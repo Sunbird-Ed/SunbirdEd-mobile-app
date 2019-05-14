@@ -1,0 +1,152 @@
+/* buttons sytle guide */
+
+// base button styles
+.sb-btn {
+    -webkit-tap-highlight-color: transparent;
+    -webkit-appearance: button;
+    user-select: none;
+    outline: 0;
+    display: inline-block;
+    border: 1px solid;
+    font-weight: normal;    
+    color: $white-color;
+    cursor:pointer;
+    @include margin(0,0,0, ($base-block-space * 1));
+    background:$white-color;
+    min-width:($base-block-space * 8);
+    @include border-radius(2px);
+    text: {
+        transform: capitalize;
+        decoration: none;
+    }
+    &.block{
+        display: block;
+        @include margin(8px);
+    }
+}
+
+.rounded {
+    height: ($base-block-space * 3);	
+    border-radius: 16px;	
+    background-color: $white-color;	
+    box-shadow: 0 3px 4px 0 rgba(0,0,0,0.12);
+    color: $white-color;
+    font-size: $font-size-sm;
+    text-align: center;
+    @include padding(($base-block-space * 0.5), ($base-block-space * 1));
+    text-transform: capitalize;
+};
+// button lin
+.sb-btn-link {
+    background:none;
+    border:0;
+    text-decoration: underline;
+    &:hover {
+        font-weight:$font-weight-bold;
+    }
+}
+// button sizes
+.sb-btn-xs, .sb-btn-normal, .sb-btn-md {
+    padding: ($base-block-space * 2);
+}
+.sb-btn-xs {
+    height:($base-block-space * 3);
+    padding: ($base-block-space * 1);
+    font-size:$font-size-sm;
+}
+//primary button style
+.sb-btn-normal {
+    height:($base-block-space * 4);
+    font-size:$font-size-base;
+}
+.sb-btn-sm {
+    height: ($base-block-space * 3);
+    font-size:$font-size-sm;
+    padding: ($base-block-space * 0.5) ($base-block-space * 1);
+}
+.sb-btn-md {
+    height:($base-block-space * 6);
+    font-size:$font-size-md;
+}
+.sb-btn-lg {
+  height:($base-block-space * 7);
+  padding: ($base-block-space * 3);
+  font-size:$font-size-lg;
+}
+
+
+// disabled button
+.sb-btn-disabled {
+    background-color: $gray-100;
+    color:$gray-200;
+    border:1px solid $gray-100;
+    cursor: not-allowed;
+}
+.sb-btn-outline-disabled {
+    background-color: $white-color;
+    color:$gray-100;
+    border:1px solid $gray-100;
+    cursor: not-allowed;
+}
+
+// default colored btns
+.sb-btn-primary{
+    @include btn-theme($primary-color);
+
+    &:hover, &:active{
+        background-color: ($primary-800);
+    }
+} 
+.sb-btn-secondary{
+    @include btn-theme($secondary-color);
+    &:hover, &:active{
+        background-color: ($secondary-400);
+    }
+}
+.sb-btn-tertiary{
+    @include btn-theme($tertiary-color);
+    &:hover, &:active{
+        background-color: ($tertiary-400);
+    }
+}
+.sb-btn-success{
+    @include btn-theme($success-color);
+    &:hover, &:active{
+        background-color: ($secondary-400);
+    }
+} 
+.sb-btn-info{
+    @include btn-theme($info-color);
+    &:hover, &:active{
+        background-color: ($primary-800);
+    }
+}
+.sb-btn-warning{
+    @include btn-theme($warning-color);
+    &:hover, &:active{
+        background-color: ($tertiary-400);
+    }
+} 
+.sb-btn-error{
+    @include btn-theme($danger-color);
+    &:hover, &:active{
+        background-color: ($red-100);
+    }
+}
+
+//outline colored btns
+.sb-btn-outline-info{
+    @include btn-theme-bgwhite($primary-color);
+ }
+ .sb-btn-outline-success{
+    @include btn-theme-bgwhite($secondary-color);
+ }
+ .sb-btn-outline-warning{
+    @include btn-theme-bgwhite($tertiary-color);
+ }
+ .sb-btn-outline-error{
+    @include btn-theme-bgwhite($red-400);
+ }
+ .sb-btn-outline-gray{
+    @include btn-theme-bgwhite($gray-800);
+ }

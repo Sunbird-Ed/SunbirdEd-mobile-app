@@ -1,0 +1,19 @@
+.float-end {
+    @include ltr() {
+        float: right;
+    }
+
+    @include rtl() {
+        float: left;
+    }
+}
+
+.float-start {
+    @include ltr() {
+        float: left;
+    }
+
+    @include rtl() {
+        float: right;
+    }
+}

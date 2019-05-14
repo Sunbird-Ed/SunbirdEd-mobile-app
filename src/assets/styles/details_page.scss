@@ -1,0 +1,114 @@
+.padding-10 {
+    padding: 10px;
+}
+
+.background-gray {
+    background: #efeff4;
+    @include margin(0, -26px);
+    @include padding(null, null, null, 25px !important);
+}
+
+.scroll {
+    position: absolute !important;
+    top: 0 !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    overflow: scroll !important;
+}
+
+.item-divider {
+    position: -webkit-sticky !important;
+    position: sticky !important;
+    top: 0px;
+    z-index: 3 !important;
+}
+
+ul {
+    padding: 0px;
+    margin: 0px;
+
+    &.rating li {
+        padding: 1px  !important;
+        background: none;
+        color: map-get($colors, primary);
+
+        ion-icon {
+            font-size: 16px;
+        }
+    }
+}
+
+.read-more {
+    color: rgb(17, 85, 204) !important;
+}
+.credits {
+    color: rgb(17, 85, 204) !important;
+    @extend .font-weight-600;
+}
+
+.back-button-md {
+    @include margin(null, null, null, -1px !important);
+}
+
+.progress-inner {
+    min-width: 15%;
+    white-space: nowrap;
+    overflow: hidden;
+    padding: 5px;
+    border-radius: 20px;
+    background-color: map-get($colors, primary);
+}
+
+.progress-inner-primary {
+    background-color: #AED6F1;
+}
+
+.padding-0 {
+    padding: 0px !important;
+}
+
+.content-size {
+    @extend .NotoSans;
+    color: grey;
+    font-size: 1.3rem;
+}
+
+.content-structure {
+    @extend .NotoSans;
+    color: #808080;
+    font-size: 1.2rem;
+}
+
+button {
+    border-radius: 4px !important;
+}
+
+.text-gray-color {
+    color: gray;
+    @extend .NotoSans;
+}
+
+// .scroll-content { 
+//     margin-bottom: 0px !important;
+// }
+
+.line-height{
+    line-height: 1.1;
+}
+
+.content-with-footer {
+    height: 90% !important;
+}
+
+.col-3-no-space{
+    max-width: 23%;
+}
+
+.content-action .list {
+    margin-bottom: 0px !important;
+}
+
+.child-item {
+    @include padding(null, null, null, 0 !important)
+}

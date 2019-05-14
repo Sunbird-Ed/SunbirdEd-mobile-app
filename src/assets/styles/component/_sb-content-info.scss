@@ -1,0 +1,51 @@
+/* Sb-Content-Info Component Styling */
+
+.sb-content-info-container {
+
+    .sb-content-info-items{
+      background-color: $primary-color;
+      height: ($base-block-space * 11);
+      width: 100%;
+      position: relative;
+      @include padding(($base-block-space * 2),0,($base-block-space * 2),0);
+      .sb-content-info-title {
+        font-size: ($font-size-base) + 2;
+        color: $white;
+        font-family: "Noto Sans";	
+        line-height: 22px;
+        overflow: auto;
+        font-weight: bold;
+        @include margin(0,0,($base-block-space * 1),0);
+        @include padding(0,($base-block-space * 1),0,($base-block-space * 3));
+        button{   
+        }
+      }
+    }
+  }
+
+  .sb-content-info-card{
+    display: flex;
+    flex-direction: column;
+    width: 96% !important;
+    box-shadow: 0 3px 5px 4px rgba(0, 0, 0, 0.05);
+    @include margin(0,($base-block-space * 1),($base-block-space * 1), ($base-block-space * 1));
+    @include padding($base-block-space * 1);
+    .sb-content-info-heading{
+      color: $gray-800;
+      font-size: ($font-size-base);
+      @include padding($base-block-space * 1);
+    }
+    .sb-info{
+      @include padding(($base-block-space * 1),($base-block-space *1));
+    }
+    .sb-content-title{
+        color: $gray-200;
+        font-size: ($font-size-base  - 2);
+        font-weight: bold;
+    }
+    .sb-content-title-data{
+        color: $gray-800;
+        font-size: ($font-size-base);
+        line-height: 17px;
+     }
+  }

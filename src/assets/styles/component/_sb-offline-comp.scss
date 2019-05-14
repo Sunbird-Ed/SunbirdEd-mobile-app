@@ -1,0 +1,24 @@
+/*sb-offline-toast styling div*/
+.sb-offline-msg
+{
+    background-color: $orange;
+    color: $white;
+
+    ion-icon
+    {
+        color: $white;
+    }
+    .offline-icon{
+    @include padding(($base-block-space),0,0,($base-block-space * 4));
+      font-size: (($font-size-base * 2) - 4);
+      display: flex;
+      align-items: center;
+    }
+    .sb-offline-text{
+            color: $white;
+            font-size: ($font-size-base);
+            font-weight: 500;
+            line-height: 19px;
+            @include padding(($base-block-space * 2),0,0,0);
+    }
+}

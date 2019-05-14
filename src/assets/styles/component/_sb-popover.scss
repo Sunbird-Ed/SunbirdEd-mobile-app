@@ -1,0 +1,207 @@
+/*Sb popver css*/
+.sb-popover {
+    ion-backdrop{
+        background-color: rgba(0,0,0,0.59);
+        opacity: 1;
+    }
+
+    //styles to align ion-popover to bottom
+    .popover-content {
+        margin: 0;
+        width: 100% !important;
+        height: auto;
+        box-shadow: unset;
+        position: fixed;
+        box-shadow:none;
+        @include ltr() {
+          left: 0 !important;
+        }
+    
+        @include rtl() {
+          right: 0 !important;
+        }
+        top: unset !important;
+        bottom: 0;
+        transform-origin: bottom -100% !important;
+        transform: translateY(0) !important;
+        overflow-y: hidden;
+        border-radius: 4px 4px 0 0;
+        background: transparent;
+        //background-color: $info-color;  
+    }
+
+    //sb popover header
+    .sb-popover-header {
+        border-radius: 4px 4px 0 0;
+        background-color: $info-color;  
+        &::after{
+            background-image: none;
+        }
+        .sb-popover-toolbar {
+            min-height: 40px;
+            max-height: 40px;
+            background-color: $info-color; 
+            border-radius: 4px 4px 0 0;
+            @include padding(($base-block-space * 0.5), ($base-block-space * 1));
+            .toolbar-background {
+                border-radius: 4px 4px 0 0;
+                background-color: $info-color;   
+            }
+            .sb-popover-close-btn{
+                color: $white-color;
+            }
+            .sb-popover-title .toolbar-title{
+                font-size: ($font-size-base);	
+                font-weight: bold;	
+               //@extend line-height: 19px;	
+                text-align: center;
+                color: $white-color;
+                @include padding(0);
+               // @include padding(0, ($base-block-space * 5) ,0,0);
+            }
+        }
+        .sb-modal-close {
+            position: absolute;
+            right: 0px;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            top: -10px;
+            text-align: center;
+            justify-content: center;
+            align-items: center;
+        }
+        
+    }
+
+    //sb popover content
+    .sb-popover-container{
+        text-align: center;
+        
+        .sb-popover-items {
+            padding: ($base-block-space * 2);
+            .icon-container{
+                ion-icon {
+                    font-size: ($font-size-base * 2)+2;
+                    color: $info-color;
+                }
+                @include margin(0,0,($base-block-space * 1) ,0);
+            }
+            .sb-popover-content-details {
+                .main-title {
+                    color: $gray-800;	
+                    font-size: 14px;	
+                    @include margin(0,0,($base-block-space * 1) ,0);
+                    font-weight: 500;
+
+                    .meta-info {
+                        color: $gray-200;	
+                        font-size: ($font-size-base - 2);	
+                        line-height: 20px;
+                        text-align: center;
+                        @include padding(($base-block-space * 2),0,0,0);
+                    }
+                }
+
+                .sb-popover-content {
+                    color: $gray-200;
+                    font-size: ($font-size-base - 2);
+                    line-height: 20px;
+                    font-weight: bold;
+                    text-align: center;
+                    @include padding(($base-block-space * 1),0,0,0);
+                }
+
+            }
+        }
+    }
+
+    
+    //sb popover footer
+    .sb-popover-footer{
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        @include padding(($base-block-space), ($base-block-space * 2),($base-block-space * 3),($base-block-space * 2));
+        .sb-popover-action-btn{
+            height: $base-block-space * 4;
+            border-radius: 2px;
+            box-shadow: 1px 3px 4px 0 rgba(0,0,0,0.26);
+            line-height: 17px;	
+            text-align: center;
+            color:$white-color;
+            font-size: 14px;
+            font-weight: normal;
+            min-width: $base-block-space * 12;
+            @include padding(($base-block-space * 0.5), ($base-block-space * 2));
+            text-transform: capitalize;
+
+            &.popover-color{
+                background-color: $info-color;
+            }
+        }
+    }
+
+    
+}
+
+.enrollement-popover {
+    background: rgba(0, 0, 0, 0.51);
+    .popover-content {
+        left: 0px !important;
+        right: 0px;
+        bottom: 0px;
+        top: auto !important;
+        width: auto !important;
+    }
+}
+
+.sb-popover.danger{
+    .sb-popover-header {
+        background-color: $danger-color;  
+        .sb-popover-toolbar .toolbar-background {
+            background-color: $danger-color;   
+        }
+    }
+     
+    .popover-content {
+        //background-color: $danger-color;
+        .sb-popover-items {
+            padding: 16px;
+            .icon-container{
+                ion-icon {
+                    font-size: ($font-size-base * 2)+2;
+                    color: $danger-color
+                }
+            }
+        }
+    }
+
+    .sb-popover-footer .sb-popover-action-btn.popover-color{
+        background-color: $danger-color;
+    }
+}
+
+.sb-popover.warning{
+    .sb-popover-header {
+        background-color: $tertiary-color; 
+        .sb-popover-toolbar .toolbar-background {
+            background-color: $tertiary-color;   
+        } 
+    }
+    .popover-content {
+       // background-color: $warning-color;
+         .sb-popover-items {
+            padding: 16px;
+            .icon-container{
+                ion-icon {
+                    font-size: ($font-size-base * 2)+2;
+                    color: $tertiary-color
+                }
+            }
+        }
+    }
+    .sb-popover-footer .sb-popover-action-btn.popover-color{
+        background-color: $tertiary-color;
+    }
+}

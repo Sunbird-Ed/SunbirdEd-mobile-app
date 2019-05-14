@@ -1,0 +1,106 @@
+/*sb-offline-toast default taost of ionic */
+.toastAfterHeader{
+    position: fixed;
+    top:50px;
+    .toast-container { background: $orange }
+    .toast-message{
+        margin-left : 35px;
+        font-weight: 500;
+        font-style: normal;
+        font-stretch: normal;
+        line-height: normal;
+        letter-spacing: -0.4px;
+        color: $white;
+    }
+    .toast-message:before{
+        font-family: "Ionicons";
+        top:10px;
+        z-index: 999;
+        position: absolute;
+        font-size: 2.1em;
+        content: url('../assets/imgs/ic_offline_white_sm.png');
+        margin-left:-35px;
+        font-weight: 500;
+        color: $white;
+    }
+    .toast-button:before {
+        font-family: "Ionicons";
+        top:0px;
+        z-index: 999;
+        position: absolute;
+        font-size: 2.5em;
+        @include padding(($base-block-space/4),0,0,0);
+        content: "\f406";
+        font-weight: bolder;
+      }
+      .toast-button span {
+          color: $orange;
+      }
+    }
+
+.sb-toast-online
+  {
+    top: 20%;
+    position: absolute;
+    background-color: $secondary-100;
+    height: ($base-block-space * 3);
+    color: $white;
+    text-align: center;
+    font-size: ($font-size-base  - 2); 
+    width: 100%;
+    .sb-online
+    {
+        @include margin($base-block-space/2,0,0,0);
+    }
+  }
+
+  .toastForOnline{
+    position: fixed;
+    top:0px;
+    .toast-container { background: $secondary-100; height: ($base-block-space * 3); }
+    .toast-message{
+        text-align: center;
+        font-style: normal;
+        font-stretch: normal;
+        line-height: normal;
+        color: $white;
+        font-size: ($font-size-base  - 2); 
+    }
+  }
+  .toastHeader{
+    position: fixed;
+    top:0px;
+    .toast-container { background: $orange }
+    .toast-message{
+        margin-left : 35px;
+        font-weight: 500;
+        font-style: normal;
+        font-stretch: normal;
+        line-height: normal;
+        letter-spacing: -0.4px;
+        color: $white;
+    }
+    .toast-message:before{
+        font-family: "Ionicons";
+        top:10px;
+        z-index: 999;
+        position: absolute;
+        font-size: 2.1em;
+        content: url('../assets/imgs/ic_offline_white_sm.png');
+        margin-left:-35px;
+        font-weight: 500;
+        color: $white;
+    }
+    .toast-button:before {
+        font-family: "Ionicons";
+        top:0px;
+        z-index: 999;
+        position: absolute;
+        font-size: 2.2em;
+        content: "\f406";
+        font-weight: bolder;
+      }
+      .toast-button span {
+          color: $orange;
+      }
+    }

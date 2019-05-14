@@ -1,0 +1,73 @@
+/* sunbird slider pill styles */
+
+// common styles for slider pills
+.sb-slider-pills-container {
+    overflow-x: auto;
+    .sb-pills-container {
+        display: inline-flex;
+        align-items: center;
+        @include padding(($base-block-space * 1) ($base-block-space * 1));
+        .pill {
+        background-color: $bg-white;
+        white-space: nowrap; 
+        -webkit-appearance: none;
+        text-overflow: ellipsis;
+        min-height: ($base-block-space * 4);
+        @include margin(null,($base-block-space * 1),null,null);
+        @include padding(($base-block-space * 0.5) ($base-block-space * 1));
+        border-radius: 5px;
+        text: {
+            transform: capitalize;
+            decoration: none;
+            align:center;
+        }
+        font: {
+            weight: normal;
+            style: normal;
+            stretch: normal;
+        }
+        box-sizing: border-box;
+        display: flex;
+        align-items: center;
+        &:last-child{
+            @include margin(null,($base-block-space * 0),null,null);
+            }
+        }
+    }
+
+    // medium filter pill styles
+    .sb-medium-pills-container {
+        min-height: ($base-block-space * 8);
+        background:$bg-white;
+        min-width:100%;
+        .pill {
+            border:$secondary-color 1px solid;
+            color:$secondary-color;
+            &:active, &.active {
+            color: $white-color;
+            background-color:$secondary-color;
+            box-shadow: 0 0 4px 0 rgba(21,18,18,0.24), 0 2px 4px 0 rgba(0,0,0,0.12);
+            }
+        }
+    }
+
+    // grade filter pill styles
+    .sb-grade-pills-container {
+        min-height: ($base-block-space * 6);
+        background:$bg-gray-0;
+        min-width: 100%;
+        .pill{
+            border-radius: 16px;
+            @include padding(($base-block-space * 0.5) ($base-block-space * 2));
+            box-shadow: 0 3px 4px 0 rgba(0,0,0,0.19);
+            color: $primary-color;	
+            min-height: ($base-block-space * 4);
+            &:active, &.active {
+                background-color: $primary-color;
+                color: $white-color;
+            }
+        }
+    }
+}
+
+

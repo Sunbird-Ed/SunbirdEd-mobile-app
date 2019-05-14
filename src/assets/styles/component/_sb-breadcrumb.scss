@@ -1,0 +1,109 @@
+ 
+  /* breadcrumb css */
+  .breadcrumb-container
+  {
+    @include padding(0,($base-block-space));
+  }
+  .step-indicator {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    overflow-x:auto;
+    width:100%;
+    display: inline-flex;
+    align-items: center;
+    height:($base-block-space * 8 );
+  }
+  
+  .step {
+    display: block;
+    float: left;
+    background: $gray-0;
+    @include padding(($base-block-space * 0.5),($base-block-space),0,0);
+    height: ($base-block-space * 3);
+    font-size: ($font-size-base - 2);
+    line-height: 17px;
+    @include margin(0,($base-block-space * 4),0,0);
+    position: relative;
+    text-decoration: none;
+    color: $primary-color;
+    cursor: default;
+    white-space: nowrap;
+      
+    &:before {
+      content: "";
+      display: block;
+      width: 0;
+      height: 0;
+      position: absolute;
+      top: 0;
+      left: -($base-block-space * 3);
+      border: 12px solid transparent;
+      border-color: $primary-100;
+      border-left-color: transparent;
+    }
+      
+    &:after {
+      content: "";
+      display: block;
+      width: 0;
+      height: 0;
+      position: absolute;
+      top: 0;
+      right: -24px;
+      border: 12px solid transparent;
+      border-left-color: $gray-0;
+    }
+      
+    &:first-of-type {
+      border-radius: 2px 0 0 2px;
+      padding-left: 15px;
+      
+      &:before {
+        display: none;
+      }
+    }
+      
+    &:last-of-type {
+      border-radius: 0 2px 2px 0;
+      @include margin(0,($base-block-space * 3),0,0);
+      background-color: $primary-100;  
+      &:after {
+        display: none;
+        background-color: $primary-100;
+      }
+    }
+  
+    &.completed {
+      background: $gray-0;
+      color: $gray-800;
+      cursor: pointer;
+      
+  
+      &:before {
+        border-color: $gray-0;
+        border-left-color: transparent;
+        
+      }
+  
+      &:after {
+        border-left-color: $gray-0;
+      }
+  
+      &:hover {
+        background: $primary-100;
+        border-color: $primary-100;
+        color: $primary-color;
+        text-decoration: none;
+          
+        &:before {
+          border-color: $primary-100;
+          border-left-color: transparent;
+        }
+            
+        &:after {
+          border-left-color: $primary-100;
+        }
+      }
+    }
+  }

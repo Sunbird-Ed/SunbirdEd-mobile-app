@@ -1,0 +1,49 @@
+/* SearchBar Component Styles*/
+.search-header
+{
+    .bar-button-md,.bar-button-ios
+    {
+        height: ($base-block-space * 3);
+        width:  ($base-block-space * 3);
+        color: $primary-color;
+        font-size: ($font-size-base + 4);
+    }
+}
+.bar-button-md,.bar-button-ios{
+    color: $primary-color;
+}
+.search-bar-icons
+{
+    font-size: ($font-size-base + 4);
+    color:$primary-color;
+}
+.sb-card-container .sb-search-card .sb-card{
+    @include padding($base-block-space,($base-block-space * 2));
+}
+.sb-view-all-container .sb-view-all-items.sb-search-items
+{
+    @include padding(0);
+    height: ($base-block-space* 9);
+    background-color: transparent;
+    border-bottom: 0.5px solid rgba(151, 151, 151, 0.5);
+}
+.sb-view-all-items.sb-search-items{
+    .sb-card-result.sb-card-details
+    {
+      @include padding($base-block-space * 2);
+      color: $gray-300;
+      .sb-card-res-count{
+           
+            font-size: ($font-size-base  - 2);
+            line-height: 15px;
+      }
+     .sb-card-result-content{
+
+            font-size: ($font-size-base  + 2);
+            line-height: 22px;
+     }
+    }
+}
+.sb-card-view-all-container.sb-search-card .sb-card .sb-card-details {
+    justify-content: center;
+}

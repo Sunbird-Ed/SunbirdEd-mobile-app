@@ -1,0 +1,98 @@
+.sb-popover.sb-popover-download{
+    .backdrop{
+        background-color: rgba(0, 0, 0, 0.59);
+        opacity: 1;
+        left: 0;
+        top: 0;
+        position: absolute;
+        z-index: 10;
+        display: block;
+        width: 100%;
+        height: 100%;
+        -webkit-transform: translateZ(0);
+        transform: translateZ(0);
+    }
+    .sb-popover-header .sb-modal-close{
+        margin: 0;
+        color: $white-color;
+        font-weight: normal;
+        text-transform: capitalize;
+        top: -10px;
+        position: absolute;
+        right: -8px;
+        height: 40px;
+        width: auto;
+    }
+    .popover-content{
+        min-height:($base-block-space * 26);
+        background:$white-color;
+        .sb-popover-container{
+            display: block;
+            justify-content: center;
+            align-items: center;
+            margin-top: ($base-block-space * 5);
+            margin-bottom: ($base-block-space * 6);    
+            max-height: 116px;
+            overflow-y: auto;
+            height: 116px;
+        }
+    }
+
+    .sb-popover-container.noscroll{
+        overflow-y: hidden !important;
+    }
+
+    .popover-progress-container{
+        height: ($base-block-space * 0.5);
+        background-color: $primary-800;
+        position: relative;
+        .progress-highlight{
+            position:absolute; 
+            background:$primary-200; 
+            left:20%; 
+            right:0; 
+            top:0; 
+            bottom:0
+        }
+    }
+
+    &.collapsed {
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        height: 72px;
+        background-color: #FFFFFF;
+        box-shadow: 0 -4px 4px 1px rgba(0,0,0,0.22);
+
+        .sb-popover-toolbar {
+            max-height: 68px;
+            height: 68px;
+            padding: 16px;
+            
+            .toolbar-background {
+                background-color: #fff;
+            }
+            .toolbar-title{
+               color: #024F9D;
+               text-align: left;
+               .meta-info{
+                    display: block;
+                    color: #979797;
+                    font-size: 12px;
+                    font-weight:normal;
+               }
+
+            }
+            .sb-modal-close{
+                color: #024F9D;
+                font-weight: normal;
+                top: -16px;
+              //  right: -16px;
+                height: 68px;
+                width: auto;
+            }
+
+        }
+    }
+}

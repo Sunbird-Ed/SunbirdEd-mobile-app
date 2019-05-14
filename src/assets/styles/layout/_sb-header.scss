@@ -1,0 +1,15 @@
+/* Sb-Header Component Styling */
+.sb-header {
+    .bar-buttons-md.sb-hamburger,.bar-buttons-ios.sb-hamburger {
+        -webkit-box-ordinal-group: 4;
+        -webkit-order: 3;
+        -ms-flex-order: 3;
+        order: 3;
+    }
+    .toolbar-ios {
+        padding:0px;
+    }
+    .toolbar-background.toolbar-background-md,.toolbar-background.toolbar-background-ios{
+        background: $white;
+    }
+}

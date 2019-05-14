@@ -1,0 +1,128 @@
+
+ /* Collection Accordian Component Style */
+ .sb-separator-line {
+    height: 1px;
+    opacity: 0.36;
+    background-color: $gray-300;
+    @include margin(0,$base-block-space);
+   }
+   
+
+
+.sb-accordian-card{
+  display: flex;
+  flex-direction: column;
+  width: 100% !important;
+  box-shadow: 0 3px 5px 4px rgba(0, 0, 0, 0.05);
+  @include margin(0,0,($base-block-space * 1),0);
+  .sb-accordian-header{
+   @include padding(($base-block-space * 1),($base-block-space * 2));
+    min-height: ($base-block-space * 7);
+    justify-content: center;
+    display: flex;
+    ion-col{
+       padding: 0;
+    }
+  }
+}
+.sb-topics-container .row{
+  flex-wrap: unset;
+}
+.sb-hidden-content .sb-separator-line{
+  @include margin(0,($base-block-space));
+}
+.sb-topics-container .sb-topic-container.sb-topics-1child
+  {
+    @include padding(($base-block-space * 2),($base-block-space * 1),0,($base-block-space * 2));
+    .sb-topic-title{
+      @include padding($base-block-space * 1);
+    }
+    .sb-topic-item
+    {
+      @include padding($base-block-space * 1);
+    }
+    .sb-separator-line{
+      @include margin($base-block-space * 1);
+    }
+  }
+  .sb-topics-container  .sb-topic-container.sb-topics-2child
+  {
+    @include padding(0,($base-block-space * 1),0,($base-block-space * 3));
+    .sb-topic-1title{
+      @include padding($base-block-space * 1);
+    }
+    .sb-topic-item
+    {
+      @include padding(($base-block-space * 1),($base-block-space * 1),($base-block-space * 1),($base-block-space * 2));
+    }
+    .sb-separator-line{
+      @include margin($base-block-space * 1);
+    }
+  }
+  .sb-topics-container  .sb-topic-container.sb-topics-3child
+  {
+    @include padding(0,($base-block-space * 1),0,($base-block-space * 4));
+    .sb-topic-1title{
+      @include padding(($base-block-space * 1),($base-block-space * 4));
+    }
+    .sb-topic-2title{
+      @include padding(($base-block-space * 1),($base-block-space * 6));
+    }
+    .sb-topic-item
+    {
+      @include padding(($base-block-space * 1),($base-block-space * 7));
+    }
+    .sb-topic-1item
+    {
+      @include padding(($base-block-space * 1),($base-block-space * 7));
+    }
+    .sb-separator-line{
+      @include margin(($base-block-space * 1),($base-block-space * 1),($base-block-space * 1),($base-block-space * 2));
+    }
+  }
+  .sb-accordian-grey-icon
+  {
+    color : $gray-300;
+    font-size : (($font-size-base * 2) + 2);
+  }
+  .sb-play-icon
+  {
+      color : $primary-color;
+      font-size: (($font-size-base * 2) + 2);
+  }
+  .sb-topic-text{
+    color:$primary-color;
+    font-size:$font-size-base;
+    @include padding(0,($base-block-space * 1));
+    line-height: 30px;
+   }
+    .sb-accordian-arrow
+    {
+        color : $primary-color;
+        font-size: (($font-size-base * 2) + 2);
+        line-height: 30px;
+    }
+    .sb-play-selected
+    {
+      @include padding(($base-block-space * 0.5),($base-block-space * 0.5),($base-block-space * 0.5),($base-block-space * 1));
+      color : $primary-color;
+      font-weight: bolder;
+     font-size:$font-size-base;
+    }
+    .sb-play-unselected
+    {
+      @include padding(($base-block-space * 0.5),($base-block-space * 0.5),($base-block-space * 0.5),($base-block-space * 1));
+      color : $primary-color;
+      font-size: $font-size-base;
+    }
+    .sb-checkmark-icon
+    {
+      color : $secondary-200;
+      font-size: ($font-size-base + 4);
+      @include margin(null,null,null,($base-block-space * .5));
+    }
+    .sb-accordian-grey-text
+    {
+        @include padding(($base-block-space * 0.5),($base-block-space * 0.5),($base-block-space * 0.5),($base-block-space * 1));
+        color : $gray-300;
+    }
