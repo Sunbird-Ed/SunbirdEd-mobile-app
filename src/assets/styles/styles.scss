@@ -1,36 +1,3 @@
-/* Load fonts first*/
-@import "./assets/fonts/notosans/notosans.css";
-@import "./assets/fonts/notosans-bengali/notosansbengali.css";
-@import "./assets/fonts/notosans-malayalam/notosansmalayalam.css";
-@import "./assets/fonts/notosans-gurmukhi/notosansgurmukhi.css";
-@import "./assets/fonts/notosans-devanagari/notosansdevanagari.css";
-@import "./assets/fonts/notosans-gujarati/notosansgujarati.css";
-@import "./assets/fonts/notosans-telugu/notosanstelugu.css";
-@import "./assets/fonts/notosans-tamil/notosanstamil.css";
-@import "./assets/fonts/notosans-kannada/notosanskannada.css";
-@import "./assets/fonts/notosans-oriya/notosansoriya.css";
-@import "./assets/fonts/noto-nastaliqurdu/notonastaliqurdu.css";
-
-@import "./variables";
-// @import "./semantic/semantic-rtl";
-// @import "./components/slick";
-// @import "./components/slick-theme";
-// @import "./components/fine-uploader-new";
-// @import "./components/fine-uploader-gallery";
-// @import "./components/iziToast";
-// @import "./components/semantic-ui-tree-picker";
-// @import "./components/semantic-ui-topic-picker";
-// @import "./components/ui.fancytree";
-// @import "./components/angular2select-default.theme";
-// @import "./components/filters";
-// @import "./components/progress-bar";
-// @import "./legacy";
-//@import "./reusables/reusables";
-// @import "./components/cards";
-// @import "./components/header";
-// @import "./components/footer";
-@import "./global";
-
 // base structure
 @import "./mixins/mixins";
 @import "./base/base";
