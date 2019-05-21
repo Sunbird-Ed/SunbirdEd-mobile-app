@@ -1,0 +1,28 @@
+cordova-plugin=https://github.com/swayangjit/jjdltc-cordova-plugin-zip.git
+cordova-plugin=ionic-plugin-keyboard
+cordova-plugin=cordova-plugin-whitelist
+cordova-plugin=cordova-plugin-ionic-webview
+cordova-plugin=cordova-plugin-globalization
+cordova-plugin=cordova-plugin-uniquedeviceid
+cordova-plugin=cordova-plugin-app-version
+cordova-plugin=cordova-plugin-x-socialsharing
+cordova-plugin=cordova-plugin-device
+cordova-plugin=cordova-plugin-file
+cordova-plugin=cordova-plugin-file-transfer
+cordova-plugin=cordova-plugin-inappbrowser
+cordova-plugin=cordova-plugin-console
+cordova-plugin=cordova-plugin-network-information
+cordova-plugin=cordova-plugin-statusbar
+cordova-plugin=https://github.com/adriano-di-giovanni/cordova-plugin-shared-preferences.git
+cordova-plugin=cordova-plugin-advanced-http
+cordova-plugin=cordova-plugin-android-permissions
+cordova-plugin=cordova-plugin-media
+cordova-plugin=https://github.com/swayangjit/cordova-plugin-buildconfig-reader.git
+cordova-plugin=https://github.com/swayangjit/cordova-plugin-android-downloadmanager.git
+cordova-plugin=https://github.com/swayangjit/sb-cordova-plugin-db.git
+cordova-plugin=cordova-android-support-gradle-release --variable ANDROID_SUPPORT_VERSION=27.1.0
+cordova-plugin=https://github.com/Sunbird-Ed/sb-cordova-plugin-customtabs.git --variable URL_SCHEME=org.sunbird.app.dev --variable URL_HOST=mobile
+sunbird-cordova-plugin=https://github.com/project-sunbird/cordova-plugin-imagechooser.git#release-1.14.0
+sunbird-cordova-plugin=https://github.com/project-sunbird/cordova-plugin-qr-scanner.git#release-1.15.0
+sunbird-cordova-plugin=https://github.com/project-sunbird/cordova-plugin-sunbirdsplash.git#release-1.15.0
+sunbird-cordova-plugin=https://github.com/project-sunbird/cordova-plugin-file-support.git#release-1.15.0
