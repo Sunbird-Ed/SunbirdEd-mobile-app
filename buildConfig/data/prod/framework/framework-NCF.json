@@ -1,0 +1,1141 @@
+{
+    "id": "api.framework.read",
+    "ver": "1.0",
+    "ts": "2018-08-17T08:59:56.242Z",
+    "params": {
+      "resmsgid": "e9937b20-a1fb-11e8-ba0f-a304a670b318",
+      "msgid": "e98e9920-a1fb-11e8-aa63-4b5021dbdb3d",
+      "status": "successful",
+      "err": null,
+      "errmsg": null
+    },
+    "responseCode": "OK",
+    "result": {
+      "framework": {
+        "identifier": "NCF",
+        "categories": [
+          {
+            "identifier": "ncf_board",
+            "code": "board",
+            "terms": [
+              {
+                "identifier": "ncf_board_ncert",
+                "code": "ncert",
+                "name": "NCERT",
+                "description": "",
+                "index": 1,
+                "category": "board",
+                "status": "Live"
+              },
+              {
+                "identifier": "ncf_board_cbse",
+                "code": "cbse",
+                "name": "CBSE",
+                "description": "",
+                "index": 2,
+                "category": "board",
+                "status": "Live"
+              },
+              {
+                "identifier": "ncf_board_icse",
+                "code": "icse",
+                "name": "ICSE",
+                "description": "",
+                "index": 3,
+                "category": "board",
+                "status": "Live"
+              },
+              {
+                "identifier": "ncf_board_upboard",
+                "code": "upboard",
+                "name": "State (Uttar Pradesh)",
+                "description": "State (Uttar Pradesh)",
+                "index": 4,
+                "category": "board",
+                "status": "Live"
+              },
+              {
+                "identifier": "ncf_board_apboard",
+                "code": "apboard",
+                "name": "State (Andhra Pradesh)",
+                "description": "State (Andhra Pradesh)",
+                "index": 5,
+                "category": "board",
+                "status": "Live"
+              },
+              {
+                "identifier": "ncf_board_tnboard",
+                "code": "tnboard",
+                "name": "State (Tamil Nadu)",
+                "description": "State (Tamil Nadu)",
+                "index": 6,
+                "category": "board",
+                "status": "Live"
+              },
+              {
+                "identifier": "ncf_board_ncte",
+                "code": "ncte",
+                "name": "NCTE",
+                "description": "",
+                "index": 7,
+                "category": "board",
+                "status": "Live"
+              },
+              {
+                "identifier": "ncf_board_mscert",
+                "code": "mscert",
+                "name": "State (Maharashtra)",
+                "description": "State (Maharashtra)",
+                "index": 8,
+                "category": "board",
+                "status": "Live"
+              },
+              {
+                "identifier": "ncf_board_bser",
+                "code": "bser",
+                "name": "State (Rajasthan)",
+                "description": "State (Rajasthan)",
+                "index": 9,
+                "category": "board",
+                "status": "Live"
+              },
+              {
+                "identifier": "ncf_board_others",
+                "code": "others",
+                "name": "Other",
+                "description": "Other",
+                "index": 10,
+                "category": "board",
+                "status": "Live"
+              },
+              {
+                "identifier": "ncf_board_dscertka",
+                "code": "dscertka",
+                "name": "State (Karnataka)",
+                "description": "State (Karnataka)",
+                "index": 11,
+                "category": "board",
+                "status": "Live"
+              },
+              {
+                "identifier": "ncf_board_statekarnataka",
+                "code": "statekarnataka",
+                "name": "State (Karnataka)",
+                "description": "State (Karnataka)",
+                "index": 12,
+                "category": "board",
+                "status": "Live"
+              }
+            ],
+            "name": "Board",
+            "description": "",
+            "index": 1,
+            "status": "Live"
+          },
+          {
+            "identifier": "ncf_medium",
+            "code": "medium",
+            "terms": [
+              {
+                "identifier": "ncf_medium_english",
+                "code": "english",
+                "name": "English",
+                "description": "",
+                "index": 1,
+                "category": "medium",
+                "status": "Live"
+              },
+              {
+                "identifier": "ncf_medium_hindi",
+                "code": "hindi",
+                "name": "Hindi",
+                "description": "",
+                "index": 2,
+                "category": "medium",
+                "status": "Live"
+              },
+              {
+                "identifier": "ncf_medium_oriya",
+                "code": "oriya",
+                "name": "Odia",
+                "description": "Odia",
+                "index": 3,
+                "category": "medium",
+                "status": "Live"
+              },
+              {
+                "identifier": "ncf_medium_telugu",
+                "code": "telugu",
+                "name": "Telugu",
+                "description": "",
+                "index": 4,
+                "category": "medium",
+                "status": "Live"
+              },
+              {
+                "identifier": "ncf_medium_kannada",
+                "code": "kannada",
+                "name": "Kannada",
+                "description": "",
+                "index": 5,
+                "category": "medium",
+                "status": "Live"
+              },
+              {
+                "identifier": "ncf_medium_marathi",
+                "code": "marathi",
+                "name": "Marathi",
+                "description": "",
+                "index": 6,
+                "category": "medium",
+                "status": "Live"
+              },
+              {
+                "identifier": "ncf_medium_assamese",
+                "code": "assamese",
+                "name": "Assamese",
+                "description": "",
+                "index": 7,
+                "category": "medium",
+                "status": "Live"
+              },
+              {
+                "identifier": "ncf_medium_bengali",
+                "code": "bengali",
+                "name": "Bengali",
+                "description": "",
+                "index": 8,
+                "category": "medium",
+                "status": "Live"
+              },
+              {
+                "identifier": "ncf_medium_gujarati",
+                "code": "gujarati",
+                "name": "Gujarati",
+                "description": "",
+                "index": 9,
+                "category": "medium",
+                "status": "Live"
+              },
+              {
+                "identifier": "ncf_medium_tamil",
+                "code": "tamil",
+                "name": "Tamil",
+                "description": "",
+                "index": 10,
+                "category": "medium",
+                "status": "Live"
+              },
+              {
+                "identifier": "ncf_medium_urdu",
+                "code": "urdu",
+                "name": "Urdu",
+                "description": "",
+                "index": 11,
+                "category": "medium",
+                "status": "Live"
+              },
+              {
+                "identifier": "ncf_medium_other",
+                "code": "other",
+                "name": "Other",
+                "description": "",
+                "index": 12,
+                "category": "medium",
+                "status": "Live"
+              }
+            ],
+            "name": "Medium",
+            "description": "",
+            "index": 2,
+            "status": "Live"
+          },
+          {
+            "identifier": "ncf_gradelevel",
+            "code": "gradeLevel",
+            "terms": [
+              {
+                "identifier": "ncf_gradelevel_kindergarten",
+                "code": "kindergarten",
+                "name": "KG",
+                "description": "KG",
+                "index": 1,
+                "category": "gradelevel",
+                "status": "Live"
+              },
+              {
+                "identifier": "ncf_gradelevel_grade1",
+                "code": "grade1",
+                "name": "Class 1",
+                "description": "Class 1",
+                "index": 2,
+                "category": "gradelevel",
+                "status": "Live"
+              },
+              {
+                "identifier": "ncf_gradelevel_grade2",
+                "code": "grade2",
+                "name": "Class 2",
+                "description": "Class 2",
+                "index": 3,
+                "category": "gradeLevel",
+                "status": "Live"
+              },
+              {
+                "identifier": "ncf_gradelevel_grade3",
+                "code": "grade3",
+                "name": "Class 3",
+                "description": "Class 3",
+                "index": 4,
+                "category": "gradelevel",
+                "status": "Live"
+              },
+              {
+                "identifier": "ncf_gradelevel_grade4",
+                "code": "grade4",
+                "name": "Class 4",
+                "description": "Class 4",
+                "index": 5,
+                "category": "gradelevel",
+                "status": "Live"
+              },
+              {
+                "identifier": "ncf_gradelevel_grade5",
+                "code": "grade5",
+                "name": "Class 5",
+                "description": "Class 5",
+                "index": 6,
+                "category": "gradelevel",
+                "status": "Live"
+              },
+              {
+                "identifier": "ncf_gradelevel_grade6",
+                "code": "grade6",
+                "name": "Class 6",
+                "description": "Class 6",
+                "index": 7,
+                "category": "gradelevel",
+                "status": "Live"
+              },
+              {
+                "identifier": "ncf_gradelevel_grade7",
+                "code": "grade7",
+                "name": "Class 7",
+                "description": "Class 7",
+                "index": 8,
+                "category": "gradelevel",
+                "status": "Live"
+              },
+              {
+                "identifier": "ncf_gradelevel_grade8",
+                "code": "grade8",
+                "name": "Class 8",
+                "description": "Class 8",
+                "index": 9,
+                "category": "gradelevel",
+                "status": "Live"
+              },
+              {
+                "identifier": "ncf_gradelevel_grade9",
+                "code": "grade9",
+                "name": "Class 9",
+                "description": "Class 9",
+                "index": 10,
+                "category": "gradelevel",
+                "status": "Live"
+              },
+              {
+                "identifier": "ncf_gradelevel_grade10",
+                "code": "grade10",
+                "name": "Class 10",
+                "description": "Class 10",
+                "index": 11,
+                "category": "gradelevel",
+                "status": "Live"
+              },
+              {
+                "identifier": "ncf_gradelevel_grade11",
+                "code": "grade11",
+                "name": "Class 11",
+                "description": "Class 11",
+                "index": 12,
+                "category": "gradelevel",
+                "status": "Live"
+              },
+              {
+                "identifier": "ncf_gradelevel_grade12",
+                "code": "grade12",
+                "name": "Class 12",
+                "description": "Class 12",
+                "index": 13,
+                "category": "gradelevel",
+                "status": "Live"
+              },
+              {
+                "identifier": "ncf_gradelevel_others",
+                "code": "others",
+                "name": "Other",
+                "description": "",
+                "index": 14,
+                "category": "gradeLevel",
+                "status": "Live"
+              }
+            ],
+            "name": "Class",
+            "description": "",
+            "index": 3,
+            "status": "Live"
+          },
+          {
+            "identifier": "ncf_subject",
+            "code": "subject",
+            "terms": [
+              {
+                "identifier": "ncf_subject_mathematics",
+                "code": "mathematics",
+                "name": "Mathematics",
+                "description": "",
+                "index": 1,
+                "category": "subject",
+                "status": "Live"
+              },
+              {
+                "identifier": "ncf_subject_english",
+                "code": "english",
+                "name": "English",
+                "description": "",
+                "index": 2,
+                "category": "subject",
+                "status": "Live"
+              },
+              {
+                "identifier": "ncf_subject_tamil",
+                "code": "tamil",
+                "name": "Tamil",
+                "description": "",
+                "index": 3,
+                "category": "subject",
+                "status": "Live"
+              },
+              {
+                "identifier": "ncf_subject_telugu",
+                "code": "telugu",
+                "name": "Telugu",
+                "description": "",
+                "index": 4,
+                "category": "subject",
+                "status": "Live"
+              },
+              {
+                "identifier": "ncf_subject_geography",
+                "code": "geography",
+                "name": "Geography",
+                "description": "",
+                "index": 5,
+                "category": "subject",
+                "status": "Live"
+              },
+              {
+                "identifier": "ncf_subject_urdu",
+                "code": "urdu",
+                "name": "Urdu",
+                "description": "",
+                "index": 6,
+                "category": "subject",
+                "status": "Live"
+              },
+              {
+                "identifier": "ncf_subject_kannada",
+                "code": "kannada",
+                "name": "Kannada",
+                "description": "",
+                "index": 7,
+                "category": "subject",
+                "status": "Live"
+              },
+              {
+                "identifier": "ncf_subject_assamese",
+                "code": "assamese",
+                "name": "Assamese",
+                "description": "",
+                "index": 8,
+                "category": "subject",
+                "status": "Live"
+              },
+              {
+                "identifier": "ncf_subject_physics",
+                "code": "physics",
+                "name": "Physics",
+                "description": "",
+                "index": 9,
+                "category": "subject",
+                "status": "Live"
+              },
+              {
+                "identifier": "ncf_subject_chemistry",
+                "code": "chemistry",
+                "name": "Chemistry",
+                "description": "",
+                "index": 10,
+                "category": "subject",
+                "status": "Live"
+              },
+              {
+                "identifier": "ncf_subject_hindi",
+                "code": "hindi",
+                "name": "Hindi",
+                "description": "",
+                "index": 11,
+                "category": "subject",
+                "status": "Live"
+              },
+              {
+                "identifier": "ncf_subject_marathi",
+                "code": "marathi",
+                "name": "Marathi",
+                "description": "",
+                "index": 12,
+                "category": "subject",
+                "status": "Live"
+              },
+              {
+                "identifier": "ncf_subject_environmentalstudies",
+                "code": "environmentalstudies",
+                "name": "EvS",
+                "description": "EvS",
+                "index": 13,
+                "category": "subject",
+                "status": "Live"
+              },
+              {
+                "identifier": "ncf_subject_politicalscience",
+                "code": "politicalscience",
+                "name": "Political Science",
+                "description": "",
+                "index": 14,
+                "category": "subject",
+                "status": "Live"
+              },
+              {
+                "identifier": "ncf_subject_bengali",
+                "code": "bengali",
+                "name": "Bengali",
+                "description": "",
+                "index": 15,
+                "category": "subject",
+                "status": "Live"
+              },
+              {
+                "identifier": "ncf_subject_history",
+                "code": "history",
+                "name": "History",
+                "description": "",
+                "index": 16,
+                "category": "subject",
+                "status": "Live"
+              },
+              {
+                "identifier": "ncf_subject_gujarati",
+                "code": "gujarati",
+                "name": "Gujarati",
+                "description": "",
+                "index": 17,
+                "category": "subject",
+                "status": "Live"
+              },
+              {
+                "identifier": "ncf_subject_biology",
+                "code": "biology",
+                "name": "Biology",
+                "description": "",
+                "index": 18,
+                "category": "subject",
+                "status": "Live"
+              },
+              {
+                "identifier": "ncf_subject_oriya",
+                "code": "oriya",
+                "name": "Odia",
+                "description": "Odia",
+                "index": 19,
+                "category": "subject",
+                "status": "Live"
+              },
+              {
+                "identifier": "ncf_subject_punjabi",
+                "code": "punjabi",
+                "name": "Punjabi",
+                "description": "",
+                "index": 20,
+                "category": "subject",
+                "status": "Live"
+              },
+              {
+                "identifier": "ncf_subject_nepali",
+                "code": "nepali",
+                "name": "Nepali",
+                "description": "",
+                "index": 21,
+                "category": "subject",
+                "status": "Live"
+              },
+              {
+                "identifier": "ncf_subject_malayalam",
+                "code": "malayalam",
+                "name": "Malayalam",
+                "description": "",
+                "index": 22,
+                "category": "subject",
+                "status": "Live"
+              },
+              {
+                "identifier": "ncf_subject_sanskrit",
+                "code": "sanskrit",
+                "name": "Sanskrit",
+                "description": "Sanskrit",
+                "index": 23,
+                "category": "subject",
+                "status": "Live"
+              },
+              {
+                "identifier": "ncf_subject_socialstudies",
+                "code": "socialstudies",
+                "name": "Social Studies",
+                "description": "Social Studies",
+                "index": 24,
+                "category": "subject",
+                "status": "Live"
+              },
+              {
+                "identifier": "ncf_subject_science",
+                "code": "science",
+                "name": "Science",
+                "description": "Science",
+                "index": 25,
+                "category": "subject",
+                "status": "Live"
+              },
+              {
+                "identifier": "ncf_subject_healthandphysicaleducation",
+                "code": "healthandphysicaleducation",
+                "name": "Health and Physical Education",
+                "description": "Health and Physical Education",
+                "index": 26,
+                "category": "subject",
+                "status": "Live"
+              },
+              {
+                "identifier": "ncf_subject_economics",
+                "code": "economics",
+                "name": "Economics",
+                "description": "Economics",
+                "index": 27,
+                "category": "subject",
+                "status": "Live"
+              },
+              {
+                "identifier": "ncf_subject_other",
+                "code": "other",
+                "name": "Other",
+                "description": "Other",
+                "index": 28,
+                "category": "subject",
+                "status": "Live"
+              },
+              {
+                "identifier": "ncf_subject_botany",
+                "code": "botany",
+                "name": "Botany",
+                "description": "Botany",
+                "index": 29,
+                "category": "subject",
+                "status": "Live"
+              },
+              {
+                "identifier": "ncf_subject_zoology",
+                "code": "zoology",
+                "name": "Zoology",
+                "description": "Zoology",
+                "index": 30,
+                "category": "subject",
+                "status": "Live"
+              },
+              {
+                "identifier": "ncf_subject_commerce",
+                "code": "commerce",
+                "name": "Commerce",
+                "description": "Commerce",
+                "index": 31,
+                "category": "subject",
+                "status": "Live"
+              },
+              {
+                "identifier": "ncf_subject_accountancy",
+                "code": "accountancy",
+                "name": "Accountancy",
+                "description": "Accountancy",
+                "index": 32,
+                "category": "subject",
+                "status": "Live"
+              },
+              {
+                "identifier": "ncf_subject_statistics",
+                "code": "statistics",
+                "name": "Statistics",
+                "description": "Statistics",
+                "index": 33,
+                "category": "subject",
+                "status": "Live"
+              },
+              {
+                "identifier": "ncf_subject_computerscience",
+                "code": "computerscience",
+                "name": "Computer Science",
+                "description": "Computer Science",
+                "index": 34,
+                "category": "subject",
+                "status": "Live"
+              },
+              {
+                "identifier": "ncf_subject_computerapplications",
+                "code": "computerapplications",
+                "name": "Computer Applications",
+                "description": "Computer Applications",
+                "index": 35,
+                "category": "subject",
+                "status": "Live"
+              },
+              {
+                "identifier": "ncf_subject_biochemistry",
+                "code": "biochemistry",
+                "name": "Bio Chemistry",
+                "description": "Bio Chemistry",
+                "index": 36,
+                "category": "subject",
+                "status": "Live"
+              },
+              {
+                "identifier": "ncf_subject_microbiology",
+                "code": "microbiology",
+                "name": "Micro Biology",
+                "description": "Micro Biology",
+                "index": 37,
+                "category": "subject",
+                "status": "Live"
+              },
+              {
+                "identifier": "ncf_subject_homescience",
+                "code": "homescience",
+                "name": "Home Science",
+                "description": "Home Science",
+                "index": 38,
+                "category": "subject",
+                "status": "Live"
+              },
+              {
+                "identifier": "ncf_subject_nutritiondiabetics",
+                "code": "nutritiondiabetics",
+                "name": "Nutrition Diabetics",
+                "description": "Nutrition Diabetics",
+                "index": 39,
+                "category": "subject",
+                "status": "Live"
+              },
+              {
+                "identifier": "ncf_subject_communicativeenglish",
+                "code": "communicativeenglish",
+                "name": "Communicative English",
+                "description": "Communicative English",
+                "index": 40,
+                "category": "subject",
+                "status": "Live"
+              },
+              {
+                "identifier": "ncf_subject_advancetamil",
+                "code": "advancetamil",
+                "name": "Advance Tamil",
+                "description": "Advance Tamil",
+                "index": 41,
+                "category": "subject",
+                "status": "Live"
+              },
+              {
+                "identifier": "ncf_subject_businessmaths",
+                "code": "businessmaths",
+                "name": "Business Maths",
+                "description": "Business Maths",
+                "index": 42,
+                "category": "subject",
+                "status": "Live"
+              },
+              {
+                "identifier": "ncf_subject_ethicsindianculture",
+                "code": "ethicsindianculture",
+                "name": "Ethics Indian Culture",
+                "description": "Ethics Indian Culture",
+                "index": 43,
+                "category": "subject",
+                "status": "Live"
+              },
+              {
+                "identifier": "ncf_subject_computertechnology",
+                "code": "computertechnology",
+                "name": "Computer Technology",
+                "description": "Computer Technology",
+                "index": 44,
+                "category": "subject",
+                "status": "Live"
+              },
+              {
+                "identifier": "ncf_subject_foodmanagement",
+                "code": "foodmanagement",
+                "name": "Food Management",
+                "description": "Food Management",
+                "index": 45,
+                "category": "subject",
+                "status": "Live"
+              },
+              {
+                "identifier": "ncf_subject_officemanagement",
+                "code": "officemanagement",
+                "name": "Office Management",
+                "description": "Office Management",
+                "index": 46,
+                "category": "subject",
+                "status": "Live"
+              },
+              {
+                "identifier": "ncf_subject_accountancyauditing",
+                "code": "accountancyauditing",
+                "name": "Accountancy Auditing",
+                "description": "Accountancy Auditing",
+                "index": 47,
+                "category": "subject",
+                "status": "Live"
+              },
+              {
+                "identifier": "ncf_subject_agriculture",
+                "code": "agriculture",
+                "name": "Agriculture",
+                "description": "Agriculture",
+                "index": 48,
+                "category": "subject",
+                "status": "Live"
+              },
+              {
+                "identifier": "ncf_subject_generalmachinist",
+                "code": "generalmachinist",
+                "name": "General Machinist",
+                "description": "General Machinist",
+                "index": 49,
+                "category": "subject",
+                "status": "Live"
+              },
+              {
+                "identifier": "ncf_subject_electricalmachinesappliances",
+                "code": "electricalmachinesappliances",
+                "name": "Electrical Machines Appliances",
+                "description": "Electrical Machines Appliances",
+                "index": 50,
+                "category": "subject",
+                "status": "Live"
+              },
+              {
+                "identifier": "ncf_subject_electricalequipments",
+                "code": "electricalequipments",
+                "name": "Electrical Equipments",
+                "description": "Electrical Equipments",
+                "index": 51,
+                "category": "subject",
+                "status": "Live"
+              },
+              {
+                "identifier": "ncf_subject_draughtsmancivil",
+                "code": "draughtsmancivil",
+                "name": "Draughtsman Civil",
+                "description": "Draughtsman Civil",
+                "index": 52,
+                "category": "subject",
+                "status": "Live"
+              },
+              {
+                "identifier": "ncf_subject_automechanic",
+                "code": "automechanic",
+                "name": "Auto Mechanic",
+                "description": "Auto Mechanic",
+                "index": 53,
+                "category": "subject",
+                "status": "Live"
+              },
+              {
+                "identifier": "ncf_subject_textiletechnology",
+                "code": "textiletechnology",
+                "name": "Textile Technology",
+                "description": "Textile Technology",
+                "index": 54,
+                "category": "subject",
+                "status": "Live"
+              },
+              {
+                "identifier": "ncf_subject_textiledressdesigning",
+                "code": "textiledressdesigning",
+                "name": "Textile Dress Designing",
+                "description": "Textile Dress Designing",
+                "index": 55,
+                "category": "subject",
+                "status": "Live"
+              },
+              {
+                "identifier": "ncf_subject_nutritiondietics",
+                "code": "nutritiondietics",
+                "name": "Nutrition Dietics",
+                "description": "Nutrition Dietics",
+                "index": 56,
+                "category": "subject",
+                "status": "Live"
+              },
+              {
+                "identifier": "ncf_subject_ethicsandindianculture",
+                "code": "ethicsandindianculture",
+                "name": "Ethics and Indian Culture",
+                "description": "Ethics and Indian Culture",
+                "index": 57,
+                "category": "subject",
+                "status": "Live"
+              },
+              {
+                "identifier": "ncf_subject_foodservicemanagement",
+                "code": "foodservicemanagement",
+                "name": "Food Service Management",
+                "description": "Food Service Management",
+                "index": 58,
+                "category": "subject",
+                "status": "Live"
+              },
+              {
+                "identifier": "ncf_subject_officemanagementandsecretaryship",
+                "code": "officemanagementandsecretaryship",
+                "name": "Office Management and Secretaryship",
+                "description": "Office Management and Secretaryship",
+                "index": 59,
+                "category": "subject",
+                "status": "Live"
+              },
+              {
+                "identifier": "ncf_subject_accountancyandauditing",
+                "code": "accountancyandauditing",
+                "name": "Accountancy and Auditing",
+                "description": "Accountancy and Auditing",
+                "index": 60,
+                "category": "subject",
+                "status": "Live"
+              },
+              {
+                "identifier": "ncf_subject_agriculturalscience",
+                "code": "agriculturalscience",
+                "name": "Agricultural Science",
+                "description": "Agricultural Science",
+                "index": 61,
+                "category": "subject",
+                "status": "Live"
+              },
+              {
+                "identifier": "ncf_subject_basicmechanicalengineering",
+                "code": "basicmechanicalengineering",
+                "name": "Basic Mechanical Engineering",
+                "description": "Basic Mechanical Engineering",
+                "index": 62,
+                "category": "subject",
+                "status": "Live"
+              },
+              {
+                "identifier": "ncf_subject_basicelectricalengineering",
+                "code": "basicelectricalengineering",
+                "name": "Basic Electrical Engineering",
+                "description": "Basic Electrical Engineering",
+                "index": 63,
+                "category": "subject",
+                "status": "Live"
+              },
+              {
+                "identifier": "ncf_subject_basicelectronicsengineering",
+                "code": "basicelectronicsengineering",
+                "name": "Basic Electronics Engineering",
+                "description": "Basic Electronics Engineering",
+                "index": 64,
+                "category": "subject",
+                "status": "Live"
+              },
+              {
+                "identifier": "ncf_subject_basiccivilengineering",
+                "code": "basiccivilengineering",
+                "name": "Basic Civil Engineering",
+                "description": "Basic Civil Engineering",
+                "index": 65,
+                "category": "subject",
+                "status": "Live"
+              },
+              {
+                "identifier": "ncf_subject_basicautomobileengineering",
+                "code": "basicautomobileengineering",
+                "name": "Basic Automobile Engineering",
+                "description": "Basic Automobile Engineering",
+                "index": 66,
+                "category": "subject",
+                "status": "Live"
+              },
+              {
+                "identifier": "ncf_subject_textilesdressdesigning",
+                "code": "textilesdressdesigning",
+                "name": "Textiles &  Dress Designing",
+                "description": "Textiles &  Dress Designing",
+                "index": 67,
+                "category": "subject",
+                "status": "Live"
+              },
+              {
+                "identifier": "ncf_subject_nursingcore",
+                "code": "nursingcore",
+                "name": "Nursing Core",
+                "description": "Nursing Core",
+                "index": 68,
+                "category": "subject",
+                "status": "Live"
+              },
+              {
+                "identifier": "ncf_subject_tourismandtravelmanagement",
+                "code": "tourismandtravelmanagement",
+                "name": "Tourism and Travel Management",
+                "description": "Tourism and Travel Management",
+                "index": 69,
+                "category": "subject",
+                "status": "Live"
+              },
+              {
+                "identifier": "ncf_subject_horticulture",
+                "code": "horticulture",
+                "name": "Horticulture",
+                "description": "Horticulture",
+                "index": 70,
+                "category": "subject",
+                "status": "Live"
+              },
+              {
+                "identifier": "ncf_subject_healthbeautystudies",
+                "code": "healthbeautystudies",
+                "name": "Health & Beauty Studies",
+                "description": "Health & Beauty Studies",
+                "index": 71,
+                "category": "subject",
+                "status": "Live"
+              },
+              {
+                "identifier": "ncf_subject_secretarialpractices",
+                "code": "secretarialpractices",
+                "name": "Secretarial Practices",
+                "description": "Secretarial Practices",
+                "index": 72,
+                "category": "subject",
+                "status": "Live"
+              },
+              {
+                "identifier": "ncf_subject_costaccountingtaxation",
+                "code": "costaccountingtaxation",
+                "name": "Cost Accounting & Taxation",
+                "description": "Cost Accounting & Taxation",
+                "index": 73,
+                "category": "subject",
+                "status": "Live"
+              },
+              {
+                "identifier": "ncf_subject_animalsciencetechnology",
+                "code": "animalsciencetechnology",
+                "name": "Animal Science & Technology",
+                "description": "Animal Science & Technology",
+                "index": 74,
+                "category": "subject",
+                "status": "Live"
+              },
+              {
+                "identifier": "ncf_subject_chemicaltechnology",
+                "code": "chemicaltechnology",
+                "name": "Chemical Technology",
+                "description": "Chemical Technology",
+                "index": 75,
+                "category": "subject",
+                "status": "Live"
+              },
+              {
+                "identifier": "ncf_subject_plastictechnology",
+                "code": "plastictechnology",
+                "name": "Plastic Technology",
+                "description": "Plastic Technology",
+                "index": 76,
+                "category": "subject",
+                "status": "Live"
+              },
+              {
+                "identifier": "ncf_subject_fisheriesandaquaculture",
+                "code": "fisheriesandaquaculture",
+                "name": "Fisheries and Aquaculture",
+                "description": "Fisheries and Aquaculture",
+                "index": 77,
+                "category": "subject",
+                "status": "Live"
+              },
+              {
+                "identifier": "ncf_subject_artandarchitecture",
+                "code": "artandarchitecture",
+                "name": "Art and Architecture",
+                "description": "Art and Architecture",
+                "index": 78,
+                "category": "subject",
+                "status": "Live"
+              },
+              {
+                "identifier": "ncf_subject_hospitalmanagement",
+                "code": "hospitalmanagement",
+                "name": "Hospital Management",
+                "description": "Hospital Management",
+                "index": 79,
+                "category": "subject",
+                "status": "Live"
+              },
+              {
+                "identifier": "ncf_subject_fashiontechnology",
+                "code": "fashiontechnology",
+                "name": "Fashion Technology",
+                "description": "Fashion Technology",
+                "index": 80,
+                "category": "subject",
+                "status": "Live"
+              },
+              {
+                "identifier": "ncf_subject_nursingvocational",
+                "code": "nursingvocational",
+                "name": "Nursing Vocational",
+                "description": "Nursing Vocational",
+                "index": 81,
+                "category": "subject",
+                "status": "Live"
+              },
+              {
+                "identifier": "ncf_subject_coreandvocational",
+                "code": "coreandvocational",
+                "name": "Core and Vocational",
+                "description": "Core and Vocational",
+                "index": 82,
+                "category": "subject",
+                "status": "Live"
+              }
+            ],
+            "name": "Subject",
+            "description": "",
+            "index": 4,
+            "status": "Live"
+          }
+        ],
+        "objectType": "Framework"
+      }
+    }
+  }

@@ -1,0 +1,211 @@
+{
+    "id": "api.framework.read",
+    "ver": "1.0",
+    "ts": "2019-03-21T10:30:35.045Z",
+    "params": {
+        "resmsgid": "5c94f550-4bc4-11e9-ad98-7f0402a0456a",
+        "msgid": "5c906170-4bc4-11e9-b81b-cd756996bcb0",
+        "status": "successful",
+        "err": null,
+        "errmsg": null
+    },
+    "responseCode": "OK",
+    "result": {
+        "framework": {
+            "identifier": "tn_k-12_custodian",
+            "code": "tn_k-12_custodian",
+            "name": "State (Tamil Nadu)",
+            "description": "State (Tamil Nadu)",
+            "graph_id": "domain",
+            "nodeType": "DATA_NODE",
+            "type": "K-12",
+            "node_id": 456573,
+            "objectType": "Framework",
+            "categories": [
+                {
+                    "identifier": "tn_k-12_custodian_board",
+                    "code": "board",
+                    "terms": [
+                        {
+                            "associations": [
+                                {
+                                    "identifier": "tn_k-12_custodian_subject_social",
+                                    "code": "social",
+                                    "translations": null,
+                                    "name": "Social",
+                                    "description": "Social",
+                                    "category": "subject",
+                                    "status": "Live"
+                                },
+                                {
+                                    "identifier": "tn_k-12_custodian_medium_english",
+                                    "code": "english",
+                                    "translations": null,
+                                    "name": "English",
+                                    "description": "English",
+                                    "category": "medium",
+                                    "status": "Live"
+                                },
+                                {
+                                    "identifier": "tn_k-12_custodian_medium_tamil",
+                                    "code": "tamil",
+                                    "translations": null,
+                                    "name": "Tamil",
+                                    "description": "Tamil",
+                                    "category": "medium",
+                                    "status": "Live"
+                                },
+                                {
+                                    "identifier": "tn_k-12_custodian_gradelevel_class9",
+                                    "code": "class9",
+                                    "translations": null,
+                                    "name": "Class 9",
+                                    "description": "Class 9",
+                                    "category": "gradeLevel",
+                                    "status": "Live"
+                                }
+                            ],
+                            "identifier": "tn_k-12_custodian_board_statetamilnadu",
+                            "code": "statetamilnadu",
+                            "translations": null,
+                            "name": "State (Tamil Nadu)",
+                            "description": "State (Tamil Nadu)",
+                            "index": 1,
+                            "category": "board",
+                            "status": "Live"
+                        }
+                    ],
+                    "translations": null,
+                    "name": "Board",
+                    "description": "Board",
+                    "index": 1,
+                    "status": "Live"
+                },
+                {
+                    "identifier": "tn_k-12_custodian_medium",
+                    "code": "medium",
+                    "terms": [
+                        {
+                            "associations": [
+                                {
+                                    "identifier": "tn_k-12_custodian_gradelevel_class9",
+                                    "code": "class9",
+                                    "translations": null,
+                                    "name": "Class 9",
+                                    "description": "Class 9",
+                                    "category": "gradeLevel",
+                                    "status": "Live"
+                                },
+                                {
+                                    "identifier": "tn_k-12_custodian_subject_social",
+                                    "code": "social",
+                                    "translations": null,
+                                    "name": "Social",
+                                    "description": "Social",
+                                    "category": "subject",
+                                    "status": "Live"
+                                }
+                            ],
+                            "identifier": "tn_k-12_custodian_medium_english",
+                            "code": "english",
+                            "translations": null,
+                            "name": "English",
+                            "description": "English",
+                            "index": 1,
+                            "category": "medium",
+                            "status": "Live"
+                        },
+                        {
+                            "associations": [
+                                {
+                                    "identifier": "tn_k-12_custodian_gradelevel_class9",
+                                    "code": "class9",
+                                    "translations": null,
+                                    "name": "Class 9",
+                                    "description": "Class 9",
+                                    "category": "gradeLevel",
+                                    "status": "Live"
+                                },
+                                {
+                                    "identifier": "tn_k-12_custodian_subject_social",
+                                    "code": "social",
+                                    "translations": null,
+                                    "name": "Social",
+                                    "description": "Social",
+                                    "category": "subject",
+                                    "status": "Live"
+                                }
+                            ],
+                            "identifier": "tn_k-12_custodian_medium_tamil",
+                            "code": "tamil",
+                            "translations": null,
+                            "name": "Tamil",
+                            "description": "Tamil",
+                            "index": 2,
+                            "category": "medium",
+                            "status": "Live"
+                        }
+                    ],
+                    "translations": null,
+                    "name": "Medium",
+                    "description": "Medium",
+                    "index": 2,
+                    "status": "Live"
+                },
+                {
+                    "identifier": "tn_k-12_custodian_gradelevel",
+                    "code": "gradeLevel",
+                    "terms": [
+                        {
+                            "associations": [
+                                {
+                                    "identifier": "tn_k-12_custodian_subject_social",
+                                    "code": "social",
+                                    "translations": null,
+                                    "name": "Social",
+                                    "description": "Social",
+                                    "category": "subject",
+                                    "status": "Live"
+                                }
+                            ],
+                            "identifier": "tn_k-12_custodian_gradelevel_class9",
+                            "code": "class9",
+                            "translations": null,
+                            "name": "Class 9",
+                            "description": "Class 9",
+                            "index": 1,
+                            "category": "gradeLevel",
+                            "status": "Live"
+                        }
+                    ],
+                    "translations": null,
+                    "name": "Grade",
+                    "description": "Grade",
+                    "index": 3,
+                    "status": "Live"
+                },
+                {
+                    "identifier": "tn_k-12_custodian_subject",
+                    "code": "subject",
+                    "terms": [
+                        {
+                            "identifier": "tn_k-12_custodian_subject_social",
+                            "code": "social",
+                            "translations": null,
+                            "name": "Social",
+                            "description": "Social",
+                            "index": 1,
+                            "category": "subject",
+                            "status": "Live"
+                        }
+                    ],
+                    "translations": null,
+                    "name": "Subject",
+                    "description": "Subject",
+                    "index": 4,
+                    "status": "Live"
+                }
+            ]
+        }
+    }
+}

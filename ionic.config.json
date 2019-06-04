@@ -1,5 +1,7 @@
 {
   "name": "Sunbird-Education",
-  "integrations": {},
+  "integrations": {
+    "cordova": {}
+  },
   "type": "angular"
 }
