@@ -1,0 +1,38 @@
+{
+  "id": 1004,
+  "type": 1,
+  "data": {
+    "start": "4 19:00",
+    "interval": "weekday",
+    "translations": {
+      "en": {
+        "title": "Sunbird",
+        "msg": "Learn something new on {{%s}} today!"
+      },
+      "hi": {
+        "title": "Sunbird",
+        "msg": "आज {{%s}} से कुछ नया सीखे!"
+      },
+      "kn": {
+        "title": "Sunbird",
+        "msg": "{{%s}} ದಲ್ಲಿ ಇಂದು ಹೊಸತೇನಾದರೂ ಕಲಿಯಿರಿ! "
+      },
+      "ta": {
+        "title": "Sunbird",
+        "msg": "இன்று {{%s}} இல் புதியவற்றைக் கற்றுக்கொள்ளுங்கள்!"
+      },
+      "te": {
+        "title": "Sunbird",
+        "msg": "నేడు {{%s}} లో కొత్త విషయాలు నేర్చుకోండి!"
+      },
+      "ur": {
+        "title": "Sunbird",
+        "msg": "{{%s}} پر آج کچھ نیا  سیکھیں!"
+      },
+      "default": {
+        "title": "Sunbird",
+        "msg": "Learn something new on {{%s}} today!"
+      }
+    }
+  }
+}

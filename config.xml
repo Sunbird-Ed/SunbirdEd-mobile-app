@@ -1,53 +1,62 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="io.ionic.starter" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
-    <name>MyApp</name>
-    <description>An awesome Ionic/Cordova app.</description>
-    <author email="hi@ionicframework.com" href="http://ionicframework.com/">Ionic Framework Team</author>
-    <content src="index.html" />
+<widget android-versionCode="1" id="org.sunbird.app" version="staging-2.0.0.01" xmlns="http://www.w3.org/ns/widgets" xmlns:android="http://schemas.android.com/apk/res/android">
+    <name>@string/_app_name</name>
+    <description>Sunbird mobile app</description>
+    <author email="" href="">EkStep Team</author>
     <access origin="*" />
-    <allow-intent href="http://*/*" />
-    <allow-intent href="https://*/*" />
     <allow-intent href="tel:*" />
     <allow-intent href="sms:*" />
     <allow-intent href="mailto:*" />
     <allow-intent href="geo:*" />
     <preference name="ScrollEnabled" value="false" />
-    <preference name="android-minSdkVersion" value="19" />
+    <preference name="android-minSdkVersion" value="16" />
     <preference name="BackupWebStorage" value="none" />
-    <preference name="SplashMaintainAspectRatio" value="true" />
-    <preference name="FadeSplashScreenDuration" value="300" />
-    <preference name="SplashShowOnlyFirstTime" value="false" />
-    <preference name="SplashScreen" value="screen" />
-    <preference name="SplashScreenDelay" value="3000" />
+    <preference name="SplashScreenDelay" value="5000" />
+    <preference name="Orientation" value="portrait" />
+    <preference name="AndroidLaunchMode" value="singleInstance" />
+    <preference name="KeyboardDisplayRequiresUserAction" value="false" />
     <hook src="scripts/copyGradleFiles.js" type="before_build" />
     <hook src="scripts/copyBundledData.js" type="before_build" />
     <hook src="scripts/application/add_application.js" type="before_run" />
     <hook src="scripts/copyGradleFiles.js" type="before_run" />
     <hook src="scripts/copyBundledData.js" type="before_run" />
     <platform name="android">
-        <edit-config file="app/src/main/AndroidManifest.xml" mode="merge" target="/manifest/application" xmlns:android="http://schemas.android.com/apk/res/android">
-            <application android:networkSecurityConfig="@xml/network_security_config" />
+        <config-file parent="/manifest/application" target="AndroidManifest.xml">
+            <meta-data android:name="io.fabric.ApiKey" android:value="${fabricKey}" />
+            <meta-data android:name="io.fabric.ApiSecret" android:value="${fabricSecret}" />
+        </config-file>
+        <config-file parent="/*" target="AndroidManifest.xml">
+            <uses-permission android:name="android.permission.RECORD_AUDIO" />
+            <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+        </config-file>
+        <edit-config file="app/src/main/AndroidManifest.xml" mode="merge" target="/manifest/application">
+            <application android:allowBackup="false" />
         </edit-config>
-        <resource-file src="resources/android/xml/network_security_config.xml" target="app/src/main/res/xml/network_security_config.xml" />
+        <preference name="android-manifest/@xmlns:tools" value="http://schemas.android.com/tools" />
+        <preference name="android-manifest/application/@tools:replace" value="android:allowBackup" />
+        <preference name="android-manifest/application/@android:allowBackup" value="false" />
+        <preference name="loadUrlTimeoutValue" value="700000" />
+        <preference name="CodePushDeploymentKey" value="agojO-OZt4dZlt_pu9r9j2Ipy_jY90dbb065-3633-45a5-9c55-c0405eafaebb" />
         <allow-intent href="market:*" />
         <icon density="ldpi" src="resources/android/icon/drawable-ldpi-icon.png" />
-        <icon density="mdpi" src="resources/android/icon/drawable-mdpi-icon.png" />
-        <icon density="hdpi" src="resources/android/icon/drawable-hdpi-icon.png" />
-        <icon density="xhdpi" src="resources/android/icon/drawable-xhdpi-icon.png" />
-        <icon density="xxhdpi" src="resources/android/icon/drawable-xxhdpi-icon.png" />
-        <icon density="xxxhdpi" src="resources/android/icon/drawable-xxxhdpi-icon.png" />
-        <splash density="land-ldpi" src="resources/android/splash/drawable-land-ldpi-screen.png" />
-        <splash density="land-mdpi" src="resources/android/splash/drawable-land-mdpi-screen.png" />
-        <splash density="land-hdpi" src="resources/android/splash/drawable-land-hdpi-screen.png" />
-        <splash density="land-xhdpi" src="resources/android/splash/drawable-land-xhdpi-screen.png" />
-        <splash density="land-xxhdpi" src="resources/android/splash/drawable-land-xxhdpi-screen.png" />
-        <splash density="land-xxxhdpi" src="resources/android/splash/drawable-land-xxxhdpi-screen.png" />
-        <splash density="port-ldpi" src="resources/android/splash/drawable-port-ldpi-screen.png" />
-        <splash density="port-mdpi" src="resources/android/splash/drawable-port-mdpi-screen.png" />
-        <splash density="port-hdpi" src="resources/android/splash/drawable-port-hdpi-screen.png" />
-        <splash density="port-xhdpi" src="resources/android/splash/drawable-port-xhdpi-screen.png" />
-        <splash density="port-xxhdpi" src="resources/android/splash/drawable-port-xxhdpi-screen.png" />
-        <splash density="port-xxxhdpi" src="resources/android/splash/drawable-port-xxxhdpi-screen.png" />
+        <icon density="mdpi" src="resources/android/icon/drawable-ldpi-icon.png" />
+        <icon density="hdpi" src="resources/android/icon/drawable-ldpi-icon.png" />
+        <icon density="xhdpi" src="resources/android/icon/drawable-ldpi-icon.png" />
+        <icon density="xxhdpi" src="resources/android/icon/drawable-ldpi-icon.png" />
+        <icon density="xxxhdpi" src="resources/android/icon/drawable-ldpi-icon.png" />
+        <splash density="land-ldpi" src="resources/android/splash/drawable-ldpi-splash.png" />
+        <splash density="land-mdpi" src="resources/android/splash/drawable-ldpi-splash.png" />
+        <splash density="land-hdpi" src="resources/android/splash/drawable-hdpi-splash.png" />
+        <splash density="land-xhdpi" src="resources/android/splash/drawable-hdpi-splash.png" />
+        <splash density="land-xxhdpi" src="resources/android/splash/drawable-xhdpi-splash.png" />
+        <splash density="land-xxxhdpi" src="resources/android/splash/drawable-xhdpi-splash.png" />
+        <splash density="port-ldpi" src="resources/android/splash/drawable-ldpi-splash.png" />
+        <splash density="port-mdpi" src="resources/android/splash/drawable-ldpi-splash.png" />
+        <splash density="port-hdpi" src="resources/android/splash/drawable-hdpi-splash.png" />
+        <splash density="port-xhdpi" src="resources/android/splash/drawable-hdpi-splash.png" />
+        <splash density="port-xxhdpi" src="resources/android/splash/drawable-xhdpi-splash.png" />
+        <splash density="port-xxxhdpi" src="resources/android/splash/drawable-xhdpi-splash.png" />
+        <resource-file src="resources/android/icon/mipmap-hdpi-icon.png" target="app/src/main/res/mipmap-hdpi/n_icon.png" />
     </platform>
     <platform name="ios">
         <allow-intent href="itms:*" />
@@ -85,17 +94,20 @@
         <splash height="480" src="resources/ios/splash/Default~iphone.png" width="320" />
         <splash height="2732" src="resources/ios/splash/Default@2x~universal~anyany.png" width="2732" />
     </platform>
-    <plugin name="cordova-plugin-splashscreen" spec="5.0.2" />
-    <plugin name="cordova-plugin-ionic-keyboard" spec="^2.0.5" />
+    <plugin name="cordova-plugin-file-opener2" spec="^2.0.19" />
+    <plugin name="cordova-plugin-customconfigparameters" spec="^3.0.0" />
+    <content src="index.html" />
+    <plugin name="cordova-plugin-screen-orientation" spec="^3.0.1" />
+    <plugin name="cordova-plugin-zip" spec="^3.1.0" />
     <plugin name="com.jjdltc.cordova.plugin.zip" spec="https://github.com/swayangjit/jjdltc-cordova-plugin-zip.git" />
     <plugin name="ionic-plugin-keyboard" spec="2.2.1" />
     <plugin name="cordova-plugin-whitelist" spec="1.3.3" />
-    <plugin name="cordova-plugin-ionic-webview" spec="4.0.1" />
+    <plugin name="cordova-plugin-ionic-webview" spec="1.2.1" />
     <plugin name="cordova-plugin-globalization" spec="1.11.0" />
     <plugin name="cordova-plugin-uniquedeviceid" spec="1.3.2" />
     <plugin name="cordova-plugin-app-version" spec="0.1.9" />
-    <plugin name="cordova-plugin-x-socialsharing" spec="5.4.4" />
-    <plugin name="cordova-plugin-device" spec="2.0.2" />
+    <plugin name="cordova-plugin-x-socialsharing" spec="5.4.3" />
+    <plugin name="cordova-plugin-device" spec="1.1.7" />
     <plugin name="cordova-plugin-file" spec="6.0.1" />
     <plugin name="cordova-plugin-file-transfer" spec="1.7.1" />
     <plugin name="cordova-plugin-inappbrowser" spec="3.0.0" />
@@ -106,19 +118,20 @@
     <plugin name="cordova-plugin-advanced-http" spec="2.0.9" />
     <plugin name="cordova-plugin-android-permissions" spec="1.0.0" />
     <plugin name="cordova-plugin-media" spec="5.0.2" />
-    <plugin name="cordova-plugin-buildconfig-reader" spec="https://github.com/swayangjit/cordova-plugin-buildconfig-reader.git" />
+    <plugin name="cordova-plugin-buildconfig-reader" spec="https://github.com/swayangjit/cordova-plugin-buildconfig-reader.git#release-2.0.0" />
     <plugin name="cordova-plugin-android-downloadmanager" spec="https://github.com/swayangjit/cordova-plugin-android-downloadmanager.git" />
     <plugin name="sb-cordova-plugin-db" spec="https://github.com/swayangjit/sb-cordova-plugin-db.git" />
-    <plugin name="cordova-android-support-gradle-release" spec="3.0.0">
+    <plugin name="cordova-plugin-local-notification" spec="https://github.com/katzer/cordova-plugin-local-notifications.git" />
+    <plugin name="cordova-android-support-gradle-release" spec="2.1.0">
         <variable name="ANDROID_SUPPORT_VERSION" value="27.1.0" />
     </plugin>
     <plugin name="sb-cordova-plugin-customtabs" spec="https://github.com/Sunbird-Ed/sb-cordova-plugin-customtabs.git">
-        <variable name="URL_SCHEME" value="org.sunbird.app.dev" />
+        <variable name="URL_SCHEME" value="@string/custom_scheme_url" />
         <variable name="URL_HOST" value="mobile" />
     </plugin>
     <plugin name="cordova-plugin-imagechooser" spec="https://github.com/project-sunbird/cordova-plugin-imagechooser.git#release-1.14.0" />
     <plugin name="cordova-plugin-qr-scanner" spec="https://github.com/project-sunbird/cordova-plugin-qr-scanner.git#release-1.15.0" />
     <plugin name="cordova-plugin-sunbirdsplash" spec="https://github.com/project-sunbird/cordova-plugin-sunbirdsplash.git#release-1.15.0" />
-    <plugin name="cordova-plugin-file-support" spec="https://github.com/project-sunbird/cordova-plugin-file-support.git#release-1.15.0" />
-    <engine name="android" spec="~7.0.0" />
+    <plugin name="cordova-plugin-code-push" spec="^1.11.18" />
+    <engine name="android" spec="7.0.0" />
 </widget>

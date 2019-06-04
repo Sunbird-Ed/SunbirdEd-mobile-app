@@ -1,0 +1,29 @@
+{
+    "id": "api.channel.read",
+    "ver": "1.0",
+    "ts": "2018-08-24T04:27:04.973Z",
+    "params": {
+      "resmsgid": "f46e53d0-a755-11e8-b887-c92514cc926e",
+      "msgid": "f46468c0-a755-11e8-8c4d-09323dfaaa46",
+      "status": "successful",
+      "err": null,
+      "errmsg": null
+    },
+    "responseCode": "OK",
+    "result": {
+      "channel": {
+        "identifier": "b00bc992ef25f1a9a8d63291e20efc8d",
+        "code": "b00bc992ef25f1a9a8d63291e20efc8d",
+        "consumerId": "fa271a76-c15a-4aa1-adff-31dd04682a1f",
+        "channel": "in.ekstep",
+        "description": "Sunbird",
+        "createdOn": "2018-01-25T05:40:03.251+0000",
+        "versionKey": "1516858803251",
+        "appId": "ekstep_portal",
+        "name": "ROOT_ORG",
+        "lastUpdatedOn": "2018-01-25T05:40:03.251+0000",
+        "defaultFramework": "NCF",
+        "status": "Live"
+      }
+    }
+}

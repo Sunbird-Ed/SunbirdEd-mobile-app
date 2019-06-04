@@ -1,0 +1,90 @@
+{
+    "id": "api.form.read",
+    "params": {
+        "resmsgid": "ea419fde-b424-4e34-958e-ed159528e5d3",
+        "msgid": "8afecb54-0ed2-4f79-b14c-fd073e41085f",
+        "status": "successful"
+    },
+    "responseCode": "OK",
+    "result": {
+        "form": {
+            "type": "pageassemble",
+            "subtype": "library",
+            "action": "filter",
+            "component": "*",
+            "framework": "*",
+            "data": {
+                "templateName": "defaultTemplate",
+                "action": "filter",
+                "fields": [
+                    {
+                        "name": "Board",
+                        "translations": "{\"en\":\"Board\",\"hi\":\"बोर्ड\",\"te\":\"బోర్డు\",\"ta\":\"வாரியம்\",\"mr\":\"बोर्ड\",\"kn\":\"ಮಂಡಳಿ\"}",
+                        "code": "board",
+                        "index": 1,
+                        "values": []
+                    },
+                    {
+                        "name": "Class",
+                        "translations": "{\"en\":\"Class\",\"hi\":\"कक्षा\",\"te\":\"క్లాసు\",\"ta\":\"வகுப்பு\",\"mr\":\"इयत्ता\",\"kn\":\"ತರಗತಿ\"}",
+                        "code": "gradeLevel",
+                        "index": 2,
+                        "values": []
+                    },
+                    {
+                        "name": "Subject",
+                        "translations": "{\"en\":\"Subject\",\"hi\":\"विषय\",\"te\":\"పాఠ్యాంశము\",\"ta\":\"பாடம்\",\"mr\":\"विषय\",\"kn\":\"ವಿಷಯ\"}",
+                        "code": "subject",
+                        "index": 3,
+                        "values": []
+                    },
+                    {
+                        "name": "Medium",
+                        "translations": "{\"en\":\"Medium\",\"hi\":\"माध्यम\",\"te\":\"మాధ్యమం\",\"ta\":\"மொழி\",\"mr\":\"माध्यम\",\"kn\":\"ಮಾಧ್ಯಮ\"}",
+                        "code": "medium",
+                        "index": 4,
+                        "values": []
+                    },
+                    {
+                        "name": "Resource Type",
+                        "translations": "{\"en\":\"Resource Type\",\"hi\":\"संसाधन के प्रकार\",\"te\":\"ఎలాంటి వనరు\",\"ta\":\"கல்வி வளம் வகை\",\"mr\":\"संसाधन प्रकार\",\"kn\":\"ಸಂಪನ್ಮೂಲದ ವಿಧ\"}",
+                        "code": "contentType",
+                        "index": 5,
+                        "values": [
+                            {
+                                "name": "Story",
+                                "code": "Story",
+                                "translations": "{\"en\":\"Story\",\"hi\":\"कहानी\",\"te\":\"స్టోరీ\",\"ta\":\"கதை\",\"mr\":\"कथा\",\"kn\":\"Story\"}"
+                            },
+                            {
+                                "name": "Worksheet",
+                                "code": "Worksheet",
+                                "translations": "{\"en\":\"Worksheet\",\"hi\":\"Worksheet\",\"te\":\"Worksheet\",\"ta\":\"Worksheet\",\"mr\":\"Worksheet\",\"kn\":\"Worksheet\"}"
+                            },
+                            {
+                                "name": "Collection",
+                                "code": "Collection",
+                                "translations": "{\"en\":\"Collection\",\"hi\":\"Collection\",\"te\":\"Collection\",\"ta\":\"Collection\",\"mr\":\"Collection\",\"kn\":\"Collection\"}"
+                            },
+                            {
+                                "name": "LessonPlan",
+                                "code": "LessonPlan",
+                                "translations": "{\"en\":\"LessonPlan\",\"hi\":\"LessonPlan\",\"te\":\"LessonPlan\",\"ta\":\"LessonPlan\",\"mr\":\"LessonPlan\",\"kn\":\"LessonPlan\"}"
+                            },
+                            {
+                                "name": "TextBook",
+                                "code": "TextBook",
+                                "translations": "{\"en\":\"TextBook\",\"hi\":\"TextBook\",\"te\":\"TextBook\",\"ta\":\"TextBook\",\"mr\":\"TextBook\",\"kn\":\"TextBook\"}"
+                            }
+                        ]
+                    }
+                ]
+            },
+            "created_on": "2018-10-12T04:26:52.659Z",
+            "last_modified_on": "2018-11-22T09:41:53.806Z",
+            "rootOrgId": "*"
+        }
+    },
+    "ts": "2018-11-22T09:48:52.559Z",
+    "ver": "1.0"
+}

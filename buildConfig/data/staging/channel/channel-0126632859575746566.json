@@ -1,0 +1,70 @@
+{
+    "id": "api.channel.read",
+    "ver": "1.0",
+    "ts": "2019-02-22T05:57:37.474Z",
+    "params": {
+        "resmsgid": "c1a2b220-3666-11e9-b2ee-49388c120b9d",
+        "msgid": "c19b3810-3666-11e9-8099-93a53720d2cf",
+        "status": "successful",
+        "err": null,
+        "errmsg": null
+    },
+    "responseCode": "OK",
+    "result": {
+        "channel": {
+            "identifier": "0126632859575746566",
+            "code": "0126632859575746566",
+            "frameworks": [
+                {
+                    "identifier": "ap_k-12_custodian",
+                    "name": "State (Andhra Pradesh)",
+                    "objectType": "Framework",
+                    "relation": "hasSequenceMember",
+                    "description": "State (Andhra Pradesh)",
+                    "index": 2,
+                    "status": null,
+                    "depth": null,
+                    "mimeType": null,
+                    "visibility": null,
+                    "compatibilityLevel": null
+                },
+                {
+                    "identifier": "tn_k-12_custodian",
+                    "name": "State (Tamil Nadu)",
+                    "objectType": "Framework",
+                    "relation": "hasSequenceMember",
+                    "description": "State (Tamil Nadu)",
+                    "index": 3,
+                    "status": null,
+                    "depth": null,
+                    "mimeType": null,
+                    "visibility": null,
+                    "compatibilityLevel": null
+                },
+                {
+                    "identifier": "mh_k-12_custodian",
+                    "name": "State (Maharashtra)",
+                    "objectType": "Framework",
+                    "relation": "hasSequenceMember",
+                    "description": "State (Maharashtra)",
+                    "index": 1,
+                    "status": null,
+                    "depth": null,
+                    "mimeType": null,
+                    "visibility": null,
+                    "compatibilityLevel": null
+                }
+            ],
+            "consumerId": "ae82a4be-2487-404f-bcac-61b28ad56482",
+            "channel": "in.ekstep",
+            "description": "framework data",
+            "createdOn": "2018-12-26T07:48:07.203+0000",
+            "versionKey": "1546617740978",
+            "appId": "staging.diksha.portal",
+            "name": "0126632859575746566",
+            "lastUpdatedOn": "2019-01-04T16:02:20.978+0000",
+            "defaultFramework": "NCF",
+            "status": "Live"
+        }
+    }
+}
