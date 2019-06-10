@@ -116,7 +116,7 @@ android {
             applicationId "${dev_app_id}"
             resValue("string", "deeplink_base_url", "${dev_deeplink_base_url}")
             resValue("string", "custom_scheme_url", "${dev_custom_scheme}")
-            resValue("string", "app_code_push_id", "${dev_app_code_push_id}")
+            //resValue("string", "app_code_push_id", "${dev_app_code_push_id}")
             buildConfigField 'String', 'BASE_URL', "\"${dev_base_url}\""
             buildConfigField 'String', 'TELEMETRY_BASE_URL', "\"${dev_base_url+"/api/data/v1"}\""
             buildConfigField 'String', 'LANGUAGE_PLATFORM_BASE_URL', "\"${dev_base_url+"/api/language/v1"}\""
@@ -158,7 +158,7 @@ android {
             flavorDimensions "default"
             resValue("string", "deeplink_base_url", "${staging_deeplink_base_url}")
             resValue("string", "custom_scheme_url", "${staging_custom_scheme}")
-            resValue("string", "app_code_push_id", "${staging_app_code_push_id}")
+           // resValue("string", "app_code_push_id", "${staging_app_code_push_id}")
             buildConfigField 'String', 'BASE_URL', "\"${staging_base_url}\""
             buildConfigField 'String', 'TELEMETRY_BASE_URL', "\"${staging_base_url+"/api/data/v1"}\""
             buildConfigField 'String', 'LANGUAGE_PLATFORM_BASE_URL', "\"${staging_base_url+"/api/language/v1"}\""
@@ -199,7 +199,7 @@ android {
             flavorDimensions "default"
             resValue("string", "deeplink_base_url", "${production_deeplink_base_url}")
             resValue("string", "custom_scheme_url", "${production_custom_scheme}")
-            resValue("string", "app_code_push_id", "${production_app_code_push_id}")
+            //resValue("string", "app_code_push_id", "${production_app_code_push_id}")
             buildConfigField 'String', 'BASE_URL', "\"${production_base_url}\""
             buildConfigField 'String', 'TELEMETRY_BASE_URL', "\"${production_base_url+"/api/data/v1"}\""
             buildConfigField 'String', 'LANGUAGE_PLATFORM_BASE_URL', "\"${production_base_url+"/api/language/v1"}\""
@@ -337,8 +337,8 @@ android {
         }
         flavor.versionName = versionName;
         variant.outputs.each { output ->
-            output.outputFileName = new File(output.outputFile.parent, "${app_name}-".toLowerCase() + versionName + ".apk")
-           //  output.outputFileName = "${variant.name}-${variant.versionName}.apk"
+            // output.outputFileName = new File(output.outputFile.parent, "${app_name}-".toLowerCase() + versionName + ".apk")
+            output.outputFileName = "${variant.name}-${variant.versionName}.apk"
         }
     }
 }
