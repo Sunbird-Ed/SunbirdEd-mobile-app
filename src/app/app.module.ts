@@ -84,7 +84,7 @@ export const downloadService = () => {
   return SunbirdSdk.instance.downloadService;
 };
 
-export const sdkDriverFactory = () => {
+export function sdkDriverFactory () : any {
   return [{
     provide: 'SDK_CONFIG',
     useFactory: authService
