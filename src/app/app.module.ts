@@ -11,6 +11,7 @@ import {IonicImageLoader} from 'ionic-image-loader';
 import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
+import { AppVersion } from '@ionic-native/app-version/ngx';
 
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
@@ -290,7 +291,9 @@ declare const buildconfigreader;
   ],
   providers: [
     StatusBar,
-    SplashScreen,
+    AppVersion,
+    SocialSharing,
+    SplashScreen, // Migration-TODO
     AppGlobalService,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     ...sunbirdSdkServicesProvidersFactory(),
