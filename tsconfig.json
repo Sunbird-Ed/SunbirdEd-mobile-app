@@ -1,4 +1,5 @@
 {
+  "allowSyntheticDefaultImports": true,
   "compileOnSave": false,
   "compilerOptions": {
     "baseUrl": "./",

@@ -1,22 +1,50 @@
+// Angular dependencies
 import { NgModule, Provider, ErrorHandler, APP_INITIALIZER } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouteReuseStrategy } from '@angular/router';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
-import {SunbirdSdk} from 'sunbird-sdk';
-import {AppGlobalService} from '../services/index';
-import {DirectivesModule} from '../directives/directives.module';
 
-
-import {IonicImageLoader} from 'ionic-image-loader';
+// ionic cordova dependencies/plugins
+import { IonicImageLoader } from 'ionic-image-loader';
+import { WebView } from '@ionic-native/ionic-webview/ngx';
 import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { AppVersion } from '@ionic-native/app-version/ngx';
+import {SocialSharing} from '@ionic-native/social-sharing/ngx';
+import { FileTransfer, FileUploadOptions, FileTransferObject } from '@ionic-native/file-transfer/ngx';
+import { FileOpener } from '@ionic-native/file-opener/ngx';
+import { UniqueDeviceID } from '@ionic-native/unique-device-id/ngx';
+import { Device } from '@ionic-native/device/ngx';
+
+// 3rd party dependencies
+import { TranslateModule, TranslateLoader, TranslateService } from '@ngx-translate/core';
+import { TranslateHttpLoader } from '@ngx-translate/http-loader';
+
+// app dependencies like directive, sdk, services etc
+import {SunbirdSdk} from 'sunbird-sdk';
+import {DirectivesModule} from '../directives/directives.module';
+import {
+  AppGlobalService,
+  CommonUtilService,
+  CourseUtilService,
+  TelemetryGeneratorService,
+  QRScannerResultHandler,
+  UtilityService,
+  AppHeaderService,
+  AppRatingService,
+  LogoutHandlerService,
+  TncUpdateHandlerService,
+  ContainerService,
+  AndroidPermissionsService,
+  ComingSoonMessageService,
+  NotificationService
+} from '../services/index';
+
 
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
-import { TranslateModule, TranslateLoader, TranslateService } from '@ngx-translate/core';
-import { TranslateHttpLoader } from '@ngx-translate/http-loader';
+
 
 // AoT requires an exported function for factories
 export function translateHttpLoaderFactory(httpClient: HttpClient) {
@@ -84,7 +112,7 @@ export const downloadService = () => {
   return SunbirdSdk.instance.downloadService;
 };
 
-export function sdkDriverFactory () : any {
+export function sdkDriverFactory(): any {
   return [{
     provide: 'SDK_CONFIG',
     useFactory: authService
@@ -273,6 +301,7 @@ declare const buildconfigreader;
     BrowserModule,
     IonicModule.forRoot(),
     AppRoutingModule,
+    IonicImageLoader.forRoot(),
     HttpClientModule,
     TranslateModule.forRoot({
       loader: {
@@ -293,10 +322,30 @@ declare const buildconfigreader;
     StatusBar,
     AppVersion,
     SocialSharing,
+    WebView,
     SplashScreen, // Migration-TODO
+    FileTransferObject,
+    FileOpener,
+    FileTransfer,
     AppGlobalService,
+    CourseUtilService,
+    TelemetryGeneratorService,
+    QRScannerResultHandler,
+    CommonUtilService,
+    LogoutHandlerService,
+    TncUpdateHandlerService,
+    ContainerService,
+    UniqueDeviceID,
+    UtilityService,
+    AppHeaderService,
+    AppRatingService,
+    Device,
+    AndroidPermissionsService,
+    ComingSoonMessageService,
+    NotificationService,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     ...sunbirdSdkServicesProvidersFactory(),
+    // { provide: ErrorHandler},
     { provide: APP_INITIALIZER, useFactory: sunbirdSdkFactory, deps: [], multi: true }
   ],
   bootstrap: [AppComponent],

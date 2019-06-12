@@ -1,0 +1,56 @@
+//App specific Properties
+dev_app_id = DEV_APP_ID
+staging_app_id = STAGING_APP_ID
+production_app_id = PRODUCTION_APP_ID
+app_name = APP_NAME
+app_version_code = APP_VERSION_CODE
+// Dev Enironment properties
+dev_base_url = DEV_BASE_URL
+dev_device_register_base_url= DEV_DEVICE_REGISTER_BASE_URL
+dev_mobile_app_key = DEV_MOBILE_APP_KEY
+dev_mobile_app_secret = DEV_MOBILE_APP_SECRET
+dev_channel_id = DEV_CHANNEL_ID
+dev_producer_id = DEV_PRODUCER_ID
+dev_deeplink_base_url = DEV_DEEPLINK_BASE_URL
+dev_oauth_redirect_url = DEV_OATH_REDIRECT_URL
+// Staging envornment properties.
+staging_base_url = STAGING_BASE_URL
+staging_device_register_base_url= STAGING_DEVICE_REGISTER_BASE_URL
+staging_mobile_app_key = STAGING_MOBILE_APP_KEY
+staging_mobile_app_secret = STAGING_MOBILE_APP_SECRET
+staging_channel_id = STAGING_CHANNEL_ID
+staging_producer_id = STAGING_PRODUCER_ID
+staging_deeplink_base_url = STAGING_DEEPLINK_BASE_URL
+staging_oauth_redirect_url = STAGING_OATH_REDIRECT_URL
+// Production envornment properties.
+production_base_url = PRODUCTION_BASE_URL
+production_device_register_base_url= PRODUCTION_DEVICE_REGISTER_BASE_URL
+production_mobile_app_key = PRODUCTION_MOBILE_APP_KEY
+production_mobile_app_secret = PRODUCTION_MOBILE_APP_SECRET
+production_channel_id = PRODUCTION_CHANNEL_ID
+production_producer_id = PRODUCTION_PRODUCER_ID
+production_deeplink_base_url = PRODUCTION_DEEPLINK_BASE_URL
+production_oauth_redirect_url = PRODUCTION_OATH_REDIRECT_URL
+// Fabric Keys
+release_fabric_api_key = RELEASE_FABRIC_API_KEY
+release_fabric_api_secret = RELEASE_FABRIC_API_SECRET
+player_deeplink_scheme = PLAYER_DEEPLINK_SCHEME
+
+display_onboarding_cards= DISPLAY_ONBOARDING_CARDS
+display_framework_categories_in_profile = DISPLAY_FRAMEWORK_CATEGORIES_IN_PROFILE
+display_onboarding_page = DISPLAY_ONBOARDING_PAGE
+display_signin_footer_card_in_course_tab_for_teacher = DISPLAY_SIGNIN_FOOTER_CARD_IN_COURSE_TAB_FOR_TEACHER
+display_signin_footer_card_in_library_tab_for_teacher = DISPLAY_SIGNIN_FOOTER_CARD_IN_LIBRARY_TAB_FOR_TEACHER
+display_signin_footer_card_in_profile_tab_for_teacher = DISPLAY_SIGNIN_FOOTER_CARD_IN_PROFILE_TAB_FOR_TEACHER
+display_signin_footer_card_in_library_tab_for_student = DISPLAY_SIGNIN_FOOTER_CARD_IN_LIBRARY_TAB_FOR_STUDENT
+display_signin_footer_card_in_profile_tab_for_student = DISPLAY_SIGNIN_FOOTER_CARD_IN_PROFILE_TAB_FOR_STUDENT
+track_user_telemetry = TRACK_USER_TELEMETRY
+content_streaming_enabled = CONTENT_STREAMING_ENABLED
+open_rapdiscovery_enabled = OPEN_RAPDISCOVERY_ENABLED
+display_onboarding_category_page = DISPLAY_ONBOARDING_CATEGORY_PAGE
+display_onboarding_scan_page = DISPLAY_ONBOARDING_SCAN_PAGE
+support_email = SUPPORT_EMAIL
+
+dev_custom_scheme = org.sunbird.app.dev
+staging_custom_scheme = staging.diksha.app
+production_custom_scheme = in.gov.diksha.app
