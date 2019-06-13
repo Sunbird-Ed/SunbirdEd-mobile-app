@@ -14,6 +14,14 @@ const routes: Routes = [
   {
     path: 'list',
     loadChildren: './list/list.module#ListPageModule'
+  },
+  {
+    path: 'language-settings',
+    loadChildren: './language-settings/language-settings.module#LanguageSettingsPageModule'
+  },
+  {
+    path: 'user-type-selection',
+    loadChildren: './user-type-selection/user-type-selection.module#UserTypeSelectionPageModule'
   }
 ];
 

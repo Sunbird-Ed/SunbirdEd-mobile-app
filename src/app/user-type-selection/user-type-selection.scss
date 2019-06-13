@@ -1,0 +1,84 @@
+page-user-type-selection {
+    .card-related-style {
+        border-style: solid;
+        border-width: 2px;
+        border-radius: 6px !important;
+    }
+
+    .description {
+        color: map-get($colors, title);
+        font-size: 1.4rem;
+        @extend .font-weight-500;
+        @include padding(null, null, null, 25px !important);
+    }
+
+    .card-title {
+        @include padding(null, null, null, 10px !important);
+        @extend .font-weight-700;
+        font-size: 1.7rem;
+        color: map-get($colors, secondary_black);
+        margin-top: 10px !important;
+    }
+
+    .continue-related-style {
+        @include margin(0, 20px, 20px, 20px);
+    }
+
+    .thumbnail {
+        width: 70px;
+        height: 70px;
+        border-radius: 5px;
+    }
+
+    .card-content-md {
+        @include padding(null, null, null, 0 !important);
+    }
+
+    .item-md ion-avatar {
+        @include padding(null, null, null, 8px !important);
+    }
+
+    ion-avatar img {
+        width: 60px !important;
+        height: 60px !important;
+    }
+
+    .item-md ion-avatar[item-start] {
+        @include margin(null, 0, null, null !important);
+    }
+
+    .card-md,
+    .item-md {
+        background-color: map-get($colors, white_f7) !important;
+    }
+
+    .card-md {  
+        margin-top: 20px !important;
+        @include margin(null, 0, 0, 0 !important);
+        width: 100% !important;
+    }
+
+    /* For Arrow icon at the end */
+    .button-inner {
+        display: initial !important;
+    }
+
+    ion-icon {
+        @include ltr {
+            float: right !important;
+        }
+
+
+        @include rtl {
+            float: left !important;
+        }
+    }
+
+    .arrow-icon {
+        @include padding(null, null, null, 2.8em !important);
+    }
+
+    .gray-color {
+        color: map-get($colors, primary_black);
+    }
+}

@@ -85,6 +85,13 @@
     "tslib": "^1.9.0",
     "zone.js": "~0.8.29"
   },
+  "config": {
+    "ionic_source_map_type": "inline-source-map",
+    "ionic_webpack": "./config/webpack.config.js",
+    "ionic_sass": "./config/sass.config.js",
+    "ionic_copy": "./config/copy.config.js",
+    "ionic_enable_lint": false
+  },
   "devDependencies": {
     "@angular-devkit/architect": "~0.13.8",
     "@angular-devkit/build-angular": "~0.13.8",

@@ -19,6 +19,16 @@ export class AppComponent {
       title: 'List',
       url: '/list',
       icon: 'list'
+    },
+    {
+      title: 'Language Settings',
+      url: '/language-settings',
+      icon: 'globe'
+    },
+    {
+      title: 'user type selection',
+      url: '/user-type-selection',
+      icon: 'list'
     }
   ];
 
