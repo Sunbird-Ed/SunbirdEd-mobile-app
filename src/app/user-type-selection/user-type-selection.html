@@ -10,10 +10,10 @@
   <ion-card (click)="selectStudentCard()" class="card-related-style" style="margin-top:20px" [ngStyle]="{'border-color': studentCardBorderColor}">
     <ion-grid>
       <ion-row>
-        <ion-col col-3>
+        <ion-col size="3">
           <img class="thumbnail" [src]="studentImageUri" />
         </ion-col>
-        <ion-col col-9>
+        <ion-col size="9">
           <h4 class="card-title">{{ 'USER_TYPE_2' | translate }}</h4>
           <ul class="description">
             <li>{{ 'STUDENT_ROLE_DESC_1' | translate }}</li>
@@ -27,10 +27,10 @@
   <ion-card (click)="selectTeacherCard()" class="card-related-style" [ngStyle]="{'border-color': teacherCardBorderColor}">
     <ion-grid>
       <ion-row>
-        <ion-col col-3>
+        <ion-col size="3">
           <img class="thumbnail" [src]="teacherImageUri" />
         </ion-col>
-        <ion-col col-9>
+        <ion-col size="9">
           <h4 class="card-title">{{ 'USER_TYPE_1' | translate }}</h4>
           <ul class="description">
             <li>{{ 'TEACHER_ROLE_DESC_1' | translate }}</li>
@@ -45,8 +45,8 @@
 </ion-content>
 
 <ion-footer padding no-border>
-  <button *ngIf="userTypeSelected" class="arrow-icon" ion-button icon-end block (click)="continue()">
+  <ion-button *ngIf="userTypeSelected" class="arrow-icon" icon-end block (click)="continue()">
     {{continueAs}}
     <ion-icon name="arrow-round-forward" class="icon icon-md ion-md-arrow-round-forward "></ion-icon>
-  </button>
+  </ion-button>
 </ion-footer>
