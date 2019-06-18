@@ -2,7 +2,7 @@
 import { CommonUtilService } from './common-util.service';
 import { Injectable } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { IonApp, Platform, PopoverController } from '@ionic/angular';
+import { Platform, PopoverController } from '@ionic/angular';
 // import { QRAlertCallBack, QRScannerAlert } from './qrscanner_alert';
 import { TelemetryGeneratorService } from './telemetry-generator.service';
 import { QRScannerResultHandler } from './qrscanresulthandler.service';
@@ -48,7 +48,8 @@ export class SunbirdQRScanner {
     private platform: Platform,
     private qrScannerResultHandler: QRScannerResultHandler,
     private telemetryGeneratorService: TelemetryGeneratorService,
-    private app: IonApp,
+    // migration-TODO
+    // private app: IonApp,
     private commonUtil: CommonUtilService,
     private appGlobalService: AppGlobalService,
     private container: ContainerService,

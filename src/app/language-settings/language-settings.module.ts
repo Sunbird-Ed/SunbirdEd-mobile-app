@@ -19,6 +19,10 @@ import { LanguageSettingsPage } from '../language-settings/language-settings';
       {
         path: '',
         component: LanguageSettingsPage
+      },
+      {
+        path: 'language-setting/:isFromSettings',
+        component: LanguageSettingsPage
       }
     ]),
     // OnboardingPageModule,

@@ -7,7 +7,7 @@ import {ContentType, MimeType} from '../app/app.constant';
 // import {ContentDetailsPage} from '../content-details/content-details';
 // import {CollectionDetailsPage} from '../collection-details/collection-details';
 import {CommonUtilService} from './common-util.service';
-import {IonApp} from '@ionic/angular';
+// import {IonApp} from '@ionic/angular';
 import {
   Environment,
   ImpressionSubtype,
@@ -24,7 +24,8 @@ export class QRScannerResultHandler {
   source: string;
 
   constructor(
-    private app: IonApp,
+    // migration-TODO
+    // private app: IonApp,
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
     private commonUtilService: CommonUtilService,
     private telemetryGeneratorService: TelemetryGeneratorService) {

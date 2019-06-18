@@ -1,6 +1,7 @@
-import {Component, Inject, NgZone, ViewChild} from '@angular/core';
-import {Events, NavController, NavParams, Platform} from '@ionic/angular';
+import {Component, Inject, NgZone, ViewChild, OnInit} from '@angular/core';
+import {Events, NavController, NavParams} from '@ionic/angular';
 import {TranslateService} from '@ngx-translate/core';
+import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 // import {GUEST_STUDENT_TABS, GUEST_TEACHER_TABS, initTabs, Map, PreferenceKey} from '../app.constant';
 // migration-TODO
 import {PreferenceKey} from '../app.constant';
@@ -28,7 +29,7 @@ const borderColor = '#F7F7F7';
   templateUrl: 'user-type-selection.html',
 })
 
-export class UserTypeSelectionPage {
+export class UserTypeSelectionPage implements OnInit {
   teacherCardBorderColor = '#F7F7F7';
   studentCardBorderColor = '#F7F7F7';
   userTypeSelected = false;
@@ -48,7 +49,7 @@ export class UserTypeSelectionPage {
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     public navCtrl: NavController,
-    public navParams: NavParams,
+    // public navParams: NavParams,
     private translate: TranslateService,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private container: ContainerService,
@@ -57,10 +58,19 @@ export class UserTypeSelectionPage {
     private commonUtilService: CommonUtilService,
     private appGlobalService: AppGlobalService,
     private scannerService: SunbirdQRScanner,
-    private platform: Platform,
+    // private platform: Platform,
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
-    private headerService: AppHeaderService
+    private headerService: AppHeaderService,
+    private route: ActivatedRoute,
+    private router: Router,
   ) { }
+
+  ngOnInit(): void {
+    this.route.params.subscribe(params => {
+      this.isChangeRoleRequest = Boolean( params['isChangeRoleRequest'] );
+      console.log('inside route paramas ', this.isChangeRoleRequest, typeof(this.isChangeRoleRequest));
+    });
+  }
 
   ionViewDidLoad() {
     this.telemetryGeneratorService.generateImpressionTelemetry(
@@ -82,7 +92,7 @@ export class UserTypeSelectionPage {
     });
     this.headerService.showHeaderWithBackButton();
     this.profile = this.appGlobalService.getCurrentUser();
-    this.isChangeRoleRequest = Boolean(this.navParams.get('isChangeRoleRequest'));
+    // this.isChangeRoleRequest = Boolean(this.navParams.get('isChangeRoleRequest'));
     // migration-TODO
     // this.backButtonFunc = this.platform.registerBackButtonAction(() => {
     //   this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.USER_TYPE_SELECTION, Environment.HOME, false);

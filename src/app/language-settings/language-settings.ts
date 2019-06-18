@@ -1,5 +1,7 @@
-import {Component, Inject, NgZone} from '@angular/core';
+import {Component, Inject, NgZone, OnInit} from '@angular/core';
 import {Events, NavController, NavParams, Platform} from '@ionic/angular';
+import { Router, ActivatedRoute, ParamMap } from '@angular/router';
+
 import {TranslateService} from '@ngx-translate/core';
 import {SharedPreferences} from 'sunbird-sdk';
 import {appLanguages, PreferenceKey} from '../app.constant';
@@ -10,6 +12,7 @@ import {AppGlobalService, CommonUtilService, TelemetryGeneratorService, AppHeade
 import {Environment, ImpressionType, InteractSubtype, InteractType, PageId} from '../../services/telemetry-constants';
 // import { ResourcesPage } from '../resources/resources';
 import { NotificationService } from '../../services/notification.service';
+import { switchMap } from 'rxjs/operators';
 
 declare const cordova;
 
@@ -17,7 +20,8 @@ declare const cordova;
   selector: 'page-language-settings',
   templateUrl: 'language-settings.html',
 })
-export class LanguageSettingsPage {
+export class LanguageSettingsPage implements OnInit {
+  
 
   languages: any = [];
   language: any;
@@ -28,13 +32,13 @@ export class LanguageSettingsPage {
   selectedLanguage: any = {};
   btnColor = '#55acee';
   unregisterBackButton = undefined;
-  mainPage: Boolean = false;
+  mainPage: Boolean = true;
   headerConfig: any;
 
 
   constructor(
     public navCtrl: NavController,
-    public navParams: NavParams,
+    // public navParams: NavParams,
     public translateService: TranslateService,
     private events: Events,
     private zone: NgZone,
@@ -44,13 +48,27 @@ export class LanguageSettingsPage {
     private commonUtilService: CommonUtilService,
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
     private headerServie: AppHeaderService,
-    private notification: NotificationService
+    private notification: NotificationService,
+    private route: ActivatedRoute,
+    private router: Router,
   ) {
-    this.mainPage = this.navParams.get('mainPage');
+    // this.mainPage = this.navParams.get('mainPage');
    }
 
+    ngOnInit(): void {
+      this.route.params.subscribe(params => {
+        this.isFromSettings = Boolean( params['isFromSettings'] );
+        console.log('inside route paramas ', this.isFromSettings, typeof(this.isFromSettings));
+        if (this.isFromSettings) {
+          this.mainPage = false;
+        } else {
+          this.mainPage = true;
+        }
+      });
+    }
+
   ionViewDidLoad() {
-    this.isFromSettings = this.navParams.get('isFromSettings');
+    // this.isFromSettings = this.navParams.get('isFromSettings');
     this.telemetryGeneratorService.generateImpressionTelemetry(
       ImpressionType.VIEW, '',
       this.isFromSettings ? PageId.SETTINGS_LANGUAGE : PageId.ONBOARDING_LANGUAGE_SETTING,
@@ -217,7 +235,7 @@ export class LanguageSettingsPage {
         // migration-TODO
         // this.navCtrl.push(OnboardingPage);
       } else {
-        // this.navCtrl.push(UserTypeSelectionPage);
+        this.router.navigate(['/user-type-selection', 'false']);
       }
     } else {
       this.generateClickInteractEvent('n/a', InteractSubtype.CONTINUE_CLICKED);

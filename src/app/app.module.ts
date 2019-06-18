@@ -16,6 +16,7 @@ import { FileTransfer, FileUploadOptions, FileTransferObject } from '@ionic-nati
 import { FileOpener } from '@ionic-native/file-opener/ngx';
 import { UniqueDeviceID } from '@ionic-native/unique-device-id/ngx';
 import { Device } from '@ionic-native/device/ngx';
+import { Network } from '@ionic-native/network/ngx';
 
 // 3rd party dependencies
 import { TranslateModule, TranslateLoader, TranslateService } from '@ngx-translate/core';
@@ -38,12 +39,15 @@ import {
   ContainerService,
   AndroidPermissionsService,
   ComingSoonMessageService,
-  NotificationService
+  NotificationService,
+  SunbirdQRScanner
 } from '../services/index';
 
 
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
+import { LanguageSettingsPageModule } from './language-settings/language-settings.module';
+import { UserTypeSelectionPageModule } from './user-type-selection/user-type-selection.module';
 
 
 // AoT requires an exported function for factories
@@ -316,7 +320,11 @@ declare const buildconfigreader;
       // autoFocusAssist: false
     }),
     IonicImageLoader.forRoot(),
-    DirectivesModule
+    DirectivesModule,
+
+    // custom modules
+    LanguageSettingsPageModule,
+    UserTypeSelectionPageModule
   ],
   providers: [
     StatusBar,
@@ -331,6 +339,7 @@ declare const buildconfigreader;
     CourseUtilService,
     TelemetryGeneratorService,
     QRScannerResultHandler,
+    SunbirdQRScanner,
     CommonUtilService,
     LogoutHandlerService,
     TncUpdateHandlerService,
@@ -340,6 +349,7 @@ declare const buildconfigreader;
     AppHeaderService,
     AppRatingService,
     Device,
+    Network,
     AndroidPermissionsService,
     ComingSoonMessageService,
     NotificationService,

@@ -13,22 +13,26 @@ export class AppComponent {
     {
       title: 'Home',
       url: '/home',
-      icon: 'home'
+      icon: 'home',
+      data:''
     },
     {
       title: 'List',
       url: '/list',
-      icon: 'list'
+      icon: 'list',
+      data:''
     },
     {
       title: 'Language Settings',
       url: '/language-settings',
-      icon: 'globe'
+      icon: 'globe',
+      data: 'true'
     },
     {
-      title: 'user type selection',
+      title: 'User Type Selection',
       url: '/user-type-selection',
-      icon: 'list'
+      icon: 'list',
+      data: 'false'
     }
   ];
 

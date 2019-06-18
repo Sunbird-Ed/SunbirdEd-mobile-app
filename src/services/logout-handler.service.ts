@@ -3,7 +3,7 @@ import { PreferenceKey} from '../app/app.constant';
 
 import {AppGlobalService, CommonUtilService, TelemetryGeneratorService} from '.';
 // import {OnboardingPage} from '@app/pages/onboarding/onboarding';
-import {IonApp, Events} from '@ionic/angular';
+import {Events} from '@ionic/angular';
 import {
   AuthService,
   ProfileService,
@@ -29,7 +29,6 @@ export class LogoutHandlerService {
     private commonUtilService: CommonUtilService,
     private events: Events,
     private appGlobalService: AppGlobalService,
-    private app: IonApp,
     private containerService: ContainerService,
     private telemetryGeneratorService: TelemetryGeneratorService,
   ) {

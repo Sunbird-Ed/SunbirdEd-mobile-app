@@ -16,11 +16,11 @@ const routes: Routes = [
     loadChildren: './list/list.module#ListPageModule'
   },
   {
-    path: 'language-settings',
+    path: 'language-settings/:isFromSettings',
     loadChildren: './language-settings/language-settings.module#LanguageSettingsPageModule'
   },
   {
-    path: 'user-type-selection',
+    path: 'user-type-selection/:isChangeRoleRequest',
     loadChildren: './user-type-selection/user-type-selection.module#UserTypeSelectionPageModule'
   }
 ];
