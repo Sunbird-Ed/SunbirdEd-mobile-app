@@ -20,13 +20,13 @@
 </ion-content>
 
 <ion-footer padding no-border *ngIf="!mainPage">
-  <ion-button class="arrow-icon" [ngStyle]="{'background-color': btnColor}" icon-end block (click)="continue()">
+  <ion-button class="arrow-icon" [ngStyle]="{'background-color': btnColor}" slot="end" expand="block" (click)="continue()">
     {{ 'CONTINUE' | translate }}
     <ion-icon name="arrow-round-forward" class="icon icon-md ion-md-arrow-round-forward"></ion-icon>
   </ion-button>
 </ion-footer>
 <ion-footer padding no-border *ngIf="mainPage">
-    <ion-button class="arrow-icon" [ngStyle]="{'background-color': btnColor}" icon-end block (click)="goToResources()">
+    <ion-button class="arrow-icon" [ngStyle]="{'background-color': btnColor}" slot="end" expand="block" (click)="goToResources()">
       {{ 'CONTINUE' | translate }}
       <ion-icon name="arrow-round-forward" class="icon icon-md ion-md-arrow-round-forward"></ion-icon>
     </ion-button>

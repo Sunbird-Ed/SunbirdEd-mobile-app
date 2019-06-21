@@ -19,6 +19,7 @@ declare const cordova;
 @Component({
   selector: 'page-language-settings',
   templateUrl: 'language-settings.html',
+  styleUrls: ['./language-settings.scss']
 })
 export class LanguageSettingsPage implements OnInit {
   
