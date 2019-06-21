@@ -48,6 +48,8 @@ import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { LanguageSettingsPageModule } from './language-settings/language-settings.module';
 import { UserTypeSelectionPageModule } from './user-type-selection/user-type-selection.module';
+import { ComponentsModule } from './components/components.module';
+
 
 
 // AoT requires an exported function for factories
@@ -305,6 +307,7 @@ declare const buildconfigreader;
     BrowserModule,
     IonicModule.forRoot(),
     AppRoutingModule,
+    ComponentsModule,
     IonicImageLoader.forRoot(),
     HttpClientModule,
     TranslateModule.forRoot({
