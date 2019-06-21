@@ -48,7 +48,7 @@ export class LanguageSettingsPage implements OnInit {
     private appGlobalService: AppGlobalService,
     private commonUtilService: CommonUtilService,
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
-    private headerServie: AppHeaderService,
+    private headerService: AppHeaderService,
     private notification: NotificationService,
     private route: ActivatedRoute,
     private router: Router,
@@ -101,11 +101,11 @@ export class LanguageSettingsPage implements OnInit {
   ionViewWillEnter() {
     this.selectedLanguage = {};
     if (!this.isFromSettings) {
-      this.headerServie.hideHeader();
+      this.headerService.hideHeader();
     } else if (this.mainPage) {
-      this.headerServie.showHeaderWithBackButton();
+      this.headerService.showHeaderWithBackButton();
     } else {
-      this.headerServie.showHeaderWithBackButton();
+      this.headerService.showHeaderWithBackButton();
     }
     this.init();
   }

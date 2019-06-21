@@ -1,0 +1,210 @@
+
+<ion-header class="sb-header" [hidden]="!headerConfig?.showHeader" [ngClass]="{'z-index-0': decreaseZindex}">
+    <ion-toolbar class="sb-header-toolbar">
+
+      <ion-buttons class="sb-hamburger" slot="start" *ngIf="headerConfig?.showBurgerMenu">
+        <button class="sb-hamburger-menu sb-hamburger-icon" ion-button icon-only (click)="toggleMenu()">
+         <!--<ion-icon name="menu"></ion-icon>--> 
+           <img src="./assets/imgs/ic_burger_menu.png" class="tool-icon">
+        </button> 
+        <!--<ion-menu-button></ion-menu-button>-->
+      </ion-buttons>
+      <ion-buttons class="sb-hamburger" slot="start" *ngIf="!headerConfig?.showBurgerMenu">
+        <button ion-button icon-only (click)="emitEvent($event, 'back');">
+          <ion-icon name="arrow-back"></ion-icon>
+        </button>
+      </ion-buttons>
+
+      <ion-buttons class="sb-header-btn-group" slot="end">
+        <button ion-button icon-only *ngIf="headerConfig?.actionButtons?.indexOf('download') >=0 && showDownloadAnimation"
+            (click)="emitEvent($event, 'download');">
+          <svg [ngClass]="{'downloading': showDownloadAnimation}" class="active-downloads-icon" height="25"
+               viewBox="0 0 14 20" width="25" xmlns="http://www.w3.org/2000/svg">
+            <title>F2562297-C67D-4A8E-831F-4BBA8FB569A4@1.5x</title>
+            <desc>Created with sketchtool.</desc>
+            <g>
+              <title>background</title>
+              <rect fill="none" height="5.25203" id="canvas_background" width="4.27642" x="-1" y="-1"/>
+            </g>
+            <g>
+              <title>Layer 1</title>
+              <g fill="none" fill-rule="evenodd" id="Download-Manager">
+                <g fill="#024F9D" fill-rule="nonzero" id="arrow">
+                  <path
+                    d="m7.97649,2.03349l0,6l1.17,0l-2.17,2.17l-2.17,-2.17l1.17,0l0,-6l2,0l0,0zm2,-2l-6,0l0,6l-4,0l7,7l7,-7l-4,0l0,-6z"
+                    id="Shape"/>
+                </g>
+              </g>
+              <g fill="none" fill-rule="evenodd" id="Download-Manager">
+                <g fill="#024F9D" fill-rule="nonzero" id="bar">
+                  <polygon id="Path"
+                           points="14.064681947231293,18.104969024658203 0.06468096375465393,18.104969024658203 0.06468096375465393,20.10494041442871 14.064681947231293,20.10494041442871 "/>
+                </g>
+              </g>
+            </g>
+          </svg>
+        </button>
+        <!-- <button ion-button icon-only (click)="emitEvent($event, 'download');">
+            <img src="./assets/imgs/active_download.png" class="tool-icon dw-icon" [ngClass]="{'jump-animation': showDownloadAnimation}">
+        </button> -->
+        <button ion-button icon-only *ngIf="headerConfig?.actionButtons?.indexOf('notification') >=0"
+          (click)="emitEvent($event, 'notification');" class="active-download-icon">
+          <ion-icon name="notifications-outline"></ion-icon>
+        </button>
+        <button ion-button icon-only *ngIf="headerConfig?.actionButtons?.indexOf('search') >=0"
+          (click)="emitEvent($event, 'search');">
+          <img src="./assets/imgs/ic_search.png" class="tool-icon">
+        </button>
+        
+        <button ion-button icon-only *ngIf="headerConfig?.actionButtons?.indexOf('person') >=0"
+          (click)="emitEvent($event, 'person');">
+          <ion-icon name="person"></ion-icon>
+        </button>
+        <button ion-button icon-only *ngIf="headerConfig?.actionButtons?.indexOf('filter') >=0"
+          (click)="emitEvent($event, 'filter');">
+          <img src="./assets/imgs/ic_filter.png" class="tool-icon">
+        </button>
+        <button ion-button icon-only *ngIf="headerConfig?.actionButtons?.indexOf('filter-applied') >=0"
+          (click)="emitEvent($event, 'filter');">
+          <img src="./assets/imgs/ic_action_filter_applied.png" class="tool-icon">
+        </button>
+        <button ion-button icon-only *ngIf="headerConfig?.actionButtons?.indexOf('share') >=0"
+          (click)="emitEvent($event, 'share');">
+          <ion-icon md="md-share" float-right></ion-icon>
+        </button>
+        <button ion-button icon-only *ngIf="headerConfig?.actionButtons?.indexOf('more') >=0"
+          (click)="emitEvent($event, 'more');" style="font-size: 1.8rem;">
+          <ion-icon md="md-more" float-end></ion-icon>
+        </button>
+      </ion-buttons>
+
+    </ion-toolbar>
+</ion-header>
+
+<ion-menu contentId="mainContent" class="sb-side-menu" *ngIf="isRtl" side="end" persistent="true" [disabled]="headerConfig?.showBurgerMenu || false">
+  <ion-header>
+    <ion-toolbar>
+      <ion-title>
+        <img class="img-container" src="{{appLogo}}">
+        <span class="app-name">{{appName}}</span>
+      </ion-title>
+    </ion-toolbar>
+  </ion-header>
+  <ion-content>
+    <ion-list class="sb-menu-list">
+      <ion-item (click)="emitSideMenuItemEvent($event, 'USERS_AND_GROUPS')">
+        <span class="sb-menu-icon">
+          <!-- <ion-icon ios="ios-contacts" md="md-contacts"></ion-icon> -->
+          <img src="./assets/imgs/Users_and_Groups.png" class="tool-icon">
+        </span>
+        <span class="sb-menu-item" menuClose>{{'USERS_AND_GROUPS' | translate}}</span>
+      </ion-item>
+      <ion-item (click)="emitSideMenuItemEvent($event, 'REPORTS')">
+        <span class="sb-menu-icon">
+          <!-- <ion-icon ios="ios-clipboard" md="md-clipboard" MR5></ion-icon> -->
+          <img src="./assets/imgs/Reports.png" class="tool-icon">
+        </span>
+        <span class="sb-menu-item" menuClose>{{'REPORTS' | translate}}</span>
+      </ion-item>
+      <ion-item (click)="emitSideMenuItemEvent($event, 'LANGUAGE')">
+        <span class="sb-menu-icon sb-pt-6">
+          <!-- <ion-icon ios="ios-planet" md="md-planet"></ion-icon> -->
+          <img src="./assets/imgs/Language.png" class="tool-icon">
+        </span>
+        <div class="sb-menu-icon sb-language">
+          <div class="sb-menu-item">{{'LANGUAGE' | translate}}</div>
+          <div class="sb-menu-item-language">{{selectedLanguage}}</div>
+        </div>
+      </ion-item>
+      <ion-item (click)="emitSideMenuItemEvent($event, 'SETTINGS')">
+        <span class="sb-menu-icon">
+          <!-- <ion-icon ios="ios-settings" md="md-settings"></ion-icon> -->
+          <img src="./assets/imgs/Settings.png" class="tool-icon">
+        </span>
+        <span class="sb-menu-item" menuClose>{{'SETTINGS' | translate}}</span>
+      </ion-item>
+      <ion-item (click)="emitSideMenuItemEvent($event, 'HELP')">
+        <span class="sb-menu-icon">
+          <!-- <ion-icon ios="ios-settings" md="md-settings"></ion-icon> -->
+          <img src="./assets/imgs/Help.png" class="tool-icon">
+        </span>
+        <span class="sb-menu-item" menuClose>{{'HELP' | translate}}</span>
+      </ion-item>
+      <ion-item (click)="emitSideMenuItemEvent($event, 'LOGOUT')" *ngIf="isLoggedIn">
+        <span class="sb-menu-icon">
+          <!-- <ion-icon ios="ios-log-out" md="md-log-out"></ion-icon> -->
+          <img src="./assets/imgs/Sign_out.png" class="tool-icon">
+        </span>
+        <span class="sb-menu-item" menuClose>{{'LOGOUT' | translate}}</span>
+      </ion-item>
+    </ion-list>
+  </ion-content>
+  <ion-footer class="side-menu-footer">
+    {{'VERSION'| translate}} {{versionName}}.{{versionCode}}
+  </ion-footer>
+</ion-menu>
+
+<ion-menu contentId="mainContent" class="sb-side-menu" *ngIf="!isRtl" side="start" persistent="true" [disabled]="false">
+  <ion-header>
+    <ion-toolbar>
+      <ion-title>
+        <img class="img-container" src="{{appLogo}}">
+        <span class="app-name">{{appName}}</span>
+      </ion-title>
+    </ion-toolbar>
+  </ion-header>
+  <ion-content>
+    <ion-list class="sb-menu-list">
+      <ion-item (click)="emitSideMenuItemEvent($event, 'USERS_AND_GROUPS')">
+        <span class="sb-menu-icon">
+          <!-- <ion-icon ios="ios-contacts" md="md-contacts"></ion-icon> -->
+          <img src="./assets/imgs/Users_and_Groups.png" class="tool-icon">
+        </span>
+        <span class="sb-menu-item" menuClose>{{'USERS_AND_GROUPS' | translate}}</span>
+      </ion-item>
+      <ion-item (click)="emitSideMenuItemEvent($event, 'REPORTS')">
+        <span class="sb-menu-icon">
+          <!-- <ion-icon ios="ios-clipboard" md="md-clipboard" MR5></ion-icon> -->
+          <img src="./assets/imgs/Reports.png" class="tool-icon">
+        </span>
+        <span class="sb-menu-item" menuClose>{{'REPORTS' | translate}}</span>
+      </ion-item>
+      <ion-item (click)="emitSideMenuItemEvent($event, 'LANGUAGE')">
+        <span class="sb-menu-icon sb-pt-6">
+          <!-- <ion-icon ios="ios-planet" md="md-planet"></ion-icon> -->
+          <img src="./assets/imgs/Language.png" class="tool-icon">
+        </span>
+        <div class="sb-menu-icon sb-language">
+          <div class="sb-menu-item">{{'LANGUAGE' | translate}}</div>
+          <div class="sb-menu-item-language">{{selectedLanguage}}</div>
+        </div>
+      </ion-item>
+      <ion-item (click)="emitSideMenuItemEvent($event, 'SETTINGS')">
+        <span class="sb-menu-icon">
+          <!-- <ion-icon ios="ios-settings" md="md-settings"></ion-icon> -->
+          <img src="./assets/imgs/Settings.png" class="tool-icon">
+        </span>
+        <span class="sb-menu-item" menuClose>{{'SETTINGS' | translate}}</span>
+      </ion-item>
+      <ion-item (click)="emitSideMenuItemEvent($event, 'HELP')">
+        <span class="sb-menu-icon">
+          <!-- <ion-icon ios="ios-settings" md="md-settings"></ion-icon> -->
+          <img src="./assets/imgs/Help.png" class="tool-icon">
+        </span>
+        <span class="sb-menu-item" menuClose>{{'HELP' | translate}}</span>
+      </ion-item>
+      <ion-item (click)="emitSideMenuItemEvent($event, 'LOGOUT')" *ngIf="isLoggedIn">
+        <span class="sb-menu-icon">
+          <!-- <ion-icon ios="ios-log-out" md="md-log-out"></ion-icon> -->
+          <img src="./assets/imgs/Sign_out.png" class="tool-icon">
+        </span>
+        <span class="sb-menu-item" menuClose>{{'LOGOUT' | translate}}</span>
+      </ion-item>
+    </ion-list>
+  </ion-content>
+  <ion-footer class="side-menu-footer">
+    {{'VERSION'| translate}} {{versionName}}.{{versionCode}}
+  </ion-footer>
+</ion-menu>
+
+

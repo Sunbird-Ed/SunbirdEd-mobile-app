@@ -1,8 +1,9 @@
-import { Component } from '@angular/core';
+import { Component,EventEmitter } from '@angular/core';
 
 import { Platform } from '@ionic/angular';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
+import { AppHeaderService } from 'src/services';
 
 @Component({
   selector: 'app-root',
@@ -35,16 +36,27 @@ export class AppComponent {
       data: 'false'
     }
   ];
+  public headerConfig = {
+    showHeader: true,
+    showBurgerMenu: true,
+    actionButtons: ['search'],
+  };
+  public sideMenuEvent = new EventEmitter
+;
 
   constructor(
     private platform: Platform,
     private splashScreen: SplashScreen,
-    private statusBar: StatusBar
+    private statusBar: StatusBar,
+    private headerService: AppHeaderService
   ) {
     this.initializeApp();
   }
 
   initializeApp() {
+    this.headerService.headerConfigEmitted$.subscribe(config => {
+      this.headerConfig = config;
+    });
     this.platform.ready().then(() => {
       this.statusBar.styleDefault();
       this.splashScreen.hide();
