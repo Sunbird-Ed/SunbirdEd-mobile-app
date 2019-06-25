@@ -1,4 +1,4 @@
-page-user-type-selection {
+:host {
     .card-related-style {
         border-style: solid;
         border-width: 2px;
@@ -6,22 +6,24 @@ page-user-type-selection {
     }
 
     .description {
-        color: map-get($colors, title);
+        // color: map-get($colors, title);
         font-size: 1.4rem;
-        @extend .font-weight-500;
-        @include padding(null, null, null, 25px !important);
+        // @extend .font-weight-500;
+        font-weight: 500;
+        // @include padding(null, null, null, 25px !important);
     }
 
     .card-title {
-        @include padding(null, null, null, 10px !important);
-        @extend .font-weight-700;
+        // @include padding(null, null, null, 10px !important);
+        // @extend .font-weight-700;
+        font-weight: 700;
         font-size: 1.7rem;
-        color: map-get($colors, secondary_black);
+        // color: map-get($colors, secondary_black);
         margin-top: 10px !important;
     }
 
     .continue-related-style {
-        @include margin(0, 20px, 20px, 20px);
+        // @include margin(0, 20px, 20px, 20px);
     }
 
     .thumbnail {
@@ -31,11 +33,11 @@ page-user-type-selection {
     }
 
     .card-content-md {
-        @include padding(null, null, null, 0 !important);
+        // @include padding(null, null, null, 0 !important);
     }
 
     .item-md ion-avatar {
-        @include padding(null, null, null, 8px !important);
+        // @include padding(null, null, null, 8px !important);
     }
 
     ion-avatar img {
@@ -44,17 +46,17 @@ page-user-type-selection {
     }
 
     .item-md ion-avatar[item-start] {
-        @include margin(null, 0, null, null !important);
+        // @include margin(null, 0, null, null !important);
     }
 
     .card-md,
     .item-md {
-        background-color: map-get($colors, white_f7) !important;
+        // background-color: map-get($colors, white_f7) !important;
     }
 
     .card-md {  
         margin-top: 20px !important;
-        @include margin(null, 0, 0, 0 !important);
+        // @include margin(null, 0, 0, 0 !important);
         width: 100% !important;
     }
 
@@ -64,21 +66,22 @@ page-user-type-selection {
     }
 
     ion-icon {
-        @include ltr {
-            float: right !important;
-        }
+        // @include ltr {
+        //     float: right !important;
+        // }
 
 
-        @include rtl {
-            float: left !important;
-        }
+        // @include rtl {
+        //     float: left !important;
+        // }
     }
 
     .arrow-icon {
-        @include padding(null, null, null, 2.8em !important);
+        // @include padding(null, null, null, 2.8em !important);
     }
 
     .gray-color {
-        color: map-get($colors, primary_black);
+        // color: map-get($colors, primary_black);
     }
 }
+

@@ -27,6 +27,7 @@ const borderColor = '#F7F7F7';
 @Component({
   selector: 'page-user-type-selection',
   templateUrl: 'user-type-selection.html',
+  styleUrls: ['./user-type-selection.scss']
 })
 
 export class UserTypeSelectionPage implements OnInit {
