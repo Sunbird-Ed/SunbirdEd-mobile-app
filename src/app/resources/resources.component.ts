@@ -13,20 +13,20 @@ import {
 } from '../../app/app.constant';
 import { Map } from '../../app/telemetryutil';
 import {AppGlobalService} from '../../services/app-global-service.service';
-import Driver from 'driver.js';
+import * as Driver from 'driver.js';
 
 // import { ActiveDownloadsPage } from '@app/pages/active-downloads/active-downloads';
 
 import * as _ from 'lodash';
 // import { ViewMoreActivityPage } from '../view-more-activity/view-more-activity';
-// import { SunbirdQRScanner } from '../qrscanner/sunbirdqrscanner.service';
+import { SunbirdQRScanner } from '../../services/sunbirdqrscanner.service';
 // import { SearchPage } from '../search/search';
 
 
 // import { PageFilterCallback } from '../page-filter/page.filter';
 
 
-import { AppVersion } from '@ionic-native/app-version';
+import { AppVersion } from '@ionic-native/app-version/ngx';
 import { updateFilterInSearchQuery } from '../../util/filter.util';
 import { TelemetryGeneratorService } from '../../services/telemetry-generator.service';
 import { CommonUtilService } from '../../services/common-util.service';
@@ -57,6 +57,7 @@ import { Environment, ImpressionType, InteractSubtype, InteractType, PageId } fr
 // import { PlayerPage } from '../player/player';
 import { Subscription } from 'rxjs';
 import { AppHeaderService } from '../../services';
+import { NavigationExtras, Router } from '@angular/router';
 // import { GuestProfilePage } from '../profile';
 // import { ProfilePage } from '../profile/profile';
 
@@ -174,7 +175,8 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
     public toastController: ToastController,
     public menuCtrl: MenuController,
-    private headerServie: AppHeaderService
+    private headerServie: AppHeaderService,
+    private router: Router
   ) {
     this.preferences.getString(PreferenceKey.SELECTED_LANGUAGE_CODE).toPromise()
       .then(val => {
@@ -189,6 +191,15 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
       });
     this.defaultImg = 'assets/imgs/ic_launcher.png';
     this.generateNetworkType();
+  }
+
+  test() {
+    const navigationExtras: NavigationExtras = {
+      state: {
+        user: 'Christy Fernandes'
+      }
+    };
+    this.router.navigate(['/view-more-activity'], navigationExtras);
   }
 
   subscribeUtilityEvents() {
@@ -604,11 +615,11 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
           this.generateExtraInfoTelemetry(newSections.length);
           // this.checkEmptySearchResult(isAfterLanguageChange);
           if (this.storyAndWorksheets.length === 0 && this.commonUtilService.networkInfo.isNetworkAvailable) {
-            if (this.tabs.getSelected().tabTitle === 'LIBRARY‌' && !avoidRefreshList) {
-              this.commonUtilService.showToast(
-                this.commonUtilService.translateMessage('EMPTY_LIBRARY_TEXTBOOK_FILTER',
-                  `${this.getGroupByPageReq.grade} (${this.getGroupByPageReq.medium} ${this.commonUtilService.translateMessage('MEDIUM')})`));
-            }
+            // if (this.tabs.getSelected().tabTitle === 'LIBRARY‌' && !avoidRefreshList) {
+            //   this.commonUtilService.showToast(
+            //     this.commonUtilService.translateMessage('EMPTY_LIBRARY_TEXTBOOK_FILTER',
+            //       `${this.getGroupByPageReq.grade} (${this.getGroupByPageReq.medium} ${this.commonUtilService.translateMessage('MEDIUM')})`));
+            // }
           }
         });
       })

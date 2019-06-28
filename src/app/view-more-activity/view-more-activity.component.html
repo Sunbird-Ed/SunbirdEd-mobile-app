@@ -1,0 +1,148 @@
+<!-- <ion-header>
+  <ion-navbar>
+    <ion-title *ngIf="!localContentsCard">
+      <span>{{ headerTitle | translate }}</span>
+    </ion-title>
+  </ion-navbar>
+
+</ion-header> -->
+<ion-content overflow-scroll="true" >
+  <!-- <div class="downloads-only" *ngIf="showDownloadsOnlyToggle">
+    <ion-list class="PL5 bg-transparent">
+      <ion-item class="PL0 bg-transparent">
+        <ion-label>{{ 'VIEW_DOWNLOADS_ONLY_MSG' | translate }}</ion-label>
+        <ion-toggle [(ngModel)]="downloadsOnlyToggle" (ngModelChange)="downloadsOnlyToggleChange($event);"></ion-toggle>
+      </ion-item>
+    </ion-list>
+  </div> -->
+  <div [ngClass]="{'p-16': !localContentsCard}">
+  <div class="sb-view-all-container" *ngIf="localContentsCard">
+
+    <div class="sb-view-all-items">
+      <div class="sb-view-all-title">
+        <span class="page-heading">{{ 'RECENTLY_VIEWED' | translate }}</span>
+        <span class="page-info" >{{'SHOW_RECENT' | translate:{'%s': searchList?.length} }}</span>
+      </div>
+    </div>
+
+  </div>
+  <div class="empty-search-result" *ngIf="!showLoader && searchList && searchList.length === 0" text-center padding-top>
+    {{ 'EMPTY_SEARCH_RESULTS' | translate }}
+  </div>
+
+  <div *ngIf="searchList && searchList.length">
+    <ng-container *ngIf="!localContentsCard">
+      <!-- migration-TODO -->
+      <!-- <view-more-card *ngFor="let item of searchList" [content]="item" [type]="pageType" [cardDisabled]="showDisabled(item)" [enrolledCourses]="enrolledCourses" [guestUser]="guestUser"></view-more-card> -->
+      
+    </ng-container>
+
+    <ng-container *ngIf="localContentsCard">
+      <!-- <view-more-card *ngFor="let item of searchList" [content]="item.contentData" [type]="pageType" [cardDisabled]="showDisabled(item)"></view-more-card> -->
+      <div class="sb-view-all-container">
+        <div class="sb-card-container sb-card-view-all-container">
+          <!-- migration-TODO -->
+         <!-- <view-all-card *ngFor="let item of searchList" [userId]="userId" [content]="item" [type]="pageType" [sectionName]="contentCard" (click)=navigateToDetailPage(item)></view-all-card> -->
+        </div>
+      </div>
+    </ng-container>
+  </div>
+  <!-- Downloads card mock up -->
+  <!-- <div>
+    <ng-container>
+      <div class="sb-view-all-container">
+        <div class="sb-card-container sb-card-download-container">
+          <div class="sb-card">
+            <div class="check-container">
+              <input type="checkbox">
+            </div>
+            <div class="img-container">
+
+            </div>
+            <div class="sb-card-details">
+              <div class="title">Great thinkers and their new religion</div>
+              <div class="info grade_ellipsis"><span class=" class">Social science</span><span
+                  class="separator-dot"></span><span class=" subject">Class 5</span>
+              </div>
+              <div>
+                32MB
+              </div>
+              <div class="sb-card-actions">
+                <button ion-button class="action-btn float-end delete mr-8">
+                  <ion-icon ios="ios-trash" md="md-trash" class="MR5"></ion-icon>
+                  {{'DELETE' | translate}}
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="sb-card">
+              <div class="check-container">
+                <input type="checkbox">
+              </div>
+              <div class="img-container">
+              </div>
+              <div class="sb-card-details">
+                <div class="title">Great thinkers and their new religion testing some long text</div>
+                <div class="info grade_ellipsis"><span class=" class">Social science</span><span
+                    class="separator-dot"></span><span class=" subject">Class 5</span>
+                </div>
+                <div>
+                  32MB
+                </div>
+                <div class="sb-card-actions">
+                  <button ion-button class="action-btn float-end delete mr-8">
+                    <ion-icon ios="ios-trash" md="md-trash" class="MR5"></ion-icon>
+                    {{'DELETE' | translate}}
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="sb-card">
+                <div class="check-container">
+                  <input type="checkbox">
+                </div>
+                <div class="img-container">
+                </div>
+                <div class="sb-card-details">
+                  <div class="title">Great thinkers and their new religion</div>
+                  <div class="info grade_ellipsis"><span class=" class">Social science</span><span
+                      class="separator-dot"></span><span class=" subject">Class 5</span>
+                  </div>
+                  <div>
+                    32MB
+                  </div>
+                  <div class="sb-card-actions">
+                    <button ion-button class="action-btn float-end delete mr-8">
+                      <ion-icon ios="ios-trash" md="md-trash" class="MR5"></ion-icon>
+                      {{'DELETE' | translate}}
+                    </button>
+                  </div>
+                </div>
+              </div>
+        </div>
+      </div>
+    </ng-container>
+  </div> -->
+
+  <!-- TODO: need good logic here -->
+  <div class="px-5">
+    <ion-button expand="block" *ngIf="searchList && searchList.length && loadMoreBtn" (click)="loadMore();">
+      {{ 'VIEW_MORE' | translate }}
+    </ion-button>
+  </div>
+</div>
+</ion-content>
+<ion-backdrop class="loading-backdrop" *ngIf="showOverlay" text-center>
+  <div class="backdrop-container">
+    <span *ngIf="downloadPercentage !== 100">
+      <ion-label>{{ 'LOADING_CONTENT' | translate }} {{ downloadPercentage ? (downloadPercentage) : '0' }} %</ion-label>
+      <!-- migration-TODO -->
+      <!-- <pb-horizontal [progress]="downloadPercentage" isOnBoardCard="false"></pb-horizontal> -->
+    </span>
+    <ion-label *ngIf="downloadPercentage === 100">{{ 'LOADING_CONTENT' | translate }}</ion-label>
+  </div>
+
+  <div class="backdrop-footer" *ngIf="downloadPercentage !== 100">
+    <ion-button size="small" (click)="cancelDownload()">Cancel</ion-button>
+  </div>
+</ion-backdrop>

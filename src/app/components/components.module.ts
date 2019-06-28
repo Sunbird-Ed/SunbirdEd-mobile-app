@@ -5,9 +5,11 @@ import { IonicModule } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
 
 import { ApplicationHeaderComponent } from './application-header/application-header.component';
+import { SignInCardComponent} from './sign-in-card/sign-in-card.component';
 
 @NgModule({
-  declarations: [ApplicationHeaderComponent],
+  declarations: [ApplicationHeaderComponent,
+    SignInCardComponent],
   imports: [
     CommonModule,
     FormsModule,
@@ -15,10 +17,12 @@ import { ApplicationHeaderComponent } from './application-header/application-hea
     TranslateModule.forChild()
   ],
   entryComponents: [
-    ApplicationHeaderComponent
+    ApplicationHeaderComponent,
+    SignInCardComponent
   ],
   exports: [
-    ApplicationHeaderComponent
+    ApplicationHeaderComponent,
+    SignInCardComponent
   ]
 })
 export class ComponentsModule { }

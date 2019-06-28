@@ -1,8 +1,9 @@
 // Angular dependencies
-import { NgModule, Provider, ErrorHandler, APP_INITIALIZER } from '@angular/core';
+import { NgModule, Provider, ErrorHandler, APP_INITIALIZER, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouteReuseStrategy } from '@angular/router';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 // ionic cordova dependencies/plugins
 import { IonicImageLoader } from 'ionic-image-loader';
@@ -305,7 +306,7 @@ declare const buildconfigreader;
   entryComponents: [],
   imports: [
     BrowserModule,
-    IonicModule.forRoot(),
+    BrowserAnimationsModule,
     AppRoutingModule,
     ComponentsModule,
     IonicImageLoader.forRoot(),
@@ -362,6 +363,9 @@ declare const buildconfigreader;
     { provide: APP_INITIALIZER, useFactory: sunbirdSdkFactory, deps: [], multi: true }
   ],
   bootstrap: [AppComponent],
+  schemas: [
+    CUSTOM_ELEMENTS_SCHEMA
+  ]
 })
 export class AppModule {
   constructor(

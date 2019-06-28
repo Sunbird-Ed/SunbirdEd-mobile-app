@@ -73,93 +73,97 @@
       </ion-footer>
     </ion-menu> -->
 
-    <ion-content hide-header-footer class="main-container avoid-bottom-tabs-space" (ionScrollEnd)="logScrollEnd($event)" scrollEvents="true" #contentView>
+<ion-content hide-header-footer class="main-container avoid-bottom-tabs-space" (ionScrollEnd)="logScrollEnd($event)"
+  scrollEvents="true" #contentView>
+  <button (click)="test()"> Goto View more details</button>
+  <div ion-fixed class="fixed-container">
+    <div class="sb-slider-pills-container">
+      <div class="sb-pills-container sb-medium-pills-container">
+        <div class="pill" *ngFor="let medium of categoryMediums; let i = index;"
+          [ngClass]="{'active': medium?.selected}" [@appear]
+          (click)="mediumClick(medium?.name,'sendMediumClickedTelemetry')">{{medium?.name}} Medium
+        </div>
+      </div>
+    </div>
+    <div class="sb-slider-pills-container">
+      <div class="sb-pills-container sb-grade-pills-container" id="gradeScroll">
+        <div class="pill" *ngFor="let grade of categoryGradeLevels; let i = index; let first = first"
+          [ngClass]="{'active': grade?.selected, '': !grade?.selected}" attr.id="class{{i}}"
+          (click)="classClick(i,'sendClassClickedTelemetry');">
+          {{grade?.name}}</div>
+      </div>
+    </div>
+  </div>
+  <div class="scrollable-container">
+    <ion-refresher (ionRefresh)="swipeDownToRefresh($event)"></ion-refresher>
+    <div *ngIf="refresh" class="spinner-align">
+      <ion-spinner icon="spiral"></ion-spinner>
+    </div>
+    <ion-spinner *ngIf="showLoader" padding style="padding-top: 100px;"></ion-spinner>
+    <div *ngIf="recentlyViewedResources && recentlyViewedResources.length">
+      <div class="sb-recently-viewed-container" style="padding-bottom:40px;">
 
-      <div ion-fixed class="fixed-container">
-        <div class="sb-slider-pills-container">
-          <div class="sb-pills-container sb-medium-pills-container">
-            <div class="pill" *ngFor="let medium of categoryMediums; let i = index;"
-              [ngClass]="{'active': medium?.selected}" [@appear] (click)="mediumClick(medium?.name,'sendMediumClickedTelemetry')">{{medium?.name}} Medium
-            </div>
+        <div class="sb-recently-viewed-items">
+          <div class="sb-recenlty-viewed-title">{{ 'RECENTLY_VIEWED' | translate }}
+            <ion-button class="sb-btn sb-btn-sm sb-btn-outline-info view-all-p8" float-end
+              (click)="navigateToViewMoreContentsPage(recentViewedSection);">
+              {{ 'VIEW_ALL' | translate }}</ion-button>
           </div>
-        </div>
-        <div class="sb-slider-pills-container">
-          <div class="sb-pills-container sb-grade-pills-container" id="gradeScroll">
-            <div class="pill" *ngFor="let grade of categoryGradeLevels; let i = index; let first = first"
-              [ngClass]="{'active': grade?.selected, '': !grade?.selected}" attr.id="class{{i}}" (click)="classClick(i,'sendClassClickedTelemetry');">
-              {{grade?.name}}</div>
+
+          <div class="sb-card-scroll-container" (scroll)='onScroll($event)'>
+            <!-- Card style -->
+            <div class="sb-card-container sb-card-recently-container">
+              <!-- <new-course-card *ngFor="let course of recentlyViewedResources" [course]="course" [env]="'home'"
+                    [index]="i" [sectionName]="recentViewedSection" [layoutName]="layoutSavedContent"></new-course-card> -->
+            </div>
           </div>
         </div>
       </div>
-      <div class="scrollable-container">
-        <ion-refresher (ionRefresh)="swipeDownToRefresh($event)"></ion-refresher>
-        <div *ngIf="refresh" class="spinner-align">
-          <ion-spinner icon="spiral"></ion-spinner>
-        </div>
-        <ion-spinner *ngIf="showLoader" padding style="padding-top: 100px;"></ion-spinner>
-        <div *ngIf="recentlyViewedResources && recentlyViewedResources.length">
-          <div class="sb-recently-viewed-container" style="padding-bottom:40px;">
-    
-            <div class="sb-recently-viewed-items">
-              <div class="sb-recenlty-viewed-title">{{ 'RECENTLY_VIEWED' | translate }}
-                <ion-button class="sb-btn sb-btn-sm sb-btn-outline-info view-all-p8" float-end
-                  (click)="navigateToViewMoreContentsPage(recentViewedSection);">
-                  {{ 'VIEW_ALL' | translate }}</ion-button></div>
-    
-              <div class="sb-card-scroll-container" (scroll)='onScroll($event)'>
-                <!-- Card style -->
-                <div class="sb-card-container sb-card-recently-container">
-                  <new-course-card *ngFor="let course of recentlyViewedResources" [course]="course" [env]="'home'"
-                    [index]="i" [sectionName]="recentViewedSection" [layoutName]="layoutSavedContent"></new-course-card>
-                </div>
-              </div>
-            </div>
+    </div>
+    <div *ngIf="searchApiLoader && storyAndWorksheets && storyAndWorksheets.length === 0">
+      <div style="height: 500px;">
+        <ion-spinner padding style="padding-top: 110px;"></ion-spinner>
+      </div>
+    </div>
+    <div *ngFor="let items of storyAndWorksheets">
+      <div class="sb-textbook-container" *ngIf="items?.contents && items?.contents?.length">
+        <div class="sb-textbook-items">
+          <div class="sb-textbook-title-container">
+            <span class="textbook-icon">
+              <ion-icon ios="ios-albums" md="md-albums"></ion-icon>
+            </span>
+            <span class="textbook-title">
+              {{items.name}}
+            </span>
           </div>
-        </div>
-        <div *ngIf="searchApiLoader && storyAndWorksheets && storyAndWorksheets.length === 0">
-          <div style="height: 500px;">
-            <ion-spinner padding style="padding-top: 110px;"></ion-spinner>
+          <!-- Card style -->
+          <div class="sb-card-container sb-card-textbook-container">
+            <!-- migration-TODO -->
+            <!-- <textbook-card *ngFor="let item of items?.contents; let i = index" [content]="item"
+                  [layoutName]='layoutName' (click)="navigateToDetailPage(item, i, item.name)"></textbook-card> -->
           </div>
-        </div>
-        <div *ngFor="let items of storyAndWorksheets">
-          <div class="sb-textbook-container" *ngIf="items?.contents && items?.contents?.length">
-            <div class="sb-textbook-items">
-              <div class="sb-textbook-title-container">
-                <span class="textbook-icon">
-                  <ion-icon ios="ios-albums" md="md-albums"></ion-icon>
-                </span>
-                <span class="textbook-title">
-                  {{items.name}}
-                </span>
-              </div>
-              <!-- Card style -->
-              <div class="sb-card-container sb-card-textbook-container">
-                <textbook-card *ngFor="let item of items?.contents; let i = index" [content]="item"
-                  [layoutName]='layoutName' (click)="navigateToDetailPage(item, i, item.name)"></textbook-card>
-              </div>
-            </div>
-          </div>
-        </div>
-    
-        <div *ngIf="pageApiLoader && storyAndWorksheets && storyAndWorksheets.length === 0">
-          <div class="course-scroll-holder" style="height: 500px;">
-            <ion-spinner padding style="padding-top: 110px;"></ion-spinner>
-          </div>
-        </div>
-    
-        <div padding text-center class="mt-32 mb-32" *ngIf="!commonUtilService?.networkInfo?.isNetworkAvailable">
-          <img src="assets/imgs/ic_offline_orange_lg.png" />
-          <ion-text>
-<h6 class="offline-header">
-            <b>{{ 'NO_INTERNET_TITLE' | translate }}</b>
-          </h6>
-</ion-text>
-          <p class="offline-content">{{ 'OFFLINE_WARNING_ETBUI' | translate }}</p>
-        </div>
-        <div *ngIf="showSignInCard" class="signin-card-bg">
-          <sign-in-card (valueChange)="showOfflineNetworkWarning($event)" [source]="source"></sign-in-card>
         </div>
       </div>
-    
-    </ion-content>
-    
+    </div>
+
+    <div *ngIf="pageApiLoader && storyAndWorksheets && storyAndWorksheets.length === 0">
+      <div class="course-scroll-holder" style="height: 500px;">
+        <ion-spinner padding style="padding-top: 110px;"></ion-spinner>
+      </div>
+    </div>
+
+    <div padding text-center class="mt-32 mb-32" *ngIf="!commonUtilService?.networkInfo?.isNetworkAvailable">
+      <img src="assets/imgs/ic_offline_orange_lg.png" />
+      <ion-text>
+        <h6 class="offline-header">
+          <b>{{ 'NO_INTERNET_TITLE' | translate }}</b>
+        </h6>
+      </ion-text>
+      <p class="offline-content">{{ 'OFFLINE_WARNING_ETBUI' | translate }}</p>
+    </div>
+    <div *ngIf="showSignInCard" class="signin-card-bg">
+      <app-sign-in-card (valueChange)="showOfflineNetworkWarning($event)" [source]="source"></app-sign-in-card>
+    </div>
+  </div>
+
+</ion-content>

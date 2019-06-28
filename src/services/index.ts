@@ -13,3 +13,4 @@ export {AndroidPermissionsService} from './android-permissions/android-permissio
 export {NotificationService} from './notification.service';
 export {ComingSoonMessageService} from './coming-soon-message.service';
 export {SunbirdQRScanner} from './sunbirdqrscanner.service';
+export {FormAndFrameworkUtilService} from './formandframeworkutil.service';

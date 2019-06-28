@@ -22,6 +22,14 @@ const routes: Routes = [
   {
     path: 'user-type-selection/:isChangeRoleRequest',
     loadChildren: './user-type-selection/user-type-selection.module#UserTypeSelectionPageModule'
+  },
+  {
+    path: 'resources',
+    loadChildren: './resources/resources.module#ResourcesModule'
+  },
+  {
+    path: 'view-more-activity',
+    loadChildren: './view-more-activity/view-more-activity.module#ViewMoreActivityModule'
   }
 ];
 
