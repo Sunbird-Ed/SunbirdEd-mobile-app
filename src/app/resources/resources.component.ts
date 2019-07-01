@@ -13,7 +13,7 @@ import {
 } from '../../app/app.constant';
 import { Map } from '../../app/telemetryutil';
 import {AppGlobalService} from '../../services/app-global-service.service';
-import Driver from 'driver.js';
+// import Driver from 'driver.js';
 
 // import { ActiveDownloadsPage } from '@app/pages/active-downloads/active-downloads';
 
@@ -26,7 +26,7 @@ import * as _ from 'lodash';
 // import { PageFilterCallback } from '../page-filter/page.filter';
 
 
-import { AppVersion } from '@ionic-native/app-version';
+import { AppVersion } from '@ionic-native/app-version/ngx';
 import { updateFilterInSearchQuery } from '../../util/filter.util';
 import { TelemetryGeneratorService } from '../../services/telemetry-generator.service';
 import { CommonUtilService } from '../../services/common-util.service';
@@ -604,11 +604,11 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
           this.generateExtraInfoTelemetry(newSections.length);
           // this.checkEmptySearchResult(isAfterLanguageChange);
           if (this.storyAndWorksheets.length === 0 && this.commonUtilService.networkInfo.isNetworkAvailable) {
-            if (this.tabs.getSelected().tabTitle === 'LIBRARY‌' && !avoidRefreshList) {
-              this.commonUtilService.showToast(
-                this.commonUtilService.translateMessage('EMPTY_LIBRARY_TEXTBOOK_FILTER',
-                  `${this.getGroupByPageReq.grade} (${this.getGroupByPageReq.medium} ${this.commonUtilService.translateMessage('MEDIUM')})`));
-            }
+            // if (this.tabs.getSelected().tabTitle === 'LIBRARY‌' && !avoidRefreshList) {
+            //   this.commonUtilService.showToast(
+            //     this.commonUtilService.translateMessage('EMPTY_LIBRARY_TEXTBOOK_FILTER',
+            //       `${this.getGroupByPageReq.grade} (${this.getGroupByPageReq.medium} ${this.commonUtilService.translateMessage('MEDIUM')})`));
+            // }
           }
         });
       })
@@ -723,37 +723,37 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
 
   ionViewDidEnter() {
     this.scrollToTop();
-    this.preferences.getString('show_app_walkthrough_screen').toPromise()
-      .then(value => {
-        if (value === 'true') {
-          const driver = new Driver({
-            allowClose: true,
-            closeBtnText: this.commonUtilService.translateMessage('DONE'),
-            showButtons: true,
-          });
+    // this.preferences.getString('show_app_walkthrough_screen').toPromise()
+    //   .then(value => {
+    //     if (value === 'true') {
+    //       const driver = new Driver({
+    //         allowClose: true,
+    //         closeBtnText: this.commonUtilService.translateMessage('DONE'),
+    //         showButtons: true,
+    //       });
 
-          setTimeout(() => {
-            driver.highlight({
-              element: '#qrIcon',
-              popover: {
-                title: this.commonUtilService.translateMessage('ONBOARD_SCAN_QR_CODE'),
-                description: '<img src="assets/imgs/ic_scanqrdemo.png" /><p>' + this.commonUtilService
-                  .translateMessage('ONBOARD_SCAN_QR_CODE_DESC', this.appLabel) + '</p>',
-                showButtons: true,         // Do not show control buttons in footer
-                closeBtnText: this.commonUtilService.translateMessage('DONE'),
-              }
-            });
+    //       setTimeout(() => {
+    //         driver.highlight({
+    //           element: '#qrIcon',
+    //           popover: {
+    //             title: this.commonUtilService.translateMessage('ONBOARD_SCAN_QR_CODE'),
+    //             description: '<img src="assets/imgs/ic_scanqrdemo.png" /><p>' + this.commonUtilService
+    //               .translateMessage('ONBOARD_SCAN_QR_CODE_DESC', this.appLabel) + '</p>',
+    //             showButtons: true,         // Do not show control buttons in footer
+    //             closeBtnText: this.commonUtilService.translateMessage('DONE'),
+    //           }
+    //         });
 
-            const element = document.getElementById('driver-highlighted-element-stage');
-            const img = document.createElement('img');
-            img.src = 'assets/imgs/ic_scan.png';
-            img.id = 'qr_scanner';
-            element.appendChild(img);
-          }, 100);
-          this.telemetryGeneratorService.generatePageViewTelemetry(PageId.ONBOARDING_QR_SHOWCASE, Environment.ONBOARDING, PageId.LIBRARY);
-          this.preferences.putString('show_app_walkthrough_screen', 'false').toPromise().then();
-        }
-      });
+    //         const element = document.getElementById('driver-highlighted-element-stage');
+    //         const img = document.createElement('img');
+    //         img.src = 'assets/imgs/ic_scan.png';
+    //         img.id = 'qr_scanner';
+    //         element.appendChild(img);
+    //       }, 100);
+    //       this.telemetryGeneratorService.generatePageViewTelemetry(PageId.ONBOARDING_QR_SHOWCASE, Environment.ONBOARDING, PageId.LIBRARY);
+    //       this.preferences.putString('show_app_walkthrough_screen', 'false').toPromise().then();
+    //     }
+    //   });
   }
 
   ionViewWillEnter() {

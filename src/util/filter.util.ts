@@ -1,4 +1,4 @@
-import {AppGlobalService} from '../service/app-global.service';
+import {AppGlobalService} from '../services/app-global-service.service';
 import {SearchType} from "sunbird-sdk";
 
 const applyProfileFilter = (profileFilter: Array<any>, assembleFilter: Array<any>,
