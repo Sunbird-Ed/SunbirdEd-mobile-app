@@ -154,6 +154,10 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
   networkSubscription: Subscription;
   headerObservable: any;
   scrollEventRemover: any;
+   /**
+   * Flag to show latest and popular course loader
+   */
+  pageApiLoader = true;
   @ViewChild('contentView') contentView: ContentView;
 
   constructor(
@@ -166,7 +170,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
     private appGlobalService: AppGlobalService,
     private appVersion: AppVersion,
     private telemetryGeneratorService: TelemetryGeneratorService,
-    private commonUtilService: CommonUtilService,
+    public commonUtilService: CommonUtilService,
     private translate: TranslateService,
     // private network: Network,
     // private tabs: Tabs,
