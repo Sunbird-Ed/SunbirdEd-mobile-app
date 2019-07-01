@@ -27,7 +27,16 @@ const routes: Routes = [
     path: 'user-type-selection/:isChangeRoleRequest',
     loadChildren: './user-type-selection/user-type-selection.module#UserTypeSelectionPageModule'
   },
-  { path: 'user-and-groups', loadChildren: './user-and-groups/user-and-groups.module#UserAndGroupsPageModule' }
+  { path: 'user-and-groups', loadChildren: './user-and-groups/user-and-groups.module#UserAndGroupsPageModule' },
+  {
+    path: 'resources',
+    loadChildren: './resources/resources.module#ResourcesModule'
+  },
+  {
+    path: 'view-more-activity',
+    loadChildren: './view-more-activity/view-more-activity.module#ViewMoreActivityModule'
+  },
+  { path: 'tabs', loadChildren: './tabs/tabs.module#TabsPageModule' }
 ];
 
 @NgModule({

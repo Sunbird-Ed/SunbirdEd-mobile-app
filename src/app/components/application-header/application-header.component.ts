@@ -1,18 +1,19 @@
-import {ChangeDetectorRef, Component, EventEmitter, Inject, Input, OnInit, Output, OnDestroy} from '@angular/core';
-import {Events, MenuController, Platform} from '@ionic/angular';
-import {AppGlobalService, UtilityService, CommonUtilService,NotificationService} from '../../../services';
-import {DownloadService, SharedPreferences} from 'sunbird-sdk';
-import {GenericAppConfig, PreferenceKey} from '../../../app/app.constant';
-import {AppVersion} from '@ionic-native/app-version/ngx';
+import { ChangeDetectorRef, Component, EventEmitter, Inject, Input, OnInit, Output, OnDestroy } from '@angular/core';
+import { Events, MenuController, Platform } from '@ionic/angular';
+import { AppGlobalService, UtilityService, CommonUtilService, NotificationService } from '../../../services';
+import { DownloadService, SharedPreferences } from 'sunbird-sdk';
+import { GenericAppConfig, PreferenceKey } from '../../../app/app.constant';
+import { AppVersion } from '@ionic-native/app-version/ngx';
 import { Subscription } from 'rxjs';
-import {TranslateService} from "@ngx-translate/core";
+import { TranslateService } from '@ngx-translate/core';
+import { NavigationExtras, Router } from '@angular/router';
 
 @Component({
   selector: 'app-application-header',
   templateUrl: './application-header.component.html',
   styleUrls: ['./application-header.component.scss'],
 })
-export class ApplicationHeaderComponent implements OnInit,OnDestroy {
+export class ApplicationHeaderComponent implements OnInit, OnDestroy {
 
   chosenLanguageString: string;
   selectedLanguage: string;
@@ -42,7 +43,8 @@ export class ApplicationHeaderComponent implements OnInit,OnDestroy {
     private changeDetectionRef: ChangeDetectorRef,
     private notification: NotificationService,
     private translate: TranslateService,
-    private platform : Platform
+    private platform: Platform,
+    private router: Router
   ) {
     this.setLanguageValue();
     this.events.subscribe('onAfterLanguageChange:update', (res) => {
@@ -62,9 +64,9 @@ export class ApplicationHeaderComponent implements OnInit,OnDestroy {
       this.setAppLogo();
     });
     this.translate.onLangChange.subscribe((params) => {
-      if(params.lang == 'ur' && !this.platform.isRTL) {
+      if (params.lang === 'ur' && !this.platform.isRTL) {
         this.isRtl = true;
-      } else if(this.platform.isRTL) {
+      } else if (this.platform.isRTL) {
         this.isRtl = false;
       }
     });
@@ -76,8 +78,12 @@ export class ApplicationHeaderComponent implements OnInit,OnDestroy {
     });
     this.listenDownloads();
     this.networkSubscription = this.commonUtilService.networkAvailability$.subscribe((available: boolean) => {
-        this.setAppLogo();
+      this.setAppLogo();
     });
+  }
+
+  test() {
+    this.router.navigateByUrl('/resources');
   }
 
   setAppVersion(): any {
@@ -103,10 +109,10 @@ export class ApplicationHeaderComponent implements OnInit,OnDestroy {
         this.selectedLanguage = value;
       });
     this.preference.getString(PreferenceKey.SELECTED_LANGUAGE_CODE).toPromise()
-    .then(langCode => {
-      console.log('Language code: ', langCode);
-      this.notification.setupLocalNotification(langCode);
-    });
+      .then(langCode => {
+        console.log('Language code: ', langCode);
+        this.notification.setupLocalNotification(langCode);
+      });
   }
 
   listenDownloads() {
@@ -127,7 +133,7 @@ export class ApplicationHeaderComponent implements OnInit,OnDestroy {
       this.isLoggedIn = true;
       this.preference.getString('app_logo').toPromise().then(value => {
         if (value) {
-          this.appLogo =  this.commonUtilService.networkInfo.isNetworkAvailable ? value : './assets/imgs/ic_launcher.png';
+          this.appLogo = this.commonUtilService.networkInfo.isNetworkAvailable ? value : './assets/imgs/ic_launcher.png';
         } else {
           this.appLogo = './assets/imgs/ic_launcher.png';
         }
@@ -143,12 +149,12 @@ export class ApplicationHeaderComponent implements OnInit,OnDestroy {
   }
 
   emitEvent($event, name) {
-      this.headerEvents.emit({name});
+    this.headerEvents.emit({ name });
   }
 
   emitSideMenuItemEvent($event, menuItem) {
     this.toggleMenu();
-    this.sideMenuItemEvent.emit({menuItem});
+    this.sideMenuItemEvent.emit({ menuItem });
   }
 
   ngOnDestroy() {

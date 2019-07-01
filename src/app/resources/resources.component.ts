@@ -19,7 +19,7 @@ import {AppGlobalService} from '../../services/app-global-service.service';
 
 import * as _ from 'lodash';
 // import { ViewMoreActivityPage } from '../view-more-activity/view-more-activity';
-// import { SunbirdQRScanner } from '../qrscanner/sunbirdqrscanner.service';
+import { SunbirdQRScanner } from '../../services/sunbirdqrscanner.service';
 // import { SearchPage } from '../search/search';
 
 
@@ -57,6 +57,7 @@ import { Environment, ImpressionType, InteractSubtype, InteractType, PageId } fr
 // import { PlayerPage } from '../player/player';
 import { Subscription } from 'rxjs';
 import { AppHeaderService } from '../../services';
+import { NavigationExtras, Router } from '@angular/router';
 // import { GuestProfilePage } from '../profile';
 // import { ProfilePage } from '../profile/profile';
 
@@ -153,6 +154,10 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
   networkSubscription: Subscription;
   headerObservable: any;
   scrollEventRemover: any;
+   /**
+   * Flag to show latest and popular course loader
+   */
+  pageApiLoader = true;
   @ViewChild('contentView') contentView: ContentView;
 
   constructor(
@@ -165,7 +170,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
     private appGlobalService: AppGlobalService,
     private appVersion: AppVersion,
     private telemetryGeneratorService: TelemetryGeneratorService,
-    private commonUtilService: CommonUtilService,
+    public commonUtilService: CommonUtilService,
     private translate: TranslateService,
     // private network: Network,
     // private tabs: Tabs,
@@ -174,7 +179,8 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
     public toastController: ToastController,
     public menuCtrl: MenuController,
-    private headerServie: AppHeaderService
+    private headerServie: AppHeaderService,
+    private router: Router
   ) {
     this.preferences.getString(PreferenceKey.SELECTED_LANGUAGE_CODE).toPromise()
       .then(val => {
@@ -189,6 +195,15 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
       });
     this.defaultImg = 'assets/imgs/ic_launcher.png';
     this.generateNetworkType();
+  }
+
+  test() {
+    const navigationExtras: NavigationExtras = {
+      state: {
+        user: 'Christy Fernandes'
+      }
+    };
+    this.router.navigate(['/view-more-activity'], navigationExtras);
   }
 
   subscribeUtilityEvents() {

@@ -4,8 +4,7 @@ import { Component, EventEmitter } from '@angular/core';
 import { Platform } from '@ionic/angular';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
-import { AppHeaderService } from 'src/services';
-import { AppGlobalService, CommonUtilService, TelemetryGeneratorService, UtilityService, AppRatingService } from '../services/';
+import { AppGlobalService, CommonUtilService, TelemetryGeneratorService, UtilityService, AppRatingService, AppHeaderService } from '../services/';
 import { InteractType, InteractSubtype, Environment, PageId } from 'src/services/telemetry-constants';
 
 @Component({
@@ -67,6 +66,37 @@ export class AppComponent {
       this.statusBar.styleDefault();
       this.splashScreen.hide();
     });
+  }
+
+  handleHeaderEvents($event) {
+    /*if ($event.name === 'back') {
+      let navObj = this.app.getRootNavs()[0];
+      let activeView: ViewController = this.nav.getActive();
+      if (activeView != null && ((<any>activeView).instance instanceof TabsPage)) {
+        navObj = this.app.getActiveNavs()[0];
+        activeView = navObj.getActive();
+      }
+      if (((<any>activeView).instance instanceof UserTypeSelectionPage)
+        || ((<any>activeView).instance instanceof EnrolledCourseDetailsPage)
+        || ((<any>activeView).instance instanceof CollectionDetailsPage)
+        || ((<any>activeView).instance instanceof CollectionDetailsEtbPage)
+        || ((<any>activeView).instance instanceof ContentDetailsPage)
+        || ((<any>activeView).instance instanceof OnboardingPage)
+        || ((<any>activeView).instance instanceof QrCodeResultPage)
+        || ((<any>activeView).instance instanceof FaqPage)
+        || ((<any>activeView).instance['pageId'] === 'ProfileSettingsPage')
+      ) {
+        this.headerServie.sidebarEvent($event);
+        return;
+      }
+      if (navObj.canGoBack()) {
+        return navObj.pop();
+      } else {
+        this.commonUtilService.showExitPopUp(this.activePageService.computePageId((<any>activeView).instance), Environment.HOME, false);
+      }
+    } else {*/
+      this.headerService.sidebarEvent($event);
+    //}
   }
 
   menuItemAction(menuName) {
