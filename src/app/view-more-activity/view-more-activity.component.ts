@@ -48,6 +48,8 @@ export class ViewMoreActivityComponent implements OnInit {
    */
   searchList: any;
 
+  showLoader: any;
+
   /**
    * Contains tab bar element ref
    */

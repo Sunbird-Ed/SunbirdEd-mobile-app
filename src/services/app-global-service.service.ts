@@ -55,6 +55,8 @@ export class AppGlobalService implements OnDestroy {
   rootOrganizations: Array<any>;
   courseFrameworkId: string;
 
+  currentPageId: string;
+
   guestUserProfile: Profile;
   isGuestUser = false;
   guestProfileType: ProfileType;

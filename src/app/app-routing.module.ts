@@ -30,7 +30,8 @@ const routes: Routes = [
   {
     path: 'view-more-activity',
     loadChildren: './view-more-activity/view-more-activity.module#ViewMoreActivityModule'
-  }
+  },
+  { path: 'tabs', loadChildren: './tabs/tabs.module#TabsPageModule' }
 ];
 
 @NgModule({
