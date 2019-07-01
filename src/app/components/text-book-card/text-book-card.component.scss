@@ -1,0 +1,23 @@
+:host {
+    .sb-card{
+        .img-container{
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+    }
+    .grade_ellipsis{
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis; 
+        // migration-TODO
+        // color:$gray-300;
+    }
+
+    .textbook-margin-4{
+        // migration-TODO
+        // margin: 0 ($base-block-space/2);
+    }
+}
+

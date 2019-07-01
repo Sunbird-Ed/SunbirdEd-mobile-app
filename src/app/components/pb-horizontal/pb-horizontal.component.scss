@@ -1,0 +1,35 @@
+:host {
+    .progress-outer {
+        width: 100%;
+        text-align: center;
+        // migration-TODO
+        // background-color: map-get($colors, light_gray);
+        // migration-TODO
+        // color: map-get($colors, white); // border-radius: 20px;
+    }
+    .progress-inner {
+        min-width: 15%;
+        white-space: nowrap;
+        overflow: hidden;
+        padding: 3px; // border-radius: 20px;
+        // migration-TODO
+        // background-color: map-get($colors, primary);
+    }
+    .progress-inner-onboard {
+        min-width: 0;
+        white-space: nowrap;
+        overflow: hidden;
+        padding: 2px;
+        border-radius: 0;
+        // migration-TODO
+        // background-color: map-get($colors, primary);
+    }
+    .progress-inner-primary {
+        // migration-TODO
+        // background-color: map-get($colors, primary);
+    }
+    .progress-inner-secondary {
+        // migration-TODO
+        // background-color: map-get($colors, secondary);
+    }
+}

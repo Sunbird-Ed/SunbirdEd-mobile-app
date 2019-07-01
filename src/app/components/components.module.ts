@@ -6,23 +6,41 @@ import { TranslateModule } from '@ngx-translate/core';
 
 import { ApplicationHeaderComponent } from './application-header/application-header.component';
 import { SignInCardComponent} from './sign-in-card/sign-in-card.component';
+import {TextBookCardComponent} from './text-book-card/text-book-card.component';
+import {NewCourseCardComponent} from './new-course-card/new-course-card.component';
+import { PipesModule } from 'src/pipes/pipes.module';
+import {ViewAllCardComponent} from './view-all-card/view-all-card.component';
+import {ViewMoreCardComponent} from './view-more-card/view-more-card.component';
+import {PbHorizontalComponent} from './pb-horizontal/pb-horizontal.component';
+
 
 @NgModule({
   declarations: [ApplicationHeaderComponent,
-    SignInCardComponent],
+    SignInCardComponent,
+    TextBookCardComponent,
+    NewCourseCardComponent,
+    ViewAllCardComponent,
+    ViewMoreCardComponent,
+    PbHorizontalComponent],
   imports: [
     CommonModule,
     FormsModule,
     IonicModule,
+    PipesModule,
     TranslateModule.forChild()
   ],
   entryComponents: [
     ApplicationHeaderComponent,
-    SignInCardComponent
+    SignInCardComponent,
   ],
   exports: [
     ApplicationHeaderComponent,
-    SignInCardComponent
+    SignInCardComponent,
+    TextBookCardComponent,
+    NewCourseCardComponent,
+    ViewAllCardComponent,
+    ViewMoreCardComponent,
+    PbHorizontalComponent
   ]
 })
 export class ComponentsModule { }
