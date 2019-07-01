@@ -4,7 +4,7 @@ import { ViewMoreActivityComponent } from './view-more-activity.component';
 import { TranslateModule } from '@ngx-translate/core';
 import { RouterModule } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
-// import { ComponentsModule } from '../../component/components.module';
+import { ComponentsModule } from '../components/components.module';
 
 @NgModule({
   declarations: [
@@ -12,6 +12,7 @@ import { IonicModule } from '@ionic/angular';
   ],
   imports: [
     CommonModule,
+    ComponentsModule,
     IonicModule.forRoot({
       scrollPadding: false,
       scrollAssist: true,

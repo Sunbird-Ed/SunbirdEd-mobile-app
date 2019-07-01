@@ -113,8 +113,8 @@
           <div class="sb-card-scroll-container" (scroll)='onScroll($event)'>
             <!-- Card style -->
             <div class="sb-card-container sb-card-recently-container">
-              <!-- <new-course-card *ngFor="let course of recentlyViewedResources" [course]="course" [env]="'home'"
-                    [index]="i" [sectionName]="recentViewedSection" [layoutName]="layoutSavedContent"></new-course-card> -->
+              <app-new-course-card *ngFor="let course of recentlyViewedResources" [course]="course" [env]="'home'"
+                    [index]="i" [sectionName]="recentViewedSection" [layoutName]="layoutSavedContent"></app-new-course-card>
             </div>
           </div>
         </div>
@@ -138,9 +138,8 @@
           </div>
           <!-- Card style -->
           <div class="sb-card-container sb-card-textbook-container">
-            <!-- migration-TODO -->
-            <!-- <textbook-card *ngFor="let item of items?.contents; let i = index" [content]="item"
-                  [layoutName]='layoutName' (click)="navigateToDetailPage(item, i, item.name)"></textbook-card> -->
+            <app-text-book-card *ngFor="let item of items?.contents; let i = index" [content]="item"
+                  [layoutName]='layoutName' (click)="navigateToDetailPage(item, i, item.name)"></app-text-book-card>
           </div>
         </div>
       </div>

@@ -32,8 +32,7 @@
 
   <div *ngIf="searchList && searchList.length">
     <ng-container *ngIf="!localContentsCard">
-      <!-- migration-TODO -->
-      <!-- <view-more-card *ngFor="let item of searchList" [content]="item" [type]="pageType" [cardDisabled]="showDisabled(item)" [enrolledCourses]="enrolledCourses" [guestUser]="guestUser"></view-more-card> -->
+      <app-view-more-card *ngFor="let item of searchList" [content]="item" [type]="pageType" [cardDisabled]="showDisabled(item)" [enrolledCourses]="enrolledCourses" [guestUser]="guestUser"></app-view-more-card>
       
     </ng-container>
 
@@ -41,8 +40,7 @@
       <!-- <view-more-card *ngFor="let item of searchList" [content]="item.contentData" [type]="pageType" [cardDisabled]="showDisabled(item)"></view-more-card> -->
       <div class="sb-view-all-container">
         <div class="sb-card-container sb-card-view-all-container">
-          <!-- migration-TODO -->
-         <!-- <view-all-card *ngFor="let item of searchList" [userId]="userId" [content]="item" [type]="pageType" [sectionName]="contentCard" (click)=navigateToDetailPage(item)></view-all-card> -->
+         <app-view-all-card *ngFor="let item of searchList" [userId]="userId" [content]="item" [type]="pageType" [sectionName]="contentCard" (click)=navigateToDetailPage(item)></app-view-all-card>
         </div>
       </div>
     </ng-container>
@@ -136,8 +134,7 @@
   <div class="backdrop-container">
     <span *ngIf="downloadPercentage !== 100">
       <ion-label>{{ 'LOADING_CONTENT' | translate }} {{ downloadPercentage ? (downloadPercentage) : '0' }} %</ion-label>
-      <!-- migration-TODO -->
-      <!-- <pb-horizontal [progress]="downloadPercentage" isOnBoardCard="false"></pb-horizontal> -->
+      <app-pb-horizontal [progress]="downloadPercentage" isOnBoardCard="false"></app-pb-horizontal>
     </span>
     <ion-label *ngIf="downloadPercentage === 100">{{ 'LOADING_CONTENT' | translate }}</ion-label>
   </div>

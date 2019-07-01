@@ -1,4 +1,4 @@
-import { Component,EventEmitter } from '@angular/core';
+import { Component, EventEmitter } from '@angular/core';
 
 import { Platform } from '@ionic/angular';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
