@@ -1,0 +1,35 @@
+<div *ngIf="layoutName === 'textbook'">
+    <div class="sb-card" [ngClass]="{'offline': !content?.isAvailableLocally && !commonUtilService.networkInfo.isNetworkAvailable}">
+      <div class="img-container" *ngIf="!(!content?.isAvailableLocally && !commonUtilService.networkInfo.isNetworkAvailable)">
+        <img src="{{ content?.courseLogoUrl || content?.appIcon || defaultImg }}">
+      </div>
+      <div class="img-container" *ngIf="!content?.isAvailableLocally && !commonUtilService.networkInfo.isNetworkAvailable">
+          <img src="assets/imgs/ic_offline_white_sm.png">
+        </div>
+      <div class="sb-card-details">
+        <div class="title">{{content?.courseName || content?.name}} </div>
+        <div class="grade_ellipsis">
+          <span class="info class">{{content?.subject | csa}}</span>
+          <span *ngIf="content?.gradeLevel && content?.subject" class="separator-dot textbook-margin-4"></span>
+          <span class="info subject">{{content?.gradeLevel}}</span>
+        </div>
+        <!-- [ngClass]="{'active': grade?.selected, '': !grade?.selected}" -->
+      </div>
+    </div>
+  </div>
+  <div *ngIf="layoutName === search">
+    <div class="sb-card reverse">
+      <div class="img-container">
+        <img src="{{ content?.courseLogoUrl || content?.appIcon || defaultImg }}">
+      </div>
+      <div class="sb-card-details">
+        <div class="title">{{content?.courseName || content?.name}} </div>
+        <div class="grade_ellipsis">
+          <span class="info class">{{content?.subject | csa}}</span>
+          <span *ngIf="content?.gradeLevel && content?.subject" class="separator-dot textbook-margin-4"></span>
+          <span class="info subject">{{content?.gradeLevel}}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  

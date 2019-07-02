@@ -1,0 +1,26 @@
+<div class="sb-card" [ngClass]="{'offline': !content.isAvailableLocally && !commonUtilService.networkInfo.isNetworkAvailable}">
+    <div class="img-container">
+      <img *ngIf="!(!content.isAvailableLocally && !commonUtilService.networkInfo.isNetworkAvailable)" src="{{ content.contentData.courseLogoUrl || content.contentData.appIcon || defaultImg }}">
+      <img *ngIf="!content.isAvailableLocally && !commonUtilService.networkInfo.isNetworkAvailable" src="assets/imgs/ic_offline_white_sm.png"/>      
+    </div>
+    <div class="sb-card-details">
+      <div class="title">{{content.contentData.name}}</div>
+      <div class="info grade_ellipsis"><span class=" class">{{content.contentData.subject | csa}}</span><span  *ngIf="content?.contentData.gradeLevel && content?.contentData.subject" class="separator-dot"></span><span
+          class=" subject">{{content.contentData.gradeLevel}}</span>
+      </div>
+      <!-- <div class="sb-card-actions" *ngIf="sectionName === contentCard">
+        <button ion-button class="action-btn float-end delete" *ngIf="content.isAvailableLocally">
+          <ion-icon ios="ios-trash" md="md-trash" class="MR5"></ion-icon>
+          {{'DELETE' | translate}}
+        </button>
+        <button ion-button class="action-btn float-end " *ngIf="content.isUpdateAvailable && content.isAvailableLocally">
+          <ion-icon ios="ios-refresh-circle" md="md-refresh-circle" class="MR5"></ion-icon>
+          {{'UPDATE' | translate }}
+        </button>
+        <button ion-button class="action-btn float-end download" *ngIf="!content.isAvailableLocally">
+          <ion-icon ios="ios-refresh-circle" md="md-refresh-circle" class="MR5"></ion-icon>
+          {{'DOWNLOAD' | translate}}
+        </button>
+      </div> -->
+    </div>
+  </div>

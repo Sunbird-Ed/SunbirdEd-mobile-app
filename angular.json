@@ -36,9 +36,6 @@
             ],
             "styles": [
               {
-                "input": "src/theme/variables.scss"
-              },
-              {
                 "input": "src/global.scss"
               }
             ],
@@ -191,6 +188,9 @@
       "styleext": "scss"
     },
     "@ionic/angular-toolkit:page": {
+      "styleext": "scss"
+    },
+    "@schematics/angular:component": {
       "styleext": "scss"
     }
   }

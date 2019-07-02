@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
+import { AuthGuardService } from 'src/services/auth-guard.service';
 
 const routes: Routes = [
   {
@@ -30,19 +31,22 @@ const routes: Routes = [
   { path: 'user-and-groups', loadChildren: './user-and-groups/user-and-groups.module#UserAndGroupsPageModule' },
   {
     path: 'resources',
-    loadChildren: './resources/resources.module#ResourcesModule'
+    loadChildren: './resources/resources.module#ResourcesModule',
+    canLoad: [AuthGuardService]
   },
   {
-    path: 'view-more-activity',
-    loadChildren: './view-more-activity/view-more-activity.module#ViewMoreActivityModule'
+    path: 'view-more-activity', loadChildren: './view-more-activity/view-more-activity.module#ViewMoreActivityModule'
   },
-  { path: 'tabs', loadChildren: './tabs/tabs.module#TabsPageModule' }
+  { path: 'tabs', loadChildren: './tabs/tabs.module#TabsPageModule' },
+  // migration-TODO to be deleted
+  { path: 'download-manager', loadChildren: './download-manager/download-manager.module#DownloadManagerPageModule' }
 ];
 
 @NgModule({
   imports: [
     RouterModule.forRoot(routes, { preloadingStrategy: PreloadAllModules })
   ],
-  exports: [RouterModule]
+  exports: [RouterModule],
+  providers: [ AuthGuardService ],
 })
 export class AppRoutingModule { }

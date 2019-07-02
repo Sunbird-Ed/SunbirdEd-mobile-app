@@ -18,7 +18,7 @@ import {AppGlobalService} from '../../services/app-global-service.service';
 // import { ActiveDownloadsPage } from '@app/pages/active-downloads/active-downloads';
 
 import * as _ from 'lodash';
-// import { ViewMoreActivityPage } from '../view-more-activity/view-more-activity';
+import { ViewMoreActivityComponent } from '../view-more-activity/view-more-activity.component';
 import { SunbirdQRScanner } from '../../services/sunbirdqrscanner.service';
 // import { SearchPage } from '../search/search';
 
@@ -490,7 +490,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
   /**
    * Get popular content
    */
-  getPopularContent(isAfterLanguageChange = false, contentSearchCriteria?: ContentSearchCriteria,avoidRefreshList = false) {
+  getPopularContent(isAfterLanguageChange = false, contentSearchCriteria?: ContentSearchCriteria, avoidRefreshList = false) {
     // if (this.isOnBoardingCardCompleted || !this.guestUser) {
     this.storyAndWorksheets = [];
     this.searchApiLoader = true;
