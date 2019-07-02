@@ -25,6 +25,11 @@ const routes: Routes = [
     loadChildren: './user-type-selection/user-type-selection.module#UserTypeSelectionPageModule'
   },
   {
+    path: 'user-type-selection/:isChangeRoleRequest',
+    loadChildren: './user-type-selection/user-type-selection.module#UserTypeSelectionPageModule'
+  },
+  { path: 'user-and-groups', loadChildren: './user-and-groups/user-and-groups.module#UserAndGroupsPageModule' },
+  {
     path: 'resources',
     loadChildren: './resources/resources.module#ResourcesModule',
     canLoad: [AuthGuardService]
@@ -43,4 +48,4 @@ const routes: Routes = [
   exports: [RouterModule],
   providers: [ AuthGuardService ],
 })
-export class AppRoutingModule {}
+export class AppRoutingModule { }

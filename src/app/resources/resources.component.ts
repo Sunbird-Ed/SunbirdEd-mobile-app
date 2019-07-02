@@ -13,6 +13,7 @@ import {
 } from '../../app/app.constant';
 import { Map } from '../../app/telemetryutil';
 import {AppGlobalService} from '../../services/app-global-service.service';
+// import Driver from 'driver.js';
 
 // import { ActiveDownloadsPage } from '@app/pages/active-downloads/active-downloads';
 
@@ -737,6 +738,37 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
 
   ionViewDidEnter() {
     this.scrollToTop();
+    // this.preferences.getString('show_app_walkthrough_screen').toPromise()
+    //   .then(value => {
+    //     if (value === 'true') {
+    //       const driver = new Driver({
+    //         allowClose: true,
+    //         closeBtnText: this.commonUtilService.translateMessage('DONE'),
+    //         showButtons: true,
+    //       });
+
+    //       setTimeout(() => {
+    //         driver.highlight({
+    //           element: '#qrIcon',
+    //           popover: {
+    //             title: this.commonUtilService.translateMessage('ONBOARD_SCAN_QR_CODE'),
+    //             description: '<img src="assets/imgs/ic_scanqrdemo.png" /><p>' + this.commonUtilService
+    //               .translateMessage('ONBOARD_SCAN_QR_CODE_DESC', this.appLabel) + '</p>',
+    //             showButtons: true,         // Do not show control buttons in footer
+    //             closeBtnText: this.commonUtilService.translateMessage('DONE'),
+    //           }
+    //         });
+
+    //         const element = document.getElementById('driver-highlighted-element-stage');
+    //         const img = document.createElement('img');
+    //         img.src = 'assets/imgs/ic_scan.png';
+    //         img.id = 'qr_scanner';
+    //         element.appendChild(img);
+    //       }, 100);
+    //       this.telemetryGeneratorService.generatePageViewTelemetry(PageId.ONBOARDING_QR_SHOWCASE, Environment.ONBOARDING, PageId.LIBRARY);
+    //       this.preferences.putString('show_app_walkthrough_screen', 'false').toPromise().then();
+    //     }
+    //   });
   }
 
   ionViewWillEnter() {
