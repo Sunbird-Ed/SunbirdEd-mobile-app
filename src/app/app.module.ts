@@ -41,13 +41,13 @@ import {
   AndroidPermissionsService,
   ComingSoonMessageService,
   NotificationService,
-  SunbirdQRScanner
+  SunbirdQRScanner,
+  FormAndFrameworkUtilService
 } from '../services/index';
 
 
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
-import { LanguageSettingsPageModule } from './language-settings/language-settings.module';
 import { UserTypeSelectionPageModule } from './user-type-selection/user-type-selection.module';
 import { ComponentsModule } from './components/components.module';
 
@@ -327,7 +327,6 @@ declare const buildconfigreader;
     DirectivesModule,
 
     // custom modules
-    LanguageSettingsPageModule,
     UserTypeSelectionPageModule
   ],
   providers: [
@@ -357,6 +356,7 @@ declare const buildconfigreader;
     AndroidPermissionsService,
     ComingSoonMessageService,
     NotificationService,
+    FormAndFrameworkUtilService,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     ...sunbirdSdkServicesProvidersFactory(),
     // { provide: ErrorHandler},

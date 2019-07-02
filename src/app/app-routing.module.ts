@@ -17,10 +17,6 @@ const routes: Routes = [
     loadChildren: './list/list.module#ListPageModule'
   },
   {
-    path: 'language-settings/:isFromSettings',
-    loadChildren: './language-settings/language-settings.module#LanguageSettingsPageModule'
-  },
-  {
     path: 'user-type-selection/:isChangeRoleRequest',
     loadChildren: './user-type-selection/user-type-selection.module#UserTypeSelectionPageModule'
   },
@@ -38,7 +34,8 @@ const routes: Routes = [
     path: 'view-more-activity',
     loadChildren: './view-more-activity/view-more-activity.module#ViewMoreActivityModule'
   },
-  { path: 'tabs', loadChildren: './tabs/tabs.module#TabsPageModule' }
+  { path: 'tabs', loadChildren: './tabs/tabs.module#TabsPageModule' },
+  { path: 'settings', loadChildren: './settings/settings.module#SettingsPageModule' }
 ];
 
 @NgModule({

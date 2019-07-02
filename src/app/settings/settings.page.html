@@ -1,0 +1,35 @@
+<ion-content>
+  <ion-list mode="ios">
+    <!-- <ion-item (click)="goToLanguageSetting()" detail-push mode="ios">
+      <h2>{{ 'CHANGE_LANGUAGE' | translate }}</h2>
+      <p class="settings-item-style">{{ selectedLanguage }}</p>
+    </ion-item> -->
+
+    <ion-item (click)="dataSync()" detail-push mode="ios">
+      <ion-label>
+        <h2>{{ 'DATA_SYNC' | translate }}</h2>
+        <p class="settings-item-style">{{ 'DATA_SYNC_SUB' | translate }}</p>
+      </ion-label>
+    </ion-item>
+
+    <ion-item (click)="showPermissionPage()" detail-push mode="ios">
+      <ion-label>
+        <h2>{{'PERMISSION' | translate}}</h2>
+      </ion-label>
+    </ion-item>
+
+    <ion-item (click)="shareApp()" detail-push mode="ios">
+      <ion-label>
+        <h2>{{ shareAppLabel }}</h2>
+      </ion-label>
+    </ion-item>
+
+    <ion-item (click)="aboutUs()" detail-push mode="ios">
+      <ion-label>
+        <h2>{{ 'ABOUT_US' | translate }}</h2>
+      </ion-label>
+    </ion-item>
+
+  </ion-list>
+
+</ion-content>

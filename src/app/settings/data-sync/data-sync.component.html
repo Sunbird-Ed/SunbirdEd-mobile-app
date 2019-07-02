@@ -1,0 +1,36 @@
+<ion-content padding>
+
+  <div class="label">
+    {{ 'AUTOMATIC_SYNC' | translate }}
+  </div>
+
+  <ion-list radio-group no-lines [(ngModel)]="dataSyncType" (ionChange)="onSelected()">
+    <ion-item>
+      <ion-label>
+        <ion-radio [value]="OPTIONS.off" item-left></ion-radio>
+        <ion-label>{{ 'OFF' | translate }}</ion-label>
+      </ion-label>
+    </ion-item>
+
+    <ion-item>
+      <ion-label>
+        <ion-radio [value]="OPTIONS.over_wifi" item-left></ion-radio>
+        <ion-label>{{ 'OVER_WIFI' | translate }}</ion-label>
+      </ion-label>
+    </ion-item>
+
+    <ion-item>
+      <ion-label>
+        <ion-radio [value]="OPTIONS.always_on" item-left></ion-radio>
+        <ion-label>{{ 'ALWAYS_ON' | translate }}</ion-label>
+      </ion-label>
+    </ion-item>
+  </ion-list>
+
+  <ion-label>{{ latestSync | translate}}</ion-label>
+
+  <button ion-button block (click)="onSyncClick()">{{ 'SYNC_NOW' | translate }}</button>
+  <hr>
+  <button ion-button (click)="shareTelemetry()" no-padding clear>{{ 'SHARE_TELEMETRY' | translate }}</button>
+
+</ion-content>
