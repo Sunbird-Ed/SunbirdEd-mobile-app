@@ -24,6 +24,11 @@ const routes: Routes = [
     loadChildren: './user-type-selection/user-type-selection.module#UserTypeSelectionPageModule'
   },
   {
+    path: 'user-type-selection/:isChangeRoleRequest',
+    loadChildren: './user-type-selection/user-type-selection.module#UserTypeSelectionPageModule'
+  },
+  { path: 'user-and-groups', loadChildren: './user-and-groups/user-and-groups.module#UserAndGroupsPageModule' },
+  {
     path: 'resources',
     loadChildren: './resources/resources.module#ResourcesModule'
   },
@@ -40,4 +45,4 @@ const routes: Routes = [
   ],
   exports: [RouterModule]
 })
-export class AppRoutingModule {}
+export class AppRoutingModule { }
