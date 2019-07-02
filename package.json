@@ -77,7 +77,6 @@
     "cordova-plugin-zip": "^3.1.0",
     "cordova-zip-plugin": "git+https://github.com/swayangjit/jjdltc-cordova-plugin-zip.git",
     "core-js": "^2.5.4",
-    "driver.js": "^0.9.7",
     "es6-promise-plugin": "^4.2.2",
     "ionic-image-loader": "^7.0.0-beta.2",
     "ionic-plugin-keyboard": "2.2.1",
