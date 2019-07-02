@@ -1,0 +1,30 @@
+.sb-card-active{
+    // background: $light-blue-bg !important;
+}
+.sb-dw-manager{
+    .selector{
+        // color: $primary-600;
+        // font-size: $font-size-md;
+    }
+}
+
+.download-checkbox-label{
+    width: 100%;
+    height: 100%;
+    margin: 0;
+}
+.download-checkbox{
+    display: flex;
+    width: 100%;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+
+    .item-cover {
+        position: absolute;
+        top:0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+    }
+}
