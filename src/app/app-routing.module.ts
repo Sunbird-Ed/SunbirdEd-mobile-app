@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
+import { AuthGuardService } from 'src/services/auth-guard.service';
 
 const routes: Routes = [
   {
@@ -25,7 +26,8 @@ const routes: Routes = [
   },
   {
     path: 'resources',
-    loadChildren: './resources/resources.module#ResourcesModule'
+    loadChildren: './resources/resources.module#ResourcesModule',
+    canLoad: [AuthGuardService]
   },
   {
     path: 'view-more-activity',
@@ -38,6 +40,7 @@ const routes: Routes = [
   imports: [
     RouterModule.forRoot(routes, { preloadingStrategy: PreloadAllModules })
   ],
-  exports: [RouterModule]
+  exports: [RouterModule],
+  providers: [ AuthGuardService ],
 })
 export class AppRoutingModule {}
