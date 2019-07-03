@@ -1,12 +1,12 @@
-import { Component, OnInit , Inject, NgZone } from '@angular/core';
+import { Component, OnInit, Inject, NgZone } from '@angular/core';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { AppGlobalService, AppHeaderService, CommonUtilService, TelemetryGeneratorService } from '../../services/index';
 import { AppStorageInfo, DownloadManagerPageInterface, EmitedContents } from './download-manager.interface';
 import { AudienceFilter, ContentType } from './../../app/app.constant';
 // import { ViewController } from 'ionic-angular/navigation/view-controller';
 // import { Component, Inject, NgZone OnInit } from '@angular/core';
-import {  IonicPage, Loading, NavController, NavParams, Popover, PopoverController } from 'ionic-angular';
-import {Events} from '@ionic/angular';
+import { IonicPage, Loading, NavController, NavParams, Popover, PopoverController } from 'ionic-angular';
+import { Events } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import {
   Content,
@@ -32,14 +32,14 @@ import { PageId, InteractType, Environment, InteractSubtype } from '../../servic
   templateUrl: './download-manager.page.html',
   styleUrls: ['./download-manager.page.scss'],
 })
-export class DownloadManagerPage implements DownloadManagerPageInterface,  OnInit {
+export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit {
 
   headerObservable: any;
 
   storageInfo: AppStorageInfo;
   downloadedContents: Content[] = [];
   defaultImg = 'assets/imgs/ic_launcher.png';
-  loader?: Loading;
+  loader?: any;
   deleteAllConfirm: Popover;
   appName: string;
   sortCriteria: ContentSortCriteria[];
@@ -66,7 +66,7 @@ export class DownloadManagerPage implements DownloadManagerPageInterface,  OnIni
     return Promise.all(
       [this.getDownloadedContents(true),
       this.getAppName()]
-      );
+    );
   }
 
   ionViewWillEnter() {
@@ -88,13 +88,13 @@ export class DownloadManagerPage implements DownloadManagerPageInterface,  OnIni
         this.appName = appName;
       });
   }
- 
+
   private async getAppStorageInfo(): Promise<AppStorageInfo> {
 
     const req: ContentSpaceUsageSummaryRequest = { paths: [cordova['file']['externalDataDirectory']] };
     return this.contentService.getContentSpaceUsageSummary(req).toPromise()
       .then((res: ContentSpaceUsageSummaryResponse[]) => {
-       return  this.deviceInfo.getAvailableInternalMemorySize().toPromise()
+        return  this.deviceInfo.getAvailableInternalMemorySize().toPromise()
           .then((size) => {
             this.storageInfo = {
               usedSpace: res[0].sizeOnDevice,
@@ -108,12 +108,11 @@ export class DownloadManagerPage implements DownloadManagerPageInterface,  OnIni
 
   async getDownloadedContents(shouldGenerateTelemetry?) {
     const profile: Profile = await this.appGlobalService.getCurrentUser();
-    //  migration-TODO
-    // this.loader = this.commonUtilService.getLoader();
-    // this.loader.present();
-    // this.loader.onDidDismiss(() => {
-    //   this.loader = undefined;
-    // });
+    this.loader = await this.commonUtilService.getLoader();
+    await this.loader.present();
+    await this.loader.onDidDismiss(() => {
+      this.loader = undefined;
+    });
     const defaultSortCriteria: ContentSortCriteria[] = [{
       sortAttribute: 'sizeOnDevice',
       sortOrder: SortOrder.DESC
@@ -146,16 +145,14 @@ export class DownloadManagerPage implements DownloadManagerPageInterface,  OnIni
             }
           }
         });
-        this.ngZone.run(() => {
+        this.ngZone.run(async () => {
           this.downloadedContents = data;
-          //  migration-TODO
-          // this.loader.dismiss();
+          await this.loader.dismiss();
         });
       })
       .catch((e) => {
-        this.ngZone.run(() => {
-           //  migration-TODO
-          // this.loader.dismiss();
+        this.ngZone.run(async () => {
+          await this.loader.dismiss();
         });
       });
   }
@@ -168,25 +165,23 @@ export class DownloadManagerPage implements DownloadManagerPageInterface,  OnIni
     this.telemetryGeneratorService.generateExtraInfoTelemetry(valuesMap, PageId.DOWNLOADS);
   }
 
-  deleteContents(emitedContents: EmitedContents) {
+  async deleteContents(emitedContents: EmitedContents) {
     const contentDeleteRequest: ContentDeleteRequest = {
       contentDeleteList: emitedContents.selectedContents
     };
     if (emitedContents.selectedContents.length > 1) {
       this.deleteAllContents(emitedContents);
     } else {
-      //  migration-TODO
-      // this.loader = this.commonUtilService.getLoader();
-      // this.loader.present();
-      // this.loader.onDidDismiss(() => {
-      //   this.loader = undefined;
-      // });
+      this.loader = await this.commonUtilService.getLoader();
+      await this.loader.present();
+      await this.loader.onDidDismiss(() => {
+        this.loader = undefined;
+      });
 
       this.contentService.deleteContent(contentDeleteRequest).toPromise()
-        .then((data: ContentDeleteResponse[]) => {
-           //  migration-TODO
-          // this.loader.dismiss();
-          // this.getDownloadedContents();
+        .then(async (data: ContentDeleteResponse[]) => {
+          await this.loader.dismiss();
+          this.getDownloadedContents();
           if (data && data[0].status === ContentDeleteStatus.NOT_FOUND) {
             this.commonUtilService.showToast(this.commonUtilService.translateMessage('CONTENT_DELETE_FAILED'));
           } else {
@@ -196,9 +191,8 @@ export class DownloadManagerPage implements DownloadManagerPageInterface,  OnIni
             this.commonUtilService.showToast(this.commonUtilService.translateMessage('MSG_RESOURCE_DELETED'));
             // this.getAppStorageInfo();
           }
-        }).catch((error: any) => {
-           //  migration-TODO
-          // this.loader.dismiss();
+        }).catch(async (error: any) => {
+          await this.loader.dismiss();
           this.commonUtilService.showToast(this.commonUtilService.translateMessage('CONTENT_DELETE_FAILED'));
         });
     }
@@ -317,7 +311,7 @@ export class DownloadManagerPage implements DownloadManagerPageInterface,  OnIni
       InteractSubtype.ACTIVE_DOWNLOADS_CLICKED,
       Environment.DOWNLOADS,
       PageId.DOWNLOADS);
-     // migration-TODO 
+    // migration-TODO 
     // this.navCtrl.push(ActiveDownloadsPage);
   }
 
