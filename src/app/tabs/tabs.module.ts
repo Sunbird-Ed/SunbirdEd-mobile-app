@@ -6,11 +6,28 @@ import { Routes, RouterModule } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 
 import { TabsPage } from './tabs.page';
+import { TranslateModule } from '@ngx-translate/core';
 
 const routes: Routes = [
   {
     path: '',
-    component: TabsPage
+    component: TabsPage,
+    children: [
+      {
+        path: 'resources',
+        children: [
+          {
+            path: '',
+            loadChildren: '../resources/resources.module#ResourcesModule'
+          }
+        ]
+      },
+      {
+        path: '',
+        redirectTo: 'resources',
+        pathMatch: 'full'
+      }
+    ]
   }
 ];
 
@@ -19,7 +36,8 @@ const routes: Routes = [
     CommonModule,
     FormsModule,
     IonicModule,
-    RouterModule.forChild(routes)
+    RouterModule.forChild(routes),
+    TranslateModule.forChild()
   ],
   declarations: [TabsPage]
 })
