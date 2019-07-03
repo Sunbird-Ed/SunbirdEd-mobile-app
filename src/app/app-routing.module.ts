@@ -35,10 +35,11 @@ const routes: Routes = [
     canLoad: [AuthGuardService]
   },
   {
-    path: 'view-more-activity',
-    loadChildren: './view-more-activity/view-more-activity.module#ViewMoreActivityModule'
+    path: 'view-more-activity', loadChildren: './view-more-activity/view-more-activity.module#ViewMoreActivityModule'
   },
-  { path: 'tabs', loadChildren: './tabs/tabs.module#TabsPageModule' }
+  { path: 'tabs', loadChildren: './tabs/tabs.module#TabsPageModule' },
+  // migration-TODO to be deleted
+  { path: 'download-manager', loadChildren: './download-manager/download-manager.module#DownloadManagerPageModule' }
 ];
 
 @NgModule({

@@ -50,6 +50,8 @@ import { AppRoutingModule } from './app-routing.module';
 import { LanguageSettingsPageModule } from './language-settings/language-settings.module';
 import { UserTypeSelectionPageModule } from './user-type-selection/user-type-selection.module';
 import { ComponentsModule } from './components/components.module';
+import { UserAndGroupsRoutingModule } from './user-and-groups/user-and-groups-routing.module';
+import { UserAndGroupsPageModule } from './user-and-groups/user-and-groups.module';
 
 
 
@@ -307,6 +309,7 @@ declare const buildconfigreader;
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
+    UserAndGroupsRoutingModule,
     AppRoutingModule,
     ComponentsModule,
     IonicImageLoader.forRoot(),
@@ -328,7 +331,8 @@ declare const buildconfigreader;
 
     // custom modules
     LanguageSettingsPageModule,
-    UserTypeSelectionPageModule
+    UserTypeSelectionPageModule,
+    UserAndGroupsPageModule
   ],
   providers: [
     StatusBar,
