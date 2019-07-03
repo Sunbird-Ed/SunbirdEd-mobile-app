@@ -1,3 +1,5 @@
+import { ContainerService } from 'src/services';
+import { TabOptions } from 'src/services/container.services';
 
 
 // const HOME_TAB = { root: HomePage, icon: "home", label: "HOME_BNAV", index: 0, tabsHideOnSubPages: true };
@@ -154,3 +156,16 @@ export const GUEST_STUDENT_SWITCH_TABS = [
     StorageSettingsPageModule
 ];
  */
+
+
+
+export const initTabs = (container: ContainerService, tabs: Array<TabOptions>) => {
+    container.removeAllTabs();
+
+    /* istanbul ignore else  */
+    if (tabs && tabs.length > 0) {
+        tabs.forEach(tabOptions => {
+            container.addTab(tabOptions);
+        });
+    }
+};

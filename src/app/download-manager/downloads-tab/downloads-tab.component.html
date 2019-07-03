@@ -1,0 +1,55 @@
+<!-- <div class="sb-view-all-container"> -->
+    <!-- <div class="sb-view-all-items">
+        <div class="sb-view-all-title flex-grow-1">
+          <div class="page-heading">Downloads</div>
+          <div class="page-info o-hide" >
+            <div class="pull-left">Space Taken By DIKSHA: 274 MB</div>
+            <div class="pull-right">Available:24GB</div>
+          </div>
+        </div>
+    </div> -->
+    <div class="sb-dw-manager o-hide p-8">
+      <div class="pull-left">  
+        <span class="selector" *ngIf="showSelectAll" (click)="selectAllContents()">{{'SELECT_ALL' | translate}}</span>
+        <span class="selector" *ngIf="!showSelectAll" (click)="unSelectAllContents()">{{'UNSELECT_ALL' | translate}}</span>
+      </div>
+      <div class="pull-right" (click)="showSortOptions($event)">
+        <span class="selector">{{selectedFilter | translate}}</span>
+        <span><img src="./assets/imgs/sort.png" alt=""></span>
+        <ion-icon name="ios-arrow-down" class="selector"></ion-icon>
+      </div>
+    </div>
+    <div class="sb-card-container sb-card-download-container" [ngClass]="{'extra-margin':!showDeleteButton}">
+      <div class="sb-card" *ngFor="let content of downloadedContents; let i = index;" [ngClass]="{'sb-card-active': content.isSelected}">
+        <div class="check-container">
+          <!-- <input type="checkbox" (change)="toggleContentSelect($event, i)" [checked]="content.isSelected" > -->
+          <ion-label class="download-checkbox-label">
+          <ion-checkbox  (ionChange)="toggleContentSelect($event, i)" [checked]="content.isSelected" class="download-checkbox">
+
+          </ion-checkbox>
+        </ion-label>
+          </div>
+          <div class="img-container">
+            <img src="{{ content?.contentData?.courseLogoUrl || content?.contentData?.appIcon || defaultImg }}"/>
+        </div>
+        <div class="sb-card-details">
+          <div (click)="!content.isSelected && navigateToDetailsPage(content)">
+            <div class="title">{{content.contentData?.name}}</div>
+            <div class="info grade_ellipsis">
+              <span class=" class">{{content.contentData?.subject}}</span>
+              <span class="separator-dot"></span>
+              <span class=" subject">{{content.contentData?.gradeLevel | csa}}</span>
+            </div>
+            <div class="info"> {{ content.sizeOnDevice | fileSize }}</div>
+          </div>
+          <div class="sb-card-actions">
+            <button *ngIf="showDeleteButton" ion-button class="action-btn float-end delete mr-8" (click)="showDeletePopup(content.identifier)">
+              <!-- <ion-icon ios="ios-trash" md="md-trash" class="MR5"></ion-icon> -->
+              {{'DELETE' | translate}}
+            </button>
+          </div>
+        </div>
+      </div>
+        
+    </div>
+  <!-- </div> -->
