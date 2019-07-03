@@ -5,7 +5,7 @@ import { AppStorageInfo, DownloadManagerPageInterface, EmitedContents } from './
 import { AudienceFilter, ContentType } from './../../app/app.constant';
 // import { ViewController } from 'ionic-angular/navigation/view-controller';
 // import { Component, Inject, NgZone OnInit } from '@angular/core';
-import {  IonicPage, Loading, NavController, NavParams, Popover, PopoverController } from 'ionic-angular';
+// import {  IonicPage, Loading, NavController, NavParams, Popover, PopoverController } from '@ionic/angular';
 import {Events} from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import {
@@ -39,8 +39,8 @@ export class DownloadManagerPage implements DownloadManagerPageInterface,  OnIni
   storageInfo: AppStorageInfo;
   downloadedContents: Content[] = [];
   defaultImg = 'assets/imgs/ic_launcher.png';
-  loader?: Loading;
-  deleteAllConfirm: Popover;
+  // loader?: Loading;
+  // deleteAllConfirm: Popover;
   appName: string;
   sortCriteria: ContentSortCriteria[];
 
@@ -231,7 +231,7 @@ export class DownloadManagerPage implements DownloadManagerPageInterface,  OnIni
     // }, {
     //     cssClass: 'sb-popover danger sb-popover-cancel-delete',
     //   });
-    this.deleteAllConfirm.present();
+/*     this.deleteAllConfirm.present();
     this.deleteAllConfirm.onDidDismiss((cancel: any) => {
       if (cancel) {
         this.contentService.clearContentDeleteQueue().toPromise();
@@ -248,7 +248,7 @@ export class DownloadManagerPage implements DownloadManagerPageInterface,  OnIni
         });
 
         this.deleteAllConfirm.dismiss();
-
+ 
         // this.getAppStorageInfo();
 
         this.events.publish('savedResources:update', {
@@ -263,6 +263,7 @@ export class DownloadManagerPage implements DownloadManagerPageInterface,  OnIni
           }
         });
       });
+      */
   }
 
 
