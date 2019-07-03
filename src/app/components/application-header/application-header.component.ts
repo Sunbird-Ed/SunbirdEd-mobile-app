@@ -2,11 +2,11 @@ import { ChangeDetectorRef, Component, EventEmitter, Inject, Input, OnInit, Outp
 import { Events, MenuController, Platform } from '@ionic/angular';
 import { AppGlobalService, UtilityService, CommonUtilService, NotificationService } from '../../../services';
 import { DownloadService, SharedPreferences } from 'sunbird-sdk';
-import { GenericAppConfig, PreferenceKey } from '../../../app/app.constant';
+import { GenericAppConfig, PreferenceKey, RouterLinks } from '../../../app/app.constant';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { Subscription } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
-import { NavigationExtras, Router } from '@angular/router';
+import { NavigationExtras, Router, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-application-header',
@@ -92,6 +92,10 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
   }
   goToStorageSettings() {
    this.router.navigateByUrl('/storage-settings');
+  }
+
+  gotoTabs() {
+    this.router.navigateByUrl(RouterLinks.TABS);
   }
 
   setAppVersion(): any {

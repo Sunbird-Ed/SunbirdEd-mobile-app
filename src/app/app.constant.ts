@@ -329,3 +329,7 @@ export class ContentConstants {
     public static readonly COMING_SOON_MSG = 'comingSoonMsg';
 }
 
+export class RouterLinks {
+    public static readonly HOME = 'home';
+    public static readonly TABS = 'tabs';
+}

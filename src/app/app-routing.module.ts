@@ -35,8 +35,7 @@ const routes: Routes = [
     canLoad: [AuthGuardService]
   },
   {
-    path: 'view-more-activity',
-    loadChildren: './view-more-activity/view-more-activity.module#ViewMoreActivityModule'
+    path: 'view-more-activity', loadChildren: './view-more-activity/view-more-activity.module#ViewMoreActivityModule'
   },
   { path: 'tabs', loadChildren: './tabs/tabs.module#TabsPageModule' },
   // migration-TODO to be deleted
