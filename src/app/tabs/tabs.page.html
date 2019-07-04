@@ -6,9 +6,14 @@
 -->
 <ion-content>
     <ion-tabs (ionChange)="ionChange($event)" #myTabs>
-        <ion-tab hide-tab-footer *ngFor="let tab of tabs; let i = index;" [ngClass]="{'disabled': tab.disabled}"
+        <!--<ion-tab hide-tab-footer *ngFor="let tab of tabs; let i = index;" [ngClass]="{'disabled': tab.disabled}"
           [root]="tab.root" tabTitle="{{tab.label | translate}}" [tabIcon]="tab.icon"
           [tabsHideOnSubPages]="tab.tabsHideOnSubPages" [enabled]="!tab.disabled" (ionSelect)="customClick(tab,i)"></ion-tab>
+        <div class="shadow"></div>-->
+        <ion-tab-button tab="resources" *ngFor="let tab of tabs; let i = index;" [disabled]="tab.disabled" [ngClass]="{'disabled': tab.disabled}">
+          <ion-icon name="{{tab.icon}}"></ion-icon>
+          <ion-label>{{tab.label | translate}}</ion-label>
+        </ion-tab-button>
         <div class="shadow"></div>
       </ion-tabs>
 

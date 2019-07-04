@@ -1,9 +1,66 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>group-members</ion-title>
+    <ion-title>
+      {{'ADD_USERS_TO_GROUP' | translate:{'%s': ""} }}
+    </ion-title>
+    <ion-buttons slot="primary">
+      <ion-button icon-only (click)="goTOGuestEdit()">
+        <ion-icon name="add" float-end></ion-icon>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
-
-<ion-content>
+<ion-content padding>
+  <div *ngIf="userList?.length">
+    <ion-row>
+      <ion-col class="rm-padding-left" size-md="4">
+        <ion-text>
+          <p *ngIf="userList.length" text-left color="title" text-uppercase>
+            <strong>{{userList?.length}}&nbsp;{{'USERS' | translate}}</strong>
+          </p>
+        </ion-text>
+      </ion-col>
+      <ion-col size-md="4" push-md="4" class="rm-padding-right">
+        <ion-button class="rm-padding-right" float-end fill="clear" (click)="selectAll()">{{'SELECT_ALL' | translate}}
+        </ion-button>
+      </ion-col>
+    </ion-row>
+  </div>
+  <div *ngIf="!userList?.length && !loading">
+    <div text-center>
+      <img class="rounded image-style" src="assets/imgs/ic_businessman.png" />
+      <h6>
+        <strong>{{'NO_USERS_ON_THIS_DEVICE' | translate}}</strong>
+      </h6>
+      <ion-text>
+        <p>{{'NO_USERS_SUGGESTION_MESSAGE' | translate}}</p>
+      </ion-text>
+      <ion-text>
+        <h6 color="primary">{{'CREATE_USER' | translate}}</h6>
+      </ion-text>
+    </div>
+  </div>
+  <div *ngIf="userList?.length">
+    <ion-item *ngFor="let user of userList; let i = index;" class="item-background" margin-bottom no-lines>
+      <ion-label (click)="toggleSelect(i)">
+        <h6 class="line-height-2">
+          <strong>{{user?.handle}}</strong>
+        </h6>
+        <p>
+          <span *ngIf="user?.profileType === ProfileType.TEACHER">{{'USER_TYPE_1' | translate | titlecase}}</span>
+          <span *ngIf="user?.profileType === ProfileType.STUDENT">{{'USER_TYPE_2' | translate | titlecase}}</span>
+          <span *ngIf="user?.grade?.length">•</span> {{ getGradeNameFromCode(user) }}</p>
+      </ion-label>
+      <ion-checkbox item-end mode="ios" checked="{{isUserSelected(i)}}" (click)="toggleSelect(i)"></ion-checkbox>
+    </ion-item>
+  </div>
 
 </ion-content>
+<ion-footer>
+  <ion-row padding>
+    <ion-col size-md="10" offset-md="1">
+      <ion-button expand="block" (click)="createGroup()" [disabled]="!userList?.length">{{'CREATE_GROUP' | translate }}
+      </ion-button>
+    </ion-col>
+  </ion-row>
+</ion-footer>

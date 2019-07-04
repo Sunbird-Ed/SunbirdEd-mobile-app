@@ -1,13 +1,12 @@
 import {Component, Inject, NgZone, ViewChild, OnInit} from '@angular/core';
-import {Events, NavController, NavParams} from '@ionic/angular';
+import {Events, NavController} from '@ionic/angular';
 import {TranslateService} from '@ngx-translate/core';
-import { Router, ActivatedRoute, ParamMap } from '@angular/router';
+import { Router, ActivatedRoute, ParamMap, NavigationExtras } from '@angular/router';
 // import {GUEST_STUDENT_TABS, GUEST_TEACHER_TABS, initTabs, Map, PreferenceKey} from '../app.constant';
 // migration-TODO
 import {PreferenceKey} from '../app.constant';
 import {AppGlobalService, CommonUtilService, TelemetryGeneratorService, AppHeaderService, SunbirdQRScanner} from '../../services/index';
 // import {SunbirdQRScanner} from '@app/pages/qrscanner';
-// import {ProfileSettingsPage} from '@app/pages/profile-settings/profile-settings';
 // import {LanguageSettingsPage} from '@app/pages/language-settings/language-settings';
 import {Profile, ProfileService, ProfileSource, ProfileType, SharedPreferences, } from 'sunbird-sdk';
 import {
@@ -46,11 +45,11 @@ export class UserTypeSelectionPage implements OnInit {
   studentImageUri = 'assets/imgs/ic_student.png';
   teacherImageUri = 'assets/imgs/ic_teacher.png';
   isChangeRoleRequest = false;
+  private navParams: any;
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     public navCtrl: NavController,
-    // public navParams: NavParams,
     private translate: TranslateService,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private container: ContainerService,
@@ -62,12 +61,12 @@ export class UserTypeSelectionPage implements OnInit {
     // private platform: Platform,
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
     private headerService: AppHeaderService,
-    private route: ActivatedRoute,
+    private activatedRoute: ActivatedRoute,
     private router: Router,
   ) { }
 
   ngOnInit(): void {
-    this.route.params.subscribe(params => {
+    this.activatedRoute.params.subscribe(params => {
       this.isChangeRoleRequest = Boolean( params['isChangeRoleRequest'] );
       console.log('inside route paramas ', this.isChangeRoleRequest, typeof(this.isChangeRoleRequest));
     });
@@ -84,7 +83,6 @@ export class UserTypeSelectionPage implements OnInit {
         this.scannerService.startScanner(PageId.USER_TYPE_SELECTION, true);
       }
     });
-    
   }
 
   ionViewWillEnter() {
@@ -154,13 +152,17 @@ export class UserTypeSelectionPage implements OnInit {
     this.generateInteractEvent(this.selectedUserType);
     // When user is changing the role via the Guest Profile screen
     if (this.profile !== undefined && this.profile.handle) {
+      console.log('if1');
       // if role types are same
       if (this.profile.profileType === this.selectedUserType) {
-        this.gotoTabsPage();
+      console.log('if2');
+      this.gotoTabsPage();
       } else {
-        this.gotoTabsPage(true);
+      console.log('else2');
+      this.gotoTabsPage(true);
       }
     } else {
+      console.log('else1');
       const profileRequest: Profile = {
         uid: this.profile.uid,
         handle: 'Guest1',
@@ -208,8 +210,12 @@ export class UserTypeSelectionPage implements OnInit {
       // initTabs(this.container, GUEST_STUDENT_TABS);
     }
     if (this.isChangeRoleRequest && isUserTypeChanged) {
+      console.log('if3');
       if (this.appGlobalService.DISPLAY_ONBOARDING_CATEGORY_PAGE) {
-        this.container.removeAllTabs();
+      this.container.removeAllTabs();
+      console.log('if10');
+      const navigationExtras: NavigationExtras = {state: { isChangeRoleRequest: true, selectedUserType: this.selectedUserType }};
+        this.router.navigate(['profile/profile-settings'], navigationExtras);
         // this.navCtrl.push(ProfileSettingsPage, { isChangeRoleRequest: true, selectedUserType: this.selectedUserType });
       } else {
         this.profile.profileType = this.selectedUserType;
@@ -223,10 +229,14 @@ export class UserTypeSelectionPage implements OnInit {
         // this.navCtrl.setRoot(TabsPage);
       }
     } else if (this.appGlobalService.isProfileSettingsCompleted) {
+      console.log('elseif3');
       // this.navCtrl.push(TabsPage, {
       //   loginMode: 'guest'
       // });
-    } else if (this.appGlobalService.DISPLAY_ONBOARDING_SCAN_PAGE) {
+    }
+    /* migration TODO
+    else if (this.appGlobalService.DISPLAY_ONBOARDING_SCAN_PAGE) {
+      console.log('elseif4');
       // Need to go tabspage when scan page is ON, changeRoleRequest ON and profileSetting is OFF
       if (this.isChangeRoleRequest) {
         // this.navCtrl.push(TabsPage, {
@@ -245,19 +255,24 @@ export class UserTypeSelectionPage implements OnInit {
           // this.scannerService.startScanner(PageId.USER_TYPE_SELECTION, true);
         }
       }
-    } else if (this.appGlobalService.DISPLAY_ONBOARDING_CATEGORY_PAGE) {
+    }*/
+    else if (this.appGlobalService.DISPLAY_ONBOARDING_CATEGORY_PAGE) {
+      console.log('elseif5');
       if (isUserTypeChanged) {
         this.profile.profileType = this.selectedUserType;
         this.profileService.updateProfile(this.profile).toPromise()
           .then((res: any) => {
             // this.navCtrl.push(ProfileSettingsPage);
+            this.router.navigate(['profile/profile-settings']);
           }).catch(error => {
             console.error('Error=');
           });
       } else {
         // this.navCtrl.push(ProfileSettingsPage);
+        this.router.navigate(['profile/profile-settings']);
       }
     } else {
+      console.log('elseif6');
       this.profile.profileType = this.selectedUserType;
       this.profileService.updateProfile(this.profile).toPromise()
         .then(() => {

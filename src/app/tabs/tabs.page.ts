@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, ViewChild, ViewEncapsulation } from '@angular/core';
 
 import { IonTabs, Events, ToastController } from '@ionic/angular';
 import { TelemetryGeneratorService, ContainerService,AppGlobalService } from '../../services';
@@ -7,6 +7,7 @@ import { TelemetryGeneratorService, ContainerService,AppGlobalService } from '..
   selector: 'app-tabs',
   templateUrl: './tabs.page.html',
   styleUrls: ['./tabs.page.scss'],
+  encapsulation: ViewEncapsulation.None
 })
 export class TabsPage {
 
@@ -36,7 +37,7 @@ export class TabsPage {
 
   ionViewWillEnter() {
     this.tabs = this.container.getAllTabs();
-
+    alert(this.tabs.length);
     let tabIndex;
 
     this.tabs.forEach((tab, index) => {

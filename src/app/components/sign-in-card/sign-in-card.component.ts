@@ -88,7 +88,7 @@ export class SignInCardComponent implements OnInit {
     });
   }
 
-  singIn() {
+  async signIn() {
 
     if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
       this.valueChange.emit(true);
@@ -105,11 +105,11 @@ export class SignInCardComponent implements OnInit {
       this.generateLoginInteractTelemetry(InteractType.TOUCH, InteractSubtype.LOGIN_INITIATE, '');
 
       const that = this;
-      const loader = this.commonUtilService.getLoader();
+      const loader = await this.commonUtilService.getLoader();
       this.authService.setSession(new OAuthSessionProvider(this.sdkConfig.apiConfig, this.apiService))
         .toPromise()
-        .then(() => {
-          loader.present();
+        .then(async () => {
+          await loader.present();
           // migration-TODO
           // initTabs(that.container, LOGIN_TEACHER_TABS);
           return that.refreshProfileData();
@@ -117,19 +117,19 @@ export class SignInCardComponent implements OnInit {
         .then(value => {
           return that.refreshTenantData(value.slug, value.title);
         })
-        .then(() => {
-          loader.dismiss();
+        .then(async () => {
+          await loader.dismiss();
           that.ngZone.run(() => {
             that.preferences.putString('SHOW_WELCOME_TOAST', 'true').toPromise().then();
             window.location.reload();
             // TabsPage.prototype.ionVieit wWillEnter();
           });
         })
-        .catch((err) => {
+        .catch(async (err) => {
           if (err instanceof SignInError) {
             this.commonUtilService.showToast(err.message);
           }
-          return loader.dismiss();
+          return await loader.dismiss();
         });
     }
   }

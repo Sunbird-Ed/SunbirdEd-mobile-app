@@ -179,28 +179,28 @@
   <ion-row padding>
     <ion-col size-md="10" offset-md="1" *ngIf="!isLoggedIn; else disableSwitchButton">
       <div *ngIf="selectedUserIndex !== -1; else enableCreateButton">
-        <ion-button *ngIf="!playConfig" block center (click)="switchAccountConfirmBox()" [disabled]="!selectedUsername">
+        <ion-button *ngIf="!playConfig" expand="block" center (click)="switchAccountConfirmBox()" [disabled]="!selectedUsername">
           {{'SWITCH_ACCOUNT' | translate}}
         </ion-button>
-        <ion-button *ngIf="playConfig" block (click)="play()" [disabled]="isCurUserSelected">
+        <ion-button *ngIf="playConfig" expand="block" (click)="play()" [disabled]="isCurUserSelected">
           {{'PLAY' | translate}}
         </ion-button>
       </div>
       <ng-template #enableCreateButton>
-        <ion-button outline block *ngIf="segmentType=='users' && !this.playConfig" (click)="createUser()">{{ 'CREATE_NEW_USER'
+        <ion-button fill="outline" expand="block" *ngIf="segmentType=='users' && !this.playConfig" (click)="createUser()">{{ 'CREATE_NEW_USER'
           | translate}}</ion-button>
-        <ion-button block *ngIf="this.playConfig && segmentType=='users'" [disabled]="true">{{ 'PLAY' | translate}}
+        <ion-button expand="block" *ngIf="this.playConfig && segmentType=='users'" [disabled]="true">{{ 'PLAY' | translate}}
         </ion-button>
-        <ion-button outline block *ngIf="segmentType=='groups' && !this.playConfig" (click)="createGroup()">{{ 'CREATE_NEW_GROUP'
+        <ion-button fill="outline" expand="block" *ngIf="segmentType=='groups' && !this.playConfig" (click)="createGroup()">{{ 'CREATE_NEW_GROUP'
           | translate}}</ion-button>
       </ng-template>
     </ion-col>
     <ng-template #disableSwitchButton>
       <ion-col>
-        <ion-button *ngIf="!playConfig" block center [disabled]="selectedUsername">
+        <ion-button *ngIf="!playConfig" expand="block" center [disabled]="selectedUsername">
           {{'SWITCH_ACCOUNT' | translate}}
         </ion-button>
-        <ion-button *ngIf="playConfig" block [disabled]="isCurUserSelected">
+        <ion-button *ngIf="playConfig" expand="block" [disabled]="isCurUserSelected">
           {{'PLAY' | translate}}
         </ion-button>
       </ion-col>

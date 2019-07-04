@@ -1,5 +1,5 @@
 import { ContainerService } from 'src/services';
-import { TabOptions } from 'src/services/container.services';
+import { TabOptions } from '../services/container.services';
 
 
 // const HOME_TAB = { root: HomePage, icon: "home", label: "HOME_BNAV", index: 0, tabsHideOnSubPages: true };
@@ -119,7 +119,7 @@ export const GUEST_STUDENT_SWITCH_TABS = [
     GUEST_PROFILE_SWITCH_TAB
 ];
 
-/* export const initTabs = (container: ContainerService, tabs: Array<TabOptions>) => {
+export const initTabs = (container: ContainerService, tabs: Array<TabOptions>) => {
     container.removeAllTabs();
 
     if (tabs && tabs.length > 0) {
@@ -127,7 +127,7 @@ export const GUEST_STUDENT_SWITCH_TABS = [
             container.addTab(tabOptions);
         });
     }
-}; */
+};
 
 /* export const PluginModules = [
     CoursesPageModule,
@@ -156,16 +156,3 @@ export const GUEST_STUDENT_SWITCH_TABS = [
     StorageSettingsPageModule
 ];
  */
-
-
-
-export const initTabs = (container: ContainerService, tabs: Array<TabOptions>) => {
-    container.removeAllTabs();
-
-    /* istanbul ignore else  */
-    if (tabs && tabs.length > 0) {
-        tabs.forEach(tabOptions => {
-            container.addTab(tabOptions);
-        });
-    }
-};

@@ -17,11 +17,7 @@ const routes: Routes = [
     loadChildren: './list/list.module#ListPageModule'
   },
   {
-    path: 'user-type-selection/:isChangeRoleRequest',
-    loadChildren: './user-type-selection/user-type-selection.module#UserTypeSelectionPageModule'
-  },
-  {
-    path: 'user-type-selection/:isChangeRoleRequest',
+    path: 'user-type-selection',
     loadChildren: './user-type-selection/user-type-selection.module#UserTypeSelectionPageModule'
   },
   { path: 'user-and-groups', loadChildren: './user-and-groups/user-and-groups.module#UserAndGroupsPageModule' },
@@ -42,10 +38,8 @@ const routes: Routes = [
     loadChildren: './settings/settings.module#SettingsPageModule'
   },
   // migration-TODO to be deleted
-  {
-    path: 'download-manager',
-    loadChildren: './download-manager/download-manager.module#DownloadManagerPageModule'
-  },
+  { path: 'download-manager', loadChildren: './download-manager/download-manager.module#DownloadManagerPageModule' },
+  { path: 'storage-settings', loadChildren: './storage-settings/storage-settings.module#StorageSettingsPageModule' },
   {
     path: 'profile',
     loadChildren: './profile/profile.module#ProfilePageModule'

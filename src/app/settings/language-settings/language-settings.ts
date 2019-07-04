@@ -1,6 +1,6 @@
 import {Component, Inject, NgZone, OnInit} from '@angular/core';
 import {Events, Platform} from '@ionic/angular';
-import { Router, ActivatedRoute, ParamMap } from '@angular/router';
+import { Router, ActivatedRoute, ParamMap, NavigationExtras } from '@angular/router';
 
 import {TranslateService} from '@ngx-translate/core';
 import {SharedPreferences} from 'sunbird-sdk';
@@ -233,7 +233,9 @@ export class LanguageSettingsPage{
       } else {
         // migration-TODO
         // this.navCtrl.push(UserTypeSelectionPage);
-        this.router.navigate(['user-type-selection', false]);
+        // this.router.navigate(['user-type-selection', false]);
+        const navigationExtras: NavigationExtras = {state: { a: true, b: 'HellLLo' }};
+        this.router.navigate(['user-type-selection'], navigationExtras);
       }
     } else {
       this.generateClickInteractEvent('n/a', InteractSubtype.CONTINUE_CLICKED);
