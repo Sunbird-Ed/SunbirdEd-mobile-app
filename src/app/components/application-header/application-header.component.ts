@@ -87,8 +87,11 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
   }
   //  migration-TODO to be deleted
 
-  goToDownloadManager(){
+  goToDownloadManager() {
     this.router.navigateByUrl('/download-manager');
+  }
+  goToStorageSettings() {
+   this.router.navigateByUrl('/storage-settings');
   }
 
   gotoTabs() {
