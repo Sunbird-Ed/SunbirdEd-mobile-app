@@ -121,6 +121,7 @@ export class AppComponent {
           InteractSubtype.REPORTS_CLICKED,
           Environment.USER,
           PageId.PROFILE);
+          this.router.navigateByUrl('/tabs');
         // migration-TODO Add new routing
         // if (this.app.getRootNavs().length > 0) {
         //   this.app.getRootNavs()[0].push(ReportsPage, { profile: this.profile });
