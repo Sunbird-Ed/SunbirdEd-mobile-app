@@ -1,9 +1,95 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>group-details</ion-title>
+    <ion-title>{{group?.name}}</ion-title>
+    <ion-buttons slot="primary">
+      <ion-button *ngIf="!playConfig" icon-only (click)="presentPopoverNav($event)">
+        <ion-icon name="more" float-end></ion-icon>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
-
 <ion-content>
+  <div padding>
+    <ion-list>
+      <div *ngIf="isNoUsers" text-center>
+        <div class="img-container">
+          <img class="image_style" src="assets/imgs/ic_businessman.png">
+        </div>
+        <br />
+        <ion-row margin-top>
+          <ion-col size-md="6" offset-md="3" size-lg="6" offset-lg="3">
+            <div class="image-text">
+              <h6>
+                <b>{{'NO_USERS_IN_THIS_GROUP' | translate}}</b>
+              </h6>
+              <p>{{'NO_USERS_SUGGESTION_MESSAGE' | translate}}</p>
+            </div>
+          </ion-col>
+        </ion-row>
+      </div>
+    </ion-list>
+    <ion-list *ngIf="!isNoUsers">
+      <ion-item *ngFor="let user of userList; let i=index;" class="item-background radius" margin-bottom [ngClass]="i===selectedUserIndex ? 'blueBorder' : ''"
+        no-lines>
+        <ion-row class="bg-color-white">
+          <ion-col size="10" class="bg-color-white">
+            <ion-item (click)="selectUser(i, user?.handle)" class="bg-color-white padding-left-0 rm-label-margin"
+                      no-padding>
+              <h6 class="line-height-2" [ngStyle]="{'color': currentUserId === user?.uid ? 'dodgerblue' : 'black'}">
+                <b>{{user?.handle | titlecase}}</b>
+              </h6>
+              <p>
+                <span *ngIf="user?.profileType === ProfileType.TEACHER">{{'USER_TYPE_1' | translate | titlecase}}</span>
+                <span *ngIf="user?.profileType === ProfileType.STUDENT">{{'USER_TYPE_2' | translate | titlecase}}</span>
+                <span *ngIf="user?.grade?.length">•</span> {{ getGradeNameFromCode(user) }}</p>
+            </ion-item>
+          </ion-col>
+          <ion-col size="2" class="advanced-menu" *ngIf="!playConfig">
+            <ion-item slot="end" class="bg-color-white">
+              <ion-icon class="line-height-2 padding-left-2" name="more" item-end (click)="presentPopover($event , i)"></ion-icon>
+            </ion-item>
+          </ion-col>
+        </ion-row>
+      </ion-item>
+    </ion-list>
+  </div>
 
 </ion-content>
+
+<ion-footer class="footer" *ngIf="userList.length && selectedUserIndex !== -1">
+  <ion-row>
+    <div *ngIf="playConfig && selectedUserIndex === -1 && !isNoUsers " class="error-message-contentplay">
+      <div>
+        <ion-icon ios="ios-information-circle" md="md-information-circle"></ion-icon>
+        {{ 'PLEASE_SELECT_USER' | translate }}
+      </div>
+    </div>
+  </ion-row>
+  <ion-row padding>
+    <ion-col size-md="10" offset-md="1">
+      <ion-button expand="block" center *ngIf="!playConfig" (click)="switchAccountConfirmBox()">
+        {{'SWITCH_ACCOUNT' | translate}}
+      </ion-button>
+      <ion-button expand="block" center *ngIf="playConfig" (click)="play()">
+        {{'PLAY' | translate}}
+      </ion-button>
+    </ion-col>
+  </ion-row>
+</ion-footer>
+<ion-footer class="footer" *ngIf="playConfig && selectedUserIndex === -1">
+  <ion-row>
+    <div *ngIf="playConfig && selectedUserIndex === -1 && !isNoUsers " class="error-message-contentplay">
+      <div>
+        <ion-icon ios="ios-information-circle" md="md-information-circle"></ion-icon>
+        {{ 'PLEASE_SELECT_USER' | translate }}
+      </div>
+    </div>
+  </ion-row>
+  <ion-row padding>
+    <ion-col size-md="10" offset-md="1">
+      <ion-button expand="block" center [disabled]="true" (click)="play()">
+        {{'PLAY' | translate}}
+      </ion-button>
+    </ion-col>
+  </ion-row>
+</ion-footer>

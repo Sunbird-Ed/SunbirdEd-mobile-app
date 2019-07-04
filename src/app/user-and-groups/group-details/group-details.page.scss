@@ -1,0 +1,104 @@
+@import "src/global.scss";
+
+:host {
+  .scroll-content {
+    z-index: 11 !important;
+  }
+  .blueBorder {
+    border-color: map-get($colors, primary) !important;
+    border-style: solid !important;
+    border-width: 2px !important;
+    border-radius: 4px;
+  }
+  .radius {
+    border-radius: 6px;
+  }
+  .item-background.item-md {
+    background-color: map-get($colors, light_gray) !important;
+  }
+
+  .radius {
+    border-radius: 6px;
+  }
+  .bg-color-white {
+    background-color: map-get($colors, light_gray) !important;
+  }
+  .advanced-menu {
+    //MIGRATION TODO
+    // @include padding(0, 0, 0, 7% !important);
+  }
+  .advanced-menu ion-icon[item-end] {
+    //MIGRATION TODO
+    // @include margin(0, null, null, null !important);
+    // @include padding(null, 8px, null, null !important);
+  }
+  .advanced-menu .item-md,
+  .advanced-menu .item-ios {
+      //MIGRATION TODO
+    // @include margin(0, null, null, null !important);
+  }
+  .padding-left-0 {
+      //MIGRATION TODO
+    // @include padding(null, null, null, 0 !important);
+  }
+  .rm-label-margin ion-label {
+      //MIGRATION TODO
+    // @include margin(0, null, null, null !important);
+    margin-bottom: 0 !important;
+  }
+  .image-text {
+    text-align: center;
+    margin-top: 38vh;
+    background-color: map-get($colors, light-gray);
+  }
+  .image_style {
+    width: 335px;
+    height: 102px;
+    border-radius: 50%;
+  }
+  .img-container {
+    position: absolute;
+    width: 100px;
+    height: 100px;
+    top: 30%;
+    //MIGRATION TODO
+    /* @include ltr() {
+      left: 60%;
+    }
+    @include rtl() {
+      right: 60%;
+    }
+    @include margin(null, null, null, -97px); */
+    margin-top: -144x;
+  }
+  .playcontent-label {
+    margin-top: 55.2vh;
+    background-color: #a1a1a1;
+    color: white;
+    width: 100%;
+  }
+
+  .error-message-contentplay {
+    width: -webkit-fill-available;
+    background-color: #a1a1a1;
+    padding: 5px 0px 5px 20px;
+    color: white;
+    // position: fixed !important;
+    // bottom: 93px;
+  }
+  .no-padding {
+    padding: 0px !important;
+  }
+  .playcontent-label {
+    font-size: 1.4rem !important;
+    //MIGRATION TODO
+    // @include padding(1px, 0px, 1px, 6px !important);
+  }
+  .footer {
+    background-color: white;
+  }
+
+  .icon.ion-md-information-circle {
+    vertical-align: text-bottom;
+  }
+}
