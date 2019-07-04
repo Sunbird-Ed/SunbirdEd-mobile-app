@@ -87,11 +87,11 @@ export class GroupDetailsPage implements OnInit {
     private router: Router
 
   ) {
-    this.group = window.history.state.groupInfo;
-    this.currentUserId = window.history.state.currentUserId;
-    this.currentGroupId = window.history.state.currentGroupId;
-    this.profileDetails = window.history.state.profile;
-    this.playConfig = window.history.state.playConfig;
+    this.group = this.router.getCurrentNavigation().extras.state.groupInfo;
+    this.currentUserId = this.router.getCurrentNavigation().extras.state.currentUserId;
+    this.currentGroupId = this.router.getCurrentNavigation().extras.state.currentGroupId;
+    this.profileDetails = this.router.getCurrentNavigation().extras.state.profile;
+    this.playConfig = this.router.getCurrentNavigation().extras.state.playConfig;
 
     this.isCurrentGroupActive = (this.group.gid === this.currentGroupId);
 

@@ -116,8 +116,8 @@ export class CommonUtilService implements OnDestroy {
      * Returns Loading object with default config
      * @returns {object} Loading object
      */
-    // migration-TODO correct type later
-    getLoader(): Promise<HTMLIonLoadingElement> {
+    // migration-TODO correct type later either use Promise<HTMLIonLoadingElement> or any
+    getLoader(): any {
         return this.loadingCtrl.create({
             duration: 30000,
             spinner: 'crescent'

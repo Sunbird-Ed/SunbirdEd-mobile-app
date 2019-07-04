@@ -88,7 +88,7 @@ export class SignInCardComponent implements OnInit {
     });
   }
 
-  async singIn() {
+  async signIn() {
 
     if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
       this.valueChange.emit(true);

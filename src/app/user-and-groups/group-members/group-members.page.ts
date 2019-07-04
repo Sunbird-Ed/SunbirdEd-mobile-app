@@ -43,7 +43,7 @@ export class GroupMembersPage implements OnInit {
     private route: ActivatedRoute,
     private router: Router
   ) {
-    this.group = window.history.state.group;
+    this.group = this.router.getCurrentNavigation().extras.state.group;
   }
 
   ngOnInit() {
