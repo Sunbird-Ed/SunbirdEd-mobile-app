@@ -39,7 +39,8 @@ const routes: Routes = [
   },
   { path: 'tabs', loadChildren: './tabs/tabs.module#TabsPageModule' },
   // migration-TODO to be deleted
-  { path: 'download-manager', loadChildren: './download-manager/download-manager.module#DownloadManagerPageModule' }
+  { path: 'download-manager', loadChildren: './download-manager/download-manager.module#DownloadManagerPageModule' },
+  { path: 'storage-settings', loadChildren: './storage-settings/storage-settings.module#StorageSettingsPageModule' }
 ];
 
 @NgModule({
