@@ -79,7 +79,7 @@ export class CommonUtilService implements OnDestroy {
                 };
 
                 const toast = await this.toastCtrl.create(toastOptions);
-                toast.present();
+                await toast.present();
             }
         );
     }
@@ -117,7 +117,7 @@ export class CommonUtilService implements OnDestroy {
      * @returns {object} Loading object
      */
     // migration-TODO correct type later
-    getLoader(): any {
+    getLoader(): Promise<HTMLIonLoadingElement> {
         return this.loadingCtrl.create({
             duration: 30000,
             spinner: 'crescent'

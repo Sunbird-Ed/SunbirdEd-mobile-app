@@ -40,7 +40,7 @@
           </ion-col>
           <!-- Button -->
           <ion-col size="4" class="padding">
-            <ion-button outline small  class="custom-btn float-end">
+            <ion-button fill="outline" size="small"  class="custom-btn float-end">
               <span style="font-size: 12px !important" *ngIf="type === 'enrolledCourse'" (click)="resumeCourse(content);">{{ ('RESUME' | translate).length > 6 ? ('RESUME' | translate | slice:0:05) + '...' : ('RESUME' | translate) }}</span>
               <span style="font-size: 12px !important" *ngIf="type !== 'enrolledCourse'" (click)="navigateToDetailsPage(content, type)">{{ ('OPEN' | translate).length > 5 ? ('OPEN' | translate | slice:0:05) + '...' : ('OPEN' | translate) }}</span>
             </ion-button>
