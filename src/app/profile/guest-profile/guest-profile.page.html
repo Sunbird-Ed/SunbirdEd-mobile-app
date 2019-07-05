@@ -20,10 +20,10 @@
 
     <ion-item no-padding class="padding-left-10">
       <ion-row [hidden]="true">
-        <ion-col col-6>
+        <ion-col size="6">
           <div text-uppercase class="info-title">{{'SYLLABUS' | translate}}</div>
         </ion-col>
-        <ion-col class="font-size-14rem page-content" col-6 text-end>
+        <ion-col class="font-size-14rem page-content" size="6" text-end>
           <div *ngIf="profile?.syllabus && profile?.syllabus !== ''">
             <div class="ellipsis text-align">{{syllabus}}</div>
             <ion-icon class="icon-align" float="end" name="md-create" color="primary" (click)="editGuestProfile()"></ion-icon>
@@ -33,10 +33,10 @@
       </ion-row>
 
       <ion-row>
-        <ion-col col-6>
+        <ion-col size="6">
           <div text-uppercase class="info-title">{{'BOARD' | translate}}</div>
         </ion-col>
-        <ion-col class="font-size-14rem page-content" col-6 text-end>
+        <ion-col class="font-size-14rem page-content" size="6" text-end>
           <div *ngIf="profile?.syllabus?.length && profile?.board?.length">
             <div class="ellipsis text-align">{{boards}} &lrm;</div>
             <ion-icon class="icon-align" float="end" name="md-create" color="primary" (click)="editGuestProfile()"></ion-icon>
@@ -46,10 +46,10 @@
       </ion-row>
 
       <ion-row>
-        <ion-col col-6>
+        <ion-col size="6">
           <div class="info-title" text-uppercase>{{'MEDIUM' | translate}}</div>
         </ion-col>
-        <ion-col class="ellipsis font-size-14rem page-content" col-6 text-end>
+        <ion-col class="ellipsis font-size-14rem page-content" size="6" text-end>
           <div *ngIf="profile?.syllabus?.length && profile?.board?.length && profile?.medium?.length">
             <div class="ellipsis text-align">{{medium}}</div>
             <ion-icon class="icon-align" float="end" name="md-create" color="primary" (click)="editGuestProfile()"></ion-icon>
@@ -60,10 +60,10 @@
       </ion-row>
 
       <ion-row>
-        <ion-col col-6>
+        <ion-col size="6">
           <div class="info-title" text-uppercase>{{'CLASS' | translate}}</div>
         </ion-col>
-        <ion-col class="ellipsis font-size-14rem page-content" col-6 text-end>
+        <ion-col class="ellipsis font-size-14rem page-content" size="6" text-end>
           <div *ngIf="profile?.syllabus?.length && profile?.board?.length && profile?.medium?.length && profile?.grade?.length">
             <div class="ellipsis text-align">{{grade}}</div>
             <ion-icon class="icon-align" float="end" name="md-create" color="primary" (click)="editGuestProfile()"></ion-icon>
@@ -74,10 +74,10 @@
       </ion-row>
 
       <ion-row>
-        <ion-col col-6>
+        <ion-col size="6">
           <div class="info-title" text-uppercase>{{'SUBJECTS' | translate}}</div>
         </ion-col>
-        <ion-col class="ellipsis font-size-14rem page-content" col-6 text-end>
+        <ion-col class="ellipsis font-size-14rem page-content" size="6" text-end>
           <div *ngIf="profile?.syllabus?.length && profile?.board?.length && profile?.medium?.length && profile?.grade?.length && profile?.subject?.length">
             <div class="ellipsis text-align">{{subjects}}</div>
             <ion-icon class="icon-align" float="end" name="md-create" color="primary" (click)="editGuestProfile()"></ion-icon>

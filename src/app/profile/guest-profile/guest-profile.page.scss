@@ -1,162 +1,171 @@
-@import 'src/global.scss';
+@import "src/global.scss";
 :host {
   .profile-name {
-      color: map-get($colors, dark);
-      margin: 0;
-      font-size: 1.6rem;
+    color: map-get($colors, dark);
+    margin: 0;
+    font-size: 1.6rem;
 
-      @include padding(5px);
+    //Migration todo
+    // @include padding(5px);
 
-      @extend .font-weight-bold;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      display: -ms-flexbox;
+    @extend .font-weight-bold;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -ms-flexbox;
   }
 
   .user {
-      text-align: center !important;
-
-      @include padding(null, null, null, 1em !important);
+    text-align: center !important;
+    //Migration todo
+    // @include padding(null, null, null, 1em !important);
   }
 
   .editIcon {
-      @include margin(null, null, null, 5px);
+    //Migration todo
+    // @include margin(null, null, null, 5px);
 
-      font-size: 1.8rem !important;
+    font-size: 1.8rem !important;
   }
 
   .change-role {
-      color: dodgerblue;
-      text-align: center;
+    color: dodgerblue;
+    text-align: center;
+    //Migration todo
+    // @include margin(null, 10px, null, null);
 
-      @include margin(null, 10px, null, null);
+    font-size: 1.2rem;
+    //Migration todo
+    // @include padding(0 2px 2px 2px);
 
-      font-size: 1.2rem;
-
-      @include padding(0 2px 2px 2px);
-
-      font-weight: normal;
-      margin: 0;
+    font-weight: normal;
+    margin: 0;
   }
 
   .user-type {
-      color: map-get($colors, dark);
-      text-align: center;
+    color: map-get($colors, dark);
+    text-align: center;
+    //Migration todo
+    // @include margin(null, 10px, null, null);
 
-      @include margin(null, 10px, null, null);
+    font-size: 1.2rem;
+    //Migration todo
+    // @include padding(2px);
 
-      font-size: 1.2rem;
-
-      @include padding(2px);
-
-      @extend .font-weight-bold;
-      margin: 0;
+    @extend .font-weight-bold;
+    margin: 0;
   }
 
   .offline-message {
-      background-color: map-get($colors, danger) !important;
-      line-height: 2.5em !important;
-      text-align: center !important;
-      color: map-get($colors, white);
-      top: 0;
-      position: sticky;
-      z-index: 11;
-      display: block;
-      width: 100%;
+    background-color: map-get($colors, danger) !important;
+    line-height: 2.5em !important;
+    text-align: center !important;
+    color: map-get($colors, white);
+    top: 0;
+    position: sticky;
+    z-index: 11;
+    display: block;
+    width: 100%;
   }
 
   .custom-avatar {
-      height: 22vw;
-      width: 22vw;
-      border: 1px solid map-get($colors, white);
-      border-radius: 50%;
-      display: inline-block;
-
-      @include margin(null, auto, null, auto);
+    height: 22vw;
+    width: 22vw;
+    border: 1px solid map-get($colors, white);
+    border-radius: 50%;
+    display: inline-block;
+    //Migration todo
+    // @include margin(null, auto, null, auto);
   }
 
   .info-title {
-      color: map-get($colors, dark_gray);
-      font-size: 1.2rem;
-      @extend .font-weight-700;
+    color: map-get($colors, dark_gray);
+    font-size: 1.2rem;
+    @extend .font-weight-700;
   }
 
   .section-title {
-      color: map-get($colors, dark);
+    color: map-get($colors, dark);
+    //Migration todo
+    // @include margin(null, null, -5px, null !important);
 
-      @include margin(null, null, -5px, null !important);
+    font-size: 1.7rem;
+    padding: 0;
+    //Migration todo
+    // @include margin(null, null, null, 0);
 
-      font-size: 1.7rem;
-      padding: 0;
-
-      @include margin(null, null, null, 0);
-
-      @extend .font-weight-700;
+    @extend .font-weight-700;
   }
 
   .page-content {
-      @extend .font-weight-600;
-      color: map-get($colors, secondary_black);
+    @extend .font-weight-600;
+    color: map-get($colors, secondary_black);
   }
 
   .vertical-align {
-      vertical-align: sub;
-      color: #979797;
-      font-size: 1.2rem;
-      @extend .font-weight-700;
+    vertical-align: sub;
+    color: #979797;
+    font-size: 1.2rem;
+    @extend .font-weight-700;
   }
 
   .text-align {
-      width: 90%;
-      display: inline-block;
-      vertical-align: top;
+    width: 90%;
+    display: inline-block;
+    vertical-align: top;
   }
 
   .icon-align {
-      @include margin(null, null, null, 2px);
+    //Migration todo
+    // @include margin(null, null, null, 2px);
 
-      size: 2px;
-      display: inline-block;
+    size: 2px;
+    display: inline-block;
   }
 }
 
 .padding-bottom-10 {
-  @include padding(null, null, 10px, null !important);
+  //Migration todo
+  // @include padding(null, null, 10px, null !important);
 }
 
 .padding-top-10 {
-  @include padding(10px, null, null, null !important);
+  //Migration todo
+  // @include padding(10px, null, null, null !important);
 }
 
 .padding-left-10 {
-  @include padding(null, null, null, 10px !important);
+  //Migration todo
+  // @include padding(null, null, null, 10px !important);
 }
 
 /* Hide extra margin of the popover-controller */
 
 .box {
   .popover-content {
-      min-width: 96px;
-      width: auto;
-      display: inline-block;
-      height: auto !important;
+    min-width: 96px;
+    width: auto;
+    display: inline-block;
+    height: auto !important;
   }
 
   .list.list-md {
-      @include margin(null, null, 0, null !important);
+    // Migration todo
+    // @include margin(null, null, 0, null !important);
   }
 
   .item-md {
-      @include padding(null, null, null, 0 !important);
+    //Migration todo
+    // @include padding(null, null, null, 0 !important);
   }
 
   .label-md {
-      @include margin(null, null, null, 16px);
+    //Migration todo
+    // @include margin(null, null, null, 16px);
   }
 }
 
 .signin-card-bg {
   background-color: map-get($colors, light_gray);
-
-  @include padding(10px, null, 10px, 0);
+  //Migration todo
+  // @include padding(10px, null, 10px, 0);
 }

@@ -1,0 +1,21 @@
+@import "src/global.scss";
+:host {
+  .popover-content {
+    height: 480px !important;
+  }
+}
+.box.download-popover {
+  .popover-content {
+    transform: scale(1) translateY(34px) !important;
+    background: #fafafa;
+    .item {
+      .label {
+        color: $primary-600;
+        margin: 10px 8px 10px 16px;
+      }
+      .item-inner {
+        border: none;
+      }
+    }
+  }
+}

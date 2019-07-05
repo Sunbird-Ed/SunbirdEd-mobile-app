@@ -292,7 +292,7 @@ export class GuestProfilePage implements OnInit {
         closeButtonText: '',
         cssClass: 'toastHeader'
       });
-      this.toast.present();
+      await this.toast.present();
       this.toast.onDidDismiss(() => {
         this.toast = undefined;
       });
