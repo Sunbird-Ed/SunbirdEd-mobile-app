@@ -164,7 +164,7 @@ export class UserAndGroupsPage implements OnInit {
                 groupInfo: this.groupList[index]
               }
             }
-            this.router.navigate(['CreateGroupPage'], navigationExtras);
+            this.router.navigate(['create-group'], navigationExtras);
           }
           //MIGRATION TODO
           // popover.dismiss();
@@ -199,7 +199,7 @@ export class UserAndGroupsPage implements OnInit {
                   groupInfo: this.groupList[index]
                 }
               }
-              this.router.navigate(['CreateGroupPage'], navigationExtras);
+              this.router.navigate(['create-group'], navigationExtras);
             }
             popover.dismiss();
           },
@@ -328,7 +328,7 @@ export class UserAndGroupsPage implements OnInit {
       Environment.USER,
       PageId.USERS_GROUPS
     );
-    this.router.navigate(['CreateGroupPage']);
+    this.router.navigate(['create-group']);
   }
 
 

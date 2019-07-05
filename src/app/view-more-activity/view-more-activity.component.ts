@@ -220,9 +220,9 @@ export class ViewMoreActivityComponent implements OnInit {
   /**
    * Search content
    */
-  search() {
-    const loader = this.commonUtilService.getLoader();
-    loader.present();
+  async search() {
+    const loader = await this.commonUtilService.getLoader();
+    await loader.present();
     const searchCriteria: ContentSearchCriteria = {
       searchType: SearchType.FILTER
     };
@@ -230,7 +230,7 @@ export class ViewMoreActivityComponent implements OnInit {
     this.searchQuery.request['offset'] = this.offset;
     this.contentService.searchContent(searchCriteria, this.searchQuery).toPromise()
       .then((data: ContentSearchResult) => {
-        this.ngZone.run(() => {
+        this.ngZone.run(async () => {
           if (data && data.contentDataList) {
             this.loadMoreBtn = data.contentDataList.length >= this.searchLimit;
             if (this.isLoadMore) {
@@ -243,14 +243,14 @@ export class ViewMoreActivityComponent implements OnInit {
           } else {
             this.loadMoreBtn = false;
           }
-          loader.dismiss();
+          await loader.dismiss();
         });
         this.generateImpressionEvent();
         this.generateLogEvent(data);
       })
-      .catch(() => {
+      .catch(async () => {
         console.error('Error: while fetching view more content');
-        loader.dismiss();
+        await loader.dismiss();
       });
   }
 
@@ -310,9 +310,9 @@ export class ViewMoreActivityComponent implements OnInit {
   /**
    * Get enrolled courses
    */
-  getEnrolledCourse() {
-    const loader = this.commonUtilService.getLoader();
-    loader.present();
+  async getEnrolledCourse() {
+    const loader = await this.commonUtilService.getLoader();
+    await loader.present();
     this.pageType = 'enrolledCourse';
     const option = {
       // migration-TODO
@@ -322,18 +322,18 @@ export class ViewMoreActivityComponent implements OnInit {
       returnRefreshedEnrolledCourses: true
     };
     this.courseService.getEnrolledCourses(option).toPromise()
-      .then((data: Course[]) => {
+      .then(async (data: Course[]) => {
         if (data) {
           // data = JSON.parse(data);
           this.searchList = data ? data : [];
           this.loadMoreBtn = false;
           console.log('**2 searchList =>', this.searchList);
         }
-        loader.dismiss();
+        await loader.dismiss();
       })
-      .catch((error: any) => {
+      .catch(async (error: any) => {
         console.error('error while loading enrolled courses', error);
-        loader.dismiss();
+        await loader.dismiss();
       });
   }
 
@@ -341,8 +341,8 @@ export class ViewMoreActivityComponent implements OnInit {
    * Get local content
    */
   async getLocalContents(recentlyViewed?: boolean, downloaded?: boolean) {
-    const loader = this.commonUtilService.getLoader();
-    loader.present();
+    const loader = await this.commonUtilService.getLoader();
+    await loader.present();
 
     const requestParams: ContentRequest = {
       uid: this.uid,
@@ -394,8 +394,8 @@ export class ViewMoreActivityComponent implements OnInit {
           // this.loadMoreBtn = false;
         });
       })
-      .catch(() => {
-        loader.dismiss();
+      .catch(async() => {
+        await loader.dismiss();
       });
   }
 

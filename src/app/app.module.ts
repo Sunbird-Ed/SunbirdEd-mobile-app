@@ -42,16 +42,17 @@ import {
   ComingSoonMessageService,
   NotificationService,
   SunbirdQRScanner,
-  FormAndFrameworkUtilService,
-  ActivePageService
+  ActivePageService,
+  FormAndFrameworkUtilService
 } from '../services/index';
 
 
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
-import { LanguageSettingsPageModule } from './language-settings/language-settings.module';
 import { UserTypeSelectionPageModule } from './user-type-selection/user-type-selection.module';
 import { ComponentsModule } from './components/components.module';
+import { UserAndGroupsRoutingModule } from './user-and-groups/user-and-groups-routing.module';
+import { UserAndGroupsPageModule } from './user-and-groups/user-and-groups.module';
 
 
 
@@ -212,7 +213,7 @@ export function sdkDriverFactory(): any {
     useFactory: errorLoggerService
   }
   ];
-};
+}
 export const sunbirdSdkServicesProvidersFactory: () => Provider[] = sdkDriverFactory;
 
 export const sunbirdSdkFactory =
@@ -331,6 +332,7 @@ declare const buildconfigreader;
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
+    UserAndGroupsRoutingModule,
     AppRoutingModule,
     ComponentsModule,
     IonicImageLoader.forRoot(),
@@ -350,9 +352,9 @@ declare const buildconfigreader;
     IonicImageLoader.forRoot(),
     DirectivesModule,
 
-    // custom modules
-    LanguageSettingsPageModule,
-    UserTypeSelectionPageModule
+    // custom modules=
+    UserTypeSelectionPageModule,
+    UserAndGroupsPageModule
   ],
   providers: [
     StatusBar,
@@ -383,6 +385,7 @@ declare const buildconfigreader;
     ComingSoonMessageService,
     NotificationService,
     ActivePageService,
+    FormAndFrameworkUtilService,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     ...sunbirdSdkServicesProvidersFactory(),
     // { provide: ErrorHandler},

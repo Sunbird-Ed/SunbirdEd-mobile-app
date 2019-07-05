@@ -12,7 +12,7 @@ import {
   UtilityService,
   AppRatingService,
   AppHeaderService,
-  FormAndFrameworkUtilService
+  FormAndFrameworkUtilService,
 } from '../services';
 import { InteractType, InteractSubtype, Environment, PageId, ImpressionType } from 'services/telemetry-constants';
 import { GUEST_STUDENT_TABS, GUEST_TEACHER_TABS, LOGIN_TEACHER_TABS } from './module.service';
@@ -52,7 +52,7 @@ import { TabsPage } from './tabs/tabs.page';
 // import { CollectionDetailsEtbPage } from '@app/pages/collection-details-etb/collection-details-etb';
 // import { QrCodeResultPage } from '@app/pages/qr-code-result';
 // import { FaqPage } from '@app/pages/help/faq';
-
+import { RouterLinks } from './app.constant';
 
 @Component({
   selector: 'app-root',
@@ -138,7 +138,8 @@ export class AppComponent implements OnInit, AfterViewInit {
     private notificationSrc: localNotification,
     private headerService: AppHeaderService,
     private router: Router,
-    private changeDetector: ChangeDetectorRef
+    private changeDetector: ChangeDetectorRef,
+    private containerService: ContainerService,
   ) {
     this.telemetryAutoSyncUtil = new TelemetryAutoSyncUtil(this.telemetryService);
     platform.ready().then(async () => {
@@ -334,124 +335,6 @@ export class AppComponent implements OnInit, AfterViewInit {
     await this.tncUpdateHandlerService.checkForTncUpdate();
   }
 
-  private async navigateToAppropriatePage() {
-    // migration-TODO
-    // const session = await this.authService.getSession().toPromise();
-    // console.log(`Platform Session`, session);
-    // if (!session) {
-    //   console.log(`Success Platform Session`, session);
-    //   this.preferences.getString(PreferenceKey.SELECTED_USER_TYPE).toPromise()
-    //     .then(async (profileType: ProfileType | undefined) => {
-    //       if (!profileType) {
-    //         this.appGlobalService.isProfileSettingsCompleted = false;
-    //         // migration-TODO
-    //         // this.rootPage = LanguageSettingsPage;
-    //         return;
-    //       }
-
-    //       switch (profileType.toLocaleLowerCase()) {
-    //         case ProfileType.TEACHER: {
-    //           await this.preferences.putString(PreferenceKey.SELECTED_USER_TYPE, ProfileType.TEACHER).toPromise();
-    //           // migration-TODO
-    //           // initTabs(this.containerService, GUEST_TEACHER_TABS);
-    //           break;
-    //         }
-    //         case ProfileType.STUDENT: {
-    //           await this.preferences.putString(PreferenceKey.SELECTED_USER_TYPE, ProfileType.STUDENT).toPromise();
-    //           // migration-TODO
-    //           // initTabs(this.containerService, GUEST_STUDENT_TABS);
-    //           break;
-    //         }
-    //       }
-
-    //       const display_cat_page: string = await this.utilityService
-    //         .getBuildConfigValue(GenericAppConfig.DISPLAY_ONBOARDING_CATEGORY_PAGE);
-
-    //       if (display_cat_page === 'false') {
-    //         // migration-TODO
-    //         // await this.nav.setRoot(TabsPage);
-    //       } else {
-    //         const profile = await this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS })
-    //           .toPromise();
-    //         if (
-    //           profile
-    //           && profile.syllabus && profile.syllabus[0]
-    //           && profile.board && profile.board.length
-    //           && profile.grade && profile.grade.length
-    //           && profile.medium && profile.medium.length
-    //         ) {
-    //           this.appGlobalService.isProfileSettingsCompleted = true;
-    //           // migration-TODO
-    //           // await this.nav.setRoot(TabsPage);
-    //         } else {
-    //           this.appGlobalService.isProfileSettingsCompleted = false;
-    //           try {
-    //             if ((await this.preferences.getString(PreferenceKey.IS_ONBOARDING_COMPLETED).toPromise()) === 'true') {
-    //               this.getProfileSettingConfig(true);
-    //             } else {
-    //               // migration-TODO
-    //               // await this.nav.insertPages(0, [{ page: LanguageSettingsPage }, { page: UserTypeSelectionPage }]);
-    //             }
-    //           } catch (e) {
-    //             this.getProfileSettingConfig();
-    //           }
-    //         }
-    //       }
-    //     });
-    // } else {
-    //   console.log(`Failure Session`, session);
-    //   this.profileService.getActiveSessionProfile({
-    //     requiredFields: ProfileConstants.REQUIRED_FIELDS
-    //   }).toPromise()
-    //     .then(async (profile: any) => {
-    //       if (profile
-    //         && profile.syllabus && profile.syllabus[0]
-    //         && profile.board && profile.board.length
-    //         && profile.grade && profile.grade.length
-    //         && profile.medium && profile.medium.length) {
-
-    //         // migration-TODO
-    //         // initTabs(this.containerService, LOGIN_TEACHER_TABS);
-
-    //         if ((await this.preferences.getString('SHOW_WELCOME_TOAST').toPromise()) === 'true') {
-    //           this.preferences.putString('SHOW_WELCOME_TOAST', 'false').toPromise().then();
-
-    //           const serverProfile = await this.profileService.getServerProfilesDetails({
-    //             userId: session.userToken,
-    //             requiredFields: ProfileConstants.REQUIRED_FIELDS,
-    //           }).toPromise();
-
-    //           this.commonUtilService
-    //             .showToast(this.commonUtilService.translateMessage('WELCOME_BACK', serverProfile.firstName));
-    //         }
-    //         // migration-TODO
-    //         // this.rootPage = TabsPage;
-    //       } else {
-    //         const serverProfile = await this.profileService.getServerProfilesDetails({
-    //           userId: session.userToken,
-    //           requiredFields: ProfileConstants.REQUIRED_FIELDS,
-    //         }).toPromise();
-
-    //         this.formAndFrameworkUtilService.updateLoggedInUser(serverProfile, profile)
-    //           .then((value) => {
-    //             if (value['status']) {
-    //               // migration-TODO
-    //               // this.nav.setRoot(TabsPage);
-    //               // migration-TODO
-    //               // initTabs(this.containerService, LOGIN_TEACHER_TABS);
-    //             } else {
-    //               // migration-TODO
-    //               // this.nav.setRoot(CategoriesEditPage, {
-    //               //   showOnlyMandatoryFields: true,
-    //               //   profile: value['profile']
-    //               // });
-    //             }
-    //           });
-    //       }
-    //     });
-    // }
-  }
-
   private async getSelectedLanguage() {
     const selectedLanguage = await this.preferences.getString(PreferenceKey.SELECTED_LANGUAGE_CODE).toPromise();
     if (selectedLanguage) {
@@ -582,7 +465,7 @@ export class AppComponent implements OnInit, AfterViewInit {
         );
       })
       .subscribe();
-  }
+ }
 
   initializeApp() {
     this.headerService.headerConfigEmitted$.subscribe(config => {
@@ -625,6 +508,141 @@ export class AppComponent implements OnInit, AfterViewInit {
     //}
   }
 
+  private async navigateToAppropriatePage() {
+    const session = await this.authService.getSession().toPromise();
+    console.log(`Platform Session`, session);
+    if (!session) {
+      console.log(`Success Platform Session`, session);
+      this.preferences.getString(PreferenceKey.SELECTED_USER_TYPE).toPromise()
+        .then(async (profileType: ProfileType | undefined) => {
+          if (!profileType) {
+            this.appGlobalService.isProfileSettingsCompleted = false;
+            // migration-TODO
+            // this.rootPage = LanguageSettingsPage;
+            this.router.navigate(['settings/language-setting', false]);
+            return;
+          }
+
+          switch (profileType.toLocaleLowerCase()) {
+            case ProfileType.TEACHER: {
+              await this.preferences.putString(PreferenceKey.SELECTED_USER_TYPE, ProfileType.TEACHER).toPromise();
+              // migration-TODO
+              // initTabs(this.containerService, GUEST_TEACHER_TABS);
+              break;
+            }
+            case ProfileType.STUDENT: {
+              await this.preferences.putString(PreferenceKey.SELECTED_USER_TYPE, ProfileType.STUDENT).toPromise();
+              // migration-TODO
+              // initTabs(this.containerService, GUEST_STUDENT_TABS);
+              break;
+            }
+          }
+
+          const display_cat_page: string = await this.utilityService
+            .getBuildConfigValue(GenericAppConfig.DISPLAY_ONBOARDING_CATEGORY_PAGE);
+
+          if (display_cat_page === 'false') {
+            // migration-TODO
+            // await this.nav.setRoot(TabsPage);
+          } else {
+            const profile = await this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS })
+              .toPromise();
+            if (
+              profile
+              && profile.syllabus && profile.syllabus[0]
+              && profile.board && profile.board.length
+              && profile.grade && profile.grade.length
+              && profile.medium && profile.medium.length
+            ) {
+              this.appGlobalService.isProfileSettingsCompleted = true;
+              // migration-TODO
+              // await this.nav.setRoot(TabsPage);
+            } else {
+              this.appGlobalService.isProfileSettingsCompleted = false;
+              try {
+                if ((await this.preferences.getString(PreferenceKey.IS_ONBOARDING_COMPLETED).toPromise()) === 'true') {
+                  this.getProfileSettingConfig(true);
+                } else {
+                  // migration-TODO
+                  // await this.nav.insertPages(0, [{ page: LanguageSettingsPage }, { page: UserTypeSelectionPage }]);
+                  this.router.navigate(['settings/language-setting', 'false']);
+                }
+              } catch (e) {
+                this.getProfileSettingConfig();
+              }
+            }
+          }
+        });
+    } else {
+      console.log(`Failure Session`, session);
+      this.profileService.getActiveSessionProfile({
+        requiredFields: ProfileConstants.REQUIRED_FIELDS
+      }).toPromise()
+        .then(async (profile: any) => {
+          if (profile
+            && profile.syllabus && profile.syllabus[0]
+            && profile.board && profile.board.length
+            && profile.grade && profile.grade.length
+            && profile.medium && profile.medium.length) {
+
+            // migration-TODO
+            // initTabs(this.containerService, LOGIN_TEACHER_TABS);
+
+            if ((await this.preferences.getString('SHOW_WELCOME_TOAST').toPromise()) === 'true') {
+              this.preferences.putString('SHOW_WELCOME_TOAST', 'false').toPromise().then();
+
+              const serverProfile = await this.profileService.getServerProfilesDetails({
+                userId: session.userToken,
+                requiredFields: ProfileConstants.REQUIRED_FIELDS,
+              }).toPromise();
+
+              this.commonUtilService
+                .showToast(this.commonUtilService.translateMessage('WELCOME_BACK', serverProfile.firstName));
+            }
+            // migration-TODO
+            // this.rootPage = TabsPage;
+          } else {
+            const serverProfile = await this.profileService.getServerProfilesDetails({
+              userId: session.userToken,
+              requiredFields: ProfileConstants.REQUIRED_FIELDS,
+            }).toPromise();
+
+            this.formAndFrameworkUtilService.updateLoggedInUser(serverProfile, profile)
+              .then((value) => {
+                if (value['status']) {
+                  // migration-TODO
+                  // this.nav.setRoot(TabsPage);
+                  // initTabs(this.containerService, LOGIN_TEACHER_TABS);
+                } else {
+                  // migration-TODO
+                  // this.nav.setRoot(CategoriesEditPage, {
+                  //   showOnlyMandatoryFields: true,
+                  //   profile: value['profile']
+                  // });
+                }
+              });
+          }
+        });
+    }
+  }
+
+  getProfileSettingConfig(hideBackButton = false) {
+    this.utilityService.getBuildConfigValue(GenericAppConfig.DISPLAY_ONBOARDING_CATEGORY_PAGE)
+      .then(response => {
+        if (response === 'true') {
+          // migration-TODO
+          // this.nav.setRoot('ProfileSettingsPage', { hideBackButton: hideBackButton });
+        } else {
+          // migration-TODO
+          // this.nav.setRoot(TabsPage);
+        }
+      })
+      .catch(error => {
+        // migration-TODO
+        // this.nav.setRoot(TabsPage);
+      });
+  }
+
   menuItemAction(menuName) {
     switch (menuName.menuItem) {
       case 'USERS_AND_GROUPS':
@@ -635,7 +653,7 @@ export class AppComponent implements OnInit, AfterViewInit {
           PageId.PROFILE
         );
 
-        this.router.navigateByUrl('/user-and-groups');
+        this.router.navigateByUrl(`/${RouterLinks.USER_AND_GROUPS}`);
         // if (this.app.getRootNavs().length > 0) {
         //   this.app.getRootNavs()[0].push(UserAndGroupsPage, { profile: this.profile });
         // }
@@ -647,6 +665,7 @@ export class AppComponent implements OnInit, AfterViewInit {
           InteractSubtype.REPORTS_CLICKED,
           Environment.USER,
           PageId.PROFILE);
+        this.router.navigateByUrl(`/${RouterLinks.TABS}`);
         // migration-TODO Add new routing
         // if (this.app.getRootNavs().length > 0) {
         //   this.app.getRootNavs()[0].push(ReportsPage, { profile: this.profile });
@@ -676,8 +695,14 @@ export class AppComponent implements OnInit, AfterViewInit {
         //   this.app.getRootNavs()[0].push(LanguageSettingsPage, {
         //     isFromSettings: true
         //   });
-      }
+        this.router.navigate(['settings/language-setting', 'false']);
+        /*if (this.app.getRootNavs().length > 0) {
+          this.app.getRootNavs()[0].push(LanguageSettingsPage, {
+            isFromSettings: true
+          });
+        }*/
         break;
+      }
 
       case 'HELP':
         this.telemetryGeneratorService.generateInteractTelemetry(

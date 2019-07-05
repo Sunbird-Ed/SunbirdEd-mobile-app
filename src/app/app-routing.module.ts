@@ -5,7 +5,7 @@ import { AuthGuardService } from 'services/auth-guard.service';
 const routes: Routes = [
   {
     path: '',
-    redirectTo: 'language-settings',
+    redirectTo: 'home',
     pathMatch: 'full',
   },
   {
@@ -17,16 +17,7 @@ const routes: Routes = [
     loadChildren: './list/list.module#ListPageModule'
   },
   {
-    path: 'language-settings',
-    loadChildren: './language-settings/language-settings.module#LanguageSettingsPageModule',
-    canLoad: [AuthGuardService]
-  },
-  {
-    path: 'user-type-selection/:isChangeRoleRequest',
-    loadChildren: './user-type-selection/user-type-selection.module#UserTypeSelectionPageModule'
-  },
-  {
-    path: 'user-type-selection/:isChangeRoleRequest',
+    path: 'user-type-selection',
     loadChildren: './user-type-selection/user-type-selection.module#UserTypeSelectionPageModule'
   },
   { path: 'user-and-groups', loadChildren: './user-and-groups/user-and-groups.module#UserAndGroupsPageModule' },
@@ -36,10 +27,23 @@ const routes: Routes = [
     canLoad: [AuthGuardService]
   },
   {
-    path: 'view-more-activity',
-    loadChildren: './view-more-activity/view-more-activity.module#ViewMoreActivityModule'
+    path: 'view-more-activity', loadChildren: './view-more-activity/view-more-activity.module#ViewMoreActivityModule'
   },
-  { path: 'tabs', loadChildren: './tabs/tabs.module#TabsPageModule' }
+  {
+    path: 'tabs',
+    loadChildren: './tabs/tabs.module#TabsPageModule'
+  },
+  {
+    path: 'settings',
+    loadChildren: './settings/settings.module#SettingsPageModule'
+  },
+  // migration-TODO to be deleted
+  { path: 'download-manager', loadChildren: './download-manager/download-manager.module#DownloadManagerPageModule' },
+  { path: 'storage-settings', loadChildren: './storage-settings/storage-settings.module#StorageSettingsPageModule' },
+  {
+    path: 'profile',
+    loadChildren: './profile/profile.module#ProfilePageModule'
+  }
 ];
 
 @NgModule({

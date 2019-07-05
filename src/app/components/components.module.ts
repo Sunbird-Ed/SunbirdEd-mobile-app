@@ -12,6 +12,7 @@ import { PipesModule } from 'pipes/pipes.module';
 import {ViewAllCardComponent} from './view-all-card/view-all-card.component';
 import {ViewMoreCardComponent} from './view-more-card/view-more-card.component';
 import {PbHorizontalComponent} from './pb-horizontal/pb-horizontal.component';
+import { SbGenericPopoverComponent } from './popups/sb-generic-popover/sb-generic-popover.component';
 
 
 @NgModule({
@@ -21,7 +22,9 @@ import {PbHorizontalComponent} from './pb-horizontal/pb-horizontal.component';
     NewCourseCardComponent,
     ViewAllCardComponent,
     ViewMoreCardComponent,
-    PbHorizontalComponent],
+    PbHorizontalComponent,
+    SbGenericPopoverComponent
+  ],
   imports: [
     CommonModule,
     FormsModule,
@@ -40,7 +43,8 @@ import {PbHorizontalComponent} from './pb-horizontal/pb-horizontal.component';
     NewCourseCardComponent,
     ViewAllCardComponent,
     ViewMoreCardComponent,
-    PbHorizontalComponent
+    PbHorizontalComponent,
+    SbGenericPopoverComponent
   ]
 })
 export class ComponentsModule { }

@@ -1,0 +1,95 @@
+@import "../../global.scss";
+:host {
+    .download-page-heading{
+        color: white;
+        font-size: $font-size-base + 2;
+    }
+
+    .download-page-info{
+        color: white;
+        font-size: $font-size-base - 2;
+    }
+
+    .download-cancel-icon{
+        font-size: $font-size-base * 2;
+        color: white;
+    }
+
+    .ad-pt-4{
+        padding-top: $base-block-space * 0.5 !important;
+    }
+    .iconSize{
+        font-size: 24px;
+    }
+    .storage-info{
+        @include padding(0,0,0,($base-block-space));
+        color: $primary-600;
+    }
+    .sb-dw-manager{
+        @include padding(($base-block-space),($base-block-space),0, ($base-block-space));
+       
+    }
+    .sb-storage-container{
+        display: grid;
+        grid-template-columns: ($base-block-space * 5) ($base-block-space * 3) auto;
+        @include padding(($base-block-space),0,($base-block-space), ($base-block-space));
+        .radio-container {
+            grid-column: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .iconSize {
+            grid-column: 2;
+            margin: $base-block-space 0;
+            display: flex;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .sb-card-details {
+            grid-column: 3;
+            margin-bottom: 0;
+            .info {
+                color: $gray-200;
+            }
+        }
+
+        &.disabled {
+            pointer-events: none;
+            opacity: 0.5;
+        }
+    }
+
+    .radio-md .radio-checked {
+        border-color: $primary-600;
+    }
+    .radio-md .radio-inner{
+        border-color: $primary-600;
+    }
+    .radio-md .radio-checked .radio-inner {
+        background-color: $primary-600;
+    }
+    .radio-md .radio-icon{
+        border-color: $primary-600;
+    }
+       
+
+    .storage-radio-btn{
+        display: flex;
+        width: 100%;
+        height: 100%;
+        align-items: center;
+        justify-content: center;
+    
+        .item-cover {
+            position: absolute;
+            top: -6px;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            width: 1000px;
+        }
+    }
+        
+}

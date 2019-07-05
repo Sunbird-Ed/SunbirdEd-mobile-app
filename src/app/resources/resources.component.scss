@@ -1,3 +1,5 @@
+@import 'src/global.scss';
+
 :host {
     ion-spinner {
         // migration-TODO
@@ -7,7 +9,7 @@
       }
       ion-spinner * {
         // migration-TODO
-        // stroke:$blue !important;
+         stroke:$blue !important;
       }
     
       .sb-card-textbook-container, .sb-card-view-all-container{
@@ -41,19 +43,19 @@
       }
       .offline-header{
         // migration-TODO
-        // color: $gray-300;
+        color: $gray-300;
         font-size: 16px;
       }
       .offline-content{
         // migration-TODO
-        // color:$gray-300 !important;
+        color:$gray-300 !important;
         width:65%; 
         margin: auto;
       }
     
       .view-all-p8{
         // migration-TODO
-        // padding: 0 $base-block-space !important;
+        padding: 0 $base-block-space !important;
       }
       #couchMark {
         position: fixed;
