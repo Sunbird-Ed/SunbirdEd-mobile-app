@@ -48,12 +48,13 @@
     "cordova-plugin-app-version": "0.1.9",
     "cordova-plugin-awesome-shared-preferences": "git+https://github.com/adriano-di-giovanni/cordova-plugin-shared-preferences.git",
     "cordova-plugin-badge": "^0.8.8",
-    "cordova-plugin-buildconfig-reader": "git+https://github.com/swayangjit/cordova-plugin-buildconfig-reader.git",
+    "cordova-plugin-buildconfig-reader": "git+https://github.com/swayangjit/cordova-plugin-buildconfig-reader.git#release-2.1.0",
     "cordova-plugin-code-push": "^1.11.19",
     "cordova-plugin-console": "1.1.0",
     "cordova-plugin-customconfigparameters": "^3.0.0",
     "cordova-plugin-device": "2.0.2",
     "cordova-plugin-dialogs": "^2.0.1",
+    "cordova-plugin-fcm-with-dependecy-updated": "git+https://github.com/swayangjit/cordova-plugin-fcm-with-dependecy-updated.git",
     "cordova-plugin-file": "6.0.1",
     "cordova-plugin-file-opener2": "^2.2.0",
     "cordova-plugin-file-support": "git+https://github.com/project-sunbird/cordova-plugin-file-support.git#release-1.15.0",
@@ -84,7 +85,7 @@
     "rxjs-compat": "^6.5.2",
     "sb-cordova-plugin-customtabs": "git+https://github.com/Sunbird-Ed/sb-cordova-plugin-customtabs.git",
     "sb-cordova-plugin-db": "git+https://github.com/swayangjit/sb-cordova-plugin-db.git",
-    "sunbird-sdk": "git+https://github.com/Sunbird-Ed/sunbird-mobile-sdk.git#v2.0.11",
+    "sunbird-sdk": "git+https://github.com/Sunbird-Ed/sunbird-mobile-sdk.git#v2.1.8",
     "tslib": "^1.9.0",
     "zone.js": "~0.8.29"
   },
@@ -144,7 +145,6 @@
       "cordova-plugin-advanced-http": {},
       "cordova-plugin-android-permissions": {},
       "cordova-plugin-media": {},
-      "cordova-plugin-buildconfig-reader": {},
       "cordova-plugin-android-downloadmanager": {},
       "sb-cordova-plugin-db": {},
       "cordova-android-support-gradle-release": {
@@ -169,7 +169,9 @@
       "cordova-plugin-local-notification": {
         "ANDROID_SUPPORT_V4_VERSION": "26.+"
       },
-      "cordova-plugin-code-push": {}
+      "cordova-plugin-code-push": {},
+      "cordova-plugin-fcm-with-dependecy-updated": {},
+      "cordova-plugin-buildconfig-reader": {}
     },
     "platforms": [
       "android"
