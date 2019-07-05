@@ -332,4 +332,12 @@ export class ContentConstants {
 export class RouterLinks {
     public static readonly HOME = 'home';
     public static readonly TABS = 'tabs';
+    public static readonly USER_AND_GROUPS = 'user-and-groups';
+    public static readonly ADD_OR_REMOVE_GROUP_USER = 'add-or-remove-group-user';
+    public static readonly GROUP_DETAILS = 'group-details';
+    public static readonly CREATE_GROUP = 'create-group';
+    public static readonly GROUP_MEMBERS = 'group-members';
+    public static readonly SHARE_USER_AND_GROUPS = 'share-user-and-groups';
+
+
 }
