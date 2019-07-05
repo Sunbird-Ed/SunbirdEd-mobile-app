@@ -6,6 +6,7 @@ import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { AppGlobalService, CommonUtilService, TelemetryGeneratorService, UtilityService, AppRatingService, AppHeaderService } from '../services/';
 import { InteractType, InteractSubtype, Environment, PageId } from 'src/services/telemetry-constants';
+import { RouterLinks } from './app.constant';
 
 @Component({
   selector: 'app-root',
@@ -109,7 +110,7 @@ export class AppComponent {
           PageId.PROFILE
         );
 
-        this.router.navigateByUrl('/user-and-groups');
+        this.router.navigateByUrl(`/${RouterLinks.USER_AND_GROUPS}`);
         // if (this.app.getRootNavs().length > 0) {
         //   this.app.getRootNavs()[0].push(UserAndGroupsPage, { profile: this.profile });
         // }
@@ -121,7 +122,7 @@ export class AppComponent {
           InteractSubtype.REPORTS_CLICKED,
           Environment.USER,
           PageId.PROFILE);
-          this.router.navigateByUrl('/tabs');
+          this.router.navigateByUrl(`/${RouterLinks.TABS}`);
         // migration-TODO Add new routing
         // if (this.app.getRootNavs().length > 0) {
         //   this.app.getRootNavs()[0].push(ReportsPage, { profile: this.profile });

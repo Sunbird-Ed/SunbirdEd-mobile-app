@@ -42,7 +42,7 @@ import {
 // import { GuestEditProfilePage } from '../../profile/guest-edit.profile/guest-edit.profile';
 import { } from '../../../services';
 import { Map } from '../../../app/telemetryutil';
-import { PreferenceKey } from '../../../app/app.constant';
+import { PreferenceKey, RouterLinks } from '../../../app/app.constant';
 import { ActivatedRoute, Router, NavigationExtras } from '@angular/router';
 import { EditDeletePopoverComponent } from '../edit-delete-popover/edit-delete-popover.component';
 import { GroupDetailNavPopover } from '../group-detail-nav-popover/group-detail-nav-popover';
@@ -283,7 +283,7 @@ export class GroupDetailsPage implements OnInit {
               groupInfo: this.group
             }
           }
-          this.router.navigate(['CreateGroupPage'], navigationExtras);
+          this.router.navigate([RouterLinks.CREATE_GROUP], navigationExtras);
           await popover.dismiss();
         },
         deleteGroup: async () => {
@@ -300,7 +300,7 @@ export class GroupDetailsPage implements OnInit {
             }
           }
 
-          this.router.navigate(['AddOrRemoveGroupUserPage'], navigationExtras);
+          this.router.navigate([RouterLinks.ADD_OR_REMOVE_GROUP_USER], navigationExtras);
           await popover.dismiss();
         },
         removeUser: async () => {
@@ -311,7 +311,7 @@ export class GroupDetailsPage implements OnInit {
               groupMembers: this.userList
             }
           }
-          this.router.navigate(['AddOrRemoveGroupUserPage'], navigationExtras);
+          this.router.navigate([RouterLinks.ADD_OR_REMOVE_GROUP_USER], navigationExtras);
 
           await popover.dismiss();
         },
