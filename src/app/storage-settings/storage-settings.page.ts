@@ -1,8 +1,8 @@
 import { Component, Inject, OnInit, ChangeDetectorRef } from '@angular/core';
-// import { IonicPage, NavController, NavParams, Popover, PopoverController, ToastController , App  } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, Popover, PopoverController, ToastController , App  } from 'ionic-angular';
 import { AppHeaderService, CommonUtilService, TelemetryGeneratorService } from '../../services/index';
 import { Observable, Subscription } from 'rxjs';
-import {IonApp , PopoverController} from '@ionic/angular';
+import {IonApp} from '@ionic/angular';
 import {
   ContentService,
   DeviceInfo,
@@ -30,13 +30,13 @@ import { AndroidPermission, AndroidPermissionsStatus } from '../../services/andr
   styleUrls: ['./storage-settings.page.scss'],
 })
 export class StorageSettingsPage implements OnInit {
-  // migration-TODO line no 35 - 39 type was Popover
+
   // popovers
-  private shouldTransferContentsPopup?: any;
-  private transferringContentsPopup?: any;
-  private cancellingTransferPopup?: any;
-  private duplicateContentPopup?: any;
-  private successTransferPopup?: any;
+  private shouldTransferContentsPopup?: Popover;
+  private transferringContentsPopup?: Popover;
+  private cancellingTransferPopup?: Popover;
+  private duplicateContentPopup?: Popover;
+  private successTransferPopup?: Popover;
   // storage
   public StorageDestination = StorageDestination;
   public storageDestination?: StorageDestination;
@@ -129,7 +129,7 @@ export class StorageSettingsPage implements OnInit {
 
     if (permissionStatus.hasPermission) {
       this.showShouldTransferContentsPopup();
-    } else if (permissionStatus['isPermissionAlwaysDenied']) {
+    } else if (permissionStatus.isPermissionAlwaysDenied) {
       this.revertSelectedStorageDestination();
       // migration-TODO
       // this.showSettingsPageToast();
@@ -333,8 +333,8 @@ export class StorageSettingsPage implements OnInit {
       await this.showTransferringContentsPopup(this.shouldTransferContentsPopup, this.storageDestination);
     });
   }
-  // migration-TODO prevPopup type was  Popover
-  private async showTransferringContentsPopup(prevPopup: any, storageDestination: StorageDestination): Promise<undefined> {
+
+  private async showTransferringContentsPopup(prevPopup: Popover, storageDestination: StorageDestination): Promise<undefined> {
     if (this.transferringContentsPopup) {
       return;
     }
@@ -462,8 +462,8 @@ export class StorageSettingsPage implements OnInit {
   //   });
   //   toast.present();
   // }
-  // migration-TODO prevPopup type was  Popover
-  private async showCancellingTransferPopup(prevPopup: any, storageDestination): Promise<undefined> {
+
+  private async showCancellingTransferPopup(prevPopup: Popover, storageDestination): Promise<undefined> {
     if (this.cancellingTransferPopup) {
       return;
     }
@@ -571,8 +571,8 @@ export class StorageSettingsPage implements OnInit {
 
     return undefined;
   }
-  // migration-TODO prevPopup type was  Popover
-  private async showSuccessTransferPopup(prevPopup: any, storageDestination: StorageDestination): Promise<undefined> {
+
+  private async showSuccessTransferPopup(prevPopup: Popover, storageDestination: StorageDestination): Promise<undefined> {
     if (this.successTransferPopup) {
       return;
     }

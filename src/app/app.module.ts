@@ -41,13 +41,13 @@ import {
   AndroidPermissionsService,
   ComingSoonMessageService,
   NotificationService,
-  SunbirdQRScanner
+  SunbirdQRScanner,
+  FormAndFrameworkUtilService
 } from '../services/index';
 
 
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
-import { LanguageSettingsPageModule } from './language-settings/language-settings.module';
 import { UserTypeSelectionPageModule } from './user-type-selection/user-type-selection.module';
 import { ComponentsModule } from './components/components.module';
 import { UserAndGroupsRoutingModule } from './user-and-groups/user-and-groups-routing.module';
@@ -296,9 +296,6 @@ export const sunbirdSdkFactory =
             enableUserSwitcher: false,
             showUser: false
           }
-        },
-        errorLoggerConfig: {
-          errorLoggerApiPath: '/api/data/v1/client/logs'
         }
       });
     };
@@ -332,8 +329,7 @@ declare const buildconfigreader;
     IonicImageLoader.forRoot(),
     DirectivesModule,
 
-    // custom modules
-    LanguageSettingsPageModule,
+    // custom modules=
     UserTypeSelectionPageModule,
     UserAndGroupsPageModule
   ],
@@ -364,6 +360,7 @@ declare const buildconfigreader;
     AndroidPermissionsService,
     ComingSoonMessageService,
     NotificationService,
+    FormAndFrameworkUtilService,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     ...sunbirdSdkServicesProvidersFactory(),
     // { provide: ErrorHandler},
