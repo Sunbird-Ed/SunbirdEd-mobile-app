@@ -16,7 +16,7 @@ import {
 } from 'src/services';
 import { ProfileService, AuthService, SharedPreferences, ProfileType } from 'sunbird-sdk';
 import { PreferenceKey, GenericAppConfig, ProfileConstants } from './app.constant';
-
+import { RouterLinks } from './app.constant';
 
 @Component({
   selector: 'app-root',
@@ -266,7 +266,7 @@ export class AppComponent {
           PageId.PROFILE
         );
 
-        this.router.navigateByUrl('/user-and-groups');
+        this.router.navigateByUrl(`/${RouterLinks.USER_AND_GROUPS}`);
         // if (this.app.getRootNavs().length > 0) {
         //   this.app.getRootNavs()[0].push(UserAndGroupsPage, { profile: this.profile });
         // }
@@ -278,7 +278,7 @@ export class AppComponent {
           InteractSubtype.REPORTS_CLICKED,
           Environment.USER,
           PageId.PROFILE);
-          this.router.navigateByUrl('/tabs');
+          this.router.navigateByUrl(`/${RouterLinks.TABS}`);
         // migration-TODO Add new routing
         // if (this.app.getRootNavs().length > 0) {
         //   this.app.getRootNavs()[0].push(ReportsPage, { profile: this.profile });
