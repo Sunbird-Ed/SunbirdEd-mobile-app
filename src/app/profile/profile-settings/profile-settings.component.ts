@@ -569,7 +569,7 @@ export class ProfileSettingsComponent {
           this.preferences.putString(PreferenceKey.SELECTED_USER_TYPE, req.profileType).toPromise().then();
         }
 
-        this.router.navigate(['']);
+        this.router.navigate(['/tabs']);
         /* migration-TODO
         this.navCtrl.push(TabsPage, {
           loginMode: 'guest'
