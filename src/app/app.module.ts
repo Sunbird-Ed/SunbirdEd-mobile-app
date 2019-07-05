@@ -41,7 +41,9 @@ import {
   AndroidPermissionsService,
   ComingSoonMessageService,
   NotificationService,
-  SunbirdQRScanner
+  SunbirdQRScanner,
+  FormAndFrameworkUtilService,
+  ActivePageService
 } from '../services/index';
 
 
@@ -119,6 +121,16 @@ export const downloadService = () => {
   return SunbirdSdk.instance.downloadService;
 };
 
+export function storageService() {
+  return SunbirdSdk.instance.storageService;
+}
+export function notificationService() {
+  return SunbirdSdk.instance.notificationService;
+}
+export function errorLoggerService() {
+  return SunbirdSdk.instance.errorLoggerService;
+}
+
 export function sdkDriverFactory(): any {
   return [{
     provide: 'SDK_CONFIG',
@@ -189,6 +201,15 @@ export function sdkDriverFactory(): any {
   }, {
     provide: 'DOWNLOAD_SERVICE',
     useFactory: downloadService
+  }, {
+    provide: 'STORAGE_SERVICE',
+    useFactory: storageService
+  }, {
+    provide: 'NOTIFICATION_SERVICE',
+    useFactory: notificationService
+  }, {
+    provide: 'ERROR_LOGGER_SERVICE',
+    useFactory: errorLoggerService
   }
   ];
 };
@@ -294,6 +315,9 @@ export const sunbirdSdkFactory =
             enableUserSwitcher: false,
             showUser: false
           }
+        },
+        errorLoggerConfig: {
+          errorLoggerApiPath: '/api/data/v1/client/logs'
         }
       });
     };
@@ -355,8 +379,10 @@ declare const buildconfigreader;
     Device,
     Network,
     AndroidPermissionsService,
+    FormAndFrameworkUtilService,
     ComingSoonMessageService,
     NotificationService,
+    ActivePageService,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     ...sunbirdSdkServicesProvidersFactory(),
     // { provide: ErrorHandler},

@@ -1,12 +1,12 @@
 import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
-import { AuthGuardService } from 'src/services/auth-guard.service';
+import { AuthGuardService } from 'services/auth-guard.service';
 
 const routes: Routes = [
   {
     path: '',
-    redirectTo: 'home',
-    pathMatch: 'full'
+    redirectTo: 'language-settings',
+    pathMatch: 'full',
   },
   {
     path: 'home',
@@ -17,8 +17,9 @@ const routes: Routes = [
     loadChildren: './list/list.module#ListPageModule'
   },
   {
-    path: 'language-settings/:isFromSettings',
-    loadChildren: './language-settings/language-settings.module#LanguageSettingsPageModule'
+    path: 'language-settings',
+    loadChildren: './language-settings/language-settings.module#LanguageSettingsPageModule',
+    canLoad: [AuthGuardService]
   },
   {
     path: 'user-type-selection/:isChangeRoleRequest',
@@ -43,7 +44,7 @@ const routes: Routes = [
 
 @NgModule({
   imports: [
-    RouterModule.forRoot(routes, { preloadingStrategy: PreloadAllModules })
+    RouterModule.forRoot(routes)
   ],
   exports: [RouterModule],
   providers: [ AuthGuardService ],
