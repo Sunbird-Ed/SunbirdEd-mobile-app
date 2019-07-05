@@ -1,10 +1,10 @@
-import { ContainerService } from 'src/services';
+import { ContainerService } from 'services';
 import { TabOptions } from '../services/container.services';
 
 
 // const HOME_TAB = { root: HomePage, icon: "home", label: "HOME_BNAV", index: 0, tabsHideOnSubPages: true };
 const COURSE_TAB = {
-    //root: CoursesPage,
+    // root: CoursesPage,
     icon: 'courses',
     label: 'COURSES_BNAV',
     index: 2,
@@ -28,7 +28,7 @@ const SCANNER_TAB = {
     tabsHideOnSubPages: true
 };
 const LIBRARY_TAB = {
-    //root: ResourcesPage,
+    // root: ResourcesPage,
     icon: 'resources',
     label: 'LIBRARY_BNAV',
     index: 1,

@@ -1,4 +1,4 @@
-import { SbGenericPopoverComponent } from 'src/app/components/popups/sb-generic-popover/sb-generic-popover.component';
+import { SbGenericPopoverComponent } from 'app/components/popups/sb-generic-popover/sb-generic-popover.component';
 import {
   CommonUtilService,
   AppHeaderService,

@@ -26,7 +26,7 @@ import {
   SunbirdQRScanner,
   ContainerService,
   AppHeaderService
-} from 'src/services';
+} from 'services';
 import { Platform, Events, LoadingController } from '@ionic/angular';
 import { ImpressionType, PageId, Environment, InteractSubtype, InteractType } from '../../../services/telemetry-constants';
 import { Router } from '@angular/router';
@@ -153,7 +153,7 @@ export class ProfileSettingsComponent {
     if (!this.hideBackButton) {
       this.headerService.showHeaderWithBackButton();
     } else {
-      this.headerService.hideHeader();  
+      this.headerService.hideHeader();
     }
     if (this.navParams && this.navParams.isCreateNavigationStack) {
       /* migration TODO
@@ -199,7 +199,7 @@ export class ProfileSettingsComponent {
           this.profile.grade = [];
           this.profile.subject = [];
           this.profile.medium = [];
-        } 
+        }
         this.profileForTelemetry = this.profile;
         this.initUserForm();
       }).catch(() => {

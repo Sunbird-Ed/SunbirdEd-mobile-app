@@ -16,7 +16,7 @@ import {
 import { AppHeaderService, CommonUtilService, Environment, InteractSubtype, InteractType, PageId, TelemetryGeneratorService } from '../../../services';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PopoverController } from '@ionic/angular';
-import { SbGenericPopoverComponent } from 'src/app/components/popups/sb-generic-popover/sb-generic-popover.component';
+import { SbGenericPopoverComponent } from 'app/components/popups/sb-generic-popover/sb-generic-popover.component';
 // import { SbGenericPopoverComponent } from '@a  pp/component/popups/sb-generic-popup/sb-generic-popover';
 
 

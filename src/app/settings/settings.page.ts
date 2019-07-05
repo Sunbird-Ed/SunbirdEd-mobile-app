@@ -4,9 +4,9 @@ import {
   SharedPreferences,
   TelemetryImpressionRequest,
 } from 'sunbird-sdk';
-import { AppHeaderService, CommonUtilService, TelemetryGeneratorService, UtilityService } from 'src/services';
+import { AppHeaderService, CommonUtilService, TelemetryGeneratorService, UtilityService } from 'services';
 import { PreferenceKey } from '../app.constant';
-import { Environment, ImpressionType, InteractSubtype, InteractType, PageId } from 'src/services/telemetry-constants';
+import { Environment, ImpressionType, InteractSubtype, InteractType, PageId } from 'services/telemetry-constants';
 import { SocialSharing } from '@ionic-native/social-sharing/ngx';
 import { Router } from '@angular/router';
 
