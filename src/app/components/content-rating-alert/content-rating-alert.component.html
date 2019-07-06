@@ -1,3 +1,28 @@
-<p>
-  content-rating-alert works!
-</p>
+
+  <ion-header class="sb-popover-header">
+    <ion-toolbar class="sb-popover-toolbar">
+      <ion-title class="sb-popover-title">{{'RATE_THE_CONTENT' | translate}}
+          <ion-icon name="close" class="sb-modal-close" (click)="closePopover()"></ion-icon> </ion-title>
+    </ion-toolbar>
+  </ion-header>
+  <ion-content no-padding class="sb-popover-container">
+      <div class="sb-popover-items">
+          <rating [(ngModel)]="userRating" (ngModelChange)="rateContent($event)"></rating>
+          <div class="sb-popover-content-details" *ngIf="userRating">
+            <div class="main-title">
+              <div class="meta-info">
+               {{'RATED_STARS' | translate: {'%s': userRating} }}
+              </div>
+            </div>
+          </div>
+          <ion-input *ngIf="showCommentBox" [(ngModel)]="comment" placeholder="{{'FEEDBACK_HINT' | translate}}" style="border-bottom : 2px;"></ion-input>
+          <div *ngIf="showCommentBox" class="sb-line"></div>
+      </div>
+  </ion-content>
+  
+  <ion-footer>
+      <div class="sb-popover-footer">
+        <button ion-button class="sb-popover-action-btn popover-color" [disabled]="!userRating" (click)="submit()">{{ 'BTN_SUBMIT' | translate }}</button>
+      </div>
+    </ion-footer>
+

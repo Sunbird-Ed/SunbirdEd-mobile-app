@@ -1,0 +1,31 @@
+@import "src/global.scss";
+:host {
+    /*     .popover-content{
+            height:85px !important;
+        } */
+    
+        .item.item-block {
+            border-bottom: 2px solid #dedede;
+            &:last-child {
+                border-bottom: 0px;
+            }
+        }
+    
+        .list-md .item-block .item-inner {
+            border-bottom: 0px;
+        }
+    }
+    .content-action  {
+        .popover-content {
+            position: fixed !important;
+            top: $base-block-space !important;
+            @include ltr() {
+                right: $base-block-space !important;
+                left: unset !important;
+            }
+            @include rtl() {
+                left: $base-block-space !important;
+                right: unset !important;
+            } 
+        }
+    }
