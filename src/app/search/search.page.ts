@@ -1,4 +1,4 @@
-import { BatchConstants, ContentFilterConfig } from './../../app/app.constant';
+import { BatchConstants } from './../../app/app.constant';
 import { Component, Inject, NgZone, OnDestroy, ViewChild } from '@angular/core';
 import { Events, NavController, NavParams, Platform, PopoverController } from '@ionic/angular';
 // import { Content as ContentView } from 'ionic-angular';

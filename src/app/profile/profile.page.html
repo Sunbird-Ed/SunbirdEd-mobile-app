@@ -6,7 +6,7 @@
   </div>
   <ion-refresher (ionRefresh)="doRefresh($event)"></ion-refresher>
   <div padding-horizontal text-center class="MT15" *ngIf="profile?.firstName">
-    <profile-avatar [username]="profile?.firstName"></profile-avatar>
+    <!--migration TODO <profile-avatar [username]="profile?.firstName"></profile-avatar> -->
   </div>
 
   <div padding-horizontal text-center>
@@ -162,7 +162,8 @@
       {{'CONTRIBUTIONS' | translate}} ({{contentCreatedByMe.length}})&lrm;
     </div>
     <div class="cards-container" style="padding:15px 5px; background-color: #fff; ">
-      <ion-scroll scrollX="true" style="width: 100%" no-padding>
+      <!-- migration -todo -->
+      <!-- <ion-scroll scrollX="true" style="width: 100%" no-padding>
         <div *ngIf="contentCreatedByMe  && isLoggedInUser">
           <ion-card *ngFor="let courseItem of contentCreatedByMe; let i=index"
             (click)="navigateToDetailPage(courseItem, layoutPopular, i);">
@@ -200,7 +201,7 @@
             </ion-card-content>
           </ion-card>
         </div>
-      </ion-scroll>
+      </ion-scroll> -->
     </div>
   </div>
 

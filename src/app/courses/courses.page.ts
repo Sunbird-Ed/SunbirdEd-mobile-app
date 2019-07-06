@@ -10,7 +10,7 @@ import { QRResultCallback, SunbirdQRScanner } from '../../services/sunbirdqrscan
 // import { SearchPage } from '../search/search';
 // import { ContentDetailsPage } from '../content-details/content-details';
 import * as _ from 'lodash';
-import { ContentCard, EventTopics, PreferenceKey, ProfileConstants, ViewMore, ContentFilterConfig } from '../../app/app.constant';
+import { ContentCard, EventTopics, PreferenceKey, ProfileConstants, ViewMore } from '../../app/app.constant';
 // migration-TODO
 // import { PageFilter, PageFilterCallback } from '../page-filter/page.filter';
 import { Network } from '@ionic-native/network/ngx';
