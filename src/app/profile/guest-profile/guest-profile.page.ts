@@ -1,7 +1,7 @@
 // import { ActiveDownloadsPage } from './../../active-downloads/active-downloads';
 import { TranslateService } from '@ngx-translate/core';
-import { Component, Inject, OnInit, AfterViewInit } from '@angular/core';
-import { Events, NavController, PopoverController, ToastController } from '@ionic/angular';
+import { Component, Inject, OnInit } from '@angular/core';
+import { Events, PopoverController, ToastController } from '@ionic/angular';
 import * as _ from 'lodash';
 import { GuestEditPage, } from '../guest-edit/guest-edit.page';
 import { UserTypeSelectionPage } from '../../user-type-selection';
@@ -25,7 +25,6 @@ import {
   SharedPreferences
 } from 'sunbird-sdk';
 import { OverflowMenuComponent } from '../overflow-menu/overflow-menu.component';
-import { FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router, NavigationExtras } from '@angular/router';
 
 @Component({
