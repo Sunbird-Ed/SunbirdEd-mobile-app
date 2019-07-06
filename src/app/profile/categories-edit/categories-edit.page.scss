@@ -1,0 +1,28 @@
+@import "src/global.scss";
+:host {
+  .label-font {
+    @extend .font-weight-600;
+    color: #979797 !important;
+    font-size: 1.4rem !important;
+  }
+  .select-text {
+    //font-size: 1.2rem !important;
+  }
+  .select-text:first-letter {
+    text-transform: capitalize;
+  }
+
+  .custom-footer-background .toolbar-background-ios,
+  .custom-footer-background .toolbar-background-md {
+    background: unset !important;
+  }
+  .padding-12 {
+    padding: 12px !important;
+  }
+  .item-select-disabled {
+    .label-md {
+      color: map-get($colors, medium_gray);
+      opacity: 1;
+    }
+  }
+}

@@ -353,8 +353,7 @@ export class RouterLinks {
     public static readonly TABS = 'tabs';
 
     // Onboarding Routs
-    public static readonly CATEGORIES_EDIT = 'categories-edit';
-
+    
     // Users and Groups Routs
     public static readonly USER_AND_GROUPS = 'user-and-groups';
     public static readonly ADD_OR_REMOVE_GROUP_USER = 'add-or-remove-group-user';
@@ -363,12 +362,13 @@ export class RouterLinks {
     public static readonly GROUP_MEMBERS = 'group-members';
     public static readonly SHARE_USER_AND_GROUPS = 'share-user-and-groups';
     public static readonly REPORTS = 'reports-page';
-
+    
     // Profile Routs
     public static readonly PROFILE = 'profile';
     public static readonly GUEST_EDIT = 'guest-edit';
     public static readonly GUEST_PROFILE = 'guest-profile';
     public static readonly PERSONAL_DETAILS_EDIT = 'personal-details-edit';
+    public static readonly CATEGORIES_EDIT = 'categories-edit';
 
     // Courses Routs
     public static readonly ENROLLED_COURSE_DETAILS = 'enrolled-course-details';
