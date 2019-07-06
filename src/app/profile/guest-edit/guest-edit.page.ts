@@ -3,8 +3,6 @@ import {
   AlertController,
   Events,
   LoadingController,
-  NavController,
-  NavParams,
   Platform,
   PopoverController
 } from '@ionic/angular';

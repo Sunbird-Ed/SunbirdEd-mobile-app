@@ -10,7 +10,6 @@ import {
   ContainerService
 } from './../../../services';
 import { Component, ViewChild, OnInit } from '@angular/core';
-import { NavParams } from '@ionic/angular';
 // import { SettingsPage } from '../../settings/settings';
 // import { UserAndGroupsPage } from '../../user-and-groups/user-and-groups';
 import { TranslateService } from '@ngx-translate/core';
@@ -38,8 +37,10 @@ export class OverflowMenuComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router
   ) {
-    this.items = this.router.getCurrentNavigation().extras.state.list;
-    this.profile = this.router.getCurrentNavigation().extras.state.profile || {};
+    if (this.router.getCurrentNavigation().extras.state) {
+      this.items = this.router.getCurrentNavigation().extras.state.list;
+      this.profile = this.router.getCurrentNavigation().extras.state.profile || {};
+    }
 
   }
 
