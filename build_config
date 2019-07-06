@@ -17,6 +17,7 @@ cordova-plugin=https://github.com/adriano-di-giovanni/cordova-plugin-shared-pref
 cordova-plugin=cordova-plugin-advanced-http
 cordova-plugin=cordova-plugin-android-permissions
 cordova-plugin=cordova-plugin-media
+cordova-plugin=cordova.plugins.diagnostic
 cordova-plugin=https://github.com/swayangjit/cordova-plugin-buildconfig-reader.git
 cordova-plugin=https://github.com/swayangjit/cordova-plugin-android-downloadmanager.git
 cordova-plugin=https://github.com/swayangjit/sb-cordova-plugin-db.git

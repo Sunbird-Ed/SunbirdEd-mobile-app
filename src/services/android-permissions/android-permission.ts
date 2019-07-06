@@ -6,5 +6,16 @@ export enum AndroidPermission {
 }
 
 export interface AndroidPermissionsStatus {
-  hasPermission: boolean;
+  hasPermission?: boolean;
+  isPermissionAlwaysDenied?: boolean;
+}
+export interface PermissionAsked {
+  isCameraAsked: boolean;
+  isStorageAsked: boolean;
+  isRecordAudioAsked: boolean;
+}
+export enum PermissionAskedEnum {
+isCameraAsked = 'isCameraAsked',
+isStorageAsked = 'isStorageAsked',
+isRecordAudioAsked = 'isRecordAudioAsked'
 }
