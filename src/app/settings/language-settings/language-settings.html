@@ -1,0 +1,35 @@
+<!-- <ion-header *ngIf="isFromSettings">
+  <ion-navbar></ion-navbar>
+</ion-header> -->
+
+<ion-content padding>
+
+  <ion-label class="font-size-17" text-center padding text-wrap><b>{{ 'CHOOSE_LANGUAGE' | translate }}</b></ion-label>
+  <div [ngClass]="isFromSettings? 'list-wrap' : '' ">
+    <ion-list inset mode="ios" >
+      <ion-radio-group [(ngModel)]="language" (ionChange)="onLanguageSelected()">
+        <ion-item mode="ios" *ngFor="let lang of languages">
+          <ion-label class="gray-color">{{ lang?.label | translate }}
+            <!-- <span *ngIf="defaultDeviceLang === lang?.code">&nbsp;&nbsp;({{ 'DETECTED' | translate }})</span> -->
+          </ion-label>
+          <ion-radio slot="start" mode="ios" [value]="lang?.code"></ion-radio>
+        </ion-item>
+      </ion-radio-group>
+    </ion-list>
+  </div>
+</ion-content>
+
+<ion-footer padding no-border *ngIf="!mainPage">
+  <ion-button class="arrow-icon" [ngStyle]="{'background-color': btnColor}" slot="end" expand="block"
+    (click)="continue()">
+    {{ 'CONTINUE' | translate }}
+    <ion-icon name="arrow-round-forward" class="icon icon-md ion-md-arrow-round-forward"></ion-icon>
+  </ion-button>
+</ion-footer>
+<ion-footer padding no-border *ngIf="mainPage">
+  <ion-button class="arrow-icon" [ngStyle]="{'background-color': btnColor}" slot="end" expand="block"
+    (click)="goToResources()">
+    {{ 'CONTINUE' | translate }}
+    <ion-icon name="arrow-round-forward" class="icon icon-md ion-md-arrow-round-forward"></ion-icon>
+  </ion-button>
+</ion-footer>

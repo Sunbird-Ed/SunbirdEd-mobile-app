@@ -15,7 +15,7 @@ import { NavParams } from '@ionic/angular';
 // import { UserAndGroupsPage } from '../../user-and-groups/user-and-groups';
 import { TranslateService } from '@ngx-translate/core';
 import { ActivatedRoute, Router, NavigationExtras } from '@angular/router';
-import { RouterLinks } from 'src/app/app.constant';
+import { RouterLinks } from '../../app.constant';
 // import { ReportsPage } from '../../reports/reports';
 
 @Component({

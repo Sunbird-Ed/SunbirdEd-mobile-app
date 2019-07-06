@@ -41,13 +41,14 @@ import {
   AndroidPermissionsService,
   ComingSoonMessageService,
   NotificationService,
-  SunbirdQRScanner
+  SunbirdQRScanner,
+  ActivePageService,
+  FormAndFrameworkUtilService
 } from '../services/index';
 
 
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
-import { LanguageSettingsPageModule } from './language-settings/language-settings.module';
 import { UserTypeSelectionPageModule } from './user-type-selection/user-type-selection.module';
 import { ComponentsModule } from './components/components.module';
 import { UserAndGroupsRoutingModule } from './user-and-groups/user-and-groups-routing.module';
@@ -121,6 +122,16 @@ export const downloadService = () => {
   return SunbirdSdk.instance.downloadService;
 };
 
+export function storageService() {
+  return SunbirdSdk.instance.storageService;
+}
+export function notificationService() {
+  return SunbirdSdk.instance.notificationService;
+}
+export function errorLoggerService() {
+  return SunbirdSdk.instance.errorLoggerService;
+}
+
 export function sdkDriverFactory(): any {
   return [{
     provide: 'SDK_CONFIG',
@@ -191,9 +202,18 @@ export function sdkDriverFactory(): any {
   }, {
     provide: 'DOWNLOAD_SERVICE',
     useFactory: downloadService
+  }, {
+    provide: 'STORAGE_SERVICE',
+    useFactory: storageService
+  }, {
+    provide: 'NOTIFICATION_SERVICE',
+    useFactory: notificationService
+  }, {
+    provide: 'ERROR_LOGGER_SERVICE',
+    useFactory: errorLoggerService
   }
   ];
-};
+}
 export const sunbirdSdkServicesProvidersFactory: () => Provider[] = sdkDriverFactory;
 
 export const sunbirdSdkFactory =
@@ -332,8 +352,7 @@ declare const buildconfigreader;
     IonicImageLoader.forRoot(),
     DirectivesModule,
 
-    // custom modules
-    LanguageSettingsPageModule,
+    // custom modules=
     UserTypeSelectionPageModule,
     UserAndGroupsPageModule
   ],
@@ -362,8 +381,11 @@ declare const buildconfigreader;
     Device,
     Network,
     AndroidPermissionsService,
+    FormAndFrameworkUtilService,
     ComingSoonMessageService,
     NotificationService,
+    ActivePageService,
+    FormAndFrameworkUtilService,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     ...sunbirdSdkServicesProvidersFactory(),
     // { provide: ErrorHandler},

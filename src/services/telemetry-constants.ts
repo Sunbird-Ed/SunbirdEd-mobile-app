@@ -277,8 +277,6 @@ export enum InteractSubtype {
     APP_INTIATED = 'app-initiated',
     ACTIVE_DOWNLOADS_CLICKED = 'active-downloads-clicked',
     SORT_OPTION_CLICKED = 'sort-option-clicked',
-    SELECT_ALL_CLICKED = 'select-all-clicked',
-    UNSELECT_ALL_CLICKED = 'unselect-all-clicked',
     SORT_OPTION_SELECTED = 'sort-options-selected',
     ACTION_BUTTON_CLICKED = 'action-button-clicked',
     OUTSIDE_POPUP_AREA_CLICKED = 'outside-popup-area-clicked',

@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, Inject, NgZone, ViewChild } from '@angular/core';
+import { Component, OnInit, AfterViewInit, Inject, NgZone, ViewChild, ViewEncapsulation } from '@angular/core';
 import {Events, NavController, ToastController, MenuController} from '@ionic/angular';
 import {IonContent as ContentView} from '@ionic/angular';
 import {
@@ -65,6 +65,7 @@ import { NavigationExtras, Router } from '@angular/router';
   selector: 'app-resources',
   templateUrl: './resources.component.html',
   styleUrls: ['./resources.component.scss'],
+  encapsulation: ViewEncapsulation.None,
   animations: [
     trigger('appear', [
       state('true', style({

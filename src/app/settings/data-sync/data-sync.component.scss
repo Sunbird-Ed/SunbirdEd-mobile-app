@@ -1,0 +1,29 @@
+.label {
+    font-size: 15px;
+}
+
+hr {
+    -webkit-margin-before: 16px;
+    height: 2px;
+    border-width: 0;
+    -webkit-box-sizing: content-box;
+    box-sizing: content-box;
+}
+
+.content-md hr {
+    // background-color: map-get($colors, medium_gray);
+    background-color: #CCCCCC;
+}
+
+.item-block {
+    min-height: unset;
+    height: 3rem;
+}
+
+.item-radio input[type="radio"] {
+    display: none;
+}
+
+.item-md {
+    padding: 0 !important;
+}

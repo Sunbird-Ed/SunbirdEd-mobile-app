@@ -360,6 +360,4 @@ export class RouterLinks {
 
     //DownloadManger Routs
     public static readonly ACTIVE_DOWNLOADS = 'active-downloads-page'
-
-
 }
