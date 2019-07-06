@@ -77,9 +77,9 @@
           <div *ngFor="let firstChildren of item?.children; let j = index;">
             <!-- <div class="separator-line"></div> -->
             <div class="sb-topics-container">
-              <collection-child
+              <app-collection-child
                 [childData]="firstChildren" [index]="j" [depth]="depth"
-                [corRelationList]="corRelationList" [isDepthChild]="isDepthChild" [breadCrumb]="breadCrumb"></collection-child>
+                [corRelationList]="corRelationList" [isDepthChild]="isDepthChild" [breadCrumb]="breadCrumb"></app-collection-child>
             </div>
           </div>
         </div>
@@ -111,6 +111,7 @@
     <ion-button size="small" (click)="cancelDownload()">{{ 'CANCEL' | translate }}</ion-button>
   </div>
 </ion-backdrop>
-<sb-download-popup *ngIf="showDownload" (cancelDownloadEmit)="cancelDownload($event)" [currentCount]="currentCount"
+<!-- migration-TODO -->
+<!-- <sb-download-popup *ngIf="showDownload" (cancelDownloadEmit)="cancelDownload($event)" [currentCount]="currentCount"
 [queuedIdentifiers]="queuedIdentifiers" [downloadSize]="downloadSize"
-[collectionName]="contentDetail?.contentData?.name" [showDownload]="showDownload"></sb-download-popup>
+[collectionName]="contentDetail?.contentData?.name" [showDownload]="showDownload"></sb-download-popup> -->

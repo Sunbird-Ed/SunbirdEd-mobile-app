@@ -5,7 +5,7 @@ import { Routes, RouterModule } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { IonicImageLoader } from 'ionic-image-loader';
-import { IonicRatingModule } from 'ionic4-rating';
+
 
 import { ComponentsModule } from '../components/components.module';
 import { DirectivesModule } from '../../directives/directives.module';
@@ -33,7 +33,6 @@ const routes: Routes = [
     ComponentsModule,
     IonicImageLoader,
     DirectivesModule,
-    IonicRatingModule,
     PipesModule
   ],
   declarations: [CollectionDetailEtbPage],

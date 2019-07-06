@@ -29,6 +29,6 @@
   <!-- <div *ngIf="childData?.children && childData?.contentData?.mimeType === 'application/vnd.ekstep.content-collection'"
       class="sb-separator-line ml8 mtb-8"></div> -->
   <div class="ml8" *ngFor="let firstChildren of childData?.children; let j = index;">
-      <collection-child [childData]="firstChildren" [breadCrumb]="breadCrumb"></collection-child>
+      <app-collection-child [childData]="firstChildren" [breadCrumb]="breadCrumb"></app-collection-child>
   </div>
 </div>
