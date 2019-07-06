@@ -1,0 +1,25 @@
+<ion-content class="no-net-popup">
+  <ion-grid padding>
+    
+    <ion-row>
+      <ion-col no-padding col-1>
+        <img src="assets/imgs/ic_offline_white_sm.png" alt="offline-image">
+      </ion-col>
+
+      <ion-col no-padding col-10>
+        <label class="no-net-heading">{{sbPopoverHeading}}</label>
+      </ion-col>
+      
+      <ion-col no-padding col-1>
+        <ion-icon class="no-net-close-btn" name="close" (click)="closePopover()"></ion-icon>        
+      </ion-col>
+    </ion-row>
+      
+    <ion-row *ngIf="sbPopoverMessage?.length">
+      <ion-col no-padding offset-1 col-10>
+        <div class="no-net-message">{{sbPopoverMessage}}</div>        
+      </ion-col>
+    </ion-row>
+
+  </ion-grid>
+</ion-content>
