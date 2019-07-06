@@ -48,6 +48,8 @@ const routes: Routes = [
   { path: 'course-batches', loadChildren: './course-batches/course-batches.module#CourseBatchesPageModule' },
   { path: 'enrolled-course-details-page', loadChildren: './enrolled-course-details-page/enrolled-course-details-page.module#EnrolledCourseDetailsPagePageModule' },
   // { path: 'collection-detail-etb', loadChildren: './collection-detail-etb/collection-detail-etb.module#CollectionDetailEtbPageModule' }
+  // { path: 'course-batches', loadChildren: './course-batches/course-batches.module#CourseBatchesPageModule' },
+  { path: 'collection-detail-etb', loadChildren: './collection-detail-etb/collection-detail-etb.module#CollectionDetailEtbPageModule' }
 ];
 
 @NgModule({
