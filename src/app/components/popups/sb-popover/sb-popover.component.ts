@@ -1,14 +1,20 @@
-import {Component, NgZone, OnDestroy, OnInit} from '@angular/core';
-import {NavParams, Platform} from '@ionic/angular';
+import {Component, NgZone, OnDestroy} from '@angular/core';
+// import {NavParams, Platform, ViewController} from 'ionic-angular';
+import {Platform} from '@ionic/angular';
 import {CorrelationData, Rollup} from 'sunbird-sdk';
-import {Observable, Subscription} from 'rxjs-compat';
+import {Observable, Subscription} from 'rxjs';
 
+/**
+ * Generated class for the PopupsComponent component.
+ *
+ * See https://angular.io/api/core/Component for more info on Angular
+ * Components.
+ */
 @Component({
-  selector: 'app-sb-popover',
-  templateUrl: './sb-popover.component.html',
-  styleUrls: ['./sb-popover.component.scss'],
+  selector: 'sb-popover',
+  templateUrl: 'sb-popover.component.html'
 })
-export class SbPopoverComponent implements OnInit, OnDestroy {
+export class SbPopoverComponent implements OnDestroy {
   sbPopoverHeading: any;
   sbPopoverMainTitle: any;
   sbPopoverContent: any;
@@ -33,35 +39,37 @@ export class SbPopoverComponent implements OnInit, OnDestroy {
   private sbPopoverDynamicContentSubscription?: Subscription;
 
   constructor(
-    public viewCtrl: any,
-    public navParams: NavParams,
+    // migration-TODO
+    // public viewCtrl: ViewController,
+    // public navParams: NavParams,
     private platform: Platform,
     private ngZone: NgZone
   ) {
-    this.content = this.navParams.get('content');
-    this.actionsButtons = this.navParams.get('actionsButtons');
-    this.icon = this.navParams.get('icon');
-    this.metaInfo = this.navParams.get('metaInfo');
-    this.sbPopoverContent = this.navParams.get('sbPopoverContent');
-    this.sbPopoverHeading = this.navParams.get('sbPopoverHeading');
-    this.sbPopoverMainTitle = this.navParams.get('sbPopoverMainTitle');
+    // migration-TODO
+    // this.content = this.navParams.get('content');
+    // this.actionsButtons = this.navParams.get('actionsButtons');
+    // this.icon = this.navParams.get('icon');
+    // this.metaInfo = this.navParams.get('metaInfo');
+    // this.sbPopoverContent = this.navParams.get('sbPopoverContent');
+    // this.sbPopoverHeading = this.navParams.get('sbPopoverHeading');
+    // this.sbPopoverMainTitle = this.navParams.get('sbPopoverMainTitle');
 
-    this.content = this.navParams.get('content');
-    this.data = this.navParams.get('data');
-    this.batchDetails = this.navParams.get('batchDetails');
-    this.pageName = this.navParams.get('pageName');
-    this.objRollup = this.navParams.get('objRollup');
-    this.corRelationList = this.navParams.get('corRelationList');
-    this.img = this.navParams.get('img');
+    // this.content = this.navParams.get('content');
+    // this.data = this.navParams.get('data');
+    // this.batchDetails = this.navParams.get('batchDetails');
+    // this.pageName = this.navParams.get('pageName');
+    // this.objRollup = this.navParams.get('objRollup');
+    // this.corRelationList = this.navParams.get('corRelationList');
+    // this.img = this.navParams.get('img');
 
-    // Dynamic
-    this.sbPopoverDynamicMainTitle$ = this.navParams.get('sbPopoverDynamicMainTitle');
-    this.sbPopoverDynamicContent$ = this.navParams.get('sbPopoverDynamicContent');
+    // // Dynamic
+    // this.sbPopoverDynamicMainTitle$ = this.navParams.get('sbPopoverDynamicMainTitle');
+    // this.sbPopoverDynamicContent$ = this.navParams.get('sbPopoverDynamicContent');
 
 
-    if (this.navParams.get('isChild')) {
-      this.isChild = true;
-    }
+    // if (this.navParams.get('isChild')) {
+    //   this.isChild = true;
+    // }
 
     if (this.sbPopoverDynamicMainTitle$) {
       this.sbPopoverDynamicMainTitleSubscription = this.sbPopoverDynamicMainTitle$
@@ -84,14 +92,11 @@ export class SbPopoverComponent implements OnInit, OnDestroy {
     }
 
     this.contentId = (this.content && this.content.identifier) ? this.content.identifier : '';
-    this.platform.backButton.subscribeWithPriority(20, () => {
-      this.viewCtrl.dismiss();
-      this.platform.backButton.unsubscribe();
-    });
-  }
-
-  ngOnInit() {
-
+    // migration-TODO
+    // this.backButtonFunc = this.platform.registerBackButtonAction(() => {
+    //   // this.viewCtrl.dismiss();
+    //   this.backButtonFunc();
+    // }, 20);
   }
 
   ngOnDestroy(): void {
@@ -105,12 +110,18 @@ export class SbPopoverComponent implements OnInit, OnDestroy {
   }
 
   closePopover() {
-    this.viewCtrl.dismiss();
+    // migration-TODO
+    // this.viewCtrl.dismiss();
   }
   deleteContent(candelete: boolean = false, whichbtnClicked?) {
-    this.viewCtrl.dismiss(candelete);
-    if (this.navParams.get('handler')) {
-      this.navParams.get('handler')(whichbtnClicked);
-    }
+    // migration-TODO
+    // this.viewCtrl.dismiss(candelete);
+    // if (this.navParams.get('handler')) {
+      // this.navParams.get('handler')(whichbtnClicked);
+    // }
+  }
+
+  ionViewWillLeave(): void {
+    this.backButtonFunc();
   }
 }

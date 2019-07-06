@@ -14,6 +14,8 @@ import {ViewMoreCardComponent} from './view-more-card/view-more-card.component';
 import {PbHorizontalComponent} from './pb-horizontal/pb-horizontal.component';
 import { CourseCardComponent } from './cards/coursecard/coursecard.component';
 import { SbGenericPopoverComponent } from './popups/sb-generic-popover/sb-generic-popover.component';
+import { SbNoNetworkPopupComponent } from './popups/sb-no-network-popup/sb-no-network-popup.component';
+import { SbPopoverComponent } from './popups/sb-popover/sb-popover.component';
 
 
 @NgModule({
@@ -25,7 +27,9 @@ import { SbGenericPopoverComponent } from './popups/sb-generic-popover/sb-generi
     ViewMoreCardComponent,
     PbHorizontalComponent,
     CourseCardComponent,
-    SbGenericPopoverComponent
+    SbGenericPopoverComponent,
+    SbPopoverComponent,
+    SbNoNetworkPopupComponent
   ],
   imports: [
     CommonModule,
@@ -47,7 +51,9 @@ import { SbGenericPopoverComponent } from './popups/sb-generic-popover/sb-generi
     ViewMoreCardComponent,
     PbHorizontalComponent,
     CourseCardComponent,
-    SbGenericPopoverComponent
+    SbGenericPopoverComponent,
+    SbPopoverComponent,
+    SbNoNetworkPopupComponent
   ]
 })
 export class ComponentsModule { }

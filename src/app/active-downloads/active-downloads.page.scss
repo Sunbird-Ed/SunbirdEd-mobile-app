@@ -1,0 +1,67 @@
+@import "../../global.scss";
+:host {
+    .download-page-heading{
+        color: white;
+        font-size: $font-size-base + 2;
+    }
+
+    .download-page-info{
+        color: white;
+        font-size: $font-size-base - 2;
+    }
+
+    .download-cancel-icon{
+        font-size: $font-size-base * 2;
+        color: white;
+    }
+
+    .ad-pt-4{
+        padding-top: $base-block-space * 0.5 !important;
+    }
+
+    .img-mt-88{
+        margin-top: $base-block-space * 11;
+    }
+
+    .ad-pb-88{
+        padding-bottom: $base-block-space * 11;        
+    }
+
+    .ad-ml-8{
+        margin-left: $base-block-space;
+    }
+
+    .ad-border-bottom-1{
+        border-bottom: 1px solid #EEE2E2;
+    }
+
+    .ad-no-box-shadow{
+        box-shadow: none;
+    }
+
+    .ad-action-btn{
+        position: absolute;
+        bottom: 0;
+        background: $primary-color;
+        border-radius: 0px !important;
+        box-shadow: none !important;
+        height: ($base-block-space * 3);
+        border-top-left-radius: 4px !important;
+        border-top-right-radius: 4px !important;
+        text-transform: capitalize;
+        @include margin(0, 0, 0, ($base-block-space * 1));
+        @include padding(null, ($base-block-space * 1));
+        background-color: $danger-color;
+
+        .button-inner {
+            font-size: ($font-size-base - 2);
+            line-height: 17px;
+            font-weight: 100;
+            font-style: normal;
+            font-stretch: normal;
+            line-height: normal;
+            text-align: center;
+            color:$white-color;
+        }
+    }
+}

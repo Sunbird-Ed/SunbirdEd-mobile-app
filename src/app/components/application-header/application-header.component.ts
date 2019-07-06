@@ -100,6 +100,9 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
   goToCourses() {
     this.router.navigateByUrl('/courses');
   }
+  goToActiveDonwloads() {
+    this.router.navigateByUrl('/active-downloads');
+  }
 
   setAppVersion(): any {
     this.utilityService.getBuildConfigValue(GenericAppConfig.VERSION_NAME)
