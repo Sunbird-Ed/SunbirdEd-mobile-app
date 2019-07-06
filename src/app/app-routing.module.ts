@@ -41,7 +41,8 @@ const routes: Routes = [
   // migration-TODO to be deleted
   { path: 'download-manager', loadChildren: './download-manager/download-manager.module#DownloadManagerPageModule' },
   { path: 'storage-settings', loadChildren: './storage-settings/storage-settings.module#StorageSettingsPageModule' },
-  { path: RouterLinks.PROFILE, loadChildren: './profile/profile.module#ProfilePageModule' },
+  { path: RouterLinks.PROFILE, loadChildren: './profile/profile.module#ProfilePageModule' },  { path: 'collection-detail-etb', loadChildren: './collection-detail-etb/collection-detail-etb.module#CollectionDetailEtbPageModule' },
+
 ];
 
 @NgModule({
