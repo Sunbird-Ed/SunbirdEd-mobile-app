@@ -1,0 +1,73 @@
+<ion-header>
+  <ion-toolbar no-border-bottom>
+    <ion-title ellipsis>
+      {{ 'REPORTS' | translate}}
+    </ion-title>
+  </ion-toolbar>
+
+  <ion-toolbar no-border-top>
+    <ion-segment [(ngModel)]="report" (ionChange)="onSegmentChange(report)">
+      <ion-segment-button value="users">
+        {{ 'USERS' | translate }}
+      </ion-segment-button>
+      <ion-segment-button value="groups">
+        {{ 'GROUPS' | translate }}
+      </ion-segment-button>
+    </ion-segment>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div [ngSwitch]="report">
+    <ion-list class="item-background radius" *ngSwitchCase="'users'" padding>
+      <ion-item class="bgColor" (click)="goToUserReportList(currentUser?.uid,currentUser?.handle)" margin-bottom
+        no-lines>
+        <h6><strong>{{currentUser?.handle}}</strong></h6>
+        <p *ngIf="currentUser?.profileType === ProfileType.TEACHER">{{'USER_TYPE_1' | translate | titlecase}}</p>
+        <p *ngIf="currentUser?.profileType === ProfileType.STUDENT">{{'USER_TYPE_2' | translate | titlecase}}</p>
+        <ion-icon name="ios-arrow-forward" item-end></ion-icon>
+      </ion-item>
+      <ion-item no-padding *ngIf="users?.length > 0" margin-bottom no-lines>
+        <ion-text>
+          <p text-uppercase color="dark_gray" class="subTitle">{{ 'OTHER_USERS' | translate}}</p>
+        </ion-text>
+      </ion-item>
+      <ion-item class="bgColor" (click)="goToUserReportList(user?.uid,user?.handle)" margin-bottom no-lines
+        *ngFor="let user of otherUsers;let i=index">
+        <h6><strong>{{user?.handle}}</strong></h6>
+        <p *ngIf="user?.profileType === ProfileType.TEACHER">{{'USER_TYPE_1' | translate | titlecase}}</p>
+        <p *ngIf="user?.profileType === ProfileType.STUDENT">{{'USER_TYPE_2' | translate | titlecase}}</p>
+        <ion-icon name="ios-arrow-forward" item-end></ion-icon>
+      </ion-item>
+    </ion-list>
+
+    <ion-list *ngSwitchCase="'groups'" padding>
+      <div *ngIf="!groups?.length">
+        <div class="img-container">
+          <img class="image_style" alt="no_user" src="assets/imgs/ic_businessman.png">
+        </div>
+        <ion-row padding-top>
+          <ion-col size-md="6" offset-md="3" size-lg="6" offset-lg="3">
+            <div class="image-text">
+              <h6>
+                <strong>{{'NO_GROUPS_CREATED_YET' | translate}}</strong>
+              </h6>
+              <div text-center class="description">
+                {{ 'NO_GROUP_MESSAGE' | translate }}
+              </div>
+            </div>
+          </ion-col>
+        </ion-row>
+      </div>
+      <div *ngIf="groups?.length">
+        <ion-item class="bgColor" (click)="goToGroupUserReportList(group)" *ngFor="let group of groups;let i=index"
+          margin-bottom no-lines>
+          <h6><strong>{{group?.name}}</strong></h6>
+          <p *ngIf="group?.profilesCount === 1">{{group?.profilesCount}} {{ 'USER' | translate}}</p>
+          <p *ngIf="group?.profilesCount > 1">{{group?.profilesCount}} {{ 'USERS' | translate}}</p>
+          <ion-icon name="ios-arrow-forward" item-end></ion-icon>
+        </ion-item>
+      </div>
+    </ion-list>
+  </div>
+</ion-content>
