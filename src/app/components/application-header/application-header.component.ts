@@ -91,11 +91,14 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
     this.router.navigateByUrl('/download-manager');
   }
   goToStorageSettings() {
-   this.router.navigateByUrl('/storage-settings');
+    this.router.navigateByUrl('/storage-settings');
   }
 
   gotoTabs() {
     this.router.navigateByUrl(RouterLinks.TABS);
+  }
+  goToCourses() {
+    this.router.navigateByUrl('/courses');
   }
 
   setAppVersion(): any {

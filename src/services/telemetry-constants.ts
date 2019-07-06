@@ -277,6 +277,8 @@ export enum InteractSubtype {
     APP_INTIATED = 'app-initiated',
     ACTIVE_DOWNLOADS_CLICKED = 'active-downloads-clicked',
     SORT_OPTION_CLICKED = 'sort-option-clicked',
+    SELECT_ALL_CLICKED = 'select-all-clicked',
+    UNSELECT_ALL_CLICKED = 'unselect-all-clicked',
     SORT_OPTION_SELECTED = 'sort-options-selected',
     ACTION_BUTTON_CLICKED = 'action-button-clicked',
     OUTSIDE_POPUP_AREA_CLICKED = 'outside-popup-area-clicked',
@@ -305,7 +307,12 @@ export enum InteractSubtype {
     UNIT_CLICKED = 'unit-clicked',
     PERMISSION_POPUP = 'permission-popup',
     WALKTHROUGH_BACKDROP_CLICKED = 'walkthrough-backdrop-clicked',
-    WALKTHROUGH_CONFIRMATION_CLICKED = 'walkthrough-confirmation-clicked'
+    WALKTHROUGH_CONFIRMATION_CLICKED = 'walkthrough-confirmation-clicked',
+    HOTCODE_PUSH_INITIATED = 'hotcode-push-initiated',
+    HOTCODE_PUSH_SUCCESS = 'hotcode-push-success',
+    HOTCODE_PUSH_FAILURE = 'hotcode-push-failure',
+    HOTCODE_PUSH_PROGRESS = 'hotcode-push-progress',
+    HOTCODE_PUSH_KEY_NOT_DEFINED = 'hotcode-push-key-not-defined'
 }
 
 export enum ActionButtonType {

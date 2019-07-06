@@ -1,10 +1,3 @@
-// migration-TODO remove this cordova declaration
-const cordova = {
-    file: {
-        dataDirectory: ''
-    }
-};
-
 export class ContentType {
     public static readonly STORY = 'Story';
     public static readonly WORKSHEET = 'Worksheet';
@@ -17,6 +10,13 @@ export class ContentType {
     public static readonly TEXTBOOK_UNIT = 'TextBookUnit';
     public static readonly LESSON_PLAN_UNIT = 'LessonPlanUnit';
     public static readonly COURSE_UNIT = 'CourseUnit';
+    public static readonly FOCUS_SPOT = 'FocusSpot';
+    public static readonly LEARNING_OUTCOME_DEFINITION = 'LearningOutcomeDefinition';
+    public static readonly PRACTICE_QUESTION_SET = 'PracticeQuestionSet';
+    public static readonly CURIOSITY_QUESTIONS = 'CuriosityQuestions';
+    public static readonly MARKING_SCHEME_RUBRIC = 'MarkingSchemeRubric';
+    public static readonly EXPLANATION_RESOURCE = 'ExplanationResource';
+    public static readonly EXPERIENTIAL_RESOURCE = 'ExperientialResource';
 
     public static readonly FOR_COURSE_TAB = [
         ContentType.COURSE
@@ -30,6 +30,24 @@ export class ContentType {
         ContentType.TEXTBOOK,
         ContentType.LESSON_PLAN
     ];
+    // TODO: not need to pass content types, by default all the content types should display
+    public static readonly FOR_DOWNLOADED_TAB = [
+        ContentType.STORY,
+        ContentType.WORKSHEET,
+        ContentType.GAME,
+        ContentType.RESOURCE,
+        ContentType.COLLECTION,
+        ContentType.TEXTBOOK,
+        ContentType.LESSON_PLAN,
+        ContentType.COURSE,
+        ContentType.FOCUS_SPOT,
+        ContentType.LEARNING_OUTCOME_DEFINITION,
+        ContentType.PRACTICE_QUESTION_SET,
+        ContentType.CURIOSITY_QUESTIONS,
+        ContentType.MARKING_SCHEME_RUBRIC,
+        ContentType.EXPLANATION_RESOURCE,
+        ContentType.EXPERIENTIAL_RESOURCE
+    ];
     public static readonly FOR_PROFILE_TAB = [
         ContentType.STORY,
         ContentType.WORKSHEET,
@@ -38,17 +56,31 @@ export class ContentType {
         ContentType.COLLECTION,
         ContentType.TEXTBOOK,
         ContentType.LESSON_PLAN,
-        ContentType.COURSE
+        ContentType.COURSE,
+        ContentType.FOCUS_SPOT,
+        ContentType.LEARNING_OUTCOME_DEFINITION,
+        ContentType.PRACTICE_QUESTION_SET,
+        ContentType.CURIOSITY_QUESTIONS,
+        ContentType.MARKING_SCHEME_RUBRIC,
+        ContentType.EXPLANATION_RESOURCE,
+        ContentType.EXPERIENTIAL_RESOURCE
     ];
     public static readonly FOR_DIAL_CODE_SEARCH = [
         ContentType.TEXTBOOK,
-        ContentType.TEXTBOOK_UNIT
+        ContentType.TEXTBOOK_UNIT,
+        ContentType.COURSE
     ];
+    // Other than mimeType collection. ContentType need not to pass recently viewded.
     public static readonly FOR_RECENTLY_VIEWED = [
         ContentType.STORY,
         ContentType.WORKSHEET,
         ContentType.GAME,
-        ContentType.RESOURCE
+        ContentType.RESOURCE,
+        ContentType.LESSON_PLAN,
+        ContentType.FOCUS_SPOT,
+        ContentType.LEARNING_OUTCOME_DEFINITION,
+        ContentType.PRACTICE_QUESTION_SET,
+        ContentType.CURIOSITY_QUESTIONS
     ];
 }
 
@@ -77,21 +109,6 @@ export class Search {
         'medium',
         'contentType',
         'channel'
-    ];
-}
-
-export class FlagContent {
-    public static readonly FLAG_REASONS_VALUE = [
-        'Copyright Violation',
-        'Inappropriate Content',
-        'Privacy Violation',
-        'Other'
-    ];
-    public static readonly FLAG_REASONS_LABLE = [
-        'OPTION_COPYRIGHT_VIOLATION',
-        'OPTION_INAPPROPRIATE_CONTENT',
-        'OPTION_PRIVACY_VIOLATION',
-        'OPTION_OTHER'
     ];
 }
 
@@ -183,6 +200,7 @@ export class PreferenceKey {
     public static readonly APP_RATING_DATE = 'app_rating_date';
     public static readonly APP_RATE_LATER_CLICKED = 'app_rate_later_clicked';
     public static readonly APP_RATING_POPUP_APPEARED = 'app_rating_popup_appeared';
+    public static readonly APP_PERMISSION_ASKED = 'app_permission_asked';
 }
 
 export class GenericAppConfig {
@@ -329,6 +347,7 @@ export class ContentConstants {
     public static readonly COMING_SOON_MSG = 'comingSoonMsg';
 }
 
+
 export class RouterLinks {
     public static readonly HOME = 'home';
     public static readonly TABS = 'tabs';
@@ -356,8 +375,8 @@ export class RouterLinks {
 
     // Resources Routs
     public static readonly COLLECTION_DETAILS_ETB = 'collection-details-etb';
-    public static readonly CONTENT_DETAILS = 'content-details'
+    public static readonly CONTENT_DETAILS = 'content-details';
 
     //DownloadManger Routs
-    public static readonly ACTIVE_DOWNLOADS = 'active-downloads-page'
+    public static readonly ACTIVE_DOWNLOADS = 'active-downloads-page';
 }

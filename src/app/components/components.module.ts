@@ -8,10 +8,11 @@ import { ApplicationHeaderComponent } from './application-header/application-hea
 import { SignInCardComponent} from './sign-in-card/sign-in-card.component';
 import {TextBookCardComponent} from './text-book-card/text-book-card.component';
 import {NewCourseCardComponent} from './new-course-card/new-course-card.component';
-import { PipesModule } from 'pipes/pipes.module';
+import { PipesModule } from '../../pipes/pipes.module';
 import {ViewAllCardComponent} from './view-all-card/view-all-card.component';
 import {ViewMoreCardComponent} from './view-more-card/view-more-card.component';
 import {PbHorizontalComponent} from './pb-horizontal/pb-horizontal.component';
+import { CourseCardComponent } from './cards/coursecard/coursecard.component';
 import { SbGenericPopoverComponent } from './popups/sb-generic-popover/sb-generic-popover.component';
 
 
@@ -23,6 +24,7 @@ import { SbGenericPopoverComponent } from './popups/sb-generic-popover/sb-generi
     ViewAllCardComponent,
     ViewMoreCardComponent,
     PbHorizontalComponent,
+    CourseCardComponent,
     SbGenericPopoverComponent
   ],
   imports: [
@@ -44,6 +46,7 @@ import { SbGenericPopoverComponent } from './popups/sb-generic-popover/sb-generi
     ViewAllCardComponent,
     ViewMoreCardComponent,
     PbHorizontalComponent,
+    CourseCardComponent,
     SbGenericPopoverComponent
   ]
 })
