@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
-import { AuthGuardService } from 'services/auth-guard.service';
+import { AuthGuardService } from '../services/auth-guard.service';
+import { RouterLinks } from './app.constant';
 
 const routes: Routes = [
   {
@@ -20,7 +21,7 @@ const routes: Routes = [
     path: 'user-type-selection',
     loadChildren: './user-type-selection/user-type-selection.module#UserTypeSelectionPageModule'
   },
-  { path: 'user-and-groups', loadChildren: './user-and-groups/user-and-groups.module#UserAndGroupsPageModule' },
+  { path: RouterLinks.USER_AND_GROUPS, loadChildren: './user-and-groups/user-and-groups.module#UserAndGroupsPageModule' },
   {
     path: 'resources',
     loadChildren: './resources/resources.module#ResourcesModule',
@@ -40,10 +41,7 @@ const routes: Routes = [
   // migration-TODO to be deleted
   { path: 'download-manager', loadChildren: './download-manager/download-manager.module#DownloadManagerPageModule' },
   { path: 'storage-settings', loadChildren: './storage-settings/storage-settings.module#StorageSettingsPageModule' },
-  {
-    path: 'profile',
-    loadChildren: './profile/profile.module#ProfilePageModule'
-  }
+  { path: RouterLinks.PROFILE, loadChildren: './profile/profile.module#ProfilePageModule' },
 ];
 
 @NgModule({
@@ -51,6 +49,6 @@ const routes: Routes = [
     RouterModule.forRoot(routes)
   ],
   exports: [RouterModule],
-  providers: [ AuthGuardService ],
+  providers: [AuthGuardService],
 })
 export class AppRoutingModule { }

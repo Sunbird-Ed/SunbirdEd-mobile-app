@@ -10,8 +10,6 @@ import { AppGlobalService } from './app-global-service.service';
 import { UtilityService } from './utility-service';
 import { CommonUtilService } from './common-util.service';
 import { FormAndFrameworkUtilService } from './formandframeworkutil.service';
-import { Observable } from 'rxjs-compat';
-import { threadId } from 'worker_threads';
 
 
 @Injectable({

@@ -530,19 +530,19 @@ async openPopover(upgradeType: any) {
   }
 
   generateAttributeChangeTelemetry(oldAttribute, newAttribute, pageId, env?) {
-        if (this.TRACK_USER_TELEMETRY) {
-            const values = new Map();
-            values['oldValue'] = oldAttribute;
-            values['newValue'] = newAttribute;
+    if (this.TRACK_USER_TELEMETRY) {
+        const values = new Map();
+        values['oldValue'] = oldAttribute;
+        values['newValue'] = newAttribute;
 
-            this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
-                InteractSubtype.PROFILE_ATTRIBUTE_CHANGED,
-                env ? env : Environment.USER,
-                pageId,
-                undefined,
-                values);
-        }
+        this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
+            InteractSubtype.PROFILE_ATTRIBUTE_CHANGED,
+            env ? env : Environment.USER,
+            pageId,
+            undefined,
+            values);
     }
+}
 
   generateSaveClickedTelemetry(profile, validation, pageId, interactSubtype) {
       if (this.TRACK_USER_TELEMETRY) {

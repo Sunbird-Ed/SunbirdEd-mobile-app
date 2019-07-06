@@ -346,7 +346,7 @@ android {
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile ("com.google.android.gms:play-services-analytics:9.4.0")
+    compile ("com.google.android.gms:play-services-analytics:10.+")
     compile ("com.android.support:multidex:1.0.3")
     compile('com.crashlytics.sdk.android:crashlytics:2.9.4@aar') {
           transitive = true;

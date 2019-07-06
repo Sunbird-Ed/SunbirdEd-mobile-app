@@ -343,6 +343,7 @@ export class RouterLinks {
     public static readonly CREATE_GROUP = 'create-group';
     public static readonly GROUP_MEMBERS = 'group-members';
     public static readonly SHARE_USER_AND_GROUPS = 'share-user-and-groups';
+    public static readonly REPORTS = 'reports-page';
 
     // Profile Routs
     public static readonly PROFILE = 'profile';
@@ -355,8 +356,8 @@ export class RouterLinks {
 
     // Resources Routs
     public static readonly COLLECTION_DETAILS_ETB = 'collection-details-etb';
-    public static readonly CONTENT_DETAILS = 'content-details';
+    public static readonly CONTENT_DETAILS = 'content-details'
 
-    // DownloadManger Routs
-    public static readonly ACTIVE_DOWNLOADS =  'active-downloads-page';
+    //DownloadManger Routs
+    public static readonly ACTIVE_DOWNLOADS = 'active-downloads-page'
 }
