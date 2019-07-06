@@ -31,8 +31,8 @@
 
   <ion-label>{{ latestSync | translate}}</ion-label>
 
-  <ion-button block (click)="onSyncClick()">{{ 'SYNC_NOW' | translate }}</ion-button>
+  <ion-button expand="block" (click)="onSyncClick()">{{ 'SYNC_NOW' | translate }}</ion-button>
   <hr>
-  <ion-button (click)="shareTelemetry()" no-padding clear>{{ 'SHARE_TELEMETRY' | translate }}</ion-button>
+  <ion-button (click)="shareTelemetry()" no-padding fill="clear">{{ 'SHARE_TELEMETRY' | translate }}</ion-button>
 
 </ion-content>
