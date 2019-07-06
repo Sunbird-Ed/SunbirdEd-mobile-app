@@ -1,0 +1,35 @@
+<ion-header class="sb-popover-header">
+  <ion-toolbar class="sb-popover-toolbar">
+    <ion-title class="sb-popover-title">{{sbPopoverHeading}}
+      <ion-icon *ngIf="isNotShowCloseIcon" name="close" class="sb-modal-close" (click)="closePopover()"></ion-icon> </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content no-padding class="sb-popover-container">
+    <div class="sb-popover-items">
+        <div class="icon-container" *ngIf="icon">
+          <ion-icon ios="{{icon?.ios}}" md="{{icon?.md}}"></ion-icon>
+        </div>
+        <div class="icon-container" *ngIf="img">
+          <img src="{{img?.path}}"/>
+        </div>
+
+        <div class="sb-popover-content-details" *ngIf="sbPopoverMainTitle || metaInfo || sbPopoverContent">
+          <div class="main-title">
+            {{sbPopoverMainTitle}}
+           <div class="meta-info">
+              {{metaInfo}}
+            </div>
+          </div>
+            <div class="sb-popover-content" *ngIf="sbPopoverContent">
+              {{sbPopoverContent}}
+            </div>
+        </div>
+    </div>
+</ion-content>
+
+<ion-footer>
+  <div class="sb-popover-footer">
+    <ion-button class="sb-popover-action-btn " [ngClass]="btn.btnClass" *ngFor="let btn of actionsButtons" (click)='deleteContent(true,btn.btntext)'> {{btn.btntext }}</ion-button>
+  </div>
+</ion-footer>
