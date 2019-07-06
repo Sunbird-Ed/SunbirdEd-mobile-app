@@ -4,11 +4,11 @@
 
       <ion-grid no-padding *ngIf="(activeDownloadRequests$ | async)?.length">
         <ion-row>
-          <ion-col class="ad-pt-4" col-9>
+          <ion-col class="ad-pt-4" size="9">
             <div class="download-page-heading"><b>{{'ACTIVE_DOWNLOADS' | translate}}</b></div>
             <div class="download-page-info">{{'DOWNLOADING_CONTENT' | translate}} : 1/{{(activeDownloadRequests$ | async)?.length}}</div>
           </ion-col>
-          <ion-col no-padding col-3>
+          <ion-col no-padding size="3">
             <div float-right text-center (click)="cancelAllDownloads()">
               <ion-icon class="download-cancel-icon" ios="ios-close" md="md-close"></ion-icon>
               <div class="download-page-info">{{'CANCEL_ALL' | translate}}</div>
@@ -42,7 +42,7 @@
       <div *ngFor="let activeDownload of (activeDownloadRequests$ | async); let i = index">
         <div>
           <ion-row class="ad-border-bottom-1">
-            <ion-col no-padding col-10>
+            <ion-col no-padding size="10">
 
               <div class="sb-card">
                 <div start class="img-container">
@@ -73,10 +73,10 @@
               </div>
 
             </ion-col>
-            <ion-col col-2>
-              <button ion-button no-margin class="ad-action-btn" margin-right (click)="cancelDownload(activeDownload)">
+            <ion-col size="2">
+              <ion-button no-margin class="ad-action-btn" margin-right (click)="cancelDownload(activeDownload)">
                 {{'CANCEL' | translate}}
-              </button>
+              </ion-button>
             </ion-col>
           </ion-row>
         </div>

@@ -361,7 +361,6 @@ export class RouterLinks {
     public static readonly CREATE_GROUP = 'create-group';
     public static readonly GROUP_MEMBERS = 'group-members';
     public static readonly SHARE_USER_AND_GROUPS = 'share-user-and-groups';
-    public static readonly REPORTS = 'reports-page';
     
     // Profile Routs
     public static readonly PROFILE = 'profile';
@@ -379,4 +378,10 @@ export class RouterLinks {
 
     //DownloadManger Routs
     public static readonly ACTIVE_DOWNLOADS = 'active-downloads-page';
+
+    // Reports Routs
+    public static readonly REPORTS_LIST = 'reports-list';
+    public static readonly REPORTS = 'reports';
+
+
 }
