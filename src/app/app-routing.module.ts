@@ -44,6 +44,7 @@ const routes: Routes = [
   { path: 'courses', loadChildren: './courses/courses.module#CoursesPageModule' },
   { path: 'search', loadChildren: './search/search.module#SearchPageModule' },
   { path: RouterLinks.PROFILE, loadChildren: './profile/profile.module#ProfilePageModule' },
+  { path: 'collection-detail-etb', loadChildren: './collection-detail-etb/collection-detail-etb.module#CollectionDetailEtbPageModule' }
 ];
 
 @NgModule({
