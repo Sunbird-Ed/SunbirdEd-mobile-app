@@ -1,0 +1,22 @@
+@import "src/global.scss";
+:host {
+    /* Sb-Rating Component Styling */
+ul {
+    @include padding($base-block-space);
+      &.rating li {
+        // migration-TODO
+        // @include padding($base-block-space * 2 !important);
+        background: none;
+        color: $info-color;
+        ion-icon {
+          font-size: (($font-size-base * 3) - 2);
+        }
+      }
+    }
+
+.content-rating-alert ion-backdrop {
+    // migration-TODO
+    // background-color: map-get($colors, dark) !important;
+    opacity: 0.4 !important;
+}
+}

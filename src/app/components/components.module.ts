@@ -16,6 +16,10 @@ import { CourseCardComponent } from './cards/coursecard/coursecard.component';
 import { SbGenericPopoverComponent } from './popups/sb-generic-popover/sb-generic-popover.component';
 import { SbNoNetworkPopupComponent } from './popups/sb-no-network-popup/sb-no-network-popup.component';
 import { SbPopoverComponent } from './popups/sb-popover/sb-popover.component';
+import { CollectionChildComponent} from './collection-child/collection-child.component';
+import {ContentActionsComponent} from './content-actions/content-actions.component';
+import {ContentRatingAlertComponent} from './content-rating-alert/content-rating-alert.component';
+import { IonicRatingModule, RatingComponent } from 'ionic4-rating';
 
 
 @NgModule({
@@ -29,18 +33,26 @@ import { SbPopoverComponent } from './popups/sb-popover/sb-popover.component';
     CourseCardComponent,
     SbGenericPopoverComponent,
     SbPopoverComponent,
-    SbNoNetworkPopupComponent
+    SbNoNetworkPopupComponent,
+    CollectionChildComponent,
+    ContentActionsComponent,
+    ContentRatingAlertComponent
   ],
   imports: [
     CommonModule,
     FormsModule,
     IonicModule,
     PipesModule,
-    TranslateModule.forChild()
+    TranslateModule.forChild(),
+    IonicRatingModule,
   ],
   entryComponents: [
     ApplicationHeaderComponent,
     SignInCardComponent,
+    SbGenericPopoverComponent,
+    SbPopoverComponent,
+    SbNoNetworkPopupComponent,
+    ContentRatingAlertComponent
   ],
   exports: [
     ApplicationHeaderComponent,
@@ -53,7 +65,10 @@ import { SbPopoverComponent } from './popups/sb-popover/sb-popover.component';
     CourseCardComponent,
     SbGenericPopoverComponent,
     SbPopoverComponent,
-    SbNoNetworkPopupComponent
+    SbNoNetworkPopupComponent,
+    CollectionChildComponent,
+    ContentActionsComponent,
+    ContentRatingAlertComponent
   ]
 })
 export class ComponentsModule { }

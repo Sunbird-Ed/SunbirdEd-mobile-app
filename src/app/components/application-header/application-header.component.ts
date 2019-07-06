@@ -106,6 +106,13 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
   goToCourseBatches() {
     this.router.navigateByUrl('/course-batches');
   }
+  goToCourseEnrollCourseDetails() {
+    this.router.navigateByUrl('/enrolled-course-details-page');
+  }
+
+  goToCollectionEtb() {
+    this.router.navigateByUrl('/collection-detail-etb');
+  }
 
   setAppVersion(): any {
     this.utilityService.getBuildConfigValue(GenericAppConfig.VERSION_NAME)
