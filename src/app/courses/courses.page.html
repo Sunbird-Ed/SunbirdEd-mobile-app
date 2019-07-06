@@ -57,12 +57,16 @@
   <div padding text-center *ngIf="!commonUtilService?.networkInfo?.isNetworkAvailable">
 
     <img height="80" width="100" src="assets/imgs/ic_offline.png" />
-    <h6 ion-text color="secondary_black">
+    <ion-text>
+<h6 color="secondary_black">
       <b>{{ 'NO_INTERNET_TITLE' | translate }}</b>
     </h6>
+</ion-text>
     <p color="dark_gray">{{ 'OFFLINE_WARNING' | translate }}</p>
-    <b ion-text text-uppercase color="primary"
+    <ion-text>
+<b text-uppercase color="primary"
       (click)="retryShowingPopularCourses(true); showOfflineWarning();">{{'RETRY_ACTION' | translate}}</b>
+</ion-text>
   </div>
   <!-- <div *ngIf="showSignInCard" class="signin-card-bg">
     <sign-in-card [source]="'courses'" (valueChange)="showOfflineWarning($event)"></sign-in-card>
@@ -78,6 +82,6 @@
   </div>
 
   <div class="backdrop-footer" *ngIf="downloadPercentage !== 100">
-    <button ion-button small (click)="cancelDownload()">{{'CANCEL' | translate}}</button>
+    <ion-button small (click)="cancelDownload()">{{'CANCEL' | translate}}</ion-button>
   </div>
 </ion-backdrop>
