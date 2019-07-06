@@ -1,3 +1,4 @@
+import { RouterLinks } from './../app.constant';
 // import { GroupDetailsPage } from './group-details/group-details';
 import { TranslateService } from '@ngx-translate/core';
 import { Component, Inject, NgZone, ViewChild, OnInit } from '@angular/core';
@@ -36,6 +37,8 @@ import {
 import { AppHeaderService, ContainerService } from '../../services';
 import { Router, ActivatedRoute, NavigationExtras } from '@angular/router';
 import { PopoverOptions } from '@ionic/core';
+import { EditDeletePopoverComponent } from './edit-delete-popover/edit-delete-popover.component';
+import { SbGenericPopoverComponent } from '../components/popups/sb-generic-popover/sb-generic-popover.component';
 // import { SbGenericPopoverComponent } from '@app/component/popups/sb-generic-popup/sb-generic-popover';
 
 
@@ -89,12 +92,15 @@ export class UserAndGroupsPage implements OnInit {
     private router: Router,
     private event: Events,
     private location: Location
-  ) { }
+  ) {
+    /* Check userList length and show message or list accordingly */
+
+    //TODO
+    // this.currentUserId = this.router.getCurrentNavigation().extras.state.userId;
+    // this.playConfig = this.router.getCurrentNavigation().extras.state.playConfig;
+  }
 
   ngOnInit() {
-    /* Check userList length and show message or list accordingly */
-    this.currentUserId = this.router.getCurrentNavigation().extras.state.userId;
-    this.playConfig = this.router.getCurrentNavigation().extras.state.playConfig;
 
     if (!this.currentUserId && this.appGlobalService.getCurrentUser()) {
       this.currentUserId = this.appGlobalService.getCurrentUser().uid;
@@ -143,88 +149,46 @@ export class UserAndGroupsPage implements OnInit {
     }, () => { });
   }
 
-  presentPopover(myEvent, index, isUser) {
+  async presentPopover(myEvent, index, isUser) {
     let isCurrentUser = isUser ? this.currentUserId === this.userList[index].uid : this.currentGroupId === this.groupList[index].gid;
-    let popOverOptions: PopoverOptions = {
-      component: 'PopoverPage',
-      cssClass: 'user-popover',
+    const popover = await this.popOverCtrl.create({
+      component: EditDeletePopoverComponent,
       componentProps: {
-        edit: () => {
+        edit: async () => {
           if (isUser) {
-            const navigationExtras: NavigationExtras = {
+            this.router.navigate([RouterLinks.GUEST_EDIT], {
               state: {
                 profile: this.userList[index],
                 isCurrentUser: isCurrentUser
               }
-            }
-            this.router.navigate(['GuestEditProfilePage'], navigationExtras);
+            });
           } else {
-            const navigationExtras: NavigationExtras = {
+            this.router.navigate([RouterLinks.CREATE_GROUP], {
               state: {
                 groupInfo: this.groupList[index]
               }
-            }
-            this.router.navigate(['create-group'], navigationExtras);
+            });
           }
-          //MIGRATION TODO
-          // popover.dismiss();
+          await popover.dismiss();
         },
-        delete: () => {
+        delete: async () => {
           if (isUser) {
             this.deleteUserConfirmBox(index);
           } else {
             this.deleteGroupConfirmBox(index);
           }
-          //MIGRATION TODO
-          //popover.dismiss();
+          await popover.dismiss();
         },
         isCurrentUser: isCurrentUser
-      }
+      }, cssClass: 'user-popover'
     }
-
-    //MIGRATION TODO
-    /*     const popover = this.popOverCtrl.create('PopoverPage', {
-          edit: () => {
-            if (isUser) {
-              const navigationExtras: NavigationExtras = {
-                state: {
-                  profile: this.userList[index],
-                  isCurrentUser: isCurrentUser
-                }
-              }
-              this.router.navigate(['GuestEditProfilePage'], navigationExtras);
-            } else {
-              const navigationExtras: NavigationExtras = {
-                state: {
-                  groupInfo: this.groupList[index]
-                }
-              }
-              this.router.navigate(['create-group'], navigationExtras);
-            }
-            popover.dismiss();
-          },
-          delete: () => {
-            if (isUser) {
-              this.deleteUserConfirmBox(index);
-            } else {
-              this.deleteGroupConfirmBox(index);
-            }
-            popover.dismiss();
-          },
-          isCurrentUser: isCurrentUser
-        },
-          {
-            cssClass: 'user-popover'
-          }
-        );
-        popover.present({
-          ev: myEvent
-        }); */
+    );
+    await popover.present();
   }
 
-  getAllProfile() {
-    const loader = this.getLoader();
-    loader.present();
+  async getAllProfile() {
+    const loader = await this.commonUtilService.getLoader();
+    await loader.present();
 
     const profileRequest: GetAllProfileRequest = {
       local: true
@@ -234,7 +198,7 @@ export class UserAndGroupsPage implements OnInit {
       this.zone.run(() => {
         this.profileService.getAllProfiles(profileRequest)
           .map((profiles) => profiles.filter((profile) => !!profile.handle))
-          .subscribe((profiles) => {
+          .subscribe(async (profiles) => {
             const profileList: Array<Profile> = profiles;
             if (profileList && profileList.length) {
               this.userList = [...profileList].sort((prev: Profile, next: Profile) => {
@@ -261,10 +225,10 @@ export class UserAndGroupsPage implements OnInit {
               this.loadingUserList = false;
             }
 
-            loader.dismiss();
+            await loader.dismiss();
 
-          }, () => {
-            loader.dismiss();
+          }, async () => {
+            await loader.dismiss();
             this.noUsersPresent = true;
             this.loadingUserList = false;
           });
@@ -308,7 +272,7 @@ export class UserAndGroupsPage implements OnInit {
       state: {
         groupInfo: this.groupList[index],
         currentUserId: this.currentUserId,
-        currentGruopId: this.currentGroupId,
+        currentGroupId: this.currentGroupId,
         profile: this.profileDetails,
         playConfig: this.playConfig
       }
@@ -328,7 +292,7 @@ export class UserAndGroupsPage implements OnInit {
       Environment.USER,
       PageId.USERS_GROUPS
     );
-    this.router.navigate(['create-group']);
+    this.router.navigate([RouterLinks.CREATE_GROUP]);
   }
 
 
@@ -338,7 +302,7 @@ export class UserAndGroupsPage implements OnInit {
         isNewUser: true
       }
     }
-    this.router.navigate(['ShareUserAndGroupPage'], navigationExtras);
+    this.router.navigate([RouterLinks.SHARE_USER_AND_GROUPS], navigationExtras);
   }
 
   /**
@@ -351,7 +315,7 @@ export class UserAndGroupsPage implements OnInit {
       }
     }
 
-    this.router.navigate(['GroupDetailsPage'], navigationExtras);
+    this.router.navigate([RouterLinks.GROUP_DETAILS], navigationExtras);
   }
 
   /**
@@ -373,14 +337,14 @@ export class UserAndGroupsPage implements OnInit {
           lastCreatedProfile: this.lastCreatedProfileData
         }
       }
-      this.router.navigate(['GuestEditProfilePage'], navigationExtras);
+      this.router.navigate([RouterLinks.GUEST_EDIT], navigationExtras);
     }).catch((error) => {
       const navigationExtras: NavigationExtras = {
         state: {
           isNewUser: true
         }
       }
-      this.router.navigate(['GuestEditProfilePage'], navigationExtras);
+      this.router.navigate([RouterLinks.GUEST_EDIT], navigationExtras);
 
     });
   }
@@ -410,7 +374,7 @@ export class UserAndGroupsPage implements OnInit {
   /**
    * Shows Prompt for switch Account
    */
-  switchAccountConfirmBox() {
+  async switchAccountConfirmBox() {
     // Generate Switch User click event
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,
@@ -445,63 +409,38 @@ export class UserAndGroupsPage implements OnInit {
       valuesMap
     );
 
-    /*const alert = this.alertCtrl.create({
-      title: this.commonUtilService.translateMessage('SWITCH_ACCOUNT_CONFIRMATION'),
-      mode: 'wp',
-      message: this.commonUtilService.translateMessage('SIGNED_OUT_ACCOUNT_MESSAGE'),
-      cssClass: 'confirm-alert',
-      buttons: [
-        {
-          text: this.commonUtilService.translateMessage('CANCEL'),
-          role: 'cancel',
-          cssClass: 'alert-btn-cancel',
-          handler: () => {
+    const confirm = await this.popOverCtrl.create({
+      component: SbGenericPopoverComponent,
+      componentProps: {
+        sbPopoverHeading: this.commonUtilService.translateMessage('SWITCH_ACCOUNT_CONFIRMATION'),
+        sbPopoverMainTitle: this.commonUtilService.translateMessage('SIGNED_OUT_ACCOUNT_MESSAGE'),
+        actionsButtons: [
+          {
+            btntext: this.commonUtilService.translateMessage('CANCEL'),
+            btnClass: 'sb-btn sb-btn-sm  sb-btn-outline-info'
+          }, {
+            btntext: this.commonUtilService.translateMessage('YES'),
+            btnClass: 'popover-color'
           }
-        },
-        {
-          text: this.commonUtilService.translateMessage('OKAY'),
-          cssClass: 'alert-btn-delete',
-          handler: () => {
-            this.logOut(selectedUser, false);
-          }
-        }
-      ]
-    });*/
-
-
-    // MIGRATION TODO
-    /* const confirm = this.popOverCtrl.create(SbGenericPopoverComponent, {
-      sbPopoverHeading: this.commonUtilService.translateMessage('SWITCH_ACCOUNT_CONFIRMATION'),
-      sbPopoverMainTitle: this.commonUtilService.translateMessage('SIGNED_OUT_ACCOUNT_MESSAGE'),
-      actionsButtons: [
-        {
-          btntext: this.commonUtilService.translateMessage('CANCEL'),
-          btnClass: 'sb-btn sb-btn-sm  sb-btn-outline-info'
-        }, {
-          btntext: this.commonUtilService.translateMessage('YES'),
-          btnClass: 'popover-color'
-        }
-      ],
-      icon: null
-    }, {
-        cssClass: 'sb-popover',
-      });
-    confirm.onDidDismiss((leftBtnClicked: boolean = false) => {
-      if (leftBtnClicked == null) {
-        return;
-      }
-      if (!leftBtnClicked) {
-        this.logOut(selectedUser, false);
-      }
+        ],
+        icon: null
+      },
+      cssClass: 'sb-popover',
     });
+    const response = await confirm.onDidDismiss();
+    if (response.data.leftBtnClicked == null) {
+      return;
+    }
+    if (!response.data.leftBtnClicked) {
+      this.logOut(selectedUser, false);
+    }
 
     if (this.appGlobalService.isUserLoggedIn()) {
-      confirm.present({
-        ev: event
-      });
+      confirm.present();
     } else {
       this.setAsCurrentUser(selectedUser, false);
-    } */
+    }
+
     // Generate Switch user success event
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.OTHER,
@@ -571,60 +510,33 @@ export class UserAndGroupsPage implements OnInit {
   }
 
   /** Delete alert box */
-  deleteGroupConfirmBox(index) {
-    /*const alert = this.alertCtrl.create({
-      title: this.commonUtilService.translateMessage('GROUP_DELETE_CONFIRM', this.groupList[index].name),
-      mode: 'wp',
-      message: this.commonUtilService.translateMessage('GROUP_DELETE_CONFIRM_MESSAGE'),
-      cssClass: 'confirm-alert',
-      buttons: [
-        {
-          text: this.commonUtilService.translateMessage('CANCEL'),
-          role: 'cancel',
-          cssClass: 'alert-btn-cancel',
-          handler: () => {
+  async deleteGroupConfirmBox(index) {
+    const confirm = await this.popOverCtrl.create({
+      component: SbGenericPopoverComponent,
+      componentProps: {
+        sbPopoverHeading: this.commonUtilService.translateMessage('GROUP_DELETE_CONFIRM', this.groupList[index].name),
+        sbPopoverMainTitle: this.commonUtilService.translateMessage('GROUP_DELETE_CONFIRM_MESSAGE'),
+        actionsButtons: [
+          {
+            btntext: this.commonUtilService.translateMessage('CANCEL'),
+            btnClass: 'sb-btn sb-btn-sm  sb-btn-outline-info'
+          }, {
+            btntext: this.commonUtilService.translateMessage('YES'),
+            btnClass: 'popover-color'
           }
-        },
-        {
-          text: this.commonUtilService.translateMessage('YES'),
-          cssClass: 'alert-btn-delete',
-          handler: () => {
-            this.deleteGroup(index);
-          }
-        }
-      ]
+        ],
+        icon: null
+      },
+      cssClass: 'sb-popover',
     });
-    alert.present();*/
-
-    //MIGRATION TODO
-    /*     const confirm = this.popOverCtrl.create(SbGenericPopoverComponent, {
-          sbPopoverHeading: this.commonUtilService.translateMessage('GROUP_DELETE_CONFIRM', this.groupList[index].name),
-          sbPopoverMainTitle: this.commonUtilService.translateMessage('GROUP_DELETE_CONFIRM_MESSAGE'),
-          actionsButtons: [
-            {
-              btntext: this.commonUtilService.translateMessage('CANCEL'),
-              btnClass: 'sb-btn sb-btn-sm  sb-btn-outline-info'
-            }, {
-              btntext: this.commonUtilService.translateMessage('YES'),
-              btnClass: 'popover-color'
-            }
-          ],
-          icon: null
-        }, {
-            cssClass: 'sb-popover',
-          });
-        confirm.present({
-          ev: event
-        });
-        confirm.onDidDismiss((leftBtnClicked: boolean = false) => {
-          if (leftBtnClicked == null) {
-            return;
-          }
-          if (!leftBtnClicked) {
-            this.deleteGroup(index);
-          }
-        });
-     */
+    await confirm.present();
+    const response = await confirm.onDidDismiss();
+    if (response.data.leftBtnClicked == null) {
+      return;
+    }
+    if (!response.data.leftBtnClicked) {
+      this.deleteGroup(index);
+    }
   }
 
   /**Navigates to play content details page nd launch the player */
@@ -659,61 +571,35 @@ export class UserAndGroupsPage implements OnInit {
   }
 
   /** Delete alert box */
-  deleteUserConfirmBox(index) {
-    // let self = this;
-    /*const alert = this.alertCtrl.create({
-      title: this.commonUtilService.translateMessage('USER_DELETE_CONFIRM', this.userList[index].handle),
-      mode: 'wp',
-      message: this.commonUtilService.translateMessage('USER_DELETE_CONFIRM_MESSAGE'),
-      cssClass: 'confirm-alert',
-      buttons: [
-        {
-          text: this.commonUtilService.translateMessage('CANCEL'),
-          role: 'cancel',
-          cssClass: 'alert-btn-cancel',
-          handler: () => {
+  async deleteUserConfirmBox(index) {
+    const confirm = await this.popOverCtrl.create({
+      component: SbGenericPopoverComponent,
+      componentProps: {
+        sbPopoverHeading: this.commonUtilService.translateMessage('USER_DELETE_CONFIRM', this.userList[index].handle),
+        sbPopoverMainTitle: this.commonUtilService.translateMessage('USER_DELETE_CONFIRM_MESSAGE'),
+        actionsButtons: [
+          {
+            btntext: this.commonUtilService.translateMessage('CANCEL'),
+            btnClass: 'sb-btn sb-btn-sm  sb-btn-outline-info'
+          },
+          {
+            btntext: this.commonUtilService.translateMessage('YES'),
+            btnClass: 'popover-color'
           }
-        },
-        {
-          text: this.commonUtilService.translateMessage('YES'),
-          cssClass: 'alert-btn-delete',
-          handler: () => {
-            this.deleteUser(index);
-          }
-        }
-      ]
+        ],
+        icon: null
+      },
+      cssClass: 'sb-popover',
     });
-    alert.present();*/
-    //MOGRATION TODO
-/*     const confirm = this.popOverCtrl.create(SbGenericPopoverComponent, {
-      sbPopoverHeading: this.commonUtilService.translateMessage('USER_DELETE_CONFIRM', this.userList[index].handle),
-      sbPopoverMainTitle: this.commonUtilService.translateMessage('USER_DELETE_CONFIRM_MESSAGE'),
-      actionsButtons: [
-        {
-          btntext: this.commonUtilService.translateMessage('CANCEL'),
-          btnClass: 'sb-btn sb-btn-sm  sb-btn-outline-info'
-        },
-        {
-          btntext: this.commonUtilService.translateMessage('YES'),
-          btnClass: 'popover-color'
-        }
-      ],
-      icon: null
-    }, {
-        cssClass: 'sb-popover',
-      });
-    confirm.present({
-      ev: event
-    });
-    confirm.onDidDismiss((leftBtnClicked: any) => {
-      if (leftBtnClicked == null) {
-        return;
-      }
-      if (!leftBtnClicked) {
-        this.deleteUser(index);
-      }
-    });
- */  }
+    await confirm.present();
+    const response = await confirm.onDidDismiss();
+    if (response.data.leftBtnClicked == null) {
+      return;
+    }
+    if (!response.data.leftBtnClicked) {
+      this.deleteUser(index);
+    }
+  }
 
   deleteUser(index: number) {
     const uid = this.userList[index].uid;
@@ -734,7 +620,6 @@ export class UserAndGroupsPage implements OnInit {
         if (this.userList.length === 0) {
           this.noUsersPresent = true;
         }
-
       }, () => {
       });
   }
@@ -758,20 +643,10 @@ export class UserAndGroupsPage implements OnInit {
     return '';
   }
 
-  // code which invokes loader
-  getLoader(): any {
-    return this.loadingCtrl.create({
-      duration: 30000,
-      spinner: 'crescent'
-    });
-  }
-
   private setAsCurrentUser(selectedUser, isBeingPlayed: boolean) {
     this.groupService.removeActiveGroupSession()
       .subscribe(() => {
-      },
-        () => {
-        });
+      }, () => { });
     this.profileService.setActiveSessionForProfile(selectedUser.uid).subscribe(() => {
       this.commonUtilService.showToast(this.commonUtilService.translateMessage('SWITCHING_TO', selectedUser.handle),
         undefined, undefined, 1000);
