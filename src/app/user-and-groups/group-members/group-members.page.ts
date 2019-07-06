@@ -1,4 +1,25 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Inject, NgZone } from '@angular/core';
+import {
+  GetAllProfileRequest,
+  Group,
+  GroupService,
+  Profile,
+  ProfileService,
+  ProfilesToGroupRequest,
+  ProfileType
+} from 'sunbird-sdk';
+import {
+  CommonUtilService,
+  TelemetryGeneratorService,
+  Environment,
+  ImpressionType,
+  InteractSubtype,
+  InteractType,
+  ObjectType,
+  PageId,
+  AppHeaderService
+} from '../../../services';
+import { NavigationExtras, ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-group-members',
@@ -6,10 +27,185 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./group-members.page.scss'],
 })
 export class GroupMembersPage implements OnInit {
-
-  constructor() { }
+  ProfileType = ProfileType;
+  group: Group;
+  userList: Array<Profile> = [];
+  userSelectionMap: Map<string, boolean> = new Map();
+  lastCreatedProfileData: any;
+  loading: boolean;
+  constructor(
+    @Inject('GROUP_SERVICE') private groupService: GroupService,
+    @Inject('PROFILE_SERVICE') private profileService: ProfileService,
+    private zone: NgZone,
+    private commonUtilService: CommonUtilService,
+    private telemetryGeneratorService: TelemetryGeneratorService,
+    private headerService: AppHeaderService,
+    private route: ActivatedRoute,
+    private router: Router
+  ) {
+    this.group = this.router.getCurrentNavigation().extras.state.group;
+  }
 
   ngOnInit() {
+    this.telemetryGeneratorService.generateImpressionTelemetry(
+      ImpressionType.VIEW, '',
+      PageId.CREATE_GROUP_USER_SELECTION,
+      Environment.USER, this.group.gid ? this.group.gid : '', this.group.gid ? ObjectType.GROUP : ''
+    );
   }
+
+  ionViewWillEnter() {
+    this.loading = true; // present only loader, untill users are fetched from service
+    this.headerService.hideHeader();
+    this.getAllProfile();
+  }
+
+  // method below fetches the last created user
+  getLastCreatedProfile() {
+    return new Promise((resolve, reject) => {
+      const req: GetAllProfileRequest = {
+        local: true
+      };
+      this.profileService.getAllProfiles(req)
+        .map((profiles) => profiles.filter((profile) => !!profile.handle))
+        .toPromise().then((lastCreatedProfile: any) => {
+          this.lastCreatedProfileData = lastCreatedProfile;
+          resolve(lastCreatedProfile);
+        }).catch(() => {
+          reject(null);
+        });
+    });
+  }
+
+  getAllProfile() {
+    const profileRequest: GetAllProfileRequest = {
+      local: true
+    };
+
+    this.zone.run(() => {
+      this.profileService.getAllProfiles(profileRequest)
+        .map((profiles) => profiles.filter((profile) => !!profile.handle))
+        .toPromise().then(async (profiles) => {
+          const loader = await this.commonUtilService.getLoader();
+          await loader.present();
+          this.zone.run(async () => {
+            if (profiles && profiles.length) {
+              this.userList = profiles;
+              await loader.dismiss();
+              this.loading = false;
+            }
+          });
+        });
+    });
+  }
+
+  toggleSelect(index: number) {
+    let value = this.userSelectionMap.get(this.userList[index].uid);
+    if (value) {
+      value = false;
+    } else {
+      value = true;
+    }
+
+    this.userSelectionMap.set(this.userList[index].uid, value);
+  }
+
+  isUserSelected(index: number) {
+    console.log('Index', index);
+    return Boolean(this.userSelectionMap.get(this.userList[index].uid));
+  }
+
+  selectAll() {
+    this.userSelectionMap.clear();
+    this.zone.run(() => {
+      for (let i = 0; i < this.userList.length; i++) {
+        this.userSelectionMap.set(this.userList[i].uid, true);
+      }
+    });
+  }
+
+
+  goTOGuestEdit() {
+    this.getLastCreatedProfile().then((response) => {
+      const navigationExtras: NavigationExtras = {
+        state: {
+          isNewUser: true,
+          lastCreatedProfile: this.lastCreatedProfileData
+        }
+      }
+
+      this.router.navigate(['GuestEditProfilePage'], navigationExtras);
+    }).catch((error) => {
+      const navigationExtras: NavigationExtras = {
+        state: {
+          isNewUser: true,
+        }
+      }
+
+      this.router.navigate(['GuestEditProfilePage'], navigationExtras);
+    });
+  }
+
+  /**
+ * Internally call create Group
+ */
+  async createGroup() {
+    const loader = await this.commonUtilService.getLoader();
+    await loader.present();
+
+    const selectedUids: Array<string> = [];
+    this.userSelectionMap.forEach((value: Boolean, key: string) => {
+      if (value === true) {
+        selectedUids.push(key);
+      }
+    });
+    this.groupService.createGroup(this.group)
+      .toPromise().then(res => {
+        this.telemetryGeneratorService.generateInteractTelemetry(
+          InteractType.OTHER,
+          InteractSubtype.CREATE_GROUP_SUCCESS,
+          Environment.USER,
+          PageId.CREATE_GROUP
+        );
+        const req: ProfilesToGroupRequest = {
+          groupId: res.gid,
+          uidList: selectedUids
+        };
+        return this.groupService.addProfilesToGroup(req).toPromise();
+      })
+      .then(success => {
+        loader.dismiss();
+        this.commonUtilService.showToast(this.commonUtilService.translateMessage('GROUP_CREATE_SUCCESS'));
+        // this.navCtrl.popTo(this.navCtrl.getByIndex(this.navCtrl.length() - 3));
+        this.router.navigate(['../../'], { relativeTo: this.route });
+      })
+      .catch(error => {
+        loader.dismiss();
+        this.commonUtilService.showToast(this.commonUtilService.translateMessage('SOMETHING_WENT_WRONG'));
+        loader.dismiss();
+      });
+  }
+
+
+  getGradeNameFromCode(data: Profile | Group): string {
+    if (data.grade && data.grade.length > 0) {
+      const gradeName = [];
+      data.grade.forEach(code => {
+
+        if (data['gradeValue'] && data['gradeValue'][code]) {
+          gradeName.push(data['gradeValue'][code]);
+        }
+      });
+
+      if (gradeName.length === 0) {
+        return data.grade.join(',');
+      }
+
+      return gradeName.join(',');
+    }
+
+    return '';
+  }
+
 
 }

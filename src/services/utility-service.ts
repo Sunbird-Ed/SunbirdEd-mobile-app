@@ -127,4 +127,34 @@ getDeviceSpec(): Promise<DeviceSpecification> {
         }
     });
 }
+getUtmInfo(): Promise<any> {
+    return new Promise<any>((resolve, reject) => {
+        try {
+            buildconfigreader.getUtmInfo((utmInfo: any) => {
+                console.log('utm parameter', utmInfo);
+                resolve(utmInfo);
+            }, err => {
+                reject(err);
+            });
+        } catch (xc) {
+            reject(xc);
+        }
+    });
+}
+
+clearUtmInfo(): Promise<any> {
+    return new Promise<any>((resolve, reject) => {
+        try {
+            buildconfigreader.clearUtmInfo(() => {
+                console.log('utm paramter clear');
+                resolve();
+            }, err => {
+                reject(err);
+            });
+        } catch (xc) {
+            console.error(xc);
+            reject(xc);
+        }
+    });
+}
 }

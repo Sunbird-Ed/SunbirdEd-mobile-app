@@ -93,8 +93,8 @@ export class UserAndGroupsPage implements OnInit {
 
   ngOnInit() {
     /* Check userList length and show message or list accordingly */
-    this.currentUserId = this.route.snapshot.paramMap.get('userId');
-    this.playConfig = this.route.snapshot.paramMap.get('playConfig') || undefined;
+    this.currentUserId = this.router.getCurrentNavigation().extras.state.userId;
+    this.playConfig = this.router.getCurrentNavigation().extras.state.playConfig;
 
     if (!this.currentUserId && this.appGlobalService.getCurrentUser()) {
       this.currentUserId = this.appGlobalService.getCurrentUser().uid;
@@ -164,7 +164,7 @@ export class UserAndGroupsPage implements OnInit {
                 groupInfo: this.groupList[index]
               }
             }
-            this.router.navigate(['CreateGroupPage'], navigationExtras);
+            this.router.navigate(['create-group'], navigationExtras);
           }
           //MIGRATION TODO
           // popover.dismiss();
@@ -199,7 +199,7 @@ export class UserAndGroupsPage implements OnInit {
                   groupInfo: this.groupList[index]
                 }
               }
-              this.router.navigate(['CreateGroupPage'], navigationExtras);
+              this.router.navigate(['create-group'], navigationExtras);
             }
             popover.dismiss();
           },
@@ -328,7 +328,7 @@ export class UserAndGroupsPage implements OnInit {
       Environment.USER,
       PageId.USERS_GROUPS
     );
-    this.router.navigate(['CreateGroupPage']);
+    this.router.navigate(['create-group']);
   }
 
 

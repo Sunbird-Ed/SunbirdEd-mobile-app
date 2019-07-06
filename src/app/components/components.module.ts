@@ -13,6 +13,7 @@ import {ViewAllCardComponent} from './view-all-card/view-all-card.component';
 import {ViewMoreCardComponent} from './view-more-card/view-more-card.component';
 import {PbHorizontalComponent} from './pb-horizontal/pb-horizontal.component';
 import { CourseCardComponent } from './cards/coursecard/coursecard.component';
+import { SbGenericPopoverComponent } from './popups/sb-generic-popover/sb-generic-popover.component';
 
 
 @NgModule({
@@ -23,7 +24,8 @@ import { CourseCardComponent } from './cards/coursecard/coursecard.component';
     ViewAllCardComponent,
     ViewMoreCardComponent,
     PbHorizontalComponent,
-    CourseCardComponent
+    CourseCardComponent,
+    SbGenericPopoverComponent
   ],
   imports: [
     CommonModule,
@@ -44,7 +46,8 @@ import { CourseCardComponent } from './cards/coursecard/coursecard.component';
     ViewAllCardComponent,
     ViewMoreCardComponent,
     PbHorizontalComponent,
-    CourseCardComponent
+    CourseCardComponent,
+    SbGenericPopoverComponent
   ]
 })
 export class ComponentsModule { }

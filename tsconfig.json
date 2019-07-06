@@ -2,7 +2,7 @@
   "allowSyntheticDefaultImports": true,
   "compileOnSave": false,
   "compilerOptions": {
-    "baseUrl": "./",
+    "baseUrl": "./src",
     "outDir": "./dist/out-tsc",
     "sourceMap": true,
     "declaration": false,
@@ -14,11 +14,24 @@
     "target": "es5",
     "typeRoots": [
       "./node_modules/@types",
-      "./typings/*.d.ts"
     ],
     "lib": [
       "es2018",
       "dom"
-    ]
-  }
+    ],
+    "paths": {
+      "@app/*": ["*"]
+    }
+  },
+  "include": [
+    "src/**/*.ts",
+    "./typings/*.d.ts",
+    "./content-player/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "src/**/*.spec.ts",
+    "src/**/*.spec.data.ts",
+    "src/**/__tests__/*.ts"
+  ],
 }
