@@ -1,3 +1,49 @@
-<p>
-  edit-contact-verify-popup works!
-</p>
+<ion-content>
+  <ion-spinner *ngIf="loader" padding></ion-spinner>
+  <ion-grid>
+    <ion-row>
+      <ion-col size="12" no-padding class="text-center">
+        <p class="f18 padding-left-5" color="dark">{{title}}</p>
+        <p class="f14" style="color: #4a4a4a">{{description}}</p>
+      </ion-col>
+      <section class="W100" *ngIf="type==='phone'">
+        <ion-label text-center class="font-weight-bold">{{'ENTER_OTP' | translate}}</ion-label>
+        <ion-col size="12" no-padding class="text-center" *ngIf="invalidOtp">
+          <p class="error">{{'ERROR_OTP' | translate}}</p>
+        </ion-col>
+        <ion-col size="12" no-padding class="text-center">
+          <div class="W100 merged-input-container MT10">
+            <ion-input type="tel" placeholder="{{'OTP_PLACEHOLDER' | translate }}" class="form-control"
+              [(ngModel)]="otp"></ion-input>
+          </div>
+        </ion-col>
+      </section>
+      <section class="W100" *ngIf="type==='email'">
+        <ion-row>
+          <ion-col size="12" no-padding class="text-center">
+            <b>{{'ENTER_OTP' | translate}}</b>
+          </ion-col>
+          <ion-col size="12" no-padding class="text-center" *ngIf="invalidOtp">
+            <p class="error">{{'ERROR_OTP' | translate}}</p>
+          </ion-col>
+          <ion-col size="12" no-padding class="text-center">
+            <div class="W100 merged-input-container MT10">
+              <ion-input type="tel" placeholder="{{'OTP_PLACEHOLDER' | translate }}" class="form-control" [(ngModel)]="otp"></ion-input>
+            </div>
+          </ion-col>
+        </ion-row>
+      </section>
+      <ion-col size="12" no-padding class="text-center">
+        <ion-button fill="clear" (click)="resendOTP();" [disabled]="!enableResend">{{'RESEND_OTP' | translate}}</ion-button>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+  <ion-row>
+    <ion-col padding>
+      <ion-button expand="block" fill="outline" (click)="cancel()">{{ 'CANCEL' | translate }} </ion-button>
+    </ion-col>
+    <ion-col padding>
+      <ion-button expand="block" (click)="verify()">{{ 'BTN_SUBMIT' | translate }} </ion-button>
+    </ion-col>
+  </ion-row>
+</ion-content>
