@@ -42,7 +42,7 @@ const routes: Routes = [
   { path: 'download-manager', loadChildren: './download-manager/download-manager.module#DownloadManagerPageModule' },
   { path: 'storage-settings', loadChildren: './storage-settings/storage-settings.module#StorageSettingsPageModule' },
   { path: 'courses', loadChildren: './courses/courses.module#CoursesPageModule' },
-  { path: 'search', loadChildren: './search/search.module#SearchPageModule' }
+  { path: 'search', loadChildren: './search/search.module#SearchPageModule' },
   { path: RouterLinks.PROFILE, loadChildren: './profile/profile.module#ProfilePageModule' },
 ];
 
