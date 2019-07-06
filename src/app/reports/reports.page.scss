@@ -1,0 +1,69 @@
+@import "src/global.scss";
+:host {
+  .settings-item-style {
+    padding-top: 5px;
+  }
+  ion-icon {
+    font-size: 22px !important;
+    @extend .font-weight-550;
+  }
+  .bgColor {
+    background-color: map-get($colors, light_gray) !important;
+    border-radius: 6px;
+    // Migration todo
+    // @include padding(5px, null, null, 18px !important);
+  }
+  .marginTop {
+    margin-top: 15px !important;
+  }
+  .header-md::after,
+  .tabs-md[tabsPlacement="top"] > .tabbar::after,
+  .footer-md::before,
+  .tabs-md[tabsPlacement="bottom"] > .tabbar::before {
+    background-image: none;
+  }
+  .item-md.item-block .item-inner {
+    border-bottom: 0 !important;
+  }
+  .subTitle {
+    font-size: 1.4rem;
+    @extend .font-weight-700;
+  }
+  .item-background.item-md {
+    background-color: map-get($colors, light_gray) !important;
+  }
+  .subTitle {
+    font-size: 1.4rem;
+    @extend .font-weight-700;
+  }
+  .radius {
+    border-radius: 6px;
+  }
+
+  .img-container {
+    position: absolute;
+    width: 100px;
+    height: 100px;
+    top: 27%;
+    margin-top: -144x;
+    // Migration todo
+    /*     @include ltr() {
+      left: 60%;
+      margin-left: -97px;
+    }
+    @include rtl() {
+      right: 60%;
+      margin-right: -97px;
+    }
+ */
+  }
+  .image-text {
+    text-align: center;
+    margin-top: 34vh;
+  }
+  .image_style {
+    width: 335px;
+    height: 102px;
+    border-radius: 50%;
+  }
+}
