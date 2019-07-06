@@ -46,6 +46,7 @@ const routes: Routes = [
   { path: RouterLinks.PROFILE, loadChildren: './profile/profile.module#ProfilePageModule' },
   { path: 'active-downloads', loadChildren: './active-downloads/active-downloads.module#ActiveDownloadsPageModule' },
   { path: 'course-batches', loadChildren: './course-batches/course-batches.module#CourseBatchesPageModule' },
+  { path: 'enrolled-course-details-page', loadChildren: './enrolled-course-details-page/enrolled-course-details-page.module#EnrolledCourseDetailsPagePageModule' },
   // { path: 'collection-detail-etb', loadChildren: './collection-detail-etb/collection-detail-etb.module#CollectionDetailEtbPageModule' }
 ];
 
