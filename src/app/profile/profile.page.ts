@@ -3,8 +3,6 @@ import { Component, NgZone, OnInit, AfterViewInit, Inject } from '@angular/core'
 import {
   Events,
   LoadingController,
-  NavController,
-  NavParams,
   PopoverController,
 } from '@ionic/angular';
 import { OverflowMenuComponent } from './overflow-menu/overflow-menu.component';
@@ -18,8 +16,6 @@ import { PersonalDetailsEditPage } from './personal-details-edit/personal-detail
 // import { ContentDetailsPage } from '@app/pages/content-details/content-details';
 import { FormAndFrameworkUtilService, AppGlobalService, CommonUtilService, TelemetryGeneratorService, AppHeaderService } from '../../services';
 import { } from '../../services';
-// import { EditContactDetailsPopupComponent } from '@app/component/edit-contact-details-popup/edit-contact-details-popup';
-// import { EditContactVerifyPopupComponent } from '@app/component';
 import {
   AuthService,
   ContentSearchCriteria,

@@ -65,7 +65,7 @@
           <div no-lines class="collection-header" margin-start>
             <div class="collection-name">
               <span>{{'FROM' | translate}} </span>{{ result.name }}</div>
-            <ion-button clear no-padding class="view-collection" (click)="openCollection(result)">
+            <ion-button fill="clear" no-padding class="view-collection" (click)="openCollection(result)">
               {{'VIEW' | translate}} {{ result.contentType }} &nbsp;
               <ion-icon ios="ios-arrow-forward" md="ios-arrow-forward"></ion-icon>
             </ion-button>
@@ -155,6 +155,6 @@
   </div>
 
   <div class="backdrop-footer">
-    <ion-button small class="cancel-btn" (click)="cancelDownload()">{{'CANCEL' | translate}}</ion-button>
+    <ion-button size="small" class="cancel-btn" (click)="cancelDownload()">{{'CANCEL' | translate}}</ion-button>
   </div>
 </ion-backdrop>

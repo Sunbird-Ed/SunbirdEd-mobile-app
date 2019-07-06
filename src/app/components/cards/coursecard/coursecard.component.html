@@ -28,7 +28,7 @@
         {{ 'COURSE_PROGRESS_COMPLETED' | translate: {'%s': course.cProgress? course.cProgress : 0} }}
       </ion-col>
       <ion-col size="4">
-        <ion-button outline small float-end class="custom-small">
+        <ion-button fill="outline" size="small" float-end class="custom-small">
           <span *ngIf="layoutName === layoutInProgress" (click)="resumeCourse(course);">{{ ('RESUME' | translate).length > 6 ? ('RESUME' | translate | slice:0:06) + '...' : ('RESUME' | translate) }}</span>
           <span *ngIf="layoutName !== layoutInProgress" (click)="navigateToDetailPage(course, layoutName);">{{ ('OPEN' | translate).length > 6 ? ('OPEN' | translate | slice:0:06) + '...' : ('OPEN' | translate) }}</span>
         </ion-button>

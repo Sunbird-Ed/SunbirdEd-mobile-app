@@ -50,8 +50,9 @@ export class PersonalDetailsEditPage implements OnInit {
     private route: ActivatedRoute,
     private router: Router
   ) {
-    // this.profile = this.appGlobalService.getCurrentUser();
-    this.profile = this.router.getCurrentNavigation().extras.state.profile;
+    if (this.router.getCurrentNavigation().extras.state) {
+      this.profile = this.router.getCurrentNavigation().extras.state.profile;
+    }
     this.initializeForm();
   }
 
