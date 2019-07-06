@@ -5,16 +5,17 @@ import { Routes, RouterModule } from '@angular/router';
 
 import { IonicModule } from '@ionic/angular';
 
-import { SearchPage } from './search.page';
-import { ComponentsModule } from '../components/components.module';
+import { CoursesPage } from './courses.page';
+import { TranslateModule } from '@ngx-translate/core';
 import { PipesModule } from '../../pipes/pipes.module';
 import { DirectivesModule } from '../../directives/directives.module';
-import { TranslateModule } from '@ngx-translate/core';
+import { CourseCardComponent } from '../components/cards/coursecard/coursecard.component';
+import { ComponentsModule } from '../components/components.module';
 
 const routes: Routes = [
   {
     path: '',
-    component: SearchPage
+    component: CoursesPage
   }
 ];
 
@@ -24,11 +25,13 @@ const routes: Routes = [
     FormsModule,
     IonicModule,
     RouterModule.forChild(routes),
+    IonicModule,
+    RouterModule.forChild(routes),
     TranslateModule.forChild(),
     PipesModule,
     DirectivesModule,
     ComponentsModule
   ],
-  declarations: [SearchPage]
+  declarations: [CoursesPage]
 })
-export class SearchPageModule {}
+export class CoursesPageModule {}

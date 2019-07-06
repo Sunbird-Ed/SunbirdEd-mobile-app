@@ -233,21 +233,21 @@ export const sunbirdSdkFactory =
         },
         apiConfig: {
           debugMode: false,
-          host: buildConfigValues.BASE_URL,
+          host: buildConfigValues['BASE_URL'],
           user_authentication: {
-            redirectUrl: buildConfigValues.OAUTH_REDIRECT_URL,
+            redirectUrl: buildConfigValues['OAUTH_REDIRECT_URL'],
             authUrl: '/auth/realms/sunbird/protocol/openid-connect',
           },
           api_authentication: {
-            mobileAppKey: buildConfigValues.MOBILE_APP_KEY,
-            mobileAppSecret: buildConfigValues.MOBILE_APP_SECRET,
-            mobileAppConsumer: buildConfigValues.MOBILE_APP_CONSUMER,
-            channelId: buildConfigValues.CHANNEL_ID,
-            producerId: buildConfigValues.PRODUCER_ID,
+            mobileAppKey: buildConfigValues['MOBILE_APP_KEY'],
+            mobileAppSecret: buildConfigValues['MOBILE_APP_SECRET'],
+            mobileAppConsumer: buildConfigValues['MOBILE_APP_CONSUMER'],
+            channelId: buildConfigValues['CHANNEL_ID'],
+            producerId: buildConfigValues['PRODUCER_ID'],
             producerUniqueId: 'sunbird.app'
           },
           cached_requests: {
-            timeToLive: 30 * 60 * 60 * 1000
+            timeToLive: 2 * 60 * 60 * 1000
           }
         },
         eventsBusConfig: {
@@ -296,9 +296,9 @@ export const sunbirdSdkFactory =
         telemetryConfig: {
           deviceRegisterApiPath: '',
           telemetryApiPath: '/api/data/v1',
-          deviceRegisterHost: buildConfigValues.DEVICE_REGISTER_BASE_URL,
+          deviceRegisterHost: buildConfigValues['DEVICE_REGISTER_BASE_URL'],
           telemetrySyncBandwidth: 200,
-          telemetrySyncThreshold: 300,
+          telemetrySyncThreshold: 200,
           telemetryLogMinAllowedOffset: 86400000
         },
         sharedPreferencesConfig: {
@@ -321,6 +321,8 @@ export const sunbirdSdkFactory =
           errorLoggerApiPath: '/api/data/v1/client/logs'
         }
       });
+
+      // window['sunbird'] = SunbirdSdk.instance;
     };
   };
 
@@ -378,6 +380,7 @@ declare const buildconfigreader;
     UtilityService,
     AppHeaderService,
     AppRatingService,
+    FormAndFrameworkUtilService,
     Device,
     Network,
     AndroidPermissionsService,
