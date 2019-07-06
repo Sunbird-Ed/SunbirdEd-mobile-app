@@ -19,6 +19,7 @@ import {
 import { ContainerService } from '../../services/container.services';
 // import { TabsPage } from '../tabs/tabs';
 import {ProfileConstants} from '../app.constant';
+import { GUEST_TEACHER_TABS, initTabs, GUEST_STUDENT_TABS } from '../module.service';
 
 const selectedCardBorderColor = '#006DE5';
 const borderColor = '#F7F7F7';
@@ -29,7 +30,7 @@ const borderColor = '#F7F7F7';
   styleUrls: ['./user-type-selection.scss']
 })
 
-export class UserTypeSelectionPage implements OnInit {
+export class UserTypeSelectionPage {
   teacherCardBorderColor = '#F7F7F7';
   studentCardBorderColor = '#F7F7F7';
   userTypeSelected = false;
@@ -63,26 +64,23 @@ export class UserTypeSelectionPage implements OnInit {
     private headerService: AppHeaderService,
     private activatedRoute: ActivatedRoute,
     private router: Router,
-  ) { }
+  ) {
+    this.getNavParams();
+  }
 
-  ngOnInit(): void {
-    this.activatedRoute.params.subscribe(params => {
-      this.isChangeRoleRequest = Boolean( params['isChangeRoleRequest'] );
-      console.log('inside route paramas ', this.isChangeRoleRequest, typeof(this.isChangeRoleRequest));
-    });
+  getNavParams() {
+    const navigation = this.router.getCurrentNavigation();
+    if (navigation && navigation.extras && navigation.extras.state) {
+      this.navParams = navigation.extras.state;
+    }
+    console.log(this.navParams);
   }
 
   ionViewDidLoad() {
     this.telemetryGeneratorService.generateImpressionTelemetry(
-      ImpressionType.VIEW, '',
-      PageId.USER_TYPE_SELECTION,
-      Environment.HOME, '', '', '');
-
-    this.event.subscribe('event:showScanner', (data) => {
-      if (data.pageName === PageId.USER_TYPE_SELECTION) {
-        this.scannerService.startScanner(PageId.USER_TYPE_SELECTION, true);
-      }
-    });
+    ImpressionType.VIEW, '',
+    PageId.USER_TYPE_SELECTION,
+    this.appGlobalService.isOnBoardingCompleted ? Environment.HOME : Environment.ONBOARDING);
   }
 
   ionViewWillEnter() {
@@ -91,8 +89,11 @@ export class UserTypeSelectionPage implements OnInit {
     });
     this.headerService.showHeaderWithBackButton();
     this.profile = this.appGlobalService.getCurrentUser();
-    // this.isChangeRoleRequest = Boolean(this.navParams.get('isChangeRoleRequest'));
-    // migration-TODO
+    if (this.navParams && this.navParams.isChangeRoleRequest && Boolean(this.navParams.isChangeRoleRequest)) {
+      this.isChangeRoleRequest = Boolean(this.navParams.isChangeRoleRequest);
+    }
+
+    // migration TODO
     // this.backButtonFunc = this.platform.registerBackButtonAction(() => {
     //   this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.USER_TYPE_SELECTION, Environment.HOME, false);
     //   this.handleBackButton();
@@ -113,14 +114,14 @@ export class UserTypeSelectionPage implements OnInit {
     if (this.isChangeRoleRequest) {
       this.navCtrl.pop();
     } else {
-      // this.navCtrl.setRoot(LanguageSettingsPage);
+      this.router.navigate(['settings/language-setting', 'false']);
     }
   }
   handleHeaderEvents($event) {
     switch ($event.name) {
       case 'back': this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.USER_TYPE_SELECTION, Environment.HOME, true);
-      // this.handleBackButton();
-                   break;
+        this.handleBackButton();
+        break;
     }
   }
 
@@ -146,23 +147,29 @@ export class UserTypeSelectionPage implements OnInit {
         this.preferences.putString(PreferenceKey.SELECTED_USER_TYPE, this.selectedUserType).toPromise().then();
       }
     });
+    const values = new Map();
+    values['userType'] = (this.selectedUserType).toUpperCase();
+    this.telemetryGeneratorService.generateInteractTelemetry(
+      InteractType.TOUCH,
+      InteractSubtype.USER_TYPE_SELECTED,
+      this.appGlobalService.isOnBoardingCompleted ? Environment.HOME : Environment.ONBOARDING,
+      PageId.USER_TYPE_SELECTION,
+      undefined,
+      values
+    );
   }
 
   continue() {
     this.generateInteractEvent(this.selectedUserType);
     // When user is changing the role via the Guest Profile screen
     if (this.profile !== undefined && this.profile.handle) {
-      console.log('if1');
       // if role types are same
       if (this.profile.profileType === this.selectedUserType) {
-      console.log('if2');
-      this.gotoTabsPage();
+      this.gotoNextPage();
       } else {
-      console.log('else2');
-      this.gotoTabsPage(true);
+      this.gotoNextPage(true);
       }
     } else {
-      console.log('else1');
       const profileRequest: Profile = {
         uid: this.profile.uid,
         handle: 'Guest1',
@@ -185,12 +192,11 @@ export class UserTypeSelectionPage implements OnInit {
               this.preferences.putString(PreferenceKey.GUEST_USER_ID_BEFORE_LOGIN, userId).toPromise().then();
             }
             this.profile = success;
-            this.gotoTabsPage();
+            this.gotoNextPage();
           }).catch(() => {
             return 'null';
           });
-      }).catch(() => {
-      });
+      })
     });
   }
 
@@ -198,7 +204,9 @@ export class UserTypeSelectionPage implements OnInit {
    * It will initializes tabs based on the user type and navigates to respective page
    * @param {boolean} isUserTypeChanged
    */
-  gotoTabsPage(isUserTypeChanged: boolean = false) {
+
+  // changes
+  gotoNextPage(isUserTypeChanged: boolean = false) {
     // Update the Global variable in the AppGlobalService
     this.event.publish(AppGlobalService.USER_INFO_UPDATED);
 
@@ -210,89 +218,73 @@ export class UserTypeSelectionPage implements OnInit {
       // initTabs(this.container, GUEST_STUDENT_TABS);
     }
     if (this.isChangeRoleRequest && isUserTypeChanged) {
-      console.log('if3');
       if (this.appGlobalService.DISPLAY_ONBOARDING_CATEGORY_PAGE) {
       this.container.removeAllTabs();
-      console.log('if10');
       const navigationExtras: NavigationExtras = {state: { isChangeRoleRequest: true, selectedUserType: this.selectedUserType }};
-        this.router.navigate(['profile/profile-settings'], navigationExtras);
-        // this.navCtrl.push(ProfileSettingsPage, { isChangeRoleRequest: true, selectedUserType: this.selectedUserType });
+      this.router.navigate(['profile-settings'], navigationExtras);
       } else {
-        this.profile.profileType = this.selectedUserType;
-        this.profileService.updateProfile(this.profile).toPromise()
-          .then(() => {
-            // this.navCtrl.push(TabsPage, {
-            //   loginMode: 'guest'
-            // });
-          }).catch(() => {
-        });
-        // this.navCtrl.setRoot(TabsPage);
+        this.updateProfile('TabsPage');
       }
     } else if (this.appGlobalService.isProfileSettingsCompleted) {
-      console.log('elseif3');
-      // this.navCtrl.push(TabsPage, {
-      //   loginMode: 'guest'
-      // });
-    }
-    /* migration TODO
-    else if (this.appGlobalService.DISPLAY_ONBOARDING_SCAN_PAGE) {
-      console.log('elseif4');
-      // Need to go tabspage when scan page is ON, changeRoleRequest ON and profileSetting is OFF
+      this.navigateToTabsAsGuest();
+    } else if (this.appGlobalService.DISPLAY_ONBOARDING_SCAN_PAGE) {
+      // Need to go tabsPage when scan page is ON, changeRoleRequest ON and profileSetting is OFF
       if (this.isChangeRoleRequest) {
-        // this.navCtrl.push(TabsPage, {
-        //   loginMode: 'guest'
-        // });
+        this.navigateToTabsAsGuest();
+      } else if (isUserTypeChanged) {
+        this.updateProfile('PermissionPage', { showScannerPage: true });
       } else {
-        if (isUserTypeChanged) {
-          this.profile.profileType = this.selectedUserType;
-          this.profileService.updateProfile(this.profile).toPromise()
-            .then((res: any) => {
-              // this.scannerService.startScanner(PageId.USER_TYPE_SELECTION, true);
-            }).catch(error => {
-              console.error('Error=');
-            });
-        } else {
-          // this.scannerService.startScanner(PageId.USER_TYPE_SELECTION, true);
-        }
+        this.navigateToPermissions({ showScannerPage: true });
       }
-    }*/
-    else if (this.appGlobalService.DISPLAY_ONBOARDING_CATEGORY_PAGE) {
-      console.log('elseif5');
+    } else if (this.appGlobalService.DISPLAY_ONBOARDING_CATEGORY_PAGE) {
       if (isUserTypeChanged) {
-        this.profile.profileType = this.selectedUserType;
-        this.profileService.updateProfile(this.profile).toPromise()
-          .then((res: any) => {
-            // this.navCtrl.push(ProfileSettingsPage);
-            this.router.navigate(['profile/profile-settings']);
-          }).catch(error => {
-            console.error('Error=');
-          });
+        this.updateProfile('PermissionPage', { showProfileSettingPage: true });
       } else {
-        // this.navCtrl.push(ProfileSettingsPage);
-        this.router.navigate(['profile/profile-settings']);
+        this.navigateToPermissions({ showProfileSettingPage: true });
       }
     } else {
-      console.log('elseif6');
-      this.profile.profileType = this.selectedUserType;
-      this.profileService.updateProfile(this.profile).toPromise()
-        .then(() => {
-          // this.navCtrl.push(TabsPage, {
-          //   loginMode: 'guest'
-          // });
-        }).catch(() => {
-      });
+      this.updateProfile('PermissionPage', { showTabsPage: true });
     }
   }
 
   generateInteractEvent(userType) {
     const values = new Map();
-    values['UserType'] = userType;
+    values['userType'] = (userType).toUpperCase();
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,
       InteractSubtype.CONTINUE_CLICKED,
-      Environment.HOME,
+      this.appGlobalService.isOnBoardingCompleted ? Environment.HOME : Environment.ONBOARDING,
       PageId.USER_TYPE_SELECTION,
       undefined,
       values);
+  }
+
+  /**
+   * Updates profile and navigates to desired page with given params
+   * @param page
+   * @param params
+   */
+  updateProfile(page, params = {}) {
+    this.profile.profileType = this.selectedUserType;
+    this.profileService.updateProfile(this.profile).toPromise()
+      .then((res: any) => {
+        if (page === 'TabsPage') {
+          this.navigateToTabsAsGuest();
+        } else {
+          this.navigateToPermissions(params);
+        }
+      }).catch(error => {
+        console.error('Error=', error);
+      });
+  }
+
+  navigateToTabsAsGuest() {
+    const navigationExtras: NavigationExtras = { state: { loginMode: 'guest' } };
+    this.router.navigate(['/tabs'], navigationExtras);
+  }
+
+  navigateToPermissions(params) {
+    const navigationExtras: NavigationExtras = { state: params };
+    this.router.navigate(['/settings/permission'], navigationExtras);
   }
 }

@@ -47,8 +47,9 @@ const routes: Routes = [
   { path: 'active-downloads', loadChildren: './active-downloads/active-downloads.module#ActiveDownloadsPageModule' },
   { path: 'course-batches', loadChildren: './course-batches/course-batches.module#CourseBatchesPageModule' },
   { path: 'enrolled-course-details-page', loadChildren: './enrolled-course-details-page/enrolled-course-details-page.module#EnrolledCourseDetailsPagePageModule' },
-  // { path: 'collection-detail-etb', loadChildren: './collection-detail-etb/collection-detail-etb.module#CollectionDetailEtbPageModule' }
-  // { path: 'course-batches', loadChildren: './course-batches/course-batches.module#CourseBatchesPageModule' },
+  { path: 'profile-settings', loadChildren: './profile-settings/profile-settings.module#ProfileSettingsPageModule' },
+  { path: 'qrscanner-alert', loadChildren: './qrscanner-alert/qrscanner-alert.module#QrscannerAlertPageModule' },
+  { path: 'course-batches', loadChildren: './course-batches/course-batches.module#CourseBatchesPageModule' },
   { path: 'collection-detail-etb', loadChildren: './collection-detail-etb/collection-detail-etb.module#CollectionDetailEtbPageModule' }
 ];
 

@@ -1,9 +1,9 @@
-import {GUEST_STUDENT_TABS, GUEST_TEACHER_TABS, initTabs} from '../../../app/module.service';
+import {GUEST_STUDENT_TABS, GUEST_TEACHER_TABS, initTabs} from '../../app/module.service';
 
 import {Component, Inject, ViewChild} from '@angular/core';
 import {TranslateService} from '@ngx-translate/core';
 import {FormBuilder, FormGroup} from '@angular/forms';
-import {PreferenceKey, ProfileConstants} from '../../../app/app.constant';
+import {PreferenceKey, ProfileConstants} from '../../app/app.constant';
 import * as _ from 'lodash';
 import {
   CategoryTerm,
@@ -28,15 +28,15 @@ import {
   AppHeaderService
 } from 'services';
 import { Platform, Events, LoadingController } from '@ionic/angular';
-import { ImpressionType, PageId, Environment, InteractSubtype, InteractType } from '../../../services/telemetry-constants';
+import { ImpressionType, PageId, Environment, InteractSubtype, InteractType } from '../../services/telemetry-constants';
 import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-profile-settings',
-  templateUrl: './profile-settings.component.html',
-  styleUrls: ['./profile-settings.component.scss'],
+  templateUrl: './profile-settings.page.html',
+  styleUrls: ['./profile-settings.page.scss'],
 })
-export class ProfileSettingsComponent {
+export class ProfileSettingsPage {
 
   public pageId = 'ProfileSettingsPage';
 
@@ -112,10 +112,6 @@ export class ProfileSettingsComponent {
     this.initUserForm();
     this.getGuestUser();
     this.handleBackButton();
-  }
-
-  changeABC() {
-    this.abc = !this.abc;
   }
 
   getNavParams() {
@@ -241,7 +237,7 @@ export class ProfileSettingsComponent {
       requiredCategories: FrameworkCategoryCodesGroup.DEFAULT_FRAMEWORK_CATEGORIES
     };
     this.frameworkUtilService.getActiveChannelSuggestedFrameworkList(getSuggestedFrameworksRequest).toPromise()
-      .then((result: Framework[]) => {
+      .then(async (result: Framework[]) => {
         console.log('getActiveChannelSuggestedFrameworkList', result);
         this.syllabusList = [];
         if (result && result !== undefined && result.length > 0) {
@@ -250,7 +246,7 @@ export class ProfileSettingsComponent {
             const value = {'name': element.name, 'code': element.identifier};
             this.syllabusList.push(value);
           });
-          this.loader.dismiss();
+          await this.loader.dismiss();
           if (this.profile && this.profile.syllabus && this.profile.syllabus[0] !== undefined) {
             const frameworkDetailsRequest: FrameworkDetailsRequest = {
               frameworkId: this.profile.syllabus[0] ? this.profile.syllabus[0] : '',
@@ -260,14 +256,14 @@ export class ProfileSettingsComponent {
               .then((framework: Framework) => {
                 this.categories = framework.categories;
                 this.resetForm(0, false);
-              }).catch(error => {
+              }).catch(async error => {
               console.error('Error', error);
-              this.loader.dismiss();
+              await this.loader.dismiss();
               this.commonUtilService.showToast('NEED_INTERNET_TO_CHANGE');
             });
           }
         } else {
-          this.loader.dismiss();
+          await this.loader.dismiss();
           this.commonUtilService.showToast('NO_DATA_FOUND');
         }
       });
@@ -281,9 +277,9 @@ export class ProfileSettingsComponent {
   getCategoryData(req: GetFrameworkCategoryTermsRequest, list): void {
     if (this.frameworkId) {
       this.frameworkUtilService.getFrameworkCategoryTerms(req).toPromise()
-        .then((result: CategoryTerm[]) => {
+        .then(async (result: CategoryTerm[]) => {
           if (this.loader !== undefined) {
-            this.loader.dismiss();
+            await this.loader.dismiss();
           }
           this[list] = result;
           if (list !== 'gradeList') {
@@ -324,34 +320,35 @@ export class ProfileSettingsComponent {
    * @param currentField
    * @param prevSelectedValue
    */
-  checkPrevValue(index, currentField, prevSelectedValue: any[]) {
+  async checkPrevValue(index, currentField, prevSelectedValue: any[]) {
     if (index === 1) {
-      const loader = this.commonUtilService.getLoader();
+      const loader = await this.commonUtilService.getLoader();
       this.frameworkId = prevSelectedValue ? (Array.isArray(prevSelectedValue[0]) ? prevSelectedValue[0][0] : prevSelectedValue[0]) : '';
       const frameworkDetailsRequest: FrameworkDetailsRequest = {
         frameworkId: this.frameworkId,
         requiredCategories: FrameworkCategoryCodesGroup.DEFAULT_FRAMEWORK_CATEGORIES
       };
+      debugger;
       this.frameworkService.getFrameworkDetails(frameworkDetailsRequest).toPromise()
         .then((framework: Framework) => {
           this.categories = framework.categories;
           console.log('this.categories', this.categories);
           const request: GetFrameworkCategoryTermsRequest = {
-            currentCategoryCode: this.categories[0].code,
+            currentCategoryCode: this.categories.length ? this.categories[0].code : '',
             language: this.translate.currentLang,
             requiredCategories: FrameworkCategoryCodesGroup.DEFAULT_FRAMEWORK_CATEGORIES,
             frameworkId: this.frameworkId
           };
           this.getCategoryData(request, currentField);
-        }).catch(() => {
+        }).catch(async () => {
         this.commonUtilService.showToast('NEED_INTERNET_TO_CHANGE');
-        loader.dismiss();
+        await loader.dismiss();
       });
 
     } else {
       const request: GetFrameworkCategoryTermsRequest = {
-        currentCategoryCode: this.categories[index - 1].code,
-        prevCategoryCode: this.categories[index - 2].code,
+        currentCategoryCode: (this.categories.length > 1) ? this.categories[index - 1].code : '',
+        prevCategoryCode: (this.categories.length > 2) ? this.categories[index - 2].code : '',
         selectedTermsCodes: prevSelectedValue,
         language: this.selectedLanguage,
         requiredCategories: FrameworkCategoryCodesGroup.DEFAULT_FRAMEWORK_CATEGORIES,
@@ -389,7 +386,9 @@ export class ProfileSettingsComponent {
         }
         this.profileForTelemetry.board = this.userForm.value.syllabus;
         this.checkPrevValue(1, 'boardList', [this.userForm.value.syllabus]);
+        /* migration-TODO
         document.querySelectorAll('[ion-button=alert-button]')[0].setAttribute('disabled', 'false');
+        */
         break;
 
       case 1:

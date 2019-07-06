@@ -1,3 +1,4 @@
+@import '../../global.scss';
 :host {
 
     text-overflow: ellipsis;
@@ -95,7 +96,9 @@
         font-size: 1.3rem;
       }
       .cancel-btn span {
+        /* migration-TODO
         color: map-get($colors, white) !important;
+        */
       }
     .empty-search-result {
       font-size: 1.2em;

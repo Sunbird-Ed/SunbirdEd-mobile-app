@@ -1,0 +1,48 @@
+<ion-header>
+
+  <ion-toolbar>
+    <ion-title>{{ 'ABOUT_US' | translate }}</ion-title>
+    <ion-buttons slot="primary">
+      <ion-button (click)="shareInformation()" icon-only>
+        <ion-icon name="share" float-end></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+
+</ion-header>
+
+
+<ion-content>
+  <ion-list>
+    <!-- Device Id -->
+    <ion-item text-wrap>
+
+      <h2>{{ 'DEVICE_ID' | translate }}</h2>
+      <p class="settings-item-style" user-select: auto>{{ deviceId | translate}}</p>
+    </ion-item>
+
+    <!-- App Version -->
+    <ion-item>
+      <h2>{{ 'APP_VERSION' | translate }}</h2>
+      <p class="settings-item-style">{{ version | translate}}</p>
+    </ion-item>
+
+    <!-- Privacy Policy -->
+    <!-- <ion-item (click)="privacyPolicy()">
+      <h2>{{ 'ABOUT_US_SCREEN.PRIVACY_POLICY' | translate }}</h2>
+      <ion-icon name="ios-arrow-forward" item-end></ion-icon>
+    </ion-item> -->
+
+    <!-- Terms of Service -->
+    <!-- <ion-item (click)="termsOfService()">
+      <h2>{{ 'ABOUT_US_SCREEN.TERMS_OF_SERVICE' | translate }}</h2>
+      <ion-icon name="ios-arrow-forward" item-end></ion-icon>
+    </ion-item> -->
+
+    <!-- About the Application -->
+    <!-- <ion-item (click)="aboutApp()">
+      <h2>{{ 'ABOUT_US_SCREEN.ABOUT_THE_APP' | translate }}</h2>
+      <ion-icon name="ios-arrow-forward" item-end></ion-icon>
+    </ion-item> -->
+  </ion-list>
+</ion-content>
