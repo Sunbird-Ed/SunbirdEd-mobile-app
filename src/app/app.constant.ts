@@ -48,6 +48,23 @@ export class ContentType {
         ContentType.EXPLANATION_RESOURCE,
         ContentType.EXPERIENTIAL_RESOURCE
     ];
+    public static readonly FOR_PROFILE_TAB = [
+        ContentType.STORY,
+        ContentType.WORKSHEET,
+        ContentType.GAME,
+        ContentType.RESOURCE,
+        ContentType.COLLECTION,
+        ContentType.TEXTBOOK,
+        ContentType.LESSON_PLAN,
+        ContentType.COURSE,
+        ContentType.FOCUS_SPOT,
+        ContentType.LEARNING_OUTCOME_DEFINITION,
+        ContentType.PRACTICE_QUESTION_SET,
+        ContentType.CURIOSITY_QUESTIONS,
+        ContentType.MARKING_SCHEME_RUBRIC,
+        ContentType.EXPLANATION_RESOURCE,
+        ContentType.EXPERIENTIAL_RESOURCE
+    ];
     public static readonly FOR_DIAL_CODE_SEARCH = [
         ContentType.TEXTBOOK,
         ContentType.TEXTBOOK_UNIT,
@@ -184,7 +201,6 @@ export class PreferenceKey {
     public static readonly APP_RATE_LATER_CLICKED = 'app_rate_later_clicked';
     public static readonly APP_RATING_POPUP_APPEARED = 'app_rating_popup_appeared';
     public static readonly APP_PERMISSION_ASKED = 'app_permission_asked';
-    public static readonly DEPLOYMENT_KEY = 'deployment_key';
 }
 
 export class GenericAppConfig {
@@ -331,13 +347,7 @@ export class ContentConstants {
     public static readonly COMING_SOON_MSG = 'comingSoonMsg';
 }
 
-export class ContentFilterConfig {
-    public static readonly NAME_LIBRARY = 'library';
-    public static readonly NAME_COURSE = 'course';
-    public static readonly NAME_DOWNLOADS = 'downloads';
-    public static readonly NAME_DIALCODE = 'dialcode';
-    public static readonly CODE_CONTENT_TYPE = 'contentType';
-}
+
 export class RouterLinks {
     public static readonly HOME = 'home';
     public static readonly TABS = 'tabs';
