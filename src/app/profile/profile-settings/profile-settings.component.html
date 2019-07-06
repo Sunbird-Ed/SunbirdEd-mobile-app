@@ -34,7 +34,7 @@
 	<form novalidate [formGroup]="userForm" class="form-position">
 
 		<ion-item>
-			<ion-label stacked class="label-font text-uppercase">{{'BOARD' | translate }}</ion-label>
+			<ion-label position="stacked" class="label-font text-uppercase">{{'BOARD' | translate }}</ion-label>
 			<ion-select multiple="false" #boardSelect text-capitalize formControlName="syllabus" (ionChange)="resetForm(0, true)"
 			 okText="{{'BTN_SUBMIT' | translate}}" cancelText="{{'CANCEL' | translate}}" placeholder="{{'BOARD_OPTION_TEXT' | translate}}">
 				<ion-select-option *ngFor="let eachSyllabus of syllabusList" value="{{eachSyllabus?.code}}">{{eachSyllabus?.name}}&lrm;</ion-select-option>
@@ -42,7 +42,7 @@
 		</ion-item>
 
 		<ion-item>
-			<ion-label stacked class="label-font text-uppercase">{{'MEDIUM' | translate }}</ion-label>
+			<ion-label position="stacked" class="label-font text-uppercase">{{'MEDIUM' | translate }}</ion-label>
 			<ion-select formControlName="medium" #mediumSelect multiple="true" text-capitalize (ionChange)="resetForm(2, false)"
 			 okText="{{'BTN_SUBMIT' | translate}}" cancelText="{{'CANCEL' | translate}}" [disabled]="!(userForm.value.boards != '')" placeholder="{{'MEDIUM_OPTION_TEXT' | translate}}">
 				<ion-select-option *ngFor="let medium of mediumList" text-capitalize value="{{medium?.code}}">{{medium?.name}}</ion-select-option>
@@ -50,7 +50,7 @@
 		</ion-item>
 
 		<ion-item>
-			<ion-label stacked class="label-font text-uppercase">{{'CLASS' | translate }}</ion-label>
+			<ion-label position="stacked" class="label-font text-uppercase">{{'CLASS' | translate }}</ion-label>
 			<ion-select multiple="true" #gradeSelect text-capitalize formControlName="grades" okText="{{'BTN_SUBMIT' | translate}}"
 			 cancelText="{{'CANCEL' | translate}}" [disabled]="!(userForm.value.medium != '')" (ionChange)="enableSubmit()" placeholder="{{'GRADE_OPTION_TEXT' | translate}}">
 				<ion-select-option *ngFor="let grade of gradeList" text-capitalize value="{{grade?.code}}">{{grade?.name}}</ion-select-option>
@@ -63,9 +63,9 @@
 <ion-footer padding no-border>
 
 	{{userForm.invalid}}
-	<button class="arrow-icon" [ngStyle]="{'background-color': btnColor}" [disabled]="userForm.invalid" ion-button
+	<ion-button class="arrow-icon" [ngStyle]="{'background-color': btnColor}" [disabled]="userForm.invalid"
 		icon-end block (click)="onSubmit()">
 		{{ 'BTN_SUBMIT' | translate }}
 		<ion-icon name="arrow-round-forward" class="icon icon-md ion-md-arrow-round-forward"></ion-icon>
-	</button>
+	</ion-button>
 </ion-footer>
