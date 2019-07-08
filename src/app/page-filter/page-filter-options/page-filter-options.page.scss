@@ -1,0 +1,107 @@
+@import "../../../global.scss";
+:host {
+    .subtitle {
+      text-transform: capitalize;
+      font-size: 1.3em;
+      @extend .font-weight-700;
+      color: map-get($colors, primary_black);
+    }
+    ion-item {
+      padding-left: 0 !important;
+      .checkbox {
+        margin: 8px !important;
+      }
+      ion-label {
+        font-size: 14px !important;
+        text-overflow: unset !important;
+        white-space: unset !important;
+      }
+    }
+    .col {
+      min-height: 3.3em !important;
+    }
+    .scroll-list {
+      overflow-y: scroll;
+      max-height: 50vh !important; 
+      padding-bottom: 10vh !important;
+    }
+    .item-md {
+      font-size: 1.3rem !important;
+      @extend .font-weight-600;
+    }
+  
+    .footer{
+      background: #FFF;
+      bottom: 0;
+   }
+   .topicFooter
+   {
+    bottom: 0;
+    color: #fff
+   }
+  }
+  
+  .resource-filter-options .popover-content {
+    margin: 0;
+    width: 100% !important;
+    max-height: 70% !important;
+    box-shadow: unset;
+    position: fixed;
+    @include ltr() {
+      left: 0 !important;
+    }
+  
+    @include rtl() {
+      right: 0 !important;
+    }
+    top: unset !important;
+    bottom: 0;
+    transform-origin: bottom -100% !important;
+    transform: translateY(0) !important;
+  }
+  
+  .resource-filter-options ion-backdrop {
+    background-color: map-get($colors, black) !important;
+    opacity: 0.4 !important;
+  }
+  .text-unselected{
+    padding-left: 20%;
+    color : black;
+    margin-bottom: 5px;
+    margin-top: 2px;
+  }
+  .text-selected{
+    padding-left: 20%;
+    color : blue; 
+    margin-bottom: 5px;
+    margin-top: 2px;
+  }
+  .pull-left{
+   float: left;
+  }
+  .pull-right{
+    float: right;
+  }
+  .icon-margin{
+    margin:0 10px !important;
+  }
+  .div-space .item-inner .input-wrapper .label-md {
+    @include margin(5px 8px 5px 0 !important);
+  }
+  
+  .filter-item {
+    width: auto;
+    margin: 16px !important;
+    background-color: map-get($colors, white_f0);
+    color: map-get($colors, dark_gray);
+    font-size: 1em;
+    @extend .font-weight-600;
+    height: 2em;
+    ion-icon {
+      color: map-get($colors, dark_gray);
+    }
+   .topic-item {
+      @extend .filter-item ;
+      height: 100%;
+    }
+  }

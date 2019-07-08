@@ -55,7 +55,9 @@ const routes: Routes = [
   { path: 'enrollment-details-page', loadChildren:
    './enrolled-course-details-page/enrollment-details-page/enrollment-details-page.module#EnrollmentDetailsPagePageModule' },
   { path: 'collection-details', loadChildren: './collection-details/collection-details.module#CollectionDetailsPageModule' },
-  { path: 'content-details', loadChildren: './content-details/content-details.module#ContentDetailsPageModule' }
+  { path: 'content-details', loadChildren: './content-details/content-details.module#ContentDetailsPageModule' },
+  { path: 'page-filter', loadChildren: './page-filter/page-filter.module#PageFilterPageModule' },
+  { path: 'page-filter-options', loadChildren: './page-filter/page-filter-options/page-filter-options.module#PageFilterOptionsPageModule' }
 
 ];
 
