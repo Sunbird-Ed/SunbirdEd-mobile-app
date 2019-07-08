@@ -139,6 +139,7 @@
       "cordova-plugin-uniquedeviceid": {},
       "cordova-plugin-app-version": {},
       "cordova-plugin-x-socialsharing": {},
+      "@ionic-native/diagnostic": "^4.0.12",
       "cordova-plugin-device": {},
       "cordova-plugin-file": {},
       "cordova-plugin-file-transfer": {},
