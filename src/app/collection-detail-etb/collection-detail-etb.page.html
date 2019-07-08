@@ -1,11 +1,11 @@
 
 <ion-content no-padding>
   <div class="p-8">
-    <detail-card (downloadAllContent)="showDownloadConfirmationAlert($event)" (shareEvent)="share()"
+    <app-detail-card (downloadAllContent)="showDownloadConfirmationAlert($event)" (shareEvent)="share()"
       (showOverflowMenuEvent)="showPopOver($event)" [contentDetail]="contentDetail"
       [currentCount]="currentCount" [queuedIdentifiers]="queuedIdentifiers"
       [localImage]="localImage" [showDownloadBtn]="showDownloadBtn" [isDepthChild]='isDepthChild'
-      [isDownloadStarted]="isDownloadStarted" [defaultAppIcon]="defaultAppIcon"></detail-card>
+      [isDownloadStarted]="isDownloadStarted" [defaultAppIcon]="defaultAppIcon"></app-detail-card>
     <!-- End of the Parent Card -->
 
     <!-- Import content loader -->
@@ -104,7 +104,7 @@
 <ion-backdrop class="loading-backdrop" *ngIf="showLoading && !isDownloadStarted" text-center>
   <div class="backdrop-container">
     <ion-label>{{ 'LOADING_CONTENTS' | translate: {'%s': downloadProgress ? downloadProgress : 0} }}</ion-label>
-    <pb-horizontal [progress]="downloadProgress" isOnBoardCard="false"></pb-horizontal>
+    <app-pb-horizontal [progress]="downloadProgress" isOnBoardCard="false"></app-pb-horizontal>
   </div>
 
   <div class="backdrop-footer">
