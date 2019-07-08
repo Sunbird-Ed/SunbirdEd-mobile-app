@@ -387,6 +387,9 @@ export class RouterLinks {
     public static readonly GROUP_REPORT = 'group-report';
     public static readonly USER_REPORT = 'user-report';
 
+    // Player Routs
+    public static readonly PLAYER = 'player';
+
 
 
 }
