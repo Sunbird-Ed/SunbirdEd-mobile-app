@@ -217,11 +217,11 @@
 <!-- Page footer -->
 <ion-footer *ngIf="showDownloadBtn && !isDepthChild">
 	<ion-toolbar padding>
-		<ion-button block *ngIf="showDownloadBtn && !isDownloadStarted" (click)="showDownloadConfirmationAlert()"> {{
+		<ion-button expand="block" *ngIf="showDownloadBtn && !isDownloadStarted" (click)="showDownloadConfirmationAlert()"> {{
 			'DOWNLOAD_ALL_CONTENT' | translate }} ({{(downloadSize | fileSize)
 			}})
 		</ion-button>
-    <ion-button *ngIf="isDownloadStarted" block outline
+    <ion-button *ngIf="isDownloadStarted" expand="block" fill="outline"
             [ngStyle]="{'background': '-webkit-linear-gradient(left, #DBECFF '  +(currentCount/queuedIdentifiers.length)*100+ '%, white 0%)'}">
       {{ 'DOWNLOADING_2' | translate }}... {{ currentCount }} / {{ queuedIdentifiers?.length }}
     </ion-button>
@@ -235,6 +235,6 @@
 	</div>
 
 	<div class="backdrop-footer">
-		<ion-button small (click)="cancelDownload()">{{ 'CANCEL' | translate }}</ion-button>
+		<ion-button size="small" (click)="cancelDownload()">{{ 'CANCEL' | translate }}</ion-button>
 	</div>
 </ion-backdrop>
