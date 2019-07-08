@@ -25,6 +25,7 @@ import { FileSizePipe } from '@app/pipes/file-size/file-size';
 import {BookmarkComponent} from './bookmark/bookmark.component';
 import {DialogPopupComponent} from './dialog-popup/dialog-popup.component';
 import {SbDownloadPopupComponent} from './popups/sb-download-popup/sb-download-popup.component';
+import { UpgradePopoverComponent } from './popups/upgrade-popover/upgrade-popover.component';
 
 
 @NgModule({
@@ -45,7 +46,8 @@ import {SbDownloadPopupComponent} from './popups/sb-download-popup/sb-download-p
     DetailCardComponent,
     BookmarkComponent,
     DialogPopupComponent,
-    SbDownloadPopupComponent
+    SbDownloadPopupComponent,
+    UpgradePopoverComponent
   ],
   imports: [
     CommonModule,
@@ -62,7 +64,8 @@ import {SbDownloadPopupComponent} from './popups/sb-download-popup/sb-download-p
     SbPopoverComponent,
     SbNoNetworkPopupComponent,
     ContentRatingAlertComponent,
-    DialogPopupComponent
+    DialogPopupComponent,
+    UpgradePopoverComponent
   ],
   exports: [
     ApplicationHeaderComponent,
@@ -82,7 +85,8 @@ import {SbDownloadPopupComponent} from './popups/sb-download-popup/sb-download-p
     DetailCardComponent,
     BookmarkComponent,
     DialogPopupComponent,
-    SbDownloadPopupComponent
+    SbDownloadPopupComponent,
+    UpgradePopoverComponent
   ],
   providers: [FileSizePipe]
 })

@@ -123,30 +123,30 @@ export class DataSyncComponent {
     });
   }
 
-  shareTelemetry() {
-    const loader = this.commonUtilService.getLoader();
-    loader.present();
+  async shareTelemetry() {
+    const loader = await this.commonUtilService.getLoader();
+    await loader.present();
     const telemetryExportRequest: TelemetryExportRequest = {
       destinationFolder: cordova.file.externalDataDirectory
     };
-    this.telemetryService.exportTelemetry(telemetryExportRequest).subscribe((data: TelemetryExportResponse) => {
-      loader.dismiss();
+    this.telemetryService.exportTelemetry(telemetryExportRequest).subscribe(async (data: TelemetryExportResponse) => {
+      await loader.dismiss();
       this.social.share('', '', 'file://' + data.exportedFilePath, '');
-    }, () => {
-      loader.dismiss();
+    }, async () => {
+      await loader.dismiss();
       this.commonUtilService.showToast('SHARE_TELEMETRY_FAILED');
     });
   }
 
-  onSyncClick() {
+  async onSyncClick() {
     const that = this;
-    const loader = this.commonUtilService.getLoader();
-    loader.present();
+    const loader = await this.commonUtilService.getLoader();
+    await loader.present();
     this.generateInteractEvent(InteractType.TOUCH, InteractSubtype.MANUALSYNC_INITIATED, null);
     this.telemetryService.sync(true)
       .subscribe((syncStat: TelemetrySyncStat) => {
 
-        that.zone.run(() => {
+        that.zone.run(async () => {
           this.generateInteractEvent(InteractType.OTHER, InteractSubtype.MANUALSYNC_SUCCESS, syncStat.syncedFileSize);
           const milliseconds = Number(syncStat.syncTime);
 
@@ -163,11 +163,11 @@ export class DataSyncComponent {
           // store the latest sync time
           this.preferences.putString(PreferenceKey.KEY_DATA_SYNC_TIME, dateAndTime).toPromise().then();
 
-          loader.dismiss();
+          await loader.dismiss();
           this.commonUtilService.showToast('DATA_SYNC_SUCCESSFUL');
         });
-      }, (error) => {
-        loader.dismiss();
+      }, async (error) => {
+        await loader.dismiss();
         this.commonUtilService.showToast('DATA_SYNC_FAILURE');
         console.error('Telemetry Data Sync Error: ' + error);
       });

@@ -1,0 +1,334 @@
+body{
+    background-color: #edf4f9;
+    font-family: 'Noto Sans';
+}
+
+.rotate{
+    -webkit-transform: rotate(180deg);  /* Chrome, Safari, Opera */
+    -moz-transform: rotate(180deg);  /* Firefox */
+    -ms-transform: rotate(180deg);  /* IE 9 */
+    transform: rotate(180deg);  /* Standard syntax */    
+}
+.btn-arrow{
+    padding: 4px;
+    margin-top: 4px;
+    margin-left: 5px;
+}
+P{
+    font-size: 13px;
+}
+.help-header, .help-header-send-email{
+    background: #024f9d;
+    color: #fff;
+    padding: 16px;
+}
+.help-header>h4,.help-header-send-email>h4{
+    margin: 0;
+    padding:0;
+    font-weight: 700;
+    max-width: 1024px;
+    margin: 0 auto;
+}
+.help-header>p,.help-header-send-email>p{
+    margin: 0;
+    font-weight: 100;
+    max-width: 1024px;
+    margin: 0 auto;
+}
+.panel-title {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+}
+ .info-msg{
+        background-color: #F3F7FA
+    }
+@media only screen and (max-width : 1024px) {
+
+    .info-msg-send-email>p,.info-msg>p{
+        margin: 0;
+        padding: 8px 16px;
+        max-width: 1024px;
+        margin: 0 auto;
+    }
+   
+}
+@media only screen and (min-width : 1025px) {
+
+    .info-msg-send-email>p,.info-msg>p{
+        margin: 0;
+        padding: 16px 0px;
+        max-width: 1024px;
+        margin: 0 auto;
+    }
+}
+.icon{
+    color:#024f9d;
+    float:right;
+} 
+.panel{
+    border-radius: 0px !important;
+    border-top: 0;
+    border-left: 0;
+    border-right: 0;
+    box-shadow:none !important;
+
+}
+.panel-default{
+
+}
+
+.panel-heading {
+    padding: 16px 16px;
+}
+.panel-group{
+    margin: 0 auto;
+    max-width: 1024px;
+}
+.panel-group .panel+.panel{
+    border-radius: 0px;
+    margin-top: 0px;
+
+}
+.panel-default>.panel-heading{
+    background-color: #fff;
+    border-radius: 0px !important;
+}
+.panel-body{
+    background-color: #F3F7FA;
+}
+.panel-interact{
+    text-align: center; 
+    padding: 20px;
+    height: 100px;
+}
+.panel-interact>button{
+    margin: 10px 5px 0px 5px;
+    background-color: #F3F7FA;
+    border-color: #F3F7FA;
+    width: 80px;
+    color: #024f9d;
+    font-size: 13px;
+    font-weight: 700;
+    outline: none;
+
+}
+.panel-interact>p{
+    margin: 0px;
+}
+.no-clicked, .yes-clicked{
+    padding:10px !important;
+    margin: auto !important;
+    margin-top:10px !important;
+    background: #F3F7FA;
+    width: 200px;
+    border-radius: 4px;
+    color:#008840;
+    text-align: center;
+}
+
+.panel-info{
+    text-align: center;
+    max-width: 1024px;
+    margin: 0 auto;
+}
+.panel-info>h6{
+    font-weight: 700;
+    margin-top: 20px;
+    margin-bottom: 0px;
+}
+
+.input-text{
+    width: 100%;
+    height: 70px;
+    border-radius: 5px;
+    box-shadow: none;
+    border-width: 1px;
+    border-style:solid;
+    border-color: #c3c3c3;
+    padding-left: 8px;
+    padding-top: 8px;
+    resize: none;
+}
+.submit-button{
+    width: 100%;
+    color: #fff;
+    background: #024f9d;
+    height: 40px;
+    border-radius: 4px;
+    border-style:solid;
+    border-color:  #024f9d;
+    margin: 10px 0px 16px 0px;
+    outline: none;
+}
+
+@media only screen and (max-width : 1024px) {
+   
+    .report-button{
+        min-width: 90vw;
+        color: #fff;
+        background: #024f9d;
+        height: 40px;
+        border-radius: 4px;
+        border-style:solid;
+        border-color:  #024f9d;
+        margin-bottom: 50px;
+        outline: none;
+    }
+    p{
+        margin: 0px;
+        font-weight: normal;
+    }
+    .panel-body{
+        padding: 8px 16px;
+    }
+    #textareainfo{
+        opacity: .5;
+        position: absolute;
+        bottom: -13px;
+        right: 0px;
+        font-weight: normal;
+        font-size: 12px;
+    }
+    .initiate-email-info-button{
+        left: 0px;
+    right: 0px;
+    position: fixed;
+    top: 80vh;
+    padding: 0px 16px;
+    }
+}
+@media only screen and (min-width : 1025px) {
+    .report-button{
+        min-width: 1024px;
+        color: #fff;
+        background: #024f9d;
+        height: 40px;
+        border-radius: 4px;
+        border-style:solid;
+        border-color:  #024f9d;
+        margin-bottom: 50px;
+        outline: none;
+    }
+}
+.report-button>img{
+    padding-bottom: 4px;
+    padding-right: 1px;
+}
+.send-email{
+    text-align: center;
+    padding: 15px;
+}
+.send-email-form{
+    text-align: center;
+    margin: 0 16px;
+}
+#send-email-form{
+    height: 40vh;
+    position: relative;
+}
+
+.send-email-info{
+    padding: 10px 0px;
+    font-weight: normal;
+    font-size: 12px;
+    text-align: justify;
+
+}
+ #know-more-form{
+        margin: 0px 16px;
+    }
+@media only screen and (min-width : 1025px) {
+    .send-email-form{
+        max-width: 1025px;
+        margin: auto;
+    }
+    .send-email-info{
+        max-width: 570px;
+        padding: 10px 0px !important;
+        margin: left;
+        float: left;
+    }
+    .submit-button{
+        width: 150px;
+        float: right;
+        color: #fff;
+        background: #024f9d;
+        border-radius: 0px;
+        border-style:solid;
+        border-color:  #024f9d;
+        margin: 10px 0px 16px 0px;
+        height: 32px;
+        outline: none;
+    }
+    .panel-info{
+        overflow: hidden;
+        text-align: left;
+    }
+    .panel-info > h6 {
+        margin-left: 15px;
+    }
+    .panel-info > p {
+        margin-left: 15px;
+    }
+    #initiate-email{
+    margin-top: 10px;
+}
+
+}
+.input-text-form{
+    width: 100%;
+    height: 128px;
+    border-radius: 5px;
+    box-shadow: none;
+    border-width: 1px;
+    border-style:solid;
+    border-color: #c3c3c3;
+    padding-left: 8px;
+    padding-top: 8px;
+    resize: none;
+}
+::placeholder {
+  color: #999999;
+  font-size: 14px;
+  font-weight: normal;
+}
+.initiate-email-info{
+        margin-top: 10px;
+    }
+@media only screen and (min-width : 1025px) {
+    .input-text-form{
+        width: 100%;
+        height: 128px;
+        border-radius: 0px;
+        box-shadow: none;
+        border-width: 1px;
+        border-style:solid;
+        border-color: #c3c3c3;
+        padding-left: 8px;
+        padding-top: 8px;
+        margin: 0px;
+        resize: none;
+    }
+    #textareainfo{
+    opacity: .5;
+    position: absolute;
+    bottom: -24px;
+    right: 0px;
+    font-weight: normal;
+    font-size: 12px;
+    }
+    
+}
+a{
+    color: #333;
+}
+
+a:active, a:hover{
+    text-decoration: none;
+    color: none;
+}
+
+#textareadiv{
+    position: relative
+}

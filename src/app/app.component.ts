@@ -519,7 +519,6 @@ export class AppComponent implements OnInit, AfterViewInit {
             this.appGlobalService.isProfileSettingsCompleted = false;
             // migration-TODO
             // this.rootPage = LanguageSettingsPage;
-            this.router.navigate(['home']);
             this.router.navigate(['settings/language-setting', false]);
             return;
           }
@@ -566,7 +565,6 @@ export class AppComponent implements OnInit, AfterViewInit {
                 } else {
                   // migration-TODO
                   // await this.nav.insertPages(0, [{ page: LanguageSettingsPage }, { page: UserTypeSelectionPage }]);
-                  this.router.navigate(['/home']);
                   this.router.navigate(['settings/language-setting', false]);
                 }
               } catch (e) {
@@ -654,7 +652,6 @@ export class AppComponent implements OnInit, AfterViewInit {
           Environment.USER,
           PageId.PROFILE
         );
-
         this.router.navigateByUrl(`/${RouterLinks.USER_AND_GROUPS}`);
         // if (this.app.getRootNavs().length > 0) {
         //   this.app.getRootNavs()[0].push(UserAndGroupsPage, { profile: this.profile });
