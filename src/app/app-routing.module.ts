@@ -46,16 +46,21 @@ const routes: Routes = [
   { path: RouterLinks.PROFILE, loadChildren: './profile/profile.module#ProfilePageModule' },
   { path: 'active-downloads', loadChildren: './active-downloads/active-downloads.module#ActiveDownloadsPageModule' },
   { path: 'course-batches', loadChildren: './course-batches/course-batches.module#CourseBatchesPageModule' },
-  { path: 'enrolled-course-details-page', loadChildren:
-   './enrolled-course-details-page/enrolled-course-details-page.module#EnrolledCourseDetailsPagePageModule' },
+  {
+    path: 'enrolled-course-details-page', loadChildren:
+      './enrolled-course-details-page/enrolled-course-details-page.module#EnrolledCourseDetailsPagePageModule'
+  },
   { path: 'profile-settings', loadChildren: './profile-settings/profile-settings.module#ProfileSettingsPageModule' },
   { path: 'qrscanner-alert', loadChildren: './qrscanner-alert/qrscanner-alert.module#QrscannerAlertPageModule' },
   { path: 'course-batches', loadChildren: './course-batches/course-batches.module#CourseBatchesPageModule' },
   { path: 'collection-detail-etb', loadChildren: './collection-detail-etb/collection-detail-etb.module#CollectionDetailEtbPageModule' },
-  { path: 'enrollment-details-page', loadChildren:
-   './enrolled-course-details-page/enrollment-details-page/enrollment-details-page.module#EnrollmentDetailsPagePageModule' },
+  {
+    path: 'enrollment-details-page', loadChildren:
+      './enrolled-course-details-page/enrollment-details-page/enrollment-details-page.module#EnrollmentDetailsPagePageModule'
+  },
   { path: 'collection-details', loadChildren: './collection-details/collection-details.module#CollectionDetailsPageModule' },
-  { path: 'content-details', loadChildren: './content-details/content-details.module#ContentDetailsPageModule' }
+  { path: 'content-details', loadChildren: './content-details/content-details.module#ContentDetailsPageModule' },
+  { path: RouterLinks.PLAYER, loadChildren: './player/player.module#PlayerPageModule' }
 
 ];
 
