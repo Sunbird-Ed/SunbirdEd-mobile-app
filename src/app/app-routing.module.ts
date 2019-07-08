@@ -64,8 +64,8 @@ const routes: Routes = [
   { path: 'page-filter', loadChildren: './page-filter/page-filter.module#PageFilterPageModule' },
   { path: 'page-filter-options', loadChildren: './page-filter/page-filter-options/page-filter-options.module#PageFilterOptionsPageModule' },
   { path: 'qrcoderesult', loadChildren: './qrcoderesult/qrcoderesult.module#QrcoderesultPageModule' },
-  { path: RouterLinks.NOTIFICATION, loadChildren: './notification/notification.module#NotificationPageModule' }
-
+  { path: RouterLinks.NOTIFICATION, loadChildren: './notification/notification.module#NotificationPageModule' },
+  { path: 'faq-help', loadChildren: './faq-help/faq-help.module#FaqHelpPageModule' }
 ];
 
 @NgModule({

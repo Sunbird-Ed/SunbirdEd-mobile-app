@@ -92,13 +92,7 @@
   </ion-header>
   <ion-content>
     <ion-list class="sb-menu-list">
-      <ion-item (click)="emitSideMenuItemEvent($event, 'USERS_AND_GROUPS')">
-        <span class="sb-menu-icon">
-          <!-- <ion-icon ios="ios-contacts" md="md-contacts"></ion-icon> -->
-          <img src="./assets/imgs/Users_and_Groups.png" class="tool-icon">
-        </span>
-        <span class="sb-menu-item" menuClose>{{'USERS_AND_GROUPS' | translate}}</span>
-      </ion-item>
+      
       <ion-item (click)="emitSideMenuItemEvent($event, 'REPORTS')">
         <span class="sb-menu-icon">
           <!-- <ion-icon ios="ios-clipboard" md="md-clipboard" MR5></ion-icon> -->
@@ -106,6 +100,13 @@
         </span>
         <span class="sb-menu-item" menuClose>{{'REPORTS' | translate}}</span>
       </ion-item>
+      <ion-item (click)="emitSideMenuItemEvent($event, 'USERS_AND_GROUPS')">
+          <span class="sb-menu-icon">
+            <!-- <ion-icon ios="ios-contacts" md="md-contacts"></ion-icon> -->
+            <img src="./assets/imgs/Users_and_Groups.png" class="tool-icon">
+          </span>
+          <span class="sb-menu-item" menuClose>{{'USERS_AND_GROUPS' | translate}}</span>
+        </ion-item>
       <ion-item (click)="emitSideMenuItemEvent($event, 'LANGUAGE')">
         <span class="sb-menu-icon sb-pt-6">
           <!-- <ion-icon ios="ios-planet" md="md-planet"></ion-icon> -->
@@ -155,13 +156,7 @@
   </ion-header>
   <ion-content>
     <ion-list class="sb-menu-list">
-      <ion-item (click)="emitSideMenuItemEvent($event, 'USERS_AND_GROUPS')">
-        <span class="sb-menu-icon">
-          <!-- <ion-icon ios="ios-contacts" md="md-contacts"></ion-icon> -->
-          <img src="./assets/imgs/Users_and_Groups.png" class="tool-icon">
-        </span>
-        <span class="sb-menu-item" menuClose>{{'USERS_AND_GROUPS' | translate}}</span>
-      </ion-item>
+     
       <ion-item (click)="emitSideMenuItemEvent($event, 'REPORTS')">
         <span class="sb-menu-icon">
           <!-- <ion-icon ios="ios-clipboard" md="md-clipboard" MR5></ion-icon> -->
@@ -169,6 +164,13 @@
         </span>
         <span class="sb-menu-item" menuClose>{{'REPORTS' | translate}}</span>
       </ion-item>
+      <ion-item (click)="emitSideMenuItemEvent($event, 'USERS_AND_GROUPS')">
+          <span class="sb-menu-icon">
+            <!-- <ion-icon ios="ios-contacts" md="md-contacts"></ion-icon> -->
+            <img src="./assets/imgs/Users_and_Groups.png" class="tool-icon">
+          </span>
+          <span class="sb-menu-item" menuClose>{{'USERS_AND_GROUPS' | translate}}</span>
+        </ion-item>
       <ion-item (click)="emitSideMenuItemEvent($event, 'LANGUAGE')">
         <span class="sb-menu-icon sb-pt-6">
           <!-- <ion-icon ios="ios-planet" md="md-planet"></ion-icon> -->
@@ -290,6 +292,22 @@
           <img src="./assets/imgs/Settings.png" class="tool-icon">
         </span>
         <span class="sb-menu-item" menuClose>Qr code result</span>
+      </ion-item>
+
+      <ion-item (click)="goToSettings()">
+        <span class="sb-menu-icon">
+          <!-- <ion-icon ios="ios-log-out" md="md-log-out"></ion-icon> -->
+          <img src="./assets/imgs/Settings.png" class="tool-icon">
+        </span>
+        <span class="sb-menu-item" menuClose>Settings</span>
+      </ion-item>
+
+      <ion-item (click)="goToFAQ()">
+        <span class="sb-menu-icon">
+          <!-- <ion-icon ios="ios-log-out" md="md-log-out"></ion-icon> -->
+          <img src="./assets/imgs/Settings.png" class="tool-icon">
+        </span>
+        <span class="sb-menu-item" menuClose>HELP</span>
       </ion-item>
     </ion-list>
   </ion-content>

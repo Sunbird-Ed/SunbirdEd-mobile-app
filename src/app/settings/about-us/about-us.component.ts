@@ -1,6 +1,6 @@
 import { Component, Inject } from '@angular/core';
 import { AppVersion } from '@ionic-native/app-version';
-import { SocialSharing } from '@ionic-native/social-sharing';
+import { SocialSharing } from '@ionic-native/social-sharing/ngx';
 import {
   ContentRequest, ContentService, DeviceInfo, GetAllProfileRequest, ProfileService, SharedPreferences
 } from 'sunbird-sdk';
@@ -40,7 +40,7 @@ export class AboutUsComponent {
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
     @Inject('DEVICE_INFO') private deviceInfo: DeviceInfo,
-    // private socialSharing: SocialSharing,
+    private socialSharing: SocialSharing,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private commonUtilService: CommonUtilService,
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
@@ -107,12 +107,10 @@ export class AboutUsComponent {
                 this.fileUrl = 'file://' + val;
 
                 // Share via email
-                /* migration-TODO
                 this.socialSharing.share('', '', this.fileUrl).then(() => {
                 }).catch(error => {
                   console.error('Sharing Data is not possible', error);
                 });
-                */
               }
 
             });

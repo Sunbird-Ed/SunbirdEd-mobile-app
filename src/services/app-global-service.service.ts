@@ -22,6 +22,7 @@ import {UtilityService} from './utility-service';
 import {ProfileConstants} from '../app/app.constant';
 import { Observable, Observer } from 'rxjs-compat';
 import { PermissionAsked } from './android-permissions/android-permission';
+import { UpgradePopoverComponent } from '../app/components/popups/upgrade-popover/upgrade-popover.component';
 
 declare const buildconfigreader;
 
@@ -470,23 +471,23 @@ export class AppGlobalService implements OnDestroy {
   }
 
 async openPopover(upgradeType: any) {
-      // migration-TODO
-      // let shouldDismissAlert = true;
+    let shouldDismissAlert = true;
 
-      // if (upgradeType.upgrade.type === 'force') {
-      //     shouldDismissAlert = false;
-      // }
+    if (upgradeType.upgrade.type === 'force') {
+        shouldDismissAlert = false;
+    }
 
-      // const options: PopoverOptions = {
-      //     cssClass: 'upgradePopover',
-      //     showBackdrop: true,
-      //     enableBackdropDismiss: shouldDismissAlert
-      // };
+    const options: PopoverOptions = {
+        component: UpgradePopoverComponent,
+        componentProps: { type: upgradeType },
+        cssClass: 'upgradePopover',
+        showBackdrop: true,
+        backdropDismiss: shouldDismissAlert
+    };
 
-      // const popover = this.popoverCtrl.create(UpgradePopover, { type: upgradeType }, options);
-      // popover.present({
-      // });
-  }
+    const popover = await this.popoverCtrl.create(options);
+    await popover.present();
+}
 
   generateConfigInteractEvent(pageId: string, isOnBoardingCompleted?: boolean) {
       if (this.isGuestUser) {

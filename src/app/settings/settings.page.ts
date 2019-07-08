@@ -8,7 +8,7 @@ import { AppHeaderService, CommonUtilService, TelemetryGeneratorService, Utility
 import { PreferenceKey } from '../app.constant';
 import { Environment, ImpressionType, InteractSubtype, InteractType, PageId } from 'services/telemetry-constants';
 import { SocialSharing } from '@ionic-native/social-sharing/ngx';
-import { Router } from '@angular/router';
+import { Router, NavigationExtras } from '@angular/router';
 
 // Migration-UNUSED
 // declare const cordova;
@@ -80,21 +80,17 @@ export class SettingsPage {
 
   goToLanguageSetting() {
     this.generateInteractTelemetry(InteractType.TOUCH, InteractSubtype.LANGUAGE_CLICKED);
-    // migration-TODO
-    // this.navCtrl.push(LanguageSettingsPage, { isFromSettings: true });
+    this.router.navigate(['settings/language-setting', true]);
   }
 
   dataSync() {
     this.generateInteractTelemetry(InteractType.TOUCH, InteractSubtype.DATA_SYNC_CLICKED);
-    // migration-TODO
-    // this.navCtrl.push(DataSyncPage);
     this.router.navigate(['settings/data-sync']);
   }
 
   aboutUs() {
     this.generateInteractTelemetry(InteractType.TOUCH, InteractSubtype.ABOUT_APP_CLICKED);
-    // migration-TODO
-    // this.navCtrl.push(AboutUsPage);
+    this.router.navigate(['/settings/about-us']);
   }
 
   async shareApp() {
@@ -127,7 +123,7 @@ export class SettingsPage {
   }
 
   showPermissionPage() {
-    // migration-TODO
-    // this.navCtrl.push(PermissionPage, { changePermissionAccess: true } ) ;
+    const navigationExtras: NavigationExtras = { state: { changePermissionAccess: true }};
+    this.router.navigate(['/settings/permission'], navigationExtras);
   }
 }
