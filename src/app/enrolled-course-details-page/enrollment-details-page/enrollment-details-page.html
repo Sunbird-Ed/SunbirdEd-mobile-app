@@ -2,10 +2,10 @@
 
   <ion-toolbar>
     <ion-title>{{ 'VIEW_ALL_BATCHES' | translate }}</ion-title>
-    <ion-buttons end>
-      <button ion-button (click)="close()">
+    <ion-buttons slot="primary">
+      <ion-button (click)="close()">
         <ion-icon name="close"></ion-icon>
-      </button>
+      </ion-button>
     </ion-buttons>
   </ion-toolbar>
 
@@ -22,7 +22,7 @@
           <p>{{batches.batch.startDate | date: 'mediumDate' }} - {{ batches.batch.endDate | date: 'mediumDate' }}</p>
           <p *ngIf="batch?.creatorFirstName">{{ 'BATCH_CREATED_BY' | translate }} {{ batches.creatorFirstName }}</p>
         </div>
-        <button ion-button clear item-end class="subtitle buttontext" (click)="resumeCourse(batches)">{{ 'RESUME' | translate }}</button>
+        <ion-button fill="clear" item-end class="subtitle buttontext" (click)="resumeCourse(batches)">{{ 'RESUME' | translate }}</ion-button>
       </ion-item>
 
       <ion-item-divider class="subtitle mytitle">{{ 'VIEW_ONGOING_BATCHES' | translate }}</ion-item-divider>
@@ -32,7 +32,7 @@
           <p>{{batch.startDate | date: 'mediumDate' }} - {{ batch.endDate | date: 'mediumDate' }}</p>
           <p *ngIf="batch?.creatorFirstName">{{ 'BATCH_CREATED_BY' | translate }} {{ batch.creatorFirstName }}</p>
         </div>
-        <button ion-button clear item-end class="subtitle buttontext" (click)="enrollIntoBatch(batch)">{{ 'ENROLL' | translate }}</button>
+        <ion-button fill="clear" item-end class="subtitle buttontext" (click)="enrollIntoBatch(batch)">{{ 'ENROLL' | translate }}</ion-button>
       </ion-item>
       <!-- <ion-item>
         <div item-start>

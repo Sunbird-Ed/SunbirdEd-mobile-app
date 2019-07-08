@@ -116,6 +116,12 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
   goToCollectionEtb() {
     this.router.navigateByUrl('/collection-detail-etb');
   }
+  goToPageFilter() {
+    this.router.navigateByUrl('/page-filter');
+  }
+  goToQrCodeResult() {
+    this.router.navigateByUrl('/qrcoderesult');
+  }
 
   goToContentDetails() {
     this.router.navigateByUrl('/content-details');

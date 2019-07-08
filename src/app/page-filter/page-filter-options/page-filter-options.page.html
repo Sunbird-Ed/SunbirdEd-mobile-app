@@ -1,0 +1,111 @@
+<div *ngIf="facets?.name !== 'Topic'">
+  <ion-header>
+    <ion-toolbar>
+      <ion-title class="subtitle">{{ 'CHOOSE_FROM_FOLLOWING' | translate }}</ion-title>
+    </ion-toolbar>
+  </ion-header>
+  <ion-content [fullscreen]="true">
+    <ion-grid class="scroll-list" *ngIf="facets?.name !== 'Organization' && facets?.name !== 'Purpose'">
+      <ion-row *ngIf="facets?.values && facets?.values?.length">
+        <ion-col size="6" *ngFor="let facetValue of facets?.values; let index=index">
+          <ion-item no-lines no-padding>
+            <ion-label text-capitalize>{{ facetValue }}</ion-label>
+            <ion-checkbox [checked]="isSelected(facetValue)" (ionChange)="changeValue(facetValue, index)">
+            </ion-checkbox>
+          </ion-item>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+    <ion-grid class="scroll-list" *ngIf="facets?.name === 'Purpose'">
+      <ion-row *ngIf="facets?.values && facets?.values?.length">
+        <ion-col size="12" *ngFor="let facetValue of facets?.values; let index=index">
+          <ion-item no-lines no-padding>
+            <ion-label text-capitalize>{{ facetValue }}</ion-label>
+            <ion-checkbox [checked]="isSelected(facetValue)" (click)="changeValue(facetValue, index)"></ion-checkbox>
+          </ion-item>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+    <ion-grid class="scroll-list" *ngIf="facets?.name === 'Organization'">
+      <ion-row *ngIf="facets?.values && facets?.values?.length">
+        <ion-col size="6" *ngFor="let facetValue of facets?.values; let index=index">
+          <ion-item no-lines no-padding>
+            <ion-label text-capitalize>{{ facetValue.orgName }}</ion-label>
+            <ion-checkbox [checked]="isSelected(facetValue.hashTagId)"
+              (ionChange)="changeValue(facetValue.hashTagId, index)"></ion-checkbox>
+          </ion-item>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ion-content>
+  <ion-footer class="footer">
+    <ion-row>
+      <ion-col>
+        <ion-button expand="block" (click)="confirm()">{{ 'SELECT' | translate }}</ion-button>
+      </ion-col>
+    </ion-row>
+  </ion-footer>
+</div>
+<div *ngIf="facets?.name === 'Topic'">
+
+  <ion-header>
+    <ion-toolbar position="top">
+      <ion-title class="subtitle pull-left"> {{ 'TOPICS' | translate }} </ion-title>
+      <ion-title class="subtitle pull-right" style="padding-right: 10px;"> {{ 'SELECTED_TOPICS' | translate }}
+        {{getSelectedOptionCount(facets)}} </ion-title>
+    </ion-toolbar>
+  </ion-header>
+  <ion-content [fullscreen]="true" no-padding>
+    <ion-searchbar (ionInput)="getItems($event)" #input debounce="1000" [spellcheck]="true" [autocomplete]="true"
+      class="subtitle"></ion-searchbar>
+    <div class="scroll-list" *ngIf="showTopicFilterList">
+      <ion-list class="topic-item">
+        <ion-item *ngFor="let items of filteredTopicArr" (click)="changeValue(items.name, index)">
+          <span
+            [ngClass]="{'text-selected':isSelected(items.name), 'text-unselected':!isSelected(items.name)}">{{ items.name }}</span>
+          <ion-icon class="icon-margin" item-right name='checkmark' *ngIf="isSelected(items.name)"
+            style="color : green; margin:0 10px;"></ion-icon>
+        </ion-item>
+      </ion-list>
+    </div>
+    <div class="scroll-list" *ngIf="!showTopicFilterList">
+      <ion-list class="topic-item">
+        <ion-item *ngFor="let facetValue of topicsArr; let i=index" no-lines no-padding class="div-space">
+          <div text-wrap (click)="toggleGroup(i)" [ngClass]="{active: isGroupShown(i)}" style="font-size: 16px;">
+            <ion-col size="1" style="margin-left:15px;padding: 0;">
+              <ion-icon class="icon-margin" item-left [name]="isGroupShown(i) ? 'remove' : 'add'"></ion-icon>
+            </ion-col>
+            <ion-col size="11" style="padding:0;margin-left:0;">
+              <span>
+                {{facetValue}}
+              </span>
+            </ion-col>
+          </div>
+          <div *ngIf="isGroupShown(i)">
+            <div *ngFor="let items of topicsVal[i]; let item = index">
+              <div [ngClass]="{'text-selected':isSelected(items.name),'text-unselected':!isSelected(items.name)}"
+                (click)="changeValue(items.name, index)">
+                {{items.name}}
+                <span>
+                  <ion-icon class="icon-margin" item-right name='checkmark' *ngIf="isSelected(items.name)"
+                    style="color : green; margin:0 10px;"></ion-icon>
+                </span>
+              </div>
+            </div>
+          </div>
+        </ion-item>
+      </ion-list>
+    </div>
+    <ion-footer class="topicFooter">
+      <ion-row>
+        <ion-col>
+          <ion-button fill="outline" expand="block" (click)="cancel()">{{ 'CANCEL' | translate }}</ion-button>
+        </ion-col>
+        <ion-col>
+          <ion-button expand="block" (click)="apply()">{{ 'APPLY' | translate }}</ion-button>
+        </ion-col>
+      </ion-row>
+    </ion-footer>
+  </ion-content>
+
+</div>

@@ -1,0 +1,10 @@
+:host {
+  .fromUser .ngx-datatable.scroll-vertical .datatable-body {
+    height: calc(100vh - 34vh) !important;
+  }
+}
+.toast-md.custom-toast {
+  .toast-message {
+    word-break: break-word;
+  }
+}
