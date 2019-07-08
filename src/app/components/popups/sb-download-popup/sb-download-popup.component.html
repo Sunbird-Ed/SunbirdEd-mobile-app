@@ -4,12 +4,12 @@
       <ion-header class="sb-popover-header">
         <ion-toolbar class="sb-popover-toolbar">
             <ion-title class="sb-popover-title" *ngIf="collectionName">{{ 'DOWNLOADING_2' | translate }}
-                <button ion-button clear class="sb-modal-close"
-                  (click)="togglePopover(this.showPopover); this.showPopover = !this.showPopover">{{'HIDE' | translate}}</button>
+                <ion-button clear class="sb-modal-close"
+                  (click)="togglePopover(this.showPopover); this.showPopover = !this.showPopover">{{'HIDE' | translate}}</ion-button>
               </ion-title>
           <ion-title class="sb-popover-title" *ngIf="contentName && !popupUpdate && showDownload">{{ 'DOWNLOADING_2' | translate }}
-            <button ion-button clear class="sb-modal-close"
-              (click)="togglePopover(this.showPopover); this.showPopover = !this.showPopover">{{'HIDE' | translate}}</button>
+            <ion-button clear class="sb-modal-close"
+              (click)="togglePopover(this.showPopover); this.showPopover = !this.showPopover">{{'HIDE' | translate}}</ion-button>
           </ion-title>
         </ion-toolbar>
       </ion-header>
@@ -41,7 +41,7 @@
         </ion-content>
       <ion-footer>
         <div class="sb-popover-footer">
-          <button ion-button class="sb-popover-action-btn sb-btn sb-btn-normal sb-btn-info" (click)="cancelDownload()" *ngIf="contentName">{{ 'CANCEL' | translate }}</button>
+          <ion-button class="sb-popover-action-btn sb-btn sb-btn-normal sb-btn-info" (click)="cancelDownload()" *ngIf="contentName">{{ 'CANCEL' | translate }}</ion-button>
         </div>
       </ion-footer>
     </div>
@@ -54,8 +54,8 @@
         <ion-header class="sb-popover-header">
           <ion-toolbar class="sb-popover-toolbar">
             <ion-title class="sb-popover-title" *ngIf="contentName && popupUpdate">{{ 'UPDATING' | translate }}
-                <button ion-button clear class="sb-modal-close"
-                  (click)="togglePopover(this.showPopover); this.showPopover = !this.showPopover">{{'HIDE' | translate}}</button>
+                <ion-button clear class="sb-modal-close"
+                  (click)="togglePopover(this.showPopover); this.showPopover = !this.showPopover">{{'HIDE' | translate}}</ion-button>
               </ion-title>
           </ion-toolbar>
         </ion-header>
@@ -74,7 +74,7 @@
           </ion-content>
         <ion-footer>
           <div class="sb-popover-footer">
-            <button ion-button class="sb-popover-action-btn sb-btn sb-btn-normal sb-btn-info" (click)="cancelDownload()" *ngIf="contentName">{{ 'CANCEL' | translate }}</button>
+            <ion-button class="sb-popover-action-btn sb-btn sb-btn-normal sb-btn-info" (click)="cancelDownload()" *ngIf="contentName">{{ 'CANCEL' | translate }}</ion-button>
           </div>
         </ion-footer>
       </div>
@@ -86,8 +86,8 @@
         <ion-toolbar class="sb-popover-toolbar">
           <ion-title padding-left padding-right class="sb-popover-title"> {{ 'DOWNLOADING_2' | translate }}
             <span class="meta-info">{{ currentCount }} / {{ queuedIdentifiers?.length }}</span>
-            <button ion-button clear class="sb-modal-close"
-              (click)="togglePopover(this.showPopover); this.showPopover = !this.showPopover">{{ 'SHOW' | translate }}</button>
+            <ion-button clear class="sb-modal-close"
+              (click)="togglePopover(this.showPopover); this.showPopover = !this.showPopover">{{ 'SHOW' | translate }}</ion-button>
           </ion-title>
         </ion-toolbar>
         <div class="popover-progress-container">
@@ -103,8 +103,8 @@
           <ion-toolbar class="sb-popover-toolbar">
             <ion-title  padding-left padding-right class="sb-popover-title"> {{ 'DOWNLOADING_2' | translate }}
               <span class="meta-info">{{this.constContentSize}} </span>
-              <button ion-button clear class="sb-modal-close"
-                (click)="togglePopover(this.showPopover); this.showPopover = !this.showPopover">{{ 'SHOW' | translate }}</button>
+              <ion-button clear class="sb-modal-close"
+                (click)="togglePopover(this.showPopover); this.showPopover = !this.showPopover">{{ 'SHOW' | translate }}</ion-button>
             </ion-title>
           </ion-toolbar>
           <div class="popover-progress-container">
@@ -121,8 +121,8 @@
             <ion-toolbar class="sb-popover-toolbar">
               <ion-title padding-left padding-right class="sb-popover-title"> {{ 'UPDATING' | translate }}
                 <span class="meta-info">{{this.constContentSize}}</span>
-                <button ion-button clear class="sb-modal-close"
-                  (click)="togglePopover(this.showPopover); this.showPopover = !this.showPopover">{{ 'SHOW' | translate }} </button>
+                <ion-button clear class="sb-modal-close"
+                  (click)="togglePopover(this.showPopover); this.showPopover = !this.showPopover">{{ 'SHOW' | translate }} </ion-button>
               </ion-title>
             </ion-toolbar>
             <div class="popover-progress-container">

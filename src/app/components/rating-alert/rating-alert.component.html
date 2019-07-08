@@ -10,20 +10,20 @@
       <div *ngIf="currentViewText.type === 'appRate'">
         <rating #rating></rating>
         <ion-row padding-bottom>
-          <ion-col col-6 class="btn-pr-8"><button ion-button outline block class="app-rate-btn-outline" (click)="rateLater()">{{'BTN_LATER' | translate}}</button></ion-col>
-          <ion-col col-6 class="btn-pl-8"><button ion-button [disabled]="!rating.value" block class="app-rate-btn" (click)="submitRating(rating.value)">{{'BTN_SUBMIT' | translate}}</button></ion-col>
+          <ion-col size="6" class="btn-pr-8"><ion-button outline block class="app-rate-btn-outline" (click)="rateLater()">{{'BTN_LATER' | translate}}</ion-button></ion-col>
+          <ion-col size="6" class="btn-pl-8"><ion-button [disabled]="!rating.value" block class="app-rate-btn" (click)="submitRating(rating.value)">{{'BTN_SUBMIT' | translate}}</ion-button></ion-col>
         </ion-row>
       </div>
   
       <div *ngIf="currentViewText.type === 'storeRate'">
         <ion-row padding-bottom>
-          <ion-col col-5 class="btn-pr-8"><button ion-button outline block class="app-rate-btn-outline" (click)="rateLater()">{{'BTN_LATER' | translate}}</button></ion-col>
-          <ion-col col-7 class="btn-pl-8"><button ion-button block class="app-rate-btn app-rate-btn-ellipsis" (click)="rateOnStore()">{{'BTN_RATE_ON_PLAYSTORE' | translate}}</button></ion-col>
+          <ion-col size="5" class="btn-pr-8"><ion-button outline block class="app-rate-btn-outline" (click)="rateLater()">{{'BTN_LATER' | translate}}</ion-button></ion-col>
+          <ion-col size="7" class="btn-pl-8"><ion-button block class="app-rate-btn app-rate-btn-ellipsis" (click)="rateOnStore()">{{'BTN_RATE_ON_PLAYSTORE' | translate}}</ion-button></ion-col>
         </ion-row>
       </div>
   
       <div padding-bottom *ngIf="currentViewText.type === 'helpDesk'">
-        <button margin-bottom ion-button class="app-rate-btn" (click)="goToHelpSection()">{{'BTN_VISIT_HELP_SECTION' | translate}}</button>
+        <ion-button margin-bottom class="app-rate-btn" (click)="goToHelpSection()">{{'BTN_VISIT_HELP_SECTION' | translate}}</ion-button>
       </div>
     </div>
   </ion-content>

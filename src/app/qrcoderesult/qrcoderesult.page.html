@@ -1,17 +1,17 @@
 <ion-header>
-  <ion-navbar style="min-height: 56px;">
+  <ion-toolbar style="min-height: 56px;">
     <ion-title>{{'RESULTS' | translate}}
 
 
     </ion-title>
-    <ion-buttons end>
-      <button ion-button clear *ngIf="!appGlobalService?.isUserLoggedIn() && !appGlobalService?.isProfileSettingsCompleted"
+    <ion-buttons slot="primary">
+      <ion-button clear *ngIf="!appGlobalService?.isUserLoggedIn() && !appGlobalService?.isProfileSettingsCompleted"
         (click)="skipSteps()">
         {{'SKIP' | translate}}
-      </button>
+      </ion-button>
     </ion-buttons>
 
-  </ion-navbar>
+  </ion-toolbar>
 </ion-header>
 
 <ion-content padding>
@@ -28,19 +28,19 @@
     </ion-row>
     <ion-card>
       <ion-row>
-        <ion-col col-12>
+        <ion-col size="12">
           <ion-card-content (click)="playOnline(content)">
             <ion-row class="top">
-              <ion-col col-3 class="img-container">
+              <ion-col size="3" class="img-container">
                 <img class="app-icon" src="{{ content?.contentData?.appIcon || defaultImg }}" />
               </ion-col>
-              <ion-col col-9>
+              <ion-col size="9">
                 <ion-row>
-                  <ion-col col-12 class="PT0">
+                  <ion-col size="12" class="PT0">
                     <h6 class="name font-size-20">{{content?.contentData?.name}}</h6>
                     <p class="author">{{content?.contentData?.creator}}</p>
                   </ion-col>
-                  <ion-col col-12 class="bottom-fix">
+                  <ion-col size="12" class="bottom-fix">
                     <span class="badge" *ngIf="content?.contentData?.resourceType">
                       {{content?.contentData?.resourceType}} </span>
                     <span class="size" *ngIf="content?.contentData?.size"> {{content?.contentData?.size | fileSize}}
@@ -56,44 +56,44 @@
       <ion-toolbar no-padding *ngIf="content.contentData?.streamingUrl  &&  !content.isAvailableLocally">
         <ion-row no-padding>
           <ion-col no-padding style="z-index: 100;" *ngIf="!content?.downloadable" (click)="navigateToDetailsPage(content)">
-            <button no-padding ion-button block color="light" style="color:#0D7DFC; z-index: 100;" text-uppercase>
+            <ion-button no-padding block color="light" style="color:#0D7DFC; z-index: 100;" text-uppercase>
               <ion-icon class="downloadicon" name="arrow-round-down"></ion-icon>&nbsp;
               {{'DOWNLOAD'| translate}}
-            </button>
+            </ion-button>
           </ion-col>
           <ion-col no-padding *ngIf="content.contentData?.streamingUrl">
-            <button no-padding class="custom-btn play" ion-button block (click)="playContent(content)">
+            <ion-button no-padding class="custom-btn play" block (click)="playContent(content)">
               <ion-icon name="play"></ion-icon>&nbsp;{{'PLAY' | translate}}
-            </button>
+            </ion-button>
           </ion-col>
         </ion-row>
       </ion-toolbar>
 <!-- play locally if content downloaded  -->
       <ion-toolbar no-padding *ngIf="content.isAvailableLocally && !content.isUpdateAvailable">
-        <button no-padding ion-button block (click)="navigateToDetailsPage(content)" text-uppercase [disabled]="isDownloadStarted">
+        <ion-button no-padding block (click)="navigateToDetailsPage(content)" text-uppercase [disabled]="isDownloadStarted">
           <ion-icon name="play"></ion-icon>&nbsp;{{'PLAY'|translate}}
-        </button>
+        </ion-button>
       </ion-toolbar>
 
        <!-- Download content if not available locally  -->
       <ion-toolbar no-padding *ngIf="!content.contentData?.streamingUrl && !content.isAvailableLocally">
-        <button no-padding ion-button block color="light" style="color:#0D7DFC" (click)="navigateToDetailsPage(content)" text-uppercase>
+        <ion-button no-padding block color="light" style="color:#0D7DFC" (click)="navigateToDetailsPage(content)" text-uppercase>
           <ion-icon  class="downloadicon" name="arrow-round-down"></ion-icon>&nbsp;{{'DOWNLOAD'| translate}}
-        </button>
+        </ion-button>
       </ion-toolbar>
 
       <!-- Update and play on device  -->
        <ion-toolbar no-padding *ngIf="content.isUpdateAvailable  &&  content.isAvailableLocally">
         <ion-row no-padding>
           <ion-col style="z-index: 100;" *ngIf="content.isUpdateAvailable" (click)="navigateToDetailsPage(content)" no-padding>
-              <button ion-button  no-margin block color="light" style="color:#0D7DFC; z-index: 100;" text-uppercase>
+              <ion-button  no-margin block color="light" style="color:#0D7DFC; z-index: 100;" text-uppercase>
                 <ion-icon  class="downloadicon" name="arrow-round-down"></ion-icon>&nbsp;{{ 'UPDATE' | translate }}
-             </button>
+             </ion-button>
         </ion-col>
           <ion-col no-padding *ngIf="content.contentData?.streamingUrl" no-padding>
-            <button  class="custom-btn play" no-margin  ion-button  block (click)="navigateToDetailsPage(content)">
+            <ion-button  class="custom-btn play" no-margin   block (click)="navigateToDetailsPage(content)">
               <ion-icon name="play"></ion-icon>&nbsp;{{'PLAY' | translate}}
-            </button>
+            </ion-button>
           </ion-col>
         </ion-row>
       </ion-toolbar>
@@ -108,6 +108,6 @@
 	</div>
 
 	<div class="backdrop-footer">
-		<button ion-button small (click)="cancelDownload()">{{ 'CANCEL' | translate }}</button>
+		<ion-button small (click)="cancelDownload()">{{ 'CANCEL' | translate }}</ion-button>
 	</div>
 </ion-backdrop>
