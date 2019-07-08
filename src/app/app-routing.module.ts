@@ -54,6 +54,7 @@ const routes: Routes = [
   { path: 'collection-detail-etb', loadChildren: './collection-detail-etb/collection-detail-etb.module#CollectionDetailEtbPageModule' },
   { path: 'enrollment-details-page', loadChildren:
    './enrolled-course-details-page/enrollment-details-page/enrollment-details-page.module#EnrollmentDetailsPagePageModule' },
+  { path: 'collection-details', loadChildren: './collection-details/collection-details.module#CollectionDetailsPageModule' },
   { path: 'content-details', loadChildren: './content-details/content-details.module#ContentDetailsPageModule' }
 
 ];

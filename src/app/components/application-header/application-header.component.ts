@@ -109,6 +109,9 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
   goToCourseEnrollCourseDetails() {
     this.router.navigateByUrl('/enrolled-course-details-page');
   }
+  goToCollectionDetails() {
+    this.router.navigateByUrl('/collection-details');
+  }
 
   goToCollectionEtb() {
     this.router.navigateByUrl('/collection-detail-etb');
