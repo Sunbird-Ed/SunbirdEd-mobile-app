@@ -5,7 +5,7 @@ import { Routes, RouterModule } from '@angular/router';
 
 import { IonicModule } from '@ionic/angular';
 
-import { EnrolledCourseDetailsPagePage } from './enrolled-course-details-page.page';
+import { EnrolledCourseDetailsPage } from './enrolled-course-details-page';
 import { DirectivesModule } from '@app/directives/directives.module';
 import { PipesModule } from '@app/pipes/pipes.module';
 import { TranslateModule } from '@ngx-translate/core';
@@ -14,7 +14,7 @@ import { ComponentsModule } from '../components/components.module';
 const routes: Routes = [
   {
     path: '',
-    component: EnrolledCourseDetailsPagePage
+    component: EnrolledCourseDetailsPage
   }
 ];
 
@@ -30,7 +30,7 @@ const routes: Routes = [
     DirectivesModule,
     ComponentsModule
   ],
-  declarations: [EnrolledCourseDetailsPagePage],
+  declarations: [EnrolledCourseDetailsPage],
   providers: [DatePipe]
 })
 export class EnrolledCourseDetailsPagePageModule { }

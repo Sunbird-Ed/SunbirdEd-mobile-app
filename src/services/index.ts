@@ -17,4 +17,4 @@ export {FormAndFrameworkUtilService} from './formandframeworkutil.service';
 export {ActivePageService} from './active-page-service';
 export * from './telemetry-constants';
 export * from './coming-soon-message.service';
-
+export {ContentShareHandlerService} from './content/content-share-handler.service';
