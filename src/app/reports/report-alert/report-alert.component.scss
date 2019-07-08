@@ -1,0 +1,52 @@
+@import 'src/global.scss';
+:host{
+    .msg {
+      color: white;
+      font-size: medium;
+      background-color: blue;
+    }
+    .input-wrapper {
+        // Migration todo
+    //   @include padding(null, 16px !important);
+    }
+    .row-align {
+        // Migration todo
+    //   @include padding(10px, 16px !important);
+    }
+    .item-ios {
+        // Migration todo
+    //   @include padding(null, null, null, 0 !important);
+    }
+    .item-md {
+        // Migration todo
+    //   @include padding(null, null, null, 0 !important);
+    }
+    .assessmentDetails h3 {
+      white-space: normal;
+    }
+  }
+  
+  .report-alert .popover-content {
+    margin: 0;
+    width: 100% !important;
+    max-height: 62vh !important;
+    box-shadow: unset;
+    position: fixed;
+    // Migration todo
+    /* @include ltr() {
+      left: 0 !important;
+    }
+    @include rtl() {
+      right: 0 !important;
+    } */
+    top: unset !important;
+    bottom: 0 !important;
+    transform-origin: bottom -100% !important;
+    transform: translateY(0) !important;
+    overflow-y: hidden;
+  }
+  
+  .report-alert ion-backdrop {
+    background-color: #000 !important;
+    opacity: 0.4 !important;
+  }

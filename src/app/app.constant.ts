@@ -384,6 +384,9 @@ export class RouterLinks {
     // Reports Routs
     public static readonly REPORTS_LIST = 'reports-list';
     public static readonly REPORTS = 'reports';
+    public static readonly GROUP_REPORT = 'group-report';
+    public static readonly USER_REPORT = 'user-report';
+
 
 
 }

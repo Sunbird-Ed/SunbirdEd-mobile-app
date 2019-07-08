@@ -1,0 +1,37 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title text-uppercase> {{ 'REPORTS' | translate }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+
+<ion-content padding>
+  <ion-list>
+    <div *ngIf="listOfReports.length > 0">
+      <ion-item *ngFor="let report of listOfReports;let i=index" class="bgColor" (click)="goToGroupReportsList(report)">
+        <h2 class="report-title">{{report.name}}</h2>
+        <p *ngIf="isFromUsers"><span>{{'SCORED' | translate}}: {{report.totalScore}}
+            <span *ngIf="report.totalQuestionsScore">/{{report.totalQuestionsScore}}</span>
+            <span *ngIf="!report.totalQuestionsScore && report.totalMaxScore">/{{report.totalMaxScore}}</span>
+          </span></p>
+        <ion-icon name="ios-arrow-forward" item-end></ion-icon>
+      </ion-item>
+    </div>
+    <div *ngIf="listOfReports.length == 0" text-center>
+      <div class="img-container">
+        <img class="image_style" alt="no_user" src="assets/imgs/ic_businessman.png">
+      </div>
+      <br />
+      <ion-row margin-top>
+        <ion-col size-md="6" offset-md="3" size-lg="6" offset-lg="3">
+          <div class="image-text">
+            <h6>
+              <strong>{{'NO_ASSESSMENT' | translate}}</strong>
+            </h6>
+            <p>{{'TAKE_ASSESSMENT' | translate}}</p>
+          </div>
+        </ion-col>
+      </ion-row>
+    </div>
+  </ion-list>
+</ion-content>

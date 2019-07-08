@@ -1,0 +1,34 @@
+<ion-header>
+  <ion-toolbar no-border-bottom>
+      <ion-title ellipsis>
+          {{contentName}}
+      </ion-title>
+      <ion-buttons slot="end">
+          <ion-button icon-only (click)='importcsv()'>
+            <ion-icon ios="ios-download" md="md-download"></ion-icon>
+          </ion-button>
+        </ion-buttons>
+  </ion-toolbar>
+
+  <ion-toolbar no-border-top>
+      <ion-segment [(ngModel)]="reportType" (ngModelChange)="fetchAssessment($event)">
+          <ion-segment-button value="users">
+              {{ 'BY_USERS' | translate }}
+          </ion-segment-button>
+          <ion-segment-button value="questions">
+              {{ 'BY_QUESTIONS' | translate }}
+          </ion-segment-button>
+      </ion-segment>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="no-scroll">
+  <div [ngSwitch]="reportType">
+      <ion-list *ngSwitchCase="'users'" class="fromGroup">
+          <assessment-details [assessmentData]="fromUserAssessment" [columns]="fromUserColumns"></assessment-details>
+      </ion-list>
+      <ion-list class="margin0 fromGroup" *ngSwitchCase="'questions'" (showQuestionFromUser)="showQuestionFromUser($event)">
+          <assessment-details [assessmentData]="fromQuestionAssessment" [columns]="fromQuestionColumns"></assessment-details>
+      </ion-list>
+  </div>
+</ion-content>
