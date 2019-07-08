@@ -57,7 +57,8 @@ const routes: Routes = [
   { path: 'collection-details', loadChildren: './collection-details/collection-details.module#CollectionDetailsPageModule' },
   { path: 'content-details', loadChildren: './content-details/content-details.module#ContentDetailsPageModule' },
   { path: 'page-filter', loadChildren: './page-filter/page-filter.module#PageFilterPageModule' },
-  { path: 'page-filter-options', loadChildren: './page-filter/page-filter-options/page-filter-options.module#PageFilterOptionsPageModule' }
+  { path: 'page-filter-options', loadChildren: './page-filter/page-filter-options/page-filter-options.module#PageFilterOptionsPageModule' },
+  { path: 'qrcoderesult', loadChildren: './qrcoderesult/qrcoderesult.module#QrcoderesultPageModule' }
 
 ];
 
