@@ -1,0 +1,177 @@
+@import "../../global.scss";
+:host{
+    .toolbar-md{
+        min-height: auto;
+    }
+    .card-container{
+        margin-bottom: 20px;
+        padding: 0 !important;
+    }
+    
+    .P010{
+        padding:0 10px;
+    }
+    
+    .PT0{
+        padding-top: 0 !important;
+    }
+    
+    [dir="ltr"] .card-content-md, [dir="rtl"] .card-content-md{
+        padding: 5px !important;
+    }
+    
+    .card.card-md {
+        border-radius: 4px;
+        box-shadow: 0 4px 10px 0 rgba(0, 0, 0, 0.16);
+        background-color: #ffffff;
+        border: solid 0.5px #cccccc;
+        position: relative;
+        .card-content-md {
+            padding: 7px !important;
+        }
+        .button.button-block.button-block-md {
+            margin: 0;
+            border-radius: 0px !important;
+        }
+    
+        .badge {
+            @include padding(5px, 15px);
+            color: #333;
+            border-radius: 100px;
+            border: solid 0.5px #c6dbd8;
+            font-size: 11px;
+            @include margin(null, 10px, null, null);
+        }
+    
+        .author {
+            font-size: 11px;
+            font-weight: normal;
+            font-style: normal;
+            font-stretch: normal;
+            line-height: normal;
+            letter-spacing: normal;
+            color: #666666;
+        }
+    
+        .size{
+            font-size: 11px;
+            color: #666666;
+        }
+    
+        .name, .author{
+            margin-bottom: 5px;
+        }
+    
+        .name{
+            // min-height: 48px;
+            display: -webkit-box;
+            width: 100%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            font-size: 14px !important;
+            color: #333333;
+            min-height: 32px;
+        }
+    
+        .bottom-fix{
+            position: absolute;
+            bottom: 0;
+        }
+    
+        
+    
+        .top {
+            min-height:15vh; 
+            // background: #E9E9E9;
+            .img-container {
+                border: 1px solid #c6dbd8;
+                padding: 0 !important;
+                background: #E9E9E9;
+                min-height: 18vh;
+                max-height: 18vh;
+                border-radius: 4px;
+                img {
+                    max-height: 100%;
+                    margin: 0 auto;
+                    width: auto;
+                    transform: translateY(-56%);
+                    position: relative;
+                    top: 50%;
+                    transform: perspective(1px) translateY(-50%);
+                }
+            }
+            
+        }
+    }
+    
+    ul.breadcrumbs{
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        li{
+            display: inline-block;
+            color: #007aff;
+            @extend .font-weight-bold;
+            font-size: 10px;
+        }
+    
+    
+        li:after{
+            content: '\003e';
+            color: #979797;
+            height: 0;
+            width: 0;
+            margin: 0 5px;
+        }
+        li:last-child:after{
+            content: none;
+        }
+        
+    }
+    
+    .custom-btn{
+        background-color: #0076FE;
+    }
+    
+    .custom-btn.play .arrow-right{
+        width: 0; 
+        height: 0; 
+        border-top: 8px solid transparent;
+        border-bottom: 8px solid transparent;
+        border-left: 14px solid #fff;
+        margin-right: 8px;
+    }
+    
+    .loading-backdrop {
+        .backdrop-container {
+            width: 100%;
+            padding: 16px;
+            text-align: center;
+            position: absolute;
+            top: 50%;
+            margin-top: -50px;
+        }
+    
+        .backdrop-footer {
+            position: absolute;
+            width: 100%;
+            bottom: 0;
+            padding-bottom: 16px;
+        }
+    
+        background-color: #ffffff;
+        height: 100%;
+        z-index: 1000;
+        opacity: 1 !important;
+    }
+    .downloadicon {
+        display: inline-block;
+        font-size: 1.1em;
+        margin-top: -2px;
+    }
+    }
+    
+    
+    

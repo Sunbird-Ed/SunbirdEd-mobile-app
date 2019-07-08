@@ -390,6 +390,9 @@ export class RouterLinks {
     // Player Routs
     public static readonly PLAYER = 'player';
 
+    // Notification Routs
+    public static readonly NOTIFICATION = 'notification';
+
 
 
 }

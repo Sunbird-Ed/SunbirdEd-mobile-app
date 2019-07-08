@@ -63,7 +63,8 @@ const routes: Routes = [
   { path: RouterLinks.PLAYER, loadChildren: './player/player.module#PlayerPageModule' },
   { path: 'page-filter', loadChildren: './page-filter/page-filter.module#PageFilterPageModule' },
   { path: 'page-filter-options', loadChildren: './page-filter/page-filter-options/page-filter-options.module#PageFilterOptionsPageModule' },
-  { path: 'qrcoderesult', loadChildren: './qrcoderesult/qrcoderesult.module#QrcoderesultPageModule' }
+  { path: 'qrcoderesult', loadChildren: './qrcoderesult/qrcoderesult.module#QrcoderesultPageModule' },
+  { path: RouterLinks.NOTIFICATION, loadChildren: './notification/notification.module#NotificationPageModule' }
 
 ];
 
