@@ -119,6 +119,9 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
   goToPageFilter() {
     this.router.navigateByUrl('/page-filter');
   }
+  goToQrCodeResult() {
+    this.router.navigateByUrl('/qrcoderesult');
+  }
 
   setAppVersion(): any {
     this.utilityService.getBuildConfigValue(GenericAppConfig.VERSION_NAME)
