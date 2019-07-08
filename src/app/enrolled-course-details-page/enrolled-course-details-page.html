@@ -99,18 +99,22 @@
 				<span *ngIf="courseCardData && enrolledCourseMimeType === 'application/vnd.ekstep.content-collection'">
 					<ion-item *ngFor="let item of childrenData; let i = index;" class="child-item" (click)="navigateToChildrenDetailsPage(item, depth + '.' + (i + 1))">
 						<ion-icon [name]="item.status? 'ios-checkmark-circle': (item.lastRead? 'ios-radio-button-on': 'ios-radio-button-off')"></ion-icon>
-						<span ion-text class="span-semibold" [ngClass]="{'fontBold': item.lastRead}">{{ (item?.contentData?.name &&
+						<ion-text>
+<span class="span-semibold" [ngClass]="{'fontBold': item.lastRead}">{{ (item?.contentData?.name &&
 							item?.contentData?.name.length > 30) ?
 							(item?.contentData?.name | slice:0:30) + '...'
 							: (item?.contentData?.name)}}</span>
+</ion-text>
 						<ion-icon name="ios-arrow-forward" float-end></ion-icon>
 					</ion-item>
 				</span>
 				<span *ngIf="courseCardData && !enrolledCourseMimeType === 'application/vnd.ekstep.content-collection'">
 					<ion-item *ngFor="let item of childrenData; let i = index;" class="child-item">
-						<span ion-text class="span-semibold">{{ (item?.contentData?.name && item?.contentData?.name.length > 30) ?
+						<ion-text>
+<span class="span-semibold">{{ (item?.contentData?.name && item?.contentData?.name.length > 30) ?
 							(item?.contentData?.name | slice:0:30) + '...'
 							: (item?.contentData?.name)}}</span>
+</ion-text>
 					</ion-item>
 				</span>
 			</ion-list>
@@ -161,23 +165,23 @@
 
 <ion-footer *ngIf="courseCardData?.batchId">
 	<ion-toolbar class="toolbar-p-16">
-		<button ion-button block *ngIf="!showResumeBtn && childrenData?.length" (click)="startContent()">{{
-			'START_COURSE' | translate }}</button>
-		<button ion-button block *ngIf="showResumeBtn" (click)="resumeContent(courseCardData?.lastReadContentId)">{{
-			'RESUME_COURSE' | translate }}</button>
-		<button ion-button block outline *ngIf="downloadIdentifiers?.length && !isDownloadStarted" (click)="downloadAllContent();">{{
+		<ion-button block *ngIf="!showResumeBtn && childrenData?.length" (click)="startContent()">{{
+			'START_COURSE' | translate }}</ion-button>
+		<ion-button block *ngIf="showResumeBtn" (click)="resumeContent(courseCardData?.lastReadContentId)">{{
+			'RESUME_COURSE' | translate }}</ion-button>
+		<ion-button block outline *ngIf="downloadIdentifiers?.length && !isDownloadStarted" (click)="downloadAllContent();">{{
 			'DOWNLOAD_ALL_CONTENT' | translate }} ({{ (downloadSize && downloadSize > 0) ? (downloadSize | fileSize) : 'O BYTES'
 			}})
-		</button>
-    <button *ngIf="isDownloadStarted" ion-button block outline
+		</ion-button>
+    <ion-button *ngIf="isDownloadStarted" block outline
             [ngStyle]="{'background': '-webkit-linear-gradient(left, #DBECFF '  +(currentCount/queuedIdentifiers.length)*100+ '%, white 0%)'}">
       {{ 'DOWNLOADING_2' | translate }}... {{ currentCount }} / {{ queuedIdentifiers?.length }}
-    </button>
+    </ion-button>
 	</ion-toolbar>
 </ion-footer>
 <ion-footer *ngIf="!courseCardData?.batchId && course?.createdBy !== userId && !isAlreadyEnrolled">
 	<ion-toolbar class="toolbar-p-16">
-		<button ion-button block (click)="navigateToBatchListPage();">{{ 'ENROLL_COURSE' | translate }}</button>
+		<ion-button block (click)="navigateToBatchListPage();">{{ 'ENROLL_COURSE' | translate }}</ion-button>
 	</ion-toolbar>
 </ion-footer>
 
@@ -188,6 +192,6 @@
 	</div>
 
 	<div class="backdrop-footer">
-		<button ion-button small (click)="cancelDownload()">{{ 'CANCEL' | translate }}</button>
+		<ion-button small (click)="cancelDownload()">{{ 'CANCEL' | translate }}</ion-button>
 	</div>
 </ion-backdrop>

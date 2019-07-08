@@ -1,0 +1,38 @@
+@import "src/global.scss";
+:host {
+  .settings-item-style {
+    padding-top: 5px;
+  }
+  ion-icon {
+    font-size: 22px !important;
+    @extend .font-weight-550;
+  }
+  .bgColor {
+    background-color: #f7f7f7;
+    border-radius: 3px;
+  }
+  .bgColor.item-block.item-md {
+    margin-bottom: 2rem;
+  }
+  .marginTop {
+    margin-top: 15px !important;
+  }
+  .header-md::after,
+  .tabs-md[tabsPlacement="top"] > .tabbar::after,
+  .footer-md::before,
+  .tabs-md[tabsPlacement="bottom"] > .tabbar::before {
+    background-image: none;
+  }
+  .item-md.item-block .item-inner {
+    border-bottom: 0 !important;
+  }
+  .report-title {
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    width: 79vw;
+  }
+}
+.bgColor ion-label {
+  overflow: visible !important;
+}
