@@ -22,7 +22,7 @@ import * as moment from 'moment';
 @Component({
   selector: 'app-content-actions',
   templateUrl: './content-actions.component.html',
-  styleUrls: ['./content-actions.component.scss'],
+  styleUrls: ['./content-actions.component.scss']
 })
 export class ContentActionsComponent implements OnInit {
 

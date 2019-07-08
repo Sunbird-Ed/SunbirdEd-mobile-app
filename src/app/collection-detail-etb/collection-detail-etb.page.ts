@@ -5,7 +5,7 @@ import { SocialSharing } from '@ionic-native/social-sharing/ngx';
 import { FileSizePipe } from '@app/pipes/file-size/file-size';
 import { IonContent as iContent } from '@ionic/angular';
 import {
-  Events, NavController, NavParams, Platform, PopoverController, ToastController,
+  Events, NavController, Platform, PopoverController, ToastController,
 } from '@ionic/angular';
 import {
   Content, ContentAccess, ContentAccessStatus, ContentDeleteStatus, ContentDetailRequest, ContentEventType,
@@ -217,7 +217,7 @@ export class CollectionDetailEtbPage implements OnInit {
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     @Inject('STORAGE_SERVICE') private storageService: StorageService,
     private navCtrl: NavController,
-    private navParams: NavParams,
+    // private navParams: NavParams,
     private zone: NgZone,
     private events: Events,
     private popoverCtrl: PopoverController,
@@ -239,10 +239,11 @@ export class CollectionDetailEtbPage implements OnInit {
     this.checkCurrentUserType();
     this.getBaseURL();
     this.defaultAppIcon = 'assets/imgs/ic_launcher.png';
-    this.content = this.navParams.get('content');
-    this.data = this.navParams.get('data');
-    this.batchDetails = this.navParams.get('batchDetails');
-    this.pageName = this.navParams.get('pageName');
+    // migration-TODO
+    // this.content = this.navParams.get('content');
+    // this.data = this.navParams.get('data');
+    // this.batchDetails = this.navParams.get('batchDetails');
+    // this.pageName = this.navParams.get('pageName');
   }
 
   /**
@@ -275,19 +276,23 @@ export class CollectionDetailEtbPage implements OnInit {
       this.headerConfig.showBurgerMenu = false;
       this.headerService.updatePageConfig(this.headerConfig);
       this.resetVariables();
-      this.cardData = this.navParams.get('content');
+      // migration-TODO
+      // this.cardData = this.navParams.get('content');
       console.log('this.cardData', this.cardData);
-      this.corRelationList = this.navParams.get('corRelation');
-      const depth = this.navParams.get('depth');
-      this.shouldGenerateEndTelemetry = this.navParams.get('shouldGenerateEndTelemetry');
-      this.source = this.navParams.get('source');
-      this.fromCoursesPage = this.navParams.get('fromCoursesPage');
-      this.isAlreadyEnrolled = this.navParams.get('isAlreadyEnrolled');
-      this.isChildClickable = this.navParams.get('isChildClickable');
-      this.facets = this.facets = this.navParams.get('facets');
+      // migration-TODO
+      // this.corRelationList = this.navParams.get('corRelation');
+      // const depth = this.navParams.get('depth');
+      let depth;
+      // this.shouldGenerateEndTelemetry = this.navParams.get('shouldGenerateEndTelemetry');
+      // this.source = this.navParams.get('source');
+      // this.fromCoursesPage = this.navParams.get('fromCoursesPage');
+      // this.isAlreadyEnrolled = this.navParams.get('isAlreadyEnrolled');
+      // this.isChildClickable = this.navParams.get('isChildClickable');
+      // this.facets = this.facets = this.navParams.get('facets');
 
       // check for parent content
-      this.parentContent = this.navParams.get('parentContent');
+      // migration-TODO
+      // this.parentContent = this.navParams.get('parentContent');
       if (depth) {
         this.depth = depth;
         this.showDownloadBtn = false;
@@ -488,9 +493,9 @@ export class CollectionDetailEtbPage implements OnInit {
    * To set content details in local variable
    * @param {string} identifier identifier of content / course
    */
-  setContentDetails(identifier, refreshContentDetails: boolean) {
+  async setContentDetails(identifier, refreshContentDetails: boolean) {
     const loader = this.commonUtilService.getLoader();
-    loader.present();
+    await loader.present();
     const option: ContentDetailRequest = {
       contentId: identifier,
       attachFeedback: true,
@@ -835,7 +840,8 @@ export class CollectionDetailEtbPage implements OnInit {
   }
 
   navigateToDetailsPage(content: any, depth) {
-    const stateData = this.navParams.get('contentState');
+    // migration-TODO
+    // const stateData = this.navParams.get('contentState');
 
     this.zone.run(() => {
       if (content.contentType === ContentType.COURSE) {
@@ -870,7 +876,8 @@ export class CollectionDetailEtbPage implements OnInit {
   }
 
   navigateToContentPage(content: any, depth) {
-    const stateData = this.navParams.get('contentState');
+    // migration-TODO
+    // const stateData = this.navParams.get('contentState');
     // migration-TODO
     // this.navCtrl.push(ContentDetailsPage, {
     //   isChildContent: true,

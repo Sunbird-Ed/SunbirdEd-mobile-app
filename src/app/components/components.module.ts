@@ -20,6 +20,8 @@ import { CollectionChildComponent} from './collection-child/collection-child.com
 import {ContentActionsComponent} from './content-actions/content-actions.component';
 import {ContentRatingAlertComponent} from './content-rating-alert/content-rating-alert.component';
 import { IonicRatingModule, RatingComponent } from 'ionic4-rating';
+import {DetailCardComponent} from './detail-card/detail-card.component';
+import { FileSizePipe } from '@app/pipes/file-size/file-size';
 
 
 @NgModule({
@@ -36,7 +38,8 @@ import { IonicRatingModule, RatingComponent } from 'ionic4-rating';
     SbNoNetworkPopupComponent,
     CollectionChildComponent,
     ContentActionsComponent,
-    ContentRatingAlertComponent
+    ContentRatingAlertComponent,
+    DetailCardComponent
   ],
   imports: [
     CommonModule,
@@ -68,7 +71,9 @@ import { IonicRatingModule, RatingComponent } from 'ionic4-rating';
     SbNoNetworkPopupComponent,
     CollectionChildComponent,
     ContentActionsComponent,
-    ContentRatingAlertComponent
-  ]
+    ContentRatingAlertComponent,
+    DetailCardComponent
+  ],
+  providers: [FileSizePipe]
 })
 export class ComponentsModule { }
