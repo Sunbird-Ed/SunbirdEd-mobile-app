@@ -3,7 +3,7 @@
     .subtitle {
       text-transform: capitalize;
       font-size: 1.3em;
-      @extend .font-weight-700;
+      @extend .font-weight-700;  
       color: map-get($colors, primary_black);
     }
     ion-item {
