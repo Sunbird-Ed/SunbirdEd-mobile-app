@@ -22,6 +22,9 @@ import {ContentRatingAlertComponent} from './content-rating-alert/content-rating
 import { IonicRatingModule, RatingComponent } from 'ionic4-rating';
 import {DetailCardComponent} from './detail-card/detail-card.component';
 import { FileSizePipe } from '@app/pipes/file-size/file-size';
+import {BookmarkComponent} from './bookmark/bookmark.component';
+import {DialogPopupComponent} from './dialog-popup/dialog-popup.component';
+import {SbDownloadPopupComponent} from './popups/sb-download-popup/sb-download-popup.component';
 
 
 @NgModule({
@@ -39,7 +42,10 @@ import { FileSizePipe } from '@app/pipes/file-size/file-size';
     CollectionChildComponent,
     ContentActionsComponent,
     ContentRatingAlertComponent,
-    DetailCardComponent
+    DetailCardComponent,
+    BookmarkComponent,
+    DialogPopupComponent,
+    SbDownloadPopupComponent
   ],
   imports: [
     CommonModule,
@@ -55,7 +61,8 @@ import { FileSizePipe } from '@app/pipes/file-size/file-size';
     SbGenericPopoverComponent,
     SbPopoverComponent,
     SbNoNetworkPopupComponent,
-    ContentRatingAlertComponent
+    ContentRatingAlertComponent,
+    DialogPopupComponent
   ],
   exports: [
     ApplicationHeaderComponent,
@@ -72,7 +79,10 @@ import { FileSizePipe } from '@app/pipes/file-size/file-size';
     CollectionChildComponent,
     ContentActionsComponent,
     ContentRatingAlertComponent,
-    DetailCardComponent
+    DetailCardComponent,
+    BookmarkComponent,
+    DialogPopupComponent,
+    SbDownloadPopupComponent
   ],
   providers: [FileSizePipe]
 })

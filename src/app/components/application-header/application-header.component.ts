@@ -117,6 +117,10 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
     this.router.navigateByUrl('/collection-detail-etb');
   }
 
+  goToContentDetails() {
+    this.router.navigateByUrl('/content-details');
+  }
+
   setAppVersion(): any {
     this.utilityService.getBuildConfigValue(GenericAppConfig.VERSION_NAME)
       .then(vName => {

@@ -1,9 +1,477 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-title>contentDetails</ion-title>
-  </ion-toolbar>
-</ion-header>
-
-<ion-content>
-
-</ion-content>
+<!-- New content details -->
+<ion-content *ngIf="new && content && appGlobalService?.CONTENT_STREAMING_ENABLED">
+    <div class="sb-play-container sb-player-container" *ngIf="commonUtilService.networkInfo.isNetworkAvailable">
+      <div *ngIf="streamingUrl">
+        <div *ngIf="contentDownloadable[content?.identifier]">
+          <img class="sb-player-container" src='{{content?.contentData.appIcon}}'>
+          <div class="sb-overlay-container" (click)="showSwitchUserAlert(false)">
+            <div class="sb-back-transparent" (click)="handleNavBackButton();$event.stopPropagation()">
+              <div class="sb-circle">
+                <ion-icon name="arrow-back" class="sb-arrow-back"></ion-icon>
+              </div>
+            </div>
+            <div class="sb-dt-content sb-dt-content-main">
+              <div class="left">
+                <div class="sb-dt-title"> {{content?.contentData?.name}}</div>
+                <div class="sb-dt-source" *ngIf="content?.contentData?.owner || content?.contentData?.creator">
+                  <span class="sb-by">{{ 'CONTENT_CREATED_BY' | translate }}</span>
+                  <span class="sb-user">{{ content?.contentData?.owner || content?.contentData?.creator }}</span>
+                  <span class="sb-rating-view" *ngIf="content?.contentData?.me_averageRating">
+                    <span class="content-vertical-line"></span>
+                    <span class="sb-rating-value">{{ content?.contentData?.me_averageRating }}</span>
+                    <span class="sb-rating-star">
+                <ion-icon ios="ios-star" md="md-star"></ion-icon>
+              </span>
+                  </span>
+                </div>
+              </div>
+            </div>
+            <div class="sb-common-player-group sb-play-title-group">
+              <button ion-button clear icon-only class="sb-common-title">
+                <img src="assets/imgs/play_circle.svg" alt="play-circle">
+              </button>
+              <p class="play-text"> {{'PLAY' | translate}} </p>
+            </div>
+          </div>
+        </div>
+        <div *ngIf="!contentDownloadable[content?.identifier]">
+          <img class="sb-player-container" src='{{content?.contentData.appIcon}}'>
+          <div class="sb-overlay-container" (click)="showSwitchUserAlert(true)">
+            <div class="sb-back-transparent" (click)="handleNavBackButton();$event.stopPropagation()">
+              <div class="sb-circle">
+                <ion-icon name="arrow-back" class="sb-arrow-back"></ion-icon>
+              </div>
+            </div>
+            <div class="sb-dt-content sb-dt-content-main">
+              <div class="left">
+                <div class="sb-dt-title"> {{content?.contentData?.name}}</div>
+                <div class="sb-dt-source" *ngIf="content?.contentData?.owner || content?.contentData?.creator">
+                  <span class="sb-by">{{ 'CONTENT_CREATED_BY' | translate }}</span>
+                  <span class="sb-user">{{ content?.contentData?.owner || content?.contentData?.creator }}</span>
+                  <span class="sb-rating-view" *ngIf="content?.contentData?.me_averageRating">
+                                    <span class="content-vertical-line"></span>
+                    <span class="sb-rating-value">{{ content?.contentData?.me_averageRating }}</span>
+                    <span class="sb-rating-star">
+                <ion-icon ios="ios-star" md="md-star"></ion-icon>
+              </span>
+                  </span>
+                </div>
+              </div>
+  
+            </div>
+            <div class="sb-common-player-group sb-play-title-group">
+              <button ion-button clear icon-only class="sb-common-title">
+                <img src="assets/imgs/play_circle.svg" alt="play-circle">
+              </button>
+              <p class="play-text"> {{'PLAY' | translate}} </p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div *ngIf="!streamingUrl">
+        <div *ngIf="!contentDownloadable[content?.identifier]">
+          <div class="sb-back-transparent" (click)="handleNavBackButton();$event.stopPropagation()">
+            <div class="sb-circle">
+              <ion-icon name="arrow-back" class="sb-arrow-back"></ion-icon>
+            </div>
+          </div>
+          <div class="sb-dt-content sb-dt-content-main">
+            <div class="left">
+              <div class="sb-dt-title"> {{content?.contentData?.name}}</div>
+              <div class="sb-dt-source" *ngIf="content?.contentData?.owner || content?.contentData?.creator">
+                <span class="sb-by">{{ 'CONTENT_CREATED_BY' | translate }}</span>
+                <span class="sb-user">{{ content?.contentData?.owner || content?.contentData?.creator }}</span>
+                <span class="sb-rating-view" *ngIf="content?.contentData?.me_averageRating">
+                                <span class="content-vertical-line"></span>
+  
+                    <span class="sb-rating-value">{{ content?.contentData?.me_averageRating }}</span>
+                    <span class="sb-rating-star">
+                <ion-icon ios="ios-star" md="md-star"></ion-icon>
+              </span>
+                  </span>
+              </div>
+            </div>
+  
+          </div>
+          <div class="sb-common-player-group sb-download-title-group" (click)="openConfirmPopUp()">
+            <button ion-button clear icon-only class="sb-common-title">
+              <ion-icon ios="ios-cloud-download" md="md-cloud-download" class="sb-common-white-icon"></ion-icon>
+            </button>
+            <div class="sb-common-footer-text">{{'PLEASE_DOWNLOAD_TO_PLAY' | translate}}</div>
+          </div>
+        </div>
+        <div *ngIf="contentDownloadable[content?.identifier]">
+          <img class="sb-player-container" src='{{content?.contentData?.appIcon}}'>
+          <div class="sb-overlay-container" (click)="showSwitchUserAlert(false)">
+            <div class="sb-back-transparent" (click)="handleNavBackButton();$event.stopPropagation()">
+              <div class="sb-circle">
+                <ion-icon name="arrow-back" class="sb-arrow-back"></ion-icon>
+              </div>
+            </div>
+            <div class="sb-dt-content sb-dt-content-main">
+              <div class="left">
+                <div class="sb-dt-title"> {{content?.contentData?.name}}</div>
+                <div class="sb-dt-source" *ngIf="content?.contentData?.owner || content?.contentData?.creator">
+                  <span class="sb-by">{{ 'CONTENT_CREATED_BY' | translate }}</span>
+                  <span class="sb-user">{{ content?.contentData?.owner || content?.contentData?.creator }}</span>
+                  <span class="sb-rating-view" *ngIf="content?.contentData?.me_averageRating">
+                                    <span class="content-vertical-line"></span>
+                    <span class="sb-rating-value">{{ content?.contentData?.me_averageRating }}</span>
+                    <span class="sb-rating-star">
+                <ion-icon ios="ios-star" md="md-star"></ion-icon>
+              </span>
+                  </span>
+                </div>
+              </div>
+            </div>
+            <div class="sb-common-player-group sb-play-title-group">
+              <button ion-button clear icon-only class="sb-common-title">
+                <img src="assets/imgs/play_circle.svg" alt="play-circle">
+              </button>
+              <p class="play-text"> {{'PLAY' | translate}} </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div *ngIf="!commonUtilService.networkInfo.isNetworkAvailable">
+      <div class="sb-play-container sb-player-container" *ngIf="contentDownloadable[content?.identifier]">
+        <img class="sb-player-container" src='{{content?.contentData?.appIcon}}'>
+        <div class="sb-overlay-container" (click)="showSwitchUserAlert(false)">
+          <div class="sb-back-transparent" (click)="handleNavBackButton();$event.stopPropagation()">
+            <div class="sb-circle">
+              <ion-icon name="arrow-back" class="sb-arrow-back"></ion-icon>
+            </div>
+          </div>
+          <div class="sb-dt-content sb-dt-content-main">
+            <div class="left">
+              <div class="sb-dt-title"> {{content?.contentData?.name}}</div>
+              <div class="sb-dt-source" *ngIf="content?.contentData?.owner || content?.contentData?.creator">
+                <span class="sb-by">{{ 'CONTENT_CREATED_BY' | translate }}</span>
+                <span class="sb-user">{{ content?.contentData?.owner || content?.contentData?.creator }}</span>
+                <span class="sb-rating-view" *ngIf="content?.contentData?.me_averageRating">
+                                <span class="content-vertical-line"></span>
+                    <span class="sb-rating-value">{{ content?.contentData?.me_averageRating }}</span>
+                    <span class="sb-rating-star">
+                <ion-icon ios="ios-star" md="md-star"></ion-icon>
+              </span>
+                  </span>
+              </div>
+            </div>
+  
+          </div>
+  
+          <div class="sb-common-player-group sb-play-title-group">
+            <button ion-button clear icon-only class="sb-common-title">
+              <img src="assets/imgs/play_circle.svg" alt="play-circle">
+            </button>
+            <p class="play-text"> {{'PLAY' | translate}} </p>
+          </div>
+        </div>
+      </div>
+      <div class="sb-player-container sb-offline-container" *ngIf="!contentDownloadable[content?.identifier]">
+        <div class="sb-back-transparent" (click)="handleNavBackButton();$event.stopPropagation()">
+          <div class="sb-circle">
+            <ion-icon name="arrow-back" class="sb-arrow-back"></ion-icon>
+          </div>
+        </div>
+        <div class="sb-common-player-group sb-common-title-group">
+          <div class="sb-offline-title">
+            <!-- <ion-icon ios="ios-notifications-off" md="md-notifications-off" class="sb-offline-white-icon"></ion-icon> -->
+            <img src="assets/imgs/ic_offline_white_sm.png"/>
+          </div>
+          <div class="sb-common-footer-text">{{'YOU_ARE_NOT_CONNECTED_TO_THE_INTERNET' | translate}}</div>
+          <div
+            class="sb-common-footer-text sb-sub-footer">{{'ONLY_DOWNLOADED_CONTENT_CAN_BE_PLAYED_OFFLINE' | translate}}</div>
+        </div>
+      </div>
+    </div>
+  
+  
+    <!--	<div class="breadcrumb-container" *ngIf="childPaths.length>0">-->
+    <!--		<div class="step-indicator" >-->
+    <!--			<a class="step" href="#" *ngFor="let result of childPaths; let i = index" [ngClass]="{'completed': i!=(childPaths.length-1)}" (click)="goBack(i,childPaths.length)">-->
+    <!--				{{result}}-->
+    <!--			</a>-->
+    <!--		</div>-->
+    <!--	</div>-->
+    <div class="sb-detail-card-info">
+      <div class="sb-dt-card">
+        <!--			<div class="sb-dt-content sb-dt-content-main">-->
+        <!--				<div class="left">-->
+        <!--					<div class="sb-dt-title"> {{content?.contentData?.name}}</div>-->
+        <!--					<div class="sb-dt-source" *ngIf="content?.contentData?.owner || content?.contentData?.creator">-->
+        <!--						<span class="sb-by">{{ 'CONTENT_CREATED_BY' | translate }}</span>-->
+        <!--						<span class="sb-user">{{ content?.contentData?.owner || content?.contentData?.creator }}</span>-->
+        <!--					</div>-->
+        <!--				</div>-->
+        <!--			</div>-->
+  
+  
+        <!--			<div class="sb-dt-content pt-0">-->
+        <!--&lt;!&ndash;				<div class="left" *ngIf="content?.contentData?.resourceType">&ndash;&gt;-->
+        <!--&lt;!&ndash;&lt;!&ndash;					<div class="sb-practice">&ndash;&gt;&ndash;&gt;-->
+        <!--&lt;!&ndash;&lt;!&ndash;						<button ion-button outline small class="content-btn-padding disable-ripple">{{content?.contentData?.resourceType}}</button>&ndash;&gt;&ndash;&gt;-->
+        <!--&lt;!&ndash;&lt;!&ndash;					</div>&ndash;&gt;&ndash;&gt;-->
+        <!--&lt;!&ndash;				</div>&ndash;&gt;-->
+        <!--				<div class="right" *ngIf="content?.contentData?.me_averageRating">-->
+        <!--					<div class="sb-rating-view">-->
+        <!--						<span class="sb-rating-value">{{ content?.contentData?.me_averageRating }}</span>-->
+        <!--						<span class="sb-rating-star">-->
+        <!--							<ion-icon ios="ios-star" md="md-star"></ion-icon>-->
+        <!--						</span>-->
+        <!--					</div>-->
+        <!--				</div>-->
+        <!--			</div>-->
+  
+        <!--			<div class="sb-separator-line"></div>-->
+  
+        <div class="sb-dt-card-actions">
+  
+          <div class="sb-btn-tile-group">
+            <div *ngIf="content && !appGlobalService?.CONTENT_STREAMING_ENABLED ">
+              <button *ngIf="!contentDownloadable[content?.identifier]" (click)="openConfirmPopUp()"
+                      [disabled]="isDownloadStarted" ion-button
+                      clear icon-only class="sb-btn-tile">
+                <ion-icon ios="ios-cloud-download" md="md-cloud-download" class="sb-dt-card-blue-icon"></ion-icon>
+                <span *ngIf="!isDownloadStarted" class="sb-btn-footer-text">{{'DOWNLOAD' | translate}}</span>
+                <span *ngIf="isDownloadStarted && showDownload" class="btn-popover-progress-container">
+                  <span class="btn-progress-highlight" [ngStyle]="{'width': this.downloadProgress + '%'}"></span>
+                </span>
+              </button>
+  
+            </div>
+            <div *ngIf="content && appGlobalService?.CONTENT_STREAMING_ENABLED">
+              <div *ngIf="!content?.contentData?.streamingUrl">
+                <button *ngIf="!contentDownloadable[content?.identifier]" (click)="openConfirmPopUp()"
+                        [disabled]="isDownloadStarted" ion-button
+                        clear icon-only class="sb-btn-tile">
+                  <ion-icon ios="ios-cloud-download" md="md-cloud-download" class="sb-dt-card-blue-icon"></ion-icon>
+                  <span *ngIf="!isDownloadStarted" class="sb-btn-footer-text">{{'DOWNLOAD' | translate}}</span>
+                  <span *ngIf="isDownloadStarted && showDownload" class="btn-popover-progress-container">
+                    <span class="btn-progress-highlight" [ngStyle]="{'width': this.downloadProgress + '%'}"></span>
+                  </span>
+                </button>
+              </div>
+  
+              <div *ngIf="content?.contentData?.streamingUrl">
+                <button *ngIf="!contentDownloadable[content?.identifier]" (click)="openConfirmPopUp()"
+                        [disabled]="isDownloadStarted" ion-button
+                        clear icon-only class="sb-btn-tile">
+                  <ion-icon ios="ios-cloud-download" md="md-cloud-download" class="sb-dt-card-blue-icon"></ion-icon>
+                  <span *ngIf="!isDownloadStarted" class="sb-btn-footer-text">{{'DOWNLOAD' | translate}}</span>
+                  <span *ngIf="isDownloadStarted && showDownload" class="btn-popover-progress-container">
+                    <span class="btn-progress-highlight" [ngStyle]="{'width': this.downloadProgress + '%'}"></span>
+                  </span>
+                </button>
+              </div>
+            </div>
+  
+            <button ion-button clear icon-only class="sb-btn-tile" *ngIf="contentDownloadable[content?.identifier]"
+                    (click)="showDeletePopup()">
+              <ion-icon ios="ios-trash" md="md-trash" class="sb-dt-card-danger-icon"></ion-icon>
+              <span class="sb-btn-footer-text">{{'DELETE' | translate}}</span>
+            </button>
+            <button ion-button clear icon-only (click)="share()" class="sb-btn-tile">
+              <ion-icon ios="ios-share" md="md-share" class="sb-dt-card-blue-icon"></ion-icon>
+              <span class="sb-btn-footer-text">{{'SHARE' | translate}}</span>
+            </button>
+            <button ion-button clear icon-only class="sb-btn-tile" (click)="rateContent('manual')">
+              <ion-icon ios="ios-star-outline" md="md-star-outline" class="sb-dt-card-blue-icon"></ion-icon>
+              <span class="sb-btn-footer-text">{{'RATE' | translate}}</span>
+            </button>
+            <button ion-button clear icon-only class="sb-btn-tile"
+                    *ngIf="contentDownloadable[content?.identifier] && this.isUpdateAvail" (click)="openConfirmPopUp()">
+              <ion-icon ios="ios-refresh" md="md-refresh" class="sb-dt-card-blue-icon"></ion-icon>
+              <span class="sb-btn-footer-text">{{'UPDATE' | translate}}</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <div class="sb-content-info-container">
+  
+      <div class="sb-content-info-items"
+           *ngIf="content?.contentData?.description || content?.contentData?.gradeLevel || content?.contentData?.subject || content?.contentData?.board">
+        <div class="sb-content-info-title">{{'ABOUT' | translate}}</div>
+  
+        <ion-card class="sb-content-info-card"
+                  *ngIf="content?.contentData?.description || content?.contentData?.gradeLevel || content?.contentData?.subject || content?.contentData?.board">
+          <div class="sb-content-info-heading"
+               *ngIf="content?.contentData?.description && content?.contentData?.description?.length">{{content?.description}}</div>
+          <div class="sb-info" *ngIf="content?.contentData?.board">
+            <div class="sb-content-title">{{ 'BOARD' | translate }}</div>
+            <div class="sb-content-title-data">{{content?.contentData?.board}}</div>
+          </div>
+          <div *ngIf="showMoreFlag">
+            <div class="sb-info" *ngIf="content?.contentData?.medium">
+              <div class="sb-content-title">{{'MEDIUM' | translate}}</div>
+              <div class="sb-content-title-data">{{content?.contentData?.medium | csa}}</div>
+            </div>
+            <div class="sb-info" *ngIf="content?.contentData?.gradeLevel && content?.contentData?.gradeLevel?.length">
+              <div class="sb-content-title">{{'CLASS' | translate}}</div>
+              <div class="sb-content-title-data">{{content?.contentData?.gradeLevel?.join(', ')}}</div>
+            </div>
+            <div class="sb-info" *ngIf="content?.contentData?.subject">
+              <div class="sb-content-title">{{'SUBJECT' | translate}}</div>
+              <div class="sb-content-title-data">{{content?.contentData?.subject | csa}}</div>
+            </div>
+            <div class="sb-info" *ngIf="content?.contentData?.license">
+              <div class="sb-content-title">{{'LICENSE' | translate}}</div>
+              <div class="sb-content-title-data">{{content?.contentData?.license}}</div>
+            </div>
+            <div class="sb-info" *ngIf="!content?.contentData?.license">
+              <div class="sb-content-title">{{'LICENSE' | translate}}</div>
+              <div class="sb-content-title-data">{{defaultLicense}}</div>
+            </div>
+            <div class="sb-info" *ngIf="content?.contentData?.creators || content?.contentData?.creator">
+              <div class="sb-content-title">{{'CREATORS' | translate}}</div>
+              <div class="sb-content-title-data">{{mergeProperties('creators', 'creator')}}</div>
+            </div>
+            <div class="sb-info" *ngIf="content?.contentData?.contributors || content?.contentData?.owner">
+              <div class="sb-content-title">{{'CONTRIBUTORS' | translate}}</div>
+              <div class="sb-content-title-data"> {{mergeProperties('contributors', 'owner')}}</div>
+            </div>
+            <div class="sb-info" *ngIf="content?.contentData?.attributions">
+              <div class="sb-content-title">{{'ATTRIBUTIONS' | translate}}</div>
+              <div class="sb-content-title-data">{{content?.contentData?.attributions}}</div>
+            </div>
+          </div>
+          <div class="read-more" *ngIf="content && content.contentData.description &&
+          content.contentData.description.length > 10 || content.contentData.gradeLevel ||
+          content.contentData.subject" (click)="showMoreFlag = !showMoreFlag">
+            <div *ngIf="showMoreFlag" style="padding-left: 8px; padding-right: 8px;" class="padding-top-10" (click)="readLessorReadMore('read-less-clicked')">
+              {{ 'READ_LESS' | translate }}
+              <ion-icon name="ios-arrow-up"></ion-icon>
+            </div>
+            <div *ngIf="!showMoreFlag" style="padding-left: 8px; padding-right: 8px;"
+                 (click)="readLessorReadMore('read-more-clicked')">
+              {{ 'READ_MORE' | translate }}
+            </div>
+          </div>
+        </ion-card>
+      </div>
+    </div>
+  </ion-content>
+  <!-- Page footer -->
+  <div *ngIf="!new">
+    <ion-footer *ngIf="content && !appGlobalService?.CONTENT_STREAMING_ENABLED ">
+      <ion-toolbar padding>
+        <button ion-button block *ngIf="contentDownloadable[content?.identifier]" (click)="showSwitchUserAlert(false)"
+                [disabled]="isDownloadStarted">{{
+          'PLAY_FROM_DEVICE' | translate }}</button>
+        <ion-icon *ngIf="isDownloadStarted && downloadProgress !== 100" (click)="cancelDownload()"
+                  name="ios-close-circle-outline" class="cancel-download" color="primary"></ion-icon>
+        <!-- <button ion-button block *ngIf="!contentDownloadable[content?.identifier] && !isDownloadStarted" (click)="downloadContent()">
+              {{ isDownloadStarted ? ('DOWNLOADING_1' | translate:{'%s': downloadProgress}) + ' %' : ('DOWNLOAD' | translate) }}
+          </button> -->
+        <button ion-button *ngIf="!contentDownloadable[content?.identifier]" (click)="downloadContent()" text-uppercase
+                [ngClass]="{'text-font': isDownloadStarted && ('DOWNLOADING_1' | translate).length > 18}"
+                [ngStyle]="{'background': '-webkit-linear-gradient(left, rgba(0,73,153, 0.86) '  +downloadProgress+ '%, #006DE5 0%)', 'width': isDownloadStarted === true ? '80%' : '100%'}"
+                style="transition: all 0s ease 0s;">
+          {{ isDownloadStarted ? ('DOWNLOADING_1' | translate:{'%s': downloadProgress}) + ' %' : ('DOWNLOAD' | translate) }}
+        </button>
+        <!-- Update content -->
+        <button ion-button outline
+                *ngIf="isUpdateAvail && contentDownloadable[content?.identifier] && downloadProgress !== 100"
+                (click)="downloadContent()" text-uppercase
+                [ngStyle]="{'background': '-webkit-linear-gradient(left, #DBECFF '  +downloadProgress+ '%, white 0%)' , 'width': isDownloadStarted === true ? '80%' : '100%' , 'pointer-events': isDownloadStarted === true ? 'none': 'auto'}">
+          {{ isDownloadStarted ? ('UPDATING_CONTENT' | translate:{'%s': downloadProgress}) : ('UPDATE_CONTENT' |
+          translate:{
+          '%s': content?.contentData?.size
+            | fileSize
+        }) }}
+        </button>
+  
+      </ion-toolbar>
+  
+    </ion-footer>
+  
+  
+    <!--- Ion footer  displays when content streaming is enabled -->
+  
+    <ion-footer *ngIf="content && appGlobalService?.CONTENT_STREAMING_ENABLED">
+      <ion-toolbar padding *ngIf="!content?.contentData?.streamingUrl">
+        <button ion-button block
+                *ngIf="content?.contentData?.lastUpdatedTime != 0 && commonUtilService?.networkInfo?.isNetworkAvailable && !contentDownloadable[content?.identifier] && playOnlineSpinner"
+                (click)="showSwitchUserAlert(true)" text-uppercase [disabled]="!content?.contentData?.streamingUrl"
+                [ngStyle]="{'opacity':!commonUtilService.networkInfo.isNetworkAvailable  || !content?.contentData?.streamingUrl ? '0.4': '1' }">{{'PLAY_ONLINE'
+          | translate}}
+          <ion-spinner icon="spiral" class="button-spinner"></ion-spinner>
+        </button>
+  
+        <button ion-button block *ngIf="contentDownloadable[content?.identifier]" (click)="showSwitchUserAlert(false)"
+                [disabled]="isDownloadStarted">{{
+          'PLAY_FROM_DEVICE' | translate }}</button>
+        <ion-icon *ngIf="isDownloadStarted && downloadProgress !== 100" (click)="cancelDownload()"
+                  name="ios-close-circle-outline" class="cancel-download" color="primary"></ion-icon>
+        <button ion-button block *ngIf="!contentDownloadable[content?.identifier] && !isDownloadStarted"
+                (click)="downloadContent()">
+          {{ isDownloadStarted ? ('DOWNLOADING_1' | translate:{'%s': downloadProgress}) + ' %' : ('DOWNLOAD' | translate) }}
+        </button>
+        <button ion-button *ngIf="!contentDownloadable[content?.identifier] && isDownloadStarted" text-uppercase
+                [ngClass]="{'text-font': isDownloadStarted && ('DOWNLOADING_1' | translate).length > 18}"
+                [ngStyle]="{'background': '-webkit-linear-gradient(left, rgba(0,73,153, 0.86) '  +downloadProgress+ '%, #006DE5 0%)', 'width': isDownloadStarted === true ? '80%' : '100%'}"
+                style="transition: all 0s ease 0s;">
+          {{ isDownloadStarted ? ('DOWNLOADING_1' | translate:{'%s': downloadProgress}) + ' %' : ('DOWNLOAD' | translate) }}
+        </button>
+        <!-- Update content -->
+        <button ion-button outline
+                *ngIf="isUpdateAvail && contentDownloadable[content?.identifier] && downloadProgress !== 100"
+                (click)="downloadContent()" text-uppercase
+                [ngStyle]="{'background': '-webkit-linear-gradient(left, #DBECFF '  +downloadProgress+ '%, white 0%)' , 'width': isDownloadStarted === true ? '80%' : '100%' , 'pointer-events': isDownloadStarted === true ? 'none': 'auto'}">
+          {{ isDownloadStarted ? ('UPDATING_CONTENT' | translate:{'%s': downloadProgress}) : ('UPDATE_CONTENT' |
+          translate:{
+          '%s': content?.contentData?.size
+            | fileSize
+        }) }}
+        </button>
+      </ion-toolbar>
+      <ion-toolbar padding *ngIf="content?.contentData?.streamingUrl">
+        <!--- play online -->
+        <button ion-button block *ngIf="!contentDownloadable[content?.identifier]" (click)="showSwitchUserAlert(true)"
+                text-uppercase
+                [disabled]="isDownloadStarted"
+                [ngStyle]="{'opacity':!commonUtilService.networkInfo.isNetworkAvailable  || isDownloadStarted ? '0.4': '1' }">{{'PLAY_ONLINE'
+          | translate}}</button>
+        <!--- play from device -->
+        <button ion-button block *ngIf="contentDownloadable[content?.identifier]" (click)="showSwitchUserAlert(false)"
+                text-uppercase
+                [disabled]="isDownloadStarted">{{'PLAY_FROM_DEVICE'|
+          translate}}</button>
+        <ion-icon *ngIf="isDownloadStarted && downloadProgress !== 100" (click)="cancelDownload()"
+                  name="ios-close-circle-outline" class="cancel-download" color="primary"></ion-icon>
+        <!-- download content -->
+        <button ion-button outline *ngIf="!contentDownloadable[content?.identifier]" (click)="downloadContent()"
+                text-uppercase
+                [ngClass]="{'text-font': isDownloadStarted && ('DOWNLOADING_1' | translate).length > 18}"
+                [ngStyle]="{'background': '-webkit-linear-gradient(left, #DBECFF '  +downloadProgress+ '%, white 0%)', 'width': isDownloadStarted === true ? '80%' : '100%'}"
+                style="transition: all 0s ease 0s;" [disabled]="isDownloadStarted">
+          {{ isDownloadStarted ? ('DOWNLOADING_1' | translate:{'%s': downloadProgress}) + '%' : ('DOWNLOAD_CONTENT' |
+          translate:{
+          '%s': content?.contentData?.size
+            | fileSize
+        }) }}
+        </button>
+        <!-- Update content -->
+        <button ion-button outline
+                *ngIf="isUpdateAvail && contentDownloadable[content?.identifier] && downloadProgress !== 100"
+                (click)="downloadContent()" text-uppercase
+                [ngStyle]="{'background': '-webkit-linear-gradient(left, #DBECFF '  +downloadProgress+ '%, white 0%)' , 'width': isDownloadStarted === true ? '80%' : '100%' , 'pointer-events': isDownloadStarted === true ? 'none': 'auto'}">
+          {{ isDownloadStarted ? ('UPDATING_CONTENT' | translate:{'%s': downloadProgress}) : ('UPDATE_CONTENT' |
+          translate:{
+          '%s': content?.contentData?.size
+            | fileSize
+        }) }}
+        </button>
+      </ion-toolbar>
+    </ion-footer>
+  </div>
+  <app-sb-download-popup *ngIf="showDownload" (cancelDownloadEmit)="cancelDownload($event)"
+                     [downloadProgress]="downloadProgress" [contentName]="content?.contentData?.name"
+                     [isUpdateAvail]="isUpdateAvail"
+                     [showDownload]="showDownload" [contentAvailableLocally]="contentDownloadable[content?.identifier]"
+                     [contentSize]="content?.contentData?.size">
+  </app-sb-download-popup>
+  

@@ -16,4 +16,7 @@ export * from './edit-contact-details-popup/edit-contact-details-popup.component
 export * from './edit-contact-verify-popup/edit-contact-verify-popup.component';
 // export * from './collection-child/collection-child';
 export * from './popups/sb-popover/sb-popover.component';
+export * from './bookmark/bookmark.component';
+export * from './dialog-popup/dialog-popup.component';
+export * from './popups/sb-download-popup/sb-download-popup.component';
 
