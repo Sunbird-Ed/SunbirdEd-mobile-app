@@ -174,10 +174,10 @@ export class QrcoderesultPage implements OnDestroy {
   }
 
   ionViewDidLoad() {
-    this.telemetryGeneratorService.generateImpressionTelemetry(ImpressionType.VIEW, '',
-      PageId.DIAL_CODE_SCAN_RESULT,
-      !this.appGlobalService.isProfileSettingsCompleted ? Environment.ONBOARDING : this.appGlobalService.getPageIdForTelemetry());
-    // migration-TODO
+    // this.telemetryGeneratorService.generateImpressionTelemetry(ImpressionType.VIEW, '',
+    //   PageId.DIAL_CODE_SCAN_RESULT,
+    //   !this.appGlobalService.isProfileSettingsCompleted ? Environment.ONBOARDING : this.appGlobalService.getPageIdForTelemetry());
+    // // migration-TODO
     // this.navBar.backButtonClick = () => {
     //   this.handleBackButton(InteractSubtype.NAV_BACK_CLICKED);
     // };
@@ -323,7 +323,8 @@ export class QrcoderesultPage implements OnDestroy {
       undefined,
       this.corRelationList);
     this.openPlayer(content, request);
-    this.telemetryGeneratorService.generateInteractTelemetry(
+    // Migration todo
+    /* this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,
       content.isAvailableLocally ? InteractSubtype.PLAY_FROM_DEVICE : InteractSubtype.PLAY_ONLINE,
       !this.appGlobalService.isOnBoardingCompleted ? Environment.ONBOARDING : this.appGlobalService.getPageIdForTelemetry(),
@@ -331,7 +332,7 @@ export class QrcoderesultPage implements OnDestroy {
       telemetryObject,
       undefined,
       undefined,
-      this.corRelationList);
+      this.corRelationList); */
   }
 
   playOnline(content) {
