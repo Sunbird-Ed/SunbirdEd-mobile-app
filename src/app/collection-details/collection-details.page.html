@@ -50,7 +50,7 @@
 						</div>
 					</ion-row>
 				</ion-col>
-        <ion-col offset-2 *ngIf="contentDetail?.contentData.me_totalDownloads">
+        <ion-col offset="2" *ngIf="contentDetail?.contentData.me_totalDownloads">
           <div
             class="padding-bottom-5 text-align-end content-meta-title">{{ contentDetail?.contentData.me_totalDownloads }}</div>
 					<div float-right class="text-gray-color">{{ 'DOWNLOADS' | translate }}</div>
@@ -95,10 +95,10 @@
 				<div *ngIf="showMoreFlag" class="padding-top-10">
 					<ion-grid no-padding>
 						<ion-row>
-							<ion-col col-3 class="col-3-no-space" (click)="readLessorReadMore('READ_LESS')">
+							<ion-col size="3" class="col-3-no-space" (click)="readLessorReadMore('READ_LESS')">
 								<span> {{ 'READ_LESS' | translate }} </span>
 							</ion-col>
-							<ion-col col-1>
+							<ion-col size="1">
 								<ion-icon class="line-height" name="ios-arrow-up"></ion-icon>
 							</ion-col>
 						</ion-row>
@@ -107,10 +107,10 @@
 				<div *ngIf="!showMoreFlag">
 					<ion-grid no-padding>
 						<ion-row>
-							<ion-col col-3 class="col-3-no-space" (click)="readLessorReadMore('READ_LESS')">
+							<ion-col size="3" class="col-3-no-space" (click)="readLessorReadMore('READ_LESS')">
 								<span> {{ 'READ_MORE' | translate }} </span>
 							</ion-col>
-							<ion-col col-1>
+							<ion-col size="1">
 								<ion-icon class="line-height" name="ios-arrow-down"></ion-icon>
 							</ion-col>
 						</ion-row>
@@ -130,18 +130,22 @@
 			<div *ngIf="fromCoursesPage && !isAlreadyEnrolled">
 				<ion-list *ngIf="childrenData?.length" padding-top>
 					<ion-item *ngFor="let item of childrenData; let i = index;" class="child-item" >
-						<span ion-text class="span-semibold">{{ (item?.contentData?.name && item?.contentData?.name.length > 30) ?
+						<ion-text>
+<span class="span-semibold">{{ (item?.contentData?.name && item?.contentData?.name.length > 30) ?
 							(item?.contentData?.name | slice:0:30) + '...'
 							: (item?.contentData?.name)}}</span>
+</ion-text>
 					</ion-item>
 				</ion-list>
 			</div>
 			<div *ngIf="fromCoursesPage && isAlreadyEnrolled && isChildClickable">
 				<ion-list *ngIf="childrenData && childrenData?.length" padding-top>
 					<ion-item *ngFor="let item of childrenData; let i = index;" class="child-item"  (click)="navigateToDetailsPage(item, depth + '.' + (i + 1))">
-						<span ion-text class="span-semibold">{{ (item?.contentData?.name && item?.contentData?.name.length > 30) ?
+						<ion-text>
+<span class="span-semibold">{{ (item?.contentData?.name && item?.contentData?.name.length > 30) ?
 							(item?.contentData?.name | slice:0:30) + '...'
 							: (item?.contentData?.name)}}</span>
+</ion-text>
 						<ion-icon name="ios-arrow-forward" float-end></ion-icon>
 					</ion-item>
 				</ion-list>
@@ -149,9 +153,11 @@
 			<div *ngIf="!fromCoursesPage && !isAlreadyEnrolled">
 				<ion-list *ngIf="childrenData && childrenData?.length" padding-top>
 					<ion-item *ngFor="let item of childrenData; let i = index;" class="child-item"  (click)="navigateToDetailsPage(item, depth + '.' + (i + 1))">
-						<span ion-text class="span-semibold">{{ (item?.contentData?.name && item?.contentData?.name.length > 30) ?
+						<ion-text>
+<span class="span-semibold">{{ (item?.contentData?.name && item?.contentData?.name.length > 30) ?
 							(item?.contentData?.name | slice:0:30) + '...'
 							: (item?.contentData?.name)}}</span>
+</ion-text>
 						<ion-icon name="ios-arrow-forward" float-end></ion-icon>
 					</ion-item>
 				</ion-list>
@@ -159,9 +165,11 @@
 			<div *ngIf="fromCoursesPage && isAlreadyEnrolled && !isChildClickable ">
 				<ion-list *ngIf="childrenData && childrenData?.length" padding-top>
 					<ion-item *ngFor="let item of childrenData; let i = index;" class="child-item">
-						<span ion-text class="span-semibold">{{ (item?.contentData?.name && item?.contentData?.name.length > 30) ?
+						<ion-text>
+<span class="span-semibold">{{ (item?.contentData?.name && item?.contentData?.name.length > 30) ?
 							(item?.contentData?.name | slice:0:30) + '...'
 							: (item?.contentData?.name)}}</span>
+</ion-text>
 					</ion-item>
 				</ion-list>
 			</div>
@@ -209,14 +217,14 @@
 <!-- Page footer -->
 <ion-footer *ngIf="showDownloadBtn && !isDepthChild">
 	<ion-toolbar padding>
-		<button ion-button block *ngIf="showDownloadBtn && !isDownloadStarted" (click)="showDownloadConfirmationAlert()"> {{
+		<ion-button block *ngIf="showDownloadBtn && !isDownloadStarted" (click)="showDownloadConfirmationAlert()"> {{
 			'DOWNLOAD_ALL_CONTENT' | translate }} ({{(downloadSize | fileSize)
 			}})
-		</button>
-    <button *ngIf="isDownloadStarted" ion-button block outline
+		</ion-button>
+    <ion-button *ngIf="isDownloadStarted" block outline
             [ngStyle]="{'background': '-webkit-linear-gradient(left, #DBECFF '  +(currentCount/queuedIdentifiers.length)*100+ '%, white 0%)'}">
       {{ 'DOWNLOADING_2' | translate }}... {{ currentCount }} / {{ queuedIdentifiers?.length }}
-    </button>
+    </ion-button>
 	</ion-toolbar>
 </ion-footer>
 
@@ -227,6 +235,6 @@
 	</div>
 
 	<div class="backdrop-footer">
-		<button ion-button small (click)="cancelDownload()">{{ 'CANCEL' | translate }}</button>
+		<ion-button small (click)="cancelDownload()">{{ 'CANCEL' | translate }}</ion-button>
 	</div>
 </ion-backdrop>

@@ -1,0 +1,22 @@
+<ion-content>
+  <ion-list>
+      <ion-item style="background-color:dodgerblue;color:white">
+          <span>{{assessmentDetails?.index}}</span>
+          <ion-icon (click)="cancel()" ios="ios-close" md="md-close" item-end></ion-icon>
+      </ion-item>
+      <ion-item>
+          <p>{{'MARKS' | translate}}</p>
+          <h3>{{assessmentDetails?.result}}</h3>
+      </ion-item>
+      <ion-item class="assessmentDetails">
+          <p>{{'QUESTION' | translate}}</p>
+          <h3>{{assessmentDetails?.qtitle}}</h3>
+      </ion-item>
+      <ion-item class="assessmentDetails">
+          <p>{{ 'DESCRIPTION' | translate}}</p>
+          <h3 *ngIf="assessmentDetails?.qdesc">{{assessmentDetails?.qdesc}}</h3>
+          <h3 *ngIf="!assessmentDetails?.qdesc">{{'NO_DESCRIPTION' | translate}}</h3>
+      </ion-item>
+  </ion-list>
+
+</ion-content>

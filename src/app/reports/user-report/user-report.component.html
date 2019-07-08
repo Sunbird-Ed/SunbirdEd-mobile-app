@@ -1,0 +1,20 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>{{contentName}}</ion-title>
+    <ion-buttons slot="start">
+      <ion-button icon-only (click)="goBack()">
+        <ion-icon name="arrow-back"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-buttons slot="end">
+      <ion-button icon-only (click)="importcsv()">
+        <ion-icon ios="ios-download" md="md-download"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+
+</ion-header>
+
+<ion-content class="fromUser">
+  <assessment-details [assessmentData]="assessmentData" [columns]="columns"></assessment-details>
+</ion-content>
