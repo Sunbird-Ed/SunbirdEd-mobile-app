@@ -66,17 +66,17 @@ import {
 } from '../../services/telemetry-constants';
 import { ProfileConstants, ContentType, EventTopics, MimeType, PreferenceKey, ShareUrl } from '../app.constant';
 import { BatchConstants } from '../app.constant';
-// import { ContentShareHandler } from '../../services/con';
+import { ContentShareHandlerService } from '../../services/content/content-share-handler.service';
 import { SbGenericPopoverComponent } from '../components/popups/sb-generic-popover/sb-generic-popover.component';
 import { ContentActionsComponent, ContentRatingAlertComponent } from '../components';
 declare const cordova;
 
 @Component({
   selector: 'app-enrolled-course-details-page',
-  templateUrl: './enrolled-course-details-page.page.html',
-  styleUrls: ['./enrolled-course-details-page.page.scss'],
+  templateUrl: './enrolled-course-details-page.html',
+  styleUrls: ['./enrolled-course-details-page.scss'],
 })
-export class EnrolledCourseDetailsPagePage implements OnInit {
+export class EnrolledCourseDetailsPage implements OnInit {
 
   /**
    * Contains content details
@@ -174,7 +174,7 @@ export class EnrolledCourseDetailsPagePage implements OnInit {
   shouldGenerateEndTelemetry = false;
   source = '';
   firstChild;
-  /**Whole child content is stored and it is used to find first child */
+  /** Whole child content is stored and it is used to find first child */
   childContentsData;
   isBatchNotStarted = false;
   // @ViewChild(Navbar) navBar: any;
@@ -204,7 +204,7 @@ export class EnrolledCourseDetailsPagePage implements OnInit {
     private datePipe: DatePipe,
     private utilityService: UtilityService,
     private headerService: AppHeaderService,
-    // private contentShareHandler: ContentShareHandler
+    private contentShareHandler: ContentShareHandlerService
   ) {
 
     this.appGlobalService.getUserId();
@@ -1196,7 +1196,7 @@ export class EnrolledCourseDetailsPagePage implements OnInit {
   }
 
   share() {
-    // this.contentShareHandler.shareContent(this.course, this.corRelationList);
+    this.contentShareHandler.shareContent(this.course, this.corRelationList);
   }
 
   ionViewDidLoad() {

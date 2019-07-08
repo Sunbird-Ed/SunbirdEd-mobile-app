@@ -1,0 +1,30 @@
+@import "../../../global.scss";
+:host {
+    .subtitle {
+        text-transform: capitalize;
+       
+        @extend .font-weight-700;
+        &.buttontext{
+            color: map-get($colors, primary);
+        }
+        &.mytitle{
+            color: map-get($colors, primary_black);
+            background-color:map-get($colors, light_gray) !important;
+            font-size: 1.2em;
+        }
+        &.head{
+            font-size: 1.2em;
+            color: map-get($colors, primary_black);
+            background-color:map-get($colors, light_gray) !important;
+        }
+        &.title{
+            color: map-get($colors, primary_black);
+            font-size: 1em;
+        }
+
+        
+    }
+    .item-divider .header{
+        
+    }
+}
