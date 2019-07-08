@@ -1,0 +1,59 @@
+@import "src/global.scss";
+:host {
+  .clear-btn {
+    // Migration todo
+    // @include float(end);
+    padding-top: 10px;
+  }
+  .sb-view-all-title {
+    width: inherit;
+  }
+  .scroll-content {
+    padding-bottom: 80px;
+    background-color: #d9e5f0;
+  }
+
+  .oval {
+    background: $white;
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    white-space: nowrap;
+    text-align: center;
+    margin: 1em 0;
+    position: relative;
+  }
+
+  .oval img {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 60px;
+    height: 60px;
+    margin-top: -30px; /*50% of the height*/
+    margin-left: -30px;
+  }
+
+  .oval-wrapper {
+    display: flex;
+    justify-content: center;
+    flex: 1 1 auto;
+    flex-wrap: wrap;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 5vh;
+    h4 {
+      height: 22px;
+      color: $gray-200;
+      font-family: "Noto Sans";
+      font-size: 16px;
+      font-weight: bold;
+      line-height: 22px;
+      text-align: center;
+    }
+    p {
+      text-align: center;
+      width: 80vw;
+    }
+  }
+}

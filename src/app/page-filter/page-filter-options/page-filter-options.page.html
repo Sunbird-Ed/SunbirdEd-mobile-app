@@ -7,7 +7,7 @@
   <ion-content [fullscreen]="true">
     <ion-grid class="scroll-list" *ngIf="facets?.name !== 'Organization' && facets?.name !== 'Purpose'">
       <ion-row *ngIf="facets?.values && facets?.values?.length">
-        <ion-col col-6 *ngFor="let facetValue of facets?.values; let index=index">
+        <ion-col size="6" *ngFor="let facetValue of facets?.values; let index=index">
           <ion-item no-lines no-padding>
             <ion-label text-capitalize>{{ facetValue }}</ion-label>
             <ion-checkbox [checked]="isSelected(facetValue)" (ionChange)="changeValue(facetValue, index)">
@@ -18,7 +18,7 @@
     </ion-grid>
     <ion-grid class="scroll-list" *ngIf="facets?.name === 'Purpose'">
       <ion-row *ngIf="facets?.values && facets?.values?.length">
-        <ion-col col-12 *ngFor="let facetValue of facets?.values; let index=index">
+        <ion-col size="12" *ngFor="let facetValue of facets?.values; let index=index">
           <ion-item no-lines no-padding>
             <ion-label text-capitalize>{{ facetValue }}</ion-label>
             <ion-checkbox [checked]="isSelected(facetValue)" (click)="changeValue(facetValue, index)"></ion-checkbox>
@@ -28,7 +28,7 @@
     </ion-grid>
     <ion-grid class="scroll-list" *ngIf="facets?.name === 'Organization'">
       <ion-row *ngIf="facets?.values && facets?.values?.length">
-        <ion-col col-6 *ngFor="let facetValue of facets?.values; let index=index">
+        <ion-col size="6" *ngFor="let facetValue of facets?.values; let index=index">
           <ion-item no-lines no-padding>
             <ion-label text-capitalize>{{ facetValue.orgName }}</ion-label>
             <ion-checkbox [checked]="isSelected(facetValue.hashTagId)"
@@ -41,7 +41,7 @@
   <ion-footer class="footer">
     <ion-row>
       <ion-col>
-        <button ion-button block (click)="confirm()">{{ 'SELECT' | translate }}</button>
+        <ion-button expand="block" (click)="confirm()">{{ 'SELECT' | translate }}</ion-button>
       </ion-col>
     </ion-row>
   </ion-footer>
@@ -72,10 +72,10 @@
       <ion-list class="topic-item">
         <ion-item *ngFor="let facetValue of topicsArr; let i=index" no-lines no-padding class="div-space">
           <div text-wrap (click)="toggleGroup(i)" [ngClass]="{active: isGroupShown(i)}" style="font-size: 16px;">
-            <ion-col col-1 style="margin-left:15px;padding: 0;">
+            <ion-col size="1" style="margin-left:15px;padding: 0;">
               <ion-icon class="icon-margin" item-left [name]="isGroupShown(i) ? 'remove' : 'add'"></ion-icon>
             </ion-col>
-            <ion-col col-11 style="padding:0;margin-left:0;">
+            <ion-col size="11" style="padding:0;margin-left:0;">
               <span>
                 {{facetValue}}
               </span>
@@ -99,10 +99,10 @@
     <ion-footer class="topicFooter">
       <ion-row>
         <ion-col>
-          <button ion-button outline block (click)="cancel()">{{ 'CANCEL' | translate }}</button>
+          <ion-button fill="outline" expand="block" (click)="cancel()">{{ 'CANCEL' | translate }}</ion-button>
         </ion-col>
         <ion-col>
-          <button ion-button block (click)="apply()">{{ 'APPLY' | translate }}</button>
+          <ion-button expand="block" (click)="apply()">{{ 'APPLY' | translate }}</ion-button>
         </ion-col>
       </ion-row>
     </ion-footer>

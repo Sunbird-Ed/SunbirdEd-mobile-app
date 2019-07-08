@@ -165,15 +165,15 @@
 
 <ion-footer *ngIf="courseCardData?.batchId">
 	<ion-toolbar class="toolbar-p-16">
-		<ion-button block *ngIf="!showResumeBtn && childrenData?.length" (click)="startContent()">{{
+		<ion-button expand="block" *ngIf="!showResumeBtn && childrenData?.length" (click)="startContent()">{{
 			'START_COURSE' | translate }}</ion-button>
-		<ion-button block *ngIf="showResumeBtn" (click)="resumeContent(courseCardData?.lastReadContentId)">{{
+		<ion-button expand="block" *ngIf="showResumeBtn" (click)="resumeContent(courseCardData?.lastReadContentId)">{{
 			'RESUME_COURSE' | translate }}</ion-button>
-		<ion-button block outline *ngIf="downloadIdentifiers?.length && !isDownloadStarted" (click)="downloadAllContent();">{{
+		<ion-button expand="block" fill="outline" *ngIf="downloadIdentifiers?.length && !isDownloadStarted" (click)="downloadAllContent();">{{
 			'DOWNLOAD_ALL_CONTENT' | translate }} ({{ (downloadSize && downloadSize > 0) ? (downloadSize | fileSize) : 'O BYTES'
 			}})
 		</ion-button>
-    <ion-button *ngIf="isDownloadStarted" block outline
+    <ion-button *ngIf="isDownloadStarted" expand="block" fill="outline"
             [ngStyle]="{'background': '-webkit-linear-gradient(left, #DBECFF '  +(currentCount/queuedIdentifiers.length)*100+ '%, white 0%)'}">
       {{ 'DOWNLOADING_2' | translate }}... {{ currentCount }} / {{ queuedIdentifiers?.length }}
     </ion-button>
@@ -181,7 +181,7 @@
 </ion-footer>
 <ion-footer *ngIf="!courseCardData?.batchId && course?.createdBy !== userId && !isAlreadyEnrolled">
 	<ion-toolbar class="toolbar-p-16">
-		<ion-button block (click)="navigateToBatchListPage();">{{ 'ENROLL_COURSE' | translate }}</ion-button>
+		<ion-button expand="block" (click)="navigateToBatchListPage();">{{ 'ENROLL_COURSE' | translate }}</ion-button>
 	</ion-toolbar>
 </ion-footer>
 
@@ -192,6 +192,6 @@
 	</div>
 
 	<div class="backdrop-footer">
-		<ion-button small (click)="cancelDownload()">{{ 'CANCEL' | translate }}</ion-button>
+		<ion-button size="small" (click)="cancelDownload()">{{ 'CANCEL' | translate }}</ion-button>
 	</div>
 </ion-backdrop>
