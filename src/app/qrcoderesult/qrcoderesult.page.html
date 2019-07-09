@@ -5,7 +5,7 @@
 
     </ion-title>
     <ion-buttons slot="primary">
-      <ion-button clear *ngIf="!appGlobalService?.isUserLoggedIn() && !appGlobalService?.isProfileSettingsCompleted"
+      <ion-button fill="clear" *ngIf="!appGlobalService?.isUserLoggedIn() && !appGlobalService?.isProfileSettingsCompleted"
         (click)="skipSteps()">
         {{'SKIP' | translate}}
       </ion-button>
@@ -56,13 +56,13 @@
       <ion-toolbar no-padding *ngIf="content.contentData?.streamingUrl  &&  !content.isAvailableLocally">
         <ion-row no-padding>
           <ion-col no-padding style="z-index: 100;" *ngIf="!content?.downloadable" (click)="navigateToDetailsPage(content)">
-            <ion-button no-padding block color="light" style="color:#0D7DFC; z-index: 100;" text-uppercase>
+            <ion-button no-padding expand="block" color="light" style="color:#0D7DFC; z-index: 100;" text-uppercase>
               <ion-icon class="downloadicon" name="arrow-round-down"></ion-icon>&nbsp;
               {{'DOWNLOAD'| translate}}
             </ion-button>
           </ion-col>
           <ion-col no-padding *ngIf="content.contentData?.streamingUrl">
-            <ion-button no-padding class="custom-btn play" block (click)="playContent(content)">
+            <ion-button no-padding class="custom-btn play" expand="block" (click)="playContent(content)">
               <ion-icon name="play"></ion-icon>&nbsp;{{'PLAY' | translate}}
             </ion-button>
           </ion-col>
@@ -70,14 +70,14 @@
       </ion-toolbar>
 <!-- play locally if content downloaded  -->
       <ion-toolbar no-padding *ngIf="content.isAvailableLocally && !content.isUpdateAvailable">
-        <ion-button no-padding block (click)="navigateToDetailsPage(content)" text-uppercase [disabled]="isDownloadStarted">
+        <ion-button no-padding expand="block" (click)="navigateToDetailsPage(content)" text-uppercase [disabled]="isDownloadStarted">
           <ion-icon name="play"></ion-icon>&nbsp;{{'PLAY'|translate}}
         </ion-button>
       </ion-toolbar>
 
        <!-- Download content if not available locally  -->
       <ion-toolbar no-padding *ngIf="!content.contentData?.streamingUrl && !content.isAvailableLocally">
-        <ion-button no-padding block color="light" style="color:#0D7DFC" (click)="navigateToDetailsPage(content)" text-uppercase>
+        <ion-button no-padding expand="block" color="light" style="color:#0D7DFC" (click)="navigateToDetailsPage(content)" text-uppercase>
           <ion-icon  class="downloadicon" name="arrow-round-down"></ion-icon>&nbsp;{{'DOWNLOAD'| translate}}
         </ion-button>
       </ion-toolbar>
@@ -86,12 +86,12 @@
        <ion-toolbar no-padding *ngIf="content.isUpdateAvailable  &&  content.isAvailableLocally">
         <ion-row no-padding>
           <ion-col style="z-index: 100;" *ngIf="content.isUpdateAvailable" (click)="navigateToDetailsPage(content)" no-padding>
-              <ion-button  no-margin block color="light" style="color:#0D7DFC; z-index: 100;" text-uppercase>
+              <ion-button  no-margin expand="block" color="light" style="color:#0D7DFC; z-index: 100;" text-uppercase>
                 <ion-icon  class="downloadicon" name="arrow-round-down"></ion-icon>&nbsp;{{ 'UPDATE' | translate }}
              </ion-button>
         </ion-col>
           <ion-col no-padding *ngIf="content.contentData?.streamingUrl" no-padding>
-            <ion-button  class="custom-btn play" no-margin   block (click)="navigateToDetailsPage(content)">
+            <ion-button  class="custom-btn play" no-margin   expand="block" (click)="navigateToDetailsPage(content)">
               <ion-icon name="play"></ion-icon>&nbsp;{{'PLAY' | translate}}
             </ion-button>
           </ion-col>
@@ -108,6 +108,6 @@
 	</div>
 
 	<div class="backdrop-footer">
-		<ion-button small (click)="cancelDownload()">{{ 'CANCEL' | translate }}</ion-button>
+		<ion-button size="small" (click)="cancelDownload()">{{ 'CANCEL' | translate }}</ion-button>
 	</div>
 </ion-backdrop>
