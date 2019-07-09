@@ -334,7 +334,6 @@ declare const buildconfigreader;
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
-    UserAndGroupsRoutingModule,
     AppRoutingModule,
     ComponentsModule,
     IonicImageLoader.forRoot(),
