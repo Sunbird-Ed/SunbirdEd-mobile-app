@@ -493,7 +493,6 @@ export class AppComponent implements OnInit, AfterViewInit {
             this.appGlobalService.isProfileSettingsCompleted = false;
             // migration-TODO
             // this.rootPage = LanguageSettingsPage;
-            console.log('LS1');
             this.router.navigate(['settings/language-setting', false]);
             return;
           }
@@ -540,7 +539,6 @@ export class AppComponent implements OnInit, AfterViewInit {
                 } else {
                   // migration-TODO
                   // await this.nav.insertPages(0, [{ page: LanguageSettingsPage }, { page: UserTypeSelectionPage }]);
-                  console.log('LS2');
                   this.router.navigate(['settings/language-setting', false]);
                 }
               } catch (e) {
@@ -670,7 +668,6 @@ export class AppComponent implements OnInit, AfterViewInit {
         //   this.app.getRootNavs()[0].push(LanguageSettingsPage, {
         //     isFromSettings: true
         //
-            console.log('LS3');
             this.router.navigate(['settings/language-setting', false]);
         /*if (this.app.getRootNavs().length > 0) {
           this.app.getRootNavs()[0].push(LanguageSettingsPage, {
