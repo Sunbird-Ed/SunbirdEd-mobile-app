@@ -64,32 +64,6 @@ import { RouterLinks } from './app.constant';
   templateUrl: 'app.component.html'
 })
 export class AppComponent implements OnInit, AfterViewInit {
-  public appPages = [
-    {
-      title: 'Home',
-      url: '/home',
-      icon: 'home',
-      data: ''
-    },
-    {
-      title: 'List',
-      url: '/list',
-      icon: 'list',
-      data: ''
-    },
-    {
-      title: 'Language Settings',
-      url: '/language-settings',
-      icon: 'globe',
-      data: 'true'
-    },
-    {
-      title: 'User Type Selection',
-      url: '/user-type-selection',
-      icon: 'list',
-      data: 'false'
-    }
-  ];
   rootPage: any;
   public counter = 0;
   headerConfig = {
@@ -694,7 +668,7 @@ export class AppComponent implements OnInit, AfterViewInit {
         //   this.app.getRootNavs()[0].push(LanguageSettingsPage, {
         //     isFromSettings: true
         //
-        this.router.navigate(['settings/language-setting', false]);
+            this.router.navigate(['settings/language-setting', false]);
         /*if (this.app.getRootNavs().length > 0) {
           this.app.getRootNavs()[0].push(LanguageSettingsPage, {
             isFromSettings: true
