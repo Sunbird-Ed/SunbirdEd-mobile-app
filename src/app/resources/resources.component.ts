@@ -836,7 +836,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
     this.getCategoryData();
     this.getCurrentUser();
     if (refresher) {
-      refresher.complete();
+      refresher.target.complete();
       this.telemetryGeneratorService.generatePullToRefreshTelemetry(PageId.LIBRARY, Environment.HOME);
       this.getGroupByPage();
     } else {

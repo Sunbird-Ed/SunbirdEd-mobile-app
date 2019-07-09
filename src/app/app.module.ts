@@ -53,6 +53,7 @@ import { UserTypeSelectionPageModule } from './user-type-selection/user-type-sel
 import { ComponentsModule } from './components/components.module';
 import { UserAndGroupsRoutingModule } from './user-and-groups/user-and-groups-routing.module';
 import { UserAndGroupsPageModule } from './user-and-groups/user-and-groups.module';
+import { LocalNotifications } from '@ionic-native/local-notifications/ngx';
 
 
 
@@ -232,7 +233,7 @@ export const sunbirdSdkFactory =
           debugMode: false
         },
         apiConfig: {
-          debugMode: false,
+          debugMode: true,
           host: buildConfigValues['BASE_URL'],
           user_authentication: {
             redirectUrl: buildConfigValues['OAUTH_REDIRECT_URL'],
@@ -361,6 +362,7 @@ declare const buildconfigreader;
   providers: [
     StatusBar,
     AppVersion,
+    LocalNotifications,
     SocialSharing,
     WebView,
     SplashScreen, // Migration-TODO

@@ -148,8 +148,9 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.imageLoaderConfig.enableDebugMode();
       this.imageLoaderConfig.setMaximumCacheSize(100 * 1024 * 1024);
       this.telemetryGeneratorService.genererateAppStartTelemetry(await utilityService.getDeviceSpec());
-      this.generateNetworkTelemetry();
-      this.autoSyncTelemetry();
+      // Migration todo
+      // this.generateNetworkTelemetry();
+      // this.autoSyncTelemetry();
       this.subscribeEvents();
       this.showAppWalkThroughScreen();
       this.startOpenrapDiscovery();

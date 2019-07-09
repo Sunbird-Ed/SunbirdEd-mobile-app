@@ -1,9 +1,9 @@
-import {GUEST_STUDENT_TABS, GUEST_TEACHER_TABS, initTabs} from '../../app/module.service';
+import { GUEST_STUDENT_TABS, GUEST_TEACHER_TABS, initTabs } from '../../app/module.service';
 
-import {Component, Inject, ViewChild} from '@angular/core';
-import {TranslateService} from '@ngx-translate/core';
-import {FormBuilder, FormGroup} from '@angular/forms';
-import {PreferenceKey, ProfileConstants} from '../../app/app.constant';
+import { Component, Inject, ViewChild } from '@angular/core';
+import { TranslateService } from '@ngx-translate/core';
+import { FormBuilder, FormGroup } from '@angular/forms';
+import { PreferenceKey, ProfileConstants } from '../../app/app.constant';
 import * as _ from 'lodash';
 import {
   CategoryTerm,
@@ -30,6 +30,7 @@ import {
 import { Platform, Events, LoadingController } from '@ionic/angular';
 import { ImpressionType, PageId, Environment, InteractSubtype, InteractType } from '../../services/telemetry-constants';
 import { Router } from '@angular/router';
+import { AppVersion } from "@ionic-native/app-version/ngx";
 
 @Component({
   selector: 'app-profile-settings',
@@ -40,9 +41,9 @@ export class ProfileSettingsPage {
 
   public pageId = 'ProfileSettingsPage';
 
-  // @ViewChild('boardSelect') boardSelect: Select;
-  // @ViewChild('mediumSelect') mediumSelect: Select;
-  // @ViewChild('gradeSelect') gradeSelect: Select;
+  @ViewChild('boardSelect') boardSelect: any;
+  @ViewChild('mediumSelect') mediumSelect: any;
+  @ViewChild('gradeSelect') gradeSelect: any;
 
   counter = 0;
   userForm: FormGroup;
@@ -65,10 +66,7 @@ export class ProfileSettingsPage {
   hideBackButton = true;
   appName: string;
   headerObservable: any;
-  // syllabusOptions = {
-  //   title: this.commonUtilService.translateMessage('SYLLABUS').toLocaleUpperCase(),
-  //   cssClass: 'select-box'
-  // };
+
   boardOptions = {
     title: this.commonUtilService.translateMessage('BOARD_OPTION_TEXT'),
     cssClass: 'select-box'
@@ -101,6 +99,7 @@ export class ProfileSettingsPage {
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
     private headerService: AppHeaderService,
     private router: Router,
+    private appVersion: AppVersion
   ) {
     this.getNavParams();
     this.preferences.getString(PreferenceKey.SELECTED_LANGUAGE_CODE).toPromise()
@@ -133,10 +132,9 @@ export class ProfileSettingsPage {
       PageId.ONBOARDING_PROFILE_PREFERENCES,
       Environment.ONBOARDING
     );
-    /* migration-TODO
     this.appVersion.getAppName().then((appName) => {
       this.appName = (appName).toUpperCase();
-    }); */
+    });
   }
 
   ionViewWillEnter() {
@@ -185,7 +183,7 @@ export class ProfileSettingsPage {
    * Initializes guest user object
    */
   getGuestUser() {
-    this.profileService.getActiveSessionProfile({requiredFields: ProfileConstants.REQUIRED_FIELDS})
+    this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS })
       .toPromise()
       .then((response: any) => {
         this.profile = response;
@@ -199,9 +197,9 @@ export class ProfileSettingsPage {
         this.profileForTelemetry = this.profile;
         this.initUserForm();
       }).catch(() => {
-      this.profile = undefined;
-      this.initUserForm();
-    });
+        this.profile = undefined;
+        this.initUserForm();
+      });
   }
 
   /**
@@ -243,7 +241,7 @@ export class ProfileSettingsPage {
         if (result && result !== undefined && result.length > 0) {
           result.forEach(element => {
             // renaming the fields to text, value and checked
-            const value = {'name': element.name, 'code': element.identifier};
+            const value = { 'name': element.name, 'code': element.identifier };
             this.syllabusList.push(value);
           });
           await this.loader.dismiss();
@@ -257,10 +255,10 @@ export class ProfileSettingsPage {
                 this.categories = framework.categories;
                 this.resetForm(0, false);
               }).catch(async error => {
-              console.error('Error', error);
-              await this.loader.dismiss();
-              this.commonUtilService.showToast('NEED_INTERNET_TO_CHANGE');
-            });
+                console.error('Error', error);
+                await this.loader.dismiss();
+                this.commonUtilService.showToast('NEED_INTERNET_TO_CHANGE');
+              });
           }
         } else {
           await this.loader.dismiss();
@@ -341,9 +339,9 @@ export class ProfileSettingsPage {
           };
           this.getCategoryData(request, currentField);
         }).catch(async () => {
-        this.commonUtilService.showToast('NEED_INTERNET_TO_CHANGE');
-        await loader.dismiss();
-      });
+          this.commonUtilService.showToast('NEED_INTERNET_TO_CHANGE');
+          await loader.dismiss();
+        });
 
     } else {
       const request: GetFrameworkCategoryTermsRequest = {
@@ -377,7 +375,7 @@ export class ProfileSettingsPage {
           this.loader = await this.commonUtilService.getLoader();
           this.loader.present();
         }
-        oldAttribute.board = this.profileForTelemetry.board &&  this.profileForTelemetry.board.length ? this.profileForTelemetry.board : '';
+        oldAttribute.board = this.profileForTelemetry.board && this.profileForTelemetry.board.length ? this.profileForTelemetry.board : '';
         newAttribute.board = this.userForm.value.syllabus ? this.userForm.value.syllabus : '';
         if (!_.isEqual(oldAttribute, newAttribute)) {
           this.appGlobalService.generateAttributeChangeTelemetry(
@@ -556,7 +554,7 @@ export class ProfileSettingsPage {
         this.events.publish('refresh:profile');
         this.appGlobalService.guestUserProfile = res;
         this.commonUtilService.showToast('PROFILE_UPDATE_SUCCESS');
-        this.events.publish('onboarding-card:completed', {isOnBoardingCardCompleted: true});
+        this.events.publish('onboarding-card:completed', { isOnBoardingCardCompleted: true });
         this.events.publish('refresh:profile');
         this.appGlobalService.guestUserProfile = res;
         this.appGlobalService.setOnBoardingCompleted();
@@ -603,10 +601,10 @@ export class ProfileSettingsPage {
 
   handleHeaderEvents($event) {
     switch ($event.name) {
-      case 'back':  this.telemetryGeneratorService.generateBackClickedTelemetry(
-                    PageId.ONBOARDING_PROFILE_PREFERENCES, Environment.ONBOARDING, true);
-                    this.dismissPopup();
-                    break;
+      case 'back': this.telemetryGeneratorService.generateBackClickedTelemetry(
+        PageId.ONBOARDING_PROFILE_PREFERENCES, Environment.ONBOARDING, true);
+        this.dismissPopup();
+        break;
     }
   }
 
@@ -616,7 +614,7 @@ export class ProfileSettingsPage {
       InteractSubtype.QRCodeScanClicked,
       Environment.ONBOARDING,
       PageId.ONBOARDING_PROFILE_PREFERENCES,
-      );
+    );
     this.scanner.startScanner(PageId.ONBOARDING_PROFILE_PREFERENCES, false);
   }
 }

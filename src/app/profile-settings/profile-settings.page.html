@@ -1,7 +1,3 @@
-<!-- <ion-header *ngIf="!hideBackButton">
-	<ion-navbar></ion-navbar>
-</ion-header> -->
-
 <ion-content class="padding-bottom-if-header">
 	<div class="qr-container">
 		<div class="qr-content">
@@ -16,7 +12,7 @@
 			<div class="qr-instruction-container pull-left">
 				<div class="qr-instruction" >
 					<span class="title">{{'APP_QR_CODE' | translate: {'%s': appName} }}</span>
-					<span class="sub-titile">{{'QR_CODE_DETAILS' | translate}}</span>
+					<span class="sub-title">{{'QR_CODE_DETAILS' | translate}}</span>
 				</div>
 			</div>
 		</div>
@@ -61,8 +57,6 @@
 </ion-content>
 
 <ion-footer padding no-border>
-
-	{{userForm.invalid}}
 	<ion-button class="arrow-icon" [ngStyle]="{'background-color': btnColor}" [disabled]="userForm.invalid"
 		slot="end" expand="block" (click)="onSubmit()">
 		{{ 'BTN_SUBMIT' | translate }}
