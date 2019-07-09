@@ -6,22 +6,21 @@ import { RouterLinks } from './app.constant';
 const routes: Routes = [
   {
     path: '',
-    redirectTo: 'home',
+    redirectTo: RouterLinks.TABS,
     pathMatch: 'full',
   },
   {
-    path: 'home',
-    loadChildren: './home/home.module#HomePageModule'
-  },
-  {
-    path: 'list',
-    loadChildren: './list/list.module#ListPageModule'
+    path: RouterLinks.TABS,
+    loadChildren: './tabs/tabs.module#TabsPageModule'
   },
   {
     path: 'user-type-selection',
     loadChildren: './user-type-selection/user-type-selection.module#UserTypeSelectionPageModule'
   },
-  { path: RouterLinks.USER_AND_GROUPS, loadChildren: './user-and-groups/user-and-groups.module#UserAndGroupsPageModule' },
+  {
+    path: RouterLinks.USER_AND_GROUPS,
+    loadChildren: './user-and-groups/user-and-groups.module#UserAndGroupsPageModule'
+  },
   {
     path: 'resources',
     loadChildren: './resources/resources.module#ResourcesModule',
@@ -31,14 +30,9 @@ const routes: Routes = [
     path: 'view-more-activity', loadChildren: './view-more-activity/view-more-activity.module#ViewMoreActivityModule'
   },
   {
-    path: 'tabs',
-    loadChildren: './tabs/tabs.module#TabsPageModule'
-  },
-  {
     path: 'settings',
     loadChildren: './settings/settings.module#SettingsPageModule'
   },
-  // migration-TODO to be deleted
   { path: 'download-manager', loadChildren: './download-manager/download-manager.module#DownloadManagerPageModule' },
   { path: 'storage-settings', loadChildren: './storage-settings/storage-settings.module#StorageSettingsPageModule' },
   { path: 'courses', loadChildren: './courses/courses.module#CoursesPageModule' },

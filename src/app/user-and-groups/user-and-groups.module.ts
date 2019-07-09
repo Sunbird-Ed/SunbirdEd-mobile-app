@@ -14,17 +14,6 @@ import { GroupDetailsPageModule } from './group-details/group-details.module';
 import { GroupMembersPageModule } from './group-members/group-members.module';
 import { ShareUserAndGroupsPageModule } from './share-user-and-groups/share-user-and-groups.module';
 
-const routes: Routes = [
-  {
-    path: '',
-    component: UserAndGroupsPage
-  },
-  {
-    path: 'user-and-groups',
-    component: UserAndGroupsPage
-  }
-];
-
 @NgModule({
   imports: [
     CommonModule,
