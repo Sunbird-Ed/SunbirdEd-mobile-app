@@ -2,6 +2,8 @@ import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 import { AuthGuardService } from '../services/auth-guard.service';
 import { RouterLinks } from './app.constant';
+import { HasNotBeenOnboardedGuard } from '@app/guards/has-not-been-onboarded.guard';
+import { ShouldDisplayProfileSettingsGuard } from '@app/guards/should-display-profile-settings.guard';
 
 const routes: Routes = [
   {
@@ -18,14 +20,24 @@ const routes: Routes = [
     loadChildren: './list/list.module#ListPageModule'
   },
   {
+    path: 'language-settings',
+    loadChildren: './language-settings/language-settings.module#LanguageSettingsModule',
+    canLoad: [HasNotBeenOnboardedGuard],
+  },
+  {
     path: 'user-type-selection',
-    loadChildren: './user-type-selection/user-type-selection.module#UserTypeSelectionPageModule'
+    loadChildren: './user-type-selection/user-type-selection.module#UserTypeSelectionPageModule',
+    canLoad: [HasNotBeenOnboardedGuard],
+  },
+  {
+    path: 'profile-settings',
+    loadChildren: './profile-settings/profile-settings.module#ProfileSettingsPageModule',
+    canLoad: [HasNotBeenOnboardedGuard, ShouldDisplayProfileSettingsGuard],
   },
   { path: RouterLinks.USER_AND_GROUPS, loadChildren: './user-and-groups/user-and-groups.module#UserAndGroupsPageModule' },
   {
     path: 'resources',
     loadChildren: './resources/resources.module#ResourcesModule',
-    canLoad: [AuthGuardService]
   },
   {
     path: 'view-more-activity', loadChildren: './view-more-activity/view-more-activity.module#ViewMoreActivityModule'
@@ -50,7 +62,6 @@ const routes: Routes = [
     path: 'enrolled-course-details-page', loadChildren:
       './enrolled-course-details-page/enrolled-course-details-page.module#EnrolledCourseDetailsPagePageModule'
   },
-  { path: 'profile-settings', loadChildren: './profile-settings/profile-settings.module#ProfileSettingsPageModule' },
   { path: 'qrscanner-alert', loadChildren: './qrscanner-alert/qrscanner-alert.module#QrscannerAlertPageModule' },
   { path: 'course-batches', loadChildren: './course-batches/course-batches.module#CourseBatchesPageModule' },
   { path: 'collection-detail-etb', loadChildren: './collection-detail-etb/collection-detail-etb.module#CollectionDetailEtbPageModule' },
@@ -74,6 +85,6 @@ const routes: Routes = [
     RouterModule.forRoot(routes)
   ],
   exports: [RouterModule],
-  providers: [AuthGuardService],
+  providers: [HasNotBeenOnboardedGuard, ShouldDisplayProfileSettingsGuard],
 })
 export class AppRoutingModule { }
