@@ -10,15 +10,15 @@
       <div *ngIf="currentViewText.type === 'appRate'">
         <rating #rating></rating>
         <ion-row padding-bottom>
-          <ion-col size="6" class="btn-pr-8"><ion-button outline block class="app-rate-btn-outline" (click)="rateLater()">{{'BTN_LATER' | translate}}</ion-button></ion-col>
-          <ion-col size="6" class="btn-pl-8"><ion-button [disabled]="!rating.value" block class="app-rate-btn" (click)="submitRating(rating.value)">{{'BTN_SUBMIT' | translate}}</ion-button></ion-col>
+          <ion-col size="6" class="btn-pr-8"><ion-button fill="outline" expand="block" class="app-rate-btn-outline" (click)="rateLater()">{{'BTN_LATER' | translate}}</ion-button></ion-col>
+          <ion-col size="6" class="btn-pl-8"><ion-button [disabled]="!rating.value" expand="block" class="app-rate-btn" (click)="submitRating(rating.value)">{{'BTN_SUBMIT' | translate}}</ion-button></ion-col>
         </ion-row>
       </div>
   
       <div *ngIf="currentViewText.type === 'storeRate'">
         <ion-row padding-bottom>
-          <ion-col size="5" class="btn-pr-8"><ion-button outline block class="app-rate-btn-outline" (click)="rateLater()">{{'BTN_LATER' | translate}}</ion-button></ion-col>
-          <ion-col size="7" class="btn-pl-8"><ion-button block class="app-rate-btn app-rate-btn-ellipsis" (click)="rateOnStore()">{{'BTN_RATE_ON_PLAYSTORE' | translate}}</ion-button></ion-col>
+          <ion-col size="5" class="btn-pr-8"><ion-button fill="outline" expand="block" class="app-rate-btn-outline" (click)="rateLater()">{{'BTN_LATER' | translate}}</ion-button></ion-col>
+          <ion-col size="7" class="btn-pl-8"><ion-button expand="block" class="app-rate-btn app-rate-btn-ellipsis" (click)="rateOnStore()">{{'BTN_RATE_ON_PLAYSTORE' | translate}}</ion-button></ion-col>
         </ion-row>
       </div>
   
