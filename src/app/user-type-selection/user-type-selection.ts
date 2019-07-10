@@ -6,13 +6,8 @@ import { Location } from '@angular/common';
 import { Router, ActivatedRoute, ParamMap, NavigationExtras } from '@angular/router';
 // import {GUEST_STUDENT_TABS, GUEST_TEACHER_TABS, initTabs, Map, PreferenceKey} from '../app.constant';
 // migration-TODO
-<<<<<<< HEAD
-import { PreferenceKey } from '../app.constant';
-import { AppGlobalService, CommonUtilService, TelemetryGeneratorService, AppHeaderService, SunbirdQRScanner } from '../../services/index';
-=======
 import {PreferenceKey, RouterLinks} from '../app.constant';
 import {AppGlobalService, CommonUtilService, TelemetryGeneratorService, AppHeaderService, SunbirdQRScanner} from '../../services/index';
->>>>>>> d21e382724f179828ff77345083db2f27a8d379a
 // import {SunbirdQRScanner} from '@app/pages/qrscanner';
 // import {LanguageSettingsPage} from '@app/pages/language-settings/language-settings';
 import { Profile, ProfileService, ProfileSource, ProfileType, SharedPreferences, } from 'sunbird-sdk';
