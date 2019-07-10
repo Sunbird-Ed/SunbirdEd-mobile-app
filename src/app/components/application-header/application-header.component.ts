@@ -83,54 +83,54 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
   }
 
   test() {
-    this.router.navigateByUrl('/resources');
+    this.router.navigateByUrl(`/${RouterLinks.RESOURCES}`);
   }
   //  migration-TODO to be deleted
 
   goToDownloadManager() {
-    this.router.navigateByUrl('/download-manager');
+    this.router.navigateByUrl(`/${RouterLinks.DOWNLOAD_MANAGER}`);
   }
   goToStorageSettings() {
-    this.router.navigateByUrl('/storage-settings');
+    this.router.navigateByUrl(`/${RouterLinks.STORAGE_SETTINGS}`);
   }
 
   gotoTabs() {
     this.router.navigateByUrl(RouterLinks.TABS);
   }
   goToCourses() {
-    this.router.navigateByUrl('/courses');
+    this.router.navigateByUrl(`/${RouterLinks.COURSES}`);
   }
   goToActiveDonwloads() {
-    this.router.navigateByUrl('/active-downloads');
+    this.router.navigateByUrl(`/${RouterLinks.ACTIVE_DOWNLOADS}`);
   }
   goToCourseBatches() {
-    this.router.navigateByUrl('/course-batches');
+    this.router.navigateByUrl(`/${RouterLinks.COURSE_BATCHES}`);
   }
   goToCourseEnrollCourseDetails() {
-    this.router.navigateByUrl('/enrolled-course-details-page');
+    this.router.navigateByUrl(`/${RouterLinks.ENROLLED_COURSE_DETAILS}`);
   }
   goToCollectionDetails() {
-    this.router.navigateByUrl('/collection-details');
+    this.router.navigateByUrl(`/${RouterLinks.COLLECTION_DETAILS}`);
   }
 
   goToCollectionEtb() {
-    this.router.navigateByUrl('/collection-detail-etb');
+    this.router.navigateByUrl(`/${RouterLinks.COLLECTION_DETAIL_ETB}`);
   }
   goToPageFilter() {
-    this.router.navigateByUrl('/page-filter');
+    this.router.navigateByUrl(`/${RouterLinks.PAGE_FILTER}`);
   }
   goToQrCodeResult() {
-    this.router.navigateByUrl('/qrcoderesult');
+    this.router.navigateByUrl(`/${RouterLinks.QRCODERESULT}`);
   }
 
   goToContentDetails() {
-    this.router.navigateByUrl('/content-details');
+    this.router.navigateByUrl(`/${RouterLinks.CONTENT_DETAILS}`);
   }
   goToFAQ() {
-    this.router.navigateByUrl('/faq-help');
+    this.router.navigateByUrl(`/${RouterLinks.FAQ_HELP}`);
   }
   goToSettings() {
-    this.router.navigateByUrl('/settings');
+    this.router.navigateByUrl(`/${RouterLinks.SETTINGS}`);
   }
 
   setAppVersion(): any {
