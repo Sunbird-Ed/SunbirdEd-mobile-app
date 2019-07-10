@@ -13,7 +13,11 @@ import {
   AppHeaderService,
   TelemetryGeneratorService
 } from '@app/services';
+<<<<<<< HEAD
 import { Location } from '@angular/common';
+=======
+import { RouterLinks } from '@app/app/app.constant';
+>>>>>>> d21e382724f179828ff77345083db2f27a8d379a
 
 declare const cordova;
 
@@ -131,7 +135,7 @@ export class PermissionComponent {
               this.scannerService.startScanner(PageId.PERMISSION, true);
             } else if (this.appGlobalService.DISPLAY_ONBOARDING_CATEGORY_PAGE) {
               const navigationExtras: NavigationExtras = { state: { hideBackButton: false } };
-              this.router.navigate(['/profile-settings'], navigationExtras);
+              this.router.navigate([`/${RouterLinks.PROFILE_SETTINGS}`], navigationExtras);
             } else {
               const navigationExtras: NavigationExtras = { state: { loginMode: 'guest' } };
               this.router.navigate(['/tabs'], navigationExtras);
@@ -141,7 +145,7 @@ export class PermissionComponent {
       } else if (this.showProfileSettingPage) {
         // check if profileSetting page config. is ON
         const navigationExtras: NavigationExtras = { state: { hideBackButton: false } };
-        this.router.navigate(['/profile-settings'], navigationExtras);
+        this.router.navigate([`/${RouterLinks.PROFILE_SETTINGS}`], navigationExtras);
       } else {
         const navigationExtras: NavigationExtras = { state: { loginMode: 'guest' } };
         this.router.navigate(['/tabs'], navigationExtras);
@@ -153,7 +157,7 @@ export class PermissionComponent {
     this.generateInteractEvent(false);
     if (this.showProfileSettingPage || this.appGlobalService.DISPLAY_ONBOARDING_CATEGORY_PAGE) {
       const navigationExtras: NavigationExtras = { state: { hideBackButton: false } };
-      this.router.navigate(['/profile-settings'], navigationExtras);
+      this.router.navigate([`/${RouterLinks.PROFILE_SETTINGS}`], navigationExtras);
     } else if (this.showScannerPage) {
       this.permission.checkPermissions([AndroidPermission.CAMERA]).toPromise().then((cameraStatus) => {
         if (cameraStatus && cameraStatus[AndroidPermission.CAMERA] && cameraStatus[AndroidPermission.CAMERA].hasPermission) {

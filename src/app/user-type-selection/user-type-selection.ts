@@ -6,8 +6,13 @@ import { Location } from '@angular/common';
 import { Router, ActivatedRoute, ParamMap, NavigationExtras } from '@angular/router';
 // import {GUEST_STUDENT_TABS, GUEST_TEACHER_TABS, initTabs, Map, PreferenceKey} from '../app.constant';
 // migration-TODO
+<<<<<<< HEAD
 import { PreferenceKey } from '../app.constant';
 import { AppGlobalService, CommonUtilService, TelemetryGeneratorService, AppHeaderService, SunbirdQRScanner } from '../../services/index';
+=======
+import {PreferenceKey, RouterLinks} from '../app.constant';
+import {AppGlobalService, CommonUtilService, TelemetryGeneratorService, AppHeaderService, SunbirdQRScanner} from '../../services/index';
+>>>>>>> d21e382724f179828ff77345083db2f27a8d379a
 // import {SunbirdQRScanner} from '@app/pages/qrscanner';
 // import {LanguageSettingsPage} from '@app/pages/language-settings/language-settings';
 import { Profile, ProfileService, ProfileSource, ProfileType, SharedPreferences, } from 'sunbird-sdk';
@@ -222,9 +227,9 @@ export class UserTypeSelectionPage {
     }
     if (this.isChangeRoleRequest && isUserTypeChanged) {
       if (this.appGlobalService.DISPLAY_ONBOARDING_CATEGORY_PAGE) {
-        this.container.removeAllTabs();
-        const navigationExtras: NavigationExtras = { state: { isChangeRoleRequest: true, selectedUserType: this.selectedUserType } };
-        this.router.navigate(['profile-settings'], navigationExtras);
+      this.container.removeAllTabs();
+      const navigationExtras: NavigationExtras = {state: { isChangeRoleRequest: true, selectedUserType: this.selectedUserType }};
+      this.router.navigate([`/${RouterLinks.PROFILE_SETTINGS}`], navigationExtras);
       } else {
         this.updateProfile('TabsPage');
       }
@@ -288,6 +293,6 @@ export class UserTypeSelectionPage {
 
   navigateToPermissions(params) {
     const navigationExtras: NavigationExtras = { state: params };
-    this.router.navigate(['/settings/permission'], navigationExtras);
+    this.router.navigate([`/${RouterLinks.SETTINGS}/${RouterLinks.PERMISSION}`], navigationExtras);
   }
 }

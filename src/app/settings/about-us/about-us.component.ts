@@ -15,7 +15,7 @@ import {
   Environment,
   ImpressionType
 } from '../../../services';
-import { ContentType, AudienceFilter } from '../../app.constant';
+import { ContentType, AudienceFilter, RouterLinks } from '../../app.constant';
 import { Router } from '@angular/router';
 
 const KEY_SUNBIRD_CONFIG_FILE_PATH = 'sunbird_config_file_path';
@@ -121,15 +121,15 @@ export class AboutUsComponent {
   }
 
   aboutApp() {
-    this.router.navigate(['/settings/about-app']);
+    this.router.navigate([`/${RouterLinks.SETTINGS}/${RouterLinks.ABOUT_APP}`]);
   }
 
   termsOfService() {
-    this.router.navigate(['/settings/terms-of-service']);
+    this.router.navigate([`/${RouterLinks.SETTINGS}/${RouterLinks.TERMS_OF_SERVICE}`]);
   }
 
   privacyPolicy() {
-    this.router.navigate(['/settings/privacy-policy']);
+    this.router.navigate([`/${RouterLinks.SETTINGS}/${RouterLinks.PRIVACY_POLICY}`]);
   }
 
   generateInteractTelemetry(interactionType, interactSubtype) {

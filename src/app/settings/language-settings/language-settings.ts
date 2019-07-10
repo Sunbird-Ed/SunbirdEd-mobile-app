@@ -4,7 +4,7 @@ import { Router, ActivatedRoute, ParamMap, NavigationExtras } from '@angular/rou
 
 import {TranslateService} from '@ngx-translate/core';
 import {SharedPreferences} from 'sunbird-sdk';
-import {appLanguages, PreferenceKey} from '../../app.constant';
+import {appLanguages, PreferenceKey, RouterLinks} from '../../app.constant';
 import {Map} from '../../telemetryutil';
 import {AppGlobalService, CommonUtilService, TelemetryGeneratorService, AppHeaderService} from '../../../services';
 // import {OnboardingPage} from '@app/pages/onboarding/onboarding';
@@ -237,9 +237,7 @@ export class LanguageSettingsPage{
       } else {
         // migration-TODO
         // this.navCtrl.push(UserTypeSelectionPage);
-        // this.router.navigate(['user-type-selection', false]);
-        const navigationExtras: NavigationExtras = {state: { a: true, b: 'HellLLo' }};
-        this.router.navigate(['user-type-selection'], navigationExtras);
+        this.router.navigate([RouterLinks.USER_TYPE_SELECTION, false]);
       }
     } else {
       this.generateClickInteractEvent('n/a', InteractSubtype.CONTINUE_CLICKED);
