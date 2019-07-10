@@ -1,5 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { CommonUtilService } from '../../../services';
+import { CommonUtilService } from '@app/services';
 
 @Component({
   selector: 'app-text-book-card',
@@ -12,8 +12,10 @@ export class TextBookCardComponent implements OnInit {
   @Input() content: any;
   @Input() layoutName: string;
 
-  constructor() { }
+  constructor(public commonUtilService: CommonUtilService) {
+    this.defaultImg = 'assets/imgs/ic_launcher.png';
+  }
 
-  ngOnInit() {}
+  ngOnInit() { }
 
 }

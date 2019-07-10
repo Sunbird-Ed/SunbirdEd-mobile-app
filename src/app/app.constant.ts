@@ -371,14 +371,21 @@ export class RouterLinks {
     public static readonly CATEGORIES_EDIT = 'categories-edit';
 
     // Courses Routs
+    public static readonly COURSES = 'courses';
     public static readonly ENROLLED_COURSE_DETAILS = 'enrolled-course-details';
+    public static readonly COLLECTION_DETAILS = 'collection-details';
+
+    // Course Batch
+    public static readonly COURSE_BATCHES = 'course-batches';
 
     // Resources Routs
-    public static readonly COLLECTION_DETAILS_ETB = 'collection-details-etb';
+    public static readonly RESOURCES = 'resources';
+    public static readonly COLLECTION_DETAIL_ETB = 'collection-detail-etb';
     public static readonly CONTENT_DETAILS = 'content-details';
+    public static readonly ENROLLMENT_DETAILS = 'enrollment-details';
 
-    //DownloadManger Routs
-    public static readonly ACTIVE_DOWNLOADS = 'active-downloads-page';
+    // DownloadManger Routs
+    public static readonly ACTIVE_DOWNLOADS = 'active-downloads';
 
     // Reports Routs
     public static readonly REPORTS_LIST = 'reports-list';
@@ -389,9 +396,51 @@ export class RouterLinks {
     // Player Routs
     public static readonly PLAYER = 'player';
 
-    // Notification Routs
+    // Notification Routes
     public static readonly NOTIFICATION = 'notification';
 
+    // Settings Routes
+    public static readonly SETTINGS = 'settings';
+    public static readonly DATA_SYNC = 'data-sync';
+    public static readonly LANGUAGE_SETTING = 'language-setting';
+    public static readonly PERMISSION = 'permission';
+    public static readonly ABOUT_US = 'about-us';
+    public static readonly ABOUT_APP = 'about-app';
+    public static readonly PRIVACY_POLICY = 'privacy-policy';
+    public static readonly TERMS_OF_SERVICE = 'terms-of-service';
 
+    // Profile settings Routes
+    public static readonly PROFILE_SETTINGS = 'profile-settings';
 
+    // User Type Selection Routes
+    public static readonly USER_TYPE_SELECTION = 'user-type-selection';
+
+    // View more activity Routes
+    public static readonly VIEW_MORE_ACTIVITY = 'view-more-activity';
+
+    // Download manager Routes
+    public static readonly DOWNLOAD_MANAGER = 'download-manager';
+    public static readonly NO_DOWNLOADS = 'no-downloads';
+    public static readonly DOWNLOADS_TAB = 'downloads-tab';
+    public static readonly DOWNLOADS_HEADER = 'downloads-header';
+
+    // Storage Settings Routes
+    public static readonly STORAGE_SETTINGS = 'storage-settings';
+
+    // Search Routes
+    public static readonly SEARCH = 'search';
+
+    // QR Scanner Routes
+    public static readonly QRSCANNER_ALERT = 'qrscanner-alert';
+    public static readonly QRCODERESULT = 'qrcoderesult';
+
+    // Page Filter Routes
+    public static readonly PAGE_FILTER = 'page-filter';
+    public static readonly PAGE_FILTER_OPTIONS = 'page-filter-options';
+
+    // Help Routes
+    public static readonly FAQ_HELP = 'faq-help';
+
+    // Terms and conditions Routes
+    public static readonly TERMS_AND_CONDITIONS = 'terms-and-conditions';
 }

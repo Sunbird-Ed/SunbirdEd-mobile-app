@@ -488,7 +488,7 @@ export class ProfilePage implements OnInit {
           content: content
         }
       }
-      this.router.navigate([RouterLinks.COLLECTION_DETAILS_ETB], navigationExtras)
+      this.router.navigate([RouterLinks.COLLECTION_DETAIL_ETB], navigationExtras);
     } else {
       const navigationExtras: NavigationExtras = {
         state: {

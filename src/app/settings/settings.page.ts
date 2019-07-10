@@ -5,7 +5,7 @@ import {
   TelemetryImpressionRequest,
 } from 'sunbird-sdk';
 import { AppHeaderService, CommonUtilService, TelemetryGeneratorService, UtilityService } from 'services';
-import { PreferenceKey } from '../app.constant';
+import { PreferenceKey, RouterLinks } from '../app.constant';
 import { Environment, ImpressionType, InteractSubtype, InteractType, PageId } from 'services/telemetry-constants';
 import { SocialSharing } from '@ionic-native/social-sharing/ngx';
 import { Router, NavigationExtras } from '@angular/router';
@@ -90,7 +90,7 @@ export class SettingsPage {
 
   aboutUs() {
     this.generateInteractTelemetry(InteractType.TOUCH, InteractSubtype.ABOUT_APP_CLICKED);
-    this.router.navigate(['/settings/about-us']);
+    this.router.navigate([`/${RouterLinks.SETTINGS}/about-us`]);
   }
 
   async shareApp() {
@@ -124,6 +124,6 @@ export class SettingsPage {
 
   showPermissionPage() {
     const navigationExtras: NavigationExtras = { state: { changePermissionAccess: true }};
-    this.router.navigate(['/settings/permission'], navigationExtras);
+    this.router.navigate([`/${RouterLinks.SETTINGS}/permission`], navigationExtras);
   }
 }

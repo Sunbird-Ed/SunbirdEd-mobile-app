@@ -8,7 +8,7 @@ import { AppStorageInfo } from './../../download-manager.interface';
   styleUrls: ['./downloads-header.component.scss'],
 })
 export class DownloadsHeaderComponent {
-  
+
   @Input() storageInfo: AppStorageInfo;
   @Input() appName: string;
 

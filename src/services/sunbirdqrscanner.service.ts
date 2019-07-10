@@ -341,6 +341,7 @@ import { ProfileSettingsPage } from '@app/app/profile-settings/profile-settings.
 import { NavigationExtras, Router } from '@angular/router';
 import { SbPopoverComponent } from '@app/app/components';
 import { QRScannerAlert, QRAlertCallBack } from '@app/app/qrscanner-alert/qrscanner-alert.page';
+import { RouterLinks } from '@app/app/app.constant';
 // import { PermissionPage } from '../permission/permission';
 
 declare const cordova;
@@ -500,7 +501,7 @@ export class SunbirdQRScanner {
             Environment.ONBOARDING,
             PageId.QRCodeScanner);
           const navigationExtras: NavigationExtras = { state: { changePermissionAccess: true }};
-          this.router.navigate(['/settings/permission'], navigationExtras);
+          this.router.navigate([`/${RouterLinks.SETTINGS}/permission`], navigationExtras);
           break;
         case 'backdrop':
           console.log('Duration timeout');
@@ -600,7 +601,7 @@ export class SunbirdQRScanner {
           if (this.appGlobalService.DISPLAY_ONBOARDING_CATEGORY_PAGE) {
             // this.app.getActiveNavs()[0].push(ProfileSettingsPage, { stopScanner: true });
             const navigationExtras: NavigationExtras = { state: { stopScanner: true } };
-            this.router.navigate(['/profile-settings'], navigationExtras);
+            this.router.navigate([`/${RouterLinks.PROFILE_SETTINGS}`], navigationExtras);
           } else {
             this.getProfileSettingConfig();
           }
@@ -695,7 +696,7 @@ export class SunbirdQRScanner {
         if (self.showButton) {
           if (this.appGlobalService.DISPLAY_ONBOARDING_CATEGORY_PAGE) {
             const navigationExtras: NavigationExtras = { state: { stopScanner: true } };
-            self.router.navigate(['/profile-settings'], navigationExtras);
+            self.router.navigate([`/${RouterLinks.PROFILE_SETTINGS}`], navigationExtras);
           } else {
             this.getProfileSettingConfig();
           }

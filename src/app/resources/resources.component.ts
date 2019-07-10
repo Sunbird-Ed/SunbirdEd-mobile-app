@@ -9,7 +9,8 @@ import {
   PreferenceKey,
   ViewMore,
   Search,
-  ProfileConstants
+  ProfileConstants,
+  RouterLinks
 } from '../../app/app.constant';
 import { Map } from '../../app/telemetryutil';
 import {AppGlobalService} from '../../services/app-global-service.service';
@@ -204,7 +205,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
         user: 'Christy Fernandes'
       }
     };
-    this.router.navigate(['/view-more-activity'], navigationExtras);
+    this.router.navigate([`/${RouterLinks.VIEW_MORE_ACTIVITY}`], navigationExtras);
   }
 
   subscribeUtilityEvents() {
@@ -836,7 +837,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
     this.getCategoryData();
     this.getCurrentUser();
     if (refresher) {
-      refresher.complete();
+      refresher.target.complete();
       this.telemetryGeneratorService.generatePullToRefreshTelemetry(PageId.LIBRARY, Environment.HOME);
       this.getGroupByPage();
     } else {
