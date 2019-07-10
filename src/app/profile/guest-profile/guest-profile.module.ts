@@ -6,13 +6,29 @@ import { Routes, RouterModule } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 
 import { GuestProfilePage } from './guest-profile.page';
+import { TranslateModule } from '@ngx-translate/core';
+import { ComponentsModule } from '@app/app/components/components.module';
+import { RouterLinks } from '@app/app/app.constant';
+import { GuestEditPage } from '../guest-edit/guest-edit.page';
 
 
 const routes: Routes = [
   {
-    path: '',
-    component: GuestProfilePage
-  }
+    path: '', component: GuestProfilePage,
+   /*  children: [
+      {
+        path: RouterLinks.GUEST_EDIT,
+        children: [
+          {
+            path: '',
+            loadChildren: '../guest-edit/guest-edit.module#GuestEditPageModule'
+          }
+        ]
+      }] */
+    /* children: [
+      { path: RouterLinks.GUEST_EDIT, loadChildren: '../guest-edit/guest-edit.module#GuestEditPageModule' },
+    ] */
+  },
 ];
 
 @NgModule({
@@ -21,8 +37,10 @@ const routes: Routes = [
     FormsModule,
     ReactiveFormsModule,
     IonicModule,
-    RouterModule.forChild(routes)
+    RouterModule.forChild(routes),
+    TranslateModule,
+    ComponentsModule
   ],
   declarations: [GuestProfilePage]
 })
-export class GuestProfilePageModule {}
+export class GuestProfilePageModule { }

@@ -1,7 +1,7 @@
 import { Component, ViewChild, ViewEncapsulation } from '@angular/core';
 
 import { IonTabs, Events, ToastController } from '@ionic/angular';
-import { TelemetryGeneratorService, ContainerService,AppGlobalService } from '../../services';
+import { TelemetryGeneratorService, ContainerService, AppGlobalService } from '../../services';
 
 @Component({
   selector: 'app-tabs',
@@ -33,11 +33,11 @@ export class TabsPage {
     public toastCtrl: ToastController,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private appGlobalService: AppGlobalService
-  ) {}
+  ) { }
 
   ionViewWillEnter() {
+    console.log("Inside tabsPage");
     this.tabs = this.container.getAllTabs();
-    alert(this.tabs.length);
     let tabIndex;
 
     this.tabs.forEach((tab, index) => {
@@ -53,22 +53,25 @@ export class TabsPage {
     }, 300);
   }
 
-  public ionChange(tab: any) {
+  public ionTabsWillChange(event: any) {
+    console.log("Inside ionChange");
+
+
     // if active tab is other than scanner tab i.e, = tab 2
-    if (tab.index !== 2) {
-      this.tabs.forEach((tabTo, index) => {
-      this.appGlobalService.currentPageId = tab.tabTitle;
-        if (tabTo.isSelected === true) {
-          tabTo.isSelected = false;
-        }
+    // if (tab.index !== 2) {
+    //   this.tabs.forEach((tabTo, index) => {
+    //     this.appGlobalService.currentPageId = tab.tabTitle;
+    //     if (tabTo.isSelected === true) {
+    //       tabTo.isSelected = false;
+    //     }
 
-        if (index === tab.index) {
-          tabTo.isSelected = true;
-        }
-      });
-    }
+    //     if (index === tab.index) {
+    //       tabTo.isSelected = true;
+    //     }
+    //   });
+    // }
 
-    this.events.publish('tab.change', tab.tabTitle);
+    // this.events.publish('tab.change', tab.tabTitle);
   }
 
   public async customClick(tab, _index) {
@@ -81,8 +84,8 @@ export class TabsPage {
         cssClass: 'sb-toast available-later',
         showCloseButton: false
       });
-     
-      toast.present();
+
+      await toast.present();
     }
 
     if (tab.disabled && !tab.availableLater) {
@@ -93,7 +96,7 @@ export class TabsPage {
         cssClass: 'sb-toast available-later',
         showCloseButton: false
       });
-      toast.present();
+      await toast.present();
     }
   }
 
