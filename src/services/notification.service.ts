@@ -4,6 +4,7 @@ import { File } from '@ionic-native/file/ngx';
 import { ProfileService, SharedPreferences } from 'sunbird-sdk';
 import { TranslateService } from '@ngx-translate/core';
 import { AppVersion } from '@ionic-native/app-version/ngx';
+import { LocalNotifications } from '@ionic-native/local-notifications/ngx';
 
 declare const cordova;
 
@@ -20,7 +21,8 @@ export class NotificationService {
         private telemetryGeneratorService: TelemetryGeneratorService,
         private file: File,
         private translate: TranslateService,
-        private appVersion: AppVersion
+        private appVersion: AppVersion,
+        private localNotifications: LocalNotifications
     ) {
         this.getAppName();
     }
@@ -28,11 +30,11 @@ export class NotificationService {
     setupLocalNotification(language?: string): any {
         if (language) {
             this.selectedLanguage = language;
-            cordova.plugins.notification.local.cancelAll();
+            this.localNotifications.cancelAll();
         }
         this.file.readAsText(this.file.applicationDirectory + 'www/assets/data', 'local_notofocation_config.json').then(data => {
             this.configData = JSON.parse(data);
-            cordova.plugins.notification.local.getScheduledIds((val) => {
+            this.localNotifications.getScheduledIds().then((val) => {
                 if (this.configData.id !== val[val.length - 1]) {
                     this.setLocalNotification();
                 }
@@ -75,7 +77,7 @@ export class NotificationService {
     setLocalNotification() {
         const trigger = this.triggerConfig();
         const translate = this.configData.data.translations[this.selectedLanguage] || this.configData.data.translations['default'];
-        cordova.plugins.notification.local.schedule({
+        this.localNotifications.schedule({
             id: this.configData.id,
             title: translate.title.replace('{{%s}}', this.appName),
             text: translate.msg.replace('{{%s}}', this.appName),
