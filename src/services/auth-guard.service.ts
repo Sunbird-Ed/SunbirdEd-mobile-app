@@ -30,7 +30,7 @@ export class AuthGuardService implements CanLoad {
 
   }
 
-  canLoad(route: Route): boolean {
+  async canLoad(route: Route): Promise<boolean> {
     console.log('route : ', route);
     return true;
     // const session = Observable.from(this.routeToAppropriatePage().then((result) => {
@@ -44,20 +44,29 @@ export class AuthGuardService implements CanLoad {
     // });
   }
 
-  async routeToAppropriatePage() {
-    console.log('inside routeToAppropriatePage');
-    const session = await this.authService.getSession().toPromise();
-    let returnval;
-    if (!session) {
-      console.log('inside !session, before await');
-      returnval = await this.handleNoSession(session);
-      console.log('inside !session, after await');
-    } else {
-      console.log('inside !session- else, before await');
-      returnval = await this.handleSession(session);
-      console.log('inside !session- else, after await');
+  async routeToAppropriatePage(): Promise<boolean> {
+    if (await this.isLoggedIn()) {
+      return true;
     }
-    return returnval;
+
+    
+    // console.log('inside routeToAppropriatePage');
+    // const session = await this.authService.getSession().toPromise();
+    // let returnval;
+    // if (!session) {
+    //   console.log('inside !session, before await');
+    //   returnval = await this.handleNoSession(session);
+    //   console.log('inside !session, after await');
+    // } else {
+    //   console.log('inside !session- else, before await');
+    //   returnval = await this.handleSession(session);
+    //   console.log('inside !session- else, after await');
+    // }
+    // return returnval;
+  }
+
+  private async isLoggedIn(): Promise<boolean> {
+    return !!(await this.authService.getSession().toPromise());
   }
 
   handleNoSession(session) {

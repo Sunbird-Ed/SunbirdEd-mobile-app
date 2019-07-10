@@ -3,32 +3,35 @@ import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 import { AuthGuardService } from '../services/auth-guard.service';
 import { RouterLinks } from './app.constant';
 import { HasNotBeenOnboardedGuard } from '@app/guards/has-not-been-onboarded.guard';
-import { ShouldDisplayProfileSettingsGuard } from '@app/guards/should-display-profile-settings.guard';
+import { HasNotSelectedFrameworkGuard } from '@app/guards/has-not-selected-framework.guard';
+import { HasNotSelectedLanguageGuard } from '@app/guards/has-not-selected-language.guard';
+import { HasNotSelectedUserTypeGuard } from '@app/guards/has-not-selected-user-type.guard';
+import { IsGuestUserGuard } from '@app/guards/is-guest-user.guard';
 
 const routes: Routes = [
   {
     path: '',
-    redirectTo: RouterLinks.TABS,
+    redirectTo: 'language-settings',
     pathMatch: 'full',
-  },
-  {
-    path: RouterLinks.TABS,
-    loadChildren: './tabs/tabs.module#TabsPageModule'
   },
   {
     path: 'language-settings',
     loadChildren: './language-settings/language-settings.module#LanguageSettingsModule',
-    canLoad: [HasNotBeenOnboardedGuard],
+    canLoad: [IsGuestUserGuard, HasNotBeenOnboardedGuard, HasNotSelectedLanguageGuard],
   },
   {
     path: 'user-type-selection',
     loadChildren: './user-type-selection/user-type-selection.module#UserTypeSelectionPageModule',
-    canLoad: [HasNotBeenOnboardedGuard],
+    canLoad: [IsGuestUserGuard, HasNotBeenOnboardedGuard, HasNotSelectedUserTypeGuard],
   },
   {
     path: 'profile-settings',
     loadChildren: './profile-settings/profile-settings.module#ProfileSettingsPageModule',
-    canLoad: [HasNotBeenOnboardedGuard, ShouldDisplayProfileSettingsGuard],
+    canLoad: [HasNotBeenOnboardedGuard, HasNotSelectedFrameworkGuard],
+  },
+  {
+    path: RouterLinks.TABS,
+    loadChildren: './tabs/tabs.module#TabsPageModule'
   },
   {
     path: RouterLinks.USER_AND_GROUPS,
@@ -79,6 +82,11 @@ const routes: Routes = [
     RouterModule.forRoot(routes)
   ],
   exports: [RouterModule],
-  providers: [HasNotBeenOnboardedGuard, ShouldDisplayProfileSettingsGuard],
+  providers: [
+    HasNotBeenOnboardedGuard,
+    HasNotSelectedLanguageGuard,
+    HasNotSelectedUserTypeGuard,
+    HasNotSelectedFrameworkGuard,
+    IsGuestUserGuard],
 })
 export class AppRoutingModule { }
