@@ -13,11 +13,8 @@ import {
   AppHeaderService,
   TelemetryGeneratorService
 } from '@app/services';
-<<<<<<< HEAD
 import { Location } from '@angular/common';
-=======
 import { RouterLinks } from '@app/app/app.constant';
->>>>>>> d21e382724f179828ff77345083db2f27a8d379a
 
 declare const cordova;
 
