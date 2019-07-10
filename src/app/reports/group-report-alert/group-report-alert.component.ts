@@ -3,6 +3,7 @@ import { NavParams, ModalController, Platform, NavController, LoadingController,
 import { SummarizerService, SummaryRequest, ReportSummary } from 'sunbird-sdk';
 import { TranslateService } from '@ngx-translate/core';
 import { CommonUtilService } from '@app/services';
+import { Location } from '@angular/common';
 
 export interface QRAlertCallBack {
   cancel(): any;
@@ -40,7 +41,8 @@ export class GroupReportAlertComponent implements OnInit {
     @Inject('SUMMARIZER_SERVICE') public summarizerService: SummarizerService,
     private translate: TranslateService,
     private commonUtilService: CommonUtilService,
-    private popOverCtrl: PopoverController
+    private popOverCtrl: PopoverController,
+    private location: Location
   ) {
     this.report = 'questions';
     this.callback = navParams.get('callback');
@@ -100,6 +102,7 @@ export class GroupReportAlertComponent implements OnInit {
     } else {
       // Migration todo
       // this.navCtrl.pop();
+      this.location.back();
     }
   }
 

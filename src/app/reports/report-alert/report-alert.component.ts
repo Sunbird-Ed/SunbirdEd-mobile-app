@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { NavParams, ModalController, Platform, NavController, PopoverController } from '@ionic/angular';
+import { Location } from '@angular/common';
 
 export interface QRAlertCallBack {
   cancel(): any;
@@ -21,7 +22,8 @@ export class ReportAlertComponent implements OnInit {
     private modalCtrl: ModalController,
     private navCtrl: NavController,
     private platform: Platform,
-    private popOverCtrl: PopoverController
+    private popOverCtrl: PopoverController,
+    private location: Location
   ) {
     this.callback = navParams.get('callback');
     this.assessmentDetails = this.callback['row'];
@@ -55,6 +57,8 @@ export class ReportAlertComponent implements OnInit {
     } else {
       // Migration todo
       // this.navCtrl.pop();
+      this.location.back();
+
     }
   }
 

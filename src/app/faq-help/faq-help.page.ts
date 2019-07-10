@@ -22,6 +22,7 @@ import {
 } from 'sunbird-sdk';
 import { PreferenceKey, appLanguages, ContentType, AudienceFilter } from '../app.constant';
 import { SocialSharing } from '@ionic-native/social-sharing/ngx';
+import { Location } from '@angular/common';
 
 const KEY_SUNBIRD_CONFIG_FILE_PATH = 'sunbird_config_file_path';
 const SUBJECT_NAME = 'support request';
@@ -62,7 +63,7 @@ export class FaqHelpPage {
     private appGlobalService: AppGlobalService,
     private headerService: AppHeaderService,
     private formAndFrameworkUtilService: FormAndFrameworkUtilService,
-    private platform: Platform
+    private location: Location
   ) {
     this.messageListener = (event) => {
       this.receiveMessage(event);
@@ -143,10 +144,11 @@ export class FaqHelpPage {
     const length = this.iframe.nativeElement.contentWindow.location.href.split('/').length;
     if (this.iframe.nativeElement.contentWindow.location.href.split('/')[length - 1].startsWith('consumption') ||
       this.iframe.nativeElement.contentWindow.history.length === 1) {
+      this.location.back();
       /* migration-TODO
       this.navCtrl.pop();
       */
-      this.backButtonFunc();
+      this.backButtonFunc.unsubscribe();
     } else {
       this.iframe.nativeElement.contentWindow.history.go(-1);
     }

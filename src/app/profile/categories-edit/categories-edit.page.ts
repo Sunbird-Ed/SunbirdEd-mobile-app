@@ -23,6 +23,7 @@ import { ContainerService } from '@app/services/container.services';
 import { TabsPage } from '@app/app/tabs/tabs.page';
 import { ProfileConstants } from '@app/app/app.constant';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Location } from '@angular/common';
 
 
 @Component({
@@ -88,7 +89,9 @@ export class CategoriesEditPage implements OnInit {
     private formAndFrameworkUtilService: FormAndFrameworkUtilService,
     private headerService: AppHeaderService,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private location: Location
+
   ) {
     this.profile = this.appGlobalService.getCurrentUser();
     const extras = this.router.getCurrentNavigation().extras;
@@ -422,6 +425,7 @@ export class CategoriesEditPage implements OnInit {
             });
         } else {
           // this.navCtrl.pop();
+          this.location.back();
           window.history.back();
         }
       }).catch(async () => {

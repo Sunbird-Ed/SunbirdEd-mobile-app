@@ -10,6 +10,7 @@ import {
   NetworkError, CourseService, CourseBatchesRequest, CourseEnrollmentType, CourseBatchStatus, Course, Batch,
   FetchEnrolledCourseRequest
 } from 'sunbird-sdk';
+import { Location } from '@angular/common';
 // import { FilterPage } from './filters/filter';
 // import { CollectionDetailsEtbPage } from '../collection-details-etb/collection-details-etb';
 // import { ContentDetailsPage } from '../content-details/content-details';
@@ -121,7 +122,8 @@ export class SearchPage implements OnDestroy {
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
     private headerService: AppHeaderService,
     @Inject('COURSE_SERVICE') private courseService: CourseService,
-    private popoverCtrl: PopoverController
+    private popoverCtrl: PopoverController,
+    private location: Location
   ) {
 
     this.checkUserSession();
@@ -162,7 +164,7 @@ export class SearchPage implements OnDestroy {
 
   ionViewWillLeave() {
     if (this.backButtonFunc) {
-      this.backButtonFunc();
+      this.backButtonFunc.unsubscribe();
     }
     if (this.eventSubscription) {
       this.eventSubscription.unsubscribe();
@@ -209,8 +211,9 @@ export class SearchPage implements OnDestroy {
   }
 
   popCurrentPage() {
-    this.navCtrl.pop();
-    this.backButtonFunc();
+    // this.navCtrl.pop();
+    this.location.back();
+    this.backButtonFunc.unsubscribe();
   }
 
   // handleDeviceBackButton() {
@@ -305,7 +308,7 @@ export class SearchPage implements OnDestroy {
         // this.navCtrl.push(QrCodeResultPage, params);
         if (this.isSingleContent) {
           this.isSingleContent = false;
-        // migration-TODO
+          // migration-TODO
           // const view = this.navCtrl.getActive();
           // this.navCtrl.removeView(view);
         }
@@ -646,7 +649,8 @@ export class SearchPage implements OnDestroy {
             this.commonUtilService.showToast('ERROR_OFFLINE_MODE');
           } else {
             this.commonUtilService.showToast('SOMETHING_WENT_WRONG');
-            this.navCtrl.pop();
+            // this.navCtrl.pop();
+            this.location.back();
           }
         });
       });
@@ -774,7 +778,8 @@ export class SearchPage implements OnDestroy {
 
     this.displayDialCodeResult = displayDialCodeResult;
     if (this.displayDialCodeResult.length === 0 && !this.isSingleContent) {
-      this.navCtrl.pop();
+      // this.navCtrl.pop();
+      this.location.back();
       if (this.shouldGenerateEndTelemetry) {
         this.generateQRSessionEndEvent(this.source, this.dialCode);
       }
@@ -832,6 +837,7 @@ export class SearchPage implements OnDestroy {
 
     if (contentArray && contentArray.length === 1 && !isParentCheckStarted) {
       // this.navCtrl.pop();
+      this.location.back();
       // this.showContentDetails(contentArray[0], true);
       this.isSingleContent = true;
       this.openContent(contentArray[0], contentArray[0], 0);
@@ -839,7 +845,8 @@ export class SearchPage implements OnDestroy {
     }
 
     if (this.dialCodeResult.length === 0 && this.dialCodeContentResult.length === 0) {
-      this.navCtrl.pop();
+      // this.navCtrl.pop();
+      this.location.back();
       if (this.shouldGenerateEndTelemetry) {
         this.generateQRSessionEndEvent(this.source, this.dialCode);
       }

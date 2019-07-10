@@ -5,8 +5,9 @@ import { Events, LoadingController } from '@ionic/angular';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 
-import { Location } from '../../app.constant';
+import { Location as loc } from '../../app.constant';
 import { LocationSearchCriteria, ProfileService } from 'sunbird-sdk';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-personal-details-edit',
@@ -48,7 +49,8 @@ export class PersonalDetailsEditPage implements OnInit {
     private events: Events,
     private headerService: AppHeaderService,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private location: Location
   ) {
     if (this.router.getCurrentNavigation().extras.state) {
       this.profile = this.router.getCurrentNavigation().extras.state.profile;
@@ -101,7 +103,7 @@ export class PersonalDetailsEditPage implements OnInit {
     this.loader = await this.commonUtilService.getLoader();
     const req: LocationSearchCriteria = {
       filters: {
-        type: Location.TYPE_STATE
+        type: loc.TYPE_STATE
       }
     };
     this.profileService.searchLocation(req).subscribe(async (success) => {
@@ -119,7 +121,7 @@ export class PersonalDetailsEditPage implements OnInit {
     this.loader = await this.commonUtilService.getLoader();
     const req: LocationSearchCriteria = {
       filters: {
-        type: Location.TYPE_DISTRICT,
+        type: loc.TYPE_DISTRICT,
         parentId: parentId
       }
     };
@@ -203,6 +205,7 @@ export class PersonalDetailsEditPage implements OnInit {
         this.loader.dismiss();
         this.commonUtilService.showToast(this.commonUtilService.translateMessage('PROFILE_UPDATE_SUCCESS'));
         this.events.publish('loggedInProfile:update', req);
+        this.location.back();
         // this.navCtrl.pop();
         window.history.back();
       }).catch(() => {

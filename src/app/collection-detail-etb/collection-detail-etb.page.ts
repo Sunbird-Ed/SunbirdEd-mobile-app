@@ -24,6 +24,7 @@ import {
 } from '../../services';
 import { SbGenericPopoverComponent } from '../components/popups/sb-generic-popover/sb-generic-popover.component';
 import { ComingSoonMessageService } from 'services/coming-soon-message.service';
+import { Location } from '@angular/common';
 // migration-TODO
 // import { ActiveDownloadsPage } from './../active-downloads/active-downloads';
 
@@ -232,7 +233,8 @@ export class CollectionDetailEtbPage implements OnInit {
     private toastController: ToastController,
     private fileSizePipe: FileSizePipe,
     private headerService: AppHeaderService,
-    private comingSoonMessageService: ComingSoonMessageService
+    private comingSoonMessageService: ComingSoonMessageService,
+    private location: Location
   ) {
     this.objRollup = new Rollup();
     this.checkLoggedInOrGuestUser();
@@ -412,13 +414,14 @@ export class CollectionDetailEtbPage implements OnInit {
       this.generateQRSessionEndEvent(this.source, this.cardData.identifier);
     }
 
-    this.navCtrl.pop();
-    this.backButtonFunc();
+    // this.navCtrl.pop();
+    this.location.back();
+    this.backButtonFunc.unsubscribe();
   }
 
   registerDeviceBackButton() {
     this.platform.backButton.subscribeWithPriority(10, () => {
-      this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.COLLECTION_DETAIL, 
+      this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.COLLECTION_DETAIL,
         Environment.HOME,
         false,
         this.cardData.identifier,
@@ -516,7 +519,8 @@ export class CollectionDetailEtbPage implements OnInit {
         console.log('error while loading content details', error);
         loader.dismiss();
         this.commonUtilService.showToast('ERROR_CONTENT_NOT_AVAILABLE');
-        this.navCtrl.pop();
+        // this.navCtrl.pop();
+        this.location.back();
       });
   }
 
@@ -526,18 +530,18 @@ export class CollectionDetailEtbPage implements OnInit {
       const popover = await this.popoverCtrl.create({
         component: SbGenericPopoverComponent,
         componentProps: {
-        sbPopoverHeading: this.commonUtilService.translateMessage('CONTENT_COMMING_SOON'),
-        sbPopoverMainTitle: message ? this.commonUtilService.translateMessage(message) :
-          this.commonUtilService.translateMessage('CONTENT_IS_BEEING_ADDED') + childData.contentData.name,
-        actionsButtons: [
-          {
-            btntext: this.commonUtilService.translateMessage('OKAY'),
-            btnClass: 'popover-color'
-          }
-        ],
-      },
-          cssClass: 'sb-popover warning',
-        });
+          sbPopoverHeading: this.commonUtilService.translateMessage('CONTENT_COMMING_SOON'),
+          sbPopoverMainTitle: message ? this.commonUtilService.translateMessage(message) :
+            this.commonUtilService.translateMessage('CONTENT_IS_BEEING_ADDED') + childData.contentData.name,
+          actionsButtons: [
+            {
+              btntext: this.commonUtilService.translateMessage('OKAY'),
+              btnClass: 'popover-color'
+            }
+          ],
+        },
+        cssClass: 'sb-popover warning',
+      });
       popover.present();
     }
   }
@@ -753,7 +757,8 @@ export class CollectionDetailEtbPage implements OnInit {
               this.commonUtilService.showToast('UNABLE_TO_FETCH_CONTENT');
             }
             this.showChildrenLoader = false;
-            this.navCtrl.pop();
+            // this.navCtrl.pop();
+            this.location.back();
           }
         });
       });
@@ -1065,19 +1070,21 @@ export class CollectionDetailEtbPage implements OnInit {
     const popover = await this.popoverCtrl.create({
       component: ContentActionsComponent,
       componentProps: {
-      content: this.contentDetail,
-      isChild: this.isDepthChild,
-      objRollup: this.objRollup,
-      pageName: PageId.COLLECTION_DETAIL,
-      corRelationList: this.corRelationList
-    },
-        cssClass: 'content-action'
+        content: this.contentDetail,
+        isChild: this.isDepthChild,
+        objRollup: this.objRollup,
+        pageName: PageId.COLLECTION_DETAIL,
+        corRelationList: this.corRelationList
+      },
+      cssClass: 'content-action'
     });
     await popover.present();
     const response = await popover.onDidDismiss();
     if (response.data.data === 'delete.success' || response.data.data === 'flag.success') {
-      this.navCtrl.pop();
-      }
+      // this.navCtrl.pop();
+      this.location.back();
+
+    }
   }
 
   generateImpressionEvent(objectId, objectType, objectVersion) {
@@ -1183,9 +1190,9 @@ export class CollectionDetailEtbPage implements OnInit {
         // Cancel Clicked Telemetry
         this.generateCancelDownloadTelemetry(this.contentDetail);
       }
-  } else {
-  this.commonUtilService.showToast('ERROR_NO_INTERNET_MESSAGE');
-}
+    } else {
+      this.commonUtilService.showToast('ERROR_NO_INTERNET_MESSAGE');
+    }
   }
 
   cancelDownload() {
@@ -1195,13 +1202,15 @@ export class CollectionDetailEtbPage implements OnInit {
         this.zone.run(() => {
           this.showLoading = false;
           this.refreshHeader();
-          this.navCtrl.pop();
+          // this.navCtrl.pop();
+          this.location.back();
         });
       }).catch(() => {
         this.zone.run(() => {
           this.showLoading = false;
           this.refreshHeader();
-          this.navCtrl.pop();
+          // this.navCtrl.pop();
+          this.location.back();
         });
       });
   }
@@ -1253,7 +1262,7 @@ export class CollectionDetailEtbPage implements OnInit {
       }
     }
     if (this.backButtonFunc) {
-      this.backButtonFunc();
+      this.backButtonFunc.unsubscribe();
     }
 
   }
@@ -1369,11 +1378,11 @@ export class CollectionDetailEtbPage implements OnInit {
   handleHeaderEvents($event) {
     switch ($event.name) {
       case 'back': this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.COLLECTION_DETAIL, Environment.HOME,
-                   true, this.cardData.identifier, this.corRelationList);
-                   this.handleBackButton();
-                   break;
+        true, this.cardData.identifier, this.corRelationList);
+        this.handleBackButton();
+        break;
       case 'download': this.redirectToActivedownloads();
-                       break;
+        break;
 
     }
   }

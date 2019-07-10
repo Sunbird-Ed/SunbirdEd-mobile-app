@@ -1,6 +1,7 @@
 import { Component, OnInit, Inject, ViewChild } from '@angular/core';
 import { Platform, NavController, NavParams, Events } from '@ionic/angular';
 import { NotificationService, NotificationStatus } from 'sunbird-sdk';
+import { Location } from '@angular/common';
 
 import {
   AppHeaderService,
@@ -33,7 +34,8 @@ export class NotificationPage implements OnInit {
     private telemetryGeneratorService: TelemetryGeneratorService,
     private platform: Platform,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private location: Location
 
   ) {
     this.headerService.hideHeader();
@@ -51,6 +53,7 @@ export class NotificationPage implements OnInit {
     this.platform.backButton.subscribeWithPriority(11, () => {
       this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.NOTIFICATION, Environment.NOTIFICATION, false);
       // this.navCtrl.pop();
+      this.location.back();
       window.history.back();
     });
   }
@@ -65,10 +68,9 @@ export class NotificationPage implements OnInit {
   }
 
   ionViewDidLoad() {
-    //Migration todo
     // this.navBar.backButtonClick = () => {
     //   this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.NOTIFICATION, Environment.NOTIFICATION, true);
-    //   this.navCtrl.pop();
+    //   // this.navCtrl.pop();
     // };
     this.telemetryGeneratorService.generateImpressionTelemetry(
       ImpressionType.VIEW, '',

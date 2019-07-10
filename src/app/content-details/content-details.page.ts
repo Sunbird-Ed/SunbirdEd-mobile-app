@@ -75,6 +75,7 @@ import {TranslateService} from '@ngx-translate/core';
 import {SbGenericPopoverComponent} from '../components/popups/sb-generic-popover/sb-generic-popover.component';
 import {RatingAlertComponent} from '../components/rating-alert/rating-alert.component';
 import * as moment from 'moment';
+import { Location } from '@angular/common';
 
 declare const cordova;
 
@@ -196,7 +197,8 @@ export class ContentDetailsPage implements OnInit {
     private fileSizePipe: FileSizePipe,
     private translate: TranslateService,
     private headerService: AppHeaderService,
-    private appRatingService: AppRatingService
+    private appRatingService: AppRatingService,
+    private location: Location
   ) {
 
     this.objRollup = new Rollup();
@@ -325,7 +327,7 @@ export class ContentDetailsPage implements OnInit {
       this.generateQRSessionEndEvent(this.source, this.cardData.identifier);
     }
     this.popToPreviousPage(true);
-    // this.backButtonFunc();
+    this.backButtonFunc.unsubscribe();
   }
 
   handleDeviceBackButton() {
@@ -339,7 +341,7 @@ export class ContentDetailsPage implements OnInit {
       if (this.shouldGenerateEndTelemetry) {
         this.generateQRSessionEndEvent(this.source, this.cardData.identifier);
       }
-      // this.backButtonFunc();
+      this.backButtonFunc.unsubscribe();
     });
   }
 
@@ -628,7 +630,8 @@ export class ContentDetailsPage implements OnInit {
         } else {
           this.commonUtilService.showToast('ERROR_CONTENT_NOT_AVAILABLE');
         }
-        this.navCtrl.pop();
+        // this.navCtrl.pop();
+        this.location.back();
       });
   }
 
@@ -914,6 +917,7 @@ export class ContentDetailsPage implements OnInit {
     //   activePortal.dismiss();
     // } else {
     //   this.navCtrl.pop();
+         this.location.back();
     // }
   }
 
@@ -923,7 +927,8 @@ export class ContentDetailsPage implements OnInit {
       // this.navCtrl.popTo(this.navCtrl.getByIndex(this.navCtrl.length() - 3));
     } else {
       if (isNavBack) {
-        this.navCtrl.pop();
+        // this.navCtrl.pop();
+        this.location.back();
       }
     }
   }
@@ -1226,6 +1231,8 @@ export class ContentDetailsPage implements OnInit {
     await popover.onDidDismiss();
     // migration-TODO
     // this.navCtrl.pop();
+    this.location.back();
+
   }
 
   async openPlayAsPopup(isStreaming) {
@@ -1706,7 +1713,8 @@ export class ContentDetailsPage implements OnInit {
 
   goBack(index, length) {
     if (index !== (length - 1)) {
-      this.navCtrl.pop();
+      // this.navCtrl.pop();
+      this.location.back();
     }
   }
 }

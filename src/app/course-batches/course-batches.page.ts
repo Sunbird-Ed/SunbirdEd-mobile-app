@@ -7,6 +7,7 @@ import { CommonUtilService } from '../../services/common-util.service';
 import { InteractType, InteractSubtype, Environment, PageId } from '../../services/telemetry-constants';
 import { AppHeaderService } from '../../services/app-header.service';
 import * as moment from 'moment';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-course-batches',
@@ -80,6 +81,7 @@ export class CourseBatchesPage implements OnInit {
     private events: Events,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private headerService: AppHeaderService,
+    private location: Location
   ) {
   }
 
@@ -127,7 +129,9 @@ export class CourseBatchesPage implements OnInit {
             courseId: item.courseId
           });
           loader.dismiss();
-          this.navCtrl.pop();
+          // this.navCtrl.pop();
+          this.location.back();
+
         });
       }, (error) => {
         this.zone.run(() => {
