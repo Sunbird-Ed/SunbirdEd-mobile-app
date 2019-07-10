@@ -12,6 +12,7 @@ import { DownloadManagerPage } from './download-manager.page';
 import { NoDownloadsComponent } from './no-downloads/no-downloads.component';
 import { DownloadsTabComponent } from './downloads-tab/downloads-tab.component';
 import { DownloadsHeaderComponent } from './downloads-tab/downloads-header/downloads-header.component';
+import { RouterLinks } from '../app.constant';
 
 
 
@@ -19,6 +20,18 @@ const routes: Routes = [
   {
     path: '',
     component: DownloadManagerPage
+  },
+  {
+    path: RouterLinks.NO_DOWNLOADS,
+    component: NoDownloadsComponent
+  },
+  {
+    path: RouterLinks.DOWNLOADS_TAB,
+    component: DownloadsTabComponent
+  },
+  {
+    path: RouterLinks.DOWNLOADS_HEADER,
+    component: DownloadsHeaderComponent
   }
 ];
 
