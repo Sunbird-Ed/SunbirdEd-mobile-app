@@ -20,10 +20,6 @@ import { TranslateModule } from '@ngx-translate/core';
       {
         path: '',
         component: UserTypeSelectionPage
-      },
-      {
-        path: 'user-type-selection/:isChangeRoleRequest',
-        component: UserTypeSelectionPage
       }
     ]),
     // IonicPageModule.forChild(UserTypeSelectionPage),

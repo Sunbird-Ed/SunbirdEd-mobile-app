@@ -8,6 +8,7 @@ import { IonicModule } from '@ionic/angular';
 import { TabsPage } from './tabs.page';
 import { TranslateModule } from '@ngx-translate/core';
 import { CoursesPage } from '../courses/courses.page';
+import { RouterLinks } from '../app.constant';
 
 const routes: Routes = [
   {
@@ -15,7 +16,7 @@ const routes: Routes = [
     component: TabsPage,
     children: [
       {
-        path: 'resources',
+        path: RouterLinks.RESOURCES,
         children: [
           {
             path: '',

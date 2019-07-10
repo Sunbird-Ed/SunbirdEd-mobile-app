@@ -8,12 +8,13 @@ import { TranslateModule } from '@ngx-translate/core';
 
 import { SettingsPage } from './settings.page';
 import { DataSyncComponent } from './data-sync/data-sync.component';
-import { LanguageSettingsPage } from './language-settings/language-settings';
+// import { LanguageSettingsPage } from '../language-settings/language-settings';
 import { PermissionComponent } from './permission/permission.component';
 import { AboutUsComponent } from './about-us/about-us.component';
 import { AboutAppComponent } from './about-app/about-app.component';
 import { PrivacyPolicyComponent } from './privacy-policy/privacy-policy.component';
 import { TermsOfServiceComponent } from './terms-of-service/terms-of-service.component';
+import { RouterLinks } from '../app.constant';
 
 const routes: Routes = [
   {
@@ -21,31 +22,27 @@ const routes: Routes = [
     component: SettingsPage
   },
   {
-    path: 'data-sync',
+    path: RouterLinks.DATA_SYNC,
     component: DataSyncComponent
   },
   {
-    path: 'language-setting/:isFromSettings',
-    component: LanguageSettingsPage
-  },
-  {
-    path: 'permission',
+    path: RouterLinks.PERMISSION,
     component: PermissionComponent
   },
   {
-    path: 'about-us',
+    path: RouterLinks.ABOUT_US,
     component: AboutUsComponent
   },
   {
-    path: 'about-app',
+    path: RouterLinks.ABOUT_APP,
     component: AboutAppComponent
   },
   {
-    path: 'privacy-policy',
+    path: RouterLinks.PRIVACY_POLICY,
     component: PrivacyPolicyComponent
   },
   {
-    path: 'terms-of-service',
+    path: RouterLinks.TERMS_OF_SERVICE,
     component: TermsOfServiceComponent
   }
 ];
@@ -62,7 +59,6 @@ const routes: Routes = [
   declarations: [
     SettingsPage,
     DataSyncComponent,
-    LanguageSettingsPage,
     PermissionComponent,
     AboutUsComponent,
     AboutAppComponent,

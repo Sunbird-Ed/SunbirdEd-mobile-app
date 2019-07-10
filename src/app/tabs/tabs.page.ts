@@ -1,3 +1,4 @@
+import { GUEST_TEACHER_TABS, initTabs } from './../module.service';
 import { Component, ViewChild, ViewEncapsulation } from '@angular/core';
 
 import { IonTabs, Events, ToastController } from '@ionic/angular';
@@ -37,6 +38,10 @@ export class TabsPage {
 
   ionViewWillEnter() {
     console.log("Inside tabsPage");
+
+    //Migration todo
+    initTabs(this.container, GUEST_TEACHER_TABS);
+
     this.tabs = this.container.getAllTabs();
     let tabIndex;
 

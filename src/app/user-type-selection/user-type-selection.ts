@@ -4,7 +4,7 @@ import {TranslateService} from '@ngx-translate/core';
 import { Router, ActivatedRoute, ParamMap, NavigationExtras } from '@angular/router';
 // import {GUEST_STUDENT_TABS, GUEST_TEACHER_TABS, initTabs, Map, PreferenceKey} from '../app.constant';
 // migration-TODO
-import {PreferenceKey} from '../app.constant';
+import {PreferenceKey, RouterLinks} from '../app.constant';
 import {AppGlobalService, CommonUtilService, TelemetryGeneratorService, AppHeaderService, SunbirdQRScanner} from '../../services/index';
 // import {SunbirdQRScanner} from '@app/pages/qrscanner';
 // import {LanguageSettingsPage} from '@app/pages/language-settings/language-settings';
@@ -70,6 +70,7 @@ export class UserTypeSelectionPage {
 
   getNavParams() {
     const navigation = this.router.getCurrentNavigation();
+    this.navParams = false;
     if (navigation && navigation.extras && navigation.extras.state) {
       this.navParams = navigation.extras.state;
     }
@@ -221,7 +222,7 @@ export class UserTypeSelectionPage {
       if (this.appGlobalService.DISPLAY_ONBOARDING_CATEGORY_PAGE) {
       this.container.removeAllTabs();
       const navigationExtras: NavigationExtras = {state: { isChangeRoleRequest: true, selectedUserType: this.selectedUserType }};
-      this.router.navigate(['profile-settings'], navigationExtras);
+      this.router.navigate([`/${RouterLinks.PROFILE_SETTINGS}`], navigationExtras);
       } else {
         this.updateProfile('TabsPage');
       }
@@ -285,6 +286,6 @@ export class UserTypeSelectionPage {
 
   navigateToPermissions(params) {
     const navigationExtras: NavigationExtras = { state: params };
-    this.router.navigate(['/settings/permission'], navigationExtras);
+    this.router.navigate([`/${RouterLinks.SETTINGS}/${RouterLinks.PERMISSION}`], navigationExtras);
   }
 }

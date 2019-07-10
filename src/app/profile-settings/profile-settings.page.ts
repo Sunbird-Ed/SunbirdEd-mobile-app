@@ -547,9 +547,9 @@ export class ProfileSettingsPage {
     this.profileService.updateProfile(req).toPromise()
       .then((res: any) => {
         if (req.profileType === ProfileType.TEACHER) {
-          // initTabs(this.container, GUEST_TEACHER_TABS);
+          initTabs(this.container, GUEST_TEACHER_TABS);
         } else if (req.profileType === ProfileType.STUDENT) {
-          // initTabs(this.container, GUEST_STUDENT_TABS);
+          initTabs(this.container, GUEST_STUDENT_TABS);
         }
         this.events.publish('refresh:profile');
         this.appGlobalService.guestUserProfile = res;
