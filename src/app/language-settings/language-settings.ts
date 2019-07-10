@@ -233,7 +233,7 @@ export class LanguageSettingsPage{
       } else {
         // migration-TODO
         // this.navCtrl.push(UserTypeSelectionPage);
-        this.router.navigate([RouterLinks.USER_TYPE_SELECTION, false]);
+        this.router.navigate([RouterLinks.USER_TYPE_SELECTION]);
       }
     } else {
       this.generateClickInteractEvent('n/a', InteractSubtype.CONTINUE_CLICKED);

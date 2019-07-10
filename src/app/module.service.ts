@@ -4,8 +4,9 @@ import { TabOptions } from '../services/container.services';
 
 // const HOME_TAB = { root: HomePage, icon: "home", label: "HOME_BNAV", index: 0, tabsHideOnSubPages: true };
 const COURSE_TAB = {
-    // root: CoursesPage,
-    icon: 'courses',
+    root: 'courses',
+    // icon: 'courses',
+    icon: './assets/imgs/Course_enable@1.5x.svg',
     label: 'COURSES_BNAV',
     index: 2,
     tabsHideOnSubPages: true
@@ -13,7 +14,8 @@ const COURSE_TAB = {
 
 const COURSE_TAB_DISABLED = {
     root: '',
-    icon: 'courses',
+    // icon: 'courses',
+    icon: './assets/imgs/Course_enable@1.5x.svg',
     label: 'COURSES_BNAV',
     index: 2,
     tabsHideOnSubPages: true,
@@ -22,75 +24,69 @@ const COURSE_TAB_DISABLED = {
 
 const SCANNER_TAB = {
     root: '',
-    icon: 'qrscanner',
+    // icon: 'qrscanner',
+    icon: './assets/imgs/QR code@1.5x.svg',
     // label: 'LIBRARY_BNAV',
     index: 3,
     tabsHideOnSubPages: true
 };
 const LIBRARY_TAB = {
-    // root: ResourcesPage,
-    icon: 'resources',
+    root: 'resources',
+    // icon: 'resources',
+    icon: './assets/imgs/Library@1.5x.svg',
     label: 'LIBRARY_BNAV',
     index: 1,
     tabsHideOnSubPages: true,
     isSelected: true
 };
 const GUEST_PROFILE_TAB = {
-    // root: GuestProfilePage,
-    icon: 'profile',
+    root: 'guest-profile',
+    // icon: 'profile',
+    icon: './assets/imgs/Profile@1.5x.svg',
     label: 'PROFILE_BNAV',
     index: 5,
     tabsHideOnSubPages: true
 };
 const GUEST_PROFILE_SWITCH_TAB = {
-    // root: GuestProfilePage,
-    icon: 'profile',
+    root: 'guest-profile',
+    // icon: 'profile',
+    icon: './assets/imgs/Profile@1.5x.svg',
     label: 'PROFILE_BNAV',
     index: 5,
     tabsHideOnSubPages: true,
     isSelected: true
 };
 const PROFILE_TAB = {
-    // root: ProfilePage,
-    icon: 'profile',
+    root: 'profile',
+    // icon: 'profile',
+    icon: './assets/imgs/Profile@1.5x.svg',
     label: 'PROFILE_BNAV',
     index: 5,
     tabsHideOnSubPages: true
 };
 
 const DOWNLOADS_TAB = {
-    root: '',
-    icon: 'downloads',
+    root: 'download-manager',
+    // icon: 'downloads',
+    icon: './assets/imgs/Downloads@1.5x.svg',
     label: 'DOWNLOAD_BNAV',
     index: 4,
     tabsHideOnSubPages: true
 };
 
-const DOWNLOADS_TAB_DISABLED = {
-    // root: DownloadManagerPage,
-    icon: 'downloads',
-    label: 'DOWNLOAD_BNAV',
-    index: 4,
-    tabsHideOnSubPages: true,
-    // disabled: true,
-    // availableLater: true    // This flag holds value for indicating that this tab will be available in the later releasesPageModule } from '../pages/storage-settings/storage-settings.module';
-};
-
 export const GUEST_TEACHER_TABS = [
-    // HOME_TAB,
     LIBRARY_TAB,
     COURSE_TAB,
     SCANNER_TAB,
-    DOWNLOADS_TAB_DISABLED,
+    DOWNLOADS_TAB,
     GUEST_PROFILE_TAB
 ];
 
 export const LOGIN_TEACHER_TABS = [
-    // HOME_TAB,
     LIBRARY_TAB,
     COURSE_TAB,
     SCANNER_TAB,
-    DOWNLOADS_TAB_DISABLED,
+    DOWNLOADS_TAB,
     PROFILE_TAB
 ];
 
@@ -98,16 +94,15 @@ export const GUEST_STUDENT_TABS = [
     LIBRARY_TAB,
     COURSE_TAB_DISABLED,
     SCANNER_TAB,
-    DOWNLOADS_TAB_DISABLED,
+    DOWNLOADS_TAB,
     GUEST_PROFILE_TAB
 ];
 
 export const GUEST_TEACHER_SWITCH_TABS = [
-    // HOME_TAB,
     LIBRARY_TAB,
     COURSE_TAB,
     SCANNER_TAB,
-    DOWNLOADS_TAB_DISABLED,
+    DOWNLOADS_TAB,
     GUEST_PROFILE_SWITCH_TAB
 ];
 
@@ -115,11 +110,13 @@ export const GUEST_STUDENT_SWITCH_TABS = [
     LIBRARY_TAB,
     COURSE_TAB_DISABLED,
     SCANNER_TAB,
-    DOWNLOADS_TAB_DISABLED,
+    DOWNLOADS_TAB,
     GUEST_PROFILE_SWITCH_TAB
 ];
 
 export const initTabs = (container: ContainerService, tabs: Array<TabOptions>) => {
+    console.log("Inside initTabs", tabs);
+
     container.removeAllTabs();
 
     if (tabs && tabs.length > 0) {
@@ -128,31 +125,3 @@ export const initTabs = (container: ContainerService, tabs: Array<TabOptions>) =
         });
     }
 };
-
-/* export const PluginModules = [
-    CoursesPageModule,
-    ProfilePageModule,
-    ResourcesPageModule,
-    OnboardingPageModule,
-    LanguageSettingsPageModule,
-    UserTypeSelectionPageModule,
-    CourseBatchesPageModule,
-    EnrolledCourseDetailsPageModule,
-    QRScannerModule,
-    SearchModule,
-    CollectionDetailsPageModule,
-    CollectionDetailsEtbPageModule,
-    ContentDetailsPageModule,
-    ViewMoreActivityPageModule,
-    PageFilterMoudule,
-    UserAndGroupsPageModule,
-    ReportsPageModule,
-    UserReportModule,
-    ProfileSettingsPageModule,
-    QrCodeResultPageModule,
-    TermsAndConditionsPageModule,
-    DownloadManagerPageModule,
-    ActiveDownloadsPageModule,
-    StorageSettingsPageModule
-];
- */

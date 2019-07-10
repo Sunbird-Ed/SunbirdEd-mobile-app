@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
-import { AuthGuardService } from '../services/auth-guard.service';
 import { RouterLinks } from './app.constant';
 import { HasNotBeenOnboardedGuard } from '@app/guards/has-not-been-onboarded.guard';
 import { HasNotSelectedFrameworkGuard } from '@app/guards/has-not-selected-framework.guard';
@@ -20,7 +19,7 @@ const routes: Routes = [
     canLoad: [IsGuestUserGuard, HasNotBeenOnboardedGuard, HasNotSelectedLanguageGuard],
   },
   {
-    path: `${RouterLinks.USER_TYPE_SELECTION}/:isChangeRoleRequest`,
+    path: `${RouterLinks.USER_TYPE_SELECTION}`,
     loadChildren: './user-type-selection/user-type-selection.module#UserTypeSelectionPageModule',
     canLoad: [IsGuestUserGuard, HasNotBeenOnboardedGuard, HasNotSelectedUserTypeGuard],
   },

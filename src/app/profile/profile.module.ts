@@ -7,6 +7,7 @@ import { IonicModule } from '@ionic/angular';
 
 import { ProfilePage } from './profile.page';
 import { ProfileRoutingModule } from './profile-routing.module';
+import { TranslateModule } from '@ngx-translate/core';
 
 const routes: Routes = [
   {
@@ -20,7 +21,8 @@ const routes: Routes = [
     CommonModule,
     FormsModule,
     IonicModule,
-    ProfileRoutingModule
+    ProfileRoutingModule,
+    TranslateModule
   ],
   declarations: [ProfilePage]
 })

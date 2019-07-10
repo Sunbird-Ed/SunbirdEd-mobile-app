@@ -129,7 +129,7 @@ export class GuestProfilePage implements OnInit {
     this.loader = await this.commonUtilService.getLoader();
 
     if (showLoader) {
-      this.loader.present();
+      await this.loader.present();
     }
     if (refresher) {
       this.telemetryGeneratorService.generatePullToRefreshTelemetry(PageId.GUEST_PROFILE, Environment.HOME);
@@ -139,11 +139,11 @@ export class GuestProfilePage implements OnInit {
         this.profile = res;
         this.getSyllabusDetails();
         setTimeout(() => {
-          if (refresher) { refresher.complete(); }
+          if (refresher) { refresher.target.complete(); }
         }, 500);
       })
-      .catch(() => {
-        this.loader.dismiss();
+      .catch(async () => {
+        await this.loader.dismiss();
       });
   }
 
@@ -154,7 +154,7 @@ export class GuestProfilePage implements OnInit {
         isCurrentUser: true
       }
     }
-    this.router.navigate([RouterLinks.GUEST_EDIT], navigationExtras);
+    this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.GUEST_EDIT}`], navigationExtras);
   }
 
 
@@ -281,21 +281,21 @@ export class GuestProfilePage implements OnInit {
     this.router.navigate([RouterLinks.ACTIVE_DOWNLOADS]);
   }
 
-    // Offline Toast
-    async presentToastForOffline(msg: string) {
-      this.toast = await this.toastController.create({
-        duration: 3000,
-        message: this.commonUtilService.translateMessage(msg),
-        showCloseButton: true,
-        position: 'top',
-        closeButtonText: '',
-        cssClass: 'toastHeader'
-      });
-      await this.toast.present();
-      this.toast.onDidDismiss(() => {
-        this.toast = undefined;
-      });
-    }
-  
+  // Offline Toast
+  async presentToastForOffline(msg: string) {
+    this.toast = await this.toastController.create({
+      duration: 3000,
+      message: this.commonUtilService.translateMessage(msg),
+      showCloseButton: true,
+      position: 'top',
+      closeButtonText: '',
+      cssClass: 'toastHeader'
+    });
+    await this.toast.present();
+    this.toast.onDidDismiss(() => {
+      this.toast = undefined;
+    });
+  }
+
 }
 

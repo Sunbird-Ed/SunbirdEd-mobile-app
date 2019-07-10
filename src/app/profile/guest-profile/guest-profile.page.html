@@ -90,6 +90,6 @@
     </ion-item>
   </ion-list>
   <div *ngIf="showSignInCard" class="signin-card-bg">
-    <sign-in-card [source]="'profile'" (valueChange)="buttonClick($event)"></sign-in-card>
+    <app-sign-in-card [source]="'profile'" (valueChange)="buttonClick($event)"></app-sign-in-card>
   </div>
 </ion-content>

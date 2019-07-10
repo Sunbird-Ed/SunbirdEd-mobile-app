@@ -1,7 +1,7 @@
 import { Router } from '@angular/router';
-import { AfterViewInit, Component, Inject, NgZone, ViewChild, OnInit, EventEmitter, ChangeDetectorRef  } from '@angular/core';
+import { AfterViewInit, Component, Inject, NgZone, ViewChild, OnInit, EventEmitter, ChangeDetectorRef } from '@angular/core';
 
-import {  Events, Platform, PopoverController, ToastController } from '@ionic/angular';
+import { Events, Platform, PopoverController, ToastController } from '@ionic/angular';
 // import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { TranslateService } from '@ngx-translate/core';
@@ -17,7 +17,7 @@ import {
 import { InteractType, InteractSubtype, Environment, PageId, ImpressionType } from 'services/telemetry-constants';
 import { GUEST_STUDENT_TABS, GUEST_TEACHER_TABS, LOGIN_TEACHER_TABS } from './module.service';
 // migration-TODO
-// import {initTabs } from './module.service';
+import { initTabs } from './module.service';
 import { Observable } from 'rxjs';
 import { ImageLoaderService, ImageLoaderConfigService } from 'ionic-image-loader';
 import { GenericAppConfig, PreferenceKey, ProfileConstants } from './app.constant';
@@ -27,7 +27,7 @@ import {
   SunbirdSdk, TelemetryAutoSyncUtil, TelemetryService, NotificationService
 } from 'sunbird-sdk';
 import { tap } from 'rxjs/operators';
-import {ActivePageService} from '../services/active-page-service';
+import { ActivePageService } from '../services/active-page-service';
 import { SplaschreenDeeplinkActionHandlerDelegate } from '../services/sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
 import { SplashcreenTelemetryActionHandlerDelegate } from '../services/sunbird-splashscreen/splashcreen-telemetry-action-handler-delegate';
 import { SplashscreenImportActionHandlerDelegate } from '../services/sunbird-splashscreen/splashscreen-import-action-handler-delegate';
@@ -117,6 +117,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   ) {
     this.telemetryAutoSyncUtil = new TelemetryAutoSyncUtil(this.telemetryService);
     platform.ready().then(async () => {
+      console.log("Inside platform ready");
       this.fcmTokenWatcher(); // Notification related
       this.receiveNotification();
       this.imageLoaderConfig.enableDebugMode();
@@ -440,7 +441,7 @@ export class AppComponent implements OnInit, AfterViewInit {
         );
       })
       .subscribe();
- }
+  }
 
   initializeApp() {
     this.headerService.headerConfigEmitted$.subscribe(config => {
@@ -479,7 +480,7 @@ export class AppComponent implements OnInit, AfterViewInit {
         this.commonUtilService.showExitPopUp(this.activePageService.computePageId((<any>activeView).instance), Environment.HOME, false);
       }
     } else {*/
-      this.headerService.sidebarEvent($event);
+    this.headerService.sidebarEvent($event);
     //}
   }
 
@@ -669,7 +670,7 @@ export class AppComponent implements OnInit, AfterViewInit {
         //   this.app.getRootNavs()[0].push(LanguageSettingsPage, {
         //     isFromSettings: true
         //
-            this.router.navigate(['settings/language-setting', false]);
+        this.router.navigate(['settings/language-setting', false]);
         /*if (this.app.getRootNavs().length > 0) {
           this.app.getRootNavs()[0].push(LanguageSettingsPage, {
             isFromSettings: true
