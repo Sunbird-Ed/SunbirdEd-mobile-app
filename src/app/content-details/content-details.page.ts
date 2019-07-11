@@ -211,6 +211,8 @@ export class ContentDetailsPage implements OnInit {
     this.checkappAvailability();
     this.defaultAppIcon = 'assets/imgs/ic_launcher.png';
     this.defaultLicense = ContentConstants.DEFAULT_LICENSE;
+    this.cardData = this.router.getCurrentNavigation().extras.state.content;
+
   }
 
   ngOnInit() {
