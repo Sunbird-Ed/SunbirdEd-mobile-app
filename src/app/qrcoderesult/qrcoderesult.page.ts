@@ -47,6 +47,7 @@ import { CanvasPlayerService } from '../../services/canvas-player.service';
 import { File } from '@ionic-native/file/ngx';
 import { AppHeaderService } from '../../services/app-header.service';
 import { CollectionDetailEtbPage } from '../collection-detail-etb/collection-detail-etb.page';
+import { Location } from '@angular/common';
 declare const cordova;
 
 @Component({
@@ -133,6 +134,7 @@ export class QrcoderesultPage implements OnDestroy {
     @Inject('EVENTS_BUS_SERVICE') private eventsBusService: EventsBusService,
     @Inject('PLAYER_SERVICE') private playerService: PlayerService,
     private canvasPlayerService: CanvasPlayerService,
+    private location: Location,
     private file: File,
     private headerService: AppHeaderService
   ) {
@@ -215,6 +217,7 @@ export class QrcoderesultPage implements OnDestroy {
     if (this.source === PageId.LIBRARY || this.source === PageId.COURSES || !this.isSingleContent) {
       // migration-TODO
       // this.navCtrl.pop();
+      this.location.back();
     } else if (this.isSingleContent && this.appGlobalService.isProfileSettingsCompleted) {
       // migration-TODO
       // this.navCtrl.setRoot(TabsPage, {
@@ -229,6 +232,7 @@ export class QrcoderesultPage implements OnDestroy {
     } else {
       // migration-TODO
       // this.navCtrl.pop();
+      this.location.back();
     }
   }
 
@@ -253,6 +257,8 @@ export class QrcoderesultPage implements OnDestroy {
           this.commonUtilService.showContentComingSoonAlert(this.source);
           // migration-TODO
           // this.navCtrl.pop();
+          this.location.back();
+
         }
 
       })
@@ -263,6 +269,8 @@ export class QrcoderesultPage implements OnDestroy {
         this.commonUtilService.showContentComingSoonAlert(this.source);
         // migration-TODO
         // this.navCtrl.pop();
+        this.location.back();
+
       });
 
   }
@@ -755,12 +763,16 @@ export class QrcoderesultPage implements OnDestroy {
           this.showLoading = false;
           // migration-TODO
           // this.navCtrl.pop();
+          this.location.back();
+
         });
       }).catch(() => {
         this.zone.run(() => {
           this.showLoading = false;
-              // migration-TODO
+          // migration-TODO
           // this.navCtrl.pop();
+          this.location.back();
+
         });
       });
   }
@@ -856,15 +868,15 @@ export class QrcoderesultPage implements OnDestroy {
             console.error('err', err);
             this.canvasPlayerService.readJSON(`${data.metadata.basePath}/index.json`).then((json) => {
               data['data'] = json;
-               // migration-TODO
+              // migration-TODO
               // this.navCtrl.push(PlayerPage, { config: data });
             }).catch((e) => {
               console.error('readJSON error', e);
             });
           });
         } else {
-        // migration-TODO
-        // this.navCtrl.push(PlayerPage, { config: data });
+          // migration-TODO
+          // this.navCtrl.push(PlayerPage, { config: data });
         }
 
       } else {

@@ -69,6 +69,7 @@ import { BatchConstants } from '../app.constant';
 import { ContentShareHandlerService } from '../../services/content/content-share-handler.service';
 import { SbGenericPopoverComponent } from '../components/popups/sb-generic-popover/sb-generic-popover.component';
 import { ContentActionsComponent, ContentRatingAlertComponent } from '../components';
+import {Location} from '@angular/common';
 declare const cordova;
 
 @Component({
@@ -204,7 +205,8 @@ export class EnrolledCourseDetailsPage implements OnInit {
     private datePipe: DatePipe,
     private utilityService: UtilityService,
     private headerService: AppHeaderService,
-    private contentShareHandler: ContentShareHandlerService
+    private contentShareHandler: ContentShareHandlerService,
+    private location: Location
   ) {
 
     this.appGlobalService.getUserId();
@@ -446,6 +448,7 @@ export class EnrolledCourseDetailsPage implements OnInit {
           this.commonUtilService.showToast('ERROR_FETCHING_DATA');
         }
         // this.navCtrl.pop();
+        this.location.back();
       });
   }
 
@@ -475,6 +478,7 @@ export class EnrolledCourseDetailsPage implements OnInit {
       if (this.course.status !== 'Live') {
         this.commonUtilService.showToast('COURSE_NOT_AVAILABLE');
         // this.navCtrl.pop();
+        this.location.back();
       }
 
       if (this.course.gradeLevel && this.course.gradeLevel.length) {
@@ -502,6 +506,8 @@ export class EnrolledCourseDetailsPage implements OnInit {
     } else {
       this.commonUtilService.showToast('ERROR_CONTENT_NOT_AVAILABLE');
       // this.navCtrl.pop();
+      this.location.back();
+
     }
 
     if (data.isAvailableLocally) {
@@ -892,12 +898,15 @@ export class EnrolledCourseDetailsPage implements OnInit {
           this.showLoading = false;
           this.headerService.showHeaderWithBackButton(['share', 'more']);
           // this.navCtrl.pop();
+          this.location.back();
+
         });
       }).catch(() => {
         this.zone.run(() => {
           this.showLoading = false;
           this.headerService.showHeaderWithBackButton(['share', 'more']);
           // this.navCtrl.pop();
+          this.location.back();
         });
       });
   }
@@ -987,7 +996,8 @@ export class EnrolledCourseDetailsPage implements OnInit {
     //     this.generateQRSessionEndEvent(this.source, this.course.identifier);
     //   }
     //   this.navCtrl.pop();
-    //   this.backButtonFunc();
+        this.location.back();
+        this.backButtonFunc.unsubscribe();
     // }, 10);
   }
 
@@ -1096,7 +1106,7 @@ export class EnrolledCourseDetailsPage implements OnInit {
       this.headerObservable.unsubscribe();
     }
     if (this.backButtonFunc) {
-      this.backButtonFunc();
+      this.backButtonFunc.unsubscribe();
     }
     // TODO: this.events.unsubscribe(EventTopics.UNENROL_COURSE_SUCCESS);
   }
@@ -1210,7 +1220,8 @@ export class EnrolledCourseDetailsPage implements OnInit {
       this.generateQRSessionEndEvent(this.source, this.course.identifier);
     }
     // this.navCtrl.pop();
-    this.backButtonFunc();
+    this.location.back();
+    this.backButtonFunc.unsubscribe();
   }
 
   generateQRSessionEndEvent(pageId: string, qrData: string) {

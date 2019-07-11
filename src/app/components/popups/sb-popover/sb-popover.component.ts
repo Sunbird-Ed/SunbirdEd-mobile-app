@@ -95,7 +95,7 @@ export class SbPopoverComponent implements OnDestroy {
     // migration-TODO
     // this.backButtonFunc = this.platform.registerBackButtonAction(() => {
     //   // this.viewCtrl.dismiss();
-    //   this.backButtonFunc();
+    this.backButtonFunc.unsubscribe();
     // }, 20);
   }
 
@@ -122,6 +122,6 @@ export class SbPopoverComponent implements OnDestroy {
   }
 
   ionViewWillLeave(): void {
-    this.backButtonFunc();
+    this.backButtonFunc.unsubscribe();
   }
 }

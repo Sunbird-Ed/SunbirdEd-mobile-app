@@ -267,7 +267,7 @@ export class PageFilterPage {
 
   ionViewWillLeave(): void {
     if (this.backButtonFunc) {
-      this.backButtonFunc();
+      this.backButtonFunc.unsubscribe();
     }
   }
 

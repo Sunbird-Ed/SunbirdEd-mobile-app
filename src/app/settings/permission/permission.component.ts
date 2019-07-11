@@ -13,6 +13,7 @@ import {
   AppHeaderService,
   TelemetryGeneratorService
 } from '@app/services';
+import { Location } from '@angular/common';
 import { RouterLinks } from '@app/app/app.constant';
 
 declare const cordova;
@@ -68,12 +69,13 @@ export class PermissionComponent {
     private headerService: AppHeaderService,
     private event: Events,
     private telemetryGeneratorService: TelemetryGeneratorService,
+    private location: Location,
     private router: Router) {
     /* migration-TODO
     this.appVersion.getAppName()
       .then((appName: any) => this.appName = appName);
     */
-   this.getNavParams();
+    this.getNavParams();
   }
 
   getNavParams() {
@@ -222,6 +224,7 @@ export class PermissionComponent {
     /* migration-TODO
     this.navCtrl.pop();
     */
+    this.location.back();
     cordova.plugins.diagnostic.switchToSettings('application_details', () => {
       console.log('opened settings');
     },
@@ -230,7 +233,5 @@ export class PermissionComponent {
       }
     );
   }
-
-  
 
 }

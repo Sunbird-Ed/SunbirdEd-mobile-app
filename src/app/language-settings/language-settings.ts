@@ -13,6 +13,7 @@ import {Environment, ImpressionType, InteractSubtype, InteractType, PageId} from
 // import { ResourcesPage } from '../resources/resources';
 import { NotificationService } from '../../services/notification.service';
 import { switchMap } from 'rxjs/operators';
+import { Location } from '@angular/common';
 
 declare const cordova;
 
@@ -49,6 +50,7 @@ export class LanguageSettingsPage{
     private notification: NotificationService,
     private router: Router,
     private activatedRoute: ActivatedRoute,
+    private location: Location
   ) {
     // this.mainPage = this.navParams.get('mainPage');
    }
@@ -71,7 +73,7 @@ export class LanguageSettingsPage{
 
   handleBackbutton() {
     // migration-TODO
-    /* this.unregisterBackButton = this.platform.registerBackButtonAction(() => {
+     this.unregisterBackButton = this.platform.backButton.subscribe(() => {
       this.telemetryGeneratorService.generateInteractTelemetry(
         InteractType.TOUCH, InteractSubtype.DEVICE_BACK_CLICKED,
         this.isFromSettings ? Environment.SETTINGS : Environment.ONBOARDING,
@@ -79,7 +81,8 @@ export class LanguageSettingsPage{
       );
 
       if (this.isFromSettings) {
-        this.navCtrl.pop();
+        // this.navCtrl.pop();
+        this.location.back();
       } else {
         const pId = this.isFromSettings ? PageId.SETTINGS_LANGUAGE : PageId.ONBOARDING_LANGUAGE_SETTING;
         const env = this.isFromSettings ? Environment.SETTINGS : Environment.ONBOARDING;
@@ -87,7 +90,7 @@ export class LanguageSettingsPage{
         this.commonUtilService.showExitPopUp(pId, env, false);
       }
       this.unregisterBackButton();
-    }, 10); */
+    });
   }
 
   ionViewWillEnter() {
@@ -227,6 +230,7 @@ export class LanguageSettingsPage{
       if (this.isFromSettings) {
         // migration-TODO
         // this.navCtrl.pop();
+        this.location.back();
       } else if (this.appGlobalService.DISPLAY_ONBOARDING_PAGE) {
         // migration-TODO
         // this.navCtrl.push(OnboardingPage);

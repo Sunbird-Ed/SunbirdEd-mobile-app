@@ -22,6 +22,7 @@ import { ImpressionType, Environment, PageId, InteractType, InteractSubtype, } f
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { AndroidPermissionsService } from '../../services/android-permissions/android-permissions.service';
 import { AndroidPermission, AndroidPermissionsStatus } from '../../services/android-permissions/android-permission';
+import { Location } from '@angular/common';
 
 
 @Component({
@@ -96,6 +97,7 @@ export class StorageSettingsPage implements OnInit {
     // migration-TODO
     // private toastController: ToastController,
     private app: IonApp,
+    private location: Location,
     @Inject('EVENTS_BUS_SERVICE') private eventsBusService: EventsBusService,
     @Inject('STORAGE_SERVICE') private storageService: StorageService,
     @Inject('DEVICE_INFO') private deviceInfo: DeviceInfo,
@@ -154,6 +156,7 @@ export class StorageSettingsPage implements OnInit {
       case 'back':
         // migration-TODO
         // this.navCtrl.pop();
+        this.location.back();
         break;
     }
   }

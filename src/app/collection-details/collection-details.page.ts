@@ -15,6 +15,7 @@ import {
   TelemetryGeneratorService,
   UtilityService
 } from '../../services/index';
+import { Location } from '@angular/common';
 import {
   ChildContentRequest,
   Content,
@@ -217,7 +218,8 @@ export class CollectionDetailsPage {
     private courseUtilService: CourseUtilService,
     private utilityService: UtilityService,
     private headerService: AppHeaderService,
-    private contentShareHandler: ContentShareHandlerService
+    private contentShareHandler: ContentShareHandlerService,
+    private location: Location
   ) {
 
     this.objRollup = new Rollup();
@@ -296,7 +298,9 @@ export class CollectionDetailsPage {
     }
     // migration-TODO
     // this.navCtrl.pop();
-    this.backButtonFunc();
+    this.location.back();
+
+    this.backButtonFunc.unsubscribe();
   }
 
   registerDeviceBackButton() {
@@ -387,7 +391,7 @@ export class CollectionDetailsPage {
     this.contentService.getContentDetails(option).toPromise()
       .then((data: Content) => {
         this.zone.run(async () => {
-         await loader.dismiss().then(() => {
+          await loader.dismiss().then(() => {
             if (data) {
               this.extractApiResponse(data);
             }
@@ -400,6 +404,8 @@ export class CollectionDetailsPage {
         this.commonUtilService.showToast('ERROR_CONTENT_NOT_AVAILABLE');
         // migration-TODO
         // this.navCtrl.pop();
+        this.location.back();
+
       });
   }
 
@@ -595,6 +601,8 @@ export class CollectionDetailsPage {
             this.showChildrenLoader = false;
             // migration-TODO
             // this.navCtrl.pop();
+            this.location.back();
+
           }
         });
       });
@@ -853,6 +861,8 @@ export class CollectionDetailsPage {
     if (response.data === 'delete.success' || response.data === 'flag.success') {
       // migration-TODO
       // this.navCtrl.pop();
+      this.location.back();
+
     }
   }
 
@@ -930,12 +940,16 @@ export class CollectionDetailsPage {
           this.showLoading = false;
           // migration-TODO
           // this.navCtrl.pop();
+          this.location.back();
+
         });
       }).catch(() => {
         this.zone.run(() => {
           this.showLoading = false;
           // migration-TODO
           // this.navCtrl.pop();
+          this.location.back();
+
         });
       });
   }
@@ -968,7 +982,7 @@ export class CollectionDetailsPage {
       this.eventSubscription.unsubscribe();
     }
     if (this.backButtonFunc) {
-      this.backButtonFunc();
+      this.backButtonFunc.unsubscribe();
     }
   }
 

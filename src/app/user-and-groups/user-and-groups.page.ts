@@ -343,7 +343,7 @@ export class UserAndGroupsPage implements OnInit {
         state: {
           isNewUser: true
         }
-      }
+      };
       this.router.navigate([RouterLinks.GUEST_EDIT], navigationExtras);
 
     });

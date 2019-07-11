@@ -43,6 +43,7 @@ import { PreferenceKey } from '../../../app/app.constant';
 
 import { TabsPage } from '../../tabs/tabs.page';
 import { SbGenericPopoverComponent } from '../../components/popups/sb-generic-popover/sb-generic-popover.component';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-guest-edit',
@@ -116,7 +117,8 @@ export class GuestEditPage implements OnInit {
     private popoverCtrl: PopoverController,
     private headerService: AppHeaderService,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private location: Location
   ) {
     this.isNewUser = Boolean(this.router.getCurrentNavigation().extras.state.isNewUser);
     this.isCurrentUser = Boolean(this.router.getCurrentNavigation().extras.state.isCurrentUser);
@@ -568,6 +570,7 @@ export class GuestEditPage implements OnInit {
           PageId.EDIT_USER
         );
         // this.navCtrl.pop();
+        this.location.back();
         window.history.back();
       }, (err: any) => {
         this._dismissLoader(loader);
@@ -636,6 +639,7 @@ export class GuestEditPage implements OnInit {
       this.telemetryGeneratorService.generateInteractTelemetry(
         InteractType.OTHER, InteractSubtype.CREATE_USER_SUCCESS, Environment.USER, PageId.CREATE_USER);
       // this.navCtrl.pop();
+      this.location.back();
       window.history.back();
     }, (err: any) => {
       this._dismissLoader(loader);

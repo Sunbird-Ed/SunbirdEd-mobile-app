@@ -7,6 +7,7 @@ import { PlayerActionHandlerDelegate, HierarchyInfo, User } from './player-actio
 import { ContentDetailsPage } from '@app/app/content-details/content-details.page';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { EventTopics } from '../app.constant';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-player',
@@ -26,7 +27,8 @@ export class PlayerPage implements OnInit, PlayerActionHandlerDelegate {
     private alertCtrl: AlertController,
     private commonUtilService: CommonUtilService,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private location: Location
   ) {
     this.canvasPlayerService.handleAction();
 
@@ -131,6 +133,7 @@ export class PlayerPage implements OnInit, PlayerActionHandlerDelegate {
     });
 
     // this.navCtrl.pop();
+    this.location.back();
     window.history.back();
   }
 

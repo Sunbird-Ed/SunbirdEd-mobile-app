@@ -53,7 +53,7 @@ export class PageFilterOptionsPage {
     this.backButtonFunc = this.platform.backButton.subscribeWithPriority(11 , () => {
       // migration-TODO
       // this.viewCtrl.dismiss();
-      this.backButtonFunc();
+      this.backButtonFunc.unsubscribe();
     });
   }
 

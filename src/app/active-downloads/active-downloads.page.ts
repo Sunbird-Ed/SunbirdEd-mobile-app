@@ -12,6 +12,7 @@ import {
   EventNamespace,
   EventsBusService
 } from 'sunbird-sdk';
+import { Location } from '@angular/common';
 //  import { SbPopoverComponent } from '@app/component';
 import { AppHeaderService, CommonUtilService, TelemetryGeneratorService } from '../../services/index';
 import { SbNoNetworkPopupComponent } from '../components/popups/sb-no-network-popup/sb-no-network-popup.component';
@@ -46,6 +47,7 @@ export class ActiveDownloadsPage implements OnInit, OnDestroy, ActiveDownloadsIn
     private commonUtilService: CommonUtilService,
     private toastController: ToastController,
     private telemetryGeneratorService: TelemetryGeneratorService,
+    private location: Location,
     @Inject('DOWNLOAD_SERVICE') private downloadService: DownloadService,
     @Inject('EVENTS_BUS_SERVICE') private eventsBusService: EventsBusService,
   ) {
@@ -129,7 +131,8 @@ export class ActiveDownloadsPage implements OnInit, OnDestroy, ActiveDownloadsIn
   private handleHeaderEvents(event: { name: string }) {
     switch (event.name) {
       case 'back':
-        this.navCtrl.pop();
+        // this.navCtrl.pop();
+        this.location.back();
         break;
     }
   }
@@ -159,7 +162,7 @@ export class ActiveDownloadsPage implements OnInit, OnDestroy, ActiveDownloadsIn
     toast.present();
   }
 
-   private async showCancelPopUp(downloadRequest?: DownloadRequest) {
+  private async showCancelPopUp(downloadRequest?: DownloadRequest) {
     this.telemetryGeneratorService.generatePageViewTelemetry(
       downloadRequest ? PageId.SINGLE_CANCEL_CONFIRMATION_POPUP : PageId.BULK_CANCEL_CONFIRMATION_POPUP,
       Environment.DOWNLOADS);

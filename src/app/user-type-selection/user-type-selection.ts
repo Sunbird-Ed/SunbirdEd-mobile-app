@@ -1,6 +1,8 @@
-import {Component, Inject, NgZone, ViewChild, OnInit} from '@angular/core';
-import {Events, NavController} from '@ionic/angular';
-import {TranslateService} from '@ngx-translate/core';
+import { Component, Inject, NgZone, ViewChild, OnInit } from '@angular/core';
+import { Events, NavController, Platform } from '@ionic/angular';
+import { TranslateService } from '@ngx-translate/core';
+import { IonRouterOutlet } from '@ionic/angular';
+import { Location } from '@angular/common';
 import { Router, ActivatedRoute, ParamMap, NavigationExtras } from '@angular/router';
 // import {GUEST_STUDENT_TABS, GUEST_TEACHER_TABS, initTabs, Map, PreferenceKey} from '../app.constant';
 // migration-TODO
@@ -8,7 +10,7 @@ import {PreferenceKey, RouterLinks} from '../app.constant';
 import {AppGlobalService, CommonUtilService, TelemetryGeneratorService, AppHeaderService, SunbirdQRScanner} from '../../services/index';
 // import {SunbirdQRScanner} from '@app/pages/qrscanner';
 // import {LanguageSettingsPage} from '@app/pages/language-settings/language-settings';
-import {Profile, ProfileService, ProfileSource, ProfileType, SharedPreferences, } from 'sunbird-sdk';
+import { Profile, ProfileService, ProfileSource, ProfileType, SharedPreferences, } from 'sunbird-sdk';
 import {
   Environment,
   ImpressionType,
@@ -18,7 +20,7 @@ import {
 } from '../../services/telemetry-constants';
 import { ContainerService } from '../../services/container.services';
 // import { TabsPage } from '../tabs/tabs';
-import {ProfileConstants} from '../app.constant';
+import { ProfileConstants } from '../app.constant';
 import { GUEST_TEACHER_TABS, initTabs, GUEST_STUDENT_TABS } from '../module.service';
 
 const selectedCardBorderColor = '#006DE5';
@@ -47,7 +49,7 @@ export class UserTypeSelectionPage {
   teacherImageUri = 'assets/imgs/ic_teacher.png';
   isChangeRoleRequest = false;
   private navParams: any;
-
+  @ViewChild(IonRouterOutlet) routerOutlet: IonRouterOutlet;
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     public navCtrl: NavController,
@@ -59,11 +61,12 @@ export class UserTypeSelectionPage {
     private commonUtilService: CommonUtilService,
     private appGlobalService: AppGlobalService,
     private scannerService: SunbirdQRScanner,
-    // private platform: Platform,
+    private platform: Platform,
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
     private headerService: AppHeaderService,
     private activatedRoute: ActivatedRoute,
     private router: Router,
+    private location: Location
   ) {
     this.getNavParams();
   }
@@ -79,9 +82,9 @@ export class UserTypeSelectionPage {
 
   ionViewDidLoad() {
     this.telemetryGeneratorService.generateImpressionTelemetry(
-    ImpressionType.VIEW, '',
-    PageId.USER_TYPE_SELECTION,
-    this.appGlobalService.isOnBoardingCompleted ? Environment.HOME : Environment.ONBOARDING);
+      ImpressionType.VIEW, '',
+      PageId.USER_TYPE_SELECTION,
+      this.appGlobalService.isOnBoardingCompleted ? Environment.HOME : Environment.ONBOARDING);
   }
 
   ionViewWillEnter() {
@@ -93,27 +96,27 @@ export class UserTypeSelectionPage {
     if (this.navParams && this.navParams.isChangeRoleRequest && Boolean(this.navParams.isChangeRoleRequest)) {
       this.isChangeRoleRequest = Boolean(this.navParams.isChangeRoleRequest);
     }
-
-    // migration TODO
-    // this.backButtonFunc = this.platform.registerBackButtonAction(() => {
-    //   this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.USER_TYPE_SELECTION, Environment.HOME, false);
-    //   this.handleBackButton();
-    //   this.backButtonFunc();
-    // }, 10);
+    this.backButtonFunc = this.platform.backButton.subscribe(() => {
+      this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.USER_TYPE_SELECTION, Environment.HOME, false);
+      this.handleBackButton();
+      this.backButtonFunc.unsubscribe();
+    });
   }
 
   ionViewWillLeave() {
+    // const self = this;
     this.headerObservable.unsubscribe();
     // Unregister the custom back button action for this page
     this.event.unsubscribe('back');
     if (this.backButtonFunc) {
-      this.backButtonFunc();
+      this.backButtonFunc.unsubscribe();
     }
   }
 
   handleBackButton() {
     if (this.isChangeRoleRequest) {
-      this.navCtrl.pop();
+      // this.navCtrl.pop();
+      this.location.back();
     } else {
       this.router.navigate(['settings/language-setting', 'false']);
     }
@@ -166,9 +169,9 @@ export class UserTypeSelectionPage {
     if (this.profile !== undefined && this.profile.handle) {
       // if role types are same
       if (this.profile.profileType === this.selectedUserType) {
-      this.gotoNextPage();
+        this.gotoNextPage();
       } else {
-      this.gotoNextPage(true);
+        this.gotoNextPage(true);
       }
     } else {
       const profileRequest: Profile = {
@@ -185,7 +188,7 @@ export class UserTypeSelectionPage {
   setProfile(profileRequest: Profile) {
     this.profileService.updateProfile(profileRequest).toPromise().then(() => {
       return this.profileService.setActiveSessionForProfile(profileRequest.uid).toPromise().then(() => {
-        return this.profileService.getActiveSessionProfile({requiredFields: ProfileConstants.REQUIRED_FIELDS}).toPromise()
+        return this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise()
           .then((success: any) => {
             const userId = success.uid;
             this.event.publish(AppGlobalService.USER_INFO_UPDATED);
@@ -197,7 +200,7 @@ export class UserTypeSelectionPage {
           }).catch(() => {
             return 'null';
           });
-      })
+      });
     });
   }
 

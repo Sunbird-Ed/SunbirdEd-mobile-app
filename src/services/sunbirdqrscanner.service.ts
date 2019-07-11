@@ -569,7 +569,7 @@ export class SunbirdQRScanner {
   public stopScanner() {
     // Unregister back button listner
     console.log('InsideSTopScannere===>>');
-    this.backButtonFunc();
+    this.backButtonFunc.unsubscribe();
     // QRScannerAlert.dismiss();
     (<any>window).qrScanner.stopScanner();
     if (this.pauseSubscription) {
