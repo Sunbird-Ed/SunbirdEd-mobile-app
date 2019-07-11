@@ -199,15 +199,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
     this.generateNetworkType();
   }
 
-  test() {
-    const navigationExtras: NavigationExtras = {
-      state: {
-        user: 'Christy Fernandes'
-      }
-    };
-    this.router.navigate([`/${RouterLinks.VIEW_MORE_ACTIVITY}`], navigationExtras);
-  }
-
   subscribeUtilityEvents() {
     this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).subscribe((profile: Profile) => {
       this.profile = profile;
@@ -333,6 +324,23 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
   //   this.navCtrl.push(SettingsPage);
   // }
 
+  testViewAll() {
+    const  headerTitle = 'RECENTLY_VIEWED';
+    const pageName = ViewMore.PAGE_RESOURCE_SAVED;
+    const uid = this.profile ? this.profile.uid : undefined;
+    const showDownloadOnlyToggleBtn = false;
+    const resourcesParams: NavigationExtras = {
+      state: {
+        headerTitle,
+        pageName,
+        showDownloadOnlyToggle: showDownloadOnlyToggleBtn,
+        uid,
+        audience: this.audienceFilter,
+      }
+    };
+    this.router.navigate([RouterLinks.VIEW_MORE_ACTIVITY], resourcesParams);
+  }
+
   navigateToViewMoreContentsPage(section: string) {
     const values = new Map();
     let headerTitle;
@@ -354,7 +362,17 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
       Environment.HOME,
       this.source, undefined,
       values);
-    // Migration TODO
+
+    const resourcesParams: NavigationExtras = {
+      state: {
+        headerTitle,
+        pageName,
+        showDownloadOnlyToggle: showDownloadOnlyToggleBtn,
+        uid,
+        audience: this.audienceFilter,
+      }
+    };
+    this.router.navigate([RouterLinks.VIEW_MORE_ACTIVITY], resourcesParams);
     // this.navCtrl.push(ViewMoreActivityPage, {
     //   headerTitle: headerTitle,
     //   pageName: pageName,

@@ -1,6 +1,5 @@
 <ion-content hide-header-footer class="main-container avoid-bottom-tabs-space" (ionScrollEnd)="logScrollEnd($event)"
   scrollEvents="true" #contentView>
-  <button (click)="test()"> Goto View more details</button>
   <div ion-fixed class="fixed-container">
     <div class="sb-slider-pills-container">
       <div class="sb-pills-container sb-medium-pills-container">
@@ -25,6 +24,9 @@
       <ion-spinner icon="spiral"></ion-spinner>
     </div>
     <ion-spinner *ngIf="showLoader" padding style="padding-top: 100px;"></ion-spinner>
+    <div>
+      <button (click)="testViewAll()">ViewAll</button>
+    </div>
     <div *ngIf="recentlyViewedResources && recentlyViewedResources.length">
       <div class="sb-recently-viewed-container" style="padding-bottom:40px;">
 

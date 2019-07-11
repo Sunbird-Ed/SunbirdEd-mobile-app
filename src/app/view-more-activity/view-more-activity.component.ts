@@ -163,8 +163,11 @@ export class ViewMoreActivityComponent implements OnInit {
   ) {
     this.route.queryParams.subscribe(params => {
       if (this.router.getCurrentNavigation().extras.state) {
-        console.log('params from state : ', this.router.getCurrentNavigation().extras.state.user);
         console.log('params from state : ', this.router.getCurrentNavigation().extras.state);
+        this.uid = this.router.getCurrentNavigation().extras.state.uid;
+        this.showDownloadsOnlyToggle = this.router.getCurrentNavigation().extras.state.showDownloadOnlyToggle;
+        console.log(this.router.getCurrentNavigation().extras.state.headerTitle);
+        console.log(this.router.getCurrentNavigation().extras.state.pageName);
       }
     });
     this.defaultImg = 'assets/imgs/ic_launcher.png';
