@@ -29,7 +29,7 @@ import { Environment, ImpressionType, LogLevel, PageId, InteractType, InteractSu
 import { Subscription } from 'rxjs';
 // import { CollectionDetailsEtbPage } from '../collection-details-etb/collection-details-etb';
 import { AppHeaderService } from '../../services';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, NavigationExtras } from '@angular/router';
 
 @Component({
   selector: 'app-view-more-activity',
@@ -172,8 +172,9 @@ export class ViewMoreActivityComponent implements OnInit {
         this.pageName = this.router.getCurrentNavigation().extras.state.pageName;
         this.guestUser = this.router.getCurrentNavigation().extras.state.guestUser;
         this.searchQuery = this.router.getCurrentNavigation().extras.state.requestParams;
-        // console.log(this.router.getCurrentNavigation().extras.state.headerTitle);
-        // console.log(this.router.getCurrentNavigation().extras.state.pageName);
+        this.audience = this.router.getCurrentNavigation().extras.state.audience;
+        this.enrolledCourses = this.router.getCurrentNavigation().extras.state.enrolledCourses;
+
         console.log('in constructor' , this.headerTitle);
         if (this.headerTitle !== this.title) {
           console.log('inside header title if condition');
@@ -185,6 +186,7 @@ export class ViewMoreActivityComponent implements OnInit {
       }
     });
     this.defaultImg = 'assets/imgs/ic_launcher.png';
+    // migration-TODO
     // this.tabBarElement = document.querySelector('.tabbar.show-tabbar');
     this.subscribeUtilityEvents();
   }
@@ -193,6 +195,7 @@ export class ViewMoreActivityComponent implements OnInit {
    * Angular life cycle hooks
    */
   ngOnInit() {
+    // migration-TODO
     // this.tabBarElement.style.display = 'none';
   }
 
@@ -200,14 +203,9 @@ export class ViewMoreActivityComponent implements OnInit {
    * Ionic default life cycle hook
    */
   ionViewWillEnter(): void {
-    // this.headerServie.showHeaderWithBackButton();
+    this.headerServie.showHeaderWithBackButton();
+    // migration-TODO
     // this.tabBarElement.style.display = 'none';
-    // this.searchQuery = this.navParams.get('requestParams');
-    // this.enrolledCourses = this.navParams.get('enrolledCourses');
-    // this.guestUser = this.navParams.get('guestUser');
-    // this.showDownloadsOnlyToggle = this.navParams.get('showDownloadOnlyToggle');
-    // this.uid = this.navParams.get('uid');
-    // this.audience = this.navParams.get('audience');
   }
 
   async subscribeUtilityEvents() {
@@ -282,9 +280,7 @@ export class ViewMoreActivityComponent implements OnInit {
    * Mapper to call api based on page.Layout name
    */
   async mapper() {
-    // migration-TODO
     const pageName = this.pageName;
-    // let pageName;
     switch (pageName) {
       case ViewMore.PAGE_COURSE_ENROLLED:
         this.pageType = 'enrolledCourse';
@@ -326,9 +322,7 @@ export class ViewMoreActivityComponent implements OnInit {
     await loader.present();
     this.pageType = 'enrolledCourse';
     const option = {
-      // migration-TODO
-      // userId: this.navParams.get('userId'),
-      userId: '',
+      userId: this.userId,
       refreshEnrolledCourses: false,
       returnRefreshedEnrolledCourses: true
     };
@@ -338,7 +332,6 @@ export class ViewMoreActivityComponent implements OnInit {
           // data = JSON.parse(data);
           this.searchList = data ? data : [];
           this.loadMoreBtn = false;
-          console.log('**2 searchList =>', this.searchList);
         }
         await loader.dismiss();
       })
@@ -415,17 +408,20 @@ export class ViewMoreActivityComponent implements OnInit {
     this.contentService.getContentDetails({ contentId: identifier }).toPromise()
       .then((data: Content) => {
         if (Boolean(data.isAvailableLocally)) {
-          // this.navCtrl.push(ContentDetailsPage, {
-          //   content: {identifier: content.lastReadContentId},
-          //   depth: '1',
-          //   contentState: {
-          //     batchId: content.batchId ? content.batchId : '',
-          //     courseId: identifier
-          //   },
-          //   isResumedCourse: true,
-          //   isChildContent: true,
-          //   resumedCourseCardData: this.resumeContentData
-          // });
+          const contentDetailsParams: NavigationExtras = {
+            state: {
+              content: {identifier: content.lastReadContentId},
+              depth: '1',
+              contentState: {
+                batchId: content.batchId ? content.batchId : '',
+                courseId: identifier
+              },
+              isResumedCourse: true,
+              isChildContent: true,
+              resumedCourseCardData: this.resumeContentData
+            }
+          };
+          this.router.navigate([RouterLinks.COLLECTION_DETAILS], contentDetailsParams);
         } else {
           this.subscribeSdkEvent();
           this.showOverlay = true;
@@ -480,17 +476,20 @@ export class ViewMoreActivityComponent implements OnInit {
         }
         if (event.payload && event.type === ContentEventType.IMPORT_COMPLETED && this.downloadPercentage === 100) {
           this.showOverlay = false;
-          // this.navCtrl.push(ContentDetailsPage, {
-          //   content: {identifier: this.resumeContentData.lastReadContentId},
-          //   depth: '1',
-          //   contentState: {
-          //     batchId: this.resumeContentData.batchId ? this.resumeContentData.batchId : '',
-          //     courseId: this.resumeContentData.contentId || this.resumeContentData.identifier
-          //   },
-          //   isResumedCourse: true,
-          //   isChildContent: true,
-          //   resumedCourseCardData: this.resumeContentData
-          // });
+          const contentDetailsParams: NavigationExtras = {
+            state: {
+              content: {identifier: this.resumeContentData.lastReadContentId},
+              depth: '1',
+              contentState: {
+                batchId: this.resumeContentData.batchId ? this.resumeContentData.batchId : '',
+                courseId: this.resumeContentData.contentId || this.resumeContentData.identifier
+              },
+              isResumedCourse: true,
+              isChildContent: true,
+              resumedCourseCardData: this.resumeContentData
+            }
+          };
+          this.router.navigate([RouterLinks.COLLECTION_DETAILS], contentDetailsParams);
         }
       });
     }) as any;
@@ -566,19 +565,16 @@ export class ViewMoreActivityComponent implements OnInit {
       telemetryObject,
       values);
     if (content.mimeType === MimeType.COLLECTION) {
-      // this.navCtrl.push(CollectionDetailsEtbPage, {
-      //   content: content
-      // });
       this.router.navigate([RouterLinks.COLLECTION_DETAIL_ETB], {
-        state : content
+        state : {
+          content: content
+        }
       });
     } else {
-      // this.navCtrl.push(ContentDetailsPage, {
-      //   content: content
-      // });
-
       this.router.navigate([RouterLinks.CONTENT_DETAILS], {
-        state: content
+        state: {
+          content: content
+        }
       });
 
     }
