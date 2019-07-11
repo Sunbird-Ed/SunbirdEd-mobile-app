@@ -41,6 +41,7 @@ import {
 import {
   ConfirmAlertComponent, ContentActionsComponent, ContentRatingAlertComponent
 } from '../components';
+import { ActivatedRoute, Router } from '@angular/router';
 declare const cordova;
 
 @Component({
@@ -234,18 +235,45 @@ export class CollectionDetailEtbPage implements OnInit {
     private fileSizePipe: FileSizePipe,
     private headerService: AppHeaderService,
     private comingSoonMessageService: ComingSoonMessageService,
-    private location: Location
+    private location: Location,
+    private route: ActivatedRoute,
+    private router: Router
   ) {
     this.objRollup = new Rollup();
     this.checkLoggedInOrGuestUser();
     this.checkCurrentUserType();
     this.getBaseURL();
     this.defaultAppIcon = 'assets/imgs/ic_launcher.png';
-    // migration-TODO
-    // this.content = this.navParams.get('content');
-    // this.data = this.navParams.get('data');
-    // this.batchDetails = this.navParams.get('batchDetails');
-    // this.pageName = this.navParams.get('pageName');
+    this.route.queryParams.subscribe(params => {
+      if (this.router.getCurrentNavigation().extras.state) {
+        this.resetVariables();
+        console.log('params from state : ', this.router.getCurrentNavigation().extras.state);
+        this.content = this.router.getCurrentNavigation().extras.state.content;
+        console.log('Content data : ', this.router.getCurrentNavigation().extras.state.content);
+        this.cardData = this.router.getCurrentNavigation().extras.state.content;
+        this.data = this.router.getCurrentNavigation().extras.state.data;
+        this.batchDetails = this.router.getCurrentNavigation().extras.state.batchDetails;
+        this.pageName = this.router.getCurrentNavigation().extras.state.pageName;
+        const depth = this.router.getCurrentNavigation().extras.state.depth;
+        this.corRelationList = this.router.getCurrentNavigation().extras.state.corRelation;
+        this.shouldGenerateEndTelemetry = this.router.getCurrentNavigation().extras.state.shouldGenerateEndTelemetry;
+        this.source = this.router.getCurrentNavigation().extras.state.source;
+        this.fromCoursesPage = this.router.getCurrentNavigation().extras.state.fromCoursesPage;
+        this.isAlreadyEnrolled = this.router.getCurrentNavigation().extras.state.isAlreadyEnrolled;
+        this.isChildClickable = this.router.getCurrentNavigation().extras.state.isChildClickable;
+        this.facets = this.facets = this.router.getCurrentNavigation().extras.state.facets;
+
+        // check for parent content
+        this.parentContent = this.router.getCurrentNavigation().extras.state.parentContent;
+        if (depth) {
+          this.depth = depth;
+          this.showDownloadBtn = false;
+          this.isDepthChild = true;
+        } else {
+          this.isDepthChild = false;
+        }
+      }
+    });
   }
 
   /**
@@ -277,32 +305,6 @@ export class CollectionDetailEtbPage implements OnInit {
       this.headerConfig.showHeader = false;
       this.headerConfig.showBurgerMenu = false;
       this.headerService.updatePageConfig(this.headerConfig);
-      this.resetVariables();
-      // migration-TODO
-      // this.cardData = this.navParams.get('content');
-      console.log('this.cardData', this.cardData);
-      // migration-TODO
-      // this.corRelationList = this.navParams.get('corRelation');
-      // const depth = this.navParams.get('depth');
-      let depth;
-      // this.shouldGenerateEndTelemetry = this.navParams.get('shouldGenerateEndTelemetry');
-      // this.source = this.navParams.get('source');
-      // this.fromCoursesPage = this.navParams.get('fromCoursesPage');
-      // this.isAlreadyEnrolled = this.navParams.get('isAlreadyEnrolled');
-      // this.isChildClickable = this.navParams.get('isChildClickable');
-      // this.facets = this.facets = this.navParams.get('facets');
-
-      // check for parent content
-      // migration-TODO
-      // this.parentContent = this.navParams.get('parentContent');
-      if (depth) {
-        this.depth = depth;
-        this.showDownloadBtn = false;
-        this.isDepthChild = true;
-      } else {
-        this.isDepthChild = false;
-      }
-
       this.identifier = this.cardData.contentId || this.cardData.identifier;
 
       if (!this.didViewLoad) {
@@ -497,7 +499,7 @@ export class CollectionDetailEtbPage implements OnInit {
    * @param {string} identifier identifier of content / course
    */
   async setContentDetails(identifier, refreshContentDetails: boolean) {
-    const loader = this.commonUtilService.getLoader();
+    const loader = await this.commonUtilService.getLoader();
     await loader.present();
     const option: ContentDetailRequest = {
       contentId: identifier,
@@ -1005,10 +1007,10 @@ export class CollectionDetailEtbPage implements OnInit {
     });
   }
 
-  share() {
+  async share() {
     this.generateShareInteractEvents(InteractType.TOUCH, InteractSubtype.SHARE_LIBRARY_INITIATED, this.contentDetail.contentType);
-    const loader = this.commonUtilService.getLoader();
-    loader.present();
+    const loader = await this.commonUtilService.getLoader();
+    await loader.present();
     const url = this.baseUrl + ShareUrl.COLLECTION + this.contentDetail.identifier;
     if (this.contentDetail.isAvailableLocally) {
       const exportContentRequest: ContentExportRequest = {
@@ -1328,7 +1330,7 @@ export class CollectionDetailEtbPage implements OnInit {
     return apiParams;
   }
 
-  deleteContent() {
+  async deleteContent() {
     const telemetryObject: TelemetryObject = new TelemetryObject(
       this.contentDetail.identifier,
       this.contentDetail.contentType,
@@ -1343,8 +1345,8 @@ export class CollectionDetailEtbPage implements OnInit {
       this.objRollup,
       this.corRelationList);
     const tmp = this.getDeleteRequestBody();
-    const loader = this.commonUtilService.getLoader();
-    loader.present();
+    const loader = await this.commonUtilService.getLoader();
+    await loader.present();
     this.contentService.deleteContent(tmp).toPromise().then((res: any) => {
       loader.dismiss();
       if (res && res.status === ContentDeleteStatus.NOT_FOUND) {
