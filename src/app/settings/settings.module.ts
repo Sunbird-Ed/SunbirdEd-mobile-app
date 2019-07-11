@@ -8,7 +8,7 @@ import { TranslateModule } from '@ngx-translate/core';
 
 import { SettingsPage } from './settings.page';
 import { DataSyncComponent } from './data-sync/data-sync.component';
-import { LanguageSettingsPage } from './language-settings/language-settings';
+// import { LanguageSettingsPage } from '../language-settings/language-settings';
 import { PermissionComponent } from './permission/permission.component';
 import { AboutUsComponent } from './about-us/about-us.component';
 import { AboutAppComponent } from './about-app/about-app.component';
@@ -24,10 +24,6 @@ const routes: Routes = [
   {
     path: RouterLinks.DATA_SYNC,
     component: DataSyncComponent
-  },
-  {
-    path: `${RouterLinks.LANGUAGE_SETTING}/:isFromSettings`,
-    component: LanguageSettingsPage
   },
   {
     path: RouterLinks.PERMISSION,
@@ -63,7 +59,6 @@ const routes: Routes = [
   declarations: [
     SettingsPage,
     DataSyncComponent,
-    LanguageSettingsPage,
     PermissionComponent,
     AboutUsComponent,
     AboutAppComponent,

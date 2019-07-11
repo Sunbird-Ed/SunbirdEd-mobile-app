@@ -1,18 +1,15 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Routes, RouterModule } from '@angular/router';
-
 import { IonicModule } from '@ionic/angular';
-
-import { ProfilePage } from './profile.page';
-import { ProfileRoutingModule } from './profile-routing.module';
 import { TranslateModule } from '@ngx-translate/core';
+import { LanguageSettingsPage } from '../language-settings/language-settings';
 
 const routes: Routes = [
   {
     path: '',
-    component: ProfilePage
+    component: LanguageSettingsPage
   }
 ];
 
@@ -21,9 +18,12 @@ const routes: Routes = [
     CommonModule,
     FormsModule,
     IonicModule,
-    ProfileRoutingModule,
-    TranslateModule
+    TranslateModule,
+    ReactiveFormsModule,
+    RouterModule.forChild(routes)
   ],
-  declarations: [ProfilePage]
+  declarations: [
+    LanguageSettingsPage,
+  ]
 })
-export class ProfilePageModule {}
+export class LanguageSettingsModule {}

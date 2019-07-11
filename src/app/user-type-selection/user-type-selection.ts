@@ -73,6 +73,7 @@ export class UserTypeSelectionPage {
 
   getNavParams() {
     const navigation = this.router.getCurrentNavigation();
+    this.navParams = false;
     if (navigation && navigation.extras && navigation.extras.state) {
       this.navParams = navigation.extras.state;
     }

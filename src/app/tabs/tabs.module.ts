@@ -7,6 +7,7 @@ import { IonicModule } from '@ionic/angular';
 
 import { TabsPage } from './tabs.page';
 import { TranslateModule } from '@ngx-translate/core';
+import { CoursesPage } from '../courses/courses.page';
 import { RouterLinks } from '../app.constant';
 
 const routes: Routes = [
@@ -20,6 +21,33 @@ const routes: Routes = [
           {
             path: '',
             loadChildren: '../resources/resources.module#ResourcesModule'
+          }
+        ]
+      },
+      {
+        path: 'courses',
+        children: [
+          {
+            path: '',
+            loadChildren: '../courses/courses.module#CoursesPageModule'
+          }
+        ]
+      },
+      {
+        path: 'guest-profile',
+        children: [
+          {
+            path: '',
+            loadChildren: '../profile/guest-profile/guest-profile.module#GuestProfilePageModule'
+          }
+        ]
+      },
+      {
+        path: 'download-manager',
+        children: [
+          {
+            path: '',
+            loadChildren: '../download-manager/download-manager.module#DownloadManagerPageModule'
           }
         ]
       },
@@ -42,4 +70,4 @@ const routes: Routes = [
   ],
   declarations: [TabsPage]
 })
-export class TabsPageModule {}
+export class TabsPageModule { }

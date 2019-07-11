@@ -4,14 +4,14 @@ import { Router, ActivatedRoute, ParamMap, NavigationExtras } from '@angular/rou
 
 import {TranslateService} from '@ngx-translate/core';
 import {SharedPreferences} from 'sunbird-sdk';
-import {appLanguages, PreferenceKey, RouterLinks} from '../../app.constant';
-import {Map} from '../../telemetryutil';
-import {AppGlobalService, CommonUtilService, TelemetryGeneratorService, AppHeaderService} from '../../../services';
+import {appLanguages, PreferenceKey, RouterLinks} from '../app.constant';
+import {Map} from '../telemetryutil';
+import {AppGlobalService, CommonUtilService, TelemetryGeneratorService, AppHeaderService} from '../../services';
 // import {OnboardingPage} from '@app/pages/onboarding/onboarding';
 // import {UserTypeSelectionPage} from '@app/pages/user-type-selection';
-import {Environment, ImpressionType, InteractSubtype, InteractType, PageId} from '../../../services/telemetry-constants';
+import {Environment, ImpressionType, InteractSubtype, InteractType, PageId} from '../../services/telemetry-constants';
 // import { ResourcesPage } from '../resources/resources';
-import { NotificationService } from '../../../services/notification.service';
+import { NotificationService } from '../../services/notification.service';
 import { switchMap } from 'rxjs/operators';
 import { Location } from '@angular/common';
 
@@ -237,7 +237,7 @@ export class LanguageSettingsPage{
       } else {
         // migration-TODO
         // this.navCtrl.push(UserTypeSelectionPage);
-        this.router.navigate([RouterLinks.USER_TYPE_SELECTION, false]);
+        this.router.navigate([RouterLinks.USER_TYPE_SELECTION]);
       }
     } else {
       this.generateClickInteractEvent('n/a', InteractSubtype.CONTINUE_CLICKED);

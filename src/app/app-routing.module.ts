@@ -1,24 +1,42 @@
 import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
-import { AuthGuardService } from '../services/auth-guard.service';
 import { RouterLinks } from './app.constant';
+import { HasNotBeenOnboardedGuard } from '@app/guards/has-not-been-onboarded.guard';
+import { HasNotSelectedFrameworkGuard } from '@app/guards/has-not-selected-framework.guard';
+import { HasNotSelectedLanguageGuard } from '@app/guards/has-not-selected-language.guard';
+import { HasNotSelectedUserTypeGuard } from '@app/guards/has-not-selected-user-type.guard';
+import { IsGuestUserGuard } from '@app/guards/is-guest-user.guard';
 
 const routes: Routes = [
   {
     path: '',
-    redirectTo: RouterLinks.TABS,
+    redirectTo: `${RouterLinks.LANGUAGE_SETTING}`,
     pathMatch: 'full',
   },
-  { path: RouterLinks.TABS, loadChildren: './tabs/tabs.module#TabsPageModule' },
   {
-    path: `${RouterLinks.USER_TYPE_SELECTION}/:isChangeRoleRequest`,
-    loadChildren: './user-type-selection/user-type-selection.module#UserTypeSelectionPageModule'
+    path: `${RouterLinks.LANGUAGE_SETTING}`,
+    loadChildren: './language-settings/language-settings.module#LanguageSettingsModule',
+    canLoad: [IsGuestUserGuard, HasNotBeenOnboardedGuard, HasNotSelectedLanguageGuard],
   },
+  {
+    path: `${RouterLinks.USER_TYPE_SELECTION}`,
+    loadChildren: './user-type-selection/user-type-selection.module#UserTypeSelectionPageModule',
+    canLoad: [IsGuestUserGuard, HasNotBeenOnboardedGuard, HasNotSelectedUserTypeGuard],
+  },
+  {
+    path: RouterLinks.PROFILE_SETTINGS,
+    loadChildren: './profile-settings/profile-settings.module#ProfileSettingsPageModule',
+    canLoad: [HasNotBeenOnboardedGuard, HasNotSelectedFrameworkGuard],
+  },
+  {
+    path: RouterLinks.TABS,
+    loadChildren: './tabs/tabs.module#TabsPageModule'
+  },
+
   { path: RouterLinks.USER_AND_GROUPS, loadChildren: './user-and-groups/user-and-groups.module#UserAndGroupsPageModule' },
   {
     path: RouterLinks.RESOURCES,
     loadChildren: './resources/resources.module#ResourcesModule',
-    canLoad: [AuthGuardService]
   },
   { path: RouterLinks.VIEW_MORE_ACTIVITY, loadChildren: './view-more-activity/view-more-activity.module#ViewMoreActivityModule' },
   { path: RouterLinks.SETTINGS, loadChildren: './settings/settings.module#SettingsPageModule' },
@@ -33,7 +51,6 @@ const routes: Routes = [
     path: RouterLinks.ENROLLED_COURSE_DETAILS,
     loadChildren: './enrolled-course-details-page/enrolled-course-details-page.module#EnrolledCourseDetailsPagePageModule'
   },
-  { path: RouterLinks.PROFILE_SETTINGS, loadChildren: './profile-settings/profile-settings.module#ProfileSettingsPageModule' },
   { path: RouterLinks.QRSCANNER_ALERT, loadChildren: './qrscanner-alert/qrscanner-alert.module#QrscannerAlertPageModule' },
   {
     path: RouterLinks.COLLECTION_DETAIL_ETB,
@@ -65,6 +82,11 @@ const routes: Routes = [
     RouterModule.forRoot(routes)
   ],
   exports: [RouterModule],
-  providers: [AuthGuardService],
+  providers: [
+    HasNotBeenOnboardedGuard,
+    HasNotSelectedLanguageGuard,
+    HasNotSelectedUserTypeGuard,
+    HasNotSelectedFrameworkGuard,
+    IsGuestUserGuard],
 })
 export class AppRoutingModule { }
