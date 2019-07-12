@@ -3,13 +3,14 @@ import { Component, OnInit, Input } from '@angular/core';
 // import { ContentDetailsPage } from '@app/pages/content-details/content-details';
 import { NavController } from '@ionic/angular';
 import { CommonUtilService, TelemetryGeneratorService } from '../../../services';
-import { MimeType, ContentType } from '../../app.constant';
+import { MimeType, ContentType, RouterLinks } from '../../app.constant';
 // migration-TODO
 // import { CollectionDetailsEtbPage } from '@app/pages/collection-details-etb/collection-details-etb';
 import {
   TelemetryObject, InteractType
 } from 'sunbird-sdk';
 import { InteractSubtype } from '../../../services/telemetry-constants';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-new-course-card',
@@ -50,7 +51,8 @@ export class NewCourseCardComponent implements OnInit {
   constructor(
     public commonUtilService: CommonUtilService,
     public navCtrl: NavController,
-    private telemetryGeneratorService: TelemetryGeneratorService
+    private telemetryGeneratorService: TelemetryGeneratorService,
+    private router: Router
   ) {
     this.defaultImg = 'assets/imgs/ic_launcher.png';
 
@@ -83,15 +85,17 @@ export class NewCourseCardComponent implements OnInit {
       telemetryObject,
       values);
     if (course.mimeType === MimeType.COLLECTION) {
-      // migration-TODO
-      // this.navCtrl.push(CollectionDetailsEtbPage, {
-      //   content: course
-      // });
+      this.router.navigate([RouterLinks.COLLECTION_DETAIL_ETB], {
+        state: {
+          content: course
+        }
+      });
     } else {
-      // migration-TODO
-      // this.navCtrl.push(ContentDetailsPage, {
-      //   content: course.contentData
-      // });
+      this.router.navigate([RouterLinks.CONTENT_DETAILS], {
+        state: {
+          content: course.contentData
+        }
+      });
     }
   }
 
