@@ -1,5 +1,5 @@
 // migration-TODO
-export * from './assessment-details/assessment-details';
+// export * from './assessment-details/assessment-details';
 export * from './cards/coursecard/coursecard.component';
 // export * from './card/incomplete-profile/incomplete-profile-card';
 // export * from './card/incomplete-profile/incomplete-profile-data';
