@@ -18,7 +18,6 @@ import { File } from '@ionic-native/file/ngx';
 import { DatePipe } from '@angular/common';
 import { DeviceInfo, Profile, ReportSummary, SummarizerService, SummaryRequest } from 'sunbird-sdk';
 import { FileTransfer, FileTransferObject } from '@ionic-native/file-transfer/ngx';
-import { Route } from '@angular/compiler/src/core';
 import { Router } from '@angular/router';
 
 @Component({
@@ -90,7 +89,6 @@ export class GroupReportListComponent implements OnInit {
     private navCtrl: NavController,
     private commonUtilService: CommonUtilService,
     private headerService: AppHeaderService,
-    private route: Route,
     private router: Router
   ) {
     const state = this.router.getCurrentNavigation().extras.state;
