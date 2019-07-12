@@ -37,12 +37,10 @@ import {
   PageId,
   ContainerService,
   AppHeaderService
-} from '../../../services';
-import { GUEST_STUDENT_TABS, GUEST_TEACHER_TABS, initTabs } from '../../../app/module.service';
-import { PreferenceKey } from '../../../app/app.constant';
-
-import { TabsPage } from '../../tabs/tabs.page';
-import { SbGenericPopoverComponent } from '../../components/popups/sb-generic-popover/sb-generic-popover.component';
+} from '@app/services';
+import { GUEST_STUDENT_TABS, GUEST_TEACHER_TABS, initTabs } from '@app/app/module.service';
+import { PreferenceKey } from '@app/app/app.constant';
+import { SbGenericPopoverComponent } from '@app/app/components/popups';
 import { Location } from '@angular/common';
 
 @Component({
@@ -101,16 +99,15 @@ export class GuestEditPage implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private loadingCtrl: LoadingController,
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     private translate: TranslateService,
     private events: Events,
     private platform: Platform,
+    private alertCtrl: AlertController,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private container: ContainerService,
     private appGlobalService: AppGlobalService,
     private commonUtilService: CommonUtilService,
-    private alertCtrl: AlertController,
     @Inject('FRAMEWORK_SERVICE') private frameworkService: FrameworkService,
     @Inject('FRAMEWORK_UTIL_SERVICE') private frameworkUtilService: FrameworkUtilService,
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
@@ -122,6 +119,9 @@ export class GuestEditPage implements OnInit {
   ) {
     this.isNewUser = Boolean(this.router.getCurrentNavigation().extras.state.isNewUser);
     this.isCurrentUser = Boolean(this.router.getCurrentNavigation().extras.state.isCurrentUser);
+
+
+    console.log("data", this.isNewUser, this.isCurrentUser);
     if (this.isNewUser) {
       this.profile = this.router.getCurrentNavigation().extras.state.lastCreatedProfile || {};
       this.isEditData = false;
@@ -136,7 +136,8 @@ export class GuestEditPage implements OnInit {
       });
 
     } else {
-      this.profile = (JSON.parse(JSON.stringify(this.router.getCurrentNavigation().extras.state.profile))) || {};
+      this.profile = this.router.getCurrentNavigation().extras.state.profile || {};
+      console.log("Profile", this.profile);
       this.guestEditForm = this.fb.group({
         name: [this.profile.handle || ''],
         profileType: [this.profile.profileType || ProfileType.STUDENT],
@@ -146,9 +147,10 @@ export class GuestEditPage implements OnInit {
         grades: [this.profile.grade || []],
         subjects: [this.profile.subject || []]
       });
+      console.log(this.guestEditForm.getRawValue());
     }
     this.previousProfileType = this.profile.profileType;
-    this.profileForTelemetry = this.profile;
+    this.profileForTelemetry = Object.assign({}, this.profile);
 
   }
 
@@ -176,15 +178,13 @@ export class GuestEditPage implements OnInit {
   ionViewWillEnter() {
     this.headerService.hideHeader();
     this.getSyllabusDetails();
-    this.platform.backButton.subscribeWithPriority(11, () => {
-      // Migration TODO
-      //this.dismissPopup();
-      this.platform.backButton.unsubscribe();
+    this.unregisterBackButton = this.platform.backButton.subscribeWithPriority(101, () => {
+      this.dismissPopup();
     });
   }
 
   ionViewWillLeave() {
-    this.platform.backButton.unsubscribe();
+    this.unregisterBackButton && this.unregisterBackButton();
   }
 
   // shows auto fill alert on load
@@ -317,17 +317,17 @@ export class GuestEditPage implements OnInit {
             medium: this.profile.medium || []
           });
 
-          // this.resetForm(2);
           this.guestEditForm.patchValue({
             grades: this.profile.grade || []
           });
 
-          // this.resetForm(3);
           this.guestEditForm.patchValue({
             subjects: this.profile.subject || []
           });
         }
-      });
+      }).catch((error) => {
+        console.error("Error", error);
+      })
   }
 
 
@@ -335,7 +335,6 @@ export class GuestEditPage implements OnInit {
     if (index === 0) {
       this[currentField] = this.syllabusList;
     } else if (index === 1) {
-      // this.frameworkId = prevSelectedValue[0];
       this.frameworkId = prevSelectedValue ? (Array.isArray(prevSelectedValue[0]) ? prevSelectedValue[0][0] : prevSelectedValue[0]) : '';
       if (this.frameworkId.length !== 0) {
         const frameworkDetailsRequest: FrameworkDetailsRequest = {
@@ -390,7 +389,7 @@ export class GuestEditPage implements OnInit {
     this.profileForTelemetry.subject = event;
   }
 
-  async resetForm(index: number = 0, showloader: boolean) {
+  async resetForm(index: number = 0, showLoader: boolean) {
     const oldAttribute: any = {};
     const newAttribute: any = {};
     switch (index) {
@@ -401,7 +400,7 @@ export class GuestEditPage implements OnInit {
           subjects: [],
           medium: []
         });
-        if (showloader) {
+        if (showLoader) {
           this._dismissLoader();
           this.loader = await this.commonUtilService.getLoader();
           await this.loader.present();
@@ -571,7 +570,6 @@ export class GuestEditPage implements OnInit {
         );
         // this.navCtrl.pop();
         this.location.back();
-        window.history.back();
       }, (err: any) => {
         this._dismissLoader(loader);
         this.commonUtilService.showToast(this.commonUtilService.translateMessage('PROFILE_UPDATE_FAILED'));
@@ -591,16 +589,14 @@ export class GuestEditPage implements OnInit {
     if (this.previousProfileType && this.previousProfileType !== formVal.profileType) {
       if (formVal.profileType === ProfileType.STUDENT) {
         this.preferences.putString(PreferenceKey.SELECTED_USER_TYPE, ProfileType.STUDENT).toPromise().then();
-        // Migration todo
-        // initTabs(this.container, GUEST_STUDENT_TABS);
+        initTabs(this.container, GUEST_STUDENT_TABS);
       } else {
         this.preferences.putString(PreferenceKey.SELECTED_USER_TYPE, ProfileType.TEACHER).toPromise().then();
-        //Migration todo
-        // initTabs(this.container, GUEST_TEACHER_TABS);
+        initTabs(this.container, GUEST_TEACHER_TABS);
       }
 
-      // this.app.getRootNav().setRoot(TabsPage);
       //Migration todo
+      // this.app.getRootNav().setRoot(TabsPage);
     }
   }
 
@@ -640,7 +636,6 @@ export class GuestEditPage implements OnInit {
         InteractType.OTHER, InteractSubtype.CREATE_USER_SUCCESS, Environment.USER, PageId.CREATE_USER);
       // this.navCtrl.pop();
       this.location.back();
-      window.history.back();
     }, (err: any) => {
       this._dismissLoader(loader);
       this.commonUtilService.showToast(this.commonUtilService.translateMessage('FILL_THE_MANDATORY_FIELDS'));
@@ -651,10 +646,22 @@ export class GuestEditPage implements OnInit {
   private _dismissLoader(loader?) {
     if (loader) {
       loader.dismiss();
-      loader = undefined;
     } else if (this.loader) {
       this.loader.dismiss();
       this.loader = undefined;
+    }
+  }
+
+  /**
+   * It will Dismiss active popup
+   */
+  async dismissPopup() {
+    const activePortal = await this.alertCtrl.getTop();
+    if (activePortal) {
+      await activePortal.dismiss();
+    } else {
+      // this.navCtrl.pop();
+      this.location.back();
     }
   }
 }
