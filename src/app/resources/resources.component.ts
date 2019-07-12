@@ -32,9 +32,9 @@ import { updateFilterInSearchQuery } from '../../util/filter.util';
 import { TelemetryGeneratorService } from '../../services/telemetry-generator.service';
 import { CommonUtilService } from '../../services/common-util.service';
 import { TranslateService } from '@ngx-translate/core';
-import { Network } from '@ionic-native/network';
+import { Network } from '@ionic-native/network/ngx';
 import { animate, group, state, style, transition, trigger } from '@angular/animations';
-// import { CollectionDetailsEtbPage } from '../collection-details-etb/collection-details-etb';
+import { CollectionDetailEtbPage } from '../collection-detail-etb/collection-detail-etb.page';
 import {
   CategoryTerm,
   ContentEventType,
@@ -55,12 +55,12 @@ import {
   TelemetryObject,
 } from 'sunbird-sdk';
 import { Environment, ImpressionType, InteractSubtype, InteractType, PageId } from '../../services/telemetry-constants';
-// import { PlayerPage } from '../player/player';
+import { PlayerPage } from '../player/player.page';
 import { Subscription } from 'rxjs';
 import { AppHeaderService } from '../../services';
 import { NavigationExtras, Router } from '@angular/router';
-// import { GuestProfilePage } from '../profile';
-// import { ProfilePage } from '../profile/profile';
+import { GuestProfilePage } from '../profile/guest-profile/guest-profile.page';
+import { ProfilePage } from '../profile/profile.page';
 
 @Component({
   selector: 'app-resources',
@@ -157,8 +157,8 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
   headerObservable: any;
   scrollEventRemover: any;
    /**
-   * Flag to show latest and popular course loader
-   */
+    * Flag to show latest and popular course loader
+    */
   pageApiLoader = true;
   @ViewChild('contentView') contentView: ContentView;
 
@@ -167,7 +167,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
     @Inject('EVENTS_BUS_SERVICE') private eventsBusService: EventsBusService,
     public navCtrl: NavController,
     private ngZone: NgZone,
-    // private qrScanner: SunbirdQRScanner,
+    private qrScanner: SunbirdQRScanner,
     private events: Events,
     private appGlobalService: AppGlobalService,
     private appVersion: AppVersion,
@@ -210,7 +210,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
     });
     this.events.subscribe('event:showScanner', (data) => {
       if (data.pageName === PageId.LIBRARY) {
-        // this.qrScanner.startScanner(PageId.LIBRARY, false);
+        this.qrScanner.startScanner(PageId.LIBRARY, false);
       }
     });
     this.events.subscribe('onAfterLanguageChange:update', (res) => {
@@ -243,7 +243,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
           this.getPopularContent();
         }
       } else if (data === '') {
-        // this.qrScanner.startScanner(PageId.LIBRARY);
+        this.qrScanner.startScanner(PageId.LIBRARY);
       }
       // });
     });
@@ -324,22 +324,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
   //   this.navCtrl.push(SettingsPage);
   // }
 
-  testViewAll() {
-    const  headerTitle = 'RECENTLY_VIEWED';
-    const pageName = ViewMore.PAGE_RESOURCE_SAVED;
-    const uid = this.profile ? this.profile.uid : undefined;
-    const showDownloadOnlyToggleBtn = false;
-    const resourcesParams: NavigationExtras = {
-      state: {
-        headerTitle,
-        pageName,
-        showDownloadOnlyToggle: showDownloadOnlyToggleBtn,
-        uid,
-        audience: this.audienceFilter,
-      }
-    };
-    this.router.navigate([RouterLinks.VIEW_MORE_ACTIVITY], resourcesParams);
-  }
 
   navigateToViewMoreContentsPage(section: string) {
     const values = new Map();
@@ -870,7 +854,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
       InteractSubtype.QRCodeScanClicked,
       Environment.HOME,
       PageId.LIBRARY);
-    // this.qrScanner.startScanner(PageId.LIBRARY);
+    this.qrScanner.startScanner(PageId.LIBRARY);
   }
 
 
@@ -879,14 +863,25 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
       InteractSubtype.SEARCH_BUTTON_CLICKED,
       Environment.HOME,
       PageId.LIBRARY);
+    this.router.navigate([RouterLinks.SEARCH], {
+      state: { contentType: ContentType.FOR_LIBRARY_TAB,
+        source: PageId.LIBRARY
+      }
+    });
     // this.navCtrl.push(SearchPage, { contentType: ContentType.FOR_LIBRARY_TAB, source: PageId.LIBRARY });
   }
   onProfileClick() {
-    // const currentProfile = (this.appGlobalService.isGuestUser) ? GuestProfilePage : ProfilePage;
-    // this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
-    //   'profile-button-clicked',
-    //   Environment.HOME,
-    //   PageId.LIBRARY);
+    const currentProfile = (this.appGlobalService.isGuestUser) ? RouterLinks.GUEST_PROFILE : RouterLinks.PROFILE;
+    this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
+      'profile-button-clicked',
+      Environment.HOME,
+      PageId.LIBRARY);
+    this.router.navigate([currentProfile], {
+      state: {
+        contentType: ContentType.FOR_LIBRARY_TAB,
+        source: PageId.LIBRARY
+      }
+    });
     // this.navCtrl.push(currentProfile, { contentType: ContentType.FOR_LIBRARY_TAB, source: PageId.LIBRARY });
   }
 
@@ -977,6 +972,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
     if (flags.length && _.includes(flags, true)) {
     } else {
       if (!isAfterLanguageChange) {
+        // migration-TODO
         // if (this.tabs.getSelected().tabTitle === 'LIBRARY‌') {
         //   this.commonUtilService.showToast('NO_CONTENTS_FOUND');
         // }
@@ -1086,25 +1082,23 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
       telemetryObject,
       values);
     if (this.commonUtilService.networkInfo.isNetworkAvailable || item.isAvailableLocally) {
-      // this.navCtrl.push(CollectionDetailsEtbPage, {
-      //   content: item
-      // });
+      this.router.navigate([RouterLinks.COLLECTION_DETAIL_ETB], {state: {content: item}});
     } else {
     this.presentToastForOffline('OFFLINE_WARNING_ETBUI_1');
     }
   }
 
   launchContent() {
-    // this.navCtrl.push(PlayerPage);
+    this.router.navigate([RouterLinks.PLAYER]);
   }
 
   handleHeaderEvents($event) {
     console.log('inside handleHeaderEvents', $event);
     switch ($event.name) {
       case 'search': this.search();
-            break;
+                     break;
       case 'download': this.redirectToActivedownloads();
-            break;
+                       break;
 
     }
   }
@@ -1115,7 +1109,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
       InteractSubtype.ACTIVE_DOWNLOADS_CLICKED,
       Environment.HOME,
       PageId.LIBRARY);
-    // this.navCtrl.push(ActiveDownloadsPage);
+    this.router.navigate([RouterLinks.ACTIVE_DOWNLOADS]);
   }
 
   toggleMenu() {
