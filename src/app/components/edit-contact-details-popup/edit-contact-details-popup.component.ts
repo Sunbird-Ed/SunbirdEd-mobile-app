@@ -4,7 +4,7 @@ import { LoadingController, Platform, NavParams, ModalController } from '@ionic/
 import { GenerateOtpRequest, IsProfileAlreadyInUseRequest, ProfileService } from 'sunbird-sdk';
 import { ProfileConstants } from '../../app.constant';
 import { CommonUtilService } from '../../../services';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators,ReactiveFormsModule } from '@angular/forms';
 import { Keyboard } from '@ionic-native/keyboard/ngx';
 
 @Component({

@@ -33,8 +33,8 @@ export class PlayerPage implements OnInit, PlayerActionHandlerDelegate {
     this.canvasPlayerService.handleAction();
 
     // Binding following methods to making it available to content player which is an iframe
-    (<any>window).onContentNotFound = this.onContentNotFound.bind(this);
-    (<any>window).onUserSwitch = this.onUserSwitch.bind(this);
+    (window as any).onContentNotFound = this.onContentNotFound.bind(this);
+    (window as any).onUserSwitch = this.onUserSwitch.bind(this);
 
     if (this.router.getCurrentNavigation().extras.state) {
       this.config = this.router.getCurrentNavigation().extras.state.config;
@@ -89,10 +89,10 @@ export class PlayerPage implements OnInit, PlayerActionHandlerDelegate {
   }
 
   /**
- * This will trigger from player/ iframe when it unable to find consecutive content
- * @param {string} identifier Content Identifier
- * @param {Array<hierarchyInfo>} hierarchyInfo Object of content hierarchy
- */
+   * This will trigger from player/ iframe when it unable to find consecutive content
+   * @param {string} identifier Content Identifier
+   * @param {Array<hierarchyInfo>} hierarchyInfo Object of content hierarchy
+   */
   onContentNotFound(identifier: string, hierarchyInformation: Array<HierarchyInfo>) {
     const content = {
       identifier: identifier,
@@ -111,9 +111,9 @@ export class PlayerPage implements OnInit, PlayerActionHandlerDelegate {
  */  }
 
   /**
-  * This is an callback to mobile when player switches user
-  * @param {user} selectedUser User id of the newly selected user by player
-  */
+   * This is an callback to mobile when player switches user
+   * @param {user} selectedUser User id of the newly selected user by player
+   */
   onUserSwitch(selectedUser: User) {
     this.appGlobalService.setSelectedUser(selectedUser);
   }
@@ -139,8 +139,8 @@ export class PlayerPage implements OnInit, PlayerActionHandlerDelegate {
 
 
   /**
- * This will show confirmation box while leaving the player, it will fire some telemetry events from the player.
- */
+   * This will show confirmation box while leaving the player, it will fire some telemetry events from the player.
+   */
   async showConfirm() {
     const type = (this.previewElement.nativeElement.contentWindow['Renderer']
       && !this.previewElement.nativeElement.contentWindow['Renderer'].running) ? 'EXIT_APP' : 'EXIT_CONTENT';
@@ -175,6 +175,4 @@ export class PlayerPage implements OnInit, PlayerActionHandlerDelegate {
     });
     alert.present();
   }
-
-
 }

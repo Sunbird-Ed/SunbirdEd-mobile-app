@@ -7,11 +7,12 @@ import {
   // NavParams,
   Platform,
   PopoverController,
-  ToastController
+  ToastController,
+  ModalController
 } from '@ionic/angular';
 import {SocialSharing} from '@ionic-native/social-sharing/ngx';
 import * as _ from 'lodash';
-import {ContentConstants, EventTopics, PreferenceKey, StoreRating, XwalkConstants, ShareUrl} from '../../app/app.constant';
+import {ContentConstants, EventTopics, PreferenceKey, StoreRating, XwalkConstants, ShareUrl, RouterLinks} from '../../app/app.constant';
 import {GUEST_STUDENT_TABS, GUEST_TEACHER_TABS, initTabs} from '../../app/module.service';
 import {Map} from '../telemetryutil';
 import {
@@ -76,6 +77,7 @@ import {SbGenericPopoverComponent} from '../components/popups/sb-generic-popover
 import {RatingAlertComponent} from '../components/rating-alert/rating-alert.component';
 import * as moment from 'moment';
 import { Location } from '@angular/common';
+import { Router, ActivatedRoute } from '@angular/router';
 
 declare const cordova;
 
@@ -86,6 +88,7 @@ declare const cordova;
   styleUrls: ['./content-details.page.scss'],
 })
 export class ContentDetailsPage implements OnInit {
+  resumedCourseCardData: any;
   [x: string]: any;
   apiLevel: number;
   appAvailability: string;
@@ -183,7 +186,7 @@ export class ContentDetailsPage implements OnInit {
     private platform: Platform,
     private appGlobalService: AppGlobalService,
     private alertCtrl: AlertController,
-    // private ionicApp: IonicApp,
+    private ionicApp: IonApp,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private commonUtilService: CommonUtilService,
     private courseUtilService: CourseUtilService,
@@ -198,7 +201,10 @@ export class ContentDetailsPage implements OnInit {
     private translate: TranslateService,
     private headerService: AppHeaderService,
     private appRatingService: AppRatingService,
-    private location: Location
+    private location: Location,
+    private modalCtrl: ModalController,
+    private router: Router,
+    private route: ActivatedRoute
   ) {
 
     this.objRollup = new Rollup();
@@ -211,15 +217,30 @@ export class ContentDetailsPage implements OnInit {
     this.checkappAvailability();
     this.defaultAppIcon = 'assets/imgs/ic_launcher.png';
     this.defaultLicense = ContentConstants.DEFAULT_LICENSE;
-    this.cardData = this.router.getCurrentNavigation().extras.state.content;
 
+    this.route.queryParams.subscribe(params => {
+      if (this.router.getCurrentNavigation().extras.state) {
+        console.log('params from state : ', this.router.getCurrentNavigation().extras.state);
+        this.cardData = this.router.getCurrentNavigation().extras.state.content;
+        this.isChildContent = this.router.getCurrentNavigation().extras.state.isChildContent;
+        this.cardData.depth = this.router.getCurrentNavigation().extras.state.depth === undefined ? '' : this.router.getCurrentNavigation().extras.state.depth;
+        this.corRelationList = this.router.getCurrentNavigation().extras.state.corRelation;
+        this.identifier = this.cardData.contentId || this.cardData.identifier;
+        this.isResumedCourse = Boolean(this.router.getCurrentNavigation().extras.state.isResumedCourse);
+        this.source = this.router.getCurrentNavigation().extras.state.source;
+        this.shouldGenerateEndTelemetry = this.router.getCurrentNavigation().extras.state.shouldGenerateEndTelemetry;
+        this.downloadAndPlay = this.router.getCurrentNavigation().extras.state.downloadAndPlay;
+        this.playOnlineSpinner = true;
+        this.contentPath = this.router.getCurrentNavigation().extras.state.paths;
+        this.breadCrumbData = this.router.getCurrentNavigation().extras.state.breadCrumb;
+        this.launchPlayer = this.router.getCurrentNavigation().extras.state.launchplayer;
+        this.resumedCourseCardData = this.router.getCurrentNavigation().extras.state.resumedCourseCardData;
+      }
+    });
   }
 
   ngOnInit() {
 
-  }
-
-  ionViewDidLoad() {
     // this.navBar.backButtonClick = (e: UIEvent) => {
     //   this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.CONTENT_DETAIL, Environment.HOME,
     //     true, this.cardData.identifier, this.corRelationList);
@@ -261,18 +282,6 @@ export class ContentDetailsPage implements OnInit {
       this.handleHeaderEvents(eventName);
     });
     this.headerService.hideHeader();
-    // this.cardData = this.navParams.get('content');
-    // this.isChildContent = this.navParams.get('isChildContent');
-    // this.cardData.depth = this.navParams.get('depth') === undefined ? '' : this.navParams.get('depth');
-    // this.corRelationList = this.navParams.get('corRelation');
-    // this.identifier = this.cardData.contentId || this.cardData.identifier;
-    // this.isResumedCourse = Boolean(this.navParams.get('isResumedCourse'));
-    // this.source = this.navParams.get('source');
-    // this.shouldGenerateEndTelemetry = this.navParams.get('shouldGenerateEndTelemetry');
-    // this.downloadAndPlay = this.navParams.get('downloadAndPlay');
-    // this.playOnlineSpinner = true;
-    // this.contentPath = this.navParams.get('paths');
-    // this.breadCrumbData = this.navParams.get('breadCrumb');
 
     if (this.isResumedCourse && !this.isPlayerLaunched) {
       if (this.isUsrGrpAlrtOpen) {
@@ -366,8 +375,6 @@ export class ContentDetailsPage implements OnInit {
         this.baseUrl = response;
         console.log('url', this.baseUrl);
       });
-    // migration-TODO
-    // this.launchPlayer = this.navParams.get('launchplayer');
     this.events.subscribe('playConfig', (config) => {
       this.appGlobalService.setSelectedUser(config['selectedUser']);
       this.playContent(config.streaming);
@@ -563,8 +570,7 @@ export class ContentDetailsPage implements OnInit {
       }
       case StoreRating.RETURN_HELP: {
         this.appRatingService.setInitialDate();
-        // migration-TODO
-        // this.navCtrl.push('FaqPage');
+        this.router.navigate([RouterLinks.FAQ_HELP]);
         break;
       }
     }
@@ -709,12 +715,11 @@ export class ContentDetailsPage implements OnInit {
       this.content.contentData.me_totalDownloads = parseInt(this.content.contentData.me_totalDownloads, 10) + '';
     }
 
-    // migration-TODO
-    // if (this.navParams.get('isResumedCourse')) {
-    //   this.cardData.contentData = this.content;
-    //   this.cardData.pkgVersion = this.content.contentData.pkgVersion;
-    //   this.generateTelemetry();
-    // }
+    if (this.isResumedCourse) {
+      this.cardData.contentData = this.content;
+      this.cardData.pkgVersion = this.content.contentData.pkgVersion;
+      this.generateTelemetry();
+    }
 
     if (this.shouldGenerateTelemetry) {
       this.generateDetailsInteractEvent();
@@ -727,7 +732,6 @@ export class ContentDetailsPage implements OnInit {
     console.log('DownloadnPlay', this.downloadAndPlay);
 
     if (this.downloadAndPlay) {
-      console.log('Inside Download And Play');
 
       if (!this.contentDownloadable[this.content.identifier] || this.content.isUpdateAvailable) {
         /**
@@ -750,21 +754,18 @@ export class ContentDetailsPage implements OnInit {
   setChildContents(): void {
     this.showChildrenLoader = true;
     // const option = new ChildContentRequest();
-    // migration-TODO
-    // const resumedCourseCardData = this.navParams.get('resumedCourseCardData');
-    let resumedCourseCardData;
     const option: ChildContentRequest = {
-      contentId: resumedCourseCardData && resumedCourseCardData.contentId ?
-        resumedCourseCardData.contentId : resumedCourseCardData.identifier,
+      contentId: this.resumedCourseCardData && this.resumedCourseCardData.contentId ?
+      this.resumedCourseCardData.contentId : this.resumedCourseCardData.identifier,
       hierarchyInfo: null,
-      level: !resumedCourseCardData ? 1 : 0,
+      level: !this.resumedCourseCardData ? 1 : 0,
     };
     // if (this.navParams.get('resumedCourseCardData')) {
     //   option.contentId = this.navParams.get('resumedCourseCardData').contentId || this.navParams.get('resumedCourseCardData').identifier;
     // }
     option.hierarchyInfo = null;
 
-    if (resumedCourseCardData && !resumedCourseCardData.batchId) {
+    if (this.resumedCourseCardData && !this.resumedCourseCardData.batchId) {
       option.level = 1;
     }
     this.contentService.getChildContents(option).toPromise()
@@ -841,7 +842,7 @@ export class ContentDetailsPage implements OnInit {
   }
 
   generateRollUp() {
-    if(this.cardData) {
+    if (this.cardData) {
       const hierarchyInfo = this.cardData.hierarchyInfo ? this.cardData.hierarchyInfo : null;
       if (hierarchyInfo === null) {
         this.objRollup.l1 = this.identifier;
@@ -911,22 +912,23 @@ export class ContentDetailsPage implements OnInit {
   /**
    * It will Dismiss active popup
    */
-  dismissPopup() {
+  async dismissPopup() {
     // migration-TODO
+
+    const activePortal = await this.modalCtrl.getTop();
     // const activePortal = this.ionicApp._modalPortal.getActive() || this.ionicApp._overlayPortal.getActive();
-    // migration-TODO
-    // if (activePortal) {
-    //   activePortal.dismiss();
-    // } else {
-    //   this.navCtrl.pop();
+    if (activePortal) {
+      activePortal.dismiss();
+    } else {
          this.location.back();
-    // }
+    }
   }
 
   popToPreviousPage(isNavBack?) {
     if (this.isResumedCourse) {
       // migration-TODO
       // this.navCtrl.popTo(this.navCtrl.getByIndex(this.navCtrl.length() - 3));
+      this.router.navigate(['../../'], {relativeTo: this.route});
     } else {
       if (isNavBack) {
         // this.navCtrl.pop();
@@ -1134,7 +1136,9 @@ export class ContentDetailsPage implements OnInit {
       });
   }
 
-  /** function add eclipses to the texts**/
+  /**
+   * function add eclipses to the texts
+   */
   addElipsesInLongText(msg: string) {
     if (this.commonUtilService.translateMessage(msg).length >= 12) {
       return this.commonUtilService.translateMessage(msg).slice(0, 8) + '....';
@@ -1271,10 +1275,11 @@ export class ContentDetailsPage implements OnInit {
       const playConfig: any = {};
       playConfig.playContent = true;
       playConfig.streaming = isStreaming;
-      // migration-TODO
-      // this.navCtrl.push(UserAndGroupsPage, {
-      //   playConfig: playConfig
-      // });
+      this.router.navigate([RouterLinks.USER_AND_GROUPS], {
+        state: {
+          playConfig: playConfig
+        }
+      });
     }
 
   }
@@ -1337,8 +1342,11 @@ export class ContentDetailsPage implements OnInit {
             this.file.checkFile(`file://${data.metadata.basePath}/`, 'index.ecml').then((isAvailable) => {
               this.canvasPlayerService.xmlToJSon(`${data.metadata.basePath}/index.ecml`).then((json) => {
                 data['data'] = json;
-                // migration-TODO
-                // this.navCtrl.push(PlayerPage, { config: data });
+                this.router.navigate([RouterLinks.PLAYER], {
+                  state: {
+                    config: data
+                  }
+                });
               }).catch((error) => {
                 console.error('error1', error);
               });
@@ -1346,20 +1354,29 @@ export class ContentDetailsPage implements OnInit {
               console.error('err', err);
               this.canvasPlayerService.readJSON(`${data.metadata.basePath}/index.json`).then((json) => {
                 data['data'] = json;
-                // migration-TODO
-                // this.navCtrl.push(PlayerPage, { config: data });
+                this.router.navigate([RouterLinks.PLAYER], {
+                  state: {
+                    config: data
+                  }
+                });
               }).catch((e) => {
                 console.error('readJSON error', e);
               });
             });
           } else {
-            // migration-TODO
-            // this.navCtrl.push(PlayerPage, { config: data });
+            this.router.navigate([RouterLinks.PLAYER], {
+              state: {
+                config: data
+              }
+            });
           }
 
         } else {
-          // migration-TODO
-          // this.navCtrl.push(PlayerPage, { config: data });
+          this.router.navigate([RouterLinks.PLAYER], {
+            state: {
+              config: data
+            }
+          });
         }
       });
     }
@@ -1653,12 +1670,10 @@ export class ContentDetailsPage implements OnInit {
   private resetTabs(selectedUser) {
     setTimeout(() => {
       if (selectedUser.profileType === ProfileType.STUDENT) {
-        // migration-TODO
-        // initTabs(this.container, GUEST_STUDENT_TABS);
+        initTabs(this.container, GUEST_STUDENT_TABS);
         this.preferences.putString(PreferenceKey.SELECTED_USER_TYPE, ProfileType.STUDENT).toPromise().then();
       } else {
-        // migration-TODO
-        // initTabs(this.container, GUEST_TEACHER_TABS);
+        initTabs(this.container, GUEST_TEACHER_TABS);
         this.preferences.putString(PreferenceKey.SELECTED_USER_TYPE, ProfileType.TEACHER).toPromise().then();
       }
       this.events.publish('refresh:profile');

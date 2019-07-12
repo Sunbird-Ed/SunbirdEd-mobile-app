@@ -33,7 +33,7 @@ import {
 import {
   ConfirmAlertComponent, ContentActionsComponent, ContentRatingAlertComponent
 } from '../components';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, NavigationExtras } from '@angular/router';
 declare const cordova;
 
 @Component({
@@ -840,39 +840,39 @@ export class CollectionDetailEtbPage implements OnInit {
   }
 
   navigateToDetailsPage(content: any, depth) {
-    console.log('content navigate to details=====>>>' , content , depth)
+    console.log('content navigate to details=====>>>', content, depth)
     // migration-TODO
     // const stateData = this.navParams.get('contentState');
 
     this.zone.run(() => {
       if (content.contentType === ContentType.COURSE) {
         this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], {
-          state : {
-          content: content,
-          depth: depth,
-          contentState: this.stateData,
-          corRelation: this.corRelationList
+          state: {
+            content: content,
+            depth: depth,
+            contentState: this.stateData,
+            corRelation: this.corRelationList
           }
         });
       } else if (content.mimeType === MimeType.COLLECTION) {
         this.isDepthChild = true;
         // COLLECTION_DETAIL_ETB
         this.router.navigate([RouterLinks.COLLECTION_DETAIL_ETB], {
-          state : {
-          content: content,
-          depth: depth,
-          contentState: this.stateData,
-          corRelation: this.corRelationList
+          state: {
+            content: content,
+            depth: depth,
+            contentState: this.stateData,
+            corRelation: this.corRelationList
           }
         });
       } else {
         // CONTENT_DETAILS
         this.router.navigate([RouterLinks.CONTENT_DETAILS], {
-          state : {
-          content: content,
-          depth: depth,
-          contentState: this.stateData,
-          corRelation: this.corRelationList
+          state: {
+            content: content,
+            depth: depth,
+            contentState: this.stateData,
+            corRelation: this.corRelationList
           }
         });
       }
@@ -881,12 +881,14 @@ export class CollectionDetailEtbPage implements OnInit {
 
   navigateToContentPage(content: any, depth) {
     this.router.navigate([RouterLinks.CONTENT_DETAILS], {
-      isChildContent: true,
-      content: content,
-      depth: depth,
-      contentState: stateData,
-      corRelation: this.corRelationList,
-      breadCrumb: this.breadCrumb
+      state: {
+        isChildContent: true,
+        content: content,
+        depth: depth,
+        contentState: this.stateData,
+        corRelation: this.corRelationList,
+        breadCrumb: this.breadCrumb
+      }
     });
   }
 
@@ -1373,11 +1375,13 @@ export class CollectionDetailEtbPage implements OnInit {
   }
   handleHeaderEvents($event) {
     switch ($event.name) {
-      case 'back': this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.COLLECTION_DETAIL, Environment.HOME,
-        true, this.cardData.identifier, this.corRelationList);
+      case 'back':
+        this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.COLLECTION_DETAIL, Environment.HOME,
+          true, this.cardData.identifier, this.corRelationList);
         this.handleBackButton();
         break;
-      case 'download': this.redirectToActivedownloads();
+      case 'download':
+        this.redirectToActivedownloads();
         break;
 
     }
