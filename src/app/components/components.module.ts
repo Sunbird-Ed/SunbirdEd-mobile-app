@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormsModule,ReactiveFormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
 
@@ -26,6 +26,17 @@ import {BookmarkComponent} from './bookmark/bookmark.component';
 import {DialogPopupComponent} from './dialog-popup/dialog-popup.component';
 import {SbDownloadPopupComponent} from './popups/sb-download-popup/sb-download-popup.component';
 import { UpgradePopoverComponent } from './popups/upgrade-popover/upgrade-popover.component';
+import { ConfirmAlertComponent } from './confirm-alert/confirm-alert.component';
+import { EditContactDetailsPopupComponent } from './edit-contact-details-popup/edit-contact-details-popup.component';
+import { EditContactVerifyPopupComponent } from './edit-contact-verify-popup/edit-contact-verify-popup.component';
+import { RatingAlertComponent } from './rating-alert/rating-alert.component';
+import { OverflowMenuComponent } from '../profile/overflow-menu/overflow-menu.component';
+import { GroupReportAlertComponent } from '../reports/group-report-alert/group-report-alert.component';
+import { ReportAlertComponent } from '../reports/report-alert/report-alert.component';
+import { UserReportComponent } from '../reports/user-report/user-report.component';
+import { GroupReportListComponent } from '../reports/group-report-list/group-report-list.component';
+import { ReportListComponent } from '../reports/report-list/report-list.component';
+import { SearchComponent } from '../search/search.component';
 
 
 @NgModule({
@@ -47,12 +58,26 @@ import { UpgradePopoverComponent } from './popups/upgrade-popover/upgrade-popove
     BookmarkComponent,
     DialogPopupComponent,
     SbDownloadPopupComponent,
-    UpgradePopoverComponent
+    UpgradePopoverComponent,
+    ConfirmAlertComponent,
+    EditContactDetailsPopupComponent,
+    EditContactVerifyPopupComponent,
+    RatingAlertComponent,
+    OverflowMenuComponent,
+    GroupReportAlertComponent,
+    ReportAlertComponent,
+    UserReportComponent,
+    GroupReportAlertComponent,
+    ReportAlertComponent,
+    GroupReportListComponent,
+    ReportListComponent,
+    SearchComponent
   ],
   imports: [
     CommonModule,
     FormsModule,
     IonicModule,
+    ReactiveFormsModule,
     PipesModule,
     TranslateModule.forChild(),
     IonicRatingModule,
@@ -86,7 +111,11 @@ import { UpgradePopoverComponent } from './popups/upgrade-popover/upgrade-popove
     BookmarkComponent,
     DialogPopupComponent,
     SbDownloadPopupComponent,
-    UpgradePopoverComponent
+    UpgradePopoverComponent,
+    ConfirmAlertComponent,
+    EditContactDetailsPopupComponent,
+    EditContactVerifyPopupComponent,
+    RatingAlertComponent
   ],
   providers: [FileSizePipe]
 })
