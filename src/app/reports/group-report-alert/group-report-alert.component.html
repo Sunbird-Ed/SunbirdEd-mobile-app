@@ -16,7 +16,8 @@
 <ion-content>
   <div [ngSwitch]="report">
       <ion-list *ngSwitchCase="'users'" class="fromGroup">
-          <assessment-details [assessmentData]="fromUserAssessment" [columns]="fromUserColumns"></assessment-details>
+          <!-- migration-TODO -->
+          <!-- <assessment-details [assessmentData]="fromUserAssessment" [columns]="fromUserColumns"></assessment-details> -->
       </ion-list>
       <ion-list class="margin0" *ngSwitchCase="'questions'">
           <ion-item>

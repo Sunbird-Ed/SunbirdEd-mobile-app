@@ -124,8 +124,8 @@
   
     <div *ngIf="dialCodeContentResult && dialCodeContentResult.length">
       <div class="sb-card-container sb-card-textbook-container">
-        <textbook-card class="tb-border-btm" *ngFor="let content of dialCodeContentResult; let i = index; let last = last"
-          (click)="openContent(content, content,i)" [content]="content" [layoutName]='search'></textbook-card>
+        <app-text-book-card class="tb-border-btm" *ngFor="let content of dialCodeContentResult; let i = index; let last = last"
+          (click)="openContent(content, content,i)" [content]="content" [layoutName]='search'></app-text-book-card>
       </div>
     </div>
   
@@ -140,8 +140,8 @@
         </div>
       </div>
       <div class="sb-card-container sb-card-textbook-container">
-        <textbook-card class="tb-border-btm" *ngFor="let content of searchContentResult; let i = index; let last = last"
-          (click)="openContent(undefined, content,i)" [content]="content" [layoutName]="search"></textbook-card>
+        <app-text-book-card class="tb-border-btm" *ngFor="let content of searchContentResult; let i = index; let last = last"
+          (click)="openContent(undefined, content,i)" [content]="content" [layoutName]="search"></app-text-book-card>
       </div>
     </div>
     <div class="empty-search-result" *ngIf="!showLoader && showEmptyMessage" text-center padding-top>

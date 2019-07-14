@@ -31,7 +31,7 @@ import { EditContactDetailsPopupComponent } from './edit-contact-details-popup/e
 import { EditContactVerifyPopupComponent } from './edit-contact-verify-popup/edit-contact-verify-popup.component';
 import { RatingAlertComponent } from './rating-alert/rating-alert.component';
 import { OverflowMenuComponent } from '../profile/overflow-menu/overflow-menu.component';
-import { GroupReportAlertComponent } from '../reports/group-report-alert/group-report-alert.component';
+// import { GroupReportAlertComponent } from '../reports/group-report-alert/group-report-alert.component';
 import { ReportAlertComponent } from '../reports/report-alert/report-alert.component';
 import { UserReportComponent } from '../reports/user-report/user-report.component';
 import { GroupReportListComponent } from '../reports/group-report-list/group-report-list.component';
@@ -64,10 +64,9 @@ import { SearchComponent } from '../search/search.component';
     EditContactVerifyPopupComponent,
     RatingAlertComponent,
     OverflowMenuComponent,
-    GroupReportAlertComponent,
+    // GroupReportAlertComponent,
     ReportAlertComponent,
     UserReportComponent,
-    GroupReportAlertComponent,
     ReportAlertComponent,
     GroupReportListComponent,
     ReportListComponent,
