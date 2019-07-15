@@ -864,7 +864,8 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
       Environment.HOME,
       PageId.LIBRARY);
     this.router.navigate([RouterLinks.SEARCH], {
-      state: { contentType: ContentType.FOR_LIBRARY_TAB,
+      state: {
+        contentType: ContentType.FOR_LIBRARY_TAB,
         source: PageId.LIBRARY
       }
     });
