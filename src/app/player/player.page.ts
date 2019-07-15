@@ -1,10 +1,9 @@
 import { ActivatedRoute, Router } from '@angular/router';
 import { CanvasPlayerService, AppGlobalService, CommonUtilService } from '@app/services';
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
-import { NavController, NavParams, Platform, AlertController, Events } from '@ionic/angular';
+import { Platform, AlertController, Events } from '@ionic/angular';
 import { ScreenOrientation } from '@ionic-native/screen-orientation/ngx';
 import { PlayerActionHandlerDelegate, HierarchyInfo, User } from './player-action-handler-delegate';
-import { ContentDetailsPage } from '@app/app/content-details/content-details.page';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { EventTopics } from '../app.constant';
 import { Location } from '@angular/common';
@@ -53,7 +52,6 @@ export class PlayerPage implements OnInit, PlayerActionHandlerDelegate {
       if (!activeAlert) {
         this.showConfirm();
       }
-
     });
     this.config['uid'] = this.config['context'].actor.id;
 
@@ -61,7 +59,6 @@ export class PlayerPage implements OnInit, PlayerActionHandlerDelegate {
     const src = this.previewElement.nativeElement.src;
     this.previewElement.nativeElement.src = '';
     this.previewElement.nativeElement.src = src;
-    // this.previewElement.nativeElement.contentWindow['cordova'] = window['cordova'];
     this.previewElement.nativeElement.onload = () => {
       console.log('config', this.config);
       setTimeout(() => {
@@ -132,9 +129,7 @@ export class PlayerPage implements OnInit, PlayerActionHandlerDelegate {
       selectedUser: this.appGlobalService.getSelectedUser()
     });
 
-    // this.navCtrl.pop();
     this.location.back();
-    window.history.back();
   }
 
 
@@ -173,6 +168,6 @@ export class PlayerPage implements OnInit, PlayerActionHandlerDelegate {
         }
       ]
     });
-    alert.present();
+    await alert.present();
   }
 }

@@ -1,6 +1,6 @@
 import { Component, OnInit, AfterViewInit, Inject, NgZone, ViewChild, ViewEncapsulation } from '@angular/core';
-import {Events, NavController, ToastController, MenuController} from '@ionic/angular';
-import {IonContent as ContentView} from '@ionic/angular';
+import { Events, NavController, ToastController, MenuController } from '@ionic/angular';
+import { IonContent as ContentView } from '@ionic/angular';
 import {
   AudienceFilter,
   CardSectionName,
@@ -13,7 +13,7 @@ import {
   RouterLinks
 } from '../../app/app.constant';
 import { Map } from '../../app/telemetryutil';
-import {AppGlobalService} from '../../services/app-global-service.service';
+import { AppGlobalService } from '../../services/app-global-service.service';
 // import Driver from 'driver.js';
 
 // import { ActiveDownloadsPage } from '@app/pages/active-downloads/active-downloads';
@@ -156,9 +156,9 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
   networkSubscription: Subscription;
   headerObservable: any;
   scrollEventRemover: any;
-   /**
-    * Flag to show latest and popular course loader
-    */
+  /**
+   * Flag to show latest and popular course loader
+   */
   pageApiLoader = true;
   @ViewChild('contentView') contentView: ContentView;
 
@@ -543,8 +543,8 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
 
   getGroupByPage(isAfterLanguageChange = false, avoidRefreshList = false) {
     const selectedBoardMediumGrade = this.getGroupByPageReq.board[0] + ', ' +
-                                     this.getGroupByPageReq.medium[0] + ' Medium, ' +
-                                     this.getGroupByPageReq.grade[0] ;
+      this.getGroupByPageReq.medium[0] + ' Medium, ' +
+      this.getGroupByPageReq.grade[0];
     this.appGlobalService.setSelectedBoardMediumGrade(selectedBoardMediumGrade);
     this.storyAndWorksheets = [];
     if (!this.refresh) {
@@ -641,7 +641,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
             if (!isAfterLanguageChange) {
               this.commonUtilService.showToast('ERROR_FETCHING_DATA');
             }
-          } else if (this.storyAndWorksheets.length === 0 && this.commonUtilService.networkInfo.isNetworkAvailable  && !avoidRefreshList) {
+          } else if (this.storyAndWorksheets.length === 0 && this.commonUtilService.networkInfo.isNetworkAvailable && !avoidRefreshList) {
             this.commonUtilService.showToast(
               this.commonUtilService.translateMessage('EMPTY_LIBRARY_TEXTBOOK_FILTER',
                 `${this.getGroupByPageReq.grade} (${this.getGroupByPageReq.medium} ${this.commonUtilService.translateMessage('MEDIUM')})`));
@@ -864,7 +864,8 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
       Environment.HOME,
       PageId.LIBRARY);
     this.router.navigate([RouterLinks.SEARCH], {
-      state: { contentType: ContentType.FOR_LIBRARY_TAB,
+      state: {
+        contentType: ContentType.FOR_LIBRARY_TAB,
         source: PageId.LIBRARY
       }
     });
@@ -1082,9 +1083,9 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
       telemetryObject,
       values);
     if (this.commonUtilService.networkInfo.isNetworkAvailable || item.isAvailableLocally) {
-      this.router.navigate([RouterLinks.COLLECTION_DETAIL_ETB], {state: {content: item}});
+      this.router.navigate([RouterLinks.COLLECTION_DETAIL_ETB], { state: { content: item } });
     } else {
-    this.presentToastForOffline('OFFLINE_WARNING_ETBUI_1');
+      this.presentToastForOffline('OFFLINE_WARNING_ETBUI_1');
     }
   }
 
@@ -1096,10 +1097,12 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
     console.log('inside handleHeaderEvents', $event);
     switch ($event.name) {
       case 'search': this.search();
-                     break;
+        break;
       case 'download': this.redirectToActivedownloads();
-                       break;
-
+        break;
+      case 'notification': this.redirectToNotifications();
+        break;
+      default: console.warn('Use Proper Event name');
     }
   }
 
@@ -1111,6 +1114,19 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
       PageId.LIBRARY);
     this.router.navigate([RouterLinks.ACTIVE_DOWNLOADS]);
   }
+
+  redirectToNotifications() {
+    const valuesMap = new Map();
+    this.telemetryGeneratorService.generateInteractTelemetry(
+      InteractType.TOUCH,
+      InteractSubtype.NOTIFICATION_CLICKED,
+      Environment.HOME,
+      PageId.LIBRARY,
+      undefined,
+      valuesMap);
+    this.router.navigate([RouterLinks.NOTIFICATION]);
+  }
+
 
   toggleMenu() {
     this.menuCtrl.toggle();
