@@ -1,5 +1,5 @@
 import { Component, OnInit, Inject, Input } from '@angular/core';
-import { LoadingController, Platform, NavParams, PopoverController } from '@ionic/angular';
+import { Platform, NavParams, PopoverController } from '@ionic/angular';
 import { GenerateOtpRequest, IsProfileAlreadyInUseRequest, ProfileService } from 'sunbird-sdk';
 import { ProfileConstants } from '@app/app/app.constant';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
