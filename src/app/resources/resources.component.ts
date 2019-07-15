@@ -609,13 +609,13 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
             sectionInfo[sectionName] = count;
           }
 
-          const resvalues = new Map();
-          resvalues['pageRes'] = sectionInfo;
+          const resValues = new Map();
+          resValues['pageRes'] = sectionInfo;
           this.telemetryGeneratorService.generateInteractTelemetry(InteractType.OTHER,
             InteractSubtype.RESOURCE_PAGE_LOADED,
             Environment.HOME,
             this.source, undefined,
-            resvalues);
+            resValues);
           this.pageLoadedSuccess = true;
           this.refresh = false;
           this.searchApiLoader = false;
@@ -623,11 +623,11 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
           this.generateExtraInfoTelemetry(newSections.length);
           // this.checkEmptySearchResult(isAfterLanguageChange);
           if (this.storyAndWorksheets.length === 0 && this.commonUtilService.networkInfo.isNetworkAvailable) {
-            // if (this.tabs.getSelected().tabTitle === 'LIBRARY‌' && !avoidRefreshList) {
-            //   this.commonUtilService.showToast(
-            //     this.commonUtilService.translateMessage('EMPTY_LIBRARY_TEXTBOOK_FILTER',
-            //       `${this.getGroupByPageReq.grade} (${this.getGroupByPageReq.medium} ${this.commonUtilService.translateMessage('MEDIUM')})`));
-            // }
+            if (this.commonUtilService.currentTabName === 'resources' && !avoidRefreshList) {
+              this.commonUtilService.showToast(
+                this.commonUtilService.translateMessage('EMPTY_LIBRARY_TEXTBOOK_FILTER',
+                  `${this.getGroupByPageReq.grade} (${this.getGroupByPageReq.medium} ${this.commonUtilService.translateMessage('MEDIUM')})`));
+            }
           }
         });
       })
@@ -636,8 +636,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
         this.ngZone.run(() => {
           this.refresh = false;
           this.searchApiLoader = false;
-          if (error === 'CONNECTION_ERROR') {
-          } else if (error === 'SERVER_ERROR' || error === 'SERVER_AUTH_ERROR') {
+          if (error === 'SERVER_ERROR' || error === 'SERVER_AUTH_ERROR') {
             if (!isAfterLanguageChange) {
               this.commonUtilService.showToast('ERROR_FETCHING_DATA');
             }
@@ -646,13 +645,13 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
               this.commonUtilService.translateMessage('EMPTY_LIBRARY_TEXTBOOK_FILTER',
                 `${this.getGroupByPageReq.grade} (${this.getGroupByPageReq.medium} ${this.commonUtilService.translateMessage('MEDIUM')})`));
           }
-          const errvalues = new Map();
-          errvalues['isNetworkAvailable'] = this.commonUtilService.networkInfo.isNetworkAvailable ? 'Y' : 'N';
+          const errValues = new Map();
+          errValues['isNetworkAvailable'] = this.commonUtilService.networkInfo.isNetworkAvailable ? 'Y' : 'N';
           this.telemetryGeneratorService.generateInteractTelemetry(InteractType.OTHER,
             InteractSubtype.RESOURCE_PAGE_ERROR,
             Environment.HOME,
             this.source, undefined,
-            errvalues);
+            errValues);
         });
       });
   }
@@ -973,10 +972,9 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
     if (flags.length && _.includes(flags, true)) {
     } else {
       if (!isAfterLanguageChange) {
-        // migration-TODO
-        // if (this.tabs.getSelected().tabTitle === 'LIBRARY‌') {
-        //   this.commonUtilService.showToast('NO_CONTENTS_FOUND');
-        // }
+        if (this.commonUtilService.currentTabName === 'resources') {
+          this.commonUtilService.showToast('NO_CONTENTS_FOUND');
+        }
       }
     }
   }
@@ -1138,7 +1136,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
       this.telemetryGeneratorService.generateInteractTelemetry(InteractType.SCROLL,
         InteractSubtype.BOOK_LIST_END_REACHED,
         Environment.HOME,
-        this.source, undefined,
+        this.source
       );
     }
   }
@@ -1148,16 +1146,14 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
       this.telemetryGeneratorService.generateInteractTelemetry(InteractType.SCROLL,
         InteractSubtype.RECENTLY_VIEWED_END_REACHED,
         Environment.HOME,
-        this.source, undefined,
+        this.source,
       );
     }
   }
 
   scrollToTop() {
-
     this.contentView.scrollToTop();
     // this.contentView._scrollContent.nativeElement.scrollToTop();
-
   }
 
 }
