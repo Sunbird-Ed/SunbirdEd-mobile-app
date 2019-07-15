@@ -1,18 +1,18 @@
 // migration-TODO
-// import { ActiveDownloadsPage } from '@app/pages/active-downloads/active-downloads';
-// import { ViewMoreActivityPage } from './../view-more-activity/view-more-activity';
+import { ActiveDownloadsPage } from '../active-downloads/active-downloads.page';
+import { ViewMoreActivityComponent } from '../view-more-activity/view-more-activity.component';
 import { Component, Inject, NgZone, OnInit, AfterViewInit } from '@angular/core';
 // import { Events, IonicPage, NavController, ToastController, PopoverController, MenuController, Tabs } from 'ionic-angular';
 import { Events, ToastController } from '@ionic/angular';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { QRResultCallback, SunbirdQRScanner } from '../../services/sunbirdqrscanner.service';
 // migration-TODO
-// import { SearchPage } from '../search/search';
-// import { ContentDetailsPage } from '../content-details/content-details';
+import { SearchComponent } from '../search/search.component';
+import { ContentDetailsPage } from '../content-details/content-details.page';
 import * as _ from 'lodash';
 import { ContentCard, EventTopics, PreferenceKey, ProfileConstants, ViewMore, RouterLinks } from '../../app/app.constant';
 // migration-TODO
-// import { PageFilter, PageFilterCallback } from '../page-filter/page.filter';
+import { PageFilterPage, PageFilterCallback } from '../page-filter/page-filter.page';
 import { Network } from '@ionic-native/network/ngx';
 import { AppGlobalService } from '../../services/app-global-service.service';
 import { CourseUtilService } from '../../services/course-util.service';
@@ -28,7 +28,7 @@ import {
 import { Environment, InteractSubtype, InteractType, PageId } from '../../services/telemetry-constants';
 import { Subscription } from 'rxjs';
 import { AppHeaderService } from '../../services/app-header.service';
-import { Router } from '@angular/router';
+import { Router, NavigationExtras } from '@angular/router';
 
 @Component({
   selector: 'app-courses',
@@ -88,8 +88,7 @@ export class CoursesPage implements OnInit, AfterViewInit {
   isFilterApplied = false;
   callback: QRResultCallback;
   // migration-TODO
-  // pageFilterCallBack: PageFilterCallback;
-  pageFilterCallBack: any;
+  pageFilterCallBack: PageFilterCallback;
   isUpgradePopoverShown = false;
   private mode = 'soft';
   private eventSubscription: Subscription;
@@ -696,25 +695,30 @@ export class CoursesPage implements OnInit, AfterViewInit {
     } else {
       this.presentToastForOffline('NO_INTERNET_TITLE'); return;
     }
-    let params;
+    let params: NavigationExtras;
     let title;
     if (showEnrolledCourses) {
       title = this.commonUtilService.translateMessage('COURSES_IN_PROGRESS');
       params = {
-        headerTitle: 'COURSES_IN_PROGRESS',
-        userId: this.userId,
-        pageName: ViewMore.PAGE_COURSE_ENROLLED
+        state: {
+          headerTitle: 'COURSES_IN_PROGRESS',
+          userId: this.userId,
+          pageName: ViewMore.PAGE_COURSE_ENROLLED
+        }
       };
     } else {
       searchQuery = updateFilterInSearchQuery(searchQuery, this.appliedFilter, this.profile,
         this.mode, this.isFilterApplied, this.appGlobalService);
       title = headerTitle;
       params = {
-        headerTitle: headerTitle,
-        pageName: ViewMore.PAGE_COURSE_POPULAR,
-        requestParams: searchQuery,
-        enrolledCourses: this.enrolledCourses,
-        guestUser: this.guestUser
+        state: {
+          headerTitle: headerTitle,
+          pageName: ViewMore.PAGE_COURSE_POPULAR,
+          requestParams: searchQuery,
+          enrolledCourses: this.enrolledCourses,
+          guestUser: this.guestUser
+        }
+
       };
     }
     const values = new Map();
@@ -726,6 +730,8 @@ export class CoursesPage implements OnInit, AfterViewInit {
       values);
     // migration-TODO
     // this.navCtrl.push(ViewMoreActivityPage, params);
+    this.router.navigate([RouterLinks.VIEW_MORE_ACTIVITY], params);
+
   }
 
   navigateToContentDetailsPage(content) {

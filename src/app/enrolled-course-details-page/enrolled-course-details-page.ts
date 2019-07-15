@@ -70,6 +70,7 @@ import { ContentShareHandlerService } from '../../services/content/content-share
 import { SbGenericPopoverComponent } from '../components/popups/sb-generic-popover/sb-generic-popover.component';
 import { ContentActionsComponent, ContentRatingAlertComponent } from '../components';
 import {Location} from '@angular/common';
+import {Router} from '@angular/router';
 declare const cordova;
 
 @Component({
@@ -206,12 +207,14 @@ export class EnrolledCourseDetailsPage implements OnInit {
     private utilityService: UtilityService,
     private headerService: AppHeaderService,
     private contentShareHandler: ContentShareHandlerService,
-    private location: Location
+    private location: Location,
+    private router: Router
   ) {
 
     this.appGlobalService.getUserId();
     this.checkLoggedInOrGuestUser();
     this.checkCurrentUserType();
+    // this.uid = this.router.getCurrentNavigation().extras.state.uid;
   }
 
   /**

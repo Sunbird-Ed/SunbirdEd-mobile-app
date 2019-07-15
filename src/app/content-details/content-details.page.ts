@@ -217,6 +217,7 @@ export class ContentDetailsPage implements OnInit {
     this.checkappAvailability();
     this.defaultAppIcon = 'assets/imgs/ic_launcher.png';
     this.defaultLicense = ContentConstants.DEFAULT_LICENSE;
+
     this.route.queryParams.subscribe(params => {
       if (this.router.getCurrentNavigation().extras.state) {
         console.log('params from state : ', this.router.getCurrentNavigation().extras.state);

@@ -25,14 +25,6 @@ import {
 import { SbGenericPopoverComponent } from '../components/popups/sb-generic-popover/sb-generic-popover.component';
 import { ComingSoonMessageService } from 'services/coming-soon-message.service';
 import { Location } from '@angular/common';
-// migration-TODO
-// import { ActiveDownloadsPage } from './../active-downloads/active-downloads';
-
-// migration-TODO
-// import { ContentDetailsPage } from '@app/pages/content-details/content-details';
-
-// migration-TODO
-// import { EnrolledCourseDetailsPage } from '@app/pages/enrolled-course-details';
 
 import {
   SbPopoverComponent
@@ -262,9 +254,8 @@ export class CollectionDetailEtbPage implements OnInit {
         this.fromCoursesPage = this.router.getCurrentNavigation().extras.state.fromCoursesPage;
         this.isAlreadyEnrolled = this.router.getCurrentNavigation().extras.state.isAlreadyEnrolled;
         this.isChildClickable = this.router.getCurrentNavigation().extras.state.isChildClickable;
-        this.facets = this.facets = this.router.getCurrentNavigation().extras.state.facets;
+        this.facets = this.router.getCurrentNavigation().extras.state.facets;
         this.stateData = this.router.getCurrentNavigation().extras.state.contentState;
-
         // check for parent content
         this.parentContent = this.router.getCurrentNavigation().extras.state.parentContent;
         if (depth) {
@@ -849,70 +840,47 @@ export class CollectionDetailEtbPage implements OnInit {
   }
 
   navigateToDetailsPage(content: any, depth) {
+    console.log('content navigate to details=====>>>', content, depth)
+    // migration-TODO
+    // const stateData = this.navParams.get('contentState');
 
     this.zone.run(() => {
       if (content.contentType === ContentType.COURSE) {
-        const stateParams = {
+        this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], {
           state: {
             content: content,
             depth: depth,
             contentState: this.stateData,
             corRelation: this.corRelationList
           }
-        };
-        this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], stateParams);
-        // migration-TODO
-        // this.navCtrl.push(EnrolledCourseDetailsPage, {
-        //   content: content,
-        //   depth: depth,
-        //   contentState: this.stateData,
-        //   corRelation: this.corRelationList
-        // });
+        });
       } else if (content.mimeType === MimeType.COLLECTION) {
-        const stateParams = {
+        this.isDepthChild = true;
+        // COLLECTION_DETAIL_ETB
+        this.router.navigate([RouterLinks.COLLECTION_DETAIL_ETB], {
           state: {
             content: content,
             depth: depth,
             contentState: this.stateData,
             corRelation: this.corRelationList
           }
-        };
-        this.isDepthChild = true;
-        this.router.navigate([RouterLinks.COLLECTION_DETAIL_ETB], stateParams);
-        // migration-TODO
-        // this.navCtrl.push(CollectionDetailsEtbPage, {
-        //   content: content,
-        //   depth: depth,
-        //   contentState: this.stateData,
-        //   corRelation: this.corRelationList
-        // });
+        });
       } else {
-        const stateParams = {
+        // CONTENT_DETAILS
+        this.router.navigate([RouterLinks.CONTENT_DETAILS], {
           state: {
-            isChildContent: true,
             content: content,
             depth: depth,
             contentState: this.stateData,
-            corRelation: this.corRelationList,
-            breadCrumb: this.breadCrumb
+            corRelation: this.corRelationList
           }
-        };
-        this.router.navigate([RouterLinks.CONTENT_DETAILS], stateParams);
-        // migration-TODO
-        // this.navCtrl.push(ContentDetailsPage, {
-        //   isChildContent: true,
-        //   content: content,
-        //   depth: depth,
-        //   contentState: this.stateData,
-        //   corRelation: this.corRelationList,
-        //   breadCrumb: this.breadCrumb
-        // });
+        });
       }
     });
   }
 
   navigateToContentPage(content: any, depth) {
-    const stateParams: NavigationExtras = {
+    this.router.navigate([RouterLinks.CONTENT_DETAILS], {
       state: {
         isChildContent: true,
         content: content,
@@ -921,19 +889,7 @@ export class CollectionDetailEtbPage implements OnInit {
         corRelation: this.corRelationList,
         breadCrumb: this.breadCrumb
       }
-    };
-    this.router.navigate([RouterLinks.CONTENT_DETAILS], stateParams);
-    // migration-TODO
-    // const stateData = this.navParams.get('contentState');
-    // migration-TODO
-    // this.navCtrl.push(ContentDetailsPage, {
-    //   isChildContent: true,
-    //   content: content,
-    //   depth: depth,
-    //   contentState: stateData,
-    //   corRelation: this.corRelationList,
-    //   breadCrumb: this.breadCrumb
-    // });
+    });
   }
 
   /**
@@ -1421,7 +1377,7 @@ export class CollectionDetailEtbPage implements OnInit {
     switch ($event.name) {
       case 'back':
         this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.COLLECTION_DETAIL, Environment.HOME,
-        true, this.cardData.identifier, this.corRelationList);
+          true, this.cardData.identifier, this.corRelationList);
         this.handleBackButton();
         break;
       case 'download':
