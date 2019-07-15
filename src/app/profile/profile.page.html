@@ -6,7 +6,6 @@
   </div>
   <ion-refresher (ionRefresh)="doRefresh($event)"></ion-refresher>
   <div padding-horizontal text-center class="MT15" *ngIf="profile?.firstName">
-    <!--migration TODO <profile-avatar [username]="profile?.firstName"></profile-avatar> -->
   </div>
 
   <div padding-horizontal text-center>
@@ -163,7 +162,7 @@
     </div>
     <div class="cards-container" style="padding:15px 5px; background-color: #fff; ">
       <!-- migration -todo -->
-      <!-- <ion-scroll scrollX="true" style="width: 100%" no-padding>
+      <div style="width: 100%" no-padding>
         <div *ngIf="contentCreatedByMe  && isLoggedInUser">
           <ion-card *ngFor="let courseItem of contentCreatedByMe; let i=index"
             (click)="navigateToDetailPage(courseItem, layoutPopular, i);">
@@ -201,7 +200,7 @@
             </ion-card-content>
           </ion-card>
         </div>
-      </ion-scroll> -->
+      </div>
     </div>
   </div>
 
@@ -220,7 +219,7 @@
       </div>
       <div class="" text-center>
         <ion-button shape="round" class="txt-capitalize custom-round" *ngIf="trainingsLimit < trainingsCompleted.length"
-          (click)="showMoreTainings()">
+          (click)="showMoreTrainings()">
           + {{trainingsCompleted?.length - 2}} {{'MORE' | translate}}
           <ion-icon class="ML10" name="ios-arrow-down"></ion-icon>
         </ion-button>
