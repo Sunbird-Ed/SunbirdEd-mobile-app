@@ -17,6 +17,7 @@ import {
 } from '../../../services';
 import { ContentType, AudienceFilter, RouterLinks } from '../../app.constant';
 import { Router } from '@angular/router';
+import { Location } from '@angular/common';
 
 const KEY_SUNBIRD_CONFIG_FILE_PATH = 'sunbird_config_file_path';
 
@@ -47,6 +48,7 @@ export class AboutUsComponent {
     private utilityService: UtilityService,
     private headerService: AppHeaderService,
     private router: Router,
+    private location: Location
   ) {
   }
 
@@ -172,5 +174,9 @@ export class AboutUsComponent {
       .catch(error => {
         console.log('Error--', error);
       });
+  }
+
+  goBack() {
+    this.location.back();
   }
 }

@@ -1,6 +1,6 @@
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, NavigationExtras } from '@angular/router';
 import { Component, Inject, OnInit, NgZone } from '@angular/core';
-import { LoadingController, NavController, NavParams } from '@ionic/angular';
+import { LoadingController } from '@ionic/angular';
 // import { ReportListPage } from './report-list/report-list';
 import {
   GetAllProfileRequest,
@@ -43,7 +43,6 @@ export class ReportsPage implements OnInit {
     @Inject('GROUP_SERVICE') private groupService: GroupService,
     private ngZone: NgZone,
     private loading: LoadingController,
-    private navParams: NavParams,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private headerService: AppHeaderService,
     private route: ActivatedRoute,
@@ -151,13 +150,8 @@ export class ReportsPage implements OnInit {
       telemetryObject
     );
 
-    this.router.navigate([RouterLinks.REPORTS_LIST], {
-      state: {
-        isFromUsers: true,
-        uids: [uid],
-        handle: handle
-      }
-    });
+    const navigationExtras: NavigationExtras = { state: { isFromUsers: true, uids: [uid], handle: handle } };
+    this.router.navigate([`/${RouterLinks.REPORTS}/${RouterLinks.REPORTS_LIST}`], navigationExtras);
   }
 
   goToGroupUserReportList(group) {
@@ -179,14 +173,8 @@ export class ReportsPage implements OnInit {
           map.set(user.uid, user.handle);
         });
 
-        this.router.navigate([RouterLinks.REPORTS_LIST], {
-          state: {
-            isFromGroups: true,
-            uids: uids,
-            users: map,
-            group: group
-          }
-        });
+        const navigationExtras: NavigationExtras = { state: { isFromGroups: true, uids: uids, users: map, group: group } };
+        this.router.navigate([`/${RouterLinks.REPORTS}/${RouterLinks.REPORTS_LIST}`], navigationExtras);
       });
   }
 

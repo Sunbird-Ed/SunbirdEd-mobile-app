@@ -20,11 +20,11 @@ import { ShareUserAndGroupsPageModule } from './share-user-and-groups/share-user
     FormsModule,
     IonicModule,
     TranslateModule.forChild(),
-    AddOrRemoveGroupUserPageModule,
-    CreateGroupPageModule,
-    GroupDetailsPageModule,
-    GroupMembersPageModule,
-    ShareUserAndGroupsPageModule,
+    // AddOrRemoveGroupUserPageModule,
+    // CreateGroupPageModule,
+    // GroupDetailsPageModule,
+    // GroupMembersPageModule,
+    // ShareUserAndGroupsPageModule,
     UserAndGroupsRoutingModule
   ],
   declarations: [UserAndGroupsPage]

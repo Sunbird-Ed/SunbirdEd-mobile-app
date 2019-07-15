@@ -1,5 +1,10 @@
 <ion-header>
   <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button icon-only (click)="goBack();">
+        <ion-icon name="arrow-back"></ion-icon>
+      </ion-button>
+    </ion-buttons>
     <ion-title *ngIf="addUsers">{{'ADD_USERS_TO_GROUP' | translate:{'%s': ""} }}</ion-title>
     <ion-title *ngIf="!addUsers">{{'REMOVE_USERS_FROM_GROUP' | translate:{'%s': ""} }}</ion-title>
   </ion-toolbar>

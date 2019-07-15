@@ -67,12 +67,7 @@ export class OverflowMenuComponent implements OnInit {
         );
         // this.app.getActiveNav().push(UserAndGroupsPage, { profile: this.profile });
 
-        const navigationExtras: NavigationExtras = {
-          state: {
-            profile: this.profile
-          }
-        }
-
+        const navigationExtras: NavigationExtras = { state: { profile: this.profile } };
         this.router.navigate([RouterLinks.USER_AND_GROUPS], navigationExtras);
         break;
 
