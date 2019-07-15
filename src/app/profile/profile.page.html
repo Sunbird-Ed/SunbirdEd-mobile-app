@@ -6,6 +6,7 @@
   </div>
   <ion-refresher (ionRefresh)="doRefresh($event)"></ion-refresher>
   <div padding-horizontal text-center class="MT15" *ngIf="profile?.firstName">
+      <app-profile-avatar [username]="profile?.firstName"></app-profile-avatar>
   </div>
 
   <div padding-horizontal text-center>

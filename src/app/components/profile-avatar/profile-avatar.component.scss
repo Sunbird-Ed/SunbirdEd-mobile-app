@@ -1,0 +1,23 @@
+@import 'src/global.scss';
+:host {
+    .profile-avatar{
+        font-size: 50px;
+        @extend .font-weight-bold;
+        line-height: 50px;
+        color: #9017FF;
+        border-radius: 50%;
+        -webkit-box-shadow: 0px 0px 8px 1px rgba(0, 0, 0, 0.25);
+        box-shadow: 0px 0px 8px 1px rgba(0, 0, 0, 0.25);
+        padding: 5px;
+        text-align: center;
+        min-width: 80px;
+        min-height: 80px;
+        margin: 0 auto;
+        display: table;
+
+        span {
+            vertical-align: middle;
+            display: table-cell;
+        }
+    }
+}

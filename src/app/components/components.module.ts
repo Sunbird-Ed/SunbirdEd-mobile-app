@@ -38,6 +38,7 @@ import { UserReportComponent } from '../reports/user-report/user-report.componen
 import { GroupReportListComponent } from '../reports/group-report-list/group-report-list.component';
 import { ReportListComponent } from '../reports/report-list/report-list.component';
 import { SearchComponent } from '../search/search.component';
+import { ProfileAvatarComponent } from './profile-avatar/profile-avatar.component';
 
 
 @NgModule({
@@ -73,7 +74,8 @@ import { SearchComponent } from '../search/search.component';
     ReportAlertComponent,
     GroupReportListComponent,
     ReportListComponent,
-    SearchComponent
+    SearchComponent,
+    ProfileAvatarComponent
   ],
   imports: [
     CommonModule,
@@ -122,7 +124,8 @@ import { SearchComponent } from '../search/search.component';
     ConfirmAlertComponent,
     EditContactDetailsPopupComponent,
     EditContactVerifyPopupComponent,
-    RatingAlertComponent
+    RatingAlertComponent,
+    ProfileAvatarComponent
   ],
   providers: [FileSizePipe, Keyboard]
 })
