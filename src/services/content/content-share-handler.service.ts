@@ -23,8 +23,8 @@ export class ContentShareHandlerService {
     this.generateShareInteractEvents(InteractType.TOUCH,
       InteractSubtype.SHARE_LIBRARY_INITIATED,
       content.contentType, corRelationList, rollup);
-    const loader = this.commonUtilService.getLoader();
-    loader.present();
+    const loader = await this.commonUtilService.getLoader();
+    await loader.present();
     const baseUrl = await this.utilityService.getBuildConfigValue('BASE_URL');
     const url = baseUrl + ShareUrl.CONTENT + content.identifier;
     if (content.isAvailableLocally) {
@@ -33,17 +33,17 @@ export class ContentShareHandlerService {
         destinationFolder: this.storageService.getStorageDestinationDirectoryPath()
       };
       this.contentService.exportContent(exportContentRequest).toPromise()
-        .then((response: ContentExportResponse) => {
-          loader.dismiss();
+        .then(async (response: ContentExportResponse) => {
+          await loader.dismiss();
           this.generateShareInteractEvents(InteractType.OTHER,
             InteractSubtype.SHARE_LIBRARY_SUCCESS, content.contentType, corRelationList, rollup);
           this.social.share('', '', '' + response.exportedFilePath, url);
-        }).catch(() => {
-          loader.dismiss();
+        }).catch(async () => {
+          await loader.dismiss();
           this.commonUtilService.showToast('SHARE_CONTENT_FAILED');
         });
     } else {
-      loader.dismiss();
+      await loader.dismiss();
       this.generateShareInteractEvents(InteractType.OTHER,
         InteractSubtype.SHARE_LIBRARY_SUCCESS,
         content.contentType, corRelationList, rollup);

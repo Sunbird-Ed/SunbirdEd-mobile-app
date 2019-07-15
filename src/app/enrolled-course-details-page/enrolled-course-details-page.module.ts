@@ -10,6 +10,7 @@ import { DirectivesModule } from '@app/directives/directives.module';
 import { PipesModule } from '@app/pipes/pipes.module';
 import { TranslateModule } from '@ngx-translate/core';
 import { ComponentsModule } from '../components/components.module';
+import { ContentActionsComponent } from '../components';
 
 const routes: Routes = [
   {
@@ -31,6 +32,7 @@ const routes: Routes = [
     ComponentsModule
   ],
   declarations: [EnrolledCourseDetailsPage],
+  entryComponents:[ContentActionsComponent],
   providers: [DatePipe]
 })
 export class EnrolledCourseDetailsPagePageModule { }

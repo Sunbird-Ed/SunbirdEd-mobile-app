@@ -1,4 +1,4 @@
-import { Events, NavController } from '@ionic/angular';
+import { Events, NavController , Platform } from '@ionic/angular';
 import { Component, Inject, NgZone, OnInit, Input } from '@angular/core';
 import {
   Content,
@@ -17,19 +17,31 @@ import {
   EventsBusEvent,
   EventsBusService,
   SearchType,
-  TelemetryObject
+  TelemetryObject,
+  CorrelationData,
+  LogLevel
 } from 'sunbird-sdk';
+import {
+  Environment,
+  ErrorType,
+  ImpressionType,
+  InteractSubtype,
+  InteractType,
+  Mode,
+  PageId,
+  CorReleationDataType
+} from '../../services/telemetry-constants';
 import * as _ from 'lodash';
 import {ContentType, ViewMore, MimeType , RouterLinks } from '../../app/app.constant';
 // import {ContentDetailsPage} from '../content-details/content-details';
 import { CourseUtilService } from '../../services/course-util.service';
 import { TelemetryGeneratorService } from '../../services/telemetry-generator.service';
 import { CommonUtilService } from '../../services/common-util.service';
-import { Environment, ImpressionType, LogLevel, PageId, InteractType, InteractSubtype } from '../../services/telemetry-constants';
 import { Subscription } from 'rxjs';
 // import { CollectionDetailsEtbPage } from '../collection-details-etb/collection-details-etb';
 import { AppHeaderService } from '../../services';
 import { ActivatedRoute, Router, NavigationExtras } from '@angular/router';
+import {Location} from '@angular/common';
 
 @Component({
   selector: 'app-view-more-activity',
@@ -71,6 +83,9 @@ export class ViewMoreActivityComponent implements OnInit {
    */
   downloadsOnlyToggle = false;
 
+  shouldGenerateEndTelemetry = false;
+
+
 
   /**
    * Offset
@@ -96,16 +111,18 @@ export class ViewMoreActivityComponent implements OnInit {
    * Flag to switch between view-more-card in view
    */
   localContentsCard = false;
+  backButtonFunc = undefined;
 
   /**
    * Header title
    */
   headerTitle: string;
-
+  private corRelationList: Array<CorrelationData>;
   /**
    * Default page type
    */
   pageType = 'library';
+  source = '';
 
   /**
    * To queue downloaded identifier
@@ -148,6 +165,11 @@ export class ViewMoreActivityComponent implements OnInit {
   @Input() sectionName: string;
 
   @Input() env: string;
+  identifier: string;
+  didViewLoad: boolean;
+  objId;
+  objType;
+  objVer;
 
   constructor(
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
@@ -160,7 +182,9 @@ export class ViewMoreActivityComponent implements OnInit {
     private telemetryGeneratorService: TelemetryGeneratorService,
     private headerServie: AppHeaderService,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private location: Location,
+    private platform: Platform
   ) {
     this.route.queryParams.subscribe(params => {
       if (this.router.getCurrentNavigation().extras.state) {
@@ -206,6 +230,7 @@ export class ViewMoreActivityComponent implements OnInit {
     this.headerServie.showHeaderWithBackButton();
     // migration-TODO
     // this.tabBarElement.style.display = 'none';
+    this.handleBackButton();
   }
 
   async subscribeUtilityEvents() {
@@ -223,6 +248,26 @@ export class ViewMoreActivityComponent implements OnInit {
     this.events.subscribe('viewMore:Courseresume', (data) => {
       this.resumeContentData = data.content;
       this.getContentDetails(data.content);
+    });
+  }
+
+  handleBackButton() {
+    this.backButtonFunc = this.platform.backButton.subscribe(() => {
+      this.telemetryGeneratorService.generateBackClickedTelemetry(
+        PageId.VIEW_MORE,
+        Environment.HOME,
+        false,
+        this.identifier,
+        this.corRelationList
+      );
+      this.didViewLoad = false;
+      this.generateEndEvent(this.objId, this.objType, this.objVer);
+
+      if (this.shouldGenerateEndTelemetry) {
+        this.generateQRSessionEndEvent(this.source, this.course.identifier);
+      }
+      this.location.back();
+      // this.backButtonFunc.unsubscribe();
     });
   }
 
@@ -467,6 +512,31 @@ export class ViewMoreActivityComponent implements OnInit {
       });
   }
 
+  generateEndEvent(objectId, objectType, objectVersion) {
+    const telemetryObject = new TelemetryObject(objectId, objectType, objectVersion);
+    this.telemetryGeneratorService.generateEndTelemetry(objectType,
+      Mode.PLAY,
+      PageId.COURSE_DETAIL,
+      Environment.HOME,
+      telemetryObject,
+      undefined,
+      this.corRelationList);
+  }
+
+  generateQRSessionEndEvent(pageId: string, qrData: string) {
+    if (pageId !== undefined) {
+      const telemetryObject = new TelemetryObject(qrData, 'qr', undefined);
+      this.telemetryGeneratorService.generateEndTelemetry(
+        'qr',
+        Mode.PLAY,
+        pageId,
+        Environment.HOME,
+        telemetryObject,
+        undefined,
+        this.corRelationList);
+    }
+  }
+
   subscribeSdkEvent() {
     this.eventSubscription = this.eventBusService.events().subscribe((event: EventsBusEvent) => {
       this.ngZone.run(() => {
@@ -519,9 +589,11 @@ export class ViewMoreActivityComponent implements OnInit {
       if (this.eventSubscription) {
         this.eventSubscription.unsubscribe();
       }
-      this.tabBarElement.style.display = 'flex';
+      // migration-TODO
+      // this.tabBarElement.style.display = 'flex';
       this.isLoadMore = false;
       this.showOverlay = false;
+      this.backButtonFunc.unsubscribe();
     });
   }
 

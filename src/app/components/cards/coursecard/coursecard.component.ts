@@ -1,11 +1,7 @@
 import { AppVersion } from '@ionic-native/app-version/ngx';
-import { BatchConstants, ContentCard, ContentType, MimeType, PreferenceKey } from '../../../app.constant';
+import { BatchConstants, ContentCard, ContentType, MimeType, PreferenceKey, RouterLinks } from '../../../app.constant';
 import { Component, Inject, Input, OnInit, NgZone } from '@angular/core';
 import { Events, NavController, PopoverController } from '@ionic/angular';
-// import { EnrolledCourseDetailsPage } from '../../../pages/enrolled-course-details/enrolled-course-details';
-// import { CollectionDetailsEtbPage } from '../../../pages/collection-details-etb/collection-details-etb';
-// import { ContentDetailsPage } from '../../../pages/content-details/content-details';
-// import { ContentCard, ContentType, MimeType, PreferenceKey } from '../../../app/app.constant';
 import { CourseUtilService } from '../../../../services/course-util.service';
 import { TelemetryGeneratorService } from '../../../../services/telemetry-generator.service';
 import {
@@ -15,7 +11,9 @@ import {
 import { InteractSubtype, InteractType, Environment, PageId } from '../../../../services/telemetry-constants';
 import { CommonUtilService } from '../../../../services/common-util.service';
 import { async } from 'q';
-// import { EnrollmentDetailsPage } from '@app/pages/enrolled-course-details/enrollment-details/enrollment-details';
+import { EnrollmentDetailsPage } from '@app/app/enrolled-course-details-page/enrollment-details-page/enrollment-details-page';
+import { RouterLink } from '@angular/router';
+import {Router} from '@angular/router';
 @Component({
   selector: 'app-coursecard',
   templateUrl: './coursecard.component.html',
@@ -84,6 +82,7 @@ export class CourseCardComponent implements OnInit {
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
     private popoverCtrl: PopoverController,
     private commonUtilService: CommonUtilService,
+    private router: Router,
     @Inject('COURSE_SERVICE') private courseService: CourseService,
     private zone: NgZone) {
     this.defaultImg = 'assets/imgs/ic_launcher.png';
@@ -144,15 +143,16 @@ export class CourseCardComponent implements OnInit {
                   PageId.CONTENT_DETAIL, undefined,
                   reqvalues);
                 await this.loader.dismiss();
-                // const popover = this.popoverCtrl.create(EnrollmentDetailsPage,
-                //   {
-                //     upcommingBatches: this.batches,
-                //     retiredBatched: retiredBatched,
-                //     courseId: content.identifier
-                //   },
-                //   { cssClass: 'enrollement-popover' }
-                // );
-                // popover.present();
+                const popover = await this.popoverCtrl.create({
+                  component: EnrollmentDetailsPage,
+                  componentProps: {
+                    upcommingBatches: this.batches,
+                    retiredBatched: retiredBatched,
+                    courseId: content.identifier
+                  },
+                  cssClass: 'enrollement-popover'
+                });
+                await popover.present();
               } else {
                 await this.loader.dismiss();
                 this.navigateToDetailPage(content, layoutName);
@@ -163,7 +163,7 @@ export class CourseCardComponent implements OnInit {
             console.log('error while fetching course batches ==>', error);
           });
       } else {
-        // this.navCtrl.push(CourseBatchesPage);
+        this.router.navigate([RouterLinks.COURSE_BATCHES]);
       }
     } else {
       this.commonUtilService.showToast('ERROR_NO_INTERNET_MESSAGE');
@@ -201,21 +201,23 @@ export class CourseCardComponent implements OnInit {
       await this.loader.dismiss();
     }
     if (layoutName === this.layoutInProgress || content.contentType === ContentType.COURSE) {
-      // migration-TODO
-      // this.navCtrl.push(EnrolledCourseDetailsPage, {
-      //   content: content
-      // });
+      this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], {
+        state: {
+          content: content
+        }
+      });
     } else if (content.mimeType === MimeType.COLLECTION) {
-      // migration-TODO
-      // this.navCtrl.push(CollectionDetailsPage, {
-      // this.navCtrl.push(CollectionDetailsEtbPage, {
-      //   content: content
-      // });
+      this.router.navigate([RouterLinks.COLLECTION_DETAILS], {
+        state: {
+          content: content
+        }
+      });
     } else {
-      // migration-TODO
-      // this.navCtrl.push(ContentDetailsPage, {
-      //   content: content
-      // });
+      this.router.navigate([RouterLinks.CONTENT_DETAILS], {
+        state: {
+          content: content
+        }
+      });
     }
   }
 
@@ -248,9 +250,11 @@ export class CourseCardComponent implements OnInit {
             content: content
           });
         } else {
-          // this.navCtrl.push(EnrolledCourseDetailsPage, {
-          //   content: content
-          // });
+          this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], {
+            state: {
+              content: content
+            }
+          });
         }
       });
   }
