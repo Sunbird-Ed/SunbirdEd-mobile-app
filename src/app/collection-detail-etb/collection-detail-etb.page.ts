@@ -18,21 +18,13 @@ import {
   Environment, ErrorType, ImpressionType, InteractSubtype, InteractType, Mode, PageId
 } from '../../services/telemetry-constants';
 import { Subscription } from 'rxjs-compat';
-import { ContentType, MimeType, ShareUrl } from '../../app/app.constant';
+import { ContentType, MimeType, ShareUrl, RouterLinks } from '../../app/app.constant';
 import {
   AppGlobalService, AppHeaderService, CommonUtilService, CourseUtilService, TelemetryGeneratorService, UtilityService
 } from '../../services';
 import { SbGenericPopoverComponent } from '../components/popups/sb-generic-popover/sb-generic-popover.component';
 import { ComingSoonMessageService } from 'services/coming-soon-message.service';
 import { Location } from '@angular/common';
-// migration-TODO
-// import { ActiveDownloadsPage } from './../active-downloads/active-downloads';
-
-// migration-TODO
-// import { ContentDetailsPage } from '@app/pages/content-details/content-details';
-
-// migration-TODO
-// import { EnrolledCourseDetailsPage } from '@app/pages/enrolled-course-details';
 
 import {
   SbPopoverComponent
@@ -41,7 +33,7 @@ import {
 import {
   ConfirmAlertComponent, ContentActionsComponent, ContentRatingAlertComponent
 } from '../components';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, NavigationExtras } from '@angular/router';
 declare const cordova;
 
 @Component({
@@ -213,6 +205,7 @@ export class CollectionDetailEtbPage implements OnInit {
   networkSubscription: any;
   toast: any;
   contentTypesCount: any;
+  stateData: any;
   constructor(
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
     @Inject('EVENTS_BUS_SERVICE') private eventBusService: EventsBusService,
@@ -261,8 +254,8 @@ export class CollectionDetailEtbPage implements OnInit {
         this.fromCoursesPage = this.router.getCurrentNavigation().extras.state.fromCoursesPage;
         this.isAlreadyEnrolled = this.router.getCurrentNavigation().extras.state.isAlreadyEnrolled;
         this.isChildClickable = this.router.getCurrentNavigation().extras.state.isChildClickable;
-        this.facets = this.facets = this.router.getCurrentNavigation().extras.state.facets;
-
+        this.facets = this.router.getCurrentNavigation().extras.state.facets;
+        this.stateData = this.router.getCurrentNavigation().extras.state.contentState;
         // check for parent content
         this.parentContent = this.router.getCurrentNavigation().extras.state.parentContent;
         if (depth) {
@@ -847,53 +840,56 @@ export class CollectionDetailEtbPage implements OnInit {
   }
 
   navigateToDetailsPage(content: any, depth) {
+    console.log('content navigate to details=====>>>', content, depth)
     // migration-TODO
     // const stateData = this.navParams.get('contentState');
 
     this.zone.run(() => {
       if (content.contentType === ContentType.COURSE) {
-        // migration-TODO
-        // this.navCtrl.push(EnrolledCourseDetailsPage, {
-        //   content: content,
-        //   depth: depth,
-        //   contentState: stateData,
-        //   corRelation: this.corRelationList
-        // });
+        this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], {
+          state: {
+            content: content,
+            depth: depth,
+            contentState: this.stateData,
+            corRelation: this.corRelationList
+          }
+        });
       } else if (content.mimeType === MimeType.COLLECTION) {
         this.isDepthChild = true;
-        // migration-TODO
-        // this.navCtrl.push(CollectionDetailsEtbPage, {
-        //   content: content,
-        //   depth: depth,
-        //   contentState: stateData,
-        //   corRelation: this.corRelationList
-        // });
+        // COLLECTION_DETAIL_ETB
+        this.router.navigate([RouterLinks.COLLECTION_DETAIL_ETB], {
+          state: {
+            content: content,
+            depth: depth,
+            contentState: this.stateData,
+            corRelation: this.corRelationList
+          }
+        });
       } else {
-        // migration-TODO
-        // this.navCtrl.push(ContentDetailsPage, {
-        //   isChildContent: true,
-        //   content: content,
-        //   depth: depth,
-        //   contentState: stateData,
-        //   corRelation: this.corRelationList,
-        //   breadCrumb: this.breadCrumb
-        // });
+        // CONTENT_DETAILS
+        this.router.navigate([RouterLinks.CONTENT_DETAILS], {
+          state: {
+            content: content,
+            depth: depth,
+            contentState: this.stateData,
+            corRelation: this.corRelationList
+          }
+        });
       }
     });
   }
 
   navigateToContentPage(content: any, depth) {
-    // migration-TODO
-    // const stateData = this.navParams.get('contentState');
-    // migration-TODO
-    // this.navCtrl.push(ContentDetailsPage, {
-    //   isChildContent: true,
-    //   content: content,
-    //   depth: depth,
-    //   contentState: stateData,
-    //   corRelation: this.corRelationList,
-    //   breadCrumb: this.breadCrumb
-    // });
+    this.router.navigate([RouterLinks.CONTENT_DETAILS], {
+      state: {
+        isChildContent: true,
+        content: content,
+        depth: depth,
+        contentState: this.stateData,
+        corRelation: this.corRelationList,
+        breadCrumb: this.breadCrumb
+      }
+    });
   }
 
   /**
@@ -1379,11 +1375,13 @@ export class CollectionDetailEtbPage implements OnInit {
   }
   handleHeaderEvents($event) {
     switch ($event.name) {
-      case 'back': this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.COLLECTION_DETAIL, Environment.HOME,
-        true, this.cardData.identifier, this.corRelationList);
+      case 'back':
+        this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.COLLECTION_DETAIL, Environment.HOME,
+          true, this.cardData.identifier, this.corRelationList);
         this.handleBackButton();
         break;
-      case 'download': this.redirectToActivedownloads();
+      case 'download':
+        this.redirectToActivedownloads();
         break;
 
     }
@@ -1395,7 +1393,6 @@ export class CollectionDetailEtbPage implements OnInit {
       InteractSubtype.ACTIVE_DOWNLOADS_CLICKED,
       Environment.HOME,
       PageId.COLLECTION_DETAIL);
-    // migration-TODO
-    // this.navCtrl.push(ActiveDownloadsPage);
+    this.router.navigate([RouterLinks.ACTIVE_DOWNLOADS]);
   }
 }

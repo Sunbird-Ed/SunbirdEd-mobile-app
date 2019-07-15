@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormsModule,ReactiveFormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
 
@@ -29,6 +29,15 @@ import { UpgradePopoverComponent } from './popups/upgrade-popover/upgrade-popove
 import { EditContactDetailsPopupComponent } from './popups/edit-contact-details-popup/edit-contact-details-popup.component';
 import { EditContactVerifyPopupComponent } from './popups/edit-contact-verify-popup/edit-contact-verify-popup.component';
 import { Keyboard } from '@ionic-native/keyboard/ngx';
+import { ConfirmAlertComponent } from './confirm-alert/confirm-alert.component';
+import { RatingAlertComponent } from './rating-alert/rating-alert.component';
+import { OverflowMenuComponent } from '../profile/overflow-menu/overflow-menu.component';
+// import { GroupReportAlertComponent } from '../reports/group-report-alert/group-report-alert.component';
+import { ReportAlertComponent } from '../reports/report-alert/report-alert.component';
+import { UserReportComponent } from '../reports/user-report/user-report.component';
+import { GroupReportListComponent } from '../reports/group-report-list/group-report-list.component';
+import { ReportListComponent } from '../reports/report-list/report-list.component';
+import { SearchComponent } from '../search/search.component';
 
 
 @NgModule({
@@ -52,13 +61,26 @@ import { Keyboard } from '@ionic-native/keyboard/ngx';
     SbDownloadPopupComponent,
     UpgradePopoverComponent,
     EditContactDetailsPopupComponent,
-    EditContactVerifyPopupComponent
+    EditContactVerifyPopupComponent,
+    ConfirmAlertComponent,
+    EditContactDetailsPopupComponent,
+    EditContactVerifyPopupComponent,
+    RatingAlertComponent,
+    OverflowMenuComponent,
+    // GroupReportAlertComponent,
+    ReportAlertComponent,
+    UserReportComponent,
+    ReportAlertComponent,
+    GroupReportListComponent,
+    ReportListComponent,
+    SearchComponent
   ],
   imports: [
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
     IonicModule,
+    ReactiveFormsModule,
     PipesModule,
     TranslateModule.forChild(),
     IonicRatingModule,
@@ -96,8 +118,11 @@ import { Keyboard } from '@ionic-native/keyboard/ngx';
     SbDownloadPopupComponent,
     UpgradePopoverComponent,
     EditContactDetailsPopupComponent,
-    EditContactDetailsPopupComponent
-
+    EditContactDetailsPopupComponent,
+    ConfirmAlertComponent,
+    EditContactDetailsPopupComponent,
+    EditContactVerifyPopupComponent,
+    RatingAlertComponent
   ],
   providers: [FileSizePipe, Keyboard]
 })

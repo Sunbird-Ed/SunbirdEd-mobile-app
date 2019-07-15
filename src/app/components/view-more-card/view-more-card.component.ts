@@ -4,10 +4,12 @@ import { BatchConstants } from '../../app.constant';
 // import { EnrolledCourseDetailsPage } from './../../pages/enrolled-course-details/enrolled-course-details';
 
 import { Component, Input, NgZone, OnInit, Inject } from '@angular/core';
-import { Events, NavController, NavParams, PopoverController } from '@ionic/angular';
-import { ContentType, MimeType, ContentCard } from '../../app.constant';
+import { Events, NavController, PopoverController } from '@ionic/angular';
+import { ContentType, MimeType, ContentCard , RouterLinks } from '../../app.constant';
 import { CommonUtilService, TelemetryGeneratorService, AppGlobalService, CourseUtilService } from '../../../services';
 // import { EnrollmentDetailsPage } from '@app/pages/enrolled-course-details/enrollment-details/enrollment-details';
+import { Router, NavigationExtras } from '@angular/router';
+
 import {
   CourseBatchesRequest,
   CourseEnrollmentType,
@@ -75,7 +77,7 @@ export class ViewMoreCardComponent implements OnInit {
    */
   constructor(
     public navCtrl: NavController,
-    public navParams: NavParams,
+    // public navParams: NavParams,
     private zone: NgZone,
     public courseUtilService: CourseUtilService,
     public events: Events,
@@ -85,13 +87,14 @@ export class ViewMoreCardComponent implements OnInit {
     private telemetryGeneratorService: TelemetryGeneratorService,
     private appGlobalService: AppGlobalService,
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
+    private router: Router
   ) {
     this.defaultImg = 'assets/imgs/ic_launcher.png';
   }
 
-  checkRetiredOpenBatch(content: any, layoutName?: string): void {
-    this.loader = this.commonUtilService.getLoader();
-    this.loader.present();
+  async checkRetiredOpenBatch(content: any, layoutName?: string) {
+    this.loader = await this.commonUtilService.getLoader();
+    await this.loader.present();
     let anyOpenBatch: Boolean = false;
     this.enrolledCourses = this.enrolledCourses || [];
     let retiredBatches: Array<any> = [];
@@ -114,7 +117,7 @@ export class ViewMoreCardComponent implements OnInit {
     }
   }
 
-  navigateToBatchListPopup(content: any, layoutName?: string, retiredBatched?: any): void {
+  async navigateToBatchListPopup(content: any, layoutName?: string, retiredBatched?: any) {
     const courseBatchesRequest: CourseBatchesRequest = {
       filters: {
         courseId: layoutName === ContentCard.LAYOUT_INPROGRESS ? content.contentId : content.identifier,
@@ -128,10 +131,10 @@ export class ViewMoreCardComponent implements OnInit {
 
     if (this.commonUtilService.networkInfo.isNetworkAvailable) {
       if (!this.guestUser) {
-        // loader.present();
+        await this.loader.present();
         this.courseService.getCourseBatches(courseBatchesRequest).toPromise()
           .then((data: any) => {
-            this.zone.run(() => {
+            this.zone.run(async () => {
               this.batches = data;
               if (this.batches.length) {
                 this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
@@ -139,7 +142,7 @@ export class ViewMoreCardComponent implements OnInit {
                   Environment.HOME,
                   PageId.CONTENT_DETAIL, undefined,
                   reqvalues);
-                this.loader.dismiss();
+                await this.loader.dismiss();
                 // migration-TODO
                 // const popover = this.popoverCtrl.create(EnrollmentDetailsPage,
                 //   {
@@ -160,7 +163,7 @@ export class ViewMoreCardComponent implements OnInit {
                 //   upcommingBatches: upcommingBatches
                 // });
               } else {
-                this.loader.dismiss();
+                await this.loader.dismiss();
                 this.navigateToDetailsPage(content, layoutName);
                 // this.commonUtilService.showToast('NO_BATCHES_AVAILABLE');
               }
@@ -178,27 +181,33 @@ export class ViewMoreCardComponent implements OnInit {
   }
 
 
-  navigateToDetailsPage(content: any, layoutName) {
-    this.zone.run(() => {
+  async navigateToDetailsPage(content: any, layoutName) {
+    this.zone.run(async () => {
       if (this.loader) {
-        this.loader.dismiss();
+        await this.loader.dismiss();
       }
       if (layoutName === 'enrolledCourse' || content.contentType === ContentType.COURSE) {
         // migration-TODO
         // this.navCtrl.push(EnrolledCourseDetailsPage, {
         //   content: content
         // });
+        this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], content);
+
+        // ENROLLED_COURSE_DETAILS
       } else if (content.mimeType === MimeType.COLLECTION) {
         // this.navCtrl.push(CollectionDetailsPage, {
         // migration-TODO
         // this.navCtrl.push(CollectionDetailsEtbPage, {
         //   content: content
         // });
+        this.router.navigate([RouterLinks.COLLECTION_DETAIL_ETB], content);
+
       } else {
         // migration-TODO
         // this.navCtrl.push(ContentDetailsPage, {
         //   content: content
         // });
+        // this.router.navigate([RouterLinks.COLLECTION_DETAIL_ETB], content);
       }
     });
   }

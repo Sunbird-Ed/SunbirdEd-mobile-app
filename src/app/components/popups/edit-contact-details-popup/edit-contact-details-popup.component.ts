@@ -1,9 +1,9 @@
 import { Component, OnInit, Inject, Input } from '@angular/core';
 import { LoadingController, Platform, NavParams, PopoverController } from '@ionic/angular';
 import { GenerateOtpRequest, IsProfileAlreadyInUseRequest, ProfileService } from 'sunbird-sdk';
-import { ProfileConstants } from '../../../app.constant';
-import { CommonUtilService } from '../../../../services';
+import { ProfileConstants } from '@app/app/app.constant';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { CommonUtilService } from '@app/services';
 import { Keyboard } from '@ionic-native/keyboard/ngx';
 
 @Component({

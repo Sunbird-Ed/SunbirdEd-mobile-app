@@ -1,0 +1,23 @@
+{
+    "id": "org.ekstep.videorenderer",
+    "ver": "1.1",
+    "shortId": "org.eskstep.videorenderer",
+    "author": "Gourav More",
+    "description": "",
+    "publishedDate": "",
+    "renderer": {
+        "main": "renderer/plugin.js",
+        "dependencies": [
+            {"type": "js", "src": "renderer/libs/videolibs/video.min.js"},
+            {"type": "js", "src": "renderer/libs/videolibs/videojs-vjsdownload.js"},
+            {"type": "css", "src": "renderer/libs/video-js.css"},
+            {"type": "css", "src": "renderer/libs/videolibs/videojs-vjsdownload.css"},
+            {"type": "js", "src": "renderer/libs/videoyoutube.js"},
+            {"type": "css", "src": "renderer/libs/loader.css"}
+        ]
+    },
+    "dependencies": [
+
+    ]
+
+}

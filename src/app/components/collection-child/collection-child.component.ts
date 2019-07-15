@@ -2,7 +2,7 @@ import { Component, Input, NgZone, AfterViewInit, OnInit } from '@angular/core';
 import { NavController, NavParams } from '@ionic/angular';
 // migration-TODO
 // import { EnrolledCourseDetailsPage } from '@app/pages/enrolled-course-details';
-import { ContentType, MimeType } from '@app/app/app.constant';
+import { ContentType, MimeType, RouterLinks } from '@app/app/app.constant';
 
 import { CollectionDetailEtbPage } from '../../collection-detail-etb/collection-detail-etb.page';
 // migration-TODO
@@ -12,6 +12,7 @@ import { CommonUtilService, ComingSoonMessageService } from '../../../services';
 import { PopoverController } from '@ionic/angular';
 import { SbGenericPopoverComponent } from '../popups/sb-generic-popover/sb-generic-popover.component';
 import { Content } from 'sunbird-sdk';
+import { Router, NavigationExtras } from '@angular/router';
 
 @Component({
   selector: 'app-collection-child',
@@ -19,8 +20,8 @@ import { Content } from 'sunbird-sdk';
   styleUrls: ['./collection-child.component.scss'],
 })
 export class CollectionChildComponent implements OnInit {
-
-  cardData: any;
+//   migration-TODO : remove unnecessary
+//   cardData: any;
   @Input() childData: Content;
   @Input() index: any;
   @Input() depth: any;
@@ -31,21 +32,26 @@ export class CollectionChildComponent implements OnInit {
   constructor(
       private navCtrl: NavController,
       private zone: NgZone,
-      private navParams: NavParams,
+    //   migration-TODO : remove unnecessary
+    //   private navParams: NavParams,
       private commonUtilService: CommonUtilService,
       private popoverCtrl: PopoverController,
-      private comingSoonMessageService: ComingSoonMessageService
-  ) { this.cardData = this.navParams.get('content'); }
+      private comingSoonMessageService: ComingSoonMessageService,
+      private router: Router
+  ) {
+    //   this.cardData = this.navParams.get('content');
+    }
 
   ngOnInit(): void {
   }
 
   navigateToDetailsPage(content: Content, depth) {
-      const stateData = this.navParams.get('contentState');
+    //   migration-TODO : remove unnecessary
+    //   const stateData = this.navParams.get('contentState');
 
       this.zone.run(() => {
           if (content.contentType === ContentType.COURSE) {
-              // migration-TODO
+              //   migration-TODO : remove unnecessary
               // this.navCtrl.push(EnrolledCourseDetailsPage, {
               //     content: content,
               //     depth: depth,
@@ -55,7 +61,18 @@ export class CollectionChildComponent implements OnInit {
               // });
           } else if (content.mimeType === MimeType.COLLECTION) {
               this.isDepthChild = true;
-              // migration-TODO
+              const collectionDetailsParams: NavigationExtras = {
+                state: {
+                    content: content,
+                    depth: depth,
+                    // migration-TODO : remove unnece
+                    // contentState: stateData,
+                    corRelation: this.corRelationList,
+                    breadCrumb: this.breadCrumb
+                }
+            };
+              this.router.navigate([RouterLinks.COLLECTION_DETAIL_ETB], collectionDetailsParams);
+              //   migration-TODO : remove unnecessary
               // this.navCtrl.push(CollectionDetailsEtbPage, {
               //     content: content,
               //     depth: depth,
@@ -64,15 +81,18 @@ export class CollectionChildComponent implements OnInit {
               //     breadCrumb: this.breadCrumb
               // });
           } else {
-            // migration-TODO
-              // this.navCtrl.push(ContentDetailsPage, {
-              //     isChildContent: true,
-              //     content: content,
-              //     depth: depth,
-              //     contentState: stateData,
-              //     corRelation: this.corRelationList,
-              //     breadCrumb: this.breadCrumb
-              // });
+            const contentDetailsParams: NavigationExtras = {
+                state: {
+                    isChildContent: true,
+                    content: content,
+                    depth: depth,
+                    // migration-TODO : remove unnece
+                    // contentState: stateData,
+                    corRelation: this.corRelationList,
+                    breadCrumb: this.breadCrumb
+                }
+            };
+            this.router.navigate([RouterLinks.CONTENT_DETAILS], contentDetailsParams);
           }
       });
   }
