@@ -190,7 +190,6 @@ export class FaqHelpPage {
   receiveMessage(event) {
     const values = new Map();
     values['values'] = event.data;
-    debugger;
     // send telemetry for all events except Initiate-Email
     if (event.data && event.data.action && event.data.action !== 'initiate-email-clicked') {
       this.generateInteractTelemetry(event.data.action, values);
@@ -214,7 +213,6 @@ export class FaqHelpPage {
       ticketSummary;
     return userDetails;
   }
-  debugger;
   generateInteractTelemetry(interactSubtype, values) {
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH, interactSubtype,

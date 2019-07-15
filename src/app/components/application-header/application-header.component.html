@@ -93,6 +93,14 @@
   <ion-content>
     <ion-list class="sb-menu-list">
       
+      <ion-item (click)="emitSideMenuItemEvent($event, 'USERS_AND_GROUPS')">
+        <span class="sb-menu-icon">
+          <!-- <ion-icon ios="ios-contacts" md="md-contacts"></ion-icon> -->
+          <img src="./assets/imgs/Users_and_Groups.png" class="tool-icon">
+        </span>
+        <span class="sb-menu-item" menuClose>{{'USERS_AND_GROUPS' | translate}}</span>
+      </ion-item>
+
       <ion-item (click)="emitSideMenuItemEvent($event, 'REPORTS')">
         <span class="sb-menu-icon">
           <!-- <ion-icon ios="ios-clipboard" md="md-clipboard" MR5></ion-icon> -->
@@ -100,13 +108,7 @@
         </span>
         <span class="sb-menu-item" menuClose>{{'REPORTS' | translate}}</span>
       </ion-item>
-      <ion-item (click)="emitSideMenuItemEvent($event, 'USERS_AND_GROUPS')">
-          <span class="sb-menu-icon">
-            <!-- <ion-icon ios="ios-contacts" md="md-contacts"></ion-icon> -->
-            <img src="./assets/imgs/Users_and_Groups.png" class="tool-icon">
-          </span>
-          <span class="sb-menu-item" menuClose>{{'USERS_AND_GROUPS' | translate}}</span>
-        </ion-item>
+
       <ion-item (click)="emitSideMenuItemEvent($event, 'LANGUAGE')">
         <span class="sb-menu-icon sb-pt-6">
           <!-- <ion-icon ios="ios-planet" md="md-planet"></ion-icon> -->
@@ -117,6 +119,7 @@
           <div class="sb-menu-item-language">{{selectedLanguage}}</div>
         </div>
       </ion-item>
+
       <ion-item (click)="emitSideMenuItemEvent($event, 'SETTINGS')">
         <span class="sb-menu-icon">
           <!-- <ion-icon ios="ios-settings" md="md-settings"></ion-icon> -->
@@ -124,6 +127,7 @@
         </span>
         <span class="sb-menu-item" menuClose>{{'SETTINGS' | translate}}</span>
       </ion-item>
+
       <ion-item (click)="emitSideMenuItemEvent($event, 'HELP')">
         <span class="sb-menu-icon">
           <!-- <ion-icon ios="ios-settings" md="md-settings"></ion-icon> -->
@@ -131,6 +135,7 @@
         </span>
         <span class="sb-menu-item" menuClose>{{'HELP' | translate}}</span>
       </ion-item>
+
       <ion-item (click)="emitSideMenuItemEvent($event, 'LOGOUT')" *ngIf="isLoggedIn">
         <span class="sb-menu-icon">
           <!-- <ion-icon ios="ios-log-out" md="md-log-out"></ion-icon> -->
@@ -138,6 +143,7 @@
         </span>
         <span class="sb-menu-item" menuClose>{{'LOGOUT' | translate}}</span>
       </ion-item>
+
     </ion-list>
   </ion-content>
   <ion-footer class="side-menu-footer">
@@ -157,6 +163,14 @@
   <ion-content>
     <ion-list class="sb-menu-list">
      
+      <ion-item (click)="emitSideMenuItemEvent($event, 'USERS_AND_GROUPS')">
+        <span class="sb-menu-icon">
+          <!-- <ion-icon ios="ios-contacts" md="md-contacts"></ion-icon> -->
+          <img src="./assets/imgs/Users_and_Groups.png" class="tool-icon">
+        </span>
+        <span class="sb-menu-item" menuClose>{{'USERS_AND_GROUPS' | translate}}</span>
+      </ion-item>
+
       <ion-item (click)="emitSideMenuItemEvent($event, 'REPORTS')">
         <span class="sb-menu-icon">
           <!-- <ion-icon ios="ios-clipboard" md="md-clipboard" MR5></ion-icon> -->
@@ -164,13 +178,7 @@
         </span>
         <span class="sb-menu-item" menuClose>{{'REPORTS' | translate}}</span>
       </ion-item>
-      <ion-item (click)="emitSideMenuItemEvent($event, 'USERS_AND_GROUPS')">
-          <span class="sb-menu-icon">
-            <!-- <ion-icon ios="ios-contacts" md="md-contacts"></ion-icon> -->
-            <img src="./assets/imgs/Users_and_Groups.png" class="tool-icon">
-          </span>
-          <span class="sb-menu-item" menuClose>{{'USERS_AND_GROUPS' | translate}}</span>
-        </ion-item>
+      
       <ion-item (click)="emitSideMenuItemEvent($event, 'LANGUAGE')">
         <span class="sb-menu-icon sb-pt-6">
           <!-- <ion-icon ios="ios-planet" md="md-planet"></ion-icon> -->
@@ -181,6 +189,7 @@
           <div class="sb-menu-item-language">{{selectedLanguage}}</div>
         </div>
       </ion-item>
+
       <ion-item (click)="emitSideMenuItemEvent($event, 'SETTINGS')">
         <span class="sb-menu-icon">
           <!-- <ion-icon ios="ios-settings" md="md-settings"></ion-icon> -->
@@ -188,6 +197,7 @@
         </span>
         <span class="sb-menu-item" menuClose>{{'SETTINGS' | translate}}</span>
       </ion-item>
+
       <ion-item (click)="emitSideMenuItemEvent($event, 'HELP')">
         <span class="sb-menu-icon">
           <!-- <ion-icon ios="ios-settings" md="md-settings"></ion-icon> -->
@@ -195,6 +205,7 @@
         </span>
         <span class="sb-menu-item" menuClose>{{'HELP' | translate}}</span>
       </ion-item>
+
       <ion-item (click)="emitSideMenuItemEvent($event, 'LOGOUT')" *ngIf="isLoggedIn">
         <span class="sb-menu-icon">
           <!-- <ion-icon ios="ios-log-out" md="md-log-out"></ion-icon> -->
@@ -202,113 +213,7 @@
         </span>
         <span class="sb-menu-item" menuClose>{{'LOGOUT' | translate}}</span>
       </ion-item>
-      <ion-item (click)="test()">
-        <span class="sb-menu-icon">
-          <!-- <ion-icon ios="ios-log-out" md="md-log-out"></ion-icon> -->
-          <img src="./assets/imgs/Sign_out.png" class="tool-icon">
-        </span>
-        <span class="sb-menu-item" menuClose>Resources</span>
-      </ion-item>
-      <ion-item (click)="gotoTabs()">
-        <span class="sb-menu-icon">
-          <img src="./assets/imgs/Sign_out.png" class="tool-icon">
-        </span>
-        <span class="sb-menu-item" menuClose>Tabs</span>
-      </ion-item>
-      <!-- migration-TODO to be deleted-->
-      <ion-item (click)="goToDownloadManager()">
-
-        <span class="sb-menu-icon">
-          <img src="./assets/imgs/Sign_out.png" class="tool-icon">
-        </span>
-        <span class="sb-menu-item" menuClose>Download manager</span>
-      </ion-item>
-      <ion-item (click)="goToStorageSettings()">
-        <span class="sb-menu-icon">
-          <!-- <ion-icon ios="ios-log-out" md="md-log-out"></ion-icon> -->
-          <img src="./assets/imgs/Sign_out.png" class="tool-icon">
-        </span>
-        <span class="sb-menu-item" menuClose>Storage Settings</span>
-      </ion-item>
-      <ion-item (click)="goToCourses()">
-        <span class="sb-menu-icon">
-          <!-- <ion-icon ios="ios-log-out" md="md-log-out"></ion-icon> -->
-          <img src="./assets/imgs/Settings.png" class="tool-icon">
-        </span>
-        <span class="sb-menu-item" menuClose>courses</span>
-      </ion-item>
-      <ion-item (click)="goToActiveDonwloads()">
-        <span class="sb-menu-icon">
-          <!-- <ion-icon ios="ios-log-out" md="md-log-out"></ion-icon> -->
-          <img src="./assets/imgs/Settings.png" class="tool-icon">
-        </span>
-        <span class="sb-menu-item" menuClose>active downloads</span>
-      </ion-item>
-      <ion-item (click)="goToCollectionEtb()">
-          <span class="sb-menu-icon">
-              <!-- <ion-icon ios="ios-log-out" md="md-log-out"></ion-icon> -->
-              <img src="./assets/imgs/Settings.png" class="tool-icon">
-            </span>
-            <span class="sb-menu-item" menuClose>collection ETB</span>
-      </ion-item>
-      <ion-item (click)="goToCourseBatches()">
-        <span class="sb-menu-icon">
-          <!-- <ion-icon ios="ios-log-out" md="md-log-out"></ion-icon> -->
-          <img src="./assets/imgs/Settings.png" class="tool-icon">
-        </span>
-        <span class="sb-menu-item" menuClose>course batches</span>
-      </ion-item>
-      <ion-item (click)="goToCourseEnrollCourseDetails()">
-        <span class="sb-menu-icon">
-          <!-- <ion-icon ios="ios-log-out" md="md-log-out"></ion-icon> -->
-          <img src="./assets/imgs/Settings.png" class="tool-icon">
-        </span>
-        <span class="sb-menu-item" menuClose>Enrolled Course</span>
-      </ion-item>
-      <ion-item (click)="goToCollectionDetails()">
-        <span class="sb-menu-icon">
-          <!-- <ion-icon ios="ios-log-out" md="md-log-out"></ion-icon> -->
-          <img src="./assets/imgs/Settings.png" class="tool-icon">
-        </span>
-        <span class="sb-menu-item" menuClose>Collection Details</span>
-      </ion-item>
-      <ion-item (click)="goToContentDetails()">
-          <span class="sb-menu-icon">
-            <!-- <ion-icon ios="ios-log-out" md="md-log-out"></ion-icon> -->
-            <img src="./assets/imgs/Settings.png" class="tool-icon">
-          </span>
-          <span class="sb-menu-item" menuClose>Content details</span>
-        </ion-item>
-      <ion-item (click)="goToPageFilter()">
-        <span class="sb-menu-icon">
-          <!-- <ion-icon ios="ios-log-out" md="md-log-out"></ion-icon> -->
-          <img src="./assets/imgs/Settings.png" class="tool-icon">
-        </span>
-        <span class="sb-menu-item" menuClose>Page filter</span>
-      </ion-item>
-      <ion-item (click)="goToQrCodeResult()">
-        <span class="sb-menu-icon">
-          <!-- <ion-icon ios="ios-log-out" md="md-log-out"></ion-icon> -->
-          <img src="./assets/imgs/Settings.png" class="tool-icon">
-        </span>
-        <span class="sb-menu-item" menuClose>Qr code result</span>
-      </ion-item>
-
-      <ion-item (click)="goToSettings()">
-        <span class="sb-menu-icon">
-          <!-- <ion-icon ios="ios-log-out" md="md-log-out"></ion-icon> -->
-          <img src="./assets/imgs/Settings.png" class="tool-icon">
-        </span>
-        <span class="sb-menu-item" menuClose>Settings</span>
-      </ion-item>
-
-      <ion-item (click)="goToFAQ()">
-        <span class="sb-menu-icon">
-          <!-- <ion-icon ios="ios-log-out" md="md-log-out"></ion-icon> -->
-          <img src="./assets/imgs/Settings.png" class="tool-icon">
-        </span>
-        <span class="sb-menu-item" menuClose>HELP</span>
-      </ion-item>
+      
     </ion-list>
   </ion-content>
   <ion-footer class="side-menu-footer">

@@ -39,6 +39,7 @@ import { Router, ActivatedRoute, NavigationExtras } from '@angular/router';
 import { PopoverOptions } from '@ionic/core';
 import { EditDeletePopoverComponent } from './edit-delete-popover/edit-delete-popover.component';
 import { SbGenericPopoverComponent } from '../components/popups/sb-generic-popover/sb-generic-popover.component';
+import { initTabs, GUEST_STUDENT_TABS, GUEST_STUDENT_SWITCH_TABS, GUEST_TEACHER_TABS, GUEST_TEACHER_SWITCH_TABS } from '../module.service';
 // import { SbGenericPopoverComponent } from '@app/component/popups/sb-generic-popup/sb-generic-popover';
 
 
@@ -96,12 +97,8 @@ export class UserAndGroupsPage implements OnInit {
     /* Check userList length and show message or list accordingly */
 
     //TODO
-    // this.currentUserId = this.router.getCurrentNavigation().extras.state.userId;
-    // this.playConfig = this.router.getCurrentNavigation().extras.state.playConfig;
-  }
-
-  ngOnInit() {
-
+    this.currentUserId = this.router.getCurrentNavigation().extras.state.userId;
+    this.playConfig = this.router.getCurrentNavigation().extras.state.playConfig;
     if (!this.currentUserId && this.appGlobalService.getCurrentUser()) {
       this.currentUserId = this.appGlobalService.getCurrentUser().uid;
     }
@@ -109,7 +106,9 @@ export class UserAndGroupsPage implements OnInit {
     if (this.appGlobalService.isUserLoggedIn()) {
       this.profileDetails = this.appGlobalService.getCurrentUser();
     }
+  }
 
+  ngOnInit() {
     this.telemetryGeneratorService.generateImpressionTelemetry(
       ImpressionType.VIEW, '',
       PageId.USERS_GROUPS,
@@ -156,14 +155,14 @@ export class UserAndGroupsPage implements OnInit {
       componentProps: {
         edit: async () => {
           if (isUser) {
-            this.router.navigate([RouterLinks.GUEST_EDIT], {
+            this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.GUEST_EDIT}`], {
               state: {
                 profile: this.userList[index],
                 isCurrentUser: isCurrentUser
               }
             });
           } else {
-            this.router.navigate([RouterLinks.CREATE_GROUP], {
+            this.router.navigate([`/${RouterLinks.USER_AND_GROUPS}/${RouterLinks.CREATE_GROUP}`], {
               state: {
                 groupInfo: this.groupList[index]
               }
@@ -278,7 +277,7 @@ export class UserAndGroupsPage implements OnInit {
       }
     }
 
-    this.router.navigate(['GroupDetailsPage'], navigationExtras)
+    this.router.navigate([`/${RouterLinks.USER_AND_GROUPS}/${RouterLinks.GROUP_DETAILS}`], navigationExtras)
   }
 
   /**
@@ -292,7 +291,7 @@ export class UserAndGroupsPage implements OnInit {
       Environment.USER,
       PageId.USERS_GROUPS
     );
-    this.router.navigate([RouterLinks.CREATE_GROUP]);
+    this.router.navigate([`/${RouterLinks.USER_AND_GROUPS}/${RouterLinks.CREATE_GROUP}`]);
   }
 
 
@@ -302,7 +301,7 @@ export class UserAndGroupsPage implements OnInit {
         isNewUser: true
       }
     }
-    this.router.navigate([RouterLinks.SHARE_USER_AND_GROUPS], navigationExtras);
+    this.router.navigate([`/${RouterLinks.USER_AND_GROUPS}/${RouterLinks.SHARE_USER_AND_GROUPS}`], navigationExtras);
   }
 
   /**
@@ -315,7 +314,7 @@ export class UserAndGroupsPage implements OnInit {
       }
     }
 
-    this.router.navigate([RouterLinks.GROUP_DETAILS], navigationExtras);
+    this.router.navigate([`/${RouterLinks.USER_AND_GROUPS}/${RouterLinks.GROUP_DETAILS}`], navigationExtras);
   }
 
   /**
@@ -337,14 +336,14 @@ export class UserAndGroupsPage implements OnInit {
           lastCreatedProfile: this.lastCreatedProfileData
         }
       }
-      this.router.navigate([RouterLinks.GUEST_EDIT], navigationExtras);
+      this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.GUEST_EDIT}`], navigationExtras);
     }).catch((error) => {
       const navigationExtras: NavigationExtras = {
         state: {
           isNewUser: true
         }
       };
-      this.router.navigate([RouterLinks.GUEST_EDIT], navigationExtras);
+      this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.GUEST_EDIT}`], navigationExtras);
 
     });
   }
@@ -666,17 +665,18 @@ export class UserAndGroupsPage implements OnInit {
         } else {
           if (selectedUser.profileType === ProfileType.STUDENT) {
             //MIGRATION TODO
-            // initTabs(this.container, isBeingPlayed ? GUEST_STUDENT_TABS : GUEST_STUDENT_SWITCH_TABS);
+            initTabs(this.container, isBeingPlayed ? GUEST_STUDENT_TABS : GUEST_STUDENT_SWITCH_TABS);
             this.preferences.putString(PreferenceKey.SELECTED_USER_TYPE, ProfileType.STUDENT).toPromise().then();
           } else {
             //MIGRATION TODO
-            // initTabs(this.container, isBeingPlayed ? GUEST_TEACHER_TABS : GUEST_TEACHER_SWITCH_TABS);
+            initTabs(this.container, isBeingPlayed ? GUEST_TEACHER_TABS : GUEST_TEACHER_SWITCH_TABS);
             this.preferences.putString(PreferenceKey.SELECTED_USER_TYPE, ProfileType.TEACHER).toPromise().then();
           }
           this.event.publish('refresh:profile');
           this.event.publish(AppGlobalService.USER_INFO_UPDATED);
 
           //MIGRATION TODO
+          this.router.navigate([`/${RouterLinks.TABS}`]);
           // this.app.getRootNavs()[0].push(TabsPage);
 
         }

@@ -570,7 +570,7 @@ export class ContentDetailsPage implements OnInit {
       }
       case StoreRating.RETURN_HELP: {
         this.appRatingService.setInitialDate();
-        this.router.navigate([RouterLinks.FAQ_HELP]);
+        this.router.navigate([`/${RouterLinks.FAQ_HELP}`]);
         break;
       }
     }
