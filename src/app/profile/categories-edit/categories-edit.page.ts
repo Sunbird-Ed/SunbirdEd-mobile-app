@@ -1,8 +1,8 @@
 import { Component, OnInit, Inject, ViewChild } from '@angular/core';
-import { Events, LoadingController, NavController, NavParams, IonSelect } from '@ionic/angular';
+import { Events, IonSelect } from '@ionic/angular';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
-// import { initTabs, LOGIN_TEACHER_TABS } from 'app/app.module';
+import { initTabs, LOGIN_TEACHER_TABS } from '@app/app/module.service';
 import {
   FrameworkService,
   FrameworkUtilService,
@@ -20,7 +20,6 @@ import {
 } from 'sunbird-sdk';
 import { CommonUtilService, AppGlobalService, AppHeaderService, FormAndFrameworkUtilService } from '@app/services';
 import { ContainerService } from '@app/services/container.services';
-import { TabsPage } from '@app/app/tabs/tabs.page';
 import { ProfileConstants } from '@app/app/app.constant';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Location } from '@angular/common';
@@ -48,8 +47,8 @@ export class CategoriesEditPage implements OnInit {
   frameworkId: string;
   categories = [];
   btnColor = '#8FC4FF';
-  showOnlyMandatoryFields: Boolean = true;
-  editData: Boolean = true;
+  showOnlyMandatoryFields: boolean = true;
+  editData: boolean = true;
   loader: any;
   headerConfig = {
     showHeader: false,
@@ -77,15 +76,14 @@ export class CategoriesEditPage implements OnInit {
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
-    private loadingCtrl: LoadingController,
+    @Inject('FRAMEWORK_SERVICE') private frameworkService: FrameworkService,
+    @Inject('FRAMEWORK_UTIL_SERVICE') private frameworkUtilService: FrameworkUtilService,
     private commonUtilService: CommonUtilService,
     private fb: FormBuilder,
     private translate: TranslateService,
     private appGlobalService: AppGlobalService,
     private events: Events,
     private container: ContainerService,
-    @Inject('FRAMEWORK_SERVICE') private frameworkService: FrameworkService,
-    @Inject('FRAMEWORK_UTIL_SERVICE') private frameworkUtilService: FrameworkUtilService,
     private formAndFrameworkUtilService: FormAndFrameworkUtilService,
     private headerService: AppHeaderService,
     private route: ActivatedRoute,
@@ -110,8 +108,8 @@ export class CategoriesEditPage implements OnInit {
   }
 
   /**
- * Ionic life cycle event - Fires every time page visits
- */
+   * Ionic life cycle event - Fires every time page visits
+   */
   ionViewWillEnter() {
     this.getSyllabusDetails();
     this.headerConfig = this.headerService.getDefaultPageConfig();
@@ -122,8 +120,8 @@ export class CategoriesEditPage implements OnInit {
   }
 
   /**
- * Initializes form with default values or empty values
- */
+   * Initializes form with default values or empty values
+   */
 
   initializeForm() {
     if (this.profile.board && this.profile.board.length > 1) {
@@ -184,8 +182,8 @@ export class CategoriesEditPage implements OnInit {
   }
 
   /**
- * It will resets the form to empty values
- */
+   * It will resets the form to empty values
+   */
   resetForm(index: number) {
     switch (index) {
       case 0:
@@ -223,11 +221,11 @@ export class CategoriesEditPage implements OnInit {
 
 
   /**
- * It builds API request object and internally call form API to fetch category data.
- * @param index Index of the field in the form
- * @param currentField Variable Name of the current field list
- * @param selectedValue selected value for the currently selected field
- */
+   * It builds API request object and internally call form API to fetch category data.
+   * @param index Index of the field in the form
+   * @param currentField Variable Name of the current field list
+   * @param selectedValue selected value for the currently selected field
+   */
   fetchNextCategoryOptionsValues(index: number, currentField: string, selectedValue: Array<string>) {
     if (index === 1) {
       this.frameworkId = selectedValue[0];
@@ -239,7 +237,6 @@ export class CategoriesEditPage implements OnInit {
         this.frameworkService.getFrameworkDetails(frameworkDetailsRequest).toPromise()
           .then((framework: Framework) => {
             this.categories = framework.categories;
-            // loader.dismiss();
             const request: GetFrameworkCategoryTermsRequest = {
               currentCategoryCode: this.categories[0].code,
               language: this.translate.currentLang,
@@ -308,8 +305,8 @@ export class CategoriesEditPage implements OnInit {
 
 
   /**
- * It will validate the forms and internally call submit method
- */
+   * It will validate the forms and internally call submit method
+   */
   onSubmit() {
     const formVal = this.profileEditForm.value;
     if (!formVal.boards.length) {
@@ -337,9 +334,9 @@ export class CategoriesEditPage implements OnInit {
 
 
   /**
- * Shows Toast Message with `red` color
- * @param {string} fieldName Name of the field in the form
- */
+   * Shows Toast Message with `red` color
+   * @param {string} fieldName Name of the field in the form
+   */
   showErrorToastMessage(fieldName: string) {
     this.btnColor = '#8FC4FF';
     this.commonUtilService.showToast(this.commonUtilService.translateMessage('PLEASE_SELECT', this.commonUtilService
@@ -348,8 +345,8 @@ export class CategoriesEditPage implements OnInit {
 
 
   /**
- * It changes the color of the submit button on change of class.
- */
+   * It changes the color of the submit button on change of class.
+   */
   enableSubmitButton() {
     if (this.profileEditForm.value.grades.length) {
       this.btnColor = '#006DE5';
@@ -360,9 +357,9 @@ export class CategoriesEditPage implements OnInit {
 
 
   /**
- * It makes an update API call.
- * @param {object} formVal Object of Form values
- */
+   * It makes an update API call.
+   * @param {object} formVal Object of Form values
+   */
 
   submitForm(formVal) {
     this.loader.present();
@@ -414,24 +411,23 @@ export class CategoriesEditPage implements OnInit {
             .then(updatedProfile => {
               this.formAndFrameworkUtilService.updateLoggedInUser(updatedProfile, this.profile)
                 .then((value) => {
+                  initTabs(this.container, LOGIN_TEACHER_TABS);
                   // Migration todo
-                  // initTabs(this.container, LOGIN_TEACHER_TABS);
                   // this.navCtrl.setRoot(TabsPage);
+
                 });
             }).catch(e => {
+              initTabs(this.container, LOGIN_TEACHER_TABS);
               // Migration todo
-              // initTabs(this.container, LOGIN_TEACHER_TABS);
               // this.navCtrl.setRoot(TabsPage);
             });
         } else {
           // this.navCtrl.pop();
           this.location.back();
-          window.history.back();
         }
       }).catch(async () => {
         await this.loader.dismiss();
         this.commonUtilService.showToast(this.commonUtilService.translateMessage('PROFILE_UPDATE_FAILED'));
       });
   }
-
 }

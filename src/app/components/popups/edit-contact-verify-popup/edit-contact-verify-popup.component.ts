@@ -1,7 +1,7 @@
-import { Component, OnInit, Inject } from '@angular/core';
-import { LoadingController, NavParams, Platform, ModalController } from '@ionic/angular';
-import { ProfileConstants } from '../../app.constant';
-import { CommonUtilService } from '../../../services';
+import { Component, OnInit, Inject, Input } from '@angular/core';
+import { NavParams, Platform, PopoverController } from '@ionic/angular';
+import { ProfileConstants } from '@app/app/app.constant';
+import { CommonUtilService } from '@app/services';
 import { GenerateOtpRequest, ProfileService, VerifyOtpRequest } from 'sunbird-sdk';
 
 @Component({
@@ -13,20 +13,20 @@ export class EditContactVerifyPopupComponent implements OnInit {
   /**
    * Key may be phone or email depending on the verification flow from which it is called
    */
-  key;
+  @Input() key: string;
+  @Input() title: string;
+  @Input() description: string;
+  @Input() type: string;
   otp;
-  title: string;
-  description: string;
-  type: string;
   invalidOtp = false;
   enableResend = true;
+  unregisterBackButton: any;
 
   constructor(
     private navParams: NavParams,
-    public modalCtrl: ModalController,
+    public popOverCtrl: PopoverController,
     public platform: Platform,
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
-    private loadingCtrl: LoadingController,
     private commonUtilService: CommonUtilService
   ) {
     this.key = this.navParams.get('key');
@@ -40,8 +40,8 @@ export class EditContactVerifyPopupComponent implements OnInit {
   }
 
   ionViewWillEnter() {
-    this.platform.backButton.subscribeWithPriority(10, () => {
-      this.modalCtrl.dismiss();
+    this.unregisterBackButton = this.platform.backButton.subscribeWithPriority(11, () => {
+      this.popOverCtrl.dismiss();
     });
   }
 
@@ -63,7 +63,7 @@ export class EditContactVerifyPopupComponent implements OnInit {
       }
       this.profileService.verifyOTP(req).toPromise()
         .then(() => {
-          this.modalCtrl.dismiss(true, this.key);
+          this.popOverCtrl.dismiss({ OTPSuccess: true, value: this.key });
         })
         .catch(error => {
           if (error.response.body.params.err === 'ERROR_INVALID_OTP') {
@@ -108,7 +108,11 @@ export class EditContactVerifyPopupComponent implements OnInit {
   }
 
   cancel() {
-    this.modalCtrl.dismiss(false);
+    this.popOverCtrl.dismiss({ OTPSuccess: false });
+  }
+
+  ionViewWillLeave() {
+    this.unregisterBackButton && this.unregisterBackButton.unsubscribe();
   }
 
 }

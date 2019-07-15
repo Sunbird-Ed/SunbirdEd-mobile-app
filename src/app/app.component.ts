@@ -253,7 +253,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   handleBackButton() {
-    this.platform.backButton.subscribeWithPriority(11, () => {
+    this.platform.backButton.subscribeWithPriority(0, () => {
       // migration-TODO
       // let navObj = this.app.getRootNavs()[0];
       // let currentPage = navObj.getActive().name;

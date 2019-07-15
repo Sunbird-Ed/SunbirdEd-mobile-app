@@ -43,6 +43,15 @@ const routes: Routes = [
         ]
       },
       {
+        path: RouterLinks.PROFILE,
+        children: [
+          {
+            path: '',
+            loadChildren: '../profile/profile.module#ProfilePageModule'
+          }
+        ]
+      },
+      {
         path: 'download-manager',
         children: [
           {

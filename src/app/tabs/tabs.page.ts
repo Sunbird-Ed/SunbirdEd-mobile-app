@@ -1,9 +1,12 @@
-import { GUEST_TEACHER_TABS, initTabs } from './../module.service';
-import { Component, ViewChild, ViewEncapsulation } from '@angular/core';
+import { ProfileType, SharedPreferences, ProfileService } from 'sunbird-sdk';
+import { GUEST_TEACHER_TABS, initTabs, GUEST_STUDENT_TABS, LOGIN_TEACHER_TABS } from './../module.service';
+import { Component, ViewChild, ViewEncapsulation, Inject } from '@angular/core';
 
 import { IonTabs, Events, ToastController } from '@ionic/angular';
-import { TelemetryGeneratorService, ContainerService, AppGlobalService } from '../../services';
-
+import { ContainerService } from '@app/services/container.services';
+import { AppGlobalService } from '@app/services/app-global-service.service';
+import { ProfileConstants } from '../app.constant';
+import { CommonUtilService } from '@app/services';
 @Component({
   selector: 'app-tabs',
   templateUrl: './tabs.page.html',
@@ -32,15 +35,40 @@ export class TabsPage {
     private container: ContainerService,
     private events: Events,
     public toastCtrl: ToastController,
-    private telemetryGeneratorService: TelemetryGeneratorService,
-    private appGlobalService: AppGlobalService
-  ) { }
+    private appGlobalService: AppGlobalService,
+    @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
+    @Inject('PROFILE_SERVICE') private profileService: ProfileService,
+    private commonUtilService: CommonUtilService
+  ) {
 
-  ionViewWillEnter() {
+  }
+
+  async ionViewWillEnter() {
     console.log("Inside tabsPage");
 
-    //Migration todo
-    initTabs(this.container, GUEST_TEACHER_TABS);
+    const session = await this.appGlobalService.authService.getSession().toPromise();
+    if (!session) {
+      console.log(`Success Platform Session`, session);
+
+      const profileType = this.appGlobalService.guestProfileType;
+      if (profileType === ProfileType.TEACHER) {
+        initTabs(this.container, GUEST_TEACHER_TABS);
+      } else {
+        initTabs(this.container, GUEST_STUDENT_TABS);
+      }
+    } else {
+      if ((await this.preferences.getString('SHOW_WELCOME_TOAST').toPromise()) === 'true') {
+        this.preferences.putString('SHOW_WELCOME_TOAST', 'false').toPromise().then();
+
+        const serverProfile = await this.profileService.getServerProfilesDetails({
+          userId: session.userToken,
+          requiredFields: ProfileConstants.REQUIRED_FIELDS,
+        }).toPromise();
+
+        this.commonUtilService.showToast(this.commonUtilService.translateMessage('WELCOME_BACK', serverProfile.firstName));
+      }
+      initTabs(this.container, LOGIN_TEACHER_TABS);
+    }
 
     this.tabs = this.container.getAllTabs();
     let tabIndex;
