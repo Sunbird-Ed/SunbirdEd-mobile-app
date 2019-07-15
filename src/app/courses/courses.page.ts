@@ -7,7 +7,6 @@ import { Events, ToastController } from '@ionic/angular';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { QRResultCallback, SunbirdQRScanner } from '../../services/sunbirdqrscanner.service';
 // migration-TODO
-import { SearchComponent } from '../search/search.component';
 import { ContentDetailsPage } from '../content-details/content-details.page';
 import * as _ from 'lodash';
 import { ContentCard, EventTopics, PreferenceKey, ProfileConstants, ViewMore, RouterLinks } from '../../app/app.constant';

@@ -154,7 +154,7 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
   }
 
   emitEvent($event, name) {
-    this.location.back();
+    // this.location.back();
     this.headerEvents.emit({ name });
   }
 
