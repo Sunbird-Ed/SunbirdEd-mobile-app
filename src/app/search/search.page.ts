@@ -1,4 +1,4 @@
-import { BatchConstants } from './../../app/app.constant';
+import { BatchConstants, RouterLinks } from './../../app/app.constant';
 import { Component, Inject, NgZone, OnDestroy, ViewChild } from '@angular/core';
 import { Events, NavController, NavParams, Platform, PopoverController } from '@ionic/angular';
 // import { Content as ContentView } from 'ionic-angular';
@@ -30,6 +30,7 @@ import {
 } from '../../services/telemetry-constants';
 // import { TabsPage } from '@app/pages/tabs/tabs';
 import { AppHeaderService } from '../../services/app-header.service';
+import { Router } from '@angular/router';
 // import { EnrollmentDetailsPage } from '../enrolled-course-details/enrollment-details/enrollment-details';
 
 @Component({
@@ -123,7 +124,8 @@ export class SearchPage implements OnDestroy {
     private headerService: AppHeaderService,
     @Inject('COURSE_SERVICE') private courseService: CourseService,
     private popoverCtrl: PopoverController,
-    private location: Location
+    private location: Location,
+    private router: Router
   ) {
 
     this.checkUserSession();
@@ -216,14 +218,14 @@ export class SearchPage implements OnDestroy {
     this.backButtonFunc.unsubscribe();
   }
 
-  // handleDeviceBackButton() {
-  //   this.backButtonFunc = this.platform.registerBackButtonAction(() => {
-  //     this.navigateToPreviousPage();
-  //     this.telemetryGeneratorService.generateBackClickedTelemetry(ImpressionType.SEARCH,
-  //       Environment.HOME, false, undefined, this.corRelationList);
-  //     this.backButtonFunc();
-  //   }, 10);
-  // }
+  handleDeviceBackButton() {
+    this.backButtonFunc = this.platform.backButton.subscribe(() => {
+      this.navigateToPreviousPage();
+      this.telemetryGeneratorService.generateBackClickedTelemetry(ImpressionType.SEARCH,
+        Environment.HOME, false, undefined, this.corRelationList);
+      this.backButtonFunc();
+    });
+  }
 
 
   openCollection(collection) {
@@ -294,7 +296,16 @@ export class SearchPage implements OnDestroy {
           }
         }
       }
-      // this.navCtrl.push(EnrolledCourseDetailsPage, params);
+      this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], {
+        state: {
+          content : params.content,
+          corRelation: params.corRelation,
+          isSingleContent : params.isSingleContent,
+          onboarding: params.onboarding,
+          parentContent: params.parentContent
+        }
+      });
+      // this.formAndFrameworkUtilService.
       if (this.isSingleContent) {
         this.isSingleContent = false;
         // migration-TODO
@@ -305,7 +316,15 @@ export class SearchPage implements OnDestroy {
       if (this.isDialCodeSearch && !isRootContent) {
         params.isCreateNavigationStack = true;
 
-        // this.navCtrl.push(QrCodeResultPage, params);
+        this.router.navigate([RouterLinks.QRCODERESULT], {
+          state: {
+            content : params.content,
+            corRelation: params.corRelation,
+            isSingleContent : params.isSingleContent,
+            onboarding: params.onboarding,
+            parentContent: params.parentContent
+          }
+        });
         if (this.isSingleContent) {
           this.isSingleContent = false;
           // migration-TODO
@@ -314,11 +333,27 @@ export class SearchPage implements OnDestroy {
         }
 
       } else {
-        // this.navCtrl.push(CollectionDetailsPage, params);
+        this.router.navigate([RouterLinks.COLLECTION_DETAILS] , {
+          state: {
+            content : params.content,
+            corRelation: params.corRelation,
+            isSingleContent : params.isSingleContent,
+            onboarding: params.onboarding,
+            parentContent: params.parentContent
+          }
+        });
         // this.navCtrl.push(CollectionDetailsEtbPage, params);
       }
     } else {
-      // this.navCtrl.push(ContentDetailsPage, params);
+      this.router.navigate([RouterLinks.CONTENT_DETAILS] , {
+        state: {
+          content : params.content,
+          corRelation: params.corRelation,
+          isSingleContent : params.isSingleContent,
+          onboarding: params.onboarding,
+          parentContent: params.parentContent
+        }
+      });
     }
   }
 
@@ -337,7 +372,11 @@ export class SearchPage implements OnDestroy {
           }
         });
       });
-      // this.navCtrl.push(FilterPage, { filterCriteria: this.responseData.filterCriteria });
+      this.router.navigate([RouterLinks.PAGE_FILTER], {
+        state: {
+          filterCriteria: this.responseData.filterCriteria
+        }
+      });
     });
   }
 
@@ -496,8 +535,8 @@ export class SearchPage implements OnDestroy {
   }
 
   private async checkRetiredOpenBatch(content: any, layoutName?: string) {
-    this.loader = this.commonUtilService.getLoader();
-    this.loader.present();
+    this.loader = await this.commonUtilService.getLoader();
+    await this.loader.present();
     this.loader.onDidDismiss(() => { this.loader = undefined; });
     let retiredBatches: Array<any> = [];
     let anyOpenBatch: Boolean = false;
@@ -572,7 +611,7 @@ export class SearchPage implements OnDestroy {
             console.log('error while fetching course batches ==>', error);
           });
       } else {
-        // this.navCtrl.push(CourseBatchesPage);
+        this.router.navigate([RouterLinks.COURSE_BATCHES]);
       }
     } else {
       if (this.loader) {
@@ -583,14 +622,6 @@ export class SearchPage implements OnDestroy {
   }
 
   init() {
-    // this.dialCode = this.navParams.get('dialCode');
-    // this.contentType = this.navParams.get('contentType');
-    // this.corRelationList = this.navParams.get('corRelation');
-    // this.source = this.navParams.get('source');
-    // this.enrolledCourses = this.navParams.get('enrolledCourses');
-    // this.guestUser = this.navParams.get('guestUser');
-    // this.userId = this.navParams.get('userId') ? this.navParams.get('userId') : this.appGlobalService.getUserId();
-    // this.shouldGenerateEndTelemetry = this.navParams.get('shouldGenerateEndTelemetry');
     this.generateImpressionEvent();
     const values = new Map();
     values['from'] = this.source;
@@ -778,7 +809,6 @@ export class SearchPage implements OnDestroy {
 
     this.displayDialCodeResult = displayDialCodeResult;
     if (this.displayDialCodeResult.length === 0 && !this.isSingleContent) {
-      // this.navCtrl.pop();
       this.location.back();
       if (this.shouldGenerateEndTelemetry) {
         this.generateQRSessionEndEvent(this.source, this.dialCode);
@@ -845,7 +875,6 @@ export class SearchPage implements OnDestroy {
     }
 
     if (this.dialCodeResult.length === 0 && this.dialCodeContentResult.length === 0) {
-      // this.navCtrl.pop();
       this.location.back();
       if (this.shouldGenerateEndTelemetry) {
         this.generateQRSessionEndEvent(this.source, this.dialCode);
