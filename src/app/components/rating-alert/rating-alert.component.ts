@@ -65,7 +65,7 @@ export class RatingAlertComponent implements OnInit {
     this.getAppName();
     this.appLogo$ = this.preference.getString('app_logo').map((logo) => logo || './assets/imgs/ic_launcher.png');
     this.currentViewText = this.appRateView[ViewType.APP_RATE];
-    this.platform.backButton.subscribeWithPriority(20, () => {
+    this.platform.backButton.subscribeWithPriority(11, () => {
       this.modalCtrl.dismiss(null);
     });
   }

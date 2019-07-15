@@ -54,7 +54,6 @@ export class NotificationPage implements OnInit {
       this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.NOTIFICATION, Environment.NOTIFICATION, false);
       // this.navCtrl.pop();
       this.location.back();
-      window.history.back();
     });
   }
 

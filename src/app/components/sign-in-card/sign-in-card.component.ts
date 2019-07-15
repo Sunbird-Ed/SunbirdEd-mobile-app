@@ -1,11 +1,14 @@
+import { telemetryService } from './../../app.module';
 import { Component, EventEmitter, Inject, Input, NgZone, Output, OnInit } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { NavController } from '@ionic/angular';
 import { AppVersion } from '@ionic-native/app-version/ngx';
-// migration-TODO
-// import { initTabs, LOGIN_TEACHER_TABS } from '../../app/module.service';
+import { initTabs, LOGIN_TEACHER_TABS } from '@app/app/module.service';
 import { ProfileConstants, PreferenceKey } from '../../app.constant';
-import { FormAndFrameworkUtilService, TelemetryGeneratorService, CommonUtilService} from '../../../services';
+import { FormAndFrameworkUtilService } from '@app/services/formandframeworkutil.service';
+import { CommonUtilService } from '@app/services/common-util.service';
+import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
+
 import {
   ApiService,
   AuthService,
@@ -25,8 +28,8 @@ import {
   InteractSubtype,
   InteractType,
   PageId
-} from '../../../services/telemetry-constants';
-import { ContainerService } from '../../../services/container.services';
+} from '@app/services/telemetry-constants';
+import { ContainerService } from '@app/services/container.services';
 
 @Component({
   selector: 'app-sign-in-card',
@@ -97,9 +100,7 @@ export class SignInCardComponent implements OnInit {
         InteractType.TOUCH,
         InteractSubtype.SIGNIN_OVERLAY_CLICKED,
         Environment.HOME,
-        this.source, null,
-        undefined,
-        undefined
+        this.source, null
       );
 
       this.generateLoginInteractTelemetry(InteractType.TOUCH, InteractSubtype.LOGIN_INITIATE, '');
@@ -110,8 +111,7 @@ export class SignInCardComponent implements OnInit {
         .toPromise()
         .then(async () => {
           await loader.present();
-          // migration-TODO
-          // initTabs(that.container, LOGIN_TEACHER_TABS);
+          initTabs(that.container, LOGIN_TEACHER_TABS);
           return that.refreshProfileData();
         })
         .then(value => {
@@ -207,8 +207,6 @@ export class SignInCardComponent implements OnInit {
       Environment.HOME,
       PageId.LOGIN,
       undefined,
-      valuesMap,
-      undefined,
-      undefined);
+      valuesMap);
   }
 }

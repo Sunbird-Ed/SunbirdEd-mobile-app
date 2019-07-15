@@ -75,7 +75,7 @@ export class AppGlobalService implements OnDestroy {
 
   constructor(
       @Inject('PROFILE_SERVICE') private profile: ProfileService,
-      @Inject('AUTH_SERVICE') private authService: AuthService,
+      @Inject('AUTH_SERVICE') public authService: AuthService,
       @Inject('FRAMEWORK_SERVICE') private frameworkService: FrameworkService,
       private event: Events,
       private popoverCtrl: PopoverController,

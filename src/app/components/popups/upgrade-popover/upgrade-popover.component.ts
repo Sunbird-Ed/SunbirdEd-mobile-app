@@ -1,5 +1,6 @@
 import { Component, Input } from '@angular/core';
-import { UtilityService } from '../../../../services/utility-service';
+import { UtilityService } from '@app/services/utility-service';
+import { ModalController } from '@ionic/angular';
 
 @Component({
   selector: 'app-upgrade-popover',
@@ -15,22 +16,22 @@ export class UpgradePopoverComponent {
 
   @Input() type;
   constructor(
-      private utilityService: UtilityService) {
-      this.init();
+    private utilityService: UtilityService,
+    private modalCtrl: ModalController
+  ) {
+    this.init();
   }
 
   init() {
     this.upgradeType = this.type;
 
-    if (this.upgradeType.optional === 'forceful') {
-        this.isMandatoryUpgrade = true;
+    if (this.upgradeType && this.upgradeType.optional === 'forceful') {
+      this.isMandatoryUpgrade = true;
     }
   }
 
   cancel() {
-    /* migration-TODO
-    this.viewCtrl.dismiss();
-    */
+    this.modalCtrl.dismiss();
   }
 
   upgrade(link) {

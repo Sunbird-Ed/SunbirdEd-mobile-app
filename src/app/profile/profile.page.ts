@@ -1,21 +1,17 @@
-// import { ActiveDownloadsPage } from './../active-downloads/active-downloads';
-import { Component, NgZone, OnInit, AfterViewInit, Inject } from '@angular/core';
+import { Component, NgZone, OnInit, Inject } from '@angular/core';
 import {
   Events,
-  LoadingController,
   PopoverController,
+  ModalController,
 } from '@ionic/angular';
 import { OverflowMenuComponent } from './overflow-menu/overflow-menu.component';
-import { generateInteractTelemetry } from '../telemetryutil';
-import { ContentCard, ContentType, MenuOverflow, MimeType, ProfileConstants, RouterLinks } from '../app.constant';
-// import { CategoriesEditPage } from '@app/pages/categories-edit/categories-edit';
-import { PersonalDetailsEditPage } from './personal-details-edit/personal-details-edit.page';
-// import { EnrolledCourseDetailsPage } from '@app/pages/enrolled-course-details/enrolled-course-details';
-// import { CollectionDetailsPage } from '@app/pages/collection-details/collection-details';
-// import { CollectionDetailsEtbPage } from '@app/pages/collection-details-etb/collection-details-etb';
-// import { ContentDetailsPage } from '@app/pages/content-details/content-details';
-import { FormAndFrameworkUtilService, AppGlobalService, CommonUtilService, TelemetryGeneratorService, AppHeaderService } from '../../services';
-import { } from '../../services';
+import { generateInteractTelemetry } from '@app/app/telemetryutil';
+import { ContentCard, ContentType, MenuOverflow, MimeType, ProfileConstants, RouterLinks } from '@app/app/app.constant';
+import { FormAndFrameworkUtilService } from '@app/services';
+import { AppGlobalService } from '@app/services';
+import { CommonUtilService } from '@app/services';
+import { TelemetryGeneratorService } from '@app/services';
+import { AppHeaderService } from '@app/services';
 import {
   AuthService,
   ContentSearchCriteria,
@@ -33,10 +29,9 @@ import {
   UpdateServerProfileInfoRequest,
   CachedItemRequestSourceFrom
 } from 'sunbird-sdk';
-import { Environment, ImpressionType, InteractSubtype, InteractType, PageId } from '../../services';
+import { Environment, InteractSubtype, InteractType, PageId } from '@app/services';
 import { ActivatedRoute, Router, NavigationExtras } from '@angular/router';
-import { EditContactDetailsPopupComponent } from '../components/edit-contact-details-popup/edit-contact-details-popup.component';
-import { EditContactVerifyPopupComponent } from '../components/edit-contact-verify-popup/edit-contact-verify-popup.component';
+import { EditContactVerifyPopupComponent, EditContactDetailsPopupComponent } from '@app/app/components';
 
 @Component({
   selector: 'app-profile',
@@ -46,9 +41,6 @@ import { EditContactVerifyPopupComponent } from '../components/edit-contact-veri
 export class ProfilePage implements OnInit {
 
   profile: any = {};
-  /**
-   * Contains userId for the Profile
-   */
   userId = '';
   isLoggedInUser = false;
   isRefreshProfile = false;
@@ -66,9 +58,6 @@ export class ProfilePage implements OnInit {
     district: {}
   };
 
-  /**
-   * Contains paths to icons
-   */
   imageUri = 'assets/imgs/ic_profile_default.png';
 
   readonly DEFAULT_PAGINATION_LIMIT = 2;
@@ -92,21 +81,25 @@ export class ProfilePage implements OnInit {
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     @Inject('AUTH_SERVICE') private authService: AuthService,
-    private popoverCtrl: PopoverController,
+    @Inject('CONTENT_SERVICE') private contentService: ContentService,
+    @Inject('COURSE_SERVICE') private courseService: CourseService,
     private zone: NgZone,
+    private route: ActivatedRoute,
+    private router: Router,
+    private popoverCtrl: PopoverController,
+    private modalCtrl: ModalController,
     private events: Events,
     private appGlobalService: AppGlobalService,
-    @Inject('COURSE_SERVICE') private courseService: CourseService,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private formAndFrameworkUtilService: FormAndFrameworkUtilService,
     private commonUtilService: CommonUtilService,
-    @Inject('CONTENT_SERVICE') private contentService: ContentService,
     private headerService: AppHeaderService,
-    private route: ActivatedRoute,
-    private router: Router
   ) {
-    this.userId = this.router.getCurrentNavigation().extras.state.userId || '';
-    this.isRefreshProfile = this.router.getCurrentNavigation().extras.state.returnRefreshedUserProfileDetails;
+    const extrasState = this.router.getCurrentNavigation().extras.state;
+    if (extrasState) {
+      this.userId = extrasState.userId || '';
+      this.isRefreshProfile = extrasState.returnRefreshedUserProfileDetails;
+    }
     this.isLoggedInUser = !this.userId;
 
     // Event for optional and forceful upgrade
@@ -159,7 +152,7 @@ export class ProfilePage implements OnInit {
       await loader.present();
     } else {
       this.telemetryGeneratorService.generatePullToRefreshTelemetry(PageId.PROFILE, Environment.HOME);
-      refresher.complete();
+      refresher.target.complete();
       this.refresh = true;
     }
     return this.refreshProfileData(refresher)
@@ -358,15 +351,13 @@ export class ProfilePage implements OnInit {
       undefined);
   }
 
-
   /**
- * To show Less items in skills list
- * DEFAULT_PAGINATION_LIMIT = 10
- */
+   * To show Less items in skills list
+   * DEFAULT_PAGINATION_LIMIT = 10
+   */
   showLessItems(): void {
     this.rolesLimit = this.DEFAULT_PAGINATION_LIMIT;
   }
-
 
   showMoreBadges(): void {
     this.badgesLimit = this.profile.badgeAssertions.length;
@@ -378,11 +369,9 @@ export class ProfilePage implements OnInit {
       undefined);
   }
 
-
   showLessBadges(): void {
     this.badgesLimit = this.DEFAULT_PAGINATION_LIMIT;
   }
-
 
   showMoreTrainings(): void {
     this.trainingsLimit = this.trainingsCompleted.length;
@@ -400,11 +389,11 @@ export class ProfilePage implements OnInit {
 
 
   /**
- *  Returns the Object with given Keys only
- * @param {string} keys - Keys of the object which are required in new sub object
- * @param {object} obj - Actual object
- * @returns {object}
- */
+   *  Returns the Object with given Keys only
+   * @param {string} keys - Keys of the object which are required in new sub object
+   * @param {object} obj - Actual object
+   * @returns {object}
+   */
   getSubset(keys, obj) {
     return keys.reduce((a, c) => ({ ...a, [c]: obj[c] }), {});
   }
@@ -412,10 +401,10 @@ export class ProfilePage implements OnInit {
 
 
   /**
- * To get enrolled course(s) of logged-in user i.e, trainings in the UI.
- *
- * It internally calls course handler of genie sdk
- */
+   * To get enrolled course(s) of logged-in user i.e, trainings in the UI.
+   *
+   * It internally calls course handler of genie sdk
+   */
   getEnrolledCourses() {
     const option = {
       userId: this.profile.userId,
@@ -448,11 +437,11 @@ export class ProfilePage implements OnInit {
 
 
   /**
- * Navigate to the course/content details page
- *
- * @param {string} layoutName
- * @param {object} content
- */
+   * Navigate to the course/content details page
+   *
+   * @param {string} layoutName
+   * @param {object} content
+   */
   navigateToDetailPage(content: any, layoutName: string, index: number): void {
     const identifier = content.contentId || content.identifier;
     let telemetryObject: TelemetryObject;
@@ -517,10 +506,8 @@ export class ProfilePage implements OnInit {
       this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
         InteractSubtype.EDIT_CLICKED,
         Environment.HOME,
-        PageId.PROFILE, null,
-        undefined,
-        undefined);
-      this.router.navigate([RouterLinks.CATEGORIES_EDIT]);
+        PageId.PROFILE, null);
+      this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.CATEGORIES_EDIT}`]);
     } else {
       this.commonUtilService.showToast('NEED_INTERNET_TO_CHANGE');
     }
@@ -532,9 +519,7 @@ export class ProfilePage implements OnInit {
         InteractType.TOUCH,
         InteractSubtype.EDIT_CLICKED,
         Environment.HOME,
-        PageId.PROFILE, null,
-        undefined,
-        undefined);
+        PageId.PROFILE, null);
 
       const navigationExtras: NavigationExtras = {
         state: {
@@ -542,7 +527,7 @@ export class ProfilePage implements OnInit {
         }
       }
 
-      this.router.navigate([RouterLinks.PERSONAL_DETAILS_EDIT], navigationExtras);
+      this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.PERSONAL_DETAILS_EDIT}`], navigationExtras);
     } else {
       this.commonUtilService.showToast('NEED_INTERNET_TO_CHANGE');
     }
@@ -550,8 +535,8 @@ export class ProfilePage implements OnInit {
 
 
   /**
- * Searches contents created by the user
- */
+   * Searches contents created by the user
+   */
   searchContent(): void {
     const contentSortCriteria: ContentSortCriteria = {
       sortAttribute: 'lastUpdatedOn',
@@ -592,10 +577,10 @@ export class ProfilePage implements OnInit {
       cssClass: 'popover-alert'
     });
     await popover.present();
-    const response = await popover.onDidDismiss()//(edited: boolean = false, key?: any) => {
+    const { data } = await popover.onDidDismiss()//(edited: boolean = false, key?: any) => {
 
-    if (response.data.edited) {
-      this.callOTPPopover(ProfileConstants.CONTACT_TYPE_PHONE, response.data.key);
+    if (data && data.isEdited) {
+      this.callOTPPopover(ProfileConstants.CONTACT_TYPE_PHONE, data.value);
     }
   }
 
@@ -624,46 +609,40 @@ export class ProfilePage implements OnInit {
 
   async callOTPPopover(type: string, key?: any) {
     if (type === ProfileConstants.CONTACT_TYPE_PHONE) {
-      const popover = await this.popoverCtrl.create({
-        component: EditContactVerifyPopupComponent,
-        componentProps: {
-          key: key,
-          phone: this.profile.phone,
-          title: this.commonUtilService.translateMessage('VERIFY_PHONE_OTP_TITLE'),
-          description: this.commonUtilService.translateMessage('VERIFY_PHONE_OTP_DESCRIPTION'),
-          type: ProfileConstants.CONTACT_TYPE_PHONE
-        },
-        cssClass: 'popover-alert'
-      });
-      popover.present();
-      const response = await popover.onDidDismiss();
-      if (response.data.OTPSuccess) {
-
-        //Migration-todo
-        // this.viewCtrl.dismiss();
-        this.updatePhoneInfo(response.data.phone);
+      const componentProps = {
+        key: key,
+        phone: this.profile.phone,
+        title: this.commonUtilService.translateMessage('VERIFY_PHONE_OTP_TITLE'),
+        description: this.commonUtilService.translateMessage('VERIFY_PHONE_OTP_DESCRIPTION'),
+        type: ProfileConstants.CONTACT_TYPE_PHONE
+      }
+      const popover = await this.openContactVerifyPopup(EditContactVerifyPopupComponent, componentProps, 'popover-alert');
+      await popover.present();
+      const { data } = await popover.onDidDismiss();
+      if (data && data.OTPSuccess) {
+        // this.modalCtrl.dismiss();
+        this.updatePhoneInfo(data.value);
       }
     } else {
-      const popover = await this.popoverCtrl.create({
-        component: EditContactVerifyPopupComponent,
-        componentProps: {
-          key: key,
-          phone: this.profile.email,
-          title: this.commonUtilService.translateMessage('VERIFY_EMAIL_OTP_TITLE'),
-          description: this.commonUtilService.translateMessage('VERIFY_EMAIL_OTP_DESCRIPTION'),
-          type: ProfileConstants.CONTACT_TYPE_EMAIL
-        },
-        cssClass: 'popover-alert'
-      });
-      popover.present(
-      );
-      const response = await popover.onDidDismiss();
-      if (response.data.OTPSuccess) {
-        //Migration-todo
-        // this.viewCtrl.dismiss();
-        this.updateEmailInfo(response.data.email);
+      const componentProps = {
+        key: key,
+        phone: this.profile.email,
+        title: this.commonUtilService.translateMessage('VERIFY_EMAIL_OTP_TITLE'),
+        description: this.commonUtilService.translateMessage('VERIFY_EMAIL_OTP_DESCRIPTION'),
+        type: ProfileConstants.CONTACT_TYPE_EMAIL
+      }
+      const popover = await this.openContactVerifyPopup(EditContactVerifyPopupComponent, componentProps, 'popover-alert');
+      await popover.present();
+      const { data } = await popover.onDidDismiss();
+      if (data && data.OTPSuccess) {
+        // this.modalCtrl.dismiss();
+        this.updateEmailInfo(data.value);
       }
     }
+  }
+
+  async openContactVerifyPopup(component, componentProps, cssClass) {
+    return await this.popoverCtrl.create({ component, componentProps, cssClass });
   }
 
   async updatePhoneInfo(phone) {
@@ -769,8 +748,3 @@ export class ProfilePage implements OnInit {
     }
   }
 }
-
-
-
-
-

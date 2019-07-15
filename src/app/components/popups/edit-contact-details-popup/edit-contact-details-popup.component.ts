@@ -1,10 +1,9 @@
-import { ActivatedRoute, Router } from '@angular/router';
-import { Component, OnInit, Inject } from '@angular/core';
-import { LoadingController, Platform, NavParams, ModalController } from '@ionic/angular';
+import { Component, OnInit, Inject, Input } from '@angular/core';
+import { LoadingController, Platform, NavParams, PopoverController } from '@ionic/angular';
 import { GenerateOtpRequest, IsProfileAlreadyInUseRequest, ProfileService } from 'sunbird-sdk';
-import { ProfileConstants } from '../../app.constant';
-import { CommonUtilService } from '../../../services';
-import { FormBuilder, FormGroup, Validators,ReactiveFormsModule } from '@angular/forms';
+import { ProfileConstants } from '@app/app/app.constant';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { CommonUtilService } from '@app/services';
 import { Keyboard } from '@ionic-native/keyboard/ngx';
 
 @Component({
@@ -14,27 +13,28 @@ import { Keyboard } from '@ionic-native/keyboard/ngx';
 })
 export class EditContactDetailsPopupComponent implements OnInit {
 
+
+  // Data passed in by componentProps
+  @Input() userId: string;
+  @Input() title: string;
+  @Input() description: string;
+  @Input() type: string;
+
   phone: string;
   email: string;
-  userId: string;
-  title: string;
-  description: string;
-  type: string;
   err: boolean;
   personEditForm: FormGroup;
   isRequired: boolean = false;
   updateErr: boolean;
   blockedAccount: boolean;
+  unregisterBackButton: any;
   constructor(
+    @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     private navParams: NavParams,
     public platform: Platform,
-    @Inject('PROFILE_SERVICE') private profileService: ProfileService,
-    private loadingCtrl: LoadingController,
     private commonUtilService: CommonUtilService,
     private fb: FormBuilder,
-    private modalCtrl: ModalController,
-    private route: ActivatedRoute,
-    private router: Router,
+    private popOverCtrl: PopoverController,
     private keyboard: Keyboard
   ) {
 
@@ -43,8 +43,8 @@ export class EditContactDetailsPopupComponent implements OnInit {
     this.description = this.navParams.get('description');
     this.type = this.navParams.get('type');
 
-    this.platform.backButton.subscribeWithPriority(10, () => {
-      this.modalCtrl.dismiss();
+    this.unregisterBackButton = this.platform.backButton.subscribeWithPriority(11, () => {
+      this.popOverCtrl.dismiss();
       this.platform.backButton.unsubscribe();
     });
     this.initEditForm();
@@ -132,26 +132,30 @@ export class EditContactDetailsPopupComponent implements OnInit {
       .then(async () => {
         await loader.dismiss();
         if (this.type === ProfileConstants.CONTACT_TYPE_PHONE) {
-          this.modalCtrl.dismiss(true, this.personEditForm.value.phone);
+          this.popOverCtrl.dismiss({ isEdited: true, value: this.personEditForm.value.phone });
         } else {
-          this.modalCtrl.dismiss(true, this.personEditForm.value.email);
+          this.popOverCtrl.dismiss({ isEdited: true, value: this.personEditForm.value.email });
         }
       })
       .catch(async (err) => {
         await loader.dismiss();
-        this.modalCtrl.dismiss(false);
+        this.popOverCtrl.dismiss({ isEdited: false });
         if (err.hasOwnProperty(err) === 'ERROR_RATE_LIMIT_EXCEEDED') {
           this.commonUtilService.showToast('You have exceeded the maximum limit for OTP, Please try after some time');
         }
       });
   }
 
-  cancel(event) {
+  async cancel(event) {
     if (event.sourceCapabilities) {
-      this.modalCtrl.dismiss(false);
+      await this.popOverCtrl.dismiss({ isEdited: false });
     } else {
       this.keyboard.hide();
     }
+  }
+
+  ionViewWillLeave() {
+    this.unregisterBackButton && this.unregisterBackButton.unsubscribe();
   }
 
 }
