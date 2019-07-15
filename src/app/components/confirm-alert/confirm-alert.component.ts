@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 // migration-TODO
 // import { ViewController } from '@ionic/angular';
-import { Platform, NavParams } from '@ionic/angular';
+import { Platform, NavParams, PopoverController } from '@ionic/angular';
 
 @Component({
   selector: 'app-confirm-alert',
@@ -21,7 +21,8 @@ export class ConfirmAlertComponent implements OnInit {
   constructor(
     // public viewCtrl: ViewController,
     public platform: Platform,
-    public navParams: NavParams) {
+    public navParams: NavParams,
+    public popOverCtrl: PopoverController) {
     this.actionsButtons = this.navParams.get('actionsButtons');
     this.icon = this.navParams.get('icon');
     this.metaInfo = this.navParams.get('metaInfo');
@@ -31,8 +32,7 @@ export class ConfirmAlertComponent implements OnInit {
     this.isUpdateAvail = this.navParams.get('isUpdateAvail');
     this.contentSize = this.navParams.get('contentSize');
     this.platform.backButton.subscribeWithPriority(10, () => {
-      // migration-TODO
-      // this.viewCtrl.dismiss();
+    this.popOverCtrl.dismiss();
     });
   }
 
@@ -41,11 +41,9 @@ export class ConfirmAlertComponent implements OnInit {
   }
 
   selectOption(canDownload: boolean = false) {
-    // migrattion-TODO
-    // this.viewCtrl.dismiss(canDownload);
+    this.popOverCtrl.dismiss(canDownload);
   }
   closePopover() {
-    // migrattion-TODO
-    // this.viewCtrl.dismiss();
+    this.popOverCtrl.dismiss();
   }
 }

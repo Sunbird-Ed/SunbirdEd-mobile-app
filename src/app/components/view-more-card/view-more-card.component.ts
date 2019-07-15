@@ -1,13 +1,10 @@
 import { BatchConstants } from '../../app.constant';
-// import { CollectionDetailsEtbPage } from './../../pages/collection-details-etb/collection-details-etb';
-// import { ContentDetailsPage } from './../../pages/content-details/content-details';
-// import { EnrolledCourseDetailsPage } from './../../pages/enrolled-course-details/enrolled-course-details';
+
 
 import { Component, Input, NgZone, OnInit, Inject } from '@angular/core';
 import { Events, NavController, PopoverController } from '@ionic/angular';
-import { ContentType, MimeType, ContentCard , RouterLinks } from '../../app.constant';
+import { ContentType, MimeType, ContentCard, RouterLinks } from '../../app.constant';
 import { CommonUtilService, TelemetryGeneratorService, AppGlobalService, CourseUtilService } from '../../../services';
-// import { EnrollmentDetailsPage } from '@app/pages/enrolled-course-details/enrollment-details/enrollment-details';
 import { Router, NavigationExtras } from '@angular/router';
 
 import {
@@ -19,6 +16,7 @@ import {
   Course, GetContentStateRequest, SharedPreferences
 } from 'sunbird-sdk';
 import { Environment, PageId, InteractType } from '../../../services/telemetry-constants';
+import { EnrollmentDetailsPage } from '@app/app/enrolled-course-details-page/enrollment-details-page/enrollment-details-page';
 
 @Component({
   selector: 'app-view-more-card',
@@ -54,6 +52,9 @@ export class ViewMoreCardComponent implements OnInit {
    * Get used when content / course does not have appIcon or courseLogo
    */
   defaultImg: string;
+  showLoader: boolean;
+
+
 
   /**
    * checks wheather batch is expired or not
@@ -95,7 +96,7 @@ export class ViewMoreCardComponent implements OnInit {
   async checkRetiredOpenBatch(content: any, layoutName?: string) {
     this.loader = await this.commonUtilService.getLoader();
     await this.loader.present();
-    let anyOpenBatch: Boolean = false;
+    let anyOpenBatch: boolean = false;
     this.enrolledCourses = this.enrolledCourses || [];
     let retiredBatches: Array<any> = [];
     if (layoutName !== ContentCard.LAYOUT_INPROGRESS) {
@@ -144,13 +145,15 @@ export class ViewMoreCardComponent implements OnInit {
                   reqvalues);
                 await this.loader.dismiss();
                 // migration-TODO
-                // const popover = this.popoverCtrl.create(EnrollmentDetailsPage,
-                //   {
+                // const popover = await this.popoverCtrl.create({
+                //     component: EnrollmentDetailsPage,
+                //     componentProps: {
                 //     upcommingBatches: this.batches,
                 //     retiredBatched: retiredBatched,
                 //     courseId: content.identifier
-                //   },
-                //   { cssClass: 'enrollement-popover' }
+                //    },
+                //   }
+                //   cssClass: 'enrollement-popover' 
                 // );
                 // popover.onDidDismiss(enrolled => {
                 //   if (enrolled) {
@@ -158,14 +161,16 @@ export class ViewMoreCardComponent implements OnInit {
                 //   }
                 // });
 
-                // this.navCtrl.push(EnrollmentDetailsPage, {
-                //   ongoingBatches: ongoingBatches,
-                //   upcommingBatches: upcommingBatches
+                // this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], {
+                //   state: {
+                //     ongoingBatches: ongoingBatches,
+                //     upcommingBatches: upcommingBatches
+                //   }
                 // });
               } else {
                 await this.loader.dismiss();
                 this.navigateToDetailsPage(content, layoutName);
-                // this.commonUtilService.showToast('NO_BATCHES_AVAILABLE');
+                this.commonUtilService.showToast('NO_BATCHES_AVAILABLE');
               }
             });
           })
@@ -173,7 +178,7 @@ export class ViewMoreCardComponent implements OnInit {
             console.log('error while fetching course batches ==>', error);
           });
       } else {
-        // this.navCtrl.push(CourseBatchesPage);
+        this.router.navigate([RouterLinks.COURSE_BATCHES]);
       }
     } else {
       this.commonUtilService.showToast('ERROR_NO_INTERNET_MESSAGE');
@@ -187,31 +192,27 @@ export class ViewMoreCardComponent implements OnInit {
         await this.loader.dismiss();
       }
       if (layoutName === 'enrolledCourse' || content.contentType === ContentType.COURSE) {
-        // migration-TODO
-        // this.navCtrl.push(EnrolledCourseDetailsPage, {
-        //   content: content
-        // });
-        this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], content);
-
-        // ENROLLED_COURSE_DETAILS
+        this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], {
+          state: {
+            content: content
+          }
+        });
       } else if (content.mimeType === MimeType.COLLECTION) {
-        // this.navCtrl.push(CollectionDetailsPage, {
-        // migration-TODO
-        // this.navCtrl.push(CollectionDetailsEtbPage, {
-        //   content: content
-        // });
-        this.router.navigate([RouterLinks.COLLECTION_DETAIL_ETB], content);
+        this.router.navigate([RouterLinks.COLLECTION_DETAIL_ETB], {
+          state: {
+            content: content
+          }
+        });
 
       } else {
-        // migration-TODO
-        // this.navCtrl.push(ContentDetailsPage, {
-        //   content: content
-        // });
-        // this.router.navigate([RouterLinks.COLLECTION_DETAIL_ETB], content);
+        this.router.navigate([RouterLinks.CONTENT_DETAILS], {
+          state: {
+            content: content
+          }
+        });
       }
     });
   }
-
   resumeCourse(content: any) {
     const identifier = content.contentId || content.identifier;
     this.getContentState(content);
@@ -221,15 +222,15 @@ export class ViewMoreCardComponent implements OnInit {
     this.preferences.getString(lastReadContentIdKey).subscribe((value) => {
       content.lastReadContentId = value;
       if (content.lastReadContentId) {
-        // migration-TODO
-        // this.events.publish('course:resume', {
-        //   content: content
-        // });
+        this.events.publish('course:resume', {
+          content: content
+        });
       } else {
-        // migration-TODO
-        // this.navCtrl.push(EnrolledCourseDetailsPage, {
-        //   content: content
-        // });
+        this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], {
+          state: {
+            content: content
+          }
+        });
       }
     });
   }
@@ -283,11 +284,11 @@ export class ViewMoreCardComponent implements OnInit {
               this.appGlobalService.setEnrolledCourseList(courseList);
             }
 
-            // this.showLoader = false;
+            this.showLoader = false;
           });
         }
       }, (err) => {
-        // this.showLoader = false;
+        this.showLoader = false;
       });
   }
 }

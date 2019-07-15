@@ -3,10 +3,8 @@ import { Events, NavController, NavParams, Platform, PopoverController } from '@
 import { TranslateService } from '@ngx-translate/core';
 import { SocialSharing } from '@ionic-native/social-sharing/ngx';
 import * as _ from 'lodash';
-// import { ContentDetailsPage } from '@app/pages/content-details/content-details';
 import { ConfirmAlertComponent, ContentActionsComponent, ContentRatingAlertComponent } from '../components/index';
-import { ContentType, MimeType, ShareUrl } from '../../app/app.constant';
-// import { EnrolledCourseDetailsPage } from '../enrolled-course-details-page';
+import { ContentType, MimeType, ShareUrl, RouterLinks } from '../../app/app.constant';
 import {
   AppGlobalService,
   AppHeaderService,
@@ -53,6 +51,7 @@ import {
 import { Subscription } from 'rxjs';
 import { ContentShareHandlerService } from '../../services/content/content-share-handler.service';
 import { EnrolledCourseDetailsPage } from '../enrolled-course-details-page/enrolled-course-details-page';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-collection-details',
@@ -147,6 +146,7 @@ export class CollectionDetailsPage {
    * Child content size
    */
   downloadSize = 0;
+  stateData: any;
 
   /**
    * Contains total size of locally not available content(s)
@@ -219,8 +219,24 @@ export class CollectionDetailsPage {
     private utilityService: UtilityService,
     private headerService: AppHeaderService,
     private contentShareHandler: ContentShareHandlerService,
-    private location: Location
+    private location: Location,
+    private router: Router
   ) {
+    this.identifier = this.router.getCurrentNavigation().extras.state.content.contentId;
+
+    this.cardData = this.router.getCurrentNavigation().extras.state.content;
+    this.corRelationList = this.router.getCurrentNavigation().extras.state.corRelation;
+    const depth = this.router.getCurrentNavigation().extras.state.depth;
+    this.shouldGenerateEndTelemetry = this.router.getCurrentNavigation().extras.state.shouldGenerateEndTelemetry;
+    this.source = this.router.getCurrentNavigation().extras.state.source;
+    this.fromCoursesPage = this.router.getCurrentNavigation().extras.state.fromCoursesPage;
+    this.isAlreadyEnrolled = this.router.getCurrentNavigation().extras.state.isAlreadyEnrolled;
+    this.isChildClickable = this.router.getCurrentNavigation().extras.state.isChildClickable;
+    this.parentContent = this.router.getCurrentNavigation().extras.state.parentContent;
+    this.stateData = this.router.getCurrentNavigation().extras.state.contentState;
+    this.isChildClickable = this.router.getCurrentNavigation().extras.state.isChildClickable;
+    // check for parent content
+    this.parentContent = this.router.getCurrentNavigation().extras.state.parentContent;
 
     this.objRollup = new Rollup();
     this.checkLoggedInOrGuestUser();
@@ -241,18 +257,6 @@ export class CollectionDetailsPage {
       this.headerConfig.showBurgerMenu = false;
       this.headerService.updatePageConfig(this.headerConfig);
       this.resetVariables();
-      // migration-TODO
-      // this.cardData = this.navParams.get('content');
-      // this.corRelationList = this.navParams.get('corRelation');
-      // const depth = this.navParams.get('depth');
-      // this.shouldGenerateEndTelemetry = this.navParams.get('shouldGenerateEndTelemetry');
-      // this.source = this.navParams.get('source');
-      // this.fromCoursesPage = this.navParams.get('fromCoursesPage');
-      // this.isAlreadyEnrolled = this.navParams.get('isAlreadyEnrolled');
-      // this.isChildClickable = this.navParams.get('isChildClickable');
-
-      // check for parent content
-      // this.parentContent = this.navParams.get('parentContent');
 
       if (this.depth) {
         this.depth = this.depth;
@@ -402,8 +406,6 @@ export class CollectionDetailsPage {
         console.log('error while loading content details', error);
         await loader.dismiss();
         this.commonUtilService.showToast('ERROR_CONTENT_NOT_AVAILABLE');
-        // migration-TODO
-        // this.navCtrl.pop();
         this.location.back();
 
       });
@@ -599,8 +601,6 @@ export class CollectionDetailsPage {
               this.commonUtilService.showToast('UNABLE_TO_FETCH_CONTENT');
             }
             this.showChildrenLoader = false;
-            // migration-TODO
-            // this.navCtrl.pop();
             this.location.back();
 
           }
@@ -675,28 +675,34 @@ export class CollectionDetailsPage {
 
     this.zone.run(() => {
       if (content.contentType === ContentType.COURSE) {
-        // this.navCtrl.push(EnrolledCourseDetailsPage, {
-        //   content: content,
-        //   depth: depth,
-        //   contentState: stateData,
-        //   corRelation: this.corRelationList
-        // });
+        this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], {
+          state: {
+            content: content,
+            depth: depth,
+            contentState: this.stateData,
+            corRelation: this.corRelationList
+          }
+        });
       } else if (content.mimeType === MimeType.COLLECTION) {
         this.isDepthChild = true;
-        // this.navCtrl.push(CollectionDetailsPage, {
-        //   content: content,
-        //   depth: depth,
-        //   contentState: stateData,
-        //   corRelation: this.corRelationList
-        // });
+        this.router.navigate([RouterLinks.COLLECTION_DETAILS], {
+          state: {
+            content: content,
+            depth: depth,
+            contentState: this.stateData,
+            corRelation: this.corRelationList
+          }
+        });
       } else {
-        // this.navCtrl.push(ContentDetailsPage, {
-        //   isChildContent: true,
-        //   content: content,
-        //   depth: depth,
-        //   contentState: stateData,
-        //   corRelation: this.corRelationList
-        // });
+        this.router.navigate([RouterLinks.CONTENT_DETAILS], {
+          state: {
+            isChildContent: true,
+            content: content,
+            depth: depth,
+            contentState: this.stateData,
+            corRelation: this.corRelationList
+          }
+        });
       }
     });
   }
@@ -859,8 +865,6 @@ export class CollectionDetailsPage {
     await popover.present();
     const response = await popover.onDidDismiss();
     if (response.data === 'delete.success' || response.data === 'flag.success') {
-      // migration-TODO
-      // this.navCtrl.pop();
       this.location.back();
 
     }
@@ -914,23 +918,23 @@ export class CollectionDetailsPage {
     }
   }
   // migration-TODO
-  // async showDownloadConfirmationAlert(myEvent) {
-  //   if (this.commonUtilService.networkInfo.isNetworkAvailable) {
-  //     const popover = await this.popoverCtrl.create(ConfirmAlertComponent, {
-  //       cssClass: 'sb-popover info'
-  //     });
-  //     popover.present({
-  //       ev: myEvent
-  //     });
-  //     popover.onDidDismiss((canDownload: boolean = false) => {
-  //       if (canDownload) {
-  //         this.downloadAllContent();
-  //       }
-  //     });
-  //   } else {
-  //     this.commonUtilService.showToast('ERROR_NO_INTERNET_MESSAGE');
-  //   }
-  // }
+  async showDownloadConfirmationAlert(myEvent) {
+    if (this.commonUtilService.networkInfo.isNetworkAvailable) {
+      const popover = await this.popoverCtrl.create({
+        component: ConfirmAlertComponent,
+        cssClass: 'sb-popover info'
+      });
+      popover.present();
+      const { data } = await popover.onDidDismiss();
+      console.log("showDownloadConfirmationAlert response", data);
+
+      if (data && data.canDownload) {
+        this.downloadAllContent();
+      }
+    } else {
+      this.commonUtilService.showToast('ERROR_NO_INTERNET_MESSAGE');
+    }
+  }
 
   cancelDownload() {
     this.telemetryGeneratorService.generateCancelDownloadTelemetry(this.contentDetail);
@@ -938,16 +942,12 @@ export class CollectionDetailsPage {
       .then(() => {
         this.zone.run(() => {
           this.showLoading = false;
-          // migration-TODO
-          // this.navCtrl.pop();
           this.location.back();
 
         });
       }).catch(() => {
         this.zone.run(() => {
           this.showLoading = false;
-          // migration-TODO
-          // this.navCtrl.pop();
           this.location.back();
 
         });
