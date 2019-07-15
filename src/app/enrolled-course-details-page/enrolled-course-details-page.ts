@@ -2,12 +2,7 @@ import { Component, Inject, NgZone, ViewChild, OnInit } from '@angular/core';
 import { AlertController, Events, NavController, NavParams, Platform, PopoverController } from '@ionic/angular';
 import * as _ from 'lodash';
 import { SocialSharing } from '@ionic-native/social-sharing/ngx';
-// migration-TODO
-// import { ContentActionsComponent, ContentRatingAlertComponent } from '@app/component';
-// import { CollectionDetailsPage } from '@app/pages/collection-details/collection-details';
-// import { ContentDetailsPage } from '@app/pages/content-details/content-details';
-// import { ContentType, EventTopics, MimeType, PreferenceKey, ShareUrl } from '@app/app';
-// import { CourseBatchesPage } from '@app/pages/course-batches/course-batches';
+
 import {
   AppGlobalService,
   CommonUtilService,
@@ -64,13 +59,13 @@ import {
   PageId,
   CorReleationDataType
 } from '../../services/telemetry-constants';
-import { ProfileConstants, ContentType, EventTopics, MimeType, PreferenceKey, ShareUrl } from '../app.constant';
+import { ProfileConstants, ContentType, EventTopics, MimeType, PreferenceKey, ShareUrl, RouterLinks } from '../app.constant';
 import { BatchConstants } from '../app.constant';
 import { ContentShareHandlerService } from '../../services/content/content-share-handler.service';
 import { SbGenericPopoverComponent } from '../components/popups/sb-generic-popover/sb-generic-popover.component';
 import { ContentActionsComponent, ContentRatingAlertComponent } from '../components';
 import {Location} from '@angular/common';
-import {Router} from '@angular/router';
+import {Router, NavigationExtras} from '@angular/router';
 declare const cordova;
 
 @Component({
@@ -191,8 +186,6 @@ export class EnrolledCourseDetailsPage implements OnInit {
     @Inject('EVENTS_BUS_SERVICE') private eventsBusService: EventsBusService,
     @Inject('COURSE_SERVICE') private courseService: CourseService,
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
-    // private navCtrl: NavController,
-    // private navParams: NavParams,
     private alertCtrl: AlertController,
     private zone: NgZone,
     private events: Events,
@@ -214,12 +207,15 @@ export class EnrolledCourseDetailsPage implements OnInit {
     this.appGlobalService.getUserId();
     this.checkLoggedInOrGuestUser();
     this.checkCurrentUserType();
-    // this.uid = this.router.getCurrentNavigation().extras.state.uid;
+    this.courseCardData = this.router.getCurrentNavigation().extras.state.content;
+    this.identifier = this.courseCardData.contentId || this.courseCardData.identifier;
+    this.corRelationList = this.router.getCurrentNavigation().extras.state.corRelation;
+    this.source = this.router.getCurrentNavigation().extras.state.source;
   }
 
   /**
    * Angular life cycle hooks
-  */
+   */
   ngOnInit() {
 
   }
@@ -480,7 +476,6 @@ export class EnrolledCourseDetailsPage implements OnInit {
 
       if (this.course.status !== 'Live') {
         this.commonUtilService.showToast('COURSE_NOT_AVAILABLE');
-        // this.navCtrl.pop();
         this.location.back();
       }
 
@@ -508,7 +503,6 @@ export class EnrolledCourseDetailsPage implements OnInit {
       this.getCourseProgress();
     } else {
       this.commonUtilService.showToast('ERROR_CONTENT_NOT_AVAILABLE');
-      // this.navCtrl.pop();
       this.location.back();
 
     }
@@ -864,31 +858,37 @@ export class EnrolledCourseDetailsPage implements OnInit {
     };
     this.zone.run(() => {
       if (content.contentType === ContentType.COURSE) {
-        // this.navCtrl.push(EnrolledCourseDetailsPage, {
-        //   content: content,
-        //   depth: depth,
-        //   contentState: contentState
-        // });
+        this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], {
+          state: {
+            content: content,
+            depth: depth,
+            contentState: contentState
+          }
+        });
       } else if (content.mimeType === MimeType.COLLECTION) {
         let isChildClickable = true;
         if (this.isAlreadyEnrolled && this.isBatchNotStarted) {
           isChildClickable = false;
         }
-        // this.navCtrl.push(CollectionDetailsPage, {
-        //   content: content,
-        //   depth: depth,
-        //   contentState: contentState,
-        //   fromCoursesPage: true,
-        //   isAlreadyEnrolled: this.isAlreadyEnrolled,
-        //   isChildClickable: isChildClickable
-        // });
+        this.router.navigate([RouterLinks.COLLECTION_DETAILS], {
+          state: {
+            content: content,
+            depth: depth,
+            contentState: contentState,
+            fromCoursesPage: true,
+            isAlreadyEnrolled: this.isAlreadyEnrolled,
+            isChildClickable: isChildClickable
+          }
+        });
       } else {
-        // this.navCtrl.push(ContentDetailsPage, {
-        //   content: content,
-        //   depth: depth,
-        //   contentState: contentState,
-        //   isChildContent: true
-        // });
+        this.router.navigate([RouterLinks.CONTENT_DETAILS], {
+          state: {
+            content: content,
+            depth: depth,
+            contentState: contentState,
+            isChildContent: true
+          }
+        });
       }
     });
   }
@@ -931,17 +931,20 @@ export class EnrolledCourseDetailsPage implements OnInit {
    * @param {string} identifier
    */
   resumeContent(identifier): void {
-    // this.navCtrl.push(ContentDetailsPage, {
-    //   content: { identifier: identifier },
-    //   depth: '1', // Needed to handle some UI elements.
-    //   contentState: {
-    //     batchId: this.courseCardData.batchId ? this.courseCardData.batchId : '',
-    //     courseId: this.identifier
-    //   },
-    //   isResumedCourse: true,
-    //   isChildContent: true,
-    //   resumedCourseCardData: this.courseCardData
-    // });
+    const params: NavigationExtras = {
+      state: {
+        content: { identifier: identifier },
+        depth: '1', // Needed to handle some UI elements.
+        contentState: {
+          batchId: this.courseCardData.batchId ? this.courseCardData.batchId : '',
+          courseId: this.identifier
+        },
+        isResumedCourse: true,
+        isChildContent: true,
+        resumedCourseCardData: this.courseCardData
+      }
+    };
+    this.router.navigate([RouterLinks.CONTENT_DETAILS], params);
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
       InteractSubtype.RESUME_CLICKED,
       Environment.HOME,
@@ -962,10 +965,6 @@ export class EnrolledCourseDetailsPage implements OnInit {
       this.handleHeaderEvents(eventName);
     });
     this.downloadSize = 0;
-    // this.courseCardData = this.navParams.get('content');
-    // this.corRelationList = this.navParams.get('corRelation');
-    // this.source = this.navParams.get('source');
-    this.identifier = this.courseCardData.contentId || this.courseCardData.identifier;
     // check if the course is already enrolled
     this.isCourseEnrolled(this.identifier);
     if (this.batchId) {
@@ -984,24 +983,22 @@ export class EnrolledCourseDetailsPage implements OnInit {
   }
 
   handleBackButton() {
-    // this.backButtonFunc = this.platform.registerBackButtonAction(() => {
-    //   this.telemetryGeneratorService.generateBackClickedTelemetry(
-    //     PageId.COURSE_DETAIL,
-    //     Environment.HOME,
-    //     false,
-    //     this.identifier,
-    //     this.corRelationList
-    //   );
-    //   this.didViewLoad = false;
-    //   this.generateEndEvent(this.objId, this.objType, this.objVer);
+    this.backButtonFunc = this.platform.backButton.subscribe(() => {
+      this.telemetryGeneratorService.generateBackClickedTelemetry(
+        PageId.COURSE_DETAIL,
+        Environment.HOME,
+        false,
+        this.identifier,
+        this.corRelationList
+      );
+      this.didViewLoad = false;
+      this.generateEndEvent(this.objId, this.objType, this.objVer);
 
-    //   if (this.shouldGenerateEndTelemetry) {
-    //     this.generateQRSessionEndEvent(this.source, this.course.identifier);
-    //   }
-    //   this.navCtrl.pop();
-        this.location.back();
-        this.backButtonFunc.unsubscribe();
-    // }, 10);
+      if (this.shouldGenerateEndTelemetry) {
+        this.generateQRSessionEndEvent(this.source, this.course.identifier);
+      }
+      this.location.back();
+    });
   }
 
   populateCorRelationData(batchId) {
@@ -1117,10 +1114,10 @@ export class EnrolledCourseDetailsPage implements OnInit {
   /**
    * checks whether batches are available or not and then Navigate user to batch list page
    */
-  navigateToBatchListPage(): void {
+  async navigateToBatchListPage() {
     const ongoingBatches = [];
     const upcommingBatches = [];
-    const loader = this.commonUtilService.getLoader();
+    const loader = await this.commonUtilService.getLoader();
     const courseBatchesRequest: CourseBatchesRequest = {
       filters: {
         courseId: this.identifier,
@@ -1139,10 +1136,10 @@ export class EnrolledCourseDetailsPage implements OnInit {
 
     if (this.commonUtilService.networkInfo.isNetworkAvailable) {
       if (!this.guestUser) {
-        loader.present();
+        await loader.present();
         this.courseService.getCourseBatches(courseBatchesRequest).toPromise()
           .then((data: Batch[]) => {
-            this.zone.run(() => {
+            this.zone.run(async () => {
               this.batches = data;
               if (this.batches.length) {
                 _.forEach(this.batches, (batch, key) => {
@@ -1152,13 +1149,15 @@ export class EnrolledCourseDetailsPage implements OnInit {
                     upcommingBatches.push(batch);
                   }
                 });
-                loader.dismiss();
-                // this.navCtrl.push(CourseBatchesPage, {
-                //   ongoingBatches: ongoingBatches,
-                //   upcommingBatches: upcommingBatches
-                // });
+                await loader.dismiss();
+                this.router.navigate([RouterLinks.COURSE_BATCHES], {
+                  state: {
+                    ongoingBatches: ongoingBatches,
+                    upcommingBatches: upcommingBatches
+                  }
+                });
               } else {
-                loader.dismiss();
+                await loader.dismiss();
                 this.commonUtilService.showToast('NO_BATCHES_AVAILABLE');
               }
             });
@@ -1166,7 +1165,7 @@ export class EnrolledCourseDetailsPage implements OnInit {
           .catch((error: any) => {
           });
       } else {
-        // this.navCtrl.push(CourseBatchesPage);
+        this.router.navigate([RouterLinks.COURSE_BATCHES]);
       }
     } else {
       this.commonUtilService.showToast('ERROR_NO_INTERNET_MESSAGE');
@@ -1222,7 +1221,6 @@ export class EnrolledCourseDetailsPage implements OnInit {
     if (this.shouldGenerateEndTelemetry) {
       this.generateQRSessionEndEvent(this.source, this.course.identifier);
     }
-    // this.navCtrl.pop();
     this.location.back();
     this.backButtonFunc.unsubscribe();
   }
@@ -1360,4 +1358,3 @@ export class EnrolledCourseDetailsPage implements OnInit {
     }
   }
 }
-// this.nav.ctrl.pop has to migrated

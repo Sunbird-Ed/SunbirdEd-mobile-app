@@ -8,6 +8,7 @@ import { InteractType, InteractSubtype, Environment, PageId } from '../../servic
 import { AppHeaderService } from '../../services/app-header.service';
 import * as moment from 'moment';
 import { Location } from '@angular/common';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-course-batches',
@@ -81,8 +82,11 @@ export class CourseBatchesPage implements OnInit {
     private events: Events,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private headerService: AppHeaderService,
-    private location: Location
+    private location: Location,
+    private router: Router
   ) {
+    this.ongoingBatches = this.router.getCurrentNavigation().extras.state.ongoingBatches;
+    this.upcommingBatches = this.router.getCurrentNavigation().extras.state.upcommingBatches;
   }
 
   ngOnInit(): void {
@@ -170,9 +174,9 @@ export class CourseBatchesPage implements OnInit {
    * To get batches, passed from enrolled-course-details page via navParams
    */
   getBatchesByCourseId(): void {
-    // this.ongoingBatches = this.navParams.get('ongoingBatches');
-    // this.upcommingBatches = this.navParams.get('upcommingBatches');
-    // this.todayDate =  moment(new Date()).format('YYYY-MM-DD');
+    this.ongoingBatches = this.ongoingBatches;
+    this.upcommingBatches = this.upcommingBatches;
+    this.todayDate =  moment(new Date()).format('YYYY-MM-DD');
   }
 
   spinner(flag) {
