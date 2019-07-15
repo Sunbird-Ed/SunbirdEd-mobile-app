@@ -1,5 +1,10 @@
 <ion-header>
   <ion-toolbar color="white">
+    <ion-buttons slot="start">
+      <ion-button icon-only (click)="goBack();">
+        <ion-icon name="arrow-back"></ion-icon>
+      </ion-button>
+    </ion-buttons>
     <ion-title>{{'USERS_AND_GROUPS' | translate}}</ion-title>
     <ion-buttons slot="primary">
       <ion-button *ngIf="!playConfig" (click)="goToSharePage()" icon-only>

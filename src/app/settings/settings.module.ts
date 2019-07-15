@@ -17,34 +17,13 @@ import { TermsOfServiceComponent } from './terms-of-service/terms-of-service.com
 import { RouterLinks } from '../app.constant';
 
 const routes: Routes = [
-  {
-    path: '',
-    component: SettingsPage
-  },
-  {
-    path: RouterLinks.DATA_SYNC,
-    component: DataSyncComponent
-  },
-  {
-    path: RouterLinks.PERMISSION,
-    component: PermissionComponent
-  },
-  {
-    path: RouterLinks.ABOUT_US,
-    component: AboutUsComponent
-  },
-  {
-    path: RouterLinks.ABOUT_APP,
-    component: AboutAppComponent
-  },
-  {
-    path: RouterLinks.PRIVACY_POLICY,
-    component: PrivacyPolicyComponent
-  },
-  {
-    path: RouterLinks.TERMS_OF_SERVICE,
-    component: TermsOfServiceComponent
-  }
+  { path: '', component: SettingsPage },
+  { path: RouterLinks.DATA_SYNC, component: DataSyncComponent },
+  { path: RouterLinks.PERMISSION, component: PermissionComponent },
+  { path: RouterLinks.ABOUT_US, component: AboutUsComponent },
+  { path: RouterLinks.ABOUT_APP, component: AboutAppComponent },
+  { path: RouterLinks.PRIVACY_POLICY, component: PrivacyPolicyComponent },
+  { path: RouterLinks.TERMS_OF_SERVICE, component: TermsOfServiceComponent }
 ];
 
 @NgModule({

@@ -94,7 +94,7 @@ export class SettingsPage {
   }
 
   async shareApp() {
-    const loader = this.commonUtilService.getLoader();
+    const loader = await this.commonUtilService.getLoader();
     await loader.present();
 
     this.generateInteractTelemetry(InteractType.TOUCH, InteractSubtype.SHARE_APP_CLICKED);
@@ -102,12 +102,12 @@ export class SettingsPage {
 
 
     this.utilityService.exportApk()
-      .then((filepath) => {
+      .then(async (filepath) => {
         this.generateInteractTelemetry(InteractType.OTHER, InteractSubtype.SHARE_APP_SUCCESS);
-        loader.dismiss();
+        await loader.dismiss();
         this.socialSharing.share('', '', 'file://' + filepath, '');
-      }).catch((error) => {
-        loader.dismiss();
+      }).catch(async (error) => {
+        await loader.dismiss();
         console.log(error);
       });
   }

@@ -40,6 +40,7 @@ const routes: Routes = [
   },
   { path: RouterLinks.VIEW_MORE_ACTIVITY, loadChildren: './view-more-activity/view-more-activity.module#ViewMoreActivityModule' },
   { path: RouterLinks.SETTINGS, loadChildren: './settings/settings.module#SettingsPageModule' },
+  { path: RouterLinks.REPORTS, loadChildren: './reports/reports.module#ReportsPageModule' },
   { path: RouterLinks.DOWNLOAD_MANAGER, loadChildren: './download-manager/download-manager.module#DownloadManagerPageModule' },
   { path: RouterLinks.STORAGE_SETTINGS, loadChildren: './storage-settings/storage-settings.module#StorageSettingsPageModule' },
   { path: RouterLinks.COURSES, loadChildren: './courses/courses.module#CoursesPageModule' },

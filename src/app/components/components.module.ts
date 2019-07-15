@@ -67,12 +67,11 @@ import { SearchComponent } from '../search/search.component';
     EditContactVerifyPopupComponent,
     RatingAlertComponent,
     OverflowMenuComponent,
+    ReportAlertComponent,
     // GroupReportAlertComponent,
-    ReportAlertComponent,
-    UserReportComponent,
-    ReportAlertComponent,
-    GroupReportListComponent,
-    ReportListComponent,
+    // UserReportComponent,
+    // GroupReportListComponent,
+    // ReportListComponent,
     SearchComponent
   ],
   imports: [
