@@ -65,7 +65,9 @@ export class CreateGroupPage implements OnInit {
     private route: ActivatedRoute,
     private router: Router
   ) {
-    this.group = this.router.getCurrentNavigation().extras.state.groupInfo || {};
+    if (this.router.getCurrentNavigation().extras.state) {
+      this.group = this.router.getCurrentNavigation().extras.state.groupInfo || {};
+    }
     this.groupEditForm = this.fb.group({
       name: [this.group.name || '', Validators.required],
       syllabus: [this.group.syllabus && this.group.syllabus[0] || []],

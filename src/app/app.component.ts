@@ -1,4 +1,4 @@
-import { Router } from '@angular/router';
+import { Router, NavigationExtras } from '@angular/router';
 import { AfterViewInit, Component, Inject, NgZone, ViewChild, OnInit, EventEmitter, ChangeDetectorRef } from '@angular/core';
 
 import { Events, Platform, PopoverController, ToastController } from '@ionic/angular';
@@ -628,7 +628,8 @@ export class AppComponent implements OnInit, AfterViewInit {
           Environment.USER,
           PageId.PROFILE
         );
-        this.router.navigateByUrl(`/${RouterLinks.USER_AND_GROUPS}`);
+        const navigationExtrasUG: NavigationExtras = { state: { profile: this.profile } };
+        this.router.navigate([`/${RouterLinks.USER_AND_GROUPS}`], navigationExtrasUG);
         // if (this.app.getRootNavs().length > 0) {
         //   this.app.getRootNavs()[0].push(UserAndGroupsPage, { profile: this.profile });
         // }
@@ -640,7 +641,8 @@ export class AppComponent implements OnInit, AfterViewInit {
           InteractSubtype.REPORTS_CLICKED,
           Environment.USER,
           PageId.PROFILE);
-        this.router.navigateByUrl(`/${RouterLinks.TABS}`);
+        const navigationExtrasReports: NavigationExtras = { state: { profile: this.profile } };
+        this.router.navigate([`/${RouterLinks.REPORTS}`], navigationExtrasReports);
         // migration-TODO Add new routing
         // if (this.app.getRootNavs().length > 0) {
         //   this.app.getRootNavs()[0].push(ReportsPage, { profile: this.profile });
@@ -653,6 +655,7 @@ export class AppComponent implements OnInit, AfterViewInit {
           InteractSubtype.SETTINGS_CLICKED,
           Environment.USER,
           PageId.PROFILE);
+        this.router.navigate([`/${RouterLinks.SETTINGS}`]);
         // migration-TODO
         // if (this.app.getRootNavs().length > 0) {
         //   this.app.getRootNavs()[0].push(SettingsPage);
@@ -665,12 +668,8 @@ export class AppComponent implements OnInit, AfterViewInit {
           InteractSubtype.LANGUAGE_CLICKED,
           Environment.USER,
           PageId.PROFILE);
+        this.router.navigate([`/${RouterLinks.LANGUAGE_SETTING}`, true]);
         // migration-TODO
-        // if (this.app.getRootNavs().length > 0) {
-        //   this.app.getRootNavs()[0].push(LanguageSettingsPage, {
-        //     isFromSettings: true
-        //
-        this.router.navigate(['settings/language-setting', false]);
         /*if (this.app.getRootNavs().length > 0) {
           this.app.getRootNavs()[0].push(LanguageSettingsPage, {
             isFromSettings: true
@@ -685,6 +684,7 @@ export class AppComponent implements OnInit, AfterViewInit {
           InteractSubtype.HELP_CLICKED,
           Environment.USER,
           PageId.PROFILE);
+        this.router.navigate([`/${RouterLinks.FAQ_HELP}`]);
         // migration-TODO
         // if (this.app.getRootNavs().length > 0) {
         //   this.app.getRootNavs()[0].push(FaqPage, {
@@ -698,7 +698,7 @@ export class AppComponent implements OnInit, AfterViewInit {
           this.commonUtilService.showToast('NEED_INTERNET_TO_CHANGE');
         } else {
           // migration-TODO
-          // this.logoutHandlerService.onLogout();
+          this.logoutHandlerService.onLogout();
         }
         break;
 

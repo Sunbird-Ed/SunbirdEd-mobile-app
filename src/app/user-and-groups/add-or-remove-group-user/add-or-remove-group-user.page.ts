@@ -51,9 +51,11 @@ export class AddOrRemoveGroupUserPage implements OnInit {
     private route: ActivatedRoute,
     private router: Router
   ) {
-    this.addUsers = Boolean(this.router.getCurrentNavigation().extras.state.isAddUsers);
-    this.groupInfo = this.router.getCurrentNavigation().extras.state.groupInfo;
-    this.groupMembers = this.router.getCurrentNavigation().extras.state.groupMembers;
+    if (this.router.getCurrentNavigation().extras.state) {
+      this.addUsers = Boolean(this.router.getCurrentNavigation().extras.state.isAddUsers);
+      this.groupInfo = this.router.getCurrentNavigation().extras.state.groupInfo;
+      this.groupMembers = this.router.getCurrentNavigation().extras.state.groupMembers;
+    }
   }
 
   ngOnInit() {

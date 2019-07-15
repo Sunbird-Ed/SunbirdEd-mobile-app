@@ -1,6 +1,11 @@
 <ion-header>
 
   <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button icon-only (click)="goBack();">
+        <ion-icon name="arrow-back"></ion-icon>
+      </ion-button>
+    </ion-buttons>
     <ion-title>{{ 'ABOUT_US' | translate }}</ion-title>
     <ion-buttons slot="primary">
       <ion-button (click)="shareInformation()" icon-only>
@@ -31,27 +36,27 @@
     </ion-item>
 
     <!-- Privacy Policy -->
-    <ion-item (click)="privacyPolicy()">
+    <!-- <ion-item (click)="privacyPolicy()">
       <ion-label>
         <h2>{{ 'ABOUT_US_SCREEN.PRIVACY_POLICY' | translate }}</h2>
         <ion-icon name="ios-arrow-forward" item-end></ion-icon>
       </ion-label>
-    </ion-item>
+    </ion-item> -->
 
     <!-- Terms of Service -->
-    <ion-item (click)="termsOfService()">
+    <!-- <ion-item (click)="termsOfService()">
       <ion-label>
         <h2>{{ 'ABOUT_US_SCREEN.TERMS_OF_SERVICE' | translate }}</h2>
         <ion-icon name="ios-arrow-forward" item-end></ion-icon>
       </ion-label>
-    </ion-item>
+    </ion-item> -->
 
     <!-- About the Application -->
-    <ion-item (click)="aboutApp()">
+    <!-- <ion-item (click)="aboutApp()">
       <ion-label>
         <h2>{{ 'ABOUT_US_SCREEN.ABOUT_THE_APP' | translate }}</h2>
         <ion-icon name="ios-arrow-forward" item-end></ion-icon>
       </ion-label>
-    </ion-item>
+    </ion-item> -->
   </ion-list>
 </ion-content>

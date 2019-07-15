@@ -326,7 +326,6 @@ export class ProfileSettingsPage {
         frameworkId: this.frameworkId,
         requiredCategories: FrameworkCategoryCodesGroup.DEFAULT_FRAMEWORK_CATEGORIES
       };
-      debugger;
       this.frameworkService.getFrameworkDetails(frameworkDetailsRequest).toPromise()
         .then((framework: Framework) => {
           this.categories = framework.categories;

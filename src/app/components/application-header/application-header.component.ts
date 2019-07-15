@@ -1,12 +1,13 @@
 import { ChangeDetectorRef, Component, EventEmitter, Inject, Input, OnInit, Output, OnDestroy } from '@angular/core';
 import { Events, MenuController, Platform } from '@ionic/angular';
 import { AppGlobalService, UtilityService, CommonUtilService, NotificationService } from '../../../services';
-import { DownloadService, SharedPreferences } from 'sunbird-sdk';
+import { DownloadService, SharedPreferences, NotificationService as PushNotificationService, NotificationStatus } from 'sunbird-sdk';
 import { GenericAppConfig, PreferenceKey, RouterLinks } from '../../../app/app.constant';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { Subscription } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
 import { NavigationExtras, Router, RouterLink } from '@angular/router';
+import {Location} from '@angular/common';
 
 @Component({
   selector: 'app-application-header',
@@ -14,7 +15,6 @@ import { NavigationExtras, Router, RouterLink } from '@angular/router';
   styleUrls: ['./application-header.component.scss'],
 })
 export class ApplicationHeaderComponent implements OnInit, OnDestroy {
-
   chosenLanguageString: string;
   selectedLanguage: string;
   @Input() headerConfig: any = false;
@@ -28,14 +28,17 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
   decreaseZindex = false;
   isRtl: boolean;
   isLoggedIn = false;
+  isDownloadingActive: boolean = false;
   showDownloadAnimation: Boolean = false;
   networkSubscription: Subscription;
+  isUnreadNotification: boolean = false;
 
   constructor(
     public menuCtrl: MenuController,
     private commonUtilService: CommonUtilService,
     @Inject('SHARED_PREFERENCES') private preference: SharedPreferences,
     @Inject('DOWNLOAD_SERVICE') private downloadService: DownloadService,
+    @Inject('NOTIFICATION_SERVICE') private pushNotificationService: PushNotificationService,
     private events: Events,
     private appGlobalService: AppGlobalService,
     private appVersion: AppVersion,
@@ -44,7 +47,8 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
     private notification: NotificationService,
     private translate: TranslateService,
     private platform: Platform,
-    private router: Router
+    private router: Router,
+    private location: Location
   ) {
     this.setLanguageValue();
     this.events.subscribe('onAfterLanguageChange:update', (res) => {
@@ -52,6 +56,7 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
         this.setLanguageValue();
       }
     });
+    this.getUnreadNotifications();
   }
 
   ngOnInit() {
@@ -62,6 +67,10 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
     });
     this.events.subscribe('app-global:profile-obj-changed', () => {
       this.setAppLogo();
+    });
+
+    this.events.subscribe('notification-status:update', (eventData) => {
+      this.isUnreadNotification = eventData.isUnreadNotifications;
     });
     this.translate.onLangChange.subscribe((params) => {
       if (params.lang === 'ur' && !this.platform.isRTL) {
@@ -80,57 +89,6 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
     this.networkSubscription = this.commonUtilService.networkAvailability$.subscribe((available: boolean) => {
       this.setAppLogo();
     });
-  }
-
-  test() {
-    this.router.navigateByUrl(`/${RouterLinks.RESOURCES}`);
-  }
-  //  migration-TODO to be deleted
-
-  goToDownloadManager() {
-    this.router.navigateByUrl(`/${RouterLinks.DOWNLOAD_MANAGER}`);
-  }
-  goToStorageSettings() {
-    this.router.navigateByUrl(`/${RouterLinks.STORAGE_SETTINGS}`);
-  }
-
-  gotoTabs() {
-    this.router.navigateByUrl(RouterLinks.TABS);
-  }
-  goToCourses() {
-    this.router.navigateByUrl(`/${RouterLinks.COURSES}`);
-  }
-  goToActiveDonwloads() {
-    this.router.navigateByUrl(`/${RouterLinks.ACTIVE_DOWNLOADS}`);
-  }
-  goToCourseBatches() {
-    this.router.navigateByUrl(`/${RouterLinks.COURSE_BATCHES}`);
-  }
-  goToCourseEnrollCourseDetails() {
-    this.router.navigateByUrl(`/${RouterLinks.ENROLLED_COURSE_DETAILS}`);
-  }
-  goToCollectionDetails() {
-    this.router.navigateByUrl(`/${RouterLinks.COLLECTION_DETAILS}`);
-  }
-
-  goToCollectionEtb() {
-    this.router.navigateByUrl(`/${RouterLinks.COLLECTION_DETAIL_ETB}`);
-  }
-  goToPageFilter() {
-    this.router.navigateByUrl(`/${RouterLinks.PAGE_FILTER}`);
-  }
-  goToQrCodeResult() {
-    this.router.navigateByUrl(`/${RouterLinks.QRCODERESULT}`);
-  }
-
-  goToContentDetails() {
-    this.router.navigateByUrl(`/${RouterLinks.CONTENT_DETAILS}`);
-  }
-  goToFAQ() {
-    this.router.navigateByUrl(`/${RouterLinks.FAQ_HELP}`);
-  }
-  goToSettings() {
-    this.router.navigateByUrl(`/${RouterLinks.SETTINGS}`);
   }
 
   setAppVersion(): any {
@@ -196,6 +154,7 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
   }
 
   emitEvent($event, name) {
+    this.location.back();
     this.headerEvents.emit({ name });
   }
 
@@ -212,5 +171,17 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
     this.events.subscribe('app-global:profile-obj-changed');
   }
 
+  getUnreadNotifications() {
+    let newNotificationCount = 0;
+    this.pushNotificationService.getAllNotifications({ notificationStatus: NotificationStatus.ALL }).subscribe((notificationList: any) => {
+      notificationList.forEach((item) => {
+        if (!item.isRead) {
+          newNotificationCount++;
+        }
+      });
+
+      this.isUnreadNotification = newNotificationCount ? true : false;
+    });
+  }
 
 }
