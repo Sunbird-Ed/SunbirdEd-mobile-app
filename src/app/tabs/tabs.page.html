@@ -1,4 +1,4 @@
-<ion-tabs (ionTabsWillChange)="ionTabsWillChange($event)" #myTabs>
+<ion-tabs (ionTabsWillChange)="ionTabsWillChange($event)" (ionTabsDidChange)="ionTabsDidChange(myTabs)" #myTabs>
   <ion-tab-bar slot="bottom">
     <ion-tab-button [tab]="tab.root"  *ngFor="let tab of tabs; let i = index;" [disabled]="tab.disabled"
       [ngClass]="{'disabled': tab.disabled}">

@@ -16,19 +16,14 @@ import { CommonUtilService } from '@app/services';
 export class TabsPage {
 
   configData: any;
-
   @ViewChild('myTabs') tabRef: IonTabs;
-
   tabIndex = 0;
-
   tabs = [];
-
   headerConfig = {
     showHeader: true,
     showBurgerMenu: true,
     actionButtons: ['search', 'filter'],
   };
-
   selectedLanguage: string;
 
   constructor(
@@ -105,6 +100,10 @@ export class TabsPage {
     // }
 
     // this.events.publish('tab.change', tab.tabTitle);
+  }
+
+  ionTabsDidChange() {
+    this.commonUtilService.currentTabName = this.tabRef.getSelected();
   }
 
   public async customClick(tab, _index) {

@@ -14,6 +14,7 @@ import {
   ImpressionType
 } from '@app/services';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-notification',
@@ -25,11 +26,12 @@ export class NotificationPage implements OnInit {
   notificationList = [];
   newNotificationCount: number = 0;
   showClearNotificationButton: boolean;
+  unregisterBackButton: Subscription;
 
   constructor(
+    @Inject('NOTIFICATION_SERVICE') private notificationService: NotificationService,
     private headerService: AppHeaderService,
     private commonUtilService: CommonUtilService,
-    @Inject('NOTIFICATION_SERVICE') private notificationService: NotificationService,
     private events: Events,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private platform: Platform,
@@ -50,9 +52,8 @@ export class NotificationPage implements OnInit {
       this.getNotifications();
     });
 
-    this.platform.backButton.subscribeWithPriority(11, () => {
+    this.unregisterBackButton = this.platform.backButton.subscribeWithPriority(11, () => {
       this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.NOTIFICATION, Environment.NOTIFICATION, false);
-      // this.navCtrl.pop();
       this.location.back();
     });
   }
@@ -71,6 +72,7 @@ export class NotificationPage implements OnInit {
     //   this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.NOTIFICATION, Environment.NOTIFICATION, true);
     //   // this.navCtrl.pop();
     // };
+
     this.telemetryGeneratorService.generateImpressionTelemetry(
       ImpressionType.VIEW, '',
       PageId.NOTIFICATION,
@@ -129,6 +131,6 @@ export class NotificationPage implements OnInit {
   }
 
   ionViewWillLeave() {
-    this.platform.backButton.unsubscribe();
+    this.unregisterBackButton && this.unregisterBackButton.unsubscribe();
   }
 }
