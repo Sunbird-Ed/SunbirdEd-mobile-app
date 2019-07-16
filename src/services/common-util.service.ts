@@ -7,7 +7,7 @@ import {
     Platform,
     AlertController,
 } from '@ionic/angular';
-import {ToastOptions} from '@ionic/core';
+import { ToastOptions } from '@ionic/core';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { SharedPreferences } from 'sunbird-sdk';
@@ -38,6 +38,7 @@ export class CommonUtilService implements OnDestroy {
 
     disconnectSubscription: any;
     private alert?: any;
+    private _currentTabName: string;
 
     constructor(
         private toastCtrl: ToastController,
@@ -390,5 +391,13 @@ export class CommonUtilService implements OnDestroy {
             return '0.00';
         }
         return (bytes / 1048576).toFixed(2);
+    }
+
+    set currentTabName(tabName: string) {
+        this._currentTabName = tabName
+    }
+
+    get currentTabName() {
+        return this._currentTabName;
     }
 }

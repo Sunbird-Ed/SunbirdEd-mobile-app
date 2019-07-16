@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule,ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
 
@@ -33,7 +33,6 @@ import { ConfirmAlertComponent } from './confirm-alert/confirm-alert.component';
 import { RatingAlertComponent } from './rating-alert/rating-alert.component';
 import { OverflowMenuComponent } from '../profile/overflow-menu/overflow-menu.component';
 import { ReportAlertComponent } from '../reports/report-alert/report-alert.component';
-import { SearchComponent } from '../search/search.component';
 import { ProfileAvatarComponent } from './profile-avatar/profile-avatar.component';
 
 
@@ -65,8 +64,7 @@ import { ProfileAvatarComponent } from './profile-avatar/profile-avatar.componen
     RatingAlertComponent,
     OverflowMenuComponent,
     ReportAlertComponent,
-    ProfileAvatarComponent,
-    SearchComponent
+    ProfileAvatarComponent
   ],
   imports: [
     CommonModule,

@@ -12,7 +12,7 @@
  */
 
 declare module 'grapheme-splitter' {
-    export class GraphemeSplitter {
+    export default class GraphemeSplitter {
         constructor();
         /** iterate the string to an iterable iterator of grapheme clusters */
         iterateGraphemes(s: string): IterableIterator<string>;

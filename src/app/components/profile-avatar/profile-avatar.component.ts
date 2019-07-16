@@ -1,5 +1,5 @@
 import { Component, Input, OnInit, OnChanges } from '@angular/core';
-import * as GraphemeSplitter from 'grapheme-splitter';
+import GraphemeSplitter from 'grapheme-splitter';
 
 @Component({
   selector: 'app-profile-avatar',
@@ -60,7 +60,7 @@ export class ProfileAvatarComponent implements OnInit , OnChanges {
  * It will extract the first character of the user name and return with different BG color
  */
   extractInitial() {
-    const splitter = new GraphemeSplitter.GraphemeSplitter();
+    const splitter = new GraphemeSplitter();
     const split: string[] = splitter.splitGraphemes(this.username.trim());
     this.initial = split[0];
     if (this.initial) {

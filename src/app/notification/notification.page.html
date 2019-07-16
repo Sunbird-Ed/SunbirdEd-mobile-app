@@ -1,5 +1,9 @@
 <ion-header>
-  <ion-toolbar></ion-toolbar>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button (click)="telemetryGeneratorService.generateBackClickedTelemetry(PageId.NOTIFICATION, Environment.NOTIFICATION, true)"></ion-back-button>
+    </ion-buttons>
+  </ion-toolbar>
 </ion-header>
 <ion-content overflow-scroll="true">
   <!-- Shows Notification Count with Clear Button -->
