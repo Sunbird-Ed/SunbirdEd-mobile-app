@@ -1,9 +1,9 @@
 <ion-header>
   <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-back-button (click)="telemetryGeneratorService.generateBackClickedTelemetry(PageId.NOTIFICATION, Environment.NOTIFICATION, true)"></ion-back-button>
+      <ion-back-button defaultHref="resources" (click)="telemetryGeneratorService.generateBackClickedTelemetry(PageId.NOTIFICATION, Environment.NOTIFICATION, true)"></ion-back-button>
     </ion-buttons>
-  </ion-toolbar>
+  </ion-toolbar> 
 </ion-header>
 <ion-content overflow-scroll="true">
   <!-- Shows Notification Count with Clear Button -->
@@ -22,8 +22,8 @@
   <ion-list *ngIf="notificationList?.length && commonUtilService?.networkInfo?.isNetworkAvailable">
     <ion-item-sliding style="margin-bottom: 8px;" *ngFor="let item of notificationList;let index = index" #slidingItem>
       <ion-item no-lines>
-        <notification-item (notificationClick)="updateNotificationCount($event);"
-          (generateNotification)="handleTelemetry($event)" [itemData]="item"></notification-item>
+        <app-notification-item (notificationClick)="updateNotificationCount($event);"
+          (generateNotification)="handleTelemetry($event)" [itemData]="item"></app-notification-item>
       </ion-item>
       <ion-item-options side="start">
         <ion-button color="danger" (click)="removeNotification( index, 'left')">

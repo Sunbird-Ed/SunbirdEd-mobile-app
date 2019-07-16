@@ -9,7 +9,6 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { IonicImageLoader } from 'ionic-image-loader';
 import { WebView } from '@ionic-native/ionic-webview/ngx';
 import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
-import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import {SocialSharing} from '@ionic-native/social-sharing/ngx';
@@ -364,7 +363,6 @@ declare const buildconfigreader;
     LocalNotifications,
     SocialSharing,
     WebView,
-    SplashScreen, // Migration-TODO
     FileTransferObject,
     FileOpener,
     FileTransfer,

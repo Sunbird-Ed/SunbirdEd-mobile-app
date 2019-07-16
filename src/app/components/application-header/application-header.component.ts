@@ -7,7 +7,7 @@ import { AppVersion } from '@ionic-native/app-version/ngx';
 import { Subscription } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
 import { NavigationExtras, Router, RouterLink } from '@angular/router';
-import {Location} from '@angular/common';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-application-header',
@@ -29,16 +29,16 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
   isRtl: boolean;
   isLoggedIn = false;
   isDownloadingActive: boolean = false;
-  showDownloadAnimation: Boolean = false;
+  showDownloadAnimation: boolean = false;
   networkSubscription: Subscription;
   isUnreadNotification: boolean = false;
 
   constructor(
-    public menuCtrl: MenuController,
-    private commonUtilService: CommonUtilService,
     @Inject('SHARED_PREFERENCES') private preference: SharedPreferences,
     @Inject('DOWNLOAD_SERVICE') private downloadService: DownloadService,
     @Inject('NOTIFICATION_SERVICE') private pushNotificationService: PushNotificationService,
+    public menuCtrl: MenuController,
+    private commonUtilService: CommonUtilService,
     private events: Events,
     private appGlobalService: AppGlobalService,
     private appVersion: AppVersion,
@@ -180,7 +180,7 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
         }
       });
 
-      this.isUnreadNotification = newNotificationCount ? true : false;
+      this.isUnreadNotification = Boolean(newNotificationCount);
     });
   }
 

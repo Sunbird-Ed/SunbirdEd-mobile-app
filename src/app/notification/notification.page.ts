@@ -1,7 +1,9 @@
-import { Component, OnInit, Inject, ViewChild } from '@angular/core';
-import { Platform, NavController, NavParams, Events } from '@ionic/angular';
-import { NotificationService, NotificationStatus } from 'sunbird-sdk';
+import { Component, OnInit, Inject } from '@angular/core';
+import { Platform, Events } from '@ionic/angular';
 import { Location } from '@angular/common';
+import { ActivatedRoute, Router } from '@angular/router';
+import { NotificationService, NotificationStatus } from 'sunbird-sdk';
+import { Subscription } from 'rxjs';
 
 import {
   AppHeaderService,
@@ -13,8 +15,6 @@ import {
   InteractSubtype,
   ImpressionType
 } from '@app/services';
-import { ActivatedRoute, Router } from '@angular/router';
-import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-notification',
@@ -68,11 +68,6 @@ export class NotificationPage implements OnInit {
   }
 
   ionViewDidLoad() {
-    // this.navBar.backButtonClick = () => {
-    //   this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.NOTIFICATION, Environment.NOTIFICATION, true);
-    //   // this.navCtrl.pop();
-    // };
-
     this.telemetryGeneratorService.generateImpressionTelemetry(
       ImpressionType.VIEW, '',
       PageId.NOTIFICATION,
