@@ -1,0 +1,85 @@
+@import "src/global.scss";
+:host {
+  .notification-item-container {
+    .date-time {
+      color: $gray-200;
+      font-family: "Noto Sans";
+      font-size: 12px;
+      line-height: 20px;
+    }
+    .title {
+      width: 100%;
+      color: $blue;
+      font-family: "Noto Sans";
+      font-size: 14px;
+      font-weight: bold;
+      letter-spacing: -0.4px;
+      line-height: 20px;
+    }
+    .description {
+      color: $gray-400;
+      font-family: ".SF NS Display";
+      font-size: 12px;
+      letter-spacing: -0.34px;
+      line-height: 20px;
+      margin: 0;
+    }
+
+    .sb-accordian-arrow {
+      font-size: 24px;
+      line-height: 20px;
+    }
+    .arrow-up {
+      transform: rotate(180deg);
+    }
+
+    .update-container {
+      white-space: normal;
+      border-radius: 2px;
+      background-color: #f1f1f1;
+      font-family: "Noto Sans";
+      font-size: 12px;
+      line-height: 20px;
+      margin-top: 8px;
+    }
+
+    .expand-button {
+      //Migration todo
+      //   @include float(end);
+      width: 1.5rem;
+      text-align: center;
+      cursor: pointer;
+    }
+
+    .update-now-btn {
+      height: 20px;
+      color: $blue;
+      font-family: "Noto Sans";
+      font-size: 12px;
+      font-weight: bold;
+      letter-spacing: -0.34px;
+      line-height: 20px;
+    }
+
+    .mr-6 {
+      //Migration todo
+      /*       @include ltr() {
+        margin-right: 6px;
+      }
+      @include rtl() {
+        margin-left: 6px;
+      }
+ */
+    }
+    .pl-16 {
+      //Migration todo
+      /*         @include ltr() {
+        padding-left: 16px;
+      }
+      @include rtl() {
+        padding-right: 16px;
+      }
+ */
+    }
+  }
+}
