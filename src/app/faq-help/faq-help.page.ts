@@ -1,5 +1,5 @@
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
-import { Component, Inject, ViewChild, ElementRef } from '@angular/core';
+import { Component, Inject, ViewChild, ElementRef, OnInit } from '@angular/core';
 import { LoadingController, Platform } from '@ionic/angular';
 import {
   TelemetryGeneratorService,
@@ -10,7 +10,7 @@ import {
   Environment,
   InteractType,
   PageId
-} from '../../services';
+} from '@app/services';
 import {
   ProfileService,
   ContentService,
@@ -23,6 +23,8 @@ import {
 import { PreferenceKey, appLanguages, ContentType, AudienceFilter } from '../app.constant';
 import { SocialSharing } from '@ionic-native/social-sharing/ngx';
 import { Location } from '@angular/common';
+import { AppVersion } from '@ionic-native/app-version/ngx';
+import { Subscription } from 'rxjs';
 
 const KEY_SUNBIRD_CONFIG_FILE_PATH = 'sunbird_config_file_path';
 const SUBJECT_NAME = 'support request';
@@ -32,7 +34,7 @@ const SUBJECT_NAME = 'support request';
   templateUrl: './faq-help.page.html',
   styleUrls: ['./faq-help.page.scss'],
 })
-export class FaqHelpPage {
+export class FaqHelpPage implements OnInit {
 
   consumptionFaqUrl: SafeResourceUrl;
 
@@ -48,35 +50,35 @@ export class FaqHelpPage {
   loading?: any;
   private messageListener: (evt: Event) => void;
   @ViewChild('f') iframe: ElementRef;
-  backButtonFunc: any;
+  backButtonFunc: Subscription;
   headerObservable: any;
   constructor(
-    private loadingCtrl: LoadingController,
-    private domSanitizer: DomSanitizer,
-    private telemetryGeneratorService: TelemetryGeneratorService,
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
-    private socialSharing: SocialSharing,
     @Inject('DEVICE_INFO') private deviceInfo: DeviceInfo,
+    private loadingCtrl: LoadingController,
+    private domSanitizer: DomSanitizer,
+    private telemetryGeneratorService: TelemetryGeneratorService,
+    private socialSharing: SocialSharing,
     private commonUtilService: CommonUtilService,
     private appGlobalService: AppGlobalService,
     private headerService: AppHeaderService,
     private formAndFrameworkUtilService: FormAndFrameworkUtilService,
-    private location: Location
+    private location: Location,
+    private appVersion: AppVersion,
+    private platform: Platform
   ) {
     this.messageListener = (event) => {
       this.receiveMessage(event);
     };
   }
 
-  ionViewDidLoad() {
-    /* migration-TODO
+  ngOnInit() {
     this.appVersion.getAppName()
       .then((appName) => {
         this.appName = appName;
       });
-    */
     window.addEventListener('message', this.messageListener, false);
   }
 
@@ -89,13 +91,14 @@ export class FaqHelpPage {
 
     window.removeEventListener('message', this.messageListener);
     if (this.loading) {
-      this.loading.dismissAll();
+      this.loading.dismiss();
     }
   }
 
   async ionViewWillEnter() {
     this.headerService.showHeaderWithBackButton();
-    await this.createAndPresentLoadingSpinner();
+    this.loading = await this.commonUtilService.getLoader();
+    await this.loading.present();
     this.headerObservable = this.headerService.headerEventEmitted$.subscribe(eventName => {
       this.handleHeaderEvents(eventName);
     });
@@ -133,11 +136,9 @@ export class FaqHelpPage {
     }
   }
   registerDeviceBackButton() {
-    /* migration-TODO
-    this.backButtonFunc = this.platform.registerBackButtonAction(() => {
+    this.backButtonFunc = this.platform.backButton.subscribeWithPriority(11, () => {
       this.handleBackButton();
-    }, 10);
-    */
+    });
   }
 
   handleBackButton() {
@@ -145,10 +146,7 @@ export class FaqHelpPage {
     if (this.iframe.nativeElement.contentWindow.location.href.split('/')[length - 1].startsWith('consumption') ||
       this.iframe.nativeElement.contentWindow.history.length === 1) {
       this.location.back();
-      /* migration-TODO
-      this.navCtrl.pop();
-      */
-      this.backButtonFunc.unsubscribe();
+      // this.backButtonFunc.unsubscribe();
     } else {
       this.iframe.nativeElement.contentWindow.history.go(-1);
     }
@@ -156,11 +154,11 @@ export class FaqHelpPage {
 
   onLoad() {
     const element = document.getElementsByTagName('iframe')[0];
-    if (element) {
+    if (element && element.contentDocument) {
       if (element.contentDocument.documentElement.getElementsByTagName('body')[0].innerHTML.length !== 0 && this.loading) {
         const appData = { appName: this.appName };
         element.contentWindow.postMessage(appData, '*');
-        this.loading.dismissAll();
+        this.loading.dismiss();
       }
       if (element.contentDocument.documentElement.getElementsByTagName('body').length === 0 ||
         element['contentWindow'].location.href.startsWith('chrome-error:')
@@ -172,19 +170,10 @@ export class FaqHelpPage {
 
   onError() {
     if (this.loading) {
-      this.loading.dismissAll();
+      this.loading.dismiss();
     }
     this.faq.url = 'file:///android_asset/www/assets/faq/consumption-faqs.html?selectedlang=en&randomid=' + Math.random();
     this.consumptionFaqUrl = this.domSanitizer.bypassSecurityTrustResourceUrl(this.faq.url);
-  }
-
-  private async createAndPresentLoadingSpinner() {
-    this.loading = await this.loadingCtrl.create({
-      showBackdrop: true,
-      spinner: 'crescent'
-    });
-
-    await this.loading.present();
   }
 
   receiveMessage(event) {
@@ -200,6 +189,7 @@ export class FaqHelpPage {
       this.sendMessage(event.data.initiateEmailBody);
     }
   }
+
   getBoardMediumGrade(mailBody: string): string {
     const userProfile: Profile = this.appGlobalService.getCurrentUser();
     let ticketSummary: string;
@@ -213,13 +203,13 @@ export class FaqHelpPage {
       ticketSummary;
     return userDetails;
   }
+
   generateInteractTelemetry(interactSubtype, values) {
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH, interactSubtype,
       Environment.USER,
       PageId.FAQ, undefined,
-      values,
-      undefined
+      values
     );
   }
 
@@ -262,6 +252,10 @@ export class FaqHelpPage {
     }, (error) => {
       console.error('ERROR - ' + error);
     });
+  }
+
+  ionViewWillLeave() {
+    this.backButtonFunc && this.backButtonFunc.unsubscribe();
   }
 
 }
