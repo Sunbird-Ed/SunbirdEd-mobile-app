@@ -630,9 +630,6 @@ export class AppComponent implements OnInit, AfterViewInit {
         );
         const navigationExtrasUG: NavigationExtras = { state: { profile: this.profile } };
         this.router.navigate([`/${RouterLinks.USER_AND_GROUPS}`], navigationExtrasUG);
-        // if (this.app.getRootNavs().length > 0) {
-        //   this.app.getRootNavs()[0].push(UserAndGroupsPage, { profile: this.profile });
-        // }
         break;
 
       case 'REPORTS':
@@ -643,10 +640,6 @@ export class AppComponent implements OnInit, AfterViewInit {
           PageId.PROFILE);
         const navigationExtrasReports: NavigationExtras = { state: { profile: this.profile } };
         this.router.navigate([`/${RouterLinks.REPORTS}`], navigationExtrasReports);
-        // migration-TODO Add new routing
-        // if (this.app.getRootNavs().length > 0) {
-        //   this.app.getRootNavs()[0].push(ReportsPage, { profile: this.profile });
-        // }
         break;
 
       case 'SETTINGS': {
@@ -656,10 +649,6 @@ export class AppComponent implements OnInit, AfterViewInit {
           Environment.USER,
           PageId.PROFILE);
         this.router.navigate([`/${RouterLinks.SETTINGS}`]);
-        // migration-TODO
-        // if (this.app.getRootNavs().length > 0) {
-        //   this.app.getRootNavs()[0].push(SettingsPage);
-        // }
         break;
       }
       case 'LANGUAGE': {
@@ -668,13 +657,7 @@ export class AppComponent implements OnInit, AfterViewInit {
           InteractSubtype.LANGUAGE_CLICKED,
           Environment.USER,
           PageId.PROFILE);
-        this.router.navigate([`/${RouterLinks.LANGUAGE_SETTING}`, true]);
-        // migration-TODO
-        /*if (this.app.getRootNavs().length > 0) {
-          this.app.getRootNavs()[0].push(LanguageSettingsPage, {
-            isFromSettings: true
-          });
-        }*/
+        this.router.navigate([`/${RouterLinks.MENU_LANGUAGE_SETTING}`, true]);
         break;
       }
 
@@ -685,12 +668,6 @@ export class AppComponent implements OnInit, AfterViewInit {
           Environment.USER,
           PageId.PROFILE);
         this.router.navigate([`/${RouterLinks.FAQ_HELP}`]);
-        // migration-TODO
-        // if (this.app.getRootNavs().length > 0) {
-        //   this.app.getRootNavs()[0].push(FaqPage, {
-        //     isFromSettings: true
-        //   });
-
         break;
 
       case 'LOGOUT':

@@ -1,5 +1,4 @@
 import { Component, Inject } from '@angular/core';
-import { AppVersion } from '@ionic-native/app-version';
 import { SocialSharing } from '@ionic-native/social-sharing/ngx';
 import {
   ContentRequest, ContentService, DeviceInfo, GetAllProfileRequest, ProfileService, SharedPreferences
@@ -18,6 +17,7 @@ import {
 import { ContentType, AudienceFilter, RouterLinks } from '../../app.constant';
 import { Router } from '@angular/router';
 import { Location } from '@angular/common';
+import { AppVersion } from '@ionic-native/app-version/ngx';
 
 const KEY_SUNBIRD_CONFIG_FILE_PATH = 'sunbird_config_file_path';
 
@@ -48,7 +48,8 @@ export class AboutUsComponent {
     private utilityService: UtilityService,
     private headerService: AppHeaderService,
     private router: Router,
-    private location: Location
+    private location: Location,
+    private appVersion: AppVersion
   ) {
   }
 
@@ -65,7 +66,6 @@ export class AboutUsComponent {
 
     this.deviceId = this.deviceInfo.getDeviceID();
 
-    /* migration-TODO
     this.appVersion.getAppName()
       .then((appName: any) => {
         return appName;
@@ -73,7 +73,7 @@ export class AboutUsComponent {
       .then(val => {
         this.getVersionName(val);
       });
-      */
+     
   }
 
   ionViewDidLeave() {

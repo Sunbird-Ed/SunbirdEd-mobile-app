@@ -1,5 +1,5 @@
 import {Inject, Injectable} from '@angular/core';
-import { PreferenceKey} from '../app/app.constant';
+import { PreferenceKey, RouterLinks} from '../app/app.constant';
 
 import {AppGlobalService, CommonUtilService, TelemetryGeneratorService} from '.';
 // import {OnboardingPage} from '@app/pages/onboarding/onboarding';
@@ -18,6 +18,8 @@ import {
   PageId
 } from './telemetry-constants';
 import {ContainerService} from './container.services';
+import { GUEST_STUDENT_TABS, GUEST_TEACHER_TABS, initTabs } from '@app/app/module.service';
+import { Router, NavigationExtras } from '@angular/router';
 // import {TabsPage} from '@app/pages/tabs/tabs';
 
 @Injectable()
@@ -31,6 +33,7 @@ export class LogoutHandlerService {
     private appGlobalService: AppGlobalService,
     private containerService: ContainerService,
     private telemetryGeneratorService: TelemetryGeneratorService,
+    private router: Router,
   ) {
   }
 
@@ -53,35 +56,30 @@ export class LogoutHandlerService {
       .mergeMap(() => Observable.defer(() => Observable.of((<any>window).splashscreen.clearPrefs())))
       .mergeMap(() => this.authService.resignSession())
       .do(async () => {
-        // migration-TODO
-        // await this.navigateToAptPage();
-        // migration-TODO
-        // this.events.publish(AppGlobalService.USER_INFO_UPDATED);
+        await this.navigateToAptPage();
+        this.events.publish(AppGlobalService.USER_INFO_UPDATED);
       })
       .subscribe();
   }
 
-  // migration-TODO
-  // private async navigateToAptPage() {
-  //   if (this.appGlobalService.DISPLAY_ONBOARDING_PAGE) {
-  //     // migration-TODO
-  //    // await this.app.getRootNav().setRoot(OnboardingPage);
-  //   } else {
-  //     const selectedUserType = await this.preferences.getString(PreferenceKey.SELECTED_USER_TYPE).toPromise();
+  private async navigateToAptPage() {
+    if (this.appGlobalService.DISPLAY_ONBOARDING_PAGE) {
+      this.router.navigate([`/${RouterLinks.ONBOARDING}`]);
+    } else {
+      const selectedUserType = await this.preferences.getString(PreferenceKey.SELECTED_USER_TYPE).toPromise();
 
-  //     await this.appGlobalService.getGuestUserInfo();
+      await this.appGlobalService.getGuestUserInfo();
 
-  //     if (selectedUserType === ProfileType.STUDENT) {
-  //       initTabs(this.containerService, GUEST_STUDENT_TABS);
-  //     } else if (selectedUserType === ProfileType.TEACHER) {
-  //       initTabs(this.containerService, GUEST_TEACHER_TABS);
-  //     }
-  //     // migration-TODO
-  //     // await this.app.getRootNav().setRoot(TabsPage, { loginMode: 'guest' });
-  //   }
-
-  //   this.generateLogoutInteractTelemetry(InteractType.OTHER, InteractSubtype.LOGOUT_SUCCESS, '');
-  // }
+      if (selectedUserType === ProfileType.STUDENT) {
+        initTabs(this.containerService, GUEST_STUDENT_TABS);
+      } else if (selectedUserType === ProfileType.TEACHER) {
+        initTabs(this.containerService, GUEST_TEACHER_TABS);
+      }
+      const navigationExtras: NavigationExtras = { state: { loginMode: 'guest' } };
+      this.router.navigate([`/${RouterLinks.TABS}`], navigationExtras);
+    }
+    this.generateLogoutInteractTelemetry(InteractType.OTHER, InteractSubtype.LOGOUT_SUCCESS, '');
+  }
 
   private generateLogoutInteractTelemetry(interactType: InteractType, interactSubtype: InteractSubtype, uid: string) {
     const valuesMap = new Map();

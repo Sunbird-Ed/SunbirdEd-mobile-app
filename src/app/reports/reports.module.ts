@@ -12,6 +12,7 @@ import { UserReportComponent } from './user-report/user-report.component';
 import { ReportListComponent } from './report-list/report-list.component';
 import { GroupReportListComponent } from './group-report-list/group-report-list.component';
 import { ReportAlertComponent } from './report-alert/report-alert.component';
+import { GroupReportAlertComponent } from './group-report-alert/group-report-alert.component';
 
 @NgModule({
   imports: [
@@ -26,6 +27,13 @@ import { ReportAlertComponent } from './report-alert/report-alert.component';
     UserReportComponent,
     ReportListComponent,
     GroupReportListComponent,
+    GroupReportAlertComponent
+  ],
+  entryComponents: [
+    GroupReportAlertComponent
+  ],
+  exports: [
+    GroupReportAlertComponent
   ]
 })
 export class ReportsPageModule {}
