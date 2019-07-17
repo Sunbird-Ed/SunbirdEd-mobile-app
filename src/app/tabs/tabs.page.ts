@@ -98,8 +98,12 @@ export class TabsPage {
     //     }
     //   });
     // }
+    this.tabs[2].root = event.tab;
+    this.events.publish('tab.change', event.tab);
+  }
 
-    // this.events.publish('tab.change', tab.tabTitle);
+  openScanner(tab) {
+    this.events.publish('tab.change', tab.label);
   }
 
   ionTabsDidChange() {

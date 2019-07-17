@@ -123,9 +123,8 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.imageLoaderConfig.enableDebugMode();
       this.imageLoaderConfig.setMaximumCacheSize(100 * 1024 * 1024);
       this.telemetryGeneratorService.genererateAppStartTelemetry(await utilityService.getDeviceSpec());
-      // Migration todo
-      // this.generateNetworkTelemetry();
-      // this.autoSyncTelemetry();
+      this.generateNetworkTelemetry();
+      this.autoSyncTelemetry();
       this.subscribeEvents();
       this.showAppWalkThroughScreen();
       this.startOpenrapDiscovery();
@@ -264,11 +263,11 @@ export class AppComponent implements OnInit, AfterViewInit {
       //   currentPage = navObj.getActive().name;
       // }
 
-      // if (navObj.canGoBack()) {
-      //   return navObj.pop();
-      // } else {
-      //   this.commonUtilService.showExitPopUp(this.activePageService.computePageId((activeView as any).instance), Environment.HOME, false);
-      // }
+    //   if (navObj.canGoBack()) {
+    //     return navObj.pop();
+    //   } else {
+    //     this.commonUtilService.showExitPopUp(this.activePageService.computePageId((activeView as any).instance), Environment.HOME, false);
+    //   }
     });
 
   }
