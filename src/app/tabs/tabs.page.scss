@@ -1,35 +1,125 @@
-@import 'src/global.scss';
-
-
+@import "src/global.scss";
 
 .sb-toast.available-later {
-    .toast-wrapper {
-        background: transparent;
-        top: unset !important;
-        bottom: 104px;
-        max-width: 80%;
-        width: auto;
-        display: flex;
+  .toast-wrapper {
+    background: transparent;
+    top: unset !important;
+    bottom: 104px;
+    max-width: 80%;
+    width: auto;
+    display: flex;
 
-        .toast-message {
-            // migration-TODO
-            // @include padding(8px, 16px);
-            font-size: 12px;
-        }
-
-        .toast-container {
-            background: $warning-color;
-            padding: 0;
-            color: $white-color;
-            border-radius: 4px;
-            box-shadow: 0 -1px 1px 0 rgba(0,0,0,0.16), 0 2px 1px 0 rgba(0,0,0,0.24);
-            // left: unset;
-            // right: unset;
-            // margin-left: 50%;
-            // transform: translateX(-50%);
-            display: inline-block;
-            margin: 0 auto;
-        }
+    .toast-message {
+      // migration-TODO
+      // @include padding(8px, 16px);
+      font-size: 12px;
     }
 
+    .toast-container {
+      background: $warning-color;
+      padding: 0;
+      color: $white-color;
+      border-radius: 4px;
+      box-shadow: 0 -1px 1px 0 rgba(0, 0, 0, 0.16), 0 2px 1px 0 rgba(0, 0, 0, 0.24);
+      // left: unset;
+      // right: unset;
+      // margin-left: 50%;
+      // transform: translateX(-50%);
+      display: inline-block;
+      margin: 0 auto;
+    }
+  }
+}
+
+ion-tabs {
+  ion-tab-bar {
+    background: none;
+    -webkit-box-shadow: 0px 0px 4px 1px #666;
+    box-shadow: 0px 0px 4px 1px #666;
+    box-shadow: none;
+  }
+
+  ion-tab-button:nth-child(3) {
+    background: $primary-color;
+    width: 56px;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    margin-top: -56px;
+    color: $white;
+  }
+
+  ion-icon {
+    background-repeat: no-repeat;
+    background-position: center;
+    height: 20px;
+    width: 20px;
+    background-size: contain;
+  }
+  ion-tab-button {
+    ion-icon[ng-reflect-name="courses"] {
+      background-image: url(/assets/imgs/ic_courses1.png);
+    }
+    ion-icon[ng-reflect-name="resources"] {
+      background-image: url(/assets/imgs/ic_library.png);
+    }
+    ion-icon[ng-reflect-name="groups"] {
+      background-image: url(/assets/imgs/ic_chat.png);
+    }
+    ion-icon[ng-reflect-name="profile"] {
+      background-image: url(/assets/imgs/ic_profile1.png);
+    }
+    ion-icon[ng-reflect-name="qrscanner"] {
+      background-image: url(/assets/imgs/ic_qr_scanner.png);
+      background-size: 30px;
+      background-position: center center;
+      background-repeat: no-repeat;
+    }
+    ion-icon[ng-reflect-name="downloads"] {
+      background-image: url(/assets/imgs/ic_dowload.png);
+    }
+  }
+  ion-tab-button.tab-disabled {
+    pointer-events: all;
+    ion-icon[ng-reflect-name="courses"],
+    ion-icon[aria-label="courses"] {
+      background-image: url(/assets/imgs/ic_courses_disabled.png);
+    }
+    ion-icon[ng-reflect-name="resources"],
+    ion-icon[aria-label="resources"] {
+      background-image: url(/assets/imgs/ic_library_disabled.png);
+    }
+    ion-icon[ng-reflect-name="downloads"],
+    ion-icon[aria-label="downloads"] {
+      background-image: url(/assets/imgs/ic_download_disabled.png);
+    }
+  }
+  ion-tab-button.tab-selected {
+    ion-icon[ng-reflect-name="courses"] {
+      background-image: url(/assets/imgs/ic_courses_selected.png);
+    }
+    ion-icon[ng-reflect-name="resources"] {
+      background-image: url(/assets/imgs/ic_library_selected.png);
+    }
+    ion-icon[ng-reflect-name="groups"] {
+      background-image: url(/assets/imgs/ic_chat_blue.png);
+    }
+    ion-icon[ng-reflect-name="profile"] {
+      background-image: url(/assets/imgs/ic_profile_selected.png);
+    }
+    ion-icon[ng-reflect-name="qrscanner"] {
+      background-image: url(/assets/imgs/ic_qr_scanner.png);
+      background-size: 30px;
+      background-position: center center;
+      background-repeat: no-repeat;
+    }
+    ion-icon[ng-reflect-name="downloads"] {
+      background-image: url(/assets/imgs/ic_download_selected.png);
+    }
+  }
+  .tab-button[aria-selected="true"] {
+    color: $primary-color;
+  }
 }
