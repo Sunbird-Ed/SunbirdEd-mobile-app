@@ -4,7 +4,6 @@ import {
   PopoverController,
   ModalController,
 } from '@ionic/angular';
-import { OverflowMenuComponent } from './overflow-menu/overflow-menu.component';
 import { generateInteractTelemetry } from '@app/app/telemetryutil';
 import { ContentCard, ContentType, MenuOverflow, MimeType, ProfileConstants, RouterLinks } from '@app/app/app.constant';
 import { FormAndFrameworkUtilService } from '@app/services';
@@ -319,23 +318,6 @@ export class ProfilePage implements OnInit {
       }
     }
   }
-
-
-  /**
- * To show popover menu
- */
-  async showOverflowMenu(event) {
-    const popover = await this.popoverCtrl.create({
-      component: OverflowMenuComponent,
-      componentProps: {
-        list: MenuOverflow.MENU_LOGIN,
-        profile: this.profile
-      },
-      cssClass: 'box'
-    });
-    await popover.present();
-  }
-
 
   /**
  * To show more Items in skills list

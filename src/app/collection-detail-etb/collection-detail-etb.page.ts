@@ -270,8 +270,8 @@ export class CollectionDetailEtbPage implements OnInit {
   }
 
   /**
-	 * Angular life cycle hooks
-	 */
+	  * Angular life cycle hooks
+	  */
   ngOnInit() {
   }
 
@@ -1173,7 +1173,7 @@ export class CollectionDetailEtbPage implements OnInit {
       });
       await popover.present();
       const response = await popover.onDidDismiss();
-      if (response.data.canDownload) {
+      if (response && response.data) {
         this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
           'download-all-button-clicked',
           Environment.HOME,

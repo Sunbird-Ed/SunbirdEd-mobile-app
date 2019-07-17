@@ -1,3 +1,5 @@
+@import "src/global.scss";
+:host {
 .sb-card-active{
     // background: $light-blue-bg !important;
 }
@@ -27,4 +29,5 @@
         left: 0;
         right: 0;
     }
+ }
 }
