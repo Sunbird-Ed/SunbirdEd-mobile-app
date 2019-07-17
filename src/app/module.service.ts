@@ -25,8 +25,8 @@ const COURSE_TAB_DISABLED = {
 const SCANNER_TAB = {
     root: '',
     // icon: 'qrscanner',
-    icon: './assets/imgs/QR code@1.5x.svg',
-    // label: 'LIBRARY_BNAV',
+    icon: './assets/imgs/qr_code@1.5x.svg',
+    label: '',
     index: 3,
     tabsHideOnSubPages: true
 };
