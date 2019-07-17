@@ -1,11 +1,13 @@
-import {Injectable} from '@angular/core';
-import {Observable} from 'rxjs-compat';
-import {AndroidPermission, AndroidPermissionsStatus} from '../android-permissions/android-permission';
+import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs-compat';
+import { AndroidPermission, AndroidPermissionsStatus } from '../android-permissions/android-permission';
+import { Diagnostic } from '@ionic-native/diagnostic/ngx';
 
 declare const cordova;
 
 @Injectable()
 export class AndroidPermissionsService {
+  constructor(private diagnostic: Diagnostic) { }
   checkPermissions(permissions: AndroidPermission[]): Observable<{ [key: string]: AndroidPermissionsStatus }> {
     return Observable.defer(async () => {
       const requestPromises = permissions.map((permission) => {
@@ -77,7 +79,7 @@ export class AndroidPermissionsService {
             resolve(false);
         }
       }, (e) => {
-          reject(e);
+        reject(e);
       }, androidPermission.split('.')[2]);
     });
   }

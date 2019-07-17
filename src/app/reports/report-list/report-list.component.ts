@@ -1,7 +1,7 @@
 import { UserReportComponent } from './../user-report/user-report.component';
 import { GroupReportListComponent } from './../group-report-list/group-report-list.component';
 import { Component, OnInit, Inject, NgZone } from '@angular/core';
-import { LoadingController, NavController, NavParams } from '@ionic/angular';
+import { LoadingController } from '@ionic/angular';
 import { LearnerAssessmentSummary, ReportSummary, SummarizerService, SummaryRequest, TelemetryObject } from 'sunbird-sdk';
 import {
   TelemetryGeneratorService,
@@ -33,9 +33,9 @@ export class ReportListComponent implements OnInit {
   handle: string;
   assessment: {};
   reportSummary: ReportSummary;
+  navData: any;
 
   constructor(
-    private navParams: NavParams,
     private loading: LoadingController,
     @Inject('SUMMARIZER_SERVICE') public summarizerService: SummarizerService,
     public ngZone: NgZone,
@@ -45,7 +45,7 @@ export class ReportListComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router
   ) {
-
+    this.getNavData();
     const extrasState = this.router.getCurrentNavigation().extras.state;
     if (extrasState) {
       this.isFromUsers = extrasState.isFromUsers;
@@ -53,6 +53,13 @@ export class ReportListComponent implements OnInit {
       this.uids = extrasState.uids;
       this.handle = extrasState.handle;
       this.groupInfo = extrasState.group;
+    }
+  }
+
+  getNavData() {
+    const navigation = this.router.getCurrentNavigation();
+    if (navigation && navigation.extras && navigation.extras.state) {
+      this.navData = navigation.extras.state;
     }
   }
 
@@ -114,8 +121,8 @@ export class ReportListComponent implements OnInit {
       });
     } else
       if (this.isFromGroups) {
-        const uids = this.navParams.get('uids');
-        const users = this.navParams.get('users');
+        const uids = this.navData.uids;
+        const users = this.navData.users;
 
         this.router.navigate([RouterLinks.GROUP_REPORT], {
           state: {

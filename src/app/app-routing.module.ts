@@ -75,7 +75,12 @@ const routes: Routes = [
   {
     path: RouterLinks.TERMS_AND_CONDITIONS,
     loadChildren: './terms-and-conditions/terms-and-conditions.module#TermsAndConditionsPageModule'
-  }
+  },
+  {
+    path: `${RouterLinks.MENU_LANGUAGE_SETTING}/:isFromSettings`,
+    loadChildren: './language-settings/language-settings.module#LanguageSettingsModule'
+  },
+  { path: RouterLinks.ONBOARDING, loadChildren: './onboarding/onboarding.module#OnboardingPageModule' }
 ];
 
 @NgModule({

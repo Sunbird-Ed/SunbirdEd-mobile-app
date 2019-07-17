@@ -34,6 +34,7 @@ import { RatingAlertComponent } from './rating-alert/rating-alert.component';
 import { OverflowMenuComponent } from '../profile/overflow-menu/overflow-menu.component';
 import { ReportAlertComponent } from '../reports/report-alert/report-alert.component';
 import { ProfileAvatarComponent } from './profile-avatar/profile-avatar.component';
+import { NotificationItemComponent } from './notification-item/notification-item.component';
 
 
 @NgModule({
@@ -64,7 +65,8 @@ import { ProfileAvatarComponent } from './profile-avatar/profile-avatar.componen
     RatingAlertComponent,
     OverflowMenuComponent,
     ReportAlertComponent,
-    ProfileAvatarComponent
+    ProfileAvatarComponent,
+    NotificationItemComponent
   ],
   imports: [
     CommonModule,
@@ -114,7 +116,9 @@ import { ProfileAvatarComponent } from './profile-avatar/profile-avatar.componen
     EditContactDetailsPopupComponent,
     EditContactVerifyPopupComponent,
     RatingAlertComponent,
-    ProfileAvatarComponent
+    ProfileAvatarComponent,
+    NotificationItemComponent,
+    TranslateModule
   ],
   providers: [FileSizePipe, Keyboard]
 })
