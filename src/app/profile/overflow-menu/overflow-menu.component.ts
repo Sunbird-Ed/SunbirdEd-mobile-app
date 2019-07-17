@@ -15,6 +15,7 @@ import { Component, ViewChild, OnInit } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { ActivatedRoute, Router, NavigationExtras } from '@angular/router';
 import { RouterLinks } from '../../app.constant';
+import { NavParams, PopoverController } from '@ionic/angular';
 // import { ReportsPage } from '../../reports/reports';
 
 @Component({
@@ -35,85 +36,25 @@ export class OverflowMenuComponent implements OnInit {
     private container: ContainerService,
     private commonUtilService: CommonUtilService,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private navParams: NavParams,
+    private popoverCtrl: PopoverController
   ) {
-    if (this.router.getCurrentNavigation().extras.state) {
-      this.items = this.router.getCurrentNavigation().extras.state.list;
-      this.profile = this.router.getCurrentNavigation().extras.state.profile || {};
-    }
-
+    this.items = this.navParams.get('list');
+    this.profile = this.navParams.get('profile') || {};
   }
+
 
   ngOnInit() { }
 
   showToast() {
-    this.items = this.router.getCurrentNavigation().extras.state.list || [];
+    this.items = this.navParams.get('list') || [];
 
   }
 
-  close(event, i) {
-    // Migration todo
-    /* this.viewCtrl.dismiss(JSON.stringify({
-      'content': event.target.innerText,
-      'index': i
-    })); */
-    switch (i) {
-      case 'USERS_AND_GROUPS':
-        this.telemetryGeneratorService.generateInteractTelemetry(
-          InteractType.TOUCH,
-          InteractSubtype.USER_GROUP_CLICKED,
-          Environment.USER,
-          PageId.PROFILE
-        );
-        // this.app.getActiveNav().push(UserAndGroupsPage, { profile: this.profile });
-
-        const navigationExtras: NavigationExtras = { state: { profile: this.profile } };
-        this.router.navigate([RouterLinks.USER_AND_GROUPS], navigationExtras);
-        break;
-
-      case 'REPORTS':
-        this.telemetryGeneratorService.generateInteractTelemetry(
-          InteractType.TOUCH,
-          InteractSubtype.REPORTS_CLICKED,
-          Environment.USER,
-          PageId.PROFILE
-        );
-        // this.app.getActiveNav().push(ReportsPage, { profile: this.profile });
-        this.router.navigate([RouterLinks.REPORTS], {
-          state: {
-            profile: this.profile
-          }
-        });
-        break;
-
-      case 'SETTINGS': {
-        this.telemetryGeneratorService.generateInteractTelemetry(
-          InteractType.TOUCH,
-          InteractSubtype.SETTINGS_CLICKED,
-          Environment.USER,
-          PageId.PROFILE,
-          null,
-          undefined,
-          undefined
-        );
-        // this.app.getActiveNav().push(SettingsPage);
-
-        const navigationExtras: NavigationExtras = {
-          state: {
-            profile: this.profile
-          }
-        }
-
-        this.router.navigate([RouterLinks.USER_AND_GROUPS], navigationExtras);
-        break;
-      }
-      case 'LOGOUT':
-        if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
-          this.commonUtilService.showToast('NEED_INTERNET_TO_CHANGE');
-        } else {
-          this.logoutHandlerService.onLogout();
-        }
-        break;
-    }
+  open(event) {
+    this.popoverCtrl.dismiss({
+      content: event.target.innerText,
+    });
   }
 }

@@ -24,7 +24,6 @@ import {
   ProfileType,
   SharedPreferences
 } from 'sunbird-sdk';
-import { OverflowMenuComponent } from '../overflow-menu/overflow-menu.component';
 import { ActivatedRoute, Router, NavigationExtras } from '@angular/router';
 
 @Component({
@@ -157,21 +156,6 @@ export class GuestProfilePage implements OnInit {
     this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.GUEST_EDIT}`], navigationExtras);
   }
 
-
-  /**
- * To show popover menu
- * @param {object} event
- */
-  async showOverflowMenu(event) {
-    const overflow = await this.popoverCtrl.create({
-      component: OverflowMenuComponent,
-      componentProps: {
-        list: MenuOverflow.MENU_GUEST
-      },
-      cssClass: 'box'
-    })
-    await overflow.present();
-  }
 
   getSyllabusDetails() {
     let selectedFrameworkId = '';

@@ -6,7 +6,7 @@ import GraphemeSplitter from 'grapheme-splitter';
   templateUrl: './profile-avatar.component.html',
   styleUrls: ['./profile-avatar.component.scss'],
 })
-export class ProfileAvatarComponent implements OnInit {
+export class ProfileAvatarComponent implements OnInit , OnChanges {
   @Input() username: string;
   bgColor: string;
   color: string;

@@ -13,6 +13,8 @@ import { NoDownloadsComponent } from './no-downloads/no-downloads.component';
 import { DownloadsTabComponent } from './downloads-tab/downloads-tab.component';
 import { DownloadsHeaderComponent } from './downloads-tab/downloads-header/downloads-header.component';
 import { RouterLinks } from '../app.constant';
+import { ComponentsModule } from '../components/components.module';
+import { OverflowMenuComponent } from '../profile/overflow-menu/overflow-menu.component';
 
 
 
@@ -44,8 +46,10 @@ const routes: Routes = [
     TranslateModule.forChild(),
     PipesModule,
     DirectivesModule,
+    ComponentsModule
   ],
   declarations: [DownloadManagerPage,
-    NoDownloadsComponent , DownloadsTabComponent , DownloadsHeaderComponent ]
+    NoDownloadsComponent , DownloadsTabComponent , DownloadsHeaderComponent ],
+  entryComponents: [OverflowMenuComponent]
 })
 export class DownloadManagerPageModule {}

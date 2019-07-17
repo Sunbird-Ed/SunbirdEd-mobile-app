@@ -534,18 +534,15 @@ export class CoursesPage implements OnInit, AfterViewInit {
       InteractSubtype.SEARCH_BUTTON_CLICKED,
       Environment.HOME,
       PageId.COURSES);
-    // migration-TODO
-    //   const contentTypes = await this.formAndFrameworkUtilService.getSupportedContentFilterConfig(
-    //     ContentFilterConfig.NAME_COURSE);
-    //   // migration-TODO
-    //   // this.navCtrl.push(SearchPage, {
-    //   //   contentType: contentTypes,
-    //   //   source: PageId.COURSES,
-    //   //   enrolledCourses: this.enrolledCourses,
-    //   //   guestUser: this.guestUser,
-    //   //   userId: this.userId
-    //   // });
-    this.router.navigateByUrl(`/${RouterLinks.SEARCH}`);
+    this.router.navigate([RouterLinks.SEARCH] , {
+      state : {
+        contentType: ContentType.FOR_COURSE_TAB,
+        source: PageId.COURSES,
+        enrolledCourses: this.enrolledCourses,
+        guestUser: this.guestUser,
+        userId: this.userId
+      }
+    });
   }
 
   showFilter() {

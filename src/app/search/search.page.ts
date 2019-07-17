@@ -1,6 +1,6 @@
 import { BatchConstants, RouterLinks } from './../../app/app.constant';
 import { Component, Inject, NgZone, OnDestroy, ViewChild } from '@angular/core';
-import { Events, NavController, NavParams, Platform, PopoverController } from '@ionic/angular';
+import { Events, NavController, NavParams,  Platform, PopoverController } from '@ionic/angular';
 // import { Content as ContentView } from 'ionic-angular';
 import {
   CachedItemRequestSourceFrom, Content, ContentDetailRequest, ContentEventType, ContentImport, ContentImportRequest,
@@ -127,6 +127,16 @@ export class SearchPage implements OnDestroy {
     private location: Location,
     private router: Router
   ) {
+
+    console.log('extranavigation' , this.router.getCurrentNavigation().extras.state.content);
+    this.dialCode = this.router.getCurrentNavigation().extras.state.dialCode;
+    this.contentType = this.router.getCurrentNavigation().extras.state.contentType;
+    this.corRelationList = this.router.getCurrentNavigation().extras.state.corRelation;
+    this.source = this.router.getCurrentNavigation().extras.state.source;
+    this.enrolledCourses = this.router.getCurrentNavigation().extras.state.enrolledCourses;
+    this.guestUser = this.router.getCurrentNavigation().extras.state.guestUser;
+    this.userId = this.router.getCurrentNavigation().extras.state.userId;
+    this.shouldGenerateEndTelemetry = this.router.getCurrentNavigation().extras.state.shouldGenerateEndTelemetry;
 
     this.checkUserSession();
 
