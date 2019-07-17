@@ -18,7 +18,12 @@
 @import "./assets/styles/fonts";
 
 
-
+html,
+body {
+  height: 100%;
+  font-size:$font-size-base;
+  @extend .NotoSans;
+}
 
 h6 {
   @extend .NotoSans-bold;
@@ -634,6 +639,7 @@ padding-top: 12px !important;
 .need-header-space {
   ion-content{
     margin-top: 58px;
+    --offset-top: -58px !important;
   }
 }
 

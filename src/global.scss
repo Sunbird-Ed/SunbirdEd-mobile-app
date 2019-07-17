@@ -5,7 +5,7 @@
 @import '~@ionic/angular/css/structure.css';
 @import '~@ionic/angular/css/typography.css';
 @import '~@ionic/angular/css/display.css';
-@import '~@ionic/angular/css/padding.css';
+// @import '~@ionic/angular/css/padding.css';
 @import '~@ionic/angular/css/float-elements.css';
 @import '~@ionic/angular/css/text-alignment.css';
 @import '~@ionic/angular/css/text-transformation.css';
@@ -13,11 +13,49 @@
 // @import '~@ionic/core/dist/collection/themes/ionic.globals.scss';
 //Dependency Styles for Mobile
 @mixin margin($top, $end: $top, $bottom: $top, $start: $end) {
+  [dir=rtl] &{
+    margin: $top $start $bottom $end
+  }
+  
+  [dir=ltr] &, &{
+    margin: $top $end $bottom $start
+  }
    // @include property(margin, $top, $end, $bottom, $start);
 }
 
+// @mixin padding($top, $end: $top, $bottom: $top, $start: $end) {
+//   [dir=rtl] {
+//     padding: $top, $start, $bottom, $end
+//   }
+//   [dir=ltr]{
+//     padding: $top, $end, $bottom, $start
+//   }
+//     //@include property(padding, $top, $end, $bottom, $start);
+// }
+// [dir=rtl]{
+//   --app-direction : left
+// }
+
+// [dir=lrt]{
+//   --app-direction : left
+// }
+
 @mixin padding($top, $end: $top, $bottom: $top, $start: $end) {
-    //@include property(padding, $top, $end, $bottom, $start);
+  // @if var(--app-direction) == right{
+  //   padding: $top $start $bottom $end
+  // }
+  // @else {
+  //   padding: $top $end $bottom $start
+  // }
+
+  [dir=rtl] &{
+    padding: $top $start $bottom $end
+  }
+  
+  [dir=ltr] &, &{
+    padding: $top $end $bottom $start
+  }
+
 }
 
 @mixin rtl() {
@@ -47,7 +85,10 @@
     //   @content;
     // }
   }
+
+  
 @import './assets/styles/styles.scss';
 //Specific Styles for Mobile
 @import 'app.scss';
+
 

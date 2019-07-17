@@ -1,6 +1,6 @@
 @import 'src/global.scss';
 
-:host {
+// :host {
     ion-spinner {
         // migration-TODO
         // color: $primary-color;
@@ -32,9 +32,9 @@
         margin: 40px; 
         padding-top: 30px;
       } 
-      .scrollable-container{
-       margin-top:112px;
-      }
+      // .scrollable-container{
+      //  margin-top:112px;
+      // }
       .fixed-container{
         width: 100%;
       }
@@ -60,5 +60,5 @@
       #couchMark {
         position: fixed;
       }
-    }
+    // }
     

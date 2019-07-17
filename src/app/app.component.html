@@ -4,7 +4,7 @@
     (sideMenuItemEvent)="menuItemAction($event)"></app-application-header>
 
   <ion-split-pane contentId="mainContent">
-    <ion-router-outlet id="mainContent" main></ion-router-outlet>
+    <ion-router-outlet id="mainContent" main [ngClass]="{'need-header-space':headerConfig?.showHeader, '':!headerConfig?.showHeader}"></ion-router-outlet>
   </ion-split-pane>
 
 </ion-app>
