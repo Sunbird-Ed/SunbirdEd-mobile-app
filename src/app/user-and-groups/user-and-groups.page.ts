@@ -1,11 +1,7 @@
 import { RouterLinks } from './../app.constant';
-// import { GroupDetailsPage } from './group-details/group-details';
-import { TranslateService } from '@ngx-translate/core';
-import { Component, Inject, NgZone, ViewChild, OnInit } from '@angular/core';
-// import { AlertController, App, Content, Events, IonicApp, IonicPage, LoadingController, NavController, NavParams, Platform, PopoverController } from 'ionic-angular';
+import { Component, Inject, NgZone, OnInit } from '@angular/core';
 import { Platform, LoadingController, PopoverController, Events } from '@ionic/angular';
 import { Location } from '@angular/common';
-//import { PopoverPage } from './popover/popover';
 import {
   AuthService,
   GetAllProfileRequest,
@@ -17,14 +13,10 @@ import {
   SharedPreferences,
   TelemetryObject
 } from 'sunbird-sdk';
-// import { GuestEditProfilePage } from '../profile/guest-edit.profile/guest-edit.profile';
-// import { ShareUserAndGroupPage } from './share-user-and-groups/share-user-and-groups';
 import { AppGlobalService, CommonUtilService } from '../../services';
-// import { GUEST_STUDENT_SWITCH_TABS, GUEST_STUDENT_TABS, GUEST_TEACHER_SWITCH_TABS, GUEST_TEACHER_TABS, initTabs } from '../app.module';
 import { TelemetryGeneratorService } from '../../services/telemetry-generator.service';
 import { Map } from '../telemetryutil';
 import { PreferenceKey } from '../app.constant';
-// import { CreateGroupPage } from './create-group/create-group';
 import {
   Environment,
   ImpressionType,
@@ -33,14 +25,12 @@ import {
   ObjectType,
   PageId,
 } from '../../services/telemetry-constants';
-// import { TabsPage } from '../tabs/tabs';
 import { AppHeaderService, ContainerService } from '../../services';
 import { Router, ActivatedRoute, NavigationExtras } from '@angular/router';
 import { PopoverOptions } from '@ionic/core';
 import { EditDeletePopoverComponent } from './edit-delete-popover/edit-delete-popover.component';
 import { SbGenericPopoverComponent } from '../components/popups/sb-generic-popover/sb-generic-popover.component';
 import { initTabs, GUEST_STUDENT_TABS, GUEST_STUDENT_SWITCH_TABS, GUEST_TEACHER_TABS, GUEST_TEACHER_SWITCH_TABS } from '../module.service';
-// import { SbGenericPopoverComponent } from '@app/component/popups/sb-generic-popup/sb-generic-popover';
 
 
 
@@ -126,8 +116,7 @@ export class UserAndGroupsPage implements OnInit {
 
       this.platform.backButton.subscribeWithPriority(11, () => {
         // Migration TODO
-        //this.dismissPopup();
-        this.platform.backButton.unsubscribe();
+        this.dismissPopup();
       });
     });
 
@@ -146,6 +135,17 @@ export class UserAndGroupsPage implements OnInit {
         });
       }
     }, () => { });
+  }
+
+  dismissPopup() {
+    /* Migration TODO
+    const activePortal = this.ionicApp._modalPortal.getActive() || this.ionicApp._overlayPortal.getActive();
+
+    if (activePortal) {
+      activePortal.dismiss();
+    } else {
+      this.navCtrl.pop();
+    } */
   }
 
   async presentPopover(myEvent, index, isUser) {

@@ -10,11 +10,6 @@ import { Environment, ImpressionType, InteractSubtype, InteractType, PageId } fr
 import { SocialSharing } from '@ionic-native/social-sharing/ngx';
 import { Router, NavigationExtras } from '@angular/router';
 
-// Migration-UNUSED
-// declare const cordova;
-// const KEY_SUNBIRD_CONFIG_FILE_PATH = 'sunbird_config_file_path';
-// const SUBJECT_NAME = 'support request';
-
 @Component({
   selector: 'app-settings',
   templateUrl: './settings.page.html',
@@ -31,10 +26,6 @@ export class SettingsPage {
   appName: any;
 
   constructor(
-    // Migration-UNUSED
-    // @Inject('PROFILE_SERVICE') private profileService: ProfileService,
-    // @Inject('CONTENT_SERVICE') private contentService: ContentService,
-    // @Inject('DEVICE_INFO') private deviceInfo: DeviceInfo,
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
     private appVersion: AppVersion,
     private socialSharing: SocialSharing,

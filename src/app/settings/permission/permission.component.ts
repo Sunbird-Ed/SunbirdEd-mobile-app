@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { PageId, Environment, InteractType, InteractSubtype } from '../../../services/telemetry-constants';
 import { Observable } from 'rxjs';
-import { AppVersion } from '@ionic-native/app-version';
 import { Events } from '@ionic/angular';
 import { Router, NavigationExtras } from '@angular/router';
 import { AndroidPermission, AndroidPermissionsStatus, PermissionAskedEnum } from '@app/services/android-permissions/android-permission';
@@ -15,6 +14,7 @@ import {
 } from '@app/services';
 import { Location } from '@angular/common';
 import { RouterLinks } from '@app/app/app.constant';
+import { AppVersion } from '@ionic-native/app-version/ngx';
 
 declare const cordova;
 
@@ -70,11 +70,10 @@ export class PermissionComponent {
     private event: Events,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private location: Location,
+    private appVersion: AppVersion,
     private router: Router) {
-    /* migration-TODO
     this.appVersion.getAppName()
       .then((appName: any) => this.appName = appName);
-    */
     this.getNavParams();
   }
 
@@ -221,9 +220,6 @@ export class PermissionComponent {
       Environment.ONBOARDING,
       PageId.PERMISSION
     );
-    /* migration-TODO
-    this.navCtrl.pop();
-    */
     this.location.back();
     cordova.plugins.diagnostic.switchToSettings('application_details', () => {
       console.log('opened settings');
