@@ -27,10 +27,11 @@ import {
   ContainerService,
   AppHeaderService
 } from 'services';
-import { Platform, Events, LoadingController } from '@ionic/angular';
+import { Platform, Events, LoadingController, NavController } from '@ionic/angular';
 import { ImpressionType, PageId, Environment, InteractSubtype, InteractType } from '../../services/telemetry-constants';
 import { Router } from '@angular/router';
 import { AppVersion } from "@ionic-native/app-version/ngx";
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-profile-settings',
@@ -40,7 +41,6 @@ import { AppVersion } from "@ionic-native/app-version/ngx";
 export class ProfileSettingsPage {
 
   public pageId = 'ProfileSettingsPage';
-
   @ViewChild('boardSelect') boardSelect: any;
   @ViewChild('mediumSelect') mediumSelect: any;
   @ViewChild('gradeSelect') gradeSelect: any;
@@ -60,7 +60,7 @@ export class ProfileSettingsPage {
   frameworkId = '';
   btnColor = '#8FC4FF';
   isEditData = true;
-  unregisterBackButton: any;
+  unregisterBackButton: Subscription;
   selectedLanguage = 'en';
   profileForTelemetry: any = {};
   hideBackButton = true;
@@ -159,7 +159,9 @@ export class ProfileSettingsPage {
 
   ionViewWillLeave() {
     this.headerObservable.unsubscribe();
-    this.unregisterBackButton();
+    if (this.unregisterBackButton) {
+      this.unregisterBackButton.unsubscribe();
+    }
   }
 
   /**
@@ -579,23 +581,18 @@ export class ProfileSettingsPage {
   }
 
   handleBackButton() {
-    /* migration-TODO
-     this.unregisterBackButton = this.platform.registerBackButtonAction(() => {
-      const navObj = this.app.getActiveNavs()[0];
+    this.unregisterBackButton = this.platform.backButton.subscribeWithPriority(11, () => {
+      // migration-TODO
+      // const navObj = this.app.getActiveNavs()[0];
 
-      if (navObj.canGoBack()) {
-        this.telemetryGeneratorService.generateBackClickedTelemetry(
-          PageId.ONBOARDING_PROFILE_PREFERENCES, Environment.ONBOARDING, false);
-        this.dismissPopup();
-      } else {
-        this.commonUtilService.showExitPopUp(PageId.ONBOARDING_PROFILE_PREFERENCES, Environment.ONBOARDING, false);
-      }
-      this.unregisterBackButton();
-    }, 11); */
-
-    // this.unregisterBackButton = this.platform.backButton.subscribeWithPriority(11, () => {
-
-    // });
+      // if (navObj.canGoBack()) {
+      //   this.telemetryGeneratorService.generateBackClickedTelemetry(
+      //     PageId.ONBOARDING_PROFILE_PREFERENCES, Environment.ONBOARDING, false);
+      //   this.dismissPopup();
+      // } else {
+      //   this.commonUtilService.showExitPopUp(PageId.ONBOARDING_PROFILE_PREFERENCES, Environment.ONBOARDING, false);
+      // }
+    });
   }
 
   handleHeaderEvents($event) {

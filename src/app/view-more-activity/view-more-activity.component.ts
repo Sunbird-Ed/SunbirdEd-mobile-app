@@ -111,7 +111,7 @@ export class ViewMoreActivityComponent implements OnInit {
    * Flag to switch between view-more-card in view
    */
   localContentsCard = false;
-  backButtonFunc = undefined;
+  backButtonFunc: Subscription;
 
   /**
    * Header title
@@ -184,7 +184,8 @@ export class ViewMoreActivityComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private location: Location,
-    private platform: Platform
+    private platform: Platform,
+    private zone: NgZone
   ) {
     this.route.queryParams.subscribe(params => {
       if (this.router.getCurrentNavigation().extras.state) {
@@ -227,10 +228,12 @@ export class ViewMoreActivityComponent implements OnInit {
    * Ionic default life cycle hook
    */
   ionViewWillEnter(): void {
-    this.headerServie.showHeaderWithBackButton();
-    // migration-TODO
-    // this.tabBarElement.style.display = 'none';
-    this.handleBackButton();
+    this.zone.run(() => {
+      this.headerServie.showHeaderWithBackButton();
+      // migration-TODO
+      // this.tabBarElement.style.display = 'none';
+      this.handleBackButton();
+    });
   }
 
   async subscribeUtilityEvents() {

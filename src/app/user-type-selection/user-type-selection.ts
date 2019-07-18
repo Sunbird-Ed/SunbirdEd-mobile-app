@@ -98,6 +98,7 @@ export class UserTypeSelectionPage {
     }
     this.backButtonFunc = this.platform.backButton.subscribe(() => {
       this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.USER_TYPE_SELECTION, Environment.HOME, false);
+      this.location.back();
       this.handleBackButton();
       this.backButtonFunc.unsubscribe();
     });
@@ -115,7 +116,6 @@ export class UserTypeSelectionPage {
 
   handleBackButton() {
     if (this.isChangeRoleRequest) {
-      // this.navCtrl.pop();
       this.location.back();
     } else {
       this.router.navigate(['settings/language-setting', 'false']);
