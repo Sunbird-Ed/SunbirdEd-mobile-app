@@ -1,26 +1,26 @@
-
 // http://ionicframework.com/docs/theming/
-@import '~@ionic/angular/css/core.css';
-@import '~@ionic/angular/css/normalize.css';
-@import '~@ionic/angular/css/structure.css';
-@import '~@ionic/angular/css/typography.css';
-@import '~@ionic/angular/css/display.css';
+@import "~@ionic/angular/css/core.css";
+@import "~@ionic/angular/css/normalize.css";
+@import "~@ionic/angular/css/structure.css";
+@import "~@ionic/angular/css/typography.css";
+@import "~@ionic/angular/css/display.css";
 // @import '~@ionic/angular/css/padding.css';
-@import '~@ionic/angular/css/float-elements.css';
-@import '~@ionic/angular/css/text-alignment.css';
-@import '~@ionic/angular/css/text-transformation.css';
-@import '~@ionic/angular/css/flex-utils.css';
+@import "~@ionic/angular/css/float-elements.css";
+@import "~@ionic/angular/css/text-alignment.css";
+@import "~@ionic/angular/css/text-transformation.css";
+@import "~@ionic/angular/css/flex-utils.css";
 // @import '~@ionic/core/dist/collection/themes/ionic.globals.scss';
 //Dependency Styles for Mobile
 @mixin margin($top, $end: $top, $bottom: $top, $start: $end) {
-  [dir=rtl] &{
-    margin: $top $start $bottom $end
+  [dir="rtl"] & {
+    margin: $top $start $bottom $end;
   }
-  
-  [dir=ltr] &, &{
-    margin: $top $end $bottom $start
+
+  [dir="ltr"] &,
+  & {
+    margin: $top $end $bottom $start;
   }
-   // @include property(margin, $top, $end, $bottom, $start);
+  // @include property(margin, $top, $end, $bottom, $start);
 }
 
 // @mixin padding($top, $end: $top, $bottom: $top, $start: $end) {
@@ -48,47 +48,62 @@
   //   padding: $top $end $bottom $start
   // }
 
-  [dir=rtl] &{
-    padding: $top $start $bottom $end
-  }
-  
-  [dir=ltr] &, &{
-    padding: $top $end $bottom $start
+  [dir="rtl"] & {
+    padding: $top $start $bottom $end;
   }
 
+  [dir="ltr"] &,
+  & {
+    padding: $top $end $bottom $start;
+  }
 }
 
 @mixin rtl() {
-    @content;
-    // @if $app-direction == multi {
-    //   $root: #{&};
-    //   @at-root [dir="rtl"] {
-    //     #{$root} {
-    //       @content;
-    //     }
-    //   }
-    // } @else if $app-direction == rtl {
-    //   @content;
-    // }
-  }
-  
-  @mixin ltr() {
-      @content;
-    // @if $app-direction == multi {
-    //   $root: #{&};
-    //   @at-root [dir="ltr"] {
-    //     #{$root} {
-    //       @content;
-    //     }
-    //   }
-    // } @else if $app-direction == ltr {
-    //   @content;
-    // }
-  }
+  @content;
+  // @if $app-direction == multi {
+  //   $root: #{&};
+  //   @at-root [dir="rtl"] {
+  //     #{$root} {
+  //       @content;
+  //     }
+  //   }
+  // } @else if $app-direction == rtl {
+  //   @content;
+  // }
+}
 
-  
-@import './assets/styles/styles.scss';
+@mixin ltr() {
+  @content;
+  // @if $app-direction == multi {
+  //   $root: #{&};
+  //   @at-root [dir="ltr"] {
+  //     #{$root} {
+  //       @content;
+  //     }
+  //   }
+  // } @else if $app-direction == ltr {
+  //   @content;
+  // }
+}
+
+@import "./assets/styles/styles.scss";
 //Specific Styles for Mobile
-@import 'app.scss';
+@import "app.scss";
 
+/* For edit contact-details popup */
+.popover-alert {
+  --width: 100%;
+}
 
+.popover-alert .popover-content.sc-ion-popover-md {
+  top: unset !important;
+  bottom: 0;
+  left: 0 !important;
+  transform-origin: left top;
+  transform: scale(1);
+}
+
+.popover-alert ion-backdrop {
+  background-color: black;
+  opacity: 0.4 !important;
+}

@@ -10,15 +10,13 @@
     height: 1.4em;
   }
   .close-button.button-outline-md .button-inner {
-    // Migration Todo
-    // @include padding(null, 14px, null, null);
+    @include padding(null, 14px, null, null);
   }
   .close-button.button-outline-md [icon-only] ion-icon {
     font-size: 1.4em;
   }
   .padding-left-5 {
-    // Migration Todo
-    // @include padding(null, null, null, 5% !important);
+    @include padding(null, null, null, 5% !important);
   }
   .margin-top-5 {
     margin-top: 15px !important;
@@ -31,15 +29,14 @@
     box-shadow: unset;
     position: fixed;
     left: 0 !important;
-    // Migration Todo
-    /*     @include ltr() {
+    @include ltr() {
       left: 0 !important;
     }
 
     @include rtl() {
       right: 0 !important;
     }
- */
+
     top: unset !important;
     bottom: 0;
     transform-origin: bottom -100% !important;
