@@ -567,6 +567,22 @@ async openPopover(upgradeType: any) {
       }
   }
 
+    getPageIdForTelemetry() {
+        let pageId = PageId.LIBRARY;
+        if (this.currentPageId) {
+            if (this.currentPageId.toLowerCase() === 'library') {
+                pageId = PageId.LIBRARY;
+            } else if (this.currentPageId.toLowerCase() === 'courses') {
+                pageId = PageId.COURSES;
+            } else if (this.currentPageId.toLowerCase() === 'profile') {
+                pageId = PageId.PROFILE;
+            } else if (this.currentPageId.toLowerCase() === 'downloads') {
+                pageId = PageId.DOWNLOADS;
+            }
+        }
+        return pageId;
+    }
+
   setAverageTime(time) {
       this.averageTime = time;
   }

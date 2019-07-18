@@ -57,7 +57,7 @@ export class AssessmentDetailsComponent implements OnInit {
         };
         // this.navCtrl.push(UserReportPage, { 'report': reportSummaryRequest });
         const navigationExtras: NavigationExtras = { state: { report: reportSummaryRequest } };
-        this.router.navigate([`/${RouterLinks.REPORTS}/${RouterLinks.USER_REPORT}`]);
+        this.router.navigate([`/${RouterLinks.REPORTS}/${RouterLinks.USER_REPORT}`], navigationExtras);
 
       } else if (row.qid) {
         subType = InteractSubtype.QUESTION_CLICKED;

@@ -9,6 +9,7 @@ import { QrcoderesultPage } from './qrcoderesult.page';
 import { DirectivesModule } from '@app/directives/directives.module';
 import { PipesModule } from '@app/pipes/pipes.module';
 import { TranslateModule } from '@ngx-translate/core';
+import { ComponentsModule } from '../components/components.module';
 
 const routes: Routes = [
   {
@@ -23,9 +24,9 @@ const routes: Routes = [
     FormsModule,
     IonicModule,
     RouterModule.forChild(routes),
-    RouterModule.forChild(routes),
     TranslateModule.forChild(),
     PipesModule,
+    ComponentsModule,
     DirectivesModule
   ],
   declarations: [QrcoderesultPage]

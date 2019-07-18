@@ -3,7 +3,7 @@ import { Component, Inject, NgZone, OnDestroy, ViewChild } from '@angular/core';
 import { AlertController, Events, NavController, NavParams, Platform, PopoverController } from '@ionic/angular';
 import { ContentDetailsPage } from '../content-details/content-details.page';
 import { EnrolledCourseDetailsPage } from '../enrolled-course-details-page/enrolled-course-details-page';
-import { ContentType, MimeType } from '../../app/app.constant';
+import { ContentType, MimeType, RouterLinks } from '../../app/app.constant';
 import { CollectionDetailsPage } from '../collection-details/collection-details.page';
 import { TranslateService } from '@ngx-translate/core';
 import { AppGlobalService } from '../../services/app-global-service.service';
@@ -48,6 +48,7 @@ import { File } from '@ionic-native/file/ngx';
 import { AppHeaderService } from '../../services/app-header.service';
 import { CollectionDetailEtbPage } from '../collection-detail-etb/collection-detail-etb.page';
 import { Location } from '@angular/common';
+import { NavigationExtras, Router } from '@angular/router';
 declare const cordova;
 
 @Component({
@@ -114,6 +115,7 @@ export class QrcoderesultPage implements OnDestroy {
   isUpdateAvailable: boolean;
   eventSubscription: Subscription;
   headerObservable: any;
+  navData: any;
 
   constructor(
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
@@ -136,9 +138,18 @@ export class QrcoderesultPage implements OnDestroy {
     private canvasPlayerService: CanvasPlayerService,
     private location: Location,
     private file: File,
-    private headerService: AppHeaderService
+    private headerService: AppHeaderService,
+    private router: Router
   ) {
+    this.getNavData();
     this.defaultImg = 'assets/imgs/ic_launcher.png';
+  }
+
+  getNavData() {
+    const navigation = this.router.getCurrentNavigation();
+    if (navigation && navigation.extras && navigation.extras.state) {
+      this.navData = navigation.extras.state;
+    }
   }
 
   /**
@@ -146,15 +157,14 @@ export class QrcoderesultPage implements OnDestroy {
    */
   ionViewWillEnter(): void {
     this.headerService.hideHeader();
-    // migration-TODO
-    // this.content = this.navParams.get('content');
-    // this.corRelationList = this.navParams.get('corRelation');
-    // this.shouldGenerateEndTelemetry = this.navParams.get('shouldGenerateEndTelemetry');
-    // this.source = this.navParams.get('source');
-    // this.isSingleContent = this.navParams.get('isSingleContent');
+    this.content = this.navData.content;
+    this.corRelationList = this.navData.corRelation;
+    this.shouldGenerateEndTelemetry = this.navData.shouldGenerateEndTelemetry;
+    this.source = this.navData.source;
+    this.isSingleContent = this.navData.isSingleContent;
 
-    // // check for parent content
-    // this.parentContent = this.navParams.get('parentContent');
+    // check for parent content
+    this.parentContent = this.navData.parentContent;
     this.searchIdentifier = this.content.identifier;
 
     if (this.parentContent) {
@@ -175,10 +185,10 @@ export class QrcoderesultPage implements OnDestroy {
     });
   }
 
-  ionViewDidLoad() {
-    // this.telemetryGeneratorService.generateImpressionTelemetry(ImpressionType.VIEW, '',
-    //   PageId.DIAL_CODE_SCAN_RESULT,
-    //   !this.appGlobalService.isProfileSettingsCompleted ? Environment.ONBOARDING : this.appGlobalService.getPageIdForTelemetry());
+  ionViewDidEnter() {
+    this.telemetryGeneratorService.generateImpressionTelemetry(ImpressionType.VIEW, '',
+      PageId.DIAL_CODE_SCAN_RESULT,
+      !this.appGlobalService.isProfileSettingsCompleted ? Environment.ONBOARDING : this.appGlobalService.getPageIdForTelemetry());
     // // migration-TODO
     // this.navBar.backButtonClick = () => {
     //   this.handleBackButton(InteractSubtype.NAV_BACK_CLICKED);
@@ -194,7 +204,7 @@ export class QrcoderesultPage implements OnDestroy {
     this.headerObservable.unsubscribe();
     // Unregister the custom back button action for this page
     if (this.unregisterBackButton) {
-      this.unregisterBackButton();
+      this.unregisterBackButton.unsubscribe();
     }
     this.downloadProgress = 0;
     if (this.eventSubscription) {
@@ -215,23 +225,15 @@ export class QrcoderesultPage implements OnDestroy {
       !this.appGlobalService.isOnBoardingCompleted ? Environment.ONBOARDING : Environment.HOME,
       PageId.DIAL_CODE_SCAN_RESULT);
     if (this.source === PageId.LIBRARY || this.source === PageId.COURSES || !this.isSingleContent) {
-      // migration-TODO
-      // this.navCtrl.pop();
       this.location.back();
     } else if (this.isSingleContent && this.appGlobalService.isProfileSettingsCompleted) {
-      // migration-TODO
-      // this.navCtrl.setRoot(TabsPage, {
-      //   loginMode: 'guest'
-      // });
+      const navigationExtras: NavigationExtras = { state: { loginMode: 'guest' } };
+      this.router.navigate([`/${RouterLinks.TABS}`], navigationExtras);
     } else if (this.appGlobalService.isGuestUser && this.isSingleContent && !this.appGlobalService.isProfileSettingsCompleted) {
-      // migration-TODO
-      // this.navCtrl.setRoot(ProfileSettingsPage, {
-      //   isCreateNavigationStack: false,
-      //   hideBackButton: true
-      // });
+      const navigationExtras: NavigationExtras = { state: { isCreateNavigationStack: false, hideBackButton: true } };
+      this.router.navigate([`/${RouterLinks.PROFILE_SETTINGS}`], navigationExtras);
     } else {
-      // migration-TODO
-      // this.navCtrl.pop();
+
       this.location.back();
     }
   }
@@ -255,8 +257,6 @@ export class QrcoderesultPage implements OnDestroy {
             PageId.DIAL_LINKED_NO_CONTENT,
             Environment.HOME);
           this.commonUtilService.showContentComingSoonAlert(this.source);
-          // migration-TODO
-          // this.navCtrl.pop();
           this.location.back();
 
         }
@@ -267,8 +267,6 @@ export class QrcoderesultPage implements OnDestroy {
           this.showChildrenLoader = false;
         });
         this.commonUtilService.showContentComingSoonAlert(this.source);
-        // migration-TODO
-        // this.navCtrl.pop();
         this.location.back();
 
       });
@@ -331,8 +329,7 @@ export class QrcoderesultPage implements OnDestroy {
       undefined,
       this.corRelationList);
     this.openPlayer(content, request);
-    // Migration todo
-    /* this.telemetryGeneratorService.generateInteractTelemetry(
+    this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,
       content.isAvailableLocally ? InteractSubtype.PLAY_FROM_DEVICE : InteractSubtype.PLAY_ONLINE,
       !this.appGlobalService.isOnBoardingCompleted ? Environment.ONBOARDING : this.appGlobalService.getPageIdForTelemetry(),
@@ -340,7 +337,7 @@ export class QrcoderesultPage implements OnDestroy {
       telemetryObject,
       undefined,
       undefined,
-      this.corRelationList); */
+      this.corRelationList);
   }
 
   playOnline(content) {
@@ -761,16 +758,12 @@ export class QrcoderesultPage implements OnDestroy {
       .then(() => {
         this.zone.run(() => {
           this.showLoading = false;
-          // migration-TODO
-          // this.navCtrl.pop();
           this.location.back();
 
         });
       }).catch(() => {
         this.zone.run(() => {
           this.showLoading = false;
-          // migration-TODO
-          // this.navCtrl.pop();
           this.location.back();
 
         });
@@ -786,13 +779,11 @@ export class QrcoderesultPage implements OnDestroy {
     );
     if ((this.appGlobalService.isOnBoardingCompleted && this.appGlobalService.isProfileSettingsCompleted)
       || !this.appGlobalService.DISPLAY_ONBOARDING_CATEGORY_PAGE) {
-      // migration-TODO
-      // this.navCtrl.setRoot(TabsPage, {
-      //   loginMode: 'guest'
-      // });
+
+      const navigationExtras: NavigationExtras = { state: { loginMode: 'guest' } };
+      this.router.navigate([`/${RouterLinks.TABS}`], navigationExtras);
     } else {
-      // migration-TODO
-      // this.navCtrl.setRoot(ProfileSettingsPage);
+      this.router.navigate([`/${RouterLinks.PROFILE_SETTINGS}`]);
     }
   }
 
@@ -859,8 +850,8 @@ export class QrcoderesultPage implements OnDestroy {
           this.file.checkFile(`file://${data.metadata.basePath}/`, 'index.ecml').then((isAvailable) => {
             this.canvasPlayerService.xmlToJSon(`${data.metadata.basePath}/index.ecml`).then((json) => {
               data['data'] = json;
-              // migration-TODO
-              // this.navCtrl.push(PlayerPage, { config: data });
+              const navigationExtras: NavigationExtras = { state: { config: data } };
+              this.router.navigate([`/${RouterLinks.PLAYER}`], navigationExtras);
             }).catch((error) => {
               console.error('error1', error);
             });
@@ -868,20 +859,20 @@ export class QrcoderesultPage implements OnDestroy {
             console.error('err', err);
             this.canvasPlayerService.readJSON(`${data.metadata.basePath}/index.json`).then((json) => {
               data['data'] = json;
-              // migration-TODO
-              // this.navCtrl.push(PlayerPage, { config: data });
+              const navigationExtras: NavigationExtras = { state: { config: data } };
+              this.router.navigate([`/${RouterLinks.PLAYER}`], navigationExtras);
             }).catch((e) => {
               console.error('readJSON error', e);
             });
           });
         } else {
-          // migration-TODO
-          // this.navCtrl.push(PlayerPage, { config: data });
+          const navigationExtras: NavigationExtras = { state: { config: data } };
+          this.router.navigate([`/${RouterLinks.PLAYER}`], navigationExtras);
         }
 
       } else {
-        // migration-TODO
-        // this.navCtrl.push(PlayerPage, { config: data });
+        const navigationExtras: NavigationExtras = { state: { config: data } };
+        this.router.navigate([`/${RouterLinks.PLAYER}`], navigationExtras);
       }
     });
   }
@@ -890,5 +881,9 @@ export class QrcoderesultPage implements OnDestroy {
       case 'back': this.handleBackButton(InteractSubtype.NAV_BACK_CLICKED);
         break;
     }
+  }
+
+  goBack() {
+    this.location.back();
   }
 }
