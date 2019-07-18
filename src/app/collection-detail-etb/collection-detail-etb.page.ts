@@ -276,11 +276,12 @@ export class CollectionDetailEtbPage implements OnInit {
   }
 
   ionViewDidLoad() {
-    /*this.navBar.backButtonClick = () => {
-      this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.COLLECTION_DETAIL, Environment.HOME,
-        true, this.cardData.identifier, this.corRelationList);
-      this.handleBackButton();
-    };*/
+    // this.navBar.backButtonClick = () => {
+    //   this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.COLLECTION_DETAIL, Environment.HOME,
+    //     true, this.cardData.identifier, this.corRelationList);
+    //   this.handleBackButton();
+    // };
+    this.handleBackButton();
 
     this.registerDeviceBackButton();
   }
@@ -326,6 +327,8 @@ export class CollectionDetailEtbPage implements OnInit {
     this.ionContent.ionScroll.subscribe((event) => {
       this.scrollPosition = event.scrollTop;
     });
+    this.handleBackButton();
+
   }
 
   async markContent() {
@@ -409,20 +412,27 @@ export class CollectionDetailEtbPage implements OnInit {
       this.generateQRSessionEndEvent(this.source, this.cardData.identifier);
     }
 
-    // this.navCtrl.pop();
-    this.location.back();
-    this.backButtonFunc.unsubscribe();
-  }
-
-  registerDeviceBackButton() {
-    this.platform.backButton.subscribeWithPriority(10, () => {
+    this.backButtonFunc = this.platform.backButton.subscribe(() => {
       this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.COLLECTION_DETAIL,
         Environment.HOME,
         false,
         this.cardData.identifier,
         this.corRelationList);
-      this.platform.backButton.unsubscribe();
+      this.location.back();
     });
+    // this.backButtonFunc.unsubscribe();
+  }
+
+  registerDeviceBackButton() {
+    // migration-TODO
+    // this.platform.backButton.subscribeWithPriority(10, () => {
+    //   this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.COLLECTION_DETAIL,
+    //     Environment.HOME,
+    //     false,
+    //     this.cardData.identifier,
+    //     this.corRelationList);
+    //   this.platform.backButton.unsubscribe();
+    // });
   }
 
   getBaseURL() {

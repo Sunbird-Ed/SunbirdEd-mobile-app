@@ -185,7 +185,7 @@ export class CollectionDetailsPage {
    */
   public objRollup: Rollup;
   public didViewLoad: boolean;
-  public backButtonFunc = undefined;
+  public backButtonFunc: Subscription;
   public baseUrl = '';
   guestUser = false;
   profileType = '';
@@ -289,29 +289,18 @@ export class CollectionDetailsPage {
       this.didViewLoad = true;
       this.setContentDetails(this.identifier, true);
       this.subscribeSdkEvent();
-      this.registerDeviceBackButton();
+      this.handleBackButton();
     });
   }
-
   handleBackButton() {
-    this.didViewLoad = false;
-    this.generateEndEvent(this.objId, this.objType, this.objVer);
+    this.backButtonFunc = this.platform.backButton.subscribe(() => {
+      this.didViewLoad = false;
+      this.generateEndEvent(this.objId, this.objType, this.objVer);
 
-    if (this.shouldGenerateEndTelemetry) {
-      this.generateQRSessionEndEvent(this.source, this.cardData.identifier);
-    }
-    // migration-TODO
-    // this.navCtrl.pop();
-    this.location.back();
-
-    this.backButtonFunc.unsubscribe();
-  }
-
-  registerDeviceBackButton() {
-    this.backButtonFunc = this.platform.backButton.subscribeWithPriority(11, () => {
-      this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.COLLECTION_DETAIL, Environment.HOME,
-        false, this.cardData.identifier, this.corRelationList);
-      this.handleBackButton();
+      if (this.shouldGenerateEndTelemetry) {
+        this.generateQRSessionEndEvent(this.source, this.cardData.identifier);
+      }
+      this.location.back();
     });
   }
 

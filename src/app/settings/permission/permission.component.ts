@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { PageId, Environment, InteractType, InteractSubtype } from '../../../services/telemetry-constants';
-import { Observable } from 'rxjs';
-import { Events } from '@ionic/angular';
+import { Observable, Subscription } from 'rxjs';
+import { Events, Platform } from '@ionic/angular';
 import { Router, NavigationExtras } from '@angular/router';
 import { AndroidPermission, AndroidPermissionsStatus, PermissionAskedEnum } from '@app/services/android-permissions/android-permission';
 import {
@@ -60,6 +60,7 @@ export class PermissionComponent {
   showTabsPage = false;
   headerObservable: any;
   private navParams: any;
+  backButtonFunc: Subscription;
 
   constructor(
     public commonUtilService: CommonUtilService,
@@ -71,7 +72,9 @@ export class PermissionComponent {
     private telemetryGeneratorService: TelemetryGeneratorService,
     private location: Location,
     private appVersion: AppVersion,
-    private router: Router) {
+    private router: Router,
+    private platform: Platform
+    ) {
     this.appVersion.getAppName()
       .then((appName: any) => this.appName = appName);
     this.getNavParams();
@@ -106,12 +109,23 @@ export class PermissionComponent {
     this.headerObservable = this.headerService.headerEventEmitted$.subscribe(eventName => {
       this.handleHeaderEvents(eventName);
     });
+    this.handleBackButton();
+  }
+
+  handleBackButton() {
+    this.backButtonFunc = this.platform.backButton.subscribe(() => {
+      this.location.back();
+    });
   }
 
   ionViewDidLoad() {
     this.telemetryGeneratorService.generatePageViewTelemetry(PageId.PERMISSION,
       Environment.ONBOARDING,
       '');
+  }
+
+  ionViewWillLeave() {
+    this.backButtonFunc.unsubscribe();
   }
 
   grantAccess() {

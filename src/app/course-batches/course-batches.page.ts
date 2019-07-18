@@ -1,7 +1,7 @@
 import { TelemetryGeneratorService } from './../../services/telemetry-generator.service';
 import { Component, Inject, NgZone, OnInit } from '@angular/core';
 import { AuthService, Batch, CourseService, EnrollCourseRequest, OAuthSession } from 'sunbird-sdk';
-import { Events, NavController } from '@ionic/angular';
+import { Events, NavController, Platform } from '@ionic/angular';
 import { EventTopics } from '../../app/app.constant';
 import { CommonUtilService } from '../../services/common-util.service';
 import { InteractType, InteractSubtype, Environment, PageId } from '../../services/telemetry-constants';
@@ -9,6 +9,7 @@ import { AppHeaderService } from '../../services/app-header.service';
 import * as moment from 'moment';
 import { Location } from '@angular/common';
 import { Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-course-batches',
@@ -47,6 +48,7 @@ export class CourseBatchesPage implements OnInit {
    */
   public isGuestUser = false;
 
+  private backButtonFunc: Subscription;
   /**
    * Contains batches list
    */
@@ -83,7 +85,8 @@ export class CourseBatchesPage implements OnInit {
     private telemetryGeneratorService: TelemetryGeneratorService,
     private headerService: AppHeaderService,
     private location: Location,
-    private router: Router
+    private router: Router,
+    private platform: Platform
   ) {
     this.ongoingBatches = this.router.getCurrentNavigation().extras.state.ongoingBatches;
     this.upcommingBatches = this.router.getCurrentNavigation().extras.state.upcommingBatches;
@@ -99,14 +102,24 @@ export class CourseBatchesPage implements OnInit {
     this.headerConfig.showHeader = false;
     this.headerConfig.showBurgerMenu = false;
     this.headerService.updatePageConfig(this.headerConfig);
+    this.handleBackButton();
   }
 
+  private handleBackButton() {
+   this.backButtonFunc =  this.platform.backButton.subscribe(() => {
+      this.location.back();
+    });
+  }
+
+  ionViewWillLeave() {
+    this.backButtonFunc.unsubscribe();
+  }
   /**
    * Enroll logged-user into selected batch
    *
    * @param {any} item contains details of select batch
    */
-  enrollIntoBatch(item: Batch): void {
+  async enrollIntoBatch(item: Batch) {
     const enrollCourseRequest: EnrollCourseRequest = {
       batchId: item.id,
       courseId: item.courseId,
@@ -114,8 +127,8 @@ export class CourseBatchesPage implements OnInit {
       contentId: item.courseId,
       batchStatus: item.status
     };
-    const loader = this.commonUtilService.getLoader();
-    loader.present();
+    const loader = await this.commonUtilService.getLoader();
+    await loader.present();
     const reqvalues = new Map();
     reqvalues['enrollReq'] = enrollCourseRequest;
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
@@ -126,13 +139,13 @@ export class CourseBatchesPage implements OnInit {
 
     this.courseService.enrollCourse(enrollCourseRequest).toPromise()
       .then((data: boolean) => {
-        this.zone.run(() => {
+        this.zone.run(async () => {
           this.commonUtilService.showToast(this.commonUtilService.translateMessage('COURSE_ENROLLED'));
           this.events.publish(EventTopics.ENROL_COURSE_SUCCESS, {
             batchId: item.id,
             courseId: item.courseId
           });
-          loader.dismiss();
+          await loader.dismiss();
           // this.navCtrl.pop();
           this.location.back();
 
