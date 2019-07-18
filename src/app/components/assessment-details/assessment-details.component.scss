@@ -1,0 +1,118 @@
+@import '../../../global.scss';
+
+/* Migration-TODO
+@import '../../../assets/styles/index.scss';
+@import '../../../assets/styles/material.scss';
+@import '../../../assets/styles/bootstrap.scss';
+@import '../../../assets/styles/icon.scss';
+*/
+.ngx-datatable.material .datatable-body .datatable-body-row .datatable-body-cell-column1 {
+    color: #007aff;
+    @extend .font-weight-bold;
+}
+
+.ngx-datatable.material .datatable-body .datatable-body-row .datatable-body-cell-column2 {
+    color: #9e9e9e;
+}
+
+.ngx-datatable.material .datatable-body .datatable-body-row .datatable-body-cell-column3 {
+    color: #70706d;
+}
+
+.ngx-datatable.material .datatable-body .datatable-body-row .datatable-body-cell-column1,
+.ngx-datatable.material .datatable-body .datatable-body-row .datatable-body-cell-column2,
+.ngx-datatable.material .datatable-body .datatable-body-row .datatable-body-cell-column3,
+.ngx-datatable.material .datatable-header .datatable-row-center .assessment-header1 {
+    padding-left: 20px;
+}
+
+#datatable.ngx-datatable.material .datatable-header .datatable-header-cell .datatable-header-cell-template-wrap .datatable-header-cell-label {
+    padding: 1.5em 0;
+}
+
+.ngx-datatable .datatable-header .datatable-header-cell .sort-btn {
+    font-size: 2rem;
+}
+
+#datatable.ngx-datatable.material .datatable-header .datatable-header-cell{
+    padding: .9rem 0 .9rem .8rem;
+}
+
+
+.ngx-datatable.material .datatable-header .datatable-row-center .assessment-header {
+    color: white;
+    text-transform: uppercase;
+}
+
+.ngx-datatable.material .datatable-body .datatable-body-row .datatable-body-cell .datatable-body-cell-label {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.datatable-row-center,
+.datatable-row-center {
+    // margin-left: 10px;
+}
+
+.assessment-card {
+    position: relative;
+    width: 90%;
+    margin: 0 auto;
+    box-shadow: 0px 0px 10px #aaaaaa;
+    background-color: white;
+    border-radius: 5px;
+    display: flex;
+    top: 15%;
+    height: 80%;
+    text-transform: uppercase;
+    //display: table;
+}
+
+.assessment-container {
+    width: 100%;
+    position: absolute;
+    top: 10%;
+    bottom: 0;
+}
+
+.datatable-header,
+.assessment-container {
+    background-color: #007aff;
+}
+
+.assessment-score,
+.assessment-time {
+    text-align: center;
+    color: #007aff;
+    max-width: 50%;
+    vertical-align: middle;
+    //display: table-cell;
+    flex: 1 1 auto;
+}
+
+.assessment-score p,
+.assessment-time p,
+.ngx-datatable.material .datatable-header .datatable-row-center .assessment-header {
+    font-size: 0.8em;
+    @extend .font-weight-bold;
+}
+
+.assessment-score {
+    border-right: 1px solid #007aff;
+}
+
+.assessment-details {
+    // height: 20vh;
+    position: relative;
+}
+
+#datatable {
+    box-shadow: none;
+}
+
+.assessment-result,
+.assessment-stats {
+    font-size: 1.8em;
+    padding-bottom: 10px;
+}

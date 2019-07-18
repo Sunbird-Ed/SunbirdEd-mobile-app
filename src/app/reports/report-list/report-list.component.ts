@@ -14,7 +14,7 @@ import {
   PageId,
   CommonUtilService
 } from '@app/services';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, NavigationExtras } from '@angular/router';
 import { RouterLinks } from '@app/app/app.constant';
 
 @Component({
@@ -112,13 +112,8 @@ export class ReportListComponent implements OnInit {
       telemetryObject
     );
     if (this.isFromUsers) {
-
-      this.router.navigate([RouterLinks.USER_REPORT], {
-        state: {
-          report: report,
-          handle: this.handle
-        }
-      });
+      const navigationExtras: NavigationExtras = { state: { report: report, handle: this.handle } };
+      this.router.navigate([`/${RouterLinks.REPORTS}/${RouterLinks.USER_REPORT}`], navigationExtras);
     } else
       if (this.isFromGroups) {
         const uids = this.navData.uids;

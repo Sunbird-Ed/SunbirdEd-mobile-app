@@ -1,4 +1,3 @@
-import { UserReportComponent } from './../user-report/user-report.component';
 import {
   AppGlobalService,
   UtilityService,

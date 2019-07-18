@@ -31,6 +31,7 @@ import { PopoverOptions } from '@ionic/core';
 import { EditDeletePopoverComponent } from './edit-delete-popover/edit-delete-popover.component';
 import { SbGenericPopoverComponent } from '../components/popups/sb-generic-popover/sb-generic-popover.component';
 import { initTabs, GUEST_STUDENT_TABS, GUEST_STUDENT_SWITCH_TABS, GUEST_TEACHER_TABS, GUEST_TEACHER_SWITCH_TABS } from '../module.service';
+import { Subscription } from 'rxjs';
 
 
 
@@ -64,6 +65,7 @@ export class UserAndGroupsPage implements OnInit {
   isCurUserSelected: boolean;
   ProfileType = ProfileType;
   isLoggedIn = false;
+  headerObservable: Subscription;
 
   constructor(
     private zone: NgZone,
@@ -106,16 +108,27 @@ export class UserAndGroupsPage implements OnInit {
     );
   }
 
+  ionViewDidEnter() {
+    // if (!this.playConfig) {
+    //   this.headerService.showHeaderWithBackButton(['share'], this.commonUtilService.translateMessage('USERS_AND_GROUPS'));
+    // }
+    console.log("called");
+  }
+
   ionViewWillEnter() {
+    if (!this.playConfig) {
+      this.headerService.showHeaderWithBackButton(['share'], this.commonUtilService.translateMessage('USERS_AND_GROUPS'));
+    }
+    this.headerObservable = this.headerService.headerEventEmitted$.subscribe(eventName => {
+      this.handleHeaderEvents(eventName);
+    });
     this.zone.run(() => {
       this.getAllProfile();
       this.getAllGroup();
       this.getCurrentGroup();
       // this.getLastCreatedProfile();
-      this.headerService.hideHeader();
 
       this.platform.backButton.subscribeWithPriority(11, () => {
-        // Migration TODO
         this.dismissPopup();
       });
     });
@@ -137,15 +150,13 @@ export class UserAndGroupsPage implements OnInit {
     }, () => { });
   }
 
-  dismissPopup() {
-    /* Migration TODO
-    const activePortal = this.ionicApp._modalPortal.getActive() || this.ionicApp._overlayPortal.getActive();
-
+  async dismissPopup() {
+    const activePortal = await this.popOverCtrl.getTop();
     if (activePortal) {
       activePortal.dismiss();
     } else {
-      this.navCtrl.pop();
-    } */
+      this.location.back();
+    }
   }
 
   async presentPopover(myEvent, index, isUser) {
@@ -296,11 +307,11 @@ export class UserAndGroupsPage implements OnInit {
 
 
   goToSharePage() {
-    let navigationExtras: NavigationExtras = {
+    const navigationExtras: NavigationExtras = {
       state: {
         isNewUser: true
       }
-    }
+    };
     this.router.navigate([`/${RouterLinks.USER_AND_GROUPS}/${RouterLinks.SHARE_USER_AND_GROUPS}`], navigationExtras);
   }
 
@@ -658,26 +669,20 @@ export class UserAndGroupsPage implements OnInit {
             this.preferences.putString(PreferenceKey.SELECTED_USER_TYPE, ProfileType.TEACHER).toPromise().then();
           }
           this.event.publish('playConfig', this.playConfig);
-
-          // this.navCtrl.pop();
           this.location.back();
 
         } else {
           if (selectedUser.profileType === ProfileType.STUDENT) {
-            //MIGRATION TODO
             initTabs(this.container, isBeingPlayed ? GUEST_STUDENT_TABS : GUEST_STUDENT_SWITCH_TABS);
             this.preferences.putString(PreferenceKey.SELECTED_USER_TYPE, ProfileType.STUDENT).toPromise().then();
           } else {
-            //MIGRATION TODO
             initTabs(this.container, isBeingPlayed ? GUEST_TEACHER_TABS : GUEST_TEACHER_SWITCH_TABS);
             this.preferences.putString(PreferenceKey.SELECTED_USER_TYPE, ProfileType.TEACHER).toPromise().then();
           }
           this.event.publish('refresh:profile');
           this.event.publish(AppGlobalService.USER_INFO_UPDATED);
 
-          //MIGRATION TODO
           this.router.navigate([`/${RouterLinks.TABS}`]);
-          // this.app.getRootNavs()[0].push(TabsPage);
 
         }
       }, 1000);
@@ -687,5 +692,15 @@ export class UserAndGroupsPage implements OnInit {
 
   ionViewWillLeave(): void {
     this.platform.backButton.unsubscribe();
+    if (this.headerObservable) {
+      this.headerObservable.unsubscribe();
+    }
+  }
+
+  handleHeaderEvents($event) {
+    switch ($event.name) {
+      case 'share': this.goToSharePage();
+                    break;
+    }
   }
 }

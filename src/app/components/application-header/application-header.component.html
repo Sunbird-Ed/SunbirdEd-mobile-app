@@ -13,7 +13,7 @@
         <ion-icon name="arrow-back"></ion-icon>
       </ion-button>
     </ion-buttons>
-
+    <ion-title *ngIf="headerConfig?.pageTitle?.length >0">{{headerConfig?.pageTitle}}</ion-title>
     <ion-buttons class="sb-header-btn-group" slot="end">
       <ion-button icon-only *ngIf="headerConfig?.actionButtons?.indexOf('download') >=0 && showDownloadAnimation"
         (click)="emitEvent($event, 'download');">

@@ -7,7 +7,6 @@ import { AppVersion } from '@ionic-native/app-version/ngx';
 import { Subscription } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
 import { NavigationExtras, Router, RouterLink } from '@angular/router';
-import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-application-header',
@@ -48,7 +47,6 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
     private translate: TranslateService,
     private platform: Platform,
     private router: Router,
-    private location: Location
   ) {
     this.setLanguageValue();
     this.events.subscribe('onAfterLanguageChange:update', (res) => {
@@ -154,7 +152,6 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
   }
 
   emitEvent($event, name) {
-    // this.location.back();
     this.headerEvents.emit({ name });
   }
 

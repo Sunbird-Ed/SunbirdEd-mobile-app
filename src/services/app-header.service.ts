@@ -41,19 +41,21 @@ export class AppHeaderService {
         this.updatePageConfig(defaultConfig);
     }
 
-    showHeaderWithBackButton(iconList?) {
+    showHeaderWithBackButton(iconList?, pageTitle?) {
         const defaultConfig = this.getDefaultPageConfig();
         defaultConfig.showHeader = true;
         defaultConfig.showBurgerMenu = false;
         defaultConfig.actionButtons = iconList ? iconList : [];
+        defaultConfig.pageTitle = pageTitle;
         this.updatePageConfig(defaultConfig);
     }
 
-    showHeaderWithHomeButton(iconList?) {
+    showHeaderWithHomeButton(iconList?, pageTitle?) {
         const defaultConfig = this.getDefaultPageConfig();
         defaultConfig.showHeader = true;
         defaultConfig.showBurgerMenu = true;
         defaultConfig.actionButtons = iconList ? iconList : [];
+        defaultConfig.pageTitle = pageTitle;
         this.updatePageConfig(defaultConfig);
     }
 

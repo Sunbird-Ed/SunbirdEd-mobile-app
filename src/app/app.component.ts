@@ -34,7 +34,8 @@ import { SplashscreenImportActionHandlerDelegate } from '../services/sunbird-spl
 import { ContainerService, LogoutHandlerService, TncUpdateHandlerService } from '../services';
 import { NotificationService as localNotification } from '../services/notification.service';
 import { TabsPage } from './tabs/tabs.page';
-
+import { RouterLinks } from './app.constant';
+import { Location } from '@angular/common';
 
 // migration-TODO
 // import { LanguageSettingsPage } from '../pages/language-settings/language-settings';
@@ -52,7 +53,6 @@ import { TabsPage } from './tabs/tabs.page';
 // import { CollectionDetailsEtbPage } from '@app/pages/collection-details-etb/collection-details-etb';
 // import { QrCodeResultPage } from '@app/pages/qr-code-result';
 // import { FaqPage } from '@app/pages/help/faq';
-import { RouterLinks } from './app.constant';
 
 @Component({
   selector: 'app-root',
@@ -114,6 +114,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     private router: Router,
     private changeDetector: ChangeDetectorRef,
     private containerService: ContainerService,
+    private location: Location
   ) {
     this.telemetryAutoSyncUtil = new TelemetryAutoSyncUtil(this.telemetryService);
     platform.ready().then(async () => {
@@ -453,6 +454,9 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   handleHeaderEvents($event) {
+    if ($event.name === 'back') {
+      this.location.back();
+    }
     /*if ($event.name === 'back') {
       let navObj = this.app.getRootNavs()[0];
       let activeView: ViewController = this.nav.getActive();
@@ -478,9 +482,9 @@ export class AppComponent implements OnInit, AfterViewInit {
       } else {
         this.commonUtilService.showExitPopUp(this.activePageService.computePageId((<any>activeView).instance), Environment.HOME, false);
       }
-    } else {*/
+    } else {
     this.headerService.sidebarEvent($event);
-    //}
+    }*/
   }
 
   getProfileSettingConfig(hideBackButton = false) {

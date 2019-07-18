@@ -25,12 +25,10 @@
 <ion-content class="no-scroll">
   <div [ngSwitch]="reportType">
       <ion-list *ngSwitchCase="'users'" class="fromGroup">
-          <!-- migration-TODO -->
-          <!-- <assessment-details [assessmentData]="fromUserAssessment" [columns]="fromUserColumns"></assessment-details> -->
+          <app-assessment-details [assessmentData]="fromUserAssessment" [columns]="fromUserColumns"></app-assessment-details>
       </ion-list>
       <ion-list class="margin0 fromGroup" *ngSwitchCase="'questions'" (showQuestionFromUser)="showQuestionFromUser($event)">
-          <!-- migration-TODO -->
-          <!-- <assessment-details [assessmentData]="fromQuestionAssessment" [columns]="fromQuestionColumns"></assessment-details> -->
+          <app-assessment-details [assessmentData]="fromQuestionAssessment" [columns]="fromQuestionColumns"></app-assessment-details>
       </ion-list>
   </div>
 </ion-content>
