@@ -2,7 +2,7 @@
   <ion-tab-bar slot="bottom">
     <ion-tab-button [tab]="tab.root" *ngFor="let tab of tabs; let i = index;" [disabled]="tab.disabled"
       [ngClass]="{'disabled': tab.disabled}" (click)="tab.label === '' ? openScanner(tab) : null">
-      <ion-icon [src]="tab.icon"></ion-icon>
+      <ion-icon [name]="tab.icon"></ion-icon>
       <ion-label>{{tab.label | translate}}</ion-label>
     </ion-tab-button>
     <!-- <div class="shadow"></div> -->

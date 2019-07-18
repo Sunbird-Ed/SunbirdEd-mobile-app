@@ -5,8 +5,8 @@ import { TabOptions } from '../services/container.services';
 // const HOME_TAB = { root: HomePage, icon: "home", label: "HOME_BNAV", index: 0, tabsHideOnSubPages: true };
 const COURSE_TAB = {
     root: 'courses',
-    // icon: 'courses',
-    icon: './assets/imgs/Course_enable@1.5x.svg',
+    icon: 'courses',
+    // icon: './assets/imgs/Course_enable@1.5x.svg',
     label: 'COURSES_BNAV',
     index: 2,
     tabsHideOnSubPages: true
@@ -14,8 +14,8 @@ const COURSE_TAB = {
 
 const COURSE_TAB_DISABLED = {
     root: '',
-    // icon: 'courses',
-    icon: './assets/imgs/Course_enable@1.5x.svg',
+    icon: 'courses',
+    // icon: './assets/imgs/Course_enable@1.5x.svg',
     label: 'COURSES_BNAV',
     index: 2,
     tabsHideOnSubPages: true,
@@ -24,16 +24,16 @@ const COURSE_TAB_DISABLED = {
 
 const SCANNER_TAB = {
     root: '',
-    // icon: 'qrscanner',
-    icon: './assets/imgs/qr_code@1.5x.svg',
+    icon: 'qrscanner',
+    // icon: './assets/imgs/qr_code@1.5x.svg',
     label: '',
     index: 3,
     tabsHideOnSubPages: true
 };
 const LIBRARY_TAB = {
     root: 'resources',
-    // icon: 'resources',
-    icon: './assets/imgs/Library@1.5x.svg',
+    icon: 'resources',
+    // icon: './assets/imgs/Library@1.5x.svg',
     label: 'LIBRARY_BNAV',
     index: 1,
     tabsHideOnSubPages: true,
@@ -41,16 +41,16 @@ const LIBRARY_TAB = {
 };
 const GUEST_PROFILE_TAB = {
     root: 'guest-profile',
-    // icon: 'profile',
-    icon: './assets/imgs/Profile@1.5x.svg',
+    icon: 'profile',
+    // icon: './assets/imgs/Profile@1.5x.svg',
     label: 'PROFILE_BNAV',
     index: 5,
     tabsHideOnSubPages: true
 };
 const GUEST_PROFILE_SWITCH_TAB = {
     root: 'guest-profile',
-    // icon: 'profile',
-    icon: './assets/imgs/Profile@1.5x.svg',
+    icon: 'profile',
+    // icon: './assets/imgs/Profile@1.5x.svg',
     label: 'PROFILE_BNAV',
     index: 5,
     tabsHideOnSubPages: true,
@@ -58,8 +58,8 @@ const GUEST_PROFILE_SWITCH_TAB = {
 };
 const PROFILE_TAB = {
     root: 'profile',
-    // icon: 'profile',
-    icon: './assets/imgs/Profile@1.5x.svg',
+    icon: 'profile',
+    // icon: './assets/imgs/Profile@1.5x.svg',
     label: 'PROFILE_BNAV',
     index: 5,
     tabsHideOnSubPages: true
@@ -67,8 +67,8 @@ const PROFILE_TAB = {
 
 const DOWNLOADS_TAB = {
     root: 'download-manager',
-    // icon: 'downloads',
-    icon: './assets/imgs/Downloads@1.5x.svg',
+    icon: 'downloads',
+    // icon: './assets/imgs/Downloads@1.5x.svg',
     label: 'DOWNLOAD_BNAV',
     index: 4,
     tabsHideOnSubPages: true
