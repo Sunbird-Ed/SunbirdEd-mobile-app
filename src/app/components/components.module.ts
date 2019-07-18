@@ -35,7 +35,8 @@ import { OverflowMenuComponent } from '../profile/overflow-menu/overflow-menu.co
 import { ReportAlertComponent } from '../reports/report-alert/report-alert.component';
 import { ProfileAvatarComponent } from './profile-avatar/profile-avatar.component';
 import { NotificationItemComponent } from './notification-item/notification-item.component';
-
+import { AssessmentDetailsComponent } from './assessment-details/assessment-details.component';
+import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 
 @NgModule({
   declarations: [ApplicationHeaderComponent,
@@ -66,7 +67,8 @@ import { NotificationItemComponent } from './notification-item/notification-item
     OverflowMenuComponent,
     ReportAlertComponent,
     ProfileAvatarComponent,
-    NotificationItemComponent
+    NotificationItemComponent,
+    AssessmentDetailsComponent
   ],
   imports: [
     CommonModule,
@@ -75,6 +77,7 @@ import { NotificationItemComponent } from './notification-item/notification-item
     IonicModule,
     ReactiveFormsModule,
     PipesModule,
+    NgxDatatableModule,
     TranslateModule.forChild(),
     IonicRatingModule,
   ],
@@ -118,7 +121,7 @@ import { NotificationItemComponent } from './notification-item/notification-item
     RatingAlertComponent,
     ProfileAvatarComponent,
     NotificationItemComponent,
-    TranslateModule
+    AssessmentDetailsComponent
   ],
   providers: [FileSizePipe, Keyboard]
 })

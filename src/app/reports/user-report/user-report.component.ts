@@ -1,6 +1,6 @@
 import { ReportAlertComponent } from './../report-alert/report-alert.component';
 import { Component, OnInit, NgZone, Inject } from '@angular/core';
-import { NavController, NavParams, LoadingController } from '@ionic/angular';
+import { LoadingController } from '@ionic/angular';
 import {
   SummarizerService,
   SummaryRequest,
@@ -26,6 +26,7 @@ import {
 import { SocialSharing } from '@ionic-native/social-sharing';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { DatePipe } from '@angular/common';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-user-report',
@@ -61,9 +62,9 @@ export class UserReportComponent implements OnInit {
   response: any;
   handle: string;
   fileTransfer: FileTransferObject = this.transfer.create();
+  private navData: any
+
   constructor(
-    private navCtrl: NavController,
-    private navParams: NavParams,
     @Inject('SUMMARIZER_SERVICE') public summarizerService: SummarizerService,
     private transfer: FileTransfer,
     private translate: TranslateService,
@@ -77,14 +78,22 @@ export class UserReportComponent implements OnInit {
     private telemetryGeneratorService: TelemetryGeneratorService,
     private commonUtilService: CommonUtilService,
     private utilityService: UtilityService,
-    private headerService: AppHeaderService
+    private headerService: AppHeaderService,
+    private router: Router,
   ) {
+    this.getNavData();
     this.downloadDirectory = this.file.dataDirectory;
     this.utilityService.getDownloadDirectoryPath()
       .then((response: any) => {
         this.downloadDirectory = response;
       })
+  }
 
+  getNavData() {
+    const navigation = this.router.getCurrentNavigation();
+    if (navigation && navigation.extras && navigation.extras.state) {
+      this.navData = navigation.extras.state;
+    }
   }
 
   ngOnInit() {
@@ -111,9 +120,9 @@ export class UserReportComponent implements OnInit {
 
     const that = this;
 
-    this.reportSummaryRequest = this.navParams.get('report');
+    this.reportSummaryRequest = this.navData.report;
     this.contentName = this.reportSummaryRequest.name;
-    this.handle = this.navParams.get('handle');
+    this.handle = this.navData.handle;
     const summaryRequest: SummaryRequest = {
       qId: '',
       uids: [this.reportSummaryRequest.uid],

@@ -435,9 +435,10 @@ export class SearchPage implements OnDestroy {
 
     this.showLoader = true;
 
-    (<any>window).cordova.plugins.Keyboard.close();
+    // (<any>window).cordova.plugins.Keyboard.close();
 
     const contentSearchRequest: ContentSearchCriteria = {
+
       searchType: SearchType.SEARCH,
       query: this.searchKeywords,
       contentTypes: this.contentType,

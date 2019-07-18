@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Routes, RouterModule } from '@angular/router';
 
@@ -13,6 +13,7 @@ import { ReportListComponent } from './report-list/report-list.component';
 import { GroupReportListComponent } from './group-report-list/group-report-list.component';
 import { ReportAlertComponent } from './report-alert/report-alert.component';
 import { GroupReportAlertComponent } from './group-report-alert/group-report-alert.component';
+import { ComponentsModule } from '../components/components.module';
 
 @NgModule({
   imports: [
@@ -20,7 +21,8 @@ import { GroupReportAlertComponent } from './group-report-alert/group-report-ale
     FormsModule,
     IonicModule,
     TranslateModule,
-    ReportsRoutingModule
+    ReportsRoutingModule,
+    ComponentsModule
   ],
   declarations: [
     ReportsPage,
@@ -34,6 +36,9 @@ import { GroupReportAlertComponent } from './group-report-alert/group-report-ale
   ],
   exports: [
     GroupReportAlertComponent
+  ],
+  providers: [
+    DatePipe
   ]
 })
 export class ReportsPageModule {}

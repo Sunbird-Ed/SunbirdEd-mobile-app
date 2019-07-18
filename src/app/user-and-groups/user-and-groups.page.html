@@ -1,17 +1,12 @@
 <ion-header>
-  <ion-toolbar color="white">
-    <ion-buttons slot="start">
-      <ion-button icon-only (click)="goBack();">
-        <ion-icon name="arrow-back"></ion-icon>
-      </ion-button>
-    </ion-buttons>
+  <!-- <ion-toolbar color="white">
     <ion-title>{{'USERS_AND_GROUPS' | translate}}</ion-title>
     <ion-buttons slot="primary">
       <ion-button *ngIf="!playConfig" (click)="goToSharePage()" icon-only>
         <ion-icon name="share" float-end></ion-icon>
       </ion-button>
     </ion-buttons>
-  </ion-toolbar>
+  </ion-toolbar> -->
 
   <ion-toolbar no-border-top>
     <ion-segment no-padding [(ngModel)]="segmentType" (ionChange)="onSegmentChange($event)">
