@@ -108,11 +108,11 @@ h6 {
 /* For changing the input placeholder based on Language Direction  */
 
 input::placeholder {
-  @include ltr() {
-    text-align: left;
-  }
   @include rtl() {
     text-align: right;
+  }
+  @include ltr() {
+    text-align: left;
   }
 }
 
