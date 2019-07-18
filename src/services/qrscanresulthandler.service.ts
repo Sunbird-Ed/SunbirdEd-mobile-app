@@ -2,7 +2,7 @@ import {Inject, Injectable} from '@angular/core';
 import {TelemetryGeneratorService} from './telemetry-generator.service';
 import {Content, ContentDetailRequest, ContentService, CorrelationData, TelemetryObject} from 'sunbird-sdk';
 // import {SearchPage} from '../search/search';
-import {ContentType, MimeType} from '../app/app.constant';
+import {ContentType, MimeType, RouterLinks} from '../app/app.constant';
 // import {EnrolledCourseDetailsPage} from '../enrolled-course-details/enrolled-course-details';
 // import {ContentDetailsPage} from '../content-details/content-details';
 // import {CollectionDetailsPage} from '../collection-details/collection-details';
@@ -17,6 +17,7 @@ import {
   Mode,
   PageId,
 } from './telemetry-constants';
+import { NavigationExtras, Router } from '@angular/router';
 
 @Injectable()
 export class QRScannerResultHandler {
@@ -28,7 +29,9 @@ export class QRScannerResultHandler {
     // private app: IonApp,
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
     private commonUtilService: CommonUtilService,
-    private telemetryGeneratorService: TelemetryGeneratorService) {
+    private telemetryGeneratorService: TelemetryGeneratorService,
+    private router: Router
+  ) {
   }
 
   isDialCode(scannedData: string): boolean {
@@ -52,13 +55,16 @@ export class QRScannerResultHandler {
     const results = scannedData.split('/');
     const dialCode = results[results.length - 1];
     this.generateQRScanSuccessInteractEvent(scannedData, 'SearchResult', dialCode);
-    // Migration-TODO
-    // this.app.getActiveNavs()[0].push(SearchPage, {
-    //   dialCode: dialCode,
-    //   corRelation: this.getCorRelationList(dialCode, QRScannerResultHandler.CORRELATION_TYPE),
-    //   source: this.source,
-    //   shouldGenerateEndTelemetry: true
-    // });
+
+    const navigationExtras: NavigationExtras = {
+      state: {
+        dialCode: dialCode,
+        corRelation: this.getCorRelationList(dialCode, QRScannerResultHandler.CORRELATION_TYPE),
+        source: this.source,
+        shouldGenerateEndTelemetry: true
+      }
+    };
+    this.router.navigate([`/${RouterLinks.SEARCH}`], navigationExtras);
   }
 
   handleContentId(source: string, scannedData: string) {
@@ -112,31 +118,21 @@ export class QRScannerResultHandler {
   }
 
   navigateToDetailsPage(content, corRelationList) {
-    if (content.contentData.contentType === ContentType.COURSE) {
-      // Migration-TODO
-      // this.app.getActiveNavs()[0].push(EnrolledCourseDetailsPage, {
-      //   content: content,
-      //   corRelation: corRelationList,
-      //   source: this.source,
-      //   shouldGenerateEndTelemetry: true
-      // });
-    } else if (content.mimeType === MimeType.COLLECTION) {
-      // Migration-TODO
-      // this.app.getActiveNavs()[0].push(CollectionDetailsPage, {
-      //   content: content,
-      //   corRelation: corRelationList,
-      //   source: this.source,
-      //   shouldGenerateEndTelemetry: true
+    const navigationExtras: NavigationExtras = {
+      state: {
+        content: content,
+        corRelation: corRelationList,
+        source: this.source,
+        shouldGenerateEndTelemetry: true
+      }
+    };
 
-      // });
+    if (content.contentData.contentType === ContentType.COURSE) {
+      this.router.navigate([`/${RouterLinks.ENROLLED_COURSE_DETAILS}`], navigationExtras);
+    } else if (content.mimeType === MimeType.COLLECTION) {
+      this.router.navigate([`/${RouterLinks.COLLECTION_DETAILS}`], navigationExtras);
     } else {
-      // Migration-TODO
-      // this.app.getActiveNavs()[0].push(ContentDetailsPage, {
-      //   content: content,
-      //   corRelation: corRelationList,
-      //   source: this.source,
-      //   shouldGenerateEndTelemetry: true
-      // });
+      this.router.navigate([`/${RouterLinks.CONTENT_DETAILS}`], navigationExtras);
     }
   }
 

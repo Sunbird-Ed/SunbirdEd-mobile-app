@@ -91,7 +91,7 @@ import { NgxDatatableModule } from '@swimlane/ngx-datatable';
     DialogPopupComponent,
     UpgradePopoverComponent,
     EditContactDetailsPopupComponent,
-    EditContactVerifyPopupComponent
+    EditContactVerifyPopupComponent,
   ],
   exports: [
     ApplicationHeaderComponent,

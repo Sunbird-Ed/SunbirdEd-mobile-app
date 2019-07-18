@@ -482,9 +482,9 @@ export class AppComponent implements OnInit, AfterViewInit {
       } else {
         this.commonUtilService.showExitPopUp(this.activePageService.computePageId((<any>activeView).instance), Environment.HOME, false);
       }
-    } else {
+    } else {*/
     this.headerService.sidebarEvent($event);
-    }*/
+    // }
   }
 
   getProfileSettingConfig(hideBackButton = false) {

@@ -26,8 +26,7 @@ import {
   PageId,
 } from '../../services/telemetry-constants';
 import { AppHeaderService, ContainerService } from '../../services';
-import { Router, ActivatedRoute, NavigationExtras } from '@angular/router';
-import { PopoverOptions } from '@ionic/core';
+import { Router, NavigationExtras } from '@angular/router';
 import { EditDeletePopoverComponent } from './edit-delete-popover/edit-delete-popover.component';
 import { SbGenericPopoverComponent } from '../components/popups/sb-generic-popover/sb-generic-popover.component';
 import { initTabs, GUEST_STUDENT_TABS, GUEST_STUDENT_SWITCH_TABS, GUEST_TEACHER_TABS, GUEST_TEACHER_SWITCH_TABS } from '../module.service';
@@ -81,7 +80,6 @@ export class UserAndGroupsPage implements OnInit {
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
     private headerService: AppHeaderService,
     private popOverCtrl: PopoverController,
-    private route: ActivatedRoute,
     private router: Router,
     private event: Events,
     private location: Location
@@ -106,13 +104,6 @@ export class UserAndGroupsPage implements OnInit {
       PageId.USERS_GROUPS,
       Environment.USER
     );
-  }
-
-  ionViewDidEnter() {
-    // if (!this.playConfig) {
-    //   this.headerService.showHeaderWithBackButton(['share'], this.commonUtilService.translateMessage('USERS_AND_GROUPS'));
-    // }
-    console.log("called");
   }
 
   ionViewWillEnter() {

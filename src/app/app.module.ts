@@ -42,7 +42,8 @@ import {
   NotificationService,
   SunbirdQRScanner,
   ActivePageService,
-  FormAndFrameworkUtilService
+  FormAndFrameworkUtilService,
+  CanvasPlayerService
 } from '../services/index';
 
 
@@ -383,11 +384,10 @@ declare const buildconfigreader;
     Device,
     Network,
     AndroidPermissionsService,
-    FormAndFrameworkUtilService,
     ComingSoonMessageService,
     NotificationService,
     ActivePageService,
-    FormAndFrameworkUtilService,
+    CanvasPlayerService,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     ...sunbirdSdkServicesProvidersFactory(),
     // { provide: ErrorHandler},
