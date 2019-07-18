@@ -164,9 +164,9 @@
     <div class="cards-container" style="padding:15px 5px; background-color: #fff; ">
       <!-- migration -todo -->
       <div style="width: 100%" no-padding>
-        <div *ngIf="contentCreatedByMe  && isLoggedInUser">
+        <div class="flex-container" *ngIf="contentCreatedByMe  && isLoggedInUser">
           <ion-card *ngFor="let courseItem of contentCreatedByMe; let i=index"
-            (click)="navigateToDetailPage(courseItem, layoutPopular, i);">
+            (click)="navigateToDetailPage(courseItem, layoutPopular, i);" style="min-width: 84%;">
             <ion-card-content>
               <ion-row class="top">
                 <ion-col size="3" class="img-container">

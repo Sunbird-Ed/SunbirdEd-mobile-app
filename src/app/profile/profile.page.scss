@@ -18,46 +18,38 @@
   .profile-last-login-text {
     color: #bdbdbd;
     text-align: center;
-    //Migration-todo
-    // @include margin(0);
+    @include margin(0);
     font-size: 1.2rem;
-    //Migration-todo
-    // @include padding(0, 5px, 8px, 5px);
+    @include padding(0, 5px, 8px, 5px);
   }
   .profile-completed-text {
     color: rgb(104, 103, 101);
     text-align: left;
-    //Migration-todo
-    // @include margin(null, null, 8px, null !important);
+    @include margin(null, null, 8px, null !important);
     font-size: small;
-    //Migration-todo
-    // @include padding(0);
+    @include padding(0);
   }
   .profile-add-exp-text {
     color: map-get($colors, primary);
     text-align: right;
     font-size: small;
-    //Migration-todo
-    // @include padding(0);
+    @include padding(0);
     @extend .font-weight-bold;
   }
   .profile-completed-ion-row {
-    //Migration-todo
-    // @include margin(5%, null, null, null !important);
-    // @include padding(6%, null, 1%, null);
+    @include margin(5%, null, null, null !important);
+    @include padding(6%, null, 1%, null);
   }
   .profile-completed-ion-col {
-    //Migration-todo
-    // @include padding(0);
+    @include padding(0);
   }
   .profile-name {
     color: map-get($colors, dark);
     text-align: center;
     font-size: 2rem;
     @extend .font-weight-bold;
-    //Migration-todo
-    // @include margin(0);
-    // @include padding(10px, 5px, 0, 5px);
+    @include margin(0);
+    @include padding(10px, 5px, 0, 5px);
   }
   .grey-bg {
     background: rgba(99, 99, 99, 0.158);
@@ -76,8 +68,7 @@
     border: 1px solid #fff;
     border-radius: 50%;
     display: inline-block;
-    //Migration-todo
-    // @include margin(null, auto, null, auto);
+    @include margin(null, auto, null, auto);
   }
   .list-header {
     font-size: 12pt;
@@ -93,15 +84,13 @@
     @extend .font-weight-700;
   }
   ion-label {
-      //Migration-todo
-    // @include margin(5%, 0, 0, 0 !important);
+    @include margin(5%, 0, 0, 0 !important);
   }
   .section-title {
     color: map-get($colors, dark);
     font-size: 1.6rem;
-    //Migration-todo
-    // @include padding(0);
-    // @include margin(3px, null, 3%, 0 !important);
+    @include padding(0);
+    @include margin(3px, null, 3%, 0 !important);
     @extend .font-weight-bold;
   }
   .info-title {
@@ -114,8 +103,7 @@
     height: 50px;
   }
   .skill-row {
-      //Migration-todo
-    // @include margin(12px, null, null, null !important);
+    @include margin(12px, null, null, null !important);
   }
   .skill-name-col {
     border-radius: 50px 0 0 50px;
@@ -135,21 +123,17 @@
     }
   }
   ion-row {
-      //Migration-todo
-    // @include padding(0 !important);
+    @include padding(0 !important);
   }
   col-2 {
-      //Migration-todo
-    // @include padding(null, null, null, 0 !important);
+    @include padding(null, null, null, 0 !important);
   }
   .item-md.item-block .item-inner {
-      //Migration-todo
-    // @include padding(null, 0, null, null !important);
+    @include padding(null, 0, null, null !important);
   }
   .additional-info ion-row {
     font-size: 1.2rem;
-    //Migration-todo
-    // @include padding(null, null, 10px, null !important);
+    @include padding(null, null, 10px, null !important);
   }
   .details-title {
     white-space: nowrap !important;
@@ -168,8 +152,7 @@
   }
   .social-icon-size ion-icon {
     font-size: 1.8em !important;
-    //Migration-todo
-    // @include padding(null, null, null, 10px !important);
+    @include padding(null, null, null, 10px !important);
   }
   .social-icon-size a {
     color: transparent;
@@ -202,7 +185,7 @@
 
   .scroll-content {
     background-color: #fafafa !important;
-    // @include padding(0 !important);
+    @include padding(0 !important);
   }
 
   ion-scroll {
@@ -210,8 +193,7 @@
       background-color: #fff !important;
       min-height: 225px;
       width: 100%;
-      //Migration-todo
-    //   @include padding(0 !important);
+      @include padding(0 !important);
     }
 
     .scroll-zoom-wrapper {
@@ -223,8 +205,7 @@
     ion-avatar img,
     ion-thumbnail img {
       display: block;
-      //Migration-todo
-    //   @include margin(30px auto);
+      @include margin(30px auto);
     }
   }
 
@@ -237,8 +218,7 @@
     display: inline-block;
 
     .badge {
-        //Migration-todo
-    //   @include padding(0, 20px);
+      @include padding(0, 20px);
       color: #006de5;
       border: solid 0.5px #006de5;
       font-size: 11px;
@@ -256,16 +236,14 @@
       // background: #E9E9E9;
       .img-container {
         border: 1px solid #c6dbd8;
-        //Migration-todo
-        // @include padding(0 !important);
+        @include padding(0 !important);
         background: #e9e9e9;
         min-height: 85px;
         max-height: 85px;
         border-radius: 4px;
         img {
           max-height: 100%;
-          //Migration-todo
-        //   @include margin(0 auto);
+          @include margin(0 auto);
           width: auto;
           transform: translateY(-56%);
           position: relative;
@@ -313,20 +291,17 @@
 
   .roles-container {
     color: #007aff;
-    //Migration-todo
-    // @include margin(5px, 0);
+    @include margin(5px, 0);
   }
   .roles {
     border: 0.5px solid #007aff;
-    //Migration-todo
-    // @include padding(4px, 15px);
+    @include padding(4px, 15px);
     border-radius: 4px;
     display: inline-block;
   }
   .school-recent {
     margin: 0 auto;
-    //Migration-todo
-    // @include padding(0, 16px, 16px, 16px);
+    @include padding(0, 16px, 16px, 16px);
     text-align: center;
   }
 
@@ -338,9 +313,8 @@
     .phone {
       display: inline-block;
       border-radius: 25px;
-      //Migration-todo
-    //   @include padding($base-block-space, $base-block-space * 2);
-    //   @include margin(null, null, 10px, null);
+      @include padding($base-block-space, $base-block-space * 2);
+      @include margin(null, null, 10px, null);
       background-color: #fff;
       color: #007aff;
 
@@ -352,8 +326,7 @@
     .email {
       display: inline-block;
       border-radius: 25px;
-      //Migration-todo
-    //   @include padding($base-block-space, $base-block-space * 2);
+      @include padding($base-block-space, $base-block-space * 2);
       background-color: #fff;
       color: #007aff;
       border-bottom: 0.3px solid #196dab;
@@ -372,30 +345,26 @@
     border-top: 0.3px solid #196dab;
     .container {
       text-align: center;
-      //Migration-todo
-    //   @include margin(null, null, 10px, null);
+      @include margin(null, null, 10px, null);
     }
   }
 
   .trainigs {
     .heading {
-        //Migration-todo
-    //   @include padding(15px);
+      @include padding(15px);
       background-color: #fff;
-      //Migration-todo
-    //   @include margin(null, null, 2px, null);
+      @include margin(null, null, 2px, null);
     }
     .content {
-        //Migration-todo
-    //   @include padding(15px);
+      @include padding(15px);
       background-color: #fff;
     }
   }
 
   .contributions {
     min-height: 305px;
-    //Migration-todo
     // @include margin(null, null, 10px, null);
+    @include margin(0);
   }
 
   .short-btn {
@@ -407,29 +376,30 @@
   }
 }
 
+.flex-container{
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+}
+
 .padding-right-10 {
-    //Migration-todo
-//   @include padding(null, 10px, null, null !important);
+  @include padding(null, 10px, null, null !important);
 }
 
 .padding-left-10 {
-    //Migration-todo
-//   @include padding(null, null, null, 10px !important);
+  @include padding(null, null, null, 10px !important);
 }
 
 .padding-left-none {
-    //Migration-todo
-//   @include padding(null, null, null, 0 !important);
+  @include padding(null, null, null, 0 !important);
 }
 
 .padding-left-5 {
-    //Migration-todo
-//   @include padding(null, null, null, 5px !important);
+  @include padding(null, null, null, 5px !important);
 }
 
 .padding-5 {
-    //Migration-todo
-//   @include padding(5px !important);
+  @include padding(5px !important);
 }
 
 .loading {
@@ -438,8 +408,7 @@
 
 .loading-md .loading-wrapper {
   border-radius: 50% !important;
-  //Migration-todo
-//   @include padding(10px !important);
+  @include padding(10px !important);
   max-height: 48px !important;
   max-width: 48px !important;
 }
@@ -457,8 +426,7 @@
 .courses-holder {
   height: 46%;
   .scroll-content {
-      //Migration-todo
-    // @include padding(6px, 0, 0, 6px !important);
+    @include padding(6px, 0, 0, 6px !important);
   }
 }
 
@@ -479,8 +447,7 @@
 }
 
 .PTB0 {
-    //Migration-todo
-//   @include padding(0, null, 0, null);
+  @include padding(0, null, 0, null);
 }
 
 .lighter {
@@ -488,8 +455,7 @@
 }
 
 .MR10 {
-    //Migration-todo
-//   @include margin(null, 10px, null, null);
+  @include margin(null, 10px, null, null);
 }
 
 .MT0 {
@@ -497,33 +463,28 @@
 }
 
 .ML10 {
-    //Migration-todo
-//   @include margin(null, null, null, 10px);
+  @include margin(null, null, null, 10px);
 }
 
 .MB5 {
-    //Migration-todo
-//   @include margin(null, null, 5px, null);
+  @include margin(null, null, 5px, null);
 }
 
 .MB10 {
-    //Migration-todo
-//   @include margin(null, null, 10px, null);
+  @include margin(null, null, 10px, null);
 }
 
 .MB15 {
-    //Migration-todo
-//   @include margin(null, null, 15px, null);
+  @include margin(null, null, 15px, null);
 }
 
-.MB30 {//Migration-todo
-//   @include margin(null, null, 30px, null);
+.MB30 {
+  @include margin(null, null, 30px, null);
 
 }
 
 .MT15 {
-    //Migration-todo
-//   @include margin(15px, null, null, null);
+  @include margin(15px, null, null, null);
 }
 
 .txt-lowercase {

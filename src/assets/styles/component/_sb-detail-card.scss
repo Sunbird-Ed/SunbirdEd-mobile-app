@@ -68,6 +68,7 @@
         .sb-dt-source {
           .sb-by {
             font-size: ($font-size-base - 4);
+            @include margin(0, ($base-block-space/2), 0, 0);
           }
           .sb-user {
             font-size: ($font-size-base - 2);
@@ -92,6 +93,7 @@
             border-radius:50%;
             display: inline-block;
             vertical-align: middle;
+            @include margin(0px, $base-block-space);
           }
         }     
       }  

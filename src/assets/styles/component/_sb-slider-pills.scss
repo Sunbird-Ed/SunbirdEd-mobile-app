@@ -6,7 +6,7 @@
     .sb-pills-container {
         display: inline-flex;
         align-items: center;
-        @include padding(($base-block-space * 1), ($base-block-space * 1));
+        @include padding(($base-block-space * 1) ($base-block-space * 1));
         .pill {
         background-color: $bg-white;
         white-space: nowrap; 
