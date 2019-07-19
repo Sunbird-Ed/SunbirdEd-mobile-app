@@ -22,7 +22,7 @@ declare const cordova;
   templateUrl: 'language-settings.html',
   styleUrls: ['./language-settings.scss']
 })
-export class LanguageSettingsPage{
+export class LanguageSettingsPage implements OnInit {
 
   languages: any = [];
   language: any;
@@ -55,7 +55,7 @@ export class LanguageSettingsPage{
     // this.mainPage = this.navParams.get('mainPage');
    }
 
-  ionViewDidEnter() {
+  ngOnInit() {
     // this.isFromSettings = this.navParams.get('isFromSettings');
     this.activatedRoute.params.subscribe(params => {
       console.log('params', params);

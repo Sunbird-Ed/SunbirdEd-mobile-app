@@ -32,7 +32,7 @@ const borderColor = '#F7F7F7';
   styleUrls: ['./user-type-selection.scss']
 })
 
-export class UserTypeSelectionPage {
+export class UserTypeSelectionPage implements OnInit {
   teacherCardBorderColor = '#F7F7F7';
   studentCardBorderColor = '#F7F7F7';
   userTypeSelected = false;
@@ -80,7 +80,7 @@ export class UserTypeSelectionPage {
     console.log(this.navParams);
   }
 
-  ionViewDidEnter() {
+  ngOnInit() {
     this.telemetryGeneratorService.generateImpressionTelemetry(
       ImpressionType.VIEW, '',
       PageId.USER_TYPE_SELECTION,

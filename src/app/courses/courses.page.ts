@@ -163,6 +163,7 @@ export class CoursesPage implements OnInit, AfterViewInit {
    */
   ngOnInit() {
     this.getCourseTabData();
+    this.isVisible = true;
   }
   ngAfterViewInit() {
 
@@ -181,7 +182,6 @@ export class CoursesPage implements OnInit, AfterViewInit {
   }
 
   ionViewDidEnter() {
-    this.isVisible = true;
     this.appGlobalService.generateConfigInteractEvent(PageId.COURSES, this.isOnBoardingCardCompleted);
 
     this.events.subscribe('event:showScanner', (data) => {

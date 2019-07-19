@@ -92,6 +92,7 @@ export class CreateGroupPage implements OnInit, OnDestroy {
         this.location.back();
       });
     });
+    this.loadTelemetry();
   }
 
   ngOnDestroy() {
@@ -100,7 +101,7 @@ export class CreateGroupPage implements OnInit, OnDestroy {
     }
   }
 
-  ionViewDidEnter() {
+  loadTelemetry() {
     this.telemetryGeneratorService.generateImpressionTelemetry(
       ImpressionType.VIEW, '',
       PageId.CREATE_GROUP_SYLLABUS_CLASS,

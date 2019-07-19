@@ -252,6 +252,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.getCurrentUser();
+    this.appGlobalService.generateConfigInteractEvent(PageId.LIBRARY, this.isOnBoardingCardCompleted);
   }
 
   generateNetworkType() {
@@ -738,7 +739,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
 
   ionViewDidEnter() {
     this.scrollToTop();
-    this.appGlobalService.generateConfigInteractEvent(PageId.LIBRARY, this.isOnBoardingCardCompleted);
     // this.preferences.getString('show_app_walkthrough_screen').toPromise()
     //   .then(value => {
     //     if (value === 'true') {

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { PageId, Environment, InteractType, InteractSubtype } from '../../../services/telemetry-constants';
 import { Observable, Subscription } from 'rxjs';
 import { Events, Platform } from '@ionic/angular';
@@ -23,7 +23,7 @@ declare const cordova;
   templateUrl: './permission.component.html',
   styleUrls: ['./permission.component.scss'],
 })
-export class PermissionComponent {
+export class PermissionComponent implements OnInit {
 
   appName = '';
 
@@ -118,7 +118,7 @@ export class PermissionComponent {
     });
   }
 
-  ionViewDidEnter() {
+  ngOnInit() {
     this.telemetryGeneratorService.generatePageViewTelemetry(PageId.PERMISSION,
       Environment.ONBOARDING,
       '');

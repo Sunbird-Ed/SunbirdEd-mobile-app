@@ -1,6 +1,6 @@
 import { GUEST_STUDENT_TABS, GUEST_TEACHER_TABS, initTabs } from '../../app/module.service';
 
-import { Component, Inject, ViewChild } from '@angular/core';
+import { Component, Inject, ViewChild, OnInit } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { PreferenceKey, ProfileConstants } from '../../app/app.constant';
@@ -38,7 +38,7 @@ import { Subscription } from 'rxjs';
   templateUrl: './profile-settings.page.html',
   styleUrls: ['./profile-settings.page.scss'],
 })
-export class ProfileSettingsPage {
+export class ProfileSettingsPage implements OnInit {
 
   public pageId = 'ProfileSettingsPage';
   @ViewChild('boardSelect') boardSelect: any;
@@ -121,7 +121,7 @@ export class ProfileSettingsPage {
     console.log(this.navParams);
   }
 
-  ionViewDidEnter() {
+  ngOnInit() {
     if (this.navParams && this.navParams.stopScanner && Boolean(this.navParams.stopScanner)) {
       setTimeout(() => {
         this.scanner.stopScanner();

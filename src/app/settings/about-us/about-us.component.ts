@@ -1,4 +1,4 @@
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { SocialSharing } from '@ionic-native/social-sharing/ngx';
 import {
   ContentRequest, ContentService, DeviceInfo, GetAllProfileRequest, ProfileService, SharedPreferences
@@ -26,7 +26,7 @@ const KEY_SUNBIRD_CONFIG_FILE_PATH = 'sunbird_config_file_path';
   templateUrl: './about-us.component.html',
   styleUrls: ['./about-us.component.scss'],
 })
-export class AboutUsComponent {
+export class AboutUsComponent implements OnInit {
 
   deviceId: string;
   version: string;
@@ -61,7 +61,7 @@ export class AboutUsComponent {
     this.headerService.updatePageConfig(this.headerConfig);
   }
 
-  ionViewDidEnter() {
+  ngOnInit() {
     this.version = 'app version will be shown here';
 
     this.deviceId = this.deviceInfo.getDeviceID();
@@ -73,7 +73,6 @@ export class AboutUsComponent {
       .then(val => {
         this.getVersionName(val);
       });
-     
   }
 
   ionViewDidLeave() {

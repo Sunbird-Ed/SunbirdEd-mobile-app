@@ -81,15 +81,8 @@ export class ContentRatingAlertComponent implements OnInit {
   }
 
   ngOnInit() {
-
-  }
-  /**
-   * Ionic life cycle hook
-   */
-  ionViewDidEnter(): void {
     this.content = this.navParams.get('content');
     this.pageId = this.navParams.get('pageId');
-
   }
 
   ionViewWillEnter() {
