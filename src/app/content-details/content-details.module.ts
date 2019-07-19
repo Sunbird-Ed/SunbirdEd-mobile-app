@@ -28,7 +28,6 @@ const routes: Routes = [
     TranslateModule.forChild(),
     PipesModule
   ],
-  declarations: [ContentDetailsPage],
-  entryComponents:[ConfirmAlertComponent]
+  declarations: [ContentDetailsPage]
 })
 export class ContentDetailsPageModule {}
