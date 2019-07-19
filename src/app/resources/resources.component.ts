@@ -252,6 +252,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.getCurrentUser();
+    this.appGlobalService.generateConfigInteractEvent(PageId.LIBRARY, this.isOnBoardingCardCompleted);
   }
 
   generateNetworkType() {
@@ -734,9 +735,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
     }
 
     return assembleFilter;
-  }
-  ionViewDidLoad() {
-    this.appGlobalService.generateConfigInteractEvent(PageId.LIBRARY, this.isOnBoardingCardCompleted);
   }
 
   ionViewDidEnter() {

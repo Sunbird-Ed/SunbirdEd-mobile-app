@@ -273,9 +273,6 @@ export class CollectionDetailEtbPage implements OnInit {
 	  * Angular life cycle hooks
 	  */
   ngOnInit() {
-  }
-
-  ionViewDidLoad() {
     // this.navBar.backButtonClick = () => {
     //   this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.COLLECTION_DETAIL, Environment.HOME,
     //     true, this.cardData.identifier, this.corRelationList);

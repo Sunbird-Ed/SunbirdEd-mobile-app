@@ -28,7 +28,7 @@ declare const cordova;
   styleUrls: ['./data-sync.component.scss'],
 })
 
-export class DataSyncComponent {
+export class DataSyncComponent implements OnInit {
 
   dataSyncType: DataSyncType;
   lastSyncedTimeString = 'LAST_SYNC';
@@ -68,7 +68,7 @@ export class DataSyncComponent {
       });
   }
 
-  ionViewDidLoad() {
+  ngOnInit() {
     this.init();
     const telemetryImpressionRequest = new TelemetryImpressionRequest();
     telemetryImpressionRequest.type = ImpressionType.VIEW;

@@ -45,9 +45,6 @@ export class NotificationPage implements OnInit {
     this.headerService.hideHeader();
   }
 
-  ngOnInit() {
-  }
-
   ionViewWillEnter() {
     this.getNotifications();
     this.events.subscribe('notification:received', () => {
@@ -69,7 +66,7 @@ export class NotificationPage implements OnInit {
     });
   }
 
-  ionViewDidLoad() {
+  ngOnInit() {
     this.telemetryGeneratorService.generateImpressionTelemetry(
       ImpressionType.VIEW, '',
       PageId.NOTIFICATION,
