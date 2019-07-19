@@ -163,13 +163,7 @@ export class CoursesPage implements OnInit, AfterViewInit {
    */
   ngOnInit() {
     this.getCourseTabData();
-    this.isVisible = true;
-  }
-  ngAfterViewInit() {
 
-  }
-
-  ionViewWillEnter() {
     this.events.subscribe('update_header', (data) => {
       this.headerServie.showHeaderWithHomeButton(['search', 'filter', 'download']);
     });
@@ -178,7 +172,10 @@ export class CoursesPage implements OnInit, AfterViewInit {
     });
     this.getEnrolledCourses();
     this.headerServie.showHeaderWithHomeButton(['search', 'filter', 'download']);
+  }
 
+  ionViewWillEnter() {
+    this.isVisible = true;
   }
 
   ionViewDidEnter() {
