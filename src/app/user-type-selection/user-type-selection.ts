@@ -80,7 +80,7 @@ export class UserTypeSelectionPage {
     console.log(this.navParams);
   }
 
-  ionViewDidLoad() {
+  ionViewDidEnter() {
     this.telemetryGeneratorService.generateImpressionTelemetry(
       ImpressionType.VIEW, '',
       PageId.USER_TYPE_SELECTION,

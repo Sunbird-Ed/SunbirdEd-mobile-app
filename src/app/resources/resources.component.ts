@@ -735,12 +735,10 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
 
     return assembleFilter;
   }
-  ionViewDidLoad() {
-    this.appGlobalService.generateConfigInteractEvent(PageId.LIBRARY, this.isOnBoardingCardCompleted);
-  }
 
   ionViewDidEnter() {
     this.scrollToTop();
+    this.appGlobalService.generateConfigInteractEvent(PageId.LIBRARY, this.isOnBoardingCardCompleted);
     // this.preferences.getString('show_app_walkthrough_screen').toPromise()
     //   .then(value => {
     //     if (value === 'true') {

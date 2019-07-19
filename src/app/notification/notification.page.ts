@@ -67,7 +67,7 @@ export class NotificationPage implements OnInit {
     });
   }
 
-  ionViewDidLoad() {
+  ionViewDidEnter() {
     this.telemetryGeneratorService.generateImpressionTelemetry(
       ImpressionType.VIEW, '',
       PageId.NOTIFICATION,

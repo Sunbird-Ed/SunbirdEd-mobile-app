@@ -275,7 +275,7 @@ export class CollectionDetailEtbPage implements OnInit {
   ngOnInit() {
   }
 
-  ionViewDidLoad() {
+  ionViewDidEnter() {
     // this.navBar.backButtonClick = () => {
     //   this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.COLLECTION_DETAIL, Environment.HOME,
     //     true, this.cardData.identifier, this.corRelationList);

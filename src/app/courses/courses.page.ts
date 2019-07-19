@@ -168,10 +168,6 @@ export class CoursesPage implements OnInit, AfterViewInit {
 
   }
 
-  ionViewDidEnter() {
-    this.isVisible = true;
-  }
-
   ionViewWillEnter() {
     this.events.subscribe('update_header', (data) => {
       this.headerServie.showHeaderWithHomeButton(['search', 'filter', 'download']);
@@ -184,8 +180,8 @@ export class CoursesPage implements OnInit, AfterViewInit {
 
   }
 
-  ionViewDidLoad() {
-
+  ionViewDidEnter() {
+    this.isVisible = true;
     this.appGlobalService.generateConfigInteractEvent(PageId.COURSES, this.isOnBoardingCardCompleted);
 
     this.events.subscribe('event:showScanner', (data) => {

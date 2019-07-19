@@ -79,7 +79,7 @@ export class ActiveDownloadsPage implements OnInit, OnDestroy, ActiveDownloadsIn
     }
   }
 
-  ionViewDidLoad() {
+  ionViewDidEnter() {
     this.telemetryGeneratorService.generatePageViewTelemetry(
       PageId.ACTIVE_DOWNLOADS,
       Environment.DOWNLOADS, '');

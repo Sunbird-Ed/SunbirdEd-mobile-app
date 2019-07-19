@@ -79,7 +79,7 @@ export class RatingAlertComponent implements OnInit {
       });
   }
 
-  ionViewDidLoad() {
+  ionViewDidEnter() {
     this.pageId = this.navParams.get('pageId');
     this.telemetryGeneratorService.generateImpressionTelemetry(
       ImpressionType.VIEW,

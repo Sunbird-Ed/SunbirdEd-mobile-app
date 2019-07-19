@@ -121,7 +121,7 @@ export class ProfileSettingsPage {
     console.log(this.navParams);
   }
 
-  ionViewDidLoad() {
+  ionViewDidEnter() {
     if (this.navParams && this.navParams.stopScanner && Boolean(this.navParams.stopScanner)) {
       setTimeout(() => {
         this.scanner.stopScanner();

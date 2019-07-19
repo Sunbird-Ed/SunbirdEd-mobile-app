@@ -34,7 +34,7 @@ export class TermsAndConditionsPage {
   ) {
   }
 
-  public async ionViewDidLoad() {
+  public async ionViewDidEnter() {
     this.headerService.hideHeader();
     this.userProfileDetails = (await this.profileService.getActiveSessionProfile({requiredFields: ProfileConstants.REQUIRED_FIELDS}).toPromise()).serverProfile;
 

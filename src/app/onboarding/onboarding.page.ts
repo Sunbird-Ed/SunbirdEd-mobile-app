@@ -77,7 +77,7 @@ export class OnboardingPage {
     ];
   }
 
-  ionViewDidLoad() {
+  ionViewDidEnter() {
 
     this.appVersion.getAppName().then((appName: any) => {
       this.appName = appName;

@@ -1211,7 +1211,7 @@ export class EnrolledCourseDetailsPage implements OnInit {
     this.contentShareHandler.shareContent(this.course, this.corRelationList);
   }
 
-  ionViewDidLoad() {
+  ionViewDidEnter() {
     this.subscribeUtilityEvents();
   }
 

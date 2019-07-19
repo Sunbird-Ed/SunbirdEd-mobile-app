@@ -68,7 +68,7 @@ export class DataSyncComponent {
       });
   }
 
-  ionViewDidLoad() {
+  ionViewDidEnter() {
     this.init();
     const telemetryImpressionRequest = new TelemetryImpressionRequest();
     telemetryImpressionRequest.type = ImpressionType.VIEW;

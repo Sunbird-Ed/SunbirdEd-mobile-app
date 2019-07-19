@@ -46,8 +46,8 @@ export class SettingsPage {
       });
   }
 
+  ionViewDidEnter() {
 
-  ionViewDidLoad() {
     const telemetryImpressionRequest = new TelemetryImpressionRequest();
     telemetryImpressionRequest.type = ImpressionType.VIEW;
     telemetryImpressionRequest.pageId = PageId.SETTINGS;
@@ -59,9 +59,7 @@ export class SettingsPage {
       undefined,
       undefined
     );
-  }
 
-  ionViewDidEnter() {
     this.chosenLanguageString = this.commonUtilService.translateMessage('CURRENT_LANGUAGE');
     this.preferences.getString(PreferenceKey.SELECTED_LANGUAGE).toPromise()
       .then(value => {

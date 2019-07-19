@@ -43,9 +43,6 @@ export class DownloadsTabComponent {
     private router: Router) {
   }
 
-  ionViewDidLoad() {
-  }
-
   async showDeletePopup(identifier?) {
     if (identifier) {
       this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,

@@ -118,7 +118,7 @@ export class PermissionComponent {
     });
   }
 
-  ionViewDidLoad() {
+  ionViewDidEnter() {
     this.telemetryGeneratorService.generatePageViewTelemetry(PageId.PERMISSION,
       Environment.ONBOARDING,
       '');

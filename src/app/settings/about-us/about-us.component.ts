@@ -61,7 +61,7 @@ export class AboutUsComponent {
     this.headerService.updatePageConfig(this.headerConfig);
   }
 
-  ionViewDidLoad() {
+  ionViewDidEnter() {
     this.version = 'app version will be shown here';
 
     this.deviceId = this.deviceInfo.getDeviceID();

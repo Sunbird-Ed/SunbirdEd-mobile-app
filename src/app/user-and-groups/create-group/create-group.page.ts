@@ -100,7 +100,7 @@ export class CreateGroupPage implements OnInit, OnDestroy {
     }
   }
 
-  ionViewDidLoad() {
+  ionViewDidEnter() {
     this.telemetryGeneratorService.generateImpressionTelemetry(
       ImpressionType.VIEW, '',
       PageId.CREATE_GROUP_SYLLABUS_CLASS,
