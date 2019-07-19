@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { UtilityService } from '@app/services/utility-service';
-import { ModalController } from '@ionic/angular';
+import { NavParams, PopoverController } from '@ionic/angular';
 
 @Component({
   selector: 'app-upgrade-popover',
@@ -17,13 +17,14 @@ export class UpgradePopoverComponent {
   @Input() type;
   constructor(
     private utilityService: UtilityService,
-    private modalCtrl: ModalController
+    private popCtrl: PopoverController,
+    private navParams: NavParams
   ) {
     this.init();
   }
 
   init() {
-    this.upgradeType = this.type;
+    this.upgradeType = this.navParams.get('type');
 
     if (this.upgradeType && this.upgradeType.optional === 'forceful') {
       this.isMandatoryUpgrade = true;
@@ -31,11 +32,11 @@ export class UpgradePopoverComponent {
   }
 
   cancel() {
-    this.modalCtrl.dismiss();
+    this.popCtrl.dismiss();
   }
 
   upgrade(link) {
-    const appId = link.substring(link.indexOf('=') + 1, link.lenght);
+    const appId = link.substring(link.indexOf('=') + 1, link.length);
     this.utilityService.openPlayStore(appId);
     this.cancel();
   }
