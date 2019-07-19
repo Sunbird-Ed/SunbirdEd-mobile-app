@@ -107,9 +107,7 @@ export class UserAndGroupsPage implements OnInit {
   }
 
   ionViewWillEnter() {
-    if (!this.playConfig) {
-      this.headerService.showHeaderWithBackButton(['share'], this.commonUtilService.translateMessage('USERS_AND_GROUPS'));
-    }
+    this.headerService.hideHeader();
     this.headerObservable = this.headerService.headerEventEmitted$.subscribe(eventName => {
       this.handleHeaderEvents(eventName);
     });
@@ -693,5 +691,9 @@ export class UserAndGroupsPage implements OnInit {
       case 'share': this.goToSharePage();
                     break;
     }
+  }
+
+  goBack() {
+    this.location.back();
   }
 }

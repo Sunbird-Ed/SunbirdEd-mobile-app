@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject, NgZone } from '@angular/core';
+import { Component, OnInit, Inject, NgZone, OnDestroy } from '@angular/core';
 import {
   GetAllProfileRequest,
   Group,
@@ -20,19 +20,24 @@ import {
   AppHeaderService
 } from '../../../services';
 import { NavigationExtras, ActivatedRoute, Router } from '@angular/router';
+import { Location } from '@angular/common';
+import { Platform } from '@ionic/angular';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-group-members',
   templateUrl: './group-members.page.html',
   styleUrls: ['./group-members.page.scss'],
 })
-export class GroupMembersPage implements OnInit {
+export class GroupMembersPage implements OnInit, OnDestroy {
   ProfileType = ProfileType;
   group: Group;
   userList: Array<Profile> = [];
   userSelectionMap: Map<string, boolean> = new Map();
   lastCreatedProfileData: any;
   loading: boolean;
+  backButtonFunc: Subscription;
+
   constructor(
     @Inject('GROUP_SERVICE') private groupService: GroupService,
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -41,7 +46,9 @@ export class GroupMembersPage implements OnInit {
     private telemetryGeneratorService: TelemetryGeneratorService,
     private headerService: AppHeaderService,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private platform: Platform,
+    private location: Location
   ) {
     this.group = this.router.getCurrentNavigation().extras.state.group;
   }
@@ -52,6 +59,18 @@ export class GroupMembersPage implements OnInit {
       PageId.CREATE_GROUP_USER_SELECTION,
       Environment.USER, this.group.gid ? this.group.gid : '', this.group.gid ? ObjectType.GROUP : ''
     );
+
+    this.zone.run(() => {
+      this.backButtonFunc = this.platform.backButton.subscribe(() => {
+        this.location.back();
+      });
+    });
+  }
+
+  ngOnDestroy() {
+    if (this.backButtonFunc) {
+      this.backButtonFunc.unsubscribe();
+    }
   }
 
   ionViewWillEnter() {
@@ -207,5 +226,8 @@ export class GroupMembersPage implements OnInit {
     return '';
   }
 
+  goBack() {
+    this.location.back();
+  }
 
 }

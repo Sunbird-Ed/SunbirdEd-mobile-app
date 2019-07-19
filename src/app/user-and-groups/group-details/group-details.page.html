@@ -1,5 +1,10 @@
 <ion-header>
   <ion-toolbar>
+    <ion-buttons class="sb-hamburger" slot="start">
+      <ion-button icon-only (click)="goBack()">
+        <ion-icon name="arrow-back"></ion-icon>
+      </ion-button>
+    </ion-buttons>
     <ion-title>{{group?.name}}</ion-title>
     <ion-buttons slot="primary">
       <ion-button *ngIf="!playConfig" icon-only (click)="presentPopoverNav($event)">
