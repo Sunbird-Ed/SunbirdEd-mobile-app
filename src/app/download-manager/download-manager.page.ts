@@ -70,13 +70,13 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
 
   async ionViewWillEnter() {
     this.events.subscribe('update_header', () => {
-      this.headerServie.showHeaderWithHomeButton(['download']);
+      this.headerServie.showHeaderWithHomeButton(['download', 'settings']);
     });
     this.headerObservable = this.headerServie.headerEventEmitted$.subscribe(eventName => {
       this.handleHeaderEvents(eventName);
     });
 
-    this.headerServie.showHeaderWithHomeButton(['download']);
+    this.headerServie.showHeaderWithHomeButton(['download', 'settings']);
     await this.getAppStorageInfo();
     this.getDownloadedContents();
   }
@@ -303,6 +303,9 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
       case 'download':
         this.redirectToActivedownloads();
         break;
+      case 'settings':
+        this.redirectToSettings();
+        break;
     }
   }
 
@@ -315,6 +318,10 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
     // migration-TODO
     // this.navCtrl.push(ActiveDownloadsPage);
     this.router.navigate([RouterLinks.ACTIVE_DOWNLOADS]);
+  }
+
+  private redirectToSettings() {
+    this.router.navigate([RouterLinks.STORAGE_SETTINGS]);
   }
 
 }
