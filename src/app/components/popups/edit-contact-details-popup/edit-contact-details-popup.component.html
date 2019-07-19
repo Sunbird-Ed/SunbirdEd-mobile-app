@@ -2,29 +2,32 @@
   <ion-spinner *ngIf="loader" padding></ion-spinner>
 
   <ion-grid class="P0">
-    <form [formGroup]="personEditForm" >
+    <form [formGroup]="personEditForm">
       <ion-row class="P16">
         <ion-col size="12" no-padding class="text-center">
           <p>{{title}}</p>
           <p class="font-weight-bold f14">{{description}}</p>
         </ion-col>
         <section *ngIf="type==='phone'" class="W100 text-center MT3V">
-          
+
           <ion-col size="12" no-padding class="text-center" *ngIf="err">
             <p class="error">{{'ERROR_PHONE_EXISTS' | translate}}</p>
           </ion-col>
-          <ion-col size="12" no-padding class="text-center" *ngIf="!personEditForm.controls.phone.valid && personEditForm.controls.phone.dirty">
+          <!-- TODO Need to check validation -->
+          <ion-col size="12" no-padding class="text-center"
+            *ngIf="!personEditForm.controls.phone.valid && personEditForm.controls.phone.dirty">
             <p class="error">{{'ERROR_PHONE_INVALID' | translate}}</p>
           </ion-col>
           <ion-col size="12" no-padding class="text-center" *ngIf="updateErr">
-              <p class="error">{{'ERROR_SAME_PHONE_UPDATED' | translate}}</p>
-            </ion-col>
-            <ion-col size="12" no-padding class="text-center" *ngIf="blockedAccount">
-                <p class="error">{{'ERROR_USER_ACCOUNT_BLOCKED' | translate}}</p>
-              </ion-col>
-          <ion-col size="12" no-padding class="text-center">
-            <div class="W100 merged-input-container MT10">
-              <ion-input type="tel" placeholder="+91 -" class="form-control decorator "  value="+91 -" disabled></ion-input>
+            <p class="error">{{'ERROR_SAME_PHONE_UPDATED' | translate}}</p>
+          </ion-col>
+          <ion-col size="12" no-padding class="text-center" *ngIf="blockedAccount">
+            <p class="error">{{'ERROR_USER_ACCOUNT_BLOCKED' | translate}}</p>
+          </ion-col>
+          <ion-col size="12" no-padding>
+            <div class="W100 merged-input-container MT10" style="text-align:start">
+              <ion-input type="tel" placeholder="+91 -" class="form-control decorator " value="+91 -" disabled>
+              </ion-input>
               <ion-input type="tel" placeholder="{{'PHONE_PLACEHOLDER' | translate }}" maxlength="10" minlength="10"
                 required class="form-control custom" (input)="refreshErr()" formControlName="phone"></ion-input>
             </div>
@@ -32,22 +35,21 @@
 
         </section>
         <section *ngIf="type==='email'" class="W100 text-center MT3V">
-          
-          <ion-col size="12" no-padding class="text-center" >
-            <p class="error"
-            *ngIf="(personEditForm.controls.email.dirty && personEditForm.controls.email?.invalid) ">
-            {{'ERROR_EMAIL_INVALID' | translate}}</p>
+
+          <ion-col size="12" no-padding class="text-center">
+            <p class="error" *ngIf="(personEditForm.controls.email.dirty && personEditForm.controls.email?.invalid) ">
+              {{'ERROR_EMAIL_INVALID' | translate}}</p>
           </ion-col>
           <ion-col size="12" no-padding class="text-center" *ngIf="err">
             <p class="error">{{'ERROR_EMAIL_EXISTS' | translate}}</p>
           </ion-col>
           <ion-col size="12" no-padding class="text-center" *ngIf="updateErr">
-              <p class="error">{{'ERROR_SAME_EMAIL_UPDATED' | translate}}</p>
-            </ion-col>
-            <ion-col size="12" no-padding class="text-center" *ngIf="blockedAccount">
-                <p class="error">{{'ERROR_USER_ACCOUNT_BLOCKED' | translate}}</p>
-              </ion-col>
-          <ion-col size="12" no-padding class="text-center">
+            <p class="error">{{'ERROR_SAME_EMAIL_UPDATED' | translate}}</p>
+          </ion-col>
+          <ion-col size="12" no-padding class="text-center" *ngIf="blockedAccount">
+            <p class="error">{{'ERROR_USER_ACCOUNT_BLOCKED' | translate}}</p>
+          </ion-col>
+          <ion-col size="12" no-padding>
             <div class="W100 merged-input-container MT10">
               <ion-input type="text" placeholder="{{'EMAIL_PLACEHOLDER' | translate}}" class="form-control custom"
                 formControlName="email" (input)="refreshErr()"></ion-input>
@@ -56,12 +58,13 @@
         </section>
 
       </ion-row>
-      <ion-row class =  "custom-shodow">
+      <ion-row class="custom-shodow">
         <ion-col padding>
           <ion-button expand="block" fill="outline" (click)="cancel($event)">{{ 'CANCEL' | translate }} </ion-button>
         </ion-col>
         <ion-col padding>
-          <ion-button expand="block" type="submit" (click)="validate($event)" [disabled]="!personEditForm.valid">{{ 'BTN_SUBMIT' | translate }}
+          <ion-button expand="block" type="submit" (click)="validate($event)" [disabled]="!personEditForm.valid">
+            {{ 'BTN_SUBMIT' | translate }}
           </ion-button>
         </ion-col>
       </ion-row>

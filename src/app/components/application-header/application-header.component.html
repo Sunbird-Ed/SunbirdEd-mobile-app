@@ -43,6 +43,10 @@
           </g>
         </svg>
       </ion-button>
+      <ion-button icon-only *ngIf="headerConfig?.actionButtons?.indexOf('settings') >=0 && !isDownloadingActive"
+        (click)="emitEvent($event, 'settings');">
+        <ion-icon name="settings"></ion-icon>
+      </ion-button>
       <!-- <button ion-button icon-only (click)="emitEvent($event, 'download');">
             <img src="./assets/imgs/active_download.png" class="tool-icon dw-icon" [ngClass]="{'jump-animation': showDownloadAnimation}">
         </button> -->
