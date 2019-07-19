@@ -1,4 +1,4 @@
-<ion-content hide-header-footer overflow-scroll="true" (click)="toggleTooltips($event)"
+<ion-content hide-header-footer overflow-scroll="true" (click)="toggleTooltips($event,'')"
   class="main-container avoid-bottom-tabs-space">
   <!-- Pull to Refresh -->
   <div class="spinner-div" *ngIf="refresh">
@@ -10,7 +10,8 @@
   </div>
 
   <div padding-horizontal text-center>
-    <ion-spinner *ngIf="isUploading"></ion-spinner>
+    
+   <!-- <ion-spinner *ngIf="res.isUploading"></ion-spinner>-->
     <p style="position: relative;"><span class="profile-name">{{ profile?.firstName }}
         {{ profile?.lastName }}</span>
       <span *ngIf="!isCustodianOrgId && profile?.firstName" class="isymbol" item-right text-left

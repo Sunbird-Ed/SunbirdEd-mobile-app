@@ -21,6 +21,7 @@ export class EditContactVerifyPopupComponent implements OnInit {
   invalidOtp = false;
   enableResend = true;
   unregisterBackButton: any;
+  loader: any;
 
   constructor(
     private navParams: NavParams,
@@ -92,15 +93,15 @@ export class EditContactVerifyPopupComponent implements OnInit {
           type: ProfileConstants.CONTACT_TYPE_EMAIL
         };
       }
-      const loader = await this.commonUtilService.getLoader();
-      await loader.present();
+      this.loader = await this.commonUtilService.getLoader();
+      await this.loader.present();
       this.profileService.generateOTP(req).toPromise()
         .then(async () => {
           this.description = this.commonUtilService.translateMessage('OTP_RESENT');
-          await loader.dismiss();
+          await this.loader.dismiss();
         })
         .catch(async () => {
-          await loader.dismiss();
+          await this.loader.dismiss();
         });
     } else {
       this.commonUtilService.showToast('INTERNET_CONNECTIVITY_NEEDED');

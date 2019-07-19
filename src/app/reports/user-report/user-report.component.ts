@@ -215,7 +215,7 @@ export class UserReportComponent implements OnInit {
 
   }
 
-  importcsv(body) {
+  importcsv() {
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,
       InteractSubtype.DOWNLOAD_REPORT_CLICKED,

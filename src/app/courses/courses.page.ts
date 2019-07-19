@@ -127,7 +127,7 @@ export class CoursesPage implements OnInit, AfterViewInit {
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
     private appGlobalService: AppGlobalService,
     private courseUtilService: CourseUtilService,
-    private commonUtilService: CommonUtilService,
+    public commonUtilService: CommonUtilService,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private network: Network,
     private router: Router,

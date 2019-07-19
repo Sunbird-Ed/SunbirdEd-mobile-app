@@ -61,7 +61,7 @@ export class CreateGroupPage implements OnInit, OnDestroy {
   constructor(
     private fb: FormBuilder,
     private translate: TranslateService,
-    private commonUtilService: CommonUtilService,
+    public commonUtilService: CommonUtilService,
     @Inject('GROUP_SERVICE') private groupService: GroupService,
     private telemetryGeneratorService: TelemetryGeneratorService,
     @Inject('FRAMEWORK_SERVICE') private frameworkService: FrameworkService,

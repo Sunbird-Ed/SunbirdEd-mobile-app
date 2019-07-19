@@ -14,7 +14,7 @@ export interface QRAlertCallBack {
 export class ReportAlertComponent implements OnInit {
 
   callback: QRAlertCallBack;
-  assessmentDetails: {};
+  assessmentDetails: any;
   report = 'questions';
 
   constructor(

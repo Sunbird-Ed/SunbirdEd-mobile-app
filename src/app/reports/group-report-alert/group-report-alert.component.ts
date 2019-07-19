@@ -30,7 +30,7 @@ export class GroupReportAlertComponent implements OnInit {
     name: this.commonUtilService.translateMessage('RESULT'),
     prop: 'res'
   }];
-  assessment: {};
+  assessment: any;
   fromUserAssessment = { 'uiRows': [], showResult: false };
   constructor(
     navParams: NavParams,
