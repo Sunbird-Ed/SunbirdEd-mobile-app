@@ -9,6 +9,7 @@ import { ContentDetailsPage } from './content-details.page';
 import { TranslateModule } from '@ngx-translate/core';
 import { PipesModule } from '@app/pipes/pipes.module';
 import { ComponentsModule } from '../components/components.module';
+import { ConfirmAlertComponent } from '../components';
 
 const routes: Routes = [
   {
@@ -27,6 +28,7 @@ const routes: Routes = [
     TranslateModule.forChild(),
     PipesModule
   ],
-  declarations: [ContentDetailsPage]
+  declarations: [ContentDetailsPage],
+  entryComponents:[ConfirmAlertComponent]
 })
 export class ContentDetailsPageModule {}
