@@ -11,9 +11,9 @@ import {
   TelemetryGeneratorService
 } from './../../../services';
 import { TranslateService } from '@ngx-translate/core';
-import { Component, Inject, NgZone, ViewChild, OnInit } from '@angular/core';
+import { Component, Inject, NgZone, ViewChild, OnInit, OnDestroy } from '@angular/core';
 import {
-  AlertController, Events, LoadingController, PopoverController, ToastController
+  AlertController, Events, LoadingController, PopoverController, ToastController, Platform
 } from '@ionic/angular';
 // import { PopoverPage } from '../popover/popover';
 // import { GroupDetailNavPopoverPage } from '../group-detail-nav-popover/group-detail-nav-popover';
@@ -46,6 +46,8 @@ import { PreferenceKey, RouterLinks } from '../../../app/app.constant';
 import { ActivatedRoute, Router, NavigationExtras } from '@angular/router';
 import { EditDeletePopoverComponent } from '../edit-delete-popover/edit-delete-popover.component';
 import { GroupDetailNavPopover } from '../group-detail-nav-popover/group-detail-nav-popover';
+import { Location } from '@angular/common';
+import { Subscription } from 'rxjs';
 // import { TabsPage } from '@app/pages/tabs/tabs';
 
 @Component({
@@ -53,7 +55,7 @@ import { GroupDetailNavPopover } from '../group-detail-nav-popover/group-detail-
   templateUrl: './group-details.page.html',
   styleUrls: ['./group-details.page.scss'],
 })
-export class GroupDetailsPage implements OnInit {
+export class GroupDetailsPage implements OnInit, OnDestroy {
   group: Group;
   currentUserId: string;
   currentGroupId: string;
@@ -65,6 +67,7 @@ export class GroupDetailsPage implements OnInit {
   playConfig: any;
   ProfileType = ProfileType;
   isCurrentGroupActive = false;
+  backButtonFunc: Subscription;
 
   constructor(
     @Inject('GROUP_SERVICE') private groupService: GroupService,
@@ -84,8 +87,9 @@ export class GroupDetailsPage implements OnInit {
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
     private headerService: AppHeaderService,
     private route: ActivatedRoute,
-    private router: Router
-
+    private router: Router,
+    private platform: Platform,
+    private location: Location
   ) {
     this.group = this.router.getCurrentNavigation().extras.state.groupInfo;
     this.currentUserId = this.router.getCurrentNavigation().extras.state.currentUserId;
@@ -98,6 +102,17 @@ export class GroupDetailsPage implements OnInit {
   }
 
   ngOnInit() {
+    this.zone.run(() => {
+      this.backButtonFunc = this.platform.backButton.subscribe(() => {
+        this.location.back();
+      });
+    });
+  }
+
+  ngOnDestroy() {
+    if (this.backButtonFunc) {
+      this.backButtonFunc.unsubscribe();
+    }
   }
 
   ionViewWillEnter() {
@@ -539,5 +554,9 @@ export class GroupDetailsPage implements OnInit {
       position: 'bottom'
     });
     await toast.present();
+  }
+
+  goBack() {
+    this.location.back();
   }
 }

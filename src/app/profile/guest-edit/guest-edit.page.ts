@@ -336,7 +336,7 @@ export class GuestEditPage implements OnInit {
       this[currentField] = this.syllabusList;
     } else if (index === 1) {
       this.frameworkId = prevSelectedValue ? (Array.isArray(prevSelectedValue[0]) ? prevSelectedValue[0][0] : prevSelectedValue[0]) : '';
-      if (this.frameworkId.length !== 0) {
+      if (this.frameworkId && this.frameworkId.length !== 0) {
         const frameworkDetailsRequest: FrameworkDetailsRequest = {
           frameworkId: this.frameworkId,
           requiredCategories: FrameworkCategoryCodesGroup.DEFAULT_FRAMEWORK_CATEGORIES

@@ -1,3 +1,4 @@
+@import '../../global.scss';
 :host {
   .img-container {
     position: absolute;
@@ -5,14 +6,13 @@
     height: 100px;
     top: 30%;
 
-    //MIGRATION TODO
-    /* @include ltr() {
+    @include ltr() {
       left: 60%;
     }
     @include rtl() {
       right: 60%;
     }
-    @include margin(null, null, null, -97px); */
+    @include margin(null, null, null, -97px);
 
     margin-top: -144px;
   }
@@ -45,20 +45,17 @@
   }
 
   .item-background.item-md {
-    //MIGRATION TODO
-    // background-color: map-get($colors, light_gray) !important;
+    background-color: map-get($colors, light_gray) !important;
   }
   .subTitle {
     font-size: 1.4rem;
-    //MIGRATION TODO
-    // @extend .font-weight-700;
+    @extend .font-weight-700;
   }
   .radius {
     border-radius: 6px;
   }
   .blueBorder {
-    //MIGRATION TODO
-    // border-color: map-get($colors, primary) !important;
+    border-color: map-get($colors, primary) !important;
     border-style: solid !important;
     border-width: 2px !important;
     border-radius: 4px;
@@ -67,14 +64,13 @@
     position: relative;
     width: 20px;
     bottom: 16px;
-    //MIGRATION TODO
-/*     @include ltr() {
+@include ltr() {
       right: 6px;
     }
     @include rtl() {
       left: 6px;
     }
- */    height: 20px;
+    height: 20px;
   }
   .elipsis {
     width: 100%;
@@ -92,16 +88,14 @@
     border-radius: 6px;
   }
   .bg-color-white {
-    //MIGRATION TODO
-    // background-color: map-get($colors, light_gray) !important;
+    background-color: map-get($colors, light_gray) !important;
   }
 
   .error-message-contentplay {
     width: -webkit-fill-available;
     background-color: #a1a1a1;
 
-    //MI
-    // @include padding(1%, 0%, 1%, 5%);
+    @include padding(1%, 0%, 1%, 5%);
     color: white;
     // position: fixed !important;
     // bottom: 32px;
@@ -112,16 +106,14 @@
   }
   .advanced-menu ion-icon[item-end] {
     margin-top: 0 !important;
-    //MIGRATION TODO
-    // @include padding(null, 8px, null, null !important);
+    @include padding(null, 8px, null, null !important);
   }
   .advanced-menu .item-md,
   .advanced-menu .item-ios {
     margin-top: 0 !important;
   }
   .padding-left-0 {
-    //MIGRATION TODO
-    // @include padding(null, null, null, 0 !important);
+    @include padding(null, null, null, 0 !important);
   }
   .rm-label-margin ion-label {
     margin-top: 0 !important;
@@ -135,8 +127,7 @@
   }
 
   .item-padding-left.item-md {
-      //MIGRATION TODO
-    // @include padding(null, null, null, 14px !important);
+    @include padding(null, null, null, 14px !important);
   }
   //.custom-margin-top{
   //margin-top: 7vh;
@@ -151,25 +142,21 @@
   }
 }
 .padding-left-2 {
-  //MIGRATION TODO
-  //   @include padding(null, null, null, 2px !important);
+    @include padding(null, null, null, 2px !important);
 }
 
 .segment-md .segment-button {
-  //MIGRATION TODO
-//   @extend .font-weight-700;
-  //   color: map-get($colors, dark_gray) !important;
-  //   background-color: map-get($colors, white);
+  @extend .font-weight-700;
+    color: map-get($colors, dark_gray) !important;
+    background-color: map-get($colors, white);
 }
 
 .segment-md .segment-button.segment-activated {
-  //MIGRATION TODO
-  //   border-color: map-get($colors, primary) !important;
-  //   color: map-get($colors, primary) !important;
+    border-color: map-get($colors, primary) !important;
+    color: map-get($colors, primary) !important;
 }
 .description {
-  //MIGRATION TODO
-  //   color: map-get($colors, dark_gray);
+    color: map-get($colors, dark_gray);
   font-size: 1.5rem;
-  //   @include margin(null, 10%, null, 10%);
+    @include margin(null, 10%, null, 10%);
 }

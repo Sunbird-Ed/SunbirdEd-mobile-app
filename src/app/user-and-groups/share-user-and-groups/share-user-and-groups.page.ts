@@ -1,5 +1,5 @@
-import { Component, OnInit, Inject, NgZone } from '@angular/core';
-import { LoadingController } from '@ionic/angular';
+import { Component, OnInit, Inject, NgZone, OnDestroy } from '@angular/core';
+import { LoadingController, Platform } from '@ionic/angular';
 import {
   GetAllProfileRequest,
   Group,
@@ -20,6 +20,8 @@ import {
   AppHeaderService,
   CommonUtilService
 } from '../../../services';
+import { Subscription } from 'rxjs';
+import { Location } from '@angular/common';
 
 declare const cordova;
 @Component({
@@ -27,7 +29,7 @@ declare const cordova;
   templateUrl: './share-user-and-groups.page.html',
   styleUrls: ['./share-user-and-groups.page.scss'],
 })
-export class ShareUserAndGroupsPage implements OnInit {
+export class ShareUserAndGroupsPage implements OnInit, OnDestroy {
   ProfileType = ProfileType;
   groupName: Group;
   userList: Array<Profile> = [];
@@ -39,6 +41,7 @@ export class ShareUserAndGroupsPage implements OnInit {
   private userWeightMap: Map<string, number> = new Map();
 
   private userGroupMap: Map<string, Array<Profile>> = new Map();
+  backButtonFunc: Subscription;
 
   constructor(
     @Inject('GROUP_SERVICE') private groupService: GroupService,
@@ -48,14 +51,27 @@ export class ShareUserAndGroupsPage implements OnInit {
     private loadingCtrl: LoadingController,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private headerService: AppHeaderService,
-    private commonUtilService: CommonUtilService
+    private commonUtilService: CommonUtilService,
+    private platform: Platform,
+    private location: Location
   ) { }
 
   ngOnInit() {
+    this.zone.run(() => {
+      this.backButtonFunc = this.platform.backButton.subscribe(() => {
+        this.location.back();
+      });
+    });
+  }
+
+  ngOnDestroy() {
+    if (this.backButtonFunc) {
+      this.backButtonFunc.unsubscribe();
+    }
   }
 
   ionViewWillEnter() {
-    this.headerService.hideHeader();
+    this.headerService.showHeaderWithBackButton([], this.commonUtilService.translateMessage('SHARE_THIS'));
     this.getAllProfile();
     this.getAllGroup();
   }
