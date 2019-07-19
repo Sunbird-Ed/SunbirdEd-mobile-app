@@ -9,6 +9,7 @@ import { ContentDetailsPage } from './content-details.page';
 import { TranslateModule } from '@ngx-translate/core';
 import { PipesModule } from '@app/pipes/pipes.module';
 import { ComponentsModule } from '../components/components.module';
+import { ConfirmAlertComponent } from '../components';
 
 const routes: Routes = [
   {

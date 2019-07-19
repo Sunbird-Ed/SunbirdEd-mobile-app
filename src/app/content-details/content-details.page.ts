@@ -1069,7 +1069,7 @@ export class ContentDetailsPage implements OnInit {
       });
       await popover.present();
       const response = await popover.onDidDismiss();
-      if (response.data.canDownload) {
+      if (response.data) {
         this.downloadContent();
       }
   } else {
