@@ -1,4 +1,4 @@
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import {
   SharedPreferences,
@@ -16,7 +16,7 @@ import { Router, NavigationExtras } from '@angular/router';
   styleUrls: ['./settings.page.scss'],
 })
 
-export class SettingsPage {
+export class SettingsPage implements OnInit {
   chosenLanguageString: string;
   selectedLanguage: string;
   fileUrl: string;
@@ -47,7 +47,7 @@ export class SettingsPage {
   }
 
 
-  ionViewDidLoad() {
+  ngOnInit() {
     const telemetryImpressionRequest = new TelemetryImpressionRequest();
     telemetryImpressionRequest.type = ImpressionType.VIEW;
     telemetryImpressionRequest.pageId = PageId.SETTINGS;

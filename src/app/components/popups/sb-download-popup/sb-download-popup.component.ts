@@ -39,7 +39,8 @@ export class SbDownloadPopupComponent implements OnInit, OnChanges {
   @Input() showDownload: any;
   @Input() contentAvailableLocally: any;
   @Input() contentSize: any;
-  private popupUpdate: any;
+  popupUpdate: any;
+  showPopover: any;
   private constContentSize: any;
   constructor(
     private events: Events,

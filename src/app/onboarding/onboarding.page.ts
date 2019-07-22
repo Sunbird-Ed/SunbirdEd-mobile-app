@@ -1,4 +1,4 @@
-import {Component, Inject} from '@angular/core';
+import {Component, Inject, OnInit} from '@angular/core';
 import {
   ApiService,
   AuthService,
@@ -30,7 +30,7 @@ import { initTabs, LOGIN_TEACHER_TABS, GUEST_STUDENT_TABS, GUEST_TEACHER_TABS } 
   templateUrl: './onboarding.page.html',
   styleUrls: ['./onboarding.page.scss'],
 })
-export class OnboardingPage {
+export class OnboardingPage implements OnInit {
 
   slides: any[];
   appDir: string;
@@ -77,7 +77,7 @@ export class OnboardingPage {
     ];
   }
 
-  ionViewDidLoad() {
+  ngOnInit() {
 
     this.appVersion.getAppName().then((appName: any) => {
       this.appName = appName;

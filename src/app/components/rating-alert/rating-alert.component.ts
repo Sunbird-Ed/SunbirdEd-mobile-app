@@ -70,16 +70,7 @@ export class RatingAlertComponent implements OnInit {
     });
   }
 
-  ngOnInit() {}
-
-  getAppName() {
-    this.appVersion.getAppName()
-      .then((appName: any) => {
-        this.appName = appName;
-      });
-  }
-
-  ionViewDidLoad() {
+  ngOnInit() {
     this.pageId = this.navParams.get('pageId');
     this.telemetryGeneratorService.generateImpressionTelemetry(
       ImpressionType.VIEW,
@@ -90,6 +81,13 @@ export class RatingAlertComponent implements OnInit {
       undefined
     );
     this.appRatePopup();
+  }
+
+  getAppName() {
+    this.appVersion.getAppName()
+      .then((appName: any) => {
+        this.appName = appName;
+      });
   }
 
   closePopover() {

@@ -22,7 +22,7 @@ declare const cordova;
   templateUrl: 'language-settings.html',
   styleUrls: ['./language-settings.scss']
 })
-export class LanguageSettingsPage{
+export class LanguageSettingsPage implements OnInit {
 
   languages: any = [];
   language: any;
@@ -55,7 +55,7 @@ export class LanguageSettingsPage{
     // this.mainPage = this.navParams.get('mainPage');
    }
 
-  ionViewDidLoad() {
+  ngOnInit() {
     // this.isFromSettings = this.navParams.get('isFromSettings');
     this.activatedRoute.params.subscribe(params => {
       console.log('params', params);
@@ -69,6 +69,14 @@ export class LanguageSettingsPage{
       );
       this.handleBackbutton();
     });
+
+    if (!this.isFromSettings) {
+      this.headerServie.hideHeader();
+    } else if (this.mainPage) {
+      this.headerServie.showHeaderWithBackButton();
+    } else {
+      this.headerServie.showHeaderWithBackButton();
+    }
   }
 
   handleBackbutton() {
@@ -95,13 +103,6 @@ export class LanguageSettingsPage{
 
   ionViewWillEnter() {
     this.selectedLanguage = {};
-    if (!this.isFromSettings) {
-      this.headerServie.hideHeader();
-    } else if (this.mainPage) {
-      this.headerServie.showHeaderWithBackButton();
-    } else {
-      this.headerServie.showHeaderWithBackButton();
-    }
     this.init();
   }
 

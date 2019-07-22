@@ -11,7 +11,7 @@
   </ion-toolbar>
 
   <ion-toolbar no-border-top>
-      <ion-segment [(ngModel)]="reportType" (ngModelChange)="fetchAssessment($event)">
+      <ion-segment [(ngModel)]="reportType" (ngModelChange)="fetchAssessment($event,false)">
           <ion-segment-button value="users">
               {{ 'BY_USERS' | translate }}
           </ion-segment-button>

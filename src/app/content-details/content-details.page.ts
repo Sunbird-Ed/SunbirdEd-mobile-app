@@ -184,7 +184,7 @@ export class ContentDetailsPage implements OnInit {
     private popoverCtrl: PopoverController,
     private social: SocialSharing,
     private platform: Platform,
-    private appGlobalService: AppGlobalService,
+    public appGlobalService: AppGlobalService,
     private alertCtrl: AlertController,
     private ionicApp: IonApp,
     private telemetryGeneratorService: TelemetryGeneratorService,

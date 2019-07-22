@@ -61,6 +61,9 @@ export class ActiveDownloadsPage implements OnInit, OnDestroy, ActiveDownloadsIn
     this.initDownloadProgress();
     this.initAppHeader();
     this.initNetworkDetection();
+    this.telemetryGeneratorService.generatePageViewTelemetry(
+      PageId.ACTIVE_DOWNLOADS,
+      Environment.DOWNLOADS, '');
   }
 
   ngOnDestroy() {
@@ -77,12 +80,6 @@ export class ActiveDownloadsPage implements OnInit, OnDestroy, ActiveDownloadsIn
         this._toast = undefined;
       }
     }
-  }
-
-  ionViewDidLoad() {
-    this.telemetryGeneratorService.generatePageViewTelemetry(
-      PageId.ACTIVE_DOWNLOADS,
-      Environment.DOWNLOADS, '');
   }
 
   cancelAllDownloads(): void {

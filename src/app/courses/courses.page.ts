@@ -34,7 +34,7 @@ import { Router, NavigationExtras } from '@angular/router';
   templateUrl: './courses.page.html',
   styleUrls: ['./courses.page.scss'],
 })
-export class CoursesPage implements OnInit, AfterViewInit {
+export class CoursesPage implements OnInit {
   /**
    * Contains enrolled course
    */
@@ -127,7 +127,7 @@ export class CoursesPage implements OnInit, AfterViewInit {
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
     private appGlobalService: AppGlobalService,
     private courseUtilService: CourseUtilService,
-    private commonUtilService: CommonUtilService,
+    public commonUtilService: CommonUtilService,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private network: Network,
     private router: Router,
@@ -163,16 +163,7 @@ export class CoursesPage implements OnInit, AfterViewInit {
    */
   ngOnInit() {
     this.getCourseTabData();
-  }
-  ngAfterViewInit() {
 
-  }
-
-  ionViewDidEnter() {
-    this.isVisible = true;
-  }
-
-  ionViewWillEnter() {
     this.events.subscribe('update_header', (data) => {
       this.headerServie.showHeaderWithHomeButton(['search', 'filter', 'download']);
     });
@@ -181,11 +172,13 @@ export class CoursesPage implements OnInit, AfterViewInit {
     });
     this.getEnrolledCourses();
     this.headerServie.showHeaderWithHomeButton(['search', 'filter', 'download']);
-
   }
 
-  ionViewDidLoad() {
+  ionViewWillEnter() {
+    this.isVisible = true;
+  }
 
+  ionViewDidEnter() {
     this.appGlobalService.generateConfigInteractEvent(PageId.COURSES, this.isOnBoardingCardCompleted);
 
     this.events.subscribe('event:showScanner', (data) => {

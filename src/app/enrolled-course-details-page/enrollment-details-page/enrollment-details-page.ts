@@ -59,10 +59,6 @@ export class EnrollmentDetailsPage {
 
   }
 
-  ionViewDidLoad() {
-    console.log('ionViewDidLoad EnrollmentDetailsPage');
-  }
-
   close() {
     // migration-TODO
     // this.viewCtrl.dismiss();

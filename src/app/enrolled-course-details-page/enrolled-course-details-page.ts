@@ -217,7 +217,7 @@ export class EnrolledCourseDetailsPage implements OnInit {
    * Angular life cycle hooks
    */
   ngOnInit() {
-
+    this.subscribeUtilityEvents();
   }
 
   subscribeUtilityEvents() {
@@ -1210,10 +1210,6 @@ export class EnrolledCourseDetailsPage implements OnInit {
 
   share() {
     this.contentShareHandler.shareContent(this.course, this.corRelationList);
-  }
-
-  ionViewDidLoad() {
-    this.subscribeUtilityEvents();
   }
 
   handleNavBackButton() {

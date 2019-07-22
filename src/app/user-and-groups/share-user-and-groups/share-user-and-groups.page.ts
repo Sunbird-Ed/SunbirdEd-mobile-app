@@ -232,7 +232,7 @@ export class ShareUserAndGroupsPage implements OnInit, OnDestroy {
     });
   }
 
-  async sshare() {
+  async share() {
 
     if (this.selectedUserList && this.selectedGroupList) {
       const valueMap = new Map();
