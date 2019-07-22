@@ -1471,7 +1471,7 @@ export class ContentDetailsPage implements OnInit {
     });
     await confirm.present();
     const response = await confirm.onDidDismiss();
-    if (response.data.canDelete) {
+    if (response.data) {
       this.deleteContent();
       // this.viewCtrl.dismiss();
     }
