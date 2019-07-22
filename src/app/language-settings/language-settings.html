@@ -1,31 +1,33 @@
-<ion-content padding>
-
-  <ion-label class="font-size-17" text-center padding text-wrap><strong>{{ 'CHOOSE_LANGUAGE' | translate }}</strong>
-  </ion-label>
-  <div [ngClass]="isFromSettings? 'list-wrap' : '' ">
+<ion-content class="ion-padding">
+  <div class="font-size-17" text-center padding text-wrap style="min-height: 75px;">
+    <strong>{{ 'CHOOSE_LANGUAGE' | translate }}</strong></div>
+  <div [class.list-wrap]="isFromSettings">
     <ion-list inset mode="ios">
       <ion-radio-group [(ngModel)]="language" (ionChange)="onLanguageSelected()">
         <ion-item mode="ios" *ngFor="let lang of languages">
           <ion-label class="gray-color">{{ lang?.label | translate }}
           </ion-label>
-          <ion-radio slot="start" mode="ios" [value]="lang?.code"></ion-radio>
+          <ion-radio slot="end" mode="ios" [value]="lang?.code"></ion-radio>
         </ion-item>
       </ion-radio-group>
     </ion-list>
   </div>
 </ion-content>
 
-<ion-footer padding no-border *ngIf="!mainPage">
-  <ion-button class="arrow-icon" [ngStyle]="{'background-color': btnColor}" slot="end" expand="block"
-    (click)="continue()">
+<ion-footer class="ion-padding" no-border>
+  <!-- <ion-button class="arrow-icon" [ngStyle]="{'--background-color': btnColor}" expand="block"
+    (click)="mainPage ? goToResources() : continue()">
+    <span class="MR15 ellipsis">{{ 'CONTINUE' | translate }}</span>
+    <ion-icon style="right: 15px;position: absolute;" name="arrow-round-forward"
+      class="icon icon-md ion-md-arrow-round-forward"></ion-icon>
+  </ion-button> -->
+
+
+  <button class="sb-btn sb-btn-md sb-btn-primary PR35 W100 ellipsis" style="position: relative;"
+    [ngStyle]="{'background-color': btnColor}" (click)="mainPage ? goToResources() : continue()">
     {{ 'CONTINUE' | translate }}
-    <ion-icon name="arrow-round-forward" class="icon icon-md ion-md-arrow-round-forward"></ion-icon>
-  </ion-button>
-</ion-footer>
-<ion-footer padding no-border *ngIf="mainPage">
-  <ion-button class="arrow-icon" [ngStyle]="{'background-color': btnColor}" slot="end" expand="block"
-    (click)="goToResources()">
-    {{ 'CONTINUE' | translate }}
-    <ion-icon name="arrow-round-forward" class="icon icon-md ion-md-arrow-round-forward"></ion-icon>
-  </ion-button>
+    <ion-icon style="right: 15px;position: absolute;top: 50%;transform: translateY(-50%);width: 22px;"
+      name="arrow-round-forward" class="icon icon-md ion-md-arrow-round-forward"></ion-icon>
+  </button>
+
 </ion-footer>

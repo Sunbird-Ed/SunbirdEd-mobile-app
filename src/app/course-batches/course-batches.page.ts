@@ -88,8 +88,14 @@ export class CourseBatchesPage implements OnInit {
     private router: Router,
     private platform: Platform
   ) {
-    this.ongoingBatches = this.router.getCurrentNavigation().extras.state.ongoingBatches;
-    this.upcommingBatches = this.router.getCurrentNavigation().extras.state.upcommingBatches;
+    const extrasState  = this.router.getCurrentNavigation().extras.state;
+    if (extrasState) {
+      this.ongoingBatches = extrasState.ongoingBatches;
+      this.upcommingBatches = extrasState.upcommingBatches;
+    } else {
+      this.ongoingBatches = [];
+      this.upcommingBatches = [];
+    }
   }
 
   ngOnInit(): void {
@@ -106,7 +112,7 @@ export class CourseBatchesPage implements OnInit {
   }
 
   private handleBackButton() {
-   this.backButtonFunc =  this.platform.backButton.subscribe(() => {
+    this.backButtonFunc =  this.platform.backButton.subscribe(() => {
       this.location.back();
     });
   }

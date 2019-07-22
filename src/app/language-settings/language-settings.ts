@@ -1,15 +1,15 @@
-import {Component, Inject, NgZone, OnInit} from '@angular/core';
-import {Events, Platform} from '@ionic/angular';
+import { Component, Inject, NgZone, OnInit } from '@angular/core';
+import { Events, Platform } from '@ionic/angular';
 import { Router, ActivatedRoute, ParamMap, NavigationExtras } from '@angular/router';
 
-import {TranslateService} from '@ngx-translate/core';
-import {SharedPreferences} from 'sunbird-sdk';
-import {appLanguages, PreferenceKey, RouterLinks} from '../app.constant';
-import {Map} from '../telemetryutil';
-import {AppGlobalService, CommonUtilService, TelemetryGeneratorService, AppHeaderService} from '../../services';
+import { TranslateService } from '@ngx-translate/core';
+import { SharedPreferences } from 'sunbird-sdk';
+import { appLanguages, PreferenceKey, RouterLinks } from '../app.constant';
+import { Map } from '../telemetryutil';
+import { AppGlobalService, CommonUtilService, TelemetryGeneratorService, AppHeaderService } from '../../services';
 // import {OnboardingPage} from '@app/pages/onboarding/onboarding';
 // import {UserTypeSelectionPage} from '@app/pages/user-type-selection';
-import {Environment, ImpressionType, InteractSubtype, InteractType, PageId} from '../../services/telemetry-constants';
+import { Environment, ImpressionType, InteractSubtype, InteractType, PageId } from '../../services/telemetry-constants';
 // import { ResourcesPage } from '../resources/resources';
 import { NotificationService } from '../../services/notification.service';
 import { switchMap } from 'rxjs/operators';
@@ -33,7 +33,7 @@ export class LanguageSettingsPage implements OnInit {
   selectedLanguage: any = {};
   btnColor = '#55acee';
   unregisterBackButton = undefined;
-  mainPage: Boolean = false;
+  mainPage: boolean = false;
   headerConfig: any;
 
 
@@ -53,7 +53,7 @@ export class LanguageSettingsPage implements OnInit {
     private location: Location
   ) {
     // this.mainPage = this.navParams.get('mainPage');
-   }
+  }
 
   ngOnInit() {
     // this.isFromSettings = this.navParams.get('isFromSettings');
@@ -81,7 +81,7 @@ export class LanguageSettingsPage implements OnInit {
 
   handleBackbutton() {
     // migration-TODO
-     this.unregisterBackButton = this.platform.backButton.subscribe(() => {
+    this.unregisterBackButton = this.platform.backButton.subscribe(() => {
       this.telemetryGeneratorService.generateInteractTelemetry(
         InteractType.TOUCH, InteractSubtype.DEVICE_BACK_CLICKED,
         this.isFromSettings ? Environment.SETTINGS : Environment.ONBOARDING,

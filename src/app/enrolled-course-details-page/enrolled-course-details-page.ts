@@ -1153,8 +1153,8 @@ export class EnrolledCourseDetailsPage implements OnInit {
                 await loader.dismiss();
                 this.router.navigate([RouterLinks.COURSE_BATCHES], {
                   state: {
-                    ongoingBatches: ongoingBatches,
-                    upcommingBatches: upcommingBatches
+                    ongoingBatches,
+                    upcommingBatches
                   }
                 });
               } else {
