@@ -539,14 +539,14 @@ export class ContentDetailsPage implements OnInit {
     const popover = await this.popoverCtrl.create({
       component: ContentRatingAlertComponent,
       componentProps: {
-      content: this.content,
-      pageId: PageId.CONTENT_DETAIL,
-      rating: this.userRating,
-      comment: this.ratingComment,
-      popupType: popupType,
-    },
-        cssClass: 'sb-popover info',
-      });
+        content: this.content,
+        pageId: PageId.CONTENT_DETAIL,
+        rating: this.userRating,
+        comment: this.ratingComment,
+        popupType: popupType,
+      },
+      cssClass: 'sb-popover info',
+    });
     await popover.present();
     const response = await popover.onDidDismiss();
     if (response.data.data && response.data.data.message === 'rating.success') {
@@ -756,7 +756,7 @@ export class ContentDetailsPage implements OnInit {
     // const option = new ChildContentRequest();
     const option: ChildContentRequest = {
       contentId: this.resumedCourseCardData && this.resumedCourseCardData.contentId ?
-      this.resumedCourseCardData.contentId : this.resumedCourseCardData.identifier,
+        this.resumedCourseCardData.contentId : this.resumedCourseCardData.identifier,
       hierarchyInfo: null,
       level: !this.resumedCourseCardData ? 1 : 0,
     };
@@ -920,7 +920,7 @@ export class ContentDetailsPage implements OnInit {
     if (activePortal) {
       activePortal.dismiss();
     } else {
-         this.location.back();
+      this.location.back();
     }
   }
 
@@ -928,7 +928,7 @@ export class ContentDetailsPage implements OnInit {
     if (this.isResumedCourse) {
       // migration-TODO
       // this.navCtrl.popTo(this.navCtrl.getByIndex(this.navCtrl.length() - 3));
-      this.router.navigate(['../../'], {relativeTo: this.route});
+      this.router.navigate(['../../'], { relativeTo: this.route});
     } else {
       if (isNavBack) {
         // this.navCtrl.pop();
@@ -1059,9 +1059,9 @@ export class ContentDetailsPage implements OnInit {
       const popover = await this.popoverCtrl.create({
         component: ConfirmAlertComponent,
         componentProps: {
-        sbPopoverMainTitle: this.content.contentData.name,
-        icon: null,
-        metaInfo:
+          sbPopoverMainTitle: this.content.contentData.name,
+          icon: null,
+          metaInfo:
             '1 item ' + '(' + this.fileSizePipe.transform(this.content.contentData.size, 2) + ')',
           isUpdateAvail: this.contentDownloadable[this.content.identifier] && this.isUpdateAvail,
         },
@@ -1072,9 +1072,9 @@ export class ContentDetailsPage implements OnInit {
       if (response.data) {
         this.downloadContent();
       }
-  } else {
-  this.commonUtilService.showToast('ERROR_NO_INTERNET_MESSAGE');
-}
+    } else {
+      this.commonUtilService.showToast('ERROR_NO_INTERNET_MESSAGE');
+    }
   }
 
   /**
@@ -1176,28 +1176,28 @@ export class ContentDetailsPage implements OnInit {
       const popover = await this.popoverCtrl.create({
         component: SbGenericPopoverComponent,
         componentProps: {
-        sbPopoverHeading: this.commonUtilService.translateMessage('LOW_BANDWIDTH'),
-        sbPopoverMainTitle: this.commonUtilService.translateMessage('LOW_BANDWIDTH_DETECTED'),
-        actionsButtons: [
-          {
-            btntext: this.commonUtilService.translateMessage('PLAY_ONLINE'),
-            btnClass: 'popover-color'
+          sbPopoverHeading: this.commonUtilService.translateMessage('LOW_BANDWIDTH'),
+          sbPopoverMainTitle: this.commonUtilService.translateMessage('LOW_BANDWIDTH_DETECTED'),
+          actionsButtons: [
+            {
+              btntext: this.commonUtilService.translateMessage('PLAY_ONLINE'),
+              btnClass: 'popover-color'
+            },
+            {
+              btntext: this.commonUtilService.translateMessage('DOWNLOAD'),
+              btnClass: 'sb-btn sb-btn-normal sb-btn-info'
+            }
+          ],
+          icon: {
+            md: 'md-sad',
+            ios: 'ios-sad',
+            className: ''
           },
-          {
-            btntext: this.commonUtilService.translateMessage('DOWNLOAD'),
-            btnClass: 'sb-btn sb-btn-normal sb-btn-info'
-          }
-        ],
-        icon: {
-          md: 'md-sad',
-          ios: 'ios-sad',
-          className: ''
+          metaInfo: '',
+          sbPopoverContent: this.commonUtilService.translateMessage('CONSIDER_DOWNLOAD')
         },
-        metaInfo: '',
-        sbPopoverContent: this.commonUtilService.translateMessage('CONSIDER_DOWNLOAD')
-      },
-          cssClass: 'sb-popover warning',
-        });
+        cssClass: 'sb-popover warning',
+      });
       await popover.present();
       const response = await popover.onDidDismiss();
       if (response.data.leftBtnClicked == null) {
@@ -1221,18 +1221,18 @@ export class ContentDetailsPage implements OnInit {
     const popover = await this.popoverCtrl.create({
       component: SbGenericPopoverComponent,
       componentProps: {
-      sbPopoverHeading: this.commonUtilService.translateMessage('CONTENT_NOT_AVAILABLE'),
-      sbPopoverMainTitle: this.commonUtilService.translateMessage('CONTENT_RETIRED_BY_AUTHOR'),
-      actionsButtons: [
-      ],
-      icon: {
-        md: 'md-warning',
-        ios: 'ios-warning',
-        className: ''
-      }
-    },
-        cssClass: 'sb-popover warning',
-      });
+        sbPopoverHeading: this.commonUtilService.translateMessage('CONTENT_NOT_AVAILABLE'),
+        sbPopoverMainTitle: this.commonUtilService.translateMessage('CONTENT_RETIRED_BY_AUTHOR'),
+        actionsButtons: [
+        ],
+        icon: {
+          md: 'md-warning',
+          ios: 'ios-warning',
+          className: ''
+        }
+      },
+      cssClass: 'sb-popover warning',
+    });
     await popover.present();
     await popover.onDidDismiss();
     // migration-TODO
@@ -1244,26 +1244,26 @@ export class ContentDetailsPage implements OnInit {
   async openPlayAsPopup(isStreaming) {
     const profile = this.appGlobalService.getCurrentUser();
     this.isUsrGrpAlrtOpen = true;
-   // if (profile.board.length > 1) {
+    // if (profile.board.length > 1) {
     const confirm = await this.popoverCtrl.create( {
       component: SbGenericPopoverComponent,
       componentProps: {
-      sbPopoverHeading: this.commonUtilService.translateMessage('PLAY_AS'),
-      sbPopoverMainTitle: profile.handle,
-      actionsButtons: [
-        {
-          btntext: this.commonUtilService.translateMessage('YES'),
-          btnClass: 'popover-color'
-        },
-        {
-          btntext: this.commonUtilService.translateMessage('CHANGE_USER'),
-          btnClass: 'sb-btn sb-btn-sm  sb-btn-outline-info'
-        }
-      ],
-      icon: null
-    },
-        cssClass: 'sb-popover info',
-      });
+        sbPopoverHeading: this.commonUtilService.translateMessage('PLAY_AS'),
+        sbPopoverMainTitle: profile.handle,
+        actionsButtons: [
+          {
+            btntext: this.commonUtilService.translateMessage('YES'),
+            btnClass: 'popover-color'
+          },
+          {
+            btntext: this.commonUtilService.translateMessage('CHANGE_USER'),
+            btnClass: 'sb-btn sb-btn-sm  sb-btn-outline-info'
+          }
+        ],
+        icon: null
+      },
+      cssClass: 'sb-popover info',
+    });
     await confirm.present();
     const response = await confirm.onDidDismiss();
     if (response.data.leftBtnClicked == null) {
@@ -1416,18 +1416,18 @@ export class ContentDetailsPage implements OnInit {
     const popover = await this.popoverCtrl.create({
       component: ContentActionsComponent,
       componentProps: {
-      content: this.content,
-      isChild: this.isChildContent,
-      objRollup: this.objRollup,
-      pageName: PageId.CONTENT_DETAIL,
-      corRelationList: this.corRelationList
-    },
-        cssClass: 'content-action'
-      });
+        content: this.content,
+        isChild: this.isChildContent,
+        objRollup: this.objRollup,
+        pageName: PageId.CONTENT_DETAIL,
+        corRelationList: this.corRelationList
+      },
+      cssClass: 'content-action'
+    });
     await popover.present();
-    const response = await popover.onDidDismiss();
+    const { data } = await popover.onDidDismiss();
     this.zone.run(() => {
-      if (response.data.data === 'delete.success') {
+      if (data.isDeleted) {
         this.content.contentData.streamingUrl = this.streamingUrl;
         this.contentDownloadable[this.content.identifier] = false;
         const playContent = this.playingContent;
@@ -1450,20 +1450,20 @@ export class ContentDetailsPage implements OnInit {
     const confirm = await this.popoverCtrl.create({
       component: SbPopoverComponent,
       componentProps: {
-      content: this.content,
-      isChild: this.isChildContent,
-      objRollup: this.objRollup,
-      pageName: PageId.CONTENT_DETAIL,
-      corRelationList: this.corRelationList,
-      sbPopoverHeading: this.commonUtilService.translateMessage('DELETE'),
-      sbPopoverMainTitle: this.commonUtilService.translateMessage('CONTENT_DELETE'),
-      actionsButtons: [
-        {
-          btntext: this.commonUtilService.translateMessage('REMOVE'),
-          btnClass: 'popover-color'
-        },
-      ],
-      icon: null,
+        content: this.content,
+        isChild: this.isChildContent,
+        objRollup: this.objRollup,
+        pageName: PageId.CONTENT_DETAIL,
+        corRelationList: this.corRelationList,
+        sbPopoverHeading: this.commonUtilService.translateMessage('DELETE'),
+        sbPopoverMainTitle: this.commonUtilService.translateMessage('CONTENT_DELETE'),
+        actionsButtons: [
+          {
+            btntext: this.commonUtilService.translateMessage('REMOVE'),
+            btnClass: 'popover-color'
+          },
+        ],
+        icon: null,
         metaInfo: this.content.contentData.name,
         sbPopoverContent: ' 1 item' + ' (' + this.fileSizePipe.transform(this.content.sizeOnDevice, 2) + ')',
       },
@@ -1552,14 +1552,14 @@ export class ContentDetailsPage implements OnInit {
     const popover = await this.popoverCtrl.create({
       component: BookmarkComponent,
       componentProps: {
-      content: this.content,
-      isChild: this.isChildContent,
-      objRollup: this.objRollup,
-      corRelationList: this.corRelationList,
-      position: 'bottom'
-    },
-        cssClass: 'bookmark-menu'
-      });
+        content: this.content,
+        isChild: this.isChildContent,
+        objRollup: this.objRollup,
+        corRelationList: this.corRelationList,
+        position: 'bottom'
+      },
+      cssClass: 'bookmark-menu'
+    });
     popover.present();
   }
 
@@ -1658,12 +1658,12 @@ export class ContentDetailsPage implements OnInit {
     const popover = await this.popoverCtrl.create({
       component: DialogPopupComponent,
       componentProps: {
-      title: this.commonUtilService.translateMessage('ANDROID_NOT_SUPPORTED'),
-      body: this.commonUtilService.translateMessage('ANDROID_NOT_SUPPORTED_DESC'),
-      buttonText: this.commonUtilService.translateMessage('INSTALL_CROSSWALK')
-    },
-        cssClass: 'popover-alert'
-      });
+        title: this.commonUtilService.translateMessage('ANDROID_NOT_SUPPORTED'),
+        body: this.commonUtilService.translateMessage('ANDROID_NOT_SUPPORTED_DESC'),
+        buttonText: this.commonUtilService.translateMessage('INSTALL_CROSSWALK')
+      },
+      cssClass: 'popover-alert'
+    });
     popover.present();
   }
 
@@ -1711,10 +1711,10 @@ export class ContentDetailsPage implements OnInit {
   handleHeaderEvents($event) {
     switch ($event.name) {
       case 'back': this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.CONTENT_DETAIL, Environment.HOME,
-                   true, this.cardData.identifier, this.corRelationList);
-                   // migration-TODO
-                   // this.handleNavBackButton();
-                   break;
+        true, this.cardData.identifier, this.corRelationList);
+        // migration-TODO
+        // this.handleNavBackButton();
+        break;
     }
   }
 

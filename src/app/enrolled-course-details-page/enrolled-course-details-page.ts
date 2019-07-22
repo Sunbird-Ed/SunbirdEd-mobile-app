@@ -64,8 +64,8 @@ import { BatchConstants } from '../app.constant';
 import { ContentShareHandlerService } from '../../services/content/content-share-handler.service';
 import { SbGenericPopoverComponent } from '../components/popups/sb-generic-popover/sb-generic-popover.component';
 import { ContentActionsComponent, ContentRatingAlertComponent } from '../components';
-import {Location} from '@angular/common';
-import {Router, NavigationExtras} from '@angular/router';
+import { Location } from '@angular/common';
+import { Router, NavigationExtras } from '@angular/router';
 declare const cordova;
 
 @Component({
@@ -365,7 +365,7 @@ export class EnrolledCourseDetailsPage implements OnInit {
   }
 
   async showOverflowMenu(event) {
-    const data = {
+    const overFlowMenuData = {
       batchStatus: this.batchDetails ? this.batchDetails.status : 2,
       contentStatus: this.courseCardData.status,
       enrollmentType: this.batchDetails ? this.batchDetails.enrollmentType : '',
@@ -375,18 +375,19 @@ export class EnrolledCourseDetailsPage implements OnInit {
     contentData.batchId = this.courseCardData.batchId ? this.courseCardData.batchId : false;
     const popover = await this.popoverCtrl.create({
       component: ContentActionsComponent,
+      event,
       componentProps: {
-        data: data,
+        overFlowMenuData,
         content: contentData,
         batchDetails: this.batchDetails,
         pageName: PageId.COURSE_DETAIL
       },
-      cssClass: 'content-action'
+      // cssClass: 'content-action'
     });
     await popover.present();
-    const response = await popover.onDidDismiss();
-    if (response.data.unenrollData && response.data.unenrollData.caller === 'unenroll') {
-      this.handleUnenrollment(response.data.unenrollData.unenroll);
+    const { data } = await popover.onDidDismiss();
+    if (data && data.data === 'unenroll') {
+      this.handleUnenrollment(data.data);
     }
   }
 
@@ -1349,7 +1350,7 @@ export class EnrolledCourseDetailsPage implements OnInit {
     switch ($event.name) {
       case 'share': this.share();
         break;
-      case 'more': this.showOverflowMenu($event);
+      case 'more': this.showOverflowMenu($event.event);
         break;
       case 'back': this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.COURSE_DETAIL, Environment.HOME,
         true, this.identifier, this.corRelationList);
