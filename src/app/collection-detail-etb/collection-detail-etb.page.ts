@@ -175,7 +175,7 @@ export class CollectionDetailEtbPage implements OnInit {
    */
   public objRollup: Rollup;
   public didViewLoad: boolean;
-  public backButtonFunc = undefined;
+  public backButtonFunc: Subscription;
   public baseUrl = '';
   guestUser = false;
   profileType = '';
@@ -1314,7 +1314,7 @@ export class CollectionDetailEtbPage implements OnInit {
     });
     await confirm.present();
     const response = await confirm.onDidDismiss();
-    if (response.data.canDelete) {
+    if (response.data) {
       this.deleteContent();
     }
   }
@@ -1349,8 +1349,8 @@ export class CollectionDetailEtbPage implements OnInit {
     const tmp = this.getDeleteRequestBody();
     const loader = await this.commonUtilService.getLoader();
     await loader.present();
-    this.contentService.deleteContent(tmp).toPromise().then((res: any) => {
-      loader.dismiss();
+    this.contentService.deleteContent(tmp).toPromise().then(async (res: any) => {
+      await loader.dismiss();
       if (res && res.status === ContentDeleteStatus.NOT_FOUND) {
         this.commonUtilService.showToast('CONTENT_DELETE_FAILED');
       } else {
@@ -1359,15 +1359,13 @@ export class CollectionDetailEtbPage implements OnInit {
           update: true
         });
         this.commonUtilService.showToast('MSG_RESOURCE_DELETED');
-        // migration-TODO
-        // this.viewCtrl.dismiss('delete.success');
+        this.popoverCtrl.dismiss('delete.success');
       }
-    }).catch((error: any) => {
-      loader.dismiss();
+    }).catch(async (error: any) => {
+      await loader.dismiss();
       console.log('delete response: ', error);
       this.commonUtilService.showToast('CONTENT_DELETE_FAILED');
-      // migration-TODO
-      // this.viewCtrl.dismiss();
+      this.popoverCtrl.dismiss();
     });
   }
 
