@@ -34,7 +34,7 @@ import { Router, NavigationExtras } from '@angular/router';
   templateUrl: './courses.page.html',
   styleUrls: ['./courses.page.scss'],
 })
-export class CoursesPage implements OnInit, AfterViewInit {
+export class CoursesPage implements OnInit {
   /**
    * Contains enrolled course
    */
