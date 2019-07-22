@@ -41,7 +41,7 @@ export class PersonalDetailsEditPage implements OnInit {
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     private loadingCtrl: LoadingController,
-    private commonUtilService: CommonUtilService,
+    public commonUtilService: CommonUtilService,
     private formAndFrameworkUtilService: FormAndFrameworkUtilService,
     private fb: FormBuilder,
     private translate: TranslateService,

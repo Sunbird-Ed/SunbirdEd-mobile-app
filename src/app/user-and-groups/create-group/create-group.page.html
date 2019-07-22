@@ -1,9 +1,3 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-title *ngIf="!isEditGroup">{{'CREATE_GROUP' | translate}}</ion-title>
-    <ion-title *ngIf="isEditGroup">{{'EDIT_GROUP' | translate}}</ion-title>
-  </ion-toolbar>
-</ion-header>
 <ion-content padding-top padding-right>
   <form [formGroup]="groupEditForm">
     <ion-item>
@@ -19,7 +13,7 @@
       <ion-label position="stacked" text-uppercase class="label-font">{{'SYLLABUS' | translate }}
       </ion-label>
       <ion-select text-capitalize formControlName="syllabus" placeholder="{{'SELECT' | translate }}"
-        (ionChange)="getClassList(eachSyllabus?.code)" okText="{{'BTN_SUBMIT' | translate}}"
+        (ionChange)="getClassList(null)" okText="{{'BTN_SUBMIT' | translate}}"
         cancelText="{{'CANCEL' | translate}}" [interfaceOptions]="syllabusOptions">
         <ion-select-option *ngFor="let eachSyllabus of syllabusList" value="{{eachSyllabus?.code}}">
           {{eachSyllabus?.name}}&lrm;</ion-select-option>

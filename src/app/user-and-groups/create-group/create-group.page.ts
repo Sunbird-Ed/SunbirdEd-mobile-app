@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, OnInit, NgZone, OnDestroy } from '@angular/core';
 // import { IonicPage, NavController, NavParams } from 'ionic-angular';
 import { TranslateService } from '@ngx-translate/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -26,13 +26,16 @@ import {
   GroupService
 } from 'sunbird-sdk';
 import { ActivatedRoute, Router, NavigationExtras } from '@angular/router';
+import { Platform } from '@ionic/angular';
+import { Location } from '@angular/common';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-create-group',
   templateUrl: './create-group.page.html',
   styleUrls: ['./create-group.page.scss'],
 })
-export class CreateGroupPage implements OnInit {
+export class CreateGroupPage implements OnInit, OnDestroy {
   groupEditForm: FormGroup;
   classList = [];
   group: Group;
@@ -41,6 +44,8 @@ export class CreateGroupPage implements OnInit {
   categories: Array<any> = [];
   loader: any;
   isFormValid = true;
+  navData: any;
+  backButtonFunc: Subscription;
 
   /* Options for class ion-select box */
   classOptions = {
@@ -56,18 +61,20 @@ export class CreateGroupPage implements OnInit {
   constructor(
     private fb: FormBuilder,
     private translate: TranslateService,
-    private commonUtilService: CommonUtilService,
+    public commonUtilService: CommonUtilService,
     @Inject('GROUP_SERVICE') private groupService: GroupService,
     private telemetryGeneratorService: TelemetryGeneratorService,
     @Inject('FRAMEWORK_SERVICE') private frameworkService: FrameworkService,
     @Inject('FRAMEWORK_UTIL_SERVICE') private frameworkUtilService: FrameworkUtilService,
     private headerService: AppHeaderService,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private platform: Platform,
+    private zone: NgZone,
+    private location: Location
   ) {
-    if (this.router.getCurrentNavigation().extras.state) {
-      this.group = this.router.getCurrentNavigation().extras.state.groupInfo || {};
-    }
+    this.navData = this.router.getCurrentNavigation().extras.state;
+    this.group = (this.navData && this.navData.groupInfo) ? this.navData.groupInfo : {};
     this.groupEditForm = this.fb.group({
       name: [this.group.name || '', Validators.required],
       syllabus: [this.group.syllabus && this.group.syllabus[0] || []],
@@ -75,17 +82,26 @@ export class CreateGroupPage implements OnInit {
     });
 
     this.isEditGroup = Boolean(this.group.hasOwnProperty('gid'));
-    this.getSyllabusDetails();
-  }
-
-  ionViewWillEnter() {
-    this.headerService.hideHeader();
+    const headerTitle = this.isEditGroup ? 'EDIT_GROUP' : 'CREATE_GROUP';
+    this.headerService.showHeaderWithBackButton([], this.commonUtilService.translateMessage(headerTitle));
   }
 
   ngOnInit() {
+    this.zone.run(() => {
+      this.backButtonFunc = this.platform.backButton.subscribe(() => {
+        this.location.back();
+      });
+    });
+    this.loadTelemetry();
   }
 
-  ionViewDidLoad() {
+  ngOnDestroy() {
+    if (this.backButtonFunc) {
+      this.backButtonFunc.unsubscribe();
+    }
+  }
+
+  loadTelemetry() {
     this.telemetryGeneratorService.generateImpressionTelemetry(
       ImpressionType.VIEW, '',
       PageId.CREATE_GROUP_SYLLABUS_CLASS,
@@ -226,10 +242,10 @@ export class CreateGroupPage implements OnInit {
  * @param frameworkId
  * @param isSyllabusChanged
  */
-  getClassList(frameworkId, isSyllabusChanged: boolean = true) {
+  async getClassList(frameworkId, isSyllabusChanged: boolean = true) {
     if (isSyllabusChanged) {
-      this.loader = this.commonUtilService.getLoader();
-      this.loader.present();
+      this.loader = await this.commonUtilService.getLoader();
+      await this.loader.present();
     }
 
     frameworkId = frameworkId ? frameworkId : this.groupEditForm.value.syllabus;
@@ -253,8 +269,8 @@ export class CreateGroupPage implements OnInit {
         };
         return this.frameworkUtilService.getFrameworkCategoryTerms(request).toPromise();
       })
-      .then((classes) => {
-        this.loader.dismiss();
+      .then(async (classes) => {
+        await this.loader.dismiss();
         this.classList = classes;
 
         if (!isSyllabusChanged) {
@@ -263,8 +279,8 @@ export class CreateGroupPage implements OnInit {
           });
         }
       })
-      .catch(error => {
-        this.loader.dismiss();
+      .catch(async error => {
+        await this.loader.dismiss();
         this.isFormValid = false;
         this.commonUtilService.showToast(this.commonUtilService.translateMessage('NEED_INTERNET_TO_CHANGE'));
         console.error('Error : ' + error);

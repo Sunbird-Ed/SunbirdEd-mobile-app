@@ -273,9 +273,6 @@ export class CollectionDetailEtbPage implements OnInit {
 	  * Angular life cycle hooks
 	  */
   ngOnInit() {
-  }
-
-  ionViewDidLoad() {
     // this.navBar.backButtonClick = () => {
     //   this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.COLLECTION_DETAIL, Environment.HOME,
     //     true, this.cardData.identifier, this.corRelationList);
@@ -1087,9 +1084,8 @@ export class CollectionDetailEtbPage implements OnInit {
       cssClass: 'content-action'
     });
     await popover.present();
-    const response = await popover.onDidDismiss();
-    if (response.data.data === 'delete.success' || response.data.data === 'flag.success') {
-      // this.navCtrl.pop();
+    const { data } = await popover.onDidDismiss();
+    if (data && data.isDeleted) {
       this.location.back();
 
     }

@@ -1,4 +1,4 @@
-import { Component, Inject, NgZone, OnInit } from '@angular/core';
+import { Component, Inject, NgZone, OnInit, OnDestroy } from '@angular/core';
 // import { AlertController, IonicPage, LoadingController, NavController, NavParams, PopoverController } from 'ionic-angular';
 import {
   GetAllProfileRequest,
@@ -15,8 +15,10 @@ import {
 // import { TelemetryGeneratorService } from '../../../service/telemetry-generator.service';
 import { AppHeaderService, CommonUtilService, Environment, InteractSubtype, InteractType, PageId, TelemetryGeneratorService } from '../../../services';
 import { ActivatedRoute, Router } from '@angular/router';
-import { PopoverController } from '@ionic/angular';
+import { PopoverController, Platform } from '@ionic/angular';
 import { SbGenericPopoverComponent } from 'app/components/popups/sb-generic-popover/sb-generic-popover.component';
+import { Subscription } from 'rxjs';
+import { Location } from '@angular/common';
 // import { SbGenericPopoverComponent } from '@a  pp/component/popups/sb-generic-popup/sb-generic-popover';
 
 
@@ -25,7 +27,7 @@ import { SbGenericPopoverComponent } from 'app/components/popups/sb-generic-popo
   templateUrl: './add-or-remove-group-user.page.html',
   styleUrls: ['./add-or-remove-group-user.page.scss'],
 })
-export class AddOrRemoveGroupUserPage implements OnInit {
+export class AddOrRemoveGroupUserPage implements OnInit, OnDestroy {
 
   ProfileType = ProfileType;
   addUsers = true;
@@ -40,6 +42,8 @@ export class AddOrRemoveGroupUserPage implements OnInit {
 
   selectedUserLength = '';
   selectedGroupMemberLength = '';
+  backButtonFunc: Subscription;
+
   constructor(
     @Inject('GROUP_SERVICE') private groupService: GroupService,
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -49,16 +53,35 @@ export class AddOrRemoveGroupUserPage implements OnInit {
     private headerService: AppHeaderService,
     private popoverCtrl: PopoverController,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private platform: Platform,
+    private location: Location
   ) {
     if (this.router.getCurrentNavigation().extras.state) {
       this.addUsers = Boolean(this.router.getCurrentNavigation().extras.state.isAddUsers);
       this.groupInfo = this.router.getCurrentNavigation().extras.state.groupInfo;
       this.groupMembers = this.router.getCurrentNavigation().extras.state.groupMembers;
+
+      if (this.addUsers) {
+        this.headerService.showHeaderWithBackButton([], this.commonUtilService.translateMessage('ADD_USERS_TO_GROUP'));
+      } else {
+        this.headerService.showHeaderWithBackButton([], this.commonUtilService.translateMessage('REMOVE_USERS_FROM_GROUP'));
+      }
     }
   }
 
   ngOnInit() {
+    this.zone.run(() => {
+      this.backButtonFunc = this.platform.backButton.subscribe(() => {
+        this.location.back();
+      });
+    });
+  }
+
+  ngOnDestroy() {
+    if (this.backButtonFunc) {
+      this.backButtonFunc.unsubscribe();
+    }
   }
 
   ionViewWillEnter() {

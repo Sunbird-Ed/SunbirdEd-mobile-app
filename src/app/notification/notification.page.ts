@@ -5,6 +5,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { NotificationService, NotificationStatus } from 'sunbird-sdk';
 import { Subscription } from 'rxjs';
 
+
+
 import {
   AppHeaderService,
   CommonUtilService,
@@ -31,9 +33,9 @@ export class NotificationPage implements OnInit {
   constructor(
     @Inject('NOTIFICATION_SERVICE') private notificationService: NotificationService,
     private headerService: AppHeaderService,
-    private commonUtilService: CommonUtilService,
+    public commonUtilService: CommonUtilService,
     private events: Events,
-    private telemetryGeneratorService: TelemetryGeneratorService,
+    public telemetryGeneratorService: TelemetryGeneratorService,
     private platform: Platform,
     private route: ActivatedRoute,
     private router: Router,
@@ -41,9 +43,6 @@ export class NotificationPage implements OnInit {
 
   ) {
     this.headerService.hideHeader();
-  }
-
-  ngOnInit() {
   }
 
   ionViewWillEnter() {
@@ -67,7 +66,7 @@ export class NotificationPage implements OnInit {
     });
   }
 
-  ionViewDidLoad() {
+  ngOnInit() {
     this.telemetryGeneratorService.generateImpressionTelemetry(
       ImpressionType.VIEW, '',
       PageId.NOTIFICATION,
@@ -127,5 +126,9 @@ export class NotificationPage implements OnInit {
 
   ionViewWillLeave() {
     this.unregisterBackButton && this.unregisterBackButton.unsubscribe();
+  }
+
+  backButton() {
+    this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.NOTIFICATION, Environment.NOTIFICATION, true)
   }
 }

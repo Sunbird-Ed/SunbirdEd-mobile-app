@@ -1,4 +1,4 @@
-import {Component, Inject} from '@angular/core';
+import {Component, Inject, OnInit} from '@angular/core';
 import {DomSanitizer, SafeUrl} from '@angular/platform-browser';
 import {TranslateService} from '@ngx-translate/core';
 import {AppVersion} from '@ionic-native/app-version';
@@ -13,7 +13,7 @@ import { ProfileConstants } from '../app.constant';
   templateUrl: './terms-and-conditions.page.html',
   styleUrls: ['./terms-and-conditions.page.scss'],
 })
-export class TermsAndConditionsPage {
+export class TermsAndConditionsPage implements OnInit {
   public tncLatestVersionUrl: SafeUrl;
   public termsAgreed = false;
   private loading?: any;
@@ -34,7 +34,7 @@ export class TermsAndConditionsPage {
   ) {
   }
 
-  public async ionViewDidLoad() {
+  public async ngOnInit() {
     this.headerService.hideHeader();
     this.userProfileDetails = (await this.profileService.getActiveSessionProfile({requiredFields: ProfileConstants.REQUIRED_FIELDS}).toPromise()).serverProfile;
 

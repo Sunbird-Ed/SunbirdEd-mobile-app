@@ -106,8 +106,8 @@ export class GuestEditPage implements OnInit {
     private alertCtrl: AlertController,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private container: ContainerService,
-    private appGlobalService: AppGlobalService,
-    private commonUtilService: CommonUtilService,
+    public appGlobalService: AppGlobalService,
+    public commonUtilService: CommonUtilService,
     @Inject('FRAMEWORK_SERVICE') private frameworkService: FrameworkService,
     @Inject('FRAMEWORK_UTIL_SERVICE') private frameworkUtilService: FrameworkUtilService,
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
@@ -336,7 +336,7 @@ export class GuestEditPage implements OnInit {
       this[currentField] = this.syllabusList;
     } else if (index === 1) {
       this.frameworkId = prevSelectedValue ? (Array.isArray(prevSelectedValue[0]) ? prevSelectedValue[0][0] : prevSelectedValue[0]) : '';
-      if (this.frameworkId.length !== 0) {
+      if (this.frameworkId && this.frameworkId.length !== 0) {
         const frameworkDetailsRequest: FrameworkDetailsRequest = {
           frameworkId: this.frameworkId,
           requiredCategories: FrameworkCategoryCodesGroup.DEFAULT_FRAMEWORK_CATEGORIES

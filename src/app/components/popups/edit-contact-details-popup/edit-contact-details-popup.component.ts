@@ -28,6 +28,7 @@ export class EditContactDetailsPopupComponent implements OnInit {
   updateErr: boolean;
   blockedAccount: boolean;
   unregisterBackButton: any;
+  loader: any;
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     private navParams: NavParams,
@@ -67,9 +68,9 @@ export class EditContactDetailsPopupComponent implements OnInit {
 
   async validate() {
     if (this.commonUtilService.networkInfo.isNetworkAvailable) {
-      const loader = await this.commonUtilService.getLoader();
+      this.loader = await this.commonUtilService.getLoader();
       const formVal = this.personEditForm.value;
-      await loader.present();
+      await this.loader.present();
       let req: IsProfileAlreadyInUseRequest;
       if (this.type === ProfileConstants.CONTACT_TYPE_PHONE) {
         req = {
@@ -84,7 +85,7 @@ export class EditContactDetailsPopupComponent implements OnInit {
       }
 
       this.profileService.isProfileAlreadyInUse(req).subscribe(async (success: any) => {
-        await loader.dismiss();
+        await this.loader.dismiss();
         if (success && success.response) {
           if (success.response.id === this.userId) {
             this.updateErr = true;
@@ -93,7 +94,7 @@ export class EditContactDetailsPopupComponent implements OnInit {
           }
         }
       }, async (error) => {
-        await loader.dismiss();
+        await this.loader.dismiss();
         if (error.response.body.params.err === 'USER_NOT_FOUND') {
           this.generateOTP();
         } else if (error.response.body.params.err === 'USER_ACCOUNT_BLOCKED') {

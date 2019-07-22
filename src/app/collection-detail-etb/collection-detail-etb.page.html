@@ -2,7 +2,7 @@
 <ion-content no-padding>
   <div class="p-8">
     <app-detail-card (downloadAllContent)="showDownloadConfirmationAlert($event)" (shareEvent)="share()"
-      (showOverflowMenuEvent)="showPopOver($event)" [contentDetail]="contentDetail"
+      (showOverflowMenuEvent)="showPopOver()" [contentDetail]="contentDetail"
       [currentCount]="currentCount" [queuedIdentifiers]="queuedIdentifiers"
       [localImage]="localImage" [showDownloadBtn]="showDownloadBtn" [isDepthChild]='isDepthChild'
       [isDownloadStarted]="isDownloadStarted" [defaultAppIcon]="defaultAppIcon"></app-detail-card>

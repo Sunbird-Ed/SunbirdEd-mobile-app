@@ -51,7 +51,7 @@ export class ContentActionsComponent implements OnInit {
     private commonUtilService: CommonUtilService,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private fileSizePipe: FileSizePipe,
-    private moduleCtrl: ModalController
+    private popOverCtrl: PopoverController
   ) {
     this.content = this.navParams.get('content');
     this.data = this.navParams.get('data');
@@ -66,7 +66,7 @@ export class ContentActionsComponent implements OnInit {
 
     this.contentId = (this.content && this.content.identifier) ? this.content.identifier : '';
     this.platform.backButton.subscribeWithPriority(11, () => {
-      this.moduleCtrl.dismiss();
+      this.popOverCtrl.dismiss();
     });
     this.getUserId();
   }
@@ -112,19 +112,19 @@ export class ContentActionsComponent implements OnInit {
         const confirm = await this.popoverCtrl.create({
           component: SbPopoverComponent,
           componentProps: {
-          content: this.content,
-          // isChild: this.isDepthChild,
-          objRollup: this.objRollup,
-          // pageName: PageId.COLLECTION_DETAIL,
-          corRelationList: this.corRelationList,
-          sbPopoverHeading: this.commonUtilService.translateMessage('REMOVE_FROM_DEVICE'),
-          // sbPopoverMainTitle: this.commonUtilService.translateMessage('REMOVE_FROM_DEVICE_MSG'),
-          sbPopoverMainTitle: this.content.name,
-          actionsButtons: [
-            {
-              btntext: this.commonUtilService.translateMessage('REMOVE'),
-              btnClass: 'popover-color'
-            },
+            content: this.content,
+            // isChild: this.isDepthChild,
+            objRollup: this.objRollup,
+            // pageName: PageId.COLLECTION_DETAIL,
+            corRelationList: this.corRelationList,
+            sbPopoverHeading: this.commonUtilService.translateMessage('REMOVE_FROM_DEVICE'),
+            // sbPopoverMainTitle: this.commonUtilService.translateMessage('REMOVE_FROM_DEVICE_MSG'),
+            sbPopoverMainTitle: this.content.name,
+            actionsButtons: [
+              {
+                btntext: this.commonUtilService.translateMessage('REMOVE'),
+                btnClass: 'popover-color'
+              },
             ],
             icon: null,
             metaInfo:
@@ -138,13 +138,13 @@ export class ContentActionsComponent implements OnInit {
         await confirm.present();
         const response = await confirm.onDidDismiss();
 
-        if (response.data.canDelete) {
+        if (response.data) {
           this.deleteContent();
         }
         break;
       }
       case 1: {
-        this.moduleCtrl.dismiss();
+        this.popOverCtrl.dismiss();
         // this.reportIssue();
         break;
       }
@@ -154,22 +154,22 @@ export class ContentActionsComponent implements OnInit {
   /*
    * shows alert to confirm unenroll send back user selection */
   async unenroll() {
-    const confirm = await this.popoverCtrl.create( {
+    const confirm = await this.popoverCtrl.create({
       component: SbGenericPopoverComponent,
       componentProps: {
-      sbPopoverHeading: this.commonUtilService.translateMessage('UNENROLL_FROM_COURSE'),
-      sbPopoverMainTitle: this.commonUtilService.translateMessage('UNENROLL_CONFIRMATION_MESSAGE'),
-      actionsButtons: [
-        {
-          btntext: this.commonUtilService.translateMessage('CANCEL'),
-          btnClass: 'sb-btn sb-btn-sm  sb-btn-outline-info'
-        },
-        {
-          btntext: this.commonUtilService.translateMessage('CONFIRM'),
-          btnClass: 'popover-color'
-        }
-      ],
-      icon: null
+        sbPopoverHeading: this.commonUtilService.translateMessage('UNENROLL_FROM_COURSE'),
+        sbPopoverMainTitle: this.commonUtilService.translateMessage('UNENROLL_CONFIRMATION_MESSAGE'),
+        actionsButtons: [
+          {
+            btntext: this.commonUtilService.translateMessage('CANCEL'),
+            btnClass: 'sb-btn sb-btn-sm  sb-btn-outline-info'
+          },
+          {
+            btntext: this.commonUtilService.translateMessage('CONFIRM'),
+            btnClass: 'popover-color'
+          }
+        ],
+        icon: null
       },
       cssClass: 'sb-popover info',
     });
@@ -184,13 +184,13 @@ export class ContentActionsComponent implements OnInit {
     } else {
       unenroll = true;
     }
-    this.moduleCtrl.dismiss({
+    this.popOverCtrl.dismiss({
       caller: 'unenroll',
-      unenroll: unenroll
+      unenroll
     });
   }
 
-  deleteContent() {
+  async deleteContent() {
     const telemetryObject = new TelemetryObject(this.content.identifier, this.content.contentType, this.content.pkgVersion);
 
     this.telemetryGeneratorService.generateInteractTelemetry(
@@ -203,38 +203,39 @@ export class ContentActionsComponent implements OnInit {
       this.objRollup,
       this.corRelationList);
 
-    const loader = this.commonUtilService.getLoader();
-    loader.present();
+    const loader = await this.commonUtilService.getLoader();
+    await loader.present();
     this.contentService.deleteContent(this.getDeleteRequestBody()).toPromise()
-      .then((data: ContentDeleteResponse[]) => {
-        loader.dismiss();
+      .then(async (data: ContentDeleteResponse[]) => {
+        console.log('data on delete', data);
+        await loader.dismiss();
         if (data && data[0].status === ContentDeleteStatus.NOT_FOUND) {
+          this.showToaster(this.getMessageByConstant('CONTENT_DELETE_FAILED'));
+        } else {
+          // Publish saved resources update event
+          this.events.publish('savedResources:update', {
+            update: true
+          });
+          console.log('delete response: ', data);
+          this.showToaster(this.getMessageByConstant('MSG_RESOURCE_DELETED'));
+          this.popOverCtrl.dismiss({ isDeleted: true });
+        }
+      }).catch(async (error: any) => {
+        await loader.dismiss();
+        console.log('delete response: ', error);
         this.showToaster(this.getMessageByConstant('CONTENT_DELETE_FAILED'));
-      } else {
-        // Publish saved resources update event
-        this.events.publish('savedResources:update', {
-          update: true
-        });
-        console.log('delete response: ', data);
-        this.showToaster(this.getMessageByConstant('MSG_RESOURCE_DELETED'));
-        this.moduleCtrl.dismiss('delete.success');
-      }
-    }).catch((error: any) => {
-      loader.dismiss();
-      console.log('delete response: ', error);
-      this.showToaster(this.getMessageByConstant('CONTENT_DELETE_FAILED'));
-      this.moduleCtrl.dismiss();
-    });
+        this.popOverCtrl.dismiss();
+      });
   }
 
 
   async showToaster(message) {
     const toast = await this.toastCtrl.create({
-      message: message,
+      message,
       duration: 2000,
       position: 'bottom'
     });
-    toast.present();
+    await toast.present();
   }
 
   getMessageByConstant(constant: string) {

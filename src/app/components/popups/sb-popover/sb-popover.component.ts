@@ -30,6 +30,7 @@ export class SbPopoverComponent implements OnDestroy {
   pageName = '';
   showFlagMenu = true;
   img: string;
+  isNotShowCloseIcon: boolean;
   public objRollup: Rollup;
   private corRelationList: Array<CorrelationData>;
   private sbPopoverDynamicMainTitle$?: Observable<string>;
