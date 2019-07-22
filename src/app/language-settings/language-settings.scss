@@ -4,9 +4,6 @@
   ion-item {
     --ion-background-color: #{map-get($colors, white_f7)};
   }
-  .button-inner {
-    display: initial !important;
-  }
 
   ion-icon {
     @include rtl {
@@ -21,29 +18,35 @@
     margin-bottom: 8px;
     padding-bottom: 16px;
   }
+
   ion-list[inset] {
     margin: 0 !important;
   }
 
   /* Change height of the ion-item*/
-  .item-block {
-    min-height: 5.5rem !important;
+  ion-radio-group {
+    ion-item {
+      --min-height: 4rem !important;
+    }
   }
 
   .gray-color {
-    // color: map-get($colors, secondary_black);
-    font-size: 1.4rem;
+    color: #{map-get($colors, secondary_black)};
+    font-size: 1rem;
     font-weight: 500;
   }
 
-  .back-button {
-    display: block !important;
-  }
-
-  .item-radio-checked.item-ios ion-label {
+  .item-radio-checked ion-label {
     color: #{map-get($colors, primary_black)};
     @extend .font-weight-700;
-    font-weight: 700;
+  }
+
+  .arrow-icon {
+    right: 15px;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 22px;
   }
 }
 
