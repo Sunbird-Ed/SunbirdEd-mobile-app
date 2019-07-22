@@ -23,6 +23,10 @@ body {
   height: 100%;
   font-size:$font-size-base;
   @extend .NotoSans;
+  --ion-default-font: "Noto Sans";
+}
+html.md {
+  --ion-default-font: "Noto Sans";
 }
 
 h6 {
