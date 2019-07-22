@@ -1,6 +1,9 @@
 <ion-content class="ion-padding">
+
   <div class="font-size-17" text-center padding text-wrap style="min-height: 75px;">
-    <strong>{{ 'CHOOSE_LANGUAGE' | translate }}</strong></div>
+    <strong>{{ 'CHOOSE_LANGUAGE' | translate }}</strong>
+  </div>
+
   <div [class.list-wrap]="isFromSettings">
     <ion-list inset mode="ios">
       <ion-radio-group [(ngModel)]="language" (ionChange)="onLanguageSelected()">
@@ -12,22 +15,15 @@
       </ion-radio-group>
     </ion-list>
   </div>
+
 </ion-content>
 
 <ion-footer class="ion-padding" no-border>
-  <!-- <ion-button class="arrow-icon" [ngStyle]="{'--background-color': btnColor}" expand="block"
-    (click)="mainPage ? goToResources() : continue()">
-    <span class="MR15 ellipsis">{{ 'CONTINUE' | translate }}</span>
-    <ion-icon style="right: 15px;position: absolute;" name="arrow-round-forward"
-      class="icon icon-md ion-md-arrow-round-forward"></ion-icon>
-  </ion-button> -->
 
-
-  <button class="sb-btn sb-btn-md sb-btn-primary PR35 W100 ellipsis" style="position: relative;"
-    [ngStyle]="{'background-color': btnColor}" (click)="mainPage ? goToResources() : continue()">
+  <button class="sb-btn sb-btn-md sb-btn-primary PR35 W100 ellipsis" style="position: relative;margin:0"
+    [style.background-color]="btnColor" (click)="continue()">
     {{ 'CONTINUE' | translate }}
-    <ion-icon style="right: 15px;position: absolute;top: 50%;transform: translateY(-50%);width: 22px;"
-      name="arrow-round-forward" class="icon icon-md ion-md-arrow-round-forward"></ion-icon>
+    <ion-icon class="arrow-icon" name="arrow-round-forward"></ion-icon>
   </button>
 
 </ion-footer>

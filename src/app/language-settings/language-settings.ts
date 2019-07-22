@@ -1,21 +1,19 @@
 import { Component, Inject, NgZone, OnInit } from '@angular/core';
 import { Events, Platform } from '@ionic/angular';
-import { Router, ActivatedRoute, ParamMap, NavigationExtras } from '@angular/router';
-
+import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { SharedPreferences } from 'sunbird-sdk';
-import { appLanguages, PreferenceKey, RouterLinks } from '../app.constant';
-import { Map } from '../telemetryutil';
-import { AppGlobalService, CommonUtilService, TelemetryGeneratorService, AppHeaderService } from '../../services';
-// import {OnboardingPage} from '@app/pages/onboarding/onboarding';
-// import {UserTypeSelectionPage} from '@app/pages/user-type-selection';
-import { Environment, ImpressionType, InteractSubtype, InteractType, PageId } from '../../services/telemetry-constants';
-// import { ResourcesPage } from '../resources/resources';
-import { NotificationService } from '../../services/notification.service';
-import { switchMap } from 'rxjs/operators';
-import { Location } from '@angular/common';
 
-declare const cordova;
+import { appLanguages, PreferenceKey, RouterLinks } from '@app/app/app.constant';
+import { Map } from '@app/app/telemetryutil';
+import { AppGlobalService } from '@app/services';
+import { CommonUtilService } from '@app/services';
+import { TelemetryGeneratorService } from '@app/services';
+import { AppHeaderService } from '@app/services';
+import { Environment, ImpressionType, InteractSubtype, InteractType, PageId } from '@app/services/telemetry-constants';
+import { NotificationService } from '@app/services/notification.service';
+import { Location } from '@angular/common';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'page-language-settings',
@@ -32,7 +30,7 @@ export class LanguageSettingsPage implements OnInit {
   previousLanguage: any;
   selectedLanguage: any = {};
   btnColor = '#55acee';
-  unregisterBackButton = undefined;
+  unregisterBackButton: Subscription;
   mainPage: boolean = false;
   headerConfig: any;
 
@@ -46,42 +44,36 @@ export class LanguageSettingsPage implements OnInit {
     private appGlobalService: AppGlobalService,
     private commonUtilService: CommonUtilService,
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
-    private headerServie: AppHeaderService,
+    private headerService: AppHeaderService,
     private notification: NotificationService,
     private router: Router,
-    private activatedRoute: ActivatedRoute,
     private location: Location
   ) {
-    // this.mainPage = this.navParams.get('mainPage');
+
+    const extrasState = this.router.getCurrentNavigation().extras.state;
+    if (extrasState)
+      this.isFromSettings = extrasState.isFromSettings;
   }
 
   ngOnInit() {
-    // this.isFromSettings = this.navParams.get('isFromSettings');
-    this.activatedRoute.params.subscribe(params => {
-      console.log('params', params);
-      this.isFromSettings = Boolean(params['isFromSettings']);
-      console.log('FormSettings', this.isFromSettings);
-
-      this.telemetryGeneratorService.generateImpressionTelemetry(
-        ImpressionType.VIEW, '',
-        this.isFromSettings ? PageId.SETTINGS_LANGUAGE : PageId.ONBOARDING_LANGUAGE_SETTING,
-        this.isFromSettings ? Environment.SETTINGS : Environment.ONBOARDING,
-      );
-      this.handleBackbutton();
-    });
+    this.telemetryGeneratorService.generateImpressionTelemetry(
+      ImpressionType.VIEW, '',
+      this.isFromSettings ? PageId.SETTINGS_LANGUAGE : PageId.ONBOARDING_LANGUAGE_SETTING,
+      this.isFromSettings ? Environment.SETTINGS : Environment.ONBOARDING,
+    );
+    this.handleBackButton();
 
     if (!this.isFromSettings) {
-      this.headerServie.hideHeader();
+      this.headerService.hideHeader();
     } else if (this.mainPage) {
-      this.headerServie.showHeaderWithBackButton();
+      this.headerService.showHeaderWithBackButton();
     } else {
-      this.headerServie.showHeaderWithBackButton();
+      this.headerService.showHeaderWithBackButton();
     }
   }
 
-  handleBackbutton() {
-    // migration-TODO
-    this.unregisterBackButton = this.platform.backButton.subscribe(() => {
+  handleBackButton() {
+    this.unregisterBackButton = this.platform.backButton.subscribeWithPriority(11, () => {
       this.telemetryGeneratorService.generateInteractTelemetry(
         InteractType.TOUCH, InteractSubtype.DEVICE_BACK_CLICKED,
         this.isFromSettings ? Environment.SETTINGS : Environment.ONBOARDING,
@@ -89,15 +81,12 @@ export class LanguageSettingsPage implements OnInit {
       );
 
       if (this.isFromSettings) {
-        // this.navCtrl.pop();
         this.location.back();
       } else {
         const pId = this.isFromSettings ? PageId.SETTINGS_LANGUAGE : PageId.ONBOARDING_LANGUAGE_SETTING;
         const env = this.isFromSettings ? Environment.SETTINGS : Environment.ONBOARDING;
-        console.log('from others calling exit popup');
         this.commonUtilService.showExitPopUp(pId, env, false);
       }
-      this.unregisterBackButton();
     });
   }
 
@@ -118,7 +107,7 @@ export class LanguageSettingsPage implements OnInit {
     }
 
     if (this.unregisterBackButton) {
-      this.unregisterBackButton();
+      this.unregisterBackButton.unsubscribe();
     }
   }
 
@@ -132,42 +121,12 @@ export class LanguageSettingsPage implements OnInit {
             this.previousLanguage = val;
             this.language = val;
           } else {
-            // this.getDeviceLanguage();
             this.previousLanguage = undefined;
-
           }
         });
     });
 
   }
-  goToResources() {
-    // migration-TODO
-    //  this.navCtrl.setRoot(ResourcesPage);
-  }
-
-  /*   getDeviceLanguage() {
-      //Get device set language
-      this.globalization.getPreferredLanguage()
-        .then(res => {
-          this.defaultDeviceLang = res.value.split("-")[0];
-          let lang = this.languages.find(i => i.code === this.defaultDeviceLang);
-          if (lang != undefined && lang != null) {
-            lang.isApplied = true;
-            this.language = lang.code;
-          } else {
-            this.makeDefaultLanguage();
-          }
-        })
-        .catch(e => {
-          this.makeDefaultLanguage();
-        });
-    }
-    makeDefaultLanguage() {
-      this.language = this.languages[0].code;
-      this.languages[0].isApplied = true;
-    } */
-
-
 
   /**
    * It will set app language
@@ -229,15 +188,10 @@ export class LanguageSettingsPage implements OnInit {
       });
       this.notification.setupLocalNotification(this.language);
       if (this.isFromSettings) {
-        // migration-TODO
-        // this.navCtrl.pop();
         this.location.back();
       } else if (this.appGlobalService.DISPLAY_ONBOARDING_PAGE) {
-        // migration-TODO
-        // this.navCtrl.push(OnboardingPage);
+        this.router.navigate([RouterLinks.ONBOARDING])
       } else {
-        // migration-TODO
-        // this.navCtrl.push(UserTypeSelectionPage);
         this.router.navigate([RouterLinks.USER_TYPE_SELECTION]);
       }
     } else {
@@ -246,5 +200,4 @@ export class LanguageSettingsPage implements OnInit {
       this.commonUtilService.showToast('PLEASE_SELECT_A_LANGUAGE', false, 'redErrorToast');
     }
   }
-
 }
