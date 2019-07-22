@@ -12,12 +12,13 @@ cordova-plugin=cordova-plugin-inappbrowser
 cordova-plugin=cordova-plugin-console
 cordova-plugin=cordova-plugin-network-information
 cordova-plugin=cordova-plugin-statusbar
-cordova-plugin=https://github.com/adriano-di-giovanni/cordova-plugin-shared-preferences.git#release-2.1.0
+cordova-plugin=https://github.com/adriano-di-giovanni/cordova-plugin-shared-preferences.git
+cordova-plugin=https://github.com/katzer/cordova-plugin-local-notifications.git
 cordova-plugin=cordova-plugin-advanced-http
 cordova-plugin=cordova-plugin-android-permissions
 cordova-plugin=cordova-plugin-media
 cordova-plugin=cordova.plugins.diagnostic
-cordova-plugin=https://github.com/swayangjit/cordova-plugin-buildconfig-reader.git
+cordova-plugin=https://github.com/swayangjit/cordova-plugin-buildconfig-reader.git#release-2.1.0
 cordova-plugin=https://github.com/swayangjit/cordova-plugin-android-downloadmanager.git
 cordova-plugin=https://github.com/swayangjit/sb-cordova-plugin-db.git
 cordova-plugin=cordova-android-support-gradle-release --variable ANDROID_SUPPORT_VERSION=27.1.0
