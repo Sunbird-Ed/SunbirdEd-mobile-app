@@ -852,10 +852,9 @@ export class CollectionDetailsPage {
       cssClass: 'content-action'
     });
     await popover.present();
-    const response = await popover.onDidDismiss();
-    if (response.data === 'delete.success' || response.data === 'flag.success') {
+    const { data } = await popover.onDidDismiss();
+    if (data && data.isDeleted) {
       this.location.back();
-
     }
   }
 

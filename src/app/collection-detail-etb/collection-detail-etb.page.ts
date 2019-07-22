@@ -1084,9 +1084,8 @@ export class CollectionDetailEtbPage implements OnInit {
       cssClass: 'content-action'
     });
     await popover.present();
-    const response = await popover.onDidDismiss();
-    if (response.data.data === 'delete.success' || response.data.data === 'flag.success') {
-      // this.navCtrl.pop();
+    const { data } = await popover.onDidDismiss();
+    if (data && data.isDeleted) {
       this.location.back();
 
     }

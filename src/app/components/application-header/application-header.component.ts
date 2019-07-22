@@ -152,7 +152,7 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
   }
 
   emitEvent($event, name) {
-    this.headerEvents.emit({ name });
+    this.headerEvents.emit({ name, event: $event });
   }
 
   emitSideMenuItemEvent($event, menuItem) {
