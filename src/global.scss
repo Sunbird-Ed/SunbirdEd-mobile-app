@@ -11,6 +11,7 @@
 @import "~@ionic/angular/css/flex-utils.css";
 // @import '~@ionic/core/dist/collection/themes/ionic.globals.scss';
 //Dependency Styles for Mobile
+$app-direction : multi;
 @mixin margin($top, $end: $top, $bottom: $top, $start: $end) {
   [dir="rtl"] & {
     margin: $top $start $bottom $end;
@@ -60,16 +61,16 @@
 
 @mixin rtl() {
   @content;
-  // @if $app-direction == multi {
-  //   $root: #{&};
-  //   @at-root [dir="rtl"] {
-  //     #{$root} {
-  //       @content;
-  //     }
-  //   }
-  // } @else if $app-direction == rtl {
-  //   @content;
-  // }
+  @if $app-direction == multi {
+    $root: #{&};
+    @at-root [dir="rtl"] {
+      #{$root} {
+        @content;
+      }
+    }
+  } @else if $app-direction == rtl {
+    @content;
+  }
 }
 
 @mixin ltr() {
