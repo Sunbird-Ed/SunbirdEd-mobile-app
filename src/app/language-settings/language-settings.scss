@@ -1,22 +1,20 @@
-@import 'src/global.scss';
+@import "src/global.scss";
 :host {
   /* This should be item-ios only as we are targeting mode as iOS for radio-button */
-  .item-ios {
-    // background-color: map-get($colors, white_f7);
+  ion-item {
+    --ion-background-color: #{map-get($colors, white_f7)};
   }
-
   .button-inner {
     display: initial !important;
   }
 
   ion-icon {
-    // @include ltr {
-    //     float: right !important;
-    // }
-
-    // @include rtl {
-    //     float: left !important;
-    // }
+    @include rtl {
+      float: left !important;
+    }
+    @include ltr {
+      float: right !important;
+    }
   }
 
   .list-wrap {
@@ -38,16 +36,12 @@
     font-weight: 500;
   }
 
-  .arrow-icon {
-    // @include padding(null, null, null, 2.8em !important);
-  }
-
   .back-button {
     display: block !important;
   }
 
   .item-radio-checked.item-ios ion-label {
-    // color: map-get($colors, primary_black);
+    color: #{map-get($colors, primary_black)};
     @extend .font-weight-700;
     font-weight: 700;
   }
@@ -75,7 +69,7 @@
       -webkit-font-smoothing: antialiased;
       font-style: normal;
       font-variant: normal;
-      // @extend .font-weight-400;
+      @extend .font-weight-400;
       font-weight: 400;
       line-height: 1;
       padding-left: 30px !important;
