@@ -91,7 +91,7 @@ export class SearchPage implements OnDestroy {
   profile: any;
   isFirstLaunch = false;
   shouldGenerateEndTelemetry = false;
-  backButtonFunc = undefined;
+  backButtonFunc: Subscription;
   isSingleContent = false;
   currentFrameworkId = '';
   selectedLanguageCode = '';
@@ -151,8 +151,7 @@ export class SearchPage implements OnDestroy {
 
   ionViewWillEnter() {
     this.headerService.hideHeader();
-    // migration-TODO
-    // this.handleDeviceBackButton();
+    this.handleDeviceBackButton();
   }
 
   ionViewDidEnter() {
@@ -233,7 +232,6 @@ export class SearchPage implements OnDestroy {
       this.navigateToPreviousPage();
       this.telemetryGeneratorService.generateBackClickedTelemetry(ImpressionType.SEARCH,
         Environment.HOME, false, undefined, this.corRelationList);
-      this.backButtonFunc();
     });
   }
 
