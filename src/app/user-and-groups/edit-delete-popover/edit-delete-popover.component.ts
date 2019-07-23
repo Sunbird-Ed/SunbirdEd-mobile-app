@@ -1,6 +1,4 @@
-import { Component, OnInit } from '@angular/core';
-import { TranslateService } from '@ngx-translate/core';
-import { NavController, NavParams } from '@ionic/angular';
+import { Component, OnInit, Input } from '@angular/core';
 
 @Component({
   selector: 'app-edit-delete-popover',
@@ -8,18 +6,18 @@ import { NavController, NavParams } from '@ionic/angular';
   styleUrls: ['./edit-delete-popover.component.scss'],
 })
 export class EditDeletePopoverComponent implements OnInit {
-  isCurrentUser = false;
-  constructor(public navCtrl: NavController, public navParams: NavParams) {
-    this.isCurrentUser = Boolean(this.navParams.get('isCurrentUser'));
-  }
+  @Input('isCurrentUser') isCurrentUser = false;
+  @Input('delete') delete: any;
+  @Input('edit') edit: any;
+  constructor() { }
 
   ngOnInit() { }
 
-  delete() {
-    this.navParams.get('delete')();
+  deleteUser() {
+    this.delete();
   }
-  edit() {
-    this.navParams.get('edit')();
+  editUser() {
+    this.edit();
   }
 
 }
