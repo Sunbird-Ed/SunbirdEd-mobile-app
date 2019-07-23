@@ -1,0 +1,109 @@
+$app-direction: multi;
+
+@mixin multi-dir() {
+  @if $app-direction == multi {
+    $root: #{&};
+    @at-root [dir="ltr"], [dir="rtl"] {
+      #{$root} {
+        @content;
+      }
+    }
+  } @else {
+    @content;
+  }
+}
+@mixin rtl() {
+  @if $app-direction == multi {
+    $root: #{&};
+    @at-root [dir="rtl"] {
+      #{$root} {
+        @content;
+      }
+    }
+  } @else if $app-direction == rtl {
+    @content;
+  }
+}
+
+@mixin ltr() {
+  @if $app-direction == multi {
+    $root: #{&};
+    @at-root [dir="ltr"] {
+      #{$root} {
+        @content;
+      }
+    }
+  } @else if $app-direction == ltr {
+    @content;
+  }
+}
+// Add property horizontal
+// @param {string} $start
+// @param {string} $end
+// ----------------------------------------------------------
+@mixin property-horizontal($prop, $start, $end: $start) {
+  @if $start == $end {
+    @include multi-dir() {
+      #{$prop}-left: $start;
+      #{$prop}-right: $end;
+    }
+  } @else {
+    @include ltr() {
+      #{$prop}-left: $start;
+      #{$prop}-right: $end;
+    }
+    @include rtl() {
+      #{$prop}-left: $end;
+      #{$prop}-right: $start;
+    }
+  }
+}
+
+// Add property for all directions
+// @param {string} $prop
+// @param {string} $top
+// @param {string} $end
+// @param {string} $bottom
+// @param {string} $start
+// @param {boolean} $content include content or use default
+// ----------------------------------------------------------
+@mixin property($prop, $top, $end: $top, $bottom: $top, $start: $end) {
+  @if $top == $end and $top == $bottom and $top == $start {
+    @include multi-dir() {
+      #{$prop}: $top;
+    }
+  } @else if $top == $bottom and $end == $start and $top != null and $end != null {
+    @include multi-dir() {
+      #{$prop}: $top $end;
+    }
+  } @else if $end == $start and $top != null and $end != null and $bottom != null {
+    @include multi-dir() {
+      #{$prop}: $top $end $bottom;
+    }
+  } @else if $top != null and $end != null and $bottom != null and $start != null {
+    @include ltr() {
+      #{$prop}: $top $end $bottom $start;
+    }
+    @include rtl() {
+      #{$prop}: $top $start $bottom $end;
+    }
+  } @else {
+    @include property-horizontal($prop, $start, $end);
+    @include multi-dir() {
+      #{$prop}-top: $top;
+      #{$prop}-bottom: $bottom;
+    }
+  }
+}
+
+@mixin margin($top, $end: $top, $bottom: $top, $start: $end) {
+  @include property(margin, $top, $end, $bottom, $start);
+}
+
+@mixin margin-horizontal($start, $end: $start) {
+  @include property-horizontal(margin, $start, $end);
+}
+
+@mixin padding($top, $end: $top, $bottom: $top, $start: $end) {
+@include property(padding, $top, $end, $bottom, $start);
+}
