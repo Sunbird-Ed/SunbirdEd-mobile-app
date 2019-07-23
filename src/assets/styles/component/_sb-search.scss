@@ -18,7 +18,7 @@
     color:$primary-color;
 }
 .sb-card-container .sb-search-card .sb-card{
-    @include padding($base-block-space,($base-block-space * 2));
+    @include padding($base-block-space, ($base-block-space * 2));
 }
 .sb-view-all-container .sb-view-all-items.sb-search-items
 {

@@ -29,7 +29,7 @@
         z-index: 999;
         position: absolute;
         font-size: 2.5em;
-        @include padding(($base-block-space/4),0,0,0);
+        @include padding(($base-block-space/4), 0, 0, 0);
         content: "\f406";
         font-weight: bolder;
       }
@@ -50,7 +50,7 @@
     width: 100%;
     .sb-online
     {
-        @include margin($base-block-space/2,0,0,0);
+        @include margin($base-block-space/2, 0, 0, 0);
     }
   }
 

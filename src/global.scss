@@ -4,7 +4,7 @@
 @import "~@ionic/angular/css/structure.css";
 @import "~@ionic/angular/css/typography.css";
 @import "~@ionic/angular/css/display.css";
-// @import '~@ionic/angular/css/padding.css';
+@import '~@ionic/angular/css/padding.css';
 @import "~@ionic/angular/css/float-elements.css";
 @import "~@ionic/angular/css/text-alignment.css";
 @import "~@ionic/angular/css/text-transformation.css";
@@ -12,7 +12,9 @@
 // @import '~@ionic/core/dist/collection/themes/ionic.globals.scss';
 //Dependency Styles for Mobile
 
-@import "./assets/styles/ custom_mixins";
+
+
+// @import "./assets/styles/_custom-mixins";
 @import "./assets/styles/styles.scss";
 //Specific Styles for Mobile
 @import "app.scss";
