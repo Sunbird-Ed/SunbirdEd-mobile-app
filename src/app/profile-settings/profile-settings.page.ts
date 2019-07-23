@@ -79,9 +79,11 @@ export class ProfileSettingsPage implements OnInit {
     cssClass: 'select-box'
   };
   private navParams: any;
-  abc = true;
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
+    @Inject('FRAMEWORK_SERVICE') private frameworkService: FrameworkService,
+    @Inject('FRAMEWORK_UTIL_SERVICE') private frameworkUtilService: FrameworkUtilService,
+    @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
     private fb: FormBuilder,
     private translate: TranslateService,
     private telemetryGeneratorService: TelemetryGeneratorService,
@@ -92,9 +94,6 @@ export class ProfileSettingsPage implements OnInit {
     private commonUtilService: CommonUtilService,
     private container: ContainerService,
     private telemetryService: TelemetryGeneratorService,
-    @Inject('FRAMEWORK_SERVICE') private frameworkService: FrameworkService,
-    @Inject('FRAMEWORK_UTIL_SERVICE') private frameworkUtilService: FrameworkUtilService,
-    @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
     private headerService: AppHeaderService,
     private router: Router,
     private appVersion: AppVersion,
@@ -221,9 +220,9 @@ export class ProfileSettingsPage implements OnInit {
           this.profile.subject = [];
           this.profile.medium = [];
         }
-        this.profileForTelemetry = this.profile;
+        this.profileForTelemetry = Object.assign({}, this.profile);
         this.initUserForm();
-      }).catch(() => {
+      }).catch((error) => {
         this.profile = undefined;
         this.initUserForm();
       });
@@ -248,7 +247,6 @@ export class ProfileSettingsPage implements OnInit {
         medium: [this.profile && this.profile.medium || []]
       });
     }
-    this.updateStyle();
   }
 
   /**
@@ -546,7 +544,7 @@ export class ProfileSettingsPage implements OnInit {
     };
 
     if (this.navParams && this.navParams.selectedUserType) {
-      req.profileType = this.navParams.get('selectedUserType');
+      req.profileType = this.navParams.selectedUserType;
     } else {
       req.profileType = this.profile.profileType;
     }
