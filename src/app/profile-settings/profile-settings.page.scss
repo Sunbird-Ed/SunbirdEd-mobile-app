@@ -1,229 +1,228 @@
-@import"../../global.scss";
-@import"../../assets/styles/variables";
-
-.scroll-content, .fixed-content{
+@import "src/global.scss";
+@import "../../assets/styles/variables";
+:host {
+  .scroll-content,
+  .fixed-content {
     padding-bottom: 53px;
-}
+  }
 
-.form-position {
+  .form-position {
     margin-top: 10px;
-}
+  }
 
-/* This should be item-ios only as we are targeting mode as iOS for radio-button */
-.item-ios {
-    background-color: map-get($colors, white_f7);
-}
+  /* This should be item-ios only as we are targeting mode as iOS for radio-button */
+  .item-ios {
+    background-color: #{map-get($colors, white_f7)};
+  }
 
-.button-inner {
+  .button-inner {
     display: initial !important;
-}
+  }
 
-ion-icon {
-    /* migration TODO
+  ion-icon {
     @include ltr {
-        float: right !important;
+      float: right !important;
     }
 
     @include rtl {
-        float: left !important;
-    }*/
-}
-
-ion-list[inset] {
-    margin: 0 !important;
-}
-
-/* Change height of the ion-item*/
-.item-block {
-    min-height: 5.5rem !important;
-}
-
-// .item-select .label-md {
-//     color: map-get($colors, black);
-// }
-
-.arrow-icon {
-    /* migration TODO
-    @include padding(null, null, null, 2.8em !important);
-    */
-}
-
-.back-button {
-    display: block !important;
-}
-
-.fill-in-style {
-    font-size:12px; 
-    text-align: center; 
-    margin-top: 30px; 
-    /* migration TODO
-    @include padding(0,5px);
-    */
-    // @extend .font-weight-bold;
-}
-.item-select-disabled {
-    .label-md {
-        color: map-get($colors, medium_gray);
-        opacity: 1;
+      float: left !important;
     }
-}
+  }
 
-.padding-bottom-if-header{
+  ion-list[inset] {
+    margin: 0 !important;
+  }
+
+  /* Change height of the ion-item*/
+  .item-block {
+    min-height: 5.5rem !important;
+  }
+
+  .back-button {
+    display: block !important;
+  }
+
+  .fill-in-style {
+    font-size: 12px;
+    text-align: center;
+    margin-top: 30px;
+    @include padding(0, 5px);
+  }
+  .item-select-disabled {
+    .label-md {
+      color: #{map-get($colors, medium_gray)};
+      opacity: 1;
+    }
+  }
+
+  .padding-bottom-if-header {
     padding-bottom: 80px !important;
-}
+  }
 
-.qr-container{
+  .qr-container {
     padding: 10px 20px 0px 20px;
     background-color: $light-grey;
     border-bottom: 2px solid $gray-200;
-    .qr-content{
-        /* migration TODO
-        @include clearfix;
-        */
-        .qr-img{
-            border-right: 2px solid $gray-100;
-            text-align: right;
-            padding-right: 10px;
-            .qr-img-container{
-                width: 50px;
-                img{
-                    display: block;
-                } 
-                .qr-text{
-                    text-align: center;
-                    width: 50px;
-                    background: #fff;
-                    span{
-                        font-weight: bold;
-                        font-size: 10px;
-                    }
-                }
-            }
-        }
-        .qr-instruction-container{
-            width: calc(100% - 65px);
-            padding-left: 10px; 
-            .qr-instruction{
-                .title{
-                    display: block;
-                    color: #006DE5;
-                }
-                .sub-title{
-                    display: block;
-                    font-size: 12px;
-                }
-                
-            }
-        }
-    }
-    .qr-btn-container{
-        text-align: center;
-        margin-top: 5px; 
-        .qr-btn{
-            display: inline-block;
-            background-color: #006DE5;
-            padding: 10px 20px;
+    .qr-content {
+      @include clearfix;
+      .qr-img {
+        border-right: 2px solid $gray-100;
+        text-align: right;
+        padding-right: 10px;
+        .qr-img-container {
+          width: 50px;
+          img {
+            display: block;
+          }
+          .qr-text {
             text-align: center;
-            color: #fff;
-            border-radius: 5px;
-            box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
-            img{
-                vertical-align: middle
+            width: 50px;
+            background: #fff;
+            span {
+              font-weight: bold;
+              font-size: 10px;
             }
-            span{
-                display: inline-block;
-                vertical-align: middle;
-                font-size: 20px;
-                padding-left: 10px;
-            }
+          }
         }
+      }
+      .qr-instruction-container {
+        width: calc(100% - 65px);
+        padding-left: 10px;
+        .qr-instruction {
+          .title {
+            display: block;
+            color: #006de5;
+          }
+          .sub-titile {
+            display: block;
+            font-size: 12px;
+          }
+        }
+      }
     }
-    .or-circle{
-        display: block;
-        width: 60px;
-        height: 30px;
-        border-radius: 15px;
-        position: relative;
-        top: 15px;
-        background-color: $gray-800;
+    .qr-btn-container {
+      text-align: center;
+      margin-top: 5px;
+      .qr-btn {
+        display: inline-block;
+        background-color: #006de5;
+        padding: 10px 20px;
         text-align: center;
         color: #fff;
-        font-size: 16px;
-        line-height: 30px;
-        margin: 0 auto;
-    }
-    
-    
-}
-
-.item-label-stacked ion-select{
-    border: 1px solid #006DE5;
-    margin-top: 8px;
-    padding-right: 15px !important;
-    .select-icon{
-        .select-icon-inner{
-            border: solid blue;
-            border-width: 0 2px 2px 0;
-            display: inline-block;
-            padding: 4px;
-            transform: rotate(45deg);
-            animation: dropDown 5s linear infinite;
-            animation-duration: 0.9s;
+        border-radius: 5px;
+        box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
+        img {
+          vertical-align: middle;
         }
+        span {
+          display: inline-block;
+          vertical-align: middle;
+          font-size: 20px;
+          padding-left: 10px;
+        }
+      }
     }
-    .select-placeholder{
-        color: #006DE5;
-        padding-left: 10px;
+    .or-circle {
+      display: block;
+      width: 60px;
+      height: 30px;
+      border-radius: 15px;
+      position: relative;
+      top: 15px;
+      background-color: $gray-800;
+      text-align: center;
+      color: #fff;
+      font-size: 16px;
+      line-height: 30px;
+      margin: 0 auto;
     }
-}
-.item-md.item-block .item-inner{
-    border-bottom: none;
-}
-.item-select .label-md {
-    color: #006DE5;
-}
+  }
 
+  .item-label-stacked ion-select {
+    border: 1px solid #006de5;
+    margin-top: 8px;
+    padding-right: 10px !important;
+    .select-icon {
+      .select-icon-inner {
+        border: solid blue;
+        border-width: 0 2px 2px 0;
+        display: inline-block;
+        padding: 4px;
+        transform: rotate(45deg);
+        animation: dropDown 5s linear infinite;
+        animation-duration: 0.9s;
+      }
+    }
+    // Not getting used because of shadow DOM
+    .select-placeholder {
+      color: #006de5;
+      padding-left: 10px;
+    }
+  }
+  ion-item.item-label-stacked {
+    --border-width: 0;
+  }
+  .item-select ion-label {
+    color: #006de5;
+  }
 
-.item-label-stacked.item-select-disabled {
-    .label-md {
-        color: #CCCCCC;
+  .item-label-stacked.item-select-disabled {
+    ion-label {
+      color: #cccccc;
+    }
+
+    ion-select {
+      border-color: #cccccc;
+      // Inside Shadow DOM
+      .select-icon {
+        .select-icon-inner {
+          border-color: #cccccc;
+          animation: none;
+        }
+      }
+      // Inside Shadow DOM
+      .select-placeholder {
+        color: #cccccc;
+      }
+    }
+  }
+
+  .item-label-stacked.item-has-value {
+    ion-label {
+      color: #{$gray-800};
     }
     ion-select {
-        border-color: #CCCCCC;
-        .select-icon{
-            .select-icon-inner{
-                border-color: #CCCCCC;
-                animation: none;
-            }
+      border-color: #{$gray-300};
+      .select-text {
+        padding-left: 10px;
+        font-weight: bold;
+        color: #{$gray-800};
+      }
+      .select-icon {
+        .select-icon-inner {
+          border-color: #{$gray-800};
+          animation: none;
         }
-        .select-placeholder{
-            color: #CCCCCC;
-        }
-        
+      }
     }
-}
+  }
+  @keyframes dropDown {
+    0% {
+      top: 0;
+    }
+    50% {
+      top: 10px;
+    }
+    100% {
+      top: 0;
+    }
+  }
 
-.item-label-stacked.input-has-value.item-input-has-value {
-    .label-md {
-        color: $gray-800;
-    }
-    ion-select{
-        border-color: $gray-300;
-        .select-text {
-            padding-left: 10px;
-            font-weight: bold;
-            color: $gray-800;
-        }
-        .select-icon{
-            .select-icon-inner{
-                border-color: $gray-800;
-                animation: none;
-            }
-        }
-    } 
-}
-@keyframes dropDown {
-    0% {top: 0;}
-    50% {top: 10px;}
-    100% {top: 0;}
+  .arrow-icon {
+    right: 15px;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 22px;
+  }
 }
