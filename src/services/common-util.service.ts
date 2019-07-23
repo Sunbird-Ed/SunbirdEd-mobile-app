@@ -284,7 +284,7 @@ export class CommonUtilService implements OnDestroy {
     /**
      * Creates a popup asking whether to exit from app or not
     */
-    showExitPopUp(pageId: string, environment: string, isNavBack: boolean) {
+    async showExitPopUp(pageId: string, environment: string, isNavBack: boolean) {
         if (!this.alert) {
             /*this.alert = this.alertCtrl.create({
                 title: this.translateMessage('BACK_TO_EXIT'),
@@ -342,7 +342,7 @@ export class CommonUtilService implements OnDestroy {
             // }, {
             //         cssClass: 'sb-popover',
             //     });
-            this.alert.onDidDismiss((leftBtnClicked: any) => {
+            await this.alert.onDidDismiss((leftBtnClicked: any) => {
                 if (leftBtnClicked == null) {
                     this.telemetryGeneratorService.generateInteractTelemetry(
                         InteractType.TOUCH,
@@ -372,7 +372,7 @@ export class CommonUtilService implements OnDestroy {
                     this.telemetryGeneratorService.generateEndTelemetry('app', '', '', environment);
                 }
             });
-            this.alert.present({
+            await this.alert.present({
                 ev: event
             });
             this.telemetryGeneratorService.generateBackClickedTelemetry(pageId, environment, isNavBack);
@@ -380,7 +380,7 @@ export class CommonUtilService implements OnDestroy {
         } else {
             this.telemetryGeneratorService.generateBackClickedTelemetry(pageId, environment, isNavBack);
             if (this.alert) {
-                this.alert.dismiss();
+                await this.alert.dismiss();
                 this.alert = undefined;
             }
         }

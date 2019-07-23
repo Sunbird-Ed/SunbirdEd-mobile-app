@@ -124,10 +124,11 @@ export class DownloadsTabComponent {
       PageId.DOWNLOADS);
     const sortOptions = await this.popoverCtrl.create({
       component: OverflowMenuComponent,
+      event,
       componentProps: {
         list: MenuOverflow.DOWNLOAD_FILTERS
       },
-      cssClass: 'box download-popover'
+      // cssClass: 'box download-popover'
     });
     await sortOptions.present();
     const { data } = await sortOptions.onDidDismiss();

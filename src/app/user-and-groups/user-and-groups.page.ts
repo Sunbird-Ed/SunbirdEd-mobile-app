@@ -179,7 +179,9 @@ export class UserAndGroupsPage implements OnInit {
           await popover.dismiss();
         },
         isCurrentUser: isCurrentUser
-      }, cssClass: 'user-popover'
+      },
+      cssClass: 'user-popover',
+      event: myEvent
     }
     );
     await popover.present();

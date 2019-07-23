@@ -13,6 +13,7 @@ import { CreateGroupPageModule } from './create-group/create-group.module';
 import { GroupDetailsPageModule } from './group-details/group-details.module';
 import { GroupMembersPageModule } from './group-members/group-members.module';
 import { ShareUserAndGroupsPageModule } from './share-user-and-groups/share-user-and-groups.module';
+import { EditDeletePopoverComponent } from './edit-delete-popover/edit-delete-popover.component';
 
 @NgModule({
   imports: [
@@ -27,6 +28,15 @@ import { ShareUserAndGroupsPageModule } from './share-user-and-groups/share-user
     // ShareUserAndGroupsPageModule,
     UserAndGroupsRoutingModule
   ],
-  declarations: [UserAndGroupsPage]
+  exports: [
+    EditDeletePopoverComponent
+  ],
+  declarations: [
+    UserAndGroupsPage,
+    EditDeletePopoverComponent
+  ],
+  entryComponents: [
+    EditDeletePopoverComponent
+  ]
 })
 export class UserAndGroupsPageModule { }
