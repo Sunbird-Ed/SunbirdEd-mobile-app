@@ -1,7 +1,8 @@
-
+@import "src/global.scss";
+:host {
 .sb-nodownloads-container{
     .sb-nodownloads-title{
-        // migration-TODO
-        // color: $gray-400;
+        color: #{$gray-400};
     }
+  }
 }
