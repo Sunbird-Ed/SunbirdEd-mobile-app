@@ -30,7 +30,7 @@
       <div padding>
         <div class="custom-margin-top">
           <div *ngIf="profileDetails?.handle">
-            <ion-text>
+            <ion-text class="ion-padding-top ion-padding-start">
               <p text-uppercase color="dark_gray" class="subTitle">{{ 'LOGGED_IN_AS' | translate}}</p>
             </ion-text>
             <ion-item class="item-background radius" margin-bottom no-lines
@@ -56,9 +56,9 @@
               </ion-row>
             </ion-item>
           </div>
-          <ion-text>
-            <ion-label color="dark_gray" text-uppercase class="subTitle">{{'USERS' | translate}}</ion-label>
-          </ion-text>
+          <ion-label>
+            <p text-uppercase class="subTitle ug-dark-grey ug-top-left-padding">{{'USERS' | translate}}</p>
+          </ion-label>
           <div *ngIf="noUsersPresent" class="nouser">
             <h6>{{'NO_USERS_CREATED_YET' | translate}}</h6>
             <div text-center class="description">
@@ -70,32 +70,35 @@
               <strong>{{'LOADING_USER_LIST' | translate}}</strong>
             </div>
           </div>
-          <ion-list *ngIf="!noUsersPresent && !loadingUserList">
-            <ion-item *ngFor="let user of userList; let i=index;" class="item-background radius" margin-bottom
-              [ngClass]="i===selectedUserIndex ? 'blueBorder' : ''" no-lines>
-              <ion-row class="bg-color-white">
-                <ion-col size="11" class="bg-color-white" (click)="selectUser(i, user?.uid, user?.handle)">
-                  <ion-item class="bg-color-white padding-left-0 rm-label-margin" no-padding>
-                    <h6 class="line-height-2 elipsis"
-                      [ngStyle]="{'color': currentUserId === user?.uid ? 'dodgerblue' : 'black'}">
-                      <strong>{{user?.handle}}</strong>
-                    </h6>
-                    <p>
-                      <span
-                        *ngIf="user?.profileType === ProfileType.TEACHER">{{'USER_TYPE_1' | translate | titlecase}}</span>
-                      <span
-                        *ngIf="user?.profileType === ProfileType.STUDENT">{{'USER_TYPE_2' | translate | titlecase}}</span>
-                      <span *ngIf="user?.grade?.length">•</span> {{ getGradeNameFromCode(user) }}
-                    </p>
-                  </ion-item>
-                </ion-col>
-                <ion-col size="1" class="advanced-menu" *ngIf="!playConfig">
-                  <ion-item slot="end" class="bg-color-white item-padding-left">
-                    <ion-icon class="line-height-2 padding-left-2" name="more" item-end
-                      (click)="presentPopover($event ,i, true)"></ion-icon>
-                  </ion-item>
-                </ion-col>
-              </ion-row>
+          <ion-list *ngIf="!noUsersPresent && !loadingUserList" lines="none">
+            <ion-item *ngFor="let user of userList; let i=index;" class="item-background" margin-bottom>
+              <ion-grid class="radius">
+                <ion-row [ngClass]="i===selectedUserIndex ? 'blueBorder' : ''" class="bg-color-white ug-row-padding radius">
+                  <ion-col size="11" class="bg-color-white" (click)="selectUser(i, user?.uid, user?.handle)">
+                    <div class="bg-color-white padding-left-0 rm-label-margin" no-padding>
+                      <ion-label>
+                        <p class="elipsis"
+                          [ngStyle]="{'color': currentUserId === user?.uid ? 'dodgerblue' : 'black'}">
+                          <strong>{{user?.handle}}</strong>
+                        </p>
+                        <p>
+                          <span
+                            *ngIf="user?.profileType === ProfileType.TEACHER">{{'USER_TYPE_1' | translate | titlecase}}</span>
+                          <span
+                            *ngIf="user?.profileType === ProfileType.STUDENT">{{'USER_TYPE_2' | translate | titlecase}}</span>
+                          <span *ngIf="user?.grade?.length">•</span> {{ getGradeNameFromCode(user) }}
+                        </p>
+                      </ion-label>
+                    </div>
+                  </ion-col>
+                  <ion-col size="1" class="advanced-menu" *ngIf="!playConfig">
+                    <!-- <div slot="end" class="bg-color-white item-padding-left"> -->
+                      <ion-icon class="ug-icon-font-size" name="more" item-end
+                        (click)="presentPopover($event ,i, true)"></ion-icon>
+                    <!-- </div> -->
+                  </ion-col>
+                </ion-row>
+              </ion-grid>
             </ion-item>
           </ion-list>
         </div>

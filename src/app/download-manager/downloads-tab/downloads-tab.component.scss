@@ -1,12 +1,14 @@
 @import "src/global.scss";
 :host {
 .sb-card-active{
-    // background: $light-blue-bg !important;
+    background: #{$light-blue-bg} !important;
 }
 .sb-dw-manager{
+    @include clearfix;
     .selector{
-        // color: $primary-600;
-        // font-size: $font-size-md;
+        color: #{$primary-600};
+        font-size: #{$font-size-md};
+        vertical-align: middle !important;
     }
 }
 

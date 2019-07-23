@@ -7,7 +7,6 @@ import { IonicModule } from '@ionic/angular';
 
 import { GroupDetailsPage } from './group-details.page';
 import { TranslateModule } from '@ngx-translate/core';
-import { EditDeletePopoverComponent } from '../edit-delete-popover/edit-delete-popover.component';
 import { GroupDetailNavPopover } from '../group-detail-nav-popover/group-detail-nav-popover';
 
 const routes: Routes = [
@@ -25,8 +24,8 @@ const routes: Routes = [
     RouterModule.forChild(routes),
     TranslateModule.forChild()
   ],
-  declarations: [GroupDetailsPage, EditDeletePopoverComponent, GroupDetailNavPopover],
-  entryComponents: [GroupDetailsPage, EditDeletePopoverComponent, GroupDetailNavPopover],
+  declarations: [GroupDetailsPage, GroupDetailNavPopover],
+  entryComponents: [GroupDetailsPage, GroupDetailNavPopover],
   exports: [GroupDetailsPage]
 })
 export class GroupDetailsPageModule { }

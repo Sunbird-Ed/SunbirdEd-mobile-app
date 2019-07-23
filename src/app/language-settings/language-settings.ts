@@ -15,6 +15,13 @@ import { NotificationService } from '@app/services/notification.service';
 import { Location } from '@angular/common';
 import { Subscription } from 'rxjs';
 
+
+export interface ILanguages {
+  label: string
+  code: string
+  isApplied: boolean
+  name: string
+}
 @Component({
   selector: 'page-language-settings',
   templateUrl: 'language-settings.html',
@@ -22,8 +29,8 @@ import { Subscription } from 'rxjs';
 })
 export class LanguageSettingsPage implements OnInit {
 
-  languages: any = [];
-  language: any;
+  languages: Array<ILanguages> = [];
+  language: string;
   isLanguageSelected = false;
   isFromSettings = false;
   defaultDeviceLang = '';
@@ -61,15 +68,6 @@ export class LanguageSettingsPage implements OnInit {
       this.isFromSettings ? PageId.SETTINGS_LANGUAGE : PageId.ONBOARDING_LANGUAGE_SETTING,
       this.isFromSettings ? Environment.SETTINGS : Environment.ONBOARDING,
     );
-    this.handleBackButton();
-
-    if (!this.isFromSettings) {
-      this.headerService.hideHeader();
-    } else if (this.mainPage) {
-      this.headerService.showHeaderWithBackButton();
-    } else {
-      this.headerService.showHeaderWithBackButton();
-    }
   }
 
   handleBackButton() {
@@ -93,6 +91,12 @@ export class LanguageSettingsPage implements OnInit {
   ionViewWillEnter() {
     this.selectedLanguage = {};
     this.init();
+    if (!this.isFromSettings) {
+      this.headerService.hideHeader();
+    } else {
+      this.headerService.showHeaderWithBackButton();
+    }
+    this.handleBackButton();
   }
 
   ionViewWillLeave() {

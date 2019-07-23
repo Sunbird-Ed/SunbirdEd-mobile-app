@@ -1,0 +1,7 @@
+@import "src/global.scss";
+:host {
+    .sb-dw-manager{
+        background-color: #{$light-blue-bg};
+        border-bottom: 2px solid #fff;
+    }
+}

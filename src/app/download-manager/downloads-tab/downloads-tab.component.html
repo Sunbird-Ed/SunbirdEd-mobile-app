@@ -23,9 +23,8 @@
       <div class="sb-card" *ngFor="let content of downloadedContents; let i = index;" [ngClass]="{'sb-card-active': content.isSelected}">
         <div class="check-container">
           <!-- <input type="checkbox" (change)="toggleContentSelect($event, i)" [checked]="content.isSelected" > -->
-          <ion-label class="download-checkbox-label">
-          <ion-checkbox  (ionChange)="toggleContentSelect($event, i)" [checked]="content.isSelected" class="download-checkbox">
-
+          <ion-label>
+          <ion-checkbox  (ionChange)="toggleContentSelect($event, i)" [checked]="content.isSelected">
           </ion-checkbox>
         </ion-label>
           </div>

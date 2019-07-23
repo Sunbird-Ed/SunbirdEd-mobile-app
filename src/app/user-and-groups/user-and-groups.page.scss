@@ -1,5 +1,5 @@
 @import '../../global.scss';
-:host {
+
   .img-container {
     position: absolute;
     width: 100px;
@@ -85,7 +85,7 @@
     margin-top: 2vh;
   }
   .radius {
-    border-radius: 6px;
+    border-radius: 6px !important;
   }
   .bg-color-white {
     background-color: map-get($colors, light_gray) !important;
@@ -140,7 +140,6 @@
   h6:first-child {
     margin-top: 0px !important;
   }
-}
 .padding-left-2 {
     @include padding(null, null, null, 2px !important);
 }
@@ -159,4 +158,20 @@
     color: map-get($colors, dark_gray);
   font-size: 1.5rem;
     @include margin(null, 10%, null, 10%);
+}
+
+.ug-row-padding{
+  @include padding(12px, 16px, 16px, 18px !important);
+}
+
+.ug-dark-grey{
+  color: map-get($colors, dark_gray);
+}
+
+.ug-top-left-padding{
+  @include padding(16px, 16px, 0px, 8px !important);
+}
+
+.ug-icon-font-size{
+  font-size: 28px;
 }
