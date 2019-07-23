@@ -12,7 +12,7 @@
     color: $white-color;
     cursor:pointer;
     vertical-align: middle;
-    @include margin(0,0,0, ($base-block-space * 1));
+    @include margin(0, 0, 0, ($base-block-space * 1));
     background:$white-color;
     min-width:($base-block-space * 8);
     @include border-radius(2px);

@@ -85,13 +85,13 @@
                     font-size: ($font-size-base * 2)+2;
                     color: $info-color;
                 }
-                @include margin(0,0,($base-block-space * 1) ,0);
+                @include margin(0,0,($base-block-space * 1), 0);
             }
             .sb-popover-content-details {
                 .main-title {
                     color: $gray-800;	
                     font-size: 14px;	
-                    @include margin(0,0,($base-block-space * 1) ,0);
+                    @include margin(0,0,($base-block-space * 1), 0);
                     font-weight: 500;
 
                     .meta-info {
@@ -99,7 +99,7 @@
                         font-size: ($font-size-base - 2);	
                         line-height: 20px;
                         text-align: center;
-                        @include padding(($base-block-space * 2),0,0,0);
+                        @include padding(($base-block-space * 2), 0, 0, 0);
                     }
                 }
 
@@ -109,7 +109,7 @@
                     line-height: 20px;
                     font-weight: bold;
                     text-align: center;
-                    @include padding(($base-block-space * 1),0,0,0);
+                    @include padding(($base-block-space * 1), 0, 0, 0);
                 }
 
             }
@@ -122,7 +122,7 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        @include padding(($base-block-space), ($base-block-space * 2),($base-block-space * 3),($base-block-space * 2));
+        @include padding(($base-block-space), ($base-block-space * 2), ($base-block-space * 3), ($base-block-space * 2));
         .sb-popover-action-btn{
             height: $base-block-space * 4;
             border-radius: 2px;

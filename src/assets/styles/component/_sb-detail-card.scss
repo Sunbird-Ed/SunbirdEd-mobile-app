@@ -3,7 +3,7 @@
     border-radius: 2px;
     box-shadow: 0 3px 5px 4px rgba(0, 0, 0, 0.05);
     background-color: map-get($colors, white );
-    @include margin(0,0,($base-block-space * 2),0);
+    @include margin(0, 0, ($base-block-space * 2), 0);
       .sb-rating-view {
         @include ltr() {
           text-align: right
@@ -15,7 +15,7 @@
         .sb-rating-value {
           font-weight: bold;
           font-size: $font-size-base;
-          @include margin(0,($base-block-space * 0.5),0,0);
+          @include margin(0, ($base-block-space * 0.5), 0, 0);
         }
         .sb-rating-star {
           color: $yellow;
@@ -36,7 +36,7 @@
       display: grid;
       grid-gap: ($base-block-space * 1);
       grid-template-columns:  auto ($base-block-space * 7);
-      @include padding($base-block-space* 2 , $base-block-space * 2,$base-block-space,$base-block-space*2);
+      @include padding($base-block-space* 2, $base-block-space * 2, $base-block-space, $base-block-space*2);
      // padding: 16px 16px 8px 16px;
      
       .right {
@@ -100,7 +100,7 @@
     }
     // Details-Card 
     .sb-dt-card-actions {
-      @include padding(null,($base-block-space * 1));
+      @include padding(null, ($base-block-space * 1));
       .sb-btn-tile-group {
         display: flex;
         &:last-child{
@@ -117,12 +117,12 @@
           .sb-dt-card-danger-icon{
             font-size : ($font-size-base * 2) + 2;
             color: $orange;
-            @include margin(0,0,($base-block-space * .5),0);
+            @include margin(0, 0, ($base-block-space * .5), 0);
           }
           .sb-dt-card-blue-icon{
             font-size : ($font-size-base * 2) + 2;
             color: $primary-color;
-            @include margin(0,0,($base-block-space * .5),0);
+            @include margin(0, 0, ($base-block-space * .5), 0);
           }   
           .sb-btn-footer-text {
             color : $gray;
@@ -141,5 +141,5 @@
   }
   .sb-detail-card-info .sb-dt-card
 {
-  @include margin(($base-block-space * 1),($base-block-space * 1),($base-block-space * 2),($base-block-space * 1))
+  @include margin(($base-block-space * 1), ($base-block-space * 1), ($base-block-space * 2), ($base-block-space * 1))
 }
