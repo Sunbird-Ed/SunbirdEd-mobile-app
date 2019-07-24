@@ -627,7 +627,8 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
             if (this.commonUtilService.currentTabName === 'resources' && !avoidRefreshList) {
               this.commonUtilService.showToast(
                 this.commonUtilService.translateMessage('EMPTY_LIBRARY_TEXTBOOK_FILTER',
-                  `${this.getGroupByPageReq.grade} (${this.getGroupByPageReq.medium} ${this.commonUtilService.translateMessage('MEDIUM')})`));
+                  `${this.getGroupByPageReq.grade} (${this.getGroupByPageReq.medium} 
+                   ${this.commonUtilService.translateMessage('MEDIUM')})`));
             }
           }
         });

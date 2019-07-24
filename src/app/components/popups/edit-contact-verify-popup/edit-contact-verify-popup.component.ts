@@ -113,7 +113,9 @@ export class EditContactVerifyPopupComponent implements OnInit {
   }
 
   ionViewWillLeave() {
-    this.unregisterBackButton && this.unregisterBackButton.unsubscribe();
+    if (this.unregisterBackButton) {
+      this.unregisterBackButton.unsubscribe();
+    }
   }
 
 }
