@@ -13,7 +13,7 @@
         <a>{{ 'VIEW_ALL' | translate }}</a>
       </span>
     </div>
-    <div *ngIf="enrolledCourses && enrolledCourses.length" scrollX="true" style="width: 100%;"
+    <div *ngIf="enrolledCourses && enrolledCourses.length" scrollX="true" style="width: 100%;height: auto;"
           no-padding>
           <div class="inner inprogress-courses" style="display:flex">
              <app-coursecard *ngFor="let course of enrolledCourses; let i=index" [env]="'home'" [index]="i"
@@ -37,12 +37,10 @@
         </div>
         <div scrollX="true" style="width: 100%; height: 166px;" no-padding style=" width: 100%;
         display: flex;">
-          <div class="inner">
             <app-coursecard *ngFor="let item of course.contents; let i=index" [env]="'home'" [index]="i"
               [sectionName]="course.name" [enrolledCourses]="enrolledCourses" [pageName]="'course'" [course]="item"
               [layoutName]="layoutPopular" [guestUser]="guestUser">
             </app-coursecard>
-          </div>
         </div>
       </div>
     </div>

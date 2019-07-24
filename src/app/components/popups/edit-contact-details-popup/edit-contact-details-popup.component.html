@@ -1,4 +1,4 @@
-<ion-content class="P0" style="min-height: 60vh;">
+<ion-content class="P0">
   <ion-spinner *ngIf="loader" padding></ion-spinner>
 
   <ion-grid class="P0">
@@ -29,12 +29,13 @@
               <ion-input type="tel" placeholder="+91 -" class="form-control decorator " value="+91 -" disabled>
               </ion-input>
               <ion-input type="tel" placeholder="{{'PHONE_PLACEHOLDER' | translate }}" maxlength="10" minlength="10"
-                required class="form-control custom" (input)="refreshErr()" formControlName="phone"></ion-input>
+                required class="form-control custom" (input)="refreshErr()" formControlName="phone" [(ngModel)]="phone">
+              </ion-input>
             </div>
           </ion-col>
 
         </section>
-        <section *ngIf="type==='email'" class="W100 text-center MT3V">
+        <section *ngIf="type==='email'" class="W100 MT3V">
 
           <ion-col size="12" no-padding class="text-center">
             <p class="error" *ngIf="(personEditForm.controls.email.dirty && personEditForm.controls.email?.invalid) ">
@@ -52,13 +53,13 @@
           <ion-col size="12" no-padding>
             <div class="W100 merged-input-container MT10">
               <ion-input type="text" placeholder="{{'EMAIL_PLACEHOLDER' | translate}}" class="form-control custom"
-                formControlName="email" (input)="refreshErr()"></ion-input>
+                formControlName="email" (input)="refreshErr()" [(ngModel)]="email"></ion-input>
             </div>
           </ion-col>
         </section>
 
       </ion-row>
-      <ion-row class="custom-shodow">
+      <ion-row class="custom-shadow">
         <ion-col padding>
           <ion-button expand="block" fill="outline" (click)="cancel($event)">{{ 'CANCEL' | translate }} </ion-button>
         </ion-col>
