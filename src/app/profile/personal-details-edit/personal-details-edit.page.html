@@ -1,18 +1,13 @@
-<!-- <ion-header>
-  <ion-navbar>
-    <ion-title>{{'EDIT_PERSONAL_DETAILS' | translate}}</ion-title>
-  </ion-navbar>
-</ion-header> -->
-
 <ion-content padding-vertical>
   <form [formGroup]="profileEditForm">
     <ion-item>
       <ion-label position="stacked" class="label-font">
         {{'NAME' | translate}}
         <ion-text>
-<span color="danger">&nbsp;*</span>
-</ion-text>
-        <div class="error" *ngIf="profileEditForm.controls.name.dirty && profileEditForm.controls.name.errors?.required">
+          <span color="danger">&nbsp;*</span>
+        </ion-text>
+        <div class="error"
+          *ngIf="profileEditForm.controls.name.dirty && profileEditForm.controls.name.errors?.required">
           {{'ERROR_NAME_INVALID' | translate}}</div>
       </ion-label>
       <ion-input class="form-control" #name formControlName="name" placeholder="{{ 'NAME_HINT' | translate }}"
@@ -20,17 +15,20 @@
     </ion-item>
     <ion-item>
       <ion-label position="stacked" class="label-font">{{'STATE' | translate}}</ion-label>
-      <ion-select formControlName="states" #stateSelect multiple="false"  placeholder="{{'STATE_OPTION_TEXT' | translate}}"
-        okText="{{'BTN_SUBMIT' | translate}}" cancelText="{{'CANCEL' | translate}}" (ionChange)="getDistrict(stateSelect.value);">
-        <ion-select-option *ngFor="let state of stateList" text-capitalize value="{{state?.id}}">{{state?.name}}</ion-select-option>
+      <ion-select formControlName="states" #stateSelect multiple="false"
+        placeholder="{{'STATE_OPTION_TEXT' | translate}}" okText="{{'BTN_SUBMIT' | translate}}"
+        cancelText="{{'CANCEL' | translate}}" (ionChange)="getDistrict(stateSelect.value);">
+        <ion-select-option *ngFor="let state of stateList" text-capitalize value="{{state?.id}}">{{state?.name}}
+        </ion-select-option>
       </ion-select>
     </ion-item>
     <ion-item>
       <ion-label position="stacked" class="label-font">{{'DISTRICT' | translate}}</ion-label>
-      <ion-select formControlName="districts" #districtSelect multiple="false" [disabled]="!profileEditForm.value.states"
-        placeholder="{{'DISTRICT_OPTION_TEXT' | translate}}" okText="{{'BTN_SUBMIT' | translate}}"
-        cancelText="{{'CANCEL' | translate}}">
-        <ion-select-option *ngFor="let district of districtList" value="{{district?.id}}">{{district?.name}}</ion-select-option>
+      <ion-select formControlName="districts" #districtSelect multiple="false"
+        [disabled]="!profileEditForm.value.states" placeholder="{{'DISTRICT_OPTION_TEXT' | translate}}"
+        okText="{{'BTN_SUBMIT' | translate}}" cancelText="{{'CANCEL' | translate}}">
+        <ion-select-option *ngFor="let district of districtList" value="{{district?.id}}">{{district?.name}}
+        </ion-select-option>
       </ion-select>
     </ion-item>
   </form>
@@ -39,8 +37,8 @@
 <ion-footer>
   <ion-row class="padding-12">
     <ion-col size-md="10" offset-md="1">
-      <ion-button expand="block" [ngStyle]="{'background-color': btnColor}" [disabled]="profileEditForm.invalid" (click)="onSubmit()">{{'SAVE'
-        | translate}}</ion-button>
+      <ion-button expand="block" [ngStyle]="{'background-color': btnColor}" [disabled]="profileEditForm.invalid"
+        (click)="onSubmit()">{{'SAVE'| translate}}</ion-button>
     </ion-col>
   </ion-row>
 </ion-footer>

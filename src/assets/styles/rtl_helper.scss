@@ -1,19 +1,37 @@
 .float-end {
-    @include ltr() {
-        float: right;
-    }
+  @include ltr() {
+    float: right;
+  }
 
-    @include rtl() {
-        float: left;
-    }
+  @include rtl() {
+    float: left;
+  }
 }
 
 .float-start {
-    @include ltr() {
-        float: left;
-    }
+  @include ltr() {
+    float: left;
+  }
 
-    @include rtl() {
-        float: right;
-    }
+  @include rtl() {
+    float: right;
+  }
+}
+
+.text-align-start {
+  @include ltr() {
+    text-align: left;
+  }
+  @include rtl() {
+    text-align: right;
+  }
+}
+
+.text-align-end {
+  @include ltr() {
+    text-align: right;
+  }
+  @include rtl() {
+    text-align: left;
+  }
 }

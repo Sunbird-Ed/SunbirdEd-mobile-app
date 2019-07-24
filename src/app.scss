@@ -414,3 +414,40 @@ ion-toolbar {
 .pull-right {
   float: right;
 }
+.signin-card-bg {
+  background-color: map-get($colors, light_gray);
+  @include padding(10px, null, 10px, 0);
+}
+.padding-bottom-10 {
+  @include padding(null, null, 10px, null !important);
+}
+
+.padding-top-10 {
+  @include padding(10px, null, null, null !important);
+}
+
+.padding-left-10 {
+  @include padding(null, null, null, 10px !important);
+}
+/* Hide extra margin of the popover-controller */
+
+.box {
+  .popover-content {
+    min-width: 96px;
+    width: auto;
+    display: inline-block;
+    height: auto !important;
+  }
+
+  .list.list-md {
+    @include margin(null, null, 0, null !important);
+  }
+
+  .item-md {
+    @include padding(null, null, null, 0 !important);
+  }
+
+  .label-md {
+    @include margin(null, null, null, 16px);
+  }
+}

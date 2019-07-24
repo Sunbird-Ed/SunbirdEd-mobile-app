@@ -1,14 +1,6 @@
-import { telemetryService } from './../../app.module';
 import { Component, EventEmitter, Inject, Input, NgZone, Output, OnInit } from '@angular/core';
-import { TranslateService } from '@ngx-translate/core';
 import { NavController } from '@ionic/angular';
 import { AppVersion } from '@ionic-native/app-version/ngx';
-import { initTabs, LOGIN_TEACHER_TABS } from '@app/app/module.service';
-import { ProfileConstants, PreferenceKey } from '../../app.constant';
-import { FormAndFrameworkUtilService } from '@app/services/formandframeworkutil.service';
-import { CommonUtilService } from '@app/services/common-util.service';
-import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
-
 import {
   ApiService,
   AuthService,
@@ -23,6 +15,12 @@ import {
   ServerProfileDetailsRequest,
   SharedPreferences
 } from 'sunbird-sdk';
+
+import { initTabs, LOGIN_TEACHER_TABS } from '@app/app/module.service';
+import { ProfileConstants, PreferenceKey } from '@app/app/app.constant';
+import { FormAndFrameworkUtilService } from '@app/services/formandframeworkutil.service';
+import { CommonUtilService } from '@app/services/common-util.service';
+import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import {
   Environment,
   InteractSubtype,
@@ -38,17 +36,10 @@ import { ContainerService } from '@app/services/container.services';
 })
 export class SignInCardComponent implements OnInit {
 
-  private readonly DEFAULT_TEXT = [
-    'OVERLAY_LABEL_COMMON',
-    'OVERLAY_INFO_TEXT_COMMON'
-  ];
-
-  private translateDisplayText;
-
   appName = '';
   @Input() source = '';
-  @Input() title = '';
-  @Input() description = '';
+  @Input() title = 'OVERLAY_LABEL_COMMON';
+  @Input() description = 'OVERLAY_INFO_TEXT_COMMON';
   @Output() valueChange = new EventEmitter();
 
   constructor(
@@ -57,7 +48,6 @@ export class SignInCardComponent implements OnInit {
     @Inject('API_SERVICE') private apiService: ApiService,
     @Inject('SDK_CONFIG') private sdkConfig: SdkConfig,
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
-    public translate: TranslateService,
     public navCtrl: NavController,
     private container: ContainerService,
     private ngZone: NgZone,
@@ -70,25 +60,11 @@ export class SignInCardComponent implements OnInit {
     this.appVersion.getAppName()
       .then((appName: any) => {
         this.appName = appName;
-        this.initText();
       });
   }
 
   ngOnInit() {
 
-  }
-
-  initText() {
-    this.translate.get(this.DEFAULT_TEXT, { '%s': this.appName }).subscribe((value) => {
-      this.translateDisplayText = value;
-      if (this.title.length === 0) {
-        this.title = 'OVERLAY_LABEL_COMMON';
-      }
-
-      if (this.description.length === 0) {
-        this.description = 'OVERLAY_INFO_TEXT_COMMON';
-      }
-    });
   }
 
   async signIn() {
@@ -122,7 +98,6 @@ export class SignInCardComponent implements OnInit {
           that.ngZone.run(() => {
             that.preferences.putString('SHOW_WELCOME_TOAST', 'true').toPromise().then();
             window.location.reload();
-            // TabsPage.prototype.ionVieit wWillEnter();
           });
         })
         .catch(async (err) => {
