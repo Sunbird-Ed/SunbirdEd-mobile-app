@@ -213,6 +213,7 @@ export class ProfileSettingsPage implements OnInit {
       .toPromise()
       .then((response: any) => {
         this.profile = response;
+        console.log('responseresponse', response);
         if (this.navParams && this.navParams.isChangeRoleRequest) {
           this.profile.syllabus = [];
           this.profile.board = [];
