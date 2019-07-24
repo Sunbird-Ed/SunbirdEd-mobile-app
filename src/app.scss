@@ -34,7 +34,6 @@ rating {
   }
 }
 
-
 h6 {
   @extend .NotoSans-bold;
 }
@@ -450,4 +449,185 @@ ion-toolbar {
   .label-md {
     @include margin(null, null, null, 16px);
   }
+}
+.upgradePopover {
+  height: auto;
+  max-height: 65vh;
+  .popover-content {
+    top: 20vh !important;
+    width: 80vw !important;
+    @include ltr() {
+      left: 10vw !important;
+      right: 10vw !important;
+    }
+
+    @include rtl() {
+      right: 10vw !important;
+      left: 10vw !important;
+    }
+  }
+  ion-backdrop {
+    // background-color: map-get($colors, dark) !important;
+    opacity: 0.2 !important;
+    height: 100vh;
+  }
+}
+.MT10 {
+  margin-top: 10px;
+}
+.error {
+  color: #e76026;
+}
+
+.flex-container {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+}
+
+.padding-right-10 {
+  @include padding(null, 10px, null, null !important);
+}
+
+.padding-left-10 {
+  @include padding(null, null, null, 10px !important);
+}
+
+.padding-left-none {
+  @include padding(null, null, null, 0 !important);
+}
+
+.padding-left-5 {
+  @include padding(null, null, null, 5px !important);
+}
+
+.padding-5 {
+  @include padding(5px !important);
+}
+
+.loading {
+  background-color: transparent !important;
+}
+
+.loading-md .loading-wrapper {
+  border-radius: 50% !important;
+  @include padding(10px !important);
+  max-height: 48px !important;
+  max-width: 48px !important;
+}
+
+.ellipsis {
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+.display-inline-block {
+  display: inline-block !important;
+}
+
+.courses-holder {
+  height: 46%;
+  .scroll-content {
+    @include padding(6px, 0, 0, 6px !important);
+  }
+}
+
+.bolder {
+  @extend .font-weight-bold;
+}
+
+.fw {
+  @extend .font-weight-600;
+}
+
+.f11 {
+  font-size: 11px;
+}
+
+.f16 {
+  font-size: 16px;
+}
+
+.PTB0 {
+  @include padding(0, null, 0, null);
+}
+
+.lighter {
+  color: #9b9b9b;
+}
+
+.MR10 {
+  @include margin(null, 10px, null, null);
+}
+
+.MT0 {
+  margin-top: 0;
+}
+
+.ML10 {
+  @include margin(null, null, null, 10px);
+}
+
+.MB5 {
+  @include margin(null, null, 5px, null);
+}
+
+.MB10 {
+  @include margin(null, null, 10px, null);
+}
+
+.MB15 {
+  @include margin(null, null, 15px, null);
+}
+
+.MB30 {
+  @include margin(null, null, 30px, null);
+}
+
+.MT15 {
+  @include margin(15px, null, null, null);
+}
+
+.txt-lowercase {
+  text-transform: lowercase;
+}
+
+.txt-capitalize {
+  text-transform: capitalize;
+}
+
+.ellipsis {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.asPerStateRecord {
+  color: white;
+  font-size: 10px;
+  white-space: pre;
+  display: inline-block;
+  font-weight: bold;
+  background-color: black;
+  padding: 6px;
+  position: absolute;
+  right: 13px;
+  top: 22px;
+}
+.isymbol {
+  position: relative;
+  top: 0;
+  line-height: 12px;
+  margin-left: 5px;
+}
+.info-icon {
+  vertical-align: sub;
+  margin-right: 13px;
+  font-size: 1.8em !important;
+  color: #a4a4a4;
+}
+.info-icon-text {
+  font-size: 10px;
+  text-align: center;
 }
