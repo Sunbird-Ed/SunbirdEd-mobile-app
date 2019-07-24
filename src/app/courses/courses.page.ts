@@ -171,11 +171,11 @@ export class CoursesPage implements OnInit {
       this.handleHeaderEvents(eventName);
     });
     this.getEnrolledCourses();
-    this.headerServie.showHeaderWithHomeButton(['search', 'filter', 'download']);
   }
 
   ionViewWillEnter() {
     this.isVisible = true;
+    this.headerServie.showHeaderWithHomeButton(['search', 'filter', 'download']);
   }
 
   ionViewDidEnter() {
