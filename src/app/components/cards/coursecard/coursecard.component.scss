@@ -1,3 +1,4 @@
+@import "src/global.scss";
 :host {
     
     height: 166px;
@@ -30,17 +31,17 @@
       position: absolute;
       bottom: 0%;
       color: #fff;
-    //   @extend .font-weight-600;
+      @extend .font-weight-600;
       font-size: 1.5rem;
       width: 100%;
       padding-left:10px;
       padding-right:10px;
 
-    //   @include padding(null, null, null, 16px);
+      @include padding(null, null, null, 16px);
     }
 
     .top-container {
-      // height: 80%;
+      height: 80%;
     }
 
     .bottom-container {
@@ -50,13 +51,13 @@
 
     .size_txt {
       font-size: 1.2rem;
-      // color: map-get($colors, dark_gray);
+      color: map-get($colors, dark_gray);
     }
 
     .info-container {
       padding-left: 8px !important;
       padding-top: 1px !important;
-      //padding-right: 0px !important;
+      padding-right: 0px !important;
     }
 
     ul {
@@ -66,7 +67,7 @@
       &.rating li {
         padding: 1px 1px !important;
         background: none;
-        // color: map-get($colors, primary);
+        color: map-get($colors, primary);
 
         ion-icon {
           font-size: 16px;
@@ -133,7 +134,14 @@
     }
 
     .custom-small {
-      font-size: 1.2rem;
+      background: #FFF;
+      border: 1px solid #006DE5;
+      color: #006DE5;
+      @include padding(0, 0.9em, 0, 0.9em);
+      @include margin(0.4rem, 0.2rem, 0.4rem, 0.2rem);
+      height: 2.1em;
+      font-size: 0.8rem;
+      font-weight: 700;
     }
 
     .grid-disabled {
@@ -142,4 +150,9 @@
         opacity: 0.7;
       }
     }
+    .size_txt {
+      font-size: 1em;
+      @include padding(null, null, null, 8px);
+    }
+    
 }
