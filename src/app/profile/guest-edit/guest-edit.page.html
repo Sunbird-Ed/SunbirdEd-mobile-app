@@ -10,7 +10,7 @@
 
 <ion-content>
   <form [formGroup]="guestEditForm">
-    <ion-list  (ionChange)="onProfileTypeChange()" class="ge-mt-8">
+    <ion-list  (ionChange)="onProfileTypeChange()" class="MT6">
       <ion-radio-group formControlName="profileType">
 
         <ion-label class="type-label ion-text-uppercase">
@@ -19,14 +19,14 @@
           </ion-text>
         </ion-label>
 
-        <ion-item lines="none">
-          <ion-label>{{ 'USER_TYPE_2' | translate | titlecase }}</ion-label>
-          <ion-radio [value]="ProfileType.STUDENT" class="ge-mr-10" slot="start"></ion-radio>
+        <ion-item lines="none" class="MT4">
+          <ion-label [ngClass]="{'highlight-radio': guestEditForm?.value?.profileType === ProfileType.STUDENT }">{{ 'USER_TYPE_2' | translate | titlecase }}</ion-label>
+          <ion-radio [value]="ProfileType.STUDENT" class="MR10" slot="start"></ion-radio>
         </ion-item>
 
         <ion-item lines="none">
-          <ion-label>{{ 'USER_TYPE_1' | translate | titlecase }}</ion-label>
-          <ion-radio [value]="ProfileType.TEACHER" class="ge-mr-10" slot="start"></ion-radio>
+          <ion-label [ngClass]="{'highlight-radio': guestEditForm?.value?.profileType === ProfileType.TEACHER }">{{ 'USER_TYPE_1' | translate | titlecase }}</ion-label>
+          <ion-radio [value]="ProfileType.TEACHER" class="MR10" slot="start"></ion-radio>
         </ion-item>
       </ion-radio-group>
     </ion-list>

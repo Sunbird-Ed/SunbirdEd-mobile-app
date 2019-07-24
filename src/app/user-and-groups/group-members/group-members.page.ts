@@ -23,6 +23,7 @@ import { NavigationExtras, ActivatedRoute, Router } from '@angular/router';
 import { Location } from '@angular/common';
 import { Platform } from '@ionic/angular';
 import { Subscription } from 'rxjs';
+import { RouterLinks } from '@app/app/app.constant';
 
 @Component({
   selector: 'app-group-members',
@@ -151,17 +152,11 @@ export class GroupMembersPage implements OnInit, OnDestroy {
           isNewUser: true,
           lastCreatedProfile: this.lastCreatedProfileData
         }
-      }
-
-      this.router.navigate(['GuestEditProfilePage'], navigationExtras);
+      };
+      this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.GUEST_EDIT}`], navigationExtras);
     }).catch((error) => {
-      const navigationExtras: NavigationExtras = {
-        state: {
-          isNewUser: true,
-        }
-      }
-
-      this.router.navigate(['GuestEditProfilePage'], navigationExtras);
+      const navigationExtras: NavigationExtras = { state: { isNewUser: true} };
+      this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.GUEST_EDIT}`], navigationExtras);
     });
   }
 
