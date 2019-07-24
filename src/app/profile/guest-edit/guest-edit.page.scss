@@ -13,15 +13,8 @@
       margin-right: 10px !important;
     }
   }
-
-  .ge-mr-10 {
-    margin-right: 10px;
-  }
-  .ge-mt-8 {
-    margin-top: 8px;
-  }
   .ge-label {
-    margin-bottom: 8px;
+    @extend .MB8;
     color: map-get($colors, title);
   }
   .ge-danger{
@@ -30,7 +23,11 @@
   .ge-item-16{
     width: calc(100% - 16px);
     --padding-start: 0px;
-    margin-left: 16px;
+    @extend .ML16;
+    @extend .MB6;
+  }
+  .highlight-radio {
+    color: map-get($colors, primary);
   }
 
   ion-list-header ion-label {

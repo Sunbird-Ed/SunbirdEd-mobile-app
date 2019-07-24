@@ -29,6 +29,7 @@ import { ActivatedRoute, Router, NavigationExtras } from '@angular/router';
 import { Platform } from '@ionic/angular';
 import { Location } from '@angular/common';
 import { Subscription } from 'rxjs';
+import { RouterLinks } from '@app/app/app.constant';
 
 @Component({
   selector: 'app-create-group',
@@ -82,6 +83,9 @@ export class CreateGroupPage implements OnInit, OnDestroy {
     });
 
     this.isEditGroup = Boolean(this.group.hasOwnProperty('gid'));
+  }
+
+  ionViewDidEnter() {
     const headerTitle = this.isEditGroup ? 'EDIT_GROUP' : 'CREATE_GROUP';
     this.headerService.showHeaderWithBackButton([], this.commonUtilService.translateMessage(headerTitle));
   }
@@ -93,6 +97,7 @@ export class CreateGroupPage implements OnInit, OnDestroy {
       });
     });
     this.loadTelemetry();
+    this.getSyllabusDetails();
   }
 
   ngOnDestroy() {
@@ -150,7 +155,7 @@ export class CreateGroupPage implements OnInit, OnDestroy {
 
   /**Navigates to guest edit profile */
   goToGuestEdit() {
-    this.router.navigate(['GuestEditProfilePage']);
+    this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.GUEST_EDIT}`]);
   }
 
   /**
@@ -181,7 +186,7 @@ export class CreateGroupPage implements OnInit, OnDestroy {
       }
 
       const navigationExtras: NavigationExtras = { state: { group: this.group } }
-      this.router.navigate(['GroupMembersPage'], navigationExtras);
+      this.router.navigate([`/${RouterLinks.USER_AND_GROUPS}/${RouterLinks.GROUP_MEMBERS}`], navigationExtras);
     } else {
       this.commonUtilService.showToast(this.commonUtilService.translateMessage('ENTER_GROUP_NAME'));
     }
