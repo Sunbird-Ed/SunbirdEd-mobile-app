@@ -1,7 +1,7 @@
 @import '../../global.scss';
 
   .img-container {
-    position: absolute;
+    // position: absolute;
     width: 100px;
     height: 100px;
     top: 30%;
@@ -19,7 +19,7 @@
 
   .image-text {
     text-align: center;
-    margin-top: 33vh;
+    margin-top: 2vh;
   }
   .secondSection {
     margin-top: 13vh;
@@ -39,13 +39,16 @@
     border: 2px solid #d9d9d9;
   }
   .image_style {
-    width: 335px;
+    width: 102px;
     height: 102px;
     border-radius: 50%;
   }
 
-  .item-background.item-md {
+  .item-background {
     background-color: map-get($colors, light_gray) !important;
+    .item-native > .item-inner{
+      padding-right: 0px !important;
+    }
   }
   .subTitle {
     font-size: 1.4rem;
@@ -158,6 +161,7 @@
     color: map-get($colors, dark_gray);
   font-size: 1.5rem;
     @include margin(null, 10%, null, 10%);
+    margin-top: 0px !important;
 }
 
 .ug-row-padding{
@@ -174,4 +178,13 @@
 
 .ug-icon-font-size{
   font-size: 28px;
+}
+
+.ug-mb-6{
+  margin-bottom: 6px;
+  --inner-padding-end: 0;
+}
+
+.ug-pt-30{
+  padding-top: 30%;
 }

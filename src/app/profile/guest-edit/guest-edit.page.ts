@@ -178,13 +178,13 @@ export class GuestEditPage implements OnInit {
   ionViewWillEnter() {
     this.headerService.hideHeader();
     this.getSyllabusDetails();
-    this.unregisterBackButton = this.platform.backButton.subscribeWithPriority(101, () => {
+    this.unregisterBackButton = this.platform.backButton.subscribe(() => {
       this.dismissPopup();
     });
   }
 
   ionViewWillLeave() {
-    this.unregisterBackButton && this.unregisterBackButton();
+    this.unregisterBackButton && this.unregisterBackButton.unsubscribe();
   }
 
   // shows auto fill alert on load
@@ -209,21 +209,22 @@ export class GuestEditPage implements OnInit {
       cssClass: 'sb-popover',
     });
     await confirm.present();
-    const response = await confirm.onDidDismiss();
-    if (response.data.leftBtnClicked == null) {
-      return;
-    }
-    if (response.data.leftBtnClicked) {
-      this.guestEditForm.patchValue({
-        name: undefined,
-        syllabus: undefined,
-        boards: [[]],
-        medium: [[]],
-        grades: [[]],
-        subjects: [[]]
-      });
-      this.guestEditForm.controls['profileType'].setValue(this.ProfileType.STUDENT);
-    }
+    await confirm.onDidDismiss().then(response => {
+      if (response.data == null) {
+        return;
+      }
+      if (response.data) {
+        this.guestEditForm.patchValue({
+          name: undefined,
+          syllabus: undefined,
+          boards: [[]],
+          medium: [[]],
+          grades: [[]],
+          subjects: [[]]
+        });
+        this.guestEditForm.controls['profileType'].setValue(this.ProfileType.STUDENT);
+      }
+    });
   }
 
   onProfileTypeChange() {
@@ -327,7 +328,7 @@ export class GuestEditPage implements OnInit {
         }
       }).catch((error) => {
         console.error("Error", error);
-      })
+      });
   }
 
 

@@ -96,54 +96,8 @@
     display: block;
     width: 100%;
   }
-}
-
-ion-nav .driver-fix-stacking {
-  //z-index: unset !important;
-}
-
-#driver-popover-item {
-  left: auto !important;
-  left: unset !important;
-  right: 10vw !important;
-  width: 70vw !important;
-}
-div#driver-popover-item {
-  min-width: 180px;
-}
-div#driver-popover-item .driver-popover-tip.top {
-  right: 15vw;
-}
-div#driver-popover-item .driver-popover-title {
-  color: map-get($colors, primary);
-}
-.toolbar.toolbar-md.driver-fix-stacking {
-  //z-index: inherit !important;
-}
-.show-tab.driver-fix-stacking {
-  //z-index: 9 !important;
-}
-.app-root.driver-fix-stacking {
-  z-index: unset !important;
-}
-.driver-popover-footer {
-  display: block !important;
-}
-.driver-btn-group {
-  display: none !important;
-}
-div#driver-popover-item .driver-popover-footer button {
-  background-color: map-get($colors, primary) !important;
-  text-shadow: unset !important;
-  color: map-get($colors, white);
-  border-color: map-get($colors, primary) !important;
-  font-family: inherit !important;
-}
-div[scrollx="true"] {
-  position: relative;
-  overflow: hidden;
-}
-
-div[scrollx="true"] {
-  overflow-x: auto;
+  
+  div[scrollx=true] {
+    overflow-x: auto;
+  }
 }

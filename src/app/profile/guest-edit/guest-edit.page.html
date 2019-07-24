@@ -10,31 +10,29 @@
 
 <ion-content>
   <form [formGroup]="guestEditForm">
-    <ion-list  (ionChange)="onProfileTypeChange()">
+    <ion-list  (ionChange)="onProfileTypeChange()" class="ge-mt-8">
       <ion-radio-group formControlName="profileType">
 
-        <ion-label class="type-label" padding-left text-uppercase>
+        <ion-label class="type-label ion-text-uppercase">
           {{ 'USER_TYPE' | translate }}<ion-text>
-            <span color="danger">&nbsp;*</span>
+            <span class="ge-danger">&nbsp;*</span>
           </ion-text>
         </ion-label>
 
-        <ion-row>
-          <ion-item no-lines>
-            <ion-label>{{ 'USER_TYPE_2' | translate | titlecase }}</ion-label>
-            <ion-radio [value]="ProfileType.STUDENT" slot="start"></ion-radio>
-          </ion-item>
+        <ion-item lines="none">
+          <ion-label>{{ 'USER_TYPE_2' | translate | titlecase }}</ion-label>
+          <ion-radio [value]="ProfileType.STUDENT" class="ge-mr-10" slot="start"></ion-radio>
+        </ion-item>
 
-          <ion-item no-lines>
-            <ion-label>{{ 'USER_TYPE_1' | translate | titlecase }}</ion-label>
-            <ion-radio [value]="ProfileType.TEACHER" slot="start"></ion-radio>
-          </ion-item>
-        </ion-row>
+        <ion-item lines="none">
+          <ion-label>{{ 'USER_TYPE_1' | translate | titlecase }}</ion-label>
+          <ion-radio [value]="ProfileType.TEACHER" class="ge-mr-10" slot="start"></ion-radio>
+        </ion-item>
       </ion-radio-group>
     </ion-list>
-    <ion-item>
-      <ion-label position="stacked" text-uppercase class="label-font">{{ 'NAME' | translate }}<ion-text>
-          <span color="danger">&nbsp;*</span>
+    <ion-item class="ge-item-16">
+      <ion-label position="stacked" text-uppercase class="label-font ge-label">{{ 'NAME' | translate }}<ion-text>
+          <span class="ge-danger">&nbsp;*</span>
         </ion-text>
       </ion-label>
       <ion-input formControlName="name" dir="{{commonUtilService.getAppDirection()}}"
@@ -42,9 +40,9 @@
     </ion-item>
 
     <!-- Syllabus -->
-    <ion-item *ngIf="appGlobalService?.DISPLAY_FRAMEWORK_CATEGORIES_IN_PROFILE">
-      <ion-label position="stacked" text-uppercase class="label-font">{{'BOARD' | translate }} &lrm;<ion-text>
-          <span color="danger">&nbsp;*</span>
+    <ion-item class="ge-item-16" *ngIf="appGlobalService?.DISPLAY_FRAMEWORK_CATEGORIES_IN_PROFILE">
+      <ion-label position="stacked" text-uppercase class="label-font ge-label">{{'BOARD' | translate }} &lrm;<ion-text>
+          <span class="ge-danger">&nbsp;*</span>
         </ion-text>
       </ion-label>
       <ion-select multiple="false" text-capitalize formControlName="syllabus" [interfaceOptions]="syllabusOptions"
@@ -56,9 +54,9 @@
     </ion-item>
 
     <!-- Medium -->
-    <ion-item *ngIf="appGlobalService?.DISPLAY_FRAMEWORK_CATEGORIES_IN_PROFILE">
-      <ion-label position="stacked" text-uppercase class="label-font">{{'MEDIUM_OF_INSTRUCTION' | translate }}<ion-text>
-          <span color="danger">&nbsp;*</span>
+    <ion-item class="ge-item-16" *ngIf="appGlobalService?.DISPLAY_FRAMEWORK_CATEGORIES_IN_PROFILE">
+      <ion-label position="stacked" text-uppercase class="label-font ge-label">{{'MEDIUM_OF_INSTRUCTION' | translate }}<ion-text>
+          <span class="ge-danger">&nbsp;*</span>
         </ion-text>
       </ion-label>
       <ion-select multiple="true" text-capitalize [disabled]="!(guestEditForm.value.boards != '')"
@@ -71,9 +69,9 @@
     </ion-item>
 
     <!-- Grade -->
-    <ion-item *ngIf="appGlobalService?.DISPLAY_FRAMEWORK_CATEGORIES_IN_PROFILE">
-      <ion-label position="stacked" text-uppercase class="label-font">{{'CLASS' | translate }}<ion-text>
-          <span color="danger">&nbsp;*</span>
+    <ion-item class="ge-item-16" *ngIf="appGlobalService?.DISPLAY_FRAMEWORK_CATEGORIES_IN_PROFILE">
+      <ion-label position="stacked" text-uppercase class="label-font ge-label">{{'CLASS' | translate }}<ion-text>
+          <span class="ge-danger">&nbsp;*</span>
         </ion-text>
       </ion-label>
       <ion-select multiple="true" text-capitalize [disabled]="!(guestEditForm.value.medium != '')"
@@ -86,8 +84,8 @@
     </ion-item>
 
     <!-- Subjects -->
-    <ion-item *ngIf="appGlobalService?.DISPLAY_FRAMEWORK_CATEGORIES_IN_PROFILE">
-      <ion-label position="stacked" text-uppercase class="label-font">{{'SUBJECTS' | translate }}
+    <ion-item class="ge-item-16" *ngIf="appGlobalService?.DISPLAY_FRAMEWORK_CATEGORIES_IN_PROFILE">
+      <ion-label position="stacked" text-uppercase class="label-font ge-label">{{'SUBJECTS' | translate }}
       </ion-label>
       <ion-select multiple="true" [interfaceOptions]="subjectsOptions" text-capitalize
         [disabled]="!(guestEditForm.value.grades != '')" formControlName="subjects"

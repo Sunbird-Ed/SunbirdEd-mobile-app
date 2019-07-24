@@ -27,6 +27,12 @@ body {
 html.md {
   --ion-default-font: "Noto Sans";
 }
+rating {
+  ion-button {
+    --padding-start: 0px !important;
+    --padding-end: 0px !important;
+  }
+}
 
 h6 {
   @extend .NotoSans-bold;

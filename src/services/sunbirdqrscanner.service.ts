@@ -86,11 +86,6 @@ export class SunbirdQRScanner {
     this.source = source;
     this.showButton = showButton;
 
-    this.backButtonFunc = this.platform.backButton.subscribeWithPriority(11, () => {
-      console.log('INNNNN BackButton');
-      this.backButtonFunc.unsubscribe();
-      this.stopScanner();
-    });
     this.pauseSubscription = this.platform.pause.subscribe(() => this.stopScanner());
     this.generateImpressionTelemetry(source);
     this.generateStartEvent(source);
@@ -239,10 +234,9 @@ export class SunbirdQRScanner {
 
   }
   public stopScanner() {
-    // Unregister back button listner
     console.log('InsideSTopScanner===>>');
     this.backButtonFunc && this.backButtonFunc.unsubscribe();
-    // QRScannerAlert.dismiss();
+    this.backButtonFunc = undefined;
     (<any>window).qrScanner.stopScanner();
     if (this.pauseSubscription) {
       this.pauseSubscription.unsubscribe();
@@ -262,7 +256,13 @@ export class SunbirdQRScanner {
   }
 
   private startQRScanner(screenTitle: string, displayText: string, displayTextColor: string,
-    buttonText: string, showButton: boolean, source: string) {
+                         buttonText: string, showButton: boolean, source: string) {
+    if (this.backButtonFunc) {
+      return;
+    }
+    this.backButtonFunc = this.platform.backButton.subscribeWithPriority(11, () => {
+      this.stopScanner();
+    });
     window['qrScanner'].startScanner(screenTitle, displayText,
       displayTextColor, buttonText, showButton, this.platform.isRTL, (scannedData) => {
         if (scannedData === 'skip') {
