@@ -14,6 +14,7 @@ export class TextBookCardComponent implements OnInit {
 
   constructor(public commonUtilService: CommonUtilService) {
     this.defaultImg = 'assets/imgs/ic_launcher.png';
+    console.log("Layout NAme"+this.layoutName);
   }
 
   ngOnInit() { }

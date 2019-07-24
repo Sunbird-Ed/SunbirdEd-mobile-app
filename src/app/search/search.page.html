@@ -2,6 +2,11 @@
   <ion-toolbar>
     <ion-input type="search" *ngIf="!dialCode" #searchInput dir="{{commonUtilService.getAppDirection()}}"
       placeholder="Search" [(ngModel)]="searchKeywords" (keyup.enter)="handleSearch()"></ion-input>
+      <ion-buttons slot="start">
+        <ion-button icon-only (click)="goBack()">
+          <ion-icon name="arrow-back"></ion-icon>
+        </ion-button>
+      </ion-buttons>
     <ion-buttons slot="primary" *ngIf="!dialCode">
       <ion-button (click)="showFilter()" *ngIf="filterIcon">
         <ion-icon name="options" float-end class="search-bar-icons"></ion-icon>
@@ -125,7 +130,7 @@
   <div *ngIf="dialCodeContentResult && dialCodeContentResult.length">
     <div class="sb-card-container sb-card-textbook-container">
       <app-text-book-card class="tb-border-btm" *ngFor="let content of dialCodeContentResult; let i = index; let last = last"
-        (click)="openContent(content, content,i)" [content]="content" [layoutName]='search'></app-text-book-card>
+        (click)="openContent(content, content,i)" [content]="content" [layoutName]='layoutName'></app-text-book-card>
     </div>
   </div>
 
@@ -140,7 +145,7 @@
     </div>
     <div class="sb-card-container sb-card-textbook-container">
       <app-text-book-card class="tb-border-btm" *ngFor="let content of searchContentResult; let i = index; let last = last"
-        (click)="openContent(undefined, content,i)" [content]="content" [layoutName]="search"></app-text-book-card>
+        (click)="openContent(undefined, content,i)" [content]="content" [layoutName]='layoutName'></app-text-book-card>
     </div>
   </div>
   <div class="empty-search-result" *ngIf="!showLoader && showEmptyMessage" text-center padding-top>
