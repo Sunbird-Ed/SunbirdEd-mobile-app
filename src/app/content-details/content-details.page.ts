@@ -1200,10 +1200,10 @@ export class ContentDetailsPage implements OnInit {
       });
       await popover.present();
       const response = await popover.onDidDismiss();
-      if (response.data.leftBtnClicked == null) {
+      if (response.data == null) {
         return;
       }
-      if (response.data.leftBtnClicked) {
+      if (response.data) {
         if (!AppGlobalService.isPlayerLaunched && this.userCount > 2) {
           this.openPlayAsPopup(isStreaming);
         } else {
@@ -1266,10 +1266,11 @@ export class ContentDetailsPage implements OnInit {
     });
     await confirm.present();
     const response = await confirm.onDidDismiss();
-    if (response.data.leftBtnClicked == null) {
+    console.log('response inside content details' , response);
+    if (response.data == null) {
       return;
     }
-    if (response.data.leftBtnClicked) {
+    if (response.data) {
       this.playContent(isStreaming);
     } else {
       const playConfig: any = {};
