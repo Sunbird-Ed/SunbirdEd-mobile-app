@@ -10,7 +10,7 @@
 				</div>
 			</div>
 			<div class="qr-instruction-container pull-left">
-				<div class="qr-instruction" >
+				<div class="qr-instruction">
 					<span class="title">{{'APP_QR_CODE' | translate: {'%s': appName} }}</span>
 					<span class="sub-title">{{'QR_CODE_DETAILS' | translate}}</span>
 				</div>
@@ -18,7 +18,7 @@
 		</div>
 		<div class="qr-btn-container">
 			<div class="qr-btn" (click)="openQRScanner()">
-				<img src="assets/imgs/ic_qr_scanner.png" alt="">
+				<img src="assets/imgs/qr_code@1.5x.svg" alt="">
 				<span>{{'SCAN_TAP' | translate}}</span>
 			</div>
 		</div>
@@ -31,25 +31,33 @@
 
 		<ion-item>
 			<ion-label position="stacked" class="label-font text-uppercase">{{'BOARD' | translate }}</ion-label>
-			<ion-select multiple="false" #boardSelect text-capitalize formControlName="syllabus" (ionChange)="resetForm(0, true)"
-			 okText="{{'BTN_SUBMIT' | translate}}" cancelText="{{'CANCEL' | translate}}" placeholder="{{'BOARD_OPTION_TEXT' | translate}}">
-				<ion-select-option *ngFor="let eachSyllabus of syllabusList" value="{{eachSyllabus?.code}}">{{eachSyllabus?.name}}&lrm;</ion-select-option>
+			<ion-select multiple="false" #boardSelect text-capitalize formControlName="syllabus"
+				[interfaceOptions]="boardOptions" (ionChange)="resetForm(0, true)" okText="{{'BTN_SUBMIT' | translate}}"
+				cancelText="{{'CANCEL' | translate}}" placeholder="{{'BOARD_OPTION_TEXT' | translate}}">
+				<ion-select-option *ngFor="let eachSyllabus of syllabusList" value="{{eachSyllabus?.code}}">
+					{{eachSyllabus?.name}}&lrm;</ion-select-option>
 			</ion-select>
 		</ion-item>
 
 		<ion-item>
 			<ion-label position="stacked" class="label-font text-uppercase">{{'MEDIUM' | translate }}</ion-label>
-			<ion-select formControlName="medium" #mediumSelect multiple="true" text-capitalize (ionChange)="resetForm(2, false)"
-			 okText="{{'BTN_SUBMIT' | translate}}" cancelText="{{'CANCEL' | translate}}" [disabled]="!(userForm.value.boards != '')" placeholder="{{'MEDIUM_OPTION_TEXT' | translate}}">
-				<ion-select-option *ngFor="let medium of mediumList" text-capitalize value="{{medium?.code}}">{{medium?.name}}</ion-select-option>
+			<ion-select formControlName="medium" #mediumSelect multiple="true" text-capitalize
+				[interfaceOptions]="mediumOptions" (ionChange)="resetForm(2, false)"
+				okText="{{'BTN_SUBMIT' | translate}}" cancelText="{{'CANCEL' | translate}}"
+				[disabled]="!(userForm.value.boards != '')" placeholder="{{'MEDIUM_OPTION_TEXT' | translate}}">
+				<ion-select-option *ngFor="let medium of mediumList" text-capitalize value="{{medium?.code}}">
+					{{medium?.name}}</ion-select-option>
 			</ion-select>
 		</ion-item>
 
 		<ion-item>
 			<ion-label position="stacked" class="label-font text-uppercase">{{'CLASS' | translate }}</ion-label>
-			<ion-select multiple="true" #gradeSelect text-capitalize formControlName="grades" okText="{{'BTN_SUBMIT' | translate}}"
-			 cancelText="{{'CANCEL' | translate}}" [disabled]="!(userForm.value.medium != '')" (ionChange)="enableSubmit()" placeholder="{{'GRADE_OPTION_TEXT' | translate}}">
-				<ion-select-option *ngFor="let grade of gradeList" text-capitalize value="{{grade?.code}}">{{grade?.name}}</ion-select-option>
+			<ion-select multiple="true" #gradeSelect text-capitalize formControlName="grades"
+				[interfaceOptions]="classOptions" okText="{{'BTN_SUBMIT' | translate}}"
+				cancelText="{{'CANCEL' | translate}}" [disabled]="!(userForm.value.medium != '')"
+				(ionChange)="enableSubmit()" placeholder="{{'GRADE_OPTION_TEXT' | translate}}">
+				<ion-select-option *ngFor="let grade of gradeList" text-capitalize value="{{grade?.code}}">
+					{{grade?.name}}</ion-select-option>
 			</ion-select>
 		</ion-item>
 
@@ -57,9 +65,9 @@
 </ion-content>
 
 <ion-footer padding no-border>
-	<ion-button class="arrow-icon" [ngStyle]="{'background-color': btnColor}" [disabled]="userForm.invalid"
-		slot="end" expand="block" (click)="onSubmit()">
+	<button class="sb-btn sb-btn-md sb-btn-primary PR35 W100 ellipsis" style="position: relative;margin:0"
+		[style.background-color]="btnColor" (click)="onSubmit()" [disabled]="userForm.invalid" text-uppercase>
 		{{ 'BTN_SUBMIT' | translate }}
-		<ion-icon name="arrow-round-forward" class="icon icon-md ion-md-arrow-round-forward"></ion-icon>
-	</ion-button>
+		<ion-icon class="arrow-icon" name="arrow-round-forward"></ion-icon>
+	</button>
 </ion-footer>

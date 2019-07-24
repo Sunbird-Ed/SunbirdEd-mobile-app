@@ -1,9 +1,12 @@
-import { GUEST_STUDENT_TABS, GUEST_TEACHER_TABS, initTabs } from '../../app/module.service';
-
 import { Component, Inject, ViewChild, OnInit } from '@angular/core';
+import { Subscription } from 'rxjs';
+import { Router, NavigationExtras } from '@angular/router';
+import { AppVersion } from "@ionic-native/app-version/ngx";
 import { TranslateService } from '@ngx-translate/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { PreferenceKey, ProfileConstants } from '../../app/app.constant';
+import { PreferenceKey, ProfileConstants } from '@app/app/app.constant';
+import { GUEST_STUDENT_TABS, GUEST_TEACHER_TABS, initTabs } from '@app/app/module.service';
+import { ImpressionType, PageId, Environment, InteractSubtype, InteractType } from '@app/services/telemetry-constants';
 import * as _ from 'lodash';
 import {
   CategoryTerm,
@@ -27,11 +30,7 @@ import {
   ContainerService,
   AppHeaderService
 } from 'services';
-import { Platform, Events, LoadingController, NavController } from '@ionic/angular';
-import { ImpressionType, PageId, Environment, InteractSubtype, InteractType } from '../../services/telemetry-constants';
-import { Router } from '@angular/router';
-import { AppVersion } from "@ionic-native/app-version/ngx";
-import { Subscription } from 'rxjs';
+import { Platform, Events, AlertController } from '@ionic/angular';
 
 @Component({
   selector: 'app-profile-settings',
@@ -80,12 +79,13 @@ export class ProfileSettingsPage implements OnInit {
     cssClass: 'select-box'
   };
   private navParams: any;
-  abc = true;
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
+    @Inject('FRAMEWORK_SERVICE') private frameworkService: FrameworkService,
+    @Inject('FRAMEWORK_UTIL_SERVICE') private frameworkUtilService: FrameworkUtilService,
+    @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
     private fb: FormBuilder,
     private translate: TranslateService,
-    private loadingCtrl: LoadingController,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private appGlobalService: AppGlobalService,
     private events: Events,
@@ -94,12 +94,10 @@ export class ProfileSettingsPage implements OnInit {
     private commonUtilService: CommonUtilService,
     private container: ContainerService,
     private telemetryService: TelemetryGeneratorService,
-    @Inject('FRAMEWORK_SERVICE') private frameworkService: FrameworkService,
-    @Inject('FRAMEWORK_UTIL_SERVICE') private frameworkUtilService: FrameworkUtilService,
-    @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
     private headerService: AppHeaderService,
     private router: Router,
-    private appVersion: AppVersion
+    private appVersion: AppVersion,
+    private alertCtrl: AlertController
   ) {
     this.getNavParams();
     this.preferences.getString(PreferenceKey.SELECTED_LANGUAGE_CODE).toPromise()
@@ -118,7 +116,6 @@ export class ProfileSettingsPage implements OnInit {
     if (navigation && navigation.extras && navigation.extras.state) {
       this.navParams = navigation.extras.state;
     }
-    console.log(this.navParams);
   }
 
   ngOnInit() {
@@ -157,6 +154,35 @@ export class ProfileSettingsPage implements OnInit {
     this.getSyllabusDetails();
   }
 
+  ionViewDidEnter() {
+    this.updateStyle();
+  }
+
+  updateStyle() {
+    const ionSelectElement = Array.from(document.querySelectorAll('ion-item ion-select'));
+    ionSelectElement && ionSelectElement.forEach((element) => {
+      element['shadowRoot'].querySelector('.select-text').setAttribute('style', 'color:#006de5;padding-left: 10px;');
+    });
+
+    const defaultSelectElement = Array.from(document.querySelectorAll('.item-label-stacked ion-select'));
+    defaultSelectElement && defaultSelectElement.forEach((element) => {
+      element['shadowRoot'].querySelector('.select-icon-inner').setAttribute('style', 'border: solid blue;border-width: 0 2px 2px 0;display: inline-block;padding: 4px;transform: rotate(45deg);animation: dropDown 5s linear infinite;animation-duration: 0.9s;');
+
+    });
+
+    const disabledSelectElement = Array.from(document.querySelectorAll('.item-label-stacked.item-select-disabled ion-select'));
+    disabledSelectElement && disabledSelectElement.forEach((element) => {
+      element['shadowRoot'].querySelector('.select-text').setAttribute('style', 'color: #cccccc;padding-left: 10px;');
+      element['shadowRoot'].querySelector('.select-icon-inner').setAttribute('style', 'border-color: #cccccc;animation: none;border: solid;border-width: 0 2px 2px 0;display: inline-block;padding: 4px;transform: rotate(45deg);');
+    });
+
+    const hasValueSelectElement = Array.from(document.querySelectorAll('.item-label-stacked.item-has-value ion-select'));
+    hasValueSelectElement && hasValueSelectElement.forEach((element) => {
+      element['shadowRoot'].querySelector('.select-text').setAttribute('style', 'font-weight: bold;color: #333333;padding-left: 10px;');
+      element['shadowRoot'].querySelector('.select-icon-inner').setAttribute('style', 'border-color: #333333;animation: none;border: solid;border-width: 0 2px 2px 0;display: inline-block;padding: 4px;transform: rotate(45deg);');
+    });
+  }
+
   ionViewWillLeave() {
     this.headerObservable.unsubscribe();
     if (this.unregisterBackButton) {
@@ -167,18 +193,16 @@ export class ProfileSettingsPage implements OnInit {
   /**
    * It will Dismiss active popup
    */
-  dismissPopup() {
-    /* migration TODO
-    const activePortal = this.ionicApp._modalPortal.getActive() ||
-      this.ionicApp._toastPortal.getActive() ||
-      this.ionicApp._overlayPortal.getActive();
+  async dismissPopup() {
+    const activePortal = await this.alertCtrl.getTop();
 
     if (activePortal) {
       activePortal.dismiss();
-    } else if (this.navCtrl.canGoBack()) {
-      this.navCtrl.pop();
     }
-    */
+    // Migration Todo
+    /* else if (this.navCtrl.canGoBack()) {
+      this.navCtrl.pop();
+    } */
   }
 
   /**
@@ -189,6 +213,7 @@ export class ProfileSettingsPage implements OnInit {
       .toPromise()
       .then((response: any) => {
         this.profile = response;
+        console.log('responseresponse', response);
         if (this.navParams && this.navParams.isChangeRoleRequest) {
           this.profile.syllabus = [];
           this.profile.board = [];
@@ -196,9 +221,9 @@ export class ProfileSettingsPage implements OnInit {
           this.profile.subject = [];
           this.profile.medium = [];
         }
-        this.profileForTelemetry = this.profile;
+        this.profileForTelemetry = Object.assign({}, this.profile);
         this.initUserForm();
-      }).catch(() => {
+      }).catch((error) => {
         this.profile = undefined;
         this.initUserForm();
       });
@@ -310,6 +335,7 @@ export class ProfileSettingsPage implements OnInit {
               grades: this.profile.grade || []
             });
           }
+          this.updateStyle();
         });
     }
   }
@@ -360,9 +386,9 @@ export class ProfileSettingsPage implements OnInit {
   /**
    * It will reset user form, based on given index
    * @param {number}  index
-   * @param {boolean} showloader Flag for showing loader or not
+   * @param {boolean} showLoader Flag for showing loader or not
    */
-  async resetForm(index, showloader: boolean) {
+  async resetForm(index, showLoader: boolean) {
     const oldAttribute: any = {};
     const newAttribute: any = {};
     switch (index) {
@@ -372,7 +398,7 @@ export class ProfileSettingsPage implements OnInit {
           grades: [],
           medium: []
         });
-        if (showloader) {
+        if (showLoader) {
           this.loader = await this.commonUtilService.getLoader();
           this.loader.present();
         }
@@ -385,9 +411,9 @@ export class ProfileSettingsPage implements OnInit {
         }
         this.profileForTelemetry.board = this.userForm.value.syllabus;
         this.checkPrevValue(1, 'boardList', [this.userForm.value.syllabus]);
-        /* migration-TODO
-        document.querySelectorAll('[ion-button=alert-button]')[0].setAttribute('disabled', 'false');
-        */
+        // Migration Todo
+        // document.querySelectorAll('[ion-button=alert-button]')[0].setAttribute('disabled', 'false');
+        this.updateStyle();
         break;
 
       case 1:
@@ -397,6 +423,7 @@ export class ProfileSettingsPage implements OnInit {
         });
 
         this.checkPrevValue(2, 'mediumList', this.userForm.value.boards);
+        this.updateStyle();
         break;
 
       case 2:
@@ -413,6 +440,7 @@ export class ProfileSettingsPage implements OnInit {
         }
         this.profileForTelemetry.medium = this.userForm.value.medium;
         this.checkPrevValue(3, 'gradeList', this.userForm.value.medium);
+        this.updateStyle();
         break;
     }
   }
@@ -443,8 +471,8 @@ export class ProfileSettingsPage implements OnInit {
     return profileReq;
   }
 
-  onSubmit() {
-    const loader = this.commonUtilService.getLoader();
+  async onSubmit() {
+    const loader = await this.commonUtilService.getLoader();
     const formVal = this.userForm.value;
     if (formVal.boards.length === 0) {
       this.btnColor = '#8FC4FF';
@@ -460,9 +488,7 @@ export class ProfileSettingsPage implements OnInit {
         Environment.HOME,
         PageId.ONBOARDING_PROFILE_PREFERENCES,
         undefined,
-        values,
-        undefined,
-        undefined,
+        values
       );
       // this.boardSelect.open();
       return false;
@@ -480,9 +506,7 @@ export class ProfileSettingsPage implements OnInit {
         Environment.HOME,
         PageId.ONBOARDING_PROFILE_PREFERENCES,
         undefined,
-        values,
-        undefined,
-        undefined,
+        values
       );
       // this.mediumSelect.open();
       return false;
@@ -501,9 +525,7 @@ export class ProfileSettingsPage implements OnInit {
         Environment.HOME,
         PageId.ONBOARDING_PROFILE_PREFERENCES,
         undefined,
-        values,
-        undefined,
-        undefined,
+        values
       );
       return false;
     } else {
@@ -523,7 +545,7 @@ export class ProfileSettingsPage implements OnInit {
     };
 
     if (this.navParams && this.navParams.selectedUserType) {
-      req.profileType = this.navParams.get('selectedUserType');
+      req.profileType = this.navParams.selectedUserType;
     } else {
       req.profileType = this.profile.profileType;
     }
@@ -567,15 +589,15 @@ export class ProfileSettingsPage implements OnInit {
           this.preferences.putString(PreferenceKey.SELECTED_USER_TYPE, req.profileType).toPromise().then();
         }
 
-        this.router.navigate(['/tabs']);
-        /* migration-TODO
-        this.navCtrl.push(TabsPage, {
-          loginMode: 'guest'
-        });*/
-
+        const navigationExtras: NavigationExtras = {
+          state: {
+            loginMode: 'guest'
+          }
+        }
+        this.router.navigate(['/tabs'], navigationExtras);
       })
-      .catch(() => {
-        loader.dismiss();
+      .catch(async () => {
+        await loader.dismiss();
         this.commonUtilService.showToast('PROFILE_UPDATE_FAILED');
       });
   }

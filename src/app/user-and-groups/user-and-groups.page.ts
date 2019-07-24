@@ -65,6 +65,7 @@ export class UserAndGroupsPage implements OnInit {
   ProfileType = ProfileType;
   isLoggedIn = false;
   headerObservable: Subscription;
+  backButtonFunc: Subscription;
 
   constructor(
     private zone: NgZone,
@@ -117,7 +118,7 @@ export class UserAndGroupsPage implements OnInit {
       this.getCurrentGroup();
       // this.getLastCreatedProfile();
 
-      this.platform.backButton.subscribeWithPriority(11, () => {
+      this.backButtonFunc = this.platform.backButton.subscribe(() => {
         this.dismissPopup();
       });
     });
@@ -337,7 +338,7 @@ export class UserAndGroupsPage implements OnInit {
           isNewUser: true,
           lastCreatedProfile: this.lastCreatedProfileData
         }
-      }
+      };
       this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.GUEST_EDIT}`], navigationExtras);
     }).catch((error) => {
       const navigationExtras: NavigationExtras = {
@@ -682,7 +683,7 @@ export class UserAndGroupsPage implements OnInit {
   }
 
   ionViewWillLeave(): void {
-    this.platform.backButton.unsubscribe();
+    this.backButtonFunc.unsubscribe();
     if (this.headerObservable) {
       this.headerObservable.unsubscribe();
     }

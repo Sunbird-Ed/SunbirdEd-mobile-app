@@ -17,11 +17,10 @@
 @import "./assets/styles/details_page";
 @import "./assets/styles/fonts";
 
-
 html,
 body {
   height: 100%;
-  font-size:$font-size-base;
+  font-size: $font-size-base;
   @extend .NotoSans;
   --ion-default-font: "Noto Sans";
 }
@@ -106,14 +105,13 @@ h6 {
   padding-right: 0px;
 }
 
-.padding-top-16{
+.padding-top-16 {
   padding-top: 16px;
 }
 
-.margin-top-3{
+.margin-top-3 {
   margin-top: 2px !important;
 }
-
 
 /* For changing the input placeholder based on Language Direction  */
 
@@ -131,8 +129,8 @@ input::placeholder {
 }
 
 /* Ionic component Overrides */
-.toolbar-md{
- // min-height:50px;
+.toolbar-md {
+  // min-height:50px;
   padding: 0 !important;
 }
 
@@ -151,7 +149,6 @@ ul.rating .ion-md-star-outline:before {
 .select-box .alert-wrapper {
   margin: 0;
   width: 100vw !important;
-  max-width: 100% !important;
   max-width: unset !important;
   max-height: 65vh;
   height: auto !important;
@@ -171,10 +168,12 @@ ul.rating .ion-md-star-outline:before {
 
 .select-box {
   .alert-head {
-    @include padding(14px 14px !important);
+    //Migration Todo
+    // @include padding(14px 14px !important);
+    padding: 13px 24px !important;
   }
   .alert-title {
-    font-size: 1.4rem !important;
+    font-size: 1.2rem !important;
     font-weight: 700;
   }
   ion-backdrop {
@@ -183,83 +182,76 @@ ul.rating .ion-md-star-outline:before {
   }
 }
 
-.select-box.alert-md .alert-button:first-child:not(:only-child) {
+.select-box.select-alert .alert-button:first-child:not(:only-child) {
   background: transparent !important;
   color: map-get($colors, primary) !important;
   // margin-right: 1%;
 }
 
-.select-box.alert-md .alert-button:last-child:not(:only-child) {
+.select-box.select-alert .alert-button:last-child:not(:only-child) {
   background: map-get($colors, primary) !important;
   color: map-get($colors, white) !important;
   // margin-left: 5%;
 }
 
-.select-box.alert-md .alert-checkbox-group {
+.select-box.select-alert .alert-checkbox-group {
   max-height: 35vh !important;
   height: auto;
 }
 
-.select-box.alert-md .alert-button {
-  // margin-right: 1%;
-  border-color: map-get($colors, primary);
-  text-transform: uppercase;
-  border-style: solid;
-  border-width: 1px;
-  border-radius: 4px !important;
-  overflow: hidden;
-  height: 4.3rem;
-  font-size: 1.4rem;
-  width: 46% !important;
-  font-weight: 700;
-}
-
-.select-box.alert-md .alert-button-group {
+.select-box.select-alert .alert-button-group {
   display: inline-block !important;
-}
+  text-align: center;
+  .alert-button {
+    border-color: map-get($colors, primary);
+    text-transform: uppercase;
+    border-style: solid;
+    border-width: 1px;
+    border-radius: 4px !important;
+    overflow: hidden;
+    height: 2.8rem;
+    font-size: 1rem;
+    width: 46% !important;
+    font-weight: 700;
 
-.select-box .alert-button {
-  display: inline-block !important;
-  display: unset !important;
-  .button-inner {
-    justify-content: center;
+    .alert-button-inner {
+      justify-content: center !important;
+    }
   }
 }
 
-.broadcast-popover{
+.broadcast-popover {
   @media screen and (min-width: 401px) {
-    .popover-content{
+    .popover-content {
       top: 10vh !important;
       width: 80% !important;
       left: 10% !important;
       border-radius: 10px !important;
     }
-    .popup-button{
+    .popup-button {
       padding-bottom: 8%;
-      margin-top: 5vh
+      margin-top: 5vh;
     }
-}
-@media screen and (min-width: 300px) and (max-width: 400px) {
-  .popover-content{
-    top: 5vh !important;
-    width: 80% !important;
-    left: 10% !important;
-    border-radius: 10px !important;
   }
-  .popup-button{
-    padding-bottom: 5%;
-
+  @media screen and (min-width: 300px) and (max-width: 400px) {
+    .popover-content {
+      top: 5vh !important;
+      width: 80% !important;
+      left: 10% !important;
+      border-radius: 10px !important;
+    }
+    .popup-button {
+      padding-bottom: 5%;
+    }
+    .popup-text {
+      padding-top: 0px !important;
+      padding-bottom: 0px !important;
+    }
   }
-  .popup-text {
-    padding-top: 0px !important;
-    padding-bottom: 0px !important;
-  }
-}
-
 }
 
 .user-popover {
-  .popover-content{
+  .popover-content {
     min-width: 96px;
     width: auto;
     display: inline-block;
@@ -282,103 +274,106 @@ ul.rating .ion-md-star-outline:before {
 
 .circle {
   display: map-get($colors, gray);
-  background: map-get($colors, gray);;
+  background: map-get($colors, gray);
   border-radius: 50%;
   height: 0.6rem;
   width: 0.6rem;
   margin: 0;
 }
 
-.alert-wp.confirm-alert .alert-wrapper {    
-  border: unset !important;    
-  background: white !important;    
-  bottom: 0;    
-  position: fixed;    
-}    
-.alert-wp.confirm-alert .closeButton {    
-//@include text-align('end');
-position: absolute;    
-width: 5px !important;    
-top: 3px;    
-z-index:1000;    
-background-color: transparent !important;    
-font-size:18px !important;    
-font-weight: 600 !important;    
-padding-top: 12px !important;    
-}    
-.alert-btn-cancel.alert-button {    
-  font-weight: 600 !important;    
-  background: transparent;    
-  color: map-get($colors, primary) !important;    
-  border-color: map-get($colors, primary);    
-  text-transform: uppercase;    
-  border-style: solid;    
-  border-width: 1px;    
-  border-radius: 4px !important;    
-  overflow: hidden;    
-  height: 4.3rem;    
-  font-size: 1.4rem;    
-  font-weight: 700;    
-}    
-.alert-btn-delete.alert-button, .alert-wp.confirm-alert .doneButton {    
-  font-weight: 600 !important;    
-  background:  map-get($colors, primary) !important;    
-  color: white !important;    
-  border-color: map-get($colors, primary);    
-  text-transform: uppercase;    
-  border-style: solid;    
-  border-width: 1px;    
-  border-radius: 4px !important;    
-  overflow: hidden;    
-  height: 4.3rem;    
-  font-size: 1.4rem;    
-  font-weight: 700;    
-  width: 100% !important;    
-}    
-.alert-wp ion-backdrop {    
-  background: black !important;    
-}    
-  
-.alert-wp .alert-button {    
-  width: 46% !important;    
-  // font-weight: 400;    
-  // color: #000;    
-  // background: #b8b8b8;    
-}    
-.alert-wp .alert-title {    
-  font-size: 1.7rem !important;    
-  font-weight: 600 !important;    
-}    
-// h2{    
-// line-height: 0 !important;    
-// }    
-.alert-wp .alert-button-group{    
-  display: inline-block !important;    
-}    
-.alert-button{    
-  display: unset !important;    
-} 
+.alert-wp.confirm-alert .alert-wrapper {
+  border: unset !important;
+  background: white !important;
+  bottom: 0;
+  position: fixed;
+}
+.alert-wp.confirm-alert .closeButton {
+  //@include text-align('end');
+  position: absolute;
+  width: 5px !important;
+  top: 3px;
+  z-index: 1000;
+  background-color: transparent !important;
+  font-size: 18px !important;
+  font-weight: 600 !important;
+  padding-top: 12px !important;
+}
+.alert-btn-cancel.alert-button {
+  font-weight: 600 !important;
+  background: transparent;
+  color: map-get($colors, primary) !important;
+  border-color: map-get($colors, primary);
+  text-transform: uppercase;
+  border-style: solid;
+  border-width: 1px;
+  border-radius: 4px !important;
+  overflow: hidden;
+  height: 4.3rem;
+  font-size: 1.4rem;
+  font-weight: 700;
+}
+.alert-btn-delete.alert-button,
+.alert-wp.confirm-alert .doneButton {
+  font-weight: 600 !important;
+  background: map-get($colors, primary) !important;
+  color: white !important;
+  border-color: map-get($colors, primary);
+  text-transform: uppercase;
+  border-style: solid;
+  border-width: 1px;
+  border-radius: 4px !important;
+  overflow: hidden;
+  height: 4.3rem;
+  font-size: 1.4rem;
+  font-weight: 700;
+  /* For changing the input placeholder based on Language Direction  */
 
-.alert-wp .alert-button:first-child:not(:only-child) {    
+  width: 100% !important;
+}
+.alert-wp ion-backdrop {
+  background: black !important;
+}
+
+.alert-wp .alert-button {
+  width: 46% !important;
+  // font-weight: 400;
+  // color: #000;
+  // background: #b8b8b8;
+}
+.alert-wp .alert-title {
+  font-size: 1.7rem !important;
+  font-weight: 600 !important;
+}
+// h2{
+// line-height: 0 !important;
+// }
+.alert-wp .alert-button-group {
+  display: inline-block !important;
+}
+.alert-button {
+  display: unset !important;
+}
+
+.alert-wp .alert-button:first-child:not(:only-child) {
   @include ltr() {
     margin-right: 7% !important;
   }
   @include rtl() {
     margin-left: 7% !important;
   }
-}  
-
-.ng2-dropdown-menu {    
-  font-size: 1.6rem;    
-  max-width: 55vw;    
-  width: auto !important;    
 }
 
-.separator-dot{
+.ng2-dropdown-menu {
+  font-size: 1.6rem;
+  max-width: 55vw;
+  width: auto !important;
+}
+
+.separator-dot {
   width: 4px;
   height: 4px;
   background-color: #d8d8d8;
-  border-radius:50%;
+  border-radius: 50%;
   display: inline-block;
   vertical-align: middle;
   margin: 0px 8px;
@@ -386,24 +381,35 @@ padding-top: 12px !important;
 }
 
 .need-header-space {
-  ion-content{
+  ion-content {
     margin-top: 58px;
     --offset-top: -58px !important;
   }
 }
 
-ion-content.avoid-bottom-tabs-space .scroll-content{
+ion-content.avoid-bottom-tabs-space .scroll-content {
   padding-bottom: 88px !important;
 }
 
 ion-navbar {
-  .bar-button-md, &.toolbar-md-white .bar-button-default-md, &.toolbar-md-white .toolbar-title-md, &.toolbar-md .toolbar-title-md {
-    color: $primary-color ;
+  .bar-button-md,
+  &.toolbar-md-white .bar-button-default-md,
+  &.toolbar-md-white .toolbar-title-md,
+  &.toolbar-md .toolbar-title-md {
+    color: $primary-color;
   }
 }
 
 ion-toolbar {
   &.toolbar-md .toolbar-title-md {
-    color: $primary-color ;
+    color: $primary-color;
   }
+}
+
+// Moved css
+.pull-left {
+  float: left;
+}
+.pull-right {
+  float: right;
 }

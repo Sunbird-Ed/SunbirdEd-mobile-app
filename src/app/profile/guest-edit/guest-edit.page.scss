@@ -14,6 +14,25 @@
     }
   }
 
+  .ge-mr-10 {
+    margin-right: 10px;
+  }
+  .ge-mt-8 {
+    margin-top: 8px;
+  }
+  .ge-label {
+    margin-bottom: 8px;
+    color: map-get($colors, title);
+  }
+  .ge-danger{
+    color: map-get($colors, danger);
+  }
+  .ge-item-16{
+    width: calc(100% - 16px);
+    --padding-start: 0px;
+    margin-left: 16px;
+  }
+
   ion-list-header ion-label {
     margin-bottom: 0 !important;
   }
@@ -25,9 +44,10 @@
   }
   ion-label.type-label {
     margin-bottom: 0 !important;
-    @extend .font-weight-600;
+    margin-left: 16px;
+    @extend .font-weight-500;
     color: #999;
-    font-size: 1.2rem;
+    font-size: 12px;
   }
   .label-font {
     @extend .font-weight-600;
