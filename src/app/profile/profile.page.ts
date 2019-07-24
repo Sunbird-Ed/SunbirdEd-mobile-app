@@ -5,7 +5,7 @@ import {
   ModalController,
 } from '@ionic/angular';
 import { generateInteractTelemetry } from '@app/app/telemetryutil';
-import { ContentCard, ContentType, MenuOverflow, MimeType, ProfileConstants, RouterLinks } from '@app/app/app.constant';
+import { ContentCard, ContentType, MimeType, ProfileConstants, RouterLinks } from '@app/app/app.constant';
 import { FormAndFrameworkUtilService } from '@app/services';
 import { AppGlobalService } from '@app/services';
 import { CommonUtilService } from '@app/services';
@@ -86,7 +86,6 @@ export class ProfilePage implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private popoverCtrl: PopoverController,
-    private modalCtrl: ModalController,
     private events: Events,
     private appGlobalService: AppGlobalService,
     private telemetryGeneratorService: TelemetryGeneratorService,
@@ -275,8 +274,8 @@ export class ProfilePage implements OnInit {
 
 
   /**
- *
- */
+   *
+   */
   formatUserLocation() {
     if (this.profile && this.profile.userLocations && this.profile.userLocations.length) {
       for (let i = 0, len = this.profile.userLocations.length; i < len; i++) {
@@ -291,8 +290,8 @@ export class ProfilePage implements OnInit {
 
 
   /**
- * Method to handle organisation details.
- */
+   * Method to handle organisation details.
+   */
   formatOrgDetails() {
     this.orgDetails = { 'state': '', 'district': '', 'block': '' };
     for (let i = 0, len = this.profile.organisations.length; i < len; i++) {
@@ -320,8 +319,8 @@ export class ProfilePage implements OnInit {
   }
 
   /**
- * To show more Items in skills list
- */
+   * To show more Items in skills list
+   */
   showMoreItems(): void {
     this.rolesLimit = this.roles.length;
     generateInteractTelemetry(
@@ -602,12 +601,11 @@ export class ProfilePage implements OnInit {
       await popover.present();
       const { data } = await popover.onDidDismiss();
       if (data && data.OTPSuccess) {
-        // this.modalCtrl.dismiss();
         this.updatePhoneInfo(data.value);
       }
     } else {
       const componentProps = {
-        key: key,
+        key,
         phone: this.profile.email,
         title: this.commonUtilService.translateMessage('VERIFY_EMAIL_OTP_TITLE'),
         description: this.commonUtilService.translateMessage('VERIFY_EMAIL_OTP_DESCRIPTION'),
@@ -617,7 +615,6 @@ export class ProfilePage implements OnInit {
       await popover.present();
       const { data } = await popover.onDidDismiss();
       if (data && data.OTPSuccess) {
-        // this.modalCtrl.dismiss();
         this.updateEmailInfo(data.value);
       }
     }
