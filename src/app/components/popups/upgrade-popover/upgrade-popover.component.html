@@ -9,12 +9,10 @@
 
 </ion-content>
 <ion-footer no-border padding>
-    <ion-row *ngIf="!isMandatoryUpgrade && upgradeType?.upgrade?.actionButtons[1]?.action === 'no'">
-        <ion-button expand="block" fill="outline" size="small" (click)="cancel() ">
-            {{ upgradeType?.upgrade?.actionButtons[1]?.label }}</ion-button>
-    </ion-row>
-    <ion-row *ngIf="upgradeType?.upgrade?.actionButtons[0]?.action === 'yes'">
-        <ion-button expand="block" size="small" (click)="upgrade(upgradeType?.upgrade?.actionButtons[0]?.link) ">
-            {{ upgradeType?.upgrade?.actionButtons[0]?.label }}</ion-button>
-    </ion-row>
+    <ion-button *ngIf="!isMandatoryUpgrade && upgradeType?.upgrade?.actionButtons[1]?.action === 'no'" expand="block"
+        fill="outline" size="small" (click)="cancel() ">
+        {{ upgradeType?.upgrade?.actionButtons[1]?.label }}</ion-button>
+    <ion-button *ngIf="upgradeType?.upgrade?.actionButtons[0]?.action === 'yes'" expand="block" size="small"
+        (click)="upgrade(upgradeType?.upgrade?.actionButtons[0]?.link) ">
+        {{ upgradeType?.upgrade?.actionButtons[0]?.label }}</ion-button>
 </ion-footer>

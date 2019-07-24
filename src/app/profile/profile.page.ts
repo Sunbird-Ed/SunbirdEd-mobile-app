@@ -2,7 +2,6 @@ import { Component, NgZone, OnInit, Inject } from '@angular/core';
 import {
   Events,
   PopoverController,
-  ModalController,
 } from '@ionic/angular';
 import { generateInteractTelemetry } from '@app/app/telemetryutil';
 import { ContentCard, ContentType, MimeType, ProfileConstants, RouterLinks } from '@app/app/app.constant';
@@ -255,8 +254,8 @@ export class ProfilePage implements OnInit {
   }
 
   /**
- * Method to store all roles from different organizations into single array
- */
+   * Method to store all roles from different organizations into single array
+   */
   formatRoles() {
     this.roles = [];
     if (this.profile && this.profile.roleList) {
@@ -293,7 +292,7 @@ export class ProfilePage implements OnInit {
    * Method to handle organisation details.
    */
   formatOrgDetails() {
-    this.orgDetails = { 'state': '', 'district': '', 'block': '' };
+    this.orgDetails = { state: '', district: '', block: '' };
     for (let i = 0, len = this.profile.organisations.length; i < len; i++) {
       if (this.profile.organisations[i].locations) {
         for (let j = 0, l = this.profile.organisations[i].locations.length; j < l; j++) {
@@ -448,21 +447,21 @@ export class ProfilePage implements OnInit {
     if (content.contentType === ContentType.COURSE) {
       const navigationExtras: NavigationExtras = {
         state: {
-          content: content
+          content
         }
       }
       this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], navigationExtras)
     } else if (content.mimeType === MimeType.COLLECTION) {
       const navigationExtras: NavigationExtras = {
         state: {
-          content: content
+          content
         }
       }
       this.router.navigate([RouterLinks.COLLECTION_DETAIL_ETB], navigationExtras);
     } else {
       const navigationExtras: NavigationExtras = {
         state: {
-          content: content
+          content
         }
       }
       this.router.navigate([RouterLinks.CONTENT_DETAILS], navigationExtras)
@@ -558,7 +557,7 @@ export class ProfilePage implements OnInit {
       cssClass: 'popover-alert'
     });
     await popover.present();
-    const { data } = await popover.onDidDismiss()//(edited: boolean = false, key?: any) => {
+    const { data } = await popover.onDidDismiss(); //(edited: boolean = false, key?: any) => {
 
     if (data && data.isEdited) {
       this.callOTPPopover(ProfileConstants.CONTACT_TYPE_PHONE, data.value);
@@ -580,10 +579,10 @@ export class ProfilePage implements OnInit {
       },
       cssClass: 'popover-alert'
     });
-    popover.present();
-    const response = await popover.onDidDismiss();
-    if (response.data.edited) {
-      this.callOTPPopover(ProfileConstants.CONTACT_TYPE_EMAIL, response.data.key);
+    await popover.present();
+    const { data } = await popover.onDidDismiss();
+    if (data && data.edited) {
+      this.callOTPPopover(ProfileConstants.CONTACT_TYPE_EMAIL, data.key);
     }
   }
 
@@ -591,7 +590,7 @@ export class ProfilePage implements OnInit {
   async callOTPPopover(type: string, key?: any) {
     if (type === ProfileConstants.CONTACT_TYPE_PHONE) {
       const componentProps = {
-        key: key,
+        key,
         phone: this.profile.phone,
         title: this.commonUtilService.translateMessage('VERIFY_PHONE_OTP_TITLE'),
         description: this.commonUtilService.translateMessage('VERIFY_PHONE_OTP_DESCRIPTION'),
@@ -628,7 +627,7 @@ export class ProfilePage implements OnInit {
     const loader = await this.commonUtilService.getLoader();
     const req: UpdateServerProfileInfoRequest = {
       userId: this.profile.userId,
-      phone: phone,
+      phone,
       phoneVerified: true
     };
     this.profileService.updateServerProfile(req).toPromise()
@@ -646,7 +645,7 @@ export class ProfilePage implements OnInit {
     const loader = await this.commonUtilService.getLoader();
     const req: UpdateServerProfileInfoRequest = {
       userId: this.profile.userId,
-      email: email,
+      email,
       emailVerified: true
     };
     this.profileService.updateServerProfile(req).toPromise()
@@ -662,10 +661,8 @@ export class ProfilePage implements OnInit {
 
 
   handleHeaderEvents($event) {
-    switch ($event.name) {
-      case 'download':
-        this.redirectToActiveDownloads();
-        break;
+    if ($event.name === 'download') {
+      this.redirectToActiveDownloads();
     }
   }
 
@@ -683,13 +680,13 @@ export class ProfilePage implements OnInit {
   toggleTooltips(event, field) {
     clearTimeout(this.timer);
     if (field === 'name') {
-      this.informationProfileName = this.informationProfileName ? false : true;
+      this.informationProfileName = !Boolean(this.informationProfileName);
       this.informationOrgName = false;
       if (this.informationProfileName) {
         this.dismissMessage();
       }
     } else if (field === 'org') {
-      this.informationOrgName = this.informationOrgName ? false : true;
+      this.informationOrgName = !Boolean(this.informationOrgName);
       this.informationProfileName = false;
       if (this.informationOrgName) {
         this.dismissMessage();
@@ -711,7 +708,7 @@ export class ProfilePage implements OnInit {
 
 
   getOrgDetails() {
-    let orgList = [];
+    const orgList = [];
     let orgItemList;
     orgItemList = this.profile.organisations;
     if (orgItemList.length > 1) {
@@ -720,7 +717,7 @@ export class ProfilePage implements OnInit {
           orgList.push(org);
         }
       });
-      orgList = orgList.sort((orgDate1, orgdate2) => orgDate1.orgjoindate > orgdate2.organisation ? 1 : -1);
+      orgList.sort((orgDate1, orgdate2) => orgDate1.orgjoindate > orgdate2.organisation ? 1 : -1);
       this.organisationDetails = orgList[0].orgName;
     } else {
       this.organisationDetails = orgItemList[0].orgName;

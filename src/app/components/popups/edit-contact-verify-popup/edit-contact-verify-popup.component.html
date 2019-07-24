@@ -21,20 +21,22 @@
       <section class="W100" *ngIf="type==='email'">
         <ion-row>
           <ion-col size="12" no-padding class="text-center">
-            <b>{{'ENTER_OTP' | translate}}</b>
+            <strong>{{'ENTER_OTP' | translate}}</strong>
           </ion-col>
           <ion-col size="12" no-padding class="text-center" *ngIf="invalidOtp">
             <p class="error">{{'ERROR_OTP' | translate}}</p>
           </ion-col>
           <ion-col size="12" no-padding class="text-center">
             <div class="W100 merged-input-container MT10">
-              <ion-input type="tel" placeholder="{{'OTP_PLACEHOLDER' | translate }}" class="form-control" [(ngModel)]="otp"></ion-input>
+              <ion-input type="tel" placeholder="{{'OTP_PLACEHOLDER' | translate }}" class="form-control"
+                [(ngModel)]="otp"></ion-input>
             </div>
           </ion-col>
         </ion-row>
       </section>
       <ion-col size="12" no-padding class="text-center">
-        <ion-button fill="clear" (click)="resendOTP();" [disabled]="!enableResend">{{'RESEND_OTP' | translate}}</ion-button>
+        <ion-button fill="clear" (click)="resendOTP();" [disabled]="!enableResend">{{'RESEND_OTP' | translate}}
+        </ion-button>
       </ion-col>
     </ion-row>
   </ion-grid>
