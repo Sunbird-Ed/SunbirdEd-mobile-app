@@ -36,10 +36,10 @@ ion-tabs {
     overflow: inherit;
   }
   ion-tab-bar {
+    contain: none;
     background: none;
-    -webkit-box-shadow: 0px 0px 4px 1px #666;
-    box-shadow: 0px 0px 4px 1px #666;
     box-shadow: none;
+    border: none; 
 
     filter: drop-shadow(0px 5px 6px rgba(0, 0, 0, 0.3));
     &::before {
@@ -252,7 +252,7 @@ ion-tabs {
 
   ion-tab-button:nth-child(3) {
     background: $primary-color;
-    width: 56px;
+    max-width: 56px;
     height: 56px;
     display: flex;
     align-items: center;
@@ -260,6 +260,11 @@ ion-tabs {
     border-radius: 50%;
     margin-top: -56px;
     color: $white;
+    margin-left: 8px;
+    ion-icon{
+      width: 30px;
+      height: 30px;
+    }
   }
 
   ion-icon {
@@ -270,6 +275,7 @@ ion-tabs {
     background-size: contain;
   }
   ion-tab-button {
+    background: transparent;
     ion-icon[ng-reflect-name="courses"] {
       background-image: url(/assets/imgs/ic_courses1.png);
     }
