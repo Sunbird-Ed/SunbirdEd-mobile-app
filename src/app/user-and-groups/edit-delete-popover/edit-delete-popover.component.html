@@ -1,4 +1,12 @@
-<ion-list>
-  <ion-item (click)="editUser()">{{'EDIT' | translate}}</ion-item>
-  <ion-item *ngIf="!isCurrentUser" (click)="deleteUser()">{{'DELETE' | translate}}</ion-item>
+<ion-list class="ion-no-padding">
+  <ion-item class="ed-pl-0" (click)="editUser()">
+    <ion-label class="ed-pl-16">
+      {{'EDIT' | translate}}
+    </ion-label>
+  </ion-item>
+  <ion-item class="ed-pl-0" *ngIf="!isCurrentUser" (click)="deleteUser()">
+    <ion-label class="ed-pl-16">
+      {{'DELETE' | translate}}
+    </ion-label>
+  </ion-item>
 </ion-list>

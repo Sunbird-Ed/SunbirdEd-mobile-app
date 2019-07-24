@@ -71,34 +71,36 @@
             </div>
           </div>
           <ion-list *ngIf="!noUsersPresent && !loadingUserList" lines="none">
-            <ion-item *ngFor="let user of userList; let i=index;" class="item-background" margin-bottom>
-              <ion-grid class="radius">
-                <ion-row [ngClass]="i===selectedUserIndex ? 'blueBorder' : ''" class="bg-color-white ug-row-padding radius">
-                  <ion-col size="11" class="bg-color-white" (click)="selectUser(i, user?.uid, user?.handle)">
-                    <div class="bg-color-white padding-left-0 rm-label-margin" no-padding>
-                      <ion-label>
-                        <p class="elipsis"
-                          [ngStyle]="{'color': currentUserId === user?.uid ? 'dodgerblue' : 'black'}">
-                          <strong>{{user?.handle}}</strong>
-                        </p>
-                        <p>
-                          <span
-                            *ngIf="user?.profileType === ProfileType.TEACHER">{{'USER_TYPE_1' | translate | titlecase}}</span>
-                          <span
-                            *ngIf="user?.profileType === ProfileType.STUDENT">{{'USER_TYPE_2' | translate | titlecase}}</span>
-                          <span *ngIf="user?.grade?.length">•</span> {{ getGradeNameFromCode(user) }}
-                        </p>
-                      </ion-label>
-                    </div>
-                  </ion-col>
-                  <ion-col size="1" class="advanced-menu" *ngIf="!playConfig">
-                    <!-- <div slot="end" class="bg-color-white item-padding-left"> -->
-                      <ion-icon class="ug-icon-font-size" name="more" item-end
-                        (click)="presentPopover($event ,i, true)"></ion-icon>
-                    <!-- </div> -->
-                  </ion-col>
-                </ion-row>
-              </ion-grid>
+            <ion-item *ngFor="let user of userList; let i=index;" class="item-background ug-mb-6 ion-no-padding">
+              <ion-label class="ion-no-margin">
+                <ion-grid class="radius">
+                  <ion-row [ngClass]="i===selectedUserIndex ? 'blueBorder' : ''" class="bg-color-white ug-row-padding radius">
+                    <ion-col size="11" class="bg-color-white" (click)="selectUser(i, user?.uid, user?.handle)">
+                      <div class="bg-color-white padding-left-0 rm-label-margin" no-padding>
+                        <ion-label>
+                          <p class="elipsis"
+                            [ngStyle]="{'color': currentUserId === user?.uid ? 'dodgerblue' : 'black'}">
+                            <strong>{{user?.handle}}</strong>
+                          </p>
+                          <p>
+                            <span
+                              *ngIf="user?.profileType === ProfileType.TEACHER">{{'USER_TYPE_1' | translate | titlecase}}</span>
+                            <span
+                              *ngIf="user?.profileType === ProfileType.STUDENT">{{'USER_TYPE_2' | translate | titlecase}}</span>
+                            <span *ngIf="user?.grade?.length">•</span> {{ getGradeNameFromCode(user) }}
+                          </p>
+                        </ion-label>
+                      </div>
+                    </ion-col>
+                    <ion-col size="1" class="advanced-menu" *ngIf="!playConfig">
+                      <!-- <div slot="end" class="bg-color-white item-padding-left"> -->
+                        <ion-icon class="ug-icon-font-size" name="more" item-end
+                          (click)="presentPopover($event ,i, true)"></ion-icon>
+                      <!-- </div> -->
+                    </ion-col>
+                  </ion-row>
+                </ion-grid>
+              </ion-label>
             </ion-item>
           </ion-list>
         </div>
@@ -109,11 +111,11 @@
     <ion-list *ngSwitchCase="'groups'">
       <div padding>
         <div class="firstSection" *ngIf="showEmptyGroupsMessage">
-          <div class="img-container">
-            <img class="image_style" alt="no_group" src="assets/imgs/ic_businessman.png">
-          </div>
           <ion-row padding-top>
             <ion-col size-md="6" offset-md="3" size-lg="6" offset-lg="3">
+              <div class="ion-text-center ug-pt-30">
+                <img class="image_style" alt="no_group" src="assets/imgs/ic_businessman.png">
+              </div>
               <div class="image-text">
                 <h6>
                   <strong>{{'NO_GROUPS_CREATED_YET' | translate}}</strong>
