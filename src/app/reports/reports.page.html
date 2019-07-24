@@ -20,25 +20,40 @@
 <ion-content>
   <div [ngSwitch]="report">
     <ion-list class="item-background radius" *ngSwitchCase="'users'" padding>
-      <ion-item class="bgColor" (click)="goToUserReportList(currentUser?.uid,currentUser?.handle)" margin-bottom
-        no-lines>
-        <h6><strong>{{currentUser?.handle}}</strong></h6>
-        <p *ngIf="currentUser?.profileType === ProfileType.TEACHER">{{'USER_TYPE_1' | translate | titlecase}}</p>
-        <p *ngIf="currentUser?.profileType === ProfileType.STUDENT">{{'USER_TYPE_2' | translate | titlecase}}</p>
-        <ion-icon name="ios-arrow-forward" item-end></ion-icon>
-      </ion-item>
-      <ion-item no-padding *ngIf="users?.length > 0" margin-bottom no-lines>
+      <!---Block shows current user-->
+      <div class="flex-card-container" lines="none" (click)="goToUserReportList(currentUser?.uid,currentUser?.handle)">
+        <div class="card-text">
+          <ion-label>
+            <h6><strong>{{currentUser?.handle}}</strong></h6>
+            <p *ngIf="currentUser?.profileType === ProfileType.TEACHER">{{'USER_TYPE_1' | translate | titlecase}}</p>
+            <p *ngIf="currentUser?.profileType === ProfileType.STUDENT">{{'USER_TYPE_2' | translate | titlecase}}</p>
+          </ion-label>
+        </div>
+        <div class="card-icon">
+          <ion-icon name="ios-arrow-forward"></ion-icon>
+        </div>
+      </div>
+      <!---Block shows list of users -->
+      <div *ngIf="otherUsers?.length > 0">
         <ion-text>
           <p text-uppercase color="dark_gray" class="subTitle">{{ 'OTHER_USERS' | translate}}</p>
         </ion-text>
-      </ion-item>
-      <ion-item class="bgColor" (click)="goToUserReportList(user?.uid,user?.handle)" margin-bottom no-lines
-        *ngFor="let user of otherUsers;let i=index">
-        <h6><strong>{{user?.handle}}</strong></h6>
-        <p *ngIf="user?.profileType === ProfileType.TEACHER">{{'USER_TYPE_1' | translate | titlecase}}</p>
-        <p *ngIf="user?.profileType === ProfileType.STUDENT">{{'USER_TYPE_2' | translate | titlecase}}</p>
-        <ion-icon name="ios-arrow-forward" item-end></ion-icon>
-      </ion-item>
+        <div>
+          <div class="flex-card-container" *ngFor="let user of otherUsers;let i=index" lines="none"
+            (click)="goToUserReportList(user?.uid,user?.handle)">
+            <div class="card-text">
+              <ion-label>
+                <h6><strong>{{user?.handle}}</strong></h6>
+                <p *ngIf="user?.profileType === ProfileType.TEACHER">{{'USER_TYPE_1' | translate | titlecase}}</p>
+                <p *ngIf="user?.profileType === ProfileType.STUDENT">{{'USER_TYPE_2' | translate | titlecase}}</p>
+              </ion-label>
+            </div>
+            <div class="card-icon">
+              <ion-icon name="ios-arrow-forward"></ion-icon>
+            </div>
+          </div>
+        </div>
+      </div>
     </ion-list>
 
     <ion-list *ngSwitchCase="'groups'" padding>
@@ -60,13 +75,20 @@
         </ion-row>
       </div>
       <div *ngIf="groups?.length">
-        <ion-item class="bgColor" (click)="goToGroupUserReportList(group)" *ngFor="let group of groups;let i=index"
-          margin-bottom no-lines>
-          <h6><strong>{{group?.name}}</strong></h6>
-          <p *ngIf="group?.profilesCount === 1">{{group?.profilesCount}} {{ 'USER' | translate}}</p>
-          <p *ngIf="group?.profilesCount > 1">{{group?.profilesCount}} {{ 'USERS' | translate}}</p>
-          <ion-icon name="ios-arrow-forward" item-end></ion-icon>
-        </ion-item>
+        <!-- block shows lists of groups -->
+        <div class="flex-card-container" (click)="goToGroupUserReportList(group)"
+          *ngFor="let group of groups;let i=index" lines="none">
+          <div class="card-text">
+            <ion-label>
+              <h6><strong>{{group?.name}}</strong></h6>
+              <p *ngIf="group?.profilesCount === 1">{{group?.profilesCount}} {{ 'USER' | translate}}</p>
+              <p *ngIf="group?.profilesCount > 1">{{group?.profilesCount}} {{ 'USERS' | translate}}</p>
+            </ion-label>
+          </div>
+          <div class="card-icon">
+            <ion-icon name="ios-arrow-forward"></ion-icon>
+          </div>
+        </div>
       </div>
     </ion-list>
   </div>

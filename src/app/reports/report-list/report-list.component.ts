@@ -1,7 +1,7 @@
 import { UserReportComponent } from './../user-report/user-report.component';
 import { GroupReportListComponent } from './../group-report-list/group-report-list.component';
 import { Component, OnInit, Inject, NgZone } from '@angular/core';
-import { LoadingController } from '@ionic/angular';
+import { LoadingController, Platform } from '@ionic/angular';
 import { LearnerAssessmentSummary, ReportSummary, SummarizerService, SummaryRequest, TelemetryObject } from 'sunbird-sdk';
 import {
   TelemetryGeneratorService,
@@ -16,6 +16,8 @@ import {
 } from '@app/services';
 import { ActivatedRoute, Router, NavigationExtras } from '@angular/router';
 import { RouterLinks } from '@app/app/app.constant';
+import { Subscription } from 'rxjs';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-report-list',
@@ -34,6 +36,7 @@ export class ReportListComponent implements OnInit {
   assessment: {};
   reportSummary: ReportSummary;
   navData: any;
+  backButtonFunc: Subscription;
 
   constructor(
     private loading: LoadingController,
@@ -43,7 +46,9 @@ export class ReportListComponent implements OnInit {
     private headerService: AppHeaderService,
     private commonUtilService: CommonUtilService,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private platform: Platform,
+    private location: Location
   ) {
     this.getNavData();
     const extrasState = this.router.getCurrentNavigation().extras.state;
@@ -61,6 +66,20 @@ export class ReportListComponent implements OnInit {
     if (navigation && navigation.extras && navigation.extras.state) {
       this.navData = navigation.extras.state;
     }
+  }
+  ionViewWillEnter() {
+    this.handleDeviceBackButton();
+
+  }
+
+  handleDeviceBackButton() {
+    this.backButtonFunc = this.platform.backButton.subscribe(() => {
+      this.location.back();
+    });
+  }
+
+  ionViewWillLeave() {
+    this.backButtonFunc.unsubscribe();
   }
 
   async ngOnInit() {
