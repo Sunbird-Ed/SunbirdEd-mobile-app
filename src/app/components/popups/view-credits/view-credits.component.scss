@@ -49,22 +49,3 @@
     padding-top: 12px;
   }
 }
-
-.view-credits .popover-content {
-  margin: 0;
-  width: 100% !important;
-  height: auto;
-  box-shadow: unset;
-  position: fixed;
-  left: 0 !important;
-  top: unset !important;
-  bottom: 0;
-  transform-origin: bottom -100% !important;
-  transform: translateY(0) !important;
-  overflow-y: hidden;
-}
-
-.view-credits ion-backdrop {
-  background-color: map-get($colors, dark) !important;
-  opacity: 0.4 !important;
-}
