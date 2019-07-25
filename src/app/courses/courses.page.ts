@@ -489,7 +489,7 @@ export class CoursesPage implements OnInit {
   getCourseTabData(refresher?) {
     setTimeout(() => {
       if (refresher) {
-        refresher.complete();
+        refresher.target.complete();
         this.telemetryGeneratorService.generatePullToRefreshTelemetry(PageId.COURSES, Environment.HOME);
       }
     }, 10);

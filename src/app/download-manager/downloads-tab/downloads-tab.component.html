@@ -42,10 +42,10 @@
             <div class="info"> {{ content.sizeOnDevice | fileSize }}</div>
           </div>
           <div class="sb-card-actions">
-            <ion-button *ngIf="showDeleteButton" class="action-btn float-end delete mr-8" (click)="showDeletePopup(content.identifier)">
+            <button *ngIf="showDeleteButton" class="action-btn float-end delete mr-8" (click)="showDeletePopup(content.identifier)">
               <!-- <ion-icon ios="ios-trash" md="md-trash" class="MR5"></ion-icon> -->
               {{'DELETE' | translate}}
-            </ion-button>
+            </button>
           </div>
         </div>
       </div>
