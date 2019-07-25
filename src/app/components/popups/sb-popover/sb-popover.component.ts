@@ -1,7 +1,7 @@
-import {Component, NgZone, OnDestroy} from '@angular/core';
-import {Platform , NavParams , PopoverController} from '@ionic/angular';
-import {CorrelationData, Rollup} from 'sunbird-sdk';
-import {Observable, Subscription} from 'rxjs';
+import { Component, NgZone, OnDestroy } from '@angular/core';
+import { Platform, NavParams, PopoverController } from '@ionic/angular';
+import { CorrelationData, Rollup } from 'sunbird-sdk';
+import { Observable, Subscription } from 'rxjs';
 
 /**
  * Generated class for the PopupsComponent component.
@@ -90,11 +90,6 @@ export class SbPopoverComponent implements OnDestroy {
     }
 
     this.contentId = (this.content && this.content.identifier) ? this.content.identifier : '';
-    // migration-TODO
-    this.backButtonFunc = this.platform.backButton.subscribe(() => {
-      this.popoverCtrl.dismiss();
-      // this.backButtonFunc.unsubscribe();
-    });
   }
 
   ngOnDestroy(): void {
@@ -119,6 +114,5 @@ export class SbPopoverComponent implements OnDestroy {
   }
 
   ionViewWillLeave(): void {
-    this.backButtonFunc.unsubscribe();
   }
 }

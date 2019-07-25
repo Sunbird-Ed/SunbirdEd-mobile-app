@@ -8,16 +8,6 @@ import { Events, Platform, ModalController, PopoverController } from '@ionic/ang
 })
 export class SbGenericPopoverComponent implements OnInit, OnDestroy {
 
-  // sbPopoverHeading: any;
-  // sbPopoverMainTitle: any;
-  // sbPopoverContent: any;
-  // actionsButtons: any;
-  // icon: any;
-  // metaInfo: any;
-  backButtonFunc = undefined;
-  // showHeader: Boolean = true;
-  // selectedContents: any;
-
   @Input() actionsButtons: any;
   @Input() icon: any;
   @Input() metaInfo: any;
@@ -26,13 +16,13 @@ export class SbGenericPopoverComponent implements OnInit, OnDestroy {
   @Input() sbPopoverMainTitle: any;
   @Input() selectedContents: any;
   @Input() showHeader = true;
-
+  backButtonFunc = undefined;
 
   constructor(public popoverCtrl: PopoverController, private platform: Platform, private events: Events) { }
 
   ngOnInit() {
     this.backButtonFunc = this.platform.backButton.subscribe(() => {
-      this.popoverCtrl.dismiss(null);
+      this.popoverCtrl.dismiss({ isLeftButtonClicked: null });
     });
 
     this.events.subscribe('selectedContents:changed', (data) => {
@@ -46,14 +36,14 @@ export class SbGenericPopoverComponent implements OnInit, OnDestroy {
   }
 
   closePopover() {
-    this.popoverCtrl.dismiss(null);
+    this.popoverCtrl.dismiss({ isLeftButtonClicked: null });
   }
 
-  deletecontent(btnIndex: number = 0) {
+  deleteContent(btnIndex: number = 0) {
     if (btnIndex === 0) {
-      this.popoverCtrl.dismiss(true);
+      this.popoverCtrl.dismiss({ isLeftButtonClicked: true });
     } else {
-      this.popoverCtrl.dismiss(false);
+      this.popoverCtrl.dismiss({ isLeftButtonClicked: false });
     }
   }
 
