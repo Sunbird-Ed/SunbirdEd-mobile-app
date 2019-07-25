@@ -23,11 +23,11 @@
 
     <!-- Looping Inside Children Data Textbook -->
     <section *ngIf=" childrenData && childrenData?.length">
-      <ion-card class="sb-accordian-card" *ngFor="let item of childrenData;  let i = index;">
+      <div class="sb-accordian-card" *ngFor="let item of childrenData;  let i = index;">
 
         <!-- new -->
         <ion-grid class="sb-accordian-header">
-          <ion-row (click)="toggleGroup(i, item)" *ngIf="item?.children">
+          <ion-row (click)="toggleGroup(i, item)" *ngIf="item?.children" class="sb-row">
             <ion-col size="11">
               <div class="sb-topic-text"> {{item?.contentData?.name}} </div>
             </ion-col>
@@ -43,7 +43,7 @@
             </ion-col>
           </ion-row>
           <ion-row *ngIf="item?.contentData?.mimeType !== 'application/vnd.ekstep.content-collection' && !item?.children"
-            (click)="navigateToDetailsPage(item, depth + '.' + (i + 1))">
+            (click)="navigateToDetailsPage(item, depth + '.' + (i + 1))" class="sb-row">
             <ion-col size="1">
               <div>
                 <ion-icon ios="ios-arrow-dropright-circle" md="md-arrow-dropright-circle"
@@ -64,12 +64,14 @@
                 </span></div>
             </ion-col>
           </ion-row>
+          <ion-row class="sb-row">
           <div class="font-grey-text" (click)="showCommingSoonPopup(item)" *ngIf="item?.contentData?.mimeType === 'application/vnd.ekstep.content-collection' && !item?.children">
             {{item?.contentData?.name}}
             <span class="grey-icon-span">
-              <ion-icon ios="ios-alert" md="md-alert" class="grey-icon ML5"></ion-icon>
+              <ion-icon ios="ios-alert" md="md-alert" class="grey-icon ML10"></ion-icon>
             </span>
           </div>
+        </ion-row>
           <!-- </div> -->
         </ion-grid>
         <!-- <div class="sb-separator-line"></div> -->
@@ -83,7 +85,7 @@
             </div>
           </div>
         </div>
-      </ion-card>
+      </div>
     </section>
   </div>
 </ion-content>

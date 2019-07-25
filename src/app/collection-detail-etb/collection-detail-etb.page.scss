@@ -118,7 +118,7 @@
       .grey-icon-span
       {
         position: relative;
-        top: 5px;
+        top: 8px;
         vertical-align: super;
       }
       .checkmark-icon
@@ -384,6 +384,9 @@
     }
     .scroll-content{
       padding-bottom: 20%!important;
+    }
+    .sb-row{ 
+      width: 100%;
     }
     
   }

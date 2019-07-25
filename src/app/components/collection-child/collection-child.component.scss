@@ -37,7 +37,7 @@
     .grey-icon-span
     {
       position: relative;
-      top : 4px;
+      top : 8px;
     }
 
     .grey-icon
@@ -60,6 +60,7 @@
     {
         // migration-TODO 
         // @include padding($base-block-space * 1);
+        display: flex;
     }
 
     .sb-topics-container .sb-topic-container.sb-topics-1child{
