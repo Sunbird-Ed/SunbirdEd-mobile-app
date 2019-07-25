@@ -98,6 +98,7 @@
   }
   
   div[scrollx=true] {
-    // overflow-x: auto;
+    overflow-x: auto;
+    overflow-y: hidden;
   }
 }
