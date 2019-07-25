@@ -811,6 +811,7 @@ export class CoursesPage implements OnInit {
       case 'search': this.search();
         break;
       case 'filter': this.showFilter();
+      console.log("Show Filter");
         break;
       case 'download': this.redirectToActivedownloads();
         break;
