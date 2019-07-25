@@ -62,11 +62,11 @@
     }
     .sb-modal-close {
       position: absolute;
-      right: 0px;
-      width: 40px;
-      height: 40px;
+      right: 5px;
+      width: 20px;
+      height: 20px;
       display: flex;
-      top: -10px;
+      top: -2px;
       text-align: center;
       justify-content: center;
       align-items: center;
@@ -120,6 +120,7 @@
     align-items: center;
     justify-content: center;
     @include padding(($base-block-space), ($base-block-space * 2), ($base-block-space * 3), ($base-block-space * 2));
+    background: $white-color;
     .sb-popover-action-btn {
       @include margin(null, 8px, null, null);
       height: $base-block-space * 4;
@@ -264,5 +265,12 @@
       --min-height: 40px;
       --max-height: 40px;
     }
+  }
+}
+
+.sb-popover.warning {
+  .sb-popover-header,
+  .sb-popover-header .sb-popover-toolbar {
+    --background: #{$tertiary-color};
   }
 }

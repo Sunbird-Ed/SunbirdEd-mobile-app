@@ -234,10 +234,11 @@ export class SunbirdQRScanner {
 
   }
   public stopScanner() {
-    console.log('InsideSTopScanner===>>');
-    this.backButtonFunc && this.backButtonFunc.unsubscribe();
-    this.backButtonFunc = undefined;
-    (<any>window).qrScanner.stopScanner();
+    if (this.backButtonFunc) {
+      this.backButtonFunc.unsubscribe();
+    }
+
+    (window as any).qrScanner.stopScanner();
     if (this.pauseSubscription) {
       this.pauseSubscription.unsubscribe();
     }
@@ -256,7 +257,7 @@ export class SunbirdQRScanner {
   }
 
   private startQRScanner(screenTitle: string, displayText: string, displayTextColor: string,
-                         buttonText: string, showButton: boolean, source: string) {
+    buttonText: string, showButton: boolean, source: string) {
     if (this.backButtonFunc) {
       return;
     }
@@ -376,7 +377,7 @@ export class SunbirdQRScanner {
     popUp = await this.popCtrl.create({
       component: QRScannerAlert,
       componentProps: {
-        callback: callback,
+        callback,
         invalidContent: true,
         messageKey: 'UNKNOWN_QR',
         tryAgainKey: 'TRY_DIFF_QR'

@@ -9,19 +9,17 @@ import {
 } from '@ionic/angular';
 import { ToastOptions } from '@ionic/core';
 import { TranslateService } from '@ngx-translate/core';
-import * as _ from 'lodash';
-import { SharedPreferences } from 'sunbird-sdk';
+import { Observable } from 'rxjs';
 import { Network } from '@ionic-native/network/ngx';
+import { SharedPreferences } from 'sunbird-sdk';
 
-import { PreferenceKey } from '../app/app.constant';
-// import { QRAlertCallBack } from '../pages/qrscanner/qrscanner_alert';
-import { appLanguages } from './../app/app.constant';
-// import { QRScannerAlert } from './../pages/qrscanner/qrscanner_alert';
+import { PreferenceKey } from '@app/app/app.constant';
+import { appLanguages } from '@app/app/app.constant';
 
-import { TelemetryGeneratorService } from './telemetry-generator.service';
-import { InteractType, InteractSubtype, PageId, Environment } from './telemetry-constants';
-import { Subject, Observable } from 'rxjs';
-// import { SbGenericPopoverComponent } from '@app/component/popups/sb-generic-popup/sb-generic-popover';
+import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
+import { InteractType, InteractSubtype } from '@app/services/telemetry-constants';
+import { SbGenericPopoverComponent } from '@app/app/components/popups';
+import { QRAlertCallBack, QRScannerAlert } from '@app/app/qrscanner-alert/qrscanner-alert.page';
 
 export interface NetworkInfo {
     isNetworkAvailable: boolean;
@@ -126,14 +124,6 @@ export class CommonUtilService implements OnDestroy {
     }
 
     /**
-     * @param {string} str Input String that need to convert into the Array
-     * @returns {array} Newly created Array
-     */
-    stringToArray(str: string = '') {
-        return _.split(str, ', ');
-    }
-
-    /**
      * Method to convert Array to Comma separated string
      * @param {Array<string>} stringArray
      * @returns {string}
@@ -165,9 +155,9 @@ export class CommonUtilService implements OnDestroy {
 
     /**
      * Show popup with Try Again and Skip button.
-     * @param {string} source Page from alert got called
+     * @param source Page from alert got called
      */
-    showContentComingSoonAlert(source) {
+    async  showContentComingSoonAlert(source) {
         if (source !== 'user-type-selection') {
             this.afterOnBoardQRErrorAlert('ERROR_CONTENT_NOT_FOUND', 'CONTENT_IS_BEING_ADDED');
             return;
@@ -176,55 +166,54 @@ export class CommonUtilService implements OnDestroy {
         let popOver: any;
         const self = this;
         // migration-TODO
-        // const callback: QRAlertCallBack = {
-        //     tryAgain() {
-        //         self.events.publish('event:showScanner', { pageName: source });
-        //         popOver.dismiss();
-        //     },
-        //     cancel() {
-        //         popOver.dismiss();
-        //     }
-        // };
-        // migration-TODO
-        // popOver = this.popOverCtrl.create(QRScannerAlert, {
-        //     callback: callback,
-        //     icon: './assets/imgs/ic_coming_soon.png',
-        //     messageKey: 'CONTENT_IS_BEING_ADDED',
-        //     cancelKey: 'hide',
-        //     tryAgainKey: 'TRY_DIFF_QR',
-        // }, {
-        //         cssClass: 'qr-alert-invalid'
-        //     });
-        // setTimeout(() => {
-        //     popOver.present();
-        // }, 300);
+        const callback: QRAlertCallBack = {
+            tryAgain() {
+                self.events.publish('event:showScanner', { pageName: source });
+                popOver.dismiss();
+            },
+            cancel() {
+                popOver.dismiss();
+            }
+        };
+        popOver = await this.popOverCtrl.create({
+            component: QRScannerAlert,
+            componentProps: {
+                callback,
+                icon: './assets/imgs/ic_coming_soon.png',
+                messageKey: 'CONTENT_IS_BEING_ADDED',
+                cancelKey: 'hide',
+                tryAgainKey: 'TRY_DIFF_QR',
+            },
+            cssClass: 'qr-alert-invalid'
+        });
+        popOver.present();
     }
     /**
      * Show popup with Close.
-     * @param {string} heading Alert heading
-     * @param {string} message Alert message
+     * @param heading Alert heading
+     * @param message Alert message
      */
-    afterOnBoardQRErrorAlert(heading, message) {
-        // migration-TODO
-        // const qrAlert = this.popOverCtrl.create(SbGenericPopoverComponent, {
-        //     sbPopoverHeading: this.translateMessage(heading),
-        //     sbPopoverMainTitle: this.translateMessage(message),
-        //     actionsButtons: [
-        //         {
-        //             btntext: this.translateMessage('OKAY'),
-        //             btnClass: 'sb-btn sb-btn-sm  sb-btn-tertiary'
-        //         }
-        //     ],
-        //     icon: null
-        // }, {
-        //         cssClass: 'sb-popover warning',
-        //     });
-        // qrAlert.present();
+    async afterOnBoardQRErrorAlert(heading, message) {
+        const qrAlert = await this.popOverCtrl.create({
+            component: SbGenericPopoverComponent,
+            componentProps: {
+                sbPopoverHeading: this.translateMessage(heading),
+                sbPopoverMainTitle: this.translateMessage(message),
+                actionsButtons: [
+                    {
+                        btntext: this.translateMessage('OKAY'),
+                        btnClass: 'sb-btn sb-btn-sm  sb-btn-tertiary'
+                    }
+                ],
+                icon: null
+            },
+            cssClass: 'sb-popover warning',
+        });
+        await qrAlert.present();
     }
-
     /**
      * Its check for the network availability
-     * @returns {boolean} status of the network
+     * @returns status of the network
      */
     private handleNetworkAvailability(): boolean {
         const updateNetworkAvailabilityStatus = (status: boolean) => {
@@ -263,11 +252,11 @@ export class CommonUtilService implements OnDestroy {
         const options
             = 'hardwareback=yes,clearcache=no,zoom=no,toolbar=yes,clearsessioncache=no,closebuttoncaption=Done,disallowoverscroll=yes';
 
-        (<any>window).cordova.InAppBrowser.open(url, '_system', options);
+        (window as any).cordova.InAppBrowser.open(url, '_system', options);
     }
 
     /**
-     * @returns {string} App direction 'rtl' || 'ltr'
+     * @returns App direction 'rtl' || 'ltr'
      */
     getAppDirection() {
         return this.platform.isRTL ? 'rtl' : 'ltr';
@@ -275,7 +264,6 @@ export class CommonUtilService implements OnDestroy {
 
     /**
      * It returns whether it is RTL or not
-     * @returns {boolean}
      */
     isRTL() {
         return this.platform.isRTL;
@@ -283,98 +271,56 @@ export class CommonUtilService implements OnDestroy {
 
     /**
      * Creates a popup asking whether to exit from app or not
-    */
+     */
     async showExitPopUp(pageId: string, environment: string, isNavBack: boolean) {
         if (!this.alert) {
-            /*this.alert = this.alertCtrl.create({
-                title: this.translateMessage('BACK_TO_EXIT'),
-                mode: 'wp',
-                cssClass: 'confirm-alert',
-                buttons: [
-                    {
-                        text: this.translateMessage('YES'),
-                        cssClass: 'alert-btn-cancel',
-                        handler: () => {
-                            this.telemetryGeneratorService.generateInteractTelemetry(
-                                InteractType.TOUCH,
-                                InteractSubtype.YES_CLICKED,
-                                environment,
-                                pageId
-                            );
-                            this.platform.exitApp();
-                            this.telemetryGeneratorService.generateEndTelemetry('app', '', '', environment);
+            this.alert = await this.popOverCtrl.create({
+                component: SbGenericPopoverComponent,
+                componentProps: {
+                    sbPopoverHeading: this.translateMessage('BACK_TO_EXIT'),
+                    sbPopoverMainTitle: '',
+                    actionsButtons: [
+                        {
+                            btntext: this.translateMessage('YES'),
+                            btnClass: 'sb-btn sb-btn-sm  sb-btn-outline-info'
+                        }, {
+                            btntext: this.translateMessage('NO'),
+                            btnClass: 'popover-color'
                         }
-                    },
-                    {
-                        text: this.translateMessage('NO'),
-                        cssClass: 'alert-btn-delete',
-                        handler: () => {
-                            this.telemetryGeneratorService.generateInteractTelemetry(
-                                InteractType.TOUCH,
-                                InteractSubtype.NO_CLICKED,
-                                environment,
-                                pageId
-                            );
-                            if (this.alert) {
-                                this.alert.dismiss();
-                                this.alert = undefined;
-                            }
-                        }
-                    }
-                ]
+                    ],
+                    icon: null
+                },
+                cssClass: 'sb-popover',
             });
-            this.alert.present();*/
 
-            // migration-TODO
-            // this.alert = this.popOverCtrl.create(SbGenericPopoverComponent, {
-            //     sbPopoverHeading: this.translateMessage('BACK_TO_EXIT'),
-            //     sbPopoverMainTitle: '',
-            //     actionsButtons: [
-            //         {
-            //             btntext: this.translateMessage('YES'),
-            //             btnClass: 'sb-btn sb-btn-sm  sb-btn-outline-info'
-            //         }, {
-            //             btntext: this.translateMessage('NO'),
-            //             btnClass: 'popover-color'
-            //         }
-            //     ],
-            //     icon: null
-            // }, {
-            //         cssClass: 'sb-popover',
-            //     });
-            await this.alert.onDidDismiss((leftBtnClicked: any) => {
-                if (leftBtnClicked == null) {
-                    this.telemetryGeneratorService.generateInteractTelemetry(
-                        InteractType.TOUCH,
-                        InteractSubtype.NO_CLICKED,
-                        environment,
-                        pageId
-                    );
-                    return;
-                }
-                if (!leftBtnClicked) {
-                    this.telemetryGeneratorService.generateInteractTelemetry(
-                        InteractType.TOUCH,
-                        InteractSubtype.NO_CLICKED,
-                        environment,
-                        pageId
-                    );
-                } else {
-                    this.telemetryGeneratorService.generateInteractTelemetry(
-                        InteractType.TOUCH,
-                        InteractSubtype.YES_CLICKED,
-                        environment,
-                        pageId
-                    );
-                    // migration-TODO
-                    // this.platform.exitApp();
-                    // navigator['app'].exitApp(); // migration-TODO need to be implemented
-                    this.telemetryGeneratorService.generateEndTelemetry('app', '', '', environment);
-                }
-            });
-            await this.alert.present({
-                ev: event
-            });
+            const { data } = await this.alert.onDidDismiss();
+            if (data.isLeftButtonClicked == null) {
+                this.telemetryGeneratorService.generateInteractTelemetry(
+                    InteractType.TOUCH,
+                    InteractSubtype.NO_CLICKED,
+                    environment,
+                    pageId
+                );
+                return;
+            }
+            if (!data.isLeftButtonClicked) {
+                this.telemetryGeneratorService.generateInteractTelemetry(
+                    InteractType.TOUCH,
+                    InteractSubtype.NO_CLICKED,
+                    environment,
+                    pageId
+                );
+            } else {
+                this.telemetryGeneratorService.generateInteractTelemetry(
+                    InteractType.TOUCH,
+                    InteractSubtype.YES_CLICKED,
+                    environment,
+                    pageId
+                );
+                (navigator as any).app.exitApp();
+                this.telemetryGeneratorService.generateEndTelemetry('app', '', '', environment);
+            }
+            await this.alert.present();
             this.telemetryGeneratorService.generateBackClickedTelemetry(pageId, environment, isNavBack);
             return;
         } else {
@@ -394,7 +340,7 @@ export class CommonUtilService implements OnDestroy {
     }
 
     set currentTabName(tabName: string) {
-        this._currentTabName = tabName
+        this._currentTabName = tabName;
     }
 
     get currentTabName() {
