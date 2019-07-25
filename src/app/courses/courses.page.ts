@@ -3,7 +3,7 @@ import { ActiveDownloadsPage } from '../active-downloads/active-downloads.page';
 import { ViewMoreActivityComponent } from '../view-more-activity/view-more-activity.component';
 import { Component, Inject, NgZone, OnInit, AfterViewInit } from '@angular/core';
 // import { Events, IonicPage, NavController, ToastController, PopoverController, MenuController, Tabs } from 'ionic-angular';
-import { Events, ToastController } from '@ionic/angular';
+import { Events, ToastController,PopoverController } from '@ionic/angular';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { QRResultCallback, SunbirdQRScanner } from '../../services/sunbirdqrscanner.service';
 // migration-TODO
@@ -122,7 +122,7 @@ export class CoursesPage implements OnInit {
     private ngZone: NgZone,
     private qrScanner: SunbirdQRScanner,
     // migration-TODO
-    // private popCtrl: PopoverController,
+    private popCtrl: PopoverController,
     private events: Events,
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
     private appGlobalService: AppGlobalService,
@@ -623,9 +623,17 @@ export class CoursesPage implements OnInit {
     });
   }
 
-  showFilterPage(filterOptions) {
+  async showFilterPage(filterOptions) {
     // migration-TODO
-    // this.popCtrl.create(PageFilter, filterOptions, { cssClass: 'resource-filter' }).present();
+    const popup = await this.popCtrl.create({
+      component: PageFilterPage,
+      componentProps: {
+        callback: filterOptions.callback,
+        filter: filterOptions.filter
+      },
+      cssClass: 'resource-filter'
+    });
+    popup.present();
   }
 
   checkEmptySearchResult(isAfterLanguageChange = false) {

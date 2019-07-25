@@ -1,16 +1,19 @@
 import { AppGlobalService } from '../../../services/app-global-service.service';
-import { Component } from '@angular/core';
+import { Component, ViewEncapsulation } from '@angular/core';
 import {
   NavParams,
   Platform,
+  PopoverController,
   // ViewController
 } from '@ionic/angular';
 import { PageAssembleFilter } from 'sunbird-sdk';
+import { ViewController } from '@ionic/core';
 
 @Component({
   selector: 'app-page-filter-options',
   templateUrl: './page-filter-options.page.html',
   styleUrls: ['./page-filter-options.page.scss'],
+  encapsulation: ViewEncapsulation.None
 })
 export class PageFilterOptionsPage {
 
@@ -29,7 +32,7 @@ export class PageFilterOptionsPage {
   prevSelectedTopic = [];
   constructor(
     private navParams: NavParams,
-    // private viewCtrl: ViewController,
+    private viewCtrl: PopoverController,
     private appGlobalService: AppGlobalService,
     private platform: Platform) {
 
@@ -52,7 +55,7 @@ export class PageFilterOptionsPage {
   handleDeviceBackButton() {
     this.backButtonFunc = this.platform.backButton.subscribeWithPriority(11 , () => {
       // migration-TODO
-      // this.viewCtrl.dismiss();
+      this.viewCtrl.dismiss();
       this.backButtonFunc.unsubscribe();
     });
   }
@@ -94,7 +97,7 @@ export class PageFilterOptionsPage {
 
   confirm() {
       // migration-TODO
-    // this.viewCtrl.dismiss();
+    this.viewCtrl.dismiss();
   }
   toggleGroup(group) {
     if (this.isGroupShown(group)) {
@@ -143,7 +146,7 @@ export class PageFilterOptionsPage {
   cancel() {
     this.facets.selected = [...this.prevSelectedTopic];
       // migration-TODO
-    // this.viewCtrl.dismiss();
+    this.viewCtrl.dismiss();
   }
   apply() {
     this.prevSelectedTopic = [...this.facets.selected];

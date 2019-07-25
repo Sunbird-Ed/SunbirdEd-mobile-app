@@ -4,7 +4,7 @@
       <ion-title class="subtitle">{{ 'CHOOSE_FROM_FOLLOWING' | translate }}</ion-title>
     </ion-toolbar>
   </ion-header>
-  <ion-content [fullscreen]="true">
+  <ion-content>
     <ion-grid class="scroll-list" *ngIf="facets?.name !== 'Organization' && facets?.name !== 'Purpose'">
       <ion-row *ngIf="facets?.values && facets?.values?.length">
         <ion-col size="6" *ngFor="let facetValue of facets?.values; let index=index">
