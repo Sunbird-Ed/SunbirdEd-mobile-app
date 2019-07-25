@@ -1,36 +1,15 @@
-@import '../../../../global.scss';
+@import "src/global.scss";
 
-upgrade-popover {
-    .scroll {
-        height: 15vh;
-        overflow: scroll;
-        overflow-y: visible;
-    }
-    ion-app.md [padding-horizontal] .scroll-content {
-        @include padding(null, 0 !important);
-    }
-    ion-app.md [padding-top] .scroll-content {
-        padding-top: 0 !important;
-    }
+:host {
+  .scroll {
+    height: 15vh;
+    overflow: scroll;
+    overflow-y: visible;
+  }
+  ion-app.md [padding-horizontal] .scroll-content {
+    @include padding(null, 0 !important);
+  }
+  ion-app.md [padding-top] .scroll-content {
+    padding-top: 0 !important;
+  }
 }
-.upgradePopover { 
-    height: auto;
-    max-height: 65vh;
-    .popover-content {
-        top: 20vh !important;
-        width: 80vw !important;
-        @include ltr() {
-            left: 10vw !important;
-            right: 10vw !important;
-        }
-    
-        @include rtl() {
-            right: 10vw !important;
-            left: 10vw !important;
-        }
-    }
-    ion-backdrop {
-    // background-color: map-get($colors, dark) !important;
-    opacity: 0.2 !important;
-    height: 100vh;
-}}

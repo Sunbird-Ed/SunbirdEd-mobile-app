@@ -1,7 +1,7 @@
 page-search {
 
     text-overflow: ellipsis;
-  
+  }
     .text-input-clear-icon {
       display: block !important;
     }
@@ -161,8 +161,10 @@ page-search {
       border-bottom: 0.5px solid rgba(151, 151, 151, 0.5);
     }
   
-   
-  }
+    ion-header .button-native {
+      --color : $primary-color;
+    }
+  
   .sb-textbook-container {
     // margin-top: ($base-block-space * 2);
     // @include padding(($base-block-space * 1));

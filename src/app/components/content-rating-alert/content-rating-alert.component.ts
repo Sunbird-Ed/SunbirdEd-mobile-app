@@ -66,7 +66,7 @@ export class ContentRatingAlertComponent implements OnInit {
     private appGlobalService: AppGlobalService,
     private commonUtilService: CommonUtilService) {
     this.getUserId();
-    this.platform.backButton.subscribeWithPriority(10, () => {
+    this.platform.backButton.subscribe(() => {
       this.modalController.dismiss();
     });
     this.ngZone.run(() => {

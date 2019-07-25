@@ -1,7 +1,7 @@
 <ion-content padding-top padding-right>
   <form [formGroup]="groupEditForm">
-    <ion-item>
-      <ion-label class="label-font" text-uppercase position="stacked">
+    <ion-item class="cg-item-16 PT16">
+      <ion-label class="label-font cg-label" text-uppercase position="stacked">
         {{ 'GROUP_NAME' | translate }}
         <span class="mandatory">*</span>
       </ion-label>
@@ -9,8 +9,8 @@
         placeholder="{{'GROUP_NAME' | translate}}"></ion-input>
     </ion-item>
     <!-- Syllabus -->
-    <ion-item>
-      <ion-label position="stacked" text-uppercase class="label-font">{{'SYLLABUS' | translate }}
+    <ion-item class="cg-item-16">
+      <ion-label position="stacked" text-uppercase class="label-font cg-label">{{'SYLLABUS' | translate }}
       </ion-label>
       <ion-select text-capitalize formControlName="syllabus" placeholder="{{'SELECT' | translate }}"
         (ionChange)="getClassList(null)" okText="{{'BTN_SUBMIT' | translate}}"
@@ -19,8 +19,8 @@
           {{eachSyllabus?.name}}&lrm;</ion-select-option>
       </ion-select>
     </ion-item>
-    <ion-item>
-      <ion-label position="stacked" text-uppercase class="label-font">{{'CLASS' | translate}}</ion-label>
+    <ion-item class="cg-item-16">
+      <ion-label position="stacked" text-uppercase class="label-font cg-label">{{'CLASS' | translate}}</ion-label>
       <ion-select formControlName="class" [interfaceOptions]="classOptions"
         [disabled]="!(groupEditForm.value.syllabus != '')" placeholder="{{'CLASS'|translate | titlecase}}"
         okText="{{'BTN_SUBMIT' | translate}}" cancelText="{{'CANCEL' | translate}}">

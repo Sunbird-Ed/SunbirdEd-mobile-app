@@ -47,8 +47,8 @@ export class CategoriesEditPage implements OnInit {
   frameworkId: string;
   categories = [];
   btnColor = '#8FC4FF';
-  showOnlyMandatoryFields: boolean = true;
-  editData: boolean = true;
+  showOnlyMandatoryFields = true;
+  editData = true;
   loader: any;
   headerConfig = {
     showHeader: false,
@@ -422,7 +422,6 @@ export class CategoriesEditPage implements OnInit {
               // this.navCtrl.setRoot(TabsPage);
             });
         } else {
-          // this.navCtrl.pop();
           this.location.back();
         }
       }).catch(async () => {

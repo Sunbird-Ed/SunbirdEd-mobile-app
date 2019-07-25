@@ -31,6 +31,7 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
   showDownloadAnimation: boolean = false;
   networkSubscription: Subscription;
   isUnreadNotification: boolean = false;
+  menuSide = 'left';
 
   constructor(
     @Inject('SHARED_PREFERENCES') private preference: SharedPreferences,
@@ -73,7 +74,9 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
     this.translate.onLangChange.subscribe((params) => {
       if (params.lang === 'ur' && !this.platform.isRTL) {
         this.isRtl = true;
+        this.menuSide = 'right';
       } else if (this.platform.isRTL) {
+        this.menuSide = 'left';
         this.isRtl = false;
       }
     });

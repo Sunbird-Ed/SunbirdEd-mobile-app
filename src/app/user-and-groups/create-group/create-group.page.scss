@@ -1,0 +1,22 @@
+@import 'src/global.scss';
+
+.mandatory {
+    color: map-get($colors, red);
+}
+
+.label-font {
+    @extend .font-weight-500;
+    font-size: 18px;
+}
+
+.cg-label {
+    @extend .MB8;
+    color: map-get($colors, title);
+}
+
+.cg-item-16{
+    width: calc(100% - 16px);
+    --padding-start: 0px;
+    @extend .ML16;
+    @extend .MB6;
+}

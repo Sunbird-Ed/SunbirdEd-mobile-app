@@ -227,6 +227,12 @@ export class SearchPage implements OnDestroy {
     this.backButtonFunc.unsubscribe();
   }
 
+  goBack() {
+    this.navigateToPreviousPage();
+    this.telemetryGeneratorService.generateBackClickedTelemetry(ImpressionType.SEARCH,
+        Environment.HOME, false, undefined, this.corRelationList);
+  }
+
   handleDeviceBackButton() {
     this.backButtonFunc = this.platform.backButton.subscribe(() => {
       this.navigateToPreviousPage();

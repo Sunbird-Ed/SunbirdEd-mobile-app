@@ -1,10 +1,17 @@
+@import "src/global.scss";
 :host {
-    .sign-in-btn {
-        border-radius: 4px !important;
-    }
-    .sign-in-card-text {
-        // migration-TODO    
-        // @extend .font-weight-600;
-        // color: map-get($colors, primary_black) !important;
-    }
+  .sign-in-btn {
+    border-radius: 4px !important;
+  }
+  .sign-in-card-text {
+    @extend .font-weight-600;
+    color: map-get($colors, primary_black) !important;
+  }
+  ion-card {
+    background-color: map-get($colors, white);
+  }
+  ion-card-header {
+    color: map-get($colors, primary_black) !important;
+    font-size: 1.1rem;
+  }
 }
