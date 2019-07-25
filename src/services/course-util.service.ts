@@ -1,8 +1,9 @@
 // import {ViewCreditsComponent} from '@app/component';
-import {Injectable} from '@angular/core';
+import { Injectable } from '@angular/core';
 import * as _ from 'lodash';
-import {PopoverController} from '@ionic/angular';
-import {ContentImport} from 'sunbird-sdk';
+import { PopoverController } from '@ionic/angular';
+import { ContentImport } from 'sunbird-sdk';
+import { ViewCreditsComponent } from '@app/app/components/popups/view-credits/view-credits.component';
 
 declare const cordova;
 @Injectable()
@@ -44,34 +45,24 @@ export class CourseUtilService {
         _.forEach(identifiers, (value, key) => {
             requestParams.push({
                 isChildContent: isChild,
-              destinationFolder: cordova.file.externalDataDirectory,
+                destinationFolder: cordova.file.externalDataDirectory,
                 contentId: value,
                 correlationData: []
             });
         });
 
-      return requestParams;
+        return requestParams;
     }
 
     /**
      * Opens up popup for the credits.
      */
-    showCredits(content, pageId, rollup, correlation) {
-        // migration-TODO
-        // const popUp = this.popOverCtrl.create(
-        //     ViewCreditsComponent,
-        //     {
-        //         content: content,
-        //         pageId: pageId,
-        //         rollUp: rollup,
-        //         correlation: correlation
-        //     },
-        //     {
-        //         cssClass: 'view-credits'
-        //     }
-        // );
-        // popUp.present({
-        //     ev: event
-        // });
+    async showCredits(content, pageId, rollUp, correlation) {
+        const popUp = await this.popOverCtrl.create({
+            component: ViewCreditsComponent,
+            componentProps: { content, pageId, rollUp, correlation },
+            cssClass: 'view-credits'
+        });
+        await popUp.present();
     }
 }
