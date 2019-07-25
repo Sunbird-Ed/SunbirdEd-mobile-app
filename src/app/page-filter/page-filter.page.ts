@@ -1,4 +1,4 @@
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, ViewEncapsulation } from '@angular/core';
 import { Events, NavParams, Platform, PopoverController } from '@ionic/angular';
 import { AppGlobalService } from '../../services/app-global-service.service';
 import * as _ from 'lodash';
@@ -21,6 +21,7 @@ import { Environment, ImpressionType, InteractSubtype, InteractType, PageId } fr
   selector: 'app-page-filter',
   templateUrl: './page-filter.page.html',
   styleUrls: ['./page-filter.page.scss'],
+  encapsulation: ViewEncapsulation.None
 })
 export class PageFilterPage {
 
@@ -41,7 +42,7 @@ export class PageFilterPage {
     private popCtrl: PopoverController,
     // migration-TODO
     // private viewCtrl: ViewController,
-    // private navParams: NavParams,
+    private navParams: NavParams,
     private platform: Platform,
     private translate: TranslateService,
     private appGlobalService: AppGlobalService,
@@ -52,12 +53,12 @@ export class PageFilterPage {
     @Inject('FRAMEWORK_UTIL_SERVICE') private frameworkUtilService: FrameworkUtilService
   ) {
     // migration-TODO
-    // this.callback = navParams.get('callback');
+    this.callback = this.navParams.get('callback');
     this.initFilterValues();
 
     this.backButtonFunc = this.platform.backButton.subscribeWithPriority(11, () => {
       // migration-TODO
-      // this.viewCtrl.dismiss();
+      this.popCtrl.dismiss();
       this.backButtonFunc = undefined;
     });
 
@@ -89,10 +90,10 @@ export class PageFilterPage {
 
   async initFilterValues() {
     // migration-TODO
-    // this.filters = this.navParams.get('filter');
+    this.filters = this.navParams.get('filter');
     this.backupFilters = JSON.parse(JSON.stringify(this.filters));
     // migration-TODO
-    // this.pageId = this.navParams.get('pageId');
+    this.pageId = this.navParams.get('pageId');
     const loader = await this.commonUtilService.getLoader();
     await loader.present();
     if (this.pageId === PageId.COURSES) {
@@ -241,7 +242,7 @@ export class PageFilterPage {
       this.callback.applyFilter(this.pagetAssemblefilter, this.facetsFilter);
     }
     // migration-TODO
-    // this.viewCtrl.dismiss();
+    this.popCtrl.dismiss();
   }
 
   cancel() {
@@ -252,7 +253,7 @@ export class PageFilterPage {
 
     this.callback.applyFilter(this.pagetAssemblefilter, this.backupFilters);
     // migration-TODO
-    // this.viewCtrl.dismiss();
+    this.popCtrl.dismiss();
   }
 
   getRootOrganizations(index) {

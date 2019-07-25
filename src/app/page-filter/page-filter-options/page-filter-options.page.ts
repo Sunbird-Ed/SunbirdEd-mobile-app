@@ -1,5 +1,5 @@
 import { AppGlobalService } from '../../../services/app-global-service.service';
-import { Component } from '@angular/core';
+import { Component, ViewEncapsulation } from '@angular/core';
 import {
   NavParams,
   Platform,
@@ -11,6 +11,7 @@ import { PageAssembleFilter } from 'sunbird-sdk';
   selector: 'app-page-filter-options',
   templateUrl: './page-filter-options.page.html',
   styleUrls: ['./page-filter-options.page.scss'],
+  encapsulation: ViewEncapsulation.None
 })
 export class PageFilterOptionsPage {
 

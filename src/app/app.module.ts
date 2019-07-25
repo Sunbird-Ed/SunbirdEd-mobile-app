@@ -55,6 +55,12 @@ import { UserAndGroupsRoutingModule } from './user-and-groups/user-and-groups-ro
 import { UserAndGroupsPageModule } from './user-and-groups/user-and-groups.module';
 import { LocalNotifications } from '@ionic-native/local-notifications/ngx';
 
+import { PageFilterPageModule } from './page-filter/page-filter.module';
+import { PageFilterPage } from './page-filter/page-filter.page';
+
+import { PageFilterOptionsPageModule } from './page-filter/page-filter-options/page-filter-options.module';
+import { PageFilterOptionsPage } from './page-filter/page-filter-options/page-filter-options.page';
+
 
 
 // AoT requires an exported function for factories
@@ -331,7 +337,7 @@ export const sunbirdSdkFactory =
 declare const buildconfigreader;
 @NgModule({
   declarations: [AppComponent],
-  entryComponents: [],
+  entryComponents: [PageFilterPage,PageFilterOptionsPage],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
@@ -356,6 +362,8 @@ declare const buildconfigreader;
 
     // custom modules=
     UserTypeSelectionPageModule,
+    PageFilterPageModule,
+    PageFilterOptionsPageModule,
     UserAndGroupsPageModule
   ],
   providers: [
