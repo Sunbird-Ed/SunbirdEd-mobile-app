@@ -22,7 +22,7 @@ import {
   ContentRatingAlertComponent,
   SbPopoverComponent
 } from '../components';
-import {AppGlobalService, AppHeaderService, AppRatingService, CourseUtilService, UtilityService} from '../../services';
+import {AppGlobalService, AppHeaderService, AppRatingService, CourseUtilService, UtilityService, CanvasPlayerService} from '../../services';
 import {EnrolledCourseDetailsPage} from '../enrolled-course-details-page/enrolled-course-details-page';
 import {Network} from '@ionic-native/network/ngx';
 import {UserAndGroupsPage} from '../user-and-groups/user-and-groups.page';
@@ -162,6 +162,7 @@ export class ContentDetailsPage implements OnInit {
   private ratingComment = '';
   private corRelationList: Array<CorrelationData>;
   private eventSubscription: Subscription;
+  defaultLicense: string;
 
   showDownload: boolean;
   contentPath: Array<any>[];
@@ -169,6 +170,11 @@ export class ContentDetailsPage implements OnInit {
   toast: any;
   childPaths: Array<string> = [];
   breadCrumbData: any;
+  networkSubscription: any;
+  showChildrenLoader: any;
+  hierarchyInfo: any;
+  showLoading: any;
+
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
@@ -190,8 +196,7 @@ export class ContentDetailsPage implements OnInit {
     private telemetryGeneratorService: TelemetryGeneratorService,
     private commonUtilService: CommonUtilService,
     private courseUtilService: CourseUtilService,
-    // migration-TODO
-    // private canvasPlayerService: CanvasPlayerService,
+    private canvasPlayerService: CanvasPlayerService,
     private file: File,
     private utilityService: UtilityService,
     private container: ContainerService,
@@ -548,11 +553,12 @@ export class ContentDetailsPage implements OnInit {
       cssClass: 'sb-popover info',
     });
     await popover.present();
-    const response = await popover.onDidDismiss();
-    if (response.data.data && response.data.data.message === 'rating.success') {
-      this.userRating = response.data.data.rating;
-      this.ratingComment = response.data.data.comment;
-    }
+    await popover.onDidDismiss().then(response => {
+      if (response.data && response.data.message === 'rating.success') {
+        this.userRating = response.data.rating;
+        this.ratingComment = response.data.comment;
+      }
+    })
   }
 
   async appRating() {
@@ -562,18 +568,19 @@ export class ContentDetailsPage implements OnInit {
       cssClass: 'sb-popover'
     });
     await popover.present();
-    const response = await popover.onDidDismiss();
-    switch (response.data.data) {
-      case null: {
-        this.appRatingService.setInitialDate();
-        break;
+    await popover.onDidDismiss().then(response => {
+      switch (response.data) {
+        case null: {
+          this.appRatingService.setInitialDate();
+          break;
+        }
+        case StoreRating.RETURN_HELP: {
+          this.appRatingService.setInitialDate();
+          this.router.navigate([`/${RouterLinks.FAQ_HELP}`]);
+          break;
+        }
       }
-      case StoreRating.RETURN_HELP: {
-        this.appRatingService.setInitialDate();
-        this.router.navigate([`/${RouterLinks.FAQ_HELP}`]);
-        break;
-      }
-    }
+    })
   }
 
   /**
