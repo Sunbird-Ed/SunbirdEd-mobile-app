@@ -238,7 +238,6 @@
     text-align: left;
   }
   .sb-popover-footer {
-    background: $white-color;
     padding: 16px;
 
     .popover-button-cancel {
@@ -272,5 +271,12 @@
   .sb-popover-header,
   .sb-popover-header .sb-popover-toolbar {
     --background: #{$tertiary-color};
+  }
+}
+
+.sb-popover.danger {
+  .sb-popover-header,
+  .sb-popover-header .sb-popover-toolbar {
+    --background: #{$danger-color};
   }
 }
