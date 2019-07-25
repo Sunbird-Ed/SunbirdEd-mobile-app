@@ -3,28 +3,35 @@
       *ngIf="childData?.contentData?.mimeType === 'application/vnd.ekstep.content-collection' && childData?.children">
       {{childData?.contentData?.name}}
   </div>
-
-  <div class="row sb-topic-item"
-      *ngIf="childData?.contentData?.mimeType !== 'application/vnd.ekstep.content-collection'"
-      (click)="navigateToDetailsPage(childData, depth + '.' + (i + 1))">
-      <ion-icon ios="ios-arrow-dropright-circle" md="md-arrow-dropright-circle"
-          [ngClass]="{'sb-accordian-grey-icon': !commonUtilService.networkInfo.isNetworkAvailable && !childData?.isAvailableLocally, 'sb-play-icon': commonUtilService.networkInfo.isNetworkAvailable || childData?.isAvailableLocally}">
-      </ion-icon> <!-- change condition to offline -->
-      <div
-          [ngClass]="{'sb-accordian-grey-text': !commonUtilService.networkInfo.isNetworkAvailable && !childData?.isAvailableLocally,
-          'sb-play-selected':childData?.isAvailableLocally,'sb-play-unselected':!childData?.isAvailableLocally}">
-          {{childData?.contentData?.name}}
-          <span *ngIf="childData?.isAvailableLocally">
-              <ion-icon class="sb-checkmark-icon" name="md-checkmark-circle"></ion-icon>
-          </span>
-      </div>
-  </div>
-
-  <div class="row sb-topic-item" (click)="showComingSoonPopup(childData)"
+<ion-grid>
+    <ion-row>
+        <div class="sb-topic-item"
+        *ngIf="childData?.contentData?.mimeType !== 'application/vnd.ekstep.content-collection'"
+        (click)="navigateToDetailsPage(childData, depth + '.' + (i + 1))">
+        <ion-icon ios="ios-arrow-dropright-circle" md="md-arrow-dropright-circle"
+            [ngClass]="{'sb-accordian-grey-icon': !commonUtilService.networkInfo.isNetworkAvailable && !childData?.isAvailableLocally, 'sb-play-icon': commonUtilService.networkInfo.isNetworkAvailable || childData?.isAvailableLocally}">
+        </ion-icon> <!-- change condition to offline -->
+        <div
+            [ngClass]="{'sb-accordian-grey-text': !commonUtilService.networkInfo.isNetworkAvailable && !childData?.isAvailableLocally,
+            'sb-play-selected':childData?.isAvailableLocally,'sb-play-unselected':!childData?.isAvailableLocally}">
+            {{childData?.contentData?.name}}
+            <span *ngIf="childData?.isAvailableLocally">
+                <ion-icon class="sb-checkmark-icon" name="md-checkmark-circle"></ion-icon>
+            </span>
+        </div>
+    </div>
+    </ion-row>
+</ion-grid>
+ 
+<ion-grid>
+    <ion-row>
+  <div class="sb-topic-item" (click)="showComingSoonPopup(childData)"
       *ngIf="childData?.contentData?.mimeType === 'application/vnd.ekstep.content-collection' && !childData?.children">
       <div class="sb-accordian-grey-text">{{childData?.contentData?.name}}</div>
       <ion-icon ios="ios-alert" md="md-alert" class="grey-icon mt-4"></ion-icon>
   </div>
+  </ion-row>
+</ion-grid>
 
   <!-- <div *ngIf="childData?.children && childData?.contentData?.mimeType === 'application/vnd.ekstep.content-collection'"
       class="sb-separator-line ml8 mtb-8"></div> -->
