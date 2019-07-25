@@ -556,7 +556,7 @@ export class EnrolledCourseDetailsPage implements OnInit {
                         actionsButtons: [
                           {
                             btntext: this.commonUtilService.translateMessage('BATCH_EXPIRED_BUTTON'),
-                            btnClass: 'doneButton'
+                            btnClass: 'popover-color'
                           }
                         ],
                         icon: null
