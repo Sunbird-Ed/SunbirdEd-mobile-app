@@ -68,7 +68,7 @@
     }
     // New changes
     .meta-name {
-        font-size: 1.5rem !important;
+        font-size: 1.0rem !important;
         // migration-TODO
         // @extend .font-weight-600;
     }
@@ -156,4 +156,10 @@
           background-color: gray !important;
         }
       }
+}
+ion-row{
+    padding: 0px;
+}
+ion-grid{
+    padding-top: 0px;
 }
