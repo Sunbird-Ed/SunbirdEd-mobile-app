@@ -74,7 +74,7 @@ import {ContainerService} from '@app/services/container.services';
 import {FileSizePipe} from '@app/pipes/file-size/file-size';
 import {TranslateService} from '@ngx-translate/core';
 import {SbGenericPopoverComponent} from '../components/popups/sb-generic-popover/sb-generic-popover.component';
-import {RatingAlertComponent} from '../components/rating-alert/rating-alert.component';
+import {AppRatingAlertComponent} from '../components/rating-alert/rating-alert.component';
 import * as moment from 'moment';
 import { Location } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -563,7 +563,7 @@ export class ContentDetailsPage implements OnInit {
 
   async appRating() {
     const popover = await this.popoverCtrl.create({
-      component: RatingAlertComponent,
+      component: AppRatingAlertComponent,
       componentProps: {},
       cssClass: 'sb-popover'
     });
