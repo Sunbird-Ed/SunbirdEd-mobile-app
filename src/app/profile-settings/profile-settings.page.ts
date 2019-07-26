@@ -1,7 +1,7 @@
-import { Component, Inject, ViewChild, OnInit } from '@angular/core';
+import { Component, Inject, ViewChild, OnInit, ViewEncapsulation } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { Router, NavigationExtras } from '@angular/router';
-import { AppVersion } from "@ionic-native/app-version/ngx";
+import { AppVersion } from '@ionic-native/app-version/ngx';
 import { TranslateService } from '@ngx-translate/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { PreferenceKey, ProfileConstants } from '@app/app/app.constant';
@@ -119,7 +119,7 @@ export class ProfileSettingsPage implements OnInit {
   }
 
   ngOnInit() {
-    if (this.navParams && this.navParams.stopScanner && Boolean(this.navParams.stopScanner)) {
+    if (this.navParams && this.navParams.stopScanner && this.navParams.stopScanner) {
       setTimeout(() => {
         this.scanner.stopScanner();
       }, 500);
@@ -138,7 +138,7 @@ export class ProfileSettingsPage implements OnInit {
     this.headerObservable = this.headerService.headerEventEmitted$.subscribe(eventName => {
       this.handleHeaderEvents(eventName);
     });
-    if (this.navParams && this.navParams.hideBackButton && Boolean(this.navParams.hideBackButton)) {
+    if (this.navParams) {
       this.hideBackButton = Boolean(this.navParams.hideBackButton);
     }
     if (!this.hideBackButton) {
@@ -160,27 +160,35 @@ export class ProfileSettingsPage implements OnInit {
 
   updateStyle() {
     const ionSelectElement = Array.from(document.querySelectorAll('ion-item ion-select'));
-    ionSelectElement && ionSelectElement.forEach((element) => {
-      element['shadowRoot'].querySelector('.select-text').setAttribute('style', 'color:#006de5;padding-left: 10px;');
-    });
+    if (ionSelectElement) {
+      ionSelectElement.forEach((element) => {
+        element['shadowRoot'].querySelector('.select-text').setAttribute('style', 'color:#006de5;padding-left: 10px;');
+      });
+    }
 
     const defaultSelectElement = Array.from(document.querySelectorAll('.item-label-stacked ion-select'));
-    defaultSelectElement && defaultSelectElement.forEach((element) => {
-      element['shadowRoot'].querySelector('.select-icon-inner').setAttribute('style', 'border: solid blue;border-width: 0 2px 2px 0;display: inline-block;padding: 4px;transform: rotate(45deg);animation: dropDown 5s linear infinite;animation-duration: 0.9s;');
-
-    });
+    if (defaultSelectElement) {
+      defaultSelectElement.forEach((element) => {
+        element['shadowRoot'].querySelector('.select-icon-inner')
+          .setAttribute('style', 'border: solid blue;border-width: 0 2px 2px 0;display: inline-block;padding: 4px;transform: rotate(45deg);animation: dropDown 5s linear infinite;animation-duration: 0.9s;');
+      });
+    }
 
     const disabledSelectElement = Array.from(document.querySelectorAll('.item-label-stacked.item-select-disabled ion-select'));
-    disabledSelectElement && disabledSelectElement.forEach((element) => {
-      element['shadowRoot'].querySelector('.select-text').setAttribute('style', 'color: #cccccc;padding-left: 10px;');
-      element['shadowRoot'].querySelector('.select-icon-inner').setAttribute('style', 'border-color: #cccccc;animation: none;border: solid;border-width: 0 2px 2px 0;display: inline-block;padding: 4px;transform: rotate(45deg);');
-    });
+    if (disabledSelectElement) {
+      disabledSelectElement.forEach((element) => {
+        element['shadowRoot'].querySelector('.select-text').setAttribute('style', 'color: #cccccc;padding-left: 10px;');
+        element['shadowRoot'].querySelector('.select-icon-inner').setAttribute('style', 'border-color: #cccccc;animation: none;border: solid;border-width: 0 2px 2px 0;display: inline-block;padding: 4px;transform: rotate(45deg);');
+      });
+    }
 
     const hasValueSelectElement = Array.from(document.querySelectorAll('.item-label-stacked.item-has-value ion-select'));
-    hasValueSelectElement && hasValueSelectElement.forEach((element) => {
-      element['shadowRoot'].querySelector('.select-text').setAttribute('style', 'font-weight: bold;color: #333333;padding-left: 10px;');
-      element['shadowRoot'].querySelector('.select-icon-inner').setAttribute('style', 'border-color: #333333;animation: none;border: solid;border-width: 0 2px 2px 0;display: inline-block;padding: 4px;transform: rotate(45deg);');
-    });
+    if (hasValueSelectElement) {
+      hasValueSelectElement.forEach((element) => {
+        element['shadowRoot'].querySelector('.select-text').setAttribute('style', 'font-weight: bold;color: #333333;padding-left: 10px;');
+        element['shadowRoot'].querySelector('.select-icon-inner').setAttribute('style', 'border-color: #333333;animation: none;border: solid;border-width: 0 2px 2px 0;display: inline-block;padding: 4px;transform: rotate(45deg);');
+      });
+    }
   }
 
   ionViewWillLeave() {
@@ -446,6 +454,7 @@ export class ProfileSettingsPage implements OnInit {
   }
 
   enableSubmit() {
+    this.updateStyle();
     if (this.userForm.value.grades.length) {
       this.btnColor = '#006DE5';
     } else {
