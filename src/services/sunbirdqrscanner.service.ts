@@ -266,6 +266,7 @@ export class SunbirdQRScanner {
     }
     this.backButtonFunc = this.platform.backButton.subscribeWithPriority(11, () => {
       this.stopScanner();
+      this.backButtonFunc.unsubscribe();
     });
     window['qrScanner'].startScanner(screenTitle, displayText,
       displayTextColor, buttonText, showButton, this.platform.isRTL, (scannedData) => {

@@ -97,6 +97,9 @@ export class PageFilterOptionsPage {
   confirm() {
       // migration-TODO
     this.viewCtrl.dismiss();
+    if(this.backButtonFunc) {
+      this.backButtonFunc.unsubscribe();
+    }
   }
   toggleGroup(group) {
     if (this.isGroupShown(group)) {

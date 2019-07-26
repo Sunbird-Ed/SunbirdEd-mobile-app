@@ -8,14 +8,20 @@
 <ion-content padding>
   <ion-list>
     <div *ngIf="listOfReports.length > 0">
-      <ion-item *ngFor="let report of listOfReports;let i=index" class="bgColor" (click)="goToGroupReportsList(report)">
-        <h2 class="report-title">{{report.name}}</h2>
-        <p *ngIf="isFromUsers"><span>{{'SCORED' | translate}}: {{report.totalScore}}
-            <span *ngIf="report.totalQuestionsScore">/{{report.totalQuestionsScore}}</span>
-            <span *ngIf="!report.totalQuestionsScore && report.totalMaxScore">/{{report.totalMaxScore}}</span>
-          </span></p>
-        <ion-icon name="ios-arrow-forward" item-end></ion-icon>
-      </ion-item>
+      <div class="flex-card-container" *ngFor="let report of listOfReports;let i=index" (click)="goToGroupReportsList(report)" lines="none">
+          <div class="card-text">
+            <ion-label>
+              <h2 class="report-title">{{report.name}}</h2>
+              <p *ngIf="isFromUsers"><span>{{'SCORED' | translate}}: {{report.totalScore}}
+                  <span *ngIf="report.totalQuestionsScore">/{{report.totalQuestionsScore}}</span>
+                  <span *ngIf="!report.totalQuestionsScore && report.totalMaxScore">/{{report.totalMaxScore}}</span>
+                </span></p>
+            </ion-label>
+          </div>
+          <div class="card-icon">
+            <ion-icon name="ios-arrow-forward"></ion-icon>
+          </div>
+        </div>
     </div>
     <div *ngIf="listOfReports.length == 0" text-center>
       <div class="img-container">

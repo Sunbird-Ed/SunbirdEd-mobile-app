@@ -407,15 +407,16 @@ export class CollectionDetailEtbPage implements OnInit {
       this.generateQRSessionEndEvent(this.source, this.cardData.identifier);
     }
 
-    this.backButtonFunc = this.platform.backButton.subscribe(() => {
+    this.backButtonFunc = this.platform.backButton.subscribeWithPriority(10,() => {
       this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.COLLECTION_DETAIL,
         Environment.HOME,
         false,
         this.cardData.identifier,
         this.corRelationList);
       this.location.back();
+      this.backButtonFunc.unsubscribe();
     });
-    // this.backButtonFunc.unsubscribe();
+    
   }
 
   registerDeviceBackButton() {

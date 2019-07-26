@@ -65,8 +65,9 @@ export class ContentRatingAlertComponent implements OnInit {
     private appGlobalService: AppGlobalService,
     private commonUtilService: CommonUtilService) {
     this.getUserId();
-    this.platform.backButton.subscribe(() => {
+    this.backButtonFunc = this.platform.backButton.subscribe(() => {
       this.modalController.dismiss();
+      this.backButtonFunc.unsubscribe();
     });
     // this.content = this.navParams.get('content');
     // this.userRating = this.navParams.get('rating');
@@ -108,7 +109,9 @@ export class ContentRatingAlertComponent implements OnInit {
       console.log(err);
     });
   }
-
+  ionViewWillLeave() {
+    this.backButtonFunc.unsubscribe();
+  }
   /**
    * Get user id
    */

@@ -178,6 +178,7 @@ export class QrcoderesultPage implements OnDestroy {
     this.getChildContents();
     this.unregisterBackButton = this.platform.backButton.subscribeWithPriority(11, () => {
       this.handleBackButton(InteractSubtype.DEVICE_BACK_CLICKED);
+      this.unregisterBackButton.unsubscribe();
     });
     this.subscribeSdkEvent();
     this.headerObservable = this.headerService.headerEventEmitted$.subscribe(eventName => {

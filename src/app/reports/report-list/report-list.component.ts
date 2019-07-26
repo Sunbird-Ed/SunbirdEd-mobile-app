@@ -75,11 +75,14 @@ export class ReportListComponent implements OnInit {
   handleDeviceBackButton() {
     this.backButtonFunc = this.platform.backButton.subscribe(() => {
       this.location.back();
+      this.backButtonFunc.unsubscribe();
     });
   }
 
   ionViewWillLeave() {
-    this.backButtonFunc.unsubscribe();
+    if(this.backButtonFunc) {
+      this.backButtonFunc.unsubscribe();
+    }
   }
 
   async ngOnInit() {
@@ -138,7 +141,7 @@ export class ReportListComponent implements OnInit {
         const uids = this.navData.uids;
         const users = this.navData.users;
 
-        this.router.navigate([RouterLinks.GROUP_REPORT], {
+        this.router.navigate([`${RouterLinks.REPORTS}/${RouterLinks.GROUP_REPORT}`], {
           state: {
             report: report,
             uids: uids,
@@ -146,7 +149,6 @@ export class ReportListComponent implements OnInit {
             group: this.groupInfo
             }
         });
-  
       }
   }
 

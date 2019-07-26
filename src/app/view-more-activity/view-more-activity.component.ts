@@ -270,7 +270,7 @@ export class ViewMoreActivityComponent implements OnInit {
         this.generateQRSessionEndEvent(this.source, this.course.identifier);
       }
       this.location.back();
-      // this.backButtonFunc.unsubscribe();
+      this.backButtonFunc.unsubscribe();
     });
   }
 

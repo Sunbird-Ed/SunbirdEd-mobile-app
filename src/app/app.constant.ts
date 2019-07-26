@@ -446,4 +446,10 @@ export class RouterLinks {
     public static readonly TERMS_AND_CONDITIONS = 'terms-and-conditions';
 
     public static readonly ONBOARDING = 'onboarding';
+
+    public static readonly LIBRARY_TAB = "/"+RouterLinks.TABS+"/"+RouterLinks.RESOURCES;
+    public static readonly COURSE_TAB = "/"+RouterLinks.TABS+"/"+RouterLinks.COURSES;
+    public static readonly PROFILE_TAB = "/"+RouterLinks.TABS+"/"+RouterLinks.PROFILE;
+    public static readonly GUEST_PROFILE_TAB = "/"+RouterLinks.TABS+"/"+RouterLinks.GUEST_PROFILE;
+    public static readonly DOWNLOAD_TAB = "/"+RouterLinks.TABS+"/"+RouterLinks.DOWNLOADS_TAB;
 }
