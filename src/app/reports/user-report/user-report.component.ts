@@ -1,5 +1,5 @@
 import { ReportAlertComponent } from './../report-alert/report-alert.component';
-import { Component, OnInit, NgZone, Inject } from '@angular/core';
+import { Component, OnInit, NgZone, Inject, ViewEncapsulation } from '@angular/core';
 import { LoadingController } from '@ionic/angular';
 import {
   SummarizerService,
@@ -32,6 +32,7 @@ import { Router } from '@angular/router';
   selector: 'app-user-report',
   templateUrl: './user-report.component.html',
   styleUrls: ['./user-report.component.scss'],
+  encapsulation: ViewEncapsulation.None
 })
 export class UserReportComponent implements OnInit {
 
@@ -86,7 +87,7 @@ export class UserReportComponent implements OnInit {
     this.utilityService.getDownloadDirectoryPath()
       .then((response: any) => {
         this.downloadDirectory = response;
-      })
+      });
   }
 
   getNavData() {

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit , ViewEncapsulation } from '@angular/core';
 import { NavParams, ModalController, Platform, NavController, PopoverController } from '@ionic/angular';
 import { Location } from '@angular/common';
 
@@ -10,6 +10,7 @@ export interface QRAlertCallBack {
   selector: 'app-report-alert',
   templateUrl: './report-alert.component.html',
   styleUrls: ['./report-alert.component.scss'],
+  encapsulation: ViewEncapsulation.None
 })
 export class ReportAlertComponent implements OnInit {
 
@@ -55,8 +56,6 @@ export class ReportAlertComponent implements OnInit {
     if (activePopover) {
       await activePopover.dismiss();
     } else {
-      // Migration todo
-      // this.navCtrl.pop();
       this.location.back();
 
     }
