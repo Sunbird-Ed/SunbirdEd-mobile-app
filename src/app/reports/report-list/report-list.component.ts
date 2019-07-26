@@ -138,7 +138,7 @@ export class ReportListComponent implements OnInit {
         const uids = this.navData.uids;
         const users = this.navData.users;
 
-        this.router.navigate([RouterLinks.GROUP_REPORT], {
+        this.router.navigate([`${RouterLinks.REPORTS}/${RouterLinks.GROUP_REPORT}`], {
           state: {
             report: report,
             uids: uids,
@@ -146,7 +146,6 @@ export class ReportListComponent implements OnInit {
             group: this.groupInfo
             }
         });
-  
       }
   }
 

@@ -1,3 +1,5 @@
+import { Component, Input, Output, OnInit, EventEmitter, ViewEncapsulation } from '@angular/core';
+import { TelemetryObject, ReportSummary, Migration } from 'sunbird-sdk';
 import { Component, Input, Output, OnInit, EventEmitter } from '@angular/core';
 import { TelemetryObject, ReportSummary } from 'sunbird-sdk';
 import { PopoverController } from '@ionic/angular';
@@ -10,6 +12,7 @@ import { NavigationExtras, Router } from '@angular/router';
   selector: 'app-assessment-details',
   templateUrl: './assessment-details.component.html',
   styleUrls: ['./assessment-details.component.scss'],
+  encapsulation: ViewEncapsulation.None
 })
 export class AssessmentDetailsComponent implements OnInit {
 

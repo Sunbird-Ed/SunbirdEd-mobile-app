@@ -73,7 +73,6 @@ export class GroupReportListComponent implements OnInit {
 
   fileTransfer: FileTransferObject = this.transfer.create();
   constructor(
-    private navParams: NavParams,
     private loading: LoadingController,
     private zone: NgZone,
     private transfer: FileTransfer,
@@ -95,6 +94,8 @@ export class GroupReportListComponent implements OnInit {
       this.groupInfo = this.router.getCurrentNavigation().extras.state.group;
       this.report = this.router.getCurrentNavigation().extras.state.report;
       this.uids = this.router.getCurrentNavigation().extras.state.uids;
+      this.reportSummary = this.router.getCurrentNavigation().extras.state.report;
+
     }
     this.downloadDirectory = this.file.dataDirectory;
     this.utilityService.getDownloadDirectoryPath()
@@ -240,10 +241,9 @@ export class GroupReportListComponent implements OnInit {
 
 
   goToReportList() {
-    const reportSummary: ReportSummary = this.navParams.get('report');
     this.router.navigate(['user-report'], {
       state: {
-        'report': reportSummary
+        'report': this.reportSummary
       }
     });
   }
