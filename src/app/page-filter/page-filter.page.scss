@@ -1,4 +1,4 @@
-@import "../../global.scss";
+@import "src/global.scss";
 :host {
     .subtitle {
       text-transform: capitalize;
@@ -55,4 +55,12 @@
     background-color: map-get($colors, black) !important;
     opacity: 0.4 !important;
   }
-  
+  .item-native {
+    width: auto;
+    margin: 16px !important;
+    background-color: #F0F0F0;
+    color: #979797;
+    font-size: 1em;
+    height: 2em;
+    padding-top: 0.5em;
+  }

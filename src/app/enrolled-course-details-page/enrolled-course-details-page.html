@@ -17,8 +17,8 @@
 					</div>
 					<ion-row>
 						<div class="col-2">
-							<!-- <rating align-items-start (click)="rateContent();" [(ngModel)]="course.me_averageRating" readOnly="true" max="5"
-							 no-padding></rating> -->
+							<rating align-items-start (click)="rateContent();" [(ngModel)]="course.me_averageRating" readonly="true" max="5"
+							 no-padding></rating>
 						</div>
 						<div class="margin-top-3 text-gray-color col-1">
 							&nbsp;({{ course?.me_totalRatings ? course?.me_totalRatings : 0 }})

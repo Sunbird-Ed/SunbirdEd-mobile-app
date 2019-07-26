@@ -1,0 +1,51 @@
+@import "src/global.scss";
+:host {
+  .display-inline {
+    display: inline;
+  }
+  .heading1 {
+    color: map-get($colors, dark);
+    margin-bottom: 3%;
+    font-size: 1.8rem;
+    padding: 0;
+    margin-left: 0;
+    @extend .font-weight-bolder;
+  }
+  .heading2 {
+    margin-top: 5px;
+  }
+  .text-gray-color {
+    color: gray;
+    @extend .NotoSans;
+    margin-top: 6px;
+    font-size: 1.3em;
+    margin-bottom: 5px;
+  }
+  .subtitle {
+    text-transform: capitalize;
+    font-size: 1.3em;
+    @extend .font-weight-700;
+    margin-bottom: 10px;
+    color: map-get($colors, primary_black);
+  }
+  .content {
+    margin-bottom: 10px;
+    color: map-get($colors, primary_black);
+  }
+  .subheader {
+    margin-bottom: 5px;
+  }
+  .feedback {
+    border-top: 0px;
+    @include ltr() {
+      border-left: 0px;
+      border-right: 0px;
+    }
+    @include rtl() {
+      border-left: 0px;
+      border-right: 0px;
+    }
+    border-bottom: 2px solid gray;
+    padding-top: 12px;
+  }
+}

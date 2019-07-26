@@ -1,5 +1,10 @@
+<<<<<<< HEAD
 import { Component, Input, Output, OnInit, EventEmitter, ViewEncapsulation } from '@angular/core';
 import { TelemetryObject, ReportSummary, Migration } from 'sunbird-sdk';
+=======
+import { Component, Input, Output, OnInit, EventEmitter } from '@angular/core';
+import { TelemetryObject, ReportSummary } from 'sunbird-sdk';
+>>>>>>> 4f80f0409e87006f76e46df5148bcd1745b010f0
 import { PopoverController } from '@ionic/angular';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { PageId, InteractSubtype, ObjectType, InteractType, Environment } from '@app/services/telemetry-constants';
@@ -56,7 +61,6 @@ export class AssessmentDetailsComponent implements OnInit {
           contentId: row.contentId,
           totalQuestionsScore: this.assessmentData.questionsScore
         };
-        // this.navCtrl.push(UserReportPage, { 'report': reportSummaryRequest });
         const navigationExtras: NavigationExtras = { state: { report: reportSummaryRequest } };
         this.router.navigate([`/${RouterLinks.REPORTS}/${RouterLinks.USER_REPORT}`], navigationExtras);
 
@@ -74,17 +78,14 @@ export class AssessmentDetailsComponent implements OnInit {
       telemetryObject
     );
     if (showPopup && callback) {
-      /* Migration-TODO */
       const popover = await this.popoverCtrl.create({
         component: callback,
-        componentProps : {
-          'callback': event
-        },
-          cssClass: 'resource-filter'
-        });
-      await popover.present();
-  } else {
-  this.showQuestionFromUser.emit();
-}
+        componentProps: { callback: event },
+        cssClass: 'resource-filter'
+      });
+      popover.present();
+    } else {
+      this.showQuestionFromUser.emit();
+    }
   }
 }

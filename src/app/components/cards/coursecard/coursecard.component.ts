@@ -147,7 +147,7 @@ export class CourseCardComponent implements OnInit {
                   component: EnrollmentDetailsPage,
                   componentProps: {
                     upcommingBatches: this.batches,
-                    retiredBatched: retiredBatched,
+                    retiredBatched,
                     courseId: content.identifier
                   },
                   cssClass: 'enrollement-popover'

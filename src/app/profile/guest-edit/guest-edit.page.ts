@@ -2,7 +2,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 import {
   AlertController,
   Events,
-  LoadingController,
   Platform,
   PopoverController
 } from '@ionic/angular';
@@ -198,7 +197,7 @@ export class GuestEditPage implements OnInit {
         actionsButtons: [
           {
             btntext: this.commonUtilService.translateMessage('CANCEL'),
-            btnClass: 'sb-btn sb-btn-sm  sb-btn-outline-info'
+            btnClass: 'sb-btn sb-btn-sm sb-btn-outline-info'
           }, {
             btntext: this.commonUtilService.translateMessage('OKAY'),
             btnClass: 'popover-color'

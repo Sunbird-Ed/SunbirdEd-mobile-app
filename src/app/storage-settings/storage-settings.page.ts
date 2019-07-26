@@ -82,9 +82,6 @@ export class StorageSettingsPage implements OnInit {
   }
 
   constructor(
-    // migration-TODO
-    // public navCtrl: NavController,
-    // public navParams: NavParams,
     private commonUtilService: CommonUtilService,
     private headerService: AppHeaderService,
     // migration-TODO

@@ -10,40 +10,31 @@
     border-width: 2px !important;
     border-radius: 4px;
   }
-  .radius {
-    border-radius: 6px;
-  }
   .item-background.item-md {
     background-color: map-get($colors, light_gray) !important;
-  }
-
-  .radius {
-    border-radius: 6px;
+    .item-native > .item-inner{
+      padding-right: 0px !important;
+    }
   }
   .bg-color-white {
     background-color: map-get($colors, light_gray) !important;
   }
   .advanced-menu {
-    //MIGRATION TODO
-    // @include padding(0, 0, 0, 7% !important);
+    @include padding(0, 0, 0, 7% !important);
   }
   .advanced-menu ion-icon[item-end] {
-    //MIGRATION TODO
-    // @include margin(0, null, null, null !important);
-    // @include padding(null, 8px, null, null !important);
+    @include margin(0, null, null, null !important);
+    @include padding(null, 8px, null, null !important);
   }
   .advanced-menu .item-md,
   .advanced-menu .item-ios {
-      //MIGRATION TODO
-    // @include margin(0, null, null, null !important);
+    @include margin(0, null, null, null !important);
   }
   .padding-left-0 {
-      //MIGRATION TODO
-    // @include padding(null, null, null, 0 !important);
+    @include padding(null, null, null, 0 !important);
   }
   .rm-label-margin ion-label {
-      //MIGRATION TODO
-    // @include margin(0, null, null, null !important);
+    margin-top: 0 !important;
     margin-bottom: 0 !important;
   }
   .image-text {
@@ -61,14 +52,13 @@
     width: 100px;
     height: 100px;
     top: 30%;
-    //MIGRATION TODO
-    /* @include ltr() {
+    @include ltr() {
       left: 60%;
     }
     @include rtl() {
       right: 60%;
     }
-    @include margin(null, null, null, -97px); */
+    @include margin(null, null, null, -97px);
     margin-top: -144x;
   }
   .playcontent-label {
@@ -91,8 +81,7 @@
   }
   .playcontent-label {
     font-size: 1.4rem !important;
-    //MIGRATION TODO
-    // @include padding(1px, 0px, 1px, 6px !important);
+    @include padding(1px, 0px, 1px, 6px !important);
   }
   .footer {
     background-color: white;
@@ -101,4 +90,23 @@
   .icon.ion-md-information-circle {
     vertical-align: text-bottom;
   }
+}
+
+.gd-mb-6{
+  margin-bottom: 6px !important;
+  --inner-padding-end: 0;
+}
+
+.gd-icon-font-size{
+  font-size: 28px;
+}
+
+.radius {
+  border-radius: 6px;
+}
+
+.gd-row-padding {
+  // Migration TODO RTL
+  // @include padding(12px, 16px, 16px, 18px !important);
+  padding: 12px 16px 16px 18px !important;
 }

@@ -688,49 +688,21 @@ ion-toolbar {
     height: 0px !important;
   }
 }
-
-.sb-popover-permissions {
-  .sb-popover-items {
-    overflow: hidden;
-    padding: 16px !important;
-    padding-top: 32px !important;
-  }
-  .icon-container {
-    float: left;
-    padding-right: 16px;
-  }
-
-  .sb-popover-container .sb-popover-content-details {
-    text-align: left;
-    float: left;
-    padding-left: 20px;
-    border-left: 2px solid #cccccc;
-    max-width: 80%;
-    .main-title {
-      margin: 0px !important;
-      font-weight: bold !important;
-      text-align: left;
-    }
-    .meta-info {
-      padding: 0px !important;
-      text-align: left;
-    }
-  }
-
-  .sb-popover-container .sb-popover-items .sb-popover-content-details .main-title .meta-info {
-    text-align: left;
-  }
+.view-credits .popover-content {
+  margin: 0;
+  width: 100% !important;
+  height: auto;
+  box-shadow: unset;
+  position: fixed;
+  left: 0 !important;
+  top: unset !important;
+  bottom: 0;
+  transform-origin: bottom -100% !important;
+  transform: translateY(0) !important;
+  overflow-y: hidden;
 }
 
-.popover-button-cancel {
-  background-color: #fff;
-  border: 1px solid #024f9d;
-  color: #024f9d !important;
-  width: 150px;
-}
-
-.popover-button-allow {
-  border: 1px solid #024f9d;
-  background-color: #024f9d;
-  width: 150px;
+.view-credits ion-backdrop {
+  background-color: map-get($colors, dark) !important;
+  opacity: 0.4 !important;
 }

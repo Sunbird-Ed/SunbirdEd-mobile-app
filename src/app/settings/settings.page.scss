@@ -1,12 +1,18 @@
+@import 'src/global.scss';
+
 .settings-item-style {
     padding-top:5px;
 }
 
 ion-icon{
     font-size: 22px !important;
-    font-weight: 550 !important;
-    // @extend .font-weight-550;
+    @extend .font-weight-550;
 }
 .item-ios h2 {
     line-height: 1.7;
+}
+
+.setting-label {
+    font-size: 18px;
+    color: black;
 }

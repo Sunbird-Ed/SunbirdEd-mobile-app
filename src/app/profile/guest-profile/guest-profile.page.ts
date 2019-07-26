@@ -1,18 +1,16 @@
 // import { ActiveDownloadsPage } from './../../active-downloads/active-downloads';
 import { TranslateService } from '@ngx-translate/core';
 import { Component, Inject, OnInit } from '@angular/core';
-import { Events, PopoverController, ToastController } from '@ionic/angular';
+import { Events, ToastController } from '@ionic/angular';
 import * as _ from 'lodash';
-import { GuestEditPage, } from '../guest-edit/guest-edit.page';
-import { UserTypeSelectionPage } from '../../user-type-selection';
 import {
   AppGlobalService,
   CommonUtilService,
   TelemetryGeneratorService,
   AppHeaderService,
   PageId, Environment, InteractType, InteractSubtype
-} from '../../../services';
-import { ProfileConstants, MenuOverflow, PreferenceKey, RouterLinks } from '../../app.constant';
+} from '@app/services';
+import { ProfileConstants, PreferenceKey, RouterLinks } from '@app/app/app.constant';
 import {
   Framework,
   FrameworkCategoryCodesGroup,
@@ -47,22 +45,18 @@ export class GuestProfilePage implements OnInit {
   loader: any;
   headerObservable: any;
   toast: any;
-
-
   isUpgradePopoverShown = false;
-
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
-    private popoverCtrl: PopoverController,
+    @Inject('FRAMEWORK_SERVICE') private frameworkService: FrameworkService,
+    @Inject('FRAMEWORK_UTIL_SERVICE') private frameworkUtilService: FrameworkUtilService,
+    @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
     private events: Events,
     public commonUtilService: CommonUtilService,
     public appGlobalService: AppGlobalService,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private translate: TranslateService,
-    @Inject('FRAMEWORK_SERVICE') private frameworkService: FrameworkService,
-    @Inject('FRAMEWORK_UTIL_SERVICE') private frameworkUtilService: FrameworkUtilService,
-    @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
     private headerServie: AppHeaderService,
     public toastController: ToastController,
     private route: ActivatedRoute,
@@ -228,9 +222,9 @@ export class GuestProfilePage implements OnInit {
 
 
   /**
- * Takes the user to role selection screen
- *
- */
+   * Takes the user to role selection screen
+   *
+   */
   goToRoles() {
     const navigationExtras: NavigationExtras = {
       state: {
