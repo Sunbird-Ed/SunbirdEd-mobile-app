@@ -10,6 +10,7 @@ import { ComponentsModule } from '../components/components.module';
 import { DirectivesModule } from '@app/directives/directives.module';
 import { PipesModule } from '@app/pipes/pipes.module';
 import { TranslateModule } from '@ngx-translate/core';
+import { IonicRatingModule, RatingComponent } from 'ionic4-rating';
 
 const routes: Routes = [
   {
@@ -27,7 +28,8 @@ const routes: Routes = [
     TranslateModule.forChild(),
     PipesModule,
     DirectivesModule,
-    ComponentsModule
+    ComponentsModule,
+    IonicRatingModule
   ],
   declarations: [CollectionDetailsPage]
 })
