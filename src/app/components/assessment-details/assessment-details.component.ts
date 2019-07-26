@@ -1,10 +1,7 @@
-<<<<<<< HEAD
 import { Component, Input, Output, OnInit, EventEmitter, ViewEncapsulation } from '@angular/core';
 import { TelemetryObject, ReportSummary, Migration } from 'sunbird-sdk';
-=======
 import { Component, Input, Output, OnInit, EventEmitter } from '@angular/core';
 import { TelemetryObject, ReportSummary } from 'sunbird-sdk';
->>>>>>> 4f80f0409e87006f76e46df5148bcd1745b010f0
 import { PopoverController } from '@ionic/angular';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { PageId, InteractSubtype, ObjectType, InteractType, Environment } from '@app/services/telemetry-constants';
