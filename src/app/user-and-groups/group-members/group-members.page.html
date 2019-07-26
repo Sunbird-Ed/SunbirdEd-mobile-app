@@ -20,14 +20,17 @@
     <ion-row>
       <ion-col class="rm-padding-left" size-md="4">
         <ion-text>
-          <p *ngIf="userList.length" text-left color="title" text-uppercase>
+          <p *ngIf="userList.length" text-left class="gm-title-color" text-uppercase>
             <strong>{{userList?.length}}&nbsp;{{'USERS' | translate}}</strong>
           </p>
         </ion-text>
       </ion-col>
       <ion-col size-md="4" push-md="4" class="rm-padding-right">
-        <ion-button class="rm-padding-right" float-end fill="clear" (click)="selectAll()">{{'SELECT_ALL' | translate}}
-        </ion-button>
+          <ion-text class="gm-float-right">
+            <p *ngIf="userList.length" text-left text-uppercase>
+              <a (click)="selectAll()" class="gm-primary-color">{{'SELECT_ALL' | translate}}</a>
+            </p>
+          </ion-text>
       </ion-col>
     </ion-row>
   </div>
@@ -46,9 +49,9 @@
     </div>
   </div>
   <div *ngIf="userList?.length">
-    <ion-item *ngFor="let user of userList; let i = index;" class="item-background" margin-bottom no-lines>
-      <ion-label (click)="toggleSelect(i)">
-        <h6 class="line-height-2">
+    <ion-item *ngFor="let user of userList; let i = index;" class="gm-item-background" margin-bottom no-lines>
+      <ion-label (click)="toggleSelect(i)" class="PL16">
+        <h6 class="MT0">
           <strong>{{user?.handle}}</strong>
         </h6>
         <p>

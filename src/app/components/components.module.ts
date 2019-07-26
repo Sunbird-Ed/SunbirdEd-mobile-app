@@ -37,9 +37,11 @@ import { ProfileAvatarComponent } from './profile-avatar/profile-avatar.componen
 import { NotificationItemComponent } from './notification-item/notification-item.component';
 import { AssessmentDetailsComponent } from './assessment-details/assessment-details.component';
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
+import { ViewCreditsComponent } from './popups/view-credits/view-credits.component';
 
 @NgModule({
-  declarations: [ApplicationHeaderComponent,
+  declarations: [
+    ApplicationHeaderComponent,
     SignInCardComponent,
     TextBookCardComponent,
     NewCourseCardComponent,
@@ -68,7 +70,8 @@ import { NgxDatatableModule } from '@swimlane/ngx-datatable';
     ReportAlertComponent,
     ProfileAvatarComponent,
     NotificationItemComponent,
-    AssessmentDetailsComponent
+    AssessmentDetailsComponent,
+    ViewCreditsComponent
   ],
   imports: [
     CommonModule,
@@ -93,7 +96,8 @@ import { NgxDatatableModule } from '@swimlane/ngx-datatable';
     EditContactDetailsPopupComponent,
     EditContactVerifyPopupComponent,
     ConfirmAlertComponent,
-    AppRatingAlertComponent
+    AppRatingAlertComponent,
+    ViewCreditsComponent
   ],
   exports: [
     ApplicationHeaderComponent,
@@ -123,7 +127,8 @@ import { NgxDatatableModule } from '@swimlane/ngx-datatable';
     AppRatingAlertComponent,
     ProfileAvatarComponent,
     NotificationItemComponent,
-    AssessmentDetailsComponent
+    AssessmentDetailsComponent,
+    ViewCreditsComponent
   ],
   providers: [FileSizePipe, Keyboard]
 })

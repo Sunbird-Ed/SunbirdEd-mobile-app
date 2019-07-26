@@ -1481,7 +1481,7 @@ export class ContentDetailsPage implements OnInit {
     const response = await confirm.onDidDismiss();
     if (response.data) {
       this.deleteContent();
-      // this.viewCtrl.dismiss();
+      this.popoverCtrl.dismiss();
     }
   }
 
@@ -1572,8 +1572,8 @@ export class ContentDetailsPage implements OnInit {
   }
 
   updateBookmarkPreference() {
-    // this.preference.putString(PreferenceKey.IS_BOOKMARK_VIEWED, 'true');
-    // this.viewCtrl.dismiss();
+    this.preference.putString(PreferenceKey.IS_BOOKMARK_VIEWED, 'true');
+    this.popoverCtrl.dismiss();
     console.log('updateBookmarkPreference');
   }
 

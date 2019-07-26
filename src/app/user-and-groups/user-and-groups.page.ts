@@ -1,6 +1,6 @@
 import { RouterLinks } from './../app.constant';
 import { Component, Inject, NgZone, OnInit } from '@angular/core';
-import { Platform, LoadingController, PopoverController, Events } from '@ionic/angular';
+import { Platform, PopoverController, Events } from '@ionic/angular';
 import { Location } from '@angular/common';
 import {
   AuthService,
@@ -76,7 +76,6 @@ export class UserAndGroupsPage implements OnInit {
     private appGlobalService: AppGlobalService,
     private container: ContainerService,
     private telemetryGeneratorService: TelemetryGeneratorService,
-    private loadingCtrl: LoadingController,
     private commonUtilService: CommonUtilService,
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
     private headerService: AppHeaderService,
@@ -159,7 +158,7 @@ export class UserAndGroupsPage implements OnInit {
             this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.GUEST_EDIT}`], {
               state: {
                 profile: this.userList[index],
-                isCurrentUser: isCurrentUser
+                isCurrentUser
               }
             });
           } else {
@@ -179,7 +178,7 @@ export class UserAndGroupsPage implements OnInit {
           }
           await popover.dismiss();
         },
-        isCurrentUser: isCurrentUser
+        isCurrentUser
       },
       cssClass: 'user-popover',
       event: myEvent

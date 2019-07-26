@@ -77,7 +77,9 @@ export class SunbirdQRScanner {
 
   }
 
-  public async startScanner(source: string, showButton: boolean = false,
+  public async startScanner(
+    source: string,
+    showButton: boolean = false,
     screenTitle = this.mQRScannerText['SCAN_QR_CODE'],
     displayText = this.mQRScannerText['SCAN_QR_INSTRUCTION'],
     displayTextColor = '#0b0b0b',
@@ -230,14 +232,15 @@ export class SunbirdQRScanner {
       cssClass: 'sb-popover sb-popover-permissions primary dw-active-downloads-popover',
     });
 
-    confirm.present();
+    await confirm.present();
 
   }
   public stopScanner() {
-    console.log('InsideSTopScanner===>>');
-    this.backButtonFunc && this.backButtonFunc.unsubscribe();
-    this.backButtonFunc = undefined;
-    (<any>window).qrScanner.stopScanner();
+    if (this.backButtonFunc) {
+      this.backButtonFunc.unsubscribe();
+    }
+
+    (window as any).qrScanner.stopScanner();
     if (this.pauseSubscription) {
       this.pauseSubscription.unsubscribe();
     }
@@ -255,8 +258,9 @@ export class SunbirdQRScanner {
     this.router.navigate(['/tabs'], navigationExtras);
   }
 
-  private startQRScanner(screenTitle: string, displayText: string, displayTextColor: string,
-                         buttonText: string, showButton: boolean, source: string) {
+  private startQRScanner(
+    screenTitle: string, displayText: string, displayTextColor: string,
+    buttonText: string, showButton: boolean, source: string) {
     if (this.backButtonFunc) {
       return;
     }
@@ -376,7 +380,7 @@ export class SunbirdQRScanner {
     popUp = await this.popCtrl.create({
       component: QRScannerAlert,
       componentProps: {
-        callback: callback,
+        callback,
         invalidContent: true,
         messageKey: 'UNKNOWN_QR',
         tryAgainKey: 'TRY_DIFF_QR'
