@@ -17,8 +17,7 @@
     position: absolute;
     z-index: -1;
     top: 0;
-    // Migration todo
-    /*         @include ltr() {
+    @include ltr() {
             right: 30%;
             left: 0;
         }
@@ -27,12 +26,11 @@
             left: 30%;
             right: 0;
         }
- */
+ 
     background: green;
   }
   .row-align {
-    // Migration
-    // @include padding(10px, 16px !important);
+    @include padding(10px, 16px !important);
   }
   .margin0 {
     margin: 0 !important;
@@ -61,16 +59,13 @@
     margin-top: 12px !important;
   }
   .input-wrapper {
-    // Migration
-    // @include padding(null, 16px !important);
+    @include padding(null, 16px !important);
   }
   .item-ios {
-    // Migration
-    // @include padding(null, null, null, 0);
+    @include padding(null, null, null, 0);
   }
   .item-md {
-    // Migration
-    // @include padding(null, null, null, 0 !important);
+    @include padding(null, null, null, 0 !important);
   }
   .text-center {
     text-align: center !important;
@@ -134,14 +129,13 @@
   box-shadow: unset;
   position: fixed;
   left: 0 !important;
-  // Migration
-  /* @include ltr() {
+   @include ltr() {
     left: 0 !important;
   }
 
   @include rtl() {
     right: 0 !important;
-  } */
+  } 
   top: unset !important;
   bottom: 0 !important;
   transform-origin: bottom -100% !important;

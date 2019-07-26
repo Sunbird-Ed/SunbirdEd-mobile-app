@@ -6,20 +6,16 @@
       background-color: blue;
     }
     .input-wrapper {
-        // Migration todo
-    //   @include padding(null, 16px !important);
+     @include padding(null, 16px !important);
     }
     .row-align {
-        // Migration todo
-    //   @include padding(10px, 16px !important);
+     @include padding(10px, 16px !important);
     }
     .item-ios {
-        // Migration todo
-    //   @include padding(null, null, null, 0 !important);
+       @include padding(null, null, null, 0 !important);
     }
     .item-md {
-        // Migration todo
-    //   @include padding(null, null, null, 0 !important);
+      @include padding(null, null, null, 0 !important);
     }
     .assessmentDetails h3 {
       white-space: normal;
@@ -32,13 +28,12 @@
     max-height: 62vh !important;
     box-shadow: unset;
     position: fixed;
-    // Migration todo
-    /* @include ltr() {
+     @include ltr() {
       left: 0 !important;
     }
     @include rtl() {
       right: 0 !important;
-    } */
+    } 
     top: unset !important;
     bottom: 0 !important;
     transform-origin: bottom -100% !important;

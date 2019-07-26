@@ -10,8 +10,7 @@
   .bgColor {
     background-color: map-get($colors, light_gray) !important;
     border-radius: 6px;
-    // Migration todo
-    // @include padding(5px, null, null, 18px !important);
+    @include padding(5px, null, null, 18px !important);
   }
   .marginTop {
     margin-top: 15px !important;
