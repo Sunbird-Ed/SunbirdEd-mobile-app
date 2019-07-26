@@ -1,37 +1,31 @@
 <ion-content padding>
 
-  <div class="label">
+  <div class="label PT16">
     {{ 'AUTOMATIC_SYNC' | translate }}
   </div>
 
-  <ion-list no-lines [(ngModel)]="dataSyncType" (ionChange)="onSelected()">
-<ion-radio-group>
-    <ion-item>
-      <ion-label>
-        <ion-radio [value]="OPTIONS.off" slot="start"></ion-radio>
-        <ion-label>{{ 'OFF' | translate }}</ion-label>
-      </ion-label>
-    </ion-item>
+  <ion-list lines="none" [(ngModel)]="dataSyncType" (ionChange)="onSelected()">
+    <ion-radio-group>
+      <ion-item class="ds-item">
+        <ion-radio class="ds-m0" [value]="OPTIONS.off" slot="start"></ion-radio>
+        <ion-label class="ds-m0">{{ 'OFF' | translate }}</ion-label>
+      </ion-item>
 
-    <ion-item>
-      <ion-label>
-        <ion-radio [value]="OPTIONS.over_wifi" slot="start"></ion-radio>
-        <ion-label>{{ 'OVER_WIFI' | translate }}</ion-label>
-      </ion-label>
-    </ion-item>
+      <ion-item class="ds-item">
+        <ion-radio class="ds-m0" [value]="OPTIONS.over_wifi" slot="start"></ion-radio>
+        <ion-label class="ds-m0">{{ 'OVER_WIFI' | translate }}</ion-label>
+      </ion-item>
 
-    <ion-item>
-      <ion-label>
-        <ion-radio [value]="OPTIONS.always_on" slot="start"></ion-radio>
-        <ion-label>{{ 'ALWAYS_ON' | translate }}</ion-label>
-      </ion-label>
-    </ion-item>
-  </ion-radio-group>
-</ion-list>
+      <ion-item class="ds-item">
+        <ion-radio class="ds-m0" [value]="OPTIONS.always_on" slot="start"></ion-radio>
+        <ion-label class="ds-m0">{{ 'ALWAYS_ON' | translate }}</ion-label>
+      </ion-item>
+    </ion-radio-group>
+  </ion-list>
 
   <ion-label>{{ latestSync | translate}}</ion-label>
 
-  <ion-button expand="block" (click)="onSyncClick()">{{ 'SYNC_NOW' | translate }}</ion-button>
+  <ion-button expand="block" class="MT16" (click)="onSyncClick()">{{ 'SYNC_NOW' | translate }}</ion-button>
   <hr>
   <ion-button (click)="shareTelemetry()" no-padding fill="clear">{{ 'SHARE_TELEMETRY' | translate }}</ion-button>
 

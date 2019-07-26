@@ -1,5 +1,5 @@
 import {Component, Inject, OnInit} from '@angular/core';
-import {NavParams, Platform, ModalController} from '@ionic/angular';
+import {  NavParams, Platform, ModalController} from '@ionic/angular';
 import {AppRatingService, TelemetryGeneratorService, UtilityService} from '@app/services';
 import {SharedPreferences, TelemetryService} from 'sunbird-sdk';
 import {AppVersion} from '@ionic-native/app-version/ngx';
@@ -31,7 +31,7 @@ interface ViewText {
   templateUrl: './rating-alert.component.html',
   styleUrls: ['./rating-alert.component.scss'],
 })
-export class RatingAlertComponent implements OnInit {
+export class AppRatingAlertComponent implements OnInit {
 
   private readonly appRateView = {
     appRate: {type: ViewType.APP_RATE, heading: 'APP_RATING_RATE_EXPERIENCE', message: 'APP_RATING_TAP_ON_STARS'},

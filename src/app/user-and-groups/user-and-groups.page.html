@@ -31,29 +31,32 @@
         <div class="custom-margin-top">
           <div *ngIf="profileDetails?.handle">
             <ion-text class="ion-padding-top ion-padding-start">
-              <p text-uppercase color="dark_gray" class="subTitle">{{ 'LOGGED_IN_AS' | translate}}</p>
+              <p text-uppercase color="dark_gray" class="subTitle M0">{{ 'LOGGED_IN_AS' | translate}}</p>
             </ion-text>
-            <ion-item class="item-background radius" margin-bottom no-lines
+            <ion-item class="item-background ug-mb-6 ion-no-padding" margin-bottom lines="none"
               [ngClass]="i===selectedUserIndex ? 'blueBorder' : ''">
-              <ion-row class="bg-color-white">
-                <ion-col size="12" class="bg-color-white"
-                  (click)="selectUser(i,  profileDetails?.uid, profileDetails?.handle)">
-                  <ion-item class="bg-color-white padding-left-0 rm-label-margin" no-padding>
-                    <h6 [ngStyle]="{'color': currentUserId === profileDetails?.uid ? 'dodgerblue' : 'black'}"
-                      class="line-height-2 padding-left-2 elipsis" color="primary">
-                      <strong *ngIf="profileDetails">
-                        {{profileDetails.serverProfile ? profileDetails.serverProfile.firstName : profileDetails.handle}}&nbsp;{{profileDetails.serverProfile?.lastName}}</strong>
-                    </h6>
-                    <!-- <p>{{profileDetails?.grade}}</p> -->
-                    <p *ngIf="profileDetails?.profileType === ProfileType.TEACHER">
-                      {{'USER_TYPE_1' | translate | titlecase}}</p>
-                    <p *ngIf="profileDetails?.profileType === ProfileType.STUDENT">
-                      {{'USER_TYPE_2' | translate | titlecase}}</p>
-                  </ion-item>
-                </ion-col>
-                <!-- <ion-col col-1 class="advanced-menu">
-  </ion-col> -->
-              </ion-row>
+              <ion-label class="ion-no-margin">
+                <ion-grid class="radius ion-no-padding">
+                  <ion-row class="bg-color-white ug-row-padding radius">
+                    <ion-col size="12" class="bg-color-white"
+                      (click)="selectUser(i,  profileDetails?.uid, profileDetails?.handle)">
+                      <div class="bg-color-white padding-left-0 rm-label-margin" no-padding>
+                        <ion-label>
+                          <h6 [ngStyle]="{'color': currentUserId === profileDetails?.uid ? 'dodgerblue' : 'black'}"
+                            class="padding-left-2 ion-no-margin elipsis" color="primary">
+                            <strong *ngIf="profileDetails">
+                              {{profileDetails.serverProfile ? profileDetails.serverProfile.firstName : profileDetails.handle}}&nbsp;{{profileDetails.serverProfile?.lastName}}</strong>
+                          </h6>
+                          <p *ngIf="profileDetails?.profileType === ProfileType.TEACHER">
+                            {{'USER_TYPE_1' | translate | titlecase}}</p>
+                          <p *ngIf="profileDetails?.profileType === ProfileType.STUDENT">
+                            {{'USER_TYPE_2' | translate | titlecase}}</p>
+                        </ion-label>
+                      </div>
+                    </ion-col>
+                  </ion-row>
+                </ion-grid>
+              </ion-label>
             </ion-item>
           </div>
           <ion-label>
@@ -127,51 +130,50 @@
             </ion-col>
           </ion-row>
         </div>
-        <ion-list>
-          <div class="groupSecondSection" *ngIf="!showEmptyGroupsMessage">
-            <ion-item *ngFor="let group of groupList; let i = index" class="item-background radius" margin-top
-              margin-bottom no-lines>
-              <ion-row class="bg-color-white">
-                <ion-col size="11" class="bg-color-white">
-                  <ion-item class="bg-color-white padding-left-0 rm-label-margin" no-padding
-                    (click)="goToGroupDetail(i)">
-                    <h6 class="line-height-2 elipsis"
-                      [ngStyle]="{'color': currentGroupId === group?.gid ? 'dodgerblue' : 'black'}">
-                      <strong>{{group?.name}}</strong>
-                    </h6>
-                    <p>
-                      <ion-text>
-                        <span color="text_gray" *ngIf="group?.grade && group?.grade[0]">{{ getGradeNameFromCode(group)
-                        }}
-                        </span>
-                      </ion-text>
-                      <ion-text>
-                        <span *ngIf="group?.grade?.length">•</span>
-                      </ion-text>
-                      <ion-text>
-                        <span color="text_gray" *ngIf="group?.profilesCount > 1">{{group?.profilesCount}} {{'USERS'
-                        | translate}}</span>
-                      </ion-text>
-                      <ion-text>
-                        <span color="text_gray" *ngIf="group?.profilesCount === 1">{{group?.profilesCount}} {{'USER'
-                        | translate}}</span>
-                      </ion-text>
-                      <ion-text>
-                        <span color="text_gray" *ngIf=" !group?.profilesCount || group?.profilesCount === 0">{{'NO_USERS'
-                        | translate}}</span>
-                      </ion-text>
-                    </p>
-                  </ion-item>
-                </ion-col>
-                <ion-col size="1" class="advanced-menu" *ngIf="!playConfig">
-                  <ion-item slot="end" class="bg-color-white item-padding-left">
-                    <ion-icon class="line-height-2 padding-left-2" name="more" item-end
-                      (click)="presentPopover($event, i , false)"></ion-icon>
-                  </ion-item>
-                </ion-col>
-              </ion-row>
+        <ion-list lines="none" *ngIf="!showEmptyGroupsMessage">
+            <ion-item *ngFor="let group of groupList; let i = index" class="item-background ug-mb-6 ion-no-padding">
+              <ion-label class="ion-no-margin">
+                <ion-grid class="radius">
+                  <ion-row class="bg-color-white ug-row-padding radius">
+                    <ion-col size="11" class="bg-color-white">
+                      <div class="bg-color-white padding-left-0 rm-label-margin" no-padding (click)="goToGroupDetail(i)">
+                        <ion-label>
+                          <h6 class="elipsis ion-no-margin"
+                            [ngStyle]="{'color': currentGroupId === group?.gid ? 'dodgerblue' : 'black'}">
+                            <strong>{{group?.name}}</strong>
+                          </h6>
+                          <p>
+                            <ion-text>
+                              <span color="text_gray" *ngIf="group?.grade && group?.grade[0]">{{ getGradeNameFromCode(group) }}
+                              </span>
+                            </ion-text>
+                            <ion-text>
+                              <span *ngIf="group?.grade?.length">•</span>
+                            </ion-text>
+                            <ion-text>
+                              <span color="text_gray" *ngIf="group?.profilesCount > 1">{{group?.profilesCount}} {{'USERS'
+                              | translate}}</span>
+                            </ion-text>
+                            <ion-text>
+                              <span color="text_gray" *ngIf="group?.profilesCount === 1">{{group?.profilesCount}} {{'USER'
+                              | translate}}</span>
+                            </ion-text>
+                            <ion-text>
+                              <span color="text_gray" *ngIf=" !group?.profilesCount || group?.profilesCount === 0">{{'NO_USERS'
+                              | translate}}</span>
+                            </ion-text>
+                          </p>
+                        </ion-label>
+                      </div>
+                    </ion-col>
+                    <ion-col size="1" class="advanced-menu" *ngIf="!playConfig">
+                        <ion-icon class="ug-icon-font-size" name="more" item-end
+                          (click)="presentPopover($event, i , false)"></ion-icon>
+                    </ion-col>
+                  </ion-row>
+                  </ion-grid>
+              </ion-label>
             </ion-item>
-          </div>
         </ion-list>
       </div>
     </ion-list>

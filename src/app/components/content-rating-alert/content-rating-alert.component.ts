@@ -1,7 +1,7 @@
-import { Component, Inject, NgZone, OnInit } from '@angular/core';
-import { NavParams, Platform, ToastController, ModalController } from '@ionic/angular';
+import { Component, Inject, NgZone, OnInit, inject } from '@angular/core';
+import { Platform, ToastController, ModalController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
-import { TelemetryGeneratorService } from '@app/services';
+import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { ProfileConstants } from '../../../app/app.constant';
 import { AppGlobalService } from '@app/services/app-global-service.service';
 import { CommonUtilService } from '@app/services/common-util.service';
@@ -54,7 +54,6 @@ export class ContentRatingAlertComponent implements OnInit {
    * @param commonUtilService
    */
   constructor(
-    private navParams: NavParams,
     private modalController: ModalController,
     private platform: Platform,
     private translate: TranslateService,
@@ -70,20 +69,18 @@ export class ContentRatingAlertComponent implements OnInit {
       this.modalController.dismiss();
       this.backButtonFunc.unsubscribe();
     });
-    this.ngZone.run(() => {
-      this.content = this.navParams.get('content');
-      this.userRating = this.navParams.get('rating');
-      this.comment = this.navParams.get('comment');
-      this.popupType = this.navParams.get('popupType');
-      if (this.userRating) {
-        this.showCommentBox = true;
-      }
-    });
+    // this.content = this.navParams.get('content');
+    // this.userRating = this.navParams.get('rating');
+    // this.comment = this.navParams.get('comment');
+    // this.popupType = this.navParams.get('popupType');
+    if (this.userRating) {
+      this.showCommentBox = true;
+    }
   }
 
   ngOnInit() {
-    this.content = this.navParams.get('content');
-    this.pageId = this.navParams.get('pageId');
+    // this.content = this.navParams.get('content');
+    // this.pageId = this.navParams.get('pageId');
   }
 
   ionViewWillEnter() {

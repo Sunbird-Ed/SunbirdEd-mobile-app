@@ -11,6 +11,7 @@ import { PipesModule } from '@app/pipes/pipes.module';
 import { TranslateModule } from '@ngx-translate/core';
 import { ComponentsModule } from '../components/components.module';
 import { ContentActionsComponent } from '../components';
+import { IonicRatingModule, RatingComponent } from 'ionic4-rating';
 
 const routes: Routes = [
   {
@@ -24,6 +25,7 @@ const routes: Routes = [
     CommonModule,
     FormsModule,
     IonicModule,
+    IonicRatingModule,
     RouterModule.forChild(routes),
     RouterModule.forChild(routes),
     TranslateModule.forChild(),

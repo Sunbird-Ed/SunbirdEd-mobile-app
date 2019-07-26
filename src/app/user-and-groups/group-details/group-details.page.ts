@@ -334,7 +334,8 @@ export class GroupDetailsPage implements OnInit, OnDestroy {
         noUsers: (this.userList.length) ? true : false,
         isActiveGroup: this.isCurrentGroupActive
       },
-      cssClass: 'user-popover'
+      cssClass: 'user-popover',
+      event: myEvent
     });
 
     await popover.present();
@@ -355,9 +356,8 @@ export class GroupDetailsPage implements OnInit, OnDestroy {
             state: {
               profile: this.userList[index]
             }
-          }
-
-          this.router.navigate(['GuestEditProfilePage'], navigationExtras)
+          };
+          this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.GUEST_EDIT}`], navigationExtras)
           await popover.dismiss();
         },
         delete: async () => {
@@ -367,7 +367,8 @@ export class GroupDetailsPage implements OnInit, OnDestroy {
         },
         isCurrentUser: isActiveUser
       },
-      cssClass: 'user-popover'
+      cssClass: 'user-popover',
+      event: myEvent
     });
     await popover.present();
   }

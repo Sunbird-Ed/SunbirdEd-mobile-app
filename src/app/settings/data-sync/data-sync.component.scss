@@ -1,5 +1,16 @@
+@import 'src/global';
+
 .label {
     font-size: 15px;
+}
+
+.ds-m0 {
+    margin-top: 0px !important;
+    margin-bottom: 0px !important;
+}
+
+.ds-item{
+    --padding-start: 0px
 }
 
 hr {
@@ -8,11 +19,7 @@ hr {
     border-width: 0;
     -webkit-box-sizing: content-box;
     box-sizing: content-box;
-}
-
-.content-md hr {
-    // background-color: map-get($colors, medium_gray);
-    background-color: #CCCCCC;
+    background-color: map-get($colors, medium_gray);
 }
 
 .item-block {

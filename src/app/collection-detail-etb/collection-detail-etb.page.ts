@@ -240,9 +240,7 @@ export class CollectionDetailEtbPage implements OnInit {
     this.route.queryParams.subscribe(params => {
       if (this.router.getCurrentNavigation().extras.state) {
         this.resetVariables();
-        console.log('params from state : ', this.router.getCurrentNavigation().extras.state);
         this.content = this.router.getCurrentNavigation().extras.state.content;
-        console.log('Content data : ', this.router.getCurrentNavigation().extras.state.content);
         this.cardData = this.router.getCurrentNavigation().extras.state.content;
         this.data = this.router.getCurrentNavigation().extras.state.data;
         this.batchDetails = this.router.getCurrentNavigation().extras.state.batchDetails;
