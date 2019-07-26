@@ -857,41 +857,39 @@ export class EnrolledCourseDetailsPage implements OnInit {
       batchId: this.courseCardData.batchId ? this.courseCardData.batchId : '',
       courseId: this.identifier
     };
-    this.zone.run(() => {
-      if (content.contentType === ContentType.COURSE) {
-        this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], {
-          state: {
-            content: content,
-            depth: depth,
-            contentState: contentState
-          }
-        });
-      } else if (content.mimeType === MimeType.COLLECTION) {
-        let isChildClickable = true;
-        if (this.isAlreadyEnrolled && this.isBatchNotStarted) {
-          isChildClickable = false;
+    if (content.contentType === ContentType.COURSE) {
+      this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], {
+        state: {
+          content: content,
+          depth: depth,
+          contentState: contentState
         }
-        this.router.navigate([RouterLinks.COLLECTION_DETAILS], {
-          state: {
-            content: content,
-            depth: depth,
-            contentState: contentState,
-            fromCoursesPage: true,
-            isAlreadyEnrolled: this.isAlreadyEnrolled,
-            isChildClickable: isChildClickable
-          }
-        });
-      } else {
-        this.router.navigate([RouterLinks.CONTENT_DETAILS], {
-          state: {
-            content: content,
-            depth: depth,
-            contentState: contentState,
-            isChildContent: true
-          }
-        });
+      });
+    } else if (content.mimeType === MimeType.COLLECTION) {
+      let isChildClickable = true;
+      if (this.isAlreadyEnrolled && this.isBatchNotStarted) {
+        isChildClickable = false;
       }
-    });
+      this.router.navigate([RouterLinks.COLLECTION_DETAILS], {
+        state: {
+          content: content,
+          depth: depth,
+          contentState: contentState,
+          fromCoursesPage: true,
+          isAlreadyEnrolled: this.isAlreadyEnrolled,
+          isChildClickable: isChildClickable
+        }
+      });
+    } else {
+      this.router.navigate([RouterLinks.CONTENT_DETAILS], {
+        state: {
+          content: content,
+          depth: depth,
+          contentState: contentState,
+          isChildContent: true
+        }
+      });
+    }
   }
 
   cancelDownload() {

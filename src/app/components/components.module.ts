@@ -18,8 +18,8 @@ import { SbNoNetworkPopupComponent } from './popups/sb-no-network-popup/sb-no-ne
 import { SbPopoverComponent } from './popups/sb-popover/sb-popover.component';
 import { CollectionChildComponent } from './collection-child/collection-child.component';
 import { ContentActionsComponent } from './content-actions/content-actions.component';
-import { ContentRatingAlertComponent } from './content-rating-alert/content-rating-alert.component';
 import { IonicRatingModule, RatingComponent } from 'ionic4-rating';
+import { ContentRatingAlertComponent } from './content-rating-alert/content-rating-alert.component';
 import { DetailCardComponent } from './detail-card/detail-card.component';
 import { FileSizePipe } from '@app/pipes/file-size/file-size';
 import { BookmarkComponent } from './bookmark/bookmark.component';
@@ -30,7 +30,7 @@ import { EditContactDetailsPopupComponent } from './popups/edit-contact-details-
 import { EditContactVerifyPopupComponent } from './popups/edit-contact-verify-popup/edit-contact-verify-popup.component';
 import { Keyboard } from '@ionic-native/keyboard/ngx';
 import { ConfirmAlertComponent } from './confirm-alert/confirm-alert.component';
-import { RatingAlertComponent } from './rating-alert/rating-alert.component';
+import { AppRatingAlertComponent } from './rating-alert/rating-alert.component';
 import { OverflowMenuComponent } from '../profile/overflow-menu/overflow-menu.component';
 import { ReportAlertComponent } from '../reports/report-alert/report-alert.component';
 import { ProfileAvatarComponent } from './profile-avatar/profile-avatar.component';
@@ -65,7 +65,7 @@ import { ViewCreditsComponent } from './popups/view-credits/view-credits.compone
     ConfirmAlertComponent,
     EditContactDetailsPopupComponent,
     EditContactVerifyPopupComponent,
-    RatingAlertComponent,
+    AppRatingAlertComponent,
     OverflowMenuComponent,
     ReportAlertComponent,
     ProfileAvatarComponent,
@@ -81,8 +81,8 @@ import { ViewCreditsComponent } from './popups/view-credits/view-credits.compone
     ReactiveFormsModule,
     PipesModule,
     NgxDatatableModule,
-    TranslateModule.forChild(),
     IonicRatingModule,
+    TranslateModule.forChild(),
   ],
   entryComponents: [
     ApplicationHeaderComponent,
@@ -96,7 +96,7 @@ import { ViewCreditsComponent } from './popups/view-credits/view-credits.compone
     EditContactDetailsPopupComponent,
     EditContactVerifyPopupComponent,
     ConfirmAlertComponent,
-    RatingAlertComponent,
+    AppRatingAlertComponent,
     ViewCreditsComponent
   ],
   exports: [
@@ -124,7 +124,7 @@ import { ViewCreditsComponent } from './popups/view-credits/view-credits.compone
     ConfirmAlertComponent,
     EditContactDetailsPopupComponent,
     EditContactVerifyPopupComponent,
-    RatingAlertComponent,
+    AppRatingAlertComponent,
     ProfileAvatarComponent,
     NotificationItemComponent,
     AssessmentDetailsComponent,

@@ -222,21 +222,25 @@ export class CollectionDetailsPage {
     private location: Location,
     private router: Router
   ) {
-    this.identifier = this.router.getCurrentNavigation().extras.state.content.contentId;
+    this.resetVariables();
+    const extras = this.router.getCurrentNavigation().extras.state;
+    if (extras) {
+      this.identifier = extras.content.contentId;
 
-    this.cardData = this.router.getCurrentNavigation().extras.state.content;
-    this.corRelationList = this.router.getCurrentNavigation().extras.state.corRelation;
-    const depth = this.router.getCurrentNavigation().extras.state.depth;
-    this.shouldGenerateEndTelemetry = this.router.getCurrentNavigation().extras.state.shouldGenerateEndTelemetry;
-    this.source = this.router.getCurrentNavigation().extras.state.source;
-    this.fromCoursesPage = this.router.getCurrentNavigation().extras.state.fromCoursesPage;
-    this.isAlreadyEnrolled = this.router.getCurrentNavigation().extras.state.isAlreadyEnrolled;
-    this.isChildClickable = this.router.getCurrentNavigation().extras.state.isChildClickable;
-    this.parentContent = this.router.getCurrentNavigation().extras.state.parentContent;
-    this.stateData = this.router.getCurrentNavigation().extras.state.contentState;
-    this.isChildClickable = this.router.getCurrentNavigation().extras.state.isChildClickable;
-    // check for parent content
-    this.parentContent = this.router.getCurrentNavigation().extras.state.parentContent;
+      this.cardData = extras.content;
+      this.corRelationList = extras.corRelation;
+      const depth = extras.depth;
+      this.shouldGenerateEndTelemetry = extras.shouldGenerateEndTelemetry;
+      this.source = extras.source;
+      this.fromCoursesPage = extras.fromCoursesPage;
+      this.isAlreadyEnrolled = extras.isAlreadyEnrolled;
+      this.isChildClickable = extras.isChildClickable;
+      this.parentContent = extras.parentContent;
+      this.stateData = extras.contentState;
+      this.isChildClickable = extras.isChildClickable;
+      // check for parent content
+      this.parentContent = extras.parentContent;
+    }
 
     this.objRollup = new Rollup();
     this.checkLoggedInOrGuestUser();
@@ -256,7 +260,6 @@ export class CollectionDetailsPage {
       this.headerConfig.showHeader = false;
       this.headerConfig.showBurgerMenu = false;
       this.headerService.updatePageConfig(this.headerConfig);
-      this.resetVariables();
 
       if (this.depth) {
         this.depth = this.depth;
