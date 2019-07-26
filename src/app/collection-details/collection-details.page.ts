@@ -301,6 +301,7 @@ export class CollectionDetailsPage {
         this.generateQRSessionEndEvent(this.source, this.cardData.identifier);
       }
       this.location.back();
+      this.backButtonFunc.unsubscribe();
     });
   }
 

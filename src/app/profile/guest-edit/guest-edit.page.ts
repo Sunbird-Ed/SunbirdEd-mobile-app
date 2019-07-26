@@ -179,6 +179,7 @@ export class GuestEditPage implements OnInit {
     this.getSyllabusDetails();
     this.unregisterBackButton = this.platform.backButton.subscribe(() => {
       this.dismissPopup();
+      this.unregisterBackButton.unsubscribe();
     });
   }
 

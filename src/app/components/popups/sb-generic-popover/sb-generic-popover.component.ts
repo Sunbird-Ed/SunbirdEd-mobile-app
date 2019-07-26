@@ -23,6 +23,7 @@ export class SbGenericPopoverComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.backButtonFunc = this.platform.backButton.subscribe(() => {
       this.popoverCtrl.dismiss({ isLeftButtonClicked: null });
+      this.backButtonFunc.unsubscribe();
     });
 
     this.events.subscribe('selectedContents:changed', (data) => {

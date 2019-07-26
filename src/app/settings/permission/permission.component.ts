@@ -115,6 +115,7 @@ export class PermissionComponent implements OnInit {
   handleBackButton() {
     this.backButtonFunc = this.platform.backButton.subscribe(() => {
       this.location.back();
+      this.backButtonFunc.unsubscribe();
     });
   }
 

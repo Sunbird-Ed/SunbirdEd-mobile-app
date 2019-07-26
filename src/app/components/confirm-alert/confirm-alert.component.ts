@@ -17,7 +17,7 @@ export class ConfirmAlertComponent implements OnInit {
   metaInfo: any;
   isUpdateAvail: any;
   contentSize: any;
-  backButtonFunc = undefined;
+  backButtonFunc: any;
   constructor(
     // public viewCtrl: ViewController,
     public platform: Platform,
@@ -31,8 +31,9 @@ export class ConfirmAlertComponent implements OnInit {
     this.sbPopoverMainTitle = this.navParams.get('sbPopoverMainTitle');
     this.isUpdateAvail = this.navParams.get('isUpdateAvail');
     this.contentSize = this.navParams.get('contentSize');
-    this.platform.backButton.subscribeWithPriority(10, () => {
+    this.backButtonFunc = this.platform.backButton.subscribeWithPriority(10, () => {
     this.popOverCtrl.dismiss();
+    this.backButtonFunc.unsubscribe();
     });
   }
 

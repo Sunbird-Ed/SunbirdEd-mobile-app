@@ -334,6 +334,9 @@ export class ContentDetailsPage implements OnInit {
         this.toast = undefined;
       }
     }
+    if(this.backButtonFunc) {
+      this.backButtonFunc.unsubscribe();
+    }
   }
 
   handleNavBackButton() {
@@ -347,7 +350,7 @@ export class ContentDetailsPage implements OnInit {
   }
 
   handleDeviceBackButton() {
-    this.backButtonFunc = this.platform.backButton.subscribeWithPriority(11, () => {
+    this.backButtonFunc = this.platform.backButton.subscribeWithPriority(10, () => {
       this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.CONTENT_DETAIL, Environment.HOME,
         false, this.cardData.identifier, this.corRelationList);
       this.didViewLoad = false;

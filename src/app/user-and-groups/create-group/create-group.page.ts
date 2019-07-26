@@ -94,6 +94,7 @@ export class CreateGroupPage implements OnInit, OnDestroy {
     this.zone.run(() => {
       this.backButtonFunc = this.platform.backButton.subscribe(() => {
         this.location.back();
+        this.backButtonFunc.unsubscribe();
       });
     });
     this.loadTelemetry();

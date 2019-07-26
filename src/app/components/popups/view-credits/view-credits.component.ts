@@ -43,7 +43,7 @@ export class ViewCreditsComponent {
     this.getUserId();
     this.backButtonFunc = this.platform.backButton.subscribeWithPriority(11, () => {
       this.popOverCtrl.dismiss();
-      this.backButtonFunc();
+      this.backButtonFunc.unsubscribe();
     });
     this.ngZone.run(() => {
       this.popupType = this.navParams.get('popupType');
@@ -107,5 +107,8 @@ export class ViewCreditsComponent {
 
   cancel() {
     this.popOverCtrl.dismiss();
+    if(this.backButtonFunc) {
+      this.backButtonFunc.unsubscribe();
+    }
   }
 }

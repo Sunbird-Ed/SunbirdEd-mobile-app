@@ -119,6 +119,7 @@ export class UserAndGroupsPage implements OnInit {
 
       this.backButtonFunc = this.platform.backButton.subscribe(() => {
         this.dismissPopup();
+        this.backButtonFunc.unsubscribe();
       });
     });
 
@@ -682,7 +683,9 @@ export class UserAndGroupsPage implements OnInit {
   }
 
   ionViewWillLeave(): void {
-    this.backButtonFunc.unsubscribe();
+    if(this.backButtonFunc) {
+      this.backButtonFunc.unsubscribe();
+    }
     if (this.headerObservable) {
       this.headerObservable.unsubscribe();
     }

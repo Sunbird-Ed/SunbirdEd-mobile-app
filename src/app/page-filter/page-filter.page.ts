@@ -59,7 +59,7 @@ export class PageFilterPage {
     this.backButtonFunc = this.platform.backButton.subscribeWithPriority(11, () => {
       // migration-TODO
       this.popCtrl.dismiss();
-      this.backButtonFunc = undefined;
+      this.backButtonFunc.unsubscribe();
     });
 
     this.events.subscribe('onAfterLanguageChange:update', () => {
