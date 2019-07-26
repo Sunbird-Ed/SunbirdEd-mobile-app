@@ -275,7 +275,9 @@ export class CreateGroupPage implements OnInit, OnDestroy {
         return this.frameworkUtilService.getFrameworkCategoryTerms(request).toPromise();
       })
       .then(async (classes) => {
-        await this.loader.dismiss();
+        if (isSyllabusChanged) {
+          await this.loader.dismiss();
+        }
         this.classList = classes;
 
         if (!isSyllabusChanged) {
@@ -285,7 +287,9 @@ export class CreateGroupPage implements OnInit, OnDestroy {
         }
       })
       .catch(async error => {
-        await this.loader.dismiss();
+        if (isSyllabusChanged) {
+          await this.loader.dismiss();
+        }
         this.isFormValid = false;
         this.commonUtilService.showToast(this.commonUtilService.translateMessage('NEED_INTERNET_TO_CHANGE'));
         console.error('Error : ' + error);
