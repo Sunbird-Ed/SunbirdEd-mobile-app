@@ -1,7 +1,7 @@
 import { Router, NavigationExtras } from '@angular/router';
-import { AfterViewInit, Component, Inject, NgZone, ViewChild, OnInit, EventEmitter, ChangeDetectorRef } from '@angular/core';
+import { AfterViewInit, Component, Inject, NgZone, OnInit, EventEmitter, ChangeDetectorRef } from '@angular/core';
 
-import { Events, Platform, PopoverController, ToastController } from '@ionic/angular';
+import { Events, Platform } from '@ionic/angular';
 // import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { TranslateService } from '@ngx-translate/core';
@@ -36,23 +36,6 @@ import { NotificationService as localNotification } from '../services/notificati
 import { TabsPage } from './tabs/tabs.page';
 import { RouterLinks } from './app.constant';
 import { Location } from '@angular/common';
-
-// migration-TODO
-// import { LanguageSettingsPage } from '../pages/language-settings/language-settings';
-// import { CollectionDetailsPage } from '../pages/collection-details/collection-details';
-// import { ContentDetailsPage } from '../pages/content-details/content-details';
-// import { EnrolledCourseDetailsPage } from '@app/pages/enrolled-course-details';
-// import { FormAndFrameworkUtilService } from '@app/pages/profile';
-// import { UserTypeSelectionPage } from '@app/pages/user-type-selection';
-// import { CategoriesEditPage } from '@app/pages/categories-edit/categories-edit';
-
-// import { OnboardingPage } from '@app/pages/onboarding/onboarding';
-// import { SettingsPage } from '@app/pages/settings';
-// import { ReportsPage } from '@app/pages/reports';
-// import { UserAndGroupsPage } from '@app/pages/user-and-groups';
-// import { CollectionDetailsEtbPage } from '@app/pages/collection-details-etb/collection-details-etb';
-// import { QrCodeResultPage } from '@app/pages/qr-code-result';
-// import { FaqPage } from '@app/pages/help/faq';
 
 @Component({
   selector: 'app-root',
@@ -264,11 +247,11 @@ export class AppComponent implements OnInit, AfterViewInit {
       //   currentPage = navObj.getActive().name;
       // }
 
-    //   if (navObj.canGoBack()) {
-    //     return navObj.pop();
-    //   } else {
-    //     this.commonUtilService.showExitPopUp(this.activePageService.computePageId((activeView as any).instance), Environment.HOME, false);
-    //   }
+      //   if (navObj.canGoBack()) {
+      //     return navObj.pop();
+      //   } else {
+      //     this.commonUtilService.showExitPopUp(this.activePageService.computePageId((activeView as any).instance), Environment.HOME, false);
+      //   }
     });
 
   }

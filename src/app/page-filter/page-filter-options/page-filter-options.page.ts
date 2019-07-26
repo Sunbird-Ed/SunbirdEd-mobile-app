@@ -4,7 +4,6 @@ import {
   NavParams,
   Platform,
   PopoverController,
-  // ViewController
 } from '@ionic/angular';
 import { PageAssembleFilter } from 'sunbird-sdk';
 import { ViewController } from '@ionic/core';

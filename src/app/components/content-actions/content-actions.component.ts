@@ -1,8 +1,8 @@
-import {TelemetryGeneratorService} from '../../../services/telemetry-generator.service';
-import {TranslateService} from '@ngx-translate/core';
-import {AlertController, Events, PopoverController, NavParams, ModalController} from '@ionic/angular';
-import {Platform, ToastController} from '@ionic/angular';
-import {Component, Inject, OnInit} from '@angular/core';
+import { TelemetryGeneratorService } from '../../../services/telemetry-generator.service';
+import { TranslateService } from '@ngx-translate/core';
+import { Events, PopoverController, NavParams, ModalController } from '@ionic/angular';
+import { Platform, ToastController } from '@ionic/angular';
+import { Component, Inject, OnInit } from '@angular/core';
 import {
   AuthService,
   ContentDeleteResponse,
@@ -13,11 +13,11 @@ import {
   Rollup,
   TelemetryObject
 } from 'sunbird-sdk';
-import {CommonUtilService} from '../../../services/common-util.service';
-import {Environment, InteractSubtype, InteractType} from '../../../services/telemetry-constants';
+import { CommonUtilService } from '../../../services/common-util.service';
+import { Environment, InteractSubtype, InteractType } from '../../../services/telemetry-constants';
 import { SbPopoverComponent } from '../popups/sb-popover/sb-popover.component';
 import { FileSizePipe } from '@app/pipes/file-size/file-size';
-import {SbGenericPopoverComponent} from '../popups/sb-generic-popover/sb-generic-popover.component';
+import { SbGenericPopoverComponent } from '../popups/sb-generic-popover/sb-generic-popover.component';
 import * as moment from 'moment';
 @Component({
   selector: 'app-content-actions',
@@ -44,7 +44,6 @@ export class ContentActionsComponent implements OnInit {
     private toastCtrl: ToastController,
     public popoverCtrl: PopoverController,
     @Inject('AUTH_SERVICE') private authService: AuthService,
-    private alertctrl: AlertController,
     private events: Events,
     private translate: TranslateService,
     private platform: Platform,
@@ -258,7 +257,7 @@ export class ContentActionsComponent implements OnInit {
   isUnenrollDisabled() {
     let isEnrolledDisabled = true;
     let progress;
-    const todayDate =  moment(new Date()).format('YYYY-MM-DD');
+    const todayDate = moment(new Date()).format('YYYY-MM-DD');
     if (this.data && this.data.courseProgress) {
       progress = this.data.courseProgress ? Math.round(this.data.courseProgress) : 0;
     }
