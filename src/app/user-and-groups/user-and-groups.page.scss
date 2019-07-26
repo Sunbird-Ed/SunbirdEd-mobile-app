@@ -165,7 +165,8 @@
 }
 
 .ug-row-padding{
-  @include padding(12px, 16px, 16px, 18px !important);
+  // Migration TODO RTL
+  padding: 12px 16px 16px 18px !important;
 }
 
 .ug-dark-grey{
@@ -173,7 +174,8 @@
 }
 
 .ug-top-left-padding{
-  @include padding(16px, 16px, 0px, 8px !important);
+  // Migration TODO RTL
+  padding: 16px 16px 0px 8px !important;
 }
 
 .ug-icon-font-size{
