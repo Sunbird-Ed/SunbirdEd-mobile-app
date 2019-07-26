@@ -143,3 +143,28 @@
 {
   @include margin(($base-block-space * 1), ($base-block-space * 1), ($base-block-space * 2), ($base-block-space * 1))
 }
+
+// ionic 4
+
+.sb-dt-card {
+    
+  .sb-dt-card-actions {
+    .sb-btn-tile-group {
+      &:last-child{
+        @include margin(null, 0, null, null);
+      }
+      .sb-btn-tile {
+        flex-direction: column;
+        background-color: $white;
+        width:72px;
+        height:72px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        .sb-btn-footer-text {
+          font-weight: 400;
+        }
+      }
+    }
+  }
+}
