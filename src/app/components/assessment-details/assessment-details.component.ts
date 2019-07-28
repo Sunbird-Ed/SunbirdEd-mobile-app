@@ -1,6 +1,4 @@
 import { Component, Input, Output, OnInit, EventEmitter, ViewEncapsulation } from '@angular/core';
-import { TelemetryObject, ReportSummary, Migration } from 'sunbird-sdk';
-import { Component, Input, Output, OnInit, EventEmitter } from '@angular/core';
 import { TelemetryObject, ReportSummary } from 'sunbird-sdk';
 import { PopoverController } from '@ionic/angular';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';

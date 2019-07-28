@@ -96,6 +96,7 @@ export class OnboardingPage implements OnInit {
     this.backButtonFunc = this.platform.backButton.subscribeWithPriority(11, () => {
       this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.ONBOARDING, Environment.HOME, false);
       this.router.navigate([`/${RouterLinks.MENU_LANGUAGE_SETTING}`, 'false']);
+      this.backButtonFunc.unsubscribe();
     })
 
     this.appDir = this.commonUtilService.getAppDirection();
@@ -103,6 +104,9 @@ export class OnboardingPage implements OnInit {
 
   ionViewWillLeave() {
     this.headerObservable.unsubscribe();
+    if(this.backButtonFunc) {
+      this.backButtonFunc.unsubscribe();
+    }
   }
 
   async signIn() {

@@ -54,6 +54,7 @@ export class NotificationPage implements OnInit {
     this.unregisterBackButton = this.platform.backButton.subscribeWithPriority(11, () => {
       this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.NOTIFICATION, Environment.NOTIFICATION, false);
       this.location.back();
+      this.unregisterBackButton.unsubscribe();
     });
   }
 

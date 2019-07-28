@@ -273,8 +273,8 @@ export class CommonUtilService implements OnDestroy {
      * Creates a popup asking whether to exit from app or not
      */
     async showExitPopUp(pageId: string, environment: string, isNavBack: boolean) {
-        if (!this.alert) {
-            this.alert = await this.popOverCtrl.create({
+        //if (!this.alert) {
+            const alert = await this.popOverCtrl.create({
                 component: SbGenericPopoverComponent,
                 componentProps: {
                     sbPopoverHeading: this.translateMessage('BACK_TO_EXIT'),
@@ -292,9 +292,9 @@ export class CommonUtilService implements OnDestroy {
                 },
                 cssClass: 'sb-popover',
             });
-
-            const { data } = await this.alert.onDidDismiss();
-            if (data.isLeftButtonClicked == null) {
+            await alert.present();
+            const response  = await alert.onDidDismiss();
+            if (response.data.isLeftButtonClicked == null) {
                 this.telemetryGeneratorService.generateInteractTelemetry(
                     InteractType.TOUCH,
                     InteractSubtype.NO_CLICKED,
@@ -303,7 +303,7 @@ export class CommonUtilService implements OnDestroy {
                 );
                 return;
             }
-            if (!data.isLeftButtonClicked) {
+            if (!response.data.isLeftButtonClicked) {
                 this.telemetryGeneratorService.generateInteractTelemetry(
                     InteractType.TOUCH,
                     InteractSubtype.NO_CLICKED,
@@ -323,13 +323,13 @@ export class CommonUtilService implements OnDestroy {
             await this.alert.present();
             this.telemetryGeneratorService.generateBackClickedTelemetry(pageId, environment, isNavBack);
             return;
-        } else {
+        /*} else {
             this.telemetryGeneratorService.generateBackClickedTelemetry(pageId, environment, isNavBack);
             if (this.alert) {
                 await this.alert.dismiss();
                 this.alert = undefined;
             }
-        }
+        }*/
     }
 
     fileSizeInMB(bytes) {

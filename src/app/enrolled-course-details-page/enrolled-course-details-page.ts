@@ -997,6 +997,7 @@ export class EnrolledCourseDetailsPage implements OnInit {
         this.generateQRSessionEndEvent(this.source, this.course.identifier);
       }
       this.location.back();
+      this.backButtonFunc.unsubscribe();
     });
   }
 

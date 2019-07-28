@@ -114,11 +114,14 @@ export class CourseBatchesPage implements OnInit {
   private handleBackButton() {
     this.backButtonFunc =  this.platform.backButton.subscribe(() => {
       this.location.back();
+      this.backButtonFunc.unsubscribe();
     });
   }
 
   ionViewWillLeave() {
-    this.backButtonFunc.unsubscribe();
+    if(this.backButtonFunc) {
+      this.backButtonFunc.unsubscribe();
+    } 
   }
   /**
    * Enroll logged-user into selected batch
