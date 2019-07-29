@@ -1,7 +1,7 @@
-import { Router, NavigationExtras } from '@angular/router';
-import { AfterViewInit, Component, Inject, NgZone, OnInit, EventEmitter, ChangeDetectorRef } from '@angular/core';
+import { Router, NavigationExtras, RouterOutlet } from '@angular/router';
+import { AfterViewInit, Component, Inject, NgZone, OnInit, EventEmitter, ChangeDetectorRef, ViewChild } from '@angular/core';
 
-import { Events, Platform } from '@ionic/angular';
+import { Events, Platform, IonRouterOutlet } from '@ionic/angular';
 // import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { TranslateService } from '@ngx-translate/core';
@@ -62,7 +62,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   profile: any = {};
   selectedLanguage: string;
   appName: string;
-  // @ViewChild('mainContent', { read: IonRouterOutlet })mainContent: IonRouterOutlet;
+  @ViewChild('mainContent', { read: IonRouterOutlet })routerOutlet: IonRouterOutlet;
 
   constructor(
     // private splashScreen: SplashScreen,
@@ -237,6 +237,14 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   handleBackButton() {
     this.platform.backButton.subscribeWithPriority(0, () => {
+      console.log("URL"+this.router.url);
+      if(this.router.url === RouterLinks.LIBRARY_TAB || this.router.url == RouterLinks.COURSE_TAB 
+      || this.router.url === RouterLinks.DOWNLOAD_TAB || this.router.url == RouterLinks.PROFILE_TAB || 
+      this.router.url == RouterLinks.GUEST_PROFILE_TAB) {
+        this.commonUtilService.showExitPopUp(this.activePageService.computePageId(this.router.url), Environment.HOME, false);
+      } else {
+        this.routerOutlet.pop();
+      }
       // migration-TODO
       // let navObj = this.app.getRootNavs()[0];
       // let currentPage = navObj.getActive().name;
@@ -438,7 +446,29 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   handleHeaderEvents($event) {
     if ($event.name === 'back') {
-      this.location.back();
+      //this.location.back();
+      let routeUrl = this.router.url;
+      if((routeUrl.indexOf(RouterLinks.USER_TYPE_SELECTION))
+      || (routeUrl.indexOf(RouterLinks.ACTIVE_DOWNLOADS))
+      || (routeUrl.indexOf(RouterLinks.COLLECTION_DETAIL_ETB))
+      || (routeUrl.indexOf(RouterLinks.COLLECTION_DETAILS))
+      || (routeUrl.indexOf(RouterLinks.CONTENT_DETAILS))
+      || (routeUrl.indexOf(RouterLinks.ENROLLED_COURSE_DETAILS))
+      || (routeUrl.indexOf(RouterLinks.FAQ_HELP))
+      || (routeUrl.indexOf(RouterLinks.PROFILE_SETTINGS))
+      || (routeUrl.indexOf(RouterLinks.QRCODERESULT))
+      || (routeUrl.indexOf(RouterLinks.STORAGE_SETTINGS))) {
+          this.headerService.sidebarEvent($event);
+          return;
+      } else {
+        if(this.router.url === RouterLinks.LIBRARY_TAB || this.router.url == RouterLinks.COURSE_TAB 
+          || this.router.url === RouterLinks.DOWNLOAD_TAB || this.router.url == RouterLinks.PROFILE_TAB || 
+          this.router.url == RouterLinks.GUEST_PROFILE_TAB) {
+            this.commonUtilService.showExitPopUp(this.activePageService.computePageId(this.router.url), Environment.HOME, false);
+          } else {
+            this.routerOutlet.pop();
+          }
+      }
     }
     /*if ($event.name === 'back') {
       let navObj = this.app.getRootNavs()[0];

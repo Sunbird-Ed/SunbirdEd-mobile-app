@@ -43,6 +43,7 @@ export class EditContactVerifyPopupComponent implements OnInit {
   ionViewWillEnter() {
     this.unregisterBackButton = this.platform.backButton.subscribeWithPriority(11, () => {
       this.popOverCtrl.dismiss();
+      this.unregisterBackButton.unsubscribe();
     });
   }
 

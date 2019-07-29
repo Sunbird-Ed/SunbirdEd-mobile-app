@@ -1,5 +1,7 @@
 import { PageId } from './telemetry-constants';
 import { ResourcesComponent } from '../app/resources/resources.component';
+import { RouterLink } from '@angular/router';
+import { RouterLinks } from '@app/app/app.constant';
 // migration-TODO
 // import { CoursesPage } from '@app/pages/courses/courses';
 // import { ProfilePage } from '@app/pages/profile/profile';
@@ -11,8 +13,25 @@ import { ResourcesComponent } from '../app/resources/resources.component';
 
 export class ActivePageService {
 
-  computePageId(page): string {
+  computePageId(url): string {
     let pageId = '';
+    if (url === RouterLinks.LIBRARY_TAB) {
+      pageId = PageId.LIBRARY;
+    } else if (url === RouterLinks.COURSE_TAB) {
+      pageId = PageId.COURSES;
+    } else if (url === RouterLinks.PROFILE_TAB) {
+      pageId = PageId.PROFILE;
+    } else if (url === RouterLinks.GUEST_PROFILE_TAB) {
+      pageId = PageId.GUEST_PROFILE;
+    } else if (url === RouterLinks.COLLECTION_DETAIL_ETB) {
+      pageId = PageId.COLLECTION_DETAIL;
+    } else if (url === RouterLinks.CONTENT_DETAILS) {
+      pageId = PageId.CONTENT_DETAIL;
+    } else if (url === RouterLinks.QRCODERESULT) {
+      pageId = PageId.DIAL_CODE_SCAN_RESULT;
+    } else if (url === RouterLinks.COLLECTION_DETAILS) {
+      pageId = PageId.COLLECTION_DETAIL;
+    } 
     // migration-TODO
     // if (page instanceof ResourcesComponent) {
     //   pageId = PageId.LIBRARY;
