@@ -1,12 +1,13 @@
-@import "src/global.scss";
+@import "src/assets/styles/variables";
+@import "src/assets/styles/_custom-mixins";
+@import "src/assets/styles/fonts";
+
 :host {
   .profile-name {
     color: map-get($colors, dark);
     margin: 0;
     font-size: 1.2rem;
-
     @include padding(5px);
-
     @extend .font-weight-bold;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -20,18 +21,16 @@
 
   .editIcon {
     @include margin(null, null, null, 5px);
-
-    font-size: 1rem !important;
+    height: 15px;
+    width: 15px;
   }
 
   .change-role {
     color: dodgerblue;
     text-align: center;
     @include margin(null, 10px, null, null);
-
-    font-size: 1rem;
+    font-size: 0.9rem;
     @include padding(0 2px 2px 2px);
-
     font-weight: normal;
     margin: 0;
   }
@@ -40,33 +39,10 @@
     color: map-get($colors, dark);
     text-align: center;
     @include margin(null, 10px, null, null);
-
     font-size: 1rem;
     @include padding(2px);
-
     @extend .font-weight-bold;
     margin: 0;
-  }
-
-  .offline-message {
-    background-color: map-get($colors, danger) !important;
-    line-height: 2.5em !important;
-    text-align: center !important;
-    color: map-get($colors, white);
-    top: 0;
-    position: sticky;
-    z-index: 11;
-    display: block;
-    width: 100%;
-  }
-
-  .custom-avatar {
-    height: 22vw;
-    width: 22vw;
-    border: 1px solid map-get($colors, white);
-    border-radius: 50%;
-    display: inline-block;
-    @include margin(null, auto, null, auto);
   }
 
   .info-title {
@@ -78,17 +54,10 @@
   .section-title {
     color: map-get($colors, dark);
     @include margin(null, null, -5px, null !important);
-
     font-size: 1.3rem;
     padding: 0;
     @include margin(null, null, null, 0);
-
     @extend .font-weight-700;
-  }
-
-  .page-content {
-    @extend .font-weight-600;
-    color: map-get($colors, secondary_black);
   }
 
   .vertical-align {
@@ -106,19 +75,15 @@
 
   .icon-align {
     @include margin(null, null, null, 2px);
-
     size: 2px;
     display: inline-block;
-  }
-
-  .font-size-1rem {
-    font-size: 1rem;
   }
 
   .details-container {
     border-top: solid #ccc;
     h2 {
       margin-top: 10px !important;
+      margin-bottom: 10px;
     }
   }
   .grid-container {
@@ -126,14 +91,14 @@
     grid-template-columns: 50% 50%;
   }
   .grid-item {
-    padding: 10px;
+    padding: 0 10px 14px;
     font-size: 12px;
     font-weight: 700;
 
     .align-content {
       display: flex;
       flex-wrap: nowrap;
-      align-items: center;
+      // align-items: center;
       width: auto;
 
       .width-100 {
@@ -141,7 +106,8 @@
       }
 
       ion-icon {
-        width: 20px;
+        width: 14px;
+        height: 14px;
         padding-left: 4px;
       }
     }
