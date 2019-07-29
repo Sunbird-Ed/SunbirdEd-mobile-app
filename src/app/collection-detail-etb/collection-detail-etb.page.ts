@@ -276,7 +276,6 @@ export class CollectionDetailEtbPage implements OnInit {
     //     true, this.cardData.identifier, this.corRelationList);
     //   this.handleBackButton();
     // };
-    this.handleBackButton();
 
     this.registerDeviceBackButton();
   }
@@ -322,7 +321,7 @@ export class CollectionDetailEtbPage implements OnInit {
     this.ionContent.ionScroll.subscribe((event) => {
       this.scrollPosition = event.scrollTop;
     });
-    this.handleBackButton();
+    //this.handleBackButton();
 
   }
 
@@ -406,7 +405,13 @@ export class CollectionDetailEtbPage implements OnInit {
     if (this.shouldGenerateEndTelemetry) {
       this.generateQRSessionEndEvent(this.source, this.cardData.identifier);
     }
+    this.location.back();
+    this.backButtonFunc.unsubscribe();
+    
+    
+  }
 
+  registerDeviceBackButton() {
     this.backButtonFunc = this.platform.backButton.subscribeWithPriority(10,() => {
       this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.COLLECTION_DETAIL,
         Environment.HOME,
@@ -416,10 +421,6 @@ export class CollectionDetailEtbPage implements OnInit {
       this.location.back();
       this.backButtonFunc.unsubscribe();
     });
-    
-  }
-
-  registerDeviceBackButton() {
     // migration-TODO
     // this.platform.backButton.subscribeWithPriority(10, () => {
     //   this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.COLLECTION_DETAIL,
