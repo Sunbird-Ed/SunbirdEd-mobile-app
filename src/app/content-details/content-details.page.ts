@@ -347,7 +347,10 @@ export class ContentDetailsPage implements OnInit {
       this.generateQRSessionEndEvent(this.source, this.cardData.identifier);
     }
     this.popToPreviousPage(true);
-    this.backButtonFunc.unsubscribe();
+    if(this.backButtonFunc) {
+      this.backButtonFunc.unsubscribe();
+    }
+    
   }
 
   handleDeviceBackButton() {

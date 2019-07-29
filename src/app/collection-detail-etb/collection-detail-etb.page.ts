@@ -277,13 +277,14 @@ export class CollectionDetailEtbPage implements OnInit {
     //   this.handleBackButton();
     // };
 
-    this.registerDeviceBackButton();
+    
   }
 
   /**
    * Ionic life cycle hook
    */
   ionViewWillEnter() {
+    this.registerDeviceBackButton();
     this.zone.run(() => {
       this.headerObservable = this.headerService.headerEventEmitted$.subscribe(eventName => {
         this.handleHeaderEvents(eventName);
