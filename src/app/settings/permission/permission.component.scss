@@ -22,10 +22,7 @@
           font-size: 3rem;
         }
       }
-      // .toggle-col {
-      //   min-width: 55px;
-      //   text-align: end;
-      // }
+
       .title {
         font-size: 14px;
         color: #333333;
@@ -41,25 +38,6 @@
     }
   }
 
-  // .changePermissionAccess {
-  //   .toggle-md {
-  //     width: 40px;
-  //     height: 22px;
-  //     padding: 0;
-
-  //     .toggle-inner {
-  //       left: 2px;
-  //       top: 1px;
-  //     }
-  //     .toggle-icon {
-  //       max-height: 23px;
-  //     }
-  //   }
-  //   .toggle-md-secondary.toggle-checked .toggle-inner {
-  //     background-color: $white;
-  //   }
-  // }
-
   .pl-16 {
     @include padding(null, null, null, 16px);
   }
@@ -71,24 +49,14 @@
   }
 }
 
-// :host(.ion-color.toggle-checked) .toggle-inner {
-//   background-color: white;
-// }
-
-// :host(.ion-color.toggle-checked) .toggle-icon {
-//   height: 22px;
-// }
-
-.permission-toggle{
+.permission-toggle {
   --ion-color-base: white !important;
-  // --background : red;
-  // --handle-background: yellow;
   height: 22px;
-  .toggle-inner{
+  .toggle-inner {
     top: 0px !important;
   }
 }
 
-.toggle-inner{
+.toggle-inner {
   top: 0px !important;
 }

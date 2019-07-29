@@ -38,11 +38,11 @@ export class LanguageSettingsPage implements OnInit {
   selectedLanguage: any = {};
   btnColor = '#55acee';
   unregisterBackButton: Subscription;
-  mainPage: boolean = false;
   headerConfig: any;
 
 
   constructor(
+    @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
     public translateService: TranslateService,
     private events: Events,
     private zone: NgZone,
@@ -50,15 +50,12 @@ export class LanguageSettingsPage implements OnInit {
     private platform: Platform,
     private appGlobalService: AppGlobalService,
     private commonUtilService: CommonUtilService,
-    @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
     private headerService: AppHeaderService,
     private notification: NotificationService,
     private router: Router,
     private location: Location,
     private activatedRoute: ActivatedRoute
-  ) {
-
-  }
+  ) { }
 
   ngOnInit() {
     this.telemetryGeneratorService.generateImpressionTelemetry(
@@ -69,7 +66,6 @@ export class LanguageSettingsPage implements OnInit {
   }
 
   ionViewDidEnter() {
-    // this.isFromSettings = this.navParams.get('isFromSettings');
     this.activatedRoute.params.subscribe(params => {
       this.isFromSettings = Boolean(params['isFromSettings']);
       console.log('FormSettings', this.isFromSettings);
@@ -84,138 +80,137 @@ export class LanguageSettingsPage implements OnInit {
   }
 
 
-    handleBackButton() {
-      this.unregisterBackButton = this.platform.backButton.subscribeWithPriority(11, () => {
-        this.telemetryGeneratorService.generateInteractTelemetry(
-          InteractType.TOUCH, InteractSubtype.DEVICE_BACK_CLICKED,
-          this.isFromSettings ? Environment.SETTINGS : Environment.ONBOARDING,
-          this.isFromSettings ? PageId.SETTINGS_LANGUAGE : PageId.ONBOARDING_LANGUAGE_SETTING,
-        );
-
-        if (this.isFromSettings) {
-          this.location.back();
-        } else {
-          const pId = this.isFromSettings ? PageId.SETTINGS_LANGUAGE : PageId.ONBOARDING_LANGUAGE_SETTING;
-          const env = this.isFromSettings ? Environment.SETTINGS : Environment.ONBOARDING;
-          this.commonUtilService.showExitPopUp(pId, env, false);
-        }
-      });
-    }
-
-    ionViewWillEnter() {
-      this.selectedLanguage = {};
-      this.init();
-      if (!this.isFromSettings) {
-        this.headerService.hideHeader();
-      } else {
-        this.headerService.showHeaderWithBackButton();
-      }
-      this.handleBackButton();
-    }
-
-    ionViewWillLeave() {
-      if (this.isLanguageSelected) {
-        if (!this.selectedLanguage.code) {
-          if (this.previousLanguage) {
-            this.translateService.use(this.previousLanguage);
-          } else {
-            this.translateService.use('en');
-          }
-        }
-      }
-
-      if (this.unregisterBackButton) {
-        this.unregisterBackButton.unsubscribe();
-      }
-    }
-
-    init(): void {
-      this.languages = appLanguages;
-
-      this.zone.run(() => {
-        this.preferences.getString(PreferenceKey.SELECTED_LANGUAGE_CODE).toPromise()
-          .then(val => {
-            if (Boolean(val)) {
-              this.previousLanguage = val;
-              this.language = val;
-            } else {
-              this.previousLanguage = undefined;
-            }
-          });
-      });
-
-    }
-
-    /**
-     * It will set app language
-     */
-    onLanguageSelected() {
-      console.log(this.language);
-      if (this.language) {
-        this.zone.run(() => {
-          this.translateService.use(this.language);
-          this.btnColor = '#006DE5';
-          this.isLanguageSelected = true;
-        });
-      } else {
-        this.btnColor = '#8FC4FF';
-      }
-    }
-
-    generateLanguageSuccessInteractEvent(previousLanguage: string, currentLanguage: string) {
-      const valuesMap = new Map();
-      valuesMap['previousLanguage'] = previousLanguage ? previousLanguage : '';
-      valuesMap['currentLanguage'] = currentLanguage;
+  handleBackButton() {
+    this.unregisterBackButton = this.platform.backButton.subscribeWithPriority(10, () => {
       this.telemetryGeneratorService.generateInteractTelemetry(
-        InteractType.TOUCH,
-        InteractSubtype.LANGUAGE_SETTINGS_SUCCESS,
+        InteractType.TOUCH, InteractSubtype.DEVICE_BACK_CLICKED,
         this.isFromSettings ? Environment.SETTINGS : Environment.ONBOARDING,
         this.isFromSettings ? PageId.SETTINGS_LANGUAGE : PageId.ONBOARDING_LANGUAGE_SETTING,
-        undefined,
-        valuesMap
       );
-    }
 
-    generateClickInteractEvent(selectedLanguage: string, interactSubType) {
-      const valuesMap = new Map();
-      valuesMap['selectedLanguage'] = selectedLanguage;
-      this.telemetryGeneratorService.generateInteractTelemetry(
-        InteractType.TOUCH,
-        interactSubType,
-        this.isFromSettings ? Environment.SETTINGS : Environment.ONBOARDING,
-        this.isFromSettings ? PageId.SETTINGS : PageId.ONBOARDING_LANGUAGE_SETTING,
-        undefined,
-        valuesMap
-      );
-    }
-
-    continue() {
-      // if language is not null, then select the checked language,
-      // else set default language as english
-      if (this.isLanguageSelected) {
-        this.generateClickInteractEvent(this.language, InteractSubtype.CONTINUE_CLICKED);
-        this.generateLanguageSuccessInteractEvent(this.previousLanguage, this.language);
-        if (this.language) {
-          this.selectedLanguage = this.languages.find(i => i.code === this.language);
-          this.preferences.putString(PreferenceKey.SELECTED_LANGUAGE_CODE, this.selectedLanguage.code).toPromise();
-          this.preferences.putString(PreferenceKey.SELECTED_LANGUAGE, this.selectedLanguage.label).toPromise();
-          this.translateService.use(this.language);
-        }
-        this.events.publish('onAfterLanguageChange:update', {
-          selectedLanguage: this.language
-        });
-        this.notification.setupLocalNotification(this.language);
-        if (this.isFromSettings) {
-          this.location.back();
-        } else if (this.appGlobalService.DISPLAY_ONBOARDING_PAGE) {
-          this.router.navigate([RouterLinks.ONBOARDING])
-        } else {
-          this.router.navigate([RouterLinks.USER_TYPE_SELECTION]);
-        }
+      if (this.isFromSettings) {
+        this.location.back();
       } else {
-        this.generateClickInteractEvent('n/a', InteractSubtype.CONTINUE_CLICKED);
-        this.btnColor = '#8FC4FF';
-        this.commonUtilService.showToast('PLEASE_SELECT_A_LANGUAGE', false, 'redErrorToast');
+        const pId = this.isFromSettings ? PageId.SETTINGS_LANGUAGE : PageId.ONBOARDING_LANGUAGE_SETTING;
+        const env = this.isFromSettings ? Environment.SETTINGS : Environment.ONBOARDING;
+        this.commonUtilService.showExitPopUp(pId, env, false);
+      }
+    });
+  }
+
+  ionViewWillEnter() {
+    this.selectedLanguage = {};
+    this.init();
+    if (!this.isFromSettings) {
+      this.headerService.hideHeader();
+    } else {
+      this.headerService.showHeaderWithBackButton();
+    }
+    this.handleBackButton();
+  }
+
+  ionViewWillLeave() {
+    if (this.isLanguageSelected) {
+      if (!this.selectedLanguage.code) {
+        if (this.previousLanguage) {
+          this.translateService.use(this.previousLanguage);
+        } else {
+          this.translateService.use('en');
+        }
       }
     }
+
+    if (this.unregisterBackButton) {
+      this.unregisterBackButton.unsubscribe();
+    }
   }
+
+  init(): void {
+    this.languages = appLanguages;
+
+    this.zone.run(() => {
+      this.preferences.getString(PreferenceKey.SELECTED_LANGUAGE_CODE).toPromise()
+        .then(val => {
+          if (Boolean(val)) {
+            this.previousLanguage = val;
+            this.language = val;
+          } else {
+            this.previousLanguage = undefined;
+          }
+        });
+    });
+
+  }
+
+  /**
+   * It will set app language
+   */
+  onLanguageSelected() {
+    if (this.language) {
+      this.zone.run(() => {
+        this.translateService.use(this.language);
+        this.btnColor = '#006DE5';
+        this.isLanguageSelected = true;
+      });
+    } else {
+      this.btnColor = '#8FC4FF';
+    }
+  }
+
+  generateLanguageSuccessInteractEvent(previousLanguage: string, currentLanguage: string) {
+    const valuesMap = new Map();
+    valuesMap['previousLanguage'] = previousLanguage ? previousLanguage : '';
+    valuesMap['currentLanguage'] = currentLanguage;
+    this.telemetryGeneratorService.generateInteractTelemetry(
+      InteractType.TOUCH,
+      InteractSubtype.LANGUAGE_SETTINGS_SUCCESS,
+      this.isFromSettings ? Environment.SETTINGS : Environment.ONBOARDING,
+      this.isFromSettings ? PageId.SETTINGS_LANGUAGE : PageId.ONBOARDING_LANGUAGE_SETTING,
+      undefined,
+      valuesMap
+    );
+  }
+
+  generateClickInteractEvent(selectedLanguage: string, interactSubType) {
+    const valuesMap = new Map();
+    valuesMap['selectedLanguage'] = selectedLanguage;
+    this.telemetryGeneratorService.generateInteractTelemetry(
+      InteractType.TOUCH,
+      interactSubType,
+      this.isFromSettings ? Environment.SETTINGS : Environment.ONBOARDING,
+      this.isFromSettings ? PageId.SETTINGS : PageId.ONBOARDING_LANGUAGE_SETTING,
+      undefined,
+      valuesMap
+    );
+  }
+
+  continue() {
+    // if language is not null, then select the checked language,
+    // else set default language as english
+    if (this.isLanguageSelected) {
+      this.generateClickInteractEvent(this.language, InteractSubtype.CONTINUE_CLICKED);
+      this.generateLanguageSuccessInteractEvent(this.previousLanguage, this.language);
+
+      if (this.language) {
+        this.selectedLanguage = this.languages.find(i => i.code === this.language);
+        this.preferences.putString(PreferenceKey.SELECTED_LANGUAGE_CODE, this.selectedLanguage.code).toPromise();
+        this.preferences.putString(PreferenceKey.SELECTED_LANGUAGE, this.selectedLanguage.label).toPromise();
+        this.translateService.use(this.language);
+      }
+      this.events.publish('onAfterLanguageChange:update', {
+        selectedLanguage: this.language
+      });
+      this.notification.setupLocalNotification(this.language);
+
+      if (this.isFromSettings) {
+        this.location.back();
+      } else {
+        this.router.navigate([RouterLinks.USER_TYPE_SELECTION]);
+      }
+    } else {
+      this.generateClickInteractEvent('n/a', InteractSubtype.CONTINUE_CLICKED);
+      this.btnColor = '#8FC4FF';
+      this.commonUtilService.showToast('PLEASE_SELECT_A_LANGUAGE', false, 'redErrorToast');
+    }
+  }
+}
