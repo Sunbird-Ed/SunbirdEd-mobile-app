@@ -451,5 +451,5 @@ export class RouterLinks {
     public static readonly COURSE_TAB = "/"+RouterLinks.TABS+"/"+RouterLinks.COURSES;
     public static readonly PROFILE_TAB = "/"+RouterLinks.TABS+"/"+RouterLinks.PROFILE;
     public static readonly GUEST_PROFILE_TAB = "/"+RouterLinks.TABS+"/"+RouterLinks.GUEST_PROFILE;
-    public static readonly DOWNLOAD_TAB = "/"+RouterLinks.TABS+"/"+RouterLinks.DOWNLOADS_TAB;
+    public static readonly DOWNLOAD_TAB = "/"+RouterLinks.TABS+"/"+RouterLinks.DOWNLOAD_MANAGER;
 }
