@@ -1,5 +1,5 @@
-<ion-content class="ion-padding" *ngIf="!changePermissionAccess">
-  <p class="permission-title mt-0">{{'PERMISSION_REQUIRED_TITLE' | translate: {'%s': appName} }}</p>
+<ion-content padding *ngIf="!changePermissionAccess">
+  <p class="permission-title">{{'PERMISSION_REQUIRED_TITLE' | translate: {'%s': appName} }}</p>
   <div class="permission-container">
     <div *ngFor="let item of permissionListDetails" class="item-row d-flex mb-16">
       <div class="icon-col pr-16">
@@ -13,13 +13,13 @@
   </div>
 </ion-content>
 
-<ion-footer class="ion-padding" *ngIf="!changePermissionAccess">
+<ion-footer padding *ngIf="!changePermissionAccess">
   <ion-button expand="block" (click)="grantAccess()">{{'GRANT_ACCESS' | translate}}</ion-button>
   <ion-button expand="block" fill="outline" class="mt-8" (click)="skipAccess()">{{'NOT_NOW' | translate}}</ion-button>
 </ion-footer>
 
 <!-- For Edit permission page -->
-<ion-content *ngIf="changePermissionAccess" class="changePermissionAccess ion-padding-vertical">
+<ion-content padding *ngIf="changePermissionAccess" class="changePermissionAccess ion-padding-vertical">
   <div>
     <p class="permission-title" class="pl-16">{{'PERMISSION_EDIT_TITLE' | translate:{'%s': appName} }}</p>
   </div>
