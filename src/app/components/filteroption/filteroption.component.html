@@ -1,0 +1,21 @@
+<ion-header>
+  <ion-toolbar>
+    <h4 class="subtitle">{{ 'CHOOSE_FROM_FOLLOWING' | translate }}</h4>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+  <ion-grid class="scroll-list">
+    <ion-row *ngIf="facets?.values && facets?.values.length">
+        <ion-col size="6" *ngFor="let facetValue of facets.values">
+          <input type="checkbox" class="checkbox" [(ngModel)]="facetValue.apply">
+          <ion-label class="filter-option-text" text-capitalize>{{ facetValue.translations ? facetValue.translations: facetValue.name  }}</ion-label>
+        </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>
+<ion-footer>
+  <ion-toolbar padding-left padding-right>
+    <!-- <button ion-button block (click)="confirm()">{{ 'CONFIRM' | translate }}</button> -->
+    <ion-button expand="full"  color="primary" (click)="confirm()">{{ 'CONFIRM' | translate }}</ion-button>
+  </ion-toolbar>
+</ion-footer>
