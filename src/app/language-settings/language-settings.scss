@@ -1,4 +1,6 @@
-@import "src/global.scss";
+@import "src/assets/styles/variables";
+@import "src/assets/styles/_custom-mixins";
+@import "src/assets/styles/fonts";
 :host {
   /* This should be item-ios only as we are targeting mode as iOS for radio-button */
   ion-item {
