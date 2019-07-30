@@ -1,7 +1,6 @@
-import { Inject, Injectable } from '@angular/core';
-import { AppGlobalService } from './app-global-service.service';
+import { Inject, Injectable, OnInit } from '@angular/core';
+import { AppGlobalService } from '@app/services/app-global-service.service';
 import { AppVersion } from '@ionic-native/app-version/ngx';
-import { PreferenceKey, SystemSettingsIds } from '../app/app.constant';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { Events } from '@ionic/angular';
@@ -22,13 +21,10 @@ import {
     SharedPreferences
 } from 'sunbird-sdk';
 
+import { SystemSettingsIds, ContentFilterConfig, ContentType } from '@app/app/app.constant';
 @Injectable()
-export class FormAndFrameworkUtilService {
-
-    /**
-     * This variable is used to store the language selected, which is required when getting form related details.
-     *
-     */
+export class FormAndFrameworkUtilService implements OnInit {
+    contentFilterConfig: Array<any> = [];
     selectedLanguage: string;
     profile: Profile;
 
@@ -43,14 +39,10 @@ export class FormAndFrameworkUtilService {
         private appVersion: AppVersion,
         private translate: TranslateService,
         private events: Events
-    ) {
-        // Get language selected
-        this.preferences.getString(PreferenceKey.SELECTED_LANGUAGE_CODE).toPromise()
-            .then(val => {
-                if (val && val.length) {
-                    this.selectedLanguage = val;
-                }
-            });
+    ) { }
+
+    ngOnInit() {
+        this.selectedLanguage = this.translate.currentLang;
     }
 
     /**
@@ -103,7 +95,6 @@ export class FormAndFrameworkUtilService {
             this.appVersion.getVersionCode()
                 .then((versionCode: any) => {
                     console.log('checkNewAppVersion Current app version - ' + versionCode);
-
                     let result: any;
 
                     // form api request
@@ -167,14 +158,11 @@ export class FormAndFrameworkUtilService {
 
     /**
      * Network call to form api
-     *
-     * @param courseFilterConfig
-     * @param resolve
-     * @param reject
      */
-    private invokeCourseFilterConfigFormApi(courseFilterConfig: Array<any>,
-                                            resolve: (value?: any) => void,
-                                            reject: (reason?: any) => void) {
+    private invokeCourseFilterConfigFormApi(
+        courseFilterConfig: Array<any>,
+        resolve: (value?: any) => void,
+        reject: (reason?: any) => void) {
 
         const req: FormRequest = {
             type: 'pageassemble',
@@ -194,75 +182,13 @@ export class FormAndFrameworkUtilService {
     }
 
     /**
-     * Get all categories using framework api
-     */
-    // getFrameworkDetails(frameworkId: string): Promise<any> {
-    //     return new Promise((resolve, reject) => {
-    //         const req: FrameworkDetailsRequest = {
-    //             defaultFrameworkDetails: true,
-    //             categories: FrameworkCategory.DEFAULT_FRAMEWORK_CATEGORIES
-    //         };
-
-    //         if (frameworkId !== undefined && frameworkId.length) {
-    //             req.defaultFrameworkDetails = false;
-    //             req.frameworkId = frameworkId;
-    //         }
-
-    //         this.framework.getAllCategories(req)
-    //             .then(res => {
-    //                 resolve(res);
-    //             })
-    //             .catch(error => {
-    //                 reject(error);
-    //             });
-    //     });
-    // }
-
-    /**
-     *
-     * This gets the categoy data according to current and previously selected values
-     *
-     * @param req
-     * @param frameworkId
-     */
-    // getCategoryData(req: CategoryRequest, frameworkId?: string): Promise<any> {
-    //     return new Promise((resolve, reject) => {
-    //         if (frameworkId !== undefined && frameworkId.length) {
-    //             req.frameworkId = frameworkId;
-    //         }
-
-    //         const categoryList: Array<any> = [];
-
-    //         this.framework.getCategoryData(req)
-    //             .then(res => {
-    //                 const category = JSON.parse(res);
-    //                 const resposneArray = category.terms;
-    //                 let value = {};
-    //                 resposneArray.forEach(element => {
-
-    //                     value = { 'name': element.name, 'code': element.code };
-
-    //                     categoryList.push(value);
-    //                 });
-
-    //                 resolve(categoryList);
-    //             })
-    //             .catch(err => {
-    //                 reject(err);
-    //             });
-    //     });
-    // }
-
-    /**
      * Network call to form api
-     *
-     * @param libraryFilterConfig
-     * @param resolve
-     * @param reject
      */
-    private invokeLibraryFilterConfigFormApi(libraryFilterConfig: Array<any>,
-                                             resolve: (value?: any) => void,
-                                             reject: (reason?: any) => void) {
+    private invokeLibraryFilterConfigFormApi(
+        libraryFilterConfig: Array<any>,
+        resolve: (value?: any) => void,
+        reject: (reason?: any) => void) {
+
         const req: FormRequest = {
             type: 'pageAssemble',
             subType: 'library',
@@ -279,9 +205,79 @@ export class FormAndFrameworkUtilService {
                 resolve(libraryFilterConfig);
             });
     }
+
+
+    private setContentFilterConfig(contentFilterConfig: Array<any>) {
+        this.contentFilterConfig = contentFilterConfig;
+    }
+
+    private getCachedContentFilterConfig() {
+        return this.contentFilterConfig;
+    }
+
+    private async invokeContentFilterConfigFormApi(): Promise<any> {
+        const req: FormRequest = {
+            type: 'config',
+            subType: 'content',
+            action: 'filter',
+        };
+
+        // form api call
+        return this.formService.getForm(req).toPromise()
+            .then((res: any) => {
+                this.setContentFilterConfig(res.form.data.fields);
+                return res.form.data.fields;
+            }).catch((error: any) => {
+                console.log('Error - ' + error);
+                return error;
+            });
+    }
+
+    async getSupportedContentFilterConfig(name): Promise<Array<string>> {
+        // get cached library config
+        let contentFilterConfig: any = this.getCachedContentFilterConfig();
+        let libraryTabContentTypes: Array<string>;
+
+        if (contentFilterConfig === undefined || contentFilterConfig.length === 0) {
+            await this.invokeContentFilterConfigFormApi()
+                .then(fields => {
+                    contentFilterConfig = fields;
+                })
+                .catch(error => {
+                });
+        }
+
+        if (contentFilterConfig === undefined || contentFilterConfig.length === 0) {
+            switch (name) {
+                case ContentFilterConfig.NAME_LIBRARY:
+                    libraryTabContentTypes = ContentType.FOR_LIBRARY_TAB;
+                    break;
+                case ContentFilterConfig.NAME_COURSE:
+                    libraryTabContentTypes = ContentType.FOR_COURSE_TAB;
+                    break;
+                case ContentFilterConfig.NAME_DOWNLOADS:
+                    libraryTabContentTypes = ContentType.FOR_DOWNLOADED_TAB;
+                    break;
+                case ContentFilterConfig.NAME_DIALCODE:
+                    libraryTabContentTypes = ContentType.FOR_DIAL_CODE_SEARCH;
+                    break;
+            }
+        } else {
+            for (const field of contentFilterConfig) {
+                if (field.name === name && field.code === ContentFilterConfig.CODE_CONTENT_TYPE) {
+                    libraryTabContentTypes = field.values;
+                    break;
+                }
+            }
+        }
+
+        return libraryTabContentTypes;
+    }
+
+
     /**
      * update local profile for logged in user and return promise with a status saying,
-     *  whether user has to be redirected to categoryedit page or library page
+     *  whether user has to be redirected to category edit page or library page
      * @param profileRes : profile details of logged in user which can be obtained using userProfileService.getUserProfileDetails
      * @param profileData : Local profile of current user
      */
@@ -368,9 +364,7 @@ export class FormAndFrameworkUtilService {
             if (profile.board && profile.board.length > 1) {
                 profile.board.splice(1, profile.board.length);
             }
-            // this.preference.getString('current_framework_id')
-            // .then(value => {
-            // req.syllabus = [value];
+
             this.profileService.updateProfile(req).toPromise()
                 .then((res: any) => {
                     const updateProfileRes = res;
@@ -405,6 +399,7 @@ export class FormAndFrameworkUtilService {
         let rootOrganizations;
         try {
             rootOrganizations = this.appGlobalService.getCachedRootOrganizations();
+
             // if data not cached
             if (rootOrganizations === undefined || rootOrganizations.length === 0) {
                 const searchOrganizationReq: OrganizationSearchCriteria<{ any }> = {
@@ -443,9 +438,6 @@ export class FormAndFrameworkUtilService {
 
     }
 
-    /**
-     *
-     */
     async getCustodianOrgId() {
         return new Promise((resolve, reject) => {
             const getSystemSettingsRequest: GetSystemSettingsRequest = {
@@ -460,9 +452,6 @@ export class FormAndFrameworkUtilService {
         });
     }
 
-    /**
-     *
-     */
     async getContentComingSoonMsg() {
         return new Promise((resolve, reject) => {
             const getSystemSettingsRequest: GetSystemSettingsRequest = {
@@ -491,5 +480,4 @@ export class FormAndFrameworkUtilService {
                 });
         });
     }
-
 }

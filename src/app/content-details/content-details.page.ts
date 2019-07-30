@@ -251,7 +251,7 @@ export class ContentDetailsPage implements OnInit {
     //     true, this.cardData.identifier, this.corRelationList);
     //   this.handleNavBackButton();
     // };
-    // this.handleDeviceBackButton();
+    // 
 
     if (!AppGlobalService.isPlayerLaunched) {
       this.calculateAvailableUserCount();
@@ -283,6 +283,7 @@ export class ContentDetailsPage implements OnInit {
    * Ionic life cycle hook
    */
   ionViewWillEnter(): void {
+    this.handleDeviceBackButton();
     this.headerObservable = this.headerService.headerEventEmitted$.subscribe(eventName => {
       this.handleHeaderEvents(eventName);
     });
@@ -346,7 +347,10 @@ export class ContentDetailsPage implements OnInit {
       this.generateQRSessionEndEvent(this.source, this.cardData.identifier);
     }
     this.popToPreviousPage(true);
-    this.backButtonFunc.unsubscribe();
+    if(this.backButtonFunc) {
+      this.backButtonFunc.unsubscribe();
+    }
+    
   }
 
   handleDeviceBackButton() {

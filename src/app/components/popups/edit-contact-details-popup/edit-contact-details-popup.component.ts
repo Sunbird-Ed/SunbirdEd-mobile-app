@@ -13,7 +13,6 @@ import { Keyboard } from '@ionic-native/keyboard/ngx';
 })
 export class EditContactDetailsPopupComponent implements OnInit {
 
-
   // Data passed in by componentProps
   @Input() userId: string;
   @Input() title: string;
@@ -24,11 +23,12 @@ export class EditContactDetailsPopupComponent implements OnInit {
   email: string;
   err: boolean;
   personEditForm: FormGroup;
-  isRequired: boolean = false;
+  isRequired = false;
   updateErr: boolean;
   blockedAccount: boolean;
   unregisterBackButton: any;
   loader: any;
+
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     private navParams: NavParams,
@@ -156,7 +156,9 @@ export class EditContactDetailsPopupComponent implements OnInit {
   }
 
   ionViewWillLeave() {
-    this.unregisterBackButton && this.unregisterBackButton.unsubscribe();
+    if (this.unregisterBackButton) {
+      this.unregisterBackButton.unsubscribe();
+    }
   }
 
 }

@@ -438,7 +438,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
     this.showLoader = true;
     const requestParams: ContentRequest = {
       uid: this.profile ? this.profile.uid : undefined,
-      contentTypes: ContentType.FOR_RECENTLY_VIEWED,
+      contentTypes: [],
       audience: this.audienceFilter,
       recentlyViewed: true,
       limit: 20

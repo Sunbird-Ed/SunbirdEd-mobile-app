@@ -239,7 +239,8 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.platform.backButton.subscribeWithPriority(0, () => {
       console.log("URL"+this.router.url);
       if(this.router.url === RouterLinks.LIBRARY_TAB || this.router.url == RouterLinks.COURSE_TAB 
-      || this.router.url === RouterLinks.DOWNLOAD_TAB) {
+      || this.router.url === RouterLinks.DOWNLOAD_TAB || this.router.url == RouterLinks.PROFILE_TAB || 
+      this.router.url == RouterLinks.GUEST_PROFILE_TAB) {
         this.commonUtilService.showExitPopUp(this.activePageService.computePageId(this.router.url), Environment.HOME, false);
       } else {
         this.routerOutlet.pop();
@@ -445,7 +446,29 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   handleHeaderEvents($event) {
     if ($event.name === 'back') {
-      this.location.back();
+      //this.location.back();
+      let routeUrl = this.router.url;
+      if((routeUrl.indexOf(RouterLinks.USER_TYPE_SELECTION))
+      || (routeUrl.indexOf(RouterLinks.ACTIVE_DOWNLOADS))
+      || (routeUrl.indexOf(RouterLinks.COLLECTION_DETAIL_ETB))
+      || (routeUrl.indexOf(RouterLinks.COLLECTION_DETAILS))
+      || (routeUrl.indexOf(RouterLinks.CONTENT_DETAILS))
+      || (routeUrl.indexOf(RouterLinks.ENROLLED_COURSE_DETAILS))
+      || (routeUrl.indexOf(RouterLinks.FAQ_HELP))
+      || (routeUrl.indexOf(RouterLinks.PROFILE_SETTINGS))
+      || (routeUrl.indexOf(RouterLinks.QRCODERESULT))
+      || (routeUrl.indexOf(RouterLinks.STORAGE_SETTINGS))) {
+          this.headerService.sidebarEvent($event);
+          return;
+      } else {
+        if(this.router.url === RouterLinks.LIBRARY_TAB || this.router.url == RouterLinks.COURSE_TAB 
+          || this.router.url === RouterLinks.DOWNLOAD_TAB || this.router.url == RouterLinks.PROFILE_TAB || 
+          this.router.url == RouterLinks.GUEST_PROFILE_TAB) {
+            this.commonUtilService.showExitPopUp(this.activePageService.computePageId(this.router.url), Environment.HOME, false);
+          } else {
+            this.routerOutlet.pop();
+          }
+      }
     }
     /*if ($event.name === 'back') {
       let navObj = this.app.getRootNavs()[0];
