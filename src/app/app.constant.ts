@@ -448,4 +448,9 @@ export class RouterLinks {
     public static readonly PROFILE_TAB = `/${RouterLinks.TABS}/${RouterLinks.PROFILE}`;
     public static readonly GUEST_PROFILE_TAB = `/${RouterLinks.TABS}/${RouterLinks.GUEST_PROFILE}`;
     public static readonly DOWNLOAD_TAB = `/${RouterLinks.TABS}/${RouterLinks.DOWNLOAD_MANAGER}`;
+
+
+    // TEXTBOOK view more page Routes
+    public static readonly TEXTBOOK_VIEW_MORE = 'textbook-view-more';
+
 }

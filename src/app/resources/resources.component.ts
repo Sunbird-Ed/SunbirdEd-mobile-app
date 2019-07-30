@@ -966,13 +966,12 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
       telemetryObject);
     if (this.commonUtilService.networkInfo.isNetworkAvailable || items.isAvailableLocally) {
 
-      // Migration Todo Missing page
-      /* this.router.navigate([RouterLinks.TEXTBOOK_VIEW_MORE_PAGE], {
+      this.router.navigate([RouterLinks.TEXTBOOK_VIEW_MORE], {
         state: {
           content: items,
-        subjectName: subject
+          subjectName: subject
         }
-      }); */
+      });
     } else {
       this.presentToastForOffline('OFFLINE_WARNING_ETBUI_1');
     }
