@@ -11,8 +11,8 @@
       </div>
       <!-- Card style -->
       <div class="sb-card-container sb-card-textbook-container">
-        <textbook-card *ngFor="let item of content; let i = index" [content]="item" [layoutName]='layoutName'
-          (click)="navigateToDetailPage(item, i, item.name)"></textbook-card>
+        <app-textbook-card *ngFor="let item of content; let i = index" [content]="item" [layoutName]='layoutName'
+          (click)="navigateToDetailPage(item, i, item.name)"></app-textbook-card>
       </div>
     </div>
   </div>

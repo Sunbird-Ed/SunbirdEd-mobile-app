@@ -80,7 +80,6 @@ const routes: Routes = [
     path: `${RouterLinks.MENU_LANGUAGE_SETTING}/:isFromSettings`,
     loadChildren: './language-settings/language-settings.module#LanguageSettingsModule'
   },
-  { path: RouterLinks.ONBOARDING, loadChildren: './onboarding/onboarding.module#OnboardingPageModule' },
   { path: 'filters', loadChildren: './search/filters/filters.module#FiltersPageModule' },
   { path: RouterLinks.TEXTBOOK_VIEW_MORE, loadChildren: './textbook-view-more/textbook-view-more.module#TextbookViewMorePageModule' },
 ];
