@@ -109,7 +109,8 @@ export enum PageId {
     SHOW_DUPLICATE_CONTENT_POPUP = 'show-duplicate-content-popup',
     CONTENT_TRANSFER_SUCCEED_POPUP = 'content-transfer-succeed-popup',
     CANCELLING_CONTENT_TRANSFER_POPUP = 'cancelling-content-transfer-popup',
-    DIAL_SEARCH = 'dial-book-result'
+    DIAL_SEARCH = 'dial-book-result',
+    TEXTBOOK_TOC = 'textbook-toc'
 }
 export enum LogType {
     NOTIFICATION = 'notification'
@@ -137,7 +138,8 @@ export enum ImpressionSubtype {
     QR_CODE_VALID = 'qr-code-valid',
     INVALID_QR_CODE = 'invalid-qr-code',
     APP_RATING_POPUP = 'app-rating-popup',
-    QR_SCAN_WALKTHROUGH = 'qr-scan-walkthrough'
+    QR_SCAN_WALKTHROUGH = 'qr-scan-walkthrough',
+    COMINGSOON_POPUP = 'coming-soon-popup'
 }
 export enum InteractType {
     TOUCH = 'TOUCH',
@@ -312,7 +314,13 @@ export enum InteractSubtype {
     HOTCODE_PUSH_SUCCESS = 'hotcode-push-success',
     HOTCODE_PUSH_FAILURE = 'hotcode-push-failure',
     HOTCODE_PUSH_PROGRESS = 'hotcode-push-progress',
-    HOTCODE_PUSH_KEY_NOT_DEFINED = 'hotcode-push-key-not-defined'
+    HOTCODE_PUSH_KEY_NOT_DEFINED = 'hotcode-push-key-not-defined',
+    SEARCH_HISTORY_CLICKED = 'search-history-clicked',
+    SHEEN_ANIMATION_START = 'sheen-animation-started',
+    SHEEN_ANIMATION_END = 'sheen-animation-ended',
+    FILTER_CLICKED = 'filter-clicked',
+    DROPDOWN_CLICKED = 'drop-down-clicked',
+    SUBUNIT_CLICKED = 'sub-unit-clicked'
 }
 
 export enum ActionButtonType {
