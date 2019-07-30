@@ -1,7 +1,6 @@
 import { BatchConstants, RouterLinks } from './../../app/app.constant';
 import { Component, Inject, NgZone, OnDestroy, ViewChild } from '@angular/core';
 import { Events, NavController, NavParams,  Platform, PopoverController } from '@ionic/angular';
-// import { Content as ContentView } from 'ionic-angular';
 import {
   CachedItemRequestSourceFrom, Content, ContentDetailRequest, ContentEventType, ContentImport, ContentImportRequest,
   ContentImportResponse, ContentImportStatus, ContentSearchCriteria, ContentSearchResult, ContentService,
@@ -11,27 +10,20 @@ import {
   FetchEnrolledCourseRequest
 } from 'sunbird-sdk';
 import { Location } from '@angular/common';
-// import { FilterPage } from './filters/filter';
-// import { CollectionDetailsEtbPage } from '../collection-details-etb/collection-details-etb';
-// import { ContentDetailsPage } from '../content-details/content-details';
 import { Map } from '../../app/telemetryutil';
 import * as _ from 'lodash';
 import { AudienceFilter, ContentType, MimeType, Search, ContentCard } from '../../app/app.constant';
-// import { EnrolledCourseDetailsPage } from '../enrolled-course-details/enrolled-course-details';
 import { AppGlobalService } from '../../services/app-global-service.service';
 import { FormAndFrameworkUtilService } from '../../services/formandframeworkutil.service';
 import { CommonUtilService } from '../../services/common-util.service';
 import { TelemetryGeneratorService } from '../../services/telemetry-generator.service';
-// import { QrCodeResultPage } from '../qr-code-result/qr-code-result';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 import {
   Environment, ImpressionType, InteractSubtype, InteractType, LogLevel, Mode, PageId
 } from '../../services/telemetry-constants';
-// import { TabsPage } from '@app/pages/tabs/tabs';
 import { AppHeaderService } from '../../services/app-header.service';
 import { Router } from '@angular/router';
-// import { EnrollmentDetailsPage } from '../enrolled-course-details/enrollment-details/enrollment-details';
 
 @Component({
   selector: 'app-search',
@@ -386,7 +378,7 @@ export class SearchPage implements OnDestroy {
           }
         });
       });
-      this.router.navigate([RouterLinks.PAGE_FILTER], {
+      this.router.navigate(['/filters'] , {
         state: {
           filterCriteria: this.responseData.filterCriteria
         }
