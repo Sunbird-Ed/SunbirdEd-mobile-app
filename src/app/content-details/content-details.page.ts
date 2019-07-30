@@ -1,4 +1,4 @@
-import {Component, Inject, NgZone, ViewChild, OnInit} from '@angular/core';
+import {Component, Inject, NgZone, ViewChild, OnInit, ViewEncapsulation} from '@angular/core';
 import {
   AlertController,
   IonApp,
@@ -86,6 +86,7 @@ declare const cordova;
   selector: 'app-content-details',
   templateUrl: './content-details.page.html',
   styleUrls: ['./content-details.page.scss'],
+  encapsulation: ViewEncapsulation.None
 })
 export class ContentDetailsPage implements OnInit {
   resumedCourseCardData: any;

@@ -39,6 +39,7 @@ import { AssessmentDetailsComponent } from './assessment-details/assessment-deta
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 import { ViewCreditsComponent } from './popups/view-credits/view-credits.component';
 import { SkeletonItemComponent } from './skeleton-item/skeleton-item.component';
+import { FilteroptionComponent } from './filteroption/filteroption.component';
 
 @NgModule({
   declarations: [
@@ -73,7 +74,8 @@ import { SkeletonItemComponent } from './skeleton-item/skeleton-item.component';
     NotificationItemComponent,
     AssessmentDetailsComponent,
     ViewCreditsComponent,
-    SkeletonItemComponent
+    SkeletonItemComponent,
+    FilteroptionComponent
   ],
   imports: [
     CommonModule,
@@ -99,7 +101,8 @@ import { SkeletonItemComponent } from './skeleton-item/skeleton-item.component';
     EditContactVerifyPopupComponent,
     ConfirmAlertComponent,
     AppRatingAlertComponent,
-    ViewCreditsComponent
+    ViewCreditsComponent,
+    FilteroptionComponent
   ],
   exports: [
     ApplicationHeaderComponent,
@@ -131,7 +134,8 @@ import { SkeletonItemComponent } from './skeleton-item/skeleton-item.component';
     NotificationItemComponent,
     AssessmentDetailsComponent,
     ViewCreditsComponent,
-    SkeletonItemComponent
+    SkeletonItemComponent,
+    FilteroptionComponent
   ],
   providers: [FileSizePipe, Keyboard]
 })

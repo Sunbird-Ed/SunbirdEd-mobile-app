@@ -3,14 +3,14 @@
 .sb-player-container {
     background-color: $gray-800;
     max-width:100%;
-    height: ($base-block-space * 25);
+    height: ($base-block-space * 50);
     overflow:hidden;
     position: relative;
     text-align: center;
     .sb-arrow-back
     {
       @include padding($base-block-space * 0.5);
-      color: $blue;
+      color: $white;
     }
     .sb-circle
     {
@@ -19,7 +19,7 @@
       left: 16px;
       height:($base-block-space * 3);
       width:24px;
-      background-color: $white;
+    //  background-color: $white;
       border-radius: 50%;
       z-index: 100;
     }
@@ -27,12 +27,13 @@
       position: absolute;
       left: 0;
       right: 0;
-      top: 40%;
+      top: 58%;
       text-align: center;
       .sb-play-title-group{
-        top: 50%;
+        top: 58%;
       }
       .sb-common-title{
+        background: transparent;
         .sb-common-white-icon{
           font-size: (($font-size-base * 3) - 2) ;
           color: $white;
@@ -61,7 +62,7 @@
       text-align: center;
     }
     .sb-common-player-group.sb-download-title-group{
-      top: 30%;
+      top: 50%;
       text-align: center;
     }
     .sb-online-message
@@ -81,9 +82,10 @@
       left: 0;
       right: 0;
       max-width: 100%;
-      height: 200px;
+      height: 400px;
       position: absolute;
-      background: rgba(0,0,0,0.4);  
+      // background: rgba(0,0,0,0.4);
+      background: linear-gradient(180deg, rgba(0,0,0,0.91) 0%, rgba(0,0,0,0.71) 100%)  
     }
   }
   // .sb-player-container.sb-offline-container{
