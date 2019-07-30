@@ -37,7 +37,6 @@ export class UserTypeSelectionPage implements OnInit {
   headerObservable: any;
   studentImageUri = 'assets/imgs/ic_student.png';
   teacherImageUri = 'assets/imgs/ic_teacher.png';
-  isChangeRoleRequest = false;
   private navParams: any;
   @ViewChild(IonRouterOutlet) routerOutlet: IonRouterOutlet;
 
@@ -79,11 +78,6 @@ export class UserTypeSelectionPage implements OnInit {
     });
     this.headerService.showHeaderWithBackButton();
     this.profile = this.appGlobalService.getCurrentUser();
-
-    if (this.navParams) {
-      this.isChangeRoleRequest = Boolean(this.navParams.isChangeRoleRequest);
-    }
-
     this.backButtonFunc = this.platform.backButton.subscribeWithPriority(10, () => {
       this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.USER_TYPE_SELECTION, Environment.HOME, false);
       this.handleBackButton();
@@ -102,11 +96,7 @@ export class UserTypeSelectionPage implements OnInit {
   }
 
   handleBackButton() {
-    if (this.isChangeRoleRequest) {
-      this.location.back();
-    } else {
-      this.router.navigate([`/${RouterLinks.LANGUAGE_SETTING}`, 'false']);
-    }
+    this.router.navigate([`/${RouterLinks.LANGUAGE_SETTING}`, 'false']);
   }
   handleHeaderEvents($event) {
     switch ($event.name) {
@@ -135,9 +125,7 @@ export class UserTypeSelectionPage implements OnInit {
         this.commonUtilService.translateMessage(userType)
       );
 
-      if (!this.isChangeRoleRequest) {
-        this.preferences.putString(PreferenceKey.SELECTED_USER_TYPE, this.selectedUserType).toPromise().then();
-      }
+      this.preferences.putString(PreferenceKey.SELECTED_USER_TYPE, this.selectedUserType).toPromise().then();
     });
     const values = new Map();
     values['userType'] = (this.selectedUserType).toUpperCase();
@@ -208,25 +196,8 @@ export class UserTypeSelectionPage implements OnInit {
       initTabs(this.container, GUEST_STUDENT_TABS);
     }
 
-    if (this.isChangeRoleRequest && isUserTypeChanged) {
-      if (this.appGlobalService.DISPLAY_ONBOARDING_CATEGORY_PAGE) {
-        this.container.removeAllTabs();
-        const navigationExtras: NavigationExtras = { state: { isChangeRoleRequest: true, selectedUserType: this.selectedUserType } };
-        this.router.navigate([`/${RouterLinks.PROFILE_SETTINGS}`], navigationExtras);
-      } else {
-        this.updateProfile('TabsPage');
-      }
-    } else if (this.appGlobalService.isProfileSettingsCompleted) {
+    if (this.appGlobalService.isProfileSettingsCompleted) {
       this.navigateToTabsAsGuest();
-    } else if (this.appGlobalService.DISPLAY_ONBOARDING_SCAN_PAGE) {
-      // Need to go tabsPage when scan page is ON, changeRoleRequest ON and profileSetting is OFF
-      if (this.isChangeRoleRequest) {
-        this.navigateToTabsAsGuest();
-      } else if (isUserTypeChanged) {
-        this.updateProfile('PermissionPage', { showScannerPage: true });
-      } else {
-        this.navigateToPermissions({ showScannerPage: true });
-      }
     } else if (this.appGlobalService.DISPLAY_ONBOARDING_CATEGORY_PAGE) {
       if (isUserTypeChanged) {
         this.updateProfile('PermissionPage', { showProfileSettingPage: true });

@@ -1,3 +1,4 @@
+import { FormAndFrameworkUtilService } from '@app/services/formandframeworkutil.service';
 import { Events, NavController , Platform } from '@ionic/angular';
 import { Component, Inject, NgZone, OnInit, Input } from '@angular/core';
 import {
@@ -32,7 +33,7 @@ import {
   CorReleationDataType
 } from '../../services/telemetry-constants';
 import * as _ from 'lodash';
-import {ContentType, ViewMore, MimeType , RouterLinks } from '../../app/app.constant';
+import {ContentType, ViewMore, MimeType , RouterLinks, ContentFilterConfig } from '../../app/app.constant';
 // import {ContentDetailsPage} from '../content-details/content-details';
 import { CourseUtilService } from '../../services/course-util.service';
 import { TelemetryGeneratorService } from '../../services/telemetry-generator.service';
@@ -185,7 +186,8 @@ export class ViewMoreActivityComponent implements OnInit {
     private router: Router,
     private location: Location,
     private platform: Platform,
-    private zone: NgZone
+    private zone: NgZone,
+    private formAndFrameworkUtilService: FormAndFrameworkUtilService
   ) {
     this.route.queryParams.subscribe(params => {
       if (this.router.getCurrentNavigation().extras.state) {
@@ -396,12 +398,20 @@ export class ViewMoreActivityComponent implements OnInit {
     const loader = await this.commonUtilService.getLoader();
     await loader.present();
 
+    let contentTypes;
+    if (recentlyViewed) {
+      contentTypes = [];
+    } else {
+      contentTypes = await this.formAndFrameworkUtilService.getSupportedContentFilterConfig(
+        ContentFilterConfig.NAME_LIBRARY);
+    }
+
     const requestParams: ContentRequest = {
       uid: this.uid,
       audience: this.audience,
       recentlyViewed: recentlyViewed,
       localOnly: downloaded,
-      contentTypes: recentlyViewed ? ContentType.FOR_RECENTLY_VIEWED : ContentType.FOR_LIBRARY_TAB,
+      contentTypes: contentTypes,
       limit: recentlyViewed ? 20 : 0
     };
     this.contentService.getContents(requestParams).toPromise()
