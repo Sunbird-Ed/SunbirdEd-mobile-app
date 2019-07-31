@@ -237,8 +237,7 @@ export class GuestEditPage implements OnInit {
     await this.loader.present();
     const getSuggestedFrameworksRequest: GetSuggestedFrameworksRequest = {
       language: this.translate.currentLang,
-      requiredCategories: FrameworkCategoryCodesGroup.DEFAULT_FRAMEWORK_CATEGORIES,
-      ignoreActiveChannel: true
+      requiredCategories: FrameworkCategoryCodesGroup.DEFAULT_FRAMEWORK_CATEGORIES
     };
     this.frameworkUtilService.getActiveChannelSuggestedFrameworkList(getSuggestedFrameworksRequest).toPromise()
       .then((result: Framework[]) => {

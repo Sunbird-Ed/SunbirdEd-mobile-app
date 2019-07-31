@@ -1,4 +1,6 @@
-@import "src/global.scss";
+@import "src/assets/styles/base/_variables.scss";
+@import "src/assets/styles/mixins/bourbon/library/_clearfix.scss";
+
 :host {
 .sb-card-active{
     background: #{$light-blue-bg} !important;
