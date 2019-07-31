@@ -1,4 +1,6 @@
-@import 'src/global.scss';
+@import "src/assets/styles/_helper.scss";
+@import "src/assets/styles/_variables.scss";
+@import "src/assets/styles/fonts.scss";
 
 .mandatory {
     color: map-get($colors, red);
