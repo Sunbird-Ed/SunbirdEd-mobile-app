@@ -6,12 +6,11 @@
   </div>
   <ion-refresher (ionRefresh)="doRefresh($event)"></ion-refresher>
   <div padding-horizontal text-center class="MT15" *ngIf="profile?.firstName">
-      <app-profile-avatar [username]="profile?.firstName"></app-profile-avatar>
+    <app-profile-avatar [username]="profile?.firstName"></app-profile-avatar>
   </div>
 
   <div padding-horizontal text-center>
-    
-   <!-- <ion-spinner *ngIf="res.isUploading"></ion-spinner>-->
+
     <p style="position: relative;"><span class="profile-name">{{ profile?.firstName }}
         {{ profile?.lastName }}</span>
       <span *ngIf="!isCustodianOrgId && profile?.firstName" class="isymbol" item-right text-left
@@ -46,8 +45,7 @@
       <span *ngIf="!isCustodianOrgId && profile?.organisations[0].orgName" class="isymbol" item-right text-left
         (click)="toggleTooltips($event, 'org')">
         <ion-icon name="information-circle" class="info-icon"></ion-icon>
-        <span class="asPerStateRecord" *ngIf="informationOrgName">{{'STATE_RECORDS'
-                    | translate}}</span>
+        <span class="asPerStateRecord" *ngIf="informationOrgName">{{'STATE_RECORDS' | translate}}</span>
       </span>
     </p>
     <div *ngIf="orgDetails && orgDetails?.block?.name">Block: {{orgDetails?.block?.name}}</div>
@@ -82,34 +80,34 @@
   <div class="contacts" *ngIf="profile?.phone || profile?.email ">
     <div *ngIf="profile?.phone">
       <div class="phone" (click)="editMobileNumber();">
-        <span class="icon MR10">
+        <span class="icon MR10 align-middle">
           <ion-icon name="md-call"></ion-icon>
         </span>
-        <span class="value">+91 {{ profile?.phone }}</span>
+        <span class="value align-middle">+91 {{ profile?.phone }}</span>
       </div>
     </div>
     <div *ngIf="!profile?.phone">
       <div class="phone light" (click)="editMobileNumber();">
-        <span class="icon MR10">
+        <span class="icon MR10 align-middle">
           <ion-icon name="md-call"></ion-icon>
         </span>
-        <span class="value">{{'ADD_PHONE' | translate}}</span>
+        <span class="value align-middle">{{'ADD_PHONE' | translate}}</span>
       </div>
     </div>
     <div *ngIf="profile?.email">
       <div class="email " (click)="editEmail();">
-        <span class="icon MR10">
+        <span class="icon MR10 align-middle">
           <ion-icon name="md-mail"></ion-icon>
         </span>
-        <span class="value">{{ profile?.email }}</span>
+        <span class="value align-middle">{{ profile?.email }}</span>
       </div>
     </div>
     <div *ngIf="!profile?.email">
       <div class="email light" (click)="editEmail();">
-        <span class="icon MR10">
+        <span class="icon MR10 align-middle">
           <ion-icon name="md-mail"></ion-icon>
         </span>
-        <span class="value">{{'ADD_EMAIL' | translate}}</span>
+        <span class="value align-middle">{{'ADD_EMAIL' | translate}}</span>
       </div>
     </div>
   </div>
@@ -158,78 +156,80 @@
     </div>
   </div>
 
-  <div class="contributions" *ngIf="contentCreatedByMe.length > 0">
-    <div class="bolder f16" style="padding: 15px; background-color: #fff; margin-bottom:  2px;">
-      {{'CONTRIBUTIONS' | translate}} ({{contentCreatedByMe.length}})&lrm;
-    </div>
-    <div class="cards-container" style="padding:15px 5px; background-color: #fff; overflow-x: scroll; ">
-      <!-- migration -todo -->
-      <div style="width: 100%" no-padding>
-        <div class="flex-container" *ngIf="contentCreatedByMe  && isLoggedInUser">
-          <ion-card *ngFor="let courseItem of contentCreatedByMe; let i=index"
-            (click)="navigateToDetailPage(courseItem, layoutPopular, i);" style="min-width: 84%;">
-            <ion-card-content>
-              <ion-row class="top">
-                <ion-col size="3" class="img-container">
-                  <img class="app-icon" alt="app" src="{{courseItem?.appIcon}}" />
-                </ion-col>
-                <ion-col size="9" style="margin-bottom: 5px; padding-left: 15px; padding: 0 0 0 15px;">
-                  <div style="margin-left: -3px; margin-bottom: 5px;" *ngIf="courseItem.resourceType">
-                    <ion-button fill="outline" class="badge">
-                      {{courseItem?.resourceType}}
-                    </ion-button>
-                  </div>
-                  <div class="f11 ellipsis info" *ngIf="courseItem.subject">
-                    {{'SUBJECT'| translate}}: {{courseItem?.subject}}
-                  </div>
-                  <div class="f11 ellipsis info" *ngIf="courseItem.gradeLevel && courseItem.gradeLevel.length">
-                    {{'CLASS' | translate}}: {{courseItem?.gradeLevel}}
-                  </div>
-                  <div class="f11 ellipsis info" *ngIf="courseItem.medium">
-                    {{'MEDIUM' | translate}}: {{courseItem?.medium}}
-                  </div>
-                </ion-col>
+  <div class="bottom-block">
+    <div class="contributions" *ngIf="contentCreatedByMe.length > 0">
+      <div class="bolder f16" style="padding: 15px; background-color: #fff; margin-bottom:  2px;">
+        {{'CONTRIBUTIONS' | translate}} ({{contentCreatedByMe.length}})&lrm;
+      </div>
+      <div class="cards-container" style="padding:0 5px; background-color: #fff; overflow-x: scroll; ">
+        <!-- migration -todo -->
+        <div style="width: 100%" no-padding>
+          <div class="flex-container" *ngIf="contentCreatedByMe  && isLoggedInUser">
+            <ion-card *ngFor="let courseItem of contentCreatedByMe; let i=index"
+              (click)="navigateToDetailPage(courseItem, layoutPopular, i);" style="min-width: 84%;height: 165px;">
+              <ion-card-content>
+                <ion-row class="top">
+                  <ion-col size="3" class="img-container">
+                    <img class="app-icon" alt="app" src="{{courseItem?.appIcon}}" />
+                  </ion-col>
+                  <ion-col size="9" style="margin-bottom: 5px; padding-left: 15px; padding: 0 0 0 15px;">
+                    <div style="margin-bottom: 5px;" *ngIf="courseItem.resourceType">
+                      <ion-button fill="outline" class="badge">
+                        {{courseItem?.resourceType}}
+                      </ion-button>
+                    </div>
+                    <div class="f11 ellipsis info" *ngIf="courseItem.subject">
+                      {{'SUBJECT'| translate}}: {{courseItem?.subject}}
+                    </div>
+                    <div class="f11 ellipsis info" *ngIf="courseItem.gradeLevel && courseItem.gradeLevel.length">
+                      {{'CLASS' | translate}}: {{courseItem?.gradeLevel}}
+                    </div>
+                    <div class="f11 ellipsis info" *ngIf="courseItem.medium">
+                      {{'MEDIUM' | translate}}: {{courseItem?.medium}}
+                    </div>
+                  </ion-col>
 
-              </ion-row>
-              <ion-row>
-                <ion-col size="12" class="PTB0">
-                  <h6 class="name second-line-ellipsis">{{courseItem?.name}}</h6>
-                </ion-col>
-                <ion-col size="12" class="PTB0">
-                  <p class="author">{{courseItem?.creator}}</p>
-                </ion-col>
-              </ion-row>
-            </ion-card-content>
-          </ion-card>
+                </ion-row>
+                <ion-row>
+                  <ion-col size="12" class="PTB0">
+                    <h6 class="name second-line-ellipsis">{{courseItem?.name}}</h6>
+                  </ion-col>
+                  <ion-col size="12" class="PTB0">
+                    <p class="author">{{courseItem?.creator}}</p>
+                  </ion-col>
+                </ion-row>
+              </ion-card-content>
+            </ion-card>
+          </div>
         </div>
       </div>
     </div>
-  </div>
 
-  <div class="trainigs" *ngIf="trainingsCompleted?.length > 0">
-    <div class="bolder heading f16">
-      {{'TRAININGS_ATTENDED' | translate}} ({{trainingsCompleted.length}})&lrm;
-    </div>
-    <div class="content">
-      <div class="MB15" *ngFor="let training of trainingsCompleted | slice : startLimit:trainingsLimit;">
-        <div class="fw" *ngIf="training?.courseName">
-          {{training?.courseName}}
-        </div>
-        <div class="lighter" *ngIf="training?.dateTime">
-          {{training?.dateTime | date:'MMMM yyyy'}}
-        </div>
+    <div class="trainings" *ngIf="trainingsCompleted?.length > 0">
+      <div class="bolder heading f16">
+        {{'TRAININGS_ATTENDED' | translate}} ({{trainingsCompleted.length}})&lrm;
       </div>
-      <div class="" text-center>
-        <ion-button shape="round" class="txt-capitalize custom-round" *ngIf="trainingsLimit < trainingsCompleted.length"
-          (click)="showMoreTrainings()">
-          + {{trainingsCompleted?.length - 2}} {{'MORE' | translate}}
-          <ion-icon class="ML10" name="ios-arrow-down"></ion-icon>
-        </ion-button>
-        <ion-button shape="round" class="txt-capitalize custom-round" *ngIf="trainingsLimit > DEFAULT_PAGINATION_LIMIT"
-          (click)="showLessTrainings()">
-          {{'SHOW_LESS' | translate }}
-          <ion-icon class="ML10" name="ios-arrow-up"></ion-icon>
-        </ion-button>
+      <div class="content">
+        <div class="MB15" *ngFor="let training of trainingsCompleted | slice : startLimit:trainingsLimit;">
+          <div class="fw" *ngIf="training?.courseName">
+            {{training?.courseName}}
+          </div>
+          <div class="lighter" *ngIf="training?.dateTime">
+            {{training?.dateTime | date:'MMMM yyyy'}}
+          </div>
+        </div>
+        <div class="" text-center>
+          <ion-button shape="round" class="txt-capitalize custom-round"
+            *ngIf="trainingsLimit < trainingsCompleted.length" (click)="showMoreTrainings()">
+            + {{trainingsCompleted?.length - 2}} {{'MORE' | translate}}
+            <ion-icon class="ML10" name="ios-arrow-down"></ion-icon>
+          </ion-button>
+          <ion-button shape="round" class="txt-capitalize custom-round"
+            *ngIf="trainingsLimit > DEFAULT_PAGINATION_LIMIT" (click)="showLessTrainings()">
+            {{'SHOW_LESS' | translate }}
+            <ion-icon class="ML10" name="ios-arrow-up"></ion-icon>
+          </ion-button>
+        </div>
       </div>
     </div>
   </div>

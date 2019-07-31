@@ -38,6 +38,7 @@ import { NotificationItemComponent } from './notification-item/notification-item
 import { AssessmentDetailsComponent } from './assessment-details/assessment-details.component';
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 import { ViewCreditsComponent } from './popups/view-credits/view-credits.component';
+import { SkeletonItemComponent } from './skeleton-item/skeleton-item.component';
 import { FilteroptionComponent } from './filteroption/filteroption.component';
 
 @NgModule({
@@ -73,6 +74,7 @@ import { FilteroptionComponent } from './filteroption/filteroption.component';
     NotificationItemComponent,
     AssessmentDetailsComponent,
     ViewCreditsComponent,
+    SkeletonItemComponent,
     FilteroptionComponent
   ],
   imports: [
@@ -132,6 +134,7 @@ import { FilteroptionComponent } from './filteroption/filteroption.component';
     NotificationItemComponent,
     AssessmentDetailsComponent,
     ViewCreditsComponent,
+    SkeletonItemComponent,
     FilteroptionComponent
   ],
   providers: [FileSizePipe, Keyboard]

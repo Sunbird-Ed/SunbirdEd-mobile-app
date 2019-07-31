@@ -222,13 +222,7 @@ export class ProfileSettingsPage implements OnInit {
       .then((response: any) => {
         this.profile = response;
         console.log('responseresponse', response);
-        if (this.navParams && this.navParams.isChangeRoleRequest) {
-          this.profile.syllabus = [];
-          this.profile.board = [];
-          this.profile.grade = [];
-          this.profile.subject = [];
-          this.profile.medium = [];
-        }
+
         this.profileForTelemetry = Object.assign({}, this.profile);
         this.initUserForm();
       }).catch((error) => {
@@ -241,21 +235,12 @@ export class ProfileSettingsPage implements OnInit {
    * Initializes form and assigns default values from the profile object
    */
   initUserForm() {
-    if (this.navParams && this.navParams.isChangeRoleRequest) {
-      this.userForm = this.fb.group({
-        syllabus: [[]],
-        boards: [[]],
-        grades: [[]],
-        medium: [[]]
-      });
-    } else {
-      this.userForm = this.fb.group({
-        syllabus: [this.profile && this.profile.syllabus && this.profile.syllabus[0] || []],
-        boards: [this.profile && this.profile.board || []],
-        grades: [this.profile && this.profile.grade || []],
-        medium: [this.profile && this.profile.medium || []]
-      });
-    }
+    this.userForm = this.fb.group({
+      syllabus: [this.profile && this.profile.syllabus && this.profile.syllabus[0] || []],
+      boards: [this.profile && this.profile.board || []],
+      grades: [this.profile && this.profile.grade || []],
+      medium: [this.profile && this.profile.medium || []]
+    });
   }
 
   /**
@@ -593,10 +578,6 @@ export class ProfileSettingsPage implements OnInit {
         this.telemetryGeneratorService.generateProfilePopulatedTelemetry(
           PageId.ONBOARDING_PROFILE_PREFERENCES, req, 'manual', Environment.ONBOARDING
         );
-
-        if (this.navParams && this.navParams.isChangeRoleRequest) {
-          this.preferences.putString(PreferenceKey.SELECTED_USER_TYPE, req.profileType).toPromise().then();
-        }
 
         const navigationExtras: NavigationExtras = {
           state: {

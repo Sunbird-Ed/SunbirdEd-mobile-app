@@ -1,0 +1,20 @@
+<ion-content overflow-scroll="true">
+  <div class="sb-textbook-container">
+    <div class="sb-textbook-items">
+      <div class="sb-textbook-title-container">
+        <span class="textbook-icon">
+          <ion-icon ios="ios-albums" md="md-albums"></ion-icon>
+        </span>
+        <span class="textbook-title">
+          {{subjectName}}
+        </span>
+      </div>
+      <!-- Card style -->
+      <div class="sb-card-container sb-card-textbook-container">
+        <app-text-book-card *ngFor="let item of content; let i = index" [content]="item" [layoutName]='layoutName'
+          (click)="navigateToDetailPage(item, i, item.name)"></app-text-book-card>
+      </div>
+    </div>
+  </div>
+
+</ion-content>
