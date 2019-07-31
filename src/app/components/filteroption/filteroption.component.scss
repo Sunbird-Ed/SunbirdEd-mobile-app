@@ -1,4 +1,6 @@
-@import 'src/global.scss';
+@import "src/assets/styles/base/_variables.scss";
+@import "src/assets/styles/fonts.scss";
+@import "src/assets/styles/_variables.scss";
     .subtitle {
       text-transform: capitalize;
       font-size: 1.3em;
