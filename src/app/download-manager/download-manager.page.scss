@@ -1,4 +1,5 @@
-@import "src/global.scss";
+@import "src/assets/styles/base/_variables.scss";
+
 :host {
     .sb-dw-manager{
         background-color: #{$light-blue-bg};

@@ -1,4 +1,6 @@
-@import "../../global.scss";
+@import "src/assets/styles/base/_variables.scss";
+@import "src/assets/styles/_custom-mixins.scss";
+
   .text-font {
       .button-inner{
           font-size: 1rem !important;
