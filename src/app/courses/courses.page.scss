@@ -38,15 +38,18 @@
     @include padding(10px, null, null, null);
     @extend .NotoSans-bold;
     @extend .font-weight-700;
-    font-size: 1.35em;
+    font-size: 18px;
+    padding-left:7px;
     width: 60%;
+    font-weight: 600 !important;
   }
   .view-all-link {
-    font-size: 1.2rem;
+    font-size: 12px;
     padding-top: 11px;
     @extend .NotoSans-bold;
     @extend .font-weight-700;
-    width: 30%;
+    width: 15%;
+    float: right;
     // @include text-align('end');
   }
   .course-scroll-holder {

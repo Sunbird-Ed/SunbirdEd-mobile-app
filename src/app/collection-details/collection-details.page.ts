@@ -834,7 +834,7 @@ export class CollectionDetailsPage {
     return (n.toFixed(n >= 10 || l < 1 ? 0 : 1) + ' ' + units[l]);
   }
 
-  async showOverflowMenu(event) {
+  async showOverflowMenu(event) {    
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
       InteractSubtype.KEBAB_MENU_CLICKED,
       Environment.HOME,
@@ -846,6 +846,7 @@ export class CollectionDetailsPage {
 
     const popover = await this.popoverCtrl.create({
       component: ContentActionsComponent,
+      event,
       componentProps: {
         content: this.contentDetail,
         isChild: this.isDepthChild,
@@ -853,7 +854,7 @@ export class CollectionDetailsPage {
         pageName: PageId.COLLECTION_DETAIL,
         corRelationList: this.corRelationList
       },
-      cssClass: 'content-action'
+      // cssClass: 'content-action'
     });
     await popover.present();
     const { data } = await popover.onDidDismiss();

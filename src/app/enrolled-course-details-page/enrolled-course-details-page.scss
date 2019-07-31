@@ -9,6 +9,18 @@
     .ion-ios-checkmark-circle:before {
         color: #008000;
     }
+    .structure-text{
+        padding: 7px 0px 0px 4px;
+    }
+    .font-12 {
+        font-size: 12px !important;
+    }
+    .padding-left-8{
+        padding-left: 8px !important;
+    }
+    .child-item{
+        --padding-start: 0 !important;
+    }
     .course-progress {
         position: absolute;
         width: 100%;
