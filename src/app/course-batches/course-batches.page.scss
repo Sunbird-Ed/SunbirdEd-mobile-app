@@ -26,6 +26,9 @@
     .batch-filter-holder{
         margin-top: -10px;
     }
+    .batches-header-text{
+        color: map-get($colors, facebook);
+    }
     .background-gray{
         background: #efeff4;
         @include margin(-16px, -26px, 0, -26px);
@@ -50,7 +53,7 @@
     }
     .batch-name {
         margin-top: 0px; 
-        font-size: 1.4rem;
+        font-size: 12px;
         @extend .NotoSans-semi-bold;
     }
     .selected-filter {
@@ -66,7 +69,7 @@
         .enroll-btn{
             @include padding(null, 0, null, null !important);
             text-transform: none;
-            font-size: 1.5rem;
+            font-size: 16px;
         }
     }
     .padding-top-8 {
@@ -97,4 +100,21 @@
     ion-label {
         white-space: unset
     }
+    .flex-card-container {
+        display: flex;
+        flex-wrap: nowrap;
+        align-items:center;
+        justify-content:center;
+        padding: 12px;
+        margin-bottom: 12px;
+        .card-text {
+          width: 62%;
+          p {
+            margin-top: 0px;
+          }
+        }
+        .card-icon{
+          width: 31%;   
+        }
+      }
 }
