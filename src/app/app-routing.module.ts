@@ -81,6 +81,7 @@ const routes: Routes = [
     loadChildren: './language-settings/language-settings.module#LanguageSettingsModule'
   },
   { path: 'filters', loadChildren: './search/filters/filters.module#FiltersPageModule' },
+  { path: RouterLinks.TEXTBOOK_VIEW_MORE, loadChildren: './textbook-view-more/textbook-view-more.module#TextbookViewMorePageModule' },
 ];
 
 @NgModule({
