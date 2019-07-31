@@ -1,4 +1,6 @@
-@import "src/global.scss";
+@import "src/assets/styles/base/_variables.scss";
+@import "src/assets/styles/_custom-mixins.scss";
+@import "src/assets/styles/_variables.scss";
 :host {
 
     ul.rating .ion-md-star-outline:before{
@@ -10,7 +12,7 @@
           /* Sb-Rating Component Styling */
     ul {
     // migration-TODO
-    //   @include padding($base-block-space);
+    @include padding($base-block-space);
       &.rating li {
         // migration-TODO
         // @include padding($base-block-space * 1.5 !important);
