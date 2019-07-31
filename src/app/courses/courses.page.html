@@ -67,9 +67,9 @@
       (click)="retryShowingPopularCourses(true); showOfflineWarning();">{{'RETRY_ACTION' | translate}}</b>
 </ion-text>
   </div>
-  <!-- <div *ngIf="showSignInCard" class="signin-card-bg">
-    <sign-in-card [source]="'courses'" (valueChange)="showOfflineWarning($event)"></sign-in-card>
-  </div> -->
+  <div *ngIf="showSignInCard" class="signin-card-bg">
+    <app-sign-in-card [source]="'courses'" (valueChange)="showOfflineWarning($event)"></app-sign-in-card>
+  </div>
 </ion-content>
 <ion-backdrop class="loading-backdrop" *ngIf="showOverlay" text-center>
   <div class="backdrop-container">

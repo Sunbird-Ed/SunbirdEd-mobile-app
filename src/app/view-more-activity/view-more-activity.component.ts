@@ -1,5 +1,8 @@
-import { FormAndFrameworkUtilService } from '@app/services/formandframeworkutil.service';
-import { Events, NavController , Platform } from '@ionic/angular';
+import * as _ from 'lodash';
+import { Subscription } from 'rxjs';
+import { Events, Platform } from '@ionic/angular';
+import { ActivatedRoute, Router, NavigationExtras } from '@angular/router';
+import { Location } from '@angular/common';
 import { Component, Inject, NgZone, OnInit, Input } from '@angular/core';
 import {
   Content,
@@ -20,29 +23,23 @@ import {
   SearchType,
   TelemetryObject,
   CorrelationData,
-  LogLevel
+  LogLevel,
+  Mode
 } from 'sunbird-sdk';
+
 import {
   Environment,
-  ErrorType,
   ImpressionType,
   InteractSubtype,
   InteractType,
-  Mode,
-  PageId,
-  CorReleationDataType
-} from '../../services/telemetry-constants';
-import * as _ from 'lodash';
-import {ContentType, ViewMore, MimeType , RouterLinks, ContentFilterConfig } from '../../app/app.constant';
-// import {ContentDetailsPage} from '../content-details/content-details';
-import { CourseUtilService } from '../../services/course-util.service';
-import { TelemetryGeneratorService } from '../../services/telemetry-generator.service';
-import { CommonUtilService } from '../../services/common-util.service';
-import { Subscription } from 'rxjs';
-// import { CollectionDetailsEtbPage } from '../collection-details-etb/collection-details-etb';
-import { AppHeaderService } from '../../services';
-import { ActivatedRoute, Router, NavigationExtras } from '@angular/router';
-import {Location} from '@angular/common';
+  PageId
+} from '@app/services/telemetry-constants';
+import { ContentType, ViewMore, MimeType, RouterLinks, ContentFilterConfig } from '@app/app/app.constant';
+import { FormAndFrameworkUtilService } from '@app/services/formandframeworkutil.service';
+import { CourseUtilService } from '@app/services/course-util.service';
+import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
+import { CommonUtilService } from '@app/services/common-util.service';
+import { AppHeaderService } from '@app/services/app-header.service';
 
 @Component({
   selector: 'app-view-more-activity',
@@ -50,18 +47,9 @@ import {Location} from '@angular/common';
   styleUrls: ['./view-more-activity.component.scss'],
 })
 export class ViewMoreActivityComponent implements OnInit {
-
-  /**
-   * Contains search query
-   */
   searchQuery: any;
   title: any;
-
-  /**
-   * To hold search result
-   */
   searchList: any;
-
   showLoader: any;
 
   /**
@@ -83,29 +71,9 @@ export class ViewMoreActivityComponent implements OnInit {
    * value for downloads only toggle button, may have true/false
    */
   downloadsOnlyToggle = false;
-
-  shouldGenerateEndTelemetry = false;
-
-
-
-  /**
-   * Offset
-   */
   offset = 0;
-
-  /**
-   * Contains search limit
-   */
   searchLimit = 10;
-
-  /**
-   * Total search count
-   */
   totalCount: number;
-
-  /**
-   * Load more flag
-   */
   isLoadMore = false;
 
   /**
@@ -113,27 +81,13 @@ export class ViewMoreActivityComponent implements OnInit {
    */
   localContentsCard = false;
   backButtonFunc: Subscription;
-
-  /**
-   * Header title
-   */
   headerTitle: string;
   private corRelationList: Array<CorrelationData>;
-  /**
-   * Default page type
-   */
   pageType = 'library';
   source = '';
-
-  /**
-   * To queue downloaded identifier
-   */
   queuedIdentifiers: Array<any> = [];
-
   downloadPercentage = 0;
-
   showOverlay = false;
-
   resumeContentData: any;
   uid: any;
   audience: any;
@@ -141,9 +95,7 @@ export class ViewMoreActivityComponent implements OnInit {
   private eventSubscription: Subscription;
   // adding for ETBV2 integration, to show saved resources after recentlyViewed
   savedResources: Array<any>;
-
   enrolledCourses: any;
-
   guestUser: any;
   userId: any;
   requestParams: any;
@@ -153,7 +105,7 @@ export class ViewMoreActivityComponent implements OnInit {
   /**
    * Contains layout name
    *
-   * @example layoutName = Inprogress / popular
+   * @example layoutName = In-progress / popular
    */
   @Input() layoutName: string;
 
@@ -174,14 +126,14 @@ export class ViewMoreActivityComponent implements OnInit {
 
   constructor(
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
-    private events: Events,
-    private ngZone: NgZone,
     @Inject('EVENTS_BUS_SERVICE') private eventBusService: EventsBusService,
     @Inject('COURSE_SERVICE') private courseService: CourseService,
+    private events: Events,
+    private ngZone: NgZone,
     private courseUtilService: CourseUtilService,
     private commonUtilService: CommonUtilService,
     private telemetryGeneratorService: TelemetryGeneratorService,
-    private headerServie: AppHeaderService,
+    private headerService: AppHeaderService,
     private route: ActivatedRoute,
     private router: Router,
     private location: Location,
@@ -202,7 +154,7 @@ export class ViewMoreActivityComponent implements OnInit {
         this.audience = this.router.getCurrentNavigation().extras.state.audience;
         this.enrolledCourses = this.router.getCurrentNavigation().extras.state.enrolledCourses;
 
-        console.log('in constructor' , this.headerTitle);
+        console.log('in constructor', this.headerTitle);
         if (this.headerTitle !== this.title) {
           console.log('inside header title if condition');
           this.headerTitle = this.headerTitle;
@@ -213,8 +165,7 @@ export class ViewMoreActivityComponent implements OnInit {
       }
     });
     this.defaultImg = 'assets/imgs/ic_launcher.png';
-    // migration-TODO
-    // this.tabBarElement = document.querySelector('.tabbar.show-tabbar');
+    this.tabBarElement = document.querySelector('.tabbar.show-tabbar');
     this.subscribeUtilityEvents();
   }
 
@@ -222,8 +173,7 @@ export class ViewMoreActivityComponent implements OnInit {
    * Angular life cycle hooks
    */
   ngOnInit() {
-    // migration-TODO
-    // this.tabBarElement.style.display = 'none';
+    this.tabBarElement.style.display = 'none';
   }
 
   /**
@@ -231,21 +181,19 @@ export class ViewMoreActivityComponent implements OnInit {
    */
   ionViewWillEnter(): void {
     this.zone.run(() => {
-      this.headerServie.showHeaderWithBackButton();
-      // migration-TODO
-      // this.tabBarElement.style.display = 'none';
+      this.headerService.showHeaderWithBackButton();
+      this.tabBarElement.style.display = 'none';
       this.handleBackButton();
     });
   }
 
-  async subscribeUtilityEvents() {
-    await this.events.subscribe('savedResources:update', async (res) => {
+  subscribeUtilityEvents() {
+    this.events.subscribe('savedResources:update', async (res) => {
       if (res && res.update) {
         if (this.pageName === ViewMore.PAGE_RESOURCE_SAVED) {
-          this.getLocalContents(false, this.downloadsOnlyToggle);
+          this.getLocalContents(false, this.downloadsOnlyToggle, true);
         } else if (this.pageName === ViewMore.PAGE_RESOURCE_RECENTLY_VIEWED) {
-          await this.getLocalContents(true, this.downloadsOnlyToggle);
-          this.getLocalContents();
+          await this.getLocalContents(true, this.downloadsOnlyToggle, true);
         }
       }
     });
@@ -257,20 +205,7 @@ export class ViewMoreActivityComponent implements OnInit {
   }
 
   handleBackButton() {
-    this.backButtonFunc = this.platform.backButton.subscribe(() => {
-      this.telemetryGeneratorService.generateBackClickedTelemetry(
-        PageId.VIEW_MORE,
-        Environment.HOME,
-        false,
-        this.identifier,
-        this.corRelationList
-      );
-      this.didViewLoad = false;
-      this.generateEndEvent(this.objId, this.objType, this.objVer);
-
-      if (this.shouldGenerateEndTelemetry) {
-        this.generateQRSessionEndEvent(this.source, this.course.identifier);
-      }
+    this.backButtonFunc = this.platform.backButton.subscribeWithPriority(10, () => {
       this.location.back();
       this.backButtonFunc.unsubscribe();
     });
@@ -355,7 +290,6 @@ export class ViewMoreActivityComponent implements OnInit {
         this.loadMoreBtn = false;
         this.localContentsCard = true;
         await this.getLocalContents(true);
-        this.getLocalContents();
         break;
 
       default:
@@ -379,8 +313,7 @@ export class ViewMoreActivityComponent implements OnInit {
     this.courseService.getEnrolledCourses(option).toPromise()
       .then(async (data: Course[]) => {
         if (data) {
-          // data = JSON.parse(data);
-          this.searchList = data ? data : [];
+          this.searchList = data;
           this.loadMoreBtn = false;
         }
         await loader.dismiss();
@@ -394,9 +327,11 @@ export class ViewMoreActivityComponent implements OnInit {
   /**
    * Get local content
    */
-  async getLocalContents(recentlyViewed?: boolean, downloaded?: boolean) {
+  async getLocalContents(recentlyViewed?: boolean, downloaded?: boolean, hideLoaderFlag?: boolean) {
     const loader = await this.commonUtilService.getLoader();
-    await loader.present();
+    if (!hideLoaderFlag) {
+      await loader.present();
+    }
 
     let contentTypes;
     if (recentlyViewed) {
@@ -409,9 +344,9 @@ export class ViewMoreActivityComponent implements OnInit {
     const requestParams: ContentRequest = {
       uid: this.uid,
       audience: this.audience,
-      recentlyViewed: recentlyViewed,
+      recentlyViewed,
       localOnly: downloaded,
-      contentTypes: contentTypes,
+      contentTypes,
       limit: recentlyViewed ? 20 : 0
     };
     this.contentService.getContents(requestParams).toPromise()
@@ -452,12 +387,16 @@ export class ViewMoreActivityComponent implements OnInit {
             this.searchList.push(...this.savedResources);
           }
           console.log('content data is =>', contentData);
-          loader.dismiss();
+          if (!hideLoaderFlag) {
+            loader.dismiss();
+          }
           this.loadMoreBtn = false;
         });
       })
       .catch(async () => {
-        await loader.dismiss();
+        if (!hideLoaderFlag) {
+          await loader.dismiss();
+        }
       });
   }
 
@@ -468,7 +407,7 @@ export class ViewMoreActivityComponent implements OnInit {
         if (Boolean(data.isAvailableLocally)) {
           const contentDetailsParams: NavigationExtras = {
             state: {
-              content: {identifier: content.lastReadContentId},
+              content: { identifier: content.lastReadContentId },
               depth: '1',
               contentState: {
                 batchId: content.batchId ? content.batchId : '',
@@ -525,31 +464,6 @@ export class ViewMoreActivityComponent implements OnInit {
       });
   }
 
-  generateEndEvent(objectId, objectType, objectVersion) {
-    const telemetryObject = new TelemetryObject(objectId, objectType, objectVersion);
-    this.telemetryGeneratorService.generateEndTelemetry(objectType,
-      Mode.PLAY,
-      PageId.COURSE_DETAIL,
-      Environment.HOME,
-      telemetryObject,
-      undefined,
-      this.corRelationList);
-  }
-
-  generateQRSessionEndEvent(pageId: string, qrData: string) {
-    if (pageId !== undefined) {
-      const telemetryObject = new TelemetryObject(qrData, 'qr', undefined);
-      this.telemetryGeneratorService.generateEndTelemetry(
-        'qr',
-        Mode.PLAY,
-        pageId,
-        Environment.HOME,
-        telemetryObject,
-        undefined,
-        this.corRelationList);
-    }
-  }
-
   subscribeSdkEvent() {
     this.eventSubscription = this.eventBusService.events().subscribe((event: EventsBusEvent) => {
       this.ngZone.run(() => {
@@ -561,7 +475,7 @@ export class ViewMoreActivityComponent implements OnInit {
           this.showOverlay = false;
           const contentDetailsParams: NavigationExtras = {
             state: {
-              content: {identifier: this.resumeContentData.lastReadContentId},
+              content: { identifier: this.resumeContentData.lastReadContentId },
               depth: '1',
               contentState: {
                 batchId: this.resumeContentData.batchId ? this.resumeContentData.batchId : '',
@@ -589,7 +503,6 @@ export class ViewMoreActivityComponent implements OnInit {
     });
   }
 
-
   showDisabled(resource) {
     return !resource.isAvailableLocally && !this.commonUtilService.networkInfo.isNetworkAvailable;
   }
@@ -602,8 +515,7 @@ export class ViewMoreActivityComponent implements OnInit {
       if (this.eventSubscription) {
         this.eventSubscription.unsubscribe();
       }
-      // migration-TODO
-      // this.tabBarElement.style.display = 'flex';
+      this.tabBarElement.style.display = 'flex';
       this.isLoadMore = false;
       this.showOverlay = false;
       this.backButtonFunc.unsubscribe();
@@ -651,18 +563,12 @@ export class ViewMoreActivityComponent implements OnInit {
       values);
     if (content.mimeType === MimeType.COLLECTION) {
       this.router.navigate([RouterLinks.COLLECTION_DETAIL_ETB], {
-        state : {
-          content: content
-        }
+        state: { content }
       });
     } else {
       this.router.navigate([RouterLinks.CONTENT_DETAILS], {
-        state: {
-          content: content
-        }
+        state: { content }
       });
-
     }
   }
-
 }

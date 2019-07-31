@@ -102,7 +102,8 @@ import { FilteroptionComponent } from './filteroption/filteroption.component';
     ConfirmAlertComponent,
     AppRatingAlertComponent,
     ViewCreditsComponent,
-    FilteroptionComponent
+    FilteroptionComponent,
+    ContentActionsComponent
   ],
   exports: [
     ApplicationHeaderComponent,
