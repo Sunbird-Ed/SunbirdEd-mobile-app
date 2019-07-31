@@ -1,13 +1,10 @@
 :host {
-  .sb-card-textbook-container,
-  .sb-card-view-all-container {
+  .sb-card-textbook-container {
     margin-bottom: 40px;
-    textbook-card {
-      .sb-card {
+    app-text-book-card {
+      border-bottom: 0.5px solid rgba(151, 151, 151, 0.4);
+      &:last-child {
         border-bottom: 0.5px solid rgba(151, 151, 151, 0.4);
-        &:last-child {
-          border-bottom: 0.5px solid rgba(151, 151, 151, 0.4);
-        }
       }
     }
   }
