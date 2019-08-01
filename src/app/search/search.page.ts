@@ -18,7 +18,7 @@ import { FormAndFrameworkUtilService } from '../../services/formandframeworkutil
 import { CommonUtilService } from '../../services/common-util.service';
 import { TelemetryGeneratorService } from '../../services/telemetry-generator.service';
 import { TranslateService } from '@ngx-translate/core';
-import { Subscription } from 'rxjs';
+import { Subscription } from 'rxjs/Subscription';
 import {
   Environment, ImpressionType, InteractSubtype, InteractType, LogLevel, Mode, PageId
 } from '../../services/telemetry-constants';

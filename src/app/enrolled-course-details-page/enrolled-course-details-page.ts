@@ -48,7 +48,7 @@ import {
   TelemetryObject,
   UnenrollCourseRequest,
 } from 'sunbird-sdk';
-import { Subscription } from 'rxjs';
+import { Subscription } from 'rxjs/Subscription';
 import {
   Environment,
   ErrorType,

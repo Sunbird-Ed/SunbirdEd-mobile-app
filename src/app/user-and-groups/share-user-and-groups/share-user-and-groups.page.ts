@@ -20,7 +20,7 @@ import {
   AppHeaderService,
   CommonUtilService
 } from '../../../services';
-import { Subscription } from 'rxjs';
+import { Subscription } from 'rxjs/Subscription';
 import { Location } from '@angular/common';
 
 declare const cordova;
