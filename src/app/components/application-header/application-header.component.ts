@@ -4,7 +4,7 @@ import { AppGlobalService, UtilityService, CommonUtilService, NotificationServic
 import { DownloadService, SharedPreferences, NotificationService as PushNotificationService, NotificationStatus } from 'sunbird-sdk';
 import { GenericAppConfig, PreferenceKey, RouterLinks } from '../../../app/app.constant';
 import { AppVersion } from '@ionic-native/app-version/ngx';
-import { Subscription } from 'rxjs';
+import { Subscription } from 'rxjs/Subscription';
 import { TranslateService } from '@ngx-translate/core';
 import { NavigationExtras, Router, RouterLink } from '@angular/router';
 

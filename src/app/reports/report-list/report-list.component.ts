@@ -16,7 +16,7 @@ import {
 } from '@app/services';
 import { ActivatedRoute, Router, NavigationExtras } from '@angular/router';
 import { RouterLinks } from '@app/app/app.constant';
-import { Subscription } from 'rxjs';
+import { Subscription } from 'rxjs/Subscription';
 import { Location } from '@angular/common';
 
 @Component({

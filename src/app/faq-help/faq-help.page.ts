@@ -24,7 +24,7 @@ import { PreferenceKey, appLanguages, ContentType, AudienceFilter } from '../app
 import { SocialSharing } from '@ionic-native/social-sharing/ngx';
 import { Location } from '@angular/common';
 import { AppVersion } from '@ionic-native/app-version/ngx';
-import { Subscription } from 'rxjs';
+import { Subscription } from 'rxjs/Subscription';
 
 const KEY_SUNBIRD_CONFIG_FILE_PATH = 'sunbird_config_file_path';
 const SUBJECT_NAME = 'support request';

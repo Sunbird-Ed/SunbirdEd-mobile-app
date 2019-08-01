@@ -60,7 +60,7 @@ import {
 // import {CanvasPlayerService} from '../player/canvas-player.service';
 // import {PlayerPage} from '../player/player';
 import {File} from '@ionic-native/file/ngx';
-import {Subscription} from 'rxjs';
+import {Subscription} from 'rxjs/Subscription';
 import {
   Environment,
   ImpressionType,

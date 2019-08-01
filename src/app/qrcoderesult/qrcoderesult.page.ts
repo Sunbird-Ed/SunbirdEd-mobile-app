@@ -39,7 +39,7 @@ import {
   ProfileService,
   TelemetryObject
 } from 'sunbird-sdk';
-import { Subscription } from 'rxjs';
+import { Subscription } from 'rxjs/Subscription';
 import { Environment, ImpressionType, InteractSubtype, InteractType, PageId } from '../../services/telemetry-constants';
 import { TabsPage } from '../tabs/tabs.page';
 import { PlayerPage } from '../player/player.page';

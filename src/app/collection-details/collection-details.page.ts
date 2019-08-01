@@ -48,7 +48,7 @@ import {
   Mode,
   PageId,
 } from '../../services/telemetry-constants';
-import { Subscription } from 'rxjs';
+import { Subscription } from 'rxjs/Subscription';
 import { ContentShareHandlerService } from '../../services/content/content-share-handler.service';
 import { EnrolledCourseDetailsPage } from '../enrolled-course-details-page/enrolled-course-details-page';
 import { Router } from '@angular/router';
