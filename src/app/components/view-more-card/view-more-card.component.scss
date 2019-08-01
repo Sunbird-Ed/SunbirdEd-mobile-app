@@ -50,7 +50,9 @@
     }
     .content-size {
         color: #b4b4b3;
-        font-size: 1.3rem;
+        font-size: 12px;
+        font-size: 12px !important;
+        font-weight: 300 !important;
     }
     .content-name{
         color: #4F4F4F;
@@ -76,8 +78,10 @@
         font-size: 1.2rem !important;
     }
     .content-size1{
-        font-size: 1.1rem !important;
         color: #b4b4b3;
+        font-size: 12px;
+        font-size: 12px !important;
+        font-weight: 300 !important;
     }
     .width-90 {
         width: 90px !important;
@@ -115,6 +119,11 @@
         overflow: hidden;
         display: block; 
         padding: 0 0.5em !important;
+        --border-width: 1px;
+    }
+    .sc-ion-buttons-md-s ion-button {
+        font-size: 10px;
+        height: 22px;
     }
     .col {
         max-height: 98px;
