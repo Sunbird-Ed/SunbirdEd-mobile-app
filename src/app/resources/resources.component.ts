@@ -53,7 +53,6 @@ import { AppHeaderService } from '@app/services';
   selector: 'app-resources',
   templateUrl: './resources.component.html',
   styleUrls: ['./resources.component.scss'],
-  encapsulation: ViewEncapsulation.None,
   animations: [
     trigger('appear', [
       state('true', style({
