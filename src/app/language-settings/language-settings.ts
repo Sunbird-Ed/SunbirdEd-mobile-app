@@ -36,7 +36,7 @@ export class LanguageSettingsPage implements OnInit {
   defaultDeviceLang = '';
   previousLanguage: any;
   selectedLanguage: any = {};
-  btnColor = '#55acee';
+  btnColor = '#8FC4FF';
   unregisterBackButton: Subscription;
   headerConfig: any;
 
