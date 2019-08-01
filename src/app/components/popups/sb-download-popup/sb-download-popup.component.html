@@ -14,7 +14,6 @@
         </ion-toolbar>
       </ion-header>
       <ion-content class="sb-popover-container noscroll">
-        <!-- <div no-padding class="scroll-content sb-popover-container"> -->
           <div class="sb-popover-items"  *ngIf = "collectionName">
             <div class="sb-popover-content-details">
               <div class="sb-progress-percent-text pb-8">{{ !queuedIdentifiers.length ? '0%' : ((currentCount/queuedIdentifiers.length)*100).toFixed(0)+ '%' }}</div>
@@ -37,7 +36,6 @@
                 </div>
               </div>
             </div>
-        <!-- </div> -->
         </ion-content>
       <ion-footer>
         <div class="sb-popover-footer">
