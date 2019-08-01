@@ -63,7 +63,7 @@ export class CommonUtilService implements OnDestroy {
         this.handleNetworkAvailability();
     }
 
-    showToast(translationKey, isInactive?, cssToast?, duration?) {
+    showToast(translationKey, isInactive?, cssToast?, duration?, position?) {
         if (Boolean(isInactive)) {
             return;
         }
@@ -73,7 +73,7 @@ export class CommonUtilService implements OnDestroy {
                 const toastOptions: ToastOptions = {
                     message: translatedMsg,
                     duration: duration ? duration : 3000,
-                    position: 'bottom',
+                    position: position ? position : 'bottom',
                     cssClass: cssToast ? cssToast : ''
                 };
 
@@ -85,12 +85,20 @@ export class CommonUtilService implements OnDestroy {
 
     /**
      * Used to Translate message to current Language
-     * @param {string} messageConst - Message Constant to be translated
-     * @returns {string} translatedMsg - Translated Message
+     * @param messageConst - Message Constant to be translated
+     * @returns translatedMsg - Translated Message
      */
-    translateMessage(messageConst: string, field?: string): string {
+    translateMessage(messageConst: string, fields?: string | any): string {
         let translatedMsg = '';
-        this.translate.get(messageConst, { '%s': field }).subscribe(
+        let replaceObject: any = '';
+
+        if (typeof (fields) === 'object') {
+            replaceObject = fields;
+        } else {
+            replaceObject = { '%s': fields };
+        }
+
+        this.translate.get(messageConst, replaceObject).subscribe(
             (value: any) => {
                 translatedMsg = value;
             }
@@ -274,55 +282,55 @@ export class CommonUtilService implements OnDestroy {
      */
     async showExitPopUp(pageId: string, environment: string, isNavBack: boolean) {
         //if (!this.alert) {
-            const alert = await this.popOverCtrl.create({
-                component: SbGenericPopoverComponent,
-                componentProps: {
-                    sbPopoverHeading: this.translateMessage('BACK_TO_EXIT'),
-                    sbPopoverMainTitle: '',
-                    actionsButtons: [
-                        {
-                            btntext: this.translateMessage('YES'),
-                            btnClass: 'sb-btn sb-btn-sm  sb-btn-outline-info'
-                        }, {
-                            btntext: this.translateMessage('NO'),
-                            btnClass: 'popover-color'
-                        }
-                    ],
-                    icon: null
-                },
-                cssClass: 'sb-popover',
-            });
-            await alert.present();
-            const response  = await alert.onDidDismiss();
-            if (response.data.isLeftButtonClicked == null) {
-                this.telemetryGeneratorService.generateInteractTelemetry(
-                    InteractType.TOUCH,
-                    InteractSubtype.NO_CLICKED,
-                    environment,
-                    pageId
-                );
-                return;
-            }
-            if (!response.data.isLeftButtonClicked) {
-                this.telemetryGeneratorService.generateInteractTelemetry(
-                    InteractType.TOUCH,
-                    InteractSubtype.NO_CLICKED,
-                    environment,
-                    pageId
-                );
-            } else {
-                this.telemetryGeneratorService.generateInteractTelemetry(
-                    InteractType.TOUCH,
-                    InteractSubtype.YES_CLICKED,
-                    environment,
-                    pageId
-                );
-                (navigator as any).app.exitApp();
-                this.telemetryGeneratorService.generateEndTelemetry('app', '', '', environment);
-            }
-            await this.alert.present();
-            this.telemetryGeneratorService.generateBackClickedTelemetry(pageId, environment, isNavBack);
+        const alert = await this.popOverCtrl.create({
+            component: SbGenericPopoverComponent,
+            componentProps: {
+                sbPopoverHeading: this.translateMessage('BACK_TO_EXIT'),
+                sbPopoverMainTitle: '',
+                actionsButtons: [
+                    {
+                        btntext: this.translateMessage('YES'),
+                        btnClass: 'sb-btn sb-btn-sm  sb-btn-outline-info'
+                    }, {
+                        btntext: this.translateMessage('NO'),
+                        btnClass: 'popover-color'
+                    }
+                ],
+                icon: null
+            },
+            cssClass: 'sb-popover',
+        });
+        await alert.present();
+        const response = await alert.onDidDismiss();
+        if (response.data.isLeftButtonClicked == null) {
+            this.telemetryGeneratorService.generateInteractTelemetry(
+                InteractType.TOUCH,
+                InteractSubtype.NO_CLICKED,
+                environment,
+                pageId
+            );
             return;
+        }
+        if (!response.data.isLeftButtonClicked) {
+            this.telemetryGeneratorService.generateInteractTelemetry(
+                InteractType.TOUCH,
+                InteractSubtype.NO_CLICKED,
+                environment,
+                pageId
+            );
+        } else {
+            this.telemetryGeneratorService.generateInteractTelemetry(
+                InteractType.TOUCH,
+                InteractSubtype.YES_CLICKED,
+                environment,
+                pageId
+            );
+            (navigator as any).app.exitApp();
+            this.telemetryGeneratorService.generateEndTelemetry('app', '', '', environment);
+        }
+        await this.alert.present();
+        this.telemetryGeneratorService.generateBackClickedTelemetry(pageId, environment, isNavBack);
+        return;
         /*} else {
             this.telemetryGeneratorService.generateBackClickedTelemetry(pageId, environment, isNavBack);
             if (this.alert) {

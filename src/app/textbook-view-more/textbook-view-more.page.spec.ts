@@ -1,22 +1,22 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { OnboardingPage } from './onboarding.page';
+import { TextbookViewMorePage } from './textbook-view-more.page';
 
-describe('OnboardingPage', () => {
-  let component: OnboardingPage;
-  let fixture: ComponentFixture<OnboardingPage>;
+describe('TextbookViewMorePage', () => {
+  let component: TextbookViewMorePage;
+  let fixture: ComponentFixture<TextbookViewMorePage>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ OnboardingPage ],
+      declarations: [ TextbookViewMorePage ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(OnboardingPage);
+    fixture = TestBed.createComponent(TextbookViewMorePage);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

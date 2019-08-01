@@ -1,4 +1,4 @@
-@import "src/global.scss";
+@import "src/assets/styles/_variables.scss";
 :host{
     
     
@@ -29,7 +29,9 @@
     .scroll-content { 
         margin-bottom: 0px !important;
     }
-
+    .child-item{
+        --padding-start: 0px;
+    }
     ul {
         padding: 0 !important;
         margin: 0px;
@@ -43,5 +45,8 @@
             font-size: 16px;
           }
         }
+    }
+    .size_txt span {
+        font-size: 12px;
     }
 }

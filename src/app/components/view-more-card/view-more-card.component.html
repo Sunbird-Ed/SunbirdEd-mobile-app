@@ -5,14 +5,14 @@
       </ion-col>
       <ion-col size="8" no-padding>
         <app-pb-horizontal *ngIf="content.cProgress" [progress]="content.cProgress" class="course-progress" [ngClass]="{'blurbackground': batchExp}"></app-pb-horizontal>
-        <ion-row style="padding-left: 5px; height: 50%;">
+        <ion-row style="height: 50%;" class="pl-5">
           <ion-col size="12">
             <h6 class="meta-name" text-wrap *ngIf="content.name && content.name.length">{{(content.name.length > 20) ? (content.name | slice:0:20) + '...' : (content.name)}}</h6>
             <h6 class="meta-name" text-wrap *ngIf="content.courseName && content.courseName.length">{{(content.courseName.length > 22) ? (content.courseName | slice:0:22) + '...' : (content.courseName)}}</h6>
             <h6 class="meta-name" text-wrap *ngIf="content.contentData && content.contentData.name && content.contentData.name.length">{{(content.contentData.name.length > 22) ? (content.contentData.name | slice:0:22) + '...' : (content.contentData.name)}}</h6>
           </ion-col>
         </ion-row>
-        <ion-row [ngSwitch]="type" style="overflow: hidden;padding-left: 5px;">
+        <ion-row [ngSwitch]="type" style="overflow: hidden;" class="pl-5">
           <!--  Enrolled courses -->
           <ion-col size="8" *ngSwitchCase="'enrolledCourse'" col-sm style="padding-top: 10px;">
             <span class="content-size1"> {{ 'COURSE_PROGRESS_COMPLETED' | translate: {'%s': content.cProgress? content.cProgress : 0} }}</span>

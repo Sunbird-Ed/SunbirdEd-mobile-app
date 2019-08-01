@@ -1,4 +1,4 @@
-import {Component, Inject, NgZone, ViewChild, OnInit} from '@angular/core';
+import {Component, Inject, NgZone, ViewChild, OnInit, ViewEncapsulation} from '@angular/core';
 import {
   AlertController,
   IonApp,
@@ -86,6 +86,7 @@ declare const cordova;
   selector: 'app-content-details',
   templateUrl: './content-details.page.html',
   styleUrls: ['./content-details.page.scss'],
+  encapsulation: ViewEncapsulation.None
 })
 export class ContentDetailsPage implements OnInit {
   resumedCourseCardData: any;
@@ -251,7 +252,7 @@ export class ContentDetailsPage implements OnInit {
     //     true, this.cardData.identifier, this.corRelationList);
     //   this.handleNavBackButton();
     // };
-    // this.handleDeviceBackButton();
+    // 
 
     if (!AppGlobalService.isPlayerLaunched) {
       this.calculateAvailableUserCount();
@@ -283,6 +284,7 @@ export class ContentDetailsPage implements OnInit {
    * Ionic life cycle hook
    */
   ionViewWillEnter(): void {
+    this.handleDeviceBackButton();
     this.headerObservable = this.headerService.headerEventEmitted$.subscribe(eventName => {
       this.handleHeaderEvents(eventName);
     });
@@ -346,7 +348,10 @@ export class ContentDetailsPage implements OnInit {
       this.generateQRSessionEndEvent(this.source, this.cardData.identifier);
     }
     this.popToPreviousPage(true);
-    this.backButtonFunc.unsubscribe();
+    if(this.backButtonFunc) {
+      this.backButtonFunc.unsubscribe();
+    }
+    
   }
 
   handleDeviceBackButton() {

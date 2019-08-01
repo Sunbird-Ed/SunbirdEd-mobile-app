@@ -90,7 +90,7 @@
 		<div class="structure-section" margin-top>
 			<h6 class="padding-10 background-gray font-size-20">{{ 'STRUCTURE' | translate }}</h6>
 			<div padding-top *ngIf="course?.contentTypesCount" class="content-structure">
-				<span *ngFor="let structure of objectKeys(course?.contentTypesCount);let last = last;">
+				<span  class="font-12" *ngFor="let structure of objectKeys(course?.contentTypesCount);let last = last;">
 					{{course.contentTypesCount[structure] + ' ' + structure}} {{last ? '' : ' |' }}
 				</span>
 			</div>
@@ -99,13 +99,13 @@
 				<span *ngIf="courseCardData && enrolledCourseMimeType === 'application/vnd.ekstep.content-collection'">
 					<ion-item *ngFor="let item of childrenData; let i = index;" class="child-item" (click)="navigateToChildrenDetailsPage(item, depth + '.' + (i + 1))">
 						<ion-icon [name]="item.status? 'ios-checkmark-circle': (item.lastRead? 'ios-radio-button-on': 'ios-radio-button-off')"></ion-icon>
-						<ion-text>
+						<ion-text class="structure-text">
 <span class="span-semibold" [ngClass]="{'fontBold': item.lastRead}">{{ (item?.contentData?.name &&
 							item?.contentData?.name.length > 30) ?
 							(item?.contentData?.name | slice:0:30) + '...'
 							: (item?.contentData?.name)}}</span>
 </ion-text>
-						<ion-icon name="ios-arrow-forward" float-end></ion-icon>
+						<ion-icon name="ios-arrow-forward" slot="end"></ion-icon>
 					</ion-item>
 				</span>
 				<span *ngIf="courseCardData && !enrolledCourseMimeType === 'application/vnd.ekstep.content-collection'">

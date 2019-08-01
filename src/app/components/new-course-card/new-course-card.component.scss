@@ -1,18 +1,17 @@
-:host{
-    .sb-card{
-        .img-container{
-            overflow: hidden;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
+@import "src/assets/styles/variables";
+:host {
+  .sb-card {
+    .img-container {
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
-    .grade_ellipsis{
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis; 
-        // migration-TODO
-        // color:$gray-300;
-    }
-
+  }
+  .grade_ellipsis {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: $gray-300;
+  }
 }

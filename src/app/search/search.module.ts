@@ -11,6 +11,7 @@ import { PipesModule } from '../../pipes/pipes.module';
 import { DirectivesModule } from '../../directives/directives.module';
 import { TranslateModule } from '@ngx-translate/core';
 
+
 const routes: Routes = [
   {
     path: '',
@@ -29,6 +30,6 @@ const routes: Routes = [
     DirectivesModule,
     ComponentsModule
   ],
-  declarations: [SearchPage]
+  declarations: [SearchPage ]
 })
 export class SearchPageModule {}

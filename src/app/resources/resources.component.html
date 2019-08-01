@@ -20,12 +20,20 @@
   </div>
   <div class="scrollable-container">
     <ion-refresher (ionRefresh)="swipeDownToRefresh($event)"></ion-refresher>
-    <div *ngIf="refresh" class="spinner-align">
-      <ion-spinner icon="spiral"></ion-spinner>
-    </div>
-    <ion-spinner *ngIf="showLoader" padding style="padding-top: 100px;"></ion-spinner>
-    <div>
-    </div>
+
+    <ion-list class="m-n" *ngIf="showLoader || refresh" style="padding-top: 100px;">
+      <app-skeleton-item height="16px" width="40%" style="padding: 16px;"></app-skeleton-item>
+      <ion-item *ngFor="let i of [0,1,2,3,4,5,6,7,8]" class="animation-background">
+        <ion-avatar item-start>
+          <app-skeleton-item height="72px" width="72px"></app-skeleton-item>
+        </ion-avatar>
+        <ion-label style="padding-left: 40px;">
+          <app-skeleton-item height="12px" width="67%" style="padding-bottom: 8px;"></app-skeleton-item>
+          <app-skeleton-item height="12px" width="47%" style="padding-bottom: 8px;"></app-skeleton-item>
+        </ion-label>
+      </ion-item>
+    </ion-list>
+
     <div *ngIf="recentlyViewedResources && recentlyViewedResources.length">
       <div class="sb-recently-viewed-container" style="padding-bottom:40px;">
 
@@ -39,18 +47,28 @@
           <div class="sb-card-scroll-container" (scroll)='onScroll($event)'>
             <!-- Card style -->
             <div class="sb-card-container sb-card-recently-container">
-              <app-new-course-card *ngFor="let course of recentlyViewedResources" [course]="course" [env]="'home'"
-                    [index]="i" [sectionName]="recentViewedSection" [layoutName]="layoutSavedContent"></app-new-course-card>
+              <app-new-course-card *ngFor="let course of recentlyViewedResources" [course]="course" [pageName]="library"
+                [env]="'home'" [index]="i" [sectionName]="recentViewedSection" [layoutName]="layoutSavedContent">
+              </app-new-course-card>
             </div>
           </div>
         </div>
       </div>
     </div>
-    <div *ngIf="searchApiLoader && storyAndWorksheets && storyAndWorksheets.length === 0">
-      <div style="height: 500px;">
-        <ion-spinner padding style="padding-top: 110px;"></ion-spinner>
-      </div>
-    </div>
+
+    <ion-list class="m-n" *ngIf="searchApiLoader && storyAndWorksheets && storyAndWorksheets.length === 0">
+      <app-skeleton-item height="16px" width="40%" style="padding: 16px;"></app-skeleton-item>
+      <ion-item *ngFor="let i of [0,1,2,3,4,5,6,7,8]" class="animation-background">
+        <ion-avatar item-start>
+          <app-skeleton-item height="72px" width="72px"></app-skeleton-item>
+        </ion-avatar>
+        <ion-label style="padding-left: 40px;">
+          <app-skeleton-item height="12px" width="67%" style="padding-bottom: 8px;"></app-skeleton-item>
+          <app-skeleton-item height="12px" width="47%" style="padding-bottom: 8px;"></app-skeleton-item>
+        </ion-label>
+      </ion-item>
+    </ion-list>
+
     <div *ngFor="let items of storyAndWorksheets">
       <div class="sb-textbook-container" *ngIf="items?.contents && items?.contents?.length">
         <div class="sb-textbook-items">
@@ -64,30 +82,40 @@
           </div>
           <!-- Card style -->
           <div class="sb-card-container sb-card-textbook-container">
-            <app-text-book-card *ngFor="let item of items?.contents; let i = index" [content]="item"
-                  [layoutName]='layoutName' (click)="navigateToDetailPage(item, i, item.name)"></app-text-book-card>
+            <div class="sb-card-textbook" *ngFor="let item of items?.contents; let i = index">
+              <app-text-book-card *ngIf="i < 3" [content]="item" [layoutName]='layoutName'
+                (click)="navigateToDetailPage(item, i, item.name)"></app-text-book-card>
+            </div>
+            <div class="sb-view-more" *ngIf="items?.contents?.length > 3"
+              (click)="navigateToTextbookPage(items?.contents, items.name)">{{'VIEW_MORE' | translate}}</div>
           </div>
         </div>
       </div>
     </div>
 
     <div *ngIf="pageApiLoader && storyAndWorksheets && storyAndWorksheets.length === 0">
-      <div class="course-scroll-holder" style="height: 500px;">
-        <ion-spinner padding style="padding-top: 110px;"></ion-spinner>
-      </div>
+      <ion-list class="m-n" *ngIf="searchApiLoader && storyAndWorksheets && storyAndWorksheets.length === 0">
+        <app-skeleton-item height="16px" width="40%" style="padding: 16px;"></app-skeleton-item>
+        <ion-item *ngFor="let i of [0,1,2,3,4,5,6,7,8]" class="animation-background">
+          <ion-avatar item-start>
+            <app-skeleton-item height="72px" width="72px"></app-skeleton-item>
+          </ion-avatar>
+          <ion-label style="padding-left: 40px;">
+            <app-skeleton-item height="12px" width="67%" style="padding-bottom: 8px;"></app-skeleton-item>
+            <app-skeleton-item height="12px" width="47%" style="padding-bottom: 8px;"></app-skeleton-item>
+          </ion-label>
+        </ion-item>
+      </ion-list>
     </div>
 
     <div padding text-center class="mt-32 mb-32" *ngIf="!commonUtilService?.networkInfo?.isNetworkAvailable">
-      <img src="assets/imgs/ic_offline_orange_lg.png" />
+      <img src="assets/imgs/outline-cloud_off.svg" alt="" />
       <ion-text>
         <h6 class="offline-header">
-          <b>{{ 'NO_INTERNET_TITLE' | translate }}</b>
+          <strong>{{ 'NO_INTERNET_TITLE' | translate }}</strong>
         </h6>
       </ion-text>
       <p class="offline-content">{{ 'OFFLINE_WARNING_ETBUI' | translate }}</p>
-    </div>
-    <div *ngIf="showSignInCard" class="signin-card-bg">
-      <app-sign-in-card (valueChange)="showOfflineNetworkWarning($event)" [source]="source"></app-sign-in-card>
     </div>
   </div>
 

@@ -31,10 +31,10 @@ const routes: Routes = [
     TranslateModule.forChild(),
     PipesModule,
     DirectivesModule,
-    ComponentsModule
+    ComponentsModule,
   ],
   declarations: [EnrolledCourseDetailsPage],
-  entryComponents:[ContentActionsComponent],
+  entryComponents: [ContentActionsComponent],
   providers: [DatePipe]
 })
 export class EnrolledCourseDetailsPagePageModule { }
