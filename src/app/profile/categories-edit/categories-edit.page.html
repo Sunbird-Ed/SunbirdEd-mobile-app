@@ -11,7 +11,7 @@
   <form [formGroup]="profileEditForm">
     <ion-item>
       <ion-label position="stacked" class="label-font">{{'BOARD' | translate}} &lrm;<ion-text>
-          <span color="danger">&nbsp;*</span>
+          <span style="color: red;">&nbsp;*</span>
         </ion-text>
       </ion-label>
       <ion-select formControlName="syllabus" #boardSelect multiple="false" [interfaceOptions]="boardOptions"
@@ -24,7 +24,7 @@
     </ion-item>
     <ion-item>
       <ion-label position="stacked" class="label-font">{{'MEDIUM' | translate}}<ion-text>
-          <span color="danger">&nbsp;*</span>
+          <span style="color: red;">&nbsp;*</span>
         </ion-text>
       </ion-label>
       <ion-select formControlName="medium" #mediumSelect multiple="true" [interfaceOptions]="mediumOptions"
@@ -37,7 +37,7 @@
     </ion-item>
     <ion-item>
       <ion-label position="stacked" class="label-font">{{'CLASS' | translate}}<ion-text>
-          <span color="danger">&nbsp;*</span>
+          <span style="color: red;">&nbsp;*</span>
         </ion-text>
       </ion-label>
       <ion-select formControlName="grades" #gradeSelect multiple="true" [interfaceOptions]="classOptions"
