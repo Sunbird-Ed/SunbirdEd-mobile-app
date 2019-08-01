@@ -237,7 +237,7 @@
 }
 
 .sb-textbook-container {
-  margin-top: ($base-block-space * 3);
+  // margin-top: ($base-block-space * 3);
   @include padding(($base-block-space * 1));
   width: 100%;
   &:last-child{
