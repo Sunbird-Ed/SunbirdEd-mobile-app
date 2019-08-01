@@ -710,29 +710,7 @@ ion-toolbar {
 ion-toast.redErrorToast {
   --background: #ff0000;
   --start: 0;
-  z-index: 60003;
   --end: 0;
   --border-radius: none;
   --ion-safe-area-bottom: -8px;
-
-  .custom-message:before {
-    content: "\f19f";
-    font-family: Ionicons;
-    -webkit-font-smoothing: antialiased;
-    font-style: normal;
-    font-variant: normal;
-    @extend .font-weight-400;
-    font-weight: 400;
-    line-height: 1;
-    padding-left: 30px !important;
-    padding-right: 16px !important;
-    padding-bottom: 5px !important;
-    text-rendering: auto;
-    text-transform: none;
-    margin-bottom: 29px !important;
-    margin-top: 28px !important;
-    margin-left: -39px !important;
-    position: static;
-    font-size: 2.1rem;
-  }
 }
