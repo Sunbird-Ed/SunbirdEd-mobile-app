@@ -1,5 +1,5 @@
 import {SplashscreenActionHandlerDelegate} from './splashscreen-action-handler-delegate';
-import {Observable} from 'rxjs';
+import {Observable} from 'rxjs/Observable';
 import {
   ContentEventType,
   ContentImportProgress,
