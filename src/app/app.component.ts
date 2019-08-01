@@ -18,7 +18,7 @@ import { InteractType, InteractSubtype, Environment, PageId, ImpressionType } fr
 import { GUEST_STUDENT_TABS, GUEST_TEACHER_TABS, LOGIN_TEACHER_TABS } from './module.service';
 // migration-TODO
 import { initTabs } from './module.service';
-import { Observable } from 'rxjs';
+import { Observable } from 'rxjs/Observable';
 import { ImageLoaderService, ImageLoaderConfigService } from 'ionic-image-loader';
 import { GenericAppConfig, PreferenceKey, ProfileConstants } from './app.constant';
 import { Network } from '@ionic-native/network/ngx';
