@@ -59,7 +59,7 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
   async ngOnInit() {
     this.subscribeContentUpdateEvents();
     return Promise.all(
-      [this.getDownloadedContents(true),
+      [this.getDownloadedContents(true,true),
       this.getAppName()]
     );
   }
@@ -101,13 +101,18 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
 
   }
 
-  async getDownloadedContents(shouldGenerateTelemetry?) {
+  async getDownloadedContents(shouldGenerateTelemetry?,ignoreLoader?) {
     const profile: Profile = this.appGlobalService.getCurrentUser();
-    this.loader = await this.commonUtilService.getLoader();
-    await this.loader.present();
-    this.loader.dismiss().then(() => {
-      this.loader = undefined;
-    });
+    if(ignoreLoader) {
+
+    } else {
+      this.loader = await this.commonUtilService.getLoader();
+      await this.loader.present();
+      this.loader.dismiss().then(() => {
+        this.loader = undefined;
+      });
+    }
+    
 
     const defaultSortCriteria: ContentSortCriteria[] = [{
       sortAttribute: 'sizeOnDevice',
