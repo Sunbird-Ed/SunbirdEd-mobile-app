@@ -1,6 +1,6 @@
-@import "src/assets/styles/base/_variables.scss";
 @import "src/assets/styles/_custom-mixins.scss";
 @import "src/assets/styles/fonts.scss";
+@import "src/assets/styles/_variables.scss";
 :host {
     .my-overlay {
         position: fixed;
@@ -44,7 +44,7 @@
             }
             .text-holder{
                 font-size: 18px;
-                @extend .font-weight-300;
+                font-weight: 300 !important;
             }
         }
     }

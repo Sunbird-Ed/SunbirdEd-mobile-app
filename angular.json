@@ -39,6 +39,7 @@
                 "output": "content-player"
               }
             ],
+
             "sourceMap": {
               "scripts": true,
               "styles": true,

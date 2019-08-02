@@ -1,6 +1,5 @@
 @import "src/assets/styles/variables";
 @import "src/assets/styles/_custom-mixins";
-@import "src/assets/styles/fonts";
 
 :host {
   .card-related-style {
@@ -13,14 +12,13 @@
     color: map-get($colors, title);
     font-size: 1rem;
     line-height: 2rem;
-    @extend .font-weight-500;
+    font-weight: 500 !important;
     @include padding(null, null, null, 35px !important);
   }
 
   .card-title {
     @include padding(null, null, null, 10px !important);
-    @extend .font-weight-700;
-    font-weight: 700;
+    font-weight: 700 !important;
     font-size: 1.2rem;
     color: map-get($colors, secondary_black);
     margin-top: 10px !important;

@@ -1,7 +1,8 @@
 import { Component, NgZone, OnDestroy } from '@angular/core';
 import { Platform, NavParams, PopoverController } from '@ionic/angular';
 import { CorrelationData, Rollup } from 'sunbird-sdk';
-import { Observable, Subscription } from 'rxjs';
+import { Observable } from 'rxjs/Observable';
+import { Subscription } from 'rxjs/Subscription';
 
 /**
  * Generated class for the PopupsComponent component.

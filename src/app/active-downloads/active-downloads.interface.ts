@@ -1,6 +1,6 @@
 import {ContentDownloadRequest, DownloadRequest} from 'sunbird-sdk';
 import {OnInit} from '@angular/core';
-import {Observable} from 'rxjs';
+import {Observable} from 'rxjs/Observable';
 
 export interface ActiveDownloadsInterface extends OnInit {
     // eventBusService: EventBusService

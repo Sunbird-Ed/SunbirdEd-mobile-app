@@ -25,7 +25,7 @@ import {
   PageAssembleCriteria, PageAssembleService, PageName, ProfileType, SharedPreferences, NetworkError
 } from 'sunbird-sdk';
 import { Environment, InteractSubtype, InteractType, PageId } from '../../services/telemetry-constants';
-import { Subscription } from 'rxjs';
+import { Subscription } from 'rxjs/Subscription';
 import { AppHeaderService } from '../../services/app-header.service';
 import { Router, NavigationExtras } from '@angular/router';
 

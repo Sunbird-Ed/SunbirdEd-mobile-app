@@ -1,7 +1,8 @@
 import { ChangeDetectorRef, Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { NavController, PopoverController, ToastController } from '@ionic/angular';
 import { ActiveDownloadsInterface } from './active-downloads.interface';
-import { Observable, Subscription } from 'rxjs';
+import { Observable } from 'rxjs/Observable';
+import { Subscription } from 'rxjs/Subscription';
 import { InteractSubtype, Environment, PageId, ActionButtonType, ImpressionType, InteractType } from '../../services/telemetry-constants';
 import {
   ContentDownloadRequest,

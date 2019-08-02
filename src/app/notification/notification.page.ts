@@ -3,7 +3,7 @@ import { Platform, Events } from '@ionic/angular';
 import { Location } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NotificationService, NotificationStatus } from 'sunbird-sdk';
-import { Subscription } from 'rxjs';
+import { Subscription } from 'rxjs/Subscription';
 
 
 

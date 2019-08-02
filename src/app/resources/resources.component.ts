@@ -5,7 +5,7 @@ import { NavigationExtras, Router } from '@angular/router';
 import { animate, group, state, style, transition, trigger } from '@angular/animations';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
-import { Subscription } from 'rxjs';
+import { Subscription } from 'rxjs/Subscription';
 import { Network } from '@ionic-native/network/ngx';
 import {
   CategoryTerm,
@@ -53,7 +53,6 @@ import { AppHeaderService } from '@app/services';
   selector: 'app-resources',
   templateUrl: './resources.component.html',
   styleUrls: ['./resources.component.scss'],
-  encapsulation: ViewEncapsulation.None,
   animations: [
     trigger('appear', [
       state('true', style({

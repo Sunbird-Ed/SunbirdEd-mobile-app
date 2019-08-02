@@ -3,7 +3,7 @@ import {  NavParams, Platform, ModalController} from '@ionic/angular';
 import {AppRatingService, TelemetryGeneratorService, UtilityService} from '@app/services';
 import {SharedPreferences, TelemetryService} from 'sunbird-sdk';
 import {AppVersion} from '@ionic-native/app-version/ngx';
-import {Observable} from 'rxjs';
+import {Observable} from 'rxjs/Observable';
 import {TranslateService} from '@ngx-translate/core';
 import {PreferenceKey, StoreRating} from '../../../app/app.constant';
 import {
