@@ -22,7 +22,7 @@ import { AppVersion } from '@ionic-native/app-version/ngx';
 import { initTabs, GUEST_TEACHER_TABS, GUEST_STUDENT_TABS } from '@app/app/module.service';
 import { ProfileSettingsPage } from '@app/app/profile-settings/profile-settings.page';
 import { NavigationExtras, Router } from '@angular/router';
-import { SbPopoverComponent } from '@app/app/components';
+import { SbPopoverComponent } from '@app/app/components/popups/sb-popover/sb-popover.component';
 import { QRScannerAlert, QRAlertCallBack } from '@app/app/qrscanner-alert/qrscanner-alert.page';
 import { RouterLinks } from '@app/app/app.constant';
 

@@ -1,19 +1,10 @@
-import { UserReportComponent } from './../user-report/user-report.component';
-import { GroupReportListComponent } from './../group-report-list/group-report-list.component';
 import { Component, OnInit, Inject, NgZone } from '@angular/core';
 import { LoadingController, Platform } from '@ionic/angular';
 import { LearnerAssessmentSummary, ReportSummary, SummarizerService, SummaryRequest, TelemetryObject } from 'sunbird-sdk';
-import {
-  TelemetryGeneratorService,
-  AppHeaderService,
-  Environment,
-  ImpressionType,
-  InteractSubtype,
-  InteractType,
-  ObjectType,
-  PageId,
-  CommonUtilService
-} from '@app/services';
+import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
+import { AppHeaderService } from '@app/services/app-header.service';
+import { Environment, ImpressionType, InteractSubtype, InteractType, ObjectType, PageId } from '@app/services/telemetry-constants';
+import { CommonUtilService } from '@app/services/common-util.service';
 import { ActivatedRoute, Router, NavigationExtras } from '@angular/router';
 import { RouterLinks } from '@app/app/app.constant';
 import { Subscription } from 'rxjs/Subscription';
@@ -80,7 +71,7 @@ export class ReportListComponent implements OnInit {
   }
 
   ionViewWillLeave() {
-    if(this.backButtonFunc) {
+    if (this.backButtonFunc) {
       this.backButtonFunc.unsubscribe();
     }
   }
@@ -147,7 +138,7 @@ export class ReportListComponent implements OnInit {
             uids: uids,
             users: users,
             group: this.groupInfo
-            }
+          }
         });
       }
   }

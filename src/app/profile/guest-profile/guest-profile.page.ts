@@ -15,13 +15,11 @@ import {
   Profile
 } from 'sunbird-sdk';
 import { ActivatedRoute, Router, NavigationExtras } from '@angular/router';
-import {
-  AppGlobalService,
-  CommonUtilService,
-  TelemetryGeneratorService,
-  AppHeaderService,
-  PageId, Environment, InteractType, InteractSubtype
-} from '@app/services';
+import { AppGlobalService } from '@app/services/app-global-service.service';
+import { CommonUtilService } from '@app/services/common-util.service';
+import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
+import { AppHeaderService } from '@app/services/app-header.service';
+import { PageId, Environment, InteractType, InteractSubtype } from '@app/services/telemetry-constants';
 import { ProfileConstants, RouterLinks } from '@app/app/app.constant';
 
 @Component({

@@ -18,7 +18,10 @@ import {
   ServerProfileDetailsRequest,
   CachedItemRequestSourceFrom
 } from 'sunbird-sdk';
-import { CommonUtilService, AppGlobalService, AppHeaderService, FormAndFrameworkUtilService } from '@app/services';
+import { CommonUtilService } from '@app/services/common-util.service';
+import { AppGlobalService } from '@app/services/app-global-service.service';
+import { AppHeaderService } from '@app/services/app-header.service';
+import { FormAndFrameworkUtilService } from '@app/services/formandframeworkutil.service';
 import { ContainerService } from '@app/services/container.services';
 import { ProfileConstants } from '@app/app/app.constant';
 import { ActivatedRoute, Router } from '@angular/router';

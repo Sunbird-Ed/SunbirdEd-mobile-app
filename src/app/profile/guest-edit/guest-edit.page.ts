@@ -24,22 +24,22 @@ import {
   ProfileType,
   SharedPreferences
 } from 'sunbird-sdk';
+import { CommonUtilService } from '@app/services/common-util.service';
+import { AppGlobalService } from '@app/services/app-global-service.service';
+import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import {
-  CommonUtilService,
-  AppGlobalService,
-  TelemetryGeneratorService,
   Environment,
   ImpressionType,
   InteractSubtype,
   InteractType,
   ObjectType,
   PageId,
-  ContainerService,
-  AppHeaderService
-} from '@app/services';
+} from '@app/services/telemetry-constants';
+import { ContainerService, } from '@app/services/container.services';
+import { AppHeaderService } from '@app/services/app-header.service';
 import { GUEST_STUDENT_TABS, GUEST_TEACHER_TABS, initTabs } from '@app/app/module.service';
 import { PreferenceKey, RouterLinks } from '@app/app/app.constant';
-import { SbGenericPopoverComponent } from '@app/app/components/popups';
+import { SbGenericPopoverComponent } from '@app/app/components/popups/sb-generic-popover/sb-generic-popover.component';
 import { Location } from '@angular/common';
 
 @Component({

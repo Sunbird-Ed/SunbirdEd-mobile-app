@@ -1,5 +1,7 @@
 import { ActivatedRoute, Router } from '@angular/router';
-import { CanvasPlayerService, AppGlobalService, CommonUtilService } from '@app/services';
+import { CanvasPlayerService } from '@app/services/canvas-player.service';
+import { AppGlobalService } from '@app/services/app-global-service.service';
+import { CommonUtilService } from '@app/services/common-util.service';
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { Platform, AlertController, Events } from '@ionic/angular';
 import { ScreenOrientation } from '@ionic-native/screen-orientation/ngx';

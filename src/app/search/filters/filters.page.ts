@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { NavParams, PopoverController, NavController, Events, Platform } from '@ionic/angular';
 import * as _ from 'lodash';
-import { CommonUtilService } from '@app/services';
+import { CommonUtilService } from '@app/services/common-util.service';
 import { Subscription } from 'rxjs/Subscription';
 import { Location } from '@angular/common';
 import { Router } from '@angular/router';

@@ -23,7 +23,7 @@ import { ContentRatingAlertComponent } from './content-rating-alert/content-rati
 import { DetailCardComponent } from './detail-card/detail-card.component';
 import { FileSizePipe } from '@app/pipes/file-size/file-size';
 import { BookmarkComponent } from './bookmark/bookmark.component';
-import { DialogPopupComponent } from './dialog-popup/dialog-popup.component';
+import { DialogPopupComponent } from './popups/dialog-popup/dialog-popup.component';
 import { SbDownloadPopupComponent } from './popups/sb-download-popup/sb-download-popup.component';
 import { UpgradePopoverComponent } from './popups/upgrade-popover/upgrade-popover.component';
 import { EditContactDetailsPopupComponent } from './popups/edit-contact-details-popup/edit-contact-details-popup.component';

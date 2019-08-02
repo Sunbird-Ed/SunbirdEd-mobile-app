@@ -11,18 +11,18 @@ import {
 import { TranslateService } from '@ngx-translate/core';
 import { File } from '@ionic-native/file/ngx';
 import { FileTransfer, FileTransferObject } from '@ionic-native/file-transfer/ngx';
+import { CommonUtilService } from '@app/services/common-util.service';
+import { AppGlobalService } from '@app/services/app-global-service.service';
+import { UtilityService } from '@app/services/utility-service';
+import { AppHeaderService } from '@app/services/app-header.service';
+import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import {
-  CommonUtilService,
-  AppGlobalService,
-  UtilityService,
-  AppHeaderService,
-  TelemetryGeneratorService,
   ImpressionType,
   PageId,
   Environment,
   InteractType,
   InteractSubtype,
-} from '@app/services';
+} from '@app/services/telemetry-constants';
 import { SocialSharing } from '@ionic-native/social-sharing';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { DatePipe } from '@angular/common';

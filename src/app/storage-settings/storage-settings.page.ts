@@ -2,7 +2,7 @@ import { Component, Inject, OnInit, ChangeDetectorRef } from '@angular/core';
 // import { IonicPage, NavController, NavParams, Popover, PopoverController, ToastController , App  } from 'ionic-angular';
 import { AppHeaderService, CommonUtilService, TelemetryGeneratorService } from '../../services/index';
 import { Observable, Subscription } from 'rxjs';
-import {IonApp , PopoverController} from '@ionic/angular';
+import { PopoverController} from '@ionic/angular';
 import {
   ContentService,
   DeviceInfo,
@@ -93,7 +93,6 @@ export class StorageSettingsPage implements OnInit {
     private permissionsService: AndroidPermissionsService,
     // migration-TODO
     // private toastController: ToastController,
-    private app: IonApp,
     private location: Location,
     @Inject('EVENTS_BUS_SERVICE') private eventsBusService: EventsBusService,
     @Inject('STORAGE_SERVICE') private storageService: StorageService,

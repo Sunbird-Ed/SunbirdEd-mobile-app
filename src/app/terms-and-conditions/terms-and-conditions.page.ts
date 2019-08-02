@@ -1,11 +1,15 @@
-import {Component, Inject, OnInit} from '@angular/core';
-import {DomSanitizer, SafeUrl} from '@angular/platform-browser';
-import {TranslateService} from '@ngx-translate/core';
-import {AppVersion} from '@ionic-native/app-version';
-import {Environment, ImpressionType, InteractSubtype, InteractType, PageId} from '../../services/telemetry-constants';
-import {ProfileService, ServerProfile} from 'sunbird-sdk';
+import { Component, Inject, OnInit } from '@angular/core';
+import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
+import { TranslateService } from '@ngx-translate/core';
+import { AppVersion } from '@ionic-native/app-version';
+import { Environment, ImpressionType, InteractSubtype, InteractType, PageId } from '../../services/telemetry-constants';
+import { ProfileService, ServerProfile } from 'sunbird-sdk';
 import { Platform, LoadingController } from '@ionic/angular';
-import { LogoutHandlerService, TncUpdateHandlerService, CommonUtilService, TelemetryGeneratorService, AppHeaderService } from '@app/services';
+import { LogoutHandlerService } from '@app/services/logout-handler.service';
+import { TncUpdateHandlerService } from '@app/services/tnc-update-handler.service';
+import { CommonUtilService } from '@app/services/common-util.service';
+import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
+import { AppHeaderService } from '@app/services/app-header.service';
 import { ProfileConstants } from '../app.constant';
 
 @Component({
@@ -36,7 +40,7 @@ export class TermsAndConditionsPage implements OnInit {
 
   public async ngOnInit() {
     this.headerService.hideHeader();
-    this.userProfileDetails = (await this.profileService.getActiveSessionProfile({requiredFields: ProfileConstants.REQUIRED_FIELDS}).toPromise()).serverProfile;
+    this.userProfileDetails = (await this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise()).serverProfile;
 
     this.tncLatestVersionUrl = this.sanitizer
       .bypassSecurityTrustResourceUrl(this.userProfileDetails.tncLatestVersionUrl);
@@ -135,10 +139,10 @@ export class TermsAndConditionsPage implements OnInit {
     if (this.unregisterBackButtonAction) {
       this.unregisterBackButtonAction();
     }
-/* migration-TODO
-    this.unregisterBackButtonAction = this.platform.registerBackButtonAction(async () => {
-      await this.logoutOnSecondBackNavigation();
-    }, 10);
-    */
+    /* migration-TODO
+        this.unregisterBackButtonAction = this.platform.registerBackButtonAction(async () => {
+          await this.logoutOnSecondBackNavigation();
+        }, 10);
+        */
   }
 }

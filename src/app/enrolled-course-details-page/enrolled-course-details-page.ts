@@ -1,16 +1,14 @@
-import { Component, Inject, NgZone, ViewChild, OnInit } from '@angular/core';
-import { AlertController, Events, NavController, NavParams, Platform, PopoverController } from '@ionic/angular';
+import { Component, Inject, NgZone, OnInit } from '@angular/core';
+import { AlertController, Events, Platform, PopoverController } from '@ionic/angular';
 import * as _ from 'lodash';
 import { SocialSharing } from '@ionic-native/social-sharing/ngx';
 
-import {
-  AppGlobalService,
-  CommonUtilService,
-  CourseUtilService,
-  TelemetryGeneratorService,
-  UtilityService,
-  AppHeaderService
-} from '@app/services';
+import { AppGlobalService } from '@app/services/app-global-service.service';
+import { CommonUtilService } from '@app/services/common-util.service';
+import { CourseUtilService } from '@app/services/course-util.service';
+import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
+import { UtilityService } from '@app/services/utility-service';
+import { AppHeaderService } from '@app/services/app-header.service';
 import { DatePipe } from '@angular/common';
 import {
   Batch,

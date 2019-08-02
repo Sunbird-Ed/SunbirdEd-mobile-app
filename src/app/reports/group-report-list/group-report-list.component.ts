@@ -1,16 +1,16 @@
+import { AppGlobalService } from '@app/services/app-global-service.service';
+import { UtilityService } from '@app/services/utility-service';
+import { AppHeaderService } from '@app/services/app-header.service';
+import { CommonUtilService } from '@app/services/common-util.service';
+import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import {
-  AppGlobalService,
-  UtilityService,
-  AppHeaderService,
-  CommonUtilService,
-  TelemetryGeneratorService,
   Environment,
   InteractSubtype,
   InteractType,
   PageId
-} from '@app/services';
+} from '@app/services/telemetry-constants';
 import { Component, OnInit, Inject, NgZone } from '@angular/core';
-import { LoadingController, NavParams, NavController } from '@ionic/angular';
+import { LoadingController, NavController } from '@ionic/angular';
 import { GroupReportAlertComponent } from '../group-report-alert/group-report-alert.component';
 import { TranslateService } from '@ngx-translate/core';
 import { File } from '@ionic-native/file/ngx';
