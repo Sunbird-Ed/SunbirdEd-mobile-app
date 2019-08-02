@@ -1,13 +1,6 @@
 @import "src/assets/styles/base/_variables.scss";
 @import "src/assets/styles/_custom-mixins.scss";
 @import "src/assets/styles/_variables.scss";
-@mixin clearfix {
-  &::after {
-    clear: both;
-    content: "";
-    display: block;
-  }
-}
 :host {
   .sb-slider-pills-container{
     .sb-grade-pills-container{
@@ -643,20 +636,87 @@
     // margin-right: 18px;
   }
 }
-  .sb-chapter-dd{
-    @include clearfix;
-    color: $blue;
-    padding: $base-block-space;
-    background-color: #fff;
-    .pull-left{
-      line-height: 30px;
+.sb-chapter-dd{
+  @include clearfix;
+  color: $blue;
+  padding: $base-block-space;
+  background-color: #fff;
+  .pull-left{
+    line-height: 30px;
+  }
+  ion-icon{
+    height: 24px;
+    width: 24px;
+    border-radius: 12px;
+    font-size: 28px;
+    color: #7EAEDE;
+  }
+}
+.sb-topics-container-ftue{
+  .sb-topic-item{
+    padding: 0 !important;
+    height: 3.11%;
+    width: 93.33%;
+    color: #999999;
+    font-size: 12px;
+    line-height: 18px;
+    font-weight: bold;
+    margin-left: 20px;
+  }
+  .sb-ftue-design {
+    // width: calc(100% - 20px);
+    width: 100%;
+    font-size: 1.4rem;
+    background: #fff;
+    margin: 10px 0;
+    border: 0.5px solid rgba(35,97,255,0.5);
+    background-color: #FFFFFF;
+    box-shadow: 0 3px 4px 0 rgba(2,79,157,0.1);
+    .sb-play-unselected{
+      color: $blue;
+      font-size: 12px;
+      line-height: 20px;
+      margin: 6px;
+      @include clearfix;
     }
-    ion-icon{
-      height: 24px;
-      width: 24px;
-      border-radius: 12px;
-      font-size: 28px;
-      color: #7EAEDE;
+    .sb-play-selected{
+      font-size: 12px;
+      line-height: 20px;
+      margin: 6px;
+      @include clearfix; 
+    }
+    
+    .pull-left{
+      width: calc(100% - 50px);
+      vertical-align: middle !important;
+      padding-top: 10px;
+      @include clearfix;
+    }
+    .pull-right{
+      vertical-align: middle;
+      padding-right: 5px;
     }
   }
+}
+.sb-topics-container-toc{
+  .sb-topic-item{
+    color: $primary-color;
+    padding: 8px;
+  }
+  .sb-ftue-design {
+    .pull-right{
+      display: none;
+    }
+    .unit-hierachy {
+      color: $primary-color;
+      padding: 8px;
+    }
+  }
+  .sb-chapter-dd{
+    border-bottom: 1px solid $gray-100;
+  }
+  .sb-collection-child-ftue{
+    margin-left: 8px;
+  }
+}
   

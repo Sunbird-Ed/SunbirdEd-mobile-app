@@ -60,7 +60,7 @@ export class CollectionChildComponent implements OnInit {
   }
 
   setContentId(id: string) {
-    console.log('extractedUrl', this.router.getCurrentNavigation().extractedUrl);
+    console.log('extractedUrl', this.router);
 
     // if (this.navCtrl.getActive().component['pageName'] === 'TextBookTocPage') {
     const values = new Map();

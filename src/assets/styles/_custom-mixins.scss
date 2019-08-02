@@ -105,5 +105,12 @@ $app-direction: multi;
 }
 
 @mixin padding($top, $end: $top, $bottom: $top, $start: $end) {
-@include property(padding, $top, $end, $bottom, $start);
+  @include property(padding, $top, $end, $bottom, $start);
+}
+@mixin clearfix {
+  &::after {
+    clear: both;
+    content: "";
+    display: block;
+  }
 }
