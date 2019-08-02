@@ -1,5 +1,5 @@
 <!-- New content details -->
-<ion-content *ngIf="new && content && appGlobalService?.CONTENT_STREAMING_ENABLED">
+<ion-content *ngIf="content && appGlobalService?.CONTENT_STREAMING_ENABLED">
   <div class="sb-play-container sb-player-container" *ngIf="commonUtilService.networkInfo.isNetworkAvailable">
     <div *ngIf="streamingUrl">
       <div *ngIf="contentDownloadable[content?.identifier]">

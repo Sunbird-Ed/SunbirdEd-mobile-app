@@ -165,6 +165,8 @@ export class ContentDetailsPage implements OnInit {
     public toastController: ToastController,
     private fileSizePipe: FileSizePipe,
     private headerService: AppHeaderService,
+    private contentShareHandler: ContentShareHandlerService,
+    private appVersion: AppVersion,
     private location: Location,
     private router: Router,
     private route: ActivatedRoute,
@@ -172,9 +174,7 @@ export class ContentDetailsPage implements OnInit {
     private ratingHandler: RatingHandler,
     private contentPlayerHandler: ContentPlayerHandler,
     private childContentHandler: ChildContentHandler,
-    private contentDeleteHandler: ContentDeleteHandler,
-    private appVersion: AppVersion,
-    private contentShareHandler: ContentShareHandlerService,
+    private contentDeleteHandler: ContentDeleteHandler
   ) {
     this.subscribePlayEvent();
     this.checkDeviceAPILevel();
@@ -188,8 +188,7 @@ export class ContentDetailsPage implements OnInit {
       console.log('params from state : ', extras);
       this.cardData = extras.content;
       this.isChildContent = extras.isChildContent;
-      this.cardData.depth = extras.depth === undefined ? '' :
-        extras.depth;
+      this.cardData.depth = extras.depth === undefined ? '' : extras.depth;
       this.corRelationList = extras.corRelation;
       this.identifier = this.cardData.contentId || this.cardData.identifier;
       this.isResumedCourse = Boolean(extras.isResumedCourse);
