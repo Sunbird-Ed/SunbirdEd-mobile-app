@@ -1,6 +1,4 @@
-@import "src/assets/styles/base/_variables.scss";
 @import "src/assets/styles/_custom-mixins.scss";
-@import "src/assets/styles/fonts.scss";
 @import "src/assets/styles/_variables.scss";
 
 :host {
@@ -9,7 +7,7 @@
   }
   ion-icon {
     font-size: 22px !important;
-    @extend .font-weight-550;
+    font-weight: 550 !important;
   }
   .bgColor {
     background-color: map-get($colors, light_gray) !important;
@@ -30,14 +28,14 @@
   }
   .subTitle {
     font-size: 1.4rem;
-    @extend .font-weight-700;
+    font-weight: 700 !important;
   }
   .item-background.item-md {
     background-color: map-get($colors, light_gray) !important;
   }
   .subTitle {
     font-size: 1.4rem;
-    @extend .font-weight-700;
+    font-weight: 700 !important;
   }
   .radius {
     border-radius: 6px;

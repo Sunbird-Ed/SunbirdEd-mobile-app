@@ -1,12 +1,10 @@
-@import "src/assets/styles/base/_variables.scss";
 @import "src/assets/styles/_custom-mixins.scss";
-@import "src/assets/styles/fonts.scss";
 @import "src/assets/styles/_variables.scss";
 :host {
     .subtitle {
       text-transform: capitalize;
       font-size: 1.3em;
-      @extend .font-weight-700;
+      font-weight: 700 !important;
       color: map-get($colors, primary_black);
     }
     .filter-item {
@@ -15,7 +13,7 @@
       background-color: map-get($colors, white_f0);
       color: map-get($colors, dark_gray);
       font-size: 1em;
-      @extend .font-weight-600;
+      font-weight: 600 !important;
       height: 2em;
       ion-icon {
         color: map-get($colors, dark_gray);
