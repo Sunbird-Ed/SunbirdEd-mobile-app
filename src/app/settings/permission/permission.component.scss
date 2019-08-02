@@ -48,6 +48,12 @@
   .pr-16 {
     @include padding(null, 16px, null, null);
   }
+
+  .btn-outline {
+    letter-spacing: normal;
+    border-width: 1px;
+    --border-width: 1px;
+  }
 }
 
 .permission-toggle {
