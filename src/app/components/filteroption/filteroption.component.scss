@@ -1,10 +1,9 @@
 @import "src/assets/styles/base/_variables.scss";
-@import "src/assets/styles/fonts.scss";
 @import "src/assets/styles/_variables.scss";
     .subtitle {
       text-transform: capitalize;
       font-size: 1.3em;
-      @extend .font-weight-700;
+      font-weight: 700 !important;
       color: map-get($colors, facebook);
     }
     .checkbox {
@@ -24,7 +23,7 @@
     }
     .item-md {
       font-size: 1.3rem !important;
-      @extend .font-weight-600;
+      font-weight: 600 !important;
     }
   
   .option-box .popover-content {

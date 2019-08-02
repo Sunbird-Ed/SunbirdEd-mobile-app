@@ -1,11 +1,9 @@
-@import "src/assets/styles/base/_variables.scss";
-@import "src/assets/styles/fonts.scss";
 @import "src/assets/styles/_variables.scss";
 :host {
     .subtitle {
         text-transform: capitalize;
        
-        @extend .font-weight-700;
+        font-weight: 700 !important;
         &.buttontext{
             color: map-get($colors, primary);
         }

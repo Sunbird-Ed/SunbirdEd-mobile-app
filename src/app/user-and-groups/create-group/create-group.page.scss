@@ -1,13 +1,13 @@
 @import "src/assets/styles/_helper.scss";
 @import "src/assets/styles/_variables.scss";
-@import "src/assets/styles/fonts.scss";
+
 
 .mandatory {
     color: map-get($colors, red);
 }
 
 .label-font {
-    @extend .font-weight-500;
+    font-weight: 500 !important;
     font-size: 18px;
 }
 

@@ -1,6 +1,4 @@
-@import "src/assets/styles/base/_variables.scss";
 @import "src/assets/styles/_custom-mixins.scss";
-@import "src/assets/styles/fonts.scss";
 
 :host {
   .G:nth-child(even) {
@@ -88,11 +86,11 @@
   }
   .icon-tickmark {
     color: green;
-    @extend .font-weight-600;
+   font-weight: 600 !important;
   }
   .icon-close {
     color: red;
-    @extend .font-weight-600;
+    font-weight: 600 !important;
   }
   .grid-align {
     margin-top: 11%;
@@ -134,7 +132,7 @@
   }
 }
 .segment-md .segment-button {
-  @extend .font-weight-700;
+  font-weight: 700 !important;
   color: black !important;
   background-color: #ffffff;
 }

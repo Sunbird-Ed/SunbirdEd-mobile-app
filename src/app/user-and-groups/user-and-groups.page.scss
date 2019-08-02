@@ -1,6 +1,4 @@
-@import "src/assets/styles/base/_variables.scss";
 @import "src/assets/styles/_custom-mixins.scss";
-@import "src/assets/styles/fonts.scss";
 @import "src/assets/styles/_variables.scss";
 
   .img-container {
@@ -55,7 +53,7 @@
   }
   .subTitle {
     font-size: 14px;
-    @extend .font-weight-600;
+    font-weight: 600 !important;
     color: map-get($colors, dark_gray) !important;
   }
   .radius {
@@ -152,7 +150,7 @@
 }
 
 .segment-md .segment-button {
-  @extend .font-weight-700;
+  font-weight: 700 !important;
     color: map-get($colors, dark_gray) !important;
     background-color: map-get($colors, white);
 }
