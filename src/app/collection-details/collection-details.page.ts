@@ -854,7 +854,7 @@ export class CollectionDetailsPage {
         pageName: PageId.COLLECTION_DETAIL,
         corRelationList: this.corRelationList
       },
-      // cssClass: 'content-action'
+       cssClass: 'content-action'
     });
     await popover.present();
     const { data } = await popover.onDidDismiss();

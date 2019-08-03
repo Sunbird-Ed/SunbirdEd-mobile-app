@@ -303,13 +303,14 @@ export class EnrolledCourseDetailsPage implements OnInit {
       if (this.course.isAvailableLocally) {
         const popUp = await this.popoverCtrl.create({
           component: ContentRatingAlertComponent,
+          event,
           componentProps: {
             content: this.course,
             rating: this.userRating,
             comment: this.ratingComment,
             pageId: PageId.COURSE_DETAIL
           },
-          cssClass: 'content-rating-alert'
+          cssClass: 'sb-popover info',
         });
         await popUp.present();
         const response = await popUp.onDidDismiss();

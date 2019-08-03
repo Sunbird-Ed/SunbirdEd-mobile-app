@@ -31,7 +31,7 @@
 
 <ion-footer>
   <div class="sb-popover-footer">
-    <button class="sb-popover-action-btn " [ngClass]="btn.btnClass" *ngFor="let btn of actionsButtons"
+    <button class="sb-popover-action-btn" [ngClass]="btn.btnClass" *ngFor="let btn of actionsButtons"
       (click)='deleteContent(true,btn.btntext)'> {{btn.btntext }}</button>
   </div>
 </ion-footer>

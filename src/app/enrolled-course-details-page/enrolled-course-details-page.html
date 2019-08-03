@@ -16,7 +16,7 @@
 						<span class="size_txt content-size">{{ 'YOUR_PROGRESS' | translate: {'%s': course?.progress ? course?.progress : '0'} }}</span>
 					</div>
 					<ion-row>
-						<div class="col-2">
+						<div class="col-2  small-rating">
 							<rating align-items-start (click)="rateContent();" [(ngModel)]="course.me_averageRating" readonly="true" max="5"
 							 no-padding></rating>
 						</div>
