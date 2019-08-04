@@ -1,6 +1,7 @@
 import { Component, Inject, NgZone, OnInit } from '@angular/core';
 import { AlertController, Events, Platform, PopoverController } from '@ionic/angular';
-import * as _ from 'lodash';
+import isObject from 'lodash/isObject';
+import forEach from 'lodash/forEach';
 import { SocialSharing } from '@ionic-native/social-sharing/ngx';
 
 import { AppGlobalService } from '@app/services/app-global-service.service';
@@ -625,12 +626,12 @@ export class EnrolledCourseDetailsPage implements OnInit {
    */
   setCourseStructure(): void {
     if (this.course.contentTypesCount) {
-      if (!_.isObject(this.course.contentTypesCount)) {
+      if (!isObject(this.course.contentTypesCount)) {
         this.course.contentTypesCount = JSON.parse(this.course.contentTypesCount);
       } else {
         this.course.contentTypesCount = this.course.contentTypesCount;
       }
-    } else if (this.courseCardData.contentTypesCount && !_.isObject(this.courseCardData.contentTypesCount)) {
+    } else if (this.courseCardData.contentTypesCount && !isObject(this.courseCardData.contentTypesCount)) {
       this.course.contentTypesCount = JSON.parse(this.courseCardData.contentTypesCount);
     }
   }
@@ -643,7 +644,7 @@ export class EnrolledCourseDetailsPage implements OnInit {
    */
   getImportContentRequestBody(identifiers, isChild: boolean): Array<ContentImport> {
     const requestParams = [];
-    _.forEach(identifiers, (value) => {
+    identifiers.forEach((value) => {
       requestParams.push({
         isChildContent: isChild,
         destinationFolder: cordova.file.externalDataDirectory,
@@ -677,7 +678,7 @@ export class EnrolledCourseDetailsPage implements OnInit {
             this.headerService.showHeaderWithBackButton(['share', 'more']);
           }
           if (data && data.length && this.isDownloadStarted) {
-            _.forEach(data, (value) => {
+            data.forEach((value) => {
               if (value.status === ContentImportStatus.ENQUEUED_FOR_DOWNLOAD) {
                 this.queuedIdentifiers.push(value.identifier);
               } else if (value.status === ContentImportStatus.NOT_FOUND) {
@@ -912,7 +913,7 @@ export class EnrolledCourseDetailsPage implements OnInit {
   }
 
   getContentsSize(data) {
-    _.forEach(data, (value) => {
+    data.forEach((value) => {
       if (value.contentData.size) {
         this.downloadSize += Number(value.contentData.size);
       }
@@ -1057,7 +1058,7 @@ export class EnrolledCourseDetailsPage implements OnInit {
             this.headerService.showHeaderWithBackButton(['share', 'more']);
             const contentImportCompleted = event as ContentImportCompleted;
             if (this.queuedIdentifiers.length && this.isDownloadStarted) {
-              if (_.includes(this.queuedIdentifiers, contentImportCompleted.payload.contentId)) {
+              if (this.queuedIdentifiers.includes(contentImportCompleted.payload.contentId)) {
                 this.currentCount++;
               }
 
@@ -1140,7 +1141,7 @@ export class EnrolledCourseDetailsPage implements OnInit {
             this.zone.run(async () => {
               this.batches = data;
               if (this.batches.length) {
-                _.forEach(this.batches, (batch, key) => {
+                forEach(this.batches, (batch, key) => {
                   if (batch.status === 1) {
                     ongoingBatches.push(batch);
                   } else {

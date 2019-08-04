@@ -1,5 +1,6 @@
 import { Component, Inject, NgZone, OnInit, ViewChild } from '@angular/core';
-import * as _ from 'lodash';
+import isObject from 'lodash/isObject';
+import forEach from 'lodash/forEach';
 import { TranslateService } from '@ngx-translate/core';
 import { SocialSharing } from '@ionic-native/social-sharing/ngx';
 import { FileSizePipe } from '@app/pipes/file-size/file-size';
@@ -332,7 +333,7 @@ export class CollectionDetailEtbPage implements OnInit {
       contentId: this.identifier,
       contentType: this.content.contentType
     };
-    const profile: Profile = await this.appGlobalService.getCurrentUser();
+    const profile: Profile = this.appGlobalService.getCurrentUser();
     this.profileService.addContentAccess(addContentAccessRequest).toPromise().then();
     const contentMarkerRequest: ContentMarkerRequest = {
       uid: profile.uid,
@@ -617,14 +618,14 @@ export class CollectionDetailEtbPage implements OnInit {
   setCollectionStructure() {
     this.showChildrenLoader = true;
     if (this.contentDetail.contentData.contentTypesCount) {
-      if (!_.isObject(this.contentDetail.contentData.contentTypesCount)) {
+      if (!isObject(this.contentDetail.contentData.contentTypesCount)) {
         this.contentTypesCount = JSON.parse(this.contentDetail.contentData.contentTypesCount);
       } else {
         this.contentTypesCount = this.contentDetail.contentData.contentTypesCount;
       }
       // this.contentDetail.contentData.contentTypesCount = JSON.parse(this.contentDetail.contentData.contentTypesCount);
     } else if (this.cardData.contentTypesCount) {
-      if (!_.isObject(this.cardData.contentTypesCount)) {
+      if (!isObject(this.cardData.contentTypesCount)) {
         this.contentTypesCount = JSON.parse(this.cardData.contentTypesCount);
         // this.contentDetail.contentData.contentTypesCount = JSON.parse(this.cardData.contentTypesCount);
       }
@@ -638,7 +639,7 @@ export class CollectionDetailEtbPage implements OnInit {
     if (hierarchyInfo === null) {
       this.objRollup.l1 = this.identifier;
     } else {
-      _.forEach(hierarchyInfo, (value, key) => {
+      forEach(hierarchyInfo, (value, key) => {
         switch (key) {
           case 0:
             this.objRollup.l1 = value.identifier;
@@ -665,7 +666,7 @@ export class CollectionDetailEtbPage implements OnInit {
    */
   getImportContentRequestBody(identifiers: Array<string>, isChild: boolean): Array<ContentImport> {
     const requestParams: ContentImport[] = [];
-    _.forEach(identifiers, (value) => {
+    identifiers.forEach((value) => {
       requestParams.push({
         isChildContent: isChild,
         destinationFolder: this.storageService.getStorageDestinationDirectoryPath(),
@@ -697,7 +698,7 @@ export class CollectionDetailEtbPage implements OnInit {
       .then((data: ContentImportResponse[]) => {
         this.zone.run(() => {
           if (data && data.length && this.isDownloadStarted) {
-            _.forEach(data, (value) => {
+            data.forEach((value) => {
               if (value.status === ContentImportStatus.ENQUEUED_FOR_DOWNLOAD) {
                 this.queuedIdentifiers.push(value.identifier);
               } else if (value.status === ContentImportStatus.NOT_FOUND) {
@@ -806,7 +807,7 @@ export class CollectionDetailEtbPage implements OnInit {
   }
 
   getContentsSize(data) {
-    _.forEach(data, (value) => {
+    data.forEach((value) => {
       this.breadCrumb.set(value.identifier, value.contentData.name);
       if (value.contentData.size) {
         this.downloadSize += Number(value.contentData.size);
@@ -834,7 +835,7 @@ export class CollectionDetailEtbPage implements OnInit {
   showDownloadAllBtn(data) {
     let size = 0;
     this.zone.run(() => {
-      _.forEach(data, (value) => {
+      data.forEach((value) => {
         if (value.isAvailableLocally === false) {
           this.downloadIdentifiers.push(value.contentData.identifier);
           size += value.contentData.size;
@@ -946,7 +947,7 @@ export class CollectionDetailEtbPage implements OnInit {
           const contentImportedEvent = event as ContentImportCompleted;
 
           if (this.queuedIdentifiers.length && this.isDownloadStarted) {
-            if (_.includes(this.queuedIdentifiers, contentImportedEvent.payload.contentId)) {
+            if (this.queuedIdentifiers.includes(contentImportedEvent.payload.contentId)) {
               this.currentCount++;
               this.downloadPercentage = +((this.currentCount / this.queuedIdentifiers.length) * (100)).toFixed(0);
             }

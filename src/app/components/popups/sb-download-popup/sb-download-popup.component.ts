@@ -9,7 +9,6 @@ import {
   SimpleChanges,
   OnInit
 } from '@angular/core';
-import * as _ from 'lodash';
 import {
   Events,
   // Navbar,

@@ -10,7 +10,6 @@ import {
   ToastController
 } from '@ionic/angular';
 import { Subscription } from 'rxjs/Subscription';
-import * as _ from 'lodash';
 import {
   AuthService,
   Content,
@@ -602,7 +601,7 @@ export class ContentDetailsPage implements OnInit {
    */
   getImportContentRequestBody(identifiers: Array<string>, isChild: boolean): Array<ContentImport> {
     const requestParams = [];
-    _.forEach(identifiers, (value) => {
+    identifiers.forEach((value) => {
       requestParams.push({
         isChildContent: isChild,
         destinationFolder: this.storageService.getStorageDestinationDirectoryPath(),
