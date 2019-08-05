@@ -237,6 +237,8 @@ export class CollectionDetailEtbPage implements OnInit {
   stateData: any;
   stckyUnitTitle?: string;
   isChapterVisible = false;
+  shouldPillsStick = false;
+
   constructor(
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
     @Inject('EVENTS_BUS_SERVICE') private eventBusService: EventsBusService,
@@ -1317,7 +1319,7 @@ export class CollectionDetailEtbPage implements OnInit {
     }
 
   }
-  async showPopOver() {
+  async showPopOver(event) {
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
       'delete-from-device-button-clicked',
       Environment.HOME,
