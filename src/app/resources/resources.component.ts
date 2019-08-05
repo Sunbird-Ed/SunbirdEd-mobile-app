@@ -4,7 +4,8 @@ import { IonContent as ContentView, Events, ToastController, MenuController } fr
 import { NavigationExtras, Router } from '@angular/router';
 import { animate, group, state, style, transition, trigger } from '@angular/animations';
 import { TranslateService } from '@ngx-translate/core';
-import * as _ from 'lodash';
+import has from 'lodash/has';
+import forEach from 'lodash/forEach';
 import { Subscription } from 'rxjs/Subscription';
 import { Network } from '@ionic-native/network/ngx';
 import {
@@ -47,7 +48,7 @@ import { TelemetryGeneratorService } from '@app/services/telemetry-generator.ser
 import { CommonUtilService } from '@app/services/common-util.service';
 import { FormAndFrameworkUtilService } from '@app/services/formandframeworkutil.service';
 import { Environment, InteractSubtype, InteractType, PageId, ImpressionType, ImpressionSubtype } from '@app/services/telemetry-constants';
-import { AppHeaderService } from '@app/services';
+import { AppHeaderService } from '@app/services/app-header.service';
 
 @Component({
   selector: 'app-resources',
@@ -350,8 +351,8 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
 
     this.contentService.getContents(requestParams).toPromise()
       .then(data => {
-        _.forEach(data, (value) => {
-          value.contentData.lastUpdatedOn = value.lastUpdatedTime;
+        data.forEach((value) => {
+          value.contentData['lastUpdatedOn'] = value.lastUpdatedTime;
           if (value.contentData.appIcon) {
             if (value.contentData.appIcon.includes('http:') || value.contentData.appIcon.includes('https:')) {
               if (this.commonUtilService.networkInfo.isNetworkAvailable) {
@@ -463,9 +464,9 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
           sections.forEach(element => {
             // element.display = JSON.parse(element.display);
             if (element.display.name) {
-              if (_.has(element.display.name, this.selectedLanguage)) {
+              if (has(element.display.name, this.selectedLanguage)) {
                 const langs = [];
-                _.forEach(element.display.name, (value, key) => {
+                forEach(element.display.name, (value, key) => {
                   langs[key] = value;
                 });
                 element.name = langs[this.selectedLanguage];
@@ -828,13 +829,13 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
 
   checkEmptySearchResult(isAfterLanguageChange = false) {
     const flags = [];
-    _.forEach(this.storyAndWorksheets, (value, key) => {
+    forEach(this.storyAndWorksheets, (value, key) => {
       if (value.contents && value.contents.length) {
         flags[key] = true;
       }
     });
 
-    if (flags.length && _.includes(flags, true)) {
+    if (flags.length && flags.includes(true)) {
     } else {
       if (!isAfterLanguageChange) {
         if (this.commonUtilService.currentTabName === 'resources') {

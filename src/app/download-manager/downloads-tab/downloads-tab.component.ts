@@ -3,7 +3,8 @@ import { ContentType, MimeType, MenuOverflow, RouterLinks } from '@app/app/app.c
 // import { MenuOverflow } from '../../../app/app.constant';
 import { OverflowMenuComponent } from '@app/app/profile/overflow-menu/overflow-menu.component';
 // import { ViewController } from 'ionic-angular/navigation/view-controller';
-import { CommonUtilService, TelemetryGeneratorService } from '@app/services';
+import { CommonUtilService, } from '@app/services/common-util.service';
+import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { SbPopoverComponent } from '@app/app/components/popups/sb-popover/sb-popover.component';
 import { PopoverController, Events } from '@ionic/angular';
 import { InteractType, TelemetryObject } from 'sunbird-sdk';

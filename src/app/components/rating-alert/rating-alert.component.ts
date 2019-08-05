@@ -1,11 +1,13 @@
-import {Component, Inject, OnInit} from '@angular/core';
-import {  NavParams, Platform, ModalController} from '@ionic/angular';
-import {AppRatingService, TelemetryGeneratorService, UtilityService} from '@app/services';
-import {SharedPreferences, TelemetryService} from 'sunbird-sdk';
-import {AppVersion} from '@ionic-native/app-version/ngx';
-import {Observable} from 'rxjs/Observable';
-import {TranslateService} from '@ngx-translate/core';
-import {PreferenceKey, StoreRating} from '../../../app/app.constant';
+import { Component, Inject, OnInit } from '@angular/core';
+import { NavParams, Platform, ModalController } from '@ionic/angular';
+import { AppRatingService } from '@app/services/app-rating.service';
+import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
+import { UtilityService } from '@app/services/utility-service';
+import { SharedPreferences, TelemetryService } from 'sunbird-sdk';
+import { AppVersion } from '@ionic-native/app-version/ngx';
+import { Observable } from 'rxjs/Observable';
+import { TranslateService } from '@ngx-translate/core';
+import { PreferenceKey, StoreRating } from '@app/app/app.constant';
 import {
   Environment,
   ImpressionSubtype,
@@ -34,13 +36,13 @@ interface ViewText {
 export class AppRatingAlertComponent implements OnInit {
 
   private readonly appRateView = {
-    appRate: {type: ViewType.APP_RATE, heading: 'APP_RATING_RATE_EXPERIENCE', message: 'APP_RATING_TAP_ON_STARS'},
+    appRate: { type: ViewType.APP_RATE, heading: 'APP_RATING_RATE_EXPERIENCE', message: 'APP_RATING_TAP_ON_STARS' },
     storeRate: {
       type: ViewType.STORE_RATE,
       heading: 'APP_RATING_THANKS_FOR_RATING',
       message: 'APP_RATING_RATE_ON_PLAYSTORE'
     },
-    helpDesk: {type: ViewType.HELP_DESK, heading: 'APP_RATING_THANKS_FOR_RATING', message: 'APP_RATING_REPORT_AN_ISSUE'}
+    helpDesk: { type: ViewType.HELP_DESK, heading: 'APP_RATING_THANKS_FOR_RATING', message: 'APP_RATING_REPORT_AN_ISSUE' }
   };
   private appRate = 0;
   private pageId = '';
@@ -51,16 +53,17 @@ export class AppRatingAlertComponent implements OnInit {
   private appRatingPopCount = 0;
   private rateLaterClickedCount = 0;
 
-  constructor(private modalCtrl: ModalController,
-              private appVersion: AppVersion,
-              private utilityService: UtilityService,
-              private appRatingService: AppRatingService,
-              @Inject('SHARED_PREFERENCES') private preference: SharedPreferences,
-              private translate: TranslateService,
-              private platform: Platform,
-              private telemetryGeneratorService: TelemetryGeneratorService,
-              private navParams: NavParams,
-              @Inject('TELEMETRY_SERVICE') private telemetryService: TelemetryService,
+  constructor(
+    @Inject('SHARED_PREFERENCES') private preference: SharedPreferences,
+    @Inject('TELEMETRY_SERVICE') private telemetryService: TelemetryService,
+    private modalCtrl: ModalController,
+    private appVersion: AppVersion,
+    private utilityService: UtilityService,
+    private appRatingService: AppRatingService,
+    private translate: TranslateService,
+    private platform: Platform,
+    private telemetryGeneratorService: TelemetryGeneratorService,
+    private navParams: NavParams,
   ) {
     this.getAppName();
     this.appLogo$ = this.preference.getString('app_logo').map((logo) => logo || './assets/imgs/ic_launcher.png');
@@ -93,7 +96,7 @@ export class AppRatingAlertComponent implements OnInit {
 
   closePopover() {
     this.modalCtrl.dismiss(null);
-    if(this.backButtonFunc) {
+    if (this.backButtonFunc) {
       this.backButtonFunc.unsubscribe();
     }
   }
@@ -102,7 +105,7 @@ export class AppRatingAlertComponent implements OnInit {
     this.rateLaterClickedCount = await this.appRatingService.rateLaterClickedCount();
     const paramsMap = new Map();
     paramsMap['rateLaterCount'] = this.rateLaterClickedCount;
-    await this.telemetryGeneratorService.generateInteractTelemetry(
+    this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,
       InteractSubtype.RATE_LATER_CLICKED,
       Environment.HOME,
@@ -170,7 +173,7 @@ export class AppRatingAlertComponent implements OnInit {
     this.appRatingPopCount = await this.countAppRatingPopupAppeared();
     const paramsMap = new Map();
     paramsMap['appRatingPopAppearedCount'] = this.appRatingPopCount;
-    await this.telemetryGeneratorService.generateInteractTelemetry(
+    this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.OTHER, InteractSubtype.APP_RATING_APPEARED,
       this.pageId, Environment.HOME, undefined, paramsMap,
       undefined, undefined
@@ -192,5 +195,4 @@ export class AppRatingAlertComponent implements OnInit {
       }
     });
   }
-
 }

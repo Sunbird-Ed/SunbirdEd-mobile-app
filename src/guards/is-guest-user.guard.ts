@@ -1,8 +1,6 @@
 import { Injectable, Inject } from '@angular/core';
 import { CanLoad, Router } from '@angular/router';
-import { SharedPreferences, ProfileService, AuthService } from 'sunbird-sdk';
-import { PreferenceKey, ProfileConstants } from '@app/app/app.constant';
-import { AppGlobalService } from '@app/services';
+import { AuthService } from 'sunbird-sdk';
 
 @Injectable()
 export class IsGuestUserGuard implements CanLoad {

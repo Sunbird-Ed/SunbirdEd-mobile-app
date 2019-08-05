@@ -12,15 +12,16 @@ import {
   ProfileType,
   TelemetryObject
 } from 'sunbird-sdk';
+import { AppHeaderService } from '@app/services/app-header.service';
 import {
-  AppHeaderService,
   Environment,
   ImpressionType,
   InteractSubtype,
   InteractType,
-  PageId,
-  TelemetryGeneratorService
-} from '@app/services';
+  PageId
+} from '@app/services/telemetry-constants';
+import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
+
 import { ProfileConstants, RouterLinks } from '@app/app/app.constant';
 
 @Component({

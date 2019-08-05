@@ -2,7 +2,7 @@ import { Injectable, Inject } from '@angular/core';
 import { CanLoad, Router, ActivatedRoute } from '@angular/router';
 import { SharedPreferences } from 'sunbird-sdk';
 import { PreferenceKey } from '@app/app/app.constant';
-import { AppGlobalService } from '@app/services';
+import { AppGlobalService } from '@app/services/app-global-service.service';
 
 @Injectable()
 export class HasNotSelectedUserTypeGuard implements CanLoad {

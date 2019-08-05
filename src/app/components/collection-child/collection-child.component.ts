@@ -1,9 +1,11 @@
 import { Location } from '@angular/common';
 import { Component, Input, NgZone, OnInit } from '@angular/core';
 import { ContentType, MimeType, RouterLinks } from '@app/app/app.constant';
-import { CommonUtilService, ComingSoonMessageService, TelemetryGeneratorService } from '@app/services';
+import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
+import { CommonUtilService } from '@app/services/common-util.service';
+import { ComingSoonMessageService } from '@app/services/coming-soon-message.service';
 import { PopoverController } from '@ionic/angular';
-import { SbGenericPopoverComponent } from '../popups/sb-generic-popover/sb-generic-popover.component';
+import { SbGenericPopoverComponent } from '@app/app/components/popups/sb-generic-popover/sb-generic-popover.component';
 import { Content } from 'sunbird-sdk';
 import { Router, NavigationExtras } from '@angular/router';
 import { TextbookTocService } from '@app/app/collection-detail-etb/textbook-toc-service';

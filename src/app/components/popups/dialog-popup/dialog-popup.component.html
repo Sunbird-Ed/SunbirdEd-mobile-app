@@ -1,0 +1,21 @@
+<ion-content>
+  <ion-row class="alert-header-padding">
+    <ion-col col-10>
+      <div class="alert-header">
+        <h5 class="alert-header-content"> {{title}} </h5>
+      </div>
+    </ion-col>
+    <ion-col col-2>
+        <button class="close-button" ion-button icon-only clear (click)="close()">
+          <ion-icon item-right name="close"></ion-icon>
+        </button>
+    </ion-col>
+  </ion-row>
+  
+  <ion-row class="alert-content-body"> {{body}} </ion-row>
+  
+  <ion-row>
+    <button ion-button full class="alert-button" (click)="redirectToPlaystore()" text-capitalize> {{buttonText}} </button>
+  </ion-row>
+  </ion-content>
+  

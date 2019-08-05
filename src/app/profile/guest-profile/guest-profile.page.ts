@@ -1,7 +1,6 @@
 import { TranslateService } from '@ngx-translate/core';
 import { Component, Inject, OnInit } from '@angular/core';
 import { Events, ToastController } from '@ionic/angular';
-import * as _ from 'lodash';
 import {
   Framework,
   FrameworkCategoryCodesGroup,
@@ -15,13 +14,11 @@ import {
   Profile
 } from 'sunbird-sdk';
 import { ActivatedRoute, Router, NavigationExtras } from '@angular/router';
-import {
-  AppGlobalService,
-  CommonUtilService,
-  TelemetryGeneratorService,
-  AppHeaderService,
-  PageId, Environment, InteractType, InteractSubtype
-} from '@app/services';
+import { AppGlobalService } from '@app/services/app-global-service.service';
+import { CommonUtilService } from '@app/services/common-util.service';
+import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
+import { AppHeaderService } from '@app/services/app-header.service';
+import { PageId, Environment, InteractType, InteractSubtype } from '@app/services/telemetry-constants';
 import { ProfileConstants, RouterLinks } from '@app/app/app.constant';
 
 @Component({
@@ -202,7 +199,7 @@ export class GuestProfilePage implements OnInit {
   getFieldDisplayValues(field: Array<any>, catIndex: number): string {
     const displayValues = [];
     this.categories[catIndex].terms.forEach(element => {
-      if (_.includes(field, element.code)) {
+      if (field.includes(element.code)) {
         displayValues.push(element.name);
       }
     });
