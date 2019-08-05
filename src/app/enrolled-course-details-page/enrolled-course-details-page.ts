@@ -382,7 +382,7 @@ export class EnrolledCourseDetailsPage implements OnInit {
         batchDetails: this.batchDetails,
         pageName: PageId.COURSE_DETAIL
       },
-      // cssClass: 'content-action'
+      cssClass: 'content-action'
     });
     await popover.present();
     const { data } = await popover.onDidDismiss();

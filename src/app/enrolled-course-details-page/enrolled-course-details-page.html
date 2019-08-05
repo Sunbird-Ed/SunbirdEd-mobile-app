@@ -7,9 +7,9 @@
 				<span class="text-gray-color size_txt padding-right-3">{{ 'CONTENT_CREATED_BY' | translate }}</span>
 				<span class="content-meta-title size_txt">{{ course?.creator || course?.owner }}</span>
 			</div>
-			<ion-row class="padding-top-10 credits" (click)="viewCredits()" *ngIf="course?.creators || course?.attributions || course?.contributors">
+			<!-- <ion-row class="padding-top-10 credits" (click)="viewCredits()" *ngIf="course?.creators || course?.attributions || course?.contributors">
 				{{ 'CREDITS' | translate }}
-			</ion-row>
+			</ion-row> -->
 			<ion-row class="padding-top-101">
 				<ion-col class="padding-0">
 					<div class=" padding-bottom-5" no-margin *ngIf="courseCardData?.batchId">
