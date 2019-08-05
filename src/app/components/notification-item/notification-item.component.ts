@@ -1,7 +1,7 @@
 import { Component, Input, Inject, Output, EventEmitter } from '@angular/core';
 import { NotificationService } from 'sunbird-sdk';
 
-import { InteractSubtype } from '@app/services';
+import { InteractSubtype } from '@app/services/telemetry-constants';
 
 @Component({
   selector: 'app-notification-item',

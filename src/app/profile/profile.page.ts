@@ -5,11 +5,11 @@ import {
 } from '@ionic/angular';
 import { generateInteractTelemetry } from '@app/app/telemetryutil';
 import { ContentCard, ContentType, MimeType, ProfileConstants, RouterLinks, ContentFilterConfig } from '@app/app/app.constant';
-import { FormAndFrameworkUtilService } from '@app/services';
-import { AppGlobalService } from '@app/services';
-import { CommonUtilService } from '@app/services';
-import { TelemetryGeneratorService } from '@app/services';
-import { AppHeaderService } from '@app/services';
+import { FormAndFrameworkUtilService } from '@app/services/formandframeworkutil.service';
+import { AppGlobalService } from '@app/services/app-global-service.service';
+import { CommonUtilService } from '@app/services/common-util.service';
+import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
+import { AppHeaderService } from '@app/services/app-header.service';
 import {
   AuthService,
   ContentSearchCriteria,
@@ -27,9 +27,10 @@ import {
   UpdateServerProfileInfoRequest,
   CachedItemRequestSourceFrom
 } from 'sunbird-sdk';
-import { Environment, InteractSubtype, InteractType, PageId } from '@app/services';
+import { Environment, InteractSubtype, InteractType, PageId } from '@app/services/telemetry-constants';
 import { ActivatedRoute, Router, NavigationExtras } from '@angular/router';
-import { EditContactVerifyPopupComponent, EditContactDetailsPopupComponent } from '@app/app/components';
+import { EditContactVerifyPopupComponent } from '@app/app/components/popups/edit-contact-verify-popup/edit-contact-verify-popup.component';
+import { EditContactDetailsPopupComponent } from '@app/app/components/popups/edit-contact-details-popup/edit-contact-details-popup.component';
 
 @Component({
   selector: 'app-profile',

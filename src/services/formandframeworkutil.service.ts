@@ -2,7 +2,6 @@ import { Inject, Injectable, OnInit } from '@angular/core';
 import { AppGlobalService } from '@app/services/app-global-service.service';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { TranslateService } from '@ngx-translate/core';
-import * as _ from 'lodash';
 import { Events } from '@ionic/angular';
 import {
     CategoryTerm,
@@ -308,13 +307,13 @@ export class FormAndFrameworkUtilService implements OnInit {
                                 keysLength++;
                                 profileRes.framework[categoryKey].forEach(element => {
                                     if (categoryKey === 'gradeLevel') {
-                                        const codeObj = _.find(categoryList, (category) => category.name === element);
+                                        const codeObj = categoryList.find((category) => category.name === element);
                                         if (codeObj) {
                                             profile['grade'].push(codeObj.code);
                                             profile['gradeValue'][codeObj.code] = element;
                                         }
                                     } else {
-                                        const codeObj = _.find(categoryList, (category) => category.name === element);
+                                        const codeObj = categoryList.find((category) => category.name === element);
                                         if (codeObj) {
                                             profile[categoryKey].push(codeObj.code);
                                         }

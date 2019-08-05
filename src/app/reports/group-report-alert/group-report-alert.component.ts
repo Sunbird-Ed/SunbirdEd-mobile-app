@@ -2,7 +2,7 @@ import { Component, OnInit, Inject } from '@angular/core';
 import { NavParams, ModalController, Platform, NavController, LoadingController, PopoverController } from '@ionic/angular';
 import { SummarizerService, SummaryRequest, ReportSummary } from 'sunbird-sdk';
 import { TranslateService } from '@ngx-translate/core';
-import { CommonUtilService } from '@app/services';
+import { CommonUtilService } from '@app/services/common-util.service';
 import { Location } from '@angular/common';
 
 export interface QRAlertCallBack {

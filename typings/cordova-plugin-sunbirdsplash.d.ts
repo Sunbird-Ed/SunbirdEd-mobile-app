@@ -3,4 +3,5 @@ declare var splashscreen: {
   setImportProgress: (currentCount, totalCount) => void;
   getActions: (successCallback: (actions: string) => void) => void;
   markImportDone: () => void;
+  clearPrefs: () => void;
 };

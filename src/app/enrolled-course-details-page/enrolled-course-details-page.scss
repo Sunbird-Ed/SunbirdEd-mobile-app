@@ -82,22 +82,20 @@
         padding: ($base-block-space * 2) ($base-block-space * 2) ($base-block-space / 2) ($base-block-space * 2) !important;
     }
 
-    ul {
-        padding: 0 !important;
-        margin: 0px;
-  
-        &.rating li {
-          padding: 1px 1px !important;
-          background: none;
-          color: map-get($colors, primary);
-  
-          ion-icon {
-            font-size: 16px;
-          }
-        }
+    .size_txt {
+        font-size: 12px;
     }
+    .padding-right-3 {
+        padding-right: 3px;
+    }
+
 
     .list-mb-48{
         margin-bottom: ($base-block-space * 6) !important;
+    }
+    
+    .sc-ion-buttons-md-s ion-button {
+        height: 20px;
+        font-size: 10px;
     }
 }

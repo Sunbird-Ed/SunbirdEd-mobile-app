@@ -1,6 +1,6 @@
 import { BatchConstants, RouterLinks } from './../../app/app.constant';
 import { Component, Inject, NgZone, OnDestroy, ViewChild } from '@angular/core';
-import { Events, NavController, NavParams,  Platform, PopoverController } from '@ionic/angular';
+import { Events, NavController, NavParams, Platform, PopoverController } from '@ionic/angular';
 import {
   CachedItemRequestSourceFrom, Content, ContentDetailRequest, ContentEventType, ContentImport, ContentImportRequest,
   ContentImportResponse, ContentImportStatus, ContentSearchCriteria, ContentSearchResult, ContentService,
@@ -11,7 +11,6 @@ import {
 } from 'sunbird-sdk';
 import { Location } from '@angular/common';
 import { Map } from '../../app/telemetryutil';
-import * as _ from 'lodash';
 import { AudienceFilter, ContentType, MimeType, Search, ContentCard } from '../../app/app.constant';
 import { AppGlobalService } from '../../services/app-global-service.service';
 import { FormAndFrameworkUtilService } from '../../services/formandframeworkutil.service';
@@ -120,7 +119,7 @@ export class SearchPage implements OnDestroy {
     private router: Router
   ) {
 
-    console.log('extranavigation' , this.router.getCurrentNavigation().extras.state.content);
+    console.log('extranavigation', this.router.getCurrentNavigation().extras.state.content);
     this.dialCode = this.router.getCurrentNavigation().extras.state.dialCode;
     this.contentType = this.router.getCurrentNavigation().extras.state.contentType;
     this.corRelationList = this.router.getCurrentNavigation().extras.state.corRelation;
@@ -222,7 +221,7 @@ export class SearchPage implements OnDestroy {
   goBack() {
     this.navigateToPreviousPage();
     this.telemetryGeneratorService.generateBackClickedTelemetry(ImpressionType.SEARCH,
-        Environment.HOME, false, undefined, this.corRelationList);
+      Environment.HOME, false, undefined, this.corRelationList);
   }
 
   handleDeviceBackButton() {
@@ -304,9 +303,9 @@ export class SearchPage implements OnDestroy {
       }
       this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], {
         state: {
-          content : params.content,
+          content: params.content,
           corRelation: params.corRelation,
-          isSingleContent : params.isSingleContent,
+          isSingleContent: params.isSingleContent,
           onboarding: params.onboarding,
           parentContent: params.parentContent
         }
@@ -324,9 +323,9 @@ export class SearchPage implements OnDestroy {
 
         this.router.navigate([RouterLinks.QRCODERESULT], {
           state: {
-            content : params.content,
+            content: params.content,
             corRelation: params.corRelation,
-            isSingleContent : params.isSingleContent,
+            isSingleContent: params.isSingleContent,
             onboarding: params.onboarding,
             parentContent: params.parentContent
           }
@@ -339,11 +338,11 @@ export class SearchPage implements OnDestroy {
         }
 
       } else {
-        this.router.navigate([RouterLinks.COLLECTION_DETAILS] , {
+        this.router.navigate([RouterLinks.COLLECTION_DETAILS], {
           state: {
-            content : params.content,
+            content: params.content,
             corRelation: params.corRelation,
-            isSingleContent : params.isSingleContent,
+            isSingleContent: params.isSingleContent,
             onboarding: params.onboarding,
             parentContent: params.parentContent
           }
@@ -351,11 +350,11 @@ export class SearchPage implements OnDestroy {
         // this.navCtrl.push(CollectionDetailsEtbPage, params);
       }
     } else {
-      this.router.navigate([RouterLinks.CONTENT_DETAILS] , {
+      this.router.navigate([RouterLinks.CONTENT_DETAILS], {
         state: {
-          content : params.content,
+          content: params.content,
           corRelation: params.corRelation,
-          isSingleContent : params.isSingleContent,
+          isSingleContent: params.isSingleContent,
           onboarding: params.onboarding,
           parentContent: params.parentContent
         }
@@ -378,7 +377,7 @@ export class SearchPage implements OnDestroy {
           }
         });
       });
-      this.router.navigate(['/filters'] , {
+      this.router.navigate(['/filters'], {
         state: {
           filterCriteria: this.responseData.filterCriteria
         }
@@ -987,7 +986,7 @@ export class SearchPage implements OnDestroy {
         this.zone.run(() => {
 
           if (data && data.length && this.isDownloadStarted) {
-            _.forEach(data, (value) => {
+            data.forEach((value) => {
               if (value.status === ContentImportStatus.ENQUEUED_FOR_DOWNLOAD) {
                 this.telemetryGeneratorService.generateInteractTelemetry(InteractType.OTHER,
                   InteractSubtype.LOADING_SPINE,
@@ -1043,7 +1042,7 @@ export class SearchPage implements OnDestroy {
         // if (event.payload && event.payload.status === 'IMPORT_COMPLETED' && event.type === 'contentImport') {
         if (event.payload && event.type === ContentEventType.IMPORT_COMPLETED) {
           if (this.queuedIdentifiers.length && this.isDownloadStarted) {
-            if (_.includes(this.queuedIdentifiers, event.payload.contentId)) {
+            if (this.queuedIdentifiers.includes(event.payload.contentId)) {
               this.currentCount++;
             }
             if (this.queuedIdentifiers.length === this.currentCount) {
@@ -1081,7 +1080,7 @@ export class SearchPage implements OnDestroy {
    */
   getImportContentRequestBody(identifiers: Array<string>, isChild: boolean): Array<ContentImport> {
     const requestParams = [];
-    _.forEach(identifiers, (value) => {
+    identifiers.forEach((value) => {
       requestParams.push({
         isChildContent: isChild,
         // TODO - check with Anil for destination folder path

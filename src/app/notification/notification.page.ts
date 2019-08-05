@@ -5,18 +5,16 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { NotificationService, NotificationStatus } from 'sunbird-sdk';
 import { Subscription } from 'rxjs/Subscription';
 
-
-
+import { AppHeaderService } from '@app/services/app-header.service';
+import { CommonUtilService } from '@app/services/common-util.service';
+import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import {
-  AppHeaderService,
-  CommonUtilService,
-  TelemetryGeneratorService,
   InteractType,
   Environment,
   PageId,
   InteractSubtype,
   ImpressionType
-} from '@app/services';
+} from '@app/services/telemetry-constants';
 
 @Component({
   selector: 'app-notification',

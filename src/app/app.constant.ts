@@ -379,6 +379,7 @@ export class RouterLinks {
     public static readonly COLLECTION_DETAIL_ETB = 'collection-detail-etb';
     public static readonly CONTENT_DETAILS = 'content-details';
     public static readonly ENROLLMENT_DETAILS = 'enrollment-details';
+    public static readonly TEXTBOOK_TOC = 'textbook-toc';
 
     // DownloadManger Routs
     public static readonly ACTIVE_DOWNLOADS = 'active-downloads';
