@@ -56,7 +56,7 @@ export class CollectionChildComponent implements OnInit {
     //   this.defaultAppIcon = 'assets/imgs/ic_launcher.png';
     //   this.parentId = extras.parentId;
     // }
-   }
+  }
 
   ngOnInit(): void {
   }
@@ -64,75 +64,92 @@ export class CollectionChildComponent implements OnInit {
   setContentId(id: string) {
     console.log('extractedUrl', this.router);
 
-    // if (this.navCtrl.getActive().component['pageName'] === 'TextBookTocPage') {
-    const values = new Map();
-    values['unitClicked'] = id;
-    // values['parentId'] = this.parentId;
-    this.telemetryService.generateInteractTelemetry(
-      InteractType.TOUCH,
-      InteractSubtype.SUBUNIT_CLICKED,
-      Environment.HOME,
-      PageId.TEXTBOOK_TOC,
-      undefined,
-      values
-    );
-    this.textbookTocService.setTextbookIds({rootUnitId: this.rootUnitId, contentId: id});
-    // this.navCtrl.pop();
-    // this.location.back();
-    // }
-}
-
-  navigateToDetailsPage(content: Content, depth) {
-    //   migration-TODO : remove unnecessary
-    //   const stateData = this.navParams.get('contentState');
-
-    this.zone.run(() => {
-      if (content.contentType === ContentType.COURSE) {
-        //   migration-TODO : remove unnecessary
-        // this.navCtrl.push(EnrolledCourseDetailsPage, {
-        //     content: content,
-        //     depth: depth,
-        //     contentState: stateData,
-        //     corRelation: this.corRelationList,
-        //     breadCrumb: this.breadCrumb
-        // });
-      } else if (content.mimeType === MimeType.COLLECTION) {
-        this.isDepthChild = true;
-        const collectionDetailsParams: NavigationExtras = {
-          state: {
-            content,
-            depth,
-            // migration-TODO : remove unnece
-            // contentState: stateData,
-            corRelation: this.corRelationList,
-            breadCrumb: this.breadCrumb
-          }
-        };
-        this.router.navigate([RouterLinks.COLLECTION_DETAIL_ETB], collectionDetailsParams);
-        //   migration-TODO : remove unnecessary
-        // this.navCtrl.push(CollectionDetailsEtbPage, {
-        //     content: content,
-        //     depth: depth,
-        //     contentState: stateData,
-        //     corRelation: this.corRelationList,
-        //     breadCrumb: this.breadCrumb
-        // });
-      } else {
-        const contentDetailsParams: NavigationExtras = {
-          state: {
-            isChildContent: true,
-            content,
-            depth,
-            // migration-TODO : remove unnece
-            // contentState: stateData,
-            corRelation: this.corRelationList,
-            breadCrumb: this.breadCrumb
-          }
-        };
-        this.router.navigate([RouterLinks.CONTENT_DETAILS], contentDetailsParams);
-      }
-    });
+    if (this.router.url.indexOf(RouterLinks.COLLECTION_DETAIL_ETB) !== -1) {
+      const values = new Map();
+      values['unitClicked'] = id;
+      // values['parentId'] = this.parentId;
+      this.telemetryService.generateInteractTelemetry(
+        InteractType.TOUCH,
+        InteractSubtype.SUBUNIT_CLICKED,
+        Environment.HOME,
+        PageId.TEXTBOOK_TOC,
+        undefined,
+        values
+      );
+      this.textbookTocService.setTextbookIds({ rootUnitId: this.rootUnitId, contentId: id });
+      this.location.back();
+    }
   }
+  navigateToDetailsPage(content: Content, depth) {
+    if (this.router.url.indexOf(RouterLinks.COLLECTION_DETAIL_ETB) !== -1) {
+      const values = new Map();
+      values['contentClicked'] = content.identifier;
+      // values['parentId'] = this.parentId;
+      this.telemetryService.generateInteractTelemetry(
+        InteractType.TOUCH,
+        InteractSubtype.CONTENT_CLICKED,
+        Environment.HOME,
+        PageId.TEXTBOOK_TOC, undefined,
+        values
+      );
+      this.textbookTocService.setTextbookIds({ rootUnitId: this.rootUnitId, contentId: content.identifier });
+      this.location.back();
+    } else {
+      //   migration-TODO : remove unnecessary
+      //   const stateData = this.navParams.get('contentState');
+      const values = new Map();
+      values['contentClicked'] = content.identifier;
+      // values['parentId'] = this.bookID;
+      this.zone.run(() => {
+        if (content.contentType === ContentType.COURSE) {
+          //   migration-TODO : remove unnecessary
+          // this.navCtrl.push(EnrolledCourseDetailsPage, {
+          //   content: content,
+          //   depth: depth,
+          //   contentState: stateData,
+          //   corRelation: this.corRelationList,
+          //   breadCrumb: this.breadCrumb
+          // });
+        } else if (content.mimeType === MimeType.COLLECTION) {
+          this.isDepthChild = true;
+          const collectionDetailsParams: NavigationExtras = {
+            state: {
+              content,
+              depth,
+              // migration-TODO : remove unnece
+              // contentState: stateData,
+              corRelation: this.corRelationList,
+              breadCrumb: this.breadCrumb
+            }
+          };
+          this.router.navigate([RouterLinks.COLLECTION_DETAIL_ETB], collectionDetailsParams);
+        } else {
+          this.textbookTocService.setTextbookIds({ rootUnitId: this.rootUnitId, contentId: content.identifier });
+
+          this.telemetryService.generateInteractTelemetry(
+            InteractType.TOUCH,
+            InteractSubtype.CONTENT_CLICKED,
+            Environment.HOME,
+            PageId.COLLECTION_DETAIL, undefined,
+            values
+          );
+          const contentDetailsParams: NavigationExtras = {
+            state: {
+              isChildContent: true,
+              content,
+              depth,
+              // migration-TODO : remove unnece
+              // contentState: stateData,
+              corRelation: this.corRelationList,
+              breadCrumb: this.breadCrumb
+            }
+          };
+          this.router.navigate([RouterLinks.CONTENT_DETAILS], contentDetailsParams);
+        }
+      });
+    }
+  }
+  
 
 
   async showComingSoonPopup(childData: any) {
@@ -159,15 +176,15 @@ export class CollectionChildComponent implements OnInit {
 
   hasMimeType(activeMimeType: string[], mimeType: string, content): boolean {
     if (!activeMimeType) {
-        return true;
+      return true;
     } else {
-        if (activeMimeType.indexOf('all') > -1) {
-            // if (content.contentData.mimeType === MimeType.COLLECTION && !content.children) {
-            //     return false;
-            // }
-            return true;
-        }
-        return !!activeMimeType.find( m => m === mimeType);
+      if (activeMimeType.indexOf('all') > -1) {
+        // if (content.contentData.mimeType === MimeType.COLLECTION && !content.children) {
+        //     return false;
+        // }
+        return true;
+      }
+      return !!activeMimeType.find(m => m === mimeType);
     }
   }
 }
