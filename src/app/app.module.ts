@@ -11,7 +11,7 @@ import { WebView } from '@ionic-native/ionic-webview/ngx';
 import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { AppVersion } from '@ionic-native/app-version/ngx';
-import {SocialSharing} from '@ionic-native/social-sharing/ngx';
+import { SocialSharing } from '@ionic-native/social-sharing/ngx';
 import { FileTransfer, FileUploadOptions, FileTransferObject } from '@ionic-native/file-transfer/ngx';
 import { FileOpener } from '@ionic-native/file-opener/ngx';
 import { UniqueDeviceID } from '@ionic-native/unique-device-id/ngx';
@@ -23,8 +23,8 @@ import { TranslateModule, TranslateLoader, TranslateService } from '@ngx-transla
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 
 // app dependencies like directive, sdk, services etc
-import {SunbirdSdk} from 'sunbird-sdk';
-import {DirectivesModule} from '../directives/directives.module';
+import { SunbirdSdk } from 'sunbird-sdk';
+import { DirectivesModule } from '../directives/directives.module';
 import {
   AppGlobalService,
   CommonUtilService,
@@ -138,6 +138,9 @@ export function notificationService() {
 export function errorLoggerService() {
   return SunbirdSdk.instance.errorLoggerService;
 }
+export function searchHistoryService() {
+  return SunbirdSdk.instance.searchHistoryService;
+}
 
 export function sdkDriverFactory(): any {
   return [{
@@ -218,9 +221,13 @@ export function sdkDriverFactory(): any {
   }, {
     provide: 'ERROR_LOGGER_SERVICE',
     useFactory: errorLoggerService
+  }, {
+    provide: 'SEARCH_HISTORY_SERVICE',
+    useFactory: searchHistoryService
   }
   ];
 }
+
 export const sunbirdSdkServicesProvidersFactory: () => Provider[] = sdkDriverFactory;
 
 export const sunbirdSdkFactory =
@@ -337,7 +344,7 @@ export const sunbirdSdkFactory =
 declare const buildconfigreader;
 @NgModule({
   declarations: [AppComponent],
-  entryComponents: [PageFilterPage,PageFilterOptionsPage],
+  entryComponents: [PageFilterPage, PageFilterOptionsPage],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
@@ -409,7 +416,7 @@ declare const buildconfigreader;
 export class AppModule {
   constructor(
     private translate: TranslateService) {
-      this.setDefaultLanguage();
+    this.setDefaultLanguage();
   }
 
   private setDefaultLanguage() {
