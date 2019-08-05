@@ -1,7 +1,8 @@
 import { Component, Inject, ViewEncapsulation } from '@angular/core';
 import { Events, NavParams, Platform, PopoverController } from '@ionic/angular';
 import { AppGlobalService } from '../../services/app-global-service.service';
-import * as _ from 'lodash';
+import map from 'lodash/map';
+import cloneDeep from 'lodash/cloneDeep';
 import { TranslateService } from '@ngx-translate/core';
 import { PageFilterOptionsPage } from './page-filter-options/page-filter-options.page';
 import { TelemetryGeneratorService } from '../../services/telemetry-generator.service';
@@ -129,7 +130,7 @@ export class PageFilterPage {
 
     this.filters.forEach(filter => {
       if (filter.code === 'contentType' && !filter.hasOwnProperty('resourceTypeValues')) {
-        filter.resourceTypeValues = _.cloneDeep(filter.values);
+        filter.resourceTypeValues = cloneDeep(filter.values);
         const resourceTypes = [];
         filter.values.forEach(element => {
           resourceTypes.push(this.commonUtilService.getTranslatedValue(element.translations, element.name));
@@ -150,7 +151,7 @@ export class PageFilterPage {
     for (const element of this.filters) {
       try {
         if (!element.frameworkCategory && this.pageId === PageId.COURSE_PAGE_FILTER) {
-          await this.getRootOrganizations(index);
+          this.getRootOrganizations(index);
         } else {
           await this.getFrameworkData(frameworkId, element.code, index);
         }
@@ -187,16 +188,16 @@ export class PageFilterPage {
           const responseArray = category;
           if (responseArray && responseArray.length > 0) {
             if (req.currentCategoryCode === 'topic' && this.pageId === PageId.COURSE_PAGE_FILTER) {
-              // this.filters[index].values = _.map(responseArray, 'name');
+              // this.filters[index].values = map(responseArray, 'name');
               for (let i = 0; i < responseArray.length; i++) {
                 const name = responseArray[i].name;
                 this.filters[index].values[i] = {};
-                // this.filters[index].values[i][name] = _.map(responseArray[i].children, 'name');
+                // this.filters[index].values[i][name] = map(responseArray[i].children, 'name');
                 this.filters[index].values[i][name] = responseArray[i].children;
               }
               resolve();
             } else {
-              resolve(this.filters[index].values = _.map(responseArray, 'name'));
+              resolve(this.filters[index].values = map(responseArray, 'name'));
             }
           }
         })
@@ -227,7 +228,7 @@ export class PageFilterPage {
 
   apply() {
     if (this.callback) {
-      const filters = _.cloneDeep(this.facetsFilter);
+      const filters = cloneDeep(this.facetsFilter);
       filters.forEach(element => {
         if (element.code === 'contentType' && element.selectedValuesIndices && element.selectedValuesIndices.length) {
           const resourceTypeSelectedValues = [];

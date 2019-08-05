@@ -1,7 +1,8 @@
 import { Component } from '@angular/core';
 import { NavParams, PopoverController, NavController, Events, Platform } from '@ionic/angular';
-import * as _ from 'lodash';
-import { CommonUtilService } from '@app/services';
+import orderBy from 'lodash/orderBy';
+import find from 'lodash/find';
+import { CommonUtilService } from '@app/services/common-util.service';
 import { Subscription } from 'rxjs/Subscription';
 import { Location } from '@angular/common';
 import { Router } from '@angular/router';
@@ -86,7 +87,7 @@ export class FiltersPage {
     this.filterCriteria.facetFilters.forEach(facet => {
       if (facet.values && facet.values.length > 0) {
         if (facet.name !== 'gradeLevel') {
-          facet.values = _.orderBy(facet.values, ['name'], ['asc']);
+          facet.values = orderBy(facet.values, ['name'], ['asc']);
         }
         facet.values.forEach((element, index) => {
           if (element.name.toUpperCase() === 'other'.toUpperCase()) {
@@ -102,7 +103,7 @@ export class FiltersPage {
 
   getFilterValues(facet: string) {
     if (facet) {
-      const filterName = _.find(this.filterCriteria.facetFilters, ['name', facet]);
+      const filterName = find(this.filterCriteria.facetFilters, ['name', facet]);
       if (filterName && filterName.values && filterName.values.length) {
         return filterName;
       } else {

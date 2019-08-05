@@ -1,4 +1,3 @@
-import * as _ from 'lodash';
 import { Subscription } from 'rxjs/Subscription';
 import { Events, Platform } from '@ionic/angular';
 import { ActivatedRoute, Router, NavigationExtras } from '@angular/router';
@@ -228,7 +227,7 @@ export class ViewMoreActivityComponent implements OnInit {
           if (data && data.contentDataList) {
             this.loadMoreBtn = data.contentDataList.length >= this.searchLimit;
             if (this.isLoadMore) {
-              _.forEach(data.contentDataList, (value) => {
+              data.contentDataList.forEach((value) => {
                 this.searchList.push(value);
               });
             } else {
@@ -352,8 +351,8 @@ export class ViewMoreActivityComponent implements OnInit {
     this.contentService.getContents(requestParams).toPromise()
       .then(data => {
         const contentData = [];
-        _.forEach(data, (value) => {
-          value.contentData.lastUpdatedOn = value.lastUpdatedTime;
+        data.forEach((value) => {
+          value.contentData['lastUpdatedOn'] = value.lastUpdatedTime;
           if (value.contentData.appIcon) {
             if (value.contentData.appIcon.includes('http:') || value.contentData.appIcon.includes('https:')) {
               if (this.commonUtilService.networkInfo.isNetworkAvailable) {
@@ -443,7 +442,7 @@ export class ViewMoreActivityComponent implements OnInit {
       .then((data: ContentImportResponse[]) => {
         this.ngZone.run(() => {
           if (data && data.length) {
-            _.forEach(data, (value) => {
+            data.forEach((value) => {
               if (value.status === ContentImportStatus.ENQUEUED_FOR_DOWNLOAD) {
                 this.queuedIdentifiers.push(value.identifier);
               }

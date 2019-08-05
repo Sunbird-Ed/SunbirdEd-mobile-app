@@ -8,7 +8,7 @@ import {
 import { TranslateService } from '@ngx-translate/core';
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import * as _ from 'lodash';
+import isEqual from 'lodash/isEqual';
 import {
   CategoryTerm,
   Framework,
@@ -24,22 +24,22 @@ import {
   ProfileType,
   SharedPreferences
 } from 'sunbird-sdk';
+import { CommonUtilService } from '@app/services/common-util.service';
+import { AppGlobalService } from '@app/services/app-global-service.service';
+import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import {
-  CommonUtilService,
-  AppGlobalService,
-  TelemetryGeneratorService,
   Environment,
   ImpressionType,
   InteractSubtype,
   InteractType,
   ObjectType,
   PageId,
-  ContainerService,
-  AppHeaderService
-} from '@app/services';
+} from '@app/services/telemetry-constants';
+import { ContainerService, } from '@app/services/container.services';
+import { AppHeaderService } from '@app/services/app-header.service';
 import { GUEST_STUDENT_TABS, GUEST_TEACHER_TABS, initTabs } from '@app/app/module.service';
 import { PreferenceKey, RouterLinks } from '@app/app/app.constant';
-import { SbGenericPopoverComponent } from '@app/app/components/popups';
+import { SbGenericPopoverComponent } from '@app/app/components/popups/sb-generic-popover/sb-generic-popover.component';
 import { Location } from '@angular/common';
 
 @Component({
@@ -376,7 +376,7 @@ export class GuestEditPage implements OnInit {
     const newAttribute: any = {};
     oldAttribute.subject = this.profileForTelemetry.subject ? this.profileForTelemetry.subject : '';
     newAttribute.subject = event ? event : '';
-    if (!_.isEqual(oldAttribute, newAttribute)) {
+    if (!isEqual(oldAttribute, newAttribute)) {
       this.appGlobalService.generateAttributeChangeTelemetry(oldAttribute, newAttribute, PageId.GUEST_PROFILE);
     }
     this.profileForTelemetry.subject = event;
@@ -410,7 +410,7 @@ export class GuestEditPage implements OnInit {
 
         oldAttribute.board = this.profileForTelemetry.board ? this.profileForTelemetry.board : '';
         newAttribute.board = this.guestEditForm.value.boards ? this.guestEditForm.value.boards : '';
-        if (!_.isEqual(oldAttribute, newAttribute)) {
+        if (!isEqual(oldAttribute, newAttribute)) {
           this.appGlobalService.generateAttributeChangeTelemetry(oldAttribute, newAttribute, PageId.GUEST_PROFILE);
         }
         this.profileForTelemetry.board = this.guestEditForm.value.boards;
@@ -424,7 +424,7 @@ export class GuestEditPage implements OnInit {
         });
         oldAttribute.medium = this.profileForTelemetry.medium ? this.profileForTelemetry.medium : '';
         newAttribute.medium = this.guestEditForm.value.medium ? this.guestEditForm.value.medium : '';
-        if (!_.isEqual(oldAttribute, newAttribute)) {
+        if (!isEqual(oldAttribute, newAttribute)) {
           this.appGlobalService.generateAttributeChangeTelemetry(oldAttribute, newAttribute, PageId.GUEST_PROFILE);
         }
         this.profileForTelemetry.medium = this.guestEditForm.value.medium;
@@ -436,7 +436,7 @@ export class GuestEditPage implements OnInit {
         });
         oldAttribute.class = this.profileForTelemetry.grade ? this.profileForTelemetry.grade : '';
         newAttribute.class = this.guestEditForm.value.grades ? this.guestEditForm.value.grades : '';
-        if (!_.isEqual(oldAttribute, newAttribute)) {
+        if (!isEqual(oldAttribute, newAttribute)) {
           this.appGlobalService.generateAttributeChangeTelemetry(oldAttribute, newAttribute, PageId.GUEST_PROFILE);
         }
         this.profileForTelemetry.grade = this.guestEditForm.value.grades;

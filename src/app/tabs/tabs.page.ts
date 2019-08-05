@@ -6,7 +6,7 @@ import { IonTabs, Events, ToastController } from '@ionic/angular';
 import { ContainerService } from '@app/services/container.services';
 import { AppGlobalService } from '@app/services/app-global-service.service';
 import { ProfileConstants } from '../app.constant';
-import { CommonUtilService } from '@app/services';
+import { CommonUtilService } from '@app/services/common-util.service';
 @Component({
   selector: 'app-tabs',
   templateUrl: './tabs.page.html',

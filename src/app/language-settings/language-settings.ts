@@ -6,10 +6,10 @@ import { SharedPreferences } from 'sunbird-sdk';
 
 import { appLanguages, PreferenceKey, RouterLinks } from '@app/app/app.constant';
 import { Map } from '@app/app/telemetryutil';
-import { AppGlobalService } from '@app/services';
-import { CommonUtilService } from '@app/services';
-import { TelemetryGeneratorService } from '@app/services';
-import { AppHeaderService } from '@app/services';
+import { AppGlobalService } from '@app/services/app-global-service.service';
+import { CommonUtilService } from '@app/services/common-util.service';
+import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
+import { AppHeaderService } from '@app/services/app-header.service';
 import { Environment, ImpressionType, InteractSubtype, InteractType, PageId } from '@app/services/telemetry-constants';
 import { NotificationService } from '@app/services/notification.service';
 import { Location } from '@angular/common';

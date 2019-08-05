@@ -2,7 +2,8 @@ import { Component, Inject, NgZone, ViewChild } from '@angular/core';
 import { Events, NavController, NavParams, Platform, PopoverController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { SocialSharing } from '@ionic-native/social-sharing/ngx';
-import * as _ from 'lodash';
+import isObject from 'lodash/isObject';
+import forEach from 'lodash/forEach';
 import { ConfirmAlertComponent, ContentActionsComponent, ContentRatingAlertComponent } from '../components/index';
 import { ContentType, MimeType, ShareUrl, RouterLinks } from '../../app/app.constant';
 import {
@@ -461,7 +462,7 @@ export class CollectionDetailsPage {
     if (this.contentDetail.contentData.contentTypesCount) {
       this.contentDetail.contentData.contentTypesCount = JSON.parse(this.contentDetail.contentData.contentTypesCount);
     } else if (this.cardData.contentTypesCount) {
-      if (!_.isObject(this.cardData.contentTypesCount)) {
+      if (!isObject(this.cardData.contentTypesCount)) {
         this.contentDetail.contentData.contentTypesCount = JSON.parse(this.cardData.contentTypesCount);
       }
     } /*else {
@@ -474,7 +475,7 @@ export class CollectionDetailsPage {
     if (hierarchyInfo === null) {
       this.objRollup.l1 = this.identifier;
     } else {
-      _.forEach(hierarchyInfo, (value, key) => {
+      forEach(hierarchyInfo, (value, key) => {
         switch (key) {
           case 0:
             this.objRollup.l1 = value.identifier;
@@ -501,7 +502,7 @@ export class CollectionDetailsPage {
    */
   getImportContentRequestBody(identifiers: Array<string>, isChild: boolean): Array<ContentImport> {
     const requestParams = [];
-    _.forEach(identifiers, (value) => {
+    identifiers.forEach((value) => {
       requestParams.push({
         isChildContent: isChild,
         destinationFolder: this.storageService.getStorageDestinationDirectoryPath(),
@@ -532,7 +533,7 @@ export class CollectionDetailsPage {
         this.zone.run(() => {
 
           if (data && data.length && this.isDownloadStarted) {
-            _.forEach(data, (value) => {
+            data.forEach((value) => {
               if (value.status === ContentImportStatus.ENQUEUED_FOR_DOWNLOAD) {
                 this.queuedIdentifiers.push(value.identifier);
               } else if (value.status === ContentImportStatus.NOT_FOUND) {
@@ -630,7 +631,7 @@ export class CollectionDetailsPage {
   }
 
   getContentsSize(data) {
-    _.forEach(data, (value) => {
+    data.forEach((value) => {
       if (value.contentData.size) {
         this.downloadSize += Number(value.contentData.size);
       }
@@ -650,7 +651,7 @@ export class CollectionDetailsPage {
   showDownloadAllBtn(data) {
     let size = 0;
     this.zone.run(() => {
-      _.forEach(data, (value) => {
+      data.forEach((value) => {
         if (value.isAvailableLocally === false) {
           this.downloadIdentifiers.push(value.contentData.identifier);
           size += value.contentData.size;
@@ -743,7 +744,7 @@ export class CollectionDetailsPage {
         if (event.payload && event.type === ContentEventType.IMPORT_COMPLETED) {
           const contentImportEvent = event as ContentImportCompleted;
           if (this.queuedIdentifiers.length && this.isDownloadStarted) {
-            if (_.includes(this.queuedIdentifiers, contentImportEvent.payload.contentId)) {
+            if (this.queuedIdentifiers.includes(contentImportEvent.payload.contentId)) {
               this.currentCount++;
               this.downloadPercentage = +((this.currentCount / this.queuedIdentifiers.length) * (100)).toFixed(0);
             }
@@ -834,7 +835,7 @@ export class CollectionDetailsPage {
     return (n.toFixed(n >= 10 || l < 1 ? 0 : 1) + ' ' + units[l]);
   }
 
-  async showOverflowMenu(event) {    
+  async showOverflowMenu(event) {
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
       InteractSubtype.KEBAB_MENU_CLICKED,
       Environment.HOME,

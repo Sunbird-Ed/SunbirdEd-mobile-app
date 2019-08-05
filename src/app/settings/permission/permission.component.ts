@@ -5,14 +5,12 @@ import { Observable } from 'rxjs/Observable';
 import { Events, Platform } from '@ionic/angular';
 import { Router, NavigationExtras } from '@angular/router';
 import { AndroidPermission, AndroidPermissionsStatus, PermissionAskedEnum } from '@app/services/android-permissions/android-permission';
-import {
-  CommonUtilService,
-  SunbirdQRScanner,
-  AndroidPermissionsService,
-  AppGlobalService,
-  AppHeaderService,
-  TelemetryGeneratorService
-} from '@app/services';
+import { CommonUtilService } from '@app/services/common-util.service';
+import { SunbirdQRScanner } from '@app/services/sunbirdqrscanner.service';
+import { AndroidPermissionsService } from '@app/services/android-permissions/android-permissions.service';
+import { AppGlobalService } from '@app/services/app-global-service.service';
+import { AppHeaderService } from '@app/services/app-header.service';
+import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { Location } from '@angular/common';
 import { RouterLinks } from '@app/app/app.constant';
 import { AppVersion } from '@ionic-native/app-version/ngx';
@@ -75,7 +73,7 @@ export class PermissionComponent implements OnInit {
     private appVersion: AppVersion,
     private router: Router,
     private platform: Platform
-    ) {
+  ) {
     this.appVersion.getAppName()
       .then((appName: any) => this.appName = appName);
     this.getNavParams();
