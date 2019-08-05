@@ -39,7 +39,7 @@
 							class="content-size">[{{ contentDetail?.contentData.size | fileSize }}] &lrm;</span>
 					</div>
 					<ion-row>
-						<div class="col-2">
+						<div class="col-2 small-rating">
 							<rating align-items-start (click)="rateContent();"
 								[(ngModel)]="contentDetail.contentData.me_averageRating" readonly="true" max="5"
 								no-padding></rating>

@@ -1,3 +1,5 @@
+import { TextBookTocPage } from './textbook-toc/textbook-toc';
+import { TextbookTocService } from './textbook-toc-service';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -12,6 +14,7 @@ import { DirectivesModule } from '../../directives/directives.module';
 import { PipesModule } from '../../pipes/pipes.module';
 
 import { CollectionDetailEtbPage } from './collection-detail-etb.page';
+import { RouterLinks } from '../app.constant';
 
 
 
@@ -20,6 +23,10 @@ const routes: Routes = [
   {
     path: '',
     component: CollectionDetailEtbPage
+  },
+  {
+    path: RouterLinks.TEXTBOOK_TOC,
+    component: TextBookTocPage
   }
 ];
 
@@ -35,9 +42,11 @@ const routes: Routes = [
     DirectivesModule,
     PipesModule
   ],
-  declarations: [CollectionDetailEtbPage],
+  providers: [TextbookTocService],
+  declarations: [CollectionDetailEtbPage, TextBookTocPage],
   exports: [
-    CollectionDetailEtbPage
+    CollectionDetailEtbPage,
+    TextBookTocPage
   ]
 })
 export class CollectionDetailEtbPageModule {}
