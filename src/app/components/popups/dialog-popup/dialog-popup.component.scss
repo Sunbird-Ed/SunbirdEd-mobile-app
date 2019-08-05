@@ -1,0 +1,61 @@
+@import "src/assets/styles/variables";
+.popover-alert .popover-content {
+    margin: 0;
+    width: 100% !important;
+    max-height: 70% !important;
+    box-shadow: unset;
+    position: fixed;
+    left: 0 !important;
+    top: unset !important;
+    bottom: 0;
+    transform-origin: bottom -100% !important;
+    transform: translateY(0) !important;
+  }
+  
+  .popover-alert ion-backdrop {
+    background-color: map-get($colors, black) !important;
+    opacity: 0.4 !important;
+  }
+  
+  .popover-alert .close-button{
+      background-color: #ffffff;
+      box-shadow: unset;
+      color: black;
+  }
+
+  .popover-alert .alert-header{
+    margin-left: 2px 
+  }
+  .popover-alert .col-2{
+    padding: 0 ;
+    margin-left: 20px ;
+  } 
+
+  .popover-alert .alert-button {
+    margin-top: 26px;
+    border-radius: 5px;
+  }
+
+  .popover-alert .close-button{
+    float: right;
+       ion-icon {
+      padding: 0;
+      margin-top: 10px;
+    }
+  } 
+
+  .popover-alert .alert-header-content{
+    padding: 0;
+    margin-left: -7px;
+  }
+
+  .popover-alert .alert-header-padding {
+    margin-top: -11px;
+
+  }
+  .popover-alert ion-content{
+    padding: 15px;
+  }
+  .popover-alert .alert-content-body{
+    color: darkgrey;
+  }

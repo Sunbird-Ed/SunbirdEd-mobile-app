@@ -2,7 +2,8 @@ import { Injectable, Inject } from '@angular/core';
 import { CanLoad, Router, ActivatedRoute } from '@angular/router';
 import { SharedPreferences, ProfileService } from 'sunbird-sdk';
 import { GenericAppConfig, ProfileConstants } from '@app/app/app.constant';
-import { UtilityService, AppGlobalService } from '@app/services';
+import { UtilityService } from '@app/services/utility-service';
+import { AppGlobalService } from '@app/services/app-global-service.service';
 import { CanDeactivate } from '@angular/router';
 
 @Injectable()
@@ -19,10 +20,10 @@ export class HasNotSelectedFrameworkGuard implements CanLoad, CanDeactivate<any>
 
     private static isProfileComplete(profile?): boolean {
         return profile
-              && profile.syllabus && profile.syllabus[0]
-              && profile.board && profile.board.length
-              && profile.grade && profile.grade.length
-              && profile.medium && profile.medium.length;
+            && profile.syllabus && profile.syllabus[0]
+            && profile.board && profile.board.length
+            && profile.grade && profile.grade.length
+            && profile.medium && profile.medium.length;
     }
 
     async canLoad(): Promise<boolean> {
@@ -30,7 +31,7 @@ export class HasNotSelectedFrameworkGuard implements CanLoad, CanDeactivate<any>
             .getBuildConfigValue(GenericAppConfig.DISPLAY_ONBOARDING_CATEGORY_PAGE)) === 'true';
 
         const profile = await this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS })
-              .toPromise();
+            .toPromise();
 
         if (shouldDisplay && !HasNotSelectedFrameworkGuard.isProfileComplete(profile)) {
             return true;

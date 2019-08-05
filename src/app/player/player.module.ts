@@ -6,7 +6,7 @@ import { Routes, RouterModule } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 
 import { PlayerPage } from './player.page';
-import { CanvasPlayerService } from '@app/services';
+import { CanvasPlayerService } from '@app/services/canvas-player.service';
 import { ScreenOrientation } from '@ionic-native/screen-orientation/ngx';
 
 const routes: Routes = [
@@ -27,7 +27,6 @@ const routes: Routes = [
   providers: [
     CanvasPlayerService,
     ScreenOrientation,
-
   ]
 })
-export class PlayerPageModule {}
+export class PlayerPageModule { }

@@ -1,5 +1,5 @@
-import { Component, Inject, ViewChild, OnInit, ViewEncapsulation } from '@angular/core';
-import { Subscription } from 'rxjs';
+import { Component, Inject, ViewChild, OnInit } from '@angular/core';
+import { Subscription } from 'rxjs/Subscription';
 import { Router, NavigationExtras } from '@angular/router';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { TranslateService } from '@ngx-translate/core';
@@ -7,7 +7,8 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { PreferenceKey, ProfileConstants } from '@app/app/app.constant';
 import { GUEST_STUDENT_TABS, GUEST_TEACHER_TABS, initTabs } from '@app/app/module.service';
 import { ImpressionType, PageId, Environment, InteractSubtype, InteractType } from '@app/services/telemetry-constants';
-import * as _ from 'lodash';
+import isEqual from 'lodash/isEqual';
+import orderBy from 'lodash/orderBy';
 import {
   CategoryTerm,
   Framework,
@@ -162,7 +163,7 @@ export class ProfileSettingsPage implements OnInit {
     const ionSelectElement = Array.from(document.querySelectorAll('ion-item ion-select'));
     if (ionSelectElement) {
       ionSelectElement.forEach((element) => {
-        element['shadowRoot'].querySelector('.select-text').setAttribute('style', 'color:#006de5;padding-left: 10px;');
+        element['shadowRoot'].querySelector('.select-text').setAttribute('style', 'color:#006de5;padding-left: 10px;opacity: inherit');
       });
     }
 
@@ -177,8 +178,8 @@ export class ProfileSettingsPage implements OnInit {
     const disabledSelectElement = Array.from(document.querySelectorAll('.item-label-stacked.item-select-disabled ion-select'));
     if (disabledSelectElement) {
       disabledSelectElement.forEach((element) => {
-        element['shadowRoot'].querySelector('.select-text').setAttribute('style', 'color: #cccccc;padding-left: 10px;');
-        element['shadowRoot'].querySelector('.select-icon-inner').setAttribute('style', 'border-color: #cccccc;animation: none;border: solid;border-width: 0 2px 2px 0;display: inline-block;padding: 4px;transform: rotate(45deg);');
+        element['shadowRoot'].querySelector('.select-text.select-placeholder').setAttribute('style', 'color: #cccccc !important;padding-left: 10px;');
+        element['shadowRoot'].querySelector('.select-icon-inner').setAttribute('style', 'border-color: #cccccc !important;animation: none;border: solid;border-width: 0 2px 2px 0;display: inline-block;padding: 4px;transform: rotate(45deg);');
       });
     }
 
@@ -301,7 +302,7 @@ export class ProfileSettingsPage implements OnInit {
           }
           this[list] = result;
           if (list !== 'gradeList') {
-            this[list] = _.orderBy(this[list], ['name'], ['asc']);
+            this[list] = orderBy(this[list], ['name'], ['asc']);
           }
           if (req.currentCategoryCode === 'board') {
             const boardName = this.syllabusList.find(framework => this.frameworkId === framework.code);
@@ -397,7 +398,7 @@ export class ProfileSettingsPage implements OnInit {
         }
         oldAttribute.board = this.profileForTelemetry.board && this.profileForTelemetry.board.length ? this.profileForTelemetry.board : '';
         newAttribute.board = this.userForm.value.syllabus ? this.userForm.value.syllabus : '';
-        if (!_.isEqual(oldAttribute, newAttribute)) {
+        if (!isEqual(oldAttribute, newAttribute)) {
           this.appGlobalService.generateAttributeChangeTelemetry(
             oldAttribute, newAttribute, PageId.ONBOARDING_PROFILE_PREFERENCES, Environment.ONBOARDING
           );
@@ -426,7 +427,7 @@ export class ProfileSettingsPage implements OnInit {
 
         oldAttribute.medium = this.profileForTelemetry.medium ? this.profileForTelemetry.medium : '';
         newAttribute.medium = this.userForm.value.medium ? this.userForm.value.medium : '';
-        if (!_.isEqual(oldAttribute, newAttribute)) {
+        if (!isEqual(oldAttribute, newAttribute)) {
           this.appGlobalService.generateAttributeChangeTelemetry(
             oldAttribute, newAttribute, PageId.ONBOARDING_PROFILE_PREFERENCES, Environment.ONBOARDING
           );
@@ -439,7 +440,6 @@ export class ProfileSettingsPage implements OnInit {
   }
 
   enableSubmit() {
-    this.updateStyle();
     if (this.userForm.value.grades.length) {
       this.btnColor = '#006DE5';
     } else {
@@ -449,12 +449,15 @@ export class ProfileSettingsPage implements OnInit {
     const newAttribute: any = {};
     oldAttribute.class = this.profileForTelemetry.grade ? this.profileForTelemetry.grade : '';
     newAttribute.class = this.userForm.value.grades ? this.userForm.value.grades : '';
-    if (!_.isEqual(oldAttribute, newAttribute)) {
+    if (!isEqual(oldAttribute, newAttribute)) {
       this.appGlobalService.generateAttributeChangeTelemetry(
         oldAttribute, newAttribute, PageId.ONBOARDING_PROFILE_PREFERENCES, Environment.ONBOARDING
       );
     }
     this.profileForTelemetry.grade = this.userForm.value.grades;
+    setTimeout(() => {
+      this.updateStyle();
+    }, 10);
   }
 
   extractProfileForTelemetry(formVal): any {

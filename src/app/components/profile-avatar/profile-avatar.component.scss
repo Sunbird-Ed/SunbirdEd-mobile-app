@@ -1,10 +1,7 @@
-@import "src/assets/styles/base/_variables.scss";
-@import "src/assets/styles/_custom-mixins.scss";
-@import "src/assets/styles/fonts.scss";
 :host {
     .profile-avatar{
         font-size: 50px;
-        @extend .font-weight-bold;
+        font-weight: bold !important;
         line-height: 50px;
         color: #9017FF;
         border-radius: 50%;

@@ -6,21 +6,21 @@ import { SharedPreferences } from 'sunbird-sdk';
 
 import { appLanguages, PreferenceKey, RouterLinks } from '@app/app/app.constant';
 import { Map } from '@app/app/telemetryutil';
-import { AppGlobalService } from '@app/services';
-import { CommonUtilService } from '@app/services';
-import { TelemetryGeneratorService } from '@app/services';
-import { AppHeaderService } from '@app/services';
+import { AppGlobalService } from '@app/services/app-global-service.service';
+import { CommonUtilService } from '@app/services/common-util.service';
+import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
+import { AppHeaderService } from '@app/services/app-header.service';
 import { Environment, ImpressionType, InteractSubtype, InteractType, PageId } from '@app/services/telemetry-constants';
 import { NotificationService } from '@app/services/notification.service';
 import { Location } from '@angular/common';
-import { Subscription } from 'rxjs';
+import { Subscription } from 'rxjs/Subscription';
 
 
 export interface ILanguages {
-  label: string
-  code: string
-  isApplied: boolean
-  name: string
+  label: string;
+  code: string;
+  isApplied: boolean;
+  name: string;
 }
 @Component({
   selector: 'page-language-settings',
@@ -36,7 +36,7 @@ export class LanguageSettingsPage implements OnInit {
   defaultDeviceLang = '';
   previousLanguage: any;
   selectedLanguage: any = {};
-  btnColor = '#55acee';
+  btnColor = '#8FC4FF';
   unregisterBackButton: Subscription;
   headerConfig: any;
 
@@ -210,7 +210,12 @@ export class LanguageSettingsPage implements OnInit {
     } else {
       this.generateClickInteractEvent('n/a', InteractSubtype.CONTINUE_CLICKED);
       this.btnColor = '#8FC4FF';
-      this.commonUtilService.showToast('PLEASE_SELECT_A_LANGUAGE', false, 'redErrorToast');
+
+      const parser = new DOMParser();
+      const translatedString = this.commonUtilService.translateMessage('PLEASE_SELECT_A_LANGUAGE');
+      const dom = parser.parseFromString(`<!doctype html><body>&#9432; ${translatedString}`, 'text/html');
+
+      this.commonUtilService.showToast(dom.body.textContent, false, 'redErrorToast');
     }
   }
 }

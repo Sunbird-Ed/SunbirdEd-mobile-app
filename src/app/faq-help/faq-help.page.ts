@@ -1,16 +1,12 @@
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { Component, Inject, ViewChild, ElementRef, OnInit } from '@angular/core';
 import { LoadingController, Platform } from '@ionic/angular';
-import {
-  TelemetryGeneratorService,
-  CommonUtilService,
-  AppGlobalService,
-  AppHeaderService,
-  FormAndFrameworkUtilService,
-  Environment,
-  InteractType,
-  PageId
-} from '@app/services';
+import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
+import { CommonUtilService } from '@app/services/common-util.service';
+import { AppGlobalService, } from '@app/services/app-global-service.service';
+import { AppHeaderService, } from '@app/services/app-header.service';
+import { FormAndFrameworkUtilService, } from '@app/services/formandframeworkutil.service';
+import { Environment, InteractType, PageId } from '@app/services/telemetry-constants';
 import {
   ProfileService,
   ContentService,
@@ -24,7 +20,7 @@ import { PreferenceKey, appLanguages, ContentType, AudienceFilter } from '../app
 import { SocialSharing } from '@ionic-native/social-sharing/ngx';
 import { Location } from '@angular/common';
 import { AppVersion } from '@ionic-native/app-version/ngx';
-import { Subscription } from 'rxjs';
+import { Subscription } from 'rxjs/Subscription';
 
 const KEY_SUNBIRD_CONFIG_FILE_PATH = 'sunbird_config_file_path';
 const SUBJECT_NAME = 'support request';
@@ -147,7 +143,7 @@ export class FaqHelpPage implements OnInit {
     if (this.iframe.nativeElement.contentWindow.location.href.split('/')[length - 1].startsWith('consumption') ||
       this.iframe.nativeElement.contentWindow.history.length === 1) {
       this.location.back();
-      if(this.backButtonFunc) {
+      if (this.backButtonFunc) {
         this.backButtonFunc.unsubscribe();
       }
     } else {

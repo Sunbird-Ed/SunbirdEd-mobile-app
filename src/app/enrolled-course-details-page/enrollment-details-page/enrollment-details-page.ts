@@ -1,6 +1,5 @@
 import { Component, NgZone, Inject } from '@angular/core';
-import {  NavController, NavParams, Events } from '@ionic/angular';
-import { EnrolledCourseDetailsPage } from '../enrolled-course-details-page';
+import { NavController, NavParams, Events } from '@ionic/angular';
 import {
   SharedPreferences,
   EnrollCourseRequest,
@@ -12,10 +11,9 @@ import {
   CourseEnrollmentType,
   CourseBatchStatus
 } from 'sunbird-sdk';
-import { PreferenceKey, ProfileConstants, EventTopics, ContentType, MimeType, ContentCard, BatchConstants } from '@app/app/app.constant';
-import { CommonUtilService, TelemetryGeneratorService } from '@app/services';
-import { CollectionDetailEtbPage } from '../../collection-detail-etb/collection-detail-etb.page';
-// import { ContentDetailsPage } from '@app/pages/content-details/content-details';
+import { PreferenceKey, ProfileConstants, EventTopics, ContentType, MimeType, BatchConstants } from '@app/app/app.constant';
+import { CommonUtilService } from '@app/services/common-util.service';
+import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { InteractSubtype, Environment, PageId } from '@app/services/telemetry-constants';
 
 @Component({
@@ -163,7 +161,7 @@ export class EnrollmentDetailsPage {
 
   navigateToDetailPage(content: any, layoutName?: string): void {
     const identifier = content.contentId || content.identifier;
-    let type ;
+    let type;
     if (layoutName === this.layoutInProgress) {
       type = ContentType.COURSE;
     } else {

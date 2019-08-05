@@ -1,11 +1,14 @@
-import { Subscription } from 'rxjs';
+import { Subscription } from 'rxjs//Subscription';
 import { Component, Inject, NgZone, ViewChild, OnInit } from '@angular/core';
 import { IonRouterOutlet, Events, Platform } from '@ionic/angular';
 import { } from '@ionic/angular';
 import { Location } from '@angular/common';
 import { Router, NavigationExtras } from '@angular/router';
 import { ProfileConstants, PreferenceKey, RouterLinks } from '@app/app/app.constant';
-import { AppGlobalService, CommonUtilService, TelemetryGeneratorService, AppHeaderService } from '@app/services';
+import { AppGlobalService } from '@app/services/app-global-service.service';
+import { CommonUtilService } from '@app/services/common-util.service';
+import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
+import { AppHeaderService } from '@app/services/app-header.service';
 import { Profile, ProfileService, ProfileSource, ProfileType, SharedPreferences, } from 'sunbird-sdk';
 import {
   Environment,

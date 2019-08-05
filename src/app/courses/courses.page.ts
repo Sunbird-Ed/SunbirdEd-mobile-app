@@ -8,7 +8,8 @@ import { AppVersion } from '@ionic-native/app-version/ngx';
 import { QRResultCallback, SunbirdQRScanner } from '../../services/sunbirdqrscanner.service';
 // migration-TODO
 import { ContentDetailsPage } from '../content-details/content-details.page';
-import * as _ from 'lodash';
+import has from 'lodash/has';
+import forEach from 'lodash/forEach';
 import { ContentCard, EventTopics, PreferenceKey, ProfileConstants, ViewMore, RouterLinks, ContentType } from '../../app/app.constant';
 // migration-TODO
 import { PageFilterPage, PageFilterCallback } from '../page-filter/page-filter.page';
@@ -25,7 +26,7 @@ import {
   PageAssembleCriteria, PageAssembleService, PageName, ProfileType, SharedPreferences, NetworkError
 } from 'sunbird-sdk';
 import { Environment, InteractSubtype, InteractType, PageId } from '../../services/telemetry-constants';
-import { Subscription } from 'rxjs';
+import { Subscription } from 'rxjs/Subscription';
 import { AppHeaderService } from '../../services/app-header.service';
 import { Router, NavigationExtras } from '@angular/router';
 
@@ -374,9 +375,9 @@ export class CoursesPage implements OnInit {
           sections.forEach(element => {
             element.display = JSON.parse(element.display);
             if (element.display.name) {
-              if (_.has(element.display.name, this.selectedLanguage)) {
+              if (has(element.display.name, this.selectedLanguage)) {
                 const langs = [];
-                _.forEach(element.display.name, (value, key) => {
+                forEach(element.display.name, (value, key) => {
                   langs[key] = value;
                 });
                 element.name = langs[this.selectedLanguage];
@@ -638,13 +639,13 @@ export class CoursesPage implements OnInit {
 
   checkEmptySearchResult(isAfterLanguageChange = false) {
     const flags = [];
-    _.forEach(this.popularAndLatestCourses, (value, key) => {
+    forEach(this.popularAndLatestCourses, (value, key) => {
       if (value.contents && value.contents.length) {
         flags[key] = true;
       }
     });
 
-    if (flags.length && _.includes(flags, true)) {
+    if (flags.length && flags.includes(true)) {
     } else {
       if (!isAfterLanguageChange) {
         // if (this.tabs.getSelected().tabTitle === 'COURSES‌') {

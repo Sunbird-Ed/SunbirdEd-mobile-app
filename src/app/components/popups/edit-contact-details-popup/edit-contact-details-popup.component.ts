@@ -3,7 +3,7 @@ import { Platform, NavParams, PopoverController } from '@ionic/angular';
 import { GenerateOtpRequest, IsProfileAlreadyInUseRequest, ProfileService } from 'sunbird-sdk';
 import { ProfileConstants } from '@app/app/app.constant';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { CommonUtilService } from '@app/services';
+import { CommonUtilService } from '../../../../services/common-util.service';
 import { Keyboard } from '@ionic-native/keyboard/ngx';
 
 @Component({

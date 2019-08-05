@@ -1,6 +1,4 @@
-@import "src/assets/styles/base/_variables.scss";
 @import "src/assets/styles/_custom-mixins.scss";
-@import "src/assets/styles/fonts.scss";
 
 :host {
   .msg {
@@ -96,7 +94,7 @@
   }
   .icon-tickmark {
     color: green;
-    @extend .font-weight-600;
+    font-weight: 600 !important;
   }
   .ellipsis {
     max-width: 100%;

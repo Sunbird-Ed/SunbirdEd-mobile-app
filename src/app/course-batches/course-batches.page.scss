@@ -1,4 +1,3 @@
-@import "src/assets/styles/base/_variables.scss";
 @import "src/assets/styles/_custom-mixins.scss";
 @import "src/assets/styles/fonts.scss";
 @import "src/assets/styles/_variables.scss";
@@ -28,7 +27,7 @@
         margin-top: -10px;
     }
     .batches-header-text{
-        color: map-get($colors, facebook);
+        // color: map-get($colors, facebook);
     }
     .background-gray{
         background: #efeff4;
@@ -45,7 +44,7 @@
             }
             .text-holder{
                 font-size: 18px;
-                @extend .font-weight-300;
+                font-weight: 300 !important;
             }
         }
     }
@@ -71,6 +70,7 @@
             @include padding(null, 0, null, null !important);
             text-transform: none;
             font-size: 16px;
+            float: right;
         }
     }
     .padding-top-8 {
@@ -109,13 +109,13 @@
         padding: 12px;
         margin-bottom: 12px;
         .card-text {
-          width: 62%;
+          width: 80%;
           p {
             margin-top: 0px;
           }
         }
         .card-icon{
-          width: 31%;   
+          width: 20%;   
         }
       }
 }

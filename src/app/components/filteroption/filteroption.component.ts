@@ -1,6 +1,6 @@
 import { Component , ViewEncapsulation  } from '@angular/core';
 import { NavParams, PopoverController, Platform } from '@ionic/angular';
-import { Subscription } from 'rxjs';
+import { Subscription } from 'rxjs/Subscription';
 @Component({
   selector: 'app-filteroption',
   templateUrl: './filteroption.component.html',

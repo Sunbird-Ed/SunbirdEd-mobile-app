@@ -18,7 +18,7 @@ import { appLanguages } from '@app/app/app.constant';
 
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { InteractType, InteractSubtype } from '@app/services/telemetry-constants';
-import { SbGenericPopoverComponent } from '@app/app/components/popups';
+import { SbGenericPopoverComponent } from '@app/app/components/popups/sb-generic-popover/sb-generic-popover.component';
 import { QRAlertCallBack, QRScannerAlert } from '@app/app/qrscanner-alert/qrscanner-alert.page';
 
 export interface NetworkInfo {

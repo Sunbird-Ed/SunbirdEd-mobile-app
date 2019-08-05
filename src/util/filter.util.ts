@@ -1,8 +1,8 @@
-import {AppGlobalService} from '../services/app-global-service.service';
-import {SearchType} from "sunbird-sdk";
+import { AppGlobalService } from '@app/services/app-global-service.service';
+import { SearchType } from "sunbird-sdk";
 
 const applyProfileFilter = (profileFilter: Array<any>, assembleFilter: Array<any>,
-                            categoryKey: string, appGlobalService: AppGlobalService) => {
+  categoryKey: string, appGlobalService: AppGlobalService) => {
   if (categoryKey) {
     const nameArray = [];
     profileFilter.forEach(filterCode => {
@@ -35,7 +35,7 @@ const applyProfileFilter = (profileFilter: Array<any>, assembleFilter: Array<any
 };
 
 export const updateFilterInSearchQuery = (queryParams, appliedFilter, profile, mode, isFilterApplied,
-                                          appGlobalService: AppGlobalService) => {
+  appGlobalService: AppGlobalService) => {
 
   const queryObj = JSON.parse(queryParams);
   const filter = queryObj.request.filters;
