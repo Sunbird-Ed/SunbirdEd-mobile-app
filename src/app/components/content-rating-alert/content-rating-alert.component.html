@@ -6,7 +6,7 @@
     </ion-toolbar>
   </ion-header>
   <ion-content no-padding class="sb-popover-container">
-      <div class="sb-popover-items">
+      <div class="sb-popover-items popover-ratings">
           <rating [(ngModel)]="userRating" (ngModelChange)="rateContent($event)"></rating>
           <div class="sb-popover-content-details" *ngIf="userRating">
             <div class="main-title">
@@ -22,7 +22,7 @@
   
   <ion-footer>
       <div class="sb-popover-footer">
-        <ion-button class="sb-popover-action-btn popover-color" [disabled]="!userRating" (click)="submit()">{{ 'BTN_SUBMIT' | translate }}</ion-button>
+        <button class="sb-popover-action-btn popover-color" [disabled]="!userRating" (click)="submit()">{{ 'BTN_SUBMIT' | translate }}</button>
       </div>
     </ion-footer>
 

@@ -4,19 +4,19 @@
 		<ion-grid class="padding-0">
 			<h6>{{course.name}}</h6>
 			<div *ngIf="course?.creator || course?.owner">
-				<span class="text-gray-color">{{ 'CONTENT_CREATED_BY' | translate }}</span>
-				<span class="content-meta-title">{{ course?.creator || course?.owner }}</span>
+				<span class="text-gray-color size_txt padding-right-3">{{ 'CONTENT_CREATED_BY' | translate }}</span>
+				<span class="content-meta-title size_txt">{{ course?.creator || course?.owner }}</span>
 			</div>
 			<ion-row class="padding-top-10 credits" (click)="viewCredits()" *ngIf="course?.creators || course?.attributions || course?.contributors">
 				{{ 'CREDITS' | translate }}
 			</ion-row>
 			<ion-row class="padding-top-101">
 				<ion-col class="padding-0">
-					<div class="size_txt padding-bottom-5" no-margin *ngIf="courseCardData?.batchId">
-						<span class="content-size">{{ 'YOUR_PROGRESS' | translate: {'%s': course?.progress ? course?.progress : '0'} }}</span>
+					<div class=" padding-bottom-5" no-margin *ngIf="courseCardData?.batchId">
+						<span class="size_txt content-size">{{ 'YOUR_PROGRESS' | translate: {'%s': course?.progress ? course?.progress : '0'} }}</span>
 					</div>
 					<ion-row>
-						<div class="col-2">
+						<div class="col-2  small-rating">
 							<rating align-items-start (click)="rateContent();" [(ngModel)]="course.me_averageRating" readonly="true" max="5"
 							 no-padding></rating>
 						</div>

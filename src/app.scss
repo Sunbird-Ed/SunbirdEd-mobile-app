@@ -165,6 +165,18 @@ ul.rating .ion-md-star-outline:before {
   border: unset;
   background: map-get($colors, white);
 }
+.small-rating .sc-ion-buttons-md-s ion-button {
+  height: 23px;
+  font-size: 11px;
+}
+.popover-ratings .sc-ion-buttons-md-s ion-button {
+  height: 32px;
+  font-size: 22px;
+  padding-right: 10px;
+}
+.popover-ratings ion-icon.filled {
+  color: #3880ff !important;
+}
 
 .select-box {
   .alert-head {
