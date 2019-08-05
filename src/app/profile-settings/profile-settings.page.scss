@@ -1,5 +1,5 @@
-@import "src/global.scss";
-@import "../../assets/styles/variables";
+@import "src/assets/styles/variables";
+@import "src/assets/styles/_custom-mixins";
 :host {
   .scroll-content,
   .fixed-content {
@@ -64,7 +64,11 @@
     background-color: $light-grey;
     border-bottom: 2px solid $gray-200;
     .qr-content {
-      @include clearfix;
+      &::after {
+        clear: both;
+        content: "";
+        display: block;
+      }
       .qr-img {
         border-right: 2px solid $gray-100;
         text-align: right;
@@ -140,7 +144,7 @@
 
   .item-label-stacked ion-select {
     border: 1px solid #006de5;
-    margin-top: 8px;
+    margin-top: 16px;
     padding-right: 10px !important;
     .select-icon {
       .select-icon-inner {

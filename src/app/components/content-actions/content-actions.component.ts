@@ -64,8 +64,9 @@ export class ContentActionsComponent implements OnInit {
     }
 
     this.contentId = (this.content && this.content.identifier) ? this.content.identifier : '';
-    this.platform.backButton.subscribeWithPriority(11, () => {
+    this.backButtonFunc = this.platform.backButton.subscribeWithPriority(10, () => {
       this.popOverCtrl.dismiss();
+      this.backButtonFunc.unsubscribe();
     });
     this.getUserId();
   }

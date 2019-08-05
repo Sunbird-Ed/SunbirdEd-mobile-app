@@ -12,8 +12,6 @@ import { DataSyncComponent } from './data-sync/data-sync.component';
 import { PermissionComponent } from './permission/permission.component';
 import { AboutUsComponent } from './about-us/about-us.component';
 import { AboutAppComponent } from './about-app/about-app.component';
-import { PrivacyPolicyComponent } from './privacy-policy/privacy-policy.component';
-import { TermsOfServiceComponent } from './terms-of-service/terms-of-service.component';
 import { RouterLinks } from '../app.constant';
 
 const routes: Routes = [
@@ -21,9 +19,7 @@ const routes: Routes = [
   { path: RouterLinks.DATA_SYNC, component: DataSyncComponent },
   { path: RouterLinks.PERMISSION, component: PermissionComponent },
   { path: RouterLinks.ABOUT_US, component: AboutUsComponent },
-  { path: RouterLinks.ABOUT_APP, component: AboutAppComponent },
-  { path: RouterLinks.PRIVACY_POLICY, component: PrivacyPolicyComponent },
-  { path: RouterLinks.TERMS_OF_SERVICE, component: TermsOfServiceComponent }
+  { path: RouterLinks.ABOUT_APP, component: AboutAppComponent }
 ];
 
 @NgModule({
@@ -40,9 +36,7 @@ const routes: Routes = [
     DataSyncComponent,
     PermissionComponent,
     AboutUsComponent,
-    AboutAppComponent,
-    PrivacyPolicyComponent,
-    TermsOfServiceComponent
+    AboutAppComponent
   ]
 })
 export class SettingsPageModule {}

@@ -9,7 +9,7 @@ import { AppHeaderService } from '../../services/app-header.service';
 import * as moment from 'moment';
 import { Location } from '@angular/common';
 import { Router } from '@angular/router';
-import { Subscription } from 'rxjs';
+import { Subscription } from 'rxjs/Subscription';
 
 @Component({
   selector: 'app-course-batches',
@@ -114,11 +114,14 @@ export class CourseBatchesPage implements OnInit {
   private handleBackButton() {
     this.backButtonFunc =  this.platform.backButton.subscribe(() => {
       this.location.back();
+      this.backButtonFunc.unsubscribe();
     });
   }
 
   ionViewWillLeave() {
-    this.backButtonFunc.unsubscribe();
+    if(this.backButtonFunc) {
+      this.backButtonFunc.unsubscribe();
+    } 
   }
   /**
    * Enroll logged-user into selected batch

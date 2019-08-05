@@ -30,7 +30,7 @@ import { Router, NavigationExtras } from '@angular/router';
 import { EditDeletePopoverComponent } from './edit-delete-popover/edit-delete-popover.component';
 import { SbGenericPopoverComponent } from '../components/popups/sb-generic-popover/sb-generic-popover.component';
 import { initTabs, GUEST_STUDENT_TABS, GUEST_STUDENT_SWITCH_TABS, GUEST_TEACHER_TABS, GUEST_TEACHER_SWITCH_TABS } from '../module.service';
-import { Subscription } from 'rxjs';
+import { Subscription } from 'rxjs/Subscription';
 
 
 
@@ -119,6 +119,7 @@ export class UserAndGroupsPage implements OnInit {
 
       this.backButtonFunc = this.platform.backButton.subscribe(() => {
         this.dismissPopup();
+        this.backButtonFunc.unsubscribe();
       });
     });
 
@@ -682,7 +683,9 @@ export class UserAndGroupsPage implements OnInit {
   }
 
   ionViewWillLeave(): void {
-    this.backButtonFunc.unsubscribe();
+    if(this.backButtonFunc) {
+      this.backButtonFunc.unsubscribe();
+    }
     if (this.headerObservable) {
       this.headerObservable.unsubscribe();
     }

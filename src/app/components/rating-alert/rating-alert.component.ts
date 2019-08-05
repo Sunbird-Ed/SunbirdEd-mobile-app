@@ -3,7 +3,7 @@ import {  NavParams, Platform, ModalController} from '@ionic/angular';
 import {AppRatingService, TelemetryGeneratorService, UtilityService} from '@app/services';
 import {SharedPreferences, TelemetryService} from 'sunbird-sdk';
 import {AppVersion} from '@ionic-native/app-version/ngx';
-import {Observable} from 'rxjs';
+import {Observable} from 'rxjs/Observable';
 import {TranslateService} from '@ngx-translate/core';
 import {PreferenceKey, StoreRating} from '../../../app/app.constant';
 import {
@@ -65,8 +65,9 @@ export class AppRatingAlertComponent implements OnInit {
     this.getAppName();
     this.appLogo$ = this.preference.getString('app_logo').map((logo) => logo || './assets/imgs/ic_launcher.png');
     this.currentViewText = this.appRateView[ViewType.APP_RATE];
-    this.platform.backButton.subscribe(() => {
+    this.backButtonFunc = this.platform.backButton.subscribe(() => {
       this.modalCtrl.dismiss(null);
+      this.backButtonFunc.unsubscribe();
     });
   }
 
@@ -92,6 +93,9 @@ export class AppRatingAlertComponent implements OnInit {
 
   closePopover() {
     this.modalCtrl.dismiss(null);
+    if(this.backButtonFunc) {
+      this.backButtonFunc.unsubscribe();
+    }
   }
 
   async rateLater() {

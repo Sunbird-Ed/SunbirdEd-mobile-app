@@ -3,7 +3,7 @@ import { Platform, Events } from '@ionic/angular';
 import { Location } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NotificationService, NotificationStatus } from 'sunbird-sdk';
-import { Subscription } from 'rxjs';
+import { Subscription } from 'rxjs/Subscription';
 
 
 
@@ -54,6 +54,7 @@ export class NotificationPage implements OnInit {
     this.unregisterBackButton = this.platform.backButton.subscribeWithPriority(11, () => {
       this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.NOTIFICATION, Environment.NOTIFICATION, false);
       this.location.back();
+      this.unregisterBackButton.unsubscribe();
     });
   }
 

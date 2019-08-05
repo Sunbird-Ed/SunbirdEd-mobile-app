@@ -28,7 +28,7 @@ import {
 import { ActivatedRoute, Router, NavigationExtras } from '@angular/router';
 import { Platform } from '@ionic/angular';
 import { Location } from '@angular/common';
-import { Subscription } from 'rxjs';
+import { Subscription } from 'rxjs/Subscription';
 import { RouterLinks } from '@app/app/app.constant';
 
 @Component({
@@ -94,6 +94,7 @@ export class CreateGroupPage implements OnInit, OnDestroy {
     this.zone.run(() => {
       this.backButtonFunc = this.platform.backButton.subscribe(() => {
         this.location.back();
+        this.backButtonFunc.unsubscribe();
       });
     });
     this.loadTelemetry();

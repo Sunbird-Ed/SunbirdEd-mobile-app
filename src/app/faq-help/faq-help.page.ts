@@ -24,7 +24,7 @@ import { PreferenceKey, appLanguages, ContentType, AudienceFilter } from '../app
 import { SocialSharing } from '@ionic-native/social-sharing/ngx';
 import { Location } from '@angular/common';
 import { AppVersion } from '@ionic-native/app-version/ngx';
-import { Subscription } from 'rxjs';
+import { Subscription } from 'rxjs/Subscription';
 
 const KEY_SUNBIRD_CONFIG_FILE_PATH = 'sunbird_config_file_path';
 const SUBJECT_NAME = 'support request';
@@ -138,6 +138,7 @@ export class FaqHelpPage implements OnInit {
   registerDeviceBackButton() {
     this.backButtonFunc = this.platform.backButton.subscribeWithPriority(11, () => {
       this.handleBackButton();
+      this.backButtonFunc.unsubscribe();
     });
   }
 
@@ -146,7 +147,9 @@ export class FaqHelpPage implements OnInit {
     if (this.iframe.nativeElement.contentWindow.location.href.split('/')[length - 1].startsWith('consumption') ||
       this.iframe.nativeElement.contentWindow.history.length === 1) {
       this.location.back();
-      // this.backButtonFunc.unsubscribe();
+      if(this.backButtonFunc) {
+        this.backButtonFunc.unsubscribe();
+      }
     } else {
       this.iframe.nativeElement.contentWindow.history.go(-1);
     }

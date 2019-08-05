@@ -22,7 +22,7 @@ import {
 import { NavigationExtras, ActivatedRoute, Router } from '@angular/router';
 import { Location } from '@angular/common';
 import { Platform } from '@ionic/angular';
-import { Subscription } from 'rxjs';
+import { Subscription } from 'rxjs//Subscription';
 import { RouterLinks } from '@app/app/app.constant';
 
 @Component({
@@ -64,6 +64,7 @@ export class GroupMembersPage implements OnInit, OnDestroy {
     this.zone.run(() => {
       this.backButtonFunc = this.platform.backButton.subscribe(() => {
         this.location.back();
+        this.backButtonFunc.unsubscribe();
       });
     });
   }

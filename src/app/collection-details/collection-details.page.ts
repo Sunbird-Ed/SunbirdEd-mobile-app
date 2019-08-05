@@ -48,7 +48,7 @@ import {
   Mode,
   PageId,
 } from '../../services/telemetry-constants';
-import { Subscription } from 'rxjs';
+import { Subscription } from 'rxjs/Subscription';
 import { ContentShareHandlerService } from '../../services/content/content-share-handler.service';
 import { EnrolledCourseDetailsPage } from '../enrolled-course-details-page/enrolled-course-details-page';
 import { Router } from '@angular/router';
@@ -304,6 +304,7 @@ export class CollectionDetailsPage {
         this.generateQRSessionEndEvent(this.source, this.cardData.identifier);
       }
       this.location.back();
+      this.backButtonFunc.unsubscribe();
     });
   }
 
@@ -833,7 +834,7 @@ export class CollectionDetailsPage {
     return (n.toFixed(n >= 10 || l < 1 ? 0 : 1) + ' ' + units[l]);
   }
 
-  async showOverflowMenu(event) {
+  async showOverflowMenu(event) {    
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
       InteractSubtype.KEBAB_MENU_CLICKED,
       Environment.HOME,
@@ -845,6 +846,7 @@ export class CollectionDetailsPage {
 
     const popover = await this.popoverCtrl.create({
       component: ContentActionsComponent,
+      event,
       componentProps: {
         content: this.contentDetail,
         isChild: this.isDepthChild,
@@ -852,7 +854,7 @@ export class CollectionDetailsPage {
         pageName: PageId.COLLECTION_DETAIL,
         corRelationList: this.corRelationList
       },
-      cssClass: 'content-action'
+      // cssClass: 'content-action'
     });
     await popover.present();
     const { data } = await popover.onDidDismiss();

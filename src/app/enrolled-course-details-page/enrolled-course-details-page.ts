@@ -48,7 +48,7 @@ import {
   TelemetryObject,
   UnenrollCourseRequest,
 } from 'sunbird-sdk';
-import { Subscription } from 'rxjs';
+import { Subscription } from 'rxjs/Subscription';
 import {
   Environment,
   ErrorType,
@@ -997,6 +997,7 @@ export class EnrolledCourseDetailsPage implements OnInit {
         this.generateQRSessionEndEvent(this.source, this.course.identifier);
       }
       this.location.back();
+      this.backButtonFunc.unsubscribe();
     });
   }
 

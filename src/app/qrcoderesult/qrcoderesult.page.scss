@@ -1,4 +1,4 @@
-@import "../../global.scss";
+@import "src/assets/styles/_custom-mixins.scss";
 :host{
     .toolbar-md{
         min-height: auto;
@@ -113,7 +113,7 @@
         li{
             display: inline-block;
             color: #007aff;
-            @extend .font-weight-bold;
+            font-weight: bold !important;
             font-size: 10px;
         }
     

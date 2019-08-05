@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { PageId, Environment, InteractType, InteractSubtype } from '../../../services/telemetry-constants';
-import { Observable, Subscription } from 'rxjs';
+import { Subscription } from 'rxjs/Subscription';
+import { Observable } from 'rxjs/Observable';
 import { Events, Platform } from '@ionic/angular';
 import { Router, NavigationExtras } from '@angular/router';
 import { AndroidPermission, AndroidPermissionsStatus, PermissionAskedEnum } from '@app/services/android-permissions/android-permission';
@@ -115,6 +116,7 @@ export class PermissionComponent implements OnInit {
   handleBackButton() {
     this.backButtonFunc = this.platform.backButton.subscribe(() => {
       this.location.back();
+      this.backButtonFunc.unsubscribe();
     });
   }
 

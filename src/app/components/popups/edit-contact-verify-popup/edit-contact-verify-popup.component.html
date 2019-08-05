@@ -6,7 +6,7 @@
         <p class="f18 padding-left-5" color="dark">{{title}}</p>
         <p class="f14" style="color: #4a4a4a">{{description}}</p>
       </ion-col>
-      <section class="W100" *ngIf="type==='phone'">
+      <section class="text-center W100" *ngIf="type==='phone'">
         <ion-label text-center class="font-weight-bold">{{'ENTER_OTP' | translate}}</ion-label>
         <ion-col size="12" no-padding class="text-center" *ngIf="invalidOtp">
           <p class="error">{{'ERROR_OTP' | translate}}</p>
@@ -18,7 +18,7 @@
           </div>
         </ion-col>
       </section>
-      <section class="W100" *ngIf="type==='email'">
+      <section class="text-center W100" *ngIf="type==='email'">
         <ion-row>
           <ion-col size="12" no-padding class="text-center">
             <strong>{{'ENTER_OTP' | translate}}</strong>

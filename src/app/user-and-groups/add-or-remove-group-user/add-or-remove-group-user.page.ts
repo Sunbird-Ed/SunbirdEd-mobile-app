@@ -17,7 +17,7 @@ import { AppHeaderService, CommonUtilService, Environment, InteractSubtype, Inte
 import { ActivatedRoute, Router } from '@angular/router';
 import { PopoverController, Platform } from '@ionic/angular';
 import { SbGenericPopoverComponent } from 'app/components/popups/sb-generic-popover/sb-generic-popover.component';
-import { Subscription } from 'rxjs';
+import { Subscription } from 'rxjs/Subscription';
 import { Location } from '@angular/common';
 // import { SbGenericPopoverComponent } from '@a  pp/component/popups/sb-generic-popup/sb-generic-popover';
 
@@ -74,6 +74,7 @@ export class AddOrRemoveGroupUserPage implements OnInit, OnDestroy {
     this.zone.run(() => {
       this.backButtonFunc = this.platform.backButton.subscribe(() => {
         this.location.back();
+        this.backButtonFunc.unsubscribe();
       });
     });
   }

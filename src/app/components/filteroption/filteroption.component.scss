@@ -1,0 +1,46 @@
+@import "src/assets/styles/base/_variables.scss";
+@import "src/assets/styles/_variables.scss";
+    .subtitle {
+      text-transform: capitalize;
+      font-size: 1.3em;
+      font-weight: 700 !important;
+      color: map-get($colors, facebook);
+    }
+    .checkbox {
+      margin: 8px !important;
+    }
+    .filter-option-text {
+          font-size: 14px !important;
+          text-overflow: unset !important;
+          white-space: unset !important;
+    }
+    .col {
+      min-height: 3.3em !important;
+    }
+    .scroll-list {
+      overflow-y: scroll;
+      max-height: 50vh !important; //padding-bottom: 10vh !important;
+    }
+    .item-md {
+      font-size: 1.3rem !important;
+      font-weight: 600 !important;
+    }
+  
+  .option-box .popover-content {
+    margin: 0;
+    width: 100% !important;
+    max-height: 70% !important;
+    height: auto !important;
+    box-shadow: unset;
+    position: fixed;
+    left: 0 !important;
+    top: unset !important;
+    bottom: 0;
+    transform-origin: bottom -100% !important;
+    transform: translateY(0) !important;
+  }
+  
+  .option-box ion-backdrop {
+    background-color: map-get($colors, black) !important;
+    opacity: 0.4 !important;
+  }

@@ -1,22 +1,22 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { TermsOfServiceComponent } from './terms-of-service.component';
+import { TextbookViewMorePage } from './textbook-view-more.page';
 
-describe('TermsOfServiceComponent', () => {
-  let component: TermsOfServiceComponent;
-  let fixture: ComponentFixture<TermsOfServiceComponent>;
+describe('TextbookViewMorePage', () => {
+  let component: TextbookViewMorePage;
+  let fixture: ComponentFixture<TextbookViewMorePage>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ TermsOfServiceComponent ],
+      declarations: [ TextbookViewMorePage ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(TermsOfServiceComponent);
+    fixture = TestBed.createComponent(TextbookViewMorePage);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

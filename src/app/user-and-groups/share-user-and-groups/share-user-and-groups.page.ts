@@ -20,7 +20,7 @@ import {
   AppHeaderService,
   CommonUtilService
 } from '../../../services';
-import { Subscription } from 'rxjs';
+import { Subscription } from 'rxjs/Subscription';
 import { Location } from '@angular/common';
 
 declare const cordova;
@@ -60,6 +60,7 @@ export class ShareUserAndGroupsPage implements OnInit, OnDestroy {
     this.zone.run(() => {
       this.backButtonFunc = this.platform.backButton.subscribe(() => {
         this.location.back();
+        this.backButtonFunc.unsubscribe();
       });
     });
   }

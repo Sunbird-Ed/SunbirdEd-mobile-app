@@ -1,11 +1,11 @@
-@import "src/global.scss";
+
 :host {
   .settings-item-style {
     padding-top: 5px;
   }
   ion-icon {
     font-size: 22px !important;
-    @extend .font-weight-550;
+    font-weight: 550 !important;
   }
   .bgColor {
     background-color: #f7f7f7;

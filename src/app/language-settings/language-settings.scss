@@ -1,4 +1,6 @@
-@import "src/global.scss";
+@import "src/assets/styles/variables";
+@import "src/assets/styles/_custom-mixins";
+@import "src/assets/styles/fonts";
 :host {
   /* This should be item-ios only as we are targeting mode as iOS for radio-button */
   ion-item {
@@ -52,39 +54,4 @@
 
 .font-size-17 {
   font-size: 17px !important;
-}
-
-.redErrorToast {
-  .toast-container {
-    background-color: #ff0000;
-
-    #toast-hdr-6 {
-      padding-left: 69px !important;
-    }
-
-    .toast-message {
-      padding-left: 40px !important;
-    }
-
-    .toast-message:before {
-      content: "\f19f";
-      font-family: Ionicons;
-      -webkit-font-smoothing: antialiased;
-      font-style: normal;
-      font-variant: normal;
-      @extend .font-weight-400;
-      font-weight: 400;
-      line-height: 1;
-      padding-left: 30px !important;
-      padding-right: 16px !important;
-      padding-bottom: 5px !important;
-      text-rendering: auto;
-      text-transform: none;
-      margin-bottom: 29px !important;
-      margin-top: 28px !important;
-      margin-left: -39px !important;
-      position: static;
-      font-size: 2.1rem;
-    }
-  }
 }

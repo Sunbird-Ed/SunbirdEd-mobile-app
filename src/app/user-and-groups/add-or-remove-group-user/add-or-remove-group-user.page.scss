@@ -1,4 +1,6 @@
-@import "src/global.scss";
+@import "src/assets/styles/base/_variables.scss";
+@import "src/assets/styles/_custom-mixins.scss";
+@import "src/assets/styles/_variables.scss";
 
 :host {
   .item-background.item-md {
@@ -6,13 +8,13 @@
   }
   .checkbox-inner {
       //MIGRATION TODO
-/*     @include ltr() {
+     @include ltr() {
       left: 7px;
     }
     @include rtl() {
       right: 7px;
     }
- */    top: 4px;
+     top: 4px;
     position: absolute;
     width: 4px;
     height: 9px;
@@ -37,10 +39,10 @@
   }
   .rm-padding-right {
     //MIGRATION TODO
-    // @include padding(null, 0, null, null !important);
+    @include padding(null, 0, null, null !important);
   }
   .rm-padding-left {
     //MIGRATION TODO
-    // @include padding(null, null, null, 0 !important);
+    @include padding(null, null, null, 0 !important);
   }
 }

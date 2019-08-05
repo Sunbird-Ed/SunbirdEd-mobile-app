@@ -1,12 +1,7 @@
 import { Component, OnInit, Inject, NgZone } from '@angular/core';
 import { AppVersion } from '@ionic-native/app-version/ngx';
-import { AppGlobalService, AppHeaderService, CommonUtilService, TelemetryGeneratorService } from '../../services/index';
-import { AppStorageInfo, DownloadManagerPageInterface, EmitedContents } from './download-manager.interface';
-import { AudienceFilter, ContentType, RouterLinks } from './../../app/app.constant';
-// import { ViewController } from 'ionic-angular/navigation/view-controller';
-import { NavController, NavParams, PopoverController } from '@ionic/angular';
-import { Events } from '@ionic/angular';
-import { TranslateService } from '@ngx-translate/core';
+import { Events, PopoverController } from '@ionic/angular';
+import { Router } from '@angular/router';
 import {
   Content,
   ContentDeleteRequest,
@@ -19,13 +14,17 @@ import {
   ContentSpaceUsageSummaryResponse,
   DeviceInfo,
   Profile,
-  ProfileType,
   SortOrder
 } from 'sunbird-sdk';
-import { SbPopoverComponent } from '../components/popups/sb-popover/sb-popover.component';
-import { ActiveDownloadsPage } from '../active-downloads/active-downloads.page';
-import {Router} from '@angular/router';
-import { PageId, InteractType, Environment, InteractSubtype } from '../../services/telemetry-constants';
+
+import { AppGlobalService } from '@app/services/app-global-service.service';
+import { AppHeaderService, } from '@app/services/app-header.service';
+import { CommonUtilService, } from '@app/services/common-util.service';
+import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
+import { AppStorageInfo, DownloadManagerPageInterface, EmitedContents } from './download-manager.interface';
+import { ContentType, RouterLinks } from '@app/app/app.constant';
+import { SbPopoverComponent } from '@app/app/components/popups/sb-popover/sb-popover.component';
+import { PageId, InteractType, Environment, InteractSubtype } from '@app/services/telemetry-constants';
 
 @Component({
   selector: 'app-download-manager',
@@ -35,7 +34,6 @@ import { PageId, InteractType, Environment, InteractSubtype } from '../../servic
 export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit {
 
   headerObservable: any;
-
   storageInfo: AppStorageInfo;
   downloadedContents: Content[] = [];
   defaultImg = 'assets/imgs/ic_launcher.png';
@@ -45,38 +43,36 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
   sortCriteria: ContentSortCriteria[];
 
   constructor(
+    @Inject('CONTENT_SERVICE') private contentService: ContentService,
+    @Inject('DEVICE_INFO') private deviceInfo: DeviceInfo,
     private ngZone: NgZone,
-    // private popoverCtrl: PopoverController,
     private commonUtilService: CommonUtilService,
-    private headerServie: AppHeaderService,
+    private headerService: AppHeaderService,
     private events: Events,
     private popoverCtrl: PopoverController,
     private appGlobalService: AppGlobalService,
     private appVersion: AppVersion,
     private router: Router,
-    @Inject('CONTENT_SERVICE') private contentService: ContentService,
-    @Inject('DEVICE_INFO') private deviceInfo: DeviceInfo,
     private telemetryGeneratorService: TelemetryGeneratorService,
-  ) {
-  }
+  ) {}
 
   async ngOnInit() {
     this.subscribeContentUpdateEvents();
     return Promise.all(
-      [this.getDownloadedContents(true),
+      [this.getDownloadedContents(true,true),
       this.getAppName()]
     );
   }
 
   async ionViewWillEnter() {
     this.events.subscribe('update_header', () => {
-      this.headerServie.showHeaderWithHomeButton(['download', 'settings']);
+      this.headerService.showHeaderWithHomeButton(['download', 'settings']);
     });
-    this.headerObservable = this.headerServie.headerEventEmitted$.subscribe(eventName => {
+    this.headerObservable = this.headerService.headerEventEmitted$.subscribe(eventName => {
       this.handleHeaderEvents(eventName);
     });
 
-    this.headerServie.showHeaderWithHomeButton(['download', 'settings']);
+    this.headerService.showHeaderWithHomeButton(['download', 'settings']);
     await this.getAppStorageInfo();
     this.getDownloadedContents();
   }
@@ -105,13 +101,19 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
 
   }
 
-  async getDownloadedContents(shouldGenerateTelemetry?) {
-    const profile: Profile = await this.appGlobalService.getCurrentUser();
-    this.loader = await this.commonUtilService.getLoader();
-    await this.loader.present();
-    await this.loader.dismiss(() => {
-      this.loader = undefined;
-    });
+  async getDownloadedContents(shouldGenerateTelemetry?,ignoreLoader?) {
+    const profile: Profile = this.appGlobalService.getCurrentUser();
+    if(ignoreLoader) {
+
+    } else {
+      this.loader = await this.commonUtilService.getLoader();
+      await this.loader.present();
+      this.loader.dismiss().then(() => {
+        this.loader = undefined;
+      });
+    }
+    
+
     const defaultSortCriteria: ContentSortCriteria[] = [{
       sortAttribute: 'sizeOnDevice',
       sortOrder: SortOrder.DESC
@@ -175,7 +177,7 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
     } else {
       this.loader = await this.commonUtilService.getLoader();
       await this.loader.present();
-      await this.loader.dismiss(() => {
+      this.loader.dismiss().then(() => {
         this.loader = undefined;
       });
 
@@ -198,7 +200,7 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
         });
     }
   }
-   private async deleteAllContents(emitedContents) {
+  private async deleteAllContents(emitedContents) {
     const valuesMap = {};
     valuesMap['size'] = this.commonUtilService.fileSizeInMB(emitedContents.selectedContentsInfo.totalSize);
     valuesMap['count'] = emitedContents.selectedContentsInfo.count;
@@ -288,7 +290,7 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
     // this.events.unsubscribe('savedResources:update');
   }
 
-   private  subscribeContentUpdateEvents() {
+  private subscribeContentUpdateEvents() {
     this.events.subscribe('savedResources:update', async (res) => {
       if (res && res.update) {
         this.getDownloadedContents(false);

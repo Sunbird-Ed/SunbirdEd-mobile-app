@@ -47,7 +47,7 @@ import { ActivatedRoute, Router, NavigationExtras } from '@angular/router';
 import { EditDeletePopoverComponent } from '../edit-delete-popover/edit-delete-popover.component';
 import { GroupDetailNavPopover } from '../group-detail-nav-popover/group-detail-nav-popover';
 import { Location } from '@angular/common';
-import { Subscription } from 'rxjs';
+import { Subscription } from 'rxjs/Subscription';
 // import { TabsPage } from '@app/pages/tabs/tabs';
 
 @Component({
@@ -105,6 +105,7 @@ export class GroupDetailsPage implements OnInit, OnDestroy {
     this.zone.run(() => {
       this.backButtonFunc = this.platform.backButton.subscribe(() => {
         this.location.back();
+        this.backButtonFunc.unsubscribe();
       });
     });
   }

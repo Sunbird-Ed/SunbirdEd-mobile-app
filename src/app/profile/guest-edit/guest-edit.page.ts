@@ -38,7 +38,7 @@ import {
   AppHeaderService
 } from '@app/services';
 import { GUEST_STUDENT_TABS, GUEST_TEACHER_TABS, initTabs } from '@app/app/module.service';
-import { PreferenceKey } from '@app/app/app.constant';
+import { PreferenceKey, RouterLinks } from '@app/app/app.constant';
 import { SbGenericPopoverComponent } from '@app/app/components/popups';
 import { Location } from '@angular/common';
 
@@ -97,19 +97,19 @@ export class GuestEditPage implements OnInit {
   };
 
   constructor(
-    private fb: FormBuilder,
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
+    @Inject('FRAMEWORK_SERVICE') private frameworkService: FrameworkService,
+    @Inject('FRAMEWORK_UTIL_SERVICE') private frameworkUtilService: FrameworkUtilService,
+    @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
+    public appGlobalService: AppGlobalService,
+    public commonUtilService: CommonUtilService,
+    private fb: FormBuilder,
     private translate: TranslateService,
     private events: Events,
     private platform: Platform,
     private alertCtrl: AlertController,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private container: ContainerService,
-    public appGlobalService: AppGlobalService,
-    public commonUtilService: CommonUtilService,
-    @Inject('FRAMEWORK_SERVICE') private frameworkService: FrameworkService,
-    @Inject('FRAMEWORK_UTIL_SERVICE') private frameworkUtilService: FrameworkUtilService,
-    @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
     private popoverCtrl: PopoverController,
     private headerService: AppHeaderService,
     private route: ActivatedRoute,
@@ -119,8 +119,6 @@ export class GuestEditPage implements OnInit {
     this.isNewUser = Boolean(this.router.getCurrentNavigation().extras.state.isNewUser);
     this.isCurrentUser = Boolean(this.router.getCurrentNavigation().extras.state.isCurrentUser);
 
-
-    console.log("data", this.isNewUser, this.isCurrentUser);
     if (this.isNewUser) {
       this.profile = this.router.getCurrentNavigation().extras.state.lastCreatedProfile || {};
       this.isEditData = false;
@@ -136,7 +134,6 @@ export class GuestEditPage implements OnInit {
 
     } else {
       this.profile = this.router.getCurrentNavigation().extras.state.profile || {};
-      console.log("Profile", this.profile);
       this.guestEditForm = this.fb.group({
         name: [this.profile.handle || ''],
         profileType: [this.profile.profileType || ProfileType.STUDENT],
@@ -177,13 +174,15 @@ export class GuestEditPage implements OnInit {
   ionViewWillEnter() {
     this.headerService.hideHeader();
     this.getSyllabusDetails();
-    this.unregisterBackButton = this.platform.backButton.subscribe(() => {
+    this.unregisterBackButton = this.platform.backButton.subscribeWithPriority(10, () => {
       this.dismissPopup();
     });
   }
 
   ionViewWillLeave() {
-    this.unregisterBackButton && this.unregisterBackButton.unsubscribe();
+    if (this.unregisterBackButton) {
+      this.unregisterBackButton.unsubscribe();
+    }
   }
 
   // shows auto fill alert on load
@@ -208,22 +207,18 @@ export class GuestEditPage implements OnInit {
       cssClass: 'sb-popover',
     });
     await confirm.present();
-    await confirm.onDidDismiss().then(response => {
-      if (response.data == null) {
-        return;
-      }
-      if (response.data) {
-        this.guestEditForm.patchValue({
-          name: undefined,
-          syllabus: undefined,
-          boards: [[]],
-          medium: [[]],
-          grades: [[]],
-          subjects: [[]]
-        });
-        this.guestEditForm.controls['profileType'].setValue(this.ProfileType.STUDENT);
-      }
-    });
+    const { data } = await confirm.onDidDismiss();
+    if (data.isLeftButtonClicked) {
+      this.guestEditForm.patchValue({
+        name: undefined,
+        syllabus: undefined,
+        boards: [[]],
+        medium: [[]],
+        grades: [[]],
+        subjects: [[]]
+      });
+      this.guestEditForm.controls['profileType'].setValue(this.ProfileType.STUDENT);
+    }
   }
 
   onProfileTypeChange() {
@@ -249,7 +244,7 @@ export class GuestEditPage implements OnInit {
         if (result && result !== undefined && result.length > 0) {
           result.forEach(element => {
             // renaming the fields to text, value and checked
-            const value = { 'name': element.name, 'code': element.identifier };
+            const value = { name: element.name, code: element.identifier };
             this.syllabusList.push(value);
           });
 
@@ -282,10 +277,10 @@ export class GuestEditPage implements OnInit {
   }
 
   /**
- * This will internally call framework API
- * @param {string} currentCategory - request Parameter passing to the framework API
- * @param {string} list - Local variable name to hold the list data
- */
+   * This will internally call framework API
+   * @param currentCategory request Parameter passing to the framework API
+   * @param list Local variable name to hold the list data
+   */
   getCategoryData(req: GetFrameworkCategoryTermsRequest, list): void {
     this.frameworkUtilService.getFrameworkCategoryTerms(req).toPromise()
       .then((result: CategoryTerm[]) => {
@@ -326,10 +321,9 @@ export class GuestEditPage implements OnInit {
           });
         }
       }).catch((error) => {
-        console.error("Error", error);
+        console.error('Error => ', error);
       });
   }
-
 
   checkPrevValue(index = 0, currentField, prevSelectedValue = []) {
     if (index === 0) {
@@ -346,7 +340,6 @@ export class GuestEditPage implements OnInit {
             this.categories = framework.categories;
 
             this.isFormValid = true;
-            // loader.dismiss();
             const request: GetFrameworkCategoryTermsRequest = {
               currentCategoryCode: this.categories[0].code,
               language: this.translate.currentLang,
@@ -376,8 +369,8 @@ export class GuestEditPage implements OnInit {
 
 
   /**
- * This method is added as we are not getting subject value in reset form method
- */
+   * This method is added as we are not getting subject value in reset form method
+   */
   onSubjectChanged(event) {
     const oldAttribute: any = {};
     const newAttribute: any = {};
@@ -454,8 +447,8 @@ export class GuestEditPage implements OnInit {
 
 
   /**
- * Call on Submit the form
- */
+   * Call on Submit the form
+   */
 
   async onSubmit() {
     if (!this.isFormValid) {
@@ -503,12 +496,12 @@ export class GuestEditPage implements OnInit {
 
 
   /**
-*  It will validate the name field.
-*/
+   *  It will validate the name field.
+   */
   validateName() {
     const name = this.guestEditForm.getRawValue().name;
     if (name) {
-      return name.trim().length ? true : false;
+      return Boolean(name.trim().length);
     } else {
       return false;
     }
@@ -522,14 +515,15 @@ export class GuestEditPage implements OnInit {
     profileReq.medium = formVal.medium;
     profileReq.profileType = formVal.profileType;
     profileReq.syllabus = (!formVal.syllabus.length) ? [] : [formVal.syllabus];
+
     return profileReq;
   }
 
   /**
- * This will submit edit form.
- */
+   * This will submit edit form.
+   */
   submitEditForm(formVal, loader): void {
-    const req = <Profile>{};
+    const req = {} as Profile;
     req.board = formVal.boards;
     req.grade = formVal.grades;
     req.subject = formVal.subjects;
@@ -568,7 +562,6 @@ export class GuestEditPage implements OnInit {
           Environment.USER,
           PageId.EDIT_USER
         );
-        // this.navCtrl.pop();
         this.location.back();
       }, (err: any) => {
         this._dismissLoader(loader);
@@ -595,17 +588,19 @@ export class GuestEditPage implements OnInit {
         initTabs(this.container, GUEST_TEACHER_TABS);
       }
 
-      //Migration todo
+      // Migration todo
       // this.app.getRootNav().setRoot(TabsPage);
+      // Need to test thoroughly
+      this.router.navigate([`/${RouterLinks.TABS}`]);
     }
   }
 
 
   /**
- * It will submit new user form
- */
+   * It will submit new user form
+   */
   submitNewUserForm(formVal, loader): void {
-    const req = <Profile>{};
+    const req = {} as Profile;
     req.board = formVal.boards;
     req.grade = formVal.grades;
     req.subject = formVal.subjects;
@@ -634,7 +629,6 @@ export class GuestEditPage implements OnInit {
       this.commonUtilService.showToast(this.commonUtilService.translateMessage('USER_CREATED_SUCCESSFULLY'));
       this.telemetryGeneratorService.generateInteractTelemetry(
         InteractType.OTHER, InteractSubtype.CREATE_USER_SUCCESS, Environment.USER, PageId.CREATE_USER);
-      // this.navCtrl.pop();
       this.location.back();
     }, (err: any) => {
       this._dismissLoader(loader);
@@ -660,7 +654,6 @@ export class GuestEditPage implements OnInit {
     if (activePortal) {
       await activePortal.dismiss();
     } else {
-      // this.navCtrl.pop();
       this.location.back();
     }
   }

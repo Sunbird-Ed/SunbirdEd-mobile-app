@@ -39,7 +39,7 @@ import {
   ProfileService,
   TelemetryObject
 } from 'sunbird-sdk';
-import { Subscription } from 'rxjs';
+import { Subscription } from 'rxjs/Subscription';
 import { Environment, ImpressionType, InteractSubtype, InteractType, PageId } from '../../services/telemetry-constants';
 import { TabsPage } from '../tabs/tabs.page';
 import { PlayerPage } from '../player/player.page';
@@ -178,6 +178,7 @@ export class QrcoderesultPage implements OnDestroy {
     this.getChildContents();
     this.unregisterBackButton = this.platform.backButton.subscribeWithPriority(11, () => {
       this.handleBackButton(InteractSubtype.DEVICE_BACK_CLICKED);
+      this.unregisterBackButton.unsubscribe();
     });
     this.subscribeSdkEvent();
     this.headerObservable = this.headerService.headerEventEmitted$.subscribe(eventName => {

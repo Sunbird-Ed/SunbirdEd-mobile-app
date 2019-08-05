@@ -1,4 +1,5 @@
-@import "src/global.scss";
+@import "src/assets/styles/_custom-mixins.scss";
+@import "src/assets/styles/_variables.scss";
 
 :host {
   .rounded {
@@ -12,18 +13,18 @@
 
   .padding-top {
     //MIGRATION TODO
-    // @include padding(2px, null, null, null !important);
+    @include padding(2px, null, null, null !important);
   }
 
   .checkbox-inner {
     //MIGRATION TODO
-    /*         @include ltr() {
+             @include ltr() {
             left: 7px;
         }
         @include rtl() {
             right: 7px;
         }
- */
+ 
     top: 4px;
     position: absolute;
     width: 4px;

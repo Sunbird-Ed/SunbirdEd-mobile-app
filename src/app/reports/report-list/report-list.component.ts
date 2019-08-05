@@ -16,7 +16,7 @@ import {
 } from '@app/services';
 import { ActivatedRoute, Router, NavigationExtras } from '@angular/router';
 import { RouterLinks } from '@app/app/app.constant';
-import { Subscription } from 'rxjs';
+import { Subscription } from 'rxjs/Subscription';
 import { Location } from '@angular/common';
 
 @Component({
@@ -75,11 +75,14 @@ export class ReportListComponent implements OnInit {
   handleDeviceBackButton() {
     this.backButtonFunc = this.platform.backButton.subscribe(() => {
       this.location.back();
+      this.backButtonFunc.unsubscribe();
     });
   }
 
   ionViewWillLeave() {
-    this.backButtonFunc.unsubscribe();
+    if(this.backButtonFunc) {
+      this.backButtonFunc.unsubscribe();
+    }
   }
 
   async ngOnInit() {

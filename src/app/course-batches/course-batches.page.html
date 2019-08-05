@@ -1,6 +1,9 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-title>
+<ion-header class="sb-header">
+  <ion-toolbar class="sb-header-toolbar">
+    <ion-buttons class="batches-header-text" slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title class="batches-header-text">
       {{ 'BATCHES_FOR_THIS_COURSE' | translate }}
     </ion-title>
   </ion-toolbar>
@@ -30,8 +33,8 @@
     </div>
 
     <div class="batch-list" padding-top *ngIf="!isGuestUser">
-      <div>
-        <ion-list *ngIf="ongoingBatches && ongoingBatches.length && !showLoader">
+      <div *ngIf="ongoingBatches && ongoingBatches.length && !showLoader">
+        <!-- <ion-list *ngIf="ongoingBatches && ongoingBatches.length && !showLoader">
           <ion-item no-lines *ngFor="let batch of ongoingBatches">
             <div class="batch-name">{{ batch.name }}</div>
             <span class="text-gray-color">
@@ -46,7 +49,26 @@
               {{ 'ENROLL' | translate }}
             </ion-button>
           </ion-item>
-        </ion-list>
+        </ion-list> -->
+        <div class="flex-card-container"
+        *ngFor="let batch of ongoingBatches">
+          <div class="card-text">
+            <div class="batch-name">{{ batch.name }}</div>
+            <span class="text-gray-color">
+              {{batch.startDate | date: 'mediumDate' }} - {{ batch.endDate | date: 'mediumDate' }}
+            </span>
+            <p *ngIf="batch.creatorFirstName">
+              <span>{{ 'BATCH_CREATED_BY' | translate }}</span>&nbsp;
+              <span class="text-gray-color">{{ batch.creatorFirstName }}</span>&nbsp;<span class="text-gray-color"
+                *ngIf="batch.creatorLastName">{{batch.creatorLastName}}</span>
+            </p>
+          </div>
+          <div class="card-icon">
+            <ion-button class="enroll-btn" fill="clear" item-end (click)="enrollIntoBatch(batch)" [disabled]="(batch.endDate && (todayDate > batch.endDate))">
+              {{ 'ENROLL' | translate }}
+            </ion-button>
+          </div>
+        </div>
       </div>
     </div>
   </div>

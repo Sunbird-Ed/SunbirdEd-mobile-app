@@ -1,7 +1,7 @@
-@import 'src/global.scss';
+@import "src/assets/styles/_variables.scss";
 :host {
     .label-font {
-        @extend .font-weight-600;
+       font-weight: 600 !important;
         color: #979797 !important;
         font-size: 1.4rem !important;
     }

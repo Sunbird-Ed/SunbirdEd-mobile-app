@@ -1,10 +1,10 @@
-@import "src/global.scss";
+@import "src/assets/styles/_variables.scss";
 :host {
   .sign-in-btn {
     border-radius: 4px !important;
   }
   .sign-in-card-text {
-    @extend .font-weight-600;
+    font-weight: 600 !important;
     color: map-get($colors, primary_black) !important;
   }
   ion-card {
