@@ -1,11 +1,22 @@
+import { Location } from '@angular/common';
 import { Component, Input, NgZone, OnInit } from '@angular/core';
 import { ContentType, MimeType, RouterLinks } from '@app/app/app.constant';
+import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { CommonUtilService } from '@app/services/common-util.service';
 import { ComingSoonMessageService } from '@app/services/coming-soon-message.service';
 import { PopoverController } from '@ionic/angular';
 import { SbGenericPopoverComponent } from '@app/app/components/popups/sb-generic-popover/sb-generic-popover.component';
 import { Content } from 'sunbird-sdk';
 import { Router, NavigationExtras } from '@angular/router';
+import { TextbookTocService } from '@app/app/collection-detail-etb/textbook-toc-service';
+import {
+  Environment,
+  ImpressionSubtype,
+  ImpressionType,
+  InteractSubtype,
+  InteractType,
+  PageId
+} from '@app/services/telemetry-constants';
 
 @Component({
   selector: 'app-collection-child',
@@ -13,25 +24,63 @@ import { Router, NavigationExtras } from '@angular/router';
   styleUrls: ['./collection-child.component.scss'],
 })
 export class CollectionChildComponent implements OnInit {
-  //   migration-TODO : remove unnecessary
-  //   cardData: any;
+  cardData: any;
+  parentId: any;
+  // isTextbookTocPage: Boolean = false;
   @Input() childData: Content;
   @Input() index: any;
   @Input() depth: any;
   @Input() corRelationList: any;
   @Input() isDepthChild: any;
   @Input() breadCrumb: any;
+  @Input() defaultAppIcon: string;
+  @Input() localImage: string;
+  @Input() activeMimeTypeFilter: any;
+  @Input() rootUnitId: any;
+  @Input() isTextbookTocPage: boolean;
+  @Input() bookID: string;
 
   constructor(
     private zone: NgZone,
     private commonUtilService: CommonUtilService,
     private popoverCtrl: PopoverController,
     private comingSoonMessageService: ComingSoonMessageService,
-    private router: Router
-  ) { }
+    private router: Router,
+    private textbookTocService: TextbookTocService,
+    private telemetryService: TelemetryGeneratorService,
+    private location: Location
+  ) {
+    // const extras = this.router.getCurrentNavigation().extras.state;
+    // if (extras) {
+    //   this.cardData = extras.content;
+    //   this.defaultAppIcon = 'assets/imgs/ic_launcher.png';
+    //   this.parentId = extras.parentId;
+    // }
+   }
 
   ngOnInit(): void {
   }
+
+  setContentId(id: string) {
+    console.log('extractedUrl', this.router);
+
+    // if (this.navCtrl.getActive().component['pageName'] === 'TextBookTocPage') {
+    const values = new Map();
+    values['unitClicked'] = id;
+    // values['parentId'] = this.parentId;
+    this.telemetryService.generateInteractTelemetry(
+      InteractType.TOUCH,
+      InteractSubtype.SUBUNIT_CLICKED,
+      Environment.HOME,
+      PageId.TEXTBOOK_TOC,
+      undefined,
+      values
+    );
+    this.textbookTocService.setTextbookIds({rootUnitId: this.rootUnitId, contentId: id});
+    // this.navCtrl.pop();
+    // this.location.back();
+    // }
+}
 
   navigateToDetailsPage(content: Content, depth) {
     //   migration-TODO : remove unnecessary
@@ -105,6 +154,20 @@ export class CollectionChildComponent implements OnInit {
         cssClass: 'sb-popover warning',
       });
       popover.present();
+    }
+  }
+
+  hasMimeType(activeMimeType: string[], mimeType: string, content): boolean {
+    if (!activeMimeType) {
+        return true;
+    } else {
+        if (activeMimeType.indexOf('all') > -1) {
+            // if (content.contentData.mimeType === MimeType.COLLECTION && !content.children) {
+            //     return false;
+            // }
+            return true;
+        }
+        return !!activeMimeType.find( m => m === mimeType);
     }
   }
 }
