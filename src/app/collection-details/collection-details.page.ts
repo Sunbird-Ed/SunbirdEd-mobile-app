@@ -984,7 +984,7 @@ export class CollectionDetailsPage {
     switch ($event.name) {
       case 'share': this.share();
         break;
-      case 'more': this.showOverflowMenu($event);
+      case 'more': this.showOverflowMenu($event.event);
         break;
       case 'back': this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.COLLECTION_DETAIL, Environment.HOME,
         true, this.cardData.identifier, this.corRelationList);
