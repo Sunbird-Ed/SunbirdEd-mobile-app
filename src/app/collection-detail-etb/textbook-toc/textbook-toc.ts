@@ -3,7 +3,7 @@ import { SbGenericPopoverComponent } from './../../components/popups/sb-generic-
 import { AppHeaderService } from './../../../services/app-header.service';
 import { TextbookTocService } from './../textbook-toc-service';
 import { Component, ViewChild, ElementRef, ViewEncapsulation, OnInit } from '@angular/core';
-import { NavController, NavParams, Platform, PopoverController } from '@ionic/angular';
+import { Platform, PopoverController } from '@ionic/angular';
 import { CommonUtilService } from '@app/services/common-util.service';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import {
@@ -32,6 +32,8 @@ export class TextBookTocPage implements OnInit {
     childrenData: Array<any>;
     activeMimeTypeFilter = ['all'];
     parentId: any;
+    showLoading = false;
+    isDownloadStarted = false;
 
     @ViewChild('stickyPillsRef') stickyPillsRef: ElementRef;
 
