@@ -23,6 +23,10 @@
     .ngx-datatable.material .datatable-header .datatable-row-center .assessment-header1 {
         padding-left: 20px;
     }
+
+    .ngx-datatable.scroll-vertical .datatable-body {
+        height: auto !important;
+    }
     
     #datatable.ngx-datatable.material .datatable-header .datatable-header-cell .datatable-header-cell-template-wrap .datatable-header-cell-label {
         padding: 1.5em 0;

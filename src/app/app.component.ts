@@ -237,13 +237,14 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   handleBackButton() {
     this.platform.backButton.subscribeWithPriority(0, () => {
-      console.log("URL"+this.router.url);
+      console.log('URL' + this.router.url);
       if(this.router.url === RouterLinks.LIBRARY_TAB || this.router.url == RouterLinks.COURSE_TAB 
       || this.router.url === RouterLinks.DOWNLOAD_TAB || this.router.url == RouterLinks.PROFILE_TAB || 
       this.router.url == RouterLinks.GUEST_PROFILE_TAB) {
         this.commonUtilService.showExitPopUp(this.activePageService.computePageId(this.router.url), Environment.HOME, false);
       } else {
-        this.routerOutlet.pop();
+        // this.routerOutlet.pop();
+        this.location.back && this.location.back();
       }
       // migration-TODO
       // let navObj = this.app.getRootNavs()[0];
@@ -467,7 +468,7 @@ export class AppComponent implements OnInit, AfterViewInit {
             this.commonUtilService.showExitPopUp(this.activePageService.computePageId(this.router.url), Environment.HOME, false);
           } else {
           // this.routerOutlet.pop();
-          this.location.back();
+            this.location.back && this.location.back();
           }
       }
     } else {
