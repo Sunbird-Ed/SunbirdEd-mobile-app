@@ -36,7 +36,7 @@ import { RouterLinks } from '@app/app/app.constant';
   templateUrl: './create-group.page.html',
   styleUrls: ['./create-group.page.scss'],
 })
-export class CreateGroupPage implements OnInit, OnDestroy {
+export class CreateGroupPage implements OnInit {
   groupEditForm: FormGroup;
   classList = [];
   group: Group;
@@ -90,18 +90,18 @@ export class CreateGroupPage implements OnInit, OnDestroy {
     this.headerService.showHeaderWithBackButton([], this.commonUtilService.translateMessage(headerTitle));
   }
 
-  ngOnInit() {
-    this.zone.run(() => {
-      this.backButtonFunc = this.platform.backButton.subscribe(() => {
-        this.location.back();
-        this.backButtonFunc.unsubscribe();
-      });
+  ionViewWillEnter() {
+    this.backButtonFunc = this.platform.backButton.subscribeWithPriority(10, () => {
+      this.location.back();
     });
+  }
+
+  ngOnInit() {
     this.loadTelemetry();
     this.getSyllabusDetails();
   }
 
-  ngOnDestroy() {
+  ionViewWillLeave() {
     if (this.backButtonFunc) {
       this.backButtonFunc.unsubscribe();
     }

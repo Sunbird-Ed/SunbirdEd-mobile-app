@@ -10,7 +10,7 @@ import {
   PageId
 } from '@app/services/telemetry-constants';
 import { Component, OnInit, Inject, NgZone } from '@angular/core';
-import { LoadingController, NavController } from '@ionic/angular';
+import { LoadingController, Platform } from '@ionic/angular';
 import { GroupReportAlertComponent } from '../group-report-alert/group-report-alert.component';
 import { TranslateService } from '@ngx-translate/core';
 import { File } from '@ionic-native/file/ngx';
@@ -18,6 +18,8 @@ import { DatePipe } from '@angular/common';
 import { DeviceInfo, Profile, ReportSummary, SummarizerService, SummaryRequest } from 'sunbird-sdk';
 import { FileTransfer, FileTransferObject } from '@ionic-native/file-transfer/ngx';
 import { Router } from '@angular/router';
+import { Subscription } from 'rxjs/Subscription';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-group-report-list',
@@ -72,6 +74,8 @@ export class GroupReportListComponent implements OnInit {
   report: ReportSummary;
 
   fileTransfer: FileTransferObject = this.transfer.create();
+  private deviceBackButton: Subscription;
+
   constructor(
     private loading: LoadingController,
     private zone: NgZone,
@@ -84,10 +88,11 @@ export class GroupReportListComponent implements OnInit {
     private file: File,
     private datePipe: DatePipe,
     @Inject('DEVICE_INFO') private deviceInfo: DeviceInfo,
-    private navCtrl: NavController,
     private commonUtilService: CommonUtilService,
     private headerService: AppHeaderService,
-    private router: Router
+    private router: Router,
+    private location: Location,
+    private platform: Platform,
   ) {
     const state = this.router.getCurrentNavigation().extras.state;
     if (state) {
@@ -112,6 +117,7 @@ export class GroupReportListComponent implements OnInit {
   }
   ionViewWillEnter() {
     this.fetchAssessment(this.reportType, false);
+    this.enableBackBtn();
   }
 
   async fetchAssessment(event: string, fromUserList: boolean) {
@@ -338,5 +344,19 @@ export class GroupReportListComponent implements OnInit {
       );
   }
 
+  enableBackBtn() {
+    this.deviceBackButton = this.platform.backButton.subscribeWithPriority(11, () => {
+      this.goBack();
+    });
+  }
+
+  goBack() {
+    this.location.back();
+  }
+
+  ionViewWillLeave() {
+    this.deviceBackButton && this.deviceBackButton.unsubscribe();
+    this.deviceBackButton = undefined;
+  }
 
 }
