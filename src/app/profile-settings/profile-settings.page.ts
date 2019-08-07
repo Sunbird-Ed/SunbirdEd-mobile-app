@@ -171,7 +171,7 @@ export class ProfileSettingsPage implements OnInit {
     if (defaultSelectElement) {
       defaultSelectElement.forEach((element) => {
         element['shadowRoot'].querySelector('.select-icon-inner')
-          .setAttribute('style', 'border: solid blue;border-width: 0 2px 2px 0;display: inline-block;padding: 4px;transform: rotate(45deg);animation: dropDown 5s linear infinite;animation-duration: 0.9s;');
+          .setAttribute('style', 'border: solid blue;border-width: 0 2px 2px 0;display: inline-block;padding: 4px;transform: rotate(45deg);animation: upDownAnimate 5s linear infinite;animation-duration: 0.9s;');
       });
     }
 

@@ -1408,13 +1408,17 @@ export class CollectionDetailEtbPage implements OnInit {
           update: true
         });
         this.commonUtilService.showToast('MSG_RESOURCE_DELETED');
-        this.popoverCtrl.dismiss('delete.success');
+
+        // This is added to replace this event which was handled elsewhere in a wrong way
+            // this.popoverCtrl.dismiss('delete.success');
+        this.location.back();
+        
       }
     }).catch(async (error: any) => {
       await loader.dismiss();
       console.log('delete response: ', error);
       this.commonUtilService.showToast('CONTENT_DELETE_FAILED');
-      this.popoverCtrl.dismiss();
+      // this.popoverCtrl.dismiss();
     });
   }
 

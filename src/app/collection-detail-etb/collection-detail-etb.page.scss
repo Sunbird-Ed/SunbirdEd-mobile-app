@@ -1,7 +1,7 @@
 @import "src/assets/styles/base/_variables.scss";
 @import "src/assets/styles/_custom-mixins.scss";
 @import "src/assets/styles/_variables.scss";
-:host {
+// :host {
   .sb-slider-pills-container{
     .sb-grade-pills-container{
       .pill{
@@ -635,7 +635,9 @@
   .box-align {
     // margin-right: 18px;
   }
-}
+// }
+
+
 .sb-chapter-dd{
   @include clearfix;
   color: $blue;
