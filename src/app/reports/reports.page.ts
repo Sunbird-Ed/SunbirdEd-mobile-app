@@ -1,7 +1,6 @@
 import { ActivatedRoute, Router, NavigationExtras } from '@angular/router';
 import { Component, Inject, OnInit, NgZone } from '@angular/core';
-import { LoadingController } from '@ionic/angular';
-// import { ReportListPage } from './report-list/report-list';
+import { LoadingController, Platform } from '@ionic/angular';
 import {
   GetAllProfileRequest,
   Group,
@@ -21,8 +20,9 @@ import {
   PageId
 } from '@app/services/telemetry-constants';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
-
 import { ProfileConstants, RouterLinks } from '@app/app/app.constant';
+import { Location } from '@angular/common';
+import { Subscription } from 'rxjs/Subscription';
 
 @Component({
   selector: 'app-reports',
@@ -38,6 +38,7 @@ export class ReportsPage implements OnInit {
   groups;
   currentGroups: {};
   private profileDetails: any;
+  private deviceBackButton: Subscription;
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -47,7 +48,9 @@ export class ReportsPage implements OnInit {
     private telemetryGeneratorService: TelemetryGeneratorService,
     private headerService: AppHeaderService,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private location: Location,
+    private platform: Platform,
   ) {
     if (this.router.getCurrentNavigation().extras.state) {
       this.profileDetails = this.router.getCurrentNavigation().extras.state.profile;
@@ -55,7 +58,6 @@ export class ReportsPage implements OnInit {
   }
 
   async ngOnInit() {
-    this.headerService.hideHeader();
     this.telemetryGeneratorService.generateImpressionTelemetry(
       ImpressionType.VIEW,
       '',
@@ -85,11 +87,15 @@ export class ReportsPage implements OnInit {
       .catch(async () => {
         await loader.dismiss();
       });
+    this.enableBackBtn();
+  }
+
+  ionViewWillEnter() {
+    this.headerService.hideHeader();
   }
 
   async populateUsers() {
     const that = this;
-
     return new Promise<Array<any>>((resolve, reject) => {
       const getAllProfileRequest: GetAllProfileRequest = {
         local: true
@@ -196,4 +202,20 @@ export class ReportsPage implements OnInit {
       PageId.REPORTS_USER_GROUP
     );
   }
+
+  enableBackBtn() {
+    this.deviceBackButton = this.platform.backButton.subscribeWithPriority(10, () => {
+      this.goBack();
+    });
+  }
+
+  goBack() {
+    this.location.back();
+  }
+
+  ionViewWillLeave() {
+    this.deviceBackButton && this.deviceBackButton.unsubscribe();
+    this.deviceBackButton = undefined;
+  }
+
 }

@@ -1,13 +1,18 @@
 <ion-header>
   <ion-toolbar no-border-bottom>
-      <ion-title ellipsis>
-          {{contentName}}
-      </ion-title>
-      <ion-buttons slot="end">
-          <ion-button icon-only (click)='importcsv()'>
-            <ion-icon ios="ios-download" md="md-download"></ion-icon>
-          </ion-button>
-        </ion-buttons>
+    <ion-buttons class="sb-hamburger" slot="start">
+        <ion-button (click)="goBack()">
+            <ion-icon slot="icon-only" name="arrow-back"></ion-icon>
+        </ion-button>
+    </ion-buttons>
+    <ion-title ellipsis>
+        {{contentName}}
+    </ion-title>
+    <ion-buttons slot="end">
+        <ion-button icon-only (click)='importcsv()'>
+        <ion-icon ios="ios-download" md="md-download"></ion-icon>
+        </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 
   <ion-toolbar no-border-top>

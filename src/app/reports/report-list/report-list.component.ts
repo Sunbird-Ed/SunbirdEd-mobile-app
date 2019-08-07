@@ -5,7 +5,7 @@ import { TelemetryGeneratorService } from '@app/services/telemetry-generator.ser
 import { AppHeaderService } from '@app/services/app-header.service';
 import { Environment, ImpressionType, InteractSubtype, InteractType, ObjectType, PageId } from '@app/services/telemetry-constants';
 import { CommonUtilService } from '@app/services/common-util.service';
-import { ActivatedRoute, Router, NavigationExtras } from '@angular/router';
+import { Router, NavigationExtras } from '@angular/router';
 import { RouterLinks } from '@app/app/app.constant';
 import { Subscription } from 'rxjs/Subscription';
 import { Location } from '@angular/common';
@@ -36,7 +36,6 @@ export class ReportListComponent implements OnInit {
     private telemetryGeneratorService: TelemetryGeneratorService,
     private headerService: AppHeaderService,
     private commonUtilService: CommonUtilService,
-    private route: ActivatedRoute,
     private router: Router,
     private platform: Platform,
     private location: Location
@@ -60,24 +59,23 @@ export class ReportListComponent implements OnInit {
   }
   ionViewWillEnter() {
     this.handleDeviceBackButton();
-
+    this.headerService.showHeaderWithBackButton(null, this.commonUtilService.translateMessage('REPORTS'));
   }
 
   handleDeviceBackButton() {
-    this.backButtonFunc = this.platform.backButton.subscribe(() => {
-      this.location.back();
-      this.backButtonFunc.unsubscribe();
+    this.backButtonFunc = this.platform.backButton.subscribeWithPriority(11, () => {
+      this.goBack();
     });
   }
 
   ionViewWillLeave() {
     if (this.backButtonFunc) {
       this.backButtonFunc.unsubscribe();
+      this.backButtonFunc = undefined;
     }
   }
 
   async ngOnInit() {
-    this.headerService.hideHeader();
     this.telemetryGeneratorService.generateImpressionTelemetry(
       ImpressionType.VIEW, '',
       PageId.REPORTS_ASSESMENT_CONTENT_LIST,
@@ -143,5 +141,8 @@ export class ReportListComponent implements OnInit {
       }
   }
 
+  goBack() {
+    this.location.back();
+  }
 
 }

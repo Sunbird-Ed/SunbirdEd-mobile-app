@@ -116,8 +116,10 @@ export class GuestEditPage implements OnInit {
     private router: Router,
     private location: Location
   ) {
-    this.isNewUser = Boolean(this.router.getCurrentNavigation().extras.state.isNewUser);
-    this.isCurrentUser = Boolean(this.router.getCurrentNavigation().extras.state.isCurrentUser);
+    if (this.router.getCurrentNavigation().extras.state) {
+      this.isNewUser = Boolean(this.router.getCurrentNavigation().extras.state.isNewUser);
+      this.isCurrentUser = Boolean(this.router.getCurrentNavigation().extras.state.isCurrentUser);
+    }
 
     if (this.isNewUser) {
       this.profile = this.router.getCurrentNavigation().extras.state.lastCreatedProfile || {};
@@ -182,6 +184,7 @@ export class GuestEditPage implements OnInit {
   ionViewWillLeave() {
     if (this.unregisterBackButton) {
       this.unregisterBackButton.unsubscribe();
+      this.unregisterBackButton = undefined;
     }
   }
 
@@ -321,6 +324,7 @@ export class GuestEditPage implements OnInit {
           });
         }
       }).catch((error) => {
+        this._dismissLoader();
         console.error('Error => ', error);
       });
   }
@@ -355,8 +359,8 @@ export class GuestEditPage implements OnInit {
 
     } else {
       const request: GetFrameworkCategoryTermsRequest = {
-        currentCategoryCode: this.categories[index - 1].code,
-        prevCategoryCode: this.categories[index - 2].code,
+        currentCategoryCode: this.categories[index - 1] ? this.categories[index - 1].code : '',
+        prevCategoryCode: this.categories[index - 2] ? this.categories[index - 2].code : '',
         selectedTermsCodes: prevSelectedValue,
         language: this.translate.currentLang,
         requiredCategories: FrameworkCategoryCodesGroup.DEFAULT_FRAMEWORK_CATEGORIES,

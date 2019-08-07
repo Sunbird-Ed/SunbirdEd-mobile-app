@@ -30,7 +30,7 @@ import { RouterLinks } from '@app/app/app.constant';
   templateUrl: './group-members.page.html',
   styleUrls: ['./group-members.page.scss'],
 })
-export class GroupMembersPage implements OnInit, OnDestroy {
+export class GroupMembersPage implements OnInit {
   ProfileType = ProfileType;
   group: Group;
   userList: Array<Profile> = [];
@@ -51,7 +51,9 @@ export class GroupMembersPage implements OnInit, OnDestroy {
     private platform: Platform,
     private location: Location
   ) {
-    this.group = this.router.getCurrentNavigation().extras.state.group;
+    if (this.router.getCurrentNavigation().extras.state) {
+      this.group = this.router.getCurrentNavigation().extras.state.group;
+    }
   }
 
   ngOnInit() {
@@ -60,18 +62,12 @@ export class GroupMembersPage implements OnInit, OnDestroy {
       PageId.CREATE_GROUP_USER_SELECTION,
       Environment.USER, this.group.gid ? this.group.gid : '', this.group.gid ? ObjectType.GROUP : ''
     );
-
-    this.zone.run(() => {
-      this.backButtonFunc = this.platform.backButton.subscribe(() => {
-        this.location.back();
-        this.backButtonFunc.unsubscribe();
-      });
-    });
   }
 
-  ngOnDestroy() {
+  ionViewWillLeave() {
     if (this.backButtonFunc) {
       this.backButtonFunc.unsubscribe();
+      this.backButtonFunc = undefined;
     }
   }
 
@@ -79,6 +75,9 @@ export class GroupMembersPage implements OnInit, OnDestroy {
     this.loading = true; // present only loader, untill users are fetched from service
     this.headerService.hideHeader();
     this.getAllProfile();
+    this.backButtonFunc = this.platform.backButton.subscribeWithPriority(10, () => {
+      this.location.back();
+    });
   }
 
   // method below fetches the last created user
@@ -138,11 +137,13 @@ export class GroupMembersPage implements OnInit, OnDestroy {
 
   selectAll() {
     this.userSelectionMap.clear();
-    this.zone.run(() => {
-      for (let i = 0; i < this.userList.length; i++) {
-        this.userSelectionMap.set(this.userList[i].uid, true);
-      }
-    });
+    // this.zone.run(() => {
+    for (let i = 0; i < this.userList.length; i++) {
+      this.userSelectionMap.set(this.userList[i].uid, true);
+      console.log(this.userSelectionMap.get(this.userList[i].uid));
+      console.log(this.userSelectionMap);
+    }
+    // });
   }
 
 

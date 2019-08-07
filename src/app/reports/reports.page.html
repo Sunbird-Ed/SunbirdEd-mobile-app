@@ -1,5 +1,10 @@
 <ion-header>
   <ion-toolbar no-border-bottom>
+    <ion-buttons class="sb-hamburger" slot="start">
+      <ion-button (click)="goBack()">
+        <ion-icon slot="icon-only" name="arrow-back"></ion-icon>
+      </ion-button>
+    </ion-buttons>
     <ion-title ellipsis>
       {{ 'REPORTS' | translate}}
     </ion-title>
