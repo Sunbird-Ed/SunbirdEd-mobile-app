@@ -35,7 +35,7 @@ export class FaqHelpPage implements OnInit {
   consumptionFaqUrl: SafeResourceUrl;
 
   faq: any = {
-    url: 'file:///android_asset/www/assets/faq/consumption-faqs.html?selectedlang=en&randomid=' + Math.random()
+    url: './assets/faq/consumption-faqs.html?selectedlang=en&randomid=' + Math.random()
   };
   selectedLanguage: string;
   chosenLanguageString: any;
@@ -53,7 +53,6 @@ export class FaqHelpPage implements OnInit {
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
     @Inject('DEVICE_INFO') private deviceInfo: DeviceInfo,
-    private loadingCtrl: LoadingController,
     private domSanitizer: DomSanitizer,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private socialSharing: SocialSharing,
@@ -134,30 +133,20 @@ export class FaqHelpPage implements OnInit {
   registerDeviceBackButton() {
     this.backButtonFunc = this.platform.backButton.subscribeWithPriority(11, () => {
       this.handleBackButton();
-      this.backButtonFunc.unsubscribe();
     });
   }
 
   handleBackButton() {
-    const length = this.iframe.nativeElement.contentWindow.location.href.split('/').length;
-    if (this.iframe.nativeElement.contentWindow.location.href.split('/')[length - 1].startsWith('consumption') ||
-      this.iframe.nativeElement.contentWindow.history.length === 1) {
-      this.location.back();
-      if (this.backButtonFunc) {
-        this.backButtonFunc.unsubscribe();
-      }
-    } else {
-      this.iframe.nativeElement.contentWindow.history.go(-1);
-    }
+    this.location.back();
   }
 
-  onLoad() {
+  async onLoad() {
     const element = document.getElementsByTagName('iframe')[0];
     if (element && element.contentDocument) {
       if (element.contentDocument.documentElement.getElementsByTagName('body')[0].innerHTML.length !== 0 && this.loading) {
         const appData = { appName: this.appName };
         element.contentWindow.postMessage(appData, '*');
-        this.loading.dismiss();
+        await this.loading.dismiss();
       }
       if (element.contentDocument.documentElement.getElementsByTagName('body').length === 0 ||
         element['contentWindow'].location.href.startsWith('chrome-error:')
@@ -171,7 +160,7 @@ export class FaqHelpPage implements OnInit {
     if (this.loading) {
       this.loading.dismiss();
     }
-    this.faq.url = 'file:///android_asset/www/assets/faq/consumption-faqs.html?selectedlang=en&randomid=' + Math.random();
+    this.faq.url = './assets/faq/consumption-faqs.html?selectedlang=en&randomid=' + Math.random();
     this.consumptionFaqUrl = this.domSanitizer.bypassSecurityTrustResourceUrl(this.faq.url);
   }
 
@@ -254,7 +243,10 @@ export class FaqHelpPage implements OnInit {
   }
 
   ionViewWillLeave() {
-    this.backButtonFunc && this.backButtonFunc.unsubscribe();
+    if (this.backButtonFunc) {
+      this.backButtonFunc.unsubscribe();
+    }
+    this.headerObservable.unsubscribe();
   }
 
 }
