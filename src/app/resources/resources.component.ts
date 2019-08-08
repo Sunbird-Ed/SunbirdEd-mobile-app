@@ -691,12 +691,12 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
   // Offline Toast
   async presentToastForOffline(msg: string) {
     this.toast = await this.toastController.create({
-      duration: 3000,
+      duration: 30000,
       message: this.commonUtilService.translateMessage(msg),
       showCloseButton: true,
       position: 'top',
-      closeButtonText: '',
-      cssClass: 'toastHeader'
+      closeButtonText: 'X',
+      cssClass: ['toastHeader','offline']
     });
     this.toast.present();
     this.toast.onDidDismiss(() => {
