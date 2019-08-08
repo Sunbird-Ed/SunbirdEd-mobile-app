@@ -1,4 +1,9 @@
 /*sb-offline-toast default taost of ionic */
+.offline {
+  --background: #e55a28 !important;
+  --color: #FFF !important;
+  --button-color: #FFF !important;
+}
 .toastAfterHeader{
     position: fixed;
     top:50px;
