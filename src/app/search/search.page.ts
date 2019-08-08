@@ -1,105 +1,113 @@
-import { BatchConstants, RouterLinks } from './../../app/app.constant';
-import { Component, Inject, NgZone, OnDestroy, ViewChild } from '@angular/core';
-import { Events, NavController, NavParams, Platform, PopoverController } from '@ionic/angular';
+import { Component, Inject, NgZone, OnDestroy, ViewChild, ChangeDetectorRef } from '@angular/core';
+import { Router } from '@angular/router';
+import { Events, Platform, PopoverController, IonContent } from '@ionic/angular';
+import { TranslateService } from '@ngx-translate/core';
+import { Subscription } from 'rxjs/Subscription';
+import { Observable } from 'rxjs/Observable';
+import { Location } from '@angular/common';
+import each from 'lodash/each';
+import find from 'lodash/find';
+import map from 'lodash/map';
 import {
   CachedItemRequestSourceFrom, Content, ContentDetailRequest, ContentEventType, ContentImport, ContentImportRequest,
   ContentImportResponse, ContentImportStatus, ContentSearchCriteria, ContentSearchResult, ContentService,
   CorrelationData, DownloadEventType, DownloadProgress, EventsBusEvent, EventsBusService, PageAssembleCriteria,
   PageAssembleFilter, PageAssembleService, PageName, ProfileType, SearchType, SharedPreferences, TelemetryObject,
   NetworkError, CourseService, CourseBatchesRequest, CourseEnrollmentType, CourseBatchStatus, Course, Batch,
-  FetchEnrolledCourseRequest
+  FetchEnrolledCourseRequest, Profile, ProfileService, Framework,
+  FrameworkCategoryCodesGroup,
+  FrameworkDetailsRequest,
+  FrameworkService,
+  FrameworkUtilService,
+  GetSuggestedFrameworksRequest, SearchEntry, SearchHistoryService
 } from 'sunbird-sdk';
-import { Location } from '@angular/common';
-import { Map } from '../../app/telemetryutil';
-import { AudienceFilter, ContentType, MimeType, Search, ContentCard } from '../../app/app.constant';
-import { AppGlobalService } from '../../services/app-global-service.service';
-import { FormAndFrameworkUtilService } from '../../services/formandframeworkutil.service';
-import { CommonUtilService } from '../../services/common-util.service';
-import { TelemetryGeneratorService } from '../../services/telemetry-generator.service';
-import { TranslateService } from '@ngx-translate/core';
-import { Subscription } from 'rxjs/Subscription';
+
+import { Map } from '@app/app/telemetryutil';
+import { 
+  BatchConstants, 
+  RouterLinks, AudienceFilter, 
+  ContentType, MimeType, Search, ContentCard, 
+  ContentFilterConfig } from '@app/app/app.constant';
+import { AppGlobalService } from '@app/services/app-global-service.service';
+import { FormAndFrameworkUtilService } from '@app/services/formandframeworkutil.service';
+import { CommonUtilService } from '@app/services/common-util.service';
+import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import {
   Environment, ImpressionType, InteractSubtype, InteractType, LogLevel, Mode, PageId
-} from '../../services/telemetry-constants';
-import { AppHeaderService } from '../../services/app-header.service';
-import { Router } from '@angular/router';
-
+} from '@app/services/telemetry-constants';
+import { AppHeaderService } from '@app/services/app-header.service';
+import { AppVersion } from '@ionic-native/app-version/ngx';
+import { EnrollmentDetailsPage } from '../enrolled-course-details-page/enrollment-details-page/enrollment-details-page';
+import { SearchHistoryNamespaces } from '@app/config/search-history-namespaces';
+import { featureIdMap } from '@app/app/feature-id-map';
+declare const cordova;
 @Component({
   selector: 'app-search',
   templateUrl: './search.page.html',
-  styleUrls: ['./search.page.scss'],
+  styleUrls: ['./search.page.scss']
 })
 export class SearchPage implements OnDestroy {
+  public searchHistory$: Observable<SearchEntry[]>;
+  appName: string;
   showLoading: boolean;
   downloadProgress: any;
   @ViewChild('searchInput') searchBar;
-
   contentType: Array<string> = [];
-
   source: string;
-
   dialCode: string;
-
   dialCodeResult: Array<any> = [];
-
   dialCodeContentResult: Array<any> = [];
-
   searchContentResult: Array<any> = [];
-
   showLoader = false;
-
   filterIcon;
-
   searchKeywords = '';
-
   responseData: any;
-
   isDialCodeSearch = false;
-
   showEmptyMessage: boolean;
-
   defaultAppIcon: string;
-
   isEmptyResult = false;
-
   queuedIdentifiers = [];
-
   isDownloadStarted = false;
-
   currentCount = 0;
-
   parentContent: any = undefined;
-
   childContent: any = undefined;
-
   loadingDisplayText = 'Loading content';
-
   audienceFilter = [];
-
   eventSubscription?: Subscription;
-
   displayDialCodeResult: any;
-  profile: any;
+  profile: Profile;
   isFirstLaunch = false;
   shouldGenerateEndTelemetry = false;
   backButtonFunc: Subscription;
   isSingleContent = false;
   currentFrameworkId = '';
   selectedLanguageCode = '';
-  // @ViewChild(Navbar) navBar: Navbar;
   private corRelationList: Array<CorrelationData>;
   layoutName = 'search';
   enrolledCourses: any;
   guestUser: any;
   batches: any;
-  // migration-TODO
   loader?: any;
   userId: any;
-  @ViewChild('contentView') contentView: any;
+  identifier: string;
+  categories: Array<any> = [];
+  boardList: Array<any> = [];
+  mediumList: Array<any> = [];
+  gradeList: Array<any> = [];
+  isProfileUpdated: boolean;
+  @ViewChild('contentView') contentView: IonContent;
   constructor(
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
-    // private navParams: NavParams,
-    private navCtrl: NavController,
+    @Inject('PAGE_ASSEMBLE_SERVICE') private pageService: PageAssembleService,
+    @Inject('EVENTS_BUS_SERVICE') private eventsBusService: EventsBusService,
+    @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
+    @Inject('PROFILE_SERVICE') private profileService: ProfileService,
+    @Inject('FRAMEWORK_SERVICE') private frameworkService: FrameworkService,
+    @Inject('FRAMEWORK_UTIL_SERVICE') private frameworkUtilService: FrameworkUtilService,
+    @Inject('COURSE_SERVICE') private courseService: CourseService,
+    @Inject('SEARCH_HISTORY_SERVICE') private searchHistoryService: SearchHistoryService,
+    private appVersion: AppVersion,
+    private changeDetectionRef: ChangeDetectorRef,
     private zone: NgZone,
     private event: Events,
     private events: Events,
@@ -109,35 +117,67 @@ export class SearchPage implements OnDestroy {
     private commonUtilService: CommonUtilService,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private translate: TranslateService,
-    @Inject('PAGE_ASSEMBLE_SERVICE') private pageService: PageAssembleService,
-    @Inject('EVENTS_BUS_SERVICE') private eventsBusService: EventsBusService,
-    @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
     private headerService: AppHeaderService,
-    @Inject('COURSE_SERVICE') private courseService: CourseService,
     private popoverCtrl: PopoverController,
     private location: Location,
     private router: Router
   ) {
 
-    console.log('extranavigation', this.router.getCurrentNavigation().extras.state.content);
-    this.dialCode = this.router.getCurrentNavigation().extras.state.dialCode;
-    this.contentType = this.router.getCurrentNavigation().extras.state.contentType;
-    this.corRelationList = this.router.getCurrentNavigation().extras.state.corRelation;
-    this.source = this.router.getCurrentNavigation().extras.state.source;
-    this.enrolledCourses = this.router.getCurrentNavigation().extras.state.enrolledCourses;
-    this.guestUser = this.router.getCurrentNavigation().extras.state.guestUser;
-    this.userId = this.router.getCurrentNavigation().extras.state.userId;
-    this.shouldGenerateEndTelemetry = this.router.getCurrentNavigation().extras.state.shouldGenerateEndTelemetry;
+    const extras = this.router.getCurrentNavigation().extras.state;
+
+    if (extras) {
+      console.log('extranavigation', extras.content);
+      this.dialCode = extras.dialCode;
+      this.contentType = extras.contentType;
+      this.corRelationList = extras.corRelation;
+      this.source = extras.source;
+      this.enrolledCourses = extras.enrolledCourses;
+      this.guestUser = extras.guestUser;
+      this.userId = extras.userId;
+      this.shouldGenerateEndTelemetry = extras.shouldGenerateEndTelemetry;
+    }
 
     this.checkUserSession();
-
     this.isFirstLaunch = true;
-
     this.init();
-
     this.defaultAppIcon = 'assets/imgs/ic_launcher.png';
     this.getFrameworkId();
     this.selectedLanguageCode = this.translate.currentLang;
+  }
+
+  ngOnInit(): void {
+    this.getAppName();
+
+    this.searchHistory$ = this.searchBar && (this.searchBar as any).ionChange
+      .map((e) => e.value)
+      .share()
+      .startWith('')
+      .debounceTime(500)
+      .switchMap((v) => {
+        if (v) {
+          return this.searchHistoryService.getEntries({
+            like: v,
+            limit: 5,
+            namespace: this.source === PageId.LIBRARY ? SearchHistoryNamespaces.LIBRARY : SearchHistoryNamespaces.COURSE
+          });
+        }
+
+        return this.searchHistoryService.getEntries({
+          limit: 10,
+          namespace: this.source === PageId.LIBRARY ? SearchHistoryNamespaces.LIBRARY : SearchHistoryNamespaces.COURSE
+        });
+      })
+      .do((v) => {
+        setTimeout(() => {
+          this.changeDetectionRef.detectChanges();
+        });
+      }) as any;
+
+    // this.navBar.backButtonClick = () => {
+    //   this.telemetryGeneratorService.generateBackClickedTelemetry(ImpressionType.SEARCH,
+    //     Environment.HOME, true, undefined, this.corRelationList);
+    //   this.navigateToPreviousPage();
+    // };
   }
 
   ionViewWillEnter() {
@@ -156,12 +196,22 @@ export class SearchPage implements OnDestroy {
     this.checkUserSession();
   }
 
-  ionViewDidLoad() {
-    // this.navBar.backButtonClick = () => {
-    //   this.telemetryGeneratorService.generateBackClickedTelemetry(ImpressionType.SEARCH,
-    //     Environment.HOME, true, undefined, this.corRelationList);
-    //   this.navigateToPreviousPage();
-    // };
+  onSearchHistoryTap(searchEntry: SearchEntry) {
+    this.searchKeywords = searchEntry.query;
+    this.handleSearch();
+
+    this.telemetryGeneratorService.generateInteractTelemetry(
+      InteractType.TOUCH,
+      InteractSubtype.SEARCH_HISTORY_CLICKED,
+      Environment.HOME,
+      PageId.SEARCH,
+      undefined,
+      {
+        'selectedSearchHistory': searchEntry.query
+      },
+      undefined,
+      featureIdMap.searchHistory.SEARCH_HISTORY_QUERY_FROM_HISTORY
+    );
   }
 
   ionViewWillLeave() {
@@ -177,6 +227,13 @@ export class SearchPage implements OnDestroy {
     if (this.eventSubscription) {
       this.eventSubscription.unsubscribe();
     }
+  }
+
+  private async getAppName() {
+    return this.appVersion.getAppName()
+      .then((appName: any) => {
+        this.appName = appName;
+      });
   }
 
   getFrameworkId() {
@@ -198,11 +255,9 @@ export class SearchPage implements OnDestroy {
       if ((this.source === PageId.PERMISSION || this.source === PageId.ONBOARDING_PROFILE_PREFERENCES)
         && this.appGlobalService.isOnBoardingCompleted) {
         if (this.appGlobalService.isProfileSettingsCompleted || !this.appGlobalService.DISPLAY_ONBOARDING_CATEGORY_PAGE) {
-          // this.navCtrl.setRoot(TabsPage, {
-          //   loginMode: 'guest'
-          // });
+          this.router.navigate([`/${RouterLinks.TABS}`], { state: { loginMode: 'guest' } });
         } else {
-          // this.navCtrl.setRoot('ProfileSettingsPage', { isCreateNavigationStack: false, hideBackButton: true });
+          this.router.navigate([`/${RouterLinks.PROFILE_SETTINGS}`], { state: { isCreateNavigationStack: false, hideBackButton: true } });
         }
       } else {
         this.popCurrentPage();
@@ -213,19 +268,11 @@ export class SearchPage implements OnDestroy {
   }
 
   popCurrentPage() {
-    // this.navCtrl.pop();
     this.location.back();
-    this.backButtonFunc.unsubscribe();
-  }
-
-  goBack() {
-    this.navigateToPreviousPage();
-    this.telemetryGeneratorService.generateBackClickedTelemetry(ImpressionType.SEARCH,
-      Environment.HOME, false, undefined, this.corRelationList);
   }
 
   handleDeviceBackButton() {
-    this.backButtonFunc = this.platform.backButton.subscribe(() => {
+    this.backButtonFunc = this.platform.backButton.subscribeWithPriority(10, () => {
       this.navigateToPreviousPage();
       this.telemetryGeneratorService.generateBackClickedTelemetry(ImpressionType.SEARCH,
         Environment.HOME, false, undefined, this.corRelationList);
@@ -268,21 +315,23 @@ export class SearchPage implements OnDestroy {
     let params;
     if (this.shouldGenerateEndTelemetry) {
       params = {
-        content: content,
+        content,
         corRelation: this.corRelationList,
         source: this.source,
         shouldGenerateEndTelemetry: this.shouldGenerateEndTelemetry,
         parentContent: this.parentContent,
         isSingleContent: this.isSingleContent,
-        onboarding: this.appGlobalService.isOnBoardingCompleted
+        onboarding: this.appGlobalService.isOnBoardingCompleted,
+        isProfileUpdated: this.isProfileUpdated
       };
     } else {
       params = {
-        content: content,
+        content,
         corRelation: this.corRelationList,
         parentContent: this.parentContent,
         isSingleContent: this.isSingleContent,
-        onboarding: this.appGlobalService.isOnBoardingCompleted
+        onboarding: this.appGlobalService.isOnBoardingCompleted,
+        isProfileUpdated: this.isProfileUpdated
       };
     }
     if (this.loader) {
@@ -310,7 +359,6 @@ export class SearchPage implements OnDestroy {
           parentContent: params.parentContent
         }
       });
-      // this.formAndFrameworkUtilService.
       if (this.isSingleContent) {
         this.isSingleContent = false;
         // migration-TODO
@@ -338,7 +386,7 @@ export class SearchPage implements OnDestroy {
         }
 
       } else {
-        this.router.navigate([RouterLinks.COLLECTION_DETAILS], {
+        this.router.navigate([RouterLinks.COLLECTION_DETAIL_ETB], {
           state: {
             content: params.content,
             corRelation: params.corRelation,
@@ -347,7 +395,7 @@ export class SearchPage implements OnDestroy {
             parentContent: params.parentContent
           }
         });
-        // this.navCtrl.push(CollectionDetailsEtbPage, params);
+
       }
     } else {
       this.router.navigate([RouterLinks.CONTENT_DETAILS], {
@@ -362,11 +410,221 @@ export class SearchPage implements OnDestroy {
     }
   }
 
+  setGrade(reset, grades) {
+    if (reset) {
+      this.profile.grade = [];
+      this.profile.gradeValue = {};
+    }
+    each(grades, (grade) => {
+      if (grade && this.profile.grade.indexOf(grade) === -1) {
+        if (this.profile.grade && this.profile.grade.length) {
+          this.profile.grade.push(grade);
+        } else {
+          this.profile.grade = [grade];
+        }
+      }
+    });
+  }
+
+  setMedium(reset, mediums) {
+    if (reset) {
+      this.profile.medium = [];
+    }
+    each(mediums, (medium) => {
+      if (medium && this.profile.medium.indexOf(medium) === -1) {
+        if (this.profile.medium && this.profile.medium.length) {
+          this.profile.medium.push(medium);
+        } else {
+          this.profile.medium = [medium];
+        }
+      }
+    });
+  }
+
+  findCode(categoryList: Array<any>, data, categoryType) {
+    if (find(categoryList, (category) => category.name === data[categoryType])) {
+      return find(categoryList, (category) => category.name === data[categoryType]).code;
+    } else {
+      return undefined;
+    }
+  }
+
+  setCurrentProfile(index, data) {
+    if (!this.profile.medium || !this.profile.medium.length) {
+      this.profile.medium = [];
+    }
+    switch (index) {
+      case 0:
+        this.profile.syllabus = [data.framework];
+        this.profile.board = [data.board];
+        this.setMedium(true, data.medium);
+        // this.profile.subject = [data.subject];
+        this.profile.subject = [];
+        this.setGrade(true, data.gradeLevel);
+        break;
+      case 1:
+        this.profile.board = [data.board];
+        this.setMedium(true, data.medium);
+        // this.profile.subject = [data.subject];
+        this.profile.subject = [];
+        this.setGrade(true, data.gradeLevel);
+        break;
+      case 2:
+        this.setMedium(false, data.medium);
+        break;
+      case 3:
+        this.setGrade(false, data.gradeLevel);
+        break;
+    }
+    this.editProfile();
+  }
+
+  checkProfileData(data, profile) {
+    if (data && data.framework) {
+
+      const getSuggestedFrameworksRequest: GetSuggestedFrameworksRequest = {
+        language: this.translate.currentLang,
+        requiredCategories: FrameworkCategoryCodesGroup.DEFAULT_FRAMEWORK_CATEGORIES
+      };
+      // Auto update the profile if that board/framework is listed in custodian framework list.
+      this.frameworkUtilService.getActiveChannelSuggestedFrameworkList(getSuggestedFrameworksRequest).toPromise()
+        .then((res: Framework[]) => {
+          this.isProfileUpdated = false;
+          res.forEach(element => {
+            // checking whether content data framework Id exists/valid in syllabus list
+            if (data.framework === element.identifier || data.board.indexOf(element.name) !== -1) {
+              this.isProfileUpdated = true;
+              const frameworkDetailsRequest: FrameworkDetailsRequest = {
+                frameworkId: data.framework,
+                requiredCategories: FrameworkCategoryCodesGroup.DEFAULT_FRAMEWORK_CATEGORIES
+              };
+              this.frameworkService.getFrameworkDetails(frameworkDetailsRequest).toPromise()
+                .then((framework: Framework) => {
+                  this.categories = framework.categories;
+                  this.boardList = find(this.categories, (category) => category.code === 'board').terms;
+                  this.mediumList = find(this.categories, (category) => category.code === 'medium').terms;
+                  this.gradeList = find(this.categories, (category) => category.code === 'gradeLevel').terms;
+                  //                  this.subjectList = find(this.categories, (category) => category.code === 'subject').terms;
+                  if (data.board) {
+                    data.board = this.findCode(this.boardList, data, 'board');
+                  }
+                  if (data.medium) {
+                    if (typeof data.medium === 'string') {
+                      data.medium = [this.findCode(this.mediumList, data, 'medium')];
+                    } else {
+                      data.medium = map(data.medium, (dataMedium) => {
+                        return find(this.mediumList, (medium) => medium.name === dataMedium).code;
+                      });
+                    }
+                  }
+                  if (data.gradeLevel && data.gradeLevel.length) {
+                    data.gradeLevel = map(data.gradeLevel, (dataGrade) => {
+                      return find(this.gradeList, (grade) => grade.name === dataGrade).code;
+                    });
+                  }
+                  if (profile && profile.syllabus && profile.syllabus[0] && data.framework === profile.syllabus[0]) {
+                    if (data.board) {
+                      if (profile.board && !(profile.board.length > 1) && data.board === profile.board[0]) {
+                        if (data.medium) {
+                          let existingMedium = false;
+                          for (let i = 0; i < data.medium.length; i++) {
+                            const mediumExists = find(profile.medium, (medium) => {
+                              return medium === data.medium[i];
+                            });
+                            if (!mediumExists) {
+                              break;
+                            }
+                            existingMedium = true;
+                          }
+                          if (!existingMedium) {
+                            this.setCurrentProfile(2, data);
+                          }
+                          if (data.gradeLevel && data.gradeLevel.length) {
+                            let existingGrade = false;
+                            for (let i = 0; i < data.gradeLevel.length; i++) {
+                              const gradeExists = find(profile.grade, (grade) => {
+                                return grade === data.gradeLevel[i];
+                              });
+                              if (!gradeExists) {
+                                break;
+                              }
+                              existingGrade = true;
+                            }
+                            if (!existingGrade) {
+                              this.setCurrentProfile(3, data);
+                            }
+                          }
+                        }
+                      } else {
+                        this.setCurrentProfile(1, data);
+                      }
+                    }
+                  } else {
+                    this.setCurrentProfile(0, data);
+                  }
+                }).catch((err) => {
+                  if (err instanceof NetworkError) {
+                    this.commonUtilService.showToast('ERROR_OFFLINE_MODE');
+                  }
+                });
+
+              return;
+            }
+          });
+        })
+        .catch((err) => {
+          if (err instanceof NetworkError) {
+            this.commonUtilService.showToast('ERROR_OFFLINE_MODE');
+          }
+        });
+    }
+  }
+
+  editProfile() {
+    const req: Profile = {
+      board: this.profile.board,
+      grade: this.profile.grade,
+      medium: this.profile.medium,
+      subject: this.profile.subject,
+      uid: this.profile.uid,
+      handle: this.profile.handle,
+      profileType: this.profile.profileType,
+      source: this.profile.source,
+      createdAt: this.profile.createdAt,
+      syllabus: this.profile.syllabus
+    };
+    if (this.profile.grade && this.profile.grade.length > 0) {
+      this.profile.grade.forEach(gradeCode => {
+        for (let i = 0; i < this.gradeList.length; i++) {
+          if (this.gradeList[i].code === gradeCode) {
+            req.gradeValue = this.profile.gradeValue;
+            req.gradeValue[this.gradeList[i].code] = this.gradeList[i].name;
+            break;
+          }
+        }
+      });
+    }
+
+    this.profileService.updateProfile(req).toPromise()
+      .then((res: any) => {
+        if (res.syllabus && res.syllabus.length && res.board && res.board.length
+          && res.grade && res.grade.length && res.medium && res.medium.length) {
+          this.events.publish(AppGlobalService.USER_INFO_UPDATED);
+          this.events.publish('refresh:profile');
+        }
+        this.appGlobalService.guestUserProfile = res;
+        this.telemetryGeneratorService.generateProfilePopulatedTelemetry(PageId.DIAL_CODE_SCAN_RESULT,
+          req, 'auto');
+      })
+      .catch(() => {
+      });
+  }
+
   showFilter() {
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
       InteractSubtype.FILTER_BUTTON_CLICKED,
       Environment.HOME,
-      this.source, undefined);
+      this.source);
     this.formAndFrameworkUtilService.getLibraryFilterConfig().then((data) => {
       const filterCriteriaData = this.responseData.filterCriteria;
       filterCriteriaData.facetFilters.forEach(element => {
@@ -389,7 +647,7 @@ export class SearchPage implements OnDestroy {
     this.showLoader = true;
     this.responseData.filterCriteria.mode = 'hard';
     this.responseData.filterCriteria.searchType = SearchType.FILTER;
-
+    this.telemetryGeneratorService.generateStartSheenAnimationTelemetry();
     this.contentService.searchContent(this.responseData.filterCriteria).toPromise()
       .then((responseData: ContentSearchResult) => {
 
@@ -413,6 +671,7 @@ export class SearchPage implements OnDestroy {
           } else {
             this.isEmptyResult = true;
           }
+          this.telemetryGeneratorService.generateEndSheenAnimationTelemetry();
           this.showLoader = false;
         });
       }).catch(() => {
@@ -422,18 +681,30 @@ export class SearchPage implements OnDestroy {
       });
   }
 
+  handleCancel() {
+    this.searchKeywords = '';
+    this.searchBar.setFocus();
+    this.searchContentResult = undefined;
+    this.filterIcon = false;
+    this.isEmptyResult = false;
+  }
+
   handleSearch() {
     this.scrollToTop();
     if (this.searchKeywords.length < 3) {
       return;
     }
 
-    this.showLoader = true;
+    this.addSearchHistoryEntry();
 
-    // (<any>window).cordova.plugins.Keyboard.close();
+    this.showLoader = true;
+    if (this.showLoader) {
+      this.telemetryGeneratorService.generateStartSheenAnimationTelemetry();
+    }
+
+    (<any>window).cordova.plugins.Keyboard.close();
 
     const contentSearchRequest: ContentSearchCriteria = {
-
       searchType: SearchType.SEARCH,
       query: this.searchKeywords,
       contentTypes: this.contentType,
@@ -449,22 +720,6 @@ export class SearchPage implements OnDestroy {
     this.dialCodeContentResult = undefined;
     this.dialCodeResult = undefined;
     this.corRelationList = [];
-
-    // if (this.profile) {
-
-    //   if (this.profile.board && this.profile.board.length) {
-    //     contentSearchRequest.board = this.applyProfileFilter(this.profile.board, contentSearchRequest.board, 'board');
-    //   }
-
-    //   if (this.profile.medium && this.profile.medium.length) {
-    //     contentSearchRequest.medium = this.applyProfileFilter(this.profile.medium, contentSearchRequest.medium, 'medium');
-    //   }
-
-    //   if (this.profile.grade && this.profile.grade.length) {
-    //     contentSearchRequest.grade = this.applyProfileFilter(this.profile.grade, contentSearchRequest.grade, 'gradeLevel');
-    //   }
-
-    // }
 
     this.contentService.searchContent(contentSearchRequest).toPromise()
       .then((response: ContentSearchResult) => {
@@ -490,15 +745,30 @@ export class SearchPage implements OnDestroy {
           }
           this.showEmptyMessage = this.searchContentResult.length === 0;
           this.showLoader = false;
+          if (!this.showLoader) {
+            this.telemetryGeneratorService.generateEndSheenAnimationTelemetry();
+          }
         });
       }).catch(() => {
         this.zone.run(() => {
           this.showLoader = false;
+          if (!this.showLoader) {
+            this.telemetryGeneratorService.generateEndSheenAnimationTelemetry();
+          }
           if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
             this.commonUtilService.showToast('ERROR_OFFLINE_MODE');
           }
         });
       });
+  }
+
+  private addSearchHistoryEntry() {
+    this.searchHistoryService
+      .addEntry({
+        query: this.searchKeywords,
+        namespace: this.source === PageId.LIBRARY ? SearchHistoryNamespaces.LIBRARY : SearchHistoryNamespaces.COURSE
+      })
+      .toPromise();
   }
 
   applyProfileFilter(profileFilter: Array<any>, assembleFilter: Array<any>, categoryKey?: string) {
@@ -545,7 +815,7 @@ export class SearchPage implements OnDestroy {
     await this.loader.present();
     this.loader.onDidDismiss(() => { this.loader = undefined; });
     let retiredBatches: Array<any> = [];
-    let anyOpenBatch: Boolean = false;
+    let anyOpenBatch = false;
     await this.getEnrolledCourses(false, true);
     this.enrolledCourses = this.enrolledCourses || [];
     if (layoutName !== ContentCard.LAYOUT_INPROGRESS) {
@@ -592,23 +862,23 @@ export class SearchPage implements OnDestroy {
                   Environment.HOME,
                   PageId.SEARCH, undefined,
                   reqvalues);
-                // const popover = this.popoverCtrl.create(EnrollmentDetailsPage,
-                //   {
-                //     upcommingBatches: this.batches,
-                //     retiredBatched: retiredBatched,
-                //     courseId: content.identifier
-                //   },
-                //   { cssClass: 'enrollement-popover' }
-                // );
+                const popover = await this.popoverCtrl.create({
+                  component: EnrollmentDetailsPage,
+                  componentProps: {
+                    upcommingBatches: this.batches,
+                    retiredBatched,
+                    courseId: content.identifier
+                  },
+                  cssClass: 'enrollement-popover'
+                });
                 await this.loader.dismiss();
-                // popover.present();
-                // popover.onDidDismiss(enrolled => {
-                //   if (enrolled) {
-                //     this.getEnrolledCourses();
-                //   }
-                // });
+                await popover.present();
+                const { data } = await popover.onDidDismiss();
+                if (data && data.isEnrolled) {
+                  this.getEnrolledCourses();
+                }
               } else {
-                this.loader.dismiss();
+                await this.loader.dismiss();
                 this.showContentDetails(content, true);
               }
             });
@@ -617,7 +887,7 @@ export class SearchPage implements OnDestroy {
             console.log('error while fetching course batches ==>', error);
           });
       } else {
-        this.router.navigate([RouterLinks.COURSE_BATCHES]);
+        // this.router.navigate([RouterLinks.COURSE_BATCHES]);
       }
     } else {
       if (this.loader) {
@@ -650,10 +920,11 @@ export class SearchPage implements OnDestroy {
     this.isDialCodeSearch = true;
 
     this.showLoader = true;
+    this.telemetryGeneratorService.generateStartSheenAnimationTelemetry();
 
-    // const contentTypes = await this.formAndFrameworkUtilService.getSupportedContentFilterConfig(
-    //   ContentFilterConfig.NAME_DIALCODE);
-    // this.contentType = contentTypes;
+    const contentTypes = await this.formAndFrameworkUtilService.getSupportedContentFilterConfig(
+      ContentFilterConfig.NAME_DIALCODE);
+    this.contentType = contentTypes;
 
     // Page API START
     const pageAssemblefilter: PageAssembleFilter = {};
@@ -677,6 +948,7 @@ export class SearchPage implements OnDestroy {
             this.processDialCodeResult(sections);
             // this.updateFilterIcon();  // TO DO
           }
+          this.telemetryGeneratorService.generateEndSheenAnimationTelemetry();
           this.showLoader = false;
         });
       }).catch(error => {
@@ -686,7 +958,6 @@ export class SearchPage implements OnDestroy {
             this.commonUtilService.showToast('ERROR_OFFLINE_MODE');
           } else {
             this.commonUtilService.showToast('SOMETHING_WENT_WRONG');
-            // this.navCtrl.pop();
             this.location.back();
           }
         });
@@ -788,7 +1059,11 @@ export class SearchPage implements OnDestroy {
 
         if (dialCodeContentResult.length) {
           dialCodeResultObj.dialCodeContentResult = dialCodeContentResult;
-          displayDialCodeResult.push(dialCodeResultObj);
+          if (displayDialCodeResult && !(displayDialCodeResult.length > 0)) {
+            displayDialCodeResult.push(dialCodeResultObj);
+          } else {
+            displayDialCodeResult[0].dialCodeContentResult = dialCodeContentResult;
+          }
         }
         if (dialCodeContentCourseResult.length) {
           dialCodeCourseResultObj.dialCodeContentResult = dialCodeContentCourseResult;
@@ -830,8 +1105,6 @@ export class SearchPage implements OnDestroy {
   processDialCodeResultPrev(searchResult) {
     const collectionArray: Array<any> = searchResult.collectionDataList;
     const contentArray: Array<any> = searchResult.contentDataList;
-    // const collectionArray: Array<any> = searchResult.collections;
-    // const contentArray: Array<any> = searchResult.contents;
 
     this.dialCodeResult = [];
     const addedContent = new Array<any>();
@@ -872,7 +1145,6 @@ export class SearchPage implements OnDestroy {
     }
 
     if (contentArray && contentArray.length === 1 && !isParentCheckStarted) {
-      // this.navCtrl.pop();
       this.location.back();
       // this.showContentDetails(contentArray[0], true);
       this.isSingleContent = true;
@@ -955,6 +1227,8 @@ export class SearchPage implements OnDestroy {
           } else {
             this.subscribeSdkEvent();
             this.downloadParentContent(parent);
+            this.profile = this.appGlobalService.getCurrentUser();
+            this.checkProfileData(data.contentData, this.profile);
           }
         } else {
           this.zone.run(() => {

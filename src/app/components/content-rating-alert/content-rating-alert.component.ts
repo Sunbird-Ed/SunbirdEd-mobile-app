@@ -1,5 +1,5 @@
 import { Component, Inject, NgZone, OnInit, inject } from '@angular/core';
-import { Platform, ToastController, ModalController } from '@ionic/angular';
+import { Platform, ToastController, ModalController, NavParams, PopoverController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { ProfileConstants } from '../../../app/app.constant';
@@ -59,20 +59,24 @@ export class ContentRatingAlertComponent implements OnInit {
     private translate: TranslateService,
     private toastCtrl: ToastController,
     private ngZone: NgZone,
+    private navParams: NavParams,
     @Inject('CONTENT_FEEDBACK_SERVICE') private contentService: ContentFeedbackService,
     @Inject('TELEMETRY_SERVICE') private telemetryService: TelemetryService,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private appGlobalService: AppGlobalService,
+    private popoverController: PopoverController,
     private commonUtilService: CommonUtilService) {
     this.getUserId();
     this.backButtonFunc = this.platform.backButton.subscribe(() => {
       this.modalController.dismiss();
       this.backButtonFunc.unsubscribe();
     });
-    // this.content = this.navParams.get('content');
-    // this.userRating = this.navParams.get('rating');
-    // this.comment = this.navParams.get('comment');
-    // this.popupType = this.navParams.get('popupType');
+    this.content = this.navParams.get('content');
+    this.userRating = this.navParams.get('rating');
+    this.comment = this.navParams.get('comment');
+    this.popupType = this.navParams.get('popupType');
+    this.pageId = this.navParams.get('pageId');
+
     if (this.userRating) {
       this.showCommentBox = true;
     }
@@ -80,7 +84,6 @@ export class ContentRatingAlertComponent implements OnInit {
 
   ngOnInit() {
     // this.content = this.navParams.get('content');
-    // this.pageId = this.navParams.get('pageId');
   }
 
   ionViewWillEnter() {
@@ -146,9 +149,9 @@ export class ContentRatingAlertComponent implements OnInit {
       contentId: this.content.identifier,
       rating: this.ratingCount ? this.ratingCount : this.userRating,
       comments: this.comment,
-      contentVersion: this.content.contentData.versionKey
+      contentVersion: this.content['versionKey']
     };
-    this.modalController.dismiss();
+    this.popoverController.dismiss();
     const paramsMap = new Map();
     paramsMap['Ratings'] = this.ratingCount ? this.ratingCount : this.userRating;
     paramsMap['Comment'] = this.comment;
@@ -172,13 +175,13 @@ export class ContentRatingAlertComponent implements OnInit {
       viewDismissData.message = 'rating.success';
       viewDismissData.rating = this.ratingCount ? this.ratingCount : this.userRating;
       viewDismissData.comment = this.comment;
-      this.modalController.dismiss(viewDismissData);
+      this.popoverController.dismiss(viewDismissData);
       this.commonUtilService.showToast(this.commonUtilService.translateMessage('THANK_FOR_RATING'));
     }, (data) => {
       console.log('error:', data);
       viewDismissData.message = 'rating.error';
       // TODO: ask anil to show error message(s)
-      this.modalController.dismiss(viewDismissData);
+      this.popoverController.dismiss(viewDismissData);
     });
   }
 

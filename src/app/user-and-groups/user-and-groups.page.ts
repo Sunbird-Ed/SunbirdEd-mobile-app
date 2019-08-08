@@ -117,7 +117,7 @@ export class UserAndGroupsPage implements OnInit {
       this.getCurrentGroup();
       // this.getLastCreatedProfile();
 
-      this.backButtonFunc = this.platform.backButton.subscribe(() => {
+      this.backButtonFunc = this.platform.backButton.subscribeWithPriority(10, () => {
         this.dismissPopup();
         this.backButtonFunc.unsubscribe();
       });
@@ -429,19 +429,21 @@ export class UserAndGroupsPage implements OnInit {
       },
       cssClass: 'sb-popover',
     });
-    const response = await confirm.onDidDismiss();
-    if (response.data.leftBtnClicked == null) {
-      return;
-    }
-    if (!response.data.leftBtnClicked) {
-      this.logOut(selectedUser, false);
-    }
 
     if (this.appGlobalService.isUserLoggedIn()) {
-      confirm.present();
+      await confirm.present();
     } else {
       this.setAsCurrentUser(selectedUser, false);
     }
+
+    await confirm.onDidDismiss().then(response => {
+      if (response.data.isLeftButtonClicked == null) {
+        return;
+      }
+      if (!response.data.isLeftButtonClicked) {
+        this.logOut(selectedUser, false);
+      }
+    });
 
     // Generate Switch user success event
     this.telemetryGeneratorService.generateInteractTelemetry(

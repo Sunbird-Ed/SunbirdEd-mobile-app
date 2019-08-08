@@ -76,6 +76,11 @@ export class LanguageSettingsPage implements OnInit {
         this.isFromSettings ? Environment.SETTINGS : Environment.ONBOARDING,
       );
       this.handleBackButton();
+      if (!this.isFromSettings) {
+        this.headerService.hideHeader();
+      } else {
+        this.headerService.showHeaderWithBackButton();
+      }
     });
   }
 
@@ -87,7 +92,6 @@ export class LanguageSettingsPage implements OnInit {
         this.isFromSettings ? Environment.SETTINGS : Environment.ONBOARDING,
         this.isFromSettings ? PageId.SETTINGS_LANGUAGE : PageId.ONBOARDING_LANGUAGE_SETTING,
       );
-
       if (this.isFromSettings) {
         this.location.back();
       } else {
@@ -101,12 +105,6 @@ export class LanguageSettingsPage implements OnInit {
   ionViewWillEnter() {
     this.selectedLanguage = {};
     this.init();
-    if (!this.isFromSettings) {
-      this.headerService.hideHeader();
-    } else {
-      this.headerService.showHeaderWithBackButton();
-    }
-    this.handleBackButton();
   }
 
   ionViewWillLeave() {

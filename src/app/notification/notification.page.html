@@ -1,7 +1,10 @@
 <ion-header>
   <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-back-button defaultHref="resources" (click)="backButton()"></ion-back-button>
+      <!-- <ion-back-button defaultHref="resources" ></ion-back-button> -->
+      <ion-button icon-only (click)="backButton()">
+        <ion-icon name="arrow-back"></ion-icon>
+      </ion-button>
     </ion-buttons>
   </ion-toolbar> 
 </ion-header>

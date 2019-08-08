@@ -1,11 +1,22 @@
+import { Location } from '@angular/common';
 import { Component, Input, NgZone, OnInit } from '@angular/core';
 import { ContentType, MimeType, RouterLinks } from '@app/app/app.constant';
+import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { CommonUtilService } from '@app/services/common-util.service';
 import { ComingSoonMessageService } from '@app/services/coming-soon-message.service';
 import { PopoverController } from '@ionic/angular';
 import { SbGenericPopoverComponent } from '@app/app/components/popups/sb-generic-popover/sb-generic-popover.component';
 import { Content } from 'sunbird-sdk';
 import { Router, NavigationExtras } from '@angular/router';
+import { TextbookTocService } from '@app/app/collection-detail-etb/textbook-toc-service';
+import {
+  Environment,
+  ImpressionSubtype,
+  ImpressionType,
+  InteractSubtype,
+  InteractType,
+  PageId
+} from '@app/services/telemetry-constants';
 
 @Component({
   selector: 'app-collection-child',
@@ -13,77 +24,132 @@ import { Router, NavigationExtras } from '@angular/router';
   styleUrls: ['./collection-child.component.scss'],
 })
 export class CollectionChildComponent implements OnInit {
-  //   migration-TODO : remove unnecessary
-  //   cardData: any;
+  cardData: any;
+  parentId: any;
+  // isTextbookTocPage: Boolean = false;
   @Input() childData: Content;
   @Input() index: any;
   @Input() depth: any;
   @Input() corRelationList: any;
   @Input() isDepthChild: any;
   @Input() breadCrumb: any;
+  @Input() defaultAppIcon: string;
+  @Input() localImage: string;
+  @Input() activeMimeTypeFilter: any;
+  @Input() rootUnitId: any;
+  @Input() isTextbookTocPage: boolean;
+  @Input() bookID: string;
 
   constructor(
     private zone: NgZone,
     private commonUtilService: CommonUtilService,
     private popoverCtrl: PopoverController,
     private comingSoonMessageService: ComingSoonMessageService,
-    private router: Router
-  ) { }
+    private router: Router,
+    private textbookTocService: TextbookTocService,
+    private telemetryService: TelemetryGeneratorService,
+    private location: Location
+  ) {
+    // const extras = this.router.getCurrentNavigation().extras.state;
+    // if (extras) {
+    //   this.cardData = extras.content;
+    //   this.defaultAppIcon = 'assets/imgs/ic_launcher.png';
+    //   this.parentId = extras.parentId;
+    // }
+  }
 
   ngOnInit(): void {
   }
 
-  navigateToDetailsPage(content: Content, depth) {
-    //   migration-TODO : remove unnecessary
-    //   const stateData = this.navParams.get('contentState');
+  setContentId(id: string) {
+    console.log('extractedUrl', this.router);
 
-    this.zone.run(() => {
-      if (content.contentType === ContentType.COURSE) {
-        //   migration-TODO : remove unnecessary
-        // this.navCtrl.push(EnrolledCourseDetailsPage, {
-        //     content: content,
-        //     depth: depth,
-        //     contentState: stateData,
-        //     corRelation: this.corRelationList,
-        //     breadCrumb: this.breadCrumb
-        // });
-      } else if (content.mimeType === MimeType.COLLECTION) {
-        this.isDepthChild = true;
-        const collectionDetailsParams: NavigationExtras = {
-          state: {
-            content,
-            depth,
-            // migration-TODO : remove unnece
-            // contentState: stateData,
-            corRelation: this.corRelationList,
-            breadCrumb: this.breadCrumb
-          }
-        };
-        this.router.navigate([RouterLinks.COLLECTION_DETAIL_ETB], collectionDetailsParams);
-        //   migration-TODO : remove unnecessary
-        // this.navCtrl.push(CollectionDetailsEtbPage, {
-        //     content: content,
-        //     depth: depth,
-        //     contentState: stateData,
-        //     corRelation: this.corRelationList,
-        //     breadCrumb: this.breadCrumb
-        // });
-      } else {
-        const contentDetailsParams: NavigationExtras = {
-          state: {
-            isChildContent: true,
-            content,
-            depth,
-            // migration-TODO : remove unnece
-            // contentState: stateData,
-            corRelation: this.corRelationList,
-            breadCrumb: this.breadCrumb
-          }
-        };
-        this.router.navigate([RouterLinks.CONTENT_DETAILS], contentDetailsParams);
-      }
-    });
+    if (this.router.url.indexOf(RouterLinks.COLLECTION_DETAIL_ETB) !== -1) {
+      const values = new Map();
+      values['unitClicked'] = id;
+      // values['parentId'] = this.parentId;
+      this.telemetryService.generateInteractTelemetry(
+        InteractType.TOUCH,
+        InteractSubtype.SUBUNIT_CLICKED,
+        Environment.HOME,
+        PageId.TEXTBOOK_TOC,
+        undefined,
+        values
+      );
+      this.textbookTocService.setTextbookIds({ rootUnitId: this.rootUnitId, contentId: id });
+      this.location.back();
+    }
   }
+  navigateToDetailsPage(content: Content, depth) {
+    if (this.router.url.indexOf(RouterLinks.COLLECTION_DETAIL_ETB) !== -1) {
+      const values = new Map();
+      values['contentClicked'] = content.identifier;
+      // values['parentId'] = this.parentId;
+      this.telemetryService.generateInteractTelemetry(
+        InteractType.TOUCH,
+        InteractSubtype.CONTENT_CLICKED,
+        Environment.HOME,
+        PageId.TEXTBOOK_TOC, undefined,
+        values
+      );
+      this.textbookTocService.setTextbookIds({ rootUnitId: this.rootUnitId, contentId: content.identifier });
+      this.location.back();
+    } else {
+      //   migration-TODO : remove unnecessary
+      //   const stateData = this.navParams.get('contentState');
+      const values = new Map();
+      values['contentClicked'] = content.identifier;
+      // values['parentId'] = this.bookID;
+      this.zone.run(() => {
+        if (content.contentType === ContentType.COURSE) {
+          //   migration-TODO : remove unnecessary
+          // this.navCtrl.push(EnrolledCourseDetailsPage, {
+          //   content: content,
+          //   depth: depth,
+          //   contentState: stateData,
+          //   corRelation: this.corRelationList,
+          //   breadCrumb: this.breadCrumb
+          // });
+        } else if (content.mimeType === MimeType.COLLECTION) {
+          this.isDepthChild = true;
+          const collectionDetailsParams: NavigationExtras = {
+            state: {
+              content,
+              depth,
+              // migration-TODO : remove unnece
+              // contentState: stateData,
+              corRelation: this.corRelationList,
+              breadCrumb: this.breadCrumb
+            }
+          };
+          this.router.navigate([RouterLinks.COLLECTION_DETAIL_ETB], collectionDetailsParams);
+        } else {
+          this.textbookTocService.setTextbookIds({ rootUnitId: this.rootUnitId, contentId: content.identifier });
+
+          this.telemetryService.generateInteractTelemetry(
+            InteractType.TOUCH,
+            InteractSubtype.CONTENT_CLICKED,
+            Environment.HOME,
+            PageId.COLLECTION_DETAIL, undefined,
+            values
+          );
+          const contentDetailsParams: NavigationExtras = {
+            state: {
+              isChildContent: true,
+              content,
+              depth,
+              // migration-TODO : remove unnece
+              // contentState: stateData,
+              corRelation: this.corRelationList,
+              breadCrumb: this.breadCrumb
+            }
+          };
+          this.router.navigate([RouterLinks.CONTENT_DETAILS], contentDetailsParams);
+        }
+      });
+    }
+  }
+  
 
 
   async showComingSoonPopup(childData: any) {
@@ -105,6 +171,20 @@ export class CollectionChildComponent implements OnInit {
         cssClass: 'sb-popover warning',
       });
       popover.present();
+    }
+  }
+
+  hasMimeType(activeMimeType: string[], mimeType: string, content): boolean {
+    if (!activeMimeType) {
+      return true;
+    } else {
+      if (activeMimeType.indexOf('all') > -1) {
+        // if (content.contentData.mimeType === MimeType.COLLECTION && !content.children) {
+        //     return false;
+        // }
+        return true;
+      }
+      return !!activeMimeType.find(m => m === mimeType);
     }
   }
 }

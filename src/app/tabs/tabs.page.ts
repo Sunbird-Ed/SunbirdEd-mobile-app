@@ -98,15 +98,16 @@ export class TabsPage {
     //     }
     //   });
     // }
-    this.tabs[2].root = event.tab;
-    this.events.publish('tab.change', event.tab);
+
   }
 
   openScanner(tab) {
     this.events.publish('tab.change', tab.label);
   }
 
-  ionTabsDidChange() {
+  ionTabsDidChange(event: any) {
+    this.tabs[2].root = event.tab;
+    this.events.publish('tab.change', event.tab);
     this.commonUtilService.currentTabName = this.tabRef.getSelected();
   }
 

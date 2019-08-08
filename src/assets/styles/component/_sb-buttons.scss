@@ -180,6 +180,10 @@
  .sb-btn-outline-success{
     @include btn-theme-bgwhite($secondary-color);
  }
+ .sb-btn-outline-white{
+    @include btn-theme-bgwhite($white);
+    background-color: transparent;
+ }
  .sb-btn-outline-warning{
     @include btn-theme-bgwhite($tertiary-color);
  }

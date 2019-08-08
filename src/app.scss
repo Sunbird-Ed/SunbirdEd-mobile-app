@@ -175,7 +175,10 @@ ul.rating .ion-md-star-outline:before {
   padding-right: 10px;
 }
 .popover-ratings ion-icon.filled {
-  color: #3880ff !important;
+  color: #024f9d !important;
+}
+.small-rating ion-icon.filled {
+  color: #024f9d !important;  
 }
 
 .select-box {
@@ -739,4 +742,29 @@ ion-toast.redErrorToast {
 .hydrated,
 .button-clear {
   letter-spacing: normal !important;
+}
+
+#backdrop {
+  background: transparent;
+  opacity: 1;
+  z-index: 11;
+  color: #fff;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+
+    -ms-transform: rotate(180deg); /* IE 9 */
+    -webkit-transform: rotate(180deg); /* Safari */
+    transform: rotate(180deg);
+    background-image: radial-gradient(
+        circle at center 55px,
+        rgba(0,0,0,0) 30px,
+        rgba(0,0,0,0.9) 30px
+    );
+  }
 }

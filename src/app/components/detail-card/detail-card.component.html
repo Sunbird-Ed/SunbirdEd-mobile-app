@@ -57,7 +57,7 @@
           </span>
         </span>
       </button>
-      <button  class="sb-btn-tile" *ngIf="contentDetail?.isAvailableLocally" (click)="showOverflowMenu()">
+      <button  class="sb-btn-tile" *ngIf="contentDetail?.isAvailableLocally" (click)="showOverflowMenu($event)">
         <ion-icon ios="ios-trash" md="md-trash" class="sb-dt-card-danger-icon"></ion-icon>
         <span class="sb-btn-footer-text">{{ 'REMOVE' | translate }}</span>
       </button>
