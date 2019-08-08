@@ -1,3 +1,6 @@
+@import "src/assets/styles/variables";
+@import "src/assets/styles/_custom-mixins";
+@import "src/assets/styles/fonts";
 :host {
     .row-holder {
         border-radius: 0.2em;
@@ -11,18 +14,15 @@
         opacity: 0.4;
     }
     .padding{
-        // migration-TODO
-        // @include padding(5px, 0 !important);
+        @include padding(5px, 0 !important);
     }
 
     .button-position {
-        // migration-TODO
-        // @include margin(0, null, null, 60px !important);
+        @include margin(0, null, null, 60px !important);
     }
 
     .padding-top-12 {
-        // migration-TODO
-        // @include padding(12px, null, null, null !important);
+        @include padding(12px, null, null, null !important);
     }
     .float-left {
         float: left;
@@ -57,13 +57,11 @@
     .content-name{
         color: #4F4F4F;
         font-size: 1.6rem;
-        // migration-TODO
-        // @extend .font-weight-500;
+        @extend .font-weight-500;
         line-height: 1.2;
     }
     .content-created-date {
-        // migration-TODO
-        // @extend .NotoSans;
+        @extend .NotoSans;
     }
     .meta-data-holder {
         height: 100px !important;
@@ -71,8 +69,7 @@
     // New changes
     .meta-name {
         font-size: 1.0rem !important;
-        // migration-TODO
-        // @extend .font-weight-600;
+        @extend .font-weight-600;
     }
     .content-created-date1 {
         font-size: 1.2rem !important;
@@ -92,8 +89,7 @@
     .row-border{
         border: 2px solid #e9e9e9; 
         border-radius: 6px;
-        // migration-TODO
-        // @include margin(-5px, null, null, null !important);
+        @include margin(-5px, null, null, null !important);
     }
     .app-icon {
         max-height: 100%;
