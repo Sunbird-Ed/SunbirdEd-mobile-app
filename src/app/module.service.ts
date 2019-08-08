@@ -25,7 +25,7 @@ const COURSE_TAB_DISABLED = {
 const SCANNER_TAB = {
     root: '',
     icon: 'qrscanner',
-    // icon: './assets/imgs/ic_qr_scanner.png',
+    // icon: './assets/imgs/ic_qr_scanner.svg',
     label: '',
     index: 3,
     tabsHideOnSubPages: true
