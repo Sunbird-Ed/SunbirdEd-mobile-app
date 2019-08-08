@@ -64,21 +64,16 @@ export class CollectionDetailEtbPage implements OnInit {
   childrenData: Array<any>;
 
   mimeTypes = [
-    { name: 'ALL', selected: true, value: ['all'], iconNormal: '', iconActive: '' },
-    {
-      name: 'VIDEOS', value: ['video/mp4', 'video/x-youtube', 'video/webm'], iconNormal: './assets/imgs/Play.svg',
-      iconActive: './assets/imgs/Play-active.svg'
-    },
-    {
-      name: 'DOCS', value: ['application/pdf', 'application/epub', 'application/msword'], iconNormal: './assets/imgs/Doc.svg',
-      iconActive: './assets/imgs/Doc-active.svg'
-    },
-    {
-      name: 'INTERACTION',
+    { name: 'ALL', selected: true, value: ['all'], iconNormal: '', iconActive: ''},
+    { name: 'VIDEOS', value: ['video/mp4', 'video/x-youtube', 'video/webm'], iconNormal: './assets/imgs/play.svg',
+    iconActive: './assets/imgs/play-active.svg'},
+    { name: 'DOCS', value: ['application/pdf', 'application/epub', 'application/msword'], iconNormal: './assets/imgs/doc.svg',
+    iconActive: './assets/imgs/doc-active.svg'},
+    { name: 'INTERACTION',
       value: ['application/vnd.ekstep.ecml-archive', 'application/vnd.ekstep.h5p-archive', 'application/vnd.ekstep.html-archive'],
-      iconNormal: './assets/imgs/Touch.svg', iconActive: './assets/imgs/Touch-active.svg'
+      iconNormal: './assets/imgs/touch.svg', iconActive: './assets/imgs/touch-active.svg'
     },
-    // { name: 'AUDIOS', value: MimeType.AUDIO, iconNormal: './assets/imgs/Audio.svg', iconActive: './assets/imgs/Audio-active.svg'},
+    // { name: 'AUDIOS', value: MimeType.AUDIO, iconNormal: './assets/imgs/audio.svg', iconActive: './assets/imgs/audio-active.svg'},
   ];
   activeMimeTypeFilter = ['all'];
 
