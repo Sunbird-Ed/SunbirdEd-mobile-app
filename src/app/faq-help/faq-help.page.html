@@ -1,5 +1,5 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
-<ion-content padding>
+<ion-content>
   <iframe #f *ngIf="consumptionFaqUrl" title="faq" id="iframeId" width="100%" height="100%" [src]="consumptionFaqUrl"
     allowfullscreen (load)="onLoad()" frameborder="0" (error)="onError()">
   </iframe>

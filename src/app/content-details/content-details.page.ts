@@ -266,7 +266,6 @@ export class ContentDetailsPage implements OnInit {
    * Ionic life cycle hook
    */
   ionViewWillLeave(): void {
-    this.headerObservable.unsubscribe();
     if (this.eventSubscription) {
       this.eventSubscription.unsubscribe();
     }
