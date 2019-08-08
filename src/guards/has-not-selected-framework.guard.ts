@@ -1,5 +1,5 @@
 import { Injectable, Inject } from '@angular/core';
-import { CanLoad, Router, ActivatedRoute } from '@angular/router';
+import { CanLoad, Router, ActivatedRoute, Resolve } from '@angular/router';
 import { SharedPreferences, ProfileService } from 'sunbird-sdk';
 import { GenericAppConfig, ProfileConstants } from '@app/app/app.constant';
 import { UtilityService } from '@app/services/utility-service';
@@ -7,7 +7,8 @@ import { AppGlobalService } from '@app/services/app-global-service.service';
 import { CanDeactivate } from '@angular/router';
 
 @Injectable()
-export class HasNotSelectedFrameworkGuard implements CanLoad, CanDeactivate<any> {
+export class HasNotSelectedFrameworkGuard implements Resolve<any> {
+    guardActivated:boolean;
     constructor(
         @Inject('SHARED_PREFERENCES') private sharedPreferences: SharedPreferences,
         @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -26,24 +27,23 @@ export class HasNotSelectedFrameworkGuard implements CanLoad, CanDeactivate<any>
             && profile.medium && profile.medium.length;
     }
 
-    async canLoad(): Promise<boolean> {
-        const shouldDisplay: boolean = (await this.utilityService
-            .getBuildConfigValue(GenericAppConfig.DISPLAY_ONBOARDING_CATEGORY_PAGE)) === 'true';
-
-        const profile = await this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS })
-            .toPromise();
-
-        if (shouldDisplay && !HasNotSelectedFrameworkGuard.isProfileComplete(profile)) {
+    resolve(): any {
+        if(this.guardActivated) {
             return true;
         }
-
-        this.appGlobalService.isProfileSettingsCompleted = true;
-        this.router.navigate(['/', 'tabs']);
-
-        return false;
-    }
-
-    async canDeactivate(): Promise<boolean> {
-        return false;
+        this.guardActivated = true;
+        this.utilityService.getBuildConfigValue(GenericAppConfig.DISPLAY_ONBOARDING_CATEGORY_PAGE).then((shouldDisplay) => {
+            this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise().then((profile)=>{
+                if (shouldDisplay && !HasNotSelectedFrameworkGuard.isProfileComplete(profile)) {
+                    this.appGlobalService.hideSplashScreen(1500);
+                    return true;
+                } else {
+                    this.appGlobalService.isProfileSettingsCompleted = true;
+                    this.appGlobalService.hideSplashScreen(1500);
+                    this.router.navigate(['/', 'tabs']);
+                }
+                
+            });
+        });
     }
 }

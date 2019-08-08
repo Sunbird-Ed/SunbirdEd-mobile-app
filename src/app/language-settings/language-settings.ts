@@ -75,7 +75,7 @@ export class LanguageSettingsPage implements OnInit {
         this.isFromSettings ? PageId.SETTINGS_LANGUAGE : PageId.ONBOARDING_LANGUAGE_SETTING,
         this.isFromSettings ? Environment.SETTINGS : Environment.ONBOARDING,
       );
-      this.handleBackButton();
+      
       if (!this.isFromSettings) {
         this.headerService.hideHeader();
       } else {
@@ -105,6 +105,7 @@ export class LanguageSettingsPage implements OnInit {
   ionViewWillEnter() {
     this.selectedLanguage = {};
     this.init();
+    this.handleBackButton();
   }
 
   ionViewWillLeave() {
