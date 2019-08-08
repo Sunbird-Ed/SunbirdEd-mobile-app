@@ -1,13 +1,14 @@
 @import "src/assets/styles/base/_variables.scss";
 @import "src/assets/styles/_custom-mixins.scss";
+@import "src/assets/styles/variables";
+
 
 :host {
     /* Sb-Rating Component Styling */
 ul {
     @include padding($base-block-space);
       &.rating li {
-        // migration-TODO
-        // @include padding($base-block-space * 2 !important);
+        @include padding($base-block-space * 2 !important);
         background: none;
         color: $info-color;
         ion-icon {
@@ -17,8 +18,7 @@ ul {
     }
 
 .content-rating-alert ion-backdrop {
-    // migration-TODO
-    // background-color: map-get($colors, dark) !important;
+    background-color: map-get($colors, dark) !important;
     opacity: 0.4 !important;
 }
 }
