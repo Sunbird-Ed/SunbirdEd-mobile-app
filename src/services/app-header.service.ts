@@ -1,10 +1,11 @@
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs/Subject';
+import { MenuController } from '@ionic/angular';
 
 @Injectable()
 export class AppHeaderService {
 
-    constructor() { }
+    constructor(private menuCtrl: MenuController) { }
 
     private headerEvent = new Subject<any>();
     headerEventEmitted$ = this.headerEvent.asObservable();
@@ -39,6 +40,7 @@ export class AppHeaderService {
         defaultConfig.showHeader = false;
         defaultConfig.showBurgerMenu = false;
         this.updatePageConfig(defaultConfig);
+        this.menuCtrl.enable(false);
     }
 
     showHeaderWithBackButton(iconList?, pageTitle?) {
@@ -48,6 +50,7 @@ export class AppHeaderService {
         defaultConfig.actionButtons = iconList ? iconList : [];
         defaultConfig.pageTitle = pageTitle;
         this.updatePageConfig(defaultConfig);
+        this.menuCtrl.enable(false);
     }
 
     showHeaderWithHomeButton(iconList?, pageTitle?) {
@@ -57,6 +60,7 @@ export class AppHeaderService {
         defaultConfig.actionButtons = iconList ? iconList : [];
         defaultConfig.pageTitle = pageTitle;
         this.updatePageConfig(defaultConfig);
+        this.menuCtrl.enable(true);
     }
 
     updatePageConfig(config) {
