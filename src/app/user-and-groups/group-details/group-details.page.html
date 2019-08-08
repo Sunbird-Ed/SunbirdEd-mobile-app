@@ -34,7 +34,7 @@
       </div>
     </ion-list>
     <ion-list lines="none" *ngIf="!isNoUsers">
-      <ion-item *ngFor="let user of userList; let i=index;" class="item-background  MB16 ion-no-padding" margin-bottom [ngClass]="i===selectedUserIndex ? 'blueBorder' : ''">
+      <ion-item *ngFor="let user of userList; let i=index;" class="item-background gd-mb-16 ion-no-padding" [ngClass]="i===selectedUserIndex ? 'blueBorder' : ''">
         <ion-label class="ion-no-margin">
           <ion-grid class="radius ion-no-padding">
             <ion-row class="bg-color-white gd-row-padding radius">

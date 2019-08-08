@@ -661,5 +661,6 @@ export class GuestEditPage implements OnInit {
       this.location.back();
     }
   }
+
 }
 
