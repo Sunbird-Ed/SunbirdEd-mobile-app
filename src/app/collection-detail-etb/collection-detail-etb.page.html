@@ -47,7 +47,7 @@
 
     <!-- Looping Inside Children Data Textbook -->
     <section *ngIf="childrenData">
-      <div *ngIf="!(filteredItemsQueryList?.changes | async)?.length">
+      <div *ngIf="childrenData.length && !(filteredItemsQueryList?.changes | async)?.length">
         <div class="heading">{{'NO_CONTENTS' | translate:{'%s': currentFilter } }}</div>
         <div class="sub-heading">{{'NO_CONTENTS_MESSAGE' | translate}}</div>
       </div>
