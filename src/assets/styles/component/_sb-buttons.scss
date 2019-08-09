@@ -144,7 +144,7 @@
  .sb-btn-outline-info button{
     // @include btn-theme-bgwhite($primary-color);
     --background: $white;
-    --color: $primary-color;
+    --color: $primary-color !important;
     --border-color: darken($primary-color, 2%);
  }
 
@@ -166,14 +166,14 @@
  ion-button {
     .button-native{
         --background: #00ffac;
-        --color: $primary-color;
+        --color: $primary-color !important;
         --border-color: darken($primary-color, 2%);
     }
  }
  ion-button.sb-btn-outline-info {
     .button{
         --background: #00ffac;
-        --color: $primary-color;
+        --color: $primary-color !important;
         --border-color: darken($primary-color, 2%);
     }
  }
