@@ -367,11 +367,23 @@ export class QrcoderesultPage implements OnDestroy {
       //   content: content,
       //   corRelation: this.corRelationList
       // });
+      this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], {
+        state: {
+          content: content,
+          corRelation: this.corRelationList
+        }
+      });
     } else if (content && content.mimeType === MimeType.COLLECTION) {
       // this.navCtrl.push(CollectionDetailsEtbPage, {
       //   content: content,
       //   corRelation: this.corRelationList
       // });
+      this.router.navigate([RouterLinks.COLLECTION_DETAIL_ETB], {
+        state: {
+          content: content,
+          corRelation: this.corRelationList
+        }
+      });
     } else {
       this.telemetryGeneratorService.generateInteractTelemetry(
         InteractType.TOUCH,
@@ -385,6 +397,15 @@ export class QrcoderesultPage implements OnDestroy {
       //   downloadAndPlay: true,
       //   corRelation: this.corRelationList
       // });
+      this.router.navigate([RouterLinks.CONTENT_DETAILS], {
+        state: {
+          content: content,
+          depth: '1',
+          isChildContent: true,
+          downloadAndPlay: true,
+          corRelation: this.corRelationList
+        }
+      });
     }
   }
 
