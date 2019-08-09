@@ -11,7 +11,7 @@
     <div class="sb-dw-manager o-hide p-8">
       <div class="pull-left">  
         <span class="selector" *ngIf="showSelectAll" (click)="selectAllContents()">{{'SELECT_ALL' | translate}}</span>
-        <span class="selector" *ngIf="!showSelectAll" (click)="unSelectAllContents()">{{'UNSELECT_ALL' | translate}}</span>
+        <span class="selector" *ngIf="!showSelectAll" (click)="unSelectAllContents($event)">{{'UNSELECT_ALL' | translate}}</span>
       </div>
       <div class="pull-right" (click)="showSortOptions($event)">
         <span class="selector">{{selectedFilter | translate}}</span>
@@ -24,7 +24,7 @@
         <div class="check-container">
           <!-- <input type="checkbox" (change)="toggleContentSelect($event, i)" [checked]="content.isSelected" > -->
           <ion-label>
-          <ion-checkbox  (ionChange)="toggleContentSelect($event, i)" [checked]="content.isSelected">
+          <ion-checkbox (ionChange)="toggleContentSelect($event, i)"  [checked]="content.isSelected" >
           </ion-checkbox>
         </ion-label>
           </div>
