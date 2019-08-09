@@ -64,7 +64,7 @@ export class CollectionChildComponent implements OnInit {
   setContentId(id: string) {
     console.log('extractedUrl', this.router);
 
-    if (this.router.url.indexOf(RouterLinks.COLLECTION_DETAIL_ETB) !== -1) {
+    if (this.router.url.indexOf(RouterLinks.TEXTBOOK_TOC) !== -1) {
       const values = new Map();
       values['unitClicked'] = id;
       // values['parentId'] = this.parentId;
@@ -81,7 +81,7 @@ export class CollectionChildComponent implements OnInit {
     }
   }
   navigateToDetailsPage(content: Content, depth) {
-    if (this.router.url.indexOf(RouterLinks.COLLECTION_DETAIL_ETB) !== -1) {
+    if (this.router.url.indexOf(RouterLinks.TEXTBOOK_TOC) !== -1) {
       const values = new Map();
       values['contentClicked'] = content.identifier;
       // values['parentId'] = this.parentId;
@@ -124,6 +124,7 @@ export class CollectionChildComponent implements OnInit {
           };
           this.router.navigate([RouterLinks.COLLECTION_DETAIL_ETB], collectionDetailsParams);
         } else {
+          console.log('go to content details');
           this.textbookTocService.setTextbookIds({ rootUnitId: this.rootUnitId, contentId: content.identifier });
 
           this.telemetryService.generateInteractTelemetry(
