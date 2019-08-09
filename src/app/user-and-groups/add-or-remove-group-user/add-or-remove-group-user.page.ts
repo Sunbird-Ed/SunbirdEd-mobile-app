@@ -144,7 +144,6 @@ export class AddOrRemoveGroupUserPage implements OnInit, OnDestroy {
   }
 
   isUserSelected(index: number) {
-    console.log('Index', index);
     this.getSelectedUids();
     return Boolean(this.userSelectionMap.get(this.uniqueUserList[index].uid));
   }
@@ -191,7 +190,6 @@ export class AddOrRemoveGroupUserPage implements OnInit, OnDestroy {
       }
     });
 
-    console.log('selectedUids', selectedUids.length);
     this.zone.run(() => {
       this.selectedUserLength = (selectedUids.length) ? selectedUids.length.toString() : '';
     });
