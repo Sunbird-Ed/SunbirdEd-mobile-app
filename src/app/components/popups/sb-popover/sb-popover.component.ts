@@ -1,4 +1,4 @@
-import { Component, NgZone, OnDestroy } from '@angular/core';
+import { Component, NgZone, OnDestroy, OnInit } from '@angular/core';
 import { Platform, NavParams, PopoverController } from '@ionic/angular';
 import { CorrelationData, Rollup } from 'sunbird-sdk';
 import { Observable } from 'rxjs/Observable';
@@ -93,6 +93,14 @@ export class SbPopoverComponent implements OnDestroy {
     this.contentId = (this.content && this.content.identifier) ? this.content.identifier : '';
   }
 
+  ionViewWillEnter() {
+    console.log("sdsdsd");
+    this.backButtonFunc = this.platform.backButton.subscribeWithPriority(11, () => {
+      this.popoverCtrl.dismiss();
+      this.backButtonFunc.unsubscribe();
+    });
+  }
+
   ngOnDestroy(): void {
     if (this.sbPopoverDynamicMainTitleSubscription) {
       this.sbPopoverDynamicMainTitleSubscription.unsubscribe();
@@ -100,6 +108,10 @@ export class SbPopoverComponent implements OnDestroy {
 
     if (this.sbPopoverDynamicContentSubscription) {
       this.sbPopoverDynamicContentSubscription.unsubscribe();
+    }
+
+    if(this.backButtonFunc) {
+      this.backButtonFunc.unsubscribe();
     }
   }
 
