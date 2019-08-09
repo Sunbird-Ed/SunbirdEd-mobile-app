@@ -1,7 +1,6 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { Platform, Events } from '@ionic/angular';
 import { Location } from '@angular/common';
-import { ActivatedRoute, Router } from '@angular/router';
 import { NotificationService, NotificationStatus } from 'sunbird-sdk';
 import { Subscription } from 'rxjs/Subscription';
 
@@ -26,7 +25,8 @@ export class NotificationPage implements OnInit {
   notificationList = [];
   newNotificationCount: number = 0;
   showClearNotificationButton: boolean;
-  unregisterBackButton: Subscription;
+  private unregisterBackButton: Subscription;
+  private headerObservable: Subscription;
 
   constructor(
     @Inject('NOTIFICATION_SERVICE') private notificationService: NotificationService,
@@ -35,13 +35,9 @@ export class NotificationPage implements OnInit {
     private events: Events,
     public telemetryGeneratorService: TelemetryGeneratorService,
     private platform: Platform,
-    private route: ActivatedRoute,
-    private router: Router,
     private location: Location
 
-  ) {
-    this.headerService.hideHeader();
-  }
+  ) { }
 
   ionViewWillEnter() {
     this.getNotifications();
@@ -53,10 +49,14 @@ export class NotificationPage implements OnInit {
       this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.NOTIFICATION, Environment.NOTIFICATION, false);
       this.location.back();
     });
+    this.headerService.showHeaderWithBackButton();
+    this.headerObservable = this.headerService.headerEventEmitted$.subscribe(eventName => {
+      this.handleHeaderEvents(eventName);
+    });
   }
 
 
-  getNotifications() {
+  private getNotifications() {
     this.notificationService.getAllNotifications({ notificationStatus: NotificationStatus.ALL }).subscribe((notificationList: any) => {
       this.newNotificationCount = 0;
       this.newNotificationCount = notificationList.filter(item => !item.isRead).length;
@@ -111,7 +111,7 @@ export class NotificationPage implements OnInit {
     this.generateClickInteractEvent(event.valuesMap, event.interactSubType);
   }
 
-  generateClickInteractEvent(valuesMap, interactSubType) {
+  private generateClickInteractEvent(valuesMap, interactSubType) {
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,
       interactSubType,
@@ -124,10 +124,15 @@ export class NotificationPage implements OnInit {
 
   ionViewWillLeave() {
     this.unregisterBackButton && this.unregisterBackButton.unsubscribe();
+    this.headerObservable && this.headerObservable.unsubscribe();
   }
 
-  backButton() {
-    this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.NOTIFICATION, Environment.NOTIFICATION, true);
-    this.location.back();
+  private handleHeaderEvents(event) {
+    switch (event.name) {
+      case 'back':
+        this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.NOTIFICATION, Environment.NOTIFICATION, true);
+        break;
+    }
   }
+
 }

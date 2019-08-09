@@ -154,6 +154,7 @@ export class RatingHandler {
         const today = moment().format();
         this.preferences.putString(PreferenceKey.APP_RATING_DATE, today).subscribe();
     }
+
     readRatingFile(): Promise<boolean> {
         return this.fileCtrl.readAsText(StoreRating.DEVICE_FOLDER_PATH + '/' + StoreRating.FOLDER_NAME, StoreRating.FILE_NAME)
             .then(() => {

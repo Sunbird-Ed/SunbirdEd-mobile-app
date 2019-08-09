@@ -1,4 +1,4 @@
-import { Component, Inject, NgZone, OnDestroy, ViewChild, ChangeDetectorRef } from '@angular/core';
+import { Component, Inject, NgZone, OnDestroy, ViewChild, ChangeDetectorRef, OnInit, AfterViewInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Events, Platform, PopoverController, IonContent } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
@@ -23,10 +23,10 @@ import {
 } from 'sunbird-sdk';
 
 import { Map } from '@app/app/telemetryutil';
-import { 
-  BatchConstants, 
-  RouterLinks, AudienceFilter, 
-  ContentType, MimeType, Search, ContentCard, 
+import {
+  BatchConstants,
+  RouterLinks, AudienceFilter,
+  ContentType, MimeType, Search, ContentCard,
   ContentFilterConfig } from '@app/app/app.constant';
 import { AppGlobalService } from '@app/services/app-global-service.service';
 import { FormAndFrameworkUtilService } from '@app/services/formandframeworkutil.service';
@@ -40,13 +40,14 @@ import { AppVersion } from '@ionic-native/app-version/ngx';
 import { EnrollmentDetailsPage } from '../enrolled-course-details-page/enrollment-details-page/enrollment-details-page';
 import { SearchHistoryNamespaces } from '@app/config/search-history-namespaces';
 import { featureIdMap } from '@app/app/feature-id-map';
+import { from } from 'rxjs';
 declare const cordova;
 @Component({
   selector: 'app-search',
   templateUrl: './search.page.html',
   styleUrls: ['./search.page.scss']
 })
-export class SearchPage implements OnDestroy {
+export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
   public searchHistory$: Observable<SearchEntry[]>;
   appName: string;
   showLoading: boolean;
@@ -148,31 +149,6 @@ export class SearchPage implements OnDestroy {
   ngOnInit(): void {
     this.getAppName();
 
-    this.searchHistory$ = this.searchBar && (this.searchBar as any).ionChange
-      .map((e) => e.value)
-      .share()
-      .startWith('')
-      .debounceTime(500)
-      .switchMap((v) => {
-        if (v) {
-          return this.searchHistoryService.getEntries({
-            like: v,
-            limit: 5,
-            namespace: this.source === PageId.LIBRARY ? SearchHistoryNamespaces.LIBRARY : SearchHistoryNamespaces.COURSE
-          });
-        }
-
-        return this.searchHistoryService.getEntries({
-          limit: 10,
-          namespace: this.source === PageId.LIBRARY ? SearchHistoryNamespaces.LIBRARY : SearchHistoryNamespaces.COURSE
-        });
-      })
-      .do((v) => {
-        setTimeout(() => {
-          this.changeDetectionRef.detectChanges();
-        });
-      }) as any;
-
     // this.navBar.backButtonClick = () => {
     //   this.telemetryGeneratorService.generateBackClickedTelemetry(ImpressionType.SEARCH,
     //     Environment.HOME, true, undefined, this.corRelationList);
@@ -194,6 +170,33 @@ export class SearchPage implements OnDestroy {
     }
 
     this.checkUserSession();
+  }
+
+  ngAfterViewInit() {
+    this.searchHistory$ = this.searchBar && (this.searchBar as any).ionChange
+      .map((e) => e.target.value)
+      .share()
+      .startWith('')
+      .debounceTime(500)
+      .switchMap((v: string) => {
+        if (v) {
+          return from(this.searchHistoryService.getEntries({
+            like: v,
+            limit: 5,
+            namespace: this.source === PageId.LIBRARY ? SearchHistoryNamespaces.LIBRARY : SearchHistoryNamespaces.COURSE
+          }).toPromise());
+        }
+
+        return from(this.searchHistoryService.getEntries({
+          limit: 10,
+          namespace: this.source === PageId.LIBRARY ? SearchHistoryNamespaces.LIBRARY : SearchHistoryNamespaces.COURSE
+        }).toPromise());
+      })
+      .do((v) => {
+        setTimeout(() => {
+          this.changeDetectionRef.detectChanges();
+        });
+      }) as any;
   }
 
   onSearchHistoryTap(searchEntry: SearchEntry) {
@@ -702,7 +705,7 @@ export class SearchPage implements OnDestroy {
       this.telemetryGeneratorService.generateStartSheenAnimationTelemetry();
     }
 
-    (<any>window).cordova.plugins.Keyboard.close();
+    (window as any).cordova.plugins.Keyboard.close();
 
     const contentSearchRequest: ContentSearchCriteria = {
       searchType: SearchType.SEARCH,
@@ -1468,5 +1471,9 @@ export class SearchPage implements OnDestroy {
 
   scrollToTop() {
     this.contentView.scrollToTop();
+  }
+
+  goBack() {
+    this.location.back();
   }
 }

@@ -11,22 +11,25 @@ const routes: Routes = [
   {
     path: '',
     redirectTo: `${RouterLinks.LANGUAGE_SETTING}`,
-    pathMatch: 'full',
+    pathMatch: 'full'
   },
   {
     path: `${RouterLinks.LANGUAGE_SETTING}`,
     loadChildren: './language-settings/language-settings.module#LanguageSettingsModule',
-    canLoad: [IsGuestUserGuard, HasNotBeenOnboardedGuard, HasNotSelectedLanguageGuard],
+    canLoad: [HasNotBeenOnboardedGuard],
+    resolve: { message: HasNotSelectedLanguageGuard }
   },
   {
     path: `${RouterLinks.USER_TYPE_SELECTION}`,
     loadChildren: './user-type-selection/user-type-selection.module#UserTypeSelectionPageModule',
-    canLoad: [IsGuestUserGuard, HasNotBeenOnboardedGuard, HasNotSelectedUserTypeGuard],
+    canLoad: [HasNotBeenOnboardedGuard],
+    resolve: { message: HasNotSelectedUserTypeGuard }
   },
   {
     path: RouterLinks.PROFILE_SETTINGS,
     loadChildren: './profile-settings/profile-settings.module#ProfileSettingsPageModule',
-    canLoad: [HasNotBeenOnboardedGuard, HasNotSelectedFrameworkGuard],
+    canLoad: [HasNotBeenOnboardedGuard],
+    resolve: { message: HasNotSelectedFrameworkGuard }
   },
   {
     path: RouterLinks.TABS,

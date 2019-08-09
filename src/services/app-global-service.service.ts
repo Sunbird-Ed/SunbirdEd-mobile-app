@@ -23,6 +23,7 @@ import { ProfileConstants } from '../app/app.constant';
 import { Observable, Observer } from 'rxjs-compat';
 import { PermissionAsked } from './android-permissions/android-permission';
 import { UpgradePopoverComponent } from '../app/components/popups/upgrade-popover/upgrade-popover.component';
+import { delay } from 'rxjs/operators';
 
 declare const buildconfigreader;
 
@@ -659,6 +660,13 @@ export class AppGlobalService implements OnDestroy {
                     return;
                 }
             });
+    }
+
+    hideSplashScreen(delay): void {
+        let timeout = setTimeout(() => {
+            splashscreen.markImportDone();
+            splashscreen.hide();
+          }, delay);
     }
 
 }

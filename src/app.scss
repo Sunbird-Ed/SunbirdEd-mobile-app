@@ -170,7 +170,8 @@ ul.rating .ion-md-star-outline:before {
   font-size: 11px;
 }
 .popover-ratings .sc-ion-buttons-md-s ion-button {
-  height: 32px;
+  height: 32px !important;
+  width: auto !important;
   font-size: 22px;
   padding-right: 10px;
 }
@@ -767,4 +768,9 @@ ion-toast.redErrorToast {
         rgba(0,0,0,0.9) 30px
     );
   }
+}
+
+.sc-ion-buttons-md-s .button-has-icon-only.button-clear{
+  height:32px !important;
+  width: auto !important;
 }

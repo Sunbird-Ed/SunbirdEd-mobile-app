@@ -150,8 +150,6 @@ export class StorageSettingsPage implements OnInit {
   private handleHeaderEvents(event: { name: string }) {
     switch (event.name) {
       case 'back':
-        // migration-TODO
-        // this.navCtrl.pop();
         this.location.back();
         break;
     }

@@ -152,7 +152,7 @@ export class GuestProfilePage implements OnInit {
 
           result.forEach(element => {
 
-            if (this.profile.syllabus && this.profile.syllabus.length && this.profile.syllabus[0] === element.identifier) {
+            if (this.profile && this.profile.syllabus && this.profile.syllabus.length && this.profile.syllabus[0] === element.identifier) {
               this.syllabus = element.name;
               selectedFrameworkId = element.identifier;
             }
@@ -172,7 +172,7 @@ export class GuestProfilePage implements OnInit {
 
   getFrameworkDetails(frameworkId?: string): void {
     const frameworkDetailsRequest: FrameworkDetailsRequest = {
-      frameworkId: this.profile.syllabus[0] || '',
+      frameworkId: (this.profile && this.profile.syllabus && this.profile.syllabus[0]) ? this.profile.syllabus[0] : '',
       requiredCategories: FrameworkCategoryCodesGroup.DEFAULT_FRAMEWORK_CATEGORIES
     };
     this.frameworkService.getFrameworkDetails(frameworkDetailsRequest).toPromise()
