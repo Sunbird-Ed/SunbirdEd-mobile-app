@@ -14,8 +14,7 @@
     // migration-TODO
     @include padding($base-block-space);
       &.rating li {
-        // migration-TODO
-        // @include padding($base-block-space * 1.5 !important);
+        @include padding($base-block-space * 1.5 !important);
         background: none;
         color: $info-color;
         ion-icon {
@@ -29,8 +28,7 @@
     }
   
     .content-rating-alert ion-backdrop {
-        // migration-TODO
-        // background-color: map-get($colors, dark) !important;
+        background-color: map-get($colors, dark) !important;
         opacity: 0.4 !important;
     }
   
@@ -51,8 +49,7 @@
     }
   
     .app-rate-btn{
-        // migration-TODO
-    //   background-color: $info-color;
+      background-color: $info-color;
       height: ($base-block-space*5)-2;
       border-radius: 2px !important
     }
@@ -101,5 +98,15 @@
     .btn-pl-8{
       padding-left: $base-block-space * 1 !important;
     }
+
+    .sc-ion-buttons-md-s .button-has-icon-only.button-clear {
+      height: 32px !important;
+      width:auto !important;
+    }
     
+  }
+
+  .sc-ion-buttons-md-s .button-has-icon-only.button-clear {
+    height: 32px !important;
+    width:auto !important;
   }

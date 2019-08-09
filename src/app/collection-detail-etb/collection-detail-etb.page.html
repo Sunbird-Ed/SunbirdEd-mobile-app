@@ -1,11 +1,10 @@
-
 <ion-content no-padding (ionScroll)="onScroll($event)">
   <div class="p-8">
     <app-detail-card (downloadAllContent)="showDownloadConfirmationAlert($event)" (shareEvent)="share()"
-      (showOverflowMenuEvent)="showPopOver($event)" [contentDetail]="contentDetail"
-      [currentCount]="currentCount" [queuedIdentifiers]="queuedIdentifiers"
-      [localImage]="localImage" [showDownloadBtn]="showDownloadBtn" [isDepthChild]='isDepthChild'
-      [isDownloadStarted]="isDownloadStarted" [defaultAppIcon]="defaultAppIcon"></app-detail-card>
+      (showOverflowMenuEvent)="showPopOver($event)" [contentDetail]="contentDetail" [currentCount]="currentCount"
+      [queuedIdentifiers]="queuedIdentifiers" [localImage]="localImage" [showDownloadBtn]="showDownloadBtn"
+      [isDepthChild]='isDepthChild' [isDownloadStarted]="isDownloadStarted" [defaultAppIcon]="defaultAppIcon">
+    </app-detail-card>
     <!-- End of the Parent Card -->
 
     <!-- Import content loader -->
@@ -23,18 +22,20 @@
     <div #stickyPillsRef *ngIf=" childrenData && childrenData?.length" class="collection-etb-filter">
       <div class="sb-chapter-dd" (click)="openTextbookToc()">
         <span class="pull-left">{{stckyUnitTitle || ('SELECT_CHAPTER' | translate)}}</span>
-        <span class="pull-right"><ion-icon name="ios-arrow-dropright-circle"></ion-icon></span>
+        <span class="pull-right">
+          <ion-icon name="ios-arrow-dropright-circle"></ion-icon>
+        </span>
       </div>
       <div class="sb-slider-pills-container">
         <div class="sb-pills-container sb-grade-pills-container" id="gradeScroll">
           <div class="pill" *ngFor="let type of mimeTypes; let i = index; let first = first"
-               [ngClass]="{'active': type?.selected, '': !type?.selected}" attr.id="class{{i}}"
-               (click)="onFilterMimeTypeChange(type.value, i, type.name);">
+            [ngClass]="{'active': type?.selected, '': !type?.selected}" attr.id="class{{i}}"
+            (click)="onFilterMimeTypeChange(type.value, i, type.name);">
             <span class="img-align" *ngIf="type?.iconNormal && type?.selected">
-              <img class="filter-icon" src="{{type?.iconActive}}" alt="">
+              <img class="filter-icon" src="{{type?.iconActive}}">
             </span>
             <span class="img-align" *ngIf="type?.iconNormal && !type?.selected">
-              <img class="filter-icon" src="{{type?.iconNormal}}" alt="">
+              <img class="filter-icon" src="{{type?.iconNormal}}">
             </span>
             <span class="allign-middle">{{type?.name | translate}}</span>
 
@@ -47,13 +48,14 @@
 
     <!-- Looping Inside Children Data Textbook -->
     <section *ngIf="childrenData">
-      <div *ngIf="!(filteredItemsQueryList?.changes | async)?.length">
+      <div *ngIf="childrenData.length && !(filteredItemsQueryList?.changes | async)?.length">
         <div class="heading">{{'NO_CONTENTS' | translate:{'%s': currentFilter } }}</div>
         <div class="sub-heading">{{'NO_CONTENTS_MESSAGE' | translate}}</div>
       </div>
       <ng-container *ngFor="let item of childrenData;  let i = index;">
         <ion-card class="sb-accordian-card" *ngIf="item | hasMimeType: activeMimeTypeFilter">
-          <div  [attr.data-sticky-unit]="item.contentData.name" #filteredItems [id]="item.mimeType === 'application/vnd.ekstep.content-collection' ? item.identifier : ''">
+          <div [attr.data-sticky-unit]="item.contentData.name" #filteredItems
+            [id]="item.mimeType === 'application/vnd.ekstep.content-collection' ? item.identifier : ''">
             <!-- new -->
             <ion-grid class="sb-accordian-header">
               <ion-row (click)="toggleGroup(i, item)" *ngIf="item?.children">
@@ -71,12 +73,13 @@
                   </div>
                 </ion-col>
               </ion-row>
-              <ion-row *ngIf="item?.contentData?.mimeType !== 'application/vnd.ekstep.content-collection' && !item?.children"
+              <ion-row
+                *ngIf="item?.contentData?.mimeType !== 'application/vnd.ekstep.content-collection' && !item?.children"
                 (click)="navigateToDetailsPage(item, depth + '.' + (i + 1))">
                 <ion-col size="1">
                   <div>
                     <ion-icon ios="ios-arrow-dropright-circle" md="md-arrow-dropright-circle"
-                    [ngClass]="{'sb-accordian-grey-icon': !commonUtilService.networkInfo.isNetworkAvailable && !item?.isAvailableLocally, 'sb-play-icon': commonUtilService.networkInfo.isNetworkAvailable || item?.isAvailableLocally}">
+                      [ngClass]="{'sb-accordian-grey-icon': !commonUtilService.networkInfo.isNetworkAvailable && !item?.isAvailableLocally, 'sb-play-icon': commonUtilService.networkInfo.isNetworkAvailable || item?.isAvailableLocally}">
                     </ion-icon>
                   </div>
                 </ion-col>
@@ -85,52 +88,31 @@
                   'sb-play-selected':item?.isAvailableLocally,'sb-play-unselected':!item?.isAvailableLocally}">
                     {{item?.contentData?.name}}
                     <span>
-                      <ion-icon class="sb-checkmark-icon" name="md-checkmark-circle" *ngIf="item?.isAvailableLocally"></ion-icon>
-                    </span>
-                    <!-- <span>
-                      <ion-icon class="checkmark-icon" name="checkmark-circle-outline" *ngIf="item?.isAvailableLocally">
+                      <ion-icon class="sb-checkmark-icon" name="md-checkmark-circle" *ngIf="item?.isAvailableLocally">
                       </ion-icon>
-                    </span> -->
+                    </span>
                   </div>
                 </ion-col>
               </ion-row>
-              <!-- <div class="font-grey-text" (click)="showCommingSoonPopup(item)" *ngIf="item?.contentData?.mimeType === 'application/vnd.ekstep.content-collection' && !item?.children">
-                {{item?.contentData?.name}}
-                <span class="grey-icon-span">
-                  <ion-icon ios="ios-alert" md="md-alert" class="grey-icon ML5"></ion-icon>
-                </span>
-              </div> -->
             </ion-grid>
-            <!-- <div class="sb-separator-line"></div> -->
             <div class="sb-hidden-content" *ngIf="isGroupShown(i) && (item?.children && item?.children?.length)">
               <div class="box-align" *ngFor="let firstChildren of item?.children; let j = index;">
-                    <div class="sb-topics-container  sb-topics-container-ftue">
-                      <app-collection-child
-                        [childData]="firstChildren" [index]="j" [depth]="depth" [activeMimeTypeFilter] = "activeMimeTypeFilter" [isTextbookTocPage] = "false"
-                        [corRelationList]="corRelationList" [isDepthChild]="isDepthChild" [breadCrumb]="breadCrumb" [rootUnitId]="item.identifier" [bookID]="identifier"></app-collection-child>
-                    </div>
+                <div class="sb-topics-container  sb-topics-container-ftue">
+                  <app-collection-child [childData]="firstChildren" [index]="j" [depth]="depth"
+                    [activeMimeTypeFilter]="activeMimeTypeFilter" [isTextbookTocPage]="false"
+                    [corRelationList]="corRelationList" [isDepthChild]="isDepthChild" [breadCrumb]="breadCrumb"
+                    [rootUnitId]="item.identifier" [bookID]="identifier"></app-collection-child>
+                </div>
               </div>
             </div>
           </div>
         </ion-card>
-      </ng-container> 
+      </ng-container>
     </section>
   </div>
 </ion-content>
 
 <!-- Page footer -->
-<!-- <ion-footer *ngIf="showDownloadBtn && !isDepthChild">
-	<ion-toolbar padding>
-		<button ion-button block *ngIf="showDownloadBtn && !isDownloadStarted" (click)="showDownloadConfirmationAlert()"> {{
-			'DOWNLOAD_ALL_CONTENT' | translate }} ({{(downloadSize | fileSize)
-			}})
-		</button>
-		<button *ngIf="isDownloadStarted" ion-button block outline [ngStyle]="{'background': '-webkit-linear-gradient(left, #DBECFF '  +(currentCount/queuedIdentifiers.length)*100+ '%, white 0%)'}">
-			{{ 'DOWNLOADING_2' | translate }}... {{ currentCount }} / {{ queuedIdentifiers?.length }}
-		</button>
-	</ion-toolbar>
-</ion-footer> -->
-
 <div class="loading-backdrop" *ngIf="showLoading && !isDownloadStarted" text-center>
   <div class="backdrop-container">
     <ion-label>{{ 'LOADING_CONTENTS' | translate: {'%s': downloadProgress ? downloadProgress : 0} }}</ion-label>
@@ -142,5 +124,5 @@
   </div>
 </div>
 <app-sb-download-popup *ngIf="showDownload" (cancelDownloadEmit)="cancelDownload($event)" [currentCount]="currentCount"
-[queuedIdentifiers]="queuedIdentifiers" [downloadSize]="downloadSize"
-[collectionName]="contentDetail?.contentData?.name" [showDownload]="showDownload"></app-sb-download-popup>
+  [queuedIdentifiers]="queuedIdentifiers" [downloadSize]="downloadSize"
+  [collectionName]="contentDetail?.contentData?.name" [showDownload]="showDownload"></app-sb-download-popup>
