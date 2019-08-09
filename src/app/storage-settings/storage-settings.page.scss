@@ -32,6 +32,7 @@
        
     }
     .sb-storage-container{
+        width: 100%;
         display: grid;
         grid-template-columns: ($base-block-space * 5) ($base-block-space * 3) auto;
         @include padding(($base-block-space),0,($base-block-space), ($base-block-space));

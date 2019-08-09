@@ -106,11 +106,11 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
     if(ignoreLoader) {
 
     } else {
-      this.loader = await this.commonUtilService.getLoader();
-      await this.loader.present();
-      this.loader.dismiss().then(() => {
-        this.loader = undefined;
-      });
+      // this.loader = await this.commonUtilService.getLoader();
+      // await this.loader.present();
+      // this.loader. dismiss().then(() => {
+      //   this.loader = undefined;
+      // });
     }
     
 
@@ -128,7 +128,7 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
       await this.getAppStorageInfo();
     }
     await this.contentService.getContents(requestParams).toPromise()
-      .then(data => {
+      .then( async data => {
         if (shouldGenerateTelemetry) {
           this.generateInteractTelemetry(data.length, this.storageInfo.usedSpace, this.storageInfo.availableSpace);
         }
@@ -148,8 +148,10 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
         });
         this.ngZone.run(async () => {
           this.downloadedContents = data;
-          if (this.downloadedContents && this.downloadedContents.length) {
-            await this.loader.dismiss();
+          if (this.downloadedContents && this.downloadedContents.length && this.loader) {
+            this.loader.dismiss().then(() => {
+              this.loader = undefined;
+            });
           }
         });
       })
@@ -173,7 +175,10 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
       contentDeleteList: emitedContents.selectedContents
     };
     if (emitedContents.selectedContents.length > 1) {
-      this.deleteAllContents(emitedContents);
+      await this.deleteAllContents(emitedContents);
+      this.loader.dismiss().then(() => {
+        this.loader = undefined;
+      });
     } else {
       this.loader = await this.commonUtilService.getLoader();
       await this.loader.present();
