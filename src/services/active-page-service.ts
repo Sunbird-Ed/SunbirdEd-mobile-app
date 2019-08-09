@@ -1,55 +1,41 @@
-import { PageId } from './telemetry-constants';
-import { ResourcesComponent } from '../app/resources/resources.component';
-import { RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { RouterLinks } from '@app/app/app.constant';
-// migration-TODO
-// import { CoursesPage } from '@app/pages/courses/courses';
-// import { ProfilePage } from '@app/pages/profile/profile';
-// import { GuestProfilePage } from '@app/pages/profile';
-// import { CollectionDetailsEtbPage } from '@app/pages/collection-details-etb/collection-details-etb';
-// import { ContentDetailsPage } from '@app/pages/content-details/content-details';
-// import { QrCodeResultPage } from '@app/pages/qr-code-result';
-// import { CollectionDetailsPage } from '@app/pages/collection-details/collection-details';
+import { PageId } from './telemetry-constants';
 
 export class ActivePageService {
 
+  constructor() { }
+
   computePageId(url): string {
+    const routeUrl = url;
     let pageId = '';
-    if (url === RouterLinks.LIBRARY_TAB) {
+
+    if (routeUrl === RouterLinks.LIBRARY_TAB) {
       pageId = PageId.LIBRARY;
-    } else if (url === RouterLinks.COURSE_TAB) {
+    } else if (routeUrl === RouterLinks.COURSE_TAB) {
       pageId = PageId.COURSES;
-    } else if (url === RouterLinks.PROFILE_TAB) {
+    } else if (routeUrl === RouterLinks.PROFILE_TAB) {
       pageId = PageId.PROFILE;
-    } else if (url === RouterLinks.GUEST_PROFILE_TAB) {
+    } else if (routeUrl === RouterLinks.GUEST_PROFILE_TAB) {
       pageId = PageId.GUEST_PROFILE;
-    } else if (url === RouterLinks.COLLECTION_DETAIL_ETB) {
+    } else if (routeUrl === RouterLinks.DOWNLOAD_TAB) {
+      pageId = PageId.DOWNLOADS;
+    } else if (routeUrl.indexOf(RouterLinks.COLLECTION_DETAIL_ETB) !== -1) {
       pageId = PageId.COLLECTION_DETAIL;
-    } else if (url === RouterLinks.CONTENT_DETAILS) {
+    } else if (routeUrl.indexOf(RouterLinks.CONTENT_DETAILS) !== -1) {
       pageId = PageId.CONTENT_DETAIL;
-    } else if (url === RouterLinks.QRCODERESULT) {
+    } else if (routeUrl.indexOf(RouterLinks.QRCODERESULT) !== -1) {
       pageId = PageId.DIAL_CODE_SCAN_RESULT;
-    } else if (url === RouterLinks.COLLECTION_DETAILS) {
+    } else if (routeUrl.indexOf(RouterLinks.COLLECTION_DETAILS) !== -1) {
       pageId = PageId.COLLECTION_DETAIL;
-    } 
-    // migration-TODO
-    // if (page instanceof ResourcesComponent) {
-    //   pageId = PageId.LIBRARY;
-    // } else if (page instanceof CoursesPage) {
-    //   pageId = PageId.COURSES;
-    // } else if (page instanceof ProfilePage) {
-    //   pageId = PageId.PROFILE;
-    // } else if (page instanceof GuestProfilePage) {
-    //   pageId = PageId.GUEST_PROFILE;
-    // } else if (page instanceof CollectionDetailsEtbPage) {
-    //   pageId = PageId.COLLECTION_DETAIL;
-    // } else if (page instanceof ContentDetailsPage) {
-    //   pageId = PageId.CONTENT_DETAIL;
-    // } else if (page instanceof QrCodeResultPage) {
-    //   pageId = PageId.DIAL_CODE_SCAN_RESULT;
-    // } else if (page instanceof CollectionDetailsPage) {
-    //   pageId = PageId.COLLECTION_DETAIL;
-    // }
+    } else if (routeUrl.indexOf(RouterLinks.ENROLLED_COURSE_DETAILS) !== -1) {
+      pageId = PageId.COURSE_DETAIL;
+    } else if (routeUrl.indexOf(RouterLinks.ACTIVE_DOWNLOADS) !== -1) {
+      pageId = PageId.ACTIVE_DOWNLOADS;
+    } else if (routeUrl.indexOf(RouterLinks.COURSE_BATCHES) !== -1) {
+      pageId = PageId.COURSE_BATCHES;
+    }
+
     return pageId;
   }
 
