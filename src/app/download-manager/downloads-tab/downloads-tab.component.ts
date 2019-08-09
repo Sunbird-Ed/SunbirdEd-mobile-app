@@ -1,4 +1,4 @@
-import { Component, Input, EventEmitter, Output } from '@angular/core';
+import { Component, Input, EventEmitter, Output, NgZone } from '@angular/core';
 import { ContentType, MimeType, MenuOverflow, RouterLinks } from '@app/app/app.constant';
 // import { MenuOverflow } from '../../../app/app.constant';
 import { OverflowMenuComponent } from '@app/app/profile/overflow-menu/overflow-menu.component';
@@ -41,9 +41,21 @@ export class DownloadsTabComponent {
     private commonUtilService: CommonUtilService,
     private events: Events,
     private telemetryGeneratorService: TelemetryGeneratorService,
-    private router: Router) {
+    private router: Router,
+    private zone: NgZone) {
+    this.setSelectedItems();
   }
 
+  setSelectedItems() {
+    this.downloadedContents.forEach(element => {
+      element['isSelected'] = false;
+    });
+    console.log('contents', this.downloadedContents);
+  }
+
+  ngOnChanges() {
+    this.setSelectedItems();
+  }
   async showDeletePopup(identifier?) {
     if (identifier) {
       this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
@@ -145,18 +157,21 @@ export class DownloadsTabComponent {
   }
 
   selectAllContents() {
-    this.downloadedContents.forEach(element => {
-      element['isSelected'] = true;
+    this.zone.run(() => {
+      this.downloadedContents.forEach(element => {
+        element['isSelected'] = true;
+      });
+      this.showDeleteButton = false;
+      this.showSelectAll = false;
+      this.deleteAllContents();
     });
-    this.showDeleteButton = false;
-    this.showSelectAll = false;
-    this.deleteAllContents();
   }
 
-  unSelectAllContents() {
+  unSelectAllContents(event?) {
     this.downloadedContents.forEach(element => {
       element['isSelected'] = false;
     });
+
     this.showDeleteButton = true;
     this.showSelectAll = true;
     if (this.deleteAllPopupPresent) {
@@ -165,21 +180,23 @@ export class DownloadsTabComponent {
     this.selectedContents = [];
   }
 
-  toggleContentSelect(event, idx) {
+  async toggleContentSelect(event, idx) {
     // this.downloadedContents[idx]['isSelected'] = !this.downloadedContents[idx]['isSelected'];
-    this.downloadedContents[idx]['isSelected'] = event.value;
-    const selectedContents = (this.downloadedContents.filter((element) => element['isSelected']));
-    if (selectedContents.length) {
-      if (selectedContents.length === this.downloadedContents.length) {
-        this.showSelectAll = false;
+    if (event.value) {
+      this.downloadedContents[idx]['isSelected'] = event.value;
+      const selectedContents = (this.downloadedContents.filter((element) => element['isSelected']));
+      if (selectedContents.length) {
+        if (selectedContents.length === this.downloadedContents.length) {
+          this.showSelectAll = false;
+        } else {
+          this.showSelectAll = true;
+        }
+        this.showDeleteButton = false;
+        this.deleteAllContents();
       } else {
-        this.showSelectAll = true;
+        this.showDeleteButton = true;
+        await this.deleteAllConfirm.dismiss(null);
       }
-      this.showDeleteButton = false;
-      this.deleteAllContents();
-    } else {
-      this.showDeleteButton = true;
-      this.deleteAllConfirm.dismiss(null);
     }
   }
 
@@ -205,7 +222,7 @@ export class DownloadsTabComponent {
     });
     if (!this.deleteAllPopupPresent) {
       this.telemetryGeneratorService.generatePageViewTelemetry(PageId.BULK_DELETE_POPUP, Environment.DOWNLOADS);
-      this.deleteAllConfirm = this.popoverCtrl.create({
+      this.deleteAllConfirm = await this.popoverCtrl.create({
         component: SbGenericPopoverComponent,
         componentProps: {
           sbPopoverMainTitle: this.commonUtilService.translateMessage('ITEMS_SELECTED'),
@@ -231,7 +248,7 @@ export class DownloadsTabComponent {
       await this.deleteAllConfirm.present();
       this.deleteAllPopupPresent = true;
     }
-    this.deleteAllConfirm.onDidDismiss((leftBtnClicked: any) => {
+    await this.deleteAllConfirm.onDidDismiss((leftBtnClicked: any) => {
       this.deleteAllPopupPresent = false;
       const valuesMap = {};
       if (leftBtnClicked == null) {
