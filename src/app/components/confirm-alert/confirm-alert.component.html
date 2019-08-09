@@ -34,7 +34,7 @@
 
 <ion-footer>
   <div class="sb-popover-footer">
-    <ion-button class="sb-popover-action-btn popover-color " (click)='selectOption(true)' *ngIf="isUpdateAvail">{{ 'UPDATE' | translate}}</ion-button>
-    <ion-button class="sb-popover-action-btn popover-color" (click)='selectOption(true)' *ngIf="!isUpdateAvail">{{ 'DOWNLOAD' | translate}}</ion-button>
+    <button class="sb-popover-action-btn popover-color " (click)='selectOption(true)' *ngIf="isUpdateAvail">{{ 'UPDATE' | translate}}</button>
+    <button class="sb-popover-action-btn popover-color" (click)='selectOption(true)' *ngIf="!isUpdateAvail">{{ 'DOWNLOAD' | translate}}</button>
   </div>
 </ion-footer>

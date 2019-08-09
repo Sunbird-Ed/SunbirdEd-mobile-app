@@ -226,9 +226,11 @@
 
             &.download{
               background-color: $secondary-400;
+              color: $white-color;
             }
             &.delete{
               background-color: $danger-color;
+              color: $white-color;
             }
           }
         }

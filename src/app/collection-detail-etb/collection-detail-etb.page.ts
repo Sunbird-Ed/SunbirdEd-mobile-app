@@ -440,9 +440,6 @@ export class CollectionDetailEtbPage implements OnInit {
       this.generateQRSessionEndEvent(this.source, this.cardData.identifier);
     }
     this.location.back();
-    if (this.backButtonFunc) {
-      this.backButtonFunc.unsubscribe();
-    }
   }
 
   registerDeviceBackButton() {
@@ -534,6 +531,7 @@ export class CollectionDetailEtbPage implements OnInit {
           loader.dismiss().then(() => {
             if (data) {
               this.extractApiResponse(data);
+              loader.present();
             }
           });
         });

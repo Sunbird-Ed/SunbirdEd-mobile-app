@@ -131,7 +131,6 @@ export class GroupMembersPage implements OnInit {
   }
 
   isUserSelected(index: number) {
-    console.log('Index', index);
     return Boolean(this.userSelectionMap.get(this.userList[index].uid));
   }
 

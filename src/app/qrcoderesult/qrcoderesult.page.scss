@@ -28,7 +28,7 @@
         font-size: 11px;
         @include margin(null, 10px, null, null);
     }
-    .card.card-md {
+    .sc-ion-card-md-h.sc-ion-card-md-s  {
         border-radius: 4px;
         box-shadow: 0 4px 10px 0 rgba(0, 0, 0, 0.16);
         background-color: #ffffff;
@@ -130,8 +130,12 @@
         
     }
     
-    .custom-btn{
+    .custom-btn, .default{
         background-color: #0076FE;
+    }
+
+    .default {
+        color: #fff;
     }
     
     .custom-btn.play .arrow-right{
@@ -164,11 +168,18 @@
         height: 100%;
         z-index: 1000;
         opacity: 1 !important;
+        position: fixed;
+        left: 0;
+        right: 0;
+        top: 0;
+        bottom: 0;
     }
     .downloadicon {
         display: inline-block;
         font-size: 1.1em;
         margin-top: -2px;
+        font-weight: 700;
+        vertical-align: middle;
     }
     .qr-result-btn{
         display: block;
@@ -176,6 +187,7 @@
         padding: $base-block-space * 1;
         border-top-left-radius: 0px !important;
         border-top-right-radius: 0px !important;
+        font-weight: 700;
     }
 }
     

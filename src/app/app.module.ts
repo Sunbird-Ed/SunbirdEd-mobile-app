@@ -60,6 +60,7 @@ import { PageFilterPage } from './page-filter/page-filter.page';
 
 import { PageFilterOptionsPageModule } from './page-filter/page-filter-options/page-filter-options.module';
 import { PageFilterOptionsPage } from './page-filter/page-filter-options/page-filter-options.page';
+import { CrashAnalyticsErrorLogger } from '@app/services/crash-analytics/crash-analytics-error-logger';
 
 
 
@@ -405,6 +406,8 @@ declare const buildconfigreader;
     CanvasPlayerService,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     ...sunbirdSdkServicesProvidersFactory(),
+    { provide: ErrorHandler, useClass: ErrorHandler },
+    { provide: ErrorHandler, useClass: CrashAnalyticsErrorLogger },
     // { provide: ErrorHandler},
     { provide: APP_INITIALIZER, useFactory: sunbirdSdkFactory, deps: [], multi: true }
   ],

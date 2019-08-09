@@ -65,7 +65,7 @@
             </button>
           </ion-col>
           <ion-col no-padding *ngIf="content.contentData?.streamingUrl">
-            <button no-padding class="custom-btn play qr-result-btn" expand="block" (click)="playContent(content)">
+            <button no-padding class="custom-btn play qr-result-btn " expand="block" (click)="playContent(content)">
               <ion-icon name="play"></ion-icon>&nbsp;{{'PLAY' | translate}}
             </button>
           </ion-col>
@@ -73,7 +73,7 @@
       </div>
 <!-- play locally if content downloaded  -->
       <div no-padding *ngIf="content.isAvailableLocally && !content.isUpdateAvailable">
-        <button class="qr-result-btn" no-padding expand="block" (click)="navigateToDetailsPage(content)" text-uppercase [disabled]="isDownloadStarted">
+        <button class="qr-result-btn default" no-padding expand="block" (click)="navigateToDetailsPage(content)" text-uppercase [disabled]="isDownloadStarted">
           <ion-icon name="play"></ion-icon>&nbsp;{{'PLAY'|translate}}
         </button>
       </div>
@@ -94,7 +94,7 @@
              </button>
         </ion-col>
           <ion-col no-padding *ngIf="content.contentData?.streamingUrl" no-padding>
-            <button  class="custom-btn play qr-result-btn" no-margin   expand="block" (click)="navigateToDetailsPage(content)">
+            <button  class="custom-btn play qr-result-btn default" no-margin   expand="block" (click)="navigateToDetailsPage(content)">
               <ion-icon name="play"></ion-icon>&nbsp;{{'PLAY' | translate}}
             </button>
           </ion-col>
@@ -104,7 +104,7 @@
   </div>
 </ion-content>
 
-<ion-backdrop class="loading-backdrop" *ngIf="showLoading && !isDownloadStarted" text-center>
+<div class="loading-backdrop" *ngIf="showLoading && !isDownloadStarted" text-center>
 	<div class="backdrop-container">
 		<ion-label>{{ 'LOADING_CONTENTS' | translate: {'%s': downloadProgress ? (downloadProgress | number: '1.0-0') : 0} }}</ion-label>
 		<app-pb-horizontal [progress]="downloadProgress" isOnBoardCard="false"></app-pb-horizontal>
@@ -113,4 +113,4 @@
 	<div class="backdrop-footer">
 		<ion-button size="small" (click)="cancelDownload()">{{ 'CANCEL' | translate }}</ion-button>
 	</div>
-</ion-backdrop>
+</div>
