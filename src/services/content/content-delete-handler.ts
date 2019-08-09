@@ -62,7 +62,7 @@ export class ContentDeleteHandler {
         });
         await confirm.present();
         const { data } = await confirm.onDidDismiss();
-        if (data && data.canDelete) {
+        if (data) {
             this.deleteContent(content.identifier, isChildContent, contentInfo, pageId);
         }
     }
@@ -70,7 +70,7 @@ export class ContentDeleteHandler {
     /**
      * Deletes the content
      */
-    private deleteContent(identifier: string, isChildContent: boolean, contentInfo: ContentInfo, pageId: string) {
+    private async deleteContent(identifier: string, isChildContent: boolean, contentInfo: ContentInfo, pageId: string) {
         this.telemetryGeneratorService.generateInteractTelemetry(
             InteractType.TOUCH,
             InteractSubtype.DELETE_CLICKED,
@@ -86,10 +86,10 @@ export class ContentDeleteHandler {
                 isChildContent
             }]
         };
-        const loader = this.commonUtilService.getLoader();
-        loader.present();
-        this.contentService.deleteContent(deleteContentRequest).toPromise().then((res: any) => {
-            loader.dismiss();
+        const loader = await this.commonUtilService.getLoader();
+        await loader.present();
+        this.contentService.deleteContent(deleteContentRequest).toPromise().then(async (res: any) => {
+            await loader.dismiss();
             if (res && res.status === ContentDeleteStatus.NOT_FOUND) {
                 this.commonUtilService.showToast('CONTENT_DELETE_FAILED');
             } else {
@@ -100,8 +100,8 @@ export class ContentDeleteHandler {
                 this.contentDelete.next();
                 this.commonUtilService.showToast('MSG_RESOURCE_DELETED');
             }
-        }).catch((error: any) => {
-            loader.dismiss();
+        }).catch(async(error: any) => {
+            await loader.dismiss();
             console.log('delete response: ', error);
             this.commonUtilService.showToast('CONTENT_DELETE_FAILED');
         });

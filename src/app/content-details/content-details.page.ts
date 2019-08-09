@@ -727,7 +727,7 @@ export class ContentDetailsPage implements OnInit {
       });
       await popover.present();
       const { data } = await popover.onDidDismiss();
-      if (data.canDownload) {
+      if (data) {
         this.downloadContent();
       }
     } else {
