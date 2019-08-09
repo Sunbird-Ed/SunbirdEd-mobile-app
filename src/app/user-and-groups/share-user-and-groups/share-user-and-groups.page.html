@@ -28,8 +28,8 @@
       </ion-col>
     </ion-row>
 
-    <ion-item *ngFor="let group of groupList; let i = index;" class="item-background" margin-bottom no-lines>
-      <ion-label (click)="toggleGroupSelected(i)">
+    <ion-item (click)="toggleGroupSelected(i)" *ngFor="let group of groupList; let i = index;" class="item-background" margin-bottom no-lines>
+      <ion-label>
         <h6 class="padding-top">
           <strong>{{group?.name}}</strong>
         </h6>
@@ -44,8 +44,7 @@
           </ion-text>
         </p>
       </ion-label>
-      <ion-checkbox item-end mode="ios" checked="{{isGroupSelected(group?.gid)}}" (click)="toggleGroupSelected(i)">
-      </ion-checkbox>
+      <ion-checkbox item-end mode="ios" [checked]="isGroupSelected(group?.gid)"></ion-checkbox>
     </ion-item>
 
     <ion-text>
@@ -53,15 +52,15 @@
         <strong>{{'USERS' | translate}}</strong> {{ '(' + userList?.length + ')'}}&lrm;
       </p>
     </ion-text>
-    <ion-item *ngFor="let user of userList; let i = index;" class="item-background" margin-bottom no-lines>
-      <ion-label (click)="toggleUserSelected(i)">
+    <ion-item (click)="toggleUserSelected(i)" *ngFor="let user of userList; let i = index;" class="item-background" margin-bottom no-lines>
+      <ion-label>
         <h6 class="padding-top">
           <strong>{{user?.handle}}</strong>
         </h6>
         <p *ngIf="user?.profileType === ProfileType.TEACHER">{{'USER_TYPE_1' | translate | titlecase}}</p>
         <p *ngIf="user?.profileType === ProfileType.STUDENT">{{'USER_TYPE_2' | translate | titlecase}}</p>
       </ion-label>
-      <ion-checkbox item-end mode="ios" checked="{{isUserSelected(user?.uid)}}" (click)="toggleUserSelected(i)">
+      <ion-checkbox item-end mode="ios" [checked]="isUserSelected(user?.uid)">
       </ion-checkbox>
     </ion-item>
   </div>
