@@ -99,7 +99,7 @@ export class UserTypeSelectionPage implements OnInit {
   }
 
   handleBackButton() {
-    this.router.navigate([`/${RouterLinks.LANGUAGE_SETTING}`, 'false']);
+    this.router.navigate([`/${RouterLinks.LANGUAGE_SETTING}`]);
   }
   handleHeaderEvents($event) {
     switch ($event.name) {

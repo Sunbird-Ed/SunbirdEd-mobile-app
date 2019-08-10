@@ -75,7 +75,7 @@ export class LanguageSettingsPage implements OnInit {
         this.isFromSettings ? PageId.SETTINGS_LANGUAGE : PageId.ONBOARDING_LANGUAGE_SETTING,
         this.isFromSettings ? Environment.SETTINGS : Environment.ONBOARDING,
       );
-      
+
       if (!this.isFromSettings) {
         this.headerService.hideHeader();
       } else {

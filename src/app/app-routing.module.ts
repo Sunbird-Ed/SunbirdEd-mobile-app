@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
+import { RouterModule, Routes } from '@angular/router';
 import { RouterLinks } from './app.constant';
 import { HasNotBeenOnboardedGuard } from '@app/guards/has-not-been-onboarded.guard';
 import { HasNotSelectedFrameworkGuard } from '@app/guards/has-not-selected-framework.guard';
@@ -12,6 +12,12 @@ const routes: Routes = [
     path: '',
     redirectTo: `${RouterLinks.LANGUAGE_SETTING}`,
     pathMatch: 'full'
+  },
+  {
+    path: `${RouterLinks.LANGUAGE_SETTING}/:isFromSettings`,
+    loadChildren: './language-settings/language-settings.module#LanguageSettingsModule',
+    canLoad: [HasNotBeenOnboardedGuard],
+    resolve: { message: HasNotSelectedLanguageGuard }
   },
   {
     path: `${RouterLinks.LANGUAGE_SETTING}`,
@@ -78,10 +84,6 @@ const routes: Routes = [
   {
     path: RouterLinks.TERMS_AND_CONDITIONS,
     loadChildren: './terms-and-conditions/terms-and-conditions.module#TermsAndConditionsPageModule'
-  },
-  {
-    path: `${RouterLinks.MENU_LANGUAGE_SETTING}/:isFromSettings`,
-    loadChildren: './language-settings/language-settings.module#LanguageSettingsModule'
   },
   { path: 'filters', loadChildren: './search/filters/filters.module#FiltersPageModule' },
   { path: RouterLinks.TEXTBOOK_VIEW_MORE, loadChildren: './textbook-view-more/textbook-view-more.module#TextbookViewMorePageModule' },
