@@ -13,9 +13,10 @@
   </div>
 </ion-content>
 
-<ion-footer padding *ngIf="!changePermissionAccess">
+<ion-footer padding *ngIf="!changePermissionAccess" style="background: white;">
   <ion-button expand="block" (click)="grantAccess()">{{'GRANT_ACCESS' | translate}}</ion-button>
-  <ion-button expand="block" fill="outline" class="mt-8 btn-outline" (click)="skipAccess()">{{'NOT_NOW' | translate}}</ion-button>
+  <ion-button expand="block" fill="outline" class="mt-8 btn-outline" (click)="skipAccess()">{{'NOT_NOW' | translate}}
+  </ion-button>
 </ion-footer>
 
 <!-- For Edit permission page -->
@@ -30,7 +31,8 @@
         <p class="description">{{item?.description}}</p>
       </div>
       <div class="toggle-col">
-        <ion-toggle class="permission-toggle" color="success" [(ngModel)]="item.permission" (ionChange)="stateChange($event)">
+        <ion-toggle class="permission-toggle" color="success" [(ngModel)]="item.permission"
+          (ionChange)="stateChange($event)">
         </ion-toggle>
       </div>
     </div>

@@ -1,11 +1,11 @@
 import { ProfileType, SharedPreferences, ProfileService } from 'sunbird-sdk';
-import { GUEST_TEACHER_TABS, initTabs, GUEST_STUDENT_TABS, LOGIN_TEACHER_TABS } from './../module.service';
+import { GUEST_TEACHER_TABS, initTabs, GUEST_STUDENT_TABS, LOGIN_TEACHER_TABS } from '@app/app/module.service';
 import { Component, ViewChild, ViewEncapsulation, Inject } from '@angular/core';
 
 import { IonTabs, Events, ToastController } from '@ionic/angular';
 import { ContainerService } from '@app/services/container.services';
 import { AppGlobalService } from '@app/services/app-global-service.service';
-import { ProfileConstants } from '../app.constant';
+import { ProfileConstants } from '@app/app/app.constant';
 import { CommonUtilService } from '@app/services/common-util.service';
 @Component({
   selector: 'app-tabs',
@@ -114,7 +114,7 @@ export class TabsPage {
   public async customClick(tab, _index) {
     // this.tabIndex = _index;
     if (tab.disabled && tab.availableLater) {
-      let toast = await this.toastCtrl.create({
+      const toast = await this.toastCtrl.create({
         message: 'Will be available in later release',
         duration: 3000,
         position: 'middle',

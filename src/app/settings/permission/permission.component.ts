@@ -24,28 +24,9 @@ declare const cordova;
 })
 export class PermissionComponent implements OnInit {
 
-  appName = '';
+  appName;
 
-  permissionListDetails = [
-    {
-      title: this.commonUtilService.translateMessage('CAMERA'),
-      path: './assets/imgs/ic_photo_camera.png',
-      description: this.commonUtilService.translateMessage('CAMERA_PERMISSION_DESCRIPTION', this.appName),
-      permission: false
-    },
-    {
-      title: this.commonUtilService.translateMessage('FILE_MANAGER'),
-      path: './assets/imgs/ic_folder_open.png',
-      description: this.commonUtilService.translateMessage('FILE_MANAGER_PERMISSION_DESCRIPTION'),
-      permission: false
-    },
-    {
-      title: this.commonUtilService.translateMessage('MICROPHONE'),
-      path: './assets/imgs/ic_keyboard_voice.png',
-      description: this.commonUtilService.translateMessage('MICROPHONE_PERMISSION_DESCRIPTION'),
-      permission: false
-    }
-  ];
+  permissionListDetails: any;
 
   readonly permissionList = [
     AndroidPermission.CAMERA,
@@ -54,7 +35,6 @@ export class PermissionComponent implements OnInit {
   ];
 
   changePermissionAccess = false;
-  showScannerPage = false;
   showProfileSettingPage = false;
   showTabsPage = false;
   headerObservable: any;
@@ -74,8 +54,29 @@ export class PermissionComponent implements OnInit {
     private router: Router,
     private platform: Platform
   ) {
-    this.appVersion.getAppName()
-      .then((appName: any) => this.appName = appName);
+    this.appVersion.getAppName().then((appName: string) => {
+      this.appName = appName;
+      this.permissionListDetails = [
+        {
+          title: this.commonUtilService.translateMessage('CAMERA'),
+          path: './assets/imgs/ic_photo_camera.png',
+          description: this.commonUtilService.translateMessage('CAMERA_PERMISSION_DESCRIPTION', this.appName),
+          permission: false
+        },
+        {
+          title: this.commonUtilService.translateMessage('FILE_MANAGER'),
+          path: './assets/imgs/ic_folder_open.png',
+          description: this.commonUtilService.translateMessage('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName),
+          permission: false
+        },
+        {
+          title: this.commonUtilService.translateMessage('MICROPHONE'),
+          path: './assets/imgs/ic_keyboard_voice.png',
+          description: this.commonUtilService.translateMessage('MICROPHONE_PERMISSION_DESCRIPTION', this.appName),
+          permission: false
+        }
+      ];
+    });
     this.getNavParams();
   }
 
@@ -88,13 +89,12 @@ export class PermissionComponent implements OnInit {
   }
 
   async ionViewWillEnter() {
-    await this.permission.checkPermissions(this.permissionList).subscribe((res: { [key: string]: AndroidPermissionsStatus }) => {
+    this.permission.checkPermissions(this.permissionList).subscribe((res: { [key: string]: AndroidPermissionsStatus }) => {
       this.permissionListDetails[0].permission = res[AndroidPermission.CAMERA].hasPermission;
       this.permissionListDetails[1].permission = res[AndroidPermission.WRITE_EXTERNAL_STORAGE].hasPermission;
       this.permissionListDetails[2].permission = res[AndroidPermission.RECORD_AUDIO].hasPermission;
     });
     this.changePermissionAccess = Boolean(this.navParams.changePermissionAccess);
-    this.showScannerPage = Boolean(this.navParams.showScannerPage);
     this.showProfileSettingPage = Boolean(this.navParams.showProfileSettingPage);
     this.showTabsPage = Boolean(this.navParams.showTabsPage);
     this.headerService.showHeaderWithBackButton();
@@ -112,7 +112,7 @@ export class PermissionComponent implements OnInit {
   }
 
   handleBackButton() {
-    this.backButtonFunc = this.platform.backButton.subscribe(() => {
+    this.backButtonFunc = this.platform.backButton.subscribeWithPriority(10, () => {
       this.location.back();
       this.backButtonFunc.unsubscribe();
     });
@@ -125,7 +125,9 @@ export class PermissionComponent implements OnInit {
   }
 
   ionViewWillLeave() {
-    this.backButtonFunc.unsubscribe();
+    if (this.backButtonFunc) {
+      this.backButtonFunc.unsubscribe();
+    }
   }
 
   grantAccess() {
@@ -135,24 +137,7 @@ export class PermissionComponent implements OnInit {
     this.generateInteractEvent(true);
     // If user given camera access and the showScannerPage is ON
     this.requestAppPermissions().then((status) => {
-      // Check if scannerpage is ON and user given permission to camera then open scanner page
-      if (this.showScannerPage) {
-        if (status && status.hasPermission) {
-          this.scannerService.startScanner(PageId.PERMISSION, true);
-        } else {
-          this.permission.checkPermissions([AndroidPermission.CAMERA]).toPromise().then((cameraStatus) => {
-            if (cameraStatus && cameraStatus[AndroidPermission.CAMERA] && cameraStatus[AndroidPermission.CAMERA].hasPermission) {
-              this.scannerService.startScanner(PageId.PERMISSION, true);
-            } else if (this.appGlobalService.DISPLAY_ONBOARDING_CATEGORY_PAGE) {
-              const navigationExtras: NavigationExtras = { state: { hideBackButton: false } };
-              this.router.navigate([`/${RouterLinks.PROFILE_SETTINGS}`], navigationExtras);
-            } else {
-              const navigationExtras: NavigationExtras = { state: { loginMode: 'guest' } };
-              this.router.navigate(['/tabs'], navigationExtras);
-            }
-          });
-        }
-      } else if (this.showProfileSettingPage) {
+      if (this.showProfileSettingPage) {
         // check if profileSetting page config. is ON
         const navigationExtras: NavigationExtras = { state: { hideBackButton: false } };
         this.router.navigate([`/${RouterLinks.PROFILE_SETTINGS}`], navigationExtras);
@@ -168,12 +153,6 @@ export class PermissionComponent implements OnInit {
     if (this.showProfileSettingPage || this.appGlobalService.DISPLAY_ONBOARDING_CATEGORY_PAGE) {
       const navigationExtras: NavigationExtras = { state: { hideBackButton: false } };
       this.router.navigate([`/${RouterLinks.PROFILE_SETTINGS}`], navigationExtras);
-    } else if (this.showScannerPage) {
-      this.permission.checkPermissions([AndroidPermission.CAMERA]).toPromise().then((cameraStatus) => {
-        if (cameraStatus && cameraStatus[AndroidPermission.CAMERA] && cameraStatus[AndroidPermission.CAMERA].hasPermission) {
-          this.scannerService.startScanner(PageId.PERMISSION, true);
-        }
-      });
     } else {
       const navigationExtras: NavigationExtras = { state: { loginMode: 'guest' } };
       this.router.navigate(['/tabs'], navigationExtras);
