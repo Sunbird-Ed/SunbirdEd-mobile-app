@@ -72,7 +72,7 @@ export class AddOrRemoveGroupUserPage implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.zone.run(() => {
-      this.backButtonFunc = this.platform.backButton.subscribe(() => {
+      this.backButtonFunc = this.platform.backButton.subscribeWithPriority(10, () => {
         this.location.back();
         this.backButtonFunc.unsubscribe();
       });

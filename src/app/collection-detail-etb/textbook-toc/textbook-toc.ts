@@ -64,7 +64,7 @@ export class TextBookTocPage implements OnInit {
             this.handleHeaderEvents(eventName);
         });
         this.headerService.showHeaderWithBackButton();
-        this.backButtonFunc = this.platform.backButton.subscribe(() => {
+        this.backButtonFunc = this.platform.backButton.subscribeWithPriority(11, () => {
             // this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.COLLECTION_DETAIL, Environment.HOME, false);
             this.handleBackButton();
             this.backButtonFunc();

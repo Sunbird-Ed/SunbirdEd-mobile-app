@@ -131,7 +131,7 @@ export class FaqHelpPage implements OnInit {
     }
   }
   registerDeviceBackButton() {
-    this.backButtonFunc = this.platform.backButton.subscribeWithPriority(11, () => {
+    this.backButtonFunc = this.platform.backButton.subscribeWithPriority(10, () => {
       this.handleBackButton();
     });
   }

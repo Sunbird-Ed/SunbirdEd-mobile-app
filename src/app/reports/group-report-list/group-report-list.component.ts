@@ -345,7 +345,7 @@ export class GroupReportListComponent implements OnInit {
   }
 
   enableBackBtn() {
-    this.deviceBackButton = this.platform.backButton.subscribeWithPriority(11, () => {
+    this.deviceBackButton = this.platform.backButton.subscribeWithPriority(10, () => {
       this.goBack();
     });
   }
