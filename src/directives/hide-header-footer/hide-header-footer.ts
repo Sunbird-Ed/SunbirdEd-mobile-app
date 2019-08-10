@@ -22,8 +22,8 @@ export class HideHeaderFooterDirective {
 
   constructor(private elemRef: ElementRef, private renderer: Renderer2, public event: Events) {}
 
-  async onContentScroll(event: IonContent) {
-    const scrollElement = await event.getScrollElement();
+  async onContentScroll(event) {
+    const scrollElement = await event.target.getScrollElement();
     if (scrollElement.scrollTop <= 58) {
       console.log(scrollElement.scrollTop);
       return;
@@ -52,12 +52,12 @@ export class HideHeaderFooterDirective {
         });
       }))
       .do(() => {
-        const appRootRef: HTMLElement = document.getElementsByTagName('ion-app')[0] as HTMLElement;
+        const appRootRef: HTMLElement = document.getElementsByTagName('app-root')[0] as HTMLElement;
 
         appRootRef.classList.add('hide-header-footer');
       })
       .finally(() => {
-        const appRootRef: HTMLElement = document.getElementsByTagName('ion-app')[0] as HTMLElement;
+        const appRootRef: HTMLElement = document.getElementsByTagName('app-root')[0] as HTMLElement;
         appRootRef.classList.remove('hide-header-footer');
 
         this.scrollEventSubscription.unsubscribe();

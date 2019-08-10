@@ -1022,7 +1022,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
 
   logScrollEnd(event) {
     // Added Telemetry on reaching Vertical Scroll End
-    if (event && event.scrollElement.scrollHeight <= event.scrollElement.scrollTop + event.scrollElement.offsetHeight) {
+    if (event && event.target.scrollHeight <= event.target.scrollTop + event.target.offsetHeight) {
       this.telemetryGeneratorService.generateInteractTelemetry(InteractType.SCROLL,
         InteractSubtype.BOOK_LIST_END_REACHED,
         Environment.HOME,

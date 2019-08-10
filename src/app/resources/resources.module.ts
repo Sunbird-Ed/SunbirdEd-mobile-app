@@ -6,7 +6,7 @@ import { RouterModule } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 import { ComponentsModule } from '../components/components.module';
 // import { PlayerPageModule } from '../player/player.module';
-// import { DirectivesModule } from '@app/directives/directives.module';
+import { DirectivesModule } from '@app/directives/directives.module';
 // import { NotificationsPageModule } from '../notifications/notifications.module';
 
 @NgModule({
@@ -29,7 +29,7 @@ import { ComponentsModule } from '../components/components.module';
     ]),
     ComponentsModule,
     // PlayerPageModule,
-    // DirectivesModule,
+    DirectivesModule,
     // NotificationsPageModule
   ],
   exports: [
