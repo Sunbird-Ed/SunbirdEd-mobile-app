@@ -52,7 +52,7 @@ export class PageFilterOptionsPage {
   }
 
   handleDeviceBackButton() {
-    this.backButtonFunc = this.platform.backButton.subscribeWithPriority(11 , () => {
+    this.backButtonFunc = this.platform.backButton.subscribeWithPriority(10 , () => {
       // migration-TODO
       this.viewCtrl.dismiss();
       this.backButtonFunc.unsubscribe();

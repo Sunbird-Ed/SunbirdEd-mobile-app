@@ -982,7 +982,7 @@ export class EnrolledCourseDetailsPage implements OnInit {
   }
 
   handleBackButton() {
-    this.backButtonFunc = this.platform.backButton.subscribe(() => {
+    this.backButtonFunc = this.platform.backButton.subscribeWithPriority(10, () => {
       this.telemetryGeneratorService.generateBackClickedTelemetry(
         PageId.COURSE_DETAIL,
         Environment.HOME,

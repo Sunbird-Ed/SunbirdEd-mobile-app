@@ -57,7 +57,7 @@ export class PageFilterPage {
     this.callback = this.navParams.get('callback');
     this.initFilterValues();
 
-    this.backButtonFunc = this.platform.backButton.subscribeWithPriority(11, () => {
+    this.backButtonFunc = this.platform.backButton.subscribeWithPriority(10, () => {
       // migration-TODO
       this.popCtrl.dismiss();
       this.backButtonFunc.unsubscribe();

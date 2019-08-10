@@ -297,7 +297,7 @@ export class CollectionDetailsPage {
     });
   }
   handleBackButton() {
-    this.backButtonFunc = this.platform.backButton.subscribe(() => {
+    this.backButtonFunc = this.platform.backButton.subscribeWithPriority(10, () => {
       this.didViewLoad = false;
       this.generateEndEvent(this.objId, this.objType, this.objVer);
 

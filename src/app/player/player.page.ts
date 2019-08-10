@@ -49,7 +49,7 @@ export class PlayerPage implements OnInit, PlayerActionHandlerDelegate {
     this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
     this.statusBar.hide();
 
-    this.platform.backButton.subscribeWithPriority(11, async () => {
+    this.platform.backButton.subscribeWithPriority(10, async () => {
       const activeAlert = await this.alertCtrl.getTop();
       if (!activeAlert) {
         this.showConfirm();

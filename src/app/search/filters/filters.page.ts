@@ -128,7 +128,7 @@ export class FiltersPage {
     //   }
     //   this.unregisterBackButton();
     // }, 11);
-    this.unregisterBackButton = this.platform.backButton.subscribe(() => {
+    this.unregisterBackButton = this.platform.backButton.subscribeWithPriority(10, () => {
       this.location.back();
     });
   }

@@ -18,7 +18,7 @@ export class FilteroptionComponent {
     private platform: Platform
     ) {
     this.facets = this.navParams.get('facet');
-    this.backButtonFunc = this.platform.backButton.subscribe(() => {
+    this.backButtonFunc = this.platform.backButton.subscribeWithPriority(11, () => {
       this.popCtrl.dismiss();
       this.backButtonFunc.unsubscribe();
     });

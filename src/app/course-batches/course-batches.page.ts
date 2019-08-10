@@ -112,7 +112,7 @@ export class CourseBatchesPage implements OnInit {
   }
 
   private handleBackButton() {
-    this.backButtonFunc =  this.platform.backButton.subscribe(() => {
+    this.backButtonFunc =  this.platform.backButton.subscribeWithPriority(10, () => {
       this.location.back();
       this.backButtonFunc.unsubscribe();
     });
