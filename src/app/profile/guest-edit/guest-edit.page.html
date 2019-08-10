@@ -1,13 +1,3 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-back-button defaultHref="guest-profile"></ion-back-button>
-    </ion-buttons>
-    <ion-title *ngIf="!isNewUser">{{ 'EDIT_PROFILE' | translate }}</ion-title>
-    <ion-title *ngIf="isNewUser">{{ 'CREATE_USER' | translate }}</ion-title>
-  </ion-toolbar>
-</ion-header>
-
 <ion-content>
   <form [formGroup]="guestEditForm">
     <ion-list  (ionChange)="onProfileTypeChange()" class="MT6">

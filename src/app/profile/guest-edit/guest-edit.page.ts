@@ -122,7 +122,12 @@ export class GuestEditPage implements OnInit {
     }
 
     if (this.isNewUser) {
-      this.profile = this.router.getCurrentNavigation().extras.state.lastCreatedProfile || {};
+      if (this.router.getCurrentNavigation().extras.state) {
+        this.profile = this.router.getCurrentNavigation().extras.state.lastCreatedProfile || {};
+      } else {
+        this.profile = {};
+      }
+
       this.isEditData = false;
       this.guestEditForm = this.fb.group({
         name: [''],
@@ -135,7 +140,12 @@ export class GuestEditPage implements OnInit {
       });
 
     } else {
-      this.profile = this.router.getCurrentNavigation().extras.state.profile || {};
+      if (this.router.getCurrentNavigation().extras.state) {
+        this.profile = this.router.getCurrentNavigation().extras.state.profile || {};
+      } else {
+        this.profile = {};
+      }
+
       this.guestEditForm = this.fb.group({
         name: [this.profile.handle || ''],
         profileType: [this.profile.profileType || ProfileType.STUDENT],
@@ -174,7 +184,9 @@ export class GuestEditPage implements OnInit {
 
 
   ionViewWillEnter() {
-    this.headerService.hideHeader();
+    const headerTitle = this.isNewUser ? this.commonUtilService.translateMessage('CREATE_USER') :
+      this.commonUtilService.translateMessage('EDIT_PROFILE');
+    this.headerService.showHeaderWithBackButton([], headerTitle);
     this.getSyllabusDetails();
     this.unregisterBackButton = this.platform.backButton.subscribeWithPriority(10, () => {
       this.dismissPopup();
@@ -213,12 +225,7 @@ export class GuestEditPage implements OnInit {
     const { data } = await confirm.onDidDismiss();
     if (data.isLeftButtonClicked) {
       this.guestEditForm.patchValue({
-        name: undefined,
-        syllabus: undefined,
-        boards: [[]],
-        medium: [[]],
-        grades: [[]],
-        subjects: [[]]
+        name: undefined
       });
       this.guestEditForm.controls['profileType'].setValue(this.ProfileType.STUDENT);
     }

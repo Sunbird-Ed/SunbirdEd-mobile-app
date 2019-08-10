@@ -531,16 +531,17 @@ export class UserAndGroupsPage implements OnInit {
         ],
         icon: null
       },
-      cssClass: 'sb-popover',
+      cssClass: 'sb-popover info',
     });
     await confirm.present();
-    const response = await confirm.onDidDismiss();
-    if (response.data.leftBtnClicked == null) {
-      return;
-    }
-    if (!response.data.leftBtnClicked) {
-      this.deleteGroup(index);
-    }
+    await confirm.onDidDismiss().then(response => {
+      if (response.data.isLeftButtonClicked == null) {
+        return;
+      }
+      if (!response.data.isLeftButtonClicked) {
+        this.deleteGroup(index);
+      }
+    })
   }
 
   /**Navigates to play content details page nd launch the player */
@@ -593,16 +594,17 @@ export class UserAndGroupsPage implements OnInit {
         ],
         icon: null
       },
-      cssClass: 'sb-popover',
+      cssClass: 'sb-popover info',
     });
     await confirm.present();
-    const response = await confirm.onDidDismiss();
-    if (response.data.leftBtnClicked == null) {
-      return;
-    }
-    if (!response.data.leftBtnClicked) {
-      this.deleteUser(index);
-    }
+    await confirm.onDidDismiss().then(response => {
+      if (response.data.isLeftButtonClicked == null) {
+        return;
+      }
+      if (!response.data.isLeftButtonClicked) {
+        this.deleteUser(index);
+      }
+    })
   }
 
   deleteUser(index: number) {
