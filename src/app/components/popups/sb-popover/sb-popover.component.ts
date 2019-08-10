@@ -4,12 +4,6 @@ import { CorrelationData, Rollup } from 'sunbird-sdk';
 import { Observable } from 'rxjs/Observable';
 import { Subscription } from 'rxjs/Subscription';
 
-/**
- * Generated class for the PopupsComponent component.
- *
- * See https://angular.io/api/core/Component for more info on Angular
- * Components.
- */
 @Component({
   selector: 'sb-popover',
   templateUrl: 'sb-popover.component.html'
@@ -110,7 +104,7 @@ export class SbPopoverComponent implements OnDestroy {
       this.sbPopoverDynamicContentSubscription.unsubscribe();
     }
 
-    if(this.backButtonFunc) {
+    if (this.backButtonFunc) {
       this.backButtonFunc.unsubscribe();
     }
   }
@@ -118,14 +112,11 @@ export class SbPopoverComponent implements OnDestroy {
   closePopover() {
     this.popoverCtrl.dismiss();
   }
-  deleteContent(candelete: boolean = false, whichbtnClicked?) {
-    // migration-TODO
-    this.popoverCtrl.dismiss(candelete);
+
+  async deleteContent(canDelete: boolean = false, whichbtnClicked?) {
+    await this.popoverCtrl.dismiss(canDelete);
     if (this.navParams.get('handler')) {
       this.navParams.get('handler')(whichbtnClicked);
     }
-  }
-
-  ionViewWillLeave(): void {
   }
 }

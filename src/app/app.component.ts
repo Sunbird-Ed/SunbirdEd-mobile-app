@@ -675,7 +675,7 @@ export class AppComponent implements OnInit, AfterViewInit {
           InteractSubtype.LANGUAGE_CLICKED,
           Environment.USER,
           PageId.PROFILE);
-        this.router.navigate([`/${RouterLinks.MENU_LANGUAGE_SETTING}`, true]);
+        this.router.navigate([`/${RouterLinks.LANGUAGE_SETTING}`, true]);
         break;
       }
 

@@ -2,7 +2,9 @@
 @import "src/assets/styles/_custom-mixins.scss";
 
 :host {
+  width: 100%;
   .notification-item-container {
+    width: 100%;
     .date-time {
       color: $gray-200;
       font-family: "Noto Sans";
@@ -46,8 +48,12 @@
     }
 
     .expand-button {
-      //Migration todo
-      //@include float(end);
+      @include rtl {
+        float: left !important;
+      }
+      @include ltr {
+        float: right !important;
+      }
       width: 1.5rem;
       text-align: center;
       cursor: pointer;
@@ -64,24 +70,20 @@
     }
 
     .mr-6 {
-      //Migration todo
-             @include ltr() {
+      @include ltr() {
         margin-right: 6px;
       }
       @include rtl() {
         margin-left: 6px;
       }
- 
     }
     .pl-16 {
-      //Migration todo
-               @include ltr() {
+      @include ltr() {
         padding-left: 16px;
       }
       @include rtl() {
         padding-right: 16px;
       }
- 
     }
   }
 }

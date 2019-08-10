@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { PageId, Environment, InteractType, InteractSubtype } from '../../../services/telemetry-constants';
+import { PageId, Environment, InteractType, InteractSubtype } from '@app/services/telemetry-constants';
 import { Subscription } from 'rxjs/Subscription';
 import { Observable } from 'rxjs/Observable';
 import { Events, Platform } from '@ionic/angular';
@@ -120,8 +120,7 @@ export class PermissionComponent implements OnInit {
 
   ngOnInit() {
     this.telemetryGeneratorService.generatePageViewTelemetry(PageId.PERMISSION,
-      Environment.ONBOARDING,
-      '');
+      Environment.ONBOARDING, '');
   }
 
   ionViewWillLeave() {
@@ -221,6 +220,7 @@ export class PermissionComponent implements OnInit {
         console.log('failed to open settings' + err);
       }
     );
+    
   }
 
 }

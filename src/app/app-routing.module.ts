@@ -15,9 +15,7 @@ const routes: Routes = [
   },
   {
     path: `${RouterLinks.LANGUAGE_SETTING}/:isFromSettings`,
-    loadChildren: './language-settings/language-settings.module#LanguageSettingsModule',
-    canLoad: [HasNotBeenOnboardedGuard],
-    resolve: { message: HasNotSelectedLanguageGuard }
+    loadChildren: './language-settings/language-settings.module#LanguageSettingsModule'
   },
   {
     path: `${RouterLinks.LANGUAGE_SETTING}`,

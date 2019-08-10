@@ -167,15 +167,19 @@ export class SunbirdQRScanner {
       duration: 3000
     });
 
-    toast.present();
-    toast.dismiss().then((res) => {
-      this.telemetryGeneratorService.generateInteractTelemetry(
-        InteractType.TOUCH,
-        InteractSubtype.SETTINGS_CLICKED,
-        Environment.ONBOARDING,
-        PageId.QRCodeScanner);
-      const navigationExtras: NavigationExtras = { state: { changePermissionAccess: true } };
-      this.router.navigate([`/${RouterLinks.SETTINGS}/permission`], navigationExtras);
+    await toast.present();
+    await toast.onWillDismiss().then((res) => {
+      console.log("res", res);
+      if (res.role === 'cancel') {
+
+        this.telemetryGeneratorService.generateInteractTelemetry(
+          InteractType.TOUCH,
+          InteractSubtype.SETTINGS_CLICKED,
+          Environment.ONBOARDING,
+          PageId.QRCodeScanner);
+        const navigationExtras: NavigationExtras = { state: { changePermissionAccess: true } };
+        this.router.navigate([`/${RouterLinks.SETTINGS}/permission`], navigationExtras);
+      }
 
     }).catch((error) => {
       console.error('Unable to dismiss toast', error);
