@@ -137,9 +137,7 @@ export class AboutUsComponent implements OnInit {
     this.telemetryGeneratorService.generateInteractTelemetry(
       interactionType, interactSubtype,
       PageId.SETTINGS,
-      Environment.SETTINGS, null,
-      undefined,
-      undefined
+      Environment.SETTINGS, null
     );
   }
 

@@ -32,6 +32,7 @@ import {
   AppHeaderService
 } from 'services';
 import { Platform, Events, AlertController } from '@ionic/angular';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-profile-settings',
@@ -98,7 +99,8 @@ export class ProfileSettingsPage implements OnInit {
     private headerService: AppHeaderService,
     private router: Router,
     private appVersion: AppVersion,
-    private alertCtrl: AlertController
+    private alertCtrl: AlertController,
+    private location: Location
   ) {
     this.getNavParams();
     this.preferences.getString(PreferenceKey.SELECTED_LANGUAGE_CODE).toPromise()
@@ -207,11 +209,14 @@ export class ProfileSettingsPage implements OnInit {
 
     if (activePortal) {
       activePortal.dismiss();
+    } else {
+      this.location.back();
     }
     // Migration Todo
     /* else if (this.navCtrl.canGoBack()) {
       this.navCtrl.pop();
     } */
+
   }
 
   /**
@@ -596,7 +601,7 @@ export class ProfileSettingsPage implements OnInit {
   }
 
   handleBackButton() {
-    this.unregisterBackButton = this.platform.backButton.subscribeWithPriority(11, () => {
+    this.unregisterBackButton = this.platform.backButton.subscribeWithPriority(10, () => {
       // migration-TODO
       // const navObj = this.app.getActiveNavs()[0];
 
@@ -607,6 +612,8 @@ export class ProfileSettingsPage implements OnInit {
       // } else {
       //   this.commonUtilService.showExitPopUp(PageId.ONBOARDING_PROFILE_PREFERENCES, Environment.ONBOARDING, false);
       // }
+
+      this.dismissPopup();
     });
   }
 

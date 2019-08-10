@@ -1,12 +1,11 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs-compat';
-import { AndroidPermission, AndroidPermissionsStatus } from '../android-permissions/android-permission';
+import { AndroidPermission, AndroidPermissionsStatus } from '@app/services/android-permissions/android-permission';
 
 declare const cordova;
 
 @Injectable()
 export class AndroidPermissionsService {
-  constructor() { }
   checkPermissions(permissions: AndroidPermission[]): Observable<{ [key: string]: AndroidPermissionsStatus }> {
     return Observable.defer(async () => {
       const requestPromises = permissions.map((permission) => {
@@ -83,4 +82,3 @@ export class AndroidPermissionsService {
     });
   }
 }
-

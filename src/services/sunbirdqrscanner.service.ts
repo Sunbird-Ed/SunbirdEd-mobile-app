@@ -20,7 +20,6 @@ import { CommonUtilService } from '@app/services/';
 import { Platform, ToastController, PopoverController } from '@ionic/angular';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { initTabs, GUEST_TEACHER_TABS, GUEST_STUDENT_TABS } from '@app/app/module.service';
-import { ProfileSettingsPage } from '@app/app/profile-settings/profile-settings.page';
 import { NavigationExtras, Router } from '@angular/router';
 import { SbPopoverComponent } from '@app/app/components/popups/sb-popover/sb-popover.component';
 import { QRScannerAlert, QRAlertCallBack } from '@app/app/qrscanner-alert/qrscanner-alert.page';
@@ -124,7 +123,7 @@ export class SunbirdQRScanner {
                     return;
                   });
                 break;
-              case cordova.plugins.diagnostic.permissionStatus.DENIED:
+              case cordova.plugins.diagnostic.permissionStatus.DENIED_ONCE:
                 // call popover
                 observer.next({ hasPermission: false } as AndroidPermissionsStatus);
                 observer.complete();
@@ -168,15 +167,19 @@ export class SunbirdQRScanner {
       duration: 3000
     });
 
-    toast.present();
-    toast.dismiss().then((res) => {
-      this.telemetryGeneratorService.generateInteractTelemetry(
-        InteractType.TOUCH,
-        InteractSubtype.SETTINGS_CLICKED,
-        Environment.ONBOARDING,
-        PageId.QRCodeScanner);
-      const navigationExtras: NavigationExtras = { state: { changePermissionAccess: true } };
-      this.router.navigate([`/${RouterLinks.SETTINGS}/permission`], navigationExtras);
+    await toast.present();
+    await toast.onWillDismiss().then((res) => {
+      console.log("res", res);
+      if (res.role === 'cancel') {
+
+        this.telemetryGeneratorService.generateInteractTelemetry(
+          InteractType.TOUCH,
+          InteractSubtype.SETTINGS_CLICKED,
+          Environment.ONBOARDING,
+          PageId.QRCodeScanner);
+        const navigationExtras: NavigationExtras = { state: { changePermissionAccess: true } };
+        this.router.navigate([`/${RouterLinks.SETTINGS}/permission`], navigationExtras);
+      }
 
     }).catch((error) => {
       console.error('Unable to dismiss toast', error);

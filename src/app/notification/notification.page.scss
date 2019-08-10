@@ -1,9 +1,13 @@
 @import "src/assets/styles/base/_variables.scss";
-
+@import "src/assets/styles/_custom-mixins";
 :host {
   .clear-btn {
-    // Migration todo
-    // @include float(end);
+    @include rtl {
+      float: left !important;
+    }
+    @include ltr {
+      float: right !important;
+    }
     padding-top: 10px;
   }
   .sb-view-all-title {
@@ -11,7 +15,19 @@
   }
   .scroll-content {
     padding-bottom: 80px;
-    background-color: #d9e5f0;
+  }
+
+  ion-content {
+    --background: #d9e5f0;
+  }
+
+  ion-list.list-md {
+    margin-top: 0 !important;
+    background: inherit;
+
+    ion-item {
+      --padding-bottom: 8px;
+    }
   }
 
   .oval {
@@ -56,5 +72,9 @@
       text-align: center;
       width: 80vw;
     }
+  }
+  .delete-button {
+    height: 100%;
+    --border-radius: none;
   }
 }

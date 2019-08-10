@@ -400,7 +400,6 @@ export class RouterLinks {
     public static readonly SETTINGS = 'settings';
     public static readonly DATA_SYNC = 'data-sync';
     public static readonly LANGUAGE_SETTING = 'language-setting';
-    public static readonly MENU_LANGUAGE_SETTING = 'menu-language-setting';
     public static readonly PERMISSION = 'permission';
     public static readonly ABOUT_US = 'about-us';
     public static readonly ABOUT_APP = 'about-app';
