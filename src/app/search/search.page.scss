@@ -45,20 +45,20 @@
   }
 
 
-    .text-input-clear-icon {
-      display: block !important;
-    }
+  .text-input-clear-icon {
+    display: block !important;
+  }
   
-    .collection-list {
-      margin-bottom: 0px !important;
-    }
+  .collection-list {
+    margin-bottom: 0px !important;
+  }
   
-    .item-inner {
-      .label {
-        margin-right: 0 !important;
-      }
-      padding-right: 0 !important;
+  .item-inner {
+    .label {
+      margin-right: 0 !important;
     }
+    padding-right: 0 !important;
+  }
   
     .spinner-container {
       width: 100%;
@@ -95,10 +95,13 @@
       margin-top: unset !important;
       margin-bottom: 0 !important;
     }
+    .collection-header {
+      margin-top: 16px;
+    }
   
     .content-list {
       margin-bottom: 0 !important;
-      padding-top: 15px;
+      padding-top: 16px;
   
   
       .label {
@@ -118,9 +121,11 @@
     .view-collection {
       margin: 0 !important;
       padding: 0 !important;
-      font-size: 10px;
       right: 0 !important;
       text-transform: none;
+      font-weight: 600;
+      font-size: 14px;
+      line-height: 14px;
       span.button-inner{
         color:#2E92FF;
       }
@@ -132,25 +137,52 @@
       color: black;
     }
   
-      span {
-        color: grey;
-        @extend .font-weight-600;
-        font-size: 1.3rem;
-      }
-      .cancel-btn span {
-        color: map-get($colors, white) !important;
-      }
+    span {
+      color: grey;
+      @extend .font-weight-600;
+      font-size: 14px;
+    }
+    .cancel-btn span {
+      color: map-get($colors, white) !important;
+    }
     .empty-search-result {
       font-size: 1.2em;
     }
-    .item-md p {
-      font-size: 1.3rem !important;
-      @extend .font-weight-600;
-  }
-  .item-md h3 {
-    font-size: 1.5rem !important;
-    @extend .font-weight-600;
-  }
+     
+
+    .search-container{
+      justify-content: center;
+      display: flex;
+      align-items: center;
+      padding: 0 16px;
+      ion-avatar{
+        height: 44px;
+        width: 43px;
+      }
+      .search-item{
+        flex: 1 1 auto;
+        padding-left: 16px;
+        vertical-align: middle;
+        span {
+          color: grey;
+          @extend .font-weight-600;
+          font-size: 14px;
+        }
+        p {
+          @include margin(8px, 0);
+          font-size: 14px !important;
+          @extend .font-weight-600;
+        }
+        h3 {
+          
+          @include margin(8px, 0);
+          font-size: 16px !important;
+          line-height: 1;
+          @extend .font-weight-600;
+        }
+      }
+    }
+
   .ellipsis{
   
     overflow: hidden !important;
