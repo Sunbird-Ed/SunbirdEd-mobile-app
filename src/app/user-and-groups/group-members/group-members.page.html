@@ -49,8 +49,8 @@
     </div>
   </div>
   <div *ngIf="userList?.length">
-    <ion-item *ngFor="let user of userList; let i = index;" class="gm-item-background" margin-bottom no-lines>
-      <ion-label (click)="toggleSelect(i)" class="PL16">
+    <ion-item *ngFor="let user of userList; let i = index;" class="gm-item-background" margin-bottom no-lines (click)="toggleSelect(i)">
+      <ion-label class="PL16">
         <h6 class="MT0">
           <strong>{{user?.handle}}</strong>
         </h6>
@@ -59,7 +59,7 @@
           <span *ngIf="user?.profileType === ProfileType.STUDENT">{{'USER_TYPE_2' | translate | titlecase}}</span>
           <span *ngIf="user?.grade?.length">•</span> {{ getGradeNameFromCode(user) }}</p>
       </ion-label>
-      <ion-checkbox item-end mode="ios" checked="{{isUserSelected(i)}}" (click)="toggleSelect(i)"></ion-checkbox>
+      <ion-checkbox item-end mode="ios" checked="{{isUserSelected(i)}}"></ion-checkbox>
     </ion-item>
   </div>
 

@@ -27,7 +27,7 @@
         <span *ngIf="user?.grade?.length">•</span> {{ getGradeNameFromCode(user) }}
       </p>
     </ion-label>
-    <ion-checkbox item-end mode="ios" (click)="toggleMemberSelect(i)" checked="{{isGroupMemberSelected(i)}}" [disabled]="addUsers"></ion-checkbox>
+    <ion-checkbox item-end mode="ios" checked="{{isGroupMemberSelected(i)}}" [disabled]="addUsers"></ion-checkbox>
   </ion-item>
 
   <div *ngIf="addUsers">
@@ -41,7 +41,7 @@
           <span *ngIf="user?.profileType === ProfileType.STUDENT">{{'USER_TYPE_2' | translate | titlecase}}</span>
           <span *ngIf="user?.grade?.length">•</span> {{ getGradeNameFromCode(user) }}</p>
       </ion-label>
-      <ion-checkbox item-end mode="ios" (click)="toggleSelect(i)" checked="{{isUserSelected(i)}}"></ion-checkbox>
+      <ion-checkbox item-end mode="ios" checked="{{isUserSelected(i)}}"></ion-checkbox>
     </ion-item>
   </div>
 </ion-content>

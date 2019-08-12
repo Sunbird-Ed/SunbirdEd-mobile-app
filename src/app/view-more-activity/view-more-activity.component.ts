@@ -164,7 +164,6 @@ export class ViewMoreActivityComponent implements OnInit {
       }
     });
     this.defaultImg = 'assets/imgs/ic_launcher.png';
-    this.tabBarElement = document.querySelector('.tabbar.show-tabbar');
     this.subscribeUtilityEvents();
   }
 
@@ -172,7 +171,10 @@ export class ViewMoreActivityComponent implements OnInit {
    * Angular life cycle hooks
    */
   ngOnInit() {
-    this.tabBarElement.style.display = 'none';
+    this.tabBarElement = document.querySelector('.tabbar.show-tabbar');
+    if (this.tabBarElement) {
+      this.tabBarElement.style.display = 'none';
+    }
   }
 
   /**

@@ -191,8 +191,7 @@ export class GroupMembersPage implements OnInit {
       .then(success => {
         loader.dismiss();
         this.commonUtilService.showToast(this.commonUtilService.translateMessage('GROUP_CREATE_SUCCESS'));
-        // this.navCtrl.popTo(this.navCtrl.getByIndex(this.navCtrl.length() - 3));
-        this.router.navigate(['../../'], { relativeTo: this.route });
+        window.history.go(-2); // will navigate back to Users and group page;
       })
       .catch(error => {
         loader.dismiss();
