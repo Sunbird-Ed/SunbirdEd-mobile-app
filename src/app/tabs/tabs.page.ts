@@ -39,7 +39,7 @@ export class TabsPage {
   }
 
   async ionViewWillEnter() {
-    console.log("Inside tabsPage");
+    console.log('Inside tabsPage');
 
     const session = await this.appGlobalService.authService.getSession().toPromise();
     if (!session) {
@@ -75,30 +75,7 @@ export class TabsPage {
     });
 
     this.events.publish('update_header', { index: tabIndex });
-    // Raise an Event
-    setTimeout(() => {
-      this.tabRef.select(tabIndex);
-    }, 300);
-  }
-
-  public ionTabsWillChange(event: any) {
-    console.log("Inside ionChange");
-
-
-    // if active tab is other than scanner tab i.e, = tab 2
-    // if (tab.index !== 2) {
-    //   this.tabs.forEach((tabTo, index) => {
-    //     this.appGlobalService.currentPageId = tab.tabTitle;
-    //     if (tabTo.isSelected === true) {
-    //       tabTo.isSelected = false;
-    //     }
-
-    //     if (index === tab.index) {
-    //       tabTo.isSelected = true;
-    //     }
-    //   });
-    // }
-
+    await this.tabRef.select(this.tabs[tabIndex].root);
   }
 
   openScanner(tab) {
