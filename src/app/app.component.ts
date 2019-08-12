@@ -1,10 +1,22 @@
-import { Router, NavigationExtras, RouterOutlet } from '@angular/router';
-import { AfterViewInit, Component, Inject, NgZone, OnInit, EventEmitter, ChangeDetectorRef, ViewChild } from '@angular/core';
-
-import { Events, Platform, IonRouterOutlet } from '@ionic/angular';
-// import { SplashScreen } from '@ionic-native/splash-screen/ngx';
+import { Router, NavigationExtras } from '@angular/router';
+import { Location } from '@angular/common';
+import { AfterViewInit, Component, Inject, NgZone, OnInit, EventEmitter, ViewChild } from '@angular/core';
+import { Events, Platform, IonRouterOutlet, MenuController } from '@ionic/angular';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { TranslateService } from '@ngx-translate/core';
+import { Observable } from 'rxjs/Observable';
+import { tap } from 'rxjs/operators';
+import { Network } from '@ionic-native/network/ngx';
+
+import {
+  AuthService, ErrorEventType, EventNamespace, EventsBusService, ProfileService, SharedPreferences,
+  SunbirdSdk, TelemetryAutoSyncUtil, TelemetryService, NotificationService
+} from 'sunbird-sdk';
+
+import { InteractType, InteractSubtype, Environment, PageId, ImpressionType } from 'services/telemetry-constants';
+import { ImageLoaderConfigService } from 'ionic-image-loader';
+import { GenericAppConfig, PreferenceKey } from './app.constant';
+import { ActivePageService } from '@app/services/active-page-service';
 import {
   AppGlobalService,
   CommonUtilService,
@@ -14,28 +26,12 @@ import {
   AppHeaderService,
   FormAndFrameworkUtilService,
 } from '../services';
-import { InteractType, InteractSubtype, Environment, PageId, ImpressionType } from 'services/telemetry-constants';
-import { GUEST_STUDENT_TABS, GUEST_TEACHER_TABS, LOGIN_TEACHER_TABS } from './module.service';
-// migration-TODO
-import { initTabs } from './module.service';
-import { Observable } from 'rxjs/Observable';
-import { ImageLoaderService, ImageLoaderConfigService } from 'ionic-image-loader';
-import { GenericAppConfig, PreferenceKey, ProfileConstants } from './app.constant';
-import { Network } from '@ionic-native/network/ngx';
-import {
-  AuthService, ErrorEventType, EventNamespace, EventsBusService, ProfileService, ProfileType, SharedPreferences,
-  SunbirdSdk, TelemetryAutoSyncUtil, TelemetryService, NotificationService
-} from 'sunbird-sdk';
-import { tap } from 'rxjs/operators';
-import { ActivePageService } from '../services/active-page-service';
-import { SplaschreenDeeplinkActionHandlerDelegate } from '../services/sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
-import { SplashcreenTelemetryActionHandlerDelegate } from '../services/sunbird-splashscreen/splashcreen-telemetry-action-handler-delegate';
-import { SplashscreenImportActionHandlerDelegate } from '../services/sunbird-splashscreen/splashscreen-import-action-handler-delegate';
-import { ContainerService, LogoutHandlerService, TncUpdateHandlerService } from '../services';
-import { NotificationService as localNotification } from '../services/notification.service';
-import { TabsPage } from './tabs/tabs.page';
+import { SplaschreenDeeplinkActionHandlerDelegate } from '@app/services/sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
+import { SplashcreenTelemetryActionHandlerDelegate } from '@app/services/sunbird-splashscreen/splashcreen-telemetry-action-handler-delegate';
+import { SplashscreenImportActionHandlerDelegate } from '@app/services/sunbird-splashscreen/splashscreen-import-action-handler-delegate';
+import { LogoutHandlerService, TncUpdateHandlerService } from '@app/services';
+import { NotificationService as localNotification } from '@app/services/notification.service';
 import { RouterLinks } from './app.constant';
-import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-root',
@@ -62,7 +58,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   profile: any = {};
   selectedLanguage: string;
   appName: string;
-  @ViewChild('mainContent', { read: IonRouterOutlet })routerOutlet: IonRouterOutlet;
+  @ViewChild('mainContent', { read: IonRouterOutlet }) routerOutlet: IonRouterOutlet;
 
   constructor(
     // private splashScreen: SplashScreen,
@@ -87,17 +83,15 @@ export class AppComponent implements OnInit, AfterViewInit {
     private splashcreenTelemetryActionHandlerDelegate: SplashcreenTelemetryActionHandlerDelegate,
     private splashscreenImportActionHandlerDelegate: SplashscreenImportActionHandlerDelegate,
     private splaschreenDeeplinkActionHandlerDelegate: SplaschreenDeeplinkActionHandlerDelegate,
-    private headerServie: AppHeaderService,
+    private headerService: AppHeaderService,
     private logoutHandlerService: LogoutHandlerService,
     private network: Network,
     private appRatingService: AppRatingService,
     private activePageService: ActivePageService,
     private notificationSrc: localNotification,
-    private headerService: AppHeaderService,
     private router: Router,
-    private changeDetector: ChangeDetectorRef,
-    private containerService: ContainerService,
-    private location: Location
+    private location: Location,
+    private menuCtrl: MenuController
   ) {
     this.telemetryAutoSyncUtil = new TelemetryAutoSyncUtil(this.telemetryService);
     platform.ready().then(async () => {
@@ -194,24 +188,18 @@ export class AppComponent implements OnInit, AfterViewInit {
       });
   }
 
-  /**
-	 * Angular life cycle hooks
-	 */
   ngOnInit() {
-    this.headerServie.headerConfigEmitted$.subscribe(config => {
+    this.headerService.headerConfigEmitted$.subscribe(config => {
       this.headerConfig = config;
     });
 
     this.commonUtilService.networkAvailability$.subscribe((available: boolean) => {
-      // migration-TODO
-      // const navObj: any = this.app.getActiveNavs()[0];
-      // const activeView: any = navObj.getActive();
-      // const pageId: string = this.activePageService.computePageId((activeView as any).instance);
-      // if (available) {
-      //   this.addNetworkTelemetry(InteractSubtype.INTERNET_CONNECTED, pageId);
-      // } else {
-      //   this.addNetworkTelemetry(InteractSubtype.INTERNET_DISCONNECTED, pageId);
-      // }
+      const pageId: string = this.activePageService.computePageId(this.router.url);
+      if (available) {
+        this.addNetworkTelemetry(InteractSubtype.INTERNET_CONNECTED, pageId);
+      } else {
+        this.addNetworkTelemetry(InteractSubtype.INTERNET_DISCONNECTED, pageId);
+      }
     });
     this.notificationSrc.setupLocalNotification();
   }
@@ -220,7 +208,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.OTHER,
       subtype,
       Environment.HOME,
-      pageId, undefined
+      pageId
     );
   }
   ngAfterViewInit(): void {
@@ -235,31 +223,22 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   handleBackButton() {
-    this.platform.backButton.subscribeWithPriority(0, () => {
+    this.platform.backButton.subscribeWithPriority(0, async () => {
       console.log('URL' + this.router.url);
-      if(this.router.url === RouterLinks.LIBRARY_TAB || this.router.url == RouterLinks.COURSE_TAB 
-      || this.router.url === RouterLinks.DOWNLOAD_TAB || this.router.url == RouterLinks.PROFILE_TAB || 
-      this.router.url == RouterLinks.GUEST_PROFILE_TAB) {
-        this.commonUtilService.showExitPopUp(this.activePageService.computePageId(this.router.url), Environment.HOME, false);
+      if (this.router.url === RouterLinks.LIBRARY_TAB || this.router.url === RouterLinks.COURSE_TAB
+        || this.router.url === RouterLinks.DOWNLOAD_TAB || this.router.url === RouterLinks.PROFILE_TAB ||
+        this.router.url === RouterLinks.GUEST_PROFILE_TAB) {
+        if (await this.menuCtrl.isOpen()) {
+          this.menuCtrl.close();
+        } else {
+          this.commonUtilService.showExitPopUp(this.activePageService.computePageId(this.router.url), Environment.HOME, false);
+        }
       } else {
         // this.routerOutlet.pop();
-        this.location.back && this.location.back();
+        if (this.location.back) {
+          this.location.back();
+        }
       }
-      // migration-TODO
-      // let navObj = this.app.getRootNavs()[0];
-      // let currentPage = navObj.getActive().name;
-      // const activeView: any = this.nav.getActive();
-      // let activeView: any;
-      // if (activeView != null && ((activeView as any).instance instanceof TabsPage)) {
-      //   navObj = this.app.getActiveNavs()[0];
-      //   currentPage = navObj.getActive().name;
-      // }
-
-      //   if (navObj.canGoBack()) {
-      //     return navObj.pop();
-      //   } else {
-      //     this.commonUtilService.showExitPopUp(this.activePageService.computePageId((activeView as any).instance), Environment.HOME, false);
-      //   }
     });
 
   }
@@ -288,11 +267,9 @@ export class AppComponent implements OnInit, AfterViewInit {
       if (params.lang === 'ur' && !this.platform.isRTL) {
         // migration-TODO since platfrom is changed, this is a quick fix need to review later
         document.documentElement.dir = 'rtl';
-        // this.platform .setDir('rtl', true);
       } else if (this.platform.isRTL) {
         // migration-TODO since platfrom is changed, this is a quick fix need to review later
         document.documentElement.dir = 'ltr';
-        // this.platform.setDir('ltr', true);
       }
     });
   }
@@ -387,7 +364,7 @@ export class AppComponent implements OnInit, AfterViewInit {
           }, 5000);
         }
       }).catch(err => {
-        // console.log('checkNewAppVersion err', err, err instanceof NetworkError);
+        console.error('checkNewAppVersion err', err);
       });
   }
 
@@ -419,8 +396,8 @@ export class AppComponent implements OnInit, AfterViewInit {
       }
     }
 
-    /*splashscreen.markImportDone();
-    splashscreen.hide();*/
+    splashscreen.markImportDone();
+    splashscreen.hide();
     this.appGlobalService.hideSplashScreen(1500);
   }
 
@@ -450,72 +427,32 @@ export class AppComponent implements OnInit, AfterViewInit {
       const routeUrl = this.router.url;
 
       if ((routeUrl.indexOf(RouterLinks.USER_TYPE_SELECTION) !== -1)
-      || (routeUrl.indexOf(RouterLinks.ACTIVE_DOWNLOADS) !== -1)
-      || (routeUrl.indexOf(RouterLinks.COLLECTION_DETAIL_ETB) !== -1)
-      || (routeUrl.indexOf(RouterLinks.COLLECTION_DETAILS) !== -1)
-      || (routeUrl.indexOf(RouterLinks.CONTENT_DETAILS) !== -1)
-      || (routeUrl.indexOf(RouterLinks.ENROLLED_COURSE_DETAILS) !== -1)
-      || (routeUrl.indexOf(RouterLinks.FAQ_HELP) !== -1)
-      || (routeUrl.indexOf(RouterLinks.PROFILE_SETTINGS) !== -1)
-      || (routeUrl.indexOf(RouterLinks.QRCODERESULT) !== -1)
-      || (routeUrl.indexOf(RouterLinks.STORAGE_SETTINGS)) !== -1) {
-          this.headerService.sidebarEvent($event);
-          return;
+        || (routeUrl.indexOf(RouterLinks.ACTIVE_DOWNLOADS) !== -1)
+        || (routeUrl.indexOf(RouterLinks.COLLECTION_DETAIL_ETB) !== -1)
+        || (routeUrl.indexOf(RouterLinks.COLLECTION_DETAILS) !== -1)
+        || (routeUrl.indexOf(RouterLinks.CONTENT_DETAILS) !== -1)
+        || (routeUrl.indexOf(RouterLinks.ENROLLED_COURSE_DETAILS) !== -1)
+        || (routeUrl.indexOf(RouterLinks.FAQ_HELP) !== -1)
+        || (routeUrl.indexOf(RouterLinks.PROFILE_SETTINGS) !== -1)
+        || (routeUrl.indexOf(RouterLinks.QRCODERESULT) !== -1)
+        || (routeUrl.indexOf(RouterLinks.STORAGE_SETTINGS)) !== -1) {
+        this.headerService.sidebarEvent($event);
+        return;
       } else {
         if (this.router.url === RouterLinks.LIBRARY_TAB || this.router.url === RouterLinks.COURSE_TAB
           || this.router.url === RouterLinks.DOWNLOAD_TAB || this.router.url === RouterLinks.PROFILE_TAB ||
           this.router.url === RouterLinks.GUEST_PROFILE_TAB) {
-            this.commonUtilService.showExitPopUp(this.activePageService.computePageId(this.router.url), Environment.HOME, false);
-          } else {
+          this.commonUtilService.showExitPopUp(this.activePageService.computePageId(this.router.url), Environment.HOME, false);
+        } else {
           // this.routerOutlet.pop();
-            this.location.back && this.location.back();
+          if (this.location.back) {
+            this.location.back();
           }
+        }
       }
     } else {
       this.headerService.sidebarEvent($event);
     }
-    /*if ($event.name === 'back') {
-      let navObj = this.app.getRootNavs()[0];
-      let activeView: ViewController = this.nav.getActive();
-      if (activeView != null && ((<any>activeView).instance instanceof TabsPage)) {
-        navObj = this.app.getActiveNavs()[0];
-        activeView = navObj.getActive();
-      }
-      if (((<any>activeView).instance instanceof UserTypeSelectionPage)
-        || ((<any>activeView).instance instanceof EnrolledCourseDetailsPage)
-        || ((<any>activeView).instance instanceof CollectionDetailsPage)
-        || ((<any>activeView).instance instanceof CollectionDetailsEtbPage)
-        || ((<any>activeView).instance instanceof ContentDetailsPage)
-        || ((<any>activeView).instance instanceof OnboardingPage)
-        || ((<any>activeView).instance instanceof QrCodeResultPage)
-        || ((<any>activeView).instance instanceof FaqPage)
-        || ((<any>activeView).instance['pageId'] === 'ProfileSettingsPage')
-      ) {
-        this.headerServie.sidebarEvent($event);
-        return;
-      }
-      if (navObj.canGoBack()) {
-        return navObj.pop();
-      } else {
-        this.commonUtilService.showExitPopUp(this.activePageService.computePageId((<any>activeView).instance), Environment.HOME, false);
-      }*/
-  }
-
-  getProfileSettingConfig(hideBackButton = false) {
-    this.utilityService.getBuildConfigValue(GenericAppConfig.DISPLAY_ONBOARDING_CATEGORY_PAGE)
-      .then(response => {
-        if (response === 'true') {
-          // migration-TODO
-          // this.nav.setRoot('ProfileSettingsPage', { hideBackButton: hideBackButton });
-        } else {
-          // migration-TODO
-          // this.nav.setRoot(TabsPage);
-        }
-      })
-      .catch(error => {
-        // migration-TODO
-        // this.nav.setRoot(TabsPage);
-      });
   }
 
   menuItemAction(menuName) {
@@ -573,7 +510,6 @@ export class AppComponent implements OnInit, AfterViewInit {
         if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
           this.commonUtilService.showToast('NEED_INTERNET_TO_CHANGE');
         } else {
-          // migration-TODO
           this.logoutHandlerService.onLogout();
         }
         break;
@@ -588,6 +524,7 @@ export class AppComponent implements OnInit, AfterViewInit {
         this.logoutHandlerService.onLogout();
       });
   }
+
   getUtmParameter() {
     this.utilityService.getUtmInfo().then(response => {
       if (response) {

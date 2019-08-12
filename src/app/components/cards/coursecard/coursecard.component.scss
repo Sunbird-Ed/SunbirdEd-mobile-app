@@ -141,6 +141,7 @@
     .custom-small {
       background: #FFF;
       border: 1px solid #006DE5;
+      outline: none;
       color: #006DE5;
       @include padding(0, 0.9em, 0, 0.9em);
       @include margin(0.4rem, 0.2rem, 0.4rem, 0.2rem);
