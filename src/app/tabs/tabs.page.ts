@@ -1,6 +1,6 @@
 import { ProfileType, SharedPreferences, ProfileService } from 'sunbird-sdk';
 import { GUEST_TEACHER_TABS, initTabs, GUEST_STUDENT_TABS, LOGIN_TEACHER_TABS } from '@app/app/module.service';
-import { Component, ViewChild, ViewEncapsulation, Inject } from '@angular/core';
+import { Component, ViewChild, ViewEncapsulation, Inject, NgZone } from '@angular/core';
 
 import { IonTabs, Events, ToastController } from '@ionic/angular';
 import { ContainerService } from '@app/services/container.services';
@@ -33,13 +33,14 @@ export class TabsPage {
     private appGlobalService: AppGlobalService,
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
-    private commonUtilService: CommonUtilService
+    private commonUtilService: CommonUtilService,
+    private zone: NgZone
   ) {
 
   }
 
   async ionViewWillEnter() {
-    console.log("Inside tabsPage");
+    console.log('Inside tabsPage');
 
     const session = await this.appGlobalService.authService.getSession().toPromise();
     if (!session) {
@@ -75,30 +76,10 @@ export class TabsPage {
     });
 
     this.events.publish('update_header', { index: tabIndex });
-    // Raise an Event
-    setTimeout(() => {
-      this.tabRef.select(tabIndex);
-    }, 300);
-  }
 
-  public ionTabsWillChange(event: any) {
-    console.log("Inside ionChange");
-
-
-    // if active tab is other than scanner tab i.e, = tab 2
-    // if (tab.index !== 2) {
-    //   this.tabs.forEach((tabTo, index) => {
-    //     this.appGlobalService.currentPageId = tab.tabTitle;
-    //     if (tabTo.isSelected === true) {
-    //       tabTo.isSelected = false;
-    //     }
-
-    //     if (index === tab.index) {
-    //       tabTo.isSelected = true;
-    //     }
-    //   });
-    // }
-
+    this.zone.run(async () => {
+      await this.tabRef.select(this.tabs[tabIndex].root);
+    });
   }
 
   openScanner(tab) {

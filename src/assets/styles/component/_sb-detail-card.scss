@@ -167,6 +167,9 @@
           font-weight: 400;
         }
       }
+      button.sb-btn-tile:focus {
+        outline: none;
+      }
     }
   }
 }
