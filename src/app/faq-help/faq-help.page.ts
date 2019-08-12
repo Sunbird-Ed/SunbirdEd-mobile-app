@@ -1,6 +1,6 @@
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { Component, Inject, ViewChild, ElementRef, OnInit } from '@angular/core';
-import { LoadingController, Platform } from '@ionic/angular';
+import { Platform } from '@ionic/angular';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { CommonUtilService } from '@app/services/common-util.service';
 import { AppGlobalService, } from '@app/services/app-global-service.service';
@@ -77,7 +77,7 @@ export class FaqHelpPage implements OnInit {
     window.addEventListener('message', this.messageListener, false);
   }
 
-  ionViewDidLeave() {
+  async ionViewDidLeave() {
     (<any>window).supportfile.removeFile(
       result => ({}),
       error => {
@@ -86,7 +86,8 @@ export class FaqHelpPage implements OnInit {
 
     window.removeEventListener('message', this.messageListener);
     if (this.loading) {
-      this.loading.dismiss();
+      await this.loading.dismiss();
+      this.loading = undefined;
     }
   }
 
@@ -147,6 +148,7 @@ export class FaqHelpPage implements OnInit {
         const appData = { appName: this.appName };
         element.contentWindow.postMessage(appData, '*');
         await this.loading.dismiss();
+        this.loading = undefined;
       }
       if (element.contentDocument.documentElement.getElementsByTagName('body').length === 0 ||
         element['contentWindow'].location.href.startsWith('chrome-error:')
@@ -154,11 +156,16 @@ export class FaqHelpPage implements OnInit {
         this.onError();
       }
     }
+    if (this.loading) {
+      await this.loading.dismiss();
+      this.loading = undefined;
+    }
   }
 
-  onError() {
+  async onError() {
     if (this.loading) {
-      this.loading.dismiss();
+      await this.loading.dismiss();
+      this.loading = undefined;
     }
     this.faq.url = './assets/faq/consumption-faqs.html?selectedlang=en&randomid=' + Math.random();
     this.consumptionFaqUrl = this.domSanitizer.bypassSecurityTrustResourceUrl(this.faq.url);
