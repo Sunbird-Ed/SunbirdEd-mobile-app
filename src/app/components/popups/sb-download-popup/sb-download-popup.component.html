@@ -77,12 +77,11 @@
         </ion-footer>
       </div>
     </div>
-  
   <div class="sb-popover sb-popover-download collapsed" *ngIf="this.showPopover && collectionName">
     <div class="collpase">
       <ion-header class="sb-popover-header">
         <ion-toolbar class="sb-popover-toolbar">
-          <ion-title padding-left padding-right class="sb-popover-title"> {{ 'DOWNLOADING_2' | translate }}
+          <ion-title padding-left padding-right class="sb-popover-title sb-popover-title-collapsed"> {{ 'DOWNLOADING_2' | translate }}
             <span class="meta-info">{{ currentCount }} / {{ queuedIdentifiers?.length }}</span>
             <ion-button fill="clear" class="sb-modal-close"
               (click)="togglePopover(this.showPopover); this.showPopover = !this.showPopover">{{ 'SHOW' | translate }}</ion-button>
@@ -99,7 +98,7 @@
       <div class="collpase">
         <ion-header class="sb-popover-header">
           <ion-toolbar class="sb-popover-toolbar">
-            <ion-title  padding-left padding-right class="sb-popover-title"> {{ 'DOWNLOADING_2' | translate }}
+            <ion-title  padding-left padding-right class="sb-popover-title sb-popover-title-collapsed"> {{ 'DOWNLOADING_2' | translate }}
               <span class="meta-info">{{this.constContentSize}} </span>
               <ion-button fill="clear" class="sb-modal-close"
                 (click)="togglePopover(this.showPopover); this.showPopover = !this.showPopover">{{ 'SHOW' | translate }}</ion-button>

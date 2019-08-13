@@ -8,7 +8,7 @@
         z-index: 10;
         display: block;
         width: 100%;
-        height: 100%;
+        height: 71vh;
         -webkit-transform: translateZ(0);
         transform: translateZ(0);
     }
@@ -85,10 +85,11 @@
 
             }
             .sb-modal-close{
-                color: #024F9D;
+                color: #eeeeee;
                 font-weight: normal;
-                top: -16px;
+                top: -24px;
               //  right: -16px;
+              font-size: 13px;
                 height: 68px;
                 width: auto;
             }
