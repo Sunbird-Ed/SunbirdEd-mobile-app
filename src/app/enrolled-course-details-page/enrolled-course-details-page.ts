@@ -1348,7 +1348,7 @@ export class EnrolledCourseDetailsPage implements OnInit {
         break;
       case 'back': this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.COURSE_DETAIL, Environment.HOME,
         true, this.identifier, this.corRelationList);
-        // this.handleNavBackButton();
+        this.handleNavBackButton();
         break;
     }
   }
