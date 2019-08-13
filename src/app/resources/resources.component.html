@@ -82,8 +82,8 @@
           </div>
           <!-- Card style -->
           <div class="sb-card-container sb-card-textbook-container">
-            <div class="sb-card-textbook" *ngFor="let item of items?.contents; let i = index">
-              <app-text-book-card *ngIf="i < 3" [content]="item" [layoutName]='layoutName'
+            <div class="sb-card-textbook" *ngFor="let item of items?.contents | slice:0:3 ; let i = index">
+              <app-text-book-card  [content]="item" [layoutName]='layoutName'
                 (click)="navigateToDetailPage(item, i, item.name)"></app-text-book-card>
             </div>
             <div class="sb-view-more" *ngIf="items?.contents?.length > 3"
