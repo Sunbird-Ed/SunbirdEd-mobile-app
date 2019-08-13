@@ -141,7 +141,7 @@ export class DownloadsTabComponent {
       componentProps: {
         list: MenuOverflow.DOWNLOAD_FILTERS
       },
-      // cssClass: 'box download-popover'
+      cssClass: 'download-popover'
     });
     await sortOptions.present();
     const { data } = await sortOptions.onDidDismiss();
