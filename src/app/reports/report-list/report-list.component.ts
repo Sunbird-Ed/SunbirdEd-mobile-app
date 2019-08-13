@@ -41,25 +41,27 @@ export class ReportListComponent implements OnInit {
     private location: Location
   ) {
     this.getNavData();
-    const extrasState = this.router.getCurrentNavigation().extras.state;
-    if (extrasState) {
-      this.isFromUsers = extrasState.isFromUsers;
-      this.isFromGroups = extrasState.isFromGroups;
-      this.uids = extrasState.uids;
-      this.handle = extrasState.handle;
-      this.groupInfo = extrasState.group;
-    }
   }
 
   getNavData() {
     const navigation = this.router.getCurrentNavigation();
     if (navigation && navigation.extras && navigation.extras.state) {
       this.navData = navigation.extras.state;
+      this.setNavData();
     }
   }
+
+  setNavData() {
+    this.isFromUsers = this.navData.isFromUsers;
+    this.isFromGroups = this.navData.isFromGroups;
+    this.uids = this.navData.uids;
+    this.handle = this.navData.handle;
+    this.groupInfo = this.navData.group;
+  }
+
   ionViewWillEnter() {
-    this.handleDeviceBackButton();
     this.headerService.showHeaderWithBackButton(null, this.commonUtilService.translateMessage('REPORTS'));
+    this.handleDeviceBackButton();
   }
 
   handleDeviceBackButton() {
