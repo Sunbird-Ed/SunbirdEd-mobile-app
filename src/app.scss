@@ -613,12 +613,6 @@ ion-toolbar {
   text-transform: capitalize;
 }
 
-.ellipsis {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
 .asPerStateRecord {
   color: white;
   font-size: 10px;
@@ -776,4 +770,14 @@ ion-toast.redErrorToast {
 .loading-wrapper.sc-ion-loading-md {
   border-radius: 50%;
   padding: 16px;
+}
+
+.grade_ellipsis {
+  @extend .ellipsis;
+  color: $gray-300;
+}
+
+.download-popover {
+  --width: auto;
+  --max-width: 90%;
 }

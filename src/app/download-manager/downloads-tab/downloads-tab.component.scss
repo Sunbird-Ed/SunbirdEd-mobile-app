@@ -2,36 +2,23 @@
 @import "src/assets/styles/mixins/bourbon/library/_clearfix.scss";
 
 :host {
-.sb-card-active{
+  .sb-card-active {
     background: #{$light-blue-bg} !important;
-}
-.sb-dw-manager{
+  }
+  .sb-dw-manager {
     @include clearfix;
-    .selector{
-        color: #{$primary-600};
-        font-size: #{$font-size-md};
-        vertical-align: middle !important;
+    .selector {
+      color: $primary-600;
+      font-size: $font-size-md;
+      vertical-align: middle !important;
     }
-}
+  }
 
-.download-checkbox-label{
-    width: 100%;
-    height: 100%;
-    margin: 0;
-}
-.download-checkbox{
-    display: flex;
-    width: 100%;
-    height: 100%;
-    align-items: center;
-    justify-content: center;
-
-    .item-cover {
-        position: absolute;
-        top:0;
-        bottom: 0;
-        left: 0;
-        right: 0;
-    }
- }
+  ion-checkbox {
+    --border-width: 1px;
+    --border-color: #7AB4EE;
+    --background-checked: #{$blue};
+    --border-color-checked: #{$blue};
+    --border-radius: 4px;
+  }
 }
