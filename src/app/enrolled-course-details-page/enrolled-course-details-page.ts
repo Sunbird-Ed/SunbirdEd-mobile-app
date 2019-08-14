@@ -65,6 +65,7 @@ import { SbGenericPopoverComponent } from '../components/popups/sb-generic-popov
 import { ContentActionsComponent, ContentRatingAlertComponent } from '../components';
 import { Location } from '@angular/common';
 import { Router, NavigationExtras } from '@angular/router';
+import { state } from '@angular/animations';
 declare const cordova;
 
 @Component({
@@ -206,10 +207,12 @@ export class EnrolledCourseDetailsPage implements OnInit {
     this.appGlobalService.getUserId();
     this.checkLoggedInOrGuestUser();
     this.checkCurrentUserType();
-    this.courseCardData = this.router.getCurrentNavigation().extras.state.content;
-    this.identifier = this.courseCardData.contentId || this.courseCardData.identifier;
-    this.corRelationList = this.router.getCurrentNavigation().extras.state.corRelation;
-    this.source = this.router.getCurrentNavigation().extras.state.source;
+    if (this.router.getCurrentNavigation) {
+      this.courseCardData = this.router.getCurrentNavigation().extras.state.content;
+      this.identifier = this.courseCardData.contentId || this.courseCardData.identifier;
+      this.corRelationList = this.router.getCurrentNavigation().extras.state.corRelation;
+      this.source = this.router.getCurrentNavigation().extras.state.source;
+    }
   }
 
   /**
@@ -1216,8 +1219,12 @@ export class EnrolledCourseDetailsPage implements OnInit {
     if (this.shouldGenerateEndTelemetry) {
       this.generateQRSessionEndEvent(this.source, this.course.identifier);
     }
-    this.location.back();
     this.backButtonFunc.unsubscribe();
+  }
+
+  goBack(){
+    this.location.replaceState(RouterLinks.COURSES);
+    this.location.back();
   }
 
   generateQRSessionEndEvent(pageId: string, qrData: string) {
@@ -1348,7 +1355,7 @@ export class EnrolledCourseDetailsPage implements OnInit {
         break;
       case 'back': this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.COURSE_DETAIL, Environment.HOME,
         true, this.identifier, this.corRelationList);
-        this.handleNavBackButton();
+        this.goBack();
         break;
     }
   }
