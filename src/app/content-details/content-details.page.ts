@@ -305,7 +305,6 @@ export class ContentDetailsPage implements OnInit {
       if (this.shouldGenerateEndTelemetry) {
         this.generateQRSessionEndEvent(this.source, this.cardData.identifier);
       }
-      this.backButtonFunc.unsubscribe();
     });
   }
 
@@ -385,27 +384,25 @@ export class ContentDetailsPage implements OnInit {
     };
 
     this.contentService.getContentDetails(req).toPromise()
-      .then((data: Content) => {
-        this.zone.run(async () => {
-          if (data) {
-            this.extractApiResponse(data);
-            if (!showRating) {
-              await loader.dismiss();
-            }
-            if (data.contentData.status === 'Retired') {
-              this.showRetiredContentPopup();
-            }
-          } else {
-            if (!showRating) {
-              await loader.dismiss();
-            }
+      .then(async (data: Content) => {
+        if (data) {
+          this.extractApiResponse(data);
+          if (!showRating) {
+            await loader.dismiss();
           }
+          if (data.contentData.status === 'Retired') {
+            this.showRetiredContentPopup();
+          }
+        } else {
+          if (!showRating) {
+            await loader.dismiss();
+          }
+        }
 
-          if (showRating) {
-            this.isPlayerLaunched = false;
-            this.ratingHandler.showRatingPopup(this.isContentPlayed, data, 'automatic', this.corRelationList, this.objRollup);
-          }
-        });
+        if (showRating) {
+          this.isPlayerLaunched = false;
+          this.ratingHandler.showRatingPopup(this.isContentPlayed, data, 'automatic', this.corRelationList, this.objRollup);
+        }
       })
       .catch(async (error: any) => {
         await loader.dismiss();
