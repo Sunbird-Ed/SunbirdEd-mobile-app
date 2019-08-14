@@ -1223,7 +1223,6 @@ export class EnrolledCourseDetailsPage implements OnInit {
   }
 
   goBack(){
-    this.location.replaceState(RouterLinks.COURSES);
     this.location.back();
   }
 
