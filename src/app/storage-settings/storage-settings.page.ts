@@ -200,7 +200,8 @@ export class StorageSettingsPage implements OnInit {
           }
         ],
         handler: (selectedButton: string) => {
-          if (selectedButton === this.commonUtilService.translateMessage('NOT_NOW')) {
+          if (selectedButton 
+              = this.commonUtilService.translateMessage('NOT_NOW')) {
             this.revertSelectedStorageDestination();
             this.showSettingsPageToast();
           } else if (selectedButton === this.commonUtilService.translateMessage('ALLOW')) {
@@ -607,4 +608,9 @@ export class StorageSettingsPage implements OnInit {
     return undefined;
   }
 
+  ionViewWillLeave() {
+    if (this._appHeaderSubscription) {
+      this._appHeaderSubscription.unsubscribe();
+    }
+  }
 }

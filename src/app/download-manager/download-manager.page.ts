@@ -1,7 +1,7 @@
 import { Component, OnInit, Inject, NgZone } from '@angular/core';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { Events, PopoverController } from '@ionic/angular';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import {
   Content,
   ContentDeleteRequest,
@@ -54,6 +54,7 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
     private appVersion: AppVersion,
     private router: Router,
     private telemetryGeneratorService: TelemetryGeneratorService,
+    private  route: ActivatedRoute
   ) {}
 
   async ngOnInit() {
@@ -328,7 +329,7 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
   }
 
   private redirectToSettings() {
-    this.router.navigate([RouterLinks.STORAGE_SETTINGS]);
+    this.router.navigate([`${RouterLinks.STORAGE_SETTINGS}`], { relativeTo: this.route});
   }
 
 }

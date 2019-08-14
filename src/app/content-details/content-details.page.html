@@ -14,7 +14,7 @@
             <div class="left">
               <div class="sb-dt-title"> {{content?.contentData?.name}}</div>
               <div class="sb-dt-source" *ngIf="content?.contentData?.owner || content?.contentData?.creator">
-                <span class="sb-by">{{ 'CONTENT_CREATED_BY' | translate }} &nbsp;</span>
+                <span class="sb-by">{{ 'CONTENT_CREATED_BY' | translate }} &nbsp;&nbsp;</span>
                 <span class="sb-user">{{ content?.contentData?.owner || content?.contentData?.creator }}</span>
                 <span class="sb-rating-view" *ngIf="content?.contentData?.me_averageRating">
                   <span class="content-vertical-line"></span>

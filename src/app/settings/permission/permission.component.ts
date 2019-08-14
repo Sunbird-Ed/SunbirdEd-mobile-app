@@ -127,6 +127,10 @@ export class PermissionComponent implements OnInit {
     if (this.backButtonFunc) {
       this.backButtonFunc.unsubscribe();
     }
+
+    if (this.headerObservable) {
+      this.headerObservable.unsubscribe();
+    }
   }
 
   grantAccess() {
@@ -220,7 +224,5 @@ export class PermissionComponent implements OnInit {
         console.log('failed to open settings' + err);
       }
     );
-    
   }
-
 }
