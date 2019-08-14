@@ -29,6 +29,12 @@
     .batches-header-text{
         color: #3b5998;
     }
+    .padding-left-6{
+        padding-left: 6px;
+    }
+    .font-size-20{
+        font-size: 18px !important;
+    }
     .background-gray{
         background: #efeff4;
         @include margin(-16px, -26px, 0, -26px);

@@ -1,9 +1,9 @@
 <ion-header class="sb-header">
   <ion-toolbar class="sb-header-toolbar">
-    <ion-buttons class="batches-header-text" slot="start">
-      <ion-back-button></ion-back-button>
+    <ion-buttons class="font-size-20  padding-left-6" (click)="goBack()" slot="start">
+      <ion-icon slot="start" name="arrow-back" class="batches-header-text"></ion-icon>
     </ion-buttons>
-    <ion-title class="batches-header-text">
+    <ion-title class="batches-header-text font-size-20">
       {{ 'BATCHES_FOR_THIS_COURSE' | translate }}
     </ion-title>
   </ion-toolbar>
