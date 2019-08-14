@@ -16,7 +16,7 @@ import {
   StorageTransferProgress,
   StorageVolume
 } from 'sunbird-sdk';
-import { SbPopoverComponent } from "@app/app/components/popups";
+import { SbPopoverComponent } from '@app/app/components/popups';
 import { FileSizePipe } from '../../pipes/file-size/file-size';
 import { ImpressionType, Environment, PageId, InteractType, InteractSubtype, } from '@app/services/telemetry-constants';
 import { AppVersion } from '@ionic-native/app-version/ngx';
@@ -605,6 +605,12 @@ export class StorageSettingsPage implements OnInit {
       );
     }
     return undefined;
+  }
+
+  ionViewWillLeave() {
+    if (this._appHeaderSubscription) {
+      this._appHeaderSubscription.unsubscribe();
+    }
   }
 
 }

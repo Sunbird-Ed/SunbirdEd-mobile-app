@@ -96,4 +96,9 @@ export class TextbookViewMorePage implements OnInit {
   ngOnInit() {
   }
 
+  ionViewWillLeave() {
+    if (this._appHeaderSubscription) {
+      this._appHeaderSubscription.unsubscribe();
+    }
+  }
 }
