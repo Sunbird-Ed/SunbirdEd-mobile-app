@@ -10,7 +10,8 @@
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "ionic-build": "ng build --eval--source-map && cordova run android"
+    "ionic-build": "ng build --eval--source-map && cordova run android",
+    "ionic-build:prod": "ionic build --prod && ionic cordova run android --prod"
   },
   "private": true,
   "dependencies": {
