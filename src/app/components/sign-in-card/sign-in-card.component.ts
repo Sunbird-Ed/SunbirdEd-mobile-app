@@ -161,7 +161,7 @@ export class SignInCardComponent implements OnInit {
 
   refreshTenantData(slug: string, title: string) {
     return new Promise((resolve, reject) => {
-      this.profileService.getTenantInfo().toPromise()
+      this.profileService.getTenantInfo({ slug: '' }).toPromise()
         .then((res) => {
           this.preferences.putString(PreferenceKey.APP_LOGO, res.logo).toPromise().then();
           this.preferences.putString(PreferenceKey.APP_NAME, title).toPromise().then();

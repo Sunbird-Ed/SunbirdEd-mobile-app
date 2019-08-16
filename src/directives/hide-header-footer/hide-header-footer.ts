@@ -1,6 +1,6 @@
 import { Directive, ElementRef, Renderer2, Input } from '@angular/core';
 import { Events, IonContent } from '@ionic/angular';
-import { Subject, Observable, Subscription} from 'rxjs-compat';
+import { Subject, Observable, Subscription} from 'rxjs';
 
 @Directive({
   selector: '[hide-header-footer]', // Attribute

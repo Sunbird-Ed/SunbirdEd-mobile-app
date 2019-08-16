@@ -22,7 +22,7 @@ import {
 import {
   Environment, ErrorType, ImpressionType, InteractSubtype, InteractType, Mode, PageId
 } from '../../services/telemetry-constants';
-import { Subscription } from 'rxjs-compat/Subscription';
+import { Subscription } from 'rxjs/Subscription';
 import { ContentType, MimeType, ShareUrl, RouterLinks } from '../../app/app.constant';
 import {
   AppGlobalService, AppHeaderService, CommonUtilService, CourseUtilService, TelemetryGeneratorService, UtilityService
