@@ -304,10 +304,14 @@ export class CollectionDetailsPage {
       if (this.shouldGenerateEndTelemetry) {
         this.generateQRSessionEndEvent(this.source, this.cardData.identifier);
       }
-      this.location.back();
       this.backButtonFunc.unsubscribe();
     });
   }
+
+  goBack(){
+    this.location.back();    
+  }
+
 
   async rateContent(event) {
     // TODO: check content is played or not
@@ -988,7 +992,7 @@ export class CollectionDetailsPage {
         break;
       case 'back': this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.COLLECTION_DETAIL, Environment.HOME,
         true, this.cardData.identifier, this.corRelationList);
-        this.handleBackButton();
+        this.goBack();
         break;
     }
   }

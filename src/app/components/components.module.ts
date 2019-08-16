@@ -103,7 +103,8 @@ import { FilteroptionComponent } from './filteroption/filteroption.component';
     AppRatingAlertComponent,
     ViewCreditsComponent,
     FilteroptionComponent,
-    ContentActionsComponent
+    ContentActionsComponent,
+    ReportAlertComponent
   ],
   exports: [
     ApplicationHeaderComponent,
@@ -136,7 +137,8 @@ import { FilteroptionComponent } from './filteroption/filteroption.component';
     AssessmentDetailsComponent,
     ViewCreditsComponent,
     SkeletonItemComponent,
-    FilteroptionComponent
+    FilteroptionComponent,
+    ReportAlertComponent
   ],
   providers: [FileSizePipe, Keyboard]
 })

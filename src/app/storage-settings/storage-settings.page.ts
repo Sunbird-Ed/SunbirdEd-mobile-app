@@ -16,7 +16,7 @@ import {
   StorageTransferProgress,
   StorageVolume
 } from 'sunbird-sdk';
-import { SbPopoverComponent } from '@app/app/components/popups';
+import { SbPopoverComponent } from "@app/app/components/popups";
 import { FileSizePipe } from '../../pipes/file-size/file-size';
 import { ImpressionType, Environment, PageId, InteractType, InteractSubtype, } from '@app/services/telemetry-constants';
 import { AppVersion } from '@ionic-native/app-version/ngx';
@@ -200,7 +200,8 @@ export class StorageSettingsPage implements OnInit {
           }
         ],
         handler: (selectedButton: string) => {
-          if (selectedButton === this.commonUtilService.translateMessage('NOT_NOW')) {
+          if (selectedButton 
+              = this.commonUtilService.translateMessage('NOT_NOW')) {
             this.revertSelectedStorageDestination();
             this.showSettingsPageToast();
           } else if (selectedButton === this.commonUtilService.translateMessage('ALLOW')) {
@@ -612,5 +613,4 @@ export class StorageSettingsPage implements OnInit {
       this._appHeaderSubscription.unsubscribe();
     }
   }
-
 }
