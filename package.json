@@ -84,7 +84,6 @@
     "core-js": "^2.5.4",
     "es6-promise-plugin": "^4.2.2",
     "grapheme-splitter": "^1.0.4",
-    "ionic-image-loader": "^7.0.0-beta.2",
     "ionic-plugin-keyboard": "2.2.1",
     "ionic4-rating": "^1.0.9",
     "moment": "^2.24.0",

@@ -6,13 +6,12 @@ import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 // ionic cordova dependencies/plugins
-import { IonicImageLoader } from 'ionic-image-loader';
 import { WebView } from '@ionic-native/ionic-webview/ngx';
 import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { SocialSharing } from '@ionic-native/social-sharing/ngx';
-import { FileTransfer, FileUploadOptions, FileTransferObject } from '@ionic-native/file-transfer/ngx';
+import { FileTransfer, FileTransferObject } from '@ionic-native/file-transfer/ngx';
 import { FileOpener } from '@ionic-native/file-opener/ngx';
 import { UniqueDeviceID } from '@ionic-native/unique-device-id/ngx';
 import { Device } from '@ionic-native/device/ngx';
@@ -61,6 +60,7 @@ import { PageFilterPage } from './page-filter/page-filter.page';
 import { PageFilterOptionsPageModule } from './page-filter/page-filter-options/page-filter-options.module';
 import { PageFilterOptionsPage } from './page-filter/page-filter-options/page-filter-options.page';
 import { CrashAnalyticsErrorLogger } from '@app/services/crash-analytics/crash-analytics-error-logger';
+import { File } from '@ionic-native/file/ngx';
 
 
 
@@ -351,7 +351,6 @@ declare const buildconfigreader;
     BrowserAnimationsModule,
     AppRoutingModule,
     ComponentsModule,
-    IonicImageLoader.forRoot(),
     HttpClientModule,
     TranslateModule.forRoot({
       loader: {
@@ -365,7 +364,6 @@ declare const buildconfigreader;
       scrollAssist: true,
       // autoFocusAssist: false
     }),
-    IonicImageLoader.forRoot(),
     DirectivesModule,
 
     // custom modules=
@@ -380,6 +378,7 @@ declare const buildconfigreader;
     LocalNotifications,
     SocialSharing,
     WebView,
+    File,
     FileTransferObject,
     FileOpener,
     FileTransfer,
