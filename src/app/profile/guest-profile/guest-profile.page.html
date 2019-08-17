@@ -8,7 +8,7 @@
       </span>
     </p>
 
-    <p class="change-role" (click)="goToRoles()" text-uppercase>
+    <p class="change-role" (click)="editGuestProfile(true)" text-uppercase>
       {{'CHANGE_ROLE' | translate }}
     </p>
     <p *ngIf="profile?.profileType === ProfileType.TEACHER" class="user-type">{{'USER_TYPE_1' | translate }}</p>

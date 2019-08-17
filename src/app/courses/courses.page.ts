@@ -1,17 +1,11 @@
-// migration-TODO
-import { ActiveDownloadsPage } from '../active-downloads/active-downloads.page';
-import { ViewMoreActivityComponent } from '../view-more-activity/view-more-activity.component';
-import { Component, Inject, NgZone, OnInit, AfterViewInit } from '@angular/core';
-// import { Events, IonicPage, NavController, ToastController, PopoverController, MenuController, Tabs } from 'ionic-angular';
-import { Events, ToastController,PopoverController } from '@ionic/angular';
+import { Component, Inject, NgZone, OnInit } from '@angular/core';
+import { Router, NavigationExtras, ActivatedRoute } from '@angular/router';
+import { Events, ToastController, PopoverController } from '@ionic/angular';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { QRResultCallback, SunbirdQRScanner } from '../../services/sunbirdqrscanner.service';
-// migration-TODO
-import { ContentDetailsPage } from '../content-details/content-details.page';
 import has from 'lodash/has';
 import forEach from 'lodash/forEach';
 import { ContentCard, EventTopics, PreferenceKey, ProfileConstants, ViewMore, RouterLinks, ContentType } from '../../app/app.constant';
-// migration-TODO
 import { PageFilterPage, PageFilterCallback } from '../page-filter/page-filter.page';
 import { Network } from '@ionic-native/network/ngx';
 import { AppGlobalService } from '../../services/app-global-service.service';
@@ -28,7 +22,6 @@ import {
 import { Environment, InteractSubtype, InteractType, PageId } from '../../services/telemetry-constants';
 import { Subscription } from 'rxjs/Subscription';
 import { AppHeaderService } from '../../services/app-header.service';
-import { Router, NavigationExtras } from '@angular/router';
 
 @Component({
   selector: 'app-courses',
@@ -94,52 +87,27 @@ export class CoursesPage implements OnInit {
   private eventSubscription: Subscription;
   headerObservable: any;
 
-  /**
-   * Default method of class CoursesPage
-   *
-   * @param appVersion
-   * @param {NavController} navCtrl To navigate user from one page to another
-   * @param {CourseService} courseService Service to get enrolled courses
-   * @param {PageAssembleService} pageService Service to get latest and popular courses
-   * @param {NgZone} ngZone To bind data
-   * @param qrScanner
-   * @param popCtrl
-   * @param events
-   * @param eventBusService
-   * @param contentService
-   * @param appGlobalService
-   * @param courseUtilService
-   * @param formAndFrameworkUtilService
-   * @param commonUtilService
-   * @param telemetryGeneratorService
-   * @param network
-   * @param preferences
-   */
   constructor(
+    @Inject('EVENTS_BUS_SERVICE') private eventBusService: EventsBusService,
+    @Inject('PAGE_ASSEMBLE_SERVICE') private pageService: PageAssembleService,
+    @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
+    @Inject('COURSE_SERVICE') private courseService: CourseService,
+    @Inject('CONTENT_SERVICE') private contentService: ContentService,
     private formAndFrameworkUtilService: FormAndFrameworkUtilService,
     private appVersion: AppVersion,
-    // private navCtrl: NavController,
-    @Inject('COURSE_SERVICE') private courseService: CourseService,
     private ngZone: NgZone,
     private qrScanner: SunbirdQRScanner,
-    // migration-TODO
     private popCtrl: PopoverController,
     private events: Events,
-    @Inject('CONTENT_SERVICE') private contentService: ContentService,
     private appGlobalService: AppGlobalService,
     private courseUtilService: CourseUtilService,
     public commonUtilService: CommonUtilService,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private network: Network,
     private router: Router,
-    // private tabs: Tabs,
-    @Inject('EVENTS_BUS_SERVICE') private eventBusService: EventsBusService,
-    @Inject('PAGE_ASSEMBLE_SERVICE') private pageService: PageAssembleService,
-    @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
-    // migration-TODO
-    // public menuCtrl: MenuController,
-    public toastController: ToastController,
-    private headerServie: AppHeaderService
+    private toastController: ToastController,
+    private headerService: AppHeaderService,
+    private route: ActivatedRoute
   ) {
     this.tabBarElement = document.querySelector('.tabbar.show-tabbar');
     this.preferences.getString(PreferenceKey.SELECTED_LANGUAGE_CODE).toPromise()
@@ -150,7 +118,6 @@ export class CoursesPage implements OnInit {
       });
 
     this.subscribeUtilityEvents();
-
 
     this.appVersion.getAppName()
       .then((appName: any) => {
@@ -165,10 +132,10 @@ export class CoursesPage implements OnInit {
   ngOnInit() {
     this.getCourseTabData();
 
-    this.events.subscribe('update_header', (data) => {
-      this.headerServie.showHeaderWithHomeButton(['search', 'filter', 'download']);
+    this.events.subscribe('update_header', () => {
+      this.headerService.showHeaderWithHomeButton(['search', 'filter', 'download']);
     });
-    this.headerObservable = this.headerServie.headerEventEmitted$.subscribe(eventName => {
+    this.headerObservable = this.headerService.headerEventEmitted$.subscribe(eventName => {
       this.handleHeaderEvents(eventName);
     });
     this.getEnrolledCourses();
@@ -176,7 +143,7 @@ export class CoursesPage implements OnInit {
 
   ionViewWillEnter() {
     this.isVisible = true;
-    this.headerServie.showHeaderWithHomeButton(['search', 'filter', 'download']);
+    this.headerService.showHeaderWithHomeButton(['search', 'filter', 'download']);
   }
 
   ionViewDidEnter() {
@@ -528,8 +495,9 @@ export class CoursesPage implements OnInit {
       InteractSubtype.SEARCH_BUTTON_CLICKED,
       Environment.HOME,
       PageId.COURSES);
-    this.router.navigate([RouterLinks.SEARCH] , {
-      state : {
+    this.router.navigate([RouterLinks.SEARCH], {
+      relativeTo: this.route,
+      state: {
         contentType: ContentType.FOR_COURSE_TAB,
         source: PageId.COURSES,
         enrolledCourses: this.enrolledCourses,
@@ -543,7 +511,7 @@ export class CoursesPage implements OnInit {
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
       InteractSubtype.FILTER_BUTTON_CLICKED,
       Environment.HOME,
-      PageId.COURSES, undefined);
+      PageId.COURSES);
     const that = this;
 
     this.pageFilterCallBack = {
@@ -726,8 +694,6 @@ export class CoursesPage implements OnInit {
       Environment.HOME,
       PageId.COURSES, undefined,
       values);
-    // migration-TODO
-    // this.navCtrl.push(ViewMoreActivityPage, params);
     this.router.navigate([RouterLinks.VIEW_MORE_ACTIVITY], params);
 
   }
@@ -820,7 +786,7 @@ export class CoursesPage implements OnInit {
       case 'search': this.search();
         break;
       case 'filter': this.showFilter();
-      console.log("Show Filter");
+        console.log("Show Filter");
         break;
       case 'download': this.redirectToActivedownloads();
         break;

@@ -49,6 +49,7 @@ const routes: Routes = [
   { path: RouterLinks.SETTINGS, loadChildren: './settings/settings.module#SettingsPageModule' },
   { path: RouterLinks.REPORTS, loadChildren: './reports/reports.module#ReportsPageModule' },
   { path: RouterLinks.DOWNLOAD_MANAGER, loadChildren: './download-manager/download-manager.module#DownloadManagerPageModule' },
+  { path: RouterLinks.STORAGE_SETTINGS, loadChildren: './storage-settings/storage-settings.module#StorageSettingsPageModule' },
   { path: RouterLinks.COURSES, loadChildren: './courses/courses.module#CoursesPageModule' },
   { path: RouterLinks.SEARCH, loadChildren: './search/search.module#SearchPageModule' },
   { path: RouterLinks.PROFILE, loadChildren: './profile/profile.module#ProfilePageModule' },
@@ -84,6 +85,7 @@ const routes: Routes = [
   },
   { path: 'filters', loadChildren: './search/filters/filters.module#FiltersPageModule' },
   { path: RouterLinks.TEXTBOOK_VIEW_MORE, loadChildren: './textbook-view-more/textbook-view-more.module#TextbookViewMorePageModule' },
+  { path: RouterLinks.GUEST_EDIT, loadChildren: './profile/guest-edit/guest-edit.module#GuestEditPageModule' }
 ];
 
 @NgModule({

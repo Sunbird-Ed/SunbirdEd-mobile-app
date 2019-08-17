@@ -88,7 +88,7 @@ export class GuestProfilePage implements OnInit {
   }
 
   ionViewWillEnter() {
-    this.events.subscribe('update_header', (data) => {
+    this.events.subscribe('update_header', () => {
       this.headerService.showHeaderWithHomeButton(['download']);
     });
     this.headerObservable = this.headerService.headerEventEmitted$.subscribe(eventName => {
@@ -102,7 +102,7 @@ export class GuestProfilePage implements OnInit {
       this.headerObservable.unsubscribe();
     }
 
-    if(this.headerObservable) {
+    if (this.headerObservable) {
       this.headerObservable.unsubscribe();
     }
 
@@ -132,14 +132,15 @@ export class GuestProfilePage implements OnInit {
       });
   }
 
-  editGuestProfile() {
+  editGuestProfile(isChangeRoleRequest = false) {
     const navigationExtras: NavigationExtras = {
       state: {
         profile: this.profile,
-        isCurrentUser: true
+        isCurrentUser: true,
+        isChangeRoleRequest
       }
     };
-    this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.GUEST_EDIT}`], navigationExtras);
+    this.router.navigate([RouterLinks.GUEST_EDIT], navigationExtras);
   }
 
 
@@ -208,21 +209,6 @@ export class GuestProfilePage implements OnInit {
       }
     });
     return this.commonUtilService.arrayToString(displayValues);
-  }
-
-  /**
-   * Takes the user to role selection screen
-   *
-   */
-  goToRoles() {
-    const navigationExtras: NavigationExtras = {
-      state: {
-        profile: this.profile,
-        isChangeRoleRequest: true,
-        isCurrentUser: true
-      }
-    };
-    this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.GUEST_EDIT}`], navigationExtras);
   }
 
   buttonClick(isNetAvailable?) {
