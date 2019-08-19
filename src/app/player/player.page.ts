@@ -7,8 +7,9 @@ import { Platform, AlertController, Events } from '@ionic/angular';
 import { ScreenOrientation } from '@ionic-native/screen-orientation/ngx';
 import { PlayerActionHandlerDelegate, HierarchyInfo, User } from './player-action-handler-delegate';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
-import { EventTopics } from '../app.constant';
+import { EventTopics, RouterLinks } from '../app.constant';
 import { Location } from '@angular/common';
+import { Subscription } from 'rxjs/Subscription';
 
 @Component({
   selector: 'app-player',
@@ -17,6 +18,7 @@ import { Location } from '@angular/common';
 export class PlayerPage implements OnInit, PlayerActionHandlerDelegate {
 
   config = {};
+  backButtonSubscription: Subscription
   @ViewChild('preview') previewElement: ElementRef;
   constructor(
     private canvasPlayerService: CanvasPlayerService,
@@ -49,7 +51,7 @@ export class PlayerPage implements OnInit, PlayerActionHandlerDelegate {
     this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
     this.statusBar.hide();
 
-    this.platform.backButton.subscribeWithPriority(10, async () => {
+    this.backButtonSubscription = this.platform.backButton.subscribeWithPriority(10, async () => {
       const activeAlert = await this.alertCtrl.getTop();
       if (!activeAlert) {
         this.showConfirm();
@@ -83,35 +85,38 @@ export class PlayerPage implements OnInit, PlayerActionHandlerDelegate {
     this.statusBar.show();
     this.screenOrientation.unlock();
     this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
-    this.events.unsubscribe('endGenieCanvas');
-    this.platform.backButton.unsubscribe();
+
+    if (this.events) {
+      this.events.unsubscribe('endGenieCanvas');
+    }
+
+    if (this.backButtonSubscription) {
+      this.backButtonSubscription.unsubscribe();
+    }
   }
 
   /**
    * This will trigger from player/ iframe when it unable to find consecutive content
-   * @param {string} identifier Content Identifier
-   * @param {Array<hierarchyInfo>} hierarchyInfo Object of content hierarchy
+   * @param identifier Content Identifier
+   * @param hierarchyInfo Object of content hierarchy
    */
-  onContentNotFound(identifier: string, hierarchyInformation: Array<HierarchyInfo>) {
-    const content = {
-      identifier: identifier,
-      hierarchyInfo: hierarchyInformation
-    };
+  onContentNotFound(identifier: string, hierarchyInfo: Array<HierarchyInfo>) {
+    const content = { identifier, hierarchyInfo };
 
     // Migration todo
-/*     this.navCtrl.push(ContentDetailsPage, {
-      content: content
-    }).then(() => {
-      // Hide player while going back
-      this.navCtrl.remove(this.navCtrl.length() - 2);
-    });
-
-
- */  }
+    /*     this.navCtrl.push(ContentDetailsPage, {
+          content: content
+        }).then(() => {
+          // Hide player while going back
+          this.navCtrl.remove(this.navCtrl.length() - 2);
+        });
+     */
+    this.router.navigate([RouterLinks.CONTENT_DETAILS], { state: { content } });
+  }
 
   /**
    * This is an callback to mobile when player switches user
-   * @param {user} selectedUser User id of the newly selected user by player
+   * @param selectedUser User id of the newly selected user by player
    */
   onUserSwitch(selectedUser: User) {
     this.appGlobalService.setSelectedUser(selectedUser);
