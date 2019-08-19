@@ -76,7 +76,7 @@ export class AssessmentDetailsComponent implements OnInit {
       const popover = await this.popoverCtrl.create({
         component: callback,
         componentProps: { callback: event },
-        cssClass: 'resource-filter'
+        cssClass: 'report-alert'
       });
       popover.present();
     } else {
