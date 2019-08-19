@@ -117,6 +117,10 @@ export class CourseBatchesPage implements OnInit {
       this.backButtonFunc.unsubscribe();
     });
   }
+  
+  goBack(){
+    this.location.back();
+  }
 
   ionViewWillLeave() {
     if(this.backButtonFunc) {

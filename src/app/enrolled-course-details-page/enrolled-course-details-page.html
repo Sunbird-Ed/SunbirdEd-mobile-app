@@ -185,7 +185,7 @@
 	</ion-toolbar>
 </ion-footer>
 
-<ion-backdrop class="loading-backdrop" *ngIf="showLoading && !isDownloadStarted" text-center>
+<div class="loading-backdrop" *ngIf="showLoading && !isDownloadStarted" text-center>
 	<div class="backdrop-container">
     <ion-label>{{ 'LOADING_CONTENTS' | translate: {'%s': downloadProgress ? downloadProgress : 0} }}</ion-label>
 		<app-pb-horizontal [progress]="downloadProgress" isOnBoardCard="false"></app-pb-horizontal>
@@ -194,4 +194,4 @@
 	<div class="backdrop-footer">
 		<ion-button size="small" (click)="cancelDownload()">{{ 'CANCEL' | translate }}</ion-button>
 	</div>
-</ion-backdrop>
+</div>

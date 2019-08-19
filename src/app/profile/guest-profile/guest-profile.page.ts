@@ -102,6 +102,10 @@ export class GuestProfilePage implements OnInit {
       this.headerObservable.unsubscribe();
     }
 
+    if(this.headerObservable) {
+      this.headerObservable.unsubscribe();
+    }
+
     this.events.unsubscribe('update_header');
   }
 

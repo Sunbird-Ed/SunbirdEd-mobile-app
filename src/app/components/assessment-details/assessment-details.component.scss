@@ -34,6 +34,11 @@
     
     .ngx-datatable .datatable-header .datatable-header-cell .sort-btn {
         font-size: 2rem;
+        padding: 0px 2px;
+    }
+
+    .ngx-datatable .datatable-header .datatable-header-cell .sort-btn::before {
+        content: "\25B4";
     }
     
     #datatable.ngx-datatable.material .datatable-header .datatable-header-cell{
@@ -117,4 +122,12 @@
     .assessment-stats {
         font-size: 1.8em;
         padding-bottom: 10px;
+    }
+
+    .datatable-icon-down:before {
+        content: "\25BE" !important;
+    }
+
+    .datatable-icon-up:before {
+        content: "\25B4" !important;
     }

@@ -34,7 +34,8 @@ const routes: Routes = [
   {
     path: RouterLinks.DOWNLOADS_HEADER,
     component: DownloadsHeaderComponent
-  }
+  },
+  { path: RouterLinks.STORAGE_SETTINGS, loadChildren: '../storage-settings/storage-settings.module#StorageSettingsPageModule' }
 ];
 
 @NgModule({
@@ -49,7 +50,7 @@ const routes: Routes = [
     ComponentsModule
   ],
   declarations: [DownloadManagerPage,
-    NoDownloadsComponent , DownloadsTabComponent , DownloadsHeaderComponent ],
+    NoDownloadsComponent, DownloadsTabComponent, DownloadsHeaderComponent],
   entryComponents: [OverflowMenuComponent]
 })
-export class DownloadManagerPageModule {}
+export class DownloadManagerPageModule { }
