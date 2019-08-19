@@ -1,5 +1,5 @@
 import { Component, OnInit , ViewEncapsulation } from '@angular/core';
-import { NavParams, ModalController, Platform, NavController, PopoverController } from '@ionic/angular';
+import { NavParams, Platform, NavController, PopoverController } from '@ionic/angular';
 import { Location } from '@angular/common';
 
 export interface QRAlertCallBack {
@@ -20,7 +20,6 @@ export class ReportAlertComponent implements OnInit {
 
   constructor(
     navParams: NavParams,
-    private modalCtrl: ModalController,
     private navCtrl: NavController,
     private platform: Platform,
     private popOverCtrl: PopoverController,
@@ -33,7 +32,7 @@ export class ReportAlertComponent implements OnInit {
   ngOnInit() { }
 
   cancel() {
-    this.modalCtrl.dismiss();
+    this.popOverCtrl.dismiss();
   }
 
   ionViewWillEnter() {
