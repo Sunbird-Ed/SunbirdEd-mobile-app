@@ -1,7 +1,5 @@
 @import "src/assets/styles/base/_variables.scss";
 @import "src/assets/styles/_custom-mixins.scss";
-
-:host{
     .msg {
       color: white;
       font-size: medium;
@@ -22,7 +20,18 @@
     .assessmentDetails h3 {
       white-space: normal;
     }
-  }
+    ion-item.item.md.in-list.ion-focusable.hydrated.popover-header{
+      --ion-item-background : dodgerBlue;
+    }
+    .popover-header-text {
+      font-size: 16px;
+    }
+    .popover-header-color {
+      color: #fff;
+    }
+    ion-list.md.list-md.hydrated.report-alert-popover-list {
+      padding-top: 0px !important;
+    }
   
   .report-alert .popover-content {
     margin: 0;

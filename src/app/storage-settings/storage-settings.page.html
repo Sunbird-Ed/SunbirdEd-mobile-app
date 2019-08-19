@@ -16,7 +16,8 @@
       <span class="storage-info">{{'STORAGE' | translate}}</span>
     </div>
   </div>
-  <div radio-group [(ngModel)]="storageDestination" (ngModelChange)="attemptTransfer()">
+  <div radio-group [(ngModel)]="storageDestination" [name]="storageDestination" ngDefaultControl
+    (ngModelChange)="attemptTransfer()">
     <div class="sb-storage-container">
       <div class="radio-container">
         <ion-radio class="storage-radio-btn" [value]="StorageDestination.INTERNAL_STORAGE"></ion-radio>
@@ -39,8 +40,9 @@
       <div class="sb-card-details">
         <div class="title" *ngIf="isExternalMemoryAvailable">{{'SD_CARD' | translate}}({{totalExternalMemorySize}})</div>
         <div class="title" *ngIf="!isExternalMemoryAvailable">{{'SD_CARD' | translate}} : (--) </div>
-        <div class="info" *ngIf="isExternalMemoryAvailable">{{'FREE_SPACE' | translate}} {{availableExternalMemorySize | fileSize}}</div>
-        <div class="info" *ngIf="!isExternalMemoryAvailable">{{'FREE_SPACE' | translate}}   -- </div>
+        <div class="info" *ngIf="isExternalMemoryAvailable">{{'FREE_SPACE' | translate}}
+          {{availableExternalMemorySize | fileSize}}</div>
+        <div class="info" *ngIf="!isExternalMemoryAvailable">{{'FREE_SPACE' | translate}} -- </div>
       </div>
     </div>
   </div>
