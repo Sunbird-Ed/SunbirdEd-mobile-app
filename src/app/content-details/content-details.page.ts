@@ -114,7 +114,7 @@ export class ContentDetailsPage implements OnInit {
   isResumedCourse: boolean;
   didViewLoad: boolean;
   contentDetail: any;
-  backButtonFunc = undefined;
+  backButtonFunc:Subscription;
   shouldGenerateEndTelemetry = false;
   source = '';
   unregisterBackButton: any;
@@ -1007,7 +1007,6 @@ export class ContentDetailsPage implements OnInit {
       corRelationList
     );
   }
-
   async showPopupDialog() {
     const popover = await this.popoverCtrl.create({
       component: DialogPopupComponent,
