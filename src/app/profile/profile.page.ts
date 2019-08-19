@@ -128,7 +128,7 @@ export class ProfilePage implements OnInit {
   }
 
   ionViewWillEnter() {
-    this.events.subscribe('update_header', (data) => {
+    this.events.subscribe('update_header', () => {
       this.headerService.showHeaderWithHomeButton();
     });
     this.headerObservable = this.headerService.headerEventEmitted$.subscribe(eventName => {

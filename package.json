@@ -10,7 +10,8 @@
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "ionic-build": "ng build --eval--source-map && cordova run android"
+    "ionic-build": "ng build --eval--source-map && cordova run android",
+    "ionic-build:prod": "ionic build --prod && ionic cordova run android --prod"
   },
   "private": true,
   "dependencies": {
@@ -83,14 +84,13 @@
     "core-js": "^2.5.4",
     "es6-promise-plugin": "^4.2.2",
     "grapheme-splitter": "^1.0.4",
-    "ionic-image-loader": "^7.0.0-beta.2",
     "ionic-plugin-keyboard": "2.2.1",
     "ionic4-rating": "^1.0.9",
     "moment": "^2.24.0",
     "rxjs-compat": "^6.5.2",
     "sb-cordova-plugin-customtabs": "git+https://github.com/Sunbird-Ed/sb-cordova-plugin-customtabs.git",
     "sb-cordova-plugin-db": "git+https://github.com/swayangjit/sb-cordova-plugin-db.git",
-    "sunbird-sdk": "git+https://github.com/Sunbird-Ed/sunbird-mobile-sdk.git#v2.3.0",
+    "sunbird-sdk": "git+https://github.com/Sunbird-Ed/sunbird-mobile-sdk.git#v2.4.1-alpha",
     "tslib": "^1.9.0",
     "x2js": "^3.3.0",
     "zone.js": "~0.8.29"

@@ -196,7 +196,6 @@ export class GuestEditPage implements OnInit {
   ionViewWillLeave() {
     if (this.unregisterBackButton) {
       this.unregisterBackButton.unsubscribe();
-      this.unregisterBackButton = undefined;
     }
   }
 
@@ -646,7 +645,6 @@ export class GuestEditPage implements OnInit {
       this.commonUtilService.showToast(this.commonUtilService.translateMessage('FILL_THE_MANDATORY_FIELDS'));
     });
   }
-
 
   private _dismissLoader(loader?) {
     if (loader) {

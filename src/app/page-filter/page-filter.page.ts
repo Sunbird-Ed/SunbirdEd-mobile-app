@@ -1,13 +1,8 @@
 import { Component, Inject, ViewEncapsulation } from '@angular/core';
 import { Events, NavParams, Platform, PopoverController } from '@ionic/angular';
-import { AppGlobalService } from '../../services/app-global-service.service';
 import map from 'lodash/map';
 import cloneDeep from 'lodash/cloneDeep';
 import { TranslateService } from '@ngx-translate/core';
-import { PageFilterOptionsPage } from './page-filter-options/page-filter-options.page';
-import { TelemetryGeneratorService } from '../../services/telemetry-generator.service';
-import { CommonUtilService } from '../../services/common-util.service';
-import { FormAndFrameworkUtilService } from '../../services/formandframeworkutil.service';
 import {
   CategoryTerm,
   FrameworkCategoryCode,
@@ -16,7 +11,13 @@ import {
   GetFrameworkCategoryTermsRequest,
   PageAssembleFilter
 } from 'sunbird-sdk';
-import { Environment, ImpressionType, InteractSubtype, InteractType, PageId } from '../../services/telemetry-constants';
+
+import { PageFilterOptionsPage } from './page-filter-options/page-filter-options.page';
+import { AppGlobalService } from 'services/app-global-service.service';
+import { TelemetryGeneratorService } from 'services/telemetry-generator.service';
+import { CommonUtilService } from 'services/common-util.service';
+import { FormAndFrameworkUtilService } from 'services/formandframeworkutil.service';
+import { Environment, ImpressionType, InteractSubtype, InteractType, PageId } from 'services/telemetry-constants';
 
 @Component({
   selector: 'app-page-filter',
@@ -25,11 +26,8 @@ import { Environment, ImpressionType, InteractSubtype, InteractType, PageId } fr
   encapsulation: ViewEncapsulation.None
 })
 export class PageFilterPage {
-
   pagetAssemblefilter: PageAssembleFilter = {};
-
   callback: PageFilterCallback;
-  // migration-TODO [for migration added blank object ]
   filters = [];
   pageId;
   facetsFilter;
@@ -40,9 +38,8 @@ export class PageFilterPage {
   categories: Array<FrameworkCategoryCode> = FrameworkCategoryCodesGroup.DEFAULT_FRAMEWORK_CATEGORIES;
 
   constructor(
+    @Inject('FRAMEWORK_UTIL_SERVICE') private frameworkUtilService: FrameworkUtilService,
     private popCtrl: PopoverController,
-    // migration-TODO
-    // private viewCtrl: ViewController,
     private navParams: NavParams,
     private platform: Platform,
     private translate: TranslateService,
@@ -50,17 +47,13 @@ export class PageFilterPage {
     private events: Events,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private commonUtilService: CommonUtilService,
-    private formAndFrameworkUtilService: FormAndFrameworkUtilService,
-    @Inject('FRAMEWORK_UTIL_SERVICE') private frameworkUtilService: FrameworkUtilService
+    private formAndFrameworkUtilService: FormAndFrameworkUtilService
   ) {
-    // migration-TODO
     this.callback = this.navParams.get('callback');
     this.initFilterValues();
 
-    this.backButtonFunc = this.platform.backButton.subscribeWithPriority(10, () => {
-      // migration-TODO
+    this.backButtonFunc = this.platform.backButton.subscribeWithPriority(11, () => {
       this.popCtrl.dismiss();
-      this.backButtonFunc.unsubscribe();
     });
 
     this.events.subscribe('onAfterLanguageChange:update', () => {
@@ -90,10 +83,8 @@ export class PageFilterPage {
   }
 
   async initFilterValues() {
-    // migration-TODO
     this.filters = this.navParams.get('filter');
     this.backupFilters = JSON.parse(JSON.stringify(this.filters));
-    // migration-TODO
     this.pageId = this.navParams.get('pageId');
     const loader = await this.commonUtilService.getLoader();
     await loader.present();
@@ -151,7 +142,7 @@ export class PageFilterPage {
     for (const element of this.filters) {
       try {
         if (!element.frameworkCategory && this.pageId === PageId.COURSE_PAGE_FILTER) {
-          this.getRootOrganizations(index);
+          await this.getRootOrganizations(index);
         } else {
           await this.getFrameworkData(frameworkId, element.code, index);
         }
@@ -168,31 +159,27 @@ export class PageFilterPage {
   }
 
   /**
- * This will internally call framework API
- * @param {string} currentCategory - request Parameter passing to the framework API
- * @param {number} index - Local variable name to hold the list data
- */
+   * This will internally call framework API
+   * @param  currentCategory - request Parameter passing to the framework API
+   * @param index - Local variable name to hold the list data
+   */
   async getFrameworkData(frameworkId: string, currentCategory: string, index: number) {
     return new Promise((resolve, reject) => {
       const req: GetFrameworkCategoryTermsRequest = {
         currentCategoryCode: currentCategory,
         language: this.translate.currentLang,
         requiredCategories: this.categories,
-        frameworkId: frameworkId
+        frameworkId
       };
       this.frameworkUtilService.getFrameworkCategoryTerms(req).toPromise()
         .then((res: CategoryTerm[]) => {
           const category = res;
-          // this.filters[index].name = category.name;  // Assign the lable from framework
-
           const responseArray = category;
           if (responseArray && responseArray.length > 0) {
             if (req.currentCategoryCode === 'topic' && this.pageId === PageId.COURSE_PAGE_FILTER) {
-              // this.filters[index].values = map(responseArray, 'name');
               for (let i = 0; i < responseArray.length; i++) {
                 const name = responseArray[i].name;
                 this.filters[index].values[i] = {};
-                // this.filters[index].values[i][name] = map(responseArray[i].children, 'name');
                 this.filters[index].values[i][name] = responseArray[i].children;
               }
               resolve();
@@ -226,7 +213,7 @@ export class PageFilterPage {
     return '';
   }
 
-  apply() {
+  async apply() {
     if (this.callback) {
       const filters = cloneDeep(this.facetsFilter);
       filters.forEach(element => {
@@ -240,21 +227,19 @@ export class PageFilterPage {
           this.pagetAssemblefilter[element.code] = resourceTypeSelectedValues;
         }
       });
-      this.callback.applyFilter(this.pagetAssemblefilter, this.facetsFilter);
+      this.callback.applyFilter(this.pagetAssemblefilter, this.facetsFilter, true);
     }
-    // migration-TODO
-    this.popCtrl.dismiss();
+    await this.popCtrl.dismiss();
   }
 
-  cancel() {
+  async cancel() {
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
       InteractSubtype.CANCEL,
       Environment.HOME,
       this.pageId);
 
-    this.callback.applyFilter(this.pagetAssemblefilter, this.backupFilters);
-    // migration-TODO
-    this.popCtrl.dismiss();
+    this.callback.applyFilter(this.pagetAssemblefilter, this.backupFilters, false);
+    await this.popCtrl.dismiss();
   }
 
   getRootOrganizations(index) {
@@ -272,9 +257,9 @@ export class PageFilterPage {
       this.backButtonFunc.unsubscribe();
     }
   }
-
 }
 
 export interface PageFilterCallback {
-  applyFilter(filter: PageAssembleFilter, appliedFilter: any);
+  applyFilter(filter: PageAssembleFilter, appliedFilter: any, isChecked: boolean);
 }
+
