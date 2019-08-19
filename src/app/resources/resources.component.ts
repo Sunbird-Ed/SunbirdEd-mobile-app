@@ -660,7 +660,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
   }
 
   ionViewWillEnter() {
-    this.events.subscribe('update_header', (data) => {
+    this.events.subscribe('update_header', () => {
       this.headerService.showHeaderWithHomeButton(['search', 'download', 'notification']);
     });
     this.headerObservable = this.headerService.headerEventEmitted$.subscribe(eventName => {

@@ -20,7 +20,7 @@ import {
 } from 'sunbird-sdk';
 import { UtilityService } from './utility-service';
 import { ProfileConstants } from '../app/app.constant';
-import { Observable, Observer } from 'rxjs-compat';
+import { Observable, Observer } from 'rxjs';
 import { PermissionAsked } from './android-permissions/android-permission';
 import { UpgradePopoverComponent } from '../app/components/popups/upgrade-popover/upgrade-popover.component';
 import { delay } from 'rxjs/operators';

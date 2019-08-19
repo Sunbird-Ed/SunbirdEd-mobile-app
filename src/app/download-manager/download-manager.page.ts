@@ -329,7 +329,7 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
   }
 
   private redirectToSettings() {
-    this.router.navigate([`${RouterLinks.STORAGE_SETTINGS}`], { relativeTo: this.route});
+    this.router.navigate([RouterLinks.STORAGE_SETTINGS]);
   }
 
 }

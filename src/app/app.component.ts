@@ -14,7 +14,6 @@ import {
 } from 'sunbird-sdk';
 
 import { InteractType, InteractSubtype, Environment, PageId, ImpressionType } from 'services/telemetry-constants';
-import { ImageLoaderConfigService } from 'ionic-image-loader';
 import { GenericAppConfig, PreferenceKey } from './app.constant';
 import { ActivePageService } from '@app/services/active-page-service';
 import {
@@ -70,7 +69,6 @@ export class AppComponent implements OnInit, AfterViewInit {
     @Inject('NOTIFICATION_SERVICE') private notificationServices: NotificationService,
     private platform: Platform,
     private statusBar: StatusBar,
-    private imageLoaderConfig: ImageLoaderConfigService,
     private translate: TranslateService,
     private events: Events,
     private zone: NgZone,
@@ -98,8 +96,6 @@ export class AppComponent implements OnInit, AfterViewInit {
       console.log("Inside platform ready");
       this.fcmTokenWatcher(); // Notification related
       this.receiveNotification();
-      this.imageLoaderConfig.enableDebugMode();
-      this.imageLoaderConfig.setMaximumCacheSize(100 * 1024 * 1024);
       this.telemetryGeneratorService.genererateAppStartTelemetry(await utilityService.getDeviceSpec());
       this.generateNetworkTelemetry();
       this.autoSyncTelemetry();

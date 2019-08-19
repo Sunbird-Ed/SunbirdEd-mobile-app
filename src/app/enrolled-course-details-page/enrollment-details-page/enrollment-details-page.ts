@@ -110,7 +110,6 @@ export class EnrollmentDetailsPage {
     const enrollCourseRequest: EnrollCourseRequest = {
       userId: this.userId,
       courseId: content.courseId || this.courseId,
-      contentId: content.courseId || this.courseId,
       batchId: content.id,
       batchStatus: content.status
     };

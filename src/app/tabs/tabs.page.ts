@@ -1,6 +1,6 @@
 import { ProfileType, SharedPreferences, ProfileService } from 'sunbird-sdk';
 import { GUEST_TEACHER_TABS, initTabs, GUEST_STUDENT_TABS, LOGIN_TEACHER_TABS } from '@app/app/module.service';
-import { Component, ViewChild, ViewEncapsulation, Inject, NgZone } from '@angular/core';
+import { Component, ViewChild, ViewEncapsulation, Inject, NgZone, OnInit } from '@angular/core';
 
 import { IonTabs, Events, ToastController } from '@ionic/angular';
 import { ContainerService } from '@app/services/container.services';
@@ -13,7 +13,7 @@ import { CommonUtilService } from '@app/services/common-util.service';
   styleUrls: ['./tabs.page.scss'],
   encapsulation: ViewEncapsulation.None
 })
-export class TabsPage {
+export class TabsPage implements OnInit {
 
   configData: any;
   @ViewChild('myTabs') tabRef: IonTabs;
@@ -39,7 +39,7 @@ export class TabsPage {
 
   }
 
-  async ionViewWillEnter() {
+  async ngOnInit() {
     console.log('Inside tabsPage');
 
     const session = await this.appGlobalService.authService.getSession().toPromise();
@@ -65,21 +65,11 @@ export class TabsPage {
       }
       initTabs(this.container, LOGIN_TEACHER_TABS);
     }
+  }
 
+  ionViewWillEnter() {
     this.tabs = this.container.getAllTabs();
-    let tabIndex;
-
-    this.tabs.forEach((tab, index) => {
-      if (tab.isSelected === true) {
-        tabIndex = index;
-      }
-    });
-
-    this.events.publish('update_header', { index: tabIndex });
-
-    this.zone.run(async () => {
-      await this.tabRef.select(this.tabs[tabIndex].root);
-    });
+    this.events.publish('update_header');
   }
 
   openScanner(tab) {

@@ -9,7 +9,7 @@ import {
 } from '@ionic/angular';
 import { ToastOptions } from '@ionic/core';
 import { TranslateService } from '@ngx-translate/core';
-import { Observable } from 'rxjs';
+import { Observable } from 'rxjs-compat';
 import { Network } from '@ionic-native/network/ngx';
 import { SharedPreferences } from 'sunbird-sdk';
 
@@ -20,7 +20,7 @@ import { TelemetryGeneratorService } from '@app/services/telemetry-generator.ser
 import { InteractType, InteractSubtype } from '@app/services/telemetry-constants';
 import { SbGenericPopoverComponent } from '@app/app/components/popups/sb-generic-popover/sb-generic-popover.component';
 import { QRAlertCallBack, QRScannerAlert } from '@app/app/qrscanner-alert/qrscanner-alert.page';
-
+import { mapTo } from 'rxjs/operators/mapTo';
 export interface NetworkInfo {
     isNetworkAvailable: boolean;
 }
@@ -54,8 +54,8 @@ export class CommonUtilService implements OnDestroy {
         this.listenForEvents();
 
         this.networkAvailability$ = Observable.merge(
-            this.network.onConnect().mapTo(true),
-            this.network.onDisconnect().mapTo(false)
+            this.network.onConnect().pipe(mapTo(true)),
+            this.network.onDisconnect().pipe(mapTo(false))
         );
     }
 
