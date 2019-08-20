@@ -146,14 +146,13 @@ export class ViewMoreActivityComponent implements OnInit {
         this.uid = this.router.getCurrentNavigation().extras.state.uid;
         this.showDownloadsOnlyToggle = this.router.getCurrentNavigation().extras.state.showDownloadOnlyToggle;
         this.title = this.router.getCurrentNavigation().extras.state.headerTitle;
-        this.userId = this.router.getCurrentNavigation().extras.state.headerTitle;
+        this.userId = this.router.getCurrentNavigation().extras.state.userId;
         this.pageName = this.router.getCurrentNavigation().extras.state.pageName;
         this.guestUser = this.router.getCurrentNavigation().extras.state.guestUser;
         this.searchQuery = this.router.getCurrentNavigation().extras.state.requestParams;
         this.audience = this.router.getCurrentNavigation().extras.state.audience;
         this.enrolledCourses = this.router.getCurrentNavigation().extras.state.enrolledCourses;
 
-        console.log('in constructor', this.headerTitle);
         if (this.headerTitle !== this.title) {
           console.log('inside header title if condition');
           this.headerTitle = this.headerTitle;

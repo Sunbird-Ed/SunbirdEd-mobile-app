@@ -1,5 +1,5 @@
 <ion-grid [ngClass]="{'grid-disabled': cardDisabled}">
-    <ion-row class="row-border">
+    <ion-row class="row-border row-margin-bottom">
       <ion-col class="image-align" (click)="checkRetiredOpenBatch(content, type)">
         <img class="app-icon" src="{{ content.courseLogoUrl || content?.appIcon || defaultImg }}" />
       </ion-col>
