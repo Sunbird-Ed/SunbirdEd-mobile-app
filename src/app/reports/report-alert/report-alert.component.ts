@@ -1,6 +1,7 @@
 import { Component, OnInit , ViewEncapsulation } from '@angular/core';
 import { NavParams, Platform, NavController, PopoverController } from '@ionic/angular';
 import { Location } from '@angular/common';
+import { Subscription } from 'rxjs/Subscription';
 
 export interface QRAlertCallBack {
   cancel(): any;
@@ -17,6 +18,7 @@ export class ReportAlertComponent implements OnInit {
   callback: QRAlertCallBack;
   assessmentDetails: any;
   report = 'questions';
+  private backButtonFunc: Subscription;
 
   constructor(
     navParams: NavParams,
@@ -36,13 +38,13 @@ export class ReportAlertComponent implements OnInit {
   }
 
   ionViewWillEnter() {
-    this.platform.backButton.subscribeWithPriority(11, () => {
+    this.backButtonFunc = this.platform.backButton.subscribeWithPriority(11, () => {
       this.dismissPopup();
     });
   }
 
   ionViewWillLeave() {
-    this.platform.backButton.unsubscribe();
+    this.backButtonFunc.unsubscribe();
   }
 
   /**

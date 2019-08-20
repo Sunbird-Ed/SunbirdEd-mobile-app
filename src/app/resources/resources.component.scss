@@ -2,6 +2,11 @@
 @import "src/assets/styles/_custom-mixins";
 @import "src/assets/styles/fonts";
 
+:host{ 
+    div.scrollable-container {
+      --background: green !important;
+    }
+  }
 // :host {
   .spinner-align {
     margin: 40px;
@@ -9,9 +14,17 @@
   }
   .fixed-container {
     width: 100%;
+    margin-top: 58px;
+    position: relative;
+    z-index: 2;
   }
+  .scrollable-container{
+    margin-top:112px;
+    z-index: 1;
+   }
   .main-container {
     background: #fff;
+    position: relative;
   }
   .offline-header {
     color: $gray-300;
@@ -49,4 +62,8 @@
       }
     }
   }
+  .textbook-icon {
+    z-index: 1;
+  }
+
 // }

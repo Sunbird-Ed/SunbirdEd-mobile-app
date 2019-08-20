@@ -8,6 +8,7 @@ import { ProfilePage } from '@app/app/profile/profile.page';
 import { ProfileRoutingModule } from '@app/app/profile/profile-routing.module';
 import { TranslateModule } from '@ngx-translate/core';
 import { ComponentsModule } from '@app/app/components/components.module';
+import { DirectivesModule } from '@app/directives/directives.module';
 
 const routes: Routes = [
   {
@@ -23,7 +24,8 @@ const routes: Routes = [
     IonicModule,
     ProfileRoutingModule,
     TranslateModule,
-    ComponentsModule
+    ComponentsModule,
+    DirectivesModule
   ],
   declarations: [ProfilePage],
   entryComponents: []

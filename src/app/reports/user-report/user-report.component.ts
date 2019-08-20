@@ -1,6 +1,6 @@
 import { ReportAlertComponent } from './../report-alert/report-alert.component';
 import { Component, OnInit, NgZone, Inject, ViewEncapsulation } from '@angular/core';
-import { LoadingController } from '@ionic/angular';
+import { LoadingController, Platform } from '@ionic/angular';
 import {
   SummarizerService,
   SummaryRequest,
@@ -27,6 +27,8 @@ import { SocialSharing } from '@ionic-native/social-sharing';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { DatePipe } from '@angular/common';
 import { Router } from '@angular/router';
+import { Subscription } from 'rxjs/Subscription';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-user-report',
@@ -63,7 +65,8 @@ export class UserReportComponent implements OnInit {
   response: any;
   handle: string;
   fileTransfer: FileTransferObject = this.transfer.create();
-  private navData: any
+  private navData: any;
+  backButtonFunc: Subscription;
 
   constructor(
     @Inject('SUMMARIZER_SERVICE') public summarizerService: SummarizerService,
@@ -81,6 +84,8 @@ export class UserReportComponent implements OnInit {
     private utilityService: UtilityService,
     private headerService: AppHeaderService,
     private router: Router,
+    private platform: Platform,
+    private location: Location
   ) {
     this.getNavData();
     this.downloadDirectory = this.file.dataDirectory;
@@ -167,6 +172,20 @@ export class UserReportComponent implements OnInit {
         await loader.dismiss();
       });
 
+    this.handleDeviceBackButton();
+  }
+
+  handleDeviceBackButton() {
+    this.backButtonFunc = this.platform.backButton.subscribeWithPriority(11, () => {
+      this.goBack();
+    });
+  }
+
+  ionViewWillLeave() {
+    if (this.backButtonFunc) {
+      this.backButtonFunc.unsubscribe();
+      this.backButtonFunc = undefined;
+    }
   }
 
   formatTime(time: number): string {
@@ -176,7 +195,7 @@ export class UserReportComponent implements OnInit {
   }
 
   goBack() {
-    window.history.back();
+    this.location.back();
   }
 
 

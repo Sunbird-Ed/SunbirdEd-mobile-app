@@ -598,7 +598,7 @@ export class CoursesPage implements OnInit {
       },
       cssClass: 'resource-filter'
     });
-    popup.present();
+    await popup.present();
   }
 
   checkEmptySearchResult(isAfterLanguageChange = false) {

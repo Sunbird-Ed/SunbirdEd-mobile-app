@@ -1,5 +1,5 @@
 <ion-content hide-header-footer overflow-scroll="true" style="background: #efeff4;"
-  class="main-container avoid-bottom-tabs-space">
+  class="main-container avoid-bottom-tabs-space" scrollEvents="true">
   <ion-refresher (ionRefresh)="getCourseTabData($event)"></ion-refresher>
 
   <div *ngIf="!guestUser && enrolledCourses && enrolledCourses.length" class="course-page-color"
