@@ -91,6 +91,9 @@
         border-radius: 6px;
         @include margin(-5px, null, null, null !important);
     }
+    .row-margin-bottom {
+        margin-bottom: 8px;
+    }
     .app-icon {
         max-height: 100%;
         max-width: 100%;
