@@ -1,5 +1,5 @@
 <ion-content hide-header-footer overflow-scroll="true" (click)="toggleTooltips($event,'')"
-  class="main-container avoid-bottom-tabs-space">
+  class="main-container avoid-bottom-tabs-space" #contentView scrollEvents="true">
   <!-- Pull to Refresh -->
   <div class="spinner-div" *ngIf="refresh">
     <ion-spinner icon="spiral" class="refreshspinner"></ion-spinner>

@@ -1,10 +1,12 @@
-import { Component, Input, Output, OnInit, EventEmitter, ViewEncapsulation } from '@angular/core';
+import { Component, Input, Output, OnInit, EventEmitter, ViewEncapsulation, OnDestroy } from '@angular/core';
 import { TelemetryObject, ReportSummary } from 'sunbird-sdk';
-import { PopoverController } from '@ionic/angular';
+import { PopoverController, Platform } from '@ionic/angular';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { PageId, InteractSubtype, ObjectType, InteractType, Environment } from '@app/services/telemetry-constants';
 import { RouterLinks } from '@app/app/app.constant';
 import { NavigationExtras, Router } from '@angular/router';
+import { Subscription } from 'rxjs/Subscription';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-assessment-details',
@@ -12,12 +14,16 @@ import { NavigationExtras, Router } from '@angular/router';
   styleUrls: ['./assessment-details.component.scss'],
   encapsulation: ViewEncapsulation.None
 })
-export class AssessmentDetailsComponent implements OnInit {
+export class AssessmentDetailsComponent implements OnInit, OnDestroy {
+
+  backButtonFunc: Subscription;
 
   constructor(
     public popoverCtrl: PopoverController,
     private telemetryGeneratorService: TelemetryGeneratorService,
-    private router: Router
+    private router: Router,
+    private platform: Platform,
+    private location: Location
   ) {
     this.showResult = true;
   }
@@ -31,9 +37,21 @@ export class AssessmentDetailsComponent implements OnInit {
     if (this.assessmentData && typeof (this.assessmentData['showResult']) === typeof (true)) {
       this.showResult = this.assessmentData['showResult'];
     }
+    this.backButtonFunc = this.platform.backButton.subscribeWithPriority(11, () => {
+      this.popoverCtrl.dismiss();
+      this.backButtonFunc.unsubscribe();
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.backButtonFunc.unsubscribe();
   }
 
   async onActivate(event, showPopup, callback) {
+    console.log(event);
+    if (event.type !== 'click') {
+      return;
+    }
     let subType: string;
     let pageId: string;
     let telemetryObject: TelemetryObject;
@@ -78,7 +96,7 @@ export class AssessmentDetailsComponent implements OnInit {
         componentProps: { callback: event },
         cssClass: 'report-alert'
       });
-      popover.present();
+      await popover.present();
     } else {
       this.showQuestionFromUser.emit();
     }
