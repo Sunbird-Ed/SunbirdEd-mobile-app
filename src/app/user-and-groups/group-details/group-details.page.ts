@@ -2,8 +2,7 @@ import { Location } from '@angular/common';
 import { Subscription } from 'rxjs/Subscription';
 import { SbGenericPopoverComponent } from 'app/components/popups/sb-generic-popover/sb-generic-popover.component';
 import { ActivatedRoute, Router, NavigationExtras } from '@angular/router';
-import { TranslateService } from '@ngx-translate/core';
-import { Component, Inject, NgZone, ViewChild, OnInit, OnDestroy } from '@angular/core';
+import { Component, Inject, NgZone } from '@angular/core';
 import {
   AlertController, Events, LoadingController, PopoverController, ToastController, Platform
 } from '@ionic/angular';
@@ -20,7 +19,7 @@ import {
   TelemetryObject
 } from 'sunbird-sdk';
 
-import { AppGlobalService } from '../../../services';
+import { AppGlobalService } from 'services/app-global-service.service';
 import {
   CommonUtilService,
   AppHeaderService,
@@ -38,7 +37,7 @@ import {
   GUEST_TEACHER_SWITCH_TABS,
   GUEST_TEACHER_TABS,
   initTabs
-} from '../../../app/module.service';
+} from 'app/module.service';
 import { Map } from 'app/telemetryutil';
 import { PreferenceKey, RouterLinks } from 'app/app.constant';
 import { EditDeletePopoverComponent } from '../edit-delete-popover/edit-delete-popover.component';
@@ -57,7 +56,7 @@ export class GroupDetailsPage {
   selectedUserIndex = -1;
   profileDetails: any;
   userUids = [];
-  isNoUsers = false;
+  isNoUsers = true;
   playConfig: any;
   ProfileType = ProfileType;
   isCurrentGroupActive = false;
@@ -70,17 +69,14 @@ export class GroupDetailsPage {
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
     private zone: NgZone,
     private popOverCtrl: PopoverController,
-    private alertCtrl: AlertController,
     private container: ContainerService,
     private event: Events,
-    private toastCtrl: ToastController,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private appGlobalService: AppGlobalService,
     private commonUtilService: CommonUtilService,
     private headerService: AppHeaderService,
     private route: ActivatedRoute,
     private router: Router,
-    private platform: Platform,
     private location: Location
   ) {
 
