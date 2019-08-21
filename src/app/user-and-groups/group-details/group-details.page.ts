@@ -178,35 +178,34 @@ export class GroupDetailsPage {
       valuesMap
     );
 
-    const confirm = await this.popOverCtrl.create({
-      component: SbGenericPopoverComponent,
-      componentProps: {
-        sbPopoverHeading: this.commonUtilService.translateMessage('SWITCH_ACCOUNT_CONFIRMATION'),
-        sbPopoverMainTitle: this.commonUtilService.translateMessage('SIGNED_OUT_ACCOUNT_MESSAGE'),
-        actionsButtons: [
-          {
-            btntext: this.commonUtilService.translateMessage('CANCEL'),
-            btnClass: 'sb-btn sb-btn-sm  sb-btn-outline-info'
-          },
-          {
-            btntext: this.commonUtilService.translateMessage('OKAY'),
-            btnClass: 'popover-color'
-          }
-        ],
-        icon: null
-      },
-      cssClass: 'sb-popover info',
-    });
-    const isLeftBtnClicked = await confirm.onDidDismiss();
-    if (isLeftBtnClicked == null) {
-      return;
-    }
-    if (!isLeftBtnClicked) {
-      this.logOut(selectedUser, false);
-    }
-
     if (this.appGlobalService.isUserLoggedIn()) {
+      const confirm = await this.popOverCtrl.create({
+        component: SbGenericPopoverComponent,
+        componentProps: {
+          sbPopoverHeading: this.commonUtilService.translateMessage('SWITCH_ACCOUNT_CONFIRMATION'),
+          sbPopoverMainTitle: this.commonUtilService.translateMessage('SIGNED_OUT_ACCOUNT_MESSAGE'),
+          actionsButtons: [
+            {
+              btntext: this.commonUtilService.translateMessage('CANCEL'),
+              btnClass: 'sb-btn sb-btn-sm  sb-btn-outline-info'
+            },
+            {
+              btntext: this.commonUtilService.translateMessage('OKAY'),
+              btnClass: 'popover-color'
+            }
+          ],
+          icon: null
+        },
+        cssClass: 'sb-popover info',
+      });
       await confirm.present();
+      const { data } = await confirm.onDidDismiss();
+      if (data && data.isLeftButtonClicked === null) {
+        return;
+      }
+      if (data && !data.isLeftButtonClicked) {
+        this.logOut(selectedUser, false);
+      }
     } else {
       this.setAsCurrentUser(selectedUser, false);
     }
@@ -376,11 +375,11 @@ export class GroupDetailsPage {
       cssClass: 'sb-popover info',
     });
     await confirm.present();
-    const isLeftBtnClicked = await confirm.onDidDismiss();
-    if (isLeftBtnClicked == null) {
+    const { data } = await confirm.onDidDismiss();
+    if (data && data.isLeftButtonClicked === null) {
       return;
     }
-    if (!isLeftBtnClicked) {
+    if (data && !data.isLeftButtonClicked) {
       this.deleteGroup();
     }
   }
@@ -396,9 +395,7 @@ export class GroupDetailsPage {
       PageId.GROUP_DETAIL,
       telemetryObject);
     this.groupService.deleteGroup(this.group.gid).subscribe(() => {
-      // this.navCtrl.popTo(this.navCtrl.getByIndex(this.navCtrl.length() - 2));
-
-      this.router.navigate(['../'], { relativeTo: this.route });
+      this.location.back();
     }, (error) => {
     });
   }
