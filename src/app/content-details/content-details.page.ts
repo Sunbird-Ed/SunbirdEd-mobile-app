@@ -117,7 +117,6 @@ export class ContentDetailsPage implements OnInit {
   backButtonFunc:Subscription;
   shouldGenerateEndTelemetry = false;
   source = '';
-  unregisterBackButton: any;
   userCount = 0;
   shouldGenerateTelemetry = true;
   playOnlineSpinner: boolean;
@@ -578,15 +577,16 @@ export class ContentDetailsPage implements OnInit {
   }
 
   popToPreviousPage(isNavBack?) {
-    if (this.isResumedCourse) {
-      // migration-TODO
-      // this.navCtrl.popTo(this.navCtrl.getByIndex(this.navCtrl.length() - 3));
-      this.router.navigate(['../../'], { relativeTo: this.route });
-    } else {
-      if (isNavBack) {
-        this.location.back();
-      }
-    }
+    // if (this.isResumedCourse) {
+    //   // migration-TODO
+    //   // this.navCtrl.popTo(this.navCtrl.getByIndex(this.navCtrl.length() - 3));
+    //   this.router.navigate(['../../'], { relativeTo: this.route });
+    // } else {
+    //   if (isNavBack) {
+    //     this.location.back();
+    //   }
+    // }
+    this.location.back();
   }
 
   /**

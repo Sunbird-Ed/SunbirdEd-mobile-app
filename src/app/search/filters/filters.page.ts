@@ -7,6 +7,7 @@ import { Subscription } from 'rxjs/Subscription';
 import { Location } from '@angular/common';
 import { Router } from '@angular/router';
 import { FilteroptionComponent } from '@app/app/components/filteroption/filteroption.component';
+import { AppHeaderService } from '@app/services/app-header.service';
 @Component({
   selector: 'app-filters',
   templateUrl: './filters.page.html',
@@ -28,7 +29,8 @@ export class FiltersPage {
     private commonUtilService: CommonUtilService,
     private platform: Platform,
     private location: Location,
-    private router: Router
+    private router: Router,
+    private headerService: AppHeaderService,
   ) {
     this.filterCriteria = this.router.getCurrentNavigation().extras.state.filterCriteria;
     this.init();
@@ -118,25 +120,18 @@ export class FiltersPage {
    * It will hndle the device back button functionality
    */
   handleBackButton() {
-    // this.unregisterBackButton = this.platform.registerBackButtonAction(() => {
-    //   const activePortal = this.ionicApp._modalPortal.getActive() ||
-    //     this.ionicApp._toastPortal.getActive() || this.ionicApp._overlayPortal.getActive();
-    //   if (activePortal) {
-    //     activePortal.dismiss();
-    //   } else if (this.navCtrl.canGoBack()) {
-    //     this.navCtrl.pop();
-    //   }
-    //   this.unregisterBackButton();
-    // }, 11);
     this.unregisterBackButton = this.platform.backButton.subscribeWithPriority(10, () => {
       this.location.back();
     });
   }
 
+  ionViewWillEnter() {
+    this.headerService.showHeaderWithBackButton([], this.commonUtilService.translateMessage('FILTER'));
+  }
+
   ionViewWillLeave() {
     // Unregister the custom back button action for this page
     if (this.unregisterBackButton) {
-      // this.unregisterBackButton();
       this.unregisterBackButton.unsubscribe();
     }
   }
