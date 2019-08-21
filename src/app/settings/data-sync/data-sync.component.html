@@ -4,8 +4,8 @@
     {{ 'AUTOMATIC_SYNC' | translate }}
   </div>
 
-  <ion-list lines="none" [(ngModel)]="dataSyncType" (ionChange)="onSelected()">
-    <ion-radio-group>
+  <ion-list lines="none" (ionChange)="onSelected()">
+    <ion-radio-group [(ngModel)]="dataSyncType">
       <ion-item class="ds-item">
         <ion-radio class="ds-m0" [value]="OPTIONS.off" slot="start"></ion-radio>
         <ion-label class="ds-m0">{{ 'OFF' | translate }}</ion-label>
