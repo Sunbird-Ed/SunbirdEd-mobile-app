@@ -25,7 +25,7 @@
           <ion-col size-md="6" offset-md="3" size-lg="6" offset-lg="3">
             <div class="image-text">
               <h6>
-                <b>{{'NO_USERS_IN_THIS_GROUP' | translate}}</b>
+                <strong>{{'NO_USERS_IN_THIS_GROUP' | translate}}</strong>
               </h6>
               <p>{{'NO_USERS_SUGGESTION_MESSAGE' | translate}}</p>
             </div>
@@ -34,25 +34,30 @@
       </div>
     </ion-list>
     <ion-list lines="none" *ngIf="!isNoUsers">
-      <ion-item *ngFor="let user of userList; let i=index;" class="item-background gd-mb-16 ion-no-padding" [ngClass]="i===selectedUserIndex ? 'blueBorder' : ''">
+      <ion-item *ngFor="let user of userList; let i=index;" class="item-background gd-mb-16 ion-no-padding"
+        [ngClass]="i===selectedUserIndex ? 'blueBorder' : ''">
         <ion-label class="ion-no-margin">
           <ion-grid class="radius ion-no-padding">
             <ion-row class="bg-color-white gd-row-padding radius">
               <ion-col size="10" class="bg-color-white">
                 <div (click)="selectUser(i, user?.handle)" class="bg-color-white padding-left-0 rm-label-margin"
-                          no-padding>
-                  <h6 class="elipsis ion-no-margin" [ngStyle]="{'color': currentUserId === user?.uid ? 'dodgerblue' : 'black'}">
-                    <b>{{user?.handle | titlecase}}</b>
+                  no-padding>
+                  <h6 class="elipsis ion-no-margin"
+                    [ngStyle]="{'color': currentUserId === user?.uid ? 'dodgerblue' : 'black'}">
+                    <strong>{{user?.handle | titlecase}}</strong>
                   </h6>
                   <p>
-                    <span *ngIf="user?.profileType === ProfileType.TEACHER">{{'USER_TYPE_1' | translate | titlecase}}</span>
-                    <span *ngIf="user?.profileType === ProfileType.STUDENT">{{'USER_TYPE_2' | translate | titlecase}}</span>
+                    <span
+                      *ngIf="user?.profileType === ProfileType.TEACHER">{{'USER_TYPE_1' | translate | titlecase}}</span>
+                    <span
+                      *ngIf="user?.profileType === ProfileType.STUDENT">{{'USER_TYPE_2' | translate | titlecase}}</span>
                     <span *ngIf="user?.grade?.length">•</span> {{ getGradeNameFromCode(user) }}
                   </p>
                 </div>
               </ion-col>
               <ion-col size="2" class="advanced-menu" *ngIf="!playConfig">
-                <ion-icon class="gd-icon-font-size" name="more" item-end (click)="presentPopover($event , i)"></ion-icon>
+                <ion-icon class="gd-icon-font-size" name="more" item-end (click)="presentPopover($event , i)">
+                </ion-icon>
               </ion-col>
             </ion-row>
           </ion-grid>
@@ -85,7 +90,7 @@
 </ion-footer>
 <ion-footer class="footer" *ngIf="playConfig && selectedUserIndex === -1">
   <ion-row>
-    <div *ngIf="playConfig && selectedUserIndex === -1 && !isNoUsers " class="error-message-contentplay">
+    <div *ngIf="playConfig && selectedUserIndex === -1 && !isNoUsers" class="error-message-contentplay">
       <div>
         <ion-icon ios="ios-information-circle" md="md-information-circle"></ion-icon>
         {{ 'PLEASE_SELECT_USER' | translate }}
