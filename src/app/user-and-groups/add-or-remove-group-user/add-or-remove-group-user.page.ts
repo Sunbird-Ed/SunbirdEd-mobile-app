@@ -265,8 +265,6 @@ export class AddOrRemoveGroupUserPage {
       .subscribe(async (success) => {
         await loader.dismiss();
         this.commonUtilService.showToast(this.commonUtilService.translateMessage('GROUP_MEMBER_DELETE_SUCCESS'));
-        // this.navCtrl.popTo(this.navCtrl.getByIndex(this.navCtrl.length() - 2));
-        // this.router.navigate(['../'], { relativeTo: this.route });
         this.location.back();
       }, async (error) => {
         await loader.dismiss();
