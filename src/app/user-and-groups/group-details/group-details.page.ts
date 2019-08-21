@@ -1,24 +1,11 @@
+import { Location } from '@angular/common';
+import { Subscription } from 'rxjs/Subscription';
 import { SbGenericPopoverComponent } from 'app/components/popups/sb-generic-popover/sb-generic-popover.component';
-import {
-  CommonUtilService,
-  AppHeaderService,
-  ContainerService,
-  Environment,
-  InteractSubtype,
-  InteractType,
-  ObjectType,
-  PageId,
-  TelemetryGeneratorService
-} from './../../../services';
-import { TranslateService } from '@ngx-translate/core';
-import { Component, Inject, NgZone, ViewChild, OnInit, OnDestroy } from '@angular/core';
+import { ActivatedRoute, Router, NavigationExtras } from '@angular/router';
+import { Component, Inject, NgZone } from '@angular/core';
 import {
   AlertController, Events, LoadingController, PopoverController, ToastController, Platform
 } from '@ionic/angular';
-// import { PopoverPage } from '../popover/popover';
-// import { GroupDetailNavPopoverPage } from '../group-detail-nav-popover/group-detail-nav-popover';
-// import { CreateGroupPage } from '../create-group/create-group';
-// import { AddOrRemoveGroupUserPage } from '../add-or-remove-group-user/add-or-remove-group-user';
 import {
   AuthService,
   GetAllProfileRequest,
@@ -31,31 +18,37 @@ import {
   SharedPreferences,
   TelemetryObject
 } from 'sunbird-sdk';
-import { AppGlobalService } from '../../../services';
+
+import { AppGlobalService } from 'services/app-global-service.service';
+import {
+  CommonUtilService,
+  AppHeaderService,
+  ContainerService,
+  Environment,
+  InteractSubtype,
+  InteractType,
+  ObjectType,
+  PageId,
+  TelemetryGeneratorService
+} from './../../../services';
 import {
   GUEST_STUDENT_SWITCH_TABS,
   GUEST_STUDENT_TABS,
   GUEST_TEACHER_SWITCH_TABS,
   GUEST_TEACHER_TABS,
-  // initTabs
-} from '../../../app/module.service';
-// import { GuestEditProfilePage } from '../../profile/guest-edit.profile/guest-edit.profile';
-import { } from '../../../services';
-import { Map } from '../../../app/telemetryutil';
-import { PreferenceKey, RouterLinks } from '../../../app/app.constant';
-import { ActivatedRoute, Router, NavigationExtras } from '@angular/router';
+  initTabs
+} from 'app/module.service';
+import { Map } from 'app/telemetryutil';
+import { PreferenceKey, RouterLinks } from 'app/app.constant';
 import { EditDeletePopoverComponent } from '../edit-delete-popover/edit-delete-popover.component';
 import { GroupDetailNavPopover } from '../group-detail-nav-popover/group-detail-nav-popover';
-import { Location } from '@angular/common';
-import { Subscription } from 'rxjs/Subscription';
-// import { TabsPage } from '@app/pages/tabs/tabs';
 
 @Component({
   selector: 'app-group-details',
   templateUrl: './group-details.page.html',
   styleUrls: ['./group-details.page.scss'],
 })
-export class GroupDetailsPage implements OnInit, OnDestroy {
+export class GroupDetailsPage {
   group: Group;
   currentUserId: string;
   currentGroupId: string;
@@ -63,7 +56,7 @@ export class GroupDetailsPage implements OnInit, OnDestroy {
   selectedUserIndex = -1;
   profileDetails: any;
   userUids = [];
-  isNoUsers = false;
+  isNoUsers = true;
   playConfig: any;
   ProfileType = ProfileType;
   isCurrentGroupActive = false;
@@ -72,48 +65,32 @@ export class GroupDetailsPage implements OnInit, OnDestroy {
   constructor(
     @Inject('GROUP_SERVICE') private groupService: GroupService,
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
+    @Inject('AUTH_SERVICE') private authService: AuthService,
+    @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
     private zone: NgZone,
-    private translate: TranslateService,
     private popOverCtrl: PopoverController,
-    private alertCtrl: AlertController,
     private container: ContainerService,
     private event: Events,
-    private loadingCtrl: LoadingController,
-    private toastCtrl: ToastController,
     private telemetryGeneratorService: TelemetryGeneratorService,
-    @Inject('AUTH_SERVICE') private authService: AuthService,
     private appGlobalService: AppGlobalService,
     private commonUtilService: CommonUtilService,
-    @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
     private headerService: AppHeaderService,
     private route: ActivatedRoute,
     private router: Router,
-    private platform: Platform,
     private location: Location
   ) {
-    this.group = this.router.getCurrentNavigation().extras.state.groupInfo;
-    this.currentUserId = this.router.getCurrentNavigation().extras.state.currentUserId;
-    this.currentGroupId = this.router.getCurrentNavigation().extras.state.currentGroupId;
-    this.profileDetails = this.router.getCurrentNavigation().extras.state.profile;
-    this.playConfig = this.router.getCurrentNavigation().extras.state.playConfig;
 
-    this.isCurrentGroupActive = (this.group.gid === this.currentGroupId);
+    const extrasState = this.router.getCurrentNavigation().extras.state;
 
-  }
-
-  ngOnInit() {
-    this.zone.run(() => {
-      this.backButtonFunc = this.platform.backButton.subscribeWithPriority(10, () => {
-        this.location.back();
-        this.backButtonFunc.unsubscribe();
-      });
-    });
-  }
-
-  ngOnDestroy() {
-    if (this.backButtonFunc) {
-      this.backButtonFunc.unsubscribe();
+    if (extrasState) {
+      this.group = extrasState.groupInfo;
+      this.currentUserId = extrasState.currentUserId;
+      this.currentGroupId = extrasState.currentGroupId;
+      this.profileDetails = extrasState.profile;
+      this.playConfig = extrasState.playConfig;
+      this.isCurrentGroupActive = (this.group.gid === this.currentGroupId);
     }
+
   }
 
   ionViewWillEnter() {
@@ -142,7 +119,7 @@ export class GroupDetailsPage implements OnInit, OnDestroy {
               this.userList.forEach((item) => {
                 this.userUids.push(item.uid);
               });
-              this.isNoUsers = (this.userList.length) ? false : true;
+              this.isNoUsers = !this.userList.length;
             }
           });
         }).catch(async () => {
@@ -155,7 +132,6 @@ export class GroupDetailsPage implements OnInit, OnDestroy {
   selectUser(index: number, name: string) {
     this.zone.run(() => {
       this.selectedUserIndex = (this.selectedUserIndex === index) ? -1 : index;
-      // this.resizeContent();
     });
   }
 
@@ -198,35 +174,34 @@ export class GroupDetailsPage implements OnInit, OnDestroy {
       valuesMap
     );
 
-    const confirm = await this.popOverCtrl.create({
-      component: SbGenericPopoverComponent,
-      componentProps: {
-        sbPopoverHeading: this.commonUtilService.translateMessage('SWITCH_ACCOUNT_CONFIRMATION'),
-        sbPopoverMainTitle: this.commonUtilService.translateMessage('SIGNED_OUT_ACCOUNT_MESSAGE'),
-        actionsButtons: [
-          {
-            btntext: this.commonUtilService.translateMessage('CANCEL'),
-            btnClass: 'sb-btn sb-btn-sm  sb-btn-outline-info'
-          },
-          {
-            btntext: this.commonUtilService.translateMessage('OKAY'),
-            btnClass: 'popover-color'
-          }
-        ],
-        icon: null
-      },
-      cssClass: 'sb-popover info',
-    });
-    const isLeftBtnClicked = await confirm.onDidDismiss();
-    if (isLeftBtnClicked == null) {
-      return;
-    }
-    if (!isLeftBtnClicked) {
-      this.logOut(selectedUser, false);
-    }
-
     if (this.appGlobalService.isUserLoggedIn()) {
+      const confirm = await this.popOverCtrl.create({
+        component: SbGenericPopoverComponent,
+        componentProps: {
+          sbPopoverHeading: this.commonUtilService.translateMessage('SWITCH_ACCOUNT_CONFIRMATION'),
+          sbPopoverMainTitle: this.commonUtilService.translateMessage('SIGNED_OUT_ACCOUNT_MESSAGE'),
+          actionsButtons: [
+            {
+              btntext: this.commonUtilService.translateMessage('CANCEL'),
+              btnClass: 'sb-btn sb-btn-sm  sb-btn-outline-info'
+            },
+            {
+              btntext: this.commonUtilService.translateMessage('OKAY'),
+              btnClass: 'popover-color'
+            }
+          ],
+          icon: null
+        },
+        cssClass: 'sb-popover info',
+      });
       await confirm.present();
+      const { data } = await confirm.onDidDismiss();
+      if (data && data.isLeftButtonClicked === null) {
+        return;
+      }
+      if (data && !data.isLeftButtonClicked) {
+        this.logOut(selectedUser, false);
+      }
     } else {
       this.setAsCurrentUser(selectedUser, false);
     }
@@ -331,7 +306,7 @@ export class GroupDetailsPage implements OnInit, OnDestroy {
 
           await popover.dismiss();
         },
-        noUsers: (this.userList.length) ? true : false,
+        noUsers: this.userList.length,
         isActiveGroup: this.isCurrentGroupActive
       },
       cssClass: 'user-popover',
@@ -341,7 +316,7 @@ export class GroupDetailsPage implements OnInit, OnDestroy {
     await popover.present();
   }
 
-  async presentPopover(myEvent, index) {
+  async presentPopover(myEvent, index: number) {
     const profile = this.userList[index];
     let isActiveUser = false;
     if (profile.uid === this.currentUserId && this.isCurrentGroupActive) {
@@ -357,7 +332,7 @@ export class GroupDetailsPage implements OnInit, OnDestroy {
               profile: this.userList[index]
             }
           };
-          this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.GUEST_EDIT}`], navigationExtras)
+          this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.GUEST_EDIT}`], navigationExtras);
           await popover.dismiss();
         },
         delete: async () => {
@@ -396,11 +371,11 @@ export class GroupDetailsPage implements OnInit, OnDestroy {
       cssClass: 'sb-popover info',
     });
     await confirm.present();
-    const isLeftBtnClicked = await confirm.onDidDismiss();
-    if (isLeftBtnClicked == null) {
+    const { data } = await confirm.onDidDismiss();
+    if (data && data.isLeftButtonClicked === null) {
       return;
     }
-    if (!isLeftBtnClicked) {
+    if (data && !data.isLeftButtonClicked) {
       this.deleteGroup();
     }
   }
@@ -416,9 +391,7 @@ export class GroupDetailsPage implements OnInit, OnDestroy {
       PageId.GROUP_DETAIL,
       telemetryObject);
     this.groupService.deleteGroup(this.group.gid).subscribe(() => {
-      // this.navCtrl.popTo(this.navCtrl.getByIndex(this.navCtrl.length() - 2));
-
-      this.router.navigate(['../'], { relativeTo: this.route });
+      this.location.back();
     }, (error) => {
     });
   }
@@ -447,16 +420,16 @@ export class GroupDetailsPage implements OnInit, OnDestroy {
       cssClass: 'sb-popover info',
     });
     await confirm.present();
-    const isLeftButtonClicked = await confirm.onDidDismiss();
-    if (isLeftButtonClicked == null) {
+    const { data } = await confirm.onDidDismiss();
+    if (data && data.isLeftButtonClicked === null) {
       return;
     }
-    if (!isLeftButtonClicked) {
-      this.deleteUsersinGroup(index);
+    if (!data.isLeftButtonClicked) {
+      this.removeGroupMember(index);
     }
   }
 
-  deleteUsersinGroup(index: number) {
+  removeGroupMember(index: number) {
     const userListIndex = this.userList.indexOf(this.userList[index]);
     this.userUids.forEach((item) => {
       if (this.userList[index].uid === item) {
@@ -473,7 +446,7 @@ export class GroupDetailsPage implements OnInit, OnDestroy {
     this.groupService.addProfilesToGroup(req).subscribe(
       () => {
         this.userList.splice(userListIndex, 1);
-        this.isNoUsers = (this.userList.length) ? false : true;
+        this.isNoUsers = !this.userList.length;
       }, error => { });
   }
 
@@ -496,15 +469,14 @@ export class GroupDetailsPage implements OnInit, OnDestroy {
     return '';
   }
 
-
   navigateToAddUser() {
     const navigationExtras: NavigationExtras = {
       state: {
         isNewUser: true
       }
-    }
+    };
 
-    this.router.navigate(['GuestEditProfilePage'], navigationExtras)
+    this.router.navigate(['GuestEditProfilePage'], navigationExtras);
   }
 
   private setAsCurrentUser(selectedUser, isBeingPlayed: boolean) {
@@ -525,37 +497,23 @@ export class GroupDetailsPage implements OnInit, OnDestroy {
               this.router.navigate(['../'], { relativeTo: this.route });
             } else {
               if (selectedUser.profileType === ProfileType.STUDENT) {
-                //MIGRTION TODO
-                // initTabs(this.container, isBeingPlayed ? GUEST_STUDENT_TABS : GUEST_STUDENT_SWITCH_TABS);
+                initTabs(this.container, isBeingPlayed ? GUEST_STUDENT_TABS : GUEST_STUDENT_SWITCH_TABS);
                 this.preferences.putString(PreferenceKey.SELECTED_USER_TYPE, ProfileType.STUDENT).toPromise().then();
               } else {
-                //MIGRTION TODO
-                // initTabs(this.container, isBeingPlayed ? GUEST_TEACHER_TABS : GUEST_TEACHER_SWITCH_TABS);
+                initTabs(this.container, isBeingPlayed ? GUEST_TEACHER_TABS : GUEST_TEACHER_SWITCH_TABS);
                 this.preferences.putString(PreferenceKey.SELECTED_USER_TYPE, ProfileType.TEACHER).toPromise().then();
               }
 
               this.event.publish('refresh:profile');
               this.event.publish(AppGlobalService.USER_INFO_UPDATED);
 
-              //MIGRTION TODO
-              // this.app.getRootNav().setRoot(TabsPage);
-              this.showToast(this.commonUtilService.translateMessage('SWITCHING_TO', selectedUser.handle))
+              this.router.navigate([RouterLinks.TABS]);
+              this.commonUtilService.showToast(this.commonUtilService.translateMessage('SWITCHING_TO', selectedUser.handle));
             }
-
-
           }, () => {
           });
       }, () => {
       });
-  }
-
-  async showToast(message) {
-    const toast = await this.toastCtrl.create({
-      message: message,
-      duration: 2000,
-      position: 'bottom'
-    });
-    await toast.present();
   }
 
   goBack() {

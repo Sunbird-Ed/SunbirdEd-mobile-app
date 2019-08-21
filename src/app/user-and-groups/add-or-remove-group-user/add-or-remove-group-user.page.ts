@@ -1,5 +1,7 @@
-import { Component, Inject, NgZone, OnInit, OnDestroy } from '@angular/core';
-// import { AlertController, IonicPage, LoadingController, NavController, NavParams, PopoverController } from 'ionic-angular';
+import { Location } from '@angular/common';
+import { Component, Inject, NgZone } from '@angular/core';
+import { Router } from '@angular/router';
+import { PopoverController } from '@ionic/angular';
 import {
   GetAllProfileRequest,
   Group,
@@ -11,24 +13,21 @@ import {
   ProfileType,
   TelemetryObject,
 } from 'sunbird-sdk';
-// import { GuestEditProfilePage } from '../../profile/guest-edit.profile/guest-edit.profile';
-// import { TelemetryGeneratorService } from '../../../service/telemetry-generator.service';
-import { AppHeaderService, CommonUtilService, Environment, InteractSubtype, InteractType, PageId, TelemetryGeneratorService } from '../../../services';
-import { ActivatedRoute, Router } from '@angular/router';
-import { PopoverController, Platform } from '@ionic/angular';
-import { SbGenericPopoverComponent } from 'app/components/popups/sb-generic-popover/sb-generic-popover.component';
-import { Subscription } from 'rxjs/Subscription';
-import { Location } from '@angular/common';
-// import { SbGenericPopoverComponent } from '@a  pp/component/popups/sb-generic-popup/sb-generic-popover';
 
+import { AppHeaderService } from 'services/app-header.service';
+import { CommonUtilService } from 'services/common-util.service';
+import { TelemetryGeneratorService } from 'services/telemetry-generator.service';
+import {
+  Environment, InteractSubtype, InteractType, PageId
+} from 'services/telemetry-constants';
+import { SbGenericPopoverComponent } from 'app/components/popups/sb-generic-popover/sb-generic-popover.component';
 
 @Component({
   selector: 'app-add-or-remove-group-user',
   templateUrl: './add-or-remove-group-user.page.html',
   styleUrls: ['./add-or-remove-group-user.page.scss'],
 })
-export class AddOrRemoveGroupUserPage implements OnInit, OnDestroy {
-
+export class AddOrRemoveGroupUserPage {
   ProfileType = ProfileType;
   addUsers = true;
   userSelectionMap: Map<string, boolean> = new Map();
@@ -39,10 +38,8 @@ export class AddOrRemoveGroupUserPage implements OnInit, OnDestroy {
   uid: any;
   allUsers: Array<Profile> = [];
   selectedUids: Array<string> = [];
-
   selectedUserLength = '';
   selectedGroupMemberLength = '';
-  backButtonFunc: Subscription;
 
   constructor(
     @Inject('GROUP_SERVICE') private groupService: GroupService,
@@ -52,36 +49,20 @@ export class AddOrRemoveGroupUserPage implements OnInit, OnDestroy {
     private telemetryGeneratorService: TelemetryGeneratorService,
     private headerService: AppHeaderService,
     private popoverCtrl: PopoverController,
-    private route: ActivatedRoute,
     private router: Router,
-    private platform: Platform,
     private location: Location
   ) {
-    if (this.router.getCurrentNavigation().extras.state) {
-      this.addUsers = Boolean(this.router.getCurrentNavigation().extras.state.isAddUsers);
-      this.groupInfo = this.router.getCurrentNavigation().extras.state.groupInfo;
-      this.groupMembers = this.router.getCurrentNavigation().extras.state.groupMembers;
+    const extrasState = this.router.getCurrentNavigation().extras.state;
+    if (extrasState) {
+      this.addUsers = Boolean(extrasState.isAddUsers);
+      this.groupInfo = extrasState.groupInfo;
+      this.groupMembers = extrasState.groupMembers;
 
       if (this.addUsers) {
         this.headerService.showHeaderWithBackButton([], this.commonUtilService.translateMessage('ADD_USERS_TO_GROUP'));
       } else {
         this.headerService.showHeaderWithBackButton([], this.commonUtilService.translateMessage('REMOVE_USERS_FROM_GROUP'));
       }
-    }
-  }
-
-  ngOnInit() {
-    this.zone.run(() => {
-      this.backButtonFunc = this.platform.backButton.subscribeWithPriority(10, () => {
-        this.location.back();
-        this.backButtonFunc.unsubscribe();
-      });
-    });
-  }
-
-  ngOnDestroy() {
-    if (this.backButtonFunc) {
-      this.backButtonFunc.unsubscribe();
     }
   }
 
@@ -120,23 +101,13 @@ export class AddOrRemoveGroupUserPage implements OnInit, OnDestroy {
   }
 
   toggleSelect(index: number) {
-    let value = this.userSelectionMap.get(this.uniqueUserList[index].uid);
-    if (value) {
-      value = false;
-    } else {
-      value = true;
-    }
-    this.userSelectionMap.set(this.uniqueUserList[index].uid, value);
+    const value = this.userSelectionMap.get(this.uniqueUserList[index].uid);
+    this.userSelectionMap.set(this.uniqueUserList[index].uid, !value);
   }
 
   toggleMemberSelect(index: number) {
-    let value = this.memberSelectionMap.get(this.groupMembers[index].uid);
-    if (value) {
-      value = false;
-    } else {
-      value = true;
-    }
-    this.memberSelectionMap.set(this.groupMembers[index].uid, value);
+    const value = this.memberSelectionMap.get(this.groupMembers[index].uid);
+    this.memberSelectionMap.set(this.groupMembers[index].uid, !value);
   }
 
   goToEditGroup(index) {
@@ -160,7 +131,6 @@ export class AddOrRemoveGroupUserPage implements OnInit, OnDestroy {
         this.userSelectionMap.set(this.uniqueUserList[index].uid, true);
       });
     });
-    // this.getSelectedUids();
   }
 
   unselectAll() {
@@ -204,7 +174,6 @@ export class AddOrRemoveGroupUserPage implements OnInit, OnDestroy {
       }
     });
 
-    console.log('selectedUids', selectedUids.length);
     this.zone.run(() => {
       this.selectedGroupMemberLength = (selectedUids.length) ? selectedUids.length.toString() : '';
     });
@@ -229,8 +198,7 @@ export class AddOrRemoveGroupUserPage implements OnInit, OnDestroy {
         console.log(success);
         await loader.dismiss();
         this.commonUtilService.showToast(this.commonUtilService.translateMessage('GROUP_MEMBER_ADD_SUCCESS'));
-        // this.navCtrl.popTo(this.navCtrl.getByIndex(this.navCtrl.length() - 2));
-        this.router.navigate(['../'], { relativeTo: this.route });
+        this.location.back();
       },
         async (error) => {
           await loader.dismiss();
@@ -262,12 +230,11 @@ export class AddOrRemoveGroupUserPage implements OnInit, OnDestroy {
     });
 
     await confirm.present();
-    const leftBtnClicked = await confirm.onDidDismiss();
+    const { data } = await confirm.onDidDismiss();
 
-    if (leftBtnClicked == null) {
+    if (data && data.leftBtnClicked === null) {
       return;
-    }
-    if (!leftBtnClicked) {
+    } else if (data && !data.leftBtnClicked) {
       this.deleteUsersFromGroup();
     }
   }
@@ -298,8 +265,7 @@ export class AddOrRemoveGroupUserPage implements OnInit, OnDestroy {
       .subscribe(async (success) => {
         await loader.dismiss();
         this.commonUtilService.showToast(this.commonUtilService.translateMessage('GROUP_MEMBER_DELETE_SUCCESS'));
-        // this.navCtrl.popTo(this.navCtrl.getByIndex(this.navCtrl.length() - 2));
-        this.router.navigate(['../'], { relativeTo: this.route });
+        this.location.back();
       }, async (error) => {
         await loader.dismiss();
         this.commonUtilService.showToast(this.commonUtilService.translateMessage('SOMETHING_WENT_WRONG'));
@@ -325,5 +291,4 @@ export class AddOrRemoveGroupUserPage implements OnInit, OnDestroy {
 
     return '';
   }
-
 }
