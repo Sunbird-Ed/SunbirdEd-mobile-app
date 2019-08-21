@@ -143,7 +143,7 @@ export class CategoriesEditPage implements OnInit {
    * It will fetch the syllabus details
    */
   async getSyllabusDetails() {
-    this.loader = this.commonUtilService.getLoader();
+    this.loader = await this.commonUtilService.getLoader();
     if (this.profile.syllabus && this.profile.syllabus[0]) {
       this.frameworkId = this.profile.syllabus[0];
     }
@@ -364,8 +364,8 @@ export class CategoriesEditPage implements OnInit {
    * @param {object} formVal Object of Form values
    */
 
-  submitForm(formVal) {
-    this.loader.present();
+  async submitForm(formVal) {
+    await this.loader.present();
     const req: UpdateServerProfileInfoRequest = {
       userId: this.profile.uid,
       framework: {}
@@ -399,8 +399,8 @@ export class CategoriesEditPage implements OnInit {
       req.framework['subject'] = Names;
     }
     this.profileService.updateServerProfile(req).toPromise()
-      .then(() => {
-        this.loader.dismiss();
+      .then(async () => {
+        await this.loader.dismiss();
         this.commonUtilService.showToast(this.commonUtilService.translateMessage('PROFILE_UPDATE_SUCCESS'));
         this.events.publish('loggedInProfile:update', req.framework);
 
