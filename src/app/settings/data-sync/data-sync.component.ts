@@ -8,15 +8,16 @@ import {
   TelemetryExportResponse,
   TelemetryExportRequest
 } from 'sunbird-sdk';
-import { CommonUtilService, TelemetryGeneratorService, AppHeaderService } from '../../../services';
-import { PreferenceKey } from '../../app.constant';
+import { CommonUtilService } from 'services/common-util.service';
+import { TelemetryGeneratorService } from 'services/telemetry-generator.service';
+import { PreferenceKey } from 'app/app.constant';
 import {
   PageId,
   Environment,
   ImpressionType,
   InteractType,
   InteractSubtype
-} from '../../../services/telemetry-constants';
+} from 'services/telemetry-constants';
 import { DataSyncType } from './data-sync-type.enum';
 import { SocialSharing } from '@ionic-native/social-sharing/ngx';
 
@@ -37,35 +38,31 @@ export class DataSyncComponent implements OnInit {
   OPTIONS: typeof DataSyncType = DataSyncType;
 
   constructor(
-    public zone: NgZone,
+    @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
     @Inject('TELEMETRY_SERVICE') private telemetryService: TelemetryService,
+    public zone: NgZone,
     private social: SocialSharing,
     private commonUtilService: CommonUtilService,
-    private telemetryGeneratorService: TelemetryGeneratorService,
-    @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
-    private headerService: AppHeaderService
+    private telemetryGeneratorService: TelemetryGeneratorService
   ) { }
 
-  init() {
-    const that = this;
+  async init() {
     this.lastSyncedTimeString = this.commonUtilService.translateMessage('LAST_SYNC');
     this.getLastSyncTime();
-
-    // check what sync option is selected
-    that.preferences.getString(PreferenceKey.KEY_DATA_SYNC_TYPE).toPromise()
-      .then(val => {
-        if (Boolean(val)) {
-          if (val === 'OFF') {
-            that.dataSyncType = DataSyncType.off;
-          } else if (val === 'OVER_WIFI_ONLY') {
-            that.dataSyncType = DataSyncType.over_wifi;
-          } else if (val === 'ALWAYS_ON') {
-            that.dataSyncType = DataSyncType.always_on;
-          }
-        } else {
-          that.dataSyncType = DataSyncType.off;
-        }
-      });
+    const syncType = await this.preferences.getString(PreferenceKey.KEY_DATA_SYNC_TYPE).toPromise();
+    switch (syncType) {
+      case 'OFF':
+        this.dataSyncType = DataSyncType.off;
+        break;
+      case 'OVER_WIFI_ONLY':
+        this.dataSyncType = DataSyncType.over_wifi;
+        break;
+      case 'ALWAYS_ON':
+        this.dataSyncType = DataSyncType.always_on;
+        break;
+      default:
+        this.dataSyncType = DataSyncType.off;
+    }
   }
 
   ngOnInit() {
@@ -77,9 +74,7 @@ export class DataSyncComponent implements OnInit {
     this.telemetryGeneratorService.generateImpressionTelemetry(
       ImpressionType.VIEW, '',
       PageId.SETTINGS_DATASYNC,
-      Environment.SETTINGS, '', '', '',
-      undefined,
-      undefined
+      Environment.SETTINGS, '', '', ''
     );
   }
 
@@ -111,7 +106,7 @@ export class DataSyncComponent implements OnInit {
 
           // get date
           const date: Date = new Date(milliseconds);
-          const month: Number = date.getMonth() + 1;
+          const month: number = date.getMonth() + 1;
 
           // complete date and time
           const dateAndTime: string = date.getDate() + '/' + month +
@@ -152,7 +147,7 @@ export class DataSyncComponent implements OnInit {
 
           // get date
           const date: Date = new Date(milliseconds);
-          const month: Number = date.getMonth() + 1;
+          const month: number = date.getMonth() + 1;
 
           // complete date and time
           const dateAndTime: string = date.getDate() + '/' + month +
@@ -180,11 +175,10 @@ export class DataSyncComponent implements OnInit {
     const date = new Date(time);
     let hours = date.getHours();
     const minutes: number = date.getMinutes();
-    let newMinutes: string;
     const ampm = hours >= 12 ? 'pm' : 'am';
     hours = hours % 12;
     hours = hours ? hours : 12; // the hour '0' should be '12'
-    newMinutes = minutes < 10 ? '0' + minutes : '' + minutes;
+    let newMinutes = minutes < 10 ? '0' + minutes : '' + minutes;
     const strTime = hours + ':' + newMinutes + ' ' + ampm;
 
     return strTime;
@@ -203,9 +197,7 @@ export class DataSyncComponent implements OnInit {
         undefined,
         {
           SizeOfFileInKB: (size / 1000) + ''
-        },
-        undefined,
-        undefined
+        }
       );
     }
   }
