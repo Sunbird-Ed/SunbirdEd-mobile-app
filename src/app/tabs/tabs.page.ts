@@ -82,30 +82,13 @@ export class TabsPage implements OnInit {
     this.commonUtilService.currentTabName = this.tabRef.getSelected();
   }
 
-  public async customClick(tab, _index) {
-    // this.tabIndex = _index;
-    if (tab.disabled && tab.availableLater) {
-      const toast = await this.toastCtrl.create({
-        message: 'Will be available in later release',
-        duration: 3000,
-        position: 'middle',
-        cssClass: 'sb-toast available-later',
-        showCloseButton: false
-      });
-
-      await toast.present();
-    }
-
-    if (tab.disabled && !tab.availableLater) {
-      const toast = await this.toastCtrl.create({
-        message: 'Available for teachers only',
-        duration: 3000,
-        position: 'middle',
-        cssClass: 'sb-toast available-later',
-        showCloseButton: false
-      });
-      await toast.present();
+  public async onTabClick(tab) {
+    if (tab.disabled) {
+      if (tab.availableLater) {
+        this.commonUtilService.showToast('Will be available in later release', false, 'sb-toast available-later');
+      } else {
+        this.commonUtilService.showToast('AVAILABLE_FOR_TEACHERS', false, 'sb-toast available-later');
+      }
     }
   }
-
 }
