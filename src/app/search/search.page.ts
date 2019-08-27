@@ -71,7 +71,6 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
   isDownloadStarted = false;
   currentCount = 0;
   parentContent: any = undefined;
-  contentData: any;
   childContent: any = undefined;
   loadingDisplayText = 'Loading content';
   audienceFilter = [];
@@ -497,10 +496,9 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
           res.forEach(element => {
             // checking whether content data framework Id exists/valid in syllabus list
             if (data.framework === element.identifier || data.board.indexOf(element.name) !== -1) {
-              data.framework = element.identifier;
               this.isProfileUpdated = true;
               const frameworkDetailsRequest: FrameworkDetailsRequest = {
-                frameworkId: element.identifier,
+                frameworkId: data.framework,
                 requiredCategories: FrameworkCategoryCodesGroup.DEFAULT_FRAMEWORK_CATEGORIES
               };
               this.frameworkService.getFrameworkDetails(frameworkDetailsRequest).toPromise()
@@ -629,7 +627,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
       InteractSubtype.FILTER_BUTTON_CLICKED,
       Environment.HOME,
-      this.source, undefined);
+      this.source);
     this.formAndFrameworkUtilService.getLibraryFilterConfig().then((data) => {
       const filterCriteriaData = this.responseData.filterCriteria;
       filterCriteriaData.facetFilters.forEach(element => {
@@ -1317,21 +1315,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
             this.loadingDisplayText = 'Loading content ';
           }
         }
-        if (event.type === ContentEventType.IMPORT_PROGRESS) {
-          this.loadingDisplayText = this.commonUtilService.translateMessage('EXTRACTING_CONTENT') + ' ' +
-            Math.floor((event.payload.currentCount / event.payload.totalCount) * 100) +
-            '% (' + event.payload.currentCount + ' / ' + event.payload.totalCount + ')';
-          if (event.payload.currentCount === event.payload.totalCount) {
-            let timer = 30;
-            const interval = setInterval(() => {
-              this.loadingDisplayText = `Getting things ready in ${timer--}  seconds`;
-              if (timer === 0) {
-                this.loadingDisplayText = 'Getting things ready';
-                clearInterval(interval);
-              }
-            }, 1000);
-          }
-        }
+
         // if (event.payload && event.payload.status === 'IMPORT_COMPLETED' && event.type === 'contentImport') {
         if (event.payload && event.type === ContentEventType.IMPORT_COMPLETED) {
           if (this.queuedIdentifiers.length && this.isDownloadStarted) {
