@@ -727,6 +727,18 @@ ion-toast.redErrorToast {
   --background: #ff0000;
 }
 
+ion-toast.sb-toast.available-later {
+  --start: 16px;
+  --end: 16px;
+  --ion-safe-area-bottom: 90px;
+  --background: #{$warning-color};
+  --color: #{$white-color};
+  --border-radius: 4px;
+  font-size: 12px;
+  padding: 0;
+  box-shadow: 0 -1px 1px 0 rgba(0, 0, 0, 0.16), 0 2px 1px 0 rgba(0, 0, 0, 0.24);
+}
+
 .btn-block {
   margin: 0 !important;
   position: relative;

@@ -567,5 +567,6 @@
   "MORE_CONTENT": "Find more books and content on {{%s}} below.",
   "SEARCH_BOOK": "Search for content (Eg: ’English Stories’)",
   "TEXTBOOK": "Textbooks",
-  "EXTRACTING_CONTENT": "Extracting content"
+  "EXTRACTING_CONTENT": "Extracting content",
+  "AVAILABLE_FOR_TEACHERS":"Available for teachers only"
 }
