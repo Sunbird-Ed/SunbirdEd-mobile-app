@@ -72,6 +72,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
   isDownloadStarted = false;
   currentCount = 0;
   parentContent: any = undefined;
+  contentData: any;
   childContent: any = undefined;
   loadingDisplayText = 'Loading content';
   audienceFilter = [];
@@ -491,6 +492,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
           res.forEach(element => {
             // checking whether content data framework Id exists/valid in syllabus list
             if (data.framework === element.identifier || data.board.indexOf(element.name) !== -1) {
+              data.framework = element.identifier;
               this.isProfileUpdated = true;
               const frameworkDetailsRequest: FrameworkDetailsRequest = {
                 frameworkId: element.identifier,
@@ -622,7 +624,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
       InteractSubtype.FILTER_BUTTON_CLICKED,
       Environment.HOME,
-      this.source);
+      this.source, undefined);
     this.formAndFrameworkUtilService.getLibraryFilterConfig().then((data) => {
       const filterCriteriaData = this.responseData.filterCriteria;
       filterCriteriaData.facetFilters.forEach(element => {
