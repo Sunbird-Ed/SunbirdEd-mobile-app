@@ -1,14 +1,13 @@
 import { Inject, Injectable } from '@angular/core';
 import * as  moment from 'moment';
 import { File } from '@ionic-native/file/ngx';
-import { RatingComponent } from 'ionic4-rating';
 import { SharedPreferences, Content, CorrelationData, Rollup } from 'sunbird-sdk';
 
 import { CommonUtilService } from '@app/services/common-util.service';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { InteractType, InteractSubtype, Environment, PageId } from '@app/services/telemetry-constants';
 import { StoreRating, PreferenceKey, RouterLinks } from '@app/app/app.constant';
-import { ContentRatingAlertComponent } from '@app/app/components';
+import { ContentRatingAlertComponent, AppRatingAlertComponent } from '@app/app/components';
 import { PopoverController } from '@ionic/angular';
 import { AppGlobalService } from '@app/services/app-global-service.service';
 import { Router } from '@angular/router';
@@ -102,7 +101,7 @@ export class RatingHandler {
         });
         await popover.present();
         const { data } = await popover.onDidDismiss();
-        if (data.message === 'rating.success') {
+        if (data && data.message === 'rating.success') {
             this.userRating = data.rating;
             this.userComment = data.comment;
         }
@@ -115,7 +114,7 @@ export class RatingHandler {
 
     private async showAppRatingPopup() {
         const popover = await this.popoverCtrl.create({
-            component: RatingComponent,
+            component: AppRatingAlertComponent,
             componentProps: { pageId: PageId.CONTENT_DETAIL },
             cssClass: 'sb-popover'
         });
