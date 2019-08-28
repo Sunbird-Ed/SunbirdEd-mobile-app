@@ -69,9 +69,9 @@ android {
     }
 
     defaultConfig {
-        minSdkVersion 16
+        minSdkVersion 19
         ext.buildNumber = System.getenv("TRAVIS_BUILD_NUMBER") ?: "local"
-        versionName "2.0.$ext.buildNumber"
+        versionName "2.4.$ext.buildNumber"
         manifestPlaceholders = [fabricKey: "${release_fabric_api_key}", fabricSecret: "${release_fabric_api_secret}"]
         resValue("string", "_app_name", "${app_name}")
         multiDexEnabled true
@@ -345,10 +345,10 @@ android {
 
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile ("com.google.android.gms:play-services-analytics:10.+")
-    compile ("com.android.support:multidex:1.0.3")
-    compile('com.crashlytics.sdk.android:crashlytics:2.9.4@aar') {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation 'com.google.android.gms:play-services-analytics:10.+'
+    implementation 'com.android.support:multidex:1.0.3'
+    implementation('com.crashlytics.sdk.android:crashlytics:2.9.4@aar') {
           transitive = true;
     }
 }
