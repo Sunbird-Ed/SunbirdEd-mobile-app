@@ -24,7 +24,7 @@
 </ion-header>
 <ion-content #contentView>
   <ng-container *ngIf="searchHistory$">
-      <ng-container *ngIf="searchHistory$ | async as searchHistory">
+    <ng-container *ngIf="searchHistory$ | async as searchHistory">
         <ng-container *ngIf="!(
                   showLoader ||
                   isEmptyResult ||
@@ -41,7 +41,7 @@
             </div>
           </ng-container>
     
-          <ng-container *ngIf="searchHistory.length && searchKeywords">
+          <ng-container *ngIf="searchKeywords">
             <div class="sb-search-history-entry sb-search-header-meta row">
               <div class="col-auto invisible">
                 <img src="assets/imgs/icon_recent.svg">
@@ -71,7 +71,7 @@
           </ng-container>
         </ng-container>
       </ng-container>
-  </ng-container>
+    </ng-container>
 
   <ng-container *ngIf="isEmptyResult">
     <div class="sb-no-search-history">
@@ -80,10 +80,6 @@
       </span>
     </div>
   </ng-container>
-
-  <!-- <div class="spinner-container" *ngIf="showLoader">
-        <ion-spinner padding class="loader"></ion-spinner>
-      </div> -->
 
       <div class="m-n" *ngIf="showLoader">
           <div class="skeleton-header">
@@ -100,19 +96,6 @@
             </div>
           </div>
         </div>
-  <!-- <ion-list class="m-n">
-    <ion-item>
-      <app-skeleton-item height="12px" width="75%" style="height:12px; width:75%; padding: 16px"></app-skeleton-item>
-      <app-skeleton-item height="12px" width="40%" style="height:12px; width:40%; padding: 16px"></app-skeleton-item>
-    </ion-item>
-    <ion-item *ngFor="let i of [0,1,2,3,4,5,6,7,8,9,10,11,12,13]">
-      <ion-avatar slot="end">
-        <app-skeleton-item height="56px" width="56px" style="height:56px; width:56px;"></app-skeleton-item>
-      </ion-avatar>
-      <app-skeleton-item height="12px" width="40%" style="height:12px; width:40%; padding-bottom: 8px;"></app-skeleton-item>
-      <app-skeleton-item height="12px" width="30%" style="height:12px; width:30%; padding-bottom: 8px;"></app-skeleton-item>
-    </ion-item>
-  </ion-list> -->
   <div text-center *ngIf="isEmptyResult">
     <h4>{{ 'EMPTY_SEARCH_RESULTS' | translate }}</h4>
   </div>
