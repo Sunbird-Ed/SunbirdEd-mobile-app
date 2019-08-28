@@ -793,3 +793,34 @@ ion-toast.sb-toast.available-later {
   --width: auto;
   --max-width: 90%;
 }
+
+.sb-popover .sb-popover-footer .sb-popover-action-btn.sb-btn-outline-info {
+  color: $primary-color;
+  margin: 0 10px;
+}
+.sb-dw-delete-popover{
+  top: auto;
+  .popover-content{
+      box-shadow: 0 0 4px 2px #ccc;
+      .sb-popover-items{
+          padding-bottom: 0 !important;
+      }
+      .sb-popover-footer {
+          .sb-popover-action-btn{
+              box-shadow: none;
+              width: 30%;
+              border-radius: 3px;
+              flex-grow: 1;
+          }
+      } 
+  }
+}
+.dw-active-downloads-popover{
+  .popover-content{
+      .sb-popover-footer {
+          .sb-popover-action-btn{
+              box-shadow: none;
+          }
+      }
+  }
+}
