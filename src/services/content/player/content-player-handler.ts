@@ -57,8 +57,6 @@ export class ContentPlayerHandler {
                     this.file.checkFile(`file://${data.metadata.basePath}/`, 'index.ecml').then((isAvailable) => {
                         this.canvasPlayerService.xmlToJSon(`${data.metadata.basePath}/index.ecml`).then((json) => {
                             data['data'] = json;
-                            // Migration Todo
-                            // this.app.getActiveNavs()[0].push(PlayerPage, { config: data });
                             this.router.navigate([RouterLinks.PLAYER], { state: { config: data } });
 
                         }).catch((error) => {
