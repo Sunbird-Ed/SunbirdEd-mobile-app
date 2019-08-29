@@ -113,10 +113,10 @@ export class SbPopoverComponent implements OnDestroy {
     this.popoverCtrl.dismiss();
   }
 
-  async deleteContent(canDelete: boolean = false, whichbtnClicked?) {
-    await this.popoverCtrl.dismiss(canDelete);
+  async deleteContent(canDelete: boolean = false, clickedButtonText?) {
+    await this.popoverCtrl.dismiss({ canDelete });
     if (this.navParams.get('handler')) {
-      this.navParams.get('handler')(whichbtnClicked);
+      this.navParams.get('handler')(clickedButtonText);
     }
   }
 }

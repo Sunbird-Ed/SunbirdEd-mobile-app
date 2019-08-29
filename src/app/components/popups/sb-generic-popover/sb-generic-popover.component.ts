@@ -1,5 +1,6 @@
 import { Component, Input, OnInit, OnDestroy } from '@angular/core';
-import { Events, Platform, ModalController, PopoverController } from '@ionic/angular';
+import { Events, Platform, PopoverController } from '@ionic/angular';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-sb-generic-popover',
@@ -16,7 +17,7 @@ export class SbGenericPopoverComponent implements OnInit, OnDestroy {
   @Input() sbPopoverMainTitle: any;
   @Input() selectedContents: any;
   @Input() showHeader = true;
-  backButtonFunc = undefined;
+  backButtonFunc: Subscription;
 
   constructor(public popoverCtrl: PopoverController, private platform: Platform, private events: Events) { }
 
@@ -40,12 +41,8 @@ export class SbGenericPopoverComponent implements OnInit, OnDestroy {
     this.popoverCtrl.dismiss({ isLeftButtonClicked: null });
   }
 
-  deleteContent(btnIndex: number = 0) {
-    if (btnIndex === 0) {
-      this.popoverCtrl.dismiss({ isLeftButtonClicked: true });
-    } else {
-      this.popoverCtrl.dismiss({ isLeftButtonClicked: false });
-    }
+  deleteContent(buttonIndex: number = 0) {
+    this.popoverCtrl.dismiss({ isLeftButtonClicked: !Boolean(buttonIndex) });
   }
 
 }
