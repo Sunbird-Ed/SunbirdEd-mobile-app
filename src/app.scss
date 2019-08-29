@@ -822,3 +822,30 @@ ion-toast.sb-toast.available-later {
       }
   }
 }
+
+
+.no-network{
+  .popover-content{
+    top: 57px !important;
+  }
+}
+.no-net-heading{
+  font-size: $font-size-normal;
+  font-weight: $font-weight-bold;
+  padding-left: $base-block-space * 0.5;
+}
+
+.no-net-message{
+  font-size: $font-size-xs;
+  padding-left: $base-block-space * 0.5;
+}
+
+.no-net-popup{
+  --background: #E55A28 !important;
+  --color: #fff !important;
+}
+
+.no-net-close-btn{
+  font-size: 24px;
+  float: right;
+}
