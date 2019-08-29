@@ -275,8 +275,6 @@ export class SunbirdQRScanner {
       displayTextColor, buttonText, showButton, this.platform.isRTL, (scannedData) => {
         if (scannedData === 'skip') {
           if (this.appGlobalService.DISPLAY_ONBOARDING_CATEGORY_PAGE) {
-            // Migration todo
-            // this.app.getActiveNavs()[0].push(ProfileSettingsPage, { stopScanner: true });
             const navigationExtras: NavigationExtras = { state: { stopScanner: true } };
             this.router.navigate([`/${RouterLinks.PROFILE_SETTINGS}`], navigationExtras);
           } else {

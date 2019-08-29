@@ -184,9 +184,7 @@ ul.rating .ion-md-star-outline:before {
 
 .select-box {
   .alert-head {
-    //Migration Todo
-    // @include padding(14px 14px !important);
-    padding: 13px 24px !important;
+    @include padding(13px 24px !important);
   }
   .alert-title {
     font-size: 1.2rem !important;

@@ -1,8 +1,8 @@
-import {Inject, Injectable} from '@angular/core';
-import { ModalController} from '@ionic/angular';
-// import {TermsAndConditionsPage} from '@app/pages/terms-and-conditions/terms-and-conditions';
-import {ProfileConstants} from '../app/app.constant';
-import {AuthService, OAuthSession, ProfileService, ServerProfile, ServerProfileDetailsRequest} from 'sunbird-sdk';
+import { Inject, Injectable } from '@angular/core';
+import { ModalController } from '@ionic/angular';
+import { ProfileConstants } from '../app/app.constant';
+import { AuthService, OAuthSession, ProfileService, ServerProfile, ServerProfileDetailsRequest } from 'sunbird-sdk';
+import { TermsAndConditionsPage } from '@app/app/terms-and-conditions/terms-and-conditions.page';
 
 @Injectable()
 export class TncUpdateHandlerService {
@@ -32,7 +32,7 @@ export class TncUpdateHandlerService {
               resolve(false);
               return;
             }
-            this.presentTncPage({response}).then(() => {
+            this.presentTncPage({ response }).then(() => {
               resolve(true);
               return;
             }).catch(() => {
@@ -45,35 +45,36 @@ export class TncUpdateHandlerService {
 
   public async onAcceptTnc(user: ServerProfile): Promise<void> {
     return new Promise<void>(((resolve, reject) => {
-      this.profileService.acceptTermsAndConditions({version: user.tncLatestVersion})
+      this.profileService.acceptTermsAndConditions({ version: user.tncLatestVersion })
         .toPromise()
         .then(() => {
           resolve();
         }).catch(() => {
-        reject();
-      });
+          reject();
+        });
     }))
-    .then(() => {
-      const reqObj = {
-        userId: user.userId,
-        requiredFields: ProfileConstants.REQUIRED_FIELDS,
-      };
-      return new Promise<void>(((resolve, reject) => {
-        this.profileService.getServerProfilesDetails(reqObj).toPromise()
-        .then( res => {
-            resolve();
-          }).catch(e => {
-            reject(e);
-          });
-      }));
-    });
+      .then(() => {
+        const reqObj = {
+          userId: user.userId,
+          requiredFields: ProfileConstants.REQUIRED_FIELDS,
+        };
+        return new Promise<void>(((resolve, reject) => {
+          this.profileService.getServerProfilesDetails(reqObj).toPromise()
+            .then(res => {
+              resolve();
+            }).catch(e => {
+              reject(e);
+            });
+        }));
+      });
   }
 
   private async presentTncPage(navParams: any): Promise<undefined> {
-    // migration-TODO
-    // this.modal = this.modalCtrl.create(TermsAndConditionsPage, navParams);
-    // return this.modal.present();
-    return;
+    this.modal = await this.modalCtrl.create({
+      component: TermsAndConditionsPage,
+      componentProps: navParams
+    });
+    return await this.modal.present();
   }
 
   private hasProfileTncUpdated(user: ServerProfile): boolean {
@@ -82,7 +83,7 @@ export class TncUpdateHandlerService {
 
   public async dismissTncPage(): Promise<void> {
     if (this.modal) {
-      return this.modal.dismiss();
+      return await this.modal.dismiss();
     }
   }
 }

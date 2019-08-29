@@ -61,30 +61,21 @@ export class LogoutHandlerService {
   }
 
   private async navigateToAptPage() {
-    if (this.appGlobalService.DISPLAY_ONBOARDING_PAGE) {
-      // Not used page
-      // Migration Todo
-      // await this.app.getRootNav().setRoot(OnboardingPage);
-      // this.router.navigate([])
-    } else {
-      const selectedUserType = await this.preferences.getString(PreferenceKey.SELECTED_USER_TYPE).toPromise();
+    const selectedUserType = await this.preferences.getString(PreferenceKey.SELECTED_USER_TYPE).toPromise();
 
-      await this.appGlobalService.getGuestUserInfo();
+    await this.appGlobalService.getGuestUserInfo();
 
-      if (selectedUserType === ProfileType.STUDENT) {
-        initTabs(this.containerService, GUEST_STUDENT_TABS);
-      } else if (selectedUserType === ProfileType.TEACHER) {
-        initTabs(this.containerService, GUEST_TEACHER_TABS);
-      }
-
-      // Migration todo
-      // await this.app.getRootNav().setRoot(TabsPage, { loginMode: 'guest' });
-      this.router.navigate([`/${RouterLinks.TABS}`], {
-        state: {
-          loginMode: 'guest'
-        }
-      });
+    if (selectedUserType === ProfileType.STUDENT) {
+      initTabs(this.containerService, GUEST_STUDENT_TABS);
+    } else if (selectedUserType === ProfileType.TEACHER) {
+      initTabs(this.containerService, GUEST_TEACHER_TABS);
     }
+
+    this.router.navigate([`/${RouterLinks.TABS}`], {
+      state: {
+        loginMode: 'guest'
+      }
+    });
 
     this.generateLogoutInteractTelemetry(InteractType.OTHER, InteractSubtype.LOGOUT_SUCCESS, '');
   }

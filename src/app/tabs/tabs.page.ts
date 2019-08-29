@@ -65,6 +65,10 @@ export class TabsPage implements OnInit {
       }
       initTabs(this.container, LOGIN_TEACHER_TABS);
     }
+
+    this.events.subscribe('UPDATE_TABS', () => {
+      this.tabs = this.container.getAllTabs();
+    });
   }
 
   ionViewWillEnter() {

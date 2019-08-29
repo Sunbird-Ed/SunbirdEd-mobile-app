@@ -598,9 +598,6 @@ export class GuestEditPage implements OnInit {
         initTabs(this.container, GUEST_TEACHER_TABS);
       }
 
-      // Migration todo
-      // this.app.getRootNav().setRoot(TabsPage);
-      // Need to test thoroughly
       this.router.navigate([`/${RouterLinks.TABS}`]);
     }
   }
