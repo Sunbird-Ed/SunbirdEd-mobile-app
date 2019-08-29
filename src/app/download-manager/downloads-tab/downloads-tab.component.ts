@@ -1,8 +1,6 @@
-import { Component, Input, EventEmitter, Output, NgZone, OnInit, OnChanges } from '@angular/core';
+import { Component, Input, EventEmitter, Output, NgZone, OnInit } from '@angular/core';
 import { ContentType, MimeType, MenuOverflow, RouterLinks } from '@app/app/app.constant';
-// import { MenuOverflow } from '../../../app/app.constant';
 import { OverflowMenuComponent } from '@app/app/profile/overflow-menu/overflow-menu.component';
-// import { ViewController } from 'ionic-angular/navigation/view-controller';
 import { CommonUtilService, } from '@app/services/common-util.service';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { SbPopoverComponent } from '@app/app/components/popups/sb-popover/sb-popover.component';
@@ -20,16 +18,16 @@ import { AppHeaderService } from '@app/services';
   templateUrl: './downloads-tab.component.html',
   styleUrls: ['./downloads-tab.component.scss'],
 })
-export class DownloadsTabComponent implements OnInit, OnChanges {
+export class DownloadsTabComponent implements OnInit {
 
   @Input() downloadedContents: Content[] = [];
   @Output() deleteContents = new EventEmitter();
   @Output() sortCriteriaChanged = new EventEmitter();
   showLoader = false;
   selectedContents: ContentDelete[] = [];
-  showDeleteButton: Boolean = true;
-  deleteAllPopupPresent: Boolean = false;
-  showSelectAll: Boolean = true;
+  showDeleteButton = true;
+  deleteAllPopupPresent = false;
+  showSelectAll = true;
   selectedFilter: string = MenuOverflow.DOWNLOAD_FILTERS[0];
   deleteAllConfirm;
   selectedContentsInfo = {
@@ -45,7 +43,6 @@ export class DownloadsTabComponent implements OnInit, OnChanges {
     private router: Router,
     private zone: NgZone,
     private headerService: AppHeaderService) {
-    this.setSelectedItems();
   }
   ngOnInit(): void {
     this.headerService.headerEventEmitted$.subscribe(async () => {
@@ -55,16 +52,6 @@ export class DownloadsTabComponent implements OnInit, OnChanges {
     });
   }
 
-  setSelectedItems() {
-    this.downloadedContents.forEach(element => {
-      element['isSelected'] = false;
-    });
-    console.log('contents', this.downloadedContents);
-  }
-
-  ngOnChanges() {
-    this.setSelectedItems();
-  }
   async showDeletePopup(identifier?) {
     if (identifier) {
       this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
@@ -90,16 +77,15 @@ export class DownloadsTabComponent implements OnInit, OnChanges {
           },
         ],
         icon: null,
-        // mshowDeletePopupshowDeletePopupetaInfo: this.content.contentData.name,
         sbPopoverContent: identifier ? this.commonUtilService.translateMessage('DELETE_CONTENT_WARNING')
           : this.commonUtilService.translateMessage('DELETE_ALL_CONTENT_WARNING')
       },
       cssClass: 'sb-popover danger',
     });
     await deleteConfirm.present();
-    const response = await deleteConfirm.onDidDismiss();
-    console.log('downloads tab', response);
-    switch (response.data) {
+    const { data } = await deleteConfirm.onDidDismiss();
+    console.log('downloads tab', data);
+    switch (data.canDelete) {
       case undefined:
         this.unSelectAllContents();
         this.telemetryGeneratorService.generateInteractTelemetry(
@@ -110,7 +96,7 @@ export class DownloadsTabComponent implements OnInit, OnChanges {
         break;
       case null:
         if (identifier) {
-            this.unSelectAllContents();
+          this.unSelectAllContents();
         }
         this.telemetryGeneratorService.generateInteractTelemetry(
           InteractType.TOUCH,
@@ -128,7 +114,6 @@ export class DownloadsTabComponent implements OnInit, OnChanges {
           PageId.SINGLE_DELETE_CONFIRMATION_POPUP, undefined,
           valuesMap);
         this.deleteContent();
-        break;
     }
   }
 
@@ -162,7 +147,7 @@ export class DownloadsTabComponent implements OnInit, OnChanges {
         this.sortCriteriaChanged.emit(data);
       }
       if (this.deleteAllPopupPresent) {
-        await this.deleteAllConfirm.dismiss({isLeftButtonClicked: null});
+        await this.deleteAllConfirm.dismiss({ isLeftButtonClicked: null });
       }
     }
   }
@@ -193,32 +178,28 @@ export class DownloadsTabComponent implements OnInit, OnChanges {
     this.showDeleteButton = true;
     this.showSelectAll = true;
     if (this.deleteAllPopupPresent) {
-      await this.deleteAllConfirm.dismiss({isLeftButtonClicked: null});
+      await this.deleteAllConfirm.dismiss({ isLeftButtonClicked: null });
     }
     this.selectedContents = [];
   }
 
   async toggleContentSelect(event, idx) {
-    // this.downloadedContents[idx]['isSelected'] = !this.downloadedContents[idx]['isSelected'];
-
-    // if (event.detail.checked) {
-      this.downloadedContents[idx]['isSelected'] = event.detail.checked;
-      const selectedContents = (this.downloadedContents.filter((element) => element['isSelected']));
-      if (selectedContents.length) {
-        if (selectedContents.length === this.downloadedContents.length) {
-          this.showSelectAll = false;
-        } else {
-          this.showSelectAll = true;
-        }
-        this.showDeleteButton = false;
-        this.deleteAllContents();
+    this.downloadedContents[idx]['isSelected'] = event.detail.checked;
+    const selectedContents = (this.downloadedContents.filter((element) => element['isSelected']));
+    if (selectedContents.length) {
+      if (selectedContents.length === this.downloadedContents.length) {
+        this.showSelectAll = false;
       } else {
-        this.showDeleteButton = true;
-        if (this.deleteAllPopupPresent) {
-          await this.deleteAllConfirm.dismiss({isLeftButtonClicked: null});
-        }
+        this.showSelectAll = true;
       }
-    // }
+      this.showDeleteButton = false;
+      this.deleteAllContents();
+    } else {
+      this.showDeleteButton = true;
+      if (this.deleteAllPopupPresent) {
+        await this.deleteAllConfirm.dismiss({ isLeftButtonClicked: null });
+      }
+    }
   }
 
   async deleteAllContents() {
@@ -243,6 +224,7 @@ export class DownloadsTabComponent implements OnInit, OnChanges {
     });
     if (!this.deleteAllPopupPresent) {
       this.telemetryGeneratorService.generatePageViewTelemetry(PageId.BULK_DELETE_POPUP, Environment.DOWNLOADS);
+      this.deleteAllPopupPresent = true;
       this.deleteAllConfirm = await this.popoverCtrl.create({
         component: SbGenericPopoverComponent,
         componentProps: {
@@ -266,7 +248,6 @@ export class DownloadsTabComponent implements OnInit, OnChanges {
         animated: true
       });
       await this.deleteAllConfirm.present();
-      this.deleteAllPopupPresent = true;
       const { data } = await this.deleteAllConfirm.onDidDismiss();
       this.deleteAllPopupPresent = false;
       const valuesMap = {};
@@ -312,21 +293,15 @@ export class DownloadsTabComponent implements OnInit, OnChanges {
     if (!this.selectedContents.length) {
       if (content.contentData && content.contentData.contentType === ContentType.COURSE) {
         this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], {
-          state: {
-            content: content
-          }
+          state: { content }
         });
       } else if (content.mimeType === MimeType.COLLECTION) {
         this.router.navigate([RouterLinks.COLLECTION_DETAIL_ETB], {
-          state: {
-            content: content
-          }
+          state: { content }
         });
       } else {
         this.router.navigate([RouterLinks.CONTENT_DETAILS], {
-          state: {
-            content: content
-          }
+          state: { content }
         });
       }
     }
