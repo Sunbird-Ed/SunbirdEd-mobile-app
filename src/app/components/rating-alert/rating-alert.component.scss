@@ -1,27 +1,7 @@
 @import "src/assets/styles/base/_variables.scss";
 @import "src/assets/styles/_custom-mixins.scss";
-@import "src/assets/styles/_variables.scss";
+@import "src/assets/styles/variables.scss";
 :host {
-
-    ul.rating .ion-md-star-outline:before{
-      content: "\F4B2" !important;
-      color: $info-color !important;
-      font-weight: $font-weight-bold
-    }
-  
-          /* Sb-Rating Component Styling */
-    ul {
-    // migration-TODO
-    @include padding($base-block-space);
-      &.rating li {
-        @include padding($base-block-space * 1.5 !important);
-        background: none;
-        color: $info-color;
-        ion-icon {
-          font-size: ($font-size-base * 2);
-        }
-      }
-    }
   
     .sb-modal-close{
       font-size: 24px !important;
@@ -103,10 +83,18 @@
       height: 32px !important;
       width:auto !important;
     }
-    
-  }
 
-  .sc-ion-buttons-md-s .button-has-icon-only.button-clear {
-    height: 32px !important;
-    width:auto !important;
+    .app-rate-center {
+      --padding-start: 5%;
+      --padding-end: 5%;
+      --padding-top: 5%;
+      --padding-bottom: 5%;
+      --background: transparent;
+    }
+
+    .sb-popover-items{
+      background-color: #fff;
+      border-radius: 5px;
+    }
+        
   }

@@ -1,8 +1,9 @@
+import { Router } from '@angular/router';
 import { Injectable, Inject } from '@angular/core';
 import { Events } from '@ionic/angular';
 import { ProfileType, SharedPreferences, AuthService } from 'sunbird-sdk';
 
-import { PreferenceKey } from '@app/app/app.constant';
+import { PreferenceKey, RouterLinks } from '@app/app/app.constant';
 import { initTabs, GUEST_STUDENT_TABS, GUEST_TEACHER_TABS } from '@app/app/module.service';
 import { AppGlobalService } from '@app/services/app-global-service.service';
 import { ContainerService } from '@app/services//container.services';
@@ -17,6 +18,7 @@ export class ProfileSwitchHandler {
         private container: ContainerService,
         private events: Events,
         private appGlobalService: AppGlobalService,
+        private router: Router
     ) {
     }
     public switchUser(selectedProfile) {
@@ -35,9 +37,7 @@ export class ProfileSwitchHandler {
             this.events.publish('refresh:profile');
             this.events.publish(AppGlobalService.USER_INFO_UPDATED);
             this.appGlobalService.setSelectedUser(undefined);
-
-            // Migration Todo
-            // this.app.getRootNav().setRoot(TabsPage);
+            this.router.navigate([RouterLinks.TABS]);
         }, 1000);
     }
 }

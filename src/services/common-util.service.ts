@@ -121,9 +121,9 @@ export class CommonUtilService implements OnDestroy {
 
     /**
      * Returns Loading object with default config
-     * @returns {object} Loading object
+     * @returns Loading object
      */
-    // migration-TODO correct type later either use Promise<HTMLIonLoadingElement> or any
+    // correct type later either use Promise<HTMLIonLoadingElement> or any
     getLoader(): any {
         return this.loadingCtrl.create({
             duration: 30000,
@@ -170,10 +170,8 @@ export class CommonUtilService implements OnDestroy {
             this.afterOnBoardQRErrorAlert('ERROR_CONTENT_NOT_FOUND', 'CONTENT_IS_BEING_ADDED');
             return;
         }
-        // migration-TODO check for the type 
         let popOver: any;
         const self = this;
-        // migration-TODO
         const callback: QRAlertCallBack = {
             tryAgain() {
                 self.events.publish('event:showScanner', { pageName: source });
