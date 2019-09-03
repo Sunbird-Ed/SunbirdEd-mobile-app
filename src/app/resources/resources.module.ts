@@ -1,24 +1,25 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import {ResourcesComponent} from './resources.component';
+import { ResourcesComponent } from './resources.component';
 import { TranslateModule } from '@ngx-translate/core';
 import { RouterModule } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 import { ComponentsModule } from '../components/components.module';
-// import { PlayerPageModule } from '../player/player.module';
 import { DirectivesModule } from '@app/directives/directives.module';
-// import { NotificationsPageModule } from '../notifications/notifications.module';
+import { ExploreBooksSortComponent } from './explore-books-sort/explore-books-sort.component';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { ExploreBooksPageModule } from './explore-books/explore-books.module';
 
 @NgModule({
   declarations: [
-    ResourcesComponent
+    ResourcesComponent,
+    ExploreBooksSortComponent
   ],
   imports: [
     CommonModule,
     IonicModule.forRoot({
       scrollPadding: false,
       scrollAssist: true,
-      // autoFocusAssist: false
     }),
     TranslateModule.forChild(),
     RouterModule.forChild([
@@ -28,12 +29,13 @@ import { DirectivesModule } from '@app/directives/directives.module';
       }
     ]),
     ComponentsModule,
-    // PlayerPageModule,
     DirectivesModule,
-    // NotificationsPageModule
+    ReactiveFormsModule
   ],
+  entryComponents: [ExploreBooksSortComponent],
   exports: [
-    ResourcesComponent
+    ResourcesComponent,
+    ExploreBooksSortComponent
   ]
 })
 export class ResourcesModule { }

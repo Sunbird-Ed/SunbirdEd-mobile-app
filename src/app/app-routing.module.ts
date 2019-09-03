@@ -85,7 +85,8 @@ const routes: Routes = [
   },
   { path: 'filters', loadChildren: './search/filters/filters.module#FiltersPageModule' },
   { path: RouterLinks.TEXTBOOK_VIEW_MORE, loadChildren: './textbook-view-more/textbook-view-more.module#TextbookViewMorePageModule' },
-  { path: RouterLinks.GUEST_EDIT, loadChildren: './profile/guest-edit/guest-edit.module#GuestEditPageModule' }
+  { path: RouterLinks.GUEST_EDIT, loadChildren: './profile/guest-edit/guest-edit.module#GuestEditPageModule' },
+  { path: RouterLinks.EXPLORE_BOOK, loadChildren: './resources/explore-books/explore-books.module#ExploreBooksPageModule' }
 ];
 
 @NgModule({
