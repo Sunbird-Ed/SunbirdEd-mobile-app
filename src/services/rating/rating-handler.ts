@@ -127,7 +127,6 @@ export class RatingHandler {
             }
             case StoreRating.RETURN_HELP: {
                 this.setInitialDate();
-                // this.app.getActiveNavs()[0].push('FaqPage');
                 this.router.navigate([RouterLinks.FAQ_HELP]);
                 break;
             }

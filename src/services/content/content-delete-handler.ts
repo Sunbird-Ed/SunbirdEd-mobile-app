@@ -62,7 +62,7 @@ export class ContentDeleteHandler {
         });
         await confirm.present();
         const { data } = await confirm.onDidDismiss();
-        if (data) {
+        if (data && data.canDelete) {
             this.deleteContent(content.identifier, isChildContent, contentInfo, pageId);
         }
     }
@@ -100,7 +100,7 @@ export class ContentDeleteHandler {
                 this.contentDelete.next();
                 this.commonUtilService.showToast('MSG_RESOURCE_DELETED');
             }
-        }).catch(async(error: any) => {
+        }).catch(async (error: any) => {
             await loader.dismiss();
             console.log('delete response: ', error);
             this.commonUtilService.showToast('CONTENT_DELETE_FAILED');
