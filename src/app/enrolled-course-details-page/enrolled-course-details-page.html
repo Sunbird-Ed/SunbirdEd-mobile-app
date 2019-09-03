@@ -1,4 +1,4 @@
-<ion-content padding
+<!-- <ion-content padding
 	[ngClass]="{'content-with-footer': (((courseCardData && courseCardData?.batchId) && ( showResumeBtn || childrenData && childrenData?.length || downloadIdentifiers && downloadIdentifiers?.length && !isDownloadStarted )) || (courseCardData && !courseCardData?.batchId && course && course?.createdBy !== userId))}">
 
 	<app-pb-horizontal *ngIf="course?.progress" [progress]="course?.progress" class="course-progress"
@@ -56,10 +56,8 @@
 					<div class="content-meta-title" text-uppercase>{{ 'COPYRIGHT' | translate }}</div>
 					<span class="text-gray-color">{{course?.copyright }}</span>
 				</div>
-				<!-- Batch details - only for enrolled courses -->
 				<div *ngIf="batchDetails?.name" margin-top>
 					<div class="content-meta-title" style="color: black !important">{{ 'BATCH_DETAILS' | translate }}
-			<!-- enrolledCourseMimeType === 'application/vnd.ekstep.content-collection' -->
 					</div>
 					<span class="text-gray-color"> {{batchDetails?.name}}</span>
 					<br />
@@ -123,7 +121,6 @@
 					</ion-item>
 				</span>
 			</ion-list>
-			<!-- Import content loader -->
 			<div *ngIf="showChildrenLoader">
 				<ion-row style="padding-top: 30px;" padding>
 					<ion-col text-center>
@@ -141,15 +138,111 @@
 				</h4>
 				<p>{{ 'CONTENT_CREATING' | translate }}</p>
 			</div>
-			<!-- End import content -->
 		</div>
 		<br />
 		<br />
 		<div padding-top></div>
 	</div>
+</ion-content> -->
+<ion-content>
+	<div>
+		<ion-card>
+			<ion-card-header class="custom-card-header">
+				<ion-card-title class="font-18">{{course.name}}</ion-card-title>
+				<ion-card-subtitle class="font-14">by {{ course?.creator || course?.owner }}</ion-card-subtitle>
+			    <hr>
+			</ion-card-header>
+			<ion-card-content>
+				<div *ngIf="!courseCardData?.batchId && course?.createdBy !== userId && !isAlreadyEnrolled">
+					<!-- <ion-button expand="block" color="success" (click)="navigateToBatchListPage()">Join Training
+					</ion-button> -->
+					<button class="enrolled-course-card-button" (click)="navigateToBatchListPage()">Join Training</button>
+				</div>
+				<ion-card-subtitle *ngIf="course?.c_diksha_stage_open_batch_count" class="font-12">
+					<ion-icon name="information-circle"></ion-icon> {{course.c_diksha_stage_open_batch_count}} batches
+					available
+				</ion-card-subtitle>
+			</ion-card-content>
+		</ion-card>
+		<ion-card>
+			<ion-card-content class="card-content-bottom-0">
+				<ion-toolbar>
+					<ion-segment [(ngModel)]="segmentType">
+						<ion-segment-button value="info">
+							<ion-label class="font-14 text-transform-none">Training Information</ion-label>
+						</ion-segment-button>
+						<ion-segment-button value="modules">
+							<ion-label class="font-14 text-transform-none">Training Modules</ion-label>
+						</ion-segment-button>
+					</ion-segment>
+				</ion-toolbar>
+			</ion-card-content>
+		</ion-card>
+		<div [ngSwitch]="segmentType">
+		<ion-card>
+			<ion-card-content>
+				<div *ngSwitchCase="'info'">
+					<div class="ion-margin-bottom">
+						<ion-card-title class="font-14 label-margin-bottom">
+							Training is relevent to teacher of
+						</ion-card-title>
+						<p>Class : {{getNumbersFromArray(course.gradeLevel)}}</p>
+						<p>Subject: {{course.subject}}</p>
+						<p>Medium : {{course.medium}}</p>
+					</div>
+					<div class="ion-margin-bottom">
+						<ion-card-title class="font-14 label-margin-bottom">
+							Training Details
+						</ion-card-title>
+						<p>Training End Date : 31 Aug 2019</p>
+					</div>
+					<div>
+						<p>{{course.description}}</p>
+					</div>
+				</div>
+			</ion-card-content>
+		</ion-card>
+		<div *ngSwitchCase="'modules'">
+				<div *ngFor="let item of childrenData; let i = index;">
+				<ion-card class="sb-accordian-card">
+					<ion-grid class="sb-accordian-header">
+					  <ion-row   (click)="toggleGroup(i , item)" *ngIf="item?.children">
+						<ion-col col-11>
+						  <div class="sb-topic-text"> {{item?.contentData.name}}</div>
+						</ion-col>
+						<ion-col col-1 *ngIf="!isGroupShown(i)">
+						  <div>
+							<!-- <ion-icon ios="ios-arrow-dropdown" md="md-arrow-dropdown" class="sb-accordian-arrow"></ion-icon> -->
+							<ion-icon name="ios-arrow-down"  class="sb-accordian-arrow"></ion-icon>
+						  </div>
+						</ion-col>
+						<ion-col col-1 *ngIf="isGroupShown(i)">
+						  <div>
+							<!-- <ion-icon ios="ios-arrow-dropup" md="md-arrow-dropup" class="sb-accordian-arrow"></ion-icon> -->
+							<ion-icon name="ios-arrow-up"  class="sb-accordian-arrow"></ion-icon>								
+						  </div>
+						</ion-col>
+					  </ion-row>
+					</ion-grid>
+				
+				
+					<div class="sb-hidden-content" *ngIf="isGroupShown(i) && (item?.children && item?.children?.length)">
+					  <div class="sb-separator-line"></div>
+					  <div class="box-align" *ngFor="let firstChildren of item?.children; let j = index;">
+					  <div class="sb-topics-container sb-topics-container-ftue">
+							<app-collection-child [childData]="firstChildren" [index]="j" [depth]="depth"
+							[activeMimeTypeFilter]="activeMimeTypeFilter" [isTextbookTocPage]="false"
+							[corRelationList]="corRelationList" [isDepthChild]="isDepthChild" [breadCrumb]="breadCrumb"
+							[rootUnitId]="item.identifier" [bookID]="identifier"></app-collection-child>
+					  </div>
+					</div>
+					</div>
+				  </ion-card>
+				</div>
+			</div>
+	</div>
+	</div>
 </ion-content>
-<!-- Page footer -->
-
 <ion-footer *ngIf="courseCardData?.batchId">
 	<ion-toolbar class="toolbar-p-16">
 		<ion-button expand="block" *ngIf="!showResumeBtn && childrenData?.length" (click)="startContent()">{{

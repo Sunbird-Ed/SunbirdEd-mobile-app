@@ -16,11 +16,26 @@
     .font-12 {
         font-size: 12px !important;
     }
+    .font-16{
+        font-size: 16px !important;
+    }
+    .font-14{
+        font-size: 14px;
+    }
+    .font-18{
+        font-size: 18px;
+    }
     .padding-left-8{
         padding-left: 8px !important;
     }
     .child-item{
         --padding-start: 0 !important;
+    }
+    .text-transform-none{
+        text-transform: none !important;
+    }
+    .card-content-bottom-0{
+        padding-bottom: 0px !important;
     }
     .course-progress {
         position: absolute;
@@ -41,6 +56,9 @@
         .progress-inner-secondary {
             background-color: #7ED321 !important;
         }
+    }
+    hr {
+        border:0.8px solid #cbc4c4;
     }
     .blurbackground {
         // background-color: gray !important;
@@ -98,4 +116,65 @@
         height: 20px;
         font-size: 10px;
     }
+    .label-margin-bottom{
+      margin-bottom: 3px !important;
+    } 
+    .custom-card-header{
+        padding-bottom: 0px !important;
+    }
+    .sb-accordian-arrow{
+        float: right;
+        font-size: 14px;
+        padding-top: 10px;
+    }
+    .enrolled-course-card-button{
+        background-color: #008840;
+        border: none;
+        color: white;
+        padding: 15px 122px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        margin: 4px 2px;
+        cursor: pointer;
+      }
+      ion-segment-button.md.segment-button-has-label.segment-button-has-label-only.segment-button-layout-icon-top
+      .ion-activatable.ion-activatable-instant
+      .hydrated.segment-button-checked{
+          color: #024f9d;
+      }
+      ion-segment-button.md.segment-button-has-label.segment-button-has-label-only
+      .segment-button-layout-icon-top
+      .ion-activatable.ion-activatable-instant.hydrated{
+          color: #97b7d7;
+      }
 }
+.sb-topics-containe{
+    padding-right: 5%;
+  }
+  .sb-hidden-content{
+    background-color: #F2F2F2;
+    height: 34.15%;
+    width: 100%;
+    border-radius: 0 0 2px 2px;
+    padding-top: 2%;
+    padding-bottom: 2%;
+  }
+  .sb-accordian-card{
+    height: 6.1%;
+    width: 100%;
+    border-radius: 2px;
+    background-color: #FFFFFF;
+    box-shadow: 0 4px 7px 0 rgba(0,0,0,0.1);
+  }
+  .sb-topic-text {
+    &.sb-topic-text {
+      padding-top: 5px;
+    }
+    height: 2.44%;
+    width: 80%;
+    color: $blue;
+    font-size: 14px;
+    line-height: 20px;
+  }

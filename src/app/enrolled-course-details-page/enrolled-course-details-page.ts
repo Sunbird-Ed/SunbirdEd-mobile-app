@@ -87,6 +87,7 @@ export class EnrolledCourseDetailsPage implements OnInit {
   childrenData: Array<any> = [];
 
   startData: any;
+  shownGroup : null;
 
   /**
    * Show loader while importing content
@@ -182,6 +183,7 @@ export class EnrolledCourseDetailsPage implements OnInit {
   appName: any;
   updatedCourseCardData: Course;
   importProgressMessage: string;
+  segmentType = 'info';
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -794,6 +796,27 @@ export class EnrolledCourseDetailsPage implements OnInit {
         }
       });
     });
+  }
+ /** Extract only numbers from an array*/
+  getNumbersFromArray(str) {
+    if (str) {
+      return str.replace(/^\D+/g, '');
+    }
+  }
+
+  toggleGroup(group, content) {
+    let isCollapsed = true;
+    if (this.isGroupShown(group)) {
+      isCollapsed = false;
+      this.shownGroup = null;
+    } else {
+      isCollapsed = false;
+      this.shownGroup = group;
+    }
+  }
+  // to check whether the card is toggled or not
+  isGroupShown(group) {
+    return this.shownGroup === group;
   }
 
   /**
