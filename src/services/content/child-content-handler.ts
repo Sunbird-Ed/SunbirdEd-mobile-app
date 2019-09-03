@@ -32,12 +32,11 @@ export class ChildContentHandler {
     private getContentHierarchyInfo(identifier: string, childContentInfo: Content): HierarchyInfo[] {
         let hierarchyInfo: HierarchyInfo[];
         if (childContentInfo && childContentInfo.children && childContentInfo.children.length) {
-            for (let i = 0; i < childContentInfo.children.length; i++) {
-                const ele = childContentInfo.children[i];
-                if (!hierarchyInfo && ele.identifier === identifier) {
-                    return ele.hierarchyInfo;
+            for (const element of childContentInfo.children) {
+                if (!hierarchyInfo && element.identifier === identifier) {
+                    return element.hierarchyInfo;
                 } else if (!hierarchyInfo) {
-                    hierarchyInfo = this.getContentHierarchyInfo(identifier, ele);
+                    hierarchyInfo = this.getContentHierarchyInfo(identifier, element);
                     if (hierarchyInfo) {
                         return hierarchyInfo;
                     }

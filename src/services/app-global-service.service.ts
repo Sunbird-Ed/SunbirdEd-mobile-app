@@ -2,7 +2,6 @@ import { Inject, Injectable, OnDestroy } from '@angular/core';
 import { Environment, InteractSubtype, InteractType, PageId } from './telemetry-constants';
 import { Events, PopoverController } from '@ionic/angular';
 import { PopoverOptions } from '@ionic/core';
-// import {UpgradePopover} from '../pages/upgrade/upgrade-popover';
 import { GenericAppConfig, PreferenceKey } from '../app/app.constant';
 import { TelemetryGeneratorService } from './telemetry-generator.service';
 import {
@@ -22,16 +21,12 @@ import { UtilityService } from './utility-service';
 import { ProfileConstants } from '../app/app.constant';
 import { Observable, Observer } from 'rxjs';
 import { PermissionAsked } from './android-permissions/android-permission';
-import { UpgradePopoverComponent } from '../app/components/popups/upgrade-popover/upgrade-popover.component';
-import { delay } from 'rxjs/operators';
-
-declare const buildconfigreader;
+import { UpgradePopoverComponent } from '@app/app/components/popups';
 
 @Injectable({
     providedIn: 'root'
 })
 export class AppGlobalService implements OnDestroy {
-
     public static readonly USER_INFO_UPDATED = 'user-profile-changed';
     public static readonly PROFILE_OBJ_CHANGED = 'app-global:profile-obj-changed';
     public static isPlayerLaunched = false;
@@ -39,23 +34,23 @@ export class AppGlobalService implements OnDestroy {
     session: OAuthSession;
 
     /**
-    * This property stores the courses enrolled by a user
-    */
+     * This property stores the courses enrolled by a user
+     */
     courseList: Array<Course>;
 
     /**
-    * This property stores the course filter configuration at the app level for a particular app session
-    */
+     * This property stores the course filter configuration at the app level for a particular app session
+     */
     courseFilterConfig: Array<any> = [];
 
     /**
-    * This property stores the library filter configuration at the app level for a particular app session
-    */
+     * This property stores the library filter configuration at the app level for a particular app session
+     */
     libraryFilterConfig: Array<any> = [];
 
     /**
-    * This property stores the organization at the app level for a particular app session
-    */
+     * This property stores the organization at the app level for a particular app session
+     */
     rootOrganizations: Array<any>;
     courseFrameworkId: string;
 
@@ -149,94 +144,78 @@ export class AppGlobalService implements OnDestroy {
     }
 
     /**
-    * This method stores the list of courses enrolled by user, and is updated every time
-    * getEnrolledCourses is called.
-    * @param courseList
-    */
+     * This method stores the list of courses enrolled by user, and is updated every time
+     * getEnrolledCourses is called.
+     */
     setEnrolledCourseList(courseList: Array<any>) {
         this.courseList = courseList;
     }
 
     /**
-    * This method returns the list of enrolled courses
-    *
-    * @param courseList
-    *
-    */
+     * This method returns the list of enrolled courses
+     */
     getEnrolledCourseList(): Array<any> {
         return this.courseList;
     }
 
     /**
-    * This method stores the course filter config, for a particular session of the app
-    *
-    * @param courseFilterConfig
-    *
-    */
+     * This method stores the course filter config, for a particular session of the app
+     */
     setCourseFilterConfig(courseFilterConfig: Array<any>) {
         this.courseFilterConfig = courseFilterConfig;
     }
 
     /**
-    * This method returns the course filter config cache, for a particular session of the app
-    *
-    * @param syllabusList
-    *
-    */
+     * This method returns the course filter config cache, for a particular session of the app
+     */
     getCachedCourseFilterConfig(): Array<any> {
         return this.courseFilterConfig;
     }
 
     /**
-    * This method stores the library filter config, for a particular session of the app
-    *
-    */
+     * This method stores the library filter config, for a particular session of the app
+     */
     setLibraryFilterConfig(libraryFilterConfig: Array<any>) {
         this.libraryFilterConfig = libraryFilterConfig;
     }
 
     /**
-    * This method returns the library filter config cache, for a particular session of the app
-    *
-    */
+     * This method returns the library filter config cache, for a particular session of the app
+     */
     getCachedLibraryFilterConfig(): Array<any> {
         return this.libraryFilterConfig;
     }
 
     /**
-    * This method stores the rootOrganizations, for a particular session of the app
-    *
-    */
+     * This method stores the rootOrganizations, for a particular session of the app
+     */
     setRootOrganizations(rootOrganizations: Array<any>) {
         this.rootOrganizations = rootOrganizations;
     }
 
     /**
-    * This method returns the rootOrganizations cache, for a particular session of the app
-    *
-    */
+     * This method returns the rootOrganizations cache, for a particular session of the app
+     */
     getCachedRootOrganizations(): Array<any> {
         return this.rootOrganizations;
     }
 
     /**
-   * This method stores the courseFrameworkId, for a particular session of the app
-   *
-   */
+     * This method stores the courseFrameworkId, for a particular session of the app
+     */
     setCourseFrameworkId(courseFrameworkId: string) {
         this.courseFrameworkId = courseFrameworkId;
     }
 
     /**
-    * This method returns the courseFrameworkId cache, for a particular session of the app
-    *
-    */
+     * This method returns the courseFrameworkId cache, for a particular session of the app
+     */
     getCachedCourseFrameworkId(): string {
         return this.courseFrameworkId;
     }
 
     /**
-     * @returns {string} UserId or empty string if not available
+     * @returns UserId or empty string if not available
      */
     getUserId(): string | undefined {
         if (!this.session) {
@@ -372,6 +351,7 @@ export class AppGlobalService implements OnDestroy {
 
         this.authService.getSession().toPromise().then((session) => {
             if (!session) {
+                this.session = session;
                 this.getGuestUserInfo();
             } else {
                 this.guestProfileType = undefined;
@@ -571,14 +551,19 @@ export class AppGlobalService implements OnDestroy {
     getPageIdForTelemetry() {
         let pageId = PageId.LIBRARY;
         if (this.currentPageId) {
-            if (this.currentPageId.toLowerCase() === 'library') {
-                pageId = PageId.LIBRARY;
-            } else if (this.currentPageId.toLowerCase() === 'courses') {
-                pageId = PageId.COURSES;
-            } else if (this.currentPageId.toLowerCase() === 'profile') {
-                pageId = PageId.PROFILE;
-            } else if (this.currentPageId.toLowerCase() === 'downloads') {
-                pageId = PageId.DOWNLOADS;
+            switch (this.currentPageId.toLowerCase()) {
+                case 'library':
+                    pageId = PageId.LIBRARY;
+                    break;
+                case 'courses':
+                    pageId = PageId.COURSES;
+                    break;
+                case 'profile':
+                    pageId = PageId.PROFILE;
+                    break;
+                case 'downloads':
+                    pageId = PageId.DOWNLOADS;
+                    break;
             }
         }
         return pageId;
@@ -633,7 +618,8 @@ export class AppGlobalService implements OnDestroy {
             this.preferences.getString(PreferenceKey.APP_PERMISSION_ASKED).subscribe(
                 (permissionAsked: string | undefined) => {
                     if (!permissionAsked) {
-                        this.preferences.putString(PreferenceKey.APP_PERMISSION_ASKED, JSON.stringify(this.isPermissionAsked)).toPromise().then();
+                        this.preferences.putString(
+                            PreferenceKey.APP_PERMISSION_ASKED, JSON.stringify(this.isPermissionAsked)).toPromise().then();
                         observer.next(false);
                         observer.complete();
                         return;
@@ -651,7 +637,8 @@ export class AppGlobalService implements OnDestroy {
         this.preferences.getString(PreferenceKey.APP_PERMISSION_ASKED).subscribe(
             (permissionAsked: string | undefined) => {
                 if (!permissionAsked) {
-                    this.preferences.putString(PreferenceKey.APP_PERMISSION_ASKED, JSON.stringify(this.isPermissionAsked)).toPromise().then();
+                    this.preferences.putString(
+                        PreferenceKey.APP_PERMISSION_ASKED, JSON.stringify(this.isPermissionAsked)).toPromise().then();
                     return;
                 } else {
                     permissionAsked = JSON.parse(permissionAsked);
@@ -661,12 +648,4 @@ export class AppGlobalService implements OnDestroy {
                 }
             });
     }
-
-    hideSplashScreen(delay): void {
-        let timeout = setTimeout(() => {
-            splashscreen.markImportDone();
-            splashscreen.hide();
-          }, delay);
-    }
-
 }

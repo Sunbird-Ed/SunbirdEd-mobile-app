@@ -33,7 +33,7 @@ export class HasNotSelectedUserTypeGuard implements Resolve<any> {
                   };
                 this.router.navigate(['/', 'profile-settings'],navigationExtras);
             } else {
-                this.appGlobalService.hideSplashScreen(1500);
+                splashscreen.hide();
                 return true;
             }
         });
