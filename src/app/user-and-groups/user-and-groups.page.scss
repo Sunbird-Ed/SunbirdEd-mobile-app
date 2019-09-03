@@ -46,7 +46,8 @@
 }
 
 .item-background {
-  background-color: map-get($colors, light_gray) !important;
+  --background: map-get($colors, light_gray) !important;
+  --padding-start: 0px !important;
   .item-native > .item-inner {
     padding-right: 0px !important;
   }
@@ -90,10 +91,16 @@
   margin-top: 2vh;
 }
 .radius {
-  border-radius: 6px !important;
+  //border-radius: 6px !important;
+  padding-left: 0px !important;
+  padding-right: 0px !important;
 }
 .bg-color-white {
   background-color: map-get($colors, light_gray) !important;
+  padding-left: 10px;
+  padding-top: 6px;
+  padding-right: 10px;
+  padding-bottom: 6px;
 }
 
 .error-message-contentplay {
@@ -161,7 +168,7 @@ h6:first-child {
 }
 .description {
   color: map-get($colors, dark_gray);
-  font-size: 1.5rem;
+  font-size: 1.2rem;
   @include margin(null, 10%, null, 10%);
   margin-top: 0px !important;
 }
@@ -174,6 +181,17 @@ h6:first-child {
   color: map-get($colors, dark_gray);
 }
 
+.separator-dot {
+  width: 4px;
+  height: 4px;
+  background-color: black;
+  border-radius: 50%;
+  display: inline-block;
+  vertical-align: middle;
+  margin: 0px 8px;
+  font-size: 12px;
+}
+
 .ug-top-left-padding {
   @include padding(16px, 16px, 0px, 8px !important);
 }
@@ -184,7 +202,13 @@ h6:first-child {
 
 .ug-mb-6 {
   margin-bottom: 6px;
+  --border-radius: 10px;
   --inner-padding-end: 0;
+  // --background: #ECEFF0 !important;
+  --padding-start: 10px;
+    --padding-end: 6px;
+    --padding-top: 10px;
+    --padding-bottom: 10px;
 }
 
 .ug-pt-30 {

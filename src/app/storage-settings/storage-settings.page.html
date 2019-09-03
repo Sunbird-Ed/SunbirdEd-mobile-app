@@ -16,7 +16,7 @@
       <span class="storage-info">{{'STORAGE' | translate}}</span>
     </div>
   </div>
-  <div [(ngModel)]="storageDestination" [name]="storageDestination" ngDefaultControl
+  <ion-radio-group  [(ngModel)]="storageDestination" [name]="storageDestination" ngDefaultControl
     (ngModelChange)="attemptTransfer()">
 <ion-radio-group>
     <div class="sb-storage-container">
@@ -47,5 +47,4 @@
       </div>
     </div>
   </ion-radio-group>
-</div>
 </ion-content>

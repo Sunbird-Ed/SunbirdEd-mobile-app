@@ -395,11 +395,14 @@ ul.rating .ion-md-star-outline:before {
 }
 
 .need-header-space {
-  ion-content {
+  ion-content:first-child {
     margin-top: 58px;
-    --offset-top: -58px !important;
+    --offset-top: -56px !important;
+    --padding-bottom: 25px;
+
   }
 }
+
 
 ion-content.avoid-bottom-tabs-space .scroll-content {
   padding-bottom: 88px !important;
@@ -848,4 +851,8 @@ ion-toast.sb-toast.available-later {
 .no-net-close-btn{
   font-size: 24px;
   float: right;
+}
+
+ion-split-pane {
+  contain: unset;
 }

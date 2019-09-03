@@ -90,7 +90,7 @@
                               *ngIf="user?.profileType === ProfileType.TEACHER">{{'USER_TYPE_1' | translate | titlecase}}</span>
                             <span
                               *ngIf="user?.profileType === ProfileType.STUDENT">{{'USER_TYPE_2' | translate | titlecase}}</span>
-                            <span *ngIf="user?.grade?.length">•</span> {{ getGradeNameFromCode(user) }}
+                            <span *ngIf="user?.grade?.length" class="separator-dot"></span> {{ getGradeNameFromCode(user) }}
                           </p>
                         </ion-label>
                       </div>
@@ -147,19 +147,19 @@
                               <span color="text_gray" *ngIf="group?.grade && group?.grade[0]">{{ getGradeNameFromCode(group) }}
                               </span>
                             </ion-text>
+                              <ion-text>
+                              <span *ngIf="group?.grade?.length" class="separator-dot"></span>
+                            </ion-text> 
                             <ion-text>
-                              <span *ngIf="group?.grade?.length">•</span>
-                            </ion-text>
-                            <ion-text>
-                              <span color="text_gray" *ngIf="group?.profilesCount > 1">{{group?.profilesCount}} {{'USERS'
+                              <span color="text_gray" *ngIf="group?.profilesCount > 1" >{{group?.profilesCount}} {{'USERS'
                               | translate}}</span>
                             </ion-text>
                             <ion-text>
-                              <span color="text_gray" *ngIf="group?.profilesCount === 1">{{group?.profilesCount}} {{'USER'
+                              <span color="text_gray" *ngIf="group?.profilesCount === 1" >{{group?.profilesCount}} {{'USER'
                               | translate}}</span>
                             </ion-text>
                             <ion-text>
-                              <span color="text_gray" *ngIf=" !group?.profilesCount || group?.profilesCount === 0">{{'NO_USERS'
+                              <span color="text_gray" *ngIf=" !group?.profilesCount || group?.profilesCount === 0" >{{'NO_USERS'
                               | translate}}</span>
                             </ion-text>
                           </p>
