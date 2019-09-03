@@ -16,7 +16,7 @@
       <span class="storage-info">{{'STORAGE' | translate}}</span>
     </div>
   </div>
-  <div radio-group [(ngModel)]="storageDestination" [name]="storageDestination" ngDefaultControl
+  <ion-radio-group  [(ngModel)]="storageDestination" [name]="storageDestination" ngDefaultControl
     (ngModelChange)="attemptTransfer()">
     <div class="sb-storage-container">
       <div class="radio-container">
@@ -45,5 +45,5 @@
         <div class="info" *ngIf="!isExternalMemoryAvailable">{{'FREE_SPACE' | translate}} -- </div>
       </div>
     </div>
-  </div>
+  </ion-radio-group>
 </ion-content>
