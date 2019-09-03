@@ -5,6 +5,10 @@
     opacity: 1;
   }
 
+  .sb-popover ion-backdrop.backdrop-hide{
+    display: none;
+  }
+
   //styles to align ion-popover to bottom
   .popover-content {
     margin: 0;

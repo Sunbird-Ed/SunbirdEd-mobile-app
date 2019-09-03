@@ -1,5 +1,5 @@
 import { Component, NgZone, Inject } from '@angular/core';
-import { NavController, NavParams, Events } from '@ionic/angular';
+import { NavController, NavParams, Events, PopoverController } from '@ionic/angular';
 import {
   SharedPreferences,
   EnrollCourseRequest,
@@ -11,10 +11,11 @@ import {
   CourseEnrollmentType,
   CourseBatchStatus
 } from 'sunbird-sdk';
-import { PreferenceKey, ProfileConstants, EventTopics, ContentType, MimeType, BatchConstants } from '@app/app/app.constant';
+import { PreferenceKey, ProfileConstants, EventTopics, ContentType, MimeType, BatchConstants, RouterLinks } from '@app/app/app.constant';
 import { CommonUtilService } from '@app/services/common-util.service';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { InteractSubtype, Environment, PageId } from '@app/services/telemetry-constants';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-enrollment-details-page',
@@ -42,12 +43,12 @@ export class EnrollmentDetailsPage {
     @Inject('COURSE_SERVICE') private courseService: CourseService,
     public navCtrl: NavController,
     public navParams: NavParams,
-    // migration-TODO
-    // private viewCtrl: ViewController,
     private events: Events,
     private zone: NgZone,
+    private popOverCtrl: PopoverController,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private commonUtilService: CommonUtilService,
+    private router: Router
   ) {
     this.ongoingBatches = this.navParams.get('ongoingBatches');
     this.upcommingBatches = this.navParams.get('upcommingBatches');
@@ -58,21 +59,15 @@ export class EnrollmentDetailsPage {
   }
 
   close() {
-    // migration-TODO
-    // this.viewCtrl.dismiss();
+    this.popOverCtrl.dismiss();
   }
 
   resumeCourse(content: any) {
     this.saveContentContext(content);
     if (content.lastReadContentId && content.status === 1) {
-      this.events.publish('course:resume', {
-        content: content
-      });
+      this.events.publish('course:resume', { content });
     } else {
-      // migration-TODO
-      // this.navCtrl.push(EnrolledCourseDetailsPage, {
-      //   content: content
-      // });
+      this.router.navigate([`/${RouterLinks.ENROLLED_COURSE_DETAILS}`], { state: { content } });
     }
     this.close();
   }
@@ -124,8 +119,7 @@ export class EnrollmentDetailsPage {
             courseId: content.courseId
           });
           loader.dismiss();
-          // migratin-TODO
-          // this.viewCtrl.dismiss(true);
+          this.popOverCtrl.dismiss({ isEnrolled: true });
           this.navigateToDetailPage(content);
         });
       }, (error) => {
@@ -182,19 +176,15 @@ export class EnrollmentDetailsPage {
 
     if (content.contentType === ContentType.COURSE) {
       content.contentId = !content.contentId ? content.courseId : content.contentId;
-      // migration-TODO
-      // this.navCtrl.push(EnrolledCourseDetailsPage, {
-      //   content: content
-      // });
+      this.router.navigate([`/${RouterLinks.ENROLLED_COURSE_DETAILS}`], { state: { content } });
     } else if (content.mimeType === MimeType.COLLECTION) {
       // this.navCtrl.push(CollectionDetailsPage, {
       // this.navCtrl.push(CollectionDetailsEtbPage, {
       //   content: content
       // });
+      this.router.navigate([`/${RouterLinks.COLLECTION_DETAILS}/${RouterLinks.ENROLLED_COURSE_DETAILS}`], { state: { content } });
     } else {
-      // this.navCtrl.push(ContentDetailsPage, {
-      //   content: content
-      // });
+      this.router.navigate([`/${RouterLinks.CONTENT_DETAILS}`], { state: { content } });
     }
   }
 

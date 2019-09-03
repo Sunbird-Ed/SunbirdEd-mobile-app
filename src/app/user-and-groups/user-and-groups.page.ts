@@ -362,8 +362,6 @@ export class UserAndGroupsPage implements OnInit {
 
   onSegmentChange(event) {
     this.zone.run(() => {
-      //MIGRATION TODO
-      // this.content.resize();
       this.selectedUserIndex = -1;
     });
     this.telemetryGeneratorService.generateImpressionTelemetry(

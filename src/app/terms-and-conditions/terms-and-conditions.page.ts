@@ -1,7 +1,7 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { TranslateService } from '@ngx-translate/core';
-import { AppVersion } from '@ionic-native/app-version';
+import { AppVersion } from '@ionic-native/app-version/ngx';
 import { Environment, ImpressionType, InteractSubtype, InteractType, PageId } from '../../services/telemetry-constants';
 import { ProfileService, ServerProfile } from 'sunbird-sdk';
 import { Platform, LoadingController } from '@ionic/angular';
@@ -11,6 +11,7 @@ import { CommonUtilService } from '@app/services/common-util.service';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { AppHeaderService } from '@app/services/app-header.service';
 import { ProfileConstants } from '../app.constant';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-terms-and-conditions',
@@ -21,7 +22,7 @@ export class TermsAndConditionsPage implements OnInit {
   public tncLatestVersionUrl: SafeUrl;
   public termsAgreed = false;
   private loading?: any;
-  private unregisterBackButtonAction?: Function;
+  private unregisterBackButtonAction: Subscription;
   private userProfileDetails: ServerProfile;
 
   constructor(
@@ -34,21 +35,21 @@ export class TermsAndConditionsPage implements OnInit {
     private commonUtilService: CommonUtilService,
     private translateService: TranslateService,
     private telemetryGeneratorService: TelemetryGeneratorService,
-    private headerService: AppHeaderService
+    private headerService: AppHeaderService,
+    private appVersion: AppVersion
   ) {
   }
 
   public async ngOnInit() {
     this.headerService.hideHeader();
-    this.userProfileDetails = (await this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise()).serverProfile;
+    this.userProfileDetails = (await this.profileService.getActiveSessionProfile(
+      { requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise()).serverProfile;
 
     this.tncLatestVersionUrl = this.sanitizer
       .bypassSecurityTrustResourceUrl(this.userProfileDetails.tncLatestVersionUrl);
 
-    /* migration-TODO
-    this.unregisterBackButtonAction = this.platform
-      .registerBackButtonAction(async () => await this.showToastOnFirstBackNavigation(), 10);
-    */
+    this.unregisterBackButtonAction = this.platform.backButton.
+      subscribeWithPriority(10, async () => await this.showToastOnFirstBackNavigation());
 
     this.telemetryGeneratorService.generateImpressionTelemetry(
       ImpressionType.VIEW, '',
@@ -60,7 +61,7 @@ export class TermsAndConditionsPage implements OnInit {
 
   public ionViewWillLeave() {
     if (this.unregisterBackButtonAction) {
-      this.unregisterBackButtonAction();
+      this.unregisterBackButtonAction.unsubscribe();
     }
   }
 
@@ -118,9 +119,6 @@ export class TermsAndConditionsPage implements OnInit {
 
   private async logoutOnSecondBackNavigation() {
     this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.TERMS_N_CONDITIONS, Environment.HOME, false);
-    if (this.unregisterBackButtonAction) {
-      this.unregisterBackButtonAction();
-    }
     this.logoutHandlerService.onLogout();
     await this.tncUpdateHandlerService.dismissTncPage();
   }
@@ -130,19 +128,8 @@ export class TermsAndConditionsPage implements OnInit {
     this.commonUtilService.showToast(await this.translateService
       .get('TNC_BACK_NAVIGATION_MESSAGE',
         {
-          /* migration-TODO
           app_name: await this.appVersion.getAppName()
-          */
         }
       ).toPromise<string>());
-
-    if (this.unregisterBackButtonAction) {
-      this.unregisterBackButtonAction();
-    }
-    /* migration-TODO
-        this.unregisterBackButtonAction = this.platform.registerBackButtonAction(async () => {
-          await this.logoutOnSecondBackNavigation();
-        }, 10);
-        */
   }
 }

@@ -7,7 +7,6 @@ import { IonicModule } from '@ionic/angular';
 
 import { TabsPage } from './tabs.page';
 import { TranslateModule } from '@ngx-translate/core';
-import { CoursesPage } from '../courses/courses.page';
 import { RouterLinks } from '../app.constant';
 
 const routes: Routes = [
@@ -25,7 +24,7 @@ const routes: Routes = [
         ]
       },
       {
-        path: 'courses',
+        path: RouterLinks.COURSES,
         children: [
           {
             path: '',
@@ -34,7 +33,7 @@ const routes: Routes = [
         ]
       },
       {
-        path: 'guest-profile',
+        path: RouterLinks.GUEST_PROFILE,
         children: [
           {
             path: '',
@@ -52,7 +51,7 @@ const routes: Routes = [
         ]
       },
       {
-        path: 'download-manager',
+        path: RouterLinks.DOWNLOAD_MANAGER,
         children: [
           {
             path: '',

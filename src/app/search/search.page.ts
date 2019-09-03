@@ -27,7 +27,8 @@ import {
   BatchConstants,
   RouterLinks, AudienceFilter,
   ContentType, MimeType, Search, ContentCard,
-  ContentFilterConfig } from '@app/app/app.constant';
+  ContentFilterConfig
+} from '@app/app/app.constant';
 import { AppGlobalService } from '@app/services/app-global-service.service';
 import { FormAndFrameworkUtilService } from '@app/services/formandframeworkutil.service';
 import { CommonUtilService } from '@app/services/common-util.service';
@@ -71,6 +72,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
   isDownloadStarted = false;
   currentCount = 0;
   parentContent: any = undefined;
+  contentData: any;
   childContent: any = undefined;
   loadingDisplayText = 'Loading content';
   audienceFilter = [];
@@ -148,12 +150,6 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnInit(): void {
     this.getAppName();
-
-    // this.navBar.backButtonClick = () => {
-    //   this.telemetryGeneratorService.generateBackClickedTelemetry(ImpressionType.SEARCH,
-    //     Environment.HOME, true, undefined, this.corRelationList);
-    //   this.navigateToPreviousPage();
-    // };
   }
 
   ionViewWillEnter() {
@@ -496,9 +492,10 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
           res.forEach(element => {
             // checking whether content data framework Id exists/valid in syllabus list
             if (data.framework === element.identifier || data.board.indexOf(element.name) !== -1) {
+              data.framework = element.identifier;
               this.isProfileUpdated = true;
               const frameworkDetailsRequest: FrameworkDetailsRequest = {
-                frameworkId: data.framework,
+                frameworkId: element.identifier,
                 requiredCategories: FrameworkCategoryCodesGroup.DEFAULT_FRAMEWORK_CATEGORIES
               };
               this.frameworkService.getFrameworkDetails(frameworkDetailsRequest).toPromise()
@@ -627,7 +624,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
       InteractSubtype.FILTER_BUTTON_CLICKED,
       Environment.HOME,
-      this.source);
+      this.source, undefined);
     this.formAndFrameworkUtilService.getLibraryFilterConfig().then((data) => {
       const filterCriteriaData = this.responseData.filterCriteria;
       filterCriteriaData.facetFilters.forEach(element => {
@@ -723,6 +720,22 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
     this.dialCodeContentResult = undefined;
     this.dialCodeResult = undefined;
     this.corRelationList = [];
+
+    if (this.profile) {
+
+      if (this.profile.board && this.profile.board.length) {
+        contentSearchRequest.board = this.applyProfileFilter(this.profile.board, contentSearchRequest.board, 'board');
+      }
+
+      if (this.profile.medium && this.profile.medium.length) {
+        contentSearchRequest.medium = this.applyProfileFilter(this.profile.medium, contentSearchRequest.medium, 'medium');
+      }
+
+      if (this.profile.grade && this.profile.grade.length) {
+        contentSearchRequest.grade = this.applyProfileFilter(this.profile.grade, contentSearchRequest.grade, 'gradeLevel');
+      }
+
+    }
 
     this.contentService.searchContent(contentSearchRequest).toPromise()
       .then((response: ContentSearchResult) => {
@@ -856,9 +869,9 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
     if (this.commonUtilService.networkInfo.isNetworkAvailable) {
       if (!this.guestUser) {
         this.courseService.getCourseBatches(courseBatchesRequest).toPromise()
-          .then((data: Batch[]) => {
+          .then((res: Batch[]) => {
             this.zone.run(async () => {
-              this.batches = data;
+              this.batches = res;
               if (this.batches.length) {
                 this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
                   'ongoing-batch-popup',
@@ -880,6 +893,9 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
                 if (data && data.isEnrolled) {
                   this.getEnrolledCourses();
                 }
+                if (data && typeof data.isEnrolled === 'function') {
+                  (data.isEnrolled as Function).call(this);
+                }
               } else {
                 await this.loader.dismiss();
                 this.showContentDetails(content, true);
@@ -889,8 +905,6 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
           .catch((error: any) => {
             console.log('error while fetching course batches ==>', error);
           });
-      } else {
-        // this.router.navigate([RouterLinks.COURSE_BATCHES]);
       }
     } else {
       if (this.loader) {
@@ -977,7 +991,13 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
       values['root'] = false;
     }
     const telemetryObject = new TelemetryObject(identifier, contentType, pkgVersion);
-
+    if (!this.corRelationList) {
+      this.corRelationList = [];
+    }
+    this.corRelationList.push({
+      id: 'SearchResult',
+      type: 'Section'
+    });
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
       InteractSubtype.CONTENT_CLICKED,
       !this.appGlobalService.isOnBoardingCompleted ? Environment.ONBOARDING : Environment.HOME,
@@ -1254,7 +1274,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
 
     const option: ContentImportRequest = {
       contentImportArray: this.getImportContentRequestBody([parent.identifier], false),
-      contentStatusArray: [],
+      contentStatusArray: ['Live'],
       fields: ['appIcon', 'name', 'subject', 'size', 'gradeLevel']
     };
     // Call content service
@@ -1315,7 +1335,21 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
             this.loadingDisplayText = 'Loading content ';
           }
         }
-
+        if (event.type === ContentEventType.IMPORT_PROGRESS) {
+          this.loadingDisplayText = this.commonUtilService.translateMessage('EXTRACTING_CONTENT') + ' ' +
+            Math.floor((event.payload.currentCount / event.payload.totalCount) * 100) +
+            '% (' + event.payload.currentCount + ' / ' + event.payload.totalCount + ')';
+          if (event.payload.currentCount === event.payload.totalCount) {
+            let timer = 30;
+            const interval = setInterval(() => {
+              this.loadingDisplayText = `Getting things ready in ${timer--}  seconds`;
+              if (timer === 0) {
+                this.loadingDisplayText = 'Getting things ready';
+                clearInterval(interval);
+              }
+            }, 1000);
+          }
+        }
         // if (event.payload && event.payload.status === 'IMPORT_COMPLETED' && event.type === 'contentImport') {
         if (event.payload && event.type === ContentEventType.IMPORT_COMPLETED) {
           if (this.queuedIdentifiers.length && this.isDownloadStarted) {
@@ -1374,10 +1408,16 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
     this.contentService.cancelDownload(this.parentContent.identifier).toPromise().then(() => {
       this.zone.run(() => {
         this.showLoading = false;
+        if (this.isSingleContent) {
+          this.location.back();
+        }
       });
     }).catch(() => {
       this.zone.run(() => {
         this.showLoading = false;
+        if (this.isSingleContent) {
+          this.location.back();
+        }
       });
     });
   }
@@ -1392,12 +1432,10 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
       } else if (userType === ProfileType.TEACHER) {
         this.audienceFilter = AudienceFilter.GUEST_TEACHER;
       }
-
-      this.profile = this.appGlobalService.getCurrentUser();
     } else {
       this.audienceFilter = AudienceFilter.LOGGED_IN_USER;
-      this.profile = undefined;
     }
+    this.profile = this.appGlobalService.getCurrentUser();
   }
 
   private addCorRelation(id: string, type: string) {
