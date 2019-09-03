@@ -8,8 +8,8 @@
   <div padding-horizontal text-center class="MT15" *ngIf="profile?.firstName">
     <!-- <app-profile-avatar [username]="profile?.firstName"></app-profile-avatar> -->
     <app-profile-avatar [username]="profile?.firstName" *ngIf="isCustodianOrgId"></app-profile-avatar>
-        <img *ngIf="!isCustodianOrgUser" src="./assets/imgs/avatar-tickmark.svg" alt="certified" class="avatar-tickmark">
-        <app-profile-avatar [username]="profile?.firstName" class="profileAvatar" *ngIf="!isCustodianOrgId"></app-profile-avatar>
+    <img *ngIf="!isCustodianOrgId" src="./assets/imgs/avatar-tickmark.svg" alt="certified" class="avatar-tickmark">
+    <app-profile-avatar [username]="profile?.firstName" [isStateUser]="!isCustodianOrgId" class="profileAvatar" *ngIf="!isCustodianOrgId"></app-profile-avatar>
   </div>
 
   <div padding-horizontal text-center>
