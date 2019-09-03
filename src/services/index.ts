@@ -14,7 +14,7 @@ export { NotificationService } from './notification.service';
 export { ComingSoonMessageService } from './coming-soon-message.service';
 export { SunbirdQRScanner } from './sunbirdqrscanner.service';
 export { FormAndFrameworkUtilService } from './formandframeworkutil.service';
-export { ActivePageService } from './active-page-service';
+export { ActivePageService } from './active-page/active-page-service';
 export * from './telemetry-constants';
 export * from './coming-soon-message.service';
 export { ContentShareHandlerService } from './content/content-share-handler.service';

@@ -179,6 +179,7 @@ export class TelemetryGeneratorService {
             pageId,
             undefined,
             values,
+            undefined,
             corRelationList);
 
     }
@@ -193,7 +194,8 @@ export class TelemetryGeneratorService {
         const values = new Map();
         values['isFirstTime'] = isFirstTime;
         values['size'] = content.size;
-        const telemetryObject = new TelemetryObject(content.identifier || content.contentId, content.contentType, content.pkgVersion);
+        const telemetryObject = new TelemetryObject(content.identifier || content.contentId,
+            content.contentData ? content.contentData.contentType : content.contentType, content.contentData.pkgVersion);
         this.generateInteractTelemetry(
             InteractType.OTHER,
             InteractSubtype.LOADING_SPINE,

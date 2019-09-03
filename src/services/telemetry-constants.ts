@@ -110,7 +110,9 @@ export enum PageId {
     CONTENT_TRANSFER_SUCCEED_POPUP = 'content-transfer-succeed-popup',
     CANCELLING_CONTENT_TRANSFER_POPUP = 'cancelling-content-transfer-popup',
     DIAL_SEARCH = 'dial-book-result',
-    TEXTBOOK_TOC = 'textbook-toc'
+    TEXTBOOK_TOC = 'textbook-toc',
+    EXPLORE_MORE_CONTENT = 'explore-more-content'
+
 }
 export enum LogType {
     NOTIFICATION = 'notification'
@@ -139,7 +141,8 @@ export enum ImpressionSubtype {
     INVALID_QR_CODE = 'invalid-qr-code',
     APP_RATING_POPUP = 'app-rating-popup',
     QR_SCAN_WALKTHROUGH = 'qr-scan-walkthrough',
-    COMINGSOON_POPUP = 'coming-soon-popup'
+    COMINGSOON_POPUP = 'coming-soon-popup',
+    EXPLORE_MORE_CONTENT = 'explore-more-content'
 }
 export enum InteractType {
     TOUCH = 'TOUCH',
@@ -320,7 +323,13 @@ export enum InteractSubtype {
     SHEEN_ANIMATION_END = 'sheen-animation-ended',
     FILTER_CLICKED = 'filter-clicked',
     DROPDOWN_CLICKED = 'drop-down-clicked',
-    SUBUNIT_CLICKED = 'sub-unit-clicked'
+    SUBUNIT_CLICKED = 'sub-unit-clicked',
+    SEE_MORE_CONTENT_CLICKED = 'see-more-content-clicked',
+    SEARCH_COMPLETED = 'search-completed',
+    SORT_BY_FILTER_SET = 'sort-by-filter-set',
+    SUBJECT_CLICKED = 'subject-clicked',
+    SORT_BY_CLICKED = 'sort-by-clicked',
+    SEARCH_INITIATED = 'search-initiated'
 }
 
 export enum ActionButtonType {

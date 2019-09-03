@@ -25,7 +25,8 @@ export class ContentPlayerHandler {
     /**
      * Launches Content-Player with given configuration
      */
-    public launchContentPlayer(content: Content, isStreaming: boolean, shouldDownloadnPlay: boolean, contentInfo: ContentInfo) {
+    public launchContentPlayer(
+        content: Content, isStreaming: boolean, shouldDownloadnPlay: boolean, contentInfo: ContentInfo, isCourse: boolean) {
         if (!AppGlobalService.isPlayerLaunched) {
             AppGlobalService.isPlayerLaunched = true;
         }
@@ -52,6 +53,12 @@ export class ContentPlayerHandler {
         request['correlationData'] = contentInfo.correlationList;
         this.playerService.getPlayerConfig(content, request).subscribe((data) => {
             data['data'] = {};
+            if (isCourse) {
+                data.config.overlay.enableUserSwitcher = false;
+                data.config.overlay.showUser = false;
+            } else {
+                data.config.overlay.enableUserSwitcher = true;
+            }
             if (data.metadata.mimeType === 'application/vnd.ekstep.ecml-archive') {
                 if (!isStreaming) {
                     this.file.checkFile(`file://${data.metadata.basePath}/`, 'index.ecml').then((isAvailable) => {
@@ -66,7 +73,6 @@ export class ContentPlayerHandler {
                         console.error('err', err);
                         this.canvasPlayerService.readJSON(`${data.metadata.basePath}/index.json`).then((json) => {
                             data['data'] = json;
-                            //this.app.getActiveNavs()[0].push(PlayerPage, { config: data });
                             this.router.navigate([RouterLinks.PLAYER], { state: { config: data } });
 
                         }).catch((e) => {
@@ -74,12 +80,10 @@ export class ContentPlayerHandler {
                         });
                     });
                 } else {
-                    // this.app.getActiveNavs()[0].push(PlayerPage, { config: data });
                     this.router.navigate([RouterLinks.PLAYER], { state: { config: data } });
                 }
 
             } else {
-                // this.app.getActiveNavs()[0].push(PlayerPage, { config: data });
                 this.router.navigate([RouterLinks.PLAYER], { state: { config: data } });
             }
         });

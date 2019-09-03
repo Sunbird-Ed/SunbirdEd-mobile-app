@@ -64,8 +64,6 @@ export class SunbirdQRScanner {
     const that = this;
     this.translate.get(this.QR_SCANNER_TEXT).subscribe((data) => {
       that.mQRScannerText = data;
-    }, (error) => {
-
     });
 
     this.translate.onLangChange.subscribe(() => {
@@ -73,7 +71,6 @@ export class SunbirdQRScanner {
     });
 
     this.appVersion.getAppName().then((appName: any) => this.appName = appName);
-
   }
 
   public async startScanner(
@@ -168,8 +165,7 @@ export class SunbirdQRScanner {
     });
 
     await toast.present();
-    await toast.onWillDismiss().then((res) => {
-      console.log("res", res);
+    toast.onWillDismiss().then((res) => {
       if (res.role === 'cancel') {
 
         this.telemetryGeneratorService.generateInteractTelemetry(
@@ -239,12 +235,10 @@ export class SunbirdQRScanner {
 
   }
   public stopScanner() {
-    if (this.backButtonFunc) {
-      this.backButtonFunc.unsubscribe();
-      this.backButtonFunc = undefined;
-    }
+    setTimeout(() => {
+      (window as any).qrScanner.stopScanner();
+    }, 100);
 
-    (window as any).qrScanner.stopScanner();
     if (this.pauseSubscription) {
       this.pauseSubscription.unsubscribe();
     }
@@ -265,12 +259,7 @@ export class SunbirdQRScanner {
   private startQRScanner(
     screenTitle: string, displayText: string, displayTextColor: string,
     buttonText: string, showButton: boolean, source: string) {
-    if (this.backButtonFunc) {
-      return;
-    }
-    this.backButtonFunc = this.platform.backButton.subscribeWithPriority(11, () => {
-      this.stopScanner();
-    });
+
     window['qrScanner'].startScanner(screenTitle, displayText,
       displayTextColor, buttonText, showButton, this.platform.isRTL, (scannedData) => {
         if (scannedData === 'skip') {
