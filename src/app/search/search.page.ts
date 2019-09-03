@@ -128,7 +128,6 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
     const extras = this.router.getCurrentNavigation().extras.state;
 
     if (extras) {
-      console.log('extranavigation', extras.content);
       this.dialCode = extras.dialCode;
       this.contentType = extras.contentType;
       this.corRelationList = extras.corRelation;
