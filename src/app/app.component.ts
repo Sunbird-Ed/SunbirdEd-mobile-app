@@ -15,7 +15,7 @@ import {
 
 import { InteractType, InteractSubtype, Environment, PageId, ImpressionType } from 'services/telemetry-constants';
 import { GenericAppConfig, PreferenceKey } from './app.constant';
-import { ActivePageService } from '@app/services/active-page-service';
+import { ActivePageService } from '@app/services/active-page/active-page-service';
 import {
   AppGlobalService,
   CommonUtilService,
@@ -394,7 +394,6 @@ export class AppComponent implements OnInit, AfterViewInit {
 
     splashscreen.markImportDone();
     splashscreen.hide();
-    this.appGlobalService.hideSplashScreen(1500);
   }
 
   private autoSyncTelemetry() {

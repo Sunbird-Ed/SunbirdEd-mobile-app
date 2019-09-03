@@ -1,6 +1,5 @@
-import { Router } from '@angular/router';
 import { RouterLinks } from '@app/app/app.constant';
-import { PageId } from './telemetry-constants';
+import { PageId } from '../telemetry-constants';
 
 export class ActivePageService {
 
