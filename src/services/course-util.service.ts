@@ -1,4 +1,3 @@
-// import {ViewCreditsComponent} from '@app/component';
 import { Injectable } from '@angular/core';
 import { PopoverController } from '@ionic/angular';
 import { ContentImport } from 'sunbird-sdk';
@@ -14,8 +13,7 @@ export class CourseUtilService {
 
     /**
      * Returns course progress in percentage
-     * @param {any}    leafNodeCount
-     * @param {number} progress Course Progress
+     * @param progress Course Progress
      */
     getCourseProgress(leafNodeCount: any, progress: number) {
         if (leafNodeCount === 0 || leafNodeCount === '0' || leafNodeCount === undefined) {
@@ -36,8 +34,6 @@ export class CourseUtilService {
 
     /**
      * Returns ImportContentRequest body
-     * @param {object} identifiers
-     * @param {boolean} isChild
      */
     getImportContentRequestBody(identifiers, isChild: boolean): Array<ContentImport> {
         const requestParams = [];

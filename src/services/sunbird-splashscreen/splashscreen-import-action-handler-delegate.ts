@@ -1,5 +1,5 @@
-import {SplashscreenActionHandlerDelegate} from './splashscreen-action-handler-delegate';
-import {Observable} from 'rxjs/Observable';
+import { SplashscreenActionHandlerDelegate } from './splashscreen-action-handler-delegate';
+import { Observable } from 'rxjs/Observable';
 import {
   ContentEventType,
   ContentImportProgress,
@@ -11,18 +11,19 @@ import {
   ContentImportResponse,
   ContentImportStatus
 } from 'sunbird-sdk';
-import {Inject, Injectable} from '@angular/core';
-import {CommonUtilService} from '../common-util.service';
-import {Events} from '@ionic/angular';
+import { Inject, Injectable } from '@angular/core';
+import { CommonUtilService } from 'services/common-util.service';
+import { Events } from '@ionic/angular';
 
 @Injectable()
 export class SplashscreenImportActionHandlerDelegate implements SplashscreenActionHandlerDelegate {
-  constructor(@Inject('CONTENT_SERVICE') private contentService: ContentService,
-              @Inject('EVENTS_BUS_SERVICE') private eventsBusService: EventsBusService,
-              @Inject('PROFILE_SERVICE') private profileService: ProfileService,
-              @Inject('TELEMETRY_SERVICE') private telemetryService: TelemetryService,
-              private events: Events,
-              private commonUtilService: CommonUtilService) {
+  constructor(
+    @Inject('CONTENT_SERVICE') private contentService: ContentService,
+    @Inject('EVENTS_BUS_SERVICE') private eventsBusService: EventsBusService,
+    @Inject('PROFILE_SERVICE') private profileService: ProfileService,
+    @Inject('TELEMETRY_SERVICE') private telemetryService: TelemetryService,
+    private events: Events,
+    private commonUtilService: CommonUtilService) {
   }
 
   onAction(type: string, payload: { filePath: string }): Observable<undefined> {
@@ -48,7 +49,7 @@ export class SplashscreenImportActionHandlerDelegate implements SplashscreenActi
       case 'epar': {
         return this.profileService.importProfile({
           sourceFilePath: filePath
-        }).do(({imported, failed}) => {
+        }).do(({ imported, failed }) => {
           this.commonUtilService.showToast('CONTENT_IMPORTED');
         }).mapTo(undefined) as any;
       }
