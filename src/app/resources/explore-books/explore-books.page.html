@@ -52,19 +52,20 @@
   <div class="spinner-container" *ngIf="showLoader">
     <ion-spinner padding class="loader"></ion-spinner>
   </div>
-  <ng-container *ngFor="let content of contentSearchResult let i = index">
+  <ng-container *ngFor="let content of contentSearchResult; let i = index">
     <div class="sb-card-container sb-card-textbook-container">
-      <app-text-book-card [content]="content" [layoutName]='layoutName' (click)="openContent(content, i)"></app-text-book-card>
+      <app-text-book-card [content]="content" [layoutName]="layoutName" (click)="openContent(content, i)">
+      </app-text-book-card>
     </div>
   </ng-container>
 
   <div padding text-center class="mt-32 mb-32" *ngIf="!commonUtilService?.networkInfo?.isNetworkAvailable">
     <img src="assets/imgs/outline-cloud_off.svg" />
     <ion-text>
-<h6 class="offline-header">
-      <b>{{ 'NO_INTERNET_TITLE' | translate }}</b>
-    </h6>
-</ion-text>
+      <h6 class="offline-header">
+        <b>{{ 'NO_INTERNET_TITLE' | translate }}</b>
+      </h6>
+    </ion-text>
     <p class="offline-content">{{ 'OFFLINE_WARNING_ETBUI' | translate }}</p>
   </div>
 

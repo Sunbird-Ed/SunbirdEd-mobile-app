@@ -108,7 +108,7 @@ export class ExploreBooksPage implements OnInit, OnDestroy {
     }
   ];
   headerObservable: any;
-  unregisterBackButton: any;
+  unregisterBackButton: Subscription;
   contentType: Array<string> = [];
   audienceFilter = [];
   contentSearchResult: Array<any> = [];
@@ -364,7 +364,7 @@ export class ExploreBooksPage implements OnInit, OnDestroy {
     }
 
     if (this.unregisterBackButton) {
-      this.unregisterBackButton();
+      this.unregisterBackButton.unsubscribe();
     }
 
     if (this.searchFormSubscription) {
