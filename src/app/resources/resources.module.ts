@@ -7,8 +7,7 @@ import { IonicModule } from '@ionic/angular';
 import { ComponentsModule } from '../components/components.module';
 import { DirectivesModule } from '@app/directives/directives.module';
 import { ExploreBooksSortComponent } from './explore-books-sort/explore-books-sort.component';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { ExploreBooksPageModule } from './explore-books/explore-books.module';
+import { ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
