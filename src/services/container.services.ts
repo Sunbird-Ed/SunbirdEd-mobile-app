@@ -5,7 +5,6 @@ export interface TabOptions {
   icon?: string;
   label?: string;
   index?: number;
-  tabsHideOnSubPages?: boolean;
   isSelected?: boolean;
 }
 
@@ -20,9 +19,7 @@ export class ContainerService {
 
   getAllTabs(): Array<any> {
     return this.tabs.sort((prev, next) => {
-      if (prev.index < next.index) return -1;
-      if (prev.index > next.index) return 1;
-      return 0;
+      return prev.index - next.index;
     });
   }
 

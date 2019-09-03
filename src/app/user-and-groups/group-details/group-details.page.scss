@@ -107,7 +107,5 @@
 }
 
 .gd-row-padding {
-  // Migration TODO RTL
-  // @include padding(12px, 16px, 16px, 18px !important);
-  padding: 12px 16px 16px 18px !important;
+  @include padding(12px, 16px, 16px, 18px !important);
 }

@@ -23,7 +23,7 @@ import { AppGlobalService } from '@app/services/app-global-service.service';
 import { AppHeaderService } from '@app/services/app-header.service';
 import { FormAndFrameworkUtilService } from '@app/services/formandframeworkutil.service';
 import { ContainerService } from '@app/services/container.services';
-import { ProfileConstants } from '@app/app/app.constant';
+import { ProfileConstants, RouterLinks } from '@app/app/app.constant';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Location } from '@angular/common';
 
@@ -415,14 +415,11 @@ export class CategoriesEditPage implements OnInit {
               this.formAndFrameworkUtilService.updateLoggedInUser(updatedProfile, this.profile)
                 .then((value) => {
                   initTabs(this.container, LOGIN_TEACHER_TABS);
-                  // Migration todo
-                  // this.navCtrl.setRoot(TabsPage);
-
+                  this.router.navigate([RouterLinks.TABS]);
                 });
             }).catch(e => {
               initTabs(this.container, LOGIN_TEACHER_TABS);
-              // Migration todo
-              // this.navCtrl.setRoot(TabsPage);
+              this.router.navigate([RouterLinks.TABS]);
             });
         } else {
           this.location.back();

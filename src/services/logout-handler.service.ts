@@ -1,23 +1,23 @@
-import {Inject, Injectable} from '@angular/core';
-import { PreferenceKey, RouterLinks} from '../app/app.constant';
+import { Inject, Injectable } from '@angular/core';
+import { PreferenceKey, RouterLinks } from '../app/app.constant';
 
-import {AppGlobalService, CommonUtilService, TelemetryGeneratorService} from '.';
+import { AppGlobalService, CommonUtilService, TelemetryGeneratorService } from '.';
 // import {OnboardingPage} from '@app/pages/onboarding/onboarding';
-import {Events} from '@ionic/angular';
+import { Events } from '@ionic/angular';
 import {
   AuthService,
   ProfileService,
   ProfileType,
   SharedPreferences
 } from 'sunbird-sdk';
-import {Observable} from 'rxjs';
+import { Observable } from 'rxjs';
 import {
   Environment,
   InteractSubtype,
   InteractType,
   PageId
 } from './telemetry-constants';
-import {ContainerService} from './container.services';
+import { ContainerService } from './container.services';
 import { GUEST_STUDENT_TABS, GUEST_TEACHER_TABS, initTabs } from '@app/app/module.service';
 import { Router, NavigationExtras } from '@angular/router';
 // import {TabsPage} from '@app/pages/tabs/tabs';
@@ -75,6 +75,8 @@ export class LogoutHandlerService {
       } else if (selectedUserType === ProfileType.TEACHER) {
         initTabs(this.containerService, GUEST_TEACHER_TABS);
       }
+
+      this.events.publish('UPDATE_TABS');
       const navigationExtras: NavigationExtras = { state: { loginMode: 'guest' } };
       this.router.navigate([`/${RouterLinks.TABS}`], navigationExtras);
     }
