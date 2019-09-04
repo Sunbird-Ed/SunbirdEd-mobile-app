@@ -40,6 +40,7 @@ import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 import { ViewCreditsComponent } from './popups/view-credits/view-credits.component';
 import { SkeletonItemComponent } from './skeleton-item/skeleton-item.component';
 import { FilteroptionComponent } from './filteroption/filteroption.component';
+import { AccountRecoveryInfoComponent } from './popups/account-recovery-id/account-recovery-id-popup.component';
 
 @NgModule({
   declarations: [
@@ -65,7 +66,6 @@ import { FilteroptionComponent } from './filteroption/filteroption.component';
     EditContactDetailsPopupComponent,
     EditContactVerifyPopupComponent,
     ConfirmAlertComponent,
-    EditContactDetailsPopupComponent,
     EditContactVerifyPopupComponent,
     AppRatingAlertComponent,
     OverflowMenuComponent,
@@ -75,7 +75,8 @@ import { FilteroptionComponent } from './filteroption/filteroption.component';
     AssessmentDetailsComponent,
     ViewCreditsComponent,
     SkeletonItemComponent,
-    FilteroptionComponent
+    FilteroptionComponent,
+    AccountRecoveryInfoComponent
   ],
   imports: [
     CommonModule,
@@ -104,7 +105,8 @@ import { FilteroptionComponent } from './filteroption/filteroption.component';
     ViewCreditsComponent,
     FilteroptionComponent,
     ContentActionsComponent,
-    ReportAlertComponent
+    ReportAlertComponent,
+    AccountRecoveryInfoComponent
   ],
   exports: [
     ApplicationHeaderComponent,
@@ -127,9 +129,7 @@ import { FilteroptionComponent } from './filteroption/filteroption.component';
     SbDownloadPopupComponent,
     UpgradePopoverComponent,
     EditContactDetailsPopupComponent,
-    EditContactDetailsPopupComponent,
     ConfirmAlertComponent,
-    EditContactDetailsPopupComponent,
     EditContactVerifyPopupComponent,
     AppRatingAlertComponent,
     ProfileAvatarComponent,
@@ -138,7 +138,8 @@ import { FilteroptionComponent } from './filteroption/filteroption.component';
     ViewCreditsComponent,
     SkeletonItemComponent,
     FilteroptionComponent,
-    ReportAlertComponent
+    ReportAlertComponent,
+    AccountRecoveryInfoComponent
   ],
   providers: [FileSizePipe, Keyboard]
 })

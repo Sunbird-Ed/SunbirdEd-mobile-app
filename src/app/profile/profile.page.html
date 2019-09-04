@@ -113,6 +113,15 @@
         <span class="value align-middle">{{'ADD_EMAIL' | translate}}</span>
       </div>
     </div>
+
+    <div class="MT10">
+      <div class="email light" (click)="editRecoveryId();">
+        <span class="icon MR10 align-middle">
+          <ion-icon name="md-mail"></ion-icon>
+        </span>
+        <span class="value align-middle">Add Recovery ID</span>
+      </div>
+    </div>
   </div>
 
   <div class="school-details" *ngIf="profile?.framework">
