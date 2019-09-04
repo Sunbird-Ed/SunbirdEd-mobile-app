@@ -41,6 +41,7 @@ import { ViewCreditsComponent } from './popups/view-credits/view-credits.compone
 import { SkeletonItemComponent } from './skeleton-item/skeleton-item.component';
 import { FilteroptionComponent } from './filteroption/filteroption.component';
 import { SbInsufficientStoragePopupComponent } from './popups/sb-insufficient-storage-popup/sb-insufficient-storage-popup';
+import { AccountRecoveryInfoComponent } from './popups/account-recovery-id/account-recovery-id-popup.component';
 
 @NgModule({
   declarations: [
@@ -66,7 +67,6 @@ import { SbInsufficientStoragePopupComponent } from './popups/sb-insufficient-st
     EditContactDetailsPopupComponent,
     EditContactVerifyPopupComponent,
     ConfirmAlertComponent,
-    EditContactDetailsPopupComponent,
     EditContactVerifyPopupComponent,
     AppRatingAlertComponent,
     OverflowMenuComponent,
@@ -77,7 +77,8 @@ import { SbInsufficientStoragePopupComponent } from './popups/sb-insufficient-st
     ViewCreditsComponent,
     SkeletonItemComponent,
     FilteroptionComponent,
-    SbInsufficientStoragePopupComponent
+    SbInsufficientStoragePopupComponent,
+    AccountRecoveryInfoComponent
   ],
   imports: [
     CommonModule,
@@ -107,7 +108,8 @@ import { SbInsufficientStoragePopupComponent } from './popups/sb-insufficient-st
     FilteroptionComponent,
     ContentActionsComponent,
     ReportAlertComponent,
-    SbInsufficientStoragePopupComponent
+    SbInsufficientStoragePopupComponent,
+    AccountRecoveryInfoComponent
   ],
   exports: [
     ApplicationHeaderComponent,
@@ -130,9 +132,7 @@ import { SbInsufficientStoragePopupComponent } from './popups/sb-insufficient-st
     SbDownloadPopupComponent,
     UpgradePopoverComponent,
     EditContactDetailsPopupComponent,
-    EditContactDetailsPopupComponent,
     ConfirmAlertComponent,
-    EditContactDetailsPopupComponent,
     EditContactVerifyPopupComponent,
     AppRatingAlertComponent,
     ProfileAvatarComponent,
@@ -142,7 +142,8 @@ import { SbInsufficientStoragePopupComponent } from './popups/sb-insufficient-st
     SkeletonItemComponent,
     FilteroptionComponent,
     ReportAlertComponent,
-    SbInsufficientStoragePopupComponent
+    SbInsufficientStoragePopupComponent,
+    AccountRecoveryInfoComponent
   ],
   providers: [FileSizePipe, Keyboard]
 })

@@ -568,5 +568,8 @@
   "SEARCH_BOOK": "Search for content (Eg: ’English Stories’)",
   "TEXTBOOK": "Textbooks",
   "EXTRACTING_CONTENT": "Extracting content",
-  "AVAILABLE_FOR_TEACHERS":"Available for teachers only"
+  "AVAILABLE_FOR_TEACHERS":"Available for teachers only",
+  "UPDATE_RECOVERY_ID": "Update recovery ID",
+  "CHOOSE_RECOVERY_ID_TYPE": "Choose recovery ID type:",
+  "EMAIL_ID_PLACEHOLDER": "Email ID"
 }
