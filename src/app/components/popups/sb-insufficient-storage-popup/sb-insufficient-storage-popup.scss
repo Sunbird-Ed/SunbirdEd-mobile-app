@@ -1,0 +1,25 @@
+sb-insufficient-storage-popup {
+
+    .no-net-heading{
+        font-size: $font-size-normal;
+        font-weight: $font-weight-bold;
+        padding-left: $base-block-space * 0.5;
+    }
+
+    .no-net-message{
+        font-size: $font-size-normal - 2;
+        padding-left: $base-block-space * 0.5;
+    }
+
+    .no-net-popup{
+        background-color: #E55A28 !important;
+        color: $white-color !important;
+    }
+
+    .no-net-close-btn{
+        font-size: 24px;
+        float: right;
+        padding: 2px;
+    }
+
+}

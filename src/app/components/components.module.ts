@@ -40,6 +40,7 @@ import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 import { ViewCreditsComponent } from './popups/view-credits/view-credits.component';
 import { SkeletonItemComponent } from './skeleton-item/skeleton-item.component';
 import { FilteroptionComponent } from './filteroption/filteroption.component';
+import { SbInsufficientStoragePopupComponent } from './popups/sb-insufficient-storage-popup/sb-insufficient-storage-popup';
 
 @NgModule({
   declarations: [
@@ -75,7 +76,8 @@ import { FilteroptionComponent } from './filteroption/filteroption.component';
     AssessmentDetailsComponent,
     ViewCreditsComponent,
     SkeletonItemComponent,
-    FilteroptionComponent
+    FilteroptionComponent,
+    SbInsufficientStoragePopupComponent
   ],
   imports: [
     CommonModule,
@@ -104,7 +106,8 @@ import { FilteroptionComponent } from './filteroption/filteroption.component';
     ViewCreditsComponent,
     FilteroptionComponent,
     ContentActionsComponent,
-    ReportAlertComponent
+    ReportAlertComponent,
+    SbInsufficientStoragePopupComponent
   ],
   exports: [
     ApplicationHeaderComponent,
@@ -138,7 +141,8 @@ import { FilteroptionComponent } from './filteroption/filteroption.component';
     ViewCreditsComponent,
     SkeletonItemComponent,
     FilteroptionComponent,
-    ReportAlertComponent
+    ReportAlertComponent,
+    SbInsufficientStoragePopupComponent
   ],
   providers: [FileSizePipe, Keyboard]
 })
