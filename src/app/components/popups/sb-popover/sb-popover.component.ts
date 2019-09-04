@@ -87,9 +87,9 @@ export class SbPopoverComponent implements OnDestroy {
       if (actionsButton.btnDisabled$) {
         this.sbPopoverDynamicButtonDisabledSubscription = actionsButton.btnDisabled$
           .do((v) => {
-            this.ngZone.run(() => {
+            // this.ngZone.run(() => {
               actionsButton.btnDisabled = v;
-            });
+            // });
           })
           .subscribe();
       }
