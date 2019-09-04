@@ -492,7 +492,7 @@ export class ProfileSettingsPage implements OnInit {
         undefined,
         values
       );
-      // this.boardSelect.open();
+      this.boardSelect.open();
       return false;
     } else if (formVal.medium.length === 0) {
       this.btnColor = '#8FC4FF';
@@ -510,7 +510,7 @@ export class ProfileSettingsPage implements OnInit {
         undefined,
         values
       );
-      // this.mediumSelect.open();
+      this.mediumSelect.open();
       return false;
     } else if (formVal.grades.length === 0) {
       this.btnColor = '#8FC4FF';
@@ -518,7 +518,7 @@ export class ProfileSettingsPage implements OnInit {
         PageId.ONBOARDING_PROFILE_PREFERENCES, InteractSubtype.FINISH_CLICKED);
       // this.commonUtilService.showToast(this.commonUtilService.translateMessage('PLEASE_SELECT', this.commonUtilService
       //   .translateMessage('CLASS')), false, 'redErrorToast');
-      // this.gradeSelect.open();
+      this.gradeSelect.open();
       const values = new Map();
       values['grades'] = 'na';
       this.telemetryService.generateInteractTelemetry(

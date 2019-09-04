@@ -31,6 +31,7 @@ import { Environment, InteractSubtype, InteractType, PageId } from '@app/service
 import { ActivatedRoute, Router, NavigationExtras } from '@angular/router';
 import { EditContactVerifyPopupComponent } from '@app/app/components/popups/edit-contact-verify-popup/edit-contact-verify-popup.component';
 import { EditContactDetailsPopupComponent } from '@app/app/components/popups/edit-contact-details-popup/edit-contact-details-popup.component';
+import { AccountRecoveryInfoComponent } from '../components/popups/account-recovery-id/account-recovery-id-popup.component';
 
 @Component({
   selector: 'app-profile',
@@ -715,5 +716,24 @@ export class ProfilePage implements OnInit {
     } else {
       this.organisationDetails = orgItemList[0].orgName;
     }
+  }
+
+  async editRecoveryId() {
+    const popover = await this.popoverCtrl.create({
+      component: AccountRecoveryInfoComponent,
+      componentProps: {},
+      cssClass: 'popover-alert'
+    });
+    await popover.present();
+
+    this.telemetryGeneratorService.generateInteractTelemetry(
+      InteractType.TOUCH,
+      InteractSubtype.RECOVERY_ACCOUNT_ID_CLICKED,
+      Environment.USER,
+      PageId.PROFILE, undefined
+    );
+
+    const { data } = await popover.onDidDismiss();
+    console.log(data);
   }
 }

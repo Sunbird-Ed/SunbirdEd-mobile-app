@@ -111,8 +111,8 @@ export enum PageId {
     CANCELLING_CONTENT_TRANSFER_POPUP = 'cancelling-content-transfer-popup',
     DIAL_SEARCH = 'dial-book-result',
     TEXTBOOK_TOC = 'textbook-toc',
-    EXPLORE_MORE_CONTENT = 'explore-more-content'
-
+    EXPLORE_MORE_CONTENT = 'explore-more-content',
+    RECOVERY_ACCOUNT_ID_POPUP = 'recovery-account-id-popup',
 }
 export enum LogType {
     NOTIFICATION = 'notification'
@@ -142,7 +142,8 @@ export enum ImpressionSubtype {
     APP_RATING_POPUP = 'app-rating-popup',
     QR_SCAN_WALKTHROUGH = 'qr-scan-walkthrough',
     COMINGSOON_POPUP = 'coming-soon-popup',
-    EXPLORE_MORE_CONTENT = 'explore-more-content'
+    EXPLORE_MORE_CONTENT = 'explore-more-content',
+    RECOVERY_ACCOUNT_POPUP = 'recovery-account-popup'
 }
 export enum InteractType {
     TOUCH = 'TOUCH',
@@ -329,7 +330,8 @@ export enum InteractSubtype {
     SORT_BY_FILTER_SET = 'sort-by-filter-set',
     SUBJECT_CLICKED = 'subject-clicked',
     SORT_BY_CLICKED = 'sort-by-clicked',
-    SEARCH_INITIATED = 'search-initiated'
+    SEARCH_INITIATED = 'search-initiated',
+    RECOVERY_ACCOUNT_ID_CLICKED = 'recovery-account-id-clicked'
 }
 
 export enum ActionButtonType {
