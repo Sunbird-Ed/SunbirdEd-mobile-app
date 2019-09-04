@@ -5,12 +5,12 @@ import {
     Events,
     PopoverController,
     Platform,
-    AlertController,
 } from '@ionic/angular';
 import { ToastOptions } from '@ionic/core';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs-compat';
 import { Network } from '@ionic-native/network/ngx';
+import { WebView } from '@ionic-native/ionic-webview/ngx';
 import { SharedPreferences } from 'sunbird-sdk';
 
 import { PreferenceKey } from '@app/app/app.constant';
@@ -49,6 +49,7 @@ export class CommonUtilService implements OnDestroy {
         private zone: NgZone,
         private platform: Platform,
         private telemetryGeneratorService: TelemetryGeneratorService,
+        private webView: WebView
     ) {
         this.listenForEvents();
 
@@ -353,5 +354,13 @@ export class CommonUtilService implements OnDestroy {
 
     get currentTabName() {
         return this._currentTabName;
+    }
+
+    convertFileSrc(img) {
+        if (img === null) {
+            return '';
+        } else {
+            return this.webView.convertFileSrc(img);
+        }
     }
 }
