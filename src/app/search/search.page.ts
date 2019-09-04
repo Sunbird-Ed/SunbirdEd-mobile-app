@@ -1335,6 +1335,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
             this.loadingDisplayText = 'Loading content ';
           }
         }
+
         if (event.type === ContentEventType.IMPORT_PROGRESS) {
           this.loadingDisplayText = this.commonUtilService.translateMessage('EXTRACTING_CONTENT') + ' ' +
             Math.floor((event.payload.currentCount / event.payload.totalCount) * 100) +
