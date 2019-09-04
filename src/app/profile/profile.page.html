@@ -6,7 +6,10 @@
   </div>
   <ion-refresher (ionRefresh)="doRefresh($event)"></ion-refresher>
   <div padding-horizontal text-center class="MT15" *ngIf="profile?.firstName">
-    <app-profile-avatar [username]="profile?.firstName"></app-profile-avatar>
+    <!-- <app-profile-avatar [username]="profile?.firstName"></app-profile-avatar> -->
+    <app-profile-avatar [username]="profile?.firstName" *ngIf="isCustodianOrgId"></app-profile-avatar>
+    <img *ngIf="!isCustodianOrgId" src="./assets/imgs/avatar-tickmark.svg" alt="certified" class="avatar-tickmark">
+    <app-profile-avatar [username]="profile?.firstName" [isStateUser]="!isCustodianOrgId" class="profileAvatar" *ngIf="!isCustodianOrgId"></app-profile-avatar>
   </div>
 
   <div padding-horizontal text-center>
@@ -108,6 +111,15 @@
           <ion-icon name="md-mail"></ion-icon>
         </span>
         <span class="value align-middle">{{'ADD_EMAIL' | translate}}</span>
+      </div>
+    </div>
+
+    <div class="MT10">
+      <div class="email light" (click)="editRecoveryId();">
+        <span class="icon MR10 align-middle">
+          <ion-icon name="md-mail"></ion-icon>
+        </span>
+        <span class="value align-middle">Add Recovery ID</span>
       </div>
     </div>
   </div>

@@ -247,8 +247,8 @@ export class StorageSettingsPage implements OnInit {
 
     const res = await toast.onWillDismiss();
     console.log("res", res);
-    if (res.role === 'close') {
-      this.router.navigate([`${RouterLinks.PERMISSION}`], { state: { changePermissionAccess: true } });
+    if (res.role === 'cancel') {
+      this.router.navigate([`/${RouterLinks.SETTINGS}/${RouterLinks.PERMISSION}`], { state: { changePermissionAccess: true } });
     }
   }
 
