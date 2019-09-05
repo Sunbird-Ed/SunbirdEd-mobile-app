@@ -168,6 +168,8 @@ export class EnrolledCourseDetailsPage implements OnInit {
   profileType = '';
   objId;
   objType;
+  batchInfo;
+  batchEndDate;
   objVer;
   didViewLoad: boolean;
   backButtonFunc = undefined;
@@ -233,6 +235,7 @@ export class EnrolledCourseDetailsPage implements OnInit {
         this.appName = appName;
     });
     this.subscribeUtilityEvents();
+    this.getAllBatches();
   }
 
   subscribeUtilityEvents() {
@@ -827,6 +830,28 @@ export class EnrolledCourseDetailsPage implements OnInit {
     if (str) {
       return str.replace(/^\D+/g, '');
     }
+  }
+  getAllBatches(){
+    const courseBatchesRequest: CourseBatchesRequest = {
+      filters: {
+        courseId: this.identifier,
+        status: [CourseBatchStatus.NOT_STARTED, CourseBatchStatus.IN_PROGRESS],
+        enrollmentType: CourseEnrollmentType.OPEN
+      },
+      fields: BatchConstants.REQUIRED_FIELDS
+    };
+    this.courseService.getCourseBatches(courseBatchesRequest).toPromise()
+    .then((data: Batch[]) => {
+      if(data.length > 1){
+        this.batchInfo = data.length;
+      }
+      else {
+        this.batchEndDate = data[0].endDate;
+      }
+    })
+    .catch((error: any) => {
+      console.log('Error while fetching Batch Details', error);
+    });
   }
 
   toggleGroup(group, content) {

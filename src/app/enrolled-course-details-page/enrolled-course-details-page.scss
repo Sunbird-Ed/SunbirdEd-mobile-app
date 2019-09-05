@@ -74,12 +74,24 @@
     ion-card ion-card-content p {
         font-size: 14px;
     }
+    ion-card{
+        --ion-item-background: white;
+    }
+    .play-icon{
+       display: inline;
+       width: 21px;
+       vertical-align: middle;
+       margin-right: 6.43px;
+    }
+    ion-content{
+        --ion-background-color: #F9F9F8;
+    }
     .hr-border-bottom {
         box-sizing: border-box;
         height: 1px;	
         width: 328px;	
         border: 0.5px solid #CCCCCC;
-        margin-top: 5px;
+        margin-top: 9px;
     }
     hr {
         border:0.5px solid #999999;
@@ -157,13 +169,15 @@
         background-color: #008840;
         border: none;
         color: white;
-        padding: 15px 122px;
         text-align: center;
         text-decoration: none;
         display: inline-block;
         font-size: 16px;
         margin: 4px 2px;
         cursor: pointer;
+        outline: none;
+        width: 100%;
+        padding: 13px 0px 13px 0px;
       }
       .border-right{
         border-right: 1.5px solid #e6e6e6;

@@ -149,25 +149,31 @@
 		<ion-card>
 			<ion-card-header class="custom-card-header ion-margin-bottom">
 				<ion-card-title class="font-18">{{course.name}}</ion-card-title>
-				<ion-card-subtitle class="font-14 subtitle-color">by {{ course?.creator || course?.owner }}</ion-card-subtitle>
+				<ion-card-subtitle class="font-14 subtitle-color">by {{ course?.creator || course?.owner }}
+				</ion-card-subtitle>
 				<div class="hr-border-bottom"></div>
 			</ion-card-header>
 			<ion-card-content>
 				<div *ngIf="!courseCardData?.batchId && course?.createdBy !== userId && !isAlreadyEnrolled">
-					<button class="enrolled-course-card-button" (click)="joinTraining()">Join
-						Training</button>
+					<button class="enrolled-course-card-button"
+						(click)="navigateToBatchListPage()">{{'JOIN_TRAINING' | translate}}</button>
 				</div>
 				<div *ngIf="courseCardData?.batchId">
 					<button *ngIf="!showResumeBtn && childrenData?.length" class="enrolled-course-card-button"
-						(click)="startContent()">{{
-							'START_COURSE' | translate }}</button>
+						(click)="startContent()"><span><img class="play-icon" src="assets/imgs/Play@1.5x.svg" alt="play-icon">{{
+										'START_COURSE_NOW' | translate }}</span></button>
 					<button *ngIf="showResumeBtn" class="enrolled-course-card-button"
 						(click)="resumeContent(courseCardData?.lastReadContentId)">{{
-							'RESUME_COURSE' | translate }}</button>
+										'RESUME_COURSE' | translate }}</button>
 				</div>
-				<ion-card-subtitle *ngIf="course?.c_diksha_stage_open_batch_count" class="font-12">
-					<ion-icon name="information-circle"></ion-icon> {{course.c_diksha_stage_open_batch_count}} batches
-					available
+				<ion-card-subtitle *ngIf="batchInfo || batchEndDate" class="font-12">
+					<div *ngIf="batchInfo">
+						<ion-icon name="information-circle"></ion-icon> {{batchInfo}} batches
+						available
+					</div>
+					<div *ngIf="batchEndDate">
+						<ion-icon name="information-circle"></ion-icon> Last date to join {{batchEndDate}}
+					</div>
 				</ion-card-subtitle>
 			</ion-card-content>
 		</ion-card>
@@ -189,12 +195,13 @@
 		<div [ngSwitch]="segmentType">
 			<ion-card *ngSwitchCase="'info'">
 				<ion-card-content>
-                    <div class="certificate-container">
+					<div class="certificate-container">
 						<div class="certificate-icon">
 							<img class="certificate-icon" src="assets/imgs/Certificate icon.svg" alt="certificate-icon">
 						</div>
 						<div class="certificate-text">
-							<ion-card-title class="font-10 certified-section-color">{{'CERTIFIED_TRAINING' | translate}}</ion-card-title>
+							<ion-card-title class="font-10 certified-section-color">{{'CERTIFIED_TRAINING' | translate}}
+							</ion-card-title>
 						</div>
 					</div>
 					<div>
@@ -202,7 +209,7 @@
 							<ion-card-title class="font-12 subtitle-color label-margin-bottom">
 								{{'TRAINING_IS_RELEVENT_TO_TEACHERS'| translate}}:
 							</ion-card-title>
-							<p>Class : {{getNumbersFromArray(course.gradeLevel)}}</p>
+							<p>Class : {{course.gradeLevel}}</p>
 							<p>Subject: {{course.subject}}</p>
 							<p>Medium : {{course.medium}}</p>
 						</div>
