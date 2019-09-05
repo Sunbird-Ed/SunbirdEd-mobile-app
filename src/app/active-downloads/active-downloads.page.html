@@ -6,7 +6,8 @@
         <ion-row>
           <ion-col class="ad-pt-4" size="9">
             <div class="download-page-heading"><b>{{'ACTIVE_DOWNLOADS' | translate}}</b></div>
-            <div class="download-page-info">{{'DOWNLOADING_CONTENT' | translate}} : 1/{{(activeDownloadRequests$ | async)?.length}}</div>
+            <div class="download-page-info">{{'DOWNLOADING_CONTENT' | translate}} :
+              1/{{(activeDownloadRequests$ | async)?.length}}</div>
           </ion-col>
           <ion-col no-padding size="3">
             <div float-right text-center (click)="cancelAllDownloads()">
@@ -46,7 +47,7 @@
 
               <div class="sb-card">
                 <div start class="img-container">
-                  <img src="{{ activeDownload.contentMeta.appIcon || defaultImg }}">
+                  <img [src]="commonUtilService.convertFileSrc(activeDownload.contentMeta.appIcon) || defaultImg">
                 </div>
                 <div end class="sb-card-details">
                   <div class="title">{{activeDownload?.contentMeta.name}}</div>
@@ -74,7 +75,8 @@
 
             </ion-col>
             <ion-col size="2">
-              <button no-margin class="action-btn float-end delete mr-8 ad-action-btn" margin-right (click)="cancelDownload(activeDownload)">
+              <button no-margin class="action-btn float-end delete mr-8 ad-action-btn" margin-right
+                (click)="cancelDownload(activeDownload)">
                 {{'CANCEL' | translate}}
               </button>
             </ion-col>

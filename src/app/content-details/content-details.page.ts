@@ -321,8 +321,8 @@ export class ContentDetailsPage implements OnInit {
       message: this.commonUtilService.translateMessage('NO_INTERNET_TITLE'),
       showCloseButton: true,
       position: 'top',
-      closeButtonText: '',
-      cssClass: 'toastHeader'
+      closeButtonText: 'X',
+      cssClass:  ['toastHeader', 'offline']
     });
     this.toast.present();
     this.toast.onDidDismiss(() => {
@@ -337,7 +337,7 @@ export class ContentDetailsPage implements OnInit {
       message: this.commonUtilService.translateMessage('INTERNET_AVAILABLE'),
       showCloseButton: false,
       position: 'top',
-      cssClass: 'toastForOnline'
+      cssClass: [ 'online', 'toastForOnline']
     });
     toast.present();
   }

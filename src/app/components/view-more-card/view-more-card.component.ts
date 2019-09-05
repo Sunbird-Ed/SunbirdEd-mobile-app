@@ -51,7 +51,7 @@ export class ViewMoreCardComponent implements OnInit {
    *
    * Get used when content / course does not have appIcon or courseLogo
    */
-  defaultImg: string;
+  defaultImg = this.commonUtilService.convertFileSrc('assets/imgs/ic_launcher.png');
   showLoader: boolean;
 
 
@@ -59,44 +59,28 @@ export class ViewMoreCardComponent implements OnInit {
   /**
    * checks wheather batch is expired or not
    */
-  batchExp: Boolean = false;
+  batchExp = false;
   batches: any;
   loader: any;
 
-  /**
-   * Default method of cass SearchListComponent
-   * @param {NavController} navCtrl To navigate user from one page to another
-   * @param {NavParams} navParams ref of navigation params
-   * @param zone
-   * @param courseUtilService
-   * @param events
-   * @param commonUtilService
-   * @param courseService
-   * @param popoverCtrl
-   * @param telemetryGeneratorService
-   * @param appGlobalService
-   */
   constructor(
+    @Inject('COURSE_SERVICE') private courseService: CourseService,
+    @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
     public navCtrl: NavController,
-    // public navParams: NavParams,
     private zone: NgZone,
     public courseUtilService: CourseUtilService,
     public events: Events,
-    private commonUtilService: CommonUtilService,
-    @Inject('COURSE_SERVICE') private courseService: CourseService,
-    private popoverCtrl: PopoverController,
+    public commonUtilService: CommonUtilService,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private appGlobalService: AppGlobalService,
-    @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
     private router: Router
   ) {
-    this.defaultImg = 'assets/imgs/ic_launcher.png';
   }
 
   async checkRetiredOpenBatch(content: any, layoutName?: string) {
     this.loader = await this.commonUtilService.getLoader();
     await this.loader.present();
-    let anyOpenBatch: boolean = false;
+    let anyOpenBatch = false;
     this.enrolledCourses = this.enrolledCourses || [];
     let retiredBatches: Array<any> = [];
     if (layoutName !== ContentCard.LAYOUT_INPROGRESS) {
