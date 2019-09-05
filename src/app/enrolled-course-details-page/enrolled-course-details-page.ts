@@ -61,12 +61,13 @@ import { ProfileConstants, ContentType, EventTopics, MimeType, PreferenceKey, Sh
 import { BatchConstants } from '../app.constant';
 import { ContentShareHandlerService } from '../../services/content/content-share-handler.service';
 import { SbGenericPopoverComponent } from '../components/popups/sb-generic-popover/sb-generic-popover.component';
-import { ContentActionsComponent, ContentRatingAlertComponent } from '../components';
+import { ContentActionsComponent, ContentRatingAlertComponent, ConfirmAlertComponent } from '../components';
 import { Location } from '@angular/common';
 import { Router, NavigationExtras } from '@angular/router';
 import { state } from '@angular/animations';
 import { ContentUtil } from '@app/util/content-util';
 import { AppVersion } from '@ionic-native/app-version/ngx';
+import { SbPopoverComponent } from '../components/popups';
 declare const cordova;
 
 @Component({
@@ -306,6 +307,30 @@ export class EnrolledCourseDetailsPage implements OnInit {
         .catch((error) => {
           this.profileType = '';
         });
+    }
+  }
+
+  async joinTraining(){
+    const confirm = await this.popoverCtrl.create({
+      component: SbPopoverComponent,
+      componentProps: {
+        sbPopoverMainTitle : 'You must join an active batch to view and access training details',
+        metaInfo: 'Register to get complete access to the content',
+        sbPopoverHeading : 'Join Training?',
+        isNotShowCloseIcon: true,
+        actionsButtons: [
+          {
+            btntext: 'Join Training',
+            btnClass: 'popover-color'
+          },
+        ]
+      },
+      cssClass: 'sb-popover info',
+  });
+  await confirm.present();
+  const { data } = await confirm.onDidDismiss();
+  if (data) {
+
     }
   }
 

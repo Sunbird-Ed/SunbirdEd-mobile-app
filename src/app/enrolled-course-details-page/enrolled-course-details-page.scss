@@ -1,5 +1,6 @@
 @import "src/assets/styles/_custom-mixins.scss";
 @import "src/assets/styles/_variables.scss";
+
 :host {
     .fontBold {
         font-weight: bold;
@@ -12,6 +13,16 @@
     }
     .structure-text{
         padding: 7px 0px 0px 4px;
+    }
+    .certified-section-color{
+      color: #08539f;
+    }
+    .certified-training-section{
+        background-color: #e5edf5;
+        padding: 8px;
+    }
+    .font-10{
+        font-size: 10px;
     }
     .font-12 {
         font-size: 12px !important;
@@ -56,6 +67,13 @@
         .progress-inner-secondary {
             background-color: #7ED321 !important;
         }
+    }
+    ion-card ion-card-content p {
+        font-size: 14px;
+    }
+    .hr-border-bottom {
+    border-bottom: 2.5px solid #f2f2f2;
+    margin-top:8px;
     }
     hr {
         border:0.8px solid #cbc4c4;
@@ -139,34 +157,38 @@
         margin: 4px 2px;
         cursor: pointer;
       }
-      ion-segment-button.md.segment-button-has-label.segment-button-has-label-only.segment-button-layout-icon-top
-      .ion-activatable.ion-activatable-instant
-      .hydrated.segment-button-checked{
-          color: #024f9d;
+      .border-right{
+        border-right: 1.5px solid #e6e6e6;
+        margin: 0px 0px 10px 11px;
       }
-      ion-segment-button.md.segment-button-has-label.segment-button-has-label-only
-      .segment-button-layout-icon-top
-      .ion-activatable.ion-activatable-instant.hydrated{
-          color: #97b7d7;
+      .hr-div {
+        padding: 0px 10px 0px 10px;       
       }
+      hr.hr-height {
+        height: 32px;
+      }
+      .segment-button-indicator{
+        width: 84% !important;
+        margin-right: 8% !important;
+      }    
 }
 .sb-topics-containe{
     padding-right: 5%;
   }
   .sb-hidden-content{
-    background-color: #F2F2F2;
-    height: 34.15%;
-    width: 100%;
-    border-radius: 0 0 2px 2px;
-    padding-top: 2%;
-    padding-bottom: 2%;
+    background-color: #F2F2F2 !important;
+    height: 34.15% !important;
+    width: 100% !important;
+    border-radius: 0 0 2px 2px !important;
+    padding-top: 2% !important;
+    padding-bottom: 2% !important;
   }
   .sb-accordian-card{
-    height: 6.1%;
-    width: 100%;
-    border-radius: 2px;
-    background-color: #FFFFFF;
-    box-shadow: 0 4px 7px 0 rgba(0,0,0,0.1);
+    height: 6.1% !important;
+    width: 100% !important;
+    border-radius: 2px !important;
+    background-color: #FFFFFF !important;
+    box-shadow: 0 4px 7px 0 rgba(0,0,0,0.1) !important;
   }
   .sb-topic-text {
     &.sb-topic-text {
@@ -178,3 +200,21 @@
     font-size: 14px;
     line-height: 20px;
   }
+
+  .certificate-container {
+    display: inline-flex;
+    flex-wrap: nowrap;
+    align-items:center;
+    background-color: #E5EDF6;
+    padding: 4px;
+    margin-bottom: 12px;
+    .certificate-icon {
+      padding-right: 5px;
+    }
+  }
+  .sc-ion-segment-md-h{
+    --color-checked : #024f9d;
+    --color: #467fb8;
+  }
+  
+  
