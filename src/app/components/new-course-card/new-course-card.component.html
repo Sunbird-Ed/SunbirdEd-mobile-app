@@ -3,7 +3,7 @@
   (click)="navigateToDetailPage(course)">
   <div class="img-container">
     <img alt="" *ngIf="!(!course.isAvailableLocally && !commonUtilService.networkInfo.isNetworkAvailable)"
-      src="{{ course?.contentData?.courseLogoUrl || course?.contentData?.appIcon || defaultImg }}" />
+      [src]="commonUtilService.convertFileSrc(course?.contentData?.courseLogoUrl) || commonUtilService.convertFileSrc(course?.contentData?.appIcon) || defaultImg " />
     <img alt="" *ngIf="!course.isAvailableLocally && !commonUtilService.networkInfo.isNetworkAvailable"
       src="assets/imgs/ic_offline_white_sm.png" />
   </div>

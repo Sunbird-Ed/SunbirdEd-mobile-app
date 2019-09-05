@@ -85,7 +85,7 @@
 </ion-header>
 
 <ion-menu contentId="mainContent" class="sb-side-menu" *ngIf="isRtl" side="end" persistent="true"
-  [disabled]="headerConfig?.showBurgerMenu || false">
+  [swipeGesture]="headerConfig?.showBurgerMenu || false">
   <ion-header>
     <ion-toolbar>
       <ion-title>
@@ -155,7 +155,7 @@
   </ion-footer>
 </ion-menu>
 
-<ion-menu contentId="mainContent" class="sb-side-menu" *ngIf="!isRtl" side="start" persistent="true" >
+<ion-menu contentId="mainContent" class="sb-side-menu" *ngIf="!isRtl" side="start" persistent="true" [swipeGesture]="headerConfig?.showBurgerMenu || false">
   <ion-header>
     <ion-toolbar>
       <ion-title>

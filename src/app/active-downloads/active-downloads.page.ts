@@ -31,7 +31,7 @@ export class ActiveDownloadsPage implements OnInit, OnDestroy, ActiveDownloadsIn
 
   downloadProgressMap: { [key: string]: number };
   activeDownloadRequests$: Observable<ContentDownloadRequest[]>;
-  defaultImg = 'assets/imgs/ic_launcher.png';
+  defaultImg = this.commonUtilService.convertFileSrc('assets/imgs/ic_launcher.png');
 
   private _appHeaderSubscription?: Subscription;
   private _downloadProgressSubscription?: Subscription;

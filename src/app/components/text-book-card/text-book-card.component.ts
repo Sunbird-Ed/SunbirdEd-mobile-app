@@ -7,15 +7,12 @@ import { CommonUtilService } from '@app/services/common-util.service';
   styleUrls: ['./text-book-card.component.scss'],
 })
 export class TextBookCardComponent implements OnInit {
-  defaultImg: string;
+  defaultImg = this.commonUtilService.convertFileSrc('assets/imgs/ic_launcher.png');
 
   @Input() content: any;
   @Input() layoutName: string;
 
-  constructor(public commonUtilService: CommonUtilService) {
-    this.defaultImg = 'assets/imgs/ic_launcher.png';
-    console.log("Layout NAme"+this.layoutName);
-  }
+  constructor(public commonUtilService: CommonUtilService) { }
 
   ngOnInit() { }
 

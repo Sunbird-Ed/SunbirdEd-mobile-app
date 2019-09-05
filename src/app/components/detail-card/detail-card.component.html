@@ -19,7 +19,8 @@
 
     <div class="right">
       <div class="img-container">
-        <img src="{{ localImage || contentDetail?.contentData?.appIcon || defaultAppIcon}}">
+        <img
+          [src]="commonUtil.convertFileSrc(localImage) || commonUtil.convertFileSrc(contentDetail?.contentData?.appIcon) || defaultAppIcon">
       </div>
 
     </div>
