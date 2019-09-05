@@ -1,0 +1,17 @@
+<ion-content class="no-net-popup">
+    <ion-grid padding >
+      
+      <ion-row>
+  
+        <ion-col no-padding col-11 (click)="navigateToStorageSettings()">
+          <label class="no-net-heading">{{sbPopoverHeading}}</label>
+          <div class="no-net-message" *ngIf="sbPopoverMessage?.length">{{sbPopoverMessage}}</div>   
+        </ion-col>
+        
+        <ion-col no-padding col-1>
+          <ion-icon class="no-net-close-btn" name="close" (click)="closePopover()"></ion-icon>        
+        </ion-col>
+      </ion-row>
+  
+    </ion-grid>
+  </ion-content>

@@ -40,6 +40,7 @@ import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 import { ViewCreditsComponent } from './popups/view-credits/view-credits.component';
 import { SkeletonItemComponent } from './skeleton-item/skeleton-item.component';
 import { FilteroptionComponent } from './filteroption/filteroption.component';
+import { SbInsufficientStoragePopupComponent } from './popups/sb-insufficient-storage-popup/sb-insufficient-storage-popup';
 import { AccountRecoveryInfoComponent } from './popups/account-recovery-id/account-recovery-id-popup.component';
 
 @NgModule({
@@ -76,6 +77,7 @@ import { AccountRecoveryInfoComponent } from './popups/account-recovery-id/accou
     ViewCreditsComponent,
     SkeletonItemComponent,
     FilteroptionComponent,
+    SbInsufficientStoragePopupComponent,
     AccountRecoveryInfoComponent
   ],
   imports: [
@@ -106,6 +108,7 @@ import { AccountRecoveryInfoComponent } from './popups/account-recovery-id/accou
     FilteroptionComponent,
     ContentActionsComponent,
     ReportAlertComponent,
+    SbInsufficientStoragePopupComponent,
     AccountRecoveryInfoComponent
   ],
   exports: [
@@ -139,6 +142,7 @@ import { AccountRecoveryInfoComponent } from './popups/account-recovery-id/accou
     SkeletonItemComponent,
     FilteroptionComponent,
     ReportAlertComponent,
+    SbInsufficientStoragePopupComponent,
     AccountRecoveryInfoComponent
   ],
   providers: [FileSizePipe, Keyboard]

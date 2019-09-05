@@ -500,12 +500,11 @@ export class StorageSettingsPage implements OnInit {
       cssClass: 'sb-popover dw-active-downloads-popover',
     });
 
-    await this.cancellingTransferPopup.present();
+    this.cancellingTransferPopup.present();
 
-    const { data } = await this.cancellingTransferPopup.onDidDismiss();
-    if (data && data.canDelete) {
+    this.cancellingTransferPopup.onDidDismiss().then(() => {
       this.cancellingTransferPopup = undefined;
-    }
+    });
 
     this.telemetryGeneratorService.generateImpressionTelemetry(
       ImpressionType.VIEW,
