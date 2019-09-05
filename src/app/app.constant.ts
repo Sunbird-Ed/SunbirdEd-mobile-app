@@ -129,6 +129,23 @@ export class ProfileConstants {
     public static readonly CONTACT_TYPE_EMAIL = 'email';
 }
 
+export class ExploreConstants {
+    public static readonly REQUIRED_FIELDS = [
+        'name',
+        'downloadUrl',
+        'variants',
+        'mimeType',
+        'contentType',
+        'resourceType',
+        'board',
+        'medium',
+        'gradeLevel',
+        'subject',
+        'streamingUrl',
+        'framework',
+        'appIcon'
+    ]
+}
 export class AudienceFilter {
     public static readonly GUEST_TEACHER = ['instructor', 'learner'];
     public static readonly GUEST_STUDENT = ['learner'];
@@ -380,6 +397,7 @@ export class RouterLinks {
     public static readonly CONTENT_DETAILS = 'content-details';
     public static readonly ENROLLMENT_DETAILS = 'enrollment-details';
     public static readonly TEXTBOOK_TOC = 'textbook-toc';
+    public static readonly EXPLORE_BOOK = 'explore-book';
 
     // DownloadManger Routs
     public static readonly ACTIVE_DOWNLOADS = 'active-downloads';
@@ -452,5 +470,6 @@ export class RouterLinks {
 
     // TEXTBOOK view more page Routes
     public static readonly TEXTBOOK_VIEW_MORE = 'textbook-view-more';
+
 
 }

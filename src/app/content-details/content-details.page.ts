@@ -114,7 +114,7 @@ export class ContentDetailsPage implements OnInit {
   isResumedCourse: boolean;
   didViewLoad: boolean;
   contentDetail: any;
-  backButtonFunc:Subscription;
+  backButtonFunc: Subscription;
   shouldGenerateEndTelemetry = false;
   source = '';
   userCount = 0;
@@ -438,8 +438,9 @@ export class ContentDetailsPage implements OnInit {
     if (this.content.lastUpdatedTime !== 0) {
       this.playOnlineSpinner = false;
     }
-    this.content.contentData.appIcon = ContentUtil.getAppIcon(this.content.contentData.appIcon, data.basePath,
-      this.commonUtilService.networkInfo.isNetworkAvailable);
+    this.content.contentData.appIcon =
+      this.commonUtilService.convertFileSrc(ContentUtil.getAppIcon(this.content.contentData.appIcon, data.basePath,
+        this.commonUtilService.networkInfo.isNetworkAvailable));
     this.content.contentAccess = data.contentAccess ? data.contentAccess : [];
     this.content.contentMarker = data.contentMarker ? data.contentMarker : [];
 
@@ -924,7 +925,7 @@ export class ContentDetailsPage implements OnInit {
       if (this.isResumedCourse) {
         this.playingContent.hierarchyInfo = hierachyInfo;
       }
-      this.contentPlayerHandler.launchContentPlayer(this.playingContent, isStreaming, this.downloadAndPlay, contentInfo);
+      this.contentPlayerHandler.launchContentPlayer(this.playingContent, isStreaming, this.downloadAndPlay, contentInfo, this.isCourse);
       this.downloadAndPlay = false;
       this.isPlayerLaunched = true;
     }

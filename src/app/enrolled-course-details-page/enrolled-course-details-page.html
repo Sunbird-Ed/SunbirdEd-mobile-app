@@ -268,7 +268,7 @@
 		</ion-button>
 	</ion-toolbar>
 </ion-footer>
-<ion-footer *ngIf="!courseCardData?.batchId && course?.createdBy !== userId && !isAlreadyEnrolled">
+<ion-footer *ngIf="!courseCardData?.batchId && course?.createdBy !== userId && !isAlreadyEnrolled && !showLoading">
 	<ion-toolbar class="toolbar-p-16">
 		<ion-button expand="block" (click)="navigateToBatchListPage();">{{ 'ENROLL_COURSE' | translate }}</ion-button>
 	</ion-toolbar>

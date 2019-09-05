@@ -126,6 +126,8 @@
     @include padding(($base-block-space), ($base-block-space * 2), ($base-block-space * 3), ($base-block-space * 2));
     background: $white-color;
     .sb-popover-action-btn {
+      opacity: 1;
+      pointer-events: all;
       @include margin(null, 8px, null, null);
       height: $base-block-space * 4;
       border-radius: 2px;
@@ -145,6 +147,11 @@
       &.popover-color {
         background-color: $info-color;
       }
+    }
+    .sb-popover-action-btn[disabled]{
+      opacity: 0.5 !important;
+      pointer-events: none !important;
+      cursor: default;
     }
   }
 }

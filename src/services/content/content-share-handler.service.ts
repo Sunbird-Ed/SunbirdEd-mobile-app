@@ -36,7 +36,7 @@ export class ContentShareHandlerService {
         .then(async (response: ContentExportResponse) => {
           await loader.dismiss();
           this.generateShareInteractEvents(InteractType.OTHER,
-            InteractSubtype.SHARE_LIBRARY_SUCCESS, content.contentType, corRelationList, rollup);
+            InteractSubtype.SHARE_LIBRARY_SUCCESS, content.contentData.contentType, corRelationList, rollup);
           this.social.share('', '', '' + response.exportedFilePath, url);
         }).catch(async () => {
           await loader.dismiss();
@@ -79,5 +79,4 @@ export class ContentShareHandlerService {
     }
     return pageId;
   }
-
 }

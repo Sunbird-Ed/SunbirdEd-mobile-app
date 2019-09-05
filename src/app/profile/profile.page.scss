@@ -223,4 +223,11 @@
     vertical-align: middle;
     display: inline-block;
   }
+
+  .avatar-tickmark {
+    width: $base-block-space*4;
+    height: $base-block-space*4;
+    position: absolute;
+    left: 53%;
+  }
 }
