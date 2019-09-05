@@ -1,43 +1,43 @@
 <div>
-    <ng-container *ngIf="childData | hasMimeType: activeMimeTypeFilter : isTextbookTocPage">
-       <div class="unit-hierachy sb-topic-item" (click)="setContentId(childData.identifier)" [id]="childData.identifier"
-           *ngIf="childData?.contentData?.mimeType === 'application/vnd.ekstep.content-collection' && childData?.children">
-           {{childData?.contentData?.name}}
-       </div>
-   </ng-container>
-   <div [id]="childData.identifier" class="row sb-topic-item"
-       *ngIf="childData?.contentData?.mimeType !== 'application/vnd.ekstep.content-collection' && hasMimeType(activeMimeTypeFilter, childData?.contentData?.mimeType, childData)"
-        (click)="navigateToDetailsPage(childData, depth + '.' + (i + 1))">
-     <!--        <ion-icon ios="ios-arrow-dropright-circle" md="md-arrow-dropright-circle"-->
-     <!--            [ngClass]="{'sb-accordian-grey-icon': !commonUtilService.networkInfo.isNetworkAvailable && !childData?.isAvailableLocally, 'sb-play-icon': commonUtilService.networkInfo.isNetworkAvailable || childData?.isAvailableLocally}">-->
-     <!--        </ion-icon> &lt;!&ndash; change condition to offline &ndash;&gt;-->
-     <div class="sb-ftue-design">
-       <div class="clearfix"
-         [ngClass]="{'sb-accordian-grey-text': !commonUtilService.networkInfo.isNetworkAvailable && !childData?.isAvailableLocally,
+  <ng-container *ngIf="childData | hasMimeType: activeMimeTypeFilter : isTextbookTocPage">
+    <div class="unit-hierachy sb-topic-item" (click)="setContentId(childData.identifier)" [id]="childData.identifier"
+      *ngIf="childData?.contentData?.mimeType === 'application/vnd.ekstep.content-collection' && childData?.children">
+      {{childData?.contentData?.name}}
+    </div>
+  </ng-container>
+  <div [id]="childData.identifier" class="row sb-topic-item"
+    *ngIf="childData?.contentData?.mimeType !== 'application/vnd.ekstep.content-collection' && hasMimeType(activeMimeTypeFilter, childData?.contentData?.mimeType, childData)"
+    (click)="navigateToDetailsPage(childData, depth + '.' + (i + 1))">
+
+    <div class="sb-ftue-design">
+      <div class="clearfix" [ngClass]="{'sb-accordian-grey-text': !commonUtilService.networkInfo.isNetworkAvailable && !childData?.isAvailableLocally,
            'sb-play-selected':childData?.isAvailableLocally,'sb-play-unselected':!childData?.isAvailableLocally}">
-         <div class="pull-left">
-           {{childData?.contentData?.name}}
-           <span *ngIf="childData?.isAvailableLocally">
-               <ion-icon class="sb-checkmark-icon" name="md-checkmark-circle"></ion-icon>
-           </span>
-         </div>
+        <div class="pull-left">
+          {{childData?.contentData?.name}}
+          <span *ngIf="childData?.isAvailableLocally">
+            <ion-icon class="sb-checkmark-icon" name="md-checkmark-circle"></ion-icon>
+          </span>
+        </div>
 
-         <div class="pull-right">
-           <img class="content-icon" alt="" src="{{ localImage || childData?.contentData?.appIcon || defaultAppIcon}}">
-         </div>
-       </div>
-     </div>
-   </div>
+        <div class="pull-right">
+          <img class="content-icon" alt=""
+            [src]="commonUtilService.convertFileSrc(localImage) || commonUtilService.convertFileSrc(childData?.contentData?.appIcon) || defaultAppIcon">
+        </div>
+      </div>
+    </div>
+  </div>
 
-   <div class="row sb-topic-item" (click)="showComingSoonPopup(childData)"
-       *ngIf="isTextbookTocPage && childData?.contentData?.mimeType === 'application/vnd.ekstep.content-collection' && !childData?.children">
-       <div class="sb-accordian-grey-text">{{childData?.contentData?.name}}</div>
-       <ion-icon ios="ios-alert" md="md-alert" class="grey-icon mt-4"></ion-icon>
-   </div>
+  <div class="row sb-topic-item" (click)="showComingSoonPopup(childData)"
+    *ngIf="isTextbookTocPage && childData?.contentData?.mimeType === 'application/vnd.ekstep.content-collection' && !childData?.children">
+    <div class="sb-accordian-grey-text">{{childData?.contentData?.name}}</div>
+    <ion-icon ios="ios-alert" md="md-alert" class="grey-icon mt-4"></ion-icon>
+  </div>
 
-   <!-- <div *ngIf="childData?.children && childData?.contentData?.mimeType === 'application/vnd.ekstep.content-collection'"
+  <!-- <div *ngIf="childData?.children && childData?.contentData?.mimeType === 'application/vnd.ekstep.content-collection'"
        class="sb-separator-line ml8 mtb-8"></div> -->
-   <div *ngFor="let firstChildren of childData?.children; let j = index;" class="sb-collection-child-ftue">
-     <app-collection-child [childData]="firstChildren" [breadCrumb]="breadCrumb" [activeMimeTypeFilter] = "activeMimeTypeFilter" [rootUnitId]="rootUnitId" [isTextbookTocPage] = "isTextbookTocPage" [bookID]="bookID"></app-collection-child>
-   </div>
+  <div *ngFor="let firstChildren of childData?.children; let j = index;" class="sb-collection-child-ftue">
+    <app-collection-child [childData]="firstChildren" [breadCrumb]="breadCrumb"
+      [activeMimeTypeFilter]="activeMimeTypeFilter" [rootUnitId]="rootUnitId" [isTextbookTocPage]="isTextbookTocPage"
+      [bookID]="bookID"></app-collection-child>
+  </div>
 </div>

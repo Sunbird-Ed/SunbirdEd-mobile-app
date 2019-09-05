@@ -85,13 +85,13 @@ export class CourseCardComponent implements OnInit {
     private router: Router,
     @Inject('COURSE_SERVICE') private courseService: CourseService,
     private zone: NgZone) {
-    this.defaultImg = 'assets/imgs/ic_launcher.png';
+    this.defaultImg = this.commonUtilService.convertFileSrc('assets/imgs/ic_launcher.png');
   }
 
   async  checkRetiredOpenBatch(content: any, layoutName?: string) {
     this.loader = await this.commonUtilService.getLoader();
     await this.loader.present();
-    let anyOpenBatch: Boolean = false;
+    let anyOpenBatch = false;
     let retiredBatches: Array<any> = [];
     this.enrolledCourses = this.enrolledCourses || [];
     if (layoutName !== ContentCard.LAYOUT_INPROGRESS) {
