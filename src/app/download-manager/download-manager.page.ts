@@ -233,6 +233,7 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
     const contentDeleteRequest: ContentDeleteRequest = {
       contentDeleteList: emitedContents.selectedContents
     };
+    this.deletedContentListTitle$ = new BehaviorSubject('0/' + contentDeleteRequest.contentDeleteList.length);
     this.deleteAllConfirm = await this.popoverCtrl.create({
       component: SbPopoverComponent,
       componentProps: {
@@ -250,18 +251,22 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
       },
       cssClass: 'sb-popover danger sb-popover-cancel-delete',
     });
-    await this.deleteAllConfirm.present();
-    const response = await this.deleteAllConfirm.onDidDismiss();
-    if (response) {
-      this.contentService.clearContentDeleteQueue().toPromise();
-    }
+
+    this.deleteAllConfirm.present();
+
+    this.deleteAllConfirm.onDidDismiss().then((response) => {
+      if (response) {
+        this.contentService.clearContentDeleteQueue().toPromise();
+      }
+    });
+
     this.contentService.enqueueContentDelete(contentDeleteRequest).toPromise();
     this.contentService.getContentDeleteQueue().skip(1).takeWhile((list) => !!list.length)
       .finally(async () => {
         this.deletedContentListTitle$
           .next(`${contentDeleteRequest.contentDeleteList.length}/${contentDeleteRequest.contentDeleteList.length}`);
 
-        await this.deleteAllConfirm.dismiss();
+        this.deleteAllConfirm.dismiss();
 
         // await this.getAppStorageInfo();
 
