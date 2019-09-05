@@ -157,13 +157,14 @@
         background-color: #008840;
         border: none;
         color: white;
-        padding: 15px 122px;
+        padding: 15px;
         text-align: center;
         text-decoration: none;
         display: inline-block;
         font-size: 16px;
         margin: 4px 2px;
         cursor: pointer;
+        width: 100%;
       }
       .border-right{
         border-right: 1.5px solid #e6e6e6;
@@ -178,7 +179,7 @@
       .segment-button-indicator{
         width: 84% !important;
         margin-right: 8% !important;
-      }    
+      }   
 }
 .sb-topics-containe{
     padding-right: 5%;
