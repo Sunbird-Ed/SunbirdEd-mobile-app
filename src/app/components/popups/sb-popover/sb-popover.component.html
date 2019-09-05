@@ -12,7 +12,7 @@
       <ion-icon ios="{{icon?.ios}}" md="{{icon?.md}}"></ion-icon>
     </div>
     <div class="icon-container" *ngIf="img">
-      <img src="{{img?.path}}" alt="" />
+      <img [src]="commonUtilService.convertFileSrc(img?.path)" alt="" />
     </div>
 
     <div class="sb-popover-content-details" *ngIf="sbPopoverMainTitle || metaInfo || sbPopoverContent">

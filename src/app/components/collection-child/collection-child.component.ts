@@ -49,14 +49,7 @@ export class CollectionChildComponent implements OnInit {
     private textbookTocService: TextbookTocService,
     private telemetryService: TelemetryGeneratorService,
     private location: Location
-  ) {
-    // const extras = this.router.getCurrentNavigation().extras.state;
-    // if (extras) {
-    //   this.cardData = extras.content;
-    //   this.defaultAppIcon = 'assets/imgs/ic_launcher.png';
-    //   this.parentId = extras.parentId;
-    // }
-  }
+  ) { }
 
   ngOnInit(): void {
   }
@@ -150,7 +143,7 @@ export class CollectionChildComponent implements OnInit {
       });
     }
   }
-  
+
 
 
   async showComingSoonPopup(childData: any) {

@@ -151,7 +151,7 @@
   <div class="badges" padding-horizontal text-center *ngIf="profile?.badgeAssertions?.length > 0">
     <p class="bolder f16">{{'MY_BADGES' | translate }} ({{profile?.badgeAssertions?.length}})&lrm;</p>
     <ion-avatar item-center="" *ngFor="let batch of profile.badgeAssertions | slice : startLimit:badgesLimit;">
-      <img height="80px" width="auto" alt="badge" src="{{batch.badgeClassImage}}">
+      <img height="80px" width="auto" alt="badge" [src]="commonUtilService.convertFileSrc(batch.badgeClassImage)">
 
     </ion-avatar>
     <div class="" text-center>
@@ -182,7 +182,7 @@
               <ion-card-content>
                 <ion-row class="top">
                   <ion-col size="3" class="img-container">
-                    <img class="app-icon" alt="app" src="{{courseItem?.appIcon}}" />
+                    <img class="app-icon" alt="app" [src]="commonUtilService.convertFileSrc(courseItem?.appIcon)" />
                   </ion-col>
                   <ion-col size="9" style="margin-bottom: 5px; padding-left: 15px; padding: 0 0 0 15px;">
                     <div style="margin-bottom: 5px;" *ngIf="courseItem.resourceType">
