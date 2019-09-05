@@ -81,7 +81,7 @@ export class CourseCardComponent implements OnInit {
     private telemetryGeneratorService: TelemetryGeneratorService,
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
     private popoverCtrl: PopoverController,
-    private commonUtilService: CommonUtilService,
+    public commonUtilService: CommonUtilService,
     private router: Router,
     @Inject('COURSE_SERVICE') private courseService: CourseService,
     private zone: NgZone) {

@@ -24,7 +24,7 @@ export class DetailCardComponent implements OnInit {
   @Output() shareEvent = new EventEmitter();
   text: string;
 
-  constructor(private commonUtil: CommonUtilService) {
+  constructor(public commonUtil: CommonUtilService) {
   }
 
   ngOnInit() {
