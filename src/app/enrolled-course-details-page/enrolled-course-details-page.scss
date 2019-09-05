@@ -48,6 +48,9 @@
     .card-content-bottom-0{
         padding-bottom: 0px !important;
     }
+    .subtitle-color{
+        color: map-get($colors, textGrey);
+    }
     .course-progress {
         position: absolute;
         width: 100%;
@@ -72,11 +75,14 @@
         font-size: 14px;
     }
     .hr-border-bottom {
-    border-bottom: 2.5px solid #f2f2f2;
-    margin-top:8px;
+        box-sizing: border-box;
+        height: 1px;	
+        width: 328px;	
+        border: 0.5px solid #CCCCCC;
+        margin-top: 5px;
     }
     hr {
-        border:0.8px solid #cbc4c4;
+        border:0.5px solid #999999;
     }
     .blurbackground {
         // background-color: gray !important;
