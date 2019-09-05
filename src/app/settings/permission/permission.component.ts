@@ -3,7 +3,7 @@ import { PageId, Environment, InteractType, InteractSubtype } from '@app/service
 import { Subscription } from 'rxjs/Subscription';
 import { Observable } from 'rxjs/Observable';
 import { Events, Platform } from '@ionic/angular';
-import { Router, NavigationExtras } from '@angular/router';
+import { Router, NavigationExtras, ActivatedRoute } from '@angular/router';
 import { AndroidPermission, AndroidPermissionsStatus, PermissionAskedEnum } from '@app/services/android-permissions/android-permission';
 import { CommonUtilService } from '@app/services/common-util.service';
 import { SunbirdQRScanner } from '@app/services/sunbirdqrscanner.service';
@@ -52,7 +52,8 @@ export class PermissionComponent implements OnInit {
     private location: Location,
     private appVersion: AppVersion,
     private router: Router,
-    private platform: Platform
+    private platform: Platform,
+    private route: ActivatedRoute
   ) {
     this.appVersion.getAppName().then((appName: string) => {
       this.appName = appName;
@@ -77,14 +78,14 @@ export class PermissionComponent implements OnInit {
         }
       ];
     });
-    this.getNavParams();
+
+    this.route.queryParams.subscribe(params => {
+      this.getNavParams();
+    });
   }
 
   getNavParams() {
-    const navigation = this.router.getCurrentNavigation();
-    if (navigation && navigation.extras && navigation.extras.state) {
-      this.navParams = navigation.extras.state;
-    }
+    this.navParams = this.router.getCurrentNavigation().extras.state;
     console.log(this.navParams);
   }
 
