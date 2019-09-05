@@ -4,10 +4,16 @@
   --color: #FFF !important;
   --button-color: #FFF !important;
 }
+.online {
+    --background: #00C786 !important;
+    --color: #fff !important;
+    // --text-align: center !important;
+    // --height: 30px !important;
+}
 .toastAfterHeader{
     position: fixed;
     top:50px;
-    .toast-container { background: $orange }
+    .toast-container { --background: #e55a28 !important; }
     .toast-message{
         margin-left : 35px;
         font-weight: 500;
@@ -34,7 +40,7 @@
         z-index: 999;
         position: absolute;
         font-size: 2.5em;
-        @include padding(($base-block-space/4), 0, 0, 0);
+        padding: ($base-block-space/4), 0, 0, 0;
         content: "\f406";
         font-weight: bolder;
       }
@@ -55,14 +61,16 @@
     width: 100%;
     .sb-online
     {
-        @include margin($base-block-space/2, 0, 0, 0);
+         margin: ($base-block-space/2, 0, 0, 0);
     }
   }
 
   .toastForOnline{
     position: fixed;
     top:0px;
-    .toast-container { background: $secondary-100; height: ($base-block-space * 3); }
+    // --height: 30px;
+    // --text-align: center;
+    .toast-container {  --background: $secondary-100 !important; height: 30px; text-align: center;}
     .toast-message{
         text-align: center;
         font-style: normal;
@@ -75,7 +83,7 @@
   .toastHeader{
     position: fixed;
     top:0px;
-    .toast-container { background: $orange }
+    .toast-container { --background: #e55a28 !important; }
     .toast-message{
         margin-left : 35px;
         font-weight: 500;
