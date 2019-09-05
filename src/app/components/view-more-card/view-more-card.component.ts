@@ -70,7 +70,7 @@ export class ViewMoreCardComponent implements OnInit {
     private zone: NgZone,
     public courseUtilService: CourseUtilService,
     public events: Events,
-    private commonUtilService: CommonUtilService,
+    public commonUtilService: CommonUtilService,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private appGlobalService: AppGlobalService,
     private router: Router
