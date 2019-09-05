@@ -113,9 +113,12 @@ export class StorageSettingsPage implements OnInit {
   }
 
   ngOnInit() {
-    this.initAppHeader();
     this.fetchStorageVolumes();
     this.fetchStorageDestination();
+  }
+  
+  ionViewWillEnter(){
+    this.initAppHeader();
   }
 
   public async attemptTransfer() {
