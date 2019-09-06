@@ -1333,7 +1333,7 @@ export class CollectionDetailEtbPage implements OnInit {
         this.commonUtilService.showToast('MSG_RESOURCE_DELETED');
         const popover = await this.popoverCtrl.getTop();
         if (popover) {
-          await popover.dismiss({ isDeleted: true;});
+          await popover.dismiss({ isDeleted: true });
         }
 
       }

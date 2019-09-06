@@ -366,8 +366,8 @@ export class EnrolledCourseDetailsPage implements OnInit {
     });
     await popover.present();
     const { data } = await popover.onDidDismiss();
-    if (data && data.data === 'unenroll') {
-      this.handleUnenrollment(data.data);
+    if (data && data.unenroll) {
+      this.handleUnenrollment(data.unenroll);
     }
   }
 
