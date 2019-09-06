@@ -117,3 +117,9 @@
 .sb-player-container .sb-common-player-group.sb-common-title-group {
   top: 40%;
 }
+
+.sb-btn-tile-group  button[disabled]{
+  opacity: 0.5 !important;
+  pointer-events: none !important;
+  cursor: default;
+}
