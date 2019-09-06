@@ -32,19 +32,43 @@ export class SplashscreenImportActionHandlerDelegate implements SplashscreenActi
 
     switch (fileExtenstion) {
       case 'ecar': {
-        return Observable.of(undefined)
-          .do(async () => {
-            await this.invokeImportEcar(filePath);
-          }).mergeMap(() => {
-            return this.eventsBusService.events(EventNamespace.CONTENT)
-              .filter(e => e.type === ContentEventType.IMPORT_PROGRESS)
-              .takeUntil(
-                this.eventsBusService.events(EventNamespace.CONTENT)
-                  .filter(e => e.type === ContentEventType.IMPORT_COMPLETED)
-              );
-          }).do((event: ContentImportProgress) => {
+        splashscreen.show();
+
+        return this.eventsBusService.events(EventNamespace.CONTENT)
+          .filter(e => e.type === ContentEventType.IMPORT_PROGRESS)
+          .takeUntil(this.contentService.importEcar({
+            isChildContent: false,
+            destinationFolder: cordova.file.externalDataDirectory,
+            sourceFilePath: filePath,
+            correlationData: []
+          }).map((response: ContentImportResponse[]) => {
+            if (!response.length) {
+              this.commonUtilService.showToast('CONTENT_IMPORTED');
+              return;
+            }
+
+            response.forEach((contentImportResponse: ContentImportResponse) => {
+              switch (contentImportResponse.status) {
+                case ContentImportStatus.ALREADY_EXIST:
+                  this.commonUtilService.showToast('CONTENT_ALREADY_EXIST');
+                  throw ContentImportStatus.ALREADY_EXIST;
+                case ContentImportStatus.IMPORT_FAILED:
+                  this.commonUtilService.showToast('CONTENT_IMPORTED_FAILED');
+                  throw ContentImportStatus.IMPORT_FAILED;
+                case ContentImportStatus.NOT_FOUND:
+                  this.commonUtilService.showToast('CONTENT_IMPORTED_FAILED');
+                  throw ContentImportStatus.NOT_FOUND;
+              }
+            });
+          })
+          )
+          .do((event: ContentImportProgress) => {
             splashscreen.setImportProgress(event.payload.currentCount, event.payload.totalCount);
-          }).mapTo(undefined) as any;
+          })
+          .catch(() => {
+            return Observable.of(undefined);
+          })
+          .mapTo(undefined) as any;
       }
       case 'epar': {
         return this.profileService.importProfile({
@@ -73,29 +97,5 @@ export class SplashscreenImportActionHandlerDelegate implements SplashscreenActi
       default:
         return Observable.of(undefined);
     }
-  }
-
-  async invokeImportEcar(filePath: string): Promise<void> {
-    return this.contentService.importEcar({
-      isChildContent: false,
-      destinationFolder: cordova.file.externalDataDirectory,
-      sourceFilePath: filePath,
-      correlationData: []
-    }).toPromise().then((response: ContentImportResponse[]) => {
-      if (!response.length) {
-        this.commonUtilService.showToast('CONTENT_IMPORTED');
-        return;
-      }
-
-      response.forEach((contentImportResponse: ContentImportResponse) => {
-        switch (contentImportResponse.status) {
-          case ContentImportStatus.ALREADY_EXIST:
-            this.commonUtilService.showToast('CONTENT_ALREADY_EXIST');
-            break;
-        }
-      });
-    }).catch(() => {
-      this.commonUtilService.showToast('CONTENT_IMPORTED_FAILED');
-    });
   }
 }
