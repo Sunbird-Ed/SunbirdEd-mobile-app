@@ -156,7 +156,7 @@
 			<ion-card-content>
 				<div *ngIf="!courseCardData?.batchId && course?.createdBy !== userId && !isAlreadyEnrolled">
 					<button class="enrolled-course-card-button"
-						(click)="navigateToBatchListPage()">{{'JOIN_TRAINING' | translate}}</button>
+						(click)="joinTraining()">{{'JOIN_TRAINING' | translate}}</button>
 				</div>
 				<div *ngIf="courseCardData?.batchId">
 					<button *ngIf="!showResumeBtn && childrenData?.length" class="enrolled-course-card-button"
