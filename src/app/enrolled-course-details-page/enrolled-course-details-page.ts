@@ -11,6 +11,7 @@ import { TelemetryGeneratorService } from '@app/services/telemetry-generator.ser
 import { UtilityService } from '@app/services/utility-service';
 import { AppHeaderService } from '@app/services/app-header.service';
 import { DatePipe } from '@angular/common';
+import { LoginHandlerService } from '@app/services/login-handler.service';
 import {
   Batch,
   ChildContentRequest,
@@ -45,6 +46,8 @@ import {
   TelemetryObject,
   UnenrollCourseRequest,
   Course,
+  AuthService,
+  OAuthSession
 } from 'sunbird-sdk';
 import { Subscription } from 'rxjs/Subscription';
 import {
@@ -187,6 +190,7 @@ export class EnrolledCourseDetailsPage implements OnInit {
   updatedCourseCardData: Course;
   importProgressMessage: string;
   segmentType = 'info';
+  isGuestUser = false;
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -194,6 +198,8 @@ export class EnrolledCourseDetailsPage implements OnInit {
     @Inject('EVENTS_BUS_SERVICE') private eventsBusService: EventsBusService,
     @Inject('COURSE_SERVICE') private courseService: CourseService,
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
+    @Inject('AUTH_SERVICE') private authService: AuthService,
+    private loginHandlerService: LoginHandlerService,
     private alertCtrl: AlertController,
     private zone: NgZone,
     private events: Events,
@@ -216,6 +222,7 @@ export class EnrolledCourseDetailsPage implements OnInit {
     this.userId = this.appGlobalService.getUserId();
     this.checkLoggedInOrGuestUser();
     this.checkCurrentUserType();
+    this.getUserId();
 
     const extrasState = this.router.getCurrentNavigation().extras.state;
     if (extrasState) {
@@ -313,27 +320,36 @@ export class EnrolledCourseDetailsPage implements OnInit {
     }
   }
 
-  async joinTraining(){
+  async joinTraining() {
     const confirm = await this.popoverCtrl.create({
       component: SbPopoverComponent,
       componentProps: {
         sbPopoverMainTitle : 'You must join an active batch to view and access training details',
         metaInfo: 'Register to get complete access to the content',
-        sbPopoverHeading : 'Join Training?',
+        sbPopoverHeading : 'Login',
         isNotShowCloseIcon: true,
         actionsButtons: [
           {
-            btntext: 'Join Training',
+            btntext: 'Login',
             btnClass: 'popover-color'
           },
-        ]
+        ],
+        handler : this.handleEnrollCoursePopup.bind(this)
       },
       cssClass: 'sb-popover info',
-  });
-  await confirm.present();
-  const { data } = await confirm.onDidDismiss();
-  if (data) {
+    });
+    if (this.isGuestUser) {
+      await confirm.present();
+    } else {
+      console.log('loggedin user');
+      this.navigateToBatchListPage();
+    }
+  }
 
+  handleEnrollCoursePopup(btnText: string) {
+    console.log('handleEnrollCoursePopup', btnText);
+    if (btnText === 'Login') {
+      this.loginHandlerService.signIn();
     }
   }
 
@@ -1455,5 +1471,23 @@ export class EnrolledCourseDetailsPage implements OnInit {
         this.goBack();
         break;
     }
+  }
+
+  // CoursePage Revamp
+  getUserId(): void {
+    this.authService.getSession().subscribe((session: OAuthSession) => {
+      if (!session) {
+        this.zone.run(() => {
+          this.isGuestUser = true;
+        });
+      } else {
+        this.zone.run(() => {
+          this.isGuestUser = false;
+          this.userId = session.userToken;
+          // this.getBatchesByCourseId();
+        });
+      }
+    }, () => {
+    });
   }
 }
