@@ -342,7 +342,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
     if (!hideLoaderFlag) {
       this.showLoader = true;
       if (this.showLoader) {
-        this.telemetryGeneratorService.generateStartSheenAnimationTelemetry();
+        this.telemetryGeneratorService.generateStartSheenAnimationTelemetry(PageId.LIBRARY);
       }
     }
     const requestParams: ContentRequest = {
