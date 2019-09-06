@@ -804,10 +804,12 @@ export class CollectionDetailEtbPage implements OnInit {
           if (this.textbookTocService.textbookIds.contentId) {
             setTimeout(() => {
               (this.stickyPillsRef.nativeElement as HTMLDivElement).classList.add('sticky');
-              window['scrollWindow'].getScrollElement().
-                scrollBy(0, 0);
-              document.getElementById(this.textbookTocService.textbookIds.contentId).scrollIntoView();
-              window['scrollWindow'].getScrollElement().scrollBy(0, -155);
+              window['scrollWindow'].getScrollElement()
+                .scrollTo({
+                  top: document.getElementById(this.textbookTocService.textbookIds.contentId).offsetTop - 165,
+                  left: 0,
+                  behavior: 'smooth'
+                });
               this.textbookTocService.resetTextbookIds();
             }, 0);
           }
@@ -909,7 +911,7 @@ export class CollectionDetailEtbPage implements OnInit {
     this.refreshHeader();
     this.downloadProgress = 0;
     this.cardData = '';
-    this.childrenData = [];
+    this.childrenData;
     this.contentDetail = undefined;
     this.showDownload = false;
     this.showDownloadBtn = false;
@@ -1080,7 +1082,6 @@ export class CollectionDetailEtbPage implements OnInit {
     const { data } = await popover.onDidDismiss();
     if (data && data.isDeleted) {
       this.location.back();
-
     }
   }
 
@@ -1284,8 +1285,8 @@ export class CollectionDetailEtbPage implements OnInit {
       cssClass: 'sb-popover danger',
     });
     await confirm.present();
-    const response = await confirm.onDidDismiss();
-    if (response.data) {
+    const { data } = await confirm.onDidDismiss();
+    if (data && data.canDelete) {
       this.deleteContent();
     }
   }
@@ -1332,7 +1333,7 @@ export class CollectionDetailEtbPage implements OnInit {
         this.commonUtilService.showToast('MSG_RESOURCE_DELETED');
         const popover = await this.popoverCtrl.getTop();
         if (popover) {
-          await popover.dismiss({ data: 'delete.success' });
+          await popover.dismiss({ isDeleted: true;});
         }
 
       }
@@ -1341,9 +1342,8 @@ export class CollectionDetailEtbPage implements OnInit {
       this.commonUtilService.showToast('CONTENT_DELETE_FAILED');
       const popover = await this.popoverCtrl.getTop();
       if (popover) {
-        await popover.dismiss({ data: 'delete.success' });
+        await popover.dismiss();
       }
-
     });
   }
 
