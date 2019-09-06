@@ -869,6 +869,23 @@ export class EnrolledCourseDetailsPage implements OnInit {
     return this.shownGroup === group;
   }
 
+  getLastPlayedName(id) {
+    if (this.showResumeBtn) {
+      const option = {
+        contentId: id,
+        hierarchyInfo: null,
+        level: !this.courseCardData.batchId ? 1 : 0,
+      }
+      this.contentService.getContentDetails(option).toPromise()
+        .then((data: Content) => {
+          console.log('data is here', data);
+        }).catch(() => {
+
+        })
+    }
+
+  }
+
   /**
    * Function to set child contents
    */

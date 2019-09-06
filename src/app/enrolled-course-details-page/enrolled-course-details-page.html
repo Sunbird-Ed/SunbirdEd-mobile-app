@@ -158,23 +158,28 @@
 					<button class="enrolled-course-card-button"
 						(click)="navigateToBatchListPage()">{{'JOIN_TRAINING' | translate}}</button>
 				</div>
-				<div *ngIf="courseCardData?.batchId">
-					<button *ngIf="!showResumeBtn && childrenData?.length" class="enrolled-course-card-button"
-						(click)="startContent()"><span><img class="play-icon" src="assets/imgs/Play@1.5x.svg" alt="play-icon">{{
-										'START_COURSE_NOW' | translate }}</span></button>
-					<button *ngIf="showResumeBtn" class="enrolled-course-card-button"
-						(click)="resumeContent(courseCardData?.lastReadContentId)">{{
-										'RESUME_COURSE' | translate }}</button>
-				</div>
 				<ion-card-subtitle *ngIf="batchInfo || batchEndDate" class="font-12">
 					<div *ngIf="batchInfo">
 						<ion-icon name="information-circle"></ion-icon> {{batchInfo}} batches
 						available
 					</div>
 					<div *ngIf="batchEndDate">
-						<ion-icon name="information-circle"></ion-icon> Last date to join {{batchEndDate}}
+						<ion-icon name="information-circle"></ion-icon> Complete Training by {{batchEndDate}} to earn a certificate
 					</div>
 				</ion-card-subtitle>
+			</ion-card-content>
+		</ion-card>
+		<ion-card class="enrolled-course-card">
+			<ion-card-content>
+				<div *ngIf="courseCardData?.batchId">
+				    <ion-card-title class="font-18">{{courseCardData?.lastReadContentId}}</ion-card-title>
+					<button *ngIf="!showResumeBtn && childrenData?.length" class="enrolled-course-card-button"
+						(click)="startContent()"><span><img class="play-icon" src="assets/imgs/Play@1.5x.svg" alt="play-icon">{{
+						'START_COURSE_NOW' | translate }}</span></button>
+					<button *ngIf="showResumeBtn" class="enrolled-course-card-button"
+						(click)="resumeContent(courseCardData?.lastReadContentId)"><span><img class="play-icon" src="assets/imgs/Play@1.5x.svg" alt="play-icon">{{
+							'CONTINUE_NOW' | translate }}</span></button>
+				</div>
 			</ion-card-content>
 		</ion-card>
 		<ion-card>

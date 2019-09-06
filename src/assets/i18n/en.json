@@ -464,6 +464,7 @@
   "SPACE_TAKEN_BY_APP": "Space used by {{%s}} content: ",
   "START_COURSE": "START",
   "START_COURSE_NOW":"Start Now",
+  "CONTINUE_NOW": "Continue Now",
   "STAR_RATINGS": "Rating",
   "STATE": "State",
   "STATE_OPTION_TEXT": "Select state",
