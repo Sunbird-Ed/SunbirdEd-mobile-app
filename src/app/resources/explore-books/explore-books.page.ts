@@ -377,6 +377,7 @@ export class ExploreBooksPage implements OnInit, OnDestroy {
         mediumList: this.mediumList
       }
     });
+    await sortOptionsModal.present();
     const { data } = await sortOptionsModal.onDidDismiss();
     if (data && data.values) {
       this.searchForm.patchValue({
@@ -406,8 +407,6 @@ export class ExploreBooksPage implements OnInit, OnDestroy {
       Environment.HOME,
       PageId.EXPLORE_MORE_CONTENT
     );
-
-    await sortOptionsModal.present();
   }
 
   onMimeTypeClicked(mimeType, index) {
