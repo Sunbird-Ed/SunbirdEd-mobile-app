@@ -16,6 +16,7 @@ import { CommonUtilService } from '@app/services/common-util.service';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { InteractSubtype, Environment, PageId } from '@app/services/telemetry-constants';
 import { Router } from '@angular/router';
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-enrollment-details-page',
@@ -36,6 +37,7 @@ export class EnrollmentDetailsPage {
   pageName: any;
   env: any;
   courseId: any;
+  todayDate: string;
 
   constructor(
     @Inject('AUTH_SERVICE') private authService: AuthService,
@@ -53,23 +55,27 @@ export class EnrollmentDetailsPage {
     this.ongoingBatches = this.navParams.get('ongoingBatches');
     this.upcommingBatches = this.navParams.get('upcommingBatches');
     this.retiredBatched = this.navParams.get('retiredBatched');
+    this.todayDate = moment(new Date()).format('YYYY-MM-DD');
     this.courseId = this.navParams.get('courseId');
     this.getUserId();
 
   }
 
-  close() {
-    this.popOverCtrl.dismiss();
+  close(data?: any) {
+    return this.popOverCtrl.dismiss(data);
   }
 
   resumeCourse(content: any) {
     this.saveContentContext(content);
+
     if (content.lastReadContentId && content.status === 1) {
       this.events.publish('course:resume', { content });
+      this.close();
     } else {
-      this.router.navigate([`/${RouterLinks.ENROLLED_COURSE_DETAILS}`], { state: { content } });
+      this.close(() => {
+        this.router.navigate([`/${RouterLinks.ENROLLED_COURSE_DETAILS}`], { state: { content } });
+      });
     }
-    this.close();
   }
 
   saveContentContext(content: any) {
@@ -173,19 +179,9 @@ export class EnrollmentDetailsPage {
       telemetryObject,
       values
     );
+    content.contentId = !content.contentId ? content.courseId : content.contentId;
+    this.router.navigate([`/${RouterLinks.ENROLLED_COURSE_DETAILS}`], { state: { content } });
 
-    if (content.contentType === ContentType.COURSE) {
-      content.contentId = !content.contentId ? content.courseId : content.contentId;
-      this.router.navigate([`/${RouterLinks.ENROLLED_COURSE_DETAILS}`], { state: { content } });
-    } else if (content.mimeType === MimeType.COLLECTION) {
-      // this.navCtrl.push(CollectionDetailsPage, {
-      // this.navCtrl.push(CollectionDetailsEtbPage, {
-      //   content: content
-      // });
-      this.router.navigate([`/${RouterLinks.COLLECTION_DETAILS}/${RouterLinks.ENROLLED_COURSE_DETAILS}`], { state: { content } });
-    } else {
-      this.router.navigate([`/${RouterLinks.CONTENT_DETAILS}`], { state: { content } });
-    }
   }
 
 }

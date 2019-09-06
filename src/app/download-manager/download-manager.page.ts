@@ -24,7 +24,7 @@ import { AppHeaderService, } from '@app/services/app-header.service';
 import { CommonUtilService, } from '@app/services/common-util.service';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { AppStorageInfo, DownloadManagerPageInterface, EmitedContents } from './download-manager.interface';
-import { ContentType, RouterLinks, ContentFilterConfig } from '@app/app/app.constant';
+import { RouterLinks, ContentFilterConfig } from '@app/app/app.constant';
 import { SbPopoverComponent } from '@app/app/components/popups/sb-popover/sb-popover.component';
 import { PageId, InteractType, Environment, InteractSubtype } from '@app/services/telemetry-constants';
 import { FormAndFrameworkUtilService } from '@app/services';
@@ -42,7 +42,7 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
   _toast: any;
   storageInfo: AppStorageInfo;
   downloadedContents: Content[] = [];
-  defaultImg = 'assets/imgs/ic_launcher.png';
+  defaultImg = this.commonUtilService.convertFileSrc('assets/imgs/ic_launcher.png');
   loader: any;
   deleteAllConfirm;
   appName: string;
@@ -55,7 +55,7 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
     @Inject('DEVICE_INFO') private deviceInfo: DeviceInfo,
     @Inject('STORAGE_SERVICE') private storageService: StorageService,
     private ngZone: NgZone,
-    private commonUtilService: CommonUtilService,
+    public commonUtilService: CommonUtilService,
     private headerService: AppHeaderService,
     private events: Events,
     private popoverCtrl: PopoverController,
@@ -70,7 +70,7 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
   async ngOnInit() {
     this.subscribeContentUpdateEvents();
     return Promise.all(
-      [this.getDownloadedContents(true, true),
+      [this.getDownloadedContents(true),
       this.getAppName()]
     );
   }
@@ -98,7 +98,6 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
   }
 
   private async getAppStorageInfo(): Promise<AppStorageInfo> {
-
     const req: ContentSpaceUsageSummaryRequest = { paths: [this.storageService.getStorageDestinationDirectoryPath()] };
     return this.contentService.getContentSpaceUsageSummary(req).toPromise()
       .then((res: ContentSpaceUsageSummaryResponse[]) => {
@@ -116,16 +115,6 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
 
   async getDownloadedContents(shouldGenerateTelemetry?, ignoreLoader?) {
     const profile: Profile = this.appGlobalService.getCurrentUser();
-    if (ignoreLoader) {
-
-    } else {
-      // this.loader = await this.commonUtilService.getLoader();
-      // await this.loader.present();
-      // this.loader. dismiss().then(() => {
-      //   this.loader = undefined;
-      // });
-    }
-
 
     const defaultSortCriteria: ContentSortCriteria[] = [{
       sortAttribute: 'sizeOnDevice',
@@ -135,7 +124,7 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
       ContentFilterConfig.NAME_DOWNLOADS);
     const requestParams: ContentRequest = {
       uid: profile.uid,
-      contentTypes: contentTypes,
+      contentTypes,
       audience: [],
       sortCriteria: this.sortCriteria || defaultSortCriteria
     };
@@ -163,17 +152,9 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
         });
         this.ngZone.run(async () => {
           this.downloadedContents = data;
-          // if (this.downloadedContents && this.downloadedContents.length && this.loader) {
-          //   await this.loader.dismiss();
-          //   this.loader = undefined;
-
-          // }
         });
       })
       .catch((e) => {
-        this.ngZone.run(async () => {
-          // await this.loader.dismiss();
-        });
       });
   }
 
@@ -191,14 +172,9 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
     };
     if (emitedContents.selectedContents.length > 1) {
       await this.deleteAllContents(emitedContents);
-      // await this.loader.dismiss();
-      // this.loader = undefined;
     } else {
       this.loader = await this.commonUtilService.getLoader();
       await this.loader.present();
-      // await this.loader.dismiss();
-      // this.loader = undefined;
-
 
       this.contentService.deleteContent(contentDeleteRequest).toPromise()
         .then(async (data: ContentDeleteResponse[]) => {
@@ -212,7 +188,6 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
               update: true
             });
             this.commonUtilService.showToast(this.commonUtilService.translateMessage('MSG_RESOURCE_DELETED'));
-            // await this.getAppStorageInfo();
           }
         }).catch(async (error: any) => {
           await this.loader.dismiss();
@@ -229,7 +204,10 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
       InteractType.TOUCH,
       InteractSubtype.DELETE_CLICKED,
       Environment.DOWNLOADS,
-      PageId.BULK_DELETE_CONFIRMATION_POPUP, undefined, valuesMap);
+      PageId.BULK_DELETE_CONFIRMATION_POPUP, undefined,
+      valuesMap,
+      undefined,
+      featureIdMap.downloadManager.DOWNLOADS_DELETE);
     const contentDeleteRequest: ContentDeleteRequest = {
       contentDeleteList: emitedContents.selectedContents
     };
@@ -247,11 +225,9 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
         icon: null,
         metaInfo: this.commonUtilService.translateMessage('FILES_DELETED'),
         sbPopoverDynamicMainTitle: this.deletedContentListTitle$
-        // sbPopoverContent: this.commonUtilService.translateMessage('FILES_DELETED')
       },
       cssClass: 'sb-popover danger sb-popover-cancel-delete',
     });
-
     this.deleteAllConfirm.present();
 
     this.deleteAllConfirm.onDidDismiss().then((response) => {
@@ -259,7 +235,6 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
         this.contentService.clearContentDeleteQueue().toPromise();
       }
     });
-
     this.contentService.enqueueContentDelete(contentDeleteRequest).toPromise();
     this.contentService.getContentDeleteQueue().skip(1).takeWhile((list) => !!list.length)
       .finally(async () => {
@@ -268,7 +243,6 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
 
         this.deleteAllConfirm.dismiss();
 
-        // await this.getAppStorageInfo();
 
         this.events.publish('savedResources:update', {
           update: true
@@ -339,8 +313,6 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
       InteractSubtype.ACTIVE_DOWNLOADS_CLICKED,
       Environment.DOWNLOADS,
       PageId.DOWNLOADS);
-    // migration-TODO
-    // this.navCtrl.push(ActiveDownloadsPage);
     this.router.navigate([RouterLinks.ACTIVE_DOWNLOADS]);
   }
 
@@ -351,7 +323,6 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
     this.storageDestination = await this.storageService.getStorageDestination().toPromise();
   }
   private async presentPopupForLessStorageSpace() {
-    console.log('STORAGEDEST', this.storageDestination);
     this._toast = await this.popoverCtrl.create({
       component: SbInsufficientStoragePopupComponent,
       componentProps: {
@@ -378,4 +349,3 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
   }
 
 }
-

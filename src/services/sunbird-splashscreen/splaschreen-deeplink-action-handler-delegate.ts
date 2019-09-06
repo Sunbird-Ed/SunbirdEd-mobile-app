@@ -1,6 +1,7 @@
 import { Inject, Injectable, NgZone } from '@angular/core';
 import { Router } from '@angular/router';
 import { Events } from '@ionic/angular';
+import { AppVersion } from '@ionic-native/app-version/ngx';
 import { Observable } from 'rxjs';
 import {
   ContentService,
@@ -28,6 +29,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
   isGuestUser: any;
   userId: string;
   enrolledCourses: any;
+  appLabel: any;
 
   constructor(
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
@@ -39,9 +41,14 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
     private appGlobalServices: AppGlobalService,
     private events: Events,
     private zone: NgZone,
-    private router: Router
+    private router: Router,
+    private appVersion: AppVersion
   ) {
     this.getUserId();
+    this.appVersion.getAppName()
+      .then((appName: any) => {
+        this.appLabel = appName;
+      });
   }
 
   handleNotification(data) {
@@ -143,6 +150,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
               batchId: batch.id,
               courseId: batch.courseId
             });
+            this.events.publish('coach_mark_seen', { showWalkthroughBackDrop: false, appName: this.appLabel });
             loader.dismiss();
             this.getEnrolledCourses();
           });
