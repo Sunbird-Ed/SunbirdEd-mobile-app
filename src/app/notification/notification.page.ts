@@ -23,7 +23,7 @@ import {
 export class NotificationPage implements OnInit {
 
   notificationList = [];
-  newNotificationCount: number = 0;
+  newNotificationCount = 0;
   showClearNotificationButton: boolean;
   private unregisterBackButton: Subscription;
   private headerObservable: Subscription;

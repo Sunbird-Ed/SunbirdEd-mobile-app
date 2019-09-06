@@ -646,7 +646,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
     this.showLoader = true;
     this.responseData.filterCriteria.mode = 'hard';
     this.responseData.filterCriteria.searchType = SearchType.FILTER;
-    this.telemetryGeneratorService.generateStartSheenAnimationTelemetry();
+    this.telemetryGeneratorService.generateStartSheenAnimationTelemetry(this.source);
     this.contentService.searchContent(this.responseData.filterCriteria).toPromise()
       .then((responseData: ContentSearchResult) => {
 
@@ -670,7 +670,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
           } else {
             this.isEmptyResult = true;
           }
-          this.telemetryGeneratorService.generateEndSheenAnimationTelemetry();
+          this.telemetryGeneratorService.generateEndSheenAnimationTelemetry(this.source);
           this.showLoader = false;
         });
       }).catch(() => {
@@ -698,7 +698,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
 
     this.showLoader = true;
     if (this.showLoader) {
-      this.telemetryGeneratorService.generateStartSheenAnimationTelemetry();
+      this.telemetryGeneratorService.generateStartSheenAnimationTelemetry(this.source);
     }
 
     (window as any).cordova.plugins.Keyboard.close();
