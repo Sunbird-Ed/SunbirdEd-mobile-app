@@ -95,11 +95,14 @@ export class PermissionComponent implements OnInit {
       this.permissionListDetails[1].permission = res[AndroidPermission.WRITE_EXTERNAL_STORAGE].hasPermission;
       this.permissionListDetails[2].permission = res[AndroidPermission.RECORD_AUDIO].hasPermission;
     });
-    this.changePermissionAccess = Boolean(this.navParams.changePermissionAccess);
-    this.showProfileSettingPage = Boolean(this.navParams.showProfileSettingPage);
-    this.showTabsPage = Boolean(this.navParams.showTabsPage);
-    this.headerService.showHeaderWithBackButton();
 
+    if (this.navParams) {
+      this.changePermissionAccess = Boolean(this.navParams.changePermissionAccess);
+      this.showProfileSettingPage = Boolean(this.navParams.showProfileSettingPage);
+      this.showTabsPage = Boolean(this.navParams.showTabsPage);
+    }
+
+    this.headerService.showHeaderWithBackButton();
     this.event.subscribe('event:showScanner', (data) => {
       if (data.pageName === PageId.PERMISSION) {
         this.scannerService.startScanner(PageId.PERMISSION, true);
