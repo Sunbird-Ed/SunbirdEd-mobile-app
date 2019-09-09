@@ -1,8 +1,7 @@
 import { Component, Inject, NgZone, OnInit } from '@angular/core';
-import { AlertController, Events, Platform, PopoverController } from '@ionic/angular';
+import { Events, Platform, PopoverController, AlertController } from '@ionic/angular';
 import isObject from 'lodash/isObject';
 import forEach from 'lodash/forEach';
-import { SocialSharing } from '@ionic-native/social-sharing/ngx';
 
 import { AppGlobalService } from '@app/services/app-global-service.service';
 import { CommonUtilService } from '@app/services/common-util.service';
@@ -27,7 +26,7 @@ import {
   ContentState,
   ContentStateResponse,
   ContentUpdate,
-  CorrelationData,
+  CorrelationData, Course,
   CourseBatchesRequest,
   CourseBatchStatus,
   CourseEnrollmentType,
@@ -45,7 +44,6 @@ import {
   TelemetryErrorCode,
   TelemetryObject,
   UnenrollCourseRequest,
-  Course,
   AuthService,
   OAuthSession
 } from 'sunbird-sdk';
@@ -67,7 +65,6 @@ import { SbGenericPopoverComponent } from '../components/popups/sb-generic-popov
 import { ContentActionsComponent, ContentRatingAlertComponent, ConfirmAlertComponent } from '../components';
 import { Location } from '@angular/common';
 import { Router, NavigationExtras } from '@angular/router';
-import { state } from '@angular/animations';
 import { ContentUtil } from '@app/util/content-util';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { SbPopoverComponent } from '../components/popups';
@@ -204,7 +201,6 @@ export class EnrolledCourseDetailsPage implements OnInit {
     private zone: NgZone,
     private events: Events,
     private popoverCtrl: PopoverController,
-    private social: SocialSharing,
     private courseUtilService: CourseUtilService,
     private platform: Platform,
     private appGlobalService: AppGlobalService,
@@ -240,7 +236,7 @@ export class EnrolledCourseDetailsPage implements OnInit {
     this.appVersion.getAppName()
       .then((appName: any) => {
         this.appName = appName;
-    });
+      });
     this.subscribeUtilityEvents();
     this.getAllBatches();
   }
@@ -382,9 +378,7 @@ export class EnrolledCourseDetailsPage implements OnInit {
           Environment.HOME,
           PageId.CONTENT_DETAIL,
           undefined,
-          // paramsMap,
           undefined,
-          // this.objRollup,
           undefined,
           this.corRelationList);
       } else {
@@ -419,8 +413,8 @@ export class EnrolledCourseDetailsPage implements OnInit {
     });
     await popover.present();
     const { data } = await popover.onDidDismiss();
-    if (data && data.data === 'unenroll') {
-      this.handleUnenrollment(data.data);
+    if (data && data.unenroll) {
+      this.handleUnenrollment(data.unenroll);
     }
   }
 
@@ -430,7 +424,7 @@ export class EnrolledCourseDetailsPage implements OnInit {
    */
   async handleUnenrollment(unenroll) {
     if (unenroll) {
-      const loader = await  this.commonUtilService.getLoader();
+      const loader = await this.commonUtilService.getLoader();
       await loader.present();
       const unenrolCourseRequest: UnenrollCourseRequest = {
         userId: this.appGlobalService.getUserId(),
@@ -543,10 +537,6 @@ export class EnrolledCourseDetailsPage implements OnInit {
     }
     this.course.isAvailableLocally = data.isAvailableLocally;
 
-    if (this.courseCardData.batchId) {
-      // if (this.course.isAvailableLocally === true) {
-      // this.getBatchDetails();
-    }
 
     if (Boolean(data.isAvailableLocally)) {
       this.setChildContents();
@@ -950,7 +940,8 @@ export class EnrolledCourseDetailsPage implements OnInit {
           state: {
             content,
             depth,
-            contentState
+            contentState,
+            corRelation: this.corRelationList
           }
         });
       } else if (content.mimeType === MimeType.COLLECTION) {
@@ -966,7 +957,8 @@ export class EnrolledCourseDetailsPage implements OnInit {
             contentState,
             fromCoursesPage: true,
             isAlreadyEnrolled: this.isAlreadyEnrolled,
-            isChildClickable
+            isChildClickable,
+            corRelation: this.corRelationList
           }
         });
       } else {
@@ -975,7 +967,9 @@ export class EnrolledCourseDetailsPage implements OnInit {
             content,
             depth,
             contentState,
-            isChildContent: true
+            isChildContent: true,
+            corRelation: this.corRelationList,
+            isCourse: true
           }
         });
       }
@@ -1035,7 +1029,9 @@ export class EnrolledCourseDetailsPage implements OnInit {
         },
         isResumedCourse: true,
         isChildContent: true,
-        resumedCourseCardData: this.courseCardData
+        resumedCourseCardData: this.courseCardData,
+        corRelation: this.corRelationList,
+        isCourse: true
       }
     };
     this.router.navigate([RouterLinks.CONTENT_DETAILS], params);
@@ -1116,7 +1112,7 @@ export class EnrolledCourseDetailsPage implements OnInit {
     if (enrolledCourses && enrolledCourses.length > 0) {
       for (const course of enrolledCourses) {
         if (course.courseId === identifier) {
-          if (this.courseCardData.batch && course.batchId === this.courseCardData.batchId) {
+          if (this.courseCardData.batch && course.batchId === this.courseCardData.batch.identifier) {
             this.isAlreadyEnrolled = true;
             this.courseCardData = course;
           } else if (!this.courseCardData.batch) {

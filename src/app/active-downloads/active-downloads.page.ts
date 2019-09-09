@@ -16,12 +16,10 @@ import {
   StorageDestination
 } from 'sunbird-sdk';
 import { Location } from '@angular/common';
-//  import { SbPopoverComponent } from '@app/component';
 import { AppHeaderService, CommonUtilService, TelemetryGeneratorService } from '../../services/index';
 import { SbNoNetworkPopupComponent } from '../components/popups/sb-no-network-popup/sb-no-network-popup.component';
 import { SbPopoverComponent } from '../components/popups/sb-popover/sb-popover.component';
-import {featureIdMap} from '@app/feature-id-map';
-// import { SbNoNetworkPopupComponent } from '../../component/popups/sb-no-network-popup/sb-no-network-popup';
+import { featureIdMap } from '@app/feature-id-map';
 @Component({
   selector: 'app-active-downloads',
   templateUrl: './active-downloads.page.html',
@@ -87,6 +85,7 @@ export class ActiveDownloadsPage implements OnInit, OnDestroy, ActiveDownloadsIn
       }
     }
   }
+
   ionViewWillEnter() {
     this.fetchStorageDestination();
     this.checkAvailableSpace();
@@ -95,7 +94,6 @@ export class ActiveDownloadsPage implements OnInit, OnDestroy, ActiveDownloadsIn
     this.telemetryGeneratorService.generatePageViewTelemetry(
       PageId.ACTIVE_DOWNLOADS,
       Environment.DOWNLOADS, '');
-    //  this.checkAvailableSpace();
   }
 
   cancelAllDownloads(): void {
@@ -131,7 +129,6 @@ export class ActiveDownloadsPage implements OnInit, OnDestroy, ActiveDownloadsIn
   }
 
   private initDownloadProgress(): void {
-    // @ts-ignore
     this._downloadProgressSubscription = this.eventsBusService.events(EventNamespace.DOWNLOADS)
       .filter((event) => event.type === DownloadEventType.PROGRESS)
       .do((event) => {
@@ -154,7 +151,6 @@ export class ActiveDownloadsPage implements OnInit, OnDestroy, ActiveDownloadsIn
   private handleHeaderEvents(event: { name: string }) {
     switch (event.name) {
       case 'back':
-        // this.navCtrl.pop();
         this.location.back();
         break;
     }
@@ -263,27 +259,23 @@ export class ActiveDownloadsPage implements OnInit, OnDestroy, ActiveDownloadsIn
         sbPopoverHeading: this.commonUtilService.translateMessage('INSUFFICIENT_STORAGE'),
         sbPopoverMessage: this.storageDestination === StorageDestination.INTERNAL_STORAGE ?
           this.commonUtilService.translateMessage('MOVE_FILES_TO_OTHER_DESTINATION', this.commonUtilService.translateMessage('SD_CARD')) :
-          this.commonUtilService.translateMessage('MOVE_FILES_TO_OTHER_DESTINATION', this.commonUtilService.translateMessage('INTERNAL_MEMORY')),
+          this.commonUtilService.translateMessage('MOVE_FILES_TO_OTHER_DESTINATION',
+            this.commonUtilService.translateMessage('INTERNAL_MEMORY')),
       },
-        cssClass: 'sb-popover no-network',
-      });
+      cssClass: 'sb-popover no-network',
+    });
 
     this._toast.present();
   }
 
   private checkAvailableSpace() {
-   this.storageService.getStorageDestinationVolumeInfo()
-   .do((volumeInfo) => {
-    if (volumeInfo.info.availableSize < 209715200) {
-      this.presentPopupForLessStorageSpace();
-    }
-   })
-   .subscribe();
+    this.storageService.getStorageDestinationVolumeInfo()
+      .do((volumeInfo) => {
+        if (volumeInfo.info.availableSize < 209715200) {
+          this.presentPopupForLessStorageSpace();
+        }
+      })
+      .subscribe();
   }
 
 }
-
-
-
-
-

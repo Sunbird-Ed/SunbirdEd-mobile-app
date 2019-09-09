@@ -1,5 +1,5 @@
-@import "src/assets/styles/_custom-mixins.scss";
-@import "src/assets/styles/_variables.scss";
+@import 'src/assets/styles/_custom-mixins';
+@import 'src/assets/styles/_variables';
 
 :host {
     .fontBold {
@@ -241,5 +241,48 @@
     --color-checked : #024f9d;
     --color: #467fb8;
   }
+  .wrapper {
+    display: grid;
+    grid-template-columns: 100px auto 100px;
+  }  
+  .wrapper {
+    border-radius: 5px;
+  }
+  
+  .wrapper > div {
+    border-radius: 5px;
+    padding: 1em;
+  }
+
+  .pull-right{
+      float: right;
+  }
+  .menu-icon{
+    display: block;
+    width: 100%;
+    height: 16px;
+    width: 4px;
+    margin-top: 9px;
+    margin-left: 50px;
+  }
+  .card-icons {
+    height: 19.92px;
+    width: 18px;
+    color: #024F9D;
+  }
+  .card-text{
+    height: 18px;
+    width: 56px;
+    color: #666666;
+    font-family: "Noto Sans";
+    font-size: 10px !important;
+    line-height: 20px;
+    text-align: center;
+  }
+  .card-button{
+      background-color: transparent !important;
+  }
+  
+  
   
   

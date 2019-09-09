@@ -147,8 +147,8 @@
 <ion-content>
 	<div>
 		<ion-card>
-			<ion-card-header class="custom-card-header ion-margin-bottom">
-				<ion-card-title class="font-18">{{course.name}}</ion-card-title>
+			<ion-card-header class="custom-card-header">
+				<ion-card-title class="font-18">{{course?.name}}</ion-card-title>
 				<ion-card-subtitle class="font-14 subtitle-color">by {{ course?.creator || course?.owner }}
 				</ion-card-subtitle>
 				<div class="hr-border-bottom"></div>
@@ -167,6 +167,34 @@
 						<ion-icon name="information-circle"></ion-icon> Complete Training by {{batchEndDate}} to earn a certificate
 					</div>
 				</ion-card-subtitle>
+				<div *ngIf="courseCardData?.batchId">
+					<div>
+						<div>
+							<div class="sb-dt-card-actions">
+								<div class="wrapper sb-btn-tile-group">
+									<div>
+											<!-- *ngIf="downloadIdentifiers?.length && !isDownloadStarted" -->
+										<button slot="icon-only" class="card-button">
+											<ion-icon ios="ios-cloud-download" md="md-cloud-download" class="card-icons">
+											</ion-icon>
+											<p *ngIf="!isDownloadStarted"
+												class="card-text">{{'DOWNLOAD' | translate}}</p>
+										</button>
+									</div>
+									<div>
+										<button slot="icon-only" (click)="share()" class="card-button">
+											<ion-icon ios="ios-share" md="md-share" class="card-icons"></ion-icon>
+											<p class="card-text">{{'SHARE' | translate}}</p>
+										</button>
+									</div>
+									<div>
+										<img class="menu-icon" src="assets/imgs/menu.svg" alt="menu-icon">
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
 			</ion-card-content>
 		</ion-card>
 		<ion-card class="enrolled-course-card">
@@ -214,9 +242,9 @@
 							<ion-card-title class="font-12 subtitle-color label-margin-bottom">
 								{{'TRAINING_IS_RELEVENT_TO_TEACHERS'| translate}}:
 							</ion-card-title>
-							<p>Class : {{course.gradeLevel}}</p>
-							<p>Subject: {{course.subject}}</p>
-							<p>Medium : {{course.medium}}</p>
+							<p>Class : {{course?.gradeLevel}}</p>
+							<p>Subject: {{course?.subject}}</p>
+							<p>Medium : {{course?.medium}}</p>
 						</div>
 						<div class="ion-margin-bottom">
 							<ion-card-title class="font-12 subtitle-color label-margin-bottom">
@@ -225,7 +253,7 @@
 							<p>{{'TRAINING_END_DATA' | translate }} : 31 Aug 2019</p>
 						</div>
 						<div>
-							<p>{{course.description}}</p>
+							<p>{{course?.description}}</p>
 						</div>
 					</div>
 				</ion-card-content>
@@ -250,8 +278,6 @@
 								</ion-col>
 							</ion-row>
 						</ion-grid>
-
-
 						<div class="sb-hidden-content"
 							*ngIf="isGroupShown(i) && (item?.children && item?.children?.length)">
 							<div class="sb-separator-line"></div>

@@ -8,6 +8,7 @@ import { IonicModule } from '@ionic/angular';
 import { ExploreBooksPage } from './explore-books.page';
 import { TranslateModule } from '@ngx-translate/core';
 import { ComponentsModule } from '@app/app/components/components.module';
+import { ExploreBooksSortComponent } from '../explore-books-sort/explore-books-sort.component';
 
 const routes: Routes = [
   {
@@ -23,8 +24,9 @@ const routes: Routes = [
     IonicModule,
     RouterModule.forChild(routes),
     TranslateModule.forChild(),
-    ComponentsModule
+    ComponentsModule,
   ],
-  declarations: [ExploreBooksPage]
+  declarations: [ExploreBooksPage, ExploreBooksSortComponent],
+  entryComponents: [ExploreBooksSortComponent],
 })
 export class ExploreBooksPageModule {}

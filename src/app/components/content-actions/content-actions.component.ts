@@ -24,7 +24,7 @@ import * as moment from 'moment';
   templateUrl: './content-actions.component.html',
   styleUrls: ['./content-actions.component.scss']
 })
-export class ContentActionsComponent implements OnInit {
+export class ContentActionsComponent {
 
   content: any;
   data: any;
@@ -71,9 +71,6 @@ export class ContentActionsComponent implements OnInit {
     this.getUserId();
   }
 
-  ngOnInit() {
-
-  }
 
   getUserId() {
     this.authService.getSession().subscribe((session: OAuthSession) => {
@@ -136,9 +133,9 @@ export class ContentActionsComponent implements OnInit {
           cssClass: 'sb-popover danger',
         });
         await confirm.present();
-        const response = await confirm.onDidDismiss();
+        const { data } = await confirm.onDidDismiss();
 
-        if (response.data) {
+        if (data && data.canDelete) {
           this.deleteContent();
         }
         break;
@@ -174,12 +171,12 @@ export class ContentActionsComponent implements OnInit {
       cssClass: 'sb-popover info',
     });
     await confirm.present();
-    const response = await confirm.onDidDismiss();
+    const { data } = await confirm.onDidDismiss();
 
     let unenroll: any = false;
-    if (response.data.leftBtnClicked == null) {
+    if (data && data.isLeftButtonClicked === null) {
       unenroll = false;
-    } else if (response.data.leftBtnClicked) {
+    } else if (data && data.isLeftButtonClicked) {
       unenroll = false;
     } else {
       unenroll = true;
@@ -207,7 +204,6 @@ export class ContentActionsComponent implements OnInit {
     await loader.present();
     this.contentService.deleteContent(this.getDeleteRequestBody()).toPromise()
       .then(async (data: ContentDeleteResponse[]) => {
-        console.log('data on delete', data);
         await loader.dismiss();
         if (data && data[0].status === ContentDeleteStatus.NOT_FOUND) {
           this.showToaster(this.getMessageByConstant('CONTENT_DELETE_FAILED'));
@@ -256,21 +252,32 @@ export class ContentActionsComponent implements OnInit {
   }
 
   isUnenrollDisabled() {
-    let isEnrolledDisabled = true;
-    let progress;
-    const todayDate = moment(new Date()).format('YYYY-MM-DD');
-    if (this.data && this.data.courseProgress) {
-      progress = this.data.courseProgress ? Math.round(this.data.courseProgress) : 0;
+    if (!this.batchDetails || this.isObjectEmpty(this.batchDetails)) {
+      return true;
     }
-    if (!this.batchDetails) {
-      return isEnrolledDisabled;
+
+    if (!this.batchDetails.endDate) {
+      let progress;
+
+      if (this.data && this.data.courseProgress) {
+        progress = this.data.courseProgress ? Math.round(this.data.courseProgress) : 0;
+      }
+
+      return !(this.batchDetails.enrollmentType === 'open' && progress !== 100);
+    } else {
+      if (moment(this.batchDetails.endDate).diff(moment(new Date())) !== 0) {
+        let progress;
+
+        if (this.data && this.data.courseProgress) {
+          progress = this.data.courseProgress ? Math.round(this.data.courseProgress) : 0;
+        }
+
+        return !(this.batchDetails.enrollmentType === 'open' && progress !== 100);
+      }
     }
-    if ((!(this.batchDetails && this.batchDetails.hasOwnProperty('endDate')) ||
-      (this.batchDetails.endDate > todayDate)) &&
-      (this.batchDetails.enrollmentType === 'open') &&
-      (progress !== 100)) {
-      isEnrolledDisabled = false;
-    }
-    return isEnrolledDisabled;
+  }
+
+  private isObjectEmpty(obj) {
+    return Object.keys(obj).length === 0 && obj.constructor === Object;
   }
 }

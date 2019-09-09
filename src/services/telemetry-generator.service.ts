@@ -150,13 +150,6 @@ export class TelemetryGeneratorService {
         this.telemetryService.interrupt(telemetryInterruptRequest).subscribe();
     }
 
-    // generateExDataTelemetry(type, data) {
-    //     const exData = new ExData();
-    //     exData.type = type;
-    //     exData.data = data;
-    //     this.telemetryService.exdata(exData);
-    // }
-
     generateErrorTelemetry(env, errCode, errorType, pageId, stackTrace) {
         const telemetryErrorRequest = new TelemetryErrorRequest();
         // telemetryErrorRequest.env = env;
@@ -241,11 +234,11 @@ export class TelemetryGeneratorService {
     }
 
     /**
-   * method generates telemetry on click Read less or Read more
-   * @param {string} param string as read less or read more
-   * @param {object} objRollup object roll up
-   * @param corRelationList corelationList
-   */
+     * method generates telemetry on click Read less or Read more
+     * @param {string} param string as read less or read more
+     * @param {object} objRollup object roll up
+     * @param corRelationList corelationList
+     */
     readLessOrReadMore(param, objRollup, corRelationList, telemetryObject) {
         this.generateInteractTelemetry(InteractType.TOUCH,
             param = 'READ_MORE' === param ? InteractSubtype.READ_MORE_CLICKED : InteractSubtype.READ_LESS_CLICKED,
@@ -327,17 +320,17 @@ export class TelemetryGeneratorService {
         return mimeType === MimeType.COLLECTION;
     }
 
-    generateStartSheenAnimationTelemetry() {
+    generateStartSheenAnimationTelemetry(pageId: string) {
         this.generateInteractTelemetry(InteractType.OTHER,
             InteractSubtype.SHEEN_ANIMATION_START,
             Environment.HOME,
-            PageId.LIBRARY);
+            pageId);
     }
 
-    generateEndSheenAnimationTelemetry() {
+    generateEndSheenAnimationTelemetry(pageId: string) {
         this.generateInteractTelemetry(InteractType.OTHER,
             InteractSubtype.SHEEN_ANIMATION_END,
             Environment.HOME,
-            PageId.LIBRARY);
+            pageId);
     }
 }
