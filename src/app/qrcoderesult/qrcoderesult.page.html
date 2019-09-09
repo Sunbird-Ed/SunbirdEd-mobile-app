@@ -19,7 +19,7 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content padding>
+<ion-content *ngIf="results.length>1" padding>
   <div class="card-container" *ngFor="let content of results; let i = index">
     <ion-row class="P010">
       <ul class="breadcrumbs">
