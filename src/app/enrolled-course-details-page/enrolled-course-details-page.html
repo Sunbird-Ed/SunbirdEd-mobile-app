@@ -152,12 +152,7 @@
 				<ion-card-subtitle class="font-14 subtitle-color">by {{ course?.creator || course?.owner }}
 				</ion-card-subtitle>
 				<div class="hr-border-bottom"></div>
-				<div class="sb-course-progress-container">
-					<p><b>Your Progress</b></p>
-					<p>{{course?.progress ? course?.progress : '0'}} % completed</p>
-					<!-- <app-pb-horizontal *ngIf="course?.progress" [progress]="course?.progress" class="course-progress" [ngClass]="{'blurbackground': batchExp}"></pb-horizontal> -->
-					<app-pb-horizontal [progress]="20" [ngClass]="{'blurbackground': batchExp}"></app-pb-horizontal>
-				</div>
+				
 				
 			</ion-card-header>
 			<ion-card-content>
@@ -199,6 +194,12 @@
 										<img class="menu-icon" (click)="($event.event)" src="assets/imgs/menu.svg" alt="menu-icon">
 									</div>
 								</div>
+								<div class="sb-course-progress-container">
+										<div class="font-13"><b>Your Progress</b></div>
+										<div class="padding-bottom-6"><span class="font-16">{{course?.progress ? course?.progress : '0'}}%</span>&nbsp;<span class="font-13">completed </span></div>
+										<!-- <app-pb-horizontal *ngIf="course?.progress" [progress]="course?.progress" class="course-progress" [ngClass]="{'blurbackground': batchExp}"></pb-horizontal> -->
+										<app-pb-horizontal [progress]="20" class="course-progress" [ngClass]="{'blurbackground': batchExp}"></app-pb-horizontal>
+									</div>
 							</div>
 						</div>
 					</div>
