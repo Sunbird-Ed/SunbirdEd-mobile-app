@@ -152,6 +152,13 @@
 				<ion-card-subtitle class="font-14 subtitle-color">by {{ course?.creator || course?.owner }}
 				</ion-card-subtitle>
 				<div class="hr-border-bottom"></div>
+				<div class="sb-course-progress-container">
+					<p><b>Your Progress</b></p>
+					<p>{{course?.progress ? course?.progress : '0'}} % completed</p>
+					<!-- <app-pb-horizontal *ngIf="course?.progress" [progress]="course?.progress" class="course-progress" [ngClass]="{'blurbackground': batchExp}"></pb-horizontal> -->
+					<app-pb-horizontal [progress]="20" [ngClass]="{'blurbackground': batchExp}"></app-pb-horizontal>
+				</div>
+				
 			</ion-card-header>
 			<ion-card-content>
 				<div *ngIf="!courseCardData?.batchId && course?.createdBy !== userId && !isAlreadyEnrolled">
