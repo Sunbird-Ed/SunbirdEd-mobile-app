@@ -1,17 +1,12 @@
-import {ContentDownloadRequest, DownloadRequest} from 'sunbird-sdk';
-import {OnInit} from '@angular/core';
-import {Observable} from 'rxjs/Observable';
+import { ContentDownloadRequest, DownloadRequest } from 'sunbird-sdk';
+import { OnInit } from '@angular/core';
+import { Observable } from 'rxjs/Observable';
 
 export interface ActiveDownloadsInterface extends OnInit {
-    // eventBusService: EventBusService
-    // contentService: ContentService
-    // downloadService: DownloadService
-    // networkConnectivity
+  activeDownloadRequests$: Observable<ContentDownloadRequest[]>;
 
-    activeDownloadRequests$: Observable<ContentDownloadRequest[]>;
-
-    cancelAllDownloads(): void;
-    cancelDownload(downloadRequest: DownloadRequest): void;
+  cancelAllDownloads(): void;
+  cancelDownload(downloadRequest: DownloadRequest): void;
 
   getContentDownloadProgress(contentId: string): number;
 }

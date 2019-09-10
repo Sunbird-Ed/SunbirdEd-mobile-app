@@ -129,7 +129,6 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
     const extras = this.router.getCurrentNavigation().extras.state;
 
     if (extras) {
-      console.log('extranavigation', extras.content);
       this.dialCode = extras.dialCode;
       this.contentType = extras.contentType;
       this.corRelationList = extras.corRelation;
@@ -647,7 +646,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
     this.showLoader = true;
     this.responseData.filterCriteria.mode = 'hard';
     this.responseData.filterCriteria.searchType = SearchType.FILTER;
-    this.telemetryGeneratorService.generateStartSheenAnimationTelemetry();
+    this.telemetryGeneratorService.generateStartSheenAnimationTelemetry(this.source);
     this.contentService.searchContent(this.responseData.filterCriteria).toPromise()
       .then((responseData: ContentSearchResult) => {
 
@@ -671,7 +670,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
           } else {
             this.isEmptyResult = true;
           }
-          this.telemetryGeneratorService.generateEndSheenAnimationTelemetry();
+          this.telemetryGeneratorService.generateEndSheenAnimationTelemetry(this.source);
           this.showLoader = false;
         });
       }).catch(() => {
@@ -699,7 +698,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
 
     this.showLoader = true;
     if (this.showLoader) {
-      this.telemetryGeneratorService.generateStartSheenAnimationTelemetry();
+      this.telemetryGeneratorService.generateStartSheenAnimationTelemetry(this.source);
     }
 
     (window as any).cordova.plugins.Keyboard.close();
@@ -753,7 +752,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
             this.generateLogEvent(response);
             const values = new Map();
             values['from'] = this.source;
-            values['searchCount'] = this.searchContentResult.length;
+            values['searchCount'] = this.searchContentResult ? this.searchContentResult.length : 0;
             values['searchCriteria'] = response.request;
             this.telemetryGeneratorService.generateExtraInfoTelemetry(values, PageId.SEARCH);
           } else {
@@ -762,14 +761,14 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
           this.showEmptyMessage = this.searchContentResult.length === 0;
           this.showLoader = false;
           if (!this.showLoader) {
-            this.telemetryGeneratorService.generateEndSheenAnimationTelemetry();
+            this.telemetryGeneratorService.generateEndSheenAnimationTelemetry(this.source);
           }
         });
       }).catch(() => {
         this.zone.run(() => {
           this.showLoader = false;
           if (!this.showLoader) {
-            this.telemetryGeneratorService.generateEndSheenAnimationTelemetry();
+            this.telemetryGeneratorService.generateEndSheenAnimationTelemetry(this.source);
           }
           if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
             this.commonUtilService.showToast('ERROR_OFFLINE_MODE');
@@ -937,7 +936,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
     this.isDialCodeSearch = true;
 
     this.showLoader = true;
-    this.telemetryGeneratorService.generateStartSheenAnimationTelemetry();
+    this.telemetryGeneratorService.generateStartSheenAnimationTelemetry(this.source);
 
     const contentTypes = await this.formAndFrameworkUtilService.getSupportedContentFilterConfig(
       ContentFilterConfig.NAME_DIALCODE);
@@ -965,7 +964,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
             this.processDialCodeResult(sections);
             // this.updateFilterIcon();  // TO DO
           }
-          this.telemetryGeneratorService.generateEndSheenAnimationTelemetry();
+          this.telemetryGeneratorService.generateEndSheenAnimationTelemetry(this.source);
           this.showLoader = false;
         });
       }).catch(error => {
@@ -1463,7 +1462,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
       const contentArray: Array<any> = searchResult.contentDataList;
       const params = new Array<any>();
       const paramsMap = new Map();
-      paramsMap['SearchResults'] = contentArray.length;
+      paramsMap['SearchResults'] = contentArray ? contentArray.length : 0;
       paramsMap['SearchCriteria'] = searchResult.request;
       params.push(paramsMap);
       this.telemetryGeneratorService.generateLogEvent(LogLevel.INFO,

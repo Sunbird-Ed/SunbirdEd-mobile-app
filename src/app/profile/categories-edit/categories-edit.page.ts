@@ -33,7 +33,7 @@ import { Location } from '@angular/common';
   templateUrl: './categories-edit.page.html',
   styleUrls: ['./categories-edit.page.scss'],
 })
-export class CategoriesEditPage implements OnInit {
+export class CategoriesEditPage {
 
   @ViewChild('boardSelect') boardSelect: IonSelect;
   @ViewChild('mediumSelect') mediumSelect: IonSelect;
@@ -95,19 +95,16 @@ export class CategoriesEditPage implements OnInit {
 
   ) {
     this.profile = this.appGlobalService.getCurrentUser();
-    const extras = this.router.getCurrentNavigation().extras;
-    if (extras.state && extras.state.showOnlyMandatoryFields) {
-      this.showOnlyMandatoryFields = extras.state.showOnlyMandatoryFields;
-      if (extras.state.profile) {
-        this.profile = extras.state.profile;
+    const extrasState = this.router.getCurrentNavigation().extras.state;
+    if (extrasState && extrasState.showOnlyMandatoryFields) {
+      this.showOnlyMandatoryFields = extrasState.showOnlyMandatoryFields;
+      if (extrasState.profile) {
+        this.profile = extrasState.profile;
       }
     } else {
       this.showOnlyMandatoryFields = false;
     }
     this.initializeForm();
-  }
-
-  ngOnInit() {
   }
 
   /**
@@ -222,7 +219,6 @@ export class CategoriesEditPage implements OnInit {
     }
   }
 
-
   /**
    * It builds API request object and internally call form API to fetch category data.
    * @param index Index of the field in the form
@@ -263,6 +259,7 @@ export class CategoriesEditPage implements OnInit {
       this.getCategoryData(request, currentField);
     }
   }
+
   /**
    * It makes an API call to fetch the categories values for the selected framework
    * @param request API request body
@@ -306,7 +303,6 @@ export class CategoriesEditPage implements OnInit {
       });
   }
 
-
   /**
    * It will validate the forms and internally call submit method
    */
@@ -335,17 +331,15 @@ export class CategoriesEditPage implements OnInit {
     }
   }
 
-
   /**
    * Shows Toast Message with `red` color
-   * @param {string} fieldName Name of the field in the form
+   * @param fieldName Name of the field in the form
    */
   showErrorToastMessage(fieldName: string) {
     this.btnColor = '#8FC4FF';
     this.commonUtilService.showToast(this.commonUtilService.translateMessage('PLEASE_SELECT', this.commonUtilService
       .translateMessage(fieldName)), false, 'redErrorToast');
   }
-
 
   /**
    * It changes the color of the submit button on change of class.
@@ -358,10 +352,9 @@ export class CategoriesEditPage implements OnInit {
     }
   }
 
-
   /**
    * It makes an update API call.
-   * @param {object} formVal Object of Form values
+   * @param formVal Object of Form values
    */
 
   async submitForm(formVal) {

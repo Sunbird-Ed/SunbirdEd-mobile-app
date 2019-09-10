@@ -1,5 +1,6 @@
 import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
 import {Content} from 'sunbird-sdk';
+import { CommonUtilService } from '@app/services';
 
 
 @Component({
@@ -23,7 +24,7 @@ export class DetailCardComponent implements OnInit {
   @Output() shareEvent = new EventEmitter();
   text: string;
 
-  constructor() {
+  constructor(public commonUtil: CommonUtilService) {
   }
 
   ngOnInit() {

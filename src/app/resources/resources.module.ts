@@ -11,8 +11,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
-    ResourcesComponent,
-    ExploreBooksSortComponent
+    ResourcesComponent
   ],
   imports: [
     CommonModule,
@@ -31,10 +30,8 @@ import { ReactiveFormsModule } from '@angular/forms';
     DirectivesModule,
     ReactiveFormsModule
   ],
-  entryComponents: [ExploreBooksSortComponent],
   exports: [
-    ResourcesComponent,
-    ExploreBooksSortComponent
+    ResourcesComponent
   ]
 })
 export class ResourcesModule { }

@@ -1,6 +1,6 @@
 import { FormGroup, FormBuilder } from '@angular/forms';
-import { Component, OnInit, Inject, ViewChild } from '@angular/core';
-import { NavParams, Platform, PopoverController } from '@ionic/angular';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { NavParams, Platform, ModalController } from '@ionic/angular';
 import { CommonUtilService } from '@app/services/common-util.service';
 import { FilterValue } from 'sunbird-sdk';
 import { Environment, InteractSubtype, InteractType, PageId } from '@app/services/telemetry-constants';
@@ -36,7 +36,7 @@ export class ExploreBooksSortComponent implements OnInit {
     private commonUtilService: CommonUtilService,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private fb: FormBuilder,
-    private popOverCtrl: PopoverController
+    private modalCtrl: ModalController
   ) {
     this.initForm();
   }
@@ -45,7 +45,7 @@ export class ExploreBooksSortComponent implements OnInit {
     this.backButtonFunc = this.platform.backButton.subscribeWithPriority(11, () => {
       this.boardSelect.close();
       this.mediumSelect.close();
-      this.popOverCtrl.dismiss(null);
+      this.modalCtrl.dismiss(null);
 
       this.telemetryGeneratorService.generateInteractTelemetry(
         InteractType.TOUCH,
@@ -70,9 +70,9 @@ export class ExploreBooksSortComponent implements OnInit {
 
   dismiss() {
     if ((this.sortForm.value.board !== this.searchForm.value.board) || (this.sortForm.value.medium !== this.searchForm.value.medium)) {
-      this.popOverCtrl.dismiss({ values: this.sortForm.value });
+      this.modalCtrl.dismiss({ values: this.sortForm.value });
     } else {
-      this.popOverCtrl.dismiss(null);
+      this.modalCtrl.dismiss(null);
     }
   }
 }

@@ -174,7 +174,7 @@ export class SunbirdQRScanner {
           Environment.ONBOARDING,
           PageId.QRCodeScanner);
         const navigationExtras: NavigationExtras = { state: { changePermissionAccess: true } };
-        this.router.navigate([`/${RouterLinks.SETTINGS}/permission`], navigationExtras);
+        this.router.navigate([`/${RouterLinks.SETTINGS}/${RouterLinks.PERMISSION}`], navigationExtras);
       }
 
     }).catch((error) => {

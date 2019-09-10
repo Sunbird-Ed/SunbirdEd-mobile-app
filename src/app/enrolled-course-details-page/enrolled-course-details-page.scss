@@ -52,6 +52,12 @@
         }
     }
     .loading-backdrop {
+        background-color: #ffffff;
+        height: 100%;
+        z-index: 1000;
+        opacity: 1 !important;
+        top: 0;
+        bottom: 0;
         .backdrop-container {
             width: 100%;
             padding: 16px;
@@ -65,11 +71,7 @@
             width: 100%;
             bottom: 0;
             padding-bottom: 16px;
-        }
-        background-color: #ffffff;
-        height: 100%;
-        z-index: 1000;
-        opacity: 1 !important;
+        } 
     }
     .child-item {
         @include padding(null, null, null, 0 !important)

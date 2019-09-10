@@ -34,6 +34,7 @@ export class DownloadsTabComponent implements OnInit {
     totalSize: 0,
     count: 0
   };
+  defaultImg = this.commonUtilService.convertFileSrc('assets/imgs/ic_launcher.png');
 
   constructor(
     private popoverCtrl: PopoverController,

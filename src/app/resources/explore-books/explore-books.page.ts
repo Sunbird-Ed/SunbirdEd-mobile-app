@@ -1,9 +1,9 @@
 import {
-  ChangeDetectorRef, Component, ElementRef,
+  Component, ElementRef,
   Inject, NgZone, OnDestroy, QueryList,
   ViewChild, ViewChildren, OnInit
 } from '@angular/core';
-import { NavController, NavParams, Platform, ModalController } from '@ionic/angular';
+import { Platform, ModalController } from '@ionic/angular';
 import { AudienceFilter, ContentType, MimeType, Search, ExploreConstants, RouterLinks } from 'app/app.constant';
 import { Map } from 'app/telemetryutil';
 import {
@@ -21,10 +21,8 @@ import {
   ContentService,
   CorrelationData,
   FilterValue,
-  FrameworkUtilService,
   ProfileType,
-  SearchType,
-  SharedPreferences
+  SearchType
 } from 'sunbird-sdk';
 import { AppGlobalService, AppHeaderService, CommonUtilService, TelemetryGeneratorService } from '@app/services';
 import { animate, group, state, style, transition, trigger } from '@angular/animations';
@@ -133,16 +131,13 @@ export class ExploreBooksPage implements OnInit, OnDestroy {
   checkedSortByButton = true;
 
   constructor(
-    @Inject('FRAMEWORK_UTIL_SERVICE') private frameworkUtilService: FrameworkUtilService,
-    @Inject('SHARED_PREFERENCES') private sharedPreferences: SharedPreferences,
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
     public modalCtrl: ModalController,
     private zone: NgZone,
-    private commonUtilService: CommonUtilService,
+    public commonUtilService: CommonUtilService,
     private headerService: AppHeaderService,
     private appGlobalService: AppGlobalService,
     private translate: TranslateService,
-    private changeDetectionRef: ChangeDetectorRef,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private platform: Platform,
     private router: Router,
@@ -382,6 +377,7 @@ export class ExploreBooksPage implements OnInit, OnDestroy {
         mediumList: this.mediumList
       }
     });
+    await sortOptionsModal.present();
     const { data } = await sortOptionsModal.onDidDismiss();
     if (data && data.values) {
       this.searchForm.patchValue({
@@ -411,8 +407,6 @@ export class ExploreBooksPage implements OnInit, OnDestroy {
       Environment.HOME,
       PageId.EXPLORE_MORE_CONTENT
     );
-
-    await sortOptionsModal.present();
   }
 
   onMimeTypeClicked(mimeType, index) {

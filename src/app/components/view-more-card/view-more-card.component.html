@@ -1,52 +1,65 @@
 <ion-grid [ngClass]="{'grid-disabled': cardDisabled}">
-    <ion-row class="row-border row-margin-bottom">
-      <ion-col class="image-align" (click)="checkRetiredOpenBatch(content, type)">
-        <img class="app-icon" src="{{ content.courseLogoUrl || content?.appIcon || defaultImg }}" />
-      </ion-col>
-      <ion-col size="8" no-padding>
-        <app-pb-horizontal *ngIf="content.cProgress" [progress]="content.cProgress" class="course-progress" [ngClass]="{'blurbackground': batchExp}"></app-pb-horizontal>
-        <ion-row style="height: 50%;" class="pl-5">
-          <ion-col size="12">
-            <h6 class="meta-name" text-wrap *ngIf="content.name && content.name.length">{{(content.name.length > 20) ? (content.name | slice:0:20) + '...' : (content.name)}}</h6>
-            <h6 class="meta-name" text-wrap *ngIf="content.courseName && content.courseName.length">{{(content.courseName.length > 22) ? (content.courseName | slice:0:22) + '...' : (content.courseName)}}</h6>
-            <h6 class="meta-name" text-wrap *ngIf="content.contentData && content.contentData.name && content.contentData.name.length">{{(content.contentData.name.length > 22) ? (content.contentData.name | slice:0:22) + '...' : (content.contentData.name)}}</h6>
-          </ion-col>
-        </ion-row>
-        <ion-row [ngSwitch]="type" style="overflow: hidden;" class="pl-5">
-          <!--  Enrolled courses -->
-          <ion-col size="8" *ngSwitchCase="'enrolledCourse'" col-sm style="padding-top: 10px;">
-            <span class="content-size1"> {{ 'COURSE_PROGRESS_COMPLETED' | translate: {'%s': content.cProgress? content.cProgress : 0} }}</span>
-            <!-- <div class="content-meta">
+  <ion-row class="row-border row-margin-bottom">
+    <ion-col class="image-align" (click)="checkRetiredOpenBatch(content, type)">
+      <img class="app-icon"
+        [src]="commonUtilService.convertFileSrc(content.courseLogoUrl) || commonUtilService.convertFileSrc(content?.appIcon) || defaultImg" />
+    </ion-col>
+    <ion-col size="8" no-padding>
+      <app-pb-horizontal *ngIf="content.cProgress" [progress]="content.cProgress" class="course-progress"
+        [ngClass]="{'blurbackground': batchExp}"></app-pb-horizontal>
+      <ion-row style="height: 50%;" class="pl-5">
+        <ion-col size="12">
+          <h6 class="meta-name" text-wrap *ngIf="content.name && content.name.length">
+            {{(content.name.length > 20) ? (content.name | slice:0:20) + '...' : (content.name)}}</h6>
+          <h6 class="meta-name" text-wrap *ngIf="content.courseName && content.courseName.length">
+            {{(content.courseName.length > 22) ? (content.courseName | slice:0:22) + '...' : (content.courseName)}}</h6>
+          <h6 class="meta-name" text-wrap
+            *ngIf="content.contentData && content.contentData.name && content.contentData.name.length">
+            {{(content.contentData.name.length > 22) ? (content.contentData.name | slice:0:22) + '...' : (content.contentData.name)}}
+          </h6>
+        </ion-col>
+      </ion-row>
+      <ion-row [ngSwitch]="type" style="overflow: hidden;" class="pl-5">
+        <!--  Enrolled courses -->
+        <ion-col size="8" *ngSwitchCase="'enrolledCourse'" col-sm style="padding-top: 10px;">
+          <span class="content-size1">
+            {{ 'COURSE_PROGRESS_COMPLETED' | translate: {'%s': content.cProgress? content.cProgress : 0} }}</span>
+          <!-- <div class="content-meta">
               <span class="content-size1">{{ 'ERROR_DURATION_NOT_AVAILABLE' | translate | slice:0:14 }}...</span>
             </div> -->
-          </ion-col>
-          <!-- Library layout -->
-          <ion-col size="8" *ngSwitchCase="'library'" col-sm>
-            <span class="content-created-date1" *ngIf="content.createdOn"> {{ content.createdOn | date: 'mediumDate' }} </span>
-            <br/>
-            <div class="content-meta">
-              <span class="content-type" *ngIf="content.contentType">{{ content.contentType }}</span>
-              <span class="content-size1" *ngIf="content.size">[{{ content.size | fileSize }}] &lrm;</span>
-              <span class="content-size1" *ngIf="content.sizeOnDevice">[{{ content.sizeOnDevice | fileSize }}] &lrm;</span>
-            </div>
-          </ion-col>
-          <!-- Popular course layout -->
-          <ion-col size="8" *ngSwitchCase="'popularCourses'" col-sm style="padding-top: 10px;">
-            <span class="content-size1" *ngIf="content.size">{{ 'FILE_SIZE' | translate: {'%s': content.size | fileSize | slice:0:07} }}</span>
-            <br/>
-            <!-- <div class="content-meta">
+        </ion-col>
+        <!-- Library layout -->
+        <ion-col size="8" *ngSwitchCase="'library'" col-sm>
+          <span class="content-created-date1" *ngIf="content.createdOn"> {{ content.createdOn | date: 'mediumDate' }}
+          </span>
+          <br />
+          <div class="content-meta">
+            <span class="content-type" *ngIf="content.contentType">{{ content.contentType }}</span>
+            <span class="content-size1" *ngIf="content.size">[{{ content.size | fileSize }}] &lrm;</span>
+            <span class="content-size1" *ngIf="content.sizeOnDevice">[{{ content.sizeOnDevice | fileSize }}]
+              &lrm;</span>
+          </div>
+        </ion-col>
+        <!-- Popular course layout -->
+        <ion-col size="8" *ngSwitchCase="'popularCourses'" col-sm style="padding-top: 10px;">
+          <span class="content-size1"
+            *ngIf="content.size">{{ 'FILE_SIZE' | translate: {'%s': content.size | fileSize | slice:0:07} }}</span>
+          <br />
+          <!-- <div class="content-meta">
               <span class="content-size1">{{ 'ERROR_DURATION_NOT_AVAILABLE' | translate }}</span>
             </div> -->
-          </ion-col>
-          <!-- Button -->
-          <ion-col size="4" class="padding">
-            <ion-button fill="outline" size="small"  class="custom-btn float-end">
-              <span style="font-size: 12px !important" *ngIf="type === 'enrolledCourse'" (click)="resumeCourse(content);">{{ ('RESUME' | translate).length > 6 ? ('RESUME' | translate | slice:0:05) + '...' : ('RESUME' | translate) }}</span>
-              <span style="font-size: 12px !important" *ngIf="type !== 'enrolledCourse'" (click)="navigateToDetailsPage(content, type)">{{ ('OPEN' | translate).length > 5 ? ('OPEN' | translate | slice:0:05) + '...' : ('OPEN' | translate) }}</span>
-            </ion-button>
-          </ion-col>
-        </ion-row>
-      </ion-col>
-    </ion-row>
-  </ion-grid>
-  <!-- <br/> -->
+        </ion-col>
+        <!-- Button -->
+        <ion-col size="4" class="padding">
+          <ion-button fill="outline" size="small" class="custom-btn float-end">
+            <span style="font-size: 12px !important" *ngIf="type === 'enrolledCourse'"
+              (click)="resumeCourse(content);">{{ ('RESUME' | translate).length > 6 ? ('RESUME' | translate | slice:0:05) + '...' : ('RESUME' | translate) }}</span>
+            <span style="font-size: 12px !important" *ngIf="type !== 'enrolledCourse'"
+              (click)="navigateToDetailsPage(content, type)">{{ ('OPEN' | translate).length > 5 ? ('OPEN' | translate | slice:0:05) + '...' : ('OPEN' | translate) }}</span>
+          </ion-button>
+        </ion-col>
+      </ion-row>
+    </ion-col>
+  </ion-row>
+</ion-grid>
+<!-- <br/> -->

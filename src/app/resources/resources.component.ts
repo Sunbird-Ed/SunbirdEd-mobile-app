@@ -182,7 +182,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
       .then((appName: any) => {
         this.appLabel = appName;
       });
-    this.defaultImg = 'assets/imgs/ic_launcher.png';
+    this.defaultImg = this.commonUtilService.convertFileSrc('assets/imgs/ic_launcher.png');
     this.generateNetworkType();
 
   }
@@ -342,7 +342,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
     if (!hideLoaderFlag) {
       this.showLoader = true;
       if (this.showLoader) {
-        this.telemetryGeneratorService.generateStartSheenAnimationTelemetry();
+        this.telemetryGeneratorService.generateStartSheenAnimationTelemetry(PageId.LIBRARY);
       }
     }
     const requestParams: ContentRequest = {
@@ -374,7 +374,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
           if (!hideLoaderFlag) {
             this.showLoader = false;
             if (!this.showLoader) {
-              this.telemetryGeneratorService.generateEndSheenAnimationTelemetry();
+              this.telemetryGeneratorService.generateEndSheenAnimationTelemetry(PageId.LIBRARY);
             }
           }
         });
@@ -384,7 +384,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
           if (!hideLoaderFlag) {
             this.showLoader = false;
             if (!this.showLoader) {
-              this.telemetryGeneratorService.generateEndSheenAnimationTelemetry();
+              this.telemetryGeneratorService.generateEndSheenAnimationTelemetry(PageId.LIBRARY);
             }
           }
         });
@@ -398,7 +398,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
     this.storyAndWorksheets = [];
     this.searchApiLoader = true;
     if (this.searchApiLoader) {
-      this.telemetryGeneratorService.generateStartSheenAnimationTelemetry();
+      this.telemetryGeneratorService.generateStartSheenAnimationTelemetry(PageId.LIBRARY);
     }
 
     if (!contentSearchCriteria) {
@@ -452,7 +452,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
     } else {
       this.searchApiLoader = false;
     }
-    this.telemetryGeneratorService.generateStartSheenAnimationTelemetry();
+    this.telemetryGeneratorService.generateStartSheenAnimationTelemetry(PageId.LIBRARY);
     const reqvalues = new Map();
     reqvalues['pageReq'] = this.getGroupByPageReq;
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.OTHER,
@@ -523,7 +523,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
           this.refresh = false;
           this.searchApiLoader = false;
           if (!this.refresh || !this.searchApiLoader) {
-            this.telemetryGeneratorService.generateEndSheenAnimationTelemetry();
+            this.telemetryGeneratorService.generateEndSheenAnimationTelemetry(PageId.LIBRARY);
           }
           this.generateExtraInfoTelemetry(newSections.length);
         });
@@ -534,7 +534,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
           this.refresh = false;
           this.searchApiLoader = false;
           if (!this.refresh || !this.searchApiLoader) {
-            this.telemetryGeneratorService.generateEndSheenAnimationTelemetry();
+            this.telemetryGeneratorService.generateEndSheenAnimationTelemetry(PageId.LIBRARY);
           }
           if (error === 'SERVER_ERROR' || error === 'SERVER_AUTH_ERROR') {
             if (!isAfterLanguageChange) {
@@ -1049,7 +1049,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
 
   scrollToTop() {
     this.contentView.scrollToTop();
-
   }
   exploreOtherContents() {
     const navigationExtras = {
@@ -1062,8 +1061,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
         selectedMedium: this.getGroupByPageReq.medium
       }
     };
-
-    console.log("NavigationExtras", navigationExtras);
     this.router.navigate([RouterLinks.EXPLORE_BOOK], navigationExtras);
     const values = new Map();
     values['board'] = this.profile.board[0];

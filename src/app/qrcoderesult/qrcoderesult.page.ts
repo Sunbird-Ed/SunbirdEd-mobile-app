@@ -1,17 +1,12 @@
 import { CommonUtilService } from './../../services/common-util.service';
 import { Component, Inject, NgZone, OnDestroy, ViewChild } from '@angular/core';
-import { AlertController, Events, NavController, NavParams, Platform, PopoverController } from '@ionic/angular';
-import { ContentDetailsPage } from '../content-details/content-details.page';
-import { EnrolledCourseDetailsPage } from '../enrolled-course-details-page/enrolled-course-details-page';
 import { ContentType, MimeType, RouterLinks } from '../../app/app.constant';
-import { CollectionDetailsPage } from '../collection-details/collection-details.page';
 import { TranslateService } from '@ngx-translate/core';
 import { AppGlobalService } from '../../services/app-global-service.service';
 import { TelemetryGeneratorService } from '../../services/telemetry-generator.service';
 import find from 'lodash/find';
 import each from 'lodash/each';
 import map from 'lodash/map';
-import { ProfileSettingsPage } from '../profile-settings/profile-settings.page';
 import {
   ChildContentRequest,
   Content,
@@ -43,14 +38,12 @@ import {
 } from 'sunbird-sdk';
 import { Subscription } from 'rxjs/Subscription';
 import { Environment, ImpressionType, InteractSubtype, InteractType, PageId } from '../../services/telemetry-constants';
-import { TabsPage } from '../tabs/tabs.page';
-import { PlayerPage } from '../player/player.page';
 import { CanvasPlayerService } from '../../services/canvas-player.service';
 import { File } from '@ionic-native/file/ngx';
 import { AppHeaderService } from '../../services/app-header.service';
-import { CollectionDetailEtbPage } from '../collection-detail-etb/collection-detail-etb.page';
 import { Location } from '@angular/common';
 import { NavigationExtras, Router } from '@angular/router';
+import { Platform, Events } from '@ionic/angular';
 declare const cordova;
 
 @Component({
@@ -96,7 +89,7 @@ export class QrcoderesultPage implements OnDestroy {
   shouldGenerateEndTelemetry = false;
   source = '';
   results: Array<any> = [];
-  defaultImg: string;
+  defaultImg = this.commonUtilService.convertFileSrc('assets/imgs/ic_launcher.png');
   parents: Array<any> = [];
   paths: Array<any> = [];
   categories: Array<any> = [];
@@ -107,12 +100,7 @@ export class QrcoderesultPage implements OnDestroy {
   showLoading: boolean;
   isDownloadStarted: boolean;
   userCount = 0;
-  /**
-   * To hold previous state data
-   */
   cardData: any;
-  // migration-TODO
-  // @ViewChild(Navbar) navBar: any;
   downloadProgress: any = 0;
   isUpdateAvailable: boolean;
   eventSubscription: Subscription;
@@ -122,21 +110,17 @@ export class QrcoderesultPage implements OnDestroy {
   constructor(
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
-    // public navCtrl: NavController,
-    // public navParams: NavParams,
-    public zone: NgZone,
-    public translate: TranslateService,
-    public platform: Platform,
-    private telemetryGeneratorService: TelemetryGeneratorService,
-    private alertCtrl: AlertController,
-    public appGlobalService: AppGlobalService,
-    private events: Events,
-    private popOverCtrl: PopoverController,
-    public commonUtilService: CommonUtilService,
     @Inject('FRAMEWORK_SERVICE') private frameworkService: FrameworkService,
     @Inject('FRAMEWORK_UTIL_SERVICE') private frameworkUtilService: FrameworkUtilService,
     @Inject('EVENTS_BUS_SERVICE') private eventsBusService: EventsBusService,
     @Inject('PLAYER_SERVICE') private playerService: PlayerService,
+    public zone: NgZone,
+    public translate: TranslateService,
+    public platform: Platform,
+    private telemetryGeneratorService: TelemetryGeneratorService,
+    public appGlobalService: AppGlobalService,
+    private events: Events,
+    public commonUtilService: CommonUtilService,
     private canvasPlayerService: CanvasPlayerService,
     private location: Location,
     private file: File,
@@ -144,7 +128,6 @@ export class QrcoderesultPage implements OnDestroy {
     private router: Router
   ) {
     this.getNavData();
-    this.defaultImg = 'assets/imgs/ic_launcher.png';
   }
 
   getNavData() {
@@ -192,10 +175,6 @@ export class QrcoderesultPage implements OnDestroy {
     this.telemetryGeneratorService.generateImpressionTelemetry(ImpressionType.VIEW, '',
       PageId.DIAL_CODE_SCAN_RESULT,
       !this.appGlobalService.isProfileSettingsCompleted ? Environment.ONBOARDING : this.appGlobalService.getPageIdForTelemetry());
-    // // migration-TODO
-    // this.navBar.backButtonClick = () => {
-    //   this.handleBackButton(InteractSubtype.NAV_BACK_CLICKED);
-    // };
 
     if (!AppGlobalService.isPlayerLaunched) {
       this.calculateAvailableUserCount();
@@ -205,7 +184,6 @@ export class QrcoderesultPage implements OnDestroy {
 
   ionViewWillLeave() {
     this.headerObservable.unsubscribe();
-    // Unregister the custom back button action for this page
     if (this.unregisterBackButton) {
       this.unregisterBackButton.unsubscribe();
     }
