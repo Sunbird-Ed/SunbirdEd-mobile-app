@@ -152,6 +152,13 @@
 				<ion-card-subtitle class="font-14 subtitle-color">by {{ course?.creator || course?.owner }}
 				</ion-card-subtitle>
 				<div class="hr-border-bottom"></div>
+				<div class="sb-course-progress-container">
+					<p><b>Your Progress</b></p>
+					<p>{{course?.progress ? course?.progress : '0'}} % completed</p>
+					<!-- <app-pb-horizontal *ngIf="course?.progress" [progress]="course?.progress" class="course-progress" [ngClass]="{'blurbackground': batchExp}"></pb-horizontal> -->
+					<app-pb-horizontal [progress]="20" [ngClass]="{'blurbackground': batchExp}"></app-pb-horizontal>
+				</div>
+				
 			</ion-card-header>
 			<ion-card-content>
 				<div *ngIf="!courseCardData?.batchId && course?.createdBy !== userId && !isAlreadyEnrolled">
@@ -177,6 +184,7 @@
 										<button slot="icon-only" class="card-button">
 											<ion-icon ios="ios-cloud-download" md="md-cloud-download" class="card-icons">
 											</ion-icon>
+											<!-- <img src="assets/imgs/outline-cloud_download-24px.png" alt="download-outline"> -->
 											<p *ngIf="!isDownloadStarted"
 												class="card-text">{{'DOWNLOAD' | translate}}</p>
 										</button>
@@ -188,7 +196,7 @@
 										</button>
 									</div>
 									<div>
-										<img class="menu-icon" src="assets/imgs/menu.svg" alt="menu-icon">
+										<img class="menu-icon" (click)="($event.event)" src="assets/imgs/menu.svg" alt="menu-icon">
 									</div>
 								</div>
 							</div>
@@ -197,9 +205,8 @@
 				</div>
 			</ion-card-content>
 		</ion-card>
-		<ion-card class="enrolled-course-card">
+		<ion-card *ngIf="courseCardData?.batchId" class="enrolled-course-card">
 			<ion-card-content>
-				<div *ngIf="courseCardData?.batchId">
 				    <ion-card-title class="font-18">{{courseCardData?.lastReadContentId}}</ion-card-title>
 					<button *ngIf="!showResumeBtn && childrenData?.length" class="enrolled-course-card-button"
 						(click)="startContent()"><span><img class="play-icon" src="assets/imgs/Play@1.5x.svg" alt="play-icon">{{
@@ -207,11 +214,11 @@
 					<button *ngIf="showResumeBtn" class="enrolled-course-card-button"
 						(click)="resumeContent(courseCardData?.lastReadContentId)"><span><img class="play-icon" src="assets/imgs/Play@1.5x.svg" alt="play-icon">{{
 							'CONTINUE_NOW' | translate }}</span></button>
-				</div>
 			</ion-card-content>
 		</ion-card>
 		<ion-card>
 			<ion-card-content class="card-content-bottom-0">
+				<div *ngIf="!courseCardData?.batchId">
 				<ion-segment [(ngModel)]="segmentType">
 					<ion-segment-button value="info">
 						<ion-label class="font-12 text-transform-none">{{'TRAINING_INFO' | translate}}</ion-label>
@@ -223,6 +230,22 @@
 						<ion-label class="font-12 text-transform-none">{{'TRAINING_MODULES' | translate}}</ion-label>
 					</ion-segment-button>
 				</ion-segment>
+			</div>
+			<div *ngIf="courseCardData?.batchId">
+					<ion-segment [(ngModel)]="segmentType">
+							<ion-segment-button value="modules">
+								<ion-label class="font-12 text-transform-none">{{'TRAINING_MODULES' | translate}}</ion-label>
+
+							</ion-segment-button>
+							<div class="hr-div">
+								<hr class="hr-height">
+							</div>
+							<ion-segment-button value="info">
+									<ion-label class="font-12 text-transform-none">{{'TRAINING_INFO' | translate}}</ion-label>
+
+							</ion-segment-button>
+						</ion-segment>
+			</div>
 			</ion-card-content>
 		</ion-card>
 		<div [ngSwitch]="segmentType">
@@ -242,9 +265,9 @@
 							<ion-card-title class="font-12 subtitle-color label-margin-bottom">
 								{{'TRAINING_IS_RELEVENT_TO_TEACHERS'| translate}}:
 							</ion-card-title>
-							<p>Class : {{course?.gradeLevel}}</p>
-							<p>Subject: {{course?.subject}}</p>
-							<p>Medium : {{course?.medium}}</p>
+							<p *ngIf="course?.gradeLevel">Class : {{course?.gradeLevel}}</p>
+							<p *ngIf="course?.subject">Subject: {{course?.subject}}</p>
+							<p *ngIf="course?.medium">Medium : {{course?.medium}}</p>
 						</div>
 						<div class="ion-margin-bottom">
 							<ion-card-title class="font-12 subtitle-color label-margin-bottom">

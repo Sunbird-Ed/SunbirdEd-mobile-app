@@ -239,6 +239,10 @@ export class EnrolledCourseDetailsPage implements OnInit {
       });
     this.subscribeUtilityEvents();
     this.getAllBatches();
+    const self = this;
+    if(this.courseCardData.batchId){
+      self.segmentType = 'modules'
+    }
   }
 
   subscribeUtilityEvents() {

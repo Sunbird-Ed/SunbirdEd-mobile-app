@@ -52,24 +52,25 @@
         color: map-get($colors, textGrey);
     }
     .course-progress {
-        position: absolute;
-        width: 100%;
-        z-index: 10;
-        left:0;
-        top:0;
-        .progress-outer {
-            background-color: transparent !important;
-        }
-        .progress-inner {
-            min-width: unset !important;
-            padding: 2px !important;
-        }
+        // position: absolute;
+        // width: 100%;
+        // z-index: 10;
+        // left:0;
+        // top:0;
+        // .progress-outer {
+        //     background-color: transparent !important;
+        // }
+        // .progress-inner {
+        //     min-width: unset !important;
+        //     padding: 2px !important;
+        // }
         .progress-inner-primary {
-            background-color: #FF9F00 !important;
+            // background-color: #FF9F00 !important;
+            background-color: #008000 !important;
         }
-        .progress-inner-secondary {
-            background-color: #7ED321 !important;
-        }
+        // .progress-inner-secondary {
+        //     background-color: #7ED321 !important;
+        // }
     }
     ion-card ion-card-content p {
         font-size: 14px;
@@ -284,5 +285,12 @@
   }
   
   
+  .sb-course-progress-container{
+      background-color: #E5EDF5;
+      padding: 3px 8px 8px 8px;
+      p{
+          margin: 5px 0;
+      }
+  }
   
   
