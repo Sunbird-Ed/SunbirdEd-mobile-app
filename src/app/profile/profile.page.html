@@ -113,12 +113,20 @@
       </div>
     </div>
 
-    <div class="MT10">
+    <div class="MT10" *ngIf="profile?.recoveryEmail || profile?.recoveryPhone">
+      <div class="email " (click)="editRecoveryId();">
+        <span class="icon MR10 align-middle">
+          <ion-icon name="md-mail"></ion-icon>
+        </span>
+        <span class="value align-middle">{{ profile?.recoveryEmail || profile?.recoveryPhone }}</span>
+      </div>
+    </div>
+    <div class="MT10" *ngIf="!profile?.recoveryEmail && !profile?.recoveryPhone">
       <div class="email light" (click)="editRecoveryId();">
         <span class="icon MR10 align-middle">
           <ion-icon name="md-mail"></ion-icon>
         </span>
-        <span class="value align-middle">Add Recovery ID</span>
+        <span class="value align-middle">{{'ADD_RECOVERY_ID' | translate}}</span>
       </div>
     </div>
   </div>
