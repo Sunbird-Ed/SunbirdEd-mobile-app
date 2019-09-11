@@ -188,6 +188,7 @@ export class EnrolledCourseDetailsPage implements OnInit {
   importProgressMessage: string;
   segmentType = 'info';
   isGuestUser = false;
+  isEnrolled = false;
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -242,6 +243,7 @@ export class EnrolledCourseDetailsPage implements OnInit {
     const self = this;
     if(this.courseCardData.batchId){
       self.segmentType = 'modules'
+      this.isEnrolled = true;
     }
   }
 
@@ -272,6 +274,11 @@ export class EnrolledCourseDetailsPage implements OnInit {
       // delete this.batchDetails; // to show 'Enroll in Course' button courseCardData should be undefined/null
       this.isAlreadyEnrolled = false; // and isAlreadyEnrolled should be false
     });
+
+    this.events.subscribe('courseToc:content-clicked', (data) => {
+      this.joinTraining();
+    });
+
   }
 
   updateEnrolledCourseList(unenrolledCourse) {
@@ -326,32 +333,38 @@ export class EnrolledCourseDetailsPage implements OnInit {
       componentProps: {
         sbPopoverMainTitle : 'You must join an active batch to view and access training details',
         metaInfo: 'Register to get complete access to the content',
-        sbPopoverHeading : 'Login',
+        sbPopoverHeading : 'Join Trainig?',
         isNotShowCloseIcon: true,
         actionsButtons: [
           {
-            btntext: 'Login',
+            btntext: 'Enroll',
             btnClass: 'popover-color'
           },
         ],
-        handler : this.handleEnrollCoursePopup.bind(this)
+        // handler : this.handleEnrollCoursePopup.bind(this)
       },
       cssClass: 'sb-popover info',
     });
-    if (this.isGuestUser) {
-      await confirm.present();
-    } else {
-      console.log('loggedin user');
-      this.navigateToBatchListPage();
-    }
+    confirm.present();
+    confirm.onDidDismiss().then(({ data }) => {
+      if (data && data.canDelete) {
+        this.navigateToBatchListPage();
+      }
+    });
+    // if (this.isGuestUser) {
+    //   await confirm.present();
+    // } else {
+    //   console.log('loggedin user');
+    //   this.navigateToBatchListPage();
+    // }
   }
 
-  handleEnrollCoursePopup(btnText: string) {
-    console.log('handleEnrollCoursePopup', btnText);
-    if (btnText === 'Login') {
-      this.loginHandlerService.signIn();
-    }
-  }
+  // handleEnrollCoursePopup(btnText: string) {
+  //   console.log('handleEnrollCoursePopup', btnText);
+  //   if (btnText === 'Login') {
+  //     this.loginHandlerService.signIn();
+  //   }
+  // }
 
   /**
    * Function to rate content
@@ -1490,4 +1503,5 @@ export class EnrolledCourseDetailsPage implements OnInit {
     }, () => {
     });
   }
+
 }
