@@ -590,6 +590,7 @@ export class CoursesPage implements OnInit {
   }
 
   async showFilterPage(filterOptions) {
+    const backupFilter = this.appliedFilter ? JSON.parse(JSON.stringify(this.appliedFilter)) : this.appliedFilter;
     const popup = await this.popCtrl.create({
       component: PageFilterPage,
       componentProps: {
@@ -599,6 +600,10 @@ export class CoursesPage implements OnInit {
       cssClass: 'resource-filter'
     });
     await popup.present();
+    const { data } = await popup.onDidDismiss();
+    if (!data || !data.apply) {
+      this.appliedFilter = backupFilter;
+    }
   }
 
   checkEmptySearchResult(isAfterLanguageChange = false) {
