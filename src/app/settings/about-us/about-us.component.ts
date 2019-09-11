@@ -95,15 +95,15 @@ export class AboutUsComponent implements OnInit {
     const getUserCount = await this.profileService.getAllProfiles(allUserProfileRequest).map((profile) => profile.length).toPromise();
     const getLocalContentCount = await this.contentService.getContents(contentRequest)
       .map((contentCount) => contentCount.length).toPromise();
-
-    (<any>window).supportfile.shareSunbirdConfigurations(getUserCount, getLocalContentCount, (result) => {
-      const loader = this.commonUtilService.getLoader();
-      loader.present();
+    let loader = await this.commonUtilService.getLoader();
+    (<any>window).supportfile.shareSunbirdConfigurations(getUserCount, getLocalContentCount, async (result) => {
+      await loader.present();
       this.preferences.putString(KEY_SUNBIRD_CONFIG_FILE_PATH, result).toPromise()
         .then((res) => {
           this.preferences.getString(KEY_SUNBIRD_CONFIG_FILE_PATH).toPromise()
-            .then(val => {
-              loader.dismiss();
+            .then(async val => {
+              await loader.dismiss();
+              loader = undefined;
               if (Boolean(val)) {
                 this.fileUrl = 'file://' + val;
 
@@ -113,10 +113,13 @@ export class AboutUsComponent implements OnInit {
                   console.error('Sharing Data is not possible', error);
                 });
               }
-
             });
         });
-    }, (error) => {
+    }, async (error) => {
+      if (loader) {
+        await loader.dismiss();
+        loader = undefined;
+      }
       console.error('ERROR - ' + error);
     });
   }
