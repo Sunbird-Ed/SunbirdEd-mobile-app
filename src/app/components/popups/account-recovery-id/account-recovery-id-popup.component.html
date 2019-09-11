@@ -1,14 +1,15 @@
 <ion-content>
 
     <div class="ar-header ion-text-center">
-        <h6 class="M0">{{'UPDATE_RECOVERY_ID' | translate}}</h6>
+        <h6 class="M0" *ngIf="recoveryEmail || recoveryPhone">{{'UPDATE_RECOVERY_ID' | translate}}</h6>
+        <h6 class="M0" *ngIf="!recoveryEmail && !recoveryPhone">{{'ADD_RECOVERY_ACCOUNT' | translate}}</h6>
     </div>
 
     <ion-list lines="none">
         <ion-radio-group [(ngModel)]="recoveryIdType">
 
-            <ion-list-header>
-                <ion-label>{{'CHOOSE_RECOVERY_ID_TYPE' | translate}}</ion-label>
+            <ion-list-header class="recovery-desc">
+                <ion-label>{{'RECOVERY_ID_DESCRIPTION' | translate}}</ion-label>
             </ion-list-header>
 
             <ion-item>
