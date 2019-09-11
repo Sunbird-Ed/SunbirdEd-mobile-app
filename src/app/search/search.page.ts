@@ -374,7 +374,8 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
             corRelation: params.corRelation,
             isSingleContent: params.isSingleContent,
             onboarding: params.onboarding,
-            parentContent: params.parentContent
+            parentContent: params.parentContent,
+            isProfileUpdated: this.isProfileUpdated
           }
         });
         if (this.isSingleContent) {

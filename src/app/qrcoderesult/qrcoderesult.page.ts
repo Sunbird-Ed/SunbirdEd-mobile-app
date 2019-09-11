@@ -107,6 +107,7 @@ export class QrcoderesultPage implements OnDestroy {
   headerObservable: any;
   navData: any;
   backToPreviusPage = true;
+  isProfileUpdated: boolean;
 
   constructor(
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
@@ -152,6 +153,7 @@ export class QrcoderesultPage implements OnDestroy {
 
     // check for parent content
     this.parentContent = this.navData.parentContent;
+    this.isProfileUpdated = this.navData.isProfileUpdated;
     this.searchIdentifier = this.content.identifier;
 
     if (this.parentContent) {
@@ -234,7 +236,6 @@ export class QrcoderesultPage implements OnDestroy {
         this.results = [];
         this.profile = this.appGlobalService.getCurrentUser();
         const contentData = data.contentData;
-        this.checkProfileData(contentData, this.profile);
         this.findContentNode(data);
 
         if (this.results && this.results.length === 0) {
@@ -242,9 +243,15 @@ export class QrcoderesultPage implements OnDestroy {
             '',
             PageId.DIAL_LINKED_NO_CONTENT,
             Environment.HOME);
-          this.commonUtilService.showContentComingSoonAlert(this.source);
-          this.location.back();
-
+          if (this.isProfileUpdated) {
+             this.navCtrl.navigateBack([RouterLinks.TABS]);
+             this.commonUtilService.showContentComingSoonAlert(this.source);
+            } else {
+              this.commonUtilService.showContentComingSoonAlert(this.source);
+              this.navCtrl.navigateBack([RouterLinks.PROFILE_SETTINGS]);
+             // this.navCtrl.navigateBack('/');
+            }
+          // this.location.back();
         } else if (this.results && this.results.length === 1) {
           this.backToPreviusPage = false;
           this.navCtrl.navigateForward([RouterLinks.CONTENT_DETAILS], {
@@ -401,45 +408,6 @@ export class QrcoderesultPage implements OnDestroy {
     }
   }
 
-  editProfile(): void {
-    const req: Profile = {
-      board: this.profile.board,
-      grade: this.profile.grade,
-      medium: this.profile.medium,
-      subject: this.profile.subject,
-      uid: this.profile.uid,
-      handle: this.profile.handle,
-      profileType: this.profile.profileType,
-      source: this.profile.source,
-      createdAt: this.profile.createdAt,
-      syllabus: this.profile.syllabus
-    };
-    if (this.profile.grade && this.profile.grade.length > 0) {
-      this.profile.grade.forEach(gradeCode => {
-        for (let i = 0; i < this.gradeList.length; i++) {
-          if (this.gradeList[i].code === gradeCode) {
-            req.gradeValue = this.profile.gradeValue;
-            req.gradeValue[this.gradeList[i].code] = this.gradeList[i].name;
-            break;
-          }
-        }
-      });
-    }
-
-    this.profileService.updateProfile(req).toPromise()
-      .then((res: any) => {
-        if (res.syllabus && res.syllabus.length && res.board && res.board.length
-          && res.grade && res.grade.length && res.medium && res.medium.length) {
-          this.events.publish(AppGlobalService.USER_INFO_UPDATED);
-          this.events.publish('refresh:profile');
-        }
-        this.appGlobalService.guestUserProfile = res;
-        this.telemetryGeneratorService.generateProfilePopulatedTelemetry(PageId.DIAL_CODE_SCAN_RESULT,
-          req, 'auto');
-      })
-      .catch(() => {
-      });
-  }
 
   /** funtion add elipses to the texts**/
 
@@ -516,165 +484,10 @@ export class QrcoderesultPage implements OnDestroy {
   }
 
   /**
-   * Assigning board, medium, grade and subject to profile
-   */
-
-  setCurrentProfile(index, data) {
-    if (!this.profile.medium || !this.profile.medium.length) {
-      this.profile.medium = [];
-    }
-    /*     if (!this.profile.subject || !this.profile.subject.length) {
-          this.profile.subject = [];
-        }
-     */
-    switch (index) {
-      case 0:
-        this.profile.syllabus = [data.framework];
-        this.profile.board = [data.board];
-        this.setMedium(true, data.medium);
-        // this.profile.subject = [data.subject];
-        this.profile.subject = [];
-        this.setGrade(true, data.gradeLevel);
-        break;
-      case 1:
-        this.profile.board = [data.board];
-        this.setMedium(true, data.medium);
-        // this.profile.subject = [data.subject];
-        this.profile.subject = [];
-        this.setGrade(true, data.gradeLevel);
-        break;
-      case 2:
-        this.setMedium(false, data.medium);
-        break;
-      case 3:
-        this.setGrade(false, data.gradeLevel);
-        break;
-      /*       case 4:
-              this.profile.subject.push(data.subject);
-              break;
-       */
-    }
-    this.editProfile();
-  }
-
-  /**
    * comparing current profile data with qr result data, If not matching then reset current profile data
    * @param {object} data
    * @param {object} profile
    */
-  checkProfileData(data, profile) {
-
-    if (data && data.framework) {
-
-      const getSuggestedFrameworksRequest: GetSuggestedFrameworksRequest = {
-        language: this.translate.currentLang,
-        requiredCategories: FrameworkCategoryCodesGroup.DEFAULT_FRAMEWORK_CATEGORIES
-      };
-      // Auto update the profile if that board/framework is listed in custodian framework list.
-      this.frameworkUtilService.getActiveChannelSuggestedFrameworkList(getSuggestedFrameworksRequest).toPromise()
-        .then((res: Framework[]) => {
-          let isProfileUpdated = false;
-          res.forEach(element => {
-            // checking whether content data framework Id exists/valid in syllabus list
-            if (data.framework === element.identifier || data.board.indexOf(element.name) !== -1) {
-              isProfileUpdated = true;
-              const frameworkDetailsRequest: FrameworkDetailsRequest = {
-                frameworkId: data.framework,
-                requiredCategories: FrameworkCategoryCodesGroup.DEFAULT_FRAMEWORK_CATEGORIES
-              };
-              this.frameworkService.getFrameworkDetails(frameworkDetailsRequest).toPromise()
-                .then((framework: Framework) => {
-                  this.categories = framework.categories;
-                  this.boardList = find(this.categories, (category) => category.code === 'board').terms;
-                  this.mediumList = find(this.categories, (category) => category.code === 'medium').terms;
-                  this.gradeList = find(this.categories, (category) => category.code === 'gradeLevel').terms;
-                  //                  this.subjectList = find(this.categories, (category) => category.code === 'subject').terms;
-                  if (data.board) {
-                    data.board = this.findCode(this.boardList, data, 'board');
-                  }
-                  if (data.medium) {
-                    if (typeof data.medium === 'string') {
-                      data.medium = [this.findCode(this.mediumList, data, 'medium')];
-                    } else {
-                      data.medium = map(data.medium, (dataMedium) => {
-                        return find(this.mediumList, (medium) => medium.name === dataMedium).code;
-                      });
-                    }
-                  }
-                  /*                   if (data.subject) {
-                                      data.subject = this.findCode(this.subjectList, data, 'subject');
-                                    } */
-                  if (data.gradeLevel && data.gradeLevel.length) {
-                    data.gradeLevel = map(data.gradeLevel, (dataGrade) => {
-                      return find(this.gradeList, (grade) => grade.name === dataGrade).code;
-                    });
-                  }
-                  if (profile && profile.syllabus && profile.syllabus[0] && data.framework === profile.syllabus[0]) {
-                    if (data.board) {
-                      if (profile.board && !(profile.board.length > 1) && data.board === profile.board[0]) {
-                        if (data.medium) {
-                          let existingMedium = false;
-                          for (let i = 0; i < data.medium.length; i++) {
-                            const mediumExists = find(profile.medium, (medium) => {
-                              return medium === data.medium[i];
-                            });
-                            if (!mediumExists) {
-                              break;
-                            }
-                            existingMedium = true;
-                          }
-                          if (!existingMedium) {
-                            this.setCurrentProfile(2, data);
-                          }
-                          if (data.gradeLevel && data.gradeLevel.length) {
-                            let existingGrade = false;
-                            for (let i = 0; i < data.gradeLevel.length; i++) {
-                              const gradeExists = find(profile.grade, (grade) => {
-                                return grade === data.gradeLevel[i];
-                              });
-                              if (!gradeExists) {
-                                break;
-                              }
-                              existingGrade = true;
-                            }
-                            if (!existingGrade) {
-                              this.setCurrentProfile(3, data);
-                            }
-                            /*                             let existingSubject = false;
-                                                        existingSubject = find(profile.subject, (subject) => {
-                                                          return subject === data.subject;
-                                                        });
-                                                        if (!existingSubject) {
-                                                          this.setCurrentProfile(4, data);
-                                                        }
-                             */
-                          }
-                        }
-                      } else {
-                        this.setCurrentProfile(1, data);
-                      }
-                    }
-                  } else {
-                    this.setCurrentProfile(0, data);
-                  }
-                }).catch((err) => {
-                  if (err instanceof NetworkError) {
-                    this.commonUtilService.showToast('ERROR_OFFLINE_MODE');
-                  }
-                });
-
-              return;
-            }
-          });
-        })
-        .catch((err) => {
-          if (err instanceof NetworkError) {
-            this.commonUtilService.showToast('ERROR_OFFLINE_MODE');
-          }
-        });
-    }
-  }
-
   /**
    * Subscribe genie event to get content download progress
    */
