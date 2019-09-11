@@ -10,9 +10,13 @@
   ion-icon {
     @include rtl {
       float: left !important;
+      left: 15px !important;
+      
+
     }
     @include ltr {
       float: right !important;
+      right: 15px !important;
     }
   }
 
@@ -44,7 +48,7 @@
   }
 
   .arrow-icon {
-    right: 15px;
+    
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
