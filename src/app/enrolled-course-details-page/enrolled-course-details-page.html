@@ -155,15 +155,17 @@
 			</ion-card-header>
 			<ion-card-content>
 				<div *ngIf="!courseCardData?.batchId && course?.createdBy !== userId && !isAlreadyEnrolled">
-					<button class="enrolled-course-card-button" (click)="navigateToBatchListPage();">{{'JOIN_TRAINING' | translate}}</button>
+					<button class="enrolled-course-card-button"
+						(click)="navigateToBatchListPage();">{{'JOIN_TRAINING' | translate}}</button>
 				</div>
 				<ion-card-subtitle *ngIf="batchInfo || batchEndDate" class="font-12">
 					<div *ngIf="batchInfo">
 						<ion-icon name="information-circle"></ion-icon> {{batchInfo}} batches
 						available
 					</div>
-					<div *ngIf="batchEndDate">
-						<ion-icon name="information-circle"></ion-icon> Complete Training by {{batchEndDate}} to earn a certificate
+					<div *ngIf="batchDetails?.enrollmentEndDate">
+						<ion-icon name="information-circle"></ion-icon> Complete Training by {{batchDetails?.enrollmentEndDate | date}} to earn a
+						certificate
 					</div>
 				</ion-card-subtitle>
 				<div *ngIf="courseCardData?.batchId">
@@ -172,13 +174,15 @@
 							<div class="sb-dt-card-actions">
 								<div class="wrapper sb-btn-tile-group">
 									<div>
-											<!-- *ngIf="downloadIdentifiers?.length && !isDownloadStarted" -->
-										<button (click)="showDownloadConfirmationAlert()" slot="icon-only" class="card-button">
-											<ion-icon ios="ios-cloud-download" md="md-cloud-download" class="card-icons">
+										<!-- *ngIf="downloadIdentifiers?.length && !isDownloadStarted" -->
+										<button (click)="showDownloadConfirmationAlert()" slot="icon-only"
+											class="card-button">
+											<ion-icon ios="ios-cloud-download" md="md-cloud-download"
+												class="card-icons">
 											</ion-icon>
 											<!-- <img src="assets/imgs/outline-cloud_download-24px.png" alt="download-outline"> -->
-											<p *ngIf="!isDownloadStarted"
-												class="card-text">{{'DOWNLOAD' | translate}}</p>
+											<p *ngIf="!isDownloadStarted" class="card-text">{{'DOWNLOAD' | translate}}
+											</p>
 										</button>
 									</div>
 									<div>
@@ -188,14 +192,38 @@
 										</button>
 									</div>
 									<div>
-										<img class="menu-icon" (click)="($event.event)" src="assets/imgs/menu.svg" alt="menu-icon">
+										<img class="menu-icon" (click)="($event.event)" src="assets/imgs/menu.svg"
+											alt="menu-icon">
 									</div>
 								</div>
-								<div class="sb-course-progress-container" *ngIf="course?.progress" >
-									<p><b>Your Progress</b></p>
-									<p>{{course?.progress ? course?.progress : '0'}} % completed</p>
-									<app-pb-horizontal [progress]="course?.progress" class="course-progress" [ngClass]="{'blurbackground': batchExp}"></app-pb-horizontal>
-									<!-- <app-pb-horizontal [progress]="20" class="course-progress" [ngClass]="{'blurbackground': batchExp}"></app-pb-horizontal> -->
+								<div *ngIf="course?.batchId">
+									<div class="sb-course-progress-container" *ngIf="course?.progress">
+										<p><b>Your Progress</b></p>
+										<p>{{course?.progress ? course?.progress : '0'}} % completed</p>
+										<app-pb-horizontal [progress]="course?.progress" class="course-progress"
+											[ngClass]="{'blurbackground': batchExp}"></app-pb-horizontal>
+										<!-- <app-pb-horizontal [progress]="20" class="course-progress" [ngClass]="{'blurbackground': batchExp}"></app-pb-horizontal> -->
+									</div>
+									<!-- need to clarify-->
+									<!-- *ngIf="" -->
+									<!-- <div class="sb-course-end-container">
+									<p class="main-heading">Courses Ended on July 24th 2019</p>
+									<p class="sub-heading">There are no batches available for this training</p>
+								</div> -->
+									<div class="sb-batch-end-container" *ngIf="course?.progress !== 100 && batchExp">
+										<p class="batch-end-main-heading">{{'BATCHEND_MAIN_HEADING' | translate}} July 24th
+											2019</p>
+										<p class="batch-end-sub-heading">{{'BATCHEND_SUB_HEADING' | translate}}</p>
+									</div>
+									<div *ngIf="course?.progress && course?.progress === 100"
+										class="sb-course-complete-container">
+										<div class="img-container">
+											<img class="success-badge" src='assets/imgs/Badge green.svg'>
+										</div>
+										<div class="text-container">
+											<p><b>{{'TRAINING_COMPLETED_SUCESSFULLY' | translate}}</b></p>
+										</div>
+									</div>
 								</div>
 							</div>
 						</div>
@@ -205,45 +233,49 @@
 		</ion-card>
 		<ion-card *ngIf="courseCardData?.batchId" class="enrolled-course-card">
 			<ion-card-content>
-				    <ion-card-title class="font-18">{{courseCardData?.lastReadContentId}}</ion-card-title>
-					<button *ngIf="!showResumeBtn && childrenData?.length" class="enrolled-course-card-button"
-						(click)="startContent()"><span><img class="play-icon" src="assets/imgs/Play@1.5x.svg" alt="play-icon">{{
+				<ion-card-title class="font-18">{{courseCardData?.lastReadContentId}}</ion-card-title>
+				<button *ngIf="!showResumeBtn && childrenData?.length" class="enrolled-course-card-button"
+					(click)="startContent()"><span><img class="play-icon" src="assets/imgs/Play@1.5x.svg"
+							alt="play-icon">{{
 						'START_COURSE_NOW' | translate }}</span></button>
-					<button *ngIf="showResumeBtn" class="enrolled-course-card-button"
-						(click)="resumeContent(courseCardData?.lastReadContentId)"><span><img class="play-icon" src="assets/imgs/Play@1.5x.svg" alt="play-icon">{{
+				<button *ngIf="showResumeBtn" class="enrolled-course-card-button"
+					(click)="resumeContent(courseCardData?.lastReadContentId)"><span><img class="play-icon"
+							src="assets/imgs/Play@1.5x.svg" alt="play-icon">{{
 							'CONTINUE_NOW' | translate }}</span></button>
 			</ion-card-content>
 		</ion-card>
 		<ion-card>
 			<ion-card-content class="card-content-bottom-0">
 				<div *ngIf="!courseCardData?.batchId">
-				<ion-segment [(ngModel)]="segmentType">
-					<ion-segment-button value="info">
-						<ion-label class="font-12 text-transform-none">{{'TRAINING_INFO' | translate}}</ion-label>
-					</ion-segment-button>
-					<div class="hr-div">
-						<hr class="hr-height">
-					</div>
-					<ion-segment-button value="modules">
-						<ion-label class="font-12 text-transform-none">{{'TRAINING_MODULES' | translate}}</ion-label>
-					</ion-segment-button>
-				</ion-segment>
-			</div>
-			<div *ngIf="courseCardData?.batchId">
 					<ion-segment [(ngModel)]="segmentType">
-							<ion-segment-button value="modules">
-								<ion-label class="font-12 text-transform-none">{{'TRAINING_MODULES' | translate}}</ion-label>
+						<ion-segment-button value="info">
+							<ion-label class="font-12 text-transform-none">{{'TRAINING_INFO' | translate}}</ion-label>
+						</ion-segment-button>
+						<div class="hr-div">
+							<hr class="hr-height">
+						</div>
+						<ion-segment-button value="modules">
+							<ion-label class="font-12 text-transform-none">{{'TRAINING_MODULES' | translate}}
+							</ion-label>
+						</ion-segment-button>
+					</ion-segment>
+				</div>
+				<div *ngIf="courseCardData?.batchId">
+					<ion-segment [(ngModel)]="segmentType">
+						<ion-segment-button value="modules">
+							<ion-label class="font-12 text-transform-none">{{'TRAINING_MODULES' | translate}}
+							</ion-label>
 
-							</ion-segment-button>
-							<div class="hr-div">
-								<hr class="hr-height">
-							</div>
-							<ion-segment-button value="info">
-									<ion-label class="font-12 text-transform-none">{{'TRAINING_INFO' | translate}}</ion-label>
+						</ion-segment-button>
+						<div class="hr-div">
+							<hr class="hr-height">
+						</div>
+						<ion-segment-button value="info">
+							<ion-label class="font-12 text-transform-none">{{'TRAINING_INFO' | translate}}</ion-label>
 
-							</ion-segment-button>
-						</ion-segment>
-			</div>
+						</ion-segment-button>
+					</ion-segment>
+				</div>
 			</ion-card-content>
 		</ion-card>
 		<div [ngSwitch]="segmentType">
@@ -271,7 +303,7 @@
 							<ion-card-title class="font-12 subtitle-color label-margin-bottom">
 								{{'TRAINING_DETAILS' | translate}}
 							</ion-card-title>
-							<p>{{'TRAINING_END_DATA' | translate }} : 31 Aug 2019</p>
+							<p *ngIf="batchEndDate">{{'TRAINING_END_DATA' | translate }} : {{ batchEndDate | date}}</p>
 						</div>
 						<div>
 							<p>{{course?.description}}</p>
@@ -352,5 +384,5 @@
 	</div>
 </div>
 <app-sb-download-popup *ngIf="showDownload" (cancelDownloadEmit)="cancelDownload($event)" [currentCount]="currentCount"
-  [queuedIdentifiers]="queuedIdentifiers" [downloadSize]="downloadSize"
-  [collectionName]="course?.name" [showDownload]="showDownload"></app-sb-download-popup>
+	[queuedIdentifiers]="queuedIdentifiers" [downloadSize]="downloadSize" [collectionName]="course?.name"
+	[showDownload]="showDownload"></app-sb-download-popup>
