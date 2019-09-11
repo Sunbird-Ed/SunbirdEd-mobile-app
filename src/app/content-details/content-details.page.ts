@@ -591,7 +591,8 @@ export class ContentDetailsPage implements OnInit {
 
     // Tested in ionic 4 working as expected
     if (this.isSingleContent) {
-      this.navCtrl.navigateBack('/');
+      // this.navCtrl.navigateBack('/');
+      window.history.go(-3);
     } else if (this.resultLength === 1) {
       this.navCtrl.navigateBack([RouterLinks.SEARCH]);
     } else {
