@@ -43,7 +43,7 @@ import { File } from '@ionic-native/file/ngx';
 import { AppHeaderService } from '../../services/app-header.service';
 import { Location } from '@angular/common';
 import { NavigationExtras, Router } from '@angular/router';
-import { Platform, Events } from '@ionic/angular';
+import { Platform, Events, NavController } from '@ionic/angular';
 declare const cordova;
 
 @Component({
@@ -106,6 +106,7 @@ export class QrcoderesultPage implements OnDestroy {
   eventSubscription: Subscription;
   headerObservable: any;
   navData: any;
+  backToPreviusPage = true;
 
   constructor(
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
@@ -125,7 +126,8 @@ export class QrcoderesultPage implements OnDestroy {
     private location: Location,
     private file: File,
     private headerService: AppHeaderService,
-    private router: Router
+    private router: Router,
+    private navCtrl: NavController
   ) {
     this.getNavData();
   }
@@ -160,7 +162,10 @@ export class QrcoderesultPage implements OnDestroy {
       this.identifier = this.content.identifier;
     }
     this.setContentDetails(this.identifier, true);
-    this.getChildContents();
+    if (this.backToPreviusPage) {
+      this.getChildContents();
+      this.backToPreviusPage = false;
+    }
     this.unregisterBackButton = this.platform.backButton.subscribeWithPriority(10, () => {
       this.handleBackButton(InteractSubtype.DEVICE_BACK_CLICKED);
       this.unregisterBackButton.unsubscribe();
@@ -240,6 +245,15 @@ export class QrcoderesultPage implements OnDestroy {
           this.commonUtilService.showContentComingSoonAlert(this.source);
           this.location.back();
 
+        } else if (this.results && this.results.length === 1) {
+          this.backToPreviusPage = false;
+          this.navCtrl.navigateForward([RouterLinks.CONTENT_DETAILS], {
+            state: {
+              content: this.results[0],
+              isSingleContent: this.isSingleContent,
+              resultsSize: this.results.length
+            }
+           });
         }
 
       })
