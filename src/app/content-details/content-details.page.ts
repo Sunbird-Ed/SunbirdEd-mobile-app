@@ -7,7 +7,8 @@ import {
   Events,
   Platform,
   PopoverController,
-  ToastController
+  ToastController,
+  NavController
 } from '@ionic/angular';
 import { Subscription } from 'rxjs/Subscription';
 import {
@@ -137,6 +138,8 @@ export class ContentDetailsPage implements OnInit {
   networkSubscription: any;
   telemetryObject: TelemetryObject;
   contentDeleteObservable: any;
+  isSingleContent: boolean;
+  resultLength: any;
 
   // Newly Added 
   resumedCourseCardData: any;
@@ -170,7 +173,8 @@ export class ContentDetailsPage implements OnInit {
     private ratingHandler: RatingHandler,
     private contentPlayerHandler: ContentPlayerHandler,
     private childContentHandler: ChildContentHandler,
-    private contentDeleteHandler: ContentDeleteHandler
+    private contentDeleteHandler: ContentDeleteHandler,
+    private navCtrl: NavController
   ) {
     this.subscribePlayEvent();
     this.checkDeviceAPILevel();
@@ -195,6 +199,8 @@ export class ContentDetailsPage implements OnInit {
       this.breadCrumbData = extras.breadCrumb;
       this.launchPlayer = extras.launchplayer;
       this.resumedCourseCardData = extras.resumedCourseCardData;
+      this.isSingleContent = extras.isSingleContent;
+      this.resultLength = extras.resultsSize;
     }
   }
 
@@ -584,7 +590,13 @@ export class ContentDetailsPage implements OnInit {
     // }
 
     // Tested in ionic 4 working as expected
-    this.location.back();
+    if (this.isSingleContent) {
+      this.navCtrl.navigateBack('/');
+    } else if (this.resultLength === 1) {
+      this.navCtrl.navigateBack([RouterLinks.SEARCH]);
+    } else {
+      this.navCtrl.pop();
+    }
   }
 
   /**
