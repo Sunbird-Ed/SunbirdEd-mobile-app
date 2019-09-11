@@ -173,7 +173,7 @@
 								<div class="wrapper sb-btn-tile-group">
 									<div>
 											<!-- *ngIf="downloadIdentifiers?.length && !isDownloadStarted" -->
-										<button slot="icon-only" class="card-button">
+										<button (click)="showDownloadConfirmationAlert()" slot="icon-only" class="card-button">
 											<ion-icon ios="ios-cloud-download" md="md-cloud-download" class="card-icons">
 											</ion-icon>
 											<!-- <img src="assets/imgs/outline-cloud_download-24px.png" alt="download-outline"> -->
@@ -351,3 +351,6 @@
 		<ion-button size="small" (click)="cancelDownload()">{{ 'CANCEL' | translate }}</ion-button>
 	</div>
 </div>
+<app-sb-download-popup *ngIf="showDownload" (cancelDownloadEmit)="cancelDownload($event)" [currentCount]="currentCount"
+  [queuedIdentifiers]="queuedIdentifiers" [downloadSize]="downloadSize"
+  [collectionName]="course?.name" [showDownload]="showDownload"></app-sb-download-popup>

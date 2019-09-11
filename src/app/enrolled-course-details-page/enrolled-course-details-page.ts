@@ -2,6 +2,7 @@ import { Component, Inject, NgZone, OnInit } from '@angular/core';
 import { Events, Platform, PopoverController, AlertController } from '@ionic/angular';
 import isObject from 'lodash/isObject';
 import forEach from 'lodash/forEach';
+import { FileSizePipe } from '@app/pipes/file-size/file-size';
 
 import { AppGlobalService } from '@app/services/app-global-service.service';
 import { CommonUtilService } from '@app/services/common-util.service';
@@ -188,6 +189,7 @@ export class EnrolledCourseDetailsPage implements OnInit {
   importProgressMessage: string;
   segmentType = 'info';
   isGuestUser = false;
+  showDownload: boolean;
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -200,6 +202,7 @@ export class EnrolledCourseDetailsPage implements OnInit {
     private alertCtrl: AlertController,
     private zone: NgZone,
     private events: Events,
+    private fileSizePipe: FileSizePipe,
     private popoverCtrl: PopoverController,
     private courseUtilService: CourseUtilService,
     private platform: Platform,
@@ -755,22 +758,84 @@ export class EnrolledCourseDetailsPage implements OnInit {
   restoreDownloadState() {
     this.isDownloadStarted = false;
   }
+  /** old download all content */
+  // downloadAllContent1() {
+  //   if (this.commonUtilService.networkInfo.isNetworkAvailable) {
+  //     if (!this.isBatchNotStarted) {
+  //       this.isDownloadStarted = true;
+  //       this.downloadProgress = 0;
+  //       this.importContent(this.downloadIdentifiers, true, true);
+  //     } else {
+  //       this.commonUtilService.showToast(this.commonUtilService.translateMessage('COURSE_WILL_BE_AVAILABLE',
+  //         this.datePipe.transform(this.courseStartDate, 'mediumDate')));
+  //     }
 
-  downloadAllContent() {
+  //   } else {
+  //     this.commonUtilService.showToast('ERROR_NO_INTERNET_MESSAGE');
+  //   }
+  // }
+
+
+  async showDownloadConfirmationAlert(myEvent) {
     if (this.commonUtilService.networkInfo.isNetworkAvailable) {
-      if (!this.isBatchNotStarted) {
+      let contentTypeCount;
+      if (this.downloadIdentifiers.length) {
+        contentTypeCount = this.downloadIdentifiers.length;
+      } else {
+        contentTypeCount = '';
+      }
+      if(!this.isBatchNotStarted){
         this.isDownloadStarted = true;
         this.downloadProgress = 0;
-        this.importContent(this.downloadIdentifiers, true, true);
       } else {
         this.commonUtilService.showToast(this.commonUtilService.translateMessage('COURSE_WILL_BE_AVAILABLE',
-          this.datePipe.transform(this.courseStartDate, 'mediumDate')));
-      }
+                this.datePipe.transform(this.courseStartDate, 'mediumDate')));
+            }
 
+      const popover = await this.popoverCtrl.create({
+        component: ConfirmAlertComponent,
+        componentProps: {
+          sbPopoverHeading: this.commonUtilService.translateMessage('DOWNLOAD'),
+          sbPopoverMainTitle: this.course.name,
+          isNotShowCloseIcon: true,
+          actionsButtons: [
+            {
+              btntext: this.commonUtilService.translateMessage('DOWNLOAD'),
+              btnClass: 'popover-color'
+            },
+          ],
+          icon: null,
+          metaInfo: this.commonUtilService.translateMessage('ITEMS', contentTypeCount)
+            + ' (' + this.fileSizePipe.transform(this.downloadSize, 2) + ')',
+        },
+        cssClass: 'sb-popover info',
+      });
+      await popover.present();
+      const response = await popover.onDidDismiss();
+      if (response && response.data) {
+        this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
+          'download-all-button-clicked',
+          Environment.HOME,
+          PageId.ENROLLED_COURSE_DETAIL,
+          undefined,
+          undefined,
+          // todo
+          // this.objRollup,
+          //this.corRelationList
+          );
+        this.importContent(this.downloadIdentifiers, true, true);        
+        this.events.publish('header:decreasezIndex');
+        this.showDownload = true;
+      } else {
+        // Cancel Clicked Telemetry
+        // todo
+        // this.generateCancelDownloadTelemetry(this.contentDetail);
+      }
     } else {
       this.commonUtilService.showToast('ERROR_NO_INTERNET_MESSAGE');
     }
   }
+
 
   /**
    * Function to get status of child contents
@@ -1007,16 +1072,16 @@ export class EnrolledCourseDetailsPage implements OnInit {
       });
   }
 
-  getContentsSize(data) {
-    data.forEach((value) => {
-      if (value.contentData.size) {
-        this.downloadSize += Number(value.contentData.size);
-      }
-      this.getContentsSize(value.children);
-      if (value.isAvailableLocally === false) {
-        this.downloadIdentifiers.push(value.contentData.identifier);
-      }
-    });
+  getContentsSize(data?) {
+      data && data.forEach((value) => {
+        if (value.contentData.size) {
+          this.downloadSize += Number(value.contentData.size);
+        }
+        this.getContentsSize(value.children);
+        if (value.isAvailableLocally === false) {
+          this.downloadIdentifiers.push(value.contentData.identifier);
+        }
+      });
   }
 
   /**
@@ -1142,9 +1207,12 @@ export class EnrolledCourseDetailsPage implements OnInit {
         this.zone.run(() => {
           // Show download percentage
           if (event.type === DownloadEventType.PROGRESS) {
+            console.log('download prog' , event);
+
             const downloadEvent = event as DownloadProgress;
             if (downloadEvent.payload.identifier === this.identifier) {
               this.downloadProgress = downloadEvent.payload.progress === -1 ? 0 : downloadEvent.payload.progress;
+
               if (this.downloadProgress === 100) {
                 this.getBatchDetails();
                 this.showLoading = false;
@@ -1156,6 +1224,8 @@ export class EnrolledCourseDetailsPage implements OnInit {
           // Get child content
           if (event.payload && event.type === ContentEventType.IMPORT_COMPLETED) {
             this.showLoading = false;
+            console.log('import complete' , event);
+
             this.headerService.showHeaderWithBackButton(['share', 'more']);
             const contentImportCompleted = event as ContentImportCompleted;
             if (this.queuedIdentifiers.length && this.isDownloadStarted) {
@@ -1166,6 +1236,7 @@ export class EnrolledCourseDetailsPage implements OnInit {
               if (this.queuedIdentifiers.length === this.currentCount) {
                 this.isDownloadStarted = false;
                 this.currentCount = 0;
+                this.showDownload = false;
                 this.isDownloadCompleted = true;
                 this.downloadIdentifiers.length = 0;
                 this.queuedIdentifiers.length = 0;
@@ -1180,6 +1251,8 @@ export class EnrolledCourseDetailsPage implements OnInit {
             this.importProgressMessage = this.commonUtilService.translateMessage('EXTRACTING_CONTENT') + ' ' +
               Math.floor((event.payload.currentCount / event.payload.totalCount) * 100) +
               '% (' + event.payload.currentCount + ' / ' + event.payload.totalCount + ')';
+              console.log('import prog' , event);
+              
             if (event.payload.currentCount === event.payload.totalCount) {
               let timer = 30;
               const interval = setInterval(() => {
@@ -1215,6 +1288,7 @@ export class EnrolledCourseDetailsPage implements OnInit {
    */
   ionViewWillLeave(): void {
     this.isNavigatingWithinCourse = true;
+    this.events.publish('header:setzIndexToNormal');
     if (this.eventSubscription) {
       this.eventSubscription.unsubscribe();
     }
