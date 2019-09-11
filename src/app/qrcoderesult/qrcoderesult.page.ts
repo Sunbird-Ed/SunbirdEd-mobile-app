@@ -248,10 +248,8 @@ export class QrcoderesultPage implements OnDestroy {
              this.commonUtilService.showContentComingSoonAlert(this.source);
             } else {
               this.commonUtilService.showContentComingSoonAlert(this.source);
-              this.navCtrl.navigateBack([RouterLinks.PROFILE_SETTINGS]);
-             // this.navCtrl.navigateBack('/');
+              window.history.go(-2);
             }
-          // this.location.back();
         } else if (this.results && this.results.length === 1) {
           this.backToPreviusPage = false;
           this.navCtrl.navigateForward([RouterLinks.CONTENT_DETAILS], {
