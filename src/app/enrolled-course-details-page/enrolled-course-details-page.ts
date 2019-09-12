@@ -330,13 +330,13 @@ export class EnrolledCourseDetailsPage implements OnInit {
     const confirm = await this.popoverCtrl.create({
       component: SbPopoverComponent,
       componentProps: {
-        sbPopoverMainTitle : 'You must join an active batch to view and access training details',
-        metaInfo: 'Register to get complete access to the content',
-        sbPopoverHeading : 'Join Trainig?',
+        sbPopoverMainTitle : this.commonUtilService.translateMessage('YOU_MUST_JOIN_AN_ACTIVE_BATCH'),
+        metaInfo: this.commonUtilService.translateMessage('REGISTER_TO_COMPLETE_ACCESS'),
+        sbPopoverHeading : this.commonUtilService.translateMessage('JOIN_TRAINING')+'?',
         isNotShowCloseIcon: true,
         actionsButtons: [
           {
-            btntext: 'Enroll',
+            btntext: this.commonUtilService.translateMessage('ENROLL'),
             btnClass: 'popover-color'
           },
         ],

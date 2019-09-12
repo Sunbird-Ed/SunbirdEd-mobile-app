@@ -149,7 +149,7 @@
 		<ion-card>
 			<ion-card-header class="custom-card-header">
 				<ion-card-title class="font-18">{{course?.name}}</ion-card-title>
-				<ion-card-subtitle class="font-14 subtitle-color">by {{ course?.creator || course?.owner }}
+				<ion-card-subtitle class="font-14 subtitle-color">{{'CONTENT_CREATED_BY' | translate}} {{ course?.creator || course?.owner }}
 				</ion-card-subtitle>
 				<div class="hr-border-bottom"></div>
 			</ion-card-header>
@@ -159,14 +159,12 @@
 						(click)="navigateToBatchListPage();">{{'JOIN_TRAINING' | translate}}</button>
 				<ion-card-subtitle *ngIf="batchInfo || batchEndDate" class="font-12">
 					<div *ngIf="batchInfo">
-						<ion-icon name="information-circle"></ion-icon> {{batchInfo}} batches
-						available
+						<ion-icon name="information-circle"></ion-icon> {{batchInfo}} {{'BATCHES_AVAILABLE' | translate}}
 					</div>
 					<div *ngIf="batchEndDate">
-						<ion-icon name="information-circle"></ion-icon> Complete Training by {{batchEndDate | date}}
-						to
-						earn a
-						certificate
+						<ion-icon name="information-circle"></ion-icon> 
+						<!-- {{'COMPLETE_TRAINING_TO_EARN_CERTIFICATE'| translate :{'%s':batchDetails?.enrollmentEndDate | date} }} -->
+						Complete Training by {{batchDetails?.enrollmentEndDate | date}}  to earn a certificate
 					</div>
 				</ion-card-subtitle>
 			</div>
@@ -201,7 +199,7 @@
 								<div *ngIf="courseCardData?.batchId">
 									<div class="sb-course-progress-container" *ngIf="course?.progress">
 										<p><b>Your Progress</b></p>
-										<p>{{course?.progress ? course?.progress : '0'}} % completed</p>
+										<p>{{course?.progress ? course?.progress : '0'}} % Completed</p>
 										<app-pb-horizontal [progress]="course?.progress" class="course-progress"
 											[ngClass]="{'blurbackground': batchExp}" isOnBoardCard="flase" isCourseProgress="true"></app-pb-horizontal>
 										<!-- <app-pb-horizontal [progress]="20" class="course-progress" [ngClass]="{'blurbackground': batchExp}"></app-pb-horizontal> -->
@@ -213,8 +211,7 @@
 									<p class="sub-heading">There are no batches available for this training</p>
 								</div> -->
 									<div class="sb-batch-end-container" *ngIf="course?.progress !== 100 && batchExp">
-										<p class="batch-end-main-heading">{{'BATCHEND_MAIN_HEADING' | translate}} July 24th
-											2019</p>
+										<p class="batch-end-main-heading">{{'BATCHEND_MAIN_HEADING' | translate}} {{batchEndDate}}</p>
 										<p class="batch-end-sub-heading">{{'BATCHEND_SUB_HEADING' | translate}}</p>
 									</div>
 									<div *ngIf="course?.progress && course?.progress === 100"
@@ -244,10 +241,9 @@
 							src="assets/imgs/Play@1.5x.svg" alt="play-icon">{{
 														'CONTINUE_NOW' | translate }}</span></button>
 				<div *ngIf="batchDetails?.enrollmentEndDate" class="enrollment-end-date">
-					<ion-icon name="information-circle"></ion-icon> Complete Training by {{batchDetails?.enrollmentEndDate | date}}
-					to
-					earn a
-					certificate
+					<ion-icon name="information-circle"></ion-icon> 
+					<!-- {{'COMPLETE_TRAINING_TO_EARN_CERTIFICATE'| translate :{'%s':batchDetails?.enrollmentEndDate | date} }} -->
+					Complete Training by {{batchDetails?.enrollmentEndDate | date}}  to earn a certificate
 				</div>
 			</ion-card-content>
 		</ion-card>
@@ -284,9 +280,9 @@
 							<ion-card-title class="font-12 subtitle-color label-margin-bottom">
 								{{'TRAINING_IS_RELEVENT_TO_TEACHERS'| translate}}:
 							</ion-card-title>
-							<p *ngIf="course?.gradeLevel">Class : {{course?.gradeLevel}}</p>
-							<p *ngIf="course?.subject">Subject: {{course?.subject}}</p>
-							<p *ngIf="course?.medium">Medium : {{course?.medium}}</p>
+							<p *ngIf="course?.gradeLevel">{{'CLASS' | translate}} : {{course?.gradeLevel}}</p>
+							<p *ngIf="course?.subject">{{'SUBJECT' | translate}}: {{course?.subject}}</p>
+							<p *ngIf="course?.medium">{{'MEDIUM' | translate}} : {{course?.medium}}</p>
 						</div>
 						<div class="ion-margin-bottom">
 							<ion-card-title class="font-12 subtitle-color label-margin-bottom">
