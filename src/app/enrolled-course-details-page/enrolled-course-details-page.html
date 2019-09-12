@@ -304,7 +304,7 @@
 								<ion-col col-11>
 									<div class="sb-topic-text">
 										<!-- <ion-icon class="sb-checkmark-icon" name="md-checkmark-circle"></ion-icon> -->
-										<ion-icon *ngIf="course?.batchId" [name]="item.status? 'ios-checkmark-circle': (item.lastRead? 'ios-radio-button-on': 'ios-radio-button-off')"></ion-icon>
+										<ion-icon *ngIf="isAlreadyEnrolled" [name]="item.status? 'ios-checkmark-circle': (item.lastRead? 'ios-radio-button-on': 'ios-radio-button-off')"></ion-icon>
 										{{item?.contentData.name}}
 									</div>
 								</ion-col>
@@ -329,7 +329,7 @@
 										[activeMimeTypeFilter]="activeMimeTypeFilter" [isTextbookTocPage]="false"
 										[corRelationList]="corRelationList" [isDepthChild]="isDepthChild"
 										[breadCrumb]="breadCrumb" [rootUnitId]="item.identifier" [bookID]="identifier"
-										[isEnrolled]="isEnrolled" [fromCourseToc]="fromCourseToc">
+										[isEnrolled]="isAlreadyEnrolled" [fromCourseToc]="fromCourseToc">
 									</app-collection-child>
 								</div>
 							</div>
