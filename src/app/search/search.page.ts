@@ -98,6 +98,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
   mediumList: Array<any> = [];
   gradeList: Array<any> = [];
   isProfileUpdated: boolean;
+  isQrCodeLinkToContent: any;
   @ViewChild('contentView') contentView: IonContent;
   constructor(
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
@@ -299,6 +300,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
 
   openContent(collection, content, index) {
     this.parentContent = collection;
+    this.isQrCodeLinkToContent = index;
     this.generateInteractEvent(content.identifier, content.contentType, content.pkgVersion, index);
     if (collection !== undefined) {
       this.parentContent = collection;
@@ -321,7 +323,8 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
         parentContent: this.parentContent,
         isSingleContent: this.isSingleContent,
         onboarding: this.appGlobalService.isOnBoardingCompleted,
-        isProfileUpdated: this.isProfileUpdated
+        isProfileUpdated: this.isProfileUpdated,
+        isQrCodeLinkToContent: this.isQrCodeLinkToContent
       };
     } else {
       params = {
@@ -330,7 +333,8 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
         parentContent: this.parentContent,
         isSingleContent: this.isSingleContent,
         onboarding: this.appGlobalService.isOnBoardingCompleted,
-        isProfileUpdated: this.isProfileUpdated
+        isProfileUpdated: this.isProfileUpdated,
+        isQrCodeLinkToContent: this.isQrCodeLinkToContent
       };
     }
     if (this.loader) {
@@ -375,7 +379,8 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
             isSingleContent: params.isSingleContent,
             onboarding: params.onboarding,
             parentContent: params.parentContent,
-            isProfileUpdated: this.isProfileUpdated
+            isProfileUpdated: this.isProfileUpdated,
+            isQrCodeLinkToContent: this.isQrCodeLinkToContent
           }
         });
         if (this.isSingleContent) {

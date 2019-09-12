@@ -108,6 +108,7 @@ export class QrcoderesultPage implements OnDestroy {
   navData: any;
   backToPreviusPage = true;
   isProfileUpdated: boolean;
+  isQrCodeLinkToContent: any;
 
   constructor(
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
@@ -155,6 +156,7 @@ export class QrcoderesultPage implements OnDestroy {
     this.parentContent = this.navData.parentContent;
     this.isProfileUpdated = this.navData.isProfileUpdated;
     this.searchIdentifier = this.content.identifier;
+    this.isQrCodeLinkToContent = this.navData.isQrCodeLinkToContent;
 
     if (this.parentContent) {
       this.isParentContentAvailable = true;
@@ -712,6 +714,10 @@ export class QrcoderesultPage implements OnDestroy {
   }
 
   goBack() {
-    this.location.back();
+    if (this.isQrCodeLinkToContent === 0) {
+      window.history.go(-2);
+    } else {
+      this.location.back();
+    }
   }
 }
