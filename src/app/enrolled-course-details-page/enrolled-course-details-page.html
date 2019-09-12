@@ -194,7 +194,7 @@
 								<div class="sb-course-progress-container" *ngIf="course?.progress" >
 									<p><b>Your Progress</b></p>
 									<p>{{course?.progress ? course?.progress : '0'}} % completed</p>
-									<app-pb-horizontal [progress]="course?.progress" class="course-progress" [ngClass]="{'blurbackground': batchExp}"></app-pb-horizontal>
+									<app-pb-horizontal [progress]="course?.progress" class="course-progress" [ngClass]="{'blurbackground': batchExp}" isOnBoardCard="true"></app-pb-horizontal>
 									<!-- <app-pb-horizontal [progress]="20" class="course-progress" [ngClass]="{'blurbackground': batchExp}"></app-pb-horizontal> -->
 								</div>
 							</div>
@@ -285,7 +285,11 @@
 						<ion-grid class="sb-accordian-header">
 							<ion-row (click)="toggleGroup(i , item)" *ngIf="item?.children">
 								<ion-col col-11>
-									<div class="sb-topic-text"> {{item?.contentData.name}}</div>
+									<div class="sb-topic-text">
+										<!-- <ion-icon class="sb-checkmark-icon" name="md-checkmark-circle"></ion-icon> -->
+										<ion-icon [name]="item.status? 'ios-checkmark-circle': (item.lastRead? 'ios-radio-button-on': 'ios-radio-button-off')"></ion-icon>
+										{{item?.contentData.name}}
+									</div>
 								</ion-col>
 								<ion-col col-1 *ngIf="!isGroupShown(i)">
 									<div>
@@ -308,7 +312,7 @@
 										[activeMimeTypeFilter]="activeMimeTypeFilter" [isTextbookTocPage]="false"
 										[corRelationList]="corRelationList" [isDepthChild]="isDepthChild"
 										[breadCrumb]="breadCrumb" [rootUnitId]="item.identifier" [bookID]="identifier"
-										[isEnrolled] = "isEnrolled">
+										[isEnrolled]="isEnrolled" [fromCourseToc]="fromCourseToc">
 									</app-collection-child>
 								</div>
 							</div>

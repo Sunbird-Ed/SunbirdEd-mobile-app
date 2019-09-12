@@ -903,4 +903,26 @@ ion-split-pane {
       padding-right: 5px;
     }
   }
+  .sb-ftue-design-course-toc{
+    .pull-left{
+      padding-top: 0 !important;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+    .pull-right{
+      .done{
+        color: #008000;
+      }
+    }
+    .content-type-container{
+      img{
+        display: inline-block !important;
+        height: 20px !important;
+        width: auto !important;
+        vertical-align: middle;
+        margin-right: 8px;
+      }
+    }
+  }
 } 

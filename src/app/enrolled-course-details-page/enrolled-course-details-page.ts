@@ -191,6 +191,7 @@ export class EnrolledCourseDetailsPage implements OnInit {
   isGuestUser = false;
   isEnrolled = false;
   showDownload: boolean;
+  public fromCourseToc = true;
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -890,6 +891,7 @@ export class EnrolledCourseDetailsPage implements OnInit {
                     return false;
                   } else {
                     // if content played completely
+                    eachContent.status = true;
                     childContent.status = true;
                     return true;
                   }
@@ -913,7 +915,7 @@ export class EnrolledCourseDetailsPage implements OnInit {
       });
     });
   }
- /** Extract only numbers from an array*/
+  /** Extract only numbers from an array */
   getNumbersFromArray(str) {
     if (str) {
       return str.replace(/^\D+/g, '');
@@ -930,10 +932,9 @@ export class EnrolledCourseDetailsPage implements OnInit {
     };
     this.courseService.getCourseBatches(courseBatchesRequest).toPromise()
     .then((data: Batch[]) => {
-      if(data.length > 1){
+      if (data.length > 1) {
         this.batchInfo = data.length;
-      }
-      else {
+      } else {
         this.batchEndDate = data[0].endDate;
       }
     })
@@ -1508,7 +1509,6 @@ export class EnrolledCourseDetailsPage implements OnInit {
             this.getStatusOfChildContent(this.childrenData);
           }
         }).catch((error: any) => {
-
         });
     } else {
       // to be handled when there won't be any batchId
