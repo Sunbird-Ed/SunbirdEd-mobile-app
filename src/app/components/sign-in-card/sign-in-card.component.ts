@@ -17,7 +17,7 @@ import {
 } from 'sunbird-sdk';
 
 import { initTabs, LOGIN_TEACHER_TABS } from '@app/app/module.service';
-import { ProfileConstants, PreferenceKey, RouterLinks } from '@app/app/app.constant';
+import { ProfileConstants, PreferenceKey, EventTopics } from '@app/app/app.constant';
 import { FormAndFrameworkUtilService } from '@app/services/formandframeworkutil.service';
 import { CommonUtilService } from '@app/services/common-util.service';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
@@ -29,7 +29,6 @@ import {
 } from '@app/services/telemetry-constants';
 import { ContainerService } from '@app/services/container.services';
 import { Router } from '@angular/router';
-import { TncUpdateHandlerService } from '@app/services/handlers/tnc-update-handler.service';
 
 
 @Component({
@@ -59,8 +58,7 @@ export class SignInCardComponent implements OnInit {
     private formAndFrameworkUtilService: FormAndFrameworkUtilService,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private router: Router,
-    private events: Events,
-    private TncUpdateHandlerService:TncUpdateHandlerService
+    private events: Events
   ) {
 
     this.appVersion.getAppName()
@@ -103,10 +101,9 @@ export class SignInCardComponent implements OnInit {
           await loader.dismiss();
           that.ngZone.run(() => {
             that.preferences.putString('SHOW_WELCOME_TOAST', 'true').toPromise().then();
-            this.events.publish('UPDATE_TABS');
-            this.router.navigate([RouterLinks.TABS]);
-            //window.location.reload();
-            this.TncUpdateHandlerService.checkForTncUpdate();
+
+            // note: Navigating back to Resourses is though the below event from App-Components.
+            this.events.publish(EventTopics.SIGN_IN_RELOAD);
           });
         })
         .catch(async (err) => {
@@ -193,4 +190,5 @@ export class SignInCardComponent implements OnInit {
       undefined,
       valuesMap);
   }
+
 }
