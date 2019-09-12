@@ -196,7 +196,7 @@
 											alt="menu-icon">
 									</div>
 								</div>
-								<div *ngIf="course?.batchId">
+								<div *ngIf="courseCardData?.batchId">
 									<div class="sb-course-progress-container" *ngIf="course?.progress">
 										<p><b>Your Progress</b></p>
 										<p>{{course?.progress ? course?.progress : '0'}} % completed</p>
@@ -319,7 +319,7 @@
 								<ion-col col-11>
 									<div class="sb-topic-text">
 										<!-- <ion-icon class="sb-checkmark-icon" name="md-checkmark-circle"></ion-icon> -->
-										<ion-icon [name]="item.status? 'ios-checkmark-circle': (item.lastRead? 'ios-radio-button-on': 'ios-radio-button-off')"></ion-icon>
+										<ion-icon *ngIf="course?.batchId" [name]="item.status? 'ios-checkmark-circle': (item.lastRead? 'ios-radio-button-on': 'ios-radio-button-off')"></ion-icon>
 										{{item?.contentData.name}}
 									</div>
 								</ion-col>
