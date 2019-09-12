@@ -17,15 +17,22 @@
 @import "./assets/styles/details_page";
 @import "./assets/styles/fonts";
 
+:root{
+  --ion-default-font: "NotoSans";
+  --ion-font-family: "NotoSans"
+}
+
 html,
 body {
   height: 100%;
   font-size: $font-size-base;
   @extend .NotoSans;
-  --ion-default-font: "Noto Sans";
+  --ion-default-font: "NotoSans";
+  --ion-font-family: "NotoSans"
 }
 html.md {
-  --ion-default-font: "Noto Sans";
+  --ion-default-font: "NotoSans";
+  --ion-font-family: "NotoSans";
 }
 rating {
   ion-button {

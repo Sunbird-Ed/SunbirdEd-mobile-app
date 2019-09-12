@@ -17,6 +17,7 @@ import {
   PageId,
 } from './telemetry-constants';
 import { NavigationExtras, Router } from '@angular/router';
+import { NavController } from '@ionic/angular';
 
 @Injectable()
 export class QRScannerResultHandler {
@@ -27,7 +28,8 @@ export class QRScannerResultHandler {
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
     private commonUtilService: CommonUtilService,
     private telemetryGeneratorService: TelemetryGeneratorService,
-    private router: Router
+    private router: Router,
+    private navCtrl: NavController
   ) {
   }
 
@@ -61,7 +63,7 @@ export class QRScannerResultHandler {
         shouldGenerateEndTelemetry: true
       }
     };
-    this.router.navigate([`/${RouterLinks.SEARCH}`], navigationExtras);
+    this.navCtrl.navigateForward([`/${RouterLinks.SEARCH}`], navigationExtras);
   }
 
   handleContentId(source: string, scannedData: string) {

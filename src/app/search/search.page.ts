@@ -1,6 +1,6 @@
 import { Component, Inject, NgZone, OnDestroy, ViewChild, ChangeDetectorRef, OnInit, AfterViewInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { Events, Platform, PopoverController, IonContent } from '@ionic/angular';
+import { Events, Platform, PopoverController, IonContent, NavController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs/Subscription';
 import { Observable } from 'rxjs/Observable';
@@ -123,7 +123,8 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
     private headerService: AppHeaderService,
     private popoverCtrl: PopoverController,
     private location: Location,
-    private router: Router
+    private router: Router,
+    private navCtrl: NavController
   ) {
 
     const extras = this.router.getCurrentNavigation().extras.state;
@@ -367,13 +368,14 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
       if (this.isDialCodeSearch && !isRootContent) {
         params.isCreateNavigationStack = true;
 
-        this.router.navigate([RouterLinks.QRCODERESULT], {
+        this.navCtrl.navigateForward([RouterLinks.QRCODERESULT], {
           state: {
             content: params.content,
             corRelation: params.corRelation,
             isSingleContent: params.isSingleContent,
             onboarding: params.onboarding,
-            parentContent: params.parentContent
+            parentContent: params.parentContent,
+            isProfileUpdated: this.isProfileUpdated
           }
         });
         if (this.isSingleContent) {
@@ -1512,6 +1514,6 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
   }
 
   goBack() {
-    this.location.back();
+    this.navCtrl.pop();
   }
 }

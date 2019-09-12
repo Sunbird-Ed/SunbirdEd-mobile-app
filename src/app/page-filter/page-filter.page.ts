@@ -229,7 +229,7 @@ export class PageFilterPage {
       });
       this.callback.applyFilter(this.pagetAssemblefilter, this.facetsFilter, true);
     }
-    await this.popCtrl.dismiss();
+    await this.popCtrl.dismiss({apply: true});
   }
 
   async cancel() {

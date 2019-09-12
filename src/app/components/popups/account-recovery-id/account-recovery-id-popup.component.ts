@@ -1,9 +1,11 @@
-import { Component, OnInit, Inject } from '@angular/core';
+import { Component, OnInit, Inject, Input } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { ImpressionType, Environment, PageId, InteractType } from '@app/services/telemetry-constants';
 import { Profile, ProfileService } from 'sunbird-sdk';
 import { AppGlobalService } from '@app/services/app-global-service.service';
+import { CommonUtilService } from '@app/services/common-util.service';
+import { PopoverController } from '@ionic/angular';
 
 @Component({
   selector: 'app-account-recovery-id-popup',
@@ -11,6 +13,10 @@ import { AppGlobalService } from '@app/services/app-global-service.service';
   styleUrls: ['./account-recovery-id-popup.component.scss']
 })
 export class AccountRecoveryInfoComponent implements OnInit {
+
+  // Data passed in by componentProps
+  @Input() recoveryPhone: any;
+  @Input() recoveryEmail: any;
 
   recoveryIdType: string;
   recoveryEmailForm: FormGroup;
@@ -23,10 +29,12 @@ export class AccountRecoveryInfoComponent implements OnInit {
 
   constructor(@Inject('PROFILE_SERVICE') private profileService: ProfileService,
               private telemetryGeneratorService: TelemetryGeneratorService,
-              private appGlobalService: AppGlobalService) { }
+              private appGlobalService: AppGlobalService,
+              private commonUtilService: CommonUtilService,
+              private popOverCtrl: PopoverController) { }
 
   ngOnInit() {
-    this.recoveryIdType = this.recoveryTypes.EMAIL;
+    this.recoveryIdType = this.recoveryPhone ? this.recoveryTypes.PHONE : this.recoveryTypes.EMAIL;
     this.initializeFormFields();
     this.profile = this.appGlobalService.getCurrentUser();
     this.generateRecoveryImpression();
@@ -39,30 +47,46 @@ export class AccountRecoveryInfoComponent implements OnInit {
     this.recoveryPhoneForm = new FormGroup({
       phone: new FormControl('', [Validators.required, Validators.pattern(/^[6-9]\d{9}$/)]),
     });
-    console.log(this.recoveryEmailForm);
+
+    if (this.recoveryEmail && this.recoveryEmail !== '') {
+      this.recoveryEmailForm.setValue({ email: this.recoveryEmail });
+    }
+    if (this.recoveryPhone && this.recoveryPhone !== '') {
+      this.recoveryPhoneForm.setValue({ phone: this.recoveryPhone });
+    }
   }
 
-  submitRecoveryId(type: string) {
-    const req = {
-      profileSummary: 'Test to check for update',
-      userId: this.profile.uid,
-      recoveryEmail: null,
-      recoveryPhone: null
-    };
-    if (type === this.recoveryTypes.EMAIL) {
-      req.recoveryEmail = this.recoveryEmailForm.value.email;
+  async submitRecoveryId(type: string) {
+    if (this.commonUtilService.networkInfo.isNetworkAvailable) {
+      let loader = await this.commonUtilService.getLoader();
+      const req = {
+        profileSummary: 'Test to check for update',
+        userId: this.profile.uid,
+        recoveryEmail: '',
+        recoveryPhone: ''
+      };
+      if (type === this.recoveryTypes.EMAIL) {
+        req.recoveryEmail = this.recoveryEmailForm.value.email;
+      }
+      if (type === this.recoveryTypes.PHONE) {
+        req.recoveryPhone = this.recoveryPhoneForm.value.phone;
+      }
+      await loader.present();
+      this.profileService.updateServerProfile(req).subscribe(async (data: any) => {
+        await loader.dismiss();
+        console.log(data);
+        if (data && data.response) {
+          // TODO Response Handling
+
+        }
+        this.generateRecoveryTelemetry(type);
+        this.popOverCtrl.dismiss({ isEdited: true, value: (req.recoveryEmail || req.recoveryPhone) });
+      }, async (error) => {
+          await loader.dismiss();
+          // TODO Error Handling
+
+      });
     }
-    if (type === this.recoveryTypes.PHONE) {
-      req.recoveryPhone = this.recoveryPhoneForm.value.phone;
-    }
-
-    this.profileService.updateServerProfile(req).subscribe((res: any) => {
-      console.log(res);
-      // TODO Response Handling
-
-      this.generateRecoveryTelemetry(type);
-    });
-
   }
 
   private generateRecoveryImpression() {
