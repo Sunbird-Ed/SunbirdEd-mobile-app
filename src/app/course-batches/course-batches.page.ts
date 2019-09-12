@@ -182,7 +182,7 @@ export class CourseBatchesPage implements OnInit {
       });
   }
 
-  enrollIntoBatch(item: Batch): void {
+  async enrollIntoBatch(item: Batch) {
     if (this.isGuestUser) {
       // this.showSignInCard = true;
       this.preferences.putString('batch_detail', JSON.stringify(item)).toPromise();
@@ -195,8 +195,8 @@ export class CourseBatchesPage implements OnInit {
         userId: this.userId,
         batchStatus: item.status
       };
-      const loader = this.commonUtilService.getLoader();
-      loader.present();
+      const loader = await this.commonUtilService.getLoader();
+      await loader.present();
       const reqvalues = new Map();
       reqvalues['enrollReq'] = enrollCourseRequest;
       this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
@@ -207,18 +207,19 @@ export class CourseBatchesPage implements OnInit {
 
       this.courseService.enrollCourse(enrollCourseRequest).toPromise()
         .then((data: boolean) => {
-          this.zone.run(() => {
+          this.zone.run(async () => {
             this.commonUtilService.showToast(this.commonUtilService.translateMessage('COURSE_ENROLLED'));
             this.events.publish(EventTopics.ENROL_COURSE_SUCCESS, {
               batchId: item.id,
               courseId: item.courseId
             });
-            loader.dismiss();
-            this.navCtrl.pop();
+            await loader.dismiss();
+            // this.navCtrl.pop();
+            this.location.back();
           });
         }, (error) => {
-          this.zone.run(() => {
-            loader.dismiss();
+          this.zone.run(async () => {
+            await loader.dismiss();
             if (error && error.code === 'NETWORK_ERROR') {
               this.commonUtilService.showToast(this.commonUtilService.translateMessage('ERROR_NO_INTERNET_MESSAGE'));
             } else if (error && error.response
