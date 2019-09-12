@@ -419,13 +419,13 @@ export class EnrolledCourseDetailsPage implements OnInit {
     const popover = await this.popoverCtrl.create({
       component: ContentActionsComponent,
       event,
+      cssClass: 'content-action',
       componentProps: {
         overFlowMenuData,
         content: contentData,
         batchDetails: this.batchDetails,
         pageName: PageId.COURSE_DETAIL
       },
-      cssClass: 'content-action'
     });
     await popover.present();
     const { data } = await popover.onDidDismiss();

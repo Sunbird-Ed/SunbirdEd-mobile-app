@@ -10,6 +10,7 @@ export class PbHorizontalComponent implements OnInit {
   @Input('progress') progress;
   // tslint:disable-next-line:no-input-rename
   @Input('isOnBoardCard') isOnBoardCard;
+  @Input ('isCourseProgress') isCourseProgress;
 
   constructor() {
   }

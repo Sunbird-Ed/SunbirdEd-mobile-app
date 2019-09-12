@@ -177,7 +177,7 @@
 								<div class="wrapper sb-btn-tile-group">
 									<div>
 										<!-- *ngIf="downloadIdentifiers?.length && !isDownloadStarted" -->
-										<button (click)="showDownloadConfirmationAlert()" slot="icon-only"
+										<button *ngIf="downloadIdentifiers?.length && !isDownloadStarted" (click)="showDownloadConfirmationAlert()" slot="icon-only"
 											class="card-button">
 											<ion-icon ios="ios-cloud-download" md="md-cloud-download"
 												class="card-icons">
@@ -194,7 +194,7 @@
 										</button>
 									</div>
 									<div>
-										<img class="menu-icon" (click)="($event.event)" src="assets/imgs/menu.svg"
+										<img class="menu-icon" (click)="showOverflowMenu($event)" src="assets/imgs/menu.svg"
 											alt="menu-icon">
 									</div>
 								</div>
@@ -203,7 +203,7 @@
 										<p><b>Your Progress</b></p>
 										<p>{{course?.progress ? course?.progress : '0'}} % completed</p>
 										<app-pb-horizontal [progress]="course?.progress" class="course-progress"
-											[ngClass]="{'blurbackground': batchExp}" isOnBoardCard="true"></app-pb-horizontal>
+											[ngClass]="{'blurbackground': batchExp}" isOnBoardCard="flase" isCourseProgress="true"></app-pb-horizontal>
 										<!-- <app-pb-horizontal [progress]="20" class="course-progress" [ngClass]="{'blurbackground': batchExp}"></app-pb-horizontal> -->
 									</div>
 									<!-- need to clarify-->
