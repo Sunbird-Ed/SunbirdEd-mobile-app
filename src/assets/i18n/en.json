@@ -582,6 +582,8 @@
   "EXTRACTING_CONTENT": "Extracting content",
   "AVAILABLE_FOR_TEACHERS":"Available for teachers only",
   "UPDATE_RECOVERY_ID": "Update recovery ID",
-  "CHOOSE_RECOVERY_ID_TYPE": "Choose recovery ID type:",
-  "EMAIL_ID_PLACEHOLDER": "Email ID"
+  "EMAIL_ID_PLACEHOLDER": "Email ID",
+  "ADD_RECOVERY_ID": "Add Recovery ID",
+  "RECOVERY_ID_DESCRIPTION": "A recovery account helps you regain access if you are locked out. Choose your recovery account type and enter details.",
+  "ADD_RECOVERY_ACCOUNT": "Add Recovery Account"
 }

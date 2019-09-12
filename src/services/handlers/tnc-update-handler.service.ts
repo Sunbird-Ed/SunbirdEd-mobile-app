@@ -68,7 +68,7 @@ export class TncUpdateHandlerService {
       });
   }
 
-  private async presentTncPage(navParams: any): Promise<undefined> {
+  private async presentTncPage (navParams: any): Promise<undefined> {
     this.modal = await this.modalCtrl.create({
       component: TermsAndConditionsPage,
       componentProps: navParams
@@ -82,7 +82,7 @@ export class TncUpdateHandlerService {
 
   public async dismissTncPage(): Promise<void> {
     if (this.modal) {
-      return this.modal.dismiss();
+      return await this.modal.dismiss();
     }
   }
 }

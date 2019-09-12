@@ -719,9 +719,14 @@ export class ProfilePage implements OnInit {
   }
 
   async editRecoveryId() {
+
+    const componentProps = {
+      recoveryEmail: this.profile.recoveryEmail ? this.profile.recoveryEmail : null,
+      recoveryPhone: this.profile.recoveryPhone ? this.profile.recoveryPhone : null,
+    };
     const popover = await this.popoverCtrl.create({
       component: AccountRecoveryInfoComponent,
-      componentProps: {},
+      componentProps,
       cssClass: 'popover-alert'
     });
     await popover.present();

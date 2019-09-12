@@ -14,7 +14,7 @@ import {
 } from 'sunbird-sdk';
 
 import { InteractType, InteractSubtype, Environment, PageId, ImpressionType } from 'services/telemetry-constants';
-import { GenericAppConfig, PreferenceKey } from './app.constant';
+import { GenericAppConfig, PreferenceKey, EventTopics } from './app.constant';
 import { ActivePageService } from '@app/services/active-page/active-page-service';
 import {
   AppGlobalService,
@@ -28,9 +28,10 @@ import {
 import { SplaschreenDeeplinkActionHandlerDelegate } from '@app/services/sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
 import { SplashcreenTelemetryActionHandlerDelegate } from '@app/services/sunbird-splashscreen/splashcreen-telemetry-action-handler-delegate';
 import { SplashscreenImportActionHandlerDelegate } from '@app/services/sunbird-splashscreen/splashscreen-import-action-handler-delegate';
-import { LogoutHandlerService, TncUpdateHandlerService } from '@app/services';
+import { LogoutHandlerService} from '@app/services/logout-handler.service';
 import { NotificationService as localNotification } from '@app/services/notification.service';
 import { RouterLinks } from './app.constant';
+import { TncUpdateHandlerService } from '@app/services/handlers/tnc-update-handler.service';
 
 @Component({
   selector: 'app-root',
@@ -53,7 +54,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   public showWalkthroughBackDrop = false;
 
   private telemetryAutoSyncUtil: TelemetryAutoSyncUtil;
-
+  toggleRouterOutlet = true;
   profile: any = {};
   selectedLanguage: string;
   appName: string;
@@ -103,7 +104,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.saveDefaultSyncSetting();
       this.checkAppUpdateAvailable();
       this.makeEntryInSupportFolder();
-      this.checkForTncUpdate();
+      this.reloadSigninEvents();
       this.handleAuthErrors();
       await this.getSelectedLanguage();
       this.handleSunbirdSplashScreenActions();
@@ -219,6 +220,31 @@ export class AppComponent implements OnInit, AfterViewInit {
       }
     });
     this.notificationSrc.setupLocalNotification();
+
+    this.triggerSignInEvent();
+  }
+
+/**
+ * Initilizing the event for reloading the Tabs on Signing-In.
+ */
+  triggerSignInEvent() {
+    this.events.subscribe(EventTopics.SIGN_IN_RELOAD, () => {
+      this.toggleRouterOutlet = false;
+      // This setTimout is very important for reloading the Tabs page on SignIn.
+      setTimeout(() => {
+        this.toggleRouterOutlet = true;
+        this.reloadSigninEvents();
+        this.events.publish('UPDATE_TABS');
+        this.router.navigate([RouterLinks.TABS]);
+      }, 0);
+    });
+  }
+
+/**
+ * Enter all methods which should trigger during OnInit and User Sign-In.
+ */
+  reloadSigninEvents() {
+    this.checkForTncUpdate();
   }
 
   addNetworkTelemetry(subtype: string, pageId: string) {

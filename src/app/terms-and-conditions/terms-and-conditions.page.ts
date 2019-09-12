@@ -6,7 +6,7 @@ import { Environment, ImpressionType, InteractSubtype, InteractType, PageId } fr
 import { ProfileService, ServerProfile } from 'sunbird-sdk';
 import { Platform, LoadingController } from '@ionic/angular';
 import { LogoutHandlerService } from '@app/services/logout-handler.service';
-import { TncUpdateHandlerService } from '@app/services/tnc-update-handler.service';
+import { TncUpdateHandlerService } from '@app/services/handlers/tnc-update-handler.service';
 import { CommonUtilService } from '@app/services/common-util.service';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { AppHeaderService } from '@app/services/app-header.service';
@@ -72,13 +72,14 @@ export class TermsAndConditionsPage implements OnInit {
       Environment.HOME
     );
     if (this.loading) {
-      this.loading.dismissAll();
+      //this.loading.dismissAll();
+      this.loading.dismiss();
     }
   }
 
   public onConfirmationChange(event) {
     const valuesMap = new Map();
-    valuesMap['isChecked'] = event.checked;
+    valuesMap['isChecked'] = event.target.checked;
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,
       InteractSubtype.ACCEPTANCE_CHECKBOX_CLICKED,
@@ -87,7 +88,8 @@ export class TermsAndConditionsPage implements OnInit {
       undefined,
       valuesMap
     );
-    this.termsAgreed = event.checked;
+    
+    this.termsAgreed = event.target.checked;
   }
 
   public async onAcceptanceClick(): Promise<void> {
@@ -106,7 +108,7 @@ export class TermsAndConditionsPage implements OnInit {
   }
 
   private async createAndPresentLoadingSpinner() {
-    this.loading = this.loadingCtrl.create({
+    this.loading = await this.loadingCtrl.create({
       /* migration-TODO
       dismissOnPageChange: true,
       */
