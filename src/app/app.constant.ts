@@ -159,6 +159,7 @@ export class EventTopics {
     public static readonly COURSE_STATUS_UPDATED_SUCCESSFULLY = 'COURSE_STATUS_UPDATED_SUCCESSFULLY';
     public static readonly REFRESH_ENROLL_COURSE_LIST = 'REFRESH_ENROLL_COURSE_LIST';
     public static readonly PLAYER_CLOSED = 'PLAYER_CLOSED';
+    public static readonly SIGN_IN_RELOAD = 'SIGN_IN_RELOAD';
 }
 
 export class ShareUrl {

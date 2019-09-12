@@ -405,9 +405,7 @@ declare const buildconfigreader;
     CanvasPlayerService,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     ...sunbirdSdkServicesProvidersFactory(),
-    { provide: ErrorHandler, useClass: ErrorHandler },
     { provide: ErrorHandler, useClass: CrashAnalyticsErrorLogger },
-    // { provide: ErrorHandler},
     { provide: APP_INITIALIZER, useFactory: sunbirdSdkFactory, deps: [], multi: true }
   ],
   bootstrap: [AppComponent],
