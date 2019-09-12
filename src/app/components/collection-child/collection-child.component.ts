@@ -39,7 +39,8 @@ export class CollectionChildComponent implements OnInit {
   @Input() rootUnitId: any;
   @Input() isTextbookTocPage: boolean;
   @Input() bookID: string;
-  @Input() isEnrolled: string;
+  @Input() isEnrolled: boolean;
+  @Input() fromCourseToc: boolean;
 
   constructor(
     private zone: NgZone,
@@ -183,6 +184,21 @@ export class CollectionChildComponent implements OnInit {
         return true;
       }
       return !!activeMimeType.find(m => m === mimeType);
+    }
+  }
+  // course-toc: for showing respective contenttype icons
+  getContentTypeIcon(content: Content) {
+    const contentType = content.mimeType;
+    if (contentType) {
+      if (MimeType.DOCS.indexOf(contentType) !== -1) {
+        return './assets/imgs/doc.svg';
+      } else if (MimeType.VIDEO.indexOf(contentType) !== -1) {
+        return './assets/imgs/play.svg';
+      } else {
+        return './assets/imgs/touch.svg';
+      }
+    } else {
+      return './assets/imgs/touch.svg';
     }
   }
 }
