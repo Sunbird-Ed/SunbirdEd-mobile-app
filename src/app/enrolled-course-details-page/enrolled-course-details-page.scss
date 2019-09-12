@@ -268,7 +268,7 @@
     height: 16px;
     width: 4px;
     margin-top: 18px;
-    margin-left: 50px;
+    float: right;
   }
   .card-icons {
     font-size: 30px;
@@ -317,6 +317,12 @@
       height: 70px;	
       width: auto;
   }
+
+  .last-read-content{
+    font-size: 14px !important;
+    padding: 0px 0px 4px 4px;
+  }
+
   .sb-batch-end-container{
     background-color: #FBE7E0;
     padding: 10px;
@@ -331,6 +337,11 @@
       font-family: "Noto Sans";
       font-size: 12px !important;
     }
+  }
+  .enrollment-end-date{
+    font-size: 12px;
+    color: #333333;
+    font-family: "Noto Sans";
   }
   .sb-course-end-container{
     background-color: #FBE7E0;

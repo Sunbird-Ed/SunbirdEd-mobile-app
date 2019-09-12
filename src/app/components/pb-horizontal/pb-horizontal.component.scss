@@ -16,12 +16,21 @@
         background-color: map-get($colors, primary);
     }
     .progress-inner-onboard {
-        // min-width: 0;
-        // white-space: nowrap;
-        // overflow: hidden;
-        // padding: 2px;
-        // border-radius: 0;
-        // background-color: map-get($colors, primary);
+        min-width: 0;
+        white-space: nowrap;
+        overflow: hidden;
+        padding: 2px;
+        border-radius: 0;
+        background-color: map-get($colors, primary);
+        // background-color: #008000;
+    }
+    .progress-inner-course{
+         min-width: 0;
+        white-space: nowrap;
+        overflow: hidden;
+        padding: 2px;
+        border-radius: 0;
+        background-color: map-get($colors, primary);
         background-color: #008000;
     }
     .progress-inner-primary {
