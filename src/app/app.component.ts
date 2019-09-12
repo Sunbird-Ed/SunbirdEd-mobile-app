@@ -28,9 +28,10 @@ import {
 import { SplaschreenDeeplinkActionHandlerDelegate } from '@app/services/sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
 import { SplashcreenTelemetryActionHandlerDelegate } from '@app/services/sunbird-splashscreen/splashcreen-telemetry-action-handler-delegate';
 import { SplashscreenImportActionHandlerDelegate } from '@app/services/sunbird-splashscreen/splashscreen-import-action-handler-delegate';
-import { LogoutHandlerService, TncUpdateHandlerService } from '@app/services';
+import { LogoutHandlerService} from '@app/services/logout-handler.service';
 import { NotificationService as localNotification } from '@app/services/notification.service';
 import { RouterLinks } from './app.constant';
+import { TncUpdateHandlerService } from '@app/services/handlers/tnc-update-handler.service';
 
 @Component({
   selector: 'app-root',

@@ -29,6 +29,8 @@ import {
 } from '@app/services/telemetry-constants';
 import { ContainerService } from '@app/services/container.services';
 import { Router } from '@angular/router';
+import { TncUpdateHandlerService } from '@app/services/handlers/tnc-update-handler.service';
+
 
 @Component({
   selector: 'app-sign-in-card',
@@ -57,7 +59,8 @@ export class SignInCardComponent implements OnInit {
     private formAndFrameworkUtilService: FormAndFrameworkUtilService,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private router: Router,
-    private events: Events
+    private events: Events,
+    private TncUpdateHandlerService:TncUpdateHandlerService
   ) {
 
     this.appVersion.getAppName()
@@ -102,7 +105,8 @@ export class SignInCardComponent implements OnInit {
             that.preferences.putString('SHOW_WELCOME_TOAST', 'true').toPromise().then();
             this.events.publish('UPDATE_TABS');
             this.router.navigate([RouterLinks.TABS]);
-            // window.location.reload();
+            //window.location.reload();
+            this.TncUpdateHandlerService.checkForTncUpdate();
           });
         })
         .catch(async (err) => {
