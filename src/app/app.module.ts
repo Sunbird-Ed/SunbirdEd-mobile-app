@@ -61,6 +61,7 @@ import { PageFilterOptionsPageModule } from './page-filter/page-filter-options/p
 import { PageFilterOptionsPage } from './page-filter/page-filter-options/page-filter-options.page';
 import { CrashAnalyticsErrorLogger } from '@app/services/crash-analytics/crash-analytics-error-logger';
 import { File } from '@ionic-native/file/ngx';
+import { TermsAndConditionsPageModule } from './terms-and-conditions/terms-and-conditions.module';
 
 
 
@@ -370,7 +371,8 @@ declare const buildconfigreader;
     UserTypeSelectionPageModule,
     PageFilterPageModule,
     PageFilterOptionsPageModule,
-    UserAndGroupsPageModule
+    UserAndGroupsPageModule,
+    TermsAndConditionsPageModule
   ],
   providers: [
     StatusBar,
