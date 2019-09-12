@@ -191,6 +191,7 @@ export class EnrolledCourseDetailsPage implements OnInit {
   isGuestUser = false;
   isEnrolled = false;
   showDownload: boolean;
+  lastReadContentName:String;
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -243,11 +244,6 @@ export class EnrolledCourseDetailsPage implements OnInit {
       });
     this.subscribeUtilityEvents();
     this.getAllBatches();
-    const self = this;
-    if(this.courseCardData.batchId){
-      self.segmentType = 'modules'
-      this.isEnrolled = true;
-    }
   }
 
   subscribeUtilityEvents() {
@@ -514,6 +510,9 @@ export class EnrolledCourseDetailsPage implements OnInit {
         this.generateStartEvent(this.course.identifier, this.course.contentType, this.course.pkgVersion);
       }
       this.didViewLoad = true;
+      if(this.course.lastReadContentId){
+        this.getLastPlayedName(this.course.lastReadContentId);
+      }
 
       if (this.course && this.course.isAvailableLocally) {
         this.headerService.showHeaderWithBackButton(['share', 'more']);
@@ -858,12 +857,13 @@ export class EnrolledCourseDetailsPage implements OnInit {
     let lastReadContentId = this.courseCardData.lastReadContentId;
     const userId = this.appGlobalService.getUserId();
     const lastReadContentIdKey = 'lastReadContentId_' + userId + '_' + this.identifier + '_' + this.courseCardData.batchId;
+    this.getLastPlayedName(lastReadContentId)
     await this.preferences.getString(lastReadContentIdKey).toPromise()
       .then(val => {
         this.courseCardData.lastReadContentId = val;
         lastReadContentId = val;
       });
-
+    
     this.zone.run(() => {
       childrenData.forEach(childContent => {
         // Inside First level
@@ -967,6 +967,7 @@ export class EnrolledCourseDetailsPage implements OnInit {
       this.contentService.getContentDetails(option).toPromise()
         .then((data: Content) => {
           console.log('data is here', data);
+          this. lastReadContentName = data.contentData.name;
         }).catch(() => {
 
         })
@@ -1160,6 +1161,11 @@ export class EnrolledCourseDetailsPage implements OnInit {
     this.subscribeSdkEvent();
     this.populateCorRelationData(this.courseCardData.batchId);
     this.handleBackButton();
+    const self= this;
+    if(this.courseCardData.batchId){
+      self.segmentType = 'modules'
+      this.isEnrolled = true;
+    }
   }
 
   handleBackButton() {
