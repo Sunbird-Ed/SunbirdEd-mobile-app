@@ -594,42 +594,13 @@ export class EnrolledCourseDetailsPage implements OnInit {
               .then(async val => {
                 if (val === this.batchDetails.identifier) {
                   this.batchExp = true;
-                } else {
-                  if (this.batchDetails.status === 2) {
+                } else if (this.batchDetails.status === 2) {
                     this.batchExp = true;
-                    const confirm = await this.popoverCtrl.create({
-                      component: SbGenericPopoverComponent,
-                      componentProps: {
-                        sbPopoverHeading: this.commonUtilService.translateMessage('BATCH_EXPIRED'),
-                        sbPopoverMainTitle: this.commonUtilService.translateMessage('BATCH_EXPIRED_DESCRIPTION'),
-                        actionsButtons: [
-                          {
-                            btntext: this.commonUtilService.translateMessage('BATCH_EXPIRED_BUTTON'),
-                            btnClass: 'doneButton'
-                          }
-                        ],
-                        icon: null
-                      },
-                      cssClass: 'sb-popover info',
-                    });
-                    await confirm.present();
-                    const response = await confirm.onDidDismiss();
-                    if (response.data && response.data.isLeftButtonClicked === null) {
-                      return;
-                    }
-                    if (response.data && response.data.isLeftButtonClicked) {
-                      this.preferences.putString(PreferenceKey.COURSE_IDENTIFIER, this.batchDetails.identifier).toPromise().then();
-                    }
-                  } else if (this.batchDetails.status === 0) {
-                    this.isBatchNotStarted = true;
-                    this.courseStartDate = this.batchDetails.startDate;
-                  } else {
-                    this.batchExp = false;
-                  }
                 }
               })
               .catch((error) => {
               });
+
             this.getBatchCreatorName();
           }
         });
