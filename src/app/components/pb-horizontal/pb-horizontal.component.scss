@@ -1,6 +1,5 @@
-@import "src/assets/styles/base/_variables.scss";
+@import "src/assets/styles/variables";
 @import "src/assets/styles/_custom-mixins.scss";
-@import "src/assets/styles/_variables.scss";
 :host {
     .progress-outer {
         width: 100%;
@@ -22,7 +21,6 @@
         padding: 2px;
         border-radius: 0;
         background-color: map-get($colors, primary);
-        // background-color: #008000;
     }
     .progress-inner-course{
          min-width: 0;
@@ -30,8 +28,7 @@
         overflow: hidden;
         padding: 2px;
         border-radius: 0;
-        background-color: map-get($colors, primary);
-        background-color: #008000;
+        background-color: map-get($colors, office_green );
     }
     .progress-inner-primary {
         background-color: map-get($colors, primary);
