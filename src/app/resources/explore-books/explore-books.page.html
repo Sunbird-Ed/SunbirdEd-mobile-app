@@ -69,8 +69,7 @@
     <p class="offline-content">{{ 'OFFLINE_WARNING_ETBUI' | translate }}</p>
   </div>
 
+  
 </ion-content>
-
-<ion-footer class="bottom-button" *ngIf="!showLoader && contentSearchResult.length && checkedSortByButton">
-  <ion-button block class="sort-by" (click)="openSortOptionsModal()"> {{'SORT_BY' | translate}}</ion-button>
-</ion-footer>
+<ion-button expand="block" class="sort-by" *ngIf="!showLoader && contentSearchResult.length && checkedSortByButton" (click)="openSortOptionsModal()"> {{'SORT_BY' | translate}}</ion-button>
+  
