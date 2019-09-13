@@ -949,7 +949,7 @@ export class EnrolledCourseDetailsPage implements OnInit {
     });
   }
 
-  toggleGroup(group, content) {
+  toggleGroup(group) {
     let isCollapsed = true;
     if (this.isGroupShown(group)) {
       isCollapsed = false;
@@ -998,6 +998,7 @@ export class EnrolledCourseDetailsPage implements OnInit {
           if (data && data.children) {
             this.enrolledCourseMimeType = data.mimeType;
             this.childrenData = data.children;
+            this.toggleGroup(0);
             this.startData = data.children;
             this.childContentsData = data;
             this.getContentState(!this.isNavigatingWithinCourse);
