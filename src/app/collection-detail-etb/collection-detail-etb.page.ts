@@ -1057,34 +1057,6 @@ export class CollectionDetailEtbPage implements OnInit {
     return (n.toFixed(n >= 10 || l < 1 ? 0 : 1) + ' ' + units[l]);
   }
 
-  async showOverflowMenu(event) {
-    this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
-      InteractSubtype.KEBAB_MENU_CLICKED,
-      Environment.HOME,
-      PageId.COLLECTION_DETAIL,
-      undefined,
-      undefined,
-      this.objRollup,
-      this.corRelationList);
-
-    const popover = await this.popoverCtrl.create({
-      component: ContentActionsComponent,
-      componentProps: {
-        content: this.contentDetail,
-        isChild: this.isDepthChild,
-        objRollup: this.objRollup,
-        pageName: PageId.COLLECTION_DETAIL,
-        corRelationList: this.corRelationList
-      },
-      cssClass: 'content-action'
-    });
-    await popover.present();
-    const { data } = await popover.onDidDismiss();
-    if (data && data.isDeleted) {
-      this.location.back();
-    }
-  }
-
   generateImpressionEvent(objectId, objectType, objectVersion) {
     this.telemetryGeneratorService.generateImpressionTelemetry(
       ImpressionType.DETAIL, '',
@@ -1323,7 +1295,7 @@ export class CollectionDetailEtbPage implements OnInit {
     await loader.present();
     this.contentService.deleteContent(tmp).toPromise().then(async (res: any) => {
       await loader.dismiss();
-      if (res && res.status === ContentDeleteStatus.NOT_FOUND) {
+      if (res && res[0].status === ContentDeleteStatus.NOT_FOUND) {
         this.commonUtilService.showToast('CONTENT_DELETE_FAILED');
       } else {
         // Publish saved resources update event
@@ -1331,11 +1303,13 @@ export class CollectionDetailEtbPage implements OnInit {
           update: true
         });
         this.commonUtilService.showToast('MSG_RESOURCE_DELETED');
-        const popover = await this.popoverCtrl.getTop();
-        if (popover) {
-          await popover.dismiss({ isDeleted: true });
-        }
+        // const popover = await this.popoverCtrl.getTop();
+        // if (popover) {
+        //   await popover.dismiss({ isDeleted: true });
+        // }
 
+        // this.popoverCtrl.dismiss({ isDeleted: true });
+        this.location.back();
       }
     }).catch(async (error: any) => {
       await loader.dismiss();
