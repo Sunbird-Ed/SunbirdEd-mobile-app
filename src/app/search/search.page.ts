@@ -359,7 +359,8 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
           corRelation: params.corRelation,
           isSingleContent: params.isSingleContent,
           onboarding: params.onboarding,
-          parentContent: params.parentContent
+          parentContent: params.parentContent,
+          isQrCodeLinkToContent: params.isQrCodeLinkToContent
         }
       });
       if (this.isSingleContent) {
@@ -379,8 +380,8 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
             isSingleContent: params.isSingleContent,
             onboarding: params.onboarding,
             parentContent: params.parentContent,
-            isProfileUpdated: this.isProfileUpdated,
-            isQrCodeLinkToContent: this.isQrCodeLinkToContent
+            isProfileUpdated: params.isProfileUpdated,
+            isQrCodeLinkToContent: params.isQrCodeLinkToContent
           }
         });
         if (this.isSingleContent) {
