@@ -12,6 +12,7 @@
     border: 1px solid #006de5;
     margin-top: 8px;
     padding-right: 15px !important;
+    padding-left: 15px !important;
     .select-icon {
       .select-icon-inner {
         // border: solid blue;
@@ -77,5 +78,9 @@
   }
   ion-footer {
     padding: $base-block-space;
+  }
+
+  ion-item.item-label-stacked {
+    --border-width: 0;
   }
 }
