@@ -1,6 +1,6 @@
 import {Inject, Injectable} from '@angular/core';
 import {TelemetryGeneratorService} from './telemetry-generator.service';
-import {Content, ContentDetailRequest, ContentService, CorrelationData, TelemetryObject} from 'sunbird-sdk';
+import {Content, ContentDetailRequest, ContentService, CorrelationData, TelemetryObject, TelemetryService} from 'sunbird-sdk';
 // import {SearchPage} from '../search/search';
 import {ContentType, MimeType, RouterLinks} from '../app/app.constant';
 // import {EnrolledCourseDetailsPage} from '../enrolled-course-details/enrolled-course-details';
@@ -17,19 +17,24 @@ import {
   PageId,
 } from './telemetry-constants';
 import { NavigationExtras, Router } from '@angular/router';
-import { NavController } from '@ionic/angular';
+import { NavController, Events } from '@ionic/angular';
+
+declare var cordova;
 
 @Injectable()
 export class QRScannerResultHandler {
   private static readonly CORRELATION_TYPE = 'qr';
   source: string;
+    inAppBrowserRef: any;
 
   constructor(
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
+    @Inject('TELEMETRY_SERVICE') private telemetryService: TelemetryService,
     private commonUtilService: CommonUtilService,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private router: Router,
-    private navCtrl: NavController
+    private navCtrl: NavController,
+    private events: Events
   ) {
   }
 
@@ -101,6 +106,24 @@ export class QRScannerResultHandler {
     });
   }
 
+  handleCertsQR(source: string, scannedData: string) {
+    this.generateQRScanSuccessInteractEvent(scannedData, 'OpenBrowser', undefined, {
+      certificateId: scannedData.split('/certs/')[1], scannedFrom: 'mobileApp'
+    });
+    this.telemetryService.buildContext().subscribe(context => {
+      scannedData = scannedData + '?clientId=android&context=' + encodeURIComponent(JSON.stringify(context));
+      this.inAppBrowserRef = cordova.InAppBrowser.open(scannedData, '_blank', 'zoom=no');
+      this.inAppBrowserRef.addEventListener('loadstart', (event) => {
+        if (event.url) {
+          if (event.url.includes('explore-course')) {
+            this.inAppBrowserRef.close();
+            this.events.publish('return_course');
+          }
+        }
+      });
+    });
+  }
+
   handleInvalidQRCode(source: string, scannedData: string) {
     this.source = source;
     this.generateQRScanSuccessInteractEvent(scannedData, 'UNKNOWN', undefined);
@@ -135,16 +158,22 @@ export class QRScannerResultHandler {
     }
   }
 
-  generateQRScanSuccessInteractEvent(scannedData, action, dialCode) {
+  generateQRScanSuccessInteractEvent(scannedData, action, dialCode?, certificate?:
+     { certificateId: string, scannedFrom: 'mobileApp' | 'genericApp' }) {
     const values = new Map();
     values['networkAvailable'] = this.commonUtilService.networkInfo.isNetworkAvailable ? 'Y' : 'N';
     values['scannedData'] = scannedData;
     values['action'] = action;
-    values['compatibile'] = (action === 'SearchResult' || action === 'ContentDetail') ? 1 : 0;
+    values['compatibile'] = (action === 'OpenBrowser' || action === 'SearchResult' || action === 'ContentDetail') ? 1 : 0;
 
     let telemetryObject: TelemetryObject;
+
     if (dialCode) {
       telemetryObject = new TelemetryObject(dialCode, 'qr', undefined);
+    }
+    if (certificate) {
+      values['scannedFrom'] = certificate.scannedFrom;
+      telemetryObject = new TelemetryObject(certificate.certificateId, 'certificate', undefined);
     }
 
     this.telemetryGeneratorService.generateInteractTelemetry(
