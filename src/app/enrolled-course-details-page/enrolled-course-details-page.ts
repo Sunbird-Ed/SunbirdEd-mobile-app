@@ -190,7 +190,7 @@ export class EnrolledCourseDetailsPage implements OnInit {
   importProgressMessage: string;
   segmentType = 'info';
   isGuestUser = false;
-  isEnrolled = false;
+  // isEnrolled = false;
   showDownload: boolean;
   lastReadContentName: string;
   enrollmentEndDate: string;
@@ -250,7 +250,7 @@ export class EnrolledCourseDetailsPage implements OnInit {
     // const self = this;
     if (this.courseCardData.batchId) {
       this.segmentType = 'modules';
-      this.isEnrolled = true;
+      // this.isEnrolled = true;
     } else {
       this.getAllBatches();
     }
@@ -265,6 +265,7 @@ export class EnrolledCourseDetailsPage implements OnInit {
       });
 
     this.events.subscribe(EventTopics.ENROL_COURSE_SUCCESS, (res) => {
+      console.log('ENROL_COURSE_SUCCESS res', res);
       if (res && res.batchId) {
         this.batchId = res.batchId;
         if (this.identifier && res.courseId && this.identifier === res.courseId) {
@@ -923,6 +924,7 @@ export class EnrolledCourseDetailsPage implements OnInit {
         // unenrolled and only one batch available
         this.batchEndDate = data[0].endDate;
         this.enrollmentEndDate =  data[0].enrollmentEndDate ;
+        // this.batchDetails = data[0];
       }
     })
     .catch((error: any) => {
@@ -1076,7 +1078,8 @@ export class EnrolledCourseDetailsPage implements OnInit {
   }
 
   getContentsSize(data?) {
-      data && data.forEach((value) => {
+    if (data) {
+      data.forEach((value) => {
         if (value.contentData.size) {
           this.downloadSize += Number(value.contentData.size);
         }
@@ -1085,6 +1088,8 @@ export class EnrolledCourseDetailsPage implements OnInit {
           this.downloadIdentifiers.push(value.contentData.identifier);
         }
       });
+      console.log('this.downloadIdentifiers', this.downloadIdentifiers);
+    }
   }
 
   /**
@@ -1152,7 +1157,7 @@ export class EnrolledCourseDetailsPage implements OnInit {
     this.handleBackButton();
     if (this.courseCardData.batchId) {
       this.segmentType = 'modules';
-      this.isEnrolled = true;
+      // this.isEnrolled = true;
     }
   }
 
@@ -1601,13 +1606,20 @@ export class EnrolledCourseDetailsPage implements OnInit {
       this.courseService.enrollCourse(enrollCourseRequest).toPromise()
         .then((data: boolean) => {
           this.zone.run(async () => {
+            // this.setContentDetails(this.identifier);
+            this.updatedCourseCardData = await this.courseService.getEnrolledCourses({userId: this.userId, returnFreshCourses: true })
+            .toPromise().then((cData) => {
+              return cData.find((element) => element.courseId === this.identifier);
+            });
+            this.courseCardData.batchId = item.id;
+            this.getBatchDetails();
+            this.segmentType = 'modules';
             this.commonUtilService.showToast(this.commonUtilService.translateMessage('COURSE_ENROLLED'));
             this.events.publish(EventTopics.ENROL_COURSE_SUCCESS, {
               batchId: item.id,
               courseId: item.courseId
             });
             await loader.dismiss();
-            // this.navCtrl.pop();
           });
         }, (error) => {
           this.zone.run(async () => {
