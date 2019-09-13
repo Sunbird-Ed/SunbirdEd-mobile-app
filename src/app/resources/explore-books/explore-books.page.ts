@@ -518,12 +518,4 @@ export class ExploreBooksPage implements OnInit, OnDestroy {
       this.checkedSortByButton = true;
     });
   }
-  // searchInputKeyBoardHandler = () => {
-  //   this.zone.run(() => {
-  //     setTimeout(() => {
-  //       this.checkedSortByButton = !this.checkedSortByButton;
-  //     }, 0);
-      
-  //   });
-  // }
 }
