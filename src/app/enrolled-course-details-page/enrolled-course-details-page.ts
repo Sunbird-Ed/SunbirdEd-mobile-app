@@ -194,6 +194,7 @@ export class EnrolledCourseDetailsPage implements OnInit {
   showDownload: boolean;
   lastReadContentName: string;
   enrollmentEndDate: string;
+  loader:any;
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -506,7 +507,9 @@ export class EnrolledCourseDetailsPage implements OnInit {
    * Function to extract api response. Check content is locally available or not.
    * If locally available then make childContents api call else make import content api call
    */
-  extractApiResponse(data: Content): void {
+  async extractApiResponse(data: Content) {
+    this.loader = await this.commonUtilService.getLoader();
+    await this.loader.present();
     if (data.contentData) {
       this.course = data.contentData;
       this.content = data;
@@ -554,6 +557,7 @@ export class EnrolledCourseDetailsPage implements OnInit {
         this.ratingComment = contentFeedback[0].comments;
       }
       this.getCourseProgress();
+      await this.loader.dismiss();
     } else {
       this.commonUtilService.showToast('ERROR_CONTENT_NOT_AVAILABLE');
       this.location.back();
