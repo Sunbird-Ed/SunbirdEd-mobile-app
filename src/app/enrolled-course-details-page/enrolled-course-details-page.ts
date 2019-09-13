@@ -179,6 +179,7 @@ export class EnrolledCourseDetailsPage implements OnInit {
   appName: any;
   updatedCourseCardData: Course;
   importProgressMessage: string;
+  isQrCodeLinkToContent: any;
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -213,6 +214,7 @@ export class EnrolledCourseDetailsPage implements OnInit {
       this.identifier = this.courseCardData.contentId || this.courseCardData.identifier;
       this.corRelationList = extrasState.corRelation;
       this.source = extrasState.source;
+      this.isQrCodeLinkToContent = extrasState.isQrCodeLinkToContent;
     }
   }
 
@@ -1223,7 +1225,11 @@ export class EnrolledCourseDetailsPage implements OnInit {
   }
 
   goBack() {
-    this.location.back();
+    if (this.isQrCodeLinkToContent === 0) {
+      window.history.go(-2);
+    } else {
+      this.location.back();
+    }
   }
 
   generateQRSessionEndEvent(pageId: string, qrData: string) {
