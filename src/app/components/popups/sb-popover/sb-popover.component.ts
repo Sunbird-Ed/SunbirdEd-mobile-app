@@ -129,7 +129,7 @@ export class SbPopoverComponent implements OnDestroy {
   }
 
   async deleteContent(canDelete: boolean = false, clickedButtonText?) {
-    await this.popoverCtrl.dismiss({ canDelete });
+    this.popoverCtrl.dismiss({ canDelete });
     if (this.navParams.get('handler')) {
       this.navParams.get('handler')(clickedButtonText);
     }

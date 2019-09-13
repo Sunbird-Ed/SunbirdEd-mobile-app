@@ -100,10 +100,10 @@
 					(click)="resumeContent(courseCardData?.lastReadContentId)"><span><img class="play-icon"
 							src="assets/imgs/Play@1.5x.svg" alt="play-icon">{{
 														'CONTINUE_NOW' | translate }}</span></button>
-				<div *ngIf="batchDetails?.enrollmentEndDate" class="enrollment-end-date">
+				<div *ngIf="batchDetails?.endDate" class="enrollment-end-date">
 					<ion-icon name="information-circle"></ion-icon>
 					<!-- {{'COMPLETE_TRAINING_TO_EARN_CERTIFICATE'| translate :{'%s':batchDetails?.enrollmentEndDate | date} }} -->
-					Complete Training by {{batchDetails?.enrollmentEndDate | date}} to earn a certificate
+					Complete Training by {{batchDetails?.endDate | date}} to earn a certificate
 				</div>
 			</ion-card-content>
 		</ion-card>
