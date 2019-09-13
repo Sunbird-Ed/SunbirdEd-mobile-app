@@ -12,16 +12,14 @@
 				<div *ngIf="!courseCardData?.batchId && course?.createdBy !== userId && !isAlreadyEnrolled">
 					<button class="enrolled-course-card-button"
 						(click)="navigateToBatchListPage();">{{'JOIN_TRAINING' | translate}}</button>
-					<ion-card-subtitle *ngIf="batchInfo || batchEndDate" class="font-12">
+					<ion-card-subtitle *ngIf="batchInfo || enrollmentEndDate" class="font-12">
 						<div *ngIf="batchInfo">
 							<ion-icon name="information-circle"></ion-icon> {{batchInfo}}
 							{{'BATCHES_AVAILABLE' | translate}}
 						</div>
-						<div *ngIf="batchEndDate">
+						<div *ngIf="enrollmentEndDate">
 							<ion-icon name="information-circle"></ion-icon>
-							{{'COMPLETE_TRAINING_TO_EARN_CERTIFICATE' | translate : {'%s':batchDetails?.enrollmentEndDate | date} }}
-							<!-- Complete Training by {{batchDetails?.enrollmentEndDate | date}} to earn a certificate -->
-
+							{{'LAST_DATE_TO_JOIN' | translate }} &nbsp; {{enrollmentEndDate | date}}
 						</div>
 					</ion-card-subtitle>
 				</div>

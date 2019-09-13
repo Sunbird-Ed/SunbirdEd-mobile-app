@@ -920,8 +920,12 @@ ion-split-pane {
     .pull-left{
       padding-top: 0 !important;
       text-overflow: ellipsis;
-      white-space: nowrap;
       overflow: hidden;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      /* autoprefixer: off */
+      -webkit-box-orient: vertical;
+      /* autoprefixer: on */
     }
     .pull-right{
       .done{

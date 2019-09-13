@@ -192,7 +192,8 @@ export class EnrolledCourseDetailsPage implements OnInit {
   isGuestUser = false;
   isEnrolled = false;
   showDownload: boolean;
-  lastReadContentName:String;
+  lastReadContentName: string;
+  enrollmentEndDate: string;
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -229,6 +230,7 @@ export class EnrolledCourseDetailsPage implements OnInit {
     const extrasState = this.router.getCurrentNavigation().extras.state;
     if (extrasState) {
       this.courseCardData = extrasState.content;
+      console.log('this.courseCardData', this.courseCardData);
       this.identifier = this.courseCardData.contentId || this.courseCardData.identifier;
       this.corRelationList = extrasState.corRelation;
       this.source = extrasState.source;
@@ -585,6 +587,7 @@ export class EnrolledCourseDetailsPage implements OnInit {
         this.zone.run(() => {
           if (data) {
             this.batchDetails = data;
+            console.log('this.batchdetails', this.batchDetails);
             this.saveContentContext(this.appGlobalService.getUserId(),
               this.batchDetails.courseId, this.courseCardData.batchId, this.batchDetails.status);
             this.preferences.getString(PreferenceKey.COURSE_IDENTIFIER).toPromise()
@@ -898,7 +901,7 @@ export class EnrolledCourseDetailsPage implements OnInit {
       return str.replace(/^\D+/g, '');
     }
   }
-  getAllBatches(){
+  getAllBatches() {
     const courseBatchesRequest: CourseBatchesRequest = {
       filters: {
         courseId: this.identifier,
@@ -909,10 +912,13 @@ export class EnrolledCourseDetailsPage implements OnInit {
     };
     this.courseService.getCourseBatches(courseBatchesRequest).toPromise()
     .then((data: Batch[]) => {
+      console.log('all batches', data);
       if (data.length > 1) {
         this.batchInfo = data.length;
-      } else {
+      } else if (data.length === 1) {
+        // unenrolled and only one batch available
         this.batchEndDate = data[0].endDate;
+        this.enrollmentEndDate =  data[0].enrollmentEndDate ;
       }
     })
     .catch((error: any) => {
