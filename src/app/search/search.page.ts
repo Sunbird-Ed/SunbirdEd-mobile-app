@@ -1520,6 +1520,8 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
   }
 
   goBack() {
+    this.telemetryGeneratorService.generateBackClickedTelemetry(ImpressionType.SEARCH,
+          Environment.HOME, true, undefined, this.corRelationList);
     this.navCtrl.pop();
   }
 }
