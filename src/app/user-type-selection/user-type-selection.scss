@@ -44,7 +44,6 @@
     @include ltr {
       float: right !important;
     }
-
     @include rtl {
       float: left !important;
     }
@@ -52,11 +51,12 @@
 
   .arrow-icon {
     right: 15px;
-    position: absolute;
+    //position: absolute;
     top: 50%;
-    transform: translateY(-50%);
+    //transform: translateY(-50%);
     width: 22px;
   }
+
 
   .gray-color {
     color: map-get($colors, primary_black);
