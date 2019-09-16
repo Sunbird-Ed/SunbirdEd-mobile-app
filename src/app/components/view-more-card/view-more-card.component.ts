@@ -16,7 +16,7 @@ import {
   Course, GetContentStateRequest, SharedPreferences
 } from 'sunbird-sdk';
 import { Environment, PageId, InteractType } from '../../../services/telemetry-constants';
-import { EnrollmentDetailsPage } from '@app/app/enrolled-course-details-page/enrollment-details-page/enrollment-details-page';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-view-more-card',
@@ -73,12 +73,13 @@ export class ViewMoreCardComponent implements OnInit {
     public commonUtilService: CommonUtilService,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private appGlobalService: AppGlobalService,
-    private router: Router
+    private router: Router,
+    private location: Location,
   ) {
+    this.loader = this.commonUtilService.getLoader();
   }
 
   async checkRetiredOpenBatch(content: any, layoutName?: string) {
-    this.loader = await this.commonUtilService.getLoader();
     await this.loader.present();
     let anyOpenBatch = false;
     this.enrolledCourses = this.enrolledCourses || [];
@@ -209,6 +210,7 @@ export class ViewMoreCardComponent implements OnInit {
         this.events.publish('course:resume', {
           content: content
         });
+        this.location.back();
       } else {
         this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], {
           state: {

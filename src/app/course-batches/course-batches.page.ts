@@ -1,7 +1,8 @@
+import { LoginHandlerService } from './../../services/login-handler.service';
 import { TelemetryGeneratorService } from './../../services/telemetry-generator.service';
 import { Component, Inject, NgZone, OnInit } from '@angular/core';
-import { AuthService, Batch, CourseService, EnrollCourseRequest, OAuthSession } from 'sunbird-sdk';
-import { Events, NavController, Platform } from '@ionic/angular';
+import { AuthService, Batch, CourseService, EnrollCourseRequest, OAuthSession, SharedPreferences } from 'sunbird-sdk';
+import { Events, NavController, Platform, PopoverController } from '@ionic/angular';
 import { EventTopics } from '../../app/app.constant';
 import { CommonUtilService } from '../../services/common-util.service';
 import { InteractType, InteractSubtype, Environment, PageId } from '../../services/telemetry-constants';
@@ -10,6 +11,7 @@ import * as moment from 'moment';
 import { Location } from '@angular/common';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs/Subscription';
+import { SbPopoverComponent } from '../components/popups';
 
 @Component({
   selector: 'app-course-batches',
@@ -64,6 +66,8 @@ export class CourseBatchesPage implements OnInit {
     showBurgerMenu: false,
     actionButtons: []
   };
+  public showSignInCard = false;
+  course: any;
 
   /**
    * Default method of class CourseBatchesComponent
@@ -77,6 +81,9 @@ export class CourseBatchesPage implements OnInit {
   constructor(
     @Inject('AUTH_SERVICE') private authService: AuthService,
     @Inject('COURSE_SERVICE') private courseService: CourseService,
+    @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
+    private popoverCtrl: PopoverController,
+    private loginHandlerService: LoginHandlerService,
     private navCtrl: NavController,
     // private navParams: NavParams,
     private zone: NgZone,
@@ -92,6 +99,7 @@ export class CourseBatchesPage implements OnInit {
     if (extrasState) {
       this.ongoingBatches = extrasState.ongoingBatches;
       this.upcommingBatches = extrasState.upcommingBatches;
+      this.course = extrasState.course;
     } else {
       this.ongoingBatches = [];
       this.upcommingBatches = [];
@@ -123,57 +131,88 @@ export class CourseBatchesPage implements OnInit {
   }
 
   ionViewWillLeave() {
-    if(this.backButtonFunc) {
+    if (this.backButtonFunc) {
       this.backButtonFunc.unsubscribe();
-    } 
+    }
   }
   /**
    * Enroll logged-user into selected batch
    *
    * @param {any} item contains details of select batch
    */
+
   async enrollIntoBatch(item: Batch) {
-    const enrollCourseRequest: EnrollCourseRequest = {
-      batchId: item.id,
-      courseId: item.courseId,
-      userId: this.userId,
-      batchStatus: item.status
-    };
-    const loader = await this.commonUtilService.getLoader();
-    await loader.present();
-    const reqvalues = new Map();
-    reqvalues['enrollReq'] = enrollCourseRequest;
-    this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
-      InteractSubtype.ENROLL_CLICKED,
-      Environment.HOME,
-      PageId.COURSE_BATCHES, undefined,
-      reqvalues);
+    if (this.isGuestUser) {
+      // this.showSignInCard = true;
+      this.preferences.putString('batch_detail', JSON.stringify(item)).toPromise();
+      this.preferences.putString('course_data', JSON.stringify(this.course)).toPromise();
+      this.joinTraining();
+    } else {
+      const enrollCourseRequest: EnrollCourseRequest = {
+        batchId: item.id,
+        courseId: item.courseId,
+        userId: this.userId,
+        batchStatus: item.status
+      };
+      const loader = await this.commonUtilService.getLoader();
+      await loader.present();
+      const reqvalues = new Map();
+      reqvalues['enrollReq'] = enrollCourseRequest;
+      this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
+        InteractSubtype.ENROLL_CLICKED,
+          Environment.HOME,
+          PageId.COURSE_BATCHES, undefined,
+          reqvalues);
 
-    this.courseService.enrollCourse(enrollCourseRequest).toPromise()
-      .then((data: boolean) => {
-        this.zone.run(async () => {
-          this.commonUtilService.showToast(this.commonUtilService.translateMessage('COURSE_ENROLLED'));
-          this.events.publish(EventTopics.ENROL_COURSE_SUCCESS, {
-            batchId: item.id,
-            courseId: item.courseId
+      this.courseService.enrollCourse(enrollCourseRequest).toPromise()
+        .then((data: boolean) => {
+          this.zone.run(async () => {
+            this.commonUtilService.showToast(this.commonUtilService.translateMessage('COURSE_ENROLLED'));
+            this.events.publish(EventTopics.ENROL_COURSE_SUCCESS, {
+              batchId: item.id,
+              courseId: item.courseId
+            });
+            await loader.dismiss();
+            // this.navCtrl.pop();
+            this.location.back();
           });
-          await loader.dismiss();
-          // this.navCtrl.pop();
-          this.location.back();
-
+        }, (error) => {
+          this.zone.run(async () => {
+            await loader.dismiss();
+            if (error && error.code === 'NETWORK_ERROR') {
+              this.commonUtilService.showToast(this.commonUtilService.translateMessage('ERROR_NO_INTERNET_MESSAGE'));
+            } else if (error && error.response
+              && error.response.body && error.response.body.params && error.response.body.params.err === 'USER_ALREADY_ENROLLED_COURSE') {
+              this.commonUtilService.showToast(this.commonUtilService.translateMessage('ALREADY_ENROLLED_COURSE'));
+            }
+          });
         });
-      }, (error) => {
-        this.zone.run(() => {
-          if (error && error.code === 'NETWORK_ERROR') {
-            this.commonUtilService.showToast(this.commonUtilService.translateMessage('ERROR_NO_INTERNET_MESSAGE'));
-          } else if (error && error.response
-            && error.response.body && error.response.body.params && error.response.body.params.err === 'USER_ALREADY_ENROLLED_COURSE') {
-            this.commonUtilService.showToast(this.commonUtilService.translateMessage('ALREADY_ENROLLED_COURSE'));
-          }
-        });
-      });
+    }
   }
 
+  async joinTraining() {
+    const confirm = await this.popoverCtrl.create({
+      component: SbPopoverComponent,
+      componentProps: {
+        sbPopoverMainTitle : 'You must login to join an active batch and access training details',
+        metaInfo: 'Trainings are only for registered users',
+        sbPopoverHeading : 'Login',
+        isNotShowCloseIcon: true,
+        actionsButtons: [
+          {
+            btntext: 'Login',
+            btnClass: 'popover-color'
+          },
+        ]
+      },
+      cssClass: 'sb-popover info',
+    });
+    await confirm.present();
+    const { data } = await confirm.onDidDismiss();
+    if (data && data.canDelete) {
+      this.loginHandlerService.signIn();
+    }
+  }
   /**
    * Get logged-user id. User id is needed to enroll user into batch.
    */
