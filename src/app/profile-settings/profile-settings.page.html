@@ -30,7 +30,7 @@
 	<form novalidate [formGroup]="userForm" class="form-position">
 
 		<ion-item>
-			<ion-label position="stacked" class="label-font text-uppercase">{{'BOARD' | translate }}</ion-label>
+			<ion-label position="stacked" class="label-font text-uppercase align-text">{{'BOARD' | translate }}</ion-label>
 			<ion-select multiple="false" #boardSelect text-capitalize formControlName="syllabus"
 				[interfaceOptions]="boardOptions" (ionChange)="resetForm(0, true)" okText="{{'BTN_SUBMIT' | translate}}"
 				cancelText="{{'CANCEL' | translate}}" placeholder="{{'BOARD_OPTION_TEXT' | translate}}">
@@ -40,7 +40,7 @@
 		</ion-item>
 
 		<ion-item>
-			<ion-label position="stacked" class="label-font text-uppercase">{{'MEDIUM' | translate }}</ion-label>
+			<ion-label position="stacked" class="label-font text-uppercase align-text">{{'MEDIUM' | translate }}</ion-label>
 			<ion-select formControlName="medium" #mediumSelect multiple="true" text-capitalize
 				[interfaceOptions]="mediumOptions" (ionChange)="resetForm(2, false)"
 				okText="{{'BTN_SUBMIT' | translate}}" cancelText="{{'CANCEL' | translate}}"
@@ -51,7 +51,7 @@
 		</ion-item>
 
 		<ion-item>
-			<ion-label position="stacked" class="label-font text-uppercase">{{'CLASS' | translate }}</ion-label>
+			<ion-label position="stacked" class="label-font text-uppercase align-text">{{'CLASS' | translate }}</ion-label>
 			<ion-select multiple="true" #gradeSelect text-capitalize formControlName="grades"
 				[interfaceOptions]="classOptions" okText="{{'BTN_SUBMIT' | translate}}"
 				cancelText="{{'CANCEL' | translate}}" [disabled]="!(userForm.value.medium != '')"

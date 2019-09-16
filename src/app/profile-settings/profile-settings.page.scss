@@ -29,6 +29,15 @@
     }
   }
 
+  ion-label.align-text {
+    @include ltr {
+      align-self: stretch;
+    }
+    @include rtl {
+      align-self: end;
+    }
+  }
+
   ion-list[inset] {
     margin: 0 !important;
   }
@@ -224,9 +233,9 @@
 
   .arrow-icon {
     right: 15px;
-    position: absolute;
+    //position: absolute;
     top: 50%;
-    transform: translateY(-50%);
+    //transform: translateY(-50%);
     width: 22px;
   }
 }

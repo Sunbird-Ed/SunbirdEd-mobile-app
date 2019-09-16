@@ -7,6 +7,7 @@ export class ContentType {
     public static readonly TEXTBOOK = 'TextBook';
     public static readonly LESSON_PLAN = 'LessonPlan';
     public static readonly COURSE = 'Course';
+    public static readonly CERTIFICATE = 'Certificate';
     public static readonly TEXTBOOK_UNIT = 'TextBookUnit';
     public static readonly LESSON_PLAN_UNIT = 'LessonPlanUnit';
     public static readonly COURSE_UNIT = 'CourseUnit';
