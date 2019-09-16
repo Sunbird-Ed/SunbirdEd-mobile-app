@@ -983,6 +983,7 @@ export class EnrolledCourseDetailsPage implements OnInit {
     this.contentService.getChildContents(option).toPromise()
       .then((data: Content) => {
         this.zone.run(async () => {
+          await loader.dismiss();
           if (data && data.children) {
             this.enrolledCourseMimeType = data.mimeType;
             this.childrenData = data.children;
@@ -996,7 +997,6 @@ export class EnrolledCourseDetailsPage implements OnInit {
             this.getContentsSize(this.childrenData);
           }
           this.showChildrenLoader = false;
-          await loader.dismiss();
         });
       }).catch(() => {
         this.zone.run(async () => {
@@ -1364,6 +1364,7 @@ export class EnrolledCourseDetailsPage implements OnInit {
       this.courseService.getCourseBatches(courseBatchesRequest).toPromise()
         .then((data: Batch[]) => {
           this.zone.run(async () => {
+            await loader.dismiss();
             this.batches = data;
             if (this.batches.length) {
               if (this.batches.length === 1) {
@@ -1376,7 +1377,6 @@ export class EnrolledCourseDetailsPage implements OnInit {
                     upcommingBatches.push(batch);
                   }
                 });
-                await loader.dismiss();
                 this.router.navigate([RouterLinks.COURSE_BATCHES], {
                   state: {
                     ongoingBatches,
@@ -1391,7 +1391,8 @@ export class EnrolledCourseDetailsPage implements OnInit {
             }
           });
         })
-        .catch((error: any) => {
+        .catch(async (error: any) => {
+          await loader.dismiss();
           console.log('Error while fetching Batch Details', error);
         });
     } else {
