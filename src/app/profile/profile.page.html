@@ -13,24 +13,8 @@
     </div>
 
     <div padding-horizontal text-center>
-
-    <div class="MT10" *ngIf="profile?.recoveryEmail || profile?.recoveryPhone">
-      <div class="email " (click)="editRecoveryId();">
-        <span class="icon MR10 align-middle">
-          <ion-icon src="assets/imgs/recovery_icon.svg"></ion-icon>
-        </span>
-        <span class="value align-middle">{{ profile?.recoveryEmail || profile?.recoveryPhone }}</span>
-      </div>
+        <!-- Previously UserId was here -->
     </div>
-    <div class="MT10" *ngIf="!profile?.recoveryEmail && !profile?.recoveryPhone">
-      <div class="email light" (click)="editRecoveryId();">
-        <span class="icon MR10 align-middle">
-          <ion-icon src="assets/imgs/recovery_icon.svg"></ion-icon>
-        </span>
-        <span class="value align-middle">{{'ADD_RECOVERY_ID' | translate}}</span>
-      </div>
-    </div>
-  </div>
 
     <div padding-horizontal text-center class="roles-container">
         <div class="MB5" text-center *ngFor="let role of roles | slice : startLimit:rolesLimit;">
@@ -126,7 +110,7 @@
         <div class="MT10" *ngIf="profile?.recoveryEmail || profile?.recoveryPhone">
             <div class="email " (click)="editRecoveryId();">
                 <span class="icon MR10 align-middle">
-                    <ion-icon name="md-mail"></ion-icon>
+                    <ion-icon src="assets/imgs/recovery_icon.svg"></ion-icon>
                 </span>
                 <span class="value align-middle">{{ profile?.recoveryEmail || profile?.recoveryPhone }}</span>
             </div>
@@ -134,11 +118,12 @@
         <div class="MT10" *ngIf="!profile?.recoveryEmail && !profile?.recoveryPhone">
             <div class="email light" (click)="editRecoveryId();">
                 <span class="icon MR10 align-middle">
-                    <ion-icon name="md-mail"></ion-icon>
+                    <ion-icon src="assets/imgs/recovery_icon.svg"></ion-icon>
                 </span>
                 <span class="value align-middle">{{'ADD_RECOVERY_ID' | translate}}</span>
             </div>
         </div>
+
     </div>
 
     <div class="school-details" *ngIf="profile?.framework">
