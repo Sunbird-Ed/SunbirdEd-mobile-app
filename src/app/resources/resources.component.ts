@@ -1056,7 +1056,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
   exploreOtherContents() {
     const navigationExtras = {
       state: {
-        subjects: this.subjects,
+        subjects: [...this.subjects],
         categoryGradeLevels: this.categoryGradeLevels,
         storyAndWorksheets: this.storyAndWorksheets,
         contentType: ContentType.FOR_LIBRARY_TAB,

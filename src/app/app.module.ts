@@ -254,6 +254,7 @@ export const sunbirdSdkFactory =
           user_authentication: {
             redirectUrl: buildConfigValues['OAUTH_REDIRECT_URL'],
             authUrl: '/auth/realms/sunbird/protocol/openid-connect',
+            mergeUserHost: buildConfigValues['MERGE_ACCOUNT_BASE_URL']
           },
           api_authentication: {
             mobileAppKey: buildConfigValues['MOBILE_APP_KEY'],

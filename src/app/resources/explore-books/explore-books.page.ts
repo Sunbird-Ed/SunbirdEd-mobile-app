@@ -163,6 +163,9 @@ export class ExploreBooksPage implements OnInit, OnDestroy {
       const index = this.categoryGradeLevels.findIndex((grade) => grade.name === this.searchForm.value['grade'][0]);
       this.classClick(index);
     }
+
+    window.addEventListener('keyboardDidHide', this.showSortByButton);
+    window.addEventListener('keyboardWillShow', this.hideSortByButton);
   }
 
   async ngOnInit() {
@@ -365,6 +368,8 @@ export class ExploreBooksPage implements OnInit, OnDestroy {
     if (this.searchFormSubscription) {
       this.searchFormSubscription.unsubscribe();
     }
+    window.removeEventListener('keyboardDidHide', this.showSortByButton);
+    window.removeEventListener('keyboardWillShow', this.hideSortByButton);
   }
 
   async openSortOptionsModal() {
@@ -502,11 +507,15 @@ export class ExploreBooksPage implements OnInit, OnDestroy {
       this.corRelationList);
   }
 
-  hideSortByButton() {
-    this.checkedSortByButton = false;
+  hideSortByButton = () => {
+    this.zone.run(() => {
+      this.checkedSortByButton = false;
+    });
   }
 
-  showSortByButton() {
-    this.checkedSortByButton = true;
+  showSortByButton = () => {
+    this.zone.run(() => {
+      this.checkedSortByButton = true;
+    });
   }
 }
