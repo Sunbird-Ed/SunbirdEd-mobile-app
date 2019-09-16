@@ -19,8 +19,6 @@ export class EditContactDetailsPopupComponent implements OnInit {
   @Input() description: string;
   @Input() type: string;
 
-  phone: string;
-  email: string;
   err: boolean;
   personEditForm: FormGroup;
   isRequired = false;
