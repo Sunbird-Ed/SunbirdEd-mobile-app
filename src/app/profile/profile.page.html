@@ -13,7 +13,15 @@
     </div>
 
     <div padding-horizontal text-center>
-        <!-- Previously UserId was here -->
+        <p style="position: relative;"><span class="profile-name">{{ profile?.firstName }}
+            {{ profile?.lastName }}</span>
+            <span *ngIf="!isCustodianOrgId && profile?.firstName" class="isymbol" item-right text-left
+            (click)="toggleTooltips($event, 'name')">
+            <ion-icon name="information-circle" class="info-icon"></ion-icon>
+            <span class="asPerStateRecord" *ngIf="informationProfileName">{{'STATE_RECORDS' | translate}}</span>
+            </span>
+        </p>
+        <p class="MT0 MB30"><span>{{'USER_ID' | translate}}:</span><span>{{profile?.userName}}</span></p>
     </div>
 
     <div padding-horizontal text-center class="roles-container">
