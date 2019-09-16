@@ -1,11 +1,10 @@
 <ion-content padding-horizontal padding-top>
-  <iframe (load)="onIFrameLoad()" *ngIf="tncLatestVersionUrl" height="100%" width="100%"
-          [src]="tncLatestVersionUrl"
-          frameborder="0"></iframe>
+  <iframe (load)="onIFrameLoad()" *ngIf="tncLatestVersionUrl" height="100%" width="100%" [src]="tncLatestVersionUrl"
+    frameborder="0"></iframe>
 </ion-content>
 
 <ion-footer tappable padding no-border>
-  <ion-grid no-padding padding-vertical >
+  <ion-grid no-padding padding-vertical>
     <ion-row nowrap align-items-center>
       <ion-col size="auto" nowrap style="line-height: 0">
         <ion-checkbox no-padding no-margin (ionChange)="onConfirmationChange($event)"></ion-checkbox>

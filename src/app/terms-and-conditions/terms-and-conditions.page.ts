@@ -1,10 +1,9 @@
 import { Component, Inject, OnInit, Injector } from '@angular/core';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
-import { TranslateService } from '@ngx-translate/core';
 import { AppVersion } from '@ionic-native/app-version/ngx';
-import { Platform, LoadingController } from '@ionic/angular';
+import { Platform } from '@ionic/angular';
 import { ProfileService, ServerProfile } from 'sunbird-sdk';
-import { Subscription } from 'rxjs';
+import { Subscription } from 'rxjs/Subscription';
 
 import { Environment, ImpressionType, InteractSubtype, InteractType, PageId } from '../../services/telemetry-constants';
 import { LogoutHandlerService } from '@app/services/logout-handler.service';
@@ -27,15 +26,14 @@ export class TermsAndConditionsPage implements OnInit {
   private loading?: any;
   private unregisterBackButtonAction: Subscription;
   private userProfileDetails: ServerProfile;
+  appName: string;
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     private platform: Platform,
-    private loadingCtrl: LoadingController,
     private logoutHandlerService: LogoutHandlerService,
     private sanitizer: DomSanitizer,
     private commonUtilService: CommonUtilService,
-    private translateService: TranslateService,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private headerService: AppHeaderService,
     private appVersion: AppVersion,
@@ -46,6 +44,7 @@ export class TermsAndConditionsPage implements OnInit {
   }
 
   public async ngOnInit() {
+    this.appName = await this.appVersion.getAppName();
     this.headerService.hideHeader();
     this.userProfileDetails = (await this.profileService.getActiveSessionProfile(
       { requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise()).serverProfile;
@@ -53,15 +52,18 @@ export class TermsAndConditionsPage implements OnInit {
     this.tncLatestVersionUrl = this.sanitizer
       .bypassSecurityTrustResourceUrl(this.userProfileDetails.tncLatestVersionUrl);
 
-    this.unregisterBackButtonAction = this.platform.backButton.
-      subscribeWithPriority(10, async () => await this.showToastOnFirstBackNavigation());
-
     this.telemetryGeneratorService.generateImpressionTelemetry(
       ImpressionType.VIEW, '',
       PageId.TERMS_N_CONDITIONS,
       Environment.HOME
     );
-    await this.createAndPresentLoadingSpinner();
+    this.loading = await this.commonUtilService.getLoader();
+    this.loading.present();
+  }
+
+  ionViewWillEnter() {
+    this.unregisterBackButtonAction = this.platform.backButton.
+      subscribeWithPriority(999, async () => this.showToastOnFirstBackNavigation());
   }
 
   public ionViewWillLeave() {
@@ -92,7 +94,6 @@ export class TermsAndConditionsPage implements OnInit {
       undefined,
       valuesMap
     );
-
     this.termsAgreed = event.target.checked;
   }
 
@@ -146,15 +147,6 @@ export class TermsAndConditionsPage implements OnInit {
     }
   }
 
-  private async createAndPresentLoadingSpinner() {
-    this.loading = await this.loadingCtrl.create({
-      showBackdrop: true,
-      spinner: 'crescent'
-    });
-
-    await this.loading.present();
-  }
-
   private async logoutOnSecondBackNavigation() {
     const tncUpdateHandlerService = this.injector.get(TncUpdateHandlerService);
     this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.TERMS_N_CONDITIONS, Environment.HOME, false);
@@ -162,13 +154,16 @@ export class TermsAndConditionsPage implements OnInit {
     await tncUpdateHandlerService.dismissTncPage();
   }
 
-  private async showToastOnFirstBackNavigation() {
+  private showToastOnFirstBackNavigation() {
     this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.TERMS_N_CONDITIONS, Environment.HOME, false);
-    this.commonUtilService.showToast(await this.translateService
-      .get('TNC_BACK_NAVIGATION_MESSAGE',
-        {
-          app_name: await this.appVersion.getAppName()
-        }
-      ).toPromise<string>());
+    this.commonUtilService.showToast(this.commonUtilService.translateMessage('TNC_BACK_NAVIGATION_MESSAGE', { app_name: this.appName }));
+
+    if (this.unregisterBackButtonAction) {
+      this.unregisterBackButtonAction.unsubscribe();
+    }
+
+    this.unregisterBackButtonAction = this.platform.backButton.subscribeWithPriority(999, async () => {
+      await this.logoutOnSecondBackNavigation();
+    });
   }
 }
