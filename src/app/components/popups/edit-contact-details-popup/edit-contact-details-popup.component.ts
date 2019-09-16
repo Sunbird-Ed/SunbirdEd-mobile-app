@@ -1,5 +1,5 @@
 import { Component, OnInit, Inject, Input } from '@angular/core';
-import { Platform, NavParams, PopoverController } from '@ionic/angular';
+import { Platform, NavParams, PopoverController, MenuController } from '@ionic/angular';
 import { GenerateOtpRequest, IsProfileAlreadyInUseRequest, ProfileService } from 'sunbird-sdk';
 import { ProfileConstants } from '@app/app/app.constant';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -34,7 +34,8 @@ export class EditContactDetailsPopupComponent implements OnInit {
     private commonUtilService: CommonUtilService,
     private fb: FormBuilder,
     private popOverCtrl: PopoverController,
-    private keyboard: Keyboard
+    private keyboard: Keyboard,
+    private menuCtrl: MenuController
   ) {
 
     this.userId = this.navParams.get('userId');
@@ -49,7 +50,9 @@ export class EditContactDetailsPopupComponent implements OnInit {
     this.initEditForm();
   }
 
-  ngOnInit() { }
+  ngOnInit() {
+    this.menuCtrl.enable(false);
+  }
 
   initEditForm() {
     if (this.type === ProfileConstants.CONTACT_TYPE_EMAIL) {
