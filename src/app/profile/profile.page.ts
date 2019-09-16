@@ -655,7 +655,8 @@ downloadTrainingCertificate(course: Course, certificate: CourseCertificate) {
         title: this.commonUtilService.translateMessage('VERIFY_PHONE_OTP_TITLE'),
         description: this.commonUtilService.translateMessage('VERIFY_PHONE_OTP_DESCRIPTION'),
         type: ProfileConstants.CONTACT_TYPE_PHONE
-      }
+      };
+
       const data = await this.openContactVerifyPopup(EditContactVerifyPopupComponent, componentProps, 'popover-alert input-focus');
       if (data && data.OTPSuccess) {
         this.updatePhoneInfo(data.value);
@@ -667,7 +668,8 @@ downloadTrainingCertificate(course: Course, certificate: CourseCertificate) {
         title: this.commonUtilService.translateMessage('VERIFY_EMAIL_OTP_TITLE'),
         description: this.commonUtilService.translateMessage('VERIFY_EMAIL_OTP_DESCRIPTION'),
         type: ProfileConstants.CONTACT_TYPE_EMAIL
-      }
+      };
+
       const data = await this.openContactVerifyPopup(EditContactVerifyPopupComponent, componentProps, 'popover-alert input-focus');
       if (data && data.OTPSuccess) {
         this.updateEmailInfo(data.value);
