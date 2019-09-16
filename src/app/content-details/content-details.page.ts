@@ -596,7 +596,7 @@ export class ContentDetailsPage implements OnInit {
     } else if (this.resultLength === 1) {
       this.navCtrl.navigateBack([RouterLinks.SEARCH]);
     } else {
-      this.navCtrl.pop();
+      this.location.back();
     }
   }
 

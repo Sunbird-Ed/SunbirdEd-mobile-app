@@ -16,6 +16,7 @@
 @import "./assets/styles/rtl_helper";
 @import "./assets/styles/details_page";
 @import "./assets/styles/fonts";
+@import "./assets/styles/variables";
 
 :root {
   --ion-default-font: "NotoSans";
@@ -865,3 +866,82 @@ ion-toast.sb-toast.available-later {
 ion-split-pane {
   contain: unset;
 }
+
+// common code for both collection-etb and enrolled course details
+.sb-topics-container-ftue{
+  .sb-topic-item{
+    padding: 0 !important;
+    height: 3.11%;
+    width: 93.33%;
+    color: #999999;
+    font-size: 12px;
+    line-height: 18px;
+    font-weight: bold;
+    @include rtl() {
+     margin-left: 20px;
+    }
+    @include ltr() {
+    margin-left: 20px;
+    }
+  }
+  .sb-ftue-design {
+    width: 100%;
+    font-size: 1.4rem;
+    background: #fff;
+    margin: 10px 0;
+    border: 0.5px solid rgba(35,97,255,0.5);
+    background-color: #FFFFFF;
+    box-shadow: 0 3px 4px 0 rgba(2,79,157,0.1);
+    .sb-play-unselected{
+      color: $blue;
+      font-size: 12px;
+      line-height: 20px;
+      @include margin(6px);
+      @include clearfix;
+    }
+    .sb-play-selected{
+      font-size: 12px;
+      line-height: 20px;
+      @include margin(6px);
+      @include clearfix; 
+    }
+    
+    .pull-left{
+      width: calc(100% - 50px);
+      vertical-align: middle !important;
+      @include padding(10px 0px 0px 0px);
+      @include clearfix;
+    }
+    .pull-right{
+      vertical-align: middle;
+      @include padding(0px 6px 0px 0px);
+
+    }
+  }
+  .sb-ftue-design-course-toc{
+    .pull-left{
+      padding-top: 0 !important;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      /* autoprefixer: off */
+      -webkit-box-orient: vertical;
+      /* autoprefixer: on */
+    }
+    .pull-right{
+      .done{
+        color: map-get($colors, office_green);      
+      }
+    }
+    .content-type-container{
+      img{
+        display: inline-block !important;
+        height: 20px !important;
+        width: auto !important;
+        vertical-align: middle;
+        @include margin( 0px 8px 0px 0px);
+      }
+    }
+  }
+} 

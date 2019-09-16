@@ -64,6 +64,7 @@ export class MimeType {
     public static readonly INTERACTION = ['application/vnd.ekstep.ecml-archive', 'application/vnd.ekstep.html-archive',
         'application/vnd.android.package-archive', 'application/vnd.ekstep.content-archive',
         'application/vnd.ekstep.plugin-archive', 'application/vnd.ekstep.h5p-archive'];
+    public static readonly DOCS =  ['application/pdf', 'application/epub', 'application/msword'];
     public static readonly ALL = ['video/mp4', 'video/x-youtube', 'video/webm', 'application/pdf', 'application/epub',
         'application/pdf', 'application/epub', 'application/vnd.ekstep.ecml-archive', 'application/vnd.ekstep.h5p-archive',
         'application/vnd.ekstep.html-archive'
