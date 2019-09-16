@@ -1,17 +1,20 @@
+import { Observable } from 'rxjs/Observable';
 import { Inject, Injectable } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import { AuthService, OAuthSession, ProfileService, ServerProfile, ServerProfileDetailsRequest } from 'sunbird-sdk';
 import { ProfileConstants } from '@app/app/app.constant';
 import { TermsAndConditionsPage } from '@app/app/terms-and-conditions/terms-and-conditions.page';
 
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class TncUpdateHandlerService {
 
   modal: any;
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
-    private modalCtrl: ModalController,
-    @Inject('AUTH_SERVICE') private authService: AuthService
+    @Inject('AUTH_SERVICE') private authService: AuthService,
+    private modalCtrl: ModalController
   ) { }
 
   public async checkForTncUpdate(): Promise<boolean> {
@@ -34,7 +37,8 @@ export class TncUpdateHandlerService {
             this.presentTncPage({ response }).then(() => {
               resolve(true);
               return;
-            }).catch(() => {
+            }).catch((error) => {
+              console.error('Error:', error);
               reject();
             });
           });
@@ -68,7 +72,7 @@ export class TncUpdateHandlerService {
       });
   }
 
-  private async presentTncPage (navParams: any): Promise<undefined> {
+  async presentTncPage(navParams: any): Promise<undefined> {
     this.modal = await this.modalCtrl.create({
       component: TermsAndConditionsPage,
       componentProps: navParams

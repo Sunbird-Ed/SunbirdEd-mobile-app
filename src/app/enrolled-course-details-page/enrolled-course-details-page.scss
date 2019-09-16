@@ -1,5 +1,7 @@
-@import "src/assets/styles/_custom-mixins.scss";
-@import "src/assets/styles/_variables.scss";
+@import 'src/assets/styles/_custom-mixins';
+@import "src/assets/styles/variables";
+
+
 :host {
     .fontBold {
         font-weight: bold;
@@ -13,34 +15,98 @@
     .structure-text{
         padding: 7px 0px 0px 4px;
     }
+    .certified-section-color{
+      color: #08539f;
+    }
+    .certified-training-section{
+        background-color: #e5edf5;
+        padding: 8px;
+    }
+    .font-10{
+        font-size: 10px;
+    }
     .font-12 {
         font-size: 12px !important;
     }
+    .font-13{
+      font-size: 13px !important;
+    }
+    .font-16{
+        font-size: 16px !important;
+    }
+    .font-14{
+        font-size: 14px !important;
+    }
+    .font-18{
+        font-size: 18px;
+    }
     .padding-left-8{
-        padding-left: 8px !important;
+        @include padding(0px 0px 0px 8px);
     }
     .child-item{
         --padding-start: 0 !important;
     }
+    .text-transform-none{
+        text-transform: none !important;
+    }
+    .card-content-bottom-0{
+        padding-bottom: 0px !important;
+    }
+    .card-content-top-0{
+      padding-top: 0px !important;
+  }
+    .subtitle-color{
+        color: map-get($colors, textGrey);
+    }
     .course-progress {
-        position: absolute;
-        width: 100%;
-        z-index: 10;
-        left:0;
-        top:0;
-        .progress-outer {
-            background-color: transparent !important;
-        }
-        .progress-inner {
-            min-width: unset !important;
-            padding: 2px !important;
-        }
+        // position: absolute;
+        // width: 100%;
+        // z-index: 10;
+        // left:0;
+        // top:0;
+        // .progress-outer {
+        //     background-color: transparent !important;
+        // }
+        // .progress-inner {
+        //     min-width: unset !important;
+        //     padding: 2px !important;
+        // }
         .progress-inner-primary {
-            background-color: #FF9F00 !important;
+            // background-color: #FF9F00 !important;
+            background-color: #008000 !important;
         }
-        .progress-inner-secondary {
-            background-color: #7ED321 !important;
-        }
+        // .progress-inner-secondary {
+        //     background-color: #7ED321 !important;
+        // }
+    }
+    ion-card ion-card-content p {
+        font-size: 14px;
+    }
+    .enrolled-course-card{
+        background-color:#d2eadd;
+    }
+    ion-card{
+        --ion-item-background: white;
+    }
+    .play-icon{
+       display: inline;
+       width: 21px;
+       vertical-align: middle;
+       margin-right: 6.43px;
+    }
+    ion-content{
+        --ion-background-color: #F9F9F8;
+    }
+    .hr-border-bottom {
+        box-sizing: border-box;
+        height: 1px;	
+        width: 328px;	
+        border: 0.5px solid #CCCCCC;
+        margin-top: 9px;
+        margin-bottom: 10px;
+    }
+    hr {
+        border:0.5px solid #999999;
     }
     .blurbackground {
         // background-color: gray !important;
@@ -100,4 +166,211 @@
         height: 20px;
         font-size: 10px;
     }
+    .label-margin-bottom{
+      margin-bottom: 3px !important;
+    } 
+    .custom-card-header{
+        padding-bottom: 0px !important;
+    }
+    .sb-accordian-arrow{
+        float: right;
+        font-size: 14px;
+        padding-top: 10px;
+    }
+    .enrolled-course-card-button{
+        background-color: #008840;
+        border: none;
+        color: white;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        margin: 4px 2px;
+        cursor: pointer;
+        outline: none;
+        width: 95%;
+        padding: 13px 0px 13px 0px;
+    }
+    .segment-button-checked{
+      ion-label.sc-ion-label-md-h.sc-ion-label-md-s.md.hydrated{
+        font-weight: bold;
+      }
+    }
+    .border-right{
+      border-right: 1.5px solid #e6e6e6;
+      margin: 0px 0px 10px 11px;
+    }
+    .hr-div {
+      padding: 0px 10px 0px 10px;       
+    }
+    hr.hr-height {
+      height: 32px;
+    }
+    .segment-button-indicator{
+      width: 84% !important;
+      margin-right: 8% !important;
+    }   
+  }
+  .sb-topics-containe{
+    padding-right: 5%;
+  }
+  .sb-hidden-content{
+    background-color: #F2F2F2 !important;
+    // height: 34.15% !important;
+    width: 100% !important;
+    border-radius: 0 0 2px 2px !important;
+    padding-top: 2% !important;
+    padding-bottom: 2% !important;
+  }
+  .sb-accordian-card{
+    // height: 6.1% !important;
+    width: 100% !important;
+    border-radius: 2px !important;
+    background-color: #FFFFFF !important;
+    box-shadow: 0 4px 7px 0 rgba(0,0,0,0.1) !important;
+  }
+  .sb-topic-text {
+    &.sb-topic-text {
+      padding-top: 5px;
+      ion-icon{
+        vertical-align: middle;
+      }
+    }
+    // height: 2.44%;
+    // width: 80%;
+    color: $blue;
+    font-size: 14px;
+    line-height: 20px;
+  }
+
+  .certificate-container {
+    display: inline-flex;
+    flex-wrap: nowrap;
+    align-items:center;
+    background-color: #E5EDF6;
+    padding: 4px;
+    margin-bottom: 12px;
+    .certificate-icon {
+      padding-right: 5px;
+    }
+  }
+  .sc-ion-segment-md-h{
+    --color-checked : #024f9d;
+    font-weight: bold;
+    --color: #467fb8;
+  }
+  .wrapper {
+    display: grid;
+    grid-template-columns: 100px auto 100px;
+    margin-bottom: -8px;
+  }  
+  .wrapper {
+    border-radius: 5px;
+  }
+  
+  .wrapper > div {
+    border-radius: 5px;
+    padding: 1em;
+  }
+
+  .pull-right{
+      float: right;
+  }
+  .menu-icon{
+    display: block;
+    width: 100%;
+    height: 16px;
+    width: 4px;
+    margin-top: 18px;
+    float: right;
+  }
+  .card-icons {
+    font-size: 30px;
+    color: #024F9D;
+  }
+  .sb-course-complete-container {
+    width: 100%;	
+    opacity: 0.7;	
+    background-color: #BFE1CF;
+    @include padding(8px);
+    .img-container{
+      width: 20%;
+      vertical-align: middle;
+      display: inline-block;
+    }
+    .text-container{
+      color: map-get($colors, office_green);
+      font-family: "Noto Sans";
+      font-size: 14px !important;
+      font-weight: bold;
+      width: 80%;
+      vertical-align: middle;
+      display: inline-block;
+      @include padding(0px 0px 0px 11px);
+    }
+  }
+  .card-text{
+    height: 18px;
+    width: 63px;
+    color: map-get($colors, textGrey);
+    font-family: "Noto Sans";
+    font-size: 13px !important;
+    line-height: 20px;
+    text-align: center;
+  }
+  .card-button{
+      background-color: transparent !important;
+  }
+  .padding-bottom-6{
+    padding-bottom: 6px;
+  }
+  
+  .sb-course-progress-container{
+      background-color: #E5EDF5;
+      padding: 8px;
+      height: 70px;	
+      width: auto;
+  }
+
+  .last-read-content{
+    font-size: 14px !important;
+    @include padding(0px 0px 4px 4px)
+  }
+
+  .sb-batch-end-container{
+    background-color: #FBE7E0;
+    padding: 10px;
+    height: 70px;	
+    width: auto;
+    .batch-end-main-heading{
+      font-size: 12px !important;
+      color: #E55A28;      
+    }
+    .batch-end-sub-heading{
+      color: #333333;
+      font-family: "Noto Sans";
+      font-size: 12px !important;
+    }
+  }
+  .enrollment-end-date{
+    font-size: 12px;
+    color: #333333;
+    font-family: "Noto Sans";
+  }
+  .sb-course-end-container{
+    background-color: #FBE7E0;
+    padding: 10px;
+    height: 70px;	
+    width: auto;
+    .main-heading{
+      font-size: 14px !important;
+      color: #E55A28;
+    }
+    .sub-heading{
+      color: #333333;
+      font-family: "Noto Sans";
+      font-size: 12px !important;
+    }
 }
+  
+  

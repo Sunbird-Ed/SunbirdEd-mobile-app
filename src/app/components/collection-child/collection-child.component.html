@@ -1,6 +1,6 @@
 <div>
   <ng-container *ngIf="childData | hasMimeType: activeMimeTypeFilter : isTextbookTocPage">
-    <div class="unit-hierachy sb-topic-item" (click)="setContentId(childData.identifier)" [id]="childData.identifier"
+    <div class="unit-hierachy sb-topic-item" (click)="!fromCourseToc && setContentId(childData.identifier)" [id]="childData.identifier"
       *ngIf="childData?.contentData?.mimeType === 'application/vnd.ekstep.content-collection' && childData?.children">
       {{childData?.contentData?.name}}
     </div>
@@ -9,11 +9,11 @@
     *ngIf="childData?.contentData?.mimeType !== 'application/vnd.ekstep.content-collection' && hasMimeType(activeMimeTypeFilter, childData?.contentData?.mimeType, childData)"
     (click)="navigateToDetailsPage(childData, depth + '.' + (i + 1))">
 
-    <div class="sb-ftue-design">
+    <div class="sb-ftue-design" *ngIf="!fromCourseToc">
       <div class="clearfix" [ngClass]="{'sb-accordian-grey-text': !commonUtilService.networkInfo.isNetworkAvailable && !childData?.isAvailableLocally,
            'sb-play-selected':childData?.isAvailableLocally,'sb-play-unselected':!childData?.isAvailableLocally}">
         <div class="pull-left">
-          {{childData?.contentData?.name}}
+            {{childData?.contentData?.name}}
           <span *ngIf="childData?.isAvailableLocally">
             <ion-icon class="sb-checkmark-icon" name="md-checkmark-circle"></ion-icon>
           </span>
@@ -25,6 +25,22 @@
         </div>
       </div>
     </div>
+    <!-- only for course toc -->
+    <div class="sb-ftue-design sb-ftue-design-course-toc" *ngIf="fromCourseToc">
+        <div class="clearfix" [ngClass]="{'sb-accordian-grey-text': !commonUtilService.networkInfo.isNetworkAvailable && !childData?.isAvailableLocally,
+             'sb-play-selected':childData?.isAvailableLocally,'sb-play-unselected':!childData?.isAvailableLocally}">
+          <div class="pull-left">
+              <span class="content-type-container">
+                <img [src]="getContentTypeIcon(childData)" alt="">
+              </span>
+              {{childData?.contentData?.name}}
+          </div>
+          <div class="pull-right" *ngIf="childData.status">
+            <!--'DONE' text doesnot need translation-->
+            <span class="done">Done</span>
+          </div>
+        </div>
+      </div>
   </div>
 
   <div class="row sb-topic-item" (click)="showComingSoonPopup(childData)"
@@ -38,6 +54,6 @@
   <div *ngFor="let firstChildren of childData?.children; let j = index;" class="sb-collection-child-ftue">
     <app-collection-child [childData]="firstChildren" [breadCrumb]="breadCrumb"
       [activeMimeTypeFilter]="activeMimeTypeFilter" [rootUnitId]="rootUnitId" [isTextbookTocPage]="isTextbookTocPage"
-      [bookID]="bookID"></app-collection-child>
+      [bookID]="bookID" [isEnrolled]="isEnrolled" [fromCourseToc]="fromCourseToc"></app-collection-child>
   </div>
 </div>

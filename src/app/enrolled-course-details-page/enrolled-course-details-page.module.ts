@@ -12,6 +12,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { ComponentsModule } from '../components/components.module';
 import { ContentActionsComponent } from '../components';
 import { IonicRatingModule, RatingComponent } from 'ionic4-rating';
+import { TextbookTocService } from '../collection-detail-etb/textbook-toc-service';
 
 const routes: Routes = [
   {
@@ -35,6 +36,7 @@ const routes: Routes = [
   ],
   declarations: [EnrolledCourseDetailsPage],
   entryComponents: [ContentActionsComponent],
-  providers: [DatePipe]
+  providers: [DatePipe , TextbookTocService]
+
 })
 export class EnrolledCourseDetailsPagePageModule { }
