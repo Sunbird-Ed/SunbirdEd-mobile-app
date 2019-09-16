@@ -194,7 +194,7 @@ export class EnrolledCourseDetailsPage implements OnInit {
   showDownload: boolean;
   lastReadContentName: string;
   enrollmentEndDate: string;
-  loader: any;
+  loader:any;
   isQrCodeLinkToContent: any;
 
   constructor(
@@ -971,10 +971,8 @@ export class EnrolledCourseDetailsPage implements OnInit {
   /**
    * Function to set child contents
    */
-  async setChildContents() {
+  setChildContents(): void {
     this.showChildrenLoader = true;
-    const loader = await this.commonUtilService.getLoader();
-    await loader.present();
     const option: ChildContentRequest = {
       contentId: this.identifier,
       hierarchyInfo: null,
@@ -982,8 +980,7 @@ export class EnrolledCourseDetailsPage implements OnInit {
     };
     this.contentService.getChildContents(option).toPromise()
       .then((data: Content) => {
-        this.zone.run(async () => {
-          await loader.dismiss();
+        this.zone.run(() => {
           if (data && data.children) {
             this.enrolledCourseMimeType = data.mimeType;
             this.childrenData = data.children;
@@ -999,9 +996,8 @@ export class EnrolledCourseDetailsPage implements OnInit {
           this.showChildrenLoader = false;
         });
       }).catch(() => {
-        this.zone.run(async () => {
+        this.zone.run(() => {
           this.showChildrenLoader = false;
-          await loader.dismiss();
         });
       });
   }
@@ -1085,15 +1081,13 @@ export class EnrolledCourseDetailsPage implements OnInit {
 
   getContentsSize(data?) {
     console.log('in getContentsSize', data);
-    this.downloadIdentifiers = [];
     if (data) {
       data.forEach((value) => {
         if (value.contentData.size) {
           this.downloadSize += Number(value.contentData.size);
         }
-        if (value.children) {
-         this.getContentsSize(value.children);
-        }
+        if(value.children)
+        this.getContentsSize(value.children);
         if (value.isAvailableLocally === false) {
           this.downloadIdentifiers.push(value.contentData.identifier);
         }
@@ -1364,7 +1358,6 @@ export class EnrolledCourseDetailsPage implements OnInit {
       this.courseService.getCourseBatches(courseBatchesRequest).toPromise()
         .then((data: Batch[]) => {
           this.zone.run(async () => {
-            await loader.dismiss();
             this.batches = data;
             if (this.batches.length) {
               if (this.batches.length === 1) {
@@ -1377,6 +1370,7 @@ export class EnrolledCourseDetailsPage implements OnInit {
                     upcommingBatches.push(batch);
                   }
                 });
+                await loader.dismiss();
                 this.router.navigate([RouterLinks.COURSE_BATCHES], {
                   state: {
                     ongoingBatches,
@@ -1391,8 +1385,7 @@ export class EnrolledCourseDetailsPage implements OnInit {
             }
           });
         })
-        .catch(async (error: any) => {
-          await loader.dismiss();
+        .catch((error: any) => {
           console.log('Error while fetching Batch Details', error);
         });
     } else {

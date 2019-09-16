@@ -878,10 +878,10 @@ ion-split-pane {
     line-height: 18px;
     font-weight: bold;
     @include rtl() {
-     margin-left: 20px;
+     margin-left: 14px;
     }
     @include ltr() {
-    margin-left: 20px;
+    margin-left: 14px;
     }
   }
   .sb-ftue-design {
