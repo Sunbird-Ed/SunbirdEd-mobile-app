@@ -75,6 +75,12 @@ export class TabsPage implements OnInit {
   ionViewWillEnter() {
     this.tabs = this.container.getAllTabs();
     this.events.publish('update_header');
+    this.events.subscribe('return_course', () => {
+      console.log('tabs');
+      setTimeout(() => {
+        this.tabRef.select('courses');
+      }, 300);
+    });
   }
 
   openScanner(tab) {

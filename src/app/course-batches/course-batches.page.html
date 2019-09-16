@@ -11,7 +11,7 @@
 <!-- Page body -->
 <ion-content padding overflow-scroll="true">
 
-  <div class="my-overlay" padding *ngIf="isGuestUser">
+  <!-- <div class="my-overlay" padding *ngIf="showSignInCard"> -->
     <!--<div class="guest-user-info" text-center>
           <p> {{ 'OVERLAY_LABEL_TAKE_COURSE' | translate }} </p>
           <br/>
@@ -20,10 +20,11 @@
           <br/>
           <button ion-button block (click)="signIn()">{{ 'OVERLAY_SIGN_IN' | translate }}</button>
         </div>-->
-    <div class="guest-user-info" text-center>
-      <app-sign-in-card (valueChange)="buttonClick($event)" [source]="'course-batches'" [title]="'OVERLAY_LABEL_TAKE_COURSE'" [description]="'OVERLAY_INFO_TEXT_TAKE_COURSE'"></app-sign-in-card>
+    <!-- <div class="guest-user-info" text-center>
+      <app-sign-in-card (valueChange)="buttonClick($event)" [source]="'course-batches'"
+        [title]="'OVERLAY_LABEL_TAKE_COURSE'" [description]="'OVERLAY_INFO_TEXT_TAKE_COURSE'"></app-sign-in-card>
     </div>
-  </div>
+  </div> -->
 
   <div *ngIf="ongoingBatches && ongoingBatches.length">
     <div class="background-gray">
@@ -32,10 +33,9 @@
       </div>
     </div>
 
-    <div class="batch-list" padding-top *ngIf="!isGuestUser">
+    <div class="batch-list" padding-top>
       <div *ngIf="ongoingBatches && ongoingBatches.length && !showLoader">
-        <div class="flex-card-container"
-        *ngFor="let batch of ongoingBatches">
+        <div class="flex-card-container" *ngFor="let batch of ongoingBatches">
           <div class="card-text">
             <div class="batch-name">{{ batch.name }}</div>
             <span class="text-gray-color">
@@ -48,7 +48,8 @@
             </p>
           </div>
           <div class="card-icon">
-            <ion-button class="enroll-btn" fill="clear" slot="end" (click)="enrollIntoBatch(batch)" [disabled]="(batch.endDate && (todayDate > batch.endDate))">
+            <ion-button class="enroll-btn" fill="clear" slot="end" (click)="enrollIntoBatch(batch)"
+              [disabled]="(batch.endDate && (todayDate > batch.endDate))">
               {{ 'ENROLL' | translate }}
             </ion-button>
           </div>
@@ -63,27 +64,29 @@
         {{ 'VIEW_UPCOMING_BATCHES' | translate }}
       </div>
     </div>
-    <div *ngIf="upcommingBatches && upcommingBatches.length && !showLoader">
-    <div class="flex-card-container"
-    *ngFor="let batch of ongoingBatches">
-      <div class="card-text">
-        <div class="batch-name">{{ batch.name }}</div>
-        <span class="text-gray-color">
-          {{batch.startDate | date: 'mediumDate' }} - {{ batch.endDate | date: 'mediumDate' }}
-        </span>
-        <p *ngIf="batch.creatorFirstName">
-          <span class="text-gray-color">{{ 'BATCH_CREATED_BY' | translate }}</span>&nbsp;
-          <span class="text-gray-color">{{ batch.creatorFirstName }}</span>&nbsp;<span class="text-gray-color"
-            *ngIf="batch.creatorLastName">{{batch.creatorLastName}}</span>
-        </p>
-      </div>
-      <div class="card-icon">
-        <ion-button class="enroll-btn" fill="clear" slot="end" (click)="enrollIntoBatch(batch)" [disabled]="(batch.endDate && (todayDate > batch.endDate))">
-          {{ 'ENROLL' | translate }}
-        </ion-button>
+    <div class="batch-list" padding-top>
+      <div *ngIf="upcommingBatches && upcommingBatches.length && !showLoader">
+        <div class="flex-card-container" *ngFor="let batch of ongoingBatches">
+          <div class="card-text">
+            <div class="batch-name">{{ batch.name }}</div>
+            <span class="text-gray-color">
+              {{batch.startDate | date: 'mediumDate' }} - {{ batch.endDate | date: 'mediumDate' }}
+            </span>
+            <p *ngIf="batch.creatorFirstName">
+              <span class="text-gray-color">{{ 'BATCH_CREATED_BY' | translate }}</span>&nbsp;
+              <span class="text-gray-color">{{ batch.creatorFirstName }}</span>&nbsp;<span class="text-gray-color"
+                *ngIf="batch.creatorLastName">{{batch.creatorLastName}}</span>
+            </p>
+          </div>
+          <div class="card-icon">
+            <ion-button class="enroll-btn" fill="clear" slot="end" (click)="enrollIntoBatch(batch)"
+              [disabled]="(batch.endDate && (todayDate > batch.endDate))">
+              {{ 'ENROLL' | translate }}
+            </ion-button>
+          </div>
+        </div>
       </div>
     </div>
-  </div>
   </div>
 
   <div *ngIf="showLoader">
