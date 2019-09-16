@@ -9,12 +9,12 @@ import { tap } from 'rxjs/operators';
 import { Network } from '@ionic-native/network/ngx';
 
 import {
-  AuthService, ErrorEventType, EventNamespace, EventsBusService, ProfileService, SharedPreferences,
+  ErrorEventType, EventNamespace, EventsBusService, SharedPreferences,
   SunbirdSdk, TelemetryAutoSyncUtil, TelemetryService, NotificationService
 } from 'sunbird-sdk';
 
 import { InteractType, InteractSubtype, Environment, PageId, ImpressionType } from 'services/telemetry-constants';
-import { GenericAppConfig, PreferenceKey, EventTopics } from './app.constant';
+import { PreferenceKey, EventTopics } from './app.constant';
 import { ActivePageService } from '@app/services/active-page/active-page-service';
 import {
   AppGlobalService,
@@ -28,7 +28,7 @@ import {
 import { SplaschreenDeeplinkActionHandlerDelegate } from '@app/services/sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
 import { SplashcreenTelemetryActionHandlerDelegate } from '@app/services/sunbird-splashscreen/splashcreen-telemetry-action-handler-delegate';
 import { SplashscreenImportActionHandlerDelegate } from '@app/services/sunbird-splashscreen/splashscreen-import-action-handler-delegate';
-import { LogoutHandlerService} from '@app/services/logout-handler.service';
+import { LogoutHandlerService } from '@app/services/logout-handler.service';
 import { NotificationService as localNotification } from '@app/services/notification.service';
 import { RouterLinks } from './app.constant';
 import { TncUpdateHandlerService } from '@app/services/handlers/tnc-update-handler.service';
@@ -61,9 +61,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   @ViewChild('mainContent', { read: IonRouterOutlet }) routerOutlet: IonRouterOutlet;
 
   constructor(
-    @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     @Inject('TELEMETRY_SERVICE') private telemetryService: TelemetryService,
-    @Inject('AUTH_SERVICE') private authService: AuthService,
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
     @Inject('EVENTS_BUS_SERVICE') private eventsBusService: EventsBusService,
     @Inject('NOTIFICATION_SERVICE') private notificationServices: NotificationService,
@@ -125,7 +123,7 @@ export class AppComponent implements OnInit, AfterViewInit {
         this.telemetryGeneratorService.generateInteractTelemetry(InteractType.OTHER, InteractSubtype.HOTCODE_PUSH_INITIATED,
           Environment.HOME, PageId.HOME, null, value);
         codePush.sync(this.syncStatus, {
-          deploymentKey: deploymentKey
+          deploymentKey
         }, this.downloadProgress);
       } else {
         this.telemetryGeneratorService.generateInteractTelemetry(InteractType.OTHER, InteractSubtype.HOTCODE_PUSH_KEY_NOT_DEFINED,
@@ -224,14 +222,15 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.triggerSignInEvent();
   }
 
-/**
- * Initilizing the event for reloading the Tabs on Signing-In.
- */
+  /**
+   * Initializing the event for reloading the Tabs on Signing-In.
+   */
   triggerSignInEvent() {
     this.events.subscribe(EventTopics.SIGN_IN_RELOAD, () => {
       this.toggleRouterOutlet = false;
-      // This setTimout is very important for reloading the Tabs page on SignIn.
+      // This setTimeout is very important for reloading the Tabs page on SignIn.
       setTimeout(() => {
+        this.events.publish(AppGlobalService.USER_INFO_UPDATED);
         this.toggleRouterOutlet = true;
         this.reloadSigninEvents();
         this.events.publish('UPDATE_TABS');
@@ -240,9 +239,9 @@ export class AppComponent implements OnInit, AfterViewInit {
     });
   }
 
-/**
- * Enter all methods which should trigger during OnInit and User Sign-In.
- */
+  /**
+   * Enter all methods which should trigger during OnInit and User Sign-In.
+   */
   reloadSigninEvents() {
     this.checkForTncUpdate();
   }

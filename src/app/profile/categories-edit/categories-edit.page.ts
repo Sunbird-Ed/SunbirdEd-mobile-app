@@ -1,5 +1,6 @@
+import { Subscription } from 'rxjs//Subscription';
 import { Component, OnInit, Inject, ViewChild } from '@angular/core';
-import { Events, IonSelect } from '@ionic/angular';
+import { Events, IonSelect, Platform } from '@ionic/angular';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 import { initTabs, LOGIN_TEACHER_TABS } from '@app/app/module.service';
@@ -26,6 +27,7 @@ import { ContainerService } from '@app/services/container.services';
 import { ProfileConstants, RouterLinks } from '@app/app/app.constant';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Location } from '@angular/common';
+import { Environment, ActivePageService } from '@app/services';
 
 
 @Component({
@@ -59,6 +61,9 @@ export class CategoriesEditPage {
     actionButtons: []
   };
 
+  backButtonFunc: Subscription;
+  isRootPage = false;
+
   /* Custom styles for the select box popup */
   boardOptions = {
     title: this.commonUtilService.translateMessage('BOARD').toLocaleUpperCase(),
@@ -91,13 +96,16 @@ export class CategoriesEditPage {
     private headerService: AppHeaderService,
     private route: ActivatedRoute,
     private router: Router,
-    private location: Location
+    private location: Location,
+    private platform: Platform,
+    private activePageService: ActivePageService
 
   ) {
     this.profile = this.appGlobalService.getCurrentUser();
     const extrasState = this.router.getCurrentNavigation().extras.state;
     if (extrasState && extrasState.showOnlyMandatoryFields) {
       this.showOnlyMandatoryFields = extrasState.showOnlyMandatoryFields;
+      this.isRootPage = Boolean(extrasState.isRootPage);
       if (extrasState.profile) {
         this.profile = extrasState.profile;
       }
@@ -117,6 +125,12 @@ export class CategoriesEditPage {
     this.headerConfig.showHeader = false;
     this.headerConfig.showBurgerMenu = false;
     this.headerService.updatePageConfig(this.headerConfig);
+
+    if (this.isRootPage) {
+      this.backButtonFunc = this.platform.backButton.subscribeWithPriority(0, () => {
+        this.commonUtilService.showExitPopUp(this.activePageService.computePageId(this.router.url), Environment.HOME, false);
+      });
+    }
   }
 
   /**
@@ -417,9 +431,16 @@ export class CategoriesEditPage {
         } else {
           this.location.back();
         }
-      }).catch(async () => {
+      }).catch(async (error) => {
         await this.loader.dismiss();
         this.commonUtilService.showToast(this.commonUtilService.translateMessage('PROFILE_UPDATE_FAILED'));
+        console.error('Unable to submit:', error);
       });
+  }
+
+  ionViewWillLeave() {
+    if (this.backButtonFunc) {
+      this.platform.backButton.unsubscribe();
+    }
   }
 }
