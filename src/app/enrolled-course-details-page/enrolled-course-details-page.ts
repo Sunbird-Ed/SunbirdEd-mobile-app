@@ -953,9 +953,22 @@ export class EnrolledCourseDetailsPage implements OnInit {
     this.identifier = this.courseCardData.contentId || this.courseCardData.identifier;
     if (!this.guestUser) {
       this.updatedCourseCardData = await this.courseService.getEnrolledCourses
-        ({ userId: this.userId, returnFreshCourses: true }).toPromise().then((data) => {
-          return data.find((element) => element.courseId === this.identifier);
-        });
+      ({userId: this.userId, returnFreshCourses: false}).toPromise().then((data) => {
+        if (data.length > 0) {
+          const courseList: Array<Course> = [];
+          for (const course of data) {
+            courseList.push(course);
+          }
+          this.appGlobalService.setEnrolledCourseList(courseList);
+        }
+        return data.find((element) =>
+        (this.courseCardData.batchId && element.batchId === this.courseCardData.batchId) ||
+        (!this.courseCardData.batchId && element.courseId === this.identifier));
+      });
+      if (this.updatedCourseCardData && !this.courseCardData.batch) {
+        this.courseCardData.batch = this.updatedCourseCardData.batch;
+        this.courseCardData.batchId = this.updatedCourseCardData.batchId;
+      }
     }
 
     // check if the course is already enrolled

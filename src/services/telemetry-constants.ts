@@ -290,6 +290,7 @@ export enum InteractSubtype {
     OUTSIDE_POPUP_AREA_CLICKED = 'outside-popup-area-clicked',
     POPUP_DISMISSED= 'popup-dismissed',
     DOWNLOAD_CANCEL_ALL_CLICKED = 'download-cancel-all-clicked',
+    DOWNLOAD_CERTIFICATE_CLICKED = 'download-certificate-clicked',
     DOWNLOAD_CANCEL_CLICKED = 'download-cancel-clicked',
     RATE_LATER_CLICKED = 'rate-later-clicked',
     PLAY_STORE_BUTTON_CLICKED = 'play-store-button-clicked',
