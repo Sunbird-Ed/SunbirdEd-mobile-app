@@ -161,7 +161,7 @@
 					<ion-card class="sb-accordian-card">
 						<ion-grid class="sb-accordian-header">
 							<ion-row (click)="toggleGroup(i , item)" *ngIf="item?.children">
-								<ion-col col-11>
+								<ion-col size="11">
 									<div class="sb-topic-text">
 										<!-- <ion-icon class="sb-checkmark-icon" name="md-checkmark-circle"></ion-icon> -->
 										<ion-icon *ngIf="isAlreadyEnrolled"
@@ -170,7 +170,7 @@
 										{{item?.contentData.name}}
 									</div>
 								</ion-col>
-								<ion-col col-1 *ngIf="!isGroupShown(i)">
+								<ion-col size="1" *ngIf="!isGroupShown(i)">
 									<div>
 										<ion-icon name="ios-arrow-down" class="sb-accordian-arrow"></ion-icon>
 									</div>
