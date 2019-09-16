@@ -595,7 +595,8 @@ export class CoursesPage implements OnInit {
       component: PageFilterPage,
       componentProps: {
         callback: filterOptions.callback,
-        filter: filterOptions.filter
+        filter: filterOptions.filter,
+        pageId: PageId.COURSES
       },
       cssClass: 'resource-filter'
     });

@@ -438,8 +438,10 @@ export class AppComponent implements OnInit, AfterViewInit {
       }
     }
 
-    splashscreen.markImportDone();
-    splashscreen.hide();
+    setTimeout(() => {
+      splashscreen.markImportDone();
+      splashscreen.hide();
+    }, 2500);
   }
 
   private autoSyncTelemetry() {
