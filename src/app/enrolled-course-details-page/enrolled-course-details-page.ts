@@ -288,6 +288,7 @@ export class EnrolledCourseDetailsPage implements OnInit {
     });
 
     this.events.subscribe('courseToc:content-clicked', (data) => {
+      console.log('courseToc:content-clicked');
       this.joinTraining();
     });
 
@@ -530,7 +531,7 @@ export class EnrolledCourseDetailsPage implements OnInit {
       }
 
       if (this.course && this.course.isAvailableLocally) {
-        this.headerService.showHeaderWithBackButton(['share', 'more']);
+        this.headerService.showHeaderWithBackButton();
       }
 
       if (this.course.status !== 'Live') {
@@ -701,7 +702,7 @@ export class EnrolledCourseDetailsPage implements OnInit {
         this.zone.run(() => {
           if (data && data[0].status === ContentImportStatus.NOT_FOUND) {
             this.showLoading = false;
-            this.headerService.showHeaderWithBackButton(['share', 'more']);
+            this.headerService.showHeaderWithBackButton();
           }
           if (data && data.length && this.isDownloadStarted) {
             data.forEach((value) => {
@@ -1064,9 +1065,8 @@ export class EnrolledCourseDetailsPage implements OnInit {
     const showHeader = () => {
       this.zone.run(() => {
         this.showLoading = false;
-        this.headerService.showHeaderWithBackButton(['share', 'more']);
+        this.headerService.showHeaderWithBackButton();
         this.location.back();
-
       });
     };
 
@@ -1080,11 +1080,13 @@ export class EnrolledCourseDetailsPage implements OnInit {
   }
 
   getContentsSize(data?) {
+    console.log('in getContentsSize', data);
     if (data) {
       data.forEach((value) => {
         if (value.contentData.size) {
           this.downloadSize += Number(value.contentData.size);
         }
+        if(value.children)
         this.getContentsSize(value.children);
         if (value.isAvailableLocally === false) {
           this.downloadIdentifiers.push(value.contentData.identifier);
@@ -1165,7 +1167,7 @@ export class EnrolledCourseDetailsPage implements OnInit {
       this.showResumeBtn = true;
     }
     this.setContentDetails(this.identifier);
-    this.headerService.showHeaderWithBackButton(['share', 'more']);
+    this.headerService.showHeaderWithBackButton();
     // If courseCardData does not have a batch id then it is not a enrolled course
     this.subscribeSdkEvent();
     this.populateCorRelationData(this.courseCardData.batchId);
@@ -1243,7 +1245,7 @@ export class EnrolledCourseDetailsPage implements OnInit {
               if (this.downloadProgress === 100) {
                 this.getBatchDetails();
                 this.showLoading = false;
-                this.headerService.showHeaderWithBackButton(['share', 'more']);
+                this.headerService.showHeaderWithBackButton();
               }
             }
           }
@@ -1253,7 +1255,7 @@ export class EnrolledCourseDetailsPage implements OnInit {
             this.showLoading = false;
             console.log('import complete' , event);
 
-            this.headerService.showHeaderWithBackButton(['share', 'more']);
+            this.headerService.showHeaderWithBackButton();
             const contentImportCompleted = event as ContentImportCompleted;
             if (this.queuedIdentifiers.length && this.isDownloadStarted) {
               if (this.queuedIdentifiers.includes(contentImportCompleted.payload.contentId)) {

@@ -52,6 +52,9 @@
     .card-content-bottom-0{
         padding-bottom: 0px !important;
     }
+    .card-content-top-0{
+      padding-top: 0px !important;
+  }
     .subtitle-color{
         color: map-get($colors, textGrey);
     }
