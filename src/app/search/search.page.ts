@@ -360,7 +360,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
           isSingleContent: params.isSingleContent,
           onboarding: params.onboarding,
           parentContent: params.parentContent,
-          isQrCodeLinkToContent: params.isQrCodeLinkToContent
+          isQrCodeLinkToContent: params.isQrCodeLinkToContent,
         }
       });
       if (this.isSingleContent) {
