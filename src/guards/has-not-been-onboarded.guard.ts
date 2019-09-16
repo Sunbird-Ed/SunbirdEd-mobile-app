@@ -21,6 +21,7 @@ export class HasNotBeenOnboardedGuard implements CanLoad {
 
         this.appGlobalService.isProfileSettingsCompleted = true;
         this.router.navigate(['/', 'tabs']);
+        splashscreen.markImportDone();
         splashscreen.hide();
         return false;
     }
