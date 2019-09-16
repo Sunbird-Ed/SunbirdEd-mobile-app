@@ -969,8 +969,10 @@ export class EnrolledCourseDetailsPage implements OnInit {
   /**
    * Function to set child contents
    */
-  setChildContents(): void {
+  async setChildContents() {
     this.showChildrenLoader = true;
+    const loader = await this.commonUtilService.getLoader();
+    await loader.present();
     const option: ChildContentRequest = {
       contentId: this.identifier,
       hierarchyInfo: null,
@@ -978,7 +980,7 @@ export class EnrolledCourseDetailsPage implements OnInit {
     };
     this.contentService.getChildContents(option).toPromise()
       .then((data: Content) => {
-        this.zone.run(() => {
+        this.zone.run(async () => {
           if (data && data.children) {
             this.enrolledCourseMimeType = data.mimeType;
             this.childrenData = data.children;
@@ -992,10 +994,12 @@ export class EnrolledCourseDetailsPage implements OnInit {
             this.getContentsSize(this.childrenData);
           }
           this.showChildrenLoader = false;
+          await loader.dismiss();
         });
       }).catch(() => {
-        this.zone.run(() => {
+        this.zone.run(async () => {
           this.showChildrenLoader = false;
+          await loader.dismiss();
         });
       });
   }
@@ -1079,13 +1083,15 @@ export class EnrolledCourseDetailsPage implements OnInit {
 
   getContentsSize(data?) {
     console.log('in getContentsSize', data);
+    this.downloadIdentifiers = [];
     if (data) {
       data.forEach((value) => {
         if (value.contentData.size) {
           this.downloadSize += Number(value.contentData.size);
         }
-        if(value.children)
-        this.getContentsSize(value.children);
+        if (value.children) {
+         this.getContentsSize(value.children);
+        }
         if (value.isAvailableLocally === false) {
           this.downloadIdentifiers.push(value.contentData.identifier);
         }
