@@ -239,10 +239,10 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
     });
   }
 
-  ngOnInit() {
+  async ngOnInit() {
     this.getCurrentUser();
     this.appGlobalService.generateConfigInteractEvent(PageId.LIBRARY, this.isOnBoardingCardCompleted);
-    this.splaschreenDeeplinkActionHandlerDelegate.onAction('content').toPromise();
+    await this.splaschreenDeeplinkActionHandlerDelegate.onAction('content').toPromise();
   }
 
   generateNetworkType() {

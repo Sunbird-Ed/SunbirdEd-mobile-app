@@ -17,7 +17,7 @@ import {
 } from 'sunbird-sdk';
 
 import { initTabs, LOGIN_TEACHER_TABS } from '@app/app/module.service';
-import { ProfileConstants, PreferenceKey, RouterLinks } from '@app/app/app.constant';
+import { ProfileConstants, PreferenceKey, RouterLinks, EventTopics } from '@app/app/app.constant';
 import { FormAndFrameworkUtilService } from '@app/services/formandframeworkutil.service';
 import { CommonUtilService } from '@app/services/common-util.service';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
@@ -92,9 +92,10 @@ export class LoginHandlerService {
           await loader.dismiss();
           that.ngZone.run(() => {
             that.preferences.putString('SHOW_WELCOME_TOAST', 'true').toPromise().then();
-            this.events.publish('UPDATE_TABS');
-            this.router.navigate([RouterLinks.TABS]);
+            // this.events.publish('UPDATE_TABS');
+            // this.router.navigate([RouterLinks.TABS]);
             // window.location.reload();
+            this.events.publish(EventTopics.SIGN_IN_RELOAD);
           });
         })
         .catch(async (err) => {
