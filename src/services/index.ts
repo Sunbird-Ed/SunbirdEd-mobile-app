@@ -4,7 +4,6 @@ export { QRScannerResultHandler } from './qrscanresulthandler.service';
 export { TelemetryGeneratorService } from './telemetry-generator.service';
 export { CommonUtilService } from './common-util.service';
 export { LogoutHandlerService } from './logout-handler.service';
-export { TncUpdateHandlerService } from './tnc-update-handler.service';
 export { ContainerService } from './container.services';
 export { UtilityService } from './utility-service';
 export { AppHeaderService } from './app-header.service';

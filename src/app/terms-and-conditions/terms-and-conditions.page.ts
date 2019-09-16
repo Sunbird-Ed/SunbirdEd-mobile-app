@@ -1,17 +1,20 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, OnInit, Injector } from '@angular/core';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { TranslateService } from '@ngx-translate/core';
 import { AppVersion } from '@ionic-native/app-version/ngx';
-import { Environment, ImpressionType, InteractSubtype, InteractType, PageId } from '../../services/telemetry-constants';
-import { ProfileService, ServerProfile } from 'sunbird-sdk';
 import { Platform, LoadingController } from '@ionic/angular';
+import { ProfileService, ServerProfile } from 'sunbird-sdk';
+import { Subscription } from 'rxjs';
+
+import { Environment, ImpressionType, InteractSubtype, InteractType, PageId } from '../../services/telemetry-constants';
 import { LogoutHandlerService } from '@app/services/logout-handler.service';
 import { TncUpdateHandlerService } from '@app/services/handlers/tnc-update-handler.service';
 import { CommonUtilService } from '@app/services/common-util.service';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { AppHeaderService } from '@app/services/app-header.service';
-import { ProfileConstants } from '../app.constant';
-import { Subscription } from 'rxjs';
+import { ProfileConstants, RouterLinks } from '../app.constant';
+import { FormAndFrameworkUtilService } from '@app/services';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-terms-and-conditions',
@@ -30,13 +33,15 @@ export class TermsAndConditionsPage implements OnInit {
     private platform: Platform,
     private loadingCtrl: LoadingController,
     private logoutHandlerService: LogoutHandlerService,
-    private tncUpdateHandlerService: TncUpdateHandlerService,
     private sanitizer: DomSanitizer,
     private commonUtilService: CommonUtilService,
     private translateService: TranslateService,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private headerService: AppHeaderService,
-    private appVersion: AppVersion
+    private appVersion: AppVersion,
+    private injector: Injector,
+    private formAndFrameworkUtilService: FormAndFrameworkUtilService,
+    private router: Router
   ) {
   }
 
@@ -72,7 +77,6 @@ export class TermsAndConditionsPage implements OnInit {
       Environment.HOME
     );
     if (this.loading) {
-      //this.loading.dismissAll();
       this.loading.dismiss();
     }
   }
@@ -88,11 +92,12 @@ export class TermsAndConditionsPage implements OnInit {
       undefined,
       valuesMap
     );
-    
+
     this.termsAgreed = event.target.checked;
   }
 
   public async onAcceptanceClick(): Promise<void> {
+    const tncUpdateHandlerService = this.injector.get(TncUpdateHandlerService);
     try {
       this.telemetryGeneratorService.generateInteractTelemetry(
         InteractType.TOUCH,
@@ -100,8 +105,42 @@ export class TermsAndConditionsPage implements OnInit {
         Environment.HOME,
         PageId.TERMS_N_CONDITIONS
       );
-      await this.tncUpdateHandlerService.onAcceptTnc(this.userProfileDetails);
-      await this.tncUpdateHandlerService.dismissTncPage();
+      // await tncUpdateHandlerService.onAcceptTnc(this.userProfileDetails);
+      const isTCAccepted = await this.profileService.acceptTermsAndConditions({ version: this.userProfileDetails.tncLatestVersion })
+        .toPromise();
+
+      if (isTCAccepted) {
+        const serverProfile = await this.profileService.getServerProfilesDetails({
+          userId: this.userProfileDetails.userId,
+          requiredFields: ProfileConstants.REQUIRED_FIELDS,
+        }).toPromise();
+
+        const profile = await this.profileService.getActiveSessionProfile({
+          requiredFields: ProfileConstants.REQUIRED_FIELDS
+        }).toPromise();
+
+        this.formAndFrameworkUtilService.updateLoggedInUser(serverProfile, profile)
+          .then(async (value) => {
+            if (value['status']) {
+              await tncUpdateHandlerService.dismissTncPage();
+              this.router.navigate(['/', 'tabs']);
+              splashscreen.hide();
+            } else {
+              await tncUpdateHandlerService.dismissTncPage();
+              this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.CATEGORIES_EDIT}`], {
+                state: {
+                  showOnlyMandatoryFields: true,
+                  profile: value['profile'],
+                  isRootPage: true
+                }
+              });
+            }
+            console.log("inside can load");
+          });
+      } else {
+        await this.logoutOnSecondBackNavigation();
+      }
+      await tncUpdateHandlerService.dismissTncPage();
     } catch (e) {
       await this.logoutOnSecondBackNavigation();
     }
@@ -109,9 +148,6 @@ export class TermsAndConditionsPage implements OnInit {
 
   private async createAndPresentLoadingSpinner() {
     this.loading = await this.loadingCtrl.create({
-      /* migration-TODO
-      dismissOnPageChange: true,
-      */
       showBackdrop: true,
       spinner: 'crescent'
     });
@@ -120,9 +156,10 @@ export class TermsAndConditionsPage implements OnInit {
   }
 
   private async logoutOnSecondBackNavigation() {
+    const tncUpdateHandlerService = this.injector.get(TncUpdateHandlerService);
     this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.TERMS_N_CONDITIONS, Environment.HOME, false);
     this.logoutHandlerService.onLogout();
-    await this.tncUpdateHandlerService.dismissTncPage();
+    await tncUpdateHandlerService.dismissTncPage();
   }
 
   private async showToastOnFirstBackNavigation() {
