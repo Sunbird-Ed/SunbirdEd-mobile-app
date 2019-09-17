@@ -1,5 +1,5 @@
 <ion-content>
-	<div>
+	<div class="p-8">
 		<ion-card>
 			<ion-card-header class="custom-card-header">
 				<ion-card-title class="font-18">{{course?.name}}</ion-card-title>
@@ -165,29 +165,27 @@
 						<ion-grid class="sb-accordian-header">
 							<ion-row (click)="toggleGroup(i , item)" *ngIf="item?.children">
 								<ion-col size="11">
-									<div class="sb-topic-text">
+									<div class="sb-topic-text" [ngClass]="{'fontBold' : isGroupShown(i)}">
 										<!-- <ion-icon class="sb-checkmark-icon" name="md-checkmark-circle"></ion-icon> -->
-										<ion-icon *ngIf="isAlreadyEnrolled"
-											[name]="item.status? 'ios-checkmark-circle': (item.lastRead? 'ios-radio-button-on': 'ios-radio-button-off')">
-										</ion-icon>
+										<ion-icon *ngIf="isAlreadyEnrolled && item.status" class="sb-checkmark-icon" name="md-checkmark-circle"></ion-icon>
 										{{item?.contentData.name}}
 									</div>
 								</ion-col>
-								<ion-col size="1" *ngIf="!isGroupShown(i)">
+								<ion-col size="1" *ngIf="!isGroupShown(i)" class="dd-icon">
 									<div>
 										<ion-icon name="ios-arrow-down" class="sb-accordian-arrow"></ion-icon>
 									</div>
 								</ion-col>
-								<ion-col col-1 *ngIf="isGroupShown(i)">
+								<ion-col col-1 *ngIf="isGroupShown(i)" class="dd-icon">
 									<div>
-										<ion-icon name="ios-arrow-up" class="sb-accordian-arrow"></ion-icon>
+										<ion-icon name="ios-arrow-up" class="sb-accordian-arrow fontBold"></ion-icon>
 									</div>
 								</ion-col>
 							</ion-row>
 						</ion-grid>
 						<div class="sb-hidden-content"
 							*ngIf="isGroupShown(i) && (item?.children && item?.children?.length)">
-							<div class="sb-separator-line"></div>
+							<!-- <div class="sb-separator-line"></div> -->
 							<div class="box-align" *ngFor="let firstChildren of item?.children; let j = index;">
 								<div class="sb-topics-container sb-topics-container-ftue">
 									<app-collection-child [childData]="firstChildren" [index]="j" [depth]="depth"

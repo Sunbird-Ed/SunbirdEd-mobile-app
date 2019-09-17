@@ -3,6 +3,9 @@
 
 
 :host {
+    ion-card{
+      margin: 0 0 10px 0 !important;
+    }
     .fontBold {
         font-weight: bold;
     }
@@ -11,6 +14,8 @@
     }
     .ion-ios-checkmark-circle:before {
         color: #008000;
+        margin-right: 4px;
+        margin-left: 0px;
     }
     .structure-text{
         padding: 7px 0px 0px 4px;
@@ -169,6 +174,16 @@
     .label-margin-bottom{
       margin-bottom: 3px !important;
     } 
+    .sb-accordian-header{
+      padding: 12px 14px;
+      .dd-icon {
+        position: relative;
+        bottom: 3px;
+      }
+      .sb-checkmark-icon{
+        color: #008000;
+      }
+    }
     .custom-card-header{
         padding-bottom: 0px !important;
     }
@@ -230,17 +245,16 @@
     box-shadow: 0 4px 7px 0 rgba(0,0,0,0.1) !important;
   }
   .sb-topic-text {
-    &.sb-topic-text {
-      padding-top: 5px;
+      // padding-top: 5px;
+      padding: 0;
       ion-icon{
         vertical-align: middle;
       }
-    }
     // height: 2.44%;
     // width: 80%;
     color: $blue;
     font-size: 14px;
-    line-height: 20px;
+    // line-height: 20px;
   }
 
   .certificate-container {

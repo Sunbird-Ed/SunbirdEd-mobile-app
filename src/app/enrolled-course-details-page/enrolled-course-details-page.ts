@@ -350,7 +350,7 @@ export class EnrolledCourseDetailsPage implements OnInit {
         isNotShowCloseIcon: true,
         actionsButtons: [
           {
-            btntext: this.commonUtilService.translateMessage('ENROLL'),
+            btntext: this.commonUtilService.translateMessage('JOIN_TRAINING'),
             btnClass: 'popover-color'
           },
         ],
@@ -364,20 +364,7 @@ export class EnrolledCourseDetailsPage implements OnInit {
         this.navigateToBatchListPage();
       }
     });
-    // if (this.isGuestUser) {
-    //   await confirm.present();
-    // } else {
-    //   console.log('loggedin user');
-    //   this.navigateToBatchListPage();
-    // }
   }
-
-  // handleEnrollCoursePopup(btnText: string) {
-  //   console.log('handleEnrollCoursePopup', btnText);
-  //   if (btnText === 'Login') {
-  //     this.loginHandlerService.signIn();
-  //   }
-  // }
 
   /**
    * Function to rate content
@@ -1283,11 +1270,11 @@ export class EnrolledCourseDetailsPage implements OnInit {
           }
 
           if (event.type === ContentEventType.IMPORT_PROGRESS) {
+            console.log('import prog' , event);
             this.importProgressMessage = this.commonUtilService.translateMessage('EXTRACTING_CONTENT') + ' ' +
               Math.floor((event.payload.currentCount / event.payload.totalCount) * 100) +
               '% (' + event.payload.currentCount + ' / ' + event.payload.totalCount + ')';
-              console.log('import prog' , event);
-              
+
             if (event.payload.currentCount === event.payload.totalCount) {
               let timer = 30;
               const interval = setInterval(() => {
@@ -1333,6 +1320,7 @@ export class EnrolledCourseDetailsPage implements OnInit {
     if (this.backButtonFunc) {
       this.backButtonFunc.unsubscribe();
     }
+    this.events.unsubscribe('courseToc:content-clicked');
     // TODO: this.events.unsubscribe(EventTopics.UNENROL_COURSE_SUCCESS);
   }
 
@@ -1386,7 +1374,6 @@ export class EnrolledCourseDetailsPage implements OnInit {
                 });
               }
             } else {
-              await loader.dismiss();
               this.commonUtilService.showToast('NO_BATCHES_AVAILABLE');
             }
           });
