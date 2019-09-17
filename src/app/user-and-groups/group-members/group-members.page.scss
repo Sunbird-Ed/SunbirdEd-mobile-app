@@ -1,5 +1,6 @@
 @import "src/assets/styles/_custom-mixins.scss";
 @import "src/assets/styles/_variables.scss";
+@import "src/assets/styles/fonts.scss";
 
 :host {
   .rounded {
@@ -57,5 +58,10 @@
   }
   .rm-padding-left {
     @include padding(null, null, null, 0 !important);
+  }
+
+  ion-button.color,ion-title.color {
+    color:#024f9d;
+    font-weight:bold;
   }
 }

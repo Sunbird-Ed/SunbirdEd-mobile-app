@@ -1,5 +1,6 @@
 @import "src/assets/styles/base/_variables.scss";
 @import "src/assets/styles/_custom-mixins.scss";
+@import "src/assets/styles/fonts.scss";
 
 ion-icon {
     width: 30px;
@@ -14,6 +15,11 @@ ion-icon {
         @include ltr {
             transform: none;
         }
+    }
+
+    ion-title.color {
+        color:#024f9d;
+        font-weight:bold;
     }
 }
 
