@@ -5,7 +5,8 @@ import { ImpressionType, Environment, PageId, InteractType } from '@app/services
 import { Profile, ProfileService } from 'sunbird-sdk';
 import { AppGlobalService } from '@app/services/app-global-service.service';
 import { CommonUtilService } from '@app/services/common-util.service';
-import { PopoverController } from '@ionic/angular';
+import { PopoverController, Platform,  MenuController } from '@ionic/angular';
+import { Subscription } from 'rxjs/Subscription';
 
 @Component({
   selector: 'app-account-recovery-id-popup',
@@ -26,18 +27,27 @@ export class AccountRecoveryInfoComponent implements OnInit {
     EMAIL: 'email'
   };
   profile: Profile;
+  unregisterBackButton: Subscription;
 
   constructor(@Inject('PROFILE_SERVICE') private profileService: ProfileService,
               private telemetryGeneratorService: TelemetryGeneratorService,
               private appGlobalService: AppGlobalService,
               private commonUtilService: CommonUtilService,
-              private popOverCtrl: PopoverController) { }
+              private popOverCtrl: PopoverController,
+              public platform: Platform,
+              private menuCtrl: MenuController) { }
 
   ngOnInit() {
     this.recoveryIdType = this.recoveryPhone ? this.recoveryTypes.PHONE : this.recoveryTypes.EMAIL;
     this.initializeFormFields();
     this.profile = this.appGlobalService.getCurrentUser();
     this.generateRecoveryImpression();
+    this.menuCtrl.enable(false);
+
+    this.unregisterBackButton = this.platform.backButton.subscribeWithPriority(11, () => {
+      this.popOverCtrl.dismiss();
+      this.platform.backButton.unsubscribe();
+    });
   }
 
   private initializeFormFields() {

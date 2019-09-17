@@ -637,7 +637,7 @@ downloadTrainingCertificate(course: Course, certificate: CourseCertificate) {
     const popover = await this.popoverCtrl.create({
       component: EditContactDetailsPopupComponent,
       componentProps,
-      cssClass: 'popover-alert input-focus'
+      cssClass: 'popover-alert'
     });
     await popover.present();
     const { data } = await popover.onDidDismiss();
@@ -657,7 +657,7 @@ downloadTrainingCertificate(course: Course, certificate: CourseCertificate) {
         type: ProfileConstants.CONTACT_TYPE_PHONE
       };
 
-      const data = await this.openContactVerifyPopup(EditContactVerifyPopupComponent, componentProps, 'popover-alert input-focus');
+      const data = await this.openContactVerifyPopup(EditContactVerifyPopupComponent, componentProps, 'popover-alert');
       if (data && data.OTPSuccess) {
         this.updatePhoneInfo(data.value);
       }
@@ -670,7 +670,7 @@ downloadTrainingCertificate(course: Course, certificate: CourseCertificate) {
         type: ProfileConstants.CONTACT_TYPE_EMAIL
       };
 
-      const data = await this.openContactVerifyPopup(EditContactVerifyPopupComponent, componentProps, 'popover-alert input-focus');
+      const data = await this.openContactVerifyPopup(EditContactVerifyPopupComponent, componentProps, 'popover-alert');
       if (data && data.OTPSuccess) {
         this.updateEmailInfo(data.value);
       }
