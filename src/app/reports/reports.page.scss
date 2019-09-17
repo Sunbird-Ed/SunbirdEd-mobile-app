@@ -1,5 +1,6 @@
 @import "src/assets/styles/_custom-mixins.scss";
 @import "src/assets/styles/_variables.scss";
+@import "src/assets/styles/fonts.scss";
 
 :host {
   .settings-item-style {
@@ -79,5 +80,12 @@
     .card-icon{
       width: 20px;   
     }
+  }
+  ion-title.color {
+    color:#024f9d;
+    font-weight:bold;
+  }
+  ion-segment-button {
+    font-weight:bold;
   }
 }
