@@ -12,7 +12,7 @@
 				<div *ngIf="!courseCardData?.batchId && course?.createdBy !== userId && !isAlreadyEnrolled">
 					<button class="enrolled-course-card-button"
 						(click)="navigateToBatchListPage();">{{'JOIN_TRAINING' | translate}}</button>
-					<ion-card-subtitle *ngIf="batchInfo || enrollmentEndDate" class="font-12">
+					<ion-card-subtitle *ngIf="batchInfo || enrollmentEndDate" class="font-12 margin-bottom-2">
 						<div *ngIf="batchInfo">
 							<ion-icon name="information-circle"></ion-icon> {{batchInfo}}
 							{{'BATCHES_AVAILABLE' | translate}}
@@ -20,6 +20,9 @@
 						<div *ngIf="enrollmentEndDate">
 							<ion-icon name="information-circle"></ion-icon>
 							{{'LAST_DATE_TO_JOIN' | translate }} {{enrollmentEndDate | date}}
+						</div>
+						<div *ngIf="batchEndDate">
+                         {{'TRAINING_ENDS_ON' | translate}} {{batchEndDate}}
 						</div>
 					</ion-card-subtitle>
 				</div>
@@ -199,6 +202,9 @@
 			</div>
 		</div>
 	</div>
+	<app-sb-download-popup *ngIf="showDownload" (cancelDownloadEmit)="cancelDownload($event)" [currentCount]="currentCount"
+	[queuedIdentifiers]="queuedIdentifiers" [downloadSize]="downloadSize" [collectionName]="course?.name"
+	[showDownload]="showDownload"></app-sb-download-popup>
 </ion-content>
 <div class="loading-backdrop" *ngIf="showLoading && !isDownloadStarted" text-center>
 	<div class="backdrop-container">
@@ -210,6 +216,3 @@
 		<ion-button size="small" (click)="cancelDownload()">{{ 'CANCEL' | translate }}</ion-button>
 	</div>
 </div>
-<app-sb-download-popup *ngIf="showDownload" (cancelDownloadEmit)="cancelDownload($event)" [currentCount]="currentCount"
-	[queuedIdentifiers]="queuedIdentifiers" [downloadSize]="downloadSize" [collectionName]="course?.name"
-	[showDownload]="showDownload"></app-sb-download-popup>

@@ -1,5 +1,5 @@
 import { Component, OnInit, Inject, Input } from '@angular/core';
-import { NavParams, Platform, PopoverController } from '@ionic/angular';
+import { NavParams, Platform, PopoverController, MenuController } from '@ionic/angular';
 import { GenerateOtpRequest, ProfileService, VerifyOtpRequest } from 'sunbird-sdk';
 
 import { ProfileConstants } from '@app/app/app.constant';
@@ -29,7 +29,8 @@ export class EditContactVerifyPopupComponent implements OnInit {
     public popOverCtrl: PopoverController,
     public platform: Platform,
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
-    private commonUtilService: CommonUtilService
+    private commonUtilService: CommonUtilService,
+    private menuCtrl: MenuController
   ) {
     this.key = this.navParams.get('key');
     this.title = this.navParams.get('title');
@@ -39,6 +40,7 @@ export class EditContactVerifyPopupComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.menuCtrl.enable(false);
   }
 
   ionViewWillEnter() {
