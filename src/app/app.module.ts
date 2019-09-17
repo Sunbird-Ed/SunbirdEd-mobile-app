@@ -35,7 +35,6 @@ import {
   AppRatingService,
   LogoutHandlerService,
   LoginHandlerService,
-  TncUpdateHandlerService,
   ContainerService,
   AndroidPermissionsService,
   ComingSoonMessageService,
@@ -46,12 +45,10 @@ import {
   CanvasPlayerService
 } from '../services/index';
 
-
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { UserTypeSelectionPageModule } from './user-type-selection/user-type-selection.module';
 import { ComponentsModule } from './components/components.module';
-import { UserAndGroupsRoutingModule } from './user-and-groups/user-and-groups-routing.module';
 import { UserAndGroupsPageModule } from './user-and-groups/user-and-groups.module';
 import { LocalNotifications } from '@ionic-native/local-notifications/ngx';
 
@@ -63,8 +60,7 @@ import { PageFilterOptionsPage } from './page-filter/page-filter-options/page-fi
 import { CrashAnalyticsErrorLogger } from '@app/services/crash-analytics/crash-analytics-error-logger';
 import { File } from '@ionic-native/file/ngx';
 import { TermsAndConditionsPageModule } from './terms-and-conditions/terms-and-conditions.module';
-
-
+import { TncUpdateHandlerService } from '@app/services/handlers/tnc-update-handler.service';
 
 // AoT requires an exported function for factories
 export function translateHttpLoaderFactory(httpClient: HttpClient) {
