@@ -1,4 +1,4 @@
-import { Component, Inject, NgZone, OnInit } from '@angular/core';
+import { Component, Inject, NgZone, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { Events, Platform, PopoverController, AlertController, ToastController } from '@ionic/angular';
 import isObject from 'lodash/isObject';
 import forEach from 'lodash/forEach';
@@ -170,7 +170,7 @@ export class EnrolledCourseDetailsPage implements OnInit {
   profileType = '';
   objId;
   objType;
-  batchInfo;
+  batchCount = 1;
   batchEndDate;
   objVer;
   didViewLoad: boolean;
@@ -198,6 +198,8 @@ export class EnrolledCourseDetailsPage implements OnInit {
   isQrCodeLinkToContent: any;
   toast: any;
   networkSubscription: Subscription;
+
+  @ViewChild('stickyPillsRef') stickyPillsRef: ElementRef;
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -911,8 +913,9 @@ export class EnrolledCourseDetailsPage implements OnInit {
     this.courseService.getCourseBatches(courseBatchesRequest).toPromise()
     .then((data: Batch[]) => {
       console.log('all batches', data);
+      this.batchCount = data.length;
       if (data.length > 1) {
-        this.batchInfo = data.length;
+        // this.batchCount = data.length;
       } else if (data.length === 1) {
         // unenrolled and only one batch available
         this.batchEndDate = data[0].endDate;
@@ -946,14 +949,14 @@ export class EnrolledCourseDetailsPage implements OnInit {
         contentId: id,
         hierarchyInfo: null,
         level: !this.courseCardData.batchId ? 1 : 0,
-      }
+      };
       this.contentService.getContentDetails(option).toPromise()
         .then((data: Content) => {
           console.log('data is here', data);
           this. lastReadContentName = data.contentData.name;
         }).catch(() => {
 
-        })
+        });
     }
 
   }
@@ -975,6 +978,13 @@ export class EnrolledCourseDetailsPage implements OnInit {
         this.zone.run(async () => {
           await loader.dismiss();
           if (data && data.children) {
+            console.log('if data.children');
+            setTimeout(() => {
+              if (this.stickyPillsRef) {
+                this.stickyPillsRef.nativeElement.classList.add('sticky');
+              }
+            }, 1000);
+
             this.enrolledCourseMimeType = data.mimeType;
             this.childrenData = data.children;
             this.toggleGroup(0);
