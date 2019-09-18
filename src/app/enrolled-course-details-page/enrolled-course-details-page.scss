@@ -282,8 +282,8 @@
     --color: #467fb8;
   }
   .wrapper {
-    display: grid;
-    grid-template-columns: 100px auto 100px;
+    display: inline-flex;
+    grid-template-columns: 100px 100px 100px auto;
     margin-bottom: -8px;
   }  
   .wrapper {
@@ -309,6 +309,10 @@
   .card-icons {
     font-size: 30px;
     color: #024F9D;
+  }
+  .card-icons-downloadStarted {
+    font-size: 30px;
+    color: map-get($colors, text_gray);
   }
   .card-icons-red{
     font-size: 30px;

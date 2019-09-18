@@ -207,7 +207,6 @@ export class EnrolledCourseDetailsPage implements OnInit {
   pageName = '';
   contentId: string;
   isChild = false;
-  showDownloadBtn = true;
 
 
   constructor(
@@ -336,8 +335,8 @@ export class EnrolledCourseDetailsPage implements OnInit {
             update: true
           });
           this.showToaster(this.getMessageByConstant('MSG_RESOURCE_DELETED'));
-          this.showDownloadBtn = true;
           this.popOverCtrl.dismiss({ isDeleted: true });
+          this.location.back();
         }
       }).catch(async (error: any) => {
         await loader.dismiss();
@@ -680,7 +679,6 @@ export class EnrolledCourseDetailsPage implements OnInit {
 
     if (Boolean(data.isAvailableLocally)) {
       this.setChildContents();
-      this.showDownloadBtn = false;
     } else {
       this.showLoading = true;
       this.headerService.hideHeader();
@@ -789,6 +787,10 @@ export class EnrolledCourseDetailsPage implements OnInit {
     return requestParams;
   }
 
+  refreshHeader() {
+    this.events.publish('header:setzIndexToNormal');
+  }
+
   /**
    * Function to get import content api request params
    *
@@ -829,7 +831,6 @@ export class EnrolledCourseDetailsPage implements OnInit {
 
             if (this.queuedIdentifiers.length === 0) {
               this.restoreDownloadState();
-              this.showDownloadBtn = false;
             }
             if (this.faultyIdentifiers.length > 0) {
               const stackTrace: any = {};
@@ -850,8 +851,6 @@ export class EnrolledCourseDetailsPage implements OnInit {
         this.zone.run(() => {
           if (this.isDownloadStarted) {
             this.restoreDownloadState();
-            this.showDownloadBtn = false;
-
           } else {
             this.showChildrenLoader = false;
           }
@@ -932,8 +931,8 @@ export class EnrolledCourseDetailsPage implements OnInit {
           // this.objRollup,
           // this.corRelationList
           );
-        this.importContent(this.downloadIdentifiers, true, true);
         this.events.publish('header:decreasezIndex');
+        this.importContent(this.downloadIdentifiers, true, true);
         this.showDownload = true;
       } else {
         // Cancel Clicked Telemetry
@@ -1414,7 +1413,6 @@ export class EnrolledCourseDetailsPage implements OnInit {
                 this.isDownloadStarted = false;
                 this.currentCount = 0;
                 this.showDownload = false;
-                this.showDownloadBtn = false;
                 this.downloadIdentifiers.length = 0;
                 this.queuedIdentifiers.length = 0;
               }
