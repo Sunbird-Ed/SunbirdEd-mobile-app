@@ -71,7 +71,7 @@
     "cordova-plugin-local-notification": "git+https://github.com/katzer/cordova-plugin-local-notifications.git",
     "cordova-plugin-media": "^5.0.3",
     "cordova-plugin-network-information": "^2.0.2",
-    "cordova-plugin-networkspeed": "^1.0.3",
+    "cordova-plugin-networkspeed": "git+https://github.com/swayangjit/cordova-plugin-networkspeed.git",
     "cordova-plugin-openrap": "git+https://github.com/project-sunbird/cordova-plugin-openrap.git",
     "cordova-plugin-qr-scanner": "git+https://github.com/project-sunbird/cordova-plugin-qr-scanner.git",
     "cordova-plugin-screen-orientation": "^3.0.2",
@@ -181,7 +181,8 @@
       "cordova-android-support-gradle-release": {
         "ANDROID_SUPPORT_VERSION": "28.0.0"
       },
-      "cordova-plugin-openrap": {}
+      "cordova-plugin-openrap": {},
+      "cordova-plugin-networkspeed": {}
     },
     "platforms": [
       "android"
