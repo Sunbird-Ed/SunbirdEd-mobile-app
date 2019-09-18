@@ -1,5 +1,5 @@
 import { Component, OnInit, Inject, Input } from '@angular/core';
-import { NavParams, Platform, PopoverController } from '@ionic/angular';
+import { NavParams, Platform, PopoverController, MenuController } from '@ionic/angular';
 import { GenerateOtpRequest, ProfileService, VerifyOtpRequest } from 'sunbird-sdk';
 
 import { ProfileConstants } from '@app/app/app.constant';
@@ -22,14 +22,14 @@ export class EditContactVerifyPopupComponent implements OnInit {
   invalidOtp = false;
   enableResend = true;
   unregisterBackButton: any;
-  loader: any;
 
   constructor(
     private navParams: NavParams,
     public popOverCtrl: PopoverController,
     public platform: Platform,
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
-    private commonUtilService: CommonUtilService
+    private commonUtilService: CommonUtilService,
+    private menuCtrl: MenuController
   ) {
     this.key = this.navParams.get('key');
     this.title = this.navParams.get('title');
@@ -39,6 +39,7 @@ export class EditContactVerifyPopupComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.menuCtrl.enable(false);
   }
 
   ionViewWillEnter() {
@@ -95,15 +96,19 @@ export class EditContactVerifyPopupComponent implements OnInit {
           type: ProfileConstants.CONTACT_TYPE_EMAIL
         };
       }
-      this.loader = await this.commonUtilService.getLoader();
-      await this.loader.present();
+      let loader = await this.commonUtilService.getLoader();
+      await loader.present();
       this.profileService.generateOTP(req).toPromise()
         .then(async () => {
           this.description = this.commonUtilService.translateMessage('OTP_RESENT');
-          await this.loader.dismiss();
+          await loader.dismiss();
+          loader = undefined;
         })
         .catch(async () => {
-          await this.loader.dismiss();
+          if (loader) {
+            await loader.dismiss();
+            loader = undefined;
+          }
         });
     } else {
       this.commonUtilService.showToast('INTERNET_CONNECTIVITY_NEEDED');
