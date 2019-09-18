@@ -65,7 +65,7 @@ org.ekstep.contentrenderer.baseLauncher.extend({
             var regex = new RegExp("^(http|https)://", "i");
             if(!regex.test(globalConfigObj.basepath)){
                 var prefix_url = globalConfigObj.basepath || '';
-                path = prefix_url + "/" + data.artifactUrl + "?" + new Date().getSeconds();
+                path = window.parent.Ionic.WebView.convertFileSrc(prefix_url + "/" + data.artifactUrl + "?" + new Date().getSeconds());
             }else
                 path = data.streamingUrl;
         } else {

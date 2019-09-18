@@ -47,6 +47,10 @@ org.ekstep.contentrenderer.baseLauncher.extend({
         this.configOverlay();
     },
     createVideo: function (path, data) {
+        // User has to long press to play/pause or mute/unmute the video in mobile view. 
+        // TO fix this problem we are removing the tap events of the videoJs library.
+        // link:- https://github.com/videojs/video.js/issues/6222
+        videojs.getComponent('Component').prototype.emitTapEvents = function () {};
         video = document.createElement('video-js');
         video.style.width = '100%';
         video.style.height = '100%';
@@ -91,7 +95,12 @@ org.ekstep.contentrenderer.baseLauncher.extend({
         if (window.cordova) {
             var videoPlayer = videojs('videoElement', {
                 "controls": true, "autoplay": true, "preload": "auto",
-                "nativeControlsForTouch": true
+                html5: {
+                    hls: {
+                        overrideNative: true,
+                    }
+                },
+                inactivityTimeout: 0
             }, function () {
                 this.on('downloadvideo', function () {
                     EkstepRendererAPI.dispatchEvent("renderer:splash:hide");
@@ -100,6 +109,7 @@ org.ekstep.contentrenderer.baseLauncher.extend({
             });
         } else {
             var videoPlayer = videojs('videoElement', {
+                inactivityTimeout: 0,
                 "controls": true, "autoplay": true, "preload": "auto",
                 plugins: {
                     vjsdownload: {
@@ -122,6 +132,38 @@ org.ekstep.contentrenderer.baseLauncher.extend({
         }
         instance.addVideoListeners(videoPlayer, path, data);
         instance.videoPlayer = videoPlayer;
+        instance.applyResolutionSwitcher();
+    },
+    applyResolutionSwitcher: function (){
+        var instance = this;
+        instance.videoPlayer.hlsQualitySelector();
+        var qualityLevels = instance.videoPlayer.qualityLevels();
+        qualityLevels.on('change', function(event) {
+            var qualityLevel = instance.videoPlayer.qualityLevels()[event.selectedIndex];
+            var currentResolution = (qualityLevel.height) ? qualityLevel.height : "Auto";
+            instance.logResolution(currentResolution);
+
+        });
+    },
+    logResolution: function(currentResolution){
+        var instance = this;
+        instance.logTelemetry('TOUCH', {
+            stageId: 'videostage',
+            subtype: "CHANGE"
+        }, "", {
+            context: {
+                cdata: [{
+                    type: 'Feature',
+                    id: 'video:resolutionChange'
+                }, {
+                    id: 'SB-13358',
+                    type: 'Task'
+                }, {
+                    type: 'Resolution',
+                    id: currentResolution
+                }]
+            }
+        })
     },
     _loadYoutube: function (path) {
         var instance = this;
@@ -135,8 +177,16 @@ org.ekstep.contentrenderer.baseLauncher.extend({
         }
         var vid = videojs("videoElement", {
             "techOrder": ["youtube"],
+            inactivityTimeout: 0,
             "src": path,
-            "controls": true, "autoplay": true, "preload": "auto"
+            "controls": false, "autoplay": true, "preload": "auto",
+            "youtube": { 
+                "ytControls": 2 , 
+                "onPlayerPlaybackQualityChange" : function(e){ 
+                    var resolution = (e && e.data) ? e.data : "Auto";
+                    instance.logResolution(resolution);
+                }
+            }
         });
         videojs("videoElement").ready(function () {
 			var youtubeInstance = this;
@@ -149,6 +199,7 @@ org.ekstep.contentrenderer.baseLauncher.extend({
             instance.addYOUTUBEListeners(youtubeInstance);
             instance.setYoutubeStyles(youtubeInstance);
             instance.videoPlayer = youtubeInstance;
+            instance.applyResolutionSwitcher();
             EkstepRendererAPI.dispatchEvent("renderer:splash:hide");
             console.log("downloadvideo");
         });
@@ -260,8 +311,8 @@ org.ekstep.contentrenderer.baseLauncher.extend({
             instance.seeked("youtubestage", Math.floor(videoPlayer.currentTime()) * 1000);
         });
     },
-    logTelemetry: function (type, eksData) {
-        EkstepRendererAPI.getTelemetryService().interact(type || 'TOUCH', "", "", eksData);
+    logTelemetry: function (type, eksData, eid, options) {
+        EkstepRendererAPI.getTelemetryService().interact(type || 'TOUCH', "", "", eksData, eid, options);
     },
     replay: function () {
         if (this.sleepMode) return;
