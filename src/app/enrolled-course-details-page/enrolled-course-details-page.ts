@@ -680,6 +680,7 @@ export class EnrolledCourseDetailsPage implements OnInit {
 
     if (Boolean(data.isAvailableLocally)) {
       this.setChildContents();
+      this.showDownloadBtn = false;
     } else {
       this.showLoading = true;
       this.headerService.hideHeader();
