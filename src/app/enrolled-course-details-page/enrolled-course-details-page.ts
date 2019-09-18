@@ -47,7 +47,10 @@ import {
   UnenrollCourseRequest,
   AuthService,
   OAuthSession,
-  EnrollCourseRequest
+  EnrollCourseRequest,
+  ContentDeleteResponse,
+  ContentDeleteStatus,
+  Rollup
 } from 'sunbird-sdk';
 import { Subscription } from 'rxjs/Subscription';
 import {
@@ -70,6 +73,7 @@ import { Router, NavigationExtras } from '@angular/router';
 import { ContentUtil } from '@app/util/content-util';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { SbPopoverComponent } from '../components/popups';
+import { TranslateService } from '@ngx-translate/core';
 declare const cordova;
 
 @Component({
@@ -157,7 +161,6 @@ export class EnrolledCourseDetailsPage implements OnInit {
   queuedIdentifiers: Array<string> = [];
   faultyIdentifiers: Array<any> = [];
   isDownloadStarted = false;
-  isDownloadCompleted = false;
   batchDetails: Batch;
   batchExp = false;
   userId = '';
@@ -200,6 +203,12 @@ export class EnrolledCourseDetailsPage implements OnInit {
   networkSubscription: Subscription;
 
   @ViewChild('stickyPillsRef') stickyPillsRef: ElementRef;
+  public objRollup: Rollup;
+  pageName = '';
+  contentId: string;
+  isChild = false;
+  showDownloadBtn = true;
+
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -226,7 +235,10 @@ export class EnrolledCourseDetailsPage implements OnInit {
     private contentShareHandler: ContentShareHandlerService,
     private location: Location,
     private router: Router,
-    private appVersion: AppVersion
+    private appVersion: AppVersion,
+    private toastCtrl: ToastController,
+    private translate: TranslateService,
+    private popOverCtrl: PopoverController
   ) {
 
     this.userId = this.appGlobalService.getUserId();
@@ -261,6 +273,107 @@ export class EnrolledCourseDetailsPage implements OnInit {
     } else {
       this.getAllBatches();
     }
+  }
+
+  async deleteCourse(){
+    const confirm = await this.popoverCtrl.create({
+      component: SbPopoverComponent,
+      componentProps: {
+        content: this.content,
+        // isChild: this.isDepthChild,
+        objRollup: this.objRollup,
+        // pageName: PageId.COLLECTION_DETAIL,
+        corRelationList: this.corRelationList,
+        sbPopoverHeading: this.commonUtilService.translateMessage('REMOVE_FROM_DEVICE'),
+        // sbPopoverMainTitle: this.commonUtilService.translateMessage('REMOVE_FROM_DEVICE_MSG'),
+        sbPopoverMainTitle: this.course.name,
+        actionsButtons: [
+          {
+            btntext: this.commonUtilService.translateMessage('REMOVE'),
+            btnClass: 'popover-color'
+          },
+        ],
+        icon: null,
+        metaInfo:
+          // this.contentDetail.contentTypesCount.TextBookUnit + 'items' +
+          // this.batchDetails.courseAdditionalInfo.leafNodesCount + 'items' +
+          '(' + this.fileSizePipe.transform(this.course.size, 2) + ')',
+        sbPopoverContent: 'Are you sure you want to delete ?'
+      },
+      cssClass: 'sb-popover danger',
+    });
+    await confirm.present();
+    const { data } = await confirm.onDidDismiss();
+
+    if (data && data.canDelete) {
+      this.deleteContent();
+    }
+  }
+
+  async deleteContent() {
+    const telemetryObject = new TelemetryObject(this.course.identifier, this.course.contentType, this.course.pkgVersion);
+
+    this.telemetryGeneratorService.generateInteractTelemetry(
+      InteractType.TOUCH,
+      InteractSubtype.DELETE_CLICKED,
+      Environment.HOME,
+      this.pageName,
+      telemetryObject,
+      undefined,
+      this.objRollup,
+      this.corRelationList);
+
+    const loader = await this.commonUtilService.getLoader();
+    await loader.present();
+    this.contentService.deleteContent(this.getDeleteRequestBody()).toPromise()
+      .then(async (data: ContentDeleteResponse[]) => {
+        await loader.dismiss();
+        if (data && data[0].status === ContentDeleteStatus.NOT_FOUND) {
+          this.showToaster(this.getMessageByConstant('CONTENT_DELETE_FAILED'));
+        } else {
+          // Publish saved resources update event
+          this.events.publish('savedResources:update', {
+            update: true
+          });
+          this.showToaster(this.getMessageByConstant('MSG_RESOURCE_DELETED'));
+          this.showDownloadBtn = true;
+          this.popOverCtrl.dismiss({ isDeleted: true });
+        }
+      }).catch(async (error: any) => {
+        await loader.dismiss();
+        this.showToaster(this.getMessageByConstant('CONTENT_DELETE_FAILED'));
+        this.popOverCtrl.dismiss();
+      });
+  }
+  /**
+   * Construct content delete request body
+   */
+  getDeleteRequestBody() {
+    return {
+      contentDeleteList: [{
+        contentId: this.course.identifier,
+        isChildContent: this.isChild
+      }]
+    };
+  }
+
+  getMessageByConstant(constant: string) {
+    let msg = '';
+    this.translate.get(constant).subscribe(
+      (value: any) => {
+        msg = value;
+      }
+    );
+    return msg;
+  }
+
+  async showToaster(message) {
+    const toast = await this.toastCtrl.create({
+      message,
+      duration: 2000,
+      position: 'bottom'
+    });
+    await toast.present();
   }
 
   subscribeUtilityEvents() {
@@ -715,6 +828,7 @@ export class EnrolledCourseDetailsPage implements OnInit {
 
             if (this.queuedIdentifiers.length === 0) {
               this.restoreDownloadState();
+              this.showDownloadBtn = false;
             }
             if (this.faultyIdentifiers.length > 0) {
               const stackTrace: any = {};
@@ -735,6 +849,8 @@ export class EnrolledCourseDetailsPage implements OnInit {
         this.zone.run(() => {
           if (this.isDownloadStarted) {
             this.restoreDownloadState();
+            this.showDownloadBtn = false;
+
           } else {
             this.showChildrenLoader = false;
           }
@@ -1084,6 +1200,7 @@ export class EnrolledCourseDetailsPage implements OnInit {
 
   getContentsSize(data?) {
     console.log('in getContentsSize', data);
+    // this.downloadIdentifiers = [];
     if (data) {
       data.forEach((value) => {
         if (value.contentData.size) {
@@ -1296,7 +1413,7 @@ export class EnrolledCourseDetailsPage implements OnInit {
                 this.isDownloadStarted = false;
                 this.currentCount = 0;
                 this.showDownload = false;
-                this.isDownloadCompleted = true;
+                this.showDownloadBtn = false;
                 this.downloadIdentifiers.length = 0;
                 this.queuedIdentifiers.length = 0;
               }
