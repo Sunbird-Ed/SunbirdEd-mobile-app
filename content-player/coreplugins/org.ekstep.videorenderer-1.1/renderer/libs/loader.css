@@ -119,3 +119,6 @@
       transform: rotate(360deg);
     }
   }
+  .vjs-control-bar .vjs-seek-to-live-control, .vjs-control-bar .vjs-picture-in-picture-control {
+    display: none;
+  }
