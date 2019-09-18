@@ -77,26 +77,27 @@ export class AccountRecoveryInfoComponent implements OnInit {
       let loader = await this.commonUtilService.getLoader();
       const req: UpdateServerProfileInfoRequest = await this.getReqPayload(type);
       await loader.present();
-      this.profileService.updateServerProfile(req).subscribe(async (data: any) => {
-        await loader.dismiss();
-        loader = undefined;
-        if (data && data.response === 'SUCCESS') {
-          this.popOverCtrl.dismiss({ isEdited: true });
-          this.generateRecoveryTelemetry(type);
-        }
-      }, async (error) => {
-        if (loader) {
-          await loader.dismiss();
-          loader = undefined;
-        }
-        if (error && error.response && error.response.body && error.response.body.params &&
-          error.response.body.params.err === 'RECOVERY_PARAM_MATCH_EXCEPTION') {
-          if (type === RecoveryType.EMAIL) { this.sameEmailErr = true; }
-          if (type === RecoveryType.PHONE) { this.samePhoneErr = true; }
-        } else {
-          this.commonUtilService.showToast('SOMETHING_WENT_WRONG');
-        }
-      });
+      this.profileService.updateServerProfile(req)
+        .finally(async () => {
+          if (loader) {
+            await loader.dismiss();
+            loader = undefined;
+          }
+        })
+        .subscribe((data: any) => {
+          if (data && data.response === 'SUCCESS') {
+            this.popOverCtrl.dismiss({ isEdited: true });
+            this.generateRecoveryTelemetry(type);
+          }
+        }, (error) => {
+          if (error && error.response && error.response.body && error.response.body.params &&
+            error.response.body.params.err === 'RECOVERY_PARAM_MATCH_EXCEPTION') {
+            if (type === RecoveryType.EMAIL) { this.sameEmailErr = true; }
+            if (type === RecoveryType.PHONE) { this.samePhoneErr = true; }
+          } else {
+            this.commonUtilService.showToast('SOMETHING_WENT_WRONG');
+          }
+        });
     } else {
       this.commonUtilService.showToast('INTERNET_CONNECTIVITY_NEEDED');
     }
