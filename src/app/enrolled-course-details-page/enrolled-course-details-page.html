@@ -37,14 +37,21 @@
 								<div class="wrapper sb-btn-tile-group">
 									<div>
 										<!-- *ngIf="downloadIdentifiers?.length && !isDownloadStarted" -->
-										<button *ngIf="downloadIdentifiers?.length && !isDownloadStarted"
+										<button *ngIf="showDownloadBtn" 
 											(click)="showDownloadConfirmationAlert()" slot="icon-only"
 											class="card-button">
 											<ion-icon ios="ios-cloud-download" md="md-cloud-download"
 												class="card-icons">
 											</ion-icon>
 											<!-- <img src="assets/imgs/outline-cloud_download-24px.png" alt="download-outline"> -->
-											<p *ngIf="!isDownloadStarted" class="card-text">{{'DOWNLOAD' | translate}}
+											<p  class="card-text">{{'DOWNLOAD' | translate}}
+											</p>
+										</button>
+										<button *ngIf="!showDownloadBtn"
+											(click)="deleteCourse()" slot="icon-only"
+											class="card-button">
+											<ion-icon ios="ios-trash" md="md-trash" class="card-icons-red"></ion-icon>
+											<p  class="card-text">{{'REMOVE' | translate}}
 											</p>
 										</button>
 									</div>
@@ -197,15 +204,12 @@
 									</app-collection-child>
 								</div>
 							</div>
-						</div>
+							</div>
 					</ion-card>
 				</div>
 			</div>
 		</div>
 	</div>
-	<app-sb-download-popup *ngIf="showDownload" (cancelDownloadEmit)="cancelDownload($event)" [currentCount]="currentCount"
-	[queuedIdentifiers]="queuedIdentifiers" [downloadSize]="downloadSize" [collectionName]="course?.name"
-	[showDownload]="showDownload"></app-sb-download-popup>
 </ion-content>
 <div class="loading-backdrop" *ngIf="showLoading && !isDownloadStarted" text-center>
 	<div class="backdrop-container">
@@ -217,3 +221,6 @@
 		<ion-button size="small" (click)="cancelDownload()">{{ 'CANCEL' | translate }}</ion-button>
 	</div>
 </div>
+<app-sb-download-popup *ngIf="showDownload" (cancelDownloadEmit)="cancelDownload($event)" [currentCount]="currentCount"
+	[queuedIdentifiers]="queuedIdentifiers" [downloadSize]="downloadSize" [collectionName]="course?.name"
+	[showDownload]="showDownload"></app-sb-download-popup>

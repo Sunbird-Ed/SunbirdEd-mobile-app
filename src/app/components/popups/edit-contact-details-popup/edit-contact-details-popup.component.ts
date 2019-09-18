@@ -69,8 +69,8 @@ export class EditContactDetailsPopupComponent implements OnInit {
 
   async validate() {
     if (this.commonUtilService.networkInfo.isNetworkAvailable) {
-      this.loader = await this.commonUtilService.getLoader();
       const formVal = this.personEditForm.value;
+      this.loader = await this.commonUtilService.getLoader();
       await this.loader.present();
       let req: IsProfileAlreadyInUseRequest;
       if (this.type === ProfileConstants.CONTACT_TYPE_PHONE) {
@@ -87,6 +87,7 @@ export class EditContactDetailsPopupComponent implements OnInit {
 
       this.profileService.isProfileAlreadyInUse(req).subscribe(async (success: any) => {
         await this.loader.dismiss();
+        this.loader = undefined;
         if (success && success.response) {
           if (success.response.id === this.userId) {
             this.updateErr = true;
@@ -95,11 +96,19 @@ export class EditContactDetailsPopupComponent implements OnInit {
           }
         }
       }, async (error) => {
-        await this.loader.dismiss();
-        if (error.response.body.params.err === 'USER_NOT_FOUND') {
+        if (error.response && error.response.body.params.err === 'USER_NOT_FOUND') {
           this.generateOTP();
-        } else if (error.response.body.params.err === 'USER_ACCOUNT_BLOCKED') {
+        } else if (error.response && error.response.body.params.err === 'USER_ACCOUNT_BLOCKED') {
           this.blockedAccount = true;
+          if (this.loader) {
+            await this.loader.dismiss();
+            this.loader = undefined;
+          }
+        } else {
+          if (this.loader) {
+            await this.loader.dismiss();
+            this.loader = undefined;
+          }
         }
       });
     } else {
@@ -128,11 +137,13 @@ export class EditContactDetailsPopupComponent implements OnInit {
         type: ProfileConstants.CONTACT_TYPE_EMAIL
       };
     }
-    const loader = await this.commonUtilService.getLoader();
-    await loader.present();
+
     this.profileService.generateOTP(req).toPromise()
       .then(async () => {
-        await loader.dismiss();
+        if (this.loader) {
+          await this.loader.dismiss();
+          this.loader = undefined;
+        }
         if (this.type === ProfileConstants.CONTACT_TYPE_PHONE) {
           this.popOverCtrl.dismiss({ isEdited: true, value: this.personEditForm.value.phone });
         } else {
@@ -140,7 +151,10 @@ export class EditContactDetailsPopupComponent implements OnInit {
         }
       })
       .catch(async (err) => {
-        await loader.dismiss();
+        if (this.loader) {
+          await this.loader.dismiss();
+          this.loader = undefined;
+        }
         this.popOverCtrl.dismiss({ isEdited: false });
         if (err.hasOwnProperty(err) === 'ERROR_RATE_LIMIT_EXCEEDED') {
           this.commonUtilService.showToast('You have exceeded the maximum limit for OTP, Please try after some time');

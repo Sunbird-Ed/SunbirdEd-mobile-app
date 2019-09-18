@@ -310,6 +310,10 @@
     font-size: 30px;
     color: #024F9D;
   }
+  .card-icons-red{
+    font-size: 30px;
+    color:map-get($colors , danger);
+  }
   .sb-course-complete-container {
     width: 100%;	
     opacity: 0.7;	
@@ -342,6 +346,7 @@
   }
   .card-button{
       background-color: transparent !important;
+      outline: none;
   }
   .padding-bottom-6{
     padding-bottom: 6px;
