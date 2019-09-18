@@ -96,7 +96,6 @@ export class ProfilePage implements OnInit {
     private telemetryGeneratorService: TelemetryGeneratorService,
     private formAndFrameworkUtilService: FormAndFrameworkUtilService,
     private commonUtilService: CommonUtilService,
-    private headerServie: AppHeaderService,
     private socialShare: SocialSharing,
     private headerService: AppHeaderService,
   ) {
@@ -782,8 +781,8 @@ downloadTrainingCertificate(course: Course, certificate: CourseCertificate) {
   async editRecoveryId() {
 
     const componentProps = {
-      recoveryEmail: this.profile.recoveryEmail ? this.profile.recoveryEmail : null,
-      recoveryPhone: this.profile.recoveryPhone ? this.profile.recoveryPhone : null,
+      recoveryEmail: this.profile.recoveryEmail ? this.profile.recoveryEmail : '',
+      recoveryPhone: this.profile.recoveryPhone ? this.profile.recoveryPhone : '',
     };
     const popover = await this.popoverCtrl.create({
       component: AccountRecoveryInfoComponent,
@@ -800,6 +799,13 @@ downloadTrainingCertificate(course: Course, certificate: CourseCertificate) {
     );
 
     const { data } = await popover.onDidDismiss();
-    console.log(data);
+    if (data && data.isEdited) {
+      const req: UpdateServerProfileInfoRequest = {
+        userId: this.profile.userId
+      };
+      await this.updateProfile(req, 'RECOVERY_ID_UPDATE_SUCCESS');
+    }
   }
+
+
 }

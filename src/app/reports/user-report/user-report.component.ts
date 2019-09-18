@@ -214,7 +214,8 @@ export class UserReportComponent implements OnInit {
       line += 'Content name (Content ID)' + ',' + this.reportSummaryRequest.name + '(' + this.reportSummaryRequest.contentId + ')' + '\n';
       line += 'Content started time' + ',' + contentStartTime + '\n';
       line += 'Total Time' + ',' + this.formatTime(this.totalTime) + '\n';
-      line += 'Total Score' + ',' + ' ' + this.totalScore + '/' + this.maxTotalScore + '\n';
+      line += 'Total Score' + ',' + ' ' + this.totalScore + '/' +
+     (this.reportSummaryRequest.totalQuestionsScore || this.reportSummaryRequest.totalMaxScore) + '\n';
       line += 'File export time' + ',' + fileExpTime + '\n';
       line += '\n\n';
       line += 'Question#' + ',';
