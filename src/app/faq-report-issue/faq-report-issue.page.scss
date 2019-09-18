@@ -1,25 +1,11 @@
-
-.need-header-space ion-content:first-child{
-    --padding-bottom: 0px;
-}
-ion-content{
-    --padding-bottom: 0px;
-}
 .scroll-content{
     padding: 0% !important;
 }
-iframe {
-    transform: scale(1, 1);
-    height: 100%;
-    width: 100%;
-  }
   body{
     background-color: #edf4f9;
     font-family: 'Noto Sans';
 }
-.panelText{
-    font-size: 14px;
-}
+
 .rotate{
     -webkit-transform: rotate(180deg);  /* Chrome, Safari, Opera */
     -moz-transform: rotate(180deg);  /* Firefox */
@@ -31,8 +17,8 @@ iframe {
     margin-top: 4px;
     margin-left: 5px;
 }
-p{
-    font-size: 14px;
+P{
+    font-size: 13px;
 }
 .help-header, .help-header-send-email{
     background: #024f9d;
@@ -57,17 +43,8 @@ p{
     align-items: flex-start;
     justify-content: space-between;
 }
-.panel-title-blue{
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    color: #024f9d;
-}
-.info-msg{
+ .info-msg{
         background-color: #F3F7FA
-    }
-.report-text{
-      padding-left: 6px;
     }
 @media only screen and (max-width : 1024px) {
 
@@ -98,8 +75,7 @@ p{
     border-left: 0;
     border-right: 0;
     box-shadow:none !important;
-    border-bottom: solid 1px lightgray;
-    font-size: 16px;
+
 }
 .panel-default{
 
@@ -115,6 +91,7 @@ p{
 .panel-group .panel+.panel{
     border-radius: 0px;
     margin-top: 0px;
+
 }
 .panel-default>.panel-heading{
     background-color: #fff;
@@ -137,7 +114,7 @@ p{
     font-size: 13px;
     font-weight: 700;
     outline: none;
-    height: 30px;
+    height: 20px;
 
 }
 .panel-interact>p{
@@ -199,6 +176,7 @@ p{
         border-radius: 4px;
         border-style:solid;
         border-color:  #024f9d;
+        margin-bottom: 50px;
         outline: none;
     }
     p{
@@ -220,7 +198,7 @@ p{
         left: 0px;
     right: 0px;
     position: fixed;
-    top: 80vh;
+    top: 88vh;
     padding: 0px 16px;
     }
 }
@@ -233,6 +211,7 @@ p{
         border-radius: 4px;
         border-style:solid;
         border-color:  #024f9d;
+        margin-bottom: 50px;
         outline: none;
     }
 }
@@ -243,8 +222,6 @@ img>.report-button{
 .send-email{
     text-align: center;
     padding: 15px;
-    background: aliceblue;
-    --padding-bottom: 0px;
 }
 .send-email-form{
     text-align: center;
