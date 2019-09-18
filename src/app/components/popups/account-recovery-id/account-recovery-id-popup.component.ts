@@ -119,4 +119,10 @@ export class AccountRecoveryInfoComponent implements OnInit {
     );
   }
 
+  ionViewWillLeave() {
+    if (this.unregisterBackButton) {
+      this.unregisterBackButton.unsubscribe();
+    }
+  }
+
 }

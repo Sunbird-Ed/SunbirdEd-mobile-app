@@ -78,9 +78,8 @@ export class GroupReportAlertComponent implements OnInit {
     }
   }
 
-
   cancel() {
-    this.modalCtrl.dismiss();
+    this.popOverCtrl.dismiss();
   }
 
   ionViewWillEnter() {
