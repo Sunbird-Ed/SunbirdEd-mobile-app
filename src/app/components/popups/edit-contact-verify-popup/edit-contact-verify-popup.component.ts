@@ -38,11 +38,10 @@ export class EditContactVerifyPopupComponent implements OnInit {
 
   }
 
-  ngOnInit() {
-    this.menuCtrl.enable(false);
-  }
+  ngOnInit() { }
 
   ionViewWillEnter() {
+    this.menuCtrl.enable(false);
     this.unregisterBackButton = this.platform.backButton.subscribeWithPriority(11, () => {
       this.popOverCtrl.dismiss();
       this.unregisterBackButton.unsubscribe();
@@ -120,6 +119,7 @@ export class EditContactVerifyPopupComponent implements OnInit {
   }
 
   ionViewWillLeave() {
+    this.menuCtrl.enable(true);
     if (this.unregisterBackButton) {
       this.unregisterBackButton.unsubscribe();
     }

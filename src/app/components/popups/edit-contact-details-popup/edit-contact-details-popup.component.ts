@@ -43,15 +43,16 @@ export class EditContactDetailsPopupComponent implements OnInit {
     this.description = this.navParams.get('description');
     this.type = this.navParams.get('type');
 
-    this.unregisterBackButton = this.platform.backButton.subscribeWithPriority(11, () => {
-      this.popOverCtrl.dismiss();
-      this.platform.backButton.unsubscribe();
-    });
     this.initEditForm();
   }
 
-  ngOnInit() {
+  ngOnInit() { }
+
+  ionViewWillEnter() {
     this.menuCtrl.enable(false);
+    this.unregisterBackButton = this.platform.backButton.subscribeWithPriority(11, () => {
+      this.popOverCtrl.dismiss();
+    });
   }
 
   initEditForm() {
@@ -171,6 +172,7 @@ export class EditContactDetailsPopupComponent implements OnInit {
   }
 
   ionViewWillLeave() {
+    this.menuCtrl.enable(true);
     if (this.unregisterBackButton) {
       this.unregisterBackButton.unsubscribe();
     }
