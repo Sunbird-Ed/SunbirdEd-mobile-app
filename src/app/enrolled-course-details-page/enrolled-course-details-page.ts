@@ -508,6 +508,7 @@ export class EnrolledCourseDetailsPage implements OnInit {
     if (data.contentData) {
       await loader.present();
       this.course = data.contentData;
+      console.log('this.course extractApiResponse', this.course);
       this.content = data;
       this.objId = this.course.identifier;
       this.objType = this.course.contentType;
@@ -518,9 +519,9 @@ export class EnrolledCourseDetailsPage implements OnInit {
         this.generateStartEvent(this.course.identifier, this.course.contentType, this.course.pkgVersion);
       }
       this.didViewLoad = true;
-      if (this.course.lastReadContentId) {
-        this.getLastPlayedName(this.course.lastReadContentId);
-      }
+      // if (this.course.lastReadContentId) {
+      //   this.getLastPlayedName(this.course.lastReadContentId);
+      // }
 
       if (this.course && this.course.isAvailableLocally) {
         this.headerService.showHeaderWithBackButton();
@@ -837,13 +838,12 @@ export class EnrolledCourseDetailsPage implements OnInit {
     let lastReadContentId = this.courseCardData.lastReadContentId;
     const userId = this.appGlobalService.getUserId();
     const lastReadContentIdKey = 'lastReadContentId_' + userId + '_' + this.identifier + '_' + this.courseCardData.batchId;
-    this.getLastPlayedName(lastReadContentId)
     await this.preferences.getString(lastReadContentIdKey).toPromise()
-      .then(val => {
-        this.courseCardData.lastReadContentId = val;
-        lastReadContentId = val;
-      });
-    
+    .then(val => {
+      this.courseCardData.lastReadContentId = val;
+      lastReadContentId = val;
+    });
+    this.getLastPlayedName(lastReadContentId);
     this.zone.run(() => {
       childrenData.forEach(childContent => {
         // Inside First level
@@ -952,10 +952,13 @@ export class EnrolledCourseDetailsPage implements OnInit {
       this.contentService.getContentDetails(option).toPromise()
         .then((data: Content) => {
           console.log('data is here', data);
-          this. lastReadContentName = data.contentData.name;
+          this.lastReadContentName = data.contentData.name;
         }).catch(() => {
 
         });
+    } else if (this.childContentsData) {
+      const firstChild = this.loadFirstChildren(this.childContentsData);
+      this.lastReadContentName = firstChild.contentData.name;
     }
 
   }
@@ -964,6 +967,7 @@ export class EnrolledCourseDetailsPage implements OnInit {
    * Function to set child contents
    */
   async setChildContents() {
+    console.log('in setChildContents');
     this.showChildrenLoader = true;
     const loader = await this.commonUtilService.getLoader();
     await loader.present();
@@ -1539,6 +1543,7 @@ export class EnrolledCourseDetailsPage implements OnInit {
   }
 
   getContentState(returnRefresh: boolean) {
+    console.log('in getContentState', returnRefresh);
     if (this.courseCardData.batchId) {
       const request: GetContentStateRequest = {
         userId: this.appGlobalService.getUserId(),
@@ -1548,6 +1553,7 @@ export class EnrolledCourseDetailsPage implements OnInit {
       };
       this.courseService.getContentState(request).toPromise()
         .then((success: ContentStateResponse) => {
+          console.log('this.contentStatusData', success);
           this.contentStatusData = success;
 
           if (this.contentStatusData && this.contentStatusData.contentList) {
