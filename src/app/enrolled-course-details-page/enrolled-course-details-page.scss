@@ -63,6 +63,14 @@
     .subtitle-color{
         color: map-get($colors, textGrey);
     }
+    .enrolled-course-container {
+      &.sticky {
+        position: sticky;
+        top: 0;
+        left: 0;
+        z-index: 10;
+      }
+    }
     .course-progress {
         // position: absolute;
         // width: 100%;

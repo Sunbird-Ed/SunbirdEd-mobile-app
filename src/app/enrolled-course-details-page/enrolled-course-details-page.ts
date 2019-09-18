@@ -1,5 +1,5 @@
-import { Component, Inject, NgZone, OnInit } from '@angular/core';
-import { Events, Platform, PopoverController, AlertController } from '@ionic/angular';
+import { Component, Inject, NgZone, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Events, Platform, PopoverController, AlertController, ToastController } from '@ionic/angular';
 import isObject from 'lodash/isObject';
 import forEach from 'lodash/forEach';
 import { FileSizePipe } from '@app/pipes/file-size/file-size';
@@ -170,7 +170,7 @@ export class EnrolledCourseDetailsPage implements OnInit {
   profileType = '';
   objId;
   objType;
-  batchInfo;
+  batchCount = 1;
   batchEndDate;
   objVer;
   didViewLoad: boolean;
@@ -196,6 +196,10 @@ export class EnrolledCourseDetailsPage implements OnInit {
   enrollmentEndDate: string;
   loader: any;
   isQrCodeLinkToContent: any;
+  toast: any;
+  networkSubscription: Subscription;
+
+  @ViewChild('stickyPillsRef') stickyPillsRef: ElementRef;
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -204,6 +208,7 @@ export class EnrolledCourseDetailsPage implements OnInit {
     @Inject('COURSE_SERVICE') private courseService: CourseService,
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
     @Inject('AUTH_SERVICE') private authService: AuthService,
+    public toastController: ToastController,
     private loginHandlerService: LoginHandlerService,
     private alertCtrl: AlertController,
     private zone: NgZone,
@@ -451,18 +456,18 @@ export class EnrolledCourseDetailsPage implements OnInit {
       this.courseService.unenrollCourse(unenrolCourseRequest)
         .subscribe(() => {
           this.zone.run(async () => {
+            await loader.dismiss();
             this.commonUtilService.showToast(this.commonUtilService.translateMessage('COURSE_UNENROLLED'));
             this.events.publish(EventTopics.UNENROL_COURSE_SUCCESS, {});
-            await loader.dismiss();
           });
         }, (error) => {
           this.zone.run(async () => {
+            await loader.dismiss();
             if (error && error.error === 'CONNECTION_ERROR') {
               this.commonUtilService.showToast(this.commonUtilService.translateMessage('ERROR_NO_INTERNET_MESSAGE'));
             } else {
               this.events.publish(EventTopics.UNENROL_COURSE_SUCCESS, {});
             }
-            await loader.dismiss();
           });
         });
     }
@@ -499,9 +504,9 @@ export class EnrolledCourseDetailsPage implements OnInit {
    * If locally available then make childContents api call else make import content api call
    */
   async extractApiResponse(data: Content) {
-    this.loader = await this.commonUtilService.getLoader();
-    await this.loader.present();
+    const loader = await this.commonUtilService.getLoader();
     if (data.contentData) {
+      await loader.present();
       this.course = data.contentData;
       this.content = data;
       this.objId = this.course.identifier;
@@ -513,7 +518,7 @@ export class EnrolledCourseDetailsPage implements OnInit {
         this.generateStartEvent(this.course.identifier, this.course.contentType, this.course.pkgVersion);
       }
       this.didViewLoad = true;
-      if(this.course.lastReadContentId){
+      if (this.course.lastReadContentId) {
         this.getLastPlayedName(this.course.lastReadContentId);
       }
 
@@ -548,11 +553,10 @@ export class EnrolledCourseDetailsPage implements OnInit {
         this.ratingComment = contentFeedback[0].comments;
       }
       this.getCourseProgress();
-      await this.loader.dismiss();
+      await loader.dismiss();
     } else {
       this.commonUtilService.showToast('ERROR_CONTENT_NOT_AVAILABLE');
       this.location.back();
-
     }
 
     if (data.isAvailableLocally) {
@@ -772,8 +776,7 @@ export class EnrolledCourseDetailsPage implements OnInit {
       } else {
         contentTypeCount = '';
       }
-      if(!this.isBatchNotStarted){
-        this.isDownloadStarted = true;
+      if (!this.isBatchNotStarted) {
         this.downloadProgress = 0;
       } else {
         this.commonUtilService.showToast(this.commonUtilService.translateMessage('COURSE_WILL_BE_AVAILABLE',
@@ -801,6 +804,7 @@ export class EnrolledCourseDetailsPage implements OnInit {
       await popover.present();
       const response = await popover.onDidDismiss();
       if (response && response.data) {
+        this.isDownloadStarted = true;
         this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
           'download-all-button-clicked',
           Environment.HOME,
@@ -809,9 +813,9 @@ export class EnrolledCourseDetailsPage implements OnInit {
           undefined,
           // todo
           // this.objRollup,
-          //this.corRelationList
+          // this.corRelationList
           );
-        this.importContent(this.downloadIdentifiers, true, true);        
+        this.importContent(this.downloadIdentifiers, true, true);
         this.events.publish('header:decreasezIndex');
         this.showDownload = true;
       } else {
@@ -908,8 +912,9 @@ export class EnrolledCourseDetailsPage implements OnInit {
     this.courseService.getCourseBatches(courseBatchesRequest).toPromise()
     .then((data: Batch[]) => {
       console.log('all batches', data);
+      this.batchCount = data.length;
       if (data.length > 1) {
-        this.batchInfo = data.length;
+        // this.batchCount = data.length;
       } else if (data.length === 1) {
         // unenrolled and only one batch available
         this.batchEndDate = data[0].endDate;
@@ -943,14 +948,14 @@ export class EnrolledCourseDetailsPage implements OnInit {
         contentId: id,
         hierarchyInfo: null,
         level: !this.courseCardData.batchId ? 1 : 0,
-      }
+      };
       this.contentService.getContentDetails(option).toPromise()
         .then((data: Content) => {
           console.log('data is here', data);
           this. lastReadContentName = data.contentData.name;
         }).catch(() => {
 
-        })
+        });
     }
 
   }
@@ -972,6 +977,13 @@ export class EnrolledCourseDetailsPage implements OnInit {
         this.zone.run(async () => {
           await loader.dismiss();
           if (data && data.children) {
+            console.log('if data.children');
+            setTimeout(() => {
+              if (this.stickyPillsRef) {
+                this.stickyPillsRef.nativeElement.classList.add('sticky');
+              }
+            }, 1000);
+
             this.enrolledCourseMimeType = data.mimeType;
             this.childrenData = data.children;
             this.toggleGroup(0);
@@ -1072,7 +1084,6 @@ export class EnrolledCourseDetailsPage implements OnInit {
 
   getContentsSize(data?) {
     console.log('in getContentsSize', data);
-    this.downloadIdentifiers = [];
     if (data) {
       data.forEach((value) => {
         if (value.contentData.size) {
@@ -1169,6 +1180,32 @@ export class EnrolledCourseDetailsPage implements OnInit {
       this.segmentType = 'modules';
       // this.isEnrolled = true;
     }
+    this.networkSubscription = this.commonUtilService.networkAvailability$.subscribe((available: boolean) => {
+      if (available) {
+        if (this.toast) {
+          this.toast.dismiss();
+          this.toast = undefined;
+        }
+      } else {
+        this.presentToastForOffline('NO_INTERNET_TITLE');
+      }
+    });
+  }
+
+  // Offline Toast
+  async presentToastForOffline(msg: string) {
+    this.toast = await this.toastController.create({
+      duration: 30000,
+      message: this.commonUtilService.translateMessage(msg),
+      showCloseButton: true,
+      position: 'top',
+      closeButtonText: 'X',
+      cssClass: ['toastHeader', 'offline']
+    });
+    this.toast.present();
+    this.toast.onDidDismiss(() => {
+      this.toast = undefined;
+    });
   }
 
   handleBackButton() {
@@ -1322,6 +1359,13 @@ export class EnrolledCourseDetailsPage implements OnInit {
     }
     this.events.unsubscribe('courseToc:content-clicked');
     // TODO: this.events.unsubscribe(EventTopics.UNENROL_COURSE_SUCCESS);
+    if (this.networkSubscription) {
+      this.networkSubscription.unsubscribe();
+      if (this.toast) {
+        this.toast.dismiss();
+        this.toast = undefined;
+      }
+    }
   }
 
   /**
@@ -1621,6 +1665,7 @@ export class EnrolledCourseDetailsPage implements OnInit {
       this.courseService.enrollCourse(enrollCourseRequest).toPromise()
         .then((data: boolean) => {
           this.zone.run(async () => {
+            await loader.dismiss();
             // this.setContentDetails(this.identifier);
             this.updatedCourseCardData = await this.courseService.getEnrolledCourses({userId: this.userId, returnFreshCourses: true })
             .toPromise().then((cData) => {
@@ -1634,7 +1679,6 @@ export class EnrolledCourseDetailsPage implements OnInit {
               batchId: item.id,
               courseId: item.courseId
             });
-            await loader.dismiss();
           });
         }, (error) => {
           this.zone.run(async () => {
