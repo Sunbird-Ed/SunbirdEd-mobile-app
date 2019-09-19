@@ -650,15 +650,14 @@ export class CoursesPage implements OnInit {
     this.contentService.getContentDetails(request).toPromise()
       .then((data: Content) => {
         if (data && data.isAvailableLocally) {
-            if (data.contentData.pkgVersion < content.content.pkgVersion) {
-              this.contentDetailsImportCall(identifier);
-            } else {
-              this.contentDetailsImportCall(identifier);
-            }
+          if (data.contentData.pkgVersion < content.content.pkgVersion) {
+            this.contentDetailsImportCall(identifier);
+          } else {
+            this.showOverlay = false;
+            this.navigateToContentDetailsPage(content);
+          }
         } else {
-          this.subscribeSdkEvent();
-          this.showOverlay = true;
-          this.importContent([identifier], false);
+          this.contentDetailsImportCall(identifier);
         }
       })
       .catch((err) => {

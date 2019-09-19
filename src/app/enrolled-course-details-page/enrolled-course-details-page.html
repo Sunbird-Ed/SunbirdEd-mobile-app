@@ -34,46 +34,40 @@
 					<div>
 						<div>
 							<div class="sb-dt-card-actions">
-								<div class="wrapper sb-btn-tile-group">
+								<div class="wrapper sb-btn-tile-group" *ngIf="course?.progress !==100">
 									<div>
 										<!-- *ngIf="downloadIdentifiers?.length && !isDownloadStarted" -->
-										<button [disabled]="isDownloadStarted" *ngIf="downloadIdentifiers?.length"
-											(click)="showDownloadConfirmationAlert()" slot="icon-only"
-											class="card-button">
+										<button [disabled]="isDownloadStarted" *ngIf="downloadIdentifiers?.length" (click)="showDownloadConfirmationAlert()"
+											slot="icon-only" class="card-button">
 											<ion-icon ios="ios-cloud-download" md="md-cloud-download"
 												[ngClass]="(isDownloadStarted)? 'card-icons-downloadStarted': 'card-icons'">
 											</ion-icon>
-											<p  class="card-text">{{'DOWNLOAD' | translate}}
+											<p class="card-text">{{'DOWNLOAD' | translate}}
 											</p>
 										</button>
-										<button
-											(click)="deleteCourse()" slot="icon-only"
-											class="card-button">
+										<button (click)="deleteCourse()" slot="icon-only" class="card-button">
 											<ion-icon ios="ios-trash" md="md-trash" class="card-icons-red"></ion-icon>
-											<p  class="card-text">{{'REMOVE' | translate}}
+											<p class="card-text">{{'REMOVE' | translate}}
 											</p>
 										</button>
-									</div>
-									<div>
 										<button slot="icon-only" (click)="share()" class="card-button">
 											<ion-icon ios="ios-share" md="md-share" class="card-icons"></ion-icon>
 											<p class="card-text">{{'SHARE' | translate}}</p>
 										</button>
 									</div>
-									<div>
+									<div class="padding-left-5em">
 										<img class="menu-icon" (click)="showOverflowMenu($event)"
 											src="assets/imgs/menu.svg" alt="menu-icon">
 									</div>
 								</div>
 								<div *ngIf="courseCardData?.batchId">
-									<div class="sb-course-progress-container" *ngIf="course?.progress && !batchExp">
+									<div class="sb-course-progress-container" *ngIf="course?.progress!==100 && !batchExp">
 										<p><b>{{'YOUR_PROGRESS_LABEL' | translate}}</b></p>
 										<p>{{course?.progress ? course?.progress : '0'}} %
 											{{'COURSE_COMPLETED_LABEL' | translate}}</p>
 										<app-pb-horizontal [progress]="course?.progress" class="course-progress"
 											[ngClass]="{'blurbackground': batchExp}" isOnBoardCard="flase"
 											isCourseProgress="true"></app-pb-horizontal>
-										<!-- <app-pb-horizontal [progress]="20" class="course-progress" [ngClass]="{'blurbackground': batchExp}"></app-pb-horizontal> -->
 									</div>
 									<div class="sb-batch-end-container" *ngIf="course?.progress !== 100 && batchExp">
 										<p class="batch-end-main-heading">{{'BATCHEND_MAIN_HEADING' | translate}}
@@ -81,7 +75,7 @@
 										<p class="batch-end-sub-heading">{{'BATCHEND_SUB_HEADING' | translate}}</p>
 									</div>
 									<div *ngIf="course?.progress && course?.progress === 100"
-										class="sb-course-complete-container">
+										class="sb-course-complete-container ion-padding">
 										<div class="img-container">
 											<img class="success-badge" src='assets/imgs/Badge green.svg'>
 										</div>
@@ -96,10 +90,10 @@
 				</div>
 			</ion-card-content>
 		</ion-card>
-		<div #stickyPillsRef *ngIf="courseCardData?.batchId" class="enrolled-course-container">
+		<div #stickyPillsRef *ngIf="courseCardData?.batchId && course?.progress !== 100" class="enrolled-course-container">
 			<ion-card class="enrolled-course-card">
-				<ion-card-content>
-					<ion-card-title class="last-read-content">{{lastReadContentName}}</ion-card-title>
+				<ion-card-content class="ion-padding-top">
+					<ion-card-title class="last-read-content padding-bottom-8">{{lastReadContentName}}</ion-card-title>
 					<button *ngIf="!showResumeBtn && childrenData?.length" class="enrolled-course-card-button"
 						(click)="startContent()"><span><img class="play-icon" src="assets/imgs/Play@1.5x.svg"
 								alt="play-icon">{{
@@ -108,7 +102,7 @@
 						(click)="resumeContent(courseCardData?.lastReadContentId)"><span><img class="play-icon"
 								src="assets/imgs/Play@1.5x.svg" alt="play-icon">{{
 															'CONTINUE_NOW' | translate }}</span></button>
-					<div *ngIf="batchDetails?.endDate" class="enrollment-end-date">
+					<div *ngIf="batchDetails?.endDate" class="enrollment-end-date ion-padding-bottom">
 						<ion-icon name="information-circle"></ion-icon>
 						<!-- {{'COMPLETE_TRAINING_TO_EARN_CERTIFICATE'| translate :{'%s':batchDetails?.enrollmentEndDate | date} }} -->
 						Complete Training by {{batchDetails?.endDate | date}} to earn a certificate
