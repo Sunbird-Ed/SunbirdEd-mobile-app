@@ -173,9 +173,6 @@ export class ViewMoreCardComponent implements OnInit {
 
   async navigateToDetailsPage(content: any, layoutName) {
     this.zone.run(async () => {
-      if (this.loader) {
-        await this.loader.dismiss();
-      }
       if (layoutName === 'enrolledCourse' || content.contentType === ContentType.COURSE) {
         this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], {
           state: {
