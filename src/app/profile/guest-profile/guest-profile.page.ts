@@ -77,13 +77,7 @@ export class GuestProfilePage implements OnInit {
       this.refreshProfileData(false, false);
     });
 
-    const profileType = this.appGlobalService.getGuestUserType();
-
-    if ((profileType === ProfileType.TEACHER && this.appGlobalService.DISPLAY_SIGNIN_FOOTER_CARD_IN_PROFILE_TAB_FOR_TEACHER) ||
-      (profileType === ProfileType.STUDENT && this.appGlobalService.DISPLAY_SIGNIN_FOOTER_CARD_IN_PROFILE_TAB_FOR_STUDENT)) {
-      this.showSignInCard = true;
-    }
-
+    this.refreshSignInCard();
     this.appGlobalService.generateConfigInteractEvent(PageId.GUEST_PROFILE);
   }
 
@@ -123,6 +117,7 @@ export class GuestProfilePage implements OnInit {
       .then((res: any) => {
         this.profile = res;
         this.getSyllabusDetails();
+        this.refreshSignInCard();
         setTimeout(() => {
           if (refresher) { refresher.target.complete(); }
         }, 500);
@@ -130,6 +125,17 @@ export class GuestProfilePage implements OnInit {
       .catch(async () => {
         await this.loader.dismiss();
       });
+  }
+
+  refreshSignInCard() {
+    const profileType = this.appGlobalService.getGuestUserType();
+
+    if ((profileType === ProfileType.TEACHER && this.appGlobalService.DISPLAY_SIGNIN_FOOTER_CARD_IN_PROFILE_TAB_FOR_TEACHER) ||
+      (profileType === ProfileType.STUDENT && this.appGlobalService.DISPLAY_SIGNIN_FOOTER_CARD_IN_PROFILE_TAB_FOR_STUDENT)) {
+      this.showSignInCard = true;
+    } else {
+      this.showSignInCard = false;
+    }
   }
 
   editGuestProfile(isChangeRoleRequest = false) {
