@@ -3,8 +3,8 @@
 
 
 :host {
-    ion-card{	
-      margin: 0 0 10px 0 !important;	
+    ion-card{
+      margin: 0 0 10px 0 !important;
     }
     .fontBold {
         font-weight: bold;
@@ -14,7 +14,7 @@
     }
     .ion-ios-checkmark-circle:before {
         color: #008000;
-        margin-right: 4px;	
+        margin-right: 4px;
         margin-left: 0px;
     }
     .structure-text{
@@ -63,13 +63,13 @@
     .subtitle-color{
         color: map-get($colors, textGrey);
     }
-    .enrolled-course-container {	
-      &.sticky {	
-        position: sticky;	
-        top: 0;	
-        left: 0;	
-        // z-index: 10;	
-      }	
+    .enrolled-course-container {
+      &.sticky {
+        position: sticky;
+        top: 0;
+        left: 0;
+        // z-index: 10;
+      }
     }
     .course-progress {
         // position: absolute;
@@ -182,15 +182,15 @@
     .label-margin-bottom{
       margin-bottom: 3px !important;
     } 
-    .sb-accordian-header{	
-      padding: 12px 14px;	
-      .dd-icon {	
-        position: relative;	
-        bottom: 3px;	
-      }	
-      .sb-checkmark-icon{	
-        color: #008000;	
-      }	
+    .sb-accordian-header{
+      padding: 12px 14px;
+      .dd-icon {
+        position: relative;
+        bottom: 3px;
+      }
+      .sb-checkmark-icon{
+        color: #008000;
+      }
     }
     .custom-card-header{
         padding-bottom: 0px !important;
@@ -310,13 +310,13 @@
     font-size: 30px;
     color: #024F9D;
   }
-  .card-icons-downloadStarted {	
-    font-size: 30px;	
-    color: map-get($colors, text_gray);	
-  }	
-  .card-icons-red{	
-    font-size: 30px;	
-    color:map-get($colors , danger);	
+  .card-icons-downloadStarted {
+    font-size: 30px;
+    color: map-get($colors, text_gray);
+  }
+  .card-icons-red{
+    font-size: 30px;
+    color:map-get($colors , danger);
   }
   .sb-course-complete-container {
     width: 100%;	
@@ -355,10 +355,10 @@
   .padding-bottom-6{
     padding-bottom: 6px;
   }
-  .margin-bottom-2{	
-    margin-bottom: 2px;	
+  .margin-bottom-2{
+    margin-bottom: 2px;
   }
-
+  
   .sb-course-progress-container{
       background-color: #E5EDF5;
       padding: 8px;
