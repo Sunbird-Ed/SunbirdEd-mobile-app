@@ -23,7 +23,7 @@
     </div>
   </div>
 </div>
-<ngx-datatable id="datatable" class="material striped" [rows]="assessmentData?.uiRows" [rowClass]="getCell" [columns]="columns" columnMode="flex" [headerHeight]="40" [footerHeight]="0" [rowHeight]="40" (activate)="onActivate($event,assessmentData.showPopup, assessmentData.popupCallback)" [sorts]="[{prop: columns[0]?.name, dir: 'asc'}]">
+<ngx-datatable id="datatable" class="material striped" [rows]="assessmentData?.uiRows" [columns]="columns" columnMode="flex" [headerHeight]="40" [footerHeight]="0" [rowHeight]="40" (activate)="onActivate($event,assessmentData.showPopup, assessmentData.popupCallback)" [sorts]="[{prop: columns[0]?.name, dir: 'asc'}]">
   <ngx-datatable-column name={{columns[0].name}} prop={{columns[0].prop}} [flexGrow]="2" [cellClass]="'datatable-body-cell-column1'" headerClass="assessment-header assessment-header1" [resizeable]="false"></ngx-datatable-column>
   <ngx-datatable-column name={{columns[1].name}} prop={{columns[1].prop}} [flexGrow]="1" [cellClass]="'datatable-body-cell-column2'" headerClass="assessment-header" [resizeable]="false"></ngx-datatable-column>
   <ngx-datatable-column name={{columns[2].name}} prop={{columns[2].prop}} [flexGrow]="1" [cellClass]="'datatable-body-cell-column3'" headerClass="assessment-header" [resizeable]="false"></ngx-datatable-column>

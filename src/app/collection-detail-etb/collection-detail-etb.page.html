@@ -13,7 +13,8 @@
         <ion-col text-center>
           <p *ngIf="downloadProgress !== 100">{{ 'FETCHING_CONTENTS' | translate: {'%s': downloadProgress ?
             downloadProgress : '0'} }}</p>
-          <p *ngIf="downloadProgress === 100">{{ 'LOADING_CONTENT' | translate }}</p>
+          <!-- <p *ngIf="downloadProgress === 100">{{ 'LOADING_CONTENT' | translate }}</p> -->
+          <p *ngIf="downloadProgress === 100">{{importProgressMessage}}</p>
           <ion-spinner padding></ion-spinner>
         </ion-col>
       </ion-row>
