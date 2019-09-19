@@ -115,15 +115,17 @@
             </div>
         </div>
 
-        <div class="MT10" *ngIf="profile?.recoveryEmail || profile?.recoveryPhone">
-            <div class="email " (click)="editRecoveryId();">
+        <div class="MT10" *ngIf=" ( profile?.recoveryEmail?.length > 0 ) || ( profile?.recoveryPhone?.length > 0 )">
+            <div class="email" (click)="editRecoveryId();">
                 <span class="icon MR10 align-middle">
                     <ion-icon src="assets/imgs/recovery_icon.svg"></ion-icon>
                 </span>
-                <span class="value align-middle">{{ profile?.recoveryEmail || profile?.recoveryPhone }}</span>
+                <span class="value align-middle" *ngIf="profile?.recoveryEmail?.length > 0">{{ profile?.recoveryEmail }}</span>
+                <span class="value align-middle" *ngIf="profile?.recoveryPhone?.length > 0">+91 {{ profile?.recoveryPhone }}</span>
             </div>
         </div>
-        <div class="MT10" *ngIf="!profile?.recoveryEmail && !profile?.recoveryPhone">
+        <div class="MT10" *ngIf="(!profile?.recoveryEmail && !profile?.recoveryPhone) || 
+        ((profile?.recoveryEmail?.length === 0) && (profile?.recoveryPhone?.length === 0))">
             <div class="email light" (click)="editRecoveryId();">
                 <span class="icon MR10 align-middle">
                     <ion-icon src="assets/imgs/recovery_icon.svg"></ion-icon>
