@@ -71,27 +71,7 @@
         // z-index: 10;
       }
     }
-    .course-progress {
-        // position: absolute;
-        // width: 100%;
-        // z-index: 10;
-        // left:0;
-        // top:0;
-        // .progress-outer {
-        //     background-color: transparent !important;
-        // }
-        // .progress-inner {
-        //     min-width: unset !important;
-        //     padding: 2px !important;
-        // }
-        .progress-inner-primary {
-            // background-color: #FF9F00 !important;
-            background-color: #008000 !important;
-        }
-        // .progress-inner-secondary {
-        //     background-color: #7ED321 !important;
-        // }
-    }
+
     ion-card ion-card-content p {
         font-size: 14px;
     }
@@ -208,10 +188,11 @@
         text-decoration: none;
         display: inline-block;
         font-size: 16px;
-        margin: 4px 2px;
+        margin: 4px 0px;
         cursor: pointer;
         outline: none;
-        width: 95%;
+        margin-bottom: 8px;
+        width: 100%;
         padding: 13px 0px 13px 0px;
     }
     .segment-button-checked{
@@ -336,6 +317,7 @@
       width: 80%;
       vertical-align: middle;
       display: inline-block;
+      padding-left: 10px;
       @include padding(0px 0px 0px 11px);
     }
   }
@@ -355,6 +337,9 @@
   .padding-bottom-6{
     padding-bottom: 6px;
   }
+  .padding-bottom-8{
+    padding-bottom: 8px;
+  }
   .margin-bottom-2{
     margin-bottom: 2px;
   }
@@ -367,8 +352,14 @@
   }
 
   .last-read-content{
-    font-size: 14px !important;
-    @include padding(0px 0px 4px 4px)
+    font-size: 16px !important;
+    font-weight:bold;
+    @include rtl() {
+      padding-bottom: 4px;
+     }
+     @include ltr() {
+     padding-left: 4px;
+     }
   }
 
   .sb-batch-end-container{

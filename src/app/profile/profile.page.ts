@@ -803,7 +803,7 @@ downloadTrainingCertificate(course: Course, certificate: CourseCertificate) {
       const req: UpdateServerProfileInfoRequest = {
         userId: this.profile.userId
       };
-      await this.updateProfile(req, 'RECOVERY_ID_UPDATE_SUCCESS');
+      await this.updateProfile(req, 'RECOVERY_ACCOUNT_UPDATE_SUCCESS');
     }
   }
 

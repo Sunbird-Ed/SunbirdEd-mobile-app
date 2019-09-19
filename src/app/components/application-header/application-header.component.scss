@@ -7,6 +7,9 @@ ion-icon {
     height: 30px;
     color: $primary-color;
 }
+.z-index-0 {
+    z-index: 0;
+  }
 :host {
     ion-icon.arrow-icon {
         @include rtl {
