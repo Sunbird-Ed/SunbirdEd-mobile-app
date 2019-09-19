@@ -593,5 +593,5 @@
   "RECOVERY_ID_DESCRIPTION": "A recovery account helps you regain access if you are locked out. Choose your recovery account type and enter details.",
   "ADD_RECOVERY_ACCOUNT": "Add Recovery Account",
   "LAST_DATE_TO_JOIN": "Last Date To Join",
-  "RECOVERY_ID_UPDATE_SUCCESS": "Recovery Id updated successfully"
+  "RECOVERY_ACCOUNT_UPDATE_SUCCESS": "Recovery account updated successfully"
 }
