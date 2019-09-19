@@ -511,6 +511,7 @@
   "TOTAL_TIME": "Total Time",
   "TO_DO": "To Do",
   "TRAININGS_ATTENDED": "Training(s) Attended",
+  "TRAINING_ENDS_ON":" Training Ends on",
   "TRAINING_IS_RELEVENT_TO_TEACHERS":"Training is relevent to teacher of",
   "TRAINING_DETAILS":"Training Details",
   "TRAINING_END_DATA":"Training End Date",
@@ -593,5 +594,7 @@
   "RECOVERY_ID_DESCRIPTION": "A recovery account helps you regain access if you are locked out. Choose your recovery account type and enter details.",
   "ADD_RECOVERY_ACCOUNT": "Add Recovery Account",
   "LAST_DATE_TO_JOIN": "Last Date To Join",
+  "COURSE_ENDED": "Course Ended",
+  "THERE_ARE_NO_BATCHES_AVAILABLE_FOR_THIS_TRAINING": "There are no batches available for this training",
   "RECOVERY_ACCOUNT_UPDATE_SUCCESS": "Recovery account updated successfully"
 }
