@@ -5,6 +5,10 @@ export class ActivePageService {
 
   constructor() { }
 
+  /**
+   * Should always pass the URL, should not call Router from this service.
+   * It will cause issue for crash-analytics-error-log.ts
+   */
   computePageId(url): string {
     const routeUrl = url;
     let pageId = '';

@@ -12,6 +12,7 @@ import {
   TelemetryObject
 } from 'sunbird-sdk';
 import { AppHeaderService } from '@app/services/app-header.service';
+import { CommonUtilService } from '@app/services/common-util.service';
 import {
   Environment,
   ImpressionType,
@@ -47,6 +48,7 @@ export class ReportsPage implements OnInit {
     private loading: LoadingController,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private headerService: AppHeaderService,
+    private commonUtilService: CommonUtilService,
     private route: ActivatedRoute,
     private router: Router,
     private location: Location,
@@ -64,9 +66,7 @@ export class ReportsPage implements OnInit {
       Environment.USER,
       PageId.REPORTS_USER_GROUP
     );
-    const loader = await this.loading.create({
-      spinner: 'crescent'
-    });
+    const loader = await this.commonUtilService.getLoader();
     await loader.present();
     let users, cUser, groups;
     this.populateUsers()
