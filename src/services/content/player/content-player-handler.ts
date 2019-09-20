@@ -8,6 +8,7 @@ import { TelemetryGeneratorService } from '@app/services/telemetry-generator.ser
 import { ContentInfo } from '../content-info';
 import { RouterLinks } from '@app/app/app.constant';
 import { Router } from '@angular/router';
+import { CommonUtilService } from '@app/services/common-util.service';
 
 
 @Injectable({
@@ -19,7 +20,8 @@ export class ContentPlayerHandler {
         private canvasPlayerService: CanvasPlayerService,
         private file: File,
         private telemetryGeneratorService: TelemetryGeneratorService,
-        private router: Router
+        private router: Router,
+        private commonUtilService: CommonUtilService
     ) { }
 
     /**
@@ -60,9 +62,10 @@ export class ContentPlayerHandler {
                 data.config.overlay.enableUserSwitcher = true;
             }
             if (data.metadata.mimeType === 'application/vnd.ekstep.ecml-archive') {
+                const filePath = this.commonUtilService.convertFileSrc(`${data.metadata.basePath}`);
                 if (!isStreaming) {
                     this.file.checkFile(`file://${data.metadata.basePath}/`, 'index.ecml').then((isAvailable) => {
-                        this.canvasPlayerService.xmlToJSon(`${data.metadata.basePath}/index.ecml`).then((json) => {
+                        this.canvasPlayerService.xmlToJSon(`${filePath}/index.ecml`).then((json) => {
                             data['data'] = json;
                             this.router.navigate([RouterLinks.PLAYER], { state: { config: data } });
 
@@ -71,7 +74,7 @@ export class ContentPlayerHandler {
                         });
                     }).catch((err) => {
                         console.error('err', err);
-                        this.canvasPlayerService.readJSON(`${data.metadata.basePath}/index.json`).then((json) => {
+                        this.canvasPlayerService.readJSON(`${filePath}/index.json`).then((json) => {
                             data['data'] = json;
                             this.router.navigate([RouterLinks.PLAYER], { state: { config: data } });
 

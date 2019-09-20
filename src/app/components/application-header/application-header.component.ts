@@ -1,6 +1,9 @@
 import { ChangeDetectorRef, Component, EventEmitter, Inject, Input, OnInit, Output, OnDestroy, NgZone } from '@angular/core';
 import { Events, MenuController, Platform } from '@ionic/angular';
-import { AppGlobalService, UtilityService, CommonUtilService, NotificationService } from '../../../services';
+import {
+  AppGlobalService, UtilityService, CommonUtilService, NotificationService, TelemetryGeneratorService,
+  InteractType, InteractSubtype, Environment, PageId, ActivePageService
+} from '../../../services';
 import { DownloadService, SharedPreferences, NotificationService as PushNotificationService, NotificationStatus } from 'sunbird-sdk';
 import { GenericAppConfig, PreferenceKey, RouterLinks } from '../../../app/app.constant';
 import { AppVersion } from '@ionic-native/app-version/ngx';
@@ -49,6 +52,8 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
     private platform: Platform,
     private router: Router,
     private ngZone: NgZone,
+    private telemetryGeneratorService: TelemetryGeneratorService,
+    private activePageService: ActivePageService
   ) {
     this.setLanguageValue();
     this.events.subscribe('onAfterLanguageChange:update', (res) => {
@@ -155,6 +160,15 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
 
   toggleMenu() {
     this.menuCtrl.toggle();
+    if (this.menuCtrl.isOpen()) {
+      const pageId = this.activePageService.computePageId(this.router.url);
+      this.telemetryGeneratorService.generateInteractTelemetry(
+        InteractType.TOUCH,
+        InteractSubtype.MENU_CLICKED,
+        Environment.HOME,
+        pageId, undefined
+      );
+    }
   }
 
   emitEvent($event, name) {

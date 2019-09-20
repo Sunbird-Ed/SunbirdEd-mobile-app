@@ -290,6 +290,7 @@ export enum InteractSubtype {
     OUTSIDE_POPUP_AREA_CLICKED = 'outside-popup-area-clicked',
     POPUP_DISMISSED= 'popup-dismissed',
     DOWNLOAD_CANCEL_ALL_CLICKED = 'download-cancel-all-clicked',
+    DOWNLOAD_CERTIFICATE_CLICKED = 'download-certificate-clicked',
     DOWNLOAD_CANCEL_CLICKED = 'download-cancel-clicked',
     RATE_LATER_CLICKED = 'rate-later-clicked',
     PLAY_STORE_BUTTON_CLICKED = 'play-store-button-clicked',
@@ -331,7 +332,8 @@ export enum InteractSubtype {
     SUBJECT_CLICKED = 'subject-clicked',
     SORT_BY_CLICKED = 'sort-by-clicked',
     SEARCH_INITIATED = 'search-initiated',
-    RECOVERY_ACCOUNT_ID_CLICKED = 'recovery-account-id-clicked'
+    RECOVERY_ACCOUNT_ID_CLICKED = 'recovery-account-id-clicked',
+    MENU_CLICKED = 'menu-clicked'
 }
 
 export enum ActionButtonType {

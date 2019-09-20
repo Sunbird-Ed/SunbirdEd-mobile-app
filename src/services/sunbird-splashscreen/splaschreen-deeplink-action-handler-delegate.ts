@@ -76,15 +76,15 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
     if (identifier) {
       switch (type) {
         case 'content': {
-          const loader = this.commonUtilService.getLoader();
-          loader.present();
+          // const loader = await this.commonUtilService.getLoader();
+          // await loader.present();
           return this.contentService.getContentDetails({
             contentId: identifier || this.identifier
-          }).catch(() => {
-            loader.dismiss();
+          }).catch(async () => {
+            // await loader.dismiss();
             return Observable.of(undefined);
           }).do(async (content: Content) => {
-            loader.dismiss();
+            // await loader.dismiss();
             if (content.contentType === ContentType.COURSE.toLowerCase()) {
               this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], { state: { content } });
             } else if (content.mimeType === MimeType.COLLECTION) {
@@ -113,7 +113,16 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
       .then(resp => {
         if (resp) {
           this.events.publish('return_course');
-          this.enrollIntoBatch(JSON.parse(resp));
+          this.authService.getSession().subscribe((session: OAuthSession) => {
+            if (!session) {
+                this.isGuestUser = true;
+            } else {
+                this.isGuestUser = false;
+                this.userId = session.userToken;
+            }
+            this.enrollIntoBatch(JSON.parse(resp));
+          }, () => {
+          });
           this.preferences.putString('batch_detail', '').toPromise();
         }
       });
@@ -124,7 +133,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
    *
    * @param batch contains details of select batch
    */
-  enrollIntoBatch(batch: Batch): void {
+  async enrollIntoBatch(batch: Batch) {
     if (!this.isGuestUser) {
       const enrollCourseRequest: EnrollCourseRequest = {
         batchId: batch.id,
@@ -132,8 +141,8 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
         userId: this.userId,
         batchStatus: batch.status
       };
-      const loader = this.commonUtilService.getLoader();
-      loader.present();
+      const loader = await this.commonUtilService.getLoader();
+      await loader.present();
       const reqvalues = new Map();
       reqvalues['enrollReq'] = enrollCourseRequest;
       this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
@@ -144,19 +153,19 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
 
       this.courseService.enrollCourse(enrollCourseRequest).toPromise()
         .then((data: boolean) => {
-          this.zone.run(() => {
+          this.zone.run(async () => {
+            await loader.dismiss();
             this.commonUtilService.showToast(this.commonUtilService.translateMessage('COURSE_ENROLLED'));
             this.events.publish(EventTopics.ENROL_COURSE_SUCCESS, {
               batchId: batch.id,
               courseId: batch.courseId
             });
             this.events.publish('coach_mark_seen', { showWalkthroughBackDrop: false, appName: this.appLabel });
-            loader.dismiss();
             this.getEnrolledCourses();
           });
         }, (error) => {
-          this.zone.run(() => {
-            loader.dismiss();
+          this.zone.run(async () => {
+            await loader.dismiss();
             if (error && error.code === 'NETWORK_ERROR') {
               this.commonUtilService.showToast(this.commonUtilService.translateMessage('ERROR_NO_INTERNET_MESSAGE'));
             } else if (error && error.response
@@ -164,7 +173,6 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
               this.commonUtilService.showToast(this.commonUtilService.translateMessage('ALREADY_ENROLLED_COURSE'));
               this.getEnrolledCourses();
             }
-            loader.dismiss();
           });
         });
     }
@@ -173,7 +181,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
   /**
    * Get logged-user id. User id is needed to enroll user into batch.
    */
-  getUserId(): void {
+  getUserId() {
     this.authService.getSession().subscribe((session: OAuthSession) => {
       if (!session) {
         this.zone.run(() => {
@@ -189,19 +197,19 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
     });
   }
 
-  navigateToCoursePage() {
-    const loader = this.commonUtilService.getLoader();
-    loader.present();
+  async navigateToCoursePage() {
+    const loader = await this.commonUtilService.getLoader();
+    await loader.present();
     this.preferences.getString('course_data').toPromise()
       .then(resp => {
         if (resp) {
-          setTimeout(() => {
+          setTimeout(async () => {
             this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], {
               state: {
                 content: JSON.parse(resp)
               }
             });
-            loader.dismiss();
+            await loader.dismiss();
             this.preferences.putString('course_data', '').toPromise();
           }, 2000);
         }

@@ -1,4 +1,4 @@
-@import "src/assets/styles/variables";
+@import "src/assets/styles/_variables";
 @import "src/assets/styles/_custom-mixins";
 @import "src/assets/styles/fonts";
 :host {
@@ -10,9 +10,21 @@
   ion-icon {
     @include rtl {
       float: left !important;
+      left: 15px !important;
     }
     @include ltr {
       float: right !important;
+      right: 15px !important;
+    }
+  }
+
+  ion-icon.arrow-icon{
+    @include rtl {
+      top: 33%;
+      transform: rotate(180deg);
+    }
+    @include ltr {
+      top: 50%;
     }
   }
 
@@ -44,9 +56,7 @@
   }
 
   .arrow-icon {
-    right: 15px;
     position: absolute;
-    top: 50%;
     transform: translateY(-50%);
     width: 22px;
   }

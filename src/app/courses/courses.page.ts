@@ -590,15 +590,21 @@ export class CoursesPage implements OnInit {
   }
 
   async showFilterPage(filterOptions) {
+    const backupFilter = this.appliedFilter ? JSON.parse(JSON.stringify(this.appliedFilter)) : this.appliedFilter;
     const popup = await this.popCtrl.create({
       component: PageFilterPage,
       componentProps: {
         callback: filterOptions.callback,
-        filter: filterOptions.filter
+        filter: filterOptions.filter,
+        pageId: PageId.COURSES
       },
       cssClass: 'resource-filter'
     });
     await popup.present();
+    const { data } = await popup.onDidDismiss();
+    if (!data || !data.apply) {
+      this.appliedFilter = backupFilter;
+    }
   }
 
   checkEmptySearchResult(isAfterLanguageChange = false) {
@@ -631,16 +637,27 @@ export class CoursesPage implements OnInit {
 
   getContentDetails(content) {
     const identifier = content.contentId || content.identifier;
-    this.corRelationList = [{id: content.batchId, type: CorReleationDataType.COURSE_BATCH}];
-    this.contentService.getContentDetails({ contentId: identifier }).toPromise()
+    this.corRelationList = [
+      {
+        id: content.batchId,
+        type: CorReleationDataType.COURSE_BATCH
+      }
+    ];
+    const request = {
+      contentId: identifier,
+      emitUpdateIfAny: false
+    };
+    this.contentService.getContentDetails(request).toPromise()
       .then((data: Content) => {
         if (data && data.isAvailableLocally) {
-          this.showOverlay = false;
-          this.navigateToContentDetailsPage(content);
+          if (data.contentData.pkgVersion < content.content.pkgVersion) {
+            this.contentDetailsImportCall(identifier);
+          } else {
+            this.showOverlay = false;
+            this.navigateToContentDetailsPage(content);
+          }
         } else {
-          this.subscribeSdkEvent();
-          this.showOverlay = true;
-          this.importContent([identifier], false);
+          this.contentDetailsImportCall(identifier);
         }
       })
       .catch((err) => {
@@ -650,6 +667,12 @@ export class CoursesPage implements OnInit {
           this.commonUtilService.showToast('ERROR_CONTENT_NOT_AVAILABLE');
         }
       });
+  }
+
+  contentDetailsImportCall(identifier) {
+    this.subscribeSdkEvent();
+    this.showOverlay = true;
+    this.importContent([identifier], false);
   }
 
   navigateToViewMoreContentsPage(showEnrolledCourses: boolean, searchQuery?: any, headerTitle?: string) {

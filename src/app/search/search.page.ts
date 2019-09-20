@@ -1,6 +1,6 @@
 import { Component, Inject, NgZone, OnDestroy, ViewChild, ChangeDetectorRef, OnInit, AfterViewInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { Events, Platform, PopoverController, IonContent } from '@ionic/angular';
+import { Events, Platform, PopoverController, IonContent, NavController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs/Subscription';
 import { Observable } from 'rxjs/Observable';
@@ -98,6 +98,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
   mediumList: Array<any> = [];
   gradeList: Array<any> = [];
   isProfileUpdated: boolean;
+  isQrCodeLinkToContent: any;
   @ViewChild('contentView') contentView: IonContent;
   constructor(
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
@@ -123,7 +124,8 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
     private headerService: AppHeaderService,
     private popoverCtrl: PopoverController,
     private location: Location,
-    private router: Router
+    private router: Router,
+    private navCtrl: NavController
   ) {
 
     const extras = this.router.getCurrentNavigation().extras.state;
@@ -298,6 +300,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
 
   openContent(collection, content, index) {
     this.parentContent = collection;
+    this.isQrCodeLinkToContent = index;
     this.generateInteractEvent(content.identifier, content.contentType, content.pkgVersion, index);
     if (collection !== undefined) {
       this.parentContent = collection;
@@ -320,7 +323,8 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
         parentContent: this.parentContent,
         isSingleContent: this.isSingleContent,
         onboarding: this.appGlobalService.isOnBoardingCompleted,
-        isProfileUpdated: this.isProfileUpdated
+        isProfileUpdated: this.isProfileUpdated,
+        isQrCodeLinkToContent: this.isQrCodeLinkToContent
       };
     } else {
       params = {
@@ -329,7 +333,8 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
         parentContent: this.parentContent,
         isSingleContent: this.isSingleContent,
         onboarding: this.appGlobalService.isOnBoardingCompleted,
-        isProfileUpdated: this.isProfileUpdated
+        isProfileUpdated: this.isProfileUpdated,
+        isQrCodeLinkToContent: this.isQrCodeLinkToContent
       };
     }
     if (this.loader) {
@@ -354,7 +359,8 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
           corRelation: params.corRelation,
           isSingleContent: params.isSingleContent,
           onboarding: params.onboarding,
-          parentContent: params.parentContent
+          parentContent: params.parentContent,
+          isQrCodeLinkToContent: params.isQrCodeLinkToContent
         }
       });
       if (this.isSingleContent) {
@@ -367,13 +373,15 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
       if (this.isDialCodeSearch && !isRootContent) {
         params.isCreateNavigationStack = true;
 
-        this.router.navigate([RouterLinks.QRCODERESULT], {
+        this.navCtrl.navigateForward([RouterLinks.QRCODERESULT], {
           state: {
             content: params.content,
             corRelation: params.corRelation,
             isSingleContent: params.isSingleContent,
             onboarding: params.onboarding,
-            parentContent: params.parentContent
+            parentContent: params.parentContent,
+            isProfileUpdated: params.isProfileUpdated,
+            isQrCodeLinkToContent: params.isQrCodeLinkToContent
           }
         });
         if (this.isSingleContent) {
@@ -1512,6 +1520,8 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
   }
 
   goBack() {
-    this.location.back();
+    this.telemetryGeneratorService.generateBackClickedTelemetry(ImpressionType.SEARCH,
+          Environment.HOME, true, undefined, this.corRelationList);
+    this.navCtrl.pop();
   }
 }

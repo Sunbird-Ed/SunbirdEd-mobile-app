@@ -7,6 +7,7 @@ export class ContentType {
     public static readonly TEXTBOOK = 'TextBook';
     public static readonly LESSON_PLAN = 'LessonPlan';
     public static readonly COURSE = 'Course';
+    public static readonly CERTIFICATE = 'Certificate';
     public static readonly TEXTBOOK_UNIT = 'TextBookUnit';
     public static readonly LESSON_PLAN_UNIT = 'LessonPlanUnit';
     public static readonly COURSE_UNIT = 'CourseUnit';
@@ -63,6 +64,7 @@ export class MimeType {
     public static readonly INTERACTION = ['application/vnd.ekstep.ecml-archive', 'application/vnd.ekstep.html-archive',
         'application/vnd.android.package-archive', 'application/vnd.ekstep.content-archive',
         'application/vnd.ekstep.plugin-archive', 'application/vnd.ekstep.h5p-archive'];
+    public static readonly DOCS =  ['application/pdf', 'application/epub', 'application/msword'];
     public static readonly ALL = ['video/mp4', 'video/x-youtube', 'video/webm', 'application/pdf', 'application/epub',
         'application/pdf', 'application/epub', 'application/vnd.ekstep.ecml-archive', 'application/vnd.ekstep.h5p-archive',
         'application/vnd.ekstep.html-archive'
@@ -159,6 +161,7 @@ export class EventTopics {
     public static readonly COURSE_STATUS_UPDATED_SUCCESSFULLY = 'COURSE_STATUS_UPDATED_SUCCESSFULLY';
     public static readonly REFRESH_ENROLL_COURSE_LIST = 'REFRESH_ENROLL_COURSE_LIST';
     public static readonly PLAYER_CLOSED = 'PLAYER_CLOSED';
+    public static readonly SIGN_IN_RELOAD = 'SIGN_IN_RELOAD';
 }
 
 export class ShareUrl {

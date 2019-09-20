@@ -126,7 +126,8 @@ export class CommonUtilService implements OnDestroy {
     getLoader(): any {
         return this.loadingCtrl.create({
             duration: 30000,
-            spinner: 'crescent'
+            spinner: 'crescent',
+            cssClass: 'custom-loader-class'
         });
     }
 

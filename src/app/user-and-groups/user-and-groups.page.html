@@ -1,13 +1,13 @@
 <ion-header>
   <ion-toolbar color="white">
     <ion-buttons class="sb-hamburger" slot="start">
-      <ion-button icon-only (click)="goBack()">
+      <ion-button  class="f18 color" icon-only (click)="goBack()">
         <ion-icon name="arrow-back"></ion-icon>
       </ion-button>
     </ion-buttons>
-    <ion-title>{{'USERS_AND_GROUPS' | translate}}</ion-title>
+    <ion-title class="color f16">{{'USERS_AND_GROUPS' | translate}}</ion-title>
     <ion-buttons slot="primary">
-      <ion-button *ngIf="!playConfig" (click)="goToSharePage()" icon-only>
+      <ion-button class="color f18" *ngIf="!playConfig" (click)="goToSharePage()" icon-only>
         <ion-icon name="share" float-end></ion-icon>
       </ion-button>
     </ion-buttons>

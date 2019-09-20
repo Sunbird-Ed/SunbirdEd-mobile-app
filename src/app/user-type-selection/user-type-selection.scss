@@ -6,6 +6,8 @@
     border-style: solid;
     border-width: 2px;
     border-radius: 6px !important;
+    margin-inline-start: unset !important;
+    margin-inline-end: unset !important;
   }
 
   .description {
@@ -44,7 +46,6 @@
     @include ltr {
       float: right !important;
     }
-
     @include rtl {
       float: left !important;
     }
@@ -52,11 +53,12 @@
 
   .arrow-icon {
     right: 15px;
-    position: absolute;
+    //position: absolute;
     top: 50%;
-    transform: translateY(-50%);
+    //transform: translateY(-50%);
     width: 22px;
   }
+
 
   .gray-color {
     color: map-get($colors, primary_black);

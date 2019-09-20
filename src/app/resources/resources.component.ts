@@ -49,6 +49,7 @@ import { CommonUtilService } from '@app/services/common-util.service';
 import { FormAndFrameworkUtilService } from '@app/services/formandframeworkutil.service';
 import { Environment, InteractSubtype, InteractType, PageId, ImpressionType, ImpressionSubtype } from '@app/services/telemetry-constants';
 import { AppHeaderService } from '@app/services/app-header.service';
+import { SplaschreenDeeplinkActionHandlerDelegate } from '@app/services/sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
 
 @Component({
   selector: 'app-resources',
@@ -156,6 +157,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
     @Inject('FRAMEWORK_UTIL_SERVICE') private frameworkUtilService: FrameworkUtilService,
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
+    private splaschreenDeeplinkActionHandlerDelegate: SplaschreenDeeplinkActionHandlerDelegate,
     private ngZone: NgZone,
     private qrScanner: SunbirdQRScanner,
     private events: Events,
@@ -237,9 +239,10 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
     });
   }
 
-  ngOnInit() {
+  async ngOnInit() {
     this.getCurrentUser();
     this.appGlobalService.generateConfigInteractEvent(PageId.LIBRARY, this.isOnBoardingCardCompleted);
+    await this.splaschreenDeeplinkActionHandlerDelegate.onAction('content').toPromise();
   }
 
   generateNetworkType() {
@@ -1053,7 +1056,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
   exploreOtherContents() {
     const navigationExtras = {
       state: {
-        subjects: this.subjects,
+        subjects: [...this.subjects],
         categoryGradeLevels: this.categoryGradeLevels,
         storyAndWorksheets: this.storyAndWorksheets,
         contentType: ContentType.FOR_LIBRARY_TAB,
