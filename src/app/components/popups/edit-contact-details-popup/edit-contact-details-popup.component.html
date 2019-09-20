@@ -1,10 +1,11 @@
 <ion-content class="P0">
-
+  <div class="ecd-header ion-text-center">
+    <h6 class="M0">{{title}}</h6>
+  </div>
   <ion-grid class="P0">
     <form [formGroup]="personEditForm">
       <ion-row class="P16">
         <ion-col size="12" no-padding class="text-center">
-          <p>{{title}}</p>
           <p class="font-weight-bold f14">{{description}}</p>
         </ion-col>
         <section *ngIf="type==='phone'" class="W100 text-center MT3V">
