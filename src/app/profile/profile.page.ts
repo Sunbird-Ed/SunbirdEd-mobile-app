@@ -67,6 +67,7 @@ export class ProfilePage implements OnInit {
   startLimit = 0;
   custodianOrgId: string;
   isCustodianOrgId: boolean;
+  isStateValidated: boolean;
   organisationDetails = '';
   contentCreatedByMe: any = [];
   orgDetails: {
@@ -240,6 +241,7 @@ export class ProfilePage implements OnInit {
                     that.getOrgDetails();
                     that.formatUserLocation();
                     that.isCustodianOrgId = (that.profile.rootOrg.rootOrgId === this.custodianOrgId);
+                    that.isStateValidated = that.profile.stateValidated;
                     resolve();
                   });
               });
