@@ -620,7 +620,6 @@ export class EnrolledCourseDetailsPage implements OnInit {
     if (data.contentData) {
       await loader.present();
       this.course = data.contentData;
-      console.log('this.course extractApiResponse', this.course);
       this.content = data;
       this.objId = this.course.identifier;
       this.objType = this.course.contentType;
@@ -1067,7 +1066,6 @@ export class EnrolledCourseDetailsPage implements OnInit {
       };
       this.contentService.getContentDetails(option).toPromise()
         .then((data: Content) => {
-          console.log('data is here', data);
           this.lastReadContentName = data.contentData.name;
         }).catch(() => {
 
@@ -1085,8 +1083,8 @@ export class EnrolledCourseDetailsPage implements OnInit {
   async setChildContents() {
     console.log('in setChildContents');
     this.showChildrenLoader = true;
-    const loader = await this.commonUtilService.getLoader();
-    await loader.present();
+    // const loader = await this.commonUtilService.getLoader();
+    // await loader.present();
     const option: ChildContentRequest = {
       contentId: this.identifier,
       hierarchyInfo: null,
@@ -1095,7 +1093,7 @@ export class EnrolledCourseDetailsPage implements OnInit {
     this.contentService.getChildContents(option).toPromise()
       .then((data: Content) => {
         this.zone.run(async () => {
-          await loader.dismiss();
+          // await loader.dismiss();
           if (data && data.children) {
             console.log('if data.children');
             setTimeout(() => {
@@ -1116,11 +1114,12 @@ export class EnrolledCourseDetailsPage implements OnInit {
             this.getContentsSize(this.childrenData);
           }
           this.showChildrenLoader = false;
+          // await loader.dismiss();
         });
       }).catch(() => {
         this.zone.run(async () => {
           this.showChildrenLoader = false;
-          await loader.dismiss();
+          // await loader.dismiss();
         });
       });
   }
@@ -1203,7 +1202,6 @@ export class EnrolledCourseDetailsPage implements OnInit {
   }
 
   getContentsSize(data?) {
-    console.log('in getContentsSize', data);
     // this.downloadIdentifiers = [];
     if (data) {
       data.forEach((value) => {
