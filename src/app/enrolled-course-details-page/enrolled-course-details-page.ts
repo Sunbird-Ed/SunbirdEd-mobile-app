@@ -248,7 +248,6 @@ export class EnrolledCourseDetailsPage implements OnInit {
     const extrasState = this.router.getCurrentNavigation().extras.state;
     if (extrasState) {
       this.courseCardData = extrasState.content;
-      console.log('this.courseCardData', this.courseCardData);
       this.identifier = this.courseCardData.contentId || this.courseCardData.identifier;
       this.corRelationList = extrasState.corRelation;
       this.source = extrasState.source;
@@ -384,7 +383,6 @@ export class EnrolledCourseDetailsPage implements OnInit {
       });
 
     this.events.subscribe(EventTopics.ENROL_COURSE_SUCCESS, (res) => {
-      console.log('ENROL_COURSE_SUCCESS res', res);
       if (res && res.batchId) {
         this.batchId = res.batchId;
         if (this.identifier && res.courseId && this.identifier === res.courseId) {
@@ -405,7 +403,6 @@ export class EnrolledCourseDetailsPage implements OnInit {
     });
 
     this.events.subscribe('courseToc:content-clicked', (data) => {
-      console.log('courseToc:content-clicked');
       this.joinTraining();
     });
 
@@ -620,7 +617,6 @@ export class EnrolledCourseDetailsPage implements OnInit {
     if (data.contentData) {
       await loader.present();
       this.course = data.contentData;
-      console.log('this.course extractApiResponse', this.course);
       this.content = data;
       this.objId = this.course.identifier;
       this.objType = this.course.contentType;
@@ -699,7 +695,6 @@ export class EnrolledCourseDetailsPage implements OnInit {
         this.zone.run(() => {
           if (data) {
             this.batchDetails = data;
-            console.log('this.batchdetails', this.batchDetails);
             this.saveContentContext(this.appGlobalService.getUserId(),
               this.batchDetails.courseId, this.courseCardData.batchId, this.batchDetails.status);
             this.preferences.getString(PreferenceKey.COURSE_IDENTIFIER).toPromise()
@@ -1027,7 +1022,6 @@ export class EnrolledCourseDetailsPage implements OnInit {
     };
     this.courseService.getCourseBatches(courseBatchesRequest).toPromise()
     .then((data: Batch[]) => {
-      console.log('all batches', data);
       this.batchCount = data.length;
       if (data.length > 1) {
         // this.batchCount = data.length;
@@ -1067,7 +1061,6 @@ export class EnrolledCourseDetailsPage implements OnInit {
       };
       this.contentService.getContentDetails(option).toPromise()
         .then((data: Content) => {
-          console.log('data is here', data);
           this.lastReadContentName = data.contentData.name;
         }).catch(() => {
 
@@ -1083,10 +1076,7 @@ export class EnrolledCourseDetailsPage implements OnInit {
    * Function to set child contents
    */
   async setChildContents() {
-    console.log('in setChildContents');
     this.showChildrenLoader = true;
-    const loader = await this.commonUtilService.getLoader();
-    await loader.present();
     const option: ChildContentRequest = {
       contentId: this.identifier,
       hierarchyInfo: null,
@@ -1095,9 +1085,8 @@ export class EnrolledCourseDetailsPage implements OnInit {
     this.contentService.getChildContents(option).toPromise()
       .then((data: Content) => {
         this.zone.run(async () => {
-          await loader.dismiss();
+          // await loader.dismiss();
           if (data && data.children) {
-            console.log('if data.children');
             setTimeout(() => {
               if (this.stickyPillsRef) {
                 this.stickyPillsRef.nativeElement.classList.add('sticky');
@@ -1120,7 +1109,6 @@ export class EnrolledCourseDetailsPage implements OnInit {
       }).catch(() => {
         this.zone.run(async () => {
           this.showChildrenLoader = false;
-          await loader.dismiss();
         });
       });
   }
@@ -1203,7 +1191,6 @@ export class EnrolledCourseDetailsPage implements OnInit {
   }
 
   getContentsSize(data?) {
-    console.log('in getContentsSize', data);
     // this.downloadIdentifiers = [];
     if (data) {
       data.forEach((value) => {
@@ -1217,7 +1204,6 @@ export class EnrolledCourseDetailsPage implements OnInit {
           this.downloadIdentifiers.push(value.contentData.identifier);
         }
       });
-      console.log('this.downloadIdentifiers', this.downloadIdentifiers);
     }
   }
 
@@ -1387,7 +1373,6 @@ export class EnrolledCourseDetailsPage implements OnInit {
         this.zone.run(() => {
           // Show download percentage
           if (event.type === DownloadEventType.PROGRESS) {
-            console.log('download prog' , event);
 
             const downloadEvent = event as DownloadProgress;
             if (downloadEvent.payload.identifier === this.identifier) {
@@ -1404,8 +1389,6 @@ export class EnrolledCourseDetailsPage implements OnInit {
           // Get child content
           if (event.payload && event.type === ContentEventType.IMPORT_COMPLETED) {
             this.showLoading = false;
-            console.log('import complete' , event);
-
             this.headerService.showHeaderWithBackButton();
             const contentImportCompleted = event as ContentImportCompleted;
             if (this.queuedIdentifiers.length && this.isDownloadStarted) {
@@ -1427,7 +1410,6 @@ export class EnrolledCourseDetailsPage implements OnInit {
           }
 
           if (event.type === ContentEventType.IMPORT_PROGRESS) {
-            console.log('import prog' , event);
             this.importProgressMessage = this.commonUtilService.translateMessage('EXTRACTING_CONTENT') + ' ' +
               Math.floor((event.payload.currentCount / event.payload.totalCount) * 100) +
               '% (' + event.payload.currentCount + ' / ' + event.payload.totalCount + ')';
@@ -1544,7 +1526,6 @@ export class EnrolledCourseDetailsPage implements OnInit {
         })
         .catch(async (error: any) => {
           await loader.dismiss();
-          console.log('Error while fetching Batch Details', error);
         });
     } else {
       this.commonUtilService.showToast('ERROR_NO_INTERNET_MESSAGE');
@@ -1659,7 +1640,6 @@ export class EnrolledCourseDetailsPage implements OnInit {
   }
 
   getContentState(returnRefresh: boolean) {
-    console.log('in getContentState', returnRefresh);
     if (this.courseCardData.batchId) {
       const request: GetContentStateRequest = {
         userId: this.appGlobalService.getUserId(),
@@ -1669,7 +1649,6 @@ export class EnrolledCourseDetailsPage implements OnInit {
       };
       this.courseService.getContentState(request).toPromise()
         .then((success: ContentStateResponse) => {
-          console.log('this.contentStatusData', success);
           this.contentStatusData = success;
 
           if (this.contentStatusData && this.contentStatusData.contentList) {
