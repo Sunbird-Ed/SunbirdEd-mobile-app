@@ -1083,8 +1083,6 @@ export class EnrolledCourseDetailsPage implements OnInit {
   async setChildContents() {
     console.log('in setChildContents');
     this.showChildrenLoader = true;
-    // const loader = await this.commonUtilService.getLoader();
-    // await loader.present();
     const option: ChildContentRequest = {
       contentId: this.identifier,
       hierarchyInfo: null,
@@ -1114,12 +1112,10 @@ export class EnrolledCourseDetailsPage implements OnInit {
             this.getContentsSize(this.childrenData);
           }
           this.showChildrenLoader = false;
-          // await loader.dismiss();
         });
       }).catch(() => {
         this.zone.run(async () => {
           this.showChildrenLoader = false;
-          // await loader.dismiss();
         });
       });
   }
