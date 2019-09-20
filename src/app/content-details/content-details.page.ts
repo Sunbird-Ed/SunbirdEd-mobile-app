@@ -31,7 +31,8 @@ import {
   Rollup,
   SharedPreferences,
   StorageService,
-  TelemetryObject
+  TelemetryObject,
+  Course
 } from 'sunbird-sdk';
 
 import { Map } from '@app/app/telemetryutil';
@@ -140,6 +141,7 @@ export class ContentDetailsPage implements OnInit {
   contentDeleteObservable: any;
   isSingleContent: boolean;
   resultLength: any;
+  course:Course;
 
   // Newly Added 
   resumedCourseCardData: any;
@@ -185,6 +187,7 @@ export class ContentDetailsPage implements OnInit {
 
     const extras = this.router.getCurrentNavigation().extras.state;
     if (extras) {
+      this.course = extras.updatedCourseCardData;
       this.cardData = extras.content;
       this.isChildContent = extras.isChildContent;
       this.cardData.depth = extras.depth === undefined ? '' : extras.depth;
@@ -929,7 +932,8 @@ export class ContentDetailsPage implements OnInit {
         telemetryObject: this.telemetryObject,
         rollUp: this.objRollup,
         correlationList: this.corRelationList,
-        hierachyInfo
+        hierachyInfo,
+        course: this.course
       };
       if (this.isResumedCourse) {
         this.playingContent.hierarchyInfo = hierachyInfo;

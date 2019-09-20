@@ -1157,7 +1157,8 @@ export class EnrolledCourseDetailsPage implements OnInit {
             contentState,
             isChildContent: true,
             corRelation: this.corRelationList,
-            isCourse: true
+            isCourse: true,
+            course: this.updatedCourseCardData
           }
         });
       }
