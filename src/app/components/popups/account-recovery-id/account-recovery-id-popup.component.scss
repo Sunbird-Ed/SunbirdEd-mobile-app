@@ -1,0 +1,45 @@
+@import "src/assets/styles/variables";
+@import "src/assets/styles/_custom-mixins.scss";
+
+.merged-input-container {
+    border: 1px solid #4a90e2;
+    display: flex;
+    flex: 1 1 auto;
+    border-radius: 4px;
+    .decorator {
+        display: inline-block;
+        max-width: 50px;
+    }
+    .custom {
+        display: inline-block;
+    }
+}
+
+.ar-submit-btn {
+    padding: 12px 15%;
+}
+
+.ar-btn-dissable-color {
+    background-color: map-get($colors, dark_gray);
+    color: map-get($colors, white);
+}
+
+.ar-btn-enable-color {
+    background-color: map-get($colors, primary);
+    color: map-get($colors, white);
+}
+
+.ar-header {
+    background-color: map-get($colors, primary);
+    color: map-get($colors, white);
+    padding: 16px 0;
+}
+
+.recovery-desc{
+    @include padding(null, 16px, null, null);
+    font-size: 16px;
+}
+
+.custom-shadow {
+    box-shadow: 0 -5px 5px -5px rgba(0, 0, 0, 0.2);
+}

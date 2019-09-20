@@ -8,7 +8,7 @@ import { Component, Input, OnInit } from '@angular/core';
 })
 export class ViewAllCardComponent implements OnInit {
   text: string;
-  defaultImg: string;
+  defaultImg = this.commonUtilService.convertFileSrc('assets/imgs/ic_launcher.png');
   @Input() content: any;
   @Input() type: any;
   @Input() sectionName: any;
@@ -16,10 +16,8 @@ export class ViewAllCardComponent implements OnInit {
 
   constructor(
     public commonUtilService: CommonUtilService
-  ) {
-    this.defaultImg = 'assets/imgs/ic_launcher.png';
-  }
+  ) { }
 
-  ngOnInit() {}
+  ngOnInit() { }
 
 }

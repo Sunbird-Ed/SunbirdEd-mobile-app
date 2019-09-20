@@ -8,6 +8,7 @@ import { TelemetryGeneratorService } from '@app/services/telemetry-generator.ser
 import { ContentInfo } from '../content-info';
 import { RouterLinks } from '@app/app/app.constant';
 import { Router } from '@angular/router';
+import { CommonUtilService } from '@app/services/common-util.service';
 
 
 @Injectable({
@@ -19,13 +20,15 @@ export class ContentPlayerHandler {
         private canvasPlayerService: CanvasPlayerService,
         private file: File,
         private telemetryGeneratorService: TelemetryGeneratorService,
-        private router: Router
+        private router: Router,
+        private commonUtilService: CommonUtilService
     ) { }
 
     /**
      * Launches Content-Player with given configuration
      */
-    public launchContentPlayer(content: Content, isStreaming: boolean, shouldDownloadnPlay: boolean, contentInfo: ContentInfo) {
+    public launchContentPlayer(
+        content: Content, isStreaming: boolean, shouldDownloadnPlay: boolean, contentInfo: ContentInfo, isCourse: boolean) {
         if (!AppGlobalService.isPlayerLaunched) {
             AppGlobalService.isPlayerLaunched = true;
         }
@@ -52,13 +55,18 @@ export class ContentPlayerHandler {
         request['correlationData'] = contentInfo.correlationList;
         this.playerService.getPlayerConfig(content, request).subscribe((data) => {
             data['data'] = {};
+            if (isCourse) {
+                data.config.overlay.enableUserSwitcher = false;
+                data.config.overlay.showUser = false;
+            } else {
+                data.config.overlay.enableUserSwitcher = true;
+            }
             if (data.metadata.mimeType === 'application/vnd.ekstep.ecml-archive') {
+                const filePath = this.commonUtilService.convertFileSrc(`${data.metadata.basePath}`);
                 if (!isStreaming) {
                     this.file.checkFile(`file://${data.metadata.basePath}/`, 'index.ecml').then((isAvailable) => {
-                        this.canvasPlayerService.xmlToJSon(`${data.metadata.basePath}/index.ecml`).then((json) => {
+                        this.canvasPlayerService.xmlToJSon(`${filePath}/index.ecml`).then((json) => {
                             data['data'] = json;
-                            // Migration Todo
-                            // this.app.getActiveNavs()[0].push(PlayerPage, { config: data });
                             this.router.navigate([RouterLinks.PLAYER], { state: { config: data } });
 
                         }).catch((error) => {
@@ -66,9 +74,8 @@ export class ContentPlayerHandler {
                         });
                     }).catch((err) => {
                         console.error('err', err);
-                        this.canvasPlayerService.readJSON(`${data.metadata.basePath}/index.json`).then((json) => {
+                        this.canvasPlayerService.readJSON(`${filePath}/index.json`).then((json) => {
                             data['data'] = json;
-                            //this.app.getActiveNavs()[0].push(PlayerPage, { config: data });
                             this.router.navigate([RouterLinks.PLAYER], { state: { config: data } });
 
                         }).catch((e) => {
@@ -76,12 +83,10 @@ export class ContentPlayerHandler {
                         });
                     });
                 } else {
-                    // this.app.getActiveNavs()[0].push(PlayerPage, { config: data });
                     this.router.navigate([RouterLinks.PLAYER], { state: { config: data } });
                 }
 
             } else {
-                // this.app.getActiveNavs()[0].push(PlayerPage, { config: data });
                 this.router.navigate([RouterLinks.PLAYER], { state: { config: data } });
             }
         });

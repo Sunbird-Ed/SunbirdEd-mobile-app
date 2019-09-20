@@ -1,8 +1,9 @@
-import { Component, NgZone, OnDestroy, OnInit } from '@angular/core';
+import { Component, NgZone, OnDestroy } from '@angular/core';
 import { Platform, NavParams, PopoverController } from '@ionic/angular';
 import { CorrelationData, Rollup } from 'sunbird-sdk';
 import { Observable } from 'rxjs/Observable';
 import { Subscription } from 'rxjs/Subscription';
+import { CommonUtilService } from '@app/services/common-util.service';
 
 @Component({
   selector: 'sb-popover',
@@ -32,12 +33,13 @@ export class SbPopoverComponent implements OnDestroy {
   private sbPopoverDynamicMainTitleSubscription?: Subscription;
   private sbPopoverDynamicContent$?: Observable<string>;
   private sbPopoverDynamicContentSubscription?: Subscription;
-
+  private sbPopoverDynamicButtonDisabledSubscription?: Subscription;
   constructor(
     public navParams: NavParams,
     private platform: Platform,
     private ngZone: NgZone,
-    private popoverCtrl: PopoverController
+    private popoverCtrl: PopoverController,
+    private commonUtilService: CommonUtilService
   ) {
     this.content = this.navParams.get('content');
     this.actionsButtons = this.navParams.get('actionsButtons');
@@ -83,12 +85,22 @@ export class SbPopoverComponent implements OnDestroy {
         })
         .subscribe();
     }
+    for (const actionsButton of this.actionsButtons) {
+      if (actionsButton.btnDisabled$) {
+        this.sbPopoverDynamicButtonDisabledSubscription = actionsButton.btnDisabled$
+          .do((v) => {
+            // this.ngZone.run(() => {
+            actionsButton.btnDisabled = v;
+            // });
+          })
+          .subscribe();
+      }
+    }
 
     this.contentId = (this.content && this.content.identifier) ? this.content.identifier : '';
   }
 
   ionViewWillEnter() {
-    console.log("sdsdsd");
     this.backButtonFunc = this.platform.backButton.subscribeWithPriority(11, () => {
       this.popoverCtrl.dismiss();
       this.backButtonFunc.unsubscribe();
@@ -103,6 +115,9 @@ export class SbPopoverComponent implements OnDestroy {
     if (this.sbPopoverDynamicContentSubscription) {
       this.sbPopoverDynamicContentSubscription.unsubscribe();
     }
+    if (this.sbPopoverDynamicButtonDisabledSubscription) {
+      this.sbPopoverDynamicButtonDisabledSubscription.unsubscribe();
+    }
 
     if (this.backButtonFunc) {
       this.backButtonFunc.unsubscribe();
@@ -113,10 +128,10 @@ export class SbPopoverComponent implements OnDestroy {
     this.popoverCtrl.dismiss();
   }
 
-  async deleteContent(canDelete: boolean = false, whichbtnClicked?) {
-    await this.popoverCtrl.dismiss(canDelete);
+  async deleteContent(canDelete: boolean = false, clickedButtonText?) {
+    this.popoverCtrl.dismiss({ canDelete });
     if (this.navParams.get('handler')) {
-      this.navParams.get('handler')(whichbtnClicked);
+      this.navParams.get('handler')(clickedButtonText);
     }
   }
 }

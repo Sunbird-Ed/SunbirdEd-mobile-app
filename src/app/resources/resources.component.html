@@ -83,12 +83,34 @@
           <!-- Card style -->
           <div class="sb-card-container sb-card-textbook-container">
             <div class="sb-card-textbook" *ngFor="let item of items?.contents | slice:0:3 ; let i = index">
-              <app-text-book-card  [content]="item" [layoutName]='layoutName'
+              <app-text-book-card [content]="item" [layoutName]='layoutName'
                 (click)="navigateToDetailPage(item, i, item.name)"></app-text-book-card>
             </div>
             <div class="sb-view-more" *ngIf="items?.contents?.length > 3"
               (click)="navigateToTextbookPage(items?.contents, items.name)">{{'VIEW_MORE' | translate}}</div>
           </div>
+        </div>
+      </div>
+    </div>
+    <div class="sb-explore-container" *ngIf="storyAndWorksheets && storyAndWorksheets.length !== 0">
+      <div class="text-center" *ngIf="commonUtilService?.networkInfo?.isNetworkAvailable">
+        <p class="information">{{'MORE_CONTENT' | translate:{'%s': appLabel} }}</p>
+        <ion-button class="explore" style="background-color: #F3F7FA;" outline (click)="exploreOtherContents()">
+          {{'DATA' | translate}} </ion-button>
+      </div>
+    </div>
+    <div *ngIf="!searchApiLoader && storyAndWorksheets && storyAndWorksheets.length === 0">
+      <div class="sb-nodownloads-container" *ngIf="commonUtilService?.networkInfo?.isNetworkAvailable">
+        <div class="text-center">
+          <img style="width: 19.58%; height: 7.72%;" src="./assets/imgs/group.svg" alt="">
+        </div>
+        <div class="text-center">
+          <p class="sb-nodownloads-title">
+            <b>{{'NO_BOOKS_AVAILABLE' | translate}}</b>
+          </p>
+          <p class="sub-heading">{{'NO_BOOKS_DEFINITION' | translate:{'%s': appLabel} }}</p>
+          <ion-button class="explore" style="background-color: #024F9D;" (click)="exploreOtherContents()">
+            {{'DATA' | translate}} </ion-button>
         </div>
       </div>
     </div>

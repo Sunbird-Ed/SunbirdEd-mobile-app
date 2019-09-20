@@ -1,5 +1,6 @@
 @import "src/assets/styles/_custom-mixins.scss";
 @import "src/assets/styles/_variables.scss";
+@import "src/assets/styles/fonts.scss";
 
 :host {
   .scroll-content {
@@ -91,6 +92,10 @@
   .icon.ion-md-information-circle {
     vertical-align: text-bottom;
   }
+  ion-title.color,ion-button.color {
+    color:#024f9d;
+    font-weight:bold;
+  }
 }
 
 .gd-mb-16{
@@ -107,7 +112,5 @@
 }
 
 .gd-row-padding {
-  // Migration TODO RTL
-  // @include padding(12px, 16px, 16px, 18px !important);
-  padding: 12px 16px 16px 18px !important;
+  @include padding(12px, 16px, 16px, 18px !important);
 }

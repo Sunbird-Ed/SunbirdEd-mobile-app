@@ -9,13 +9,13 @@ import { tap } from 'rxjs/operators';
 import { Network } from '@ionic-native/network/ngx';
 
 import {
-  AuthService, ErrorEventType, EventNamespace, EventsBusService, ProfileService, SharedPreferences,
+  ErrorEventType, EventNamespace, EventsBusService, SharedPreferences,
   SunbirdSdk, TelemetryAutoSyncUtil, TelemetryService, NotificationService
 } from 'sunbird-sdk';
 
 import { InteractType, InteractSubtype, Environment, PageId, ImpressionType } from 'services/telemetry-constants';
-import { GenericAppConfig, PreferenceKey } from './app.constant';
-import { ActivePageService } from '@app/services/active-page-service';
+import { PreferenceKey, EventTopics } from './app.constant';
+import { ActivePageService } from '@app/services/active-page/active-page-service';
 import {
   AppGlobalService,
   CommonUtilService,
@@ -28,9 +28,10 @@ import {
 import { SplaschreenDeeplinkActionHandlerDelegate } from '@app/services/sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
 import { SplashcreenTelemetryActionHandlerDelegate } from '@app/services/sunbird-splashscreen/splashcreen-telemetry-action-handler-delegate';
 import { SplashscreenImportActionHandlerDelegate } from '@app/services/sunbird-splashscreen/splashscreen-import-action-handler-delegate';
-import { LogoutHandlerService, TncUpdateHandlerService } from '@app/services';
+import { LogoutHandlerService } from '@app/services/logout-handler.service';
 import { NotificationService as localNotification } from '@app/services/notification.service';
 import { RouterLinks } from './app.constant';
+import { TncUpdateHandlerService } from '@app/services/handlers/tnc-update-handler.service';
 
 @Component({
   selector: 'app-root',
@@ -53,17 +54,14 @@ export class AppComponent implements OnInit, AfterViewInit {
   public showWalkthroughBackDrop = false;
 
   private telemetryAutoSyncUtil: TelemetryAutoSyncUtil;
-
+  toggleRouterOutlet = true;
   profile: any = {};
   selectedLanguage: string;
   appName: string;
   @ViewChild('mainContent', { read: IonRouterOutlet }) routerOutlet: IonRouterOutlet;
 
   constructor(
-    // private splashScreen: SplashScreen,
-    @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     @Inject('TELEMETRY_SERVICE') private telemetryService: TelemetryService,
-    @Inject('AUTH_SERVICE') private authService: AuthService,
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
     @Inject('EVENTS_BUS_SERVICE') private eventsBusService: EventsBusService,
     @Inject('NOTIFICATION_SERVICE') private notificationServices: NotificationService,
@@ -93,7 +91,6 @@ export class AppComponent implements OnInit, AfterViewInit {
   ) {
     this.telemetryAutoSyncUtil = new TelemetryAutoSyncUtil(this.telemetryService);
     platform.ready().then(async () => {
-      console.log("Inside platform ready");
       this.fcmTokenWatcher(); // Notification related
       this.receiveNotification();
       this.telemetryGeneratorService.genererateAppStartTelemetry(await utilityService.getDeviceSpec());
@@ -105,7 +102,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.saveDefaultSyncSetting();
       this.checkAppUpdateAvailable();
       this.makeEntryInSupportFolder();
-      this.checkForTncUpdate();
+      this.reloadSigninEvents();
       this.handleAuthErrors();
       await this.getSelectedLanguage();
       this.handleSunbirdSplashScreenActions();
@@ -116,6 +113,46 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.appRatingService.checkInitialDate();
       this.getUtmParameter();
     });
+  }
+
+  checkForCodeUpdates() {
+    this.preferences.getString(PreferenceKey.DEPLOYMENT_KEY).toPromise().then(deploymentKey => {
+      if (codePush != null && deploymentKey) {
+        const value = new Map();
+        value['deploymentKey'] = deploymentKey;
+        this.telemetryGeneratorService.generateInteractTelemetry(InteractType.OTHER, InteractSubtype.HOTCODE_PUSH_INITIATED,
+          Environment.HOME, PageId.HOME, null, value);
+        codePush.sync(this.syncStatus, {
+          deploymentKey
+        }, this.downloadProgress);
+      } else {
+        this.telemetryGeneratorService.generateInteractTelemetry(InteractType.OTHER, InteractSubtype.HOTCODE_PUSH_KEY_NOT_DEFINED,
+          Environment.HOME, PageId.HOME);
+      }
+    });
+  }
+
+  syncStatus(status) {
+    switch (status) {
+      case SyncStatus.DOWNLOADING_PACKAGE:
+        const value = new Map();
+        value['codepushUpdate'] = 'downloading-package';
+        break;
+      case SyncStatus.INSTALLING_UPDATE:
+        const value1 = new Map();
+        value1['codepushUpdate'] = 'installing-update';
+        break;
+      case SyncStatus.ERROR:
+        const value2 = new Map();
+        value2['codepushUpdate'] = 'error-in-update';
+    }
+  }
+
+  downloadProgress(downloadProgress) {
+    if (downloadProgress) {
+      console.log('Downloading ' + downloadProgress.receivedBytes + ' of ' +
+        downloadProgress.totalBytes);
+    }
   }
 
   /* Generates new FCM Token if not available
@@ -139,24 +176,6 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.preferences.putString('fcm_token', token).toPromise();
   }
 
-  handleNotification(data) {
-    switch (data.actionData.actionType) {
-      case 'updateApp':
-        console.log('updateApp');
-        break;
-      case 'contentUpdate':
-        console.log('contentUpdate');
-        break;
-      case 'bookUpdate':
-        console.log('bookUpdate');
-        break;
-      default:
-        console.log('Default Called');
-        break;
-    }
-  }
-
-
   /* Notification data will be received in data variable
    * can take action on data variable
    */
@@ -173,10 +192,11 @@ export class AppComponent implements OnInit, AfterViewInit {
         this.events.publish('notification:received');
         this.events.publish('notification-status:update', { isUnreadNotifications: true });
       });
+      this.splaschreenDeeplinkActionHandlerDelegate.handleNotification(data);
     },
-      (sucess) => {
+      (success) => {
         console.log('Notification Sucess Callback');
-        console.log(sucess);
+        console.log(success);
       },
       (err) => {
         console.log('Notification Error Callback');
@@ -198,6 +218,32 @@ export class AppComponent implements OnInit, AfterViewInit {
       }
     });
     this.notificationSrc.setupLocalNotification();
+
+    this.triggerSignInEvent();
+  }
+
+  /**
+   * Initializing the event for reloading the Tabs on Signing-In.
+   */
+  triggerSignInEvent() {
+    this.events.subscribe(EventTopics.SIGN_IN_RELOAD, () => {
+      this.toggleRouterOutlet = false;
+      // This setTimeout is very important for reloading the Tabs page on SignIn.
+      setTimeout(() => {
+        this.events.publish(AppGlobalService.USER_INFO_UPDATED);
+        this.toggleRouterOutlet = true;
+        this.reloadSigninEvents();
+        this.events.publish('UPDATE_TABS');
+        this.router.navigate([RouterLinks.TABS]);
+      }, 0);
+    });
+  }
+
+  /**
+   * Enter all methods which should trigger during OnInit and User Sign-In.
+   */
+  reloadSigninEvents() {
+    this.checkForTncUpdate();
   }
 
   addNetworkTelemetry(subtype: string, pageId: string) {
@@ -301,20 +347,20 @@ export class AppComponent implements OnInit, AfterViewInit {
       });
   }
 
-  private generateInteractEvent(pageid: string) {
+  private generateInteractEvent(pageId: string) {
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,
       InteractSubtype.TAB_CLICKED,
       Environment.HOME,
-      pageid.toLowerCase());
+      pageId ? pageId.toLowerCase() : PageId.QRCodeScanner);
   }
 
-  private generateImpressionEvent(pageid: string) {
-    pageid = pageid.toLowerCase();
-    const env = pageid.localeCompare(PageId.PROFILE) ? Environment.HOME : Environment.USER;
+  private generateImpressionEvent(pageId: string) {
+    pageId = pageId.toLowerCase();
+    const env = pageId.localeCompare(PageId.PROFILE) ? Environment.HOME : Environment.USER;
     this.telemetryGeneratorService.generateImpressionTelemetry(
       ImpressionType.VIEW, '',
-      pageid,
+      pageId,
       env);
   }
 
@@ -392,9 +438,10 @@ export class AppComponent implements OnInit, AfterViewInit {
       }
     }
 
-    splashscreen.markImportDone();
-    splashscreen.hide();
-    this.appGlobalService.hideSplashScreen(1500);
+    setTimeout(() => {
+      splashscreen.markImportDone();
+      splashscreen.hide();
+    }, 2500);
   }
 
   private autoSyncTelemetry() {
@@ -414,7 +461,6 @@ export class AppComponent implements OnInit, AfterViewInit {
     });
     this.platform.ready().then(() => {
       this.statusBar.styleDefault();
-      // this.splashScreen.hide();
     });
   }
 

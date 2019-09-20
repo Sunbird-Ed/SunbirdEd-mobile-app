@@ -23,6 +23,8 @@ const routes: Routes = [
     TranslateModule,
     RouterModule.forChild(routes)
   ],
-  declarations: [TermsAndConditionsPage]
+  declarations: [TermsAndConditionsPage],
+  entryComponents: [TermsAndConditionsPage],
+  exports: [TermsAndConditionsPage]
 })
 export class TermsAndConditionsPageModule {}

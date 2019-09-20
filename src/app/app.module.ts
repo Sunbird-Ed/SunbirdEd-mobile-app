@@ -34,7 +34,7 @@ import {
   AppHeaderService,
   AppRatingService,
   LogoutHandlerService,
-  TncUpdateHandlerService,
+  LoginHandlerService,
   ContainerService,
   AndroidPermissionsService,
   ComingSoonMessageService,
@@ -45,12 +45,10 @@ import {
   CanvasPlayerService
 } from '../services/index';
 
-
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { UserTypeSelectionPageModule } from './user-type-selection/user-type-selection.module';
 import { ComponentsModule } from './components/components.module';
-import { UserAndGroupsRoutingModule } from './user-and-groups/user-and-groups-routing.module';
 import { UserAndGroupsPageModule } from './user-and-groups/user-and-groups.module';
 import { LocalNotifications } from '@ionic-native/local-notifications/ngx';
 
@@ -61,8 +59,8 @@ import { PageFilterOptionsPageModule } from './page-filter/page-filter-options/p
 import { PageFilterOptionsPage } from './page-filter/page-filter-options/page-filter-options.page';
 import { CrashAnalyticsErrorLogger } from '@app/services/crash-analytics/crash-analytics-error-logger';
 import { File } from '@ionic-native/file/ngx';
-
-
+import { TermsAndConditionsPageModule } from './terms-and-conditions/terms-and-conditions.module';
+import { TncUpdateHandlerService } from '@app/services/handlers/tnc-update-handler.service';
 
 // AoT requires an exported function for factories
 export function translateHttpLoaderFactory(httpClient: HttpClient) {
@@ -252,6 +250,7 @@ export const sunbirdSdkFactory =
           user_authentication: {
             redirectUrl: buildConfigValues['OAUTH_REDIRECT_URL'],
             authUrl: '/auth/realms/sunbird/protocol/openid-connect',
+            mergeUserHost: buildConfigValues['MERGE_ACCOUNT_BASE_URL']
           },
           api_authentication: {
             mobileAppKey: buildConfigValues['MOBILE_APP_KEY'],
@@ -370,7 +369,8 @@ declare const buildconfigreader;
     UserTypeSelectionPageModule,
     PageFilterPageModule,
     PageFilterOptionsPageModule,
-    UserAndGroupsPageModule
+    UserAndGroupsPageModule,
+    TermsAndConditionsPageModule
   ],
   providers: [
     StatusBar,
@@ -389,6 +389,7 @@ declare const buildconfigreader;
     SunbirdQRScanner,
     CommonUtilService,
     LogoutHandlerService,
+    LoginHandlerService,
     TncUpdateHandlerService,
     ContainerService,
     UniqueDeviceID,
@@ -405,9 +406,7 @@ declare const buildconfigreader;
     CanvasPlayerService,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     ...sunbirdSdkServicesProvidersFactory(),
-    { provide: ErrorHandler, useClass: ErrorHandler },
     { provide: ErrorHandler, useClass: CrashAnalyticsErrorLogger },
-    // { provide: ErrorHandler},
     { provide: APP_INITIALIZER, useFactory: sunbirdSdkFactory, deps: [], multi: true }
   ],
   bootstrap: [AppComponent],

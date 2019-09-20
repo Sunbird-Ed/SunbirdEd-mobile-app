@@ -1,17 +1,12 @@
 import { CommonUtilService } from './../../services/common-util.service';
 import { Component, Inject, NgZone, OnDestroy, ViewChild } from '@angular/core';
-import { AlertController, Events, NavController, NavParams, Platform, PopoverController } from '@ionic/angular';
-import { ContentDetailsPage } from '../content-details/content-details.page';
-import { EnrolledCourseDetailsPage } from '../enrolled-course-details-page/enrolled-course-details-page';
 import { ContentType, MimeType, RouterLinks } from '../../app/app.constant';
-import { CollectionDetailsPage } from '../collection-details/collection-details.page';
 import { TranslateService } from '@ngx-translate/core';
 import { AppGlobalService } from '../../services/app-global-service.service';
 import { TelemetryGeneratorService } from '../../services/telemetry-generator.service';
 import find from 'lodash/find';
 import each from 'lodash/each';
 import map from 'lodash/map';
-import { ProfileSettingsPage } from '../profile-settings/profile-settings.page';
 import {
   ChildContentRequest,
   Content,
@@ -43,14 +38,12 @@ import {
 } from 'sunbird-sdk';
 import { Subscription } from 'rxjs/Subscription';
 import { Environment, ImpressionType, InteractSubtype, InteractType, PageId } from '../../services/telemetry-constants';
-import { TabsPage } from '../tabs/tabs.page';
-import { PlayerPage } from '../player/player.page';
 import { CanvasPlayerService } from '../../services/canvas-player.service';
 import { File } from '@ionic-native/file/ngx';
 import { AppHeaderService } from '../../services/app-header.service';
-import { CollectionDetailEtbPage } from '../collection-detail-etb/collection-detail-etb.page';
 import { Location } from '@angular/common';
 import { NavigationExtras, Router } from '@angular/router';
+import { Platform, Events, NavController } from '@ionic/angular';
 declare const cordova;
 
 @Component({
@@ -96,7 +89,7 @@ export class QrcoderesultPage implements OnDestroy {
   shouldGenerateEndTelemetry = false;
   source = '';
   results: Array<any> = [];
-  defaultImg: string;
+  defaultImg = this.commonUtilService.convertFileSrc('assets/imgs/ic_launcher.png');
   parents: Array<any> = [];
   paths: Array<any> = [];
   categories: Array<any> = [];
@@ -107,44 +100,38 @@ export class QrcoderesultPage implements OnDestroy {
   showLoading: boolean;
   isDownloadStarted: boolean;
   userCount = 0;
-  /**
-   * To hold previous state data
-   */
   cardData: any;
-  // migration-TODO
-  // @ViewChild(Navbar) navBar: any;
   downloadProgress: any = 0;
   isUpdateAvailable: boolean;
   eventSubscription: Subscription;
   headerObservable: any;
   navData: any;
+  backToPreviusPage = true;
+  isProfileUpdated: boolean;
+  isQrCodeLinkToContent: any;
 
   constructor(
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
-    // public navCtrl: NavController,
-    // public navParams: NavParams,
-    public zone: NgZone,
-    public translate: TranslateService,
-    public platform: Platform,
-    private telemetryGeneratorService: TelemetryGeneratorService,
-    private alertCtrl: AlertController,
-    public appGlobalService: AppGlobalService,
-    private events: Events,
-    private popOverCtrl: PopoverController,
-    public commonUtilService: CommonUtilService,
     @Inject('FRAMEWORK_SERVICE') private frameworkService: FrameworkService,
     @Inject('FRAMEWORK_UTIL_SERVICE') private frameworkUtilService: FrameworkUtilService,
     @Inject('EVENTS_BUS_SERVICE') private eventsBusService: EventsBusService,
     @Inject('PLAYER_SERVICE') private playerService: PlayerService,
+    public zone: NgZone,
+    public translate: TranslateService,
+    public platform: Platform,
+    private telemetryGeneratorService: TelemetryGeneratorService,
+    public appGlobalService: AppGlobalService,
+    private events: Events,
+    public commonUtilService: CommonUtilService,
     private canvasPlayerService: CanvasPlayerService,
     private location: Location,
     private file: File,
     private headerService: AppHeaderService,
-    private router: Router
+    private router: Router,
+    private navCtrl: NavController
   ) {
     this.getNavData();
-    this.defaultImg = 'assets/imgs/ic_launcher.png';
   }
 
   getNavData() {
@@ -167,7 +154,9 @@ export class QrcoderesultPage implements OnDestroy {
 
     // check for parent content
     this.parentContent = this.navData.parentContent;
+    this.isProfileUpdated = this.navData.isProfileUpdated;
     this.searchIdentifier = this.content.identifier;
+    this.isQrCodeLinkToContent = this.navData.isQrCodeLinkToContent;
 
     if (this.parentContent) {
       this.isParentContentAvailable = true;
@@ -177,7 +166,10 @@ export class QrcoderesultPage implements OnDestroy {
       this.identifier = this.content.identifier;
     }
     this.setContentDetails(this.identifier, true);
-    this.getChildContents();
+    if (this.backToPreviusPage) {
+      this.getChildContents();
+      this.backToPreviusPage = false;
+    }
     this.unregisterBackButton = this.platform.backButton.subscribeWithPriority(10, () => {
       this.handleBackButton(InteractSubtype.DEVICE_BACK_CLICKED);
       this.unregisterBackButton.unsubscribe();
@@ -192,10 +184,6 @@ export class QrcoderesultPage implements OnDestroy {
     this.telemetryGeneratorService.generateImpressionTelemetry(ImpressionType.VIEW, '',
       PageId.DIAL_CODE_SCAN_RESULT,
       !this.appGlobalService.isProfileSettingsCompleted ? Environment.ONBOARDING : this.appGlobalService.getPageIdForTelemetry());
-    // // migration-TODO
-    // this.navBar.backButtonClick = () => {
-    //   this.handleBackButton(InteractSubtype.NAV_BACK_CLICKED);
-    // };
 
     if (!AppGlobalService.isPlayerLaunched) {
       this.calculateAvailableUserCount();
@@ -205,7 +193,6 @@ export class QrcoderesultPage implements OnDestroy {
 
   ionViewWillLeave() {
     this.headerObservable.unsubscribe();
-    // Unregister the custom back button action for this page
     if (this.unregisterBackButton) {
       this.unregisterBackButton.unsubscribe();
     }
@@ -251,7 +238,6 @@ export class QrcoderesultPage implements OnDestroy {
         this.results = [];
         this.profile = this.appGlobalService.getCurrentUser();
         const contentData = data.contentData;
-        this.checkProfileData(contentData, this.profile);
         this.findContentNode(data);
 
         if (this.results && this.results.length === 0) {
@@ -259,9 +245,22 @@ export class QrcoderesultPage implements OnDestroy {
             '',
             PageId.DIAL_LINKED_NO_CONTENT,
             Environment.HOME);
-          this.commonUtilService.showContentComingSoonAlert(this.source);
-          this.location.back();
-
+          if (this.isProfileUpdated) {
+             this.navCtrl.navigateBack([RouterLinks.TABS]);
+             this.commonUtilService.showContentComingSoonAlert(this.source);
+            } else {
+              this.commonUtilService.showContentComingSoonAlert(this.source);
+              window.history.go(-2);
+            }
+        } else if (this.results && this.results.length === 1) {
+          this.backToPreviusPage = false;
+          this.navCtrl.navigateForward([RouterLinks.CONTENT_DETAILS], {
+            state: {
+              content: this.results[0],
+              isSingleContent: this.isSingleContent,
+              resultsSize: this.results.length
+            }
+           });
         }
 
       })
@@ -409,45 +408,6 @@ export class QrcoderesultPage implements OnDestroy {
     }
   }
 
-  editProfile(): void {
-    const req: Profile = {
-      board: this.profile.board,
-      grade: this.profile.grade,
-      medium: this.profile.medium,
-      subject: this.profile.subject,
-      uid: this.profile.uid,
-      handle: this.profile.handle,
-      profileType: this.profile.profileType,
-      source: this.profile.source,
-      createdAt: this.profile.createdAt,
-      syllabus: this.profile.syllabus
-    };
-    if (this.profile.grade && this.profile.grade.length > 0) {
-      this.profile.grade.forEach(gradeCode => {
-        for (let i = 0; i < this.gradeList.length; i++) {
-          if (this.gradeList[i].code === gradeCode) {
-            req.gradeValue = this.profile.gradeValue;
-            req.gradeValue[this.gradeList[i].code] = this.gradeList[i].name;
-            break;
-          }
-        }
-      });
-    }
-
-    this.profileService.updateProfile(req).toPromise()
-      .then((res: any) => {
-        if (res.syllabus && res.syllabus.length && res.board && res.board.length
-          && res.grade && res.grade.length && res.medium && res.medium.length) {
-          this.events.publish(AppGlobalService.USER_INFO_UPDATED);
-          this.events.publish('refresh:profile');
-        }
-        this.appGlobalService.guestUserProfile = res;
-        this.telemetryGeneratorService.generateProfilePopulatedTelemetry(PageId.DIAL_CODE_SCAN_RESULT,
-          req, 'auto');
-      })
-      .catch(() => {
-      });
-  }
 
   /** funtion add elipses to the texts**/
 
@@ -524,165 +484,10 @@ export class QrcoderesultPage implements OnDestroy {
   }
 
   /**
-   * Assigning board, medium, grade and subject to profile
-   */
-
-  setCurrentProfile(index, data) {
-    if (!this.profile.medium || !this.profile.medium.length) {
-      this.profile.medium = [];
-    }
-    /*     if (!this.profile.subject || !this.profile.subject.length) {
-          this.profile.subject = [];
-        }
-     */
-    switch (index) {
-      case 0:
-        this.profile.syllabus = [data.framework];
-        this.profile.board = [data.board];
-        this.setMedium(true, data.medium);
-        // this.profile.subject = [data.subject];
-        this.profile.subject = [];
-        this.setGrade(true, data.gradeLevel);
-        break;
-      case 1:
-        this.profile.board = [data.board];
-        this.setMedium(true, data.medium);
-        // this.profile.subject = [data.subject];
-        this.profile.subject = [];
-        this.setGrade(true, data.gradeLevel);
-        break;
-      case 2:
-        this.setMedium(false, data.medium);
-        break;
-      case 3:
-        this.setGrade(false, data.gradeLevel);
-        break;
-      /*       case 4:
-              this.profile.subject.push(data.subject);
-              break;
-       */
-    }
-    this.editProfile();
-  }
-
-  /**
    * comparing current profile data with qr result data, If not matching then reset current profile data
    * @param {object} data
    * @param {object} profile
    */
-  checkProfileData(data, profile) {
-
-    if (data && data.framework) {
-
-      const getSuggestedFrameworksRequest: GetSuggestedFrameworksRequest = {
-        language: this.translate.currentLang,
-        requiredCategories: FrameworkCategoryCodesGroup.DEFAULT_FRAMEWORK_CATEGORIES
-      };
-      // Auto update the profile if that board/framework is listed in custodian framework list.
-      this.frameworkUtilService.getActiveChannelSuggestedFrameworkList(getSuggestedFrameworksRequest).toPromise()
-        .then((res: Framework[]) => {
-          let isProfileUpdated = false;
-          res.forEach(element => {
-            // checking whether content data framework Id exists/valid in syllabus list
-            if (data.framework === element.identifier || data.board.indexOf(element.name) !== -1) {
-              isProfileUpdated = true;
-              const frameworkDetailsRequest: FrameworkDetailsRequest = {
-                frameworkId: data.framework,
-                requiredCategories: FrameworkCategoryCodesGroup.DEFAULT_FRAMEWORK_CATEGORIES
-              };
-              this.frameworkService.getFrameworkDetails(frameworkDetailsRequest).toPromise()
-                .then((framework: Framework) => {
-                  this.categories = framework.categories;
-                  this.boardList = find(this.categories, (category) => category.code === 'board').terms;
-                  this.mediumList = find(this.categories, (category) => category.code === 'medium').terms;
-                  this.gradeList = find(this.categories, (category) => category.code === 'gradeLevel').terms;
-                  //                  this.subjectList = find(this.categories, (category) => category.code === 'subject').terms;
-                  if (data.board) {
-                    data.board = this.findCode(this.boardList, data, 'board');
-                  }
-                  if (data.medium) {
-                    if (typeof data.medium === 'string') {
-                      data.medium = [this.findCode(this.mediumList, data, 'medium')];
-                    } else {
-                      data.medium = map(data.medium, (dataMedium) => {
-                        return find(this.mediumList, (medium) => medium.name === dataMedium).code;
-                      });
-                    }
-                  }
-                  /*                   if (data.subject) {
-                                      data.subject = this.findCode(this.subjectList, data, 'subject');
-                                    } */
-                  if (data.gradeLevel && data.gradeLevel.length) {
-                    data.gradeLevel = map(data.gradeLevel, (dataGrade) => {
-                      return find(this.gradeList, (grade) => grade.name === dataGrade).code;
-                    });
-                  }
-                  if (profile && profile.syllabus && profile.syllabus[0] && data.framework === profile.syllabus[0]) {
-                    if (data.board) {
-                      if (profile.board && !(profile.board.length > 1) && data.board === profile.board[0]) {
-                        if (data.medium) {
-                          let existingMedium = false;
-                          for (let i = 0; i < data.medium.length; i++) {
-                            const mediumExists = find(profile.medium, (medium) => {
-                              return medium === data.medium[i];
-                            });
-                            if (!mediumExists) {
-                              break;
-                            }
-                            existingMedium = true;
-                          }
-                          if (!existingMedium) {
-                            this.setCurrentProfile(2, data);
-                          }
-                          if (data.gradeLevel && data.gradeLevel.length) {
-                            let existingGrade = false;
-                            for (let i = 0; i < data.gradeLevel.length; i++) {
-                              const gradeExists = find(profile.grade, (grade) => {
-                                return grade === data.gradeLevel[i];
-                              });
-                              if (!gradeExists) {
-                                break;
-                              }
-                              existingGrade = true;
-                            }
-                            if (!existingGrade) {
-                              this.setCurrentProfile(3, data);
-                            }
-                            /*                             let existingSubject = false;
-                                                        existingSubject = find(profile.subject, (subject) => {
-                                                          return subject === data.subject;
-                                                        });
-                                                        if (!existingSubject) {
-                                                          this.setCurrentProfile(4, data);
-                                                        }
-                             */
-                          }
-                        }
-                      } else {
-                        this.setCurrentProfile(1, data);
-                      }
-                    }
-                  } else {
-                    this.setCurrentProfile(0, data);
-                  }
-                }).catch((err) => {
-                  if (err instanceof NetworkError) {
-                    this.commonUtilService.showToast('ERROR_OFFLINE_MODE');
-                  }
-                });
-
-              return;
-            }
-          });
-        })
-        .catch((err) => {
-          if (err instanceof NetworkError) {
-            this.commonUtilService.showToast('ERROR_OFFLINE_MODE');
-          }
-        });
-    }
-  }
-
   /**
    * Subscribe genie event to get content download progress
    */
@@ -909,6 +714,10 @@ export class QrcoderesultPage implements OnDestroy {
   }
 
   goBack() {
-    this.location.back();
+    if (this.isQrCodeLinkToContent === 0) {
+      window.history.go(-2);
+    } else {
+      this.location.back();
+    }
   }
 }

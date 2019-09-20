@@ -1,6 +1,6 @@
 import { Component, Inject, NgZone, OnDestroy, ViewChild, ChangeDetectorRef, OnInit, AfterViewInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { Events, Platform, PopoverController, IonContent } from '@ionic/angular';
+import { Events, Platform, PopoverController, IonContent, NavController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs/Subscription';
 import { Observable } from 'rxjs/Observable';
@@ -27,7 +27,8 @@ import {
   BatchConstants,
   RouterLinks, AudienceFilter,
   ContentType, MimeType, Search, ContentCard,
-  ContentFilterConfig } from '@app/app/app.constant';
+  ContentFilterConfig
+} from '@app/app/app.constant';
 import { AppGlobalService } from '@app/services/app-global-service.service';
 import { FormAndFrameworkUtilService } from '@app/services/formandframeworkutil.service';
 import { CommonUtilService } from '@app/services/common-util.service';
@@ -71,6 +72,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
   isDownloadStarted = false;
   currentCount = 0;
   parentContent: any = undefined;
+  contentData: any;
   childContent: any = undefined;
   loadingDisplayText = 'Loading content';
   audienceFilter = [];
@@ -96,6 +98,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
   mediumList: Array<any> = [];
   gradeList: Array<any> = [];
   isProfileUpdated: boolean;
+  isQrCodeLinkToContent: any;
   @ViewChild('contentView') contentView: IonContent;
   constructor(
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
@@ -121,13 +124,13 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
     private headerService: AppHeaderService,
     private popoverCtrl: PopoverController,
     private location: Location,
-    private router: Router
+    private router: Router,
+    private navCtrl: NavController
   ) {
 
     const extras = this.router.getCurrentNavigation().extras.state;
 
     if (extras) {
-      console.log('extranavigation', extras.content);
       this.dialCode = extras.dialCode;
       this.contentType = extras.contentType;
       this.corRelationList = extras.corRelation;
@@ -148,12 +151,6 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnInit(): void {
     this.getAppName();
-
-    // this.navBar.backButtonClick = () => {
-    //   this.telemetryGeneratorService.generateBackClickedTelemetry(ImpressionType.SEARCH,
-    //     Environment.HOME, true, undefined, this.corRelationList);
-    //   this.navigateToPreviousPage();
-    // };
   }
 
   ionViewWillEnter() {
@@ -303,6 +300,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
 
   openContent(collection, content, index) {
     this.parentContent = collection;
+    this.isQrCodeLinkToContent = index;
     this.generateInteractEvent(content.identifier, content.contentType, content.pkgVersion, index);
     if (collection !== undefined) {
       this.parentContent = collection;
@@ -325,7 +323,8 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
         parentContent: this.parentContent,
         isSingleContent: this.isSingleContent,
         onboarding: this.appGlobalService.isOnBoardingCompleted,
-        isProfileUpdated: this.isProfileUpdated
+        isProfileUpdated: this.isProfileUpdated,
+        isQrCodeLinkToContent: this.isQrCodeLinkToContent
       };
     } else {
       params = {
@@ -334,7 +333,8 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
         parentContent: this.parentContent,
         isSingleContent: this.isSingleContent,
         onboarding: this.appGlobalService.isOnBoardingCompleted,
-        isProfileUpdated: this.isProfileUpdated
+        isProfileUpdated: this.isProfileUpdated,
+        isQrCodeLinkToContent: this.isQrCodeLinkToContent
       };
     }
     if (this.loader) {
@@ -359,7 +359,8 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
           corRelation: params.corRelation,
           isSingleContent: params.isSingleContent,
           onboarding: params.onboarding,
-          parentContent: params.parentContent
+          parentContent: params.parentContent,
+          isQrCodeLinkToContent: params.isQrCodeLinkToContent
         }
       });
       if (this.isSingleContent) {
@@ -372,13 +373,15 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
       if (this.isDialCodeSearch && !isRootContent) {
         params.isCreateNavigationStack = true;
 
-        this.router.navigate([RouterLinks.QRCODERESULT], {
+        this.navCtrl.navigateForward([RouterLinks.QRCODERESULT], {
           state: {
             content: params.content,
             corRelation: params.corRelation,
             isSingleContent: params.isSingleContent,
             onboarding: params.onboarding,
-            parentContent: params.parentContent
+            parentContent: params.parentContent,
+            isProfileUpdated: params.isProfileUpdated,
+            isQrCodeLinkToContent: params.isQrCodeLinkToContent
           }
         });
         if (this.isSingleContent) {
@@ -496,9 +499,10 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
           res.forEach(element => {
             // checking whether content data framework Id exists/valid in syllabus list
             if (data.framework === element.identifier || data.board.indexOf(element.name) !== -1) {
+              data.framework = element.identifier;
               this.isProfileUpdated = true;
               const frameworkDetailsRequest: FrameworkDetailsRequest = {
-                frameworkId: data.framework,
+                frameworkId: element.identifier,
                 requiredCategories: FrameworkCategoryCodesGroup.DEFAULT_FRAMEWORK_CATEGORIES
               };
               this.frameworkService.getFrameworkDetails(frameworkDetailsRequest).toPromise()
@@ -627,7 +631,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
       InteractSubtype.FILTER_BUTTON_CLICKED,
       Environment.HOME,
-      this.source);
+      this.source, undefined);
     this.formAndFrameworkUtilService.getLibraryFilterConfig().then((data) => {
       const filterCriteriaData = this.responseData.filterCriteria;
       filterCriteriaData.facetFilters.forEach(element => {
@@ -650,7 +654,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
     this.showLoader = true;
     this.responseData.filterCriteria.mode = 'hard';
     this.responseData.filterCriteria.searchType = SearchType.FILTER;
-    this.telemetryGeneratorService.generateStartSheenAnimationTelemetry();
+    this.telemetryGeneratorService.generateStartSheenAnimationTelemetry(this.source);
     this.contentService.searchContent(this.responseData.filterCriteria).toPromise()
       .then((responseData: ContentSearchResult) => {
 
@@ -674,7 +678,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
           } else {
             this.isEmptyResult = true;
           }
-          this.telemetryGeneratorService.generateEndSheenAnimationTelemetry();
+          this.telemetryGeneratorService.generateEndSheenAnimationTelemetry(this.source);
           this.showLoader = false;
         });
       }).catch(() => {
@@ -702,7 +706,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
 
     this.showLoader = true;
     if (this.showLoader) {
-      this.telemetryGeneratorService.generateStartSheenAnimationTelemetry();
+      this.telemetryGeneratorService.generateStartSheenAnimationTelemetry(this.source);
     }
 
     (window as any).cordova.plugins.Keyboard.close();
@@ -724,6 +728,22 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
     this.dialCodeResult = undefined;
     this.corRelationList = [];
 
+    if (this.profile) {
+
+      if (this.profile.board && this.profile.board.length) {
+        contentSearchRequest.board = this.applyProfileFilter(this.profile.board, contentSearchRequest.board, 'board');
+      }
+
+      if (this.profile.medium && this.profile.medium.length) {
+        contentSearchRequest.medium = this.applyProfileFilter(this.profile.medium, contentSearchRequest.medium, 'medium');
+      }
+
+      if (this.profile.grade && this.profile.grade.length) {
+        contentSearchRequest.grade = this.applyProfileFilter(this.profile.grade, contentSearchRequest.grade, 'gradeLevel');
+      }
+
+    }
+
     this.contentService.searchContent(contentSearchRequest).toPromise()
       .then((response: ContentSearchResult) => {
 
@@ -740,7 +760,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
             this.generateLogEvent(response);
             const values = new Map();
             values['from'] = this.source;
-            values['searchCount'] = this.searchContentResult.length;
+            values['searchCount'] = this.searchContentResult ? this.searchContentResult.length : 0;
             values['searchCriteria'] = response.request;
             this.telemetryGeneratorService.generateExtraInfoTelemetry(values, PageId.SEARCH);
           } else {
@@ -749,14 +769,14 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
           this.showEmptyMessage = this.searchContentResult.length === 0;
           this.showLoader = false;
           if (!this.showLoader) {
-            this.telemetryGeneratorService.generateEndSheenAnimationTelemetry();
+            this.telemetryGeneratorService.generateEndSheenAnimationTelemetry(this.source);
           }
         });
       }).catch(() => {
         this.zone.run(() => {
           this.showLoader = false;
           if (!this.showLoader) {
-            this.telemetryGeneratorService.generateEndSheenAnimationTelemetry();
+            this.telemetryGeneratorService.generateEndSheenAnimationTelemetry(this.source);
           }
           if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
             this.commonUtilService.showToast('ERROR_OFFLINE_MODE');
@@ -856,9 +876,9 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
     if (this.commonUtilService.networkInfo.isNetworkAvailable) {
       if (!this.guestUser) {
         this.courseService.getCourseBatches(courseBatchesRequest).toPromise()
-          .then((data: Batch[]) => {
+          .then((res: Batch[]) => {
             this.zone.run(async () => {
-              this.batches = data;
+              this.batches = res;
               if (this.batches.length) {
                 this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
                   'ongoing-batch-popup',
@@ -880,6 +900,9 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
                 if (data && data.isEnrolled) {
                   this.getEnrolledCourses();
                 }
+                if (data && typeof data.isEnrolled === 'function') {
+                  (data.isEnrolled as Function).call(this);
+                }
               } else {
                 await this.loader.dismiss();
                 this.showContentDetails(content, true);
@@ -889,8 +912,6 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
           .catch((error: any) => {
             console.log('error while fetching course batches ==>', error);
           });
-      } else {
-        // this.router.navigate([RouterLinks.COURSE_BATCHES]);
       }
     } else {
       if (this.loader) {
@@ -923,7 +944,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
     this.isDialCodeSearch = true;
 
     this.showLoader = true;
-    this.telemetryGeneratorService.generateStartSheenAnimationTelemetry();
+    this.telemetryGeneratorService.generateStartSheenAnimationTelemetry(this.source);
 
     const contentTypes = await this.formAndFrameworkUtilService.getSupportedContentFilterConfig(
       ContentFilterConfig.NAME_DIALCODE);
@@ -951,7 +972,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
             this.processDialCodeResult(sections);
             // this.updateFilterIcon();  // TO DO
           }
-          this.telemetryGeneratorService.generateEndSheenAnimationTelemetry();
+          this.telemetryGeneratorService.generateEndSheenAnimationTelemetry(this.source);
           this.showLoader = false;
         });
       }).catch(error => {
@@ -977,7 +998,13 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
       values['root'] = false;
     }
     const telemetryObject = new TelemetryObject(identifier, contentType, pkgVersion);
-
+    if (!this.corRelationList) {
+      this.corRelationList = [];
+    }
+    this.corRelationList.push({
+      id: 'SearchResult',
+      type: 'Section'
+    });
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
       InteractSubtype.CONTENT_CLICKED,
       !this.appGlobalService.isOnBoardingCompleted ? Environment.ONBOARDING : Environment.HOME,
@@ -1254,7 +1281,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
 
     const option: ContentImportRequest = {
       contentImportArray: this.getImportContentRequestBody([parent.identifier], false),
-      contentStatusArray: [],
+      contentStatusArray: ['Live'],
       fields: ['appIcon', 'name', 'subject', 'size', 'gradeLevel']
     };
     // Call content service
@@ -1316,6 +1343,21 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
           }
         }
 
+        if (event.type === ContentEventType.IMPORT_PROGRESS) {
+          this.loadingDisplayText = this.commonUtilService.translateMessage('EXTRACTING_CONTENT') + ' ' +
+            Math.floor((event.payload.currentCount / event.payload.totalCount) * 100) +
+            '% (' + event.payload.currentCount + ' / ' + event.payload.totalCount + ')';
+          if (event.payload.currentCount === event.payload.totalCount) {
+            let timer = 30;
+            const interval = setInterval(() => {
+              this.loadingDisplayText = `Getting things ready in ${timer--}  seconds`;
+              if (timer === 0) {
+                this.loadingDisplayText = 'Getting things ready';
+                clearInterval(interval);
+              }
+            }, 1000);
+          }
+        }
         // if (event.payload && event.payload.status === 'IMPORT_COMPLETED' && event.type === 'contentImport') {
         if (event.payload && event.type === ContentEventType.IMPORT_COMPLETED) {
           if (this.queuedIdentifiers.length && this.isDownloadStarted) {
@@ -1374,10 +1416,16 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
     this.contentService.cancelDownload(this.parentContent.identifier).toPromise().then(() => {
       this.zone.run(() => {
         this.showLoading = false;
+        if (this.isSingleContent) {
+          this.location.back();
+        }
       });
     }).catch(() => {
       this.zone.run(() => {
         this.showLoading = false;
+        if (this.isSingleContent) {
+          this.location.back();
+        }
       });
     });
   }
@@ -1392,12 +1440,10 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
       } else if (userType === ProfileType.TEACHER) {
         this.audienceFilter = AudienceFilter.GUEST_TEACHER;
       }
-
-      this.profile = this.appGlobalService.getCurrentUser();
     } else {
       this.audienceFilter = AudienceFilter.LOGGED_IN_USER;
-      this.profile = undefined;
     }
+    this.profile = this.appGlobalService.getCurrentUser();
   }
 
   private addCorRelation(id: string, type: string) {
@@ -1424,7 +1470,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
       const contentArray: Array<any> = searchResult.contentDataList;
       const params = new Array<any>();
       const paramsMap = new Map();
-      paramsMap['SearchResults'] = contentArray.length;
+      paramsMap['SearchResults'] = contentArray ? contentArray.length : 0;
       paramsMap['SearchCriteria'] = searchResult.request;
       params.push(paramsMap);
       this.telemetryGeneratorService.generateLogEvent(LogLevel.INFO,
@@ -1474,6 +1520,8 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
   }
 
   goBack() {
-    this.location.back();
+    this.telemetryGeneratorService.generateBackClickedTelemetry(ImpressionType.SEARCH,
+          Environment.HOME, true, undefined, this.corRelationList);
+    this.navCtrl.pop();
   }
 }

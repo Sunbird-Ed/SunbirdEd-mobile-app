@@ -78,9 +78,8 @@ export class GroupReportAlertComponent implements OnInit {
     }
   }
 
-
   cancel() {
-    this.modalCtrl.dismiss();
+    this.popOverCtrl.dismiss();
   }
 
   ionViewWillEnter() {
@@ -100,8 +99,6 @@ export class GroupReportAlertComponent implements OnInit {
     if (activePopover) {
       activePopover.dismiss();
     } else {
-      // Migration todo
-      // this.navCtrl.pop();
       this.location.back();
     }
   }

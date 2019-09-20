@@ -65,11 +65,22 @@ export class TabsPage implements OnInit {
       }
       initTabs(this.container, LOGIN_TEACHER_TABS);
     }
+
+    this.tabs = this.container.getAllTabs();
+    this.events.subscribe('UPDATE_TABS', () => {
+      this.tabs = this.container.getAllTabs();
+    });
   }
 
   ionViewWillEnter() {
     this.tabs = this.container.getAllTabs();
     this.events.publish('update_header');
+    this.events.subscribe('return_course', () => {
+      console.log('tabs');
+      setTimeout(() => {
+        this.tabRef.select('courses');
+      }, 300);
+    });
   }
 
   openScanner(tab) {

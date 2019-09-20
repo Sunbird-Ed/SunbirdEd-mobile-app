@@ -16,7 +16,7 @@ import {
   Course, GetContentStateRequest, SharedPreferences
 } from 'sunbird-sdk';
 import { Environment, PageId, InteractType } from '../../../services/telemetry-constants';
-import { EnrollmentDetailsPage } from '@app/app/enrolled-course-details-page/enrollment-details-page/enrollment-details-page';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-view-more-card',
@@ -51,7 +51,7 @@ export class ViewMoreCardComponent implements OnInit {
    *
    * Get used when content / course does not have appIcon or courseLogo
    */
-  defaultImg: string;
+  defaultImg = this.commonUtilService.convertFileSrc('assets/imgs/ic_launcher.png');
   showLoader: boolean;
 
 
@@ -59,44 +59,29 @@ export class ViewMoreCardComponent implements OnInit {
   /**
    * checks wheather batch is expired or not
    */
-  batchExp: Boolean = false;
+  batchExp = false;
   batches: any;
   loader: any;
 
-  /**
-   * Default method of cass SearchListComponent
-   * @param {NavController} navCtrl To navigate user from one page to another
-   * @param {NavParams} navParams ref of navigation params
-   * @param zone
-   * @param courseUtilService
-   * @param events
-   * @param commonUtilService
-   * @param courseService
-   * @param popoverCtrl
-   * @param telemetryGeneratorService
-   * @param appGlobalService
-   */
   constructor(
+    @Inject('COURSE_SERVICE') private courseService: CourseService,
+    @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
     public navCtrl: NavController,
-    // public navParams: NavParams,
     private zone: NgZone,
     public courseUtilService: CourseUtilService,
     public events: Events,
-    private commonUtilService: CommonUtilService,
-    @Inject('COURSE_SERVICE') private courseService: CourseService,
-    private popoverCtrl: PopoverController,
+    public commonUtilService: CommonUtilService,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private appGlobalService: AppGlobalService,
-    @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
-    private router: Router
+    private router: Router,
+    private location: Location,
   ) {
-    this.defaultImg = 'assets/imgs/ic_launcher.png';
+    this.loader = this.commonUtilService.getLoader();
   }
 
   async checkRetiredOpenBatch(content: any, layoutName?: string) {
-    this.loader = await this.commonUtilService.getLoader();
     await this.loader.present();
-    let anyOpenBatch: boolean = false;
+    let anyOpenBatch = false;
     this.enrolledCourses = this.enrolledCourses || [];
     let retiredBatches: Array<any> = [];
     if (layoutName !== ContentCard.LAYOUT_INPROGRESS) {
@@ -188,9 +173,6 @@ export class ViewMoreCardComponent implements OnInit {
 
   async navigateToDetailsPage(content: any, layoutName) {
     this.zone.run(async () => {
-      if (this.loader) {
-        await this.loader.dismiss();
-      }
       if (layoutName === 'enrolledCourse' || content.contentType === ContentType.COURSE) {
         this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], {
           state: {
@@ -225,6 +207,7 @@ export class ViewMoreCardComponent implements OnInit {
         this.events.publish('course:resume', {
           content: content
         });
+        this.location.back();
       } else {
         this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], {
           state: {

@@ -7,6 +7,7 @@ export class ContentType {
     public static readonly TEXTBOOK = 'TextBook';
     public static readonly LESSON_PLAN = 'LessonPlan';
     public static readonly COURSE = 'Course';
+    public static readonly CERTIFICATE = 'Certificate';
     public static readonly TEXTBOOK_UNIT = 'TextBookUnit';
     public static readonly LESSON_PLAN_UNIT = 'LessonPlanUnit';
     public static readonly COURSE_UNIT = 'CourseUnit';
@@ -63,6 +64,7 @@ export class MimeType {
     public static readonly INTERACTION = ['application/vnd.ekstep.ecml-archive', 'application/vnd.ekstep.html-archive',
         'application/vnd.android.package-archive', 'application/vnd.ekstep.content-archive',
         'application/vnd.ekstep.plugin-archive', 'application/vnd.ekstep.h5p-archive'];
+    public static readonly DOCS =  ['application/pdf', 'application/epub', 'application/msword'];
     public static readonly ALL = ['video/mp4', 'video/x-youtube', 'video/webm', 'application/pdf', 'application/epub',
         'application/pdf', 'application/epub', 'application/vnd.ekstep.ecml-archive', 'application/vnd.ekstep.h5p-archive',
         'application/vnd.ekstep.html-archive'
@@ -129,6 +131,23 @@ export class ProfileConstants {
     public static readonly CONTACT_TYPE_EMAIL = 'email';
 }
 
+export class ExploreConstants {
+    public static readonly REQUIRED_FIELDS = [
+        'name',
+        'downloadUrl',
+        'variants',
+        'mimeType',
+        'contentType',
+        'resourceType',
+        'board',
+        'medium',
+        'gradeLevel',
+        'subject',
+        'streamingUrl',
+        'framework',
+        'appIcon'
+    ]
+}
 export class AudienceFilter {
     public static readonly GUEST_TEACHER = ['instructor', 'learner'];
     public static readonly GUEST_STUDENT = ['learner'];
@@ -142,6 +161,7 @@ export class EventTopics {
     public static readonly COURSE_STATUS_UPDATED_SUCCESSFULLY = 'COURSE_STATUS_UPDATED_SUCCESSFULLY';
     public static readonly REFRESH_ENROLL_COURSE_LIST = 'REFRESH_ENROLL_COURSE_LIST';
     public static readonly PLAYER_CLOSED = 'PLAYER_CLOSED';
+    public static readonly SIGN_IN_RELOAD = 'SIGN_IN_RELOAD';
 }
 
 export class ShareUrl {
@@ -380,6 +400,7 @@ export class RouterLinks {
     public static readonly CONTENT_DETAILS = 'content-details';
     public static readonly ENROLLMENT_DETAILS = 'enrollment-details';
     public static readonly TEXTBOOK_TOC = 'textbook-toc';
+    public static readonly EXPLORE_BOOK = 'explore-book';
 
     // DownloadManger Routs
     public static readonly ACTIVE_DOWNLOADS = 'active-downloads';
@@ -452,5 +473,6 @@ export class RouterLinks {
 
     // TEXTBOOK view more page Routes
     public static readonly TEXTBOOK_VIEW_MORE = 'textbook-view-more';
+
 
 }

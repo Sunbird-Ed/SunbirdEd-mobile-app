@@ -122,6 +122,16 @@
   .assessmentDetails h3 {
     white-space: normal;
   }
+  .popover-header-color {
+    color: #fff;
+  }
+  .popover-header-text {
+    font-size:16px;
+  }
+  ion-item.background-color {
+    --ion-item-background:dodgerblue;
+    color:white;
+  }
 }
 .group-report-alert .popover-content {
   margin: 0;

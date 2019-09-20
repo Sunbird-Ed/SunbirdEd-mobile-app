@@ -1,5 +1,5 @@
 import { Component, NgZone, Inject } from '@angular/core';
-import { NavController, NavParams, Events } from '@ionic/angular';
+import { NavController, NavParams, Events, PopoverController } from '@ionic/angular';
 import {
   SharedPreferences,
   EnrollCourseRequest,
@@ -11,10 +11,12 @@ import {
   CourseEnrollmentType,
   CourseBatchStatus
 } from 'sunbird-sdk';
-import { PreferenceKey, ProfileConstants, EventTopics, ContentType, MimeType, BatchConstants } from '@app/app/app.constant';
+import { PreferenceKey, ProfileConstants, EventTopics, ContentType, MimeType, BatchConstants, RouterLinks } from '@app/app/app.constant';
 import { CommonUtilService } from '@app/services/common-util.service';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { InteractSubtype, Environment, PageId } from '@app/services/telemetry-constants';
+import { Router } from '@angular/router';
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-enrollment-details-page',
@@ -35,6 +37,7 @@ export class EnrollmentDetailsPage {
   pageName: any;
   env: any;
   courseId: any;
+  todayDate: string;
 
   constructor(
     @Inject('AUTH_SERVICE') private authService: AuthService,
@@ -42,39 +45,37 @@ export class EnrollmentDetailsPage {
     @Inject('COURSE_SERVICE') private courseService: CourseService,
     public navCtrl: NavController,
     public navParams: NavParams,
-    // migration-TODO
-    // private viewCtrl: ViewController,
     private events: Events,
     private zone: NgZone,
+    private popOverCtrl: PopoverController,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private commonUtilService: CommonUtilService,
+    private router: Router
   ) {
     this.ongoingBatches = this.navParams.get('ongoingBatches');
     this.upcommingBatches = this.navParams.get('upcommingBatches');
     this.retiredBatched = this.navParams.get('retiredBatched');
+    this.todayDate = moment(new Date()).format('YYYY-MM-DD');
     this.courseId = this.navParams.get('courseId');
     this.getUserId();
 
   }
 
-  close() {
-    // migration-TODO
-    // this.viewCtrl.dismiss();
+  close(data?: any) {
+    return this.popOverCtrl.dismiss(data);
   }
 
   resumeCourse(content: any) {
     this.saveContentContext(content);
+
     if (content.lastReadContentId && content.status === 1) {
-      this.events.publish('course:resume', {
-        content: content
-      });
+      this.events.publish('course:resume', { content });
+      this.close();
     } else {
-      // migration-TODO
-      // this.navCtrl.push(EnrolledCourseDetailsPage, {
-      //   content: content
-      // });
+      this.close(() => {
+        this.router.navigate([`/${RouterLinks.ENROLLED_COURSE_DETAILS}`], { state: { content } });
+      });
     }
-    this.close();
   }
 
   saveContentContext(content: any) {
@@ -124,8 +125,7 @@ export class EnrollmentDetailsPage {
             courseId: content.courseId
           });
           loader.dismiss();
-          // migratin-TODO
-          // this.viewCtrl.dismiss(true);
+          this.popOverCtrl.dismiss({ isEnrolled: true });
           this.navigateToDetailPage(content);
         });
       }, (error) => {
@@ -179,23 +179,9 @@ export class EnrollmentDetailsPage {
       telemetryObject,
       values
     );
+    content.contentId = !content.contentId ? content.courseId : content.contentId;
+    this.router.navigate([`/${RouterLinks.ENROLLED_COURSE_DETAILS}`], { state: { content } });
 
-    if (content.contentType === ContentType.COURSE) {
-      content.contentId = !content.contentId ? content.courseId : content.contentId;
-      // migration-TODO
-      // this.navCtrl.push(EnrolledCourseDetailsPage, {
-      //   content: content
-      // });
-    } else if (content.mimeType === MimeType.COLLECTION) {
-      // this.navCtrl.push(CollectionDetailsPage, {
-      // this.navCtrl.push(CollectionDetailsEtbPage, {
-      //   content: content
-      // });
-    } else {
-      // this.navCtrl.push(ContentDetailsPage, {
-      //   content: content
-      // });
-    }
   }
 
 }

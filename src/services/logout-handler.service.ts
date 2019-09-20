@@ -1,28 +1,30 @@
-import {Inject, Injectable} from '@angular/core';
-import { PreferenceKey, RouterLinks} from '../app/app.constant';
-
-import {AppGlobalService, CommonUtilService, TelemetryGeneratorService} from '.';
-// import {OnboardingPage} from '@app/pages/onboarding/onboarding';
-import {Events} from '@ionic/angular';
+import { Inject, Injectable } from '@angular/core';
+import { Events } from '@ionic/angular';
+import { Observable } from 'rxjs';
+import { Router, NavigationExtras } from '@angular/router';
 import {
   AuthService,
   ProfileService,
   ProfileType,
   SharedPreferences
 } from 'sunbird-sdk';
-import {Observable} from 'rxjs';
+
+import { PreferenceKey, RouterLinks } from '../app/app.constant';
+import { AppGlobalService } from 'services/app-global-service.service';
+import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
+import { CommonUtilService } from '@app/services/common-util.service';
 import {
   Environment,
   InteractSubtype,
   InteractType,
   PageId
 } from './telemetry-constants';
-import {ContainerService} from './container.services';
+import { ContainerService } from './container.services';
 import { GUEST_STUDENT_TABS, GUEST_TEACHER_TABS, initTabs } from '@app/app/module.service';
-import { Router, NavigationExtras } from '@angular/router';
-// import {TabsPage} from '@app/pages/tabs/tabs';
 
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class LogoutHandlerService {
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -75,6 +77,8 @@ export class LogoutHandlerService {
       } else if (selectedUserType === ProfileType.TEACHER) {
         initTabs(this.containerService, GUEST_TEACHER_TABS);
       }
+
+      this.events.publish('UPDATE_TABS');
       const navigationExtras: NavigationExtras = { state: { loginMode: 'guest' } };
       this.router.navigate([`/${RouterLinks.TABS}`], navigationExtras);
     }
@@ -89,9 +93,7 @@ export class LogoutHandlerService {
       Environment.HOME,
       PageId.LOGOUT,
       undefined,
-      valuesMap,
-      undefined,
-      undefined
+      valuesMap
     );
   }
 }

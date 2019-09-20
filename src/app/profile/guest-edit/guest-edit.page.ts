@@ -493,7 +493,7 @@ export class GuestEditPage implements OnInit {
         this.commonUtilService.translateMessage('PLEASE_SELECT', this.commonUtilService.translateMessage('CLASS')), false, 'red-toast');
       return false;
     } else {
-      loader.present();
+      await loader.present();
       if (this.isNewUser) {
         this.submitNewUserForm(formVal, loader);
       } else {
@@ -561,9 +561,6 @@ export class GuestEditPage implements OnInit {
 
     this.profileService.updateProfile(req)
       .subscribe((res: any) => {
-        if (this.isCurrentUser) {
-          this.publishProfileEvents(formVal);
-        }
         this._dismissLoader(loader);
         this.commonUtilService.showToast(this.commonUtilService.translateMessage('PROFILE_UPDATE_SUCCESS'));
         this.telemetryGeneratorService.generateInteractTelemetry(
@@ -572,7 +569,11 @@ export class GuestEditPage implements OnInit {
           Environment.USER,
           PageId.EDIT_USER
         );
-        this.location.back();
+        if (this.isCurrentUser) {
+          this.publishProfileEvents(formVal);
+        } else {
+          this.location.back();
+        }
       }, (err: any) => {
         this._dismissLoader(loader);
         this.commonUtilService.showToast(this.commonUtilService.translateMessage('PROFILE_UPDATE_FAILED'));
@@ -597,12 +598,8 @@ export class GuestEditPage implements OnInit {
         this.preferences.putString(PreferenceKey.SELECTED_USER_TYPE, ProfileType.TEACHER).toPromise().then();
         initTabs(this.container, GUEST_TEACHER_TABS);
       }
-
-      // Migration todo
-      // this.app.getRootNav().setRoot(TabsPage);
-      // Need to test thoroughly
-      this.router.navigate([`/${RouterLinks.TABS}`]);
     }
+    this.location.back();
   }
 
 
@@ -646,11 +643,11 @@ export class GuestEditPage implements OnInit {
     });
   }
 
-  private _dismissLoader(loader?) {
+  private async _dismissLoader(loader?) {
     if (loader) {
-      loader.dismiss();
+      await loader.dismiss();
     } else if (this.loader) {
-      this.loader.dismiss();
+      await this.loader.dismiss();
       this.loader = undefined;
     }
   }

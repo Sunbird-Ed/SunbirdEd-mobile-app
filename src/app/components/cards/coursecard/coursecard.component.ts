@@ -1,4 +1,3 @@
-import { AppVersion } from '@ionic-native/app-version/ngx';
 import { BatchConstants, ContentCard, ContentType, MimeType, PreferenceKey, RouterLinks } from '../../../app.constant';
 import { Component, Inject, Input, OnInit, NgZone } from '@angular/core';
 import { Events, NavController, PopoverController } from '@ionic/angular';
@@ -6,23 +5,21 @@ import { CourseUtilService } from '../../../../services/course-util.service';
 import { TelemetryGeneratorService } from '../../../../services/telemetry-generator.service';
 import {
   SharedPreferences, TelemetryObject,
-  CourseService, CourseBatchesRequest, CourseEnrollmentType, CourseBatchStatus, GetContentStateRequest
+  CourseService, CourseBatchesRequest, CourseEnrollmentType, CourseBatchStatus, GetContentStateRequest, CorrelationData
 } from 'sunbird-sdk';
 import { InteractSubtype, InteractType, Environment, PageId } from '../../../../services/telemetry-constants';
 import { CommonUtilService } from '../../../../services/common-util.service';
-import { async } from 'q';
 import { EnrollmentDetailsPage } from '@app/app/enrolled-course-details-page/enrollment-details-page/enrollment-details-page';
-import { RouterLink } from '@angular/router';
-import {Router} from '@angular/router';
+import { Router } from '@angular/router';
 @Component({
   selector: 'app-coursecard',
   templateUrl: './coursecard.component.html',
   styleUrls: ['./coursecard.component.scss'],
 })
 export class CourseCardComponent implements OnInit {
-   /**
-    * Contains course details
-    */
+  /**
+   * Contains course details
+   */
   @Input() course: any;
 
   /**
@@ -56,7 +53,7 @@ export class CourseCardComponent implements OnInit {
    *
    * It gets used when perticular course does not have a course/content icon
    */
-  defaultImg: string;
+  defaultImg = this.commonUtilService.convertFileSrc('assets/imgs/ic_launcher.png');
 
   layoutInProgress = ContentCard.LAYOUT_INPROGRESS;
   layoutPopular = ContentCard.LAYOUT_POPULAR;
@@ -65,39 +62,28 @@ export class CourseCardComponent implements OnInit {
   batches: any;
   loader: any;
 
-  /**
-   * Default method of class CourseCard
-   *
-   * @param navCtrl To navigate user from one page to another
-   * @param courseUtilService
-   * @param events
-   * @param telemetryGeneratorService
-   * @param preferences
-   */
   constructor(
+    @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
+    @Inject('COURSE_SERVICE') private courseService: CourseService,
     public navCtrl: NavController,
     private courseUtilService: CourseUtilService,
     private events: Events,
     private telemetryGeneratorService: TelemetryGeneratorService,
-    @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
     private popoverCtrl: PopoverController,
-    private commonUtilService: CommonUtilService,
+    public commonUtilService: CommonUtilService,
     private router: Router,
-    @Inject('COURSE_SERVICE') private courseService: CourseService,
-    private zone: NgZone) {
-    this.defaultImg = 'assets/imgs/ic_launcher.png';
-  }
+    private zone: NgZone) { }
 
   async  checkRetiredOpenBatch(content: any, layoutName?: string) {
     this.loader = await this.commonUtilService.getLoader();
     await this.loader.present();
-    let anyOpenBatch: Boolean = false;
+    let anyRunningBatch = false;
     let retiredBatches: Array<any> = [];
     this.enrolledCourses = this.enrolledCourses || [];
     if (layoutName !== ContentCard.LAYOUT_INPROGRESS) {
       retiredBatches = this.enrolledCourses.filter((element) => {
         if (element.contentId === content.identifier && element.batch.status === 1 && element.cProgress !== 100) {
-          anyOpenBatch = true;
+          anyRunningBatch = true;
           content.batch = element.batch;
         }
         if (element.contentId === content.identifier && element.batch.status === 2 && element.cProgress !== 100) {
@@ -105,7 +91,7 @@ export class CourseCardComponent implements OnInit {
         }
       });
     }
-    if (anyOpenBatch || !retiredBatches.length) {
+    if (anyRunningBatch || !retiredBatches.length) {
       // open the batch directly
       this.navigateToDetailPage(content, layoutName);
     } else if (retiredBatches.length) {
@@ -124,11 +110,6 @@ export class CourseCardComponent implements OnInit {
     };
     const reqvalues = new Map();
     reqvalues['enrollReq'] = courseBatchesRequest;
-    // this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
-    //   InteractSubtype.ENROLL_CLICKED,
-    //     Environment.HOME,
-    //     PageId.CONTENT_DETAIL, undefined,
-    //     reqvalues);
 
     if (this.commonUtilService.networkInfo.isNetworkAvailable) {
       if (!this.guestUser) {
@@ -172,9 +153,6 @@ export class CourseCardComponent implements OnInit {
 
   /**
    * Navigate to the course/content details page
-   *
-   * @param {string} layoutName
-   * @param {object} content
    */
   async navigateToDetailPage(content: any, layoutName: string) {
     const identifier = content.contentId || content.identifier;
@@ -186,6 +164,10 @@ export class CourseCardComponent implements OnInit {
       telemetryObject = new TelemetryObject(identifier, objectType, undefined);
     }
 
+    const corRelationList: Array<CorrelationData> = [{
+      id: this.sectionName,
+      type: 'Section'
+    }];
 
     const values = new Map();
     values['sectionName'] = this.sectionName;
@@ -196,26 +178,33 @@ export class CourseCardComponent implements OnInit {
       this.env,
       this.pageName ? this.pageName : this.layoutName,
       telemetryObject,
-      values);
+      values,
+      undefined,
+      corRelationList);
     if (this.loader) {
       await this.loader.dismiss();
     }
     if (layoutName === this.layoutInProgress || content.contentType === ContentType.COURSE) {
       this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], {
         state: {
-          content: content
+          content,
+          isCourse: true,
+          corRelation: corRelationList
         }
       });
     } else if (content.mimeType === MimeType.COLLECTION) {
       this.router.navigate([RouterLinks.COLLECTION_DETAILS], {
         state: {
-          content: content
+          content,
+          corRelation: corRelationList
         }
       });
     } else {
       this.router.navigate([RouterLinks.CONTENT_DETAILS], {
         state: {
-          content: content
+          content,
+          isCourse: true,
+          corRelation: corRelationList
         }
       });
     }
@@ -247,12 +236,13 @@ export class CourseCardComponent implements OnInit {
 
         if (content.lastReadContentId) {
           this.events.publish('course:resume', {
-            content: content
+            content
           });
         } else {
           this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], {
             state: {
-              content: content
+              content,
+              isCourse: true
             }
           });
         }
@@ -261,13 +251,8 @@ export class CourseCardComponent implements OnInit {
 
   ngOnInit() {
     if (this.layoutName === this.layoutInProgress) {
-      this.course.cProgress = (this.courseUtilService.getCourseProgress(this.course.leafNodesCount, this.course.progress));
-      this.course.cProgress = parseInt(this.course.cProgress, 10);
-      if (this.course.batch && this.course.batch.status === 2) {
-        this.batchExp = true;
-      } else {
-        this.batchExp = false;
-      }
+      this.course.cProgress = this.course.completionPercentage;
+      this.batchExp = this.course.batch && this.course.batch.status === 2;
     }
   }
 
@@ -295,5 +280,5 @@ export class CourseCardComponent implements OnInit {
     // store the contentContextMap in shared preference and access it from SDK
     this.preferences.putString(PreferenceKey.CONTENT_CONTEXT, JSON.stringify(contentContextMap)).toPromise().then();
   }
-
 }
+

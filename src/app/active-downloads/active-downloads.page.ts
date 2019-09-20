@@ -11,14 +11,15 @@ import {
   DownloadRequest,
   DownloadService,
   EventNamespace,
-  EventsBusService
+  EventsBusService,
+  StorageService,
+  StorageDestination
 } from 'sunbird-sdk';
 import { Location } from '@angular/common';
-//  import { SbPopoverComponent } from '@app/component';
 import { AppHeaderService, CommonUtilService, TelemetryGeneratorService } from '../../services/index';
 import { SbNoNetworkPopupComponent } from '../components/popups/sb-no-network-popup/sb-no-network-popup.component';
 import { SbPopoverComponent } from '../components/popups/sb-popover/sb-popover.component';
-// import { SbNoNetworkPopupComponent } from '../../component/popups/sb-no-network-popup/sb-no-network-popup';
+import { featureIdMap } from '@app/feature-id-map';
 @Component({
   selector: 'app-active-downloads',
   templateUrl: './active-downloads.page.html',
@@ -28,7 +29,7 @@ export class ActiveDownloadsPage implements OnInit, OnDestroy, ActiveDownloadsIn
 
   downloadProgressMap: { [key: string]: number };
   activeDownloadRequests$: Observable<ContentDownloadRequest[]>;
-  defaultImg = 'assets/imgs/ic_launcher.png';
+  defaultImg = this.commonUtilService.convertFileSrc('assets/imgs/ic_launcher.png');
 
   private _appHeaderSubscription?: Subscription;
   private _downloadProgressSubscription?: Subscription;
@@ -39,6 +40,7 @@ export class ActiveDownloadsPage implements OnInit, OnDestroy, ActiveDownloadsIn
     actionButtons: [] as string[]
   };
   private _toast: any;
+  private storageDestination: any;
 
   constructor(
     private popoverCtrl: PopoverController,
@@ -51,6 +53,7 @@ export class ActiveDownloadsPage implements OnInit, OnDestroy, ActiveDownloadsIn
     private location: Location,
     @Inject('DOWNLOAD_SERVICE') private downloadService: DownloadService,
     @Inject('EVENTS_BUS_SERVICE') private eventsBusService: EventsBusService,
+    @Inject('STORAGE_SERVICE') private storageService: StorageService
   ) {
     this.downloadProgressMap = {};
     // @ts-ignore
@@ -83,12 +86,27 @@ export class ActiveDownloadsPage implements OnInit, OnDestroy, ActiveDownloadsIn
     }
   }
 
+  ionViewWillEnter() {
+    this.fetchStorageDestination();
+    this.checkAvailableSpace();
+  }
+  ionViewDidLoad() {
+    this.telemetryGeneratorService.generatePageViewTelemetry(
+      PageId.ACTIVE_DOWNLOADS,
+      Environment.DOWNLOADS, '');
+  }
+
   cancelAllDownloads(): void {
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,
       InteractSubtype.DOWNLOAD_CANCEL_ALL_CLICKED,
       Environment.DOWNLOADS,
-      PageId.ACTIVE_DOWNLOADS);
+      PageId.ACTIVE_DOWNLOADS,
+      undefined,
+      undefined,
+      undefined,
+      featureIdMap.downloadManager.ACTIVE_DOWNLOADS_CANCEL
+    );
     this.showCancelPopUp();
   }
 
@@ -97,7 +115,12 @@ export class ActiveDownloadsPage implements OnInit, OnDestroy, ActiveDownloadsIn
       InteractType.TOUCH,
       InteractSubtype.DOWNLOAD_CANCEL_CLICKED,
       Environment.DOWNLOADS,
-      PageId.ACTIVE_DOWNLOADS);
+      PageId.ACTIVE_DOWNLOADS,
+      undefined,
+      undefined,
+      undefined,
+      featureIdMap.downloadManager.ACTIVE_DOWNLOADS_CANCEL
+    );
     this.showCancelPopUp(downloadRequest);
   }
 
@@ -106,7 +129,6 @@ export class ActiveDownloadsPage implements OnInit, OnDestroy, ActiveDownloadsIn
   }
 
   private initDownloadProgress(): void {
-    // @ts-ignore
     this._downloadProgressSubscription = this.eventsBusService.events(EventNamespace.DOWNLOADS)
       .filter((event) => event.type === DownloadEventType.PROGRESS)
       .do((event) => {
@@ -129,7 +151,6 @@ export class ActiveDownloadsPage implements OnInit, OnDestroy, ActiveDownloadsIn
   private handleHeaderEvents(event: { name: string }) {
     switch (event.name) {
       case 'back':
-        // this.navCtrl.pop();
         this.location.back();
         break;
     }
@@ -189,7 +210,7 @@ export class ActiveDownloadsPage implements OnInit, OnDestroy, ActiveDownloadsIn
     const loader = await this.commonUtilService.getLoader();
 
     const response = await confirm.onDidDismiss();
-    if (response.data.canDelete) {
+    if (response.data) {
       let valuesMap;
       if (downloadRequest) {
         valuesMap = {
@@ -216,7 +237,6 @@ export class ActiveDownloadsPage implements OnInit, OnDestroy, ActiveDownloadsIn
   }
 
   private async presentPopupForOffline() {
-    // migration-TODO
     this._toast = await this.popoverCtrl.create({
       component: SbNoNetworkPopupComponent,
       componentProps: {
@@ -228,10 +248,34 @@ export class ActiveDownloadsPage implements OnInit, OnDestroy, ActiveDownloadsIn
 
     this._toast.present();
   }
+  private async fetchStorageDestination() {
+    this.storageDestination = await this.storageService.getStorageDestination().toPromise();
+  }
+
+  private async presentPopupForLessStorageSpace() {
+    this._toast = await this.popoverCtrl.create({
+      component: SbNoNetworkPopupComponent,
+      componentProps: {
+        sbPopoverHeading: this.commonUtilService.translateMessage('INSUFFICIENT_STORAGE'),
+        sbPopoverMessage: this.storageDestination === StorageDestination.INTERNAL_STORAGE ?
+          this.commonUtilService.translateMessage('MOVE_FILES_TO_OTHER_DESTINATION', this.commonUtilService.translateMessage('SD_CARD')) :
+          this.commonUtilService.translateMessage('MOVE_FILES_TO_OTHER_DESTINATION',
+            this.commonUtilService.translateMessage('INTERNAL_MEMORY')),
+      },
+      cssClass: 'sb-popover no-network',
+    });
+
+    this._toast.present();
+  }
+
+  private checkAvailableSpace() {
+    this.storageService.getStorageDestinationVolumeInfo()
+      .do((volumeInfo) => {
+        if (volumeInfo.info.availableSize < 209715200) {
+          this.presentPopupForLessStorageSpace();
+        }
+      })
+      .subscribe();
+  }
 
 }
-
-
-
-
-

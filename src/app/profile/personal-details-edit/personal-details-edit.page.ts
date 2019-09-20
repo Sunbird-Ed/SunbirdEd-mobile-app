@@ -26,7 +26,6 @@ export class PersonalDetailsEditPage implements OnInit {
   btnColor = '#8FC4FF';
   showOnlyMandatoryFields: boolean = true;
   editData: boolean = true;
-  loader: any;
 
   /* Custom styles for the select box popup */
   stateOptions = {
@@ -66,7 +65,6 @@ export class PersonalDetailsEditPage implements OnInit {
    */
   ionViewWillEnter() {
     this.headerService.showHeaderWithBackButton();
-    this.profile = this.router.getCurrentNavigation().extras.state.profile;
     this.getStates();
   }
 
@@ -100,7 +98,8 @@ export class PersonalDetailsEditPage implements OnInit {
   }
 
   async getStates() {
-    this.loader = await this.commonUtilService.getLoader();
+    let loader = await this.commonUtilService.getLoader();
+    await loader.present();
     const req: LocationSearchCriteria = {
       filters: {
         type: loc.TYPE_STATE
@@ -108,25 +107,34 @@ export class PersonalDetailsEditPage implements OnInit {
     };
     this.profileService.searchLocation(req).subscribe(async (success) => {
       const locations = success;
+      await loader.dismiss();
+      loader = undefined;
       if (locations && Object.keys(locations).length) {
         this.stateList = locations;
       } else {
-        await this.loader.dismiss();
         this.commonUtilService.showToast(this.commonUtilService.translateMessage('NO_DATA_FOUND'));
+      }
+    }, async (error) => {
+      if (loader) {
+        await loader.dismiss();
+        loader = undefined;
       }
     });
   }
 
   async getDistrict(parentId: string) {
-    this.loader = await this.commonUtilService.getLoader();
+    let loader = await this.commonUtilService.getLoader();
+    await loader.present();
     const req: LocationSearchCriteria = {
       filters: {
         type: loc.TYPE_DISTRICT,
-        parentId: parentId
+        parentId
       }
     };
     this.profileService.searchLocation(req).subscribe(async (success) => {
       const districtsTemp = success;
+      await loader.dismiss();
+      loader = undefined;
       if (districtsTemp && Object.keys(districtsTemp).length) {
         this.districtList = districtsTemp;
       } else {
@@ -134,8 +142,12 @@ export class PersonalDetailsEditPage implements OnInit {
           districts: []
         });
         this.districtList = [];
-        await this.loader.dismiss();
         this.commonUtilService.showToast(this.commonUtilService.translateMessage('NO_DATA_FOUND'));
+      }
+    }, async (error) => {
+      if (loader) {
+        await loader.dismiss();
+        loader = undefined;
       }
     });
   }
@@ -180,8 +192,9 @@ export class PersonalDetailsEditPage implements OnInit {
    * @param {object} formVal Object of Form values
    */
 
-  submitForm() {
-    this.loader.present();
+  async submitForm() {
+    let loader = await this.commonUtilService.getLoader();
+    await loader.present();
     const req = {
       userId: this.profile.userId,
       lastName: ' ',
@@ -201,15 +214,17 @@ export class PersonalDetailsEditPage implements OnInit {
     }
 
     this.profileService.updateServerProfile(req).toPromise()
-      .then(() => {
-        this.loader.dismiss();
+      .then(async () => {
+        await loader.dismiss();
+        loader = undefined;
         this.commonUtilService.showToast(this.commonUtilService.translateMessage('PROFILE_UPDATE_SUCCESS'));
         this.events.publish('loggedInProfile:update', req);
         this.location.back();
-        // this.navCtrl.pop();
-        window.history.back();
-      }).catch(() => {
-        this.loader.dismiss();
+      }).catch(async () => {
+        if (loader) {
+          await loader.dismiss();
+          loader = undefined;
+        }
         this.commonUtilService.showToast(this.commonUtilService.translateMessage('PROFILE_UPDATE_FAILED'));
       });
   }
@@ -221,4 +236,5 @@ export class PersonalDetailsEditPage implements OnInit {
     const name = this.profileEditForm.getRawValue().name;
     return name.trim();
   }
+
 }

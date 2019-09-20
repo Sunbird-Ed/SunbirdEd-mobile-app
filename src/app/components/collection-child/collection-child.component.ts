@@ -1,10 +1,10 @@
 import { Location } from '@angular/common';
-import { Component, Input, NgZone, OnInit } from '@angular/core';
+import { Component, Input, NgZone, OnInit, Output, EventEmitter } from '@angular/core';
 import { ContentType, MimeType, RouterLinks } from '@app/app/app.constant';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { CommonUtilService } from '@app/services/common-util.service';
 import { ComingSoonMessageService } from '@app/services/coming-soon-message.service';
-import { PopoverController } from '@ionic/angular';
+import { PopoverController, Events } from '@ionic/angular';
 import { SbGenericPopoverComponent } from '@app/app/components/popups/sb-generic-popover/sb-generic-popover.component';
 import { Content } from 'sunbird-sdk';
 import { Router, NavigationExtras } from '@angular/router';
@@ -39,6 +39,8 @@ export class CollectionChildComponent implements OnInit {
   @Input() rootUnitId: any;
   @Input() isTextbookTocPage: boolean;
   @Input() bookID: string;
+  @Input() isEnrolled: boolean;
+  @Input() fromCourseToc: boolean;
 
   constructor(
     private zone: NgZone,
@@ -48,15 +50,9 @@ export class CollectionChildComponent implements OnInit {
     private router: Router,
     private textbookTocService: TextbookTocService,
     private telemetryService: TelemetryGeneratorService,
-    private location: Location
-  ) {
-    // const extras = this.router.getCurrentNavigation().extras.state;
-    // if (extras) {
-    //   this.cardData = extras.content;
-    //   this.defaultAppIcon = 'assets/imgs/ic_launcher.png';
-    //   this.parentId = extras.parentId;
-    // }
-  }
+    private location: Location,
+    private events: Events,
+  ) { }
 
   ngOnInit(): void {
   }
@@ -94,6 +90,8 @@ export class CollectionChildComponent implements OnInit {
       );
       this.textbookTocService.setTextbookIds({ rootUnitId: this.rootUnitId, contentId: content.identifier });
       this.location.back();
+    } else if (!this.isEnrolled && this.router.url.indexOf(RouterLinks.ENROLLED_COURSE_DETAILS) !== -1) {
+      this.events.publish('courseToc:content-clicked');
     } else {
       //   migration-TODO : remove unnecessary
       //   const stateData = this.navParams.get('contentState');
@@ -150,7 +148,7 @@ export class CollectionChildComponent implements OnInit {
       });
     }
   }
-  
+
 
 
   async showComingSoonPopup(childData: any) {
@@ -186,6 +184,21 @@ export class CollectionChildComponent implements OnInit {
         return true;
       }
       return !!activeMimeType.find(m => m === mimeType);
+    }
+  }
+  // course-toc: for showing respective contenttype icons
+  getContentTypeIcon(content: Content) {
+    const contentType = content.mimeType;
+    if (contentType) {
+      if (MimeType.DOCS.indexOf(contentType) !== -1) {
+        return './assets/imgs/doc.svg';
+      } else if (MimeType.VIDEO.indexOf(contentType) !== -1) {
+        return './assets/imgs/play.svg';
+      } else {
+        return './assets/imgs/touch.svg';
+      }
+    } else {
+      return './assets/imgs/touch.svg';
     }
   }
 }

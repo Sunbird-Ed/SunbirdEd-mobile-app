@@ -1,5 +1,6 @@
+import { Subscription } from 'rxjs//Subscription';
 import { Component, OnInit, Inject, ViewChild } from '@angular/core';
-import { Events, IonSelect } from '@ionic/angular';
+import { Events, IonSelect, Platform } from '@ionic/angular';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 import { initTabs, LOGIN_TEACHER_TABS } from '@app/app/module.service';
@@ -23,9 +24,10 @@ import { AppGlobalService } from '@app/services/app-global-service.service';
 import { AppHeaderService } from '@app/services/app-header.service';
 import { FormAndFrameworkUtilService } from '@app/services/formandframeworkutil.service';
 import { ContainerService } from '@app/services/container.services';
-import { ProfileConstants } from '@app/app/app.constant';
+import { ProfileConstants, RouterLinks } from '@app/app/app.constant';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Location } from '@angular/common';
+import { Environment, ActivePageService } from '@app/services';
 
 
 @Component({
@@ -33,7 +35,7 @@ import { Location } from '@angular/common';
   templateUrl: './categories-edit.page.html',
   styleUrls: ['./categories-edit.page.scss'],
 })
-export class CategoriesEditPage implements OnInit {
+export class CategoriesEditPage {
 
   @ViewChild('boardSelect') boardSelect: IonSelect;
   @ViewChild('mediumSelect') mediumSelect: IonSelect;
@@ -58,6 +60,9 @@ export class CategoriesEditPage implements OnInit {
     showBurgerMenu: false,
     actionButtons: []
   };
+
+  backButtonFunc: Subscription;
+  isRootPage = false;
 
   /* Custom styles for the select box popup */
   boardOptions = {
@@ -91,23 +96,23 @@ export class CategoriesEditPage implements OnInit {
     private headerService: AppHeaderService,
     private route: ActivatedRoute,
     private router: Router,
-    private location: Location
+    private location: Location,
+    private platform: Platform,
+    private activePageService: ActivePageService
 
   ) {
     this.profile = this.appGlobalService.getCurrentUser();
-    const extras = this.router.getCurrentNavigation().extras;
-    if (extras.state && extras.state.showOnlyMandatoryFields) {
-      this.showOnlyMandatoryFields = extras.state.showOnlyMandatoryFields;
-      if (extras.state.profile) {
-        this.profile = extras.state.profile;
+    const extrasState = this.router.getCurrentNavigation().extras.state;
+    if (extrasState && extrasState.showOnlyMandatoryFields) {
+      this.showOnlyMandatoryFields = extrasState.showOnlyMandatoryFields;
+      this.isRootPage = Boolean(extrasState.isRootPage);
+      if (extrasState.profile) {
+        this.profile = extrasState.profile;
       }
     } else {
       this.showOnlyMandatoryFields = false;
     }
     this.initializeForm();
-  }
-
-  ngOnInit() {
   }
 
   /**
@@ -120,6 +125,12 @@ export class CategoriesEditPage implements OnInit {
     this.headerConfig.showHeader = false;
     this.headerConfig.showBurgerMenu = false;
     this.headerService.updatePageConfig(this.headerConfig);
+
+    if (this.isRootPage) {
+      this.backButtonFunc = this.platform.backButton.subscribeWithPriority(0, () => {
+        this.commonUtilService.showExitPopUp(this.activePageService.computePageId(this.router.url), Environment.HOME, false);
+      });
+    }
   }
 
   /**
@@ -222,7 +233,6 @@ export class CategoriesEditPage implements OnInit {
     }
   }
 
-
   /**
    * It builds API request object and internally call form API to fetch category data.
    * @param index Index of the field in the form
@@ -263,6 +273,7 @@ export class CategoriesEditPage implements OnInit {
       this.getCategoryData(request, currentField);
     }
   }
+
   /**
    * It makes an API call to fetch the categories values for the selected framework
    * @param request API request body
@@ -306,7 +317,6 @@ export class CategoriesEditPage implements OnInit {
       });
   }
 
-
   /**
    * It will validate the forms and internally call submit method
    */
@@ -335,17 +345,15 @@ export class CategoriesEditPage implements OnInit {
     }
   }
 
-
   /**
    * Shows Toast Message with `red` color
-   * @param {string} fieldName Name of the field in the form
+   * @param fieldName Name of the field in the form
    */
   showErrorToastMessage(fieldName: string) {
     this.btnColor = '#8FC4FF';
     this.commonUtilService.showToast(this.commonUtilService.translateMessage('PLEASE_SELECT', this.commonUtilService
       .translateMessage(fieldName)), false, 'redErrorToast');
   }
-
 
   /**
    * It changes the color of the submit button on change of class.
@@ -358,10 +366,9 @@ export class CategoriesEditPage implements OnInit {
     }
   }
 
-
   /**
    * It makes an update API call.
-   * @param {object} formVal Object of Form values
+   * @param formVal Object of Form values
    */
 
   async submitForm(formVal) {
@@ -415,21 +422,25 @@ export class CategoriesEditPage implements OnInit {
               this.formAndFrameworkUtilService.updateLoggedInUser(updatedProfile, this.profile)
                 .then((value) => {
                   initTabs(this.container, LOGIN_TEACHER_TABS);
-                  // Migration todo
-                  // this.navCtrl.setRoot(TabsPage);
-
+                  this.router.navigate([RouterLinks.TABS]);
                 });
             }).catch(e => {
               initTabs(this.container, LOGIN_TEACHER_TABS);
-              // Migration todo
-              // this.navCtrl.setRoot(TabsPage);
+              this.router.navigate([RouterLinks.TABS]);
             });
         } else {
           this.location.back();
         }
-      }).catch(async () => {
+      }).catch(async (error) => {
         await this.loader.dismiss();
         this.commonUtilService.showToast(this.commonUtilService.translateMessage('PROFILE_UPDATE_FAILED'));
+        console.error('Unable to submit:', error);
       });
+  }
+
+  ionViewWillLeave() {
+    if (this.backButtonFunc) {
+      this.platform.backButton.unsubscribe();
+    }
   }
 }

@@ -1,4 +1,3 @@
-:host {
     .profile-avatar{
         font-size: 50px;
         font-weight: bold !important;
@@ -19,4 +18,7 @@
             display: table-cell;
         }
     }
-}
+    .profile-avatar.profileAvatar{
+        border: 1px solid #008840 !important;
+        box-shadow: none;
+    }

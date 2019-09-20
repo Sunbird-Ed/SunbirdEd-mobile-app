@@ -10,10 +10,10 @@
     </ion-buttons>
     <ion-buttons class="sb-hamburger" slot="start" *ngIf="!headerConfig?.showBurgerMenu">
       <ion-button icon-only (click)="emitEvent($event, 'back');">
-        <ion-icon name="arrow-back"></ion-icon>
+        <ion-icon class="arrow-icon" name="arrow-back"></ion-icon>
       </ion-button>
     </ion-buttons>
-    <ion-title *ngIf="headerConfig?.pageTitle?.length >0">{{headerConfig?.pageTitle}}</ion-title>
+    <ion-title class="color f16"*ngIf="headerConfig?.pageTitle?.length >0">{{headerConfig?.pageTitle}}</ion-title>
     <ion-buttons class="sb-header-btn-group" slot="end">
       <ion-button icon-only *ngIf="headerConfig?.actionButtons?.indexOf('download') >=0 && showDownloadAnimation"
         (click)="emitEvent($event, 'download');">
@@ -85,7 +85,7 @@
 </ion-header>
 
 <ion-menu contentId="mainContent" class="sb-side-menu" *ngIf="isRtl" side="end" persistent="true"
-  [disabled]="headerConfig?.showBurgerMenu || false">
+  [swipeGesture]="headerConfig?.showBurgerMenu || false">
   <ion-header>
     <ion-toolbar>
       <ion-title>
@@ -155,7 +155,7 @@
   </ion-footer>
 </ion-menu>
 
-<ion-menu contentId="mainContent" class="sb-side-menu" *ngIf="!isRtl" side="start" persistent="true" >
+<ion-menu contentId="mainContent" class="sb-side-menu" *ngIf="!isRtl" side="start" persistent="true" [swipeGesture]="headerConfig?.showBurgerMenu || false">
   <ion-header>
     <ion-toolbar>
       <ion-title>

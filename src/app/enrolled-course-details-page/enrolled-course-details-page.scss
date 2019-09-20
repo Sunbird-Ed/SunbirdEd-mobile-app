@@ -1,6 +1,11 @@
-@import "src/assets/styles/_custom-mixins.scss";
-@import "src/assets/styles/_variables.scss";
+@import 'src/assets/styles/_custom-mixins';
+@import "src/assets/styles/variables";
+
+
 :host {
+    ion-card{
+      margin: 0 0 10px 0 !important;
+    }
     .fontBold {
         font-weight: bold;
     }
@@ -9,38 +14,92 @@
     }
     .ion-ios-checkmark-circle:before {
         color: #008000;
+        margin-right: 4px;
+        margin-left: 0px;
     }
     .structure-text{
         padding: 7px 0px 0px 4px;
     }
+    .certified-section-color{
+      color: #08539f;
+    }
+    .certified-training-section{
+        background-color: #e5edf5;
+        padding: 8px;
+    }
+    .font-10{
+        font-size: 10px;
+    }
     .font-12 {
         font-size: 12px !important;
     }
+    .font-13{
+      font-size: 13px !important;
+    }
+    .font-16{
+        font-size: 16px !important;
+    }
+    .font-14{
+        font-size: 14px !important;
+    }
+    .font-18{
+        font-size: 18px;
+    }
     .padding-left-8{
-        padding-left: 8px !important;
+        @include padding(0px 0px 0px 8px);
     }
     .child-item{
         --padding-start: 0 !important;
     }
-    .course-progress {
-        position: absolute;
-        width: 100%;
-        z-index: 10;
-        left:0;
-        top:0;
-        .progress-outer {
-            background-color: transparent !important;
-        }
-        .progress-inner {
-            min-width: unset !important;
-            padding: 2px !important;
-        }
-        .progress-inner-primary {
-            background-color: #FF9F00 !important;
-        }
-        .progress-inner-secondary {
-            background-color: #7ED321 !important;
-        }
+    .text-transform-none{
+        text-transform: none !important;
+    }
+    .card-content-bottom-0{
+        padding-bottom: 0px !important;
+    }
+    .card-content-top-0{
+      padding-top: 0px !important;
+  }
+    .subtitle-color{
+        color: map-get($colors, textGrey);
+    }
+    .enrolled-course-container {
+      &.sticky {
+        position: sticky;
+        top: 0;
+        left: 0;
+        // z-index: 10;
+      }
+    }
+
+    ion-card ion-card-content p {
+        font-size: 14px;
+    }
+    .enrolled-course-card{
+        background-color:#d2eadd;
+    }
+    ion-card{
+        --ion-item-background: white;
+    }
+    .play-icon{
+       display: inline;
+       width: 21px;
+       vertical-align: middle;
+       margin-right: 6.43px;
+    }
+    ion-content{
+        --ion-background-color: #F9F9F8;
+    }
+    .hr-border-bottom {
+        box-sizing: border-box;
+        height: 1px;	
+        width: 328px;	
+        border: 0.5px solid #CCCCCC;
+        margin-top: 9px;
+        margin-bottom: 10px;
+    }
+    hr {
+        border:0.5px solid #999999;
     }
     .blurbackground {
         // background-color: gray !important;
@@ -52,6 +111,12 @@
         }
     }
     .loading-backdrop {
+        background-color: #ffffff;
+        height: 100%;
+        z-index: 1000;
+        opacity: 1 !important;
+        top: 0;
+        bottom: 0;
         .backdrop-container {
             width: 100%;
             padding: 16px;
@@ -65,11 +130,7 @@
             width: 100%;
             bottom: 0;
             padding-bottom: 16px;
-        }
-        background-color: #ffffff;
-        height: 100%;
-        z-index: 1000;
-        opacity: 1 !important;
+        } 
     }
     .child-item {
         @include padding(null, null, null, 0 !important)
@@ -98,4 +159,246 @@
         height: 20px;
         font-size: 10px;
     }
+    .label-margin-bottom{
+      margin-bottom: 3px !important;
+    } 
+    .sb-accordian-header{
+      padding: 12px 14px;
+      .dd-icon {
+        position: relative;
+        bottom: 3px;
+      }
+      .sb-checkmark-icon{
+        color: #008000;
+      }
+    }
+    .custom-card-header{
+        padding-bottom: 0px !important;
+    }
+    .sb-accordian-arrow{
+        float: right;
+        font-size: 14px;
+        padding-top: 10px;
+    }
+    .enrolled-course-card-button{
+        background-color: #008840;
+        border: none;
+        color: white;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        margin: 4px 0px;
+        cursor: pointer;
+        outline: none;
+        margin-bottom: 8px;
+        width: 100%;
+        padding: 13px 0px 13px 0px;
+    }
+    .segment-button-checked{
+      ion-label.sc-ion-label-md-h.sc-ion-label-md-s.md.hydrated{
+        font-weight: bold;
+      }
+    }
+    .border-right{
+      border-right: 1.5px solid #e6e6e6;
+      margin: 0px 0px 10px 11px;
+    }
+    .hr-div {
+      padding: 0px 10px 0px 10px;       
+    }
+    hr.hr-height {
+      height: 32px;
+    }
+    .segment-button-indicator{
+      width: 84% !important;
+      margin-right: 8% !important;
+    }   
+  }
+  .sb-topics-containe{
+    padding-right: 5%;
+  }
+  .sb-hidden-content{
+    background-color: #F2F2F2 !important;
+    // height: 34.15% !important;
+    width: 100% !important;
+    border-radius: 0 0 2px 2px !important;
+    padding-top: 2% !important;
+    padding-bottom: 2% !important;
+  }
+  .sb-accordian-card{
+    // height: 6.1% !important;
+    width: 100% !important;
+    border-radius: 2px !important;
+    background-color: #FFFFFF !important;
+    box-shadow: 0 4px 7px 0 rgba(0,0,0,0.1) !important;
+  }
+  .sb-topic-text {
+      // padding-top: 5px;
+      padding: 0;
+      ion-icon{
+        vertical-align: middle;
+      }
+    // height: 2.44%;
+    // width: 80%;
+    color: $blue;
+    font-size: 14px;
+    // line-height: 20px;
+  }
+
+  .certificate-container {
+    display: inline-flex;
+    flex-wrap: nowrap;
+    align-items:center;
+    background-color: #E5EDF6;
+    padding: 4px;
+    margin-bottom: 12px;
+    .certificate-icon {
+      padding-right: 5px;
+    }
+  }
+  .sc-ion-segment-md-h{
+    --color-checked : #024f9d;
+    font-weight: bold;
+    --color: #467fb8;
+  }
+  .wrapper {
+    display: inline-flex;
+    grid-template-columns: 100px 100px 100px auto;
+    margin-bottom: -8px;
+  }  
+  .wrapper {
+    border-radius: 5px;
+  }
+  
+  .wrapper > div {
+    border-radius: 5px;
+    padding: 1em;
+  }
+
+  .pull-right{
+      float: right;
+  }
+  .menu-icon{
+    display: block;
+    width: 100%;
+    height: 16px;
+    width: 4px;
+    margin-top: 18px;
+    float: right;
+  }
+  .card-icons {
+    font-size: 30px;
+    color: #024F9D;
+  }
+  .card-icons-downloadStarted {
+    font-size: 30px;
+    color: map-get($colors, text_gray);
+  }
+  .card-icons-red{
+    font-size: 30px;
+    color:map-get($colors , danger);
+  }
+  .sb-course-complete-container {
+    width: 100%;	
+    opacity: 0.7;	
+    background-color: #BFE1CF;
+    @include padding(8px);
+    .img-container{
+      width: 20%;
+      vertical-align: middle;
+      display: inline-block;
+    }
+    .text-container{
+      color: map-get($colors, office_green);
+      font-family: "Noto Sans";
+      font-size: 14px !important;
+      font-weight: bold;
+      width: 80%;
+      vertical-align: middle;
+      display: inline-block;
+      padding-left: 10px;
+      @include padding(0px 0px 0px 11px);
+    }
+  }
+  .card-text{
+    height: 18px;
+    width: 63px;
+    color: map-get($colors, textGrey);
+    font-family: "Noto Sans";
+    font-size: 13px !important;
+    line-height: 20px;
+    text-align: center;
+  }
+  .card-button{
+      background-color: transparent !important;
+      outline: none;
+  }
+  .padding-bottom-6{
+    padding-bottom: 6px;
+  }
+  .padding-bottom-8{
+    padding-bottom: 8px;
+  }
+  .margin-bottom-2{
+    margin-bottom: 2px;
+  }
+  
+  .sb-course-progress-container{
+      background-color: #E5EDF5;
+      padding: 8px;
+      height: 70px;	
+      width: auto;
+  }
+
+  .last-read-content{
+    font-size: 16px !important;
+    font-weight:bold;
+    @include rtl() {
+      padding-bottom: 4px;
+     }
+     @include ltr() {
+     padding-left: 4px;
+     }
+  }
+
+  .sb-batch-end-container{
+    background-color: #FBE7E0;
+    padding: 10px;
+    height: 70px;	
+    width: auto;
+    .batch-end-main-heading{
+      font-size: 12px !important;
+      color: #E55A28;      
+    }
+    .batch-end-sub-heading{
+      color: #333333;
+      font-family: "Noto Sans";
+      font-size: 12px !important;
+    }
+  }
+  .enrollment-end-date{
+    font-size: 12px;
+    color: #333333;
+    font-family: "Noto Sans";
+  }
+  .padding-left-5em{
+    padding-left: 5em !important;
+  }
+  .sb-course-end-container{
+    background-color: #FBE7E0;
+    padding: 10px;
+    height: 70px;	
+    width: auto;
+    .main-heading{
+      font-size: 14px !important;
+      color: #E55A28;
+    }
+    .sub-heading{
+      color: #333333;
+      font-family: "Noto Sans";
+      font-size: 12px !important;
+    }
 }
+  
+  

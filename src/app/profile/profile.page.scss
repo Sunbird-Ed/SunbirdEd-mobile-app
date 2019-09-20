@@ -223,4 +223,26 @@
     vertical-align: middle;
     display: inline-block;
   }
+
+  .avatar-tickmark {
+    width: $base-block-space*4;
+    height: $base-block-space*4;
+    position: absolute;
+    left: 53%;
+  }
+
+  .training-1 {
+    width: 80%;
+    float: left;
+  }
+
+  .training-2 {
+    width: 20%;
+  }
+
+  .flex-nowrap {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: nowrap;
+  }
 }

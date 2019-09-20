@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Inject, Input, NgZone, Output, OnInit } from '@angular/core';
-import { NavController } from '@ionic/angular';
+import { NavController, Events } from '@ionic/angular';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import {
   ApiService,
@@ -17,7 +17,7 @@ import {
 } from 'sunbird-sdk';
 
 import { initTabs, LOGIN_TEACHER_TABS } from '@app/app/module.service';
-import { ProfileConstants, PreferenceKey } from '@app/app/app.constant';
+import { ProfileConstants, PreferenceKey, EventTopics } from '@app/app/app.constant';
 import { FormAndFrameworkUtilService } from '@app/services/formandframeworkutil.service';
 import { CommonUtilService } from '@app/services/common-util.service';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
@@ -28,6 +28,8 @@ import {
   PageId
 } from '@app/services/telemetry-constants';
 import { ContainerService } from '@app/services/container.services';
+import { Router } from '@angular/router';
+
 
 @Component({
   selector: 'app-sign-in-card',
@@ -54,7 +56,9 @@ export class SignInCardComponent implements OnInit {
     private appVersion: AppVersion,
     private commonUtilService: CommonUtilService,
     private formAndFrameworkUtilService: FormAndFrameworkUtilService,
-    private telemetryGeneratorService: TelemetryGeneratorService
+    private telemetryGeneratorService: TelemetryGeneratorService,
+    private router: Router,
+    private events: Events
   ) {
 
     this.appVersion.getAppName()
@@ -97,7 +101,9 @@ export class SignInCardComponent implements OnInit {
           await loader.dismiss();
           that.ngZone.run(() => {
             that.preferences.putString('SHOW_WELCOME_TOAST', 'true').toPromise().then();
-            window.location.reload();
+
+            // note: Navigating back to Resourses is though the below event from App-Components.
+            this.events.publish(EventTopics.SIGN_IN_RELOAD);
           });
         })
         .catch(async (err) => {
@@ -184,4 +190,5 @@ export class SignInCardComponent implements OnInit {
       undefined,
       valuesMap);
   }
+
 }

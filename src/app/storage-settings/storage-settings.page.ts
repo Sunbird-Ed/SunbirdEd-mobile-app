@@ -113,9 +113,12 @@ export class StorageSettingsPage implements OnInit {
   }
 
   ngOnInit() {
-    this.initAppHeader();
     this.fetchStorageVolumes();
     this.fetchStorageDestination();
+  }
+  
+  ionViewWillEnter(){
+    this.initAppHeader();
   }
 
   public async attemptTransfer() {
@@ -127,7 +130,7 @@ export class StorageSettingsPage implements OnInit {
 
     if (permissionStatus.hasPermission) {
       this.showShouldTransferContentsPopup();
-    } else if (permissionStatus['isPermissionAlwaysDenied']) {
+    } else if (permissionStatus.isPermissionAlwaysDenied) {
       this.revertSelectedStorageDestination();
       this.showSettingsPageToast();
     } else {
@@ -200,8 +203,7 @@ export class StorageSettingsPage implements OnInit {
           }
         ],
         handler: (selectedButton: string) => {
-          if (selectedButton 
-              = this.commonUtilService.translateMessage('NOT_NOW')) {
+          if (selectedButton === this.commonUtilService.translateMessage('NOT_NOW')) {
             this.revertSelectedStorageDestination();
             this.showSettingsPageToast();
           } else if (selectedButton === this.commonUtilService.translateMessage('ALLOW')) {
@@ -248,8 +250,8 @@ export class StorageSettingsPage implements OnInit {
 
     const res = await toast.onWillDismiss();
     console.log("res", res);
-    if (res.role === 'close') {
-      this.router.navigate([`${RouterLinks.PERMISSION}`], { state: { changePermissionAccess: true } });
+    if (res.role === 'cancel') {
+      this.router.navigate([`/${RouterLinks.SETTINGS}/${RouterLinks.PERMISSION}`], { state: { changePermissionAccess: true } });
     }
   }
 
@@ -288,35 +290,34 @@ export class StorageSettingsPage implements OnInit {
       PageId.TRANSFER_CONTENT_CONFIRMATION_POPUP,
       Environment.DOWNLOADS
     );
+    const { data } = await this.shouldTransferContentsPopup.onDidDismiss();
+    this.shouldTransferContentsPopup = undefined;
 
-    this.shouldTransferContentsPopup.onDidDismiss(async (shouldTransfer: boolean) => {
-      this.shouldTransferContentsPopup = undefined;
-
-      if (!shouldTransfer) {
-        this.telemetryGeneratorService.generateInteractTelemetry(
-          InteractType.TOUCH,
-          InteractSubtype.POPUP_DISMISSED,
-          Environment.DOWNLOADS,
-          PageId.TRANSFER_CONTENT_CONFIRMATION_POPUP,
-          undefined, undefined, undefined,
-          featureIdMap.downloadManager.STORAGE_SETTINGS_TRANSFER
-        );
-
-        this.revertSelectedStorageDestination();
-        return;
-      }
-
+    if (!data ) {
       this.telemetryGeneratorService.generateInteractTelemetry(
         InteractType.TOUCH,
-        InteractSubtype.START_CLICKED,
+        InteractSubtype.POPUP_DISMISSED,
         Environment.DOWNLOADS,
-        PageId.TRANSFER_CONTENT_CONFIRMATION_POPUP, undefined, undefined, undefined,
+        PageId.TRANSFER_CONTENT_CONFIRMATION_POPUP,
+        undefined, undefined, undefined,
         featureIdMap.downloadManager.STORAGE_SETTINGS_TRANSFER
       );
 
-      await this.showTransferringContentsPopup(this.shouldTransferContentsPopup, this.storageDestination);
-    });
+      this.revertSelectedStorageDestination();
+      return;
+    }
+
+    this.telemetryGeneratorService.generateInteractTelemetry(
+      InteractType.TOUCH,
+      InteractSubtype.START_CLICKED,
+      Environment.DOWNLOADS,
+      PageId.TRANSFER_CONTENT_CONFIRMATION_POPUP, undefined, undefined, undefined,
+      featureIdMap.downloadManager.STORAGE_SETTINGS_TRANSFER
+    );
+
+    await this.showTransferringContentsPopup(this.shouldTransferContentsPopup, this.storageDestination);
   }
+
   private async showTransferringContentsPopup(prevPopup: any, storageDestination: StorageDestination): Promise<undefined> {
     if (this.transferringContentsPopup) {
       return;
@@ -342,7 +343,7 @@ export class StorageSettingsPage implements OnInit {
           this.showDuplicateContentPopup();
         } else if (e.type === StorageEventType.TRANSFER_FAILED_LOW_MEMORY) {
           if (this.transferringContentsPopup) {
-            this.transferringContentsPopup.dismiss();
+           await  this.transferringContentsPopup.dismiss();
           }
           this.showLowMemoryToast();
           this.revertSelectedStorageDestination();
@@ -363,7 +364,7 @@ export class StorageSettingsPage implements OnInit {
         this.showSuccessTransferPopup(this.transferringContentsPopup, storageDestination);
       });
 
-    this.transferringContentsPopup = this.popoverCtrl.create({
+    this.transferringContentsPopup = await this.popoverCtrl.create({
       component: SbPopoverComponent,
       componentProps: {
         sbPopoverHeading: this.commonUtilService.translateMessage('TRANSFERRING_FILES'),
@@ -382,7 +383,25 @@ export class StorageSettingsPage implements OnInit {
         actionsButtons: [
           {
             btntext: this.commonUtilService.translateMessage('CANCEL'),
-            btnClass: 'popover-color'
+            btnClass: 'popover-color',
+            btnDisabled$: transferProgress$
+            .startWith({
+              transferredCount: 0,
+              totalCount: 0
+            })
+            .map(({ transferredCount, totalCount }) => {
+              if (transferredCount && totalCount) {
+                if ((Math.round((transferredCount / totalCount) * 100)) === 100) {
+                  return true;
+                } else {
+                  return false;
+                }
+              } else {
+                return false;
+              }
+            })
+            .do((v) => {
+            }),
           },
         ],
         icon: null,
@@ -417,23 +436,23 @@ export class StorageSettingsPage implements OnInit {
       Environment.DOWNLOADS
     );
 
-    this.transferringContentsPopup.onDidDismiss(async (shouldCancel: boolean) => {
-      this.transferringContentsPopup = undefined;
+    const { data } = await this.transferringContentsPopup.onDidDismiss();
 
-      transferCompleteSubscription.unsubscribe();
-      transferProgressSubscription.unsubscribe();
+    this.transferringContentsPopup = undefined;
 
-      if (shouldCancel) {
-        this.telemetryGeneratorService.generateInteractTelemetry(
-          InteractType.TOUCH,
-          InteractSubtype.CANCEL_CLICKED,
-          Environment.DOWNLOADS,
-          PageId.TRANSFERING_CONTENT_POPUP
-        );
+    transferCompleteSubscription.unsubscribe();
+    transferProgressSubscription.unsubscribe();
 
-        this.showCancellingTransferPopup(this.transferringContentsPopup, storageDestination);
-      }
-    });
+    if (data && data.canDelete) {
+      this.telemetryGeneratorService.generateInteractTelemetry(
+        InteractType.TOUCH,
+        InteractSubtype.CANCEL_CLICKED,
+        Environment.DOWNLOADS,
+        PageId.TRANSFERING_CONTENT_POPUP
+      );
+
+      this.showCancellingTransferPopup(this.transferringContentsPopup, storageDestination);
+    }
 
     return;
   }
@@ -456,15 +475,15 @@ export class StorageSettingsPage implements OnInit {
         e.type === StorageEventType.TRANSFER_COMPLETED
       )
       .take(1)
-      .subscribe((e) => {
+      .subscribe(async (e) => {
         if (e.type === StorageEventType.TRANSFER_REVERT_COMPLETED) {
           this.storageDestination = this.storageDestination === StorageDestination.INTERNAL_STORAGE ?
             StorageDestination.EXTERNAL_STORAGE :
             StorageDestination.INTERNAL_STORAGE;
 
-          this.cancellingTransferPopup.dismiss();
+          await this.cancellingTransferPopup.dismiss();
         } else if (e.type === StorageEventType.TRANSFER_COMPLETED) {
-          this.cancellingTransferPopup.dismiss();
+          await this.cancellingTransferPopup.dismiss();
           this.showSuccessTransferPopup(this.cancellingTransferPopup, storageDestination);
         }
       });
@@ -481,12 +500,11 @@ export class StorageSettingsPage implements OnInit {
       cssClass: 'sb-popover dw-active-downloads-popover',
     });
 
-    await this.cancellingTransferPopup.present();
+    this.cancellingTransferPopup.present();
 
-    const { data } = await this.cancellingTransferPopup.onDidDismiss();
-    if (data && data.cancellingTransferPopup) {
+    this.cancellingTransferPopup.onDidDismiss().then(() => {
       this.cancellingTransferPopup = undefined;
-    }
+    });
 
     this.telemetryGeneratorService.generateImpressionTelemetry(
       ImpressionType.VIEW,
@@ -530,7 +548,7 @@ export class StorageSettingsPage implements OnInit {
     const { data } = await this.duplicateContentPopup.onDidDismiss();
     this.duplicateContentPopup = undefined;
 
-    if (data && data.canContinue) {
+    if (data && data.canDelete) {
       this.telemetryGeneratorService.generateInteractTelemetry(
         InteractType.TOUCH,
         InteractSubtype.CONTINUE_CLICKED,
@@ -542,7 +560,7 @@ export class StorageSettingsPage implements OnInit {
     }
 
     if (this.transferringContentsPopup) {
-      this.transferringContentsPopup.dismiss();
+     await  this.transferringContentsPopup.dismiss();
     }
 
     this.telemetryGeneratorService.generateInteractTelemetry(
@@ -560,7 +578,7 @@ export class StorageSettingsPage implements OnInit {
     }
 
     const spaceTakenBySunbird = await this.spaceTakenBySunbird$.toPromise();
-    this.successTransferPopup = this.popoverCtrl.create({
+    this.successTransferPopup = await this.popoverCtrl.create({
       component: SbPopoverComponent,
       componentProps: {
         sbPopoverHeading: (storageDestination === StorageDestination.INTERNAL_STORAGE) ?
@@ -590,10 +608,10 @@ export class StorageSettingsPage implements OnInit {
       Environment.DOWNLOADS
     );
 
-    const { data } = this.successTransferPopup.onDidDismiss();
+    const { data } = await this.successTransferPopup.onDidDismiss();
     this.successTransferPopup = undefined;
 
-    if (data && data.okClicked) {
+    if (data && data.canDelete) {
       this.telemetryGeneratorService.generateInteractTelemetry(
         InteractType.TOUCH,
         InteractSubtype.OK_CLICKED,
