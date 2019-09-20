@@ -1,4 +1,5 @@
 @import "src/assets/styles/_custom-mixins.scss";
+@import "src/assets/styles/variables";
 :host {
   .close-button.button-outline-md {
     border-color: transparent;
@@ -71,5 +72,11 @@
   .custom-shadow {
     box-shadow: 0 -5px 5px -5px rgba(0, 0, 0, 0.2);
     margin-top: 35% !important;
+  }
+
+  .ecd-header {
+    background-color: map-get($colors, primary);
+    color: map-get($colors, white);
+    padding: 16px 0;
   }
 }
