@@ -1,3 +1,6 @@
+@import "src/assets/styles/base/_variables.scss";
+@import "src/assets/styles/_custom-mixins.scss";
+@import "src/assets/styles/_variables.scss";
 .scroll-content{
     padding: 0% !important;
 }
@@ -150,8 +153,7 @@ P{
     border-width: 1px;
     border-style:solid;
     border-color: #c3c3c3;
-    padding-left: 8px;
-    padding-top: 8px;
+    @include padding(8px 0px 0px 8px);
     resize: none;
 }
 .submit-button{
@@ -270,10 +272,10 @@ img>.report-button{
         text-align: left;
     }
     .panel-info > h6 {
-        margin-left: 15px;
+        @include margin(0px 0px 0px 15px);
     }
     .panel-info > p {
-        margin-left: 15px;
+        @include margin(0px 0px 0px 15px);
     }
     #initiate-email{
     margin-top: 10px;
@@ -288,8 +290,7 @@ img>.report-button{
     border-width: 1px;
     border-style:solid;
     border-color: #c3c3c3;
-    padding-left: 8px;
-    padding-top: 8px;
+    @include padding(8px 0px 0px 8px);
     resize: none;
 }
 ::placeholder {
@@ -309,8 +310,7 @@ img>.report-button{
         border-width: 1px;
         border-style:solid;
         border-color: #c3c3c3;
-        padding-left: 8px;
-        padding-top: 8px;
+        @include padding(8px 0px 0px 8px);
         margin: 0px;
         resize: none;
     }

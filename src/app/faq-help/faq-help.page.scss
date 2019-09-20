@@ -1,8 +1,16 @@
-
+@import "src/assets/styles/base/_variables.scss";
+@import "src/assets/styles/_custom-mixins.scss";
+@import "src/assets/styles/_variables.scss";
+:host{
+    --padding-bottom: 0px;
+}
 .need-header-space ion-content:first-child{
     --padding-bottom: 0px;
 }
 ion-content{
+    --padding-bottom: 0px;
+}
+.contentPadding{
     --padding-bottom: 0px;
 }
 .scroll-content{
@@ -30,6 +38,9 @@ iframe {
     padding: 4px;
     margin-top: 4px;
     margin-left: 5px;
+}
+.yesBtn{
+    color: #008840;
 }
 p{
     font-size: 14px;
@@ -138,7 +149,9 @@ p{
     font-weight: 700;
     outline: none;
     height: 30px;
-
+}
+.panel-interact .yesBtn{
+    color: #008840;
 }
 .panel-interact>p{
     margin: 0px;
@@ -173,8 +186,7 @@ p{
     border-width: 1px;
     border-style:solid;
     border-color: #c3c3c3;
-    padding-left: 8px;
-    padding-top: 8px;
+    @include padding(8px 0px 0px 8px);
     resize: none;
 }
 .submit-button{
@@ -293,10 +305,10 @@ img>.report-button{
         text-align: left;
     }
     .panel-info > h6 {
-        margin-left: 15px;
+        @include margin(0px 0px 0px 15px);
     }
     .panel-info > p {
-        margin-left: 15px;
+        @include margin(0px 0px 0px 15px);
     }
     #initiate-email{
     margin-top: 10px;
@@ -311,8 +323,7 @@ img>.report-button{
     border-width: 1px;
     border-style:solid;
     border-color: #c3c3c3;
-    padding-left: 8px;
-    padding-top: 8px;
+    @include padding(15px);
     resize: none;
 }
 ::placeholder {
@@ -332,8 +343,7 @@ img>.report-button{
         border-width: 1px;
         border-style:solid;
         border-color: #c3c3c3;
-        padding-left: 8px;
-        padding-top: 8px;
+        @include padding(8px 0px 0px 8px);
         margin: 0px;
         resize: none;
     }

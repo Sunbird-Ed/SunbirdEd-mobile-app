@@ -62,6 +62,7 @@ export class FaqHelpPage implements OnInit {
   faqs: any;
   jsonURL: any;
   textValue: any;
+  value: any;
   constructor(
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -89,12 +90,23 @@ export class FaqHelpPage implements OnInit {
         this.appName = appName;
         console.log('APpName', this.appName);
       });
+    this.messageListener = (event) => {
+        this.receiveMessage(event);
+    };
     window.addEventListener('message', this.messageListener, false);
     this.getSelectedLanguage();
     console.log('this.data', this.data);
     this.getDataFromUrl();
   }
-
+  receiveMessage(event) {
+    const values = new Map();
+    values['values'] = event.data;
+    console.log('Event.data', event.data);
+    // send telemetry for all events except Initiate-Email
+    if (event.data && event.data.action && event.data.action !== 'initiate-email-clicked') {
+      this.generateInteractTelemetry(event.data.action, values);
+    }
+  }
 
   public getJSON(): Observable<any> {
     return this.http.get(this.jsonURL);
@@ -215,35 +227,7 @@ export class FaqHelpPage implements OnInit {
     this.location.back();
   }
 
-  // async onLoad() {
-  //   const element = document.getElementsByTagName('iframe')[0];
-  //   if (element && element.contentDocument) {
-  //     if (element.contentDocument.documentElement.getElementsByTagName('body')[0].innerHTML.length !== 0 && this.loading) {
-  //       const appData = { appName: this.appName };
-  //       element.contentWindow.postMessage(appData, '*');
-  //       await this.loading.dismiss();
-  //       this.loading = undefined;
-  //     }
-  //     if (element.contentDocument.documentElement.getElementsByTagName('body').length === 0 ||
-  //       element['contentWindow'].location.href.startsWith('chrome-error:')
-  //     ) {
-  //       this.onError();
-  //     }
-  //   }
-  //   if (this.loading) {
-  //     await this.loading.dismiss();
-  //     this.loading = undefined;
-  //   }
-  // }
-
-  // async onError() {
-  //   if (this.loading) {
-  //     await this.loading.dismiss();
-  //     this.loading = undefined;
-  //   }
-  //   this.faq.url = './assets/faq/consumption-faqs.html?selectedlang=en&randomid=' + Math.random();
-  //   this.consumptionFaqUrl = this.domSanitizer.bypassSecurityTrustResourceUrl(this.faq.url);
-  // }
+  
 
 
   generateInteractTelemetry(interactSubtype, values) {
@@ -283,22 +267,50 @@ export class FaqHelpPage implements OnInit {
    return this.shownGroup === group;
 }
 
-noClicked() {
+noClicked(i) {
+  this.value = {};
   if (!this.isNoClicked) {
     this.isNoClicked = true;
   }
+  this.value.action = 'no-clicked';
+  this.value.position = i;
+  this.value.value = {};
+  this.value.value.topic = this.data.faqs[i].topic;
+  this.value.value.description = this.data.faqs[i].description;
+  console.log('this.value, noclicked', this.value);
+  window.parent.postMessage(this.value, '*');
 
 }
 
-yesClicked() {
+yesClicked(i) {
+  this.value = {};
   if (!this.isYesClicked) {
     this.isYesClicked = true;
   }
+
+  this.value.action = 'yes-clicked';
+  this.value.position = i;
+  this.value.value = {};
+  this.value.value.topic = this.data.faqs[i].topic;
+  this.value.value.description = this.data.faqs[i].description;
+
+  console.log('this.value, yesclicked', this.value);
+  window.parent.postMessage(this.value, '*');
 }
 
-submitClicked(textValue) {
+submitClicked(textValue, i) {
   this.isSubmitted = true;
   console.log(this.textValue);
+
+  this.value.action = 'no-clicked';
+  this.value.position = i;
+  this.value.value = {};
+  this.value.value.topic = this.data.faqs[i].topic;
+  this.value.value.description = this.data.faqs[i].description;
+  this.value.value.knowMoreText = textValue;
+  console.log('this.value, noclicked', this.value);
+  window.parent.postMessage(this.value, '*');
+  this.textValue = '';
 }
 
 navigateToReportIssue() {
