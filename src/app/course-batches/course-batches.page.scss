@@ -32,6 +32,9 @@
     .padding-left-6{
         padding-left: 6px;
     }
+    .enroll-msg-style {
+        font-size: 0.9em;
+    }
     .font-size-20{
         font-size: 18px !important;
     }
@@ -101,7 +104,7 @@
     .batch-font{
         @extend .NotoSans-bold;
         padding: 15px 0 12px 7px;
-        font-size: 1.6rem;
+        font-size: 16px;
     }
 
     ion-label {
@@ -118,10 +121,26 @@
           width: 80%;
           p {
             margin-top: 0px;
+            margin-bottom: 2px;
           }
         }
         .card-icon{
           width: 20%;   
         }
       }
+      .sb-btn-outline-info {
+        background-color: #006DE5 !important;
+        border-radius: 5px !important;
+        font-weight: bold;
+        font-size: 12px;
+        color: white !important;
+        border-color: white !important;
+    }
+    .enroll-msg-ended {
+        color: #e55a28;
+        font-size: 0.9em;
+    }
+}
+button:disbled{
+    opacity: 0.5 !important;
 }

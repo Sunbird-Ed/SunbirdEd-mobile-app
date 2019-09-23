@@ -1,5 +1,5 @@
 import { Injectable, Inject } from '@angular/core';
-import { PlayerService, InteractType, Content } from 'sunbird-sdk';
+import { PlayerService, InteractType, Content, CorrelationData } from 'sunbird-sdk';
 import { CanvasPlayerService } from '@app/services/canvas-player.service';
 import { AppGlobalService } from '@app/services/app-global-service.service';
 import { File } from '@ionic-native/file/ngx';
@@ -9,6 +9,7 @@ import { ContentInfo } from '../content-info';
 import { RouterLinks } from '@app/app/app.constant';
 import { Router } from '@angular/router';
 import { CommonUtilService } from '@app/services/common-util.service';
+import {Course, CourseService} from "sunbird-sdk";
 
 
 @Injectable({
@@ -17,6 +18,7 @@ import { CommonUtilService } from '@app/services/common-util.service';
 export class ContentPlayerHandler {
     constructor(
         @Inject('PLAYER_SERVICE') private playerService: PlayerService,
+        @Inject('COURSE_SERVICE') private courseService: CourseService,
         private canvasPlayerService: CanvasPlayerService,
         private file: File,
         private telemetryGeneratorService: TelemetryGeneratorService,
@@ -53,6 +55,23 @@ export class ContentPlayerHandler {
             request.streaming = isStreaming;
         }
         request['correlationData'] = contentInfo.correlationList;
+          if (isCourse && content.contentData['totalQuestions']) {
+          const correlationData: CorrelationData = {
+            id: this.courseService.generateAssessmentAttemptId({
+              courseId: contentInfo.course!.identifier,
+              batchId: contentInfo.course.batchId,
+              contentId: content.identifier,
+              userId: contentInfo.course.userId
+            }),
+            type: 'AttemptId'
+          };
+
+          if (request['correlationData']) {
+            request['correlationData'].push(correlationData)
+          }
+
+          request['correlationData'] = [correlationData];
+        }
         this.playerService.getPlayerConfig(content, request).subscribe((data) => {
             data['data'] = {};
             if (isCourse) {
