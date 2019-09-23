@@ -474,5 +474,9 @@ export class RouterLinks {
     // TEXTBOOK view more page Routes
     public static readonly TEXTBOOK_VIEW_MORE = 'textbook-view-more';
 
+    // faq Report Issue Pag
+    public static readonly FAQ_REPORT_ISSUE = 'faq-report-issue';
+
+
 
 }
