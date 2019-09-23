@@ -2,7 +2,7 @@
 @import "src/assets/styles/_custom-mixins";
 @import "src/assets/styles/fonts";
 
-:host{ 
+:host{
     div.scrollable-container {
       --background: green !important;
     }
@@ -51,6 +51,34 @@
     padding: $base-block-space * 2;
     color: $primary-color;
     font-weight: bolder;
+  }
+  .explore {
+    border: 1px solid #024F9D;
+    border-radius: 4px;
+  }
+.sub-heading {
+  padding: 1em 4em !important;
+  font-size: 12px;
+  color: #999999;
+  margin: 0;
+}
+.sb-nodownloads-container {
+  & {
+    padding-top: 4rem;
+  }
+}
+.sb-nodownloads-title {
+  & {
+    margin: 0;
+    font-size: 16px;
+    padding-top: 4%;
+    color: #666666;
+    font-weight: bold;
+    letter-spacing: -0.46px
+  }
+}
+  .sb-explore-container{
+  padding-bottom: 30px;
   }
   .sb-card-textbook-container {
     .sb-card-textbook {
