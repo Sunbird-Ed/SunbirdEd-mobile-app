@@ -1,5 +1,8 @@
 import { Injectable, Inject } from '@angular/core';
-import { ContentService, StorageService, ContentExportRequest, ContentExportResponse, Content, Rollup, CorrelationData } from 'sunbird-sdk';
+import {
+  ContentService, StorageService, ContentExportRequest, ContentExportResponse,
+  Content, Rollup, CorrelationData, ContentDetailRequest
+} from 'sunbird-sdk';
 import { CommonUtilService } from '../common-util.service';
 import { InteractSubtype, InteractType, Environment, PageId } from '../telemetry-constants';
 import { SocialSharing } from '@ionic-native/social-sharing/ngx';
@@ -20,6 +23,19 @@ export class ContentShareHandlerService {
     private utilityService: UtilityService) {
   }
   public async shareContent(content: Content, corRelationList?: CorrelationData[], rollup?: Rollup) {
+    if (content.hierarchyInfo && content.hierarchyInfo.length > 0) {
+      const contentDetailRequest: ContentDetailRequest = {
+        contentId: content.hierarchyInfo[0].identifier,
+        attachFeedback: false,
+        attachContentAccess: false,
+        emitUpdateIfAny: false
+      };
+      await this.contentService.getContentDetails(contentDetailRequest).toPromise()
+        .then((contentDetail: Content) => {
+          content = contentDetail;
+        });
+    }
+
     this.generateShareInteractEvents(InteractType.TOUCH,
       InteractSubtype.SHARE_LIBRARY_INITIATED,
       content.contentType, corRelationList, rollup);
