@@ -52,8 +52,14 @@
     color: $primary-color;
     font-weight: bolder;
   }
-  .explore {
+  .explore-more-content {
     border: 1px solid #024F9D;
+    border-radius: 4px;
+    --background: #F3F7FA;
+    --color: #024F90;
+  }
+  .explore-more-books {
+    --background: #024F9D;
     border-radius: 4px;
   }
 .sub-heading {
