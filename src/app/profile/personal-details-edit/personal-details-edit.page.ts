@@ -111,7 +111,6 @@ export class PersonalDetailsEditPage implements OnInit {
       loader = undefined;
       if (locations && Object.keys(locations).length) {
         this.stateList = locations;
-        console.log('SstateList', this.stateList);
       } else {
         this.commonUtilService.showToast(this.commonUtilService.translateMessage('NO_DATA_FOUND'));
       }
@@ -138,7 +137,6 @@ export class PersonalDetailsEditPage implements OnInit {
       loader = undefined;
       if (districtsTemp && Object.keys(districtsTemp).length) {
         this.districtList = districtsTemp;
-        console.log('this.DistrictList', this.districtList);
       } else {
         this.profileEditForm.patchValue({
           districts: []
