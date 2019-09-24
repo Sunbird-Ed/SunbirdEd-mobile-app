@@ -31,8 +31,8 @@ const routes: Routes = [
     DirectivesModule,
     ComponentsModule,
   ],
-  entryComponents:[EnrollmentDetailsPage],
-  declarations: [SearchPage , EnrollmentDetailsPage],
+  entryComponents: [],
+  declarations: [SearchPage],
 
 })
 export class SearchPageModule {}
