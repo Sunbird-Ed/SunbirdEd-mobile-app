@@ -1,9 +1,10 @@
 @import "src/assets/styles/_variables.scss";
+@import "src/assets/styles/_custom-mixins.scss";
 :host {
     .label-font {
        font-weight: 600 !important;
         color: #979797 !important;
-        font-size: 1.4rem !important;
+        font-size: 14px !important;
     }
     .select-text {
       //font-size: 1.2rem !important;
@@ -83,6 +84,14 @@
     }
     .popover-alert .alert-content-body{
       color: darkgrey;
+    }
+
+    .label-stacked.sc-ion-label-md-h{
+      transform: translate3d(0,0,0) scale(1);
+    }
+
+    ion-item {
+      @include padding(16px, null, null, null);
     }
   }
   
