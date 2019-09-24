@@ -56,10 +56,6 @@
             </p>
           </div>
           <div class="card-icon">
-            <!-- <ion-button size="small" slot="end" (click)="enrollIntoBatch(batch)"
-            [disabled]="(batch.endDate && (todayDate > batch.endDate))">
-            {{ 'ENROLL' | translate }}
-          </ion-button> -->
           <button class="sb-btn sb-btn-sm sb-btn-outline-info view-all-p8" float-end
           (click)="enrollIntoBatch(batch);" [disabled]="(batch.enrollmentEndDate && (todayDate > batch.enrollmentEndDate))">
           {{ 'ENROLL' | translate }}</button>
@@ -98,7 +94,7 @@
             </p>
           </div>
           <div class="card-icon">
-            <button size="small" ion-button item-end (click)="enrollIntoBatch(batch)" [disabled]="(batch.enrollmentEndDate && (todayDate > batch.enrollmentEndDate))"
+            <button class="sb-btn sb-btn-sm sb-btn-outline-info view-all-p8" float-end  (click)="enrollIntoBatch(batch)" [disabled]="(batch.enrollmentEndDate && (todayDate > batch.enrollmentEndDate))"
               [ngClass]="{'enroll-style' : (batch.enrollmentEndDate && (todayDate > batch.enrollmentEndDate))}">
              {{ 'ENROLL' | translate }}
            </button>
