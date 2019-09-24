@@ -103,9 +103,12 @@ export class UserTypeSelectionPage implements OnInit {
   }
   handleHeaderEvents($event) {
     switch ($event.name) {
-      case 'back': this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.USER_TYPE_SELECTION, Environment.HOME, true);
-        this.handleBackButton();
-        break;
+      case 'back': this.telemetryGeneratorService.generateBackClickedTelemetry(
+          PageId.USER_TYPE_SELECTION,
+          this.appGlobalService.isOnBoardingCompleted ? Environment.HOME : Environment.ONBOARDING,
+          true);
+                   this.handleBackButton();
+                   break;
     }
   }
 
