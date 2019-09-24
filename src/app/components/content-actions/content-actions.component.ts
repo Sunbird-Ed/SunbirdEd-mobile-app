@@ -251,31 +251,6 @@ export class ContentActionsComponent {
         this.data.enrollmentType !== 'invite-only'));
   }
 
-  isUnenrollDisabled() {
-    if (!this.batchDetails || this.isObjectEmpty(this.batchDetails)) {
-      return true;
-    }
-
-    if (!this.batchDetails.endDate) {
-      let progress;
-
-      if (this.data && this.data.courseProgress) {
-        progress = this.data.courseProgress ? Math.round(this.data.courseProgress) : 0;
-      }
-
-      return !(this.batchDetails.enrollmentType === 'open' && progress !== 100);
-    } else {
-      if (moment(this.batchDetails.endDate).diff(moment(new Date())) !== 0) {
-        let progress;
-
-        if (this.data && this.data.courseProgress) {
-          progress = this.data.courseProgress ? Math.round(this.data.courseProgress) : 0;
-        }
-
-        return !(this.batchDetails.enrollmentType === 'open' && progress !== 100);
-      }
-    }
-  }
 
   private isObjectEmpty(obj) {
     return Object.keys(obj).length === 0 && obj.constructor === Object;
