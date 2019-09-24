@@ -107,7 +107,7 @@ export class PersonalDetailsEditPage implements OnInit {
     };
     this.profileService.searchLocation(req).subscribe(async (success) => {
       const locations = success;
-      await loader.dismiss();
+      loader.dismiss();
       loader = undefined;
       if (locations && Object.keys(locations).length) {
         this.stateList = locations;
@@ -116,7 +116,7 @@ export class PersonalDetailsEditPage implements OnInit {
       }
     }, async (error) => {
       if (loader) {
-        await loader.dismiss();
+        loader.dismiss();
         loader = undefined;
       }
     });
@@ -124,7 +124,7 @@ export class PersonalDetailsEditPage implements OnInit {
 
   async getDistrict(parentId: string) {
     let loader = await this.commonUtilService.getLoader();
-    await loader.present();
+    loader.present();
     const req: LocationSearchCriteria = {
       filters: {
         type: loc.TYPE_DISTRICT,
@@ -133,7 +133,7 @@ export class PersonalDetailsEditPage implements OnInit {
     };
     this.profileService.searchLocation(req).subscribe(async (success) => {
       const districtsTemp = success;
-      await loader.dismiss();
+      loader.dismiss();
       loader = undefined;
       if (districtsTemp && Object.keys(districtsTemp).length) {
         this.districtList = districtsTemp;
@@ -146,7 +146,7 @@ export class PersonalDetailsEditPage implements OnInit {
       }
     }, async (error) => {
       if (loader) {
-        await loader.dismiss();
+        loader.dismiss();
         loader = undefined;
       }
     });
