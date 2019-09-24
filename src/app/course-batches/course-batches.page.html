@@ -58,7 +58,7 @@
           <div class="card-icon">
           <button class="sb-btn sb-btn-sm sb-btn-outline-info view-all-p8" float-end
           (click)="enrollIntoBatch(batch);" [disabled]="(batch.enrollmentEndDate && (todayDate > batch.enrollmentEndDate))">
-          {{ 'JOIN' | translate }}</button>
+          {{ 'ENROLL' | translate }}</button>
           </div>
         </div>
       </div>
@@ -96,7 +96,7 @@
           <div class="card-icon">
             <button class="sb-btn sb-btn-sm sb-btn-outline-info view-all-p8" float-end  (click)="enrollIntoBatch(batch)" [disabled]="(batch.enrollmentEndDate && (todayDate > batch.enrollmentEndDate))"
               [ngClass]="{'enroll-style' : (batch.enrollmentEndDate && (todayDate > batch.enrollmentEndDate))}">
-             {{ 'JOIN' | translate }}
+             {{ 'ENROLL' | translate }}
            </button>
           </div>
         </div>
