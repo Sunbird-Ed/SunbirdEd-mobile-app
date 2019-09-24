@@ -333,7 +333,8 @@ export enum InteractSubtype {
     SORT_BY_CLICKED = 'sort-by-clicked',
     SEARCH_INITIATED = 'search-initiated',
     RECOVERY_ACCOUNT_ID_CLICKED = 'recovery-account-id-clicked',
-    MENU_CLICKED = 'menu-clicked'
+    MENU_CLICKED = 'menu-clicked',
+    NO_SEARCH_RESULT_FOUND = 'no-search-result-found'
 }
 
 export enum ActionButtonType {
