@@ -17,6 +17,7 @@ import {
   InteractType,
   PageId
 } from '@app/services/telemetry-constants';
+import { ContentUtil } from '@app/util/content-util';
 
 @Component({
   selector: 'app-collection-child',
@@ -41,6 +42,7 @@ export class CollectionChildComponent implements OnInit {
   @Input() bookID: string;
   @Input() isEnrolled: boolean;
   @Input() fromCourseToc: boolean;
+  collectionChildIcon: any;
 
   constructor(
     private zone: NgZone,
@@ -55,7 +57,9 @@ export class CollectionChildComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-  }
+    this.collectionChildIcon = ContentUtil.getAppIcon(this.childData.contentData.appIcon, this.childData.basePath,
+        this.commonUtilService.networkInfo.isNetworkAvailable);
+}
 
   setContentId(id: string) {
     console.log('extractedUrl', this.router);
