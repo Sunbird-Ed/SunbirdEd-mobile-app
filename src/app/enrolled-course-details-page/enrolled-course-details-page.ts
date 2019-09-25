@@ -207,6 +207,7 @@ export class EnrolledCourseDetailsPage implements OnInit {
   pageName = '';
   contentId: string;
   isChild = false;
+  public telemetryObject: TelemetryObject;
 
 
   constructor(
@@ -240,6 +241,7 @@ export class EnrolledCourseDetailsPage implements OnInit {
     private popOverCtrl: PopoverController
   ) {
 
+    this.objRollup = new Rollup();
     this.userId = this.appGlobalService.getUserId();
     this.checkLoggedInOrGuestUser();
     this.checkCurrentUserType();
@@ -509,9 +511,9 @@ export class EnrolledCourseDetailsPage implements OnInit {
           InteractSubtype.RATING_CLICKED,
           Environment.HOME,
           PageId.CONTENT_DETAIL,
+          this.telemetryObject,
           undefined,
-          undefined,
-          undefined,
+          this.objRollup,
           this.corRelationList);
       } else {
         this.commonUtilService.showToast('TRY_BEFORE_RATING');
@@ -623,6 +625,8 @@ export class EnrolledCourseDetailsPage implements OnInit {
       this.objType = this.course.contentType;
       this.objVer = this.course.pkgVersion;
       this.showLoading = false;
+
+      this.telemetryObject = ContentUtil.getTelemetryObject(this.content);
       if (!this.didViewLoad) {
         this.generateImpressionEvent(this.course.identifier, this.course.contentType, this.course.pkgVersion);
         this.generateStartEvent(this.course.identifier, this.course.contentType, this.course.pkgVersion);
@@ -822,7 +826,9 @@ export class EnrolledCourseDetailsPage implements OnInit {
                 PageId.COURSE_DETAIL,
                 this.course,
                 this.queuedIdentifiers,
-                identifiers.length
+                identifiers.length,
+                this.objRollup,
+                this.corRelationList
               );
             }
 
@@ -1164,7 +1170,7 @@ export class EnrolledCourseDetailsPage implements OnInit {
         PageId.COURSE_DETAIL,
         ContentUtil.getTelemetryObject(content),
         undefined,
-        undefined,
+        ContentUtil.generateRollUp(content.hierarchyInfo, undefined),
         this.corRelationList);
     });
   }
@@ -1247,6 +1253,7 @@ export class EnrolledCourseDetailsPage implements OnInit {
       this.handleHeaderEvents(eventName);
     });
     this.downloadSize = 0;
+    this.objRollup = ContentUtil.generateRollUp(this.courseCardData.hierarchyInfo, this.identifier);
     if (!this.guestUser) {
       this.updatedCourseCardData = await this.courseService.getEnrolledCourses
       ({userId: this.userId, returnFreshCourses: false}).toPromise().then((data) => {
@@ -1321,7 +1328,9 @@ export class EnrolledCourseDetailsPage implements OnInit {
         Environment.HOME,
         false,
         this.identifier,
-        this.corRelationList
+        this.corRelationList,
+        this.objRollup,
+         this.telemetryObject
       );
       this.didViewLoad = false;
       this.generateEndEvent(this.objId, this.objType, this.objVer);
@@ -1336,8 +1345,9 @@ export class EnrolledCourseDetailsPage implements OnInit {
   populateCorRelationData(batchId) {
     if (batchId && !this.corRelationList) {
       this.corRelationList = [];
-      this.corRelationList.push({ id: batchId, type: CorReleationDataType.COURSE_BATCH });
     }
+    this.corRelationList.push({ id: batchId, type: CorReleationDataType.COURSE_BATCH });
+    this.corRelationList = this.commonUtilService.deDupe(this.corRelationList, 'type');
   }
 
   isCourseEnrolled(identifier: string) {
@@ -1489,13 +1499,14 @@ export class EnrolledCourseDetailsPage implements OnInit {
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
       InteractSubtype.ENROLL_CLICKED,
       Environment.HOME,
-      PageId.COURSE_DETAIL, undefined,
-      reqvalues);
+      PageId.COURSE_DETAIL, this.telemetryObject,
+      reqvalues,
+      this.objRollup);
 
     if (this.commonUtilService.networkInfo.isNetworkAvailable) {
       await loader.present();
-            await loader.dismiss();
-            if (this.batches.length) {
+      await loader.dismiss();
+      if (this.batches.length) {
               if (this.batches.length === 1) {
                 this.enrollIntoBatch(this.batches[0]);
               } else {
@@ -1510,7 +1521,10 @@ export class EnrolledCourseDetailsPage implements OnInit {
                   state: {
                     ongoingBatches,
                     upcommingBatches,
-                    course: this.course
+                    course: this.course,
+                    objRollup: this.objRollup,
+                    telemetryObject: this.telemetryObject,
+                    corRelationList: this.corRelationList
                   }
                 });
               }
@@ -1543,9 +1557,9 @@ export class EnrolledCourseDetailsPage implements OnInit {
       InteractSubtype.START_CLICKED,
       Environment.HOME,
       PageId.COURSE_DETAIL,
+      this.telemetryObject,
       undefined,
-      undefined,
-      undefined,
+      this.objRollup,
       this.corRelationList
     );
     if (this.startData && this.startData.length && !this.isBatchNotStarted) {
@@ -1586,7 +1600,7 @@ export class EnrolledCourseDetailsPage implements OnInit {
         pageId,
         Environment.HOME,
         telemetryObject,
-        undefined,
+        this.objRollup,
         this.corRelationList);
     }
   }
@@ -1598,7 +1612,7 @@ export class EnrolledCourseDetailsPage implements OnInit {
       objectId,
       objectType,
       objectVersion,
-      undefined,
+      this.objRollup,
       this.corRelationList);
   }
 
@@ -1606,7 +1620,7 @@ export class EnrolledCourseDetailsPage implements OnInit {
     const telemetryObject = new TelemetryObject(objectId, objectType, objectVersion);
     this.telemetryGeneratorService.generateStartTelemetry(PageId.COURSE_DETAIL,
       telemetryObject,
-      undefined,
+      this.objRollup,
       this.corRelationList
     );
   }
@@ -1618,7 +1632,7 @@ export class EnrolledCourseDetailsPage implements OnInit {
       PageId.COURSE_DETAIL,
       Environment.HOME,
       telemetryObject,
-      undefined,
+      this.objRollup,
       this.corRelationList);
   }
 
@@ -1706,7 +1720,7 @@ export class EnrolledCourseDetailsPage implements OnInit {
         break;
       case 'back':
         this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.COURSE_DETAIL, Environment.HOME,
-          true, this.identifier, this.corRelationList);
+          true, this.identifier, this.corRelationList, this.objRollup, this.telemetryObject);
         this.goBack();
         break;
     }

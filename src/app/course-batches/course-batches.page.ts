@@ -1,7 +1,8 @@
 import { LoginHandlerService } from './../../services/login-handler.service';
 import { TelemetryGeneratorService } from './../../services/telemetry-generator.service';
 import { Component, Inject, NgZone, OnInit } from '@angular/core';
-import { AuthService, Batch, CourseService, EnrollCourseRequest, OAuthSession, SharedPreferences } from 'sunbird-sdk';
+import { AuthService, Batch, CourseService, EnrollCourseRequest, OAuthSession, SharedPreferences,
+   Rollup, CorrelationData, TelemetryObject } from 'sunbird-sdk';
 import { Events, NavController, Platform, PopoverController } from '@ionic/angular';
 import { EventTopics } from '../../app/app.constant';
 import { CommonUtilService } from '../../services/common-util.service';
@@ -69,6 +70,10 @@ export class CourseBatchesPage implements OnInit {
   public showSignInCard = false;
   course: any;
 
+  public objRollup: Rollup;
+  public corRelationList: Array<CorrelationData>;
+  public telemetryObject: TelemetryObject;
+
   /**
    * Default method of class CourseBatchesComponent
    *
@@ -100,6 +105,10 @@ export class CourseBatchesPage implements OnInit {
       this.ongoingBatches = extrasState.ongoingBatches;
       this.upcommingBatches = extrasState.upcommingBatches;
       this.course = extrasState.course;
+      this.objRollup = extrasState.objRollup;
+      this.corRelationList = extrasState.corRelationList;
+      this.telemetryObject = extrasState.telemetryObject;
+
     } else {
       this.ongoingBatches = [];
       this.upcommingBatches = [];
@@ -161,8 +170,11 @@ export class CourseBatchesPage implements OnInit {
       this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
         InteractSubtype.ENROLL_CLICKED,
           Environment.HOME,
-          PageId.COURSE_BATCHES, undefined,
-          reqvalues);
+          PageId.COURSE_BATCHES, this.telemetryObject,
+          reqvalues,
+          this.objRollup,
+          this.corRelationList
+      );
 
       this.courseService.enrollCourse(enrollCourseRequest).toPromise()
         .then((data: boolean) => {
@@ -241,6 +253,9 @@ export class CourseBatchesPage implements OnInit {
     this.ongoingBatches = this.ongoingBatches;
     this.upcommingBatches = this.upcommingBatches;
     this.todayDate =  moment(new Date()).format('YYYY-MM-DD');
+    this.objRollup = this.objRollup;
+    this.corRelationList = this.corRelationList;
+    this.telemetryObject = this.telemetryObject;
   }
 
   spinner(flag) {
