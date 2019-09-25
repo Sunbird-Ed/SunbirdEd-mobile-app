@@ -304,6 +304,12 @@ export class UserAndGroupsPage implements OnInit {
         isNewUser: true
       }
     };
+    this.telemetryGeneratorService.generateInteractTelemetry(
+        InteractType.TOUCH,
+        InteractSubtype.SHARE_CLICKED,
+        Environment.USER,
+        PageId.USERS_GROUPS
+    );
     this.router.navigate([`/${RouterLinks.USER_AND_GROUPS}/${RouterLinks.SHARE_USER_AND_GROUPS}`], navigationExtras);
   }
 
