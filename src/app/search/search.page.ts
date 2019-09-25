@@ -678,7 +678,6 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
             this.updateFilterIcon();
           } else {
             this.isEmptyResult = true;
-            this.generateEmptySearchResultTelemetry();
           }
           this.telemetryGeneratorService.generateEndSheenAnimationTelemetry(this.source);
           this.showLoader = false;
@@ -767,7 +766,6 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
             this.telemetryGeneratorService.generateExtraInfoTelemetry(values, PageId.SEARCH);
           } else {
             this.isEmptyResult = true;
-            this.generateEmptySearchResultTelemetry();
           }
           this.showEmptyMessage = this.searchContentResult.length === 0;
           this.showLoader = false;
@@ -779,7 +777,6 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
         this.zone.run(() => {
           this.showLoader = false;
           if (!this.showLoader) {
-            this.generateEmptySearchResultTelemetry();
             this.telemetryGeneratorService.generateEndSheenAnimationTelemetry(this.source);
           }
           if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
@@ -1528,14 +1525,5 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
     this.telemetryGeneratorService.generateBackClickedTelemetry(ImpressionType.SEARCH,
           Environment.HOME, true, undefined, this.corRelationList);
     this.navCtrl.pop();
-  }
-
-  generateEmptySearchResultTelemetry() {
-    return this.telemetryGeneratorService.generateInteractTelemetry(
-        InteractType.OTHER,
-        InteractSubtype.NO_SEARCH_RESULT_FOUND,
-        Environment.HOME,
-        this.source === PageId.LIBRARY ? PageId.LIBRARY : PageId.COURSES
-    );
   }
 }
