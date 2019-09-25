@@ -1126,33 +1126,6 @@ export class EnrolledCourseDetailsPage implements OnInit {
       courseId: this.identifier
     };
     this.zone.run(() => {
-      if (content.contentType === ContentType.COURSE) {
-        this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], {
-          state: {
-            content,
-            depth,
-            contentState,
-            corRelation: this.corRelationList
-          }
-        });
-      } else if (content.mimeType === MimeType.COLLECTION) {
-        subtype = InteractSubtype.UNIT_CLICKED;
-        let isChildClickable = true;
-        if (this.isAlreadyEnrolled && this.isBatchNotStarted) {
-          isChildClickable = false;
-        }
-        this.router.navigate([RouterLinks.COLLECTION_DETAILS], {
-          state: {
-            content,
-            depth,
-            contentState,
-            fromCoursesPage: true,
-            isAlreadyEnrolled: this.isAlreadyEnrolled,
-            isChildClickable,
-            corRelation: this.corRelationList
-          }
-        });
-      } else {
         this.router.navigate([RouterLinks.CONTENT_DETAILS], {
           state: {
             content,
@@ -1164,7 +1137,6 @@ export class EnrolledCourseDetailsPage implements OnInit {
             course: this.updatedCourseCardData
           }
         });
-      }
       this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
         subtype,
         Environment.HOME,
