@@ -208,7 +208,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
       PageId.SEARCH,
       undefined,
       {
-        'selectedSearchHistory': searchEntry.query
+        selectedSearchHistory: searchEntry.query
       },
       undefined,
       featureIdMap.searchHistory.SEARCH_HISTORY_QUERY_FROM_HISTORY
@@ -287,7 +287,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
     const objectType = this.telemetryGeneratorService.isCollection(collection.mimeType) ? collection.contentType : ContentType.RESOURCE;
     telemetryObject = new TelemetryObject(identifier, objectType, undefined);
     const values = new Map();
-    values['root'] = true;
+    values.root = true;
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
       InteractSubtype.CONTENT_CLICKED,
       !this.appGlobalService.isOnBoardingCompleted ? Environment.ONBOARDING : Environment.HOME,
@@ -350,7 +350,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
       if (this.enrolledCourses && this.enrolledCourses.length) {
         for (let i = 0; i < this.enrolledCourses.length; i++) {
           if (content.identifier === this.enrolledCourses[i].courseId) {
-            params['content'] = this.enrolledCourses[i];
+            params.content = this.enrolledCourses[i];
           }
         }
       }
@@ -670,9 +670,9 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
 
               this.isEmptyResult = !(this.searchContentResult && this.searchContentResult.length > 0);
               const values = new Map();
-              values['from'] = this.source;
-              values['searchCount'] = this.responseData.length;
-              values['searchCriteria'] = this.responseData.filterCriteria;
+              values.from = this.source;
+              values.searchCount = this.responseData.length;
+              values.searchCriteria = this.responseData.filterCriteria;
               this.telemetryGeneratorService.generateExtraInfoTelemetry(values, PageId.SEARCH);
             }
             this.updateFilterIcon();
@@ -760,9 +760,9 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
 
             this.generateLogEvent(response);
             const values = new Map();
-            values['from'] = this.source;
-            values['searchCount'] = this.searchContentResult ? this.searchContentResult.length : 0;
-            values['searchCriteria'] = response.request;
+            values.from = this.source;
+            values.searchCount = this.searchContentResult ? this.searchContentResult.length : 0;
+            values.searchCriteria = response.request;
             this.telemetryGeneratorService.generateExtraInfoTelemetry(values, PageId.SEARCH);
           } else {
             this.isEmptyResult = true;
@@ -872,7 +872,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
       fields: BatchConstants.REQUIRED_FIELDS
     };
     const reqvalues = new Map();
-    reqvalues['enrollReq'] = courseBatchesRequest;
+    reqvalues.enrollReq = courseBatchesRequest;
 
     if (this.commonUtilService.networkInfo.isNetworkAvailable) {
       if (!this.guestUser) {
@@ -925,7 +925,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
   init() {
     this.generateImpressionEvent();
     const values = new Map();
-    values['from'] = this.source;
+    values.from = this.source;
     this.telemetryGeneratorService.generateExtraInfoTelemetry(values, PageId.SEARCH);
     if (this.dialCode !== undefined && this.dialCode.length > 0) {
       this.getContentForDialCode();
@@ -992,11 +992,11 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
 
   generateInteractEvent(identifier, contentType, pkgVersion, index) {
     const values = new Map();
-    values['SearchPhrase'] = this.searchKeywords;
-    values['PositionClicked'] = index;
-    values['source'] = this.source;
+    values.SearchPhrase = this.searchKeywords;
+    values.PositionClicked = index;
+    values.source = this.source;
     if (this.isDialCodeSearch) {
-      values['root'] = false;
+      values.root = false;
     }
     const telemetryObject = new TelemetryObject(identifier, contentType, pkgVersion);
     if (!this.corRelationList) {
@@ -1200,9 +1200,9 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
 
   generateQRScanSuccessInteractEvent(dialCodeResultCount, dialCode) {
     const values = new Map();
-    values['networkAvailable'] = this.commonUtilService.networkInfo.isNetworkAvailable ? 'Y' : 'N';
-    values['scannedData'] = dialCode;
-    values['count'] = dialCodeResultCount;
+    values.networkAvailable = this.commonUtilService.networkInfo.isNetworkAvailable ? 'Y' : 'N';
+    values.scannedData = dialCode;
+    values.count = dialCodeResultCount;
 
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.OTHER,
@@ -1472,8 +1472,8 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
       const contentArray: Array<any> = searchResult.contentDataList;
       const params = new Array<any>();
       const paramsMap = new Map();
-      paramsMap['SearchResults'] = contentArray ? contentArray.length : 0;
-      paramsMap['SearchCriteria'] = searchResult.request;
+      paramsMap.SearchResults = contentArray ? contentArray.length : 0;
+      paramsMap.SearchCriteria = searchResult.request;
       params.push(paramsMap);
       this.telemetryGeneratorService.generateLogEvent(LogLevel.INFO,
         this.source,
