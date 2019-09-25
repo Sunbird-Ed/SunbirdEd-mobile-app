@@ -53,6 +53,7 @@ import { Subscription } from 'rxjs/Subscription';
 import { ContentShareHandlerService } from '../../services/content/content-share-handler.service';
 import { EnrolledCourseDetailsPage } from '../enrolled-course-details-page/enrolled-course-details-page';
 import { Router } from '@angular/router';
+import { ContentUtil } from '@app/util/content-util';
 
 @Component({
   selector: 'app-collection-details',
@@ -670,6 +671,7 @@ export class CollectionDetailsPage {
 
   navigateToDetailsPage(content: any, depth) {
     // const stateData = this.navParams.get('contentState');
+    let subtype = InteractSubtype.CONTENT_CLICKED;
 
     this.zone.run(() => {
       if (content.contentType === ContentType.COURSE) {
@@ -682,6 +684,7 @@ export class CollectionDetailsPage {
           }
         });
       } else if (content.mimeType === MimeType.COLLECTION) {
+        subtype = InteractSubtype.UNIT_CLICKED;
         this.isDepthChild = true;
         this.router.navigate([RouterLinks.COLLECTION_DETAILS], {
           state: {
@@ -702,6 +705,14 @@ export class CollectionDetailsPage {
           }
         });
       }
+      this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
+        subtype,
+        Environment.HOME,
+        PageId.COLLECTION_DETAIL,
+        ContentUtil.getTelemetryObject(content),
+        undefined,
+        undefined,
+        this.corRelationList);
     });
   }
 

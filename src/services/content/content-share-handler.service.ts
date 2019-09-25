@@ -38,7 +38,7 @@ export class ContentShareHandlerService {
 
     this.generateShareInteractEvents(InteractType.TOUCH,
       InteractSubtype.SHARE_LIBRARY_INITIATED,
-      content.contentType, corRelationList, rollup);
+      content.contentData.contentType, corRelationList, rollup);
     const loader = await this.commonUtilService.getLoader();
     await loader.present();
     const baseUrl = await this.utilityService.getBuildConfigValue('BASE_URL');
@@ -62,7 +62,7 @@ export class ContentShareHandlerService {
       await loader.dismiss();
       this.generateShareInteractEvents(InteractType.OTHER,
         InteractSubtype.SHARE_LIBRARY_SUCCESS,
-        content.contentType, corRelationList, rollup);
+        content.contentData.contentType, corRelationList, rollup);
       this.social.share(null, null, null, url);
     }
   }

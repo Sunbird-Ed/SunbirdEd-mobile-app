@@ -1039,7 +1039,7 @@ export class EnrolledCourseDetailsPage implements OnInit {
     });
   }
 
-  toggleGroup(group) {
+  toggleGroup(group, content) {
     let isCollapsed = true;
     if (this.isGroupShown(group)) {
       isCollapsed = false;
@@ -1048,6 +1048,19 @@ export class EnrolledCourseDetailsPage implements OnInit {
       isCollapsed = false;
       this.shownGroup = group;
     }
+    const values = new Map();
+    values['isCollapsed'] = isCollapsed;
+    const telemetryObject = new TelemetryObject(content.identifier, ContentType.COURSE_UNIT, content.pkgVersion);
+    this.telemetryGeneratorService.generateInteractTelemetry(
+      InteractType.TOUCH,
+      InteractSubtype.UNIT_CLICKED,
+      Environment.HOME,
+      PageId.ENROLLED_COURSE_DETAIL,
+      telemetryObject,
+      values,
+      undefined,
+      this.corRelationList
+    );
   }
   // to check whether the card is toggled or not
   isGroupShown(group) {
@@ -1097,7 +1110,7 @@ export class EnrolledCourseDetailsPage implements OnInit {
 
             this.enrolledCourseMimeType = data.mimeType;
             this.childrenData = data.children;
-            this.toggleGroup(0);
+            this.toggleGroup(0, this.childrenData[0]);
             this.startData = data.children;
             this.childContentsData = data;
             this.getContentState(!this.isNavigatingWithinCourse);
@@ -1234,9 +1247,9 @@ export class EnrolledCourseDetailsPage implements OnInit {
       InteractSubtype.RESUME_CLICKED,
       Environment.HOME,
       PageId.COURSE_DETAIL,
+      this.telemetryObject,
       undefined,
-      undefined,
-      undefined,
+      this.objRollup,
       this.corRelationList
     );
   }
