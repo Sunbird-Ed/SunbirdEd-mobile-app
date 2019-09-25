@@ -13,10 +13,12 @@ import {
   CourseBatchStatus,
   CourseService,
   FetchEnrolledCourseRequest,
-  Course, GetContentStateRequest, SharedPreferences
+  Course, GetContentStateRequest, SharedPreferences, Batch
 } from 'sunbird-sdk';
 import { Environment, PageId, InteractType } from '../../../services/telemetry-constants';
 import { Location } from '@angular/common';
+import forEach from 'lodash/forEach';
+import { EnrollmentDetailsComponent } from '../enrollment-details/enrollment-details.component';
 
 @Component({
   selector: 'app-view-more-card',
@@ -75,6 +77,7 @@ export class ViewMoreCardComponent implements OnInit {
     private appGlobalService: AppGlobalService,
     private router: Router,
     private location: Location,
+    private popoverCtrl: PopoverController
   ) {
     this.loader = this.commonUtilService.getLoader();
   }
@@ -104,6 +107,8 @@ export class ViewMoreCardComponent implements OnInit {
   }
 
   async navigateToBatchListPopup(content: any, layoutName?: string, retiredBatched?: any) {
+    const ongoingBatches = [];
+    const upcommingBatches = [];
     const courseBatchesRequest: CourseBatchesRequest = {
       filters: {
         courseId: layoutName === ContentCard.LAYOUT_INPROGRESS ? content.contentId : content.identifier,
@@ -119,39 +124,40 @@ export class ViewMoreCardComponent implements OnInit {
       if (!this.guestUser) {
         await this.loader.present();
         this.courseService.getCourseBatches(courseBatchesRequest).toPromise()
-          .then((data: any) => {
+          .then((res: Batch[]) => {
             this.zone.run(async () => {
-              this.batches = data;
+              this.batches = res;
               if (this.batches.length) {
+                forEach(this.batches, (batch, key) => {
+                    if (batch.status === 1) {
+                      ongoingBatches.push(batch);
+                    } else {
+                      upcommingBatches.push(batch);
+                    }
+                });
                 this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
                   'showing-enrolled-ongoing-batch-popup',
                   Environment.HOME,
                   PageId.CONTENT_DETAIL, undefined,
                   reqvalues);
                 await this.loader.dismiss();
-                // migration-TODO
-                // const popover = await this.popoverCtrl.create({
-                //     component: EnrollmentDetailsPage,
-                //     componentProps: {
-                //     upcommingBatches: this.batches,
-                //     retiredBatched: retiredBatched,
-                //     courseId: content.identifier
-                //    },
-                //   }
-                //   cssClass: 'enrollement-popover' 
-                // );
-                // popover.onDidDismiss(enrolled => {
-                //   if (enrolled) {
-                //     this.getEnrolledCourses();
-                //   }
-                // });
 
-                // this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], {
-                //   state: {
-                //     ongoingBatches: ongoingBatches,
-                //     upcommingBatches: upcommingBatches
-                //   }
-                // });
+                const popover = await this.popoverCtrl.create({
+                    component: EnrollmentDetailsComponent,
+                    componentProps: {
+                        upcommingBatches,
+                        ongoingBatches,
+                        retiredBatched,
+                        courseId: content.identifier
+                   },
+                  cssClass: 'enrollement-popover'
+                });
+                await popover.present();
+                const { data } = await popover.onDidDismiss();
+                if (data && data.isEnrolled) {
+                  this.getEnrolledCourses();
+                }
+
               } else {
                 await this.loader.dismiss();
                 this.navigateToDetailsPage(content, layoutName);

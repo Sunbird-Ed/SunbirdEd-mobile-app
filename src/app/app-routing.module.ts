@@ -64,10 +64,6 @@ const routes: Routes = [
     path: RouterLinks.COLLECTION_DETAIL_ETB,
     loadChildren: './collection-detail-etb/collection-detail-etb.module#CollectionDetailEtbPageModule'
   },
-  {
-    path: RouterLinks.ENROLLMENT_DETAILS,
-    loadChildren: './enrolled-course-details-page/enrollment-details-page/enrollment-details-page.module#EnrollmentDetailsPagePageModule'
-  },
   { path: RouterLinks.COLLECTION_DETAILS, loadChildren: './collection-details/collection-details.module#CollectionDetailsPageModule' },
   { path: RouterLinks.CONTENT_DETAILS, loadChildren: './content-details/content-details.module#ContentDetailsPageModule' },
   { path: RouterLinks.PLAYER, loadChildren: './player/player.module#PlayerPageModule' },
