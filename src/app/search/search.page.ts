@@ -42,6 +42,7 @@ import { EnrollmentDetailsPage } from '../enrolled-course-details-page/enrollmen
 import { SearchHistoryNamespaces } from '@app/config/search-history-namespaces';
 import { featureIdMap } from '@app/app/feature-id-map';
 import { from } from 'rxjs';
+import { ContentUtil } from '@app/util/content-util';
 declare const cordova;
 @Component({
   selector: 'app-search',
@@ -74,7 +75,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
   parentContent: any = undefined;
   contentData: any;
   childContent: any = undefined;
-  loadingDisplayText = 'Loading content';
+  loadingDisplayText = this.commonUtilService.translateMessage('LOADING_CONTENT');
   audienceFilter = [];
   eventSubscription?: Subscription;
   displayDialCodeResult: any;
@@ -1014,7 +1015,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
       this.isDialCodeSearch ? PageId.DIAL_SEARCH : this.source,
       telemetryObject,
       values,
-      undefined,
+      ContentUtil.generateRollUp(undefined, identifier),
       this.corRelationList);
   }
 
@@ -1333,16 +1334,17 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
    * Subscribe Sunbird-SDK event to get content download progress
    */
   subscribeSdkEvent() {
-    this.eventSubscription = this.eventsBusService.events().subscribe((event: EventsBusEvent) => {
+    this.eventSubscription = this.eventsBusService.events()
+      .subscribe((event: EventsBusEvent) => {
       this.zone.run(() => {
         if (event.type === DownloadEventType.PROGRESS && event.payload.progress) {
           const downloadEvent = event as DownloadProgress;
-          this.downloadProgress = downloadEvent.payload.progress === -1 ? 0 : downloadEvent.payload.progress;
-          this.loadingDisplayText = 'Loading content ' + this.downloadProgress + ' %';
+          this.downloadProgress =  downloadEvent.payload.progress === -1 ? 0 : downloadEvent.payload.progress;
+          this.loadingDisplayText = this.commonUtilService.translateMessage('LOADING_CONTENT') + ' ' + this.downloadProgress + ' %';
 
           if (this.downloadProgress === 100) {
             // this.showLoading = false;
-            this.loadingDisplayText = 'Loading content ';
+            this.loadingDisplayText = this.commonUtilService.translateMessage('LOADING_CONTENT') + ' ';
           }
         }
 

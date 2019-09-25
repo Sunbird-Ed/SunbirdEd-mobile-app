@@ -21,7 +21,7 @@
 
         <div class="pull-right">
           <img class="content-icon" alt=""
-            [src]="commonUtilService.convertFileSrc(localImage) || commonUtilService.convertFileSrc(childData?.contentData?.appIcon) || defaultAppIcon">
+            [src]="commonUtilService.convertFileSrc(localImage) || commonUtilService.convertFileSrc(collectionChildIcon) || commonUtilService.convertFileSrc(childData?.contentData?.appIcon) || defaultAppIcon">
         </div>
       </div>
     </div>
