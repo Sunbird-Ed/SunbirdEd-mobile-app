@@ -349,6 +349,12 @@ export class CommonUtilService implements OnDestroy {
         return (bytes / 1048576).toFixed(2);
     }
 
+    public  deDupe<T>(array: T[], property): T[] {
+        return array.filter((obj, pos, arr) => {
+            return arr.map(mapObj => mapObj[property]).indexOf(obj[property]) === pos;
+        });
+    }
+
     set currentTabName(tabName: string) {
         this._currentTabName = tabName;
     }

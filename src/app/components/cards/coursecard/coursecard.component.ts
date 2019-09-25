@@ -12,6 +12,7 @@ import { CommonUtilService } from '../../../../services/common-util.service';
 import { Router } from '@angular/router';
 import forEach from 'lodash/forEach';
 import { EnrollmentDetailsComponent } from '../../enrollment-details/enrollment-details.component';
+import { ContentUtil } from '@app/util/content-util';
 
 @Component({
   selector: 'app-coursecard',
@@ -191,7 +192,7 @@ export class CourseCardComponent implements OnInit {
       this.pageName ? this.pageName : this.layoutName,
       telemetryObject,
       values,
-      undefined,
+      ContentUtil.generateRollUp(undefined, identifier),
       corRelationList);
     if (this.loader) {
       await this.loader.dismiss();
@@ -235,7 +236,8 @@ export class CourseCardComponent implements OnInit {
       this.env,
       this.pageName ? this.pageName : this.layoutName,
       telemetryObject,
-      values);
+      values,
+      ContentUtil.generateRollUp(undefined, identifier));
     // Update enrolled courses playedOffline status.
     this.getContentState(content);
     this.saveContentContext(content);
