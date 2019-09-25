@@ -208,6 +208,7 @@ export class EnrolledCourseDetailsPage implements OnInit {
   contentId: string;
   isChild = false;
   public telemetryObject: TelemetryObject;
+  showCredits:Boolean = false;
 
 
   constructor(
@@ -1319,6 +1320,10 @@ export class EnrolledCourseDetailsPage implements OnInit {
     this.toast.onDidDismiss(() => {
       this.toast = undefined;
     });
+  }
+
+  showLicensce(){
+    this.showCredits = !this.showCredits;
   }
 
   handleBackButton() {
