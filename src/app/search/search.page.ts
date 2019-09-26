@@ -38,10 +38,10 @@ import {
 } from '@app/services/telemetry-constants';
 import { AppHeaderService } from '@app/services/app-header.service';
 import { AppVersion } from '@ionic-native/app-version/ngx';
-import { EnrollmentDetailsPage } from '../enrolled-course-details-page/enrollment-details-page/enrollment-details-page';
 import { SearchHistoryNamespaces } from '@app/config/search-history-namespaces';
 import { featureIdMap } from '@app/app/feature-id-map';
 import { from } from 'rxjs';
+import { EnrollmentDetailsComponent } from '../components/enrollment-details/enrollment-details.component';
 import { ContentUtil } from '@app/util/content-util';
 declare const cordova;
 @Component({
@@ -863,6 +863,8 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
 
   // TODO: SDK changes by Swayangjit
   async navigateToBatchListPopup(content: any, layoutName?: string, retiredBatched?: any) {
+    const ongoingBatches = [];
+    const upcommingBatches = [];
     const courseBatchesRequest: CourseBatchesRequest = {
       filters: {
         courseId: layoutName === ContentCard.LAYOUT_INPROGRESS ? content.contentId : content.identifier,
@@ -881,15 +883,23 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
             this.zone.run(async () => {
               this.batches = res;
               if (this.batches.length) {
+                this.batches.forEach((batch, key) => {
+                    if (batch.status === 1) {
+                      ongoingBatches.push(batch);
+                    } else {
+                      upcommingBatches.push(batch);
+                    }
+                });
                 this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
                   'ongoing-batch-popup',
                   Environment.HOME,
                   PageId.SEARCH, undefined,
                   reqvalues);
                 const popover = await this.popoverCtrl.create({
-                  component: EnrollmentDetailsPage,
+                  component: EnrollmentDetailsComponent,
                   componentProps: {
-                    upcommingBatches: this.batches,
+                    upcommingBatches,
+                    ongoingBatches,
                     retiredBatched,
                     courseId: content.identifier
                   },
