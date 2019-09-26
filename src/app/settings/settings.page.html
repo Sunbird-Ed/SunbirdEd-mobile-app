@@ -24,6 +24,12 @@
       </ion-label>
     </ion-item>
 
+    <ion-item class="PT2 PB2" *ngIf="(isUserLoggedIn$ | async) && (isNotDefaultChannelProfile$ | async)" (click)="showMergeAccountConfirmationPopup()" detail>
+      <ion-label>
+        <p class="setting-label">{{ 'MERGE_ACCOUNT' | translate }}</p>
+      </ion-label>
+    </ion-item>
+
     <ion-item class="PT2 PB2" (click)="aboutUs()" detail>
       <ion-label>
         <p class="setting-label">{{ 'ABOUT_US' | translate }}</p>
