@@ -10,7 +10,6 @@ import {
 import { InteractSubtype, InteractType, Environment, PageId } from '../../../../services/telemetry-constants';
 import { CommonUtilService } from '../../../../services/common-util.service';
 import { Router } from '@angular/router';
-import forEach from 'lodash/forEach';
 import { EnrollmentDetailsComponent } from '../../enrollment-details/enrollment-details.component';
 import { ContentUtil } from '@app/util/content-util';
 
@@ -123,7 +122,7 @@ export class CourseCardComponent implements OnInit {
             this.zone.run(async () => {
               this.batches = data;
               if (this.batches.length) {
-                forEach(this.batches, (batch, key) => {
+                this.batches.forEach((batch, key) => {
                     if (batch.status === 1) {
                       ongoingBatches.push(batch);
                     } else {

@@ -17,7 +17,6 @@ import {
 } from 'sunbird-sdk';
 import { Environment, PageId, InteractType } from '../../../services/telemetry-constants';
 import { Location } from '@angular/common';
-import forEach from 'lodash/forEach';
 import { EnrollmentDetailsComponent } from '../enrollment-details/enrollment-details.component';
 
 @Component({
@@ -128,7 +127,7 @@ export class ViewMoreCardComponent implements OnInit {
             this.zone.run(async () => {
               this.batches = res;
               if (this.batches.length) {
-                forEach(this.batches, (batch, key) => {
+                this.batches.forEach((batch, key) => {
                     if (batch.status === 1) {
                       ongoingBatches.push(batch);
                     } else {
