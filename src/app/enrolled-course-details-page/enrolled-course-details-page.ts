@@ -572,10 +572,28 @@ export class EnrolledCourseDetailsPage implements OnInit {
             await loader.dismiss();
             this.commonUtilService.showToast(this.commonUtilService.translateMessage('COURSE_UNENROLLED'));
             this.events.publish(EventTopics.UNENROL_COURSE_SUCCESS, {});
+            this.telemetryGeneratorService.generateInteractTelemetry(
+              InteractType.OTHER,
+              InteractSubtype.UNENROL_SUCCESS,
+              Environment.HOME,
+              PageId.COURSE_DETAIL,
+              this.telemetryObject,
+              undefined,
+              this.objRollup,
+              this.corRelationList);
           });
         }, (error) => {
           this.zone.run(async () => {
             await loader.dismiss();
+            this.telemetryGeneratorService.generateInteractTelemetry(
+              InteractType.OTHER,
+              InteractSubtype.UNENROL_FAILURE,
+              Environment.HOME,
+              PageId.COURSE_DETAIL,
+              this.telemetryObject,
+              undefined,
+              this.objRollup,
+              this.corRelationList);
             if (error && error.error === 'CONNECTION_ERROR') {
               this.commonUtilService.showToast(this.commonUtilService.translateMessage('ERROR_NO_INTERNET_MESSAGE'));
             } else {
