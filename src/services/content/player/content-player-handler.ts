@@ -9,13 +9,14 @@ import { ContentInfo } from '../content-info';
 import { RouterLinks } from '@app/app/app.constant';
 import { Router } from '@angular/router';
 import { CommonUtilService } from '@app/services/common-util.service';
-import {Course, CourseService} from "sunbird-sdk";
+import { Course, CourseService } from 'sunbird-sdk';
 
 
 @Injectable({
     providedIn: 'root'
 })
 export class ContentPlayerHandler {
+    private isPlayerLaunched = false;
     constructor(
         @Inject('PLAYER_SERVICE') private playerService: PlayerService,
         @Inject('COURSE_SERVICE') private courseService: CourseService,
@@ -55,22 +56,22 @@ export class ContentPlayerHandler {
             request.streaming = isStreaming;
         }
         request['correlationData'] = contentInfo.correlationList;
-          if (isCourse && content.contentData['totalQuestions']) {
-          const correlationData: CorrelationData = {
-            id: this.courseService.generateAssessmentAttemptId({
-              courseId: contentInfo.course!.identifier,
-              batchId: contentInfo.course.batchId,
-              contentId: content.identifier,
-              userId: contentInfo.course.userId
-            }),
-            type: 'AttemptId'
-          };
+        if (isCourse && content.contentData['totalQuestions']) {
+            const correlationData: CorrelationData = {
+                id: this.courseService.generateAssessmentAttemptId({
+                    courseId: contentInfo.course!.identifier,
+                    batchId: contentInfo.course.batchId,
+                    contentId: content.identifier,
+                    userId: contentInfo.course.userId
+                }),
+                type: 'AttemptId'
+            };
 
-          if (request['correlationData']) {
-            request['correlationData'].push(correlationData)
-          }
+            if (request['correlationData']) {
+                request['correlationData'].push(correlationData)
+            }
 
-          request['correlationData'] = [correlationData];
+            request['correlationData'] = [correlationData];
         }
         this.playerService.getPlayerConfig(content, request).subscribe((data) => {
             data['data'] = {};
@@ -80,6 +81,7 @@ export class ContentPlayerHandler {
             } else {
                 data.config.overlay.enableUserSwitcher = true;
             }
+            this.isPlayerLaunched = true;
             if (data.metadata.mimeType === 'application/vnd.ekstep.ecml-archive') {
                 const filePath = this.commonUtilService.convertFileSrc(`${data.metadata.basePath}`);
                 if (!isStreaming) {
@@ -109,5 +111,12 @@ export class ContentPlayerHandler {
                 this.router.navigate([RouterLinks.PLAYER], { state: { config: data } });
             }
         });
+    }
+    public isContentPlayerLaunched(): boolean {
+        return this.isPlayerLaunched;
+    }
+
+    public setContentPlayerLaunchStatus(isPlayerLaunced: boolean) {
+        this.isPlayerLaunched = isPlayerLaunced;
     }
 }

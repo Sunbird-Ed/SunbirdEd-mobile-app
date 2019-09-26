@@ -78,9 +78,10 @@
   }
   .sort-by {
     border-radius: 4px;
-    background-color: #024f9d;
-    left: 15px;
-    right: 15px;
+    --background: #024f9d;
+    padding: 0 2rem 0 2rem !important;
+    margin-bottom: 1rem;
+    height: 45px;
   }
   .spinner-container {
     width: 100%;

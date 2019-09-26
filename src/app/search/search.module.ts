@@ -10,7 +10,6 @@ import { ComponentsModule } from '../components/components.module';
 import { PipesModule } from '../../pipes/pipes.module';
 import { DirectivesModule } from '../../directives/directives.module';
 import { TranslateModule } from '@ngx-translate/core';
-import { EnrollmentDetailsPage } from '../enrolled-course-details-page/enrollment-details-page/enrollment-details-page';
 
 
 const routes: Routes = [
@@ -29,10 +28,10 @@ const routes: Routes = [
     TranslateModule.forChild(),
     PipesModule,
     DirectivesModule,
-    ComponentsModule,
+    ComponentsModule
   ],
-  entryComponents:[EnrollmentDetailsPage],
-  declarations: [SearchPage , EnrollmentDetailsPage],
+  entryComponents: [],
+  declarations: [SearchPage],
 
 })
 export class SearchPageModule {}

@@ -4,7 +4,7 @@
 			<ion-card-header class="custom-card-header">
 				<ion-card-title class="font-18">{{course?.name}}</ion-card-title>
 				<ion-card-subtitle class="font-14 subtitle-color">{{'CONTENT_CREATED_BY' | translate}}
-					{{ course?.creator || course?.owner }}
+					{{course?.organisation.join(', ')}}
 				</ion-card-subtitle>
 				<div class="hr-border-bottom"></div>
 			</ion-card-header>
@@ -14,7 +14,7 @@
 					<button class="enrolled-course-card-button"
 						(click)="navigateToBatchListPage();">{{'JOIN_TRAINING' | translate}}</button>
 					<ion-card-subtitle *ngIf="batchCount || enrollmentEndDate" class="font-12 margin-bottom-2">
-						<div *ngIf="batchCount > 1">
+						<div *ngIf="batchCount">
 							<ion-icon name="information-circle"></ion-icon> {{batchCount}}
 							{{'BATCHES_AVAILABLE' | translate}}
 						</div>
@@ -23,7 +23,7 @@
 							{{'LAST_DATE_TO_JOIN' | translate }} {{enrollmentEndDate | date}}
 						</div>
 						<div *ngIf="!enrollmentEndDate && batchEndDate">
-							{{'TRAINING_ENDS_ON' | translate}} {{batchEndDate}}
+							{{'TRAINING_ENDS_ON' | translate}} {{batchEndDate | date}}
 						</div>
 					</ion-card-subtitle>
 				</div>
@@ -38,7 +38,6 @@
 							<div class="sb-dt-card-actions">
 								<div class="wrapper sb-btn-tile-group" *ngIf="course?.progress !==100">
 									<div>
-										<!-- *ngIf="downloadIdentifiers?.length && !isDownloadStarted" -->
 										<button [disabled]="isDownloadStarted" *ngIf="downloadIdentifiers?.length"
 											(click)="showDownloadConfirmationAlert()" slot="icon-only"
 											class="card-button">
@@ -64,14 +63,11 @@
 									</div>
 								</div>
 								<div *ngIf="courseCardData?.batchId">
-									<div class="sb-course-progress-container"
-										*ngIf="course?.progress!==100 && !batchExp">
+									<div class="sb-course-progress-container" *ngIf="course?.progress!==100 && !batchExp">
 										<p><b>{{'YOUR_PROGRESS_LABEL' | translate}}</b></p>
-										<p>{{course?.progress ? course?.progress : '0'}} %
-											{{'COURSE_COMPLETED_LABEL' | translate}}</p>
-										<app-pb-horizontal [progress]="course?.progress" class="course-progress"
-											[ngClass]="{'blurbackground': batchExp}" isOnBoardCard="flase"
-											isCourseProgress="true"></app-pb-horizontal>
+										<p>{{ 'COURSE_COMPLETED_LABEL' | translate:{'%s': course?.progress ? course?.progress : '0'} }}</p>
+										<app-pb-horizontal [progress]="course?.progress" class="course-progress" [ngClass]="{'blurbackground': batchExp}"
+											isOnBoardCard="flase" isCourseProgress="true"></app-pb-horizontal>
 									</div>
 									<div class="sb-batch-end-container" *ngIf="course?.progress !== 100 && batchExp">
 										<p class="batch-end-main-heading">{{'BATCHEND_MAIN_HEADING' | translate}}
@@ -84,7 +80,7 @@
 											<img class="success-badge" src='assets/imgs/Badge green.svg'>
 										</div>
 										<div class="text-container">
-											<p><b>{{'TRAINING_COMPLETED_SUCESSFULLY' | translate}}</b></p>
+											<p><b>{{'TRAINING_COMPLETED_SUCCESSFULLY' | translate}}</b></p>
 										</div>
 									</div>
 								</div>
@@ -107,10 +103,10 @@
 						(click)="resumeContent(courseCardData?.lastReadContentId)"><span><img class="play-icon"
 								src="assets/imgs/Play@1.5x.svg" alt="play-icon">{{
 															'CONTINUE_NOW' | translate }}</span></button>
-					<div *ngIf="batchDetails?.endDate" class="enrollment-end-date ion-padding-bottom">
+					<div *ngIf="batchDetails?.endDate && !batchExp" class="enrollment-end-date ion-padding-bottom">
 						<ion-icon name="information-circle"></ion-icon>
-						<!-- {{'COMPLETE_TRAINING_TO_EARN_CERTIFICATE'| translate :{'%s':batchDetails?.enrollmentEndDate | date} }} -->
-						Complete Training by {{batchDetails?.endDate | date}} to earn a certificate
+						<span>{{'COMPLETE_TRAINING_TO_EARN_CERTIFICATE' | translate}} {{batchDetails?.endDate | date}}</span>
+						<span *ngIf="course?.certificate">{{'TO_EARN_CERTIFICATE' | translate}}</span>
 					</div>
 				</ion-card-content>
 			</ion-card>
@@ -118,7 +114,7 @@
 
 		<ion-card>
 			<ion-card-content class="card-content-bottom-0 card-content-top-0">
-				<ion-segment [(ngModel)]="segmentType">
+				<ion-segment [(ngModel)]="segmentType" (ionChange)="onSegmentChange($event)">
 					<ion-segment-button value="info">
 						<ion-label class="font-12 text-transform-none">{{'TRAINING_INFO' | translate}}</ion-label>
 					</ion-segment-button>
@@ -134,7 +130,8 @@
 		</ion-card>
 		<div [ngSwitch]="segmentType">
 			<ion-card *ngSwitchCase="'info'">
-				<ion-card-content>
+				<ion-card-content class="ion-no-padding">
+					<div class="ion-padding">
 					<div class="certificate-container">
 						<div class="certificate-icon">
 							<img class="certificate-icon" src="assets/imgs/Certificate icon.svg" alt="certificate-icon">
@@ -144,10 +141,9 @@
 							</ion-card-title>
 						</div>
 					</div>
-					<div>
 						<div class="ion-margin-bottom">
 							<ion-card-title class="font-12 subtitle-color label-margin-bottom">
-								{{'TRAINING_IS_RELEVENT_TO_TEACHERS'| translate}}:
+								<b>{{'TRAINING_IS_RELEVANT_TO_TEACHERS'| translate}}</b>:
 							</ion-card-title>
 							<p *ngIf="course?.gradeLevel">{{'CLASS' | translate}} : {{course?.gradeLevel}}</p>
 							<p *ngIf="course?.subject">{{'SUBJECT' | translate}}: {{course?.subject}}</p>
@@ -155,14 +151,58 @@
 						</div>
 						<div class="ion-margin-bottom">
 							<ion-card-title class="font-12 subtitle-color label-margin-bottom">
-								{{'TRAINING_DETAILS' | translate}}
+								<b>{{'TRAINING_DETAILS' | translate}}</b>
 							</ion-card-title>
-							<p *ngIf="batchEndDate">{{'TRAINING_END_DATA' | translate }} : {{ batchEndDate | date}}</p>
+							<p *ngIf="batchEndDate">{{'TRAINING_END_DATE' | translate }} : {{ batchEndDate | date}}</p>
 						</div>
 						<div>
 							<p>{{course?.description}}</p>
 						</div>
+				</div>
+					<!--credits and license info-->
+					<div *ngIf="course?.author || course?.organisation || course?.license || course?.copyright">
+						<div class="hr-border-bottom"></div>
+						<div class="ion-padding">
+							<div class="font-14 view-credits" (click)="showLicensce()">
+								<span><b>{{'CREDITS_LICENCE_INFO' | translate}}</b></span>
+								<span *ngIf="showCredits">
+									<ion-icon name="ios-arrow-up"></ion-icon>
+								</span>
+								<span *ngIf="!showCredits">
+									<ion-icon name="ios-arrow-down"></ion-icon>
+								</span>
+							</div>
+							<div *ngIf="showCredits" class="showLicensce">
+								<div *ngIf="course?.author">
+									<ion-card-title class="font-12 subtitle-color label-margin-bottom">
+										<b>{{'AUTHOR' | translate}}</b>:
+									</ion-card-title>
+									<p>{{course?.author}}</p>
+								</div>
+								<div *ngIf="course?.organisation">
+									<ion-card-title class="font-12 subtitle-color label-margin-bottom">
+										<b>{{ 'PUBLISHED_BY' | translate:{'%s': appName} }}</b>:
+									</ion-card-title>
+									<p>{{course?.organisation}} </p>
+								</div>
+								<div *ngIf="course?.license">
+									<ion-card-title class="font-12 subtitle-color label-margin-bottom">
+										<b>{{ 'LICENSE' | translate }}</b>:
+									</ion-card-title>
+									<p>{{course?.license}}</p>
+								</div>
+								<div *ngIf="course?.copyright">
+					
+									<ion-card-title class="font-12 subtitle-color label-margin-bottom">
+										<b>{{ 'COPYRIGHT' | translate }}</b>:
+									</ion-card-title>
+									<p>{{course?.copyright}}</p>
+								</div>
+							</div>
+						</div>
 					</div>
+					<!--/credits and license info-->
+
 				</ion-card-content>
 			</ion-card>
 			<div *ngSwitchCase="'modules'">
@@ -210,7 +250,7 @@
 		</div>
 	</div>
 </ion-content>
-<div class="loading-backdrop" *ngIf="showLoading && !isDownloadStarted" text-center>
+<div class="loading-backdrop" *ngIf="showLoading" text-center>
 	<div class="backdrop-container">
 		<ion-label>{{ 'LOADING_CONTENTS' | translate: {'%s': downloadProgress ? downloadProgress : 0} }}</ion-label>
 		<app-pb-horizontal [progress]="downloadProgress" isOnBoardCard="false"></app-pb-horizontal>

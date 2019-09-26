@@ -44,7 +44,6 @@ export enum PageId {
     LIBRARY_PAGE_FILTER = 'library-page-filter',
     COURSE_DETAIL = 'course-detail',
     COLLECTION_DETAIL = 'collection-detail',
-    ENROLLED_COURSE_DETAIL = 'enrolled-course-detail',
     CONTENT_DETAIL = 'content-detail',
     COURSE_BATCHES = 'course-batches',
     SHARE_CONTENT = 'share-content',
@@ -152,6 +151,9 @@ export enum InteractType {
 }
 
 export enum InteractSubtype {
+    MERGE_ACCOUNT_INITIATED = 'merge-account-initiated',
+    MERGE_ACCOUNT_SUCCESS = 'merge-account-success',
+    MERGE_ACCOUNT_FAILED = 'merge-account-failed',
     NETWORK_STATUS = 'networkStatus',
     INTERNET_CONNECTED = 'internet-connected',
     INTERNET_DISCONNECTED = 'internet-disconnected',
@@ -333,7 +335,13 @@ export enum InteractSubtype {
     SORT_BY_CLICKED = 'sort-by-clicked',
     SEARCH_INITIATED = 'search-initiated',
     RECOVERY_ACCOUNT_ID_CLICKED = 'recovery-account-id-clicked',
-    MENU_CLICKED = 'menu-clicked'
+    MENU_CLICKED = 'menu-clicked',
+    SHARE_CLICKED = 'share-clicked',
+    UNENROL_CLICKED = 'unenrol-clicked',
+    UNENROL_SUCCESS = 'unenrol-success',
+    UNENROL_FAILURE = 'unenrol-failure',
+    TRAINING_INFO_CLICKED = 'training-info-clicked',
+    TRAINING_MODULE_CLICKED = 'training-module-clicked',
 }
 
 export enum ActionButtonType {

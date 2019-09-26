@@ -19,6 +19,10 @@
   }
 
   ion-icon.arrow-icon{
+    position: absolute;
+    transform: translateY(-50%);
+    width: 22px;
+
     @include rtl {
       top: 33%;
       transform: rotate(180deg);
@@ -56,9 +60,7 @@
   }
 
   .arrow-icon {
-    position: absolute;
-    transform: translateY(-50%);
-    width: 22px;
+
   }
 }
 
