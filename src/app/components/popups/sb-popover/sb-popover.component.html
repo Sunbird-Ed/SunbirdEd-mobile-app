@@ -15,7 +15,7 @@
       <img [src]="commonUtilService.convertFileSrc(img?.path)" alt="" />
     </div>
 
-    <div class="sb-popover-content-details" *ngIf="sbPopoverMainTitle || metaInfo || sbPopoverContent">
+    <div class="sb-popover-content-details" *ngIf="sbPopoverMainTitle || metaInfo || sbPopoverContent || sbPopoverHtmlContent">
       <div class="main-title">
         {{sbPopoverMainTitle}}
         <div class="meta-info">
@@ -24,6 +24,8 @@
       </div>
       <div class="sb-popover-content" *ngIf="sbPopoverContent">
         {{sbPopoverContent}}
+      </div>
+      <div *ngIf="sbPopoverHtmlContent" [innerHTML]="sbPopoverHtmlContent">
       </div>
     </div>
   </div>

@@ -208,6 +208,7 @@ export class EnrolledCourseDetailsPage implements OnInit {
   contentId: string;
   isChild = false;
   public telemetryObject: TelemetryObject;
+  showCredits:Boolean = false;
 
 
   constructor(
@@ -1039,7 +1040,7 @@ export class EnrolledCourseDetailsPage implements OnInit {
     });
   }
 
-  toggleGroup(group) {
+  toggleGroup(group, content) {
     let isCollapsed = true;
     if (this.isGroupShown(group)) {
       isCollapsed = false;
@@ -1048,6 +1049,19 @@ export class EnrolledCourseDetailsPage implements OnInit {
       isCollapsed = false;
       this.shownGroup = group;
     }
+    const values = new Map();
+    values['isCollapsed'] = isCollapsed;
+    const telemetryObject = new TelemetryObject(content.identifier, ContentType.COURSE_UNIT, content.pkgVersion);
+    this.telemetryGeneratorService.generateInteractTelemetry(
+      InteractType.TOUCH,
+      InteractSubtype.UNIT_CLICKED,
+      Environment.HOME,
+      PageId.ENROLLED_COURSE_DETAIL,
+      telemetryObject,
+      values,
+      undefined,
+      this.corRelationList
+    );
   }
   // to check whether the card is toggled or not
   isGroupShown(group) {
@@ -1097,7 +1111,7 @@ export class EnrolledCourseDetailsPage implements OnInit {
 
             this.enrolledCourseMimeType = data.mimeType;
             this.childrenData = data.children;
-            this.toggleGroup(0);
+            this.toggleGroup(0, this.childrenData[0]);
             this.startData = data.children;
             this.childContentsData = data;
             this.getContentState(!this.isNavigatingWithinCourse);
@@ -1125,33 +1139,6 @@ export class EnrolledCourseDetailsPage implements OnInit {
       courseId: this.identifier
     };
     this.zone.run(() => {
-      if (content.contentType === ContentType.COURSE) {
-        this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], {
-          state: {
-            content,
-            depth,
-            contentState,
-            corRelation: this.corRelationList
-          }
-        });
-      } else if (content.mimeType === MimeType.COLLECTION) {
-        subtype = InteractSubtype.UNIT_CLICKED;
-        let isChildClickable = true;
-        if (this.isAlreadyEnrolled && this.isBatchNotStarted) {
-          isChildClickable = false;
-        }
-        this.router.navigate([RouterLinks.COLLECTION_DETAILS], {
-          state: {
-            content,
-            depth,
-            contentState,
-            fromCoursesPage: true,
-            isAlreadyEnrolled: this.isAlreadyEnrolled,
-            isChildClickable,
-            corRelation: this.corRelationList
-          }
-        });
-      } else {
         this.router.navigate([RouterLinks.CONTENT_DETAILS], {
           state: {
             content,
@@ -1163,7 +1150,6 @@ export class EnrolledCourseDetailsPage implements OnInit {
             course: this.updatedCourseCardData
           }
         });
-      }
       this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
         subtype,
         Environment.HOME,
@@ -1234,9 +1220,9 @@ export class EnrolledCourseDetailsPage implements OnInit {
       InteractSubtype.RESUME_CLICKED,
       Environment.HOME,
       PageId.COURSE_DETAIL,
+      this.telemetryObject,
       undefined,
-      undefined,
-      undefined,
+      this.objRollup,
       this.corRelationList
     );
   }
@@ -1319,6 +1305,10 @@ export class EnrolledCourseDetailsPage implements OnInit {
     this.toast.onDidDismiss(() => {
       this.toast = undefined;
     });
+  }
+
+  showLicensce(){
+    this.showCredits = !this.showCredits;
   }
 
   handleBackButton() {

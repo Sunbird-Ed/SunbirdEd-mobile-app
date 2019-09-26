@@ -152,6 +152,9 @@ export enum InteractType {
 }
 
 export enum InteractSubtype {
+    MERGE_ACCOUNT_INITIATED = 'merge-account-initiated',
+    MERGE_ACCOUNT_SUCCESS = 'merge-account-success',
+    MERGE_ACCOUNT_FAILED = 'merge-account-failed',
     NETWORK_STATUS = 'networkStatus',
     INTERNET_CONNECTED = 'internet-connected',
     INTERNET_DISCONNECTED = 'internet-disconnected',
