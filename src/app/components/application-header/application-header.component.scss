@@ -11,15 +11,6 @@ ion-icon {
     z-index: 0;
   }
 :host {
-    ion-icon.arrow-icon {
-        @include rtl {
-            transform : rotate(180deg);
-        }
-        @include ltr {
-            transform: none;
-        }
-    }
-
     ion-title.color {
         color:#024f9d;
         font-weight:bold;
