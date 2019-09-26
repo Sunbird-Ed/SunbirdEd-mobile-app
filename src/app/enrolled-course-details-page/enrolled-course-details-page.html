@@ -14,7 +14,7 @@
 					<button class="enrolled-course-card-button"
 						(click)="navigateToBatchListPage();">{{'JOIN_TRAINING' | translate}}</button>
 					<ion-card-subtitle *ngIf="batchCount || enrollmentEndDate" class="font-12 margin-bottom-2">
-						<div *ngIf="batchCount > 1">
+						<div *ngIf="batchCount">
 							<ion-icon name="information-circle"></ion-icon> {{batchCount}}
 							{{'BATCHES_AVAILABLE' | translate}}
 						</div>
@@ -23,7 +23,7 @@
 							{{'LAST_DATE_TO_JOIN' | translate }} {{enrollmentEndDate | date}}
 						</div>
 						<div *ngIf="!enrollmentEndDate && batchEndDate">
-							{{'TRAINING_ENDS_ON' | translate}} {{batchEndDate}}
+							{{'TRAINING_ENDS_ON' | translate}} {{batchEndDate | date}}
 						</div>
 					</ion-card-subtitle>
 				</div>
@@ -38,7 +38,6 @@
 							<div class="sb-dt-card-actions">
 								<div class="wrapper sb-btn-tile-group" *ngIf="course?.progress !==100">
 									<div>
-										<!-- *ngIf="downloadIdentifiers?.length && !isDownloadStarted" -->
 										<button [disabled]="isDownloadStarted" *ngIf="downloadIdentifiers?.length"
 											(click)="showDownloadConfirmationAlert()" slot="icon-only"
 											class="card-button">
@@ -67,7 +66,7 @@
 									<div class="sb-course-progress-container"
 										*ngIf="course?.progress!==100 && !batchExp">
 										<p><b>{{'YOUR_PROGRESS_LABEL' | translate}}</b></p>
-										<p>{{course?.progress ? course?.progress : '0'}} %
+										<p>{{course?.progress ? course?.progress : '0'}}%
 											{{'COURSE_COMPLETED_LABEL' | translate}}</p>
 										<app-pb-horizontal [progress]="course?.progress" class="course-progress"
 											[ngClass]="{'blurbackground': batchExp}" isOnBoardCard="flase"
@@ -107,9 +106,8 @@
 						(click)="resumeContent(courseCardData?.lastReadContentId)"><span><img class="play-icon"
 								src="assets/imgs/Play@1.5x.svg" alt="play-icon">{{
 															'CONTINUE_NOW' | translate }}</span></button>
-					<div *ngIf="batchDetails?.endDate" class="enrollment-end-date ion-padding-bottom">
+					<div *ngIf="batchDetails?.endDate && !batchExp" class="enrollment-end-date ion-padding-bottom">
 						<ion-icon name="information-circle"></ion-icon>
-						<!-- {{'COMPLETE_TRAINING_TO_EARN_CERTIFICATE'| translate :{'%s':batchDetails?.enrollmentEndDate | date} }} -->
 						Complete Training by {{batchDetails?.endDate | date}} to earn a certificate
 					</div>
 				</ion-card-content>
@@ -147,7 +145,7 @@
 					<div>
 						<div class="ion-margin-bottom">
 							<ion-card-title class="font-12 subtitle-color label-margin-bottom">
-								{{'TRAINING_IS_RELEVENT_TO_TEACHERS'| translate}}:
+								<b>{{'TRAINING_IS_RELEVENT_TO_TEACHERS'| translate}}</b>:
 							</ion-card-title>
 							<p *ngIf="course?.gradeLevel">{{'CLASS' | translate}} : {{course?.gradeLevel}}</p>
 							<p *ngIf="course?.subject">{{'SUBJECT' | translate}}: {{course?.subject}}</p>
@@ -155,7 +153,7 @@
 						</div>
 						<div class="ion-margin-bottom">
 							<ion-card-title class="font-12 subtitle-color label-margin-bottom">
-								{{'TRAINING_DETAILS' | translate}}
+								<b>{{'TRAINING_DETAILS' | translate}}</b>
 							</ion-card-title>
 							<p *ngIf="batchEndDate">{{'TRAINING_END_DATA' | translate }} : {{ batchEndDate | date}}</p>
 						</div>
@@ -210,7 +208,7 @@
 		</div>
 	</div>
 </ion-content>
-<div class="loading-backdrop" *ngIf="showLoading && !isDownloadStarted" text-center>
+<div class="loading-backdrop" *ngIf="showLoading" text-center>
 	<div class="backdrop-container">
 		<ion-label>{{ 'LOADING_CONTENTS' | translate: {'%s': downloadProgress ? downloadProgress : 0} }}</ion-label>
 		<app-pb-horizontal [progress]="downloadProgress" isOnBoardCard="false"></app-pb-horizontal>

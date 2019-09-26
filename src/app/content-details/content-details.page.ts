@@ -237,7 +237,7 @@ export class ContentDetailsPage implements OnInit {
   ionViewWillEnter(): void {
     this.headerService.hideHeader();
 
-    if (this.isResumedCourse && !this.isPlayerLaunched) {
+    if (this.isResumedCourse && !this.contentPlayerHandler.isContentPlayerLaunched()) {
       if (this.isUsrGrpAlrtOpen) {
         this.isUsrGrpAlrtOpen = false;
       } else {
@@ -250,7 +250,7 @@ export class ContentDetailsPage implements OnInit {
       this.generateTelemetry();
     }
     this.isPlayedFromCourse();
-    this.setContentDetails(this.identifier, true, this.isPlayerLaunched);
+    this.setContentDetails(this.identifier, true, this.contentPlayerHandler.isContentPlayerLaunched());
     this.subscribeSdkEvent();
     this.findHierarchyOfContent();
     this.networkSubscription = this.commonUtilService.networkAvailability$.subscribe((available: boolean) => {
@@ -291,7 +291,7 @@ export class ContentDetailsPage implements OnInit {
 
   handleNavBackButton() {
     this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.CONTENT_DETAIL, Environment.HOME,
-      true, this.cardData.identifier, this.corRelationList);
+      true, this.cardData.identifier, this.corRelationList, this.objRollup, this.telemetryObject);
     this.didViewLoad = false;
     this.generateEndEvent();
     if (this.shouldGenerateEndTelemetry) {
@@ -303,7 +303,7 @@ export class ContentDetailsPage implements OnInit {
   handleDeviceBackButton() {
     this.backButtonFunc = this.platform.backButton.subscribeWithPriority(10, () => {
       this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.CONTENT_DETAIL, Environment.HOME,
-        false, this.cardData.identifier, this.corRelationList);
+        false, this.cardData.identifier, this.corRelationList, this.objRollup, this.telemetryObject);
       this.didViewLoad = false;
       this.popToPreviousPage(false);
       this.generateEndEvent();
@@ -403,7 +403,7 @@ export class ContentDetailsPage implements OnInit {
         }
 
         if (showRating) {
-          this.isPlayerLaunched = false;
+          this.contentPlayerHandler.setContentPlayerLaunchStatus(false);
           this.ratingHandler.showRatingPopup(this.isContentPlayed, data, 'automatic', this.corRelationList, this.objRollup);
         }
       })
@@ -491,7 +491,7 @@ export class ContentDetailsPage implements OnInit {
       this.shouldGenerateEndTelemetry = false;
     }
 
-    if (this.isPlayerLaunched) {
+    if (this.contentPlayerHandler.isContentPlayerLaunched()) {
       this.downloadAndPlay = false;
     }
     if (this.downloadAndPlay) {
@@ -940,7 +940,6 @@ export class ContentDetailsPage implements OnInit {
       }
       this.contentPlayerHandler.launchContentPlayer(this.playingContent, isStreaming, this.downloadAndPlay, contentInfo, this.isCourse);
       this.downloadAndPlay = false;
-      this.isPlayerLaunched = true;
     }
   }
 

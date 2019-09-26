@@ -11,6 +11,7 @@ import { InteractSubtype, InteractType, Environment, PageId } from '../../../../
 import { CommonUtilService } from '../../../../services/common-util.service';
 import { EnrollmentDetailsPage } from '@app/app/enrolled-course-details-page/enrollment-details-page/enrollment-details-page';
 import { Router } from '@angular/router';
+import { ContentUtil } from '@app/util/content-util';
 @Component({
   selector: 'app-coursecard',
   templateUrl: './coursecard.component.html',
@@ -179,7 +180,7 @@ export class CourseCardComponent implements OnInit {
       this.pageName ? this.pageName : this.layoutName,
       telemetryObject,
       values,
-      undefined,
+      ContentUtil.generateRollUp(undefined, identifier),
       corRelationList);
     if (this.loader) {
       await this.loader.dismiss();
@@ -223,7 +224,8 @@ export class CourseCardComponent implements OnInit {
       this.env,
       this.pageName ? this.pageName : this.layoutName,
       telemetryObject,
-      values);
+      values,
+      ContentUtil.generateRollUp(undefined, identifier));
     // Update enrolled courses playedOffline status.
     this.getContentState(content);
     this.saveContentContext(content);
