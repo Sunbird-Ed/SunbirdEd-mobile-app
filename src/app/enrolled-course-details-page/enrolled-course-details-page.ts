@@ -946,7 +946,7 @@ export class EnrolledCourseDetailsPage implements OnInit {
         this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
           'download-all-button-clicked',
           Environment.HOME,
-          PageId.ENROLLED_COURSE_DETAIL,
+          PageId.COURSE_DETAIL,
           undefined,
           undefined,
           // todo
@@ -1074,7 +1074,7 @@ export class EnrolledCourseDetailsPage implements OnInit {
       InteractType.TOUCH,
       InteractSubtype.UNIT_CLICKED,
       Environment.HOME,
-      PageId.ENROLLED_COURSE_DETAIL,
+      PageId.COURSE_DETAIL,
       telemetryObject,
       values,
       undefined,
@@ -1710,7 +1710,7 @@ export class EnrolledCourseDetailsPage implements OnInit {
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
       param,
       Environment.HOME,
-      PageId.ENROLLED_COURSE_DETAIL,
+      PageId.COURSE_DETAIL,
       undefined,
       telemetryObject,
       objRollup,
@@ -1829,6 +1829,19 @@ export class EnrolledCourseDetailsPage implements OnInit {
     if (data && data.canDelete) {
       this.loginHandlerService.signIn();
     }
+  }
+
+  onSegmentChange(event) {
+      this.telemetryGeneratorService.generateInteractTelemetry(
+        InteractType.TOUCH,
+        event.detail.value === 'modules' ? InteractSubtype.TRAINING_MODULE_CLICKED : InteractSubtype.TRAINING_INFO_CLICKED,
+        Environment.HOME,
+        PageId.COURSE_DETAIL,
+        this.telemetryObject,
+        undefined,
+        this.objRollup,
+        this.corRelationList
+      );
   }
 
 }

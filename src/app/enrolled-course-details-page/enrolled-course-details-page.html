@@ -114,7 +114,7 @@
 
 		<ion-card>
 			<ion-card-content class="card-content-bottom-0 card-content-top-0">
-				<ion-segment [(ngModel)]="segmentType">
+				<ion-segment [(ngModel)]="segmentType" (ionChange)="onSegmentChange($event)">
 					<ion-segment-button value="info">
 						<ion-label class="font-12 text-transform-none">{{'TRAINING_INFO' | translate}}</ion-label>
 					</ion-segment-button>
