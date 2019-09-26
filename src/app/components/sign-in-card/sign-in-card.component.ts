@@ -13,7 +13,9 @@ import {
   SdkConfig,
   SignInError,
   ServerProfileDetailsRequest,
-  SharedPreferences
+  SharedPreferences,
+  GroupService,
+  TenantInfoRequest
 } from 'sunbird-sdk';
 
 import { initTabs, LOGIN_TEACHER_TABS } from '@app/app/module.service';
@@ -46,6 +48,7 @@ export class SignInCardComponent implements OnInit {
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
+    @Inject('GROUP_SERVICE') private groupService: GroupService,
     @Inject('AUTH_SERVICE') private authService: AuthService,
     @Inject('API_SERVICE') private apiService: ApiService,
     @Inject('SDK_CONFIG') private sdkConfig: SdkConfig,
@@ -139,6 +142,11 @@ export class SignInCardComponent implements OnInit {
                 this.profileService.createProfile(profile, ProfileSource.SERVER)
                   .toPromise()
                   .then(() => {
+                    that.groupService.removeActiveGroupSession()
+                    .subscribe(() => {
+                    },
+                      () => {
+                      });
                     that.profileService.setActiveSessionForProfile(profile.uid).toPromise()
                       .then(() => {
                         that.formAndFrameworkUtilService.updateLoggedInUser(success, profile)
@@ -165,13 +173,14 @@ export class SignInCardComponent implements OnInit {
     });
   }
 
-  refreshTenantData(slug: string, title: string) {
+  refreshTenantData(tenantSlug: string, title: string) {
+    const tenantInfoRequest: TenantInfoRequest = {slug: tenantSlug};
     return new Promise((resolve, reject) => {
-      this.profileService.getTenantInfo({ slug: '' }).toPromise()
+      this.profileService.getTenantInfo(tenantInfoRequest).toPromise()
         .then((res) => {
-          this.preferences.putString(PreferenceKey.APP_LOGO, res.logo).toPromise().then();
+          this.preferences.putString(PreferenceKey.APP_LOGO, res.appLogo).toPromise().then();
           this.preferences.putString(PreferenceKey.APP_NAME, title).toPromise().then();
-          (window as any).splashscreen.setContent(title, res.logo);
+          (window as any).splashscreen.setContent(title, res.appLogo);
           resolve();
         }).catch(() => {
           resolve(); // ignore
