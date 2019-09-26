@@ -337,7 +337,10 @@ export enum InteractSubtype {
     SEARCH_INITIATED = 'search-initiated',
     RECOVERY_ACCOUNT_ID_CLICKED = 'recovery-account-id-clicked',
     MENU_CLICKED = 'menu-clicked',
-    SHARE_CLICKED = 'share-clicked'
+    SHARE_CLICKED = 'share-clicked',
+    UNENROL_CLICKED = 'unenrol-clicked',
+    UNENROL_SUCCESS = 'unenrol-success',
+    UNENROL_FAILURE = 'unenrol-failure',
 }
 
 export enum ActionButtonType {
