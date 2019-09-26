@@ -208,6 +208,7 @@ export class EnrolledCourseDetailsPage implements OnInit {
   contentId: string;
   isChild = false;
   public telemetryObject: TelemetryObject;
+  showCredits:Boolean = false;
 
 
   constructor(
@@ -571,10 +572,28 @@ export class EnrolledCourseDetailsPage implements OnInit {
             await loader.dismiss();
             this.commonUtilService.showToast(this.commonUtilService.translateMessage('COURSE_UNENROLLED'));
             this.events.publish(EventTopics.UNENROL_COURSE_SUCCESS, {});
+            this.telemetryGeneratorService.generateInteractTelemetry(
+              InteractType.OTHER,
+              InteractSubtype.UNENROL_SUCCESS,
+              Environment.HOME,
+              PageId.COURSE_DETAIL,
+              this.telemetryObject,
+              undefined,
+              this.objRollup,
+              this.corRelationList);
           });
         }, (error) => {
           this.zone.run(async () => {
             await loader.dismiss();
+            this.telemetryGeneratorService.generateInteractTelemetry(
+              InteractType.OTHER,
+              InteractSubtype.UNENROL_FAILURE,
+              Environment.HOME,
+              PageId.COURSE_DETAIL,
+              this.telemetryObject,
+              undefined,
+              this.objRollup,
+              this.corRelationList);
             if (error && error.error === 'CONNECTION_ERROR') {
               this.commonUtilService.showToast(this.commonUtilService.translateMessage('ERROR_NO_INTERNET_MESSAGE'));
             } else {
@@ -1138,33 +1157,6 @@ export class EnrolledCourseDetailsPage implements OnInit {
       courseId: this.identifier
     };
     this.zone.run(() => {
-      if (content.contentType === ContentType.COURSE) {
-        this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], {
-          state: {
-            content,
-            depth,
-            contentState,
-            corRelation: this.corRelationList
-          }
-        });
-      } else if (content.mimeType === MimeType.COLLECTION) {
-        subtype = InteractSubtype.UNIT_CLICKED;
-        let isChildClickable = true;
-        if (this.isAlreadyEnrolled && this.isBatchNotStarted) {
-          isChildClickable = false;
-        }
-        this.router.navigate([RouterLinks.COLLECTION_DETAILS], {
-          state: {
-            content,
-            depth,
-            contentState,
-            fromCoursesPage: true,
-            isAlreadyEnrolled: this.isAlreadyEnrolled,
-            isChildClickable,
-            corRelation: this.corRelationList
-          }
-        });
-      } else {
         this.router.navigate([RouterLinks.CONTENT_DETAILS], {
           state: {
             content,
@@ -1176,7 +1168,6 @@ export class EnrolledCourseDetailsPage implements OnInit {
             course: this.updatedCourseCardData
           }
         });
-      }
       this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
         subtype,
         Environment.HOME,
@@ -1332,6 +1323,10 @@ export class EnrolledCourseDetailsPage implements OnInit {
     this.toast.onDidDismiss(() => {
       this.toast = undefined;
     });
+  }
+
+  showLicensce(){
+    this.showCredits = !this.showCredits;
   }
 
   handleBackButton() {

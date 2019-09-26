@@ -5,7 +5,6 @@ import {Content, ContentDetailRequest, ContentService, CorrelationData, Telemetr
 import {ContentType, MimeType, RouterLinks} from '../app/app.constant';
 // import {EnrolledCourseDetailsPage} from '../enrolled-course-details/enrolled-course-details';
 // import {ContentDetailsPage} from '../content-details/content-details';
-// import {CollectionDetailsPage} from '../collection-details/collection-details';
 import {CommonUtilService} from './common-util.service';
 import {
   Environment,
@@ -151,9 +150,8 @@ export class QRScannerResultHandler {
 
     if (content.contentData.contentType === ContentType.COURSE) {
       this.router.navigate([`/${RouterLinks.ENROLLED_COURSE_DETAILS}`], navigationExtras);
-    } else if (content.mimeType === MimeType.COLLECTION) {
-      this.router.navigate([`/${RouterLinks.COLLECTION_DETAILS}`], navigationExtras);
-    } else {
+     } 
+   else {
       this.router.navigate([`/${RouterLinks.CONTENT_DETAILS}`], navigationExtras);
     }
   }

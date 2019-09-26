@@ -152,6 +152,9 @@ export enum InteractType {
 }
 
 export enum InteractSubtype {
+    MERGE_ACCOUNT_INITIATED = 'merge-account-initiated',
+    MERGE_ACCOUNT_SUCCESS = 'merge-account-success',
+    MERGE_ACCOUNT_FAILED = 'merge-account-failed',
     NETWORK_STATUS = 'networkStatus',
     INTERNET_CONNECTED = 'internet-connected',
     INTERNET_DISCONNECTED = 'internet-disconnected',
@@ -333,7 +336,11 @@ export enum InteractSubtype {
     SORT_BY_CLICKED = 'sort-by-clicked',
     SEARCH_INITIATED = 'search-initiated',
     RECOVERY_ACCOUNT_ID_CLICKED = 'recovery-account-id-clicked',
-    MENU_CLICKED = 'menu-clicked'
+    MENU_CLICKED = 'menu-clicked',
+    SHARE_CLICKED = 'share-clicked',
+    UNENROL_CLICKED = 'unenrol-clicked',
+    UNENROL_SUCCESS = 'unenrol-success',
+    UNENROL_FAILURE = 'unenrol-failure',
 }
 
 export enum ActionButtonType {
