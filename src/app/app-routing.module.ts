@@ -68,7 +68,6 @@ const routes: Routes = [
     path: RouterLinks.ENROLLMENT_DETAILS,
     loadChildren: './enrolled-course-details-page/enrollment-details-page/enrollment-details-page.module#EnrollmentDetailsPagePageModule'
   },
-  { path: RouterLinks.COLLECTION_DETAILS, loadChildren: './collection-details/collection-details.module#CollectionDetailsPageModule' },
   { path: RouterLinks.CONTENT_DETAILS, loadChildren: './content-details/content-details.module#ContentDetailsPageModule' },
   { path: RouterLinks.PLAYER, loadChildren: './player/player.module#PlayerPageModule' },
   { path: RouterLinks.PAGE_FILTER, loadChildren: './page-filter/page-filter.module#PageFilterPageModule' },

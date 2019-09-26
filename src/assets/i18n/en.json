@@ -137,6 +137,7 @@
   "CREATE_USER": "Create User",
   "CREATORS": "Created on {{%s}} by",
   "CREDITS": "CREDITS",
+  "CREDITS_LICENCE_INFO":"Credits & License Info",
   "CSV_DOWNLOAD_SUCCESS": "{{%s}} saved in ‘Downloads’",
   "CERTIFIED_TRAINING":"Certified Training",
   "CURRENT_LANGUAGE": "Current Language ",
