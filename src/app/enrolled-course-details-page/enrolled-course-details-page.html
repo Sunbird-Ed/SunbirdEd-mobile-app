@@ -4,7 +4,7 @@
 			<ion-card-header class="custom-card-header">
 				<ion-card-title class="font-18">{{course?.name}}</ion-card-title>
 				<ion-card-subtitle class="font-14 subtitle-color">{{'CONTENT_CREATED_BY' | translate}}
-					{{ course?.owner || course?.creator }}
+					{{course?.organisation.join(', ')}}
 				</ion-card-subtitle>
 				<div class="hr-border-bottom"></div>
 			</ion-card-header>
@@ -63,14 +63,11 @@
 									</div>
 								</div>
 								<div *ngIf="courseCardData?.batchId">
-									<div class="sb-course-progress-container"
-										*ngIf="course?.progress!==100 && !batchExp">
+									<div class="sb-course-progress-container" *ngIf="course?.progress!==100 && !batchExp">
 										<p><b>{{'YOUR_PROGRESS_LABEL' | translate}}</b></p>
-										<p>{{course?.progress ? course?.progress : '0'}}%
-											{{'COURSE_COMPLETED_LABEL' | translate}}</p>
-										<app-pb-horizontal [progress]="course?.progress" class="course-progress"
-											[ngClass]="{'blurbackground': batchExp}" isOnBoardCard="flase"
-											isCourseProgress="true"></app-pb-horizontal>
+										<p>{{ 'COURSE_COMPLETED_LABEL' | translate:{'%s': course?.progress ? course?.progress : '0'} }}</p>
+										<app-pb-horizontal [progress]="course?.progress" class="course-progress" [ngClass]="{'blurbackground': batchExp}"
+											isOnBoardCard="flase" isCourseProgress="true"></app-pb-horizontal>
 									</div>
 									<div class="sb-batch-end-container" *ngIf="course?.progress !== 100 && batchExp">
 										<p class="batch-end-main-heading">{{'BATCHEND_MAIN_HEADING' | translate}}
@@ -108,7 +105,8 @@
 															'CONTINUE_NOW' | translate }}</span></button>
 					<div *ngIf="batchDetails?.endDate && !batchExp" class="enrollment-end-date ion-padding-bottom">
 						<ion-icon name="information-circle"></ion-icon>
-						Complete Training by {{batchDetails?.endDate | date}} to earn a certificate
+						<span>{{'COMPLETE_TRAINING_TO_EARN_CERTIFICATE' | translate}} {{batchDetails?.endDate | date}}</span>
+						<span *ngIf="course?.certificate">{{'TO_EARN_CERTIFICATE' | translate}}</span>
 					</div>
 				</ion-card-content>
 			</ion-card>
