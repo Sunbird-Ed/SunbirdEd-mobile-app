@@ -8,7 +8,6 @@ import { Location } from '@angular/common';
 import each from 'lodash/each';
 import find from 'lodash/find';
 import map from 'lodash/map';
-import forEach from 'lodash/forEach';
 import {
   CachedItemRequestSourceFrom, Content, ContentDetailRequest, ContentEventType, ContentImport, ContentImportRequest,
   ContentImportResponse, ContentImportStatus, ContentSearchCriteria, ContentSearchResult, ContentService,
@@ -884,7 +883,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
             this.zone.run(async () => {
               this.batches = res;
               if (this.batches.length) {
-                forEach(this.batches, (batch, key) => {
+                this.batches.forEach(, (batch, key) => {
                     if (batch.status === 1) {
                       ongoingBatches.push(batch);
                     } else {
