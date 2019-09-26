@@ -94,7 +94,7 @@ export class EnrolledCourseDetailsPage implements OnInit {
   childrenData: Array<any> = [];
 
   startData: any;
-  shownGroup : null;
+  shownGroup: null;
 
   /**
    * Show loader while importing content
@@ -153,14 +153,14 @@ export class EnrolledCourseDetailsPage implements OnInit {
    */
   courseStartDate;
   isContentPlayed;
-  showLoading;
+  showLoading = false;
   showDownloadProgress: boolean;
   totalDownload: number;
   currentCount = 0;
   isDownloadComplete = false;
   queuedIdentifiers: Array<string> = [];
   faultyIdentifiers: Array<any> = [];
-  isDownloadStarted;
+  isDownloadStarted = false;
   batchDetails: Batch;
   batchExp = false;
   userId = '';
@@ -173,8 +173,8 @@ export class EnrolledCourseDetailsPage implements OnInit {
   profileType = '';
   objId;
   objType;
-  batchCount:Number;
-  batchEndDate:String;
+  batchCount: Number;
+  batchEndDate: String;
   objVer;
   didViewLoad: boolean;
   backButtonFunc = undefined;
@@ -208,7 +208,7 @@ export class EnrolledCourseDetailsPage implements OnInit {
   contentId: string;
   isChild = false;
   public telemetryObject: TelemetryObject;
-  showCredits:Boolean = false;
+  showCredits: Boolean = false;
 
 
   constructor(
@@ -270,14 +270,14 @@ export class EnrolledCourseDetailsPage implements OnInit {
     if (this.courseCardData.batchId) {
       this.segmentType = 'modules';
     }
-    if (this.courseCardData.batchId){
-      this.getBatchDetails();     
-    } else { 
-    this.getAllBatches();      
+    if (this.courseCardData.batchId) {
+      this.getBatchDetails();
+    } else {
+    this.getAllBatches();
     }
   }
 
-  async deleteCourse(){
+  async deleteCourse() {
     const confirm = await this.popoverCtrl.create({
       component: SbPopoverComponent,
       componentProps: {
@@ -464,7 +464,7 @@ export class EnrolledCourseDetailsPage implements OnInit {
       componentProps: {
         sbPopoverMainTitle : this.commonUtilService.translateMessage('YOU_MUST_JOIN_AN_ACTIVE_BATCH'),
         metaInfo: this.commonUtilService.translateMessage('REGISTER_TO_COMPLETE_ACCESS'),
-        sbPopoverHeading : this.commonUtilService.translateMessage('JOIN_TRAINING')+'?',
+        sbPopoverHeading : this.commonUtilService.translateMessage('JOIN_TRAINING') + '?',
         isNotShowCloseIcon: true,
         actionsButtons: [
           {
@@ -701,7 +701,7 @@ export class EnrolledCourseDetailsPage implements OnInit {
     if (Boolean(data.isAvailableLocally)) {
       this.setChildContents();
     } else {
-      // this.showLoading = true;
+      this.showLoading = true;
       this.headerService.hideHeader();
       this.telemetryGeneratorService.generateSpineLoadingTelemetry(data, true);
       this.importContent([this.identifier], false);
@@ -906,7 +906,7 @@ export class EnrolledCourseDetailsPage implements OnInit {
   // }
 
 
-  async showDownloadConfirmationAlert(myEvent) {
+  async showDownloadConfirmationAlert() {
     if (this.commonUtilService.networkInfo.isNetworkAvailable) {
       let contentTypeCount;
       if (this.downloadIdentifiers.length) {
@@ -1031,7 +1031,7 @@ export class EnrolledCourseDetailsPage implements OnInit {
       });
     });
   }
-  
+
   getAllBatches() {
     const courseBatchesRequest: CourseBatchesRequest = {
       filters: {
@@ -1047,7 +1047,7 @@ export class EnrolledCourseDetailsPage implements OnInit {
       // this.batchCount = this.batches.length;
 
       if ( data && data.length > 1) {
-        this.batchCount = data.length;           
+        this.batchCount = data.length;
       } else {
         this.batchEndDate = data[0].endDate;
         this.enrollmentEndDate =  data[0].enrollmentEndDate ;
@@ -1151,7 +1151,7 @@ export class EnrolledCourseDetailsPage implements OnInit {
    * Redirect to child content details page
    */
   navigateToChildrenDetailsPage(content: Content, depth): void {
-    let subtype = InteractSubtype.CONTENT_CLICKED;
+    const subtype = InteractSubtype.CONTENT_CLICKED;
     const contentState: ContentState = {
       batchId: this.courseCardData.batchId ? this.courseCardData.batchId : '',
       courseId: this.identifier
@@ -1168,7 +1168,7 @@ export class EnrolledCourseDetailsPage implements OnInit {
             course: this.updatedCourseCardData
           }
         });
-      this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
+        this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
         subtype,
         Environment.HOME,
         PageId.COURSE_DETAIL,
@@ -1276,7 +1276,7 @@ export class EnrolledCourseDetailsPage implements OnInit {
         this.courseCardData.batch = this.updatedCourseCardData.batch;
         this.courseCardData.batchId = this.updatedCourseCardData.batchId;
       }
-      
+
     }
 
     // check if the course is already enrolled
@@ -1325,7 +1325,7 @@ export class EnrolledCourseDetailsPage implements OnInit {
     });
   }
 
-  showLicensce(){
+  showLicensce() {
     this.showCredits = !this.showCredits;
   }
 
