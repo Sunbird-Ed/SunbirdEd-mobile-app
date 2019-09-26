@@ -146,7 +146,7 @@ export class ExploreConstants {
         'streamingUrl',
         'framework',
         'appIcon'
-    ]
+    ];
 }
 export class AudienceFilter {
     public static readonly GUEST_TEACHER = ['instructor', 'learner'];

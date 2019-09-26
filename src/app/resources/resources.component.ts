@@ -222,6 +222,12 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
         this.isUpgradePopoverShown = true;
       }
     });
+  }
+
+  async ngOnInit() {
+    this.getCurrentUser();
+    this.appGlobalService.generateConfigInteractEvent(PageId.LIBRARY, this.isOnBoardingCardCompleted);
+    await this.splaschreenDeeplinkActionHandlerDelegate.onAction('content').toPromise();
 
     this.events.subscribe('tab.change', (data: string) => {
       this.scrollToTop();
@@ -237,12 +243,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
         this.qrScanner.startScanner(this.appGlobalService.getPageIdForTelemetry());
       }
     });
-  }
-
-  async ngOnInit() {
-    this.getCurrentUser();
-    this.appGlobalService.generateConfigInteractEvent(PageId.LIBRARY, this.isOnBoardingCardCompleted);
-    await this.splaschreenDeeplinkActionHandlerDelegate.onAction('content').toPromise();
   }
 
   generateNetworkType() {
