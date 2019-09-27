@@ -3,7 +3,7 @@ export { CourseUtilService } from './course-util.service';
 export { QRScannerResultHandler } from './qrscanresulthandler.service';
 export { TelemetryGeneratorService } from './telemetry-generator.service';
 export { CommonUtilService } from './common-util.service';
-export { LogoutHandlerService } from './logout-handler.service';
+export { LogoutHandlerService } from './handlers/logout-handler.service';
 export { LoginHandlerService } from './login-handler.service';
 export { ContainerService } from './container.services';
 export { UtilityService } from './utility-service';

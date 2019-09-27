@@ -6,7 +6,7 @@ import { ProfileService, ServerProfile } from 'sunbird-sdk';
 import { Subscription } from 'rxjs/Subscription';
 
 import { Environment, ImpressionType, InteractSubtype, InteractType, PageId } from '../../services/telemetry-constants';
-import { LogoutHandlerService } from '@app/services/logout-handler.service';
+import { LogoutHandlerService } from '@app/services/handlers/logout-handler.service';
 import { TncUpdateHandlerService } from '@app/services/handlers/tnc-update-handler.service';
 import { CommonUtilService } from '@app/services/common-util.service';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
