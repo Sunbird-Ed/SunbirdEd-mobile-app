@@ -95,12 +95,12 @@ org.ekstep.contentrenderer.baseLauncher.extend({
         if (window.cordova) {
             var videoPlayer = videojs('videoElement', {
                 "controls": true, "autoplay": true, "preload": "auto",
+                "nativeControlsForTouch": true,
                 html5: {
                     hls: {
                         overrideNative: true,
                     }
-                },
-                inactivityTimeout: 0
+                }
             }, function () {
                 this.on('downloadvideo', function () {
                     EkstepRendererAPI.dispatchEvent("renderer:splash:hide");
@@ -109,7 +109,6 @@ org.ekstep.contentrenderer.baseLauncher.extend({
             });
         } else {
             var videoPlayer = videojs('videoElement', {
-                inactivityTimeout: 0,
                 "controls": true, "autoplay": true, "preload": "auto",
                 plugins: {
                     vjsdownload: {
@@ -156,11 +155,14 @@ org.ekstep.contentrenderer.baseLauncher.extend({
                     type: 'Feature',
                     id: 'video:resolutionChange'
                 }, {
+                    type: 'Task',
                     id: 'SB-13358',
-                    type: 'Task'
                 }, {
                     type: 'Resolution',
-                    id: currentResolution
+                    id: String(currentResolution)
+                },{
+                    type: 'ResolutionChange',
+                    id: "Auto"
                 }]
             }
         })
@@ -177,11 +179,9 @@ org.ekstep.contentrenderer.baseLauncher.extend({
         }
         var vid = videojs("videoElement", {
             "techOrder": ["youtube"],
-            inactivityTimeout: 0,
             "src": path,
-            "controls": false, "autoplay": true, "preload": "auto",
-            "youtube": { 
-                "ytControls": 2 , 
+            "controls": true, "autoplay": true, "preload": "auto",
+            "youtube": {
                 "onPlayerPlaybackQualityChange" : function(e){ 
                     var resolution = (e && e.data) ? e.data : "Auto";
                     instance.logResolution(resolution);
