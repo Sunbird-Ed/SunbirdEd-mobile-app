@@ -216,7 +216,6 @@ it('backButtonFunc defaults to: undefined', () => {
     userTypeSelectionPage.selectedUserType = ProfileType.STUDENT;
     profileServiceMock.updateProfile.mockResolvedValue('');
     userTypeSelectionPage.isChangeRoleRequest = true;
-    appGlobalServiceMock.DISPLAY_ONBOARDING_SCAN_PAGE = jest.fn();
     spyOn(userTypeSelectionPage, 'generateInteractEvent');
     // act
     userTypeSelectionPage.continue();

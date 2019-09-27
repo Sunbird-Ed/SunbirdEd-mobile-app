@@ -3,8 +3,8 @@
 		<ion-card>
 			<ion-card-header class="custom-card-header">
 				<ion-card-title class="font-18">{{course?.name}}</ion-card-title>
-				<ion-card-subtitle class="font-14 subtitle-color">{{'CONTENT_CREATED_BY' | translate}}
-					{{course?.organisation?.join(', ')}}
+				<ion-card-subtitle *ngIf="course?.organisation" class="font-14 subtitle-color">{{'CONTENT_CREATED_BY' | translate}}
+					{{course?.organisation.join(', ')}}
 				</ion-card-subtitle>
 				<div class="hr-border-bottom"></div>
 			</ion-card-header>
@@ -28,7 +28,7 @@
 					</ion-card-subtitle>
 				</div>
 				<div class="sb-course-end-container"
-					*ngIf="!courseCardData?.batchId && !isAlreadyEnrolled && !batchCount">
+					*ngIf="!courseCardData?.batchId && !isAlreadyEnrolled && batches?.length">
 					<p class="main-heading">{{'COURSE_ENDED' | translate}}</p>
 					<p class="sub-heading">{{'THERE_ARE_NO_BATCHES_AVAILABLE_FOR_THIS_TRAINING' | translate}}</p>
 				</div>
@@ -47,7 +47,7 @@
 											<p class="card-text">{{'DOWNLOAD' | translate}}
 											</p>
 										</button>
-										<button (click)="deleteCourse()" slot="icon-only" class="card-button">
+										<button (click)="showDeletePopup()" slot="icon-only" class="card-button">
 											<ion-icon ios="ios-trash" md="md-trash" class="card-icons-red"></ion-icon>
 											<p class="card-text">{{'REMOVE' | translate}}
 											</p>
