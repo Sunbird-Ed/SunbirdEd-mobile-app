@@ -22629,19 +22629,18 @@ function parseUrl(sourceUrl) {
   var parsedUrl = url.parse(sourceUrl);
 
   if (parsedUrl.protocol === 'file:' || parsedUrl.host) {
-    return window.parent.Ionic.WebView.convertFileSrc(parsedUrl);
+    return parsedUrl;
   }
 
   if (/^[a-z]:[/\\]/i.test(sourceUrl)) {
-    // return url.parse("file:///".concat(sourceUrl));
-    return url.parse(window.parent.Ionic.WebView.convertFileSrc(sourceUrl));
+    return url.parse("file:///".concat(sourceUrl));
   }
 
   if (!parsedUrl.host) {
     parsedUrl.protocol = 'file:';
   }
 
-  return window.parent.Ionic.WebView.convertFileSrc(parsedUrl);
+  return parsedUrl;
 }
 
 var PDFNodeStream =
