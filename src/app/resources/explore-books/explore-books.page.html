@@ -36,7 +36,7 @@
 
     <div class="search-bar">
       <input type="search" (focus)="hideSortByButton()" (focusout)="showSortByButton()" #searchInput
-        placeholder="{{'SEARCH_BOOK' | translate}}" [formControl]="searchForm.get('query')" />
+        placeholder="{{'SEARCH_PLACEHOLDER' | translate}}" [formControl]="searchForm.get('query')" />
       <button type="submit" class="btn-link sb-btn-link">
         <ion-icon name="search"></ion-icon>
       </button>

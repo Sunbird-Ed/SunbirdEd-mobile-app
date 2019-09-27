@@ -94,7 +94,7 @@ export class EnrolledCourseDetailsPage implements OnInit {
   childrenData: Array<any> = [];
 
   startData: any;
-  shownGroup : null;
+  shownGroup: null;
 
   /**
    * Show loader while importing content
@@ -153,14 +153,14 @@ export class EnrolledCourseDetailsPage implements OnInit {
    */
   courseStartDate;
   isContentPlayed;
-  showLoading;
+  showLoading = false;
   showDownloadProgress: boolean;
   totalDownload: number;
   currentCount = 0;
   isDownloadComplete = false;
   queuedIdentifiers: Array<string> = [];
   faultyIdentifiers: Array<any> = [];
-  isDownloadStarted;
+  isDownloadStarted = false;
   batchDetails: Batch;
   batchExp = false;
   userId = '';
@@ -208,7 +208,7 @@ export class EnrolledCourseDetailsPage implements OnInit {
   contentId: string;
   isChild = false;
   public telemetryObject: TelemetryObject;
-  showCredits:Boolean = false;
+  showCredits: Boolean = false;
 
 
   constructor(
@@ -466,7 +466,7 @@ export class EnrolledCourseDetailsPage implements OnInit {
       componentProps: {
         sbPopoverMainTitle : this.commonUtilService.translateMessage('YOU_MUST_JOIN_AN_ACTIVE_BATCH'),
         metaInfo: this.commonUtilService.translateMessage('REGISTER_TO_COMPLETE_ACCESS'),
-        sbPopoverHeading : this.commonUtilService.translateMessage('JOIN_TRAINING')+'?',
+        sbPopoverHeading : this.commonUtilService.translateMessage('JOIN_TRAINING') + '?',
         isNotShowCloseIcon: true,
         actionsButtons: [
           {
@@ -574,10 +574,28 @@ export class EnrolledCourseDetailsPage implements OnInit {
             await loader.dismiss();
             this.commonUtilService.showToast(this.commonUtilService.translateMessage('COURSE_UNENROLLED'));
             this.events.publish(EventTopics.UNENROL_COURSE_SUCCESS, {});
+            this.telemetryGeneratorService.generateInteractTelemetry(
+              InteractType.OTHER,
+              InteractSubtype.UNENROL_SUCCESS,
+              Environment.HOME,
+              PageId.COURSE_DETAIL,
+              this.telemetryObject,
+              undefined,
+              this.objRollup,
+              this.corRelationList);
           });
         }, (error) => {
           this.zone.run(async () => {
             await loader.dismiss();
+            this.telemetryGeneratorService.generateInteractTelemetry(
+              InteractType.OTHER,
+              InteractSubtype.UNENROL_FAILURE,
+              Environment.HOME,
+              PageId.COURSE_DETAIL,
+              this.telemetryObject,
+              undefined,
+              this.objRollup,
+              this.corRelationList);
             if (error && error.error === 'CONNECTION_ERROR') {
               this.commonUtilService.showToast(this.commonUtilService.translateMessage('ERROR_NO_INTERNET_MESSAGE'));
             } else {
@@ -685,7 +703,7 @@ export class EnrolledCourseDetailsPage implements OnInit {
     if (Boolean(data.isAvailableLocally)) {
       this.setChildContents();
     } else {
-      // this.showLoading = true;
+      this.showLoading = true;
       this.headerService.hideHeader();
       this.telemetryGeneratorService.generateSpineLoadingTelemetry(data, true);
       this.importContent([this.identifier], false);
@@ -890,7 +908,7 @@ export class EnrolledCourseDetailsPage implements OnInit {
   // }
 
 
-  async showDownloadConfirmationAlert(myEvent) {
+  async showDownloadConfirmationAlert() {
     if (this.commonUtilService.networkInfo.isNetworkAvailable) {
       let contentTypeCount;
       if (this.downloadIdentifiers.length) {
@@ -930,7 +948,7 @@ export class EnrolledCourseDetailsPage implements OnInit {
         this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
           'download-all-button-clicked',
           Environment.HOME,
-          PageId.ENROLLED_COURSE_DETAIL,
+          PageId.COURSE_DETAIL,
           undefined,
           undefined,
           // todo
@@ -1058,7 +1076,7 @@ export class EnrolledCourseDetailsPage implements OnInit {
       InteractType.TOUCH,
       InteractSubtype.UNIT_CLICKED,
       Environment.HOME,
-      PageId.ENROLLED_COURSE_DETAIL,
+      PageId.COURSE_DETAIL,
       telemetryObject,
       values,
       undefined,
@@ -1135,7 +1153,7 @@ export class EnrolledCourseDetailsPage implements OnInit {
    * Redirect to child content details page
    */
   navigateToChildrenDetailsPage(content: Content, depth): void {
-    let subtype = InteractSubtype.CONTENT_CLICKED;
+    const subtype = InteractSubtype.CONTENT_CLICKED;
     const contentState: ContentState = {
       batchId: this.courseCardData.batchId ? this.courseCardData.batchId : '',
       courseId: this.identifier
@@ -1152,7 +1170,7 @@ export class EnrolledCourseDetailsPage implements OnInit {
             course: this.updatedCourseCardData
           }
         });
-      this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
+        this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
         subtype,
         Environment.HOME,
         PageId.COURSE_DETAIL,
@@ -1260,7 +1278,7 @@ export class EnrolledCourseDetailsPage implements OnInit {
         this.courseCardData.batch = this.updatedCourseCardData.batch;
         this.courseCardData.batchId = this.updatedCourseCardData.batchId;
       }
-      
+
     }
 
     // check if the course is already enrolled
@@ -1309,7 +1327,7 @@ export class EnrolledCourseDetailsPage implements OnInit {
     });
   }
 
-  showLicensce(){
+  showLicensce() {
     this.showCredits = !this.showCredits;
   }
 
@@ -1694,7 +1712,7 @@ export class EnrolledCourseDetailsPage implements OnInit {
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
       param,
       Environment.HOME,
-      PageId.ENROLLED_COURSE_DETAIL,
+      PageId.COURSE_DETAIL,
       undefined,
       telemetryObject,
       objRollup,
@@ -1813,6 +1831,19 @@ export class EnrolledCourseDetailsPage implements OnInit {
     if (data && data.canDelete) {
       this.loginHandlerService.signIn();
     }
+  }
+
+  onSegmentChange(event) {
+      this.telemetryGeneratorService.generateInteractTelemetry(
+        InteractType.TOUCH,
+        event.detail.value === 'modules' ? InteractSubtype.TRAINING_MODULE_CLICKED : InteractSubtype.TRAINING_INFO_CLICKED,
+        Environment.HOME,
+        PageId.COURSE_DETAIL,
+        this.telemetryObject,
+        undefined,
+        this.objRollup,
+        this.corRelationList
+      );
   }
 
 }
