@@ -13,7 +13,7 @@
             </ion-list-header>
 
             <ion-item>
-                <ion-label>{{'EMAIL_ID_PLACEHOLDER' | translate}}</ion-label>
+                <ion-label>{{'EMAIL_ADDRESS_TITLE' | translate}}</ion-label>
                 <ion-radio slot="start" value="{{RecoveryType.EMAIL}}"></ion-radio>
             </ion-item>
 
@@ -30,7 +30,7 @@
             <form [formGroup]="recoveryEmailForm">
                 <div class="M16">
                     <div class="W100 merged-input-container MT10">
-                        <ion-input type="text" placeholder="{{'EMAIL_ID_PLACEHOLDER' | translate}}"
+                        <ion-input type="text" placeholder="{{'EMAIL_PLACEHOLDER' | translate}}"
                             class="form-control custom" formControlName="email" (input)="removeSameRecoveryIdErr(RecoveryType.EMAIL)">
                         </ion-input>
                     </div>
@@ -52,7 +52,7 @@
                         <ion-input type="tel" placeholder="+91 -" class="form-control decorator " value="+91 -"
                             disabled>
                         </ion-input>
-                        <ion-input type="tel" placeholder="{{'PHONE_PLACEHOLDER' | translate}}" maxlength="10"
+                        <ion-input type="tel" placeholder="{{'ENTER_PHONE_POPUP_TITLE' | translate}}" maxlength="10"
                             minlength="10" required class="form-control custom" formControlName="phone"
                             (input)="removeSameRecoveryIdErr(RecoveryType.PHONE)">
                         </ion-input>
