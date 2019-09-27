@@ -14565,9 +14565,9 @@ visited {
     src: url(fonts/NotoSans-Bold.woff) format('woff')
 }
 
-body {	
-    font-family: NotoSans, NotoSansOriya, NotoSansGujarati, NotoSansMalayalam;	
-} 
+body {
+    font-family: NotoSans, NotoSansOriya, NotoSansGujarati, NotoSansMalayalam;
+}
 
 .splashText {
     position: absolute;
@@ -14807,7 +14807,7 @@ ion-popover-view.fit ion-content {
 }
 
 .gc-menu a.gc-menu-btn {
-    position: relative;
+    /*position: relative;*/
 }
 
 .gc-menu-collection-cont {
@@ -14917,11 +14917,16 @@ ion-popover-view.fit ion-content {
 .gc-menu-btn img.icon {
     position: absolute;
     margin-top: 40%;
-    width: 100%;
 }
 
 .gc-menu-btn.old_menu img.icon {
     margin-top: 0;
+    width: 20%;
+}
+
+.gc-menu-btn img.icon.nav-top {
+    /* margin-top: 8%;
+    width: 65%; */
 }
 
 .nav-icon {
@@ -16620,7 +16625,27 @@ body {
 .center {
     margin: 0 auto;
 }
-
+.gc-menu a.gc-menu-btn .hamberger-menu {
+    cursor: pointer;
+    display: inline-flex;
+    -webkit-box-align: center;
+    align-items: center;
+    max-width: 4%;
+    z-index: 10000;
+    position: fixed;
+    left: 1.25%;
+    min-height: 28px;
+    min-width: 28px;
+    width: 4%;
+    top: 1.75%;
+    height: calc(10% - 3.5%);
+}
+.gc-menu a.gc-menu-btn .hamberger-menu img {
+    max-width: 100%;
+    position: unset;
+    margin-top: 0;
+    width: 100%;
+}
 
 /* new popup style */
 .grey-text {
