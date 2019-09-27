@@ -173,8 +173,8 @@ export class EnrolledCourseDetailsPage implements OnInit {
   profileType = '';
   objId;
   objType;
-  batchCount:Number;
-  batchEndDate:String;
+  batchCount: number;
+  batchEndDate: string;
   objVer;
   didViewLoad: boolean;
   backButtonFunc = undefined;
@@ -270,14 +270,14 @@ export class EnrolledCourseDetailsPage implements OnInit {
     if (this.courseCardData.batchId) {
       this.segmentType = 'modules';
     }
-    if (this.courseCardData.batchId){
-      this.getBatchDetails();     
-    } else { 
-    this.getAllBatches();      
+    if (this.courseCardData.batchId) {
+      this.getBatchDetails();
+    } else {
+      this.getAllBatches();
     }
   }
 
-  async deleteCourse(){
+  async deleteCourse() {
     const confirm = await this.popoverCtrl.create({
       component: SbPopoverComponent,
       componentProps: {
@@ -407,7 +407,9 @@ export class EnrolledCourseDetailsPage implements OnInit {
     });
 
     this.events.subscribe('courseToc:content-clicked', (data) => {
-      this.joinTraining();
+      if (this.course.createdBy !== this.userId) {
+        this.joinTraining();
+      }
     });
 
   }
@@ -1013,7 +1015,7 @@ export class EnrolledCourseDetailsPage implements OnInit {
       });
     });
   }
-  
+
   getAllBatches() {
     const courseBatchesRequest: CourseBatchesRequest = {
       filters: {
@@ -1029,8 +1031,8 @@ export class EnrolledCourseDetailsPage implements OnInit {
       // this.batchCount = this.batches.length;
 
       if ( data && data.length > 1) {
-        this.batchCount = data.length;           
-      } else {
+        this.batchCount = data.length;
+      } else if (data && data.length === 1) {
         this.batchEndDate = data[0].endDate;
         this.enrollmentEndDate =  data[0].enrollmentEndDate ;
       }
