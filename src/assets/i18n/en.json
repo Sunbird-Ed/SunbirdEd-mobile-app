@@ -187,7 +187,7 @@
   "EDIT_PHONE_POPUP_TITLE": "Edit Mobile Number",
   "EDIT_PROFILE": "Edit profile",
   "EMAIL_EDIT_SUCCESS": "Email address updated successfully",
-  "EMAIL_ADDRESS_TITLE": "Email Address",
+  "EMAIL_ID_PLACEHOLDER": "Email Address",
   "EMAIL_PLACEHOLDER": "Enter email address",
   "EMAIL_UPDATE_SUCCESS": "Email updated successfully",
   "EMPTY_LIBRARY_TEXTBOOK_FILTER": "No books found for {{%grade}} ({{%medium}})",
