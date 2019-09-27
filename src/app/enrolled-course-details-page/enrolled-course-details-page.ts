@@ -74,6 +74,8 @@ import { ContentUtil } from '@app/util/content-util';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { SbPopoverComponent } from '../components/popups';
 import { TranslateService } from '@ngx-translate/core';
+import { ContentInfo } from '@app/services/content/content-info';
+import { ContentDeleteHandler } from '@app/services/content/content-delete-handler';
 declare const cordova;
 
 @Component({
@@ -173,8 +175,8 @@ export class EnrolledCourseDetailsPage implements OnInit {
   profileType = '';
   objId;
   objType;
-  batchCount: Number;
-  batchEndDate: String;
+  batchCount: number;
+  batchEndDate: string;
   objVer;
   didViewLoad: boolean;
   backButtonFunc = undefined;
@@ -208,8 +210,8 @@ export class EnrolledCourseDetailsPage implements OnInit {
   contentId: string;
   isChild = false;
   public telemetryObject: TelemetryObject;
-  showCredits: Boolean = false;
-
+  showCredits = false;
+  contentDeleteObservable: any;
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -220,7 +222,6 @@ export class EnrolledCourseDetailsPage implements OnInit {
     @Inject('AUTH_SERVICE') private authService: AuthService,
     public toastController: ToastController,
     private loginHandlerService: LoginHandlerService,
-    private alertCtrl: AlertController,
     private zone: NgZone,
     private events: Events,
     private fileSizePipe: FileSizePipe,
@@ -239,7 +240,8 @@ export class EnrolledCourseDetailsPage implements OnInit {
     private appVersion: AppVersion,
     private toastCtrl: ToastController,
     private translate: TranslateService,
-    private popOverCtrl: PopoverController
+    private popOverCtrl: PopoverController,
+    private contentDeleteHandler: ContentDeleteHandler,
   ) {
 
     this.objRollup = new Rollup();
@@ -277,106 +279,19 @@ export class EnrolledCourseDetailsPage implements OnInit {
     }
   }
 
-  async deleteCourse() {
-    const confirm = await this.popoverCtrl.create({
-      component: SbPopoverComponent,
-      componentProps: {
-        content: this.content,
-        // isChild: this.isDepthChild,
-        objRollup: this.objRollup,
-        // pageName: PageId.COLLECTION_DETAIL,
-        corRelationList: this.corRelationList,
-        sbPopoverHeading: this.commonUtilService.translateMessage('REMOVE_FROM_DEVICE'),
-        // sbPopoverMainTitle: this.commonUtilService.translateMessage('REMOVE_FROM_DEVICE_MSG'),
-        sbPopoverMainTitle: this.course.name,
-        actionsButtons: [
-          {
-            btntext: this.commonUtilService.translateMessage('REMOVE'),
-            btnClass: 'popover-color'
-          },
-        ],
-        icon: null,
-        metaInfo:
-          // this.contentDetail.contentTypesCount.TextBookUnit + 'items' +
-          // this.batchDetails.courseAdditionalInfo.leafNodesCount + 'items' +
-          '(' + this.fileSizePipe.transform(this.course.size, 2) + ')',
-        sbPopoverContent: 'Are you sure you want to delete ?'
-      },
-      cssClass: 'sb-popover danger',
+  showDeletePopup() {
+    this.contentDeleteObservable = this.contentDeleteHandler.contentDeleteCompleted$.subscribe(() => {
+      this.location.back();
     });
-    await confirm.present();
-    const { data } = await confirm.onDidDismiss();
-
-    if (data && data.canDelete) {
-      this.deleteContent();
-    }
-  }
-
-  async deleteContent() {
-    const telemetryObject = new TelemetryObject(this.course.identifier, this.course.contentType, this.course.pkgVersion);
-
-    this.telemetryGeneratorService.generateInteractTelemetry(
-      InteractType.TOUCH,
-      InteractSubtype.DELETE_CLICKED,
-      Environment.HOME,
-      this.pageName,
-      telemetryObject,
-      undefined,
-      this.objRollup,
-      this.corRelationList);
-
-    const loader = await this.commonUtilService.getLoader();
-    await loader.present();
-    this.contentService.deleteContent(this.getDeleteRequestBody()).toPromise()
-      .then(async (data: ContentDeleteResponse[]) => {
-        await loader.dismiss();
-        if (data && data[0].status === ContentDeleteStatus.NOT_FOUND) {
-          this.showToaster(this.getMessageByConstant('CONTENT_DELETE_FAILED'));
-        } else {
-          // Publish saved resources update event
-          this.events.publish('savedResources:update', {
-            update: true
-          });
-          this.showToaster(this.getMessageByConstant('MSG_RESOURCE_DELETED'));
-          this.popOverCtrl.dismiss({ isDeleted: true });
-          this.location.back();
-        }
-      }).catch(async (error: any) => {
-        await loader.dismiss();
-        this.showToaster(this.getMessageByConstant('CONTENT_DELETE_FAILED'));
-        this.popOverCtrl.dismiss();
-      });
-  }
-  /**
-   * Construct content delete request body
-   */
-  getDeleteRequestBody() {
-    return {
-      contentDeleteList: [{
-        contentId: this.course.identifier,
-        isChildContent: this.isChild
-      }]
+    const contentInfo: ContentInfo = {
+      telemetryObject: this.telemetryObject,
+      rollUp: this.objRollup,
+      correlationList: this.corRelationList,
+      hierachyInfo: undefined
     };
+    this.contentDeleteHandler.showContentDeletePopup(this.content, this.isChild, contentInfo, PageId.COURSE_DETAIL);
   }
 
-  getMessageByConstant(constant: string) {
-    let msg = '';
-    this.translate.get(constant).subscribe(
-      (value: any) => {
-        msg = value;
-      }
-    );
-    return msg;
-  }
-
-  async showToaster(message) {
-    const toast = await this.toastCtrl.create({
-      message,
-      duration: 2000,
-      position: 'bottom'
-    });
-    await toast.present();
-  }
 
   subscribeUtilityEvents() {
     this.utilityService.getBuildConfigValue('BASE_URL')
@@ -429,12 +344,10 @@ export class EnrolledCourseDetailsPage implements OnInit {
               }
               this.appGlobalService.setEnrolledCourseList(courseList);
             }
-            // this.removeUnenrolledCourse(unenrolledCourse);
           });
         }
       })
       .catch(() => {
-        // this.removeUnenrolledCourse(unenrolledCourse);
       });
   }
 
@@ -1689,22 +1602,6 @@ export class EnrolledCourseDetailsPage implements OnInit {
     }
   }
 
-  private removeUnenrolledCourse(unenrolledCourse) {
-    const enrolledCourses = this.appGlobalService.getEnrolledCourseList();
-    const found = enrolledCourses.find((ele) => {
-      return ele.courseId === unenrolledCourse.courseId;
-    });
-    let indx = -1;
-    if (found) {
-      indx = enrolledCourses.indexOf(found);
-    }
-    if (indx !== -1) {
-      enrolledCourses.splice(indx, 1);
-    }
-    this.appGlobalService.setEnrolledCourseList(enrolledCourses);
-    this.events.publish(EventTopics.REFRESH_ENROLL_COURSE_LIST, {});
-  }
-
   readLessorReadMore(param: string, objRollup, corRelationList) {
     const telemetryObject = new TelemetryObject(this.objId, this.objType, this.objVer);
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
@@ -1729,6 +1626,7 @@ export class EnrolledCourseDetailsPage implements OnInit {
       case 'back':
         this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.COURSE_DETAIL, Environment.HOME,
           true, this.identifier, this.corRelationList, this.objRollup, this.telemetryObject);
+        this.handleNavBackButton();
         this.goBack();
         break;
     }
