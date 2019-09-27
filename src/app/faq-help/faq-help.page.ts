@@ -88,20 +88,17 @@ export class FaqHelpPage implements OnInit {
     this.appVersion.getAppName()
       .then((appName) => {
         this.appName = appName;
-        console.log('APpName', this.appName);
       });
     this.messageListener = (event) => {
         this.receiveMessage(event);
     };
     window.addEventListener('message', this.messageListener, false);
     this.getSelectedLanguage();
-    console.log('this.data', this.data);
     this.getDataFromUrl();
   }
   receiveMessage(event) {
     const values = new Map();
     values['values'] = event.data;
-    console.log('Event.data', event.data);
     // send telemetry for all events except Initiate-Email
     if (event.data && event.data.action && event.data.action !== 'initiate-email-clicked') {
       this.generateInteractTelemetry(event.data.action, values);
@@ -113,7 +110,6 @@ export class FaqHelpPage implements OnInit {
   }
   private async getSelectedLanguage() {
     const selectedLanguage = await this.preferences.getString(PreferenceKey.SELECTED_LANGUAGE_CODE).toPromise();
-    console.log('Selected Language', selectedLanguage);
     if (selectedLanguage) {
       await this.translate.use(selectedLanguage).toPromise();
     }
@@ -136,22 +132,20 @@ export class FaqHelpPage implements OnInit {
         this.jsonURL = '../../assets/faq/resources/res/faq-en.json';
       }
     }
-    console.log('JSONURl', this.jsonURL);
+
 
     this.getJSON().subscribe(data => {
       this.data = data;
-      console.log('JSONDATA from httpclient', data);
-      console.log('this.data', this.data);
       this.constants = this.data.constants;
       this.faqs = this.data.faqs;
       // tslint:disable-next-line:prefer-for-of
       for (let i = 0; i < this.data.faqs.length; i++) {
-        if (this.data.faqs[i].topic.search('{{APP_NAME}}')) {
+        if (this.data.faqs[i].topic.includes('{{APP_NAME}}')) {
           this.data.faqs[i].topic = this.data.faqs[i].topic.replace('{{APP_NAME}}', this.appName);
         } else {
           this.data.faqs[i].topic = this.data.faqs[i].topic;
         }
-        if (this.data.faqs[i].description.search('{{APP_NAME}}')) {
+        if (this.data.faqs[i].description.includes('{{APP_NAME}}')) {
           this.data.faqs[i].description = this.data.faqs[i].description.replace('{{APP_NAME}}', this.appName);
         } else {
           this.data.faqs[i].description = this.data.faqs[i].description;
@@ -177,8 +171,6 @@ export class FaqHelpPage implements OnInit {
 
   async ionViewWillEnter() {
     this.headerService.showHeaderWithBackButton();
-    // this.loading = await this.commonUtilService.getLoader();
-    // await this.loading.present();
     this.headerObservable = this.headerService.headerEventEmitted$.subscribe(eventName => {
       this.handleHeaderEvents(eventName);
     });
@@ -196,10 +188,8 @@ export class FaqHelpPage implements OnInit {
         url += '?selectedlang=' + this.selectedLanguage + '&randomid=' + Math.random();
         this.faq.url = url;
         this.consumptionFaqUrl = this.domSanitizer.bypassSecurityTrustResourceUrl(this.faq.url);
-        console.log('this.consumptionurl', this.consumptionFaqUrl);
       } else {
         this.consumptionFaqUrl = this.domSanitizer.bypassSecurityTrustResourceUrl(this.faq.url);
-        console.log('this.consumptionurl', this.consumptionFaqUrl);
 
       }
     }).catch((error) => {
@@ -227,7 +217,6 @@ export class FaqHelpPage implements OnInit {
     this.location.back();
   }
 
-  
 
 
   generateInteractTelemetry(interactSubtype, values) {
@@ -293,28 +282,22 @@ yesClicked(i) {
   this.value.value = {};
   this.value.value.topic = this.data.faqs[i].topic;
   this.value.value.description = this.data.faqs[i].description;
-
-  console.log('this.value, yesclicked', this.value);
   window.parent.postMessage(this.value, '*');
 }
 
 submitClicked(textValue, i) {
   this.isSubmitted = true;
-  console.log(this.textValue);
-
   this.value.action = 'no-clicked';
   this.value.position = i;
   this.value.value = {};
   this.value.value.topic = this.data.faqs[i].topic;
   this.value.value.description = this.data.faqs[i].description;
   this.value.value.knowMoreText = textValue;
-  console.log('this.value, noclicked', this.value);
   window.parent.postMessage(this.value, '*');
   this.textValue = '';
 }
 
 navigateToReportIssue() {
-  console.log('Data', this.data);
   this.router.navigate([RouterLinks.FAQ_REPORT_ISSUE], {
     state: {
       data: this.data
