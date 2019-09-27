@@ -1,6 +1,6 @@
 import { TelemetryGeneratorService } from '../../../services/telemetry-generator.service';
 import { TranslateService } from '@ngx-translate/core';
-import { Events, PopoverController, NavParams, ModalController } from '@ionic/angular';
+import { Events, PopoverController, NavParams } from '@ionic/angular';
 import { Platform, ToastController } from '@ionic/angular';
 import { Component, Inject, OnInit } from '@angular/core';
 import {
@@ -42,7 +42,6 @@ export class ContentActionsComponent {
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
     private navParams: NavParams,
     private toastCtrl: ToastController,
-    public popoverCtrl: PopoverController,
     @Inject('AUTH_SERVICE') private authService: AuthService,
     private events: Events,
     private translate: TranslateService,
@@ -66,7 +65,7 @@ export class ContentActionsComponent {
     this.contentId = (this.content && this.content.identifier) ? this.content.identifier : '';
     this.backButtonFunc = this.platform.backButton.subscribeWithPriority(10, () => {
       this.popOverCtrl.dismiss();
-      this.backButtonFunc.unsubscribe();
+      this.backButtonFunc.unmsubscribe();
     });
     this.getUserId();
   }
@@ -106,7 +105,7 @@ export class ContentActionsComponent {
   async close(i) {
     switch (i) {
       case 0: {
-        const confirm = await this.popoverCtrl.create({
+        const confirm = await this.popOverCtrl.create({
           component: SbPopoverComponent,
           componentProps: {
             content: this.content,
@@ -161,40 +160,8 @@ export class ContentActionsComponent {
       undefined,
       this.objRollup,
       this.corRelationList);
-    const confirm = await this.popoverCtrl.create({
-      component: SbGenericPopoverComponent,
-      componentProps: {
-        sbPopoverHeading: this.commonUtilService.translateMessage('UNENROLL_FROM_COURSE'),
-        sbPopoverMainTitle: this.commonUtilService.translateMessage('UNENROLL_CONFIRMATION_MESSAGE'),
-        actionsButtons: [
-          {
-            btntext: this.commonUtilService.translateMessage('CANCEL'),
-            btnClass: 'sb-btn sb-btn-sm  sb-btn-outline-info'
-          },
-          {
-            btntext: this.commonUtilService.translateMessage('CONFIRM'),
-            btnClass: 'popover-color'
-          }
-        ],
-        icon: null
-      },
-      cssClass: 'sb-popover info',
-    });
-    await confirm.present();
-    const { data } = await confirm.onDidDismiss();
-
-    let unenroll: any = false;
-    if (data && data.isLeftButtonClicked === null) {
-      unenroll = false;
-    } else if (data && data.isLeftButtonClicked) {
-      unenroll = false;
-    } else {
-      unenroll = true;
-    }
-    this.popOverCtrl.dismiss({
-      caller: 'unenroll',
-      unenroll
-    });
+    this.popOverCtrl.dismiss({ unenroll: true });
+   
   }
 
   async deleteContent() {
