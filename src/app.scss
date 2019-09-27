@@ -867,7 +867,22 @@ ion-toast.sb-toast.available-later {
 ion-split-pane {
   contain: unset;
 }
-
+.leave-training-popup {
+.popover-content{
+    top: 168.273px !important;
+    left: 186px !important;
+    transform-origin: right top;
+    transform: scale(1);
+    width: 36% !important;
+   .list-md{
+    padding-top: 0px !important;
+    padding-bottom: 0px !important;
+   }
+   ion-backdrop{
+     opacity: 0;
+    }
+  }
+ }
 // common code for both collection-etb and enrolled course details
 .sb-topics-container-ftue{
   .sb-topic-item{
