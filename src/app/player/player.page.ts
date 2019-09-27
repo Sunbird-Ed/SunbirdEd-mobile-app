@@ -58,6 +58,11 @@ export class PlayerPage implements OnInit, PlayerActionHandlerDelegate {
       }
     });
     this.config['uid'] = this.config['context'].actor.id;
+    this.config['metadata'].basePath = '/_app_file_' + this.config['metadata'].basePath;
+
+    if (this.config['metadata'].isAvailableLocally) {
+      this.config['metadata'].contentData.streamingUrl = '/_app_file_' + this.config['metadata'].contentData.streamingUrl;
+    }
 
     // This is to reload a iframe as iframes reload method not working on cross-origin.
     const src = this.previewElement.nativeElement.src;

@@ -1,4 +1,4 @@
 <ion-list lines="none">
-  <ion-item *ngFor="let item of items,let i = index" (click)="open($event)">
+  <ion-item *ngFor="let item of items,let i = index" (click)="open($event, item)">
     <label class="ellipsis">{{item | translate }}</label></ion-item>
 </ion-list>
