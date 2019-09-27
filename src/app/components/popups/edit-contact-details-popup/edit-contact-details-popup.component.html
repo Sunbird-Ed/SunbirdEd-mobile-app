@@ -1,6 +1,6 @@
 <ion-content class="P0">
   <div class="ecd-header ion-text-center">
-    <h6 class="M0">{{title}}</h6>
+    <h6 class="M0">{{title | titlecase}}</h6>
   </div>
   <ion-grid class="P0">
     <form [formGroup]="personEditForm">
@@ -28,7 +28,7 @@
             <div class="W100 merged-input-container MT10" style="text-align:start">
               <ion-input type="tel" placeholder="+91 -" class="form-control decorator " value="+91 -" disabled>
               </ion-input>
-              <ion-input type="tel" placeholder="{{'PHONE_PLACEHOLDER' | translate }}" maxlength="10" minlength="10"
+              <ion-input type="tel" placeholder="{{'ENTER_PHONE_POPUP_TITLE' | translate }}" maxlength="10" minlength="10"
                 required class="form-control custom" (input)="refreshErr()" formControlName="phone">
               </ion-input>
             </div>
