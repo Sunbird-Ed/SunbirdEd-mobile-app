@@ -10,11 +10,12 @@ import { Network } from '@ionic-native/network/ngx';
 
 import {
   ErrorEventType, EventNamespace, EventsBusService, SharedPreferences,
-  SunbirdSdk, TelemetryAutoSyncUtil, TelemetryService, NotificationService
+  SunbirdSdk, TelemetryAutoSyncUtil, TelemetryService, NotificationService, GetSystemSettingsRequest, SystemSettings, SystemSettingsService,
+  CodePushExperimentService
 } from 'sunbird-sdk';
 
 import { InteractType, InteractSubtype, Environment, PageId, ImpressionType } from 'services/telemetry-constants';
-import { PreferenceKey, EventTopics } from './app.constant';
+import { PreferenceKey, EventTopics, SystemSettingsIds } from './app.constant';
 import { ActivePageService } from '@app/services/active-page/active-page-service';
 import {
   AppGlobalService,
@@ -58,6 +59,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   profile: any = {};
   selectedLanguage: string;
   appName: string;
+  appVersion: string;
   @ViewChild('mainContent', { read: IonRouterOutlet }) routerOutlet: IonRouterOutlet;
 
   constructor(
@@ -65,6 +67,8 @@ export class AppComponent implements OnInit, AfterViewInit {
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
     @Inject('EVENTS_BUS_SERVICE') private eventsBusService: EventsBusService,
     @Inject('NOTIFICATION_SERVICE') private notificationServices: NotificationService,
+    @Inject('SYSTEM_SETTINGS_SERVICE') private systemSettingsService: SystemSettingsService,
+    @Inject('CODEPUSH_EXPERIMENT_SERVICE') private codePushExperimentService: CodePushExperimentService,
     private platform: Platform,
     private statusBar: StatusBar,
     private translate: TranslateService,
@@ -92,6 +96,12 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.telemetryAutoSyncUtil = new TelemetryAutoSyncUtil(this.telemetryService);
     platform.ready().then(async () => {
       this.fcmTokenWatcher(); // Notification related
+      this.getSystemConfig();
+      this.utilityService.getBuildConfigValue('VERSION_NAME')
+      .then(response => {
+          this.appVersion = response;
+      });
+      this.checkForExperiment();
       this.receiveNotification();
       this.telemetryGeneratorService.genererateAppStartTelemetry(await utilityService.getDeviceSpec());
       this.generateNetworkTelemetry();
@@ -112,6 +122,22 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.handleBackButton();
       this.appRatingService.checkInitialDate();
       this.getUtmParameter();
+      this.checkForCodeUpdates();
+    });
+  }
+
+  getSystemConfig() {
+    const getSystemSettingsRequest: GetSystemSettingsRequest = {
+      id: SystemSettingsIds.COURSE_FRAMEWORK_ID
+    };
+    this.systemSettingsService.getSystemSettings(getSystemSettingsRequest).toPromise()
+    .then((res: SystemSettings) => {
+    //   res['deploymentKey'] = '6Xhfs4-WVV8dhYN9U5OkZw6PukglrykIsJ8-B';
+      if (res['deploymentKey']) {
+        this.codePushExperimentService.setDefaultDeploymentKey(res['deploymentKey']).subscribe();
+      }
+    }).catch(err => {
+      console.log('error :', err);
     });
   }
 
@@ -122,7 +148,9 @@ export class AppComponent implements OnInit, AfterViewInit {
         value['deploymentKey'] = deploymentKey;
         this.telemetryGeneratorService.generateInteractTelemetry(InteractType.OTHER, InteractSubtype.HOTCODE_PUSH_INITIATED,
           Environment.HOME, PageId.HOME, null, value);
-        codePush.sync(this.syncStatus, {
+        codePush.sync((status => {
+            this.syncStatus(status);
+        }), {
           deploymentKey
         }, this.downloadProgress);
       } else {
@@ -146,6 +174,37 @@ export class AppComponent implements OnInit, AfterViewInit {
         const value2 = new Map();
         value2['codepushUpdate'] = 'error-in-update';
     }
+  }
+
+  checkForExperiment() {
+      /**
+       * TODO
+       * call the update
+       * if update is set
+       * then check for default-deplyment-key, if matches
+       * then remove emperiment_key and emperiemtn_app_version
+       * if not then
+       * then set emperiment_key and experiemnt_app_version
+       * if update is null
+       * then remove emperiment_key and emperiemtn_app_version
+       */
+
+      codePush.getCurrentPackage((update) => {
+        if (update) {
+            this.codePushExperimentService.getDefaultDeploymentKey().subscribe(key => {
+                if (key !== update.deploymentKey && this.appVersion === update.appVersion) {
+                    this.codePushExperimentService.setExperimentKey(update.deploymentKey).subscribe();
+                    this.codePushExperimentService.setExperimentAppVersion(update.appVersion).subscribe();
+                } else if (key === update.deploymentKey || this.appVersion !== update.appVersion) {
+                    this.codePushExperimentService.setExperimentKey('').subscribe();
+                    this.codePushExperimentService.setExperimentAppVersion('').subscribe();
+                }
+            });
+        } else {
+            this.codePushExperimentService.setExperimentKey('').subscribe();
+            this.codePushExperimentService.setExperimentAppVersion('').subscribe();
+        }
+      });
   }
 
   downloadProgress(downloadProgress) {
@@ -257,6 +316,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.platform.resume.subscribe(() => {
       this.telemetryGeneratorService.generateInterruptTelemetry('resume', '');
       this.handleSunbirdSplashScreenActions();
+      this.checkForCodeUpdates();
     });
 
     this.platform.pause.subscribe(() => {

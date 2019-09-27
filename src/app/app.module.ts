@@ -141,6 +141,10 @@ export function searchHistoryService() {
   return SunbirdSdk.instance.searchHistoryService;
 }
 
+export function codePushExperimentService() {
+  return SunbirdSdk.instance.codePushExperimentService;
+}
+
 export function sdkDriverFactory(): any {
   return [{
     provide: 'SDK_CONFIG',
@@ -223,6 +227,9 @@ export function sdkDriverFactory(): any {
   }, {
     provide: 'SEARCH_HISTORY_SERVICE',
     useFactory: searchHistoryService
+  }, {
+    provide: 'CODEPUSH_EXPERIMENT_SERVICE',
+    useFactory: codePushExperimentService
   }
   ];
 }
