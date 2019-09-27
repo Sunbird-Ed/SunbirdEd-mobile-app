@@ -445,6 +445,7 @@ export class EnrolledCourseDetailsPage implements OnInit {
       component: ContentActionsComponent,
       event,
       cssClass: 'leave-training-popup',
+      showBackdrop:false,
       componentProps: {
         // overFlowMenuData,
         content: this.course,
