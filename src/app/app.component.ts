@@ -10,7 +10,7 @@ import { Network } from '@ionic-native/network/ngx';
 
 import {
   ErrorEventType, EventNamespace, EventsBusService, SharedPreferences,
-  SunbirdSdk, TelemetryAutoSyncUtil, TelemetryService, NotificationService
+  SunbirdSdk, TelemetryAutoSyncUtil, TelemetryService, NotificationService, AuthEventType
 } from 'sunbird-sdk';
 
 import { InteractType, InteractSubtype, Environment, PageId, ImpressionType } from 'services/telemetry-constants';
@@ -106,6 +106,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.checkAppUpdateAvailable();
       this.makeEntryInSupportFolder();
       this.reloadSigninEvents();
+      this.handleAuthAutoMigrateEvents();
       this.handleAuthErrors();
       await this.getSelectedLanguage();
       this.handleSunbirdSplashScreenActions();
@@ -556,6 +557,23 @@ export class AppComponent implements OnInit, AfterViewInit {
         break;
 
     }
+  }
+
+  private handleAuthAutoMigrateEvents() {
+    this.eventsBusService.events(EventNamespace.AUTH)
+        .filter((e) => e.type === AuthEventType.AUTO_MIGRATE_SUCCESS || e.type === AuthEventType.AUTO_MIGRATE_FAIL)
+        .take(1).subscribe((e) => {
+      switch (e.type) {
+        case AuthEventType.AUTO_MIGRATE_SUCCESS: {
+          this.commonUtilService.showToast('AUTO_MIGRATION_SUCCESS_MESSAGE');
+          break;
+        }
+        case AuthEventType.AUTO_MIGRATE_FAIL: {
+          this.commonUtilService.showToast('AUTO_MIGRATION_FAIL_MESSAGE');
+          break;
+        }
+      }
+    });
   }
 
   private handleAuthErrors() {
