@@ -42,6 +42,7 @@ import { SkeletonItemComponent } from './skeleton-item/skeleton-item.component';
 import { FilteroptionComponent } from './filteroption/filteroption.component';
 import { SbInsufficientStoragePopupComponent } from './popups/sb-insufficient-storage-popup/sb-insufficient-storage-popup';
 import { AccountRecoveryInfoComponent } from './popups/account-recovery-id/account-recovery-id-popup.component';
+import { EnrollmentDetailsComponent } from './enrollment-details/enrollment-details.component';
 
 @NgModule({
   declarations: [
@@ -78,7 +79,8 @@ import { AccountRecoveryInfoComponent } from './popups/account-recovery-id/accou
     SkeletonItemComponent,
     FilteroptionComponent,
     SbInsufficientStoragePopupComponent,
-    AccountRecoveryInfoComponent
+    AccountRecoveryInfoComponent,
+    EnrollmentDetailsComponent
   ],
   imports: [
     CommonModule,
@@ -109,7 +111,8 @@ import { AccountRecoveryInfoComponent } from './popups/account-recovery-id/accou
     ContentActionsComponent,
     ReportAlertComponent,
     SbInsufficientStoragePopupComponent,
-    AccountRecoveryInfoComponent
+    AccountRecoveryInfoComponent,
+    EnrollmentDetailsComponent
   ],
   exports: [
     ApplicationHeaderComponent,
@@ -143,7 +146,8 @@ import { AccountRecoveryInfoComponent } from './popups/account-recovery-id/accou
     FilteroptionComponent,
     ReportAlertComponent,
     SbInsufficientStoragePopupComponent,
-    AccountRecoveryInfoComponent
+    AccountRecoveryInfoComponent,
+    EnrollmentDetailsComponent
   ],
   providers: [FileSizePipe, Keyboard]
 })

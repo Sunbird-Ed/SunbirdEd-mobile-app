@@ -35,10 +35,6 @@ export class HasNotSelectedFrameworkGuard implements Resolve<any> {
         this.utilityService.getBuildConfigValue(GenericAppConfig.DISPLAY_ONBOARDING_CATEGORY_PAGE).then((shouldDisplay) => {
             this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise().then((profile) => {
                 if (shouldDisplay && !HasNotSelectedFrameworkGuard.isProfileComplete(profile)) {
-                    setTimeout(() => {
-                        splashscreen.markImportDone();
-                        splashscreen.hide();
-                    }, 2500);
                     return true;
                 } else {
                     this.appGlobalService.isProfileSettingsCompleted = true;

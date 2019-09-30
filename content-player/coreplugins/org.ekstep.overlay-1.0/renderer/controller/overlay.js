@@ -327,9 +327,17 @@ app.compileProvider.directive('menu', function($rootScope, $sce) {
         restrict: 'E',
         scope: false,
         link: function(scope) {
+            scope.navigationTop = false;
             scope.getTemplate = function() {
                 return scope.pluginInstance._menuTP;
             }
+            scope.changeNavigation = function (event) {
+                switch (event.target.tempName) {
+                    case "navigationTop": scope.navigationTop = true; break;
+                    default: scope.navigationTop = false; break;
+                }
+            }
+			EkstepRendererAPI.addEventListener("renderer:navigation:load", scope.changeNavigation, scope);
         },
         template: "<div ng-include=getTemplate()></div>"
     }

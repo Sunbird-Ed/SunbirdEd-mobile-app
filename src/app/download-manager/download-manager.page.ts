@@ -256,9 +256,9 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
 
   onSortCriteriaChange(sortAttribute): void {
     let sortAttr: string;
-    if (sortAttribute.content === 'Content size') {
+    if (sortAttribute.selectedItem === 'CONTENT_SIZE') {
       sortAttr = 'sizeOnDevice';
-    } else if (sortAttribute.content === 'Last viewed') {
+    } else if (sortAttribute.selectedItem === 'LAST_VIEWED') {
       sortAttr = 'lastUsedOn';
     }
     const valuesMap = {};

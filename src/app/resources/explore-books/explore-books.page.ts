@@ -163,9 +163,6 @@ export class ExploreBooksPage implements OnInit, OnDestroy {
       const index = this.categoryGradeLevels.findIndex((grade) => grade.name === this.searchForm.value['grade'][0]);
       this.classClick(index);
     }
-
-    window.addEventListener('keyboardDidHide', this.showSortByButton);
-    window.addEventListener('keyboardWillShow', this.hideSortByButton);
   }
 
   async ngOnInit() {
@@ -197,6 +194,8 @@ export class ExploreBooksPage implements OnInit, OnDestroy {
     });
     this.handleBackButton();
     this.headerService.showHeaderWithBackButton();
+    window.addEventListener('keyboardDidHide', this.showSortByButton);
+    window.addEventListener('keyboardWillShow', this.hideSortByButton);
   }
 
   ngOnDestroy(): void {

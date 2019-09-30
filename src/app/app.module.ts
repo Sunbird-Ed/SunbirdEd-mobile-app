@@ -140,6 +140,9 @@ export function errorLoggerService() {
 export function searchHistoryService() {
   return SunbirdSdk.instance.searchHistoryService;
 }
+export function networkInfoService() {
+  return SunbirdSdk.instance.networkInfoService;
+}
 
 export function sdkDriverFactory(): any {
   return [{
@@ -223,6 +226,9 @@ export function sdkDriverFactory(): any {
   }, {
     provide: 'SEARCH_HISTORY_SERVICE',
     useFactory: searchHistoryService
+  }, {
+    provide: 'NETWORK_INFO_SERVICE',
+    useFactory: networkInfoService
   }
   ];
 }

@@ -28,10 +28,11 @@ import {
 import { SplaschreenDeeplinkActionHandlerDelegate } from '@app/services/sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
 import { SplashcreenTelemetryActionHandlerDelegate } from '@app/services/sunbird-splashscreen/splashcreen-telemetry-action-handler-delegate';
 import { SplashscreenImportActionHandlerDelegate } from '@app/services/sunbird-splashscreen/splashscreen-import-action-handler-delegate';
-import { LogoutHandlerService } from '@app/services/logout-handler.service';
+import { LogoutHandlerService } from '@app/services/handlers/logout-handler.service';
 import { NotificationService as localNotification } from '@app/services/notification.service';
 import { RouterLinks } from './app.constant';
 import { TncUpdateHandlerService } from '@app/services/handlers/tnc-update-handler.service';
+import { NetworkAvailabilityToastService } from '@app/services/network-availability-toast/network-availability-toast.service';
 
 @Component({
   selector: 'app-root',
@@ -87,10 +88,12 @@ export class AppComponent implements OnInit, AfterViewInit {
     private notificationSrc: localNotification,
     private router: Router,
     private location: Location,
-    private menuCtrl: MenuController
-  ) {
-    this.telemetryAutoSyncUtil = new TelemetryAutoSyncUtil(this.telemetryService);
-    platform.ready().then(async () => {
+    private menuCtrl: MenuController,
+    private networkAvailability: NetworkAvailabilityToastService
+    ) {
+      this.telemetryAutoSyncUtil = new TelemetryAutoSyncUtil(this.telemetryService);
+      platform.ready().then(async () => {
+      this.networkAvailability.init();
       this.fcmTokenWatcher(); // Notification related
       this.receiveNotification();
       this.telemetryGeneratorService.genererateAppStartTelemetry(await utilityService.getDeviceSpec());
@@ -438,11 +441,6 @@ export class AppComponent implements OnInit, AfterViewInit {
           return;
       }
     }
-
-    setTimeout(() => {
-      splashscreen.markImportDone();
-      splashscreen.hide();
-    }, 2500);
   }
 
   private autoSyncTelemetry() {
@@ -478,7 +476,8 @@ export class AppComponent implements OnInit, AfterViewInit {
         || (routeUrl.indexOf(RouterLinks.FAQ_HELP) !== -1)
         || (routeUrl.indexOf(RouterLinks.PROFILE_SETTINGS) !== -1)
         || (routeUrl.indexOf(RouterLinks.QRCODERESULT) !== -1)
-        || (routeUrl.indexOf(RouterLinks.STORAGE_SETTINGS)) !== -1) {
+        || (routeUrl.indexOf(RouterLinks.STORAGE_SETTINGS) !== -1)
+        || (routeUrl.indexOf(RouterLinks.EXPLORE_BOOK) !== -1)) {
         this.headerService.sidebarEvent($event);
         return;
       } else {
