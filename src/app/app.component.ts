@@ -32,6 +32,7 @@ import { LogoutHandlerService } from '@app/services/handlers/logout-handler.serv
 import { NotificationService as localNotification } from '@app/services/notification.service';
 import { RouterLinks } from './app.constant';
 import { TncUpdateHandlerService } from '@app/services/handlers/tnc-update-handler.service';
+import { NetworkAvailabilityToastService } from '@app/services/network-availability-toast/network-availability-toast.service';
 
 @Component({
   selector: 'app-root',
@@ -87,10 +88,12 @@ export class AppComponent implements OnInit, AfterViewInit {
     private notificationSrc: localNotification,
     private router: Router,
     private location: Location,
-    private menuCtrl: MenuController
-  ) {
-    this.telemetryAutoSyncUtil = new TelemetryAutoSyncUtil(this.telemetryService);
-    platform.ready().then(async () => {
+    private menuCtrl: MenuController,
+    private networkAvailability: NetworkAvailabilityToastService
+    ) {
+      this.telemetryAutoSyncUtil = new TelemetryAutoSyncUtil(this.telemetryService);
+      platform.ready().then(async () => {
+      this.networkAvailability.init();
       this.fcmTokenWatcher(); // Notification related
       this.receiveNotification();
       this.telemetryGeneratorService.genererateAppStartTelemetry(await utilityService.getDeviceSpec());
