@@ -274,9 +274,9 @@ export class EnrolledCourseDetailsPage implements OnInit {
       this.segmentType = 'modules';
     }
       if(this.courseCardData.batchId){
-      this.getAllBatches();        
-      } else {
       this.getBatchDetails();
+      } else {
+      this.getAllBatches();   
       }
   }
 
