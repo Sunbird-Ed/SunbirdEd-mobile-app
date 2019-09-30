@@ -9,7 +9,7 @@
 				<div class="hr-border-bottom"></div>
 			</ion-card-header>
 			<ion-card-content>
-				<div *ngIf="batches?.length && !isAlreadyEnrolled">
+				<div *ngIf="batches?.length && !isAlreadyEnrolled && course?.createdBy !== userId">
 					<button class="enrolled-course-card-button"
 						(click)="navigateToBatchListPage();">{{'JOIN_TRAINING' | translate}}</button>
 					<ion-card-subtitle *ngIf="batchCount || enrollmentEndDate" class="font-12 margin-bottom-2">
