@@ -273,11 +273,8 @@ export class EnrolledCourseDetailsPage implements OnInit {
     if (this.courseCardData.batchId) {
       this.segmentType = 'modules';
     }
-    if (this.courseCardData.batchId) {
       this.getBatchDetails();
-    } else {
       this.getAllBatches();
-    }
   }
 
   showDeletePopup() {
@@ -980,7 +977,6 @@ export class EnrolledCourseDetailsPage implements OnInit {
     this.courseService.getCourseBatches(courseBatchesRequest).toPromise()
       .then((data: Batch[]) => {
         this.batches = data || [];
-        // this.batchCount = this.batches.length;
 
         if ( data && data.length > 1) {
           this.batchCount = data.length;
