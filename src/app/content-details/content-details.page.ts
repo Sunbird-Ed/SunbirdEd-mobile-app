@@ -133,10 +133,8 @@ export class ContentDetailsPage implements OnInit {
   showDownload: boolean;
   contentPath: Array<any>[];
   FileSizePipe: any;
-  toast: any;
   childPaths: Array<string> = [];
   breadCrumbData: any;
-  networkSubscription: any;
   telemetryObject: TelemetryObject;
   contentDeleteObservable: any;
   isSingleContent: boolean;
@@ -253,17 +251,6 @@ export class ContentDetailsPage implements OnInit {
     this.setContentDetails(this.identifier, true, this.contentPlayerHandler.isContentPlayerLaunched());
     this.subscribeSdkEvent();
     this.findHierarchyOfContent();
-    this.networkSubscription = this.commonUtilService.networkAvailability$.subscribe((available: boolean) => {
-      if (available) {
-        this.presentToast();
-        if (this.toast) {
-          this.toast.dismiss();
-          this.toast = undefined;
-        }
-      } else {
-        this.presentToastForOffline();
-      }
-    });
     this.handleDeviceBackButton();
   }
 
@@ -273,13 +260,6 @@ export class ContentDetailsPage implements OnInit {
   ionViewWillLeave(): void {
     if (this.eventSubscription) {
       this.eventSubscription.unsubscribe();
-    }
-    if (this.networkSubscription) {
-      this.networkSubscription.unsubscribe();
-      if (this.toast) {
-        this.toast.dismiss();
-        this.toast = undefined;
-      }
     }
     if (this.contentDeleteObservable) {
       this.contentDeleteObservable.unsubscribe();
@@ -320,21 +300,6 @@ export class ContentDetailsPage implements OnInit {
     });
   }
 
-  // You are Offline Toast
-  async presentToastForOffline() {
-    this.toast = await this.toastController.create({
-      duration: 2000,
-      message: this.commonUtilService.translateMessage('NO_INTERNET_TITLE'),
-      showCloseButton: true,
-      position: 'top',
-      closeButtonText: 'X',
-      cssClass: ['toastHeader', 'offline']
-    });
-    this.toast.present();
-    this.toast.onDidDismiss(() => {
-      this.toast = undefined;
-    });
-  }
 
   // You are Online Toast
   async presentToast() {

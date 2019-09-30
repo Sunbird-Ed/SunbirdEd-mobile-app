@@ -140,6 +140,9 @@ export function errorLoggerService() {
 export function searchHistoryService() {
   return SunbirdSdk.instance.searchHistoryService;
 }
+export function networkInfoService() {
+  return SunbirdSdk.instance.networkInfoService;
+}
 
 export function codePushExperimentService() {
   return SunbirdSdk.instance.codePushExperimentService;
@@ -230,6 +233,9 @@ export function sdkDriverFactory(): any {
   }, {
     provide: 'CODEPUSH_EXPERIMENT_SERVICE',
     useFactory: codePushExperimentService
+  }, {
+    provide: 'NETWORK_INFO_SERVICE',
+    useFactory: networkInfoService
   }
   ];
 }
@@ -257,7 +263,8 @@ export const sunbirdSdkFactory =
           user_authentication: {
             redirectUrl: buildConfigValues['OAUTH_REDIRECT_URL'],
             authUrl: '/auth/realms/sunbird/protocol/openid-connect',
-            mergeUserHost: buildConfigValues['MERGE_ACCOUNT_BASE_URL']
+            mergeUserHost: buildConfigValues['MERGE_ACCOUNT_BASE_URL'],
+            autoMergeApiPath: '/migrate/user/account'
           },
           api_authentication: {
             mobileAppKey: buildConfigValues['MOBILE_APP_KEY'],

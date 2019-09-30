@@ -3,8 +3,8 @@
 		<ion-card>
 			<ion-card-header class="custom-card-header">
 				<ion-card-title class="font-18">{{course?.name}}</ion-card-title>
-				<ion-card-subtitle class="font-14 subtitle-color">{{'CONTENT_CREATED_BY' | translate}}
-					{{ course?.owner || course?.creator }}
+				<ion-card-subtitle *ngIf="course?.organisation" class="font-14 subtitle-color">{{'CONTENT_CREATED_BY' | translate}}
+					{{course?.organisation.join(', ')}}
 				</ion-card-subtitle>
 				<div class="hr-border-bottom"></div>
 			</ion-card-header>
@@ -28,7 +28,7 @@
 					</ion-card-subtitle>
 				</div>
 				<div class="sb-course-end-container"
-					*ngIf="!courseCardData?.batchId && !isAlreadyEnrolled && !batchCount">
+					*ngIf="!courseCardData?.batchId && !isAlreadyEnrolled && batches?.length">
 					<p class="main-heading">{{'COURSE_ENDED' | translate}}</p>
 					<p class="sub-heading">{{'THERE_ARE_NO_BATCHES_AVAILABLE_FOR_THIS_TRAINING' | translate}}</p>
 				</div>
@@ -47,7 +47,7 @@
 											<p class="card-text">{{'DOWNLOAD' | translate}}
 											</p>
 										</button>
-										<button (click)="deleteCourse()" slot="icon-only" class="card-button">
+										<button (click)="showDeletePopup()" slot="icon-only" class="card-button">
 											<ion-icon ios="ios-trash" md="md-trash" class="card-icons-red"></ion-icon>
 											<p class="card-text">{{'REMOVE' | translate}}
 											</p>
@@ -63,14 +63,11 @@
 									</div>
 								</div>
 								<div *ngIf="courseCardData?.batchId">
-									<div class="sb-course-progress-container"
-										*ngIf="course?.progress!==100 && !batchExp">
+									<div class="sb-course-progress-container" *ngIf="course?.progress!==100 && !batchExp">
 										<p><b>{{'YOUR_PROGRESS_LABEL' | translate}}</b></p>
-										<p>{{course?.progress ? course?.progress : '0'}}%
-											{{'COURSE_COMPLETED_LABEL' | translate}}</p>
-										<app-pb-horizontal [progress]="course?.progress" class="course-progress"
-											[ngClass]="{'blurbackground': batchExp}" isOnBoardCard="flase"
-											isCourseProgress="true"></app-pb-horizontal>
+										<p>{{ 'COURSE_COMPLETED_LABEL' | translate:{'%s': course?.progress ? course?.progress : '0'} }}</p>
+										<app-pb-horizontal [progress]="course?.progress" class="course-progress" [ngClass]="{'blurbackground': batchExp}"
+											isOnBoardCard="flase" isCourseProgress="true"></app-pb-horizontal>
 									</div>
 									<div class="sb-batch-end-container" *ngIf="course?.progress !== 100 && batchExp">
 										<p class="batch-end-main-heading">{{'BATCHEND_MAIN_HEADING' | translate}}
@@ -83,7 +80,7 @@
 											<img class="success-badge" src='assets/imgs/Badge green.svg'>
 										</div>
 										<div class="text-container">
-											<p><b>{{'TRAINING_COMPLETED_SUCESSFULLY' | translate}}</b></p>
+											<p><b>{{'TRAINING_COMPLETED_SUCCESSFULLY' | translate}}</b></p>
 										</div>
 									</div>
 								</div>
@@ -108,7 +105,8 @@
 															'CONTINUE_NOW' | translate }}</span></button>
 					<div *ngIf="batchDetails?.endDate && !batchExp" class="enrollment-end-date ion-padding-bottom">
 						<ion-icon name="information-circle"></ion-icon>
-						Complete Training by {{batchDetails?.endDate | date}} to earn a certificate
+						<span>{{'COMPLETE_TRAINING_TO_EARN_CERTIFICATE' | translate}} {{batchDetails?.endDate | date}}</span>
+						<span *ngIf="course?.certificate">{{'TO_EARN_CERTIFICATE' | translate}}</span>
 					</div>
 				</ion-card-content>
 			</ion-card>
@@ -116,7 +114,7 @@
 
 		<ion-card>
 			<ion-card-content class="card-content-bottom-0 card-content-top-0">
-				<ion-segment [(ngModel)]="segmentType">
+				<ion-segment [(ngModel)]="segmentType" (ionChange)="onSegmentChange($event)">
 					<ion-segment-button value="info">
 						<ion-label class="font-12 text-transform-none">{{'TRAINING_INFO' | translate}}</ion-label>
 					</ion-segment-button>
@@ -145,7 +143,7 @@
 					</div>
 						<div class="ion-margin-bottom">
 							<ion-card-title class="font-12 subtitle-color label-margin-bottom">
-								<b>{{'TRAINING_IS_RELEVENT_TO_TEACHERS'| translate}}</b>:
+								<b>{{'TRAINING_IS_RELEVANT_TO_TEACHERS'| translate}}</b>:
 							</ion-card-title>
 							<p *ngIf="course?.gradeLevel">{{'CLASS' | translate}} : {{course?.gradeLevel}}</p>
 							<p *ngIf="course?.subject">{{'SUBJECT' | translate}}: {{course?.subject}}</p>
@@ -155,7 +153,7 @@
 							<ion-card-title class="font-12 subtitle-color label-margin-bottom">
 								<b>{{'TRAINING_DETAILS' | translate}}</b>
 							</ion-card-title>
-							<p *ngIf="batchEndDate">{{'TRAINING_END_DATA' | translate }} : {{ batchEndDate | date}}</p>
+							<p *ngIf="batchEndDate">{{'TRAINING_END_DATE' | translate }} : {{ batchEndDate | date}}</p>
 						</div>
 						<div>
 							<p>{{course?.description}}</p>

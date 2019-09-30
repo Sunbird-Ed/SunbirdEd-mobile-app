@@ -11,7 +11,7 @@ import { Network } from '@ionic-native/network/ngx';
 import {
   ErrorEventType, EventNamespace, EventsBusService, SharedPreferences,
   SunbirdSdk, TelemetryAutoSyncUtil, TelemetryService, NotificationService, GetSystemSettingsRequest, SystemSettings, SystemSettingsService,
-  CodePushExperimentService
+  CodePushExperimentService, AuthEventType
 } from 'sunbird-sdk';
 
 import { InteractType, InteractSubtype, Environment, PageId, ImpressionType } from 'services/telemetry-constants';
@@ -29,10 +29,11 @@ import {
 import { SplaschreenDeeplinkActionHandlerDelegate } from '@app/services/sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
 import { SplashcreenTelemetryActionHandlerDelegate } from '@app/services/sunbird-splashscreen/splashcreen-telemetry-action-handler-delegate';
 import { SplashscreenImportActionHandlerDelegate } from '@app/services/sunbird-splashscreen/splashscreen-import-action-handler-delegate';
-import { LogoutHandlerService } from '@app/services/logout-handler.service';
+import { LogoutHandlerService } from '@app/services/handlers/logout-handler.service';
 import { NotificationService as localNotification } from '@app/services/notification.service';
 import { RouterLinks } from './app.constant';
 import { TncUpdateHandlerService } from '@app/services/handlers/tnc-update-handler.service';
+import { NetworkAvailabilityToastService } from '@app/services/network-availability-toast/network-availability-toast.service';
 
 @Component({
   selector: 'app-root',
@@ -91,10 +92,12 @@ export class AppComponent implements OnInit, AfterViewInit {
     private notificationSrc: localNotification,
     private router: Router,
     private location: Location,
-    private menuCtrl: MenuController
-  ) {
-    this.telemetryAutoSyncUtil = new TelemetryAutoSyncUtil(this.telemetryService);
-    platform.ready().then(async () => {
+    private menuCtrl: MenuController,
+    private networkAvailability: NetworkAvailabilityToastService
+    ) {
+      this.telemetryAutoSyncUtil = new TelemetryAutoSyncUtil(this.telemetryService);
+      platform.ready().then(async () => {
+      this.networkAvailability.init();
       this.fcmTokenWatcher(); // Notification related
       this.getSystemConfig();
       this.utilityService.getBuildConfigValue('VERSION_NAME')
@@ -113,6 +116,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.checkAppUpdateAvailable();
       this.makeEntryInSupportFolder();
       this.reloadSigninEvents();
+      this.handleAuthAutoMigrateEvents();
       this.handleAuthErrors();
       await this.getSelectedLanguage();
       this.handleSunbirdSplashScreenActions();
@@ -497,11 +501,6 @@ export class AppComponent implements OnInit, AfterViewInit {
           return;
       }
     }
-
-    setTimeout(() => {
-      splashscreen.markImportDone();
-      splashscreen.hide();
-    }, 2500);
   }
 
   private autoSyncTelemetry() {
@@ -537,7 +536,8 @@ export class AppComponent implements OnInit, AfterViewInit {
         || (routeUrl.indexOf(RouterLinks.FAQ_HELP) !== -1)
         || (routeUrl.indexOf(RouterLinks.PROFILE_SETTINGS) !== -1)
         || (routeUrl.indexOf(RouterLinks.QRCODERESULT) !== -1)
-        || (routeUrl.indexOf(RouterLinks.STORAGE_SETTINGS)) !== -1) {
+        || (routeUrl.indexOf(RouterLinks.STORAGE_SETTINGS) !== -1)
+        || (routeUrl.indexOf(RouterLinks.EXPLORE_BOOK) !== -1)) {
         this.headerService.sidebarEvent($event);
         return;
       } else {
@@ -617,6 +617,23 @@ export class AppComponent implements OnInit, AfterViewInit {
         break;
 
     }
+  }
+
+  private handleAuthAutoMigrateEvents() {
+    this.eventsBusService.events(EventNamespace.AUTH)
+        .filter((e) => e.type === AuthEventType.AUTO_MIGRATE_SUCCESS || e.type === AuthEventType.AUTO_MIGRATE_FAIL)
+        .take(1).subscribe((e) => {
+      switch (e.type) {
+        case AuthEventType.AUTO_MIGRATE_SUCCESS: {
+          this.commonUtilService.showToast('AUTO_MIGRATION_SUCCESS_MESSAGE');
+          break;
+        }
+        case AuthEventType.AUTO_MIGRATE_FAIL: {
+          this.commonUtilService.showToast('AUTO_MIGRATION_FAIL_MESSAGE');
+          break;
+        }
+      }
+    });
   }
 
   private handleAuthErrors() {

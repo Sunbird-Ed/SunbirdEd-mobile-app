@@ -146,7 +146,7 @@ export class ExploreConstants {
         'streamingUrl',
         'framework',
         'appIcon'
-    ]
+    ];
 }
 export class AudienceFilter {
     public static readonly GUEST_TEACHER = ['instructor', 'learner'];
@@ -207,9 +207,7 @@ export class PreferenceKey {
 }
 
 export class GenericAppConfig {
-    public static readonly DISPLAY_ONBOARDING_CARDS = 'DISPLAY_ONBOARDING_CARDS';
     public static readonly DISPLAY_FRAMEWORK_CATEGORIES_IN_PROFILE = 'DISPLAY_FRAMEWORK_CATEGORIES_IN_PROFILE';
-    public static readonly DISPLAY_ONBOARDING_PAGE = 'DISPLAY_ONBOARDING_PAGE';
     public static readonly DISPLAY_SIGNIN_FOOTER_CARD_IN_COURSE_TAB_FOR_TEACHER = 'DISPLAY_SIGNIN_FOOTER_CARD_IN_COURSE_TAB_FOR_TEACHER';
     public static readonly DISPLAY_SIGNIN_FOOTER_CARD_IN_LIBRARY_TAB_FOR_TEACHER = 'DISPLAY_SIGNIN_FOOTER_CARD_IN_LIBRARY_TAB_FOR_TEACHER';
     public static readonly DISPLAY_SIGNIN_FOOTER_CARD_IN_PROFILE_TAB_FOR_TEACHER = 'DISPLAY_SIGNIN_FOOTER_CARD_IN_PROFILE_TAB_FOR_TEACHER';
@@ -218,7 +216,6 @@ export class GenericAppConfig {
     public static readonly DISPLAY_SIGNIN_FOOTER_CARD_IN_PROFILE_TAB_FOR_STUDENT = 'DISPLAY_SIGNIN_FOOTER_CARD_IN_PROFILE_TAB_FOR_STUDENT';
     public static readonly TRACK_USER_TELEMETRY = 'TRACK_USER_TELEMETRY';
     public static readonly CONTENT_STREAMING_ENABLED = 'CONTENT_STREAMING_ENABLED';
-    public static readonly DISPLAY_ONBOARDING_SCAN_PAGE = 'DISPLAY_ONBOARDING_SCAN_PAGE';
     public static readonly DISPLAY_ONBOARDING_CATEGORY_PAGE = 'DISPLAY_ONBOARDING_CATEGORY_PAGE';
     public static readonly OPEN_RAPDISCOVERY_ENABLED = 'OPEN_RAPDISCOVERY_ENABLED';
     public static readonly SUPPORT_EMAIL = 'SUPPORT_EMAIL';
@@ -369,8 +366,6 @@ export class ActionType {
 export class RouterLinks {
     public static readonly TABS = 'tabs';
 
-    // Onboarding Routs
-
     // Users and Groups Routs
     public static readonly USER_AND_GROUPS = 'user-and-groups';
     public static readonly ADD_OR_REMOVE_GROUP_USER = 'add-or-remove-group-user';
@@ -461,8 +456,6 @@ export class RouterLinks {
 
     // Terms and conditions Routes
     public static readonly TERMS_AND_CONDITIONS = 'terms-and-conditions';
-
-    public static readonly ONBOARDING = 'onboarding';
 
     public static readonly LIBRARY_TAB = `/${RouterLinks.TABS}/${RouterLinks.RESOURCES}`;
     public static readonly COURSE_TAB = `/${RouterLinks.TABS}/${RouterLinks.COURSES}`;

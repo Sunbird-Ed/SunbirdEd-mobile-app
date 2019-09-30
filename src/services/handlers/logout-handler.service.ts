@@ -1,27 +1,23 @@
 import { Inject, Injectable } from '@angular/core';
-import { PreferenceKey, RouterLinks } from '@app/app/app.constant';
-import { GUEST_STUDENT_TABS, GUEST_TEACHER_TABS, initTabs } from '@app/app/module.service'
-import { AppGlobalService } from '@app/services/app-global-service.service';
-import { CommonUtilService } from '@app/services/common-util.service';
-import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { Events } from '@ionic/angular';
-import {
-  AuthService,
-  ProfileService,
-  ProfileType,
-  SharedPreferences
-} from 'sunbird-sdk';
 import { Observable } from 'rxjs';
+import { Router, NavigationExtras } from '@angular/router';
 import {
-  Environment,
-  InteractSubtype,
-  InteractType,
-  PageId
-} from '@app/services/telemetry-constants';
-import { ContainerService } from '@app/services/container.services';
-import { Router } from '@angular/router';
+  AuthService, ProfileService, ProfileType, SharedPreferences
+} from 'sunbird-sdk';
+import { PreferenceKey, RouterLinks } from '../../app/app.constant';
+import { AppGlobalService } from 'services/app-global-service.service';
+import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
+import { CommonUtilService } from '@app/services/common-util.service';
+import {
+  Environment, InteractSubtype, InteractType, PageId
+} from '../telemetry-constants';
+import { ContainerService } from '../container.services';
+import { GUEST_STUDENT_TABS, GUEST_TEACHER_TABS, initTabs } from '@app/app/module.service';
 
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class LogoutHandlerService {
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -33,7 +29,8 @@ export class LogoutHandlerService {
     private containerService: ContainerService,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private router: Router
-  ) { }
+  ) {
+  }
 
   public onLogout() {
     if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
@@ -71,11 +68,9 @@ export class LogoutHandlerService {
       initTabs(this.containerService, GUEST_TEACHER_TABS);
     }
 
-    this.router.navigate([`/${RouterLinks.TABS}`], {
-      state: {
-        loginMode: 'guest'
-      }
-    });
+    this.events.publish('UPDATE_TABS');
+    const navigationExtras: NavigationExtras = { state: { loginMode: 'guest' } };
+    this.router.navigate([`/${RouterLinks.TABS}`], navigationExtras);
 
     this.generateLogoutInteractTelemetry(InteractType.OTHER, InteractSubtype.LOGOUT_SUCCESS, '');
   }
@@ -88,9 +83,7 @@ export class LogoutHandlerService {
       Environment.HOME,
       PageId.LOGOUT,
       undefined,
-      valuesMap,
-      undefined,
-      undefined
+      valuesMap
     );
   }
 }
