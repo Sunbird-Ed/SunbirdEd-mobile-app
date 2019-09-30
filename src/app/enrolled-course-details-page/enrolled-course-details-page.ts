@@ -1,5 +1,5 @@
 import { Component, Inject, NgZone, OnInit, ViewChild, ElementRef } from '@angular/core';
-import { Events, Platform, PopoverController, AlertController, ToastController } from '@ionic/angular';
+import { Events, Platform, PopoverController, AlertController } from '@ionic/angular';
 import isObject from 'lodash/isObject';
 import forEach from 'lodash/forEach';
 import { FileSizePipe } from '@app/pipes/file-size/file-size';
@@ -201,8 +201,6 @@ export class EnrolledCourseDetailsPage implements OnInit {
   enrollmentEndDate: string;
   loader: any;
   isQrCodeLinkToContent: any;
-  toast: any;
-  networkSubscription: Subscription;
   leaveTrainigPopover: any;
 
   @ViewChild('stickyPillsRef') stickyPillsRef: ElementRef;
@@ -221,7 +219,6 @@ export class EnrolledCourseDetailsPage implements OnInit {
     @Inject('COURSE_SERVICE') private courseService: CourseService,
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
     @Inject('AUTH_SERVICE') private authService: AuthService,
-    public toastController: ToastController,
     private loginHandlerService: LoginHandlerService,
     private zone: NgZone,
     private events: Events,
@@ -239,7 +236,6 @@ export class EnrolledCourseDetailsPage implements OnInit {
     private location: Location,
     private router: Router,
     private appVersion: AppVersion,
-    private toastCtrl: ToastController,
     private translate: TranslateService,
     private popOverCtrl: PopoverController,
     private contentDeleteHandler: ContentDeleteHandler,
@@ -1246,32 +1242,6 @@ export class EnrolledCourseDetailsPage implements OnInit {
       this.segmentType = 'modules';
       // this.isEnrolled = true;
     }
-    this.networkSubscription = this.commonUtilService.networkAvailability$.subscribe((available: boolean) => {
-      if (available) {
-        if (this.toast) {
-          this.toast.dismiss();
-          this.toast = undefined;
-        }
-      } else {
-        this.presentToastForOffline('NO_INTERNET_TITLE');
-      }
-    });
-  }
-
-  // Offline Toast
-  async presentToastForOffline(msg: string) {
-    this.toast = await this.toastController.create({
-      duration: 30000,
-      message: this.commonUtilService.translateMessage(msg),
-      showCloseButton: true,
-      position: 'top',
-      closeButtonText: 'X',
-      cssClass: ['toastHeader', 'offline']
-    });
-    this.toast.present();
-    this.toast.onDidDismiss(() => {
-      this.toast = undefined;
-    });
   }
 
   showLicensce() {
@@ -1427,13 +1397,6 @@ export class EnrolledCourseDetailsPage implements OnInit {
     }
     this.events.unsubscribe('courseToc:content-clicked');
     // TODO: this.events.unsubscribe(EventTopics.UNENROL_COURSE_SUCCESS);
-    if (this.networkSubscription) {
-      this.networkSubscription.unsubscribe();
-      if (this.toast) {
-        this.toast.dismiss();
-        this.toast = undefined;
-      }
-    }
   }
 
   /**
