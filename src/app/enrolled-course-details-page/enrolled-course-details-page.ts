@@ -320,7 +320,9 @@ export class EnrolledCourseDetailsPage implements OnInit {
     });
 
     this.events.subscribe('courseToc:content-clicked', (data) => {
-      this.joinTraining();
+      if (this.course.createdBy !== this.userId) {
+        this.joinTraining();
+      }
     });
 
   }

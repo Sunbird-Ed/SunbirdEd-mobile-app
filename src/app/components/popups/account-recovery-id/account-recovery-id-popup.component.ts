@@ -109,7 +109,7 @@ export class AccountRecoveryInfoComponent implements OnInit {
       recoveryEmail: '',
       recoveryPhone: ''
     };
-    if (type === RecoveryType.EMAIL) { req.recoveryEmail = this.recoveryEmailForm.value.email; }
+    if (type === RecoveryType.EMAIL) { req.recoveryEmail = this.recoveryEmailForm.value.email.toLowerCase(); }
     if (type === RecoveryType.PHONE) { req.recoveryPhone = this.recoveryPhoneForm.value.phone; }
     return req;
   }
