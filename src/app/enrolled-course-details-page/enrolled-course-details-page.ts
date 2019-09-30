@@ -250,7 +250,7 @@ export class EnrolledCourseDetailsPage implements OnInit {
     const extrasState = this.router.getCurrentNavigation().extras.state;
     if (extrasState) {
       this.courseCardData = extrasState.content;
-      console.log('courseCardData', this.courseCardData);
+      // console.log('courseCardData', this.courseCardData);
       this.identifier = this.courseCardData.contentId || this.courseCardData.identifier;
       this.corRelationList = extrasState.corRelation;
       this.source = extrasState.source;
@@ -659,7 +659,7 @@ export class EnrolledCourseDetailsPage implements OnInit {
         this.zone.run(() => {
           if (data) {
             this.batchDetails = data;
-            console.log('this.batchDetails', this.batchDetails);
+            // console.log('this.batchDetails', this.batchDetails);
             this.saveContentContext(this.appGlobalService.getUserId(),
               this.batchDetails.courseId, this.courseCardData.batchId, this.batchDetails.status);
             this.preferences.getString(PreferenceKey.COURSE_IDENTIFIER).toPromise()
@@ -988,7 +988,7 @@ export class EnrolledCourseDetailsPage implements OnInit {
     this.courseService.getCourseBatches(courseBatchesRequest).toPromise()
       .then((data: Batch[]) => {
         this.batches = data || [];
-        console.log('this.batches', this.batches);
+        // console.log('this.batches', this.batches);
         if ( data && data.length > 1) {
           this.batchCount = data.length;
         } else {
