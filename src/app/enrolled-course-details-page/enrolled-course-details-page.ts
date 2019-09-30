@@ -273,8 +273,11 @@ export class EnrolledCourseDetailsPage implements OnInit {
     if (this.courseCardData.batchId) {
       this.segmentType = 'modules';
     }
+      if(this.courseCardData.batchId){
+      this.getAllBatches();        
+      } else {
       this.getBatchDetails();
-      this.getAllBatches();
+      }
   }
 
   showDeletePopup() {
