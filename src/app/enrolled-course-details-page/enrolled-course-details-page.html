@@ -9,8 +9,7 @@
 				<div class="hr-border-bottom"></div>
 			</ion-card-header>
 			<ion-card-content>
-				<div
-					*ngIf="!courseCardData?.batchId && course?.createdBy !== userId && !isAlreadyEnrolled && batchCount">
+				<div *ngIf="batches?.length && !isAlreadyEnrolled">
 					<button class="enrolled-course-card-button"
 						(click)="navigateToBatchListPage();">{{'JOIN_TRAINING' | translate}}</button>
 					<ion-card-subtitle *ngIf="batchCount || enrollmentEndDate" class="font-12 margin-bottom-2">
@@ -28,15 +27,15 @@
 					</ion-card-subtitle>
 				</div>
 				<div class="sb-course-end-container"
-					*ngIf="!courseCardData?.batchId && !isAlreadyEnrolled && batches?.length">
+					*ngIf="!batches?.length">
 					<p class="main-heading">{{'COURSE_ENDED' | translate}}</p>
 					<p class="sub-heading">{{'THERE_ARE_NO_BATCHES_AVAILABLE_FOR_THIS_TRAINING' | translate}}</p>
 				</div>
-				<div *ngIf="courseCardData?.batchId">
+				<div *ngIf="isAlreadyEnrolled">
 					<div>
 						<div>
 							<div class="sb-dt-card-actions">
-								<div class="wrapper sb-btn-tile-group" *ngIf="course?.progress !==100">
+								<div class="wrapper sb-btn-tile-group" *ngIf="course?.progress !==100 && isAlreadyEnrolled">
 									<div>
 										<button [disabled]="isDownloadStarted" *ngIf="downloadIdentifiers?.length"
 											(click)="showDownloadConfirmationAlert()" slot="icon-only"
@@ -57,7 +56,7 @@
 											<p class="card-text">{{'SHARE' | translate}}</p>
 										</button>
 									</div>
-									<div class="padding-left-5em">
+									<div class="padding-left-5em" *ngIf="!batchExp">
 										<img class="menu-icon" (click)="showOverflowMenu($event)"
 											src="assets/imgs/menu.svg" alt="menu-icon">
 									</div>
