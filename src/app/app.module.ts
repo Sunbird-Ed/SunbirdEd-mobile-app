@@ -144,6 +144,10 @@ export function networkInfoService() {
   return SunbirdSdk.instance.networkInfoService;
 }
 
+export function codePushExperimentService() {
+  return SunbirdSdk.instance.codePushExperimentService;
+}
+
 export function sdkDriverFactory(): any {
   return [{
     provide: 'SDK_CONFIG',
@@ -226,6 +230,9 @@ export function sdkDriverFactory(): any {
   }, {
     provide: 'SEARCH_HISTORY_SERVICE',
     useFactory: searchHistoryService
+  }, {
+    provide: 'CODEPUSH_EXPERIMENT_SERVICE',
+    useFactory: codePushExperimentService
   }, {
     provide: 'NETWORK_INFO_SERVICE',
     useFactory: networkInfoService
