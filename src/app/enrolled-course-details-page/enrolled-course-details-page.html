@@ -27,8 +27,8 @@
 					</ion-card-subtitle>
 				</div>
 				<div class="sb-course-end-container"
-					*ngIf="!batches?.length">
-					<p class="main-heading">{{'COURSE_ENDED' | translate}}</p>
+					*ngIf="!batches?.length && course?.progress!= 100">
+					<p class="main-heading">{{'COURSE_ENDED'  | translate : {'%s': enrollmentEndDate? enrollmentEndDate : ''} | date }}</p>
 					<p class="sub-heading">{{'THERE_ARE_NO_BATCHES_AVAILABLE_FOR_THIS_TRAINING' | translate}}</p>
 				</div>
 				<div *ngIf="isAlreadyEnrolled">
