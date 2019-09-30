@@ -10,7 +10,6 @@ Plugin.extend({
 		app.compileProvider.directive("nextNavigation", ["$rootScope", "$compile", function ($rootScope, $compile) {
 			return {
 				restrict: "E",
-				replace: true,
 				template: '<div id="nav-next"></div>',
 				link: function (scope, element) {
 					var events = ["overlayNext", "renderer:next:show", "renderer:next:hide"]
