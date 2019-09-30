@@ -56,7 +56,7 @@
 											<p class="card-text">{{'SHARE' | translate}}</p>
 										</button>
 									</div>
-									<div class="padding-left-5em">
+									<div class="padding-left-5em" *ngIf="!batchExp">
 										<img class="menu-icon" (click)="showOverflowMenu($event)"
 											src="assets/imgs/menu.svg" alt="menu-icon">
 									</div>
