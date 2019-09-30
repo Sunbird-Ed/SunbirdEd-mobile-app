@@ -140,7 +140,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
   private eventSubscription: Subscription;
 
   toast: any;
-  networkSubscription: Subscription;
   headerObservable: any;
   scrollEventRemover: any;
   subjects: any;
@@ -268,13 +267,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
     this.events.unsubscribe('onboarding-card:completed');
     if (this.headerObservable) {
       this.headerObservable.unsubscribe();
-    }
-    if (this.networkSubscription) {
-      this.networkSubscription.unsubscribe();
-      if (this.toast) {
-        this.toast.dismiss();
-        this.toast = undefined;
-      }
     }
   }
 
@@ -667,22 +659,12 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
       this.getPopularContent();
     }
     this.subscribeSdkEvent();
-    this.networkSubscription = this.commonUtilService.networkAvailability$.subscribe((available: boolean) => {
-      if (available) {
-        if (this.toast) {
-          this.toast.dismiss();
-          this.toast = undefined;
-        }
-      } else {
-        this.presentToastForOffline('NO_INTERNET_TITLE');
-      }
-    });
-  }
+}
 
   // Offline Toast
   async presentToastForOffline(msg: string) {
     this.toast = await this.toastController.create({
-      duration: 30000,
+      duration: 3000,
       message: this.commonUtilService.translateMessage(msg),
       showCloseButton: true,
       position: 'top',
