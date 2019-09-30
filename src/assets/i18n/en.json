@@ -603,5 +603,7 @@
   "LAST_DATE_TO_JOIN": "Last Date To Join",
   "COURSE_ENDED": "Course Ended",
   "THERE_ARE_NO_BATCHES_AVAILABLE_FOR_THIS_TRAINING": "There are no batches available for this training",
-  "RECOVERY_ACCOUNT_UPDATE_SUCCESS": "Recovery account updated successfully"
+  "RECOVERY_ACCOUNT_UPDATE_SUCCESS": "Recovery account updated successfully",
+  "AUTO_MIGRATION_SUCCESS_MESSAGE": "Merge account successful",
+  "AUTO_MIGRATION_FAIL_MESSAGE": "Merge account failed"
 }
