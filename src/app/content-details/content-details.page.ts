@@ -876,7 +876,8 @@ export class ContentDetailsPage implements OnInit {
     }
     if (data && data.isLeftButtonClicked) {
       this.playContent(isStreaming);
-    } else {
+      // Incase of close button click data.isLeftButtonClicked = null so we have put the false condition check
+    } else if (data && data.isLeftButtonClicked  === false) {
       const playConfig: any = {};
       playConfig.playContent = true;
       playConfig.streaming = isStreaming;
