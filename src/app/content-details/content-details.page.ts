@@ -185,7 +185,7 @@ export class ContentDetailsPage implements OnInit {
 
     const extras = this.router.getCurrentNavigation().extras.state;
     if (extras) {
-      this.course = extras.updatedCourseCardData;
+      this.course = extras.course;
       this.cardData = extras.content;
       this.isChildContent = extras.isChildContent;
       this.cardData.depth = extras.depth === undefined ? '' : extras.depth;
