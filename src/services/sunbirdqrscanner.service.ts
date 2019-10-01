@@ -40,12 +40,10 @@ export class SunbirdQRScanner {
   private mQRScannerText;
   readonly permissionList = [AndroidPermission.CAMERA];
   backButtonFunc = undefined;
-  private pauseSubscription?: Subscription;
   source: string;
   showButton = false;
-  t1: number;
-  t2: number;
   appName = '';
+  private isScannerActive = false;
   constructor(
     private translate: TranslateService,
     private platform: Platform,
@@ -61,6 +59,7 @@ export class SunbirdQRScanner {
     private popCtrl: PopoverController,
     private router: Router
   ) {
+    console.log('instantiated');
     const that = this;
     this.translate.get(this.QR_SCANNER_TEXT).subscribe((data) => {
       that.mQRScannerText = data;
@@ -84,7 +83,7 @@ export class SunbirdQRScanner {
     this.source = source;
     this.showButton = showButton;
 
-    this.pauseSubscription = this.platform.pause.subscribe(() => this.stopScanner());
+    this.platform.pause.take(1).subscribe(() => this.stopScanner());
     this.generateImpressionTelemetry(source);
     this.generateStartEvent(source);
 
@@ -235,13 +234,14 @@ export class SunbirdQRScanner {
 
   }
   public stopScanner() {
+    if (!this.isScannerActive) {
+      return;
+    }
+    // to prevent back event propagating up to parent
     setTimeout(() => {
       (window as any).qrScanner.stopScanner();
+      this.isScannerActive = false;
     }, 100);
-
-    if (this.pauseSubscription) {
-      this.pauseSubscription.unsubscribe();
-    }
   }
 
   getProfileSettingConfig() {
@@ -260,7 +260,11 @@ export class SunbirdQRScanner {
     screenTitle: string, displayText: string, displayTextColor: string,
     buttonText: string, showButton: boolean, source: string) {
 
-    window['qrScanner'].startScanner(screenTitle, displayText,
+    if (this.isScannerActive) {
+      return;
+    }
+    this.isScannerActive = true;
+    (window as any).qrScanner.startScanner(screenTitle, displayText,
       displayTextColor, buttonText, showButton, this.platform.isRTL, (scannedData) => {
         if (scannedData === 'skip') {
           if (this.appGlobalService.DISPLAY_ONBOARDING_CATEGORY_PAGE) {
