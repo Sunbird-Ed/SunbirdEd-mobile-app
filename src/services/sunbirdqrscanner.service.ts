@@ -59,7 +59,6 @@ export class SunbirdQRScanner {
     private popCtrl: PopoverController,
     private router: Router
   ) {
-    console.log('instantiated');
     const that = this;
     this.translate.get(this.QR_SCANNER_TEXT).subscribe((data) => {
       that.mQRScannerText = data;
