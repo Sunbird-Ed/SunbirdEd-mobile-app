@@ -1,5 +1,5 @@
-import { Component, Inject, NgZone, OnInit, ViewChild, ElementRef } from '@angular/core';
-import { Events, Platform, PopoverController, AlertController } from '@ionic/angular';
+import { Component, Inject, NgZone, OnInit, ViewChild, ElementRef, OnDestroy } from '@angular/core';
+import { Events, Platform, PopoverController } from '@ionic/angular';
 import isObject from 'lodash/isObject';
 import forEach from 'lodash/forEach';
 import { FileSizePipe } from '@app/pipes/file-size/file-size';
@@ -83,7 +83,7 @@ declare const cordova;
   templateUrl: './enrolled-course-details-page.html',
   styleUrls: ['./enrolled-course-details-page.scss'],
 })
-export class EnrolledCourseDetailsPage implements OnInit {
+export class EnrolledCourseDetailsPage implements OnInit , OnDestroy {
 
   /**
    * Contains content details
@@ -171,7 +171,7 @@ export class EnrolledCourseDetailsPage implements OnInit {
   batchId = '';
   baseUrl = '';
   guestUser = false;
-  isAlreadyEnrolled = false;
+  isAlreadyEnrolled:Boolean = false;
   profileType = '';
   objId;
   objType;
@@ -266,7 +266,7 @@ export class EnrolledCourseDetailsPage implements OnInit {
       .then((appName: any) => {
         this.appName = appName;
       });
-    this.subscribeUtilityEvents();
+      this.subscribeUtilityEvents();
     if (this.courseCardData.batchId) {
       this.segmentType = 'modules';
     }
@@ -298,15 +298,15 @@ export class EnrolledCourseDetailsPage implements OnInit {
       })
       .catch((error) => {
       });
-
-    this.events.subscribe(EventTopics.ENROL_COURSE_SUCCESS, (res) => {
-      if (res && res.batchId) {
-        this.batchId = res.batchId;
-        if (this.identifier && res.courseId && this.identifier === res.courseId) {
-          this.isAlreadyEnrolled = true;
+      this.events.subscribe(EventTopics.ENROL_COURSE_SUCCESS, (res) => {
+        if (res && res.batchId) {
+          this.batchId = res.batchId;
+          if (this.identifier && res.courseId && this.identifier === res.courseId) {
+            this.isAlreadyEnrolled = true;
+          }
         }
-      }
-    });
+      });
+    
 
     this.events.subscribe(EventTopics.UNENROL_COURSE_SUCCESS, () => {
       // to show 'Enroll in Course' button courseCardData.batchId should be undefined/null
@@ -1393,8 +1393,11 @@ export class EnrolledCourseDetailsPage implements OnInit {
     if (this.backButtonFunc) {
       this.backButtonFunc.unsubscribe();
     }
-    this.events.unsubscribe('courseToc:content-clicked');
+    // this.events.unsubscribe('courseToc:content-clicked');
     // TODO: this.events.unsubscribe(EventTopics.UNENROL_COURSE_SUCCESS);
+  }
+  ngOnDestroy(){
+    this.events.unsubscribe('courseToc:content-clicked');
   }
 
   /**
