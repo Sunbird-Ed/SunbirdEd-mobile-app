@@ -231,7 +231,7 @@
   "ERROR_UPLOADING_IMG": "Error while uploading image",
   "ERROR_USER_ACCOUNT_BLOCKED": "User account is blocked. Contact your administrator for details",
   "ERROR_WHILE_LOGIN": "Error while logging in",
-  "EXTRACTING_CONTENT": "Extracting content",
+  "EXTRACTING_CONTENT": "Extracting content {{%s}}",
   "FEEDBACK_HINT": "Feedback (optional)",
   "FEEDBACK_HINT_1": "Add a comment here",
   "FETCHING_CONTENTS": "Fetching content: {{%s}}%",
