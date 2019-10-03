@@ -69,7 +69,7 @@
 											isOnBoardCard="flase" isCourseProgress="true"></app-pb-horizontal>
 									</div>
 									<div class="sb-batch-end-container" *ngIf="course?.progress !== 100 && batchExp">
-										<p class="batch-end-main-heading">{{'BATCHEND_MAIN_HEADING'  | translate : {'%s': batchEndDate ? (batchEndDate | date) : ''} }}</p>
+										<p class="batch-end-main-heading">{{'BATCHEND_MAIN_HEADING'  | translate : {'%s': batchDetails?.endDate ? (batchDetails?.endDate | date) : ''} }}</p>
 										<p class="batch-end-sub-heading">{{'BATCHEND_SUB_HEADING' | translate}}</p>
 									</div>
 									<div *ngIf="course?.progress && course?.progress === 100"
