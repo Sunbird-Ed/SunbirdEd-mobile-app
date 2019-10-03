@@ -586,7 +586,10 @@ export class ProfileSettingsPage implements OnInit {
         }
         this.events.publish('refresh:profile');
         this.appGlobalService.guestUserProfile = res;
-        this.commonUtilService.showToast('PROFILE_UPDATE_SUCCESS');
+        setTimeout(() => {
+          this.commonUtilService.showToast('PROFILE_UPDATE_SUCCESS');
+        },1000);
+        
         this.events.publish('onboarding-card:completed', { isOnBoardingCardCompleted: true });
         this.events.publish('refresh:profile');
         this.appGlobalService.guestUserProfile = res;
