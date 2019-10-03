@@ -44,7 +44,9 @@ export class AssessmentDetailsComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.backButtonFunc.unsubscribe();
+    if (this.backButtonFunc) {
+      this.backButtonFunc.unsubscribe();
+    }
   }
 
   async onActivate(event, showPopup, callback) {

@@ -4,6 +4,7 @@ import { SummarizerService, SummaryRequest, ReportSummary } from 'sunbird-sdk';
 import { TranslateService } from '@ngx-translate/core';
 import { CommonUtilService } from '@app/services/common-util.service';
 import { Location } from '@angular/common';
+import {Subscription} from 'rxjs';
 
 export interface QRAlertCallBack {
   cancel(): any;
@@ -32,6 +33,8 @@ export class GroupReportAlertComponent implements OnInit {
   }];
   assessment: any;
   fromUserAssessment = { 'uiRows': [], showResult: false };
+  backButtonFunc: Subscription;
+
   constructor(
     navParams: NavParams,
     private modalCtrl: ModalController,
@@ -83,13 +86,16 @@ export class GroupReportAlertComponent implements OnInit {
   }
 
   ionViewWillEnter() {
-    this.platform.backButton.subscribeWithPriority(11, () => {
+    this.backButtonFunc = this.platform.backButton.subscribeWithPriority(11, () => {
       this.dismissPopup();
+      this.backButtonFunc.unsubscribe();
     });
   }
 
   ionViewWillLeave() {
-    this.platform.backButton.unsubscribe();
+    if (this.backButtonFunc) {
+      this.backButtonFunc.unsubscribe();
+    }
   }
   /**
    * It will Dismiss active popup
