@@ -95,7 +95,7 @@
     <div class="sb-explore-container" *ngIf="storyAndWorksheets && storyAndWorksheets.length !== 0">
       <div class="text-center" *ngIf="commonUtilService?.networkInfo?.isNetworkAvailable">
         <p class="information">{{'MORE_CONTENT' | translate:{'%s': appLabel} }}</p>
-        <ion-button class="explore" style="background-color: #F3F7FA;" outline (click)="exploreOtherContents()">
+        <ion-button class="explore-more-content" outline (click)="exploreOtherContents()">
           {{'DATA' | translate}} </ion-button>
       </div>
     </div>
@@ -109,7 +109,7 @@
             <b>{{'NO_BOOKS_AVAILABLE' | translate}}</b>
           </p>
           <p class="sub-heading">{{'NO_BOOKS_DEFINITION' | translate:{'%s': appLabel} }}</p>
-          <ion-button class="explore" style="background-color: #024F9D;" (click)="exploreOtherContents()">
+          <ion-button class="explore-more-books" (click)="exploreOtherContents()">
             {{'DATA' | translate}} </ion-button>
         </div>
       </div>

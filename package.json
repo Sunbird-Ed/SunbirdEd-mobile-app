@@ -71,6 +71,7 @@
     "cordova-plugin-local-notification": "git+https://github.com/katzer/cordova-plugin-local-notifications.git",
     "cordova-plugin-media": "^5.0.3",
     "cordova-plugin-network-information": "^2.0.2",
+    "cordova-plugin-networkspeed": "^1.0.3",
     "cordova-plugin-openrap": "git+https://github.com/project-sunbird/cordova-plugin-openrap.git",
     "cordova-plugin-qr-scanner": "git+https://github.com/project-sunbird/cordova-plugin-qr-scanner.git",
     "cordova-plugin-screen-orientation": "^3.0.2",
@@ -91,7 +92,7 @@
     "rxjs-compat": "^6.5.2",
     "sb-cordova-plugin-customtabs": "git+https://github.com/Sunbird-Ed/sb-cordova-plugin-customtabs.git",
     "sb-cordova-plugin-db": "git+https://github.com/swayangjit/sb-cordova-plugin-db.git",
-    "sunbird-sdk": "git+https://github.com/Sunbird-Ed/sunbird-mobile-sdk.git#v2.4.3-alpha",
+    "sunbird-sdk": "git+https://github.com/Sunbird-Ed/sunbird-mobile-sdk.git#v2.4.9-alpha",
     "tslib": "^1.9.0",
     "x2js": "^3.3.0",
     "zone.js": "~0.8.29"
@@ -180,7 +181,8 @@
       "cordova-android-support-gradle-release": {
         "ANDROID_SUPPORT_VERSION": "28.0.0"
       },
-      "cordova-plugin-openrap": {}
+      "cordova-plugin-openrap": {},
+      "cordova-plugin-networkspeed": {}
     },
     "platforms": [
       "android"

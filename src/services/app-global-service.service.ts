@@ -5,17 +5,8 @@ import { PopoverOptions } from '@ionic/core';
 import { GenericAppConfig, PreferenceKey } from '../app/app.constant';
 import { TelemetryGeneratorService } from './telemetry-generator.service';
 import {
-    AuthService,
-    Course,
-    Framework,
-    FrameworkCategoryCodesGroup,
-    FrameworkDetailsRequest,
-    FrameworkService,
-    OAuthSession,
-    Profile,
-    ProfileService,
-    ProfileType,
-    SharedPreferences
+    AuthService, Course, Framework, FrameworkCategoryCodesGroup, FrameworkDetailsRequest, FrameworkService,
+    OAuthSession, Profile, ProfileService, ProfileType, SharedPreferences
 } from 'sunbird-sdk';
 import { UtilityService } from './utility-service';
 import { ProfileConstants } from '../app/app.constant';
@@ -86,9 +77,7 @@ export class AppGlobalService implements OnDestroy {
     public averageTime = 0;
     public averageScore = 0;
     private frameworkData = [];
-    public DISPLAY_ONBOARDING_CARDS = false;
     public DISPLAY_FRAMEWORK_CATEGORIES_IN_PROFILE = false;
-    public DISPLAY_ONBOARDING_PAGE = false;
     public DISPLAY_SIGNIN_FOOTER_CARD_IN_COURSE_TAB_FOR_TEACHER = false;
     public DISPLAY_SIGNIN_FOOTER_CARD_IN_LIBRARY_TAB_FOR_TEACHER = false;
     public DISPLAY_SIGNIN_FOOTER_CARD_IN_PROFILE_TAB_FOR_TEACHER = false;
@@ -96,7 +85,6 @@ export class AppGlobalService implements OnDestroy {
     public DISPLAY_SIGNIN_FOOTER_CARD_IN_PROFILE_TAB_FOR_STUDENT = false;
     public TRACK_USER_TELEMETRY = false;
     public CONTENT_STREAMING_ENABLED = false;
-    public DISPLAY_ONBOARDING_SCAN_PAGE = false;
     public DISPLAY_ONBOARDING_CATEGORY_PAGE = false;
     public OPEN_RAPDISCOVERY_ENABLED = false;
     public SUPPORT_EMAIL = 'support@sunbird.com';
@@ -233,28 +221,12 @@ export class AppGlobalService implements OnDestroy {
     }
 
     readConfig() {
-        this.utilityService.getBuildConfigValue(GenericAppConfig.DISPLAY_ONBOARDING_CARDS)
-            .then(response => {
-                this.DISPLAY_ONBOARDING_CARDS = response === 'true' ? true : false;
-            })
-            .catch(error => {
-                this.DISPLAY_ONBOARDING_CARDS = false;
-            });
-
         this.utilityService.getBuildConfigValue(GenericAppConfig.DISPLAY_FRAMEWORK_CATEGORIES_IN_PROFILE)
             .then(response => {
                 this.DISPLAY_FRAMEWORK_CATEGORIES_IN_PROFILE = response === 'true' ? true : false;
             })
             .catch(error => {
                 this.DISPLAY_FRAMEWORK_CATEGORIES_IN_PROFILE = false;
-            });
-
-        this.utilityService.getBuildConfigValue(GenericAppConfig.DISPLAY_ONBOARDING_PAGE)
-            .then(response => {
-                this.DISPLAY_ONBOARDING_PAGE = response === 'true' ? true : false;
-            })
-            .catch(error => {
-                this.DISPLAY_ONBOARDING_PAGE = false;
             });
 
         this.utilityService.getBuildConfigValue(GenericAppConfig.DISPLAY_SIGNIN_FOOTER_CARD_IN_COURSE_TAB_FOR_TEACHER)
@@ -311,13 +283,6 @@ export class AppGlobalService implements OnDestroy {
                 this.CONTENT_STREAMING_ENABLED = false;
             });
 
-        this.utilityService.getBuildConfigValue(GenericAppConfig.DISPLAY_ONBOARDING_SCAN_PAGE)
-            .then(response => {
-                this.DISPLAY_ONBOARDING_SCAN_PAGE = response === 'true' ? true : false;
-            })
-            .catch(error => {
-                this.DISPLAY_ONBOARDING_SCAN_PAGE = false;
-            });
         this.utilityService.getBuildConfigValue(GenericAppConfig.DISPLAY_ONBOARDING_CATEGORY_PAGE)
             .then(response => {
                 this.DISPLAY_ONBOARDING_CATEGORY_PAGE = response === 'true' ? true : false;
@@ -431,7 +396,7 @@ export class AppGlobalService implements OnDestroy {
                         resolve(this.guestProfileType);
                     }
                 }).catch(() => {
-                    reject()
+                    reject();
                 });
         });
     }
@@ -474,8 +439,6 @@ export class AppGlobalService implements OnDestroy {
         if (this.isGuestUser) {
             const paramsMap = new Map();
             if (pageId !== PageId.PROFILE) {
-                paramsMap['isOnBoardingPageConfigEnabled'] = this.DISPLAY_ONBOARDING_PAGE;
-                paramsMap['isOnBoardingCardsConfigEnabled'] = this.DISPLAY_ONBOARDING_CARDS;
                 paramsMap['isProfileSettingsCompleted'] = isOnBoardingCompleted;
             }
             const profileType = this.getGuestUserType();

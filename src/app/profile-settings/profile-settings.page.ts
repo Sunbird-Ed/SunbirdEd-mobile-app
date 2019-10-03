@@ -159,6 +159,14 @@ export class ProfileSettingsPage implements OnInit {
 
   ionViewDidEnter() {
     this.updateStyle();
+    this.hideOnboardingSplashScreen();
+  }
+
+  async hideOnboardingSplashScreen() {
+    if (this.navParams && this.navParams.forwardMigration) {
+      splashscreen.markImportDone();
+      splashscreen.hide();
+    }
   }
 
   updateStyle() {

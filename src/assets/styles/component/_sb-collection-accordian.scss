@@ -17,7 +17,7 @@
   @include margin(0, 0, ($base-block-space * 1), 0);
   .sb-accordian-header{
    @include padding(($base-block-space * 1), ($base-block-space * 2));
-    min-height: ($base-block-space * 7);
+    // min-height: ($base-block-space * 7);
     justify-content: center;
     // display: flex;
     ion-col{

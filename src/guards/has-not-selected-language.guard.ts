@@ -29,6 +29,7 @@ export class HasNotSelectedLanguageGuard implements Resolve<any> {
                   };
                 this.router.navigate(['/', 'user-type-selection'],navigationExtras);
             } else {
+                splashscreen.markImportDone();
                 splashscreen.hide();
                 return true;
             }

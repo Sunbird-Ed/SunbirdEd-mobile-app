@@ -9,8 +9,10 @@ import {
 } from 'sunbird-sdk';
 import { InteractSubtype, InteractType, Environment, PageId } from '../../../../services/telemetry-constants';
 import { CommonUtilService } from '../../../../services/common-util.service';
-import { EnrollmentDetailsPage } from '@app/app/enrolled-course-details-page/enrollment-details-page/enrollment-details-page';
 import { Router } from '@angular/router';
+import { EnrollmentDetailsComponent } from '../../enrollment-details/enrollment-details.component';
+import { ContentUtil } from '@app/util/content-util';
+
 @Component({
   selector: 'app-coursecard',
   templateUrl: './coursecard.component.html',
@@ -100,6 +102,8 @@ export class CourseCardComponent implements OnInit {
   }
 
   async navigateToBatchListPopup(content: any, layoutName?: string, retiredBatched?: any) {
+    const ongoingBatches = [];
+    const upcommingBatches = [];
     const courseBatchesRequest: CourseBatchesRequest = {
       filters: {
         courseId: layoutName === ContentCard.LAYOUT_INPROGRESS ? content.contentId : content.identifier,
@@ -118,6 +122,13 @@ export class CourseCardComponent implements OnInit {
             this.zone.run(async () => {
               this.batches = data;
               if (this.batches.length) {
+                this.batches.forEach((batch, key) => {
+                    if (batch.status === 1) {
+                      ongoingBatches.push(batch);
+                    } else {
+                      upcommingBatches.push(batch);
+                    }
+                });
                 this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
                   'showing-enrolled-ongoing-batch-popup',
                   Environment.HOME,
@@ -125,9 +136,10 @@ export class CourseCardComponent implements OnInit {
                   reqvalues);
                 await this.loader.dismiss();
                 const popover = await this.popoverCtrl.create({
-                  component: EnrollmentDetailsPage,
+                  component: EnrollmentDetailsComponent,
                   componentProps: {
-                    upcommingBatches: this.batches,
+                    upcommingBatches,
+                    ongoingBatches,
                     retiredBatched,
                     courseId: content.identifier
                   },
@@ -179,7 +191,7 @@ export class CourseCardComponent implements OnInit {
       this.pageName ? this.pageName : this.layoutName,
       telemetryObject,
       values,
-      undefined,
+      ContentUtil.generateRollUp(undefined, identifier),
       corRelationList);
     if (this.loader) {
       await this.loader.dismiss();
@@ -223,7 +235,8 @@ export class CourseCardComponent implements OnInit {
       this.env,
       this.pageName ? this.pageName : this.layoutName,
       telemetryObject,
-      values);
+      values,
+      ContentUtil.generateRollUp(undefined, identifier));
     // Update enrolled courses playedOffline status.
     this.getContentState(content);
     this.saveContentContext(content);

@@ -64,11 +64,6 @@ const routes: Routes = [
     path: RouterLinks.COLLECTION_DETAIL_ETB,
     loadChildren: './collection-detail-etb/collection-detail-etb.module#CollectionDetailEtbPageModule'
   },
-  {
-    path: RouterLinks.ENROLLMENT_DETAILS,
-    loadChildren: './enrolled-course-details-page/enrollment-details-page/enrollment-details-page.module#EnrollmentDetailsPagePageModule'
-  },
-  { path: RouterLinks.COLLECTION_DETAILS, loadChildren: './collection-details/collection-details.module#CollectionDetailsPageModule' },
   { path: RouterLinks.CONTENT_DETAILS, loadChildren: './content-details/content-details.module#ContentDetailsPageModule' },
   { path: RouterLinks.PLAYER, loadChildren: './player/player.module#PlayerPageModule' },
   { path: RouterLinks.PAGE_FILTER, loadChildren: './page-filter/page-filter.module#PageFilterPageModule' },
@@ -86,7 +81,8 @@ const routes: Routes = [
   { path: 'filters', loadChildren: './search/filters/filters.module#FiltersPageModule' },
   { path: RouterLinks.TEXTBOOK_VIEW_MORE, loadChildren: './textbook-view-more/textbook-view-more.module#TextbookViewMorePageModule' },
   { path: RouterLinks.GUEST_EDIT, loadChildren: './profile/guest-edit/guest-edit.module#GuestEditPageModule' },
-  { path: RouterLinks.EXPLORE_BOOK, loadChildren: './resources/explore-books/explore-books.module#ExploreBooksPageModule' }
+  { path: RouterLinks.EXPLORE_BOOK, loadChildren: './resources/explore-books/explore-books.module#ExploreBooksPageModule' },
+  { path: RouterLinks.FAQ_REPORT_ISSUE, loadChildren: './faq-report-issue/faq-report-issue.module#FaqReportIssuePageModule' }
 ];
 
 @NgModule({

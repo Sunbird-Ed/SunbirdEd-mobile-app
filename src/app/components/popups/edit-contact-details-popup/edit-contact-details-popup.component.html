@@ -1,11 +1,11 @@
 <ion-content class="P0">
-  <ion-spinner *ngIf="loader" padding></ion-spinner>
-
+  <div class="ecd-header ion-text-center">
+    <h6 class="M0">{{title | titlecase}}</h6>
+  </div>
   <ion-grid class="P0">
     <form [formGroup]="personEditForm">
       <ion-row class="P16">
         <ion-col size="12" no-padding class="text-center">
-          <p>{{title}}</p>
           <p class="font-weight-bold f14">{{description}}</p>
         </ion-col>
         <section *ngIf="type==='phone'" class="W100 text-center MT3V">
@@ -28,8 +28,8 @@
             <div class="W100 merged-input-container MT10" style="text-align:start">
               <ion-input type="tel" placeholder="+91 -" class="form-control decorator " value="+91 -" disabled>
               </ion-input>
-              <ion-input type="tel" placeholder="{{'PHONE_PLACEHOLDER' | translate }}" maxlength="10" minlength="10"
-                required class="form-control custom" (input)="refreshErr()" formControlName="phone" [(ngModel)]="phone">
+              <ion-input type="tel" placeholder="{{'ENTER_PHONE_POPUP_TITLE' | translate }}" maxlength="10" minlength="10"
+                required class="form-control custom" (input)="refreshErr()" formControlName="phone">
               </ion-input>
             </div>
           </ion-col>
@@ -53,7 +53,7 @@
           <ion-col size="12" no-padding>
             <div class="W100 merged-input-container MT10">
               <ion-input type="text" placeholder="{{'EMAIL_PLACEHOLDER' | translate}}" class="form-control custom"
-                formControlName="email" (input)="refreshErr()" [(ngModel)]="email"></ion-input>
+                formControlName="email" (input)="refreshErr()"></ion-input>
             </div>
           </ion-col>
         </section>

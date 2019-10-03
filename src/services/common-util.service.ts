@@ -126,7 +126,8 @@ export class CommonUtilService implements OnDestroy {
     getLoader(duration?): any {
         return this.loadingCtrl.create({
             duration: duration?duration:30000,
-            spinner: 'crescent'
+            spinner: 'crescent',
+            cssClass: 'custom-loader-class'
         });
     }
 
@@ -283,7 +284,7 @@ export class CommonUtilService implements OnDestroy {
      */
     async showExitPopUp(pageId: string, environment: string, isNavBack: boolean) {
         if (!this.alert) {
-            const alert = await this.popOverCtrl.create({
+            this.alert = await this.popOverCtrl.create({
                 component: SbGenericPopoverComponent,
                 componentProps: {
                     sbPopoverHeading: this.translateMessage('BACK_TO_EXIT'),
@@ -301,9 +302,9 @@ export class CommonUtilService implements OnDestroy {
                 },
                 cssClass: 'sb-popover',
             });
-            await alert.present();
-            const { data } = await alert.onDidDismiss();
-            if (data && data.isLeftButtonClicked === null) {
+            await this.alert.present();
+            const { data } = await this.alert.onDidDismiss();
+            if (data === undefined) {
                 this.telemetryGeneratorService.generateInteractTelemetry(
                     InteractType.TOUCH,
                     InteractSubtype.NO_CLICKED,
@@ -329,15 +330,12 @@ export class CommonUtilService implements OnDestroy {
                 (navigator as any).app.exitApp();
                 this.telemetryGeneratorService.generateEndTelemetry('app', '', '', environment);
             }
-            await this.alert.present();
             this.telemetryGeneratorService.generateBackClickedTelemetry(pageId, environment, isNavBack);
             return;
         } else {
             this.telemetryGeneratorService.generateBackClickedTelemetry(pageId, environment, isNavBack);
-            if (this.alert) {
-                await this.alert.dismiss();
-                this.alert = undefined;
-            }
+            await this.alert.dismiss();
+            this.alert = undefined;
         }
     }
 
@@ -346,6 +344,12 @@ export class CommonUtilService implements OnDestroy {
             return '0.00';
         }
         return (bytes / 1048576).toFixed(2);
+    }
+
+    public  deDupe<T>(array: T[], property): T[] {
+        return array.filter((obj, pos, arr) => {
+            return arr.map(mapObj => mapObj[property]).indexOf(obj[property]) === pos;
+        });
     }
 
     set currentTabName(tabName: string) {

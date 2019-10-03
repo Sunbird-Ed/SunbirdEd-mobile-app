@@ -31,6 +31,7 @@
         </config-file>
         <edit-config file="app/src/main/AndroidManifest.xml" mode="merge" target="/manifest/application">
             <application android:allowBackup="false" />
+            <application android:usesCleartextTraffic="true" />
         </edit-config>
         <preference name="android-manifest/@xmlns:tools" value="http://schemas.android.com/tools" />
         <preference name="android-manifest/application/@tools:replace" value="android:allowBackup" />
@@ -140,5 +141,6 @@
     <plugin name="cordova-plugin-qr-scanner" spec="https://github.com/project-sunbird/cordova-plugin-qr-scanner.git" />
     <plugin name="cordova-plugin-sunbirdsplash" spec="https://github.com/project-sunbird/cordova-plugin-sunbirdsplash.git#release-2.3.0" />
     <plugin name="cordova-plugin-file-support" spec="https://github.com/project-sunbird/cordova-plugin-file-support.git" />
+    <plugin name="cordova-plugin-networkspeed" spec="https://github.com/swayangjit/cordova-plugin-networkspeed.git" />
     <engine name="android" spec="^8.0.0" />
 </widget>

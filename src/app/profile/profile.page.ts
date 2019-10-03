@@ -71,6 +71,7 @@ export class ProfilePage implements OnInit {
   startLimit = 0;
   custodianOrgId: string;
   isCustodianOrgId: boolean;
+  isStateValidated: boolean;
   organisationDetails = '';
   contentCreatedByMe: any = [];
   orgDetails: {
@@ -96,7 +97,6 @@ export class ProfilePage implements OnInit {
     private telemetryGeneratorService: TelemetryGeneratorService,
     private formAndFrameworkUtilService: FormAndFrameworkUtilService,
     private commonUtilService: CommonUtilService,
-    private headerServie: AppHeaderService,
     private socialShare: SocialSharing,
     private headerService: AppHeaderService,
   ) {
@@ -246,6 +246,7 @@ export class ProfilePage implements OnInit {
                     that.getOrgDetails();
                     that.formatUserLocation();
                     that.isCustodianOrgId = (that.profile.rootOrg.rootOrgId === this.custodianOrgId);
+                    that.isStateValidated = that.profile.stateValidated;
                     resolve();
                   });
               });
@@ -637,7 +638,7 @@ downloadTrainingCertificate(course: Course, certificate: CourseCertificate) {
     const popover = await this.popoverCtrl.create({
       component: EditContactDetailsPopupComponent,
       componentProps,
-      cssClass: 'popover-alert input-focus'
+      cssClass: 'popover-alert'
     });
     await popover.present();
     const { data } = await popover.onDidDismiss();
@@ -655,8 +656,9 @@ downloadTrainingCertificate(course: Course, certificate: CourseCertificate) {
         title: this.commonUtilService.translateMessage('VERIFY_PHONE_OTP_TITLE'),
         description: this.commonUtilService.translateMessage('VERIFY_PHONE_OTP_DESCRIPTION'),
         type: ProfileConstants.CONTACT_TYPE_PHONE
-      }
-      const data = await this.openContactVerifyPopup(EditContactVerifyPopupComponent, componentProps, 'popover-alert input-focus');
+      };
+
+      const data = await this.openContactVerifyPopup(EditContactVerifyPopupComponent, componentProps, 'popover-alert');
       if (data && data.OTPSuccess) {
         this.updatePhoneInfo(data.value);
       }
@@ -667,8 +669,9 @@ downloadTrainingCertificate(course: Course, certificate: CourseCertificate) {
         title: this.commonUtilService.translateMessage('VERIFY_EMAIL_OTP_TITLE'),
         description: this.commonUtilService.translateMessage('VERIFY_EMAIL_OTP_DESCRIPTION'),
         type: ProfileConstants.CONTACT_TYPE_EMAIL
-      }
-      const data = await this.openContactVerifyPopup(EditContactVerifyPopupComponent, componentProps, 'popover-alert input-focus');
+      };
+
+      const data = await this.openContactVerifyPopup(EditContactVerifyPopupComponent, componentProps, 'popover-alert');
       if (data && data.OTPSuccess) {
         this.updateEmailInfo(data.value);
       }
@@ -780,8 +783,8 @@ downloadTrainingCertificate(course: Course, certificate: CourseCertificate) {
   async editRecoveryId() {
 
     const componentProps = {
-      recoveryEmail: this.profile.recoveryEmail ? this.profile.recoveryEmail : null,
-      recoveryPhone: this.profile.recoveryPhone ? this.profile.recoveryPhone : null,
+      recoveryEmail: this.profile.recoveryEmail ? this.profile.recoveryEmail : '',
+      recoveryPhone: this.profile.recoveryPhone ? this.profile.recoveryPhone : '',
     };
     const popover = await this.popoverCtrl.create({
       component: AccountRecoveryInfoComponent,
@@ -798,6 +801,13 @@ downloadTrainingCertificate(course: Course, certificate: CourseCertificate) {
     );
 
     const { data } = await popover.onDidDismiss();
-    console.log(data);
+    if (data && data.isEdited) {
+      const req: UpdateServerProfileInfoRequest = {
+        userId: this.profile.userId
+      };
+      await this.updateProfile(req, 'RECOVERY_ACCOUNT_UPDATE_SUCCESS');
+    }
   }
+
+
 }

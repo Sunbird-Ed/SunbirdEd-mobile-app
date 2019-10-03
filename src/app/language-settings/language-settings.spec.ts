@@ -298,34 +298,6 @@ describe('LanguageSettingsPage', () => {
       expect(navCtrlMock.pop).toHaveBeenCalled();
     });
 
-    it('should navigate to the user type selection page if DISPLAY_ONBOARDING_PAGE ' +
-      'configuration is set to false', () => {
-      // arrange
-      languageSettingsPage.isLanguageSelected = true;
-      languageSettingsPage.isFromSettings = false;
-      (appGlobalServiceMock as any).DISPLAY_ONBOARDING_PAGE = false;
-
-      // act
-      languageSettingsPage.continue();
-
-      // assert
-      expect(navCtrlMock.push).toHaveBeenCalledWith(UserTypeSelectionPage);
-    });
-
-    it('should navigate to the onboarding page if DISPLAY_ONBOARDING_PAGE ' +
-      'configuration is set to true', () => {
-      // arrange
-      languageSettingsPage.isLanguageSelected = true;
-      languageSettingsPage.isFromSettings = false;
-      (appGlobalServiceMock as any).DISPLAY_ONBOARDING_PAGE = true;
-
-      // act
-      languageSettingsPage.continue();
-
-      // assert
-      expect(navCtrlMock.push).toHaveBeenCalledWith(OnboardingPage);
-    });
-
     it('should show popup if language is not selected', () => {
       // arrange
       languageSettingsPage.isLanguageSelected = false;

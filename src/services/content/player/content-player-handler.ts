@@ -1,5 +1,5 @@
 import { Injectable, Inject } from '@angular/core';
-import { PlayerService, InteractType, Content } from 'sunbird-sdk';
+import { PlayerService, InteractType, Content, CorrelationData } from 'sunbird-sdk';
 import { CanvasPlayerService } from '@app/services/canvas-player.service';
 import { AppGlobalService } from '@app/services/app-global-service.service';
 import { File } from '@ionic-native/file/ngx';
@@ -8,18 +8,23 @@ import { TelemetryGeneratorService } from '@app/services/telemetry-generator.ser
 import { ContentInfo } from '../content-info';
 import { RouterLinks } from '@app/app/app.constant';
 import { Router } from '@angular/router';
+import { CommonUtilService } from '@app/services/common-util.service';
+import { Course, CourseService } from 'sunbird-sdk';
 
 
 @Injectable({
     providedIn: 'root'
 })
 export class ContentPlayerHandler {
+    private isPlayerLaunched = false;
     constructor(
         @Inject('PLAYER_SERVICE') private playerService: PlayerService,
+        @Inject('COURSE_SERVICE') private courseService: CourseService,
         private canvasPlayerService: CanvasPlayerService,
         private file: File,
         private telemetryGeneratorService: TelemetryGeneratorService,
-        private router: Router
+        private router: Router,
+        private commonUtilService: CommonUtilService
     ) { }
 
     /**
@@ -51,6 +56,23 @@ export class ContentPlayerHandler {
             request.streaming = isStreaming;
         }
         request['correlationData'] = contentInfo.correlationList;
+        if (isCourse && content.contentData['totalQuestions']) {
+            const correlationData: CorrelationData = {
+                id: this.courseService.generateAssessmentAttemptId({
+                    courseId: contentInfo.course!.identifier,
+                    batchId: contentInfo.course.batchId,
+                    contentId: content.identifier,
+                    userId: contentInfo.course.userId
+                }),
+                type: 'AttemptId'
+            };
+
+            if (request['correlationData']) {
+                request['correlationData'].push(correlationData)
+            }
+
+            request['correlationData'] = [correlationData];
+        }
         this.playerService.getPlayerConfig(content, request).subscribe((data) => {
             data['data'] = {};
             if (isCourse) {
@@ -59,10 +81,12 @@ export class ContentPlayerHandler {
             } else {
                 data.config.overlay.enableUserSwitcher = true;
             }
+            this.isPlayerLaunched = true;
             if (data.metadata.mimeType === 'application/vnd.ekstep.ecml-archive') {
+                const filePath = this.commonUtilService.convertFileSrc(`${data.metadata.basePath}`);
                 if (!isStreaming) {
                     this.file.checkFile(`file://${data.metadata.basePath}/`, 'index.ecml').then((isAvailable) => {
-                        this.canvasPlayerService.xmlToJSon(`${data.metadata.basePath}/index.ecml`).then((json) => {
+                        this.canvasPlayerService.xmlToJSon(`${filePath}/index.ecml`).then((json) => {
                             data['data'] = json;
                             this.router.navigate([RouterLinks.PLAYER], { state: { config: data } });
 
@@ -71,7 +95,7 @@ export class ContentPlayerHandler {
                         });
                     }).catch((err) => {
                         console.error('err', err);
-                        this.canvasPlayerService.readJSON(`${data.metadata.basePath}/index.json`).then((json) => {
+                        this.canvasPlayerService.readJSON(`${filePath}/index.json`).then((json) => {
                             data['data'] = json;
                             this.router.navigate([RouterLinks.PLAYER], { state: { config: data } });
 
@@ -87,5 +111,12 @@ export class ContentPlayerHandler {
                 this.router.navigate([RouterLinks.PLAYER], { state: { config: data } });
             }
         });
+    }
+    public isContentPlayerLaunched(): boolean {
+        return this.isPlayerLaunched;
+    }
+
+    public setContentPlayerLaunchStatus(isPlayerLaunced: boolean) {
+        this.isPlayerLaunched = isPlayerLaunced;
     }
 }

@@ -4,7 +4,7 @@
       <ion-label position="stacked" class="label-font">
         {{'NAME' | translate}}
         <ion-text>
-          <span color="danger">&nbsp;*</span>
+          <span class="error">&nbsp;*</span>
         </ion-text>
         <div class="error"
           *ngIf="profileEditForm.controls.name.dirty && profileEditForm.controls.name.errors?.required">

@@ -35,7 +35,6 @@ import {
   AppRatingService,
   LogoutHandlerService,
   LoginHandlerService,
-  TncUpdateHandlerService,
   ContainerService,
   AndroidPermissionsService,
   ComingSoonMessageService,
@@ -46,12 +45,10 @@ import {
   CanvasPlayerService
 } from '../services/index';
 
-
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { UserTypeSelectionPageModule } from './user-type-selection/user-type-selection.module';
 import { ComponentsModule } from './components/components.module';
-import { UserAndGroupsRoutingModule } from './user-and-groups/user-and-groups-routing.module';
 import { UserAndGroupsPageModule } from './user-and-groups/user-and-groups.module';
 import { LocalNotifications } from '@ionic-native/local-notifications/ngx';
 
@@ -63,8 +60,7 @@ import { PageFilterOptionsPage } from './page-filter/page-filter-options/page-fi
 import { CrashAnalyticsErrorLogger } from '@app/services/crash-analytics/crash-analytics-error-logger';
 import { File } from '@ionic-native/file/ngx';
 import { TermsAndConditionsPageModule } from './terms-and-conditions/terms-and-conditions.module';
-
-
+import { TncUpdateHandlerService } from '@app/services/handlers/tnc-update-handler.service';
 
 // AoT requires an exported function for factories
 export function translateHttpLoaderFactory(httpClient: HttpClient) {
@@ -143,6 +139,13 @@ export function errorLoggerService() {
 }
 export function searchHistoryService() {
   return SunbirdSdk.instance.searchHistoryService;
+}
+export function networkInfoService() {
+  return SunbirdSdk.instance.networkInfoService;
+}
+
+export function codePushExperimentService() {
+  return SunbirdSdk.instance.codePushExperimentService;
 }
 
 export function sdkDriverFactory(): any {
@@ -227,6 +230,12 @@ export function sdkDriverFactory(): any {
   }, {
     provide: 'SEARCH_HISTORY_SERVICE',
     useFactory: searchHistoryService
+  }, {
+    provide: 'CODEPUSH_EXPERIMENT_SERVICE',
+    useFactory: codePushExperimentService
+  }, {
+    provide: 'NETWORK_INFO_SERVICE',
+    useFactory: networkInfoService
   }
   ];
 }
@@ -254,7 +263,8 @@ export const sunbirdSdkFactory =
           user_authentication: {
             redirectUrl: buildConfigValues['OAUTH_REDIRECT_URL'],
             authUrl: '/auth/realms/sunbird/protocol/openid-connect',
-            mergeUserHost: buildConfigValues['MERGE_ACCOUNT_BASE_URL']
+            mergeUserHost: buildConfigValues['MERGE_ACCOUNT_BASE_URL'],
+            autoMergeApiPath: '/migrate/user/account'
           },
           api_authentication: {
             mobileAppKey: buildConfigValues['MOBILE_APP_KEY'],

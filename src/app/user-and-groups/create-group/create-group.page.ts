@@ -225,7 +225,7 @@ export class CreateGroupPage implements OnInit {
 
       this.groupService.updateGroup(this.group)
         .subscribe(async (val) => {
-          await loader.dismiss();
+          loader.dismiss();
           this.telemetryGeneratorService.generateInteractTelemetry(
             InteractType.OTHER,
             InteractSubtype.EDIT_GROUP_SUCCESS,
@@ -233,9 +233,10 @@ export class CreateGroupPage implements OnInit {
             PageId.CREATE_GROUP
           );
           // this.navCtrl.popTo(this.navCtrl.getByIndex(this.navCtrl.length() - 2));
+          this.commonUtilService.showToast(this.commonUtilService.translateMessage('GROUP_UPDATE_SUCCESS'));
           this.router.navigate(['../'], { relativeTo: this.route });
         }, async (error) => {
-          await loader.dismiss();
+          loader.dismiss();
           console.error('Error : ' + error);
         });
     } else {

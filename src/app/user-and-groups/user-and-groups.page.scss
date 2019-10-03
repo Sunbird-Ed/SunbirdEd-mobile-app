@@ -1,5 +1,6 @@
 @import "src/assets/styles/_custom-mixins.scss";
 @import "src/assets/styles/_variables.scss";
+@import "src/assets/styles/fonts.scss";
 
 .img-container {
   // position: absolute;
@@ -168,7 +169,7 @@ h6:first-child {
 }
 .description {
   color: map-get($colors, dark_gray);
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   @include margin(null, 10%, null, 10%);
   margin-top: 0px !important;
 }
@@ -213,4 +214,13 @@ h6:first-child {
 
 .ug-pt-30 {
   padding-top: 30%;
+}
+
+ion-button.color,ion-title.color {
+  color:#024f9d;
+  font-weight:bold;
+}
+
+ion-segment-button {
+  font-weight:bold;
 }

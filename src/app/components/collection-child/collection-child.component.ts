@@ -17,6 +17,7 @@ import {
   InteractType,
   PageId
 } from '@app/services/telemetry-constants';
+import { ContentUtil } from '@app/util/content-util';
 
 @Component({
   selector: 'app-collection-child',
@@ -41,6 +42,9 @@ export class CollectionChildComponent implements OnInit {
   @Input() bookID: string;
   @Input() isEnrolled: boolean;
   @Input() fromCourseToc: boolean;
+  @Input() isBatchNotStarted: boolean;
+  @Input() updatedCourseCardData: boolean;
+  collectionChildIcon: any;
 
   constructor(
     private zone: NgZone,
@@ -55,7 +59,9 @@ export class CollectionChildComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-  }
+    this.collectionChildIcon = ContentUtil.getAppIcon(this.childData.contentData.appIcon, this.childData.basePath,
+        this.commonUtilService.networkInfo.isNetworkAvailable);
+}
 
   setContentId(id: string) {
     console.log('extractedUrl', this.router);
@@ -91,7 +97,9 @@ export class CollectionChildComponent implements OnInit {
       this.textbookTocService.setTextbookIds({ rootUnitId: this.rootUnitId, contentId: content.identifier });
       this.location.back();
     } else if (!this.isEnrolled && this.router.url.indexOf(RouterLinks.ENROLLED_COURSE_DETAILS) !== -1) {
-      this.events.publish('courseToc:content-clicked');
+      this.events.publish('courseToc:content-clicked', {isBatchNotStarted: this.isBatchNotStarted, isEnrolled: this.isEnrolled});
+    } else if (this.isEnrolled && this.isBatchNotStarted && this.router.url.indexOf(RouterLinks.ENROLLED_COURSE_DETAILS) !== -1) {
+      this.events.publish('courseToc:content-clicked', {isBatchNotStarted: this.isBatchNotStarted, isEnrolled: this.isEnrolled});
     } else {
       //   migration-TODO : remove unnecessary
       //   const stateData = this.navParams.get('contentState');
@@ -139,6 +147,7 @@ export class CollectionChildComponent implements OnInit {
               depth,
               // migration-TODO : remove unnece
               // contentState: stateData,
+              course: this.updatedCourseCardData || undefined,
               corRelation: this.corRelationList,
               breadCrumb: this.breadCrumb
             }

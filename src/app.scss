@@ -788,7 +788,8 @@ ion-toast.sb-toast.available-later {
 
 .loading-wrapper.sc-ion-loading-md {
   border-radius: 50%;
-  padding: 16px;
+  // padding: 16px;
+  padding-bottom:18px;
 }
 
 .grade_ellipsis {
@@ -866,7 +867,22 @@ ion-toast.sb-toast.available-later {
 ion-split-pane {
   contain: unset;
 }
-
+.leave-training-popup {
+.popover-content{
+    top: 168.273px !important;
+    left: 186px !important;
+    transform-origin: right top;
+    transform: scale(1);
+    width: 36% !important;
+   .list-md{
+    padding-top: 0px !important;
+    padding-bottom: 0px !important;
+   }
+   ion-backdrop{
+     opacity: 0;
+    }
+  }
+ }
 // common code for both collection-etb and enrolled course details
 .sb-topics-container-ftue{
   .sb-topic-item{
@@ -878,10 +894,10 @@ ion-split-pane {
     line-height: 18px;
     font-weight: bold;
     @include rtl() {
-     margin-left: 20px;
+     margin-left: 14px;
     }
     @include ltr() {
-    margin-left: 20px;
+    margin-left: 14px;
     }
   }
   .sb-ftue-design {
@@ -944,4 +960,7 @@ ion-split-pane {
       }
     }
   }
+}
+.contentPadding{
+  --padding-bottom: 0px !important;
 } 

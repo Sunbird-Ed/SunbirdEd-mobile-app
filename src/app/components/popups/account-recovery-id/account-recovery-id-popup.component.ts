@@ -2,10 +2,16 @@ import { Component, OnInit, Inject, Input } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { ImpressionType, Environment, PageId, InteractType } from '@app/services/telemetry-constants';
-import { Profile, ProfileService } from 'sunbird-sdk';
+import { Profile, ProfileService, UpdateServerProfileInfoRequest } from 'sunbird-sdk';
 import { AppGlobalService } from '@app/services/app-global-service.service';
 import { CommonUtilService } from '@app/services/common-util.service';
-import { PopoverController } from '@ionic/angular';
+import { PopoverController, Platform, MenuController } from '@ionic/angular';
+import { Subscription } from 'rxjs/Subscription';
+
+enum RecoveryType {
+  PHONE = 'phone',
+  EMAIL = 'email'
+}
 
 @Component({
   selector: 'app-account-recovery-id-popup',
@@ -14,30 +20,47 @@ import { PopoverController } from '@ionic/angular';
 })
 export class AccountRecoveryInfoComponent implements OnInit {
 
+  RecoveryType = RecoveryType;
+
   // Data passed in by componentProps
-  @Input() recoveryPhone: any;
-  @Input() recoveryEmail: any;
+  @Input() recoveryPhone: string;
+  @Input() recoveryEmail: string;
 
   recoveryIdType: string;
   recoveryEmailForm: FormGroup;
   recoveryPhoneForm: FormGroup;
-  recoveryTypes = {
-    PHONE: 'phone',
-    EMAIL: 'email'
-  };
-  profile: Profile;
+  private profile: Profile;
+  private unregisterBackButton: Subscription;
+  sameEmailErr = false;
+  samePhoneErr = false;
 
   constructor(@Inject('PROFILE_SERVICE') private profileService: ProfileService,
-              private telemetryGeneratorService: TelemetryGeneratorService,
-              private appGlobalService: AppGlobalService,
-              private commonUtilService: CommonUtilService,
-              private popOverCtrl: PopoverController) { }
+    private telemetryGeneratorService: TelemetryGeneratorService,
+    private appGlobalService: AppGlobalService,
+    private commonUtilService: CommonUtilService,
+    private popOverCtrl: PopoverController,
+    public platform: Platform,
+    private menuCtrl: MenuController) { }
 
   ngOnInit() {
-    this.recoveryIdType = this.recoveryPhone ? this.recoveryTypes.PHONE : this.recoveryTypes.EMAIL;
+    this.recoveryIdType = (this.recoveryPhone.length > 0) ? RecoveryType.PHONE : RecoveryType.EMAIL;
     this.initializeFormFields();
     this.profile = this.appGlobalService.getCurrentUser();
     this.generateRecoveryImpression();
+    this.menuCtrl.enable(false);
+  }
+
+  ionViewWillEnter() {
+    this.unregisterBackButton = this.platform.backButton.subscribeWithPriority(11, () => {
+      this.popOverCtrl.dismiss();
+    });
+  }
+
+  ionViewWillLeave() {
+    this.menuCtrl.enable(true);
+    if (this.unregisterBackButton) {
+      this.unregisterBackButton.unsubscribe();
+    }
   }
 
   private initializeFormFields() {
@@ -47,46 +70,48 @@ export class AccountRecoveryInfoComponent implements OnInit {
     this.recoveryPhoneForm = new FormGroup({
       phone: new FormControl('', [Validators.required, Validators.pattern(/^[6-9]\d{9}$/)]),
     });
+  }
 
-    if (this.recoveryEmail && this.recoveryEmail !== '') {
-      this.recoveryEmailForm.setValue({ email: this.recoveryEmail });
-    }
-    if (this.recoveryPhone && this.recoveryPhone !== '') {
-      this.recoveryPhoneForm.setValue({ phone: this.recoveryPhone });
+  async submitRecoveryId(type: RecoveryType) {
+    if (this.commonUtilService.networkInfo.isNetworkAvailable) {
+      let loader = await this.commonUtilService.getLoader();
+      const req: UpdateServerProfileInfoRequest = await this.getReqPayload(type);
+      await loader.present();
+      this.profileService.updateServerProfile(req)
+        .finally(async () => {
+          if (loader) {
+            await loader.dismiss();
+            loader = undefined;
+          }
+        })
+        .subscribe((data: any) => {
+          if (data && data.response === 'SUCCESS') {
+            this.popOverCtrl.dismiss({ isEdited: true });
+            this.generateRecoveryTelemetry(type);
+          }
+        }, (error) => {
+          if (error && error.response && error.response.body && error.response.body.params &&
+            error.response.body.params.err === 'RECOVERY_PARAM_MATCH_EXCEPTION') {
+            if (type === RecoveryType.EMAIL) { this.sameEmailErr = true; }
+            if (type === RecoveryType.PHONE) { this.samePhoneErr = true; }
+          } else {
+            this.commonUtilService.showToast('SOMETHING_WENT_WRONG');
+          }
+        });
+    } else {
+      this.commonUtilService.showToast('INTERNET_CONNECTIVITY_NEEDED');
     }
   }
 
-  async submitRecoveryId(type: string) {
-    if (this.commonUtilService.networkInfo.isNetworkAvailable) {
-      let loader = await this.commonUtilService.getLoader();
-      const req = {
-        profileSummary: 'Test to check for update',
-        userId: this.profile.uid,
-        recoveryEmail: '',
-        recoveryPhone: ''
-      };
-      if (type === this.recoveryTypes.EMAIL) {
-        req.recoveryEmail = this.recoveryEmailForm.value.email;
-      }
-      if (type === this.recoveryTypes.PHONE) {
-        req.recoveryPhone = this.recoveryPhoneForm.value.phone;
-      }
-      await loader.present();
-      this.profileService.updateServerProfile(req).subscribe(async (data: any) => {
-        await loader.dismiss();
-        console.log(data);
-        if (data && data.response) {
-          // TODO Response Handling
-
-        }
-        this.generateRecoveryTelemetry(type);
-        this.popOverCtrl.dismiss({ isEdited: true, value: (req.recoveryEmail || req.recoveryPhone) });
-      }, async (error) => {
-          await loader.dismiss();
-          // TODO Error Handling
-
-      });
-    }
+  private getReqPayload(type: string): UpdateServerProfileInfoRequest {
+    const req = {
+      userId: this.profile.uid,
+      recoveryEmail: '',
+      recoveryPhone: ''
+    };
+    if (type === RecoveryType.EMAIL) { req.recoveryEmail = this.recoveryEmailForm.value.email.toLowerCase(); }
+    if (type === RecoveryType.PHONE) { req.recoveryPhone = this.recoveryPhoneForm.value.phone; }
+    return req;
   }
 
   private generateRecoveryImpression() {
@@ -107,6 +132,15 @@ export class AccountRecoveryInfoComponent implements OnInit {
       Environment.USER,
       PageId.RECOVERY_ACCOUNT_ID_POPUP, undefined, valueMap
     );
+  }
+
+  removeSameRecoveryIdErr(type: string) {
+    if (this.sameEmailErr && type === RecoveryType.EMAIL) { this.sameEmailErr = false; }
+    if (this.samePhoneErr && type === RecoveryType.PHONE) { this.samePhoneErr = false; }
+  }
+
+  async cancel() {
+    await this.popOverCtrl.dismiss({ isEdited: false });
   }
 
 }

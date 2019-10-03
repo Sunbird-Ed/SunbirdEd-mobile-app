@@ -31,7 +31,8 @@ import {
   Rollup,
   SharedPreferences,
   StorageService,
-  TelemetryObject
+  TelemetryObject,
+  Course
 } from 'sunbird-sdk';
 
 import { Map } from '@app/app/telemetryutil';
@@ -132,14 +133,13 @@ export class ContentDetailsPage implements OnInit {
   showDownload: boolean;
   contentPath: Array<any>[];
   FileSizePipe: any;
-  toast: any;
   childPaths: Array<string> = [];
   breadCrumbData: any;
-  networkSubscription: any;
   telemetryObject: TelemetryObject;
   contentDeleteObservable: any;
   isSingleContent: boolean;
   resultLength: any;
+  course:Course;
 
   // Newly Added 
   resumedCourseCardData: any;
@@ -185,6 +185,7 @@ export class ContentDetailsPage implements OnInit {
 
     const extras = this.router.getCurrentNavigation().extras.state;
     if (extras) {
+      this.course = extras.course;
       this.cardData = extras.content;
       this.isChildContent = extras.isChildContent;
       this.cardData.depth = extras.depth === undefined ? '' : extras.depth;
@@ -234,7 +235,7 @@ export class ContentDetailsPage implements OnInit {
   ionViewWillEnter(): void {
     this.headerService.hideHeader();
 
-    if (this.isResumedCourse && !this.isPlayerLaunched) {
+    if (this.isResumedCourse && !this.contentPlayerHandler.isContentPlayerLaunched()) {
       if (this.isUsrGrpAlrtOpen) {
         this.isUsrGrpAlrtOpen = false;
       } else {
@@ -247,20 +248,9 @@ export class ContentDetailsPage implements OnInit {
       this.generateTelemetry();
     }
     this.isPlayedFromCourse();
-    this.setContentDetails(this.identifier, true, this.isPlayerLaunched);
+    this.setContentDetails(this.identifier, true, this.contentPlayerHandler.isContentPlayerLaunched());
     this.subscribeSdkEvent();
     this.findHierarchyOfContent();
-    this.networkSubscription = this.commonUtilService.networkAvailability$.subscribe((available: boolean) => {
-      if (available) {
-        this.presentToast();
-        if (this.toast) {
-          this.toast.dismiss();
-          this.toast = undefined;
-        }
-      } else {
-        this.presentToastForOffline();
-      }
-    });
     this.handleDeviceBackButton();
   }
 
@@ -270,13 +260,6 @@ export class ContentDetailsPage implements OnInit {
   ionViewWillLeave(): void {
     if (this.eventSubscription) {
       this.eventSubscription.unsubscribe();
-    }
-    if (this.networkSubscription) {
-      this.networkSubscription.unsubscribe();
-      if (this.toast) {
-        this.toast.dismiss();
-        this.toast = undefined;
-      }
     }
     if (this.contentDeleteObservable) {
       this.contentDeleteObservable.unsubscribe();
@@ -288,7 +271,7 @@ export class ContentDetailsPage implements OnInit {
 
   handleNavBackButton() {
     this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.CONTENT_DETAIL, Environment.HOME,
-      true, this.cardData.identifier, this.corRelationList);
+      true, this.cardData.identifier, this.corRelationList, this.objRollup, this.telemetryObject);
     this.didViewLoad = false;
     this.generateEndEvent();
     if (this.shouldGenerateEndTelemetry) {
@@ -300,7 +283,7 @@ export class ContentDetailsPage implements OnInit {
   handleDeviceBackButton() {
     this.backButtonFunc = this.platform.backButton.subscribeWithPriority(10, () => {
       this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.CONTENT_DETAIL, Environment.HOME,
-        false, this.cardData.identifier, this.corRelationList);
+        false, this.cardData.identifier, this.corRelationList, this.objRollup, this.telemetryObject);
       this.didViewLoad = false;
       this.popToPreviousPage(false);
       this.generateEndEvent();
@@ -317,21 +300,6 @@ export class ContentDetailsPage implements OnInit {
     });
   }
 
-  // You are Offline Toast
-  async presentToastForOffline() {
-    this.toast = await this.toastController.create({
-      duration: 2000,
-      message: this.commonUtilService.translateMessage('NO_INTERNET_TITLE'),
-      showCloseButton: true,
-      position: 'top',
-      closeButtonText: 'X',
-      cssClass: ['toastHeader', 'offline']
-    });
-    this.toast.present();
-    this.toast.onDidDismiss(() => {
-      this.toast = undefined;
-    });
-  }
 
   // You are Online Toast
   async presentToast() {
@@ -400,7 +368,7 @@ export class ContentDetailsPage implements OnInit {
         }
 
         if (showRating) {
-          this.isPlayerLaunched = false;
+          this.contentPlayerHandler.setContentPlayerLaunchStatus(false);
           this.ratingHandler.showRatingPopup(this.isContentPlayed, data, 'automatic', this.corRelationList, this.objRollup);
         }
       })
@@ -488,7 +456,7 @@ export class ContentDetailsPage implements OnInit {
       this.shouldGenerateEndTelemetry = false;
     }
 
-    if (this.isPlayerLaunched) {
+    if (this.contentPlayerHandler.isContentPlayerLaunched()) {
       this.downloadAndPlay = false;
     }
     if (this.downloadAndPlay) {
@@ -908,7 +876,8 @@ export class ContentDetailsPage implements OnInit {
     }
     if (data && data.isLeftButtonClicked) {
       this.playContent(isStreaming);
-    } else {
+      // Incase of close button click data.isLeftButtonClicked = null so we have put the false condition check
+    } else if (data && data.isLeftButtonClicked  === false) {
       const playConfig: any = {};
       playConfig.playContent = true;
       playConfig.streaming = isStreaming;
@@ -929,14 +898,14 @@ export class ContentDetailsPage implements OnInit {
         telemetryObject: this.telemetryObject,
         rollUp: this.objRollup,
         correlationList: this.corRelationList,
-        hierachyInfo
+        hierachyInfo,
+        course: this.course
       };
       if (this.isResumedCourse) {
         this.playingContent.hierarchyInfo = hierachyInfo;
       }
       this.contentPlayerHandler.launchContentPlayer(this.playingContent, isStreaming, this.downloadAndPlay, contentInfo, this.isCourse);
       this.downloadAndPlay = false;
-      this.isPlayerLaunched = true;
     }
   }
 
