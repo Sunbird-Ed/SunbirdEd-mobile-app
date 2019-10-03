@@ -226,7 +226,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
   async ngOnInit() {
     this.getCurrentUser();
     this.appGlobalService.generateConfigInteractEvent(PageId.LIBRARY, this.isOnBoardingCardCompleted);
-    await this.splaschreenDeeplinkActionHandlerDelegate.onAction('content').toPromise();
+    // await this.splaschreenDeeplinkActionHandlerDelegate.onAction('content').toPromise();
 
     this.events.subscribe('tab.change', (data: string) => {
       this.scrollToTop();

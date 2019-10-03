@@ -204,6 +204,8 @@ export class PreferenceKey {
     public static readonly APP_RATING_POPUP_APPEARED = 'app_rating_popup_appeared';
     public static readonly APP_PERMISSION_ASKED = 'app_permission_asked';
     public static readonly DEPLOYMENT_KEY = 'deployment_key';
+    public static readonly COURSE_DATA_KEY = 'course_data';
+    public static readonly BATCH_DETAIL_KEY = 'batch_detail';
 }
 
 export class GenericAppConfig {

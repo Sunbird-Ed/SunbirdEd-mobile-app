@@ -289,15 +289,28 @@ export class AppComponent implements OnInit, AfterViewInit {
    * Initializing the event for reloading the Tabs on Signing-In.
    */
   triggerSignInEvent() {
-    this.events.subscribe(EventTopics.SIGN_IN_RELOAD, () => {
-      this.toggleRouterOutlet = false;
+    this.events.subscribe(EventTopics.SIGN_IN_RELOAD, async () => {
+      let batchDetails;
+      await this.preferences.getString(PreferenceKey.BATCH_DETAIL_KEY).toPromise()
+      .then(async (resp) => {
+        if (resp) {
+          batchDetails = resp;
+        } else {
+          this.toggleRouterOutlet = false;
+        }
+      });
+      // this.toggleRouterOutlet = false;
       // This setTimeout is very important for reloading the Tabs page on SignIn.
-      setTimeout(() => {
+      setTimeout(async () => {
         this.events.publish(AppGlobalService.USER_INFO_UPDATED);
         this.toggleRouterOutlet = true;
         this.reloadSigninEvents();
         this.events.publish('UPDATE_TABS');
-        this.router.navigate([RouterLinks.TABS]);
+        if (batchDetails) {
+          await this.splaschreenDeeplinkActionHandlerDelegate.onAction('content').toPromise();
+        } else {
+          this.router.navigate([RouterLinks.TABS]);
+        }
       }, 0);
     });
   }
