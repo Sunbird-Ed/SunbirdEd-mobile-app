@@ -103,8 +103,8 @@
 															'CONTINUE_NOW' | translate }}</span></button>
 					<div *ngIf="batchDetails?.endDate && !batchExp" class="enrollment-end-date ion-padding-bottom">
 						<ion-icon name="information-circle"></ion-icon>
-						<span>{{'COMPLETE_TRAINING_TO_EARN_CERTIFICATE' | translate}} {{batchDetails?.endDate | date}}</span>
-						<span *ngIf="course?.certificate">{{'TO_EARN_CERTIFICATE' | translate}}</span>
+						<span *ngIf="!course?.certificate">{{'COMPLETE_TRAINING_TO_EARN_CERTIFICATE' | translate: {'%s': batchDetails?.endDate | date} }} </span>
+						<span *ngIf="course?.certificate">{{'TO_EARN_CERTIFICATE' | translate: {'%s': batchDetails?.endDate | date} }}</span>
 					</div>
 				</ion-card-content>
 			</ion-card>
