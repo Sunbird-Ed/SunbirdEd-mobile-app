@@ -43,6 +43,7 @@ export class CollectionChildComponent implements OnInit {
   @Input() isEnrolled: boolean;
   @Input() fromCourseToc: boolean;
   @Input() isBatchNotStarted: boolean;
+  @Input() updatedCourseCardData: boolean;
   collectionChildIcon: any;
 
   constructor(
@@ -146,6 +147,7 @@ export class CollectionChildComponent implements OnInit {
               depth,
               // migration-TODO : remove unnece
               // contentState: stateData,
+              course: this.updatedCourseCardData || undefined,
               corRelation: this.corRelationList,
               breadCrumb: this.breadCrumb
             }

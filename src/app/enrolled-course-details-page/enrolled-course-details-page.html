@@ -69,7 +69,7 @@
 											isOnBoardCard="flase" isCourseProgress="true"></app-pb-horizontal>
 									</div>
 									<div class="sb-batch-end-container" *ngIf="course?.progress !== 100 && batchExp">
-										<p class="batch-end-main-heading">{{'BATCHEND_MAIN_HEADING'  | translate : {'%s': batchEndDate ? (batchEndDate | date) : ''} }}</p>
+										<p class="batch-end-main-heading">{{'BATCHEND_MAIN_HEADING'  | translate : {'%s': batchDetails?.endDate ? (batchDetails?.endDate | date) : ''} }}</p>
 										<p class="batch-end-sub-heading">{{'BATCHEND_SUB_HEADING' | translate}}</p>
 									</div>
 									<div *ngIf="course?.progress && course?.progress === 100"
@@ -236,7 +236,8 @@
 									<app-collection-child [childData]="firstChildren" [index]="j" [depth]="depth"
 										[activeMimeTypeFilter]="activeMimeTypeFilter" [isTextbookTocPage]="false"
 										[corRelationList]="corRelationList" [isDepthChild]="isDepthChild"
-										[breadCrumb]="breadCrumb" [rootUnitId]="item.identifier" [bookID]="identifier"
+                                        [breadCrumb]="breadCrumb" [rootUnitId]="item.identifier" [bookID]="identifier"
+                                        [updatedCourseCardData]="updatedCourseCardData"
 										[isEnrolled]="isAlreadyEnrolled" [fromCourseToc]="true" [isBatchNotStarted]="isBatchNotStarted">
 									</app-collection-child>
 								</div>
