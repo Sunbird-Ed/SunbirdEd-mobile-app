@@ -53,6 +53,7 @@ export class LogoutHandlerService {
       .do(async () => {
         await this.navigateToAptPage();
         this.events.publish(AppGlobalService.USER_INFO_UPDATED);
+        this.appGlobalService.setEnrolledCourseList([]);
       })
       .subscribe();
   }

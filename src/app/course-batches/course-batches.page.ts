@@ -1,3 +1,4 @@
+import { PreferenceKey } from '@app/app/app.constant';
 import { LoginHandlerService } from './../../services/login-handler.service';
 import { TelemetryGeneratorService } from './../../services/telemetry-generator.service';
 import { Component, Inject, NgZone, OnInit } from '@angular/core';
@@ -153,9 +154,7 @@ export class CourseBatchesPage implements OnInit {
   async enrollIntoBatch(item: Batch) {
     if (this.isGuestUser) {
       // this.showSignInCard = true;
-      this.preferences.putString('batch_detail', JSON.stringify(item)).toPromise();
-      this.preferences.putString('course_data', JSON.stringify(this.course)).toPromise();
-      this.joinTraining();
+      this.joinTraining(item);
     } else {
       const enrollCourseRequest: EnrollCourseRequest = {
         batchId: item.id,
@@ -202,7 +201,7 @@ export class CourseBatchesPage implements OnInit {
     }
   }
 
-  async joinTraining() {
+  async joinTraining(batchDetails) {
     const confirm = await this.popoverCtrl.create({
       component: SbPopoverComponent,
       componentProps: {
@@ -222,6 +221,8 @@ export class CourseBatchesPage implements OnInit {
     await confirm.present();
     const { data } = await confirm.onDidDismiss();
     if (data && data.canDelete) {
+      this.preferences.putString(PreferenceKey.BATCH_DETAIL_KEY, JSON.stringify(batchDetails)).toPromise();
+      this.preferences.putString(PreferenceKey.COURSE_DATA_KEY, JSON.stringify(this.course)).toPromise();
       this.loginHandlerService.signIn();
     }
   }

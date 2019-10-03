@@ -44,6 +44,7 @@ export class SignInCardComponent implements OnInit {
   @Input() source = '';
   @Input() title = 'OVERLAY_LABEL_COMMON';
   @Input() description = 'OVERLAY_INFO_TEXT_COMMON';
+  @Input() fromEnrol: boolean;
   @Output() valueChange = new EventEmitter();
 
   constructor(
@@ -75,6 +76,11 @@ export class SignInCardComponent implements OnInit {
   }
 
   async signIn() {
+    // clean the prefernces to avoid unnecessary enrolment
+    if (!this.fromEnrol) {
+      this.preferences.putString(PreferenceKey.BATCH_DETAIL_KEY, '').toPromise();
+      this.preferences.putString(PreferenceKey.COURSE_DATA_KEY, '').toPromise();
+    }
 
     if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
       this.valueChange.emit(true);

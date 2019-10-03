@@ -83,7 +83,7 @@ declare const cordova;
   templateUrl: './enrolled-course-details-page.html',
   styleUrls: ['./enrolled-course-details-page.scss'],
 })
-export class EnrolledCourseDetailsPage implements OnInit , OnDestroy {
+export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
 
   /**
    * Contains content details
@@ -243,6 +243,7 @@ export class EnrolledCourseDetailsPage implements OnInit , OnDestroy {
 
     this.objRollup = new Rollup();
     this.userId = this.appGlobalService.getUserId();
+    // console.log('this.userId', this.userId);
     this.checkLoggedInOrGuestUser();
     this.checkCurrentUserType();
     this.getUserId();
@@ -250,7 +251,7 @@ export class EnrolledCourseDetailsPage implements OnInit , OnDestroy {
     const extrasState = this.router.getCurrentNavigation().extras.state;
     if (extrasState) {
       this.courseCardData = extrasState.content;
-      // console.log('courseCardData', this.courseCardData);
+      // console.log('courseCardData constructor', this.courseCardData);
       this.identifier = this.courseCardData.contentId || this.courseCardData.identifier;
       this.corRelationList = extrasState.corRelation;
       this.source = extrasState.source;
@@ -270,11 +271,11 @@ export class EnrolledCourseDetailsPage implements OnInit , OnDestroy {
     if (this.courseCardData.batchId) {
       this.segmentType = 'modules';
     }
-      if(this.courseCardData.batchId){
+    if (this.courseCardData.batchId) {
       this.getBatchDetails();
-      } else {
-      this.getAllBatches();   
-      }
+    } else {
+      this.getAllBatches();
+    }
   }
 
   showDeletePopup() {
@@ -298,18 +299,28 @@ export class EnrolledCourseDetailsPage implements OnInit , OnDestroy {
       })
       .catch((error) => {
       });
-      this.events.subscribe(EventTopics.ENROL_COURSE_SUCCESS, (res) => {
-        if (res && res.batchId) {
-          this.batchId = res.batchId;
-          if (this.identifier && res.courseId && this.identifier === res.courseId) {
-            this.isAlreadyEnrolled = true;
-          }
-        }
+
+    this.events.subscribe(EventTopics.ENROL_COURSE_SUCCESS, async (res) => {
+      // console.log('ENROL_COURSE_SUCCESS enrolpage', res);
+      this.updatedCourseCardData = await this.courseService.getEnrolledCourses({userId: this.userId, returnFreshCourses: true })
+      .toPromise().then((cData) => {
+        return cData.find((element) => element.courseId === this.identifier);
       });
-    
+      this.courseCardData.batchId = res.batchId;
+      this.getBatchDetails();
+      this.segmentType = 'modules';
+      if (res && res.batchId) {
+        this.batchId = res.batchId;
+        if (this.identifier && res.courseId && this.identifier === res.courseId) {
+          this.isAlreadyEnrolled = true;
+        }
+      }
+    });
+
 
     this.events.subscribe(EventTopics.UNENROL_COURSE_SUCCESS, () => {
       // to show 'Enroll in Course' button courseCardData.batchId should be undefined/null
+      this.getAllBatches();
       this.updateEnrolledCourseList(this.courseCardData); // enrolled course list updated
       if (this.courseCardData) {
         delete this.courseCardData.batchId;
@@ -317,9 +328,11 @@ export class EnrolledCourseDetailsPage implements OnInit , OnDestroy {
       delete this.batchDetails;
       // delete this.batchDetails; // to show 'Enroll in Course' button courseCardData should be undefined/null
       this.isAlreadyEnrolled = false; // and isAlreadyEnrolled should be false
+      this.isBatchNotStarted = false;
     });
 
     this.events.subscribe('courseToc:content-clicked', (data) => {
+      // console.log('courseToc:content-clicked', data);
       if (this.course.createdBy !== this.userId) {
         if (!data.isEnrolled && !data.isBatchNotStarted) {
           this.joinTraining();
@@ -1393,11 +1406,12 @@ export class EnrolledCourseDetailsPage implements OnInit , OnDestroy {
     if (this.backButtonFunc) {
       this.backButtonFunc.unsubscribe();
     }
-    // this.events.unsubscribe('courseToc:content-clicked');
-    // TODO: this.events.unsubscribe(EventTopics.UNENROL_COURSE_SUCCESS);
   }
-  ngOnDestroy(){
+
+  ngOnDestroy() {
+    this.events.unsubscribe(EventTopics.ENROL_COURSE_SUCCESS);
     this.events.unsubscribe('courseToc:content-clicked');
+    this.events.unsubscribe(EventTopics.UNENROL_COURSE_SUCCESS);
   }
 
   /**
@@ -1653,9 +1667,7 @@ export class EnrolledCourseDetailsPage implements OnInit , OnDestroy {
   async enrollIntoBatch(item: Batch) {
     if (this.isGuestUser) {
       // this.showSignInCard = true;
-      this.preferences.putString('batch_detail', JSON.stringify(item)).toPromise();
-      this.preferences.putString('course_data', JSON.stringify(this.course)).toPromise();
-      this.promptToLogin();
+      this.promptToLogin(item);
     } else {
       const enrollCourseRequest: EnrollCourseRequest = {
         batchId: item.id,
@@ -1705,7 +1717,7 @@ export class EnrolledCourseDetailsPage implements OnInit , OnDestroy {
     }
   }
 
-  async promptToLogin() {
+  async promptToLogin(batchdetail) {
     const confirm = await this.popoverCtrl.create({
       component: SbPopoverComponent,
       componentProps: {
@@ -1725,6 +1737,8 @@ export class EnrolledCourseDetailsPage implements OnInit , OnDestroy {
     await confirm.present();
     const { data } = await confirm.onDidDismiss();
     if (data && data.canDelete) {
+      this.preferences.putString(PreferenceKey.BATCH_DETAIL_KEY, JSON.stringify(batchdetail)).toPromise();
+      this.preferences.putString(PreferenceKey.COURSE_DATA_KEY, JSON.stringify(this.course)).toPromise();
       this.loginHandlerService.signIn();
     }
   }
