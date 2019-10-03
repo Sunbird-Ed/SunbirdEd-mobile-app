@@ -116,7 +116,7 @@ export class PlayerPage implements OnInit, PlayerActionHandlerDelegate {
           this.navCtrl.remove(this.navCtrl.length() - 2);
         });
      */
-    this.router.navigate([RouterLinks.CONTENT_DETAILS], { state: { content } });
+    this.router.navigate([RouterLinks.CONTENT_DETAILS , identifier], { state: { content } , replaceUrl: true, });
   }
 
   /**
