@@ -14,6 +14,7 @@ import { AppHeaderService } from '@app/services/app-header.service';
 import { ProfileConstants, RouterLinks } from '../app.constant';
 import { FormAndFrameworkUtilService } from '@app/services';
 import { Router } from '@angular/router';
+import { SplashScreenService } from '@app/services/splash-screen.service';
 
 @Component({
   selector: 'app-terms-and-conditions',
@@ -39,7 +40,8 @@ export class TermsAndConditionsPage implements OnInit {
     private appVersion: AppVersion,
     private injector: Injector,
     private formAndFrameworkUtilService: FormAndFrameworkUtilService,
-    private router: Router
+    private router: Router,
+    private splashScreenService: SplashScreenService
   ) {
   }
 
@@ -125,7 +127,7 @@ export class TermsAndConditionsPage implements OnInit {
             if (value['status']) {
               await tncUpdateHandlerService.dismissTncPage();
               this.router.navigate(['/', 'tabs']);
-              splashscreen.hide();
+              this.splashScreenService.handleSunbirdSplashScreenActions();
             } else {
               await tncUpdateHandlerService.dismissTncPage();
               this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.CATEGORIES_EDIT}`], {

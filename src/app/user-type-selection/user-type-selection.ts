@@ -19,6 +19,7 @@ import {
 import { ContainerService } from '@app/services/container.services';
 import { initTabs, GUEST_STUDENT_TABS, GUEST_TEACHER_TABS } from '@app/app/module.service';
 import { HasNotSelectedFrameworkGuard } from '@app/guards/has-not-selected-framework.guard';
+import { SplashScreenService } from '@app/services/splash-screen.service';
 
 const selectedCardBorderColor = '#006DE5';
 const borderColor = '#F7F7F7';
@@ -55,7 +56,8 @@ export class UserTypeSelectionPage implements OnInit {
     private platform: Platform,
     private headerService: AppHeaderService,
     private router: Router,
-    public frameworkGuard: HasNotSelectedFrameworkGuard
+    public frameworkGuard: HasNotSelectedFrameworkGuard,
+    private splashScreenService: SplashScreenService
   ) {
     this.getNavParams();
   }
@@ -74,8 +76,7 @@ export class UserTypeSelectionPage implements OnInit {
   async hideOnboardingSplashScreen() {
     if (this.navParams && this.navParams.forwardMigration) {
       if (!this.frameworkGuard.guardActivated) {
-        splashscreen.markImportDone();
-        splashscreen.hide();
+        this.splashScreenService.handleSunbirdSplashScreenActions();
       }
     }
   }
