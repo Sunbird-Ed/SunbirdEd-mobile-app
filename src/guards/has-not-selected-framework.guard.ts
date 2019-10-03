@@ -5,6 +5,7 @@ import { GenericAppConfig, ProfileConstants } from '@app/app/app.constant';
 import { UtilityService } from '@app/services/utility-service';
 import { AppGlobalService } from '@app/services/app-global-service.service';
 import { CanDeactivate } from '@angular/router';
+import { SplashScreenService } from '@app/services/splash-screen.service';
 
 @Injectable()
 export class HasNotSelectedFrameworkGuard implements Resolve<any> {
@@ -15,7 +16,8 @@ export class HasNotSelectedFrameworkGuard implements Resolve<any> {
         private appGlobalService: AppGlobalService,
         private utilityService: UtilityService,
         private router: Router,
-        private activatedRoute: ActivatedRoute
+        private activatedRoute: ActivatedRoute,
+        private splashScreenService: SplashScreenService
     ) {
     }
 
@@ -38,8 +40,7 @@ export class HasNotSelectedFrameworkGuard implements Resolve<any> {
                     return true;
                 } else {
                     this.appGlobalService.isProfileSettingsCompleted = true;
-                    splashscreen.markImportDone();
-                    splashscreen.hide();
+                    this.splashScreenService.handleSunbirdSplashScreenActions();
                     this.router.navigate(['/', 'tabs']);
                 }
             });
