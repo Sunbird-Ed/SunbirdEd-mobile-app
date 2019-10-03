@@ -481,7 +481,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
     const confirm = await this.popoverCtrl.create({
       component: SbGenericPopoverComponent,
       componentProps: {
-        sbPopoverHeading: this.commonUtilService.translateMessage('UNENROLL_FROM_COURSE'),
+        sbPopoverHeading: this.commonUtilService.translateMessage('LEAVE_TRAINING_HEADING'),
         sbPopoverMainTitle: this.commonUtilService.translateMessage('UNENROLL_CONFIRMATION_MESSAGE'),
         actionsButtons: [
           {
