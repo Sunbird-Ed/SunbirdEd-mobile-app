@@ -578,7 +578,7 @@ export class ProfileSettingsPage implements OnInit {
       });
     }
     this.profileService.updateProfile(req).toPromise()
-      .then((res: any) => {
+      .then(async (res: any) => {
         if (req.profileType === ProfileType.TEACHER) {
           initTabs(this.container, GUEST_TEACHER_TABS);
         } else if (req.profileType === ProfileType.STUDENT) {
@@ -597,6 +597,8 @@ export class ProfileSettingsPage implements OnInit {
         this.telemetryGeneratorService.generateProfilePopulatedTelemetry(
           PageId.ONBOARDING_PROFILE_PREFERENCES, req, 'manual', Environment.ONBOARDING
         );
+        this.loader = await this.commonUtilService.getLoader(2000);
+        this.loader.present();
 
         const navigationExtras: NavigationExtras = {
           state: {
