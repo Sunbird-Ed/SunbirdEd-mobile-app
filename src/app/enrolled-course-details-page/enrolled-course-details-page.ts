@@ -202,6 +202,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
   loader: any;
   isQrCodeLinkToContent: any;
   leaveTrainigPopover: any;
+  showOfflineSection = false;
 
   @ViewChild('stickyPillsRef') stickyPillsRef: ElementRef;
   public objRollup: Rollup;
@@ -309,6 +310,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
       this.courseCardData.batchId = res.batchId;
       this.getBatchDetails();
       this.segmentType = 'modules';
+      // this.getCourseProgress();
       if (res && res.batchId) {
         this.batchId = res.batchId;
         if (this.identifier && res.courseId && this.identifier === res.courseId) {
@@ -328,11 +330,11 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
       delete this.batchDetails;
       // delete this.batchDetails; // to show 'Enroll in Course' button courseCardData should be undefined/null
       this.isAlreadyEnrolled = false; // and isAlreadyEnrolled should be false
-      this.isBatchNotStarted = false;
+      this.isBatchNotStarted = false; // this is needed to change behaviour onclick of individual content
     });
 
     this.events.subscribe('courseToc:content-clicked', (data) => {
-      // console.log('courseToc:content-clicked', data);
+      console.log('courseToc:content-clicked', data);
       if (this.course.createdBy !== this.userId) {
         if (!data.isEnrolled && !data.isBatchNotStarted) {
           this.joinTraining();
@@ -592,6 +594,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
     if (data.contentData) {
       await loader.present();
       this.course = data.contentData;
+      // console.log('this.course', this.course);
       this.content = data;
       this.objId = this.course.identifier;
       this.objType = this.course.contentType;
@@ -929,6 +932,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
    */
   async getStatusOfChildContent(childrenData) {
     const contentStatusData = this.contentStatusData;
+    // console.log('this.contentStatusData', this.contentStatusData);
     let lastReadContentId = this.courseCardData.lastReadContentId;
     const userId = this.appGlobalService.getUserId();
     const lastReadContentIdKey = 'lastReadContentId_' + userId + '_' + this.identifier + '_' + this.courseCardData.batchId;
@@ -937,6 +941,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
         this.courseCardData.lastReadContentId = val;
         lastReadContentId = val;
       });
+    // console.log('lastReadContentId', lastReadContentId);
     this.getLastPlayedName(lastReadContentId);
     this.zone.run(() => {
       childrenData.forEach(childContent => {
@@ -1000,6 +1005,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
     };
     this.courseService.getCourseBatches(courseBatchesRequest).toPromise()
       .then((data: Batch[]) => {
+        this.showOfflineSection = false;
         this.batches = data || [];
         // console.log('this.batches', this.batches);
         if ( data && data.length > 1) {
@@ -1010,7 +1016,12 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
         }
       })
       .catch((error: any) => {
-        console.log('Error while fetching Batch Details', error);
+        if (error instanceof NetworkError) {
+          this.showOfflineSection = true;
+        } else {
+          this.showOfflineSection = false;
+        }
+        console.log('Error while fetching all Batches', error);
       });
   }
 
@@ -1074,6 +1085,10 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
     };
     this.contentService.getChildContents(option).toPromise()
       .then((data: Content) => {
+        // console.log('getChildContents', data);
+        // this.contentService.nextContent(data.hierarchyInfo, this.courseCardData.lastReadContentId).subscribe((content) => {
+        //   console.log('next content', content);
+        // });
         this.zone.run(async () => {
           // await loader.dismiss();
           if (data && data.children) {
@@ -1228,6 +1243,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
             (this.courseCardData.batchId && element.batchId === this.courseCardData.batchId) ||
             (!this.courseCardData.batchId && element.courseId === this.identifier));
         });
+      // console.log('ionViewWillEnter updatedCourseCardData', this.updatedCourseCardData);
       if (this.updatedCourseCardData && !this.courseCardData.batch) {
         this.courseCardData.batch = this.updatedCourseCardData.batch;
         this.courseCardData.batchId = this.updatedCourseCardData.batchId;
@@ -1307,6 +1323,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
 
   getCourseProgress() {
     if (this.courseCardData.batchId) {
+      // console.log('getCourseProgress', this.updatedCourseCardData);
       this.course.progress = this.updatedCourseCardData.completionPercentage;
     }
   }
