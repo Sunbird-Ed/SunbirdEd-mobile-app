@@ -260,7 +260,7 @@
   "GROUP_MEMBER_ADD_SUCCESS": "Members added successfully",
   "GROUP_MEMBER_DELETE_SUCCESS": "Group members deleted successfully",
   "GROUP_NAME": "Group Name",
-  "GROUP_UPDATE_SUCCESS": "Group Details Updated Successfully",
+  "GROUP_UPDATE_SUCCESS": "Group details updated successfully",
   "HABIT_REMINDER_NOTIFICATION_MESSAGE": "Learn something new on {{%s}} today!",
   "HELP": "Help",
   "HELP_US_BY_RATING": "Help us by rating {{%s}}",
@@ -610,5 +610,6 @@
   "YOUR_PROGRESS_LABEL": "Your Progress",
   "YOU_ARE_NOT_CONNECTED_TO_THE_INTERNET": "You are not connected to the Internet",
   "YOU_MUST_JOIN_AN_ACTIVE_BATCH": "You must join an active batch to view and access training details",
-  "YOU_MUST_JOIN_TO_ACCESS_TRAINING_DETAIL": "You must log in to access training details"
+  "YOU_MUST_JOIN_TO_ACCESS_TRAINING_DETAIL": "You must log in to access training details",
+  "RETRY": "Retry"
 }
