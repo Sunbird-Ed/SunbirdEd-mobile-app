@@ -1,5 +1,5 @@
 <ion-content>
-	<div class="p-8">
+	<div class="p-8" *ngIf="!showOfflineSection">
 		<ion-card>
 			<ion-card-header class="custom-card-header">
 				<ion-card-title class="font-18">{{course?.name}}</ion-card-title>
@@ -246,6 +246,16 @@
 				</div>
 			</div>
 		</div>
+	</div>
+	<div padding text-center class="mt-32 mb-32" *ngIf="showOfflineSection">
+		<img src="assets/imgs/outline-cloud_off.svg" alt="" />
+		<ion-text>
+		  <h6 class="offline-header">
+			<strong>{{ 'NO_INTERNET_TITLE' | translate }}</strong>
+		  </h6>
+		</ion-text>
+		<p class="offline-content">{{ 'OFFLINE_WARNING_ETBUI' | translate }}</p>
+		<button (click)="getAllBatches()" class="sb-btn sb-btn-outline-info retry-btn">{{'RETRY' | translate}}</button>
 	</div>
 </ion-content>
 <div class="loading-backdrop" *ngIf="showLoading" text-center>
