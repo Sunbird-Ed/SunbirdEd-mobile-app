@@ -1,5 +1,5 @@
 import { Component, Inject, NgZone, OnInit, ViewChild, ElementRef, OnDestroy } from '@angular/core';
-import { Events, Platform, PopoverController, AlertController } from '@ionic/angular';
+import { Events, Platform, PopoverController } from '@ionic/angular';
 import isObject from 'lodash/isObject';
 import forEach from 'lodash/forEach';
 import { FileSizePipe } from '@app/pipes/file-size/file-size';
@@ -171,7 +171,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
   batchId = '';
   baseUrl = '';
   guestUser = false;
-  isAlreadyEnrolled = false;
+  isAlreadyEnrolled:Boolean = false;
   profileType = '';
   objId;
   objType;
@@ -267,7 +267,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
       .then((appName: any) => {
         this.appName = appName;
       });
-    this.subscribeUtilityEvents();
+      this.subscribeUtilityEvents();
     if (this.courseCardData.batchId) {
       this.segmentType = 'modules';
     }
@@ -316,6 +316,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
         }
       }
     });
+
 
     this.events.subscribe(EventTopics.UNENROL_COURSE_SUCCESS, () => {
       // to show 'Enroll in Course' button courseCardData.batchId should be undefined/null
