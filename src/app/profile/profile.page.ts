@@ -791,7 +791,6 @@ downloadTrainingCertificate(course: Course, certificate: CourseCertificate) {
       componentProps,
       cssClass: 'popover-alert'
     });
-    await popover.present();
 
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,
@@ -799,6 +798,8 @@ downloadTrainingCertificate(course: Course, certificate: CourseCertificate) {
       Environment.USER,
       PageId.PROFILE, undefined
     );
+
+    await popover.present();
 
     const { data } = await popover.onDidDismiss();
     if (data && data.isEdited) {
