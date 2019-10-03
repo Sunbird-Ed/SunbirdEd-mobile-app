@@ -501,6 +501,9 @@ export class AppComponent implements OnInit, AfterViewInit {
           return;
       }
     }
+
+    splashscreen.markImportDone();
+    splashscreen.hide();
   }
 
   private autoSyncTelemetry() {
