@@ -11,7 +11,7 @@ import { SocialSharing } from '@ionic-native/social-sharing/ngx';
 import { FileSizePipe } from '@app/pipes/file-size/file-size';
 import { IonContent as iContent } from '@ionic/angular';
 import {
-  Events, NavController, Platform, PopoverController, ToastController,
+  Events, NavController, Platform, PopoverController,
 } from '@ionic/angular';
 import {
   Content, ContentAccess, ContentAccessStatus, ContentDeleteStatus, ContentDetailRequest, ContentEventType,
@@ -226,8 +226,6 @@ export class CollectionDetailEtbPage implements OnInit {
   private eventSubscription: Subscription;
 
   showDownload: boolean;
-  networkSubscription: any;
-  toast: any;
   contentTypesCount: any;
   stateData: any;
   stckyUnitTitle?: string;
@@ -252,7 +250,6 @@ export class CollectionDetailEtbPage implements OnInit {
     private telemetryGeneratorService: TelemetryGeneratorService,
     private courseUtilService: CourseUtilService,
     private utilityService: UtilityService,
-    private toastController: ToastController,
     private fileSizePipe: FileSizePipe,
     private headerService: AppHeaderService,
     private comingSoonMessageService: ComingSoonMessageService,
@@ -332,16 +329,6 @@ export class CollectionDetailEtbPage implements OnInit {
       this.didViewLoad = true;
       this.setContentDetails(this.identifier, true);
       this.subscribeSdkEvent();
-      this.networkSubscription = this.commonUtilService.networkAvailability$.subscribe((available: boolean) => {
-        if (available) {
-          if (this.toast) {
-            this.toast.dismiss();
-            this.toast = undefined;
-          }
-        } else {
-          this.presentToastWithOptions();
-        }
-      });
     });
     this.ionContent.ionScroll.subscribe((event) => {
       this.scrollPosition = event.scrollTop;
@@ -367,20 +354,6 @@ export class CollectionDetailEtbPage implements OnInit {
     this.contentService.setContentMarker(contentMarkerRequest).toPromise().then();
   }
 
-  async presentToastWithOptions() {
-    this.toast = await this.toastController.create({
-      message: this.commonUtilService.translateMessage('NO_INTERNET_TITLE'),
-      duration: 2000,
-      showCloseButton: true,
-      position: 'top',
-      closeButtonText: '',
-      cssClass: 'toastAfterHeader'
-    });
-    this.toast.present();
-    this.toast.onDidDismiss(() => {
-      this.toast = undefined;
-    });
-  }
 
   // toggle the card
   toggleGroup(group, content) {
@@ -1201,13 +1174,6 @@ export class CollectionDetailEtbPage implements OnInit {
     this.events.publish('header:setzIndexToNormal');
     if (this.eventSubscription) {
       this.eventSubscription.unsubscribe();
-    }
-    if (this.networkSubscription) {
-      this.networkSubscription.unsubscribe();
-      if (this.toast) {
-        this.toast.dismiss();
-        this.toast = undefined;
-      }
     }
     if (this.backButtonFunc) {
       this.backButtonFunc.unsubscribe();

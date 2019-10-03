@@ -42,6 +42,7 @@ export class CollectionChildComponent implements OnInit {
   @Input() bookID: string;
   @Input() isEnrolled: boolean;
   @Input() fromCourseToc: boolean;
+  @Input() isBatchNotStarted: boolean;
   collectionChildIcon: any;
 
   constructor(
@@ -95,7 +96,9 @@ export class CollectionChildComponent implements OnInit {
       this.textbookTocService.setTextbookIds({ rootUnitId: this.rootUnitId, contentId: content.identifier });
       this.location.back();
     } else if (!this.isEnrolled && this.router.url.indexOf(RouterLinks.ENROLLED_COURSE_DETAILS) !== -1) {
-      this.events.publish('courseToc:content-clicked');
+      this.events.publish('courseToc:content-clicked', {isBatchNotStarted: this.isBatchNotStarted, isEnrolled: this.isEnrolled});
+    } else if (this.isEnrolled && this.isBatchNotStarted && this.router.url.indexOf(RouterLinks.ENROLLED_COURSE_DETAILS) !== -1) {
+      this.events.publish('courseToc:content-clicked', {isBatchNotStarted: this.isBatchNotStarted, isEnrolled: this.isEnrolled});
     } else {
       //   migration-TODO : remove unnecessary
       //   const stateData = this.navParams.get('contentState');

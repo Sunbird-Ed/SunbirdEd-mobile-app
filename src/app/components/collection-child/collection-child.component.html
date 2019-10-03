@@ -54,6 +54,6 @@
   <div *ngFor="let firstChildren of childData?.children; let j = index;" class="sb-collection-child-ftue">
     <app-collection-child [childData]="firstChildren" [breadCrumb]="breadCrumb"
       [activeMimeTypeFilter]="activeMimeTypeFilter" [rootUnitId]="rootUnitId" [isTextbookTocPage]="isTextbookTocPage"
-      [bookID]="bookID" [isEnrolled]="isEnrolled" [fromCourseToc]="fromCourseToc"></app-collection-child>
+      [bookID]="bookID" [isEnrolled]="isEnrolled" [fromCourseToc]="fromCourseToc" [isBatchNotStarted]="isBatchNotStarted"></app-collection-child>
   </div>
 </div>

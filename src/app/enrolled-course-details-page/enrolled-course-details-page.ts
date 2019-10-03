@@ -1,5 +1,5 @@
 import { Component, Inject, NgZone, OnInit, ViewChild, ElementRef, OnDestroy } from '@angular/core';
-import { Events, Platform, PopoverController, AlertController, ToastController } from '@ionic/angular';
+import { Events, Platform, PopoverController } from '@ionic/angular';
 import isObject from 'lodash/isObject';
 import forEach from 'lodash/forEach';
 import { FileSizePipe } from '@app/pipes/file-size/file-size';
@@ -201,8 +201,6 @@ export class EnrolledCourseDetailsPage implements OnInit , OnDestroy {
   enrollmentEndDate: string;
   loader: any;
   isQrCodeLinkToContent: any;
-  toast: any;
-  networkSubscription: Subscription;
   leaveTrainigPopover: any;
 
   @ViewChild('stickyPillsRef') stickyPillsRef: ElementRef;
@@ -221,7 +219,6 @@ export class EnrolledCourseDetailsPage implements OnInit , OnDestroy {
     @Inject('COURSE_SERVICE') private courseService: CourseService,
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
     @Inject('AUTH_SERVICE') private authService: AuthService,
-    public toastController: ToastController,
     private loginHandlerService: LoginHandlerService,
     private zone: NgZone,
     private events: Events,
@@ -239,7 +236,6 @@ export class EnrolledCourseDetailsPage implements OnInit , OnDestroy {
     private location: Location,
     private router: Router,
     private appVersion: AppVersion,
-    private toastCtrl: ToastController,
     private translate: TranslateService,
     private popOverCtrl: PopoverController,
     private contentDeleteHandler: ContentDeleteHandler,
@@ -254,6 +250,7 @@ export class EnrolledCourseDetailsPage implements OnInit , OnDestroy {
     const extrasState = this.router.getCurrentNavigation().extras.state;
     if (extrasState) {
       this.courseCardData = extrasState.content;
+      // console.log('courseCardData', this.courseCardData);
       this.identifier = this.courseCardData.contentId || this.courseCardData.identifier;
       this.corRelationList = extrasState.corRelation;
       this.source = extrasState.source;
@@ -324,7 +321,12 @@ export class EnrolledCourseDetailsPage implements OnInit , OnDestroy {
 
     this.events.subscribe('courseToc:content-clicked', (data) => {
       if (this.course.createdBy !== this.userId) {
-        this.joinTraining();
+        if (!data.isEnrolled && !data.isBatchNotStarted) {
+          this.joinTraining();
+        } else if (data.isEnrolled && data.isBatchNotStarted) {
+          this.commonUtilService.showToast(this.commonUtilService.translateMessage('COURSE_WILL_BE_AVAILABLE',
+          this.datePipe.transform(this.courseStartDate, 'mediumDate')));
+        }
       }
     });
 
@@ -657,6 +659,7 @@ export class EnrolledCourseDetailsPage implements OnInit , OnDestroy {
         this.zone.run(() => {
           if (data) {
             this.batchDetails = data;
+            // console.log('this.batchDetails', this.batchDetails);
             this.saveContentContext(this.appGlobalService.getUserId(),
               this.batchDetails.courseId, this.courseCardData.batchId, this.batchDetails.status);
             this.preferences.getString(PreferenceKey.COURSE_IDENTIFIER).toPromise()
@@ -665,6 +668,9 @@ export class EnrolledCourseDetailsPage implements OnInit , OnDestroy {
                   this.batchExp = true;
                 } else if (this.batchDetails.status === 2) {
                   this.batchExp = true;
+                } else if (this.batchDetails.status === 0) {
+                  this.isBatchNotStarted = true;
+                  this.courseStartDate = this.batchDetails.startDate;
                 }
               })
               .catch((error) => {
@@ -982,7 +988,7 @@ export class EnrolledCourseDetailsPage implements OnInit , OnDestroy {
     this.courseService.getCourseBatches(courseBatchesRequest).toPromise()
       .then((data: Batch[]) => {
         this.batches = data || [];
-
+        // console.log('this.batches', this.batches);
         if ( data && data.length > 1) {
           this.batchCount = data.length;
         } else {
@@ -1234,32 +1240,6 @@ export class EnrolledCourseDetailsPage implements OnInit , OnDestroy {
       this.segmentType = 'modules';
       // this.isEnrolled = true;
     }
-    this.networkSubscription = this.commonUtilService.networkAvailability$.subscribe((available: boolean) => {
-      if (available) {
-        if (this.toast) {
-          this.toast.dismiss();
-          this.toast = undefined;
-        }
-      } else {
-        this.presentToastForOffline('NO_INTERNET_TITLE');
-      }
-    });
-  }
-
-  // Offline Toast
-  async presentToastForOffline(msg: string) {
-    this.toast = await this.toastController.create({
-      duration: 30000,
-      message: this.commonUtilService.translateMessage(msg),
-      showCloseButton: true,
-      position: 'top',
-      closeButtonText: 'X',
-      cssClass: ['toastHeader', 'offline']
-    });
-    this.toast.present();
-    this.toast.onDidDismiss(() => {
-      this.toast = undefined;
-    });
   }
 
   showLicensce() {
@@ -1415,13 +1395,6 @@ export class EnrolledCourseDetailsPage implements OnInit , OnDestroy {
     }
     // this.events.unsubscribe('courseToc:content-clicked');
     // TODO: this.events.unsubscribe(EventTopics.UNENROL_COURSE_SUCCESS);
-    if (this.networkSubscription) {
-      this.networkSubscription.unsubscribe();
-      if (this.toast) {
-        this.toast.dismiss();
-        this.toast = undefined;
-      }
-    }
   }
   ngOnDestroy(){
     this.events.unsubscribe('courseToc:content-clicked');
