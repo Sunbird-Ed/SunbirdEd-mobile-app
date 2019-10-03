@@ -260,6 +260,7 @@
   "GROUP_MEMBER_ADD_SUCCESS": "Members added successfully",
   "GROUP_MEMBER_DELETE_SUCCESS": "Group members deleted successfully",
   "GROUP_NAME": "Group Name",
+  "GROUP_UPDATE_SUCCESS": "Group Details Updated Successfully",
   "HABIT_REMINDER_NOTIFICATION_MESSAGE": "Learn something new on {{%s}} today!",
   "HELP": "Help",
   "HELP_US_BY_RATING": "Help us by rating {{%s}}",
