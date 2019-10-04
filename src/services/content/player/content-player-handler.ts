@@ -69,7 +69,7 @@ export class ContentPlayerHandler {
             };
 
             if (request['correlationData']) {
-                request['correlationData'].push(correlationData)
+                request['correlationData'].push(correlationData);
             }
 
             request['correlationData'] = [correlationData];
@@ -89,7 +89,7 @@ export class ContentPlayerHandler {
                 if (!isStreaming) {
                     this.file.checkFile(`file://${data.metadata.basePath}/`, 'index.ecml').then((isAvailable) => {
                         this.canvasPlayerService.xmlToJSon(`${filePath}/index.ecml`).then((json) => {
-                            data['data'] = json;
+                            data['data'] = JSON.stringify(json);
                             this.router.navigate([RouterLinks.PLAYER], { state: { config: data } });
 
                         }).catch((error) => {
