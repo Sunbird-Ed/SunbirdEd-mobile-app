@@ -33,6 +33,7 @@ import {
 } from 'services';
 import { Platform, Events, AlertController } from '@ionic/angular';
 import { Location } from '@angular/common';
+import { SplashScreenService } from '@app/services/splash-screen.service';
 
 @Component({
   selector: 'app-profile-settings',
@@ -100,7 +101,8 @@ export class ProfileSettingsPage implements OnInit {
     private router: Router,
     private appVersion: AppVersion,
     private alertCtrl: AlertController,
-    private location: Location
+    private location: Location,
+    private splashScreenService: SplashScreenService
   ) {
     this.getNavParams();
     this.preferences.getString(PreferenceKey.SELECTED_LANGUAGE_CODE).toPromise()
@@ -164,8 +166,7 @@ export class ProfileSettingsPage implements OnInit {
 
   async hideOnboardingSplashScreen() {
     if (this.navParams && this.navParams.forwardMigration) {
-      splashscreen.markImportDone();
-      splashscreen.hide();
+      this.splashScreenService.handleSunbirdSplashScreenActions();
     }
   }
 
@@ -275,7 +276,7 @@ export class ProfileSettingsPage implements OnInit {
         if (result && result !== undefined && result.length > 0) {
           result.forEach(element => {
             // renaming the fields to text, value and checked
-            const value = { 'name': element.name, 'code': element.identifier };
+            const value = { name: element.name, code: element.identifier };
             this.syllabusList.push(value);
           });
           await this.loader.dismiss();
@@ -604,7 +605,7 @@ export class ProfileSettingsPage implements OnInit {
           state: {
             loginMode: 'guest'
           }
-        }
+        };
         this.router.navigate(['/tabs'], navigationExtras);
       })
       .catch(async () => {
@@ -634,8 +635,8 @@ export class ProfileSettingsPage implements OnInit {
     switch ($event.name) {
       case 'back': this.telemetryGeneratorService.generateBackClickedTelemetry(
         PageId.ONBOARDING_PROFILE_PREFERENCES, Environment.ONBOARDING, true);
-        this.dismissPopup();
-        break;
+                   this.dismissPopup();
+                   break;
     }
   }
 

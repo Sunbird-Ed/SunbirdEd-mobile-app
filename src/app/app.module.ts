@@ -42,7 +42,8 @@ import {
   SunbirdQRScanner,
   ActivePageService,
   FormAndFrameworkUtilService,
-  CanvasPlayerService
+  CanvasPlayerService,
+  SplashScreenService
 } from '../services/index';
 
 import { AppComponent } from './app.component';
@@ -61,6 +62,9 @@ import { CrashAnalyticsErrorLogger } from '@app/services/crash-analytics/crash-a
 import { File } from '@ionic-native/file/ngx';
 import { TermsAndConditionsPageModule } from './terms-and-conditions/terms-and-conditions.module';
 import { TncUpdateHandlerService } from '@app/services/handlers/tnc-update-handler.service';
+import {SplashcreenTelemetryActionHandlerDelegate} from '@app/services/sunbird-splashscreen/splashcreen-telemetry-action-handler-delegate';
+import {SplashscreenImportActionHandlerDelegate} from '@app/services/sunbird-splashscreen/splashscreen-import-action-handler-delegate';
+import {SplaschreenDeeplinkActionHandlerDelegate} from '@app/services/sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
 
 // AoT requires an exported function for factories
 export function translateHttpLoaderFactory(httpClient: HttpClient) {
@@ -350,7 +354,7 @@ export const sunbirdSdkFactory =
         }
       });
 
-      // window['sunbird'] = SunbirdSdk.instance;
+      window['sunbird'] = SunbirdSdk.instance;
     };
   };
 
@@ -418,6 +422,10 @@ declare const buildconfigreader;
     NotificationService,
     ActivePageService,
     CanvasPlayerService,
+    SplashcreenTelemetryActionHandlerDelegate,
+    SplashscreenImportActionHandlerDelegate,
+    SplaschreenDeeplinkActionHandlerDelegate,
+    SplashScreenService,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     ...sunbirdSdkServicesProvidersFactory(),
     { provide: ErrorHandler, useClass: CrashAnalyticsErrorLogger },
