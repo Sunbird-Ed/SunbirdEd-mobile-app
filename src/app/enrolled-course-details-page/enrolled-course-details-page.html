@@ -9,22 +9,24 @@
 				<div class="hr-border-bottom"></div>
 			</ion-card-header>
 			<ion-card-content>
-				<div *ngIf="batches?.length && !isAlreadyEnrolled && course?.createdBy !== userId">
-					<button class="enrolled-course-card-button"
-						(click)="navigateToBatchListPage();">{{'JOIN_TRAINING' | translate}}</button>
-					<ion-card-subtitle *ngIf="batchCount || enrollmentEndDate" class="font-12 margin-bottom-2">
-						<div *ngIf="batchCount">
-							<ion-icon name="information-circle"></ion-icon> {{batchCount}}
-							{{'BATCHES_AVAILABLE' | translate}}
-						</div>
-						<div *ngIf="enrollmentEndDate">
-							<ion-icon name="information-circle"></ion-icon>
-							{{'LAST_DATE_TO_JOIN' | translate }} {{enrollmentEndDate | date}}
-						</div>
-						<div *ngIf="!enrollmentEndDate && batchEndDate">
-							{{'TRAINING_ENDS_ON' | translate}} {{batchEndDate | date}}
-						</div>
-					</ion-card-subtitle>
+				<div *ngIf="!isAlreadyEnrolled">
+					<div *ngIf="batches && course?.createdBy !== userId">
+						<button class="enrolled-course-card-button"
+							(click)="navigateToBatchListPage();">{{'JOIN_TRAINING' | translate}}</button>
+						<ion-card-subtitle *ngIf="batchCount || enrollmentEndDate" class="font-12 margin-bottom-2">
+							<div *ngIf="batchCount">
+								<ion-icon name="information-circle"></ion-icon> {{batchCount}}
+								{{'BATCHES_AVAILABLE' | translate}}
+							</div>
+							<div *ngIf="enrollmentEndDate">
+								<ion-icon name="information-circle"></ion-icon>
+								{{'LAST_DATE_TO_JOIN' | translate }} {{enrollmentEndDate | date}}
+							</div>
+							<div *ngIf="!enrollmentEndDate && batchEndDate">
+								{{'TRAINING_ENDS_ON' | translate}} {{batchEndDate | date}}
+							</div>
+						</ion-card-subtitle>
+					</div>
 				</div>
 				<div class="sb-course-end-container"
 					*ngIf="!isAlreadyEnrolled && !batches?.length">
@@ -37,7 +39,7 @@
 							<div class="sb-dt-card-actions">
 								<div class="wrapper sb-btn-tile-group" *ngIf="course?.progress !==100 && isAlreadyEnrolled">
 									<div>
-										<button *ngIf="downloadIdentifiers && downloadIdentifiers?.length" [disabled]="isDownloadStarted"
+										<button *ngIf="downloadIdentifiers" [disabled]="isDownloadStarted"
 											(click)="showDownloadConfirmationAlert()" slot="icon-only"
 											class="card-button">
 											<ion-icon ios="ios-cloud-download" md="md-cloud-download"
