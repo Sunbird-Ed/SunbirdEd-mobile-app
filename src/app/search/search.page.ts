@@ -346,7 +346,9 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
     }
 
     if (content.contentType === ContentType.COURSE) {
-      this.enrolledCourses = await this.getEnrolledCourses(false, false);
+      if (!this.guestUser) {
+        this.enrolledCourses = await this.getEnrolledCourses(false, false);
+      }
       if (this.enrolledCourses && this.enrolledCourses.length) {
         for (let i = 0; i < this.enrolledCourses.length; i++) {
           if (content.identifier === this.enrolledCourses[i].courseId) {

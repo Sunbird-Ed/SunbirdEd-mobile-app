@@ -1328,7 +1328,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
   }
 
   getCourseProgress() {
-    if (this.courseCardData.batchId) {
+    if (this.courseCardData.batchId && this.updatedCourseCardData) {
       // console.log('getCourseProgress', this.updatedCourseCardData);
       this.course.progress = this.updatedCourseCardData.completionPercentage;
     }
@@ -1686,13 +1686,13 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
           this.zone.run(async () => {
             await loader.dismiss();
             // this.setContentDetails(this.identifier);
-            this.updatedCourseCardData = await this.courseService.getEnrolledCourses({userId: this.userId, returnFreshCourses: true })
-              .toPromise().then((cData) => {
-                return cData.find((element) => element.courseId === this.identifier);
-              });
+            // this.updatedCourseCardData = await this.courseService.getEnrolledCourses({userId: this.userId, returnFreshCourses: true })
+            //   .toPromise().then((cData) => {
+            //     return cData.find((element) => element.courseId === this.identifier);
+            //   });
             this.courseCardData.batchId = item.id;
-            this.getBatchDetails();
-            this.segmentType = 'modules';
+            // this.getBatchDetails();
+            // this.segmentType = 'modules';
             this.commonUtilService.showToast(this.commonUtilService.translateMessage('COURSE_ENROLLED'));
             this.events.publish(EventTopics.ENROL_COURSE_SUCCESS, {
               batchId: item.id,
