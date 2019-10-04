@@ -1698,6 +1698,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
               batchId: item.id,
               courseId: item.courseId
             });
+            this.isAlreadyEnrolled = true;
           });
         }, (error) => {
           this.zone.run(async () => {
