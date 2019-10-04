@@ -23,6 +23,7 @@ import { AppGlobalService } from '../app-global-service.service';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { CommonUtilService } from '@app/services/common-util.service';
 import { PageId, InteractType, InteractSubtype, Environment } from '../telemetry-constants';
+import { Location } from '@angular/common';
 
 @Injectable()
 export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenActionHandlerDelegate {
@@ -43,7 +44,8 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
     private events: Events,
     private zone: NgZone,
     private router: Router,
-    private appVersion: AppVersion
+    private appVersion: AppVersion,
+    private location: Location
   ) {
     this.getUserId();
     this.appVersion.getAppName()
@@ -172,6 +174,10 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
             } else if (error && error.response
               && error.response.body && error.response.body.params && error.response.body.params.err === 'USER_ALREADY_ENROLLED_COURSE') {
               this.commonUtilService.showToast(this.commonUtilService.translateMessage('ALREADY_ENROLLED_COURSE'));
+              this.events.publish(EventTopics.ENROL_COURSE_SUCCESS, {
+                batchId: batch.id,
+                courseId: batch.courseId
+              });
               this.getEnrolledCourses();
             }
           });
@@ -205,12 +211,15 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
       .then(resp => {
         if (resp) {
           console.log('URL', this.router.url);
+          if (this.router.url.indexOf(RouterLinks.COURSE_BATCHES) !== -1) {
+            this.location.back();
+          }
           // setTimeout(async () => {
-          this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], {
-            state: {
-              content: JSON.parse(resp)
-            }
-          });
+          // this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], {
+          //   state: {
+          //     content: JSON.parse(resp)
+          //   }
+          // });
             // await loader.dismiss();
           this.preferences.putString(PreferenceKey.COURSE_DATA_KEY, '').toPromise();
           // }, 2000);
