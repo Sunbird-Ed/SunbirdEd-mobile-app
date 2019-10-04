@@ -189,8 +189,8 @@ export class ProfileSettingsPage implements OnInit {
     const disabledSelectElement = Array.from(document.querySelectorAll('.item-label-stacked.item-select-disabled ion-select'));
     if (disabledSelectElement) {
       disabledSelectElement.forEach((element) => {
-        element['shadowRoot'].querySelector('.select-text.select-placeholder').setAttribute('style', 'color: #cccccc !important;padding-left: 10px;');
-        element['shadowRoot'].querySelector('.select-icon-inner').setAttribute('style', 'border-color: #cccccc !important;animation: none;border: solid;border-width: 0 2px 2px 0;display: inline-block;padding: 4px;transform: rotate(45deg);');
+        element['shadowRoot'].querySelector('.select-text.select-placeholder').setAttribute('style', 'color: #979797 !important;padding-left: 10px;opacity: 1;');
+        element['shadowRoot'].querySelector('.select-icon-inner').setAttribute('style', 'border-color: #979797 !important;animation: none;border: solid;border-width: 0 2px 2px 0;display: inline-block;padding: 4px;transform: rotate(45deg);opacity: 1;');
       });
     }
 
