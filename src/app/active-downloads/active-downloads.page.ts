@@ -41,6 +41,7 @@ export class ActiveDownloadsPage implements OnInit, OnDestroy, ActiveDownloadsIn
   };
   private _toast: any;
   private storageDestination: any;
+  networkFlag: boolean;
 
   constructor(
     private popoverCtrl: PopoverController,
@@ -157,14 +158,18 @@ export class ActiveDownloadsPage implements OnInit, OnDestroy, ActiveDownloadsIn
   }
 
   private initNetworkDetection() {
-    this._networkSubscription = this.commonUtilService.networkAvailability$.subscribe((available: boolean) => {
-      if (this._toast) {
-        this._toast.dismiss();
-        this._toast = undefined;
+    this.networkFlag = this.commonUtilService.networkInfo.isNetworkAvailable;
+    this._networkSubscription = this.commonUtilService.networkAvailability$.subscribe(async (available: boolean) => {
+      if (this.networkFlag !== available) {
+        if (this._toast) {
+          await this._toast.dismiss();
+          this._toast = undefined;
+        }
+        if (!available) {
+          this.presentPopupForOffline();
+        }
       }
-      if (!available) {
-        this.presentPopupForOffline();
-      }
+      this.networkFlag = available;
     });
   }
 
