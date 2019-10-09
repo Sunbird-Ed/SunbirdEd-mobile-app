@@ -306,19 +306,6 @@ export class ContentDetailsPage implements OnInit {
     });
   }
 
-
-  // You are Online Toast
-  async presentToast() {
-    const toast = await this.toastController.create({
-      duration: 2000,
-      message: this.commonUtilService.translateMessage('INTERNET_AVAILABLE'),
-      showCloseButton: false,
-      position: 'top',
-      cssClass: ['online', 'toastForOnline']
-    });
-    toast.present();
-  }
-
   calculateAvailableUserCount() {
     const profileRequest: GetAllProfileRequest = {
       local: true,

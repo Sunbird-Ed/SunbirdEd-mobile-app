@@ -159,7 +159,6 @@ export class ActiveDownloadsPage implements OnInit, OnDestroy, ActiveDownloadsIn
   private initNetworkDetection() {
     this._networkSubscription = this.commonUtilService.networkAvailability$.subscribe((available: boolean) => {
       if (available) {
-        this.presentToast();
         if (this._toast) {
           this._toast.dismiss();
           this._toast = undefined;
@@ -168,17 +167,6 @@ export class ActiveDownloadsPage implements OnInit, OnDestroy, ActiveDownloadsIn
         this.presentPopupForOffline();
       }
     });
-  }
-
-  private async presentToast() {
-    const toast = await this.toastController.create({
-      duration: 2000,
-      message: this.commonUtilService.translateMessage('INTERNET_AVAILABLE'),
-      showCloseButton: false,
-      position: 'top',
-      cssClass: 'toastForOnline'
-    });
-    toast.present();
   }
 
   private async showCancelPopUp(downloadRequest?: DownloadRequest) {
