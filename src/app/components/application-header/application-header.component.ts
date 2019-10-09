@@ -172,7 +172,18 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
   }
 
   emitEvent($event, name) {
-    this.headerEvents.emit({ name, event: $event });
+
+    if(name == 'filter') {
+      if(this.commonUtilService.networkInfo.isNetworkAvailable) {
+        this.headerEvents.emit({ name, event: $event });
+      }
+      else{
+        this.commonUtilService.showToast('NEED_INTERNET_TO_CHANGE');
+      }
+    }
+    else {
+      this.headerEvents.emit({ name, event: $event });
+    }
   }
 
   emitSideMenuItemEvent($event, menuItem) {
