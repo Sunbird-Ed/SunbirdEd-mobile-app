@@ -252,7 +252,7 @@ export class ProfilePage implements OnInit {
               });
             }).catch(err => {
               if (refresher) {
-                refresher.complete();
+                refresher.target.complete();
               }
               reject();
             });
