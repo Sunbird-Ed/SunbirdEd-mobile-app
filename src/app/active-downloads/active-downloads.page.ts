@@ -158,12 +158,11 @@ export class ActiveDownloadsPage implements OnInit, OnDestroy, ActiveDownloadsIn
 
   private initNetworkDetection() {
     this._networkSubscription = this.commonUtilService.networkAvailability$.subscribe((available: boolean) => {
-      if (available) {
-        if (this._toast) {
-          this._toast.dismiss();
-          this._toast = undefined;
-        }
-      } else {
+      if (this._toast) {
+        this._toast.dismiss();
+        this._toast = undefined;
+      }
+      if (!available) {
         this.presentPopupForOffline();
       }
     });

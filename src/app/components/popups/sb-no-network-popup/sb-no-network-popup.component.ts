@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
-// migration-TODO
-// import { NavParams, ViewController } from 'ionic-angular';
+import { PopoverController } from '@ionic/angular';
 
 @Component({
   selector: 'sb-no-network-popup',
@@ -10,23 +9,11 @@ export class SbNoNetworkPopupComponent {
   sbPopoverHeading = '';
   sbPopoverMessage = '';
 
-  constructor(
-    // migration-TODO
-    // private navParams: NavParams,
-    // private viewCtrl: ViewController
-    ) {
-    this.initParams();
-  }
-
-  private initParams() {
-    // migration-TODO
-    // this.sbPopoverHeading = this.navParams.get('sbPopoverHeading');
-    // this.sbPopoverMessage = this.navParams.get('sbPopoverMessage');
+  constructor(private popoverCtrl: PopoverController) {
   }
 
   closePopover() {
-    // migration-TODO
-    // this.viewCtrl.dismiss();
+    this.popoverCtrl.dismiss();
   }
 
 }
