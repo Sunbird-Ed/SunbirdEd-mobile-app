@@ -64,9 +64,6 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
         this.utillService.getBuildConfigValue('APPLICATION_ID')
         .then( value => {
             this.appId = value;
-        })
-        .catch(err => {
-            console.log('Error in fetching APPLICATION_ID: ', err);
         });
         break;
       case ActionType.COURSE_UPDATE:
