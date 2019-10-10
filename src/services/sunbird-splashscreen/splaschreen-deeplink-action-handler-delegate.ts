@@ -33,7 +33,6 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
   appLabel: any;
   externalUrl: any;
   appId: any;
-    isUpdateRequired: boolean;
 
   constructor(
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
