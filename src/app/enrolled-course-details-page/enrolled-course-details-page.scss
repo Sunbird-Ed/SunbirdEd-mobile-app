@@ -187,6 +187,12 @@
         font-size: 14px;
         padding-top: 10px;
     }
+    .enrollment-info{
+      ion-icon{
+        position: relative;
+        top: 2px;
+      }
+    }
     .enrolled-course-card-button{
         background-color: #008840;
         border: none;
@@ -201,10 +207,6 @@
         margin-bottom: 8px;
         width: 100%;
         padding: 13px 0px 13px 0px;
-        ion-icon{
-          position: relative;
-          top: 2px;
-        }
     }
     .segment-button-checked{
       ion-label.sc-ion-label-md-h.sc-ion-label-md-s.md.hydrated{
