@@ -30,6 +30,8 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
   userId: string;
   enrolledCourses: any;
   appLabel: any;
+  externalUrl: any;
+  appId: any;
 
   constructor(
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
@@ -53,8 +55,11 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
 
   handleNotification(data) {
     switch (data.actionData.actionType) {
+      case ActionType.SURVEY:
+        this.externalUrl = data.actionData.deepLink;
+        break;
       case ActionType.UPDATE_APP:
-        console.log('updateApp');
+        this.appId = data.actionData.identifier;
         break;
       case ActionType.COURSE_UPDATE:
         this.identifier = data.actionData.identifier;
@@ -72,7 +77,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
   }
 
   onAction(type: string, action?: { identifier: string }): Observable<undefined> {
-    const identifier: any = action !== undefined ? action.identifier : undefined;
+    const identifier: any = action !== undefined ? action.identifier : this.identifier;
     if (identifier) {
       switch (type) {
         case 'content': {
@@ -102,6 +107,8 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
           return Observable.of(undefined);
         }
       }
+    } else if (this.externalUrl) {
+        open(this.externalUrl);
     } else {
       this.checkCourseRedirect();
     }
