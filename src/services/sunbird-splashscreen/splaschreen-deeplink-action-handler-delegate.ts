@@ -23,7 +23,9 @@ import { AppGlobalService } from '../app-global-service.service';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { CommonUtilService } from '@app/services/common-util.service';
 import { PageId, InteractType, InteractSubtype, Environment } from '../telemetry-constants';
+import { UtilityService } from '..';
 import { Location } from '@angular/common';
+
 
 @Injectable()
 export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenActionHandlerDelegate {
@@ -32,6 +34,8 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
   userId: string;
   enrolledCourses: any;
   appLabel: any;
+  externalUrl: any;
+  appId: any;
 
   constructor(
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
@@ -45,6 +49,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
     private zone: NgZone,
     private router: Router,
     private appVersion: AppVersion,
+    private utillService: UtilityService,
     private location: Location
   ) {
     this.getUserId();
@@ -56,8 +61,14 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
 
   handleNotification(data) {
     switch (data.actionData.actionType) {
+      case ActionType.SURVEY:
+        this.externalUrl = data.actionData.deepLink;
+        break;
       case ActionType.UPDATE_APP:
-        console.log('updateApp');
+        this.utillService.getBuildConfigValue('APPLICATION_ID')
+        .then( value => {
+            this.appId = value;
+        });
         break;
       case ActionType.COURSE_UPDATE:
         this.identifier = data.actionData.identifier;
@@ -75,7 +86,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
   }
 
   onAction(type: string, action?: { identifier: string }): Observable<undefined> {
-    const identifier: any = action !== undefined ? action.identifier : undefined;
+    const identifier: any = action !== undefined ? action.identifier : this.identifier;
     if (identifier) {
       switch (type) {
         case 'content': {
@@ -105,6 +116,10 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
           return Observable.of(undefined);
         }
       }
+    } else if (this.appId) {
+        this.utillService.openPlayStore(this.appId);
+    } else if (this.externalUrl) {
+        open(this.externalUrl);
     } else {
       this.checkCourseRedirect();
     }
