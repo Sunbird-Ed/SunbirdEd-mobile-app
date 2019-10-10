@@ -174,7 +174,6 @@ export class ContentDetailsPage implements OnInit {
     private contentPlayerHandler: ContentPlayerHandler,
     private childContentHandler: ChildContentHandler,
     private contentDeleteHandler: ContentDeleteHandler,
-    private navCtrl: NavController
   ) {
     this.subscribePlayEvent();
     this.checkDeviceAPILevel();
@@ -182,7 +181,12 @@ export class ContentDetailsPage implements OnInit {
     this.defaultAppIcon = 'assets/imgs/ic_launcher.png';
     this.defaultLicense = ContentConstants.DEFAULT_LICENSE;
     this.ratingHandler.resetRating();
+    this.route.queryParams.subscribe(params => {
+      this.getNavParams();
+    });
+  }
 
+  getNavParams() {
     const extras = this.router.getCurrentNavigation().extras.state;
     if (extras) {
       this.course = extras.course;
@@ -248,7 +252,9 @@ export class ContentDetailsPage implements OnInit {
       this.generateTelemetry();
     }
     this.isPlayedFromCourse();
-    this.setContentDetails(this.identifier, true, this.contentPlayerHandler.isContentPlayerLaunched());
+    this.setContentDetails(
+      this.identifier, true,
+      this.contentPlayerHandler.getLastPlayedContentId() === this.identifier);
     this.subscribeSdkEvent();
     this.findHierarchyOfContent();
     this.handleDeviceBackButton();
@@ -298,19 +304,6 @@ export class ContentDetailsPage implements OnInit {
       this.appGlobalService.setSelectedUser(config['selectedUser']);
       this.playContent(config.streaming);
     });
-  }
-
-
-  // You are Online Toast
-  async presentToast() {
-    const toast = await this.toastController.create({
-      duration: 2000,
-      message: this.commonUtilService.translateMessage('INTERNET_AVAILABLE'),
-      showCloseButton: false,
-      position: 'top',
-      cssClass: ['online', 'toastForOnline']
-    });
-    toast.present();
   }
 
   calculateAvailableUserCount() {
@@ -370,6 +363,7 @@ export class ContentDetailsPage implements OnInit {
         if (showRating) {
           this.contentPlayerHandler.setContentPlayerLaunchStatus(false);
           this.ratingHandler.showRatingPopup(this.isContentPlayed, data, 'automatic', this.corRelationList, this.objRollup);
+          this.contentPlayerHandler.setLastPlayedContentId('');
         }
       })
       .catch(async (error: any) => {
@@ -561,10 +555,10 @@ export class ContentDetailsPage implements OnInit {
     if (this.isSingleContent) {
       window.history.go(-3);
     } else if (this.resultLength === 1) {
-     // this.navCtrl.navigateBack([RouterLinks.SEARCH]);
-     window.history.go(-2);
+      // this.navCtrl.navigateBack([RouterLinks.SEARCH]);
+      window.history.go(-2);
     } else {
-     this.location.back();
+      this.location.back();
     }
   }
 
@@ -876,7 +870,8 @@ export class ContentDetailsPage implements OnInit {
     }
     if (data && data.isLeftButtonClicked) {
       this.playContent(isStreaming);
-    } else {
+      // Incase of close button click data.isLeftButtonClicked = null so we have put the false condition check
+    } else if (data && data.isLeftButtonClicked  === false) {
       const playConfig: any = {};
       playConfig.playContent = true;
       playConfig.streaming = isStreaming;

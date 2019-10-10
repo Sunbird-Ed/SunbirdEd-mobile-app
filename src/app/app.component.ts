@@ -25,10 +25,9 @@ import {
   AppRatingService,
   AppHeaderService,
   FormAndFrameworkUtilService,
+  SplashScreenService
 } from '../services';
 import { SplaschreenDeeplinkActionHandlerDelegate } from '@app/services/sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
-import { SplashcreenTelemetryActionHandlerDelegate } from '@app/services/sunbird-splashscreen/splashcreen-telemetry-action-handler-delegate';
-import { SplashscreenImportActionHandlerDelegate } from '@app/services/sunbird-splashscreen/splashscreen-import-action-handler-delegate';
 import { LogoutHandlerService } from '@app/services/handlers/logout-handler.service';
 import { NotificationService as localNotification } from '@app/services/notification.service';
 import { RouterLinks } from './app.constant';
@@ -37,11 +36,6 @@ import { NetworkAvailabilityToastService } from '@app/services/network-availabil
 
 @Component({
   selector: 'app-root',
-  providers: [
-    SplashcreenTelemetryActionHandlerDelegate,
-    SplashscreenImportActionHandlerDelegate,
-    SplaschreenDeeplinkActionHandlerDelegate
-  ],
   templateUrl: 'app.component.html'
 })
 export class AppComponent implements OnInit, AfterViewInit {
@@ -81,8 +75,6 @@ export class AppComponent implements OnInit, AfterViewInit {
     private telemetryGeneratorService: TelemetryGeneratorService,
     private tncUpdateHandlerService: TncUpdateHandlerService,
     private utilityService: UtilityService,
-    private splashcreenTelemetryActionHandlerDelegate: SplashcreenTelemetryActionHandlerDelegate,
-    private splashscreenImportActionHandlerDelegate: SplashscreenImportActionHandlerDelegate,
     private splaschreenDeeplinkActionHandlerDelegate: SplaschreenDeeplinkActionHandlerDelegate,
     private headerService: AppHeaderService,
     private logoutHandlerService: LogoutHandlerService,
@@ -93,7 +85,8 @@ export class AppComponent implements OnInit, AfterViewInit {
     private router: Router,
     private location: Location,
     private menuCtrl: MenuController,
-    private networkAvailability: NetworkAvailabilityToastService
+    private networkAvailability: NetworkAvailabilityToastService,
+    private splashScreenService: SplashScreenService
     ) {
       this.telemetryAutoSyncUtil = new TelemetryAutoSyncUtil(this.telemetryService);
       platform.ready().then(async () => {
@@ -119,7 +112,6 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.handleAuthAutoMigrateEvents();
       this.handleAuthErrors();
       await this.getSelectedLanguage();
-      this.handleSunbirdSplashScreenActions();
       this.preferences.putString(PreferenceKey.CONTENT_CONTEXT, '').subscribe();
       window['thisRef'] = this;
       this.statusBar.styleBlackTranslucent();
@@ -289,15 +281,28 @@ export class AppComponent implements OnInit, AfterViewInit {
    * Initializing the event for reloading the Tabs on Signing-In.
    */
   triggerSignInEvent() {
-    this.events.subscribe(EventTopics.SIGN_IN_RELOAD, () => {
-      this.toggleRouterOutlet = false;
+    this.events.subscribe(EventTopics.SIGN_IN_RELOAD, async () => {
+      let batchDetails;
+      await this.preferences.getString(PreferenceKey.BATCH_DETAIL_KEY).toPromise()
+      .then(async (resp) => {
+        if (resp) {
+          batchDetails = resp;
+        } else {
+          this.toggleRouterOutlet = false;
+        }
+      });
+      // this.toggleRouterOutlet = false;
       // This setTimeout is very important for reloading the Tabs page on SignIn.
-      setTimeout(() => {
+      setTimeout(async () => {
         this.events.publish(AppGlobalService.USER_INFO_UPDATED);
         this.toggleRouterOutlet = true;
         this.reloadSigninEvents();
         this.events.publish('UPDATE_TABS');
-        this.router.navigate([RouterLinks.TABS]);
+        if (batchDetails) {
+          await this.splaschreenDeeplinkActionHandlerDelegate.onAction('content').toPromise();
+        } else {
+          this.router.navigate([RouterLinks.TABS]);
+        }
       }, 0);
     });
   }
@@ -319,7 +324,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   ngAfterViewInit(): void {
     this.platform.resume.subscribe(() => {
       this.telemetryGeneratorService.generateInterruptTelemetry('resume', '');
-      this.handleSunbirdSplashScreenActions();
+      this.splashScreenService.handleSunbirdSplashScreenActions();
       this.checkForCodeUpdates();
     });
 
@@ -474,34 +479,6 @@ export class AppComponent implements OnInit, AfterViewInit {
       });
   }
 
-  private async handleSunbirdSplashScreenActions(): Promise<undefined> {
-    const stringifiedActions = await new Promise<string>((resolve) => {
-      splashscreen.getActions((actionsTobeDone) => {
-        resolve(actionsTobeDone);
-      });
-    });
-
-    const actions: { type: string, payload: any }[] = JSON.parse(stringifiedActions);
-
-    for (const action of actions) {
-      switch (action.type) {
-        case 'TELEMETRY': {
-          await this.splashcreenTelemetryActionHandlerDelegate.onAction(action.type, action.payload).toPromise();
-          break;
-        }
-        case 'IMPORT': {
-          await this.splashscreenImportActionHandlerDelegate.onAction(action.type, action.payload).toPromise();
-          break;
-        }
-        case 'DEEPLINK': {
-          await this.splaschreenDeeplinkActionHandlerDelegate.onAction(action.payload.type, action.payload).toPromise();
-          break;
-        }
-        default:
-          return;
-      }
-    }
-  }
 
   private autoSyncTelemetry() {
     this.telemetryAutoSyncUtil.start(30 * 1000)
@@ -544,7 +521,7 @@ export class AppComponent implements OnInit, AfterViewInit {
         if (this.router.url === RouterLinks.LIBRARY_TAB || this.router.url === RouterLinks.COURSE_TAB
           || this.router.url === RouterLinks.DOWNLOAD_TAB || this.router.url === RouterLinks.PROFILE_TAB ||
           this.router.url === RouterLinks.GUEST_PROFILE_TAB) {
-          this.commonUtilService.showExitPopUp(this.activePageService.computePageId(this.router.url), Environment.HOME, false);
+          this.commonUtilService.showExitPopUp(this.activePageService.computePageId(this.router.url), Environment.HOME, false).then();
         } else {
           // this.routerOutlet.pop();
           if (this.location.back) {

@@ -961,9 +961,9 @@ export class CollectionDetailEtbPage implements OnInit {
         }
 
         if (event.type === ContentEventType.IMPORT_PROGRESS) {
-          this.importProgressMessage = this.commonUtilService.translateMessage('EXTRACTING_CONTENT') + ' ' +
-            Math.floor((event.payload.currentCount / event.payload.totalCount) * 100) +
+          const totalCountMsg = Math.floor((event.payload.currentCount / event.payload.totalCount) * 100) +
             '% (' + event.payload.currentCount + ' / ' + event.payload.totalCount + ')';
+          this.importProgressMessage = this.commonUtilService.translateMessage('EXTRACTING_CONTENT', totalCountMsg);
           if (event.payload.currentCount === event.payload.totalCount) {
             let timer = 30;
             const interval = setInterval(() => {

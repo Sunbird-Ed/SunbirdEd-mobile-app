@@ -17,6 +17,7 @@ import { Course, CourseService } from 'sunbird-sdk';
 })
 export class ContentPlayerHandler {
     private isPlayerLaunched = false;
+    private lastPlayedContentId: string;
     constructor(
         @Inject('PLAYER_SERVICE') private playerService: PlayerService,
         @Inject('COURSE_SERVICE') private courseService: CourseService,
@@ -68,7 +69,7 @@ export class ContentPlayerHandler {
             };
 
             if (request['correlationData']) {
-                request['correlationData'].push(correlationData)
+                request['correlationData'].push(correlationData);
             }
 
             request['correlationData'] = [correlationData];
@@ -81,13 +82,14 @@ export class ContentPlayerHandler {
             } else {
                 data.config.overlay.enableUserSwitcher = true;
             }
+            this.lastPlayedContentId = content.identifier;
             this.isPlayerLaunched = true;
             if (data.metadata.mimeType === 'application/vnd.ekstep.ecml-archive') {
                 const filePath = this.commonUtilService.convertFileSrc(`${data.metadata.basePath}`);
                 if (!isStreaming) {
                     this.file.checkFile(`file://${data.metadata.basePath}/`, 'index.ecml').then((isAvailable) => {
                         this.canvasPlayerService.xmlToJSon(`${filePath}/index.ecml`).then((json) => {
-                            data['data'] = json;
+                            data['data'] = JSON.stringify(json);
                             this.router.navigate([RouterLinks.PLAYER], { state: { config: data } });
 
                         }).catch((error) => {
@@ -118,5 +120,13 @@ export class ContentPlayerHandler {
 
     public setContentPlayerLaunchStatus(isPlayerLaunced: boolean) {
         this.isPlayerLaunched = isPlayerLaunced;
+    }
+
+    public getLastPlayedContentId(): string {
+        return this.lastPlayedContentId;
+    }
+
+    public setLastPlayedContentId(contentId: string) {
+        this.lastPlayedContentId = contentId;
     }
 }

@@ -346,7 +346,11 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
     }
 
     if (content.contentType === ContentType.COURSE) {
-      this.enrolledCourses = await this.getEnrolledCourses(false, false);
+      if (!this.guestUser) {
+        this.enrolledCourses = await this.getEnrolledCourses(false, false);
+      } else {
+        this.enrolledCourses = [];
+      }
       if (this.enrolledCourses && this.enrolledCourses.length) {
         for (let i = 0; i < this.enrolledCourses.length; i++) {
           if (content.identifier === this.enrolledCourses[i].courseId) {
@@ -1356,9 +1360,9 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
         }
 
         if (event.type === ContentEventType.IMPORT_PROGRESS) {
-          this.loadingDisplayText = this.commonUtilService.translateMessage('EXTRACTING_CONTENT') + ' ' +
-            Math.floor((event.payload.currentCount / event.payload.totalCount) * 100) +
-            '% (' + event.payload.currentCount + ' / ' + event.payload.totalCount + ')';
+          const totalCountMsg = Math.floor((event.payload.currentCount / event.payload.totalCount) * 100) +
+          '% (' + event.payload.currentCount + ' / ' + event.payload.totalCount + ')';
+          this.loadingDisplayText = this.commonUtilService.translateMessage('EXTRACTING_CONTENT', totalCountMsg);
           if (event.payload.currentCount === event.payload.totalCount) {
             let timer = 30;
             const interval = setInterval(() => {

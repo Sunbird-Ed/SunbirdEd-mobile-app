@@ -1,3 +1,4 @@
+import { PreferenceKey } from '@app/app/app.constant';
 import { Inject, Injectable, NgZone } from '@angular/core';
 import { Router } from '@angular/router';
 import { Events } from '@ionic/angular';
@@ -23,6 +24,8 @@ import { TelemetryGeneratorService } from '@app/services/telemetry-generator.ser
 import { CommonUtilService } from '@app/services/common-util.service';
 import { PageId, InteractType, InteractSubtype, Environment } from '../telemetry-constants';
 import { UtilityService } from '..';
+import { Location } from '@angular/common';
+
 
 @Injectable()
 export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenActionHandlerDelegate {
@@ -46,7 +49,8 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
     private zone: NgZone,
     private router: Router,
     private appVersion: AppVersion,
-    private utillService: UtilityService
+    private utillService: UtilityService,
+    private location: Location
   ) {
     this.getUserId();
     this.appVersion.getAppName()
@@ -123,10 +127,10 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
   }
 
   checkCourseRedirect() {
-    this.preferences.getString('batch_detail').toPromise()
+    this.preferences.getString(PreferenceKey.BATCH_DETAIL_KEY).toPromise()
       .then(resp => {
         if (resp) {
-          this.events.publish('return_course');
+          // this.events.publish('return_course');
           this.authService.getSession().subscribe((session: OAuthSession) => {
             if (!session) {
                 this.isGuestUser = true;
@@ -137,7 +141,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
             this.enrollIntoBatch(JSON.parse(resp));
           }, () => {
           });
-          this.preferences.putString('batch_detail', '').toPromise();
+          this.preferences.putString(PreferenceKey.BATCH_DETAIL_KEY, '').toPromise();
         }
       });
   }
@@ -185,6 +189,10 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
             } else if (error && error.response
               && error.response.body && error.response.body.params && error.response.body.params.err === 'USER_ALREADY_ENROLLED_COURSE') {
               this.commonUtilService.showToast(this.commonUtilService.translateMessage('ALREADY_ENROLLED_COURSE'));
+              this.events.publish(EventTopics.ENROL_COURSE_SUCCESS, {
+                batchId: batch.id,
+                courseId: batch.courseId
+              });
               this.getEnrolledCourses();
             }
           });
@@ -212,20 +220,24 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
   }
 
   async navigateToCoursePage() {
-    const loader = await this.commonUtilService.getLoader();
-    await loader.present();
-    this.preferences.getString('course_data').toPromise()
+    // const loader = await this.commonUtilService.getLoader();
+    // await loader.present();
+    this.preferences.getString(PreferenceKey.COURSE_DATA_KEY).toPromise()
       .then(resp => {
         if (resp) {
-          setTimeout(async () => {
-            this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], {
-              state: {
-                content: JSON.parse(resp)
-              }
-            });
-            await loader.dismiss();
-            this.preferences.putString('course_data', '').toPromise();
-          }, 2000);
+          console.log('URL', this.router.url);
+          if (this.router.url.indexOf(RouterLinks.COURSE_BATCHES) !== -1) {
+            this.location.back();
+          }
+          // setTimeout(async () => {
+          // this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], {
+          //   state: {
+          //     content: JSON.parse(resp)
+          //   }
+          // });
+            // await loader.dismiss();
+          this.preferences.putString(PreferenceKey.COURSE_DATA_KEY, '').toPromise();
+          // }, 2000);
         }
       });
   }
@@ -235,13 +247,16 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
    *
    * It internally calls course handler of genie sdk
    */
-  getEnrolledCourses(refreshEnrolledCourses: boolean = true, returnRefreshedCourses: boolean = false): void {
+  async getEnrolledCourses(refreshEnrolledCourses: boolean = true, returnRefreshedCourses: boolean = false) {
+    const loader = await this.commonUtilService.getLoader();
+    await loader.present();
     const option: FetchEnrolledCourseRequest = {
       userId: this.userId,
       returnFreshCourses: returnRefreshedCourses
     };
     this.courseService.getEnrolledCourses(option).toPromise()
-      .then((enrolledCourses) => {
+      .then(async (enrolledCourses) => {
+        await loader.dismiss();
         if (enrolledCourses) {
           this.zone.run(() => {
             this.enrolledCourses = enrolledCourses ? enrolledCourses : [];
@@ -255,7 +270,8 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
             }
           });
         }
-      }, (err) => {
+      }, async (err) => {
+        await loader.dismiss();
       });
   }
 }

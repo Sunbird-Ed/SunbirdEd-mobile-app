@@ -268,14 +268,14 @@ export class GroupDetailsPage {
     const popover = await this.popOverCtrl.create({
       component: GroupDetailNavPopover,
       componentProps: {
-        goToEditGroup: async () => {
+        goToEditGroup: () => {
           const navigationExtras: NavigationExtras = {
             state: {
               groupInfo: this.group
             }
-          }
+          };
           this.router.navigate([RouterLinks.CREATE_GROUP], navigationExtras);
-          await popover.dismiss();
+          popover.dismiss();
         },
         deleteGroup: async () => {
 
