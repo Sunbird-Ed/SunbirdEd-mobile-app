@@ -22,6 +22,7 @@ import { AppGlobalService } from '../app-global-service.service';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { CommonUtilService } from '@app/services/common-util.service';
 import { PageId, InteractType, InteractSubtype, Environment } from '../telemetry-constants';
+import { UtilityService } from '..';
 
 @Injectable()
 export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenActionHandlerDelegate {
@@ -32,6 +33,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
   appLabel: any;
   externalUrl: any;
   appId: any;
+    isUpdateRequired: boolean;
 
   constructor(
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
@@ -44,7 +46,8 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
     private events: Events,
     private zone: NgZone,
     private router: Router,
-    private appVersion: AppVersion
+    private appVersion: AppVersion,
+    private utillService: UtilityService
   ) {
     this.getUserId();
     this.appVersion.getAppName()
@@ -59,7 +62,13 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
         this.externalUrl = data.actionData.deepLink;
         break;
       case ActionType.UPDATE_APP:
-        this.appId = data.actionData.identifier;
+        this.utillService.getBuildConfigValue('APPLICATION_ID')
+        .then( value => {
+            this.appId = value;
+        })
+        .catch(err => {
+            console.log('Error in fetching APPLICATION_ID: ', err);
+        });
         break;
       case ActionType.COURSE_UPDATE:
         this.identifier = data.actionData.identifier;
@@ -107,6 +116,8 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
           return Observable.of(undefined);
         }
       }
+    } else if (this.appId) {
+        this.utillService.openPlayStore(this.appId);
     } else if (this.externalUrl) {
         open(this.externalUrl);
     } else {
