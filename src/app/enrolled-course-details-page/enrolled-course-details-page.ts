@@ -1228,7 +1228,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
    */
   async ionViewWillEnter() {
     this.todayDate =  moment(new Date()).format('YYYY-MM-DD');
-    this.showLoading = true;
+    // this.showLoading = true;
     this.identifier = this.courseCardData.contentId || this.courseCardData.identifier;
     this.downloadSize = 0;
     this.objRollup = ContentUtil.generateRollUp(this.courseCardData.hierarchyInfo, this.identifier);
