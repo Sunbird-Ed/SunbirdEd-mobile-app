@@ -76,6 +76,7 @@ import { SbPopoverComponent } from '../components/popups';
 import { TranslateService } from '@ngx-translate/core';
 import { ContentInfo } from '@app/services/content/content-info';
 import { ContentDeleteHandler } from '@app/services/content/content-delete-handler';
+import * as moment from 'moment';
 declare const cordova;
 
 @Component({
@@ -203,6 +204,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
   leaveTrainigPopover: any;
   showOfflineSection = false;
   courseBatchesRequest: CourseBatchesRequest;
+  showUnenrollButton = false;
 
   @ViewChild('stickyPillsRef') stickyPillsRef: ElementRef;
   public objRollup: Rollup;
@@ -213,6 +215,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
   showCredits = false;
   contentDeleteObservable: any;
   public showUnenroll: boolean;
+  public todayDate: any;
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -253,6 +256,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
     const extrasState = this.router.getCurrentNavigation().extras.state;
     if (extrasState) {
       this.courseCardData = extrasState.content;
+      // console.log('this.courseCardData', this.courseCardData);
       this.identifier = this.courseCardData.contentId || this.courseCardData.identifier;
       this.corRelationList = extrasState.corRelation;
       this.source = extrasState.source;
@@ -298,7 +302,8 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
 
     this.events.subscribe(EventTopics.ENROL_COURSE_SUCCESS, async (res) => {
       // console.log('ENROL_COURSE_SUCCESS enrolpage', res);
-      this.updatedCourseCardData = await this.courseService.getEnrolledCourses({userId: this.userId, returnFreshCourses: true })
+      this.updatedCourseCardData = await this.courseService
+      .getEnrolledCourses({userId: this.appGlobalService.getUserId(), returnFreshCourses: true })
       .toPromise()
       .then((cData) => {
         return cData.find((element) => element.courseId === this.identifier);
@@ -672,6 +677,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
           if (data) {
             this.batchDetails = data;
             // console.log('this.batchDetails', this.batchDetails);
+            this.handleUnenrollButton();
             this.saveContentContext(this.appGlobalService.getUserId(),
               this.batchDetails.courseId, this.courseCardData.batchId, this.batchDetails.status);
             this.preferences.getString(PreferenceKey.COURSE_IDENTIFIER).toPromise()
@@ -990,7 +996,8 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
     });
   }
 
-  getAllBatches() {
+  async getAllBatches() {
+    const loader = await this.commonUtilService.getLoader();
     this.courseBatchesRequest = {
       filters: {
         courseId: this.identifier,
@@ -999,8 +1006,11 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
       },
       fields: BatchConstants.REQUIRED_FIELDS
     };
+    await loader.present();
     this.courseService.getCourseBatches(this.courseBatchesRequest).toPromise()
-      .then((data: Batch[]) => {
+      .then(async (data: Batch[]) => {
+        await loader.dismiss();
+        this.handleUnenrollButton();
         this.showOfflineSection = false;
         this.batches = data || [];
         // console.log('this.batches', this.batches);
@@ -1011,7 +1021,8 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
           this.enrollmentEndDate =  data[0].enrollmentEndDate ;
         }
       })
-      .catch((error: any) => {
+      .catch(async (error: any) => {
+        await loader.dismiss();
         if (error instanceof NetworkError) {
           this.showOfflineSection = true;
         } else {
@@ -1216,6 +1227,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
    * Ionic life cycle hook
    */
   async ionViewWillEnter() {
+    this.todayDate =  moment(new Date()).format('YYYY-MM-DD');
     this.showLoading = true;
     this.identifier = this.courseCardData.contentId || this.courseCardData.identifier;
     this.downloadSize = 0;
@@ -1754,7 +1766,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
   }
 
   // check wheather to show Unenroll button in overflow menu or not
-  showUnenrollButton(): boolean {
+  handleUnenrollButton() {
     console.log('INside the show unenroll ');
     const batchDetails = this.batchDetails ? this.batchDetails.status : 2;
     const enrollmentType = this.batchDetails ? this.batchDetails.enrollmentType : '';
@@ -1764,13 +1776,11 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
       enrollmentType !== 'invite-only'));
 
     if (this.updatedCourseCardData) {
-      return (
-        (batchDetails !== 2 &&
+        this.showUnenrollButton = (batchDetails !== 2 &&
           (this.updatedCourseCardData.status === 0 || this.updatedCourseCardData.status === 1 || this.course.progress < 100) &&
-          enrollmentType !== 'invite-only')
-        );
+          enrollmentType !== 'invite-only');
     } else {
-      return (
+      this.showUnenrollButton = (
         (batchDetails !== 2 &&
           (this.courseCardData.status === 0 || this.courseCardData.status === 1 || this.course.progress < 100) &&
           enrollmentType !== 'invite-only')

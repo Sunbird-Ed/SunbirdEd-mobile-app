@@ -834,10 +834,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
     }
   }
 
-  showOfflineNetworkWarning() {
-    this.presentToastForOffline('NO_INTERNET_TITLE');
-  }
-
   checkNetworkStatus(showRefresh = false) {
     if (this.commonUtilService.networkInfo.isNetworkAvailable && showRefresh) {
       this.swipeDownToRefresh();
