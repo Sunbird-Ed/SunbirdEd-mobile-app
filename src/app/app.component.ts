@@ -1,4 +1,4 @@
-import { Router, NavigationExtras } from '@angular/router';
+import { Router, NavigationExtras, NavigationStart, NavigationEnd, NavigationError, Event } from '@angular/router';
 import { Location } from '@angular/common';
 import { AfterViewInit, Component, Inject, NgZone, OnInit, EventEmitter, ViewChild } from '@angular/core';
 import { Events, Platform, IonRouterOutlet, MenuController } from '@ionic/angular';
@@ -55,6 +55,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   private telemetryAutoSyncUtil: TelemetryAutoSyncUtil;
   toggleRouterOutlet = true;
+  rootPageDisplayed: boolean = false;
   profile: any = {};
   selectedLanguage: string;
   appName: string;
@@ -266,6 +267,29 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   handleBackButton() {
+    this.router.events.subscribe((event: Event) => {
+      if (event instanceof NavigationStart) {
+        // Show loading indicator
+        console.log("Actual Handler Start"+event.url);
+        if(event.url.indexOf("tabs")!= -1) {
+          this.rootPageDisplayed = true;
+        } else {
+          this.rootPageDisplayed = true;
+        }
+    }
+
+    if (event instanceof NavigationEnd) {
+        // Hide loading indicator
+        console.log("Actual Handler End"+event.url);
+    }
+
+    if (event instanceof NavigationError) {
+        // Hide loading indicator
+
+        // Present error to user
+        console.log("Actual Handler"+event.error);
+    }
+    });
     this.platform.backButton.subscribeWithPriority(0, async () => {
       console.log('URL' + this.router.url);
       if (this.router.url === RouterLinks.LIBRARY_TAB || this.router.url === RouterLinks.COURSE_TAB
@@ -278,7 +302,7 @@ export class AppComponent implements OnInit, AfterViewInit {
         }
       } else {
         // this.routerOutlet.pop();
-        if (this.location.back) {
+        if (this.location.back &&  !this.rootPageDisplayed) {
           this.location.back();
         }
       }
