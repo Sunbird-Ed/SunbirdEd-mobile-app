@@ -270,7 +270,6 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.router.events.subscribe((event: Event) => {
       if (event instanceof NavigationStart) {
         // Show loading indicator
-        console.log("Actual Handler Start"+event.url);
         if(event.url.indexOf("tabs")!= -1) {
           this.rootPageDisplayed = true;
         } else {
