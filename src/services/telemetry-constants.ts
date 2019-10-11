@@ -112,6 +112,8 @@ export enum PageId {
     TEXTBOOK_TOC = 'textbook-toc',
     EXPLORE_MORE_CONTENT = 'explore-more-content',
     RECOVERY_ACCOUNT_ID_POPUP = 'recovery-account-id-popup',
+    DOWNLOAD_ALL_POPUP = 'collection-detail-download-all-popup',
+    CANCEL_ALL_POPUP = 'collection-detail-cancel-all-popup'
 }
 export enum LogType {
     NOTIFICATION = 'notification'
