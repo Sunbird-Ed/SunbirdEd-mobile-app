@@ -277,18 +277,6 @@ export class AppComponent implements OnInit, AfterViewInit {
           this.rootPageDisplayed = true;
         }
     }
-
-    if (event instanceof NavigationEnd) {
-        // Hide loading indicator
-        console.log("Actual Handler End"+event.url);
-    }
-
-    if (event instanceof NavigationError) {
-        // Hide loading indicator
-
-        // Present error to user
-        console.log("Actual Handler"+event.error);
-    }
     });
     this.platform.backButton.subscribeWithPriority(0, async () => {
       console.log('URL' + this.router.url);
