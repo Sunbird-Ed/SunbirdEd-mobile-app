@@ -1016,7 +1016,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
         // console.log('this.batches', this.batches);
         if ( data && data.length > 1) {
           this.batchCount = data.length;
-        } else {
+        } else if (data && data.length === 1) {
           this.batchEndDate = data[0].endDate;
           this.enrollmentEndDate =  data[0].enrollmentEndDate ;
         }
@@ -1228,7 +1228,6 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
    */
   async ionViewWillEnter() {
     this.todayDate =  moment(new Date()).format('YYYY-MM-DD');
-    this.showLoading = true;
     this.identifier = this.courseCardData.contentId || this.courseCardData.identifier;
     this.downloadSize = 0;
     this.objRollup = ContentUtil.generateRollUp(this.courseCardData.hierarchyInfo, this.identifier);
