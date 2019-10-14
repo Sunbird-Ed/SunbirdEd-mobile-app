@@ -6,7 +6,7 @@ import { CommonUtilService } from '@app/services/common-util.service';
 import { AppGlobalService, } from '@app/services/app-global-service.service';
 import { AppHeaderService, } from '@app/services/app-header.service';
 import { FormAndFrameworkUtilService, } from '@app/services/formandframeworkutil.service';
-import { Environment, InteractType, PageId } from '@app/services/telemetry-constants';
+import { Environment, InteractType, PageId, InteractSubtype } from '@app/services/telemetry-constants';
 import {
   ProfileService,
   ContentService,
@@ -14,7 +14,8 @@ import {
   Profile,
   GetAllProfileRequest,
   ContentRequest,
-  SharedPreferences
+  SharedPreferences,
+  TelemetryObject
 } from 'sunbird-sdk';
 import { PreferenceKey, appLanguages, ContentType, AudienceFilter, RouterLinks } from '../app.constant';
 import { SocialSharing } from '@ionic-native/social-sharing/ngx';
@@ -235,8 +236,17 @@ export class FaqHelpPage implements OnInit {
     this.headerObservable.unsubscribe();
   }
 
-  // toggle the card
+  // toggle the car
   toggleGroup(group) {
+
+    const telemetryObject = new TelemetryObject((group+1).toString(), ContentType.FAQ,'');
+    this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
+      InteractSubtype.HELP_SECTION_CLICKED,
+      Environment.USER,
+      PageId.FAQ,
+      telemetryObject,
+      undefined);
+
     this.isNoClicked = false;
     this.isYesClicked = false;
     this.isSubmitted = false;
