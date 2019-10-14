@@ -1093,7 +1093,7 @@ export class CollectionDetailEtbPage implements OnInit {
       this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
         'download-from-device-button-clicked',
         Environment.HOME,
-        PageId.DOWNLOAD_ALL_POPUP,
+        PageId.COLLECTION_DETAIL,
         telemetryObject,
         values,
         this.objRollup,
@@ -1123,7 +1123,7 @@ export class CollectionDetailEtbPage implements OnInit {
       * type: impression
       */
      this.telemetryGeneratorService.generateImpressionTelemetry(ImpressionType.VIEW, '',
-     PageId.DOWNLOAD_ALL_POPUP,
+     PageId.COLLECTION_DETAIL,
      Environment.HOME,
      this.identifier,
      "",
@@ -1136,7 +1136,7 @@ export class CollectionDetailEtbPage implements OnInit {
         this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
           'download-all-button-clicked',
           Environment.HOME,
-          PageId.DOWNLOAD_ALL_POPUP,
+          PageId.COLLECTION_DETAIL,
           undefined,
           undefined,
           this.objRollup,
@@ -1213,7 +1213,7 @@ export class CollectionDetailEtbPage implements OnInit {
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
       'delete-from-device-button-clicked',
       Environment.HOME,
-      PageId.CANCEL_ALL_POPUP,
+      PageId.SINGLE_DELETE_CONFIRMATION_POPUP,
       telemetryObject,
       values,
       this.objRollup,
@@ -1257,7 +1257,7 @@ export class CollectionDetailEtbPage implements OnInit {
      * type: impression
      */
     this.telemetryGeneratorService.generateImpressionTelemetry(ImpressionType.VIEW, '',
-     PageId.CANCEL_ALL_POPUP,
+     PageId.SINGLE_DELETE_CONFIRMATION_POPUP,
      Environment.HOME,
      this.identifier,
      "",
