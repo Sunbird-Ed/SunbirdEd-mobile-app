@@ -236,7 +236,7 @@ export class FaqHelpPage implements OnInit {
     this.headerObservable.unsubscribe();
   }
 
-  // toggle the car
+  // toggle the card
   toggleGroup(group) {
 
     const telemetryObject = new TelemetryObject((group+1).toString(), ContentType.FAQ,'');
