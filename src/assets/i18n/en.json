@@ -611,5 +611,12 @@
   "YOUR_PROGRESS_LABEL": "Your Progress",
   "YOU_ARE_NOT_CONNECTED_TO_THE_INTERNET": "You are not connected to the Internet",
   "YOU_MUST_JOIN_AN_ACTIVE_BATCH": "You must join an active batch to view and access training details",
-  "YOU_MUST_JOIN_TO_ACCESS_TRAINING_DETAIL": "You must log in to access training details"
+  "YOU_MUST_JOIN_TO_ACCESS_TRAINING_DETAIL": "You must log in to access training details",
+  "TEACHER_ID_VERIFICATION": "Teacher ID Verification",
+  "TEACHER_ID_ENTER_LABEL": "Enter your teacher ID for verification",
+  "TEACHER_ID_PLACEHOLDER": "For Example, ER12345",
+  "ARE_YOU_STATE_TEACHER": "Are you a government school teacher in {{%s}}",
+  "TEACHER_PROFILE_VERIFIED": "Teacher profile verified successfully",
+  "TEACHER_PROFILE_FAILED": "Could not verify teacher profile as teacher ID entered is incorrect",
+  "INCORRECT_TEACHER_ID_ERROR": "The ID entered is incorrect. Enter the ID again"
 }
