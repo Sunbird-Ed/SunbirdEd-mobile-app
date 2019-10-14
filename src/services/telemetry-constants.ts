@@ -111,7 +111,7 @@ export enum PageId {
     DIAL_SEARCH = 'dial-book-result',
     TEXTBOOK_TOC = 'textbook-toc',
     EXPLORE_MORE_CONTENT = 'explore-more-content',
-    RECOVERY_ACCOUNT_ID_POPUP = 'recovery-account-id-popup',
+    RECOVERY_ACCOUNT_ID_POPUP = 'recovery-account-id-popup'
 }
 export enum LogType {
     NOTIFICATION = 'notification'
@@ -222,6 +222,7 @@ export enum InteractSubtype {
     SWITCH_USER_SUCCESS = 'switch-user-success',
     DELETE_USER_INITIATE = 'delete-user-initiate',
     DELETE_GROUP_INITIATE = 'delete-group-initiate',
+    DELETE_ALL_CLICKED = 'delete-from-device-button-clicked',
     SHARE_USER_GROUP_INITIATE = 'share-usergroup-initiate',
     SHARE_USER_GROUP_SUCCESS = 'share-usergroup-success',
     USER_GROUP_CLICKED = 'users-groups-clicked',
@@ -294,6 +295,7 @@ export enum InteractSubtype {
     DOWNLOAD_CANCEL_ALL_CLICKED = 'download-cancel-all-clicked',
     DOWNLOAD_CERTIFICATE_CLICKED = 'download-certificate-clicked',
     DOWNLOAD_CANCEL_CLICKED = 'download-cancel-clicked',
+    DOWNLOAD_CLICKED = 'download-from-device-button-clicked',
     RATE_LATER_CLICKED = 'rate-later-clicked',
     PLAY_STORE_BUTTON_CLICKED = 'play-store-button-clicked',
     HELP_SECTION_CLICKED = 'help-section-clicked',
