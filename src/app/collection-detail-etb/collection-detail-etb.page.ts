@@ -1091,7 +1091,7 @@ export class CollectionDetailEtbPage implements OnInit {
       const telemetryObject = new TelemetryObject(this.content.identifier || this.content.contentId, this.content.contentType, this.content.pkgVersion);
       const values = new Map();
       this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
-        'download-from-device-button-clicked',
+        InteractSubtype.DOWNLOAD_CLICKED,
         Environment.HOME,
         PageId.COLLECTION_DETAIL,
         telemetryObject,
@@ -1134,7 +1134,7 @@ export class CollectionDetailEtbPage implements OnInit {
       const response = await popover.onDidDismiss();
       if (response && response.data) {
         this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
-          'download-all-button-clicked',
+          InteractSubtype.DOWNLOAD_ALL_CLICKED,
           Environment.HOME,
           PageId.COLLECTION_DETAIL,
           undefined,
@@ -1211,7 +1211,7 @@ export class CollectionDetailEtbPage implements OnInit {
     const telemetryObject = new TelemetryObject(this.content.identifier || this.content.contentId, this.content.contentType, this.content.pkgVersion);
     const values = new Map();
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
-      'delete-from-device-button-clicked',
+      InteractSubtype.DELETE_ALL_CLICKED,
       Environment.HOME,
       PageId.SINGLE_DELETE_CONFIRMATION_POPUP,
       telemetryObject,
