@@ -1085,6 +1085,19 @@ export class CollectionDetailEtbPage implements OnInit {
       } else {
         contentTypeCount = '';
       }
+      /* generate telemetry on download click from device button
+       * type: interaction
+       */
+      const telemetryObject = new TelemetryObject(this.content.identifier || this.content.contentId, this.content.contentType, this.content.pkgVersion);
+      const values = new Map();
+      this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
+        InteractSubtype.DOWNLOAD_CLICKED,
+        Environment.HOME,
+        PageId.COLLECTION_DETAIL,
+        telemetryObject,
+        values,
+        this.objRollup,
+        this.corRelationList);
 
       const popover = await this.popoverCtrl.create({
         component: ConfirmAlertComponent,
@@ -1103,11 +1116,25 @@ export class CollectionDetailEtbPage implements OnInit {
         },
         cssClass: 'sb-popover info',
       });
+      
       await popover.present();
+      /*
+      * generate telemetry for the impression for download click from device button
+      * type: impression
+      */
+     this.telemetryGeneratorService.generateImpressionTelemetry(ImpressionType.VIEW, '',
+     PageId.COLLECTION_DETAIL,
+     Environment.HOME,
+     this.identifier,
+     "",
+     this.content.pkgVersion,
+     this.objRollup,
+     this.corRelationList);
+
       const response = await popover.onDidDismiss();
       if (response && response.data) {
         this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
-          'download-all-button-clicked',
+          InteractSubtype.DOWNLOAD_ALL_CLICKED,
           Environment.HOME,
           PageId.COLLECTION_DETAIL,
           undefined,
@@ -1181,12 +1208,14 @@ export class CollectionDetailEtbPage implements OnInit {
 
   }
   async showPopOver(event) {
+    const telemetryObject = new TelemetryObject(this.content.identifier || this.content.contentId, this.content.contentType, this.content.pkgVersion);
+    const values = new Map();
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
-      'delete-from-device-button-clicked',
+      InteractSubtype.DELETE_ALL_CLICKED,
       Environment.HOME,
-      PageId.COLLECTION_DETAIL,
-      undefined,
-      undefined,
+      PageId.SINGLE_DELETE_CONFIRMATION_POPUP,
+      telemetryObject,
+      values,
       this.objRollup,
       this.corRelationList);
     let contentTypeCount;
@@ -1223,6 +1252,18 @@ export class CollectionDetailEtbPage implements OnInit {
       cssClass: 'sb-popover danger',
     });
     await confirm.present();
+    /*
+     * generate telemetry for the cancel click from the device button
+     * type: impression
+     */
+    this.telemetryGeneratorService.generateImpressionTelemetry(ImpressionType.VIEW, '',
+     PageId.SINGLE_DELETE_CONFIRMATION_POPUP,
+     Environment.HOME,
+     this.identifier,
+     "",
+     this.content.pkgVersion,
+     this.objRollup,
+     this.corRelationList);
     const { data } = await confirm.onDidDismiss();
     if (data && data.canDelete) {
       this.deleteContent();
