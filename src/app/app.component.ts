@@ -514,7 +514,8 @@ export class AppComponent implements OnInit, AfterViewInit {
         || (routeUrl.indexOf(RouterLinks.PROFILE_SETTINGS) !== -1)
         || (routeUrl.indexOf(RouterLinks.QRCODERESULT) !== -1)
         || (routeUrl.indexOf(RouterLinks.STORAGE_SETTINGS) !== -1)
-        || (routeUrl.indexOf(RouterLinks.EXPLORE_BOOK) !== -1)) {
+        || (routeUrl.indexOf(RouterLinks.EXPLORE_BOOK) !== -1)
+        || (routeUrl.indexOf(RouterLinks.PERMISSION) !== -1)) {
         this.headerService.sidebarEvent($event);
         return;
       } else {

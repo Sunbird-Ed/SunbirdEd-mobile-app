@@ -198,6 +198,7 @@ export class PermissionComponent implements OnInit {
   handleHeaderEvents($event) {
     if ($event.name === 'back') {
       this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.PERMISSION, Environment.ONBOARDING, true);
+      this.location.back();
     }
   }
 
