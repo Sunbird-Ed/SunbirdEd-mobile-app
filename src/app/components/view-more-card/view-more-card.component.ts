@@ -213,7 +213,7 @@ export class ViewMoreCardComponent implements OnInit {
         this.events.publish('course:resume', {
           content: content
         });
-        this.location.back();
+        // this.location.back();
       } else {
         this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], {
           state: {
