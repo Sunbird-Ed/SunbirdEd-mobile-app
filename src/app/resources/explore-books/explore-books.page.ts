@@ -141,7 +141,8 @@ export class ExploreBooksPage implements OnInit, OnDestroy {
     private telemetryGeneratorService: TelemetryGeneratorService,
     private platform: Platform,
     private router: Router,
-    private location: Location
+    private location: Location,
+    private appGloabalService:AppGlobalService
   ) {
     const extras = this.router.getCurrentNavigation().extras.state;
     if (extras) {
@@ -205,6 +206,7 @@ export class ExploreBooksPage implements OnInit, OnDestroy {
   }
 
   handleBackButton() {
+    if(!this.appGloabalService.isOnBoardingCompleted){
     this.unregisterBackButton = this.platform.backButton.subscribeWithPriority(10, () => {
       this.telemetryGeneratorService.generateInteractTelemetry(
         InteractType.TOUCH,
@@ -214,6 +216,7 @@ export class ExploreBooksPage implements OnInit, OnDestroy {
       );
       this.location.back();
     });
+   }
   }
 
   handleHeaderEvents($event) {

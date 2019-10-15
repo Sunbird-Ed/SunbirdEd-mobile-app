@@ -1,0 +1,27 @@
+<ion-content class="ion-padding">
+  <ion-icon ios="ios-arrow-back" md="md-arrow-back" class="top-back-button"></ion-icon>
+  <div class="heading"><b>{{'YOUR_LOCATION'| translate}}</b></div>
+  <div class="sub-heading">{{'YOUR_LOCATION_DETAILS' | translate}}</div>
+  <div class="state">
+    <div class="input-container">
+      <input type="text" class="input" (ngModelChange)="getCities()" [(ngModel)]="state"
+        placeholder="{{'SEARCH_STATE' | translate}}">
+      <ion-icon (click)="getCities()" class="input-icon" name="ios-arrow-down"></ion-icon>
+    </div>
+    <div class="showList" *ngIf="showList">
+      <ul>
+        <li (click)="selectCity(i.name)" *ngFor="let i of cities | filter : state">{{i.name}}</li>
+      </ul>
+    </div>
+  </div>
+  <div class="district">
+    <div class="input-container margin-top">
+      <input type="text" class="input" (onModalChange)="getCities()" [(ngModel)]="district"
+        placeholder="{{'SEARCH_DISTRICT' | translate}}">
+      <ion-icon (click)="getCities()" class="input-icon" name="ios-arrow-down"></ion-icon>
+    </div>
+  </div>
+</ion-content>
+<div class="footer">
+  <button class="block-button">Submit</button>
+</div>

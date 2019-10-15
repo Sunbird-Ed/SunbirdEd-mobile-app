@@ -423,6 +423,7 @@ export class RouterLinks {
     public static readonly ABOUT_APP = 'about-app';
     public static readonly PRIVACY_POLICY = 'privacy-policy';
     public static readonly TERMS_OF_SERVICE = 'terms-of-service';
+    public static readonly DISTRICT_MAPPING = 'district-mapping';
 
     // Profile settings Routes
     public static readonly PROFILE_SETTINGS = 'profile-settings';

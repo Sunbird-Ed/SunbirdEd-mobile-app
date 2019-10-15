@@ -43,6 +43,7 @@ import { FilteroptionComponent } from './filteroption/filteroption.component';
 import { SbInsufficientStoragePopupComponent } from './popups/sb-insufficient-storage-popup/sb-insufficient-storage-popup';
 import { AccountRecoveryInfoComponent } from './popups/account-recovery-id/account-recovery-id-popup.component';
 import { EnrollmentDetailsComponent } from './enrollment-details/enrollment-details.component';
+import { FilterPipe } from '@app/pipes/filter/filter.pipe';
 
 @NgModule({
   declarations: [
@@ -149,6 +150,6 @@ import { EnrollmentDetailsComponent } from './enrollment-details/enrollment-deta
     AccountRecoveryInfoComponent,
     EnrollmentDetailsComponent
   ],
-  providers: [FileSizePipe, Keyboard]
+  providers: [FileSizePipe, FilterPipe,  Keyboard]
 })
 export class ComponentsModule { }

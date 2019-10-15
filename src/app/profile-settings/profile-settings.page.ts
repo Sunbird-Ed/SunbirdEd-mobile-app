@@ -4,7 +4,7 @@ import { Router, NavigationExtras } from '@angular/router';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { TranslateService } from '@ngx-translate/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { PreferenceKey, ProfileConstants } from '@app/app/app.constant';
+import { PreferenceKey, ProfileConstants, RouterLinks } from '@app/app/app.constant';
 import { GUEST_STUDENT_TABS, GUEST_TEACHER_TABS, initTabs } from '@app/app/module.service';
 import { ImpressionType, PageId, Environment, InteractSubtype, InteractType } from '@app/services/telemetry-constants';
 import isEqual from 'lodash/isEqual';
@@ -31,7 +31,7 @@ import {
   ContainerService,
   AppHeaderService
 } from 'services';
-import { Platform, Events, AlertController } from '@ionic/angular';
+import { Platform, Events, AlertController, PopoverController } from '@ionic/angular';
 import { Location } from '@angular/common';
 import { SplashScreenService } from '@app/services/splash-screen.service';
 
@@ -102,7 +102,8 @@ export class ProfileSettingsPage implements OnInit {
     private appVersion: AppVersion,
     private alertCtrl: AlertController,
     private location: Location,
-    private splashScreenService: SplashScreenService
+    private splashScreenService: SplashScreenService,
+    private popoverCtrl : PopoverController
   ) {
     this.getNavParams();
     this.preferences.getString(PreferenceKey.SELECTED_LANGUAGE_CODE).toPromise()
@@ -629,6 +630,10 @@ export class ProfileSettingsPage implements OnInit {
 
       this.dismissPopup();
     });
+  }
+  // temporary function 
+  async openDistrictMappingPopover() {
+    this.router.navigate([RouterLinks.DISTRICT_MAPPING]);
   }
 
   handleHeaderEvents($event) {
