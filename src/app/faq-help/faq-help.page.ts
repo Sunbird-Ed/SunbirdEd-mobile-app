@@ -239,7 +239,7 @@ export class FaqHelpPage implements OnInit {
   // toggle the card
   toggleGroup(group) {
 
-    const telemetryObject = new TelemetryObject((group+1).toString(), '','');
+    const telemetryObject = new TelemetryObject((group+1).toString(), 'faq','');
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
       InteractSubtype.HELP_SECTION_CLICKED,
       Environment.USER,
