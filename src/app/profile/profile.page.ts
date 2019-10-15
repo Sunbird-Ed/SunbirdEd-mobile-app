@@ -36,6 +36,7 @@ import {
 } from '@app/app/components/popups/edit-contact-details-popup/edit-contact-details-popup.component';
 import { AccountRecoveryInfoComponent } from '../components/popups/account-recovery-id/account-recovery-id-popup.component';
 import { SocialSharing } from '@ionic-native/social-sharing/ngx';
+import { TeacherIdVerificationComponent } from '../components/popups/teacher-id-verification-popup/teacher-id-verification-popup.component';
 
 @Component({
   selector: 'app-profile',
@@ -810,5 +811,14 @@ downloadTrainingCertificate(course: Course, certificate: CourseCertificate) {
     }
   }
 
+  async showTeacherIdVerificationPopup() {
+    const popover = await this.popoverCtrl.create({
+      component: TeacherIdVerificationComponent,
+      backdropDismiss: false,
+      cssClass: 'popover-alert'
+    });
+
+    await popover.present();
+  }
 
 }

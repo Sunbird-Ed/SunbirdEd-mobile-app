@@ -291,3 +291,24 @@
     --background: #{$danger-color};
   }
 }
+
+.sb-popup-header-info{
+  background-color: $primary-color;
+  color: $white-color;
+  padding: 16px;
+  text-align: center;
+  ion-icon{
+    float: right;
+    font-size: 24px;
+  }
+}
+
+.sb-popup-header-danger{
+  @extend .sb-popup-header-info;
+  background-color: $danger-color;
+}
+
+.sb-popup-header-success{
+  @extend .sb-popup-header-info;
+  background-color: $success-color;
+}
