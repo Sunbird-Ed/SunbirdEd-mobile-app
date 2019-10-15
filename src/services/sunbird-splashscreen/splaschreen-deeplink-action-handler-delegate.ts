@@ -61,7 +61,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
 
   handleNotification(data) {
     switch (data.actionData.actionType) {
-      case ActionType.SURVEY:
+      case ActionType.EXT_URL:
         this.externalUrl = data.actionData.deepLink;
         break;
       case ActionType.UPDATE_APP:
