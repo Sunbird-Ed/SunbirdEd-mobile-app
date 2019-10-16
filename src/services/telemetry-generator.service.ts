@@ -14,7 +14,7 @@ import {
     DeviceSpecification
 } from 'sunbird-sdk';
 import { Map } from '../app/telemetryutil';
-import { Environment, ImpressionType, InteractSubtype, InteractType, Mode, PageId } from './telemetry-constants';
+import { Environment, ImpressionType, InteractSubtype, InteractType, Mode, PageId, CorReleationDataType } from './telemetry-constants';
 import { MimeType } from '../app/app.constant';
 import { ContentUtil } from '@app/util/content-util';
 
@@ -259,13 +259,19 @@ export class TelemetryGeneratorService {
         values['medium'] = profile.medium;
         values['grade'] = profile.grade;
         values['mode'] = mode;
+        const corRelationList: Array<CorrelationData> = [];
+        corRelationList.push({ id: profile.board ? profile.board.join(',') : '', type: CorReleationDataType.BOARD });
+        corRelationList.push({ id: profile.medium ? profile.medium.join(',') : '' , type: CorReleationDataType.MEDIUM });
+        corRelationList.push({ id: profile.grade ? profile.grade.join(',') : '', type: CorReleationDataType.CLASS });
+        corRelationList.push({ id: profile.profileType, type: CorReleationDataType.USERTYPE });
         this.generateInteractTelemetry(
             InteractType.OTHER,
             InteractSubtype.PROFILE_ATTRIBUTE_POPULATION,
             env ? env : Environment.HOME,
             pageId,
             undefined,
-            values);
+            values, undefined,
+            corRelationList);
     }
 
     generateExtraInfoTelemetry(values: Map, pageId) {
