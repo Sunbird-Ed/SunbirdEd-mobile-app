@@ -103,7 +103,7 @@ export class ViewMoreCardComponent implements OnInit {
     } else if (retiredBatches.length) {
       this.navigateToBatchListPopup(content, layoutName, retiredBatches);
     }
-    await loader.dismiss();
+    await this.loader.dismiss();
   }
 
   async navigateToBatchListPopup(content: any, layoutName?: string, retiredBatched?: any) {
