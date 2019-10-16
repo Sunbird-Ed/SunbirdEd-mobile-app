@@ -161,16 +161,12 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
   countChar(val) {
     const maxLength = 1000;
     this.len = val.length;
-
-    console.log('Val', val);
-    console.log('length', this.len);
     if (this.len === 0) {
     this.charEntered = false;
     }
     if (this.len > 0 && this.len <= 1000) {
       this.charEntered = true;
       this.charsLeft = maxLength - this.len;
-      console.log('CharsLeft', this.charsLeft);
     }
     if (val.length > 1000) {
       this.emailContent = this.emailContent.slice(0, 1000);
