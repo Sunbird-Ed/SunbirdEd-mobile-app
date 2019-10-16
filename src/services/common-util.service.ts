@@ -125,7 +125,7 @@ export class CommonUtilService implements OnDestroy {
      */
     getLoader(duration?): any {
         return this.loadingCtrl.create({
-            duration: duration?duration:30000,
+            duration: duration ? duration : 30000,
             spinner: 'crescent',
             cssClass: 'custom-loader-class'
         });
@@ -346,7 +346,7 @@ export class CommonUtilService implements OnDestroy {
         return (bytes / 1048576).toFixed(2);
     }
 
-    public  deDupe<T>(array: T[], property): T[] {
+    public deDupe<T>(array: T[], property): T[] {
         return array.filter((obj, pos, arr) => {
             return arr.map(mapObj => mapObj[property]).indexOf(obj[property]) === pos;
         });

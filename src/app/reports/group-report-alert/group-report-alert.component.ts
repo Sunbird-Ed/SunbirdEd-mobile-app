@@ -56,7 +56,7 @@ export class GroupReportAlertComponent implements OnInit {
 
   async getAssessmentByUser(event) {
     if (event === 'users') {
-      const loader = await this.commonUtilService.getLoader()
+      const loader = await this.commonUtilService.getLoader();
       const summaryRequest: SummaryRequest = {
         qId: this.assessment['qid'],
         uids: this.assessment['uids'],

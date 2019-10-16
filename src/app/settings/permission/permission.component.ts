@@ -117,6 +117,7 @@ export class PermissionComponent implements OnInit {
 
   handleBackButton() {
     this.backButtonFunc = this.platform.backButton.subscribeWithPriority(10, () => {
+      this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.PERMISSION, Environment.ONBOARDING, false);
       this.location.back();
       this.backButtonFunc.unsubscribe();
     });
@@ -198,6 +199,7 @@ export class PermissionComponent implements OnInit {
   handleHeaderEvents($event) {
     if ($event.name === 'back') {
       this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.PERMISSION, Environment.ONBOARDING, true);
+      this.location.back();
     }
   }
 

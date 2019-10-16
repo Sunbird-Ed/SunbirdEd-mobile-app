@@ -363,6 +363,7 @@ export class ActionType {
     public static readonly CONTENT_UPDATE = 'contentUpdate';
     public static readonly BOOK_UPDATE = 'bookUpdate';
     public static readonly UPDATE_APP = 'updateApp';
+    public static readonly EXT_URL = 'extURL';
 }
 
 export class RouterLinks {

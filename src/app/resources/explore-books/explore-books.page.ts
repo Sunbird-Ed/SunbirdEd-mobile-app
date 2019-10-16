@@ -212,7 +212,9 @@ export class ExploreBooksPage implements OnInit, OnDestroy {
         Environment.HOME,
         PageId.EXPLORE_MORE_CONTENT,
       );
+      this.unregisterBackButton.unsubscribe();
       this.location.back();
+      
     });
   }
 
