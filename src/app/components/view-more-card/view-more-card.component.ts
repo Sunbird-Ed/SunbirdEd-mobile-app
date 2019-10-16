@@ -78,10 +78,10 @@ export class ViewMoreCardComponent implements OnInit {
     private location: Location,
     private popoverCtrl: PopoverController
   ) {
-    this.loader = this.commonUtilService.getLoader();
   }
 
   async checkRetiredOpenBatch(content: any, layoutName?: string) {
+    this.loader = await this.commonUtilService.getLoader();
     await this.loader.present();
     let anyOpenBatch = false;
     this.enrolledCourses = this.enrolledCourses || [];
@@ -99,6 +99,7 @@ export class ViewMoreCardComponent implements OnInit {
     }
     if (anyOpenBatch || !retiredBatches.length) {
       // open the batch directly
+      await this.loader.dismiss();
       this.navigateToDetailsPage(content, layoutName);
     } else if (retiredBatches.length) {
       this.navigateToBatchListPopup(content, layoutName, retiredBatches);
@@ -121,6 +122,7 @@ export class ViewMoreCardComponent implements OnInit {
 
     if (this.commonUtilService.networkInfo.isNetworkAvailable) {
       if (!this.guestUser) {
+        this.loader = await this.commonUtilService.getLoader();
         await this.loader.present();
         this.courseService.getCourseBatches(courseBatchesRequest).toPromise()
           .then((res: Batch[]) => {
@@ -181,20 +183,20 @@ export class ViewMoreCardComponent implements OnInit {
       if (layoutName === 'enrolledCourse' || content.contentType === ContentType.COURSE) {
         this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], {
           state: {
-            content: content
+            content
           }
         });
       } else if (content.mimeType === MimeType.COLLECTION) {
         this.router.navigate([RouterLinks.COLLECTION_DETAIL_ETB], {
           state: {
-            content: content
+            content
           }
         });
 
       } else {
         this.router.navigate([RouterLinks.CONTENT_DETAILS], {
           state: {
-            content: content
+            content
           }
         });
       }
@@ -210,13 +212,13 @@ export class ViewMoreCardComponent implements OnInit {
       content.lastReadContentId = value;
       if (content.lastReadContentId) {
         this.events.publish('course:resume', {
-          content: content
+          content
         });
         // this.location.back();
       } else {
         this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], {
           state: {
-            content: content
+            content
           }
         });
       }
