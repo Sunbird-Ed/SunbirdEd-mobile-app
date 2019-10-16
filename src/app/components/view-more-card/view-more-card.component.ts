@@ -18,7 +18,6 @@ import {
 import { Environment, PageId, InteractType } from '../../../services/telemetry-constants';
 import { Location } from '@angular/common';
 import { EnrollmentDetailsComponent } from '../enrollment-details/enrollment-details.component';
-import { async } from '@angular/core/testing';
 
 @Component({
   selector: 'app-view-more-card',
@@ -63,6 +62,7 @@ export class ViewMoreCardComponent implements OnInit {
    */
   batchExp = false;
   batches: any;
+  loader: any;
 
   constructor(
     @Inject('COURSE_SERVICE') private courseService: CourseService,
@@ -77,11 +77,12 @@ export class ViewMoreCardComponent implements OnInit {
     private router: Router,
     private location: Location,
     private popoverCtrl: PopoverController
-  ) {}
+  ) {
+  }
 
   async checkRetiredOpenBatch(content: any, layoutName?: string) {
-    const loader = await this.commonUtilService.getLoader();
-    await loader.present();
+    this.loader = await this.commonUtilService.getLoader();
+    await this.loader.present();
     let anyOpenBatch = false;
     this.enrolledCourses = this.enrolledCourses || [];
     let retiredBatches: Array<any> = [];
@@ -106,7 +107,6 @@ export class ViewMoreCardComponent implements OnInit {
   }
 
   async navigateToBatchListPopup(content: any, layoutName?: string, retiredBatched?: any) {
-    const loader = await this.commonUtilService.getLoader();
     const ongoingBatches = [];
     const upcommingBatches = [];
     const courseBatchesRequest: CourseBatchesRequest = {
@@ -122,7 +122,8 @@ export class ViewMoreCardComponent implements OnInit {
 
     if (this.commonUtilService.networkInfo.isNetworkAvailable) {
       if (!this.guestUser) {
-        await loader.present();
+        this.loader = await this.commonUtilService.getLoader();
+        await this.loader.present();
         this.courseService.getCourseBatches(courseBatchesRequest).toPromise()
           .then((res: Batch[]) => {
             this.zone.run(async () => {
@@ -140,7 +141,7 @@ export class ViewMoreCardComponent implements OnInit {
                   Environment.HOME,
                   PageId.CONTENT_DETAIL, undefined,
                   reqvalues);
-                await loader.dismiss();
+                await this.loader.dismiss();
 
                 const popover = await this.popoverCtrl.create({
                     component: EnrollmentDetailsComponent,
@@ -159,7 +160,7 @@ export class ViewMoreCardComponent implements OnInit {
                 }
 
               } else {
-                await loader.dismiss();
+                await this.loader.dismiss();
                 this.navigateToDetailsPage(content, layoutName);
                 this.commonUtilService.showToast('NO_BATCHES_AVAILABLE');
               }
