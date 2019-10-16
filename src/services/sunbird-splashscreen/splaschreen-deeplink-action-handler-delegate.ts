@@ -61,7 +61,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
 
   handleNotification(data) {
     switch (data.actionData.actionType) {
-      case ActionType.SURVEY:
+      case ActionType.EXT_URL:
         this.externalUrl = data.actionData.deepLink;
         break;
       case ActionType.UPDATE_APP:
@@ -220,24 +220,24 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
   }
 
   async navigateToCoursePage() {
-    // const loader = await this.commonUtilService.getLoader();
-    // await loader.present();
+    const loader = await this.commonUtilService.getLoader();
+    await loader.present();
     this.preferences.getString(PreferenceKey.COURSE_DATA_KEY).toPromise()
       .then(resp => {
         if (resp) {
           console.log('URL', this.router.url);
           if (this.router.url.indexOf(RouterLinks.COURSE_BATCHES) !== -1) {
-            this.location.back();
+            window.history.go(-2);
           }
-          // setTimeout(async () => {
-          // this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], {
-          //   state: {
-          //     content: JSON.parse(resp)
-          //   }
-          // });
-            // await loader.dismiss();
+          setTimeout(async () => {
+          this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], {
+            state: {
+              content: JSON.parse(resp)
+            }
+          });
+          await loader.dismiss();
           this.preferences.putString(PreferenceKey.COURSE_DATA_KEY, '').toPromise();
-          // }, 2000);
+          }, 2000);
         }
       });
   }
