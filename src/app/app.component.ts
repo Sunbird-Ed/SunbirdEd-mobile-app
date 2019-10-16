@@ -11,10 +11,10 @@ import { Network } from '@ionic-native/network/ngx';
 import {
   ErrorEventType, EventNamespace, EventsBusService, SharedPreferences,
   SunbirdSdk, TelemetryAutoSyncUtil, TelemetryService, NotificationService, GetSystemSettingsRequest, SystemSettings, SystemSettingsService,
-  CodePushExperimentService, AuthEventType
+  CodePushExperimentService, AuthEventType, CorrelationData, Profile
 } from 'sunbird-sdk';
 
-import { InteractType, InteractSubtype, Environment, PageId, ImpressionType } from 'services/telemetry-constants';
+import { InteractType, InteractSubtype, Environment, PageId, ImpressionType, CorReleationDataType } from 'services/telemetry-constants';
 import { PreferenceKey, EventTopics, SystemSettingsIds } from './app.constant';
 import { ActivePageService } from '@app/services/active-page/active-page-service';
 import {
@@ -438,10 +438,20 @@ export class AppComponent implements OnInit, AfterViewInit {
   private generateImpressionEvent(pageId: string) {
     pageId = pageId.toLowerCase();
     const env = pageId.localeCompare(PageId.PROFILE) ? Environment.HOME : Environment.USER;
+    const corRelationList: Array<CorrelationData> = [];
+    if (pageId === 'resources') {
+      const currentProfile: Profile = this.appGlobalService.getCurrentUser();
+      corRelationList.push({ id: currentProfile.board ? currentProfile.board.join(',') : '', type: CorReleationDataType.BOARD });
+      corRelationList.push({ id: currentProfile.medium ? currentProfile.medium.join(',') : '' , type: CorReleationDataType.MEDIUM });
+      corRelationList.push({ id: currentProfile.grade ? currentProfile.grade.join(',') : '', type: CorReleationDataType.CLASS });
+      corRelationList.push({ id: currentProfile.profileType, type: CorReleationDataType.USERTYPE });
+    }
+
     this.telemetryGeneratorService.generateImpressionTelemetry(
       ImpressionType.VIEW, '',
       pageId,
-      env);
+      env, undefined, undefined, undefined, undefined,
+      corRelationList);
   }
 
   private async startOpenrapDiscovery(): Promise<undefined> {
@@ -525,7 +535,8 @@ export class AppComponent implements OnInit, AfterViewInit {
         || (routeUrl.indexOf(RouterLinks.PROFILE_SETTINGS) !== -1)
         || (routeUrl.indexOf(RouterLinks.QRCODERESULT) !== -1)
         || (routeUrl.indexOf(RouterLinks.STORAGE_SETTINGS) !== -1)
-        || (routeUrl.indexOf(RouterLinks.EXPLORE_BOOK) !== -1)) {
+        || (routeUrl.indexOf(RouterLinks.EXPLORE_BOOK) !== -1)
+        || (routeUrl.indexOf(RouterLinks.PERMISSION) !== -1)) {
         this.headerService.sidebarEvent($event);
         return;
       } else {
