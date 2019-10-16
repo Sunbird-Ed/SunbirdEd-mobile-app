@@ -172,7 +172,7 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
       this.charsLeft = maxLength - this.len;
       console.log('CharsLeft', this.charsLeft);
     }
-    if (val.length > 10) {
+    if (val.length > 1000) {
       this.emailContent = this.emailContent.slice(0, 1000);
     }
   }
