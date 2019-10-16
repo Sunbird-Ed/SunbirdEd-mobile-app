@@ -1,5 +1,5 @@
 import { Component, Inject, ViewEncapsulation } from '@angular/core';
-import { Events, NavParams, Platform, PopoverController } from '@ionic/angular';
+import { Events, NavParams, Platform, PopoverController, MenuController } from '@ionic/angular';
 import map from 'lodash/map';
 import cloneDeep from 'lodash/cloneDeep';
 import { TranslateService } from '@ngx-translate/core';
@@ -47,7 +47,8 @@ export class PageFilterPage {
     private events: Events,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private commonUtilService: CommonUtilService,
-    private formAndFrameworkUtilService: FormAndFrameworkUtilService
+    private formAndFrameworkUtilService: FormAndFrameworkUtilService,
+    private menuCtrl: MenuController
   ) {
     this.callback = this.navParams.get('callback');
     this.initFilterValues();
@@ -59,6 +60,10 @@ export class PageFilterPage {
     this.events.subscribe('onAfterLanguageChange:update', () => {
       this.onLanguageChange();
     });
+  }
+
+  ionViewWillEnter() {
+    this.menuCtrl.enable(false);
   }
 
   onLanguageChange() {
@@ -256,6 +261,7 @@ export class PageFilterPage {
     if (this.backButtonFunc) {
       this.backButtonFunc.unsubscribe();
     }
+    this.menuCtrl.enable(true);
   }
 }
 
