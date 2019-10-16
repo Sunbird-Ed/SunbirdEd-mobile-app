@@ -179,12 +179,12 @@
     <div class="bottom-block">
         <div class="trainings" *ngIf="trainingsCompleted?.length > 0">
             <div class="bolder heading f16">
-                {{'TRAININGS_ATTENDED' | translate}} ({{mapTrainingsToCertificates(trainingsCompleted)?.length}})&lrm;
+                {{'TRAININGS_ATTENDED' | translate}} ({{mappedTrainingCertificates?.length}})&lrm;
             </div>
             <div class="content">
                 <ng-container>
                     <div class="MB15 flex-nowrap"
-                        *ngFor="let certificate of (mapTrainingsToCertificates(trainingsCompleted) | slice : startLimit:trainingsLimit);">
+                        *ngFor="let certificate of (mappedTrainingCertificates | slice : startLimit:trainingsLimit);">
                         <div class="training-1">
                             <div class="fw">
                                 {{certificate.courseName}}
@@ -208,8 +208,8 @@
                 </ng-container>
                 <div class="" text-center>
                     <ion-button shape="round" class="txt-capitalize custom-round"
-                        *ngIf="trainingsLimit < (mapTrainingsToCertificates(trainingsCompleted).length)" (click)="showMoreTrainings()">
-                        + {{(mapTrainingsToCertificates(trainingsCompleted))?.length - 2}} {{'MORE' | translate}}
+                        *ngIf="trainingsLimit < mappedTrainingCertificates?.length" (click)="showMoreTrainings()">
+                        + {{mappedTrainingCertificates?.length - 2}} {{'MORE' | translate}}
                         <ion-icon class="ML10" name="ios-arrow-down"></ion-icon>
                     </ion-button>
                     <ion-button shape="round" class="txt-capitalize custom-round"
