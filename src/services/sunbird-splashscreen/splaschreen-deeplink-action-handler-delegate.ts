@@ -130,18 +130,26 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
     this.preferences.getString(PreferenceKey.BATCH_DETAIL_KEY).toPromise()
       .then(resp => {
         if (resp) {
-          // this.events.publish('return_course');
-          this.authService.getSession().subscribe((session: OAuthSession) => {
-            if (!session) {
-                this.isGuestUser = true;
-            } else {
-                this.isGuestUser = false;
-                this.userId = session.userToken;
+          this.preferences.getString(PreferenceKey.COURSE_DATA_KEY).toPromise()
+          .then(courseDetail => {
+            if (courseDetail) {
+              this.authService.getSession().subscribe((session: OAuthSession) => {
+                if (!session) {
+                    this.isGuestUser = true;
+                } else {
+                    this.isGuestUser = false;
+                    this.userId = session.userToken;
+                }
+                if (JSON.parse(courseDetail).createdBy !== this.userId) {
+                  this.enrollIntoBatch(JSON.parse(resp));
+                } else {
+                  this.events.publish('return_course');
+                }
+              }, () => {
+              });
+              this.preferences.putString(PreferenceKey.BATCH_DETAIL_KEY, '').toPromise();
             }
-            this.enrollIntoBatch(JSON.parse(resp));
-          }, () => {
           });
-          this.preferences.putString(PreferenceKey.BATCH_DETAIL_KEY, '').toPromise();
         }
       });
   }
