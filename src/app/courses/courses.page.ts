@@ -1,6 +1,6 @@
 import { Component, Inject, NgZone, OnInit } from '@angular/core';
 import { Router, NavigationExtras, ActivatedRoute } from '@angular/router';
-import { Events, ToastController, PopoverController, MenuController } from '@ionic/angular';
+import { Events, ToastController, PopoverController } from '@ionic/angular';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { QRResultCallback, SunbirdQRScanner } from '../../services/sunbirdqrscanner.service';
 import has from 'lodash/has';
@@ -105,7 +105,6 @@ export class CoursesPage implements OnInit {
     private telemetryGeneratorService: TelemetryGeneratorService,
     private network: Network,
     private router: Router,
-    private menuCtrl: MenuController,
     private toastController: ToastController,
     private headerService: AppHeaderService,
     private route: ActivatedRoute
@@ -827,10 +826,6 @@ export class CoursesPage implements OnInit {
       Environment.HOME,
       PageId.COURSES);
     this.router.navigate([RouterLinks.ACTIVE_DOWNLOADS]);
-  }
-
-  toggleMenu() {
-    this.menuCtrl.toggle();
   }
 
 }

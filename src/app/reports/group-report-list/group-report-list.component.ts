@@ -100,6 +100,7 @@ export class GroupReportListComponent implements OnInit {
       this.report = this.router.getCurrentNavigation().extras.state.report;
       this.uids = this.router.getCurrentNavigation().extras.state.uids;
       this.reportSummary = this.router.getCurrentNavigation().extras.state.report;
+      this.users = this.router.getCurrentNavigation().extras.state.users;
 
     }
     this.downloadDirectory = this.file.dataDirectory;
@@ -148,7 +149,7 @@ export class GroupReportListComponent implements OnInit {
     }
     if (event === 'users' && !this.fromUserAssessment) {
       this.reportType = event;
-      await loader.present();
+    //  await loader.present();
       this.summarizerService.getReportsByUser(summaryRequest).toPromise()
         .then((data: any) => {
           this.groupReport = data;
@@ -180,7 +181,9 @@ export class GroupReportListComponent implements OnInit {
               })
               .catch(async (error: any) => {
                 console.log('error', error);
-                await loader.dismiss();
+                loader.present().then(() => {
+                  loader.dismiss();
+                });
               });
           });
           this.response = data;
@@ -198,18 +201,22 @@ export class GroupReportListComponent implements OnInit {
             questionsScore: this.reportSummary.totalQuestionsScore
           };
           that.zone.run(async () => {
-            await loader.dismiss();
+            loader.present().then(() => {
+              loader.dismiss();
+            });
             that.fromUserAssessment = details;
           });
 
         })
         .catch(async () => {
-          await loader.dismiss();
+          loader.present().then(() => {
+            loader.dismiss();
+          });
         });
     } else
       if (event === 'questions') {
         this.reportType = event;
-        await loader.present();
+       // await loader.present();
         this.summarizerService.getReportByQuestions(summaryRequest).toPromise()
           .then((data: any) => {
             this.response = data;
@@ -235,13 +242,17 @@ export class GroupReportListComponent implements OnInit {
               fromUser: false
             };
             that.zone.run(async () => {
-              await loader.dismiss();
+              loader.present().then(() => {
+                loader.dismiss();
+              });
               that.fromQuestionAssessment = details;
             });
           })
           .catch(async (error: any) => {
             console.log('error in 2nd one', error);
-            await loader.dismiss();
+            loader.present().then(() => {
+              loader.dismiss();
+            });
           });
       }
   }

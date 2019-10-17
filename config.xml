@@ -21,6 +21,7 @@
     <hook src="scripts/copyGradleFiles.js" type="before_run" />
     <hook src="scripts/copyBundledData.js" type="before_run" />
     <platform name="android">
+        <resource-file src="MainActivity.java" target="app/src/main/java/org/sunbird/app/MainActivity.java" />
         <config-file parent="/manifest/application" target="AndroidManifest.xml">
             <meta-data android:name="io.fabric.ApiKey" android:value="${fabricKey}" />
             <meta-data android:name="io.fabric.ApiSecret" android:value="${fabricSecret}" />

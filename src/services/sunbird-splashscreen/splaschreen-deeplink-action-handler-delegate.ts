@@ -23,7 +23,9 @@ import { AppGlobalService } from '../app-global-service.service';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { CommonUtilService } from '@app/services/common-util.service';
 import { PageId, InteractType, InteractSubtype, Environment } from '../telemetry-constants';
+import { UtilityService } from '..';
 import { Location } from '@angular/common';
+
 
 @Injectable()
 export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenActionHandlerDelegate {
@@ -32,6 +34,8 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
   userId: string;
   enrolledCourses: any;
   appLabel: any;
+  externalUrl: any;
+  appId: any;
 
   constructor(
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
@@ -45,6 +49,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
     private zone: NgZone,
     private router: Router,
     private appVersion: AppVersion,
+    private utillService: UtilityService,
     private location: Location
   ) {
     this.getUserId();
@@ -56,8 +61,14 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
 
   handleNotification(data) {
     switch (data.actionData.actionType) {
+      case ActionType.EXT_URL:
+        this.externalUrl = data.actionData.deepLink;
+        break;
       case ActionType.UPDATE_APP:
-        console.log('updateApp');
+        this.utillService.getBuildConfigValue('APPLICATION_ID')
+        .then( value => {
+            this.appId = value;
+        });
         break;
       case ActionType.COURSE_UPDATE:
         this.identifier = data.actionData.identifier;
@@ -75,7 +86,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
   }
 
   onAction(type: string, action?: { identifier: string }): Observable<undefined> {
-    const identifier: any = action !== undefined ? action.identifier : undefined;
+    const identifier: any = action !== undefined ? action.identifier : this.identifier;
     if (identifier) {
       switch (type) {
         case 'content': {
@@ -105,6 +116,10 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
           return Observable.of(undefined);
         }
       }
+    } else if (this.appId) {
+        this.utillService.openPlayStore(this.appId);
+    } else if (this.externalUrl) {
+        open(this.externalUrl);
     } else {
       this.checkCourseRedirect();
     }
@@ -115,18 +130,26 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
     this.preferences.getString(PreferenceKey.BATCH_DETAIL_KEY).toPromise()
       .then(resp => {
         if (resp) {
-          // this.events.publish('return_course');
-          this.authService.getSession().subscribe((session: OAuthSession) => {
-            if (!session) {
-                this.isGuestUser = true;
-            } else {
-                this.isGuestUser = false;
-                this.userId = session.userToken;
+          this.preferences.getString(PreferenceKey.COURSE_DATA_KEY).toPromise()
+          .then(courseDetail => {
+            if (courseDetail) {
+              this.authService.getSession().subscribe((session: OAuthSession) => {
+                if (!session) {
+                    this.isGuestUser = true;
+                } else {
+                    this.isGuestUser = false;
+                    this.userId = session.userToken;
+                }
+                if (JSON.parse(courseDetail).createdBy !== this.userId) {
+                  this.enrollIntoBatch(JSON.parse(resp));
+                } else {
+                  this.events.publish('return_course');
+                }
+              }, () => {
+              });
+              this.preferences.putString(PreferenceKey.BATCH_DETAIL_KEY, '').toPromise();
             }
-            this.enrollIntoBatch(JSON.parse(resp));
-          }, () => {
           });
-          this.preferences.putString(PreferenceKey.BATCH_DETAIL_KEY, '').toPromise();
         }
       });
   }
@@ -205,24 +228,24 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
   }
 
   async navigateToCoursePage() {
-    // const loader = await this.commonUtilService.getLoader();
-    // await loader.present();
+    const loader = await this.commonUtilService.getLoader();
+    await loader.present();
     this.preferences.getString(PreferenceKey.COURSE_DATA_KEY).toPromise()
       .then(resp => {
         if (resp) {
           console.log('URL', this.router.url);
           if (this.router.url.indexOf(RouterLinks.COURSE_BATCHES) !== -1) {
-            this.location.back();
+            window.history.go(-2);
           }
-          // setTimeout(async () => {
-          // this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], {
-          //   state: {
-          //     content: JSON.parse(resp)
-          //   }
-          // });
-            // await loader.dismiss();
+          setTimeout(async () => {
+          this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], {
+            state: {
+              content: JSON.parse(resp)
+            }
+          });
+          await loader.dismiss();
           this.preferences.putString(PreferenceKey.COURSE_DATA_KEY, '').toPromise();
-          // }, 2000);
+          }, 2000);
         }
       });
   }

@@ -164,8 +164,20 @@ export class SettingsPage implements OnInit {
         ],
         handler: (selectedButton: string) => {
           if (selectedButton === this.commonUtilService.translateMessage('CANCEL')) {
+            this.telemetryGeneratorService.generateInteractTelemetry(
+              InteractType.TOUCH,
+              InteractSubtype.CANCEL_CLICKED,
+              Environment.SETTINGS,
+              PageId.MERGE_ACCOUNT_POPUP
+          );
             confirm.dismiss();
           } else if (selectedButton === this.commonUtilService.translateMessage('ACCOUNT_MERGE_CONFIRMATION_BTN_MERGE')) {
+            this.telemetryGeneratorService.generateInteractTelemetry(
+              InteractType.TOUCH,
+              InteractSubtype.MERGE_CLICKED,
+              Environment.SETTINGS,
+              PageId.MERGE_ACCOUNT_POPUP
+          );
             confirm.dismiss();
             this.mergeAccount();
           }

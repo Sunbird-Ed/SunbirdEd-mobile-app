@@ -23,7 +23,6 @@ import {
   InteractType,
   InteractSubtype,
 } from '@app/services/telemetry-constants';
-import { SocialSharing } from '@ionic-native/social-sharing';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { DatePipe } from '@angular/common';
 import { Router } from '@angular/router';
@@ -122,7 +121,6 @@ export class UserReportComponent implements OnInit {
   async ionViewWillEnter() {
 
     const loader = await this.commonUtilService.getLoader();
-    await loader.present();
 
     const that = this;
 
@@ -157,7 +155,9 @@ export class UserReportComponent implements OnInit {
         data['fromUser'] = true;
         data['fromGroup'] = false;
         that.zone.run(async () => {
-          await loader.dismiss();
+          loader.present().then(() => {
+             loader.dismiss();
+          });
           data['showResult'] = true;
           that.assessmentData = data;
           that.assessmentData['showPopup'] = true;
@@ -169,7 +169,9 @@ export class UserReportComponent implements OnInit {
         });
       })
       .catch(async err => {
-        await loader.dismiss();
+        loader.present().then(() => {
+          loader.dismiss();
+       });
       });
 
     this.handleDeviceBackButton();
