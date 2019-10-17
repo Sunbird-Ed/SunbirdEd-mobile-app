@@ -1,27 +1,37 @@
 <ion-content class="ion-padding">
-  <ion-icon ios="ios-arrow-back" md="md-arrow-back" class="top-back-button"></ion-icon>
+  <ion-icon ios="ios-arrow-back" md="md-arrow-back" (click)="goBack()" class="top-back-button"></ion-icon>
   <div class="heading"><b>{{'YOUR_LOCATION'| translate}}</b></div>
   <div class="sub-heading">{{'YOUR_LOCATION_DETAILS' | translate}}</div>
+  <!-- <div class="name margin-bottom">
+    <label class="input-label">Name <span class="danger">*</span></label>
+    <input type="text" class="oneline-input">
+  </div> -->
   <div class="state">
     <div class="input-container">
-      <input type="text" class="input" (ngModelChange)="getCities()" [(ngModel)]="state"
-        placeholder="{{'SEARCH_STATE' | translate}}">
-      <ion-icon (click)="getCities()" class="input-icon" name="ios-arrow-down"></ion-icon>
+      <input type="text" class="input"  [(ngModel)]="state"
+        placeholder="{{'SEARCH_STATE' | translate}}" (ngModelChange)="district = '' ">
+      <ion-icon (click)="showStates = !showStates" class="input-icon" name="ios-arrow-down"></ion-icon>
     </div>
-    <div class="showList" *ngIf="showList">
+    <div class="showList" *ngIf="showStates">
       <ul>
-        <li (click)="selectCity(i.name)" *ngFor="let i of cities | filter : state">{{i.name}}</li>
+        <li (click)="selectState(state.name , state.id)" *ngFor="let state of stateList | filter : state">{{state?.name}}</li>
       </ul>
     </div>
   </div>
-  <div class="district">
-    <div class="input-container margin-top">
-      <input type="text" class="input" (onModalChange)="getCities()" [(ngModel)]="district"
-        placeholder="{{'SEARCH_DISTRICT' | translate}}">
-      <ion-icon (click)="getCities()" class="input-icon" name="ios-arrow-down"></ion-icon>
+  <div class="district" *ngIf="!showStates">
+    <div class="input-container margin-top" [ngClass]="(!state) ? 'disableInput' : ''">
+      <input type="text" class="input"  [(ngModel)]="district"
+        placeholder="{{'SEARCH_DISTRICT' | translate}}" [disabled]="!state">
+      <ion-icon *ngIf="this.state" (click)="showDistrict = !showDistrict" class="input-icon" name="ios-arrow-down"></ion-icon>
+      <ion-icon *ngIf="!this.state" class="input-icon" name="ios-arrow-down"></ion-icon>
+    </div>
+    <div class="showList" *ngIf="showDistrict">
+      <ul>
+        <li (click)="selectDistrict(district.name)" *ngFor="let district of districtList | filter : district">{{district?.name}}</li>
+      </ul>
     </div>
   </div>
 </ion-content>
 <div class="footer">
-  <button class="block-button">Submit</button>
+  <button class="block-button" [disabled]="!state || !district" [ngClass]="(!state || !district)? 'disabled-button': ''" (click)="goToTabsPage()">Submit</button>
 </div>

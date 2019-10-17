@@ -601,13 +601,7 @@ export class ProfileSettingsPage implements OnInit {
         );
         this.loader = await this.commonUtilService.getLoader(2000);
         this.loader.present();
-
-        const navigationExtras: NavigationExtras = {
-          state: {
-            loginMode: 'guest'
-          }
-        };
-        this.router.navigate(['/tabs'], navigationExtras);
+        this.router.navigate([RouterLinks.DISTRICT_MAPPING])
       })
       .catch(async () => {
         await loader.dismiss();

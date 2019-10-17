@@ -17,8 +17,36 @@
         }
     }
 
+    .oneline-input {
+        border-left: white;
+        border-right: white;
+        border-top: white;
+        border-bottom: 0.5px solid #333333;
+        width:100%;
+        outline: none;
+    }
+    
+    .disableInput {
+        background-color: #EBEBE4
+    };
+    .danger{
+        color: red;
+    }
+    .disabled-button{
+        opacity: 0.5;
+    }
+    .input-label {
+        font-weight: 200;
+        font-size: 14px;
+        color: #797979;
+    }
+
     .margin-top {
         margin-top: 20px;
+    }
+
+    .margin-bottom {
+        margin-bottom: 20px;
     }
 
     .showList {
