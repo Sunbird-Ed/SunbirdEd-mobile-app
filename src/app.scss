@@ -789,7 +789,7 @@ ion-toast.sb-toast.available-later {
 .loading-wrapper.sc-ion-loading-md {
   border-radius: 50%;
   // padding: 16px;
-  padding-bottom:18px;
+  padding-bottom: 18px;
 }
 
 .grade_ellipsis {
@@ -808,7 +808,10 @@ ion-toast.sb-toast.available-later {
 }
 
 .input-focus.sc-ion-popover-md-h {
-  display: contents;
+  display: grid;
+  @supports (display: contents) {
+    display: contents;
+  }
 }
 
 .sb-dw-delete-popover {
@@ -868,24 +871,24 @@ ion-split-pane {
   contain: unset;
 }
 .leave-training-popup {
-.popover-content{
+  .popover-content {
     top: 168.273px !important;
     left: 186px !important;
     transform-origin: right top;
     transform: scale(1);
     width: 36% !important;
-   .list-md{
-    padding-top: 0px !important;
-    padding-bottom: 0px !important;
-   }
-   ion-backdrop{
-     opacity: 0;
+    .list-md {
+      padding-top: 0px !important;
+      padding-bottom: 0px !important;
+    }
+    ion-backdrop {
+      opacity: 0;
     }
   }
- }
+}
 // common code for both collection-etb and enrolled course details
-.sb-topics-container-ftue{
-  .sb-topic-item{
+.sb-topics-container-ftue {
+  .sb-topic-item {
     padding: 0 !important;
     height: 3.11%;
     width: 93.33%;
@@ -894,10 +897,10 @@ ion-split-pane {
     line-height: 18px;
     font-weight: bold;
     @include rtl() {
-     margin-left: 14px;
+      margin-left: 14px;
     }
     @include ltr() {
-    margin-left: 14px;
+      margin-left: 14px;
     }
   }
   .sb-ftue-design {
@@ -905,37 +908,36 @@ ion-split-pane {
     font-size: 1.4rem;
     background: #fff;
     margin: 10px 0;
-    border: 0.5px solid rgba(35,97,255,0.5);
-    background-color: #FFFFFF;
-    box-shadow: 0 3px 4px 0 rgba(2,79,157,0.1);
-    .sb-play-unselected{
+    border: 0.5px solid rgba(35, 97, 255, 0.5);
+    background-color: #ffffff;
+    box-shadow: 0 3px 4px 0 rgba(2, 79, 157, 0.1);
+    .sb-play-unselected {
       color: $blue;
       font-size: 12px;
       line-height: 20px;
       @include margin(6px);
       @include clearfix;
     }
-    .sb-play-selected{
+    .sb-play-selected {
       font-size: 12px;
       line-height: 20px;
       @include margin(6px);
-      @include clearfix; 
+      @include clearfix;
     }
-    
-    .pull-left{
+
+    .pull-left {
       width: calc(100% - 50px);
       vertical-align: middle !important;
       @include padding(10px 0px 0px 0px);
       @include clearfix;
     }
-    .pull-right{
+    .pull-right {
       vertical-align: middle;
       @include padding(0px 6px 0px 0px);
-
     }
   }
-  .sb-ftue-design-course-toc{
-    .pull-left{
+  .sb-ftue-design-course-toc {
+    .pull-left {
       padding-top: 0 !important;
       text-overflow: ellipsis;
       overflow: hidden;
@@ -945,22 +947,22 @@ ion-split-pane {
       -webkit-box-orient: vertical;
       /* autoprefixer: on */
     }
-    .pull-right{
-      .done{
-        color: map-get($colors, office_green);      
+    .pull-right {
+      .done {
+        color: map-get($colors, office_green);
       }
     }
-    .content-type-container{
-      img{
+    .content-type-container {
+      img {
         display: inline-block !important;
         height: 20px !important;
         width: auto !important;
         vertical-align: middle;
-        @include margin( 0px 8px 0px 0px);
+        @include margin(0px 8px 0px 0px);
       }
     }
   }
 }
-.contentPadding{
+.contentPadding {
   --padding-bottom: 0px !important;
-} 
+}

@@ -638,7 +638,7 @@ downloadTrainingCertificate(course: Course, certificate: CourseCertificate) {
     const popover = await this.popoverCtrl.create({
       component: EditContactDetailsPopupComponent,
       componentProps,
-      cssClass: 'popover-alert'
+      cssClass: 'popover-alert input-focus'
     });
     await popover.present();
     const { data } = await popover.onDidDismiss();
@@ -658,7 +658,7 @@ downloadTrainingCertificate(course: Course, certificate: CourseCertificate) {
         type: ProfileConstants.CONTACT_TYPE_PHONE
       };
 
-      const data = await this.openContactVerifyPopup(EditContactVerifyPopupComponent, componentProps, 'popover-alert');
+      const data = await this.openContactVerifyPopup(EditContactVerifyPopupComponent, componentProps, 'popover-alert input-focus');
       if (data && data.OTPSuccess) {
         this.updatePhoneInfo(data.value);
       }
@@ -671,7 +671,7 @@ downloadTrainingCertificate(course: Course, certificate: CourseCertificate) {
         type: ProfileConstants.CONTACT_TYPE_EMAIL
       };
 
-      const data = await this.openContactVerifyPopup(EditContactVerifyPopupComponent, componentProps, 'popover-alert');
+      const data = await this.openContactVerifyPopup(EditContactVerifyPopupComponent, componentProps, 'popover-alert input-focus');
       if (data && data.OTPSuccess) {
         this.updateEmailInfo(data.value);
       }
@@ -789,14 +789,14 @@ downloadTrainingCertificate(course: Course, certificate: CourseCertificate) {
     const popover = await this.popoverCtrl.create({
       component: AccountRecoveryInfoComponent,
       componentProps,
-      cssClass: 'popover-alert'
+      cssClass: 'popover-alert input-focus'
     });
 
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,
       InteractSubtype.RECOVERY_ACCOUNT_ID_CLICKED,
       Environment.USER,
-      PageId.PROFILE, undefined
+      PageId.PROFILE
     );
 
     await popover.present();
