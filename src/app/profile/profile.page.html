@@ -182,7 +182,6 @@
                 {{'TRAININGS_ATTENDED' | translate}} ({{mappedTrainingCertificates?.length}})&lrm;
             </div>
             <div class="content">
-                <ng-container>
                     <div class="MB15 flex-nowrap"
                         *ngFor="let certificate of (mappedTrainingCertificates | slice : startLimit:trainingsLimit);">
                         <div class="training-1">
@@ -194,19 +193,13 @@
                             </div>
                         </div>
                         <div class="training-2" *ngIf="certificate?.certificate">
-                            <ion-button 
-                                (click)="downloadTrainingCertificate(certificate, certificate?.certificate)">
-                                <ion-icon class="sb-dt-card-blue-icon" name="download"></ion-icon>
-                                <ion-label class="sb-btn-footer-text">{{'DOWNLOAD' | translate}}</ion-label>
-                            </ion-button>
-                            <!-- <button ion-button clear icon-only class="sb-btn-tile" (click)="shareTrainingCertificate(getCertificateCourse(certificate), certificate)">
-                                <ion-icon ios="ios-share" md="md-share" class="sb-dt-card-blue-icon"></ion-icon>
-                                <span class="sb-btn-footer-text">{{'SHARE' | translate}}</span>
-                            </button> -->
+                            <button class="sb-btn-tile" (click)="downloadTrainingCertificate(certificate, certificate?.certificate)">
+                                <img src="assets/imgs/ic_download_selected.png" class="cert-download">
+                                <span class="sb-btn-footer-text m-t-4">{{ 'DOWNLOAD' | translate }}</span>
+                            </button>
                         </div>
                     </div>
-                </ng-container>
-                <div class="" text-center>
+                <div text-center *ngIf="mapTrainingsToCertificates(trainingsCompleted).length > trainingsLimit">
                     <ion-button shape="round" class="txt-capitalize custom-round"
                         *ngIf="trainingsLimit < mappedTrainingCertificates?.length" (click)="showMoreTrainings()">
                         + {{mappedTrainingCertificates?.length - 2}} {{'MORE' | translate}}

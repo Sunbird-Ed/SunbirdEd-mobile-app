@@ -777,7 +777,7 @@ downloadTrainingCertificate(course: Course, certificate: CourseCertificate) {
       });
       orgList.sort((orgDate1, orgdate2) => orgDate1.orgjoindate > orgdate2.organisation ? 1 : -1);
       this.organisationDetails = orgList[0].orgName;
-    } else {
+    } else if (orgItemList.length === 1) {
       this.organisationDetails = orgItemList[0].orgName;
     }
   }
