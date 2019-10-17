@@ -61,7 +61,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
 
   handleNotification(data) {
     switch (data.actionData.actionType) {
-      case ActionType.SURVEY:
+      case ActionType.EXT_URL:
         this.externalUrl = data.actionData.deepLink;
         break;
       case ActionType.UPDATE_APP:
@@ -130,18 +130,26 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
     this.preferences.getString(PreferenceKey.BATCH_DETAIL_KEY).toPromise()
       .then(resp => {
         if (resp) {
-          // this.events.publish('return_course');
-          this.authService.getSession().subscribe((session: OAuthSession) => {
-            if (!session) {
-                this.isGuestUser = true;
-            } else {
-                this.isGuestUser = false;
-                this.userId = session.userToken;
+          this.preferences.getString(PreferenceKey.COURSE_DATA_KEY).toPromise()
+          .then(courseDetail => {
+            if (courseDetail) {
+              this.authService.getSession().subscribe((session: OAuthSession) => {
+                if (!session) {
+                    this.isGuestUser = true;
+                } else {
+                    this.isGuestUser = false;
+                    this.userId = session.userToken;
+                }
+                if (JSON.parse(courseDetail).createdBy !== this.userId) {
+                  this.enrollIntoBatch(JSON.parse(resp));
+                } else {
+                  this.events.publish('return_course');
+                }
+              }, () => {
+              });
+              this.preferences.putString(PreferenceKey.BATCH_DETAIL_KEY, '').toPromise();
             }
-            this.enrollIntoBatch(JSON.parse(resp));
-          }, () => {
           });
-          this.preferences.putString(PreferenceKey.BATCH_DETAIL_KEY, '').toPromise();
         }
       });
   }
@@ -220,24 +228,24 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
   }
 
   async navigateToCoursePage() {
-    // const loader = await this.commonUtilService.getLoader();
-    // await loader.present();
+    const loader = await this.commonUtilService.getLoader();
+    await loader.present();
     this.preferences.getString(PreferenceKey.COURSE_DATA_KEY).toPromise()
       .then(resp => {
         if (resp) {
           console.log('URL', this.router.url);
           if (this.router.url.indexOf(RouterLinks.COURSE_BATCHES) !== -1) {
-            this.location.back();
+            window.history.go(-2);
           }
-          // setTimeout(async () => {
-          // this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], {
-          //   state: {
-          //     content: JSON.parse(resp)
-          //   }
-          // });
-            // await loader.dismiss();
+          setTimeout(async () => {
+          this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], {
+            state: {
+              content: JSON.parse(resp)
+            }
+          });
+          await loader.dismiss();
           this.preferences.putString(PreferenceKey.COURSE_DATA_KEY, '').toPromise();
-          // }, 2000);
+          }, 2000);
         }
       });
   }

@@ -17,7 +17,7 @@
     <form action="#" id="send-email-form">
       <div id="textareadiv">
         <textarea #textarea type="text" name="moreInfo" placeholder="{{data?.constants?.typeHere}}" class="input-text-form"
-          maxLength="10"  [(ngModel)]="emailContent" (keyup)="countChar(emailContent)"></textarea>
+          maxLength="1000"  [(ngModel)]="emailContent" (keyup)="countChar(emailContent)"></textarea>
         <p id="textareainfo"> <span id="charleft" *ngIf="!charEntered">1000</span><span *ngIf="charEntered">{{charsLeft}}</span>{{ data?.constants?.charactersLeft}}</p>
       </div>
       <div class="initiate-email-info">

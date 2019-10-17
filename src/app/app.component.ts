@@ -1,4 +1,4 @@
-import { Router, NavigationExtras } from '@angular/router';
+import { Router, NavigationExtras, NavigationStart, NavigationEnd, NavigationError, Event } from '@angular/router';
 import { Location } from '@angular/common';
 import { AfterViewInit, Component, Inject, NgZone, OnInit, EventEmitter, ViewChild } from '@angular/core';
 import { Events, Platform, IonRouterOutlet, MenuController } from '@ionic/angular';
@@ -11,10 +11,10 @@ import { Network } from '@ionic-native/network/ngx';
 import {
   ErrorEventType, EventNamespace, EventsBusService, SharedPreferences,
   SunbirdSdk, TelemetryAutoSyncUtil, TelemetryService, NotificationService, GetSystemSettingsRequest, SystemSettings, SystemSettingsService,
-  CodePushExperimentService, AuthEventType
+  CodePushExperimentService, AuthEventType, CorrelationData, Profile
 } from 'sunbird-sdk';
 
-import { InteractType, InteractSubtype, Environment, PageId, ImpressionType } from 'services/telemetry-constants';
+import { InteractType, InteractSubtype, Environment, PageId, ImpressionType, CorReleationDataType } from 'services/telemetry-constants';
 import { PreferenceKey, EventTopics, SystemSettingsIds } from './app.constant';
 import { ActivePageService } from '@app/services/active-page/active-page-service';
 import {
@@ -51,6 +51,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   private telemetryAutoSyncUtil: TelemetryAutoSyncUtil;
   toggleRouterOutlet = true;
+  rootPageDisplayed: boolean = false;
   profile: any = {};
   selectedLanguage: string;
   appName: string;
@@ -334,6 +335,16 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   handleBackButton() {
+    this.router.events.subscribe((event: Event) => {
+      if (event instanceof NavigationStart) {
+        // Show loading indicator
+        if(event.url.indexOf("tabs")!= -1) {
+          this.rootPageDisplayed = true;
+        } else {
+          this.rootPageDisplayed = true;
+        }
+    }
+    });
     this.platform.backButton.subscribeWithPriority(0, async () => {
       console.log('URL' + this.router.url);
       if (this.router.url === RouterLinks.LIBRARY_TAB || this.router.url === RouterLinks.COURSE_TAB
@@ -346,7 +357,7 @@ export class AppComponent implements OnInit, AfterViewInit {
         }
       } else {
         // this.routerOutlet.pop();
-        if (this.location.back) {
+        if (this.location.back &&  !this.rootPageDisplayed) {
           this.location.back();
         }
       }
@@ -427,10 +438,20 @@ export class AppComponent implements OnInit, AfterViewInit {
   private generateImpressionEvent(pageId: string) {
     pageId = pageId.toLowerCase();
     const env = pageId.localeCompare(PageId.PROFILE) ? Environment.HOME : Environment.USER;
+    const corRelationList: Array<CorrelationData> = [];
+    if (pageId === 'resources') {
+      const currentProfile: Profile = this.appGlobalService.getCurrentUser();
+      corRelationList.push({ id: currentProfile.board ? currentProfile.board.join(',') : '', type: CorReleationDataType.BOARD });
+      corRelationList.push({ id: currentProfile.medium ? currentProfile.medium.join(',') : '' , type: CorReleationDataType.MEDIUM });
+      corRelationList.push({ id: currentProfile.grade ? currentProfile.grade.join(',') : '', type: CorReleationDataType.CLASS });
+      corRelationList.push({ id: currentProfile.profileType, type: CorReleationDataType.USERTYPE });
+    }
+
     this.telemetryGeneratorService.generateImpressionTelemetry(
       ImpressionType.VIEW, '',
       pageId,
-      env);
+      env, undefined, undefined, undefined, undefined,
+      corRelationList);
   }
 
   private async startOpenrapDiscovery(): Promise<undefined> {
@@ -514,7 +535,8 @@ export class AppComponent implements OnInit, AfterViewInit {
         || (routeUrl.indexOf(RouterLinks.PROFILE_SETTINGS) !== -1)
         || (routeUrl.indexOf(RouterLinks.QRCODERESULT) !== -1)
         || (routeUrl.indexOf(RouterLinks.STORAGE_SETTINGS) !== -1)
-        || (routeUrl.indexOf(RouterLinks.EXPLORE_BOOK) !== -1)) {
+        || (routeUrl.indexOf(RouterLinks.EXPLORE_BOOK) !== -1)
+        || (routeUrl.indexOf(RouterLinks.PERMISSION) !== -1)) {
         this.headerService.sidebarEvent($event);
         return;
       } else {

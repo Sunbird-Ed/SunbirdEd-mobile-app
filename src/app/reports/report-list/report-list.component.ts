@@ -30,7 +30,6 @@ export class ReportListComponent implements OnInit {
   backButtonFunc: Subscription;
 
   constructor(
-    private loading: LoadingController,
     @Inject('SUMMARIZER_SERVICE') public summarizerService: SummarizerService,
     public ngZone: NgZone,
     private telemetryGeneratorService: TelemetryGeneratorService,
@@ -84,26 +83,27 @@ export class ReportListComponent implements OnInit {
       Environment.USER
     );
     const loader = await this.commonUtilService.getLoader();
-    await loader.present();
-
     const summaryRequest: SummaryRequest = {
-      qId: '',
-      uids: this.uids,
-      contentId: '',
-      hierarchyData: null,
-    };
+        qId: '',
+        uids: this.uids,
+        contentId: '',
+        hierarchyData: null,
+      };
     this.summarizerService.getSummary(summaryRequest).toPromise()
-      .then((list: LearnerAssessmentSummary[]) => {
-        this.ngZone.run(async () => {
-          await loader.dismiss();
-          this.listOfReports = list;
+        .then((list: LearnerAssessmentSummary[]) => {
+          this.ngZone.run(async () => {
+            loader.present().then(() => {
+              loader.dismiss();
+            });
+            this.listOfReports = list;
+          });
+        })
+        .catch(async err => {
+          console.log('get summary error :', err);
+          loader.present().then(() => {
+            loader.dismiss();
+          });
         });
-      })
-      .catch(async err => {
-        console.log('get summary error :', err);
-        await loader.dismiss();
-      });
-
   }
 
   formatTime(time: number): string {
@@ -125,7 +125,7 @@ export class ReportListComponent implements OnInit {
       telemetryObject
     );
     if (this.isFromUsers) {
-      const navigationExtras: NavigationExtras = { state: { report: report, handle: this.handle } };
+      const navigationExtras: NavigationExtras = { state: { report, handle: this.handle } };
       this.router.navigate([`/${RouterLinks.REPORTS}/${RouterLinks.USER_REPORT}`], navigationExtras);
     } else
       if (this.isFromGroups) {
@@ -134,9 +134,9 @@ export class ReportListComponent implements OnInit {
 
         this.router.navigate([`${RouterLinks.REPORTS}/${RouterLinks.GROUP_REPORT}`], {
           state: {
-            report: report,
-            uids: uids,
-            users: users,
+            report,
+            uids,
+            users,
             group: this.groupInfo
           }
         });
