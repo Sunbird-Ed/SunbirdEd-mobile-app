@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@angular/core';
 import * as  moment from 'moment';
 import { File } from '@ionic-native/file/ngx';
-import { SharedPreferences, Content, CorrelationData, Rollup } from 'sunbird-sdk';
+import { SharedPreferences, Content, CorrelationData, Rollup, TelemetryObject } from 'sunbird-sdk';
 
 import { CommonUtilService } from '@app/services/common-util.service';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
@@ -41,6 +41,7 @@ export class RatingHandler {
             this.userRating = contentFeedback[0].rating;
             this.userComment = contentFeedback[0].comments;
         }
+        const telemetryObject = new TelemetryObject(content.identifier , content.contentType, content.contentData.pkgVersion);
 
         if (isContentPlayed || content.contentAccess.length) {
             if (popupType === 'automatic' && (this.userRating === 0 && !this.appGlobalService.getSelectedUser())) {
@@ -75,7 +76,7 @@ export class RatingHandler {
             InteractSubtype.RATING_CLICKED,
             Environment.HOME,
             PageId.CONTENT_DETAIL,
-            undefined,
+            telemetryObject,
             paramsMap,
             rollUp,
             corRelationList);

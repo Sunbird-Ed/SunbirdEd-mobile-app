@@ -6,7 +6,7 @@ import { CommonUtilService } from '@app/services/common-util.service';
 import { ComingSoonMessageService } from '@app/services/coming-soon-message.service';
 import { PopoverController, Events } from '@ionic/angular';
 import { SbGenericPopoverComponent } from '@app/app/components/popups/sb-generic-popover/sb-generic-popover.component';
-import { Content } from 'sunbird-sdk';
+import { Content,TelemetryObject } from 'sunbird-sdk';
 import { Router, NavigationExtras } from '@angular/router';
 import { TextbookTocService } from '@app/app/collection-detail-etb/textbook-toc-service';
 import {
@@ -83,6 +83,7 @@ export class CollectionChildComponent implements OnInit {
     }
   }
   navigateToDetailsPage(content: Content, depth) {
+    const telemetryObject = new TelemetryObject(content.identifier, content.contentData.contentType, content.contentData.pkgVersion);
     if (this.router.url.indexOf(RouterLinks.TEXTBOOK_TOC) !== -1) {
       const values = new Map();
       values['contentClicked'] = content.identifier;
@@ -91,7 +92,7 @@ export class CollectionChildComponent implements OnInit {
         InteractType.TOUCH,
         InteractSubtype.CONTENT_CLICKED,
         Environment.HOME,
-        PageId.TEXTBOOK_TOC, undefined,
+        PageId.TEXTBOOK_TOC, telemetryObject,
         values
       );
       this.textbookTocService.setTextbookIds({ rootUnitId: this.rootUnitId, contentId: content.identifier });
@@ -137,7 +138,7 @@ export class CollectionChildComponent implements OnInit {
             InteractType.TOUCH,
             InteractSubtype.CONTENT_CLICKED,
             Environment.HOME,
-            PageId.COLLECTION_DETAIL, undefined,
+            PageId.COLLECTION_DETAIL,telemetryObject ,
             values
           );
           const contentDetailsParams: NavigationExtras = {

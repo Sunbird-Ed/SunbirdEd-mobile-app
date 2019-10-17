@@ -786,11 +786,13 @@ export class CollectionDetailEtbPage implements OnInit {
               this.textbookTocService.resetTextbookIds();
             }, 0);
           }
+          const telemetryObject = new TelemetryObject(this.content.identifier || this.content.contentId, this.content.contentType, this.content.pkgVersion);
           this.telemetryGeneratorService.generateInteractTelemetry(
             InteractType.OTHER,
             InteractSubtype.IMPORT_COMPLETED,
             Environment.HOME,
-            PageId.COLLECTION_DETAIL
+            PageId.COLLECTION_DETAIL,
+            telemetryObject
           );
         });
       })
@@ -1105,12 +1107,13 @@ export class CollectionDetailEtbPage implements OnInit {
       });
       await popover.present();
       const response = await popover.onDidDismiss();
+      const telemetryObject = new TelemetryObject(this.content.identifier || this.content.contentId, this.content.contentType, this.content.pkgVersion);
       if (response && response.data) {
         this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
           'download-all-button-clicked',
           Environment.HOME,
           PageId.COLLECTION_DETAIL,
-          undefined,
+          telemetryObject,
           undefined,
           this.objRollup,
           this.corRelationList);
@@ -1181,11 +1184,12 @@ export class CollectionDetailEtbPage implements OnInit {
 
   }
   async showPopOver(event) {
+    const telemetryObject = new TelemetryObject(this.content.identifier || this.content.contentId, this.content.contentType, this.content.pkgVersion);
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
       'delete-from-device-button-clicked',
       Environment.HOME,
       PageId.COLLECTION_DETAIL,
-      undefined,
+      telemetryObject,
       undefined,
       this.objRollup,
       this.corRelationList);
@@ -1310,15 +1314,21 @@ export class CollectionDetailEtbPage implements OnInit {
   }
 
   private redirectToActivedownloads() {
+    const telemetryObject = new TelemetryObject(this.content.identifier || this.content.contentId, this.content.contentType, this.content.pkgVersion);
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,
       InteractSubtype.ACTIVE_DOWNLOADS_CLICKED,
       Environment.HOME,
-      PageId.COLLECTION_DETAIL);
+      PageId.COLLECTION_DETAIL,
+      telemetryObject);
     this.router.navigate([RouterLinks.ACTIVE_DOWNLOADS]);
   }
 
   async onFilterMimeTypeChange(val, idx, currentFilter?) {
+    const telemetryObject: TelemetryObject = new TelemetryObject(
+      this.contentDetail.identifier,
+      this.contentDetail.contentType,
+      this.contentDetail.contentData.pkgVersion);
     const values = new Map();
     values['filter'] = currentFilter;
     this.activeMimeTypeFilter = val;
@@ -1338,11 +1348,17 @@ export class CollectionDetailEtbPage implements OnInit {
       InteractSubtype.FILTER_CLICKED,
       Environment.HOME,
       PageId.COLLECTION_DETAIL,
+      telemetryObject,
       undefined,
-      values);
+      this.objRollup,
+      this.corRelationList);
   }
 
   openTextbookToc() {
+    const telemetryObject: TelemetryObject = new TelemetryObject(
+      this.contentDetail.identifier,
+      this.contentDetail.contentType,
+      this.contentDetail.contentData.pkgVersion);
     this.shownGroup = null;
     this.router.navigate([`/${RouterLinks.COLLECTION_DETAIL_ETB}/${RouterLinks.TEXTBOOK_TOC}`],
       { state: { childrenData: this.childrenData, parentId: this.identifier } });
@@ -1353,8 +1369,10 @@ export class CollectionDetailEtbPage implements OnInit {
       InteractSubtype.DROPDOWN_CLICKED,
       Environment.HOME,
       PageId.COLLECTION_DETAIL,
+      telemetryObject,
       undefined,
-      values
+      this.objRollup,
+      this.corRelationList
     );
   }
 
