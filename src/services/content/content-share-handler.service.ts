@@ -1,7 +1,7 @@
 import { Injectable, Inject } from '@angular/core';
 import {
   ContentService, StorageService, ContentExportRequest, ContentExportResponse,
-  Content, Rollup, CorrelationData, ContentDetailRequest
+  Content, Rollup, CorrelationData, ContentDetailRequest, TelemetryObject
 } from 'sunbird-sdk';
 import { CommonUtilService } from '../common-util.service';
 import { InteractSubtype, InteractType, Environment, PageId } from '../telemetry-constants';
@@ -9,11 +9,14 @@ import { SocialSharing } from '@ionic-native/social-sharing/ngx';
 import { TelemetryGeneratorService } from '../telemetry-generator.service';
 import { ShareUrl, ContentType } from '../../app/app.constant';
 import { UtilityService } from '../utility-service';
+import { ContentUtil } from '@app/util/content-util';
 
 @Injectable({
   providedIn: 'root'
 })
+
 export class ContentShareHandlerService {
+  public telemetryObject :TelemetryObject;
   constructor(
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
     @Inject('STORAGE_SERVICE') private storageService: StorageService,
@@ -23,6 +26,7 @@ export class ContentShareHandlerService {
     private utilityService: UtilityService) {
   }
   public async shareContent(content: Content, corRelationList?: CorrelationData[], rollup?: Rollup) {
+    this.telemetryObject = ContentUtil.getTelemetryObject(content);
     if (content.hierarchyInfo && content.hierarchyInfo.length > 0) {
       const contentDetailRequest: ContentDetailRequest = {
         contentId: content.hierarchyInfo[0].identifier,
@@ -74,7 +78,7 @@ export class ContentShareHandlerService {
       subType,
       Environment.HOME,
       this.getPageId(contentType),
-      undefined,
+      this.telemetryObject,
       values,
       rollup,
       corRelationList);
