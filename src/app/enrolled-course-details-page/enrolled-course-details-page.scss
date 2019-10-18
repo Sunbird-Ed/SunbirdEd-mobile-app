@@ -206,7 +206,7 @@
         outline: none;
         margin-bottom: 8px;
         width: 100%;
-        padding: 13px 0px 13px 0px;
+        padding: 16px 0px 16px 0px;
     }
     .segment-button-checked{
       ion-label.sc-ion-label-md-h.sc-ion-label-md-s.md.hydrated{
@@ -264,11 +264,11 @@
   .view-credits{
     margin-bottom: 8px;
     span{
-    color: #6090c1;
+    color: #024F9D;
     ion-icon{
-      padding-left: 4px;
+      padding: 0 0 4px 8px;
       vertical-align: middle;
-      font-size: 16px;
+      font-size: 14px;
     }
     }
     
@@ -333,8 +333,7 @@
     color:map-get($colors , danger);
   }
   .sb-course-complete-container {
-    width: 100%;	
-    opacity: 0.7;	
+    width: 100%;
     background-color: #BFE1CF;
     @include padding(8px);
     .img-container{
@@ -400,12 +399,13 @@
 
   .sb-batch-end-container{
     background-color: #FBE7E0;
-    padding: 10px;
+    padding: 8px 16px;
     height: auto;	
     width: auto;
     .batch-end-main-heading{
       font-size: 12px !important;
-      color: #E55A28;      
+      color: #E55A28;
+      font-weight: bold;
     }
     .batch-end-sub-heading{
       color: #333333;
@@ -446,4 +446,8 @@
   font-size: 14px;
 }
 
-  
+.progress-label {
+  font-size: 10px !important;
+  color: #333;
+}
+
