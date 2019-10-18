@@ -84,6 +84,7 @@ export class ProfilePage implements OnInit {
   layoutPopular = ContentCard.LAYOUT_POPULAR;
   headerObservable: any;
   timer: any;
+  mappedTrainingCertificates: CourseCertificate[] = [];
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     @Inject('AUTH_SERVICE') private authService: AuthService,
@@ -366,6 +367,7 @@ export class ProfilePage implements OnInit {
     this.courseService.getEnrolledCourses(option).toPromise()
       .then((res: Course[]) => {
         this.trainingsCompleted = res.filter((course) => course.status === 2);
+        this.mappedTrainingCertificates = this.mapTrainingsToCertificates(this.trainingsCompleted);
       })
       .catch((error: any) => {
         console.error('error while loading enrolled courses', error);
@@ -397,11 +399,11 @@ export class ProfilePage implements OnInit {
     }, []);
   }
 
-  getCertificateCourse(certificate: CourseCertificate): Course {
-    return this.trainingsCompleted.find((course: Course) => {
-      return course.certificates ? course.certificates.indexOf(certificate) > -1 : undefined;
-    });
-  }
+  // getCertificateCourse(certificate: CourseCertificate): Course {
+  //   return this.trainingsCompleted.find((course: Course) => {
+  //     return course.certificates ? course.certificates.indexOf(certificate) > -1 : undefined;
+  //   });
+  // }
 
 downloadTrainingCertificate(course: Course, certificate: CourseCertificate) {
     const telemetryObject: TelemetryObject  = new TelemetryObject(certificate.id, ContentType.CERTIFICATE, undefined);
@@ -597,7 +599,7 @@ downloadTrainingCertificate(course: Course, certificate: CourseCertificate) {
     const popover = await this.popoverCtrl.create({
       component: EditContactDetailsPopupComponent,
       componentProps,
-      cssClass: 'popover-alert'
+      cssClass: 'popover-alert input-focus'
     });
     await popover.present();
     const { data } = await popover.onDidDismiss();
@@ -617,7 +619,7 @@ downloadTrainingCertificate(course: Course, certificate: CourseCertificate) {
         type: ProfileConstants.CONTACT_TYPE_PHONE
       };
 
-      const data = await this.openContactVerifyPopup(EditContactVerifyPopupComponent, componentProps, 'popover-alert');
+      const data = await this.openContactVerifyPopup(EditContactVerifyPopupComponent, componentProps, 'popover-alert input-focus');
       if (data && data.OTPSuccess) {
         this.updatePhoneInfo(data.value);
       }
@@ -630,7 +632,7 @@ downloadTrainingCertificate(course: Course, certificate: CourseCertificate) {
         type: ProfileConstants.CONTACT_TYPE_EMAIL
       };
 
-      const data = await this.openContactVerifyPopup(EditContactVerifyPopupComponent, componentProps, 'popover-alert');
+      const data = await this.openContactVerifyPopup(EditContactVerifyPopupComponent, componentProps, 'popover-alert input-focus');
       if (data && data.OTPSuccess) {
         this.updateEmailInfo(data.value);
       }
@@ -734,7 +736,7 @@ downloadTrainingCertificate(course: Course, certificate: CourseCertificate) {
       });
       orgList.sort((orgDate1, orgdate2) => orgDate1.orgjoindate > orgdate2.organisation ? 1 : -1);
       this.organisationDetails = orgList[0].orgName;
-    } else {
+    } else if (orgItemList.length === 1) {
       this.organisationDetails = orgItemList[0].orgName;
     }
   }
@@ -748,14 +750,14 @@ downloadTrainingCertificate(course: Course, certificate: CourseCertificate) {
     const popover = await this.popoverCtrl.create({
       component: AccountRecoveryInfoComponent,
       componentProps,
-      cssClass: 'popover-alert'
+      cssClass: 'popover-alert input-focus'
     });
 
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,
       InteractSubtype.RECOVERY_ACCOUNT_ID_CLICKED,
       Environment.USER,
-      PageId.PROFILE, undefined
+      PageId.PROFILE
     );
 
     await popover.present();
