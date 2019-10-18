@@ -226,18 +226,21 @@
     .segment-button-indicator{
       width: 84% !important;
       margin-right: 8% !important;
-    }   
+    }  
+    .info-icon-pr-4 {
+      --padding-end: 4px !important;
+    }
   }
   .sb-topics-containe{
     padding-right: 5%;
   }
   .sb-hidden-content{
-    background-color: #F2F2F2 !important;
+    background-color: #E5EDF5 !important;
     // height: 34.15% !important;
     width: 100% !important;
     border-radius: 0 0 2px 2px !important;
     padding-top: 2% !important;
-    padding-bottom: 2% !important;
+    padding-bottom: 5% !important;
   }
   .sb-accordian-card{
     // height: 6.1% !important;
@@ -437,5 +440,10 @@
       font-size: 12px !important;
     }
 }
-  
+
+.information-icon {
+  color: map-get($colors, dark);
+  font-size: 14px;
+}
+
   
