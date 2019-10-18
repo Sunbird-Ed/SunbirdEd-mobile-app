@@ -196,6 +196,7 @@ org.ekstep.contentrenderer.baseLauncher.extend({
                 src: path
             });
             youtubeInstance.play();
+            $('.vjs-loading-spinner').css({"display": "none"});
             instance.addYOUTUBEListeners(youtubeInstance);
             instance.setYoutubeStyles(youtubeInstance);
             instance.videoPlayer = youtubeInstance;
@@ -217,6 +218,11 @@ org.ekstep.contentrenderer.baseLauncher.extend({
             EkstepRendererAPI.getTelemetryService().navigate(stageid, stageid, {
                 "duration": (Date.now() / 1000) - window.PLAYER_STAGE_START_TIME
             });
+            $('.vjs-loading-spinner').css({"top": "46%","left": "49%",
+            "width": "72px",
+            "height": "70px",
+            "border-radius": "70px",
+            "border": "5px solid rgba(47, 51, 63, 0.7)"});
         }
         var instance = this;
         instance.heartBeatEvent(true);
