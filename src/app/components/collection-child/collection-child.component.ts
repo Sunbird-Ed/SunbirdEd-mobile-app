@@ -136,7 +136,6 @@ export class CollectionChildComponent implements OnInit {
           };
           this.router.navigate([RouterLinks.COLLECTION_DETAIL_ETB], collectionDetailsParams);
         } else {
-          //console.log('go to content details');
           this.textbookTocService.setTextbookIds({ rootUnitId: this.rootUnitId, contentId: content.identifier });
 
           this.telemetryService.generateInteractTelemetry(

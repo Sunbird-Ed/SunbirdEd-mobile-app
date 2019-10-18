@@ -1118,7 +1118,7 @@ export class CollectionDetailEtbPage implements OnInit {
       
       if (response && response.data) {
         this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
-          'download-all-button-clicked',
+          InteractSubtype.DOWNLOAD_ALL_CLICKED,
           Environment.HOME,
           PageId.COLLECTION_DETAIL,
           this.telemetryObject,
