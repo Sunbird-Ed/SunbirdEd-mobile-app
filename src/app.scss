@@ -932,7 +932,7 @@ ion-split-pane {
     width: 100%;
     font-size: 1.4rem;
     background: #fff;
-    margin: 10px 0;
+    @include margin(10px 0px 0px 0px);
     border: 0.5px solid rgba(35, 97, 255, 0.5);
     background-color: #ffffff;
     box-shadow: 0 3px 4px 0 rgba(2, 79, 157, 0.1);
@@ -975,15 +975,17 @@ ion-split-pane {
     .pull-right {
       .done {
         color: map-get($colors, office_green);
+        font-weight: normal;
+        @include margin(8px 0px 0px 0px);
       }
     }
     .content-type-container {
       img {
         display: inline-block !important;
-        height: 20px !important;
+        height: 28px !important;
         width: auto !important;
         vertical-align: middle;
-        @include margin(0px 8px 0px 0px);
+        @include margin(4px 8px 4px 0px);
       }
     }
   }
