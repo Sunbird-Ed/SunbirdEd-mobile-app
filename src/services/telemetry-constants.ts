@@ -223,6 +223,7 @@ export enum InteractSubtype {
     SWITCH_USER_SUCCESS = 'switch-user-success',
     DELETE_USER_INITIATE = 'delete-user-initiate',
     DELETE_GROUP_INITIATE = 'delete-group-initiate',
+    DELETE_ALL_CLICKED = 'delete-from-device-button-clicked',
     SHARE_USER_GROUP_INITIATE = 'share-usergroup-initiate',
     SHARE_USER_GROUP_SUCCESS = 'share-usergroup-success',
     USER_GROUP_CLICKED = 'users-groups-clicked',

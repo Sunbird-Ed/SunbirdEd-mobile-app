@@ -10,6 +10,7 @@ import { StoreRating, PreferenceKey, RouterLinks } from '@app/app/app.constant';
 import { ContentRatingAlertComponent, AppRatingAlertComponent } from '@app/app/components';
 import { PopoverController } from '@ionic/angular';
 import { AppGlobalService } from '@app/services/app-global-service.service';
+import { ContentUtil } from '@app/util/content-util';
 import { Router } from '@angular/router';
 
 @Injectable({
@@ -19,6 +20,7 @@ export class RatingHandler {
 
     private userRating = 0;
     private userComment: string;
+    public telemetryObject: TelemetryObject;
     constructor(
         @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
         private popoverCtrl: PopoverController,
@@ -28,6 +30,7 @@ export class RatingHandler {
         private appGlobalService: AppGlobalService,
         private router: Router
     ) { }
+
     public async showRatingPopup(
         isContentPlayed: boolean,
         content: Content,
@@ -37,11 +40,11 @@ export class RatingHandler {
     ) {
         const paramsMap = new Map();
         const contentFeedback: any = content.contentFeedback;
+        this.telemetryObject = ContentUtil.getTelemetryObject(content);
         if (contentFeedback && contentFeedback.length) {
             this.userRating = contentFeedback[0].rating;
             this.userComment = contentFeedback[0].comments;
         }
-        const telemetryObject = new TelemetryObject(content.identifier , content.contentType, content.contentData.pkgVersion);
 
         if (isContentPlayed || content.contentAccess.length) {
             if (popupType === 'automatic' && (this.userRating === 0 && !this.appGlobalService.getSelectedUser())) {
@@ -76,7 +79,7 @@ export class RatingHandler {
             InteractSubtype.RATING_CLICKED,
             Environment.HOME,
             PageId.CONTENT_DETAIL,
-            telemetryObject,
+            this.telemetryObject,
             paramsMap,
             rollUp,
             corRelationList);

@@ -710,13 +710,15 @@ export class ContentDetailsPage implements OnInit {
         this.downloadContent();
       }
       else {
-        const telemetryObject = new TelemetryObject(this.content.identifier, this.content.contentType, this.content.contentData.pkgVersion);
+        //const telemetryObject = new TelemetryObject(this.content.identifier, this.content.contentType, this.content.contentData.pkgVersion);
         this.telemetryGeneratorService.generateInteractTelemetry(
           InteractType.TOUCH,
           InteractSubtype.CLOSE_CLICKED,
           Environment.HOME,
           PageId.CONTENT_DETAIL,
-          telemetryObject);
+          this.telemetryObject,undefined,
+          this.objRollup,
+          this.corRelationList);
       }
     } else {
       this.commonUtilService.showToast('ERROR_NO_INTERNET_MESSAGE');
