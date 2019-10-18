@@ -147,9 +147,11 @@ export function searchHistoryService() {
 export function networkInfoService() {
   return SunbirdSdk.instance.networkInfoService;
 }
-
 export function codePushExperimentService() {
   return SunbirdSdk.instance.codePushExperimentService;
+}
+export function faqService() {
+  return SunbirdSdk.instance.faqService;
 }
 
 export function sdkDriverFactory(): any {
@@ -240,6 +242,9 @@ export function sdkDriverFactory(): any {
   }, {
     provide: 'NETWORK_INFO_SERVICE',
     useFactory: networkInfoService
+  }, {
+    provide: 'FAQ_SERVICE',
+    useFactory: faqService
   }
   ];
 }
@@ -351,6 +356,11 @@ export const sunbirdSdkFactory =
         },
         errorLoggerConfig: {
           errorLoggerApiPath: '/api/data/v1/client/logs'
+        },
+        faqServiceConfig: {
+          faqConfigDirPath: '/data/faq',
+          faqApiPath: 'public/faq/resources/res/faq-',
+          faqHost: buildConfigValues['FAQ_BASE_URL']
         }
       });
 
