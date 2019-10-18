@@ -2,7 +2,7 @@ import { Component, Inject, OnInit, Injector } from '@angular/core';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { Platform } from '@ionic/angular';
-import { ProfileService, ServerProfile } from 'sunbird-sdk';
+import { ProfileService, ServerProfile, CachedItemRequestSourceFrom } from 'sunbird-sdk';
 import { Subscription } from 'rxjs/Subscription';
 
 import { Environment, ImpressionType, InteractSubtype, InteractType, PageId } from '../../services/telemetry-constants';
@@ -116,8 +116,10 @@ export class TermsAndConditionsPage implements OnInit {
         const serverProfile = await this.profileService.getServerProfilesDetails({
           userId: this.userProfileDetails.userId,
           requiredFields: ProfileConstants.REQUIRED_FIELDS,
+          from: CachedItemRequestSourceFrom.SERVER
         }).toPromise();
 
+        // TODO: 
         const profile = await this.profileService.getActiveSessionProfile({
           requiredFields: ProfileConstants.REQUIRED_FIELDS
         }).toPromise();
@@ -125,13 +127,18 @@ export class TermsAndConditionsPage implements OnInit {
         this.formAndFrameworkUtilService.updateLoggedInUser(serverProfile, profile)
           .then(async (value) => {
             if (value['status']) {
-              await tncUpdateHandlerService.dismissTncPage();
-              this.router.navigate(['/', 'tabs']);
-              this.splashScreenService.handleSunbirdSplashScreenActions();
+              if (this.commonUtilService.isUserLocationAvalable(serverProfile)) {
+                await tncUpdateHandlerService.dismissTncPage();
+                this.router.navigate(['/', RouterLinks.TABS]);
+                this.splashScreenService.handleSunbirdSplashScreenActions();
+              } else {
+                this.router.navigate(['/', RouterLinks.DISTRICT_MAPPING]);
+              }
             } else {
               await tncUpdateHandlerService.dismissTncPage();
               this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.CATEGORIES_EDIT}`], {
                 state: {
+                  hasFilledLocation: this.commonUtilService.isUserLocationAvalable(serverProfile),
                   showOnlyMandatoryFields: true,
                   profile: value['profile'],
                   isRootPage: true
