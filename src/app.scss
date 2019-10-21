@@ -993,3 +993,8 @@ ion-split-pane {
 .contentPadding {
   --padding-bottom: 0px !important;
 }
+
+[dir="rtl"] .search-input .native-input.sc-ion-input-md::placeholder {
+  font-size: 11px !important;
+  line-height: 32px !important;
+}
