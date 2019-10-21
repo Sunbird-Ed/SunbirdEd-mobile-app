@@ -63,11 +63,11 @@ export class CollectionChildComponent implements OnInit {
   ngOnInit(): void {
     this.collectionChildIcon = ContentUtil.getAppIcon(this.childData.contentData.appIcon, this.childData.basePath,
         this.commonUtilService.networkInfo.isNetworkAvailable);
+        this.telemetryObject = ContentUtil.getTelemetryObject(this.childData);
 }
 
   setContentId(id: string) {
     console.log('extractedUrl', this.router);
-
     if (this.router.url.indexOf(RouterLinks.TEXTBOOK_TOC) !== -1) {
       const values = new Map();
       values['unitClicked'] = id;
@@ -87,7 +87,7 @@ export class CollectionChildComponent implements OnInit {
     }
   }
   navigateToDetailsPage(content: Content, depth) {
-    this.telemetryObject = ContentUtil.getTelemetryObject(content);
+    
     if (this.router.url.indexOf(RouterLinks.TEXTBOOK_TOC) !== -1) {
       const values = new Map();
       values['contentClicked'] = content.identifier;
