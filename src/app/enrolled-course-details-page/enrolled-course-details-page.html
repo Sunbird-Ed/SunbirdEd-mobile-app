@@ -30,7 +30,7 @@
 				</div>
 				<div class="sb-course-end-container"
 					*ngIf="(batches && !isAlreadyEnrolled && !batches.length) || (batches && !isAlreadyEnrolled && batches.length === 1 && (todayDate > batches[0].enrollmentEndDate))">
-					<p class="main-heading">{{'COURSE_ENDED'  | translate : {'%s': enrollmentEndDate ? (enrollmentEndDate | date) : ''} }}</p>
+					<p class="main-heading"><b>{{'COURSE_ENDED'  | translate : {'%s': enrollmentEndDate ? (enrollmentEndDate | date) : ''} }}</b></p>
 					<p class="sub-heading">{{'THERE_ARE_NO_BATCHES_AVAILABLE_FOR_THIS_TRAINING' | translate}}</p>
 				</div>
 				<div *ngIf="isAlreadyEnrolled">
@@ -65,7 +65,7 @@
 								</div>
 								<div *ngIf="courseCardData?.batchId">
 									<div class="sb-course-progress-container" *ngIf="course?.progress!==100 && !batchExp">
-										<p><b>{{'YOUR_PROGRESS_LABEL' | translate}}</b></p>
+										<p class="progress-label"><b>{{'YOUR_PROGRESS_LABEL' | translate}}</b></p>
 										<p>{{ 'COURSE_COMPLETED_LABEL' | translate:{'%s': course?.progress ? course?.progress : '0'} }}</p>
 										<app-pb-horizontal [progress]="course?.progress? course?.progress : 0" class="course-progress" [ngClass]="{'blurbackground': batchExp}"
 											isOnBoardCard="flase" isCourseProgress="true"></app-pb-horizontal>
