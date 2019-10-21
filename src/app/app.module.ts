@@ -65,6 +65,7 @@ import { TncUpdateHandlerService } from '@app/services/handlers/tnc-update-handl
 import {SplashcreenTelemetryActionHandlerDelegate} from '@app/services/sunbird-splashscreen/splashcreen-telemetry-action-handler-delegate';
 import {SplashscreenImportActionHandlerDelegate} from '@app/services/sunbird-splashscreen/splashscreen-import-action-handler-delegate';
 import {SplaschreenDeeplinkActionHandlerDelegate} from '@app/services/sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
+import { LocalCourseService } from '@app/services/local-course.service';
 
 // AoT requires an exported function for factories
 export function translateHttpLoaderFactory(httpClient: HttpClient) {
@@ -412,6 +413,7 @@ declare const buildconfigreader;
     ContainerService,
     UniqueDeviceID,
     UtilityService,
+    LocalCourseService,
     AppHeaderService,
     AppRatingService,
     FormAndFrameworkUtilService,
