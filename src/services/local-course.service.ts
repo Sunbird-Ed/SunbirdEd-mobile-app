@@ -48,21 +48,24 @@ export class LocalCourseService {
             return data;
         })
         .catch(err => {
+            const requestValue = this.prepareRequestValue(enrollCourseRequest)
+            if (err && err.code === 'NETWORK_ERROR') {
+                requestValue.error = err.code;
+                this.commonUtilService.showToast(this.commonUtilService.translateMessage('ERROR_NO_INTERNET_MESSAGE'));
+            } else if (err && err.response
+                && err.response.body && err.response.body.params && err.response.body.params.err === 'USER_ALREADY_ENROLLED_COURSE') {
+                    requestValue.error = err.response.body.params.err;
+                    this.commonUtilService.showToast(this.commonUtilService.translateMessage('ALREADY_ENROLLED_COURSE'));
+            }
             this.telemetryGeneratorService.generateInteractTelemetry(
                 InteractType.OTHER,
                 InteractSubtype.ENROLL_FAILED,
                 Environment.HOME,
                 enrollCourse.pageId, enrollCourse.telemetryObject,
-                this.prepareRequestValue(enrollCourseRequest),
+                requestValue,
                 enrollCourse.objRollup,
                 enrollCourse.corRelationList
             );
-            if (err && err.code === 'NETWORK_ERROR') {
-              this.commonUtilService.showToast(this.commonUtilService.translateMessage('ERROR_NO_INTERNET_MESSAGE'));
-            } else if (err && err.response
-              && err.response.body && err.response.body.params && err.response.body.params.err === 'USER_ALREADY_ENROLLED_COURSE') {
-              this.commonUtilService.showToast(this.commonUtilService.translateMessage('ALREADY_ENROLLED_COURSE'));
-            }
             throw err;
         });
     }
