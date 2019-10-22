@@ -290,8 +290,8 @@ export const sunbirdSdkFactory =
           dbName: 'GenieServices.db'
         },
         deviceRegisterConfig: {
-          deviceRegisterHost: buildConfigValues['DEVICE_REGISTER_BASE_URL'],
-          deviceRegisterApiPath: '',
+          host: buildConfigValues['DEVICE_REGISTER_BASE_URL'],
+          apiPath: '',
         },
         contentServiceConfig: {
           apiPath: '/api/content/v1',
@@ -330,7 +330,7 @@ export const sunbirdSdkFactory =
           systemSettingsDirPath: '/data/system',
         },
         telemetryConfig: {
-          telemetryApiPath: '/api/data/v1',
+          apiPath: '/api/data/v1',
           telemetrySyncBandwidth: 200,
           telemetrySyncThreshold: 200,
           telemetryLogMinAllowedOffset: 86400000
