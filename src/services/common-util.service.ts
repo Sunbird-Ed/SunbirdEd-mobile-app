@@ -423,4 +423,13 @@ export class CommonUtilService implements OnDestroy {
             return false;
         }
     }
+
+    async isDeviceLocationAvailable(): Promise<boolean> {
+        const deviceLoc = await this.preferences.getString(PreferenceKey.DEVICE_LOCATION).toPromise();
+        if (deviceLoc) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 }
