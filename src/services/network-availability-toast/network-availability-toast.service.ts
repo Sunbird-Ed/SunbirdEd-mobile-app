@@ -42,7 +42,7 @@ export class NetworkAvailabilityToastService {
     }
 
     private async showOnlineToast() {
-        const onlineOption: ToastOptions = {
+        const onlineOption = {
             duration: 3000,
             message: this.commonUtilService.translateMessage('INTERNET_AVAILABLE'),
             showCloseButton: false,
@@ -64,7 +64,7 @@ export class NetworkAvailabilityToastService {
         this.openNetworkToast(offlineOption);
     }
 
-    private async openNetworkToast(toastOption: ToastOptions) {
+    private async openNetworkToast(toastOption) {
         this.toast = await this.toastController.create(toastOption);
         await this.toast.present();
         await this.toast.onDidDismiss(() => {
