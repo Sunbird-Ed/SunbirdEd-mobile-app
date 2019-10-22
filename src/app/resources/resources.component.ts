@@ -242,6 +242,12 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
         this.qrScanner.startScanner(this.appGlobalService.getPageIdForTelemetry());
       }
     });
+    // redirects to district mapping if user state  or user location is not filled
+    this.preferences.getString(PreferenceKey.DEVICE_LOCATION).subscribe(deviceLocation =>{
+      if(!deviceLocation){
+        this.router.navigate([RouterLinks.DISTRICT_MAPPING]);
+      }
+    })
   }
 
   generateNetworkType() {
