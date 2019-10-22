@@ -39,7 +39,7 @@
     "@ionic-native/social-sharing": "^5.8.0",
     "@ionic-native/status-bar": "^5.0.0",
     "@ionic-native/unique-device-id": "^5.8.0",
-    "@ionic/angular": "^4.11.0",
+    "@ionic/angular": "^4.1.0",
     "@ngx-translate/core": "^11.0.1",
     "@ngx-translate/http-loader": "^4.0.0",
     "@swimlane/ngx-datatable": "^15.0.2",
@@ -67,7 +67,7 @@
     "cordova-plugin-imagechooser": "git+https://github.com/project-sunbird/cordova-plugin-imagechooser.git#release-1.14.0",
     "cordova-plugin-inappbrowser": "^3.1.0",
     "cordova-plugin-ionic-keyboard": "^2.2.0",
-    "cordova-plugin-ionic-webview": "4.1.2",
+    "cordova-plugin-ionic-webview": "^4.1.1",
     "cordova-plugin-local-notification": "git+https://github.com/katzer/cordova-plugin-local-notifications.git",
     "cordova-plugin-media": "^5.0.3",
     "cordova-plugin-network-information": "^2.0.2",
@@ -137,6 +137,7 @@
       "com.jjdltc.cordova.plugin.zip": {},
       "ionic-plugin-keyboard": {},
       "cordova-plugin-whitelist": {},
+      "cordova-plugin-ionic-webview": {},
       "cordova-plugin-uniquedeviceid": {},
       "cordova-plugin-app-version": {},
       "cordova-plugin-x-socialsharing": {},
@@ -181,10 +182,7 @@
         "ANDROID_SUPPORT_VERSION": "28.0.0"
       },
       "cordova-plugin-openrap": {},
-      "cordova-plugin-networkspeed": {},
-      "cordova-plugin-ionic-webview": {
-        "ANDROID_SUPPORT_ANNOTATIONS_VERSION": "27.+"
-      }
+      "cordova-plugin-networkspeed": {}
     },
     "platforms": [
       "android"
