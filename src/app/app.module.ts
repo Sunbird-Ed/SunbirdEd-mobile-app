@@ -92,6 +92,9 @@ export const apiService = () => {
 export const profileService = () => {
   return SunbirdSdk.instance.profileService;
 };
+export const deviceRegisterService = () => {
+  return SunbirdSdk.instance.deviceRegisterService;
+}
 export const groupService = () => {
   return SunbirdSdk.instance.groupService;
 };
@@ -180,6 +183,9 @@ export function sdkDriverFactory(): any {
   }, {
     provide: 'PROFILE_SERVICE',
     useFactory: profileService
+  }, {
+    provide: 'DEVICE_REGISTER_SERVICE',
+    useFactory: deviceRegisterService
   }, {
     provide: 'DB_SERVICE',
     useFactory: dbService

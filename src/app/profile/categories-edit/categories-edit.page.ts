@@ -25,7 +25,7 @@ import { AppHeaderService } from '@app/services/app-header.service';
 import { FormAndFrameworkUtilService } from '@app/services/formandframeworkutil.service';
 import { ContainerService } from '@app/services/container.services';
 import { ProfileConstants, RouterLinks } from '@app/app/app.constant';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, NavigationExtras } from '@angular/router';
 import { Location } from '@angular/common';
 import { Environment, ActivePageService } from '@app/services';
 
@@ -424,20 +424,28 @@ export class CategoriesEditPage {
               this.formAndFrameworkUtilService.updateLoggedInUser(updatedProfile, this.profile)
                 .then((value) => {
                   initTabs(this.container, LOGIN_TEACHER_TABS);
-
                   if (this.hasFilledLocation) {
                     this.router.navigate([RouterLinks.TABS]);
                   } else {
-                    this.router.navigate([RouterLinks.DISTRICT_MAPPING]);
+                    const navigationExtras: NavigationExtras = {
+                      state: {
+                        isShowBackButton: false
+                      }
+                    };
+                    this.router.navigate([RouterLinks.DISTRICT_MAPPING] , navigationExtras);
                   }
                 });
             }).catch(e => {
               initTabs(this.container, LOGIN_TEACHER_TABS);
-              
               if (this.hasFilledLocation) {
                 this.router.navigate([RouterLinks.TABS]);
               } else {
-                this.router.navigate([RouterLinks.DISTRICT_MAPPING]);
+                const navigationExtras: NavigationExtras = {
+                  state: {
+                    isShowBackButton: false
+                  }
+                };
+                this.router.navigate([RouterLinks.DISTRICT_MAPPING] , navigationExtras);
               }
             });
         } else {

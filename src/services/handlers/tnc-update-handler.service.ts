@@ -4,7 +4,7 @@ import { ModalController } from '@ionic/angular';
 import { AuthService, OAuthSession, ProfileService, ServerProfile, ServerProfileDetailsRequest, CachedItemRequestSourceFrom } from 'sunbird-sdk';
 import { ProfileConstants, RouterLinks } from '@app/app/app.constant';
 import { TermsAndConditionsPage } from '@app/app/terms-and-conditions/terms-and-conditions.page';
-import { Router } from '@angular/router';
+import { Router, NavigationExtras } from '@angular/router';
 import { CommonUtilService } from '../common-util.service';
 
 @Injectable({
@@ -38,7 +38,12 @@ export class TncUpdateHandlerService {
             .then((profile) => {
               if (!this.hasProfileTncUpdated(profile)) {
                 if (!this.commonUtilService.isUserLocationAvalable(profile)) {
-                  this.router.navigate(['/', RouterLinks.DISTRICT_MAPPING])
+                  const navigationExtras: NavigationExtras = {
+                    state: {
+                      isShowBackButton: false
+                    }
+                  };
+                  this.router.navigate(['/', RouterLinks.DISTRICT_MAPPING] , navigationExtras)
                     .then(() => resolve(false));
                   return;
                 }

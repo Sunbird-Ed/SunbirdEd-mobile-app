@@ -1,10 +1,13 @@
 import { Component, OnInit, Inject } from '@angular/core';
-import { LocationSearchCriteria, ProfileService, SharedPreferences, Profile } from 'sunbird-sdk';
+import { LocationSearchCriteria, ProfileService,
+   SharedPreferences, Profile, DeviceRegisterRequest , DeviceRegisterService } from 'sunbird-sdk';
 import { Location as loc, PreferenceKey, RouterLinks } from '../../app/app.constant';
 import { AppHeaderService, CommonUtilService, AppGlobalService } from '@app/services';
 import { NavigationExtras, Router } from '@angular/router';
 import { Location } from '@angular/common';
 import { Events } from '@ionic/angular';
+import { Subscription } from 'rxjs';
+import { Platform } from '@ionic/angular';
 
 @Component({
   selector: 'app-district-mapping',
@@ -21,25 +24,29 @@ export class DistrictMappingPage implements OnInit {
   showDistrict: boolean;
   stateCode;
   districtCode;
+  isShowBackButton: boolean = true;
+  backButtonFunc: Subscription;
 
   constructor(
     public headerService: AppHeaderService,
     public commonUtilService: CommonUtilService,
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
+    @Inject('DEVICE_REGISTER_SERVICE')private deviceRegisterService: DeviceRegisterService,
     public router: Router,
     public location: Location,
     public appGlobalService: AppGlobalService,
-    public events: Events
+    public events: Events,
+    public platform: Platform,
   ) {
     if (this.router.getCurrentNavigation().extras.state) {
       this.profile = this.router.getCurrentNavigation().extras.state.profile;
+      this.isShowBackButton = this.router.getCurrentNavigation().extras.state.isShowBackButton;
     }
   }
 
   ngOnInit() {
-    this.headerService.hideHeader();
-    this.getStates();
+    this.handleDeviceBackButton();
   }
 
   selectState(name, id, code) {
@@ -58,6 +65,22 @@ export class DistrictMappingPage implements OnInit {
 
   goBack() {
     this.location.back();
+  }
+
+  ionViewWillEnter(): void {
+    this.headerService.hideHeader();
+    this.getStates();
+  }
+
+  handleDeviceBackButton() {
+    if (this.isShowBackButton) {
+      this.backButtonFunc = this.platform.backButton.subscribeWithPriority(10, () => {
+        this.location.back;
+      });
+    }
+  }
+  ionViewWillLeave(): void {
+    this.backButtonFunc.unsubscribe();
   }
 
   showStateList() {
@@ -90,7 +113,7 @@ export class DistrictMappingPage implements OnInit {
     });
   }
 
-  async getDistrict(parentId: string) {
+  async getDistrict(pid: string) {
     if (this.stateName) {
       this.showDistrict = !this.showDistrict;
       let loader = await this.commonUtilService.getLoader();
@@ -98,7 +121,7 @@ export class DistrictMappingPage implements OnInit {
       const req: LocationSearchCriteria = {
         filters: {
           type: loc.TYPE_DISTRICT,
-          parentId
+          parentId: pid
         }
       };
       this.profileService.searchLocation(req).subscribe(async (success) => {
@@ -126,7 +149,7 @@ export class DistrictMappingPage implements OnInit {
         userId: this.appGlobalService.getCurrentUser().uid || this.profile.uid,
         locationCodes: [this.stateCode, this.districtCode]
       };
-      let loader = await this.commonUtilService.getLoader();
+      const loader = await this.commonUtilService.getLoader();
       this.profileService.updateServerProfile(req).toPromise()
         .then(async () => {
           await loader.dismiss();
@@ -156,5 +179,17 @@ export class DistrictMappingPage implements OnInit {
             });
         }
       });
+    this.commonUtilService.networkAvailability$.subscribe(() => {
+      const req: DeviceRegisterRequest = {
+        userDeclaredLocation: {
+          state: this.stateName,
+          district: this.districtName,
+        }
+      };
+      this.deviceRegisterService.registerDevice(req).toPromise().then((response) => {
+        console.log('response is =>', response);
+      });
+    });
   }
 }
+

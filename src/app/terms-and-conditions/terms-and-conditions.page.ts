@@ -13,7 +13,7 @@ import { TelemetryGeneratorService } from '@app/services/telemetry-generator.ser
 import { AppHeaderService } from '@app/services/app-header.service';
 import { ProfileConstants, RouterLinks } from '../app.constant';
 import { FormAndFrameworkUtilService } from '@app/services';
-import { Router } from '@angular/router';
+import { Router, NavigationExtras } from '@angular/router';
 import { SplashScreenService } from '@app/services/splash-screen.service';
 
 @Component({
@@ -132,7 +132,12 @@ export class TermsAndConditionsPage implements OnInit {
                 this.router.navigate(['/', RouterLinks.TABS]);
                 this.splashScreenService.handleSunbirdSplashScreenActions();
               } else {
-                this.router.navigate(['/', RouterLinks.DISTRICT_MAPPING]);
+                const navigationExtras: NavigationExtras = {
+                  state: {
+                    isShowBackButton: false
+                  }
+                };
+                this.router.navigate(['/', RouterLinks.DISTRICT_MAPPING] , navigationExtras);
               }
             } else {
               await tncUpdateHandlerService.dismissTncPage();

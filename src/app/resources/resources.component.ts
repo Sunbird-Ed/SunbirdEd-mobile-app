@@ -242,12 +242,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
         this.qrScanner.startScanner(this.appGlobalService.getPageIdForTelemetry());
       }
     });
-    // redirects to district mapping if user state  or user location is not filled
-    this.preferences.getString(PreferenceKey.DEVICE_LOCATION).subscribe(deviceLocation =>{
-      if(!deviceLocation){
-        this.router.navigate([RouterLinks.DISTRICT_MAPPING]);
-      }
-    })
   }
 
   generateNetworkType() {
@@ -486,7 +480,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
             this.storyAndWorksheets = newSections;
           }
           const sectionInfo = {};
-          for (let i = 0; i < this.storyAndWorksheets.length; i++) {
+          for(let i = 0; i < this.storyAndWorksheets.length; i++) {
             const sectionName = this.storyAndWorksheets[i].name,
               count = this.storyAndWorksheets[i].contents.length;
 
@@ -665,7 +659,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
       this.getPopularContent();
     }
     this.subscribeSdkEvent();
-}
+  }
 
   // Offline Toast
   async presentToastForOffline(msg: string) {
