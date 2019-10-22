@@ -1780,4 +1780,8 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
     }
   }
 
+  mergeProperties(mergeProp) {
+    return ContentUtil.mergeProperties(this.course, mergeProp);
+  }
+
 }
