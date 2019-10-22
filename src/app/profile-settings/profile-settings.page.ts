@@ -31,7 +31,7 @@ import {
   ContainerService,
   AppHeaderService
 } from 'services';
-import { Platform, Events, AlertController, PopoverController } from '@ionic/angular';
+import { Platform, Events, AlertController } from '@ionic/angular';
 import { Location } from '@angular/common';
 import { SplashScreenService } from '@app/services/splash-screen.service';
 
@@ -102,8 +102,7 @@ export class ProfileSettingsPage implements OnInit {
     private appVersion: AppVersion,
     private alertCtrl: AlertController,
     private location: Location,
-    private splashScreenService: SplashScreenService,
-    private popoverCtrl : PopoverController
+    private splashScreenService: SplashScreenService
   ) {
     this.getNavParams();
     this.preferences.getString(PreferenceKey.SELECTED_LANGUAGE_CODE).toPromise()
@@ -590,8 +589,7 @@ export class ProfileSettingsPage implements OnInit {
         this.appGlobalService.guestUserProfile = res;
         setTimeout(() => {
           this.commonUtilService.showToast('PROFILE_UPDATE_SUCCESS');
-        },1000);
-        
+        }, 1000);
         this.events.publish('onboarding-card:completed', { isOnBoardingCardCompleted: true });
         this.events.publish('refresh:profile');
         this.appGlobalService.guestUserProfile = res;
@@ -624,10 +622,6 @@ export class ProfileSettingsPage implements OnInit {
 
       this.dismissPopup();
     });
-  }
-  // temporary function 
-  async openDistrictMappingPopover() {
-    this.router.navigate([RouterLinks.DISTRICT_MAPPING]);
   }
 
   handleHeaderEvents($event) {

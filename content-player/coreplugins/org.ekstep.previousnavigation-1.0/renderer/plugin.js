@@ -10,7 +10,6 @@ Plugin.extend({
         app.compileProvider.directive('previousNavigation', ['$rootScope', "$compile", function ($rootScope, $compile) {
             return {
                 restrict: 'E',
-                replace: true,
 				template: '<div id="nav-previous"></div>',
                 link: function(scope, element) {
                     var events = [ "overlayPrevious", "renderer:previous:show", "renderer:previous:hide"];
