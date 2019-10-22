@@ -2,8 +2,6 @@ import { Injectable, Inject } from '@angular/core';
 import { NetworkInfoService, NetworkStatus } from 'sunbird-sdk';
 import { ToastController } from '@ionic/angular';
 import { CommonUtilService } from '../common-util.service';
-import { ToastOptions } from '@ionic/core';
-
 @Injectable({ providedIn: 'root' })
 export class NetworkAvailabilityToastService {
 
@@ -55,7 +53,7 @@ export class NetworkAvailabilityToastService {
     }
 
     private async showOfflineToast() {
-        const offlineOption: ToastOptions = {
+        const offlineOption = {
             duration: 3000,
             message: this.commonUtilService.translateMessage('NO_INTERNET_TITLE'),
             showCloseButton: true,

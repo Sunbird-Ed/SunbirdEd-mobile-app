@@ -1,7 +1,6 @@
 import { Inject, Injectable, OnDestroy } from '@angular/core';
 import { Environment, InteractSubtype, InteractType, PageId } from './telemetry-constants';
 import { Events, PopoverController } from '@ionic/angular';
-import { PopoverOptions } from '@ionic/core';
 import { GenericAppConfig, PreferenceKey } from '../app/app.constant';
 import { TelemetryGeneratorService } from './telemetry-generator.service';
 import {
@@ -423,7 +422,7 @@ export class AppGlobalService implements OnDestroy {
             shouldDismissAlert = false;
         }
 
-        const options: PopoverOptions = {
+        const options = {
             component: UpgradePopoverComponent,
             componentProps: { type: upgradeType },
             cssClass: 'upgradePopover',
