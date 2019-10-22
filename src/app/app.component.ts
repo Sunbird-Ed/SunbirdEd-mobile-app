@@ -88,16 +88,16 @@ export class AppComponent implements OnInit, AfterViewInit {
     private menuCtrl: MenuController,
     private networkAvailability: NetworkAvailabilityToastService,
     private splashScreenService: SplashScreenService
-    ) {
-      this.telemetryAutoSyncUtil = new TelemetryAutoSyncUtil(this.telemetryService);
-      platform.ready().then(async () => {
+  ) {
+    this.telemetryAutoSyncUtil = new TelemetryAutoSyncUtil(this.telemetryService);
+    platform.ready().then(async () => {
       this.networkAvailability.init();
       this.fcmTokenWatcher(); // Notification related
       this.getSystemConfig();
       this.utilityService.getBuildConfigValue('VERSION_NAME')
-      .then(response => {
+        .then(response => {
           this.appVersion = response;
-      });
+        });
       this.checkForExperiment();
       this.receiveNotification();
       this.telemetryGeneratorService.genererateAppStartTelemetry(await utilityService.getDeviceSpec());
@@ -128,14 +128,14 @@ export class AppComponent implements OnInit, AfterViewInit {
       id: SystemSettingsIds.COURSE_FRAMEWORK_ID
     };
     this.systemSettingsService.getSystemSettings(getSystemSettingsRequest).toPromise()
-    .then((res: SystemSettings) => {
-    //   res['deploymentKey'] = '6Xhfs4-WVV8dhYN9U5OkZw6PukglrykIsJ8-B';
-      if (res['deploymentKey']) {
-        this.codePushExperimentService.setDefaultDeploymentKey(res['deploymentKey']).subscribe();
-      }
-    }).catch(err => {
-      console.log('error :', err);
-    });
+      .then((res: SystemSettings) => {
+        //   res['deploymentKey'] = '6Xhfs4-WVV8dhYN9U5OkZw6PukglrykIsJ8-B';
+        if (res['deploymentKey']) {
+          this.codePushExperimentService.setDefaultDeploymentKey(res['deploymentKey']).subscribe();
+        }
+      }).catch(err => {
+        console.log('error :', err);
+      });
   }
 
   checkForCodeUpdates() {
@@ -146,7 +146,7 @@ export class AppComponent implements OnInit, AfterViewInit {
         this.telemetryGeneratorService.generateInteractTelemetry(InteractType.OTHER, InteractSubtype.HOTCODE_PUSH_INITIATED,
           Environment.HOME, PageId.HOME, null, value);
         codePush.sync((status => {
-            this.syncStatus(status);
+          this.syncStatus(status);
         }), {
           deploymentKey
         }, this.downloadProgress);
@@ -174,34 +174,33 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   checkForExperiment() {
-      /**
-       * TODO
-       * call the update
-       * if update is set
-       * then check for default-deplyment-key, if matches
-       * then remove emperiment_key and emperiemtn_app_version
-       * if not then
-       * then set emperiment_key and experiemnt_app_version
-       * if update is null
-       * then remove emperiment_key and emperiemtn_app_version
-       */
-
-      codePush.getCurrentPackage((update) => {
-        if (update) {
-            this.codePushExperimentService.getDefaultDeploymentKey().subscribe(key => {
-                if (key !== update.deploymentKey && this.appVersion === update.appVersion) {
-                    this.codePushExperimentService.setExperimentKey(update.deploymentKey).subscribe();
-                    this.codePushExperimentService.setExperimentAppVersion(update.appVersion).subscribe();
-                } else if (key === update.deploymentKey || this.appVersion !== update.appVersion) {
-                    this.codePushExperimentService.setExperimentKey('').subscribe();
-                    this.codePushExperimentService.setExperimentAppVersion('').subscribe();
-                }
-            });
-        } else {
+    /**
+     * TODO
+     * call the update
+     * if update is set
+     * then check for default-deplyment-key, if matches
+     * then remove emperiment_key and emperiemtn_app_version
+     * if not then
+     * then set emperiment_key and experiemnt_app_version
+     * if update is null
+     * then remove emperiment_key and emperiemtn_app_version
+     */
+    codePush.getCurrentPackage((update) => {
+      if (update) {
+        this.codePushExperimentService.getDefaultDeploymentKey().subscribe(key => {
+          if (key !== update.deploymentKey && this.appVersion === update.appVersion) {
+            this.codePushExperimentService.setExperimentKey(update.deploymentKey).subscribe();
+            this.codePushExperimentService.setExperimentAppVersion(update.appVersion).subscribe();
+          } else if (key === update.deploymentKey || this.appVersion !== update.appVersion) {
             this.codePushExperimentService.setExperimentKey('').subscribe();
             this.codePushExperimentService.setExperimentAppVersion('').subscribe();
-        }
-      });
+          }
+        });
+      } else {
+        this.codePushExperimentService.setExperimentKey('').subscribe();
+        this.codePushExperimentService.setExperimentAppVersion('').subscribe();
+      }
+    });
   }
 
   downloadProgress(downloadProgress) {
@@ -219,12 +218,12 @@ export class AppComponent implements OnInit, AfterViewInit {
     if (!fcmToken) {
       FCMPlugin.getToken((token) => {
         this.storeFCMToken(token);
-        SunbirdSdk.instance.updateTelemetryConfig({ fcmToken: token });
+        SunbirdSdk.instance.updateDeviceRegisterConfig({ fcmToken: token });
       });
     }
     FCMPlugin.onTokenRefresh((token) => {
       this.storeFCMToken(token);
-      SunbirdSdk.instance.updateTelemetryConfig({ fcmToken: token });
+      SunbirdSdk.instance.updateDeviceRegisterConfig({ fcmToken: token });
     });
   }
 
@@ -285,13 +284,13 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.events.subscribe(EventTopics.SIGN_IN_RELOAD, async () => {
       let batchDetails;
       await this.preferences.getString(PreferenceKey.BATCH_DETAIL_KEY).toPromise()
-      .then(async (resp) => {
-        if (resp) {
-          batchDetails = resp;
-        } else {
-          this.toggleRouterOutlet = false;
-        }
-      });
+        .then(async (resp) => {
+          if (resp) {
+            batchDetails = resp;
+          } else {
+            this.toggleRouterOutlet = false;
+          }
+        });
       // this.toggleRouterOutlet = false;
       // This setTimeout is very important for reloading the Tabs page on SignIn.
       setTimeout(async () => {
@@ -322,6 +321,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       pageId
     );
   }
+
   ngAfterViewInit(): void {
     this.platform.resume.subscribe(() => {
       this.telemetryGeneratorService.generateInterruptTelemetry('resume', '');
@@ -338,12 +338,12 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.router.events.subscribe((event: Event) => {
       if (event instanceof NavigationStart) {
         // Show loading indicator
-        if(event.url.indexOf("tabs")!= -1) {
+        if (event.url.indexOf('tabs') !== -1) {
           this.rootPageDisplayed = true;
         } else {
           this.rootPageDisplayed = true;
         }
-    }
+      }
     });
     this.platform.backButton.subscribeWithPriority(0, async () => {
       console.log('URL' + this.router.url);
@@ -357,12 +357,11 @@ export class AppComponent implements OnInit, AfterViewInit {
         }
       } else {
         // this.routerOutlet.pop();
-        if (this.location.back &&  !this.rootPageDisplayed) {
+        if (this.location.back && !this.rootPageDisplayed) {
           this.location.back();
         }
       }
     });
-
   }
 
   generateNetworkTelemetry() {
@@ -395,7 +394,6 @@ export class AppComponent implements OnInit, AfterViewInit {
       }
     });
   }
-
 
   private async checkForTncUpdate() {
     await this.tncUpdateHandlerService.checkForTncUpdate();
@@ -442,7 +440,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     if (pageId === 'resources') {
       const currentProfile: Profile = this.appGlobalService.getCurrentUser();
       corRelationList.push({ id: currentProfile.board ? currentProfile.board.join(',') : '', type: CorReleationDataType.BOARD });
-      corRelationList.push({ id: currentProfile.medium ? currentProfile.medium.join(',') : '' , type: CorReleationDataType.MEDIUM });
+      corRelationList.push({ id: currentProfile.medium ? currentProfile.medium.join(',') : '', type: CorReleationDataType.MEDIUM });
       corRelationList.push({ id: currentProfile.grade ? currentProfile.grade.join(',') : '', type: CorReleationDataType.CLASS });
       corRelationList.push({ id: currentProfile.profileType, type: CorReleationDataType.USERTYPE });
     }
@@ -620,19 +618,19 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   private handleAuthAutoMigrateEvents() {
     this.eventsBusService.events(EventNamespace.AUTH)
-        .filter((e) => e.type === AuthEventType.AUTO_MIGRATE_SUCCESS || e.type === AuthEventType.AUTO_MIGRATE_FAIL)
-        .take(1).subscribe((e) => {
-      switch (e.type) {
-        case AuthEventType.AUTO_MIGRATE_SUCCESS: {
-          this.commonUtilService.showToast('AUTO_MIGRATION_SUCCESS_MESSAGE');
-          break;
+      .filter((e) => e.type === AuthEventType.AUTO_MIGRATE_SUCCESS || e.type === AuthEventType.AUTO_MIGRATE_FAIL)
+      .take(1).subscribe((e) => {
+        switch (e.type) {
+          case AuthEventType.AUTO_MIGRATE_SUCCESS: {
+            this.commonUtilService.showToast('AUTO_MIGRATION_SUCCESS_MESSAGE');
+            break;
+          }
+          case AuthEventType.AUTO_MIGRATE_FAIL: {
+            this.commonUtilService.showToast('AUTO_MIGRATION_FAIL_MESSAGE');
+            break;
+          }
         }
-        case AuthEventType.AUTO_MIGRATE_FAIL: {
-          this.commonUtilService.showToast('AUTO_MIGRATION_FAIL_MESSAGE');
-          break;
-        }
-      }
-    });
+      });
   }
 
   private handleAuthErrors() {
