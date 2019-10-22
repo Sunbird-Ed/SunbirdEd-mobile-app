@@ -227,8 +227,8 @@
       width: 84% !important;
       margin-right: 8% !important;
     }  
-    .info-icon-pr-4 {
-      --padding-end: 4px !important;
+    .info-icon-pr-8 {
+      padding-right: 8px !important;
     }
   }
   .sb-topics-containe{
@@ -449,5 +449,19 @@
 .progress-label {
   font-size: 10px !important;
   color: #333;
+}
+
+ion-segment-button{
+  --ripple-color: transparent;
+  --background-hover: transparent;
+  --background-activated: transparent;
+}
+
+.flex-5 {
+  flex: 5;
+}
+
+#card-mb-0{
+  margin-bottom: 0 !important;
 }
 
