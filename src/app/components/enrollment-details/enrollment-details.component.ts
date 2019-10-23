@@ -17,6 +17,8 @@ import { TelemetryGeneratorService } from '@app/services/telemetry-generator.ser
 import { InteractSubtype, Environment, PageId } from '@app/services/telemetry-constants';
 import { Router } from '@angular/router';
 import * as moment from 'moment';
+import { LocalCourseService } from '@app/services';
+import { EnrollCourse } from '@app/app/enrolled-course-details-page/course.interface';
 
 @Component({
     selector: 'app-enrollment-details',
@@ -49,7 +51,8 @@ export class EnrollmentDetailsComponent {
         private popOverCtrl: PopoverController,
         private telemetryGeneratorService: TelemetryGeneratorService,
         private commonUtilService: CommonUtilService,
-        private router: Router
+        private router: Router,
+        private localCourseService: LocalCourseService
     ) {
         this.ongoingBatches = this.navParams.get('ongoingBatches');
         this.upcommingBatches = this.navParams.get('upcommingBatches');
@@ -92,30 +95,23 @@ export class EnrollmentDetailsComponent {
     }
 
     enrollIntoBatch(content: any): void {
-        const courseBatchesRequest: CourseBatchesRequest = {
-            filters: {
-                courseId: content.contentId ? content.contentId : content.identifier,
-                enrollmentType: CourseEnrollmentType.OPEN,
-                status: [CourseBatchStatus.NOT_STARTED, CourseBatchStatus.IN_PROGRESS]
-            },
-            fields: BatchConstants.REQUIRED_FIELDS
-        };
-        const reqvalues = new Map();
-        reqvalues['enrollReq'] = courseBatchesRequest;
+
+        const enrollCourseRequest = this.localCourseService.prepareEnrollCourseRequest(this.userId, content, this.courseId);
         this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
             InteractSubtype.ENROLL_CLICKED,
             Environment.HOME,
             PageId.CONTENT_DETAIL, undefined,
-            reqvalues);
-        const enrollCourseRequest: EnrollCourseRequest = {
-            userId: this.userId,
-            courseId: content.courseId || this.courseId,
-            batchId: content.id,
-            batchStatus: content.status
-        };
+            this.localCourseService.prepareRequestValue(enrollCourseRequest));
+
         const loader = this.commonUtilService.getLoader();
         loader.present();
-        this.courseService.enrollCourse(enrollCourseRequest).toPromise()
+        const enrollCourse: EnrollCourse = {
+            userId: this.userId,
+            batch: content,
+            pageId: PageId.COURSE_BATCHES,
+            courseId: this.courseId
+        };
+        this.localCourseService.enrollIntoBatch(enrollCourse).toPromise()
             .then((data: any) => {
                 this.zone.run(() => {
                     this.commonUtilService.showToast(this.commonUtilService.translateMessage('COURSE_ENROLLED'));
@@ -129,15 +125,6 @@ export class EnrollmentDetailsComponent {
                 });
             }, (error) => {
                 loader.dismiss();
-                this.zone.run(() => {
-                    if (error && error.code === 'NETWORK_ERROR') {
-                        this.commonUtilService.showToast(this.commonUtilService.translateMessage('ERROR_NO_INTERNET_MESSAGE'));
-                    } else if (error && error.response
-                        && error.response.body && error.response.body.params &&
-                        error.response.body.params.err === 'USER_ALREADY_ENROLLED_COURSE') {
-                        this.commonUtilService.showToast(this.commonUtilService.translateMessage('ALREADY_ENROLLED_COURSE'));
-                    }
-                });
             });
     }
 

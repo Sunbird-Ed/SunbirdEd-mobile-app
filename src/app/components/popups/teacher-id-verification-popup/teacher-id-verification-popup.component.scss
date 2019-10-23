@@ -1,0 +1,36 @@
+@import "src/assets/styles/variables.scss";
+
+.merged-input-container {
+    border: 1px solid $info-color;
+    display: flex;
+    flex: 1 1 auto;
+    border-radius: 4px;
+    .decorator {
+        display: inline-block;
+        max-width: 50px;
+    }
+    .custom {
+        display: inline-block;
+    }
+}
+
+.sb-input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid red;
+    border-radius: 2px;
+}
+
+.sb-input-info {
+    @extend .sb-input;
+    border: 1px solid $info-color;
+}
+
+.sb-input-danger {
+    @extend .sb-input;
+    border: 1px solid $danger-color;
+}
+
+input:focus {
+    outline: $info-color auto 1px;
+}

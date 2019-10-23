@@ -10,7 +10,7 @@
 			</ion-card-header>
 			<ion-card-content>
 				<div *ngIf="!isAlreadyEnrolled">
-					<div *ngIf="batches && course?.createdBy !== userId">
+					<div class="enrollment-info" *ngIf="batches && course?.createdBy !== userId && (batches.length > 1 || (batches.length === 1 && !(todayDate > batches[0].enrollmentEndDate)))">
 						<button class="enrolled-course-card-button"
 							(click)="navigateToBatchListPage();">{{'JOIN_TRAINING' | translate}}</button>
 						<ion-card-subtitle *ngIf="batchCount || enrollmentEndDate" class="font-12 margin-bottom-2">
@@ -29,7 +29,7 @@
 					</div>
 				</div>
 				<div class="sb-course-end-container"
-					*ngIf="!isAlreadyEnrolled && !batches?.length">
+					*ngIf="(batches && !isAlreadyEnrolled && !batches.length) || (batches && !isAlreadyEnrolled && batches.length === 1 && (todayDate > batches[0].enrollmentEndDate))">
 					<p class="main-heading">{{'COURSE_ENDED'  | translate : {'%s': enrollmentEndDate ? (enrollmentEndDate | date) : ''} }}</p>
 					<p class="sub-heading">{{'THERE_ARE_NO_BATCHES_AVAILABLE_FOR_THIS_TRAINING' | translate}}</p>
 				</div>
@@ -58,7 +58,7 @@
 											<p class="card-text">{{'SHARE' | translate}}</p>
 										</button>
 									</div>
-									<div class="padding-left-5em" *ngIf="showUnenrollButton()">
+									<div class="padding-left-5em" *ngIf="showUnenrollButton">
 										<img class="menu-icon" (click)="showOverflowMenu($event)"
 											src="assets/imgs/menu.svg" alt="menu-icon">
 									</div>
@@ -90,7 +90,7 @@
 				</div>
 			</ion-card-content>
 		</ion-card>
-		<div #stickyPillsRef *ngIf="courseCardData?.batchId && course?.progress !== 100"
+		<div #stickyPillsRef *ngIf="isAlreadyEnrolled && courseCardData?.batchId && course?.progress !== 100" 
 			class="enrolled-course-container">
 			<ion-card class="enrolled-course-card">
 				<ion-card-content class="ion-padding-top">
@@ -184,6 +184,12 @@
 										<b>{{ 'PUBLISHED_BY' | translate:{'%s': appName} }}</b>:
 									</ion-card-title>
 									<p>{{course?.organisation}} </p>
+                                </div>
+                                <div *ngIf="course?.contributors || course?.creators || course?.attributions">
+									<ion-card-title class="font-12 subtitle-color label-margin-bottom">
+										<b>{{ 'ATTRIBUTIONS' | translate }}</b>:
+									</ion-card-title>
+									<p>{{mergeProperties(['attributions', 'contributors', 'creators'])}}</p>
 								</div>
 								<div *ngIf="course?.license">
 									<ion-card-title class="font-12 subtitle-color label-margin-bottom">
@@ -196,7 +202,7 @@
 									<ion-card-title class="font-12 subtitle-color label-margin-bottom">
 										<b>{{ 'COPYRIGHT' | translate }}</b>:
 									</ion-card-title>
-									<p>{{course?.copyright}}</p>
+									<p>{{course?.copyright}}{{course?.copyrightYear ? ", " + course?.copyrightYear : ""}}</p>
 								</div>
 							</div>
 						</div>

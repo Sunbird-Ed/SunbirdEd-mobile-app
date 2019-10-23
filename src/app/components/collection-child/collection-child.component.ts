@@ -6,7 +6,7 @@ import { CommonUtilService } from '@app/services/common-util.service';
 import { ComingSoonMessageService } from '@app/services/coming-soon-message.service';
 import { PopoverController, Events } from '@ionic/angular';
 import { SbGenericPopoverComponent } from '@app/app/components/popups/sb-generic-popover/sb-generic-popover.component';
-import { Content } from 'sunbird-sdk';
+import { Content,TelemetryObject,Rollup } from 'sunbird-sdk';
 import { Router, NavigationExtras } from '@angular/router';
 import { TextbookTocService } from '@app/app/collection-detail-etb/textbook-toc-service';
 import {
@@ -48,6 +48,8 @@ export class CollectionChildComponent implements OnInit {
   @Input() stckyindex: string;
   @Input() latestParentName: string;
   @Input() latestParentNodes: any;
+  public telemetryObject: TelemetryObject;
+  public objRollup: Rollup;
   collectionChildIcon: any;
   sameHierarchy: boolean;
 
@@ -61,7 +63,7 @@ export class CollectionChildComponent implements OnInit {
     private telemetryService: TelemetryGeneratorService,
     private location: Location,
     private events: Events,
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     this.collectionChildIcon = ContentUtil.getAppIcon(this.childData.contentData.appIcon, this.childData.basePath,
@@ -69,6 +71,7 @@ export class CollectionChildComponent implements OnInit {
     if (this.latestParentName) {
       this.checkHierarchy();
      }
+    this.telemetryObject = ContentUtil.getTelemetryObject(this.childData);
 }
 
 checkHierarchy() {
@@ -89,7 +92,6 @@ checkHierarchy() {
 }
   setContentId(id: string) {
     console.log('extractedUrl', this.router);
-
     if (this.router.url.indexOf(RouterLinks.TEXTBOOK_TOC) !== -1) {
       const values = new Map();
       values['unitClicked'] = id;
@@ -99,14 +101,17 @@ checkHierarchy() {
         InteractSubtype.SUBUNIT_CLICKED,
         Environment.HOME,
         PageId.TEXTBOOK_TOC,
-        undefined,
-        values
+        this.telemetryObject,
+        values,
+        this.objRollup,
+        this.corRelationList
       );
       this.textbookTocService.setTextbookIds({ rootUnitId: this.rootUnitId, contentId: id });
       this.location.back();
     }
   }
   navigateToDetailsPage(content: Content, depth) {
+    
     if (this.router.url.indexOf(RouterLinks.TEXTBOOK_TOC) !== -1) {
       const values = new Map();
       values['contentClicked'] = content.identifier;
@@ -115,8 +120,9 @@ checkHierarchy() {
         InteractType.TOUCH,
         InteractSubtype.CONTENT_CLICKED,
         Environment.HOME,
-        PageId.TEXTBOOK_TOC, undefined,
-        values
+        PageId.TEXTBOOK_TOC, this.telemetryObject,
+        values,
+        this.objRollup,this.corRelationList
       );
       this.textbookTocService.setTextbookIds({ rootUnitId: this.rootUnitId, contentId: content.identifier });
       this.location.back();
@@ -154,15 +160,14 @@ checkHierarchy() {
           };
           this.router.navigate([RouterLinks.COLLECTION_DETAIL_ETB], collectionDetailsParams);
         } else {
-          console.log('go to content details');
           this.textbookTocService.setTextbookIds({ rootUnitId: this.rootUnitId, contentId: content.identifier });
 
           this.telemetryService.generateInteractTelemetry(
             InteractType.TOUCH,
             InteractSubtype.CONTENT_CLICKED,
             Environment.HOME,
-            PageId.COLLECTION_DETAIL, undefined,
-            values
+            PageId.COLLECTION_DETAIL,this.telemetryObject ,
+            values,this.objRollup,this.corRelationList
           );
           const contentDetailsParams: NavigationExtras = {
             state: {
