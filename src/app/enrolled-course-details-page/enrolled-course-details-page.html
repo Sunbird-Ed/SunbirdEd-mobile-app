@@ -39,7 +39,7 @@
 							<div class="sb-dt-card-actions">
 								<div class="wrapper sb-btn-tile-group" *ngIf="course?.progress !==100 && isAlreadyEnrolled">
 									<div>
-										<button *ngIf="downloadIdentifiers" [disabled]="isDownloadStarted"
+										<button *ngIf="downloadIdentifiers.length" [disabled]="isDownloadStarted"
 											(click)="showDownloadConfirmationAlert()" slot="icon-only"
 											class="card-button">
 											<ion-icon ios="ios-cloud-download" md="md-cloud-download"
