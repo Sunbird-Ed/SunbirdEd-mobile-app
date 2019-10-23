@@ -4,7 +4,9 @@
     <div class="spinner-div" *ngIf="refresh">
         <ion-spinner icon="spiral" class="refreshspinner"></ion-spinner>
     </div>
-    <ion-refresher (ionRefresh)="doRefresh($event)"></ion-refresher>
+    <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
+    <ion-refresher-content refreshingSpinner="circles"></ion-refresher-content>
+    </ion-refresher>
     <div padding-horizontal text-center class="MT15" *ngIf="profile?.firstName">
         <app-profile-avatar [username]="profile?.firstName" *ngIf="!isStateValidated"></app-profile-avatar>
         <img *ngIf="isStateValidated" src="./assets/imgs/avatar-tickmark.svg" alt="certified" class="avatar-tickmark">

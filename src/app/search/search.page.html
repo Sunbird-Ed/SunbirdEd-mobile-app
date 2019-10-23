@@ -1,6 +1,6 @@
 <ion-header>
   <ion-toolbar>
-    <ion-input type="search" *ngIf="!dialCode" #searchInput dir="{{commonUtilService.getAppDirection()}}"
+    <ion-input type="search" *ngIf="!dialCode" #searchInput dir="{{commonUtilService.getAppDirection()}}" class="search-input"
       (keyup.enter)="handleSearch()"
       (ngModelChange)="searchContentResult = undefined; filterIcon = false; isEmptyResult = false"
       [(ngModel)]="searchKeywords" [placeholder]="'SEARCH_PLACEHOLDER' | translate"></ion-input>
