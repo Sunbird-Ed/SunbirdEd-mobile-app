@@ -298,7 +298,7 @@
           </div>
           <div class="sb-info" *ngIf="content?.contentData?.copyright">
             <div class="sb-content-title">{{'COPYRIGHT' | translate}}</div>
-            <div class="sb-content-title-data">{{content?.contentData?.copyright}}</div>
+            <div class="sb-content-title-data">{{content?.contentData?.copyright}}{{content?.contentData.copyrightYear ? ", " + content?.contentData.copyrightYear : ""}}</div>
           </div>
           <div class="sb-info"
             *ngIf="content?.contentData?.attributions && !content?.contentData?.contributors && !content?.contentData?.creators">

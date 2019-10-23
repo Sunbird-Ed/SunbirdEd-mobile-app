@@ -20,3 +20,4 @@ export * from './coming-soon-message.service';
 export { ContentShareHandlerService } from './content/content-share-handler.service';
 export { CanvasPlayerService } from './canvas-player.service';
 export { SplashScreenService } from './splash-screen.service';
+export { LocalCourseService } from './local-course.service';

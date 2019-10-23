@@ -184,6 +184,12 @@
 										<b>{{ 'PUBLISHED_BY' | translate:{'%s': appName} }}</b>:
 									</ion-card-title>
 									<p>{{course?.organisation}} </p>
+                                </div>
+                                <div *ngIf="course?.contributors || course?.creators || course?.attributions">
+									<ion-card-title class="font-12 subtitle-color label-margin-bottom">
+										<b>{{ 'ATTRIBUTIONS' | translate }}</b>:
+									</ion-card-title>
+									<p>{{mergeProperties(['attributions', 'contributors', 'creators'])}}</p>
 								</div>
 								<div *ngIf="course?.license">
 									<ion-card-title class="font-12 subtitle-color label-margin-bottom">
@@ -196,7 +202,7 @@
 									<ion-card-title class="font-12 subtitle-color label-margin-bottom">
 										<b>{{ 'COPYRIGHT' | translate }}</b>:
 									</ion-card-title>
-									<p>{{course?.copyright}}</p>
+									<p>{{course?.copyright}}{{course?.copyrightYear ? ", " + course?.copyrightYear : ""}}</p>
 								</div>
 							</div>
 						</div>
