@@ -34,8 +34,12 @@ export class TextBookTocPage implements OnInit {
     parentId: any;
     showLoading = false;
     isDownloadStarted = false;
-
+    isTextbookTocPage = false;
+    stckyUnitTitle?: string;
     @ViewChild('stickyPillsRef') stickyPillsRef: ElementRef;
+    stckyindex: any;
+    latestParentNodes: any;
+    latestParentName: any;
 
     constructor(
         private router: Router,
@@ -51,6 +55,13 @@ export class TextBookTocPage implements OnInit {
         if (extras) {
             this.childrenData = extras.childrenData;
             this.parentId = extras.parentId;
+            this.isTextbookTocPage = extras.isTextbookTocPage;
+            if (extras.stckyUnitTitle) {
+                this.stckyUnitTitle = extras.stckyUnitTitle;
+                this.stckyindex = extras.stckyindex;
+                this.latestParentNodes = extras.latestParentNodes;
+                this.latestParentName =  extras.latestParentNodes ? this.latestParentNodes[this.stckyindex].contentData.name : '';
+            }
         }
     }
 

@@ -10,6 +10,7 @@ import { DirectivesModule } from '@app/directives/directives.module';
 import { PipesModule } from '@app/pipes/pipes.module';
 import { TranslateModule } from '@ngx-translate/core';
 import { ComponentsModule } from '../components/components.module';
+import { TextbookTocService } from '../collection-detail-etb/textbook-toc-service';
 
 const routes: Routes = [
   {
@@ -29,6 +30,10 @@ const routes: Routes = [
     ComponentsModule,
     DirectivesModule
   ],
-  declarations: [QrcoderesultPage]
+  providers: [TextbookTocService],
+  declarations: [QrcoderesultPage],
+  exports: [
+    QrcoderesultPage
+  ]
 })
 export class QrcoderesultPageModule {}

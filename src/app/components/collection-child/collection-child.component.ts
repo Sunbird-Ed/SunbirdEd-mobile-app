@@ -44,7 +44,12 @@ export class CollectionChildComponent implements OnInit {
   @Input() fromCourseToc: boolean;
   @Input() isBatchNotStarted: boolean;
   @Input() updatedCourseCardData: boolean;
+  @Input() stckyUnitTitle: string;
+  @Input() stckyindex: string;
+  @Input() latestParentName: string;
+  @Input() latestParentNodes: any;
   collectionChildIcon: any;
+  sameHierarchy: boolean;
 
   constructor(
     private zone: NgZone,
@@ -61,8 +66,27 @@ export class CollectionChildComponent implements OnInit {
   ngOnInit(): void {
     this.collectionChildIcon = ContentUtil.getAppIcon(this.childData.contentData.appIcon, this.childData.basePath,
         this.commonUtilService.networkInfo.isNetworkAvailable);
+    if (this.latestParentName) {
+      this.checkHierarchy();
+     }
 }
 
+checkHierarchy() {
+  console.log('LatesParentNode', this.latestParentNodes[this.stckyindex].hierarchyInfo);
+  if (this.childData.hierarchyInfo && this.latestParentNodes[this.stckyindex].hierarchyInfo &&
+    this.childData.hierarchyInfo.length === this.latestParentNodes[this.stckyindex].hierarchyInfo.length) {
+    for (let i = 0; i < this.childData.hierarchyInfo.length; i++) {
+      if (this.childData.hierarchyInfo[i]['identifier'] === this.latestParentNodes[this.stckyindex].hierarchyInfo[i]['identifier']) {
+        this.sameHierarchy = true;
+      } else {
+        this.sameHierarchy = false;
+        break;
+      }
+    }
+  } else {
+    this.sameHierarchy = false;
+  }
+}
   setContentId(id: string) {
     console.log('extractedUrl', this.router);
 

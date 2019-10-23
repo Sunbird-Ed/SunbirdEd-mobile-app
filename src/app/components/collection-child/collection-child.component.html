@@ -1,15 +1,26 @@
 <div>
   <ng-container *ngIf="childData | hasMimeType: activeMimeTypeFilter : isTextbookTocPage">
-    <div class="unit-hierachy sb-topic-item" (click)="!fromCourseToc && setContentId(childData.identifier)" [id]="childData.identifier"
-      *ngIf="childData?.contentData?.mimeType === 'application/vnd.ekstep.content-collection' && childData?.children">
+    <!-- <div class="unit-hierachy sb-topic-item" -->
+      <div [ngClass] = "{'unit-hierachy sb-topic-item': !isTextbookTocPage}"
+     (click)="!fromCourseToc && setContentId(childData.identifier)" [id]="childData.identifier"
+      *ngIf="childData?.contentData?.mimeType === 'application/vnd.ekstep.content-collection' && childData?.children && !isTextbookTocPage">
       {{childData?.contentData?.name}}
     </div>
+    <div [ngClass] = "{'row sb-textbook-toc px-16': isTextbookTocPage, 'sb-highlighted-row' : (latestParentName === childData?.contentData?.name && sameHierarchy)}"
+    (click)="!fromCourseToc && setContentId(childData.identifier)" [id]="childData.identifier"
+     *ngIf="childData?.contentData?.mimeType === 'application/vnd.ekstep.content-collection' && childData?.children && isTextbookTocPage">
+     <div class="pull-left px-16">
+        {{childData?.contentData?.name}}
+     </div>
+    </div>
   </ng-container>
-  <div [id]="childData.identifier" class="row sb-topic-item"
-    *ngIf="childData?.contentData?.mimeType !== 'application/vnd.ekstep.content-collection' && hasMimeType(activeMimeTypeFilter, childData?.contentData?.mimeType, childData)"
+  <div [id]="childData.identifier"
+  [ngClass] ="{'row sb-topic-item': !stckyUnitTitle, 'sb-highlighted-row' : (latestParentName === childData?.contentData?.name) ,
+   'row sb-topic-item':  (stckyUnitTitle !== childData?.contentData?.name)}"
+    *ngIf="!isTextbookTocPage && childData?.contentData?.mimeType !== 'application/vnd.ekstep.content-collection' && hasMimeType(activeMimeTypeFilter, childData?.contentData?.mimeType, childData)"
     (click)="navigateToDetailsPage(childData, depth + '.' + (i + 1))">
 
-    <div class="sb-ftue-design" *ngIf="!fromCourseToc">
+    <div class="sb-ftue-design" *ngIf="!fromCourseToc  && !isTextbookTocPage">
       <div class="clearfix" [ngClass]="{'sb-accordian-grey-text': !commonUtilService.networkInfo.isNetworkAvailable && !childData?.isAvailableLocally,
            'sb-play-selected':childData?.isAvailableLocally,'sb-play-unselected':!childData?.isAvailableLocally}">
         <div class="pull-left">
@@ -22,6 +33,15 @@
         <div class="pull-right">
           <img class="content-icon" alt=""
             [src]="commonUtilService.convertFileSrc(localImage) || commonUtilService.convertFileSrc(collectionChildIcon) || commonUtilService.convertFileSrc(childData?.contentData?.appIcon) || defaultAppIcon">
+        </div>
+      </div>
+    </div>
+    <!-- only for QR CODE SCanner-->
+
+    <div class="sb-ftue-design" *ngIf="!fromCourseToc && isTextbookTocPage">
+      <div class="clearfix" class="sb-blue-text">
+        <div class="pull-left px-16">
+            {{childData?.contentData?.name}}
         </div>
       </div>
     </div>
@@ -51,9 +71,10 @@
 
   <!-- <div *ngIf="childData?.children && childData?.contentData?.mimeType === 'application/vnd.ekstep.content-collection'"
        class="sb-separator-line ml8 mtb-8"></div> -->
-  <div *ngFor="let firstChildren of childData?.children; let j = index;" class="sb-collection-child-ftue">
+  <div *ngFor="let firstChildren of childData?.children; let j = index;" [ngClass]="{'sb-collection-child-ftue': isTextbookTocPage}">
     <app-collection-child [childData]="firstChildren" [breadCrumb]="breadCrumb"
       [activeMimeTypeFilter]="activeMimeTypeFilter" [rootUnitId]="rootUnitId" [isTextbookTocPage]="isTextbookTocPage"
-      [bookID]="bookID" [isEnrolled]="isEnrolled" [fromCourseToc]="fromCourseToc" [isBatchNotStarted]="isBatchNotStarted"></app-collection-child>
+      [bookID]="bookID" [isEnrolled]="isEnrolled" [fromCourseToc]="fromCourseToc" [isBatchNotStarted]="isBatchNotStarted"  [stckyUnitTitle]="stckyUnitTitle"
+       [stckyindex]="stckyindex" [latestParentName]="latestParentName" [latestParentNodes]="latestParentNodes"></app-collection-child>
   </div>
 </div>

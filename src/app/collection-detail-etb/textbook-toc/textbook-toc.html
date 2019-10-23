@@ -6,25 +6,8 @@
               <ion-col size="11">
                 <div class="sb-topic-text" (click)="setContentId(item.identifier)"> {{item?.contentData?.name}} </div>
               </ion-col>
-              <!-- <ion-col col-1 *ngIf="!isGroupShown(i)">
-                <div>
-                  <ion-icon ios="ios-arrow-dropdown" md="md-arrow-dropdown" class="sb-accordian-arrow"></ion-icon>
-                </div>
-              </ion-col>
-              <ion-col col-1 *ngIf="isGroupShown(i)">
-                <div>
-                  <ion-icon ios="ios-arrow-dropup" md="md-arrow-dropup" class="sb-accordian-arrow"></ion-icon>
-                </div>
-              </ion-col> -->
             </ion-row>
             <ion-row *ngIf="item?.contentData?.mimeType !== 'application/vnd.ekstep.content-collection' && !item?.children" (click)="setContentId(item.identifier)">
-              <!-- <ion-col col-1>
-                <div>
-                  <ion-icon ios="ios-arrow-dropright-circle" md="md-arrow-dropright-circle"
-                  [ngClass]="{'sb-accordian-grey-icon': !commonUtilService.networkInfo.isNetworkAvailable && !item?.isAvailableLocally, 'sb-play-icon': commonUtilService.networkInfo.isNetworkAvailable || item?.isAvailableLocally}">
-                  </ion-icon>
-                </div>
-              </ion-col> -->
               <ion-col size="11">
                 <div [ngClass]="{'sb-accordian-grey-text': !commonUtilService.networkInfo.isNetworkAvailable && !item?.isAvailableLocally,
                 'sb-play-selected':item?.isAvailableLocally,'sb-play-unselected':!item?.isAvailableLocally}">
@@ -43,10 +26,11 @@
           <div class="sb-hidden-content px-16 pt-8" *ngIf="(item?.children && item?.children?.length)">
             <div *ngFor="let firstChildren of item?.children; let j = index;">
               <!-- <div class="separator-line"></div> -->
-              <div class="sb-topics-container sb-topics-container-toc">
+              <div class="sb-topics-container sb-topics-container-toc"  #stickyPillsRef>
                 <app-collection-child
                   [childData]="firstChildren" [index]="j" [depth]="depth" [rootUnitId]="item.identifier" [isTextbookTocPage] = "true"
-                  [corRelationList]="corRelationList" [isDepthChild]="isDepthChild" [breadCrumb]="breadCrumb"></app-collection-child>
+                  [corRelationList]="corRelationList" [isDepthChild]="isDepthChild" [breadCrumb]="breadCrumb" [stckyUnitTitle]="stckyUnitTitle" 
+                  [stckyindex]="stckyindex" [latestParentName]="latestParentName" [latestParentNodes]="latestParentNodes"></app-collection-child>
               </div>
             </div>
           </div>
