@@ -45,26 +45,25 @@ import {
   CanvasPlayerService,
   SplashScreenService
 } from '../services/index';
-
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { UserTypeSelectionPageModule } from './user-type-selection/user-type-selection.module';
 import { ComponentsModule } from './components/components.module';
 import { UserAndGroupsPageModule } from './user-and-groups/user-and-groups.module';
 import { LocalNotifications } from '@ionic-native/local-notifications/ngx';
-
 import { PageFilterPageModule } from './page-filter/page-filter.module';
 import { PageFilterPage } from './page-filter/page-filter.page';
-
 import { PageFilterOptionsPageModule } from './page-filter/page-filter-options/page-filter-options.module';
 import { PageFilterOptionsPage } from './page-filter/page-filter-options/page-filter-options.page';
 import { CrashAnalyticsErrorLogger } from '@app/services/crash-analytics/crash-analytics-error-logger';
 import { File } from '@ionic-native/file/ngx';
 import { TermsAndConditionsPageModule } from './terms-and-conditions/terms-and-conditions.module';
 import { TncUpdateHandlerService } from '@app/services/handlers/tnc-update-handler.service';
-import {SplashcreenTelemetryActionHandlerDelegate} from '@app/services/sunbird-splashscreen/splashcreen-telemetry-action-handler-delegate';
-import {SplashscreenImportActionHandlerDelegate} from '@app/services/sunbird-splashscreen/splashscreen-import-action-handler-delegate';
-import {SplaschreenDeeplinkActionHandlerDelegate} from '@app/services/sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
+import {
+  SplashcreenTelemetryActionHandlerDelegate
+} from '@app/services/sunbird-splashscreen/splashcreen-telemetry-action-handler-delegate';
+import { SplashscreenImportActionHandlerDelegate } from '@app/services/sunbird-splashscreen/splashscreen-import-action-handler-delegate';
+import { SplaschreenDeeplinkActionHandlerDelegate } from '@app/services/sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
 import { LocalCourseService } from '@app/services/local-course.service';
 
 // AoT requires an exported function for factories
@@ -95,7 +94,7 @@ export const profileService = () => {
 };
 export const deviceRegisterService = () => {
   return SunbirdSdk.instance.deviceRegisterService;
-}
+};
 export const groupService = () => {
   return SunbirdSdk.instance.groupService;
 };
@@ -323,7 +322,8 @@ export const sunbirdSdkFactory =
           profileApiPath: '/api/user/v1',
           tenantApiPath: '/v1/tenant',
           otpApiPath: '/api/otp/v1',
-          searchLocationApiPath: '/api/data/v1'
+          searchLocationApiPath: '/api/data/v1',
+          locationDirPath: '/data/location'
         },
         pageServiceConfig: {
           apiPath: '/api/data/v1',
