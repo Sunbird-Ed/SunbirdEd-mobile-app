@@ -247,7 +247,7 @@
     width: 100% !important;
     border-radius: 2px !important;
     background-color: #FFFFFF !important;
-    box-shadow: 0 4px 7px 0 rgba(0,0,0,0.1) !important;
+    box-shadow: 0px 5px 5px 3px #ddd;
   }
   .sb-topic-text {
       // padding-top: 5px;
@@ -462,5 +462,9 @@ ion-segment-button{
 
 #card-mb-0{
   margin-bottom: 0 !important;
+}
+
+.card-box-shadow {
+  box-shadow: 0px 5px 5px 3px #ddd;
 }
 

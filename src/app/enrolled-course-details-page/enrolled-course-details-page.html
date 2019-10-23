@@ -1,6 +1,6 @@
 <ion-content>
 	<div class="p-8" *ngIf="!showOfflineSection">
-		<ion-card>
+		<ion-card class="card-box-shadow">
 			<ion-card-header class="custom-card-header">
 				<ion-card-title class="font-18 font-weight-900">{{course?.name}}</ion-card-title>
 				<ion-card-subtitle *ngIf="course?.organisation" class="font-14 subtitle-color">{{'CONTENT_CREATED_BY' | translate}}
@@ -112,7 +112,7 @@
 			</div>
 		</ion-card>
 
-		<ion-card>
+		<ion-card class="card-box-shadow">
 			<ion-card-content class="card-content-bottom-0 card-content-top-0">
 				<ion-segment class="d-flex" [(ngModel)]="segmentType" (ionChange)="onSegmentChange($event)">
 					<ion-segment-button value="info" class="flex-5">
