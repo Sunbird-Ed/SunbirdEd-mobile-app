@@ -25,7 +25,7 @@ import { AppHeaderService } from '@app/services/app-header.service';
 import { FormAndFrameworkUtilService } from '@app/services/formandframeworkutil.service';
 import { ContainerService } from '@app/services/container.services';
 import { ProfileConstants, RouterLinks } from '@app/app/app.constant';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, NavigationExtras } from '@angular/router';
 import { Location } from '@angular/common';
 import { Environment, ActivePageService } from '@app/services';
 
@@ -63,6 +63,7 @@ export class CategoriesEditPage {
 
   backButtonFunc: Subscription;
   isRootPage = false;
+  hasFilledLocation = false;
 
   /* Custom styles for the select box popup */
   boardOptions = {
@@ -104,6 +105,7 @@ export class CategoriesEditPage {
     this.profile = this.appGlobalService.getCurrentUser();
     const extrasState = this.router.getCurrentNavigation().extras.state;
     if (extrasState && extrasState.showOnlyMandatoryFields) {
+      this.hasFilledLocation = extrasState.hasFilledLocation;
       this.showOnlyMandatoryFields = extrasState.showOnlyMandatoryFields;
       this.isRootPage = Boolean(extrasState.isRootPage);
       if (extrasState.profile) {
@@ -422,11 +424,29 @@ export class CategoriesEditPage {
               this.formAndFrameworkUtilService.updateLoggedInUser(updatedProfile, this.profile)
                 .then((value) => {
                   initTabs(this.container, LOGIN_TEACHER_TABS);
-                  this.router.navigate([RouterLinks.TABS]);
+                  if (this.hasFilledLocation) {
+                    this.router.navigate([RouterLinks.TABS]);
+                  } else {
+                    const navigationExtras: NavigationExtras = {
+                      state: {
+                        isShowBackButton: false
+                      }
+                    };
+                    this.router.navigate([RouterLinks.DISTRICT_MAPPING] , navigationExtras);
+                  }
                 });
             }).catch(e => {
               initTabs(this.container, LOGIN_TEACHER_TABS);
-              this.router.navigate([RouterLinks.TABS]);
+              if (this.hasFilledLocation) {
+                this.router.navigate([RouterLinks.TABS]);
+              } else {
+                const navigationExtras: NavigationExtras = {
+                  state: {
+                    isShowBackButton: false
+                  }
+                };
+                this.router.navigate([RouterLinks.DISTRICT_MAPPING] , navigationExtras);
+              }
             });
         } else {
           this.location.back();

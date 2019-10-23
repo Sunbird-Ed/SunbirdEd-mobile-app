@@ -109,10 +109,9 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.saveDefaultSyncSetting();
       this.checkAppUpdateAvailable();
       this.makeEntryInSupportFolder();
-      this.reloadSigninEvents();
+      await this.getSelectedLanguage();
       this.handleAuthAutoMigrateEvents();
       this.handleAuthErrors();
-      await this.getSelectedLanguage();
       this.preferences.putString(PreferenceKey.CONTENT_CONTEXT, '').subscribe();
       window['thisRef'] = this;
       this.statusBar.styleBlackTranslucent();
@@ -120,6 +119,12 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.appRatingService.checkInitialDate();
       this.getUtmParameter();
       this.checkForCodeUpdates();
+
+      if (this.appGlobalService.getUserId()) {
+        this.reloadSigninEvents();
+      } else {
+        // this.reloadGuestEvents();
+      }
     });
   }
 
@@ -148,8 +153,8 @@ export class AppComponent implements OnInit, AfterViewInit {
         codePush.sync((status => {
           this.syncStatus(status);
         }), {
-          deploymentKey
-        }, this.downloadProgress);
+            deploymentKey
+          }, this.downloadProgress);
       } else {
         this.telemetryGeneratorService.generateInteractTelemetry(InteractType.OTHER, InteractSubtype.HOTCODE_PUSH_KEY_NOT_DEFINED,
           Environment.HOME, PageId.HOME);
@@ -314,6 +319,10 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.checkForTncUpdate();
   }
 
+  reloadGuestEvents() {
+    this.checkDeviceLocation();
+  }
+
   addNetworkTelemetry(subtype: string, pageId: string) {
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.OTHER,
       subtype,
@@ -397,6 +406,17 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   private async checkForTncUpdate() {
     await this.tncUpdateHandlerService.checkForTncUpdate();
+  }
+
+  private async checkDeviceLocation() {
+    if (!(await this.commonUtilService.isDeviceLocationAvailable())) {
+      const navigationExtras: NavigationExtras = {
+        state: {
+          isShowBackButton: false
+        }
+      };
+      this.router.navigate([RouterLinks.DISTRICT_MAPPING], navigationExtras);
+    }
   }
 
   private async getSelectedLanguage() {
