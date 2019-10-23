@@ -43,6 +43,8 @@ import { FilteroptionComponent } from './filteroption/filteroption.component';
 import { SbInsufficientStoragePopupComponent } from './popups/sb-insufficient-storage-popup/sb-insufficient-storage-popup';
 import { AccountRecoveryInfoComponent } from './popups/account-recovery-id/account-recovery-id-popup.component';
 import { EnrollmentDetailsComponent } from './enrollment-details/enrollment-details.component';
+import { FilterPipe } from '@app/pipes/filter/filter.pipe';
+import { TeacherIdVerificationComponent } from './popups/teacher-id-verification-popup/teacher-id-verification-popup.component';
 
 @NgModule({
   declarations: [
@@ -80,7 +82,8 @@ import { EnrollmentDetailsComponent } from './enrollment-details/enrollment-deta
     FilteroptionComponent,
     SbInsufficientStoragePopupComponent,
     AccountRecoveryInfoComponent,
-    EnrollmentDetailsComponent
+    EnrollmentDetailsComponent,
+    TeacherIdVerificationComponent
   ],
   imports: [
     CommonModule,
@@ -112,7 +115,8 @@ import { EnrollmentDetailsComponent } from './enrollment-details/enrollment-deta
     ReportAlertComponent,
     SbInsufficientStoragePopupComponent,
     AccountRecoveryInfoComponent,
-    EnrollmentDetailsComponent
+    EnrollmentDetailsComponent,
+    TeacherIdVerificationComponent
   ],
   exports: [
     ApplicationHeaderComponent,
@@ -147,8 +151,9 @@ import { EnrollmentDetailsComponent } from './enrollment-details/enrollment-deta
     ReportAlertComponent,
     SbInsufficientStoragePopupComponent,
     AccountRecoveryInfoComponent,
-    EnrollmentDetailsComponent
+    EnrollmentDetailsComponent,
+    TeacherIdVerificationComponent
   ],
-  providers: [FileSizePipe, Keyboard]
+  providers: [FileSizePipe, FilterPipe,  Keyboard]
 })
 export class ComponentsModule { }

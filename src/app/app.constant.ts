@@ -187,6 +187,7 @@ export class FormConstant {
 
 export class PreferenceKey {
     public static readonly SELECTED_LANGUAGE_CODE = 'sunbirdselected_language_code';
+    public static readonly DEVICE_LOCATION = 'device_location';
     public static readonly SELECTED_LANGUAGE = 'sunbirdselected_language';
     public static readonly SELECTED_USER_TYPE = 'sunbirdselected_user_type';
     public static readonly COURSE_IDENTIFIER = 'sunbirdcourse_identifier';
@@ -424,6 +425,7 @@ export class RouterLinks {
     public static readonly ABOUT_APP = 'about-app';
     public static readonly PRIVACY_POLICY = 'privacy-policy';
     public static readonly TERMS_OF_SERVICE = 'terms-of-service';
+    public static readonly DISTRICT_MAPPING = 'district-mapping';
 
     // Profile settings Routes
     public static readonly PROFILE_SETTINGS = 'profile-settings';

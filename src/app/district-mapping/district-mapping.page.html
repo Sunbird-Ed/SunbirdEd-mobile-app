@@ -1,0 +1,33 @@
+<ion-content class="ion-padding">
+  <ion-icon *ngIf="isShowBackButton" ios="ios-arrow-back" md="md-arrow-back" (click)="goBack()" class="top-back-button"></ion-icon>
+  <div class="heading"><b>{{'YOUR_LOCATION'| translate}}</b></div>
+  <div class="sub-heading">{{'YOUR_LOCATION_DETAILS' | translate}}</div>
+  <div class="state">
+    <div class="input-container">
+      <input type="text" class="input"  [(ngModel)]="stateName"
+        placeholder="{{'SEARCH_STATE' | translate}}" (ngModelChange)="showStateList()">
+      <ion-icon (click)="showStates = !showStates" class="input-icon" name="ios-arrow-down"></ion-icon>
+    </div>
+    <div class="showList" *ngIf="showStates">
+      <ul>
+        <li (click)="selectState(state.name , state.id, state.code)" *ngFor="let state of stateList | filter : stateName">{{state?.name}}</li>
+      </ul>
+    </div>
+  </div>
+  <div class="district" *ngIf="!showStates">
+    <div class="input-container margin-top" [ngClass]="(!stateName) ? 'disableInput' : ''">
+      <input type="text" class="input"  [(ngModel)]="districtName"
+        placeholder="{{'SEARCH_DISTRICT' | translate}}" [disabled]="!stateName">
+      <ion-icon *ngIf="this.stateName" (click)="showDistrict = !showDistrict" class="input-icon" name="ios-arrow-down"></ion-icon>
+      <ion-icon *ngIf="!this.stateName" class="input-icon" name="ios-arrow-down"></ion-icon>
+    </div>
+    <div class="showList" *ngIf="showDistrict">
+      <ul>
+        <li (click)="selectDistrict(district.name , district.code)" *ngFor="let district of districtList | filter : districtName">{{district?.name}}</li>
+      </ul>
+    </div>
+  </div>
+</ion-content>
+<div class="footer">
+  <button class="block-button" [disabled]="!stateName || !districtName" [ngClass]="(!stateName || !districtName)? 'disabled-button': ''" (click)="submit()">{{'BTN_SUBMIT' | translate}}</button>
+</div>

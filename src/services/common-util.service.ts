@@ -367,4 +367,69 @@ export class CommonUtilService implements OnDestroy {
             return this.webView.convertFileSrc(img);
         }
     }
+
+    // return org location details for logged in user
+    getOrgLocation(profile: any) {
+        let location = { 'state': '', 'district': '', 'block': '' };
+        for (let i = 0, len = profile.organisations.length; i < len; i++) {
+            if (profile.organisations[i].locations) {
+                for (let j = 0, l = profile.organisations[i].locations.length; j < l; j++) {
+                    switch (profile.organisations[i].locations[j].type) {
+                        case 'state':
+                            location.state = profile.organisations[i].locations[j];
+                            break;
+
+                        case 'block':
+                            location.block = profile.organisations[i].locations[j];
+                            break;
+
+                        case 'district':
+                            location.district = profile.organisations[i].locations[j];
+                            break;
+
+                        default:
+                            console.log('default');
+                    }
+                }
+            }
+        }
+
+        return location;
+    }
+
+    getUserLocation(profile: any) {
+        let userLocation = {
+            state: {},
+            district: {}
+        };
+        if (profile && profile.userLocations && profile.userLocations.length) {
+            for (let i = 0, len = profile.userLocations.length; i < len; i++) {
+                if (profile.userLocations[i].type === 'state') {
+                    userLocation.state = profile.userLocations[i];
+                } else if (profile.userLocations[i].type === 'district') {
+                    userLocation.district = profile.userLocations[i];
+                }
+            }
+        }
+
+        return userLocation;
+    }
+
+    isUserLocationAvalable(profile: any): boolean {
+        const location = this.getUserLocation(profile);
+        if (location && location.state && location.state['name'] && location.district && location.district['name']) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    async isDeviceLocationAvailable(): Promise<boolean> {
+        const deviceLoc = await this.preferences.getString(PreferenceKey.DEVICE_LOCATION).toPromise();
+        if (deviceLoc) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 }
