@@ -84,7 +84,10 @@ const routes: Routes = [
   { path: RouterLinks.GUEST_EDIT, loadChildren: './profile/guest-edit/guest-edit.module#GuestEditPageModule' },
   { path: RouterLinks.EXPLORE_BOOK, loadChildren: './resources/explore-books/explore-books.module#ExploreBooksPageModule' },
   { path: RouterLinks.FAQ_REPORT_ISSUE, loadChildren: './faq-report-issue/faq-report-issue.module#FaqReportIssuePageModule' },
-  { path: RouterLinks.DISTRICT_MAPPING, loadChildren: './district-mapping/district-mapping.module#DistrictMappingPageModule' }
+  {
+    path: RouterLinks.DISTRICT_MAPPING,
+    loadChildren: './district-mapping/district-mapping.module#DistrictMappingPageModule'
+  }
 ];
 
 @NgModule({

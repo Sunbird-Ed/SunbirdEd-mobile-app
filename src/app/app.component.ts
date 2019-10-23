@@ -110,6 +110,11 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.checkAppUpdateAvailable();
       this.makeEntryInSupportFolder();
       await this.getSelectedLanguage();
+      if (this.appGlobalService.getUserId()) {
+        this.reloadSigninEvents();
+      } else {
+        this.reloadGuestEvents();
+      }
       this.handleAuthAutoMigrateEvents();
       this.handleAuthErrors();
       this.preferences.putString(PreferenceKey.CONTENT_CONTEXT, '').subscribe();
@@ -119,12 +124,6 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.appRatingService.checkInitialDate();
       this.getUtmParameter();
       this.checkForCodeUpdates();
-
-      if (this.appGlobalService.getUserId()) {
-        this.reloadSigninEvents();
-      } else {
-        // this.reloadGuestEvents();
-      }
     });
   }
 
@@ -153,8 +152,8 @@ export class AppComponent implements OnInit, AfterViewInit {
         codePush.sync((status => {
           this.syncStatus(status);
         }), {
-            deploymentKey
-          }, this.downloadProgress);
+          deploymentKey
+        }, this.downloadProgress);
       } else {
         this.telemetryGeneratorService.generateInteractTelemetry(InteractType.OTHER, InteractSubtype.HOTCODE_PUSH_KEY_NOT_DEFINED,
           Environment.HOME, PageId.HOME);
@@ -409,13 +408,15 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   private async checkDeviceLocation() {
-    if (!(await this.commonUtilService.isDeviceLocationAvailable())) {
+    if (!(await this.commonUtilService.isDeviceLocationAvailable())
+      && (await this.preferences.getString(PreferenceKey.IS_ONBOARDING_COMPLETED).toPromise() === 'true')) {
       const navigationExtras: NavigationExtras = {
         state: {
           isShowBackButton: false
         }
       };
-      this.router.navigate([RouterLinks.DISTRICT_MAPPING], navigationExtras);
+      await this.router.navigate(['/', RouterLinks.DISTRICT_MAPPING], navigationExtras);
+      this.splashScreenService.handleSunbirdSplashScreenActions();
     }
   }
 
