@@ -187,7 +187,6 @@ android {
             buildConfigField 'String', 'MOBILE_APP_SECRET', "\"${staging_mobile_app_secret}\""
             buildConfigField 'String', 'OAUTH_SESSION', '"org.genie.KeycloakOAuthSessionService"'
             buildConfigField "String", "OAUTH_REDIRECT_URL","\"${staging_oauth_redirect_url}\""
-            buildConfigField "String", "FAQ_BASE_URL","\"${staging_faq_base_url}\""
         }
 
         production {
