@@ -4,7 +4,7 @@ import { Router, NavigationExtras } from '@angular/router';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { TranslateService } from '@ngx-translate/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { PreferenceKey, ProfileConstants } from '@app/app/app.constant';
+import { PreferenceKey, ProfileConstants, RouterLinks } from '@app/app/app.constant';
 import { GUEST_STUDENT_TABS, GUEST_TEACHER_TABS, initTabs } from '@app/app/module.service';
 import { ImpressionType, PageId, Environment, InteractSubtype, InteractType } from '@app/services/telemetry-constants';
 import isEqual from 'lodash/isEqual';
@@ -589,8 +589,7 @@ export class ProfileSettingsPage implements OnInit {
         this.appGlobalService.guestUserProfile = res;
         setTimeout(() => {
           this.commonUtilService.showToast('PROFILE_UPDATE_SUCCESS');
-        },1000);
-        
+        }, 1000);
         this.events.publish('onboarding-card:completed', { isOnBoardingCardCompleted: true });
         this.events.publish('refresh:profile');
         this.appGlobalService.guestUserProfile = res;
@@ -600,13 +599,7 @@ export class ProfileSettingsPage implements OnInit {
         );
         this.loader = await this.commonUtilService.getLoader(2000);
         this.loader.present();
-
-        const navigationExtras: NavigationExtras = {
-          state: {
-            loginMode: 'guest'
-          }
-        };
-        this.router.navigate(['/tabs'], navigationExtras);
+        this.router.navigate([RouterLinks.DISTRICT_MAPPING])
       })
       .catch(async () => {
         await loader.dismiss();

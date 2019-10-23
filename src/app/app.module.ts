@@ -92,6 +92,9 @@ export const apiService = () => {
 export const profileService = () => {
   return SunbirdSdk.instance.profileService;
 };
+export const deviceRegisterService = () => {
+  return SunbirdSdk.instance.deviceRegisterService;
+}
 export const groupService = () => {
   return SunbirdSdk.instance.groupService;
 };
@@ -180,6 +183,9 @@ export function sdkDriverFactory(): any {
   }, {
     provide: 'PROFILE_SERVICE',
     useFactory: profileService
+  }, {
+    provide: 'DEVICE_REGISTER_SERVICE',
+    useFactory: deviceRegisterService
   }, {
     provide: 'DB_SERVICE',
     useFactory: dbService
@@ -289,6 +295,10 @@ export const sunbirdSdkFactory =
           debugMode: false,
           dbName: 'GenieServices.db'
         },
+        deviceRegisterConfig: {
+          host: buildConfigValues['DEVICE_REGISTER_BASE_URL'],
+          apiPath: '',
+        },
         contentServiceConfig: {
           apiPath: '/api/content/v1',
           searchApiPath: '/api/composite/v1'
@@ -326,9 +336,7 @@ export const sunbirdSdkFactory =
           systemSettingsDirPath: '/data/system',
         },
         telemetryConfig: {
-          deviceRegisterApiPath: '',
-          telemetryApiPath: '/api/data/v1',
-          deviceRegisterHost: buildConfigValues['DEVICE_REGISTER_BASE_URL'],
+          apiPath: '/api/data/v1',
           telemetrySyncBandwidth: 200,
           telemetrySyncThreshold: 200,
           telemetryLogMinAllowedOffset: 86400000

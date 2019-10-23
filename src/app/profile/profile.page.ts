@@ -76,14 +76,15 @@ export class ProfilePage implements OnInit {
   organisationDetails = '';
   contentCreatedByMe: any = [];
   orgDetails: {
-    'state': '',
-    'district': '',
-    'block': ''
+    'state': string,
+    'district': string,
+    'block': string
   };
 
   layoutPopular = ContentCard.LAYOUT_POPULAR;
   headerObservable: any;
   timer: any;
+  mappedTrainingCertificates: CourseCertificate[] = [];
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     @Inject('AUTH_SERVICE') private authService: AuthService,
@@ -208,7 +209,7 @@ export class ProfilePage implements OnInit {
           const serverProfileDetailsRequest: ServerProfileDetailsRequest = {
             userId: that.userId && that.userId !== session.userToken ? that.userId : session.userToken,
             requiredFields: ProfileConstants.REQUIRED_FIELDS,
-            from: CachedItemRequestSourceFrom.SERVER,
+            from: CachedItemRequestSourceFrom.SERVER
           };
 
           if (that.isLoggedInUser) {
@@ -243,9 +244,9 @@ export class ProfilePage implements OnInit {
                       that.imageUri = profileData.avatar;
                     }
                     that.formatRoles();
-                    that.formatOrgDetails();
+                    that.orgDetails = that.commonUtilService.getOrgLocation(that.profile);
                     that.getOrgDetails();
-                    that.formatUserLocation();
+                    that.userLocation =  that.commonUtilService.getUserLocation(that.profile);
                     that.isCustodianOrgId = (that.profile.rootOrg.rootOrgId === this.custodianOrgId);
                     that.isStateValidated = that.profile.stateValidated;
                     resolve();
@@ -281,48 +282,6 @@ export class ProfilePage implements OnInit {
           const val = this.profile.roleList.find(role => role.id === roleKey);
           if (val && val.name.toLowerCase() !== 'public') {
             this.roles.push(val.name);
-          }
-        }
-      }
-    }
-  }
-
-  formatUserLocation() {
-    if (this.profile && this.profile.userLocations && this.profile.userLocations.length) {
-      for (let i = 0, len = this.profile.userLocations.length; i < len; i++) {
-        if (this.profile.userLocations[i].type === 'state') {
-          this.userLocation.state = this.profile.userLocations[i];
-        } else {
-          this.userLocation.district = this.profile.userLocations[i];
-        }
-      }
-    }
-  }
-
-
-  /**
-   * Method to handle organization details.
-   */
-  formatOrgDetails() {
-    this.orgDetails = { state: '', district: '', block: '' };
-    for (let i = 0, len = this.profile.organisations.length; i < len; i++) {
-      if (this.profile.organisations[i].locations) {
-        for (let j = 0, l = this.profile.organisations[i].locations.length; j < l; j++) {
-          switch (this.profile.organisations[i].locations[j].type) {
-            case 'state':
-              this.orgDetails.state = this.profile.organisations[i].locations[j];
-              break;
-
-            case 'block':
-              this.orgDetails.block = this.profile.organisations[i].locations[j];
-              break;
-
-            case 'district':
-              this.orgDetails.district = this.profile.organisations[i].locations[j];
-              break;
-
-            default:
-              console.log('default');
           }
         }
       }
@@ -408,6 +367,7 @@ export class ProfilePage implements OnInit {
     this.courseService.getEnrolledCourses(option).toPromise()
       .then((res: Course[]) => {
         this.trainingsCompleted = res.filter((course) => course.status === 2);
+        this.mappedTrainingCertificates = this.mapTrainingsToCertificates(this.trainingsCompleted);
       })
       .catch((error: any) => {
         console.error('error while loading enrolled courses', error);
@@ -439,11 +399,11 @@ export class ProfilePage implements OnInit {
     }, []);
   }
 
-  getCertificateCourse(certificate: CourseCertificate): Course {
-    return this.trainingsCompleted.find((course: Course) => {
-      return course.certificates ? course.certificates.indexOf(certificate) > -1 : undefined;
-    });
-  }
+  // getCertificateCourse(certificate: CourseCertificate): Course {
+  //   return this.trainingsCompleted.find((course: Course) => {
+  //     return course.certificates ? course.certificates.indexOf(certificate) > -1 : undefined;
+  //   });
+  // }
 
 downloadTrainingCertificate(course: Course, certificate: CourseCertificate) {
     const telemetryObject: TelemetryObject  = new TelemetryObject(certificate.id, ContentType.CERTIFICATE, undefined);
@@ -639,7 +599,7 @@ downloadTrainingCertificate(course: Course, certificate: CourseCertificate) {
     const popover = await this.popoverCtrl.create({
       component: EditContactDetailsPopupComponent,
       componentProps,
-      cssClass: 'popover-alert'
+      cssClass: 'popover-alert input-focus'
     });
     await popover.present();
     const { data } = await popover.onDidDismiss();
@@ -659,7 +619,7 @@ downloadTrainingCertificate(course: Course, certificate: CourseCertificate) {
         type: ProfileConstants.CONTACT_TYPE_PHONE
       };
 
-      const data = await this.openContactVerifyPopup(EditContactVerifyPopupComponent, componentProps, 'popover-alert');
+      const data = await this.openContactVerifyPopup(EditContactVerifyPopupComponent, componentProps, 'popover-alert input-focus');
       if (data && data.OTPSuccess) {
         this.updatePhoneInfo(data.value);
       }
@@ -672,7 +632,7 @@ downloadTrainingCertificate(course: Course, certificate: CourseCertificate) {
         type: ProfileConstants.CONTACT_TYPE_EMAIL
       };
 
-      const data = await this.openContactVerifyPopup(EditContactVerifyPopupComponent, componentProps, 'popover-alert');
+      const data = await this.openContactVerifyPopup(EditContactVerifyPopupComponent, componentProps, 'popover-alert input-focus');
       if (data && data.OTPSuccess) {
         this.updateEmailInfo(data.value);
       }
@@ -776,7 +736,7 @@ downloadTrainingCertificate(course: Course, certificate: CourseCertificate) {
       });
       orgList.sort((orgDate1, orgdate2) => orgDate1.orgjoindate > orgdate2.organisation ? 1 : -1);
       this.organisationDetails = orgList[0].orgName;
-    } else {
+    } else if (orgItemList.length === 1) {
       this.organisationDetails = orgItemList[0].orgName;
     }
   }
@@ -790,14 +750,14 @@ downloadTrainingCertificate(course: Course, certificate: CourseCertificate) {
     const popover = await this.popoverCtrl.create({
       component: AccountRecoveryInfoComponent,
       componentProps,
-      cssClass: 'popover-alert'
+      cssClass: 'popover-alert input-focus'
     });
 
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,
       InteractSubtype.RECOVERY_ACCOUNT_ID_CLICKED,
       Environment.USER,
-      PageId.PROFILE, undefined
+      PageId.PROFILE
     );
 
     await popover.present();

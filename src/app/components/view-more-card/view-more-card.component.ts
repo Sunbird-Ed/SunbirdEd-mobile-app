@@ -78,10 +78,10 @@ export class ViewMoreCardComponent implements OnInit {
     private location: Location,
     private popoverCtrl: PopoverController
   ) {
-    this.loader = this.commonUtilService.getLoader();
   }
 
   async checkRetiredOpenBatch(content: any, layoutName?: string) {
+    this.loader = await this.commonUtilService.getLoader();
     await this.loader.present();
     let anyOpenBatch = false;
     this.enrolledCourses = this.enrolledCourses || [];
@@ -103,6 +103,7 @@ export class ViewMoreCardComponent implements OnInit {
     } else if (retiredBatches.length) {
       this.navigateToBatchListPopup(content, layoutName, retiredBatches);
     }
+    await this.loader.dismiss();
   }
 
   async navigateToBatchListPopup(content: any, layoutName?: string, retiredBatched?: any) {
@@ -121,6 +122,7 @@ export class ViewMoreCardComponent implements OnInit {
 
     if (this.commonUtilService.networkInfo.isNetworkAvailable) {
       if (!this.guestUser) {
+        this.loader = await this.commonUtilService.getLoader();
         await this.loader.present();
         this.courseService.getCourseBatches(courseBatchesRequest).toPromise()
           .then((res: Batch[]) => {
@@ -212,7 +214,7 @@ export class ViewMoreCardComponent implements OnInit {
         this.events.publish('course:resume', {
           content: content
         });
-        this.location.back();
+        // this.location.back();
       } else {
         this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], {
           state: {
