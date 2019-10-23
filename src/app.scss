@@ -898,7 +898,8 @@ ion-split-pane {
 .leave-training-popup {
   .popover-content {
     top: 168.273px !important;
-    left: 186px !important;
+    left: 220px !important;
+    --box-shadow: 0px 3px 6px 5px #eee;
     transform-origin: right top;
     transform: scale(1);
     width: 36% !important;
