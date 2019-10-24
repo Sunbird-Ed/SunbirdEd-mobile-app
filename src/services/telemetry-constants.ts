@@ -111,7 +111,8 @@ export enum PageId {
     DIAL_SEARCH = 'dial-book-result',
     TEXTBOOK_TOC = 'textbook-toc',
     EXPLORE_MORE_CONTENT = 'explore-more-content',
-    RECOVERY_ACCOUNT_ID_POPUP = 'recovery-account-id-popup'
+    RECOVERY_ACCOUNT_ID_POPUP = 'recovery-account-id-popup',
+    MERGE_ACCOUNT_POPUP = 'merge-account-popup'
 }
 export enum LogType {
     NOTIFICATION = 'notification'
@@ -280,6 +281,8 @@ export enum InteractSubtype {
     RESOURCE_PAGE_LOADED = 'page-loaded',
     RESOURCE_PAGE_ERROR = 'page-error',
     ENROLL_CLICKED = 'enroll-clicked',
+    ENROLL_SUCCESS = 'enroll-success',
+    ENROLL_FAILED = 'enroll-failed',
     YES_CLICKED = 'yes-clicked',
     NO_CLICKED = 'no-clicked',
     RESUME_CLICKED = 'resume-clicked',
@@ -344,6 +347,7 @@ export enum InteractSubtype {
     UNENROL_FAILURE = 'unenrol-failure',
     TRAINING_INFO_CLICKED = 'training-info-clicked',
     TRAINING_MODULE_CLICKED = 'training-module-clicked',
+    MERGE_CLICKED = 'merge-clicked',
 }
 
 export enum ActionButtonType {
@@ -354,6 +358,10 @@ export enum ActionButtonType {
 export enum CorReleationDataType {
     COURSE_BATCH = 'CourseBatch',
     FTUE = 'Ftue',
+    BOARD = 'Board',
+    MEDIUM = 'Medium',
+    CLASS = 'Class',
+    USERTYPE = 'UserType'
 }
 
 

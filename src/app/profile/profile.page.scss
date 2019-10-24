@@ -1,4 +1,5 @@
 @import "src/assets/styles/variables";
+@import "src/assets/styles/base/_variables.scss";
 @import "src/assets/styles/_custom-mixins";
 @import "src/assets/styles/fonts";
 :host {
@@ -145,6 +146,35 @@
     text-align: center;
   }
 
+  .sb-btn-footer-text {
+    color : $gray;
+    font-weight: 100;
+    font-size: ($font-size-base - 2);
+    text-align: center;
+    text-transform: initial;
+  }
+.sb-btn-tile {
+    flex-direction: column;
+    background-color: $white;
+    width:72px;
+    height:72px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    .sb-btn-footer-text {
+      font-weight: 400;
+    }
+  }
+  button.sb-btn-tile:focus {
+    outline: none;
+  }
+
+  .sb-dt-card-blue-icon{
+    font-size : ($font-size-base * 2) + 2;
+    color: $primary-color;
+    @include margin(0, 0, ($base-block-space * .5), 0);
+  }
+
   .contacts {
     padding: 15px;
     background-color: #196dab;
@@ -244,5 +274,19 @@
     display: flex;
     justify-content: space-between;
     flex-wrap: nowrap;
+  }
+
+  .margin-pull-up {
+      margin-top: -18px;
+  }
+
+  .m-t-4 {
+      margin-top: 4px;
+  }
+
+  .cert-download {
+      width:35px;
+      height:25px;
+      margin-bottom: 4px;
   }
 }

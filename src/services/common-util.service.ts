@@ -6,7 +6,6 @@ import {
     PopoverController,
     Platform,
 } from '@ionic/angular';
-import { ToastOptions } from '@ionic/core';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs-compat';
 import { Network } from '@ionic-native/network/ngx';
@@ -70,7 +69,7 @@ export class CommonUtilService implements OnDestroy {
 
         this.translate.get(translationKey).subscribe(
             async (translatedMsg: any) => {
-                const toastOptions: ToastOptions = {
+                const toastOptions = {
                     message: translatedMsg,
                     duration: duration ? duration : 3000,
                     position: position ? position : 'bottom',
@@ -125,7 +124,7 @@ export class CommonUtilService implements OnDestroy {
      */
     getLoader(duration?): any {
         return this.loadingCtrl.create({
-            duration: duration?duration:30000,
+            duration: duration ? duration : 30000,
             spinner: 'crescent',
             cssClass: 'custom-loader-class'
         });
@@ -346,7 +345,7 @@ export class CommonUtilService implements OnDestroy {
         return (bytes / 1048576).toFixed(2);
     }
 
-    public  deDupe<T>(array: T[], property): T[] {
+    public deDupe<T>(array: T[], property): T[] {
         return array.filter((obj, pos, arr) => {
             return arr.map(mapObj => mapObj[property]).indexOf(obj[property]) === pos;
         });
@@ -365,6 +364,71 @@ export class CommonUtilService implements OnDestroy {
             return '';
         } else {
             return this.webView.convertFileSrc(img);
+        }
+    }
+
+    // return org location details for logged in user
+    getOrgLocation(profile: any) {
+        let location = { 'state': '', 'district': '', 'block': '' };
+        for (let i = 0, len = profile.organisations.length; i < len; i++) {
+            if (profile.organisations[i].locations) {
+                for (let j = 0, l = profile.organisations[i].locations.length; j < l; j++) {
+                    switch (profile.organisations[i].locations[j].type) {
+                        case 'state':
+                            location.state = profile.organisations[i].locations[j];
+                            break;
+
+                        case 'block':
+                            location.block = profile.organisations[i].locations[j];
+                            break;
+
+                        case 'district':
+                            location.district = profile.organisations[i].locations[j];
+                            break;
+
+                        default:
+                            console.log('default');
+                    }
+                }
+            }
+        }
+
+        return location;
+    }
+
+    getUserLocation(profile: any) {
+        let userLocation = {
+            state: {},
+            district: {}
+        };
+        if (profile && profile.userLocations && profile.userLocations.length) {
+            for (let i = 0, len = profile.userLocations.length; i < len; i++) {
+                if (profile.userLocations[i].type === 'state') {
+                    userLocation.state = profile.userLocations[i];
+                } else if (profile.userLocations[i].type === 'district') {
+                    userLocation.district = profile.userLocations[i];
+                }
+            }
+        }
+
+        return userLocation;
+    }
+
+    isUserLocationAvalable(profile: any): boolean {
+        const location = this.getUserLocation(profile);
+        if (location && location.state && location.state['name'] && location.district && location.district['name']) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    async isDeviceLocationAvailable(): Promise<boolean> {
+        const deviceLoc = await this.preferences.getString(PreferenceKey.DEVICE_LOCATION).toPromise();
+        if (deviceLoc) {
+            return true;
+        } else {
+            return false;
         }
     }
 }

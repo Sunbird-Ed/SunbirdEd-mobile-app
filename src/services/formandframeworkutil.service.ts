@@ -20,9 +20,9 @@ import {
     SharedPreferences
 } from 'sunbird-sdk';
 
-import { SystemSettingsIds, ContentFilterConfig, ContentType } from '@app/app/app.constant';
+import { SystemSettingsIds, ContentFilterConfig, ContentType, PreferenceKey } from '@app/app/app.constant';
 @Injectable()
-export class FormAndFrameworkUtilService implements OnInit {
+export class FormAndFrameworkUtilService {
     contentFilterConfig: Array<any> = [];
     selectedLanguage: string;
     profile: Profile;
@@ -38,10 +38,11 @@ export class FormAndFrameworkUtilService implements OnInit {
         private appVersion: AppVersion,
         private translate: TranslateService,
         private events: Events
-    ) { }
-
-    ngOnInit() {
-        this.selectedLanguage = this.translate.currentLang;
+    ) {
+        this.preferences.getString(PreferenceKey.SELECTED_LANGUAGE_CODE).toPromise()
+        .then(val => {
+            this.selectedLanguage = val ? val : 'en' ;
+        });
     }
 
     /**
@@ -111,8 +112,7 @@ export class FormAndFrameworkUtilService implements OnInit {
 
                             if (res && res.form && res.form.data) {
                                 fields = res.form.data.fields;
-
-                                fields.forEach(element => {
+                                for (const element of fields) {
                                     if (element.language === this.selectedLanguage) {
                                         if (element.range) {
                                             ranges = element.range;
@@ -122,13 +122,12 @@ export class FormAndFrameworkUtilService implements OnInit {
                                             upgradeTypes = element.upgradeTypes;
                                         }
                                     }
-                                });
+                                }
 
                                 if (ranges && ranges.length > 0 && upgradeTypes && upgradeTypes.length > 0) {
                                     let type: string;
                                     const forceType = 'force';
-
-                                    ranges.forEach(element => {
+                                    for (const element of ranges) {
                                         if (versionCode >= element.minVersionCode && versionCode <= element.maxVersionCode) {
                                             console.log('App needs a upgrade of type - ' + element.type);
                                             type = element.type;
@@ -137,13 +136,12 @@ export class FormAndFrameworkUtilService implements OnInit {
                                                 return true; // this is to stop the foreach loop
                                             }
                                         }
-                                    });
-
-                                    upgradeTypes.forEach(upgradeElement => {
+                                    }
+                                    for (const upgradeElement of upgradeTypes) {
                                         if (type === upgradeElement.type) {
                                             result = upgradeElement;
                                         }
-                                    });
+                                    }
                                 }
                             }
 
