@@ -1,5 +1,8 @@
 <ion-content class="ion-padding">
-  <ion-icon *ngIf="isShowBackButton" ios="ios-arrow-back" md="md-arrow-back" (click)="goBack()" class="top-back-button"></ion-icon>
+  <div>
+    <ion-icon *ngIf="isShowBackButton" ios="ios-arrow-back" md="md-arrow-back" (click)="goBack()" class="top-back-button"></ion-icon>
+    <button class="pull-right sb-btn-sm sb-btn-outline-info" (click)="skipLocation()" *ngIf="showNotNowFlag">{{'NOT_NOW'| translate}}</button>
+  </div>
   <div class="heading"><b>{{'YOUR_LOCATION'| translate}}</b></div>
   <div class="sub-heading">{{'YOUR_LOCATION_DETAILS' | translate}}</div>
   <div class="state">
