@@ -111,7 +111,7 @@ export class QrcoderesultPage implements OnDestroy {
   isQrCodeLinkToContent: any;
   childrenData?: Array<any>;
   stckyUnitTitle?: string;
-  stckyparent: string;
+  stckyParent: any;
   latestParents: Array<any> = [];
   stckyindex: string;
 
@@ -759,6 +759,7 @@ export class QrcoderesultPage implements OnDestroy {
       this.zone.run(() => {
         this.stckyUnitTitle = currentTitle.getAttribute('data-sticky-unit');
         this.stckyindex = currentTitle.getAttribute('data-index');
+        this.stckyParent = this.latestParents[this.stckyindex].contentData.name;
       });
     }
 

@@ -19,7 +19,7 @@
   </ion-toolbar>
 </ion-header>
 <div #stickyPillsRef class="sb-chapter-dd" (click)="openTextbookToc()" *ngIf="results.length>1">
-  <span class="pull-left">{{stckyUnitTitle || ('SELECT_CHAPTER' | translate)}}</span>
+  <span class="pull-left">{{stckyParent || ('SELECT_CHAPTER' | translate)}}</span>
   <span class="pull-right">
     <ion-icon name="ios-arrow-dropright-circle"></ion-icon>
   </span>
