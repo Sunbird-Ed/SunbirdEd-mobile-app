@@ -240,6 +240,10 @@ export class CoursesPage implements OnInit {
     this.events.subscribe(EventTopics.REFRESH_ENROLL_COURSE_LIST, () => {
       this.getEnrolledCourses(false, true);
     });
+
+    this.events.subscribe(EventTopics.SIGN_IN_RELOAD, async () => {
+      this.showSignInCard = false;
+    });
   }
 
   /**

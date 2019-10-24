@@ -26,6 +26,7 @@ export class DistrictMappingPage implements OnInit {
   districtCode;
   isShowBackButton: boolean = true;
   backButtonFunc: Subscription;
+  showNotNowFlag: boolean = false;
 
   constructor(
     public headerService: AppHeaderService,
@@ -47,6 +48,7 @@ export class DistrictMappingPage implements OnInit {
 
   ngOnInit() {
     this.handleDeviceBackButton();
+    this.checkLocationMandatory();
   }
 
   selectState(name, id, code) {
@@ -191,5 +193,25 @@ export class DistrictMappingPage implements OnInit {
       });
     });
   }
+
+  async checkLocationMandatory() {
+    const deviceLocation = await this.preferences.getString(PreferenceKey.DEVICE_LOCATION).toPromise();
+    let isLocationMandatory = await this.preferences.getString(PreferenceKey.IS_LOCATION_MANDATORY).toPromise();
+
+    this.showNotNowFlag = false;
+    if (isLocationMandatory === null || isLocationMandatory === undefined || isLocationMandatory === '') {
+      this.preferences.putString(PreferenceKey.IS_LOCATION_MANDATORY, 'TRUE').toPromise();
+      isLocationMandatory = 'TRUE';
+    }
+
+    if (!deviceLocation && isLocationMandatory === 'FALSE') {
+      this.showNotNowFlag = true;
+    }
+  }
+
+  skipLocation() {
+    this.router.navigate([`/${RouterLinks.TABS}`]);
+  }
+
 }
 

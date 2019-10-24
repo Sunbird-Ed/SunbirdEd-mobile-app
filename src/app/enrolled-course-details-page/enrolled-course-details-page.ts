@@ -349,6 +349,14 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
       }
     });
 
+    this.events.subscribe('header:setzIndexToNormal', () => {
+      this.stickyPillsRef.nativeElement.classList.remove('z-index-0');
+    });
+
+    this.events.subscribe('header:decreasezIndex', () => {
+      this.stickyPillsRef.nativeElement.classList.add('z-index-0');
+    });
+
   }
 
   updateEnrolledCourseList(unenrolledCourse) {
@@ -1384,7 +1392,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
                 this.isDownloadStarted = false;
                 this.currentCount = 0;
                 this.showDownload = false;
-                this.downloadIdentifiers.length = 0;
+                this.downloadIdentifiers = [];
                 this.queuedIdentifiers.length = 0;
               }
             } else {
@@ -1449,6 +1457,8 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
     this.events.unsubscribe(EventTopics.ENROL_COURSE_SUCCESS);
     this.events.unsubscribe('courseToc:content-clicked');
     this.events.unsubscribe(EventTopics.UNENROL_COURSE_SUCCESS);
+    this.events.unsubscribe('header:setzIndexToNormal');
+    this.events.unsubscribe('header:decreasezIndex');
   }
 
   /**

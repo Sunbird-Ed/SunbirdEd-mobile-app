@@ -6,7 +6,6 @@ import {
     PopoverController,
     Platform,
 } from '@ionic/angular';
-import { ToastOptions } from '@ionic/core';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs-compat';
 import { Network } from '@ionic-native/network/ngx';
@@ -70,7 +69,7 @@ export class CommonUtilService implements OnDestroy {
 
         this.translate.get(translationKey).subscribe(
             async (translatedMsg: any) => {
-                const toastOptions: ToastOptions = {
+                const toastOptions = {
                     message: translatedMsg,
                     duration: duration ? duration : 3000,
                     position: position ? position : 'bottom',
