@@ -8,7 +8,7 @@
   <div class="state">
     <div class="input-container">
       <input type="text" class="input"  [(ngModel)]="stateName"
-        placeholder="{{'SEARCH_STATE' | translate}}" (ngModelChange)="showStateList()">
+        placeholder="{{('SEARCH_STATE' | translate)}}" value="{{stateName}}" (ngModelChange)="showStateList()" >
       <ion-icon (click)="showStates = !showStates" class="input-icon" name="ios-arrow-down"></ion-icon>
     </div>
     <div class="showList" *ngIf="showStates">
@@ -20,7 +20,7 @@
   <div class="district" *ngIf="!showStates">
     <div class="input-container margin-top" [ngClass]="(!stateName) ? 'disableInput' : ''">
       <input type="text" class="input"  [(ngModel)]="districtName"
-        placeholder="{{'SEARCH_DISTRICT' | translate}}" [disabled]="!stateName">
+        placeholder="{{('SEARCH_DISTRICT' | translate)}}" [disabled]="!stateName" value="{{ districtName }}">
       <ion-icon *ngIf="this.stateName" (click)="showDistrict = !showDistrict" class="input-icon" name="ios-arrow-down"></ion-icon>
       <ion-icon *ngIf="!this.stateName" class="input-icon" name="ios-arrow-down"></ion-icon>
     </div>

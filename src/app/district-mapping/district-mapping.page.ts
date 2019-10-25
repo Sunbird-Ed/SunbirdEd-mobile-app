@@ -27,6 +27,9 @@ export class DistrictMappingPage implements OnInit {
   isShowBackButton: boolean = true;
   backButtonFunc: Subscription;
   showNotNowFlag: boolean = false;
+  ipLocationData: any;
+  mockLocationDistrict: string;
+  mockLocationState: string;
 
   constructor(
     public headerService: AppHeaderService,
@@ -43,6 +46,12 @@ export class DistrictMappingPage implements OnInit {
     if (this.router.getCurrentNavigation().extras.state) {
       this.profile = this.router.getCurrentNavigation().extras.state.profile;
       this.isShowBackButton = this.router.getCurrentNavigation().extras.state.isShowBackButton;
+      if (this.router.getCurrentNavigation().extras.state.ipLocationData) {
+        this.ipLocationData = this.router.getCurrentNavigation().extras.state.ipLocationData;
+        this.mockLocationState = 'State-0001-name1';
+        this.mockLocationDistrict = 'District-0001-name1';
+        console.log('IpLOcationData', this.ipLocationData);
+     }
     }
   }
 
@@ -72,6 +81,7 @@ export class DistrictMappingPage implements OnInit {
   ionViewWillEnter(): void {
     this.headerService.hideHeader();
     this.getStates();
+    console.log('This.statelist.naem', this.stateList);
   }
 
   handleDeviceBackButton() {
@@ -100,10 +110,17 @@ export class DistrictMappingPage implements OnInit {
     };
     this.profileService.searchLocation(req).subscribe(async (success) => {
       const locations = success;
-      loader.dismiss();
-      loader = undefined;
       if (locations && Object.keys(locations).length) {
         this.stateList = locations;
+        loader.dismiss();
+        loader = undefined;
+        for (const element of this.stateList) {
+          if (element.name === this.mockLocationState) {
+            this.stateName = element.name;
+            this.getDistrict(element.id);
+            break;
+          }
+        }
       } else {
         this.commonUtilService.showToast(this.commonUtilService.translateMessage('NO_DATA_FOUND'));
       }
@@ -128,10 +145,16 @@ export class DistrictMappingPage implements OnInit {
       };
       this.profileService.searchLocation(req).subscribe(async (success) => {
         const districtsTemp = success;
-        loader.dismiss();
-        loader = undefined;
         if (districtsTemp && Object.keys(districtsTemp).length) {
           this.districtList = districtsTemp;
+          loader.dismiss();
+          loader = undefined;
+          this.districtList.forEach(element => {
+            if (element.name === this.mockLocationDistrict) {
+              this.districtName = element.name;
+              this.showDistrict = false;
+            }
+          });
         } else {
           this.commonUtilService.showToast(this.commonUtilService.translateMessage('NO_DATA_FOUND'));
         }
@@ -145,6 +168,7 @@ export class DistrictMappingPage implements OnInit {
   }
 
   async submit() {
+    console.log('Statename', this.stateName,  this.districtName);
 
     if (this.appGlobalService.isUserLoggedIn()) {
       const req = {
