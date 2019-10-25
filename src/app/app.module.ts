@@ -297,7 +297,8 @@ export const sunbirdSdkFactory =
         },
         deviceRegisterConfig: {
           host: buildConfigValues['DEVICE_REGISTER_BASE_URL'],
-          apiPath: '',
+          apiPath: '/v3/device',
+          deviceProfileApiPath: '/api/v3/device',
         },
         contentServiceConfig: {
           apiPath: '/api/content/v1',
@@ -320,6 +321,7 @@ export const sunbirdSdkFactory =
         },
         profileServiceConfig: {
           profileApiPath: '/api/user/v1',
+          profileApiPath_V2: '/api/user/v2',
           tenantApiPath: '/v1/tenant',
           otpApiPath: '/api/otp/v1',
           searchLocationApiPath: '/api/data/v1',
