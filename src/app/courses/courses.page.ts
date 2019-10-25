@@ -86,6 +86,7 @@ export class CoursesPage implements OnInit {
   private eventSubscription: Subscription;
   headerObservable: any;
   private corRelationList: Array<CorrelationData>;
+  isFilterOpen: boolean = false;
 
   constructor(
     @Inject('EVENTS_BUS_SERVICE') private eventBusService: EventsBusService,
@@ -507,6 +508,10 @@ export class CoursesPage implements OnInit {
   }
 
   showFilter() {
+    if(this.isFilterOpen){
+      return;
+    }
+    this.isFilterOpen = true;
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
       InteractSubtype.FILTER_BUTTON_CLICKED,
       Environment.HOME,
@@ -573,9 +578,9 @@ export class CoursesPage implements OnInit {
         filterOptions['filter'] = data;
         this.showFilterPage(filterOptions);
       }).catch(() => {
+        this.isFilterOpen = false;
       });
     }
-
   }
   async presentToastForOffline(msg: string) {
     this.toast = await this.toastController.create({
@@ -605,6 +610,7 @@ export class CoursesPage implements OnInit {
     });
     await popup.present();
     const { data } = await popup.onDidDismiss();
+    this.isFilterOpen = false;
     if (!data || !data.apply) {
       this.appliedFilter = backupFilter;
     }
