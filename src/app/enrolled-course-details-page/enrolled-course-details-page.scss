@@ -6,6 +6,9 @@
     ion-card{
       margin: 0 0 10px 0 !important;
     }
+    .z-index-0 {
+      z-index: 0 !important;
+    }
     .retry-btn{
       border-color: $orange;
       color: $orange !important;
@@ -227,8 +230,8 @@
       width: 84% !important;
       margin-right: 8% !important;
     }  
-    .info-icon-pr-4 {
-      --padding-end: 4px !important;
+    .info-icon-pr-8 {
+      padding-right: 8px !important;
     }
   }
   .sb-topics-containe{
@@ -247,7 +250,7 @@
     width: 100% !important;
     border-radius: 2px !important;
     background-color: #FFFFFF !important;
-    box-shadow: 0 4px 7px 0 rgba(0,0,0,0.1) !important;
+    box-shadow: 0px 5px 5px 3px #ddd;
   }
   .sb-topic-text {
       // padding-top: 5px;
@@ -296,7 +299,6 @@
     --color: #467fb8;
   }
   .wrapper {
-    display: inline-flex;
     grid-template-columns: 100px 100px 100px auto;
     margin-bottom: -8px;
   }  
@@ -449,5 +451,23 @@
 .progress-label {
   font-size: 10px !important;
   color: #333;
+}
+
+ion-segment-button{
+  --ripple-color: transparent;
+  --background-hover: transparent;
+  --background-activated: transparent;
+}
+
+.flex-5 {
+  flex: 5;
+}
+
+#card-mb-0{
+  margin-bottom: 0 !important;
+}
+
+.card-box-shadow {
+  box-shadow: 0px 5px 5px 3px #ddd;
 }
 

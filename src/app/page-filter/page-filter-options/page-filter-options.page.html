@@ -21,7 +21,7 @@
         <ion-col size="12" *ngFor="let facetValue of facets?.values; let index=index">
           <ion-item no-lines no-padding>
             <ion-label text-capitalize>{{ facetValue }}</ion-label>
-            <ion-checkbox [checked]="isSelected(facetValue)" (click)="changeValue(facetValue, index)"></ion-checkbox>
+            <ion-checkbox [checked]="isSelected(facetValue)" (ionChange)="changeValue(facetValue, index)"></ion-checkbox>
           </ion-item>
         </ion-col>
       </ion-row>
