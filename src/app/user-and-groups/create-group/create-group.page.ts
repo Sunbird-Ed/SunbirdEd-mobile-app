@@ -202,9 +202,6 @@ export class CreateGroupPage implements OnInit {
       this.commonUtilService.showToast(this.commonUtilService.translateMessage('NEED_INTERNET_TO_CHANGE'));
       return;
     }
-    if(!this.isFormValid) {
-      return;
-    }
 
     const formValue = this.groupEditForm.value;
     if (formValue.name) {
