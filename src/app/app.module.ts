@@ -250,11 +250,14 @@ export const sunbirdSdkFactory =
   () => {
     return async () => {
       const buildConfigValues = JSON.parse(await new Promise<string>((resolve, reject) => {
-        buildconfigreader.getBuildConfigValues('org.sunbird.app', (v) => {
-          resolve(v);
-        }, (err) => {
-          reject(err);
-        });
+      document.addEventListener('deviceready', ( ) => {
+          buildconfigreader.getBuildConfigValues('org.sunbird.app', (v) => {
+            resolve(v);
+          }, (err) => {
+            reject(err);
+          });
+        }, false);
+
       }));
 
       await SunbirdSdk.instance.init({

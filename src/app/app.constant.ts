@@ -342,7 +342,7 @@ export class StoreRating {
     public static readonly FILE_TEXT = 'APP-Rating';
     public static readonly RETURN_CLOSE = 'close';
     public static readonly RETURN_HELP = 'help';
-    public static readonly DEVICE_FOLDER_PATH = cordova.file.dataDirectory;
+    // public static readonly DEVICE_FOLDER_PATH = cordova.file.dataDirectory;
 }
 export class ContentConstants {
     public static readonly DEFAULT_LICENSE = 'CC BY 4.0';
