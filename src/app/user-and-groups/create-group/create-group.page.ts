@@ -30,7 +30,6 @@ import { Platform } from '@ionic/angular';
 import { Location } from '@angular/common';
 import { Subscription } from 'rxjs/Subscription';
 import { RouterLinks } from '@app/app/app.constant';
-import { isSymbol } from 'util';
 
 @Component({
   selector: 'app-create-group',
