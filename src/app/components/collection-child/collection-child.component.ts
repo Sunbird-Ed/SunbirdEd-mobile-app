@@ -1,6 +1,6 @@
 import { Location } from '@angular/common';
 import { Component, Input, NgZone, OnInit, Output, EventEmitter } from '@angular/core';
-import { ContentType, MimeType, RouterLinks } from '@app/app/app.constant';
+import { ContentType, MimeType, RouterLinks, EventTopics } from '@app/app/app.constant';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { CommonUtilService } from '@app/services/common-util.service';
 import { ComingSoonMessageService } from '@app/services/coming-soon-message.service';
@@ -70,26 +70,30 @@ export class CollectionChildComponent implements OnInit {
         this.commonUtilService.networkInfo.isNetworkAvailable);
     if (this.latestParentName) {
       this.checkHierarchy();
-     }
-    this.telemetryObject = ContentUtil.getTelemetryObject(this.childData);
-}
-
-checkHierarchy() {
-  console.log('LatesParentNode', this.latestParentNodes[this.stckyindex].hierarchyInfo);
-  if (this.childData.hierarchyInfo && this.latestParentNodes[this.stckyindex].hierarchyInfo &&
-    this.childData.hierarchyInfo.length === this.latestParentNodes[this.stckyindex].hierarchyInfo.length) {
-    for (let i = 0; i < this.childData.hierarchyInfo.length; i++) {
-      if (this.childData.hierarchyInfo[i]['identifier'] === this.latestParentNodes[this.stckyindex].hierarchyInfo[i]['identifier']) {
-        this.sameHierarchy = true;
-      } else {
-        this.sameHierarchy = false;
-        break;
-      }
     }
-  } else {
-    this.sameHierarchy = false;
+    this.telemetryObject = ContentUtil.getTelemetryObject(this.childData);
   }
-}
+
+  checkHierarchy() {
+    console.log('LatesParentNode', this.latestParentNodes[this.stckyindex].hierarchyInfo);
+    if (this.childData.hierarchyInfo && this.latestParentNodes[this.stckyindex].hierarchyInfo &&
+      this.childData.hierarchyInfo.length === this.latestParentNodes[this.stckyindex].hierarchyInfo.length) {
+      for (let i = 0; i < this.childData.hierarchyInfo.length; i++) {
+        if (this.childData.hierarchyInfo[i]['identifier'] === this.latestParentNodes[this.stckyindex].hierarchyInfo[i]['identifier']) {
+          this.sameHierarchy = true;
+          if (this.latestParentName === this.childData.contentData.name) {
+            this.events.publish(EventTopics.TOC_COLLECTION_CHILD_ID, { id: this.childData.identifier });
+          }
+        } else {
+          this.sameHierarchy = false;
+          break;
+        }
+      }
+    } else {
+      this.sameHierarchy = false;
+    }
+  }
+
   setContentId(id: string) {
     console.log('extractedUrl', this.router);
     if (this.router.url.indexOf(RouterLinks.TEXTBOOK_TOC) !== -1) {
@@ -110,8 +114,8 @@ checkHierarchy() {
       this.location.back();
     }
   }
+
   navigateToDetailsPage(content: Content, depth) {
-    
     if (this.router.url.indexOf(RouterLinks.TEXTBOOK_TOC) !== -1) {
       const values = new Map();
       values['contentClicked'] = content.identifier;
@@ -187,8 +191,6 @@ checkHierarchy() {
     }
   }
 
-
-
   async showComingSoonPopup(childData: any) {
     const message = await this.comingSoonMessageService.getComingSoonMessage(childData);
     if (childData.contentData.mimeType === MimeType.COLLECTION && !childData.children) {
@@ -239,4 +241,5 @@ checkHierarchy() {
       return './assets/imgs/touch.svg';
     }
   }
+
 }
