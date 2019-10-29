@@ -2,8 +2,8 @@ import { Location } from '@angular/common';
 import { SbGenericPopoverComponent } from './../../components/popups/sb-generic-popover/sb-generic-popover.component';
 import { AppHeaderService } from './../../../services/app-header.service';
 import { TextbookTocService } from './../textbook-toc-service';
-import { Component, ViewChild, ElementRef, ViewEncapsulation, OnInit } from '@angular/core';
-import { Platform, PopoverController } from '@ionic/angular';
+import { Component, ViewChild, ViewEncapsulation, OnInit, OnDestroy } from '@angular/core';
+import { Platform, PopoverController, IonContent, Events } from '@ionic/angular';
 import { CommonUtilService } from '@app/services/common-util.service';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import {
@@ -15,6 +15,7 @@ import {
     PageId
 } from '@app/services/telemetry-constants';
 import { Router } from '@angular/router';
+import { EventTopics } from '@app/app/app.constant';
 
 
 @Component({
@@ -23,7 +24,7 @@ import { Router } from '@angular/router';
     styleUrls: ['./textbook-toc.scss'],
     encapsulation: ViewEncapsulation.None,
 })
-export class TextBookTocPage implements OnInit {
+export class TextBookTocPage implements OnInit, OnDestroy {
 
     static pageName = 'TextBookTocPage';
 
@@ -36,7 +37,7 @@ export class TextBookTocPage implements OnInit {
     isDownloadStarted = false;
     isTextbookTocPage = false;
     stckyUnitTitle?: string;
-    @ViewChild('stickyPillsRef') stickyPillsRef: ElementRef;
+    @ViewChild(IonContent) content: IonContent;
     stckyindex: any;
     latestParentNodes: any;
     latestParentName: any;
@@ -49,7 +50,8 @@ export class TextBookTocPage implements OnInit {
         private popoverCtrl: PopoverController,
         private textbookTocService: TextbookTocService,
         private telemetryService: TelemetryGeneratorService,
-        private location: Location
+        private location: Location,
+        private events: Events,
     ) {
         const extras = this.router.getCurrentNavigation().extras.state;
         if (extras) {
@@ -68,6 +70,7 @@ export class TextBookTocPage implements OnInit {
     ngOnInit() {
         // this.childrenData = this.navParams.get('childrenData');
         // this.parentId = this.navParams.get('parentId');
+        this.getChildDataIdScrollEvent();
     }
 
     ionViewWillEnter() {
@@ -147,6 +150,22 @@ export class TextBookTocPage implements OnInit {
         this.textbookTocService.setTextbookIds({ rootUnitId: id, contentId: id });
         // this.navCtrl.pop();
         this.location.back();
+    }
+
+    getChildDataIdScrollEvent() {
+        this.events.subscribe(EventTopics.TOC_COLLECTION_CHILD_ID, (event) => {
+            setTimeout(() => {
+                const idVal: any  = document.getElementById(event.id);
+                if (idVal) {
+                    const offSetIdVal = idVal.offsetTop;
+                    this.content.scrollToPoint(0, offSetIdVal, 500);
+                }
+            }, 1000);
+        });
+    }
+
+    ngOnDestroy() {
+        this.events.unsubscribe(EventTopics.TOC_COLLECTION_CHILD_ID);
     }
 
 }
