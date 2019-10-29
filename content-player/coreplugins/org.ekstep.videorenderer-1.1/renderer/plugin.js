@@ -132,7 +132,6 @@ org.ekstep.contentrenderer.baseLauncher.extend({
         instance.addVideoListeners(videoPlayer, path, data);
         instance.videoPlayer = videoPlayer;
         instance.applyResolutionSwitcher();
-        $('.vjs-loading-spinner').css({"display": "none"});
     },
     applyResolutionSwitcher: function (){
         var instance = this;
