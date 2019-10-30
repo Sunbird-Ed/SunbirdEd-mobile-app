@@ -153,12 +153,16 @@ export class TextBookTocPage implements OnInit, OnDestroy {
     }
 
     getChildDataIdScrollEvent() {
+        const headerSpaceHeight = 58;
+        const deviceHeight = this.platform.height();
         this.events.subscribe(EventTopics.TOC_COLLECTION_CHILD_ID, (event) => {
             setTimeout(() => {
                 const idVal: any  = document.getElementById(event.id);
                 if (idVal) {
                     const offSetIdVal = idVal.offsetTop;
-                    this.content.scrollToPoint(0, offSetIdVal, 500);
+                    if (offSetIdVal && (deviceHeight - headerSpaceHeight) < offSetIdVal) {
+                        this.content.scrollToPoint(0, offSetIdVal, 500);
+                    }
                 }
             }, 1000);
         });
