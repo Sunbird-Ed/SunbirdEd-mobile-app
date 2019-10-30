@@ -162,6 +162,7 @@ export class EventTopics {
     public static readonly REFRESH_ENROLL_COURSE_LIST = 'REFRESH_ENROLL_COURSE_LIST';
     public static readonly PLAYER_CLOSED = 'PLAYER_CLOSED';
     public static readonly SIGN_IN_RELOAD = 'SIGN_IN_RELOAD';
+    public static readonly TOC_COLLECTION_CHILD_ID = 'TOC_COLLECTION_CHILD_ID';
 }
 
 export class ShareUrl {
@@ -344,7 +345,7 @@ export class StoreRating {
     public static readonly FILE_TEXT = 'APP-Rating';
     public static readonly RETURN_CLOSE = 'close';
     public static readonly RETURN_HELP = 'help';
-    public static readonly DEVICE_FOLDER_PATH = cordova.file.dataDirectory;
+    // public static readonly DEVICE_FOLDER_PATH = cordova.file.dataDirectory;
 }
 export class ContentConstants {
     public static readonly DEFAULT_LICENSE = 'CC BY 4.0';

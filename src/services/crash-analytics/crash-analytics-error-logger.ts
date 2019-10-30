@@ -34,7 +34,7 @@ export class CrashAnalyticsErrorLogger extends ErrorHandler {
             }
         } catch (e) { }
 
-        if (SunbirdSdk.instance && telemetryErrorRequest.stacktrace) {
+        if (SunbirdSdk.instance && SunbirdSdk.instance.isInitialised && telemetryErrorRequest.stacktrace) {
             SunbirdSdk.instance.telemetryService.error(telemetryErrorRequest).toPromise();
         }
 

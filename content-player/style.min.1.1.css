@@ -14925,8 +14925,9 @@ ion-popover-view.fit ion-content {
 }
 
 .gc-menu-btn img.icon.nav-top {
-    /* margin-top: 8%;
-    width: 65%; */
+     margin-top: 0%;
+    width: auto;
+    height: auto;
 }
 
 .nav-icon {
