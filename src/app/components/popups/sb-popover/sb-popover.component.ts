@@ -1,9 +1,13 @@
 import { Component, NgZone, OnDestroy } from '@angular/core';
 import { Platform, NavParams, PopoverController } from '@ionic/angular';
-import { CorrelationData, Rollup } from 'sunbird-sdk';
+import { CorrelationData, Rollup, TelemetryObject } from 'sunbird-sdk';
 import { Observable } from 'rxjs/Observable';
 import { Subscription } from 'rxjs/Subscription';
 import { CommonUtilService } from '@app/services/common-util.service';
+import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
+
+import {Environment, InteractSubtype, InteractType, PageId} from '@app/services/telemetry-constants';
+import { ContentUtil } from '@app/util/content-util';
 
 @Component({
   selector: 'sb-popover',
@@ -27,7 +31,6 @@ export class SbPopoverComponent implements OnDestroy {
   pageName = '';
   showFlagMenu = true;
   img: string;
-  isNotShowCloseIcon: boolean;
   public objRollup: Rollup;
   private corRelationList: Array<CorrelationData>;
   private sbPopoverDynamicMainTitle$?: Observable<string>;
@@ -35,12 +38,14 @@ export class SbPopoverComponent implements OnDestroy {
   private sbPopoverDynamicContent$?: Observable<string>;
   private sbPopoverDynamicContentSubscription?: Subscription;
   private sbPopoverDynamicButtonDisabledSubscription?: Subscription;
+  public telemetryObject: TelemetryObject;
   constructor(
     public navParams: NavParams,
     private platform: Platform,
     private ngZone: NgZone,
     private popoverCtrl: PopoverController,
-    private commonUtilService: CommonUtilService
+    private commonUtilService: CommonUtilService,
+    private telemetryGeneratorService: TelemetryGeneratorService,
   ) {
     this.content = this.navParams.get('content');
     this.actionsButtons = this.navParams.get('actionsButtons');
@@ -58,6 +63,7 @@ export class SbPopoverComponent implements OnDestroy {
     this.objRollup = this.navParams.get('objRollup');
     this.corRelationList = this.navParams.get('corRelationList');
     this.img = this.navParams.get('img');
+    this.telemetryObject = ContentUtil.getTelemetryObject(this.content);
 
     // Dynamic
     this.sbPopoverDynamicMainTitle$ = this.navParams.get('sbPopoverDynamicMainTitle');
@@ -127,6 +133,12 @@ export class SbPopoverComponent implements OnDestroy {
   }
 
   closePopover() {
+    this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
+      InteractSubtype.CLOSE_CLICKED,
+      Environment.HOME,
+      PageId.COLLECTION_DETAIL, this.telemetryObject,undefined,
+      this.objRollup,
+      this.corRelationList);
     this.popoverCtrl.dismiss();
   }
 
