@@ -222,7 +222,19 @@ export class ShareUserAndGroupsPage implements OnInit, OnDestroy {
 
 
   selectAll() {
+  
     this.zone.run(() => {
+      const values = new Map();
+      values['select'] = 'select-all';
+      this.telemetryGeneratorService.generateInteractTelemetry(
+        InteractType.TOUCH,
+        InteractSubtype.SELECT_ALL_CLICKED,
+        Environment.USER,
+        PageId.SHARE_USER_GROUP,
+        undefined,
+        values
+      );
+
       for (let i = 0; i < this.userList.length; i++) {
         this.toggleUserSelected(i);
       }
