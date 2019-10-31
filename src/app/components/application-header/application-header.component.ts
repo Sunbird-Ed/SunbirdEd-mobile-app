@@ -182,6 +182,15 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
       }
     }
     else {
+      if(name === 'back') {
+        const pageId = this.activePageService.computePageId(this.router.url);
+        this.telemetryGeneratorService.generateInteractTelemetry(
+        InteractType.TOUCH,
+        InteractSubtype.NAV_BACK_CLICKED,
+        Environment.HOME,
+        pageId, undefined
+       );
+      }
       this.headerEvents.emit({ name, event: $event });
     }
   }
