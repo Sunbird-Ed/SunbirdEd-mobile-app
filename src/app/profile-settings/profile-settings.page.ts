@@ -21,7 +21,8 @@ import {
   Profile,
   ProfileService,
   ProfileType,
-  SharedPreferences
+  SharedPreferences,
+  InteractSubType
 } from 'sunbird-sdk';
 import {
   AppGlobalService,
@@ -451,6 +452,17 @@ export class ProfileSettingsPage implements OnInit {
         this.updateStyle();
         break;
     }
+  }
+  cancelEvent() {
+    const values = new Map();
+    values['Event'] = 'Cancel';
+    console.log("evnet:"+values['Event']);
+    this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
+      InteractSubtype.CANCEL_CLICKED,
+      Environment.ONBOARDING,
+      PageId.ONBOARDING_PROFILE_PREFERENCES,
+      undefined,
+      values);
   }
 
   enableSubmit() {
