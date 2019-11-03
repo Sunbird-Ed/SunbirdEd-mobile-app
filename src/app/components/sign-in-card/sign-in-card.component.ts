@@ -5,7 +5,6 @@ import {
   ApiService,
   AuthService,
   OAuthSession,
-  OAuthSessionProvider,
   Profile,
   ProfileService,
   ProfileSource,
@@ -15,7 +14,9 @@ import {
   ServerProfileDetailsRequest,
   SharedPreferences,
   GroupService,
-  TenantInfoRequest
+  TenantInfoRequest,
+  WebviewLoginSessionProvider,
+  WebviewSessionProviderConfig
 } from 'sunbird-sdk';
 
 import { initTabs, LOGIN_TEACHER_TABS } from '@app/app/module.service';
@@ -31,7 +32,6 @@ import {
 } from '@app/services/telemetry-constants';
 import { ContainerService } from '@app/services/container.services';
 import { Router } from '@angular/router';
-
 
 @Component({
   selector: 'app-sign-in-card',
@@ -96,7 +96,28 @@ export class SignInCardComponent implements OnInit {
 
       const that = this;
       const loader = await this.commonUtilService.getLoader();
-      this.authService.setSession(new OAuthSessionProvider(this.sdkConfig.apiConfig, this.apiService))
+      const webviewSessionProviderConfigloader = await this.commonUtilService.getLoader();
+
+      let webviewLoginSessionProviderConfig: WebviewSessionProviderConfig;
+      let webviewMigrateSessionProviderConfig: WebviewSessionProviderConfig;
+
+      await webviewSessionProviderConfigloader.present();
+      try {
+        webviewLoginSessionProviderConfig = await this.formAndFrameworkUtilService.getWebviewSessionProviderConfig('login');
+        webviewMigrateSessionProviderConfig = await this.formAndFrameworkUtilService.getWebviewSessionProviderConfig('migrate');
+        await webviewSessionProviderConfigloader.dismiss();
+      } catch (e) {
+        await webviewSessionProviderConfigloader.dismiss();
+        this.commonUtilService.showToast('ERROR_WHILE_LOGIN');
+        return;
+      }
+
+      this.authService.setSession(
+          new WebviewLoginSessionProvider(
+              webviewLoginSessionProviderConfig,
+              webviewMigrateSessionProviderConfig
+          )
+      )
         .toPromise()
         .then(async () => {
           await loader.present();
@@ -116,9 +137,14 @@ export class SignInCardComponent implements OnInit {
           });
         })
         .catch(async (err) => {
+          console.error(err);
+
           if (err instanceof SignInError) {
             this.commonUtilService.showToast(err.message);
+          } else {
+            this.commonUtilService.showToast('ERROR_WHILE_LOGIN');
           }
+
           return await loader.dismiss();
         });
     }
