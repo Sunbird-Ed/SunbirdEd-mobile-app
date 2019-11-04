@@ -47,7 +47,7 @@ readFileConfig();
 
 
 function readFileConfig() {
-  var obj = JSON.parse(fs.readFileSync('./diksha_api_config.json', 'utf8'));
+  var obj = JSON.parse(fs.readFileSync('./data_config.json', 'utf8'));
   var jsonArray = obj.config;
 
   for (var i = 0; i < jsonArray.length; i++) {
