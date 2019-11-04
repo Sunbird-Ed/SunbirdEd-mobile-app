@@ -40,6 +40,7 @@ export class DistrictMappingPage implements OnInit {
   mockLocationDistrict: string;
   mockLocationState: string;
   isautoPopulated: boolean = false;
+  isLocationChanged: boolean = false;
 
   constructor(
     public headerService: AppHeaderService,
@@ -57,7 +58,8 @@ export class DistrictMappingPage implements OnInit {
     if (this.router.getCurrentNavigation().extras.state) {
       this.profile = this.router.getCurrentNavigation().extras.state.profile;
       this.isShowBackButton = this.router.getCurrentNavigation().extras.state.isShowBackButton;
-      if (this.router.getCurrentNavigation().extras.state.ipLocationData.state) {
+      if (this.router.getCurrentNavigation().extras.state.ipLocationData) {
+        if (this.router.getCurrentNavigation().extras.state.ipLocationData.state) {
         this.isautoPopulated = true;
         this.ipLocationData = this.router.getCurrentNavigation().extras.state.ipLocationData;
         this.mockLocationState = this.ipLocationData.state;
@@ -70,6 +72,7 @@ export class DistrictMappingPage implements OnInit {
           undefined,
           { isAutoPopulated: this.isautoPopulated });
      }
+    }
     }
   }
 
@@ -90,9 +93,15 @@ export class DistrictMappingPage implements OnInit {
     // this.showDistrict = false;
     this.getDistrict(id);
     this.stateCode = code;
+    if (this.isautoPopulated) {
+      this.isLocationChanged = true;
+    }
   }
 
   selectDistrict(name, code) {
+    if (this.isautoPopulated) {
+      this.isLocationChanged = true;
+    }
     this.districtName = name;
     this.showDistrict = false;
     this.districtCode = code;
@@ -254,7 +263,7 @@ export class DistrictMappingPage implements OnInit {
       Environment.HOME,
       PageId.DISTRICT_MAPPING,
       undefined,
-      { isAutoPopulated: this.isautoPopulated });
+      { isLocationChanged: this.isLocationChanged });
   }
 
   async checkLocationMandatory() {

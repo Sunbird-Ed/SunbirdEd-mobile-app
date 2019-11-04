@@ -84,7 +84,7 @@ export class ProfileSettingsPage implements OnInit {
   };
   private navParams: any;
   ipLocationAvailable: boolean;
-  userLocationAvailable: boolean;
+  userLocationAvailable = false;
   ipLocationData: any;
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -497,6 +497,15 @@ export class ProfileSettingsPage implements OnInit {
       }
       if (response.userDeclaredLocation) {
         this.userLocationAvailable = true;
+        this.preferences.getString(PreferenceKey.DEVICE_LOCATION).toPromise()
+        .then(deviceLoc => {
+          if (!deviceLoc) {
+            const locationMap = new Map();
+            locationMap['state'] = response.userDeclaredLocation.state;
+            locationMap['district'] = response.userDeclaredLocation.district;
+            this.preferences.putString(PreferenceKey.DEVICE_LOCATION, JSON.stringify(locationMap)).toPromise();
+          }
+        });
       }
       console.log('DeviceRegister =>', response);
     });
@@ -618,8 +627,10 @@ export class ProfileSettingsPage implements OnInit {
               }
             };
             this.router.navigate([RouterLinks.DISTRICT_MAPPING], navigationExtras);
-          } else if (this.userLocationAvailable || !this.ipLocationAvailable) {
+          } else if (this.userLocationAvailable && !this.ipLocationAvailable) {
             this.router.navigate(['/tabs']);
+          } else if (!this.userLocationAvailable && !this.ipLocationAvailable) {
+            this.router.navigate([RouterLinks.DISTRICT_MAPPING]);
           }
         }, 2000);
         this.events.publish('onboarding-card:completed', { isOnBoardingCardCompleted: true });
