@@ -507,9 +507,6 @@ export class ProfileSettingsPage implements OnInit {
       } else if (!response.ipLocation.state) {
         this.ipLocationAvailable = false;
       }
-
-      console.log('DEVICE REISTER', response);
-
     });
   }
 
