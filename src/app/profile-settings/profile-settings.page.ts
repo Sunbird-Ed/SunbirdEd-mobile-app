@@ -21,7 +21,8 @@ import {
   Profile,
   ProfileService,
   ProfileType,
-  SharedPreferences
+  SharedPreferences,
+  DeviceRegisterService
 } from 'sunbird-sdk';
 import {
   AppGlobalService,
@@ -82,11 +83,15 @@ export class ProfileSettingsPage implements OnInit {
     cssClass: 'select-box'
   };
   private navParams: any;
+  ipLocationAvailable: boolean;
+  userLocationAvailable: boolean;
+  ipLocationData: any;
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     @Inject('FRAMEWORK_SERVICE') private frameworkService: FrameworkService,
     @Inject('FRAMEWORK_UTIL_SERVICE') private frameworkUtilService: FrameworkUtilService,
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
+    @Inject('DEVICE_REGISTER_SERVICE')private deviceRegisterService: DeviceRegisterService,
     private fb: FormBuilder,
     private translate: TranslateService,
     private telemetryGeneratorService: TelemetryGeneratorService,
@@ -157,6 +162,7 @@ export class ProfileSettingsPage implements OnInit {
       */
     }
     this.getSyllabusDetails();
+    this.getAutoPopulatedData();
   }
 
   ionViewDidEnter() {
@@ -481,10 +487,25 @@ export class ProfileSettingsPage implements OnInit {
     profileReq.grade = formVal.grades;
     return profileReq;
   }
+  getAutoPopulatedData() {
+    this.deviceRegisterService.getDeviceProfile().toPromise().then((response) => {
+      if (response.ipLocation.state) {
+        this.ipLocationAvailable = true;
+        this.ipLocationData = response.ipLocation;
+      } else if (!response.ipLocation.state) {
+        this.ipLocationAvailable = false;
+      }
+      if (response.userDeclaredLocation) {
+        this.userLocationAvailable = true;
+      }
+      console.log('DeviceRegister =>', response);
+    });
+  }
 
   async onSubmit() {
     const loader = await this.commonUtilService.getLoader();
     const formVal = this.userForm.value;
+    // await this.getAutoPopulatedData();
     if (formVal.boards.length === 0) {
       this.btnColor = '#8FC4FF';
       this.appGlobalService.generateSaveClickedTelemetry(this.extractProfileForTelemetry(formVal), 'failed',
@@ -589,7 +610,18 @@ export class ProfileSettingsPage implements OnInit {
         this.appGlobalService.guestUserProfile = res;
         setTimeout(() => {
           this.commonUtilService.showToast('PROFILE_UPDATE_SUCCESS');
-        }, 1000);
+          if (this.ipLocationAvailable) {
+            const navigationExtras: NavigationExtras = {
+              state: {
+                isShowBackButton: true,
+                ipLocationData : this.ipLocationData
+              }
+            };
+            this.router.navigate([RouterLinks.DISTRICT_MAPPING], navigationExtras);
+          } else if (this.userLocationAvailable || !this.ipLocationAvailable) {
+            this.router.navigate(['/tabs']);
+          }
+        }, 2000);
         this.events.publish('onboarding-card:completed', { isOnBoardingCardCompleted: true });
         this.events.publish('refresh:profile');
         this.appGlobalService.guestUserProfile = res;
@@ -598,8 +630,7 @@ export class ProfileSettingsPage implements OnInit {
           PageId.ONBOARDING_PROFILE_PREFERENCES, req, 'manual', Environment.ONBOARDING
         );
         this.loader = await this.commonUtilService.getLoader(2000);
-        this.loader.present();
-        this.router.navigate([RouterLinks.DISTRICT_MAPPING])
+        await this.loader.present();
       })
       .catch(async () => {
         await loader.dismiss();

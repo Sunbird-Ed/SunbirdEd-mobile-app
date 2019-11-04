@@ -112,7 +112,8 @@ export enum PageId {
     TEXTBOOK_TOC = 'textbook-toc',
     EXPLORE_MORE_CONTENT = 'explore-more-content',
     RECOVERY_ACCOUNT_ID_POPUP = 'recovery-account-id-popup',
-    MERGE_ACCOUNT_POPUP = 'merge-account-popup'
+    MERGE_ACCOUNT_POPUP = 'merge-account-popup',
+    DISTRICT_MAPPING = 'district-mapping'
 }
 export enum LogType {
     NOTIFICATION = 'notification'
@@ -132,7 +133,8 @@ export enum ImpressionType {
     DETAIL = 'detail',
     VIEW = 'view',
     EDIT = 'edit',
-    WORKFLOW = 'workflow'
+    WORKFLOW = 'workflow',
+    DISTRICT_MAPPING = 'district-mapping'
 }
 export enum ImpressionSubtype {
     QRCodeScanInitiate = 'qr-code-scan-initiate',
@@ -143,7 +145,8 @@ export enum ImpressionSubtype {
     QR_SCAN_WALKTHROUGH = 'qr-scan-walkthrough',
     COMINGSOON_POPUP = 'coming-soon-popup',
     EXPLORE_MORE_CONTENT = 'explore-more-content',
-    RECOVERY_ACCOUNT_POPUP = 'recovery-account-popup'
+    RECOVERY_ACCOUNT_POPUP = 'recovery-account-popup',
+    DISTRICT_LOCATION_MAPPING = 'district-location-mapping'
 }
 export enum InteractType {
     TOUCH = 'TOUCH',
@@ -348,7 +351,8 @@ export enum InteractSubtype {
     TRAINING_INFO_CLICKED = 'training-info-clicked',
     TRAINING_MODULE_CLICKED = 'training-module-clicked',
     MERGE_CLICKED = 'merge-clicked',
-    NOTIFICATION_RECEIVED = 'notification-received'
+    NOTIFICATION_RECEIVED = 'notification-received',
+    AUTO_POPULATED_LOCATION = 'auto-populated-location'
 }
 
 export enum ActionButtonType {
