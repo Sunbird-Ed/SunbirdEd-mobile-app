@@ -14,7 +14,14 @@ import {
   CodePushExperimentService, AuthEventType, CorrelationData, Profile
 } from 'sunbird-sdk';
 
-import { InteractType, InteractSubtype, Environment, PageId, ImpressionType, CorReleationDataType } from 'services/telemetry-constants';
+import {
+    InteractType,
+    InteractSubtype,
+    Environment, PageId,
+    ImpressionType,
+    CorReleationDataType,
+    ImpressionSubtype
+} from 'services/telemetry-constants';
 import { PreferenceKey, EventTopics, SystemSettingsIds } from './app.constant';
 import { ActivePageService } from '@app/services/active-page/active-page-service';
 import {
@@ -245,6 +252,17 @@ export class AppComponent implements OnInit, AfterViewInit {
       } else {
         // Notification was received in foreground. Maybe the user needs to be notified.
       }
+      const value = new Map();
+      value['notification_id'] = data.id;
+      this.telemetryGeneratorService.generateInteractTelemetry(
+        InteractType.OTHER,
+        InteractSubtype.NOTIFICATION_RECEIVED,
+        Environment.HOME,
+        this.activePageService.computePageId(this.router.url),
+        undefined,
+        value
+      );
+
       data['isRead'] = data.wasTapped ? 1 : 0;
       data['actionData'] = JSON.parse(data['actionData']);
       this.notificationServices.addNotification(data).subscribe((status) => {

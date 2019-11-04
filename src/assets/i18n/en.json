@@ -490,6 +490,7 @@
   "SPACE_AVAILABLE_ON_SDCARD": "Space available on SD Card:",
   "SPACE_TAKEN": "Space taken by {{%s}}",
   "SPACE_TAKEN_BY_APP": "Space used by {{%s}} content: ",
+  "START_ASSESSMENT": "Start Assessment",
   "START_COURSE": "START",
   "START_COURSE_NOW": "Start Now",
   "STAR_RATINGS": "Rating",
