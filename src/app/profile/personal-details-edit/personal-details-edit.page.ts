@@ -36,6 +36,7 @@ export class PersonalDetailsEditPage implements OnInit {
     title: this.commonUtilService.translateMessage('DISTRICT').toLocaleUpperCase(),
     cssClass: 'select-box'
   };
+  disableSubmitFlag: boolean = false;
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -122,7 +123,7 @@ export class PersonalDetailsEditPage implements OnInit {
     });
   }
 
-  async getDistrict(parentId: string) {
+  async getDistrict(parentId: string, resetDistrictFlag?: boolean) {
     let loader = await this.commonUtilService.getLoader();
     loader.present();
     const req: LocationSearchCriteria = {
@@ -138,12 +139,15 @@ export class PersonalDetailsEditPage implements OnInit {
       if (districtsTemp && Object.keys(districtsTemp).length) {
         this.districtList = districtsTemp;
       } else {
-        this.profileEditForm.patchValue({
-          districts: []
-        });
         this.districtList = [];
         this.commonUtilService.showToast(this.commonUtilService.translateMessage('NO_DATA_FOUND'));
       }
+      if (resetDistrictFlag) {
+        this.profileEditForm.patchValue({
+          districts: []
+        });
+      }
+      this.enableSubmitButton();
     }, async (error) => {
       if (loader) {
         loader.dismiss();
@@ -174,18 +178,15 @@ export class PersonalDetailsEditPage implements OnInit {
     this.commonUtilService.showToast(this.commonUtilService.translateMessage('NAME_HINT'), false, 'redErrorToast');
   }
 
-
-  /**
-   * It changes the color of the submit button on change of class.
-   */
   enableSubmitButton() {
-    if (this.profileEditForm.value.name.length) {
-      this.btnColor = '#006DE5';
-    } else {
-      this.btnColor = '#8FC4FF';
+    const formValues = this.profileEditForm.value;
+    if ((formValues.states && formValues.states.length && formValues.districts && formValues.districts.length) ||
+    (formValues.states && !formValues.states.length && formValues.districts && !formValues.districts.length)) {
+      this.disableSubmitFlag = false;
+    } else if (formValues.states && formValues.states.length && formValues.districts && !formValues.districts.length) {
+      this.disableSubmitFlag = true;
     }
   }
-
 
   /**
    * It makes an update API call.
