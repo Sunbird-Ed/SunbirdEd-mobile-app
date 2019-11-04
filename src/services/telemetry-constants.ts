@@ -351,7 +351,7 @@ export enum InteractSubtype {
     TRAINING_INFO_CLICKED = 'training-info-clicked',
     TRAINING_MODULE_CLICKED = 'training-module-clicked',
     MERGE_CLICKED = 'merge-clicked',
-    AUTO_POPULATED_LOCATION = 'auto-populated-location1'
+    AUTO_POPULATED_LOCATION = 'auto-populated-location'
 }
 
 export enum ActionButtonType {
