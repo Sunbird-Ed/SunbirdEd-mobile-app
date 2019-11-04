@@ -37,8 +37,8 @@ export class DistrictMappingPage implements OnInit {
   backButtonFunc: Subscription;
   showNotNowFlag: boolean = false;
   ipLocationData: any;
-  mockLocationDistrict: string;
-  mockLocationState: string;
+  ipLocationDistrict: string;
+  ipLocationState: string;
   isautoPopulated: boolean = false;
   isLocationChanged: boolean = false;
 
@@ -62,8 +62,8 @@ export class DistrictMappingPage implements OnInit {
         if (this.router.getCurrentNavigation().extras.state.ipLocationData.state) {
         this.isautoPopulated = true;
         this.ipLocationData = this.router.getCurrentNavigation().extras.state.ipLocationData;
-        this.mockLocationState = this.ipLocationData.state;
-        this.mockLocationDistrict = this.ipLocationData.district;
+        this.ipLocationState = this.ipLocationData.state;
+        this.ipLocationDistrict = this.ipLocationData.district;
         this.telemetryGeneratorService.generateInteractTelemetry(
           InteractType.OTHER,
           InteractSubtype.AUTO_POPULATED_LOCATION,
@@ -151,9 +151,9 @@ export class DistrictMappingPage implements OnInit {
       loader = undefined;
       if (locations && Object.keys(locations).length) {
         this.stateList = locations;
-        if (this.mockLocationState) {
+        if (this.ipLocationState) {
           for (const element of this.stateList) {
-            if (element.name === this.mockLocationState) {
+            if (element.name === this.ipLocationState) {
               this.stateName = element.name;
               this.getDistrict(element.id);
               break;
@@ -188,9 +188,9 @@ export class DistrictMappingPage implements OnInit {
         loader = undefined;
         if (districtsTemp && Object.keys(districtsTemp).length) {
           this.districtList = districtsTemp;
-          if (this.mockLocationDistrict) {
+          if (this.ipLocationDistrict) {
             this.districtList.forEach(element => {
-              if (element.name === this.mockLocationDistrict) {
+              if (element.name === this.ipLocationDistrict) {
                 this.districtName = element.name;
                 this.showDistrict = false;
               }

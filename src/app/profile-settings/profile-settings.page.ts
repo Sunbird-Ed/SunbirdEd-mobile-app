@@ -84,14 +84,14 @@ export class ProfileSettingsPage implements OnInit {
   };
   private navParams: any;
   ipLocationAvailable: boolean;
-  userLocationAvailable = false;
+  userDeclaredLocationAvailable = false;
   ipLocationData: any;
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     @Inject('FRAMEWORK_SERVICE') private frameworkService: FrameworkService,
     @Inject('FRAMEWORK_UTIL_SERVICE') private frameworkUtilService: FrameworkUtilService,
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
-    @Inject('DEVICE_REGISTER_SERVICE')private deviceRegisterService: DeviceRegisterService,
+    @Inject('DEVICE_REGISTER_SERVICE') private deviceRegisterService: DeviceRegisterService,
     private fb: FormBuilder,
     private translate: TranslateService,
     private telemetryGeneratorService: TelemetryGeneratorService,
@@ -487,27 +487,29 @@ export class ProfileSettingsPage implements OnInit {
     profileReq.grade = formVal.grades;
     return profileReq;
   }
+
   getAutoPopulatedData() {
     this.deviceRegisterService.getDeviceProfile().toPromise().then((response) => {
-      if (response.ipLocation.state) {
+      if (response.userDeclaredLocation) {
+        this.userDeclaredLocationAvailable = true;
+        this.preferences.getString(PreferenceKey.DEVICE_LOCATION).toPromise()
+          .then(deviceLoc => {
+            if (!deviceLoc) {
+              const locationMap = new Map();
+              locationMap['state'] = response.userDeclaredLocation.state;
+              locationMap['district'] = response.userDeclaredLocation.district;
+              this.preferences.putString(PreferenceKey.DEVICE_LOCATION, JSON.stringify(locationMap)).toPromise();
+            }
+          });
+      } else if (response.ipLocation.state) {
         this.ipLocationAvailable = true;
         this.ipLocationData = response.ipLocation;
       } else if (!response.ipLocation.state) {
         this.ipLocationAvailable = false;
       }
-      if (response.userDeclaredLocation) {
-        this.userLocationAvailable = true;
-        this.preferences.getString(PreferenceKey.DEVICE_LOCATION).toPromise()
-        .then(deviceLoc => {
-          if (!deviceLoc) {
-            const locationMap = new Map();
-            locationMap['state'] = response.userDeclaredLocation.state;
-            locationMap['district'] = response.userDeclaredLocation.district;
-            this.preferences.putString(PreferenceKey.DEVICE_LOCATION, JSON.stringify(locationMap)).toPromise();
-          }
-        });
-      }
-      console.log('DeviceRegister =>', response);
+
+      console.log('DEVICE REISTER', response);
+
     });
   }
 
@@ -619,18 +621,16 @@ export class ProfileSettingsPage implements OnInit {
         this.appGlobalService.guestUserProfile = res;
         setTimeout(() => {
           this.commonUtilService.showToast('PROFILE_UPDATE_SUCCESS');
-          if (this.ipLocationAvailable) {
+          if (this.userDeclaredLocationAvailable) {
+            this.router.navigate(['/tabs']);
+          } else {
             const navigationExtras: NavigationExtras = {
               state: {
                 isShowBackButton: true,
-                ipLocationData : this.ipLocationData
+                ipLocationData: this.ipLocationData
               }
             };
             this.router.navigate([RouterLinks.DISTRICT_MAPPING], navigationExtras);
-          } else if (this.userLocationAvailable && !this.ipLocationAvailable) {
-            this.router.navigate(['/tabs']);
-          } else if (!this.userLocationAvailable && !this.ipLocationAvailable) {
-            this.router.navigate([RouterLinks.DISTRICT_MAPPING]);
           }
         }, 2000);
         this.events.publish('onboarding-card:completed', { isOnBoardingCardCompleted: true });
@@ -670,8 +670,8 @@ export class ProfileSettingsPage implements OnInit {
     switch ($event.name) {
       case 'back': this.telemetryGeneratorService.generateBackClickedTelemetry(
         PageId.ONBOARDING_PROFILE_PREFERENCES, Environment.ONBOARDING, true);
-                   this.dismissPopup();
-                   break;
+        this.dismissPopup();
+        break;
     }
   }
 
