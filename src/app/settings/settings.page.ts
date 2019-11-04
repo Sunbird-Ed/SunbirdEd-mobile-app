@@ -7,12 +7,13 @@ import {
   SharedPreferences,
   TelemetryImpressionRequest,
   AuthService,
-  OAuthSessionProvider,
   SdkConfig,
   ApiService,
-  MergeServerProfilesRequest
+  MergeServerProfilesRequest,
+  WebviewManualMergeSessionProvider,
+  WebviewSessionProviderConfig
 } from 'sunbird-sdk';
-import { AppHeaderService, CommonUtilService, TelemetryGeneratorService, UtilityService } from 'services';
+import {AppHeaderService, CommonUtilService, FormAndFrameworkUtilService, TelemetryGeneratorService, UtilityService} from 'services';
 import { PreferenceKey, RouterLinks } from '../app.constant';
 import { Environment, ImpressionType, InteractSubtype, InteractType, PageId } from 'services/telemetry-constants';
 import { SocialSharing } from '@ionic-native/social-sharing/ngx';
@@ -54,7 +55,8 @@ export class SettingsPage implements OnInit {
     private router: Router,
     private toastCtrl: ToastController,
     private translate: TranslateService,
-    private popoverCtrl: PopoverController
+    private popoverCtrl: PopoverController,
+    private formAndFrameworkUtilService: FormAndFrameworkUtilService
   ) {
     this.isUserLoggedIn$ = this.authService.getSession()
       .map((session) => !!session) as any;
@@ -189,7 +191,7 @@ export class SettingsPage implements OnInit {
     confirm.present();
   }
 
-  private mergeAccount() {
+  private async mergeAccount() {
     let loader: any | undefined;
 
     this.telemetryGeneratorService.generateInteractTelemetry(
@@ -199,10 +201,25 @@ export class SettingsPage implements OnInit {
         PageId.SETTINGS
     );
 
+    const webviewSessionProviderConfigloader = await this.commonUtilService.getLoader();
+    let webviewMergeSessionProviderConfig: WebviewSessionProviderConfig;
+
+    await webviewSessionProviderConfigloader.present();
+    try {
+      webviewMergeSessionProviderConfig = await this.formAndFrameworkUtilService.getWebviewSessionProviderConfig('merge');
+      await webviewSessionProviderConfigloader.dismiss();
+    } catch (e) {
+      await webviewSessionProviderConfigloader.dismiss();
+      this.commonUtilService.showToast('ERROR_WHILE_LOGIN');
+      return;
+    }
+
     this.authService.getSession()
         .map((session) => session!)
         .mergeMap(async (mergeToProfileSession) => {
-          const mergeFromProfileSessionProvider = new OAuthSessionProvider(this.sdkConfig.apiConfig, this.apiService, 'merge');
+          const mergeFromProfileSessionProvider = new WebviewManualMergeSessionProvider(
+              webviewMergeSessionProviderConfig
+          );
           const mergeFromProfileSession = await mergeFromProfileSessionProvider.provide();
 
           return {
@@ -226,7 +243,7 @@ export class SettingsPage implements OnInit {
         .catch(async (e) => {
           console.error(e);
 
-          if (e instanceof Error && e['code'] === 'IN_APP_BROWSER_EXIT_ERROR') {
+          if (e instanceof Error && e['code'] === 'INTERRUPT_ERROR') {
             throw e;
           }
 
