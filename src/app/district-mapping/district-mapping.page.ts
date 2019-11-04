@@ -46,7 +46,7 @@ export class DistrictMappingPage implements OnInit {
     public commonUtilService: CommonUtilService,
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
-    @Inject('DEVICE_REGISTER_SERVICE')private deviceRegisterService: DeviceRegisterService,
+    @Inject('DEVICE_REGISTER_SERVICE') private deviceRegisterService: DeviceRegisterService,
     public router: Router,
     public location: Location,
     public appGlobalService: AppGlobalService,
@@ -62,7 +62,13 @@ export class DistrictMappingPage implements OnInit {
         this.ipLocationData = this.router.getCurrentNavigation().extras.state.ipLocationData;
         this.mockLocationState = this.ipLocationData.state;
         this.mockLocationDistrict = this.ipLocationData.district;
-        console.log('IpLOcationData', this.ipLocationData);
+        this.telemetryGeneratorService.generateInteractTelemetry(
+          InteractType.OTHER,
+          InteractSubtype.AUTO_POPULATED_LOCATION,
+          Environment.HOME,
+          PageId.DISTRICT_MAPPING,
+          undefined,
+          { isAutoPopulated: this.isautoPopulated });
      }
     }
   }
@@ -136,7 +142,6 @@ export class DistrictMappingPage implements OnInit {
       loader = undefined;
       if (locations && Object.keys(locations).length) {
         this.stateList = locations;
-        console.log('This.staeList', this.stateList);
         if (this.mockLocationState) {
           for (const element of this.stateList) {
             if (element.name === this.mockLocationState) {
@@ -195,8 +200,6 @@ export class DistrictMappingPage implements OnInit {
   }
 
   async submit() {
-    console.log('Statename', this.stateName,  this.districtName);
-    console.log('isAutoPopulated', this.isautoPopulated);
 
     if (this.appGlobalService.isUserLoggedIn()) {
       const req = {
@@ -218,7 +221,6 @@ export class DistrictMappingPage implements OnInit {
 
     this.preferences.getString(PreferenceKey.DEVICE_LOCATION).toPromise()
       .then(deviceLoc => {
-        console.log('DeviceLoc', deviceLoc);
         if (!deviceLoc) {
           const locationMap = new Map();
           const navigationExtras: NavigationExtras = {
@@ -235,9 +237,7 @@ export class DistrictMappingPage implements OnInit {
               district: this.districtName,
             }
           };
-          console.log('DEVICEREGISTERREQUEST', req);
           this.deviceRegisterService.registerDevice(req).toPromise().then((response) => {
-            console.log('req', req);
             console.log('response is =>', response);
           });
           // });
