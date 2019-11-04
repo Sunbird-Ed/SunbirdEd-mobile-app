@@ -162,7 +162,7 @@ export class ProfileSettingsPage implements OnInit {
       */
     }
     this.getSyllabusDetails();
-    // this.getAutoPopulatedData();
+    this.getAutoPopulatedData();
   }
 
   ionViewDidEnter() {
@@ -489,10 +489,13 @@ export class ProfileSettingsPage implements OnInit {
   }
   getAutoPopulatedData() {
     this.deviceRegisterService.getDeviceProfile().toPromise().then((response) => {
-      if (response.ipLocation) {
+      if (response.ipLocation.state) {
         this.ipLocationAvailable = true;
         this.ipLocationData = response.ipLocation;
-      } else if (response.userDeclaredLocation) {
+      } else if (!response.ipLocation.state) {
+        this.ipLocationAvailable = false;
+      }
+      if (response.userDeclaredLocation) {
         this.userLocationAvailable = true;
       }
       console.log('DeviceRegister =>', response);
@@ -502,7 +505,7 @@ export class ProfileSettingsPage implements OnInit {
   async onSubmit() {
     const loader = await this.commonUtilService.getLoader();
     const formVal = this.userForm.value;
-    await this.getAutoPopulatedData();
+    // await this.getAutoPopulatedData();
     if (formVal.boards.length === 0) {
       this.btnColor = '#8FC4FF';
       this.appGlobalService.generateSaveClickedTelemetry(this.extractProfileForTelemetry(formVal), 'failed',
@@ -608,11 +611,17 @@ export class ProfileSettingsPage implements OnInit {
         setTimeout(() => {
           this.commonUtilService.showToast('PROFILE_UPDATE_SUCCESS');
           if (this.ipLocationAvailable) {
-            this.router.navigate([RouterLinks.DISTRICT_MAPPING], { state: { ipLocationData : this.ipLocationData } });
-          } else if (this.userLocationAvailable) {
+            const navigationExtras: NavigationExtras = {
+              state: {
+                isShowBackButton: true,
+                ipLocationData : this.ipLocationData
+              }
+            };
+            this.router.navigate([RouterLinks.DISTRICT_MAPPING], navigationExtras);
+          } else if (this.userLocationAvailable || !this.ipLocationAvailable) {
             this.router.navigate(['/tabs']);
           }
-        }, 1000);
+        }, 2000);
         this.events.publish('onboarding-card:completed', { isOnBoardingCardCompleted: true });
         this.events.publish('refresh:profile');
         this.appGlobalService.guestUserProfile = res;
