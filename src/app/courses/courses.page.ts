@@ -132,6 +132,10 @@ export class CoursesPage implements OnInit {
    */
   ngOnInit() {
     this.getCourseTabData();
+
+    this.events.subscribe('UPDATE_COURSE_DATA', () => {
+      this.getEnrolledCourses();
+    });
   }
 
   ionViewWillEnter() {
