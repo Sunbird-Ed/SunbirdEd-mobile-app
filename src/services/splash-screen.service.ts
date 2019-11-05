@@ -1,7 +1,7 @@
-import {SplashscreenImportActionHandlerDelegate} from '@app/services/sunbird-splashscreen/splashscreen-import-action-handler-delegate';
-import {SplashcreenTelemetryActionHandlerDelegate} from '@app/services/sunbird-splashscreen/splashcreen-telemetry-action-handler-delegate';
-import {SplaschreenDeeplinkActionHandlerDelegate} from '@app/services/sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
-import {Injectable} from '@angular/core';
+import { Injectable } from '@angular/core';
+import { SplashscreenImportActionHandlerDelegate } from './sunbird-splashscreen/splashscreen-import-action-handler-delegate';
+import { SplashcreenTelemetryActionHandlerDelegate } from './sunbird-splashscreen/splashcreen-telemetry-action-handler-delegate';
+import { SplaschreenDeeplinkActionHandlerDelegate } from './sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
 
 @Injectable()
 export class SplashScreenService {
@@ -10,26 +10,26 @@ export class SplashScreenService {
         private splashScreenImportActionHandlerDelegate: SplashscreenImportActionHandlerDelegate,
         private splashScreenTelemetryActionHandlerDelegate: SplashcreenTelemetryActionHandlerDelegate,
         private splashScreenDeeplinkActionHandlerDelegate: SplaschreenDeeplinkActionHandlerDelegate,
-
-
     ) {
+
     }
-     async handleSunbirdSplashScreenActions(): Promise<undefined> {
-         const stringifiedActions = await new Promise<string>((resolve) => {
-             splashscreen.getActions((actionsTobeDone) => {
-                 resolve(actionsTobeDone);
-             });
-         });
 
-         const actions: { type: string, payload: any }[] = JSON.parse(stringifiedActions);
+    async handleSunbirdSplashScreenActions(): Promise<undefined> {
+        const stringifiedActions = await new Promise<string>((resolve) => {
+            splashscreen.getActions((actionsTobeDone) => {
+                resolve(actionsTobeDone);
+            });
+        });
 
-         if (!actions.length) {
-             splashscreen.markImportDone();
-             splashscreen.hide();
-             return;
-         }
+        const actions: { type: string, payload: any }[] = JSON.parse(stringifiedActions);
 
-         for (const action of actions) {
+        if (!actions.length) {
+            splashscreen.markImportDone();
+            splashscreen.hide();
+            return;
+        }
+
+        for (const action of actions) {
             switch (action.type) {
                 case 'TELEMETRY': {
                     await this.splashScreenTelemetryActionHandlerDelegate.onAction(action.type, action.payload).toPromise();
@@ -48,8 +48,8 @@ export class SplashScreenService {
             }
         }
 
-         splashscreen.markImportDone();
-         splashscreen.hide();
+        splashscreen.markImportDone();
+        splashscreen.hide();
     }
 
 }
