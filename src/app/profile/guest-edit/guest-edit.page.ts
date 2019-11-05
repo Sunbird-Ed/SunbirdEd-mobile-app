@@ -250,7 +250,7 @@ export class GuestEditPage implements OnInit {
     };
     this.frameworkUtilService.getActiveChannelSuggestedFrameworkList(getSuggestedFrameworksRequest).toPromise()
       .then((result: Framework[]) => {
-        if (result && result.length > 0) {
+        if (result && result !== undefined && result.length > 0) {
           result.forEach(element => {
             // renaming the fields to text, value and checked
             const value = { name: element.name, code: element.identifier };
@@ -397,18 +397,18 @@ export class GuestEditPage implements OnInit {
     const newAttribute: any = {};
     switch (index) {
       case 0:
-        if (showLoader) {
-          this._dismissLoader();
-          this.loader = await this.commonUtilService.getLoader();
-          await this.loader.present();
-        }
-        this.checkPrevValue(1, 'boardList', [this.guestEditForm.value.syllabus]);
         this.guestEditForm.patchValue({
           boards: [],
           grades: [],
           subjects: [],
           medium: []
         });
+        if (showLoader) {
+          this._dismissLoader();
+          this.loader = await this.commonUtilService.getLoader();
+          await this.loader.present();
+        }
+        this.checkPrevValue(1, 'boardList', [this.guestEditForm.value.syllabus]);
         break;
 
       case 1:
