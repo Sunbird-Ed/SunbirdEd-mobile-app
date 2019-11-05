@@ -7,7 +7,7 @@
 					{{course?.organisation.join(', ')}}
 				</ion-card-subtitle>
 				<div class="hr-border-bottom"></div>
-			</ion-card-header>
+            </ion-card-header>
 			<ion-card-content>
 				<div *ngIf="!isAlreadyEnrolled">
 					<div class="enrollment-info" *ngIf="batches && course?.createdBy !== userId && (batches.length > 1 || (batches.length === 1 && !(todayDate > batches[0].enrollmentEndDate)))">
@@ -91,25 +91,30 @@
 				</div>
 			</ion-card-content>
 			<div #stickyPillsRef *ngIf="isAlreadyEnrolled && courseCardData?.batchId && course?.progress !== 100" 
-				class="enrolled-course-container">
-				<ion-card id="card-mb-0" class="enrolled-course-card">
-					<ion-card-content class="ion-padding-top">
-						<ion-card-title class="last-read-content padding-bottom-8">{{lastReadContentName}}</ion-card-title>
-						<button *ngIf="!showResumeBtn && childrenData?.length" class="enrolled-course-card-button"
-							(click)="startContent()"><span><img class="play-icon" src="assets/imgs/Play@1.5x.svg"
-									alt="play-icon">{{ 'START_COURSE_NOW' | translate }}</span></button>
-						<button *ngIf="showResumeBtn" class="enrolled-course-card-button"
-							(click)="resumeContent(courseCardData?.lastReadContentId)"><span><img class="play-icon"
-									src="assets/imgs/Play@1.5x.svg" alt="play-icon">{{
-																'CONTINUE_NOW' | translate }}</span></button>
-						<div *ngIf="batchDetails?.endDate && !batchExp" class="enrollment-end-date">
-							<ion-icon class="information-icon info-icon-pr-8" name="information-circle"></ion-icon>
-							<span *ngIf="!course?.certificate">{{'COMPLETE_TRAINING_TO_EARN_CERTIFICATE' | translate: {'%s': batchDetails?.endDate | date} }} </span>
-							<span *ngIf="course?.certificate">{{'TO_EARN_CERTIFICATE' | translate: {'%s': batchDetails?.endDate | date} }}</span>
-						</div>
-					</ion-card-content>
-				</ion-card>
-			</div>
+			class="enrolled-course-container">
+			<ion-card class="enrolled-course-card">
+				<ion-card-content class="ion-padding-top">
+                    <ion-card-title class="last-read-content padding-bottom-8">{{lastReadContentName}}</ion-card-title>
+					<button *ngIf="!showResumeBtn && childrenData?.length && lastReadContentType !== 'SelfAssess'" class="enrolled-course-card-button"
+                    (click)="startContent()"><span><img class="play-icon" src="assets/imgs/Play@1.5x.svg"
+                        alt="play-icon">{{
+                            'START_COURSE_NOW' | translate }}</span></button>
+					<button *ngIf="showResumeBtn && lastReadContentType !== 'SelfAssess'" class="enrolled-course-card-button"
+						(click)="resumeContent(courseCardData?.lastReadContentId)"><span><img class="play-icon"
+								src="assets/imgs/Play@1.5x.svg" alt="play-icon">{{
+															'CONTINUE_NOW' | translate }}</span></button>
+					<button *ngIf="lastReadContentType === 'SelfAssess'" class="enrolled-course-card-button"
+						(click)="resumeContent(courseCardData?.lastReadContentId)"><span><img class="play-icon"
+								src="assets/imgs/Play@1.5x.svg" alt="play-icon">{{
+															'START_ASSESSMENT' | translate }}</span></button>
+					<div *ngIf="batchDetails?.endDate && !batchExp" class="enrollment-end-date ion-padding-bottom">
+						<ion-icon name="information-circle"></ion-icon>
+						<span *ngIf="!course?.certificate">{{'COMPLETE_TRAINING_TO_EARN_CERTIFICATE' | translate: {'%s': batchDetails?.endDate | date} }} </span>
+						<span *ngIf="course?.certificate">{{'TO_EARN_CERTIFICATE' | translate: {'%s': batchDetails?.endDate | date} }}</span>
+					</div>
+				</ion-card-content>
+			</ion-card>
+		</div>
 		</ion-card>
 
 		<ion-card class="card-box-shadow">

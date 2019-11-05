@@ -200,6 +200,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
   // isEnrolled = false;
   showDownload: boolean;
   lastReadContentName: string;
+  lastReadContentType: string;
   enrollmentEndDate: string;
   loader: any;
   isQrCodeLinkToContent: any;
@@ -1081,12 +1082,14 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
       this.contentService.getContentDetails(option).toPromise()
         .then((data: Content) => {
           this.lastReadContentName = data.contentData.name;
+          this.lastReadContentType = data.contentData.contentType;
         }).catch(() => {
 
         });
     } else if (this.childContentsData) {
       const firstChild = this.loadFirstChildren(this.childContentsData);
       this.lastReadContentName = firstChild.contentData.name;
+      this.lastReadContentType = firstChild.contentData.contentType;
     }
 
   }
