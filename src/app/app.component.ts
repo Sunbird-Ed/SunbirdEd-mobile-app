@@ -51,7 +51,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   private telemetryAutoSyncUtil: TelemetryAutoSyncUtil;
   toggleRouterOutlet = true;
-  rootPageDisplayed: boolean = false;
+  rootPageDisplayed = false;
   profile: any = {};
   selectedLanguage: string;
   appName: string;
@@ -338,12 +338,8 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.router.events.subscribe((event: Event) => {
       if (event instanceof NavigationStart) {
         // Show loading indicator
-        if(event.url.indexOf("tabs")!= -1) {
-          this.rootPageDisplayed = true;
-        } else {
-          this.rootPageDisplayed = true;
-        }
-    }
+        this.rootPageDisplayed = event.url.indexOf('tabs') !== -1;
+      }
     });
     this.platform.backButton.subscribeWithPriority(0, async () => {
       console.log('URL' + this.router.url);
