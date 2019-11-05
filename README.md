@@ -3,16 +3,16 @@
 NPM Version - above 6
 Node JS Version - above 8
 
-**1.  Ionic-Android build Setup**
+**1. Ionic-Android build Setup**
     - [Install java](https://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html)
     - [Install Gradle](https://gradle.org/install/)
     - [Install Android Studio](https://developer.android.com/studio/) 
     - After Android studio installation, install SDK
-    - Open Android studio and goto `settings/apperance and
-    behaviour/system settings/Android SDK`
-    - Install appropriate Andoid sdk platform package.
+    - Open Android studio and goto `settings/appearance and
+    behavior/system settings/Android SDK`
+    - Install appropriate Android sdk platform package.
     - Add environment variables in `~/.bashrc` or `~/.bash_profile` as follows
-       ```export ANDROID_SDK_ROOT=$HOME/Library/Android/sdk```
+       ```export ANDROID_SDK_ROOT=path_to_sdk```
        ```export PATH=$PATH:$ANDROID_SDK_ROOT/tools/bin```
        ```export PATH=$PATH:$ANDROID_SDK_ROOT/platform-tools```
     - Reference: https://ionicframework.com/docs/installation/android 
