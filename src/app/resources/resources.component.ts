@@ -242,6 +242,9 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
         this.qrScanner.startScanner(this.appGlobalService.getPageIdForTelemetry());
       }
     });
+    this.events.subscribe('update_recently_viewed', () => {
+      this.loadRecentlyViewedContent();
+    });
   }
 
   generateNetworkType() {
@@ -329,9 +332,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
     this.router.navigate([RouterLinks.VIEW_MORE_ACTIVITY], resourcesParams);
   }
 
-  /**
-	 * Load/get recently viewed content
-	 */
   async loadRecentlyViewedContent(hideLoaderFlag?: boolean) {
     this.recentlyViewedResources = [];
     if (!hideLoaderFlag) {
