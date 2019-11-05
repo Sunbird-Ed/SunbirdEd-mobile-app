@@ -1,4 +1,4 @@
-<ion-content no-padding (ionScroll)="onScroll($event)">
+<ion-content no-padding [scrollEvents]="true" (ionScroll)="onScroll($event)">
   <div class="p-8">
     <app-detail-card (downloadAllContent)="showDownloadConfirmationAlert($event)" (shareEvent)="share()"
       (showOverflowMenuEvent)="showPopOver($event)" [contentDetail]="contentDetail" [currentCount]="currentCount"

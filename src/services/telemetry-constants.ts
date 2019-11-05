@@ -112,7 +112,8 @@ export enum PageId {
     TEXTBOOK_TOC = 'textbook-toc',
     EXPLORE_MORE_CONTENT = 'explore-more-content',
     RECOVERY_ACCOUNT_ID_POPUP = 'recovery-account-id-popup',
-    MERGE_ACCOUNT_POPUP = 'merge-account-popup'
+    MERGE_ACCOUNT_POPUP = 'merge-account-popup',
+    DISTRICT_MAPPING = 'district-mapping'
 }
 export enum LogType {
     NOTIFICATION = 'notification'
@@ -132,7 +133,8 @@ export enum ImpressionType {
     DETAIL = 'detail',
     VIEW = 'view',
     EDIT = 'edit',
-    WORKFLOW = 'workflow'
+    WORKFLOW = 'workflow',
+    DISTRICT_MAPPING = 'district-mapping'
 }
 export enum ImpressionSubtype {
     QRCodeScanInitiate = 'qr-code-scan-initiate',
@@ -143,7 +145,8 @@ export enum ImpressionSubtype {
     QR_SCAN_WALKTHROUGH = 'qr-scan-walkthrough',
     COMINGSOON_POPUP = 'coming-soon-popup',
     EXPLORE_MORE_CONTENT = 'explore-more-content',
-    RECOVERY_ACCOUNT_POPUP = 'recovery-account-popup'
+    RECOVERY_ACCOUNT_POPUP = 'recovery-account-popup',
+    DISTRICT_LOCATION_MAPPING = 'district-location-mapping'
 }
 export enum InteractType {
     TOUCH = 'TOUCH',
@@ -223,6 +226,7 @@ export enum InteractSubtype {
     SWITCH_USER_SUCCESS = 'switch-user-success',
     DELETE_USER_INITIATE = 'delete-user-initiate',
     DELETE_GROUP_INITIATE = 'delete-group-initiate',
+    DELETE_ALL_CLICKED = 'delete-from-device-button-clicked',
     SHARE_USER_GROUP_INITIATE = 'share-usergroup-initiate',
     SHARE_USER_GROUP_SUCCESS = 'share-usergroup-success',
     USER_GROUP_CLICKED = 'users-groups-clicked',
@@ -280,6 +284,8 @@ export enum InteractSubtype {
     RESOURCE_PAGE_LOADED = 'page-loaded',
     RESOURCE_PAGE_ERROR = 'page-error',
     ENROLL_CLICKED = 'enroll-clicked',
+    ENROLL_SUCCESS = 'enroll-success',
+    ENROLL_FAILED = 'enroll-failed',
     YES_CLICKED = 'yes-clicked',
     NO_CLICKED = 'no-clicked',
     RESUME_CLICKED = 'resume-clicked',
@@ -295,6 +301,7 @@ export enum InteractSubtype {
     DOWNLOAD_CANCEL_ALL_CLICKED = 'download-cancel-all-clicked',
     DOWNLOAD_CERTIFICATE_CLICKED = 'download-certificate-clicked',
     DOWNLOAD_CANCEL_CLICKED = 'download-cancel-clicked',
+    DOWNLOAD_CLICKED = 'download-from-device-button-clicked',
     RATE_LATER_CLICKED = 'rate-later-clicked',
     PLAY_STORE_BUTTON_CLICKED = 'play-store-button-clicked',
     HELP_SECTION_CLICKED = 'help-section-clicked',
@@ -344,6 +351,7 @@ export enum InteractSubtype {
     TRAINING_INFO_CLICKED = 'training-info-clicked',
     TRAINING_MODULE_CLICKED = 'training-module-clicked',
     MERGE_CLICKED = 'merge-clicked',
+    AUTO_POPULATED_LOCATION = 'auto-populated-location'
 }
 
 export enum ActionButtonType {

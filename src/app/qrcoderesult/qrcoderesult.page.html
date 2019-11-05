@@ -18,8 +18,14 @@
 
   </ion-toolbar>
 </ion-header>
+<div #stickyPillsRef class="sb-chapter-dd" (click)="openTextbookToc()" *ngIf="results.length>1">
+  <span class="pull-left">{{stckyParent || ('SELECT_CHAPTER' | translate)}}</span>
+  <span class="pull-right">
+    <ion-icon name="ios-arrow-dropright-circle"></ion-icon>
+  </span>
+</div>
 
-<ion-content *ngIf="results.length>1" padding>
+<ion-content *ngIf="results.length>1" padding  [scrollEvents]="true" (ionScroll)="onScroll($event)">
   <div class="card-container" *ngFor="let content of results; let i = index">
     <ion-row class="P010">
       <ul class="breadcrumbs">
@@ -31,7 +37,7 @@
       </ul>
     </ion-row>
     <ion-card>
-      <ion-row>
+      <ion-row [attr.data-sticky-unit]="content.contentData.name" [attr.data-index]= "i">
         <ion-col size="12">
           <ion-card-content (click)="playOnline(content)">
             <ion-row class="top">

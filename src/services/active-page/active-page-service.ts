@@ -37,6 +37,8 @@ export class ActivePageService {
       pageId = PageId.ACTIVE_DOWNLOADS;
     } else if (routeUrl.indexOf(RouterLinks.COURSE_BATCHES) !== -1) {
       pageId = PageId.COURSE_BATCHES;
+    } else if (routeUrl.indexOf(RouterLinks.DISTRICT_MAPPING) !== -1) {
+      pageId = PageId.DISTRICT_MAPPING;
     }
 
     return pageId;

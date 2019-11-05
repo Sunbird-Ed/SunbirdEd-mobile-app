@@ -1,26 +1,30 @@
-import { Inject, Injectable, OnInit } from '@angular/core';
-import { AppGlobalService } from '@app/services/app-global-service.service';
-import { AppVersion } from '@ionic-native/app-version/ngx';
-import { TranslateService } from '@ngx-translate/core';
-import { Events } from '@ionic/angular';
+import {Inject, Injectable} from '@angular/core';
+import {AppGlobalService} from '@app/services/app-global-service.service';
+import {AppVersion} from '@ionic-native/app-version/ngx';
+import {TranslateService} from '@ngx-translate/core';
+import {Events} from '@ionic/angular';
 import {
+    CachedItemRequestSourceFrom,
     CategoryTerm,
     FormRequest,
     FormService,
-    FrameworkService,
     FrameworkCategoryCodesGroup,
+    FrameworkService,
     FrameworkUtilService,
     GetFrameworkCategoryTermsRequest,
     GetSystemSettingsRequest,
     OrganizationSearchCriteria,
     Profile,
     ProfileService,
+    SharedPreferences,
     SystemSettings,
     SystemSettingsService,
-    SharedPreferences
+    WebviewSessionProviderConfig,
+    SignInError
 } from 'sunbird-sdk';
 
-import { SystemSettingsIds, ContentFilterConfig, ContentType, PreferenceKey } from '@app/app/app.constant';
+import {ContentFilterConfig, ContentType, PreferenceKey, SystemSettingsIds} from '@app/app/app.constant';
+
 @Injectable()
 export class FormAndFrameworkUtilService {
     contentFilterConfig: Array<any> = [];
@@ -43,6 +47,26 @@ export class FormAndFrameworkUtilService {
         .then(val => {
             this.selectedLanguage = val ? val : 'en' ;
         });
+    }
+
+    getWebviewSessionProviderConfig(context: 'login' | 'merge' | 'migrate'): Promise<WebviewSessionProviderConfig> {
+        const request: FormRequest = {
+            from: CachedItemRequestSourceFrom.SERVER,
+            type: 'config',
+            subType: 'login',
+            action: 'get'
+        };
+
+        return this.formService.getForm(request)
+            .map((result) => {
+                const config = result['data']['fields'].find(c => c.context === context);
+
+                if (!config) {
+                    throw new SignInError('SESSION_PROVIDER_CONFIG_NOT_FOUND');
+                }
+
+                return config;
+            }).toPromise();
     }
 
     /**

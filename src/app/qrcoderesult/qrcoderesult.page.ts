@@ -1,5 +1,5 @@
 import { CommonUtilService } from './../../services/common-util.service';
-import { Component, Inject, NgZone, OnDestroy, ViewChild } from '@angular/core';
+import { Component, Inject, NgZone, OnDestroy, ViewChild, ViewChildren, QueryList, ElementRef } from '@angular/core';
 import { ContentType, MimeType, RouterLinks } from '../../app/app.constant';
 import { TranslateService } from '@ngx-translate/core';
 import { AppGlobalService } from '../../services/app-global-service.service';
@@ -52,7 +52,7 @@ declare const cordova;
   styleUrls: ['./qrcoderesult.page.scss'],
 })
 export class QrcoderesultPage implements OnDestroy {
-
+  @ViewChild('stickyPillsRef') stickyPillsRef: ElementRef;
   unregisterBackButton: any;
   /**
    * To hold identifier
@@ -109,6 +109,11 @@ export class QrcoderesultPage implements OnDestroy {
   backToPreviusPage = true;
   isProfileUpdated: boolean;
   isQrCodeLinkToContent: any;
+  childrenData?: Array<any>;
+  stckyUnitTitle?: string;
+  stckyParent: any;
+  latestParents: Array<any> = [];
+  stckyindex: string;
 
   constructor(
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
@@ -233,6 +238,10 @@ export class QrcoderesultPage implements OnDestroy {
     this.contentService.getChildContents(
       request).toPromise()
       .then((data: Content) => {
+        if (data && data.contentData) {
+          this.childrenData = data.children;
+        }
+
         this.parents.splice(0, this.parents.length);
         this.parents.push(data);
         this.results = [];
@@ -635,11 +644,14 @@ export class QrcoderesultPage implements OnDestroy {
           this.results.push(content);
 
           const path = [];
+          let latestParent = [];
+          latestParent = this.parents[this.parents.length - 2];
           this.parents.forEach(ele => {
             path.push(ele);
           });
           path.splice(-1, 1);
           this.paths.push(path);
+          this.latestParents.push(latestParent);
         }
         return;
       }
@@ -719,5 +731,43 @@ export class QrcoderesultPage implements OnDestroy {
     } else {
       this.location.back();
     }
+  }
+
+  openTextbookToc() {
+    this.router.navigate([`/${RouterLinks.COLLECTION_DETAIL_ETB}/${RouterLinks.TEXTBOOK_TOC}`],
+      { state: { childrenData: this.childrenData, parentId: this.identifier,
+        stckyUnitTitle: this.stckyUnitTitle , stckyindex: this.stckyindex,
+        latestParentNodes: this.latestParents} });
+    const values = new Map();
+    this.telemetryGeneratorService.generateInteractTelemetry(
+      InteractType.TOUCH,
+      InteractSubtype.DROPDOWN_CLICKED,
+      Environment.HOME,
+      PageId.DIAL_CODE_SCAN_RESULT,
+      undefined,
+      values
+    );
+  }
+
+  onScroll(event) {
+    const titles = document.querySelectorAll('[data-sticky-unit]');
+    const currentTitle = Array.from(titles).filter((title) => {
+      return title.getBoundingClientRect().top < 200;
+    }).slice(-1)[0];
+
+    if (currentTitle) {
+      this.zone.run(() => {
+        this.stckyUnitTitle = currentTitle.getAttribute('data-sticky-unit');
+        this.stckyindex = currentTitle.getAttribute('data-index');
+        this.stckyParent = this.latestParents[this.stckyindex].contentData.name;
+      });
+    }
+
+    if (event.scrollTop >= 205) {
+      (this.stickyPillsRef.nativeElement as HTMLDivElement).classList.add('sticky');
+      return;
+    }
+
+    (this.stickyPillsRef.nativeElement as HTMLDivElement).classList.remove('sticky');
   }
 }

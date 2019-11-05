@@ -25,6 +25,8 @@ import { CommonUtilService } from '@app/services/common-util.service';
 import { PageId, InteractType, InteractSubtype, Environment } from '../telemetry-constants';
 import { UtilityService } from '..';
 import { Location } from '@angular/common';
+import { LocalCourseService } from '../local-course.service';
+import { EnrollCourse } from '@app/app/enrolled-course-details-page/course.interface';
 
 
 @Injectable()
@@ -50,7 +52,8 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
     private router: Router,
     private appVersion: AppVersion,
     private utillService: UtilityService,
-    private location: Location
+    private location: Location,
+    private localCourseService: LocalCourseService
   ) {
     this.getUserId();
     this.appVersion.getAppName()
@@ -161,23 +164,21 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
    */
   async enrollIntoBatch(batch: Batch) {
     if (!this.isGuestUser) {
-      const enrollCourseRequest: EnrollCourseRequest = {
-        batchId: batch.id,
-        courseId: batch.courseId,
-        userId: this.userId,
-        batchStatus: batch.status
-      };
+      const enrollCourseRequest = this.localCourseService.prepareEnrollCourseRequest(this.userId, batch);
       const loader = await this.commonUtilService.getLoader();
       await loader.present();
-      const reqvalues = new Map();
-      reqvalues['enrollReq'] = enrollCourseRequest;
       this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
         InteractSubtype.ENROLL_CLICKED,
         Environment.HOME,
         PageId.COURSE_BATCHES, undefined,
-        reqvalues);
+        this.localCourseService.prepareRequestValue(enrollCourseRequest));
 
-      this.courseService.enrollCourse(enrollCourseRequest).toPromise()
+      const enrollCourse: EnrollCourse = {
+        userId: this.userId,
+        batch,
+        pageId: PageId.COURSE_BATCHES
+      };
+      this.localCourseService.enrollIntoBatch(enrollCourse).toPromise()
         .then((data: boolean) => {
           this.zone.run(async () => {
             await loader.dismiss();
@@ -192,16 +193,8 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
         }, (error) => {
           this.zone.run(async () => {
             await loader.dismiss();
-            if (error && error.code === 'NETWORK_ERROR') {
-              this.commonUtilService.showToast(this.commonUtilService.translateMessage('ERROR_NO_INTERNET_MESSAGE'));
-            } else if (error && error.response
-              && error.response.body && error.response.body.params && error.response.body.params.err === 'USER_ALREADY_ENROLLED_COURSE') {
-              this.commonUtilService.showToast(this.commonUtilService.translateMessage('ALREADY_ENROLLED_COURSE'));
-              this.events.publish(EventTopics.ENROL_COURSE_SUCCESS, {
-                batchId: batch.id,
-                courseId: batch.courseId
-              });
-              this.getEnrolledCourses();
+            if (error && error.code !== 'NETWORK_ERROR') {
+                this.getEnrolledCourses();
             }
           });
         });

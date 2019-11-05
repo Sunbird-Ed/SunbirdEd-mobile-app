@@ -484,7 +484,7 @@ export class ContentDetailsPage implements OnInit {
     values['isUpdateAvailable'] = this.isUpdateAvail;
     values['isDownloaded'] = this.contentDownloadable[this.content.identifier];
     values['autoAfterDownload'] = this.downloadAndPlay ? true : false;
-
+    
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.OTHER,
       ImpressionType.DETAIL,
       Environment.HOME,
@@ -684,6 +684,14 @@ export class ContentDetailsPage implements OnInit {
    * confirming popUp content
    */
   async openConfirmPopUp() {
+    this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
+      this.isUpdateAvail ? InteractSubtype.UPDATE_INITIATE : InteractSubtype.DOWNLOAD_INITIATE,
+      Environment.HOME,
+      PageId.CONTENT_DETAIL,
+      this.telemetryObject,
+      undefined,
+      this.objRollup,
+      this.corRelationList);
     if (this.commonUtilService.networkInfo.isNetworkAvailable) {
       const popover = await this.popoverCtrl.create({
         component: ConfirmAlertComponent,
@@ -700,6 +708,17 @@ export class ContentDetailsPage implements OnInit {
       const { data } = await popover.onDidDismiss();
       if (data) {
         this.downloadContent();
+      }
+      else {
+        //const telemetryObject = new TelemetryObject(this.content.identifier, this.content.contentType, this.content.contentData.pkgVersion);
+        this.telemetryGeneratorService.generateInteractTelemetry(
+          InteractType.TOUCH,
+          InteractSubtype.CLOSE_CLICKED,
+          Environment.HOME,
+          PageId.CONTENT_DETAIL,
+          this.telemetryObject,undefined,
+          this.objRollup,
+          this.corRelationList);
       }
     } else {
       this.commonUtilService.showToast('ERROR_NO_INTERNET_MESSAGE');
@@ -732,6 +751,14 @@ export class ContentDetailsPage implements OnInit {
   }
 
   cancelDownload() {
+    this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
+      this.isUpdateAvail ? InteractSubtype.DOWNLOAD_CANCEL_CLICKED : InteractSubtype.DOWNLOAD_CANCEL_CLICKED,
+      Environment.HOME,
+      PageId.CONTENT_DETAIL,
+      this.telemetryObject,
+      undefined,
+      this.objRollup,
+      this.corRelationList);
     this.contentService.cancelDownload(this.identifier).toPromise()
       .then(() => {
         this.zone.run(() => {
@@ -975,8 +1002,8 @@ export class ContentDetailsPage implements OnInit {
       param,
       Environment.HOME,
       PageId.CONTENT_DETAIL,
-      undefined,
       this.telemetryObject,
+      undefined,
       objRollup,
       corRelationList
     );

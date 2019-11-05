@@ -45,26 +45,26 @@ import {
   CanvasPlayerService,
   SplashScreenService
 } from '../services/index';
-
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { UserTypeSelectionPageModule } from './user-type-selection/user-type-selection.module';
 import { ComponentsModule } from './components/components.module';
 import { UserAndGroupsPageModule } from './user-and-groups/user-and-groups.module';
 import { LocalNotifications } from '@ionic-native/local-notifications/ngx';
-
 import { PageFilterPageModule } from './page-filter/page-filter.module';
 import { PageFilterPage } from './page-filter/page-filter.page';
-
 import { PageFilterOptionsPageModule } from './page-filter/page-filter-options/page-filter-options.module';
 import { PageFilterOptionsPage } from './page-filter/page-filter-options/page-filter-options.page';
 import { CrashAnalyticsErrorLogger } from '@app/services/crash-analytics/crash-analytics-error-logger';
 import { File } from '@ionic-native/file/ngx';
 import { TermsAndConditionsPageModule } from './terms-and-conditions/terms-and-conditions.module';
 import { TncUpdateHandlerService } from '@app/services/handlers/tnc-update-handler.service';
-import {SplashcreenTelemetryActionHandlerDelegate} from '@app/services/sunbird-splashscreen/splashcreen-telemetry-action-handler-delegate';
-import {SplashscreenImportActionHandlerDelegate} from '@app/services/sunbird-splashscreen/splashscreen-import-action-handler-delegate';
-import {SplaschreenDeeplinkActionHandlerDelegate} from '@app/services/sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
+import {
+  SplashcreenTelemetryActionHandlerDelegate
+} from '@app/services/sunbird-splashscreen/splashcreen-telemetry-action-handler-delegate';
+import { SplashscreenImportActionHandlerDelegate } from '@app/services/sunbird-splashscreen/splashscreen-import-action-handler-delegate';
+import { SplaschreenDeeplinkActionHandlerDelegate } from '@app/services/sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
+import { LocalCourseService } from '@app/services/local-course.service';
 
 // AoT requires an exported function for factories
 export function translateHttpLoaderFactory(httpClient: HttpClient) {
@@ -91,6 +91,9 @@ export const apiService = () => {
 };
 export const profileService = () => {
   return SunbirdSdk.instance.profileService;
+};
+export const deviceRegisterService = () => {
+  return SunbirdSdk.instance.deviceRegisterService;
 };
 export const groupService = () => {
   return SunbirdSdk.instance.groupService;
@@ -181,6 +184,9 @@ export function sdkDriverFactory(): any {
     provide: 'PROFILE_SERVICE',
     useFactory: profileService
   }, {
+    provide: 'DEVICE_REGISTER_SERVICE',
+    useFactory: deviceRegisterService
+  }, {
     provide: 'DB_SERVICE',
     useFactory: dbService
   }, {
@@ -250,11 +256,14 @@ export const sunbirdSdkFactory =
   () => {
     return async () => {
       const buildConfigValues = JSON.parse(await new Promise<string>((resolve, reject) => {
-        buildconfigreader.getBuildConfigValues('org.sunbird.app', (v) => {
-          resolve(v);
-        }, (err) => {
-          reject(err);
-        });
+      document.addEventListener('deviceready', ( ) => {
+          buildconfigreader.getBuildConfigValues('org.sunbird.app', (v) => {
+            resolve(v);
+          }, (err) => {
+            reject(err);
+          });
+        }, false);
+
       }));
 
       await SunbirdSdk.instance.init({
@@ -289,6 +298,11 @@ export const sunbirdSdkFactory =
           debugMode: false,
           dbName: 'GenieServices.db'
         },
+        deviceRegisterConfig: {
+          host: buildConfigValues['DEVICE_REGISTER_BASE_URL'],
+          apiPath: '/v3/device',
+          deviceProfileApiPath: '/api/v3/device',
+        },
         contentServiceConfig: {
           apiPath: '/api/content/v1',
           searchApiPath: '/api/composite/v1'
@@ -310,9 +324,11 @@ export const sunbirdSdkFactory =
         },
         profileServiceConfig: {
           profileApiPath: '/api/user/v1',
+          profileApiPath_V2: '/api/user/v2',
           tenantApiPath: '/v1/tenant',
           otpApiPath: '/api/otp/v1',
-          searchLocationApiPath: '/api/data/v1'
+          searchLocationApiPath: '/api/data/v1',
+          locationDirPath: '/data/location'
         },
         pageServiceConfig: {
           apiPath: '/api/data/v1',
@@ -326,9 +342,7 @@ export const sunbirdSdkFactory =
           systemSettingsDirPath: '/data/system',
         },
         telemetryConfig: {
-          deviceRegisterApiPath: '',
-          telemetryApiPath: '/api/data/v1',
-          deviceRegisterHost: buildConfigValues['DEVICE_REGISTER_BASE_URL'],
+          apiPath: '/api/data/v1',
           telemetrySyncBandwidth: 200,
           telemetrySyncThreshold: 200,
           telemetryLogMinAllowedOffset: 86400000
@@ -412,6 +426,7 @@ declare const buildconfigreader;
     ContainerService,
     UniqueDeviceID,
     UtilityService,
+    LocalCourseService,
     AppHeaderService,
     AppRatingService,
     FormAndFrameworkUtilService,

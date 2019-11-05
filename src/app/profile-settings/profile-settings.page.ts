@@ -4,7 +4,7 @@ import { Router, NavigationExtras } from '@angular/router';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { TranslateService } from '@ngx-translate/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { PreferenceKey, ProfileConstants } from '@app/app/app.constant';
+import { PreferenceKey, ProfileConstants, RouterLinks } from '@app/app/app.constant';
 import { GUEST_STUDENT_TABS, GUEST_TEACHER_TABS, initTabs } from '@app/app/module.service';
 import { ImpressionType, PageId, Environment, InteractSubtype, InteractType } from '@app/services/telemetry-constants';
 import isEqual from 'lodash/isEqual';
@@ -21,7 +21,8 @@ import {
   Profile,
   ProfileService,
   ProfileType,
-  SharedPreferences
+  SharedPreferences,
+  DeviceRegisterService
 } from 'sunbird-sdk';
 import {
   AppGlobalService,
@@ -82,11 +83,15 @@ export class ProfileSettingsPage implements OnInit {
     cssClass: 'select-box'
   };
   private navParams: any;
+  ipLocationAvailable: boolean;
+  userDeclaredLocationAvailable = false;
+  ipLocationData: any;
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     @Inject('FRAMEWORK_SERVICE') private frameworkService: FrameworkService,
     @Inject('FRAMEWORK_UTIL_SERVICE') private frameworkUtilService: FrameworkUtilService,
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
+    @Inject('DEVICE_REGISTER_SERVICE') private deviceRegisterService: DeviceRegisterService,
     private fb: FormBuilder,
     private translate: TranslateService,
     private telemetryGeneratorService: TelemetryGeneratorService,
@@ -157,6 +162,7 @@ export class ProfileSettingsPage implements OnInit {
       */
     }
     this.getSyllabusDetails();
+    this.getAutoPopulatedData();
   }
 
   ionViewDidEnter() {
@@ -482,9 +488,32 @@ export class ProfileSettingsPage implements OnInit {
     return profileReq;
   }
 
+  getAutoPopulatedData() {
+    this.deviceRegisterService.getDeviceProfile().toPromise().then((response) => {
+      if (response.userDeclaredLocation) {
+        this.userDeclaredLocationAvailable = true;
+        this.preferences.getString(PreferenceKey.DEVICE_LOCATION).toPromise()
+          .then(deviceLoc => {
+            if (!deviceLoc) {
+              const locationMap = new Map();
+              locationMap['state'] = response.userDeclaredLocation.state;
+              locationMap['district'] = response.userDeclaredLocation.district;
+              this.preferences.putString(PreferenceKey.DEVICE_LOCATION, JSON.stringify(locationMap)).toPromise();
+            }
+          });
+      } else if (response.ipLocation.state) {
+        this.ipLocationAvailable = true;
+        this.ipLocationData = response.ipLocation;
+      } else if (!response.ipLocation.state) {
+        this.ipLocationAvailable = false;
+      }
+    });
+  }
+
   async onSubmit() {
     const loader = await this.commonUtilService.getLoader();
     const formVal = this.userForm.value;
+    // await this.getAutoPopulatedData();
     if (formVal.boards.length === 0) {
       this.btnColor = '#8FC4FF';
       this.appGlobalService.generateSaveClickedTelemetry(this.extractProfileForTelemetry(formVal), 'failed',
@@ -589,8 +618,18 @@ export class ProfileSettingsPage implements OnInit {
         this.appGlobalService.guestUserProfile = res;
         setTimeout(() => {
           this.commonUtilService.showToast('PROFILE_UPDATE_SUCCESS');
-        },1000);
-        
+          if (this.userDeclaredLocationAvailable) {
+            this.router.navigate(['/tabs']);
+          } else {
+            const navigationExtras: NavigationExtras = {
+              state: {
+                isShowBackButton: true,
+                ipLocationData: this.ipLocationData
+              }
+            };
+            this.router.navigate([RouterLinks.DISTRICT_MAPPING], navigationExtras);
+          }
+        }, 2000);
         this.events.publish('onboarding-card:completed', { isOnBoardingCardCompleted: true });
         this.events.publish('refresh:profile');
         this.appGlobalService.guestUserProfile = res;
@@ -599,14 +638,7 @@ export class ProfileSettingsPage implements OnInit {
           PageId.ONBOARDING_PROFILE_PREFERENCES, req, 'manual', Environment.ONBOARDING
         );
         this.loader = await this.commonUtilService.getLoader(2000);
-        this.loader.present();
-
-        const navigationExtras: NavigationExtras = {
-          state: {
-            loginMode: 'guest'
-          }
-        };
-        this.router.navigate(['/tabs'], navigationExtras);
+        await this.loader.present();
       })
       .catch(async () => {
         await loader.dismiss();
@@ -635,8 +667,8 @@ export class ProfileSettingsPage implements OnInit {
     switch ($event.name) {
       case 'back': this.telemetryGeneratorService.generateBackClickedTelemetry(
         PageId.ONBOARDING_PROFILE_PREFERENCES, Environment.ONBOARDING, true);
-                   this.dismissPopup();
-                   break;
+        this.dismissPopup();
+        break;
     }
   }
 

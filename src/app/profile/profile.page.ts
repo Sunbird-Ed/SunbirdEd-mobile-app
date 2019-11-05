@@ -36,6 +36,7 @@ import {
 } from '@app/app/components/popups/edit-contact-details-popup/edit-contact-details-popup.component';
 import { AccountRecoveryInfoComponent } from '../components/popups/account-recovery-id/account-recovery-id-popup.component';
 import { SocialSharing } from '@ionic-native/social-sharing/ngx';
+import { TeacherIdVerificationComponent } from '../components/popups/teacher-id-verification-popup/teacher-id-verification-popup.component';
 
 @Component({
   selector: 'app-profile',
@@ -75,9 +76,9 @@ export class ProfilePage implements OnInit {
   organisationDetails = '';
   contentCreatedByMe: any = [];
   orgDetails: {
-    'state': '',
-    'district': '',
-    'block': ''
+    'state': string,
+    'district': string,
+    'block': string
   };
 
   layoutPopular = ContentCard.LAYOUT_POPULAR;
@@ -208,7 +209,7 @@ export class ProfilePage implements OnInit {
           const serverProfileDetailsRequest: ServerProfileDetailsRequest = {
             userId: that.userId && that.userId !== session.userToken ? that.userId : session.userToken,
             requiredFields: ProfileConstants.REQUIRED_FIELDS,
-            from: CachedItemRequestSourceFrom.SERVER,
+            from: CachedItemRequestSourceFrom.SERVER
           };
 
           if (that.isLoggedInUser) {
@@ -243,9 +244,9 @@ export class ProfilePage implements OnInit {
                       that.imageUri = profileData.avatar;
                     }
                     that.formatRoles();
-                    that.formatOrgDetails();
+                    that.orgDetails = that.commonUtilService.getOrgLocation(that.profile);
                     that.getOrgDetails();
-                    that.formatUserLocation();
+                    that.userLocation =  that.commonUtilService.getUserLocation(that.profile);
                     that.isCustodianOrgId = (that.profile.rootOrg.rootOrgId === this.custodianOrgId);
                     that.isStateValidated = that.profile.stateValidated;
                     resolve();
@@ -281,48 +282,6 @@ export class ProfilePage implements OnInit {
           const val = this.profile.roleList.find(role => role.id === roleKey);
           if (val && val.name.toLowerCase() !== 'public') {
             this.roles.push(val.name);
-          }
-        }
-      }
-    }
-  }
-
-  formatUserLocation() {
-    if (this.profile && this.profile.userLocations && this.profile.userLocations.length) {
-      for (let i = 0, len = this.profile.userLocations.length; i < len; i++) {
-        if (this.profile.userLocations[i].type === 'state') {
-          this.userLocation.state = this.profile.userLocations[i];
-        } else {
-          this.userLocation.district = this.profile.userLocations[i];
-        }
-      }
-    }
-  }
-
-
-  /**
-   * Method to handle organization details.
-   */
-  formatOrgDetails() {
-    this.orgDetails = { state: '', district: '', block: '' };
-    for (let i = 0, len = this.profile.organisations.length; i < len; i++) {
-      if (this.profile.organisations[i].locations) {
-        for (let j = 0, l = this.profile.organisations[i].locations.length; j < l; j++) {
-          switch (this.profile.organisations[i].locations[j].type) {
-            case 'state':
-              this.orgDetails.state = this.profile.organisations[i].locations[j];
-              break;
-
-            case 'block':
-              this.orgDetails.block = this.profile.organisations[i].locations[j];
-              break;
-
-            case 'district':
-              this.orgDetails.district = this.profile.organisations[i].locations[j];
-              break;
-
-            default:
-              console.log('default');
           }
         }
       }
@@ -812,5 +771,14 @@ downloadTrainingCertificate(course: Course, certificate: CourseCertificate) {
     }
   }
 
+  async showTeacherIdVerificationPopup() {
+    const popover = await this.popoverCtrl.create({
+      component: TeacherIdVerificationComponent,
+      backdropDismiss: false,
+      cssClass: 'popover-alert'
+    });
+
+    await popover.present();
+  }
 
 }

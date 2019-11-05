@@ -23,11 +23,31 @@ var library_request_body = {
   }
 };
 
+var state_list_request_body = {
+  request : {
+    'filters': {
+      'type': 'state'
+   }
+  }
+}
+
+var district_list_request_body = function(district_id) {
+  var objDistrict = {
+    request : {
+      filters : {
+         'type' : 'district',
+         'parentId' : district_id
+          }
+      }
+    }
+  return objDistrict;
+}
+
 readFileConfig();
 
 
 function readFileConfig() {
-  var obj = JSON.parse(fs.readFileSync('./diksha_api_config.json', 'utf8'));
+  var obj = JSON.parse(fs.readFileSync('./data_config.json', 'utf8'));
   var jsonArray = obj.config;
 
   for (var i = 0; i < jsonArray.length; i++) {
@@ -39,6 +59,8 @@ function readFileConfig() {
     getLibraryFormResponse(jsonObj.apiKey, jsonObj.baseUrl, jsonObj.apiForm, jsonObj.filePathToSaveResonse);
 
     getSystemList(jsonObj.apiKey, jsonObj.apiChannel, jsonObj.baseUrl, jsonObj.apiChannelList, jsonObj.apiSystemSetting, jsonObj.filePathToSaveResonse,jsonObj.apiFramework);
+
+    getStateList(jsonObj.apiKey, jsonObj.baseUrl, jsonObj.apiSearch, jsonObj.filePathToSaveResonse);
   }
 }
 
@@ -48,6 +70,30 @@ function getSystemList(apiKey, apiChannel, baseUrl, apiSystemSettingList, apiSys
   makeApiCall(apiKey, baseUrl, 'GET', getSystemListUrl, function (resp) {
     getCustodianId(apiKey, apiChannel, baseUrl, resp, apiSystemSettingId, strFileDirectory,apiFramework);
   })
+}
+
+//GET STATE WISE LIST RESPONSE FUNCTION
+function getStateList(apiKey, baseUrl, apiSearch, strFileDirectory) {
+   var res = makePostApiCall(apiKey, baseUrl, 'POST', apiSearch, state_list_request_body, function (response) {
+       createMainDirectory(strFileDirectory, 'location', function (dirName) {
+          saveResponse(JSON.stringify(response.body), dirName, 'state', '');
+        });
+        //Call District wise api call
+        getDistrictList(response.body,apiKey,baseUrl,apiSearch,strFileDirectory);
+   });
+}
+
+//GET DISTRICT WISE API RESPONSE FUNCTION
+function getDistrictList(res,apiKey, baseUrl, apiSearch, strFileDirectory) {
+  var data = res.result.response;
+  for(var i=0;i<data.length;i++) {
+    let id = data[i].id;
+    makePostApiCall(apiKey, baseUrl, 'POST', apiSearch, district_list_request_body(data[i].id), function (response) {
+         createMainDirectory(strFileDirectory, 'location', function (dirName) {
+            saveResponse(JSON.stringify(response.body), dirName, 'district-', id);
+        });
+    });
+  }
 }
 
 //GET CUSTODIAN RESPONSE HERE
