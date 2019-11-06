@@ -433,7 +433,7 @@ export class CommonUtilService implements OnDestroy {
     }
 
     async isIpLocationAvailable(): Promise<boolean> {
-        const deviceLoc = await this.preferences.getString(PreferenceKey.IPLOCATION).toPromise();
+        const deviceLoc = await this.preferences.getString(PreferenceKey.IP_LOCATION).toPromise();
         if (deviceLoc) {
             return true;
         } else {

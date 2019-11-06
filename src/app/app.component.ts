@@ -118,7 +118,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.checkAppUpdateAvailable();
       this.makeEntryInSupportFolder();
       await this.getSelectedLanguage();
-      await this.getDeviceLocation();
+      await this.getDeviceProfile();
       if (this.appGlobalService.getUserId()) {
         this.reloadSigninEvents();
       } else {
@@ -727,11 +727,10 @@ export class AppComponent implements OnInit, AfterViewInit {
     await this.preferences.putBoolean('coach_mark_seen', showAppWalkthrough).toPromise();
   }
 
-  private async getDeviceLocation() {
+  private async getDeviceProfile() {
     if (!(await this.commonUtilService.isDeviceLocationAvailable())
       && !(await this.commonUtilService.isIpLocationAvailable())) {
       this.deviceRegisterService.getDeviceProfile().toPromise().then((response) => {
-        console.log('Response Device Profile', response);
         if (response.userDeclaredLocation) {
           const locationMap = new Map();
           locationMap['state'] = response.userDeclaredLocation.state;
@@ -745,7 +744,7 @@ export class AppComponent implements OnInit, AfterViewInit {
               iplocationMap['district'] = response.ipLocation.district;
             }
           }
-          this.preferences.putString(PreferenceKey.IPLOCATION, JSON.stringify(iplocationMap)).toPromise();
+          this.preferences.putString(PreferenceKey.IP_LOCATION, JSON.stringify(iplocationMap)).toPromise();
         }
       });
     }
