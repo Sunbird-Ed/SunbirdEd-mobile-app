@@ -19,7 +19,7 @@ import { CommonUtilService } from '@app/services/common-util.service';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { AppHeaderService } from '@app/services/app-header.service';
 import { PageId, Environment, InteractType, InteractSubtype } from '@app/services/telemetry-constants';
-import { ProfileConstants, RouterLinks } from '@app/app/app.constant';
+import { ProfileConstants, RouterLinks, PreferenceKey } from '@app/app/app.constant';
 
 @Component({
   selector: 'app-guest-profile',
@@ -42,6 +42,7 @@ export class GuestProfilePage implements OnInit {
   loader: any;
   headerObservable: any;
   isUpgradePopoverShown = false;
+  deviceLocation: any;
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -113,6 +114,8 @@ export class GuestProfilePage implements OnInit {
     if (refresher) {
       this.telemetryGeneratorService.generatePullToRefreshTelemetry(PageId.GUEST_PROFILE, Environment.HOME);
     }
+    this.deviceLocation = JSON.parse(await this.preferences.getString(PreferenceKey.DEVICE_LOCATION).toPromise()) || '';
+
     this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise()
       .then((res: any) => {
         this.profile = res;
@@ -237,6 +240,10 @@ export class GuestProfilePage implements OnInit {
       PageId.GUEST_PROFILE);
 
     this.router.navigate([RouterLinks.ACTIVE_DOWNLOADS]);
+  }
+
+  redirectToDistrictMappingPage() {
+    this.router.navigate([RouterLinks.DISTRICT_MAPPING]);
   }
 }
 
