@@ -243,6 +243,12 @@ export class GuestProfilePage implements OnInit {
   }
 
   redirectToDistrictMappingPage() {
+    this.telemetryGeneratorService.generateInteractTelemetry(
+      InteractType.TOUCH,
+      InteractSubtype.EDIT_DISTRICT_MAPPING_CLICKED,
+      Environment.HOME,
+      PageId.GUEST_PROFILE);
+
     this.router.navigate([RouterLinks.DISTRICT_MAPPING]);
   }
 }
