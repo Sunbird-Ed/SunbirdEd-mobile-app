@@ -1,5 +1,5 @@
 import { Component, Inject, NgZone, OnDestroy, ViewChild, ChangeDetectorRef, OnInit, AfterViewInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, NavigationExtras } from '@angular/router';
 import { Events, Platform, PopoverController, IonContent, NavController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs/Subscription';
@@ -247,7 +247,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
       });
   }
 
-  navigateToPreviousPage() {
+  async navigateToPreviousPage() {
     if (this.shouldGenerateEndTelemetry) {
       this.generateQRSessionEndEvent(this.source, this.dialCode);
     }
@@ -256,7 +256,16 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
       if ((this.source === PageId.PERMISSION || this.source === PageId.ONBOARDING_PROFILE_PREFERENCES)
         && this.appGlobalService.isOnBoardingCompleted) {
         if (this.appGlobalService.isProfileSettingsCompleted || !this.appGlobalService.DISPLAY_ONBOARDING_CATEGORY_PAGE) {
-          this.router.navigate([`/${RouterLinks.TABS}`], { state: { loginMode: 'guest' } });
+          if (await this.commonUtilService.isDeviceLocationAvailable()) {
+            this.router.navigate([`/${RouterLinks.TABS}`], { state: { loginMode: 'guest' } });
+          } else {
+            const navigationExtras: NavigationExtras = {
+              state: {
+                isShowBackButton: false
+              }
+            };
+            this.navCtrl.navigateForward([`/${RouterLinks.DISTRICT_MAPPING}`], navigationExtras);
+          }
         } else {
           this.router.navigate([`/${RouterLinks.PROFILE_SETTINGS}`], { state: { isCreateNavigationStack: false, hideBackButton: true } });
         }
@@ -341,7 +350,8 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
     if (this.loader) {
       this.loader.dismiss();
     }
-    if (this.isDialCodeSearch && !this.appGlobalService.isOnBoardingCompleted && (this.parentContent || content)) {
+
+    if (this.isDialCodeSearch && !this.appGlobalService.isOnBoardingCompleted && await this.appGlobalService.getProfileSettingsStatus()) {
       this.appGlobalService.setOnBoardingCompleted();
     }
 

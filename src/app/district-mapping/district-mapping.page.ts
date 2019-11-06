@@ -60,17 +60,17 @@ export class DistrictMappingPage implements OnInit {
       this.isShowBackButton = this.router.getCurrentNavigation().extras.state.isShowBackButton;
       if (this.router.getCurrentNavigation().extras.state.ipLocationData) {
         if (this.router.getCurrentNavigation().extras.state.ipLocationData.state) {
-        this.isautoPopulated = true;
-        this.ipLocationData = this.router.getCurrentNavigation().extras.state.ipLocationData;
-        this.ipLocationState = this.ipLocationData.state;
-        this.ipLocationDistrict = this.ipLocationData.district;
-        this.telemetryGeneratorService.generateInteractTelemetry(
-          InteractType.OTHER,
-          InteractSubtype.AUTO_POPULATED_LOCATION,
-          Environment.HOME,
-          PageId.DISTRICT_MAPPING,
-          undefined,
-          { isAutoPopulated: this.isautoPopulated });
+          this.isautoPopulated = true;
+          this.ipLocationData = this.router.getCurrentNavigation().extras.state.ipLocationData;
+          this.ipLocationState = this.ipLocationData.state;
+          this.ipLocationDistrict = this.ipLocationData.district;
+          this.telemetryGeneratorService.generateInteractTelemetry(
+            InteractType.OTHER,
+            InteractSubtype.AUTO_POPULATED_LOCATION,
+            Environment.HOME,
+            PageId.DISTRICT_MAPPING,
+            undefined,
+            { isAutoPopulated: this.isautoPopulated });
      }
     }
     }
@@ -147,13 +147,17 @@ export class DistrictMappingPage implements OnInit {
     };
     this.profileService.searchLocation(req).subscribe(async (success) => {
       const locations = success;
-      loader.dismiss();
-      loader = undefined;
       if (locations && Object.keys(locations).length) {
         this.stateList = locations;
+        loader.dismiss();
+        loader = undefined;
         if (this.ipLocationState) {
+          let loaderState =  await this.commonUtilService.getLoader();
+          await loaderState.present();
           for (const element of this.stateList) {
             if (element.name === this.ipLocationState) {
+              await loaderState.dismiss();
+              loaderState = undefined;
               this.stateName = element.name;
               this.getDistrict(element.id);
               break;
@@ -161,6 +165,8 @@ export class DistrictMappingPage implements OnInit {
           }
         }
       } else {
+        loader.dismiss();
+        loader = undefined;
         this.commonUtilService.showToast(this.commonUtilService.translateMessage('NO_DATA_FOUND'));
       }
     }, async (error) => {
@@ -184,11 +190,11 @@ export class DistrictMappingPage implements OnInit {
       };
       this.profileService.searchLocation(req).subscribe(async (success) => {
         const districtsTemp = success;
-        loader.dismiss();
-        loader = undefined;
         if (districtsTemp && Object.keys(districtsTemp).length) {
           this.districtList = districtsTemp;
-          if (this.ipLocationDistrict) {
+          loader.dismiss();
+          loader = undefined;
+          if (this.ipLocationDistrict && this.ipLocationDistrict !== null) {
             this.districtList.forEach(element => {
               if (element.name === this.ipLocationDistrict) {
                 this.districtName = element.name;
@@ -197,6 +203,8 @@ export class DistrictMappingPage implements OnInit {
             });
           }
         } else {
+          loader.dismiss();
+          loader = undefined;
           this.commonUtilService.showToast(this.commonUtilService.translateMessage('NO_DATA_FOUND'));
         }
       }, async (error) => {
@@ -252,7 +260,7 @@ export class DistrictMappingPage implements OnInit {
           // });
           this.preferences.putString(PreferenceKey.DEVICE_LOCATION, JSON.stringify(locationMap)).toPromise()
             .then(() => {
-              this.router.navigate(['/tabs'], navigationExtras);
+                this.router.navigate(['/tabs'], navigationExtras);
             });
         }
       });

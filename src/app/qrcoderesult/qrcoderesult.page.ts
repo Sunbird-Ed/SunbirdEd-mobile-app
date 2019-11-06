@@ -213,7 +213,7 @@ export class QrcoderesultPage implements OnDestroy {
     }
   }
 
-  handleBackButton(clickSource) {
+ async handleBackButton(clickSource) {
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,
       clickSource,
@@ -222,8 +222,17 @@ export class QrcoderesultPage implements OnDestroy {
     if (this.source === PageId.LIBRARY || this.source === PageId.COURSES || !this.isSingleContent) {
       this.location.back();
     } else if (this.isSingleContent && this.appGlobalService.isProfileSettingsCompleted) {
-      const navigationExtras: NavigationExtras = { state: { loginMode: 'guest' } };
-      this.router.navigate([`/${RouterLinks.TABS}`], navigationExtras);
+      if (await this.commonUtilService.isDeviceLocationAvailable()) {
+        const navigationExtras: NavigationExtras = { state: { loginMode: 'guest' } };
+        this.router.navigate([`/${RouterLinks.TABS}`], navigationExtras);
+      } else {
+        const navigationExtras: NavigationExtras = {
+          state: {
+            isShowBackButton: false
+          }
+        };
+        this.navCtrl.navigateForward([`/${RouterLinks.DISTRICT_MAPPING}`], navigationExtras);
+      }
     } else if (this.appGlobalService.isGuestUser && this.isSingleContent && !this.appGlobalService.isProfileSettingsCompleted) {
       const navigationExtras: NavigationExtras = { state: { isCreateNavigationStack: false, hideBackButton: true } };
       this.router.navigate([`/${RouterLinks.PROFILE_SETTINGS}`], navigationExtras);
@@ -237,7 +246,7 @@ export class QrcoderesultPage implements OnDestroy {
     const request: ChildContentRequest = { contentId: this.identifier, hierarchyInfo: [] };
     this.contentService.getChildContents(
       request).toPromise()
-      .then((data: Content) => {
+      .then(async (data: Content) => {
         if (data && data.contentData) {
           this.childrenData = data.children;
         }
@@ -255,7 +264,17 @@ export class QrcoderesultPage implements OnDestroy {
             PageId.DIAL_LINKED_NO_CONTENT,
             Environment.HOME);
           if (this.isProfileUpdated) {
-             this.navCtrl.navigateBack([RouterLinks.TABS]);
+             console.log('qrcodeREsultTbas', await this.commonUtilService.isDeviceLocationAvailable());
+             if (!await this.commonUtilService.isDeviceLocationAvailable()) {
+              const navigationExtras: NavigationExtras = {
+                state: {
+                  isShowBackButton: false
+                }
+              };
+              this.navCtrl.navigateForward([`/${RouterLinks.DISTRICT_MAPPING}`], navigationExtras);
+             } else {
+              this.navCtrl.navigateBack([RouterLinks.TABS]);
+             }
              this.commonUtilService.showContentComingSoonAlert(this.source);
             } else {
               this.commonUtilService.showContentComingSoonAlert(this.source);
