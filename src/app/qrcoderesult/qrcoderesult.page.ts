@@ -264,7 +264,6 @@ export class QrcoderesultPage implements OnDestroy {
             PageId.DIAL_LINKED_NO_CONTENT,
             Environment.HOME);
           if (this.isProfileUpdated) {
-             console.log('qrcodeREsultTbas', await this.commonUtilService.isDeviceLocationAvailable());
              if (!await this.commonUtilService.isDeviceLocationAvailable()) {
               const navigationExtras: NavigationExtras = {
                 state: {

@@ -60,7 +60,6 @@ export class GuestProfilePage implements OnInit {
     private router: Router
   ) { }
 
-
   ngOnInit() {
     this.selectedLanguage = this.translate.currentLang;
 
@@ -104,7 +103,6 @@ export class GuestProfilePage implements OnInit {
     this.events.unsubscribe('update_header');
   }
 
-
   async refreshProfileData(refresher: any = false, showLoader: boolean = true) {
     this.loader = await this.commonUtilService.getLoader();
 
@@ -114,7 +112,10 @@ export class GuestProfilePage implements OnInit {
     if (refresher) {
       this.telemetryGeneratorService.generatePullToRefreshTelemetry(PageId.GUEST_PROFILE, Environment.HOME);
     }
-    this.deviceLocation = JSON.parse(await this.preferences.getString(PreferenceKey.DEVICE_LOCATION).toPromise()) || '';
+    const deviceLocationInfo = await this.preferences.getString(PreferenceKey.DEVICE_LOCATION).toPromise();
+    if (deviceLocationInfo) {
+      this.deviceLocation = JSON.parse(deviceLocationInfo);
+    }
 
     this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise()
       .then((res: any) => {
@@ -151,7 +152,6 @@ export class GuestProfilePage implements OnInit {
     };
     this.router.navigate([RouterLinks.GUEST_EDIT], navigationExtras);
   }
-
 
   getSyllabusDetails() {
     let selectedFrameworkId = '';
@@ -249,7 +249,13 @@ export class GuestProfilePage implements OnInit {
       Environment.HOME,
       PageId.GUEST_PROFILE);
 
-    this.router.navigate([RouterLinks.DISTRICT_MAPPING]);
+    const navigationExtras: NavigationExtras = {
+      state: {
+        isShowBackButton: true,
+        source: PageId.GUEST_PROFILE
+      }
+    };
+    this.router.navigate([RouterLinks.DISTRICT_MAPPING], navigationExtras);
   }
-}
 
+}

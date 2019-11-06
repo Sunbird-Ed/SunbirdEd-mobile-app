@@ -592,9 +592,9 @@ export class ProfileSettingsPage implements OnInit {
         }
         this.events.publish('refresh:profile');
         this.appGlobalService.guestUserProfile = res;
-        setTimeout(() => {
+        setTimeout(async () => {
           this.commonUtilService.showToast('PROFILE_UPDATE_SUCCESS');
-          if (this.commonUtilService.isDeviceLocationAvailable()) {
+          if (await this.commonUtilService.isDeviceLocationAvailable()) {
             this.router.navigate(['/tabs']);
           } else {
             const navigationExtras: NavigationExtras = {
