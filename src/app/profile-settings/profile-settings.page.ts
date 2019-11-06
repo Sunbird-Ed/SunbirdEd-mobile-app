@@ -22,7 +22,6 @@ import {
   ProfileService,
   ProfileType,
   SharedPreferences,
-  InteractSubType, 
   DeviceRegisterService
 } from 'sunbird-sdk';
 import {
