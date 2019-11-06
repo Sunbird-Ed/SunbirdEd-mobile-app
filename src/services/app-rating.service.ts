@@ -31,19 +31,19 @@ export class AppRatingService {
   }
 
   createFolder(rate) {
-    this.fileCtrl.createDir(StoreRating.DEVICE_FOLDER_PATH, StoreRating.FOLDER_NAME, true)
+    this.fileCtrl.createDir(cordova.file.dataDirectory, StoreRating.FOLDER_NAME, true)
       .then(() => {
         this.writeFile(rate);
       });
   }
 
   writeFile(rate) {
-    this.fileCtrl.writeFile(StoreRating.DEVICE_FOLDER_PATH + '/' + StoreRating.FOLDER_NAME,
+    this.fileCtrl.writeFile(cordova.file.dataDirectory + '/' + StoreRating.FOLDER_NAME,
       StoreRating.FILE_NAME, StoreRating.FILE_TEXT + ' = ' + rate, { replace: true }).then(() => { });
   }
 
   checkReadFile() {
-    return this.fileCtrl.readAsText(StoreRating.DEVICE_FOLDER_PATH + '/' + StoreRating.FOLDER_NAME,
+    return this.fileCtrl.readAsText(cordova.file.dataDirectory + '/' + StoreRating.FOLDER_NAME,
       StoreRating.FILE_NAME).then(() => { return true; }).catch(() => { return false; });
   }
   async rateLaterClickedCount() {

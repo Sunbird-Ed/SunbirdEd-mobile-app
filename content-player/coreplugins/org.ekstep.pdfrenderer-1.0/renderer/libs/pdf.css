@@ -31,8 +31,8 @@
   }
   
   #pdf-buttons {
-    width: 30%;
-    float: left;
+    width: 3%;
+    float: right;
   }
   
   #pdf-next {
@@ -73,15 +73,22 @@
     height: auto;
   }
   
-  #page-loader {
-    height: 100px;
+   #page-loader {
+    /*height: 100px;
     line-height: 100px;
     text-align: center;
     display: none;
     color: #999999;
     font-size: 13px;
     padding-top: 1%;
-  }
+*/
+    display: none;
+    text-align: center;
+    color: #bd1515;
+    font-size: 13px;
+    line-height: 100px;
+    height: 100px;
+  } 
   
   #htmldiv {
     height: 100%;
@@ -128,7 +135,6 @@
   }
   .sb-pdf-container .download-pdf-image {
   margin: 0 1.25% 0 7.75%;
-  background: white;
   cursor: pointer;
   border-radius: 4px;
   height: 100%;
@@ -282,6 +288,53 @@
     width: 48px;
   }
   }
+
+  .canvasWrapper canvas{
+    box-shadow: 0px 0px 6px 0px #777474;
+    margin-top: 9%;
+  }
+
+  .page{
+    margin: 1px auto -8px auto;
+    position: relative;
+  }
+
+.page .loadingIcon{
+  background: url('../assets/pdfSpinner.gif') no-repeat center 50%;
+  display: block;
+  left: 0;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  margin: auto;
+  width: 100px;
+  height: 100px;
+}
+
+/* .loadingIcon{
+  position: relative;
+  top: 50%;
+  left: 50%;
+  border: 8px solid #f3f3f3;
+  border-radius: 20%;
+  border-top: 8px solid rgb(90, 90, 192);
+  border-bottom: 8px solid rgb(90, 90, 192);
+  width: 60px;
+  height: 60px;
+  -webkit-animation: spin 2s linear infinite;
+  animation: spin 2s linear infinite;
+}
+
+@-webkit-keyframes spin {
+  0% { -webkit-transform: rotate(0deg); }
+  100% { -webkit-transform: rotate(360deg); }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); } */
+  
   /* 
   @media screen and (max-width: 1024px) {
   .hamberger-menu img, .sb-pdf-container .download-pdf-image img {
@@ -294,3 +347,5 @@
       right: 10.5%;
   }
   } */
+
+  

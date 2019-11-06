@@ -11,7 +11,8 @@
             {"type": "js", "src": "renderer/libs/pdf.js"},
             {"type": "js", "src": "renderer/libs/compatibility.js"},
             {"type": "css", "src": "renderer/libs/pdf.css"},
-            {"type": "js", "src": "renderer/libs/hammer.js"}
+            {"type": "js", "src": "renderer/libs/hammer.js"},
+            {"type": "js", "src": "renderer/libs/pdf_viewer.js"}
         ]
     },
     "dependencies": [

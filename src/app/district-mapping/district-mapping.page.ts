@@ -1,6 +1,6 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { LocationSearchCriteria, ProfileService,
-   SharedPreferences, Profile, DeviceRegisterRequest , DeviceRegisterService } from 'sunbird-sdk';
+   SharedPreferences, Profile, DeviceRegisterRequest , DeviceRegisterService, TelemetryService } from 'sunbird-sdk';
 import { Location as loc, PreferenceKey, RouterLinks } from '../../app/app.constant';
 import { AppHeaderService, CommonUtilService, AppGlobalService } from '@app/services';
 import { NavigationExtras, Router } from '@angular/router';
@@ -8,6 +8,15 @@ import { Location } from '@angular/common';
 import { Events } from '@ionic/angular';
 import { Subscription } from 'rxjs';
 import { Platform } from '@ionic/angular';
+import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
+import {
+    Environment,
+    ImpressionSubtype,
+    ImpressionType,
+    InteractSubtype,
+    InteractType,
+    PageId
+} from '@app/services/telemetry-constants';
 
 @Component({
   selector: 'app-district-mapping',
@@ -27,44 +36,82 @@ export class DistrictMappingPage implements OnInit {
   isShowBackButton: boolean = true;
   backButtonFunc: Subscription;
   showNotNowFlag: boolean = false;
+  ipLocationData: any;
+  ipLocationDistrict: string;
+  ipLocationState: string;
+  isautoPopulated: boolean = false;
+  isLocationChanged: boolean = false;
 
   constructor(
     public headerService: AppHeaderService,
     public commonUtilService: CommonUtilService,
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
-    @Inject('DEVICE_REGISTER_SERVICE')private deviceRegisterService: DeviceRegisterService,
+    @Inject('DEVICE_REGISTER_SERVICE') private deviceRegisterService: DeviceRegisterService,
     public router: Router,
     public location: Location,
     public appGlobalService: AppGlobalService,
     public events: Events,
     public platform: Platform,
+    public telemetryGeneratorService: TelemetryGeneratorService
   ) {
     if (this.router.getCurrentNavigation().extras.state) {
       this.profile = this.router.getCurrentNavigation().extras.state.profile;
       this.isShowBackButton = this.router.getCurrentNavigation().extras.state.isShowBackButton;
+      if (this.router.getCurrentNavigation().extras.state.ipLocationData) {
+        if (this.router.getCurrentNavigation().extras.state.ipLocationData.state) {
+        this.isautoPopulated = true;
+        this.ipLocationData = this.router.getCurrentNavigation().extras.state.ipLocationData;
+        this.ipLocationState = this.ipLocationData.state;
+        this.ipLocationDistrict = this.ipLocationData.district;
+        this.telemetryGeneratorService.generateInteractTelemetry(
+          InteractType.OTHER,
+          InteractSubtype.AUTO_POPULATED_LOCATION,
+          Environment.HOME,
+          PageId.DISTRICT_MAPPING,
+          undefined,
+          { isAutoPopulated: this.isautoPopulated });
+     }
+    }
     }
   }
 
   ngOnInit() {
     this.handleDeviceBackButton();
     this.checkLocationMandatory();
+    this.telemetryGeneratorService.generateImpressionTelemetry(
+      ImpressionType.VIEW,
+      ImpressionSubtype.DISTRICT_LOCATION_MAPPING,
+      PageId.DISTRICT_MAPPING,
+      Environment.HOME);
   }
 
   selectState(name, id, code) {
     this.stateName = name;
     this.districtName = '';
     this.showStates = false;
+    // this.showDistrict = false;
     this.getDistrict(id);
     this.stateCode = code;
+    if (this.isautoPopulated) {
+      this.isLocationChanged = true;
+    }
   }
 
   selectDistrict(name, code) {
+    if (this.isautoPopulated) {
+      this.isLocationChanged = true;
+    }
     this.districtName = name;
     this.showDistrict = false;
     this.districtCode = code;
   }
-
+  stateIconClicked() {
+    this.stateName = '';
+  }
+  districtIconClicked() {
+    this.districtName = '';
+  }
   goBack() {
     this.location.back();
   }
@@ -104,6 +151,15 @@ export class DistrictMappingPage implements OnInit {
       loader = undefined;
       if (locations && Object.keys(locations).length) {
         this.stateList = locations;
+        if (this.ipLocationState) {
+          for (const element of this.stateList) {
+            if (element.name === this.ipLocationState) {
+              this.stateName = element.name;
+              this.getDistrict(element.id);
+              break;
+            }
+          }
+        }
       } else {
         this.commonUtilService.showToast(this.commonUtilService.translateMessage('NO_DATA_FOUND'));
       }
@@ -117,7 +173,7 @@ export class DistrictMappingPage implements OnInit {
 
   async getDistrict(pid: string) {
     if (this.stateName) {
-      this.showDistrict = !this.showDistrict;
+      // this.showDistrict = !this.showDistrict;
       let loader = await this.commonUtilService.getLoader();
       loader.present();
       const req: LocationSearchCriteria = {
@@ -132,6 +188,14 @@ export class DistrictMappingPage implements OnInit {
         loader = undefined;
         if (districtsTemp && Object.keys(districtsTemp).length) {
           this.districtList = districtsTemp;
+          if (this.ipLocationDistrict) {
+            this.districtList.forEach(element => {
+              if (element.name === this.ipLocationDistrict) {
+                this.districtName = element.name;
+                this.showDistrict = false;
+              }
+            });
+          }
         } else {
           this.commonUtilService.showToast(this.commonUtilService.translateMessage('NO_DATA_FOUND'));
         }
@@ -175,23 +239,31 @@ export class DistrictMappingPage implements OnInit {
           };
           locationMap['state'] = this.stateName;
           locationMap['district'] = this.districtName;
+          // this.commonUtilService.networkAvailability$.subscribe(() => {
+          const req: DeviceRegisterRequest = {
+            userDeclaredLocation: {
+              state: this.stateName,
+              district: this.districtName,
+            }
+          };
+          this.deviceRegisterService.registerDevice(req).toPromise().then((response) => {
+            console.log('response is =>', response);
+          });
+          // });
           this.preferences.putString(PreferenceKey.DEVICE_LOCATION, JSON.stringify(locationMap)).toPromise()
             .then(() => {
               this.router.navigate(['/tabs'], navigationExtras);
             });
         }
       });
-    this.commonUtilService.networkAvailability$.subscribe(() => {
-      const req: DeviceRegisterRequest = {
-        userDeclaredLocation: {
-          state: this.stateName,
-          district: this.districtName,
-        }
-      };
-      this.deviceRegisterService.registerDevice(req).toPromise().then((response) => {
-        console.log('response is =>', response);
-      });
-    });
+
+    this.telemetryGeneratorService.generateInteractTelemetry(
+      InteractType.OTHER,
+      InteractSubtype.AUTO_POPULATED_LOCATION,
+      Environment.HOME,
+      PageId.DISTRICT_MAPPING,
+      undefined,
+      { isLocationChanged: this.isLocationChanged });
   }
 
   async checkLocationMandatory() {

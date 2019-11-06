@@ -1,4 +1,4 @@
-<ion-content no-padding class="sb-textbook-toc">
+<ion-content [scrollEvents]="true" no-padding class="sb-textbook-toc">
     <section *ngIf=" childrenData && childrenData?.length">
         <ion-card class="sb-accordian-card" *ngFor="let item of childrenData;  let i = index;">
           <ion-grid class="sb-accordian-header">
@@ -26,7 +26,7 @@
           <div class="sb-hidden-content px-16 pt-8" *ngIf="(item?.children && item?.children?.length)">
             <div *ngFor="let firstChildren of item?.children; let j = index;">
               <!-- <div class="separator-line"></div> -->
-              <div class="sb-topics-container sb-topics-container-toc"  #stickyPillsRef>
+              <div class="sb-topics-container sb-topics-container-toc">
                 <app-collection-child
                   [childData]="firstChildren" [index]="j" [depth]="depth" [rootUnitId]="item.identifier" [isTextbookTocPage] = "true"
                   [corRelationList]="corRelationList" [isDepthChild]="isDepthChild" [breadCrumb]="breadCrumb" [stckyUnitTitle]="stckyUnitTitle" 

@@ -926,7 +926,7 @@ export class CollectionDetailEtbPage implements OnInit {
         }
 
         // Get child content
-        if (event.type === ContentEventType.IMPORT_COMPLETED) {
+        if (event.type === ContentEventType.CONTENT_EXTRACT_COMPLETED) {
           const contentImportedEvent = event as ContentImportCompleted;
 
           if (this.queuedIdentifiers.length && this.isDownloadStarted) {
