@@ -46,7 +46,6 @@ export class PlayerPage implements OnInit, PlayerActionHandlerDelegate {
 
   ngOnInit() {
   }
-
   ionViewWillEnter() {
     this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
     this.statusBar.hide();
@@ -74,6 +73,9 @@ export class PlayerPage implements OnInit, PlayerActionHandlerDelegate {
         this.previewElement.nativeElement.contentWindow['cordova'] = window['cordova'];
         this.previewElement.nativeElement.contentWindow['Media'] = window['Media'];
         this.previewElement.nativeElement.contentWindow['initializePreview'](this.config);
+        this.previewElement.nativeElement.addEventListener('question:score:submit', resp => {
+            console.log('Player Response', resp);
+        });
       }, 1000);
     };
 
@@ -98,6 +100,9 @@ export class PlayerPage implements OnInit, PlayerActionHandlerDelegate {
     if (this.backButtonSubscription) {
       this.backButtonSubscription.unsubscribe();
     }
+    this.previewElement.nativeElement.removeEventListener('question:score:submit', () => {
+        console.log('Removed Listener!');
+    });
   }
 
   /**
