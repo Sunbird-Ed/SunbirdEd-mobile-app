@@ -138,7 +138,7 @@ export class GuestProfilePage implements OnInit {
     }
   }
 
-  editGuestProfile(isChangeRoleRequest = false) {
+  editGuestProfile(isChangeRoleRequest: string, eventName) {
     const navigationExtras: NavigationExtras = {
       state: {
         profile: this.profile,
@@ -146,6 +146,13 @@ export class GuestProfilePage implements OnInit {
         isChangeRoleRequest
       }
     };
+    const values = new Map();
+    values['Option'] = eventName;
+    this.telemetryGeneratorService.generateInteractTelemetry(
+      InteractType.TOUCH,
+      InteractSubtype.EDIT_CLICKED,
+      Environment.HOME,
+      PageId.GUEST_PROFILE,undefined,values);
     this.router.navigate([RouterLinks.GUEST_EDIT], navigationExtras);
   }
 
