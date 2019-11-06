@@ -235,6 +235,7 @@ export class CollectionDetailEtbPage implements OnInit {
   importProgressMessage: string;
 
   public telemetryObject: TelemetryObject;
+  public rollUpMap: { [key: string]: Rollup } = {};
 
   constructor(
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
@@ -651,7 +652,8 @@ export class CollectionDetailEtbPage implements OnInit {
         isChildContent: isChild,
         destinationFolder: this.storageService.getStorageDestinationDirectoryPath(),
         contentId: value,
-        correlationData: this.corRelationList ? this.corRelationList : []
+        correlationData: this.corRelationList ? this.corRelationList : [],
+        rollUp: this.rollUpMap[value]
       });
     });
 
@@ -791,7 +793,7 @@ export class CollectionDetailEtbPage implements OnInit {
               this.textbookTocService.resetTextbookIds();
             }, 0);
           }
-          
+
           this.telemetryGeneratorService.generateInteractTelemetry(
             InteractType.OTHER,
             InteractSubtype.IMPORT_COMPLETED,
@@ -829,6 +831,7 @@ export class CollectionDetailEtbPage implements OnInit {
       }
       if (value.isAvailableLocally === false) {
         this.downloadIdentifiers.add(value.contentData.identifier);
+        this.rollUpMap[value.contentData.identifier] = ContentUtil.generateRollUp(value.hierarchyInfo, undefined);
       }
 
     });
