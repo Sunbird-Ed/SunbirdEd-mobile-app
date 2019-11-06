@@ -11,7 +11,7 @@ import { Network } from '@ionic-native/network/ngx';
 import {
   ErrorEventType, EventNamespace, EventsBusService, SharedPreferences,
   SunbirdSdk, TelemetryAutoSyncUtil, TelemetryService, NotificationService, GetSystemSettingsRequest, SystemSettings, SystemSettingsService,
-  CodePushExperimentService, AuthEventType, CorrelationData, Profile
+  CodePushExperimentService, AuthEventType, CorrelationData, Profile, DeviceRegisterService
 } from 'sunbird-sdk';
 
 import {
@@ -72,6 +72,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     @Inject('NOTIFICATION_SERVICE') private notificationServices: NotificationService,
     @Inject('SYSTEM_SETTINGS_SERVICE') private systemSettingsService: SystemSettingsService,
     @Inject('CODEPUSH_EXPERIMENT_SERVICE') private codePushExperimentService: CodePushExperimentService,
+    @Inject('DEVICE_REGISTER_SERVICE') private deviceRegisterService: DeviceRegisterService,
     private platform: Platform,
     private statusBar: StatusBar,
     private translate: TranslateService,
@@ -117,6 +118,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.checkAppUpdateAvailable();
       this.makeEntryInSupportFolder();
       await this.getSelectedLanguage();
+      await this.getDeviceLocation();
       if (this.appGlobalService.getUserId()) {
         this.reloadSigninEvents();
       } else {
@@ -723,5 +725,29 @@ export class AppComponent implements OnInit, AfterViewInit {
   private async showAppWalkThroughScreen() {
     const showAppWalkthrough: boolean = await this.preferences.getBoolean('coach_mark_seen').toPromise();
     await this.preferences.putBoolean('coach_mark_seen', showAppWalkthrough).toPromise();
+  }
+
+  private async getDeviceLocation() {
+    if (!(await this.commonUtilService.isDeviceLocationAvailable())
+      && !(await this.commonUtilService.isIpLocationAvailable())) {
+      this.deviceRegisterService.getDeviceProfile().toPromise().then((response) => {
+        console.log('Response Device Profile', response);
+        if (response.userDeclaredLocation) {
+          const locationMap = new Map();
+          locationMap['state'] = response.userDeclaredLocation.state;
+          locationMap['district'] = response.userDeclaredLocation.district;
+          this.preferences.putString(PreferenceKey.DEVICE_LOCATION, JSON.stringify(locationMap)).toPromise();
+        } else if (response.ipLocation) {
+          const iplocationMap = new Map();
+          if (response.ipLocation.state) {
+            iplocationMap['state'] = response.ipLocation.state;
+            if (response.ipLocation.district) {
+              iplocationMap['district'] = response.ipLocation.district;
+            }
+          }
+          this.preferences.putString(PreferenceKey.IPLOCATION, JSON.stringify(iplocationMap)).toPromise();
+        }
+      });
+    }
   }
 }

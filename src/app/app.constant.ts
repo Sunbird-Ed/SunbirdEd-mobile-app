@@ -209,6 +209,7 @@ export class PreferenceKey {
     public static readonly COURSE_DATA_KEY = 'course_data';
     public static readonly BATCH_DETAIL_KEY = 'batch_detail';
     public static readonly IS_LOCATION_MANDATORY = 'is_location_mandatory';
+    public static readonly IPLOCATION = 'IpLocation';
 }
 
 export class GenericAppConfig {

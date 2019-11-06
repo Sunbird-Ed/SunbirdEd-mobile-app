@@ -431,4 +431,13 @@ export class CommonUtilService implements OnDestroy {
             return false;
         }
     }
+
+    async isIpLocationAvailable(): Promise<boolean> {
+        const deviceLoc = await this.preferences.getString(PreferenceKey.IPLOCATION).toPromise();
+        if (deviceLoc) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 }

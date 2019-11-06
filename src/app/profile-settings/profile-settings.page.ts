@@ -501,11 +501,6 @@ export class ProfileSettingsPage implements OnInit {
               this.preferences.putString(PreferenceKey.DEVICE_LOCATION, JSON.stringify(locationMap)).toPromise();
             }
           });
-      } else if (response.ipLocation.state) {
-        this.ipLocationAvailable = true;
-        this.ipLocationData = response.ipLocation;
-      } else if (!response.ipLocation.state) {
-        this.ipLocationAvailable = false;
       }
     });
   }
@@ -624,7 +619,6 @@ export class ProfileSettingsPage implements OnInit {
             const navigationExtras: NavigationExtras = {
               state: {
                 isShowBackButton: true,
-                ipLocationData: this.ipLocationData
               }
             };
             this.router.navigate([RouterLinks.DISTRICT_MAPPING], navigationExtras);
