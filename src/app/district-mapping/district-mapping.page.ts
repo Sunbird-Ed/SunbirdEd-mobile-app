@@ -35,14 +35,14 @@ export class DistrictMappingPage implements OnInit {
   showDistrict: boolean;
   stateCode;
   districtCode;
-  isShowBackButton: boolean = true;
+  isShowBackButton = true;
   backButtonFunc: Subscription;
-  showNotNowFlag: boolean = false;
-  ipLocationData: any;
-  ipLocationDistrict: string;
-  ipLocationState: string;
-  isautoPopulated: boolean = false;
-  isLocationChanged: boolean = false;
+  showNotNowFlag = false;
+  availableLocationData: any;
+  availableLocationDistrict: string;
+  availableLocationState: string;
+  isAutoPopulated = false;
+  isLocationChanged = false;
 
   constructor(
     public headerService: AppHeaderService,
@@ -80,13 +80,13 @@ export class DistrictMappingPage implements OnInit {
     // this.showDistrict = false;
     this.getDistrict(id);
     this.stateCode = code;
-    if (this.isautoPopulated) {
+    if (this.isAutoPopulated) {
       this.isLocationChanged = true;
     }
   }
 
   selectDistrict(name, code) {
-    if (this.isautoPopulated) {
+    if (this.isAutoPopulated) {
       this.isLocationChanged = true;
     }
     this.districtName = name;
@@ -110,25 +110,23 @@ export class DistrictMappingPage implements OnInit {
   }
 
   async checkLocationAvailability() {
-    if (await this.commonUtilService.isDeviceLocationAvailable &&
-      await this.preferences.getString(PreferenceKey.DEVICE_LOCATION).toPromise()) {
-        this.isautoPopulated = true;
-        this.ipLocationData = JSON.parse(await this.preferences.getString(PreferenceKey.DEVICE_LOCATION).toPromise());
-        this.ipLocationState = this.ipLocationData.state;
-        this.ipLocationDistrict = this.ipLocationData.district;
-    } else if (await this.commonUtilService.isIpLocationAvailable &&
-      await this.preferences.getString(PreferenceKey.IP_LOCATION).toPromise()) {
-      this.isautoPopulated = true;
-      this.ipLocationData = JSON.parse(await this.preferences.getString(PreferenceKey.IP_LOCATION).toPromise());
-      this.ipLocationState = this.ipLocationData.state;
-      this.ipLocationDistrict = this.ipLocationData.district;
+    if (await this.commonUtilService.isDeviceLocationAvailable()) {
+        this.isAutoPopulated = true;
+        this.availableLocationData = JSON.parse(await this.preferences.getString(PreferenceKey.DEVICE_LOCATION).toPromise());
+        this.availableLocationState = this.availableLocationData.state;
+        this.availableLocationDistrict = this.availableLocationData.district;
+    } else if (await this.commonUtilService.isIpLocationAvailable()) {
+      this.isAutoPopulated = true;
+      this.availableLocationData = JSON.parse(await this.preferences.getString(PreferenceKey.IP_LOCATION).toPromise());
+      this.availableLocationState = this.availableLocationData.state;
+      this.availableLocationDistrict = this.availableLocationData.district;
     }
   }
 
   handleDeviceBackButton() {
     if (this.isShowBackButton) {
       this.backButtonFunc = this.platform.backButton.subscribeWithPriority(10, () => {
-        this.location.back;
+        this.location.back();
       });
     }
   }
@@ -156,11 +154,11 @@ export class DistrictMappingPage implements OnInit {
         this.stateList = locations;
         loader.dismiss();
         loader = undefined;
-        if (this.ipLocationState) {
+        if (this.availableLocationState) {
           let loaderState = await this.commonUtilService.getLoader();
           await loaderState.present();
           for (const element of this.stateList) {
-            if (element.name === this.ipLocationState) {
+            if (element.name === this.availableLocationState) {
               await loaderState.dismiss();
               loaderState = undefined;
               this.stateName = element.name;
@@ -198,9 +196,9 @@ export class DistrictMappingPage implements OnInit {
           this.districtList = districtsTemp;
           loader.dismiss();
           loader = undefined;
-          if (this.ipLocationDistrict && this.ipLocationDistrict !== null) {
+          if (this.availableLocationDistrict && this.availableLocationDistrict !== null) {
             this.districtList.forEach(element => {
-              if (element.name === this.ipLocationDistrict) {
+              if (element.name === this.availableLocationDistrict) {
                 this.districtName = element.name;
                 this.showDistrict = false;
               }
@@ -302,7 +300,7 @@ export class DistrictMappingPage implements OnInit {
       Environment.HOME,
       PageId.DISTRICT_MAPPING,
       undefined,
-      { isAutoPopulated: this.isautoPopulated });
+      { isAutoPopulated: this.isAutoPopulated });
   }
 }
 
