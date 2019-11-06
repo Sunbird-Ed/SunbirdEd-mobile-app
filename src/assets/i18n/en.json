@@ -616,5 +616,6 @@
   "ARE_YOU_STATE_TEACHER": "Are you a government school teacher in {{%s}}",
   "TEACHER_PROFILE_VERIFIED": "Teacher profile verified successfully",
   "TEACHER_PROFILE_FAILED": "Could not verify teacher profile as teacher ID entered is incorrect",
-  "INCORRECT_TEACHER_ID_ERROR": "The ID entered is incorrect. Enter the ID again"
+  "INCORRECT_TEACHER_ID_ERROR": "The ID entered is incorrect. Enter the ID again",
+  "DEVICE_LOCATION": "Device Location"
 }
