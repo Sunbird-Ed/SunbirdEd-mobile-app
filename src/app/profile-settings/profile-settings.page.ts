@@ -595,7 +595,7 @@ export class ProfileSettingsPage implements OnInit {
         setTimeout(async () => {
           this.commonUtilService.showToast('PROFILE_UPDATE_SUCCESS');
           if (await this.commonUtilService.isDeviceLocationAvailable()) {
-            this.router.navigate(['/tabs']);
+            this.router.navigate([`/${RouterLinks.TABS}`]);
           } else {
             const navigationExtras: NavigationExtras = {
               state: {

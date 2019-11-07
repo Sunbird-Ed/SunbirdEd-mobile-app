@@ -1,7 +1,7 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import {
   LocationSearchCriteria, ProfileService,
-  SharedPreferences, Profile, DeviceRegisterRequest, DeviceRegisterService, TelemetryService
+  SharedPreferences, Profile, DeviceRegisterRequest, DeviceRegisterService
 } from 'sunbird-sdk';
 import { Location as loc, PreferenceKey, RouterLinks } from '../../app/app.constant';
 import { AppHeaderService, CommonUtilService, AppGlobalService } from '@app/services';
@@ -36,6 +36,7 @@ export class DistrictMappingPage implements OnInit {
   stateCode;
   districtCode;
   isShowBackButton = true;
+  source;
   backButtonFunc: Subscription;
   showNotNowFlag = false;
   availableLocationData: any;
@@ -60,6 +61,7 @@ export class DistrictMappingPage implements OnInit {
     if (this.router.getCurrentNavigation().extras.state) {
       this.profile = this.router.getCurrentNavigation().extras.state.profile;
       this.isShowBackButton = this.router.getCurrentNavigation().extras.state.isShowBackButton;
+      this.source = this.router.getCurrentNavigation().extras.state.source;
     }
   }
 
@@ -74,31 +76,33 @@ export class DistrictMappingPage implements OnInit {
   }
 
   selectState(name, id, code) {
+    this.showStates = false;
     this.stateName = name;
     this.districtName = '';
-    this.showStates = false;
-    // this.showDistrict = false;
-    this.getDistrict(id);
     this.stateCode = code;
-    if (this.isAutoPopulated) {
+    this.getDistrict(id);
+    if (this.isAutoPopulated) { // TODO: Do we need this if.
       this.isLocationChanged = true;
     }
   }
 
   selectDistrict(name, code) {
-    if (this.isAutoPopulated) {
+    if (this.isAutoPopulated) { // TODO: Do we need this if.
       this.isLocationChanged = true;
     }
     this.districtName = name;
-    this.showDistrict = false;
     this.districtCode = code;
+    this.showDistrict = false;
   }
+
   stateIconClicked() {
     this.stateName = '';
   }
+
   districtIconClicked() {
     this.districtName = '';
   }
+
   goBack() {
     this.location.back();
   }
@@ -111,10 +115,10 @@ export class DistrictMappingPage implements OnInit {
 
   async checkLocationAvailability() {
     if (await this.commonUtilService.isDeviceLocationAvailable()) {
-        this.isAutoPopulated = true;
-        this.availableLocationData = JSON.parse(await this.preferences.getString(PreferenceKey.DEVICE_LOCATION).toPromise());
-        this.availableLocationState = this.availableLocationData.state;
-        this.availableLocationDistrict = this.availableLocationData.district;
+      this.isAutoPopulated = true;
+      this.availableLocationData = JSON.parse(await this.preferences.getString(PreferenceKey.DEVICE_LOCATION).toPromise());
+      this.availableLocationState = this.availableLocationData.state;
+      this.availableLocationDistrict = this.availableLocationData.district;
     } else if (await this.commonUtilService.isIpLocationAvailable()) {
       this.isAutoPopulated = true;
       this.availableLocationData = JSON.parse(await this.preferences.getString(PreferenceKey.IP_LOCATION).toPromise());
@@ -126,7 +130,7 @@ export class DistrictMappingPage implements OnInit {
   handleDeviceBackButton() {
     if (this.isShowBackButton) {
       this.backButtonFunc = this.platform.backButton.subscribeWithPriority(10, () => {
-        this.location.back();
+        this.goBack();
       });
     }
   }
@@ -161,9 +165,8 @@ export class DistrictMappingPage implements OnInit {
             if (element.name === this.availableLocationState) {
               await loaderState.dismiss();
               loaderState = undefined;
-              this.stateName = element.name;
+              this.selectState(element.name, element.id, element.code);
               this.generateAutoPopulatedTelemetry();
-              this.getDistrict(element.id);
               break;
             }
           }
@@ -197,12 +200,12 @@ export class DistrictMappingPage implements OnInit {
           loader.dismiss();
           loader = undefined;
           if (this.availableLocationDistrict && this.availableLocationDistrict !== null) {
-            this.districtList.forEach(element => {
+            for (const element of this.districtList) {
               if (element.name === this.availableLocationDistrict) {
-                this.districtName = element.name;
-                this.showDistrict = false;
+                this.selectDistrict(element.name, element.code);
+                break;
               }
-            });
+            }
           }
         } else {
           loader.dismiss();
@@ -219,52 +222,6 @@ export class DistrictMappingPage implements OnInit {
   }
 
   async submit() {
-
-    if (this.appGlobalService.isUserLoggedIn()) {
-      const req = {
-        userId: this.appGlobalService.getCurrentUser().uid || this.profile.uid,
-        locationCodes: [this.stateCode, this.districtCode]
-      };
-      const loader = await this.commonUtilService.getLoader();
-      this.profileService.updateServerProfile(req).toPromise()
-        .then(async () => {
-          await loader.dismiss();
-          this.commonUtilService.showToast(this.commonUtilService.translateMessage('PROFILE_UPDATE_SUCCESS'));
-          this.events.publish('loggedInProfile:update', req);
-          this.router.navigate(['/tabs']);
-        }).catch(async () => {
-          await loader.dismiss();
-          this.commonUtilService.showToast(this.commonUtilService.translateMessage('PROFILE_UPDATE_FAILED'));
-        });
-    }
-
-    this.preferences.getString(PreferenceKey.DEVICE_LOCATION).toPromise()
-      .then(deviceLoc => {
-        if (!deviceLoc) {
-          const locationMap = new Map();
-          const navigationExtras: NavigationExtras = {
-            state: {
-              loginMode: 'guest'
-            }
-          };
-          locationMap['state'] = this.stateName;
-          locationMap['district'] = this.districtName;
-          const req: DeviceRegisterRequest = {
-            userDeclaredLocation: {
-              state: this.stateName,
-              district: this.districtName,
-            }
-          };
-          this.deviceRegisterService.registerDevice(req).toPromise().then((response) => {
-            console.log('response is =>', response);
-          });
-          this.preferences.putString(PreferenceKey.DEVICE_LOCATION, JSON.stringify(locationMap)).toPromise()
-            .then(() => {
-              this.router.navigate(['/tabs'], navigationExtras);
-            });
-        }
-      });
-
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.OTHER,
       InteractSubtype.AUTO_POPULATED_LOCATION,
@@ -272,10 +229,60 @@ export class DistrictMappingPage implements OnInit {
       PageId.DISTRICT_MAPPING,
       undefined,
       { isLocationChanged: this.isLocationChanged });
+
+    if (this.appGlobalService.isUserLoggedIn()) {
+      const req = {
+        userId: this.appGlobalService.getCurrentUser().uid || this.profile.uid,
+        locationCodes: [this.stateCode, this.districtCode]
+      };
+      const loader = await this.commonUtilService.getLoader();
+      await loader.present();
+      this.profileService.updateServerProfile(req).toPromise()
+        .then(async () => {
+          await loader.dismiss();
+          this.commonUtilService.showToast(this.commonUtilService.translateMessage('PROFILE_UPDATE_SUCCESS'));
+          this.events.publish('loggedInProfile:update', req);
+          this.router.navigate([`/${RouterLinks.TABS}`]);
+        }).catch(async () => {
+          await loader.dismiss();
+          this.commonUtilService.showToast(this.commonUtilService.translateMessage('PROFILE_UPDATE_FAILED'));
+        });
+    }
+
+    if (this.source === PageId.GUEST_PROFILE) {
+      await this.saveDeviceLocation();
+      this.events.publish('refresh:profile');
+      this.goBack();
+    } else if (!(await this.commonUtilService.isDeviceLocationAvailable())) {
+      await this.saveDeviceLocation();
+      const navigationExtras: NavigationExtras = {
+        state: {
+          loginMode: 'guest'
+        }
+      };
+      this.router.navigate([`/${RouterLinks.TABS}`], navigationExtras);
+    }
+  }
+
+  async saveDeviceLocation() {
+    const loader = await this.commonUtilService.getLoader();
+    await loader.present();
+    const req: DeviceRegisterRequest = {
+      userDeclaredLocation: {
+        state: this.stateName,
+        district: this.districtName,
+      }
+    };
+    this.deviceRegisterService.registerDevice(req).toPromise();
+
+    const locationMap = new Map();
+    locationMap['state'] = this.stateName;
+    locationMap['district'] = this.districtName;
+    await this.preferences.putString(PreferenceKey.DEVICE_LOCATION, JSON.stringify(locationMap)).toPromise();
+    await loader.dismiss();
   }
 
   async checkLocationMandatory() {
-    const deviceLocation = await this.preferences.getString(PreferenceKey.DEVICE_LOCATION).toPromise();
     let isLocationMandatory = await this.preferences.getString(PreferenceKey.IS_LOCATION_MANDATORY).toPromise();
 
     this.showNotNowFlag = false;
@@ -284,7 +291,7 @@ export class DistrictMappingPage implements OnInit {
       isLocationMandatory = 'TRUE';
     }
 
-    if (!deviceLocation && isLocationMandatory === 'FALSE') {
+    if (!(this.source === PageId.GUEST_PROFILE) && isLocationMandatory === 'FALSE') {
       this.showNotNowFlag = true;
     }
   }
@@ -303,4 +310,3 @@ export class DistrictMappingPage implements OnInit {
       { isAutoPopulated: this.isAutoPopulated });
   }
 }
-
