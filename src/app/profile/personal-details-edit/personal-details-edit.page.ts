@@ -1,6 +1,6 @@
 import { ActivatedRoute, Router } from '@angular/router';
 import { AppHeaderService, CommonUtilService, AppGlobalService, FormAndFrameworkUtilService } from '../../../services';
-import { Component, Inject, OnInit, ViewChild } from '@angular/core';
+import { Component, Inject, OnInit, ViewChild, ChangeDetectorRef } from '@angular/core';
 import { Events, LoadingController } from '@ionic/angular';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
@@ -8,6 +8,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { Location as loc } from '../../app.constant';
 import { LocationSearchCriteria, ProfileService } from 'sunbird-sdk';
 import { Location } from '@angular/common';
+import { Subject } from 'rxjs/Subject';
 
 @Component({
   selector: 'app-personal-details-edit',
@@ -16,8 +17,26 @@ import { Location } from '@angular/common';
 })
 export class PersonalDetailsEditPage implements OnInit {
 
-  stateList = [];
-  districtList = [];
+  private _stateList = [];
+  private _districtList = [];
+
+  get stateList() {
+    return this._stateList;
+  }
+
+  set stateList(v) {
+    this._stateList = v;
+    this.changeDetectionRef.detectChanges();
+  }
+
+  get districtList() {
+    return this._districtList;
+  }
+
+  set districtList(v) {
+    this._districtList = v;
+    this.changeDetectionRef.detectChanges();
+  }
 
   profile: any;
   profileEditForm: FormGroup;
@@ -40,25 +59,22 @@ export class PersonalDetailsEditPage implements OnInit {
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
-    private loadingCtrl: LoadingController,
     public commonUtilService: CommonUtilService,
-    private formAndFrameworkUtilService: FormAndFrameworkUtilService,
     private fb: FormBuilder,
-    private translate: TranslateService,
-    private appGlobalService: AppGlobalService,
     private events: Events,
     private headerService: AppHeaderService,
-    private route: ActivatedRoute,
     private router: Router,
-    private location: Location
+    private location: Location,
+    private changeDetectionRef: ChangeDetectorRef
   ) {
     if (this.router.getCurrentNavigation().extras.state) {
       this.profile = this.router.getCurrentNavigation().extras.state.profile;
     }
-    this.initializeForm();
   }
 
   ngOnInit() {
+    this.getStates();
+    this.initializeForm();
   }
 
   /**
@@ -66,7 +82,6 @@ export class PersonalDetailsEditPage implements OnInit {
    */
   ionViewWillEnter() {
     this.headerService.showHeaderWithBackButton();
-    this.getStates();
   }
 
   /**
