@@ -1,7 +1,7 @@
-import { Component, OnInit, Inject } from '@angular/core';
+import { Component, OnInit, Inject, ChangeDetectorRef } from '@angular/core';
 import {
   LocationSearchCriteria, ProfileService,
-  SharedPreferences, Profile, DeviceRegisterRequest, DeviceRegisterService
+  SharedPreferences, Profile, DeviceRegisterRequest, DeviceRegisterService, DeviceInfo
 } from 'sunbird-sdk';
 import { Location as loc, PreferenceKey, RouterLinks } from '../../app/app.constant';
 import { AppHeaderService, CommonUtilService, AppGlobalService } from '@app/services';
@@ -44,6 +44,7 @@ export class DistrictMappingPage implements OnInit {
   availableLocationState: string;
   isAutoPopulated = false;
   isLocationChanged = false;
+  isKeyboardShown$;
 
   constructor(
     public headerService: AppHeaderService,
@@ -51,18 +52,21 @@ export class DistrictMappingPage implements OnInit {
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
     @Inject('DEVICE_REGISTER_SERVICE') private deviceRegisterService: DeviceRegisterService,
+    @Inject('DEVICE_INFO') public deviceInfo: DeviceInfo,
     public router: Router,
     public location: Location,
     public appGlobalService: AppGlobalService,
     public events: Events,
     public platform: Platform,
-    public telemetryGeneratorService: TelemetryGeneratorService
+    public telemetryGeneratorService: TelemetryGeneratorService,
+    private changeDetectionRef: ChangeDetectorRef
   ) {
     if (this.router.getCurrentNavigation().extras.state) {
       this.profile = this.router.getCurrentNavigation().extras.state.profile;
       this.isShowBackButton = this.router.getCurrentNavigation().extras.state.isShowBackButton;
       this.source = this.router.getCurrentNavigation().extras.state.source;
     }
+    this.isKeyboardShown$ = deviceInfo.isKeyboardShown().do(() => this.changeDetectionRef.detectChanges());
   }
 
   ngOnInit() {
@@ -143,6 +147,9 @@ export class DistrictMappingPage implements OnInit {
     this.districtName = '';
     this.showStates = true;
   }
+  showDistrictList() {
+    this.showDistrict = true;
+  }
 
   async getStates() {
     let loader = await this.commonUtilService.getLoader();
@@ -172,7 +179,11 @@ export class DistrictMappingPage implements OnInit {
           }
         }
       } else {
+        this.districtList = '';
+        this.showDistrict = !this.showDistrict;
         this.commonUtilService.showToast(this.commonUtilService.translateMessage('NO_DATA_FOUND'));
+        loader.dismiss();
+        loader = undefined;
       }
     }, async (error) => {
       if (loader) {
@@ -184,7 +195,7 @@ export class DistrictMappingPage implements OnInit {
 
   async getDistrict(pid: string) {
     if (this.stateName) {
-      // this.showDistrict = !this.showDistrict;
+     // this.showDistrict = !this.showDistrict;
       let loader = await this.commonUtilService.getLoader();
       loader.present();
       const req: LocationSearchCriteria = {
@@ -210,6 +221,8 @@ export class DistrictMappingPage implements OnInit {
         } else {
           loader.dismiss();
           loader = undefined;
+          this.districtList = '';
+          this.showDistrict = !this.showDistrict;
           this.commonUtilService.showToast(this.commonUtilService.translateMessage('NO_DATA_FOUND'));
         }
       }, async (error) => {
@@ -288,8 +301,8 @@ export class DistrictMappingPage implements OnInit {
     this.deviceRegisterService.registerDevice(req).toPromise();
 
     const locationMap = new Map();
-    locationMap['state'] = this.stateName;
-    locationMap['district'] = this.districtName;
+    locationMap['state'] = this.stateName ? this.stateName : this.availableLocationState;
+    locationMap['district'] = this.districtName ? this.districtName : this.availableLocationDistrict;
     await this.preferences.putString(PreferenceKey.DEVICE_LOCATION, JSON.stringify(locationMap)).toPromise();
     await loader.dismiss();
   }
