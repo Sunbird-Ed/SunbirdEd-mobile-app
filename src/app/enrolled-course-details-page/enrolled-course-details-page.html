@@ -109,7 +109,8 @@
 															'START_ASSESSMENT' | translate }}</span></button>
 					<div *ngIf="batchDetails?.endDate && !batchExp" class="enrollment-end-date ion-padding-bottom">
 						<ion-icon name="information-circle"></ion-icon>
-						<span *ngIf="!course?.certificate">{{'COMPLETE_TRAINING_TO_EARN_CERTIFICATE' | translate: {'%s': batchDetails?.endDate | date} }} </span>
+						<span *ngIf="!course?.certificate && lastReadContentType !== 'SelfAssess'">{{'COMPLETE_TRAINING_TO_EARN_CERTIFICATE' | translate: {'%s': batchDetails?.endDate | date} }} </span>
+						<span *ngIf="!course?.certificate && lastReadContentType === 'SelfAssess'">{{'COMPLETE_ASSESSMENT_TO_EARN_CERTIFICATE' | translate: {'%s': batchDetails?.endDate | date} }} </span>
 						<span *ngIf="course?.certificate">{{'TO_EARN_CERTIFICATE' | translate: {'%s': batchDetails?.endDate | date} }}</span>
 					</div>
 				</ion-card-content>
@@ -250,7 +251,7 @@
 										[activeMimeTypeFilter]="activeMimeTypeFilter" [isTextbookTocPage]="false"
 										[corRelationList]="corRelationList" [isDepthChild]="isDepthChild"
                                         [breadCrumb]="breadCrumb" [rootUnitId]="item.identifier" [bookID]="identifier"
-                                        [updatedCourseCardData]="updatedCourseCardData"
+                                        [updatedCourseCardData]="updatedCourseCardData" [batch]="batchDetails"
 										[isEnrolled]="isAlreadyEnrolled" [fromCourseToc]="true" [isBatchNotStarted]="isBatchNotStarted">
 									</app-collection-child>
 								</div>

@@ -2,7 +2,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { CanvasPlayerService } from '@app/services/canvas-player.service';
 import { AppGlobalService } from '@app/services/app-global-service.service';
 import { CommonUtilService } from '@app/services/common-util.service';
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, Inject } from '@angular/core';
 import { Platform, AlertController, Events } from '@ionic/angular';
 import { ScreenOrientation } from '@ionic-native/screen-orientation/ngx';
 import { PlayerActionHandlerDelegate, HierarchyInfo, User } from './player-action-handler-delegate';
@@ -10,6 +10,7 @@ import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { EventTopics, RouterLinks } from '../app.constant';
 import { Location } from '@angular/common';
 import { Subscription } from 'rxjs/Subscription';
+import { CourseService } from 'sunbird-sdk';
 
 @Component({
   selector: 'app-player',
@@ -21,6 +22,7 @@ export class PlayerPage implements OnInit, PlayerActionHandlerDelegate {
   backButtonSubscription: Subscription
   @ViewChild('preview') previewElement: ElementRef;
   constructor(
+    @Inject('COURSE_SERVICE') private courseService: CourseService,
     private canvasPlayerService: CanvasPlayerService,
     private platform: Platform,
     private screenOrientation: ScreenOrientation,
@@ -73,8 +75,11 @@ export class PlayerPage implements OnInit, PlayerActionHandlerDelegate {
         this.previewElement.nativeElement.contentWindow['cordova'] = window['cordova'];
         this.previewElement.nativeElement.contentWindow['Media'] = window['Media'];
         this.previewElement.nativeElement.contentWindow['initializePreview'](this.config);
-        this.previewElement.nativeElement.addEventListener('question:score:submit', resp => {
+        this.previewElement.nativeElement.contentWindow.addEventListener('message', resp => {
             console.log('Player Response', resp);
+            if (resp.data === 'renderer:question:submitscore') {
+                this.courseService.syncAssessmentEvents();
+            }
         });
       }, 1000);
     };
@@ -100,9 +105,7 @@ export class PlayerPage implements OnInit, PlayerActionHandlerDelegate {
     if (this.backButtonSubscription) {
       this.backButtonSubscription.unsubscribe();
     }
-    this.previewElement.nativeElement.removeEventListener('question:score:submit', () => {
-        console.log('Removed Listener!');
-    });
+    window.removeEventListener('renderer:question:submitscore', () => {});
   }
 
   /**
