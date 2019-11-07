@@ -19,7 +19,7 @@ import { CommonUtilService } from '@app/services/common-util.service';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { AppHeaderService } from '@app/services/app-header.service';
 import { PageId, Environment, InteractType, InteractSubtype } from '@app/services/telemetry-constants';
-import { ProfileConstants, RouterLinks } from '@app/app/app.constant';
+import { ProfileConstants, RouterLinks, PreferenceKey } from '@app/app/app.constant';
 
 @Component({
   selector: 'app-guest-profile',
@@ -42,6 +42,7 @@ export class GuestProfilePage implements OnInit {
   loader: any;
   headerObservable: any;
   isUpgradePopoverShown = false;
+  deviceLocation: any;
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -58,7 +59,6 @@ export class GuestProfilePage implements OnInit {
     private route: ActivatedRoute,
     private router: Router
   ) { }
-
 
   ngOnInit() {
     this.selectedLanguage = this.translate.currentLang;
@@ -103,7 +103,6 @@ export class GuestProfilePage implements OnInit {
     this.events.unsubscribe('update_header');
   }
 
-
   async refreshProfileData(refresher: any = false, showLoader: boolean = true) {
     this.loader = await this.commonUtilService.getLoader();
 
@@ -113,6 +112,11 @@ export class GuestProfilePage implements OnInit {
     if (refresher) {
       this.telemetryGeneratorService.generatePullToRefreshTelemetry(PageId.GUEST_PROFILE, Environment.HOME);
     }
+    const deviceLocationInfo = await this.preferences.getString(PreferenceKey.DEVICE_LOCATION).toPromise();
+    if (deviceLocationInfo) {
+      this.deviceLocation = JSON.parse(deviceLocationInfo);
+    }
+
     this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise()
       .then((res: any) => {
         this.profile = res;
@@ -155,7 +159,6 @@ export class GuestProfilePage implements OnInit {
       PageId.GUEST_PROFILE,undefined,values);
     this.router.navigate([RouterLinks.GUEST_EDIT], navigationExtras);
   }
-
 
   getSyllabusDetails() {
     let selectedFrameworkId = '';
@@ -245,5 +248,21 @@ export class GuestProfilePage implements OnInit {
 
     this.router.navigate([RouterLinks.ACTIVE_DOWNLOADS]);
   }
-}
 
+  redirectToDistrictMappingPage() {
+    this.telemetryGeneratorService.generateInteractTelemetry(
+      InteractType.TOUCH,
+      InteractSubtype.EDIT_DISTRICT_MAPPING_CLICKED,
+      Environment.HOME,
+      PageId.GUEST_PROFILE);
+
+    const navigationExtras: NavigationExtras = {
+      state: {
+        isShowBackButton: true,
+        source: PageId.GUEST_PROFILE
+      }
+    };
+    this.router.navigate([RouterLinks.DISTRICT_MAPPING], navigationExtras);
+  }
+
+}
