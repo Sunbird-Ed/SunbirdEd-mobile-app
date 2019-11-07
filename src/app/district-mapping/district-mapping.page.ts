@@ -195,7 +195,7 @@ export class DistrictMappingPage implements OnInit {
 
   async getDistrict(pid: string) {
     if (this.stateName) {
-      this.showDistrict = !this.showDistrict;
+     // this.showDistrict = !this.showDistrict;
       let loader = await this.commonUtilService.getLoader();
       loader.present();
       const req: LocationSearchCriteria = {
@@ -221,6 +221,8 @@ export class DistrictMappingPage implements OnInit {
         } else {
           loader.dismiss();
           loader = undefined;
+          this.districtList = '';
+          this.showDistrict = !this.showDistrict;
           this.commonUtilService.showToast(this.commonUtilService.translateMessage('NO_DATA_FOUND'));
         }
       }, async (error) => {
