@@ -83,9 +83,8 @@ export class ProfileSettingsPage implements OnInit {
     cssClass: 'select-box'
   };
   private navParams: any;
-  ipLocationAvailable: boolean;
-  userDeclaredLocationAvailable = false;
-  ipLocationData: any;
+
+
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     @Inject('FRAMEWORK_SERVICE') private frameworkService: FrameworkService,
@@ -162,7 +161,6 @@ export class ProfileSettingsPage implements OnInit {
       */
     }
     this.getSyllabusDetails();
-    this.getAutoPopulatedData();
   }
 
   ionViewDidEnter() {
@@ -488,28 +486,6 @@ export class ProfileSettingsPage implements OnInit {
     return profileReq;
   }
 
-  getAutoPopulatedData() {
-    this.deviceRegisterService.getDeviceProfile().toPromise().then((response) => {
-      if (response.userDeclaredLocation) {
-        this.userDeclaredLocationAvailable = true;
-        this.preferences.getString(PreferenceKey.DEVICE_LOCATION).toPromise()
-          .then(deviceLoc => {
-            if (!deviceLoc) {
-              const locationMap = new Map();
-              locationMap['state'] = response.userDeclaredLocation.state;
-              locationMap['district'] = response.userDeclaredLocation.district;
-              this.preferences.putString(PreferenceKey.DEVICE_LOCATION, JSON.stringify(locationMap)).toPromise();
-            }
-          });
-      } else if (response.ipLocation.state) {
-        this.ipLocationAvailable = true;
-        this.ipLocationData = response.ipLocation;
-      } else if (!response.ipLocation.state) {
-        this.ipLocationAvailable = false;
-      }
-    });
-  }
-
   async onSubmit() {
     const loader = await this.commonUtilService.getLoader();
     const formVal = this.userForm.value;
@@ -616,15 +592,14 @@ export class ProfileSettingsPage implements OnInit {
         }
         this.events.publish('refresh:profile');
         this.appGlobalService.guestUserProfile = res;
-        setTimeout(() => {
+        setTimeout(async () => {
           this.commonUtilService.showToast('PROFILE_UPDATE_SUCCESS');
-          if (this.userDeclaredLocationAvailable) {
-            this.router.navigate(['/tabs']);
+          if (await this.commonUtilService.isDeviceLocationAvailable()) {
+            this.router.navigate([`/${RouterLinks.TABS}`]);
           } else {
             const navigationExtras: NavigationExtras = {
               state: {
-                isShowBackButton: true,
-                ipLocationData: this.ipLocationData
+                isShowBackButton: true
               }
             };
             this.router.navigate([RouterLinks.DISTRICT_MAPPING], navigationExtras);
@@ -665,8 +640,8 @@ export class ProfileSettingsPage implements OnInit {
 
   handleHeaderEvents($event) {
     switch ($event.name) {
-      case 'back': this.telemetryGeneratorService.generateBackClickedTelemetry(
-        PageId.ONBOARDING_PROFILE_PREFERENCES, Environment.ONBOARDING, true);
+      case 'back':
+        this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.ONBOARDING_PROFILE_PREFERENCES, Environment.ONBOARDING, true);
         this.dismissPopup();
         break;
     }
@@ -682,4 +657,3 @@ export class ProfileSettingsPage implements OnInit {
     this.scanner.startScanner(PageId.ONBOARDING_PROFILE_PREFERENCES, false);
   }
 }
-

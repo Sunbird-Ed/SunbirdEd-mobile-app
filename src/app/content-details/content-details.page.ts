@@ -574,7 +574,8 @@ export class ContentDetailsPage implements OnInit {
         isChildContent: isChild,
         destinationFolder: this.storageService.getStorageDestinationDirectoryPath(),
         contentId: value,
-        correlationData: this.corRelationList !== undefined ? this.corRelationList : []
+        correlationData: this.corRelationList !== undefined ? this.corRelationList : [],
+        rollUp: isChild ? this.objRollup : undefined
       });
     });
 

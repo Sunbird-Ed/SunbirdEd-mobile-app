@@ -219,6 +219,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
   contentDeleteObservable: any;
   public showUnenroll: boolean;
   public todayDate: any;
+  public rollUpMap: { [key: string]: Rollup } = {};
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -774,7 +775,8 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
         isChildContent: isChild,
         destinationFolder: cordova.file.externalDataDirectory,
         contentId: value,
-        correlationData: this.corRelationList !== undefined ? this.corRelationList : []
+        correlationData: this.corRelationList !== undefined ? this.corRelationList : [],
+        rollUp: this.rollUpMap[value]
       });
     });
 
@@ -1201,6 +1203,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
         }
         if (value.isAvailableLocally === false) {
           this.downloadIdentifiers.push(value.contentData.identifier);
+          this.rollUpMap[value.contentData.identifier] = ContentUtil.generateRollUp(value.hierarchyInfo, undefined);
         }
       });
     }
