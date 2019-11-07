@@ -42,6 +42,7 @@ export enum PageId {
     PROFILE = 'profile',
     COURSE_PAGE_FILTER = 'course-page-filter',
     LIBRARY_PAGE_FILTER = 'library-page-filter',
+    LIBRARY_SEARCH_FILTER = 'library-search-filter',
     COURSE_DETAIL = 'course-detail',
     COLLECTION_DETAIL = 'collection-detail',
     CONTENT_DETAIL = 'content-detail',

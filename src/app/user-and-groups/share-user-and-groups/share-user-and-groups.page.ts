@@ -42,6 +42,7 @@ export class ShareUserAndGroupsPage implements OnInit, OnDestroy {
 
   private userGroupMap: Map<string, Array<Profile>> = new Map();
   backButtonFunc: Subscription;
+  headerObservable: any;
 
   constructor(
     @Inject('GROUP_SERVICE') private groupService: GroupService,
@@ -69,9 +70,13 @@ export class ShareUserAndGroupsPage implements OnInit, OnDestroy {
     if (this.backButtonFunc) {
       this.backButtonFunc.unsubscribe();
     }
+    this.headerObservable.unsubscribe();
   }
 
   ionViewWillEnter() {
+    this.headerObservable = this.headerService.headerEventEmitted$.subscribe(eventName => {
+      this.handleHeaderEvents(eventName);
+    });
     this.headerService.showHeaderWithBackButton([], this.commonUtilService.translateMessage('SHARE_THIS'));
     this.getAllProfile();
     this.getAllGroup();
@@ -222,7 +227,16 @@ export class ShareUserAndGroupsPage implements OnInit, OnDestroy {
 
 
   selectAll() {
+  
     this.zone.run(() => {
+      this.telemetryGeneratorService.generateInteractTelemetry(
+        InteractType.TOUCH,
+        InteractSubtype.SELECT_ALL_CLICKED,
+        Environment.USER,
+        PageId.SHARE_USER_GROUP,
+        undefined
+      );
+
       for (let i = 0; i < this.userList.length; i++) {
         this.toggleUserSelected(i);
       }
@@ -277,5 +291,15 @@ export class ShareUserAndGroupsPage implements OnInit, OnDestroy {
       }).catch(async () => {
         await loader.dismiss();
       });
+  }
+
+  handleHeaderEvents($event) {
+    switch ($event.name) {
+      case 'back':
+        this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.SHARE_USER_GROUP, Environment.USER,
+          true);
+        this.location.back();
+        break;
+    }
   }
 }

@@ -1281,8 +1281,10 @@ export class CollectionDetailEtbPage implements OnInit {
     const { data } = await confirm.onDidDismiss();
     if (data && data.canDelete) {
       this.deleteContent();
+    } else if(data && data.closeDeletePopOver) {
+      this.closePopOver();
     }
-  }
+ }
 
   /**
    * Construct content delete request body
@@ -1338,6 +1340,18 @@ export class CollectionDetailEtbPage implements OnInit {
     });
   }
 
+  async closePopOver() {
+    this.telemetryGeneratorService.generateInteractTelemetry(
+      InteractType.TOUCH,
+      InteractSubtype.CLOSE_CLICKED,
+      Environment.HOME,
+      PageId.COLLECTION_DETAIL,
+      this.telemetryObject,
+      undefined,
+      this.objRollup,
+      this.corRelationList);
+  }
+
   refreshHeader() {
     this.headerConfig = this.headerService.getDefaultPageConfig();
     this.headerConfig.actionButtons = ['download'];
@@ -1356,7 +1370,6 @@ export class CollectionDetailEtbPage implements OnInit {
       case 'download':
         this.redirectToActivedownloads();
         break;
-
     }
   }
 
