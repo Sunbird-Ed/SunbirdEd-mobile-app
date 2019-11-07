@@ -457,15 +457,11 @@ export class ProfileSettingsPage implements OnInit {
     }
   }
   cancelEvent() {
-    const values = new Map();
-    values['Event'] = 'Cancel';
-    console.log("evnet:"+values['Event']);
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
       InteractSubtype.CANCEL_CLICKED,
       Environment.ONBOARDING,
       PageId.ONBOARDING_PROFILE_PREFERENCES,
-      undefined,
-      values);
+      undefined);
   }
 
   enableSubmit() {

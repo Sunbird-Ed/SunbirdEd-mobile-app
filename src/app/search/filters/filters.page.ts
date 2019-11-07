@@ -53,7 +53,7 @@ export class FiltersPage {
       cssClass: 'option-box'
     });
     const values = new Map();
-    values['Option'] = facet.name;
+    values['facetsClicked'] = facet.name;
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
       InteractSubtype.FILTER_CLICKED,
       Environment.HOME,

@@ -31,7 +31,7 @@ export class FilteroptionComponent {
 
   confirm() {
     const values = new Map();
-    values['Option'] = this.facets.name;
+    values['option'] = this.facets.name;
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
       InteractSubtype.APPLY_FILTER_CLICKED,
       Environment.HOME,

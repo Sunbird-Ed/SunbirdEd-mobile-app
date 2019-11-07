@@ -718,11 +718,8 @@ export class UserAndGroupsPage implements OnInit {
   }
 
   goBack() {
-    this.telemetryGeneratorService.generateInteractTelemetry(
-      InteractType.TOUCH,
-      InteractSubtype.NAV_BACK_CLICKED,
-      Environment.USER,
-      PageId.USERS_GROUPS
+    this.telemetryGeneratorService.generateBackClickedTelemetry(
+      PageId.USERS_GROUPS, Environment.USER, true, 
     );
     this.location.back();
   }
