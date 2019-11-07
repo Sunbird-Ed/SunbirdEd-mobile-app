@@ -18,6 +18,7 @@ export class ContentType {
     public static readonly MARKING_SCHEME_RUBRIC = 'MarkingSchemeRubric';
     public static readonly EXPLANATION_RESOURCE = 'ExplanationResource';
     public static readonly EXPERIENTIAL_RESOURCE = 'ExperientialResource';
+    public static readonly SELF_ASSESS = 'SelfAssess';
 
     public static readonly FOR_COURSE_TAB = [
         ContentType.COURSE
