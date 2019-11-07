@@ -101,6 +101,7 @@
   "COACH_SCREEN": "Scanning the QR code will redirect you to the content",
   "COMMUNITIES": "Community",
   "COMPLETE_TRAINING_TO_EARN_CERTIFICATE": "Complete training by {{%s}}",
+  "COMPLETE_ASSESSMENT_TO_EARN_CERTIFICATE": "Complete assessment by {{%s}}",
   "CONFIRM": "Confirm",
   "CONNECT_TO_INTERNET_SUGGESTION": "Connect to the internet to view the content",
   "CONSIDER_DOWNLOAD": "Consider downloading the content",

@@ -264,11 +264,13 @@ export class CollectionChildComponent implements OnInit {
   }
   // course-toc: for showing respective contenttype icons
   getContentTypeIcon(content: Content) {
-    const contentType = content.mimeType;
-    if (contentType) {
-      if (MimeType.DOCS.indexOf(contentType) !== -1) {
+    const mimeType = content.mimeType;
+    if (content.contentData.contentType === ContentType.SELF_ASSESS) {
+      return './assets/imgs/selfassess.svg';
+    } else if (mimeType) {
+      if (MimeType.DOCS.indexOf(mimeType) !== -1) {
         return './assets/imgs/doc.svg';
-      } else if (MimeType.VIDEO.indexOf(contentType) !== -1) {
+      } else if (MimeType.VIDEO.indexOf(mimeType) !== -1) {
         return './assets/imgs/play.svg';
       } else {
         return './assets/imgs/touch.svg';
