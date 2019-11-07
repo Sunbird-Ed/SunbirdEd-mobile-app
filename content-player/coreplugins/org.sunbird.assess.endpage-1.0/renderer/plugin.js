@@ -13,11 +13,21 @@ org.ekstep.contentrenderer.baseEndepage.extend({
     initialize: function(data) {
         this.templatePath = EkstepRendererAPI.resolvePluginResource(data.id, data.ver, "renderer/templates/end.html");
         this.controllerPath = EkstepRendererAPI.resolvePluginResource(data.id, data.ver, "renderer/endpageApp.js");
-        var instance = this;
+        EkstepRendererAPI.addEventListener("renderer:genie:click",this.gotTohome,this)
         org.ekstep.service.controller.loadNgModules(this.templatePath, this.controllerPath);
     },
     initEndPage:function(event, instance){
         
         EkstepRendererAPI.dispatchEvent("renderer:add:template", {templatePath: this.templatePath, scopeVariable: this._ngScopeVar, toElement: '#pluginTemplate'});
+    },
+    gotTohome: function() {
+        if (!isbrowserpreview) {
+            EkstepRendererAPI.hideEndPage();
+            stageId = !_.isUndefined(Renderer) ? Renderer.theme._currentStage : " ";
+            TelemetryService.interact("TOUCH", "gc_genie", "TOUCH", {
+                stageId: stageId
+            });
+            exitApp();
+        };
     }
 })
