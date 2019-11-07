@@ -1091,7 +1091,6 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
     } else if (this.childContentsData) {
       const firstChild = this.loadFirstChildren(this.childContentsData);
       this.lastReadContentName = firstChild.contentData.name;
-      this.lastReadContentType = firstChild.contentData.contentType;
     }
 
   }
@@ -1126,7 +1125,8 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
             this.toggleGroup(0, this.childrenData[0]);
             this.startData = data.children;
             this.childContentsData = data;
-            this.getContentState(!this.isNavigatingWithinCourse);
+            // this.getContentState(!this.isNavigatingWithinCourse);
+            this.getContentState(true);
           }
           if (this.courseCardData.batchId) {
             this.downloadSize = 0;

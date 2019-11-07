@@ -6,7 +6,7 @@ import { File } from '@ionic-native/file/ngx';
 import { InteractSubtype, Environment, PageId } from '@app/services/telemetry-constants';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { ContentInfo } from '../content-info';
-import { RouterLinks } from '@app/app/app.constant';
+import { RouterLinks, ContentType } from '@app/app/app.constant';
 import { Router } from '@angular/router';
 import { CommonUtilService } from '@app/services/common-util.service';
 import { Course, CourseService } from 'sunbird-sdk';
@@ -76,6 +76,15 @@ export class ContentPlayerHandler {
         }
         this.playerService.getPlayerConfig(content, request).subscribe((data) => {
             data['data'] = {};
+            data.config.showEndPage = content.contentData.contentType === ContentType.SELF_ASSESS ? false : true;
+            data.config.plugins = [
+                {
+                    id: content.contentData.contentType === ContentType.SELF_ASSESS ? 'org.sunbird.assess.endpage' : 'org.sunbird.player.endpage',
+                    ver: '1.0',
+                    type: 'plugin'
+                }
+            ];
+
             if (isCourse) {
                 data.config.overlay.enableUserSwitcher = false;
                 data.config.overlay.showUser = false;

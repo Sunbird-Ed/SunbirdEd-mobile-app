@@ -7,8 +7,8 @@
   <div class="sub-heading">{{'YOUR_LOCATION_DETAILS' | translate}}</div>
   <div class="state">
     <div class="input-container">
-      <input type="text" class="input"  [(ngModel)]="stateName"
-        placeholder="{{('SEARCH_STATE' | translate)}}" value="{{stateName}}" (ngModelChange)="showStateList()" >
+      <input type="text" class="input" [(ngModel)]="stateName"
+        placeholder="{{('SEARCH_STATE' | translate)}}" value="{{availableLocationState ? availableLocationState : stateName}}" (ngModelChange)="showStateList()" >
       <ion-icon (click)="showStates = !showStates; stateIconClicked()" class="input-icon" name="ios-arrow-down"></ion-icon>
     </div>
     <div class="showList" *ngIf="showStates">
@@ -17,12 +17,15 @@
       </ul>
     </div>
   </div>
+
   <div class="district" *ngIf="!showStates">
-    <div class="input-container margin-top" [ngClass]="(!stateName) ? 'disableInput' : ''">
-      <input type="text" class="input"  [(ngModel)]="districtName"
-        placeholder="{{('SEARCH_DISTRICT' | translate)}}" [disabled]="!stateName" value="{{ districtName }}">
-      <ion-icon *ngIf="this.stateName" (click)="showDistrict = !showDistrict; districtIconClicked()" class="input-icon" name="ios-arrow-down"></ion-icon>
-      <ion-icon *ngIf="!this.stateName" class="input-icon" name="ios-arrow-down"></ion-icon>
+    <div class="input-container margin-top" [ngClass]="(!stateName && !availableLocationState) ? 'disableInput' : ''">
+      <input type="text" class="input"   [(ngModel)]="districtName"
+        placeholder="{{('SEARCH_DISTRICT' | translate)}}" [disabled]="!stateName && !availableLocationState"  
+        value="{{ availableLocationDistrict? availableLocationDistrict : stateName}}"
+       (ngModelChange)="showDistrictList()">
+      <ion-icon (click)="showDistrict = !showDistrict; districtIconClicked()" class="input-icon" name="ios-arrow-down"></ion-icon>
+      <!-- <ion-icon *ngIf="!this.stateName && !availableLocationState" class="input-icon" name="ios-arrow-down"></ion-icon> -->
     </div>
     <div class="showList" *ngIf="showDistrict">
       <ul>
@@ -30,7 +33,10 @@
       </ul>
     </div>
   </div>
+
+  <div style="display:none">{{!(isKeyboardShown$ | async)}}</div>
 </ion-content>
-<div class="footer">
-  <button class="block-button" [disabled]="!stateName || !districtName" [ngClass]="(!stateName || !districtName)? 'disabled-button': ''" (click)="submit()">{{'BTN_SUBMIT' | translate}}</button>
+<div class="footer" *ngIf="!(isKeyboardShown$ | async)">
+  <button class="block-button"  [disabled] = "!stateName || !districtName || !availableLocationState || !availableLocationDistrict"
+  [ngClass]="!stateName || !districtName || !availableLocationState || !availableLocationDistrict ? 'disabled-button': ''" (click)="submit()">{{'BTN_SUBMIT' | translate}}</button>
 </div>

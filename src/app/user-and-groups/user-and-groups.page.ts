@@ -718,6 +718,9 @@ export class UserAndGroupsPage implements OnInit {
   }
 
   goBack() {
+    this.telemetryGeneratorService.generateBackClickedTelemetry(
+      PageId.USERS_GROUPS, Environment.USER, true, 
+    );
     this.location.back();
   }
 }

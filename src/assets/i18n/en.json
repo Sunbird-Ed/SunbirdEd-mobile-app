@@ -101,6 +101,7 @@
   "COACH_SCREEN": "Scanning the QR code will redirect you to the content",
   "COMMUNITIES": "Community",
   "COMPLETE_TRAINING_TO_EARN_CERTIFICATE": "Complete training by {{%s}}",
+  "COMPLETE_ASSESSMENT_TO_EARN_CERTIFICATE": "Complete assessment by {{%s}}",
   "CONFIRM": "Confirm",
   "CONNECT_TO_INTERNET_SUGGESTION": "Connect to the internet to view the content",
   "CONSIDER_DOWNLOAD": "Consider downloading the content",
@@ -493,6 +494,7 @@
   "START_ASSESSMENT": "Start Assessment",
   "START_COURSE": "START",
   "START_COURSE_NOW": "Start Now",
+  "START": "Start",
   "STAR_RATINGS": "Rating",
   "STATE": "State",
   "STATE_OPTION_TEXT": "Select state",
@@ -617,5 +619,9 @@
   "TEACHER_PROFILE_VERIFIED": "Teacher profile verified successfully",
   "TEACHER_PROFILE_FAILED": "Could not verify teacher profile as teacher ID entered is incorrect",
   "INCORRECT_TEACHER_ID_ERROR": "The ID entered is incorrect. Enter the ID again",
-  "DEVICE_LOCATION": "Device Location"
+  "DEVICE_LOCATION": "Device Location",
+  "TRAINING_ENDED_START_ASSESSMENT": "The training has ended. You may take the assessment but, your progress will not be recorded.",
+  "REDO_ASSESSMENT": "Redo Assessment",
+  "TRAINING_ENDED_REDO_ASSESSMENT": "The training has ended. You may redo the assessment but, your progress will not be recorded.",
+  "REDO": "Redo"
 }

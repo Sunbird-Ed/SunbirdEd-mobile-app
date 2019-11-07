@@ -42,6 +42,7 @@ export enum PageId {
     PROFILE = 'profile',
     COURSE_PAGE_FILTER = 'course-page-filter',
     LIBRARY_PAGE_FILTER = 'library-page-filter',
+    LIBRARY_SEARCH_FILTER = 'library-search-filter',
     COURSE_DETAIL = 'course-detail',
     COLLECTION_DETAIL = 'collection-detail',
     CONTENT_DETAIL = 'content-detail',
@@ -233,6 +234,8 @@ export enum InteractSubtype {
     REPORTS_CLICKED = 'reports-clicked',
     USERS_TAB_CLICKED = 'users-tab-clicked',
     GROUPS_TAB_CLICKED = 'groups-tab-clicked',
+    SUBMIT_CLICKED = 'submit-clicked',
+    LOCATION_CAPTURED = 'location-captured',
     USER_CLICKED = 'user-clicked',
     GROUP_CLICKED = 'group-clicked',
     CLASS_CLICKED = 'class-clicked',
@@ -352,7 +355,7 @@ export enum InteractSubtype {
     TRAINING_MODULE_CLICKED = 'training-module-clicked',
     MERGE_CLICKED = 'merge-clicked',
     NOTIFICATION_RECEIVED = 'notification-received',
-    AUTO_POPULATED_LOCATION = 'auto-populated-location',
+    AUTO_POPULATED_LOCATION = 'auto-populate-location',
     EDIT_DISTRICT_MAPPING_CLICKED = 'edit-district-mapping-clicked'
 }
 

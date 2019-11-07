@@ -456,6 +456,13 @@ export class ProfileSettingsPage implements OnInit {
         break;
     }
   }
+  cancelEvent() {
+    this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
+      InteractSubtype.CANCEL_CLICKED,
+      Environment.ONBOARDING,
+      PageId.ONBOARDING_PROFILE_PREFERENCES,
+      undefined);
+  }
 
   enableSubmit() {
     if (this.userForm.value.grades.length) {
