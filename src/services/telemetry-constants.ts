@@ -234,6 +234,8 @@ export enum InteractSubtype {
     REPORTS_CLICKED = 'reports-clicked',
     USERS_TAB_CLICKED = 'users-tab-clicked',
     GROUPS_TAB_CLICKED = 'groups-tab-clicked',
+    SUBMIT_CLICKED = 'submit-clicked',
+    LOCATION_CAPTURED = 'location-captured',
     USER_CLICKED = 'user-clicked',
     GROUP_CLICKED = 'group-clicked',
     CLASS_CLICKED = 'class-clicked',
@@ -353,7 +355,7 @@ export enum InteractSubtype {
     TRAINING_MODULE_CLICKED = 'training-module-clicked',
     MERGE_CLICKED = 'merge-clicked',
     NOTIFICATION_RECEIVED = 'notification-received',
-    AUTO_POPULATED_LOCATION = 'auto-populated-location',
+    AUTO_POPULATED_LOCATION = 'auto-populate-location',
     EDIT_DISTRICT_MAPPING_CLICKED = 'edit-district-mapping-clicked'
 }
 

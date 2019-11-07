@@ -70,7 +70,7 @@ export class DistrictMappingPage implements OnInit {
     this.checkLocationMandatory();
     this.telemetryGeneratorService.generateImpressionTelemetry(
       ImpressionType.VIEW,
-      ImpressionSubtype.DISTRICT_LOCATION_MAPPING,
+      '',
       PageId.DISTRICT_MAPPING,
       Environment.HOME);
   }
@@ -230,6 +230,14 @@ export class DistrictMappingPage implements OnInit {
       undefined,
       { isLocationChanged: this.isLocationChanged });
 
+    this.telemetryGeneratorService.generateInteractTelemetry(
+      InteractType.TOUCH,
+      InteractSubtype.SUBMIT_CLICKED,
+      Environment.HOME,
+      PageId.DISTRICT_MAPPING,
+      undefined,
+      );
+
     if (this.appGlobalService.isUserLoggedIn()) {
       const req = {
         userId: this.appGlobalService.getCurrentUser().uid || this.profile.uid,
@@ -240,6 +248,7 @@ export class DistrictMappingPage implements OnInit {
       this.profileService.updateServerProfile(req).toPromise()
         .then(async () => {
           await loader.dismiss();
+          this.generateLocationCaptured(false); // is dirtrict or location edit  = false
           this.commonUtilService.showToast(this.commonUtilService.translateMessage('PROFILE_UPDATE_SUCCESS'));
           this.events.publish('loggedInProfile:update', req);
           this.router.navigate([`/${RouterLinks.TABS}`]);
@@ -249,11 +258,14 @@ export class DistrictMappingPage implements OnInit {
         });
     }
 
-    if (this.source === PageId.GUEST_PROFILE) {
+    if (this.source === PageId.GUEST_PROFILE) { // block for editing the device location
+
+      this.generateLocationCaptured(true); // is dirtrict or location edit  = true
+
       await this.saveDeviceLocation();
       this.events.publish('refresh:profile');
       this.goBack();
-    } else if (!(await this.commonUtilService.isDeviceLocationAvailable())) {
+    } else if (!(await this.commonUtilService.isDeviceLocationAvailable())) { // adding the device loc
       await this.saveDeviceLocation();
       const navigationExtras: NavigationExtras = {
         state: {
@@ -308,5 +320,18 @@ export class DistrictMappingPage implements OnInit {
       PageId.DISTRICT_MAPPING,
       undefined,
       { isAutoPopulated: this.isAutoPopulated });
+  }
+
+  generateLocationCaptured(isEdited: boolean) {
+    this.telemetryGeneratorService.generateInteractTelemetry(
+      InteractType.TOUCH,
+      InteractSubtype.LOCATION_CAPTURED,
+      Environment.HOME,
+      PageId.DISTRICT_MAPPING,
+      undefined,
+      {
+        isAutoPopulated: this.isAutoPopulated,
+        isEdited
+      });
   }
 }
