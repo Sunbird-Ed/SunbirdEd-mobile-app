@@ -1,4 +1,4 @@
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import {
   AlertController,
   Events,
@@ -6,7 +6,7 @@ import {
   PopoverController
 } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, OnInit, ChangeDetectorRef } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import isEqual from 'lodash/isEqual';
 import {
@@ -41,6 +41,7 @@ import { GUEST_STUDENT_TABS, GUEST_TEACHER_TABS, initTabs } from '@app/app/modul
 import { PreferenceKey, RouterLinks } from '@app/app/app.constant';
 import { SbGenericPopoverComponent } from '@app/app/components/popups/sb-generic-popover/sb-generic-popover.component';
 import { Location } from '@angular/common';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-guest-edit',
@@ -49,15 +50,50 @@ import { Location } from '@angular/common';
 })
 export class GuestEditPage implements OnInit {
 
+  private _syllabusList = [];
+  private _mediumList = [];
+  private _gradeList = [];
+  private _subjectList = [];
+  formOnChange$: any;
+
+  get syllabusList() {
+    return this._syllabusList;
+  }
+  set syllabusList(v) {
+    this._syllabusList = v;
+    this.changeDetectionRef.detectChanges();
+  }
+
+  get mediumList() {
+    return this._mediumList;
+  }
+  set mediumList(v) {
+    this._mediumList = v;
+    this.changeDetectionRef.detectChanges();
+  }
+
+  get gradeList() {
+    return this._gradeList;
+  }
+  set gradeList(v) {
+    this._gradeList = v;
+    this.changeDetectionRef.detectChanges();
+  }
+
+  get subjectList() {
+    return this._subjectList;
+  }
+  set subjectList(v) {
+    this._subjectList = v;
+    this.changeDetectionRef.detectChanges();
+  }
+
+
   ProfileType = ProfileType;
   guestEditForm: FormGroup;
   profile: any = {};
   categories: Array<any> = [];
-  syllabusList: Array<any> = [];
   boardList: Array<any> = [];
-  gradeList: Array<any> = [];
-  subjectList: Array<string> = [];
-  mediumList: Array<string> = [];
   userName = '';
   frameworkId = '';
   loader: any;
@@ -112,9 +148,9 @@ export class GuestEditPage implements OnInit {
     private container: ContainerService,
     private popoverCtrl: PopoverController,
     private headerService: AppHeaderService,
-    private route: ActivatedRoute,
     private router: Router,
-    private location: Location
+    private location: Location,
+    private changeDetectionRef: ChangeDetectorRef
   ) {
     if (this.router.getCurrentNavigation().extras.state) {
       this.isNewUser = Boolean(this.router.getCurrentNavigation().extras.state.isNewUser);
@@ -157,6 +193,16 @@ export class GuestEditPage implements OnInit {
       });
       console.log(this.guestEditForm.getRawValue());
     }
+
+    this.formOnChange$ = Observable.merge(
+      this.guestEditForm.get('syllabus').valueChanges
+        .do(() => this.resetForm(0, true)),
+      this.guestEditForm.get('medium').valueChanges
+        .do(() => this.resetForm(2, true)),
+      this.guestEditForm.get('grades').valueChanges
+        .do(() => this.resetForm(3, true)),
+    ).subscribe();
+
     this.previousProfileType = this.profile.profileType;
     this.profileForTelemetry = Object.assign({}, this.profile);
 
@@ -196,6 +242,9 @@ export class GuestEditPage implements OnInit {
   ionViewWillLeave() {
     if (this.unregisterBackButton) {
       this.unregisterBackButton.unsubscribe();
+    }
+    if (this.formOnChange$) {
+      this.formOnChange$.unsubscribe();
     }
   }
 
