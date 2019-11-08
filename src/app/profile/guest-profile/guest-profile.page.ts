@@ -142,7 +142,7 @@ export class GuestProfilePage implements OnInit {
     }
   }
 
-  editGuestProfile(isChangeRoleRequest: string, attribute) {
+  editGuestProfile(isChangeRoleRequest: boolean, attribute) {
     const navigationExtras: NavigationExtras = {
       state: {
         profile: this.profile,
