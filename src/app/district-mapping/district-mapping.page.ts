@@ -130,22 +130,22 @@ export class DistrictMappingPage implements OnInit {
   }
 
   async checkLocationAvailability() {
-    if (this.profile ) {
+    if (this.profile) {
       this.isAutoPopulated = true;
       this.name = this.profile['firstName'];
       if (this.profile['lastName']) {
         this.name = this.profile['firstName'] + this.profile['lastName'];
       }
-      if (this.profile['userLocations'] && this.profile['userLocations'].length ) {
-      for (const ele of this.profile['userLocations']) {
-        if (ele.type === 'district') {
-          this.availableLocationDistrict = ele.name;
+      if (this.profile['userLocations'] && this.profile['userLocations'].length) {
+        for (const ele of this.profile['userLocations']) {
+          if (ele.type === 'district') {
+            this.availableLocationDistrict = ele.name;
 
-        } else if (ele.type === 'state') {
-          this.availableLocationState = ele.name;
+          } else if (ele.type === 'state') {
+            this.availableLocationState = ele.name;
+          }
         }
       }
-    }
 
     } else if (await this.commonUtilService.isDeviceLocationAvailable()) {
       this.isAutoPopulated = true;
@@ -276,7 +276,7 @@ export class DistrictMappingPage implements OnInit {
       Environment.HOME,
       PageId.DISTRICT_MAPPING,
       undefined,
-      {isPopulatedLocation: this.isPopulatedLocationChanged });
+      { isPopulatedLocation: this.isPopulatedLocationChanged });
 
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,
