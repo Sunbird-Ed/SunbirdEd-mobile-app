@@ -195,7 +195,7 @@ export class DistrictMappingPage implements OnInit {
 
   async getDistrict(pid: string) {
     if (this.stateName) {
-     // this.showDistrict = !this.showDistrict;
+      // this.showDistrict = !this.showDistrict;
       let loader = await this.commonUtilService.getLoader();
       loader.present();
       const req: LocationSearchCriteria = {
@@ -249,7 +249,7 @@ export class DistrictMappingPage implements OnInit {
       Environment.HOME,
       PageId.DISTRICT_MAPPING,
       undefined,
-      );
+    );
 
     if (this.appGlobalService.isUserLoggedIn()) {
       const req = {
@@ -261,6 +261,10 @@ export class DistrictMappingPage implements OnInit {
       this.profileService.updateServerProfile(req).toPromise()
         .then(async () => {
           await loader.dismiss();
+
+          if (!(await this.commonUtilService.isDeviceLocationAvailable())) { // adding the device loc if not available
+            await this.saveDeviceLocation();
+          }
           this.generateLocationCaptured(false); // is dirtrict or location edit  = false
           this.commonUtilService.showToast(this.commonUtilService.translateMessage('PROFILE_UPDATE_SUCCESS'));
           this.events.publish('loggedInProfile:update', req);
@@ -268,17 +272,16 @@ export class DistrictMappingPage implements OnInit {
         }).catch(async () => {
           await loader.dismiss();
           this.commonUtilService.showToast(this.commonUtilService.translateMessage('PROFILE_UPDATE_FAILED'));
+          this.router.navigate([`/${RouterLinks.TABS}`]);
         });
-    }
-
-    if (this.source === PageId.GUEST_PROFILE) { // block for editing the device location
+    } else if (this.source === PageId.GUEST_PROFILE) { // block for editing the device location
 
       this.generateLocationCaptured(true); // is dirtrict or location edit  = true
 
       await this.saveDeviceLocation();
       this.events.publish('refresh:profile');
       this.goBack();
-    } else if (!(await this.commonUtilService.isDeviceLocationAvailable())) { // adding the device loc
+    } else { // add or update the device loc
       await this.saveDeviceLocation();
       const navigationExtras: NavigationExtras = {
         state: {
