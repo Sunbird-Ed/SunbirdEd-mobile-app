@@ -1005,11 +1005,10 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
           this.showLoader = false;
           if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
             this.commonUtilService.showToast('ERROR_OFFLINE_MODE');
-            this.location.back();
           } else {
             this.commonUtilService.showToast('SOMETHING_WENT_WRONG');
-            this.location.back();
           }
+          this.location.back();
         });
       });
     // Page API END
