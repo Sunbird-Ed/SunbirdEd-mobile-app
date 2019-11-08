@@ -387,14 +387,14 @@ export class ExploreBooksPage implements OnInit, OnDestroy {
     const { data } = await sortOptionsModal.onDidDismiss();
     if (data && data.values) {
       this.searchForm.patchValue({
-        board: data.board,
-        medium: data.medium
+        board: data.values.board || [],
+        medium: data.values.medium || []
       });
       this.corRelationList = [{
-        id: data.board,
+        id: data.values.board,
         type: 'Board'
       }, {
-        id: data.medium,
+        id: data.values.medium,
         type: 'Medium'
       }];
       this.telemetryGeneratorService.generateInteractTelemetry(
