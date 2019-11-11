@@ -19,7 +19,6 @@ import {
   InteractType,
   PageId
 } from '@app/services/telemetry-constants';
-
 @Component({
   selector: 'app-district-mapping',
   templateUrl: './district-mapping.page.html',
@@ -28,6 +27,7 @@ import {
 export class DistrictMappingPage implements OnInit {
   stateName;
   districtName;
+  name;
   stateList;
   districtList;
   profile: Profile;
@@ -45,7 +45,7 @@ export class DistrictMappingPage implements OnInit {
   isAutoPopulated = false;
   isPopulatedLocationChanged = false;
   isKeyboardShown$;
-  isLocationChanged =  false;
+  isLocationChanged = false;
 
   constructor(
     public headerService: AppHeaderService,
@@ -118,6 +118,8 @@ export class DistrictMappingPage implements OnInit {
   }
 
   goBack() {
+    this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.DISTRICT_MAPPING, Environment.HOME,
+      true);
     this.location.back();
   }
 
@@ -128,7 +130,24 @@ export class DistrictMappingPage implements OnInit {
   }
 
   async checkLocationAvailability() {
-    if (await this.commonUtilService.isDeviceLocationAvailable()) {
+    if (this.profile) {
+      this.isAutoPopulated = true;
+      this.name = this.profile['firstName'];
+      if (this.profile['lastName']) {
+        this.name = this.profile['firstName'] + this.profile['lastName'];
+      }
+      if (this.profile['userLocations'] && this.profile['userLocations'].length) {
+        for (const ele of this.profile['userLocations']) {
+          if (ele.type === 'district') {
+            this.availableLocationDistrict = ele.name;
+
+          } else if (ele.type === 'state') {
+            this.availableLocationState = ele.name;
+          }
+        }
+      }
+
+    } else if (await this.commonUtilService.isDeviceLocationAvailable()) {
       this.isAutoPopulated = true;
       this.availableLocationData = JSON.parse(await this.preferences.getString(PreferenceKey.DEVICE_LOCATION).toPromise());
       this.availableLocationState = this.availableLocationData.state;
@@ -159,6 +178,12 @@ export class DistrictMappingPage implements OnInit {
   }
   showDistrictList() {
     this.showDistrict = true;
+  }
+  // validates the name input feild
+  validateName() {
+    if (this.name) {
+      return !Boolean(this.name.match(/^[a-zA-Z ]*$/));
+    }
   }
 
   async getStates() {
@@ -251,7 +276,7 @@ export class DistrictMappingPage implements OnInit {
       Environment.HOME,
       PageId.DISTRICT_MAPPING,
       undefined,
-      {isPopulatedLocation: this.isPopulatedLocationChanged });
+      { isPopulatedLocation: this.isPopulatedLocationChanged });
 
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,
@@ -266,6 +291,10 @@ export class DistrictMappingPage implements OnInit {
         userId: this.appGlobalService.getCurrentUser().uid || this.profile.uid,
         locationCodes: [this.stateCode, this.districtCode]
       };
+      if (this.profile) {
+        req['firstName'] = this.name.trim();
+        req['lastName'] = '';
+      }
       const loader = await this.commonUtilService.getLoader();
       await loader.present();
       this.profileService.updateServerProfile(req).toPromise()
@@ -278,11 +307,19 @@ export class DistrictMappingPage implements OnInit {
           this.generateLocationCaptured(false); // is dirtrict or location edit  = false
           this.commonUtilService.showToast(this.commonUtilService.translateMessage('PROFILE_UPDATE_SUCCESS'));
           this.events.publish('loggedInProfile:update', req);
-          this.router.navigate([`/${RouterLinks.TABS}`]);
+          if (this.profile) {
+            this.goBack();
+          } else {
+            this.router.navigate([`/${RouterLinks.TABS}`]);
+          }
         }).catch(async () => {
           await loader.dismiss();
           this.commonUtilService.showToast(this.commonUtilService.translateMessage('PROFILE_UPDATE_FAILED'));
-          this.router.navigate([`/${RouterLinks.TABS}`]);
+          if (this.profile) {
+            this.goBack();
+          } else {
+            this.router.navigate([`/${RouterLinks.TABS}`]);
+          }
         });
     } else if (this.source === PageId.GUEST_PROFILE) { // block for editing the device location
 
