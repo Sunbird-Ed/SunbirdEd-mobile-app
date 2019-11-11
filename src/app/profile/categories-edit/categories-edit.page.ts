@@ -1,5 +1,5 @@
 import { Subscription } from 'rxjs//Subscription';
-import { Component, OnInit, Inject, ViewChild } from '@angular/core';
+import { Component, Inject, ViewChild, ChangeDetectorRef } from '@angular/core';
 import { Events, IonSelect, Platform } from '@ionic/angular';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
@@ -41,11 +41,44 @@ export class CategoriesEditPage {
   @ViewChild('mediumSelect') mediumSelect: IonSelect;
   @ViewChild('gradeSelect') gradeSelect: IonSelect;
 
-  syllabusList = [];
+  private _syllabusList = [];
+  private _mediumList = [];
+  private _gradeList = [];
+  private _subjectList = [];
+
+  get syllabusList() {
+    return this._syllabusList;
+  }
+  set syllabusList(v) {
+    this._syllabusList = v;
+    this.changeDetectionRef.detectChanges();
+  }
+
+  get mediumList() {
+    return this._mediumList;
+  }
+  set mediumList(v) {
+    this._mediumList = v;
+    this.changeDetectionRef.detectChanges();
+  }
+
+  get gradeList() {
+    return this._gradeList;
+  }
+  set gradeList(v) {
+    this._gradeList = v;
+    this.changeDetectionRef.detectChanges();
+  }
+
+  get subjectList() {
+    return this._subjectList;
+  }
+  set subjectList(v) {
+    this._subjectList = v;
+    this.changeDetectionRef.detectChanges();
+  }
+
   boardList = [];
-  subjectList = [];
-  gradeList = [];
-  mediumList = [];
 
   profile: Profile;
   profileEditForm: FormGroup;
@@ -99,7 +132,8 @@ export class CategoriesEditPage {
     private router: Router,
     private location: Location,
     private platform: Platform,
-    private activePageService: ActivePageService
+    private activePageService: ActivePageService,
+    private changeDetectionRef: ChangeDetectorRef
 
   ) {
     this.profile = this.appGlobalService.getCurrentUser();
