@@ -45,7 +45,6 @@ export class CategoriesEditPage {
   private _mediumList = [];
   private _gradeList = [];
   private _subjectList = [];
-  formOnChange$: any;
 
   get syllabusList() {
     return this._syllabusList;
