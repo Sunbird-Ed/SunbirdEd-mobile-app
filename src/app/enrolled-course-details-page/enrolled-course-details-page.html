@@ -190,8 +190,8 @@
 										<b>{{ 'PUBLISHED_BY' | translate:{'%s': appName} }}</b>:
 									</ion-card-title>
 									<p>{{course?.organisation}} </p>
-                                </div>
-                                <div *ngIf="course?.contributors || course?.creators || course?.attributions">
+								</div>
+								<div *ngIf="course?.contributors || course?.creators || course?.attributions">
 									<ion-card-title class="font-12 subtitle-color label-margin-bottom">
 										<b>{{ 'ATTRIBUTIONS' | translate }}</b>:
 									</ion-card-title>
@@ -210,11 +210,44 @@
 									</ion-card-title>
 									<p>{{course?.copyright}}{{course?.copyrightYear ? ", " + course?.copyrightYear : ""}}</p>
 								</div>
+								<!--training derived from section starts-->
+								<div class="copiedCourseDetails" *ngIf="copiedCourseDetails">
+									<div class="font-14 view-credits">
+										<span><b>{{'TRAINING_DERIVED_FROM' | translate}}</b></span>
+									</div>
+									<div *ngIf="copiedCourseDetails?.name">
+										<ion-card-title class="font-12 subtitle-color label-margin-bottom">
+											<b> {{'TRAINING' | translate}}</b>:
+										</ion-card-title>
+										<p>{{copiedCourseDetails?.name}}</p>
+									</div>
+									<div *ngIf="copiedCourseDetails?.author">
+					
+										<ion-card-title class="font-12 subtitle-color label-margin-bottom">
+											<b>{{ 'AUTHOR_OF_SOURCE_TRAINING' | translate }}</b>:
+										</ion-card-title>
+										<p>{{copiedCourseDetails?.author}}</p>
+									</div>
+					
+									<div *ngIf="copiedCourseDetails?.license">
+										<ion-card-title class="font-12 subtitle-color label-margin-bottom">
+											<b>{{ 'LICENSE' | translate }}</b>:
+										</ion-card-title>
+										<p>{{copiedCourseDetails?.license}}</p>
+									</div>
+					
+									<div *ngIf="copiedCourseDetails?.lastPublishedBy">
+										<ion-card-title class="font-12 subtitle-color label-margin-bottom">
+										<b>{{ 'PUBLISHED_BY' | translate:{'%s': appName} }}</b>:
+										</ion-card-title>
+										<p>{{copiedCourseDetails?.lastPublishedBy}}</p>
+									</div>
+								</div>
+								<!-- / training derived from section ends -->
 							</div>
 						</div>
 					</div>
 					<!--/credits and license info-->
-
 				</ion-card-content>
 			</ion-card>
 			<div *ngSwitchCase="'modules'">

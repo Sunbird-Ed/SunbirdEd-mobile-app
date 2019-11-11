@@ -186,6 +186,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
   shouldGenerateEndTelemetry = false;
   source = '';
   firstChild;
+  copiedCourseDetails: any;
   /** Whole child content is stored and it is used to find first child */
   childContentsData;
   isBatchNotStarted = false;
@@ -608,7 +609,6 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
     if (data.contentData) {
       await loader.present();
       this.course = data.contentData;
-      // console.log('this.course', this.course);
       this.content = data;
       this.objId = this.course.identifier;
       this.objType = this.course.contentType;
@@ -616,6 +616,9 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
       this.showLoading = false;
 
       this.telemetryObject = ContentUtil.getTelemetryObject(this.content);
+      if (this.course.origin) {
+        this.getCopiedCourseDetails(this.course.origin);
+      }
       if (!this.didViewLoad) {
         this.generateImpressionEvent(this.course.identifier, this.course.contentType, this.course.pkgVersion);
         this.generateStartEvent(this.course.identifier, this.course.contentType, this.course.pkgVersion);
@@ -678,6 +681,20 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
     }
 
     this.setCourseStructure();
+  }
+
+  getCopiedCourseDetails(originCourseId) {
+    const option = {
+      contentId: originCourseId,
+      hierarchyInfo: null,
+      level: !this.courseCardData.batchId ? 1 : 0,
+    };
+    this.contentService.getContentDetails(option).toPromise()
+      .then((data: Content) => {
+        this.copiedCourseDetails = data.contentData;
+      }).catch(() => {
+
+      });
   }
 
   /**
