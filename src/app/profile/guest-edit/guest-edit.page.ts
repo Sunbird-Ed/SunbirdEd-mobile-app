@@ -444,9 +444,9 @@ export class GuestEditPage implements OnInit {
           boards: []
         });
         if (showLoader) {
-            this._dismissLoader();
-            this.loader = await this.commonUtilService.getLoader();
-            await this.loader.present();
+          this._dismissLoader();
+          this.loader = await this.commonUtilService.getLoader();
+          await this.loader.present();
         }
         this.checkPrevValue(1, 'boardList', [this.guestEditForm.value.syllabus]);
         this.resetForm(1, false);
@@ -466,29 +466,29 @@ export class GuestEditPage implements OnInit {
         break;
 
       case 2:
-          this.guestEditForm.patchValue({
-            grades: []
-          });
-          oldAttribute.medium = this.profileForTelemetry.medium ? this.profileForTelemetry.medium : '';
-          newAttribute.medium = this.guestEditForm.value.medium ? this.guestEditForm.value.medium : '';
-          if (!isEqual(oldAttribute, newAttribute)) {
-            this.appGlobalService.generateAttributeChangeTelemetry(oldAttribute, newAttribute, PageId.GUEST_PROFILE);
-          }
-          this.profileForTelemetry.medium = this.guestEditForm.value.medium;
-          this.checkPrevValue(3, 'gradeList', this.guestEditForm.value.medium);
-          break;
+        this.guestEditForm.patchValue({
+          grades: []
+        });
+        oldAttribute.medium = this.profileForTelemetry.medium ? this.profileForTelemetry.medium : '';
+        newAttribute.medium = this.guestEditForm.value.medium ? this.guestEditForm.value.medium : '';
+        if (!isEqual(oldAttribute, newAttribute)) {
+          this.appGlobalService.generateAttributeChangeTelemetry(oldAttribute, newAttribute, PageId.GUEST_PROFILE);
+        }
+        this.profileForTelemetry.medium = this.guestEditForm.value.medium;
+        this.checkPrevValue(3, 'gradeList', this.guestEditForm.value.medium);
+        break;
       case 3:
-          this.guestEditForm.patchValue({
-            subjects: []
-          });
-          oldAttribute.class = this.profileForTelemetry.grade ? this.profileForTelemetry.grade : '';
-          newAttribute.class = this.guestEditForm.value.grades ? this.guestEditForm.value.grades : '';
-          if (!isEqual(oldAttribute, newAttribute)) {
-            this.appGlobalService.generateAttributeChangeTelemetry(oldAttribute, newAttribute, PageId.GUEST_PROFILE);
-          }
-          this.profileForTelemetry.grade = this.guestEditForm.value.grades;
-          this.checkPrevValue(4, 'subjectList', this.guestEditForm.value.grades);
-          break;
+        this.guestEditForm.patchValue({
+          subjects: []
+        });
+        oldAttribute.class = this.profileForTelemetry.grade ? this.profileForTelemetry.grade : '';
+        newAttribute.class = this.guestEditForm.value.grades ? this.guestEditForm.value.grades : '';
+        if (!isEqual(oldAttribute, newAttribute)) {
+          this.appGlobalService.generateAttributeChangeTelemetry(oldAttribute, newAttribute, PageId.GUEST_PROFILE);
+        }
+        this.profileForTelemetry.grade = this.guestEditForm.value.grades;
+        this.checkPrevValue(4, 'subjectList', this.guestEditForm.value.grades);
+        break;
     }
     this.changeDetectionRef.detectChanges();
   }
