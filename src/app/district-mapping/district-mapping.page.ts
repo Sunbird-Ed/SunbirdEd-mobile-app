@@ -43,8 +43,9 @@ export class DistrictMappingPage implements OnInit {
   availableLocationDistrict: string;
   availableLocationState: string;
   isAutoPopulated = false;
-  isLocationChanged = false;
+  isPopulatedLocationChanged = false;
   isKeyboardShown$;
+  isLocationChanged =  false;
 
   constructor(
     public headerService: AppHeaderService,
@@ -80,20 +81,29 @@ export class DistrictMappingPage implements OnInit {
   }
 
   selectState(name, id, code) {
-    this.showStates = false;
-    this.stateName = name;
+    this.getState(name, id, code);
     this.districtName = '';
-    this.stateCode = code;
-    this.getDistrict(id);
+    this.isLocationChanged = true;
     if (this.isAutoPopulated) { // TODO: Do we need this if.
-      this.isLocationChanged = true;
+      this.isPopulatedLocationChanged = true;
+    }
+    if (this.isPopulatedLocationChanged) {
+      this.availableLocationDistrict = '';
     }
   }
 
+  getState(name, id, code) {
+    this.showStates = false;
+    this.stateName = name;
+    this.stateCode = code;
+    this.getDistrict(id);
+  }
+
   selectDistrict(name, code) {
-    if (this.isAutoPopulated) { // TODO: Do we need this if.
-      this.isLocationChanged = true;
+    if (this.isAutoPopulated && this.availableLocationDistrict) { // TODO: Do we need this if.
+      this.isPopulatedLocationChanged = true;
     }
+    this.isLocationChanged = true;
     this.districtName = name;
     this.districtCode = code;
     this.showDistrict = false;
@@ -172,7 +182,7 @@ export class DistrictMappingPage implements OnInit {
             if (element.name === this.availableLocationState) {
               await loaderState.dismiss();
               loaderState = undefined;
-              this.selectState(element.name, element.id, element.code);
+              this.getState(element.name, element.id, element.code); // set the name, id and code
               this.generateAutoPopulatedTelemetry();
               break;
             }
@@ -195,7 +205,7 @@ export class DistrictMappingPage implements OnInit {
 
   async getDistrict(pid: string) {
     if (this.stateName) {
-     // this.showDistrict = !this.showDistrict;
+      // this.showDistrict = !this.showDistrict;
       let loader = await this.commonUtilService.getLoader();
       loader.present();
       const req: LocationSearchCriteria = {
@@ -241,7 +251,7 @@ export class DistrictMappingPage implements OnInit {
       Environment.HOME,
       PageId.DISTRICT_MAPPING,
       undefined,
-      { isLocationChanged: this.isLocationChanged });
+      {isPopulatedLocation: this.isPopulatedLocationChanged });
 
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,
@@ -249,7 +259,7 @@ export class DistrictMappingPage implements OnInit {
       Environment.HOME,
       PageId.DISTRICT_MAPPING,
       undefined,
-      );
+    );
 
     if (this.appGlobalService.isUserLoggedIn()) {
       const req = {
@@ -261,6 +271,10 @@ export class DistrictMappingPage implements OnInit {
       this.profileService.updateServerProfile(req).toPromise()
         .then(async () => {
           await loader.dismiss();
+
+          if (!(await this.commonUtilService.isDeviceLocationAvailable())) { // adding the device loc if not available
+            await this.saveDeviceLocation();
+          }
           this.generateLocationCaptured(false); // is dirtrict or location edit  = false
           this.commonUtilService.showToast(this.commonUtilService.translateMessage('PROFILE_UPDATE_SUCCESS'));
           this.events.publish('loggedInProfile:update', req);
@@ -268,17 +282,16 @@ export class DistrictMappingPage implements OnInit {
         }).catch(async () => {
           await loader.dismiss();
           this.commonUtilService.showToast(this.commonUtilService.translateMessage('PROFILE_UPDATE_FAILED'));
+          this.router.navigate([`/${RouterLinks.TABS}`]);
         });
-    }
-
-    if (this.source === PageId.GUEST_PROFILE) { // block for editing the device location
+    } else if (this.source === PageId.GUEST_PROFILE) { // block for editing the device location
 
       this.generateLocationCaptured(true); // is dirtrict or location edit  = true
 
       await this.saveDeviceLocation();
       this.events.publish('refresh:profile');
       this.goBack();
-    } else if (!(await this.commonUtilService.isDeviceLocationAvailable())) { // adding the device loc
+    } else { // add or update the device loc
       await this.saveDeviceLocation();
       const navigationExtras: NavigationExtras = {
         state: {
