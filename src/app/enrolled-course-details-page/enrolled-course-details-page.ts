@@ -606,7 +606,6 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
   async extractApiResponse(data: Content) {
     const loader = await this.commonUtilService.getLoader();
     if (data.contentData) {
-      console.log('data is' , data);
       await loader.present();
       this.course = data.contentData;
       this.content = data;
