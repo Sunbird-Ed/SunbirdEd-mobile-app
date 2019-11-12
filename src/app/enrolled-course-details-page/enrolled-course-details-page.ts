@@ -1102,8 +1102,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
     this.showChildrenLoader = true;
     const option: ChildContentRequest = {
       contentId: this.identifier,
-      hierarchyInfo: null,
-      level: !this.courseCardData.batchId ? 1 : 0,
+      hierarchyInfo: null
     };
     this.contentService.getChildContents(option).toPromise()
       .then((data: Content) => {
