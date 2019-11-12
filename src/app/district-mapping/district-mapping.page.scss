@@ -17,6 +17,49 @@
         }
     }
 
+    .font-size-13{
+      font-size: 13px;
+    }
+    
+    .error-input{
+      border-bottom: 1.5px solid #e76026 !important;
+    }
+
+    .label {
+        font-size: 13px;
+        padding-left: 16px;
+        color: #333333;
+    }
+
+    .name {
+        padding-bottom: 16px;
+        padding-bottom: 22px;
+    }
+
+    input:-internal-autofill-selected {
+        background-color: white !important;
+    }
+
+    .margin-top-6 {
+        margin-top: 6vh;
+    }
+
+    .name-feild {
+        width: 100%;
+        border-right: white;
+        border-top: white;
+        border-left: white;
+        border-bottom: 0.5px solid #333333;
+        padding-bottom: 6px;
+        padding-left: 11px;
+        font-size: 13px;
+        outline: none;
+    }
+
+    input::placeholder {
+        padding-left: 16px;
+    }
+
     .oneline-input {
         border-left: white;
         border-right: white;
@@ -25,16 +68,18 @@
         width:100%;
         outline: none;
     }
-    
+
     .disableInput {
-        background-color: #EBEBE4
+        background-color: #EBEBE4;
     };
-    .danger{
+    .danger {
         color: red;
     }
-    .disabled-button{
+
+    .disabled-button {
         opacity: 0.5;
     }
+
     .input-label {
         font-weight: 200;
         font-size: 14px;

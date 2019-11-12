@@ -1,4 +1,4 @@
-import { Router, NavigationExtras, NavigationStart, NavigationEnd, NavigationError, Event } from '@angular/router';
+import { Router, NavigationExtras, NavigationStart, Event } from '@angular/router';
 import { Location } from '@angular/common';
 import { AfterViewInit, Component, Inject, NgZone, OnInit, EventEmitter, ViewChild } from '@angular/core';
 import { Events, Platform, IonRouterOutlet, MenuController } from '@ionic/angular';
@@ -15,12 +15,11 @@ import {
 } from 'sunbird-sdk';
 
 import {
-    InteractType,
-    InteractSubtype,
-    Environment, PageId,
-    ImpressionType,
-    CorReleationDataType,
-    ImpressionSubtype
+  InteractType,
+  InteractSubtype,
+  Environment, PageId,
+  ImpressionType,
+  CorReleationDataType
 } from 'services/telemetry-constants';
 import { PreferenceKey, EventTopics, SystemSettingsIds } from './app.constant';
 import { ActivePageService } from '@app/services/active-page/active-page-service';
@@ -58,7 +57,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   private telemetryAutoSyncUtil: TelemetryAutoSyncUtil;
   toggleRouterOutlet = true;
-  rootPageDisplayed: boolean = false;
+  rootPageDisplayed = false;
   profile: any = {};
   selectedLanguage: string;
   appName: string;
@@ -577,7 +576,7 @@ export class AppComponent implements OnInit, AfterViewInit {
         || (routeUrl.indexOf(RouterLinks.EXPLORE_BOOK) !== -1)
         || (routeUrl.indexOf(RouterLinks.PERMISSION) !== -1)
         || (routeUrl.indexOf(RouterLinks.SHARE_USER_AND_GROUPS) !== -1)
-        ) {
+      ) {
         this.headerService.sidebarEvent($event);
         return;
       } else {
@@ -732,21 +731,21 @@ export class AppComponent implements OnInit, AfterViewInit {
   private async getDeviceProfile() {
     if (!(await this.commonUtilService.isDeviceLocationAvailable())
       && !(await this.commonUtilService.isIpLocationAvailable())) {
-      this.deviceRegisterService.getDeviceProfile().toPromise().then((response) => {
+      this.deviceRegisterService.getDeviceProfile().toPromise().then(async (response) => {
         if (response.userDeclaredLocation) {
           const locationMap = new Map();
           locationMap['state'] = response.userDeclaredLocation.state;
           locationMap['district'] = response.userDeclaredLocation.district;
-          this.preferences.putString(PreferenceKey.DEVICE_LOCATION, JSON.stringify(locationMap)).toPromise();
+          await this.preferences.putString(PreferenceKey.DEVICE_LOCATION, JSON.stringify(locationMap)).toPromise();
         } else if (response.ipLocation) {
-          const iplocationMap = new Map();
+          const ipLocationMap = new Map();
           if (response.ipLocation.state) {
-            iplocationMap['state'] = response.ipLocation.state;
+            ipLocationMap['state'] = response.ipLocation.state;
             if (response.ipLocation.district) {
-              iplocationMap['district'] = response.ipLocation.district;
+              ipLocationMap['district'] = response.ipLocation.district;
             }
           }
-          this.preferences.putString(PreferenceKey.IP_LOCATION, JSON.stringify(iplocationMap)).toPromise();
+          await this.preferences.putString(PreferenceKey.IP_LOCATION, JSON.stringify(ipLocationMap)).toPromise();
         }
       });
     }

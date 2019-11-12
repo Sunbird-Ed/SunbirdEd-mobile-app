@@ -80,7 +80,7 @@ export class ContentPlayerHandler {
             data.config.plugins = [
                 {
                     id: content.contentData.contentType === ContentType.SELF_ASSESS ? 'org.sunbird.assess.endpage' : 'org.sunbird.player.endpage',
-                    ver: '1.0',
+                    ver: content.contentData.contentType === ContentType.SELF_ASSESS ? '1.0' : '1.1',
                     type: 'plugin'
                 }
             ];

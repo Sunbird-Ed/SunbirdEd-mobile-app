@@ -1,7 +1,9 @@
-import { Observable } from 'rxjs/Observable';
 import { Inject, Injectable } from '@angular/core';
 import { ModalController } from '@ionic/angular';
-import { AuthService, OAuthSession, ProfileService, ServerProfile, ServerProfileDetailsRequest, CachedItemRequestSourceFrom } from 'sunbird-sdk';
+import {
+  AuthService, OAuthSession, ProfileService,
+  ServerProfile, ServerProfileDetailsRequest, CachedItemRequestSourceFrom
+} from 'sunbird-sdk';
 import { ProfileConstants, RouterLinks } from '@app/app/app.constant';
 import { TermsAndConditionsPage } from '@app/app/terms-and-conditions/terms-and-conditions.page';
 import { Router, NavigationExtras } from '@angular/router';
@@ -43,7 +45,7 @@ export class TncUpdateHandlerService {
                       isShowBackButton: false
                     }
                   };
-                  this.router.navigate(['/', RouterLinks.DISTRICT_MAPPING] , navigationExtras)
+                  this.router.navigate(['/', RouterLinks.DISTRICT_MAPPING], navigationExtras)
                     .then(() => resolve(false));
                   return;
                 }

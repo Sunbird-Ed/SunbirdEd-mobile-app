@@ -526,11 +526,13 @@ downloadTrainingCertificate(course: Course, certificate: CourseCertificate) {
 
       const navigationExtras: NavigationExtras = {
         state: {
-          profile: this.profile
+          profile: this.profile,
+          isShowBackButton: true
         }
       };
 
-      this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.PERSONAL_DETAILS_EDIT}`], navigationExtras);
+      // this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.PERSONAL_DETAILS_EDIT}`], navigationExtras);
+      this.router.navigate([RouterLinks.DISTRICT_MAPPING], navigationExtras);
     } else {
       this.commonUtilService.showToast('NEED_INTERNET_TO_CHANGE');
     }

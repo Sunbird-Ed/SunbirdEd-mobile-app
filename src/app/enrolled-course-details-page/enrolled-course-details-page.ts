@@ -1325,7 +1325,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
       if (this.shouldGenerateEndTelemetry) {
         this.generateQRSessionEndEvent(this.source, this.course.identifier);
       }
-      this.location.back();
+      this.goBack();
     });
   }
 
