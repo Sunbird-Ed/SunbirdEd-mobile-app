@@ -32,6 +32,13 @@ export class FilteroptionComponent {
   confirm() {
     const values = new Map();
     values['option'] = this.facets.name;
+    const appliedFilter = []  
+    this.facets.values.map(function(element) {
+       if(element.apply === true){
+          appliedFilter.push(element.name);
+       }
+    });
+    values['SelectedFilter'] = appliedFilter;
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
       InteractSubtype.APPLY_FILTER_CLICKED,
       Environment.HOME,
