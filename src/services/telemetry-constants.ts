@@ -114,7 +114,8 @@ export enum PageId {
     EXPLORE_MORE_CONTENT = 'explore-more-content',
     RECOVERY_ACCOUNT_ID_POPUP = 'recovery-account-id-popup',
     MERGE_ACCOUNT_POPUP = 'merge-account-popup',
-    DISTRICT_MAPPING = 'district-mapping'
+    DISTRICT_MAPPING = 'district-mapping',
+    SIGNIN_POPUP = 'signin-popup',
 }
 export enum LogType {
     NOTIFICATION = 'notification'
@@ -356,7 +357,8 @@ export enum InteractSubtype {
     MERGE_CLICKED = 'merge-clicked',
     NOTIFICATION_RECEIVED = 'notification-received',
     AUTO_POPULATED_LOCATION = 'auto-populate-location',
-    EDIT_DISTRICT_MAPPING_CLICKED = 'edit-district-mapping-clicked'
+    EDIT_DISTRICT_MAPPING_CLICKED = 'edit-district-mapping-clicked',
+    LOGIN_CLICKED = 'login-clicked'
 }
 
 export enum ActionButtonType {

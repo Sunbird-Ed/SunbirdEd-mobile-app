@@ -46,10 +46,6 @@ import {
   TelemetryObject,
   UnenrollCourseRequest,
   AuthService,
-  OAuthSession,
-  EnrollCourseRequest,
-  ContentDeleteResponse,
-  ContentDeleteStatus,
   Rollup
 } from 'sunbird-sdk';
 import { Subscription } from 'rxjs/Subscription';
@@ -174,7 +170,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
   batchId = '';
   baseUrl = '';
   guestUser = false;
-  isAlreadyEnrolled:Boolean = false;
+  isAlreadyEnrolled = false;
   profileType = '';
   objId;
   objType;
@@ -1734,6 +1730,14 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
   }
 
   async promptToLogin(batchdetail) {
+    this.telemetryGeneratorService.generateImpressionTelemetry(ImpressionType.VIEW,
+      '', PageId.SIGNIN_POPUP,
+      Environment.HOME,
+      this.telemetryObject.id,
+      this.telemetryObject.type,
+      this.telemetryObject.version,
+      this.objRollup,
+      this.corRelationList);
     const confirm = await this.popoverCtrl.create({
       component: SbPopoverComponent,
       componentProps: {
@@ -1755,6 +1759,15 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
     if (data && data.canDelete) {
       this.preferences.putString(PreferenceKey.BATCH_DETAIL_KEY, JSON.stringify(batchdetail)).toPromise();
       this.preferences.putString(PreferenceKey.COURSE_DATA_KEY, JSON.stringify(this.course)).toPromise();
+      this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
+        InteractSubtype.LOGIN_CLICKED,
+        Environment.HOME,
+        PageId.SIGNIN_POPUP,
+        undefined,
+        this.telemetryObject,
+        this.objRollup,
+        this.corRelationList
+      );
       this.loginHandlerService.signIn();
     }
   }
