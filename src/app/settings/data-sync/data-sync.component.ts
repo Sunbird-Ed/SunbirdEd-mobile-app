@@ -124,6 +124,11 @@ export class DataSyncComponent implements OnInit {
     const telemetryExportRequest: TelemetryExportRequest = {
       destinationFolder: cordova.file.externalDataDirectory
     };
+    this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
+      InteractSubtype.SHARE_TELEMETRY,
+      Environment.SETTINGS,
+      PageId.SETTINGS_DATASYNC,
+      undefined);
     this.telemetryService.exportTelemetry(telemetryExportRequest).subscribe(async (data: TelemetryExportResponse) => {
       await loader.dismiss();
       this.social.share('', '', 'file://' + data.exportedFilePath, '');
