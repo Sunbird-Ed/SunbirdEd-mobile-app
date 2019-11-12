@@ -4,7 +4,7 @@ import {
   AppGlobalService, UtilityService, CommonUtilService, NotificationService, TelemetryGeneratorService,
   InteractType, InteractSubtype, Environment, PageId, ActivePageService
 } from '../../../services';
-import { DownloadService, SharedPreferences, NotificationService as PushNotificationService, NotificationStatus } from 'sunbird-sdk';
+import { DownloadService, SharedPreferences, NotificationService as PushNotificationService, NotificationStatus, ProfileService } from 'sunbird-sdk';
 import { GenericAppConfig, PreferenceKey, RouterLinks } from '../../../app/app.constant';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { Subscription } from 'rxjs/Subscription';
@@ -40,6 +40,7 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
     @Inject('SHARED_PREFERENCES') private preference: SharedPreferences,
     @Inject('DOWNLOAD_SERVICE') private downloadService: DownloadService,
     @Inject('NOTIFICATION_SERVICE') private pushNotificationService: PushNotificationService,
+    @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     public menuCtrl: MenuController,
     private commonUtilService: CommonUtilService,
     private events: Events,
@@ -136,25 +137,33 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
     });
   }
 
-  setAppLogo() {
+  async setAppLogo() {
+
+    this.preference.getString('app_logo').toPromise().then(value => {
+      if (value) {
+        this.appLogo = this.commonUtilService.networkInfo.isNetworkAvailable ? value : './assets/imgs/ic_launcher.png';
+      } else {
+        this.appLogo = './assets/imgs/ic_launcher.png';
+      }
+    });
+
     if (!this.appGlobalService.isUserLoggedIn()) {
       this.isLoggedIn = false;
-      this.appLogo = './assets/imgs/ic_launcher.png';
       this.appVersion.getAppName().then((appName: any) => {
         this.appName = appName;
       });
     } else {
+      const isDefaultChannelProfile = await this.profileService.isDefaultChannelProfile().toPromise();
       this.isLoggedIn = true;
-      this.preference.getString('app_logo').toPromise().then(value => {
-        if (value) {
-          this.appLogo = this.commonUtilService.networkInfo.isNetworkAvailable ? value : './assets/imgs/ic_launcher.png';
-        } else {
-          this.appLogo = './assets/imgs/ic_launcher.png';
-        }
-      });
-      this.preference.getString('app_name').toPromise().then(value => {
-        this.appName = value;
-      });
+      if (isDefaultChannelProfile) {
+        this.appVersion.getAppName().then((appName: any) => {
+          this.appName = appName;
+        });
+      } else {
+        this.preference.getString('app_name').toPromise().then(value => {
+          this.appName = value;
+        });
+      }
     }
   }
 
