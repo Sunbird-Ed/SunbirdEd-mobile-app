@@ -211,36 +211,36 @@
 									<p>{{course?.copyright}}{{course?.copyrightYear ? ", " + course?.copyrightYear : ""}}</p>
 								</div>
 								<!--training derived from section starts-->
-								<div class="copiedCourseDetails" *ngIf="copiedCourseDetails">
+								<div class="origin-data" *ngIf="course?.originData">
 									<div class="font-14 view-credits">
 										<span><b>{{'TRAINING_DERIVED_FROM' | translate}}</b></span>
 									</div>
-									<div *ngIf="copiedCourseDetails?.name">
+									<div *ngIf="course?.originData.name">
 										<ion-card-title class="font-12 subtitle-color label-margin-bottom">
 											<b> {{'TRAINING' | translate}}</b>:
 										</ion-card-title>
-										<p>{{copiedCourseDetails?.name}}</p>
+										<p>{{course?.originData.name}}</p>
 									</div>
-									<div *ngIf="copiedCourseDetails?.author">
+									<div *ngIf="course?.originData.author">
 					
 										<ion-card-title class="font-12 subtitle-color label-margin-bottom">
 											<b>{{ 'AUTHOR_OF_SOURCE_TRAINING' | translate }}</b>:
 										</ion-card-title>
-										<p>{{copiedCourseDetails?.author}}</p>
+										<p>{{course?.originData.author}}</p>
 									</div>
 					
-									<div *ngIf="copiedCourseDetails?.license">
+									<div *ngIf="course?.originData.license">
 										<ion-card-title class="font-12 subtitle-color label-margin-bottom">
 											<b>{{ 'LICENSE' | translate }}</b>:
 										</ion-card-title>
-										<p>{{copiedCourseDetails?.license}}</p>
+										<p>{{course?.originData.license}}</p>
 									</div>
 					
-									<div *ngIf="copiedCourseDetails?.lastPublishedBy">
+									<div *ngIf="course?.originData.organisation">
 										<ion-card-title class="font-12 subtitle-color label-margin-bottom">
 										<b>{{ 'PUBLISHED_BY' | translate:{'%s': appName} }}</b>:
 										</ion-card-title>
-										<p>{{copiedCourseDetails?.lastPublishedBy}}</p>
+										<p>{{course?.originData.organisation[0]}}</p>
 									</div>
 								</div>
 								<!-- / training derived from section ends -->
