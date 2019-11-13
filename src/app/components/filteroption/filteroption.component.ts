@@ -38,7 +38,7 @@ export class FilteroptionComponent {
           appliedFilter.push(element.name);
        }
     });
-    values['SelectedFilter'] = appliedFilter;
+    values['selectedFilter'] = appliedFilter;
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
       InteractSubtype.APPLY_FILTER_CLICKED,
       Environment.HOME,
