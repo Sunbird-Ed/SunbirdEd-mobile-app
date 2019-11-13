@@ -312,7 +312,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
       this.courseCardData.batchId = res.batchId;
       this.getBatchDetails();
       this.segmentType = 'modules';
-      // this.getCourseProgress();
+      this.getCourseProgress();
       if (res && res.batchId) {
         this.batchId = res.batchId;
         if (this.identifier && res.courseId && this.identifier === res.courseId) {
@@ -474,7 +474,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
       component: ContentActionsComponent,
       event,
       cssClass: 'leave-training-popup',
-      showBackdrop:false,
+      showBackdrop: false,
       componentProps: {
         // overFlowMenuData,
         content: this.course,
@@ -514,7 +514,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
     let unenroll = false;
     if (data && data.isLeftButtonClicked === false) {
       unenroll = true;
-      this.handleUnenrollment(unenroll)
+      this.handleUnenrollment(unenroll);
     }
   }
 
@@ -600,9 +600,9 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
    * If locally available then make childContents api call else make import content api call
    */
   async extractApiResponse(data: Content) {
-    const loader = await this.commonUtilService.getLoader();
+    // const loader = await this.commonUtilService.getLoader();
     if (data.contentData) {
-      await loader.present();
+      // await loader.present();
       this.course = data.contentData;
       // console.log('this.course', this.course);
       this.content = data;
@@ -652,7 +652,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
         this.ratingComment = contentFeedback[0].comments;
       }
       this.getCourseProgress();
-      await loader.dismiss();
+      // await loader.dismiss();
     } else {
       this.commonUtilService.showToast('ERROR_CONTENT_NOT_AVAILABLE');
       this.location.back();
@@ -1559,6 +1559,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
   }
 
   goBack() {
+    this.events.publish('event:update_course_data');
     if (this.isQrCodeLinkToContent === 0) {
       window.history.go(-2);
     } else {
