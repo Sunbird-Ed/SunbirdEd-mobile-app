@@ -133,7 +133,7 @@ export class CoursesPage implements OnInit {
   ngOnInit() {
     this.getCourseTabData();
 
-    this.events.subscribe('events:update_course_data', () => {
+    this.events.subscribe('event:update_course_data', () => {
         this.getEnrolledCourses();
     });
   }
