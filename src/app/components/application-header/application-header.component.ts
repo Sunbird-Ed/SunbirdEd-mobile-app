@@ -4,7 +4,7 @@ import {
   AppGlobalService, UtilityService, CommonUtilService, NotificationService, TelemetryGeneratorService,
   InteractType, InteractSubtype, Environment, PageId, ActivePageService
 } from '../../../services';
-import { DownloadService, SharedPreferences, NotificationService as PushNotificationService, NotificationStatus, ProfileService } from 'sunbird-sdk';
+import { DownloadService, SharedPreferences, NotificationService as PushNotificationService, NotificationStatus } from 'sunbird-sdk';
 import { GenericAppConfig, PreferenceKey, RouterLinks } from '../../../app/app.constant';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { Subscription } from 'rxjs/Subscription';
@@ -40,7 +40,6 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
     @Inject('SHARED_PREFERENCES') private preference: SharedPreferences,
     @Inject('DOWNLOAD_SERVICE') private downloadService: DownloadService,
     @Inject('NOTIFICATION_SERVICE') private pushNotificationService: PushNotificationService,
-    @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     public menuCtrl: MenuController,
     private commonUtilService: CommonUtilService,
     private events: Events,
