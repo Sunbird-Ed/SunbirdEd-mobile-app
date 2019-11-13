@@ -184,17 +184,22 @@ export class LoginHandlerService {
   }
 
   refreshTenantData(slug: string, title: string) {
-    // return new Promise((resolve, reject) => {
-    //   this.profileService.getTenantInfo({ slug: '' }).toPromise()
-    //     .then((res) => {
-    //       this.preferences.putString(PreferenceKey.APP_LOGO, res.logo).toPromise().then();
-    //       this.preferences.putString(PreferenceKey.APP_NAME, title).toPromise().then();
-    //       (window as any).splashscreen.setContent(title, res.logo);
-    //       resolve();
-    //     }).catch(() => {
-    //       resolve(); // ignore
-    //     });
-    // });
+    return new Promise((resolve, reject) => {
+      this.profileService.getTenantInfo({ slug: '' }).toPromise()
+        .then(async (res) => {
+          this.preferences.putString(PreferenceKey.APP_LOGO, res.logo).toPromise().then();
+          this.preferences.putString(PreferenceKey.APP_NAME, title).toPromise().then();
+          const isDefaultChannelProfile = await this.profileService.isDefaultChannelProfile().toPromise();
+          if (isDefaultChannelProfile) {
+             (window as any).splashscreen.setContent(await this.appVersion.getAppName(), res.appLogo);
+          } else {
+            (window as any).splashscreen.setContent(title, res.appLogo);
+          }
+          resolve();
+        }).catch(() => {
+          resolve(); // ignore
+        });
+    });
   }
 
   generateLoginInteractTelemetry(interactType, interactSubtype, uid) {
