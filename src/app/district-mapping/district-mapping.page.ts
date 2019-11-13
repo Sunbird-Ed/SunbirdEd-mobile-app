@@ -272,10 +272,6 @@ export class DistrictMappingPage implements OnInit {
   }
 
   async submit() {
-    if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
-      this.commonUtilService.showToast('INTERNET_CONNECTIVITY_NEEDED');
-      return;
-    }
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.OTHER,
       InteractSubtype.AUTO_POPULATED_LOCATION,
@@ -293,6 +289,10 @@ export class DistrictMappingPage implements OnInit {
     );
 
     if (this.appGlobalService.isUserLoggedIn()) {
+      if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
+        this.commonUtilService.showToast('INTERNET_CONNECTIVITY_NEEDED');
+        return;
+      }
       const req = {
         userId: this.appGlobalService.getCurrentUser().uid || this.profile.uid,
         locationCodes: [this.stateCode, this.districtCode]
