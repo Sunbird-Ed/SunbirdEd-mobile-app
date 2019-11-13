@@ -348,7 +348,7 @@ export enum InteractSubtype {
     RECOVERY_ACCOUNT_ID_CLICKED = 'recovery-account-id-clicked',
     MENU_CLICKED = 'menu-clicked',
     SHARE_CLICKED = 'share-clicked',
-    SHARE_TELEMETRY = 'share-telemetry-clicked',
+    SHARE_TELEMETRY_CLICKED = 'share-telemetry-clicked',
     UNENROL_CLICKED = 'unenrol-clicked',
     UNENROL_SUCCESS = 'unenrol-success',
     UNENROL_FAILURE = 'unenrol-failure',

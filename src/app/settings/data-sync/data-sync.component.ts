@@ -125,7 +125,7 @@ export class DataSyncComponent implements OnInit {
       destinationFolder: cordova.file.externalDataDirectory
     };
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
-      InteractSubtype.SHARE_TELEMETRY,
+      InteractSubtype.SHARE_TELEMETRY_CLICKED,
       Environment.SETTINGS,
       PageId.SETTINGS_DATASYNC,
       undefined);
