@@ -83,7 +83,6 @@ export class DistrictMappingPage implements OnInit {
   selectState(name, id, code) {
     this.getState(name, id, code);
     this.districtName = '';
-    this.districtCode = '';
     this.isLocationChanged = true;
     if (this.isAutoPopulated) { // TODO: Do we need this if.
       this.isPopulatedLocationChanged = true;
@@ -116,7 +115,6 @@ export class DistrictMappingPage implements OnInit {
 
   districtIconClicked() {
     this.districtName = '';
-    this.districtCode = '';
   }
 
   goBack() {
@@ -398,9 +396,5 @@ export class DistrictMappingPage implements OnInit {
         isAutoPopulated: this.isAutoPopulated,
         isEdited
       });
-  }
-
-  resetDistrictCode() {
-    this.districtCode = '';
   }
 }

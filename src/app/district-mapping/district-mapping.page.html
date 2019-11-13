@@ -33,7 +33,7 @@
       <input type="text" class="input" [(ngModel)]="districtName" placeholder="{{('SEARCH_DISTRICT' | translate)}}"
         [disabled]="!stateName && !availableLocationState"
         value="{{ availableLocationDistrict? availableLocationDistrict : stateName}}"
-        (ngModelChange)="showDistrictList()" (input)="resetDistrictCode()">
+        (ngModelChange)="showDistrictList()">
       <ion-icon (click)="showDistrict = !showDistrict; districtIconClicked()" class="input-icon" name="ios-arrow-down">
       </ion-icon>
       <!-- <ion-icon *ngIf="!this.stateName && !availableLocationState" class="input-icon" name="ios-arrow-down"></ion-icon> -->
@@ -54,7 +54,7 @@
     (click)="submit()">{{'BTN_SUBMIT' | translate}}</button>
 </div>
 <div class="footer" *ngIf="!(isKeyboardShown$ | async) && isLocationChanged">
-  <button class="block-button" [disabled]="!stateCode || !districtCode "
-    [ngClass]="!stateCode || !districtCode ? 'disabled-button': ''"
+  <button class="block-button" [disabled]="!stateName || !districtName "
+    [ngClass]="!stateName || !districtName ? 'disabled-button': ''"
     (click)="submit()">{{'BTN_SUBMIT' | translate}}</button>
 </div>
