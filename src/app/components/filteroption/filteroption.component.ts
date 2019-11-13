@@ -33,7 +33,7 @@ export class FilteroptionComponent {
     const values = new Map();
     values['option'] = this.facets.name;
     const appliedFilter = []  
-    this.facets.values.map(function(element) {
+    this.facets.values.map((element) => {
        if(element.apply === true){
           appliedFilter.push(element.name);
        }
