@@ -187,14 +187,13 @@ export class LoginHandlerService {
     return new Promise((resolve, reject) => {
       this.profileService.getTenantInfo({ slug: '' }).toPromise()
         .then(async (res) => {
-          this.preferences.putString(PreferenceKey.APP_LOGO, res.logo).toPromise().then();
-          this.preferences.putString(PreferenceKey.APP_NAME, title).toPromise().then();
           const isDefaultChannelProfile = await this.profileService.isDefaultChannelProfile().toPromise();
           if (isDefaultChannelProfile) {
-             (window as any).splashscreen.setContent(await this.appVersion.getAppName(), res.appLogo);
-          } else {
-            (window as any).splashscreen.setContent(title, res.appLogo);
+            title = await this.appVersion.getAppName();
           }
+          this.preferences.putString(PreferenceKey.APP_LOGO, res.logo).toPromise().then();
+          this.preferences.putString(PreferenceKey.APP_NAME, title).toPromise().then();
+          (window as any).splashscreen.setContent(title, res.appLogo);
           resolve();
         }).catch(() => {
           resolve(); // ignore

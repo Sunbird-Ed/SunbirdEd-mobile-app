@@ -137,33 +137,25 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
     });
   }
 
-  async setAppLogo() {
-
-    this.preference.getString('app_logo').toPromise().then(value => {
-      if (value) {
-        this.appLogo = this.commonUtilService.networkInfo.isNetworkAvailable ? value : './assets/imgs/ic_launcher.png';
-      } else {
-        this.appLogo = './assets/imgs/ic_launcher.png';
-      }
-    });
-
+  setAppLogo() {
     if (!this.appGlobalService.isUserLoggedIn()) {
       this.isLoggedIn = false;
+      this.appLogo = './assets/imgs/ic_launcher.png';
       this.appVersion.getAppName().then((appName: any) => {
         this.appName = appName;
       });
     } else {
-      const isDefaultChannelProfile = await this.profileService.isDefaultChannelProfile().toPromise();
       this.isLoggedIn = true;
-      if (isDefaultChannelProfile) {
-        this.appVersion.getAppName().then((appName: any) => {
-          this.appName = appName;
-        });
-      } else {
-        this.preference.getString('app_name').toPromise().then(value => {
-          this.appName = value;
-        });
-      }
+      this.preference.getString('app_logo').toPromise().then(value => {
+        if (value) {
+          this.appLogo = this.commonUtilService.networkInfo.isNetworkAvailable ? value : './assets/imgs/ic_launcher.png';
+        } else {
+          this.appLogo = './assets/imgs/ic_launcher.png';
+        }
+      });
+      this.preference.getString('app_name').toPromise().then(value => {
+        this.appName = value;
+      });
     }
   }
 
