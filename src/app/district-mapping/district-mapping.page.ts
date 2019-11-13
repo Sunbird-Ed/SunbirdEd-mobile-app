@@ -83,6 +83,7 @@ export class DistrictMappingPage implements OnInit {
   selectState(name, id, code) {
     this.getState(name, id, code);
     this.districtName = '';
+    this.districtCode = '';
     this.isLocationChanged = true;
     if (this.isAutoPopulated) { // TODO: Do we need this if.
       this.isPopulatedLocationChanged = true;
@@ -115,6 +116,7 @@ export class DistrictMappingPage implements OnInit {
 
   districtIconClicked() {
     this.districtName = '';
+    this.districtCode = '';
   }
 
   goBack() {
@@ -287,6 +289,10 @@ export class DistrictMappingPage implements OnInit {
     );
 
     if (this.appGlobalService.isUserLoggedIn()) {
+      if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
+        this.commonUtilService.showToast('INTERNET_CONNECTIVITY_NEEDED');
+        return;
+      }
       const req = {
         userId: this.appGlobalService.getCurrentUser().uid || this.profile.uid,
         locationCodes: [this.stateCode, this.districtCode]
@@ -396,5 +402,9 @@ export class DistrictMappingPage implements OnInit {
         isAutoPopulated: this.isAutoPopulated,
         isEdited
       });
+  }
+
+  resetDistrictCode() {
+    this.districtCode = '';
   }
 }
