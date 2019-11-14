@@ -14,24 +14,18 @@
             <p class="ps-chapter-text chapter-section multiline-ellipsis ellipsis-three-line" >{{ previousContent[content.identifier].content.contentData.name.length > 40 ? previousContent[content.identifier].content.contentData.name.substring(0,40)+"..." : previousContent[content.identifier].content.contentData.name}}</p>
           </div>
         </div>
-          <div class="assessment-content-endpage assessment-score-content">
-            <div class="assessment-content-title mt-32">You assessment score is {{userScore}}/{{totalScore}}
-            </div>
-            <div class="assessment-content-description mt-16">
+          <div class="assessment-content assessment-score-content">
+            <div class="assessment-content-title">Your score is {{userScore}}/{{totalScore}}</div>
+            <div class="assessment-content-description">
               <div class="text-center">
-                You can re-take the assessment to improve your score or move to
-                next module to continue learning.
+                You can redo the assessment to improve your score.
               </div>
             </div>
-            <div class="assessment-action-buttons mt-40">
-              <button type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary sb-btn-responsive mr-24" ng-click="openGenie()"> Exit </button>
-              <button type="button" class="sb-btn sb-btn-primary sb-btn-normal sb-btn-responsive" ng-click="replayContent()"> Re-take Assessment </button>
+            <div class="assessment-action-buttons mt-24">
+              <button class="sb-btn sb-btn-normal sb-btn-outline-primary sb-btn-responsive mr-24" ng-click="replayContent()"> Redo
+              </button>
+              <button class="sb-btn sb-btn-primary sb-btn-normal sb-btn-responsive" ng-show="isCordova" ng-click="openGenie()">Exit </button>
             </div>
-            <!-- <div class="text-center mt-32">
-              <div class="assessment-result"><i class="check icon"></i>We'll send the answer key link to your
-                registered contact details. 
-              </div>
-            </div> -->
           </div>
         <div class="ps-nav right contentButton" ng-class="nextContent[content.identifier] ? 'buttonVisible' : 'buttonHide'" ng-click="contentLaunch('next',content.identifier)">
           <a class="ps-nav-header textdeco-none">

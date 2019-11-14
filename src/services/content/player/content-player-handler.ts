@@ -76,15 +76,6 @@ export class ContentPlayerHandler {
         }
         this.playerService.getPlayerConfig(content, request).subscribe((data) => {
             data['data'] = {};
-            data.config.showEndPage = content.contentData.contentType === ContentType.SELF_ASSESS ? false : true;
-            data.config.plugins = [
-                {
-                    id: content.contentData.contentType === ContentType.SELF_ASSESS ? 'org.sunbird.assess.endpage' : 'org.sunbird.player.endpage',
-                    ver: content.contentData.contentType === ContentType.SELF_ASSESS ? '1.0' : '1.1',
-                    type: 'plugin'
-                }
-            ];
-
             if (isCourse) {
                 data.config.overlay.enableUserSwitcher = false;
                 data.config.overlay.showUser = false;
