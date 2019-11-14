@@ -26,7 +26,7 @@
           </div>
         </div>
     <div *ngIf="enrolledCourses && enrolledCourses.length === 0 && !showLoader">{{ 'NO_DATA_FOUND' | translate }}</div>
-    <ion-spinner *ngIf="showLoader" padding style="padding-top: 100px;"></ion-spinner>
+    <ion-spinner *ngIf="showLoader" class="ion-padding" style="padding-top: 100px;"></ion-spinner>
   </div>
 
   <div *ngFor="let course of popularAndLatestCourses">
@@ -52,7 +52,7 @@
   </div>
   <div *ngIf="pageApiLoader && popularAndLatestCourses && popularAndLatestCourses.length === 0">
     <div class="course-scroll-holder" style="height: 500px;">
-      <ion-spinner padding style="padding-top: 110px;"></ion-spinner>
+      <ion-spinner class="ion-padding" style="padding-top: 110px;"></ion-spinner>
     </div>
   </div>
   <!-- </div> -->

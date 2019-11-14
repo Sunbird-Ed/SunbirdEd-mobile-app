@@ -373,6 +373,7 @@ export class CommonUtilService implements OnDestroy {
         for (let i = 0, len = profile.organisations.length; i < len; i++) {
             if (profile.organisations[i].locations) {
                 for (let j = 0, l = profile.organisations[i].locations.length; j < l; j++) {
+                    if (profile.organisations[i].locations[j]) {
                     switch (profile.organisations[i].locations[j].type) {
                         case 'state':
                             location.state = profile.organisations[i].locations[j];
@@ -389,6 +390,7 @@ export class CommonUtilService implements OnDestroy {
                         default:
                             console.log('default');
                     }
+                }
                 }
             }
         }

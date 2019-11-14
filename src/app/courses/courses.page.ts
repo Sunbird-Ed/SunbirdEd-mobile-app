@@ -132,6 +132,10 @@ export class CoursesPage implements OnInit {
    */
   ngOnInit() {
     this.getCourseTabData();
+
+    this.events.subscribe('event:update_course_data', () => {
+        this.getEnrolledCourses();
+    });
   }
 
   ionViewWillEnter() {
@@ -142,7 +146,6 @@ export class CoursesPage implements OnInit {
     this.headerObservable = this.headerService.headerEventEmitted$.subscribe(eventName => {
       this.handleHeaderEvents(eventName);
     });
-    this.getEnrolledCourses();
     this.headerService.showHeaderWithHomeButton(['search', 'filter', 'download']);
   }
 

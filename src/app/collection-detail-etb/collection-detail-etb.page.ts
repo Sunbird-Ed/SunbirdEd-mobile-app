@@ -1442,8 +1442,7 @@ export class CollectionDetailEtbPage implements OnInit {
         this.stckyUnitTitle = currentTitle.getAttribute('data-sticky-unit');
       });
     }
-
-    if (event.scrollTop >= 205) {
+    if (event.detail.scrollTop >= 205) {
       (this.stickyPillsRef.nativeElement as HTMLDivElement).classList.add('sticky');
       return;
     }
