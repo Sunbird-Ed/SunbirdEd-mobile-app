@@ -281,7 +281,11 @@ export class GuestEditPage implements OnInit {
 
   onProfileTypeChange() {
     this.guestEditForm.patchValue({
-      syllabus: []
+      syllabus: [],
+      boards: [],
+      grades: [],
+      subjects: [],
+      medium: []
     });
   }
 
@@ -349,12 +353,13 @@ export class GuestEditPage implements OnInit {
               this.guestEditForm.patchValue({
                 boards: [boardCode.code]
               });
+              this.resetForm(1, false);
             } else {
               this.guestEditForm.patchValue({
                 boards: [result[0].code]
               });
+              this.resetForm(1, false);
             }
-            this.resetForm(1, false);
           } else {
             this.isEditData = false;
           }
@@ -406,6 +411,7 @@ export class GuestEditPage implements OnInit {
             this.commonUtilService.showToast(this.commonUtilService.translateMessage('NEED_INTERNET_TO_CHANGE'));
           });
       }
+
     } else {
       const request: GetFrameworkCategoryTermsRequest = {
         currentCategoryCode: this.categories[index - 1] ? this.categories[index - 1].code : '',
@@ -441,7 +447,10 @@ export class GuestEditPage implements OnInit {
     switch (index) {
       case 0:
         this.guestEditForm.patchValue({
-          boards: []
+          boards: [],
+          grades: [],
+          subjects: [],
+          medium: []
         });
         if (showLoader) {
           this._dismissLoader();
@@ -449,13 +458,15 @@ export class GuestEditPage implements OnInit {
           await this.loader.present();
         }
         this.checkPrevValue(1, 'boardList', [this.guestEditForm.value.syllabus]);
-        this.resetForm(1, false);
         break;
 
       case 1:
         this.guestEditForm.patchValue({
+          grades: [],
+          subjects: [],
           medium: []
         });
+
         oldAttribute.board = this.profileForTelemetry.board ? this.profileForTelemetry.board : '';
         newAttribute.board = this.guestEditForm.value.boards ? this.guestEditForm.value.boards : '';
         if (!isEqual(oldAttribute, newAttribute)) {
@@ -467,7 +478,8 @@ export class GuestEditPage implements OnInit {
 
       case 2:
         this.guestEditForm.patchValue({
-          grades: []
+          subjects: [],
+          grades: [],
         });
         oldAttribute.medium = this.profileForTelemetry.medium ? this.profileForTelemetry.medium : '';
         newAttribute.medium = this.guestEditForm.value.medium ? this.guestEditForm.value.medium : '';
@@ -479,7 +491,7 @@ export class GuestEditPage implements OnInit {
         break;
       case 3:
         this.guestEditForm.patchValue({
-          subjects: []
+          subjects: [],
         });
         oldAttribute.class = this.profileForTelemetry.grade ? this.profileForTelemetry.grade : '';
         newAttribute.class = this.guestEditForm.value.grades ? this.guestEditForm.value.grades : '';
@@ -490,7 +502,6 @@ export class GuestEditPage implements OnInit {
         this.checkPrevValue(4, 'subjectList', this.guestEditForm.value.grades);
         break;
     }
-    this.changeDetectionRef.detectChanges();
   }
 
 
@@ -703,4 +714,3 @@ export class GuestEditPage implements OnInit {
   }
 
 }
-
