@@ -24,7 +24,8 @@ declare var cordova;
 export class QRScannerResultHandler {
   private static readonly CORRELATION_TYPE = 'qr';
   source: string;
-    inAppBrowserRef: any;
+  inAppBrowserRef: any;
+  regEx = [/(?<=\/dial\/)(?:[A-za-z1-9]+)/ , /(?<=http:\/\/epathshala.nic.in\/QR\/\?id=)(?:[A-za-z0-9]+)/];
 
   constructor(
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
@@ -38,9 +39,12 @@ export class QRScannerResultHandler {
   }
 
   isDialCode(scannedData: string): boolean {
-    const results = scannedData.split('/');
-    const data = results[results.length - 2];
-    return data === 'dial';
+    for (const element of this.regEx) {
+      if (scannedData.match(element)) {
+        return true;
+      }
+    }
+    return false;
   }
 
   isContentId(scannedData: string): boolean {
@@ -55,8 +59,12 @@ export class QRScannerResultHandler {
 
   handleDialCode(source: string, scannedData: string) {
     this.source = source;
-    const results = scannedData.split('/');
-    const dialCode = results[results.length - 1];
+    let dialCode;
+    for (const element of this.regEx) {
+      if (Boolean(scannedData.match(element))) {
+        dialCode = scannedData.match(element);
+      }
+    }
     this.generateQRScanSuccessInteractEvent(scannedData, 'SearchResult', dialCode);
 
     const navigationExtras: NavigationExtras = {

@@ -308,7 +308,8 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
     this.showContentDetails(collection, true);
   }
 
-  openContent(collection, content, index) {
+  async openContent(collection, content, index) {
+    this.showLoader = false;
     this.parentContent = collection;
     this.isQrCodeLinkToContent = index;
     this.generateInteractEvent(content.identifier, content.contentType, content.pkgVersion, index);
@@ -317,12 +318,13 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
       this.childContent = content;
       this.checkParent(collection, content);
     } else {
-      this.checkRetiredOpenBatch(content);
+      this.showLoader = false;
+      await this.checkRetiredOpenBatch(content);
     }
   }
 
   private async showContentDetails(content, isRootContent: boolean = false) {
-
+    this.showLoader = false;
     let params;
     if (this.shouldGenerateEndTelemetry) {
       params = {
@@ -849,6 +851,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private async checkRetiredOpenBatch(content: any, layoutName?: string) {
+    this.showLoader = false;
     this.loader = await this.commonUtilService.getLoader();
     await this.loader.present();
     this.loader.onDidDismiss(() => { this.loader = undefined; });
@@ -869,9 +872,9 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
     }
     if (anyOpenBatch || !retiredBatches.length) {
       // open the batch directly
-      this.showContentDetails(content, true);
+      await  this.showContentDetails(content, true);
     } else if (retiredBatches.length) {
-      this.navigateToBatchListPopup(content, layoutName, retiredBatches);
+      await this.navigateToBatchListPopup(content, layoutName, retiredBatches);
     }
   }
 
