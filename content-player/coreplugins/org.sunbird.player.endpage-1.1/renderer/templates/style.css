@@ -110,15 +110,15 @@ table {
   box-shadow: 0 0 4px 1px #bcbcbc;
 }
 .ps-nav.left, .ps-nav.right {	
-  position: absolute;	
-  top: 50%;	
-  transform: translateY(-50%);	
-}	
-.ps-nav.left {	
- left: 0px;	
-}	
-.ps-nav.right {	
-  right: 0px;	
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+}
+.ps-nav.left {
+ left: 0px;
+}
+.ps-nav.right {
+  right: 0px;
 }
 
 .ps-score {
@@ -486,7 +486,7 @@ table {
   display: inline-block;	
   color: var(--white);	
   cursor: pointer;	
-  min-width: 64px;	
+  min-width: 64px;
   border-radius: 3px;	
   -webkit-border-radius: 3px;	
   -moz-border-radius: 3px;	
