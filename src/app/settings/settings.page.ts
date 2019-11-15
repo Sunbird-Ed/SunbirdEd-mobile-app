@@ -21,7 +21,9 @@ import { Router, NavigationExtras } from '@angular/router';
 import { SbPopoverComponent } from '@app/app/components/popups';
 import { PopoverController, ToastController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
+import { Location } from '@angular/common';
+import { Platform } from '@ionic/angular';
 
 @Component({
   selector: 'app-settings',
@@ -39,7 +41,7 @@ export class SettingsPage implements OnInit {
 
   public isUserLoggedIn$: Observable<boolean>;
   public isNotDefaultChannelProfile$: Observable<boolean>;
-
+  backButtonFunc: Subscription;
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
@@ -56,7 +58,9 @@ export class SettingsPage implements OnInit {
     private toastCtrl: ToastController,
     private translate: TranslateService,
     private popoverCtrl: PopoverController,
-    private formAndFrameworkUtilService: FormAndFrameworkUtilService
+    private formAndFrameworkUtilService: FormAndFrameworkUtilService,
+    private platform: Platform,
+    private location: Location
   ) {
     this.isUserLoggedIn$ = this.authService.getSession()
       .map((session) => !!session) as any;
@@ -72,6 +76,7 @@ export class SettingsPage implements OnInit {
         this.appName = appName;
         this.shareAppLabel = this.commonUtilService.translateMessage('SHARE_APP', appName);
       });
+    this.handleBackButton();
   }
 
 
@@ -296,5 +301,12 @@ export class SettingsPage implements OnInit {
           }
         })
         .subscribe();
+  }
+  handleBackButton() {
+    this.backButtonFunc = this.platform.backButton.subscribeWithPriority(10, () => {
+      this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.SETTINGS, Environment.SETTINGS, false);
+      this.location.back();
+      this.backButtonFunc.unsubscribe();
+    });
   }
 }
