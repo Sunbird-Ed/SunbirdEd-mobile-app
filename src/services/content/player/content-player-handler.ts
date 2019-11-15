@@ -76,7 +76,6 @@ export class ContentPlayerHandler {
         }
         this.playerService.getPlayerConfig(content, request).subscribe((data) => {
             data['data'] = {};
-
             if (isCourse) {
                 data.config.overlay.enableUserSwitcher = false;
                 data.config.overlay.showUser = false;
