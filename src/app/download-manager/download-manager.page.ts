@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject, NgZone } from '@angular/core';
+import { Component, OnInit, Inject, NgZone, ViewChild } from '@angular/core';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { Events, PopoverController } from '@ionic/angular';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -24,13 +24,14 @@ import { AppHeaderService, } from '@app/services/app-header.service';
 import { CommonUtilService, } from '@app/services/common-util.service';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { AppStorageInfo, DownloadManagerPageInterface, EmitedContents } from './download-manager.interface';
-import { RouterLinks, ContentFilterConfig } from '@app/app/app.constant';
+import { RouterLinks, ContentFilterConfig, EventTopics } from '@app/app/app.constant';
 import { SbPopoverComponent } from '@app/app/components/popups/sb-popover/sb-popover.component';
 import { PageId, InteractType, Environment, InteractSubtype } from '@app/services/telemetry-constants';
 import { FormAndFrameworkUtilService } from '@app/services';
 import { featureIdMap } from '../feature-id-map';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { SbInsufficientStoragePopupComponent } from '@app/app/components/popups/sb-insufficient-storage-popup/sb-insufficient-storage-popup';
+import { DownloadsTabComponent } from './downloads-tab/downloads-tab.component';
 
 @Component({
   selector: 'app-download-manager',
@@ -49,6 +50,7 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
   sortCriteria: ContentSortCriteria[];
   storageDestination: any;
   private deletedContentListTitle$?: BehaviorSubject<string>;
+  @ViewChild('downloadsTab') downloadsTab: DownloadsTabComponent;
 
   constructor(
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
@@ -88,6 +90,9 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
     this.getDownloadedContents();
     this.checkAvailableSpace();
     this.fetchStorageDestination();
+    this.events.subscribe(EventTopics.HAMBURGER_MENU_CLICKED, () => {
+      this.closeSelectAllPopup();
+    });
   }
 
   private async getAppName() {
@@ -283,7 +288,7 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
   ionViewWillLeave(): void {
     this.events.unsubscribe('update_header');
     this.headerObservable.unsubscribe();
-    // this.events.unsubscribe('savedResources:update');
+    this.events.unsubscribe(EventTopics.HAMBURGER_MENU_CLICKED);
   }
 
   private subscribeContentUpdateEvents() {
@@ -302,6 +307,7 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
         this.redirectToActivedownloads();
         break;
       case 'settings':
+        this.closeSelectAllPopup();
         this.redirectToSettings();
         break;
     }
@@ -346,6 +352,13 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
         }
       })
       .subscribe();
+  }
+
+  async closeSelectAllPopup() {
+    if (this.downloadsTab.deleteAllConfirm) {
+      await this.downloadsTab.deleteAllConfirm.dismiss();
+      this.downloadsTab.unSelectAllContents();
+    }
   }
 
 }
