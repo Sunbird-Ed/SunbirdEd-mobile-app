@@ -49,12 +49,15 @@ export class QRScannerResultHandler {
     }
   }
 
-  async isDialCode(scannedData: string): Promise<boolean> {
+  async parseDialCode(scannedData: string): Promise<string | undefined> {
     this.dailCodeRegExpression = await this.getDailCodeRegularExpression();
-    if (Boolean(scannedData.match(new RegExp(this.dailCodeRegExpression)))) {
-      return true;
+    const execArray = (new RegExp(this.dailCodeRegExpression)).exec(scannedData);
+
+    if (execArray && execArray.groups) {
+      return execArray.groups[Object.keys(execArray.groups).find((key) => !!execArray.groups[key])];
     }
-    return false;
+
+    return undefined;
   }
 
   isContentId(scannedData: string): boolean {
@@ -67,12 +70,8 @@ export class QRScannerResultHandler {
       (action === 'learn' && type === 'course');
   }
 
-  handleDialCode(source: string, scannedData: string) {
+  handleDialCode(source: string, scannedData, dialCode: string) {
     this.source = source;
-    let dialCode;
-    if (Boolean(scannedData.match(new RegExp(this.dailCodeRegExpression)))) {
-      dialCode = scannedData.match(this.dailCodeRegExpression)[0];
-    }
     this.generateQRScanSuccessInteractEvent(scannedData, 'SearchResult', dialCode);
 
     const navigationExtras: NavigationExtras = {

@@ -279,6 +279,7 @@ export class SunbirdQRScanner {
             PageId.QRCodeScanner);
           this.generateEndEvent(source, '');
         } else {
+          const dialCode = await this.qrScannerResultHandler.parseDialCode(scannedData);
           if (scannedData === 'cancel' ||
             scannedData === 'cancel_hw_back' ||
             scannedData === 'cancel_nav_back') {
@@ -291,8 +292,8 @@ export class SunbirdQRScanner {
               Environment.HOME,
               PageId.QRCodeScanner);
             this.generateEndEvent(source, '');
-          } else if (await this.qrScannerResultHandler.isDialCode(scannedData)) {
-            this.qrScannerResultHandler.handleDialCode(source, scannedData);
+          } else if (dialCode) {
+            this.qrScannerResultHandler.handleDialCode(source, scannedData, dialCode);
           } else if (this.qrScannerResultHandler.isContentId(scannedData)) {
             this.qrScannerResultHandler.handleContentId(source, scannedData);
           } else if (scannedData.includes('/certs/')) {
