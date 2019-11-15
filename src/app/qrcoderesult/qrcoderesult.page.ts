@@ -1,6 +1,6 @@
 import { CommonUtilService } from './../../services/common-util.service';
 import { Component, Inject, NgZone, OnDestroy, ViewChild, ViewChildren, QueryList, ElementRef } from '@angular/core';
-import { ContentType, MimeType, RouterLinks } from '../../app/app.constant';
+import { ContentType, MimeType, RouterLinks, EventTopics } from '../../app/app.constant';
 import { TranslateService } from '@ngx-translate/core';
 import { AppGlobalService } from '../../services/app-global-service.service';
 import { TelemetryGeneratorService } from '../../services/telemetry-generator.service';
@@ -44,6 +44,8 @@ import { AppHeaderService } from '../../services/app-header.service';
 import { Location } from '@angular/common';
 import { NavigationExtras, Router } from '@angular/router';
 import { Platform, Events, NavController } from '@ionic/angular';
+import { RatingHandler } from '@app/services/rating/rating-handler';
+import { ContentPlayerHandler } from '@app/services/content/player/content-player-handler';
 declare const cordova;
 
 @Component({
@@ -134,7 +136,9 @@ export class QrcoderesultPage implements OnDestroy {
     private file: File,
     private headerService: AppHeaderService,
     private router: Router,
-    private navCtrl: NavController
+    private navCtrl: NavController,
+    private ratingHandler: RatingHandler,
+    private contentPlayerHandler: ContentPlayerHandler
   ) {
     this.getNavData();
   }
@@ -170,7 +174,6 @@ export class QrcoderesultPage implements OnDestroy {
       this.isParentContentAvailable = false;
       this.identifier = this.content.identifier;
     }
-    this.setContentDetails(this.identifier, true);
     if (this.backToPreviusPage) {
       this.getChildContents();
       this.backToPreviusPage = false;
@@ -220,7 +223,7 @@ export class QrcoderesultPage implements OnDestroy {
       !this.appGlobalService.isOnBoardingCompleted ? Environment.ONBOARDING : Environment.HOME,
       PageId.DIAL_CODE_SCAN_RESULT);
     if (this.source === PageId.LIBRARY || this.source === PageId.COURSES || !this.isSingleContent) {
-      this.goBack();
+      this.location.back();
     } else if (this.isSingleContent && this.appGlobalService.isProfileSettingsCompleted) {
       if (await this.commonUtilService.isDeviceLocationAvailable()) {
         const navigationExtras: NavigationExtras = { state: { loginMode: 'guest' } };
@@ -237,7 +240,8 @@ export class QrcoderesultPage implements OnDestroy {
       const navigationExtras: NavigationExtras = { state: { isCreateNavigationStack: false, hideBackButton: true } };
       this.router.navigate([`/${RouterLinks.PROFILE_SETTINGS}`], navigationExtras);
     } else {
-      this.goBack();
+
+      this.location.back();
     }
   }
 
@@ -280,6 +284,7 @@ export class QrcoderesultPage implements OnDestroy {
             }
         } else if (this.results && this.results.length === 1) {
           this.backToPreviusPage = false;
+          this.events.unsubscribe(EventTopics.PLAYER_CLOSED);
           this.navCtrl.navigateForward([RouterLinks.CONTENT_DETAILS], {
             state: {
               content: this.results[0],
@@ -458,6 +463,13 @@ export class QrcoderesultPage implements OnDestroy {
     };
     this.contentService.getContentDetails(option).toPromise()
       .then((data: any) => {
+        if (data) {
+          this.content.contentAccess = data.contentAccess ? data.contentAccess : [];
+        }
+
+        this.contentPlayerHandler.setContentPlayerLaunchStatus(false);
+        this.ratingHandler.showRatingPopup(false, this.content, 'automatic', this.corRelationList, null);
+        this.contentPlayerHandler.setLastPlayedContentId('');
       })
       .catch((error: any) => {
       });
@@ -704,6 +716,10 @@ export class QrcoderesultPage implements OnDestroy {
   private openPlayer(playingContent, request) {
     this.playerService.getPlayerConfig(playingContent, request).subscribe((data) => {
       data['data'] = {};
+      this.events.subscribe(EventTopics.PLAYER_CLOSED, () => {
+        this.setContentDetails(playingContent.identifier, true);
+        this.events.unsubscribe(EventTopics.PLAYER_CLOSED);
+      });
       if (data.metadata.mimeType === 'application/vnd.ekstep.ecml-archive') {
         if (!request.streaming) {
           this.file.checkFile(`file://${data.metadata.basePath}/`, 'index.ecml').then((isAvailable) => {
