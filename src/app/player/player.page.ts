@@ -1,3 +1,4 @@
+
 import { ActivatedRoute, Router } from '@angular/router';
 import { CanvasPlayerService } from '@app/services/canvas-player.service';
 import { AppGlobalService } from '@app/services/app-global-service.service';
@@ -10,7 +11,7 @@ import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { EventTopics, RouterLinks } from '../app.constant';
 import { Location } from '@angular/common';
 import { Subscription } from 'rxjs/Subscription';
-import { CourseService, Course } from 'sunbird-sdk';
+import { CourseService } from 'sunbird-sdk';
 
 @Component({
   selector: 'app-player',
@@ -19,8 +20,7 @@ import { CourseService, Course } from 'sunbird-sdk';
 export class PlayerPage implements OnInit, PlayerActionHandlerDelegate {
 
   config = {};
-  backButtonSubscription: Subscription;
-  course: Course;
+  backButtonSubscription: Subscription
   @ViewChild('preview') previewElement: ElementRef;
   constructor(
     @Inject('COURSE_SERVICE') private courseService: CourseService,
@@ -44,7 +44,6 @@ export class PlayerPage implements OnInit, PlayerActionHandlerDelegate {
 
     if (this.router.getCurrentNavigation().extras.state) {
       this.config = this.router.getCurrentNavigation().extras.state.config;
-      this.course = this.router.getCurrentNavigation().extras.state.course;
     }
   }
 
@@ -126,7 +125,7 @@ export class PlayerPage implements OnInit, PlayerActionHandlerDelegate {
           this.navCtrl.remove(this.navCtrl.length() - 2);
         });
      */
-    this.router.navigate([RouterLinks.CONTENT_DETAILS , identifier], { state: { content, course: this.course } , replaceUrl: true, });
+    this.router.navigate([RouterLinks.CONTENT_DETAILS , identifier], { state: { content } , replaceUrl: true, });
   }
 
   /**
