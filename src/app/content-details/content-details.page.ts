@@ -558,6 +558,7 @@ export class ContentDetailsPage implements OnInit {
       // this.navCtrl.navigateBack([RouterLinks.SEARCH]);
       window.history.go(-2);
     } else {
+      this.events.publish('event:update_recently_viewed');
       this.location.back();
     }
   }

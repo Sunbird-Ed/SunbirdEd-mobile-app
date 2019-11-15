@@ -242,6 +242,9 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
         this.qrScanner.startScanner(this.appGlobalService.getPageIdForTelemetry());
       }
     });
+    this.events.subscribe('event:update_recently_viewed', () => {
+      this.loadRecentlyViewedContent();
+    });
   }
 
   generateNetworkType() {

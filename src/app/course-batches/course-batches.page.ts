@@ -155,21 +155,21 @@ export class CourseBatchesPage implements OnInit {
    */
 
   async enrollIntoBatch(item: Batch) {
+    const enrollCourseRequest = this.localCourseService.prepareEnrollCourseRequest(this.userId, item);
+    this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
+      InteractSubtype.ENROLL_CLICKED,
+      Environment.HOME,
+      PageId.COURSE_BATCHES, this.telemetryObject,
+      this.localCourseService.prepareRequestValue(enrollCourseRequest),
+      this.objRollup,
+      this.corRelationList
+    );
+
     if (this.isGuestUser) {
       this.joinTraining(item);
     } else {
-      const enrollCourseRequest = this.localCourseService.prepareEnrollCourseRequest(this.userId, item);
       const loader = await this.commonUtilService.getLoader();
       await loader.present();
-      this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
-        InteractSubtype.ENROLL_CLICKED,
-        Environment.HOME,
-        PageId.COURSE_BATCHES, this.telemetryObject,
-        this.localCourseService.prepareRequestValue(enrollCourseRequest),
-        this.objRollup,
-        this.corRelationList
-      );
-
       const enrollCourse: EnrollCourse = {
         userId: this.userId,
         batch: item,

@@ -306,7 +306,7 @@
 		<button (click)="getAllBatches()" class="sb-btn sb-btn-outline-info retry-btn">{{'RETRY' | translate}}</button>
 	</div>
 </ion-content>
-<div class="loading-backdrop" *ngIf="showLoading" text-center>
+<div class="loading-backdrop" *ngIf="showLoading && !isDownloadStarted" text-center>
 	<div class="backdrop-container">
 		<ion-label>{{ 'LOADING_CONTENTS' | translate: {'%s': downloadProgress ? downloadProgress : 0} }}</ion-label>
 		<app-pb-horizontal [progress]="downloadProgress" isOnBoardCard="false"></app-pb-horizontal>

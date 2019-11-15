@@ -65,6 +65,7 @@ import {
 import { SplashscreenImportActionHandlerDelegate } from '@app/services/sunbird-splashscreen/splashscreen-import-action-handler-delegate';
 import { SplaschreenDeeplinkActionHandlerDelegate } from '@app/services/sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
 import { LocalCourseService } from '@app/services/local-course.service';
+import { ContentType } from './app.constant';
 
 // AoT requires an exported function for factories
 export function translateHttpLoaderFactory(httpClient: HttpClient) {
@@ -256,7 +257,7 @@ export const sunbirdSdkFactory =
   () => {
     return async () => {
       const buildConfigValues = JSON.parse(await new Promise<string>((resolve, reject) => {
-      document.addEventListener('deviceready', ( ) => {
+        document.addEventListener('deviceready', () => {
           buildconfigreader.getBuildConfigValues('org.sunbird.app', (v) => {
             resolve(v);
           }, (err) => {
@@ -352,6 +353,10 @@ export const sunbirdSdkFactory =
         },
         playerConfig: {
           showEndPage: false,
+          endPage: [{
+            template: 'assessment',
+            contentType: [ContentType.SELF_ASSESS]
+          }],
           splash: {
             webLink: '',
             text: '',
@@ -361,7 +366,14 @@ export const sunbirdSdkFactory =
           overlay: {
             enableUserSwitcher: false,
             showUser: false
-          }
+          },
+          plugins: [
+            {
+              id: 'org.sunbird.player.endpage',
+              ver: '1.1',
+              type: 'plugin'
+            }
+          ]
         },
         errorLoggerConfig: {
           errorLoggerApiPath: '/api/data/v1/client/logs'
