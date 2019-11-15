@@ -76,6 +76,15 @@ export class ContentPlayerHandler {
         }
         this.playerService.getPlayerConfig(content, request).subscribe((data) => {
             data['data'] = {};
+            data.config.showEndPage = content.contentData.contentType === ContentType.SELF_ASSESS ? false : true;
+            data.config.plugins = [
+                {
+                    id: content.contentData.contentType === ContentType.SELF_ASSESS ? 'org.sunbird.assess.endpage' : 'org.sunbird.player.endpage',
+                    ver: content.contentData.contentType === ContentType.SELF_ASSESS ? '1.0' : '1.1',
+                    type: 'plugin'
+                }
+            ];
+
             if (isCourse) {
                 data.config.overlay.enableUserSwitcher = false;
                 data.config.overlay.showUser = false;
@@ -90,7 +99,7 @@ export class ContentPlayerHandler {
                     this.file.checkFile(`file://${data.metadata.basePath}/`, 'index.ecml').then((isAvailable) => {
                         this.canvasPlayerService.xmlToJSon(`${filePath}/index.ecml`).then((json) => {
                             data['data'] = JSON.stringify(json);
-                            this.router.navigate([RouterLinks.PLAYER], { state: { config: data,  course : contentInfo.course } });
+                            this.router.navigate([RouterLinks.PLAYER], { state: { config: data } });
 
                         }).catch((error) => {
                             console.error('error1', error);
@@ -99,18 +108,18 @@ export class ContentPlayerHandler {
                         console.error('err', err);
                         this.canvasPlayerService.readJSON(`${filePath}/index.json`).then((json) => {
                             data['data'] = json;
-                            this.router.navigate([RouterLinks.PLAYER], { state: { config: data,  course : contentInfo.course } });
+                            this.router.navigate([RouterLinks.PLAYER], { state: { config: data } });
 
                         }).catch((e) => {
                             console.error('readJSON error', e);
                         });
                     });
                 } else {
-                    this.router.navigate([RouterLinks.PLAYER], { state: { config: data, course : contentInfo.course } });
+                    this.router.navigate([RouterLinks.PLAYER], { state: { config: data } });
                 }
 
             } else {
-                this.router.navigate([RouterLinks.PLAYER], { state: { config: data,  course : contentInfo.course } });
+                this.router.navigate([RouterLinks.PLAYER], { state: { config: data } });
             }
         });
     }
