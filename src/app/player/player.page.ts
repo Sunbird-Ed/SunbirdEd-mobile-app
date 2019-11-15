@@ -1,4 +1,3 @@
-
 import { ActivatedRoute, Router } from '@angular/router';
 import { CanvasPlayerService } from '@app/services/canvas-player.service';
 import { AppGlobalService } from '@app/services/app-global-service.service';
