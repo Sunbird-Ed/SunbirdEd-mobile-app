@@ -401,86 +401,69 @@ table {
   padding-bottom: 4px;
 }
 .assessment-overlay{
-  background: rgba(0,0,0,0.4);
-  display: flex;
-  position: relative;
-  align-items: center;
-  justify-content: center;
-  height: 100vh;
-  width: 100%;
-}
-.assessment-content-endpage{
-  padding: 30px;
-  font-size: 1em;
-  max-width: 36em;
-  margin: 0 auto;
-  margin-top: 0%;
-}
-.assessment-content-title{
-font-size: 0.9em;
-color: #024F9D;
-text-align: center;
-margin-top: 16px;
-}
-.assessment-content-description{
-color: #333333;
-font-size: 0.9em;
-}
-.assessment-action-buttons{
-display: flex;
-justify-content: center;
-align-items: center;
-}
-.sb-btn-responsive {
-height: auto;
-padding: 0.75em 1.5em;
-transition: 0.3s;
-font-size: 0.8em;
-display: inline-block;
-}
-  .assessment-score-content .assessment-content-title{
-      color: #333333;
-      font-weight: bold;
+    background: rgba(0,0,0,0.4);
+    display: flex;
+    position: relative;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    width: 100%;
   }
-  .assessment-score-content .assessment-content-description{
-      color: #666666;
+  .assessment-content{
+    padding: 1.5em;
+    font-size: 1em;
+    max-width: 36em;
+    margin: 0 auto;
   }
-
-.assessment-result{
-    color:#008840;
-    font-size: 0.7em;
+  .assessment-result-content{
+    width: 30em;
+    margin: 0 auto;
+    background: #fff;
+    box-shadow: 0px 2px 6px 0px rgba(0, 0, 0, 0.2);
+    height: auto;
+  }
+  .assessment-result-content  .score{
+    font-weight: bold;
+  }
+  .assessment-content-title{
+    font-size: 0.9em;
+    color: #024F9D;
+    text-align: center;
+    margin: 1em 0;
+  }
+  .assessment-content-description{
+    color: #333333;
+    font-size: 0.9em;
+    padding: 1em 0px 2em 0px;
+  }
+  .assessment-scoreitem {
+    margin-bottom: 0.8em;
+  }
+  .assessment-scoreitem:last-child{
+    margin-bottom: 0px;
+  }
+  .assessment-action-buttons{
     display: flex;
     justify-content: center;
     align-items: center;
-    
-}
-.assessment-result .icon{
-  font-size: 1.7em;
-  display: inline-block;
-  background: #008840;
-  color: #fff;
-  width: 26px;
-  height: 26px;
-  border-radius: 50%;
-  text-align: center;
-  margin-right: 8px;
+  }
+  .sb-btn-responsive {
+    height: auto;
+    padding: 0.75em 3em;
+    transition: 0.3s;
+    font-size: 0.8em;
+    display: inline-block;
+    border: 0.05em solid;
+  }
+  .assessment-score-content .assessment-content-title{
+    color: #333333;
+    font-weight: bold;
+  }
+  .assessment-score-content .assessment-content-description{
+    color: #666666;
+    padding-top: 0;
+  }
   
-}
-i.icon.check:before {
-  content: '';
-  display: block;
-  width: 6px;
-  height: 12px;
-  border: solid #fff;
-  border-width: 0 2px 2px 0;
-  transform: rotate(45deg);
-  margin: 6px 10px;
-}
-
-.assessment-result-info{
-  color: #008840;
-  font-size: 0.9em;
-}
 .sb-btn {
   white-space: nowrap;
   -webkit-tap-highlight-color: transparent;
@@ -490,7 +473,6 @@ i.icon.check:before {
   user-select: none;
   outline: 0;
   display: inline-block;
-  border: 1px solid;
   color: var(--white);
   cursor: pointer;
   min-width: 64px;
@@ -501,13 +483,6 @@ i.icon.check:before {
   text-transform: capitalize;
   text-decoration: none;
 }
-.sb-btn-normal {
-  height: 32px;
-  font-size: 11.9994px;
-}
-.sb-btn-xs, .sb-btn-normal, .sb-btn-sm {
-  padding: 8px 16px;
-}
 .sb-btn-outline-primary, .sb-btn-outline-info {
   background-color: #fff;
   color:#024f9d; 
@@ -517,15 +492,9 @@ i.icon.check:before {
   background-color: #024f9d;
   color: #fff;
 }
-.mt-32 {
-  margin-top: 32px !important;
-}
-.mt-16 {
-  margin-top: 16px !important;
-}
 .mr-24 {
-  margin-right: 24px !important;
+  margin-right: 1.5em !important;
 }
-.mt-40 {
-  margin-top: 40px !important;
+.mt-24 {
+  margin-top: 24px !important;
 }

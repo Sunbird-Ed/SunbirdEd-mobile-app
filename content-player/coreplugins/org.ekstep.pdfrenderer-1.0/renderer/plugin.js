@@ -342,6 +342,7 @@ org.ekstep.contentrenderer.baseLauncher.extend({
        
         document.getElementById(this.manifest.id).onscroll = function () {
                 var pageNumber = document.getElementById('pdf-find-text').value;
+                context.stageId.push(pageNumber);
                $("#pdf-find-text").val(context.pdfViewer.currentPageNumber);
 
                   if(pageNumber>context.pdfViewer.currentPageNumber){
@@ -436,6 +437,7 @@ org.ekstep.contentrenderer.baseLauncher.extend({
             var loadPDf = pdfjsLib.getDocument(pdf_url)
             loadPDf.promise.then(function(pdfDocument) {
                 context.PDF_DOC = pdfDocument;
+                context.TOTAL_PAGES = pdfDocument.numPages;
                 context.pdfDocument = pdfDocument;
                 context.pdfViewer.setDocument(pdfDocument);
                 $("#pdf-total-pages").text(pdfDocument.numPages);

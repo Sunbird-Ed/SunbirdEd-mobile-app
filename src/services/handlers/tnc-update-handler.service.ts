@@ -8,6 +8,7 @@ import { ProfileConstants, RouterLinks } from '@app/app/app.constant';
 import { TermsAndConditionsPage } from '@app/app/terms-and-conditions/terms-and-conditions.page';
 import { Router, NavigationExtras } from '@angular/router';
 import { CommonUtilService } from '../common-util.service';
+import { FormAndFrameworkUtilService } from '../formandframeworkutil.service';
 
 @Injectable({
   providedIn: 'root'
@@ -19,48 +20,62 @@ export class TncUpdateHandlerService {
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     @Inject('AUTH_SERVICE') private authService: AuthService,
     private commonUtilService: CommonUtilService,
+    private formAndFrameworkUtilService: FormAndFrameworkUtilService,
     private modalCtrl: ModalController,
     private router: Router
   ) { }
 
   public async checkForTncUpdate(): Promise<boolean> {
-    return new Promise<boolean>((resolve, reject) => {
-      this.authService.getSession().toPromise()
-        .then((sessionData: OAuthSession) => {
-          if (!sessionData) {
-            resolve(false);
-            return;
-          }
-          const request: ServerProfileDetailsRequest = {
-            userId: sessionData.userToken,
-            requiredFields: ProfileConstants.REQUIRED_FIELDS,
-            from: CachedItemRequestSourceFrom.SERVER
-          };
-          this.profileService.getServerProfilesDetails(request).toPromise()
-            .then((profile) => {
-              if (!this.hasProfileTncUpdated(profile)) {
-                if (!this.commonUtilService.isUserLocationAvalable(profile)) {
-                  const navigationExtras: NavigationExtras = {
-                    state: {
-                      isShowBackButton: false
-                    }
-                  };
-                  this.router.navigate(['/', RouterLinks.DISTRICT_MAPPING], navigationExtras)
-                    .then(() => resolve(false));
-                  return;
-                }
+    return new Promise<boolean>(async (resolve, reject) => {
+      const sessionData = await this.authService.getSession().toPromise();
+      if (!sessionData) {
+        resolve(false);
+        return;
+      }
+      const request: ServerProfileDetailsRequest = {
+        userId: sessionData.userToken,
+        requiredFields: ProfileConstants.REQUIRED_FIELDS,
+        from: CachedItemRequestSourceFrom.SERVER
+      };
+      this.profileService.getServerProfilesDetails(request).toPromise()
+        .then((profile) => {
+          if (!this.hasProfileTncUpdated(profile)) {
+            if (this.commonUtilService.networkInfo.isNetworkAvailable) {
+              this.formAndFrameworkUtilService.getCustodianOrgId()
+                .then((custodianOrgId: string) => {
+                  const isCustodianOrgId = profile.rootOrg.rootOrgId === custodianOrgId;
 
-                resolve(false);
-                return;
-              }
-              this.presentTncPage({ profile })
-                .then(() => {
-                  resolve(true);
-                  return;
-                }).catch((error) => {
+                  if (isCustodianOrgId
+                    && !this.commonUtilService.isUserLocationAvalable(profile)) {
+                    const navigationExtras: NavigationExtras = {
+                      state: {
+                        isShowBackButton: false
+                      }
+                    };
+                    this.router.navigate(['/', RouterLinks.DISTRICT_MAPPING], navigationExtras)
+                      .then(() => resolve(false));
+                    return;
+                  } else {
+                    resolve(false);
+                    return;
+                  }
+                })
+                .catch((error) => {
                   console.error('Error:', error);
                   reject();
                 });
+            }
+            resolve(false);
+            return;
+          }
+          this.presentTncPage({ profile })
+            .then(() => {
+              resolve(true);
+              return;
+            })
+            .catch((error) => {
+              console.error('Error:', error);
+              reject();
             });
         });
     });
@@ -72,7 +87,8 @@ export class TncUpdateHandlerService {
         .toPromise()
         .then(() => {
           resolve();
-        }).catch(() => {
+        })
+        .catch(() => {
           reject();
         });
     }))
@@ -85,7 +101,8 @@ export class TncUpdateHandlerService {
           this.profileService.getServerProfilesDetails(reqObj).toPromise()
             .then(res => {
               resolve();
-            }).catch(e => {
+            })
+            .catch(e => {
               reject(e);
             });
         }));
