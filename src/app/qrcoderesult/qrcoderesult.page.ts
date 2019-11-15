@@ -223,7 +223,7 @@ export class QrcoderesultPage implements OnDestroy {
       !this.appGlobalService.isOnBoardingCompleted ? Environment.ONBOARDING : Environment.HOME,
       PageId.DIAL_CODE_SCAN_RESULT);
     if (this.source === PageId.LIBRARY || this.source === PageId.COURSES || !this.isSingleContent) {
-      this.location.back();
+      this.goBack();
     } else if (this.isSingleContent && this.appGlobalService.isProfileSettingsCompleted) {
       if (await this.commonUtilService.isDeviceLocationAvailable()) {
         const navigationExtras: NavigationExtras = { state: { loginMode: 'guest' } };
@@ -240,8 +240,7 @@ export class QrcoderesultPage implements OnDestroy {
       const navigationExtras: NavigationExtras = { state: { isCreateNavigationStack: false, hideBackButton: true } };
       this.router.navigate([`/${RouterLinks.PROFILE_SETTINGS}`], navigationExtras);
     } else {
-
-      this.location.back();
+      this.goBack();
     }
   }
 
