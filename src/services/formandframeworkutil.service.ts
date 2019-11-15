@@ -42,11 +42,13 @@ export class FormAndFrameworkUtilService {
         private appVersion: AppVersion,
         private translate: TranslateService,
         private events: Events
-    ) {
-        this.preferences.getString(PreferenceKey.SELECTED_LANGUAGE_CODE).toPromise()
-        .then(val => {
+    ) {}
+
+    async init() {
+        await this.preferences.getString(PreferenceKey.SELECTED_LANGUAGE_CODE).toPromise().then(val => {
             this.selectedLanguage = val ? val : 'en' ;
         });
+        await this.getDailCodeConfig();
     }
 
     getWebviewSessionProviderConfig(context: 'login' | 'merge' | 'migrate'): Promise<WebviewSessionProviderConfig> {
@@ -87,6 +89,14 @@ export class FormAndFrameworkUtilService {
                 resolve(libraryFilterConfig);
             }
         });
+    }
+    /**
+     *  this method gets the cached dial code config
+     */
+    async getDailCodeConfig() {
+        if (!this.appGlobalService.getCachedDialCodeConfig()) {
+            this.invokeDialCodeFormApi();
+        }
     }
 
     /**
@@ -225,6 +235,24 @@ export class FormAndFrameworkUtilService {
                 console.log('Error - ' + error);
                 resolve(libraryFilterConfig);
             });
+    }
+    /**
+     * Network call to form api to fetch dial code config
+     */
+     async invokeDialCodeFormApi() {
+        const req: FormRequest = {
+            type: 'config',
+            subType: 'dialcode',
+            action: 'get'
+        };
+        this.formService.getForm(req).toPromise()
+            .then((res: any) => {
+                this.appGlobalService.setDailCodeConfig(res.data.fields[0].values[0]);
+
+            }).catch((error: any) => {
+               console.log('error while fetching dial code reg ex ' , error);
+            });
+
     }
 
 

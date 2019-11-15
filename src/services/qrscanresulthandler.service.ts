@@ -1,10 +1,8 @@
 import {Inject, Injectable} from '@angular/core';
 import {TelemetryGeneratorService} from './telemetry-generator.service';
 import {Content, ContentDetailRequest, ContentService, CorrelationData, TelemetryObject, TelemetryService} from 'sunbird-sdk';
-// import {SearchPage} from '../search/search';
 import {ContentType, MimeType, RouterLinks} from '../app/app.constant';
-// import {EnrolledCourseDetailsPage} from '../enrolled-course-details/enrolled-course-details';
-// import {ContentDetailsPage} from '../content-details/content-details';
+
 import {CommonUtilService} from './common-util.service';
 import {
   Environment,
@@ -17,6 +15,8 @@ import {
 } from './telemetry-constants';
 import { NavigationExtras, Router } from '@angular/router';
 import { NavController, Events } from '@ionic/angular';
+import { AppGlobalService } from './app-global-service.service';
+import { FormAndFrameworkUtilService } from './formandframeworkutil.service';
 
 declare var cordova;
 
@@ -25,7 +25,7 @@ export class QRScannerResultHandler {
   private static readonly CORRELATION_TYPE = 'qr';
   source: string;
   inAppBrowserRef: any;
-  regEx = [/(?<=\/dial\/)(?:[A-za-z1-9]+)/ , /(?<=http:\/\/epathshala.nic.in\/QR\/\?id=)(?:[A-za-z0-9]+)/];
+  dailCodeRegExpression: RegExp;
 
   constructor(
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
@@ -34,15 +34,25 @@ export class QRScannerResultHandler {
     private telemetryGeneratorService: TelemetryGeneratorService,
     private router: Router,
     private navCtrl: NavController,
-    private events: Events
+    private events: Events,
+    private appGlobalService: AppGlobalService,
+    private formFrameWorkUtilService: FormAndFrameworkUtilService
   ) {
   }
 
-  isDialCode(scannedData: string): boolean {
-    for (const element of this.regEx) {
-      if (scannedData.match(element)) {
-        return true;
-      }
+  private async getDailCodeRegularExpression(): Promise<RegExp> {
+    if (!this.appGlobalService.getCachedDialCodeConfig) {
+      await this.formFrameWorkUtilService.getDailCodeConfig();
+      return this.appGlobalService.getCachedDialCodeConfig();
+    } else {
+      return await this.appGlobalService.getCachedDialCodeConfig();
+    }
+  }
+
+  async isDialCode(scannedData: string): Promise<boolean> {
+    this.dailCodeRegExpression = await this.getDailCodeRegularExpression();
+    if (Boolean(scannedData.match(new RegExp(this.dailCodeRegExpression)))) {
+      return true;
     }
     return false;
   }
@@ -60,10 +70,8 @@ export class QRScannerResultHandler {
   handleDialCode(source: string, scannedData: string) {
     this.source = source;
     let dialCode;
-    for (const element of this.regEx) {
-      if (Boolean(scannedData.match(element))) {
-        dialCode = scannedData.match(element);
-      }
+    if (Boolean(scannedData.match(new RegExp(this.dailCodeRegExpression)))) {
+      dialCode = scannedData.match(this.dailCodeRegExpression)[0];
     }
     this.generateQRScanSuccessInteractEvent(scannedData, 'SearchResult', dialCode);
 

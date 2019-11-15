@@ -264,7 +264,7 @@ export class SunbirdQRScanner {
     }
     this.isScannerActive = true;
     (window as any).qrScanner.startScanner(screenTitle, displayText,
-      displayTextColor, buttonText, showButton, this.platform.isRTL, (scannedData) => {
+      displayTextColor, buttonText, showButton, this.platform.isRTL, async (scannedData) => {
         if (scannedData === 'skip') {
           if (this.appGlobalService.DISPLAY_ONBOARDING_CATEGORY_PAGE) {
             const navigationExtras: NavigationExtras = { state: { stopScanner: true } };
@@ -291,7 +291,7 @@ export class SunbirdQRScanner {
               Environment.HOME,
               PageId.QRCodeScanner);
             this.generateEndEvent(source, '');
-          } else if (this.qrScannerResultHandler.isDialCode(scannedData)) {
+          } else if (await this.qrScannerResultHandler.isDialCode(scannedData)) {
             this.qrScannerResultHandler.handleDialCode(source, scannedData);
           } else if (this.qrScannerResultHandler.isContentId(scannedData)) {
             this.qrScannerResultHandler.handleContentId(source, scannedData);
