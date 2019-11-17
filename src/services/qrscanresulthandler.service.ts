@@ -41,11 +41,11 @@ export class QRScannerResultHandler {
   }
 
   private async getDailCodeRegularExpression(): Promise<RegExp> {
-    if (!this.appGlobalService.getCachedDialCodeConfig) {
+    if (!this.appGlobalService.getCachedDialCodeConfig()) {
       await this.formFrameWorkUtilService.getDailCodeConfig();
       return this.appGlobalService.getCachedDialCodeConfig();
     } else {
-      return await this.appGlobalService.getCachedDialCodeConfig();
+      return this.appGlobalService.getCachedDialCodeConfig();
     }
   }
 
