@@ -203,7 +203,7 @@ export class AboutUsComponent implements OnInit {
     const baseUrl = await this.utilityService.getBuildConfigValue('BASE_URL');
     const url = baseUrl + RouterLinks.TERM_OF_USE;
     const options
-            = 'hardwareback=yes,clearcache=no,zoom=no,toolbar=yes,clearsessioncache=no,closebuttoncaption=Done,disallowoverscroll=yes';
+            = 'hardwareback=yes,clearcache=no,zoom=no,toolbar=yes,disallowoverscroll=yes';
 
     (window as any).cordova.InAppBrowser.open(url, '_blank', options);
   }
