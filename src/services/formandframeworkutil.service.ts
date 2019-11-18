@@ -247,7 +247,6 @@ export class FormAndFrameworkUtilService {
         };
         this.formService.getForm(req).toPromise()
             .then((res: any) => {
-                console.log('res is' , res);
                 const data = res.data.fields;
                 if (res && res.data.fields.length) {
                     for (const ele of data) {
