@@ -5,7 +5,7 @@ import {
   InteractType, InteractSubtype, Environment, PageId, ActivePageService
 } from '../../../services';
 import { DownloadService, SharedPreferences, NotificationService as PushNotificationService, NotificationStatus } from 'sunbird-sdk';
-import { GenericAppConfig, PreferenceKey, RouterLinks } from '../../../app/app.constant';
+import { GenericAppConfig, PreferenceKey, EventTopics } from '../../../app/app.constant';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { Subscription } from 'rxjs/Subscription';
 import { TranslateService } from '@ngx-translate/core';
@@ -169,6 +169,7 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
         pageId, undefined
       );
     }
+    this.events.publish(EventTopics.HAMBURGER_MENU_CLICKED);
   }
 
   emitEvent($event, name) {
