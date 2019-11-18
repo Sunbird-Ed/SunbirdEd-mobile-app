@@ -20,6 +20,9 @@ import {
 } from 'services/telemetry-constants';
 import { DataSyncType } from './data-sync-type.enum';
 import { SocialSharing } from '@ionic-native/social-sharing/ngx';
+import { Location } from '@angular/common';
+import { Platform } from '@ionic/angular';
+import { Subscription } from 'rxjs';
 
 declare const cordova;
 
@@ -36,6 +39,7 @@ export class DataSyncComponent implements OnInit {
   latestSync = '';
 
   OPTIONS: typeof DataSyncType = DataSyncType;
+  backButtonFunc: Subscription;
 
   constructor(
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
@@ -43,7 +47,9 @@ export class DataSyncComponent implements OnInit {
     public zone: NgZone,
     private social: SocialSharing,
     private commonUtilService: CommonUtilService,
-    private telemetryGeneratorService: TelemetryGeneratorService
+    private telemetryGeneratorService: TelemetryGeneratorService,
+    private location: Location,
+    private platform: Platform
   ) { }
 
   async init() {
@@ -205,5 +211,12 @@ export class DataSyncComponent implements OnInit {
         }
       );
     }
+  }
+  handleBackButton() {
+    this.backButtonFunc = this.platform.backButton.subscribeWithPriority(10, () => {
+      this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.SETTINGS_DATASYNC, Environment.SETTINGS, false);
+      this.location.back();
+      this.backButtonFunc.unsubscribe();
+    });
   }
 }
