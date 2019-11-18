@@ -184,7 +184,7 @@
                 {{'TRAININGS_ATTENDED' | translate}} ({{mappedTrainingCertificates?.length}})&lrm;
             </div>
             <div class="content">
-                    <div class="MB15 flex-nowrap"
+                    <div class="flex-nowrap"
                         *ngFor="let certificate of (mappedTrainingCertificates | slice : startLimit:trainingsLimit);">
                         <div class="training-1">
                             <div class="fw">
@@ -201,7 +201,7 @@
                             </button>
                         </div>
                     </div>
-                <div text-center *ngIf="mapTrainingsToCertificates(trainingsCompleted).length > trainingsLimit">
+                <div text-center *ngIf="mapTrainingsToCertificates(trainingsCompleted).length >= trainingsLimit">
                     <ion-button shape="round" class="txt-capitalize custom-round"
                         *ngIf="trainingsLimit < mappedTrainingCertificates?.length" (click)="showMoreTrainings()">
                         + {{mappedTrainingCertificates?.length - 2}} {{'MORE' | translate}}
