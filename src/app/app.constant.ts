@@ -480,6 +480,8 @@ export class RouterLinks {
     // faq Report Issue Pag
     public static readonly FAQ_REPORT_ISSUE = 'faq-report-issue';
 
+    // routing to Term of use Web Page
+    public static readonly TERM_OF_USE = '/term-of-use.html';
 
 
 }

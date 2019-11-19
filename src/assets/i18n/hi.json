@@ -26,7 +26,6 @@
   "ALLOW": "स्वीकार करें",
   "ALL_ANNOUNCEMENTS": "सभी घोषणाएं",
   "ALREADY_ENROLLED_COURSE": "उपयोगकर्ता यह कोर्स के लिए पहले ही नामांकित हैं",
-  "ALREADY_HAVE_ACC": "मौजूदा उपयोगकर्ता? साइन इन करें",
   "ALWAYS_ON": "हमेशा चालू रखे",
   "ANDROID_NOT_SUPPORTED": "आपका एंड्राइड संस्करण समर्थित नहीं हैं",
   "ANDROID_NOT_SUPPORTED_DESC": "यह कंटेंट खोला नहीं जा सकता है क्योंकि आपके मोबाइल का Android संस्करण बहुत पुराना है। अपने मोबाइल पर Crosswalk इंस्टाल करके आप इस कंटेंट को देखने में सक्षम हो सकते हैं|",
@@ -383,7 +382,7 @@
   "OVERLAY_LABEL_COMMON": "{{%s}} मे असीमित पहुंच प्राप्त करें",
   "OVERLAY_LABEL_HOME": "आपका व्यक्तिगत होम टैब",
   "OVERLAY_LABEL_TAKE_COURSE": "इस कोर्स में नामांकन के लिए साइन इन करें",
-  "OVERLAY_SIGN_IN": "साइन इन करें",
+  "OVERLAY_SIGN_IN": "लाॅग इन करें",
   "OVER_WIFI": "वाई-फ़ाई पर उपलब्ध",
   "PASSWORD": "पासवर्ड",
   "PEOPLE_WHO_FOLLOW_YOU": "जो लोग आपका अनुसरण करते हैं",
@@ -480,8 +479,8 @@
   "SHOW_MORE": "और दिखाएं",
   "SHOW_RECENT": "{{%s}} फ़ाइलें दिखा रहा है",
   "SIGNED_OUT_ACCOUNT_MESSAGE": "आपको वर्तमान खाते से साइन आउट कर दिया जाएगा",
-  "SIGNIN_TO_USE_FEATURE": "इस फ़ीचर के लिए साइन इन कीजिए",
-  "SIGN_IN": "साइन इन करें",
+  "SIGNIN_TO_USE_FEATURE": "इस फ़ीचर के लिए लाॅग इन कीजिए",
+  "SIGN_IN": "लाॅग इन करें",
   "SKIP": "छोड़ें",
   "SOMETHING_WENT_WRONG": "तकनीकी त्रुटि के कारण आपका अनुरोध को संसाधित करने में असमर्थ हैं",
   "SORT_BY": "आधार पर छाँटे",
@@ -604,5 +603,5 @@
   "YOUR_PROGRESS_LABEL": "आपकी प्रगति",
   "YOU_ARE_NOT_CONNECTED_TO_THE_INTERNET": "आप इंटरनेट से जुड़े हुए नहीं हैं",
   "YOU_MUST_JOIN_AN_ACTIVE_BATCH": "प्रशिक्षण जानकारी के लिए सक्रिय बैच में नामांकन किजिए",
-  "YOU_MUST_JOIN_TO_ACCESS_TRAINING_DETAIL": "प्रशिक्षण जानकारी के लिए साइन इन करें"
+  "YOU_MUST_JOIN_TO_ACCESS_TRAINING_DETAIL": "प्रशिक्षण जानकारी के लिए लाॅग इन करें"
 }

@@ -90,7 +90,7 @@ export class ContentPlayerHandler {
                     this.file.checkFile(`file://${data.metadata.basePath}/`, 'index.ecml').then((isAvailable) => {
                         this.canvasPlayerService.xmlToJSon(`${filePath}/index.ecml`).then((json) => {
                             data['data'] = JSON.stringify(json);
-                            this.router.navigate([RouterLinks.PLAYER], { state: { config: data } });
+                            this.router.navigate([RouterLinks.PLAYER], { state: { config: data,  course : contentInfo.course } });
 
                         }).catch((error) => {
                             console.error('error1', error);
@@ -99,18 +99,18 @@ export class ContentPlayerHandler {
                         console.error('err', err);
                         this.canvasPlayerService.readJSON(`${filePath}/index.json`).then((json) => {
                             data['data'] = json;
-                            this.router.navigate([RouterLinks.PLAYER], { state: { config: data } });
+                            this.router.navigate([RouterLinks.PLAYER], { state: { config: data,  course : contentInfo.course } });
 
                         }).catch((e) => {
                             console.error('readJSON error', e);
                         });
                     });
                 } else {
-                    this.router.navigate([RouterLinks.PLAYER], { state: { config: data } });
+                    this.router.navigate([RouterLinks.PLAYER], { state: { config: data, course : contentInfo.course } });
                 }
 
             } else {
-                this.router.navigate([RouterLinks.PLAYER], { state: { config: data } });
+                this.router.navigate([RouterLinks.PLAYER], { state: { config: data,  course : contentInfo.course } });
             }
         });
     }
