@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@angular/core';
-import * as  moment from 'moment';
+import * as  dayjs from 'dayjs';
 import { File } from '@ionic-native/file/ngx';
 import { SharedPreferences, Content, CorrelationData, Rollup, TelemetryObject } from 'sunbird-sdk';
 
@@ -140,10 +140,10 @@ export class RatingHandler {
     private shouldShowAppRating(date): boolean {
         let isValid = false;
         if (this.commonUtilService.networkInfo.isNetworkAvailable) {
-            const presentDate = moment();
-            const initialDate = moment(date);
+            const presentDate = dayjs();
+            const initialDate = dayjs(date);
             if (initialDate.isValid()) {
-                const diffInDays = presentDate.diff(initialDate, 'days');
+                const diffInDays = presentDate.diff(initialDate, 'day');
                 if (diffInDays >= StoreRating.DATE_DIFF) {
                     isValid = true;
                 }
@@ -153,7 +153,7 @@ export class RatingHandler {
     }
 
     setInitialDate() {
-        const today = moment().format();
+        const today = dayjs().format();
         this.preferences.putString(PreferenceKey.APP_RATING_DATE, today).subscribe();
     }
 

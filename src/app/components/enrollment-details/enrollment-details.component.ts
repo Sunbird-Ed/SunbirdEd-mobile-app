@@ -16,7 +16,7 @@ import { CommonUtilService } from '@app/services/common-util.service';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { InteractSubtype, Environment, PageId } from '@app/services/telemetry-constants';
 import { Router } from '@angular/router';
-import * as moment from 'moment';
+import * as dayjs from 'dayjs';
 import { LocalCourseService } from '@app/services';
 import { EnrollCourse } from '@app/app/enrolled-course-details-page/course.interface';
 
@@ -57,7 +57,7 @@ export class EnrollmentDetailsComponent {
         this.ongoingBatches = this.navParams.get('ongoingBatches');
         this.upcommingBatches = this.navParams.get('upcommingBatches');
         this.retiredBatched = this.navParams.get('retiredBatched');
-        this.todayDate = moment(new Date()).format('YYYY-MM-DD');
+        this.todayDate = dayjs().format('YYYY-MM-DD');
         this.courseId = this.navParams.get('courseId');
         this.getUserId();
 
