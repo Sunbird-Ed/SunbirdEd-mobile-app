@@ -13,7 +13,6 @@ import { AppVersion } from '@ionic-native/app-version/ngx';
 import { SocialSharing } from '@ionic-native/social-sharing/ngx';
 import { FileTransfer, FileTransferObject } from '@ionic-native/file-transfer/ngx';
 import { FileOpener } from '@ionic-native/file-opener/ngx';
-import { UniqueDeviceID } from '@ionic-native/unique-device-id/ngx';
 import { Device } from '@ionic-native/device/ngx';
 import { Network } from '@ionic-native/network/ngx';
 
@@ -436,7 +435,6 @@ declare const buildconfigreader;
     LoginHandlerService,
     TncUpdateHandlerService,
     ContainerService,
-    UniqueDeviceID,
     UtilityService,
     LocalCourseService,
     AppHeaderService,
