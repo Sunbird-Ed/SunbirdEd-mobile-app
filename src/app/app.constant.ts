@@ -65,7 +65,7 @@ export class MimeType {
     public static readonly INTERACTION = ['application/vnd.ekstep.ecml-archive', 'application/vnd.ekstep.html-archive',
         'application/vnd.android.package-archive', 'application/vnd.ekstep.content-archive',
         'application/vnd.ekstep.plugin-archive', 'application/vnd.ekstep.h5p-archive'];
-    public static readonly DOCS =  ['application/pdf', 'application/epub', 'application/msword'];
+    public static readonly DOCS = ['application/pdf', 'application/epub', 'application/msword'];
     public static readonly ALL = ['video/mp4', 'video/x-youtube', 'video/webm', 'application/pdf', 'application/epub',
         'application/pdf', 'application/epub', 'application/vnd.ekstep.ecml-archive', 'application/vnd.ekstep.h5p-archive',
         'application/vnd.ekstep.html-archive'
@@ -210,7 +210,6 @@ export class PreferenceKey {
     public static readonly DEPLOYMENT_KEY = 'deployment_key';
     public static readonly COURSE_DATA_KEY = 'course_data';
     public static readonly BATCH_DETAIL_KEY = 'batch_detail';
-    public static readonly IS_LOCATION_MANDATORY = 'is_location_mandatory';
 }
 
 export class GenericAppConfig {
@@ -360,6 +359,12 @@ export class ContentFilterConfig {
     public static readonly NAME_DOWNLOADS = 'downloads';
     public static readonly NAME_DIALCODE = 'dialcode';
     public static readonly CODE_CONTENT_TYPE = 'contentType';
+}
+
+export class LocationConfig {
+    public static readonly CODE_SKIP = 'skip';
+    public static readonly SKIP_DEVICE = 'device';
+    public static readonly SKIP_USER = 'user';
 }
 
 export class ActionType {

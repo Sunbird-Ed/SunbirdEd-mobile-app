@@ -39,6 +39,11 @@ export class AppGlobalService implements OnDestroy {
     libraryFilterConfig: Array<any> = [];
 
     /**
+     * This property stores the location configuration at the app level for a particular app session
+     */
+    locationConfig: Array<any> = [];
+
+    /**
      * This property stores the organization at the app level for a particular app session
      */
     rootOrganizations: Array<any>;
@@ -174,6 +179,20 @@ export class AppGlobalService implements OnDestroy {
     }
 
     /**
+     * This method stores the location config, for a particular session of the app
+     */
+    setLocationConfig(locationConfig: Array<any>) {
+        this.courseFilterConfig = locationConfig;
+    }
+
+    /**
+     * This method returns the location config cache, for a particular session of the app
+     */
+    getCachedLocationConfig(): Array<any> {
+        return this.locationConfig;
+    }
+
+    /**
      * This method stores the rootOrganizations, for a particular session of the app
      */
     setRootOrganizations(rootOrganizations: Array<any>) {
@@ -203,6 +222,7 @@ export class AppGlobalService implements OnDestroy {
 
     /**
      * @returns UserId or empty string if not available
+     * getLoggedinUserId
      */
     getUserId(): string | undefined {
         if (!this.session) {

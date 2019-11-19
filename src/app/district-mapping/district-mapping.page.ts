@@ -3,8 +3,8 @@ import {
   LocationSearchCriteria, ProfileService,
   SharedPreferences, Profile, DeviceRegisterRequest, DeviceRegisterService, DeviceInfo
 } from 'sunbird-sdk';
-import { Location as loc, PreferenceKey, RouterLinks } from '../../app/app.constant';
-import { AppHeaderService, CommonUtilService, AppGlobalService } from '@app/services';
+import { Location as loc, PreferenceKey, RouterLinks, LocationConfig } from '../../app/app.constant';
+import { AppHeaderService, CommonUtilService, AppGlobalService, FormAndFrameworkUtilService } from '@app/services';
 import { NavigationExtras, Router } from '@angular/router';
 import { Location } from '@angular/common';
 import { Events } from '@ionic/angular';
@@ -54,6 +54,7 @@ export class DistrictMappingPage implements OnInit {
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
     @Inject('DEVICE_REGISTER_SERVICE') private deviceRegisterService: DeviceRegisterService,
     @Inject('DEVICE_INFO') public deviceInfo: DeviceInfo,
+    private formAndFrameworkUtilService: FormAndFrameworkUtilService,
     public router: Router,
     public location: Location,
     public appGlobalService: AppGlobalService,
@@ -364,16 +365,27 @@ export class DistrictMappingPage implements OnInit {
   }
 
   async checkLocationMandatory() {
-    let isLocationMandatory = await this.preferences.getString(PreferenceKey.IS_LOCATION_MANDATORY).toPromise();
-
-    this.showNotNowFlag = false;
-    if (isLocationMandatory === null || isLocationMandatory === undefined || isLocationMandatory === '') {
-      this.preferences.putString(PreferenceKey.IS_LOCATION_MANDATORY, 'TRUE').toPromise();
-      isLocationMandatory = 'TRUE';
+    if (this.appGlobalService.isUserLoggedIn()) {
     }
+    let skipValues = [];
+    await this.formAndFrameworkUtilService.getLocationConfig()
+      .then((locationConfig) => {
+        for (const field of locationConfig) {
+          if (field.code === LocationConfig.CODE_SKIP) {
+            skipValues = field.values;
+            break;
+          }
+        }
+      });
 
-    if (!(this.source === PageId.GUEST_PROFILE) && isLocationMandatory === 'FALSE') {
-      this.showNotNowFlag = true;
+    for (const value of skipValues) {
+      if (this.appGlobalService.isUserLoggedIn()) {
+        if (!this.profile && value === LocationConfig.SKIP_USER) {
+          this.showNotNowFlag = true;
+        }
+      } else if (!(this.source === PageId.GUEST_PROFILE) && value === LocationConfig.SKIP_DEVICE) {
+        this.showNotNowFlag = true;
+      }
     }
   }
 
