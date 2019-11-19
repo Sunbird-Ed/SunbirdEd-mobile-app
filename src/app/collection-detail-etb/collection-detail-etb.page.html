@@ -54,8 +54,13 @@
       </div>
       <ng-container *ngFor="let item of childrenData;  let i = index;">
         <ion-card class="sb-accordian-card" *ngIf="item | hasMimeType: activeMimeTypeFilter">
-          <div [attr.data-sticky-unit]="item.contentData.name" #filteredItems
-            [id]="item.mimeType === 'application/vnd.ekstep.content-collection' ? item.identifier : ''">
+          <div
+            class="sticky-header-title-box"
+            [attr.data-text]="item.contentData.name" 
+            [attr.data-render-level]="0"
+            [id]="item.mimeType === 'application/vnd.ekstep.content-collection' ? item.identifier : ''"
+            #filteredItems
+          >
             <!-- new -->
             <ion-grid class="sb-accordian-header">
               <ion-row (click)="toggleGroup(i, item)" *ngIf="item?.children">
@@ -98,7 +103,7 @@
             <div class="sb-hidden-content" *ngIf="isGroupShown(i) && (item?.children && item?.children?.length)">
               <div class="box-align" *ngFor="let firstChildren of item?.children; let j = index;">
                 <div class="sb-topics-container  sb-topics-container-ftue">
-                  <app-collection-child [childData]="firstChildren" [index]="j" [depth]="depth"
+                  <app-collection-child [renderLevel]="1" [childData]="firstChildren" [index]="j" [depth]="depth"
                     [activeMimeTypeFilter]="activeMimeTypeFilter" [isTextbookTocPage]="false"
                     [corRelationList]="corRelationList" [isDepthChild]="isDepthChild" [breadCrumb]="breadCrumb"
                     [rootUnitId]="item.identifier" [bookID]="identifier"></app-collection-child>

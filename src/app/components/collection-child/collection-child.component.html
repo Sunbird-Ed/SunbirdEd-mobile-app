@@ -17,6 +17,9 @@
   <div [id]="childData.identifier"
   [ngClass] ="{'row sb-topic-item': !stckyUnitTitle, 'sb-highlighted-row' : (latestParentName === childData?.contentData?.name) ,
    'row sb-topic-item':  (stckyUnitTitle !== childData?.contentData?.name)}"
+   class="sticky-header-title-box"
+   [attr.data-text] = "childData.contentData.name" 
+   [attr.data-render-level] = "renderLevel"
     *ngIf="!isTextbookTocPage && childData?.contentData?.mimeType !== 'application/vnd.ekstep.content-collection' && hasMimeType(activeMimeTypeFilter, childData?.contentData?.mimeType, childData)"
     (click)="navigateToDetailsPage(childData, depth + '.' + (i + 1))">
 
@@ -72,7 +75,7 @@
   <!-- <div *ngIf="childData?.children && childData?.contentData?.mimeType === 'application/vnd.ekstep.content-collection'"
        class="sb-separator-line ml8 mtb-8"></div> -->
   <div *ngFor="let firstChildren of childData?.children; let j = index;" [ngClass]="{'sb-collection-child-ftue': isTextbookTocPage}">
-    <app-collection-child [childData]="firstChildren" [breadCrumb]="breadCrumb"
+    <app-collection-child [renderLevel]="renderLevel + 1" [childData]="firstChildren" [breadCrumb]="breadCrumb"
       [activeMimeTypeFilter]="activeMimeTypeFilter" [rootUnitId]="rootUnitId" [isTextbookTocPage]="isTextbookTocPage"
       [bookID]="bookID" [isEnrolled]="isEnrolled" [fromCourseToc]="fromCourseToc" [isBatchNotStarted]="isBatchNotStarted"  [stckyUnitTitle]="stckyUnitTitle"
        [stckyindex]="stckyindex" [latestParentName]="latestParentName" [latestParentNodes]="latestParentNodes"></app-collection-child>
