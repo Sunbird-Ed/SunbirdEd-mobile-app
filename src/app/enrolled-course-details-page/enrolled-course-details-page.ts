@@ -72,7 +72,7 @@ import { SbPopoverComponent } from '../components/popups';
 import { TranslateService } from '@ngx-translate/core';
 import { ContentInfo } from '@app/services/content/content-info';
 import { ContentDeleteHandler } from '@app/services/content/content-delete-handler';
-import * as moment from 'moment';
+import * as dayjs from 'dayjs';
 import { LocalCourseService } from '@app/services';
 import { EnrollCourse } from './course.interface';
 declare const cordova;
@@ -604,7 +604,6 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
     if (data.contentData) {
       // await loader.present();
       this.course = data.contentData;
-      // console.log('this.course', this.course);
       this.content = data;
       this.objId = this.course.identifier;
       this.objType = this.course.contentType;
@@ -1239,7 +1238,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
    * Ionic life cycle hook
    */
   async ionViewWillEnter() {
-    this.todayDate =  moment(new Date()).format('YYYY-MM-DD');
+    this.todayDate =  dayjs().format('YYYY-MM-DD');
     this.identifier = this.courseCardData.contentId || this.courseCardData.identifier;
     this.downloadSize = 0;
     this.objRollup = ContentUtil.generateRollUp(this.courseCardData.hierarchyInfo, this.identifier);

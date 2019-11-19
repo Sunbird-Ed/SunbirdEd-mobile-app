@@ -164,6 +164,7 @@ export class EventTopics {
     public static readonly PLAYER_CLOSED = 'PLAYER_CLOSED';
     public static readonly SIGN_IN_RELOAD = 'SIGN_IN_RELOAD';
     public static readonly TOC_COLLECTION_CHILD_ID = 'TOC_COLLECTION_CHILD_ID';
+    public static readonly HAMBURGER_MENU_CLICKED = 'HAMBURGER_MENU_CLICKED';
 }
 
 export class ShareUrl {

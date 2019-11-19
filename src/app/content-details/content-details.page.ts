@@ -2,7 +2,7 @@ import { Location } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { Network } from '@ionic-native/network/ngx';
-import { Component, Inject, NgZone, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, Inject, NgZone, OnInit, ViewEncapsulation, OnDestroy } from '@angular/core';
 import {
   Events,
   Platform,
@@ -70,7 +70,7 @@ import { ContentUtil } from '@app/util/content-util';
   styleUrls: ['./content-details.page.scss'],
   encapsulation: ViewEncapsulation.None
 })
-export class ContentDetailsPage implements OnInit {
+export class ContentDetailsPage implements OnInit, OnDestroy{
   appName: any;
   isCourse = false;
   apiLevel: number;
@@ -231,6 +231,10 @@ export class ContentDetailsPage implements OnInit {
         }
       }
     });
+  }
+
+  ngOnDestroy(){
+    this.events.unsubscribe(EventTopics.PLAYER_CLOSED);
   }
 
   /**

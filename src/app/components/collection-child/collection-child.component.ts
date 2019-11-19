@@ -6,7 +6,7 @@ import { CommonUtilService } from '@app/services/common-util.service';
 import { ComingSoonMessageService } from '@app/services/coming-soon-message.service';
 import { PopoverController, Events } from '@ionic/angular';
 import { SbGenericPopoverComponent } from '@app/app/components/popups/sb-generic-popover/sb-generic-popover.component';
-import { Content,TelemetryObject,Rollup } from 'sunbird-sdk';
+import { Content, TelemetryObject, Rollup } from 'sunbird-sdk';
 import { Router, NavigationExtras } from '@angular/router';
 import { TextbookTocService } from '@app/app/collection-detail-etb/textbook-toc-service';
 import {
@@ -18,7 +18,6 @@ import {
   PageId
 } from '@app/services/telemetry-constants';
 import { ContentUtil } from '@app/util/content-util';
-import * as moment from 'moment';
 
 @Component({
   selector: 'app-collection-child',
@@ -119,7 +118,6 @@ export class CollectionChildComponent implements OnInit {
   }
 
   navigateToDetailsPage(content: Content, depth) {
-    const todayDate =  moment(new Date()).format('YYYY-MM-DD');
     if (this.router.url.indexOf(RouterLinks.TEXTBOOK_TOC) !== -1) {
       const values = new Map();
       values['contentClicked'] = content.identifier;
