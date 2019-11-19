@@ -50,6 +50,7 @@ export class CollectionChildComponent implements OnInit {
   @Input() latestParentName: string;
   @Input() latestParentNodes: any;
   @Input() batch: any;
+  @Input() renderLevel: number;
   public telemetryObject: TelemetryObject;
   public objRollup: Rollup;
   collectionChildIcon: any;
@@ -279,5 +280,5 @@ export class CollectionChildComponent implements OnInit {
       return './assets/imgs/touch.svg';
     }
   }
-
+  
 }
