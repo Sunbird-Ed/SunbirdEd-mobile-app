@@ -18,7 +18,6 @@ import { Environment, InteractSubtype, InteractType } from '../../../services/te
 import { SbPopoverComponent } from '../popups/sb-popover/sb-popover.component';
 import { FileSizePipe } from '@app/pipes/file-size/file-size';
 import { SbGenericPopoverComponent } from '../popups/sb-generic-popover/sb-generic-popover.component';
-import * as moment from 'moment';
 @Component({
   selector: 'app-content-actions',
   templateUrl: './content-actions.component.html',

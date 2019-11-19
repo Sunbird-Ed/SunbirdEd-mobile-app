@@ -9,7 +9,7 @@ import { EventTopics } from '../../app/app.constant';
 import { CommonUtilService } from '../../services/common-util.service';
 import { InteractType, InteractSubtype, Environment, PageId } from '../../services/telemetry-constants';
 import { AppHeaderService } from '../../services/app-header.service';
-import * as moment from 'moment';
+import * as dayjs from 'dayjs';
 import { Location } from '@angular/common';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs/Subscription';
@@ -155,21 +155,21 @@ export class CourseBatchesPage implements OnInit {
    */
 
   async enrollIntoBatch(item: Batch) {
+    const enrollCourseRequest = this.localCourseService.prepareEnrollCourseRequest(this.userId, item);
+    this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
+      InteractSubtype.ENROLL_CLICKED,
+      Environment.HOME,
+      PageId.COURSE_BATCHES, this.telemetryObject,
+      this.localCourseService.prepareRequestValue(enrollCourseRequest),
+      this.objRollup,
+      this.corRelationList
+    );
+
     if (this.isGuestUser) {
       this.joinTraining(item);
     } else {
-      const enrollCourseRequest = this.localCourseService.prepareEnrollCourseRequest(this.userId, item);
       const loader = await this.commonUtilService.getLoader();
       await loader.present();
-      this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
-        InteractSubtype.ENROLL_CLICKED,
-        Environment.HOME,
-        PageId.COURSE_BATCHES, this.telemetryObject,
-        this.localCourseService.prepareRequestValue(enrollCourseRequest),
-        this.objRollup,
-        this.corRelationList
-      );
-
       const enrollCourse: EnrollCourse = {
         userId: this.userId,
         batch: item,
@@ -249,7 +249,7 @@ export class CourseBatchesPage implements OnInit {
   getBatchesByCourseId(): void {
     this.ongoingBatches = this.ongoingBatches;
     this.upcommingBatches = this.upcommingBatches;
-    this.todayDate =  moment(new Date()).format('YYYY-MM-DD');
+    this.todayDate =  dayjs().format('YYYY-MM-DD');
     this.objRollup = this.objRollup;
     this.corRelationList = this.corRelationList;
     this.telemetryObject = this.telemetryObject;

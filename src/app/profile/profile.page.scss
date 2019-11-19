@@ -264,6 +264,7 @@
   .training-1 {
     width: 80%;
     float: left;
+    @include padding(16px, null, 8px, null);
   }
 
   .training-2 {

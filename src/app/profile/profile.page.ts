@@ -392,10 +392,8 @@ export class ProfilePage implements OnInit {
         certificate: undefined
       };
       if (course.certificates && course.certificates.length) {
-        course.certificates.forEach( value => {
-          oneCert.certificate = value;
-          accumulator = accumulator.concat(oneCert);
-        });
+        oneCert.certificate = course.certificates[0];
+        accumulator = accumulator.concat(oneCert);
       } else {
         accumulator = accumulator.concat(oneCert);
       }
