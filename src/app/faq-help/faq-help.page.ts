@@ -161,7 +161,6 @@ export class FaqHelpPage implements OnInit {
       }
       this.loading.dismiss();
     });
-    console.log('Data To be Loaded, constants, faqs', this.data, this.constants, this.faqs);
   }
 
   async ionViewDidLeave() {
