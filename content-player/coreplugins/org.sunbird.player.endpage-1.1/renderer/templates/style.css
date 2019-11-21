@@ -106,21 +106,20 @@ table {
 
 .ps-nav {
   width: 22%;
-  /* margin-top: -3%; */
+  /*margin-top: -3%;*/
   box-shadow: 0 0 4px 1px #bcbcbc;
 }
 .ps-nav.left, .ps-nav.right {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-}
+   position: absolute;
+   top: 50%;
+   transform: translateY(-50%);
+ }
 .ps-nav.left {
- left: 0px;
+  left: 0px;
 }
 .ps-nav.right {
-  right: 0px;
-}
-
+   right: 0px;
+ }
 .ps-score {
   width: 62%;
 }
@@ -392,7 +391,7 @@ table {
 }
 
 .ellipsis-three-line{
-  -webkit-line-clamp: 3; 
+  -webkit-line-clamp: 3;
 }
 
 .buttonVisible {
