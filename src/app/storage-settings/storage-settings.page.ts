@@ -296,7 +296,7 @@ export class StorageSettingsPage implements OnInit {
     );
     this.shouldTransferContentsPopup.onDidDismiss().then(async ({ data }) => {
       this.shouldTransferContentsPopup = undefined;
-      if (!data) {
+      if (!data || data.closeDeletePopOver) {
         this.telemetryGeneratorService.generateInteractTelemetry(
           InteractType.TOUCH,
           InteractSubtype.POPUP_DISMISSED,
