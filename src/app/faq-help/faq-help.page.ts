@@ -1,5 +1,5 @@
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
-import { Component, Inject, ViewChild, ElementRef, OnInit, OnDestroy } from '@angular/core';
+import { Component, Inject, ViewChild, ElementRef, OnInit } from '@angular/core';
 import { Platform } from '@ionic/angular';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { CommonUtilService } from '@app/services/common-util.service';
@@ -11,30 +11,23 @@ import {
   ProfileService,
   ContentService,
   DeviceInfo,
-  Profile,
-  GetAllProfileRequest,
-  ContentRequest,
   SharedPreferences,
   TelemetryObject,
   GetSystemSettingsRequest,
   SystemSettingsService,
   SystemSettings,
-  FaqService
+  FaqService,
+  GetFaqRequest
 } from 'sunbird-sdk';
-import { PreferenceKey, appLanguages, ContentType, AudienceFilter, RouterLinks } from '../app.constant';
+import { PreferenceKey, appLanguages, RouterLinks } from '../app.constant';
 import { SocialSharing } from '@ionic-native/social-sharing/ngx';
 import { Location } from '@angular/common';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { Subscription } from 'rxjs/Subscription';
 import { TranslateService } from '@ngx-translate/core';
-import { LoadedRouterConfig } from '@angular/router/src/config';
 import { Observable } from 'rxjs-compat';
 import { HttpClient } from '@angular/common/http';
-import { NavigationExtras, Router } from '@angular/router';
-import { GetFaqRequest } from 'sunbird-sdk/faq/def/get-faq-request';
-
-const KEY_SUNBIRD_CONFIG_FILE_PATH = 'sunbird_config_file_path';
-const SUBJECT_NAME = 'support request';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-faq-help',
@@ -92,18 +85,19 @@ export class FaqHelpPage implements OnInit {
   ) {
   }
 
-   ngOnInit() {
+  ngOnInit() {
     this.appVersion.getAppName()
       .then((appName) => {
         this.appName = appName;
       });
     this.messageListener = (event) => {
-        this.receiveMessage(event);
+      this.receiveMessage(event);
     };
     window.addEventListener('message', this.messageListener, false);
     this.getSelectedLanguage();
     this.getDataFromUrl();
   }
+
   receiveMessage(event) {
     const values = new Map();
     values['values'] = event.data;
@@ -116,6 +110,7 @@ export class FaqHelpPage implements OnInit {
   public getJSON(): Observable<any> {
     return this.http.get(this.jsonURL);
   }
+
   private async getSelectedLanguage() {
     const selectedLanguage = await this.preferences.getString(PreferenceKey.SELECTED_LANGUAGE_CODE).toPromise();
     if (selectedLanguage) {
@@ -124,14 +119,14 @@ export class FaqHelpPage implements OnInit {
   }
 
   private async getDataFromUrl() {
-    const faqRequest: GetFaqRequest = {language: '', faqUrl: ''};
+    const faqRequest: GetFaqRequest = { language: '', faqUrl: '' };
     const getSystemSettingsRequest: GetSystemSettingsRequest = {
       id: 'faqURL'
     };
     await this.systemSettingsService.getSystemSettings(getSystemSettingsRequest).toPromise()
       .then((res: SystemSettings) => {
-          console.log('faqdata', res);
-          faqRequest.faqUrl = res.value;
+        console.log('faqdata', res);
+        faqRequest.faqUrl = res.value;
       }).catch(err => {
       });
     this.loading = await this.commonUtilService.getLoader();
@@ -225,8 +220,6 @@ export class FaqHelpPage implements OnInit {
     this.location.back();
   }
 
-
-
   generateInteractTelemetry(interactSubtype, values) {
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH, interactSubtype,
@@ -245,8 +238,7 @@ export class FaqHelpPage implements OnInit {
 
   // toggle the card
   toggleGroup(group) {
-
-    const telemetryObject = new TelemetryObject((group+1).toString(), 'faq','');
+    const telemetryObject = new TelemetryObject((group + 1).toString(), 'faq', '');
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
       InteractSubtype.HELP_SECTION_CLICKED,
       Environment.USER,
@@ -269,57 +261,56 @@ export class FaqHelpPage implements OnInit {
   }
 
   // to check whether the card is toggled or not
- isGroupShown(group) {
-   return this.shownGroup === group;
-}
-
-noClicked(i) {
-  this.value = {};
-  if (!this.isNoClicked) {
-    this.isNoClicked = true;
-  }
-  this.value.action = 'no-clicked';
-  this.value.position = i;
-  this.value.value = {};
-  this.value.value.topic = this.data.faqs[i].topic;
-  this.value.value.description = this.data.faqs[i].description;
-  console.log('this.value, noclicked', this.value);
-  window.parent.postMessage(this.value, '*');
-
-}
-
-yesClicked(i) {
-  this.value = {};
-  if (!this.isYesClicked) {
-    this.isYesClicked = true;
+  isGroupShown(group) {
+    return this.shownGroup === group;
   }
 
-  this.value.action = 'yes-clicked';
-  this.value.position = i;
-  this.value.value = {};
-  this.value.value.topic = this.data.faqs[i].topic;
-  this.value.value.description = this.data.faqs[i].description;
-  window.parent.postMessage(this.value, '*');
-}
-
-submitClicked(textValue, i) {
-  this.isSubmitted = true;
-  this.value.action = 'no-clicked';
-  this.value.position = i;
-  this.value.value = {};
-  this.value.value.topic = this.data.faqs[i].topic;
-  this.value.value.description = this.data.faqs[i].description;
-  this.value.value.knowMoreText = textValue;
-  window.parent.postMessage(this.value, '*');
-  this.textValue = '';
-}
-
-navigateToReportIssue() {
-  this.router.navigate([RouterLinks.FAQ_REPORT_ISSUE], {
-    state: {
-      data: this.data
+  noClicked(i) {
+    this.value = {};
+    if (!this.isNoClicked) {
+      this.isNoClicked = true;
     }
-  });
-}
+    this.value.action = 'no-clicked';
+    this.value.position = i;
+    this.value.value = {};
+    this.value.value.topic = this.data.faqs[i].topic;
+    this.value.value.description = this.data.faqs[i].description;
+    window.parent.postMessage(this.value, '*');
+
+  }
+
+  yesClicked(i) {
+    this.value = {};
+    if (!this.isYesClicked) {
+      this.isYesClicked = true;
+    }
+
+    this.value.action = 'yes-clicked';
+    this.value.position = i;
+    this.value.value = {};
+    this.value.value.topic = this.data.faqs[i].topic;
+    this.value.value.description = this.data.faqs[i].description;
+    window.parent.postMessage(this.value, '*');
+  }
+
+  submitClicked(textValue, i) {
+    this.isSubmitted = true;
+    this.value.action = 'no-clicked';
+    this.value.position = i;
+    this.value.value = {};
+    this.value.value.topic = this.data.faqs[i].topic;
+    this.value.value.description = this.data.faqs[i].description;
+    this.value.value.knowMoreText = textValue;
+    window.parent.postMessage(this.value, '*');
+    this.textValue = '';
+  }
+
+  navigateToReportIssue() {
+    this.router.navigate([RouterLinks.FAQ_REPORT_ISSUE], {
+      state: {
+        data: this.data
+      }
+    });
+  }
 
 }
