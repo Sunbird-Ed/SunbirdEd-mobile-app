@@ -1,7 +1,7 @@
 import { Component, OnInit, Inject, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
-import { PreferenceKey, appLanguages, ContentType, AudienceFilter, RouterLinks } from '../app.constant';
+import { ContentType, AudienceFilter } from '../app.constant';
 import {
   ProfileService,
   ContentService,
@@ -11,7 +11,6 @@ import {
   ContentRequest,
   SharedPreferences
 } from 'sunbird-sdk';
-import { FormAndFrameworkUtilService, } from '@app/services/formandframeworkutil.service';
 import { Environment, InteractType, PageId } from '@app/services/telemetry-constants';
 import { AppGlobalService } from '@app/services/app-global-service.service';
 import { CommonUtilService } from '@app/services/common-util.service';
@@ -55,7 +54,7 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
       this.data = this.router.getCurrentNavigation().extras.state.data;
       console.log('Data from Faq-Help', this.data);
     }
-   }
+  }
 
   ngOnInit() {
     this.appVersion.getAppName()
@@ -64,7 +63,7 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
         console.log('APpName', this.appName);
       });
     this.messageListener = (event) => {
-        this.receiveMessage(event);
+      this.receiveMessage(event);
     };
     window.addEventListener('message', this.messageListener, false);
   }
@@ -162,7 +161,7 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
     const maxLength = 1000;
     this.len = val.length;
     if (this.len === 0) {
-    this.charEntered = false;
+      this.charEntered = false;
     }
     if (this.len > 0 && this.len <= 1000) {
       this.charEntered = true;

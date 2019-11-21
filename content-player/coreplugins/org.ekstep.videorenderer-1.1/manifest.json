@@ -15,7 +15,6 @@
             {"type": "js", "src": "renderer/libs/videolibs/videojs-contrib-quality-levels.min.js"},
             {"type": "js", "src": "renderer/libs/videolibs/videojs-hls-quality-selector.min.js"},
             {"type": "css", "src": "renderer/libs/videolibs/videojs-hls-quality-selector.css"},
-            {"type": "js", "src": "renderer/libs/videoyoutube.js"},
             {"type": "css", "src": "renderer/libs/loader.css"}
         ]
     },

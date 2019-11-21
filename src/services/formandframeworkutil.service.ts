@@ -1,8 +1,8 @@
-import {Inject, Injectable} from '@angular/core';
-import {AppGlobalService} from '@app/services/app-global-service.service';
-import {AppVersion} from '@ionic-native/app-version/ngx';
-import {TranslateService} from '@ngx-translate/core';
-import {Events} from '@ionic/angular';
+import { Inject, Injectable } from '@angular/core';
+import { AppGlobalService } from '@app/services/app-global-service.service';
+import { AppVersion } from '@ionic-native/app-version/ngx';
+import { TranslateService } from '@ngx-translate/core';
+import { Events } from '@ionic/angular';
 import {
     CachedItemRequestSourceFrom,
     CategoryTerm,
@@ -23,7 +23,7 @@ import {
     SignInError
 } from 'sunbird-sdk';
 
-import {ContentFilterConfig, ContentType, PreferenceKey, SystemSettingsIds} from '@app/app/app.constant';
+import { ContentFilterConfig, ContentType, PreferenceKey, SystemSettingsIds } from '@app/app/app.constant';
 
 @Injectable()
 export class FormAndFrameworkUtilService {
@@ -115,6 +115,26 @@ export class FormAndFrameworkUtilService {
                 this.invokeCourseFilterConfigFormApi(courseFilterConfig, resolve, reject);
             } else {
                 resolve(courseFilterConfig);
+            }
+        });
+    }
+
+    /**
+     * This method gets the location config.
+     *
+     */
+    getLocationConfig(): Promise<any> {
+        return new Promise((resolve, reject) => {
+            let locationConfig: Array<any> = [];
+
+            // get cached course config
+            locationConfig = this.appGlobalService.getCachedLocationConfig();
+
+            if (locationConfig === undefined || locationConfig.length === 0) {
+                locationConfig = [];
+                this.invokeLocationConfigFormApi(locationConfig, resolve, reject);
+            } else {
+                resolve(locationConfig);
             }
         });
     }
@@ -262,6 +282,30 @@ export class FormAndFrameworkUtilService {
 
     }
 
+    /**
+     * Network call to form api
+     */
+    private invokeLocationConfigFormApi(
+        locationConfig: Array<any>,
+        resolve: (value?: any) => void,
+        reject: (reason?: any) => void) {
+
+        const req: FormRequest = {
+            type: 'config',
+            subType: 'location',
+            action: 'get',
+        };
+        // form api call
+        this.formService.getForm(req).toPromise()
+            .then((res: any) => {
+                locationConfig = res.form.data.fields;
+                this.appGlobalService.setLocationConfig(locationConfig);
+                resolve(locationConfig);
+            }).catch((error: any) => {
+                console.log('Error - ' + error);
+                resolve(locationConfig);
+            });
+    }
 
     private setContentFilterConfig(contentFilterConfig: Array<any>) {
         this.contentFilterConfig = contentFilterConfig;

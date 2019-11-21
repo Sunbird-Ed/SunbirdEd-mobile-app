@@ -49,7 +49,6 @@ export class SunbirdQRScanner {
     private platform: Platform,
     private qrScannerResultHandler: QRScannerResultHandler,
     private telemetryGeneratorService: TelemetryGeneratorService,
-    private commonUtil: CommonUtilService,
     private appGlobalService: AppGlobalService,
     private container: ContainerService,
     private permission: AndroidPermissionsService,
@@ -137,7 +136,7 @@ export class SunbirdQRScanner {
 
       }).toPromise().then((status?: AndroidPermissionsStatus) => {
         if (!status) {
-          this.commonUtil.showToast('PERMISSION_DENIED');
+          this.commonUtilService.showToast('PERMISSION_DENIED');
         }
 
         if (status.isPermissionAlwaysDenied) {
@@ -346,7 +345,7 @@ export class SunbirdQRScanner {
       this.source
     );
     if (this.source !== 'permission') {
-      this.commonUtil.afterOnBoardQRErrorAlert('INVALID_QR', 'UNKNOWN_QR');
+      this.commonUtilService.afterOnBoardQRErrorAlert('INVALID_QR', 'UNKNOWN_QR');
       return;
     }
     let popUp;
