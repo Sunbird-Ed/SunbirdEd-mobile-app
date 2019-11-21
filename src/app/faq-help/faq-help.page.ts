@@ -1,5 +1,5 @@
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
-import { Component, Inject, ViewChild, ElementRef, OnInit } from '@angular/core';
+import { Component, Inject, ViewChild, ElementRef, OnInit, NgZone } from '@angular/core';
 import { Platform } from '@ionic/angular';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { CommonUtilService } from '@app/services/common-util.service';
@@ -81,7 +81,8 @@ export class FaqHelpPage implements OnInit {
     private platform: Platform,
     private translate: TranslateService,
     private http: HttpClient,
-    private router: Router
+    private router: Router,
+    private zone: NgZone
   ) {
   }
 
@@ -138,23 +139,25 @@ export class FaqHelpPage implements OnInit {
     }
 
     this.faqService.getFaqDetails(faqRequest).subscribe(data => {
-      this.data = data;
-      this.constants = this.data.constants;
-      this.faqs = this.data.faqs;
-      // tslint:disable-next-line:prefer-for-of
-      for (let i = 0; i < this.data.faqs.length; i++) {
-        if (this.data.faqs[i].topic.includes('{{APP_NAME}}')) {
-          this.data.faqs[i].topic = this.data.faqs[i].topic.replace('{{APP_NAME}}', this.appName);
-        } else {
-          this.data.faqs[i].topic = this.data.faqs[i].topic;
+      this.zone.run( () => {
+        this.data = data;
+        this.constants = this.data.constants;
+        this.faqs = this.data.faqs;
+        // tslint:disable-next-line:prefer-for-of
+        for (let i = 0; i < this.data.faqs.length; i++) {
+          if (this.data.faqs[i].topic.includes('{{APP_NAME}}')) {
+            this.data.faqs[i].topic = this.data.faqs[i].topic.replace('{{APP_NAME}}', this.appName);
+          } else {
+            this.data.faqs[i].topic = this.data.faqs[i].topic;
+          }
+          if (this.data.faqs[i].description.includes('{{APP_NAME}}')) {
+            this.data.faqs[i].description = this.data.faqs[i].description.replace('{{APP_NAME}}', this.appName);
+          } else {
+            this.data.faqs[i].description = this.data.faqs[i].description;
+          }
         }
-        if (this.data.faqs[i].description.includes('{{APP_NAME}}')) {
-          this.data.faqs[i].description = this.data.faqs[i].description.replace('{{APP_NAME}}', this.appName);
-        } else {
-          this.data.faqs[i].description = this.data.faqs[i].description;
-        }
-      }
-      this.loading.dismiss();
+        this.loading.dismiss();
+      });
     });
   }
 
