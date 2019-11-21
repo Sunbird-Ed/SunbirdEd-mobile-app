@@ -1,4 +1,6 @@
 {
+  "HTTP_SERVER_ERROR": "An unexpected error occurred",
+  "HTTP_CLIENT_ERROR": "An unexpected error occurred",
   "ABOUT": "About",
   "ABOUT_APP": "About the app",
   "ABOUT_APPLICATION": "About the Application",

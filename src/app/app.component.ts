@@ -5,13 +5,13 @@ import { Events, Platform, IonRouterOutlet, MenuController } from '@ionic/angula
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs/Observable';
-import { tap } from 'rxjs/operators';
+import { filter, tap } from 'rxjs/operators';
 import { Network } from '@ionic-native/network/ngx';
 
 import {
   ErrorEventType, EventNamespace, EventsBusService, SharedPreferences,
   SunbirdSdk, TelemetryAutoSyncUtil, TelemetryService, NotificationService, GetSystemSettingsRequest, SystemSettings, SystemSettingsService,
-  CodePushExperimentService, AuthEventType, CorrelationData, Profile, DeviceRegisterService
+  CodePushExperimentService, AuthEventType, CorrelationData, Profile, DeviceRegisterService, ErrorEvent
 } from 'sunbird-sdk';
 
 import {
@@ -416,6 +416,23 @@ export class AppComponent implements OnInit, AfterViewInit {
         document.documentElement.dir = 'ltr';
       }
     });
+
+    this.eventsBusService.events(EventNamespace.ERROR).pipe(
+        filter((e) =>
+            e.type === ErrorEventType.HTTP_CLIENT_ERROR ||
+            e.type === ErrorEventType.HTTP_SERVER_ERROR
+        ),
+        tap((e) => {
+          switch (e.type) {
+            case ErrorEventType.HTTP_SERVER_ERROR:
+              this.commonUtilService.showToast('HTTP_SERVER_ERROR');
+              break;
+            case ErrorEventType.HTTP_CLIENT_ERROR:
+              this.commonUtilService.showToast('HTTP_CLIENT_ERROR');
+              break;
+          }
+        })
+    ).subscribe();
   }
 
   private async checkForTncUpdate() {
