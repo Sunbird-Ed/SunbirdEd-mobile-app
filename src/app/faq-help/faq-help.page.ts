@@ -15,7 +15,11 @@ import {
   GetAllProfileRequest,
   ContentRequest,
   SharedPreferences,
-  TelemetryObject
+  TelemetryObject,
+  GetSystemSettingsRequest,
+  SystemSettingsService,
+  SystemSettings,
+  FaqService
 } from 'sunbird-sdk';
 import { PreferenceKey, appLanguages, ContentType, AudienceFilter, RouterLinks } from '../app.constant';
 import { SocialSharing } from '@ionic-native/social-sharing/ngx';
@@ -27,6 +31,7 @@ import { LoadedRouterConfig } from '@angular/router/src/config';
 import { Observable } from 'rxjs-compat';
 import { HttpClient } from '@angular/common/http';
 import { NavigationExtras, Router } from '@angular/router';
+import { GetFaqRequest } from 'sunbird-sdk/faq/def/get-faq-request';
 
 const KEY_SUNBIRD_CONFIG_FILE_PATH = 'sunbird_config_file_path';
 const SUBJECT_NAME = 'support request';
@@ -69,6 +74,8 @@ export class FaqHelpPage implements OnInit {
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
     @Inject('DEVICE_INFO') private deviceInfo: DeviceInfo,
+    @Inject('SYSTEM_SETTINGS_SERVICE') private systemSettingsService: SystemSettingsService,
+    @Inject('FAQ_SERVICE') private faqService: FaqService,
     private domSanitizer: DomSanitizer,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private socialSharing: SocialSharing,
@@ -115,27 +122,27 @@ export class FaqHelpPage implements OnInit {
       await this.translate.use(selectedLanguage).toPromise();
     }
   }
+
   private async getDataFromUrl() {
+    const faqRequest: GetFaqRequest = {language: '', faqUrl: ''};
+    const getSystemSettingsRequest: GetSystemSettingsRequest = {
+      id: 'faqURL'
+    };
+    await this.systemSettingsService.getSystemSettings(getSystemSettingsRequest).toPromise()
+      .then((res: SystemSettings) => {
+          console.log('faqdata', res);
+          faqRequest.faqUrl = res.value;
+      }).catch(err => {
+      });
     this.loading = await this.commonUtilService.getLoader();
     await this.loading.present();
-    if (this.commonUtilService.networkInfo.isNetworkAvailable) {
-      if (this.selectedLanguage) {
-        this.jsonURL = 'https://ntpstagingall.blob.core.windows.net/public/faq/resources/res/faq-' + this.selectedLanguage + '.json';
-      } else {
-        this.jsonURL = 'https://ntpstagingall.blob.core.windows.net/public/faq/resources/res/faq-en.json';
-      }
-    } else if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
-      if (this.selectedLanguage) {
-        console.log('LANGUAGESELCTED', this.selectedLanguage);
-        this.jsonURL = '../../assets/faq/resources/res/faq-en.json';
-        // + this.selectedLanguage + '.json';
-      } else {
-        this.jsonURL = '../../assets/faq/resources/res/faq-en.json';
-      }
+    if (this.selectedLanguage && this.commonUtilService.networkInfo.isNetworkAvailable) {
+      faqRequest.language = this.selectedLanguage;
+    } else {
+      faqRequest.language = 'en';
     }
 
-
-    this.getJSON().subscribe(data => {
+    this.faqService.getFaqDetails(faqRequest).subscribe(data => {
       this.data = data;
       this.constants = this.data.constants;
       this.faqs = this.data.faqs;
@@ -154,8 +161,8 @@ export class FaqHelpPage implements OnInit {
       }
       this.loading.dismiss();
     });
-    console.log('Data To be Loaded, constants, faqs', this.data, this.constants, this.faqs);
   }
+
   async ionViewDidLeave() {
     (<any>window).supportfile.removeFile(
       result => ({}),
