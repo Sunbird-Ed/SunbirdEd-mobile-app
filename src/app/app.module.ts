@@ -306,7 +306,8 @@ export const sunbirdSdkFactory =
         },
         contentServiceConfig: {
           apiPath: '/api/content/v1',
-          searchApiPath: '/api/composite/v1'
+          searchApiPath: '/api/composite/v1',
+          contentHeirarchyAPIPath: '/api/course/v1'
         },
         courseServiceConfig: {
           apiPath: '/api/course/v1'

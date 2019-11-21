@@ -493,15 +493,29 @@ export class CollectionDetailEtbPage implements OnInit {
       attachContentAccess: true,
       emitUpdateIfAny: refreshContentDetails
     };
+    console.time('getContentDetails');
     this.contentService.getContentDetails(option).toPromise()
       .then((data: Content) => {
-        this.zone.run(() => {
+        // this.zone.run(() => {
           loader.dismiss().then(() => {
             if (data) {
-              this.extractApiResponse(data);
+              // console.log('isAvailableLocally', data.isAvailableLocally);
+              // console.log('etb getContentDetails', data);
+              if (!data.isAvailableLocally) {
+                this.contentDetail = data;
+                this.contentService.getContentHeirarchy(option).toPromise()
+                .then((content: Content) => {
+                  this.childrenData = content.children;
+                  // console.timeEnd('getContentDetails');
+                  // this.extractApiResponse(data);
+                  this.importContentInBackground([this.identifier], false);
+                });
+              } else {
+                this.extractApiResponse(data);
+              }
             }
           });
-        });
+        // });
       })
       .catch((error: any) => {
         console.log('error while loading content details', error);
@@ -538,7 +552,7 @@ export class CollectionDetailEtbPage implements OnInit {
    */
   extractApiResponse(data: Content) {
     this.contentDetail = data;
-    this.contentDetail.isAvailableLocally = data.isAvailableLocally;
+    // this.contentDetail.isAvailableLocally = data.isAvailableLocally;
 
     if (this.contentDetail.contentData.appIcon) {
       if (this.contentDetail.contentData.appIcon.includes('http:') || this.contentDetail.contentData.appIcon.includes('https:')) {
@@ -756,6 +770,7 @@ export class CollectionDetailEtbPage implements OnInit {
     this.contentService.getChildContents(option).toPromise()
       .then((data: Content) => {
         this.zone.run(() => {
+          console.log('data setChildContents', data);
           if (data && data.children) {
             this.breadCrumb.set(data.identifier, data.contentData.name);
             if (this.textbookTocService.textbookIds.rootUnitId && this.activeMimeTypeFilter !== ['all']) {
@@ -1479,4 +1494,85 @@ onScroll(event) {
 
   (this.stickyPillsRef.nativeElement as HTMLDivElement).classList.remove('sticky');
   }
+
+  importContentInBackground(identifiers: Array<string>, isChild: boolean, isDownloadAllClicked?) {
+    if (this.showLoading && !this.isDownloadStarted) {
+      this.headerService.hideHeader();
+    }
+    const option: ContentImportRequest = {
+      contentImportArray: this.getImportContentRequestBody(identifiers, isChild),
+      contentStatusArray: ['Live'],
+      fields: ['appIcon', 'name', 'subject', 'size', 'gradeLevel'],
+    };
+    // Call content service
+    this.contentService.importContent(option).toPromise()
+      .then((data: ContentImportResponse[]) => {
+        this.zone.run(() => {
+          if (data && data.length && this.isDownloadStarted) {
+            data.forEach((value) => {
+              if (value.status === ContentImportStatus.ENQUEUED_FOR_DOWNLOAD) {
+                this.queuedIdentifiers.push(value.identifier);
+              } else if (value.status === ContentImportStatus.NOT_FOUND) {
+                this.faultyIdentifiers.push(value.identifier);
+              }
+            });
+
+            if (isDownloadAllClicked) {
+              this.telemetryGeneratorService.generateDownloadAllClickTelemetry(
+                PageId.COLLECTION_DETAIL,
+                this.contentDetail,
+                this.queuedIdentifiers,
+                identifiers.length
+              );
+            }
+
+            if (this.queuedIdentifiers.length === 0) {
+              if (this.isDownloadStarted) {
+                this.showDownloadBtn = true;
+                this.isDownloadStarted = false;
+                this.showLoading = false;
+                this.refreshHeader();
+              }
+            }
+            if (this.faultyIdentifiers.length > 0) {
+              const stackTrace: any = {};
+              stackTrace.parentIdentifier = this.cardData.identifier;
+              stackTrace.faultyIdentifiers = this.faultyIdentifiers;
+              this.telemetryGeneratorService.generateErrorTelemetry(Environment.HOME,
+                TelemetryErrorCode.ERR_DOWNLOAD_FAILED,
+                ErrorType.SYSTEM,
+                PageId.COLLECTION_DETAIL,
+                JSON.stringify(stackTrace),
+              );
+              this.commonUtilService.showToast('UNABLE_TO_FETCH_CONTENT');
+            }
+          } else if (data && data[0].status === ContentImportStatus.NOT_FOUND) {
+            this.showLoading = false;
+            this.refreshHeader();
+            this.showChildrenLoader = false;
+            this.childrenData.length = 0;
+          }
+        });
+      })
+      .catch((error: any) => {
+        this.zone.run(() => {
+          this.showDownloadBtn = true;
+          this.isDownloadStarted = false;
+          this.showLoading = false;
+          this.refreshHeader();
+          if (Boolean(this.isUpdateAvailable)) {
+            this.setChildContents();
+          } else {
+            if (error && (error.error === 'NETWORK_ERROR' || error.error === 'CONNECTION_ERROR')) {
+              this.commonUtilService.showToast('NEED_INTERNET_TO_CHANGE');
+            } else {
+              this.commonUtilService.showToast('UNABLE_TO_FETCH_CONTENT');
+            }
+            this.showChildrenLoader = false;
+            this.location.back();
+          }
+        });
+      });
+  }
+
 }
