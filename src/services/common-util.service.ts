@@ -346,6 +346,9 @@ export class CommonUtilService implements OnDestroy {
     }
 
     public deDupe<T>(array: T[], property): T[] {
+        if (!array) {
+            return [];
+        }
         return array.filter((obj, pos, arr) => {
             return arr.map(mapObj => mapObj[property]).indexOf(obj[property]) === pos;
         });

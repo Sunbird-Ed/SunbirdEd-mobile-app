@@ -1330,6 +1330,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
       this.corRelationList = [];
     }
     this.corRelationList.push({ id: batchId, type: CorReleationDataType.COURSE_BATCH });
+    this.corRelationList.push({ id: this.identifier, type: CorReleationDataType.ROOT_ID });
     this.corRelationList = this.commonUtilService.deDupe(this.corRelationList, 'type');
   }
 

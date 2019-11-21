@@ -7,7 +7,7 @@ import {
   SharedPreferences, TelemetryObject,
   CourseService, CourseBatchesRequest, CourseEnrollmentType, CourseBatchStatus, GetContentStateRequest, CorrelationData
 } from 'sunbird-sdk';
-import { InteractSubtype, InteractType, Environment, PageId } from '../../../../services/telemetry-constants';
+import { InteractSubtype, InteractType, Environment, PageId, CorReleationDataType } from '../../../../services/telemetry-constants';
 import { CommonUtilService } from '../../../../services/common-util.service';
 import { Router } from '@angular/router';
 import { EnrollmentDetailsComponent } from '../../enrollment-details/enrollment-details.component';
@@ -178,7 +178,10 @@ export class CourseCardComponent implements OnInit {
 
     const corRelationList: Array<CorrelationData> = [{
       id: this.sectionName,
-      type: 'Section'
+      type: CorReleationDataType.SECTION
+    }, {
+      id: identifier,
+      type: CorReleationDataType.ROOT_ID
     }];
 
     const values = new Map();
@@ -192,7 +195,7 @@ export class CourseCardComponent implements OnInit {
       telemetryObject,
       values,
       ContentUtil.generateRollUp(undefined, identifier),
-      corRelationList);
+      this.commonUtilService.deDupe(corRelationList, 'type'));
     if (this.loader) {
       await this.loader.dismiss();
     }
@@ -230,13 +233,22 @@ export class CourseCardComponent implements OnInit {
     values['sectionName'] = this.sectionName;
     values['positionClicked'] = this.index;
 
+    const corRelationList: Array<CorrelationData> = [{
+      id: this.sectionName,
+      type: CorReleationDataType.SECTION
+    }, {
+      id: identifier,
+      type: CorReleationDataType.ROOT_ID
+    }];
+
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
       InteractSubtype.RESUME_CLICKED,
       this.env,
       this.pageName ? this.pageName : this.layoutName,
       telemetryObject,
       values,
-      ContentUtil.generateRollUp(undefined, identifier));
+      ContentUtil.generateRollUp(undefined, identifier),
+      this.commonUtilService.deDupe(corRelationList, 'type'));
     // Update enrolled courses playedOffline status.
     this.getContentState(content);
     this.saveContentContext(content);

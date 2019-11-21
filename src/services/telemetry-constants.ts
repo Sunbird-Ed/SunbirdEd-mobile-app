@@ -370,6 +370,8 @@ export enum ActionButtonType {
 
 export enum CorReleationDataType {
     COURSE_BATCH = 'CourseBatch',
+    ROOT_ID = 'RootId',
+    SECTION = 'Section',
     FTUE = 'Ftue',
     BOARD = 'Board',
     MEDIUM = 'Medium',
