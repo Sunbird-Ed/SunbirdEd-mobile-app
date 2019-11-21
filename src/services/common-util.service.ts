@@ -372,8 +372,7 @@ export class CommonUtilService implements OnDestroy {
 
     // return org location details for logged in user
     getOrgLocation(organisation: any) {
-        let location = { 'state': '', 'district': '', 'block': '' };
-        // for (let i = 0, len = profile.organisations.length; i < len; i++) {
+        const location = { 'state': '', 'district': '', 'block': '' };
         if (organisation.locations) {
             for (let j = 0, l = organisation.locations.length; j < l; j++) {
                 if (organisation.locations[j]) {
@@ -396,8 +395,6 @@ export class CommonUtilService implements OnDestroy {
                 }
             }
         }
-        // }
-
         return location;
     }
 

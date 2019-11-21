@@ -244,7 +244,6 @@ export class ProfilePage implements OnInit {
                       that.imageUri = profileData.avatar;
                     }
                     that.formatRoles();
-                    // that.orgDetails = that.commonUtilService.getOrgLocation(that.profile);
                     that.getOrgDetails();
                     that.userLocation =  that.commonUtilService.getUserLocation(that.profile);
                     that.isCustodianOrgId = (that.profile.rootOrg.rootOrgId === this.custodianOrgId);
