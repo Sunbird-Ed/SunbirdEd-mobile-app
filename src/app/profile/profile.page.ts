@@ -73,7 +73,7 @@ export class ProfilePage implements OnInit {
   custodianOrgId: string;
   isCustodianOrgId: boolean;
   isStateValidated: boolean;
-  organisationDetails = '';
+  organisationName: string;
   contentCreatedByMe: any = [];
   orgDetails: {
     'state': string,
@@ -734,10 +734,10 @@ downloadTrainingCertificate(course: Course, certificate: CourseCertificate) {
         }
       });
       orgList.sort((orgDate1, orgdate2) => orgDate1.orgjoindate > orgdate2.organisation ? 1 : -1);
-      this.organisationDetails = orgList[0].orgName;
+      this.organisationName = orgList[0].orgName;
       this.orgDetails = this.commonUtilService.getOrgLocation(orgList[0]);
     } else if (orgItemList.length === 1) {
-      this.organisationDetails = orgItemList[0].orgName;
+      this.organisationName = orgItemList[0].orgName;
       this.orgDetails = this.commonUtilService.getOrgLocation(orgItemList[0]);
     }
   }
