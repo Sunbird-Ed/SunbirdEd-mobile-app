@@ -371,32 +371,32 @@ export class CommonUtilService implements OnDestroy {
     }
 
     // return org location details for logged in user
-    getOrgLocation(profile: any) {
+    getOrgLocation(organisation: any) {
         let location = { 'state': '', 'district': '', 'block': '' };
-        for (let i = 0, len = profile.organisations.length; i < len; i++) {
-            if (profile.organisations[i].locations) {
-                for (let j = 0, l = profile.organisations[i].locations.length; j < l; j++) {
-                    if (profile.organisations[i].locations[j]) {
-                    switch (profile.organisations[i].locations[j].type) {
+        // for (let i = 0, len = profile.organisations.length; i < len; i++) {
+        if (organisation.locations) {
+            for (let j = 0, l = organisation.locations.length; j < l; j++) {
+                if (organisation.locations[j]) {
+                    switch (organisation.locations[j].type) {
                         case 'state':
-                            location.state = profile.organisations[i].locations[j];
+                            location.state = organisation.locations[j];
                             break;
 
                         case 'block':
-                            location.block = profile.organisations[i].locations[j];
+                            location.block = organisation.locations[j];
                             break;
 
                         case 'district':
-                            location.district = profile.organisations[i].locations[j];
+                            location.district = organisation.locations[j];
                             break;
 
                         default:
                             console.log('default');
                     }
                 }
-                }
             }
         }
+        // }
 
         return location;
     }

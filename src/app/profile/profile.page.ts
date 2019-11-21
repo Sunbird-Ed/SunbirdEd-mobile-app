@@ -244,7 +244,7 @@ export class ProfilePage implements OnInit {
                       that.imageUri = profileData.avatar;
                     }
                     that.formatRoles();
-                    that.orgDetails = that.commonUtilService.getOrgLocation(that.profile);
+                    // that.orgDetails = that.commonUtilService.getOrgLocation(that.profile);
                     that.getOrgDetails();
                     that.userLocation =  that.commonUtilService.getUserLocation(that.profile);
                     that.isCustodianOrgId = (that.profile.rootOrg.rootOrgId === this.custodianOrgId);
@@ -736,8 +736,10 @@ downloadTrainingCertificate(course: Course, certificate: CourseCertificate) {
       });
       orgList.sort((orgDate1, orgdate2) => orgDate1.orgjoindate > orgdate2.organisation ? 1 : -1);
       this.organisationDetails = orgList[0].orgName;
+      this.orgDetails = this.commonUtilService.getOrgLocation(orgList[0]);
     } else if (orgItemList.length === 1) {
       this.organisationDetails = orgItemList[0].orgName;
+      this.orgDetails = this.commonUtilService.getOrgLocation(orgItemList[0]);
     }
   }
 
