@@ -1326,7 +1326,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
   }
 
   populateCorRelationData(batchId) {
-    if (batchId && !this.corRelationList) {
+    if (!this.corRelationList) {
       this.corRelationList = [];
     }
     this.corRelationList.push({ id: batchId, type: CorReleationDataType.COURSE_BATCH });
