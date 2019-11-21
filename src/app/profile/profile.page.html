@@ -58,7 +58,7 @@
         </p>
         <div *ngIf="orgDetails && orgDetails?.block?.name">Block: {{orgDetails?.block?.name}}</div>
         <div *ngIf="orgDetails">
-            <span *ngIf="orgDetails && orgDetails?.district?.name">District: {{orgDetails?.district?.name}}</span>
+            <span *ngIf="orgDetails && orgDetails?.district?.name">{{'DISTRICT' | translate}}: {{orgDetails?.district?.name}}</span>
             <span *ngIf="orgDetails?.district?.name"> | </span>
             <span *ngIf="orgDetails?.state?.name">{{orgDetails?.state?.name}}</span>
         </div>

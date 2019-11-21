@@ -365,28 +365,26 @@ export class DistrictMappingPage implements OnInit {
   }
 
   async checkLocationMandatory() {
-    if (this.appGlobalService.isUserLoggedIn()) {
-    }
-    let skipValues = [];
-    await this.formAndFrameworkUtilService.getLocationConfig()
-      .then((locationConfig) => {
-        for (const field of locationConfig) {
-          if (field.code === LocationConfig.CODE_SKIP) {
-            skipValues = field.values;
-            break;
-          }
-        }
-      });
+    // let skipValues = [];
+    // await this.formAndFrameworkUtilService.getLocationConfig()
+    //   .then((locationConfig) => {
+    //     for (const field of locationConfig) {
+    //       if (field.code === LocationConfig.CODE_SKIP) {
+    //         skipValues = field.values;
+    //         break;
+    //       }
+    //     }
+    //   });
 
-    for (const value of skipValues) {
-      if (this.appGlobalService.isUserLoggedIn()) {
-        if (!this.profile && value === LocationConfig.SKIP_USER) {
-          this.showNotNowFlag = true;
-        }
-      } else if (!(this.source === PageId.GUEST_PROFILE) && value === LocationConfig.SKIP_DEVICE) {
-        this.showNotNowFlag = true;
-      }
-    }
+    // for (const value of skipValues) {
+    //   if (this.appGlobalService.isUserLoggedIn()) {
+    //     if (!this.profile && value === LocationConfig.SKIP_USER) {
+    //       this.showNotNowFlag = true;
+    //     }
+    //   } else if (!(this.source === PageId.GUEST_PROFILE) && value === LocationConfig.SKIP_DEVICE) {
+    //     this.showNotNowFlag = true;
+    //   }
+    // }
   }
 
   skipLocation() {
