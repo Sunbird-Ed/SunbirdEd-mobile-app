@@ -93,7 +93,7 @@
     "rxjs-compat": "^6.5.3",
     "sb-cordova-plugin-customtabs": "git+https://github.com/Sunbird-Ed/sb-cordova-plugin-customtabs.git",
     "sb-cordova-plugin-db": "git+https://github.com/swayangjit/sb-cordova-plugin-db.git",
-    "sunbird-sdk": "git+https://github.com/Sunbird-Ed/sunbird-mobile-sdk.git#v2.5.19",
+    "sunbird-sdk": "git+https://github.com/Sunbird-Ed/sunbird-mobile-sdk.git#v2.5.20",
     "tslib": "^1.10.0",
     "x2js": "^3.3.0",
     "zone.js": "~0.8.29"
