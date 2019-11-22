@@ -43,6 +43,7 @@ import { featureIdMap } from '@app/app/feature-id-map';
 import { from } from 'rxjs';
 import { EnrollmentDetailsComponent } from '../components/enrollment-details/enrollment-details.component';
 import { ContentUtil } from '@app/util/content-util';
+import { LibraryCardTypes } from '@project-sunbird/common-consumption';
 declare const cordova;
 @Component({
   selector: 'app-search',
@@ -100,6 +101,8 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
   gradeList: Array<any> = [];
   isProfileUpdated: boolean;
   isQrCodeLinkToContent: any;
+  LibraryCardTypes = LibraryCardTypes;
+
   @ViewChild('contentView') contentView: IonContent;
   constructor(
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
@@ -288,7 +291,6 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
         Environment.HOME, false, undefined, this.corRelationList);
     });
   }
-
 
   openCollection(collection) {
     const identifier = collection.identifier;
@@ -1552,5 +1554,20 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
     this.telemetryGeneratorService.generateBackClickedTelemetry(ImpressionType.SEARCH,
           Environment.HOME, true, undefined, this.corRelationList);
     this.navCtrl.pop();
+  }
+
+  getContentCount(resultlist) {
+    let totalCount = 0;
+    if (resultlist.dialCodeResult.length) {
+      for (let i = 0; i < resultlist.dialCodeResult.length; i++){
+        if (resultlist.dialCodeResult[i].content && resultlist.dialCodeResult[i].content.length) {
+          totalCount += resultlist.dialCodeResult[i].content.length;
+        }
+      }
+    }
+    if (resultlist.dialCodeContentResult.length) {
+      totalCount += resultlist.dialCodeContentResult.length;
+    }
+    return totalCount;
   }
 }
