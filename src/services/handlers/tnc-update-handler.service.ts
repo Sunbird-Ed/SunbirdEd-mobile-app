@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import {
-  AuthService, OAuthSession, ProfileService,
+  AuthService, ProfileService,
   ServerProfile, ServerProfileDetailsRequest, CachedItemRequestSourceFrom
 } from 'sunbird-sdk';
 import { ProfileConstants, RouterLinks } from '@app/app/app.constant';

@@ -7,9 +7,11 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
-    "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
+    "test": "jest",
+    "test:coverage": "jest --coverage",
+    "test:ci": "jest --ci --collectCoverage=true --coverageReporters=lcov --forceExit --detectOpenHandles --maxWorkers=2",
     "ionic-build": "ng build --eval--source-map && cordova run android",
     "ionic-build:prod": "ionic build --prod && ionic cordova run android --prod",
     "ionic-serve": "ionic cordova run android --livereload --configuration=hmr"
@@ -48,7 +50,7 @@
     "cordova-android": "^8.1.0",
     "cordova-android-support-gradle-release": "^3.0.1",
     "cordova-plugin-advanced-http": "^2.2.0",
-    "cordova-plugin-android-downloadmanager": "git+https://github.com/swayangjit/cordova-plugin-android-downloadmanager.git",
+    "cordova-plugin-android-downloadmanager": "git+https://github.com/swayangjit/cordova-plugin-android-downloadmanager.git#release-2.5.0",
     "cordova-plugin-android-permissions": "^1.0.2",
     "cordova-plugin-app-version": "^0.1.9",
     "cordova-plugin-awesome-shared-preferences": "git+https://github.com/adriano-di-giovanni/cordova-plugin-shared-preferences.git",
@@ -64,7 +66,7 @@
     "cordova-plugin-file-transfer": "^1.7.1",
     "cordova-plugin-inappbrowser": "^3.1.0",
     "cordova-plugin-ionic-keyboard": "^2.2.0",
-    "cordova-plugin-ionic-webview": "^4.1.2",
+    "cordova-plugin-ionic-webview": "^4.1.3",
     "cordova-plugin-local-notification": "git+https://github.com/katzer/cordova-plugin-local-notifications.git",
     "cordova-plugin-media": "^5.0.3",
     "cordova-plugin-network-information": "^2.0.2",
@@ -72,7 +74,7 @@
     "cordova-plugin-qr-scanner": "git+https://github.com/project-sunbird/cordova-plugin-qr-scanner.git",
     "cordova-plugin-screen-orientation": "^3.0.2",
     "cordova-plugin-statusbar": "^2.4.3",
-    "cordova-plugin-sunbirdsplash": "git+https://github.com/project-sunbird/cordova-plugin-sunbirdsplash.git#release-2.3.0",
+    "cordova-plugin-sunbirdsplash": "git+https://github.com/project-sunbird/cordova-plugin-sunbirdsplash.git#release-2.6.0",
     "cordova-plugin-whitelist": "^1.3.4",
     "cordova-plugin-x-socialsharing": "^5.6.2",
     "cordova-plugin-zip": "^3.1.0",
@@ -87,7 +89,7 @@
     "rxjs-compat": "^6.5.3",
     "sb-cordova-plugin-customtabs": "git+https://github.com/Sunbird-Ed/sb-cordova-plugin-customtabs.git",
     "sb-cordova-plugin-db": "git+https://github.com/swayangjit/sb-cordova-plugin-db.git",
-    "sunbird-sdk": "git+https://github.com/Sunbird-Ed/sunbird-mobile-sdk.git#v2.6.0",
+    "sunbird-sdk": "git+https://github.com/Sunbird-Ed/sunbird-mobile-sdk.git#v2.6.1",
     "tslib": "^1.10.0",
     "x2js": "^3.3.0",
     "zone.js": "~0.8.29"
@@ -100,6 +102,13 @@
     "ionic_enable_lint": false
   },
   "devDependencies": {
+    "@babel/core": "^7.5.5",
+    "@babel/plugin-proposal-class-properties": "^7.5.5",
+    "@babel/plugin-proposal-decorators": "^7.4.4",
+    "@babel/plugin-proposal-object-rest-spread": "^7.5.5",
+    "@babel/plugin-transform-runtime": "^7.5.5",
+    "@babel/preset-env": "^7.5.5",
+    "@babel/preset-typescript": "^7.3.3",
     "@angular-devkit/architect": "~0.13.8",
     "@angular-devkit/build-angular": "~0.13.8",
     "@angular-devkit/core": "~7.3.8",
@@ -111,18 +120,11 @@
     "@angularclass/hmr": "^2.1.3",
     "@ionic/angular-toolkit": "~1.5.1",
     "@ionic/v4-migration-tslint": "^1.7.1",
-    "@types/jasmine": "~2.8.8",
-    "@types/jasminewd2": "^2.0.8",
+    "@types/jest": "^23.3.9",
     "@types/node": "^12.11.5",
-    "codelyzer": "~4.5.0",
-    "jasmine-core": "~2.99.1",
-    "jasmine-spec-reporter": "~4.2.1",
-    "karma": "~4.1.0",
-    "karma-chrome-launcher": "~2.2.0",
-    "karma-coverage-istanbul-reporter": "^2.1.0",
-    "karma-jasmine": "~1.1.2",
-    "karma-jasmine-html-reporter": "^0.2.2",
-    "protractor": "~5.4.0",
+    "babel-jest": "^24.8.0",
+    "babel-polyfill": "^6.26.0",
+    "jest": "^24.8.0",
     "ts-node": "^8.4.1",
     "tslint": "~5.16.0",
     "typescript": "~3.1.6"
@@ -178,5 +180,50 @@
     "platforms": [
       "android"
     ]
+  },
+  "jest": {
+    "browser": false,
+    "globals": {
+      "cordova": true
+    },
+    "setupFiles": [
+      "<rootDir>/src/__tests__/setup.js"
+    ],
+    "rootDir": "./",
+    "roots": [
+      "<rootDir>/src/app",
+      "<rootDir>/src/config",
+      "<rootDir>/src/directives",
+      "<rootDir>/src/guards",
+      "<rootDir>/src/pipes",
+      "<rootDir>/src/services",
+      "<rootDir>/src/util"
+    ],
+    "moduleDirectories": [
+      "node_modules"
+    ],
+    "testPathIgnorePatterns": [
+      "/node_modules/"
+    ],
+    "testMatch": [
+      "**/?(*.)(spec).ts"
+    ],
+    "moduleFileExtensions": [
+      "js",
+      "jsx",
+      "json",
+      "ts",
+      "tsx"
+    ],
+    "transform": {
+      "^.+\\.(ts|js)$": "babel-jest"
+    },
+    "coverageReporters": [
+      "text"
+    ],
+    "moduleNameMapper": {
+      "^@app/(.*)$": "<rootDir>/src/$1"
+    },
+    "transformIgnorePatterns": []
   }
 }

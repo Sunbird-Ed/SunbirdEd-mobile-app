@@ -3,6 +3,7 @@ import { Platform, NavParams, PopoverController } from '@ionic/angular';
 import { CorrelationData, Rollup } from 'sunbird-sdk';
 import { Observable } from 'rxjs/Observable';
 import { Subscription } from 'rxjs/Subscription';
+import { CommonUtilService } from '@app/services/';
 
 @Component({
   selector: 'sb-popover',
@@ -25,8 +26,10 @@ export class SbPopoverComponent implements OnDestroy {
   userId = '';
   pageName = '';
   showFlagMenu = true;
-  img: string;
+  img: any;
   public objRollup: Rollup;
+  public commonUtilService: CommonUtilService;
+
   private corRelationList: Array<CorrelationData>;
   private sbPopoverDynamicMainTitle$?: Observable<string>;
   private sbPopoverDynamicMainTitleSubscription?: Subscription;
@@ -37,7 +40,7 @@ export class SbPopoverComponent implements OnDestroy {
     public navParams: NavParams,
     private platform: Platform,
     private ngZone: NgZone,
-    private popoverCtrl: PopoverController,
+    private popoverCtrl: PopoverController
   ) {
     this.content = this.navParams.get('content');
     this.actionsButtons = this.navParams.get('actionsButtons');

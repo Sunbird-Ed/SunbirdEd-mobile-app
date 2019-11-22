@@ -1,10 +1,10 @@
-import { Component, OnInit, Inject, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, Inject, ChangeDetectorRef, NgZone } from '@angular/core';
 import {
   LocationSearchCriteria, ProfileService,
   SharedPreferences, Profile, DeviceRegisterRequest, DeviceRegisterService, DeviceInfo
 } from 'sunbird-sdk';
-import { Location as loc, PreferenceKey, RouterLinks } from '../../app/app.constant';
-import { AppHeaderService, CommonUtilService, AppGlobalService } from '@app/services';
+import { Location as loc, PreferenceKey, RouterLinks, LocationConfig } from '../../app/app.constant';
+import { AppHeaderService, CommonUtilService, AppGlobalService, FormAndFrameworkUtilService } from '@app/services';
 import { NavigationExtras, Router } from '@angular/router';
 import { Location } from '@angular/common';
 import { Events } from '@ionic/angular';
@@ -54,13 +54,15 @@ export class DistrictMappingPage implements OnInit {
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
     @Inject('DEVICE_REGISTER_SERVICE') private deviceRegisterService: DeviceRegisterService,
     @Inject('DEVICE_INFO') public deviceInfo: DeviceInfo,
+    private formAndFrameworkUtilService: FormAndFrameworkUtilService,
     public router: Router,
     public location: Location,
     public appGlobalService: AppGlobalService,
     public events: Events,
     public platform: Platform,
     public telemetryGeneratorService: TelemetryGeneratorService,
-    private changeDetectionRef: ChangeDetectorRef
+    private changeDetectionRef: ChangeDetectorRef,
+    private ngZone: NgZone
   ) {
     if (this.router.getCurrentNavigation().extras.state) {
       this.profile = this.router.getCurrentNavigation().extras.state.profile;
@@ -93,21 +95,25 @@ export class DistrictMappingPage implements OnInit {
     }
   }
 
-  getState(name, id, code) {
-    this.showStates = false;
-    this.stateName = name;
-    this.stateCode = code;
-    this.getDistrict(id);
+  async getState(name, id, code) {
+    this.ngZone.run( async () => {
+      this.showStates = false;
+      this.stateName = name;
+      this.stateCode = code;
+      await this.getDistrict(id);
+    });
   }
 
-  selectDistrict(name, code) {
-    if (this.isAutoPopulated && this.availableLocationDistrict) { // TODO: Do we need this if.
-      this.isPopulatedLocationChanged = true;
-    }
-    this.isLocationChanged = true;
-    this.districtName = name;
-    this.districtCode = code;
-    this.showDistrict = false;
+  async selectDistrict(name, code) {
+    this.ngZone.run(() => {
+      if (this.isAutoPopulated && this.availableLocationDistrict) { // TODO: Do we need this if.
+        this.isPopulatedLocationChanged = true;
+      }
+      this.isLocationChanged = true;
+      this.districtName = name;
+      this.districtCode = code;
+      this.showDistrict = false;
+    });
   }
 
   stateIconClicked() {
@@ -198,30 +204,32 @@ export class DistrictMappingPage implements OnInit {
     };
     this.profileService.searchLocation(req).subscribe(async (success) => {
       const locations = success;
-      if (locations && Object.keys(locations).length) {
-        this.stateList = locations;
-        loader.dismiss();
-        loader = undefined;
-        if (this.availableLocationState) {
-          let loaderState = await this.commonUtilService.getLoader();
-          await loaderState.present();
-          for (const element of this.stateList) {
-            if (element.name === this.availableLocationState) {
+      this.ngZone.run(async () => {
+        if (locations && Object.keys(locations).length) {
+          this.stateList = locations;
+          loader.dismiss();
+          loader = undefined;
+          if (this.availableLocationState) {
+            let loaderState = await this.commonUtilService.getLoader();
+            await loaderState.present();
+            const state = this.stateList.find(s => s.name === this.availableLocationState);
+            if (state) {
               await loaderState.dismiss();
               loaderState = undefined;
-              this.getState(element.name, element.id, element.code); // set the name, id and code
+              await this.getState(state.name, state.id, state.code);
               this.generateAutoPopulatedTelemetry();
-              break;
+            } else {
+              this.stateName = '';
             }
           }
+        } else {
+          this.districtList = '';
+          this.showDistrict = !this.showDistrict;
+          this.commonUtilService.showToast(this.commonUtilService.translateMessage('NO_DATA_FOUND'));
+          loader.dismiss();
+          loader = undefined;
         }
-      } else {
-        this.districtList = '';
-        this.showDistrict = !this.showDistrict;
-        this.commonUtilService.showToast(this.commonUtilService.translateMessage('NO_DATA_FOUND'));
-        loader.dismiss();
-        loader = undefined;
-      }
+      });
     }, async (error) => {
       if (loader) {
         loader.dismiss();
@@ -232,7 +240,6 @@ export class DistrictMappingPage implements OnInit {
 
   async getDistrict(pid: string) {
     if (this.stateName) {
-      // this.showDistrict = !this.showDistrict;
       let loader = await this.commonUtilService.getLoader();
       loader.present();
       const req: LocationSearchCriteria = {
@@ -242,26 +249,31 @@ export class DistrictMappingPage implements OnInit {
         }
       };
       this.profileService.searchLocation(req).subscribe(async (success) => {
-        const districtsTemp = success;
-        if (districtsTemp && Object.keys(districtsTemp).length) {
-          this.districtList = districtsTemp;
-          loader.dismiss();
-          loader = undefined;
-          if (this.availableLocationDistrict && this.availableLocationDistrict !== null) {
-            for (const element of this.districtList) {
-              if (element.name === this.availableLocationDistrict) {
-                this.selectDistrict(element.name, element.code);
-                break;
+        this.ngZone.run(async () => {
+          if (success && Object.keys(success).length) {
+            this.districtList = success;
+            if (this.availableLocationDistrict) {
+              this.districtName = this.availableLocationDistrict;
+              const district = this.districtList.find(d => d.name === this.availableLocationDistrict);
+              if (district) {
+                await this.selectDistrict(district.name, district.code);
+                loader.dismiss();
+                loader = undefined;
+              } else {
+                this.districtName = '';
+                loader.dismiss();
+                loader = undefined;
               }
             }
+          } else {
+            this.availableLocationDistrict = '';
+            loader.dismiss();
+            loader = undefined;
+            this.districtList = [];
+            this.showDistrict = !this.showDistrict;
+            this.commonUtilService.showToast(this.commonUtilService.translateMessage('NO_DATA_FOUND'));
           }
-        } else {
-          loader.dismiss();
-          loader = undefined;
-          this.districtList = '';
-          this.showDistrict = !this.showDistrict;
-          this.commonUtilService.showToast(this.commonUtilService.translateMessage('NO_DATA_FOUND'));
-        }
+        });
       }, async (error) => {
         if (loader) {
           loader.dismiss();
@@ -364,17 +376,26 @@ export class DistrictMappingPage implements OnInit {
   }
 
   async checkLocationMandatory() {
-    let isLocationMandatory = await this.preferences.getString(PreferenceKey.IS_LOCATION_MANDATORY).toPromise();
+    // let skipValues = [];
+    // await this.formAndFrameworkUtilService.getLocationConfig()
+    //   .then((locationConfig) => {
+    //     for (const field of locationConfig) {
+    //       if (field.code === LocationConfig.CODE_SKIP) {
+    //         skipValues = field.values;
+    //         break;
+    //       }
+    //     }
+    //   });
 
-    this.showNotNowFlag = false;
-    if (isLocationMandatory === null || isLocationMandatory === undefined || isLocationMandatory === '') {
-      this.preferences.putString(PreferenceKey.IS_LOCATION_MANDATORY, 'TRUE').toPromise();
-      isLocationMandatory = 'TRUE';
-    }
-
-    if (!(this.source === PageId.GUEST_PROFILE) && isLocationMandatory === 'FALSE') {
-      this.showNotNowFlag = true;
-    }
+    // for (const value of skipValues) {
+    //   if (this.appGlobalService.isUserLoggedIn()) {
+    //     if (!this.profile && value === LocationConfig.SKIP_USER) {
+    //       this.showNotNowFlag = true;
+    //     }
+    //   } else if (!(this.source === PageId.GUEST_PROFILE) && value === LocationConfig.SKIP_DEVICE) {
+    //     this.showNotNowFlag = true;
+    //   }
+    // }
   }
 
   skipLocation() {

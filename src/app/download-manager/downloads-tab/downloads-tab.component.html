@@ -1,15 +1,18 @@
-<div class="sb-dw-manager o-hide p-8">
-  <div class="pull-left">
+<div class="sb-dw-manager d-flex p-4 width-100">
+  <div class="pull-left p-4 flex-50">
     <span class="selector" *ngIf="showSelectAll" (click)="selectAllContents()">{{'SELECT_ALL' | translate}}</span>
     <span class="selector" *ngIf="!showSelectAll"
       (click)="unSelectAllContents($event)">{{'UNSELECT_ALL' | translate}}</span>
   </div>
-  <div class="pull-right" (click)="showSortOptions($event)">
-    <span class="selector">{{selectedFilter | translate}}</span>
-    <span><img src="./assets/imgs/sort.png" alt=""></span>
-    <ion-icon name="ios-arrow-down" class="selector"></ion-icon>
+  <div class="p-4 flex-50" (click)="showSortOptions($event)">
+    <div class="pull-right">
+      <span class="selector">{{selectedFilter | translate}}</span>
+      <span><img src="./assets/imgs/sort.png" alt=""></span>
+      <ion-icon name="ios-arrow-down" class="selector"></ion-icon>
+    </div>
   </div>
 </div>
+
 <div class="sb-card-container sb-card-download-container" [ngClass]="{'extra-margin':!showDeleteButton}">
   <div class="sb-card" *ngFor="let content of downloadedContents; let i = index;"
     [ngClass]="{'sb-card-active': content.isSelected}">
