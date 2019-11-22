@@ -1,5 +1,5 @@
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
-import { Component, Inject, ViewChild, ElementRef, OnInit, OnDestroy } from '@angular/core';
+import { Component, Inject, ViewChild, ElementRef, OnInit, NgZone } from '@angular/core';
 import { Platform } from '@ionic/angular';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { CommonUtilService } from '@app/services/common-util.service';
@@ -11,25 +11,23 @@ import {
   ProfileService,
   ContentService,
   DeviceInfo,
-  Profile,
-  GetAllProfileRequest,
-  ContentRequest,
   SharedPreferences,
-  TelemetryObject
+  TelemetryObject,
+  GetSystemSettingsRequest,
+  SystemSettingsService,
+  SystemSettings,
+  FaqService,
+  GetFaqRequest
 } from 'sunbird-sdk';
-import { PreferenceKey, appLanguages, ContentType, AudienceFilter, RouterLinks } from '../app.constant';
+import { PreferenceKey, appLanguages, RouterLinks } from '../app.constant';
 import { SocialSharing } from '@ionic-native/social-sharing/ngx';
 import { Location } from '@angular/common';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { Subscription } from 'rxjs/Subscription';
 import { TranslateService } from '@ngx-translate/core';
-import { LoadedRouterConfig } from '@angular/router/src/config';
 import { Observable } from 'rxjs-compat';
 import { HttpClient } from '@angular/common/http';
-import { NavigationExtras, Router } from '@angular/router';
-
-const KEY_SUNBIRD_CONFIG_FILE_PATH = 'sunbird_config_file_path';
-const SUBJECT_NAME = 'support request';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-faq-help',
@@ -69,6 +67,8 @@ export class FaqHelpPage implements OnInit {
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
     @Inject('DEVICE_INFO') private deviceInfo: DeviceInfo,
+    @Inject('SYSTEM_SETTINGS_SERVICE') private systemSettingsService: SystemSettingsService,
+    @Inject('FAQ_SERVICE') private faqService: FaqService,
     private domSanitizer: DomSanitizer,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private socialSharing: SocialSharing,
@@ -81,22 +81,24 @@ export class FaqHelpPage implements OnInit {
     private platform: Platform,
     private translate: TranslateService,
     private http: HttpClient,
-    private router: Router
+    private router: Router,
+    private zone: NgZone
   ) {
   }
 
-   ngOnInit() {
+  ngOnInit() {
     this.appVersion.getAppName()
       .then((appName) => {
         this.appName = appName;
       });
     this.messageListener = (event) => {
-        this.receiveMessage(event);
+      this.receiveMessage(event);
     };
     window.addEventListener('message', this.messageListener, false);
     this.getSelectedLanguage();
     this.getDataFromUrl();
   }
+
   receiveMessage(event) {
     const values = new Map();
     values['values'] = event.data;
@@ -109,53 +111,56 @@ export class FaqHelpPage implements OnInit {
   public getJSON(): Observable<any> {
     return this.http.get(this.jsonURL);
   }
+
   private async getSelectedLanguage() {
     const selectedLanguage = await this.preferences.getString(PreferenceKey.SELECTED_LANGUAGE_CODE).toPromise();
     if (selectedLanguage) {
       await this.translate.use(selectedLanguage).toPromise();
     }
   }
+
   private async getDataFromUrl() {
+    const faqRequest: GetFaqRequest = { language: '', faqUrl: '' };
+    const getSystemSettingsRequest: GetSystemSettingsRequest = {
+      id: 'faqURL'
+    };
+    await this.systemSettingsService.getSystemSettings(getSystemSettingsRequest).toPromise()
+      .then((res: SystemSettings) => {
+        console.log('faqdata', res);
+        faqRequest.faqUrl = res.value;
+      }).catch(err => {
+      });
     this.loading = await this.commonUtilService.getLoader();
     await this.loading.present();
-    if (this.commonUtilService.networkInfo.isNetworkAvailable) {
-      if (this.selectedLanguage) {
-        this.jsonURL = 'https://ntpstagingall.blob.core.windows.net/public/faq/resources/res/faq-' + this.selectedLanguage + '.json';
-      } else {
-        this.jsonURL = 'https://ntpstagingall.blob.core.windows.net/public/faq/resources/res/faq-en.json';
-      }
-    } else if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
-      if (this.selectedLanguage) {
-        console.log('LANGUAGESELCTED', this.selectedLanguage);
-        this.jsonURL = '../../assets/faq/resources/res/faq-en.json';
-        // + this.selectedLanguage + '.json';
-      } else {
-        this.jsonURL = '../../assets/faq/resources/res/faq-en.json';
-      }
+    if (this.selectedLanguage && this.commonUtilService.networkInfo.isNetworkAvailable) {
+      faqRequest.language = this.selectedLanguage;
+    } else {
+      faqRequest.language = 'en';
     }
 
-
-    this.getJSON().subscribe(data => {
-      this.data = data;
-      this.constants = this.data.constants;
-      this.faqs = this.data.faqs;
-      // tslint:disable-next-line:prefer-for-of
-      for (let i = 0; i < this.data.faqs.length; i++) {
-        if (this.data.faqs[i].topic.includes('{{APP_NAME}}')) {
-          this.data.faqs[i].topic = this.data.faqs[i].topic.replace('{{APP_NAME}}', this.appName);
-        } else {
-          this.data.faqs[i].topic = this.data.faqs[i].topic;
+    this.faqService.getFaqDetails(faqRequest).subscribe(data => {
+      this.zone.run( () => {
+        this.data = data;
+        this.constants = this.data.constants;
+        this.faqs = this.data.faqs;
+        // tslint:disable-next-line:prefer-for-of
+        for (let i = 0; i < this.data.faqs.length; i++) {
+          if (this.data.faqs[i].topic.includes('{{APP_NAME}}')) {
+            this.data.faqs[i].topic = this.data.faqs[i].topic.replace('{{APP_NAME}}', this.appName);
+          } else {
+            this.data.faqs[i].topic = this.data.faqs[i].topic;
+          }
+          if (this.data.faqs[i].description.includes('{{APP_NAME}}')) {
+            this.data.faqs[i].description = this.data.faqs[i].description.replace('{{APP_NAME}}', this.appName);
+          } else {
+            this.data.faqs[i].description = this.data.faqs[i].description;
+          }
         }
-        if (this.data.faqs[i].description.includes('{{APP_NAME}}')) {
-          this.data.faqs[i].description = this.data.faqs[i].description.replace('{{APP_NAME}}', this.appName);
-        } else {
-          this.data.faqs[i].description = this.data.faqs[i].description;
-        }
-      }
-      this.loading.dismiss();
+        this.loading.dismiss();
+      });
     });
-    console.log('Data To be Loaded, constants, faqs', this.data, this.constants, this.faqs);
   }
+
   async ionViewDidLeave() {
     (<any>window).supportfile.removeFile(
       result => ({}),
@@ -218,8 +223,6 @@ export class FaqHelpPage implements OnInit {
     this.location.back();
   }
 
-
-
   generateInteractTelemetry(interactSubtype, values) {
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH, interactSubtype,
@@ -238,8 +241,7 @@ export class FaqHelpPage implements OnInit {
 
   // toggle the card
   toggleGroup(group) {
-
-    const telemetryObject = new TelemetryObject((group+1).toString(), 'faq','');
+    const telemetryObject = new TelemetryObject((group + 1).toString(), 'faq', '');
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
       InteractSubtype.HELP_SECTION_CLICKED,
       Environment.USER,
@@ -262,57 +264,56 @@ export class FaqHelpPage implements OnInit {
   }
 
   // to check whether the card is toggled or not
- isGroupShown(group) {
-   return this.shownGroup === group;
-}
-
-noClicked(i) {
-  this.value = {};
-  if (!this.isNoClicked) {
-    this.isNoClicked = true;
-  }
-  this.value.action = 'no-clicked';
-  this.value.position = i;
-  this.value.value = {};
-  this.value.value.topic = this.data.faqs[i].topic;
-  this.value.value.description = this.data.faqs[i].description;
-  console.log('this.value, noclicked', this.value);
-  window.parent.postMessage(this.value, '*');
-
-}
-
-yesClicked(i) {
-  this.value = {};
-  if (!this.isYesClicked) {
-    this.isYesClicked = true;
+  isGroupShown(group) {
+    return this.shownGroup === group;
   }
 
-  this.value.action = 'yes-clicked';
-  this.value.position = i;
-  this.value.value = {};
-  this.value.value.topic = this.data.faqs[i].topic;
-  this.value.value.description = this.data.faqs[i].description;
-  window.parent.postMessage(this.value, '*');
-}
-
-submitClicked(textValue, i) {
-  this.isSubmitted = true;
-  this.value.action = 'no-clicked';
-  this.value.position = i;
-  this.value.value = {};
-  this.value.value.topic = this.data.faqs[i].topic;
-  this.value.value.description = this.data.faqs[i].description;
-  this.value.value.knowMoreText = textValue;
-  window.parent.postMessage(this.value, '*');
-  this.textValue = '';
-}
-
-navigateToReportIssue() {
-  this.router.navigate([RouterLinks.FAQ_REPORT_ISSUE], {
-    state: {
-      data: this.data
+  noClicked(i) {
+    this.value = {};
+    if (!this.isNoClicked) {
+      this.isNoClicked = true;
     }
-  });
-}
+    this.value.action = 'no-clicked';
+    this.value.position = i;
+    this.value.value = {};
+    this.value.value.topic = this.data.faqs[i].topic;
+    this.value.value.description = this.data.faqs[i].description;
+    window.parent.postMessage(this.value, '*');
+
+  }
+
+  yesClicked(i) {
+    this.value = {};
+    if (!this.isYesClicked) {
+      this.isYesClicked = true;
+    }
+
+    this.value.action = 'yes-clicked';
+    this.value.position = i;
+    this.value.value = {};
+    this.value.value.topic = this.data.faqs[i].topic;
+    this.value.value.description = this.data.faqs[i].description;
+    window.parent.postMessage(this.value, '*');
+  }
+
+  submitClicked(textValue, i) {
+    this.isSubmitted = true;
+    this.value.action = 'no-clicked';
+    this.value.position = i;
+    this.value.value = {};
+    this.value.value.topic = this.data.faqs[i].topic;
+    this.value.value.description = this.data.faqs[i].description;
+    this.value.value.knowMoreText = textValue;
+    window.parent.postMessage(this.value, '*');
+    this.textValue = '';
+  }
+
+  navigateToReportIssue() {
+    this.router.navigate([RouterLinks.FAQ_REPORT_ISSUE], {
+      state: {
+        data: this.data
+      }
+    });
+  }
 
 }

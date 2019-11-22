@@ -39,6 +39,11 @@ export class AppGlobalService implements OnDestroy {
     libraryFilterConfig: Array<any> = [];
 
     /**
+     * This property stores the dial code  configuration at the app level for non standard QR Code
+     */
+    dailCodeConfig?: RegExp;
+
+    /**
      * This property stores the organization at the app level for a particular app session
      */
     rootOrganizations: Array<any>;
@@ -164,6 +169,20 @@ export class AppGlobalService implements OnDestroy {
      */
     setLibraryFilterConfig(libraryFilterConfig: Array<any>) {
         this.libraryFilterConfig = libraryFilterConfig;
+    }
+
+    /**
+     * This method returns the cached dial code config
+     */
+    getCachedDialCodeConfig(): RegExp | undefined {
+        return this.dailCodeConfig;
+    }
+
+    /**
+     * This method stores the dial code config, for a non standard dial code
+     */
+    setDailCodeConfig(dialCodeConfig: RegExp) {
+        this.dailCodeConfig = dialCodeConfig;
     }
 
     /**

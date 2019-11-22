@@ -49,7 +49,6 @@ export class SunbirdQRScanner {
     private platform: Platform,
     private qrScannerResultHandler: QRScannerResultHandler,
     private telemetryGeneratorService: TelemetryGeneratorService,
-    private commonUtil: CommonUtilService,
     private appGlobalService: AppGlobalService,
     private container: ContainerService,
     private permission: AndroidPermissionsService,
@@ -137,7 +136,7 @@ export class SunbirdQRScanner {
 
       }).toPromise().then((status?: AndroidPermissionsStatus) => {
         if (!status) {
-          this.commonUtil.showToast('PERMISSION_DENIED');
+          this.commonUtilService.showToast('PERMISSION_DENIED');
         }
 
         if (status.isPermissionAlwaysDenied) {
@@ -264,7 +263,7 @@ export class SunbirdQRScanner {
     }
     this.isScannerActive = true;
     (window as any).qrScanner.startScanner(screenTitle, displayText,
-      displayTextColor, buttonText, showButton, this.platform.isRTL, (scannedData) => {
+      displayTextColor, buttonText, showButton, this.platform.isRTL, async (scannedData) => {
         if (scannedData === 'skip') {
           if (this.appGlobalService.DISPLAY_ONBOARDING_CATEGORY_PAGE) {
             const navigationExtras: NavigationExtras = { state: { stopScanner: true } };
@@ -279,6 +278,7 @@ export class SunbirdQRScanner {
             PageId.QRCodeScanner);
           this.generateEndEvent(source, '');
         } else {
+          const dialCode = await this.qrScannerResultHandler.parseDialCode(scannedData);
           if (scannedData === 'cancel' ||
             scannedData === 'cancel_hw_back' ||
             scannedData === 'cancel_nav_back') {
@@ -291,8 +291,8 @@ export class SunbirdQRScanner {
               Environment.HOME,
               PageId.QRCodeScanner);
             this.generateEndEvent(source, '');
-          } else if (this.qrScannerResultHandler.isDialCode(scannedData)) {
-            this.qrScannerResultHandler.handleDialCode(source, scannedData);
+          } else if (dialCode) {
+            this.qrScannerResultHandler.handleDialCode(source, scannedData, dialCode);
           } else if (this.qrScannerResultHandler.isContentId(scannedData)) {
             this.qrScannerResultHandler.handleContentId(source, scannedData);
           } else if (scannedData.includes('/certs/')) {
@@ -345,7 +345,7 @@ export class SunbirdQRScanner {
       this.source
     );
     if (this.source !== 'permission') {
-      this.commonUtil.afterOnBoardQRErrorAlert('INVALID_QR', 'UNKNOWN_QR');
+      this.commonUtilService.afterOnBoardQRErrorAlert('INVALID_QR', 'UNKNOWN_QR');
       return;
     }
     let popUp;
