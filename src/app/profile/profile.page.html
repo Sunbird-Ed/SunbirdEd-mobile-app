@@ -48,9 +48,9 @@
             </ion-button>
         </div>
     </div>
-    <div class="school-recent" *ngIf="profile?.organisations?.length > 0 && !(isDefaultChannelProfile$ | async)">
-        <p class="bolder MB5" style="position: relative;">{{organisationDetails}}
-            <span *ngIf="!isCustodianOrgId && profile?.organisations[0].orgName" class="isymbol" item-right text-left
+    <div class="school-recent" *ngIf="organisationName">
+        <p class="bolder MB5" style="position: relative;">{{organisationName}}
+            <span *ngIf="!isCustodianOrgId && organisationName" class="isymbol" item-right text-left
                 (click)="toggleTooltips($event, 'org')">
                 <ion-icon name="information-circle" class="info-icon"></ion-icon>
                 <span class="asPerStateRecord" *ngIf="informationOrgName">{{'STATE_RECORDS' | translate}}</span>

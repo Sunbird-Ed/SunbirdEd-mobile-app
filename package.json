@@ -41,7 +41,6 @@
     "@ionic-native/screen-orientation": "^5.15.1",
     "@ionic-native/social-sharing": "^5.15.1",
     "@ionic-native/status-bar": "^5.15.1",
-    "@ionic-native/unique-device-id": "^5.15.1",
     "@ionic/angular": "^4.11.2",
     "@ngx-translate/core": "^11.0.1",
     "@ngx-translate/http-loader": "^4.0.0",
@@ -60,8 +59,6 @@
     "cordova-plugin-badge": "^0.8.8",
     "cordova-plugin-buildconfig-reader": "git+https://github.com/swayangjit/cordova-plugin-buildconfig-reader.git",
     "cordova-plugin-code-push": "^1.12.0",
-    "cordova-plugin-console": "^1.1.0",
-    "cordova-plugin-customconfigparameters": "^3.0.0",
     "cordova-plugin-device": "^2.0.3",
     "cordova-plugin-dialogs": "^2.0.2",
     "cordova-plugin-fcm-with-dependecy-updated": "git+https://github.com/swayangjit/cordova-plugin-fcm-with-dependecy-updated.git",
@@ -69,20 +66,17 @@
     "cordova-plugin-file-opener2": "^2.2.1",
     "cordova-plugin-file-support": "git+https://github.com/project-sunbird/cordova-plugin-file-support.git",
     "cordova-plugin-file-transfer": "^1.7.1",
-    "cordova-plugin-imagechooser": "git+https://github.com/project-sunbird/cordova-plugin-imagechooser.git#release-1.14.0",
     "cordova-plugin-inappbrowser": "^3.1.0",
     "cordova-plugin-ionic-keyboard": "^2.2.0",
     "cordova-plugin-ionic-webview": "^4.1.3",
     "cordova-plugin-local-notification": "git+https://github.com/katzer/cordova-plugin-local-notifications.git",
     "cordova-plugin-media": "^5.0.3",
     "cordova-plugin-network-information": "^2.0.2",
-    "cordova-plugin-networkspeed": "git+https://github.com/swayangjit/cordova-plugin-networkspeed.git",
     "cordova-plugin-openrap": "git+https://github.com/project-sunbird/cordova-plugin-openrap.git",
     "cordova-plugin-qr-scanner": "git+https://github.com/project-sunbird/cordova-plugin-qr-scanner.git",
     "cordova-plugin-screen-orientation": "^3.0.2",
     "cordova-plugin-statusbar": "^2.4.3",
     "cordova-plugin-sunbirdsplash": "git+https://github.com/project-sunbird/cordova-plugin-sunbirdsplash.git#release-2.6.0",
-    "cordova-plugin-uniquedeviceid": "^1.3.2",
     "cordova-plugin-whitelist": "^1.3.4",
     "cordova-plugin-x-socialsharing": "^5.6.2",
     "cordova-plugin-zip": "^3.1.0",
@@ -97,7 +91,7 @@
     "rxjs-compat": "^6.5.3",
     "sb-cordova-plugin-customtabs": "git+https://github.com/Sunbird-Ed/sb-cordova-plugin-customtabs.git",
     "sb-cordova-plugin-db": "git+https://github.com/swayangjit/sb-cordova-plugin-db.git",
-    "sunbird-sdk": "git+https://github.com/Sunbird-Ed/sunbird-mobile-sdk.git#v2.6.0",
+    "sunbird-sdk": "git+https://github.com/Sunbird-Ed/sunbird-mobile-sdk.git#v2.6.1",
     "tslib": "^1.10.0",
     "x2js": "^3.3.0",
     "zone.js": "~0.8.29"
@@ -144,14 +138,12 @@
       "ionic-plugin-keyboard": {},
       "cordova-plugin-whitelist": {},
       "cordova-plugin-ionic-webview": {},
-      "cordova-plugin-uniquedeviceid": {},
       "cordova-plugin-app-version": {},
       "cordova-plugin-x-socialsharing": {},
       "cordova-plugin-device": {},
       "cordova-plugin-file": {},
       "cordova-plugin-file-transfer": {},
       "cordova-plugin-inappbrowser": {},
-      "cordova-plugin-console": {},
       "cordova-plugin-network-information": {},
       "cordova-plugin-statusbar": {},
       "cordova-plugin-awesome-shared-preferences": {},
@@ -164,7 +156,6 @@
         "URL_SCHEME": "@string/custom_scheme_url",
         "URL_HOST": "mobile"
       },
-      "cordova-plugin-imagechooser": {},
       "cordova-plugin-qr-scanner": {},
       "cordova-plugin-sunbirdsplash": {},
       "cordova-plugin-file-support": {},
@@ -172,7 +163,6 @@
       "cordova-plugin-file-opener2": {
         "ANDROID_SUPPORT_V4_VERSION": "27.+"
       },
-      "cordova-plugin-customconfigparameters": {},
       "cordova-plugin-screen-orientation": {},
       "cordova-plugin-zip": {},
       "cordova-plugin-local-notification": {
@@ -187,8 +177,7 @@
       "cordova-android-support-gradle-release": {
         "ANDROID_SUPPORT_VERSION": "28.0.0"
       },
-      "cordova-plugin-openrap": {},
-      "cordova-plugin-networkspeed": {}
+      "cordova-plugin-openrap": {}
     },
     "platforms": [
       "android"
