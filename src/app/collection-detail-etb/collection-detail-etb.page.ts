@@ -237,6 +237,7 @@ export class CollectionDetailEtbPage implements OnInit {
   public telemetryObject: TelemetryObject;
   public rollUpMap: { [key: string]: Rollup } = {};
 
+  private previousHeaderBottomOffset?: number;
   constructor(
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
     @Inject('EVENTS_BUS_SERVICE') private eventBusService: EventsBusService,
@@ -1429,24 +1430,53 @@ export class CollectionDetailEtbPage implements OnInit {
     );
   }
 
-  onScroll(event) {
-    const titles = document.querySelectorAll('[data-sticky-unit]');
+onScroll(event) {
+  if (event.detail.scrollTop >= 205) {
+    (this.stickyPillsRef.nativeElement as HTMLDivElement).classList.add('sticky');
+    
+    const boxes: HTMLElement[] = Array.from(document.getElementsByClassName('sticky-header-title-box')) as HTMLElement[];
 
-    const currentTitle = Array.from(titles).filter((title) => {
-      return title.getBoundingClientRect().top < 150;
-    }).slice(-1)[0];
+    let headerBottomOffset = (this.stickyPillsRef.nativeElement as HTMLDivElement).getBoundingClientRect().bottom;
 
-    if (currentTitle) {
-      this.isChapterVisible = true;
-      this.zone.run(() => {
-        this.stckyUnitTitle = currentTitle.getAttribute('data-sticky-unit');
-      });
+    // TODO: Logic will Change if Header Height got fixed
+    if (this.previousHeaderBottomOffset && this.previousHeaderBottomOffset > headerBottomOffset) {
+      headerBottomOffset = this.previousHeaderBottomOffset;
     }
-    if (event.detail.scrollTop >= 205) {
-      (this.stickyPillsRef.nativeElement as HTMLDivElement).classList.add('sticky');
+
+    this.previousHeaderBottomOffset = headerBottomOffset;
+
+    const boxesData = boxes.map(b => {
+      return {
+        elem: b,
+        text: b.dataset['text'],
+        renderLevel: parseInt(b.dataset['renderLevel']),
+        offsetTop: b.getBoundingClientRect().top
+      };
+    });
+
+    const activeBoxes = boxesData.filter(data => {
+      return data.offsetTop < headerBottomOffset
+        && (data.offsetTop + data.elem.getBoundingClientRect().height) > headerBottomOffset;
+    });
+
+    if (!activeBoxes.length) {
       return;
     }
 
-    (this.stickyPillsRef.nativeElement as HTMLDivElement).classList.remove('sticky');
+    const activeBox = activeBoxes.reduce((acc, box) => {
+      if (acc.renderLevel > box.renderLevel) {
+        return acc;
+      } else {
+        return box;
+      }
+    }, activeBoxes[0]);
+
+    if (activeBox.text) {
+      this.stckyUnitTitle = activeBox.text;
+    }
+    return;
+  }
+
+  (this.stickyPillsRef.nativeElement as HTMLDivElement).classList.remove('sticky');
   }
 }

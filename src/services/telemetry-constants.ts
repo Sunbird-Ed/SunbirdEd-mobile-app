@@ -359,7 +359,8 @@ export enum InteractSubtype {
     NOTIFICATION_RECEIVED = 'notification-received',
     AUTO_POPULATED_LOCATION = 'auto-populate-location',
     EDIT_DISTRICT_MAPPING_CLICKED = 'edit-district-mapping-clicked',
-    LOGIN_CLICKED = 'login-clicked'
+    LOGIN_CLICKED = 'login-clicked',
+    TERMS_OF_USE_CLICKED = 'terms-of-use-clicked'
 }
 
 export enum ActionButtonType {
@@ -369,6 +370,8 @@ export enum ActionButtonType {
 
 export enum CorReleationDataType {
     COURSE_BATCH = 'CourseBatch',
+    ROOT_ID = 'RootId',
+    SECTION = 'Section',
     FTUE = 'Ftue',
     BOARD = 'Board',
     MEDIUM = 'Medium',

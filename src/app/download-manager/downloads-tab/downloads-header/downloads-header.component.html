@@ -1,11 +1,13 @@
 <div class="sb-view-all-container">
   <div class="sb-view-all-items">
-      <div class="sb-view-all-title flex-grow-1">
-          <div class="page-heading">{{'DOWNLOAD_BNAV' | translate}}</div>
-          <div class="page-info o-hide" >
-          <div class="pull-left">{{'SPACE_TAKEN' | translate: {'%s': appName } }}: <b>{{storageInfo?.usedSpace | fileSize}}</b></div>
-          <div class="pull-right padding-left-4em">{{'AVAILABLE' | translate}}: {{storageInfo?.availableSpace | fileSize}}</div>
+    <div class="sb-view-all-title width-100">
+      <div class="page-heading px-4">{{'DOWNLOAD_BNAV' | translate}}</div>
+      <div class="d-flex">
+        <div class="pull-left flex-60 px-4">{{'SPACE_TAKEN' | translate: {'%s': appName } }}: <b>{{storageInfo?.usedSpace | fileSize}}</b></div>
+        <div class="flex-40 px-4">
+          <span class="pull-right">{{'AVAILABLE' | translate}}: {{storageInfo?.availableSpace | fileSize}}</span>
           </div>
       </div>
+    </div>
   </div>
 </div>

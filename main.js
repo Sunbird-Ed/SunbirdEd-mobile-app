@@ -137,6 +137,7 @@ function getChannelResponse(apiKey, apiChannel, baseUrl, custodianOrgId, strFile
 
 function getFrameworkResponse(apiKey, baseUrl, response, strFileDirectory, apiFramework) {
 
+  // TODO: Add null/empty check for frameworks
   var frameworkId = JSON.parse(response).result.channel.frameworks;
   urlParameter = '?categories=board,gradeLevel,subject,medium';
   for (var i = 0; i < frameworkId.length; i++) {
@@ -174,7 +175,7 @@ function getCourseFormResponse(apiKey, baseUrl, apiForm, strFileDirectory) {
   var res = makePostApiCall(apiKey, baseUrl, 'POST', apiForm, course_request_body, function (response) {
 
     createMainDirectory(strFileDirectory, 'form', function (dirName) {
-      saveResponse(JSON.stringify(response.body), dirName, 'pageassemble_', 'course_filter');
+      saveResponse(JSON.stringify(response.body), dirName, 'form-', 'pageassemble_course_filter');
     });
   });
 }
@@ -182,7 +183,7 @@ function getCourseFormResponse(apiKey, baseUrl, apiForm, strFileDirectory) {
 function getLibraryFormResponse(apiKey, baseUrl, apiForm, strFileDirectory) {
   var res = makePostApiCall(apiKey, baseUrl, 'POST', apiForm, library_request_body, function (response) {
     createMainDirectory(strFileDirectory, 'form', function (dirName) {
-      saveResponse(JSON.stringify(response.body), dirName, 'pageassemble_', 'library_filter');
+      saveResponse(JSON.stringify(response.body), dirName, 'form-', 'pageassemble_library_filter');
     });
   });
 }

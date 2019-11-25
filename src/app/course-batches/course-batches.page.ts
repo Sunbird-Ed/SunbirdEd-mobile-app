@@ -7,7 +7,7 @@ import { AuthService, Batch, CourseService, EnrollCourseRequest, OAuthSession, S
 import { Events, NavController, Platform, PopoverController } from '@ionic/angular';
 import { EventTopics } from '../../app/app.constant';
 import { CommonUtilService } from '../../services/common-util.service';
-import { InteractType, InteractSubtype, Environment, PageId } from '../../services/telemetry-constants';
+import { InteractType, InteractSubtype, Environment, PageId, ImpressionType } from '../../services/telemetry-constants';
 import { AppHeaderService } from '../../services/app-header.service';
 import * as dayjs from 'dayjs';
 import { Location } from '@angular/common';
@@ -155,21 +155,21 @@ export class CourseBatchesPage implements OnInit {
    */
 
   async enrollIntoBatch(item: Batch) {
+    const enrollCourseRequest = this.localCourseService.prepareEnrollCourseRequest(this.userId, item);
+    this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
+      InteractSubtype.ENROLL_CLICKED,
+      Environment.HOME,
+      PageId.COURSE_BATCHES, this.telemetryObject,
+      this.localCourseService.prepareRequestValue(enrollCourseRequest),
+      this.objRollup,
+      this.corRelationList
+    );
+
     if (this.isGuestUser) {
       this.joinTraining(item);
     } else {
-      const enrollCourseRequest = this.localCourseService.prepareEnrollCourseRequest(this.userId, item);
       const loader = await this.commonUtilService.getLoader();
       await loader.present();
-      this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
-        InteractSubtype.ENROLL_CLICKED,
-        Environment.HOME,
-        PageId.COURSE_BATCHES, this.telemetryObject,
-        this.localCourseService.prepareRequestValue(enrollCourseRequest),
-        this.objRollup,
-        this.corRelationList
-      );
-
       const enrollCourse: EnrollCourse = {
         userId: this.userId,
         batch: item,
@@ -198,16 +198,24 @@ export class CourseBatchesPage implements OnInit {
   }
 
   async joinTraining(batchDetails) {
+    this.telemetryGeneratorService.generateImpressionTelemetry(ImpressionType.VIEW,
+      '', PageId.SIGNIN_POPUP,
+      Environment.HOME,
+      this.telemetryObject.id,
+      this.telemetryObject.type,
+      this.telemetryObject.version,
+      this.objRollup,
+      this.corRelationList);
     const confirm = await this.popoverCtrl.create({
       component: SbPopoverComponent,
       componentProps: {
-        sbPopoverMainTitle : 'You must login to join an active batch and access training details',
-        metaInfo: 'Trainings are only for registered users',
-        sbPopoverHeading : 'Login',
+        sbPopoverMainTitle: this.commonUtilService.translateMessage('YOU_MUST_JOIN_TO_ACCESS_TRAINING_DETAIL'),
+        metaInfo: this.commonUtilService.translateMessage('TRAININGS_ONLY_REGISTERED_USERS'),
+        sbPopoverHeading: this.commonUtilService.translateMessage('OVERLAY_SIGN_IN'),
         isNotShowCloseIcon: true,
         actionsButtons: [
           {
-            btntext: 'Login',
+            btntext: this.commonUtilService.translateMessage('OVERLAY_SIGN_IN'),
             btnClass: 'popover-color'
           },
         ]
@@ -219,6 +227,14 @@ export class CourseBatchesPage implements OnInit {
     if (data && data.canDelete) {
       this.preferences.putString(PreferenceKey.BATCH_DETAIL_KEY, JSON.stringify(batchDetails)).toPromise();
       this.preferences.putString(PreferenceKey.COURSE_DATA_KEY, JSON.stringify(this.course)).toPromise();
+      this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
+        InteractSubtype.LOGIN_CLICKED,
+        Environment.HOME,
+        PageId.SIGNIN_POPUP,
+        undefined,
+        this.telemetryObject,
+        this.objRollup,
+        this.corRelationList);
       this.loginHandlerService.signIn();
     }
   }

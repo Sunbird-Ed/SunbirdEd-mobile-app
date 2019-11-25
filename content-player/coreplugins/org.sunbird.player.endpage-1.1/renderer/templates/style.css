@@ -106,21 +106,20 @@ table {
 
 .ps-nav {
   width: 22%;
-  margin-top: -3%;
+  /*margin-top: -3%;*/
   box-shadow: 0 0 4px 1px #bcbcbc;
 }
 .ps-nav.left, .ps-nav.right {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-}
+   position: absolute;
+   top: 50%;
+   transform: translateY(-50%);
+ }
 .ps-nav.left {
- left: 0px;
+  left: 0px;
 }
 .ps-nav.right {
-  right: 0px;
-}
-
+   right: 0px;
+ }
 .ps-score {
   width: 62%;
 }
@@ -177,13 +176,14 @@ table {
   font-weight: bold;
   position: absolute;
   width: 55%;
-  top: 47%;
+  top: 50%;
   left: 50%;
   -webkit-transform: translate(-50%, -50%);
           transform: translate(-50%, -50%);
   background-color: #f3f3f3;
   border-radius: 5px;
   padding: 1vw 0vw;
+  height: 17vm;
 }
 
 .ps-chapter-text {
@@ -391,7 +391,7 @@ table {
 }
 
 .ellipsis-three-line{
-  -webkit-line-clamp: 3; 
+  -webkit-line-clamp: 3;
 }
 
 .buttonVisible {

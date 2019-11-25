@@ -17,7 +17,7 @@ org.ekstep.contentrenderer.baseLauncher.extend({
     heartBeatData: {},
     enableHeartBeatEvent: false,
     _constants: {
-        mimeType: ["video/mp4", "video/x-youtube", "video/webm"],
+        mimeType: ["video/mp4", "video/webm"],
         events: {
             launchEvent: "renderer:launch:video"
         }
