@@ -607,8 +607,7 @@ export class GuestEditPage implements OnInit {
         }
       });
     }
-
-    this.profileService.updateProfile(req)
+    this.commonUtilService.handleToTopicBasedNotification(req)
       .subscribe((res: any) => {
         this._dismissLoader(loader);
         this.commonUtilService.showToast(this.commonUtilService.translateMessage('PROFILE_UPDATE_SUCCESS'));

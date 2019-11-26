@@ -10,9 +10,9 @@ import { TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs-compat';
 import { Network } from '@ionic-native/network/ngx';
 import { WebView } from '@ionic-native/ionic-webview/ngx';
-import { SharedPreferences } from 'sunbird-sdk';
+import { SharedPreferences, ProfileService, Profile } from 'sunbird-sdk';
 
-import { PreferenceKey } from '@app/app/app.constant';
+import { PreferenceKey, ProfileConstants } from '@app/app/app.constant';
 import { appLanguages } from '@app/app/app.constant';
 
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
@@ -20,6 +20,8 @@ import { InteractType, InteractSubtype, PageId, Environment } from '@app/service
 import { SbGenericPopoverComponent } from '@app/app/components/popups/sb-generic-popover/sb-generic-popover.component';
 import { QRAlertCallBack, QRScannerAlert } from '@app/app/qrscanner-alert/qrscanner-alert.page';
 import { mapTo } from 'rxjs/operators/mapTo';
+
+declare const FCMPlugin;
 export interface NetworkInfo {
     isNetworkAvailable: boolean;
 }
@@ -34,11 +36,14 @@ export class CommonUtilService implements OnDestroy {
     connectSubscription: any;
 
     disconnectSubscription: any;
+    unsubscribeTopic: any;
+    topics: any;
     private alert?: any;
     private _currentTabName: string;
 
     constructor(
         @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
+        @Inject('PROFILE_SERVICE') private profileService: ProfileService,
         private toastCtrl: ToastController,
         private translate: TranslateService,
         private loadingCtrl: LoadingController,
@@ -389,12 +394,12 @@ export class CommonUtilService implements OnDestroy {
                             location.district = organisation.locations[j];
                             break;
 
-                        default:
-                            console.log('default');
+                            default:
+                                console.log('default');
+                        }
                     }
                 }
             }
-        }
         return location;
     }
 
@@ -441,5 +446,35 @@ export class CommonUtilService implements OnDestroy {
         } else {
             return false;
         }
+    }
+
+    handleToTopicBasedNotification(req) {
+        return this.profileService.updateProfile(req).do(async (profile) => {
+            const res = [];
+            res.push(profile.board);
+            profile.medium.forEach(element => {
+                const set = [];
+                set.push(profile.board);
+                set.push(element);
+                res.push(set);
+            });
+            this.preferences.getString(PreferenceKey.DEVICE_LOCATION).subscribe((data) => {
+                const deviceLocation = data;
+                console.log('devices location', deviceLocation);
+           });
+            this.topics = res.map((r) => r.join('_')).join('::');
+            this.preferences.getString(PreferenceKey.TOPICS).subscribe((data) => {
+                 this.unsubscribeTopic = data;
+                 console.log('topicssss', data);
+            });
+            await new Promise<undefined>((resolve, reject) => {
+                FCMPlugin.unsubscribeFromTopic(this.unsubscribeTopic, resolve, reject);
+            });
+
+            await this.preferences.putString(PreferenceKey.TOPICS, this.topics).toPromise();
+            await new Promise<undefined>((resolve, reject) => {
+                FCMPlugin.subscribeToTopic(this.topics, resolve, reject);
+            });
+        });
     }
 }

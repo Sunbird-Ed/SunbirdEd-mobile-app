@@ -241,7 +241,6 @@ export class ProfileSettingsPage implements OnInit {
       .then((response: any) => {
         this.profile = response;
         console.log('responseresponse', response);
-
         this.profileForTelemetry = Object.assign({}, this.profile);
         this.initUserForm();
       }).catch((error) => {
@@ -566,7 +565,6 @@ export class ProfileSettingsPage implements OnInit {
       grade: formVal.grades,
       medium: formVal.medium
     };
-
     if (this.navParams && this.navParams.selectedUserType) {
       req.profileType = this.navParams.selectedUserType;
     } else {
@@ -590,7 +588,7 @@ export class ProfileSettingsPage implements OnInit {
         }
       });
     }
-    this.profileService.updateProfile(req).toPromise()
+    this.commonUtilService.handleToTopicBasedNotification(req).toPromise()
       .then(async (res: any) => {
         if (req.profileType === ProfileType.TEACHER) {
           initTabs(this.container, GUEST_TEACHER_TABS);

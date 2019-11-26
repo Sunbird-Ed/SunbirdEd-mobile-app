@@ -628,8 +628,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
         }
       });
     }
-
-    this.profileService.updateProfile(req).toPromise()
+    this.commonUtilService.handleToTopicBasedNotification(req).toPromise()
       .then((res: any) => {
         if (res.syllabus && res.syllabus.length && res.board && res.board.length
           && res.grade && res.grade.length && res.medium && res.medium.length) {
