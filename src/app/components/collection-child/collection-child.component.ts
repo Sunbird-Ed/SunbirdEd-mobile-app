@@ -57,7 +57,7 @@ export class CollectionChildComponent implements OnInit {
   sameHierarchy: boolean;
   assessemtnAlert: HTMLIonPopoverElement;
 
-  get markDone(): boolean {
+  get isContentCompleted(): boolean {
     if (this.contentStatusData && this.isEnrolled) {
       return !!this.contentStatusData.contentList.find(c => c.contentId === this.childData.identifier);
     }

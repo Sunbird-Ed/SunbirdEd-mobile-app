@@ -216,8 +216,8 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
   public showUnenroll: boolean;
   public todayDate: any;
   public rollUpMap: { [key: string]: Rollup } = {};
-  lastReadContentId;
-  courseCompletionData = {};
+  public lastReadContentId;
+  public courseCompletionData = {};
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
