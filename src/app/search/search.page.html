@@ -143,7 +143,8 @@
         
         <div class="px-8" >
           <div class="pt-8">
-            <p class="results-count" *ngIf="resultlist.dialCodeContentResult || resultlist.dialCodeResult"> {{'QR_SHOWING_MULTIPLE_BOOK_RESULT' | translate:{'%s': getContentCount(resultlist)} }} <b>"{{resultlist.dialCodeContentResult[0]?.dialcodes[0]}}"</b> </p>
+            <p class="results-count" *ngIf="resultlist.dialCodeContentResult || resultlist.dialCodeResult"> {{'QR_SHOWING_MULTIPLE_BOOK_RESULT' | translate:{'%s': getContentCount(resultlist)} }} 
+              <b>"{{resultlist.dialCodeContentResult[0]?.dialcodes[0] || resultlist.dialCodeResult[0]?.content[0]?.dialcodes[0]}}"</b> </p>
         </div>
           <!-- Collection List -->
           <div no-margin *ngFor="let result of resultlist.dialCodeResult" no-padding>
