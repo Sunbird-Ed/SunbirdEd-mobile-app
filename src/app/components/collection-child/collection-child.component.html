@@ -58,7 +58,7 @@
               </span>
               {{childData?.contentData?.name}}
           </div>
-          <div class="pull-right done-pt-8" *ngIf="childData.status">
+          <div class="pull-right done-pt-8" *ngIf="markDone">
             <!--'DONE' text doesnot need translation-->
             <span class="done">Done</span>
           </div>
@@ -78,6 +78,6 @@
     <app-collection-child [renderLevel]="renderLevel + 1" [childData]="firstChildren" [breadCrumb]="breadCrumb"
       [activeMimeTypeFilter]="activeMimeTypeFilter" [rootUnitId]="rootUnitId" [isTextbookTocPage]="isTextbookTocPage"
       [bookID]="bookID" [isEnrolled]="isEnrolled" [fromCourseToc]="fromCourseToc" [isBatchNotStarted]="isBatchNotStarted"  [stckyUnitTitle]="stckyUnitTitle"
-       [stckyindex]="stckyindex" [latestParentName]="latestParentName" [latestParentNodes]="latestParentNodes"></app-collection-child>
+       [stckyindex]="stckyindex" [latestParentName]="latestParentName" [latestParentNodes]="latestParentNodes" [contentStatusData]="contentStatusData"></app-collection-child>
   </div>
 </div>

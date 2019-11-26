@@ -258,7 +258,7 @@
 								<ion-col size="11">
 									<div class="sb-topic-text" [ngClass]="{'fontBold' : isGroupShown(i)}">
 										<!-- <ion-icon class="sb-checkmark-icon" name="md-checkmark-circle"></ion-icon> -->
-										<ion-icon *ngIf="isAlreadyEnrolled && item.status" class="sb-checkmark-icon"
+										<ion-icon *ngIf="isAlreadyEnrolled && courseCompletionData[item.identifier]" class="sb-checkmark-icon"
 											name="md-checkmark-circle"></ion-icon>
 										{{item?.contentData.name}}
 									</div>
@@ -285,7 +285,7 @@
 										[corRelationList]="corRelationList" [isDepthChild]="isDepthChild"
                                         [breadCrumb]="breadCrumb" [rootUnitId]="item.identifier" [bookID]="identifier"
                                         [updatedCourseCardData]="updatedCourseCardData" [batch]="batchDetails"
-										[isEnrolled]="isAlreadyEnrolled" [fromCourseToc]="true" [isBatchNotStarted]="isBatchNotStarted">
+										[isEnrolled]="isAlreadyEnrolled" [fromCourseToc]="true" [isBatchNotStarted]="isBatchNotStarted" [contentStatusData]="contentStatusData">
 									</app-collection-child>
 								</div>
 							</div>
