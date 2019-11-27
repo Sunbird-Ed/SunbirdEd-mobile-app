@@ -36,8 +36,6 @@ export class CommonUtilService implements OnDestroy {
     connectSubscription: any;
 
     disconnectSubscription: any;
-    unsubscribeTopic: any;
-    topics: any;
     private alert?: any;
     private _currentTabName: string;
 
@@ -448,32 +446,29 @@ export class CommonUtilService implements OnDestroy {
         }
     }
 
-    handleToTopicBasedNotification(req) {
+     handleToTopicBasedNotification(req) {
         return this.profileService.updateProfile(req).do(async (profile) => {
-            const res = [];
-            res.push(profile.board);
-            profile.medium.forEach(element => {
-                const set = [];
-                set.push(profile.board);
-                set.push(element);
-                res.push(set);
-            });
-            this.preferences.getString(PreferenceKey.DEVICE_LOCATION).subscribe((data) => {
-                const deviceLocation = data;
-                console.log('devices location', deviceLocation);
-           });
-            this.topics = res.map((r) => r.join('_')).join('::');
-            this.preferences.getString(PreferenceKey.TOPICS).subscribe((data) => {
-                 this.unsubscribeTopic = data;
-                 console.log('topicssss', data);
-            });
-            await new Promise<undefined>((resolve, reject) => {
-                FCMPlugin.unsubscribeFromTopic(this.unsubscribeTopic, resolve, reject);
-            });
+            const res = {};
+            const prevTopic = [];
+            const currentTopic = [];
+            res['board'] = (profile.board);
+            res['medium'] = (profile.medium);
+            res['grade'] = (profile.grade);
 
-            await this.preferences.putString(PreferenceKey.TOPICS, this.topics).toPromise();
+            await this.preferences.getString(PreferenceKey.DEVICE_LOCATION).subscribe((data) => {
+               prevTopic.push(JSON.parse(data).state);
+               currentTopic.push(JSON.parse(data).state);
+           });
+            currentTopic.push(profile.board[0]);
+            await this.preferences.getString(PreferenceKey.TOPICS).subscribe((data) => {
+                prevTopic.push(JSON.parse(data).board[0]);
+            });
+            await this.preferences.putString(PreferenceKey.TOPICS, JSON.stringify(res)).toPromise();
             await new Promise<undefined>((resolve, reject) => {
-                FCMPlugin.subscribeToTopic(this.topics, resolve, reject);
+                FCMPlugin.unsubscribeFromTopic(prevTopic.join(','), resolve, reject);
+            });
+            await new Promise<undefined>((resolve, reject) => {
+                FCMPlugin.subscribeToTopic(currentTopic.join(','), resolve, reject);
             });
         });
     }
