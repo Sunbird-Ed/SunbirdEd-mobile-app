@@ -13,7 +13,6 @@ import { AppVersion } from '@ionic-native/app-version/ngx';
 import { SocialSharing } from '@ionic-native/social-sharing/ngx';
 import { FileTransfer, FileTransferObject } from '@ionic-native/file-transfer/ngx';
 import { FileOpener } from '@ionic-native/file-opener/ngx';
-import { UniqueDeviceID } from '@ionic-native/unique-device-id/ngx';
 import { Device } from '@ionic-native/device/ngx';
 import { Network } from '@ionic-native/network/ngx';
 
@@ -151,9 +150,11 @@ export function searchHistoryService() {
 export function networkInfoService() {
   return SunbirdSdk.instance.networkInfoService;
 }
-
 export function codePushExperimentService() {
   return SunbirdSdk.instance.codePushExperimentService;
+}
+export function faqService() {
+  return SunbirdSdk.instance.faqService;
 }
 
 export function sdkDriverFactory(): any {
@@ -247,6 +248,9 @@ export function sdkDriverFactory(): any {
   }, {
     provide: 'NETWORK_INFO_SERVICE',
     useFactory: networkInfoService
+  }, {
+    provide: 'FAQ_SERVICE',
+    useFactory: faqService
   }
   ];
 }
@@ -378,6 +382,9 @@ export const sunbirdSdkFactory =
         },
         errorLoggerConfig: {
           errorLoggerApiPath: '/api/data/v1/client/logs'
+        },
+        faqServiceConfig: {
+          faqConfigDirPath: '/data/faq'
         }
       });
 
@@ -437,7 +444,6 @@ declare const buildconfigreader;
     LoginHandlerService,
     TncUpdateHandlerService,
     ContainerService,
-    UniqueDeviceID,
     UtilityService,
     LocalCourseService,
     AppHeaderService,

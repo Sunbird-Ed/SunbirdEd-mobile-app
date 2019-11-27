@@ -39,6 +39,11 @@ export class AppGlobalService implements OnDestroy {
     libraryFilterConfig: Array<any> = [];
 
     /**
+     * This property stores the location configuration at the app level for a particular app session
+     */
+    locationConfig: Array<any> = [];
+
+    /**
      * This property stores the dial code  configuration at the app level for non standard QR Code
      */
     dailCodeConfig?: RegExp;
@@ -172,6 +177,27 @@ export class AppGlobalService implements OnDestroy {
     }
 
     /**
+     * This method returns the library filter config cache, for a particular session of the app
+     */
+    getCachedLibraryFilterConfig(): Array<any> {
+        return this.libraryFilterConfig;
+    }
+
+    /**
+     * This method stores the location config, for a particular session of the app
+     */
+    setLocationConfig(locationConfig: Array<any>) {
+        this.courseFilterConfig = locationConfig;
+    }
+
+    /**
+     * This method returns the location config cache, for a particular session of the app
+     */
+    getCachedLocationConfig(): Array<any> {
+        return this.locationConfig;
+    }
+
+    /**
      * This method returns the cached dial code config
      */
     getCachedDialCodeConfig(): RegExp | undefined {
@@ -183,13 +209,6 @@ export class AppGlobalService implements OnDestroy {
      */
     setDailCodeConfig(dialCodeConfig: RegExp) {
         this.dailCodeConfig = dialCodeConfig;
-    }
-
-    /**
-     * This method returns the library filter config cache, for a particular session of the app
-     */
-    getCachedLibraryFilterConfig(): Array<any> {
-        return this.libraryFilterConfig;
     }
 
     /**
@@ -222,6 +241,7 @@ export class AppGlobalService implements OnDestroy {
 
     /**
      * @returns UserId or empty string if not available
+     * getLoggedinUserId
      */
     getUserId(): string | undefined {
         if (!this.session) {

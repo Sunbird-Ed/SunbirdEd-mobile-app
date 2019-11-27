@@ -16,7 +16,7 @@
   <div class="state">
     <div class="input-container">
       <input type="text" class="input" [(ngModel)]="stateName" placeholder="{{('SEARCH_STATE' | translate)}}"
-        value="{{availableLocationState ? availableLocationState : stateName}}" (ngModelChange)="showStateList()">
+      value="{{availableLocationState ? availableLocationState : stateName}}" (ngModelChange)="showStateList()">
       <ion-icon (click)="showStates = !showStates; stateIconClicked()" class="input-icon" name="ios-arrow-down">
       </ion-icon>
     </div>
@@ -28,12 +28,11 @@
     </div>
   </div>
 
+
   <div class="district" *ngIf="!showStates">
     <div class="input-container margin-top" [ngClass]="(!stateName && !availableLocationState) ? 'disableInput' : ''">
-      <input type="text" class="input" [(ngModel)]="districtName" placeholder="{{('SEARCH_DISTRICT' | translate)}}"
-        [disabled]="!stateName && !availableLocationState"
-        value="{{ availableLocationDistrict? availableLocationDistrict : stateName}}"
-        (ngModelChange)="showDistrictList()" (input)="resetDistrictCode()">
+      <input type="text" class="input" [(ngModel)]="districtName" placeholder="{{('SEARCH_DISTRICT' | translate)}}"  
+      value="{{ availableLocationDistrict? availableLocationDistrict : districtName}}" (ngModelChange)="showDistrictList()" (input)="resetDistrictCode()" [disabled]="!stateName && !availableLocationState">
       <ion-icon (click)="showDistrict = !showDistrict; districtIconClicked()" class="input-icon" name="ios-arrow-down">
       </ion-icon>
       <!-- <ion-icon *ngIf="!this.stateName && !availableLocationState" class="input-icon" name="ios-arrow-down"></ion-icon> -->
@@ -49,8 +48,8 @@
   <div style="display:none">{{!(isKeyboardShown$ | async)}}</div>
 </ion-content>
 <div class="footer" *ngIf="!(isKeyboardShown$ | async) && !isPopulatedLocationChanged">
-  <button class="block-button" [disabled]="!availableLocationState || !availableLocationDistrict"
-    [ngClass]=" !availableLocationState || !availableLocationDistrict ? 'disabled-button': ''"
+  <button class="block-button" [disabled]="!availableLocationState || !availableLocationDistrict || !districtName"
+    [ngClass]=" !availableLocationState || !availableLocationDistrict || !districtName ? 'disabled-button': ''"
     (click)="submit()">{{'BTN_SUBMIT' | translate}}</button>
 </div>
 <div class="footer" *ngIf="!(isKeyboardShown$ | async) && isLocationChanged">
