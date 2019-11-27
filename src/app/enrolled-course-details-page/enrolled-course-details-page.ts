@@ -216,6 +216,8 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
   public showUnenroll: boolean;
   public todayDate: any;
   public rollUpMap: { [key: string]: Rollup } = {};
+  public lastReadContentId;
+  public courseCompletionData = {};
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -937,71 +939,59 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
     }
   }
 
+  private async getLastReadContentId() {
+    this.lastReadContentId = this.courseCardData.lastReadContentId;
+    const userId = this.appGlobalService.getUserId();
+    const lastReadContentIdKey = 'lastReadContentId_' + userId + '_' + this.identifier
+        + this.courseCardData.batchId;
+    await this.preferences.getString(lastReadContentIdKey).toPromise().then((val) => {
+      if (val) {
+        this.courseCardData.lastReadContentId = val;
+        this.lastReadContentId = val;
+      }
+    });
+    return this.lastReadContentId;
+  }
+
+  private getLeafNodes(contents: Content[]) {
+    return contents.reduce((acc, content) => {
+      if (content.children) {
+        acc = acc.concat(this.getLeafNodes(content.children));
+      } else {
+        acc.push(content);
+      }
+      return acc;
+    }, []);
+  }
 
   /**
    * Function to get status of child contents
    */
-  async getStatusOfChildContent(childrenData) {
-    const contentStatusData = this.contentStatusData;
-    // console.log('this.contentStatusData', this.contentStatusData);
-    let lastReadContentId = this.courseCardData.lastReadContentId;
-    const userId = this.appGlobalService.getUserId();
-    const lastReadContentIdKey = 'lastReadContentId_' + userId + '_' + this.identifier + '_' + this.courseCardData.batchId;
-    await this.preferences.getString(lastReadContentIdKey).toPromise()
-      .then(val => {
-        this.courseCardData.lastReadContentId = val;
-        lastReadContentId = val;
-      });
-    // console.log('lastReadContentId', lastReadContentId);
-    this.getLastPlayedName(lastReadContentId);
-    this.zone.run(() => {
-      childrenData.forEach(childContent => {
-        // Inside First level
-        let contentLength = 0;
-        childContent.children.every(eachContent => {
-          // Inside resource level
-          if (childContent.hasOwnProperty('status') && !childContent.status) {
-            // checking for property status
-            return false;
-          } else {
-            // checking for getContentState result length
-            if (contentStatusData.contentList.length) {
-              contentStatusData.contentList.every(contentData => {
-                // checking for each content status
-                if (eachContent.identifier === contentData.contentId) {
-                  contentLength = contentLength + 1;
-                  // checking for contentId from getContentState and lastReadContentId
-                  if (contentData.contentId === lastReadContentId) {
-                    childContent.lastRead = true;
-                  }
-                  if (contentData.status === 0 || contentData.status === 1) {
-                    // manipulating the status
-                    childContent.status = false;
-                    return false;
-                  } else {
-                    // if content played completely
-                    eachContent.status = true;
-                    childContent.status = true;
-                    return true;
-                  }
-                }
-                return true;
-              });
-              return true;
-            } else {
-              childContent.status = false;
-              return false;
-            }
-          }
-        });
 
-        if (childContent.children.length === contentLength) {
-          return true;
-        } else {
-          childContent.status = false;
-          return true;
+  private getStatusOfCourseCompletion(childrenData: Content[]) {
+    const contentStatusData = this.contentStatusData;
+    this.getLastPlayedName(this.lastReadContentId);
+
+    this.zone.run(() => {
+      childrenData.forEach((childContent) => {
+        if (childContent.children && childContent.children.length) {
+          this.courseCompletionData[childContent.identifier] =
+            this.getLeafNodes(childContent.children).every((eachContent) => {
+              if (contentStatusData.contentList.length) {
+                const statusData = contentStatusData.contentList.find(c => c.contentId === eachContent.identifier);
+                if (statusData) {
+                  if (this.lastReadContentId === statusData.contentId) {
+                    childContent['lastRead'] = true;
+                  }
+                  return !(statusData.status === 0 || statusData.status === 1);
+                }
+                return false;
+              }
+              return false;
+            });
         }
       });
+      console.log('courseCompletionData ', this.courseCompletionData);
     });
   }
 
@@ -1297,6 +1287,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
     this.subscribeSdkEvent();
     this.populateCorRelationData(this.courseCardData.batchId);
     this.handleBackButton();
+    this.getLastReadContentId();
   }
 
   showLicensce() {
@@ -1649,7 +1640,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
           }
 
           if (this.childrenData) {
-            this.getStatusOfChildContent(this.childrenData);
+            this.getStatusOfCourseCompletion(this.childrenData);
           }
         }).catch((error: any) => {
         });

@@ -31,7 +31,9 @@ export class CanvasPlayerService {
                 case 'getContent':
                     return SunbirdSdk.instance.contentService.getContents(params[0]).toPromise();
                 case 'getRelevantContent':
-                    return SunbirdSdk.instance.contentService.getRelevantContent(JSON.parse(params[0])).toPromise();
+                    const request = JSON.parse(params[0]);
+                    request['shouldConvertBasePath'] = true;
+                    return SunbirdSdk.instance.contentService.getRelevantContent(request).toPromise();
                 case 'getRelatedContent':
                     console.log('getRelatedContent to be defined');
                     break;

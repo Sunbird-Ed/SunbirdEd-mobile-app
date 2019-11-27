@@ -267,17 +267,17 @@ export class FormAndFrameworkUtilService {
         };
         this.formService.getForm(req).toPromise()
             .then((res: any) => {
-                const data = res.data.fields;
-                if (res && res.data.fields.length) {
+                const data = res.form.data.fields;
+                if (res && data.length) {
                     for (const ele of data) {
-                        if (ele.code === 'dialcodeRegEx') {
-                            this.appGlobalService.setDailCodeConfig(ele.regEx);
+                        if (ele.code === 'dialcode') {
+                            this.appGlobalService.setDailCodeConfig(ele.values);
                         }
                     }
                 }
 
             }).catch((error: any) => {
-               console.log('error while fetching dial code reg ex ' , error);
+               console.error('error while fetching dial code reg ex ' , error);
             });
 
     }
