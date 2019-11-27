@@ -26,7 +26,8 @@ import {
 import { Subscription } from 'rxjs/Subscription';
 import { ContentType, MimeType, ShareUrl, RouterLinks } from '../../app/app.constant';
 import {
-  AppGlobalService, AppHeaderService, CommonUtilService, CourseUtilService, TelemetryGeneratorService, UtilityService, ContentShareHandlerService
+  AppGlobalService, AppHeaderService, CommonUtilService, CourseUtilService, TelemetryGeneratorService, UtilityService,
+  ContentShareHandlerService
 } from '../../services';
 import { SbGenericPopoverComponent } from '../components/popups/sb-generic-popover/sb-generic-popover.component';
 import { ComingSoonMessageService } from 'services/coming-soon-message.service';
@@ -233,6 +234,7 @@ export class CollectionDetailEtbPage implements OnInit {
   isChapterVisible = false;
   shouldPillsStick = false;
   importProgressMessage: string;
+  showSheenAnimation = true;
 
   public telemetryObject: TelemetryObject;
   public rollUpMap: { [key: string]: Rollup } = {};
@@ -493,24 +495,29 @@ export class CollectionDetailEtbPage implements OnInit {
       attachContentAccess: true,
       emitUpdateIfAny: refreshContentDetails
     };
-    console.time('getContentDetails');
+    // console.time('getContentDetails');
     this.contentService.getContentDetails(option).toPromise()
       .then((data: Content) => {
         // this.zone.run(() => {
           loader.dismiss().then(() => {
             if (data) {
-              // console.log('isAvailableLocally', data.isAvailableLocally);
-              // console.log('etb getContentDetails', data);
               if (!data.isAvailableLocally) {
                 this.contentDetail = data;
+                // const telemetryObject = new TelemetryObject(this.cardData.identifier,  this.objType, this.cardData.pkgVersion);
+                // this.telemetryGeneratorService.generateStartTelemetry(
+                //   PageId.COLLECTION_DETAIL,
+                //   telemetryObject);
                 this.contentService.getContentHeirarchy(option).toPromise()
                 .then((content: Content) => {
                   this.childrenData = content.children;
+                  this.showSheenAnimation = false;
                   // console.timeEnd('getContentDetails');
-                  // this.extractApiResponse(data);
-                  this.importContentInBackground([this.identifier], false);
+                }).catch((err) => {
+                  this.showSheenAnimation = false;
                 });
+                this.importContentInBackground([this.identifier], false);
               } else {
+                this.showSheenAnimation = false;
                 this.extractApiResponse(data);
               }
             }
@@ -519,6 +526,7 @@ export class CollectionDetailEtbPage implements OnInit {
       })
       .catch((error: any) => {
         console.log('error while loading content details', error);
+        this.showSheenAnimation = false;
         loader.dismiss();
         this.commonUtilService.showToast('ERROR_CONTENT_NOT_AVAILABLE');
         this.location.back();
@@ -982,6 +990,9 @@ export class CollectionDetailEtbPage implements OnInit {
                 this.refreshHeader();
                 this.updateSavedResources();
                 this.setChildContents();
+                // this.downloadSize = 0;
+                // this.localResourseCount = 0;
+                // this.getContentsSize(this.childrenData || []);
                 this.contentDetail.isAvailableLocally = true;
               }
 
@@ -1145,23 +1156,21 @@ export class CollectionDetailEtbPage implements OnInit {
         },
         cssClass: 'sb-popover info',
       });
-      
       await popover.present();
       /*
       * generate telemetry for the impression for download click from device button
       * type: impression
       */
-     this.telemetryGeneratorService.generateImpressionTelemetry(ImpressionType.VIEW, '',
-     PageId.COLLECTION_DETAIL,
-     Environment.HOME,
-     this.identifier,
-     "",
-     this.content.pkgVersion,
-     this.objRollup,
-     this.corRelationList);
+      this.telemetryGeneratorService.generateImpressionTelemetry(ImpressionType.VIEW, '',
+      PageId.COLLECTION_DETAIL,
+      Environment.HOME,
+      this.identifier,
+      '',
+      this.content.pkgVersion,
+      this.objRollup,
+      this.corRelationList);
 
       const response = await popover.onDidDismiss();
-      
       if (response && response.data) {
         this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
           InteractSubtype.DOWNLOAD_ALL_CLICKED,
@@ -1517,23 +1526,23 @@ onScroll(event) {
               }
             });
 
-            if (isDownloadAllClicked) {
-              this.telemetryGeneratorService.generateDownloadAllClickTelemetry(
-                PageId.COLLECTION_DETAIL,
-                this.contentDetail,
-                this.queuedIdentifiers,
-                identifiers.length
-              );
-            }
+            // if (isDownloadAllClicked) {
+            //   this.telemetryGeneratorService.generateDownloadAllClickTelemetry(
+            //     PageId.COLLECTION_DETAIL,
+            //     this.contentDetail,
+            //     this.queuedIdentifiers,
+            //     identifiers.length
+            //   );
+            // }
 
-            if (this.queuedIdentifiers.length === 0) {
-              if (this.isDownloadStarted) {
-                this.showDownloadBtn = true;
-                this.isDownloadStarted = false;
-                this.showLoading = false;
-                this.refreshHeader();
-              }
-            }
+            // if (this.queuedIdentifiers.length === 0) {
+            //   if (this.isDownloadStarted) {
+            //     this.showDownloadBtn = true;
+            //     this.isDownloadStarted = false;
+            //     this.showLoading = false;
+            //     this.refreshHeader();
+            //   }
+            // }
             if (this.faultyIdentifiers.length > 0) {
               const stackTrace: any = {};
               stackTrace.parentIdentifier = this.cardData.identifier;
@@ -1548,7 +1557,7 @@ onScroll(event) {
             }
           } else if (data && data[0].status === ContentImportStatus.NOT_FOUND) {
             this.showLoading = false;
-            this.refreshHeader();
+            // this.refreshHeader();
             this.showChildrenLoader = false;
             this.childrenData.length = 0;
           }
@@ -1559,18 +1568,18 @@ onScroll(event) {
           this.showDownloadBtn = true;
           this.isDownloadStarted = false;
           this.showLoading = false;
-          this.refreshHeader();
-          if (Boolean(this.isUpdateAvailable)) {
-            this.setChildContents();
+          // this.refreshHeader();
+          // if (Boolean(this.isUpdateAvailable)) {
+          //   this.setChildContents();
+          // } else {
+          if (error && (error.error === 'NETWORK_ERROR' || error.error === 'CONNECTION_ERROR')) {
+            this.commonUtilService.showToast('NEED_INTERNET_TO_CHANGE');
           } else {
-            if (error && (error.error === 'NETWORK_ERROR' || error.error === 'CONNECTION_ERROR')) {
-              this.commonUtilService.showToast('NEED_INTERNET_TO_CHANGE');
-            } else {
-              this.commonUtilService.showToast('UNABLE_TO_FETCH_CONTENT');
-            }
-            this.showChildrenLoader = false;
-            this.location.back();
+            this.commonUtilService.showToast('UNABLE_TO_FETCH_CONTENT');
           }
+          this.showChildrenLoader = false;
+          this.location.back();
+          // }
         });
       });
   }
