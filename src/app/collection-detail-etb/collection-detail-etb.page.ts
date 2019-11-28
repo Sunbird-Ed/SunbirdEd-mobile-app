@@ -790,7 +790,7 @@ export class CollectionDetailEtbPage implements OnInit {
     this.contentService.getChildContents(option).toPromise()
       .then((data: Content) => {
         this.zone.run(() => {
-          console.log('data setChildContents', data);
+          // console.log('data setChildContents', data);
           if (data && data.children) {
             this.breadCrumb.set(data.identifier, data.contentData.name);
             if (this.textbookTocService.textbookIds.rootUnitId && this.activeMimeTypeFilter !== ['all']) {
@@ -1538,23 +1538,6 @@ onScroll(event) {
               }
             });
 
-            // if (isDownloadAllClicked) {
-            //   this.telemetryGeneratorService.generateDownloadAllClickTelemetry(
-            //     PageId.COLLECTION_DETAIL,
-            //     this.contentDetail,
-            //     this.queuedIdentifiers,
-            //     identifiers.length
-            //   );
-            // }
-
-            // if (this.queuedIdentifiers.length === 0) {
-            //   if (this.isDownloadStarted) {
-            //     this.showDownloadBtn = true;
-            //     this.isDownloadStarted = false;
-            //     this.showLoading = false;
-            //     this.refreshHeader();
-            //   }
-            // }
             if (this.faultyIdentifiers.length > 0) {
               const stackTrace: any = {};
               stackTrace.parentIdentifier = this.cardData.identifier;
@@ -1580,10 +1563,6 @@ onScroll(event) {
           this.showDownloadBtn = true;
           this.isDownloadStarted = false;
           this.showLoading = false;
-          // this.refreshHeader();
-          // if (Boolean(this.isUpdateAvailable)) {
-          //   this.setChildContents();
-          // } else {
           if (error && (error.error === 'NETWORK_ERROR' || error.error === 'CONNECTION_ERROR')) {
             this.commonUtilService.showToast('NEED_INTERNET_TO_CHANGE');
           } else {
@@ -1591,7 +1570,6 @@ onScroll(event) {
           }
           this.showChildrenLoader = false;
           this.location.back();
-          // }
         });
       });
   }
