@@ -365,9 +365,9 @@ export class CollectionDetailEtbPage implements OnInit {
 
 
   // toggle the card
-  toggleGroup(group, content) {
+  toggleGroup(group, content, openCarousel?) {
     let isCollapsed = true;
-    if (this.isGroupShown(group)) {
+    if (!openCarousel && this.isGroupShown(group)) {
       isCollapsed = false;
       this.shownGroup = null;
     } else {
@@ -503,15 +503,27 @@ export class CollectionDetailEtbPage implements OnInit {
             if (data) {
               if (!data.isAvailableLocally) {
                 this.contentDetail = data;
-                // const telemetryObject = new TelemetryObject(this.cardData.identifier,  this.objType, this.cardData.pkgVersion);
-                // this.telemetryGeneratorService.generateStartTelemetry(
-                //   PageId.COLLECTION_DETAIL,
-                //   telemetryObject);
+                this.telemetryGeneratorService.generateInteractTelemetry(InteractType.OTHER,
+                  InteractSubtype.FAST_LOADING_OF_TEXTBOOK_INITIATED,
+                  Environment.HOME,
+                  PageId.COLLECTION_DETAIL,
+                  this.telemetryObject,
+                  undefined,
+                  this.objRollup,
+                  this.corRelationList);
                 this.contentService.getContentHeirarchy(option).toPromise()
                 .then((content: Content) => {
                   this.childrenData = content.children;
                   this.showSheenAnimation = false;
-                  // console.timeEnd('getContentDetails');
+                  this.toggleGroup(0, this.content);
+                  this.telemetryGeneratorService.generateInteractTelemetry(InteractType.OTHER,
+                    InteractSubtype.FAST_LOADING_OF_TEXTBOOK_FINISHED,
+                    Environment.HOME,
+                    PageId.COLLECTION_DETAIL,
+                    this.telemetryObject,
+                    undefined,
+                    this.objRollup,
+                    this.corRelationList);
                 }).catch((err) => {
                   this.showSheenAnimation = false;
                 });
@@ -804,7 +816,7 @@ export class CollectionDetailEtbPage implements OnInit {
             carouselIndex = this.childrenData.findIndex((content) => this.textbookTocService.textbookIds.rootUnitId === content.identifier);
             // carouselIndex = carouselIndex > 0 ? carouselIndex : 0;
           }
-          this.toggleGroup(carouselIndex, this.content);
+          this.toggleGroup(carouselIndex, this.content, true);
           if (this.textbookTocService.textbookIds.contentId) {
             setTimeout(() => {
               (this.stickyPillsRef.nativeElement as HTMLDivElement).classList.add('sticky');
