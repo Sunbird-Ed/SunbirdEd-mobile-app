@@ -23,7 +23,10 @@
 .popover-alert {
   --width: 100%;
 }
-
+.popover-alert.popoverPosition{
+  --width: 100%;
+  position: absolute;
+}
 .popover-alert .popover-content.sc-ion-popover-md {
   top: unset !important;
   bottom: 0;

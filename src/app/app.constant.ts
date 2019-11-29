@@ -211,6 +211,7 @@ export class PreferenceKey {
     public static readonly DEPLOYMENT_KEY = 'deployment_key';
     public static readonly COURSE_DATA_KEY = 'course_data';
     public static readonly BATCH_DETAIL_KEY = 'batch_detail';
+    public static readonly SHOW_EXTERNAL_VERIFICATION = 'show_external_verification';
 }
 
 export class GenericAppConfig {

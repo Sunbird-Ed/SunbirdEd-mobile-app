@@ -116,6 +116,7 @@ export enum PageId {
     MERGE_ACCOUNT_POPUP = 'merge-account-popup',
     DISTRICT_MAPPING = 'district-mapping',
     SIGNIN_POPUP = 'signin-popup',
+    EXTERNAL_USER_VERIFICATION_POPUP = 'external-user-verification-popup'
 }
 export enum LogType {
     NOTIFICATION = 'notification'
@@ -360,7 +361,9 @@ export enum InteractSubtype {
     AUTO_POPULATED_LOCATION = 'auto-populate-location',
     EDIT_DISTRICT_MAPPING_CLICKED = 'edit-district-mapping-clicked',
     LOGIN_CLICKED = 'login-clicked',
-    TERMS_OF_USE_CLICKED = 'terms-of-use-clicked'
+    TERMS_OF_USE_CLICKED = 'terms-of-use-clicked',
+    USER_VERIFICATION_SUCCESS = 'user-verification-success',
+    USER_VERIFICATION_FAILURE = 'user-verification-failure'
 }
 
 export enum ActionButtonType {
