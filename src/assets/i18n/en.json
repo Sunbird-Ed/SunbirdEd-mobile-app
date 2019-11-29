@@ -627,5 +627,6 @@
   "TRAINING_ENDED_START_ASSESSMENT": "The training has ended. You may take the assessment but, your progress will not be recorded.",
   "REDO_ASSESSMENT": "Redo Assessment",
   "TRAINING_ENDED_REDO_ASSESSMENT": "The training has ended. You may redo the assessment but, your progress will not be recorded.",
-  "REDO": "Redo"
+  "REDO": "Redo",
+  "QR_SHOWING_MULTIPLE_BOOK_RESULT": "Showing {{%s}} results for "
 }

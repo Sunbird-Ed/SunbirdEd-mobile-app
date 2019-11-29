@@ -488,5 +488,8 @@ export class RouterLinks {
     // routing to Term of use Web Page
     public static readonly TERM_OF_USE = '/term-of-use.html';
 
+}
 
+export class LibraryCardTypes {
+    public static readonly QRCODE_RESULT = 'qrcode_result';
 }
