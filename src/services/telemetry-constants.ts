@@ -361,8 +361,8 @@ export enum InteractSubtype {
     EDIT_DISTRICT_MAPPING_CLICKED = 'edit-district-mapping-clicked',
     LOGIN_CLICKED = 'login-clicked',
     TERMS_OF_USE_CLICKED = 'terms-of-use-clicked',
-    FAST_LOADING_OF_TEXTBOOK_INITIATED = 'fast-loading-of-textbook-initiated',
-    FAST_LOADING_OF_TEXTBOOK_FINISHED = 'fast-loading-of-textbook-finished'
+    FAST_LOADING_OF_TEXTBOOK_INITIATED = 'textbook-fast-loading-initiated',
+    FAST_LOADING_OF_TEXTBOOK_FINISHED = 'textbook-fast-loading-finished'
 }
 
 export enum ActionButtonType {
