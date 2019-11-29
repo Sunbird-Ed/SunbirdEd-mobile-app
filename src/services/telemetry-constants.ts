@@ -363,7 +363,9 @@ export enum InteractSubtype {
     LOGIN_CLICKED = 'login-clicked',
     TERMS_OF_USE_CLICKED = 'terms-of-use-clicked',
     USER_VERIFICATION_SUCCESS = 'user-verification-success',
-    USER_VERIFICATION_FAILURE = 'user-verification-failure'
+    USER_VERIFICATION_FAILURE = 'user-verification-failure',
+    FAST_LOADING_OF_TEXTBOOK_INITIATED = 'textbook-fast-loading-initiated',
+    FAST_LOADING_OF_TEXTBOOK_FINISHED = 'textbook-fast-loading-finished'
 }
 
 export enum ActionButtonType {

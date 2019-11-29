@@ -630,5 +630,6 @@
   "REDO": "Redo", 
   "TEACHER_ID_VERIFICATION" : "Teacher Id Verification",
   "SELECT_YOUR_STATE": "Select Your State",
-  "USER_IS_NOT_VERIFIED": "User is not verified"
- }
+  "USER_IS_NOT_VERIFIED": "User is not verified",
+  "QR_SHOWING_MULTIPLE_BOOK_RESULT": "Showing {{%s}} results for "
+}

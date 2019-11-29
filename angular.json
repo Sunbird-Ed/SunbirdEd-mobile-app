@@ -46,6 +46,7 @@
               "vendor": true
             },
             "styles": [
+              "node_modules/common-consumption-styles/assets/_styles.scss",
               {
                 "input": "src/global.scss"
               }
