@@ -70,8 +70,7 @@ export class TabsPage implements OnInit {
 
         this.commonUtilService.showToast(this.commonUtilService.translateMessage('WELCOME_BACK', serverProfile.firstName)); 
       }
-      this.saveExternalUser(session.userToken);
-      this.showExternalPopup(session.userToken);
+      this.saveExternalUserAndShowPopup(session.userToken);
       initTabs(this.container, LOGIN_TEACHER_TABS);
     }
 
@@ -112,8 +111,10 @@ export class TabsPage implements OnInit {
     }
   }
 
-  async saveExternalUser(userId) {
+  async saveExternalUserAndShowPopup(userId) {
     const isCustodianUser = await this.isCustodianUser$.toPromise();
+    const shouldShowVerificationPopup = await this.preferences.getBoolean(PreferenceKey.SHOW_EXTERNAL_VERIFICATION + '-' + userId)
+      .toPromise();
     console.log('this.iscustodianUser', isCustodianUser);
     if (isCustodianUser) {
       await this.profileService.getUserFeed().toPromise()
@@ -122,23 +123,7 @@ export class TabsPage implements OnInit {
           if (userFeed[0]) {
             if ((userFeed[0].category).toLowerCase() === 'orgmigrationaction') {
               await this.preferences.putBoolean(PreferenceKey.SHOW_EXTERNAL_VERIFICATION + '-' + userId, true).toPromise();
-            }
-          }
-        })
-        .catch((error) => {
-          console.log('error', error);
-        });
-    }
-  }
-  async showExternalPopup(userId) {
-    const isCustodianUser = await this.isCustodianUser$.toPromise();
-    if (isCustodianUser) {
-      await this.profileService.getUserFeed().toPromise()
-        .then(async (userFeed: UserFeed[]) => {
-          console.log('UserFeedResponse in Resources', userFeed);
-          if (userFeed[0]) {
-            if ((userFeed[0].category).toLowerCase() === 'orgmigrationaction') {
-              if (await this.preferences.getBoolean(PreferenceKey.SHOW_EXTERNAL_VERIFICATION + '-' + userId).toPromise()) {
+              if (shouldShowVerificationPopup) {
                 const popover = await this.popoverCtrl.create({
                   component: TeacherIdVerificationComponent,
                   backdropDismiss: false,
