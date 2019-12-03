@@ -216,10 +216,10 @@ export class QrcoderesultPage implements OnDestroy {
     }
   }
 
- async handleBackButton(clickSource) {
+ async handleBackButton(clickSource?) {
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,
-      clickSource,
+      clickSource || InteractSubtype.NAV_BACK_CLICKED,
       !this.appGlobalService.isOnBoardingCompleted ? Environment.ONBOARDING : Environment.HOME,
       PageId.DIAL_CODE_SCAN_RESULT);
     if (this.source === PageId.LIBRARY || this.source === PageId.COURSES || !this.isSingleContent) {
