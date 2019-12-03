@@ -212,10 +212,10 @@ export class DistrictMappingPage implements OnInit {
             await loader.dismiss();
             if (state) {
               await this.getState(state.name, state.id, state.code);
-              this.generateAutoPopulatedTelemetry();
             } else {
               this.stateName = '';
             }
+            this.generateAutoPopulatedTelemetry();
           }
         } else {
           this.districtList = '';
