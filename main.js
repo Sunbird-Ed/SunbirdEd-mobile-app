@@ -27,6 +27,9 @@ var state_list_request_body = {
   request : {
     'filters': {
       'type': 'state'
+   },
+   "sort_by": {
+       "name": "ASC"
    }
   }
 }
@@ -37,6 +40,9 @@ var district_list_request_body = function(district_id) {
       filters : {
          'type' : 'district',
          'parentId' : district_id
+          },
+          "sort_by": {
+              "name": "ASC"
           }
       }
     }
