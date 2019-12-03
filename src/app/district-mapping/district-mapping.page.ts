@@ -207,12 +207,12 @@ export class DistrictMappingPage implements OnInit {
       this.ngZone.run(async () => {
         if (locations && Object.keys(locations).length) {
           this.stateList = locations;
+          this.generateAutoPopulatedTelemetry();
           if (this.availableLocationState) {
             const state = this.stateList.find(s => s.name === this.availableLocationState);
             await loader.dismiss();
             if (state) {
               await this.getState(state.name, state.id, state.code);
-              this.generateAutoPopulatedTelemetry();
             } else {
               this.stateName = '';
             }
@@ -285,8 +285,8 @@ export class DistrictMappingPage implements OnInit {
     }
 
     this.telemetryGeneratorService.generateInteractTelemetry(
-      InteractType.TOUCH,
-      InteractSubtype.SUBMIT_CLICKED,
+      InteractType.SUBMIT_CLICKED,
+      isLocationUpdated ? InteractSubtype.WITH_CHANGE : InteractSubtype.WITHOUT_CHANGE,
       Environment.HOME,
       PageId.DISTRICT_MAPPING,
       undefined,
@@ -397,8 +397,8 @@ export class DistrictMappingPage implements OnInit {
 
   generateAutoPopulatedTelemetry() {
     this.telemetryGeneratorService.generateInteractTelemetry(
-      InteractType.OTHER,
-      InteractSubtype.AUTO_POPULATED_LOCATION,
+      InteractType.AUTO_POPULATED_LOCATION,
+      this.isAutoPopulated ? InteractSubtype.POPULATED : InteractSubtype.NOT_POPULATED,
       Environment.HOME,
       PageId.DISTRICT_MAPPING,
       undefined,
