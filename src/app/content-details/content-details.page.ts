@@ -401,6 +401,11 @@ export class ContentDetailsPage implements OnInit, OnDestroy{
     }
 
     this.content = data;
+    this.content.contentData['licenseDetails'] = {
+      name: 'CC BY 4.0',
+      description: 'Description of CC BY 4.0',
+      url: 'https://creativecommons.org/licenses/by/4.0/'
+    };
     this.contentDownloadable[this.content.identifier] = data.isAvailableLocally;
     if (this.content.lastUpdatedTime !== 0) {
       this.playOnlineSpinner = false;
