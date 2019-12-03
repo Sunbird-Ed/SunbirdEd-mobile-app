@@ -153,7 +153,9 @@ export enum ImpressionSubtype {
 export enum InteractType {
     TOUCH = 'TOUCH',
     OTHER = 'OTHER',
-    SCROLL = 'SCROLL'
+    SCROLL = 'SCROLL',
+    SUBMIT_CLICKED = 'submit-clicked',
+    AUTO_POPULATED_LOCATION = 'auto-populate-location'
 }
 
 export enum InteractSubtype {
@@ -259,6 +261,7 @@ export enum InteractSubtype {
     FINISH_CLICKED = 'finish-clicked',
     DEVICE_BACK_CLICKED = 'device-back-clicked',
     NAV_BACK_CLICKED = 'nav-back-clicked',
+    NOT_POPULATED = 'not-populated',
     SKIP_CLICKED = 'skip-clicked',
     LANGUAGE_SELECTED = 'language-selected',
     KEBAB_MENU_CLICKED = 'kebab-menu-clicked',
@@ -277,6 +280,7 @@ export enum InteractSubtype {
     DOWNLOAD_PLAY_CLICKED = 'download-play-clicked',
     DOWNLOAD_REPORT_CLICKED = 'download-report-clicked',
     PLAY_CLICKED = 'play-clicked',
+    POPULATED = 'populated',
     EXTRA_INFO = 'extra-info',
     PROFILE_ATTRIBUTE_POPULATION = 'profile-attribute-population',
     ACCEPTANCE_CHECKBOX_CLICKED = 'acceptance_checkbox_clicked',
@@ -360,7 +364,9 @@ export enum InteractSubtype {
     AUTO_POPULATED_LOCATION = 'auto-populate-location',
     EDIT_DISTRICT_MAPPING_CLICKED = 'edit-district-mapping-clicked',
     LOGIN_CLICKED = 'login-clicked',
-    TERMS_OF_USE_CLICKED = 'terms-of-use-clicked'
+    TERMS_OF_USE_CLICKED = 'terms-of-use-clicked',
+    WITH_CHANGE = 'with-change',
+    WITHOUT_CHANGE = 'without-change'
 }
 
 export enum ActionButtonType {
