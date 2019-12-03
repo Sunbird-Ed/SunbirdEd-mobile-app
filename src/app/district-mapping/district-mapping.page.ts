@@ -96,7 +96,7 @@ export class DistrictMappingPage implements OnInit {
   }
 
   async getState(name, id, code) {
-    this.ngZone.run( async () => {
+    this.ngZone.run(async () => {
       this.showStates = false;
       this.stateName = name;
       this.stateCode = code;
@@ -292,12 +292,19 @@ export class DistrictMappingPage implements OnInit {
       undefined,
       { isPopulatedLocation: this.isPopulatedLocationChanged });
 
+    let isLocationUpdated = false;
+    if (this.stateName !== this.availableLocationState ||
+      this.districtName !== this.availableLocationDistrict) {
+      isLocationUpdated = true;
+    }
+
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,
       InteractSubtype.SUBMIT_CLICKED,
       Environment.HOME,
       PageId.DISTRICT_MAPPING,
       undefined,
+      { isLocationUpdated }
     );
 
     if (this.appGlobalService.isUserLoggedIn()) {

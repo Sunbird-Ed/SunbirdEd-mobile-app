@@ -8,7 +8,7 @@
     <!-- End of the Parent Card -->
 
     <!-- Import content loader -->
-    <div *ngIf="showChildrenLoader">
+    <!-- <div *ngIf="showChildrenLoader">
       <ion-row style="padding-top: 30px;" padding>
         <ion-col text-center>
           <p *ngIf="downloadProgress !== 100">{{ 'FETCHING_CONTENTS' | translate: {'%s': downloadProgress ?
@@ -17,9 +17,16 @@
           <ion-spinner padding></ion-spinner>
         </ion-col>
       </ion-row>
-    </div>
+    </div> -->
     <!-- End import content -->
-    <div #stickyPillsRef *ngIf=" childrenData && childrenData?.length" class="collection-etb-filter">
+    <div class="m-n" *ngIf="showSheenAnimation">
+        <div class="skeleton-search-card" *ngFor="let i of [0,1,2,3,4,5,6,7,8,9,10,11,12,13]" >
+          <div style=" flex: 22 auto;">
+              <app-skeleton-item height="60px" width="100%" style="height:60px; width:100%; margin-bottom: 10px;"></app-skeleton-item>
+          </div>
+        </div>
+      </div>
+    <div #stickyPillsRef *ngIf="!showSheenAnimation && childrenData && childrenData?.length" class="collection-etb-filter">
       <div class="sb-chapter-dd" (click)="openTextbookToc()">
         <span class="pull-left">{{stckyUnitTitle || ('SELECT_CHAPTER' | translate)}}</span>
         <span class="pull-right">
@@ -47,7 +54,7 @@
     <div *ngIf="shouldPillsStick" style="height: 48px;"></div>
 
     <!-- Looping Inside Children Data Textbook -->
-    <section *ngIf="childrenData">
+    <section *ngIf="!showSheenAnimation && childrenData">
       <div *ngIf="childrenData.length && !(filteredItemsQueryList?.changes | async)?.length">
         <div class="heading">{{'NO_CONTENTS' | translate:{'%s': currentFilter } }}</div>
         <div class="sub-heading">{{'NO_CONTENTS_MESSAGE' | translate}}</div>
@@ -118,7 +125,7 @@
 </ion-content>
 
 <!-- Page footer -->
-<div class="loading-backdrop" *ngIf="showLoading && !isDownloadStarted" text-center>
+<!-- <div class="loading-backdrop" *ngIf="showLoading && !isDownloadStarted" text-center>
   <div class="backdrop-container">
     <ion-label>{{ 'LOADING_CONTENTS' | translate: {'%s': downloadProgress ? downloadProgress : 0} }}</ion-label>
     <app-pb-horizontal [progress]="downloadProgress" isOnBoardCard="false"></app-pb-horizontal>
@@ -127,7 +134,7 @@
   <div class="backdrop-footer">
     <ion-button size="small" (click)="cancelDownload()">{{ 'CANCEL' | translate }}</ion-button>
   </div>
-</div>
+</div> -->
 <app-sb-download-popup *ngIf="showDownload" (cancelDownloadEmit)="cancelDownload($event)" [currentCount]="currentCount"
   [queuedIdentifiers]="queuedIdentifiers" [downloadSize]="downloadSize"
   [collectionName]="contentDetail?.contentData?.name" [showDownload]="showDownload"></app-sb-download-popup>
