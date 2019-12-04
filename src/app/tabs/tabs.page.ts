@@ -112,14 +112,11 @@ export class TabsPage implements OnInit {
       }
     }
   }
-  async getTenantMessages() {
-   await this.formAndFrameworkUtilService.getTenantSpecificMessages();
-  }
 
 
   async saveExternalUserAndShowPopup(userId) {
     const isCustodianUser = await this.isCustodianUser$.toPromise();
-    const tenantMessages =  await this.formAndFrameworkUtilService.getTenantSpecificMessages();
+    const tenantSpecificMessages = await this.formAndFrameworkUtilService.getTenantSpecificMessages();
     if (isCustodianUser) {
       await this.profileService.getUserFeed().toPromise()
         .then(async (userFeed: UserFeed[]) => {
@@ -130,7 +127,7 @@ export class TabsPage implements OnInit {
                   component: TeacherIdVerificationComponent,
                   backdropDismiss: false,
                   cssClass: 'popover-alert popoverPosition',
-                  componentProps: {userFeed: userFeed[0], tenantMessages: tenantMessages && tenantMessages.length}
+                  componentProps: {userFeed: userFeed[0], tenantMessages: tenantSpecificMessages}
                 });
                 await popover.present();
             }
