@@ -588,7 +588,7 @@ export class ProfileSettingsPage implements OnInit {
         }
       });
     }
-    this.commonUtilService.handleToTopicBasedNotification(req).toPromise()
+    this.profileService.updateProfile(req).toPromise()
       .then(async (res: any) => {
         if (req.profileType === ProfileType.TEACHER) {
           initTabs(this.container, GUEST_TEACHER_TABS);
@@ -597,6 +597,7 @@ export class ProfileSettingsPage implements OnInit {
         }
         this.events.publish('refresh:profile');
         this.appGlobalService.guestUserProfile = res;
+        this.commonUtilService.handleToTopicBasedNotification();
         setTimeout(async () => {
           this.commonUtilService.showToast('PROFILE_UPDATE_SUCCESS');
           if (await this.commonUtilService.isDeviceLocationAvailable()) {
