@@ -20,7 +20,6 @@ import { InteractType, InteractSubtype, PageId, Environment } from '@app/service
 import { SbGenericPopoverComponent } from '@app/app/components/popups/sb-generic-popover/sb-generic-popover.component';
 import { QRAlertCallBack, QRScannerAlert } from '@app/app/qrscanner-alert/qrscanner-alert.page';
 import { mapTo } from 'rxjs/operators/mapTo';
-import { AppGlobalService } from '@app/services/app-global-service.service';
 
 declare const FCMPlugin;
 export interface NetworkInfo {
@@ -448,14 +447,10 @@ export class CommonUtilService implements OnDestroy {
     }
 
     handleToTopicBasedNotification() {
-        // const profile = this.appGlobalService.getCurrentUser();
         this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise()
             .then(async (response: Profile) => {
                 const profile = response;
                 const subscribeTopic = [];
-                const unsubscribeTopic = [];
-                // const currentTopic = [];
-                // res['grade'] = (profile.grade);
                 subscribeTopic.push(profile.board[0]);
                 profile.medium.map(m => subscribeTopic.push(m));
                 await this.preferences.getString(PreferenceKey.DEVICE_LOCATION).subscribe((data) => {
@@ -471,11 +466,6 @@ export class CommonUtilService implements OnDestroy {
                     await new Promise<undefined>((resolve, reject) => {
                         FCMPlugin.subscribeToTopic(subscribeTopic.join(','), resolve, reject);
                     });
-                    // console.log('ghhghhghh', previuslySubscribeTopics);
-                    // unsubscribeTopic.push(previuslySubscribeTopics.board[0]);
-                    // previuslySubscribeTopics.medium.map(m => unsubscribeTopic.push(m));
-                    // unsubscribeTopic.push(previuslySubscribeTopics.location.state);
-                    // unsubscribeTopic.push(previuslySubscribeTopics.location.district);
                 });
                 await this.preferences.putString(PreferenceKey.CURRENT_USER_PROFILE, JSON.stringify(profile)).toPromise();
                 await this.preferences.putString(PreferenceKey.SUBSCRIBE_TOPICS, JSON.stringify(subscribeTopic)).toPromise();
