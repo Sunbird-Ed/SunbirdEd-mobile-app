@@ -27,6 +27,9 @@ var state_list_request_body = {
   request : {
     'filters': {
       'type': 'state'
+   },
+   "sort_by": {
+       "name": "ASC"
    }
   }
 }
@@ -37,6 +40,9 @@ var district_list_request_body = function(district_id) {
       filters : {
          'type' : 'district',
          'parentId' : district_id
+          },
+          "sort_by": {
+              "name": "ASC"
           }
       }
     }
@@ -100,7 +106,7 @@ function getDistrictList(res,apiKey, baseUrl, apiSearch, strFileDirectory) {
 function getCustodianId(apiKey, apiChannel, baseUrl, res, apiSystemSettingId, strFileDirectory,apiFramework) {
 
   var data = JSON.parse(res).result.response;
-  frameworkUrlParameter = '?categories=board,gradeLevel,subject,medium,to[oc,purpose';
+  frameworkUrlParameter = '?categories=board,gradeLevel,subject,medium,topic,purpose';
 
   for (var i = 0; i < data.length; i++) {
     var json = data[i];
@@ -193,6 +199,7 @@ function saveResponse(response, dirName, preFixOfFileName, fileName) {
   var strFileName = dirName + '/' +
     preFixOfFileName + fileName + '.json';
   console.log("File Name "+strFileName+" Saved")
+
   fs.writeFile(strFileName, response, (err) => {
     if (err) {
       console.error(err);
@@ -242,30 +249,26 @@ function makeApiCall(apiKey, baseUrl, requestType, url, callback) {
     }
   };
 
-  var req = https.request(options, (res) => {
+  var req = https.request(options, function(res) {
     res.setEncoding('utf8');
-
-    res.on('data', (chunk) => {
-      console.log('status code ==', res.statusCode);
+    var body = '';
+    res.on('data', function(chunk) {
+      body += chunk;
+    });
+    res.on('end', function() {
       if (res.statusCode == 200) {
         //var data = JSON.parse(chunk).result;
         console.log('API called--------', url);
-        return callback(chunk);
+        return callback(body);
       } else {
         console.log('API failed--------', options.hostname + url);
       }
-      res.on('end', () => {
-      });
-
-      return callback(0);
-
     });
+  });
 
-    req.on('error', (e) => {
 
-      console.error(`problem with request: ${e.message}`);
-    });
-
+  req.on('error', function(e) {
+    console.error('problem with request: ' + e.message);
   });
 
   req.end();
