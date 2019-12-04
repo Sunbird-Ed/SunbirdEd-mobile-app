@@ -116,7 +116,8 @@ export enum PageId {
     MERGE_ACCOUNT_POPUP = 'merge-account-popup',
     DISTRICT_MAPPING = 'district-mapping',
     SIGNIN_POPUP = 'signin-popup',
-    EXTERNAL_USER_VERIFICATION_POPUP = 'external-user-verification-popup'
+    EXTERNAL_USER_VERIFICATION_POPUP = 'external-user-verification-popup',
+    FAQ_REPORT_ISSUE = 'faq-report-issue'
 }
 export enum LogType {
     NOTIFICATION = 'notification'
@@ -365,7 +366,8 @@ export enum InteractSubtype {
     USER_VERIFICATION_SUCCESS = 'user-verification-success',
     USER_VERIFICATION_FAILURE = 'user-verification-failure',
     FAST_LOADING_OF_TEXTBOOK_INITIATED = 'textbook-fast-loading-initiated',
-    FAST_LOADING_OF_TEXTBOOK_FINISHED = 'textbook-fast-loading-finished'
+    FAST_LOADING_OF_TEXTBOOK_FINISHED = 'textbook-fast-loading-finished',
+    REPORT_ISSUE_CLICKED = 'report-issue-clicked'
 }
 
 export enum ActionButtonType {
