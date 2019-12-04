@@ -41,6 +41,7 @@ export class TeacherIdVerificationComponent implements OnInit {
   userFeed: any;
   count = 0;
   teacherModelId: string;
+  tenantMessages: any;
 
   constructor(
     private popOverCtrl: PopoverController,
@@ -49,9 +50,11 @@ export class TeacherIdVerificationComponent implements OnInit {
     private commonUtilService: CommonUtilService,
     @Inject('PROFILE_SERVICE') private profileService: ProfileService) {
     if (this.navParams.data) {
-      this.userFeed = this.navParams.data;
+      this.userFeed = this.navParams.data.userFeed;
       this.stateList = this.userFeed.data.prospectChannels;
+      this.tenantMessages = this.navParams.data.tenantMessages;
     }
+
   }
 
   ngOnInit() {

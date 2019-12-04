@@ -9,6 +9,7 @@ import { ProfileConstants, PreferenceKey } from '@app/app/app.constant';
 import { CommonUtilService } from '@app/services/common-util.service';
 import { Observable } from 'rxjs';
 import { TeacherIdVerificationComponent } from '../components/popups/teacher-id-verification-popup/teacher-id-verification-popup.component';
+import { FormAndFrameworkUtilService } from '@app/services/formandframeworkutil.service';
 @Component({
   selector: 'app-tabs',
   templateUrl: './tabs.page.html',
@@ -39,7 +40,8 @@ export class TabsPage implements OnInit {
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     private commonUtilService: CommonUtilService,
     private zone: NgZone,
-    private popoverCtrl: PopoverController
+    private popoverCtrl: PopoverController,
+    private formAndFrameworkUtilService: FormAndFrameworkUtilService
   ) {
     this.isCustodianUser$ = this.profileService.isDefaultChannelProfile()
       .map((isDefaultChannelProfile) => isDefaultChannelProfile) as any;
@@ -110,28 +112,27 @@ export class TabsPage implements OnInit {
       }
     }
   }
+  async getTenantMessages() {
+   await this.formAndFrameworkUtilService.getTenantSpecificMessages();
+  }
+
 
   async saveExternalUserAndShowPopup(userId) {
     const isCustodianUser = await this.isCustodianUser$.toPromise();
-    const shouldShowVerificationPopup = await this.preferences.getBoolean(PreferenceKey.SHOW_EXTERNAL_VERIFICATION + '-' + userId)
-      .toPromise();
-    console.log('this.iscustodianUser', isCustodianUser);
+    const tenantMessages =  await this.formAndFrameworkUtilService.getTenantSpecificMessages();
     if (isCustodianUser) {
       await this.profileService.getUserFeed().toPromise()
         .then(async (userFeed: UserFeed[]) => {
           console.log('UserFeedResponse in Resources', userFeed);
           if (userFeed[0]) {
             if ((userFeed[0].category).toLowerCase() === 'orgmigrationaction') {
-              await this.preferences.putBoolean(PreferenceKey.SHOW_EXTERNAL_VERIFICATION + '-' + userId, true).toPromise();
-              if (shouldShowVerificationPopup) {
                 const popover = await this.popoverCtrl.create({
                   component: TeacherIdVerificationComponent,
                   backdropDismiss: false,
                   cssClass: 'popover-alert popoverPosition',
-                  componentProps: userFeed[0]
+                  componentProps: {userFeed: userFeed[0], tenantMessages: tenantMessages && tenantMessages.length}
                 });
                 await popover.present();
-              }
             }
           }
         })
