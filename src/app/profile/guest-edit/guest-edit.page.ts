@@ -446,17 +446,17 @@ export class GuestEditPage implements OnInit {
     const newAttribute: any = {};
     switch (index) {
       case 0:
+        if (showLoader) {
+          this._dismissLoader();
+          this.loader = await this.commonUtilService.getLoader();
+          await this.loader.present();
+        }
         this.guestEditForm.patchValue({
           boards: [],
           grades: [],
           subjects: [],
           medium: []
         });
-        if (showLoader) {
-          this._dismissLoader();
-          this.loader = await this.commonUtilService.getLoader();
-          await this.loader.present();
-        }
         this.checkPrevValue(1, 'boardList', [this.guestEditForm.value.syllabus]);
         break;
 
