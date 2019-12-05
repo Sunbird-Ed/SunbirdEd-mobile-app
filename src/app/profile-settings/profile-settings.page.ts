@@ -410,10 +410,6 @@ export class ProfileSettingsPage implements OnInit {
           grades: [],
           medium: []
         });
-        if (showLoader) {
-          this.loader = await this.commonUtilService.getLoader();
-          this.loader.present();
-        }
         oldAttribute.board = this.profileForTelemetry.board && this.profileForTelemetry.board.length ? this.profileForTelemetry.board : '';
         newAttribute.board = this.userForm.value.syllabus ? this.userForm.value.syllabus : '';
         if (!isEqual(oldAttribute, newAttribute)) {
