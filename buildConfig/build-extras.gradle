@@ -179,6 +179,42 @@ android {
         }
     }
 
+    task copyStagingSSLConfig(type: Copy,overwrite: true) {
+        if (System.properties['os.name'].toLowerCase().contains('windows')){
+            from "$rootDir\\app\\data\\SSLCertificates\\staging"
+            into "$rootDir\\app\\src\\main\\assets\\www\\certificates"
+            println "inside copydir staging SSLCertificates windows OS"
+        } else {
+            from "$rootDir/app/data/SSLCertificates/staging"
+            into "$rootDir/app/src/main/assets/www/certificates"
+            println "inside copydir staging SSLCertificates linux OS"
+        }
+    }
+
+    task copyProdSSLConfig(type: Copy,overwrite: true) {
+        if (System.properties['os.name'].toLowerCase().contains('windows')){
+            from "$rootDir\\app\\data\\SSLCertificates\\prod"
+            into "$rootDir\\app\\src\\main\\assets\\www\\certificates"
+            println "inside copydir prod SSLCertificates windows OS"
+        } else {
+            from "$rootDir/app/data/SSLCertificates/prod"
+            into "$rootDir/app/src/main/assets/www/certificates"
+            println "inside copydir prod SSLCertificates linux OS"
+        }
+    }
+
+    task copyDevSSLConfig(type: Copy,overwrite: true) {
+        if (System.properties['os.name'].toLowerCase().contains('windows')){
+            from "$rootDir\\app\\data\\SSLCertificates\\dev"
+            into "$rootDir\\app\\src\\main\\assets\\www\\certificates"
+            println "inside copydir dev SSLCertificates windows OS"
+        } else {
+            from "$rootDir/app/data/SSLCertificates/dev"
+            into "$rootDir/app/src/main/assets/www/certificates"
+            println "inside copydir dev SSLCertificates linux OS"
+        }
+    }
+
     task copyDirNotificationConfig(type: Copy,overwrite: true) {
         if (System.properties['os.name'].toLowerCase().contains('windows')){
             from "$rootDir\\app\\data\\notificationconfig"
@@ -228,13 +264,13 @@ android {
     }
 
     task dev(type: GradleBuild) {
-        tasks = ['myclean', 'copyDirDev', 'copyDirNotificationConfig']
+        tasks = ['myclean', 'copyDirDev', 'copyDirNotificationConfig', 'copyDevSSLConfig']
     }      
     task staging(type: GradleBuild) {
-        tasks = ['myclean', 'copyDirStaging', 'copyDirNotificationConfig']
+        tasks = ['myclean', 'copyDirStaging', 'copyDirNotificationConfig', 'copyStagingSSLConfig']
     }
     task prod(type: GradleBuild) {
-        tasks = ['myclean', 'copyDirProd', 'copyDirNotificationConfig']
+        tasks = ['myclean', 'copyDirProd', 'copyDirNotificationConfig', 'copyProdSSLConfig']
     }
 
     applicationVariants.all { variant ->
