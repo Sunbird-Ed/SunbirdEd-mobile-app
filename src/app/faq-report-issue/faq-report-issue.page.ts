@@ -11,7 +11,7 @@ import {
   ContentRequest,
   SharedPreferences
 } from 'sunbird-sdk';
-import { Environment, InteractType, PageId } from '@app/services/telemetry-constants';
+import { Environment, InteractType, PageId, ImpressionType } from '@app/services/telemetry-constants';
 import { AppGlobalService } from '@app/services/app-global-service.service';
 import { CommonUtilService } from '@app/services/common-util.service';
 import { SocialSharing } from '@ionic-native/social-sharing/ngx';
@@ -66,6 +66,11 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
       this.receiveMessage(event);
     };
     window.addEventListener('message', this.messageListener, false);
+    this.telemetryGeneratorService.generateImpressionTelemetry(
+      ImpressionType.VIEW,
+      '',
+      PageId.FAQ_REPORT_ISSUE,
+      Environment.USER);
   }
   ngOnDestroy() {
     window.removeEventListener('message', this.messageListener);
@@ -129,7 +134,7 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH, interactSubtype,
       Environment.USER,
-      PageId.FAQ, undefined,
+      PageId.FAQ_REPORT_ISSUE, undefined,
       values
     );
   }
