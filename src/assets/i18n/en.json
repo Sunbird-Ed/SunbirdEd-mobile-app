@@ -297,6 +297,7 @@
   "LEAVE_TRAINING_HEADING": "Leave the Training?",
   "LIBRARY_BNAV": "Library",
   "LICENSE": "License terms",
+  "MULTIPLE_LICENSE":"License terms {{%s}}",
   "LOADING_CONTENT": "Loading content",
   "LOADING_CONTENTS": "Loading content {{%s}} %",
   "LOADING_USER_LIST": "Loading user list, please wait",
