@@ -6,7 +6,7 @@ import { CommonUtilService } from '@app/services/common-util.service';
 import { AppGlobalService, } from '@app/services/app-global-service.service';
 import { AppHeaderService, } from '@app/services/app-header.service';
 import { FormAndFrameworkUtilService, } from '@app/services/formandframeworkutil.service';
-import { Environment, InteractType, PageId, InteractSubtype } from '@app/services/telemetry-constants';
+import { Environment, InteractType, PageId, InteractSubtype, ImpressionType } from '@app/services/telemetry-constants';
 import {
   ProfileService,
   ContentService,
@@ -97,6 +97,11 @@ export class FaqHelpPage implements OnInit {
     window.addEventListener('message', this.messageListener, false);
     this.getSelectedLanguage();
     this.getDataFromUrl();
+    this.telemetryGeneratorService.generateImpressionTelemetry(
+      ImpressionType.VIEW,
+      '',
+      PageId.FAQ,
+      Environment.USER);
   }
 
   receiveMessage(event) {
@@ -309,6 +314,12 @@ export class FaqHelpPage implements OnInit {
   }
 
   navigateToReportIssue() {
+    this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
+      InteractSubtype.REPORT_ISSUE_CLICKED,
+      Environment.USER,
+      PageId.FAQ,
+      undefined,
+      undefined);
     this.router.navigate([RouterLinks.FAQ_REPORT_ISSUE], {
       state: {
         data: this.data
