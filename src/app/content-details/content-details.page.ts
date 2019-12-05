@@ -70,7 +70,7 @@ import { ContentUtil } from '@app/util/content-util';
   styleUrls: ['./content-details.page.scss'],
   encapsulation: ViewEncapsulation.None
 })
-export class ContentDetailsPage implements OnInit, OnDestroy{
+export class ContentDetailsPage implements OnInit, OnDestroy {
   appName: any;
   isCourse = false;
   apiLevel: number;
@@ -617,6 +617,11 @@ export class ContentDetailsPage implements OnInit, OnDestroy{
         }
         this.commonUtilService.showToast('SOMETHING_WENT_WRONG');
       });
+  }
+
+  openinBrowser(url) {
+    const options = 'hardwareback=yes,clearcache=no,zoom=no,toolbar=yes,disallowoverscroll=yes';
+    (window as any).cordova.InAppBrowser.open(url, '_blank', options);
   }
 
   /**
