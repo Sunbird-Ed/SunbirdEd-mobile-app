@@ -49,6 +49,12 @@ export class PlayerPage implements OnInit, PlayerActionHandlerDelegate {
   }
 
   ngOnInit() {
+    this.platform.pause.subscribe(() => {
+      var iframes = window.document.getElementsByTagName('iframe');
+      if (iframes.length > 0) {
+        iframes[0].contentWindow.postMessage('pause.youtube', '*');
+      }
+    });
   }
   ionViewWillEnter() {
     this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
