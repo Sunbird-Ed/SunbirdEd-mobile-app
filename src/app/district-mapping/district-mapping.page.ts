@@ -17,8 +17,10 @@ import {
   ImpressionType,
   InteractSubtype,
   InteractType,
-  PageId
+  PageId,
+  ID
 } from '@app/services/telemetry-constants';
+import { featureIdMap } from '@app/feature-id-map';
 @Component({
   selector: 'app-district-mapping',
   templateUrl: './district-mapping.page.html',
@@ -269,20 +271,38 @@ export class DistrictMappingPage implements OnInit {
     });
   }
 
+  async stateDistrictChanged() {
+    if (this.availableLocationState !== this.stateName && this.availableLocationDistrict === this.districtName) {
+      return InteractSubtype.STATE_CHANGED;
+    } else if (this.availableLocationDistrict !== this.districtName && this.availableLocationState === this.stateName) {
+      return InteractSubtype.DIST_CHANGED;
+    } else if (this.availableLocationState !== this.stateName && this.availableLocationDistrict !== this.districtName) {
+      return InteractSubtype.STATE_DIST_CHANGED;
+    } else {
+        return '';
+    }
+    }
+
   async submit() {
-    this.telemetryGeneratorService.generateInteractTelemetry(
-      InteractType.OTHER,
-      InteractSubtype.AUTO_POPULATED_LOCATION,
-      Environment.HOME,
-      PageId.DISTRICT_MAPPING,
-      undefined,
-      { isPopulatedLocation: this.isPopulatedLocationChanged });
 
     let isLocationUpdated = false;
     if (this.stateName !== this.availableLocationState ||
       this.districtName !== this.availableLocationDistrict) {
       isLocationUpdated = true;
     }
+
+    this.telemetryGeneratorService.generateInteractTelemetry(
+      isLocationUpdated ?  InteractType.LOCATION_CHANGED : InteractType.LOCATION_UNCHANGED,
+      await this.stateDistrictChanged(),
+      Environment.HOME,
+      PageId.DISTRICT_MAPPING,
+      undefined,
+      { isPopulatedLocation: this.isPopulatedLocationChanged },
+      undefined,
+      undefined,
+      ID.SUBMIT_CLICKED,
+      featureIdMap.location.LOCATION_CAPTURE
+      );
 
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,

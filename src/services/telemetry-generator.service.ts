@@ -24,7 +24,7 @@ export class TelemetryGeneratorService {
     }
 
     generateInteractTelemetry(interactType, interactSubtype, env, pageId, object?: TelemetryObject, values?: Map,
-                              rollup?: Rollup, corRelationList?: Array<CorrelationData>, id?: string) {
+                              rollup?: Rollup, corRelationList?: Array<CorrelationData>, id?: string , featureIdMap?: object) {
         const telemetryInteractRequest = new TelemetryInteractRequest();
         telemetryInteractRequest.type = interactType;
         telemetryInteractRequest.subType = interactSubtype;
