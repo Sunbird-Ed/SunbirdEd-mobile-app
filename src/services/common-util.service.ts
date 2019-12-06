@@ -458,11 +458,15 @@ export class CommonUtilService implements OnDestroy {
                     subscribeTopic.push(JSON.parse(data).district);
                 });
 
-                await this.preferences.getString(PreferenceKey.SUBSCRIBE_TOPICS).subscribe(async (data) => {
+                await this.preferences.getString(PreferenceKey.SUBSCRIBE_TOPICS).toPromise().then(async (data) => {
                     const previuslySubscribeTopics = JSON.parse(data);
                     await new Promise<undefined>((resolve, reject) => {
                         FCMPlugin.unsubscribeFromTopic(previuslySubscribeTopics.join(','), resolve, reject);
                     });
+                    await new Promise<undefined>((resolve, reject) => {
+                        FCMPlugin.subscribeToTopic(subscribeTopic.join(','), resolve, reject);
+                    });
+                }).catch(async (err) => {
                     await new Promise<undefined>((resolve, reject) => {
                         FCMPlugin.subscribeToTopic(subscribeTopic.join(','), resolve, reject);
                     });

@@ -593,7 +593,7 @@ export class ProfileSettingsPage implements OnInit {
         }
         this.events.publish('refresh:profile');
         this.appGlobalService.guestUserProfile = res;
-        this.commonUtilService.handleToTopicBasedNotification();
+        await this.commonUtilService.handleToTopicBasedNotification();
         setTimeout(async () => {
           this.commonUtilService.showToast('PROFILE_UPDATE_SUCCESS');
           if (await this.commonUtilService.isDeviceLocationAvailable()) {
