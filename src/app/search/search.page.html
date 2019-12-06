@@ -116,8 +116,8 @@
             <!-- Card style -->
             <div class="sb-card-container sb-card-textbook-container">
               <div class="sb-card"
-                *ngFor="let content of resultlist.dialCodeContentResult; let i = index; let last = last"
-                (click)="openContent(undefined, content,index)">
+                *ngFor="let content of resultlist.dialCodeContentResult; let last = last"
+                (click)="openContent(undefined, content)">
                 <div class="img-container" style="display: flex;
                   justify-content: center;
                   flex-direction: column;
@@ -150,7 +150,7 @@
           <div no-margin *ngFor="let result of resultlist.dialCodeResult" no-padding>
 
             <div *ngIf="result && result.content && result.content.length">
-              <div no-padding *ngFor="let content of result.content let i = index; let last = last"
+              <div no-padding *ngFor="let content of result.content; let last = last"
                 class="content-list">
                 <sb-library-card [content]="result" [type]="LibraryCardTypes.QRCODE_RESULT" (click)="openContent(result, content);" [cardImg]="result?.appIcon || defaultAppIcon" [moreInfoLabel]="'Section'" [section]="content.name">
                   </sb-library-card>
@@ -162,9 +162,9 @@
 
           <!-- Content List -->
           <div no-lines *ngIf="resultlist.dialCodeContentResult && resultlist.dialCodeContentResult.length">
-            <div *ngFor="let content of resultlist.dialCodeContentResult; let i = index; let last = last"
+            <div *ngFor="let content of resultlist.dialCodeContentResult; let last = last"
               class="content-list">
-              <sb-library-card [content]="content" [type]="LibraryCardTypes.QRCODE_RESULT" (click)="openContent(undefined, content);" [cardImg]="content?.appIcon || defaultAppIcon" [moreInfoLabel]="'Section'">
+              <sb-library-card [content]="content" [type]="LibraryCardTypes.QRCODE_RESULT" (click)="openContent(content, content);" [cardImg]="content?.appIcon || defaultAppIcon" [moreInfoLabel]="'Section'">
                 </sb-library-card>
 
               <div *ngIf="!last" class="inner-divider"></div>
