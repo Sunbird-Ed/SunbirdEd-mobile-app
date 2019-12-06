@@ -46,9 +46,10 @@ export class LogoutHandlerService {
         if (!guest_user_id) {
           await this.preferences.putString(PreferenceKey.SELECTED_USER_TYPE, ProfileType.TEACHER).toPromise();
         }
+
+        splashscreen.clearPrefs();
       })
       .mergeMap((guest_user_id: string) => this.profileService.setActiveSessionForProfile(guest_user_id))
-      .mergeMap(() => Observable.defer(() => Observable.of((<any>window).splashscreen.clearPrefs())))
       .mergeMap(() => this.authService.resignSession())
       .do(async () => {
         await this.navigateToAptPage();
