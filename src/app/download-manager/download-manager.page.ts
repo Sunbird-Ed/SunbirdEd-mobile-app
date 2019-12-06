@@ -355,7 +355,7 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
   }
 
   async closeSelectAllPopup() {
-    if (this.downloadsTab.deleteAllConfirm) {
+    if (this.downloadsTab && this.downloadsTab.deleteAllConfirm) {
       await this.downloadsTab.deleteAllConfirm.dismiss();
       this.downloadsTab.unSelectAllContents();
     }

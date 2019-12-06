@@ -580,4 +580,25 @@ export class FormAndFrameworkUtilService {
                 });
         });
     }
+
+    async getTenantSpecificMessages(rootOrgId) {
+        return new Promise((resolve, reject) => {
+            const req: FormRequest = {
+                type: 'user',
+                subType: 'externalIdVerification',
+                action: 'onboarding',
+                rootOrgId
+            };
+            this.formService.getForm(req).toPromise()
+                .then((res: any) => {
+                    const data = res.form.data.fields;
+                    if (data && data.length) {
+                        resolve(data);
+                    }
+                }).catch((error: any) => {
+                    reject(error);
+                    console.error('error while fetching dial code reg ex ' , error);
+                });
+        });
+    }
 }

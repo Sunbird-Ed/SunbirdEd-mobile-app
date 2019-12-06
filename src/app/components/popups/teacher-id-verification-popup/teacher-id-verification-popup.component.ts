@@ -4,13 +4,15 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ProfileService, UserFeed, UserMigrateRequest, HttpClientError } from 'sunbird-sdk';
 import { CommonUtilService } from '@app/services/common-util.service';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
+import { featureIdMap } from '@app/feature-id-map';
 import {
   Environment,
   ImpressionSubtype,
   ImpressionType,
   InteractSubtype,
   InteractType,
-  PageId
+  PageId,
+  ID
 } from '@app/services/telemetry-constants';
 import { map } from 'rxjs-compat/operator/map';
 
@@ -41,6 +43,7 @@ export class TeacherIdVerificationComponent implements OnInit {
   userFeed: any;
   count = 0;
   teacherModelId: string;
+  tenantMessages: any;
 
   constructor(
     private popOverCtrl: PopoverController,
@@ -49,8 +52,9 @@ export class TeacherIdVerificationComponent implements OnInit {
     private commonUtilService: CommonUtilService,
     @Inject('PROFILE_SERVICE') private profileService: ProfileService) {
     if (this.navParams.data) {
-      this.userFeed = this.navParams.data;
+      this.userFeed = this.navParams.data.userFeed;
       this.stateList = this.userFeed.data.prospectChannels;
+      this.tenantMessages = this.navParams.data.tenantMessages;
     }
   }
 
@@ -60,7 +64,7 @@ export class TeacherIdVerificationComponent implements OnInit {
       ImpressionType.VIEW,
       '',
       PageId.EXTERNAL_USER_VERIFICATION_POPUP,
-      Environment.HOME);
+      Environment.HOME, '', '', '', undefined, featureIdMap.userVerification.EXTERNAL_USER_VERIFICATION);
   }
 
   async closePopup() {
@@ -71,9 +75,9 @@ export class TeacherIdVerificationComponent implements OnInit {
   teacherConfirmation(flag: boolean) {
     if (flag) {
       this.initializeFormFields();
-      this.generateTelemetryForYesAndNo(InteractSubtype.YES_CLICKED);
+      this.generateTelemetryForYesAndNo(ID.USER_VERIFICATION_CONFIRMED);
     } else {
-      this.generateTelemetryForYesAndNo(InteractSubtype.NO_CLICKED);
+      this.generateTelemetryForYesAndNo(ID.USER_VERIFICATION_REJECTED);
       const req: UserMigrateRequest = {
         userId: this.userFeed.userId,
         action: 'reject'
@@ -106,11 +110,14 @@ export class TeacherIdVerificationComponent implements OnInit {
     // this.disableButton = true;
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,
-      InteractSubtype.SUBMIT_CLICKED,
+      '',
       Environment.HOME,
       PageId.EXTERNAL_USER_VERIFICATION_POPUP,
       undefined,
-      undefined
+      undefined,
+      undefined,
+      featureIdMap.userVerification.EXTERNAL_USER_VERIFICATION,
+      ID.USER_VERIFICATION_SUBMITED
     );
     if (this.teacherIdForm.value.teacherId) {
       const req: UserMigrateRequest = {
@@ -137,11 +144,14 @@ export class TeacherIdVerificationComponent implements OnInit {
           this.teacherIdFlag = TeacherIdPopupFlags.VERIFIED_STATE_ID;
           this.telemetryGeneratorService.generateInteractTelemetry(
             InteractType.OTHER,
-            InteractSubtype.USER_VERIFICATION_SUCCESS,
-            Environment.HOME,
+            '',
+            Environment.USER,
             PageId.EXTERNAL_USER_VERIFICATION_POPUP,
             undefined,
-            undefined
+            undefined,
+            undefined,
+            featureIdMap.userVerification.EXTERNAL_USER_VERIFICATION,
+            ID.USER_VERIFICATION_SUCCESS
           );
         }
       })
@@ -180,27 +190,35 @@ export class TeacherIdVerificationComponent implements OnInit {
       Environment.HOME,
       PageId.EXTERNAL_USER_VERIFICATION_POPUP,
       undefined,
-      undefined
+      undefined,
+      undefined,
+      featureIdMap.userVerification.EXTERNAL_USER_VERIFICATION,
      );
   }
   generateTelemetryForFailedVerification() {
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.OTHER,
-      InteractSubtype.USER_VERIFICATION_SUCCESS,
+      '',
       Environment.HOME,
       PageId.EXTERNAL_USER_VERIFICATION_POPUP,
       undefined,
-      undefined
+      undefined,
+      undefined,
+      featureIdMap.userVerification.EXTERNAL_USER_VERIFICATION,
+      ID.USER_VERIFICATION_FAILED
     );
   }
-  generateTelemetryForYesAndNo(subinteractType) {
+  generateTelemetryForYesAndNo(id) {
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,
-      subinteractType,
+      '',
       Environment.HOME,
       PageId.EXTERNAL_USER_VERIFICATION_POPUP,
       undefined,
-      undefined
+      undefined,
+      undefined,
+      featureIdMap.userVerification.EXTERNAL_USER_VERIFICATION,
+      id
     );
   }
   async cancelPopup(message) {
@@ -212,7 +230,9 @@ export class TeacherIdVerificationComponent implements OnInit {
       Environment.HOME,
       PageId.EXTERNAL_USER_VERIFICATION_POPUP,
       undefined,
-      reason
+      reason,
+      undefined,
+      featureIdMap.userVerification.EXTERNAL_USER_VERIFICATION,
      );
     await this.popOverCtrl.dismiss();
   }

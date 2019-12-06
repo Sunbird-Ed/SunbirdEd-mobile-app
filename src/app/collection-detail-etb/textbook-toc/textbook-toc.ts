@@ -80,7 +80,7 @@ export class TextBookTocPage implements OnInit, OnDestroy {
         this.headerService.showHeaderWithBackButton();
         this.backButtonFunc = this.platform.backButton.subscribeWithPriority(11, () => {
             // this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.COLLECTION_DETAIL, Environment.HOME, false);
-            this.handleBackButton();
+            this.handleBackButton(false);
             this.backButtonFunc();
         });
         this.textbookTocService.setTextbookIds({ contentId: undefined, rootUnitId: undefined });
@@ -93,16 +93,15 @@ export class TextBookTocPage implements OnInit, OnDestroy {
         }
     }
 
-    handleBackButton() {
-        // this.navCtrl.pop();
+    handleBackButton(isNavBack: boolean) {
+        this.telemetryService.generateBackClickedTelemetry(PageId.TEXTBOOK_TOC, Environment.HOME, isNavBack);
         this.location.back();
     }
 
     handleHeaderEvents($event) {
         switch ($event.name) {
             case 'back':
-                // this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.COLLECTION_DETAIL, Environment.HOME, true);
-                this.handleBackButton();
+                this.handleBackButton(true);
                 break;
         }
     }
