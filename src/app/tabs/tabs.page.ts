@@ -64,7 +64,6 @@ export class TabsPage implements OnInit {
 
         this.commonUtilService.showToast(this.commonUtilService.translateMessage('WELCOME_BACK', serverProfile.firstName));
       }
-      this.externalIdVerificationService.showExternalIdVerificationPopup();
       initTabs(this.container, LOGIN_TEACHER_TABS);
     }
 
