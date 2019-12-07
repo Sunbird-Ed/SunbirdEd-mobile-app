@@ -2,7 +2,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { CanvasPlayerService } from '@app/services/canvas-player.service';
 import { AppGlobalService } from '@app/services/app-global-service.service';
 import { CommonUtilService } from '@app/services/common-util.service';
-import { Component, OnInit, ViewChild, ElementRef, Inject } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, Inject, OnDestroy } from '@angular/core';
 import { Platform, AlertController, Events } from '@ionic/angular';
 import { ScreenOrientation } from '@ionic-native/screen-orientation/ngx';
 import { PlayerActionHandlerDelegate, HierarchyInfo, User } from './player-action-handler-delegate';
@@ -16,11 +16,13 @@ import { CourseService, Course } from 'sunbird-sdk';
   selector: 'app-player',
   templateUrl: './player.page.html'
 })
-export class PlayerPage implements OnInit, PlayerActionHandlerDelegate {
+export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegate {
 
   config = {};
   backButtonSubscription: Subscription;
   course: Course;
+  pauseSubscription: any;
+
   @ViewChild('preview') previewElement: ElementRef;
   constructor(
     @Inject('COURSE_SERVICE') private courseService: CourseService,
@@ -49,6 +51,12 @@ export class PlayerPage implements OnInit, PlayerActionHandlerDelegate {
   }
 
   ngOnInit() {
+    this.pauseSubscription =  this.platform.pause.subscribe(() => {
+      var iframes = window.document.getElementsByTagName('iframe');
+      if (iframes.length > 0) {
+        iframes[0].contentWindow.postMessage('pause.youtube', '*');
+      }
+    });
   }
   ionViewWillEnter() {
     this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
@@ -108,6 +116,13 @@ export class PlayerPage implements OnInit, PlayerActionHandlerDelegate {
       this.backButtonSubscription.unsubscribe();
     }
     window.removeEventListener('renderer:question:submitscore', () => {});
+  }
+
+  ngOnDestroy() {
+    if (this.pauseSubscription) {
+      this.pauseSubscription.unsubscribe();
+    }
+
   }
 
   /**
