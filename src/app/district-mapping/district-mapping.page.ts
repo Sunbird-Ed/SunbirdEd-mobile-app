@@ -13,12 +13,12 @@ import { Platform } from '@ionic/angular';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import {
   Environment,
-  ImpressionSubtype,
   ImpressionType,
   InteractSubtype,
   InteractType,
   PageId
 } from '@app/services/telemetry-constants';
+import { ExternalIdVerificationService } from '@app/services/externalid-verification.service';
 @Component({
   selector: 'app-district-mapping',
   templateUrl: './district-mapping.page.html',
@@ -62,7 +62,8 @@ export class DistrictMappingPage implements OnInit {
     public platform: Platform,
     public telemetryGeneratorService: TelemetryGeneratorService,
     private changeDetectionRef: ChangeDetectorRef,
-    private ngZone: NgZone
+    private ngZone: NgZone,
+    private externalIdVerificationService: ExternalIdVerificationService
   ) {
     if (this.router.getCurrentNavigation().extras.state) {
       this.profile = this.router.getCurrentNavigation().extras.state.profile;
@@ -322,6 +323,7 @@ export class DistrictMappingPage implements OnInit {
             this.goBack();
           } else {
             this.router.navigate([`/${RouterLinks.TABS}`]);
+            this.externalIdVerificationService.showExternalIdVerificationPopup();
           }
         }).catch(async () => {
           await loader.dismiss();
@@ -330,6 +332,7 @@ export class DistrictMappingPage implements OnInit {
             this.goBack();
           } else {
             this.router.navigate([`/${RouterLinks.TABS}`]);
+            this.externalIdVerificationService.showExternalIdVerificationPopup();
           }
         });
     } else if (this.source === PageId.GUEST_PROFILE) { // block for editing the device location
