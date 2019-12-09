@@ -44,7 +44,7 @@ import { CourseUtilService } from '@app/services/course-util.service';
 import { UtilityService } from '@app/services/utility-service';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { ContentShareHandlerService } from '@app/services/content/content-share-handler.service';
-import { ContentInfo } from '@app/services/content/content-info'
+import { ContentInfo } from '@app/services/content/content-info';
 import { CommonUtilService } from '@app/services/common-util.service';
 import { DialogPopupComponent } from '@app/app/components/popups/dialog-popup/dialog-popup.component';
 import {
@@ -63,6 +63,9 @@ import { ContentPlayerHandler } from '@app/services/content/player/content-playe
 import { ChildContentHandler } from '@app/services/content/child-content-handler';
 import { ContentDeleteHandler } from '@app/services/content/content-delete-handler';
 import { ContentUtil } from '@app/util/content-util';
+import { FileOpener } from '@ionic-native/file-opener/ngx';
+import { File } from '@ionic-native/file/ngx';
+import { FileTransfer, FileTransferObject } from '@ionic-native/file-transfer/ngx';
 
 @Component({
   selector: 'app-content-details',
@@ -139,9 +142,9 @@ export class ContentDetailsPage implements OnInit, OnDestroy{
   contentDeleteObservable: any;
   isSingleContent: boolean;
   resultLength: any;
-  course:Course;
-
-  // Newly Added 
+  course: Course;
+  fileTransfer: FileTransferObject;
+  // Newly Added
   resumedCourseCardData: any;
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -174,6 +177,9 @@ export class ContentDetailsPage implements OnInit, OnDestroy{
     private contentPlayerHandler: ContentPlayerHandler,
     private childContentHandler: ChildContentHandler,
     private contentDeleteHandler: ContentDeleteHandler,
+    private fileOpener: FileOpener,
+    private file: File,
+    private transfer: FileTransfer
   ) {
     this.subscribePlayEvent();
     this.checkDeviceAPILevel();
@@ -714,15 +720,13 @@ export class ContentDetailsPage implements OnInit, OnDestroy{
       const { data } = await popover.onDidDismiss();
       if (data) {
         this.downloadContent();
-      }
-      else {
-        //const telemetryObject = new TelemetryObject(this.content.identifier, this.content.contentType, this.content.contentData.pkgVersion);
+      } else {
         this.telemetryGeneratorService.generateInteractTelemetry(
           InteractType.TOUCH,
           InteractSubtype.CLOSE_CLICKED,
           Environment.HOME,
           PageId.CONTENT_DETAIL,
-          this.telemetryObject,undefined,
+          this.telemetryObject, undefined,
           this.objRollup,
           this.corRelationList);
       }
@@ -1045,5 +1049,32 @@ export class ContentDetailsPage implements OnInit, OnDestroy{
     if (this.cardData.hierarchyInfo && this.cardData.hierarchyInfo.length && this.cardData.hierarchyInfo[0].contentType === 'course') {
       this.isCourse = true;
     }
+  }
+
+  openPDF() {
+    console.log('cordova.file.externalRootDirectory', cordova.file.externalRootDirectory + 'Download/130892_Mar18.pdf');
+
+    // For Offline Scenario
+    // this.fileOpener.open(cordova.file.externalRootDirectory + 'Download/130892_Mar18.pdf', 'application/pdf')
+    // .then(() =>
+    // console.log('File is opened')
+    // )
+    // .catch(e => console.log('Error opening file', e));
+    // const url = cordova.file.externalRootDirectory + 'Download/130892_Mar18.pdf';
+
+    // for Online Scenario
+    const url = 'https://www.antennahouse.com/XSLsample/pdf/sample-link_1.pdf';
+    const browser: any = this.commonUtilService.openLink(url);
+    browser.on('exit');
+    this.fileTransfer = this.transfer.create();
+    this.fileTransfer
+      .download(url, this.file.dataDirectory + 'sample' + '.pdf')
+      .then(entry => {
+        console.log('download complete: ' + entry.toURL());
+        this.fileOpener
+          .open(entry.toURL(), 'application/pdf')
+          .then(() => console.log('File opened'))
+          .catch(e => console.log('Error opening file', e));
+      });
   }
 }
