@@ -1060,9 +1060,11 @@ export class ContentDetailsPage implements OnInit, OnDestroy{
     // console.log('File is opened')
     // )
     // .catch(e => console.log('Error opening file', e));
+    // Give the relevant path for your downloaded PDF
     // const url = cordova.file.externalRootDirectory + 'Download/130892_Mar18.pdf';
 
     // for Online Scenario
+    // sample link for the online PDF
     const url = 'https://www.antennahouse.com/XSLsample/pdf/sample-link_1.pdf';
     const browser: any = this.commonUtilService.openLink(url);
     browser.on('exit');
