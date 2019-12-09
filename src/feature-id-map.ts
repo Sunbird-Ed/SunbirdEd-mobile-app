@@ -52,5 +52,29 @@ export const featureIdMap = {
         type: "Task"
       }
     ],
+  },
+  location: {
+    LOCATION_CAPTURE: [
+      {
+        id: "user:location_capture",
+        type: "Feature"
+      },
+      {
+        id: "SB-14682",
+        type: "Task"
+      }
+    ],
+  },
+  userVerification: {
+    EXTERNAL_USER_VERIFICATION: [
+      {
+        id: "user:state:externalId",
+        type: "Feature"
+      },
+      {
+        id: "SC-1362",
+        type: "Task"
+      }
+    ],
   }
 };

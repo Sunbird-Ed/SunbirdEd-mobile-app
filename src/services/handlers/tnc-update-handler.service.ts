@@ -9,6 +9,7 @@ import { TermsAndConditionsPage } from '@app/app/terms-and-conditions/terms-and-
 import { Router, NavigationExtras } from '@angular/router';
 import { CommonUtilService } from '../common-util.service';
 import { FormAndFrameworkUtilService } from '../formandframeworkutil.service';
+import { ExternalIdVerificationService } from '../externalid-verification.service';
 
 @Injectable({
   providedIn: 'root'
@@ -22,7 +23,8 @@ export class TncUpdateHandlerService {
     private commonUtilService: CommonUtilService,
     private formAndFrameworkUtilService: FormAndFrameworkUtilService,
     private modalCtrl: ModalController,
-    private router: Router
+    private router: Router,
+    private externalIdVerificationService: ExternalIdVerificationService
   ) { }
 
   public async checkForTncUpdate(): Promise<boolean> {
@@ -56,11 +58,13 @@ export class TncUpdateHandlerService {
                       .then(() => resolve(false));
                     return;
                   } else {
+                    this.externalIdVerificationService.showExternalIdVerificationPopup();
                     resolve(false);
                     return;
                   }
                 })
                 .catch((error) => {
+                  this.externalIdVerificationService.showExternalIdVerificationPopup();
                   console.error('Error:', error);
                   reject();
                 });

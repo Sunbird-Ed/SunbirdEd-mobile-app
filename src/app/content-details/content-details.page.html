@@ -278,7 +278,7 @@
           </div>
           <div class="sb-info" *ngIf="content?.contentData?.licenseDetails">
             <div class="sb-content-title">{{'MULTIPLE_LICENSE' | translate:{'%s': content?.contentData?.licenseDetails?.name} }}</div>
-            <div class="sb-url">{{ content?.contentData?.licenseDetails?.url }}</div>
+            <div class="sb-url" (click)="openinBrowser(content?.contentData?.licenseDetails?.url)">{{ content?.contentData?.licenseDetails?.url }}</div>
           </div>
           <div class="sb-info" *ngIf="content?.contentData?.creators || content?.contentData?.creator">
             <div class="sb-content-title">{{ 'CREATORS' | translate:{'%s': appName} }}</div>

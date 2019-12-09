@@ -607,7 +607,6 @@ export class GuestEditPage implements OnInit {
         }
       });
     }
-
     this.profileService.updateProfile(req)
       .subscribe((res: any) => {
         this._dismissLoader(loader);
@@ -619,6 +618,7 @@ export class GuestEditPage implements OnInit {
           PageId.EDIT_USER
         );
         if (this.isCurrentUser) {
+          this.commonUtilService.handleToTopicBasedNotification();
           this.publishProfileEvents(formVal);
         } else {
           this.location.back();

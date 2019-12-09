@@ -241,7 +241,6 @@ export class ProfileSettingsPage implements OnInit {
       .then((response: any) => {
         this.profile = response;
         console.log('responseresponse', response);
-
         this.profileForTelemetry = Object.assign({}, this.profile);
         this.initUserForm();
       }).catch((error) => {
@@ -410,10 +409,6 @@ export class ProfileSettingsPage implements OnInit {
           grades: [],
           medium: []
         });
-        if (showLoader) {
-          this.loader = await this.commonUtilService.getLoader();
-          this.loader.present();
-        }
         oldAttribute.board = this.profileForTelemetry.board && this.profileForTelemetry.board.length ? this.profileForTelemetry.board : '';
         newAttribute.board = this.userForm.value.syllabus ? this.userForm.value.syllabus : '';
         if (!isEqual(oldAttribute, newAttribute)) {
@@ -566,7 +561,6 @@ export class ProfileSettingsPage implements OnInit {
       grade: formVal.grades,
       medium: formVal.medium
     };
-
     if (this.navParams && this.navParams.selectedUserType) {
       req.profileType = this.navParams.selectedUserType;
     } else {
@@ -599,6 +593,7 @@ export class ProfileSettingsPage implements OnInit {
         }
         this.events.publish('refresh:profile');
         this.appGlobalService.guestUserProfile = res;
+        await this.commonUtilService.handleToTopicBasedNotification();
         setTimeout(async () => {
           this.commonUtilService.showToast('PROFILE_UPDATE_SUCCESS');
           if (await this.commonUtilService.isDeviceLocationAvailable()) {
