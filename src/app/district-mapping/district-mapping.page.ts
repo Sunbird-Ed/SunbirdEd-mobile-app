@@ -13,12 +13,14 @@ import { Platform } from '@ionic/angular';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import {
   Environment,
-  ImpressionSubtype,
   ImpressionType,
   InteractSubtype,
   InteractType,
-  PageId
+  PageId,
+  ID
 } from '@app/services/telemetry-constants';
+import { featureIdMap } from '@app/feature-id-map';
+import { ExternalIdVerificationService } from '@app/services/externalid-verification.service';
 @Component({
   selector: 'app-district-mapping',
   templateUrl: './district-mapping.page.html',
@@ -62,7 +64,8 @@ export class DistrictMappingPage implements OnInit {
     public platform: Platform,
     public telemetryGeneratorService: TelemetryGeneratorService,
     private changeDetectionRef: ChangeDetectorRef,
-    private ngZone: NgZone
+    private ngZone: NgZone,
+    private externalIdVerificationService: ExternalIdVerificationService
   ) {
     if (this.router.getCurrentNavigation().extras.state) {
       this.profile = this.router.getCurrentNavigation().extras.state.profile;
@@ -195,7 +198,7 @@ export class DistrictMappingPage implements OnInit {
   }
 
   async getStates() {
-    let loader = await this.commonUtilService.getLoader();
+    const loader = await this.commonUtilService.getLoader();
     await loader.present();
     const req: LocationSearchCriteria = {
       filters: {
@@ -207,96 +210,99 @@ export class DistrictMappingPage implements OnInit {
       this.ngZone.run(async () => {
         if (locations && Object.keys(locations).length) {
           this.stateList = locations;
-          loader.dismiss();
-          loader = undefined;
           if (this.availableLocationState) {
-            let loaderState = await this.commonUtilService.getLoader();
-            await loaderState.present();
             const state = this.stateList.find(s => s.name === this.availableLocationState);
+            await loader.dismiss();
             if (state) {
-              await loaderState.dismiss();
-              loaderState = undefined;
               await this.getState(state.name, state.id, state.code);
-              this.generateAutoPopulatedTelemetry();
             } else {
               this.stateName = '';
             }
+            this.generateAutoPopulatedTelemetry();
           }
         } else {
           this.districtList = '';
           this.showDistrict = !this.showDistrict;
           this.commonUtilService.showToast(this.commonUtilService.translateMessage('NO_DATA_FOUND'));
-          loader.dismiss();
-          loader = undefined;
+          await loader.dismiss();
         }
       });
     }, async (error) => {
-      if (loader) {
-        loader.dismiss();
-        loader = undefined;
-      }
+        await loader.dismiss();
     });
   }
 
   async getDistrict(pid: string) {
-    if (this.stateName) {
-      let loader = await this.commonUtilService.getLoader();
-      loader.present();
-      const req: LocationSearchCriteria = {
-        filters: {
-          type: loc.TYPE_DISTRICT,
-          parentId: pid
-        }
-      };
-      this.profileService.searchLocation(req).subscribe(async (success) => {
-        this.ngZone.run(async () => {
-          if (success && Object.keys(success).length) {
-            this.districtList = success;
-            if (this.availableLocationDistrict) {
-              this.districtName = this.availableLocationDistrict;
-              const district = this.districtList.find(d => d.name === this.availableLocationDistrict);
-              if (district) {
-                await this.selectDistrict(district.name, district.code);
-                loader.dismiss();
-                loader = undefined;
-              } else {
-                this.districtName = '';
-                loader.dismiss();
-                loader = undefined;
-              }
+    const loader = await this.commonUtilService.getLoader();
+    await loader.present();
+    const req: LocationSearchCriteria = {
+      filters: {
+        type: loc.TYPE_DISTRICT,
+        parentId: pid
+      }
+    };
+    this.profileService.searchLocation(req).subscribe(async (success) => {
+      this.ngZone.run(async () => {
+        if (success && Object.keys(success).length) {
+          this.showDistrict = false;
+          this.districtList = success;
+          if (this.availableLocationDistrict) {
+            this.districtName = this.availableLocationDistrict;
+            const district = this.districtList.find(d => d.name === this.availableLocationDistrict);
+            await loader.dismiss();
+            if (district) {
+              await this.selectDistrict(district.name, district.code);
+            } else {
+              this.districtName = '';
             }
-          } else {
-            this.availableLocationDistrict = '';
-            loader.dismiss();
-            loader = undefined;
-            this.districtList = [];
-            this.showDistrict = !this.showDistrict;
-            this.commonUtilService.showToast(this.commonUtilService.translateMessage('NO_DATA_FOUND'));
+          } else if (this.districtList) {
+              this.showDistrict = true;
+              await loader.dismiss();
           }
-        });
-      }, async (error) => {
-        if (loader) {
-          loader.dismiss();
-          loader = undefined;
+        } else {
+          this.availableLocationDistrict = '';
+          await loader.dismiss();
+          this.districtList = [];
+          this.showDistrict = !this.showDistrict;
+          this.commonUtilService.showToast(this.commonUtilService.translateMessage('NO_DATA_FOUND'));
         }
       });
-    }
+    }, async (error) => {
+        await loader.dismiss();
+    });
   }
 
+  isStateorDistrictChanged() {
+    if (this.availableLocationState !== this.stateName && this.availableLocationDistrict === this.districtName) {
+      return InteractSubtype.STATE_CHANGED;
+    } else if (this.availableLocationDistrict !== this.districtName && this.availableLocationState === this.stateName) {
+      return InteractSubtype.DIST_CHANGED;
+    } else if (this.availableLocationState !== this.stateName && this.availableLocationDistrict !== this.districtName) {
+      return InteractSubtype.STATE_DIST_CHANGED;
+    } else {
+        return '';
+    }
+    }
+
   async submit() {
-    this.telemetryGeneratorService.generateInteractTelemetry(
-      InteractType.OTHER,
-      InteractSubtype.AUTO_POPULATED_LOCATION,
-      Environment.HOME,
-      PageId.DISTRICT_MAPPING,
-      undefined,
-      { isPopulatedLocation: this.isPopulatedLocationChanged });
 
     let isLocationUpdated = false;
     if (this.stateName !== this.availableLocationState ||
       this.districtName !== this.availableLocationDistrict) {
       isLocationUpdated = true;
     }
+
+    this.telemetryGeneratorService.generateInteractTelemetry(
+      isLocationUpdated ?  InteractType.LOCATION_CHANGED : InteractType.LOCATION_UNCHANGED,
+      this.isStateorDistrictChanged(),
+      Environment.HOME,
+      PageId.DISTRICT_MAPPING,
+      undefined,
+      { isPopulatedLocation: this.isPopulatedLocationChanged },
+      undefined,
+      featureIdMap.location.LOCATION_CAPTURE,
+      ID.SUBMIT_CLICKED,
+      );
 
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,
@@ -336,6 +342,7 @@ export class DistrictMappingPage implements OnInit {
             this.goBack();
           } else {
             this.router.navigate([`/${RouterLinks.TABS}`]);
+            this.externalIdVerificationService.showExternalIdVerificationPopup();
           }
         }).catch(async () => {
           await loader.dismiss();
@@ -344,6 +351,7 @@ export class DistrictMappingPage implements OnInit {
             this.goBack();
           } else {
             this.router.navigate([`/${RouterLinks.TABS}`]);
+            this.externalIdVerificationService.showExternalIdVerificationPopup();
           }
         });
     } else if (this.source === PageId.GUEST_PROFILE) { // block for editing the device location

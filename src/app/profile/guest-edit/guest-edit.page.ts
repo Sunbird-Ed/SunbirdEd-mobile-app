@@ -446,17 +446,17 @@ export class GuestEditPage implements OnInit {
     const newAttribute: any = {};
     switch (index) {
       case 0:
+        if (showLoader) {
+          this._dismissLoader();
+          this.loader = await this.commonUtilService.getLoader();
+          await this.loader.present();
+        }
         this.guestEditForm.patchValue({
           boards: [],
           grades: [],
           subjects: [],
           medium: []
         });
-        if (showLoader) {
-          this._dismissLoader();
-          this.loader = await this.commonUtilService.getLoader();
-          await this.loader.present();
-        }
         this.checkPrevValue(1, 'boardList', [this.guestEditForm.value.syllabus]);
         break;
 
@@ -607,7 +607,6 @@ export class GuestEditPage implements OnInit {
         }
       });
     }
-
     this.profileService.updateProfile(req)
       .subscribe((res: any) => {
         this._dismissLoader(loader);
@@ -619,6 +618,7 @@ export class GuestEditPage implements OnInit {
           PageId.EDIT_USER
         );
         if (this.isCurrentUser) {
+          this.commonUtilService.handleToTopicBasedNotification();
           this.publishProfileEvents(formVal);
         } else {
           this.location.back();

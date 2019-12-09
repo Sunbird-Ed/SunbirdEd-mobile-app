@@ -18,13 +18,12 @@
         <app-profile-avatar [username]="profile?.firstName" [isStateUser]="!isCustodianOrgId" class="profileAvatar"
             *ngIf="!isCustodianOrgId"></app-profile-avatar> -->
     </div>
-    <div padding-horizontal text-center>
-        <p style="position: relative;"><span class="profile-name">{{ profile?.firstName }}
-            {{ profile?.lastName }}</span>
-            <span *ngIf="!isCustodianOrgId && profile?.firstName" class="isymbol" item-right text-left
-            (click)="toggleTooltips($event, 'name')">
-            <ion-icon name="information-circle" class="info-icon"></ion-icon>
-            <span class="asPerStateRecord" *ngIf="informationProfileName">{{'STATE_RECORDS' | translate}}</span>
+    <div padding-horizontal text-center style="margin-top: 16px">
+        <p class="profile-head">
+            <span class="profile-name">{{ profile?.firstName }}{{ profile?.lastName }}</span>
+            <span *ngIf="!isCustodianOrgId && profile?.firstName" class="isymbol profile-symbol" item-right text-left (click)="toggleTooltips($event, 'name')">
+                <ion-icon name="information-circle" class="info-icon"></ion-icon>
+                <span class="asPerStateRecord" *ngIf="informationProfileName">{{'STATE_RECORDS' | translate}}</span>
             </span>
         </p>
         <p class="MT0 MB30"><span>{{'USER_ID' | translate}}:</span><span>{{profile?.userName}}</span></p>

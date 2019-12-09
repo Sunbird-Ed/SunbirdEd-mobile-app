@@ -630,7 +630,6 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
         }
       });
     }
-
     this.profileService.updateProfile(req).toPromise()
       .then((res: any) => {
         if (res.syllabus && res.syllabus.length && res.board && res.board.length
@@ -638,6 +637,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
           this.events.publish(AppGlobalService.USER_INFO_UPDATED);
           this.events.publish('refresh:profile');
         }
+        this.commonUtilService.handleToTopicBasedNotification();
         this.appGlobalService.guestUserProfile = res;
         this.telemetryGeneratorService.generateProfilePopulatedTelemetry(PageId.DIAL_CODE_SCAN_RESULT,
           req, 'auto');

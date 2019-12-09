@@ -116,7 +116,8 @@ export enum PageId {
     MERGE_ACCOUNT_POPUP = 'merge-account-popup',
     DISTRICT_MAPPING = 'district-mapping',
     SIGNIN_POPUP = 'signin-popup',
-    EXTERNAL_USER_VERIFICATION_POPUP = 'external-user-verification-popup'
+    EXTERNAL_USER_VERIFICATION_POPUP = 'user-verification-popup',
+    FAQ_REPORT_ISSUE = 'faq-report-issue'
 }
 export enum LogType {
     NOTIFICATION = 'notification'
@@ -154,7 +155,9 @@ export enum ImpressionSubtype {
 export enum InteractType {
     TOUCH = 'TOUCH',
     OTHER = 'OTHER',
-    SCROLL = 'SCROLL'
+    SCROLL = 'SCROLL',
+    LOCATION_CHANGED = 'location-changed',
+    LOCATION_UNCHANGED = 'location-unchanged'
 }
 
 export enum InteractSubtype {
@@ -365,7 +368,20 @@ export enum InteractSubtype {
     USER_VERIFICATION_SUCCESS = 'user-verification-success',
     USER_VERIFICATION_FAILURE = 'user-verification-failure',
     FAST_LOADING_OF_TEXTBOOK_INITIATED = 'textbook-fast-loading-initiated',
-    FAST_LOADING_OF_TEXTBOOK_FINISHED = 'textbook-fast-loading-finished'
+    FAST_LOADING_OF_TEXTBOOK_FINISHED = 'textbook-fast-loading-finished',
+    REPORT_ISSUE_CLICKED = 'report-issue-clicked',
+    STATE_DIST_CHANGED = 'state-dist-changed',
+    STATE_CHANGED = 'state-changed',
+    DIST_CHANGED = 'dist-changed'
+}
+
+export enum ID {
+    USER_VERIFICATION_REJECTED = 'ext-user-verify-reject',
+    USER_VERIFICATION_CONFIRMED = 'ext-user-verify-confirm',
+    USER_VERIFICATION_SUBMITED = 'ext-user-verify-submit',
+    USER_VERIFICATION_FAILED = 'ext-user-verify-fail',
+    USER_VERIFICATION_SUCCESS = 'ext-user-verify-success',
+    SUBMIT_CLICKED = 'submit-clicked'
 }
 
 export enum ActionButtonType {
