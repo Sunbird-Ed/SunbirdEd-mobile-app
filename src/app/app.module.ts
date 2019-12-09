@@ -65,6 +65,7 @@ import { SplashscreenImportActionHandlerDelegate } from '@app/services/sunbird-s
 import { SplaschreenDeeplinkActionHandlerDelegate } from '@app/services/sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
 import { LocalCourseService } from '@app/services/local-course.service';
 import { ContentType } from './app.constant';
+import { ExternalIdVerificationService } from '@app/services/externalid-verification.service';
 
 // AoT requires an exported function for factories
 export function translateHttpLoaderFactory(httpClient: HttpClient) {
@@ -460,6 +461,7 @@ declare const buildconfigreader;
     SplashscreenImportActionHandlerDelegate,
     SplaschreenDeeplinkActionHandlerDelegate,
     SplashScreenService,
+    ExternalIdVerificationService,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     ...sunbirdSdkServicesProvidersFactory(),
     { provide: ErrorHandler, useClass: CrashAnalyticsErrorLogger },

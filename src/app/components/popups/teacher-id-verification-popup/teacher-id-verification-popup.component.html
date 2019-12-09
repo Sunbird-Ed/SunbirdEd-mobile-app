@@ -3,12 +3,12 @@
     <div [ngClass]="{ 'sb-popup-header-info': (teacherIdPopupFlags.STATE_CONFIRMATION === teacherIdFlag || teacherIdPopupFlags.STATE_ID_INPUT === teacherIdFlag),
                     'sb-popup-header-success': teacherIdPopupFlags.VERIFIED_STATE_ID === teacherIdFlag,
                     'sb-popup-header-danger': teacherIdPopupFlags.FAILED_STATE_ID === teacherIdFlag  }">
-        <h6 class="M0">{{'USER_VERIFICATION' | translate}}</h6>
+        <h6 class="M0">{{tenantMessages?.popupHeaderLabel}}</h6>
     </div>
 
     <section class="sb-popover" *ngIf="teacherIdPopupFlags.STATE_CONFIRMATION === teacherIdFlag">
         <div class="M16 text-center">
-            <p>{{ tenantMessages.headerLabel }}</p>
+            <p>{{ tenantMessages?.headerLabel }}</p>
         </div>
 
         <div class="sb-popover-footer MT30 d-flex">
@@ -37,7 +37,7 @@
         </div>
         <form [formGroup]="teacherIdForm">
             <div class="M16">
-                <p>{{ tenantMessages.fieldLabel }}</p>
+                <p>{{ tenantMessages?.fieldLabel }}</p>
                 <ion-input type="text"
                     [ngClass]="{'sb-input-danger': showTeacherIdIncorrectErr,'sb-input-black': !showTeacherIdIncorrectErr}"
                     placeholder="{{'TEACHER_ID_PLACEHOLDER' | translate}}" formControlName="teacherId"
@@ -58,7 +58,7 @@
 
     <section class="sb-popover" *ngIf="teacherIdPopupFlags.VERIFIED_STATE_ID === teacherIdFlag">
         <div class="M16 text-center">
-            <p>{{tenantMessages.verificationSuccessfulLabel }}</p>
+            <p>{{tenantMessages?.verificationSuccessfulLabel }}</p>
         </div>
 
         <div class="sb-popover-footer MT30">
@@ -69,7 +69,7 @@
 
     <section class="sb-popover" *ngIf="teacherIdPopupFlags.FAILED_STATE_ID === teacherIdFlag">
         <div class="M16 text-center">
-            <p>{{ tenantMessages.verficationFailureLabel }}</p>
+            <p>{{ tenantMessages?.verficationFailureLabel }}</p>
         </div>
 
         <div class="sb-popover-footer MT30">

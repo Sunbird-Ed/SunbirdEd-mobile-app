@@ -10,9 +10,9 @@ import { TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs-compat';
 import { Network } from '@ionic-native/network/ngx';
 import { WebView } from '@ionic-native/ionic-webview/ngx';
-import { SharedPreferences } from 'sunbird-sdk';
+import { SharedPreferences, ProfileService, Profile } from 'sunbird-sdk';
 
-import { PreferenceKey } from '@app/app/app.constant';
+import { PreferenceKey, ProfileConstants } from '@app/app/app.constant';
 import { appLanguages } from '@app/app/app.constant';
 
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
@@ -20,6 +20,8 @@ import { InteractType, InteractSubtype, PageId, Environment } from '@app/service
 import { SbGenericPopoverComponent } from '@app/app/components/popups/sb-generic-popover/sb-generic-popover.component';
 import { QRAlertCallBack, QRScannerAlert } from '@app/app/qrscanner-alert/qrscanner-alert.page';
 import { mapTo } from 'rxjs/operators/mapTo';
+
+declare const FCMPlugin;
 export interface NetworkInfo {
     isNetworkAvailable: boolean;
 }
@@ -39,6 +41,7 @@ export class CommonUtilService implements OnDestroy {
 
     constructor(
         @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
+        @Inject('PROFILE_SERVICE') private profileService: ProfileService,
         private toastCtrl: ToastController,
         private translate: TranslateService,
         private loadingCtrl: LoadingController,
@@ -441,5 +444,35 @@ export class CommonUtilService implements OnDestroy {
         } else {
             return false;
         }
+    }
+
+    handleToTopicBasedNotification() {
+        this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise()
+            .then(async (response: Profile) => {
+                const profile = response;
+                const subscribeTopic = [];
+                subscribeTopic.push(profile.board[0]);
+                profile.medium.map(m => subscribeTopic.push(m));
+                await this.preferences.getString(PreferenceKey.DEVICE_LOCATION).subscribe((data) => {
+                    subscribeTopic.push(JSON.parse(data).state);
+                    subscribeTopic.push(JSON.parse(data).district);
+                });
+
+                await this.preferences.getString(PreferenceKey.SUBSCRIBE_TOPICS).toPromise().then(async (data) => {
+                    const previuslySubscribeTopics = JSON.parse(data);
+                    await new Promise<undefined>((resolve, reject) => {
+                        FCMPlugin.unsubscribeFromTopic(previuslySubscribeTopics.join(','), resolve, reject);
+                    });
+                    await new Promise<undefined>((resolve, reject) => {
+                        FCMPlugin.subscribeToTopic(subscribeTopic.join(','), resolve, reject);
+                    });
+                }).catch(async (err) => {
+                    await new Promise<undefined>((resolve, reject) => {
+                        FCMPlugin.subscribeToTopic(subscribeTopic.join(','), resolve, reject);
+                    });
+                });
+                await this.preferences.putString(PreferenceKey.CURRENT_USER_PROFILE, JSON.stringify(profile)).toPromise();
+                await this.preferences.putString(PreferenceKey.SUBSCRIBE_TOPICS, JSON.stringify(subscribeTopic)).toPromise();
+            });
     }
 }

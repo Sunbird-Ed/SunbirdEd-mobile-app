@@ -1,15 +1,13 @@
-import { ProfileType, SharedPreferences, ProfileService, UserFeed } from 'sunbird-sdk';
+import { ProfileType, SharedPreferences, ProfileService } from 'sunbird-sdk';
 import { GUEST_TEACHER_TABS, initTabs, GUEST_STUDENT_TABS, LOGIN_TEACHER_TABS } from '@app/app/module.service';
-import { Component, ViewChild, ViewEncapsulation, Inject, NgZone, OnInit } from '@angular/core';
+import { Component, ViewChild, ViewEncapsulation, Inject, OnInit } from '@angular/core';
 
-import { IonTabs, Events, ToastController, PopoverController } from '@ionic/angular';
+import { IonTabs, Events, ToastController } from '@ionic/angular';
 import { ContainerService } from '@app/services/container.services';
 import { AppGlobalService } from '@app/services/app-global-service.service';
-import { ProfileConstants, PreferenceKey } from '@app/app/app.constant';
+import { ProfileConstants } from '@app/app/app.constant';
 import { CommonUtilService } from '@app/services/common-util.service';
-import { Observable } from 'rxjs';
-import { TeacherIdVerificationComponent } from '../components/popups/teacher-id-verification-popup/teacher-id-verification-popup.component';
-import { FormAndFrameworkUtilService } from '@app/services/formandframeworkutil.service';
+import { ExternalIdVerificationService } from '@app/services/externalid-verification.service';
 @Component({
   selector: 'app-tabs',
   templateUrl: './tabs.page.html',
@@ -28,8 +26,6 @@ export class TabsPage implements OnInit {
     actionButtons: ['search', 'filter'],
   };
   selectedLanguage: string;
-  public isCustodianUser$: Observable<boolean>;
-  isCustodianUser: any;
 
   constructor(
     private container: ContainerService,
@@ -39,12 +35,8 @@ export class TabsPage implements OnInit {
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     private commonUtilService: CommonUtilService,
-    private zone: NgZone,
-    private popoverCtrl: PopoverController,
-    private formAndFrameworkUtilService: FormAndFrameworkUtilService
+    private externalIdVerificationService: ExternalIdVerificationService
   ) {
-    this.isCustodianUser$ = this.profileService.isDefaultChannelProfile()
-      .map((isDefaultChannelProfile) => isDefaultChannelProfile) as any;
 
   }
 
@@ -70,9 +62,8 @@ export class TabsPage implements OnInit {
           requiredFields: ProfileConstants.REQUIRED_FIELDS,
         }).toPromise();
 
-        this.commonUtilService.showToast(this.commonUtilService.translateMessage('WELCOME_BACK', serverProfile.firstName)); 
+        this.commonUtilService.showToast(this.commonUtilService.translateMessage('WELCOME_BACK', serverProfile.firstName));
       }
-      this.saveExternalUserAndShowPopup(session.userToken);
       initTabs(this.container, LOGIN_TEACHER_TABS);
     }
 
@@ -114,28 +105,37 @@ export class TabsPage implements OnInit {
   }
 
 
-  async saveExternalUserAndShowPopup(userId) {
-    const isCustodianUser = await this.isCustodianUser$.toPromise();
-    const tenantSpecificMessages = await this.formAndFrameworkUtilService.getTenantSpecificMessages();
-    if (isCustodianUser) {
-      await this.profileService.getUserFeed().toPromise()
-        .then(async (userFeed: UserFeed[]) => {
-          console.log('UserFeedResponse in Resources', userFeed);
-          if (userFeed[0]) {
-            if ((userFeed[0].category).toLowerCase() === 'orgmigrationaction') {
-                const popover = await this.popoverCtrl.create({
-                  component: TeacherIdVerificationComponent,
-                  backdropDismiss: false,
-                  cssClass: 'popover-alert popoverPosition',
-                  componentProps: {userFeed: userFeed[0], tenantMessages: tenantSpecificMessages}
-                });
-                await popover.present();
-            }
-          }
-        })
-        .catch((error) => {
-          console.log('error', error);
-        });
-    }
-  }
+  // async saveExternalUserAndShowPopup(userId) {
+  //   const isCustodianUser = await this.isCustodianUser$.toPromise();
+  //   const tenantSpecificMessages: any = await this.formAndFrameworkUtilService.getTenantSpecificMessages();
+  //   if (isCustodianUser) {
+  //     await this.profileService.getUserFeed().toPromise()
+  //       .then(async (userFeed: UserFeed[]) => {
+  //         userFeed = [this.userFeed];
+  //         console.log('UserFeedResponse in Resources', userFeed);
+  //         if (userFeed[0]) {
+  //           if ((userFeed[0].category).toLowerCase() === 'orgmigrationaction') {
+  //             let popupLabels = {};
+  //             if (tenantSpecificMessages && tenantSpecificMessages.length) {
+  //               if (tenantSpecificMessages[0] && tenantSpecificMessages[0].range && tenantSpecificMessages[0].range.length) {
+  //                    popupLabels = tenantSpecificMessages[0].range[0];
+  //               }
+  //             }
+  //             const popover = await this.popoverCtrl.create({
+  //               component: TeacherIdVerificationComponent,
+  //               backdropDismiss: false,
+  //               cssClass: 'popover-alert popoverPosition',
+  //               componentProps: {
+  //                 userFeed: userFeed[0], tenantMessages: popupLabels
+  //               }
+  //             });
+  //             await popover.present();
+  //           }
+  //         }
+  //       })
+  //       .catch((error) => {
+  //         console.log('error', error);
+  //       });
+  //   }
+  // }
 }
