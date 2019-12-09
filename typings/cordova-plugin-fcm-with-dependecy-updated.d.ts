@@ -5,4 +5,10 @@ declare var FCMPlugin: {
     getToken: (sucess: (token: string) => void, error?: (error: string) => void) => void;
 
     onTokenRefresh: (sucess: (token: string) => void, error?: (error: string) => void) => void;
+
+    subscribeToTopic: ( callback: (data: any) => void, success: (sucess: object) => void,
+    error: (err: string) => void) => void;
+
+    unsubscribeFromTopic: ( callback: (data: any) => void, success: (sucess: object) => void,
+    error: (err: string) => void) => void;
 }

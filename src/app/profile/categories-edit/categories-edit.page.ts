@@ -28,6 +28,7 @@ import { ProfileConstants, RouterLinks } from '@app/app/app.constant';
 import { ActivatedRoute, Router, NavigationExtras } from '@angular/router';
 import { Location } from '@angular/common';
 import { Environment, ActivePageService } from '@app/services';
+import { ExternalIdVerificationService } from '@app/services/externalid-verification.service';
 
 
 @Component({
@@ -133,7 +134,8 @@ export class CategoriesEditPage {
     private location: Location,
     private platform: Platform,
     private activePageService: ActivePageService,
-    private changeDetectionRef: ChangeDetectorRef
+    private changeDetectionRef: ChangeDetectorRef,
+    private externalIdVerificationService: ExternalIdVerificationService
 
   ) {
     this.profile = this.appGlobalService.getCurrentUser();
@@ -460,6 +462,7 @@ export class CategoriesEditPage {
                   initTabs(this.container, LOGIN_TEACHER_TABS);
                   if (this.hasFilledLocation) {
                     this.router.navigate([RouterLinks.TABS]);
+                    this.externalIdVerificationService.showExternalIdVerificationPopup();
                   } else {
                     const navigationExtras: NavigationExtras = {
                       state: {
@@ -473,6 +476,7 @@ export class CategoriesEditPage {
               initTabs(this.container, LOGIN_TEACHER_TABS);
               if (this.hasFilledLocation) {
                 this.router.navigate([RouterLinks.TABS]);
+                this.externalIdVerificationService.showExternalIdVerificationPopup();
               } else {
                 const navigationExtras: NavigationExtras = {
                   state: {

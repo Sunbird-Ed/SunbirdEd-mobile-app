@@ -15,6 +15,7 @@ import { ProfileConstants, RouterLinks } from '../app.constant';
 import { FormAndFrameworkUtilService } from '@app/services';
 import { Router, NavigationExtras } from '@angular/router';
 import { SplashScreenService } from '@app/services/splash-screen.service';
+import { ExternalIdVerificationService } from '@app/services/externalid-verification.service';
 
 @Component({
   selector: 'app-terms-and-conditions',
@@ -41,7 +42,8 @@ export class TermsAndConditionsPage implements OnInit {
     private injector: Injector,
     private formAndFrameworkUtilService: FormAndFrameworkUtilService,
     private router: Router,
-    private splashScreenService: SplashScreenService
+    private splashScreenService: SplashScreenService,
+    private externalIdVerificationService: ExternalIdVerificationService
   ) {
   }
 
@@ -130,6 +132,7 @@ export class TermsAndConditionsPage implements OnInit {
               if (this.commonUtilService.isUserLocationAvalable(serverProfile)) {
                 await tncUpdateHandlerService.dismissTncPage();
                 this.router.navigate(['/', RouterLinks.TABS]);
+                this.externalIdVerificationService.showExternalIdVerificationPopup();
                 this.splashScreenService.handleSunbirdSplashScreenActions();
               } else {
                 const navigationExtras: NavigationExtras = {

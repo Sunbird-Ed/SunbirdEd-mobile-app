@@ -33,6 +33,14 @@
     @include margin(0);
     @include padding(10px, 5px, 0, 5px);
   }
+  .profile-head {
+    position: relative;
+    .profile-symbol {
+      position: absolute;
+      top: -6px;
+     }
+  }
+  
 
   ion-row {
     @include padding(0 !important);
