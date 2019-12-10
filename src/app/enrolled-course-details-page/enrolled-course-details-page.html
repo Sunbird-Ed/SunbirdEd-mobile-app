@@ -138,7 +138,7 @@
 			<ion-card *ngSwitchCase="'info'">
 				<ion-card-content class="ion-no-padding">
 					<div class="ion-padding">
-					<div *ngIf="course?.progress && course?.progress === 100" class="certificate-container">
+					<div *ngIf="updatedCourseCardData?.certificates?.length" class="certificate-container">
 						<div class="certificate-icon">
 							<img class="certificate-icon" src="assets/imgs/Certificate icon.svg" alt="certificate-icon">
 						</div>
