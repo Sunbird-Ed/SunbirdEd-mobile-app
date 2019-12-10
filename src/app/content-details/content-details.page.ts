@@ -32,7 +32,7 @@ import {
   SharedPreferences,
   StorageService,
   TelemetryObject,
-  Course
+  Course, ContentData
 } from 'sunbird-sdk';
 
 import { Map } from '@app/app/telemetryutil';
@@ -139,7 +139,8 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
   contentDeleteObservable: any;
   isSingleContent: boolean;
   resultLength: any;
-  course:Course;
+  course: Course;
+  licenseDetails;
 
   // Newly Added 
   resumedCourseCardData: any;
@@ -674,7 +675,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
           });
         }
 
-        if (event.payload && event.type === ContentEventType.STREAMING_URL_AVAILABLE) {
+        if (event.payload && event.type === ContentEventType.SERVER_CONTENT_DATA) {
           this.zone.run(() => {
             const eventPayload = event.payload;
             if (eventPayload.contentId === this.content.identifier) {
@@ -684,6 +685,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
               } else {
                 this.playOnlineSpinner = false;
               }
+              this.licenseDetails = eventPayload.licenseDetails;
             }
           });
         }
@@ -719,15 +721,15 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
       const { data } = await popover.onDidDismiss();
       if (data) {
         this.downloadContent();
-      }
-      else {
-        //const telemetryObject = new TelemetryObject(this.content.identifier, this.content.contentType, this.content.contentData.pkgVersion);
+      } else {
+        // const telemetryObject = new TelemetryObject(this.content.identifier, this.content.contentType,
+        // this.content.contentData.pkgVersion);
         this.telemetryGeneratorService.generateInteractTelemetry(
           InteractType.TOUCH,
           InteractSubtype.CLOSE_CLICKED,
           Environment.HOME,
           PageId.CONTENT_DETAIL,
-          this.telemetryObject,undefined,
+          this.telemetryObject, undefined,
           this.objRollup,
           this.corRelationList);
       }
