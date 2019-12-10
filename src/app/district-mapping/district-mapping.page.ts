@@ -212,7 +212,6 @@ export class DistrictMappingPage implements OnInit {
           this.stateList = locations;
           if (this.availableLocationState) {
             const state = this.stateList.find(s => s.name === this.availableLocationState);
-            await loader.dismiss();
             if (state) {
               await this.getState(state.name, state.id, state.code);
             } else {
@@ -220,13 +219,12 @@ export class DistrictMappingPage implements OnInit {
             }
             this.generateAutoPopulatedTelemetry();
           }
-          await loader.dismiss();
         } else {
           this.districtList = '';
           this.showDistrict = !this.showDistrict;
           this.commonUtilService.showToast(this.commonUtilService.translateMessage('NO_DATA_FOUND'));
-          await loader.dismiss();
         }
+        await loader.dismiss();
       });
     }, async (error) => {
         await loader.dismiss();
