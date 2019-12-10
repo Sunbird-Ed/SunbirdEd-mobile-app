@@ -219,9 +219,8 @@ export class DistrictMappingPage implements OnInit {
               this.stateName = '';
             }
             this.generateAutoPopulatedTelemetry();
-          } else {
-            await loader.dismiss();
           }
+          await loader.dismiss();
         } else {
           this.districtList = '';
           this.showDistrict = !this.showDistrict;
