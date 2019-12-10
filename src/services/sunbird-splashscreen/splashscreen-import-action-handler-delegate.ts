@@ -9,7 +9,9 @@ import {
   ProfileService,
   TelemetryService,
   ContentImportResponse,
-  ContentImportStatus
+  ContentImportStatus,
+  TelemetryErrorRequest,
+  SunbirdSdk
 } from 'sunbird-sdk';
 import { Inject, Injectable } from '@angular/core';
 import { CommonUtilService } from 'services/common-util.service';
@@ -65,7 +67,8 @@ export class SplashscreenImportActionHandlerDelegate implements SplashscreenActi
           .do((event: ContentImportProgress) => {
             splashscreen.setImportProgress(event.payload.currentCount, event.payload.totalCount);
           })
-          .catch(() => {
+          .catch((error) => {
+            this.generateImportErrorTelemetry('invalid-ecar');
             return Observable.of(undefined);
           })
           .mapTo(undefined) as any;
@@ -96,6 +99,18 @@ export class SplashscreenImportActionHandlerDelegate implements SplashscreenActi
       }
       default:
         return Observable.of(undefined);
+    }
+  }
+
+  generateImportErrorTelemetry(error) {
+    const telemetryErrorRequest: TelemetryErrorRequest = {
+      errorCode: error,
+      errorType: 'mobile-app',
+      stacktrace: error,
+      pageId: 'home'
+    };
+    if (SunbirdSdk.instance && SunbirdSdk.instance.isInitialised && telemetryErrorRequest.stacktrace) {
+      SunbirdSdk.instance.telemetryService.error(telemetryErrorRequest).toPromise();
     }
   }
 }
