@@ -7,6 +7,7 @@ export class ContentType {
     public static readonly TEXTBOOK = 'TextBook';
     public static readonly LESSON_PLAN = 'LessonPlan';
     public static readonly COURSE = 'Course';
+    public static readonly CERTIFICATE = 'Certificate';
     public static readonly TEXTBOOK_UNIT = 'TextBookUnit';
     public static readonly LESSON_PLAN_UNIT = 'LessonPlanUnit';
     public static readonly COURSE_UNIT = 'CourseUnit';
@@ -17,6 +18,7 @@ export class ContentType {
     public static readonly MARKING_SCHEME_RUBRIC = 'MarkingSchemeRubric';
     public static readonly EXPLANATION_RESOURCE = 'ExplanationResource';
     public static readonly EXPERIENTIAL_RESOURCE = 'ExperientialResource';
+    public static readonly SELF_ASSESS = 'SelfAssess';
 
     public static readonly FOR_COURSE_TAB = [
         ContentType.COURSE
@@ -63,6 +65,7 @@ export class MimeType {
     public static readonly INTERACTION = ['application/vnd.ekstep.ecml-archive', 'application/vnd.ekstep.html-archive',
         'application/vnd.android.package-archive', 'application/vnd.ekstep.content-archive',
         'application/vnd.ekstep.plugin-archive', 'application/vnd.ekstep.h5p-archive'];
+    public static readonly DOCS = ['application/pdf', 'application/epub', 'application/msword'];
     public static readonly ALL = ['video/mp4', 'video/x-youtube', 'video/webm', 'application/pdf', 'application/epub',
         'application/pdf', 'application/epub', 'application/vnd.ekstep.ecml-archive', 'application/vnd.ekstep.h5p-archive',
         'application/vnd.ekstep.html-archive'
@@ -129,6 +132,23 @@ export class ProfileConstants {
     public static readonly CONTACT_TYPE_EMAIL = 'email';
 }
 
+export class ExploreConstants {
+    public static readonly REQUIRED_FIELDS = [
+        'name',
+        'downloadUrl',
+        'variants',
+        'mimeType',
+        'contentType',
+        'resourceType',
+        'board',
+        'medium',
+        'gradeLevel',
+        'subject',
+        'streamingUrl',
+        'framework',
+        'appIcon'
+    ];
+}
 export class AudienceFilter {
     public static readonly GUEST_TEACHER = ['instructor', 'learner'];
     public static readonly GUEST_STUDENT = ['learner'];
@@ -142,6 +162,8 @@ export class EventTopics {
     public static readonly COURSE_STATUS_UPDATED_SUCCESSFULLY = 'COURSE_STATUS_UPDATED_SUCCESSFULLY';
     public static readonly REFRESH_ENROLL_COURSE_LIST = 'REFRESH_ENROLL_COURSE_LIST';
     public static readonly PLAYER_CLOSED = 'PLAYER_CLOSED';
+    public static readonly SIGN_IN_RELOAD = 'SIGN_IN_RELOAD';
+    public static readonly TOC_COLLECTION_CHILD_ID = 'TOC_COLLECTION_CHILD_ID';
 }
 
 export class ShareUrl {
@@ -167,6 +189,8 @@ export class FormConstant {
 
 export class PreferenceKey {
     public static readonly SELECTED_LANGUAGE_CODE = 'sunbirdselected_language_code';
+    public static readonly DEVICE_LOCATION = 'device_location';
+    public static readonly IP_LOCATION = 'ip_location';
     public static readonly SELECTED_LANGUAGE = 'sunbirdselected_language';
     public static readonly SELECTED_USER_TYPE = 'sunbirdselected_user_type';
     public static readonly COURSE_IDENTIFIER = 'sunbirdcourse_identifier';
@@ -184,12 +208,12 @@ export class PreferenceKey {
     public static readonly APP_RATING_POPUP_APPEARED = 'app_rating_popup_appeared';
     public static readonly APP_PERMISSION_ASKED = 'app_permission_asked';
     public static readonly DEPLOYMENT_KEY = 'deployment_key';
+    public static readonly COURSE_DATA_KEY = 'course_data';
+    public static readonly BATCH_DETAIL_KEY = 'batch_detail';
 }
 
 export class GenericAppConfig {
-    public static readonly DISPLAY_ONBOARDING_CARDS = 'DISPLAY_ONBOARDING_CARDS';
     public static readonly DISPLAY_FRAMEWORK_CATEGORIES_IN_PROFILE = 'DISPLAY_FRAMEWORK_CATEGORIES_IN_PROFILE';
-    public static readonly DISPLAY_ONBOARDING_PAGE = 'DISPLAY_ONBOARDING_PAGE';
     public static readonly DISPLAY_SIGNIN_FOOTER_CARD_IN_COURSE_TAB_FOR_TEACHER = 'DISPLAY_SIGNIN_FOOTER_CARD_IN_COURSE_TAB_FOR_TEACHER';
     public static readonly DISPLAY_SIGNIN_FOOTER_CARD_IN_LIBRARY_TAB_FOR_TEACHER = 'DISPLAY_SIGNIN_FOOTER_CARD_IN_LIBRARY_TAB_FOR_TEACHER';
     public static readonly DISPLAY_SIGNIN_FOOTER_CARD_IN_PROFILE_TAB_FOR_TEACHER = 'DISPLAY_SIGNIN_FOOTER_CARD_IN_PROFILE_TAB_FOR_TEACHER';
@@ -198,7 +222,6 @@ export class GenericAppConfig {
     public static readonly DISPLAY_SIGNIN_FOOTER_CARD_IN_PROFILE_TAB_FOR_STUDENT = 'DISPLAY_SIGNIN_FOOTER_CARD_IN_PROFILE_TAB_FOR_STUDENT';
     public static readonly TRACK_USER_TELEMETRY = 'TRACK_USER_TELEMETRY';
     public static readonly CONTENT_STREAMING_ENABLED = 'CONTENT_STREAMING_ENABLED';
-    public static readonly DISPLAY_ONBOARDING_SCAN_PAGE = 'DISPLAY_ONBOARDING_SCAN_PAGE';
     public static readonly DISPLAY_ONBOARDING_CATEGORY_PAGE = 'DISPLAY_ONBOARDING_CATEGORY_PAGE';
     public static readonly OPEN_RAPDISCOVERY_ENABLED = 'OPEN_RAPDISCOVERY_ENABLED';
     public static readonly SUPPORT_EMAIL = 'SUPPORT_EMAIL';
@@ -323,7 +346,7 @@ export class StoreRating {
     public static readonly FILE_TEXT = 'APP-Rating';
     public static readonly RETURN_CLOSE = 'close';
     public static readonly RETURN_HELP = 'help';
-    public static readonly DEVICE_FOLDER_PATH = cordova.file.dataDirectory;
+    // public static readonly DEVICE_FOLDER_PATH = cordova.file.dataDirectory;
 }
 export class ContentConstants {
     public static readonly DEFAULT_LICENSE = 'CC BY 4.0';
@@ -338,18 +361,23 @@ export class ContentFilterConfig {
     public static readonly CODE_CONTENT_TYPE = 'contentType';
 }
 
+export class LocationConfig {
+    public static readonly CODE_SKIP = 'skip';
+    public static readonly SKIP_DEVICE = 'device';
+    public static readonly SKIP_USER = 'user';
+}
+
 export class ActionType {
     public static readonly CODE_PUSH = 'codePush';
     public static readonly COURSE_UPDATE = 'courseUpdate';
     public static readonly CONTENT_UPDATE = 'contentUpdate';
     public static readonly BOOK_UPDATE = 'bookUpdate';
     public static readonly UPDATE_APP = 'updateApp';
+    public static readonly EXT_URL = 'extURL';
 }
 
 export class RouterLinks {
     public static readonly TABS = 'tabs';
-
-    // Onboarding Routs
 
     // Users and Groups Routs
     public static readonly USER_AND_GROUPS = 'user-and-groups';
@@ -380,6 +408,7 @@ export class RouterLinks {
     public static readonly CONTENT_DETAILS = 'content-details';
     public static readonly ENROLLMENT_DETAILS = 'enrollment-details';
     public static readonly TEXTBOOK_TOC = 'textbook-toc';
+    public static readonly EXPLORE_BOOK = 'explore-book';
 
     // DownloadManger Routs
     public static readonly ACTIVE_DOWNLOADS = 'active-downloads';
@@ -405,6 +434,7 @@ export class RouterLinks {
     public static readonly ABOUT_APP = 'about-app';
     public static readonly PRIVACY_POLICY = 'privacy-policy';
     public static readonly TERMS_OF_SERVICE = 'terms-of-service';
+    public static readonly DISTRICT_MAPPING = 'district-mapping';
 
     // Profile settings Routes
     public static readonly PROFILE_SETTINGS = 'profile-settings';
@@ -441,8 +471,6 @@ export class RouterLinks {
     // Terms and conditions Routes
     public static readonly TERMS_AND_CONDITIONS = 'terms-and-conditions';
 
-    public static readonly ONBOARDING = 'onboarding';
-
     public static readonly LIBRARY_TAB = `/${RouterLinks.TABS}/${RouterLinks.RESOURCES}`;
     public static readonly COURSE_TAB = `/${RouterLinks.TABS}/${RouterLinks.COURSES}`;
     public static readonly PROFILE_TAB = `/${RouterLinks.TABS}/${RouterLinks.PROFILE}`;
@@ -452,5 +480,12 @@ export class RouterLinks {
 
     // TEXTBOOK view more page Routes
     public static readonly TEXTBOOK_VIEW_MORE = 'textbook-view-more';
+
+    // faq Report Issue Pag
+    public static readonly FAQ_REPORT_ISSUE = 'faq-report-issue';
+
+    // routing to Term of use Web Page
+    public static readonly TERM_OF_USE = '/term-of-use.html';
+
 
 }

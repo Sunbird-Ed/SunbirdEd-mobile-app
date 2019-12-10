@@ -5,6 +5,10 @@
     opacity: 1;
   }
 
+  .sb-popover ion-backdrop.backdrop-hide{
+    display: none;
+  }
+
   //styles to align ion-popover to bottom
   .popover-content {
     margin: 0;
@@ -122,6 +126,8 @@
     @include padding(($base-block-space), ($base-block-space * 2), ($base-block-space * 3), ($base-block-space * 2));
     background: $white-color;
     .sb-popover-action-btn {
+      opacity: 1;
+      pointer-events: all;
       @include margin(null, 8px, null, null);
       height: $base-block-space * 4;
       border-radius: 2px;
@@ -141,6 +147,11 @@
       &.popover-color {
         background-color: $info-color;
       }
+    }
+    .sb-popover-action-btn[disabled]{
+      opacity: 0.5 !important;
+      pointer-events: none !important;
+      cursor: default;
     }
   }
 }
@@ -279,4 +290,25 @@
   .sb-popover-header .sb-popover-toolbar {
     --background: #{$danger-color};
   }
+}
+
+.sb-popup-header-info{
+  background-color: $primary-color;
+  color: $white-color;
+  padding: 16px;
+  text-align: center;
+  ion-icon{
+    float: right;
+    font-size: 24px;
+  }
+}
+
+.sb-popup-header-danger{
+  @extend .sb-popup-header-info;
+  background-color: $danger-color;
+}
+
+.sb-popup-header-success{
+  @extend .sb-popup-header-info;
+  background-color: $success-color;
 }

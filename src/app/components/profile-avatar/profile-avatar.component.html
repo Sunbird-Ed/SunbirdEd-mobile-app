@@ -1,7 +1,12 @@
 <!-- Generated template for the ProfileAvatarComponent component -->
 
-<div class="profile-avatar">  
+<div class="profile-avatar" *ngIf="!isStateUser" >  
     <span [style.color]="bgColor">
       {{initial}}
     </span>
+</div>
+<div class="profile-avatar profileAvatar" *ngIf="isStateUser" >  
+  <span [style.color]="bgColor">
+    {{initial}}
+  </span>
 </div>

@@ -18,7 +18,8 @@ import { ContentType, AudienceFilter, RouterLinks } from '../../app.constant';
 import { Router } from '@angular/router';
 import { Location } from '@angular/common';
 import { AppVersion } from '@ionic-native/app-version/ngx';
-
+import { Subscription } from 'rxjs/Subscription';
+import { Platform } from '@ionic/angular';
 const KEY_SUNBIRD_CONFIG_FILE_PATH = 'sunbird_config_file_path';
 
 @Component({
@@ -36,6 +37,7 @@ export class AboutUsComponent implements OnInit {
     showBurgerMenu: false,
     actionButtons: []
   };
+  backButtonFunc: Subscription;
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -49,7 +51,8 @@ export class AboutUsComponent implements OnInit {
     private headerService: AppHeaderService,
     private router: Router,
     private location: Location,
-    private appVersion: AppVersion
+    private appVersion: AppVersion,
+    private platform: Platform,
   ) {
   }
 
@@ -59,6 +62,7 @@ export class AboutUsComponent implements OnInit {
     this.headerConfig.showHeader = false;
     this.headerConfig.showBurgerMenu = false;
     this.headerService.updatePageConfig(this.headerConfig);
+    this.handleBackButton();
   }
 
   ngOnInit() {
@@ -73,6 +77,12 @@ export class AboutUsComponent implements OnInit {
       .then(val => {
         this.getVersionName(val);
       });
+  }
+
+  ionViewWillLeave() {
+    if (this.backButtonFunc) {
+      this.backButtonFunc.unsubscribe();
+    }
   }
 
   ionViewDidLeave() {
@@ -95,15 +105,15 @@ export class AboutUsComponent implements OnInit {
     const getUserCount = await this.profileService.getAllProfiles(allUserProfileRequest).map((profile) => profile.length).toPromise();
     const getLocalContentCount = await this.contentService.getContents(contentRequest)
       .map((contentCount) => contentCount.length).toPromise();
-
-    (<any>window).supportfile.shareSunbirdConfigurations(getUserCount, getLocalContentCount, (result) => {
-      const loader = this.commonUtilService.getLoader();
-      loader.present();
+    let loader = await this.commonUtilService.getLoader();
+    (<any>window).supportfile.shareSunbirdConfigurations(getUserCount, getLocalContentCount, async (result) => {
+      await loader.present();
       this.preferences.putString(KEY_SUNBIRD_CONFIG_FILE_PATH, result).toPromise()
         .then((res) => {
           this.preferences.getString(KEY_SUNBIRD_CONFIG_FILE_PATH).toPromise()
-            .then(val => {
-              loader.dismiss();
+            .then(async val => {
+              await loader.dismiss();
+              loader = undefined;
               if (Boolean(val)) {
                 this.fileUrl = 'file://' + val;
 
@@ -113,10 +123,13 @@ export class AboutUsComponent implements OnInit {
                   console.error('Sharing Data is not possible', error);
                 });
               }
-
             });
         });
-    }, (error) => {
+    }, async (error) => {
+      if (loader) {
+        await loader.dismiss();
+        loader = undefined;
+      }
       console.error('ERROR - ' + error);
     });
   }
@@ -175,5 +188,23 @@ export class AboutUsComponent implements OnInit {
 
   goBack() {
     this.location.back();
+  }
+
+  handleBackButton() {
+    this.backButtonFunc = this.platform.backButton.subscribeWithPriority(10, () => {
+      this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.SETTINGS_ABOUT_US, Environment.SETTINGS, false);
+      this.location.back();
+      this.backButtonFunc.unsubscribe();
+    });
+  }
+
+  async openTermsOfUse() {
+    this.generateInteractTelemetry(InteractType.TOUCH, InteractSubtype.TERMS_OF_USE_CLICKED);
+    const baseUrl = await this.utilityService.getBuildConfigValue('BASE_URL');
+    const url = baseUrl + RouterLinks.TERM_OF_USE;
+    const options
+            = 'hardwareback=yes,clearcache=no,zoom=no,toolbar=yes,disallowoverscroll=yes';
+
+    (window as any).cordova.InAppBrowser.open(url, '_blank', options);
   }
 }

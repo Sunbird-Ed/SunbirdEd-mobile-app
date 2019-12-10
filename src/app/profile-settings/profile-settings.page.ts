@@ -4,7 +4,7 @@ import { Router, NavigationExtras } from '@angular/router';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { TranslateService } from '@ngx-translate/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { PreferenceKey, ProfileConstants } from '@app/app/app.constant';
+import { PreferenceKey, ProfileConstants, RouterLinks } from '@app/app/app.constant';
 import { GUEST_STUDENT_TABS, GUEST_TEACHER_TABS, initTabs } from '@app/app/module.service';
 import { ImpressionType, PageId, Environment, InteractSubtype, InteractType } from '@app/services/telemetry-constants';
 import isEqual from 'lodash/isEqual';
@@ -21,7 +21,8 @@ import {
   Profile,
   ProfileService,
   ProfileType,
-  SharedPreferences
+  SharedPreferences,
+  DeviceRegisterService
 } from 'sunbird-sdk';
 import {
   AppGlobalService,
@@ -33,6 +34,7 @@ import {
 } from 'services';
 import { Platform, Events, AlertController } from '@ionic/angular';
 import { Location } from '@angular/common';
+import { SplashScreenService } from '@app/services/splash-screen.service';
 
 @Component({
   selector: 'app-profile-settings',
@@ -81,11 +83,14 @@ export class ProfileSettingsPage implements OnInit {
     cssClass: 'select-box'
   };
   private navParams: any;
+
+
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     @Inject('FRAMEWORK_SERVICE') private frameworkService: FrameworkService,
     @Inject('FRAMEWORK_UTIL_SERVICE') private frameworkUtilService: FrameworkUtilService,
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
+    @Inject('DEVICE_REGISTER_SERVICE') private deviceRegisterService: DeviceRegisterService,
     private fb: FormBuilder,
     private translate: TranslateService,
     private telemetryGeneratorService: TelemetryGeneratorService,
@@ -100,7 +105,8 @@ export class ProfileSettingsPage implements OnInit {
     private router: Router,
     private appVersion: AppVersion,
     private alertCtrl: AlertController,
-    private location: Location
+    private location: Location,
+    private splashScreenService: SplashScreenService
   ) {
     this.getNavParams();
     this.preferences.getString(PreferenceKey.SELECTED_LANGUAGE_CODE).toPromise()
@@ -159,6 +165,13 @@ export class ProfileSettingsPage implements OnInit {
 
   ionViewDidEnter() {
     this.updateStyle();
+    this.hideOnboardingSplashScreen();
+  }
+
+  async hideOnboardingSplashScreen() {
+    if (this.navParams && this.navParams.forwardMigration) {
+      this.splashScreenService.handleSunbirdSplashScreenActions();
+    }
   }
 
   updateStyle() {
@@ -180,8 +193,8 @@ export class ProfileSettingsPage implements OnInit {
     const disabledSelectElement = Array.from(document.querySelectorAll('.item-label-stacked.item-select-disabled ion-select'));
     if (disabledSelectElement) {
       disabledSelectElement.forEach((element) => {
-        element['shadowRoot'].querySelector('.select-text.select-placeholder').setAttribute('style', 'color: #cccccc !important;padding-left: 10px;');
-        element['shadowRoot'].querySelector('.select-icon-inner').setAttribute('style', 'border-color: #cccccc !important;animation: none;border: solid;border-width: 0 2px 2px 0;display: inline-block;padding: 4px;transform: rotate(45deg);');
+        element['shadowRoot'].querySelector('.select-text.select-placeholder').setAttribute('style', 'color: #979797 !important;padding-left: 10px;opacity: 1;');
+        element['shadowRoot'].querySelector('.select-icon-inner').setAttribute('style', 'border-color: #979797 !important;animation: none;border: solid;border-width: 0 2px 2px 0;display: inline-block;padding: 4px;transform: rotate(45deg);opacity: 1;');
       });
     }
 
@@ -267,7 +280,7 @@ export class ProfileSettingsPage implements OnInit {
         if (result && result !== undefined && result.length > 0) {
           result.forEach(element => {
             // renaming the fields to text, value and checked
-            const value = { 'name': element.name, 'code': element.identifier };
+            const value = { name: element.name, code: element.identifier };
             this.syllabusList.push(value);
           });
           await this.loader.dismiss();
@@ -443,6 +456,13 @@ export class ProfileSettingsPage implements OnInit {
         break;
     }
   }
+  cancelEvent() {
+    this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
+      InteractSubtype.CANCEL_CLICKED,
+      Environment.ONBOARDING,
+      PageId.ONBOARDING_PROFILE_PREFERENCES,
+      undefined);
+  }
 
   enableSubmit() {
     if (this.userForm.value.grades.length) {
@@ -476,6 +496,7 @@ export class ProfileSettingsPage implements OnInit {
   async onSubmit() {
     const loader = await this.commonUtilService.getLoader();
     const formVal = this.userForm.value;
+    // await this.getAutoPopulatedData();
     if (formVal.boards.length === 0) {
       this.btnColor = '#8FC4FF';
       this.appGlobalService.generateSaveClickedTelemetry(this.extractProfileForTelemetry(formVal), 'failed',
@@ -492,7 +513,7 @@ export class ProfileSettingsPage implements OnInit {
         undefined,
         values
       );
-      // this.boardSelect.open();
+      this.boardSelect.open();
       return false;
     } else if (formVal.medium.length === 0) {
       this.btnColor = '#8FC4FF';
@@ -510,7 +531,7 @@ export class ProfileSettingsPage implements OnInit {
         undefined,
         values
       );
-      // this.mediumSelect.open();
+      this.mediumSelect.open();
       return false;
     } else if (formVal.grades.length === 0) {
       this.btnColor = '#8FC4FF';
@@ -518,7 +539,7 @@ export class ProfileSettingsPage implements OnInit {
         PageId.ONBOARDING_PROFILE_PREFERENCES, InteractSubtype.FINISH_CLICKED);
       // this.commonUtilService.showToast(this.commonUtilService.translateMessage('PLEASE_SELECT', this.commonUtilService
       //   .translateMessage('CLASS')), false, 'redErrorToast');
-      // this.gradeSelect.open();
+      this.gradeSelect.open();
       const values = new Map();
       values['grades'] = 'na';
       this.telemetryService.generateInteractTelemetry(
@@ -570,7 +591,7 @@ export class ProfileSettingsPage implements OnInit {
       });
     }
     this.profileService.updateProfile(req).toPromise()
-      .then((res: any) => {
+      .then(async (res: any) => {
         if (req.profileType === ProfileType.TEACHER) {
           initTabs(this.container, GUEST_TEACHER_TABS);
         } else if (req.profileType === ProfileType.STUDENT) {
@@ -578,7 +599,19 @@ export class ProfileSettingsPage implements OnInit {
         }
         this.events.publish('refresh:profile');
         this.appGlobalService.guestUserProfile = res;
-        this.commonUtilService.showToast('PROFILE_UPDATE_SUCCESS');
+        setTimeout(async () => {
+          this.commonUtilService.showToast('PROFILE_UPDATE_SUCCESS');
+          if (await this.commonUtilService.isDeviceLocationAvailable()) {
+            this.router.navigate([`/${RouterLinks.TABS}`]);
+          } else {
+            const navigationExtras: NavigationExtras = {
+              state: {
+                isShowBackButton: true
+              }
+            };
+            this.router.navigate([RouterLinks.DISTRICT_MAPPING], navigationExtras);
+          }
+        }, 2000);
         this.events.publish('onboarding-card:completed', { isOnBoardingCardCompleted: true });
         this.events.publish('refresh:profile');
         this.appGlobalService.guestUserProfile = res;
@@ -586,13 +619,8 @@ export class ProfileSettingsPage implements OnInit {
         this.telemetryGeneratorService.generateProfilePopulatedTelemetry(
           PageId.ONBOARDING_PROFILE_PREFERENCES, req, 'manual', Environment.ONBOARDING
         );
-
-        const navigationExtras: NavigationExtras = {
-          state: {
-            loginMode: 'guest'
-          }
-        }
-        this.router.navigate(['/tabs'], navigationExtras);
+        this.loader = await this.commonUtilService.getLoader(2000);
+        await this.loader.present();
       })
       .catch(async () => {
         await loader.dismiss();
@@ -619,8 +647,8 @@ export class ProfileSettingsPage implements OnInit {
 
   handleHeaderEvents($event) {
     switch ($event.name) {
-      case 'back': this.telemetryGeneratorService.generateBackClickedTelemetry(
-        PageId.ONBOARDING_PROFILE_PREFERENCES, Environment.ONBOARDING, true);
+      case 'back':
+        this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.ONBOARDING_PROFILE_PREFERENCES, Environment.ONBOARDING, true);
         this.dismissPopup();
         break;
     }
@@ -636,4 +664,3 @@ export class ProfileSettingsPage implements OnInit {
     this.scanner.startScanner(PageId.ONBOARDING_PROFILE_PREFERENCES, false);
   }
 }
-

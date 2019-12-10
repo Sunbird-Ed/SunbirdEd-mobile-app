@@ -86,7 +86,7 @@ export class UserAndGroupsPage implements OnInit {
   ) {
     /* Check userList length and show message or list accordingly */
 
-    //TODO
+    // TODO
     this.currentUserId = this.router.getCurrentNavigation().extras.state.userId;
     this.playConfig = this.router.getCurrentNavigation().extras.state.playConfig;
     if (!this.currentUserId && this.appGlobalService.getCurrentUser()) {
@@ -268,7 +268,7 @@ export class UserAndGroupsPage implements OnInit {
     });
   }
 
-  /**Navigates to group details page */
+  /* Navigates to group details page */
   goToGroupDetail(index) {
     const navigationExtras: NavigationExtras = {
       state: {
@@ -278,9 +278,9 @@ export class UserAndGroupsPage implements OnInit {
         profile: this.profileDetails,
         playConfig: this.playConfig
       }
-    }
+    };
 
-    this.router.navigate([`/${RouterLinks.USER_AND_GROUPS}/${RouterLinks.GROUP_DETAILS}`], navigationExtras)
+    this.router.navigate([`/${RouterLinks.USER_AND_GROUPS}/${RouterLinks.GROUP_DETAILS}`], navigationExtras);
   }
 
   /**
@@ -304,6 +304,12 @@ export class UserAndGroupsPage implements OnInit {
         isNewUser: true
       }
     };
+    this.telemetryGeneratorService.generateInteractTelemetry(
+        InteractType.TOUCH,
+        InteractSubtype.SHARE_CLICKED,
+        Environment.USER,
+        PageId.USERS_GROUPS
+    );
     this.router.navigate([`/${RouterLinks.USER_AND_GROUPS}/${RouterLinks.SHARE_USER_AND_GROUPS}`], navigationExtras);
   }
 
@@ -315,7 +321,7 @@ export class UserAndGroupsPage implements OnInit {
       state: {
         item: this.groupList
       }
-    }
+    };
 
     this.router.navigate([`/${RouterLinks.USER_AND_GROUPS}/${RouterLinks.GROUP_DETAILS}`], navigationExtras);
   }
@@ -358,12 +364,21 @@ export class UserAndGroupsPage implements OnInit {
       this.selectedUserIndex = (this.selectedUserIndex === index) ? -1 : index;
     });
     this.selectedUsername = name;
+    const values = new Map();
+    values.uid = this.currentUserId;
+    values.userName = this.selectedUsername;
+    this.telemetryGeneratorService.generateInteractTelemetry(
+        InteractType.TOUCH,
+        InteractSubtype.USER_CLICKED,
+        Environment.USER,
+        PageId.USERS_GROUPS,
+        undefined,
+        values
+    );
   }
 
   onSegmentChange(event) {
     this.zone.run(() => {
-      //MIGRATION TODO
-      // this.content.resize();
       this.selectedUserIndex = -1;
     });
     this.telemetryGeneratorService.generateImpressionTelemetry(
@@ -389,15 +404,15 @@ export class UserAndGroupsPage implements OnInit {
 
     const valuesMap = new Map();
     const fromUser = new Map();
-    fromUser['uid'] = this.currentUserId;
-    fromUser['type'] = this.appGlobalService.isUserLoggedIn() ? 'signedin' : 'guest';
+    fromUser.uid = this.currentUserId;
+    fromUser.type = this.appGlobalService.isUserLoggedIn() ? 'signedin' : 'guest';
 
     const toUser = new Map();
-    toUser['uid'] = selectedUser.uid;
-    toUser['type'] = 'guest';
+    toUser.uid = selectedUser.uid;
+    toUser.type = 'guest';
 
-    valuesMap['from'] = fromUser;
-    valuesMap['to'] = toUser;
+    valuesMap.from = fromUser;
+    valuesMap.to = toUser;
 
     const telemetryObject = new TelemetryObject(selectedUser.uid, ObjectType.USER, undefined);
 
@@ -486,13 +501,13 @@ export class UserAndGroupsPage implements OnInit {
     } else {
       if (this.commonUtilService.networkInfo.isNetworkAvailable) {
         this.authService.resignSession().subscribe(() => {
-          (<any>window).splashscreen.clearPrefs();
+          (window as any).splashscreen.clearPrefs();
           this.setAsCurrentUser(selectedUser, false);
         }, () => {
         });
       } else {
         this.authService.resignSession().subscribe();
-        (<any>window).splashscreen.clearPrefs();
+        (window as any).splashscreen.clearPrefs();
         this.setAsCurrentUser(selectedUser, false);
       }
     }
@@ -508,7 +523,7 @@ export class UserAndGroupsPage implements OnInit {
 
   }
 
-  /**condition for disabling the play button */
+  /* condition for disabling the play button */
   disablePlayButton() {
     return this.selectedUserIndex === -1 && !this.userList.length;
   }
@@ -541,10 +556,10 @@ export class UserAndGroupsPage implements OnInit {
       if (!response.data.isLeftButtonClicked) {
         this.deleteGroup(index);
       }
-    })
+    });
   }
 
-  /**Navigates to play content details page nd launch the player */
+  /* Navigates to play content details page nd launch the player */
   play() {
     const selectedUser = this.userList[this.selectedUserIndex];
     if (this.appGlobalService.isUserLoggedIn()) {
@@ -604,7 +619,7 @@ export class UserAndGroupsPage implements OnInit {
       if (!response.data.isLeftButtonClicked) {
         this.deleteUser(index);
       }
-    })
+    });
   }
 
   deleteUser(index: number) {
@@ -634,8 +649,8 @@ export class UserAndGroupsPage implements OnInit {
     if (data.grade && data.grade.length > 0) {
       const gradeName = [];
       data.grade.forEach(code => {
-        if (data['gradeValue'] && data['gradeValue'][code]) {
-          gradeName.push(data['gradeValue'][code]);
+        if (data.gradeValue && data.gradeValue[code]) {
+          gradeName.push(data.gradeValue[code]);
         }
       });
 
@@ -658,7 +673,7 @@ export class UserAndGroupsPage implements OnInit {
         undefined, undefined, 1000);
       setTimeout(() => {
         if (isBeingPlayed) {
-          this.playConfig['selectedUser'] = selectedUser;
+          this.playConfig.selectedUser = selectedUser;
           if (selectedUser.profileType === ProfileType.STUDENT) {
             this.preferences.putString(PreferenceKey.SELECTED_USER_TYPE, ProfileType.STUDENT).toPromise().then();
           } else {
@@ -687,7 +702,7 @@ export class UserAndGroupsPage implements OnInit {
   }
 
   ionViewWillLeave(): void {
-    if(this.backButtonFunc) {
+    if (this.backButtonFunc) {
       this.backButtonFunc.unsubscribe();
     }
     if (this.headerObservable) {
@@ -703,6 +718,9 @@ export class UserAndGroupsPage implements OnInit {
   }
 
   goBack() {
+    this.telemetryGeneratorService.generateBackClickedTelemetry(
+      PageId.USERS_GROUPS, Environment.USER, true, 
+    );
     this.location.back();
   }
 }

@@ -1,0 +1,86 @@
+<ion-content>
+
+    <div class="ar-header ion-text-center">
+        <h6 class="M0" *ngIf="recoveryEmail?.length || recoveryPhone?.length">{{'UPDATE_RECOVERY_ID' | translate}}</h6>
+        <h6 class="M0" *ngIf="!recoveryEmail?.length && !recoveryPhone?.length">{{'ADD_RECOVERY_ACCOUNT' | translate}}</h6>
+    </div>
+
+    <ion-list lines="none">
+        <ion-radio-group [(ngModel)]="recoveryIdType">
+
+            <ion-list-header class="recovery-desc">
+                <ion-label>{{'RECOVERY_ID_DESCRIPTION' | translate}}</ion-label>
+            </ion-list-header>
+
+            <ion-item>
+                <ion-label>{{'EMAIL_ID_PLACEHOLDER' | translate}}</ion-label>
+                <ion-radio slot="start" value="{{RecoveryType.EMAIL}}"></ion-radio>
+            </ion-item>
+
+            <ion-item>
+                <ion-label>{{'PHONE_PLACEHOLDER' | translate}}</ion-label>
+                <ion-radio slot="start" value="{{RecoveryType.PHONE}}"></ion-radio>
+            </ion-item>
+
+        </ion-radio-group>
+    </ion-list>
+
+    <div>
+        <div *ngIf="recoveryIdType === RecoveryType.EMAIL">
+            <form [formGroup]="recoveryEmailForm">
+                <div class="M16">
+                    <div class="W100 merged-input-container MT10">
+                        <ion-input type="text" placeholder="{{'EMAIL_PLACEHOLDER' | translate}}"
+                            class="form-control custom" formControlName="email" (input)="removeSameRecoveryIdErr(RecoveryType.EMAIL)">
+                        </ion-input>
+                    </div>
+                    <ion-label class="error"
+                        *ngIf="recoveryEmailForm.controls.email.dirty && recoveryEmailForm.controls.email.invalid">
+                        {{'ERROR_EMAIL_INVALID' | translate}}
+                    </ion-label>
+                    <ion-label class="error" *ngIf="sameEmailErr">
+                        {{'ERROR_SAME_EMAIL_UPDATED' | translate}}
+                    </ion-label>
+                </div>
+            </form>
+        </div>
+
+        <div *ngIf="recoveryIdType === RecoveryType.PHONE">
+            <form [formGroup]="recoveryPhoneForm">
+                <div class="M16">
+                    <div class="W100 merged-input-container MT10" style="text-align:start">
+                        <ion-input type="tel" placeholder="+91 -" class="form-control decorator " value="+91 -"
+                            disabled>
+                        </ion-input>
+                        <ion-input type="tel" placeholder="{{'ENTER_PHONE_POPUP_TITLE' | translate}}" maxlength="10"
+                            minlength="10" required class="form-control custom" formControlName="phone"
+                            (input)="removeSameRecoveryIdErr(RecoveryType.PHONE)">
+                        </ion-input>
+                    </div>
+                    <ion-label class="error"
+                        *ngIf="recoveryPhoneForm.controls.phone.dirty && recoveryPhoneForm.controls.phone.invalid">
+                        {{'ERROR_PHONE_INVALID' | translate}}
+                    </ion-label>
+                    <ion-label class="error" *ngIf="samePhoneErr">
+                        {{'ERROR_SAME_PHONE_UPDATED' | translate}}
+                    </ion-label>
+                </div>
+            </form>
+        </div>
+        <ion-row class="custom-shadow">
+            <ion-col padding>
+                <ion-button expand="block" fill="outline" (click)="cancel()">{{ 'CANCEL' | translate }} </ion-button>
+            </ion-col>
+            <ion-col padding>
+                <ion-button expand="block" type="submit" *ngIf="recoveryIdType === RecoveryType.EMAIL"
+                    (click)="submitRecoveryId(RecoveryType.EMAIL)" [disabled]="!recoveryEmailForm.valid">
+                    {{ 'BTN_SUBMIT' | translate }}</ion-button>
+
+                <ion-button expand="block" type="submit" *ngIf="recoveryIdType === RecoveryType.PHONE"
+                    (click)="submitRecoveryId(RecoveryType.PHONE)" [disabled]="!recoveryPhoneForm.valid">
+                    {{ 'BTN_SUBMIT' | translate }}</ion-button>
+            </ion-col>
+        </ion-row>
+    </div>
+
+</ion-content>

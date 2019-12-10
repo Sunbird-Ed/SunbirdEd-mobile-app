@@ -40,18 +40,15 @@ export class SunbirdQRScanner {
   private mQRScannerText;
   readonly permissionList = [AndroidPermission.CAMERA];
   backButtonFunc = undefined;
-  private pauseSubscription?: Subscription;
   source: string;
   showButton = false;
-  t1: number;
-  t2: number;
   appName = '';
+  private isScannerActive = false;
   constructor(
     private translate: TranslateService,
     private platform: Platform,
     private qrScannerResultHandler: QRScannerResultHandler,
     private telemetryGeneratorService: TelemetryGeneratorService,
-    private commonUtil: CommonUtilService,
     private appGlobalService: AppGlobalService,
     private container: ContainerService,
     private permission: AndroidPermissionsService,
@@ -64,8 +61,6 @@ export class SunbirdQRScanner {
     const that = this;
     this.translate.get(this.QR_SCANNER_TEXT).subscribe((data) => {
       that.mQRScannerText = data;
-    }, (error) => {
-
     });
 
     this.translate.onLangChange.subscribe(() => {
@@ -73,7 +68,6 @@ export class SunbirdQRScanner {
     });
 
     this.appVersion.getAppName().then((appName: any) => this.appName = appName);
-
   }
 
   public async startScanner(
@@ -87,7 +81,7 @@ export class SunbirdQRScanner {
     this.source = source;
     this.showButton = showButton;
 
-    this.pauseSubscription = this.platform.pause.subscribe(() => this.stopScanner());
+    this.platform.pause.take(1).subscribe(() => this.stopScanner());
     this.generateImpressionTelemetry(source);
     this.generateStartEvent(source);
 
@@ -142,7 +136,7 @@ export class SunbirdQRScanner {
 
       }).toPromise().then((status?: AndroidPermissionsStatus) => {
         if (!status) {
-          this.commonUtil.showToast('PERMISSION_DENIED');
+          this.commonUtilService.showToast('PERMISSION_DENIED');
         }
 
         if (status.isPermissionAlwaysDenied) {
@@ -168,8 +162,7 @@ export class SunbirdQRScanner {
     });
 
     await toast.present();
-    await toast.onWillDismiss().then((res) => {
-      console.log("res", res);
+    toast.onWillDismiss().then((res) => {
       if (res.role === 'cancel') {
 
         this.telemetryGeneratorService.generateInteractTelemetry(
@@ -178,7 +171,7 @@ export class SunbirdQRScanner {
           Environment.ONBOARDING,
           PageId.QRCodeScanner);
         const navigationExtras: NavigationExtras = { state: { changePermissionAccess: true } };
-        this.router.navigate([`/${RouterLinks.SETTINGS}/permission`], navigationExtras);
+        this.router.navigate([`/${RouterLinks.SETTINGS}/${RouterLinks.PERMISSION}`], navigationExtras);
       }
 
     }).catch((error) => {
@@ -239,15 +232,14 @@ export class SunbirdQRScanner {
 
   }
   public stopScanner() {
-    if (this.backButtonFunc) {
-      this.backButtonFunc.unsubscribe();
-      this.backButtonFunc = undefined;
+    if (!this.isScannerActive) {
+      return;
     }
-
-    (window as any).qrScanner.stopScanner();
-    if (this.pauseSubscription) {
-      this.pauseSubscription.unsubscribe();
-    }
+    // to prevent back event propagating up to parent
+    setTimeout(() => {
+      (window as any).qrScanner.stopScanner();
+      this.isScannerActive = false;
+    }, 100);
   }
 
   getProfileSettingConfig() {
@@ -265,18 +257,15 @@ export class SunbirdQRScanner {
   private startQRScanner(
     screenTitle: string, displayText: string, displayTextColor: string,
     buttonText: string, showButton: boolean, source: string) {
-    if (this.backButtonFunc) {
+
+    if (this.isScannerActive) {
       return;
     }
-    this.backButtonFunc = this.platform.backButton.subscribeWithPriority(11, () => {
-      this.stopScanner();
-    });
-    window['qrScanner'].startScanner(screenTitle, displayText,
+    this.isScannerActive = true;
+    (window as any).qrScanner.startScanner(screenTitle, displayText,
       displayTextColor, buttonText, showButton, this.platform.isRTL, (scannedData) => {
         if (scannedData === 'skip') {
           if (this.appGlobalService.DISPLAY_ONBOARDING_CATEGORY_PAGE) {
-            // Migration todo
-            // this.app.getActiveNavs()[0].push(ProfileSettingsPage, { stopScanner: true });
             const navigationExtras: NavigationExtras = { state: { stopScanner: true } };
             this.router.navigate([`/${RouterLinks.PROFILE_SETTINGS}`], navigationExtras);
           } else {
@@ -305,6 +294,8 @@ export class SunbirdQRScanner {
             this.qrScannerResultHandler.handleDialCode(source, scannedData);
           } else if (this.qrScannerResultHandler.isContentId(scannedData)) {
             this.qrScannerResultHandler.handleContentId(source, scannedData);
+          } else if (scannedData.includes('/certs/')) {
+            this.qrScannerResultHandler.handleCertsQR(source, scannedData);
           } else {
             this.qrScannerResultHandler.handleInvalidQRCode(source, scannedData);
             this.showInvalidCodeAlert();
@@ -353,7 +344,7 @@ export class SunbirdQRScanner {
       this.source
     );
     if (this.source !== 'permission') {
-      this.commonUtil.afterOnBoardQRErrorAlert('INVALID_QR', 'UNKNOWN_QR');
+      this.commonUtilService.afterOnBoardQRErrorAlert('INVALID_QR', 'UNKNOWN_QR');
       return;
     }
     let popUp;

@@ -42,9 +42,9 @@ export enum PageId {
     PROFILE = 'profile',
     COURSE_PAGE_FILTER = 'course-page-filter',
     LIBRARY_PAGE_FILTER = 'library-page-filter',
+    LIBRARY_SEARCH_FILTER = 'library-search-filter',
     COURSE_DETAIL = 'course-detail',
     COLLECTION_DETAIL = 'collection-detail',
-    ENROLLED_COURSE_DETAIL = 'enrolled-course-detail',
     CONTENT_DETAIL = 'content-detail',
     COURSE_BATCHES = 'course-batches',
     SHARE_CONTENT = 'share-content',
@@ -110,7 +110,12 @@ export enum PageId {
     CONTENT_TRANSFER_SUCCEED_POPUP = 'content-transfer-succeed-popup',
     CANCELLING_CONTENT_TRANSFER_POPUP = 'cancelling-content-transfer-popup',
     DIAL_SEARCH = 'dial-book-result',
-    TEXTBOOK_TOC = 'textbook-toc'
+    TEXTBOOK_TOC = 'textbook-toc',
+    EXPLORE_MORE_CONTENT = 'explore-more-content',
+    RECOVERY_ACCOUNT_ID_POPUP = 'recovery-account-id-popup',
+    MERGE_ACCOUNT_POPUP = 'merge-account-popup',
+    DISTRICT_MAPPING = 'district-mapping',
+    SIGNIN_POPUP = 'signin-popup',
 }
 export enum LogType {
     NOTIFICATION = 'notification'
@@ -130,7 +135,8 @@ export enum ImpressionType {
     DETAIL = 'detail',
     VIEW = 'view',
     EDIT = 'edit',
-    WORKFLOW = 'workflow'
+    WORKFLOW = 'workflow',
+    DISTRICT_MAPPING = 'district-mapping'
 }
 export enum ImpressionSubtype {
     QRCodeScanInitiate = 'qr-code-scan-initiate',
@@ -139,7 +145,10 @@ export enum ImpressionSubtype {
     INVALID_QR_CODE = 'invalid-qr-code',
     APP_RATING_POPUP = 'app-rating-popup',
     QR_SCAN_WALKTHROUGH = 'qr-scan-walkthrough',
-    COMINGSOON_POPUP = 'coming-soon-popup'
+    COMINGSOON_POPUP = 'coming-soon-popup',
+    EXPLORE_MORE_CONTENT = 'explore-more-content',
+    RECOVERY_ACCOUNT_POPUP = 'recovery-account-popup',
+    DISTRICT_LOCATION_MAPPING = 'district-location-mapping'
 }
 export enum InteractType {
     TOUCH = 'TOUCH',
@@ -148,6 +157,9 @@ export enum InteractType {
 }
 
 export enum InteractSubtype {
+    MERGE_ACCOUNT_INITIATED = 'merge-account-initiated',
+    MERGE_ACCOUNT_SUCCESS = 'merge-account-success',
+    MERGE_ACCOUNT_FAILED = 'merge-account-failed',
     NETWORK_STATUS = 'networkStatus',
     INTERNET_CONNECTED = 'internet-connected',
     INTERNET_DISCONNECTED = 'internet-disconnected',
@@ -216,12 +228,15 @@ export enum InteractSubtype {
     SWITCH_USER_SUCCESS = 'switch-user-success',
     DELETE_USER_INITIATE = 'delete-user-initiate',
     DELETE_GROUP_INITIATE = 'delete-group-initiate',
+    DELETE_ALL_CLICKED = 'delete-from-device-button-clicked',
     SHARE_USER_GROUP_INITIATE = 'share-usergroup-initiate',
     SHARE_USER_GROUP_SUCCESS = 'share-usergroup-success',
     USER_GROUP_CLICKED = 'users-groups-clicked',
     REPORTS_CLICKED = 'reports-clicked',
     USERS_TAB_CLICKED = 'users-tab-clicked',
     GROUPS_TAB_CLICKED = 'groups-tab-clicked',
+    SUBMIT_CLICKED = 'submit-clicked',
+    LOCATION_CAPTURED = 'location-captured',
     USER_CLICKED = 'user-clicked',
     GROUP_CLICKED = 'group-clicked',
     CLASS_CLICKED = 'class-clicked',
@@ -273,6 +288,8 @@ export enum InteractSubtype {
     RESOURCE_PAGE_LOADED = 'page-loaded',
     RESOURCE_PAGE_ERROR = 'page-error',
     ENROLL_CLICKED = 'enroll-clicked',
+    ENROLL_SUCCESS = 'enroll-success',
+    ENROLL_FAILED = 'enroll-failed',
     YES_CLICKED = 'yes-clicked',
     NO_CLICKED = 'no-clicked',
     RESUME_CLICKED = 'resume-clicked',
@@ -286,7 +303,9 @@ export enum InteractSubtype {
     OUTSIDE_POPUP_AREA_CLICKED = 'outside-popup-area-clicked',
     POPUP_DISMISSED= 'popup-dismissed',
     DOWNLOAD_CANCEL_ALL_CLICKED = 'download-cancel-all-clicked',
+    DOWNLOAD_CERTIFICATE_CLICKED = 'download-certificate-clicked',
     DOWNLOAD_CANCEL_CLICKED = 'download-cancel-clicked',
+    DOWNLOAD_CLICKED = 'download-from-device-button-clicked',
     RATE_LATER_CLICKED = 'rate-later-clicked',
     PLAY_STORE_BUTTON_CLICKED = 'play-store-button-clicked',
     HELP_SECTION_CLICKED = 'help-section-clicked',
@@ -320,7 +339,28 @@ export enum InteractSubtype {
     SHEEN_ANIMATION_END = 'sheen-animation-ended',
     FILTER_CLICKED = 'filter-clicked',
     DROPDOWN_CLICKED = 'drop-down-clicked',
-    SUBUNIT_CLICKED = 'sub-unit-clicked'
+    SUBUNIT_CLICKED = 'sub-unit-clicked',
+    SEE_MORE_CONTENT_CLICKED = 'see-more-content-clicked',
+    SEARCH_COMPLETED = 'search-completed',
+    SORT_BY_FILTER_SET = 'sort-by-filter-set',
+    SUBJECT_CLICKED = 'subject-clicked',
+    SORT_BY_CLICKED = 'sort-by-clicked',
+    SEARCH_INITIATED = 'search-initiated',
+    RECOVERY_ACCOUNT_ID_CLICKED = 'recovery-account-id-clicked',
+    MENU_CLICKED = 'menu-clicked',
+    SHARE_CLICKED = 'share-clicked',
+    SHARE_TELEMETRY_CLICKED = 'share-telemetry-clicked',
+    UNENROL_CLICKED = 'unenrol-clicked',
+    UNENROL_SUCCESS = 'unenrol-success',
+    UNENROL_FAILURE = 'unenrol-failure',
+    TRAINING_INFO_CLICKED = 'training-info-clicked',
+    TRAINING_MODULE_CLICKED = 'training-module-clicked',
+    MERGE_CLICKED = 'merge-clicked',
+    NOTIFICATION_RECEIVED = 'notification-received',
+    AUTO_POPULATED_LOCATION = 'auto-populate-location',
+    EDIT_DISTRICT_MAPPING_CLICKED = 'edit-district-mapping-clicked',
+    LOGIN_CLICKED = 'login-clicked',
+    TERMS_OF_USE_CLICKED = 'terms-of-use-clicked'
 }
 
 export enum ActionButtonType {
@@ -330,7 +370,13 @@ export enum ActionButtonType {
 
 export enum CorReleationDataType {
     COURSE_BATCH = 'CourseBatch',
+    ROOT_ID = 'RootId',
+    SECTION = 'Section',
     FTUE = 'Ftue',
+    BOARD = 'Board',
+    MEDIUM = 'Medium',
+    CLASS = 'Class',
+    USERTYPE = 'UserType'
 }
 
 

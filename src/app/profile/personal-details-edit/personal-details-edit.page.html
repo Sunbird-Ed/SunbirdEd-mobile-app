@@ -4,29 +4,30 @@
       <ion-label position="stacked" class="label-font">
         {{'NAME' | translate}}
         <ion-text>
-          <span color="danger">&nbsp;*</span>
+          <span class="error">&nbsp;*</span>
         </ion-text>
         <div class="error"
           *ngIf="profileEditForm.controls.name.dirty && profileEditForm.controls.name.errors?.required">
           {{'ERROR_NAME_INVALID' | translate}}</div>
       </ion-label>
       <ion-input class="form-control" #name formControlName="name" placeholder="{{ 'NAME_HINT' | translate }}"
-        (ionChange)="enableSubmitButton();" dir="{{commonUtilService.getAppDirection()}}"></ion-input>
+       dir="{{commonUtilService.getAppDirection()}}"></ion-input>
     </ion-item>
     <ion-item>
       <ion-label position="stacked" class="label-font">{{'STATE' | translate}}</ion-label>
-      <ion-select formControlName="states" #stateSelect multiple="false"
-        placeholder="{{'STATE_OPTION_TEXT' | translate}}" okText="{{'BTN_SUBMIT' | translate}}"
-        cancelText="{{'CANCEL' | translate}}" (ionChange)="getDistrict(stateSelect.value);">
+      <ion-select  [disabled]="!stateList.length" formControlName="states" #stateSelect multiple="false"
+      placeholder="{{ (stateList.length ? 'STATE_OPTION_TEXT':'NO_DATA_FOUND') | translate }}" okText="{{'BTN_SUBMIT' | translate}}"
+        cancelText="{{'CANCEL' | translate}}" (ionChange)="getDistrict(stateSelect.value, true);">
         <ion-select-option *ngFor="let state of stateList" text-capitalize value="{{state?.id}}">{{state?.name}}
         </ion-select-option>
       </ion-select>
     </ion-item>
     <ion-item>
       <ion-label position="stacked" class="label-font">{{'DISTRICT' | translate}}</ion-label>
-      <ion-select formControlName="districts" #districtSelect multiple="false"
-        [disabled]="!profileEditForm.value.states" placeholder="{{'DISTRICT_OPTION_TEXT' | translate}}"
-        okText="{{'BTN_SUBMIT' | translate}}" cancelText="{{'CANCEL' | translate}}">
+      <ion-select [disabled]="!districtList.length" formControlName="districts" #districtSelect multiple="false"
+        [disabled]="!profileEditForm.value.states" placeholder="{{ (districtList.length ? 'DISTRICT_OPTION_TEXT':'NO_DATA_FOUND') | translate }}"
+        okText="{{'BTN_SUBMIT' | translate}}" cancelText="{{'CANCEL' | translate}}"
+        (ionChange)="enableSubmitButton()">
         <ion-select-option *ngFor="let district of districtList" value="{{district?.id}}">{{district?.name}}
         </ion-select-option>
       </ion-select>
@@ -37,7 +38,8 @@
 <ion-footer>
   <ion-row class="padding-12">
     <ion-col size-md="10" offset-md="1">
-      <ion-button expand="block" [ngStyle]="{'background-color': btnColor}" [disabled]="profileEditForm.invalid"
+      <ion-button expand="block" [ngStyle]="{'background-color': btnColor}" 
+      [disabled]="profileEditForm.invalid || (!profileEditForm.invalid && disableSubmitFlag)"
         (click)="onSubmit()">{{'SAVE'| translate}}</ion-button>
     </ion-col>
   </ion-row>

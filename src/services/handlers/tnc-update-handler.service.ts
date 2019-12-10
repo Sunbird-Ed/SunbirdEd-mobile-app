@@ -1,44 +1,83 @@
 import { Inject, Injectable } from '@angular/core';
 import { ModalController } from '@ionic/angular';
-import { AuthService, OAuthSession, ProfileService, ServerProfile, ServerProfileDetailsRequest } from 'sunbird-sdk';
-import { ProfileConstants } from '@app/app/app.constant';
+import {
+  AuthService, ProfileService,
+  ServerProfile, ServerProfileDetailsRequest, CachedItemRequestSourceFrom
+} from 'sunbird-sdk';
+import { ProfileConstants, RouterLinks } from '@app/app/app.constant';
 import { TermsAndConditionsPage } from '@app/app/terms-and-conditions/terms-and-conditions.page';
+import { Router, NavigationExtras } from '@angular/router';
+import { CommonUtilService } from '../common-util.service';
+import { FormAndFrameworkUtilService } from '../formandframeworkutil.service';
 
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class TncUpdateHandlerService {
 
   modal: any;
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
+    @Inject('AUTH_SERVICE') private authService: AuthService,
+    private commonUtilService: CommonUtilService,
+    private formAndFrameworkUtilService: FormAndFrameworkUtilService,
     private modalCtrl: ModalController,
-    @Inject('AUTH_SERVICE') private authService: AuthService
+    private router: Router
   ) { }
 
   public async checkForTncUpdate(): Promise<boolean> {
-    return new Promise<boolean>((resolve, reject) => {
-      this.authService.getSession().toPromise().then((sessionData: OAuthSession) => {
-        if (!sessionData) {
-          resolve(false);
-          return;
-        }
-        const request: ServerProfileDetailsRequest = {
-          userId: sessionData.userToken,
-          requiredFields: ProfileConstants.REQUIRED_FIELDS
-        };
-        this.profileService.getServerProfilesDetails(request).toPromise()
-          .then((response) => {
-            if (!this.hasProfileTncUpdated(response)) {
-              resolve(false);
-              return;
+    return new Promise<boolean>(async (resolve, reject) => {
+      const sessionData = await this.authService.getSession().toPromise();
+      if (!sessionData) {
+        resolve(false);
+        return;
+      }
+      const request: ServerProfileDetailsRequest = {
+        userId: sessionData.userToken,
+        requiredFields: ProfileConstants.REQUIRED_FIELDS,
+        from: CachedItemRequestSourceFrom.SERVER
+      };
+      this.profileService.getServerProfilesDetails(request).toPromise()
+        .then((profile) => {
+          if (!this.hasProfileTncUpdated(profile)) {
+            if (this.commonUtilService.networkInfo.isNetworkAvailable) {
+              this.formAndFrameworkUtilService.getCustodianOrgId()
+                .then((custodianOrgId: string) => {
+                  const isCustodianOrgId = profile.rootOrg.rootOrgId === custodianOrgId;
+
+                  if (isCustodianOrgId
+                    && !this.commonUtilService.isUserLocationAvalable(profile)) {
+                    const navigationExtras: NavigationExtras = {
+                      state: {
+                        isShowBackButton: false
+                      }
+                    };
+                    this.router.navigate(['/', RouterLinks.DISTRICT_MAPPING], navigationExtras)
+                      .then(() => resolve(false));
+                    return;
+                  } else {
+                    resolve(false);
+                    return;
+                  }
+                })
+                .catch((error) => {
+                  console.error('Error:', error);
+                  reject();
+                });
             }
-            this.presentTncPage({ response }).then(() => {
+            resolve(false);
+            return;
+          }
+          this.presentTncPage({ profile })
+            .then(() => {
               resolve(true);
               return;
-            }).catch(() => {
+            })
+            .catch((error) => {
+              console.error('Error:', error);
               reject();
             });
-          });
-      });
+        });
     });
   }
 
@@ -48,7 +87,8 @@ export class TncUpdateHandlerService {
         .toPromise()
         .then(() => {
           resolve();
-        }).catch(() => {
+        })
+        .catch(() => {
           reject();
         });
     }))
@@ -61,14 +101,15 @@ export class TncUpdateHandlerService {
           this.profileService.getServerProfilesDetails(reqObj).toPromise()
             .then(res => {
               resolve();
-            }).catch(e => {
+            })
+            .catch(e => {
               reject(e);
             });
         }));
       });
   }
 
-  private async presentTncPage(navParams: any): Promise<undefined> {
+  async presentTncPage(navParams: any): Promise<undefined> {
     this.modal = await this.modalCtrl.create({
       component: TermsAndConditionsPage,
       componentProps: navParams
@@ -82,7 +123,7 @@ export class TncUpdateHandlerService {
 
   public async dismissTncPage(): Promise<void> {
     if (this.modal) {
-      return this.modal.dismiss();
+      return await this.modal.dismiss();
     }
   }
 }

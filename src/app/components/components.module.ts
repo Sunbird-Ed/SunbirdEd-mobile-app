@@ -40,6 +40,11 @@ import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 import { ViewCreditsComponent } from './popups/view-credits/view-credits.component';
 import { SkeletonItemComponent } from './skeleton-item/skeleton-item.component';
 import { FilteroptionComponent } from './filteroption/filteroption.component';
+import { SbInsufficientStoragePopupComponent } from './popups/sb-insufficient-storage-popup/sb-insufficient-storage-popup';
+import { AccountRecoveryInfoComponent } from './popups/account-recovery-id/account-recovery-id-popup.component';
+import { EnrollmentDetailsComponent } from './enrollment-details/enrollment-details.component';
+import { FilterPipe } from '@app/pipes/filter/filter.pipe';
+import { TeacherIdVerificationComponent } from './popups/teacher-id-verification-popup/teacher-id-verification-popup.component';
 
 @NgModule({
   declarations: [
@@ -65,7 +70,6 @@ import { FilteroptionComponent } from './filteroption/filteroption.component';
     EditContactDetailsPopupComponent,
     EditContactVerifyPopupComponent,
     ConfirmAlertComponent,
-    EditContactDetailsPopupComponent,
     EditContactVerifyPopupComponent,
     AppRatingAlertComponent,
     OverflowMenuComponent,
@@ -75,7 +79,11 @@ import { FilteroptionComponent } from './filteroption/filteroption.component';
     AssessmentDetailsComponent,
     ViewCreditsComponent,
     SkeletonItemComponent,
-    FilteroptionComponent
+    FilteroptionComponent,
+    SbInsufficientStoragePopupComponent,
+    AccountRecoveryInfoComponent,
+    EnrollmentDetailsComponent,
+    TeacherIdVerificationComponent
   ],
   imports: [
     CommonModule,
@@ -104,7 +112,11 @@ import { FilteroptionComponent } from './filteroption/filteroption.component';
     ViewCreditsComponent,
     FilteroptionComponent,
     ContentActionsComponent,
-    ReportAlertComponent
+    ReportAlertComponent,
+    SbInsufficientStoragePopupComponent,
+    AccountRecoveryInfoComponent,
+    EnrollmentDetailsComponent,
+    TeacherIdVerificationComponent
   ],
   exports: [
     ApplicationHeaderComponent,
@@ -127,9 +139,7 @@ import { FilteroptionComponent } from './filteroption/filteroption.component';
     SbDownloadPopupComponent,
     UpgradePopoverComponent,
     EditContactDetailsPopupComponent,
-    EditContactDetailsPopupComponent,
     ConfirmAlertComponent,
-    EditContactDetailsPopupComponent,
     EditContactVerifyPopupComponent,
     AppRatingAlertComponent,
     ProfileAvatarComponent,
@@ -138,8 +148,12 @@ import { FilteroptionComponent } from './filteroption/filteroption.component';
     ViewCreditsComponent,
     SkeletonItemComponent,
     FilteroptionComponent,
-    ReportAlertComponent
+    ReportAlertComponent,
+    SbInsufficientStoragePopupComponent,
+    AccountRecoveryInfoComponent,
+    EnrollmentDetailsComponent,
+    TeacherIdVerificationComponent
   ],
-  providers: [FileSizePipe, Keyboard]
+  providers: [FileSizePipe, FilterPipe,  Keyboard]
 })
 export class ComponentsModule { }

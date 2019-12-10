@@ -1,6 +1,6 @@
 @import "src/assets/styles/base/_variables.scss";
 @import "src/assets/styles/_custom-mixins.scss";
-:host {
+// :host {
     .download-page-heading{
         color: white;
         font-size: $font-size-base + 2;
@@ -43,16 +43,16 @@
     .ad-action-btn{
         position: absolute;
         bottom: 0;
-        background: $primary-color;
         border-radius: 0px !important;
         box-shadow: none !important;
         height: ($base-block-space * 3);
         border-top-left-radius: 4px !important;
         border-top-right-radius: 4px !important;
         text-transform: capitalize;
-        @include margin(0, 0, 0, ($base-block-space * 1));
+        // @include margin(0, 0, 0, ($base-block-space * 1));
         @include padding(null, ($base-block-space * 1));
         background-color: $danger-color;
+        color: $white-color;
 
         .button-inner {
             font-size: ($font-size-base - 2);
@@ -65,4 +65,17 @@
             color:$white-color;
         }
     }
-}
+    .popover-progress-container{
+        height: ($base-block-space * 0.5);
+        background-color: $primary-800;
+        position: relative;
+        .progress-highlight{
+            position:absolute; 
+            background:$primary-200; 
+            left:20%; 
+            right:0; 
+            top:0; 
+            bottom:0
+        }
+    }
+// }

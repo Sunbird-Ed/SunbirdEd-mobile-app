@@ -16,34 +16,34 @@
       <span class="storage-info">{{'STORAGE' | translate}}</span>
     </div>
   </div>
-  <div radio-group [(ngModel)]="storageDestination" [name]="storageDestination" ngDefaultControl
-    (ngModelChange)="attemptTransfer()">
-    <div class="sb-storage-container">
-      <div class="radio-container">
-        <ion-radio class="storage-radio-btn" [value]="StorageDestination.INTERNAL_STORAGE"></ion-radio>
+  <ion-radio-group [(ngModel)]="storageDestination" (ngModelChange)="$event && attemptTransfer()" [name]="storageDestination" ngDefaultControl>
+      <div class="sb-storage-container">
+        <div class="radio-container">
+          <ion-radio slot="start" class="storage-radio-btn" [value]="StorageDestination.INTERNAL_STORAGE"></ion-radio>
+        </div>
+        <div class="iconSize">
+          <img src="./assets/imgs/Phone.png">
+        </div>
+        <div class="sb-card-details">
+          <div class="title">{{'PHONE' | translate}}({{totalInternalMemorySize}})</div>
+          <div class="info">{{'FREE_SPACE' | translate}} {{availableInternalMemorySize | fileSize}}</div>
+        </div>
       </div>
-      <div class="iconSize">
-        <img src="./assets/imgs/Phone.png">
+      <div class="sb-storage-container" [class.disabled]="!isExternalMemoryAvailable">
+        <div class="radio-container">
+          <ion-radio slot="start" class="storage-radio-btn" [value]="StorageDestination.EXTERNAL_STORAGE"></ion-radio>
+        </div>
+        <div class="iconSize">
+          <img src="./assets/imgs/SD_card.png">
+        </div>
+        <div class="sb-card-details">
+          <div class="title" *ngIf="isExternalMemoryAvailable">{{'SD_CARD' | translate}}({{totalExternalMemorySize}})
+          </div>
+          <div class="title" *ngIf="!isExternalMemoryAvailable">{{'SD_CARD' | translate}} : (--) </div>
+          <div class="info" *ngIf="isExternalMemoryAvailable">{{'FREE_SPACE' | translate}}
+            {{availableExternalMemorySize | fileSize}}</div>
+          <div class="info" *ngIf="!isExternalMemoryAvailable">{{'FREE_SPACE' | translate}} -- </div>
+        </div>
       </div>
-      <div class="sb-card-details">
-        <div class="title">{{'PHONE' | translate}}({{totalInternalMemorySize}})</div>
-        <div class="info">{{'FREE_SPACE' | translate}} {{availableInternalMemorySize | fileSize}}</div>
-      </div>
-    </div>
-    <div class="sb-storage-container" [class.disabled]="!isExternalMemoryAvailable">
-      <div class="radio-container">
-        <ion-radio class="storage-radio-btn" [value]="StorageDestination.EXTERNAL_STORAGE"></ion-radio>
-      </div>
-      <div class="iconSize">
-        <img src="./assets/imgs/SD_card.png">
-      </div>
-      <div class="sb-card-details">
-        <div class="title" *ngIf="isExternalMemoryAvailable">{{'SD_CARD' | translate}}({{totalExternalMemorySize}})</div>
-        <div class="title" *ngIf="!isExternalMemoryAvailable">{{'SD_CARD' | translate}} : (--) </div>
-        <div class="info" *ngIf="isExternalMemoryAvailable">{{'FREE_SPACE' | translate}}
-          {{availableExternalMemorySize | fileSize}}</div>
-        <div class="info" *ngIf="!isExternalMemoryAvailable">{{'FREE_SPACE' | translate}} -- </div>
-      </div>
-    </div>
-  </div>
+    </ion-radio-group>
 </ion-content>

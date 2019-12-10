@@ -1,77 +1,59 @@
 import { ContainerService } from 'services';
 import { TabOptions } from '../services/container.services';
 
-
-// const HOME_TAB = { root: HomePage, icon: "home", label: "HOME_BNAV", index: 0, tabsHideOnSubPages: true };
 const COURSE_TAB = {
     root: 'courses',
     icon: 'courses',
-    // icon: './assets/imgs/Course_enable@1.5x.svg',
     label: 'COURSES_BNAV',
-    index: 2,
-    tabsHideOnSubPages: true
+    index: 2
 };
 
 const COURSE_TAB_DISABLED = {
     root: '',
     icon: 'courses',
-    // icon: './assets/imgs/Course_enable@1.5x.svg',
     label: 'COURSES_BNAV',
     index: 2,
-    tabsHideOnSubPages: true,
     disabled: true
 };
 
 const SCANNER_TAB = {
     root: '',
     icon: 'qrscanner',
-    // icon: './assets/imgs/ic_qr_scanner.svg',
     label: '',
-    index: 3,
-    tabsHideOnSubPages: true
+    index: 3
 };
 const LIBRARY_TAB = {
     root: 'resources',
     icon: 'resources',
-    // icon: './assets/imgs/Library@1.5x.svg',
     label: 'LIBRARY_BNAV',
     index: 1,
-    tabsHideOnSubPages: true,
     isSelected: true
 };
 const GUEST_PROFILE_TAB = {
     root: 'guest-profile',
     icon: 'profile',
-    // icon: './assets/imgs/Profile@1.5x.svg',
     label: 'PROFILE_BNAV',
-    index: 5,
-    tabsHideOnSubPages: true
+    index: 5
 };
 const GUEST_PROFILE_SWITCH_TAB = {
     root: 'guest-profile',
     icon: 'profile',
-    // icon: './assets/imgs/Profile@1.5x.svg',
     label: 'PROFILE_BNAV',
     index: 5,
-    tabsHideOnSubPages: true,
     isSelected: true
 };
 const PROFILE_TAB = {
     root: 'profile',
     icon: 'profile',
-    // icon: './assets/imgs/Profile@1.5x.svg',
     label: 'PROFILE_BNAV',
-    index: 5,
-    tabsHideOnSubPages: true
+    index: 5
 };
 
 const DOWNLOADS_TAB = {
     root: 'download-manager',
     icon: 'downloads',
-    // icon: './assets/imgs/Downloads@1.5x.svg',
     label: 'DOWNLOAD_BNAV',
-    index: 4,
-    tabsHideOnSubPages: true
+    index: 4
 };
 
 export const GUEST_TEACHER_TABS = [
@@ -115,7 +97,7 @@ export const GUEST_STUDENT_SWITCH_TABS = [
 ];
 
 export const initTabs = (container: ContainerService, tabs: Array<TabOptions>) => {
-    console.log("Inside initTabs", tabs);
+    console.log('Inside initTabs', tabs);
 
     container.removeAllTabs();
 

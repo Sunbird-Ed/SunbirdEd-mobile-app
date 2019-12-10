@@ -2,7 +2,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { CanvasPlayerService } from '@app/services/canvas-player.service';
 import { AppGlobalService } from '@app/services/app-global-service.service';
 import { CommonUtilService } from '@app/services/common-util.service';
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, Inject } from '@angular/core';
 import { Platform, AlertController, Events } from '@ionic/angular';
 import { ScreenOrientation } from '@ionic-native/screen-orientation/ngx';
 import { PlayerActionHandlerDelegate, HierarchyInfo, User } from './player-action-handler-delegate';
@@ -10,6 +10,7 @@ import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { EventTopics, RouterLinks } from '../app.constant';
 import { Location } from '@angular/common';
 import { Subscription } from 'rxjs/Subscription';
+import { CourseService, Course } from 'sunbird-sdk';
 
 @Component({
   selector: 'app-player',
@@ -18,9 +19,11 @@ import { Subscription } from 'rxjs/Subscription';
 export class PlayerPage implements OnInit, PlayerActionHandlerDelegate {
 
   config = {};
-  backButtonSubscription: Subscription
+  backButtonSubscription: Subscription;
+  course: Course;
   @ViewChild('preview') previewElement: ElementRef;
   constructor(
+    @Inject('COURSE_SERVICE') private courseService: CourseService,
     private canvasPlayerService: CanvasPlayerService,
     private platform: Platform,
     private screenOrientation: ScreenOrientation,
@@ -41,12 +44,12 @@ export class PlayerPage implements OnInit, PlayerActionHandlerDelegate {
 
     if (this.router.getCurrentNavigation().extras.state) {
       this.config = this.router.getCurrentNavigation().extras.state.config;
+      this.course = this.router.getCurrentNavigation().extras.state.course;
     }
   }
 
   ngOnInit() {
   }
-
   ionViewWillEnter() {
     this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
     this.statusBar.hide();
@@ -58,6 +61,11 @@ export class PlayerPage implements OnInit, PlayerActionHandlerDelegate {
       }
     });
     this.config['uid'] = this.config['context'].actor.id;
+    this.config['metadata'].basePath = '/_app_file_' + this.config['metadata'].basePath;
+
+    if (this.config['metadata'].isAvailableLocally) {
+      this.config['metadata'].contentData.streamingUrl = '/_app_file_' + this.config['metadata'].contentData.streamingUrl;
+    }
 
     // This is to reload a iframe as iframes reload method not working on cross-origin.
     const src = this.previewElement.nativeElement.src;
@@ -69,6 +77,12 @@ export class PlayerPage implements OnInit, PlayerActionHandlerDelegate {
         this.previewElement.nativeElement.contentWindow['cordova'] = window['cordova'];
         this.previewElement.nativeElement.contentWindow['Media'] = window['Media'];
         this.previewElement.nativeElement.contentWindow['initializePreview'](this.config);
+        this.previewElement.nativeElement.contentWindow.addEventListener('message', resp => {
+            console.log('Player Response', resp);
+            if (resp.data === 'renderer:question:submitscore') {
+                this.courseService.syncAssessmentEvents();
+            }
+        });
       }, 1000);
     };
 
@@ -93,6 +107,7 @@ export class PlayerPage implements OnInit, PlayerActionHandlerDelegate {
     if (this.backButtonSubscription) {
       this.backButtonSubscription.unsubscribe();
     }
+    window.removeEventListener('renderer:question:submitscore', () => {});
   }
 
   /**
@@ -111,7 +126,7 @@ export class PlayerPage implements OnInit, PlayerActionHandlerDelegate {
           this.navCtrl.remove(this.navCtrl.length() - 2);
         });
      */
-    this.router.navigate([RouterLinks.CONTENT_DETAILS], { state: { content } });
+    this.router.navigate([RouterLinks.CONTENT_DETAILS , identifier], { state: { content, course: this.course } , replaceUrl: true, });
   }
 
   /**

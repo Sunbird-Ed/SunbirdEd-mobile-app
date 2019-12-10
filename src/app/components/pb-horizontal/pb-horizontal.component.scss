@@ -1,6 +1,5 @@
-@import "src/assets/styles/base/_variables.scss";
+@import "src/assets/styles/variables";
 @import "src/assets/styles/_custom-mixins.scss";
-@import "src/assets/styles/_variables.scss";
 :host {
     .progress-outer {
         width: 100%;
@@ -12,8 +11,14 @@
         min-width: 15%;
         white-space: nowrap;
         overflow: hidden;
-        padding: 3px; // border-radius: 20px;
+        padding: 2px; // border-radius: 20px;
         background-color: map-get($colors, primary);
+    }	
+    .progress-outer-course{	
+       width: 100%;	
+       text-align: center;	
+       background-color:#d8d8d8;	
+       color: #FFFFFF;
     }
     .progress-inner-onboard {
         min-width: 0;
@@ -22,6 +27,14 @@
         padding: 2px;
         border-radius: 0;
         background-color: map-get($colors, primary);
+    }
+    .progress-inner-course{
+         min-width: 0;
+        white-space: nowrap;
+        overflow: hidden;
+        padding: 2px;
+        border-radius: 0;
+        background-color: map-get($colors, office_green );
     }
     .progress-inner-primary {
         background-color: map-get($colors, primary);

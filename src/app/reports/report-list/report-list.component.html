@@ -1,22 +1,24 @@
 <ion-content padding>
   <ion-list>
-    <div *ngIf="listOfReports.length > 0">
-      <div class="flex-card-container" *ngFor="let report of listOfReports;let i=index" (click)="goToGroupReportsList(report)" lines="none">
-          <div class="card-text">
-            <ion-label>
-              <h2 class="report-title">{{report.name}}</h2>
-              <p *ngIf="isFromUsers"><span>{{'SCORED' | translate}}: {{report.totalScore}}
-                  <span *ngIf="report.totalQuestionsScore">/{{report.totalQuestionsScore}}</span>
-                  <span *ngIf="!report.totalQuestionsScore && report.totalMaxScore">/{{report.totalMaxScore}}</span>
-                </span></p>
-            </ion-label>
-          </div>
-          <div class="card-icon">
-            <ion-icon name="ios-arrow-forward"></ion-icon>
-          </div>
+    <div *ngIf="listOfReports.length > 0 else emptyListOfReport">
+      <div class="flex-card-container" *ngFor="let report of listOfReports;let i=index"
+        (click)="goToGroupReportsList(report)" lines="none">
+        <div class="card-text">
+          <ion-label>
+            <h2 class="report-title">{{report.name}}</h2>
+            <p *ngIf="isFromUsers"><span>{{'SCORED' | translate}}: {{report.totalScore}}
+                <span *ngIf="report.totalQuestionsScore">/{{report.totalQuestionsScore}}</span>
+                <span *ngIf="!report.totalQuestionsScore && report.totalMaxScore">/{{report.totalMaxScore}}</span>
+              </span></p>
+          </ion-label>
         </div>
+        <div class="card-icon">
+          <ion-icon name="ios-arrow-forward"></ion-icon>
+        </div>
+      </div>
     </div>
-    <div *ngIf="listOfReports.length == 0" text-center>
+    <ng-template #emptyListOfReport>
+      <div text-center>
       <div class="img-container">
         <img class="image_style" alt="no_user" src="assets/imgs/ic_businessman.png">
       </div>
@@ -31,6 +33,7 @@
           </div>
         </ion-col>
       </ion-row>
-    </div>
+      </div>
+    </ng-template>
   </ion-list>
 </ion-content>

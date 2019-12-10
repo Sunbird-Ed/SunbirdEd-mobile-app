@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { NavParams, Platform, ModalController } from '@ionic/angular';
+import { NavParams, Platform, PopoverController } from '@ionic/angular';
 import { AppRatingService } from '@app/services/app-rating.service';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { UtilityService } from '@app/services/utility-service';
@@ -44,7 +44,7 @@ export class AppRatingAlertComponent implements OnInit {
     },
     helpDesk: { type: ViewType.HELP_DESK, heading: 'APP_RATING_THANKS_FOR_RATING', message: 'APP_RATING_REPORT_AN_ISSUE' }
   };
-  private appRate = 0;
+  public appRate = 0;
   private pageId = '';
   public currentViewText: ViewText;
   public appLogo$: Observable<string>;
@@ -56,7 +56,7 @@ export class AppRatingAlertComponent implements OnInit {
   constructor(
     @Inject('SHARED_PREFERENCES') private preference: SharedPreferences,
     @Inject('TELEMETRY_SERVICE') private telemetryService: TelemetryService,
-    private modalCtrl: ModalController,
+    private popOverCtrl: PopoverController,
     private appVersion: AppVersion,
     private utilityService: UtilityService,
     private appRatingService: AppRatingService,
@@ -69,7 +69,7 @@ export class AppRatingAlertComponent implements OnInit {
     this.appLogo$ = this.preference.getString('app_logo').map((logo) => logo || './assets/imgs/ic_launcher.png');
     this.currentViewText = this.appRateView[ViewType.APP_RATE];
     this.backButtonFunc = this.platform.backButton.subscribeWithPriority(11, () => {
-      this.modalCtrl.dismiss(null);
+      this.popOverCtrl.dismiss(null);
       this.backButtonFunc.unsubscribe();
     });
   }
@@ -95,7 +95,7 @@ export class AppRatingAlertComponent implements OnInit {
   }
 
   closePopover() {
-    this.modalCtrl.dismiss(null);
+    this.popOverCtrl.dismiss(null);
     if (this.backButtonFunc) {
       this.backButtonFunc.unsubscribe();
     }
@@ -128,16 +128,15 @@ export class AppRatingAlertComponent implements OnInit {
         this.pageId, undefined, paramsMap,
         undefined, undefined
       );
-      this.modalCtrl.dismiss(StoreRating.RETURN_CLOSE);
+      this.popOverCtrl.dismiss(StoreRating.RETURN_CLOSE);
     });
   }
 
-  submitRating(rating) {
-    if (rating >= StoreRating.APP_MIN_RATE) {
+  submitRating() {
+    if (this.appRate >= StoreRating.APP_MIN_RATE) {
       this.currentViewText = this.appRateView[ViewType.STORE_RATE];
-      this.appRate = rating;
       const paramsMap = new Map();
-      paramsMap['appRating'] = rating;
+      paramsMap['appRating'] = this.appRate;
       this.telemetryGeneratorService.generateInteractTelemetry(
         InteractType.TOUCH,
         InteractSubtype.RATING_SUBMITTED,
@@ -149,7 +148,7 @@ export class AppRatingAlertComponent implements OnInit {
     }
     this.currentViewText = this.appRateView[ViewType.HELP_DESK];
     const paramsMap = new Map();
-    paramsMap['appRating'] = rating;
+    paramsMap['appRating'] = this.appRate;
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,
       InteractSubtype.RATING_SUBMITTED,
@@ -166,7 +165,7 @@ export class AppRatingAlertComponent implements OnInit {
       Environment.HOME,
       this.pageId, undefined, undefined, undefined
     );
-    this.modalCtrl.dismiss(StoreRating.RETURN_HELP);
+    this.popOverCtrl.dismiss(StoreRating.RETURN_HELP);
   }
 
   private async appRatePopup() {
@@ -195,4 +194,5 @@ export class AppRatingAlertComponent implements OnInit {
       }
     });
   }
+
 }

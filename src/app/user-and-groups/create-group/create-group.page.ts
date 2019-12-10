@@ -197,7 +197,7 @@ export class CreateGroupPage implements OnInit {
    * Internally calls Update group API if form is valid
    */
   async updateGroup() {
-    if (!this.isFormValid) {
+    if(!this.commonUtilService.networkInfo.isNetworkAvailable) {
       this.commonUtilService.showToast(this.commonUtilService.translateMessage('NEED_INTERNET_TO_CHANGE'));
       return;
     }
@@ -225,7 +225,7 @@ export class CreateGroupPage implements OnInit {
 
       this.groupService.updateGroup(this.group)
         .subscribe(async (val) => {
-          await loader.dismiss();
+          loader.dismiss();
           this.telemetryGeneratorService.generateInteractTelemetry(
             InteractType.OTHER,
             InteractSubtype.EDIT_GROUP_SUCCESS,
@@ -233,9 +233,11 @@ export class CreateGroupPage implements OnInit {
             PageId.CREATE_GROUP
           );
           // this.navCtrl.popTo(this.navCtrl.getByIndex(this.navCtrl.length() - 2));
-          this.router.navigate(['../'], { relativeTo: this.route });
+          this.commonUtilService.showToast(this.commonUtilService.translateMessage('GROUP_UPDATE_SUCCESS'));
+          //this.router.navigate(['../'], { relativeTo: this.route });
+          this.location.back();
         }, async (error) => {
-          await loader.dismiss();
+          loader.dismiss();
           console.error('Error : ' + error);
         });
     } else {
@@ -292,7 +294,9 @@ export class CreateGroupPage implements OnInit {
           await this.loader.dismiss();
         }
         this.isFormValid = false;
-        this.commonUtilService.showToast(this.commonUtilService.translateMessage('NEED_INTERNET_TO_CHANGE'));
+        if(!this.commonUtilService.networkInfo.isNetworkAvailable){
+          this.commonUtilService.showToast(this.commonUtilService.translateMessage('NEED_INTERNET_TO_CHANGE'));
+        }
         console.error('Error : ' + error);
       });
   }

@@ -49,6 +49,7 @@ import { CommonUtilService } from '@app/services/common-util.service';
 import { FormAndFrameworkUtilService } from '@app/services/formandframeworkutil.service';
 import { Environment, InteractSubtype, InteractType, PageId, ImpressionType, ImpressionSubtype } from '@app/services/telemetry-constants';
 import { AppHeaderService } from '@app/services/app-header.service';
+import { SplaschreenDeeplinkActionHandlerDelegate } from '@app/services/sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
 
 @Component({
   selector: 'app-resources',
@@ -139,14 +140,15 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
   private eventSubscription: Subscription;
 
   toast: any;
-  networkSubscription: Subscription;
   headerObservable: any;
   scrollEventRemover: any;
+  subjects: any;
   /**
    * Flag to show latest and popular course loader
    */
   pageApiLoader = true;
   @ViewChild('contentView') contentView: ContentView;
+  locallyDownloadResources;
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -154,6 +156,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
     @Inject('FRAMEWORK_UTIL_SERVICE') private frameworkUtilService: FrameworkUtilService,
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
+    private splaschreenDeeplinkActionHandlerDelegate: SplaschreenDeeplinkActionHandlerDelegate,
     private ngZone: NgZone,
     private qrScanner: SunbirdQRScanner,
     private events: Events,
@@ -180,7 +183,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
       .then((appName: any) => {
         this.appLabel = appName;
       });
-    this.defaultImg = 'assets/imgs/ic_launcher.png';
+    this.defaultImg = this.commonUtilService.convertFileSrc('assets/imgs/ic_launcher.png');
     this.generateNetworkType();
 
   }
@@ -192,6 +195,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
     this.events.subscribe('savedResources:update', (res) => {
       if (res && res.update) {
         this.loadRecentlyViewedContent(true);
+        this.getLocalContent();
       }
     });
     this.events.subscribe('event:showScanner', (data) => {
@@ -217,6 +221,12 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
         this.isUpgradePopoverShown = true;
       }
     });
+  }
+
+  async ngOnInit() {
+    this.getCurrentUser();
+    this.appGlobalService.generateConfigInteractEvent(PageId.LIBRARY, this.isOnBoardingCardCompleted);
+    await this.splaschreenDeeplinkActionHandlerDelegate.onAction('content').toPromise();
 
     this.events.subscribe('tab.change', (data: string) => {
       this.scrollToTop();
@@ -232,11 +242,9 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
         this.qrScanner.startScanner(this.appGlobalService.getPageIdForTelemetry());
       }
     });
-  }
-
-  ngOnInit() {
-    this.getCurrentUser();
-    this.appGlobalService.generateConfigInteractEvent(PageId.LIBRARY, this.isOnBoardingCardCompleted);
+    this.events.subscribe('event:update_recently_viewed', () => {
+      this.loadRecentlyViewedContent();
+    });
   }
 
   generateNetworkType() {
@@ -263,13 +271,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
     if (this.headerObservable) {
       this.headerObservable.unsubscribe();
     }
-    if (this.networkSubscription) {
-      this.networkSubscription.unsubscribe();
-      if (this.toast) {
-        this.toast.dismiss();
-        this.toast = undefined;
-      }
-    }
   }
 
   /**
@@ -294,6 +295,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
 
     this.profile = this.appGlobalService.getCurrentUser();
     this.loadRecentlyViewedContent();
+    this.getLocalContent();
   }
 
   navigateToViewMoreContentsPage(section: string) {
@@ -338,7 +340,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
     if (!hideLoaderFlag) {
       this.showLoader = true;
       if (this.showLoader) {
-        this.telemetryGeneratorService.generateStartSheenAnimationTelemetry();
+        this.telemetryGeneratorService.generateStartSheenAnimationTelemetry(PageId.LIBRARY);
       }
     }
     const requestParams: ContentRequest = {
@@ -370,7 +372,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
           if (!hideLoaderFlag) {
             this.showLoader = false;
             if (!this.showLoader) {
-              this.telemetryGeneratorService.generateEndSheenAnimationTelemetry();
+              this.telemetryGeneratorService.generateEndSheenAnimationTelemetry(PageId.LIBRARY);
             }
           }
         });
@@ -380,7 +382,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
           if (!hideLoaderFlag) {
             this.showLoader = false;
             if (!this.showLoader) {
-              this.telemetryGeneratorService.generateEndSheenAnimationTelemetry();
+              this.telemetryGeneratorService.generateEndSheenAnimationTelemetry(PageId.LIBRARY);
             }
           }
         });
@@ -394,7 +396,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
     this.storyAndWorksheets = [];
     this.searchApiLoader = true;
     if (this.searchApiLoader) {
-      this.telemetryGeneratorService.generateStartSheenAnimationTelemetry();
+      this.telemetryGeneratorService.generateStartSheenAnimationTelemetry(PageId.LIBRARY);
     }
 
     if (!contentSearchCriteria) {
@@ -448,7 +450,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
     } else {
       this.searchApiLoader = false;
     }
-    this.telemetryGeneratorService.generateStartSheenAnimationTelemetry();
+    this.telemetryGeneratorService.generateStartSheenAnimationTelemetry(PageId.LIBRARY);
     const reqvalues = new Map();
     reqvalues['pageReq'] = this.getGroupByPageReq;
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.OTHER,
@@ -481,7 +483,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
             this.storyAndWorksheets = newSections;
           }
           const sectionInfo = {};
-          for (let i = 0; i < this.storyAndWorksheets.length; i++) {
+          for(let i = 0; i < this.storyAndWorksheets.length; i++) {
             const sectionName = this.storyAndWorksheets[i].name,
               count = this.storyAndWorksheets[i].contents.length;
 
@@ -519,17 +521,9 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
           this.refresh = false;
           this.searchApiLoader = false;
           if (!this.refresh || !this.searchApiLoader) {
-            this.telemetryGeneratorService.generateEndSheenAnimationTelemetry();
+            this.telemetryGeneratorService.generateEndSheenAnimationTelemetry(PageId.LIBRARY);
           }
           this.generateExtraInfoTelemetry(newSections.length);
-          if (this.storyAndWorksheets.length === 0 && this.commonUtilService.networkInfo.isNetworkAvailable) {
-            if (this.commonUtilService.currentTabName === 'resources' && !avoidRefreshList) {
-              this.commonUtilService.showToast(
-                this.commonUtilService.translateMessage('EMPTY_LIBRARY_TEXTBOOK_FILTER',
-                  `${this.getGroupByPageReq.grade} (${this.getGroupByPageReq.medium} 
-                   ${this.commonUtilService.translateMessage('MEDIUM')})`));
-            }
-          }
         });
       })
       .catch(error => {
@@ -538,20 +532,12 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
           this.refresh = false;
           this.searchApiLoader = false;
           if (!this.refresh || !this.searchApiLoader) {
-            this.telemetryGeneratorService.generateEndSheenAnimationTelemetry();
+            this.telemetryGeneratorService.generateEndSheenAnimationTelemetry(PageId.LIBRARY);
           }
-          if (error === 'CONNECTION_ERROR') {
-          } else if (error === 'SERVER_ERROR' || error === 'SERVER_AUTH_ERROR') {
+          if (error === 'SERVER_ERROR' || error === 'SERVER_AUTH_ERROR') {
             if (!isAfterLanguageChange) {
               this.commonUtilService.showToast('ERROR_FETCHING_DATA');
             }
-          } else if (this.storyAndWorksheets.length === 0 && this.commonUtilService.networkInfo.isNetworkAvailable && !avoidRefreshList) {
-            this.commonUtilService.showToast(
-              this.commonUtilService.translateMessage('EMPTY_LIBRARY_TEXTBOOK_FILTER',
-                {
-                  '%grade': this.getGroupByPageReq.grade,
-                  '%medium': `${this.getGroupByPageReq.medium} ${this.commonUtilService.translateMessage('MEDIUM')}`
-                }));
           }
           const errValues = new Map();
           errValues['isNetworkAvailable'] = this.commonUtilService.networkInfo.isNetworkAvailable ? 'Y' : 'N';
@@ -580,14 +566,14 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
     return filteredSubject;
   }
   markLocallyAvailableTextBook() {
-    if (!this.recentlyViewedResources || !this.storyAndWorksheets) {
+    if (!this.locallyDownloadResources || !this.storyAndWorksheets) {
       return;
     }
-    for (let i = 0; i < this.recentlyViewedResources.length; i++) {
+    for (let i = 0; i < this.locallyDownloadResources.length; i++) {
       for (let j = 0; j < this.storyAndWorksheets.length; j++) {
         for (let k = 0; k < this.storyAndWorksheets[j].contents.length; k++) {
-          if (this.recentlyViewedResources[i].isAvailableLocally &&
-            this.recentlyViewedResources[i].identifier === this.storyAndWorksheets[j].contents[k].identifier) {
+          if (this.locallyDownloadResources[i].isAvailableLocally &&
+            this.locallyDownloadResources[i].identifier === this.storyAndWorksheets[j].contents[k].identifier) {
             this.storyAndWorksheets[j].contents[k].isAvailableLocally = true;
           }
         }
@@ -676,27 +662,17 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
       this.getPopularContent();
     }
     this.subscribeSdkEvent();
-    this.networkSubscription = this.commonUtilService.networkAvailability$.subscribe((available: boolean) => {
-      if (available) {
-        if (this.toast) {
-          this.toast.dismiss();
-          this.toast = undefined;
-        }
-      } else {
-        this.presentToastForOffline('NO_INTERNET_TITLE');
-      }
-    });
   }
 
   // Offline Toast
   async presentToastForOffline(msg: string) {
     this.toast = await this.toastController.create({
-      duration: 30000,
+      duration: 3000,
       message: this.commonUtilService.translateMessage(msg),
       showCloseButton: true,
       position: 'top',
       closeButtonText: 'X',
-      cssClass: ['toastHeader','offline']
+      cssClass: ['toastHeader', 'offline']
     });
     this.toast.present();
     this.toast.onDidDismiss(() => {
@@ -708,6 +684,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
     this.eventSubscription = this.eventsBusService.events().subscribe((event: EventsBusEvent) => {
       if (event.payload && event.type === ContentEventType.IMPORT_COMPLETED) {
         this.loadRecentlyViewedContent();
+        this.getLocalContent();
       }
     }) as any;
   }
@@ -757,6 +734,21 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
     const categories: Array<FrameworkCategoryCode> = FrameworkCategoryCodesGroup.DEFAULT_FRAMEWORK_CATEGORIES;
     this.getMediumData(frameworkId, categories);
     this.getGradeLevelData(frameworkId, categories);
+    this.getSubjectData(frameworkId, categories);
+  }
+
+  getSubjectData(frameworkId, categories): any {
+    const req: GetFrameworkCategoryTermsRequest = {
+      currentCategoryCode: FrameworkCategoryCode.SUBJECT,
+      language: this.translate.currentLang,
+      requiredCategories: categories,
+      frameworkId
+    };
+    this.frameworkUtilService.getFrameworkCategoryTerms(req).toPromise()
+      .then((res: CategoryTerm[]) => {
+        this.subjects = res;
+      })
+      .catch(() => { });
   }
 
   getMediumData(frameworkId, categories): any {
@@ -843,10 +835,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
         }
       }
     }
-  }
-
-  showOfflineNetworkWarning() {
-    this.presentToastForOffline('NO_INTERNET_TITLE');
   }
 
   checkNetworkStatus(showRefresh = false) {
@@ -938,7 +926,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
     const identifier = item.contentId || item.identifier;
     let telemetryObject: TelemetryObject;
     telemetryObject = new TelemetryObject(identifier, item.contentType, undefined);
-
     const values = new Map();
     values['sectionName'] = item.subject;
     values['positionClicked'] = index;
@@ -984,11 +971,14 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
   handleHeaderEvents($event) {
     console.log('inside handleHeaderEvents', $event);
     switch ($event.name) {
-      case 'search': this.search();
+      case 'search':
+        this.search();
         break;
-      case 'download': this.redirectToActivedownloads();
+      case 'download':
+        this.redirectToActivedownloads();
         break;
-      case 'notification': this.redirectToNotifications();
+      case 'notification':
+        this.redirectToNotifications();
         break;
       default: console.warn('Use Proper Event name');
     }
@@ -1043,6 +1033,46 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
 
   scrollToTop() {
     this.contentView.scrollToTop();
+  }
+  exploreOtherContents() {
+    const navigationExtras = {
+      state: {
+        subjects: [...this.subjects],
+        categoryGradeLevels: this.categoryGradeLevels,
+        storyAndWorksheets: this.storyAndWorksheets,
+        contentType: ContentType.FOR_LIBRARY_TAB,
+        selectedGrade: this.getGroupByPageReq.grade,
+        selectedMedium: this.getGroupByPageReq.medium
+      }
+    };
+    this.router.navigate([RouterLinks.EXPLORE_BOOK], navigationExtras);
+    const values = new Map();
+    values['board'] = this.profile.board[0];
+    values['class'] = this.currentGrade.name;
+    values['medium'] = this.currentMedium;
+
+    this.telemetryGeneratorService.generateInteractTelemetry(
+      InteractType.TOUCH,
+      InteractSubtype.SEE_MORE_CONTENT_CLICKED,
+      Environment.LIBRARY,
+      PageId.LIBRARY,
+      undefined,
+      values);
+  }
+  async getLocalContent() {
+    this.locallyDownloadResources = [];
+
+    const requestParams: ContentRequest = {
+      uid: this.profile ? this.profile.uid : undefined,
+      contentTypes: [],
+      audience: this.audienceFilter,
+      recentlyViewed: false,
+    };
+    this.contentService.getContents(requestParams).subscribe((data) => {
+      this.ngZone.run(() => {
+        this.locallyDownloadResources = data;
+      });
+    });
   }
 
 }

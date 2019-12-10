@@ -4,18 +4,37 @@
 .W100 {
   width: 100%;
 }
+
+.W50 {
+  width: 50%;
+}
+
 .M0 {
   margin: 0 !important;
 }
+
+.M16 {
+  margin: 16px;
+}
+
 .P0 {
   padding: 0 !important;
 }
+
+.P16 {
+  padding: 16px;
+}
+
 .MR5 {
   margin-right: 5px;
 }
 
 .MR10 {
   margin-right: 10px;
+}
+
+.MR16 {
+  margin-right: 16px;
 }
 
 .MT0 {
@@ -40,6 +59,10 @@
 
 .MT16 {
   margin-top: 16px;
+}
+
+.MT30 {
+  margin-top: 30px;
 }
 
 .ML5 {
@@ -76,6 +99,11 @@
 .MB30 {
   margin-bottom: 30px;
 }
+
+.PR16 {
+  padding-right: 16px;
+}
+
 .PR35 {
   padding-right: 35px;
 }

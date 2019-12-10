@@ -25,12 +25,18 @@ import {
   SortOrder,
   TelemetryObject,
   UpdateServerProfileInfoRequest,
-  CachedItemRequestSourceFrom
+  CachedItemRequestSourceFrom,
+  CourseCertificate
 } from 'sunbird-sdk';
 import { Environment, InteractSubtype, InteractType, PageId } from '@app/services/telemetry-constants';
 import { ActivatedRoute, Router, NavigationExtras } from '@angular/router';
 import { EditContactVerifyPopupComponent } from '@app/app/components/popups/edit-contact-verify-popup/edit-contact-verify-popup.component';
-import { EditContactDetailsPopupComponent } from '@app/app/components/popups/edit-contact-details-popup/edit-contact-details-popup.component';
+import {
+  EditContactDetailsPopupComponent
+} from '@app/app/components/popups/edit-contact-details-popup/edit-contact-details-popup.component';
+import { AccountRecoveryInfoComponent } from '../components/popups/account-recovery-id/account-recovery-id-popup.component';
+import { SocialSharing } from '@ionic-native/social-sharing/ngx';
+import { TeacherIdVerificationComponent } from '../components/popups/teacher-id-verification-popup/teacher-id-verification-popup.component';
 
 @Component({
   selector: 'app-profile',
@@ -66,17 +72,19 @@ export class ProfilePage implements OnInit {
   startLimit = 0;
   custodianOrgId: string;
   isCustodianOrgId: boolean;
-  organisationDetails = '';
+  isStateValidated: boolean;
+  organisationName: string;
   contentCreatedByMe: any = [];
   orgDetails: {
-    'state': '',
-    'district': '',
-    'block': ''
+    'state': string,
+    'district': string,
+    'block': string
   };
 
   layoutPopular = ContentCard.LAYOUT_POPULAR;
   headerObservable: any;
   timer: any;
+  mappedTrainingCertificates: CourseCertificate[] = [];
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     @Inject('AUTH_SERVICE') private authService: AuthService,
@@ -91,6 +99,7 @@ export class ProfilePage implements OnInit {
     private telemetryGeneratorService: TelemetryGeneratorService,
     private formAndFrameworkUtilService: FormAndFrameworkUtilService,
     private commonUtilService: CommonUtilService,
+    private socialShare: SocialSharing,
     private headerService: AppHeaderService,
   ) {
     const extrasState = this.router.getCurrentNavigation().extras.state;
@@ -200,7 +209,7 @@ export class ProfilePage implements OnInit {
           const serverProfileDetailsRequest: ServerProfileDetailsRequest = {
             userId: that.userId && that.userId !== session.userToken ? that.userId : session.userToken,
             requiredFields: ProfileConstants.REQUIRED_FIELDS,
-            from: CachedItemRequestSourceFrom.SERVER,
+            from: CachedItemRequestSourceFrom.SERVER
           };
 
           if (that.isLoggedInUser) {
@@ -235,16 +244,16 @@ export class ProfilePage implements OnInit {
                       that.imageUri = profileData.avatar;
                     }
                     that.formatRoles();
-                    that.formatOrgDetails();
                     that.getOrgDetails();
-                    that.formatUserLocation();
+                    that.userLocation =  that.commonUtilService.getUserLocation(that.profile);
                     that.isCustodianOrgId = (that.profile.rootOrg.rootOrgId === this.custodianOrgId);
+                    that.isStateValidated = that.profile.stateValidated;
                     resolve();
                   });
               });
             }).catch(err => {
               if (refresher) {
-                refresher.complete();
+                refresher.target.complete();
               }
               reject();
             });
@@ -272,48 +281,6 @@ export class ProfilePage implements OnInit {
           const val = this.profile.roleList.find(role => role.id === roleKey);
           if (val && val.name.toLowerCase() !== 'public') {
             this.roles.push(val.name);
-          }
-        }
-      }
-    }
-  }
-
-  formatUserLocation() {
-    if (this.profile && this.profile.userLocations && this.profile.userLocations.length) {
-      for (let i = 0, len = this.profile.userLocations.length; i < len; i++) {
-        if (this.profile.userLocations[i].type === 'state') {
-          this.userLocation.state = this.profile.userLocations[i];
-        } else {
-          this.userLocation.district = this.profile.userLocations[i];
-        }
-      }
-    }
-  }
-
-
-  /**
-   * Method to handle organization details.
-   */
-  formatOrgDetails() {
-    this.orgDetails = { state: '', district: '', block: '' };
-    for (let i = 0, len = this.profile.organisations.length; i < len; i++) {
-      if (this.profile.organisations[i].locations) {
-        for (let j = 0, l = this.profile.organisations[i].locations.length; j < l; j++) {
-          switch (this.profile.organisations[i].locations[j].type) {
-            case 'state':
-              this.orgDetails.state = this.profile.organisations[i].locations[j];
-              break;
-
-            case 'block':
-              this.orgDetails.block = this.profile.organisations[i].locations[j];
-              break;
-
-            case 'district':
-              this.orgDetails.district = this.profile.organisations[i].locations[j];
-              break;
-
-            default:
-              console.log('default');
           }
         }
       }
@@ -398,20 +365,72 @@ export class ProfilePage implements OnInit {
     this.trainingsCompleted = [];
     this.courseService.getEnrolledCourses(option).toPromise()
       .then((res: Course[]) => {
-        // res = JSON.parse(res);
-        const enrolledCourses = res;
-        console.log('course is ', res);
-        for (let i = 0, len = enrolledCourses.length; i < len; i++) {
-          if (enrolledCourses[i].status === 2) {
-            this.trainingsCompleted.push(enrolledCourses[i]);
-          }
-        }
+        this.trainingsCompleted = res.filter((course) => course.status === 2);
+        this.mappedTrainingCertificates = this.mapTrainingsToCertificates(this.trainingsCompleted);
       })
       .catch((error: any) => {
         console.error('error while loading enrolled courses', error);
       });
   }
 
+  mapTrainingsToCertificates(trainings: Course[]): CourseCertificate[] {
+    /**
+     * If certificate is there loop through certificates and add certificates in accumulator
+     * with Course_Name and Date
+     * if not then add only Course_Name and Date and add in to the accumulator
+     */
+    return trainings.reduce((accumulator, course) => {
+      const oneCert = {
+        courseName: course.courseName,
+        dateTime: course.dateTime,
+        courseId: course.courseId,
+        certificate: undefined
+      };
+      if (course.certificates && course.certificates.length) {
+        oneCert.certificate = course.certificates[0];
+        accumulator = accumulator.concat(oneCert);
+      } else {
+        accumulator = accumulator.concat(oneCert);
+      }
+      return accumulator;
+    }, []);
+  }
+
+  // getCertificateCourse(certificate: CourseCertificate): Course {
+  //   return this.trainingsCompleted.find((course: Course) => {
+  //     return course.certificates ? course.certificates.indexOf(certificate) > -1 : undefined;
+  //   });
+  // }
+
+downloadTrainingCertificate(course: Course, certificate: CourseCertificate) {
+    const telemetryObject: TelemetryObject  = new TelemetryObject(certificate.id, ContentType.CERTIFICATE, undefined);
+
+    const values = new Map();
+    values['courseId'] = course.courseId;
+
+    this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
+    InteractSubtype.DOWNLOAD_CERTIFICATE_CLICKED,
+    Environment.USER, // env
+    PageId.PROFILE, // page name
+    telemetryObject,
+    values);
+
+    this.courseService.downloadCurrentProfileCourseCertificate({
+      courseId: course.courseId,
+      certificateToken: certificate.token
+    })
+    .subscribe();
+  }
+
+  shareTrainingCertificate(course: Course, certificate: CourseCertificate) {
+    this.courseService.downloadCurrentProfileCourseCertificate({
+      courseId: course.courseId,
+      certificateToken: certificate.token
+    })
+    .subscribe((res) => {
+      this.socialShare.share('', '', res.path, '');
+    });
+  }
 
   isResource(contentType) {
     return contentType === ContentType.STORY ||
@@ -450,22 +469,22 @@ export class ProfilePage implements OnInit {
         state: {
           content
         }
-      }
+      };
       this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], navigationExtras)
     } else if (content.mimeType === MimeType.COLLECTION) {
       const navigationExtras: NavigationExtras = {
         state: {
           content
         }
-      }
+      };
       this.router.navigate([RouterLinks.COLLECTION_DETAIL_ETB], navigationExtras);
     } else {
       const navigationExtras: NavigationExtras = {
         state: {
           content
         }
-      }
-      this.router.navigate([RouterLinks.CONTENT_DETAILS], navigationExtras)
+      };
+      this.router.navigate([RouterLinks.CONTENT_DETAILS], navigationExtras);
     }
   }
 
@@ -504,11 +523,13 @@ export class ProfilePage implements OnInit {
 
       const navigationExtras: NavigationExtras = {
         state: {
-          profile: this.profile
+          profile: this.profile,
+          isShowBackButton: true
         }
-      }
+      };
 
-      this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.PERSONAL_DETAILS_EDIT}`], navigationExtras);
+      // this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.PERSONAL_DETAILS_EDIT}`], navigationExtras);
+      this.router.navigate([RouterLinks.DISTRICT_MAPPING], navigationExtras);
     } else {
       this.commonUtilService.showToast('NEED_INTERNET_TO_CHANGE');
     }
@@ -577,7 +598,7 @@ export class ProfilePage implements OnInit {
     const popover = await this.popoverCtrl.create({
       component: EditContactDetailsPopupComponent,
       componentProps,
-      cssClass: 'popover-alert'
+      cssClass: 'popover-alert input-focus'
     });
     await popover.present();
     const { data } = await popover.onDidDismiss();
@@ -595,8 +616,9 @@ export class ProfilePage implements OnInit {
         title: this.commonUtilService.translateMessage('VERIFY_PHONE_OTP_TITLE'),
         description: this.commonUtilService.translateMessage('VERIFY_PHONE_OTP_DESCRIPTION'),
         type: ProfileConstants.CONTACT_TYPE_PHONE
-      }
-      const data = await this.openContactVerifyPopup(EditContactVerifyPopupComponent, componentProps, 'popover-alert');
+      };
+
+      const data = await this.openContactVerifyPopup(EditContactVerifyPopupComponent, componentProps, 'popover-alert input-focus');
       if (data && data.OTPSuccess) {
         this.updatePhoneInfo(data.value);
       }
@@ -607,8 +629,9 @@ export class ProfilePage implements OnInit {
         title: this.commonUtilService.translateMessage('VERIFY_EMAIL_OTP_TITLE'),
         description: this.commonUtilService.translateMessage('VERIFY_EMAIL_OTP_DESCRIPTION'),
         type: ProfileConstants.CONTACT_TYPE_EMAIL
-      }
-      const data = await this.openContactVerifyPopup(EditContactVerifyPopupComponent, componentProps, 'popover-alert');
+      };
+
+      const data = await this.openContactVerifyPopup(EditContactVerifyPopupComponent, componentProps, 'popover-alert input-focus');
       if (data && data.OTPSuccess) {
         this.updateEmailInfo(data.value);
       }
@@ -711,9 +734,52 @@ export class ProfilePage implements OnInit {
         }
       });
       orgList.sort((orgDate1, orgdate2) => orgDate1.orgjoindate > orgdate2.organisation ? 1 : -1);
-      this.organisationDetails = orgList[0].orgName;
-    } else {
-      this.organisationDetails = orgItemList[0].orgName;
+      this.organisationName = orgList[0].orgName;
+      this.orgDetails = this.commonUtilService.getOrgLocation(orgList[0]);
+    } else if (orgItemList.length === 1) {
+      this.organisationName = orgItemList[0].orgName;
+      this.orgDetails = this.commonUtilService.getOrgLocation(orgItemList[0]);
     }
   }
+
+  async editRecoveryId() {
+
+    const componentProps = {
+      recoveryEmail: this.profile.recoveryEmail ? this.profile.recoveryEmail : '',
+      recoveryPhone: this.profile.recoveryPhone ? this.profile.recoveryPhone : '',
+    };
+    const popover = await this.popoverCtrl.create({
+      component: AccountRecoveryInfoComponent,
+      componentProps,
+      cssClass: 'popover-alert input-focus'
+    });
+
+    this.telemetryGeneratorService.generateInteractTelemetry(
+      InteractType.TOUCH,
+      InteractSubtype.RECOVERY_ACCOUNT_ID_CLICKED,
+      Environment.USER,
+      PageId.PROFILE
+    );
+
+    await popover.present();
+
+    const { data } = await popover.onDidDismiss();
+    if (data && data.isEdited) {
+      const req: UpdateServerProfileInfoRequest = {
+        userId: this.profile.userId
+      };
+      await this.updateProfile(req, 'RECOVERY_ACCOUNT_UPDATE_SUCCESS');
+    }
+  }
+
+  async showTeacherIdVerificationPopup() {
+    const popover = await this.popoverCtrl.create({
+      component: TeacherIdVerificationComponent,
+      backdropDismiss: false,
+      cssClass: 'popover-alert'
+    });
+
+    await popover.present();
+  }
+
 }

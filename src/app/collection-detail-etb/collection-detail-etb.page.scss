@@ -613,7 +613,7 @@
     width: 100%;
     border-radius: 0 0 2px 2px;
     padding-top: 2%;
-    padding-bottom: 2%;
+    padding-bottom: 5%;
   }
   .sb-accordian-card{
     height: 6.1%;
@@ -652,52 +652,6 @@
     border-radius: 12px;
     font-size: 28px;
     color: #7EAEDE;
-  }
-}
-.sb-topics-container-ftue{
-  .sb-topic-item{
-    padding: 0 !important;
-    height: 3.11%;
-    width: 93.33%;
-    color: #999999;
-    font-size: 12px;
-    line-height: 18px;
-    font-weight: bold;
-    margin-left: 20px;
-  }
-  .sb-ftue-design {
-    // width: calc(100% - 20px);
-    width: 100%;
-    font-size: 1.4rem;
-    background: #fff;
-    margin: 10px 0;
-    border: 0.5px solid rgba(35,97,255,0.5);
-    background-color: #FFFFFF;
-    box-shadow: 0 3px 4px 0 rgba(2,79,157,0.1);
-    .sb-play-unselected{
-      color: $blue;
-      font-size: 12px;
-      line-height: 20px;
-      margin: 6px;
-      @include clearfix;
-    }
-    .sb-play-selected{
-      font-size: 12px;
-      line-height: 20px;
-      margin: 6px;
-      @include clearfix; 
-    }
-    
-    .pull-left{
-      width: calc(100% - 50px);
-      vertical-align: middle !important;
-      padding-top: 10px;
-      @include clearfix;
-    }
-    .pull-right{
-      vertical-align: middle;
-      padding-right: 5px;
-    }
   }
 }
 .sb-topics-container-toc{

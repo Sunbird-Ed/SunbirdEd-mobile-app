@@ -1,8 +1,6 @@
-import { Component, Input, EventEmitter, Output, NgZone } from '@angular/core';
+import { Component, Input, EventEmitter, Output, NgZone, OnInit } from '@angular/core';
 import { ContentType, MimeType, MenuOverflow, RouterLinks } from '@app/app/app.constant';
-// import { MenuOverflow } from '../../../app/app.constant';
 import { OverflowMenuComponent } from '@app/app/profile/overflow-menu/overflow-menu.component';
-// import { ViewController } from 'ionic-angular/navigation/view-controller';
 import { CommonUtilService, } from '@app/services/common-util.service';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { SbPopoverComponent } from '@app/app/components/popups/sb-popover/sb-popover.component';
@@ -13,28 +11,30 @@ import { SbGenericPopoverComponent } from '../../components/popups/sb-generic-po
 import { InteractSubtype, Environment, PageId, ActionButtonType } from '../../../services/telemetry-constants';
 import { EmitedContents } from '../download-manager.interface';
 import { Router } from '@angular/router';
+import { AppHeaderService } from '@app/services';
 
 @Component({
   selector: 'app-downloads-tab',
   templateUrl: './downloads-tab.component.html',
   styleUrls: ['./downloads-tab.component.scss'],
 })
-export class DownloadsTabComponent {
+export class DownloadsTabComponent implements OnInit {
 
   @Input() downloadedContents: Content[] = [];
   @Output() deleteContents = new EventEmitter();
   @Output() sortCriteriaChanged = new EventEmitter();
   showLoader = false;
   selectedContents: ContentDelete[] = [];
-  showDeleteButton: Boolean = true;
-  deleteAllPopupPresent: Boolean = false;
-  showSelectAll: boolean = true;
+  showDeleteButton = true;
+  deleteAllPopupPresent = false;
+  showSelectAll = true;
   selectedFilter: string = MenuOverflow.DOWNLOAD_FILTERS[0];
   deleteAllConfirm;
   selectedContentsInfo = {
     totalSize: 0,
     count: 0
   };
+  defaultImg = this.commonUtilService.convertFileSrc('assets/imgs/ic_launcher.png');
 
   constructor(
     private popoverCtrl: PopoverController,
@@ -42,20 +42,17 @@ export class DownloadsTabComponent {
     private events: Events,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private router: Router,
-    private zone: NgZone) {
-    this.setSelectedItems();
+    private zone: NgZone,
+    private headerService: AppHeaderService) {
   }
-
-  setSelectedItems() {
-    this.downloadedContents.forEach(element => {
-      element['isSelected'] = false;
+  ngOnInit(): void {
+    this.headerService.headerEventEmitted$.subscribe(async () => {
+      if (this.deleteAllPopupPresent) {
+        await this.deleteAllConfirm.dismiss();
+      }
     });
-    console.log('contents', this.downloadedContents);
   }
 
-  ngOnChanges() {
-    this.setSelectedItems();
-  }
   async showDeletePopup(identifier?) {
     if (identifier) {
       this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
@@ -81,16 +78,15 @@ export class DownloadsTabComponent {
           },
         ],
         icon: null,
-        // mshowDeletePopupshowDeletePopupetaInfo: this.content.contentData.name,
         sbPopoverContent: identifier ? this.commonUtilService.translateMessage('DELETE_CONTENT_WARNING')
           : this.commonUtilService.translateMessage('DELETE_ALL_CONTENT_WARNING')
       },
       cssClass: 'sb-popover danger',
     });
     await deleteConfirm.present();
-    const response = await deleteConfirm.onDidDismiss();
-    console.log('downloads tab', response);
-    switch (response.data) {
+    const { data } = await deleteConfirm.onDidDismiss();
+    console.log('downloads tab', data);
+    switch (data.canDelete) {
       case undefined:
         this.unSelectAllContents();
         this.telemetryGeneratorService.generateInteractTelemetry(
@@ -100,7 +96,9 @@ export class DownloadsTabComponent {
           PageId.SINGLE_DELETE_CONFIRMATION_POPUP);
         break;
       case null:
-        this.unSelectAllContents();
+        if (identifier) {
+          this.unSelectAllContents();
+        }
         this.telemetryGeneratorService.generateInteractTelemetry(
           InteractType.TOUCH,
           InteractSubtype.OUTSIDE_POPUP_AREA_CLICKED,
@@ -117,7 +115,6 @@ export class DownloadsTabComponent {
           PageId.SINGLE_DELETE_CONFIRMATION_POPUP, undefined,
           valuesMap);
         this.deleteContent();
-        break;
     }
   }
 
@@ -151,51 +148,57 @@ export class DownloadsTabComponent {
         this.sortCriteriaChanged.emit(data);
       }
       if (this.deleteAllPopupPresent) {
-        this.deleteAllConfirm.dismiss(null);
+        await this.deleteAllConfirm.dismiss({ isLeftButtonClicked: null });
       }
     }
   }
 
   selectAllContents() {
-    this.zone.run(() => {
-      this.downloadedContents.forEach(element => {
-        element['isSelected'] = true;
-      });
-      this.showDeleteButton = false;
-      this.showSelectAll = false;
-      this.deleteAllContents();
+    this.telemetryGeneratorService.generateInteractTelemetry(
+      InteractType.TOUCH,
+      InteractSubtype.SELECT_ALL_CLICKED,
+      Environment.DOWNLOADS,
+      PageId.DOWNLOADS);
+    this.downloadedContents.forEach(element => {
+      element['isSelected'] = true;
     });
+    this.showDeleteButton = false;
+    this.showSelectAll = false;
+    this.deleteAllContents();
   }
 
-  unSelectAllContents(event?) {
+  async unSelectAllContents(event?) {
+    this.telemetryGeneratorService.generateInteractTelemetry(
+      InteractType.TOUCH,
+      InteractSubtype.UNSELECT_ALL_CLICKED,
+      Environment.DOWNLOADS,
+      PageId.DOWNLOADS);
     this.downloadedContents.forEach(element => {
       element['isSelected'] = false;
     });
-
     this.showDeleteButton = true;
     this.showSelectAll = true;
     if (this.deleteAllPopupPresent) {
-      this.deleteAllConfirm.dismiss(null);
+      await this.deleteAllConfirm.dismiss({ isLeftButtonClicked: null });
     }
     this.selectedContents = [];
   }
 
   async toggleContentSelect(event, idx) {
-    // this.downloadedContents[idx]['isSelected'] = !this.downloadedContents[idx]['isSelected'];
-    if (event.value) {
-      this.downloadedContents[idx]['isSelected'] = event.value;
-      const selectedContents = (this.downloadedContents.filter((element) => element['isSelected']));
-      if (selectedContents.length) {
-        if (selectedContents.length === this.downloadedContents.length) {
-          this.showSelectAll = false;
-        } else {
-          this.showSelectAll = true;
-        }
-        this.showDeleteButton = false;
-        this.deleteAllContents();
+    this.downloadedContents[idx]['isSelected'] = event.detail.checked;
+    const selectedContents = (this.downloadedContents.filter((element) => element['isSelected']));
+    if (selectedContents.length) {
+      if (selectedContents.length === this.downloadedContents.length) {
+        this.showSelectAll = false;
       } else {
-        this.showDeleteButton = true;
-        await this.deleteAllConfirm.dismiss(null);
+        this.showSelectAll = true;
+      }
+      this.showDeleteButton = false;
+      this.deleteAllContents();
+    } else {
+      this.showDeleteButton = true;
+      if (this.deleteAllPopupPresent) {
+        await this.deleteAllConfirm.dismiss({ isLeftButtonClicked: null });
       }
     }
   }
@@ -222,6 +225,7 @@ export class DownloadsTabComponent {
     });
     if (!this.deleteAllPopupPresent) {
       this.telemetryGeneratorService.generatePageViewTelemetry(PageId.BULK_DELETE_POPUP, Environment.DOWNLOADS);
+      this.deleteAllPopupPresent = true;
       this.deleteAllConfirm = await this.popoverCtrl.create({
         component: SbGenericPopoverComponent,
         componentProps: {
@@ -241,17 +245,14 @@ export class DownloadsTabComponent {
         },
         cssClass: 'sb-popover danger sb-dw-delete-popover',
         showBackdrop: false,
-        // migration-TODO
-        // enableBackdropDismiss: false (ionic v3)
-        backdropDismiss: false
+        backdropDismiss: false,
+        animated: true
       });
       await this.deleteAllConfirm.present();
-      this.deleteAllPopupPresent = true;
-    }
-    await this.deleteAllConfirm.onDidDismiss((leftBtnClicked: any) => {
+      const { data } = await this.deleteAllConfirm.onDidDismiss();
       this.deleteAllPopupPresent = false;
       const valuesMap = {};
-      if (leftBtnClicked == null) {
+      if (data && data.isLeftButtonClicked === null) {
         this.unSelectAllContents();
         this.telemetryGeneratorService.generateInteractTelemetry(
           InteractType.TOUCH,
@@ -259,7 +260,7 @@ export class DownloadsTabComponent {
           Environment.DOWNLOADS,
           PageId.BULK_DELETE_POPUP);
         return;
-      } else if (leftBtnClicked) {
+      } else if (data.isLeftButtonClicked) {
         valuesMap['type'] = ActionButtonType.NEGATIVE;
         this.unSelectAllContents();
       } else {
@@ -278,7 +279,7 @@ export class DownloadsTabComponent {
         Environment.DOWNLOADS,
         PageId.BULK_DELETE_POPUP, undefined,
         valuesMap);
-    });
+    }
   }
 
   navigateToDetailsPage(content) {
@@ -291,29 +292,19 @@ export class DownloadsTabComponent {
       PageId.DOWNLOADS,
       telemetryObject);
     if (!this.selectedContents.length) {
-      switch (content.mimeType) {
-
-        // case MimeType.COLLECTION: this.navCtrl.push(CollectionDetailsEtbPage, { content: content });
-        case MimeType.COLLECTION: this.router.navigate([RouterLinks.COLLECTION_DETAIL_ETB], {
-          state: {
-            content: content
-          }
+      if (content.contentData && content.contentData.contentType === ContentType.COURSE) {
+        this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], {
+          state: { content }
         });
-
-          break;
-        // default: this.navCtrl.push(ContentDetailsPage, { content: content });
-        default: this.router.navigate([RouterLinks.CONTENT_DETAILS], {
-          state: {
-            content: content
-          }
+      } else if (content.mimeType === MimeType.COLLECTION) {
+        this.router.navigate([RouterLinks.COLLECTION_DETAIL_ETB], {
+          state: { content }
+        });
+      } else {
+        this.router.navigate([RouterLinks.CONTENT_DETAILS], {
+          state: { content }
         });
       }
     }
-
   }
-
 }
-
-
-
-

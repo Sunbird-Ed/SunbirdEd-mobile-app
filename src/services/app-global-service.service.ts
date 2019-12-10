@@ -1,37 +1,22 @@
 import { Inject, Injectable, OnDestroy } from '@angular/core';
 import { Environment, InteractSubtype, InteractType, PageId } from './telemetry-constants';
 import { Events, PopoverController } from '@ionic/angular';
-import { PopoverOptions } from '@ionic/core';
-// import {UpgradePopover} from '../pages/upgrade/upgrade-popover';
 import { GenericAppConfig, PreferenceKey } from '../app/app.constant';
 import { TelemetryGeneratorService } from './telemetry-generator.service';
 import {
-    AuthService,
-    Course,
-    Framework,
-    FrameworkCategoryCodesGroup,
-    FrameworkDetailsRequest,
-    FrameworkService,
-    OAuthSession,
-    Profile,
-    ProfileService,
-    ProfileType,
-    SharedPreferences
+    AuthService, Course, Framework, FrameworkCategoryCodesGroup, FrameworkDetailsRequest, FrameworkService,
+    OAuthSession, Profile, ProfileService, ProfileType, SharedPreferences
 } from 'sunbird-sdk';
 import { UtilityService } from './utility-service';
 import { ProfileConstants } from '../app/app.constant';
 import { Observable, Observer } from 'rxjs';
 import { PermissionAsked } from './android-permissions/android-permission';
-import { UpgradePopoverComponent } from '../app/components/popups/upgrade-popover/upgrade-popover.component';
-import { delay } from 'rxjs/operators';
-
-declare const buildconfigreader;
+import { UpgradePopoverComponent } from '@app/app/components/popups';
 
 @Injectable({
     providedIn: 'root'
 })
 export class AppGlobalService implements OnDestroy {
-
     public static readonly USER_INFO_UPDATED = 'user-profile-changed';
     public static readonly PROFILE_OBJ_CHANGED = 'app-global:profile-obj-changed';
     public static isPlayerLaunched = false;
@@ -39,23 +24,28 @@ export class AppGlobalService implements OnDestroy {
     session: OAuthSession;
 
     /**
-    * This property stores the courses enrolled by a user
-    */
+     * This property stores the courses enrolled by a user
+     */
     courseList: Array<Course>;
 
     /**
-    * This property stores the course filter configuration at the app level for a particular app session
-    */
+     * This property stores the course filter configuration at the app level for a particular app session
+     */
     courseFilterConfig: Array<any> = [];
 
     /**
-    * This property stores the library filter configuration at the app level for a particular app session
-    */
+     * This property stores the library filter configuration at the app level for a particular app session
+     */
     libraryFilterConfig: Array<any> = [];
 
     /**
-    * This property stores the organization at the app level for a particular app session
-    */
+     * This property stores the location configuration at the app level for a particular app session
+     */
+    locationConfig: Array<any> = [];
+
+    /**
+     * This property stores the organization at the app level for a particular app session
+     */
     rootOrganizations: Array<any>;
     courseFrameworkId: string;
 
@@ -91,9 +81,7 @@ export class AppGlobalService implements OnDestroy {
     public averageTime = 0;
     public averageScore = 0;
     private frameworkData = [];
-    public DISPLAY_ONBOARDING_CARDS = false;
     public DISPLAY_FRAMEWORK_CATEGORIES_IN_PROFILE = false;
-    public DISPLAY_ONBOARDING_PAGE = false;
     public DISPLAY_SIGNIN_FOOTER_CARD_IN_COURSE_TAB_FOR_TEACHER = false;
     public DISPLAY_SIGNIN_FOOTER_CARD_IN_LIBRARY_TAB_FOR_TEACHER = false;
     public DISPLAY_SIGNIN_FOOTER_CARD_IN_PROFILE_TAB_FOR_TEACHER = false;
@@ -101,7 +89,6 @@ export class AppGlobalService implements OnDestroy {
     public DISPLAY_SIGNIN_FOOTER_CARD_IN_PROFILE_TAB_FOR_STUDENT = false;
     public TRACK_USER_TELEMETRY = false;
     public CONTENT_STREAMING_ENABLED = false;
-    public DISPLAY_ONBOARDING_SCAN_PAGE = false;
     public DISPLAY_ONBOARDING_CATEGORY_PAGE = false;
     public OPEN_RAPDISCOVERY_ENABLED = false;
     public SUPPORT_EMAIL = 'support@sunbird.com';
@@ -149,94 +136,93 @@ export class AppGlobalService implements OnDestroy {
     }
 
     /**
-    * This method stores the list of courses enrolled by user, and is updated every time
-    * getEnrolledCourses is called.
-    * @param courseList
-    */
+     * This method stores the list of courses enrolled by user, and is updated every time
+     * getEnrolledCourses is called.
+     */
     setEnrolledCourseList(courseList: Array<any>) {
         this.courseList = courseList;
     }
 
     /**
-    * This method returns the list of enrolled courses
-    *
-    * @param courseList
-    *
-    */
+     * This method returns the list of enrolled courses
+     */
     getEnrolledCourseList(): Array<any> {
         return this.courseList;
     }
 
     /**
-    * This method stores the course filter config, for a particular session of the app
-    *
-    * @param courseFilterConfig
-    *
-    */
+     * This method stores the course filter config, for a particular session of the app
+     */
     setCourseFilterConfig(courseFilterConfig: Array<any>) {
         this.courseFilterConfig = courseFilterConfig;
     }
 
     /**
-    * This method returns the course filter config cache, for a particular session of the app
-    *
-    * @param syllabusList
-    *
-    */
+     * This method returns the course filter config cache, for a particular session of the app
+     */
     getCachedCourseFilterConfig(): Array<any> {
         return this.courseFilterConfig;
     }
 
     /**
-    * This method stores the library filter config, for a particular session of the app
-    *
-    */
+     * This method stores the library filter config, for a particular session of the app
+     */
     setLibraryFilterConfig(libraryFilterConfig: Array<any>) {
         this.libraryFilterConfig = libraryFilterConfig;
     }
 
     /**
-    * This method returns the library filter config cache, for a particular session of the app
-    *
-    */
+     * This method returns the library filter config cache, for a particular session of the app
+     */
     getCachedLibraryFilterConfig(): Array<any> {
         return this.libraryFilterConfig;
     }
 
     /**
-    * This method stores the rootOrganizations, for a particular session of the app
-    *
-    */
+     * This method stores the location config, for a particular session of the app
+     */
+    setLocationConfig(locationConfig: Array<any>) {
+        this.courseFilterConfig = locationConfig;
+    }
+
+    /**
+     * This method returns the location config cache, for a particular session of the app
+     */
+    getCachedLocationConfig(): Array<any> {
+        return this.locationConfig;
+    }
+
+    /**
+     * This method stores the rootOrganizations, for a particular session of the app
+     */
     setRootOrganizations(rootOrganizations: Array<any>) {
         this.rootOrganizations = rootOrganizations;
     }
 
     /**
-    * This method returns the rootOrganizations cache, for a particular session of the app
-    *
-    */
+     * This method returns the rootOrganizations cache, for a particular session of the app
+     */
     getCachedRootOrganizations(): Array<any> {
         return this.rootOrganizations;
     }
 
     /**
-   * This method stores the courseFrameworkId, for a particular session of the app
-   *
-   */
+     * This method stores the courseFrameworkId, for a particular session of the app
+     */
     setCourseFrameworkId(courseFrameworkId: string) {
         this.courseFrameworkId = courseFrameworkId;
     }
 
     /**
-    * This method returns the courseFrameworkId cache, for a particular session of the app
-    *
-    */
+     * This method returns the courseFrameworkId cache, for a particular session of the app
+     */
     getCachedCourseFrameworkId(): string {
         return this.courseFrameworkId;
     }
 
     /**
-     * @returns {string} UserId or empty string if not available
+     * @returns UserId or empty string if not available
+     * getLoggedinUserId
      */
     getUserId(): string | undefined {
         if (!this.session) {
@@ -254,28 +240,12 @@ export class AppGlobalService implements OnDestroy {
     }
 
     readConfig() {
-        this.utilityService.getBuildConfigValue(GenericAppConfig.DISPLAY_ONBOARDING_CARDS)
-            .then(response => {
-                this.DISPLAY_ONBOARDING_CARDS = response === 'true' ? true : false;
-            })
-            .catch(error => {
-                this.DISPLAY_ONBOARDING_CARDS = false;
-            });
-
         this.utilityService.getBuildConfigValue(GenericAppConfig.DISPLAY_FRAMEWORK_CATEGORIES_IN_PROFILE)
             .then(response => {
                 this.DISPLAY_FRAMEWORK_CATEGORIES_IN_PROFILE = response === 'true' ? true : false;
             })
             .catch(error => {
                 this.DISPLAY_FRAMEWORK_CATEGORIES_IN_PROFILE = false;
-            });
-
-        this.utilityService.getBuildConfigValue(GenericAppConfig.DISPLAY_ONBOARDING_PAGE)
-            .then(response => {
-                this.DISPLAY_ONBOARDING_PAGE = response === 'true' ? true : false;
-            })
-            .catch(error => {
-                this.DISPLAY_ONBOARDING_PAGE = false;
             });
 
         this.utilityService.getBuildConfigValue(GenericAppConfig.DISPLAY_SIGNIN_FOOTER_CARD_IN_COURSE_TAB_FOR_TEACHER)
@@ -332,13 +302,6 @@ export class AppGlobalService implements OnDestroy {
                 this.CONTENT_STREAMING_ENABLED = false;
             });
 
-        this.utilityService.getBuildConfigValue(GenericAppConfig.DISPLAY_ONBOARDING_SCAN_PAGE)
-            .then(response => {
-                this.DISPLAY_ONBOARDING_SCAN_PAGE = response === 'true' ? true : false;
-            })
-            .catch(error => {
-                this.DISPLAY_ONBOARDING_SCAN_PAGE = false;
-            });
         this.utilityService.getBuildConfigValue(GenericAppConfig.DISPLAY_ONBOARDING_CATEGORY_PAGE)
             .then(response => {
                 this.DISPLAY_ONBOARDING_CATEGORY_PAGE = response === 'true' ? true : false;
@@ -372,6 +335,7 @@ export class AppGlobalService implements OnDestroy {
 
         this.authService.getSession().toPromise().then((session) => {
             if (!session) {
+                this.session = session;
                 this.getGuestUserInfo();
             } else {
                 this.guestProfileType = undefined;
@@ -389,7 +353,7 @@ export class AppGlobalService implements OnDestroy {
 
     private getCurrentUserProfile() {
         this.profile.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise()
-            .then((response: any) => {
+            .then((response: Profile) => {
                 this.guestUserProfile = response;
                 if (this.guestUserProfile.syllabus && this.guestUserProfile.syllabus.length > 0) {
                     this.getFrameworkDetails(this.guestUserProfile.syllabus[0])
@@ -451,7 +415,7 @@ export class AppGlobalService implements OnDestroy {
                         resolve(this.guestProfileType);
                     }
                 }).catch(() => {
-                    reject()
+                    reject();
                 });
         });
     }
@@ -478,7 +442,7 @@ export class AppGlobalService implements OnDestroy {
             shouldDismissAlert = false;
         }
 
-        const options: PopoverOptions = {
+        const options = {
             component: UpgradePopoverComponent,
             componentProps: { type: upgradeType },
             cssClass: 'upgradePopover',
@@ -494,8 +458,6 @@ export class AppGlobalService implements OnDestroy {
         if (this.isGuestUser) {
             const paramsMap = new Map();
             if (pageId !== PageId.PROFILE) {
-                paramsMap['isOnBoardingPageConfigEnabled'] = this.DISPLAY_ONBOARDING_PAGE;
-                paramsMap['isOnBoardingCardsConfigEnabled'] = this.DISPLAY_ONBOARDING_CARDS;
                 paramsMap['isProfileSettingsCompleted'] = isOnBoardingCompleted;
             }
             const profileType = this.getGuestUserType();
@@ -571,14 +533,19 @@ export class AppGlobalService implements OnDestroy {
     getPageIdForTelemetry() {
         let pageId = PageId.LIBRARY;
         if (this.currentPageId) {
-            if (this.currentPageId.toLowerCase() === 'library') {
-                pageId = PageId.LIBRARY;
-            } else if (this.currentPageId.toLowerCase() === 'courses') {
-                pageId = PageId.COURSES;
-            } else if (this.currentPageId.toLowerCase() === 'profile') {
-                pageId = PageId.PROFILE;
-            } else if (this.currentPageId.toLowerCase() === 'downloads') {
-                pageId = PageId.DOWNLOADS;
+            switch (this.currentPageId.toLowerCase()) {
+                case 'library':
+                    pageId = PageId.LIBRARY;
+                    break;
+                case 'courses':
+                    pageId = PageId.COURSES;
+                    break;
+                case 'profile':
+                    pageId = PageId.PROFILE;
+                    break;
+                case 'downloads':
+                    pageId = PageId.DOWNLOADS;
+                    break;
             }
         }
         return pageId;
@@ -633,7 +600,8 @@ export class AppGlobalService implements OnDestroy {
             this.preferences.getString(PreferenceKey.APP_PERMISSION_ASKED).subscribe(
                 (permissionAsked: string | undefined) => {
                     if (!permissionAsked) {
-                        this.preferences.putString(PreferenceKey.APP_PERMISSION_ASKED, JSON.stringify(this.isPermissionAsked)).toPromise().then();
+                        this.preferences.putString(
+                            PreferenceKey.APP_PERMISSION_ASKED, JSON.stringify(this.isPermissionAsked)).toPromise().then();
                         observer.next(false);
                         observer.complete();
                         return;
@@ -651,7 +619,8 @@ export class AppGlobalService implements OnDestroy {
         this.preferences.getString(PreferenceKey.APP_PERMISSION_ASKED).subscribe(
             (permissionAsked: string | undefined) => {
                 if (!permissionAsked) {
-                    this.preferences.putString(PreferenceKey.APP_PERMISSION_ASKED, JSON.stringify(this.isPermissionAsked)).toPromise().then();
+                    this.preferences.putString(
+                        PreferenceKey.APP_PERMISSION_ASKED, JSON.stringify(this.isPermissionAsked)).toPromise().then();
                     return;
                 } else {
                     permissionAsked = JSON.parse(permissionAsked);
@@ -661,12 +630,4 @@ export class AppGlobalService implements OnDestroy {
                 }
             });
     }
-
-    hideSplashScreen(delay): void {
-        let timeout = setTimeout(() => {
-            splashscreen.markImportDone();
-            splashscreen.hide();
-          }, delay);
-    }
-
 }

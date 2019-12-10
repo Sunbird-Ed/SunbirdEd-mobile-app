@@ -14,8 +14,9 @@ import {
     DeviceSpecification
 } from 'sunbird-sdk';
 import { Map } from '../app/telemetryutil';
-import { Environment, ImpressionType, InteractSubtype, InteractType, Mode, PageId } from './telemetry-constants';
+import { Environment, ImpressionType, InteractSubtype, InteractType, Mode, PageId, CorReleationDataType } from './telemetry-constants';
 import { MimeType } from '../app/app.constant';
+import { ContentUtil } from '@app/util/content-util';
 
 @Injectable()
 export class TelemetryGeneratorService {
@@ -23,7 +24,7 @@ export class TelemetryGeneratorService {
     }
 
     generateInteractTelemetry(interactType, interactSubtype, env, pageId, object?: TelemetryObject, values?: Map,
-        rollup?: Rollup, corRelationList?: Array<CorrelationData>) {
+                              rollup?: Rollup, corRelationList?: Array<CorrelationData>) {
         const telemetryInteractRequest = new TelemetryInteractRequest();
         telemetryInteractRequest.type = interactType;
         telemetryInteractRequest.subType = interactSubtype;
@@ -150,13 +151,6 @@ export class TelemetryGeneratorService {
         this.telemetryService.interrupt(telemetryInterruptRequest).subscribe();
     }
 
-    // generateExDataTelemetry(type, data) {
-    //     const exData = new ExData();
-    //     exData.type = type;
-    //     exData.data = data;
-    //     this.telemetryService.exdata(exData);
-    // }
-
     generateErrorTelemetry(env, errCode, errorType, pageId, stackTrace) {
         const telemetryErrorRequest = new TelemetryErrorRequest();
         // telemetryErrorRequest.env = env;
@@ -167,7 +161,7 @@ export class TelemetryGeneratorService {
         this.telemetryService.error(telemetryErrorRequest).subscribe();
     }
 
-    generateBackClickedTelemetry(pageId, env, isNavBack: boolean, identifier?: string, corRelationList?) {
+    generateBackClickedTelemetry(pageId, env, isNavBack: boolean, identifier?: string, corRelationList?, objRollup?, telemetryObject?) {
         const values = new Map();
         if (identifier) {
             values['identifier'] = identifier;
@@ -177,8 +171,9 @@ export class TelemetryGeneratorService {
             isNavBack ? InteractSubtype.NAV_BACK_CLICKED : InteractSubtype.DEVICE_BACK_CLICKED,
             env,
             pageId,
-            undefined,
+            telemetryObject,
             values,
+            objRollup,
             corRelationList);
 
     }
@@ -193,14 +188,16 @@ export class TelemetryGeneratorService {
         const values = new Map();
         values['isFirstTime'] = isFirstTime;
         values['size'] = content.size;
-        const telemetryObject = new TelemetryObject(content.identifier || content.contentId, content.contentType, content.pkgVersion);
+        const telemetryObject = new TelemetryObject(content.identifier || content.contentId,
+            content.contentData ? content.contentData.contentType : content.contentType, content.contentData.pkgVersion);
         this.generateInteractTelemetry(
             InteractType.OTHER,
             InteractSubtype.LOADING_SPINE,
             Environment.HOME,
             PageId.DOWNLOAD_SPINE,
             telemetryObject,
-            values);
+            values,
+            ContentUtil.generateRollUp(undefined, telemetryObject.id));
     }
 
     generateCancelDownloadTelemetry(content: any) {
@@ -215,7 +212,7 @@ export class TelemetryGeneratorService {
             values);
     }
 
-    generateDownloadAllClickTelemetry(pageId, content, downloadingIdentifier, childrenCount) {
+    generateDownloadAllClickTelemetry(pageId, content, downloadingIdentifier, childrenCount, rollup?, corelationList?) {
         const values = new Map();
         values['downloadingIdentifers'] = downloadingIdentifier;
         values['childrenCount'] = childrenCount;
@@ -226,7 +223,8 @@ export class TelemetryGeneratorService {
             Environment.HOME,
             pageId,
             telemetryObject,
-            values);
+            values,
+            rollup, corelationList);
     }
 
     generatePullToRefreshTelemetry(pageId, env) {
@@ -239,11 +237,11 @@ export class TelemetryGeneratorService {
     }
 
     /**
-   * method generates telemetry on click Read less or Read more
-   * @param {string} param string as read less or read more
-   * @param {object} objRollup object roll up
-   * @param corRelationList corelationList
-   */
+     * method generates telemetry on click Read less or Read more
+     * @param {string} param string as read less or read more
+     * @param {object} objRollup object roll up
+     * @param corRelationList corelationList
+     */
     readLessOrReadMore(param, objRollup, corRelationList, telemetryObject) {
         this.generateInteractTelemetry(InteractType.TOUCH,
             param = 'READ_MORE' === param ? InteractSubtype.READ_MORE_CLICKED : InteractSubtype.READ_LESS_CLICKED,
@@ -261,13 +259,19 @@ export class TelemetryGeneratorService {
         values['medium'] = profile.medium;
         values['grade'] = profile.grade;
         values['mode'] = mode;
+        const corRelationList: Array<CorrelationData> = [];
+        corRelationList.push({ id: profile.board ? profile.board.join(',') : '', type: CorReleationDataType.BOARD });
+        corRelationList.push({ id: profile.medium ? profile.medium.join(',') : '' , type: CorReleationDataType.MEDIUM });
+        corRelationList.push({ id: profile.grade ? profile.grade.join(',') : '', type: CorReleationDataType.CLASS });
+        corRelationList.push({ id: profile.profileType, type: CorReleationDataType.USERTYPE });
         this.generateInteractTelemetry(
             InteractType.OTHER,
             InteractSubtype.PROFILE_ATTRIBUTE_POPULATION,
             env ? env : Environment.HOME,
             pageId,
             undefined,
-            values);
+            values, undefined,
+            corRelationList);
     }
 
     generateExtraInfoTelemetry(values: Map, pageId) {
@@ -325,17 +329,17 @@ export class TelemetryGeneratorService {
         return mimeType === MimeType.COLLECTION;
     }
 
-    generateStartSheenAnimationTelemetry() {
+    generateStartSheenAnimationTelemetry(pageId: string) {
         this.generateInteractTelemetry(InteractType.OTHER,
             InteractSubtype.SHEEN_ANIMATION_START,
             Environment.HOME,
-            PageId.LIBRARY);
+            pageId);
     }
 
-    generateEndSheenAnimationTelemetry() {
+    generateEndSheenAnimationTelemetry(pageId: string) {
         this.generateInteractTelemetry(InteractType.OTHER,
             InteractSubtype.SHEEN_ANIMATION_END,
             Environment.HOME,
-            PageId.LIBRARY);
+            pageId);
     }
 }

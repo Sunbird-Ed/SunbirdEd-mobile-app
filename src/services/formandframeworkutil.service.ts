@@ -1,28 +1,32 @@
-import { Inject, Injectable, OnInit } from '@angular/core';
+import { Inject, Injectable } from '@angular/core';
 import { AppGlobalService } from '@app/services/app-global-service.service';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { TranslateService } from '@ngx-translate/core';
 import { Events } from '@ionic/angular';
 import {
+    CachedItemRequestSourceFrom,
     CategoryTerm,
     FormRequest,
     FormService,
-    FrameworkService,
     FrameworkCategoryCodesGroup,
+    FrameworkService,
     FrameworkUtilService,
     GetFrameworkCategoryTermsRequest,
     GetSystemSettingsRequest,
     OrganizationSearchCriteria,
     Profile,
     ProfileService,
+    SharedPreferences,
     SystemSettings,
     SystemSettingsService,
-    SharedPreferences
+    WebviewSessionProviderConfig,
+    SignInError
 } from 'sunbird-sdk';
 
-import { SystemSettingsIds, ContentFilterConfig, ContentType } from '@app/app/app.constant';
+import { ContentFilterConfig, ContentType, PreferenceKey, SystemSettingsIds } from '@app/app/app.constant';
+
 @Injectable()
-export class FormAndFrameworkUtilService implements OnInit {
+export class FormAndFrameworkUtilService {
     contentFilterConfig: Array<any> = [];
     selectedLanguage: string;
     profile: Profile;
@@ -38,10 +42,31 @@ export class FormAndFrameworkUtilService implements OnInit {
         private appVersion: AppVersion,
         private translate: TranslateService,
         private events: Events
-    ) { }
+    ) {
+        this.preferences.getString(PreferenceKey.SELECTED_LANGUAGE_CODE).toPromise()
+            .then(val => {
+                this.selectedLanguage = val ? val : 'en';
+            });
+    }
 
-    ngOnInit() {
-        this.selectedLanguage = this.translate.currentLang;
+    getWebviewSessionProviderConfig(context: 'login' | 'merge' | 'migrate'): Promise<WebviewSessionProviderConfig> {
+        const request: FormRequest = {
+            from: CachedItemRequestSourceFrom.SERVER,
+            type: 'config',
+            subType: 'login',
+            action: 'get'
+        };
+
+        return this.formService.getForm(request)
+            .map((result) => {
+                const config = result['data']['fields'].find(c => c.context === context);
+
+                if (!config) {
+                    throw new SignInError('SESSION_PROVIDER_CONFIG_NOT_FOUND');
+                }
+
+                return config;
+            }).toPromise();
     }
 
     /**
@@ -85,6 +110,26 @@ export class FormAndFrameworkUtilService implements OnInit {
     }
 
     /**
+     * This method gets the location config.
+     *
+     */
+    getLocationConfig(): Promise<any> {
+        return new Promise((resolve, reject) => {
+            let locationConfig: Array<any> = [];
+
+            // get cached course config
+            locationConfig = this.appGlobalService.getCachedLocationConfig();
+
+            if (locationConfig === undefined || locationConfig.length === 0) {
+                locationConfig = [];
+                this.invokeLocationConfigFormApi(locationConfig, resolve, reject);
+            } else {
+                resolve(locationConfig);
+            }
+        });
+    }
+
+    /**
      * This method checks if the newer version of the available and respectively shows the dialog with relevant contents
      */
     checkNewAppVersion(): Promise<any> {
@@ -111,8 +156,7 @@ export class FormAndFrameworkUtilService implements OnInit {
 
                             if (res && res.form && res.form.data) {
                                 fields = res.form.data.fields;
-
-                                fields.forEach(element => {
+                                for (const element of fields) {
                                     if (element.language === this.selectedLanguage) {
                                         if (element.range) {
                                             ranges = element.range;
@@ -122,13 +166,12 @@ export class FormAndFrameworkUtilService implements OnInit {
                                             upgradeTypes = element.upgradeTypes;
                                         }
                                     }
-                                });
+                                }
 
                                 if (ranges && ranges.length > 0 && upgradeTypes && upgradeTypes.length > 0) {
                                     let type: string;
                                     const forceType = 'force';
-
-                                    ranges.forEach(element => {
+                                    for (const element of ranges) {
                                         if (versionCode >= element.minVersionCode && versionCode <= element.maxVersionCode) {
                                             console.log('App needs a upgrade of type - ' + element.type);
                                             type = element.type;
@@ -137,13 +180,12 @@ export class FormAndFrameworkUtilService implements OnInit {
                                                 return true; // this is to stop the foreach loop
                                             }
                                         }
-                                    });
-
-                                    upgradeTypes.forEach(upgradeElement => {
+                                    }
+                                    for (const upgradeElement of upgradeTypes) {
                                         if (type === upgradeElement.type) {
                                             result = upgradeElement;
                                         }
-                                    });
+                                    }
                                 }
                             }
 
@@ -205,6 +247,30 @@ export class FormAndFrameworkUtilService implements OnInit {
             });
     }
 
+    /**
+     * Network call to form api
+     */
+    private invokeLocationConfigFormApi(
+        locationConfig: Array<any>,
+        resolve: (value?: any) => void,
+        reject: (reason?: any) => void) {
+
+        const req: FormRequest = {
+            type: 'config',
+            subType: 'location',
+            action: 'get',
+        };
+        // form api call
+        this.formService.getForm(req).toPromise()
+            .then((res: any) => {
+                locationConfig = res.form.data.fields;
+                this.appGlobalService.setLocationConfig(locationConfig);
+                resolve(locationConfig);
+            }).catch((error: any) => {
+                console.log('Error - ' + error);
+                resolve(locationConfig);
+            });
+    }
 
     private setContentFilterConfig(contentFilterConfig: Array<any>) {
         this.contentFilterConfig = contentFilterConfig;

@@ -6,7 +6,7 @@
       font-size: 1.3em;
       font-weight: 700 !important;
       color: map-get($colors, primary_black);
-    }
+    } 
     .filter-item {
       width: auto;
       margin: 16px !important;
@@ -19,6 +19,11 @@
         color: map-get($colors, dark_gray);
       }
     }
+    .apply-button {
+      margin: 16px !important;
+      width: 90%;
+    }
+     
     .scroll-list {
       overflow-y: scroll;
       max-height: 50vh !important;
@@ -64,4 +69,35 @@
     font-size: 1em;
     height: 2em;
     padding-top: 0.5em;
+  }
+  .text-end {
+    float: right;
+  } 
+
+  .flex-card-container {
+    display: flex !important;
+    flex-wrap: nowrap !important;;
+    align-items:center !important;;
+    justify-content:center !important;;
+    background-color:#f1f1f1;
+    padding: 23px;
+    margin-bottom: 12px;
+    .card-text {
+      width: 100%;
+    }
+    .card-icon{
+      width: 20px;   
+    }
+  } 
+  .filter-item {
+    width: auto;
+    margin: 16px !important;
+    background-color: map-get($colors, white_f0);
+    color: map-get($colors, dark_gray);
+    font-size: 1em;
+    font-weight: 600 !important;
+    height: 2em;
+    ion-icon {
+      color: map-get($colors, dark_gray);
+    }
   }

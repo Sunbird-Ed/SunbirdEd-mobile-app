@@ -1,12 +1,12 @@
 import { Location } from '@angular/common';
-import { Component, Input, NgZone, OnInit } from '@angular/core';
-import { ContentType, MimeType, RouterLinks } from '@app/app/app.constant';
+import { Component, Input, NgZone, OnInit, Output, EventEmitter } from '@angular/core';
+import { ContentType, MimeType, RouterLinks, EventTopics } from '@app/app/app.constant';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { CommonUtilService } from '@app/services/common-util.service';
 import { ComingSoonMessageService } from '@app/services/coming-soon-message.service';
-import { PopoverController } from '@ionic/angular';
+import { PopoverController, Events } from '@ionic/angular';
 import { SbGenericPopoverComponent } from '@app/app/components/popups/sb-generic-popover/sb-generic-popover.component';
-import { Content } from 'sunbird-sdk';
+import { Content,TelemetryObject,Rollup } from 'sunbird-sdk';
 import { Router, NavigationExtras } from '@angular/router';
 import { TextbookTocService } from '@app/app/collection-detail-etb/textbook-toc-service';
 import {
@@ -17,6 +17,8 @@ import {
   InteractType,
   PageId
 } from '@app/services/telemetry-constants';
+import { ContentUtil } from '@app/util/content-util';
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-collection-child',
@@ -39,6 +41,20 @@ export class CollectionChildComponent implements OnInit {
   @Input() rootUnitId: any;
   @Input() isTextbookTocPage: boolean;
   @Input() bookID: string;
+  @Input() isEnrolled: boolean;
+  @Input() fromCourseToc: boolean;
+  @Input() isBatchNotStarted: boolean;
+  @Input() updatedCourseCardData: boolean;
+  @Input() stckyUnitTitle: string;
+  @Input() stckyindex: string;
+  @Input() latestParentName: string;
+  @Input() latestParentNodes: any;
+  @Input() batch: any;
+  public telemetryObject: TelemetryObject;
+  public objRollup: Rollup;
+  collectionChildIcon: any;
+  sameHierarchy: boolean;
+    assessemtnAlert: HTMLIonPopoverElement;
 
   constructor(
     private zone: NgZone,
@@ -48,22 +64,41 @@ export class CollectionChildComponent implements OnInit {
     private router: Router,
     private textbookTocService: TextbookTocService,
     private telemetryService: TelemetryGeneratorService,
-    private location: Location
-  ) {
-    // const extras = this.router.getCurrentNavigation().extras.state;
-    // if (extras) {
-    //   this.cardData = extras.content;
-    //   this.defaultAppIcon = 'assets/imgs/ic_launcher.png';
-    //   this.parentId = extras.parentId;
-    // }
-  }
+    private location: Location,
+    private events: Events,
+  ) {}
 
   ngOnInit(): void {
+    this.collectionChildIcon = ContentUtil.getAppIcon(this.childData.contentData.appIcon, this.childData.basePath,
+        this.commonUtilService.networkInfo.isNetworkAvailable);
+    if (this.latestParentName) {
+      this.checkHierarchy();
+    }
+    this.telemetryObject = ContentUtil.getTelemetryObject(this.childData);
+  }
+
+  checkHierarchy() {
+    console.log('LatesParentNode', this.latestParentNodes[this.stckyindex].hierarchyInfo);
+    if (this.childData.hierarchyInfo && this.latestParentNodes[this.stckyindex].hierarchyInfo &&
+      this.childData.hierarchyInfo.length === this.latestParentNodes[this.stckyindex].hierarchyInfo.length) {
+      for (let i = 0; i < this.childData.hierarchyInfo.length; i++) {
+        if (this.childData.hierarchyInfo[i]['identifier'] === this.latestParentNodes[this.stckyindex].hierarchyInfo[i]['identifier']) {
+          this.sameHierarchy = true;
+          if (this.latestParentName === this.childData.contentData.name) {
+            this.events.publish(EventTopics.TOC_COLLECTION_CHILD_ID, { id: this.childData.identifier });
+          }
+        } else {
+          this.sameHierarchy = false;
+          break;
+        }
+      }
+    } else {
+      this.sameHierarchy = false;
+    }
   }
 
   setContentId(id: string) {
     console.log('extractedUrl', this.router);
-
     if (this.router.url.indexOf(RouterLinks.TEXTBOOK_TOC) !== -1) {
       const values = new Map();
       values['unitClicked'] = id;
@@ -73,14 +108,18 @@ export class CollectionChildComponent implements OnInit {
         InteractSubtype.SUBUNIT_CLICKED,
         Environment.HOME,
         PageId.TEXTBOOK_TOC,
-        undefined,
-        values
+        this.telemetryObject,
+        values,
+        this.objRollup,
+        this.corRelationList
       );
       this.textbookTocService.setTextbookIds({ rootUnitId: this.rootUnitId, contentId: id });
       this.location.back();
     }
   }
+
   navigateToDetailsPage(content: Content, depth) {
+    const todayDate =  moment(new Date()).format('YYYY-MM-DD');
     if (this.router.url.indexOf(RouterLinks.TEXTBOOK_TOC) !== -1) {
       const values = new Map();
       values['contentClicked'] = content.identifier;
@@ -89,18 +128,23 @@ export class CollectionChildComponent implements OnInit {
         InteractType.TOUCH,
         InteractSubtype.CONTENT_CLICKED,
         Environment.HOME,
-        PageId.TEXTBOOK_TOC, undefined,
-        values
+        PageId.TEXTBOOK_TOC, this.telemetryObject,
+        values,
+        this.objRollup,this.corRelationList
       );
       this.textbookTocService.setTextbookIds({ rootUnitId: this.rootUnitId, contentId: content.identifier });
       this.location.back();
+    } else if (!this.isEnrolled && this.router.url.indexOf(RouterLinks.ENROLLED_COURSE_DETAILS) !== -1) {
+      this.events.publish('courseToc:content-clicked', {isBatchNotStarted: this.isBatchNotStarted, isEnrolled: this.isEnrolled});
+    } else if (this.isEnrolled && this.isBatchNotStarted && this.router.url.indexOf(RouterLinks.ENROLLED_COURSE_DETAILS) !== -1) {
+      this.events.publish('courseToc:content-clicked', {isBatchNotStarted: this.isBatchNotStarted, isEnrolled: this.isEnrolled});
     } else {
       //   migration-TODO : remove unnecessary
       //   const stateData = this.navParams.get('contentState');
       const values = new Map();
       values['contentClicked'] = content.identifier;
       // values['parentId'] = this.bookID;
-      this.zone.run(() => {
+      this.zone.run(async () => {
         if (content.contentType === ContentType.COURSE) {
           //   migration-TODO : remove unnecessary
           // this.navCtrl.push(EnrolledCourseDetailsPage, {
@@ -124,34 +168,64 @@ export class CollectionChildComponent implements OnInit {
           };
           this.router.navigate([RouterLinks.COLLECTION_DETAIL_ETB], collectionDetailsParams);
         } else {
-          console.log('go to content details');
-          this.textbookTocService.setTextbookIds({ rootUnitId: this.rootUnitId, contentId: content.identifier });
+          const goToContentDetails = () => {
+            this.textbookTocService.setTextbookIds({ rootUnitId: this.rootUnitId, contentId: content.identifier });
 
-          this.telemetryService.generateInteractTelemetry(
-            InteractType.TOUCH,
-            InteractSubtype.CONTENT_CLICKED,
-            Environment.HOME,
-            PageId.COLLECTION_DETAIL, undefined,
-            values
-          );
-          const contentDetailsParams: NavigationExtras = {
-            state: {
-              isChildContent: true,
-              content,
-              depth,
-              // migration-TODO : remove unnece
-              // contentState: stateData,
-              corRelation: this.corRelationList,
-              breadCrumb: this.breadCrumb
-            }
+            this.telemetryService.generateInteractTelemetry(
+              InteractType.TOUCH,
+              InteractSubtype.CONTENT_CLICKED,
+              Environment.HOME,
+              PageId.COLLECTION_DETAIL,this.telemetryObject ,
+              values,this.objRollup,this.corRelationList
+            );
+            const contentDetailsParams: NavigationExtras = {
+              state: {
+                isChildContent: true,
+                content,
+                depth,
+                course: this.updatedCourseCardData || undefined,
+                corRelation: this.corRelationList,
+                breadCrumb: this.breadCrumb
+              }
+            };
+            this.router.navigate([RouterLinks.CONTENT_DETAILS], contentDetailsParams);
           };
-          this.router.navigate([RouterLinks.CONTENT_DETAILS], contentDetailsParams);
+
+          if (content.contentData.contentType === ContentType.SELF_ASSESS && this.batch && this.batch.status === 2) {
+            this.assessemtnAlert = await this.popoverCtrl.create({
+              component: SbGenericPopoverComponent,
+              componentProps: {
+                sbPopoverHeading: this.commonUtilService.translateMessage(content['status'] ? 'REDO_ASSESSMENT' : 'START_ASSESSMENT'),
+                sbPopoverMainTitle: this.commonUtilService.translateMessage(content['status'] ? 'TRAINING_ENDED_REDO_ASSESSMENT' : 'TRAINING_ENDED_START_ASSESSMENT'),
+                actionsButtons: [
+                  {
+                    btntext: this.commonUtilService.translateMessage('SKIP'),
+                    btnClass: 'sb-btn sb-btn-sm  sb-btn-outline-info'
+                  }, {
+                    btntext: this.commonUtilService.translateMessage(content['status'] ? 'REDO' : 'START'),
+                    btnClass: 'popover-color'
+                  }
+                ],
+                showHeader: true,
+                icon: null
+              },
+              cssClass: 'sb-popover sb-dw-delete-popover',
+              showBackdrop: false,
+              backdropDismiss: false,
+              animated: true
+            });
+            await this.assessemtnAlert.present();
+            const { data } = await this.assessemtnAlert.onDidDismiss();
+            if (data && data.isLeftButtonClicked === false) {
+              goToContentDetails();
+            }
+          } else {
+            goToContentDetails();
+          }
         }
       });
     }
   }
-  
-
 
   async showComingSoonPopup(childData: any) {
     const message = await this.comingSoonMessageService.getComingSoonMessage(childData);
@@ -188,4 +262,22 @@ export class CollectionChildComponent implements OnInit {
       return !!activeMimeType.find(m => m === mimeType);
     }
   }
+  // course-toc: for showing respective contenttype icons
+  getContentTypeIcon(content: Content) {
+    const mimeType = content.mimeType;
+    if (content.contentData.contentType === ContentType.SELF_ASSESS) {
+      return './assets/imgs/selfassess.svg';
+    } else if (mimeType) {
+      if (MimeType.DOCS.indexOf(mimeType) !== -1) {
+        return './assets/imgs/doc.svg';
+      } else if (MimeType.VIDEO.indexOf(mimeType) !== -1) {
+        return './assets/imgs/play.svg';
+      } else {
+        return './assets/imgs/touch.svg';
+      }
+    } else {
+      return './assets/imgs/touch.svg';
+    }
+  }
+
 }

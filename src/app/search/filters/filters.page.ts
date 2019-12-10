@@ -8,6 +8,10 @@ import { Location } from '@angular/common';
 import { Router } from '@angular/router';
 import { FilteroptionComponent } from '@app/app/components/filteroption/filteroption.component';
 import { AppHeaderService } from '@app/services/app-header.service';
+import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
+import {
+  Environment, InteractSubtype, InteractType, PageId
+} from '@app/services/telemetry-constants';
 @Component({
   selector: 'app-filters',
   templateUrl: './filters.page.html',
@@ -31,6 +35,7 @@ export class FiltersPage {
     private location: Location,
     private router: Router,
     private headerService: AppHeaderService,
+    private telemetryGeneratorService: TelemetryGeneratorService
   ) {
     this.filterCriteria = this.router.getCurrentNavigation().extras.state.filterCriteria;
     this.init();
@@ -47,6 +52,14 @@ export class FiltersPage {
       },
       cssClass: 'option-box'
     });
+    const values = new Map();
+    values['facetsClicked'] = facet.name;
+    this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
+      InteractSubtype.FILTER_CLICKED,
+      Environment.HOME,
+      PageId.LIBRARY_SEARCH_FILTER,
+      undefined,
+      values);
     await popUp.present();
   }
 

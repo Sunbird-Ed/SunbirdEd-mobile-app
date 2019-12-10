@@ -1,0 +1,61 @@
+<ion-content>
+
+    <div [ngClass]="{ 'sb-popup-header-info': (teacherIdPopupFlags.STATE_CONFIRMATION === teacherIdFlag || teacherIdPopupFlags.STATE_ID_INPUT === teacherIdFlag),
+                    'sb-popup-header-success': teacherIdPopupFlags.VERIFIED_STATE_ID === teacherIdFlag,
+                    'sb-popup-header-danger': teacherIdPopupFlags.FAILED_STATE_ID === teacherIdFlag  }">
+        <h6 class="M0">{{'TEACHER_ID_VERIFICATION' | translate}}</h6>
+    </div>
+
+    <section class="sb-popover" *ngIf="teacherIdPopupFlags.STATE_CONFIRMATION === teacherIdFlag">
+        <div class="M16 text-center">
+            <p>{{ 'ARE_YOU_STATE_TEACHER' | translate: {'%s': stateName} }}</p>
+        </div>
+
+        <div class="sb-popover-footer MT30 d-flex">
+            <button class="sb-popover-action-btn sb-btn sb-btn-normal sb-btn-outline-info W100" (click)="teacherIdConfirmation(false)">
+                {{ 'NO' | translate | uppercase }}</button>
+            <button class="sb-popover-action-btn sb-btn sb-btn-normal sb-btn-info W100" (click)="teacherIdConfirmation(true)">
+                    {{ 'YES' | translate | uppercase }}</button>
+        </div>
+    </section>
+
+    <section class="sb-popover" *ngIf="teacherIdPopupFlags.STATE_ID_INPUT === teacherIdFlag">
+        <div>
+            <form [formGroup]="teacherIdForm">
+                <div class="M16">
+                    <p>{{'TEACHER_ID_ENTER_LABEL' | translate}}</p>
+                    <input type="text" class="sb-input-info" placeholder="{{'TEACHER_ID_PLACEHOLDER' | translate}}" formControlName="teacherId" />
+                    <p class="error" *ngIf="showTeacherIdIncorrectErr">{{ 'INCORRECT_TEACHER_ID_ERROR' | translate }}</p>
+                </div>
+            </form>
+        </div>
+
+        <div class="sb-popover-footer MT30">
+            <button class="sb-popover-action-btn sb-btn sb-btn-normal sb-btn-info W50" (click)="submitTeacherId()">
+                {{ 'BTN_SUBMIT' | translate | uppercase }}</button>
+        </div>
+    </section>
+
+    <section class="sb-popover" *ngIf="teacherIdPopupFlags.VERIFIED_STATE_ID === teacherIdFlag">
+        <div class="M16 text-center">
+            <p>{{ 'TEACHER_PROFILE_VERIFIED' | translate }}</p>
+        </div>
+
+        <div class="sb-popover-footer MT30">
+            <button class="sb-popover-action-btn sb-btn sb-btn-normal sb-btn-success W50" (click)="closePopup()">
+                {{ 'OKAY' | translate }}</button>
+        </div>
+    </section>
+
+    <section class="sb-popover" *ngIf="teacherIdPopupFlags.FAILED_STATE_ID === teacherIdFlag">
+        <div class="M16 text-center">
+            <p>{{ 'TEACHER_PROFILE_FAILED' | translate }}</p>
+        </div>
+
+        <div class="sb-popover-footer MT30">
+            <button class="sb-popover-action-btn sb-btn sb-btn-normal sb-btn-error W50" (click)="closePopup()">
+                {{ 'OKAY' | translate }}</button>
+        </div>
+    </section>
+
+</ion-content>

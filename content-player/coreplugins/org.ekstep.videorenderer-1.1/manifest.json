@@ -12,7 +12,9 @@
             {"type": "js", "src": "renderer/libs/videolibs/videojs-vjsdownload.js"},
             {"type": "css", "src": "renderer/libs/video-js.css"},
             {"type": "css", "src": "renderer/libs/videolibs/videojs-vjsdownload.css"},
-            {"type": "js", "src": "renderer/libs/videoyoutube.js"},
+            {"type": "js", "src": "renderer/libs/videolibs/videojs-contrib-quality-levels.min.js"},
+            {"type": "js", "src": "renderer/libs/videolibs/videojs-hls-quality-selector.min.js"},
+            {"type": "css", "src": "renderer/libs/videolibs/videojs-hls-quality-selector.css"},
             {"type": "css", "src": "renderer/libs/loader.css"}
         ]
     },

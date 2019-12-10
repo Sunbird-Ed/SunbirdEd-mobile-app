@@ -100,6 +100,7 @@ export class GroupReportListComponent implements OnInit {
       this.report = this.router.getCurrentNavigation().extras.state.report;
       this.uids = this.router.getCurrentNavigation().extras.state.uids;
       this.reportSummary = this.router.getCurrentNavigation().extras.state.report;
+      this.users = this.router.getCurrentNavigation().extras.state.users;
 
     }
     this.downloadDirectory = this.file.dataDirectory;
@@ -117,7 +118,10 @@ export class GroupReportListComponent implements OnInit {
   }
   ionViewWillEnter() {
     this.fetchAssessment(this.reportType, false);
-    this.enableBackBtn();
+    this.deviceBackButton = this.platform.backButton.subscribeWithPriority(10, () => {
+      this.goBack();
+      this.deviceBackButton.unsubscribe();
+    });
   }
 
   async fetchAssessment(event: string, fromUserList: boolean) {
@@ -129,7 +133,7 @@ export class GroupReportListComponent implements OnInit {
       PageId.REPORTS_GROUP_ASSESMENT_DETAILS
     );
 
-    const loader = await this.commonUtilService.getLoader()
+    const loader = await this.commonUtilService.getLoader();
     this.reportSummary = this.report;
     this.contentName = this.reportSummary.name;
     const that = this;
@@ -145,7 +149,7 @@ export class GroupReportListComponent implements OnInit {
     }
     if (event === 'users' && !this.fromUserAssessment) {
       this.reportType = event;
-      await loader.present();
+    //  await loader.present();
       this.summarizerService.getReportsByUser(summaryRequest).toPromise()
         .then((data: any) => {
           this.groupReport = data;
@@ -161,22 +165,25 @@ export class GroupReportListComponent implements OnInit {
                 const data1 = reportsMap.get(report.uid);
                 const rows = data1.reportDetailsList.map(row => {
                   return {
-                    'index': 'Q' + (('00' + row.qindex).slice(-3)),
-                    'result': row.score + '/' + row.maxScore,
-                    'timespent': this.formatTime(row.timespent),
-                    'qdesc': row.qdesc,
-                    'score': row.score,
-                    'maxScore': row.maxScore,
-                    'qtitle': row.qtitle,
-                    'qid': row.qid,
-                    'name': report.userName,
-                    'timestamp': report.createdAt,
+                    index: 'Q' + (('00' + row.qindex).slice(-3)),
+                    result: row.score + '/' + row.maxScore,
+                    timespent: this.formatTime(row.timespent),
+                    qdesc: row.qdesc,
+                    score: row.score,
+                    maxScore: row.maxScore,
+                    qtitle: row.qtitle,
+                    qid: row.qid,
+                    name: report.userName,
+                    timestamp: report.createdAt,
                   };
                 });
                 report.assessmentData = rows;
               })
-              .catch(async () => {
-                await loader.dismiss();
+              .catch(async (error: any) => {
+                console.log('error', error);
+                loader.present().then(() => {
+                  loader.dismiss();
+                });
               });
           });
           this.response = data;
@@ -186,7 +193,7 @@ export class GroupReportListComponent implements OnInit {
           this.appGlobalService.setAverageTime(averageTime);
           this.appGlobalService.setAverageScore(averageScore);
           const details = {
-            'uiRows': data,
+            uiRows: data,
             totalScore: averageScore,
             uiTotalTime: that.formatTime(averageTime),
             fromGroup: true,
@@ -194,18 +201,22 @@ export class GroupReportListComponent implements OnInit {
             questionsScore: this.reportSummary.totalQuestionsScore
           };
           that.zone.run(async () => {
-            await loader.dismiss();
+            loader.present().then(() => {
+              loader.dismiss();
+            });
             that.fromUserAssessment = details;
           });
 
         })
         .catch(async () => {
-          await loader.dismiss();
+          loader.present().then(() => {
+            loader.dismiss();
+          });
         });
     } else
       if (event === 'questions') {
         this.reportType = event;
-        await loader.present();
+       // await loader.present();
         this.summarizerService.getReportByQuestions(summaryRequest).toPromise()
           .then((data: any) => {
             this.response = data;
@@ -222,7 +233,7 @@ export class GroupReportListComponent implements OnInit {
             averageScore = (averageScore / data.length).toFixed(2);
             averageTime = averageTime / data.length;
             const details = {
-              'uiRows': data,
+              uiRows: data,
               totalScore: that.appGlobalService.getAverageScore(),
               uiTotalTime: that.formatTime(that.appGlobalService.getAverageTime()),
               showPopup: true,
@@ -231,12 +242,17 @@ export class GroupReportListComponent implements OnInit {
               fromUser: false
             };
             that.zone.run(async () => {
-              await loader.dismiss();
+              loader.present().then(() => {
+                loader.dismiss();
+              });
               that.fromQuestionAssessment = details;
             });
           })
-          .catch(async () => {
-            await loader.dismiss();
+          .catch(async (error: any) => {
+            console.log('error in 2nd one', error);
+            loader.present().then(() => {
+              loader.dismiss();
+            });
           });
       }
   }
@@ -249,7 +265,7 @@ export class GroupReportListComponent implements OnInit {
   goToReportList() {
     this.router.navigate(['user-report'], {
       state: {
-        'report': this.reportSummary
+        report: this.reportSummary
       }
     });
   }
@@ -329,7 +345,8 @@ export class GroupReportListComponent implements OnInit {
     this.file.writeFile(this.downloadDirectory, combineFilename, csv)
       .then(
         _ => {
-          this.commonUtilService.showToast(this.commonUtilService.translateMessage('CSV_DOWNLOAD_SUCCESS', combineFilename), false, 'custom-toast');
+          this.commonUtilService.showToast(
+              this.commonUtilService.translateMessage('CSV_DOWNLOAD_SUCCESS', combineFilename), false, 'custom-toast');
         }
       )
       .catch(
@@ -344,19 +361,14 @@ export class GroupReportListComponent implements OnInit {
       );
   }
 
-  enableBackBtn() {
-    this.deviceBackButton = this.platform.backButton.subscribeWithPriority(10, () => {
-      this.goBack();
-    });
-  }
-
   goBack() {
     this.location.back();
   }
 
   ionViewWillLeave() {
-    this.deviceBackButton && this.deviceBackButton.unsubscribe();
-    this.deviceBackButton = undefined;
+   if (this.deviceBackButton) {
+     this.deviceBackButton.unsubscribe();
+   }
   }
 
 }

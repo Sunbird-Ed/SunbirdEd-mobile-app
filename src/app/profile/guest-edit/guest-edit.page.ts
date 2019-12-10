@@ -1,4 +1,4 @@
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import {
   AlertController,
   Events,
@@ -6,7 +6,7 @@ import {
   PopoverController
 } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, OnInit, ChangeDetectorRef } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import isEqual from 'lodash/isEqual';
 import {
@@ -41,6 +41,7 @@ import { GUEST_STUDENT_TABS, GUEST_TEACHER_TABS, initTabs } from '@app/app/modul
 import { PreferenceKey, RouterLinks } from '@app/app/app.constant';
 import { SbGenericPopoverComponent } from '@app/app/components/popups/sb-generic-popover/sb-generic-popover.component';
 import { Location } from '@angular/common';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-guest-edit',
@@ -49,15 +50,50 @@ import { Location } from '@angular/common';
 })
 export class GuestEditPage implements OnInit {
 
+  private _syllabusList = [];
+  private _mediumList = [];
+  private _gradeList = [];
+  private _subjectList = [];
+  formOnChange$: any;
+
+  get syllabusList() {
+    return this._syllabusList;
+  }
+  set syllabusList(v) {
+    this._syllabusList = v;
+    this.changeDetectionRef.detectChanges();
+  }
+
+  get mediumList() {
+    return this._mediumList;
+  }
+  set mediumList(v) {
+    this._mediumList = v;
+    this.changeDetectionRef.detectChanges();
+  }
+
+  get gradeList() {
+    return this._gradeList;
+  }
+  set gradeList(v) {
+    this._gradeList = v;
+    this.changeDetectionRef.detectChanges();
+  }
+
+  get subjectList() {
+    return this._subjectList;
+  }
+  set subjectList(v) {
+    this._subjectList = v;
+    this.changeDetectionRef.detectChanges();
+  }
+
+
   ProfileType = ProfileType;
   guestEditForm: FormGroup;
   profile: any = {};
   categories: Array<any> = [];
-  syllabusList: Array<any> = [];
   boardList: Array<any> = [];
-  gradeList: Array<any> = [];
-  subjectList: Array<string> = [];
-  mediumList: Array<string> = [];
   userName = '';
   frameworkId = '';
   loader: any;
@@ -112,9 +148,9 @@ export class GuestEditPage implements OnInit {
     private container: ContainerService,
     private popoverCtrl: PopoverController,
     private headerService: AppHeaderService,
-    private route: ActivatedRoute,
     private router: Router,
-    private location: Location
+    private location: Location,
+    private changeDetectionRef: ChangeDetectorRef
   ) {
     if (this.router.getCurrentNavigation().extras.state) {
       this.isNewUser = Boolean(this.router.getCurrentNavigation().extras.state.isNewUser);
@@ -157,6 +193,16 @@ export class GuestEditPage implements OnInit {
       });
       console.log(this.guestEditForm.getRawValue());
     }
+
+    this.formOnChange$ = Observable.merge(
+      this.guestEditForm.get('syllabus').valueChanges
+        .do(() => this.resetForm(0, true)),
+      this.guestEditForm.get('medium').valueChanges
+        .do(() => this.resetForm(2, true)),
+      this.guestEditForm.get('grades').valueChanges
+        .do(() => this.resetForm(3, true)),
+    ).subscribe();
+
     this.previousProfileType = this.profile.profileType;
     this.profileForTelemetry = Object.assign({}, this.profile);
 
@@ -197,6 +243,9 @@ export class GuestEditPage implements OnInit {
     if (this.unregisterBackButton) {
       this.unregisterBackButton.unsubscribe();
     }
+    if (this.formOnChange$) {
+      this.formOnChange$.unsubscribe();
+    }
   }
 
   // shows auto fill alert on load
@@ -232,11 +281,7 @@ export class GuestEditPage implements OnInit {
 
   onProfileTypeChange() {
     this.guestEditForm.patchValue({
-      syllabus: [],
-      boards: [],
-      grades: [],
-      subjects: [],
-      medium: []
+      syllabus: []
     });
   }
 
@@ -304,13 +349,12 @@ export class GuestEditPage implements OnInit {
               this.guestEditForm.patchValue({
                 boards: [boardCode.code]
               });
-              this.resetForm(1, false);
             } else {
               this.guestEditForm.patchValue({
                 boards: [result[0].code]
               });
-              this.resetForm(1, false);
             }
+            this.resetForm(1, false);
           } else {
             this.isEditData = false;
           }
@@ -362,7 +406,6 @@ export class GuestEditPage implements OnInit {
             this.commonUtilService.showToast(this.commonUtilService.translateMessage('NEED_INTERNET_TO_CHANGE'));
           });
       }
-
     } else {
       const request: GetFrameworkCategoryTermsRequest = {
         currentCategoryCode: this.categories[index - 1] ? this.categories[index - 1].code : '',
@@ -398,10 +441,7 @@ export class GuestEditPage implements OnInit {
     switch (index) {
       case 0:
         this.guestEditForm.patchValue({
-          boards: [],
-          grades: [],
-          subjects: [],
-          medium: []
+          boards: []
         });
         if (showLoader) {
           this._dismissLoader();
@@ -409,15 +449,13 @@ export class GuestEditPage implements OnInit {
           await this.loader.present();
         }
         this.checkPrevValue(1, 'boardList', [this.guestEditForm.value.syllabus]);
+        this.resetForm(1, false);
         break;
 
       case 1:
         this.guestEditForm.patchValue({
-          grades: [],
-          subjects: [],
           medium: []
         });
-
         oldAttribute.board = this.profileForTelemetry.board ? this.profileForTelemetry.board : '';
         newAttribute.board = this.guestEditForm.value.boards ? this.guestEditForm.value.boards : '';
         if (!isEqual(oldAttribute, newAttribute)) {
@@ -429,8 +467,7 @@ export class GuestEditPage implements OnInit {
 
       case 2:
         this.guestEditForm.patchValue({
-          subjects: [],
-          grades: [],
+          grades: []
         });
         oldAttribute.medium = this.profileForTelemetry.medium ? this.profileForTelemetry.medium : '';
         newAttribute.medium = this.guestEditForm.value.medium ? this.guestEditForm.value.medium : '';
@@ -442,7 +479,7 @@ export class GuestEditPage implements OnInit {
         break;
       case 3:
         this.guestEditForm.patchValue({
-          subjects: [],
+          subjects: []
         });
         oldAttribute.class = this.profileForTelemetry.grade ? this.profileForTelemetry.grade : '';
         newAttribute.class = this.guestEditForm.value.grades ? this.guestEditForm.value.grades : '';
@@ -453,6 +490,7 @@ export class GuestEditPage implements OnInit {
         this.checkPrevValue(4, 'subjectList', this.guestEditForm.value.grades);
         break;
     }
+    this.changeDetectionRef.detectChanges();
   }
 
 
@@ -493,7 +531,7 @@ export class GuestEditPage implements OnInit {
         this.commonUtilService.translateMessage('PLEASE_SELECT', this.commonUtilService.translateMessage('CLASS')), false, 'red-toast');
       return false;
     } else {
-      loader.present();
+      await loader.present();
       if (this.isNewUser) {
         this.submitNewUserForm(formVal, loader);
       } else {
@@ -561,9 +599,6 @@ export class GuestEditPage implements OnInit {
 
     this.profileService.updateProfile(req)
       .subscribe((res: any) => {
-        if (this.isCurrentUser) {
-          this.publishProfileEvents(formVal);
-        }
         this._dismissLoader(loader);
         this.commonUtilService.showToast(this.commonUtilService.translateMessage('PROFILE_UPDATE_SUCCESS'));
         this.telemetryGeneratorService.generateInteractTelemetry(
@@ -572,7 +607,11 @@ export class GuestEditPage implements OnInit {
           Environment.USER,
           PageId.EDIT_USER
         );
-        this.location.back();
+        if (this.isCurrentUser) {
+          this.publishProfileEvents(formVal);
+        } else {
+          this.location.back();
+        }
       }, (err: any) => {
         this._dismissLoader(loader);
         this.commonUtilService.showToast(this.commonUtilService.translateMessage('PROFILE_UPDATE_FAILED'));
@@ -597,12 +636,8 @@ export class GuestEditPage implements OnInit {
         this.preferences.putString(PreferenceKey.SELECTED_USER_TYPE, ProfileType.TEACHER).toPromise().then();
         initTabs(this.container, GUEST_TEACHER_TABS);
       }
-
-      // Migration todo
-      // this.app.getRootNav().setRoot(TabsPage);
-      // Need to test thoroughly
-      this.router.navigate([`/${RouterLinks.TABS}`]);
     }
+    this.location.back();
   }
 
 
@@ -646,11 +681,11 @@ export class GuestEditPage implements OnInit {
     });
   }
 
-  private _dismissLoader(loader?) {
+  private async _dismissLoader(loader?) {
     if (loader) {
-      loader.dismiss();
+      await loader.dismiss();
     } else if (this.loader) {
-      this.loader.dismiss();
+      await this.loader.dismiss();
       this.loader = undefined;
     }
   }

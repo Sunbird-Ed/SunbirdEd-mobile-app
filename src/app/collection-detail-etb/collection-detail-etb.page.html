@@ -1,4 +1,4 @@
-<ion-content no-padding (ionScroll)="onScroll($event)">
+<ion-content no-padding [scrollEvents]="true" (ionScroll)="onScroll($event)">
   <div class="p-8">
     <app-detail-card (downloadAllContent)="showDownloadConfirmationAlert($event)" (shareEvent)="share()"
       (showOverflowMenuEvent)="showPopOver($event)" [contentDetail]="contentDetail" [currentCount]="currentCount"
@@ -13,7 +13,7 @@
         <ion-col text-center>
           <p *ngIf="downloadProgress !== 100">{{ 'FETCHING_CONTENTS' | translate: {'%s': downloadProgress ?
             downloadProgress : '0'} }}</p>
-          <p *ngIf="downloadProgress === 100">{{ 'LOADING_CONTENT' | translate }}</p>
+          <p *ngIf="downloadProgress === 100">{{importProgressMessage}}</p>
           <ion-spinner padding></ion-spinner>
         </ion-col>
       </ion-row>

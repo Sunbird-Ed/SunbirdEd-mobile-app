@@ -2,7 +2,6 @@ import { Subscription } from 'rxjs//Subscription';
 import { Component, Inject, NgZone, ViewChild, OnInit } from '@angular/core';
 import { IonRouterOutlet, Events, Platform } from '@ionic/angular';
 import { } from '@ionic/angular';
-import { Location } from '@angular/common';
 import { Router, NavigationExtras } from '@angular/router';
 import { ProfileConstants, PreferenceKey, RouterLinks } from '@app/app/app.constant';
 import { AppGlobalService } from '@app/services/app-global-service.service';
@@ -19,6 +18,8 @@ import {
 } from '@app/services/telemetry-constants';
 import { ContainerService } from '@app/services/container.services';
 import { initTabs, GUEST_STUDENT_TABS, GUEST_TEACHER_TABS } from '@app/app/module.service';
+import { HasNotSelectedFrameworkGuard } from '@app/guards/has-not-selected-framework.guard';
+import { SplashScreenService } from '@app/services/splash-screen.service';
 
 const selectedCardBorderColor = '#006DE5';
 const borderColor = '#F7F7F7';
@@ -55,7 +56,8 @@ export class UserTypeSelectionPage implements OnInit {
     private platform: Platform,
     private headerService: AppHeaderService,
     private router: Router,
-    private location: Location
+    public frameworkGuard: HasNotSelectedFrameworkGuard,
+    private splashScreenService: SplashScreenService
   ) {
     this.getNavParams();
   }
@@ -65,7 +67,18 @@ export class UserTypeSelectionPage implements OnInit {
     if (navigation && navigation.extras && navigation.extras.state) {
       this.navParams = navigation.extras.state;
     }
-    console.log(this.navParams);
+  }
+
+  ionViewDidEnter() {
+    this.hideOnboardingSplashScreen();
+  }
+
+  async hideOnboardingSplashScreen() {
+    if (this.navParams && this.navParams.forwardMigration) {
+      if (!this.frameworkGuard.guardActivated) {
+        this.splashScreenService.handleSunbirdSplashScreenActions();
+      }
+    }
   }
 
   ngOnInit() {
@@ -103,9 +116,12 @@ export class UserTypeSelectionPage implements OnInit {
   }
   handleHeaderEvents($event) {
     switch ($event.name) {
-      case 'back': this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.USER_TYPE_SELECTION, Environment.HOME, true);
-        this.handleBackButton();
-        break;
+      case 'back': this.telemetryGeneratorService.generateBackClickedTelemetry(
+          PageId.USER_TYPE_SELECTION,
+          this.appGlobalService.isOnBoardingCompleted ? Environment.HOME : Environment.ONBOARDING,
+          true);
+                   this.handleBackButton();
+                   break;
     }
   }
 

@@ -1,16 +1,16 @@
 import { Inject, Injectable } from '@angular/core';
 import * as  moment from 'moment';
 import { File } from '@ionic-native/file/ngx';
-import { RatingComponent } from 'ionic4-rating';
-import { SharedPreferences, Content, CorrelationData, Rollup } from 'sunbird-sdk';
+import { SharedPreferences, Content, CorrelationData, Rollup, TelemetryObject } from 'sunbird-sdk';
 
 import { CommonUtilService } from '@app/services/common-util.service';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { InteractType, InteractSubtype, Environment, PageId } from '@app/services/telemetry-constants';
 import { StoreRating, PreferenceKey, RouterLinks } from '@app/app/app.constant';
-import { ContentRatingAlertComponent } from '@app/app/components';
+import { ContentRatingAlertComponent, AppRatingAlertComponent } from '@app/app/components';
 import { PopoverController } from '@ionic/angular';
 import { AppGlobalService } from '@app/services/app-global-service.service';
+import { ContentUtil } from '@app/util/content-util';
 import { Router } from '@angular/router';
 
 @Injectable({
@@ -20,6 +20,7 @@ export class RatingHandler {
 
     private userRating = 0;
     private userComment: string;
+    public telemetryObject: TelemetryObject;
     constructor(
         @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
         private popoverCtrl: PopoverController,
@@ -29,6 +30,7 @@ export class RatingHandler {
         private appGlobalService: AppGlobalService,
         private router: Router
     ) { }
+
     public async showRatingPopup(
         isContentPlayed: boolean,
         content: Content,
@@ -38,6 +40,7 @@ export class RatingHandler {
     ) {
         const paramsMap = new Map();
         const contentFeedback: any = content.contentFeedback;
+        this.telemetryObject = ContentUtil.getTelemetryObject(content);
         if (contentFeedback && contentFeedback.length) {
             this.userRating = contentFeedback[0].rating;
             this.userComment = contentFeedback[0].comments;
@@ -76,7 +79,7 @@ export class RatingHandler {
             InteractSubtype.RATING_CLICKED,
             Environment.HOME,
             PageId.CONTENT_DETAIL,
-            undefined,
+            this.telemetryObject,
             paramsMap,
             rollUp,
             corRelationList);
@@ -102,7 +105,7 @@ export class RatingHandler {
         });
         await popover.present();
         const { data } = await popover.onDidDismiss();
-        if (data.message === 'rating.success') {
+        if (data && data.message === 'rating.success') {
             this.userRating = data.rating;
             this.userComment = data.comment;
         }
@@ -115,7 +118,7 @@ export class RatingHandler {
 
     private async showAppRatingPopup() {
         const popover = await this.popoverCtrl.create({
-            component: RatingComponent,
+            component: AppRatingAlertComponent,
             componentProps: { pageId: PageId.CONTENT_DETAIL },
             cssClass: 'sb-popover'
         });
@@ -128,7 +131,6 @@ export class RatingHandler {
             }
             case StoreRating.RETURN_HELP: {
                 this.setInitialDate();
-                // this.app.getActiveNavs()[0].push('FaqPage');
                 this.router.navigate([RouterLinks.FAQ_HELP]);
                 break;
             }
@@ -156,7 +158,7 @@ export class RatingHandler {
     }
 
     readRatingFile(): Promise<boolean> {
-        return this.fileCtrl.readAsText(StoreRating.DEVICE_FOLDER_PATH + '/' + StoreRating.FOLDER_NAME, StoreRating.FILE_NAME)
+        return this.fileCtrl.readAsText(cordova.file.dataDirectory + '/' + StoreRating.FOLDER_NAME, StoreRating.FILE_NAME)
             .then(() => {
                 return true;
             })

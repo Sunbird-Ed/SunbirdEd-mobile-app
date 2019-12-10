@@ -1,4 +1,4 @@
-<div class="progress-outer">
-    <div [style.width]="progress + '%'" [ngClass]="(isOnBoardCard) ? 'progress-inner-onboard' : ((progress < 100) ? 'progress-inner-primary progress-inner' : 'progress-inner progress-inner-secondary')">
+<div [ngClass]="(isCourseProgress)? 'progress-outer-course':'progress-outer'">
+    <div [style.width]="progress + '%'" [ngClass]="(isCourseProgress)? 'progress-inner-course' : (isOnBoardCard) ? 'progress-inner-onboard progress-inner' : ((progress < 100) ? 'progress-inner-primary progress-inner' : 'progress-inner progress-inner-secondary')">
     </div>
   </div>

@@ -30,9 +30,9 @@
 	<form novalidate [formGroup]="userForm" class="form-position">
 
 		<ion-item>
-			<ion-label position="stacked" class="label-font text-uppercase">{{'BOARD' | translate }}</ion-label>
+			<ion-label position="stacked" class="label-font text-uppercase align-text">{{'BOARD' | translate }}</ion-label>
 			<ion-select multiple="false" #boardSelect text-capitalize formControlName="syllabus"
-				[interfaceOptions]="boardOptions" (ionChange)="resetForm(0, true)" okText="{{'BTN_SUBMIT' | translate}}"
+				[interfaceOptions]="boardOptions" (ionCancel)="cancelEvent()" (ionChange)="resetForm(0, true)" okText="{{'BTN_SUBMIT' | translate}}"
 				cancelText="{{'CANCEL' | translate}}" placeholder="{{'BOARD_OPTION_TEXT' | translate}}">
 				<ion-select-option *ngFor="let eachSyllabus of syllabusList" value="{{eachSyllabus?.code}}">
 					{{eachSyllabus?.name}}&lrm;</ion-select-option>
@@ -40,9 +40,9 @@
 		</ion-item>
 
 		<ion-item>
-			<ion-label position="stacked" class="label-font text-uppercase">{{'MEDIUM' | translate }}</ion-label>
+			<ion-label position="stacked" class="label-font text-uppercase align-text">{{'MEDIUM' | translate }}</ion-label>
 			<ion-select formControlName="medium" #mediumSelect multiple="true" text-capitalize
-				[interfaceOptions]="mediumOptions" (ionChange)="resetForm(2, false)"
+				[interfaceOptions]="mediumOptions" (ionCancel)="cancelEvent()" (ionChange)="resetForm(2, false)"
 				okText="{{'BTN_SUBMIT' | translate}}" cancelText="{{'CANCEL' | translate}}"
 				[disabled]="!(userForm.value.boards != '')" placeholder="{{'MEDIUM_OPTION_TEXT' | translate}}">
 				<ion-select-option *ngFor="let medium of mediumList" text-capitalize value="{{medium?.code}}">
@@ -51,10 +51,10 @@
 		</ion-item>
 
 		<ion-item>
-			<ion-label position="stacked" class="label-font text-uppercase">{{'CLASS' | translate }}</ion-label>
+			<ion-label position="stacked" class="label-font text-uppercase align-text">{{'CLASS' | translate }}</ion-label>
 			<ion-select multiple="true" #gradeSelect text-capitalize formControlName="grades"
 				[interfaceOptions]="classOptions" okText="{{'BTN_SUBMIT' | translate}}"
-				cancelText="{{'CANCEL' | translate}}" [disabled]="!(userForm.value.medium != '')"
+				cancelText="{{'CANCEL' | translate}}" [disabled]="!(userForm.value.medium != '')" (ionCancel)="cancelEvent()"
 				(ionChange)="enableSubmit()" placeholder="{{'GRADE_OPTION_TEXT' | translate}}">
 				<ion-select-option *ngFor="let grade of gradeList" text-capitalize value="{{grade?.code}}">
 					{{grade?.name}}</ion-select-option>

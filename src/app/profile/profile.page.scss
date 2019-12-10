@@ -1,4 +1,5 @@
 @import "src/assets/styles/variables";
+@import "src/assets/styles/base/_variables.scss";
 @import "src/assets/styles/_custom-mixins";
 @import "src/assets/styles/fonts";
 :host {
@@ -82,7 +83,7 @@
         max-height: 85px;
         border-radius: 4px;
         img {
-          max-height: 100%;
+          max-height: 85px;
           @include margin(0 auto);
           width: auto;
           transform: translateY(-56%);
@@ -143,6 +144,35 @@
     margin: 0 auto;
     @include padding(0, 16px, 16px, 16px);
     text-align: center;
+  }
+
+  .sb-btn-footer-text {
+    color : $gray;
+    font-weight: 100;
+    font-size: ($font-size-base - 2);
+    text-align: center;
+    text-transform: initial;
+  }
+.sb-btn-tile {
+    flex-direction: column;
+    background-color: $white;
+    width:72px;
+    height:72px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    .sb-btn-footer-text {
+      font-weight: 400;
+    }
+  }
+  button.sb-btn-tile:focus {
+    outline: none;
+  }
+
+  .sb-dt-card-blue-icon{
+    font-size : ($font-size-base * 2) + 2;
+    color: $primary-color;
+    @include margin(0, 0, ($base-block-space * .5), 0);
   }
 
   .contacts {
@@ -222,5 +252,42 @@
   .align-middle {
     vertical-align: middle;
     display: inline-block;
+  }
+
+  .avatar-tickmark {
+    width: $base-block-space*4;
+    height: $base-block-space*4;
+    position: absolute;
+    left: 53%;
+  }
+
+  .training-1 {
+    width: 80%;
+    float: left;
+    @include padding(16px, null, 8px, null);
+  }
+
+  .training-2 {
+    width: 20%;
+  }
+
+  .flex-nowrap {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: nowrap;
+  }
+
+  .margin-pull-up {
+      margin-top: -18px;
+  }
+
+  .m-t-4 {
+      margin-top: 4px;
+  }
+
+  .cert-download {
+      width:35px;
+      height:25px;
+      margin-bottom: 4px;
   }
 }

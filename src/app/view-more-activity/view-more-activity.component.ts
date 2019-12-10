@@ -162,7 +162,7 @@ export class ViewMoreActivityComponent implements OnInit {
         }
       }
     });
-    this.defaultImg = 'assets/imgs/ic_launcher.png';
+    this.defaultImg = this.commonUtilService.convertFileSrc('assets/imgs/ic_launcher.png');
     this.subscribeUtilityEvents();
   }
 

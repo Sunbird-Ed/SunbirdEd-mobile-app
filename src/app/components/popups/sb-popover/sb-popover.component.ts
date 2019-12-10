@@ -1,8 +1,9 @@
-import { Component, NgZone, OnDestroy, OnInit } from '@angular/core';
+import { Component, NgZone, OnDestroy } from '@angular/core';
 import { Platform, NavParams, PopoverController } from '@ionic/angular';
 import { CorrelationData, Rollup } from 'sunbird-sdk';
 import { Observable } from 'rxjs/Observable';
 import { Subscription } from 'rxjs/Subscription';
+import { CommonUtilService } from '@app/services/';
 
 @Component({
   selector: 'sb-popover',
@@ -12,6 +13,7 @@ export class SbPopoverComponent implements OnDestroy {
   sbPopoverHeading: any;
   sbPopoverMainTitle: any;
   sbPopoverContent: any;
+  sbPopoverHtmlContent?: string;
   actionsButtons: any;
   icon: any;
   metaInfo: any;
@@ -24,15 +26,16 @@ export class SbPopoverComponent implements OnDestroy {
   userId = '';
   pageName = '';
   showFlagMenu = true;
-  img: string;
-  isNotShowCloseIcon: boolean;
+  img: any;
   public objRollup: Rollup;
+  public commonUtilService: CommonUtilService;
+
   private corRelationList: Array<CorrelationData>;
   private sbPopoverDynamicMainTitle$?: Observable<string>;
   private sbPopoverDynamicMainTitleSubscription?: Subscription;
   private sbPopoverDynamicContent$?: Observable<string>;
   private sbPopoverDynamicContentSubscription?: Subscription;
-
+  private sbPopoverDynamicButtonDisabledSubscription?: Subscription;
   constructor(
     public navParams: NavParams,
     private platform: Platform,
@@ -44,6 +47,7 @@ export class SbPopoverComponent implements OnDestroy {
     this.icon = this.navParams.get('icon');
     this.metaInfo = this.navParams.get('metaInfo');
     this.sbPopoverContent = this.navParams.get('sbPopoverContent');
+    this.sbPopoverHtmlContent = this.navParams.get('sbPopoverHtmlContent');
     this.sbPopoverHeading = this.navParams.get('sbPopoverHeading');
     this.sbPopoverMainTitle = this.navParams.get('sbPopoverMainTitle');
 
@@ -83,12 +87,22 @@ export class SbPopoverComponent implements OnDestroy {
         })
         .subscribe();
     }
+    for (const actionsButton of this.actionsButtons) {
+      if (actionsButton.btnDisabled$) {
+        this.sbPopoverDynamicButtonDisabledSubscription = actionsButton.btnDisabled$
+          .do((v) => {
+            // this.ngZone.run(() => {
+            actionsButton.btnDisabled = v;
+            // });
+          })
+          .subscribe();
+      }
+    }
 
     this.contentId = (this.content && this.content.identifier) ? this.content.identifier : '';
   }
 
   ionViewWillEnter() {
-    console.log("sdsdsd");
     this.backButtonFunc = this.platform.backButton.subscribeWithPriority(11, () => {
       this.popoverCtrl.dismiss();
       this.backButtonFunc.unsubscribe();
@@ -103,20 +117,23 @@ export class SbPopoverComponent implements OnDestroy {
     if (this.sbPopoverDynamicContentSubscription) {
       this.sbPopoverDynamicContentSubscription.unsubscribe();
     }
+    if (this.sbPopoverDynamicButtonDisabledSubscription) {
+      this.sbPopoverDynamicButtonDisabledSubscription.unsubscribe();
+    }
 
     if (this.backButtonFunc) {
       this.backButtonFunc.unsubscribe();
     }
   }
 
-  closePopover() {
-    this.popoverCtrl.dismiss();
+  async closePopover(closeDeletePopOver: boolean) {
+   await this.popoverCtrl.dismiss({closeDeletePopOver});
   }
 
-  async deleteContent(canDelete: boolean = false, whichbtnClicked?) {
-    await this.popoverCtrl.dismiss(canDelete);
+  async deleteContent(canDelete: boolean = false, clickedButtonText?) {
+    this.popoverCtrl.dismiss({ canDelete });
     if (this.navParams.get('handler')) {
-      this.navParams.get('handler')(whichbtnClicked);
+      this.navParams.get('handler')(clickedButtonText);
     }
   }
 }

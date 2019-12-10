@@ -19,7 +19,7 @@ import { CommonUtilService } from '@app/services/common-util.service';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { AppHeaderService } from '@app/services/app-header.service';
 import { PageId, Environment, InteractType, InteractSubtype } from '@app/services/telemetry-constants';
-import { ProfileConstants, RouterLinks } from '@app/app/app.constant';
+import { ProfileConstants, RouterLinks, PreferenceKey } from '@app/app/app.constant';
 
 @Component({
   selector: 'app-guest-profile',
@@ -42,6 +42,7 @@ export class GuestProfilePage implements OnInit {
   loader: any;
   headerObservable: any;
   isUpgradePopoverShown = false;
+  deviceLocation: any;
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -58,7 +59,6 @@ export class GuestProfilePage implements OnInit {
     private route: ActivatedRoute,
     private router: Router
   ) { }
-
 
   ngOnInit() {
     this.selectedLanguage = this.translate.currentLang;
@@ -77,13 +77,7 @@ export class GuestProfilePage implements OnInit {
       this.refreshProfileData(false, false);
     });
 
-    const profileType = this.appGlobalService.getGuestUserType();
-
-    if ((profileType === ProfileType.TEACHER && this.appGlobalService.DISPLAY_SIGNIN_FOOTER_CARD_IN_PROFILE_TAB_FOR_TEACHER) ||
-      (profileType === ProfileType.STUDENT && this.appGlobalService.DISPLAY_SIGNIN_FOOTER_CARD_IN_PROFILE_TAB_FOR_STUDENT)) {
-      this.showSignInCard = true;
-    }
-
+    this.refreshSignInCard();
     this.appGlobalService.generateConfigInteractEvent(PageId.GUEST_PROFILE);
   }
 
@@ -109,7 +103,6 @@ export class GuestProfilePage implements OnInit {
     this.events.unsubscribe('update_header');
   }
 
-
   async refreshProfileData(refresher: any = false, showLoader: boolean = true) {
     this.loader = await this.commonUtilService.getLoader();
 
@@ -119,10 +112,16 @@ export class GuestProfilePage implements OnInit {
     if (refresher) {
       this.telemetryGeneratorService.generatePullToRefreshTelemetry(PageId.GUEST_PROFILE, Environment.HOME);
     }
+    const deviceLocationInfo = await this.preferences.getString(PreferenceKey.DEVICE_LOCATION).toPromise();
+    if (deviceLocationInfo) {
+      this.deviceLocation = JSON.parse(deviceLocationInfo);
+    }
+
     this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise()
       .then((res: any) => {
         this.profile = res;
         this.getSyllabusDetails();
+        this.refreshSignInCard();
         setTimeout(() => {
           if (refresher) { refresher.target.complete(); }
         }, 500);
@@ -132,7 +131,18 @@ export class GuestProfilePage implements OnInit {
       });
   }
 
-  editGuestProfile(isChangeRoleRequest = false) {
+  refreshSignInCard() {
+    const profileType = this.appGlobalService.getGuestUserType();
+
+    if ((profileType === ProfileType.TEACHER && this.appGlobalService.DISPLAY_SIGNIN_FOOTER_CARD_IN_PROFILE_TAB_FOR_TEACHER) ||
+      (profileType === ProfileType.STUDENT && this.appGlobalService.DISPLAY_SIGNIN_FOOTER_CARD_IN_PROFILE_TAB_FOR_STUDENT)) {
+      this.showSignInCard = true;
+    } else {
+      this.showSignInCard = false;
+    }
+  }
+
+  editGuestProfile(isChangeRoleRequest: boolean, attribute) {
     const navigationExtras: NavigationExtras = {
       state: {
         profile: this.profile,
@@ -140,9 +150,15 @@ export class GuestProfilePage implements OnInit {
         isChangeRoleRequest
       }
     };
+    const values = new Map();
+    values['optionClicked'] = attribute;
+    this.telemetryGeneratorService.generateInteractTelemetry(
+      InteractType.TOUCH,
+      InteractSubtype.EDIT_CLICKED,
+      Environment.HOME,
+      PageId.GUEST_PROFILE,undefined,values);
     this.router.navigate([RouterLinks.GUEST_EDIT], navigationExtras);
   }
-
 
   getSyllabusDetails() {
     let selectedFrameworkId = '';
@@ -232,5 +248,21 @@ export class GuestProfilePage implements OnInit {
 
     this.router.navigate([RouterLinks.ACTIVE_DOWNLOADS]);
   }
-}
 
+  redirectToDistrictMappingPage() {
+    this.telemetryGeneratorService.generateInteractTelemetry(
+      InteractType.TOUCH,
+      InteractSubtype.EDIT_DISTRICT_MAPPING_CLICKED,
+      Environment.HOME,
+      PageId.GUEST_PROFILE);
+
+    const navigationExtras: NavigationExtras = {
+      state: {
+        isShowBackButton: true,
+        source: PageId.GUEST_PROFILE
+      }
+    };
+    this.router.navigate([RouterLinks.DISTRICT_MAPPING], navigationExtras);
+  }
+
+}

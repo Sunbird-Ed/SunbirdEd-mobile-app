@@ -2,39 +2,41 @@
   <ion-grid no-padding>
     <ion-row class="top-container" no-padding (click)="checkRetiredOpenBatch(course, layoutName);">
       <ion-col size="12">
-        <app-pb-horizontal *ngIf="course?.cProgress" [progress]="course?.cProgress" class="course-progress" [ngClass]="{'blurbackground': batchExp}"></app-pb-horizontal>
+        <app-pb-horizontal *ngIf="course?.cProgress" [progress]="course?.cProgress" class="course-progress"
+          [ngClass]="{'blurbackground': batchExp}"></app-pb-horizontal>
         <div class="img-container">
         </div>
         <ion-badge class="badge" *ngIf="onProfile" color="light" item-end>{{course?.contentType}}</ion-badge>
-          <img class="app-icon" src="{{ course?.courseLogoUrl || course?.appIcon || defaultImg }}"/>
+        <img class="app-icon"
+          [src]="commonUtilService.convertFileSrc(course?.courseLogoUrl) || commonUtilService.convertFileSrc(course?.appIcon) || defaultImg" />
         <ion-label class="card-title">{{course?.courseName || course?.name}}</ion-label>
       </ion-col>
     </ion-row>
     <ion-row class="padding-top-8" [ngClass]="{'bottom-container' : layoutName !== layoutSavedContent}" no-padding>
       <ion-col size="8" *ngIf="layoutName === layoutPopular && pageName !== 'library'">
         <rating [(ngModel)]="course.progress" readonly="true" max="5" no-padding></rating>
-        <ion-label class="size_txt" no-margin *ngIf="course.size">{{ 'FILE_SIZE' | translate: {'%s': course?.size | fileSize } }}</ion-label>
+        <ion-label class="size_txt" no-margin *ngIf="course.size">
+          {{ 'FILE_SIZE' | translate: {'%s': course?.size | fileSize } }}</ion-label>
       </ion-col>
       <!-- Saved Resources -->
       <ion-col size="8" *ngIf="layoutName === layoutSavedContent">
-          <p style="font-size: 0.95em; padding-top: 3px;">{{ course?.contentType }}</p>
-          <p style="font-size: 1rem; color: #979797;">{{ 'SAVED_ON' | translate }} {{ course?.lastUpdatedOn | date: 'medium' | slice:0:6 }}...</p>
+        <p style="font-size: 0.95em; padding-top: 3px;">{{ course?.contentType }}</p>
+        <p style="font-size: 1rem; color: #979797;">{{ 'SAVED_ON' | translate }}
+          {{ course?.lastUpdatedOn | date: 'medium' | slice:0:6 }}...</p>
       </ion-col>
       <ion-col size="8" *ngIf="pageName === 'library'">
-          <rating [(ngModel)]="course.me_averageRating" readonly="true" max="5" no-padding></rating>
-          <ion-label class="size_txt" no-margin *ngIf="course?.contentType">{{ course?.contentType }}</ion-label>
+        <rating [(ngModel)]="course.me_averageRating" readonly="true" max="5" no-padding></rating>
+        <ion-label class="size_txt" no-margin *ngIf="course?.contentType">{{ course?.contentType }}</ion-label>
       </ion-col>
       <ion-col size="8" *ngIf="layoutName === layoutInProgress" style="padding-top: 8px;">
         {{ 'COURSE_PROGRESS_COMPLETED' | translate: {'%s': course.cProgress? course.cProgress : 0} }}
       </ion-col>
       <ion-col size="4">
-        <!--ion-button fill="outline" size="small" float-end class="custom-small">
-          <span *ngIf="layoutName === layoutInProgress" (click)="resumeCourse(course);">{{ ('RESUME' | translate).length > 6 ? ('RESUME' | translate | slice:0:06) + '...' : ('RESUME' | translate) }}</span>
-          <span *ngIf="layoutName !== layoutInProgress" (click)="navigateToDetailPage(course, layoutName);">{{ ('OPEN' | translate).length > 6 ? ('OPEN' | translate | slice:0:06) + '...' : ('OPEN' | translate) }}</span>
-        </ion-button>-->
         <button fill="outline" float-end class="custom-small">
-          <span *ngIf="layoutName === layoutInProgress" (click)="resumeCourse(course);">{{ ('RESUME' | translate).length > 6 ? ('RESUME' | translate | slice:0:06) + '...' : ('RESUME' | translate) }}</span>
-          <span *ngIf="layoutName !== layoutInProgress" (click)="navigateToDetailPage(course, layoutName);">{{ ('OPEN' | translate).length > 6 ? ('OPEN' | translate | slice:0:06) + '...' : ('OPEN' | translate) }}</span>
+          <span *ngIf="layoutName === layoutInProgress"
+            (click)="resumeCourse(course);">{{ ('RESUME' | translate).length > 6 ? ('RESUME' | translate | slice:0:06) + '...' : ('RESUME' | translate) }}</span>
+          <span *ngIf="layoutName !== layoutInProgress"
+            (click)="navigateToDetailPage(course, layoutName);">{{ ('OPEN' | translate).length > 6 ? ('OPEN' | translate | slice:0:06) + '...' : ('OPEN' | translate) }}</span>
         </button>
       </ion-col>
     </ion-row>

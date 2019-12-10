@@ -45,7 +45,7 @@ export class NewCourseCardComponent implements OnInit {
    *
    * It gets used when perticular course does not have a course/content icon
    */
-  defaultImg: string;
+  defaultImg = this.commonUtilService.convertFileSrc('assets/imgs/ic_launcher.png');
 
 
   constructor(
@@ -53,10 +53,7 @@ export class NewCourseCardComponent implements OnInit {
     public navCtrl: NavController,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private router: Router
-  ) {
-    this.defaultImg = 'assets/imgs/ic_launcher.png';
-
-  }
+  ) { }
 
   ngOnInit() {
 

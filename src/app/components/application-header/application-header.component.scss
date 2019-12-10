@@ -1,9 +1,20 @@
 @import "src/assets/styles/base/_variables.scss";
+@import "src/assets/styles/_custom-mixins.scss";
+@import "src/assets/styles/fonts.scss";
 
 ion-icon {
     width: 30px;
     height: 30px;
     color: $primary-color;
+}
+.z-index-0 {
+    z-index: 0;
+  }
+:host {
+    ion-title.color {
+        color:#024f9d;
+        font-weight:bold;
+    }
 }
 
 .sb-menu-list > ion-item {

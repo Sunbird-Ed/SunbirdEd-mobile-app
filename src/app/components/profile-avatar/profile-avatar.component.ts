@@ -8,6 +8,7 @@ import GraphemeSplitter from 'grapheme-splitter';
 })
 export class ProfileAvatarComponent implements OnInit , OnChanges {
   @Input() username: string;
+  @Input() isStateUser: boolean;
   bgColor: string;
   color: string;
   initial: string;

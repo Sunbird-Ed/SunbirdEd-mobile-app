@@ -1,0 +1,32 @@
+<!-- <ion-header>
+  <ion-toolbar>
+    <ion-title>faq-report-issue</ion-title>
+  </ion-toolbar>
+</ion-header> -->
+
+<ion-content>
+
+  <div class="help-header-send-email">
+    <h4> {{data?.constants?.reportIssue}}</h4>
+    <p>{{data?.constants?.explainMsg}}</p>
+  </div>
+  <div class="info-msg-send-email">
+    <p>{{ data?.constants?.tellMoreMsg }}</p>
+  </div>
+  <div class="send-email-form">
+    <form action="#" id="send-email-form">
+      <div id="textareadiv">
+        <textarea #textarea type="text" name="moreInfo" placeholder="{{data?.constants?.typeHere}}" class="input-text-form"
+          maxLength="1000"  [(ngModel)]="emailContent" (keyup)="countChar(emailContent)"></textarea>
+        <p id="textareainfo"> <span id="charleft" *ngIf="!charEntered">1000</span><span *ngIf="charEntered">{{charsLeft}}</span>{{ data?.constants?.charactersLeft}}</p>
+      </div>
+      <div class="initiate-email-info">
+        <p class="send-email-info">{{ data?.constants?.triggerEmailMsg}}</p>
+        <div class="initiate-email-info-button">
+          <input type="submit" value="{{data?.constants?.initiateEmailButton}}" class="submit-button" id="initiate-email" (click)="initiateEmail(emailContent)">
+        </div>
+      </div>
+    </form>
+  </div>
+
+</ion-content>

@@ -1,6 +1,6 @@
 import { Component, Inject, NgZone, OnInit } from '@angular/core';
 import { Router, NavigationExtras, ActivatedRoute } from '@angular/router';
-import { Events, ToastController, PopoverController, MenuController } from '@ionic/angular';
+import { Events, ToastController, PopoverController } from '@ionic/angular';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { QRResultCallback, SunbirdQRScanner } from '../../services/sunbirdqrscanner.service';
 import has from 'lodash/has';
@@ -86,6 +86,7 @@ export class CoursesPage implements OnInit {
   private eventSubscription: Subscription;
   headerObservable: any;
   private corRelationList: Array<CorrelationData>;
+  isFilterOpen: boolean = false;
 
   constructor(
     @Inject('EVENTS_BUS_SERVICE') private eventBusService: EventsBusService,
@@ -105,7 +106,6 @@ export class CoursesPage implements OnInit {
     private telemetryGeneratorService: TelemetryGeneratorService,
     private network: Network,
     private router: Router,
-    private menuCtrl: MenuController,
     private toastController: ToastController,
     private headerService: AppHeaderService,
     private route: ActivatedRoute
@@ -132,6 +132,10 @@ export class CoursesPage implements OnInit {
    */
   ngOnInit() {
     this.getCourseTabData();
+
+    this.events.subscribe('event:update_course_data', () => {
+        this.getEnrolledCourses();
+    });
   }
 
   ionViewWillEnter() {
@@ -142,7 +146,6 @@ export class CoursesPage implements OnInit {
     this.headerObservable = this.headerService.headerEventEmitted$.subscribe(eventName => {
       this.handleHeaderEvents(eventName);
     });
-    this.getEnrolledCourses();
     this.headerService.showHeaderWithHomeButton(['search', 'filter', 'download']);
   }
 
@@ -240,6 +243,10 @@ export class CoursesPage implements OnInit {
     });
     this.events.subscribe(EventTopics.REFRESH_ENROLL_COURSE_LIST, () => {
       this.getEnrolledCourses(false, true);
+    });
+
+    this.events.subscribe(EventTopics.SIGN_IN_RELOAD, async () => {
+      this.showSignInCard = false;
     });
   }
 
@@ -504,6 +511,10 @@ export class CoursesPage implements OnInit {
   }
 
   showFilter() {
+    if(this.isFilterOpen){
+      return;
+    }
+    this.isFilterOpen = true;
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
       InteractSubtype.FILTER_BUTTON_CLICKED,
       Environment.HOME,
@@ -570,9 +581,9 @@ export class CoursesPage implements OnInit {
         filterOptions['filter'] = data;
         this.showFilterPage(filterOptions);
       }).catch(() => {
+        this.isFilterOpen = false;
       });
     }
-
   }
   async presentToastForOffline(msg: string) {
     this.toast = await this.toastController.create({
@@ -590,15 +601,22 @@ export class CoursesPage implements OnInit {
   }
 
   async showFilterPage(filterOptions) {
+    const backupFilter = this.appliedFilter ? JSON.parse(JSON.stringify(this.appliedFilter)) : this.appliedFilter;
     const popup = await this.popCtrl.create({
       component: PageFilterPage,
       componentProps: {
         callback: filterOptions.callback,
-        filter: filterOptions.filter
+        filter: filterOptions.filter,
+        pageId: PageId.COURSES
       },
       cssClass: 'resource-filter'
     });
     await popup.present();
+    const { data } = await popup.onDidDismiss();
+    this.isFilterOpen = false;
+    if (!data || !data.apply) {
+      this.appliedFilter = backupFilter;
+    }
   }
 
   checkEmptySearchResult(isAfterLanguageChange = false) {
@@ -631,16 +649,27 @@ export class CoursesPage implements OnInit {
 
   getContentDetails(content) {
     const identifier = content.contentId || content.identifier;
-    this.corRelationList = [{id: content.batchId, type: CorReleationDataType.COURSE_BATCH}];
-    this.contentService.getContentDetails({ contentId: identifier }).toPromise()
+    this.corRelationList = [
+      {
+        id: content.batchId,
+        type: CorReleationDataType.COURSE_BATCH
+      }
+    ];
+    const request = {
+      contentId: identifier,
+      emitUpdateIfAny: false
+    };
+    this.contentService.getContentDetails(request).toPromise()
       .then((data: Content) => {
         if (data && data.isAvailableLocally) {
-          this.showOverlay = false;
-          this.navigateToContentDetailsPage(content);
+          if (data.contentData.pkgVersion < content.content.pkgVersion) {
+            this.contentDetailsImportCall(identifier);
+          } else {
+            this.showOverlay = false;
+            this.navigateToContentDetailsPage(content);
+          }
         } else {
-          this.subscribeSdkEvent();
-          this.showOverlay = true;
-          this.importContent([identifier], false);
+          this.contentDetailsImportCall(identifier);
         }
       })
       .catch((err) => {
@@ -650,6 +679,12 @@ export class CoursesPage implements OnInit {
           this.commonUtilService.showToast('ERROR_CONTENT_NOT_AVAILABLE');
         }
       });
+  }
+
+  contentDetailsImportCall(identifier) {
+    this.subscribeSdkEvent();
+    this.showOverlay = true;
+    this.importContent([identifier], false);
   }
 
   navigateToViewMoreContentsPage(showEnrolledCourses: boolean, searchQuery?: any, headerTitle?: string) {
@@ -804,10 +839,6 @@ export class CoursesPage implements OnInit {
       Environment.HOME,
       PageId.COURSES);
     this.router.navigate([RouterLinks.ACTIVE_DOWNLOADS]);
-  }
-
-  toggleMenu() {
-    this.menuCtrl.toggle();
   }
 
 }

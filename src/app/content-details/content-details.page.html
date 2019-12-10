@@ -14,7 +14,7 @@
             <div class="left">
               <div class="sb-dt-title"> {{content?.contentData?.name}}</div>
               <div class="sb-dt-source" *ngIf="content?.contentData?.owner || content?.contentData?.creator">
-                <span class="sb-by">{{ 'CONTENT_CREATED_BY' | translate }} &nbsp;&nbsp;</span>
+                <span class="sb-by-gray">{{ 'CONTENT_CREATED_BY' | translate }} &nbsp;</span>
                 <span class="sb-user">{{ content?.contentData?.owner || content?.contentData?.creator }}</span>
                 <span class="sb-rating-view" *ngIf="content?.contentData?.me_averageRating">
                   <span class="content-vertical-line"></span>
@@ -46,7 +46,7 @@
             <div class="left">
               <div class="sb-dt-title"> {{content?.contentData?.name}}</div>
               <div class="sb-dt-source" *ngIf="content?.contentData?.owner || content?.contentData?.creator">
-                <span class="sb-by">{{ 'CONTENT_CREATED_BY' | translate }}</span>
+                <span class="sb-by-gray">{{ 'CONTENT_CREATED_BY' | translate }} &nbsp;</span>
                 <span class="sb-user">{{ content?.contentData?.owner || content?.contentData?.creator }}</span>
                 <span class="sb-rating-view" *ngIf="content?.contentData?.me_averageRating">
                   <span class="content-vertical-line"></span>
@@ -79,7 +79,7 @@
           <div class="left">
             <div class="sb-dt-title"> {{content?.contentData?.name}}</div>
             <div class="sb-dt-source" *ngIf="content?.contentData?.owner || content?.contentData?.creator">
-              <span class="sb-by">{{ 'CONTENT_CREATED_BY' | translate }}</span>
+              <span class="sb-by-gray">{{ 'CONTENT_CREATED_BY' | translate }} &nbsp;</span>
               <span class="sb-user">{{ content?.contentData?.owner || content?.contentData?.creator }}</span>
               <span class="sb-rating-view" *ngIf="content?.contentData?.me_averageRating">
                 <span class="content-vertical-line"></span>
@@ -112,7 +112,7 @@
             <div class="left">
               <div class="sb-dt-title"> {{content?.contentData?.name}}</div>
               <div class="sb-dt-source" *ngIf="content?.contentData?.owner || content?.contentData?.creator">
-                <span class="sb-by">{{ 'CONTENT_CREATED_BY' | translate }}</span>
+                <span class="sb-by-gray">{{ 'CONTENT_CREATED_BY' | translate }} &nbsp;</span>
                 <span class="sb-user">{{ content?.contentData?.owner || content?.contentData?.creator }}</span>
                 <span class="sb-rating-view" *ngIf="content?.contentData?.me_averageRating">
                   <span class="content-vertical-line"></span>
@@ -147,7 +147,7 @@
           <div class="left">
             <div class="sb-dt-title"> {{content?.contentData?.name}}</div>
             <div class="sb-dt-source" *ngIf="content?.contentData?.owner || content?.contentData?.creator">
-              <span class="sb-by">{{ 'CONTENT_CREATED_BY' | translate }}</span>
+              <span class="sb-by-gray">{{ 'CONTENT_CREATED_BY' | translate }} &nbsp;</span>
               <span class="sb-user">{{ content?.contentData?.owner || content?.contentData?.creator }}</span>
               <span class="sb-rating-view" *ngIf="content?.contentData?.me_averageRating">
                 <span class="content-vertical-line"></span>
@@ -298,7 +298,7 @@
           </div>
           <div class="sb-info" *ngIf="content?.contentData?.copyright">
             <div class="sb-content-title">{{'COPYRIGHT' | translate}}</div>
-            <div class="sb-content-title-data">{{content?.contentData?.copyright}}</div>
+            <div class="sb-content-title-data">{{content?.contentData?.copyright}}{{content?.contentData.copyrightYear ? ", " + content?.contentData.copyrightYear : ""}}</div>
           </div>
           <div class="sb-info"
             *ngIf="content?.contentData?.attributions && !content?.contentData?.contributors && !content?.contentData?.creators">

@@ -8,6 +8,9 @@
         background-color: #979797;
         width: 100%;
     }
+    .pull-right{
+        float: right !important;
+    }
 
     .P10{
         padding: 10px;
@@ -83,4 +86,30 @@
     .clearfix {
         @include clearfix;
     }
+    .sb-collection-child-ftue{
+        padding-left: 8px;
+    }
+    .sb-bold-blue{
+        font-weight: bolder;
+        color:#024f9d;
+        padding: 8px;
+    }
+    .sb-blue-text{
+        color:#024f9d;
+    }
+    .sb-highlighted-row{
+        @include padding($base-block-space * 1);
+        display: flex;
+        background-color: lightblue;
+    }
+    .sb-textbook-toc{
+        @include padding($base-block-space * 1);
+        display: flex;
+        color:#024f9d;
+        @include clearfix;
+    }
+}
+
+.done-pt-8 {
+    padding-top: 8px !important;
 }

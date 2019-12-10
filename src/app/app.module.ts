@@ -34,7 +34,7 @@ import {
   AppHeaderService,
   AppRatingService,
   LogoutHandlerService,
-  TncUpdateHandlerService,
+  LoginHandlerService,
   ContainerService,
   AndroidPermissionsService,
   ComingSoonMessageService,
@@ -42,27 +42,30 @@ import {
   SunbirdQRScanner,
   ActivePageService,
   FormAndFrameworkUtilService,
-  CanvasPlayerService
+  CanvasPlayerService,
+  SplashScreenService
 } from '../services/index';
-
-
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { UserTypeSelectionPageModule } from './user-type-selection/user-type-selection.module';
 import { ComponentsModule } from './components/components.module';
-import { UserAndGroupsRoutingModule } from './user-and-groups/user-and-groups-routing.module';
 import { UserAndGroupsPageModule } from './user-and-groups/user-and-groups.module';
 import { LocalNotifications } from '@ionic-native/local-notifications/ngx';
-
 import { PageFilterPageModule } from './page-filter/page-filter.module';
 import { PageFilterPage } from './page-filter/page-filter.page';
-
 import { PageFilterOptionsPageModule } from './page-filter/page-filter-options/page-filter-options.module';
 import { PageFilterOptionsPage } from './page-filter/page-filter-options/page-filter-options.page';
 import { CrashAnalyticsErrorLogger } from '@app/services/crash-analytics/crash-analytics-error-logger';
 import { File } from '@ionic-native/file/ngx';
-
-
+import { TermsAndConditionsPageModule } from './terms-and-conditions/terms-and-conditions.module';
+import { TncUpdateHandlerService } from '@app/services/handlers/tnc-update-handler.service';
+import {
+  SplashcreenTelemetryActionHandlerDelegate
+} from '@app/services/sunbird-splashscreen/splashcreen-telemetry-action-handler-delegate';
+import { SplashscreenImportActionHandlerDelegate } from '@app/services/sunbird-splashscreen/splashscreen-import-action-handler-delegate';
+import { SplaschreenDeeplinkActionHandlerDelegate } from '@app/services/sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
+import { LocalCourseService } from '@app/services/local-course.service';
+import { ContentType } from './app.constant';
 
 // AoT requires an exported function for factories
 export function translateHttpLoaderFactory(httpClient: HttpClient) {
@@ -89,6 +92,9 @@ export const apiService = () => {
 };
 export const profileService = () => {
   return SunbirdSdk.instance.profileService;
+};
+export const deviceRegisterService = () => {
+  return SunbirdSdk.instance.deviceRegisterService;
 };
 export const groupService = () => {
   return SunbirdSdk.instance.groupService;
@@ -142,6 +148,15 @@ export function errorLoggerService() {
 export function searchHistoryService() {
   return SunbirdSdk.instance.searchHistoryService;
 }
+export function networkInfoService() {
+  return SunbirdSdk.instance.networkInfoService;
+}
+export function codePushExperimentService() {
+  return SunbirdSdk.instance.codePushExperimentService;
+}
+export function faqService() {
+  return SunbirdSdk.instance.faqService;
+}
 
 export function sdkDriverFactory(): any {
   return [{
@@ -171,6 +186,9 @@ export function sdkDriverFactory(): any {
   }, {
     provide: 'PROFILE_SERVICE',
     useFactory: profileService
+  }, {
+    provide: 'DEVICE_REGISTER_SERVICE',
+    useFactory: deviceRegisterService
   }, {
     provide: 'DB_SERVICE',
     useFactory: dbService
@@ -225,6 +243,15 @@ export function sdkDriverFactory(): any {
   }, {
     provide: 'SEARCH_HISTORY_SERVICE',
     useFactory: searchHistoryService
+  }, {
+    provide: 'CODEPUSH_EXPERIMENT_SERVICE',
+    useFactory: codePushExperimentService
+  }, {
+    provide: 'NETWORK_INFO_SERVICE',
+    useFactory: networkInfoService
+  }, {
+    provide: 'FAQ_SERVICE',
+    useFactory: faqService
   }
   ];
 }
@@ -235,11 +262,14 @@ export const sunbirdSdkFactory =
   () => {
     return async () => {
       const buildConfigValues = JSON.parse(await new Promise<string>((resolve, reject) => {
-        buildconfigreader.getBuildConfigValues('org.sunbird.app', (v) => {
-          resolve(v);
-        }, (err) => {
-          reject(err);
-        });
+        document.addEventListener('deviceready', () => {
+          buildconfigreader.getBuildConfigValues('org.sunbird.app', (v) => {
+            resolve(v);
+          }, (err) => {
+            reject(err);
+          });
+        }, false);
+
       }));
 
       await SunbirdSdk.instance.init({
@@ -252,6 +282,8 @@ export const sunbirdSdkFactory =
           user_authentication: {
             redirectUrl: buildConfigValues['OAUTH_REDIRECT_URL'],
             authUrl: '/auth/realms/sunbird/protocol/openid-connect',
+            mergeUserHost: buildConfigValues['MERGE_ACCOUNT_BASE_URL'],
+            autoMergeApiPath: '/migrate/user/account'
           },
           api_authentication: {
             mobileAppKey: buildConfigValues['MOBILE_APP_KEY'],
@@ -271,6 +303,11 @@ export const sunbirdSdkFactory =
         dbConfig: {
           debugMode: false,
           dbName: 'GenieServices.db'
+        },
+        deviceRegisterConfig: {
+          host: buildConfigValues['DEVICE_REGISTER_BASE_URL'],
+          apiPath: '/v3/device',
+          deviceProfileApiPath: '/api/v3/device',
         },
         contentServiceConfig: {
           apiPath: '/api/content/v1',
@@ -293,9 +330,11 @@ export const sunbirdSdkFactory =
         },
         profileServiceConfig: {
           profileApiPath: '/api/user/v1',
+          profileApiPath_V2: '/api/user/v2',
           tenantApiPath: '/v1/tenant',
           otpApiPath: '/api/otp/v1',
-          searchLocationApiPath: '/api/data/v1'
+          searchLocationApiPath: '/api/data/v1',
+          locationDirPath: '/data/location'
         },
         pageServiceConfig: {
           apiPath: '/api/data/v1',
@@ -309,9 +348,7 @@ export const sunbirdSdkFactory =
           systemSettingsDirPath: '/data/system',
         },
         telemetryConfig: {
-          deviceRegisterApiPath: '',
-          telemetryApiPath: '/api/data/v1',
-          deviceRegisterHost: buildConfigValues['DEVICE_REGISTER_BASE_URL'],
+          apiPath: '/api/data/v1',
           telemetrySyncBandwidth: 200,
           telemetrySyncThreshold: 200,
           telemetryLogMinAllowedOffset: 86400000
@@ -321,6 +358,10 @@ export const sunbirdSdkFactory =
         },
         playerConfig: {
           showEndPage: false,
+          endPage: [{
+            template: 'assessment',
+            contentType: [ContentType.SELF_ASSESS]
+          }],
           splash: {
             webLink: '',
             text: '',
@@ -330,14 +371,24 @@ export const sunbirdSdkFactory =
           overlay: {
             enableUserSwitcher: false,
             showUser: false
-          }
+          },
+          plugins: [
+            {
+              id: 'org.sunbird.player.endpage',
+              ver: '1.1',
+              type: 'plugin'
+            }
+          ]
         },
         errorLoggerConfig: {
           errorLoggerApiPath: '/api/data/v1/client/logs'
+        },
+        faqServiceConfig: {
+          faqConfigDirPath: '/data/faq'
         }
       });
 
-      // window['sunbird'] = SunbirdSdk.instance;
+      window['sunbird'] = SunbirdSdk.instance;
     };
   };
 
@@ -370,7 +421,8 @@ declare const buildconfigreader;
     UserTypeSelectionPageModule,
     PageFilterPageModule,
     PageFilterOptionsPageModule,
-    UserAndGroupsPageModule
+    UserAndGroupsPageModule,
+    TermsAndConditionsPageModule
   ],
   providers: [
     StatusBar,
@@ -389,10 +441,12 @@ declare const buildconfigreader;
     SunbirdQRScanner,
     CommonUtilService,
     LogoutHandlerService,
+    LoginHandlerService,
     TncUpdateHandlerService,
     ContainerService,
     UniqueDeviceID,
     UtilityService,
+    LocalCourseService,
     AppHeaderService,
     AppRatingService,
     FormAndFrameworkUtilService,
@@ -403,11 +457,13 @@ declare const buildconfigreader;
     NotificationService,
     ActivePageService,
     CanvasPlayerService,
+    SplashcreenTelemetryActionHandlerDelegate,
+    SplashscreenImportActionHandlerDelegate,
+    SplaschreenDeeplinkActionHandlerDelegate,
+    SplashScreenService,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     ...sunbirdSdkServicesProvidersFactory(),
-    { provide: ErrorHandler, useClass: ErrorHandler },
     { provide: ErrorHandler, useClass: CrashAnalyticsErrorLogger },
-    // { provide: ErrorHandler},
     { provide: APP_INITIALIZER, useFactory: sunbirdSdkFactory, deps: [], multi: true }
   ],
   bootstrap: [AppComponent],

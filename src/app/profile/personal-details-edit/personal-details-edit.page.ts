@@ -1,6 +1,6 @@
 import { ActivatedRoute, Router } from '@angular/router';
 import { AppHeaderService, CommonUtilService, AppGlobalService, FormAndFrameworkUtilService } from '../../../services';
-import { Component, Inject, OnInit, ViewChild } from '@angular/core';
+import { Component, Inject, OnInit, ViewChild, ChangeDetectorRef } from '@angular/core';
 import { Events, LoadingController } from '@ionic/angular';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
@@ -8,6 +8,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { Location as loc } from '../../app.constant';
 import { LocationSearchCriteria, ProfileService } from 'sunbird-sdk';
 import { Location } from '@angular/common';
+import { Subject } from 'rxjs/Subject';
 
 @Component({
   selector: 'app-personal-details-edit',
@@ -16,8 +17,26 @@ import { Location } from '@angular/common';
 })
 export class PersonalDetailsEditPage implements OnInit {
 
-  stateList = [];
-  districtList = [];
+  private _stateList = [];
+  private _districtList = [];
+
+  get stateList() {
+    return this._stateList;
+  }
+
+  set stateList(v) {
+    this._stateList = v;
+    this.changeDetectionRef.detectChanges();
+  }
+
+  get districtList() {
+    return this._districtList;
+  }
+
+  set districtList(v) {
+    this._districtList = v;
+    this.changeDetectionRef.detectChanges();
+  }
 
   profile: any;
   profileEditForm: FormGroup;
@@ -26,7 +45,6 @@ export class PersonalDetailsEditPage implements OnInit {
   btnColor = '#8FC4FF';
   showOnlyMandatoryFields: boolean = true;
   editData: boolean = true;
-  loader: any;
 
   /* Custom styles for the select box popup */
   stateOptions = {
@@ -37,28 +55,26 @@ export class PersonalDetailsEditPage implements OnInit {
     title: this.commonUtilService.translateMessage('DISTRICT').toLocaleUpperCase(),
     cssClass: 'select-box'
   };
+  disableSubmitFlag: boolean = false;
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
-    private loadingCtrl: LoadingController,
     public commonUtilService: CommonUtilService,
-    private formAndFrameworkUtilService: FormAndFrameworkUtilService,
     private fb: FormBuilder,
-    private translate: TranslateService,
-    private appGlobalService: AppGlobalService,
     private events: Events,
     private headerService: AppHeaderService,
-    private route: ActivatedRoute,
     private router: Router,
-    private location: Location
+    private location: Location,
+    private changeDetectionRef: ChangeDetectorRef
   ) {
     if (this.router.getCurrentNavigation().extras.state) {
       this.profile = this.router.getCurrentNavigation().extras.state.profile;
     }
-    this.initializeForm();
   }
 
   ngOnInit() {
+    this.getStates();
+    this.initializeForm();
   }
 
   /**
@@ -66,8 +82,6 @@ export class PersonalDetailsEditPage implements OnInit {
    */
   ionViewWillEnter() {
     this.headerService.showHeaderWithBackButton();
-    this.profile = this.router.getCurrentNavigation().extras.state.profile;
-    this.getStates();
   }
 
   /**
@@ -100,7 +114,8 @@ export class PersonalDetailsEditPage implements OnInit {
   }
 
   async getStates() {
-    this.loader = await this.commonUtilService.getLoader();
+    let loader = await this.commonUtilService.getLoader();
+    await loader.present();
     const req: LocationSearchCriteria = {
       filters: {
         type: loc.TYPE_STATE
@@ -108,34 +123,50 @@ export class PersonalDetailsEditPage implements OnInit {
     };
     this.profileService.searchLocation(req).subscribe(async (success) => {
       const locations = success;
+      loader.dismiss();
+      loader = undefined;
       if (locations && Object.keys(locations).length) {
         this.stateList = locations;
       } else {
-        await this.loader.dismiss();
         this.commonUtilService.showToast(this.commonUtilService.translateMessage('NO_DATA_FOUND'));
+      }
+    }, async (error) => {
+      if (loader) {
+        loader.dismiss();
+        loader = undefined;
       }
     });
   }
 
-  async getDistrict(parentId: string) {
-    this.loader = await this.commonUtilService.getLoader();
+  async getDistrict(parentId: string, resetDistrictFlag?: boolean) {
+    let loader = await this.commonUtilService.getLoader();
+    loader.present();
     const req: LocationSearchCriteria = {
       filters: {
         type: loc.TYPE_DISTRICT,
-        parentId: parentId
+        parentId
       }
     };
     this.profileService.searchLocation(req).subscribe(async (success) => {
       const districtsTemp = success;
+      loader.dismiss();
+      loader = undefined;
       if (districtsTemp && Object.keys(districtsTemp).length) {
         this.districtList = districtsTemp;
       } else {
+        this.districtList = [];
+        this.commonUtilService.showToast(this.commonUtilService.translateMessage('NO_DATA_FOUND'));
+      }
+      if (resetDistrictFlag) {
         this.profileEditForm.patchValue({
           districts: []
         });
-        this.districtList = [];
-        await this.loader.dismiss();
-        this.commonUtilService.showToast(this.commonUtilService.translateMessage('NO_DATA_FOUND'));
+      }
+      this.enableSubmitButton();
+    }, async (error) => {
+      if (loader) {
+        loader.dismiss();
+        loader = undefined;
       }
     });
   }
@@ -162,26 +193,24 @@ export class PersonalDetailsEditPage implements OnInit {
     this.commonUtilService.showToast(this.commonUtilService.translateMessage('NAME_HINT'), false, 'redErrorToast');
   }
 
-
-  /**
-   * It changes the color of the submit button on change of class.
-   */
   enableSubmitButton() {
-    if (this.profileEditForm.value.name.length) {
-      this.btnColor = '#006DE5';
-    } else {
-      this.btnColor = '#8FC4FF';
+    const formValues = this.profileEditForm.value;
+    if ((formValues.states && formValues.states.length && formValues.districts && formValues.districts.length) ||
+    (formValues.states && !formValues.states.length && formValues.districts && !formValues.districts.length)) {
+      this.disableSubmitFlag = false;
+    } else if (formValues.states && formValues.states.length && formValues.districts && !formValues.districts.length) {
+      this.disableSubmitFlag = true;
     }
   }
-
 
   /**
    * It makes an update API call.
    * @param {object} formVal Object of Form values
    */
 
-  submitForm() {
-    this.loader.present();
+  async submitForm() {
+    let loader = await this.commonUtilService.getLoader();
+    await loader.present();
     const req = {
       userId: this.profile.userId,
       lastName: ' ',
@@ -201,15 +230,17 @@ export class PersonalDetailsEditPage implements OnInit {
     }
 
     this.profileService.updateServerProfile(req).toPromise()
-      .then(() => {
-        this.loader.dismiss();
+      .then(async () => {
+        await loader.dismiss();
+        loader = undefined;
         this.commonUtilService.showToast(this.commonUtilService.translateMessage('PROFILE_UPDATE_SUCCESS'));
         this.events.publish('loggedInProfile:update', req);
         this.location.back();
-        // this.navCtrl.pop();
-        window.history.back();
-      }).catch(() => {
-        this.loader.dismiss();
+      }).catch(async () => {
+        if (loader) {
+          await loader.dismiss();
+          loader = undefined;
+        }
         this.commonUtilService.showToast(this.commonUtilService.translateMessage('PROFILE_UPDATE_FAILED'));
       });
   }
@@ -221,4 +252,5 @@ export class PersonalDetailsEditPage implements OnInit {
     const name = this.profileEditForm.getRawValue().name;
     return name.trim();
   }
+
 }

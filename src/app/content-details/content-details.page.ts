@@ -7,7 +7,8 @@ import {
   Events,
   Platform,
   PopoverController,
-  ToastController
+  ToastController,
+  NavController
 } from '@ionic/angular';
 import { Subscription } from 'rxjs/Subscription';
 import {
@@ -30,7 +31,8 @@ import {
   Rollup,
   SharedPreferences,
   StorageService,
-  TelemetryObject
+  TelemetryObject,
+  Course
 } from 'sunbird-sdk';
 
 import { Map } from '@app/app/telemetryutil';
@@ -81,9 +83,7 @@ export class ContentDetailsPage implements OnInit {
   headerObservable: any;
 
   cardData: any;
-  /**: isChildContent
-   * Content depth
-   */
+
   depth: string;
   isDownloadStarted = false;
   downloadProgress: any;
@@ -114,7 +114,7 @@ export class ContentDetailsPage implements OnInit {
   isResumedCourse: boolean;
   didViewLoad: boolean;
   contentDetail: any;
-  backButtonFunc:Subscription;
+  backButtonFunc: Subscription;
   shouldGenerateEndTelemetry = false;
   source = '';
   userCount = 0;
@@ -133,14 +133,15 @@ export class ContentDetailsPage implements OnInit {
   showDownload: boolean;
   contentPath: Array<any>[];
   FileSizePipe: any;
-  toast: any;
   childPaths: Array<string> = [];
   breadCrumbData: any;
-  networkSubscription: any;
   telemetryObject: TelemetryObject;
   contentDeleteObservable: any;
+  isSingleContent: boolean;
+  resultLength: any;
+  course:Course;
 
-  //Newly Added 
+  // Newly Added 
   resumedCourseCardData: any;
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -172,7 +173,7 @@ export class ContentDetailsPage implements OnInit {
     private ratingHandler: RatingHandler,
     private contentPlayerHandler: ContentPlayerHandler,
     private childContentHandler: ChildContentHandler,
-    private contentDeleteHandler: ContentDeleteHandler
+    private contentDeleteHandler: ContentDeleteHandler,
   ) {
     this.subscribePlayEvent();
     this.checkDeviceAPILevel();
@@ -180,10 +181,15 @@ export class ContentDetailsPage implements OnInit {
     this.defaultAppIcon = 'assets/imgs/ic_launcher.png';
     this.defaultLicense = ContentConstants.DEFAULT_LICENSE;
     this.ratingHandler.resetRating();
+    this.route.queryParams.subscribe(params => {
+      this.getNavParams();
+    });
+  }
 
+  getNavParams() {
     const extras = this.router.getCurrentNavigation().extras.state;
     if (extras) {
-      console.log('params from state : ', extras);
+      this.course = extras.course;
       this.cardData = extras.content;
       this.isChildContent = extras.isChildContent;
       this.cardData.depth = extras.depth === undefined ? '' : extras.depth;
@@ -198,6 +204,8 @@ export class ContentDetailsPage implements OnInit {
       this.breadCrumbData = extras.breadCrumb;
       this.launchPlayer = extras.launchplayer;
       this.resumedCourseCardData = extras.resumedCourseCardData;
+      this.isSingleContent = extras.isSingleContent;
+      this.resultLength = extras.resultsSize;
     }
   }
 
@@ -231,11 +239,11 @@ export class ContentDetailsPage implements OnInit {
   ionViewWillEnter(): void {
     this.headerService.hideHeader();
 
-    if (this.isResumedCourse && !this.isPlayerLaunched) {
+    if (this.isResumedCourse && !this.contentPlayerHandler.isContentPlayerLaunched()) {
       if (this.isUsrGrpAlrtOpen) {
         this.isUsrGrpAlrtOpen = false;
       } else {
-        // migration-TODO
+        // migration-TODO - tested, not affecting current behaviour
         // this.navCtrl.insert(this.navCtrl.length() - 1, EnrolledCourseDetailsPage, {
         //   content: this.navParams.get('resumedCourseCardData')
         // });
@@ -243,21 +251,12 @@ export class ContentDetailsPage implements OnInit {
     } else {
       this.generateTelemetry();
     }
-
-    this.setContentDetails(this.identifier, true, this.isPlayerLaunched);
+    this.isPlayedFromCourse();
+    this.setContentDetails(
+      this.identifier, true,
+      this.contentPlayerHandler.getLastPlayedContentId() === this.identifier);
     this.subscribeSdkEvent();
     this.findHierarchyOfContent();
-    this.networkSubscription = this.commonUtilService.networkAvailability$.subscribe((available: boolean) => {
-      if (available) {
-        this.presentToast();
-        if (this.toast) {
-          this.toast.dismiss();
-          this.toast = undefined;
-        }
-      } else {
-        this.presentToastForOffline();
-      }
-    });
     this.handleDeviceBackButton();
   }
 
@@ -267,13 +266,6 @@ export class ContentDetailsPage implements OnInit {
   ionViewWillLeave(): void {
     if (this.eventSubscription) {
       this.eventSubscription.unsubscribe();
-    }
-    if (this.networkSubscription) {
-      this.networkSubscription.unsubscribe();
-      if (this.toast) {
-        this.toast.dismiss();
-        this.toast = undefined;
-      }
     }
     if (this.contentDeleteObservable) {
       this.contentDeleteObservable.unsubscribe();
@@ -285,7 +277,7 @@ export class ContentDetailsPage implements OnInit {
 
   handleNavBackButton() {
     this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.CONTENT_DETAIL, Environment.HOME,
-      true, this.cardData.identifier, this.corRelationList);
+      true, this.cardData.identifier, this.corRelationList, this.objRollup, this.telemetryObject);
     this.didViewLoad = false;
     this.generateEndEvent();
     if (this.shouldGenerateEndTelemetry) {
@@ -297,7 +289,7 @@ export class ContentDetailsPage implements OnInit {
   handleDeviceBackButton() {
     this.backButtonFunc = this.platform.backButton.subscribeWithPriority(10, () => {
       this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.CONTENT_DETAIL, Environment.HOME,
-        false, this.cardData.identifier, this.corRelationList);
+        false, this.cardData.identifier, this.corRelationList, this.objRollup, this.telemetryObject);
       this.didViewLoad = false;
       this.popToPreviousPage(false);
       this.generateEndEvent();
@@ -312,34 +304,6 @@ export class ContentDetailsPage implements OnInit {
       this.appGlobalService.setSelectedUser(config['selectedUser']);
       this.playContent(config.streaming);
     });
-  }
-
-  // You are Offline Toast
-  async presentToastForOffline() {
-    this.toast = await this.toastController.create({
-      duration: 2000,
-      message: this.commonUtilService.translateMessage('NO_INTERNET_TITLE'),
-      showCloseButton: true,
-      position: 'top',
-      closeButtonText: '',
-      cssClass: 'toastHeader'
-    });
-    this.toast.present();
-    this.toast.onDidDismiss(() => {
-      this.toast = undefined;
-    });
-  }
-
-  // You are Online Toast
-  async presentToast() {
-    const toast = await this.toastController.create({
-      duration: 2000,
-      message: this.commonUtilService.translateMessage('INTERNET_AVAILABLE'),
-      showCloseButton: false,
-      position: 'top',
-      cssClass: 'toastForOnline'
-    });
-    toast.present();
   }
 
   calculateAvailableUserCount() {
@@ -364,9 +328,7 @@ export class ContentDetailsPage implements OnInit {
 
   /**
    * To set content details in local variable
-   * @param {string} identifier identifier of content / course
-   * @param refreshContentDetails
-   * @param showRating
+   * @param identifier identifier of content / course
    */
 
   async setContentDetails(identifier, refreshContentDetails: boolean, showRating: boolean) {
@@ -399,8 +361,9 @@ export class ContentDetailsPage implements OnInit {
         }
 
         if (showRating) {
-          this.isPlayerLaunched = false;
+          this.contentPlayerHandler.setContentPlayerLaunchStatus(false);
           this.ratingHandler.showRatingPopup(this.isContentPlayed, data, 'automatic', this.corRelationList, this.objRollup);
+          this.contentPlayerHandler.setLastPlayedContentId('');
         }
       })
       .catch(async (error: any) => {
@@ -438,8 +401,9 @@ export class ContentDetailsPage implements OnInit {
     if (this.content.lastUpdatedTime !== 0) {
       this.playOnlineSpinner = false;
     }
-    this.content.contentData.appIcon = ContentUtil.getAppIcon(this.content.contentData.appIcon, data.basePath,
-      this.commonUtilService.networkInfo.isNetworkAvailable);
+    this.content.contentData.appIcon =
+      this.commonUtilService.convertFileSrc(ContentUtil.getAppIcon(this.content.contentData.appIcon, data.basePath,
+        this.commonUtilService.networkInfo.isNetworkAvailable));
     this.content.contentAccess = data.contentAccess ? data.contentAccess : [];
     this.content.contentMarker = data.contentMarker ? data.contentMarker : [];
 
@@ -486,7 +450,7 @@ export class ContentDetailsPage implements OnInit {
       this.shouldGenerateEndTelemetry = false;
     }
 
-    if (this.isPlayerLaunched) {
+    if (this.contentPlayerHandler.isContentPlayerLaunched()) {
       this.downloadAndPlay = false;
     }
     if (this.downloadAndPlay) {
@@ -520,7 +484,7 @@ export class ContentDetailsPage implements OnInit {
     values['isUpdateAvailable'] = this.isUpdateAvail;
     values['isDownloaded'] = this.contentDownloadable[this.content.identifier];
     values['autoAfterDownload'] = this.downloadAndPlay ? true : false;
-
+    
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.OTHER,
       ImpressionType.DETAIL,
       Environment.HOME,
@@ -586,14 +550,23 @@ export class ContentDetailsPage implements OnInit {
     //     this.location.back();
     //   }
     // }
-    this.location.back();
+
+    // Tested in ionic 4 working as expected
+    if (this.isSingleContent) {
+      window.history.go(-3);
+    } else if (this.resultLength === 1) {
+      // this.navCtrl.navigateBack([RouterLinks.SEARCH]);
+      window.history.go(-2);
+    } else {
+      this.events.publish('event:update_recently_viewed');
+      this.location.back();
+    }
   }
 
   /**
    * Function to get import content api request params
    *
-   * @param {Array<string>} identifiers contains list of content identifier(s)
-   * @param {boolean} isChild
+   * @param identifiers contains list of content identifier(s)
    */
   getImportContentRequestBody(identifiers: Array<string>, isChild: boolean): Array<ContentImport> {
     const requestParams = [];
@@ -602,7 +575,8 @@ export class ContentDetailsPage implements OnInit {
         isChildContent: isChild,
         destinationFolder: this.storageService.getStorageDestinationDirectoryPath(),
         contentId: value,
-        correlationData: this.corRelationList !== undefined ? this.corRelationList : []
+        correlationData: this.corRelationList !== undefined ? this.corRelationList : [],
+        rollUp: isChild ? this.objRollup : undefined
       });
     });
 
@@ -612,13 +586,12 @@ export class ContentDetailsPage implements OnInit {
   /**
    * Function to get import content api request params
    *
-   * @param {Array<string>} identifiers contains list of content identifier(s)
-   * @param {boolean} isChild
+   * @param identifiers contains list of content identifier(s)
    */
   importContent(identifiers: Array<string>, isChild: boolean) {
     const contentImportRequest: ContentImportRequest = {
       contentImportArray: this.getImportContentRequestBody(identifiers, isChild),
-      contentStatusArray: [],
+      contentStatusArray: ['Live'],
       fields: ['appIcon', 'name', 'subject', 'size', 'gradeLevel']
     };
 
@@ -686,6 +659,9 @@ export class ContentDetailsPage implements OnInit {
         if (event.payload && event.type === ContentEventType.UPDATE) {
           this.zone.run(() => {
             this.isUpdateAvail = true;
+            if (event.payload.size) {
+              this.content.contentData.size = event.payload.size;
+            }
           });
         }
 
@@ -710,6 +686,14 @@ export class ContentDetailsPage implements OnInit {
    * confirming popUp content
    */
   async openConfirmPopUp() {
+    this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
+      this.isUpdateAvail ? InteractSubtype.UPDATE_INITIATE : InteractSubtype.DOWNLOAD_INITIATE,
+      Environment.HOME,
+      PageId.CONTENT_DETAIL,
+      this.telemetryObject,
+      undefined,
+      this.objRollup,
+      this.corRelationList);
     if (this.commonUtilService.networkInfo.isNetworkAvailable) {
       const popover = await this.popoverCtrl.create({
         component: ConfirmAlertComponent,
@@ -726,6 +710,17 @@ export class ContentDetailsPage implements OnInit {
       const { data } = await popover.onDidDismiss();
       if (data) {
         this.downloadContent();
+      }
+      else {
+        //const telemetryObject = new TelemetryObject(this.content.identifier, this.content.contentType, this.content.contentData.pkgVersion);
+        this.telemetryGeneratorService.generateInteractTelemetry(
+          InteractType.TOUCH,
+          InteractSubtype.CLOSE_CLICKED,
+          Environment.HOME,
+          PageId.CONTENT_DETAIL,
+          this.telemetryObject,undefined,
+          this.objRollup,
+          this.corRelationList);
       }
     } else {
       this.commonUtilService.showToast('ERROR_NO_INTERNET_MESSAGE');
@@ -758,6 +753,14 @@ export class ContentDetailsPage implements OnInit {
   }
 
   cancelDownload() {
+    this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
+      this.isUpdateAvail ? InteractSubtype.DOWNLOAD_CANCEL_CLICKED : InteractSubtype.DOWNLOAD_CANCEL_CLICKED,
+      Environment.HOME,
+      PageId.CONTENT_DETAIL,
+      this.telemetryObject,
+      undefined,
+      this.objRollup,
+      this.corRelationList);
     this.contentService.cancelDownload(this.identifier).toPromise()
       .then(() => {
         this.zone.run(() => {
@@ -830,7 +833,7 @@ export class ContentDetailsPage implements OnInit {
       if (data == null) {
         return;
       }
-      if (data.isLeftButtonClicked) {
+      if (data && data.isLeftButtonClicked) {
         if (!AppGlobalService.isPlayerLaunched && this.userCount > 2 && !this.isCourse) {
           this.openPlayAsPopup(isStreaming);
         } else {
@@ -894,16 +897,15 @@ export class ContentDetailsPage implements OnInit {
     if (data == null) {
       return;
     }
-    if (data.isLeftButtonClicked) {
+    if (data && data.isLeftButtonClicked) {
       this.playContent(isStreaming);
-    } else {
+      // Incase of close button click data.isLeftButtonClicked = null so we have put the false condition check
+    } else if (data && data.isLeftButtonClicked  === false) {
       const playConfig: any = {};
       playConfig.playContent = true;
       playConfig.streaming = isStreaming;
       this.router.navigate([RouterLinks.USER_AND_GROUPS], {
-        state: {
-          playConfig
-        }
+        state: { playConfig }
       });
     }
   }
@@ -919,14 +921,14 @@ export class ContentDetailsPage implements OnInit {
         telemetryObject: this.telemetryObject,
         rollUp: this.objRollup,
         correlationList: this.corRelationList,
-        hierachyInfo
+        hierachyInfo,
+        course: this.course
       };
       if (this.isResumedCourse) {
         this.playingContent.hierarchyInfo = hierachyInfo;
       }
-      this.contentPlayerHandler.launchContentPlayer(this.playingContent, isStreaming, this.downloadAndPlay, contentInfo);
+      this.contentPlayerHandler.launchContentPlayer(this.playingContent, isStreaming, this.downloadAndPlay, contentInfo, this.isCourse);
       this.downloadAndPlay = false;
-      this.isPlayerLaunched = true;
     }
   }
 
@@ -992,17 +994,18 @@ export class ContentDetailsPage implements OnInit {
 
   /**
    * method generates telemetry on click Read less or Read more
-   * @param {string} param string as read less or read more
-   * @param {object} objRollup object roll up
+   * @param param string as read less or read more
+   * @param objRollup object roll up
    * @param corRelationList correlation List
    */
   readLessorReadMore(param, objRollup, corRelationList) {
+    param = 'read-more-clicked' === param ? InteractSubtype.READ_MORE_CLICKED : InteractSubtype.READ_LESS_CLICKED;
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
-      param = 'read-more-clicked' === param ? InteractSubtype.READ_MORE_CLICKED : InteractSubtype.READ_LESS_CLICKED,
+      param,
       Environment.HOME,
       PageId.CONTENT_DETAIL,
-      undefined,
       this.telemetryObject,
+      undefined,
       objRollup,
       corRelationList
     );
@@ -1034,4 +1037,9 @@ export class ContentDetailsPage implements OnInit {
     }
   }
 
+  isPlayedFromCourse() {
+    if (this.cardData.hierarchyInfo && this.cardData.hierarchyInfo.length && this.cardData.hierarchyInfo[0].contentType === 'course') {
+      this.isCourse = true;
+    }
+  }
 }
