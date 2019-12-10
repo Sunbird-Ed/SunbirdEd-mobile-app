@@ -309,9 +309,6 @@
           <div class="sb-info" *ngIf="content?.contentData?.origin">
             <div class="sb-content-title">{{'ORIGINAL_CONTENT_DATA' | translate}}</div>
           </div>
-          <div class="sb-info" *ngIf="content?.contentData?.originData?.license">
-            <div class="sb-content-title">{{'MULTIPLE_LICENSE' | translate:{'%s': content?.contentData?.originData?.license} }}</div>
-          </div>
           <div class="sb-info" *ngIf="content?.contentData?.origin && !content?.contentData?.originData">
             <div class="sb-content-title-data">{{'NOT_AVAILABLE' | translate}}</div>
           </div>
@@ -322,6 +319,9 @@
           <div class="sb-info" *ngIf="content?.contentData?.originData?.author">
             <div class="sb-content-title">{{'ORIGINAL_AUTHOR' | translate}}</div>
             <div class="sb-content-title-data">{{content?.contentData?.originData?.author}}</div>
+          </div>
+          <div class="sb-info" *ngIf="content?.contentData?.originData?.license">
+            <div class="sb-content-title">{{'MULTIPLE_LICENSE' | translate:{'%s': content?.contentData?.originData?.license} }}</div>
           </div>
           <div class="sb-info" *ngIf="content?.contentData?.originData?.organisation">
             <div class="sb-content-title">{{ 'PUBLISHED_BY' | translate:{'%s': appName} }}</div>
