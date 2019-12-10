@@ -284,6 +284,7 @@
   "INTERNET_CONNECTIVITY_NEEDED": "No internet connectivity",
   "INVALID_CONTENT": "Invalid content",
   "INVALID_QR": "Invalid QR code",
+  "IMPORTING": "Importing...",
   "ITEMS": "{{%s}} file(s)",
   "ITEMS_SELECTED": "files selected",
   "I_AGREE_TO_TNC": "I agree to the terms and conditions of use",

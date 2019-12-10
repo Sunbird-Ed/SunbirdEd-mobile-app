@@ -16,8 +16,10 @@ import {
   ImpressionType,
   InteractSubtype,
   InteractType,
-  PageId
+  PageId,
+  ID
 } from '@app/services/telemetry-constants';
+import { featureIdMap } from '@app/feature-id-map';
 import { ExternalIdVerificationService } from '@app/services/externalid-verification.service';
 @Component({
   selector: 'app-district-mapping',
@@ -270,20 +272,37 @@ export class DistrictMappingPage implements OnInit {
     });
   }
 
+  isStateorDistrictChanged() {
+    if (this.availableLocationState !== this.stateName && this.availableLocationDistrict === this.districtName) {
+      return InteractSubtype.STATE_CHANGED;
+    } else if (this.availableLocationDistrict !== this.districtName && this.availableLocationState === this.stateName) {
+      return InteractSubtype.DIST_CHANGED;
+    } else if (this.availableLocationState !== this.stateName && this.availableLocationDistrict !== this.districtName) {
+      return InteractSubtype.STATE_DIST_CHANGED;
+    } else {
+        return '';
+    }
+    }
+
   async submit() {
-    this.telemetryGeneratorService.generateInteractTelemetry(
-      InteractType.OTHER,
-      InteractSubtype.AUTO_POPULATED_LOCATION,
-      Environment.HOME,
-      PageId.DISTRICT_MAPPING,
-      undefined,
-      { isPopulatedLocation: this.isPopulatedLocationChanged });
 
     let isLocationUpdated = false;
     if (this.stateName !== this.availableLocationState ||
       this.districtName !== this.availableLocationDistrict) {
       isLocationUpdated = true;
     }
+
+    this.telemetryGeneratorService.generateInteractTelemetry(
+      isLocationUpdated ?  InteractType.LOCATION_CHANGED : InteractType.LOCATION_UNCHANGED,
+      this.isStateorDistrictChanged(),
+      Environment.HOME,
+      PageId.DISTRICT_MAPPING,
+      undefined,
+      { isPopulatedLocation: this.isPopulatedLocationChanged },
+      undefined,
+      featureIdMap.location.LOCATION_CAPTURE,
+      ID.SUBMIT_CLICKED,
+      );
 
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,
