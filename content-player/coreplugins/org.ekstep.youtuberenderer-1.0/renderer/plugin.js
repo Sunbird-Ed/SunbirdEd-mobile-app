@@ -49,6 +49,10 @@ org.ekstep.contentrenderer.baseLauncher.extend({
         jQuery("#loading").hide()
         window.addEventListener('message', function(event){
             if(event.type === 'message' && typeof event.data !== 'object'){
+                if(event.data == "pause.youtube") {
+                    instance.pauseYoutube();
+                    return;
+                }
                 var eventData = JSON.parse(event.data)
                 switch (eventData.eid) {
                     case 'paly':
@@ -69,6 +73,13 @@ org.ekstep.contentrenderer.baseLauncher.extend({
             }
         });
         
+    },
+    pauseYoutube: function () {
+        var instance  = this;
+        var iframes = window.document.getElementsByTagName("iframe");
+        if(iframes.length > 0) {
+            iframes[0].contentWindow.postMessage("pause.youtube","*");
+        }
     },
     logTelemetry: function (type, eksData, eid, options) {
         EkstepRendererAPI.getTelemetryService().interact(type || 'TOUCH', "", "", eksData, eid, options);
@@ -191,5 +202,4 @@ org.ekstep.contentrenderer.baseLauncher.extend({
         return ID;
     }
 });
-
 //# sourceURL=YoutubeRenderer.js
