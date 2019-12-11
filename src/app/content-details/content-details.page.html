@@ -281,9 +281,10 @@
             <div class="sb-content-title">{{'SUBJECT' | translate}}</div>
             <div class="sb-content-title-data">{{content?.contentData?.subject | csa}}</div>
           </div>
-          <div class="sb-info" *ngIf="content?.contentData?.licenseDetails">
-            <div class="sb-content-title">{{'MULTIPLE_LICENSE' | translate:{'%s': content?.contentData?.licenseDetails?.name} }}</div>
-            <div class="sb-url" (click)="openinBrowser(content?.contentData?.licenseDetails?.url)">{{ content?.contentData?.licenseDetails?.url }}</div>
+          <div class="sb-info" *ngIf="licenseDetails">
+            <div class="sb-content-title">{{'MULTIPLE_LICENSE' | translate:{'%s': licenseDetails?.name} }}</div>
+            {{licenseDetails.description}}
+            <div class="sb-url" (click)="openinBrowser(licenseDetails?.url)">{{ licenseDetails?.url }}</div>
           </div>
           <div class="sb-info" *ngIf="content?.contentData?.creators || content?.contentData?.creator">
             <div class="sb-content-title">{{ 'CREATORS' | translate:{'%s': appName} }}</div>
@@ -323,6 +324,9 @@
           <div class="sb-info" *ngIf="content?.contentData?.originData?.author">
             <div class="sb-content-title">{{'ORIGINAL_AUTHOR' | translate}}</div>
             <div class="sb-content-title-data">{{content?.contentData?.originData?.author}}</div>
+          </div>
+          <div class="sb-info" *ngIf="content?.contentData?.originData?.license">
+            <div class="sb-content-title">{{'MULTIPLE_LICENSE' | translate:{'%s': content?.contentData?.originData?.license} }}</div>
           </div>
           <div class="sb-info" *ngIf="content?.contentData?.originData?.organisation">
             <div class="sb-content-title">{{ 'PUBLISHED_BY' | translate:{'%s': appName} }}</div>

@@ -9,7 +9,9 @@ import {
   ProfileService,
   TelemetryService,
   ContentImportResponse,
-  ContentImportStatus
+  ContentImportStatus,
+  TelemetryErrorRequest,
+  SunbirdSdk
 } from 'sunbird-sdk';
 import { Inject, Injectable } from '@angular/core';
 import { CommonUtilService } from 'services/common-util.service';
@@ -108,6 +110,18 @@ export class SplashscreenImportActionHandlerDelegate implements SplashscreenActi
       }
       default:
         return of(undefined);
+    }
+  }
+
+  generateImportErrorTelemetry(error) {
+    const telemetryErrorRequest: TelemetryErrorRequest = {
+      errorCode: error,
+      errorType: 'mobile-app',
+      stacktrace: error,
+      pageId: 'home'
+    };
+    if (SunbirdSdk.instance && SunbirdSdk.instance.isInitialised && telemetryErrorRequest.stacktrace) {
+      SunbirdSdk.instance.telemetryService.error(telemetryErrorRequest).toPromise();
     }
   }
 }

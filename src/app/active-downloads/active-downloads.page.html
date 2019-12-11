@@ -41,10 +41,9 @@
     <div *ngIf="(activeDownloadRequests$ | async)?.length"
       class="sb-card-container sb-card-view-all-container ad-pb-88 ad-no-box-shadow">
       <div *ngFor="let activeDownload of (activeDownloadRequests$ | async); let i = index">
-        <div>
+        <ng-container *ngIf="getContentDownloadProgress(activeDownload.identifier) as downloadProgress; else pending">
           <ion-row class="ad-border-bottom-1">
             <ion-col no-padding size="10">
-
               <div class="sb-card">
                 <div start class="img-container">
                   <img [src]="commonUtilService.convertFileSrc(activeDownload.contentMeta.appIcon) || defaultImg">
@@ -56,32 +55,63 @@
                       class="separator-dot"></span><span
                       class="subject">{{activeDownload.contentMeta.gradeLevel?.join(', ')}}</span>
                   </div>
-                  <div class="info" *ngIf="getContentDownloadProgress(activeDownload.identifier)">
-                    {{((getContentDownloadProgress(activeDownload.identifier) / 100) * activeDownload.contentMeta.size) | fileSize}}
-                    / {{activeDownload.contentMeta.size | fileSize}}
-                  </div>
-                  <div class="info" *ngIf="!getContentDownloadProgress(activeDownload.identifier)">
-                    {{ 'WAITING_TO_DOWNLOAD' | translate }}
+                  <div class="info">
+                    <ng-container *ngIf="!downloadProgress || downloadProgress === -1">
+                      {{ 'WAITING_TO_DOWNLOAD' | translate }}
+                    </ng-container>
+                    <ng-container *ngIf="downloadProgress >= 0 && downloadProgress < 100">
+                      {{((downloadProgress / 100) * activeDownload.contentMeta.size) | fileSize}}
+                      / {{activeDownload.contentMeta.size | fileSize}}
+                    </ng-container>
+                    <ng-container *ngIf="downloadProgress === 100">
+                      {{ 'IMPORTING' | translate }}
+                    </ng-container>
                   </div>
                 </div>
               </div>
-
               <div class="popover-progress-container ad-ml-8"
-                *ngIf="getContentDownloadProgress(activeDownload.identifier)">
-                <div [ngStyle]="{'left': getContentDownloadProgress(activeDownload.identifier) + '%'}"
+                   *ngIf="downloadProgress >= 0 && downloadProgress < 100">
+                <div [ngStyle]="{'left': downloadProgress + '%'}"
                   class="progress-highlight">
                 </div>
               </div>
-
             </ion-col>
             <ion-col size="2">
-              <button no-margin class="action-btn float-end delete mr-8 ad-action-btn" margin-right
+              <button *ngIf="downloadProgress !== 100" no-margin class="action-btn float-end delete mr-8 ad-action-btn" margin-right
                 (click)="cancelDownload(activeDownload)">
                 {{'CANCEL' | translate}}
               </button>
             </ion-col>
           </ion-row>
-        </div>
+        </ng-container>
+        <ng-template #pending>
+          <ion-row class="ad-border-bottom-1">
+            <ion-col no-padding size="10">
+              <div class="sb-card">
+                <div start class="img-container">
+                  <img [src]="commonUtilService.convertFileSrc(activeDownload.contentMeta.appIcon) || defaultImg">
+                </div>
+                <div end class="sb-card-details">
+                  <div class="title">{{activeDownload?.contentMeta.name}}</div>
+                  <div class="info grade_ellipsis"><span
+                          class="class">{{activeDownload.contentMeta.subject}}</span><span
+                          class="separator-dot"></span><span
+                          class="subject">{{activeDownload.contentMeta.gradeLevel?.join(', ')}}</span>
+                  </div>
+                  <div class="info">
+                    {{ 'WAITING_TO_DOWNLOAD' | translate }}
+                  </div>
+                </div>
+              </div>
+            </ion-col>
+            <ion-col size="2">
+              <button no-margin class="action-btn float-end delete mr-8 ad-action-btn" margin-right
+                      (click)="cancelDownload(activeDownload)">
+                {{'CANCEL' | translate}}
+              </button>
+            </ion-col>
+          </ion-row>
+        </ng-template>
       </div>
     </div>
   </div>
