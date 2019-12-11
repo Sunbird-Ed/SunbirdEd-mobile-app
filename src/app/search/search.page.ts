@@ -313,8 +313,9 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
   async openContent(collection, content, index?) {
     this.showLoader = false;
     this.parentContent = collection;
+    const indexLinked = index ? index : 0;
     this.isQrCodeLinkToContent = index;
-    this.generateInteractEvent(content.identifier, content.contentType, content.pkgVersion, index);
+    this.generateInteractEvent(content.identifier, content.contentType, content.pkgVersion, indexLinked);
     if (collection !== undefined) {
       this.parentContent = collection;
       this.childContent = content;
