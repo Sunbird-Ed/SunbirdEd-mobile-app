@@ -9,7 +9,7 @@ import { PlayerActionHandlerDelegate, HierarchyInfo, User } from './player-actio
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { EventTopics, RouterLinks } from '../app.constant';
 import { Location } from '@angular/common';
-import { Subscription } from 'rxjs/Subscription';
+import { Subscription } from 'rxjs';
 import { CourseService, Course } from 'sunbird-sdk';
 
 @Component({

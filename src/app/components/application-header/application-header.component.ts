@@ -7,7 +7,7 @@ import {
 import { DownloadService, SharedPreferences, NotificationService as PushNotificationService, NotificationStatus } from 'sunbird-sdk';
 import { GenericAppConfig, PreferenceKey, EventTopics } from '../../../app/app.constant';
 import { AppVersion } from '@ionic-native/app-version/ngx';
-import { Subscription } from 'rxjs/Subscription';
+import { Subscription } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
 import { NavigationExtras, Router, RouterLink } from '@angular/router';
 
@@ -174,15 +174,13 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
 
   emitEvent($event, name) {
 
-    if(name === 'filter') {
-      if(this.commonUtilService.networkInfo.isNetworkAvailable) {
+    if (name === 'filter') {
+      if (this.commonUtilService.networkInfo.isNetworkAvailable) {
         this.headerEvents.emit({ name, event: $event });
-      }
-      else{
+      } else {
         this.commonUtilService.showToast('NEED_INTERNET_TO_CHANGE');
       }
-    }
-    else {
+    } else {
       this.headerEvents.emit({ name, event: $event });
     }
   }

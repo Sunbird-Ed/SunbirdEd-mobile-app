@@ -13,7 +13,7 @@ import { AppHeaderService } from '@app/services/app-header.service';
 import { Environment, ImpressionType, InteractSubtype, InteractType, PageId } from '@app/services/telemetry-constants';
 import { NotificationService } from '@app/services/notification.service';
 import { Location } from '@angular/common';
-import { Subscription } from 'rxjs/Subscription';
+import { Subscription } from 'rxjs';
 
 
 export interface ILanguages {

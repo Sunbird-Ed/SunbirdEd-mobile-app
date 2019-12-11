@@ -1,9 +1,9 @@
 import { Component, NgZone, OnDestroy } from '@angular/core';
 import { Platform, NavParams, PopoverController } from '@ionic/angular';
 import { CorrelationData, Rollup } from 'sunbird-sdk';
-import { Observable } from 'rxjs/Observable';
-import { Subscription } from 'rxjs/Subscription';
+import { Observable, Subscription} from 'rxjs';
 import { CommonUtilService } from '@app/services/';
+import { map, tap } from 'rxjs/operators';
 
 @Component({
   selector: 'sb-popover',
@@ -69,33 +69,36 @@ export class SbPopoverComponent implements OnDestroy {
     }
 
     if (this.sbPopoverDynamicMainTitle$) {
-      this.sbPopoverDynamicMainTitleSubscription = this.sbPopoverDynamicMainTitle$
-        .do((v) => {
+      this.sbPopoverDynamicMainTitleSubscription = this.sbPopoverDynamicMainTitle$.pipe(
+        tap((v) => {
           this.ngZone.run(() => {
             this.sbPopoverMainTitle = v;
           });
         })
-        .subscribe();
+      )
+      .subscribe();
     }
 
     if (this.sbPopoverDynamicContent$) {
-      this.sbPopoverDynamicContentSubscription = this.sbPopoverDynamicContent$
-        .do((v) => {
+      this.sbPopoverDynamicContentSubscription = this.sbPopoverDynamicContent$.pipe(
+        tap((v) => {
           this.ngZone.run(() => {
             this.sbPopoverContent = v;
           });
         })
-        .subscribe();
+      )
+      .subscribe();
     }
     for (const actionsButton of this.actionsButtons) {
       if (actionsButton.btnDisabled$) {
-        this.sbPopoverDynamicButtonDisabledSubscription = actionsButton.btnDisabled$
-          .do((v) => {
+        this.sbPopoverDynamicButtonDisabledSubscription = actionsButton.btnDisabled$.pipe(
+          tap((v) => {
             // this.ngZone.run(() => {
             actionsButton.btnDisabled = v;
             // });
           })
-          .subscribe();
+        )
+        .subscribe();
       }
     }
 

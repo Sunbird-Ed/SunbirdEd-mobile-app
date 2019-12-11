@@ -10,7 +10,7 @@ import {
   ToastController,
   NavController
 } from '@ionic/angular';
-import { Subscription } from 'rxjs/Subscription';
+import { Subscription } from 'rxjs';
 import {
   AuthService,
   Content,
@@ -66,7 +66,7 @@ import { ContentUtil } from '@app/util/content-util';
 import { FileOpener } from '@ionic-native/file-opener/ngx';
 import { File } from '@ionic-native/file/ngx';
 import { FileTransfer, FileTransferObject } from '@ionic-native/file-transfer/ngx';
-
+import { map } from 'rxjs/operators';
 @Component({
   selector: 'app-content-details',
   templateUrl: './content-details.page.html',
@@ -239,7 +239,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
     });
   }
 
-  ngOnDestroy(){
+  ngOnDestroy() {
     this.events.unsubscribe(EventTopics.PLAYER_CLOSED);
   }
 
@@ -321,8 +321,9 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
       local: true,
       server: false
     };
-    this.profileService.getAllProfiles(profileRequest)
-      .map((profiles) => profiles.filter((profile) => !!profile.handle))
+    this.profileService.getAllProfiles(profileRequest).pipe(
+      map((profiles) => profiles.filter((profile) => !!profile.handle))
+    )
       .toPromise()
       .then((profiles) => {
         if (profiles) {
@@ -494,7 +495,6 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
     values['isUpdateAvailable'] = this.isUpdateAvail;
     values['isDownloaded'] = this.contentDownloadable[this.content.identifier];
     values['autoAfterDownload'] = this.downloadAndPlay ? true : false;
-    
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.OTHER,
       ImpressionType.DETAIL,
       Environment.HOME,

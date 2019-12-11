@@ -1,7 +1,7 @@
 import { Component, OnInit , ViewEncapsulation } from '@angular/core';
 import { NavParams, Platform, NavController, PopoverController } from '@ionic/angular';
 import { Location } from '@angular/common';
-import { Subscription } from 'rxjs/Subscription';
+import { Subscription } from 'rxjs';
 
 export interface QRAlertCallBack {
   cancel(): any;

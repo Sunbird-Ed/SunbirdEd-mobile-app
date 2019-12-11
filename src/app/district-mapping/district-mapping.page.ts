@@ -19,6 +19,7 @@ import {
   PageId
 } from '@app/services/telemetry-constants';
 import { ExternalIdVerificationService } from '@app/services/externalid-verification.service';
+import { tap } from 'rxjs/operators';
 @Component({
   selector: 'app-district-mapping',
   templateUrl: './district-mapping.page.html',
@@ -70,7 +71,9 @@ export class DistrictMappingPage implements OnInit {
       this.isShowBackButton = this.router.getCurrentNavigation().extras.state.isShowBackButton;
       this.source = this.router.getCurrentNavigation().extras.state.source;
     }
-    this.isKeyboardShown$ = deviceInfo.isKeyboardShown().do(() => this.changeDetectionRef.detectChanges());
+    this.isKeyboardShown$ = deviceInfo.isKeyboardShown().pipe(
+      tap(() => this.changeDetectionRef.detectChanges())
+    );
   }
 
   ngOnInit() {

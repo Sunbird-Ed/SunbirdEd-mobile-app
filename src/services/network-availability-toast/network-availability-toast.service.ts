@@ -2,6 +2,7 @@ import { Injectable, Inject } from '@angular/core';
 import { NetworkInfoService, NetworkStatus } from 'sunbird-sdk';
 import { ToastController } from '@ionic/angular';
 import { CommonUtilService } from '../common-util.service';
+import { skip, distinctUntilChanged, filter} from 'rxjs/operators';
 @Injectable({ providedIn: 'root' })
 export class NetworkAvailabilityToastService {
 
@@ -14,9 +15,10 @@ export class NetworkAvailabilityToastService {
 
     public init() {
         this.networkFlag = this.commonUtilService.networkInfo.isNetworkAvailable ? NetworkStatus.ONLINE : NetworkStatus.OFFLINE;
-        this.networkInfoService.networkStatus$.skip(1)
-            .distinctUntilChanged()
-            .filter((networkStatus) => {
+        this.networkInfoService.networkStatus$.pipe(
+            skip(1),
+            distinctUntilChanged(),
+            filter((networkStatus) => {
                 if (
                     (this.networkFlag !== networkStatus) &&
                     ((networkStatus === NetworkStatus.ONLINE) ||
@@ -28,7 +30,7 @@ export class NetworkAvailabilityToastService {
                 this.networkFlag = networkStatus;
                 return false;
             })
-            .subscribe((networkStatus) => {
+            ).subscribe((networkStatus) => {
                 if (this.toast) {
                     this.toast.dismiss();
                     this.toast = undefined;

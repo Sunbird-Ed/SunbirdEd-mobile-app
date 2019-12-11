@@ -6,7 +6,7 @@ import { AppGlobalService } from '../../services/app-global-service.service';
 import { TelemetryGeneratorService } from '../../services/telemetry-generator.service';
 import find from 'lodash/find';
 import each from 'lodash/each';
-import map from 'lodash/map';
+// import map from 'lodash/map';
 import {
   ChildContentRequest,
   Content,
@@ -36,7 +36,7 @@ import {
   ProfileService,
   TelemetryObject
 } from 'sunbird-sdk';
-import { Subscription } from 'rxjs/Subscription';
+import { Subscription } from 'rxjs';
 import { Environment, ImpressionType, InteractSubtype, InteractType, PageId } from '../../services/telemetry-constants';
 import { CanvasPlayerService } from '../../services/canvas-player.service';
 import { File } from '@ionic-native/file/ngx';
@@ -46,6 +46,7 @@ import { NavigationExtras, Router } from '@angular/router';
 import { Platform, Events, NavController } from '@ionic/angular';
 import { RatingHandler } from '@app/services/rating/rating-handler';
 import { ContentPlayerHandler } from '@app/services/content/player/content-player-handler';
+import { mapTo, map } from 'rxjs/operators';
 declare const cordova;
 
 @Component({
@@ -310,9 +311,9 @@ export class QrcoderesultPage implements OnDestroy {
       local: true,
       server: false
     };
-    this.profileService.getAllProfiles(profileRequest)
-      .map((profiles) => profiles.filter((profile) => !!profile.handle))
-      .subscribe(profiles => {
+    this.profileService.getAllProfiles(profileRequest).pipe(
+      map((profiles) => profiles.filter((profile) => !!profile.handle))
+      ).subscribe(profiles => {
         if (profiles) {
           this.userCount = profiles.length;
         }

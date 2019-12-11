@@ -48,7 +48,7 @@ import {
   AuthService,
   Rollup
 } from 'sunbird-sdk';
-import { Subscription } from 'rxjs/Subscription';
+import { Subscription } from 'rxjs';
 import {
   Environment,
   ErrorType,
