@@ -5,13 +5,14 @@ import { CommonUtilService, } from '@app/services/common-util.service';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { SbPopoverComponent } from '@app/app/components/popups/sb-popover/sb-popover.component';
 import { PopoverController, Events } from '@ionic/angular';
-import { InteractType, TelemetryObject } from 'sunbird-sdk';
+import { InteractType, TelemetryObject, CorrelationData } from 'sunbird-sdk';
 import { Content, ContentDelete } from 'sunbird-sdk';
 import { SbGenericPopoverComponent } from '../../components/popups/sb-generic-popover/sb-generic-popover.component';
-import { InteractSubtype, Environment, PageId, ActionButtonType } from '../../../services/telemetry-constants';
+import { InteractSubtype, Environment, PageId, ActionButtonType, CorReleationDataType } from '../../../services/telemetry-constants';
 import { EmitedContents } from '../download-manager.interface';
 import { Router } from '@angular/router';
 import { AppHeaderService } from '@app/services';
+import { ContentUtil } from '@app/util/content-util';
 
 @Component({
   selector: 'app-downloads-tab',
@@ -282,12 +283,19 @@ export class DownloadsTabComponent implements OnInit {
   navigateToDetailsPage(content) {
     const objectType = this.telemetryGeneratorService.isCollection(content.mimeType) ? content.contentData.contentType
       : ContentType.RESOURCE;
+    const corRelationList: Array<CorrelationData> = [{
+        id: CorReleationDataType.DOWNLOADS,
+        type: CorReleationDataType.SECTION
+      }];
     const telemetryObject: TelemetryObject = new TelemetryObject(content.identifier, objectType, content.contentData.pkgVersion);
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
       InteractSubtype.CONTENT_CLICKED,
       Environment.DOWNLOADS,
       PageId.DOWNLOADS,
-      telemetryObject);
+      telemetryObject,
+      undefined,
+      ContentUtil.generateRollUp(undefined, content.identifier),
+      corRelationList);
     if (!this.selectedContents.length) {
       if (content.contentData && content.contentData.contentType === ContentType.COURSE) {
         this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], {

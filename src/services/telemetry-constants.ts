@@ -397,7 +397,8 @@ export enum CorReleationDataType {
     BOARD = 'Board',
     MEDIUM = 'Medium',
     CLASS = 'Class',
-    USERTYPE = 'UserType'
+    USERTYPE = 'UserType',
+    DOWNLOADS = 'Downloads'
 }
 
 
