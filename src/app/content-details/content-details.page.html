@@ -191,7 +191,7 @@
       <div class="sb-dt-card-actions">
 
         <div class="sb-btn-tile-group">
-          <div *ngIf="content && !appGlobalService?.CONTENT_STREAMING_ENABLED ">
+          <div *ngIf="content && !appGlobalService?.CONTENT_STREAMING_ENABLED && !this.hideDownloadShare">
             <button *ngIf="!contentDownloadable[content?.identifier]" (click)="openConfirmPopUp()"
               [disabled]="isDownloadStarted" fill="clear" icon-only class="sb-btn-tile">
               <ion-icon ios="ios-cloud-download" md="md-cloud-download" class="sb-dt-card-blue-icon"></ion-icon>
@@ -202,7 +202,7 @@
             </button>
 
           </div>
-          <div *ngIf="content && appGlobalService?.CONTENT_STREAMING_ENABLED">
+          <div *ngIf="content && appGlobalService?.CONTENT_STREAMING_ENABLED && !this.hideDownloadShare">
             <div *ngIf="!content?.contentData?.streamingUrl">
               <button *ngIf="!contentDownloadable[content?.identifier]" (click)="openConfirmPopUp()"
                 [disabled]="isDownloadStarted" fill="clear" icon-only class="sb-btn-tile">
@@ -230,7 +230,7 @@
             <ion-icon ios="ios-trash" md="md-trash" class="sb-dt-card-danger-icon"></ion-icon>
             <span class="sb-btn-footer-text">{{'DELETE' | translate}}</span>
           </button>
-          <button (click)="share()" class="sb-btn-tile">
+          <button (click)="share()" class="sb-btn-tile" *ngIf="!this.hideDownloadShare">
             <ion-icon ios="ios-share" md="md-share" class="sb-dt-card-blue-icon"></ion-icon>
             <span class="sb-btn-footer-text">{{'SHARE' | translate}}</span>
           </button>

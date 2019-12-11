@@ -364,6 +364,7 @@ export class ContentFilterConfig {
     public static readonly NAME_DOWNLOADS = 'downloads';
     public static readonly NAME_DIALCODE = 'dialcode';
     public static readonly CODE_CONTENT_TYPE = 'contentType';
+    public static readonly CONTENT_STATUS_UNLISTED = 'Unlisted';
 }
 
 export class LocationConfig {

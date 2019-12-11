@@ -39,7 +39,7 @@ import { Map } from '@app/app/telemetryutil';
 import { ConfirmAlertComponent } from '@app/app/components';
 import { AppGlobalService } from '@app/services/app-global-service.service';
 import { AppHeaderService } from '@app/services/app-header.service';
-import { ContentConstants, EventTopics, XwalkConstants, RouterLinks } from '@app/app/app.constant';
+import { ContentConstants, EventTopics, XwalkConstants, RouterLinks, ContentFilterConfig } from '@app/app/app.constant';
 import { CourseUtilService } from '@app/services/course-util.service';
 import { UtilityService } from '@app/services/utility-service';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
@@ -144,6 +144,8 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
 
   // Newly Added 
   resumedCourseCardData: any;
+  hideDownloadShare = false;
+
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
@@ -207,6 +209,8 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
       this.resumedCourseCardData = extras.resumedCourseCardData;
       this.isSingleContent = extras.isSingleContent;
       this.resultLength = extras.resultsSize;
+      this.hideDownloadShare = (this.cardData.contentData &&
+        this.cardData.contentData.status === ContentFilterConfig.CONTENT_STATUS_UNLISTED);
     }
   }
 
@@ -490,7 +494,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
     values['isUpdateAvailable'] = this.isUpdateAvail;
     values['isDownloaded'] = this.contentDownloadable[this.content.identifier];
     values['autoAfterDownload'] = this.downloadAndPlay ? true : false;
-    
+
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.OTHER,
       ImpressionType.DETAIL,
       Environment.HOME,
