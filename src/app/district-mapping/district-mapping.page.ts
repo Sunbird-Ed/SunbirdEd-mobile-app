@@ -439,6 +439,13 @@ export class DistrictMappingPage implements OnInit {
       });
   }
 
+  isValid(input: string, objects: any[], key: 'code' | 'name'): boolean {
+    if (!objects) {
+      return false;
+    }
+    return !!objects.find(o => o[key] === input);
+  }
+
   resetDistrictCode() {
     this.districtCode = '';
   }
