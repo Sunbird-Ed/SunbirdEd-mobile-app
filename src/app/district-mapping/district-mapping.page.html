@@ -1,6 +1,6 @@
 <ion-content class="ion-padding">
   <div>
-    <ion-icon *ngIf="isShowBackButton" ios="ios-arrow-back" md="md-arrow-back" (click)="goBack()"
+    <ion-icon *ngIf="isShowBackButton" ios="ios-arrow-back" md="md-arrow-back" (click)="goBack(true)"
       class="top-back-button"></ion-icon>
     <button class="pull-right sb-btn-sm sb-btn-outline-info" (click)="skipLocation()"
       *ngIf="showNotNowFlag">{{'NOT_NOW'| translate}}</button>
