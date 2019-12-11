@@ -47,13 +47,8 @@
 
   <div style="display:none">{{!(isKeyboardShown$ | async)}}</div>
 </ion-content>
-<div class="footer" *ngIf="!(isKeyboardShown$ | async) && !isPopulatedLocationChanged">
-  <button class="block-button" [disabled]="!availableLocationState || !availableLocationDistrict || !districtName"
-    [ngClass]=" !availableLocationState || !availableLocationDistrict || !districtName ? 'disabled-button': ''"
-    (click)="submit()">{{'BTN_SUBMIT' | translate}}</button>
-</div>
-<div class="footer" *ngIf="!(isKeyboardShown$ | async) && isLocationChanged">
-  <button class="block-button" [disabled]="!stateCode || !districtCode "
-    [ngClass]="!stateCode || !districtCode ? 'disabled-button': ''"
+<div class="footer" *ngIf="!(isKeyboardShown$ | async)">
+  <button class="block-button" [disabled]="!isValid(stateName, stateList, 'name') || !isValid(districtName, districtList, 'name')"
+    [ngClass]="!isValid(stateName, stateList, 'name') || !isValid(districtName, districtList, 'name') ? 'disabled-button': ''"
     (click)="submit()">{{'BTN_SUBMIT' | translate}}</button>
 </div>
