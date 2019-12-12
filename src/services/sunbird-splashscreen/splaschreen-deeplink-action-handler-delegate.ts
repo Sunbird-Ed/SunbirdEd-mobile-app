@@ -111,6 +111,9 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
                   this.commonUtilService.showToast('INTERNET_CONNECTIVITY_NEEDED');
                   return false;
               }
+              if (content.contentData && content.contentData.status === 'Unlisted' && !this.appGlobalServices.isUserLoggedIn()) {
+                await this.preferences.putString(PreferenceKey.LIMITED_CONTENT_SHARING, JSON.stringify(action)).toPromise();
+              }
               this.router.navigate([RouterLinks.CONTENT_DETAILS], { state: { content } });
             }
           }).mapTo(undefined) as any;

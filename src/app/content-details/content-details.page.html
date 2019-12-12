@@ -26,7 +26,7 @@
               </div>
             </div>
           </div>
-          <div class="sb-common-player-group sb-play-title-group" (click)="showSwitchUserAlert(false)">
+          <div class="sb-common-player-group sb-play-title-group" (click)="checkLoginForLimitedSharing(false)" >
             <button fill="clear" icon-only class="sb-common-title">
               <img src="assets/imgs/play_circle.svg" alt="play-circle">
             </button>
@@ -59,7 +59,7 @@
             </div>
 
           </div>
-          <div class="sb-common-player-group sb-play-title-group" (click)="showSwitchUserAlert(true)">
+          <div class="sb-common-player-group sb-play-title-group" (click)="checkLoginForLimitedSharing(true)">
             <button fill="clear" icon-only class="sb-common-title">
               <img src="assets/imgs/play_circle.svg" alt="play-circle">
             </button>
@@ -124,7 +124,7 @@
               </div>
             </div>
           </div>
-          <div class="sb-common-player-group sb-play-title-group" (click)="showSwitchUserAlert(false)">
+          <div class="sb-common-player-group sb-play-title-group" (click)="checkLoginForLimitedSharing(false)">
             <button class="sb-common-title">
               <img src="assets/imgs/play_circle.svg" alt="play-circle">
             </button>
@@ -161,7 +161,7 @@
 
         </div>
 
-        <div class="sb-common-player-group sb-play-title-group" (click)="showSwitchUserAlert(false)">
+        <div class="sb-common-player-group sb-play-title-group" (click)="checkLoginForLimitedSharing(false)">
           <button fill="clear" icon-only class="sb-common-title">
             <img src="assets/imgs/play_circle.svg" alt="play-circle">
           </button>
@@ -191,7 +191,7 @@
       <div class="sb-dt-card-actions">
 
         <div class="sb-btn-tile-group">
-          <div *ngIf="content && !appGlobalService?.CONTENT_STREAMING_ENABLED && !this.hideDownloadShare">
+          <div *ngIf="content && !appGlobalService?.CONTENT_STREAMING_ENABLED && !this.limitedShareContentFlag">
             <button *ngIf="!contentDownloadable[content?.identifier]" (click)="openConfirmPopUp()"
               [disabled]="isDownloadStarted" fill="clear" icon-only class="sb-btn-tile">
               <ion-icon ios="ios-cloud-download" md="md-cloud-download" class="sb-dt-card-blue-icon"></ion-icon>
@@ -202,7 +202,7 @@
             </button>
 
           </div>
-          <div *ngIf="content && appGlobalService?.CONTENT_STREAMING_ENABLED && !this.hideDownloadShare">
+          <div *ngIf="content && appGlobalService?.CONTENT_STREAMING_ENABLED && !this.limitedShareContentFlag">
             <div *ngIf="!content?.contentData?.streamingUrl">
               <button *ngIf="!contentDownloadable[content?.identifier]" (click)="openConfirmPopUp()"
                 [disabled]="isDownloadStarted" fill="clear" icon-only class="sb-btn-tile">
@@ -230,7 +230,7 @@
             <ion-icon ios="ios-trash" md="md-trash" class="sb-dt-card-danger-icon"></ion-icon>
             <span class="sb-btn-footer-text">{{'DELETE' | translate}}</span>
           </button>
-          <button (click)="share()" class="sb-btn-tile" *ngIf="!this.hideDownloadShare">
+          <button (click)="share()" class="sb-btn-tile" *ngIf="!this.limitedShareContentFlag">
             <ion-icon ios="ios-share" md="md-share" class="sb-dt-card-blue-icon"></ion-icon>
             <span class="sb-btn-footer-text">{{'SHARE' | translate}}</span>
           </button>

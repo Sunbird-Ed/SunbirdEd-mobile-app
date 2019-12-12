@@ -555,6 +555,7 @@
   "TRAINING": "Training",
   "TRAININGS_ATTENDED": "Training(s) Attended",
   "TRAININGS_ONLY_REGISTERED_USERS": "Trainings are only for registered users",
+  "CONTENTS_ONLY_REGISTERED_USERS": "Contents are only for registered users",
   "TRAINING_COMPLETED_SUCCESSFULLY": "You have successfully completed this training",
   "TRAINING_DERIVED_FROM": "This training is derived from",
   "TRAINING_DETAILS": "Training Details",
@@ -632,5 +633,6 @@
   "YOUR_PROGRESS_LABEL": "Your Progress",
   "YOU_ARE_NOT_CONNECTED_TO_THE_INTERNET": "You are not connected to the Internet",
   "YOU_MUST_JOIN_AN_ACTIVE_BATCH": "You must join an active batch to view and access training details",
-  "YOU_MUST_JOIN_TO_ACCESS_TRAINING_DETAIL": "You must log in to access training details"
+  "YOU_MUST_JOIN_TO_ACCESS_TRAINING_DETAIL": "You must log in to access training details",
+  "YOU_MUST_LOGIN_TO_ACCESS_CONTENT_DETAIL": "You must log in to access content details"
 }

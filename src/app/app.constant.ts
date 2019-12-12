@@ -215,6 +215,7 @@ export class PreferenceKey {
     public static readonly SUBSCRIBE_TOPICS = 'subscribe_topics';
     public static readonly SHOW_EXTERNAL_VERIFICATION = 'show_external_verification';
     public static readonly CURRENT_USER_PROFILE = 'current_user_profile';
+    public static readonly LIMITED_CONTENT_SHARING = 'limited_content_sharing';
 }
 
 export class GenericAppConfig {

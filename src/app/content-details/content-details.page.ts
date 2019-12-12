@@ -39,7 +39,7 @@ import { Map } from '@app/app/telemetryutil';
 import { ConfirmAlertComponent } from '@app/app/components';
 import { AppGlobalService } from '@app/services/app-global-service.service';
 import { AppHeaderService } from '@app/services/app-header.service';
-import { ContentConstants, EventTopics, XwalkConstants, RouterLinks, ContentFilterConfig } from '@app/app/app.constant';
+import { ContentConstants, EventTopics, XwalkConstants, RouterLinks, ContentFilterConfig, PreferenceKey } from '@app/app/app.constant';
 import { CourseUtilService } from '@app/services/course-util.service';
 import { UtilityService } from '@app/services/utility-service';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
@@ -63,6 +63,8 @@ import { ContentPlayerHandler } from '@app/services/content/player/content-playe
 import { ChildContentHandler } from '@app/services/content/child-content-handler';
 import { ContentDeleteHandler } from '@app/services/content/content-delete-handler';
 import { ContentUtil } from '@app/util/content-util';
+import { SbPopoverComponent } from '../components/popups/sb-popover/sb-popover.component';
+import { LoginHandlerService } from '@app/services/login-handler.service';
 
 @Component({
   selector: 'app-content-details',
@@ -144,7 +146,8 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
 
   // Newly Added 
   resumedCourseCardData: any;
-  hideDownloadShare = false;
+  limitedShareContentFlag = false;
+  isLoginPromptOpen = false;
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -177,6 +180,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
     private contentPlayerHandler: ContentPlayerHandler,
     private childContentHandler: ChildContentHandler,
     private contentDeleteHandler: ContentDeleteHandler,
+    private loginHandlerService: LoginHandlerService,
   ) {
     this.subscribePlayEvent();
     this.checkDeviceAPILevel();
@@ -209,8 +213,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
       this.resumedCourseCardData = extras.resumedCourseCardData;
       this.isSingleContent = extras.isSingleContent;
       this.resultLength = extras.resultsSize;
-      this.hideDownloadShare = (this.cardData.contentData &&
-        this.cardData.contentData.status === ContentFilterConfig.CONTENT_STATUS_UNLISTED);
+      this.checkLimitedContentSharingFlag(extras.content);
     }
   }
 
@@ -238,7 +241,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
     });
   }
 
-  ngOnDestroy(){
+  ngOnDestroy() {
     this.events.unsubscribe(EventTopics.PLAYER_CLOSED);
   }
 
@@ -406,6 +409,8 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
     }
 
     this.content = data;
+    this.checkLimitedContentSharingFlag(data);
+
     this.licenseDetails = data.contentData.licenseDetails || this.licenseDetails;
     this.contentDownloadable[this.content.identifier] = data.isAvailableLocally;
     if (this.content.lastUpdatedTime !== 0) {
@@ -795,6 +800,20 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
       });
   }
 
+  checkLoginForLimitedSharing(switchUserFlag) {
+    if (this.limitedShareContentFlag && !this.appGlobalService.isUserLoggedIn()) {
+      this.checkLimitedShareContent();
+    } else {
+      this.showSwitchUserAlert(switchUserFlag);
+    }
+  }
+
+  checkLimitedShareContent() {
+    if (!this.appGlobalService.isUserLoggedIn()) {
+      this.promptToLogin();
+    }
+  }
+
   /**
    * alert for playing the content
    */
@@ -1058,4 +1077,41 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
       this.isCourse = true;
     }
   }
+
+  async promptToLogin() {
+    if (this.isLoginPromptOpen) { return; }
+    this.isLoginPromptOpen = true;
+    const confirm = await this.popoverCtrl.create({
+      component: SbPopoverComponent,
+      componentProps: {
+        sbPopoverMainTitle: this.commonUtilService.translateMessage('YOU_MUST_LOGIN_TO_ACCESS_CONTENT_DETAIL'),
+        metaInfo: this.commonUtilService.translateMessage('CONTENTS_ONLY_REGISTERED_USERS'),
+        sbPopoverHeading: this.commonUtilService.translateMessage('OVERLAY_SIGN_IN'),
+        isNotShowCloseIcon: true,
+        actionsButtons: [
+          {
+            btntext: this.commonUtilService.translateMessage('OVERLAY_SIGN_IN'),
+            btnClass: 'popover-color'
+          },
+        ]
+      },
+      cssClass: 'sb-popover info',
+    });
+    await confirm.present();
+
+    const { data } = await confirm.onDidDismiss();
+    if (data && data.canDelete) {
+      this.loginHandlerService.signIn();
+    }
+    this.isLoginPromptOpen = false;
+  }
+
+  checkLimitedContentSharingFlag(content) {
+    this.limitedShareContentFlag = (content.contentData &&
+      content.contentData.status === ContentFilterConfig.CONTENT_STATUS_UNLISTED);
+    if (this.limitedShareContentFlag) {
+      this.checkLimitedShareContent();
+    }
+  }
+
 }
