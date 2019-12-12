@@ -761,7 +761,7 @@ export class QrcoderesultPage implements OnDestroy {
     this.telemetryGeneratorService.generateBackClickedTelemetry(
       PageId.DIAL_CODE_SCAN_RESULT, Environment.HOME,
       true, this.content.identifier, this.corRelationList);
-    if (this.isQrCodeLinkToContent === 0) {
+    if (this.isQrCodeLinkToContent) {
       window.history.go(-2);
     } else {
       this.location.back();
