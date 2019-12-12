@@ -629,8 +629,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
   }
 
   openinBrowser(url) {
-    const options = 'hardwareback=yes,clearcache=no,zoom=no,toolbar=yes,disallowoverscroll=yes';
-    (window as any).cordova.InAppBrowser.open(url, '_blank', options);
+    this.commonUtilService.openUrlInBrowser(url);
   }
 
   /**
