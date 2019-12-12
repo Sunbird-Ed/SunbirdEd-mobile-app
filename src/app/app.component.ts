@@ -4,8 +4,6 @@ import { AfterViewInit, Component, Inject, NgZone, OnInit, EventEmitter, ViewChi
 import { Events, Platform, IonRouterOutlet, MenuController } from '@ionic/angular';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { TranslateService } from '@ngx-translate/core';
-import { Observable } from 'rxjs';
-import { tap, combineLatest, mergeMap } from 'rxjs/operators';
 import { Network } from '@ionic-native/network/ngx';
 
 import {
@@ -39,7 +37,7 @@ import { NotificationService as localNotification } from '@app/services/notifica
 import { RouterLinks } from './app.constant';
 import { TncUpdateHandlerService } from '@app/services/handlers/tnc-update-handler.service';
 import { NetworkAvailabilityToastService } from '@app/services/network-availability-toast/network-availability-toast.service';
-import {defer, from, Observable, of, throwError, zip, combineLatest} from 'rxjs';
+import {Observable, combineLatest} from 'rxjs';
 import { mergeMap, filter, take, tap} from 'rxjs/operators';
 @Component({
   selector: 'app-root',
