@@ -1,4 +1,4 @@
-import { Subscription } from 'rxjs//Subscription';
+import { Subscription } from 'rxjs';
 import { Component, Inject, ViewChild, ChangeDetectorRef } from '@angular/core';
 import { Events, IonSelect, Platform } from '@ionic/angular';
 import { FormBuilder, FormGroup } from '@angular/forms';

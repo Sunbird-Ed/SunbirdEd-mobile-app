@@ -12,7 +12,7 @@ import { AppHeaderService } from '../../services/app-header.service';
 import * as dayjs from 'dayjs';
 import { Location } from '@angular/common';
 import { Router } from '@angular/router';
-import { Subscription } from 'rxjs/Subscription';
+import { Subscription } from 'rxjs';
 import { SbPopoverComponent } from '../components/popups';
 import { LocalCourseService } from '@app/services/local-course.service';
 import { EnrollCourse } from '../enrolled-course-details-page/course.interface';
@@ -138,8 +138,8 @@ export class CourseBatchesPage implements OnInit {
       this.backButtonFunc.unsubscribe();
     });
   }
-  
-  goBack(){
+
+  goBack() {
     this.location.back();
   }
 

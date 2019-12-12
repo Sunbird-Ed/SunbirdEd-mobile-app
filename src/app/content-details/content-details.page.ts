@@ -10,7 +10,7 @@ import {
   ToastController,
   NavController
 } from '@ionic/angular';
-import { Subscription } from 'rxjs/Subscription';
+import { Subscription } from 'rxjs';
 import {
   AuthService,
   Content,
@@ -44,7 +44,7 @@ import { CourseUtilService } from '@app/services/course-util.service';
 import { UtilityService } from '@app/services/utility-service';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { ContentShareHandlerService } from '@app/services/content/content-share-handler.service';
-import { ContentInfo } from '@app/services/content/content-info'
+import { ContentInfo } from '@app/services/content/content-info';
 import { CommonUtilService } from '@app/services/common-util.service';
 import { DialogPopupComponent } from '@app/app/components/popups/dialog-popup/dialog-popup.component';
 import {
@@ -63,7 +63,10 @@ import { ContentPlayerHandler } from '@app/services/content/player/content-playe
 import { ChildContentHandler } from '@app/services/content/child-content-handler';
 import { ContentDeleteHandler } from '@app/services/content/content-delete-handler';
 import { ContentUtil } from '@app/util/content-util';
-
+import { FileOpener } from '@ionic-native/file-opener/ngx';
+import { File } from '@ionic-native/file/ngx';
+import { FileTransfer, FileTransferObject } from '@ionic-native/file-transfer/ngx';
+import { map } from 'rxjs/operators';
 @Component({
   selector: 'app-content-details',
   templateUrl: './content-details.page.html',
@@ -140,9 +143,10 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
   isSingleContent: boolean;
   resultLength: any;
   course: Course;
+  fileTransfer: FileTransferObject;
+  // Newly Added
   licenseDetails;
 
-  // Newly Added 
   resumedCourseCardData: any;
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -175,6 +179,9 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
     private contentPlayerHandler: ContentPlayerHandler,
     private childContentHandler: ChildContentHandler,
     private contentDeleteHandler: ContentDeleteHandler,
+    private fileOpener: FileOpener,
+    private file: File,
+    private transfer: FileTransfer
   ) {
     this.subscribePlayEvent();
     this.checkDeviceAPILevel();
@@ -234,7 +241,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
     });
   }
 
-  ngOnDestroy(){
+  ngOnDestroy() {
     this.events.unsubscribe(EventTopics.PLAYER_CLOSED);
   }
 
@@ -316,8 +323,9 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
       local: true,
       server: false
     };
-    this.profileService.getAllProfiles(profileRequest)
-      .map((profiles) => profiles.filter((profile) => !!profile.handle))
+    this.profileService.getAllProfiles(profileRequest).pipe(
+      map((profiles) => profiles.filter((profile) => !!profile.handle))
+    )
       .toPromise()
       .then((profiles) => {
         if (profiles) {
@@ -490,7 +498,6 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
     values['isUpdateAvailable'] = this.isUpdateAvail;
     values['isDownloaded'] = this.contentDownloadable[this.content.identifier];
     values['autoAfterDownload'] = this.downloadAndPlay ? true : false;
-    
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.OTHER,
       ImpressionType.DETAIL,
       Environment.HOME,
@@ -1053,5 +1060,34 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
     if (this.cardData.hierarchyInfo && this.cardData.hierarchyInfo.length && this.cardData.hierarchyInfo[0].contentType === 'course') {
       this.isCourse = true;
     }
+  }
+
+  openPDF() {
+    console.log('cordova.file.externalRootDirectory', cordova.file.externalRootDirectory + 'Download/130892_Mar18.pdf');
+
+    // For Offline Scenario
+    // this.fileOpener.open(cordova.file.externalRootDirectory + 'Download/130892_Mar18.pdf', 'application/pdf')
+    // .then(() =>
+    // console.log('File is opened')
+    // )
+    // .catch(e => console.log('Error opening file', e));
+    // Give the relevant path for your downloaded PDF
+    // const url = cordova.file.externalRootDirectory + 'Download/130892_Mar18.pdf';
+
+    // for Online Scenario
+    // sample link for the online PDF
+    const url = 'https://www.antennahouse.com/XSLsample/pdf/sample-link_1.pdf';
+    const browser: any = this.commonUtilService.openLink(url);
+    browser.on('exit');
+    this.fileTransfer = this.transfer.create();
+    this.fileTransfer
+      .download(url, this.file.dataDirectory + 'sample' + '.pdf')
+      .then(entry => {
+        console.log('download complete: ' + entry.toURL());
+        this.fileOpener
+          .open(entry.toURL(), 'application/pdf')
+          .then(() => console.log('File opened'))
+          .catch(e => console.log('Error opening file', e));
+      });
   }
 }

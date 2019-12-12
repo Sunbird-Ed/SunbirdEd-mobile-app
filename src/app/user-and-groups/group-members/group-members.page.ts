@@ -22,8 +22,9 @@ import {
 import { NavigationExtras, ActivatedRoute, Router } from '@angular/router';
 import { Location } from '@angular/common';
 import { Platform } from '@ionic/angular';
-import { Subscription } from 'rxjs//Subscription';
+import { Subscription } from 'rxjs';
 import { RouterLinks } from '@app/app/app.constant';
+import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-group-members',
@@ -86,9 +87,9 @@ export class GroupMembersPage implements OnInit {
       const req: GetAllProfileRequest = {
         local: true
       };
-      this.profileService.getAllProfiles(req)
-        .map((profiles) => profiles.filter((profile) => !!profile.handle))
-        .toPromise().then((lastCreatedProfile: any) => {
+      this.profileService.getAllProfiles(req).pipe(
+        map((profiles) => profiles.filter((profile) => !!profile.handle))
+      ).toPromise().then((lastCreatedProfile: any) => {
           this.lastCreatedProfileData = lastCreatedProfile;
           resolve(lastCreatedProfile);
         }).catch(() => {
@@ -103,9 +104,9 @@ export class GroupMembersPage implements OnInit {
     };
 
     this.zone.run(() => {
-      this.profileService.getAllProfiles(profileRequest)
-        .map((profiles) => profiles.filter((profile) => !!profile.handle))
-        .toPromise().then(async (profiles) => {
+      this.profileService.getAllProfiles(profileRequest).pipe(
+        map((profiles) => profiles.filter((profile) => !!profile.handle))
+        ).toPromise().then(async (profiles) => {
           const loader = await this.commonUtilService.getLoader();
           await loader.present();
           this.zone.run(async () => {

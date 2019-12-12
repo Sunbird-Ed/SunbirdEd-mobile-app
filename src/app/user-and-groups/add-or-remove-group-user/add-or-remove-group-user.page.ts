@@ -21,6 +21,7 @@ import {
   Environment, InteractSubtype, InteractType, PageId
 } from 'services/telemetry-constants';
 import { SbGenericPopoverComponent } from 'app/components/popups/sb-generic-popover/sb-generic-popover.component';
+import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-add-or-remove-group-user',
@@ -76,8 +77,9 @@ export class AddOrRemoveGroupUserPage {
       local: true
     };
 
-    this.profileService.getAllProfiles(req)
-      .map((profiles) => profiles.filter((profile) => !!profile.handle))
+    this.profileService.getAllProfiles(req).pipe(
+      map((profiles) => profiles.filter((profile) => !!profile.handle))
+    )
       .subscribe((profiles) => {
         this.allUsers = profiles;
         const uniqueUserList = this.allUsers.filter(e => {

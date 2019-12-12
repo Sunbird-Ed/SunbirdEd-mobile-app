@@ -18,7 +18,7 @@ import { DatePipe } from '@angular/common';
 import { DeviceInfo, Profile, ReportSummary, SummarizerService, SummaryRequest } from 'sunbird-sdk';
 import { FileTransfer, FileTransferObject } from '@ionic-native/file-transfer/ngx';
 import { Router } from '@angular/router';
-import { Subscription } from 'rxjs/Subscription';
+import { Subscription } from 'rxjs';
 import { Location } from '@angular/common';
 
 @Component({

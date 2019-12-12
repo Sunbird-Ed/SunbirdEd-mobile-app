@@ -6,7 +6,7 @@ import { animate, group, state, style, transition, trigger } from '@angular/anim
 import { TranslateService } from '@ngx-translate/core';
 import has from 'lodash/has';
 import forEach from 'lodash/forEach';
-import { Subscription } from 'rxjs/Subscription';
+import { Subscription } from 'rxjs';
 import { Network } from '@ionic-native/network/ngx';
 import {
   CategoryTerm,

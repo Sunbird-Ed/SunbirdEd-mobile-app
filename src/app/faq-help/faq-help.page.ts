@@ -23,9 +23,8 @@ import { PreferenceKey, appLanguages, RouterLinks } from '../app.constant';
 import { SocialSharing } from '@ionic-native/social-sharing/ngx';
 import { Location } from '@angular/common';
 import { AppVersion } from '@ionic-native/app-version/ngx';
-import { Subscription } from 'rxjs/Subscription';
 import { TranslateService } from '@ngx-translate/core';
-import { Observable } from 'rxjs-compat';
+import { Observable, Subscription } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 

@@ -8,7 +8,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { Location as loc } from '../../app.constant';
 import { LocationSearchCriteria, ProfileService } from 'sunbird-sdk';
 import { Location } from '@angular/common';
-import { Subject } from 'rxjs/Subject';
+import { Subject } from 'rxjs';
 
 @Component({
   selector: 'app-personal-details-edit',

@@ -16,6 +16,7 @@ import { AppGlobalService } from '@app/services/app-global-service.service';
 import { CommonUtilService } from '@app/services/common-util.service';
 import { SocialSharing } from '@ionic-native/social-sharing/ngx';
 import { AppVersion } from '@ionic-native/app-version/ngx';
+import { map } from 'rxjs/operators';
 
 const KEY_SUNBIRD_CONFIG_FILE_PATH = 'sunbird_config_file_path';
 const SUBJECT_NAME = 'support request';
@@ -100,9 +101,14 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
       contentTypes: ContentType.FOR_DOWNLOADED_TAB,
       audience: AudienceFilter.GUEST_TEACHER
     };
-    const getUserCount = await this.profileService.getAllProfiles(allUserProfileRequest).map((profile) => profile.length).toPromise();
-    const getLocalContentCount = await this.contentService.getContents(contentRequest)
-      .map((contentCount) => contentCount.length).toPromise();
+    const getUserCount = await this.profileService.getAllProfiles(allUserProfileRequest).pipe(
+      map((profile) => profile.length)
+    )
+    .toPromise();
+    const getLocalContentCount = await this.contentService.getContents(contentRequest).pipe(
+      map((contentCount) => contentCount.length)
+    )
+    .toPromise();
     (<any>window).supportfile.shareSunbirdConfigurations(getUserCount, getLocalContentCount, async (result) => {
       const loader = await this.commonUtilService.getLoader();
       await loader.present();

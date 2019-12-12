@@ -30,7 +30,8 @@ import { Router, NavigationExtras } from '@angular/router';
 import { EditDeletePopoverComponent } from './edit-delete-popover/edit-delete-popover.component';
 import { SbGenericPopoverComponent } from '../components/popups/sb-generic-popover/sb-generic-popover.component';
 import { initTabs, GUEST_STUDENT_TABS, GUEST_STUDENT_SWITCH_TABS, GUEST_TEACHER_TABS, GUEST_TEACHER_SWITCH_TABS } from '../module.service';
-import { Subscription } from 'rxjs/Subscription';
+import { Subscription } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 
 
@@ -198,9 +199,9 @@ export class UserAndGroupsPage implements OnInit {
     this.loadingUserList = true;
     setTimeout(() => {
       this.zone.run(() => {
-        this.profileService.getAllProfiles(profileRequest)
-          .map((profiles) => profiles.filter((profile) => !!profile.handle))
-          .subscribe(async (profiles) => {
+        this.profileService.getAllProfiles(profileRequest).pipe(
+          map((profiles) => profiles.filter((profile) => !!profile.handle))
+           ).subscribe(async (profiles) => {
             const profileList: Array<Profile> = profiles;
             if (profileList && profileList.length) {
               this.userList = [...profileList].sort((prev: Profile, next: Profile) => {
@@ -305,10 +306,10 @@ export class UserAndGroupsPage implements OnInit {
       }
     };
     this.telemetryGeneratorService.generateInteractTelemetry(
-        InteractType.TOUCH,
-        InteractSubtype.SHARE_CLICKED,
-        Environment.USER,
-        PageId.USERS_GROUPS
+      InteractType.TOUCH,
+      InteractSubtype.SHARE_CLICKED,
+      Environment.USER,
+      PageId.USERS_GROUPS
     );
     this.router.navigate([`/${RouterLinks.USER_AND_GROUPS}/${RouterLinks.SHARE_USER_AND_GROUPS}`], navigationExtras);
   }
@@ -368,12 +369,12 @@ export class UserAndGroupsPage implements OnInit {
     values.uid = this.currentUserId;
     values.userName = this.selectedUsername;
     this.telemetryGeneratorService.generateInteractTelemetry(
-        InteractType.TOUCH,
-        InteractSubtype.USER_CLICKED,
-        Environment.USER,
-        PageId.USERS_GROUPS,
-        undefined,
-        values
+      InteractType.TOUCH,
+      InteractSubtype.USER_CLICKED,
+      Environment.USER,
+      PageId.USERS_GROUPS,
+      undefined,
+      values
     );
   }
 
@@ -474,14 +475,15 @@ export class UserAndGroupsPage implements OnInit {
   // method below fetches the last created user
   getLastCreatedProfile() {
     return new Promise((resolve, reject) => {
-      this.profileService.getAllProfiles()
-        .map((profiles) => (profiles.sort((p1, p2) => p2.createdAt - p1.createdAt))[0])
-        .toPromise().then((lastCreatedProfile: any) => {
-          this.lastCreatedProfileData = lastCreatedProfile;
-          resolve(lastCreatedProfile);
-        }).catch(() => {
-          reject(null);
-        });
+      this.profileService.getAllProfiles().pipe(
+        map((profiles) => (profiles.sort((p1, p2) => p2.createdAt - p1.createdAt))[0])
+      )
+      .toPromise().then((lastCreatedProfile: any) => {
+        this.lastCreatedProfileData = lastCreatedProfile;
+        resolve(lastCreatedProfile);
+      }).catch(() => {
+        reject(null);
+      });
     });
   }
 
@@ -713,13 +715,13 @@ export class UserAndGroupsPage implements OnInit {
   handleHeaderEvents($event) {
     switch ($event.name) {
       case 'share': this.goToSharePage();
-                    break;
+        break;
     }
   }
 
   goBack() {
     this.telemetryGeneratorService.generateBackClickedTelemetry(
-      PageId.USERS_GROUPS, Environment.USER, true, 
+      PageId.USERS_GROUPS, Environment.USER, true,
     );
     this.location.back();
   }

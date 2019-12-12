@@ -41,7 +41,8 @@ import { GUEST_STUDENT_TABS, GUEST_TEACHER_TABS, initTabs } from '@app/app/modul
 import { PreferenceKey, RouterLinks } from '@app/app/app.constant';
 import { SbGenericPopoverComponent } from '@app/app/components/popups/sb-generic-popover/sb-generic-popover.component';
 import { Location } from '@angular/common';
-import { Observable } from 'rxjs';
+import { Observable, merge } from 'rxjs';
+import { tap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-guest-edit',
@@ -194,13 +195,16 @@ export class GuestEditPage implements OnInit {
       console.log(this.guestEditForm.getRawValue());
     }
 
-    this.formOnChange$ = Observable.merge(
-      this.guestEditForm.get('syllabus').valueChanges
-        .do(() => this.resetForm(0, true)),
-      this.guestEditForm.get('medium').valueChanges
-        .do(() => this.resetForm(2, true)),
-      this.guestEditForm.get('grades').valueChanges
-        .do(() => this.resetForm(3, true)),
+    this.formOnChange$ = merge(
+      this.guestEditForm.get('syllabus').valueChanges.pipe(
+        tap(() => this.resetForm(0, true))
+      ),
+      this.guestEditForm.get('medium').valueChanges.pipe(
+        tap(() => this.resetForm(2, true))
+      ),
+      this.guestEditForm.get('grades').valueChanges.pipe(
+        tap(() => this.resetForm(3, true))
+      ),
     ).subscribe();
 
     this.previousProfileType = this.profile.profileType;

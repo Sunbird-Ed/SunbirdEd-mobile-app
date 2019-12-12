@@ -5,7 +5,7 @@ import { TelemetryGeneratorService } from '@app/services/telemetry-generator.ser
 import { PageId, InteractSubtype, ObjectType, InteractType, Environment } from '@app/services/telemetry-constants';
 import { RouterLinks } from '@app/app/app.constant';
 import { NavigationExtras, Router } from '@angular/router';
-import { Subscription } from 'rxjs/Subscription';
+import { Subscription } from 'rxjs';
 import { Location } from '@angular/common';
 
 @Component({

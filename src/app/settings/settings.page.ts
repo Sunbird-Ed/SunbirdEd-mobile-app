@@ -21,9 +21,10 @@ import { Router, NavigationExtras } from '@angular/router';
 import { SbPopoverComponent } from '@app/app/components/popups';
 import { PopoverController, ToastController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
-import { Observable, Subscription } from 'rxjs';
 import { Location } from '@angular/common';
 import { Platform } from '@ionic/angular';
+import { Observable, Subscription } from 'rxjs';
+import { map, mergeMap, catchError, finalize, tap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-settings',
@@ -62,11 +63,13 @@ export class SettingsPage implements OnInit {
     private platform: Platform,
     private location: Location
   ) {
-    this.isUserLoggedIn$ = this.authService.getSession()
-      .map((session) => !!session) as any;
+    this.isUserLoggedIn$ = this.authService.getSession().pipe(
+      map((session) => !!session)
+    );
 
-    this.isNotDefaultChannelProfile$ = this.profileService.isDefaultChannelProfile()
-      .map((isDefaultChannelProfile) => !isDefaultChannelProfile) as any;
+    this.isNotDefaultChannelProfile$ = this.profileService.isDefaultChannelProfile().pipe(
+      map((isDefaultChannelProfile) => !isDefaultChannelProfile)
+    );
   }
 
   ionViewWillEnter() {
@@ -219,88 +222,88 @@ export class SettingsPage implements OnInit {
       return;
     }
 
-    this.authService.getSession()
-        .map((session) => session!)
-        .mergeMap(async (mergeToProfileSession) => {
-          const mergeFromProfileSessionProvider = new WebviewManualMergeSessionProvider(
-              webviewMergeSessionProviderConfig
-          );
-          const mergeFromProfileSession = await mergeFromProfileSessionProvider.provide();
+    this.authService.getSession().pipe(
+      map((session) => session!),
+      mergeMap(async (mergeToProfileSession) => {
+        const mergeFromProfileSessionProvider = new WebviewManualMergeSessionProvider(
+            webviewMergeSessionProviderConfig
+        );
+        const mergeFromProfileSession = await mergeFromProfileSessionProvider.provide();
 
-          return {
-            from: {
-              userId: mergeFromProfileSession.userToken,
-              accessToken: mergeFromProfileSession.access_token
-            },
-            to: {
-              userId: mergeToProfileSession.userToken,
-              accessToken: mergeToProfileSession.access_token
-            }
-          } as MergeServerProfilesRequest;
-        })
-        .do(async () => {
-          loader = await (this.commonUtilService.getLoader() as Promise<any>);
-          loader.present();
-        })
-        .mergeMap((mergeServerProfilesRequest) => {
-          return this.profileService.mergeServerProfiles(mergeServerProfilesRequest);
-        })
-        .catch(async (e) => {
-          console.error(e);
-
-          if (e instanceof Error && e['code'] === 'INTERRUPT_ERROR') {
-            throw e;
+        return {
+          from: {
+            userId: mergeFromProfileSession.userToken,
+            accessToken: mergeFromProfileSession.access_token
+          },
+          to: {
+            userId: mergeToProfileSession.userToken,
+            accessToken: mergeToProfileSession.access_token
           }
+        } as MergeServerProfilesRequest;
+      }),
+      tap(async () => {
+        loader = await (this.commonUtilService.getLoader() as Promise<any>);
+        loader.present();
+      }),
+      mergeMap((mergeServerProfilesRequest) => {
+        return this.profileService.mergeServerProfiles(mergeServerProfilesRequest);
+      }),
+      catchError(async (e) => {
+        console.error(e);
 
-          this.telemetryGeneratorService.generateInteractTelemetry(
-              InteractType.OTHER,
-              InteractSubtype.MERGE_ACCOUNT_FAILED,
-              Environment.SETTINGS,
-              PageId.SETTINGS
-          );
-
-          const toast = await this.toastCtrl.create({
-            message: await this.translate.get('ACCOUNT_MERGE_FAILED').toPromise(),
-            duration: 2000,
-            position: 'bottom'
-          });
-
-          await toast.present();
-
+        if (e instanceof Error && e['code'] === 'INTERRUPT_ERROR') {
           throw e;
-        })
-        .do(async () => {
-          this.telemetryGeneratorService.generateInteractTelemetry(
-              InteractType.OTHER,
-              InteractSubtype.MERGE_ACCOUNT_SUCCESS,
-              Environment.SETTINGS,
-              PageId.SETTINGS
-          );
+        }
 
-          const successPopover = await this.popoverCtrl.create({
-            component: SbPopoverComponent,
-            componentProps: {
-              sbPopoverHeading: this.commonUtilService.translateMessage('ACCOUNT_MERGE_SUCCESS_POPOVER_HEADING'),
-              icon: null,
-              actionsButtons: [
-                {
-                  btntext: this.commonUtilService.translateMessage('OKAY'),
-                  btnClass: 'sb-btn sb-btn-sm  sb-btn-outline-info'
-                },
-              ],
-              sbPopoverContent: this.commonUtilService.translateMessage('ACCOUNT_MERGE_SUCCESS_POPOVER_CONTENT'),
-            },
-            cssClass: 'sb-popover'
-          });
+        this.telemetryGeneratorService.generateInteractTelemetry(
+            InteractType.OTHER,
+            InteractSubtype.MERGE_ACCOUNT_FAILED,
+            Environment.SETTINGS,
+            PageId.SETTINGS
+        );
 
-          await successPopover.present();
-        })
-        .finally(() => {
-          if (loader) {
-            loader.dismiss();
-          }
-        })
-        .subscribe();
+        const toast = await this.toastCtrl.create({
+          message: await this.translate.get('ACCOUNT_MERGE_FAILED').toPromise(),
+          duration: 2000,
+          position: 'bottom'
+        });
+
+        await toast.present();
+
+        throw e;
+      }),
+      tap(async () => {
+        this.telemetryGeneratorService.generateInteractTelemetry(
+            InteractType.OTHER,
+            InteractSubtype.MERGE_ACCOUNT_SUCCESS,
+            Environment.SETTINGS,
+            PageId.SETTINGS
+        );
+
+        const successPopover = await this.popoverCtrl.create({
+          component: SbPopoverComponent,
+          componentProps: {
+            sbPopoverHeading: this.commonUtilService.translateMessage('ACCOUNT_MERGE_SUCCESS_POPOVER_HEADING'),
+            icon: null,
+            actionsButtons: [
+              {
+                btntext: this.commonUtilService.translateMessage('OKAY'),
+                btnClass: 'sb-btn sb-btn-sm  sb-btn-outline-info'
+              },
+            ],
+            sbPopoverContent: this.commonUtilService.translateMessage('ACCOUNT_MERGE_SUCCESS_POPOVER_CONTENT'),
+          },
+          cssClass: 'sb-popover'
+        });
+
+        await successPopover.present();
+      }),
+      finalize(() => {
+        if (loader) {
+          loader.dismiss();
+        }
+      })
+    ).subscribe();
   }
   handleBackButton() {
     this.backButtonFunc = this.platform.backButton.subscribeWithPriority(10, () => {

@@ -1,6 +1,6 @@
 import { Component , ViewEncapsulation  } from '@angular/core';
 import { NavParams, PopoverController, Platform } from '@ionic/angular';
-import { Subscription } from 'rxjs/Subscription';
+import { Subscription } from 'rxjs';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import {
   Environment, InteractSubtype, InteractType, PageId
@@ -32,9 +32,9 @@ export class FilteroptionComponent {
   confirm() {
     const values = new Map();
     values['option'] = this.facets.name;
-    const appliedFilter = []  
+    const appliedFilter = [];
     this.facets.values.map((element) => {
-       if(element.apply){
+       if (element.apply) {
           appliedFilter.push(element.name);
        }
     });
