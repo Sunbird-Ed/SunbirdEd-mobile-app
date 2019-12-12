@@ -17,6 +17,7 @@ import { NavigationExtras, Router } from '@angular/router';
 import { NavController, Events } from '@ionic/angular';
 import { AppGlobalService } from './app-global-service.service';
 import { FormAndFrameworkUtilService } from './formandframeworkutil.service';
+import { exec } from 'child_process';
 
 declare var cordova;
 
@@ -26,6 +27,7 @@ export class QRScannerResultHandler {
   source: string;
   inAppBrowserRef: any;
   dailCodeRegExpression: RegExp;
+  scannedUrlMap: object;
 
   constructor(
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
@@ -52,7 +54,7 @@ export class QRScannerResultHandler {
   async parseDialCode(scannedData: string): Promise<string | undefined> {
     this.dailCodeRegExpression = await this.getDailCodeRegularExpression();
     const execArray = (new RegExp(this.dailCodeRegExpression)).exec(scannedData);
-
+    this.scannedUrlMap = execArray.groups;
     if (execArray && execArray.groups) {
       return execArray.groups[Object.keys(execArray.groups).find((key) => !!execArray.groups[key])];
     }
@@ -177,6 +179,7 @@ export class QRScannerResultHandler {
     values['scannedData'] = scannedData;
     values['action'] = action;
     values['compatibile'] = (action === 'OpenBrowser' || action === 'SearchResult' || action === 'ContentDetail') ? 1 : 0;
+    values['dialCodeType'] = this.scannedUrlMap['sunbird'] ? 'standard' : 'non-standard';
 
     let telemetryObject: TelemetryObject;
 
