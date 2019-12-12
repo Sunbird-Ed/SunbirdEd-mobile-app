@@ -168,7 +168,8 @@
 					<!--credits and license info-->
 					<div *ngIf="course?.author || course?.organisation || course?.license || course?.copyright">
 						<div class="hr-border-bottom"></div>
-						<div class="ion-padding">
+						<div>
+							<div class="ion-padding-start">
 							<div class="font-14 view-credits" (click)="showLicensce()">
 								<span><b>{{'CREDITS_LICENCE_INFO' | translate}}</b></span>
 								<span *ngIf="showCredits">
@@ -178,7 +179,9 @@
 									<ion-icon name="ios-arrow-down"></ion-icon>
 								</span>
 							</div>
+						</div>
 							<div *ngIf="showCredits" class="showLicensce">
+								<div class="ion-padding">
 								<div *ngIf="course?.author">
 									<ion-card-title class="font-12 subtitle-color label-margin-bottom">
 										<b>{{'AUTHOR' | translate}}</b>:
@@ -197,12 +200,22 @@
 									</ion-card-title>
 									<p>{{mergeProperties(['attributions', 'contributors', 'creators'])}}</p>
 								</div>
-								<div *ngIf="course?.license">
+								<div *ngIf="course?.license && !licenseDetails">
 									<ion-card-title class="font-12 subtitle-color label-margin-bottom">
 										<b>{{ 'LICENSE' | translate }}</b>:
 									</ion-card-title>
 									<p>{{course?.license}}</p>
 								</div>
+								<div *ngIf="licenseDetails" class="ion-padding-bottom">
+										<ion-card-title class="font-12 subtitle-color label-margin-bottom">
+											<b>{{ 'LICENSE' | translate }}</b>:
+										</ion-card-title>
+										<div>{{licenseDetails.name}}</div>
+										<div>{{licenseDetails.description}}</div>
+										<span>{{'FOR_DETAILS' | translate}}-</span><span
+											(click)="openBrowser(licenseDetails.url)"
+											class="sb-url">{{licenseDetails.url}}</span>
+									</div>
 								<div *ngIf="course?.copyright">
 					
 									<ion-card-title class="font-12 subtitle-color label-margin-bottom">
@@ -210,11 +223,13 @@
 									</ion-card-title>
 									<p>{{course?.copyright}}{{course?.copyrightYear ? ", " + course?.copyrightYear : ""}}</p>
 								</div>
+								</div>
 								<!--training derived from section starts-->
 								<div class="origin-data" *ngIf="course?.originData">
-									<div class="font-14 view-credits">
-										<span><b>{{'TRAINING_DERIVED_FROM' | translate}}</b></span>
-									</div>
+										<div class="font-14 traning-derived-label-background ion-padding-bottom">
+												<span><b>{{'TRAINING_DERIVED_FROM' | translate}}</b></span>
+											</div>
+									<div class="ion-padding">
 									<div *ngIf="course?.originData.name">
 										<ion-card-title class="font-12 subtitle-color label-margin-bottom">
 											<b> {{'TRAINING' | translate}}</b>:
@@ -242,11 +257,12 @@
 										</ion-card-title>
 										<p>{{course?.originData.organisation[0]}}</p>
 									</div>
+									</div>
 								</div>
 								<!-- / training derived from section ends -->
-							</div>
 						</div>
 					</div>
+				</div>
 					<!--/credits and license info-->
 				</ion-card-content>
 			</ion-card>

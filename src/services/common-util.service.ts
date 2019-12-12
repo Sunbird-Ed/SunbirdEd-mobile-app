@@ -345,6 +345,11 @@ export class CommonUtilService implements OnDestroy {
         }
     }
 
+    openUrlInBrowser(url) {
+        const options = 'hardwareback=yes,clearcache=no,zoom=no,toolbar=yes,disallowoverscroll=yes';
+        (window as any).cordova.InAppBrowser.open(url, '_blank', options);
+      }
+
     fileSizeInMB(bytes) {
         if (!bytes) {
             return '0.00';
@@ -404,6 +409,7 @@ export class CommonUtilService implements OnDestroy {
         }
         return location;
     }
+
 
     getUserLocation(profile: any) {
         let userLocation = {
