@@ -157,7 +157,9 @@ export enum InteractType {
     OTHER = 'OTHER',
     SCROLL = 'SCROLL',
     LOCATION_CHANGED = 'location-changed',
-    LOCATION_UNCHANGED = 'location-unchanged'
+    LOCATION_UNCHANGED = 'location-unchanged',
+    VISIBLE = 'visible',
+    NOT_VISIBLE = 'not-visible'
 }
 
 export enum InteractSubtype {
@@ -381,7 +383,8 @@ export enum ID {
     USER_VERIFICATION_SUBMITED = 'ext-user-verify-submit',
     USER_VERIFICATION_FAILED = 'ext-user-verify-fail',
     USER_VERIFICATION_SUCCESS = 'ext-user-verify-success',
-    SUBMIT_CLICKED = 'submit-clicked'
+    SUBMIT_CLICKED = 'submit-clicked',
+    IP_BASED_LOCATION_SUGGESTION = 'ip-based-location-suggestion'
 }
 
 export enum ActionButtonType {
