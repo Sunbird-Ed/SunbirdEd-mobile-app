@@ -2,7 +2,7 @@ import { Component, OnInit, Inject } from '@angular/core';
 import { Platform, Events } from '@ionic/angular';
 import { Location } from '@angular/common';
 import { NotificationService, NotificationStatus } from 'sunbird-sdk';
-import { Subscription } from 'rxjs/Subscription';
+import { Subscription } from 'rxjs';
 
 import { AppHeaderService } from '@app/services/app-header.service';
 import { CommonUtilService } from '@app/services/common-util.service';

@@ -23,7 +23,7 @@ import {
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { ProfileConstants, RouterLinks } from '@app/app/app.constant';
 import { Location } from '@angular/common';
-import { Subscription } from 'rxjs/Subscription';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-reports',

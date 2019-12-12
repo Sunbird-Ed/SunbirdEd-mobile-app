@@ -20,8 +20,9 @@ import {
   AppHeaderService,
   CommonUtilService
 } from '../../../services';
-import { Subscription } from 'rxjs/Subscription';
+import { Subscription } from 'rxjs';
 import { Location } from '@angular/common';
+import { map } from 'rxjs/operators';
 
 declare const cordova;
 @Component({
@@ -87,9 +88,10 @@ export class ShareUserAndGroupsPage implements OnInit, OnDestroy {
     const profileRequest: GetAllProfileRequest = {
       local: true
     };
-    this.profileService.getAllProfiles(profileRequest)
-      .map((profiles) => profiles.filter((profile) => !!profile.handle))
-      .toPromise()
+    this.profileService.getAllProfiles(profileRequest).pipe(
+      map((profiles) => profiles.filter((profile) => !!profile.handle))
+    )
+    .toPromise()
       .then((profiles) => {
         this.zone.run(() => {
           if (profiles && profiles.length) {
@@ -115,9 +117,9 @@ export class ShareUserAndGroupsPage implements OnInit, OnDestroy {
             local: true,
             groupId: group.gid
           };
-          this.profileService.getAllProfiles(gruopUserRequest)
-            .map((profiles) => profiles.filter((profile) => !!profile.handle))
-            .toPromise().then((profiles) => {
+          this.profileService.getAllProfiles(gruopUserRequest).pipe(
+            map((profiles) => profiles.filter((profile) => !!profile.handle))
+          ).toPromise().then((profiles) => {
               this.zone.run(() => {
                 if (profiles && profiles.length) {
                   this.userGroupMap.set(group.gid, profiles);
@@ -227,7 +229,6 @@ export class ShareUserAndGroupsPage implements OnInit, OnDestroy {
 
 
   selectAll() {
-  
     this.zone.run(() => {
       this.telemetryGeneratorService.generateInteractTelemetry(
         InteractType.TOUCH,

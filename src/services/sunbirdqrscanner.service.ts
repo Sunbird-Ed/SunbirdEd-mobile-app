@@ -24,6 +24,8 @@ import { NavigationExtras, Router } from '@angular/router';
 import { SbPopoverComponent } from '@app/app/components/popups/sb-popover/sb-popover.component';
 import { QRScannerAlert, QRAlertCallBack } from '@app/app/qrscanner-alert/qrscanner-alert.page';
 import { RouterLinks } from '@app/app/app.constant';
+import { mergeMap, take } from 'rxjs/operators';
+import { of } from 'rxjs';
 
 declare const cordova;
 @Injectable()
@@ -81,12 +83,14 @@ export class SunbirdQRScanner {
     this.source = source;
     this.showButton = showButton;
 
-    this.platform.pause.take(1).subscribe(() => this.stopScanner());
+    this.platform.pause.pipe(
+    take(1)
+    ).subscribe(() => this.stopScanner());
     this.generateImpressionTelemetry(source);
     this.generateStartEvent(source);
 
-    return this.permission.checkPermissions(this.permissionList)
-      .mergeMap((statusMap: { [key: string]: AndroidPermissionsStatus }) => {
+    return this.permission.checkPermissions(this.permissionList).pipe(
+      mergeMap((statusMap: { [key: string]: AndroidPermissionsStatus }) => {
         const toRequest: AndroidPermission[] = [];
 
         for (const permission in statusMap) {
@@ -96,10 +100,10 @@ export class SunbirdQRScanner {
         }
 
         if (!toRequest.length) {
-          return Observable.of({ hasPermission: true });
+          return of({ hasPermission: true });
         }
 
-        return Observable.create((observer: Observer<AndroidPermissionsStatus>) => {
+        return new Observable((observer: Observer<AndroidPermissionsStatus>) => {
           cordova.plugins.diagnostic.getPermissionAuthorizationStatus((status) => {
             switch (status) {
               case cordova.plugins.diagnostic.permissionStatus.NOT_REQUESTED:
@@ -133,22 +137,22 @@ export class SunbirdQRScanner {
             observer.complete();
           }, cordova.plugins.diagnostic.permission.CAMERA);
         });
+      })
+    ).toPromise().then((status?: AndroidPermissionsStatus) => {
+      if (!status) {
+        this.commonUtilService.showToast('PERMISSION_DENIED');
+      }
 
-      }).toPromise().then((status?: AndroidPermissionsStatus) => {
-        if (!status) {
-          this.commonUtilService.showToast('PERMISSION_DENIED');
-        }
+      if (status.isPermissionAlwaysDenied) {
+        return this.showSettingErrorToast();
+      }
 
-        if (status.isPermissionAlwaysDenied) {
-          return this.showSettingErrorToast();
-        }
-
-        if (status.hasPermission) {
-          this.startQRScanner(screenTitle, displayText, displayTextColor, buttonText, showButton, source);
-        } else if (!status.hasPermission) {
-          this.showPopover();
-        }
-      });
+      if (status.hasPermission) {
+        this.startQRScanner(screenTitle, displayText, displayTextColor, buttonText, showButton, source);
+      } else if (!status.hasPermission) {
+        this.showPopover();
+      }
+    });
   }
 
   async showSettingErrorToast() {

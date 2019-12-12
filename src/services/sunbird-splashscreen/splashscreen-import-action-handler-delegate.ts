@@ -1,5 +1,5 @@
 import { SplashscreenActionHandlerDelegate } from './splashscreen-action-handler-delegate';
-import { Observable } from 'rxjs/Observable';
+import { Observable , of} from 'rxjs';
 import {
   ContentEventType,
   ContentImportProgress,
@@ -16,6 +16,7 @@ import {
 import { Inject, Injectable } from '@angular/core';
 import { CommonUtilService } from 'services/common-util.service';
 import { Events } from '@ionic/angular';
+import { mapTo, tap, takeUntil, filter, map, catchError} from 'rxjs/operators';
 
 @Injectable()
 export class SplashscreenImportActionHandlerDelegate implements SplashscreenActionHandlerDelegate {
@@ -36,69 +37,79 @@ export class SplashscreenImportActionHandlerDelegate implements SplashscreenActi
       case 'ecar': {
         splashscreen.show();
 
-        return this.eventsBusService.events(EventNamespace.CONTENT)
-          .filter(e => e.type === ContentEventType.IMPORT_PROGRESS)
-          .takeUntil(this.contentService.importEcar({
-            isChildContent: false,
-            destinationFolder: cordova.file.externalDataDirectory,
-            sourceFilePath: filePath,
-            correlationData: []
-          }).map((response: ContentImportResponse[]) => {
-            if (!response.length) {
-              this.commonUtilService.showToast('CONTENT_IMPORTED');
-              return;
-            }
+        return this.eventsBusService.events(EventNamespace.CONTENT).pipe(
+          filter(e => e.type === ContentEventType.IMPORT_PROGRESS),
+          takeUntil(
+            this.contentService.importEcar({
+              isChildContent: false,
+              destinationFolder: cordova.file.externalDataDirectory,
+              sourceFilePath: filePath,
+              correlationData: []
+            }).pipe(
+                map((response: ContentImportResponse[]) => {
+                if (!response.length) {
+                  this.commonUtilService.showToast('CONTENT_IMPORTED');
+                  return;
+                }
 
-            response.forEach((contentImportResponse: ContentImportResponse) => {
-              switch (contentImportResponse.status) {
-                case ContentImportStatus.ALREADY_EXIST:
-                  this.commonUtilService.showToast('CONTENT_ALREADY_EXIST');
-                  throw ContentImportStatus.ALREADY_EXIST;
-                case ContentImportStatus.IMPORT_FAILED:
-                  this.commonUtilService.showToast('CONTENT_IMPORTED_FAILED');
-                  throw ContentImportStatus.IMPORT_FAILED;
-                case ContentImportStatus.NOT_FOUND:
-                  this.commonUtilService.showToast('CONTENT_IMPORTED_FAILED');
-                  throw ContentImportStatus.NOT_FOUND;
-              }
-            });
-          })
-          )
-          .do((event: ContentImportProgress) => {
+                response.forEach((contentImportResponse: ContentImportResponse) => {
+                  switch (contentImportResponse.status) {
+                    case ContentImportStatus.ALREADY_EXIST:
+                      this.commonUtilService.showToast('CONTENT_ALREADY_EXIST');
+                      throw ContentImportStatus.ALREADY_EXIST;
+                    case ContentImportStatus.IMPORT_FAILED:
+                      this.commonUtilService.showToast('CONTENT_IMPORTED_FAILED');
+                      throw ContentImportStatus.IMPORT_FAILED;
+                    case ContentImportStatus.NOT_FOUND:
+                      this.commonUtilService.showToast('CONTENT_IMPORTED_FAILED');
+                      throw ContentImportStatus.NOT_FOUND;
+                  }
+                });
+              })
+            )
+          ),
+          tap((event: ContentImportProgress) => {
             splashscreen.setImportProgress(event.payload.currentCount, event.payload.totalCount);
-          })
-          .catch((error) => {
-            this.generateImportErrorTelemetry('invalid-ecar');
-            return Observable.of(undefined);
-          })
-          .mapTo(undefined) as any;
+          }),
+          catchError(() => {
+            return of(undefined);
+          }),
+          mapTo(undefined) as any
+        );
       }
       case 'epar': {
         return this.profileService.importProfile({
           sourceFilePath: filePath
-        }).do(({ imported, failed }) => {
-          this.commonUtilService.showToast('CONTENT_IMPORTED');
-        }).mapTo(undefined) as any;
+        }).pipe(
+          tap(({ imported, failed }) => {
+            this.commonUtilService.showToast('CONTENT_IMPORTED');
+          }),
+          mapTo(undefined) as any
+        );
       }
       case 'gsa': {
         return this.telemetryService.importTelemetry({
           sourceFilePath: filePath
-        }).do((imported) => {
-          if (!imported) {
-            this.commonUtilService.showToast('CONTENT_IMPORTED_FAILED');
-          } else {
-            this.commonUtilService.showToast('CONTENT_IMPORTED');
-          }
-        }).do((imported) => {
-          if (imported) {
-            this.events.publish('savedResources:update', {
-              update: true
-            });
-          }
-        }).mapTo(undefined) as any;
+        }).pipe(
+          tap((imported) => {
+            if (!imported) {
+              this.commonUtilService.showToast('CONTENT_IMPORTED_FAILED');
+            } else {
+              this.commonUtilService.showToast('CONTENT_IMPORTED');
+            }
+          }),
+          tap((imported) => {
+            if (imported) {
+              this.events.publish('savedResources:update', {
+                update: true
+              });
+            }
+          }),
+          mapTo(undefined) as any
+        );
       }
       default:
-        return Observable.of(undefined);
+        return of(undefined);
     }
   }
 

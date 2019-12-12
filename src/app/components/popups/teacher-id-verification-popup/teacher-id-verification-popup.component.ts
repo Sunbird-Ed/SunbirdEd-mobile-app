@@ -14,7 +14,7 @@ import {
   PageId,
   ID
 } from '@app/services/telemetry-constants';
-import { map } from 'rxjs-compat/operator/map';
+import { map } from 'rxjs/operators';
 
 export enum TeacherIdPopupFlags {
   STATE_CONFIRMATION = 'stateConfirmation',

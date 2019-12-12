@@ -1,6 +1,6 @@
 import { ContentDownloadRequest, DownloadRequest } from 'sunbird-sdk';
 import { OnInit } from '@angular/core';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 
 export interface ActiveDownloadsInterface extends OnInit {
   activeDownloadRequests$: Observable<ContentDownloadRequest[]>;

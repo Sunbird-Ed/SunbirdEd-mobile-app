@@ -28,10 +28,11 @@ import { AppGlobalService, AppHeaderService, CommonUtilService, TelemetryGenerat
 import { animate, group, state, style, transition, trigger } from '@angular/animations';
 import { TranslateService } from '@ngx-translate/core';
 import { FormControl, FormGroup } from '@angular/forms';
-import { Observable, Subscription } from 'rxjs';
+import { Observable, Subscription, of } from 'rxjs';
 import { Router, NavigationExtras } from '@angular/router';
 import { Location } from '@angular/common';
 import { ExploreBooksSortComponent } from '../explore-books-sort/explore-books-sort.component';
+import { tap, switchMap, catchError, mapTo, debounceTime} from 'rxjs/operators';
 
 @Component({
   selector: 'app-explore-books',
@@ -214,7 +215,6 @@ export class ExploreBooksPage implements OnInit, OnDestroy {
       );
       this.unregisterBackButton.unsubscribe();
       this.location.back();
-      
     });
   }
 
@@ -250,10 +250,10 @@ export class ExploreBooksPage implements OnInit, OnDestroy {
 
   private onSearchFormChange(): Observable<undefined> {
     const value = new Map();
-    return this.searchForm.valueChanges
-      .do(() => { })
-      .debounceTime(200)
-      .switchMap(() => {
+    return this.searchForm.valueChanges.pipe(
+      tap(() => { }),
+      debounceTime(200),
+      switchMap(() => {
         const searchCriteria: ContentSearchCriteria = {
           ...this.searchForm.getRawValue(),
           query: this.searchInputRef.nativeElement['value'],
@@ -276,8 +276,8 @@ export class ExploreBooksPage implements OnInit, OnDestroy {
           values);
         this.showLoader = true;
         this.contentSearchResult = [];
-        return this.contentService.searchContent(searchCriteria)
-          .catch(() => {
+        return this.contentService.searchContent(searchCriteria).pipe(
+          catchError(() => {
             this.zone.run(() => {
               this.showLoader = false;
               if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
@@ -285,13 +285,14 @@ export class ExploreBooksPage implements OnInit, OnDestroy {
               }
             });
 
-            return Observable.of(undefined);
-          });
-      })
-      .do(() => {
+            return of(undefined);
+          })
+        );
+      }),
+      tap(() => {
         (window as any).cordova.plugins.Keyboard.close();
-      })
-      .do((result?: ContentSearchResult) => {
+      }),
+      tap((result?: ContentSearchResult) => {
         this.zone.run(() => {
           if (result) {
             let facetFilters: Array<ContentSearchFilter>;
@@ -310,8 +311,8 @@ export class ExploreBooksPage implements OnInit, OnDestroy {
             value['searchResult'] = this.contentSearchResult.length;
           }
         });
-      })
-      .do(() => {
+      }),
+      tap(() => {
         this.telemetryGeneratorService.generateInteractTelemetry(
           InteractType.OTHER,
           InteractSubtype.SEARCH_COMPLETED,
@@ -319,8 +320,10 @@ export class ExploreBooksPage implements OnInit, OnDestroy {
           PageId.EXPLORE_MORE_CONTENT,
           undefined,
           value);
-      })
-      .mapTo(undefined);
+      }),
+      mapTo(undefined)
+    );
+
   }
 
   openContent(content, index) {

@@ -24,6 +24,7 @@ import {
 } from 'sunbird-sdk';
 
 import { ContentFilterConfig, ContentType, PreferenceKey, SystemSettingsIds } from '@app/app/app.constant';
+import { map } from 'rxjs/operators';
 
 @Injectable()
 export class FormAndFrameworkUtilService {
@@ -59,8 +60,8 @@ export class FormAndFrameworkUtilService {
             action: 'get'
         };
 
-        return this.formService.getForm(request)
-            .map((result) => {
+        return this.formService.getForm(request).pipe(
+            map((result) => {
                 const config = result['data']['fields'].find(c => c.context === context);
 
                 if (!config) {
@@ -68,7 +69,8 @@ export class FormAndFrameworkUtilService {
                 }
 
                 return config;
-            }).toPromise();
+            })
+        ).toPromise();
     }
 
     /**
