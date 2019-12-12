@@ -74,7 +74,7 @@ import { LoginHandlerService } from '@app/services/login-handler.service';
 })
 export class ContentDetailsPage implements OnInit, OnDestroy {
   appName: any;
-  isCourse = false;
+  shouldOpenPlayAsPopup = false;
   apiLevel: number;
   appAvailability: string;
   content: Content;
@@ -147,7 +147,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
   // Newly Added 
   resumedCourseCardData: any;
   limitedShareContentFlag = false;
-  isLoginPromptOpen = false;
+  private isLoginPromptOpen = false;
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -402,6 +402,8 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
   }
 
   extractApiResponse(data: Content) {
+    this.checkLimitedContentSharingFlag(data);
+
     if (this.isResumedCourse) {
       const parentIdentifier = this.resumedCourseCardData && this.resumedCourseCardData.contentId ?
         this.resumedCourseCardData.contentId : this.resumedCourseCardData.identifier;
@@ -409,8 +411,6 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
     }
 
     this.content = data;
-    this.checkLimitedContentSharingFlag(data);
-
     this.licenseDetails = data.contentData.licenseDetails || this.licenseDetails;
     this.contentDownloadable[this.content.identifier] = data.isAvailableLocally;
     if (this.content.lastUpdatedTime !== 0) {
@@ -800,17 +800,15 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
       });
   }
 
-  checkLoginForLimitedSharing(switchUserFlag) {
-    if (this.limitedShareContentFlag && !this.appGlobalService.isUserLoggedIn()) {
-      this.checkLimitedShareContent();
+  handleContentPlay(isStreaming) {
+    if (this.limitedShareContentFlag) {
+      if (!this.appGlobalService.isUserLoggedIn()) {
+        this.promptToLogin();
+      } else {
+        this.showSwitchUserAlert(true);
+      }
     } else {
-      this.showSwitchUserAlert(switchUserFlag);
-    }
-  }
-
-  checkLimitedShareContent() {
-    if (!this.appGlobalService.isUserLoggedIn()) {
-      this.promptToLogin();
+      this.showSwitchUserAlert(isStreaming);
     }
   }
 
@@ -835,7 +833,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
         this.corRelationList);
     }
 
-    if (!AppGlobalService.isPlayerLaunched && this.userCount > 2 && this.network.type !== '2g' && !this.isCourse) {
+    if (!AppGlobalService.isPlayerLaunched && this.userCount > 2 && this.network.type !== '2g' && !this.shouldOpenPlayAsPopup) {
       this.openPlayAsPopup(isStreaming);
     } else if (this.network.type === '2g' && !this.contentDownloadable[this.content.identifier]) {
       const popover = await this.popoverCtrl.create({
@@ -869,7 +867,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
         return;
       }
       if (data && data.isLeftButtonClicked) {
-        if (!AppGlobalService.isPlayerLaunched && this.userCount > 2 && !this.isCourse) {
+        if (!AppGlobalService.isPlayerLaunched && this.userCount > 2 && !this.shouldOpenPlayAsPopup) {
           this.openPlayAsPopup(isStreaming);
         } else {
           this.playContent(isStreaming);
@@ -962,7 +960,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
       if (this.isResumedCourse) {
         this.playingContent.hierarchyInfo = hierachyInfo;
       }
-      this.contentPlayerHandler.launchContentPlayer(this.playingContent, isStreaming, this.downloadAndPlay, contentInfo, this.isCourse);
+      this.contentPlayerHandler.launchContentPlayer(this.playingContent, isStreaming, this.downloadAndPlay, contentInfo, this.shouldOpenPlayAsPopup);
       this.downloadAndPlay = false;
     }
   }
@@ -1074,12 +1072,17 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
 
   isPlayedFromCourse() {
     if (this.cardData.hierarchyInfo && this.cardData.hierarchyInfo.length && this.cardData.hierarchyInfo[0].contentType === 'course') {
-      this.isCourse = true;
+      this.shouldOpenPlayAsPopup = true;
     }
   }
 
   async promptToLogin() {
-    if (this.isLoginPromptOpen) { return; }
+    if (this.appGlobalService.isUserLoggedIn()) {
+      return;
+    }
+    if (this.isLoginPromptOpen) {
+      return;
+    }
     this.isLoginPromptOpen = true;
     const confirm = await this.popoverCtrl.create({
       component: SbPopoverComponent,
@@ -1110,7 +1113,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
     this.limitedShareContentFlag = (content.contentData &&
       content.contentData.status === ContentFilterConfig.CONTENT_STATUS_UNLISTED);
     if (this.limitedShareContentFlag) {
-      this.checkLimitedShareContent();
+      this.promptToLogin();
     }
   }
 

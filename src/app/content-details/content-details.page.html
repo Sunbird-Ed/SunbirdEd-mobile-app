@@ -26,7 +26,7 @@
               </div>
             </div>
           </div>
-          <div class="sb-common-player-group sb-play-title-group" (click)="checkLoginForLimitedSharing(false)" >
+          <div class="sb-common-player-group sb-play-title-group" (click)="handleContentPlay(false)">
             <button fill="clear" icon-only class="sb-common-title">
               <img src="assets/imgs/play_circle.svg" alt="play-circle">
             </button>
@@ -59,7 +59,7 @@
             </div>
 
           </div>
-          <div class="sb-common-player-group sb-play-title-group" (click)="checkLoginForLimitedSharing(true)">
+          <div class="sb-common-player-group sb-play-title-group" (click)="handleContentPlay(true)">
             <button fill="clear" icon-only class="sb-common-title">
               <img src="assets/imgs/play_circle.svg" alt="play-circle">
             </button>
@@ -124,7 +124,7 @@
               </div>
             </div>
           </div>
-          <div class="sb-common-player-group sb-play-title-group" (click)="checkLoginForLimitedSharing(false)">
+          <div class="sb-common-player-group sb-play-title-group" (click)="handleContentPlay(false)">
             <button class="sb-common-title">
               <img src="assets/imgs/play_circle.svg" alt="play-circle">
             </button>
@@ -161,7 +161,7 @@
 
         </div>
 
-        <div class="sb-common-player-group sb-play-title-group" (click)="checkLoginForLimitedSharing(false)">
+        <div class="sb-common-player-group sb-play-title-group" (click)="handleContentPlay(false)">
           <button fill="clear" icon-only class="sb-common-title">
             <img src="assets/imgs/play_circle.svg" alt="play-circle">
           </button>
@@ -191,7 +191,7 @@
       <div class="sb-dt-card-actions">
 
         <div class="sb-btn-tile-group">
-          <div *ngIf="content && !appGlobalService?.CONTENT_STREAMING_ENABLED && !this.limitedShareContentFlag">
+          <div *ngIf="content && !this.limitedShareContentFlag">
             <button *ngIf="!contentDownloadable[content?.identifier]" (click)="openConfirmPopUp()"
               [disabled]="isDownloadStarted" fill="clear" icon-only class="sb-btn-tile">
               <ion-icon ios="ios-cloud-download" md="md-cloud-download" class="sb-dt-card-blue-icon"></ion-icon>
@@ -200,30 +200,6 @@
                 <span class="btn-progress-highlight" [ngStyle]="{'width': this.downloadProgress + '%'}"></span>
               </span>
             </button>
-
-          </div>
-          <div *ngIf="content && appGlobalService?.CONTENT_STREAMING_ENABLED && !this.limitedShareContentFlag">
-            <div *ngIf="!content?.contentData?.streamingUrl">
-              <button *ngIf="!contentDownloadable[content?.identifier]" (click)="openConfirmPopUp()"
-                [disabled]="isDownloadStarted" fill="clear" icon-only class="sb-btn-tile">
-                <ion-icon ios="ios-cloud-download" md="md-cloud-download" class="sb-dt-card-blue-icon"></ion-icon>
-                <span *ngIf="!isDownloadStarted" class="sb-btn-footer-text">{{'DOWNLOAD' | translate}}</span>
-                <span *ngIf="isDownloadStarted && showDownload" class="btn-popover-progress-container">
-                  <span class="btn-progress-highlight" [ngStyle]="{'width': this.downloadProgress + '%'}"></span>
-                </span>
-              </button>
-            </div>
-
-            <div *ngIf="content?.contentData?.streamingUrl">
-              <button *ngIf="!contentDownloadable[content?.identifier]" (click)="openConfirmPopUp()"
-                [disabled]="isDownloadStarted" fill="clear" icon-only class="sb-btn-tile">
-                <ion-icon ios="ios-cloud-download" md="md-cloud-download" class="sb-dt-card-blue-icon"></ion-icon>
-                <span *ngIf="!isDownloadStarted" class="sb-btn-footer-text">{{'DOWNLOAD' | translate}}</span>
-                <span *ngIf="isDownloadStarted && showDownload" class="btn-popover-progress-container">
-                  <span class="btn-progress-highlight" [ngStyle]="{'width': this.downloadProgress + '%'}"></span>
-                </span>
-              </button>
-            </div>
           </div>
 
           <button class="sb-btn-tile" *ngIf="contentDownloadable[content?.identifier]" (click)="showDeletePopup()">
