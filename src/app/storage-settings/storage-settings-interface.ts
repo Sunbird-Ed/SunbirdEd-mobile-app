@@ -1,6 +1,6 @@
 import {StorageDestination} from 'sunbird-sdk';
 import {OnInit} from '@angular/core';
-import {Observable} from 'rxjs/Observable';
+import {Observable} from 'rxjs';
 
 export interface StorageSettingsInterface extends OnInit {
   // eventBusService: EventBusService

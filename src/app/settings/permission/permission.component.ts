@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { PageId, Environment, InteractType, InteractSubtype } from '@app/services/telemetry-constants';
-import { Subscription } from 'rxjs/Subscription';
-import { Observable } from 'rxjs/Observable';
+import { Observable, Subscription, of } from 'rxjs';
 import { Events, Platform } from '@ionic/angular';
 import { Router, NavigationExtras, ActivatedRoute } from '@angular/router';
 import { AndroidPermission, AndroidPermissionsStatus, PermissionAskedEnum } from '@app/services/android-permissions/android-permission';
@@ -14,7 +13,7 @@ import { TelemetryGeneratorService } from '@app/services/telemetry-generator.ser
 import { Location } from '@angular/common';
 import { RouterLinks } from '@app/app/app.constant';
 import { AppVersion } from '@ionic-native/app-version/ngx';
-
+import { mergeMap } from 'rxjs/operators';
 declare const cordova;
 
 @Component({
@@ -168,8 +167,8 @@ export class PermissionComponent implements OnInit {
   }
 
   private async requestAppPermissions() {
-    return this.permission.checkPermissions(this.permissionList)
-      .mergeMap((statusMap: { [key: string]: AndroidPermissionsStatus }) => {
+    return this.permission.checkPermissions(this.permissionList).pipe(
+      mergeMap((statusMap: { [key: string]: AndroidPermissionsStatus }) => {
         const toRequest: AndroidPermission[] = [];
 
         for (const permission in statusMap) {
@@ -190,10 +189,11 @@ export class PermissionComponent implements OnInit {
         }
 
         if (!toRequest.length) {
-          return Observable.of(undefined);
+          return of(undefined);
         }
         return this.permission.requestPermissions(toRequest);
-      }).toPromise();
+      })
+    ).toPromise();
   }
 
   handleHeaderEvents($event) {

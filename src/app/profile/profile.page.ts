@@ -37,7 +37,7 @@ import {
 import { AccountRecoveryInfoComponent } from '../components/popups/account-recovery-id/account-recovery-id-popup.component';
 import { SocialSharing } from '@ionic-native/social-sharing/ngx';
 import { TeacherIdVerificationComponent } from '../components/popups/teacher-id-verification-popup/teacher-id-verification-popup.component';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-profile',

@@ -4,13 +4,11 @@ import { AfterViewInit, Component, Inject, NgZone, OnInit, EventEmitter, ViewChi
 import { Events, Platform, IonRouterOutlet, MenuController } from '@ionic/angular';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { TranslateService } from '@ngx-translate/core';
-import { Observable } from 'rxjs/Observable';
-import { tap } from 'rxjs/operators';
 import { Network } from '@ionic-native/network/ngx';
 
 import {
   ErrorEventType, EventNamespace, EventsBusService, SharedPreferences,
-  SunbirdSdk, TelemetryAutoSyncUtil, TelemetryService, NotificationService, GetSystemSettingsRequest, SystemSettings, SystemSettingsService,
+  SunbirdSdk, TelemetryAutoSyncService, TelemetryService, NotificationService, GetSystemSettingsRequest, SystemSettings, SystemSettingsService,
   CodePushExperimentService, AuthEventType, CorrelationData, Profile, DeviceRegisterService
 } from 'sunbird-sdk';
 
@@ -39,7 +37,8 @@ import { NotificationService as localNotification } from '@app/services/notifica
 import { RouterLinks } from './app.constant';
 import { TncUpdateHandlerService } from '@app/services/handlers/tnc-update-handler.service';
 import { NetworkAvailabilityToastService } from '@app/services/network-availability-toast/network-availability-toast.service';
-
+import {Observable, combineLatest} from 'rxjs';
+import { mergeMap, filter, take, tap} from 'rxjs/operators';
 @Component({
   selector: 'app-root',
   templateUrl: 'app.component.html'
@@ -55,7 +54,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   public sideMenuEvent = new EventEmitter<void>();
   public showWalkthroughBackDrop = false;
 
-  private telemetryAutoSyncUtil: TelemetryAutoSyncUtil;
+  private telemetryAutoSync: TelemetryAutoSyncService;
   toggleRouterOutlet = true;
   rootPageDisplayed = false;
   profile: any = {};
@@ -96,7 +95,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     private networkAvailability: NetworkAvailabilityToastService,
     private splashScreenService: SplashScreenService
   ) {
-    this.telemetryAutoSyncUtil = new TelemetryAutoSyncUtil(this.telemetryService);
+    this.telemetryAutoSync = this.telemetryService.autoSync;
     platform.ready().then(async () => {
       this.formAndFrameworkUtilService.init();
       this.networkAvailability.init();
@@ -537,14 +536,14 @@ export class AppComponent implements OnInit, AfterViewInit {
 
 
   private autoSyncTelemetry() {
-    this.telemetryAutoSyncUtil.start(30 * 1000)
-      .mergeMap(() => {
-        return Observable.combineLatest(
-          this.platform.pause.pipe(tap(() => this.telemetryAutoSyncUtil.pause())),
-          this.platform.resume.pipe(tap(() => this.telemetryAutoSyncUtil.continue()))
-        );
-      })
-      .subscribe();
+    this.telemetryAutoSync.start(30 * 1000).pipe(
+        mergeMap(() => {
+          return combineLatest([
+            this.platform.pause.pipe(tap(() => this.telemetryAutoSync.pause())),
+            this.platform.resume.pipe(tap(() => this.telemetryAutoSync.continue()))
+          ]);
+        })
+    ).subscribe();
   }
 
   initializeApp() {
@@ -656,9 +655,9 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   private handleAuthAutoMigrateEvents() {
-    this.eventsBusService.events(EventNamespace.AUTH)
-      .filter((e) => e.type === AuthEventType.AUTO_MIGRATE_SUCCESS || e.type === AuthEventType.AUTO_MIGRATE_FAIL)
-      .take(1).subscribe((e) => {
+    this.eventsBusService.events(EventNamespace.AUTH).pipe(
+      filter((e) => e.type === AuthEventType.AUTO_MIGRATE_SUCCESS || e.type === AuthEventType.AUTO_MIGRATE_FAIL),
+      take(1)).subscribe((e) => {
         switch (e.type) {
           case AuthEventType.AUTO_MIGRATE_SUCCESS: {
             this.commonUtilService.showToast('AUTO_MIGRATION_SUCCESS_MESSAGE');
@@ -673,9 +672,10 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   private handleAuthErrors() {
-    this.eventsBusService.events(EventNamespace.ERROR)
-      .filter((e) => e.type === ErrorEventType.AUTH_TOKEN_REFRESH_ERROR)
-      .take(1).subscribe(() => {
+    this.eventsBusService.events(EventNamespace.ERROR).pipe(
+      filter((e) => e.type === ErrorEventType.AUTH_TOKEN_REFRESH_ERROR),
+      take(1))
+      .subscribe(() => {
         this.logoutHandlerService.onLogout();
       });
   }

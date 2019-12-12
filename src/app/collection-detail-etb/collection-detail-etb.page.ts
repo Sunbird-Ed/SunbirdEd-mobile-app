@@ -23,7 +23,7 @@ import {
 import {
   Environment, ErrorType, ImpressionType, InteractSubtype, InteractType, Mode, PageId
 } from '../../services/telemetry-constants';
-import { Subscription } from 'rxjs/Subscription';
+import { Subscription } from 'rxjs';
 import { ContentType, MimeType, ShareUrl, RouterLinks } from '../../app/app.constant';
 import {
   AppGlobalService, AppHeaderService, CommonUtilService, CourseUtilService, TelemetryGeneratorService, UtilityService,
@@ -42,6 +42,7 @@ import {
 } from '../components';
 import { ActivatedRoute, Router, NavigationExtras } from '@angular/router';
 import { ContentUtil } from '@app/util/content-util';
+import { tap } from 'rxjs/operators';
 declare const cordova;
 
 @Component({
@@ -272,7 +273,7 @@ export class CollectionDetailEtbPage implements OnInit {
     this.checkCurrentUserType();
     this.defaultAppIcon = 'assets/imgs/ic_launcher.png';
     const extras = this.router.getCurrentNavigation().extras.state;
-    
+
     if (extras) {
       this.content = extras.content;
       this.data = extras.data;
@@ -386,7 +387,7 @@ export class CollectionDetailEtbPage implements OnInit {
     }
     const values = new Map();
     values['isCollapsed'] = isCollapsed;
-  
+
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,
       InteractSubtype.UNIT_CLICKED,
@@ -1417,11 +1418,12 @@ export class CollectionDetailEtbPage implements OnInit {
       type.selected = false;
     });
     this.mimeTypes[idx].selected = true;
-    this.filteredItemsQueryList.changes
-      .do((v) => {
+    this.filteredItemsQueryList.changes.pipe(
+      tap((v) => {
         this.changeDetectionRef.detectChanges();
         values['contentLength'] = v.length;
       })
+    )
       .subscribe();
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,
@@ -1455,7 +1457,7 @@ export class CollectionDetailEtbPage implements OnInit {
 onScroll(event) {
   if (event.detail.scrollTop >= 205) {
     (this.stickyPillsRef.nativeElement as HTMLDivElement).classList.add('sticky');
-    
+
     const boxes: HTMLElement[] = Array.from(document.getElementsByClassName('sticky-header-title-box')) as HTMLElement[];
 
     let headerBottomOffset = (this.stickyPillsRef.nativeElement as HTMLDivElement).getBoundingClientRect().bottom;

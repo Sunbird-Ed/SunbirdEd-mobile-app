@@ -4,12 +4,14 @@ import {
   AppGlobalService, UtilityService, CommonUtilService, NotificationService, TelemetryGeneratorService,
   InteractType, InteractSubtype, Environment, PageId, ActivePageService
 } from '../../../services';
-import { DownloadService, SharedPreferences, NotificationService as PushNotificationService, NotificationStatus } from 'sunbird-sdk';
+import { DownloadService, SharedPreferences, NotificationService as PushNotificationService, NotificationStatus, EventNamespace, DownloadProgress, DownloadEventType, EventsBusService } from 'sunbird-sdk';
 import { GenericAppConfig, PreferenceKey, EventTopics } from '../../../app/app.constant';
 import { AppVersion } from '@ionic-native/app-version/ngx';
-import { Subscription } from 'rxjs/Subscription';
+import { Subscription } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
 import { NavigationExtras, Router, RouterLink } from '@angular/router';
+import {combineLatest} from 'rxjs';
+import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-application-header',
@@ -17,7 +19,7 @@ import { NavigationExtras, Router, RouterLink } from '@angular/router';
   styleUrls: ['./application-header.component.scss'],
 })
 export class ApplicationHeaderComponent implements OnInit, OnDestroy {
-  chosenLanguageString: string;
+  downloadProgressMap: { [key: string]: number } = {};
   selectedLanguage: string;
   @Input() headerConfig: any = false;
   @Output() headerEvents = new EventEmitter();
@@ -31,7 +33,7 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
   isRtl: boolean;
   isLoggedIn = false;
   isDownloadingActive: boolean = false;
-  showDownloadAnimation: boolean = false;
+  showDownloadingIcon: boolean = false;
   networkSubscription: Subscription;
   isUnreadNotification: boolean = false;
   menuSide = 'left';
@@ -40,6 +42,7 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
     @Inject('SHARED_PREFERENCES') private preference: SharedPreferences,
     @Inject('DOWNLOAD_SERVICE') private downloadService: DownloadService,
     @Inject('NOTIFICATION_SERVICE') private pushNotificationService: PushNotificationService,
+    @Inject('EVENTS_BUS_SERVICE') private eventsBusService: EventsBusService,
     public menuCtrl: MenuController,
     private commonUtilService: CommonUtilService,
     private events: Events,
@@ -130,8 +133,23 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
   }
 
   listenDownloads() {
-    this.downloadService.getActiveDownloadRequests().subscribe((list) => {
-      this.showDownloadAnimation = !!list.length;
+    combineLatest([
+      this.downloadService.getActiveDownloadRequests(),
+      this.eventsBusService.events(EventNamespace.DOWNLOADS).pipe(
+        filter((event) => event.type === DownloadEventType.PROGRESS)
+      )
+    ]).subscribe(([list, event]) => {
+      const downloadEvent = event as DownloadProgress;
+      this.downloadProgressMap[downloadEvent.payload.identifier] = downloadEvent.payload.progress;
+
+      if (list.length > 1) {
+        this.showDownloadingIcon = true;
+      } else if (list.length === 1 && this.downloadProgressMap[list[0].identifier] !== 100) {
+        this.showDownloadingIcon = true;
+      } else {
+        this.showDownloadingIcon = false;
+      }
+
       this.changeDetectionRef.detectChanges();
     });
   }
@@ -174,15 +192,13 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
 
   emitEvent($event, name) {
 
-    if(name === 'filter') {
-      if(this.commonUtilService.networkInfo.isNetworkAvailable) {
+    if (name === 'filter') {
+      if (this.commonUtilService.networkInfo.isNetworkAvailable) {
         this.headerEvents.emit({ name, event: $event });
-      }
-      else{
+      } else {
         this.commonUtilService.showToast('NEED_INTERNET_TO_CHANGE');
       }
-    }
-    else {
+    } else {
       this.headerEvents.emit({ name, event: $event });
     }
   }

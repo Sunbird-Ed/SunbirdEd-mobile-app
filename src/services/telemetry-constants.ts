@@ -155,7 +155,11 @@ export enum ImpressionSubtype {
 export enum InteractType {
     TOUCH = 'TOUCH',
     OTHER = 'OTHER',
-    SCROLL = 'SCROLL'
+    SCROLL = 'SCROLL',
+    LOCATION_CHANGED = 'location-changed',
+    LOCATION_UNCHANGED = 'location-unchanged',
+    VISIBLE = 'visible',
+    NOT_VISIBLE = 'not-visible'
 }
 
 export enum InteractSubtype {
@@ -368,6 +372,9 @@ export enum InteractSubtype {
     FAST_LOADING_OF_TEXTBOOK_INITIATED = 'textbook-fast-loading-initiated',
     FAST_LOADING_OF_TEXTBOOK_FINISHED = 'textbook-fast-loading-finished',
     REPORT_ISSUE_CLICKED = 'report-issue-clicked',
+    STATE_DIST_CHANGED = 'state-dist-changed',
+    STATE_CHANGED = 'state-changed',
+    DIST_CHANGED = 'dist-changed'
 }
 
 export enum ID {
@@ -375,7 +382,9 @@ export enum ID {
     USER_VERIFICATION_CONFIRMED = 'ext-user-verify-confirm',
     USER_VERIFICATION_SUBMITED = 'ext-user-verify-submit',
     USER_VERIFICATION_FAILED = 'ext-user-verify-fail',
-    USER_VERIFICATION_SUCCESS = 'ext-user-verify-success'
+    USER_VERIFICATION_SUCCESS = 'ext-user-verify-success',
+    SUBMIT_CLICKED = 'submit-clicked',
+    IP_BASED_LOCATION_SUGGESTION = 'ip-based-location-suggestion'
 }
 
 export enum ActionButtonType {
@@ -391,7 +400,8 @@ export enum CorReleationDataType {
     BOARD = 'Board',
     MEDIUM = 'Medium',
     CLASS = 'Class',
-    USERTYPE = 'UserType'
+    USERTYPE = 'UserType',
+    DOWNLOADS = 'Downloads'
 }
 
 

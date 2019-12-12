@@ -2,8 +2,7 @@ import { Component, Inject, NgZone, OnDestroy, ViewChild, ChangeDetectorRef, OnI
 import { Router, NavigationExtras } from '@angular/router';
 import { Events, Platform, PopoverController, IonContent, NavController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
-import { Subscription } from 'rxjs/Subscription';
-import { Observable } from 'rxjs/Observable';
+import { Subscription, Observable } from 'rxjs';
 import { Location } from '@angular/common';
 import each from 'lodash/each';
 import find from 'lodash/find';
@@ -314,7 +313,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
     this.showLoader = false;
     this.parentContent = collection;
     this.isQrCodeLinkToContent = index;
-    this.generateInteractEvent(content.identifier, content.contentType, content.pkgVersion, index);
+    this.generateInteractEvent(content.identifier, content.contentType, content.pkgVersion, index ? index : 0);
     if (collection !== undefined) {
       this.parentContent = collection;
       this.childContent = content;

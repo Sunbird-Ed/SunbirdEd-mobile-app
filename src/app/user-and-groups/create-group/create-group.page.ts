@@ -28,7 +28,7 @@ import {
 import { ActivatedRoute, Router, NavigationExtras } from '@angular/router';
 import { Platform } from '@ionic/angular';
 import { Location } from '@angular/common';
-import { Subscription } from 'rxjs/Subscription';
+import { Subscription } from 'rxjs';
 import { RouterLinks } from '@app/app/app.constant';
 
 @Component({
@@ -294,7 +294,7 @@ export class CreateGroupPage implements OnInit {
           await this.loader.dismiss();
         }
         this.isFormValid = false;
-        if(!this.commonUtilService.networkInfo.isNetworkAvailable){
+        if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
           this.commonUtilService.showToast(this.commonUtilService.translateMessage('NEED_INTERNET_TO_CHANGE'));
         }
         console.error('Error : ' + error);

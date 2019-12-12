@@ -26,7 +26,7 @@ import {
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { DatePipe } from '@angular/common';
 import { Router } from '@angular/router';
-import { Subscription } from 'rxjs/Subscription';
+import { Subscription } from 'rxjs';
 import { Location } from '@angular/common';
 
 @Component({

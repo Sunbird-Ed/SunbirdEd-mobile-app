@@ -2,7 +2,7 @@ import { RouterLinks } from '@app/app/app.constant';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ToastController } from '@ionic/angular';
-import { Subscription } from 'rxjs/Subscription';
+import { Subscription } from 'rxjs';
 import { TelemetryObject } from 'sunbird-sdk';
 
 import { AppHeaderService } from '@app/services/app-header.service';

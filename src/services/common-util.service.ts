@@ -7,7 +7,6 @@ import {
     Platform,
 } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
-import { Observable } from 'rxjs-compat';
 import { Network } from '@ionic-native/network/ngx';
 import { WebView } from '@ionic-native/ionic-webview/ngx';
 import { SharedPreferences, ProfileService, Profile } from 'sunbird-sdk';
@@ -19,7 +18,8 @@ import { TelemetryGeneratorService } from '@app/services/telemetry-generator.ser
 import { InteractType, InteractSubtype, PageId, Environment } from '@app/services/telemetry-constants';
 import { SbGenericPopoverComponent } from '@app/app/components/popups/sb-generic-popover/sb-generic-popover.component';
 import { QRAlertCallBack, QRScannerAlert } from '@app/app/qrscanner-alert/qrscanner-alert.page';
-import { mapTo } from 'rxjs/operators/mapTo';
+import { Observable, merge } from 'rxjs';
+import { mapTo } from 'rxjs/operators';
 
 declare const FCMPlugin;
 export interface NetworkInfo {
@@ -55,9 +55,13 @@ export class CommonUtilService implements OnDestroy {
     ) {
         this.listenForEvents();
 
-        this.networkAvailability$ = Observable.merge(
-            this.network.onConnect().pipe(mapTo(true)),
-            this.network.onDisconnect().pipe(mapTo(false))
+        this.networkAvailability$ = merge(
+            this.network.onConnect().pipe(
+                mapTo(true)
+            ),
+            this.network.onDisconnect().pipe(
+                mapTo(false)
+            )
         );
     }
 
@@ -341,6 +345,11 @@ export class CommonUtilService implements OnDestroy {
         }
     }
 
+    openUrlInBrowser(url) {
+        const options = 'hardwareback=yes,clearcache=no,zoom=no,toolbar=yes,disallowoverscroll=yes';
+        (window as any).cordova.InAppBrowser.open(url, '_blank', options);
+      }
+
     fileSizeInMB(bytes) {
         if (!bytes) {
             return '0.00';
@@ -400,6 +409,7 @@ export class CommonUtilService implements OnDestroy {
         }
         return location;
     }
+
 
     getUserLocation(profile: any) {
         let userLocation = {

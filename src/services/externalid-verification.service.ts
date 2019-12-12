@@ -6,6 +6,7 @@ import { PopoverController } from '@ionic/angular';
 import { FormAndFrameworkUtilService } from './formandframeworkutil.service';
 import { TeacherIdVerificationComponent } from '@app/app/components/popups/teacher-id-verification-popup/teacher-id-verification-popup.component';
 import { ProfileConstants } from '@app/app/app.constant';
+import { map } from 'rxjs/operators';
 
 @Injectable()
 export class ExternalIdVerificationService {
@@ -17,8 +18,9 @@ export class ExternalIdVerificationService {
         private popoverCtrl: PopoverController,
         private formAndFrameworkUtilService: FormAndFrameworkUtilService
     ) {
-        this.isCustodianUser$ = this.profileService.isDefaultChannelProfile()
-        .map((isDefaultChannelProfile) => isDefaultChannelProfile) as any;
+        this.isCustodianUser$ = this.profileService.isDefaultChannelProfile().pipe(
+            map((isDefaultChannelProfile) => isDefaultChannelProfile) as any
+        );
     }
 
     async showExternalIdVerificationPopup() {

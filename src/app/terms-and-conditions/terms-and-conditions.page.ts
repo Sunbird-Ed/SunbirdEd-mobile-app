@@ -3,8 +3,7 @@ import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { Platform } from '@ionic/angular';
 import { ProfileService, ServerProfile, CachedItemRequestSourceFrom } from 'sunbird-sdk';
-import { Subscription } from 'rxjs/Subscription';
-
+import { Subscription } from 'rxjs';
 import { Environment, ImpressionType, InteractSubtype, InteractType, PageId } from '../../services/telemetry-constants';
 import { LogoutHandlerService } from '@app/services/handlers/logout-handler.service';
 import { TncUpdateHandlerService } from '@app/services/handlers/tnc-update-handler.service';

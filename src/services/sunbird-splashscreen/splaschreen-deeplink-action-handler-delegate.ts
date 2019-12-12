@@ -3,7 +3,7 @@ import { Inject, Injectable, NgZone } from '@angular/core';
 import { Router } from '@angular/router';
 import { Events } from '@ionic/angular';
 import { AppVersion } from '@ionic-native/app-version/ngx';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import {
   ContentService,
   Content,
@@ -27,6 +27,7 @@ import { UtilityService } from '..';
 import { Location } from '@angular/common';
 import { LocalCourseService } from '../local-course.service';
 import { EnrollCourse } from '@app/app/enrolled-course-details-page/course.interface';
+import { tap, catchError, mapTo } from 'rxjs/operators';
 
 
 @Injectable()
@@ -69,9 +70,9 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
         break;
       case ActionType.UPDATE_APP:
         this.utillService.getBuildConfigValue('APPLICATION_ID')
-        .then( value => {
+          .then(value => {
             this.appId = value;
-        });
+          });
         break;
       case ActionType.COURSE_UPDATE:
         this.identifier = data.actionData.identifier;
@@ -97,40 +98,44 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
           // await loader.present();
           return this.contentService.getContentDetails({
             contentId: identifier || this.identifier
-          }).catch(async () => {
-            // await loader.dismiss();
-            return Observable.of(undefined);
-          }).do(async (content: Content) => {
-            // await loader.dismiss();
-            if (content.contentType === ContentType.COURSE.toLowerCase()) {
-              this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], { state: { content } });
-            } else if (content.mimeType === MimeType.COLLECTION) {
-              this.router.navigate([RouterLinks.COLLECTION_DETAIL_ETB], { state: { content } });
-            } else {
-              if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
+          }).pipe(
+            catchError(async () => {
+              // await loader.dismiss();
+              return of(undefined);
+            }),
+            tap(async (content: Content) => {
+              // await loader.dismiss();
+              if (content.contentType === ContentType.COURSE.toLowerCase()) {
+                this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], { state: { content } });
+              } else if (content.mimeType === MimeType.COLLECTION) {
+                this.router.navigate([RouterLinks.COLLECTION_DETAIL_ETB], { state: { content } });
+              } else {
+                if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
                   this.commonUtilService.showToast('INTERNET_CONNECTIVITY_NEEDED');
                   return false;
+                }
+                this.router.navigate([RouterLinks.CONTENT_DETAILS], { state: { content } });
               }
-              this.router.navigate([RouterLinks.CONTENT_DETAILS], { state: { content } });
-            }
-          }).mapTo(undefined) as any;
+            }),
+            mapTo(undefined) as any
+          );
         }
         case 'dial': {
           this.router.navigate([RouterLinks.SEARCH], { state: { dialCode: identifier, source: PageId.HOME } });
-          return Observable.of(undefined);
+          return of(undefined);
         }
         default: {
-          return Observable.of(undefined);
+          return of(undefined);
         }
       }
     } else if (this.appId) {
-        this.utillService.openPlayStore(this.appId);
+      this.utillService.openPlayStore(this.appId);
     } else if (this.externalUrl) {
-        open(this.externalUrl);
+      open(this.externalUrl);
     } else {
       this.checkCourseRedirect();
     }
-    return Observable.of(undefined);
+    return of(undefined);
   }
 
   checkCourseRedirect() {
@@ -138,25 +143,25 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
       .then(resp => {
         if (resp) {
           this.preferences.getString(PreferenceKey.COURSE_DATA_KEY).toPromise()
-          .then(courseDetail => {
-            if (courseDetail) {
-              this.authService.getSession().subscribe((session: OAuthSession) => {
-                if (!session) {
+            .then(courseDetail => {
+              if (courseDetail) {
+                this.authService.getSession().subscribe((session: OAuthSession) => {
+                  if (!session) {
                     this.isGuestUser = true;
-                } else {
+                  } else {
                     this.isGuestUser = false;
                     this.userId = session.userToken;
-                }
-                if (JSON.parse(courseDetail).createdBy !== this.userId) {
-                  this.enrollIntoBatch(JSON.parse(resp));
-                } else {
-                  this.events.publish('return_course');
-                }
-              }, () => {
-              });
-              this.preferences.putString(PreferenceKey.BATCH_DETAIL_KEY, '').toPromise();
-            }
-          });
+                  }
+                  if (JSON.parse(courseDetail).createdBy !== this.userId) {
+                    this.enrollIntoBatch(JSON.parse(resp));
+                  } else {
+                    this.events.publish('return_course');
+                  }
+                }, () => {
+                });
+                this.preferences.putString(PreferenceKey.BATCH_DETAIL_KEY, '').toPromise();
+              }
+            });
         }
       });
   }
@@ -198,7 +203,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
           this.zone.run(async () => {
             await loader.dismiss();
             if (error && error.code !== 'NETWORK_ERROR') {
-                this.getEnrolledCourses();
+              this.getEnrolledCourses();
             }
           });
         });
@@ -235,13 +240,13 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
             window.history.go(-2);
           }
           setTimeout(async () => {
-          this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], {
-            state: {
-              content: JSON.parse(resp)
-            }
-          });
-          await loader.dismiss();
-          this.preferences.putString(PreferenceKey.COURSE_DATA_KEY, '').toPromise();
+            this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], {
+              state: {
+                content: JSON.parse(resp)
+              }
+            });
+            await loader.dismiss();
+            this.preferences.putString(PreferenceKey.COURSE_DATA_KEY, '').toPromise();
           }, 2000);
         }
       });

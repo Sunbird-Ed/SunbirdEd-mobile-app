@@ -1,4 +1,4 @@
-import { Subscription } from 'rxjs/Subscription';
+import { Subscription } from 'rxjs';
 import { Events, Platform } from '@ionic/angular';
 import { ActivatedRoute, Router, NavigationExtras } from '@angular/router';
 import { Location } from '@angular/common';
