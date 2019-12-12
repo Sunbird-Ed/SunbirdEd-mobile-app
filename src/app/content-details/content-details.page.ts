@@ -139,10 +139,11 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
   contentDeleteObservable: any;
   isSingleContent: boolean;
   resultLength: any;
-  course:Course;
+  course: Course;
 
-  // Newly Added 
+  // Newly Added
   resumedCourseCardData: any;
+  previousidentifier: string;
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
@@ -176,6 +177,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
     private contentDeleteHandler: ContentDeleteHandler,
   ) {
     this.subscribePlayEvent();
+    console.log('Constructor!!!!!!!');
     this.checkDeviceAPILevel();
     this.checkappAvailability();
     this.defaultAppIcon = 'assets/imgs/ic_launcher.png';
@@ -187,10 +189,10 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
   }
 
   getNavParams() {
-    const extras = this.router.getCurrentNavigation().extras.state;
+    const extras = this.content || this.router.getCurrentNavigation().extras.state;
     if (extras) {
-      this.course = extras.course;
-      this.cardData = extras.content;
+      this.course = this.course || extras.course;
+      this.cardData = this.content || extras.content;
       this.isChildContent = extras.isChildContent;
       this.cardData.depth = extras.depth === undefined ? '' : extras.depth;
       this.corRelationList = extras.corRelation;
@@ -210,6 +212,10 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.subscribeEvents();
+  }
+
+  subscribeEvents() {
     this.appVersion.getAppName()
       .then((appName: any) => {
         this.appName = appName;
@@ -231,16 +237,40 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
         }
       }
     });
+    this.events.subscribe('NEXT_CONTENT', (data) => {
+      console.log(data);
+      this.events.unsubscribe(EventTopics.PLAYER_CLOSED);
+      this.events.unsubscribe('NEXT_CONTENT');
+      const previousContent = this.content;
+      this.content = data.content;
+      this.course = data.course;
+      console.log('current content', this.content.identifier);
+      this.getNavParams();
+      this.subscribeEvents();
+      this.viewEnterHandler();
+
+      // show popup for previous content
+      this.ratingHandler.showRatingPopup(this.isContentPlayed, previousContent, 'automatic', this.corRelationList, this.objRollup);
+      console.log('previous content', this.content.identifier);
+      this.contentPlayerHandler.setLastPlayedContentId('');
+      this.generateTelemetry(true);
+    });
   }
 
-  ngOnDestroy(){
+  ngOnDestroy() {
+    console.log('Destroyed Content-details page!');
     this.events.unsubscribe(EventTopics.PLAYER_CLOSED);
+    this.events.unsubscribe('NEXT_CONTENT');
   }
 
   /**
    * Ionic life cycle hook
    */
   ionViewWillEnter(): void {
+    this.viewEnterHandler();
+  }
+
+  viewEnterHandler() {
     this.headerService.hideHeader();
 
     if (this.isResumedCourse && !this.contentPlayerHandler.isContentPlayerLaunched()) {
@@ -473,8 +503,8 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
     }
   }
 
-  generateTelemetry() {
-    if (!this.didViewLoad && !this.isContentPlayed) {
+  generateTelemetry(forceGenerate?: boolean) {
+    if (!this.didViewLoad && !this.isContentPlayed || forceGenerate) {
       this.objRollup = ContentUtil.generateRollUp(this.cardData.hierarchyInfo, this.identifier);
       this.telemetryObject = ContentUtil.getTelemetryObject(this.cardData);
       this.generateImpressionEvent(this.cardData.identifier, this.telemetryObject.type, this.cardData.pkgVersion);
