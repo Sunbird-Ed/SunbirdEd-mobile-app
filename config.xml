@@ -15,6 +15,8 @@
     <preference name="Orientation" value="portrait" />
     <preference name="AndroidLaunchMode" value="singleInstance" />
     <preference name="KeyboardDisplayRequiresUserAction" value="false" />
+    <hook src="copyContentPlayer.js" type="before_build" />
+    <hook src="config/copy.config.js" type="before_build" />
     <hook src="scripts/copyGradleFiles.js" type="before_build" />
     <hook src="scripts/copyBundledData.js" type="before_build" />
     <hook src="scripts/application/add_application.js" type="before_run" />
