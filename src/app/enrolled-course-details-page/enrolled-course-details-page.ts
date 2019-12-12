@@ -204,6 +204,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
   showOfflineSection = false;
   courseBatchesRequest: CourseBatchesRequest;
   showUnenrollButton = false;
+  licenseDetails;
 
   @ViewChild('stickyPillsRef') stickyPillsRef: ElementRef;
   public objRollup: Rollup;
@@ -218,7 +219,6 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
   public rollUpMap: { [key: string]: Rollup } = {};
   public lastReadContentId;
   public courseCompletionData = {};
-
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
@@ -606,6 +606,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
     if (data.contentData) {
       // await loader.present();
       this.course = data.contentData;
+      this.licenseDetails = data.contentData.licenseDetails || this.licenseDetails;
       this.content = data;
       this.objId = this.course.identifier;
       this.objType = this.course.contentType;
@@ -714,6 +715,10 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
             this.courseCardData.courseId, this.courseCardData.batchId, this.courseCardData.batch.status);
         }
       });
+  }
+  /** url opens in browser */
+  openBrowser(url) {
+    this.commonUtilService.openUrlInBrowser(url);
   }
 
   saveContentContext(userId, courseId, batchId, batchStatus) {
@@ -1392,6 +1397,10 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
               this.course.isAvailableLocally = true;
               this.setContentDetails(this.identifier);
             }
+          }
+
+          if (event.payload && event.type === ContentEventType.SERVER_CONTENT_DATA) {
+              this.licenseDetails = event.payload.licenseDetails;
           }
 
           if (event.type === ContentEventType.IMPORT_PROGRESS) {
