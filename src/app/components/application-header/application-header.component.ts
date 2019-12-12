@@ -11,6 +11,7 @@ import { Subscription } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
 import { NavigationExtras, Router, RouterLink } from '@angular/router';
 import {combineLatest} from 'rxjs';
+import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-application-header',
@@ -134,8 +135,9 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
   listenDownloads() {
     combineLatest([
       this.downloadService.getActiveDownloadRequests(),
-      this.eventsBusService.events(EventNamespace.DOWNLOADS)
-          .filter((event) => event.type === DownloadEventType.PROGRESS)
+      this.eventsBusService.events(EventNamespace.DOWNLOADS).pipe(
+        filter((event) => event.type === DownloadEventType.PROGRESS)
+      )
     ]).subscribe(([list, event]) => {
       const downloadEvent = event as DownloadProgress;
       this.downloadProgressMap[downloadEvent.payload.identifier] = downloadEvent.payload.progress;
