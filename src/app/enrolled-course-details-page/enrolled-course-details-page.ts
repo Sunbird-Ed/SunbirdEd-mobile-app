@@ -718,8 +718,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
   }
   /** url opens in browser */
   openBrowser(url) {
-    const options = 'hardwareback=yes,clearcache=no,zoom=no,toolbar=yes,disallowoverscroll=yes';
-    (window as any).cordova.InAppBrowser.open(url, '_blank', options);
+    this.commonUtilService.openUrlInBrowser(url);
   }
 
   saveContentContext(userId, courseId, batchId, batchStatus) {

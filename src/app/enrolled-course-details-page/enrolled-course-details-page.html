@@ -200,12 +200,12 @@
 									</ion-card-title>
 									<p>{{mergeProperties(['attributions', 'contributors', 'creators'])}}</p>
 								</div>
-								<!-- <div *ngIf="course?.license">
+								<div *ngIf="course?.license && !licenseDetails">
 									<ion-card-title class="font-12 subtitle-color label-margin-bottom">
 										<b>{{ 'LICENSE' | translate }}</b>:
 									</ion-card-title>
 									<p>{{course?.license}}</p>
-								</div> -->
+								</div>
 								<div *ngIf="licenseDetails" class="ion-padding-bottom">
 										<ion-card-title class="font-12 subtitle-color label-margin-bottom">
 											<b>{{ 'LICENSE' | translate }}</b>:
