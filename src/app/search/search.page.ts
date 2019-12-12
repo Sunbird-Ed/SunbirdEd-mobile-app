@@ -313,7 +313,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
     this.showLoader = false;
     this.parentContent = collection;
     this.isQrCodeLinkToContent = index;
-    this.generateInteractEvent(content.identifier, content.contentType, content.pkgVersion, index);
+    this.generateInteractEvent(content.identifier, content.contentType, content.pkgVersion, index ? index : 0);
     if (collection !== undefined) {
       this.parentContent = collection;
       this.childContent = content;
