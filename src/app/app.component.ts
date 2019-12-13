@@ -4,13 +4,13 @@ import { AfterViewInit, Component, Inject, NgZone, OnInit, EventEmitter, ViewChi
 import { Events, Platform, IonRouterOutlet, MenuController } from '@ionic/angular';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { TranslateService } from '@ngx-translate/core';
-import { Observable } from 'rxjs/Observable';
-import { tap } from 'rxjs/operators';
+import { Observable } from 'rxjs';
+import { tap, combineLatest, mergeMap } from 'rxjs/operators';
 import { Network } from '@ionic-native/network/ngx';
 
 import {
   ErrorEventType, EventNamespace, EventsBusService, SharedPreferences,
-  SunbirdSdk, TelemetryAutoSyncUtil, TelemetryService, NotificationService, GetSystemSettingsRequest, SystemSettings, SystemSettingsService,
+  SunbirdSdk, TelemetryAutoSyncService, TelemetryService, NotificationService, GetSystemSettingsRequest, SystemSettings, SystemSettingsService,
   CodePushExperimentService, AuthEventType, CorrelationData, Profile, DeviceRegisterService
 } from 'sunbird-sdk';
 
@@ -55,7 +55,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   public sideMenuEvent = new EventEmitter<void>();
   public showWalkthroughBackDrop = false;
 
-  private telemetryAutoSyncUtil: TelemetryAutoSyncUtil;
+  private telemetryAutoSync: TelemetryAutoSyncService;
   toggleRouterOutlet = true;
   rootPageDisplayed = false;
   profile: any = {};
@@ -96,7 +96,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     private networkAvailability: NetworkAvailabilityToastService,
     private splashScreenService: SplashScreenService
   ) {
-    this.telemetryAutoSyncUtil = new TelemetryAutoSyncUtil(this.telemetryService);
+    this.telemetryAutoSync = this.telemetryService.autoSync;
     platform.ready().then(async () => {
       this.formAndFrameworkUtilService.init();
       this.networkAvailability.init();
@@ -539,14 +539,14 @@ export class AppComponent implements OnInit, AfterViewInit {
 
 
   private autoSyncTelemetry() {
-    this.telemetryAutoSyncUtil.start(30 * 1000)
-      .mergeMap(() => {
-        return Observable.combineLatest(
-          this.platform.pause.pipe(tap(() => this.telemetryAutoSyncUtil.pause())),
-          this.platform.resume.pipe(tap(() => this.telemetryAutoSyncUtil.continue()))
-        );
-      })
-      .subscribe();
+    this.telemetryAutoSync.start(30 * 1000).pipe(
+        mergeMap(() => {
+          return combineLatest([
+            this.platform.pause.pipe(tap(() => this.telemetryAutoSync.pause())),
+            this.platform.resume.pipe(tap(() => this.telemetryAutoSync.continue()))
+          ]);
+        })
+    ).subscribe();
   }
 
   initializeApp() {
