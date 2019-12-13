@@ -165,6 +165,7 @@ export class EventTopics {
     public static readonly SIGN_IN_RELOAD = 'SIGN_IN_RELOAD';
     public static readonly TOC_COLLECTION_CHILD_ID = 'TOC_COLLECTION_CHILD_ID';
     public static readonly HAMBURGER_MENU_CLICKED = 'HAMBURGER_MENU_CLICKED';
+    public static readonly NEXT_CONTENT = 'event:NextContent';
 }
 
 export class ShareUrl {

@@ -141,7 +141,13 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
           this.navCtrl.remove(this.navCtrl.length() - 2);
         });
      */
-    this.router.navigate([RouterLinks.CONTENT_DETAILS , identifier], { state: { content, course: this.course } , replaceUrl: true, });
+    setTimeout(() => {
+        this.closeIframe();
+    }, 1000);
+    this.events.publish(EventTopics.NEXT_CONTENT, {
+        content,
+        course: this.course
+    });
   }
 
   /**

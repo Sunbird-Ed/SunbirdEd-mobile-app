@@ -195,10 +195,10 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
   }
 
   getNavParams() {
-    const extras = this.router.getCurrentNavigation().extras.state;
+    const extras = this.content || this.router.getCurrentNavigation().extras.state;
     if (extras) {
-      this.course = extras.course;
-      this.cardData = extras.content;
+      this.course = this.course || extras.course;
+      this.cardData = this.content || extras.content;
       this.isChildContent = extras.isChildContent;
       this.cardData.depth = extras.depth === undefined ? '' : extras.depth;
       this.corRelationList = extras.corRelation;
@@ -218,6 +218,10 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.subscribeEvents();
+  }
+
+  subscribeEvents() {
     this.appVersion.getAppName()
       .then((appName: any) => {
         this.appName = appName;
@@ -239,16 +243,34 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
         }
       }
     });
+    this.events.subscribe(EventTopics.NEXT_CONTENT, (data) => {
+      this.generateEndEvent();
+      this.events.unsubscribe(EventTopics.PLAYER_CLOSED);
+      this.events.unsubscribe(EventTopics.NEXT_CONTENT);
+      const previousContent = this.content;
+      this.content = data.content;
+      this.course = data.course;
+      this.getNavParams();
+      this.subscribeEvents();
+
+      // show popup for previous content
+      setTimeout(() => {
+        this.ratingHandler.showRatingPopup(this.isContentPlayed, previousContent, 'automatic', this.corRelationList, this.objRollup);
+        this.contentPlayerHandler.setLastPlayedContentId('');
+        this.generateTelemetry(true);
+      }, 1000);
+    });
   }
 
   ngOnDestroy() {
     this.events.unsubscribe(EventTopics.PLAYER_CLOSED);
+    this.events.unsubscribe(EventTopics.NEXT_CONTENT);
   }
 
   /**
    * Ionic life cycle hook
    */
-  ionViewWillEnter(): void {
+  ionViewWillEnter() {
     this.headerService.hideHeader();
 
     if (this.isResumedCourse && !this.contentPlayerHandler.isContentPlayerLaunched()) {
@@ -483,8 +505,8 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
     }
   }
 
-  generateTelemetry() {
-    if (!this.didViewLoad && !this.isContentPlayed) {
+  generateTelemetry(forceGenerate?: boolean) {
+    if (!this.didViewLoad && !this.isContentPlayed || forceGenerate) {
       this.objRollup = ContentUtil.generateRollUp(this.cardData.hierarchyInfo, this.identifier);
       this.telemetryObject = ContentUtil.getTelemetryObject(this.cardData);
       this.generateImpressionEvent(this.cardData.identifier, this.telemetryObject.type, this.cardData.pkgVersion);
