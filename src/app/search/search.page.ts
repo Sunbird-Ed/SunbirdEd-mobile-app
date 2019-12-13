@@ -310,10 +310,10 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
     this.showContentDetails(collection, true);
   }
 
-  async openContent(collection, content, index?) {
+  async openContent(collection, content, index?, isQrCodeLinkToSingleContent?) {
     this.showLoader = false;
     this.parentContent = collection;
-    this.isQrCodeLinkToContent = index;
+    this.isQrCodeLinkToContent = isQrCodeLinkToSingleContent;
     this.generateInteractEvent(content.identifier, content.contentType, content.pkgVersion, index ? index : 0);
     if (collection !== undefined) {
       this.parentContent = collection;
@@ -1143,7 +1143,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
 
       if (contentArray && contentArray.length === 1 && !isParentCheckStarted) {
         this.isSingleContent = true;
-        this.openContent(contentArray[0], contentArray[0], 0);
+        this.openContent(contentArray[0], contentArray[0], 0, true);
         // return;
       }
     });
@@ -1208,7 +1208,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
       this.location.back();
       // this.showContentDetails(contentArray[0], true);
       this.isSingleContent = true;
-      this.openContent(contentArray[0], contentArray[0], 0);
+      this.openContent(contentArray[0], contentArray[0], 0, true);
       return;
     }
 

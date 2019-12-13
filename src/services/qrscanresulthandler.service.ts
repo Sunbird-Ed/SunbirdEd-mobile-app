@@ -167,7 +167,9 @@ export class QRScannerResultHandler {
 
     if (content.contentData.contentType === ContentType.COURSE) {
       this.router.navigate([`/${RouterLinks.ENROLLED_COURSE_DETAILS}`], navigationExtras);
-     } else {
+     } else if (content.mimeType === MimeType.COLLECTION) {
+      this.router.navigate([`/${RouterLinks.COLLECTION_DETAIL_ETB}`], navigationExtras);
+    }  else {
       this.router.navigate([`/${RouterLinks.CONTENT_DETAILS}`], navigationExtras);
     }
   }
