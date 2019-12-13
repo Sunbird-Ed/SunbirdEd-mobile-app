@@ -164,7 +164,7 @@
           <div no-lines *ngIf="resultlist.dialCodeContentResult && resultlist.dialCodeContentResult.length">
             <div *ngFor="let content of resultlist.dialCodeContentResult; let last = last, let i = index"
               class="content-list">
-              <sb-library-card [content]="content" [type]="LibraryCardTypes.QRCODE_RESULT" (click)="openContent(content, content, i);" [cardImg]="content?.appIcon || defaultAppIcon" [moreInfoLabel]="'Section'">
+              <sb-library-card [content]="content" [type]="LibraryCardTypes.QRCODE_RESULT" (click)="openContent(content, content, i + resultlist.dialCodeResult.length);" [cardImg]="content?.appIcon || defaultAppIcon" [moreInfoLabel]="'Section'">
                 </sb-library-card>
 
               <div *ngIf="!last" class="inner-divider"></div>
