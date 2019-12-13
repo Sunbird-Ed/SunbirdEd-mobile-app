@@ -306,15 +306,13 @@ export class AppComponent implements OnInit, AfterViewInit {
    */
   triggerSignInEvent() {
     this.events.subscribe(EventTopics.SIGN_IN_RELOAD, async () => {
-      let batchDetails;
-      await this.preferences.getString(PreferenceKey.BATCH_DETAIL_KEY).toPromise()
-        .then(async (resp) => {
-          if (resp) {
-            batchDetails = resp;
-          } else {
-            this.toggleRouterOutlet = false;
-          }
-        });
+      const batchDetails = await this.preferences.getString(PreferenceKey.BATCH_DETAIL_KEY).toPromise();
+      const limitedSharingContentDetails = await this.preferences.getString(PreferenceKey.LIMITED_CONTENT_SHARING).toPromise();
+
+      if (!batchDetails && !limitedSharingContentDetails) {
+        this.toggleRouterOutlet = false;
+      }
+
       // this.toggleRouterOutlet = false;
       // This setTimeout is very important for reloading the Tabs page on SignIn.
       setTimeout(async () => {
@@ -324,6 +322,10 @@ export class AppComponent implements OnInit, AfterViewInit {
         this.events.publish('UPDATE_TABS');
         if (batchDetails) {
           await this.splaschreenDeeplinkActionHandlerDelegate.onAction('content').toPromise();
+        } else if (limitedSharingContentDetails) {
+          const limitedSharingContentPayload = JSON.parse(limitedSharingContentDetails);
+          await this.preferences.putString(PreferenceKey.LIMITED_CONTENT_SHARING, '').toPromise();
+          await this.splaschreenDeeplinkActionHandlerDelegate.onAction('content', limitedSharingContentPayload).toPromise();
         } else {
           this.router.navigate([RouterLinks.TABS]);
         }

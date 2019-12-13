@@ -215,6 +215,7 @@ export class PreferenceKey {
     public static readonly SUBSCRIBE_TOPICS = 'subscribe_topics';
     public static readonly SHOW_EXTERNAL_VERIFICATION = 'show_external_verification';
     public static readonly CURRENT_USER_PROFILE = 'current_user_profile';
+    public static readonly LIMITED_CONTENT_SHARING = 'limited_content_sharing';
 }
 
 export class GenericAppConfig {
@@ -364,6 +365,7 @@ export class ContentFilterConfig {
     public static readonly NAME_DOWNLOADS = 'downloads';
     public static readonly NAME_DIALCODE = 'dialcode';
     public static readonly CODE_CONTENT_TYPE = 'contentType';
+    public static readonly CONTENT_STATUS_UNLISTED = 'Unlisted';
 }
 
 export class LocationConfig {

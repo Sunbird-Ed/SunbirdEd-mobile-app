@@ -39,7 +39,7 @@ import { Map } from '@app/app/telemetryutil';
 import { ConfirmAlertComponent } from '@app/app/components';
 import { AppGlobalService } from '@app/services/app-global-service.service';
 import { AppHeaderService } from '@app/services/app-header.service';
-import { ContentConstants, EventTopics, XwalkConstants, RouterLinks } from '@app/app/app.constant';
+import { ContentConstants, EventTopics, XwalkConstants, RouterLinks, ContentFilterConfig, PreferenceKey } from '@app/app/app.constant';
 import { CourseUtilService } from '@app/services/course-util.service';
 import { UtilityService } from '@app/services/utility-service';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
@@ -63,6 +63,8 @@ import { ContentPlayerHandler } from '@app/services/content/player/content-playe
 import { ChildContentHandler } from '@app/services/content/child-content-handler';
 import { ContentDeleteHandler } from '@app/services/content/content-delete-handler';
 import { ContentUtil } from '@app/util/content-util';
+import { SbPopoverComponent } from '../components/popups/sb-popover/sb-popover.component';
+import { LoginHandlerService } from '@app/services/login-handler.service';
 
 @Component({
   selector: 'app-content-details',
@@ -72,7 +74,7 @@ import { ContentUtil } from '@app/util/content-util';
 })
 export class ContentDetailsPage implements OnInit, OnDestroy {
   appName: any;
-  isCourse = false;
+  shouldOpenPlayAsPopup = false;
   apiLevel: number;
   appAvailability: string;
   content: Content;
@@ -144,6 +146,9 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
 
   // Newly Added 
   resumedCourseCardData: any;
+  limitedShareContentFlag = false;
+  private isLoginPromptOpen = false;
+
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
@@ -175,6 +180,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
     private contentPlayerHandler: ContentPlayerHandler,
     private childContentHandler: ChildContentHandler,
     private contentDeleteHandler: ContentDeleteHandler,
+    private loginHandlerService: LoginHandlerService,
   ) {
     this.subscribePlayEvent();
     this.checkDeviceAPILevel();
@@ -207,6 +213,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
       this.resumedCourseCardData = extras.resumedCourseCardData;
       this.isSingleContent = extras.isSingleContent;
       this.resultLength = extras.resultsSize;
+      this.checkLimitedContentSharingFlag(extras.content);
     }
   }
 
@@ -234,7 +241,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
     });
   }
 
-  ngOnDestroy(){
+  ngOnDestroy() {
     this.events.unsubscribe(EventTopics.PLAYER_CLOSED);
   }
 
@@ -395,6 +402,8 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
   }
 
   extractApiResponse(data: Content) {
+    this.checkLimitedContentSharingFlag(data);
+
     if (this.isResumedCourse) {
       const parentIdentifier = this.resumedCourseCardData && this.resumedCourseCardData.contentId ?
         this.resumedCourseCardData.contentId : this.resumedCourseCardData.identifier;
@@ -490,7 +499,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
     values['isUpdateAvailable'] = this.isUpdateAvail;
     values['isDownloaded'] = this.contentDownloadable[this.content.identifier];
     values['autoAfterDownload'] = this.downloadAndPlay ? true : false;
-    
+
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.OTHER,
       ImpressionType.DETAIL,
       Environment.HOME,
@@ -791,6 +800,18 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
       });
   }
 
+  handleContentPlay(isStreaming) {
+    if (this.limitedShareContentFlag) {
+      if (!this.appGlobalService.isUserLoggedIn()) {
+        this.promptToLogin();
+      } else {
+        this.showSwitchUserAlert(true);
+      }
+    } else {
+      this.showSwitchUserAlert(isStreaming);
+    }
+  }
+
   /**
    * alert for playing the content
    */
@@ -812,7 +833,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
         this.corRelationList);
     }
 
-    if (!AppGlobalService.isPlayerLaunched && this.userCount > 2 && this.network.type !== '2g' && !this.isCourse) {
+    if (!AppGlobalService.isPlayerLaunched && this.userCount > 2 && this.network.type !== '2g' && !this.shouldOpenPlayAsPopup) {
       this.openPlayAsPopup(isStreaming);
     } else if (this.network.type === '2g' && !this.contentDownloadable[this.content.identifier]) {
       const popover = await this.popoverCtrl.create({
@@ -846,7 +867,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
         return;
       }
       if (data && data.isLeftButtonClicked) {
-        if (!AppGlobalService.isPlayerLaunched && this.userCount > 2 && !this.isCourse) {
+        if (!AppGlobalService.isPlayerLaunched && this.userCount > 2 && !this.shouldOpenPlayAsPopup) {
           this.openPlayAsPopup(isStreaming);
         } else {
           this.playContent(isStreaming);
@@ -939,7 +960,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
       if (this.isResumedCourse) {
         this.playingContent.hierarchyInfo = hierachyInfo;
       }
-      this.contentPlayerHandler.launchContentPlayer(this.playingContent, isStreaming, this.downloadAndPlay, contentInfo, this.isCourse);
+      this.contentPlayerHandler.launchContentPlayer(this.playingContent, isStreaming, this.downloadAndPlay, contentInfo, this.shouldOpenPlayAsPopup);
       this.downloadAndPlay = false;
     }
   }
@@ -1051,7 +1072,49 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
 
   isPlayedFromCourse() {
     if (this.cardData.hierarchyInfo && this.cardData.hierarchyInfo.length && this.cardData.hierarchyInfo[0].contentType === 'course') {
-      this.isCourse = true;
+      this.shouldOpenPlayAsPopup = true;
     }
   }
+
+  async promptToLogin() {
+    if (this.appGlobalService.isUserLoggedIn()) {
+      return;
+    }
+    if (this.isLoginPromptOpen) {
+      return;
+    }
+    this.isLoginPromptOpen = true;
+    const confirm = await this.popoverCtrl.create({
+      component: SbPopoverComponent,
+      componentProps: {
+        sbPopoverMainTitle: this.commonUtilService.translateMessage('YOU_MUST_LOGIN_TO_ACCESS_CONTENT_DETAIL'),
+        metaInfo: this.commonUtilService.translateMessage('CONTENTS_ONLY_REGISTERED_USERS'),
+        sbPopoverHeading: this.commonUtilService.translateMessage('OVERLAY_SIGN_IN'),
+        isNotShowCloseIcon: true,
+        actionsButtons: [
+          {
+            btntext: this.commonUtilService.translateMessage('OVERLAY_SIGN_IN'),
+            btnClass: 'popover-color'
+          },
+        ]
+      },
+      cssClass: 'sb-popover info',
+    });
+    await confirm.present();
+
+    const { data } = await confirm.onDidDismiss();
+    if (data && data.canDelete) {
+      this.loginHandlerService.signIn();
+    }
+    this.isLoginPromptOpen = false;
+  }
+
+  checkLimitedContentSharingFlag(content) {
+    this.limitedShareContentFlag = (content.contentData &&
+      content.contentData.status === ContentFilterConfig.CONTENT_STATUS_UNLISTED);
+    if (this.limitedShareContentFlag) {
+      this.promptToLogin();
+    }
+  }
+
 }
