@@ -1,3 +1,4 @@
+import { TextbookTocService } from '@app/app/collection-detail-etb/textbook-toc-service';
 // Angular dependencies
 import { NgModule, Provider, ErrorHandler, APP_INITIALIZER, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
@@ -462,6 +463,7 @@ declare const buildconfigreader;
     SplaschreenDeeplinkActionHandlerDelegate,
     SplashScreenService,
     ExternalIdVerificationService,
+    TextbookTocService,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     ...sunbirdSdkServicesProvidersFactory(),
     { provide: ErrorHandler, useClass: CrashAnalyticsErrorLogger },
