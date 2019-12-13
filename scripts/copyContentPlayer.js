@@ -32,7 +32,7 @@ function copyFromContentPlayer(src, dist) {
              //   console.log(file);
                 fs.copy(path.join(src, file), path.join(dist, file), (err) => {
                     if (err) throw err;
-                  //  console.log('File was copied to destination');
+                   // console.log('File was copied to destination');
                 });
             }
         });
@@ -40,12 +40,12 @@ function copyFromContentPlayer(src, dist) {
 }
 
 module.exports = function (context) {
-    srcPath = 'node_modules/@project-sunbird/content-player';
-    destinationPath = 'www/content-player';
+    srcPath = path.join(__dirname, '../node_modules/@project-sunbird/content-player');
+    destinationPath = path.join(__dirname, '../www/content-player');
     copyFromNodeModule(srcPath, destinationPath);
     console.log('copy file/folders from node_modules/content-player to www/content-player')
-    srcPath = 'content-player';
-    destinationPath = 'www/content-player';
+    srcPath = path.join(__dirname, '../content-player');
+    destinationPath = path.join(__dirname, '../www/content-player');
     copyFromContentPlayer(srcPath, destinationPath);
     console.log('copy file/folders from app content-player to www/content-player');
 }
