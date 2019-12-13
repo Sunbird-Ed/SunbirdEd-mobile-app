@@ -7,7 +7,6 @@ function copyFromNodeModule(src, dist) {
         files.forEach(function (file) {
             if (['assets', 'coreplugins', 'fonts', 'style.min.1.1.js', 'coreplugins.js',
              'script.min.1.1.js', 'style.min.1.1.css', 'youtube.html'].includes(file)) {
-                    console.log(file);
                 fs.copySync(path.join(src, file), path.join(dist, file));
             }
         });
