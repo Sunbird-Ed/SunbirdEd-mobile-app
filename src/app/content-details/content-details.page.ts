@@ -185,7 +185,6 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
     private transfer: FileTransfer
   ) {
     this.subscribePlayEvent();
-    console.log('Constructor!!!!!!!');
     this.checkDeviceAPILevel();
     this.checkappAvailability();
     this.defaultAppIcon = 'assets/imgs/ic_launcher.png';
@@ -246,22 +245,21 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
       }
     });
     this.events.subscribe('NEXT_CONTENT', (data) => {
-      console.log(data);
+      this.generateEndEvent();
       this.events.unsubscribe(EventTopics.PLAYER_CLOSED);
       this.events.unsubscribe('NEXT_CONTENT');
       const previousContent = this.content;
       this.content = data.content;
       this.course = data.course;
-      console.log('current content', this.content.identifier);
       this.getNavParams();
       this.subscribeEvents();
-      this.viewEnterHandler();
 
       // show popup for previous content
-      this.ratingHandler.showRatingPopup(this.isContentPlayed, previousContent, 'automatic', this.corRelationList, this.objRollup);
-      console.log('previous content', this.content.identifier);
-      this.contentPlayerHandler.setLastPlayedContentId('');
-      this.generateTelemetry(true);
+      setTimeout(() => {
+        this.ratingHandler.showRatingPopup(this.isContentPlayed, previousContent, 'automatic', this.corRelationList, this.objRollup);
+        this.contentPlayerHandler.setLastPlayedContentId('');
+        this.generateTelemetry(true);
+      }, 1000);
     });
   }
 
