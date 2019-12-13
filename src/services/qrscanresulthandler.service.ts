@@ -18,7 +18,6 @@ import { NavigationExtras, Router } from '@angular/router';
 import { NavController, Events } from '@ionic/angular';
 import { AppGlobalService } from './app-global-service.service';
 import { FormAndFrameworkUtilService } from './formandframeworkutil.service';
-import { exec } from 'child_process';
 
 declare var cordova;
 
