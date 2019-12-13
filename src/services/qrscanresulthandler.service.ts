@@ -180,8 +180,9 @@ export class QRScannerResultHandler {
     values['scannedData'] = scannedData;
     values['action'] = action;
     values['compatibile'] = (action === 'OpenBrowser' || action === 'SearchResult' || action === 'ContentDetail') ? 1 : 0;
+    if (this.scannedUrlMap) {
     values['dialCodeType'] = this.scannedUrlMap['sunbird'] ? 'standard' : 'non-standard';
-
+    }
     let telemetryObject: TelemetryObject;
 
     if (dialCode) {
