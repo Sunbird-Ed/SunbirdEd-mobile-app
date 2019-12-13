@@ -31,12 +31,12 @@ module.exports = function (context) {
     srcPath = path.join(__dirname, '../content-player');
     destinationPath = path.join(__dirname, '../www/content-player');
     copyFromContentPlayer(srcPath, destinationPath);
-    console.log('copy completed!');
+    console.log('copied from content-player to www/content-player');
 
     srcPath = path.join(__dirname, '../node_modules/@project-sunbird/content-player');
     destinationPath = path.join(__dirname, '../www/content-player');
     copyFromNodeModule(srcPath, destinationPath);
-    console.log('copy completed!');
+    console.log('copied from node_modules/content-player to wwww/content-player');
 }
 
 
