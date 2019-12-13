@@ -1083,6 +1083,16 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
     if (this.isLoginPromptOpen) {
       return;
     }
+
+    this.telemetryGeneratorService.generateImpressionTelemetry(ImpressionType.VIEW,
+      '', PageId.SIGNIN_POPUP,
+      Environment.HOME,
+      this.telemetryObject.id,
+      this.telemetryObject.type,
+      this.telemetryObject.version,
+      this.objRollup,
+      this.corRelationList);
+
     this.isLoginPromptOpen = true;
     const confirm = await this.popoverCtrl.create({
       component: SbPopoverComponent,
@@ -1104,6 +1114,15 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
 
     const { data } = await confirm.onDidDismiss();
     if (data && data.canDelete) {
+      this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
+        InteractSubtype.LOGIN_CLICKED,
+        Environment.HOME,
+        PageId.SIGNIN_POPUP,
+        this.telemetryObject,
+        undefined,
+        this.objRollup,
+        this.corRelationList
+      );
       this.loginHandlerService.signIn();
     }
     this.isLoginPromptOpen = false;
@@ -1111,7 +1130,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
 
   checkLimitedContentSharingFlag(content) {
     this.limitedShareContentFlag = (content.contentData &&
-      content.contentData.status === ContentFilterConfig.CONTENT_STATUS_UNLISTED);
+    content.contentData.status === ContentFilterConfig.CONTENT_STATUS_UNLISTED);
     if (this.limitedShareContentFlag) {
       this.promptToLogin();
     }

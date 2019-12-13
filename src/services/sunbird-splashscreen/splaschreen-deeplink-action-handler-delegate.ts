@@ -22,7 +22,7 @@ import { ContentType, MimeType, ActionType, EventTopics, RouterLinks } from '../
 import { AppGlobalService } from '../app-global-service.service';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { CommonUtilService } from '@app/services/common-util.service';
-import { PageId, InteractType, InteractSubtype, Environment } from '../telemetry-constants';
+import { PageId, InteractType, InteractSubtype, Environment, ID, CorReleationDataType } from '../telemetry-constants';
 import { UtilityService } from '..';
 import { Location } from '@angular/common';
 import { LocalCourseService } from '../local-course.service';
@@ -111,8 +111,18 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
                   this.commonUtilService.showToast('INTERNET_CONNECTIVITY_NEEDED');
                   return false;
               }
+              const islimitedShareContentLinkClicked =
+                await this.preferences.getBoolean(PreferenceKey.LIMITED_CONTENT_SHARING_LINK_CLICKED).toPromise();
               if (content.contentData && content.contentData.status === 'Unlisted' && !this.appGlobalServices.isUserLoggedIn()) {
+                this.limitedSharingContentLinkClickedTelemery();
+                await this.preferences.putBoolean(PreferenceKey.LIMITED_CONTENT_SHARING_LINK_CLICKED, true).toPromise();
                 await this.preferences.putString(PreferenceKey.LIMITED_CONTENT_SHARING, JSON.stringify(action)).toPromise();
+              } else if (content.contentData && content.contentData.status === 'Unlisted' && this.appGlobalServices.isUserLoggedIn()) {
+                if (!islimitedShareContentLinkClicked) {
+                  this.limitedSharingContentLinkClickedTelemery();
+                } else {
+                  await this.preferences.putBoolean(PreferenceKey.LIMITED_CONTENT_SHARING_LINK_CLICKED, false).toPromise();
+                }
               }
               this.router.navigate([RouterLinks.CONTENT_DETAILS], { state: { content } });
             }
@@ -282,4 +292,18 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
         await loader.dismiss();
       });
   }
+
+  limitedSharingContentLinkClickedTelemery() {
+    const corRelationList = [];
+    corRelationList.push({ id: ID.QUIZ, type: CorReleationDataType.DEEPLINK });
+    this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
+      InteractSubtype.DEEPLINK_CLICKED,
+      Environment.HOME,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      corRelationList);
+  }
+
 }

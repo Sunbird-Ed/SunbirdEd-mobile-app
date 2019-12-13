@@ -372,7 +372,8 @@ export enum InteractSubtype {
     REPORT_ISSUE_CLICKED = 'report-issue-clicked',
     STATE_DIST_CHANGED = 'state-dist-changed',
     STATE_CHANGED = 'state-changed',
-    DIST_CHANGED = 'dist-changed'
+    DIST_CHANGED = 'dist-changed',
+    DEEPLINK_CLICKED = 'deeplink-clicked',
 }
 
 export enum ID {
@@ -381,7 +382,8 @@ export enum ID {
     USER_VERIFICATION_SUBMITED = 'ext-user-verify-submit',
     USER_VERIFICATION_FAILED = 'ext-user-verify-fail',
     USER_VERIFICATION_SUCCESS = 'ext-user-verify-success',
-    SUBMIT_CLICKED = 'submit-clicked'
+    SUBMIT_CLICKED = 'submit-clicked',
+    QUIZ = 'quiz',
 }
 
 export enum ActionButtonType {
@@ -397,7 +399,8 @@ export enum CorReleationDataType {
     BOARD = 'Board',
     MEDIUM = 'Medium',
     CLASS = 'Class',
-    USERTYPE = 'UserType'
+    USERTYPE = 'UserType',
+    DEEPLINK = 'Deeplink'
 }
 
 
