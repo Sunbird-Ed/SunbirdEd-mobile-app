@@ -12,6 +12,7 @@ import {
   InteractType,
   Mode,
   PageId,
+  ObjectType,
 } from './telemetry-constants';
 import { NavigationExtras, Router } from '@angular/router';
 import { NavController, Events } from '@ionic/angular';
@@ -101,10 +102,10 @@ export class QRScannerResultHandler {
         this.navigateToDetailsPage(content,
           this.getCorRelationList(content.identifier, QRScannerResultHandler.CORRELATION_TYPE));
         this.telemetryGeneratorService.generateImpressionTelemetry(
-          ImpressionType.SEARCH, '',
-          ImpressionSubtype.QR_CODE_VALID,
+          ImpressionType.VIEW, ImpressionSubtype.QR_CODE_VALID,
           PageId.QRCodeScanner,
           Environment.HOME,
+          contentId , ObjectType.QR , ''
         );
       }).catch(() => {
       if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
@@ -112,11 +113,10 @@ export class QRScannerResultHandler {
       } else {
         this.commonUtilService.showToast('UNKNOWN_QR');
         this.telemetryGeneratorService.generateImpressionTelemetry(
-          ImpressionType.SEARCH, '',
-          ImpressionSubtype.INVALID_QR_CODE,
-          InteractType.OTHER,
+          ImpressionType.VIEW, ImpressionSubtype.INVALID_QR_CODE,
           PageId.QRCodeScanner,
           Environment.HOME,
+          contentId , ObjectType.QR , ''
         );
       }
     });
