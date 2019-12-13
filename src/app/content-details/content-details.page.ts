@@ -148,7 +148,6 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
   licenseDetails;
 
   resumedCourseCardData: any;
-  previousidentifier: string;
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
@@ -244,10 +243,10 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
         }
       }
     });
-    this.events.subscribe('NEXT_CONTENT', (data) => {
+    this.events.subscribe(EventTopics.NEXT_CONTENT, (data) => {
       this.generateEndEvent();
       this.events.unsubscribe(EventTopics.PLAYER_CLOSED);
-      this.events.unsubscribe('NEXT_CONTENT');
+      this.events.unsubscribe(EventTopics.NEXT_CONTENT);
       const previousContent = this.content;
       this.content = data.content;
       this.course = data.course;
@@ -265,17 +264,13 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.events.unsubscribe(EventTopics.PLAYER_CLOSED);
-    this.events.unsubscribe('NEXT_CONTENT');
+    this.events.unsubscribe(EventTopics.NEXT_CONTENT);
   }
 
   /**
    * Ionic life cycle hook
    */
-  ionViewWillEnter(): void {
-    this.viewEnterHandler();
-  }
-
-  viewEnterHandler() {
+  ionViewWillEnter() {
     this.headerService.hideHeader();
 
     if (this.isResumedCourse && !this.contentPlayerHandler.isContentPlayerLaunched()) {

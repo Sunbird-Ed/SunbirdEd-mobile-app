@@ -144,12 +144,10 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
     setTimeout(() => {
         this.closeIframe();
     }, 1000);
-    this.events.publish('NEXT_CONTENT', {
+    this.events.publish(EventTopics.NEXT_CONTENT, {
         content,
         course: this.course
     });
-    //  this.router.navigate([RouterLinks.CONTENT_DETAILS , identifier], { state: { content, course: this.course }});
-
   }
 
   /**
