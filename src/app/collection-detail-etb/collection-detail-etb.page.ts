@@ -798,7 +798,6 @@ export class CollectionDetailEtbPage implements OnInit {
             .findIndex((d: Content) => {
               return divElement.nativeElement.id === d.identifier;
             });
-
           if (this.textbookTocService.textbookIds.rootUnitId) {
             carouselIndex = this.childrenData.findIndex((content) => this.textbookTocService.textbookIds.rootUnitId === content.identifier);
             // carouselIndex = carouselIndex > 0 ? carouselIndex : 0;
@@ -807,13 +806,10 @@ export class CollectionDetailEtbPage implements OnInit {
           if (this.textbookTocService.textbookIds.contentId) {
             setTimeout(() => {
               (this.stickyPillsRef.nativeElement as HTMLDivElement).classList.add('sticky');
-              window['scrollWindow'].getScrollElement()
-                .scrollTo({
-                  top: document.getElementById(this.textbookTocService.textbookIds.contentId).offsetTop - 165,
-                  left: 0,
-                  behavior: 'smooth'
-                });
-              this.textbookTocService.resetTextbookIds();
+              window['scrollWindow'].getScrollElement().then((v) => {
+                document.getElementById(this.textbookTocService.textbookIds.contentId).scrollIntoView({behavior: 'smooth'});
+                this.textbookTocService.resetTextbookIds();
+              });
             }, 0);
           }
 
