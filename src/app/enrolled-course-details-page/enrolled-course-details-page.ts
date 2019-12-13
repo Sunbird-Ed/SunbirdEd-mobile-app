@@ -1214,7 +1214,8 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
         isChildContent: true,
         resumedCourseCardData: this.courseCardData,
         corRelation: this.corRelationList,
-        isCourse: true
+        isCourse: true,
+        course: this.updatedCourseCardData
       }
     };
     this.router.navigate([RouterLinks.CONTENT_DETAILS], params);
