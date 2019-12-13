@@ -146,7 +146,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
   fileTransfer: FileTransferObject;
   // Newly Added
   licenseDetails;
-
+  showPrint: false;
   resumedCourseCardData: any;
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
