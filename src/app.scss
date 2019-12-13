@@ -56,6 +56,11 @@ h6 {
 .span-semibold {
   @extend .NotoSans;
 }
+.sb-legal-url {
+  color: #0a55a0;
+  font-size: 14px;
+  text-decoration: underline;
+}
 
 .content-meta-title {
   @extend .NotoSans;
