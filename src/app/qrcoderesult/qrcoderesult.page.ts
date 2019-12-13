@@ -1,3 +1,4 @@
+import { TextbookTocService } from './../collection-detail-etb/textbook-toc-service';
 import { CommonUtilService } from './../../services/common-util.service';
 import { Component, Inject, NgZone, OnDestroy, ViewChild, ViewChildren, QueryList, ElementRef } from '@angular/core';
 import { ContentType, MimeType, RouterLinks, EventTopics } from '../../app/app.constant';
@@ -138,7 +139,8 @@ export class QrcoderesultPage implements OnDestroy {
     private router: Router,
     private navCtrl: NavController,
     private ratingHandler: RatingHandler,
-    private contentPlayerHandler: ContentPlayerHandler
+    private contentPlayerHandler: ContentPlayerHandler,
+    private textbookTocService: TextbookTocService
   ) {
     this.getNavData();
   }
@@ -390,7 +392,7 @@ export class QrcoderesultPage implements OnDestroy {
     }
   }
 
-  navigateToDetailsPage(content) {
+  navigateToDetailsPage(content, paths?, contentIdentifier?) {
     if (content && content.contentData && content.contentData.contentType === ContentType.COURSE) {
       // this.navCtrl.push(EnrolledCourseDetailsPage, {
       //   content: content,
@@ -407,6 +409,9 @@ export class QrcoderesultPage implements OnDestroy {
       //   content: content,
       //   corRelation: this.corRelationList
       // });
+      if (paths.length && paths.length >= 2) {
+        this.textbookTocService.setTextbookIds({ rootUnitId: paths[1].identifier, contentId: contentIdentifier });
+      }
       this.router.navigate([RouterLinks.COLLECTION_DETAIL_ETB], {
         state: {
           content: content,
