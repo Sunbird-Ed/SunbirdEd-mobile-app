@@ -1,4 +1,3 @@
-import { TextbookTocService } from '@app/app/collection-detail-etb/textbook-toc-service';
 // Angular dependencies
 import { NgModule, Provider, ErrorHandler, APP_INITIALIZER, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
@@ -67,6 +66,7 @@ import { SplaschreenDeeplinkActionHandlerDelegate } from '@app/services/sunbird-
 import { LocalCourseService } from '@app/services/local-course.service';
 import { ContentType } from './app.constant';
 import { ExternalIdVerificationService } from '@app/services/externalid-verification.service';
+import { TextbookTocService } from '@app/app/collection-detail-etb/textbook-toc-service';
 
 // AoT requires an exported function for factories
 export function translateHttpLoaderFactory(httpClient: HttpClient) {
