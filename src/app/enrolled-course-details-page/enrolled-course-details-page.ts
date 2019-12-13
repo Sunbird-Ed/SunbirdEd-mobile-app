@@ -1552,7 +1552,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
 
   goBack() {
     this.events.publish('event:update_course_data');
-    if (this.isQrCodeLinkToContent === 0) {
+    if (this.isQrCodeLinkToContent) {
       window.history.go(-2);
     } else {
       this.location.back();
