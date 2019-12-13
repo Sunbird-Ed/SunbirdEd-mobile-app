@@ -47,7 +47,7 @@
             </ion-button>
         </div>
     </div>
-    <div class="school-recent" *ngIf="organisationName">
+    <div class="school-recent" *ngIf="organisationName && !(isDefaultChannelProfile$ | async)">
         <p class="bolder MB5" style="position: relative;">{{organisationName}}
             <span *ngIf="!isCustodianOrgId && organisationName" class="isymbol" item-right text-left
                 (click)="toggleTooltips($event, 'org')">
