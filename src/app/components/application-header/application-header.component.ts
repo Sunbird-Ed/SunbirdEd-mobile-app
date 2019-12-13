@@ -7,10 +7,9 @@ import {
 import { DownloadService, SharedPreferences, NotificationService as PushNotificationService, NotificationStatus, EventNamespace, DownloadProgress, DownloadEventType, EventsBusService } from 'sunbird-sdk';
 import { GenericAppConfig, PreferenceKey, EventTopics } from '../../../app/app.constant';
 import { AppVersion } from '@ionic-native/app-version/ngx';
-import { Subscription } from 'rxjs';
+import { Subscription, combineLatest } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
 import { NavigationExtras, Router, RouterLink } from '@angular/router';
-import {combineLatest} from 'rxjs';
 import { filter } from 'rxjs/operators';
 
 @Component({
