@@ -4,13 +4,13 @@ const fs = require('fs-extra');
 function copyFromNodeModule(src, dist) {
     try {
         const files = fs.readdirSync(src);
+
         files.forEach(function (file) {
-            if (['assets', 'coreplugins', 'fonts', 'style.min.1.1.js', 'coreplugins.js',
-             'script.min.1.1.js', 'style.min.1.1.css', 'youtube.html'].includes(file)) {
+            if (!(['node_modules', 'preview.html', 'README.md', 'chunks', 'preview_cdn.html', 'package.json'].includes(file))) {
                 fs.copySync(path.join(src, file), path.join(dist, file));
             }
         });
-    } catch(e) {
+    } catch (e) {
         console.error(e);
     }
 
@@ -19,10 +19,10 @@ function copyFromNodeModule(src, dist) {
 function copyFromContentPlayer(src, dist) {
     try {
         fs.copySync(src, dist);
-    } catch(e) {
+    } catch (e) {
         console.error(e);
     }
-    
+
 }
 module.exports = function (context) {
     var srcPath;
