@@ -312,10 +312,7 @@ export class CollectionDetailEtbPage implements OnInit {
 	  * Angular life cycle hooks
 	  */
   ngOnInit() {
-    this.appVersion.getAppName()
-      .then((appName: any) => {
-        this.appName = appName;
-      });
+    this.appName = this.commonUtilService.getAppName();
     window['scrollWindow'] = this.ionContent;
   }
 
