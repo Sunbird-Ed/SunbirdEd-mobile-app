@@ -20,6 +20,7 @@ import { SbGenericPopoverComponent } from '@app/app/components/popups/sb-generic
 import { QRAlertCallBack, QRScannerAlert } from '@app/app/qrscanner-alert/qrscanner-alert.page';
 import { Observable, merge } from 'rxjs';
 import { mapTo } from 'rxjs/operators';
+import { AppVersion } from '@ionic-native/app-version/ngx';
 
 declare const FCMPlugin;
 export interface NetworkInfo {
@@ -51,7 +52,8 @@ export class CommonUtilService implements OnDestroy {
         private zone: NgZone,
         private platform: Platform,
         private telemetryGeneratorService: TelemetryGeneratorService,
-        private webView: WebView
+        private webView: WebView,
+        private appVersion: AppVersion,
     ) {
         this.listenForEvents();
 
@@ -343,6 +345,12 @@ export class CommonUtilService implements OnDestroy {
             await this.alert.dismiss();
             this.alert = undefined;
         }
+    }
+
+    getAppName(){
+        this.appVersion.getAppName().then((appName: any) => {
+            return appName;
+        });
     }
 
     openUrlInBrowser(url) {
