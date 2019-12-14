@@ -20,7 +20,6 @@ import {
   DownloadEventType, DownloadProgress, EventsBusEvent, EventsBusService, MarkerType, Profile, ProfileService,
   ProfileType, Rollup, StorageService, TelemetryErrorCode, TelemetryObject
 } from 'sunbird-sdk';
-import { AppVersion } from '@ionic-native/app-version/ngx';
 import {
   Environment, ErrorType, ImpressionType, InteractSubtype, InteractType, Mode, PageId
 } from '../../services/telemetry-constants';
@@ -271,7 +270,6 @@ export class CollectionDetailEtbPage implements OnInit {
     private changeDetectionRef: ChangeDetectorRef,
     private textbookTocService: TextbookTocService,
     private contentShareHandler: ContentShareHandlerService,
-    private appVersion: AppVersion
   ) {
     this.objRollup = new Rollup();
     this.checkLoggedInOrGuestUser();
