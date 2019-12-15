@@ -39,6 +39,7 @@ export class CommonUtilService implements OnDestroy {
     disconnectSubscription: any;
     private alert?: any;
     private _currentTabName: string;
+    appName: any;
 
     constructor(
         @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
@@ -347,10 +348,8 @@ export class CommonUtilService implements OnDestroy {
         }
     }
 
-    getAppName(){
-        this.appVersion.getAppName().then((appName: any) => {
-            return appName;
-        });
+    async getAppName() {
+       return this.appVersion.getAppName();
     }
 
     openUrlInBrowser(url) {

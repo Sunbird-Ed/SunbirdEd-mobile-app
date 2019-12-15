@@ -74,6 +74,7 @@ import { ContentDeleteHandler } from '@app/services/content/content-delete-handl
 import * as dayjs from 'dayjs';
 import { LocalCourseService } from '@app/services';
 import { EnrollCourse } from './course.interface';
+import { AppVersion } from '@ionic-native/app-version/ngx';
 declare const cordova;
 
 @Component({
@@ -244,7 +245,8 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
     private translate: TranslateService,
     private popOverCtrl: PopoverController,
     private contentDeleteHandler: ContentDeleteHandler,
-    private localCourseService: LocalCourseService
+    private localCourseService: LocalCourseService,
+    private appVersion: AppVersion
   ) {
 
     this.objRollup = new Rollup();
@@ -269,7 +271,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
    * Angular life cycle hooks
    */
   ngOnInit() {
-    this.appName = this.commonUtilService.getAppName();
+    this.commonUtilService.getAppName().then((res) => { this.appName = res; });
     this.subscribeUtilityEvents();
     if (this.courseCardData.batchId) {
       this.segmentType = 'modules';
