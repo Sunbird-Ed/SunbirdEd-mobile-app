@@ -498,7 +498,7 @@ export class CategoriesEditPage {
 
   ionViewWillLeave() {
     if (this.backButtonFunc) {
-      this.platform.backButton.unsubscribe();
+      this.backButtonFunc.unsubscribe();
     }
   }
 }
