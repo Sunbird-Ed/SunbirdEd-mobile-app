@@ -30,7 +30,7 @@ const routes: Routes = [
     ComponentsModule,
     DirectivesModule
   ],
-  providers: [TextbookTocService],
+  providers: [],
   declarations: [QrcoderesultPage],
   exports: [
     QrcoderesultPage

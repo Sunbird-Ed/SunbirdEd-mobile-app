@@ -269,7 +269,7 @@ export class FormAndFrameworkUtilService {
         };
         this.formService.getForm(req).toPromise()
             .then((res: any) => {
-                const data = res.form.data.fields;
+                const data = res.data.fields;
                 if (res && data.length) {
                     for (const ele of data) {
                         if (ele.code === 'dialcode') {

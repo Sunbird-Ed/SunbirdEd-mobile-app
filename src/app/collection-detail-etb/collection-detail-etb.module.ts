@@ -1,5 +1,4 @@
 import { TextBookTocPage } from './textbook-toc/textbook-toc';
-import { TextbookTocService } from './textbook-toc-service';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -39,7 +38,7 @@ const routes: Routes = [
     DirectivesModule,
     PipesModule
   ],
-  providers: [TextbookTocService],
+  providers: [],
   declarations: [CollectionDetailEtbPage, TextBookTocPage],
   exports: [
     CollectionDetailEtbPage,

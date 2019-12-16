@@ -281,6 +281,14 @@
             <div class="sb-content-title">{{'SUBJECT' | translate}}</div>
             <div class="sb-content-title-data">{{content?.contentData?.subject | csa}}</div>
           </div>
+          <div class="sb-info" *ngIf="content?.contentData?.license && !licenseDetails">
+              <div class="sb-content-title">{{'LICENSE' | translate}}</div>
+              <div class="sb-content-title-data">{{content?.contentData?.license}}</div>
+            </div>
+            <div class="sb-info" *ngIf="!content?.contentData?.license && !licenseDetails">
+              <div class="sb-content-title">{{'LICENSE' | translate}}</div>
+              <div class="sb-content-title-data">{{defaultLicense}}</div>
+            </div>
           <div class="sb-info" *ngIf="licenseDetails">
             <div class="sb-content-title">{{'MULTIPLE_LICENSE' | translate:{'%s': licenseDetails?.name} }}</div>
             {{licenseDetails.description}}

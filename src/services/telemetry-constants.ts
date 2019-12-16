@@ -22,7 +22,8 @@ export enum ObjectType {
     USER = 'User',
     GROUP = 'Group',
     CONTENT = 'Content',
-    QUESTION = 'Question'
+    QUESTION = 'Question',
+    QR = 'Qr'
 }
 export enum Mode {
     PLAY = 'play'
