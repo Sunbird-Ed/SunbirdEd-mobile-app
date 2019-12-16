@@ -15,10 +15,10 @@
     </ion-buttons>
     <ion-title class="color f16"*ngIf="headerConfig?.pageTitle?.length >0">{{headerConfig?.pageTitle}}</ion-title>
     <ion-buttons class="sb-header-btn-group" slot="end">
-      <ion-button icon-only *ngIf="headerConfig?.actionButtons?.indexOf('download') >=0 && showDownloadAnimation"
+      <ion-button icon-only *ngIf="headerConfig?.actionButtons?.indexOf('download') >=0 && showDownloadingIcon"
         (click)="emitEvent($event, 'download');">
-        <svg [ngClass]="{'downloading': showDownloadAnimation}" class="active-downloads-icon" height="25"
-          viewBox="0 0 14 20" width="25" xmlns="http://www.w3.org/2000/svg">
+        <svg [ngClass]="{'downloading': showDownloadingIcon}" class="active-downloads-icon" height="25"
+             viewBox="0 0 14 20" width="25" xmlns="http://www.w3.org/2000/svg">
           <title>F2562297-C67D-4A8E-831F-4BBA8FB569A4@1.5x</title>
           <desc>Created with sketchtool.</desc>
           <g>

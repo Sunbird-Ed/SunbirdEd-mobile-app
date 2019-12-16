@@ -9,8 +9,9 @@ import { MimeType, ContentType, RouterLinks } from '../../app.constant';
 import {
   TelemetryObject, InteractType
 } from 'sunbird-sdk';
-import { InteractSubtype } from '../../../services/telemetry-constants';
+import { InteractSubtype, CorReleationDataType } from '../../../services/telemetry-constants';
 import { Router } from '@angular/router';
+import { ContentUtil } from '@app/util/content-util';
 
 @Component({
   selector: 'app-new-course-card',
@@ -66,7 +67,8 @@ export class NewCourseCardComponent implements OnInit {
     const type = this.telemetryGeneratorService.isCollection(course.contentData.mimeType) ?
       course.contentData.contentType : ContentType.RESOURCE;
 
-    const telemetryObject: TelemetryObject = new TelemetryObject(identifier, type, '');
+    const telemetryObject: TelemetryObject = new TelemetryObject(identifier, type, course.contentData.pkgVersion);
+    const corRelationList = [{ id: this.sectionName, type: CorReleationDataType.SECTION }];
     const values = new Map();
     values['sectionName'] = this.sectionName;
     values['positionClicked'] = this.index;
@@ -80,17 +82,21 @@ export class NewCourseCardComponent implements OnInit {
       this.env,
       this.pageName ? this.pageName : this.layoutName,
       telemetryObject,
-      values);
+      values,
+      ContentUtil.generateRollUp(undefined, identifier),
+      corRelationList);
     if (course.mimeType === MimeType.COLLECTION) {
       this.router.navigate([RouterLinks.COLLECTION_DETAIL_ETB], {
         state: {
-          content: course
+          content: course,
+          corRelation: corRelationList
         }
       });
     } else {
       this.router.navigate([RouterLinks.CONTENT_DETAILS], {
         state: {
-          content: course.contentData
+          content: course.contentData,
+          corRelation: corRelationList
         }
       });
     }

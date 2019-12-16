@@ -16,8 +16,10 @@ import {
   ImpressionType,
   InteractSubtype,
   InteractType,
-  PageId
+  PageId,
+  ID
 } from '@app/services/telemetry-constants';
+import { featureIdMap } from '@app/feature-id-map';
 import { ExternalIdVerificationService } from '@app/services/externalid-verification.service';
 @Component({
   selector: 'app-district-mapping',
@@ -80,7 +82,8 @@ export class DistrictMappingPage implements OnInit {
       ImpressionType.VIEW,
       '',
       PageId.DISTRICT_MAPPING,
-      Environment.HOME);
+      this.getEnvironment(), '', '', '', undefined,
+      featureIdMap.location.LOCATION_CAPTURE);
   }
 
   selectState(name, id, code) {
@@ -126,9 +129,9 @@ export class DistrictMappingPage implements OnInit {
     this.districtCode = '';
   }
 
-  goBack() {
-    this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.DISTRICT_MAPPING, Environment.HOME,
-      true);
+  goBack(isNavClicked: boolean) {
+    this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.DISTRICT_MAPPING, this.getEnvironment(),
+      isNavClicked);
     this.location.back();
   }
 
@@ -172,7 +175,7 @@ export class DistrictMappingPage implements OnInit {
   handleDeviceBackButton() {
     if (this.isShowBackButton) {
       this.backButtonFunc = this.platform.backButton.subscribeWithPriority(10, () => {
-        this.goBack();
+        this.goBack(false);
       });
     }
   }
@@ -210,7 +213,6 @@ export class DistrictMappingPage implements OnInit {
           this.stateList = locations;
           if (this.availableLocationState) {
             const state = this.stateList.find(s => s.name === this.availableLocationState);
-            await loader.dismiss();
             if (state) {
               await this.getState(state.name, state.id, state.code);
             } else {
@@ -222,11 +224,11 @@ export class DistrictMappingPage implements OnInit {
           this.districtList = '';
           this.showDistrict = !this.showDistrict;
           this.commonUtilService.showToast(this.commonUtilService.translateMessage('NO_DATA_FOUND'));
-          await loader.dismiss();
         }
+        await loader.dismiss();
       });
     }, async (error) => {
-        await loader.dismiss();
+      await loader.dismiss();
     });
   }
 
@@ -254,8 +256,8 @@ export class DistrictMappingPage implements OnInit {
               this.districtName = '';
             }
           } else if (this.districtList) {
-              this.showDistrict = true;
-              await loader.dismiss();
+            this.showDistrict = true;
+            await loader.dismiss();
           }
         } else {
           this.availableLocationDistrict = '';
@@ -266,18 +268,23 @@ export class DistrictMappingPage implements OnInit {
         }
       });
     }, async (error) => {
-        await loader.dismiss();
+      await loader.dismiss();
     });
   }
 
+  isStateorDistrictChanged() {
+    if (this.availableLocationState !== this.stateName && this.availableLocationDistrict === this.districtName) {
+      return InteractSubtype.STATE_CHANGED;
+    } else if (this.availableLocationDistrict !== this.districtName && this.availableLocationState === this.stateName) {
+      return InteractSubtype.DIST_CHANGED;
+    } else if (this.availableLocationState !== this.stateName && this.availableLocationDistrict !== this.districtName) {
+      return InteractSubtype.STATE_DIST_CHANGED;
+    } else {
+      return '';
+    }
+  }
+
   async submit() {
-    this.telemetryGeneratorService.generateInteractTelemetry(
-      InteractType.OTHER,
-      InteractSubtype.AUTO_POPULATED_LOCATION,
-      Environment.HOME,
-      PageId.DISTRICT_MAPPING,
-      undefined,
-      { isPopulatedLocation: this.isPopulatedLocationChanged });
 
     let isLocationUpdated = false;
     if (this.stateName !== this.availableLocationState ||
@@ -286,12 +293,15 @@ export class DistrictMappingPage implements OnInit {
     }
 
     this.telemetryGeneratorService.generateInteractTelemetry(
-      InteractType.TOUCH,
-      InteractSubtype.SUBMIT_CLICKED,
-      Environment.HOME,
+      isLocationUpdated ? InteractType.LOCATION_CHANGED : InteractType.LOCATION_UNCHANGED,
+      this.isStateorDistrictChanged(),
+      this.getEnvironment(),
       PageId.DISTRICT_MAPPING,
       undefined,
-      { isLocationUpdated }
+      { isPopulatedLocation: this.isPopulatedLocationChanged },
+      undefined,
+      featureIdMap.location.LOCATION_CAPTURE,
+      ID.SUBMIT_CLICKED
     );
 
     if (this.appGlobalService.isUserLoggedIn()) {
@@ -320,7 +330,7 @@ export class DistrictMappingPage implements OnInit {
           this.commonUtilService.showToast(this.commonUtilService.translateMessage('PROFILE_UPDATE_SUCCESS'));
           this.events.publish('loggedInProfile:update', req);
           if (this.profile) {
-            this.goBack();
+            this.location.back();
           } else {
             this.router.navigate([`/${RouterLinks.TABS}`]);
             this.externalIdVerificationService.showExternalIdVerificationPopup();
@@ -329,7 +339,7 @@ export class DistrictMappingPage implements OnInit {
           await loader.dismiss();
           this.commonUtilService.showToast(this.commonUtilService.translateMessage('PROFILE_UPDATE_FAILED'));
           if (this.profile) {
-            this.goBack();
+            this.location.back();
           } else {
             this.router.navigate([`/${RouterLinks.TABS}`]);
             this.externalIdVerificationService.showExternalIdVerificationPopup();
@@ -341,7 +351,7 @@ export class DistrictMappingPage implements OnInit {
 
       await this.saveDeviceLocation();
       this.events.publish('refresh:profile');
-      this.goBack();
+      this.location.back();
     } else { // add or update the device loc
       await this.saveDeviceLocation();
       const navigationExtras: NavigationExtras = {
@@ -400,25 +410,40 @@ export class DistrictMappingPage implements OnInit {
 
   generateAutoPopulatedTelemetry() {
     this.telemetryGeneratorService.generateInteractTelemetry(
-      InteractType.OTHER,
-      InteractSubtype.AUTO_POPULATED_LOCATION,
-      Environment.HOME,
+      this.isAutoPopulated ? InteractType.VISIBLE : InteractType.NOT_VISIBLE,
+      '',
+      this.getEnvironment(),
       PageId.DISTRICT_MAPPING,
       undefined,
-      { isAutoPopulated: this.isAutoPopulated });
+      { isAutoPopulated: this.isAutoPopulated },
+      undefined,
+      featureIdMap.location.LOCATION_CAPTURE,
+      ID.IP_BASED_LOCATION_SUGGESTION);
   }
 
   generateLocationCaptured(isEdited: boolean) {
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,
       InteractSubtype.LOCATION_CAPTURED,
-      Environment.HOME,
+      this.getEnvironment(),
       PageId.DISTRICT_MAPPING,
       undefined,
       {
         isAutoPopulated: this.isAutoPopulated,
         isEdited
-      });
+      }, undefined,
+      featureIdMap.location.LOCATION_CAPTURE);
+  }
+
+  getEnvironment(): string {
+    return this.source === PageId.GUEST_PROFILE ? Environment.USER : Environment.ONBOARDING;
+  }
+
+  isValid(input: string, objects: any[], key: 'code' | 'name'): boolean {
+    if (!objects) {
+      return false;
+    }
+    return !!objects.find(o => o[key] === input);
   }
 
   resetDistrictCode() {
