@@ -29,6 +29,7 @@ import { ActivatedRoute, Router, NavigationExtras } from '@angular/router';
 import { Location } from '@angular/common';
 import { Environment, ActivePageService } from '@app/services';
 import { ExternalIdVerificationService } from '@app/services/externalid-verification.service';
+import { TncUpdateHandlerService } from '@app/services/handlers/tnc-update-handler.service';
 
 
 @Component({
@@ -135,7 +136,8 @@ export class CategoriesEditPage {
     private platform: Platform,
     private activePageService: ActivePageService,
     private changeDetectionRef: ChangeDetectorRef,
-    private externalIdVerificationService: ExternalIdVerificationService
+    private externalIdVerificationService: ExternalIdVerificationService,
+    private tncUpdateHandlerService: TncUpdateHandlerService,
 
   ) {
     this.profile = this.appGlobalService.getCurrentUser();
@@ -458,9 +460,9 @@ export class CategoriesEditPage {
           this.profileService.getServerProfilesDetails(reqObj).toPromise()
             .then(updatedProfile => {
               this.formAndFrameworkUtilService.updateLoggedInUser(updatedProfile, this.profile)
-                .then((value) => {
+                .then( async (value) => {
                   initTabs(this.container, LOGIN_TEACHER_TABS);
-                  if (this.hasFilledLocation) {
+                  if (this.hasFilledLocation || await this.tncUpdateHandlerService.isSSOUser(this.profile)) {
                     this.router.navigate([RouterLinks.TABS]);
                     this.externalIdVerificationService.showExternalIdVerificationPopup();
                   } else {
