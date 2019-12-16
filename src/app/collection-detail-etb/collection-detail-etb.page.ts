@@ -168,6 +168,7 @@ export class CollectionDetailEtbPage implements OnInit {
    * Child content size
    */
   downloadSize = 0;
+  showCredits = false;
 
   /**
    * Contains total size of locally not available content(s)
@@ -224,6 +225,7 @@ export class CollectionDetailEtbPage implements OnInit {
   scrollPosition = 0;
   currentFilter = 'ALL';
   localImage = '';
+  appName: any;
   @ViewChild(iContent) ionContent: iContent;
   @ViewChild('stickyPillsRef') stickyPillsRef: ElementRef;
   private eventSubscription: Subscription;
@@ -239,6 +241,7 @@ export class CollectionDetailEtbPage implements OnInit {
 
   public telemetryObject: TelemetryObject;
   public rollUpMap: { [key: string]: Rollup } = {};
+  licenseDetails: any;
 
   private previousHeaderBottomOffset?: number;
   constructor(
@@ -266,7 +269,7 @@ export class CollectionDetailEtbPage implements OnInit {
     private router: Router,
     private changeDetectionRef: ChangeDetectorRef,
     private textbookTocService: TextbookTocService,
-    private contentShareHandler: ContentShareHandlerService
+    private contentShareHandler: ContentShareHandlerService,
   ) {
     this.objRollup = new Rollup();
     this.checkLoggedInOrGuestUser();
@@ -307,6 +310,7 @@ export class CollectionDetailEtbPage implements OnInit {
 	  * Angular life cycle hooks
 	  */
   ngOnInit() {
+    this.commonUtilService.getAppName().then((res) => { this.appName = res; });
     window['scrollWindow'] = this.ionContent;
   }
 
@@ -343,6 +347,10 @@ export class CollectionDetailEtbPage implements OnInit {
     this.ionContent.ionScroll.subscribe((event) => {
       this.scrollPosition = event.scrollTop;
     });
+  }
+
+  openBrowser(url) {
+    this.commonUtilService.openUrlInBrowser(url);
   }
 
   markContent() {
@@ -500,12 +508,12 @@ export class CollectionDetailEtbPage implements OnInit {
     this.contentService.getContentDetails(option).toPromise()
       .then((data: Content) => {
         // this.zone.run(() => {
-          loader.dismiss().then(() => {
-            if (data) {
-              if (!data.isAvailableLocally) {
-                this.contentDetail = data;
-                this.generatefastLoadingTelemetry(InteractSubtype.FAST_LOADING_OF_TEXTBOOK_INITIATED);
-                this.contentService.getContentHeirarchy(option).toPromise()
+        loader.dismiss().then(() => {
+          if (data) {
+            if (!data.isAvailableLocally) {
+              this.contentDetail = data;
+              this.generatefastLoadingTelemetry(InteractSubtype.FAST_LOADING_OF_TEXTBOOK_INITIATED);
+              this.contentService.getContentHeirarchy(option).toPromise()
                 .then((content: Content) => {
                   this.childrenData = content.children;
                   this.showSheenAnimation = false;
@@ -514,13 +522,13 @@ export class CollectionDetailEtbPage implements OnInit {
                 }).catch((err) => {
                   this.showSheenAnimation = false;
                 });
-                this.importContentInBackground([this.identifier], false);
-              } else {
-                this.showSheenAnimation = false;
-                this.extractApiResponse(data);
-              }
+              this.importContentInBackground([this.identifier], false);
+            } else {
+              this.showSheenAnimation = false;
+              this.extractApiResponse(data);
             }
-          });
+          }
+        });
         // });
       })
       .catch((error: any) => {
@@ -530,6 +538,10 @@ export class CollectionDetailEtbPage implements OnInit {
         this.commonUtilService.showToast('ERROR_CONTENT_NOT_AVAILABLE');
         this.location.back();
       });
+  }
+
+  showLicensce() {
+    this.showCredits = !this.showCredits;
   }
 
   async showCommingSoonPopup(childData: any) {
@@ -559,6 +571,7 @@ export class CollectionDetailEtbPage implements OnInit {
    */
   extractApiResponse(data: Content) {
     this.contentDetail = data;
+    this.licenseDetails = data.contentData.licenseDetails || this.licenseDetails;
     // this.contentDetail.isAvailableLocally = data.isAvailableLocally;
 
     if (this.contentDetail.contentData.appIcon) {
@@ -947,6 +960,10 @@ export class CollectionDetailEtbPage implements OnInit {
           }
         }
 
+        if (event.payload && event.type === ContentEventType.SERVER_CONTENT_DATA) {
+          this.licenseDetails = event.payload.licenseDetails;
+      }
+
         // Get child content
         if (event.type === ContentEventType.CONTENT_EXTRACT_COMPLETED) {
           const contentImportedEvent = event as ContentImportCompleted;
@@ -1157,13 +1174,13 @@ export class CollectionDetailEtbPage implements OnInit {
       * type: impression
       */
       this.telemetryGeneratorService.generateImpressionTelemetry(ImpressionType.VIEW, '',
-      PageId.COLLECTION_DETAIL,
-      Environment.HOME,
-      this.identifier,
-      '',
-      this.content.pkgVersion,
-      this.objRollup,
-      this.corRelationList);
+        PageId.COLLECTION_DETAIL,
+        Environment.HOME,
+        this.identifier,
+        '',
+        this.content.pkgVersion,
+        this.objRollup,
+        this.corRelationList);
 
       const response = await popover.onDidDismiss();
       if (response && response.data) {
@@ -1186,6 +1203,10 @@ export class CollectionDetailEtbPage implements OnInit {
     }
   }
 
+  mergeProperties(mergeProp) {
+    return ContentUtil.mergeProperties(this.contentDetail.contentData, mergeProp);
+  }
+
   cancelDownload() {
     this.telemetryGeneratorService.generateCancelDownloadTelemetry(this.contentDetail);
     this.contentService.cancelDownload(this.identifier).toPromise().finally(() => {
@@ -1204,7 +1225,7 @@ export class CollectionDetailEtbPage implements OnInit {
       Environment.HOME,
       PageId.COLLECTION_DETAIL,
       this.telemetryObject,
-      values,this.objRollup,
+      values, this.objRollup,
       this.corRelationList);
   }
 
@@ -1291,20 +1312,20 @@ export class CollectionDetailEtbPage implements OnInit {
      * type: impression
      */
     this.telemetryGeneratorService.generateImpressionTelemetry(ImpressionType.VIEW, '',
-     PageId.SINGLE_DELETE_CONFIRMATION_POPUP,
-     Environment.HOME,
-     this.identifier,
-     "",
-     this.content.pkgVersion,
-     this.objRollup,
-     this.corRelationList);
+      PageId.SINGLE_DELETE_CONFIRMATION_POPUP,
+      Environment.HOME,
+      this.identifier,
+      "",
+      this.content.pkgVersion,
+      this.objRollup,
+      this.corRelationList);
     const { data } = await confirm.onDidDismiss();
     if (data && data.canDelete) {
       this.deleteContent();
-    } else if(data && data.closeDeletePopOver) {
+    } else if (data && data.closeDeletePopOver) {
       this.closePopOver();
     }
- }
+  }
 
   /**
    * Construct content delete request body
@@ -1400,7 +1421,7 @@ export class CollectionDetailEtbPage implements OnInit {
       Environment.HOME,
       PageId.COLLECTION_DETAIL,
       this.telemetryObject,
-      undefined,this.objRollup,
+      undefined, this.objRollup,
       this.corRelationList);
     this.router.navigate([RouterLinks.ACTIVE_DOWNLOADS]);
   }
@@ -1450,54 +1471,54 @@ export class CollectionDetailEtbPage implements OnInit {
     );
   }
 
-onScroll(event) {
-  if (event.detail.scrollTop >= 205) {
-    (this.stickyPillsRef.nativeElement as HTMLDivElement).classList.add('sticky');
+  onScroll(event) {
+    if (event.detail.scrollTop >= 205) {
+      (this.stickyPillsRef.nativeElement as HTMLDivElement).classList.add('sticky');
 
-    const boxes: HTMLElement[] = Array.from(document.getElementsByClassName('sticky-header-title-box')) as HTMLElement[];
+      const boxes: HTMLElement[] = Array.from(document.getElementsByClassName('sticky-header-title-box')) as HTMLElement[];
 
-    let headerBottomOffset = (this.stickyPillsRef.nativeElement as HTMLDivElement).getBoundingClientRect().bottom;
+      let headerBottomOffset = (this.stickyPillsRef.nativeElement as HTMLDivElement).getBoundingClientRect().bottom;
 
-    // TODO: Logic will Change if Header Height got fixed
-    if (this.previousHeaderBottomOffset && this.previousHeaderBottomOffset > headerBottomOffset) {
-      headerBottomOffset = this.previousHeaderBottomOffset;
-    }
+      // TODO: Logic will Change if Header Height got fixed
+      if (this.previousHeaderBottomOffset && this.previousHeaderBottomOffset > headerBottomOffset) {
+        headerBottomOffset = this.previousHeaderBottomOffset;
+      }
 
-    this.previousHeaderBottomOffset = headerBottomOffset;
+      this.previousHeaderBottomOffset = headerBottomOffset;
 
-    const boxesData = boxes.map(b => {
-      return {
-        elem: b,
-        text: b.dataset['text'],
-        renderLevel: parseInt(b.dataset['renderLevel']),
-        offsetTop: b.getBoundingClientRect().top
-      };
-    });
+      const boxesData = boxes.map(b => {
+        return {
+          elem: b,
+          text: b.dataset['text'],
+          renderLevel: parseInt(b.dataset['renderLevel']),
+          offsetTop: b.getBoundingClientRect().top
+        };
+      });
 
-    const activeBoxes = boxesData.filter(data => {
-      return data.offsetTop < headerBottomOffset
-        && (data.offsetTop + data.elem.getBoundingClientRect().height) > headerBottomOffset;
-    });
+      const activeBoxes = boxesData.filter(data => {
+        return data.offsetTop < headerBottomOffset
+          && (data.offsetTop + data.elem.getBoundingClientRect().height) > headerBottomOffset;
+      });
 
-    if (!activeBoxes.length) {
+      if (!activeBoxes.length) {
+        return;
+      }
+
+      const activeBox = activeBoxes.reduce((acc, box) => {
+        if (acc.renderLevel > box.renderLevel) {
+          return acc;
+        } else {
+          return box;
+        }
+      }, activeBoxes[0]);
+
+      if (activeBox.text) {
+        this.stckyUnitTitle = activeBox.text;
+      }
       return;
     }
 
-    const activeBox = activeBoxes.reduce((acc, box) => {
-      if (acc.renderLevel > box.renderLevel) {
-        return acc;
-      } else {
-        return box;
-      }
-    }, activeBoxes[0]);
-
-    if (activeBox.text) {
-      this.stckyUnitTitle = activeBox.text;
-    }
-    return;
-  }
-
-  (this.stickyPillsRef.nativeElement as HTMLDivElement).classList.remove('sticky');
+    (this.stickyPillsRef.nativeElement as HTMLDivElement).classList.remove('sticky');
   }
 
   importContentInBackground(identifiers: Array<string>, isChild: boolean, isDownloadAllClicked?) {

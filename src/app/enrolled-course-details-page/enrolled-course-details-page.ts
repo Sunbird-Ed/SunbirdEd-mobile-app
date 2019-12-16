@@ -67,7 +67,6 @@ import { ContentActionsComponent, ContentRatingAlertComponent, ConfirmAlertCompo
 import { Location } from '@angular/common';
 import { Router, NavigationExtras } from '@angular/router';
 import { ContentUtil } from '@app/util/content-util';
-import { AppVersion } from '@ionic-native/app-version/ngx';
 import { SbPopoverComponent } from '../components/popups';
 import { TranslateService } from '@ngx-translate/core';
 import { ContentInfo } from '@app/services/content/content-info';
@@ -75,6 +74,7 @@ import { ContentDeleteHandler } from '@app/services/content/content-delete-handl
 import * as dayjs from 'dayjs';
 import { LocalCourseService } from '@app/services';
 import { EnrollCourse } from './course.interface';
+import { AppVersion } from '@ionic-native/app-version/ngx';
 declare const cordova;
 
 @Component({
@@ -242,11 +242,11 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
     private contentShareHandler: ContentShareHandlerService,
     private location: Location,
     private router: Router,
-    private appVersion: AppVersion,
     private translate: TranslateService,
     private popOverCtrl: PopoverController,
     private contentDeleteHandler: ContentDeleteHandler,
-    private localCourseService: LocalCourseService
+    private localCourseService: LocalCourseService,
+    private appVersion: AppVersion
   ) {
 
     this.objRollup = new Rollup();
@@ -271,10 +271,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
    * Angular life cycle hooks
    */
   ngOnInit() {
-    this.appVersion.getAppName()
-      .then((appName: any) => {
-        this.appName = appName;
-      });
+    this.commonUtilService.getAppName().then((res) => { this.appName = res; });
     this.subscribeUtilityEvents();
     if (this.courseCardData.batchId) {
       this.segmentType = 'modules';
