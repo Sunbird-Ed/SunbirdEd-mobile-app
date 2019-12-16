@@ -189,7 +189,8 @@ export class SunbirdQRScanner {
         actionsButtons: [
           {
             btntext: this.commonUtilService.translateMessage('NOT_NOW'),
-            btnClass: 'popover-button-cancel',
+            btnClass: (this.commonUtilService.translateMessage('NOT_NOW').length > 10) ?
+            'popover-button-cancel-longlength' : 'popover-button-cancel',
           },
           {
             btntext: this.commonUtilService.translateMessage('ALLOW'),

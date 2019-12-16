@@ -44,7 +44,7 @@ import { CourseUtilService } from '@app/services/course-util.service';
 import { UtilityService } from '@app/services/utility-service';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { ContentShareHandlerService } from '@app/services/content/content-share-handler.service';
-import { ContentInfo } from '@app/services/content/content-info'
+import { ContentInfo } from '@app/services/content/content-info';
 import { CommonUtilService } from '@app/services/common-util.service';
 import { DialogPopupComponent } from '@app/app/components/popups/dialog-popup/dialog-popup.component';
 import {
@@ -63,6 +63,7 @@ import { ContentPlayerHandler } from '@app/services/content/player/content-playe
 import { ChildContentHandler } from '@app/services/content/child-content-handler';
 import { ContentDeleteHandler } from '@app/services/content/content-delete-handler';
 import { ContentUtil } from '@app/util/content-util';
+
 
 @Component({
   selector: 'app-content-details',
@@ -141,8 +142,6 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
   resultLength: any;
   course: Course;
   licenseDetails;
-
-  // Newly Added 
   resumedCourseCardData: any;
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -174,7 +173,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
     private ratingHandler: RatingHandler,
     private contentPlayerHandler: ContentPlayerHandler,
     private childContentHandler: ChildContentHandler,
-    private contentDeleteHandler: ContentDeleteHandler,
+    private contentDeleteHandler: ContentDeleteHandler
   ) {
     this.subscribePlayEvent();
     this.checkDeviceAPILevel();

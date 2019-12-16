@@ -258,7 +258,25 @@
       color: #024f9d !important;
       width: 150px;
     }
-
+    @media only screen and (max-width : 412px) {
+    .popover-button-cancel-longlength { 
+      background-color: #fff;
+      --background: white;
+      border: 1px solid #024f9d;
+      color: #024f9d !important;
+      width: 160px;
+      padding: 8px;
+    }
+    }
+    @media only screen and (min-width : 413px) and (max-width : 1025px) {
+      .popover-button-cancel-longlength { 
+        background-color: #fff;
+        --background: white;
+        border: 1px solid #024f9d;
+        color: #024f9d !important;
+        width: 150px;
+    }
+  }
     .popover-button-allow {
       border: 1px solid #024f9d;
       background-color: #024f9d;
