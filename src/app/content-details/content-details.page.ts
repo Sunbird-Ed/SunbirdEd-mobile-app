@@ -142,8 +142,6 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
   resultLength: any;
   course: Course;
   licenseDetails;
-
-  // Newly Added
   resumedCourseCardData: any;
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
