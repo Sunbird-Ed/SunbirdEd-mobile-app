@@ -143,8 +143,6 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
   isSingleContent: boolean;
   resultLength: any;
   course: Course;
-  fileTransfer: FileTransferObject;
-  // Newly Added
   licenseDetails;
 
   // Newly Added
@@ -179,10 +177,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
     private ratingHandler: RatingHandler,
     private contentPlayerHandler: ContentPlayerHandler,
     private childContentHandler: ChildContentHandler,
-    private contentDeleteHandler: ContentDeleteHandler,
-    private fileOpener: FileOpener,
-    private file: File,
-    private transfer: FileTransfer
+    private contentDeleteHandler: ContentDeleteHandler
   ) {
     this.subscribePlayEvent();
     this.checkDeviceAPILevel();
@@ -1063,32 +1058,4 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
     }
   }
 
-  openPDF() {
-    console.log('cordova.file.externalRootDirectory', cordova.file.externalRootDirectory + 'Download/130892_Mar18.pdf');
-
-    // For Offline Scenario
-    // this.fileOpener.open(cordova.file.externalRootDirectory + 'Download/130892_Mar18.pdf', 'application/pdf')
-    // .then(() =>
-    // console.log('File is opened')
-    // )
-    // .catch(e => console.log('Error opening file', e));
-    // Give the relevant path for your downloaded PDF
-    // const url = cordova.file.externalRootDirectory + 'Download/130892_Mar18.pdf';
-
-    // for Online Scenario
-    // sample link for the online PDF
-    const url = 'https://www.antennahouse.com/XSLsample/pdf/sample-link_1.pdf';
-    const browser: any = this.commonUtilService.openLink(url);
-    browser.on('exit');
-    this.fileTransfer = this.transfer.create();
-    this.fileTransfer
-      .download(url, this.file.dataDirectory + 'sample' + '.pdf')
-      .then(entry => {
-        console.log('download complete: ' + entry.toURL());
-        this.fileOpener
-          .open(entry.toURL(), 'application/pdf')
-          .then(() => console.log('File opened'))
-          .catch(e => console.log('Error opening file', e));
-      });
-  }
 }
