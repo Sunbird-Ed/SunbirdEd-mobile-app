@@ -47,7 +47,7 @@ org.ekstep.contentrenderer.baseLauncher.extend({
         this.configOverlay();
     },
     createVideo: function (path, data) {
-        // User has to long press to play/pause or mute/unmute the video in mobile view. 
+        // User has to long press to play/pause or mute/unmute the video in mobile view.
         // TO fix this problem we are removing the tap events of the videoJs library.
         // link:- https://github.com/videojs/video.js/issues/6222
         videojs.getComponent('Component').prototype.emitTapEvents = function () {};
@@ -182,14 +182,14 @@ org.ekstep.contentrenderer.baseLauncher.extend({
             "src": path,
             "controls": true, "autoplay": true, "preload": "auto",
             "youtube": {
-                "onPlayerPlaybackQualityChange" : function(e){ 
+                "onPlayerPlaybackQualityChange" : function(e){
                     var resolution = (e && e.data) ? e.data : "Auto";
                     instance.logResolution(resolution);
                 }
             }
         });
         videojs("videoElement").ready(function () {
-			var youtubeInstance = this;
+            var youtubeInstance = this;
             $('.vjs-default-skin').css('opacity', '1');
             youtubeInstance.src({
                 type: 'video/youtube',

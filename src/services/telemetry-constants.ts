@@ -22,7 +22,8 @@ export enum ObjectType {
     USER = 'User',
     GROUP = 'Group',
     CONTENT = 'Content',
-    QUESTION = 'Question'
+    QUESTION = 'Question',
+    QR = 'Qr'
 }
 export enum Mode {
     PLAY = 'play'
@@ -157,7 +158,9 @@ export enum InteractType {
     OTHER = 'OTHER',
     SCROLL = 'SCROLL',
     LOCATION_CHANGED = 'location-changed',
-    LOCATION_UNCHANGED = 'location-unchanged'
+    LOCATION_UNCHANGED = 'location-unchanged',
+    VISIBLE = 'visible',
+    NOT_VISIBLE = 'not-visible'
 }
 
 export enum InteractSubtype {
@@ -384,6 +387,7 @@ export enum ID {
     USER_VERIFICATION_SUCCESS = 'ext-user-verify-success',
     SUBMIT_CLICKED = 'submit-clicked',
     QUIZ = 'quiz',
+    IP_BASED_LOCATION_SUGGESTION = 'ip-based-location-suggestion'
 }
 
 export enum ActionButtonType {

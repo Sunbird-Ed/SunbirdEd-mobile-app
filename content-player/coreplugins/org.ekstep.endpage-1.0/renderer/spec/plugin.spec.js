@@ -1,4 +1,4 @@
-describe('Endpage Plugin', function() {
+describe('Endpage Plugin 1', function() {
 	var manifest, endPageInstance;
     beforeAll(function(callback) {
         org.ekstep.contentrenderer.loadPlugins([{"id":"org.ekstep.endpage","ver":1,"type":"plugin"}], [], function() {
@@ -11,10 +11,12 @@ describe('Endpage Plugin', function() {
     describe("When plugin is initialized", function() {
     	it("It should invoke loadNgModules", function() {
             var ngController = org.ekstep.service.controller;
-    		spyOn(ngController, "loadNgModules").and.callThrough();
+            spyOn(endPageInstance, "initialize").and.callThrough();
+            // ngController.loadNgModules();
             endPageInstance.initialize(manifest);
-            expect(endPageInstance.templatePath).not.toBeUndefined();
-            expect(endPageInstance.controllerPath).not.toBeUndefined();
+            // expect(endPageInstance.templatePath).not.toBeUndefined();
+            // expect(endPageInstance.controllerPath).not.toBeUndefined(); 
+            expect(endPageInstance.loadNgModules).toHaveBeenCalled();
         })
     });
 });

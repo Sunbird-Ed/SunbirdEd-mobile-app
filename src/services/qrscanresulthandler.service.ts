@@ -12,6 +12,7 @@ import {
   InteractType,
   Mode,
   PageId,
+  ObjectType,
 } from './telemetry-constants';
 import { NavigationExtras, Router } from '@angular/router';
 import { NavController, Events } from '@ionic/angular';
@@ -26,6 +27,7 @@ export class QRScannerResultHandler {
   source: string;
   inAppBrowserRef: any;
   dailCodeRegExpression: RegExp;
+  scannedUrlMap: object;
 
   constructor(
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
@@ -52,7 +54,7 @@ export class QRScannerResultHandler {
   async parseDialCode(scannedData: string): Promise<string | undefined> {
     this.dailCodeRegExpression = await this.getDailCodeRegularExpression();
     const execArray = (new RegExp(this.dailCodeRegExpression)).exec(scannedData);
-
+    this.scannedUrlMap = execArray.groups;
     if (execArray && execArray.groups) {
       return execArray.groups[Object.keys(execArray.groups).find((key) => !!execArray.groups[key])];
     }
@@ -99,10 +101,10 @@ export class QRScannerResultHandler {
         this.navigateToDetailsPage(content,
           this.getCorRelationList(content.identifier, QRScannerResultHandler.CORRELATION_TYPE));
         this.telemetryGeneratorService.generateImpressionTelemetry(
-          ImpressionType.SEARCH, '',
-          ImpressionSubtype.QR_CODE_VALID,
+          ImpressionType.VIEW, ImpressionSubtype.QR_CODE_VALID,
           PageId.QRCodeScanner,
           Environment.HOME,
+          contentId , ObjectType.QR , ''
         );
       }).catch(() => {
       if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
@@ -110,11 +112,10 @@ export class QRScannerResultHandler {
       } else {
         this.commonUtilService.showToast('UNKNOWN_QR');
         this.telemetryGeneratorService.generateImpressionTelemetry(
-          ImpressionType.SEARCH, '',
-          ImpressionSubtype.INVALID_QR_CODE,
-          InteractType.OTHER,
+          ImpressionType.VIEW, ImpressionSubtype.INVALID_QR_CODE,
           PageId.QRCodeScanner,
           Environment.HOME,
+          contentId , ObjectType.QR , ''
         );
       }
     });
@@ -165,7 +166,9 @@ export class QRScannerResultHandler {
 
     if (content.contentData.contentType === ContentType.COURSE) {
       this.router.navigate([`/${RouterLinks.ENROLLED_COURSE_DETAILS}`], navigationExtras);
-     } else {
+     } else if (content.mimeType === MimeType.COLLECTION) {
+      this.router.navigate([`/${RouterLinks.COLLECTION_DETAIL_ETB}`], navigationExtras);
+    }  else {
       this.router.navigate([`/${RouterLinks.CONTENT_DETAILS}`], navigationExtras);
     }
   }
@@ -177,7 +180,9 @@ export class QRScannerResultHandler {
     values['scannedData'] = scannedData;
     values['action'] = action;
     values['compatibile'] = (action === 'OpenBrowser' || action === 'SearchResult' || action === 'ContentDetail') ? 1 : 0;
-
+    if (this.scannedUrlMap) {
+    values['dialCodeType'] = this.scannedUrlMap['sunbird'] ? 'standard' : 'non-standard';
+    }
     let telemetryObject: TelemetryObject;
 
     if (dialCode) {
