@@ -63,9 +63,7 @@ import { ContentPlayerHandler } from '@app/services/content/player/content-playe
 import { ChildContentHandler } from '@app/services/content/child-content-handler';
 import { ContentDeleteHandler } from '@app/services/content/content-delete-handler';
 import { ContentUtil } from '@app/util/content-util';
-import { FileOpener } from '@ionic-native/file-opener/ngx';
-import { File } from '@ionic-native/file/ngx';
-import { FileTransfer, FileTransferObject } from '@ionic-native/file-transfer/ngx';
+
 
 @Component({
   selector: 'app-content-details',
@@ -1057,5 +1055,4 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
       this.isCourse = true;
     }
   }
-
 }
