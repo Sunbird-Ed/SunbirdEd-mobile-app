@@ -403,7 +403,7 @@ export class FormAndFrameworkUtilService {
                             currentCategoryCode: categoryKey,
                             language: this.translate.currentLang,
                             requiredCategories: FrameworkCategoryCodesGroup.DEFAULT_FRAMEWORK_CATEGORIES,
-                            frameworkId: profileRes.framework.id ? profileRes.framework.id[0] : undefined
+                            frameworkId: (profileRes.framework && profileRes.framework.id) ? profileRes.framework.id[0] : undefined
                         };
                         this.frameworkUtilService.getFrameworkCategoryTerms(request).toPromise()
                             .then((categoryList: CategoryTerm[]) => {
