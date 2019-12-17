@@ -161,7 +161,7 @@ export enum InteractType {
     LOCATION_UNCHANGED = 'location-unchanged',
     VISIBLE = 'visible',
     NOT_VISIBLE = 'not-visible',
-    QUIZ_DEEPLINK = 'quiz-deeplink',
+    QUIZ_DEEPLINK = 'quiz-deeplink'
 }
 
 export enum InteractSubtype {
