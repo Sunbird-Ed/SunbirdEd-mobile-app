@@ -59,7 +59,9 @@
     width: 22px;
   }
 
-
+  .black-color {
+    color : black;
+  }
   .gray-color {
     color: map-get($colors, primary_black);
   }
