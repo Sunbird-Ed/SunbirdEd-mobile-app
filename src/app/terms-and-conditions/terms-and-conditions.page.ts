@@ -128,7 +128,8 @@ export class TermsAndConditionsPage implements OnInit {
         this.formAndFrameworkUtilService.updateLoggedInUser(serverProfile, profile)
           .then(async (value) => {
             if (value['status']) {
-              if (this.commonUtilService.isUserLocationAvalable(serverProfile)) {
+              if (this.commonUtilService.isUserLocationAvalable(serverProfile)
+              &&  await tncUpdateHandlerService.isSSOUser(profile)) {
                 await tncUpdateHandlerService.dismissTncPage();
                 this.router.navigate(['/', RouterLinks.TABS]);
                 this.externalIdVerificationService.showExternalIdVerificationPopup();
