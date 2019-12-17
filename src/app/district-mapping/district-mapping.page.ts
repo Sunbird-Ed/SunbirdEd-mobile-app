@@ -181,7 +181,9 @@ export class DistrictMappingPage implements OnInit {
   }
 
   ionViewWillLeave(): void {
+    if (this.backButtonFunc) {
     this.backButtonFunc.unsubscribe();
+    }
   }
 
   showStateList() {
