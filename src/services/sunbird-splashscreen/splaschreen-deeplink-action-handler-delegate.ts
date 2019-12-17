@@ -1,4 +1,4 @@
-import { PreferenceKey } from '@app/app/app.constant';
+import { PreferenceKey, ContentFilterConfig } from '@app/app/app.constant';
 import { Inject, Injectable, NgZone } from '@angular/core';
 import { Router } from '@angular/router';
 import { Events } from '@ionic/angular';
@@ -88,7 +88,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
     }
   }
 
-  onAction(type: string, action?: { identifier: string }): Observable<undefined> {
+  onAction(type: string, action?: { identifier: string }, isFromLink = true): Observable<undefined> {
     const identifier: any = action !== undefined ? action.identifier : this.identifier;
     if (identifier) {
       switch (type) {
@@ -111,17 +111,12 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
                   this.commonUtilService.showToast('INTERNET_CONNECTIVITY_NEEDED');
                   return false;
               }
-              const islimitedShareContentLinkClicked =
-                await this.preferences.getBoolean(PreferenceKey.LIMITED_CONTENT_SHARING_LINK_CLICKED).toPromise();
-              if (content.contentData && content.contentData.status === 'Unlisted' && !this.appGlobalServices.isUserLoggedIn()) {
-                this.limitedSharingContentLinkClickedTelemery();
-                await this.preferences.putBoolean(PreferenceKey.LIMITED_CONTENT_SHARING_LINK_CLICKED, true).toPromise();
-                await this.preferences.putString(PreferenceKey.LIMITED_CONTENT_SHARING, JSON.stringify(action)).toPromise();
-              } else if (content.contentData && content.contentData.status === 'Unlisted' && this.appGlobalServices.isUserLoggedIn()) {
-                if (!islimitedShareContentLinkClicked) {
+              if (content.contentData && content.contentData.status === ContentFilterConfig.CONTENT_STATUS_UNLISTED) {
+                if (!this.appGlobalServices.isUserLoggedIn()) {
+                  await this.preferences.putString(PreferenceKey.LIMITED_CONTENT_SHARING, JSON.stringify(action)).toPromise();
+                }
+                if (isFromLink) {
                   this.limitedSharingContentLinkClickedTelemery();
-                } else {
-                  await this.preferences.putBoolean(PreferenceKey.LIMITED_CONTENT_SHARING_LINK_CLICKED, false).toPromise();
                 }
               }
               this.router.navigate([RouterLinks.CONTENT_DETAILS], { state: { content } });
