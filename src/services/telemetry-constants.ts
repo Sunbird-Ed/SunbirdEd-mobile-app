@@ -376,7 +376,7 @@ export enum InteractSubtype {
     REPORT_ISSUE_CLICKED = 'report-issue-clicked',
     STATE_DIST_CHANGED = 'state-dist-changed',
     STATE_CHANGED = 'state-changed',
-    DIST_CHANGED = 'dist-changed',
+    DIST_CHANGED = 'dist-changed'
 }
 
 export enum ID {
@@ -388,7 +388,7 @@ export enum ID {
     SUBMIT_CLICKED = 'submit-clicked',
     QUIZ = 'quiz',
     IP_BASED_LOCATION_SUGGESTION = 'ip-based-location-suggestion',
-    DEEPLINK_CLICKED = 'deeplink-clicked',
+    DEEPLINK_CLICKED = 'deeplink-clicked'
 }
 
 export enum ActionButtonType {
