@@ -401,11 +401,9 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
     }
 
     this.content = data;
-    this.licenseDetails = data.contentData.licenseDetails || (
-      this.licenseDetails &&
-      Object.keys(this.licenseDetails).length &&
-      this.licenseDetails
-    );
+    if (data.contentData.licenseDetails && Object.keys(data.contentData.licenseDetails).length) {
+      this.licenseDetails = data.contentData.licenseDetails;
+    }
     this.contentDownloadable[this.content.identifier] = data.isAvailableLocally;
     if (this.content.lastUpdatedTime !== 0) {
       this.playOnlineSpinner = false;
