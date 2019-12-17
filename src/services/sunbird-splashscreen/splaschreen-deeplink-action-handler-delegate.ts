@@ -291,14 +291,17 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
   limitedSharingContentLinkClickedTelemery() {
     const corRelationList = [];
     corRelationList.push({ id: ID.QUIZ, type: CorReleationDataType.DEEPLINK });
-    this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
-      InteractSubtype.DEEPLINK_CLICKED,
+    this.telemetryGeneratorService.generateInteractTelemetry(
+      InteractType.QUIZ_DEEPLINK,
+      '',
       Environment.HOME,
       undefined,
       undefined,
       undefined,
       undefined,
-      corRelationList);
+      corRelationList,
+      ID.DEEPLINK_CLICKED
+    );
   }
 
 }
