@@ -44,7 +44,7 @@ import { CourseUtilService } from '@app/services/course-util.service';
 import { UtilityService } from '@app/services/utility-service';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { ContentShareHandlerService } from '@app/services/content/content-share-handler.service';
-import { ContentInfo } from '@app/services/content/content-info'
+import { ContentInfo } from '@app/services/content/content-info';
 import { CommonUtilService } from '@app/services/common-util.service';
 import { DialogPopupComponent } from '@app/app/components/popups/dialog-popup/dialog-popup.component';
 import {
@@ -65,6 +65,7 @@ import { ContentDeleteHandler } from '@app/services/content/content-delete-handl
 import { ContentUtil } from '@app/util/content-util';
 import { SbPopoverComponent } from '../components/popups/sb-popover/sb-popover.component';
 import { LoginHandlerService } from '@app/services/login-handler.service';
+
 
 @Component({
   selector: 'app-content-details',
@@ -143,8 +144,6 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
   resultLength: any;
   course: Course;
   licenseDetails;
-
-  // Newly Added 
   resumedCourseCardData: any;
   limitedShareContentFlag = false;
   private isLoginPromptOpen = false;
@@ -411,7 +410,9 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
     }
 
     this.content = data;
-    this.licenseDetails = data.contentData.licenseDetails || this.licenseDetails;
+    if (data.contentData.licenseDetails && Object.keys(data.contentData.licenseDetails).length) {
+      this.licenseDetails = data.contentData.licenseDetails;
+    }
     this.contentDownloadable[this.content.identifier] = data.isAvailableLocally;
     if (this.content.lastUpdatedTime !== 0) {
       this.playOnlineSpinner = false;
