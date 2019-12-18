@@ -93,7 +93,7 @@ describe('collectionDetailEtbPage', () => {
         expect(mockcommonUtilService.getAppName).toHaveBeenCalled();
     });
 
-    it('it should extract content data', () => {
+    it('should extract content data', () => {
         const data = contentDetailsMcokResponse1;
         collectionDetailEtbPage.isUpdateAvailable = false;
         collectionDetailEtbPage.showLoading = true;
