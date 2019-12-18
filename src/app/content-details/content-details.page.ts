@@ -219,6 +219,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    // DEEPLINK_CONTENT_PAGE_OPEN is used to refresh the contend details on external deeplink clicked
     this.events.subscribe(EventTopics.DEEPLINK_CONTENT_PAGE_OPEN, (data) => {
       if (data && data.content) {
         this.ratingHandler.resetRating();
