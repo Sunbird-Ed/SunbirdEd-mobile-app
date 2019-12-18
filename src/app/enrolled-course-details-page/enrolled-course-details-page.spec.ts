@@ -1,7 +1,7 @@
 import { EnrolledCourseDetailsPage } from './enrolled-course-details-page';
 import {
     ProfileService, ContentService, EventsBusService, CourseService, SharedPreferences,
-    AuthService, CorrelationData, TelemetryObject, FetchEnrolledCourseRequest, Content, ContentFeedback
+    AuthService, CorrelationData, TelemetryObject, FetchEnrolledCourseRequest, Content, ContentFeedback, ProfileType
 } from 'sunbird-sdk';
 import {
     LoginHandlerService, CourseUtilService, AppGlobalService, TelemetryGeneratorService,
@@ -16,7 +16,7 @@ import { AppVersion } from '@ionic-native/app-version/ngx';
 import { FileSizePipe } from '../../pipes/file-size/file-size';
 import { ContentDeleteHandler } from '../../services/content/content-delete-handler';
 import { Location } from '@angular/common';
-import { mockEnrolledData, contentDetailsResponse } from './enrolled-course-details-page.data.spec';
+import { mockEnrolledData, contentDetailsResponse } from './enrolled-course-details-page.spec.data';
 import { of, Subject } from 'rxjs';
 import { ContentInfo } from '../../services/content/content-info';
 import { async } from 'rxjs/internal/scheduler/async';
@@ -214,12 +214,12 @@ describe('EnrolledCourseDetailsPage', () => {
         mockHeaderService.showHeaderWithBackButton = jest.fn(() => {});
         mockCommonUtilService.showToast = jest.fn(() => 'COURSE_NOT_AVAILABLE');
         mockLocation.back = jest.fn();
+        spyOn(enrolledCourseDetailsPage, 'getBatchDetails').and.stub();
         // act
         enrolledCourseDetailsPage.extractApiResponse(response);
         // assert
         expect(enrolledCourseDetailsPage.generateImpressionEvent).toBeCalled();
         expect(enrolledCourseDetailsPage.generateStartEvent).toBeCalled();
-        expect(mockHeaderService.showHeaderWithBackButton).toHaveBeenCalled();
         expect(response.contentData.status).not.toBe('Live');
         expect(mockCommonUtilService.showToast).toHaveBeenCalled();
         expect(response.contentData.me_totalRatings).toBe('4');
@@ -259,12 +259,11 @@ describe('EnrolledCourseDetailsPage', () => {
         // arrange
         mockPopoverCtrl.create = jest.fn(() => (Promise.resolve({
             present: jest.fn(() => {}),
-            onDidDismiss: jest.fn(() => Promise.resolve({}))
+            onDidDismiss: jest.fn(() => Promise.resolve({canDelete: ''}))
         } as any)));
         mockCommonUtilService.translateMessage = jest.fn(() => '');
         spyOn(enrolledCourseDetailsPage, 'navigateToBatchListPage').and.stub();
-        
-        // .present = jest.fn(() => Promise.resolve());
+
         // act
         enrolledCourseDetailsPage.joinTraining();
         // assert
@@ -275,10 +274,41 @@ describe('EnrolledCourseDetailsPage', () => {
         }, 0);
     });
 
-    it('', () => {
+    it('should user rating for content if not guest user', () => {
         // arrange
+        enrolledCourseDetailsPage.guestUser = false;
+        contentDetailsResponse.contentData['isAvailableLocally'] = true;
         // act
+        enrolledCourseDetailsPage.rateContent('');
         // assert
+        expect(contentDetailsResponse.contentData['isAvailableLocally']).toBeTruthy();
+        expect(enrolledCourseDetailsPage.guestUser).toBeFalsy();
+    });
+
+    it('should user rating for content if content is not available locally', () => {
+        // arrange
+        enrolledCourseDetailsPage.guestUser = false;
+        contentDetailsResponse.contentData['isAvailableLocally'] = false;
+        mockCommonUtilService.showToast = jest.fn(() => 'try before rating');
+        // act
+        enrolledCourseDetailsPage.rateContent('');
+        // assert
+        expect(contentDetailsResponse.contentData['isAvailableLocally']).toBeFalsy();
+        expect(enrolledCourseDetailsPage.guestUser).toBeFalsy();
+        expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('TRY_BEFORE_RATING');
+    });
+
+    it('should user rating for content for guest user', () => {
+        // arrange
+        enrolledCourseDetailsPage.guestUser = true;
+        enrolledCourseDetailsPage.profileType = ProfileType.TEACHER;
+        mockCommonUtilService.showToast = jest.fn(() => 'signin to use feature')
+        // act
+        enrolledCourseDetailsPage.rateContent('');
+        // assert
+        expect(enrolledCourseDetailsPage.guestUser).toBeTruthy();
+        expect(enrolledCourseDetailsPage.profileType).toBe(ProfileType.TEACHER);
+        expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('SIGNIN_TO_USE_FEATURE');
     });
 
 });
