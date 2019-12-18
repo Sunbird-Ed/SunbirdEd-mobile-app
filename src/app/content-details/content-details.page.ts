@@ -713,7 +713,9 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
               } else {
                 this.playOnlineSpinner = false;
               }
-              this.licenseDetails = eventPayload.licenseDetails;
+              if (eventPayload.licenseDetails && Object.keys(eventPayload.licenseDetails).length) {
+                this.licenseDetails = eventPayload.licenseDetails;
+              }
             }
           });
         }

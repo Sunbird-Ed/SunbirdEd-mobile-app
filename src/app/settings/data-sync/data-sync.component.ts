@@ -1,4 +1,4 @@
-import { Component, OnInit, NgZone, Inject } from '@angular/core';
+import { Component, OnInit, NgZone, Inject, ChangeDetectorRef } from '@angular/core';
 import {
   TelemetrySyncStat,
   TelemetryService,
@@ -21,7 +21,7 @@ import { SocialSharing } from '@ionic-native/social-sharing/ngx';
 import { Location } from '@angular/common';
 import { Platform } from '@ionic/angular';
 import { Subscription, Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, tap } from 'rxjs/operators';
 import * as dayjs from 'dayjs';
 
 declare const cordova;
@@ -42,6 +42,7 @@ export class DataSyncComponent implements OnInit {
   constructor(
     @Inject('TELEMETRY_SERVICE') private telemetryService: TelemetryService,
     public zone: NgZone,
+    private changeDetectionRef: ChangeDetectorRef,
     private social: SocialSharing,
     private commonUtilService: CommonUtilService,
     private telemetryGeneratorService: TelemetryGeneratorService,
@@ -55,6 +56,9 @@ export class DataSyncComponent implements OnInit {
           }
 
           return undefined;
+        }),
+        tap(() => {
+          this.changeDetectionRef.detectChanges();
         })
     );
   }
