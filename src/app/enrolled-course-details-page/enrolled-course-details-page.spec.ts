@@ -16,7 +16,7 @@ import { AppVersion } from '@ionic-native/app-version/ngx';
 import { FileSizePipe } from '../../pipes/file-size/file-size';
 import { ContentDeleteHandler } from '../../services/content/content-delete-handler';
 import { Location } from '@angular/common';
-import { mockEnrolledData, contentDetailsResponse } from './enrolled-course-details-page.spec.data';
+import { mockEnrolledData, contentDetailsResponse } from './enrolled-course-details-page.data.spec';
 import { of, Subject } from 'rxjs';
 import { ContentInfo } from '../../services/content/content-info';
 import { async } from 'rxjs/internal/scheduler/async';
@@ -142,6 +142,7 @@ describe('EnrolledCourseDetailsPage', () => {
         mockUtilityService.getBuildConfigValue = jest.fn(() => Promise.reject(true));
         mockEvents.subscribe = jest.fn(() => ({ batchId: 'SAMPLE_BATCH_ID', courseId: 'SAMPLE_COURSE_ID' }));
         spyOn(enrolledCourseDetailsPage, 'updateEnrolledCourseList').and.stub();
+        spyOn(enrolledCourseDetailsPage, 'getBatchDetails').and.stub();
         // assert
         enrolledCourseDetailsPage.subscribeUtilityEvents();
         // act
@@ -234,6 +235,8 @@ describe('EnrolledCourseDetailsPage', () => {
         mockTelemetryGeneratorService.generateSpineLoadingTelemetry = jest.fn();
         enrolledCourseDetailsPage.didViewLoad = true;
         mockHeaderService.hideHeader = jest.fn();
+        spyOn(enrolledCourseDetailsPage, 'importContent').and.stub();
+        spyOn(enrolledCourseDetailsPage, 'setCourseStructure').and.stub();
         // act
         enrolledCourseDetailsPage.extractApiResponse(response);
         // assert
@@ -252,18 +255,30 @@ describe('EnrolledCourseDetailsPage', () => {
         expect(mockAppGlobalService.getGuestUserInfo).toHaveBeenCalled();
     });
 
-    it('should be joined training for logged in user', async () => {
+    it('should be joined training for logged in user', async (done) => {
         // arrange
-        const confirm = mockPopOverCtrl.create = jest.fn(() => (Promise.resolve({
-            present: jest.fn(() => {})
+        mockPopoverCtrl.create = jest.fn(() => (Promise.resolve({
+            present: jest.fn(() => {}),
+            onDidDismiss: jest.fn(() => Promise.resolve({}))
         } as any)));
+        mockCommonUtilService.translateMessage = jest.fn(() => '');
+        spyOn(enrolledCourseDetailsPage, 'navigateToBatchListPage').and.stub();
+        
         // .present = jest.fn(() => Promise.resolve());
         // act
         enrolledCourseDetailsPage.joinTraining();
         // assert
         setTimeout(() => {
-         expect(mockPopOverCtrl.create).toHaveBeenCalled();
+         expect(mockPopoverCtrl.create).toHaveBeenCalled();
+         expect(mockCommonUtilService.translateMessage).toHaveBeenCalled();
+         done();
         }, 0);
+    });
+
+    it('', () => {
+        // arrange
+        // act
+        // assert
     });
 
 });
