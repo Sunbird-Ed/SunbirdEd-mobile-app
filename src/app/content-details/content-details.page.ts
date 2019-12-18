@@ -63,9 +63,7 @@ import { ContentPlayerHandler } from '@app/services/content/player/content-playe
 import { ChildContentHandler } from '@app/services/content/child-content-handler';
 import { ContentDeleteHandler } from '@app/services/content/content-delete-handler';
 import { ContentUtil } from '@app/util/content-util';
-import { FileOpener } from '@ionic-native/file-opener/ngx';
-import { File } from '@ionic-native/file/ngx';
-import { FileTransfer, FileTransferObject } from '@ionic-native/file-transfer/ngx';
+import { FileTransferObject } from '@ionic-native/file-transfer/ngx';
 import { map } from 'rxjs/operators';
 
 
@@ -168,7 +166,6 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
     private courseUtilService: CourseUtilService,
     private utilityService: UtilityService,
     private network: Network,
-    public toastController: ToastController,
     private fileSizePipe: FileSizePipe,
     private headerService: AppHeaderService,
     private contentShareHandler: ContentShareHandlerService,
@@ -233,6 +230,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
     this.events.subscribe(EventTopics.PLAYER_CLOSED, (data) => {
       if (data.selectedUser) {
         if (!data.selectedUser['profileType']) {
+          console.log('data', !data.selectedUser['profileType']);
           this.profileService.getActiveProfileSession().toPromise()
             .then((profile) => {
               this.profileSwitchHandler.switchUser(profile);
@@ -244,13 +242,13 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
     });
     this.events.subscribe(EventTopics.NEXT_CONTENT, (data) => {
       this.generateEndEvent();
-      this.events.unsubscribe(EventTopics.PLAYER_CLOSED);
-      this.events.unsubscribe(EventTopics.NEXT_CONTENT);
+      // this.events.unsubscribe(EventTopics.PLAYER_CLOSED);
+      // this.events.unsubscribe(EventTopics.NEXT_CONTENT);
       const previousContent = this.content;
       this.content = data.content;
       this.course = data.course;
       this.getNavParams();
-      this.subscribeEvents();
+      // this.subscribeEvents();
 
       // show popup for previous content
       setTimeout(() => {
