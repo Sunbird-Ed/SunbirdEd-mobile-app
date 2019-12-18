@@ -1,67 +1,6 @@
 /* Migration-TODO */
-@import 'src/assets/styles/index.scss';
-@import 'src/assets/styles/material.scss';
-@import 'src/assets/styles/bootstrap.scss';
-@import 'src/assets/styles/icon.scss';
 @import "src/assets/styles/_custom-mixins.scss";
 
-    .ngx-datatable.material .datatable-body .datatable-body-row .datatable-body-cell-column1 {
-        color: #007aff;
-        font-weight: bold;
-    }
-
-    .ngx-datatable.material .datatable-body .datatable-body-row .datatable-body-cell-column2 {
-        color: #9e9e9e;
-    }
-
-    .ngx-datatable.material .datatable-body .datatable-body-row .datatable-body-cell-column3 {
-        color: #70706d;
-    }
-
-    .ngx-datatable.material .datatable-body .datatable-body-row .datatable-body-cell-column1,
-    .ngx-datatable.material .datatable-body .datatable-body-row .datatable-body-cell-column2,
-    .ngx-datatable.material .datatable-body .datatable-body-row .datatable-body-cell-column3,
-    .ngx-datatable.material .datatable-header .datatable-row-center .assessment-header1 {
-        padding-left: 20px;
-    }
-
-    .ngx-datatable.scroll-vertical .datatable-body {
-        height: auto !important;
-    }
-
-    #datatable.ngx-datatable.material .datatable-header .datatable-header-cell .datatable-header-cell-template-wrap .datatable-header-cell-label {
-        padding: 1.5em 0;
-    }
-
-    .ngx-datatable .datatable-header .datatable-header-cell .sort-btn {
-        font-size: 2rem;
-        padding: 0px 2px;
-    }
-
-    .ngx-datatable .datatable-header .datatable-header-cell .sort-btn::before {
-        content: "\25B4";
-    }
-
-    #datatable.ngx-datatable.material .datatable-header .datatable-header-cell{
-        padding: .9rem 0 .9rem .8rem;
-    }
-
-
-    .ngx-datatable.material .datatable-header .datatable-row-center .assessment-header {
-        color: white;
-        text-transform: uppercase;
-    }
-
-    .ngx-datatable.material .datatable-body .datatable-body-row .datatable-body-cell .datatable-body-cell-label {
-        overflow: hidden;
-        white-space: nowrap;
-        text-overflow: ellipsis;
-    }
-
-    .datatable-row-center,
-    .datatable-row-center {
-        // margin-left: 10px;
-    }
 
     .assessment-card {
         position: relative;
