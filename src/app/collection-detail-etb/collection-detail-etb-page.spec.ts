@@ -9,7 +9,7 @@ import { FileSizePipe } from '../../pipes/file-size/file-size';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TextbookTocService } from './textbook-toc-service';
 import { Location } from '@angular/common';
-import { mockEnrolledData } from '../enrolled-course-details-page/enrolled-course-details-page.spec.data';
+import { mockEnrolledData } from '../enrolled-course-details-page/enrolled-course-details-page.data.spec';
 import { contentDetailsMcokResponse1, contentDetailsMcokResponse2, contentDetailsMcokResponse3 } from './collection-detail-etb-page.spec.data';
 import { Network } from '@ionic-native/network/ngx';
 import { of } from 'rxjs';
@@ -87,6 +87,12 @@ describe('collectionDetailEtbPage', () => {
         expect(collectionDetailEtbPage).toBeTruthy();
     });
 
+    it('should get the appName' , () => {
+        mockcommonUtilService.getAppName = jest.fn(() => Promise.resolve('diksha'));
+        collectionDetailEtbPage.ngOnInit();
+        expect(mockcommonUtilService.getAppName).toHaveBeenCalled();
+    });
+
     it('it should extract content data', () => {
         const data = contentDetailsMcokResponse1;
         collectionDetailEtbPage.isUpdateAvailable = false;
@@ -119,17 +125,24 @@ describe('collectionDetailEtbPage', () => {
         expect(mockevents.publish).toHaveBeenCalled();
     });
 
-    it('should extract content data', () => {
+    it('should call setchildcontents when isUpdateAvailable is falsy', () => {
         const data = contentDetailsMcokResponse2;
-        collectionDetailEtbPage.isUpdateAvailable = true;
+        collectionDetailEtbPage.isUpdateAvailable = false;
         mockcommonUtilService.networkInfo = { isNetworkAvailable: false };
+        spyOn(collectionDetailEtbPage , 'setChildContents').and.stub();
+        spyOn(collectionDetailEtbPage , 'setCollectionStructure').and.stub();
         collectionDetailEtbPage.extractApiResponse(data);
-
+        // assert
+        expect(collectionDetailEtbPage.isUpdateAvailable).toBeFalsy();
+        expect(collectionDetailEtbPage.setChildContents).toHaveBeenCalled();
+        expect(collectionDetailEtbPage.setCollectionStructure).toHaveBeenCalled();
     });
 
-    it('should extract content data', () => {
+    it('should call setCollectionStructure when content is not available locally', () => {
         const data = contentDetailsMcokResponse3;
+        spyOn(collectionDetailEtbPage, 'setCollectionStructure').and.stub();
         collectionDetailEtbPage.extractApiResponse(data);
+        expect(collectionDetailEtbPage.setCollectionStructure).toHaveBeenCalled();
 
     });
 
