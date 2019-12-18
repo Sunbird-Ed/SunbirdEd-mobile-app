@@ -3,20 +3,21 @@
 @import 'src/assets/styles/material.scss';
 @import 'src/assets/styles/bootstrap.scss';
 @import 'src/assets/styles/icon.scss';
+@import "src/assets/styles/_custom-mixins.scss";
 
     .ngx-datatable.material .datatable-body .datatable-body-row .datatable-body-cell-column1 {
         color: #007aff;
         font-weight: bold;
     }
-    
+
     .ngx-datatable.material .datatable-body .datatable-body-row .datatable-body-cell-column2 {
         color: #9e9e9e;
     }
-    
+
     .ngx-datatable.material .datatable-body .datatable-body-row .datatable-body-cell-column3 {
         color: #70706d;
     }
-    
+
     .ngx-datatable.material .datatable-body .datatable-body-row .datatable-body-cell-column1,
     .ngx-datatable.material .datatable-body .datatable-body-row .datatable-body-cell-column2,
     .ngx-datatable.material .datatable-body .datatable-body-row .datatable-body-cell-column3,
@@ -27,11 +28,11 @@
     .ngx-datatable.scroll-vertical .datatable-body {
         height: auto !important;
     }
-    
+
     #datatable.ngx-datatable.material .datatable-header .datatable-header-cell .datatable-header-cell-template-wrap .datatable-header-cell-label {
         padding: 1.5em 0;
     }
-    
+
     .ngx-datatable .datatable-header .datatable-header-cell .sort-btn {
         font-size: 2rem;
         padding: 0px 2px;
@@ -40,28 +41,28 @@
     .ngx-datatable .datatable-header .datatable-header-cell .sort-btn::before {
         content: "\25B4";
     }
-    
+
     #datatable.ngx-datatable.material .datatable-header .datatable-header-cell{
         padding: .9rem 0 .9rem .8rem;
     }
-    
-    
+
+
     .ngx-datatable.material .datatable-header .datatable-row-center .assessment-header {
         color: white;
         text-transform: uppercase;
     }
-    
+
     .ngx-datatable.material .datatable-body .datatable-body-row .datatable-body-cell .datatable-body-cell-label {
         overflow: hidden;
         white-space: nowrap;
         text-overflow: ellipsis;
     }
-    
+
     .datatable-row-center,
     .datatable-row-center {
         // margin-left: 10px;
     }
-    
+
     .assessment-card {
         position: relative;
         width: 90%;
@@ -75,19 +76,19 @@
         text-transform: uppercase;
         //display: table;
     }
-    
+
     .assessment-container {
         width: 100%;
         position: absolute;
         top: 10%;
         bottom: 0;
     }
-    
+
     .datatable-header,
     .assessment-container {
         background-color: #007aff;
     }
-    
+
     .assessment-score,
     .assessment-time {
         text-align: center;
@@ -97,27 +98,27 @@
         //display: table-cell;
         flex: 1 1 auto;
     }
-    
+
     .assessment-score p,
     .assessment-time p,
     .ngx-datatable.material .datatable-header .datatable-row-center .assessment-header {
         font-size: 0.8em;
         font-weight: bold !important;
     }
-    
+
     .assessment-score {
         border-right: 1px solid #007aff;
     }
-    
+
     .assessment-details {
         // height: 20vh;
         position: relative;
     }
-    
+
     #datatable {
         box-shadow: none;
     }
-    
+
     .assessment-result,
     .assessment-stats {
         font-size: 1.8em;
@@ -131,3 +132,59 @@
     .datatable-icon-up:before {
         content: "\25B4" !important;
     }
+
+.rt-container{
+    .rt-header{
+        background-color: #007aff;
+        .rt-head{
+            color: #fff;
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 12px;
+            padding: 5px 5px 5px 10px;
+        }
+        .sort-icon{
+            font-size: 26px;
+            position: relative;
+            top: 8px;
+        }
+    }
+    .rt-raw-items{
+        &:nth-child(odd){
+            background-color: #eee;
+        }
+    }
+}
+.rt-raw {
+    @include clearfix;
+    .rt-cell{
+        &:first-child{
+            width: 46%;
+        }
+        width: 27%;
+        float: left;
+        padding: 12px;
+    }
+    .rt-cell-item{
+        padding: .9rem 1.2rem;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
+    .rt-cell-question{
+        font-weight: bold;
+        color: #007aff;
+        padding-left: 20px;
+    }
+}
+@media only screen and (max-width: 360px) {
+    .rt-raw {
+        .rt-cell{
+            &:first-child{
+                width: 40%;
+                padding: 5px 0 5px 5px;
+            }
+            width: 30%;
+        }
+    }
+}

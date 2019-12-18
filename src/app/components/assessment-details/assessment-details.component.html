@@ -23,8 +23,27 @@
     </div>
   </div>
 </div>
-<ngx-datatable id="datatable" class="material striped" [rows]="assessmentData?.uiRows" [columns]="columns" columnMode="flex" [headerHeight]="40" [footerHeight]="0" [rowHeight]="40" (activate)="onActivate($event,assessmentData.showPopup, assessmentData.popupCallback)" [sorts]="[{prop: columns[0]?.name, dir: 'asc'}]">
-  <ngx-datatable-column name={{columns[0].name}} prop={{columns[0].prop}} [flexGrow]="2" [cellClass]="'datatable-body-cell-column1'" headerClass="assessment-header assessment-header1" [resizeable]="false"></ngx-datatable-column>
-  <ngx-datatable-column name={{columns[1].name}} prop={{columns[1].prop}} [flexGrow]="1" [cellClass]="'datatable-body-cell-column2'" headerClass="assessment-header" [resizeable]="false"></ngx-datatable-column>
-  <ngx-datatable-column name={{columns[2].name}} prop={{columns[2].prop}} [flexGrow]="1" [cellClass]="'datatable-body-cell-column3'" headerClass="assessment-header" [resizeable]="false"></ngx-datatable-column>
-</ngx-datatable>
+<div class="rt-container">
+  <div class="rt-raw rt-header">
+    <div class="rt-cell rt-head" (click)="onSortChange(columns[0].prop)">
+      <span>{{columns[0].name}}</span>
+      <span class="sort-icon"><ion-icon ios="ios-arrow-dropdown" md="md-arrow-dropdown" *ngIf="sortProps.key === columns[0].prop && sortProps.type === 'asc'"></ion-icon></span>
+      <span class="sort-icon"><ion-icon ios="ios-arrow-dropup" md="md-arrow-dropup" *ngIf="sortProps.key !== columns[0].prop || (sortProps.key === columns[0].prop && sortProps.type === 'desc')"></ion-icon></span>
+    </div>
+    <div class="rt-cell rt-head" (click)="onSortChange(columns[1].prop)">
+        <span>{{columns[1].name}}</span>
+        <span class="sort-icon"><ion-icon ios="ios-arrow-dropdown" md="md-arrow-dropdown" *ngIf="sortProps.key === columns[1].prop && sortProps.type === 'asc'"></ion-icon></span>
+        <span class="sort-icon"><ion-icon ios="ios-arrow-dropup" md="md-arrow-dropup" *ngIf="sortProps.key !== columns[1].prop || (sortProps.key === columns[1].prop && sortProps.type === 'desc')"></ion-icon></span>
+    </div>
+    <div class="rt-cell rt-head" (click)="onSortChange(columns[2].prop)">
+        <span>{{columns[2].name}}</span>
+        <span class="sort-icon"><ion-icon ios="ios-arrow-dropdown" md="md-arrow-dropdown" *ngIf="sortProps.key === columns[2].prop && sortProps.type === 'asc'"></ion-icon></span>
+        <span class="sort-icon"><ion-icon ios="ios-arrow-dropup" md="md-arrow-dropup" *ngIf="sortProps.key !== columns[2].prop || (sortProps.key === columns[2].prop && sortProps.type === 'desc')"></ion-icon></span>
+    </div>
+  </div>
+  <div class="rt-raw rt-raw-items" *ngFor="let report of assessmentData?.uiRows | sortBy: sortProps.key : sortProps.type" (click)="onActivate($event, assessmentData.showPopup, assessmentData.popupCallback, report)">
+    <div class="rt-cell rt-cell-item rt-cell-question"><span>{{report[columns[0].prop]}}</span></div>
+    <div class="rt-cell rt-cell-item"><span>{{report[columns[1].prop]}}</span></div>
+    <div class="rt-cell rt-cell-item"><span>{{report[columns[2].prop]}}</span></div>
+  </div>
+</div>
