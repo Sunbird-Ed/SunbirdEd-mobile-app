@@ -94,9 +94,7 @@ export const contentDetailsResponse: Content = {
         subject: 'Physics',
         downloadUrl: 'https://ntpstagingall.blob.core.windows.net/ntp-content-staging/ecar_files/do_21281258639073280011490/sb-13081-2_1564037681733_do_21281258639073280011490_2.0_spine.ecar',
         channel: '01269936129926758441',
-        organisation: [
-            'Odisha'
-        ],
+        organisation: ['Odisha'],
         language: [
             'English',
             'Kannada'
