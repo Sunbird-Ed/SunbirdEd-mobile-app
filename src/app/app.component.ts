@@ -4,8 +4,8 @@ import { AfterViewInit, Component, Inject, NgZone, OnInit, EventEmitter, ViewChi
 import { Events, Platform, IonRouterOutlet, MenuController } from '@ionic/angular';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { TranslateService } from '@ngx-translate/core';
-import { Observable } from 'rxjs';
-import { tap, combineLatest, mergeMap } from 'rxjs/operators';
+import { Observable, combineLatest } from 'rxjs';
+import { tap, mergeMap } from 'rxjs/operators';
 import { Network } from '@ionic-native/network/ngx';
 
 import {
