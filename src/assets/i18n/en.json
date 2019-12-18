@@ -557,7 +557,7 @@
   "TRAINING": "Training",
   "TRAININGS_ATTENDED": "Training(s) Attended",
   "TRAININGS_ONLY_REGISTERED_USERS": "Trainings are only for registered users",
-  "CONTENTS_ONLY_REGISTERED_USERS": "Contents are only for registered users",
+  "QUIZ_CONTENTS_ONLY_REGISTERED_USERS": "The quiz is only for registered users",
   "TRAINING_COMPLETED_SUCCESSFULLY": "You have successfully completed this training",
   "TRAINING_DERIVED_FROM": "This training is derived from",
   "TRAINING_DETAILS": "Training Details",
@@ -636,5 +636,6 @@
   "YOU_ARE_NOT_CONNECTED_TO_THE_INTERNET": "You are not connected to the Internet",
   "YOU_MUST_JOIN_AN_ACTIVE_BATCH": "You must join an active batch to view and access training details",
   "YOU_MUST_JOIN_TO_ACCESS_TRAINING_DETAIL": "You must log in to access training details",
-  "YOU_MUST_LOGIN_TO_ACCESS_CONTENT_DETAIL": "You must log in to access content details"
+  "YOU_MUST_LOGIN_TO_ACCESS_QUIZ_CONTENT": "You must login to access this content",
+  "INTERNET_CONNECTIVITY_NEEDED_FOR_QUIZ": "You are offline. Connect to the internet to access the quiz."
 }

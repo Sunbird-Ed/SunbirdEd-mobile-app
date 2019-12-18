@@ -108,16 +108,24 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
               this.router.navigate([RouterLinks.COLLECTION_DETAIL_ETB], { state: { content } });
             } else {
               if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
-                  this.commonUtilService.showToast('INTERNET_CONNECTIVITY_NEEDED');
-                  return false;
+                let offlineMessage = 'INTERNET_CONNECTIVITY_NEEDED';
+                if (content.contentData && content.contentData.status === ContentFilterConfig.CONTENT_STATUS_UNLISTED) {
+                  offlineMessage = 'INTERNET_CONNECTIVITY_NEEDED_FOR_QUIZ';
+                }
+                this.commonUtilService.showToast(offlineMessage);
+                return false;
               }
               if (content.contentData && content.contentData.status === ContentFilterConfig.CONTENT_STATUS_UNLISTED) {
-                if (!this.appGlobalServices.isUserLoggedIn()) {
-                  await this.preferences.putString(PreferenceKey.LIMITED_CONTENT_SHARING, JSON.stringify(action)).toPromise();
-                }
+                this.appGlobalServices.limitedShareQuizContent = action;
                 if (isFromLink) {
                   this.limitedSharingContentLinkClickedTelemery();
                 }
+                if (this.router.url && this.router.url.indexOf(RouterLinks.CONTENT_DETAILS) !== -1) {
+                  this.events.publish(EventTopics.DEEPLINK_CONTENT_PAGE_OPEN, { content, autoPlayQuizContent: true });
+                  return;
+                }
+                this.router.navigate([RouterLinks.CONTENT_DETAILS], { state: { content, autoPlayQuizContent: true } });
+                return;
               }
               this.router.navigate([RouterLinks.CONTENT_DETAILS], { state: { content } });
             }
