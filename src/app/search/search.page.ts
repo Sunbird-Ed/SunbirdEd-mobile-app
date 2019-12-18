@@ -1,8 +1,7 @@
 import { Component, Inject, NgZone, OnDestroy, ViewChild, ChangeDetectorRef, OnInit, AfterViewInit } from '@angular/core';
 import { Router, NavigationExtras } from '@angular/router';
-import { Events, Platform, PopoverController, IonContent, NavController } from '@ionic/angular';
+import { Events, Platform, PopoverController, IonContent, NavController, IonInput } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
-import { Subscription, Observable } from 'rxjs';
 import { Location } from '@angular/common';
 import each from 'lodash/each';
 import find from 'lodash/find';
@@ -39,10 +38,12 @@ import { AppHeaderService } from '@app/services/app-header.service';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { SearchHistoryNamespaces } from '@app/config/search-history-namespaces';
 import { featureIdMap } from '@app/app/feature-id-map';
-import { from } from 'rxjs';
 import { EnrollmentDetailsComponent } from '../components/enrollment-details/enrollment-details.component';
 import { ContentUtil } from '@app/util/content-util';
 import { LibraryCardTypes } from '@project-sunbird/common-consumption';
+import { Subscription, Observable, from } from 'rxjs';
+import { switchMap, tap, map as rxjsMap, share, startWith, debounceTime } from 'rxjs/operators';
+
 declare const cordova;
 @Component({
   selector: 'app-search',
@@ -173,12 +174,12 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit() {
-    this.searchHistory$ = this.searchBar && (this.searchBar as any).ionChange
-      .map((e) => e.target.value)
-      .share()
-      .startWith('')
-      .debounceTime(500)
-      .switchMap((v: string) => {
+    this.searchHistory$ = this.searchBar && (this.searchBar as any).ionChange.pipe(
+      rxjsMap((e: IonInput) => e.value),
+      share(),
+      startWith(''),
+      debounceTime(500),
+      switchMap((v: string) => {
         if (v) {
           return from(this.searchHistoryService.getEntries({
             like: v,
@@ -191,12 +192,14 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
           limit: 10,
           namespace: this.source === PageId.LIBRARY ? SearchHistoryNamespaces.LIBRARY : SearchHistoryNamespaces.COURSE
         }).toPromise());
-      })
-      .do((v) => {
+      }),
+      tap((v) => {
         setTimeout(() => {
           this.changeDetectionRef.detectChanges();
         });
-      }) as any;
+      }) as any
+
+    );
   }
 
   onSearchHistoryTap(searchEntry: SearchEntry) {
