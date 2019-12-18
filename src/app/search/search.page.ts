@@ -175,7 +175,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
 
   ngAfterViewInit() {
     this.searchHistory$ = this.searchBar && (this.searchBar as any).ionChange.pipe(
-      rxjsMap((e: IonInput) => e.value),
+      rxjsMap((e: CustomEvent) => e.target['value']),
       share(),
       startWith(''),
       debounceTime(500),
