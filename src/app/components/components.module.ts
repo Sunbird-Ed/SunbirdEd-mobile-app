@@ -36,7 +36,6 @@ import { ReportAlertComponent } from '../reports/report-alert/report-alert.compo
 import { ProfileAvatarComponent } from './profile-avatar/profile-avatar.component';
 import { NotificationItemComponent } from './notification-item/notification-item.component';
 import { AssessmentDetailsComponent } from './assessment-details/assessment-details.component';
-import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 import { ViewCreditsComponent } from './popups/view-credits/view-credits.component';
 import { SkeletonItemComponent } from './skeleton-item/skeleton-item.component';
 import { FilteroptionComponent } from './filteroption/filteroption.component';
@@ -92,7 +91,6 @@ import { TeacherIdVerificationComponent } from './popups/teacher-id-verification
     IonicModule,
     ReactiveFormsModule,
     PipesModule,
-    NgxDatatableModule,
     IonicRatingModule,
     TranslateModule.forChild(),
   ],
