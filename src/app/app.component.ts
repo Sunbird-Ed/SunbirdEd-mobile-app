@@ -325,7 +325,7 @@ export class AppComponent implements OnInit, AfterViewInit {
         } else if (limitedSharingContentDetails) {
           const limitedSharingContentPayload = JSON.parse(limitedSharingContentDetails);
           await this.preferences.putString(PreferenceKey.LIMITED_CONTENT_SHARING, '').toPromise();
-          await this.splaschreenDeeplinkActionHandlerDelegate.onAction('content', limitedSharingContentPayload).toPromise();
+          await this.splaschreenDeeplinkActionHandlerDelegate.onAction('content', limitedSharingContentPayload, false).toPromise();
         } else {
           this.router.navigate([RouterLinks.TABS]);
         }

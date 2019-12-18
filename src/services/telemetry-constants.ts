@@ -160,7 +160,8 @@ export enum InteractType {
     LOCATION_CHANGED = 'location-changed',
     LOCATION_UNCHANGED = 'location-unchanged',
     VISIBLE = 'visible',
-    NOT_VISIBLE = 'not-visible'
+    NOT_VISIBLE = 'not-visible',
+    QUIZ_DEEPLINK = 'quiz-deeplink'
 }
 
 export enum InteractSubtype {
@@ -385,7 +386,9 @@ export enum ID {
     USER_VERIFICATION_FAILED = 'ext-user-verify-fail',
     USER_VERIFICATION_SUCCESS = 'ext-user-verify-success',
     SUBMIT_CLICKED = 'submit-clicked',
-    IP_BASED_LOCATION_SUGGESTION = 'ip-based-location-suggestion'
+    QUIZ = 'quiz',
+    IP_BASED_LOCATION_SUGGESTION = 'ip-based-location-suggestion',
+    DEEPLINK_CLICKED = 'deeplink-clicked'
 }
 
 export enum ActionButtonType {
@@ -402,7 +405,8 @@ export enum CorReleationDataType {
     MEDIUM = 'Medium',
     CLASS = 'Class',
     SUBJECT = 'Subject',
-    USERTYPE = 'UserType'
+    USERTYPE = 'UserType',
+    DEEPLINK = 'Deeplink'
 }
 
 

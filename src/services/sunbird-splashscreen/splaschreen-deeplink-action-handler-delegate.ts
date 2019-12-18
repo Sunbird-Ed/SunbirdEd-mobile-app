@@ -1,4 +1,4 @@
-import { PreferenceKey } from '@app/app/app.constant';
+import { PreferenceKey, ContentFilterConfig } from '@app/app/app.constant';
 import { Inject, Injectable, NgZone } from '@angular/core';
 import { Router } from '@angular/router';
 import { Events } from '@ionic/angular';
@@ -22,7 +22,7 @@ import { ContentType, MimeType, ActionType, EventTopics, RouterLinks } from '../
 import { AppGlobalService } from '../app-global-service.service';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { CommonUtilService } from '@app/services/common-util.service';
-import { PageId, InteractType, InteractSubtype, Environment } from '../telemetry-constants';
+import { PageId, InteractType, InteractSubtype, Environment, ID, CorReleationDataType } from '../telemetry-constants';
 import { UtilityService } from '..';
 import { Location } from '@angular/common';
 import { LocalCourseService } from '../local-course.service';
@@ -88,7 +88,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
     }
   }
 
-  onAction(type: string, action?: { identifier: string }): Observable<undefined> {
+  onAction(type: string, action?: { identifier: string }, isFromLink = true): Observable<undefined> {
     const identifier: any = action !== undefined ? action.identifier : this.identifier;
     if (identifier) {
       switch (type) {
@@ -111,8 +111,13 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
                   this.commonUtilService.showToast('INTERNET_CONNECTIVITY_NEEDED');
                   return false;
               }
-              if (content.contentData && content.contentData.status === 'Unlisted' && !this.appGlobalServices.isUserLoggedIn()) {
-                await this.preferences.putString(PreferenceKey.LIMITED_CONTENT_SHARING, JSON.stringify(action)).toPromise();
+              if (content.contentData && content.contentData.status === ContentFilterConfig.CONTENT_STATUS_UNLISTED) {
+                if (!this.appGlobalServices.isUserLoggedIn()) {
+                  await this.preferences.putString(PreferenceKey.LIMITED_CONTENT_SHARING, JSON.stringify(action)).toPromise();
+                }
+                if (isFromLink) {
+                  this.limitedSharingContentLinkClickedTelemery();
+                }
               }
               this.router.navigate([RouterLinks.CONTENT_DETAILS], { state: { content } });
             }
@@ -282,4 +287,21 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
         await loader.dismiss();
       });
   }
+
+  limitedSharingContentLinkClickedTelemery() {
+    const corRelationList = [];
+    corRelationList.push({ id: ID.QUIZ, type: CorReleationDataType.DEEPLINK });
+    this.telemetryGeneratorService.generateInteractTelemetry(
+      InteractType.QUIZ_DEEPLINK,
+      '',
+      Environment.HOME,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      corRelationList,
+      ID.DEEPLINK_CLICKED
+    );
+  }
+
 }
