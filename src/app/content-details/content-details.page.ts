@@ -147,6 +147,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
   resumedCourseCardData: any;
   limitedShareContentFlag = false;
   private isLoginPromptOpen = false;
+  private autoPlayQuizContent = false;
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -212,11 +213,20 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
       this.resumedCourseCardData = extras.resumedCourseCardData;
       this.isSingleContent = extras.isSingleContent;
       this.resultLength = extras.resultsSize;
+      this.autoPlayQuizContent = extras.autoPlayQuizContent || false;
       this.checkLimitedContentSharingFlag(extras.content);
     }
   }
 
   ngOnInit() {
+    // DEEPLINK_CONTENT_PAGE_OPEN is used to refresh the contend details on external deeplink clicked
+    this.events.subscribe(EventTopics.DEEPLINK_CONTENT_PAGE_OPEN, (data) => {
+      if (data && data.content) {
+        this.ratingHandler.resetRating();
+        this.autoPlayQuizContent = data.autoPlayQuizContent || false;
+        this.checkLimitedContentSharingFlag(data.content);
+      }
+    });
     this.appVersion.getAppName()
       .then((appName: any) => {
         this.appName = appName;
@@ -242,6 +252,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.events.unsubscribe(EventTopics.PLAYER_CLOSED);
+    this.events.unsubscribe(EventTopics.DEEPLINK_CONTENT_PAGE_OPEN);
   }
 
   /**
@@ -1079,6 +1090,12 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
 
   async promptToLogin() {
     if (this.appGlobalService.isUserLoggedIn()) {
+      if (this.autoPlayQuizContent) {
+        setTimeout(() => {
+          this.handleContentPlay(true);
+          this.autoPlayQuizContent = false;
+        }, 1000);
+      }
       return;
     }
     if (this.isLoginPromptOpen) {
@@ -1098,8 +1115,8 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
     const confirm = await this.popoverCtrl.create({
       component: SbPopoverComponent,
       componentProps: {
-        sbPopoverMainTitle: this.commonUtilService.translateMessage('YOU_MUST_LOGIN_TO_ACCESS_CONTENT_DETAIL'),
-        metaInfo: this.commonUtilService.translateMessage('CONTENTS_ONLY_REGISTERED_USERS'),
+        sbPopoverMainTitle: this.commonUtilService.translateMessage('YOU_MUST_LOGIN_TO_ACCESS_QUIZ_CONTENT'),
+        metaInfo: this.commonUtilService.translateMessage('QUIZ_CONTENTS_ONLY_REGISTERED_USERS'),
         sbPopoverHeading: this.commonUtilService.translateMessage('OVERLAY_SIGN_IN'),
         isNotShowCloseIcon: true,
         actionsButtons: [
@@ -1131,8 +1148,12 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
 
   checkLimitedContentSharingFlag(content) {
     this.limitedShareContentFlag = (content.contentData &&
-    content.contentData.status === ContentFilterConfig.CONTENT_STATUS_UNLISTED);
+      content.contentData.status === ContentFilterConfig.CONTENT_STATUS_UNLISTED);
     if (this.limitedShareContentFlag) {
+      this.content = content;
+      this.playingContent = content;
+      this.identifier = content.contentId || content.identifier;
+      this.telemetryObject = ContentUtil.getTelemetryObject(content);
       this.promptToLogin();
     }
   }

@@ -6,6 +6,7 @@ import { PopoverController } from '@ionic/angular';
 import { FormAndFrameworkUtilService } from './formandframeworkutil.service';
 import { TeacherIdVerificationComponent } from '@app/app/components/popups/teacher-id-verification-popup/teacher-id-verification-popup.component';
 import { ProfileConstants } from '@app/app/app.constant';
+import { SplaschreenDeeplinkActionHandlerDelegate } from './sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
 
 @Injectable()
 export class ExternalIdVerificationService {
@@ -15,7 +16,8 @@ export class ExternalIdVerificationService {
         @Inject('PROFILE_SERVICE') private profileService: ProfileService,
         private appGlobalService: AppGlobalService,
         private popoverCtrl: PopoverController,
-        private formAndFrameworkUtilService: FormAndFrameworkUtilService
+        private formAndFrameworkUtilService: FormAndFrameworkUtilService,
+        private splaschreenDeeplinkActionHandlerDelegate: SplaschreenDeeplinkActionHandlerDelegate,
     ) {
         this.isCustodianUser$ = this.profileService.isDefaultChannelProfile()
         .map((isDefaultChannelProfile) => isDefaultChannelProfile) as any;
@@ -33,30 +35,39 @@ export class ExternalIdVerificationService {
         if (session && isCustodianUser) {
             await this.profileService.getUserFeed().toPromise()
                 .then(async (userFeed: UserFeed[]) => {
-                    if (userFeed[0]) {
-                        if ((userFeed[0].category).toLowerCase() === 'orgmigrationaction') {
-                            let popupLabels = {};
-                            if (tenantSpecificMessages && tenantSpecificMessages.length) {
-                                if (tenantSpecificMessages[0] && tenantSpecificMessages[0].range
-                                    && tenantSpecificMessages[0].range.length) {
-                                    popupLabels = tenantSpecificMessages[0].range[0];
-                                }
-                            }
-                            const popover = await this.popoverCtrl.create({
-                                component: TeacherIdVerificationComponent,
-                                backdropDismiss: false,
-                                cssClass: 'popover-alert popoverPosition',
-                                componentProps: {
-                                    userFeed: userFeed[0], tenantMessages: popupLabels
-                                }
-                            });
-                            await popover.present();
+                    if (userFeed[0] && (userFeed[0].category).toLowerCase() === 'orgmigrationaction') {
+                        let popupLabels = {};
+                        if (tenantSpecificMessages && tenantSpecificMessages.length && tenantSpecificMessages[0].range
+                            && tenantSpecificMessages[0].range.length) {
+                            popupLabels = tenantSpecificMessages[0].range[0];
                         }
+                        const popover = await this.popoverCtrl.create({
+                            component: TeacherIdVerificationComponent,
+                            backdropDismiss: false,
+                            cssClass: 'popover-alert popoverPosition',
+                            componentProps: {
+                                userFeed: userFeed[0], tenantMessages: popupLabels
+                            }
+                        });
+                        await popover.present();
+                    } else {
+                        this.checkQuizContent();
                     }
                 })
                 .catch((error) => {
                     console.log('error', error);
                 });
+        } else {
+            this.checkQuizContent();
         }
     }
+
+    async checkQuizContent() {
+        const limitedSharingContentDetails = this.appGlobalService.limitedShareQuizContent;
+        if (limitedSharingContentDetails) {
+          const limitedSharingContentPayload = limitedSharingContentDetails;
+          this.appGlobalService.limitedShareQuizContent = null;
+          await this.splaschreenDeeplinkActionHandlerDelegate.onAction('content', limitedSharingContentPayload, false).toPromise();
+        }
+      }
 }

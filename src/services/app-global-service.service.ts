@@ -68,6 +68,7 @@ export class AppGlobalService implements OnDestroy {
         isStorageAsked: false,
         isRecordAudioAsked: false,
     };
+    private _limitedShareQuizContent: any;
 
     constructor(
         @Inject('PROFILE_SERVICE') private profile: ProfileService,
@@ -649,4 +650,13 @@ export class AppGlobalService implements OnDestroy {
                 }
             });
     }
+
+    get limitedShareQuizContent() {
+        return this._limitedShareQuizContent;
+    }
+
+    set limitedShareQuizContent(value) {
+        this._limitedShareQuizContent = value;
+    }
+
 }

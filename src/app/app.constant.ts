@@ -165,6 +165,7 @@ export class EventTopics {
     public static readonly SIGN_IN_RELOAD = 'SIGN_IN_RELOAD';
     public static readonly TOC_COLLECTION_CHILD_ID = 'TOC_COLLECTION_CHILD_ID';
     public static readonly HAMBURGER_MENU_CLICKED = 'HAMBURGER_MENU_CLICKED';
+    public static readonly DEEPLINK_CONTENT_PAGE_OPEN = 'DEEPLINK_CONTENT_PAGE_OPEN';
 }
 
 export class ShareUrl {
@@ -215,7 +216,6 @@ export class PreferenceKey {
     public static readonly SUBSCRIBE_TOPICS = 'subscribe_topics';
     public static readonly SHOW_EXTERNAL_VERIFICATION = 'show_external_verification';
     public static readonly CURRENT_USER_PROFILE = 'current_user_profile';
-    public static readonly LIMITED_CONTENT_SHARING = 'limited_content_sharing';
 }
 
 export class GenericAppConfig {

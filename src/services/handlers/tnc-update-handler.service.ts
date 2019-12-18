@@ -1,8 +1,8 @@
 import { Inject, Injectable } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import {
-  AuthService, ProfileService,
-  ServerProfile, ServerProfileDetailsRequest, CachedItemRequestSourceFrom, Profile
+  AuthService, ProfileService, SharedPreferences,
+  ServerProfile, ServerProfileDetailsRequest, CachedItemRequestSourceFrom, Profile, UserFeed
 } from 'sunbird-sdk';
 import { ProfileConstants, RouterLinks } from '@app/app/app.constant';
 import { TermsAndConditionsPage } from '@app/app/terms-and-conditions/terms-and-conditions.page';
@@ -11,6 +11,7 @@ import { CommonUtilService } from '../common-util.service';
 import { FormAndFrameworkUtilService } from '../formandframeworkutil.service';
 import { ExternalIdVerificationService } from '../externalid-verification.service';
 import { AppGlobalService } from '../app-global-service.service';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -18,9 +19,11 @@ import { AppGlobalService } from '../app-global-service.service';
 export class TncUpdateHandlerService {
 
   modal: any;
+
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     @Inject('AUTH_SERVICE') private authService: AuthService,
+    @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
     private commonUtilService: CommonUtilService,
     private formAndFrameworkUtilService: FormAndFrameworkUtilService,
     private modalCtrl: ModalController,
@@ -29,107 +32,45 @@ export class TncUpdateHandlerService {
     private appGlobalService: AppGlobalService,
   ) { }
 
-  public async checkForTncUpdate(): Promise<boolean> {
-    return new Promise<boolean>(async (resolve, reject) => {
-      const sessionData = await this.authService.getSession().toPromise();
-      if (!sessionData) {
-        resolve(false);
-        return;
-      }
-      const request: ServerProfileDetailsRequest = {
-        userId: sessionData.userToken,
-        requiredFields: ProfileConstants.REQUIRED_FIELDS,
-        from: CachedItemRequestSourceFrom.SERVER
-      };
-      this.profileService.getServerProfilesDetails(request).toPromise()
-        .then((profile) => {
-          if (!this.hasProfileTncUpdated(profile)) {
-            if (this.commonUtilService.networkInfo.isNetworkAvailable) {
-              this.formAndFrameworkUtilService.getCustodianOrgId()
-                .then((custodianOrgId: string) => {
-                  const isCustodianOrgId = profile.rootOrg.rootOrgId === custodianOrgId;
+  public async checkForTncUpdate() {
+    const sessionData = await this.authService.getSession().toPromise();
+    if (!sessionData) {
+      return;
+    }
 
-                  if (isCustodianOrgId
-                    && !this.commonUtilService.isUserLocationAvalable(profile)) {
-                    const navigationExtras: NavigationExtras = {
-                      state: {
-                        isShowBackButton: false
-                      }
-                    };
-                    this.router.navigate(['/', RouterLinks.DISTRICT_MAPPING], navigationExtras)
-                      .then(() => resolve(false));
-                    return;
-                  } else {
-                    this.externalIdVerificationService.showExternalIdVerificationPopup();
-                    resolve(false);
-                    return;
-                  }
-                })
-                .catch((error) => {
-                  this.externalIdVerificationService.showExternalIdVerificationPopup();
-                  console.error('Error:', error);
-                  reject();
-                });
-            }
-            resolve(false);
-            return;
+    const request: ServerProfileDetailsRequest = {
+      userId: sessionData.userToken,
+      requiredFields: ProfileConstants.REQUIRED_FIELDS,
+      from: CachedItemRequestSourceFrom.SERVER
+    };
+
+    this.profileService.getServerProfilesDetails(request).toPromise()
+      .then((profile) => {
+        if (!this.hasProfileTncUpdated(profile)) {
+          if (this.commonUtilService.networkInfo.isNetworkAvailable) {
+            this.checkBmc(profile);
           }
-          this.presentTncPage({ profile })
-            .then(() => {
-              resolve(true);
-              return;
-            })
-            .catch((error) => {
-              console.error('Error:', error);
-              reject();
-            });
-        });
-    });
-  }
-
-  public async onAcceptTnc(user: ServerProfile): Promise<void> {
-    return new Promise<void>(((resolve, reject) => {
-      this.profileService.acceptTermsAndConditions({ version: user.tncLatestVersion })
-        .toPromise()
-        .then(() => {
-          resolve();
-        })
-        .catch(() => {
-          reject();
-        });
-    }))
-      .then(() => {
-        const reqObj = {
-          userId: user.userId,
-          requiredFields: ProfileConstants.REQUIRED_FIELDS,
-        };
-        return new Promise<void>(((resolve, reject) => {
-          this.profileService.getServerProfilesDetails(reqObj).toPromise()
-            .then(res => {
-              resolve();
-            })
-            .catch(e => {
-              reject(e);
-            });
-        }));
+          return;
+        }
+        this.presentTncPage({ profile });
       });
   }
 
-  async presentTncPage(navParams: any): Promise<undefined> {
+  async presentTncPage(navParams: any) {
     this.modal = await this.modalCtrl.create({
       component: TermsAndConditionsPage,
       componentProps: navParams
     });
-    return await this.modal.present();
+    await this.modal.present();
   }
 
   private hasProfileTncUpdated(user: ServerProfile): boolean {
     return !!(user.promptTnC && user.tncLatestVersion && user.tncLatestVersionUrl);
   }
 
-  public async dismissTncPage(): Promise<void> {
+  public async dismissTncPage() {
     if (this.modal) {
-      return await this.modal.dismiss();
+      await this.modal.dismiss();
     }
   }
 
@@ -168,7 +109,7 @@ export class TncUpdateHandlerService {
             isRootPage: true
           }
         });
-    });
+      });
   }
 
   async isSSOUser(profile: Profile): Promise<boolean> {
@@ -200,7 +141,7 @@ export class TncUpdateHandlerService {
       });
   }
 
-  private navigateToDistrictMapping(){
+  private navigateToDistrictMapping() {
     const navigationExtras: NavigationExtras = {
       state: {
         isShowBackButton: false
