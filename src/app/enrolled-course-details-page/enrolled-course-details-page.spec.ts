@@ -1,7 +1,7 @@
 import { EnrolledCourseDetailsPage } from './enrolled-course-details-page';
 import {
     ProfileService, ContentService, EventsBusService, CourseService, SharedPreferences,
-    AuthService, CorrelationData, TelemetryObject, FetchEnrolledCourseRequest, Content, ContentFeedback, ProfileType
+    AuthService, CorrelationData, TelemetryObject, FetchEnrolledCourseRequest, Content, ContentFeedback, ProfileType, UnenrollCourseRequest
 } from 'sunbird-sdk';
 import {
     LoginHandlerService, CourseUtilService, AppGlobalService, TelemetryGeneratorService,
@@ -210,8 +210,8 @@ describe('EnrolledCourseDetailsPage', () => {
         spyOn(enrolledCourseDetailsPage, 'generateStartEvent');
         spyOn(enrolledCourseDetailsPage, 'setCourseStructure');
         spyOn(enrolledCourseDetailsPage, 'setChildContents');
-        enrolledCourseDetailsPage.courseCardData = {lastReadContentId: 'SAMPLE_LAST_READ_CONTENT'};
-        mockHeaderService.showHeaderWithBackButton = jest.fn(() => {});
+        enrolledCourseDetailsPage.courseCardData = { lastReadContentId: 'SAMPLE_LAST_READ_CONTENT' };
+        mockHeaderService.showHeaderWithBackButton = jest.fn(() => { });
         mockCommonUtilService.showToast = jest.fn(() => 'COURSE_NOT_AVAILABLE');
         mockLocation.back = jest.fn();
         spyOn(enrolledCourseDetailsPage, 'getBatchDetails').and.stub();
@@ -229,7 +229,7 @@ describe('EnrolledCourseDetailsPage', () => {
     it('should return import content if data is not available for extractApiResponse', () => {
         // assert
         const response = mockEnrolledData.extras.state.content;
-        mockHeaderService.showHeaderWithBackButton = jest.fn(() => {});
+        mockHeaderService.showHeaderWithBackButton = jest.fn(() => { });
         mockCommonUtilService.showToast = jest.fn(() => 'COURSE_NOT_AVAILABLE');
         mockLocation.back = jest.fn();
         mockTelemetryGeneratorService.generateSpineLoadingTelemetry = jest.fn();
@@ -258,8 +258,8 @@ describe('EnrolledCourseDetailsPage', () => {
     it('should be joined training for logged in user', async (done) => {
         // arrange
         mockPopoverCtrl.create = jest.fn(() => (Promise.resolve({
-            present: jest.fn(() => {}),
-            onDidDismiss: jest.fn(() => Promise.resolve({canDelete: ''}))
+            present: jest.fn(() => { }),
+            onDidDismiss: jest.fn(() => Promise.resolve({ canDelete: '' }))
         } as any)));
         mockCommonUtilService.translateMessage = jest.fn(() => '');
         spyOn(enrolledCourseDetailsPage, 'navigateToBatchListPage').and.stub();
@@ -268,13 +268,13 @@ describe('EnrolledCourseDetailsPage', () => {
         enrolledCourseDetailsPage.joinTraining();
         // assert
         setTimeout(() => {
-         expect(mockPopoverCtrl.create).toHaveBeenCalled();
-         expect(mockCommonUtilService.translateMessage).toHaveBeenCalled();
-         done();
+            expect(mockPopoverCtrl.create).toHaveBeenCalled();
+            expect(mockCommonUtilService.translateMessage).toHaveBeenCalled();
+            done();
         }, 0);
     });
 
-    it('should user rating for content if not guest user', () => {
+    it('should show user rating for content if not guest user', () => {
         // arrange
         enrolledCourseDetailsPage.guestUser = false;
         contentDetailsResponse.contentData['isAvailableLocally'] = true;
@@ -285,7 +285,7 @@ describe('EnrolledCourseDetailsPage', () => {
         expect(enrolledCourseDetailsPage.guestUser).toBeFalsy();
     });
 
-    it('should user rating for content if content is not available locally', () => {
+    it('should show user rating for content if content is not available locally', () => {
         // arrange
         enrolledCourseDetailsPage.guestUser = false;
         contentDetailsResponse.contentData['isAvailableLocally'] = false;
@@ -298,7 +298,7 @@ describe('EnrolledCourseDetailsPage', () => {
         expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('TRY_BEFORE_RATING');
     });
 
-    it('should user rating for content for guest user', () => {
+    it('should show user rating for content for guest user', () => {
         // arrange
         enrolledCourseDetailsPage.guestUser = true;
         enrolledCourseDetailsPage.profileType = ProfileType.TEACHER;
@@ -309,6 +309,15 @@ describe('EnrolledCourseDetailsPage', () => {
         expect(enrolledCourseDetailsPage.guestUser).toBeTruthy();
         expect(enrolledCourseDetailsPage.profileType).toBe(ProfileType.TEACHER);
         expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('SIGNIN_TO_USE_FEATURE');
+    });
+
+    it('should handle unenrolled for enrolled course', () => {
+        // arrange
+        mockCommonUtilService.getLoader = jest.fn();
+        // assert
+        enrolledCourseDetailsPage.handleUnenrollment(true);
+        // act
+        expect(mockCommonUtilService.getLoader).toHaveBeenCalled();
     });
 
 });
