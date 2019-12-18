@@ -21,7 +21,7 @@ import {
   ProfileType, Rollup, StorageService, TelemetryErrorCode, TelemetryObject
 } from 'sunbird-sdk';
 import {
-  Environment, ErrorType, ImpressionType, InteractSubtype, InteractType, Mode, PageId
+  Environment, ErrorType, ImpressionType, InteractSubtype, InteractType, Mode, PageId, ID
 } from '../../services/telemetry-constants';
 import { Subscription } from 'rxjs';
 import { ContentType, MimeType, ShareUrl, RouterLinks } from '../../app/app.constant';
@@ -1234,6 +1234,21 @@ export class CollectionDetailEtbPage implements OnInit {
    */
   viewCredits() {
     this.courseUtilService.showCredits(this.contentDetail, PageId.COLLECTION_DETAIL, this.objRollup, this.corRelationList);
+  }
+
+  licenseSectionClicked(params) {
+    const telemetryObject = new TelemetryObject(this.objId, this.objType, this.objVer);
+    this.telemetryGeneratorService.generateInteractTelemetry(
+       params === 'expanded' ? InteractType.LICENSE_CARD_EXPANDED : InteractType.LICENSE_CARD_COLLAPSED,
+       '',
+       undefined,
+       PageId.COLLECTION_DETAIL,
+       telemetryObject,
+       undefined,
+       this.objRollup,
+       this.corRelationList,
+       ID.LICENSE_CARD_CLICKED
+     );
   }
 
   /**
