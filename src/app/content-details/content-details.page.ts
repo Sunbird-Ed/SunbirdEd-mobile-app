@@ -63,10 +63,10 @@ import { ContentPlayerHandler } from '@app/services/content/player/content-playe
 import { ChildContentHandler } from '@app/services/content/child-content-handler';
 import { ContentDeleteHandler } from '@app/services/content/content-delete-handler';
 import { ContentUtil } from '@app/util/content-util';
-import { FileOpener } from '@ionic-native/file-opener/ngx';
-import { File } from '@ionic-native/file/ngx';
-import { FileTransfer, FileTransferObject } from '@ionic-native/file-transfer/ngx';
+import { FileTransferObject } from '@ionic-native/file-transfer/ngx';
 import { map } from 'rxjs/operators';
+
+
 @Component({
   selector: 'app-content-details',
   templateUrl: './content-details.page.html',
@@ -166,7 +166,6 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
     private courseUtilService: CourseUtilService,
     private utilityService: UtilityService,
     private network: Network,
-    public toastController: ToastController,
     private fileSizePipe: FileSizePipe,
     private headerService: AppHeaderService,
     private contentShareHandler: ContentShareHandlerService,
@@ -178,10 +177,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
     private ratingHandler: RatingHandler,
     private contentPlayerHandler: ContentPlayerHandler,
     private childContentHandler: ChildContentHandler,
-    private contentDeleteHandler: ContentDeleteHandler,
-    private fileOpener: FileOpener,
-    private file: File,
-    private transfer: FileTransfer
+    private contentDeleteHandler: ContentDeleteHandler
   ) {
     this.subscribePlayEvent();
     this.checkDeviceAPILevel();
@@ -234,6 +230,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
     this.events.subscribe(EventTopics.PLAYER_CLOSED, (data) => {
       if (data.selectedUser) {
         if (!data.selectedUser['profileType']) {
+          console.log('data', !data.selectedUser['profileType']);
           this.profileService.getActiveProfileSession().toPromise()
             .then((profile) => {
               this.profileSwitchHandler.switchUser(profile);
@@ -245,13 +242,13 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
     });
     this.events.subscribe(EventTopics.NEXT_CONTENT, (data) => {
       this.generateEndEvent();
-      this.events.unsubscribe(EventTopics.PLAYER_CLOSED);
-      this.events.unsubscribe(EventTopics.NEXT_CONTENT);
+      // this.events.unsubscribe(EventTopics.PLAYER_CLOSED);
+      // this.events.unsubscribe(EventTopics.NEXT_CONTENT);
       const previousContent = this.content;
       this.content = data.content;
       this.course = data.course;
       this.getNavParams();
-      this.subscribeEvents();
+      // this.subscribeEvents();
 
       // show popup for previous content
       setTimeout(() => {
@@ -432,7 +429,9 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
     }
 
     this.content = data;
-    this.licenseDetails = data.contentData.licenseDetails || this.licenseDetails;
+    if (data.contentData.licenseDetails && Object.keys(data.contentData.licenseDetails).length) {
+      this.licenseDetails = data.contentData.licenseDetails;
+    }
     this.contentDownloadable[this.content.identifier] = data.isAvailableLocally;
     if (this.content.lastUpdatedTime !== 0) {
       this.playOnlineSpinner = false;
@@ -714,7 +713,9 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
               } else {
                 this.playOnlineSpinner = false;
               }
-              this.licenseDetails = eventPayload.licenseDetails;
+              if (eventPayload.licenseDetails && Object.keys(eventPayload.licenseDetails).length) {
+                this.licenseDetails = eventPayload.licenseDetails;
+              }
             }
           });
         }
@@ -1081,34 +1082,5 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
     if (this.cardData.hierarchyInfo && this.cardData.hierarchyInfo.length && this.cardData.hierarchyInfo[0].contentType === 'course') {
       this.isCourse = true;
     }
-  }
-
-  openPDF() {
-    console.log('cordova.file.externalRootDirectory', cordova.file.externalRootDirectory + 'Download/130892_Mar18.pdf');
-
-    // For Offline Scenario
-    // this.fileOpener.open(cordova.file.externalRootDirectory + 'Download/130892_Mar18.pdf', 'application/pdf')
-    // .then(() =>
-    // console.log('File is opened')
-    // )
-    // .catch(e => console.log('Error opening file', e));
-    // Give the relevant path for your downloaded PDF
-    // const url = cordova.file.externalRootDirectory + 'Download/130892_Mar18.pdf';
-
-    // for Online Scenario
-    // sample link for the online PDF
-    const url = 'https://www.antennahouse.com/XSLsample/pdf/sample-link_1.pdf';
-    const browser: any = this.commonUtilService.openLink(url);
-    browser.on('exit');
-    this.fileTransfer = this.transfer.create();
-    this.fileTransfer
-      .download(url, this.file.dataDirectory + 'sample' + '.pdf')
-      .then(entry => {
-        console.log('download complete: ' + entry.toURL());
-        this.fileOpener
-          .open(entry.toURL(), 'application/pdf')
-          .then(() => console.log('File opened'))
-          .catch(e => console.log('Error opening file', e));
-      });
   }
 }

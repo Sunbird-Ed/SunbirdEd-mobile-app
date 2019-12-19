@@ -269,7 +269,7 @@ export class FormAndFrameworkUtilService {
         };
         this.formService.getForm(req).toPromise()
             .then((res: any) => {
-                const data = res.form.data.fields;
+                const data = res.data.fields;
                 if (res && data.length) {
                     for (const ele of data) {
                         if (ele.code === 'dialcode') {
@@ -403,7 +403,7 @@ export class FormAndFrameworkUtilService {
                             currentCategoryCode: categoryKey,
                             language: this.translate.currentLang,
                             requiredCategories: FrameworkCategoryCodesGroup.DEFAULT_FRAMEWORK_CATEGORIES,
-                            frameworkId: profileRes.framework.id ? profileRes.framework.id[0] : undefined
+                            frameworkId: (profileRes.framework && profileRes.framework.id) ? profileRes.framework.id[0] : undefined
                         };
                         this.frameworkUtilService.getFrameworkCategoryTerms(request).toPromise()
                             .then((categoryList: CategoryTerm[]) => {

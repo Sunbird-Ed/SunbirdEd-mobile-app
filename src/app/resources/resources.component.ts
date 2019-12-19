@@ -47,9 +47,10 @@ import { AppVersion } from '@ionic-native/app-version/ngx';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { CommonUtilService } from '@app/services/common-util.service';
 import { FormAndFrameworkUtilService } from '@app/services/formandframeworkutil.service';
-import { Environment, InteractSubtype, InteractType, PageId, ImpressionType, ImpressionSubtype } from '@app/services/telemetry-constants';
+import { Environment, InteractSubtype, InteractType, PageId, ImpressionType, ImpressionSubtype, CorReleationDataType } from '@app/services/telemetry-constants';
 import { AppHeaderService } from '@app/services/app-header.service';
 import { SplaschreenDeeplinkActionHandlerDelegate } from '@app/services/sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
+import { ContentUtil } from '@app/util/content-util';
 
 @Component({
   selector: 'app-resources',
@@ -912,19 +913,21 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
 
   navigateToDetailPage(item, index, sectionName) {
     const identifier = item.contentId || item.identifier;
-    let telemetryObject: TelemetryObject;
-    telemetryObject = new TelemetryObject(identifier, item.contentType, undefined);
+    const telemetryObject: TelemetryObject = new TelemetryObject(identifier, item.contentType, item.pkgVersion);
+    const corRelationList = [{ id: sectionName, type: CorReleationDataType.SUBJECT }];
     const values = new Map();
     values['sectionName'] = item.subject;
     values['positionClicked'] = index;
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
       InteractSubtype.CONTENT_CLICKED,
-      'home',
-      'library',
+      Environment.HOME,
+      PageId.LIBRARY,
       telemetryObject,
-      values);
+      values,
+      ContentUtil.generateRollUp(undefined, identifier),
+      corRelationList);
     if (this.commonUtilService.networkInfo.isNetworkAvailable || item.isAvailableLocally) {
-      this.router.navigate([RouterLinks.COLLECTION_DETAIL_ETB], { state: { content: item } });
+      this.router.navigate([RouterLinks.COLLECTION_DETAIL_ETB], { state: { content: item, corRelation: corRelationList } });
     } else {
       this.presentToastForOffline('OFFLINE_WARNING_ETBUI_1');
     }
