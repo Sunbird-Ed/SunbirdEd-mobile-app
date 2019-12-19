@@ -32,7 +32,7 @@ import { FormAndFrameworkUtilService } from '@app/services/formandframeworkutil.
 import { CommonUtilService } from '@app/services/common-util.service';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import {
-  Environment, ImpressionType, InteractSubtype, InteractType, LogLevel, Mode, PageId
+  Environment, ImpressionType, InteractSubtype, InteractType, LogLevel, Mode, PageId, CorReleationDataType
 } from '@app/services/telemetry-constants';
 import { AppHeaderService } from '@app/services/app-header.service';
 import { AppVersion } from '@ionic-native/app-version/ngx';
@@ -1264,10 +1264,13 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
 
     if (isFilterApplied) {
       this.filterIcon = './assets/imgs/ic_action_filter_applied.png';
+      this.corRelationList.push({
+        id: 'filter',
+        type: CorReleationDataType.DISCOVERY_TYPE
+      });
     } else {
       this.filterIcon = './assets/imgs/ic_action_filter.png';
     }
-
     if (this.isEmptyResult) {
       this.filterIcon = undefined;
     }
