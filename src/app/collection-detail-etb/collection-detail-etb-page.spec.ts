@@ -9,7 +9,7 @@ import { FileSizePipe } from '../../pipes/file-size/file-size';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TextbookTocService } from './textbook-toc-service';
 import { Location } from '@angular/common';
-import { mockEnrolledData } from '../enrolled-course-details-page/enrolled-course-details-page.data.spec';
+import { mockEnrolledData } from '../enrolled-course-details-page/enrolled-course-details-page.spec.data';
 import { contentDetailsMcokResponse1, contentDetailsMcokResponse2, contentDetailsMcokResponse3 } from './collection-detail-etb-page.spec.data';
 import { Network } from '@ionic-native/network/ngx';
 import { of } from 'rxjs';
