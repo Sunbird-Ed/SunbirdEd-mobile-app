@@ -318,6 +318,7 @@
   "MSG_NO_DETAILS_TO_SHOW": "تفصیلات موجود نہیں ",
   "MSG_NO_NEW_NOTIFICATION": " کوئی نئی اطلاعات نہیں ہے",
   "MSG_RESOURCE_DELETED": "اجزا  آلہ سے خارج کر  دیے گئے ہیں ",
+  "MULTIPLE_LICENSE": "اجازت دینے کی شرائط{{%s}}",
   "MY_BADGES": "میرے بیج",
   "NAME": "نام",
   "NAME_HINT": "آپنا نام ٹائپ کریں",
