@@ -75,7 +75,8 @@ export const mockcollectionData: Partial<Navigation> = {
                     'do_212911625643237376158',
                     'do_212911626908123136157'
                 ],
-                batchId: 'SAMPLE_BATCH'
+                batchId: 'SAMPLE_BATCH',
+                pkgVersion: 'SAMPLE_PKG_VERSION'
             }
         }
     }
@@ -85,7 +86,6 @@ export const mockcollectionData: Partial<Navigation> = {
 
 export const contentDetailsMcokResponse1: Content = {
     identifier: 'do_21281258639073280011490',
-    type: "SAMPLE_TYPE",
     contentData: {
         ownershipType: [
             'createdBy'
@@ -359,6 +359,7 @@ export const contentDetailsMcokResponse2: Content = {
         ],
         lastPublishedBy: 'dca7518d-5886-4251-94aa-360c762b1182',
         version: 2,
+        type: 'textBook',
         c_diksha_stage_open_batch_count: 1,
         tags: [
             'test'

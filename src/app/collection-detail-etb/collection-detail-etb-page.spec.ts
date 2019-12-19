@@ -1,5 +1,5 @@
 import { CollectionDetailEtbPage } from './collection-detail-etb.page';
-import { ContentService, EventsBusService, ProfileService, StorageService, ContentImportResponse, ContentImportStatus, HierarchyInfo, Rollup, CorrelationData } from 'sunbird-sdk';
+import { ContentService, EventsBusService, ProfileService, StorageService, ContentImportResponse, ContentImportStatus, HierarchyInfo, Rollup, CorrelationData, TelemetryObject } from 'sunbird-sdk';
 import { NavController, Events, PopoverController, Platform } from '@ionic/angular';
 import { NgZone, ChangeDetectorRef } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
@@ -9,13 +9,14 @@ import { FileSizePipe } from '../../pipes/file-size/file-size';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TextbookTocService } from './textbook-toc-service';
 import { Location } from '@angular/common';
-import { mockEnrolledData } from '../enrolled-course-details-page/enrolled-course-details-page.data.spec';
 import { contentDetailsMcokResponse1, contentDetailsMcokResponse2, contentDetailsMcokResponse3, mockcollectionData } from './collection-detail-etb-page.spec.data';
 import { Network } from '@ionic-native/network/ngx';
 import {
     Environment, ErrorType, ImpressionType, InteractSubtype, InteractType, Mode, PageId, ID
-  } from '../../services/telemetry-constants';
-import { of } from 'rxjs';
+} from '../../services/telemetry-constants';
+import { of, from } from 'rxjs';
+import { IonContent } from '@ionic/angular';
+
 
 describe('collectionDetailEtbPage', () => {
     let collectionDetailEtbPage: CollectionDetailEtbPage;
@@ -90,7 +91,37 @@ describe('collectionDetailEtbPage', () => {
         expect(collectionDetailEtbPage).toBeTruthy();
     });
 
-    it('should get the appName' , () => {
+    it('should initialize ion view will enter', () => {
+        spyOn(collectionDetailEtbPage, 'registerDeviceBackButton').and.stub();
+        mockzone.run = jest.fn((fn) => fn());
+        mockheaderService.headerEventEmitted$ = of();
+        mockheaderService.getDefaultPageConfig = jest.fn(() => ({}) as any);
+        mockevents.publish = jest.fn();
+        mockheaderService.updatePageConfig = jest.fn();
+        spyOn(collectionDetailEtbPage, 'generateStartEvent').and.stub();
+        spyOn(collectionDetailEtbPage, 'generateImpressionEvent').and.stub();
+        spyOn(collectionDetailEtbPage, 'markContent').and.stub();
+        spyOn(collectionDetailEtbPage, 'subscribeSdkEvent').and.stub();
+        collectionDetailEtbPage.ionContent = { ionScroll: from([
+            { scrollTop: 0 }, { scrollTop: 10 }, { scrollTop: 20 }
+        ]) } as any;
+        collectionDetailEtbPage.ionViewWillEnter();
+        expect(mockheaderService.getDefaultPageConfig).toHaveBeenCalled();
+        expect(mockheaderService.updatePageConfig).toHaveBeenCalledWith(
+            expect.objectContaining({
+                showHeader: true,
+                showBurgerMenu: false,
+                actionButtons: expect.arrayContaining([])
+            })
+        );
+        expect(mockevents.publish).toHaveBeenCalledWith('header:setzIndexToNormal');
+        expect(collectionDetailEtbPage.generateStartEvent).toHaveBeenCalled();
+        expect(collectionDetailEtbPage.generateImpressionEvent).toHaveBeenCalled();
+        expect(collectionDetailEtbPage.markContent).toHaveBeenCalled();
+        expect(collectionDetailEtbPage.subscribeSdkEvent).toHaveBeenCalled();
+    });
+
+    it('should get the appName', () => {
         mockcommonUtilService.getAppName = jest.fn(() => Promise.resolve('diksha'));
         collectionDetailEtbPage.ngOnInit();
         expect(mockcommonUtilService.getAppName).toHaveBeenCalled();
@@ -119,7 +150,8 @@ describe('collectionDetailEtbPage', () => {
         mockevents.publish = jest.fn();
         spyOn(collectionDetailEtbPage, 'setCollectionStructure').and.stub();
         collectionDetailEtbPage.extractApiResponse(data);
-        expect(mocktelemetryGeneratorService.generateSpineLoadingTelemetry).toHaveBeenCalled();
+        expect(mocktelemetryGeneratorService.generateSpineLoadingTelemetry).toHaveBeenCalledWith(
+            contentDetailsMcokResponse1, false);
         expect(mockheaderService.hideHeader).toHaveBeenCalled();
         expect(mockStorageService.getStorageDestinationDirectoryPath).toHaveBeenCalled();
         expect(mockContentService.importContent).toHaveBeenCalled();
@@ -132,8 +164,8 @@ describe('collectionDetailEtbPage', () => {
         const data = contentDetailsMcokResponse2;
         collectionDetailEtbPage.isUpdateAvailable = false;
         mockcommonUtilService.networkInfo = { isNetworkAvailable: false };
-        spyOn(collectionDetailEtbPage , 'setChildContents').and.stub();
-        spyOn(collectionDetailEtbPage , 'setCollectionStructure').and.stub();
+        spyOn(collectionDetailEtbPage, 'setChildContents').and.stub();
+        spyOn(collectionDetailEtbPage, 'setCollectionStructure').and.stub();
         collectionDetailEtbPage.extractApiResponse(data);
         // assert
         expect(collectionDetailEtbPage.isUpdateAvailable).toBeFalsy();
@@ -153,21 +185,11 @@ describe('collectionDetailEtbPage', () => {
         const params = 'expanded';
         mocktelemetryGeneratorService.generateInteractTelemetry = jest.fn();
         collectionDetailEtbPage.licenseSectionClicked(params);
-        const telemetry = {
+        const telemetryObject: Partial<TelemetryObject> = {
             id: 'do_21281258639073280011490',
-            type: undefined,
+            type: 'course',
             version: '2',
         };
-        expect(mocktelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
-            InteractType.LICENSE_CARD_EXPANDED,
-            '',
-            undefined,
-            PageId.COLLECTION_DETAIL,
-            telemetry,
-            undefined,
-            {},
-            undefined,
-            ID.LICENSE_CARD_CLICKED
-        );
+        expect(mocktelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
     });
 });
