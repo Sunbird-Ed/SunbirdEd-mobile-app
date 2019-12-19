@@ -1,5 +1,5 @@
 import { CollectionDetailEtbPage } from './collection-detail-etb.page';
-import { ContentService, EventsBusService, ProfileService, StorageService, ContentImportResponse, ContentImportStatus, HierarchyInfo } from 'sunbird-sdk';
+import { ContentService, EventsBusService, ProfileService, StorageService, ContentImportResponse, ContentImportStatus, HierarchyInfo, Rollup, CorrelationData } from 'sunbird-sdk';
 import { NavController, Events, PopoverController, Platform } from '@ionic/angular';
 import { NgZone, ChangeDetectorRef } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
@@ -10,8 +10,11 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { TextbookTocService } from './textbook-toc-service';
 import { Location } from '@angular/common';
 import { mockEnrolledData } from '../enrolled-course-details-page/enrolled-course-details-page.data.spec';
-import { contentDetailsMcokResponse1, contentDetailsMcokResponse2, contentDetailsMcokResponse3 } from './collection-detail-etb-page.spec.data';
+import { contentDetailsMcokResponse1, contentDetailsMcokResponse2, contentDetailsMcokResponse3, mockcollectionData } from './collection-detail-etb-page.spec.data';
 import { Network } from '@ionic-native/network/ngx';
+import {
+    Environment, ErrorType, ImpressionType, InteractSubtype, InteractType, Mode, PageId, ID
+  } from '../../services/telemetry-constants';
 import { of } from 'rxjs';
 
 describe('collectionDetailEtbPage', () => {
@@ -42,7 +45,7 @@ describe('collectionDetailEtbPage', () => {
     const mocklocation: Partial<Location> = {};
     const mockroute: Partial<ActivatedRoute> = {};
     const mockrouter: Partial<Router> = {
-        getCurrentNavigation: jest.fn(() => mockEnrolledData)
+        getCurrentNavigation: jest.fn(() => mockcollectionData)
     };
     const mockchangeDetectionRef: Partial<ChangeDetectorRef> = {};
     const mocktextbookTocService: Partial<TextbookTocService> = {};
@@ -150,6 +153,21 @@ describe('collectionDetailEtbPage', () => {
         const params = 'expanded';
         mocktelemetryGeneratorService.generateInteractTelemetry = jest.fn();
         collectionDetailEtbPage.licenseSectionClicked(params);
-        expect(mocktelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
+        const telemetry = {
+            id: 'do_21281258639073280011490',
+            type: undefined,
+            version: '2',
+        };
+        expect(mocktelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+            InteractType.LICENSE_CARD_EXPANDED,
+            '',
+            undefined,
+            PageId.COLLECTION_DETAIL,
+            telemetry,
+            undefined,
+            {},
+            undefined,
+            ID.LICENSE_CARD_CLICKED
+        );
     });
 });
