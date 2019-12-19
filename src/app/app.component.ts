@@ -397,6 +397,15 @@ export class AppComponent implements OnInit, AfterViewInit {
   subscribeEvents() {
     this.events.subscribe('coach_mark_seen', (data) => {
       this.showWalkthroughBackDrop = data.showWalkthroughBackDrop;
+      setTimeout(() => {
+        const backdropClipCenter = document.getElementById('qrScannerIcon').getBoundingClientRect().left +
+        ((document.getElementById('qrScannerIcon').getBoundingClientRect().width) / 2);
+
+        (document.getElementById('backdrop').getElementsByClassName('bg')[0] as HTMLDivElement).setAttribute(
+          'style',
+          `background-image: radial-gradient(circle at ${backdropClipCenter}px 56px, rgba(0, 0, 0, 0) 30px, rgba(0, 0, 0, 0.9) 30px);`
+        );
+        }, 2000);
       this.appName = data.appName;
     });
     this.events.subscribe('tab.change', (data) => {
