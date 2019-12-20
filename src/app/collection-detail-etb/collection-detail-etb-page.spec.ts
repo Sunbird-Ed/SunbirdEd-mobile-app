@@ -1,17 +1,20 @@
 import { CollectionDetailEtbPage } from './collection-detail-etb.page';
-import { ContentService, EventsBusService, ProfileService, StorageService, ContentImportResponse, ContentImportStatus, HierarchyInfo } from 'sunbird-sdk';
+import { ContentService, EventsBusService, ProfileService, StorageService, ContentImportResponse, ContentImportStatus } from 'sunbird-sdk';
 import { NavController, Events, PopoverController, Platform } from '@ionic/angular';
 import { NgZone, ChangeDetectorRef } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { SocialSharing } from '@ionic-native/social-sharing/ngx';
-import { AppGlobalService, CommonUtilService, TelemetryGeneratorService, CourseUtilService, UtilityService, AppHeaderService, ComingSoonMessageService, ContentShareHandlerService } from '../../services';
+import { AppGlobalService, CommonUtilService, TelemetryGeneratorService, CourseUtilService, UtilityService, AppHeaderService, 
+    ComingSoonMessageService,
+    ContentShareHandlerService } from '../../services';
 import { FileSizePipe } from '../../pipes/file-size/file-size';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TextbookTocService } from './textbook-toc-service';
 import { Location } from '@angular/common';
 import { mockEnrolledData } from '../enrolled-course-details-page/enrolled-course-details-page.spec.data';
-import { contentDetailsMcokResponse1, contentDetailsMcokResponse2, contentDetailsMcokResponse3 } from './collection-detail-etb-page.spec.data';
-import { Network } from '@ionic-native/network/ngx';
+import { contentDetailsMcokResponse1,
+    contentDetailsMcokResponse2,
+    contentDetailsMcokResponse3 } from './collection-detail-etb-page.spec.data';
 import { of } from 'rxjs';
 
 describe('collectionDetailEtbPage', () => {
