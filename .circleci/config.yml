@@ -1,6 +1,8 @@
 version: 2.1
 jobs:
   build:
+    branches:
+      only: release-*
     docker:
       - image: circleci/node:chakracore-10.13.0
     steps:
