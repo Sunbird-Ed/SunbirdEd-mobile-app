@@ -25,6 +25,10 @@ jobs:
           name: Run Tests
           command: npm run test:ci
       - store_artifacts:
-          path: /coverage
-      - store_test_results:
-          path: /coverage
+          path: coverage
+      - run:
+          name: install sonar scanner
+          command: sudo npm install -g sonarqube-scanner
+      - run:
+          name: Run SonarScan
+          command: sonar-scanner
