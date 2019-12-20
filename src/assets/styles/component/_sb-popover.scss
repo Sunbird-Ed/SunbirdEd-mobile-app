@@ -258,7 +258,7 @@
       color: #024f9d !important;
       width: 150px;
     }
-    @media only screen and (max-width : 412px) {
+    @media only screen and (max-width : 720px) {
     .popover-button-cancel-longlength { 
       background-color: #fff;
       --background: white;
@@ -268,7 +268,7 @@
       padding: 8px;
     }
     }
-    @media only screen and (min-width : 413px) and (max-width : 1025px) {
+    @media only screen and (min-width : 721px) and (max-width : 1025px) {
       .popover-button-cancel-longlength { 
         background-color: #fff;
         --background: white;
