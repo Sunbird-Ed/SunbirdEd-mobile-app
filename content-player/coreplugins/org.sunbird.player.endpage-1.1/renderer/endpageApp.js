@@ -73,6 +73,12 @@ endPage.controller("endPageController", function($scope, $rootScope, $state,$ele
         }else {
             $scope.replayCallback();
         }
+
+        //Generate Telemetry for redo button
+        TelemetryService.interact("TOUCH", "redo_btn", "TOUCH", {
+            stageId: "ContentApp-EndScreen",
+            subtype: "ContentID"
+        });
     };
     $scope.replayCallback = function(){
         EkstepRendererAPI.hideEndPage();

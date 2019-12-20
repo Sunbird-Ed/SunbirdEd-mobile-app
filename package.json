@@ -1,5 +1,5 @@
 {
-  "name": "Sunbird-Education",
+  "name": "sunbirded-mobile-app",
   "version": "0.0.1",
   "author": "Ionic Framework",
   "homepage": "https://ionicframework.com/",
@@ -14,7 +14,9 @@
     "test:ci": "jest --ci --collectCoverage=true --coverageReporters=lcov --forceExit --detectOpenHandles --maxWorkers=2",
     "ionic-build": "ng build --eval--source-map && cordova run android",
     "ionic-build:prod": "ionic build --prod && ionic cordova run android --prod",
-    "ionic-serve": "ionic cordova run android --livereload --configuration=hmr"
+    "ionic-serve": "ionic cordova run android --livereload --configuration=hmr",
+    "sonar-scanner": "sonar-scanner",
+    "sonar-scanner:scan": "sonar-scanner -Dsonar.host.url=http://127.0.0.1:9000 -Dsonar.login=$SONAR_LOGIN"
   },
   "private": true,
   "dependencies": {
@@ -127,6 +129,7 @@
     "babel-jest": "^24.8.0",
     "babel-polyfill": "^6.26.0",
     "jest": "^24.8.0",
+    "sonarqube-scanner": "^2.5.0",
     "ts-node": "^8.4.1",
     "tslint": "~5.16.0",
     "typescript": "~3.1.6"
