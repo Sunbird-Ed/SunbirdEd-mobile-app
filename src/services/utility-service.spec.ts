@@ -5,20 +5,19 @@ describe('UtilityService', () => {
 
     beforeAll(() => {
         window['buildconfigreader'] = {
-            getBuildConfigValue: jest.fn(() => {}),
-            openPlayStore: jest.fn(() => {}),
-            getDeviceAPILevel: jest.fn(() => {}),
-            checkAppAvailability: jest.fn(() => {}),
-            getDownloadDirectoryPath: jest.fn(() => {}),
-            exportApk: jest.fn(() => {}),
-            getDeviceSpec: jest.fn(() => {}),
-            getUtmInfo: jest.fn(() => {}),
-            clearUtmInfo: jest.fn(() => {}),
-            readFromAssets: jest.fn(() => {}),
-            rm: jest.fn(() => {})
+            getBuildConfigValue: jest.fn(() => { }),
+            openPlayStore: jest.fn(() => { }),
+            getDeviceAPILevel: jest.fn(() => { }),
+            checkAppAvailability: jest.fn(() => { }),
+            getDownloadDirectoryPath: jest.fn(() => { }),
+            exportApk: jest.fn(() => { }),
+            getDeviceSpec: jest.fn(() => { }),
+            getUtmInfo: jest.fn(() => { }),
+            clearUtmInfo: jest.fn(() => { }),
+            readFromAssets: jest.fn(() => { }),
+            rm: jest.fn(() => { })
         };
         utilityService = new UtilityService();
-        //jest.setTimeout(3000);
     });
 
     beforeEach(() => {
@@ -29,26 +28,29 @@ describe('UtilityService', () => {
     * unit test case for getBuildConfigValue
     */
     describe('getBuildConfigValue()', () => {
-        
+
         it('should delegate to builconfigreader plugin', (done) => {
             // arrange
-            (window['buildconfigreader']['getBuildConfigValue'] as jest.Mock).mockImplementation((namespace, key, successCallback, errorCallback) => {
-                setTimeout(() => {
-                    successCallback();
+            (window['buildconfigreader']['getBuildConfigValue'] as jest.Mock).
+                mockImplementation((namespace, key, successCallback, errorCallback) => {
+                    setTimeout(() => {
+                        successCallback();
+                    });
                 });
-            });
 
             // act
             utilityService.getBuildConfigValue('SOME_KEY').then(() => {
                 // assert
-                expect(window['buildconfigreader']['getBuildConfigValue']).toHaveBeenCalledWith('org.sunbird.app', 'SOME_KEY', expect.any(Function), expect.any(Function));
+                expect(window['buildconfigreader']['getBuildConfigValue']).
+                toHaveBeenCalledWith('org.sunbird.app', 'SOME_KEY', expect.any(Function), expect.any(Function));
                 done();
             });
         });
 
         it('should reject if buildConfig string for corresponding key was not found', (done) => {
             // arrange
-            (window['buildconfigreader']['getBuildConfigValue'] as jest.Mock).mockImplementation((namespace, key, successCallback, errorCallback) => {
+            (window['buildconfigreader']['getBuildConfigValue'] as jest.Mock).
+            mockImplementation((namespace, key, successCallback, errorCallback) => {
                 setTimeout(() => {
                     errorCallback();
                 });
@@ -57,20 +59,22 @@ describe('UtilityService', () => {
             // act
             utilityService.getBuildConfigValue('').catch(() => {
                 // assert
-               expect(window['buildconfigreader']['getBuildConfigValue']).toReturnWith(undefined);
+                expect(window['buildconfigreader']['getBuildConfigValue']).toReturnWith(undefined);
                 done();
             });
         });
 
         it('should reject buildConfig string for corresponding key', (done) => {
             // arrange
-            (window['buildconfigreader']['getBuildConfigValue'] as jest.Mock).mockImplementation((namespace, key, successCallback, errorCallback) => {
+            (window['buildconfigreader']['getBuildConfigValue'] as jest.Mock).
+            mockImplementation((namespace, key, successCallback, errorCallback) => {
                 throw Error;
             });
             // act
-            utilityService.getBuildConfigValue("SOME_KEY").catch(() => {
+            utilityService.getBuildConfigValue('SOME_KEY').catch(() => {
                 // assert
-                expect(window['buildconfigreader']['getBuildConfigValue']).toHaveBeenCalledWith('org.sunbird.app', 'SOME_KEY', expect.any(Function), expect.any(Function));
+                expect(window['buildconfigreader']['getBuildConfigValue']).
+                toHaveBeenCalledWith('org.sunbird.app', 'SOME_KEY', expect.any(Function), expect.any(Function));
                 done();
             });
         });
@@ -91,7 +95,8 @@ describe('UtilityService', () => {
             // act
             utilityService.openPlayStore('SOME_ID').then(() => {
                 // assert
-                expect(window['buildconfigreader']['openPlayStore']).toHaveBeenCalledWith('SOME_ID', expect.any(Function), expect.any(Function));
+                expect(window['buildconfigreader']['openPlayStore']).
+                toHaveBeenCalledWith('SOME_ID', expect.any(Function), expect.any(Function));
                 done();
             });
         });
@@ -107,7 +112,7 @@ describe('UtilityService', () => {
             // act
             utilityService.openPlayStore('').catch(() => {
                 // assert
-               expect(window['buildconfigreader']['openPlayStore']).toReturnWith(undefined);
+                expect(window['buildconfigreader']['openPlayStore']).toReturnWith(undefined);
                 done();
             });
         });
@@ -118,9 +123,10 @@ describe('UtilityService', () => {
                 throw Error;
             });
             // act
-            utilityService.openPlayStore("SOME_ID").catch(() => {
+            utilityService.openPlayStore('SOME_ID').catch(() => {
                 // assert
-                expect(window['buildconfigreader']['openPlayStore']).toHaveBeenCalledWith('SOME_ID', expect.any(Function), expect.any(Function));
+                expect(window['buildconfigreader']['openPlayStore']).
+                toHaveBeenCalledWith('SOME_ID', expect.any(Function), expect.any(Function));
                 done();
             });
         });
@@ -130,49 +136,49 @@ describe('UtilityService', () => {
     /*
     * unit test case for getDeviceAPILevel Method
     */
-   describe('getDeviceAPILevel()', () => {
-    it('should delegate to getDeviceAPILevel Method', (done) => {
-        // arrange
-        (window['buildconfigreader']['getDeviceAPILevel'] as jest.Mock).mockImplementation(( successCallback, errorCallback) => {
-            setTimeout(() => {
-                successCallback();
-            }, 0);
-        });
+    describe('getDeviceAPILevel()', () => {
+        it('should delegate to getDeviceAPILevel Method', (done) => {
+            // arrange
+            (window['buildconfigreader']['getDeviceAPILevel'] as jest.Mock).mockImplementation((successCallback, errorCallback) => {
+                setTimeout(() => {
+                    successCallback();
+                }, 0);
+            });
 
-        // act
-        utilityService.getDeviceAPILevel().then(() => {
-            // assert
-            expect(window['buildconfigreader']['getDeviceAPILevel']).toHaveBeenCalledWith( expect.any(Function), expect.any(Function));
-            done();
-        });
-    });
-
-    it('should reject if getDeviceAPILevel string for corresponding entryString was not found', (done) => {
-        // arrange
-        (window['buildconfigreader']['getDeviceAPILevel'] as jest.Mock).mockImplementation((successCallback, errorCallback) => {
-            setTimeout(() => {
-                errorCallback();
+            // act
+            utilityService.getDeviceAPILevel().then(() => {
+                // assert
+                expect(window['buildconfigreader']['getDeviceAPILevel']).toHaveBeenCalledWith(expect.any(Function), expect.any(Function));
+                done();
             });
         });
 
-        // act
-        utilityService.getDeviceAPILevel().catch(() => {
-            // assert
-           expect(window['buildconfigreader']['getDeviceAPILevel']).toReturnWith(undefined);
-            done();
-        });
-    });
+        it('should reject if getDeviceAPILevel string for corresponding entryString was not found', (done) => {
+            // arrange
+            (window['buildconfigreader']['getDeviceAPILevel'] as jest.Mock).mockImplementation((successCallback, errorCallback) => {
+                setTimeout(() => {
+                    errorCallback();
+                });
+            });
 
-    it('should reject getDeviceAPILevel string for corresponding EntryString', (done) => {
-        // arrange
-        (window['buildconfigreader']['getDeviceAPILevel'] as jest.Mock).mockImplementation(( successCallback, errorCallback) => {
-            throw Error;
+            // act
+            utilityService.getDeviceAPILevel().catch(() => {
+                // assert
+                expect(window['buildconfigreader']['getDeviceAPILevel']).toReturnWith(undefined);
+                done();
+            });
         });
-        // act
-        utilityService.getDeviceAPILevel().catch(() => {
-            // assert
-            expect(window['buildconfigreader']['getDeviceAPILevel']).toHaveBeenCalledWith(expect.any(Function), expect.any(Function));
-            done();
+
+        it('should reject getDeviceAPILevel string for corresponding EntryString', (done) => {
+            // arrange
+            (window['buildconfigreader']['getDeviceAPILevel'] as jest.Mock).mockImplementation((successCallback, errorCallback) => {
+                throw Error;
+            });
+            // act
+            utilityService.getDeviceAPILevel().catch(() => {
+                // assert
+                expect(window['buildconfigreader']['getDeviceAPILevel']).toHaveBeenCalledWith(expect.any(Function), expect.any(Function));
+                done();
             });
         });
     });
@@ -180,49 +186,54 @@ describe('UtilityService', () => {
     /*
     * unit test case for checkAppAvailability Method
     */
-   describe('checkAppAvailability()', () => {
-    it('should delegate to checkAppAvailability Method', (done) => {
-        // arrange
-        (window['buildconfigreader']['checkAppAvailability'] as jest.Mock).mockImplementation((SOME_PACKAGENAME, successCallback, errorCallback) => {
-            setTimeout(() => {
-                successCallback();
+    describe('checkAppAvailability()', () => {
+        it('should delegate to checkAppAvailability Method', (done) => {
+            // arrange
+            (window['buildconfigreader']['checkAppAvailability'] as jest.Mock).
+            mockImplementation((SOME_PACKAGENAME, successCallback, errorCallback) => {
+                setTimeout(() => {
+                    successCallback();
+                });
+            });
+
+            // act
+            utilityService.checkAppAvailability('SOME_PACKAGENAME').then(() => {
+                // assert
+                expect(window['buildconfigreader']['checkAppAvailability']).
+                toHaveBeenCalledWith('SOME_PACKAGENAME', expect.any(Function), expect.any(Function));
+                done();
             });
         });
 
-        // act
-        utilityService.checkAppAvailability('SOME_PACKAGENAME').then(() => {
-            // assert
-            expect(window['buildconfigreader']['checkAppAvailability']).toHaveBeenCalledWith('SOME_PACKAGENAME', expect.any(Function), expect.any(Function));
-            done();
-        });
-    });
+        it('should reject if checkAppAvailability string for corresponding entryString was not found', (done) => {
+            // arrange
+            (window['buildconfigreader']['checkAppAvailability'] as jest.Mock).
+            mockImplementation((SOME_PACKAGENAME, successCallback, errorCallback) => {
+                setTimeout(() => {
+                    errorCallback();
+                });
+            });
 
-    it('should reject if checkAppAvailability string for corresponding entryString was not found', (done) => {
-        // arrange
-        (window['buildconfigreader']['checkAppAvailability'] as jest.Mock).mockImplementation((SOME_PACKAGENAME, successCallback, errorCallback) => {
-            setTimeout(() => {
-                errorCallback();
+            // act
+            utilityService.checkAppAvailability('SOME_PACKAGENAME').catch(() => {
+                // assert
+                expect(window['buildconfigreader']['checkAppAvailability']).toReturnWith(undefined);
+                done();
             });
         });
 
-        // act
-        utilityService.checkAppAvailability('SOME_PACKAGENAME').catch(() => {
-            // assert
-           expect(window['buildconfigreader']['checkAppAvailability']).toReturnWith(undefined);
-            done();
-        });
-    });
-
-    it('should reject checkAppAvailability string for corresponding EntryString', (done) => {
-        // arrange
-        (window['buildconfigreader']['checkAppAvailability'] as jest.Mock).mockImplementation(( SOME_PACKAGENAME, successCallback, errorCallback) => {
-            throw Error;
-        });
-        // act
-        utilityService.checkAppAvailability('SOME_PACKAGENAME').catch(() => {
-            // assert
-            expect(window['buildconfigreader']['checkAppAvailability']).toHaveBeenCalledWith('SOME_PACKAGENAME',expect.any(Function), expect.any(Function));
-            done();
+        it('should reject checkAppAvailability string for corresponding EntryString', (done) => {
+            // arrange
+            (window['buildconfigreader']['checkAppAvailability'] as jest.Mock).
+            mockImplementation((SOME_PACKAGENAME, successCallback, errorCallback) => {
+                throw Error;
+            });
+            // act
+            utilityService.checkAppAvailability('SOME_PACKAGENAME').catch(() => {
+                // assert
+                expect(window['buildconfigreader']['checkAppAvailability']).
+                toHaveBeenCalledWith('SOME_PACKAGENAME', expect.any(Function), expect.any(Function));
+                done();
             });
         });
     });
@@ -230,49 +241,52 @@ describe('UtilityService', () => {
     /*
     * unit test case for getDownloadDirectoryPath Method
     */
-   describe('getDownloadDirectoryPath()', () => {
-    it('should delegate to getDownloadDirectoryPath Method', (done) => {
-        // arrange
-        (window['buildconfigreader']['getDownloadDirectoryPath'] as jest.Mock).mockImplementation(( successCallback, errorCallback) => {
-            setTimeout(() => {
-                successCallback();
+    describe('getDownloadDirectoryPath()', () => {
+        it('should delegate to getDownloadDirectoryPath Method', (done) => {
+            // arrange
+            (window['buildconfigreader']['getDownloadDirectoryPath'] as jest.Mock).
+            mockImplementation((successCallback, errorCallback) => {
+                setTimeout(() => {
+                    successCallback();
+                });
+            });
+
+            // act
+            utilityService.getDownloadDirectoryPath().then(() => {
+                // assert
+                expect(window['buildconfigreader']['getDownloadDirectoryPath']).
+                toHaveBeenCalledWith(expect.any(Function), expect.any(Function));
+                done();
             });
         });
 
-        // act
-        utilityService.getDownloadDirectoryPath().then(() => {
-            // assert
-            expect(window['buildconfigreader']['getDownloadDirectoryPath']).toHaveBeenCalledWith( expect.any(Function), expect.any(Function));
-            done();
-        });
-    });
+        it('should reject if checkAgetDownloadDirectoryPathppAvailability string for corresponding entryString was not found', (done) => {
+            // arrange
+            (window['buildconfigreader']['getDownloadDirectoryPath'] as jest.Mock).mockImplementation((successCallback, errorCallback) => {
+                setTimeout(() => {
+                    errorCallback();
+                });
+            });
 
-    it('should reject if checkAgetDownloadDirectoryPathppAvailability string for corresponding entryString was not found', (done) => {
-        // arrange
-        (window['buildconfigreader']['getDownloadDirectoryPath'] as jest.Mock).mockImplementation(( successCallback, errorCallback) => {
-            setTimeout(() => {
-                errorCallback();
+            // act
+            utilityService.getDownloadDirectoryPath().catch(() => {
+                // assert
+                expect(window['buildconfigreader']['getDownloadDirectoryPath']).toReturnWith(undefined);
+                done();
             });
         });
 
-        // act
-        utilityService.getDownloadDirectoryPath().catch(() => {
-            // assert
-           expect(window['buildconfigreader']['getDownloadDirectoryPath']).toReturnWith(undefined);
-            done();
-        });
-    });
-
-    it('should reject getDownloadDirectoryPath string for corresponding EntryString', (done) => {
-        // arrange
-        (window['buildconfigreader']['getDownloadDirectoryPath'] as jest.Mock).mockImplementation((successCallback, errorCallback) => {
-            throw Error;
-        });
-        // act
-        utilityService.getDownloadDirectoryPath().catch(() => {
-            // assert
-            expect(window['buildconfigreader']['getDownloadDirectoryPath']).toHaveBeenCalledWith(expect.any(Function), expect.any(Function));
-            done();
+        it('should reject getDownloadDirectoryPath string for corresponding EntryString', (done) => {
+            // arrange
+            (window['buildconfigreader']['getDownloadDirectoryPath'] as jest.Mock).mockImplementation((successCallback, errorCallback) => {
+                throw Error;
+            });
+            // act
+            utilityService.getDownloadDirectoryPath().catch(() => {
+                // assert
+                expect(window['buildconfigreader']['getDownloadDirectoryPath']).
+                toHaveBeenCalledWith(expect.any(Function), expect.any(Function));
+                done();
             });
         });
     });
@@ -280,49 +294,53 @@ describe('UtilityService', () => {
     /*
     * unit test case for exportApk Method
     */
-   describe('exportApk()', () => {
-    it('should delegate to exportApk Method', (done) => {
-        // arrange
-        (window['buildconfigreader']['exportApk'] as jest.Mock).mockImplementation(( successCallback, errorCallback) => {
-            setTimeout(() => {
-                successCallback();
+    describe('exportApk()', () => {
+        it('should delegate to exportApk Method', (done) => {
+            // arrange
+            (window['buildconfigreader']['exportApk'] as jest.Mock).
+            mockImplementation((successCallback, errorCallback) => {
+                setTimeout(() => {
+                    successCallback();
+                });
+            });
+
+            // act
+            utilityService.exportApk().then(() => {
+                // assert
+                expect(window['buildconfigreader']['exportApk']).toHaveBeenCalledWith(expect.any(Function), expect.any(Function));
+                done();
             });
         });
 
-        // act
-        utilityService.exportApk().then(() => {
-            // assert
-            expect(window['buildconfigreader']['exportApk']).toHaveBeenCalledWith( expect.any(Function), expect.any(Function));
-            done();
-        });
-    });
+        it('should reject if exportApk string for corresponding entryString was not found', (done) => {
+            // arrange
+            (window['buildconfigreader']['exportApk'] as jest.Mock).
+            mockImplementation((successCallback, errorCallback) => {
+                setTimeout(() => {
+                    errorCallback();
+                });
+            });
 
-    it('should reject if exportApk string for corresponding entryString was not found', (done) => {
-        // arrange
-        (window['buildconfigreader']['exportApk'] as jest.Mock).mockImplementation(( successCallback, errorCallback) => {
-            setTimeout(() => {
-                errorCallback();
+            // act
+            utilityService.exportApk().catch(() => {
+                // assert
+                expect(window['buildconfigreader']['exportApk']).
+                toReturnWith(undefined);
+                done();
             });
         });
 
-        // act
-        utilityService.exportApk().catch(() => {
-            // assert
-           expect(window['buildconfigreader']['exportApk']).toReturnWith(undefined);
-            done();
-        });
-    });
-
-    it('should reject exportApk string for corresponding EntryString', (done) => {
-        // arrange
-        (window['buildconfigreader']['exportApk'] as jest.Mock).mockImplementation((successCallback, errorCallback) => {
-            throw Error;
-        });
-        // act
-        utilityService.exportApk().catch(() => {
-            // assert
-            expect(window['buildconfigreader']['exportApk']).toHaveBeenCalledWith(expect.any(Function), expect.any(Function));
-            done();
+        it('should reject exportApk string for corresponding EntryString', (done) => {
+            // arrange
+            (window['buildconfigreader']['exportApk'] as jest.Mock).
+            mockImplementation((successCallback, errorCallback) => {
+                throw Error;
+            });
+            // act
+            utilityService.exportApk().catch(() => {
+                // assert
+                expect(window['buildconfigreader']['exportApk']).toHaveBeenCalledWith(expect.any(Function), expect.any(Function));
+                done();
             });
         });
     });
@@ -330,49 +348,49 @@ describe('UtilityService', () => {
     /*
     * unit test case for getDeviceSpec Method
     */
-   describe('getDeviceSpec()', () => {
-    it('should delegate to getDeviceSpec Method', (done) => {
-        // arrange
-        (window['buildconfigreader']['getDeviceSpec'] as jest.Mock).mockImplementation((successCallback, errorCallback) => {
-            setTimeout(() => {
-                successCallback();
+    describe('getDeviceSpec()', () => {
+        it('should delegate to getDeviceSpec Method', (done) => {
+            // arrange
+            (window['buildconfigreader']['getDeviceSpec'] as jest.Mock).mockImplementation((successCallback, errorCallback) => {
+                setTimeout(() => {
+                    successCallback();
+                });
+            });
+
+            // act
+            utilityService.getDeviceSpec().then(() => {
+                // assert
+                expect(window['buildconfigreader']['getDeviceSpec']).toHaveBeenCalledWith(expect.any(Function), expect.any(Function));
+                done();
             });
         });
 
-        // act
-        utilityService.getDeviceSpec().then(() => {
-            // assert
-            expect(window['buildconfigreader']['getDeviceSpec']).toHaveBeenCalledWith( expect.any(Function), expect.any(Function));
-            done();
-        });
-    });
+        it('should reject if getDeviceSpec string for corresponding entryString was not found', (done) => {
+            // arrange
+            (window['buildconfigreader']['getDeviceSpec'] as jest.Mock).mockImplementation((successCallback, errorCallback) => {
+                setTimeout(() => {
+                    errorCallback();
+                });
+            });
 
-    it('should reject if getDeviceSpec string for corresponding entryString was not found', (done) => {
-        // arrange
-        (window['buildconfigreader']['getDeviceSpec'] as jest.Mock).mockImplementation(( successCallback, errorCallback) => {
-            setTimeout(() => {
-                errorCallback();
+            // act
+            utilityService.getDeviceSpec().catch(() => {
+                // assert
+                expect(window['buildconfigreader']['getDeviceSpec']).toReturnWith(undefined);
+                done();
             });
         });
 
-        // act
-        utilityService.getDeviceSpec().catch(() => {
-            // assert
-           expect(window['buildconfigreader']['getDeviceSpec']).toReturnWith(undefined);
-            done();
-        });
-    });
-
-    it('should reject getDeviceSpec string for corresponding EntryString', (done) => {
-        // arrange
-        (window['buildconfigreader']['getDeviceSpec'] as jest.Mock).mockImplementation(( successCallback, errorCallback) => {
-            throw Error;
-        });
-        // act
-        utilityService.getDeviceSpec().catch(() => {
-            // assert
-            expect(window['buildconfigreader']['getDeviceSpec']).toHaveBeenCalledWith(expect.any(Function), expect.any(Function));
-            done();
+        it('should reject getDeviceSpec string for corresponding EntryString', (done) => {
+            // arrange
+            (window['buildconfigreader']['getDeviceSpec'] as jest.Mock).mockImplementation((successCallback, errorCallback) => {
+                throw Error;
+            });
+            // act
+            utilityService.getDeviceSpec().catch(() => {
+                // assert
+                expect(window['buildconfigreader']['getDeviceSpec']).toHaveBeenCalledWith(expect.any(Function), expect.any(Function));
+                done();
             });
         });
     });
@@ -380,49 +398,49 @@ describe('UtilityService', () => {
     /*
     * unit test case for getUtmInfo Method
     */
-   describe('getUtmInfo()', () => {
-    it('should delegate to getUtmInfo Method', (done) => {
-        // arrange
-        (window['buildconfigreader']['getUtmInfo'] as jest.Mock).mockImplementation(( successCallback, errorCallback) => {
-            setTimeout(() => {
-                successCallback();
+    describe('getUtmInfo()', () => {
+        it('should delegate to getUtmInfo Method', (done) => {
+            // arrange
+            (window['buildconfigreader']['getUtmInfo'] as jest.Mock).mockImplementation((successCallback, errorCallback) => {
+                setTimeout(() => {
+                    successCallback();
+                });
+            });
+
+            // act
+            utilityService.getUtmInfo().then(() => {
+                // assert
+                expect(window['buildconfigreader']['getUtmInfo']).toHaveBeenCalledWith(expect.any(Function), expect.any(Function));
+                done();
             });
         });
 
-        // act
-        utilityService.getUtmInfo().then(() => {
-            // assert
-            expect(window['buildconfigreader']['getUtmInfo']).toHaveBeenCalledWith( expect.any(Function), expect.any(Function));
-            done();
-        });
-    });
+        it('should reject if getUtmInfo string for corresponding entryString was not found', (done) => {
+            // arrange
+            (window['buildconfigreader']['getUtmInfo'] as jest.Mock).mockImplementation((successCallback, errorCallback) => {
+                setTimeout(() => {
+                    errorCallback();
+                });
+            });
 
-    it('should reject if getUtmInfo string for corresponding entryString was not found', (done) => {
-        // arrange
-        (window['buildconfigreader']['getUtmInfo'] as jest.Mock).mockImplementation(( successCallback, errorCallback) => {
-            setTimeout(() => {
-                errorCallback();
+            // act
+            utilityService.getUtmInfo().catch(() => {
+                // assert
+                expect(window['buildconfigreader']['getUtmInfo']).toReturnWith(undefined);
+                done();
             });
         });
 
-        // act
-        utilityService.getUtmInfo().catch(() => {
-            // assert
-           expect(window['buildconfigreader']['getUtmInfo']).toReturnWith(undefined);
-            done();
-        });
-    });
-
-    it('should reject getUtmInfo string for corresponding EntryString', (done) => {
-        // arrange
-        (window['buildconfigreader']['getUtmInfo'] as jest.Mock).mockImplementation((successCallback, errorCallback) => {
-            throw Error;
-        });
-        // act
-        utilityService.getUtmInfo().catch(() => {
-            // assert
-            expect(window['buildconfigreader']['getUtmInfo']).toHaveBeenCalledWith(expect.any(Function), expect.any(Function));
-            done();
+        it('should reject getUtmInfo string for corresponding EntryString', (done) => {
+            // arrange
+            (window['buildconfigreader']['getUtmInfo'] as jest.Mock).mockImplementation((successCallback, errorCallback) => {
+                throw Error;
+            });
+            // act
+            utilityService.getUtmInfo().catch(() => {
+                // assert
+                expect(window['buildconfigreader']['getUtmInfo']).toHaveBeenCalledWith(expect.any(Function), expect.any(Function));
+                done();
             });
         });
     });
@@ -430,49 +448,49 @@ describe('UtilityService', () => {
     /*
     * unit test case for clearUtmInfo Method
     */
-   describe('clearUtmInfo()', () => {
-    it('should delegate to clearUtmInfo Method', (done) => {
-        // arrange
-        (window['buildconfigreader']['clearUtmInfo'] as jest.Mock).mockImplementation(( successCallback, errorCallback) => {
-            setTimeout(() => {
-                successCallback();
+    describe('clearUtmInfo()', () => {
+        it('should delegate to clearUtmInfo Method', (done) => {
+            // arrange
+            (window['buildconfigreader']['clearUtmInfo'] as jest.Mock).mockImplementation((successCallback, errorCallback) => {
+                setTimeout(() => {
+                    successCallback();
+                });
+            });
+
+            // act
+            utilityService.clearUtmInfo().then(() => {
+                // assert
+                expect(window['buildconfigreader']['clearUtmInfo']).toHaveBeenCalledWith(expect.any(Function), expect.any(Function));
+                done();
             });
         });
 
-        // act
-        utilityService.clearUtmInfo().then(() => {
-            // assert
-            expect(window['buildconfigreader']['clearUtmInfo']).toHaveBeenCalledWith( expect.any(Function), expect.any(Function));
-            done();
-        });
-    });
+        it('should reject if clearUtmInfo string for corresponding entryString was not found', (done) => {
+            // arrange
+            (window['buildconfigreader']['clearUtmInfo'] as jest.Mock).mockImplementation((successCallback, errorCallback) => {
+                setTimeout(() => {
+                    errorCallback();
+                });
+            });
 
-    it('should reject if clearUtmInfo string for corresponding entryString was not found', (done) => {
-        // arrange
-        (window['buildconfigreader']['clearUtmInfo'] as jest.Mock).mockImplementation(( successCallback, errorCallback) => {
-            setTimeout(() => {
-                errorCallback();
+            // act
+            utilityService.clearUtmInfo().catch(() => {
+                // assert
+                expect(window['buildconfigreader']['clearUtmInfo']).toReturnWith(undefined);
+                done();
             });
         });
 
-        // act
-        utilityService.clearUtmInfo().catch(() => {
-            // assert
-           expect(window['buildconfigreader']['clearUtmInfo']).toReturnWith(undefined);
-            done();
-        });
-    });
-
-    it('should reject clearUtmInfo string for corresponding EntryString', (done) => {
-        // arrange
-        (window['buildconfigreader']['clearUtmInfo'] as jest.Mock).mockImplementation((successCallback, errorCallback) => {
-            throw Error;
-        });
-        // act
-        utilityService.clearUtmInfo().catch(() => {
-            // assert
-            expect(window['buildconfigreader']['clearUtmInfo']).toHaveBeenCalledWith(expect.any(Function), expect.any(Function));
-            done();
+        it('should reject clearUtmInfo string for corresponding EntryString', (done) => {
+            // arrange
+            (window['buildconfigreader']['clearUtmInfo'] as jest.Mock).mockImplementation((successCallback, errorCallback) => {
+                throw Error;
+            });
+            // act
+            utilityService.clearUtmInfo().catch(() => {
+                // assert
+                expect(window['buildconfigreader']['clearUtmInfo']).toHaveBeenCalledWith(expect.any(Function), expect.any(Function));
+                done();
             });
         });
     });
@@ -481,99 +499,109 @@ describe('UtilityService', () => {
     /*
     * unit test case for readFileFromAssets Method
     */
-   describe('readFileFromAssets()', () => {
-    it('should delegate to readFileFromAssets Method', (done) => {
-        // arrange
-        (window['buildconfigreader']['readFromAssets'] as jest.Mock).mockImplementation(( SOME_FILENAME, successCallback, errorCallback) => {
-            setTimeout(() => {
-                successCallback();
+    describe('readFileFromAssets()', () => {
+        it('should delegate to readFileFromAssets Method', (done) => {
+            // arrange
+            (window['buildconfigreader']['readFromAssets'] as jest.Mock).
+            mockImplementation((SOME_FILENAME, successCallback, errorCallback) => {
+                setTimeout(() => {
+                    successCallback();
+                });
+            });
+
+            // act
+            utilityService.readFileFromAssets('SOME_FILENAME').then(() => {
+                // assert
+                expect(window['buildconfigreader']['readFromAssets']).
+                toHaveBeenCalledWith('SOME_FILENAME', expect.any(Function), expect.any(Function));
+                done();
             });
         });
 
-        // act
-        utilityService.readFileFromAssets('SOME_FILENAME').then(() => {
-            // assert
-            expect(window['buildconfigreader']['readFromAssets']).toHaveBeenCalledWith( "SOME_FILENAME", expect.any(Function), expect.any(Function));
-            done();
-        });
-    });
+        it('should reject if readFileFromAssets string for corresponding entryString was not found', (done) => {
+            // arrange
+            (window['buildconfigreader']['readFromAssets'] as jest.Mock).
+            mockImplementation((SOME_FILENAME, successCallback, errorCallback) => {
+                setTimeout(() => {
+                    errorCallback();
+                });
+            });
 
-    it('should reject if readFileFromAssets string for corresponding entryString was not found', (done) => {
-        // arrange
-        (window['buildconfigreader']['readFromAssets'] as jest.Mock).mockImplementation(( SOME_FILENAME, successCallback, errorCallback) => {
-            setTimeout(() => {
-                errorCallback();
+            // act
+            utilityService.readFileFromAssets('SOME_FILENAME').catch(() => {
+                // assert
+                expect(window['buildconfigreader']['readFromAssets']).toReturnWith(undefined);
+                done();
             });
         });
 
-        // act
-        utilityService.readFileFromAssets('SOME_FILENAME').catch(() => {
-            // assert
-           expect(window['buildconfigreader']['readFromAssets']).toReturnWith(undefined);
-            done();
-        });
-    });
-
-    it('should reject readFileFromAssets string for corresponding EntryString', (done) => {
-        // arrange
-        (window['buildconfigreader']['readFromAssets'] as jest.Mock).mockImplementation((SOME_FILENAME ,successCallback, errorCallback) => {
-            throw Error;
-        });
-        // act
-        utilityService.readFileFromAssets('SOME_FILENAME').catch(() => {
-            // assert
-            expect(window['buildconfigreader']['readFromAssets']).toHaveBeenCalledWith('SOME_FILENAME', expect.any(Function), expect.any(Function));
-            done();
+        it('should reject readFileFromAssets string for corresponding EntryString', (done) => {
+            // arrange
+            (window['buildconfigreader']['readFromAssets'] as jest.Mock).
+            mockImplementation((SOME_FILENAME, successCallback, errorCallback) => {
+                throw Error;
+            });
+            // act
+            utilityService.readFileFromAssets('SOME_FILENAME').catch(() => {
+                // assert
+                expect(window['buildconfigreader']['readFromAssets']).
+                toHaveBeenCalledWith('SOME_FILENAME', expect.any(Function), expect.any(Function));
+                done();
             });
         });
     });
 
-     /*
-    * unit test case for rm Method
-    */
-   describe('rm()', () => {
-    it('should delegate to rm Method', (done) => {
-        // arrange
-        (window['buildconfigreader']['rm'] as jest.Mock).mockImplementation(( SOME_DIRPATH, SOME_DIRTOSKIP , successCallback, errorCallback) => {
-            setTimeout(() => {
-                successCallback();
+    /*
+   * unit test case for rm Method
+   */
+    describe('rm()', () => {
+        it('should delegate to rm Method', (done) => {
+            // arrange
+            (window['buildconfigreader']['rm'] as jest.Mock).
+            mockImplementation((SOME_DIRPATH, SOME_DIRTOSKIP, successCallback, errorCallback) => {
+                setTimeout(() => {
+                    successCallback();
+                });
+            });
+
+            // act
+            utilityService.rm('SOME_DIRPATH', 'SOME_DIRTOSKIP').then(() => {
+                // assert
+                expect(window['buildconfigreader']['rm']).
+                toHaveBeenCalledWith('SOME_DIRPATH', 'SOME_DIRTOSKIP', expect.any(Function), expect.any(Function));
+                done();
             });
         });
 
-        // act
-        utilityService.rm('SOME_DIRPATH','SOME_DIRTOSKIP').then(() => {
-            // assert
-            expect(window['buildconfigreader']['rm']).toHaveBeenCalledWith( 'SOME_DIRPATH', 'SOME_DIRTOSKIP', expect.any(Function), expect.any(Function));
-            done();
-        });
-    });
+        it('should reject if rm string for corresponding entryString was not found', (done) => {
+            // arrange
+            (window['buildconfigreader']['rm'] as jest.Mock).
+            mockImplementation((SOME_DIRPATH, SOME_DIRTOSKIP, successCallback, errorCallback) => {
+                setTimeout(() => {
+                    errorCallback();
+                });
+            });
 
-    it('should reject if rm string for corresponding entryString was not found', (done) => {
-        // arrange
-        (window['buildconfigreader']['rm'] as jest.Mock).mockImplementation(( SOME_DIRPATH, SOME_DIRTOSKIP, successCallback, errorCallback) => {
-            setTimeout(() => {
-                errorCallback();
+            // act
+            utilityService.rm('SOME_DIRPATH', 'SOME_DIRTOSKIP').catch(() => {
+                // assert
+                expect(window['buildconfigreader']['rm']).toReturnWith(undefined);
+                done();
             });
         });
 
-        // act
-        utilityService.rm('SOME_DIRPATH','SOME_DIRTOSKIP').catch(() => {
-            // assert
-           expect(window['buildconfigreader']['rm']).toReturnWith(undefined);
-            done();
-        });
-    });
-
-    it('should reject rm string for corresponding EntryString', (done) => {
-        // arrange
-        (window['buildconfigreader']['rm'] as jest.Mock).mockImplementation((SOME_DIRPATH, SOME_DIRTOSKIP, successCallback, errorCallback) => {
-            throw Error;
-        });
-        // act
-        utilityService.rm('SOME_DIRPATH','SOME_DIRTOSKIP').catch(() => {
-            // assert
-            expect(window['buildconfigreader']['rm']).toHaveBeenCalledWith('SOME_DIRPATH', 'SOME_DIRTOSKIP', expect.any(Function), expect.any(Function));
-            done();
+        it('should reject rm string for corresponding EntryString', (done) => {
+            // arrange
+            (window['buildconfigreader']['rm'] as jest.Mock).
+            mockImplementation((SOME_DIRPATH, SOME_DIRTOSKIP, successCallback, errorCallback) => {
+                throw Error;
+            });
+            // act
+            utilityService.rm('SOME_DIRPATH', 'SOME_DIRTOSKIP').catch(() => {
+                // assert
+                expect(window['buildconfigreader']['rm']).
+                toHaveBeenCalledWith('SOME_DIRPATH', 'SOME_DIRTOSKIP', expect.any(Function), expect.any(Function));
+                done();
             });
         });
     });

@@ -441,16 +441,14 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
   }
 
   getGroupByPage(isAfterLanguageChange = false, avoidRefreshList = false) {
-    const selectedBoardMediumGrade = this.getGroupByPageReq.board[0] + ', ' +
-      this.getGroupByPageReq.medium[0] + ' Medium, ' +
-      this.getGroupByPageReq.grade[0];
+    const selectedBoardMediumGrade = ((this.getGroupByPageReq.board && this.getGroupByPageReq.board.length
+        && this.getGroupByPageReq.board[0]) ? this.getGroupByPageReq.board[0] + ', ' : '') +
+        (this.getGroupByPageReq.medium && this.getGroupByPageReq.medium.length
+            && this.getGroupByPageReq.medium[0]) + ' Medium, ' +
+        (this.getGroupByPageReq.grade && this.getGroupByPageReq.grade.length && this.getGroupByPageReq.grade[0]);
     this.appGlobalService.setSelectedBoardMediumGrade(selectedBoardMediumGrade);
     this.storyAndWorksheets = [];
-    if (!this.refresh) {
-      this.searchApiLoader = true;
-    } else {
-      this.searchApiLoader = false;
-    }
+    this.searchApiLoader = !this.refresh;
     this.telemetryGeneratorService.generateStartSheenAnimationTelemetry(PageId.LIBRARY);
     const reqvalues = new Map();
     reqvalues['pageReq'] = this.getGroupByPageReq;
@@ -506,7 +504,8 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
             // check if locally available
             this.markLocallyAvailableTextBook();
             sectionInfo[sectionName] = count;
-            sectionInfo['board'] = this.getGroupByPageReq.board[0];
+            sectionInfo['board'] = (this.getGroupByPageReq.board && this.getGroupByPageReq.board.length
+                && this.getGroupByPageReq.board[0]) ? this.getGroupByPageReq.board[0] : '';
             sectionInfo['medium'] = this.getGroupByPageReq.medium[0];
             sectionInfo['grade'] = this.getGroupByPageReq.grade[0];
           }
