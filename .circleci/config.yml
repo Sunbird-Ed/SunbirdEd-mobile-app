@@ -28,4 +28,4 @@ jobs:
           path: coverage
       - run:
           name: Run SonarScan
-          command: npm run sonar-scanner
+          command: sonar-scanner
