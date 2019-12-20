@@ -108,7 +108,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
               this.router.navigate([RouterLinks.COLLECTION_DETAIL_ETB], { state: { content } });
             } else {
               if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
-                this.commonUtilService.showToast('INTERNET_CONNECTIVITY_NEEDED');
+                this.commonUtilService.showToast('NEED_INTERNET_FOR_DEEPLINK_CONTENT');
                 return false;
               }
               if (content.contentData && content.contentData.status === ContentFilterConfig.CONTENT_STATUS_UNLISTED) {
