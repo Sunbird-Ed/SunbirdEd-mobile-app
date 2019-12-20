@@ -62,6 +62,7 @@ export class ExternalIdVerificationService {
     }
 
     checkQuizContent(): Promise<boolean> {
+        this.appGlobalService.isSignInOnboardingCompleted = true;
         return new Promise<boolean>(async (resolve) => {
             const limitedSharingContentDetails = this.appGlobalService.limitedShareQuizContent;
             if (limitedSharingContentDetails) {
