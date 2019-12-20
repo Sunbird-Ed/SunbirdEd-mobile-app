@@ -42,3 +42,6 @@ UserInterfaceState.xcuserstate
 /src/assets/data/
 
 google-services.json
+
+#sonarcloud
+.scannerwork
