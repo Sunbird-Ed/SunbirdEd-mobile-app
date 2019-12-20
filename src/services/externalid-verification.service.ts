@@ -24,6 +24,9 @@ export class ExternalIdVerificationService {
     }
 
     async showExternalIdVerificationPopup() {
+        if (await this.checkQuizContent()) {
+            return;
+        }
         const session = await this.appGlobalService.authService.getSession().toPromise();
         const isCustodianUser = await this.isCustodianUser$.toPromise();
         const serverProfile = await this.profileService.getServerProfilesDetails({
@@ -50,24 +53,24 @@ export class ExternalIdVerificationService {
                             }
                         });
                         await popover.present();
-                    } else {
-                        this.checkQuizContent();
                     }
                 })
                 .catch((error) => {
                     console.log('error', error);
                 });
-        } else {
-            this.checkQuizContent();
         }
     }
 
-    async checkQuizContent() {
-        const limitedSharingContentDetails = this.appGlobalService.limitedShareQuizContent;
-        if (limitedSharingContentDetails) {
-          const limitedSharingContentPayload = limitedSharingContentDetails;
-          this.appGlobalService.limitedShareQuizContent = null;
-          await this.splaschreenDeeplinkActionHandlerDelegate.onAction('content', limitedSharingContentPayload, false).toPromise();
-        }
+    checkQuizContent(): Promise<boolean> {
+        return new Promise<boolean>(async (resolve) => {
+            const limitedSharingContentDetails = this.appGlobalService.limitedShareQuizContent;
+            if (limitedSharingContentDetails) {
+                this.appGlobalService.limitedShareQuizContent = null;
+                await this.splaschreenDeeplinkActionHandlerDelegate.onAction('content', limitedSharingContentDetails, false).toPromise();
+                resolve(true);
+            } else {
+                resolve(false);
+            }
+        });
       }
 }
