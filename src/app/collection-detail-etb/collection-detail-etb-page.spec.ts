@@ -1,20 +1,30 @@
 import { CollectionDetailEtbPage } from './collection-detail-etb.page';
-import { ContentService, EventsBusService, ProfileService, StorageService, ContentImportResponse, ContentImportStatus } from 'sunbird-sdk';
+import {
+    ContentService, EventsBusService, ProfileService,
+    StorageService, ContentImportResponse, ContentImportStatus
+} from 'sunbird-sdk';
 import { NavController, Events, PopoverController, Platform } from '@ionic/angular';
 import { NgZone, ChangeDetectorRef } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { SocialSharing } from '@ionic-native/social-sharing/ngx';
-import { AppGlobalService, CommonUtilService, TelemetryGeneratorService, CourseUtilService, UtilityService, AppHeaderService, 
+import {
+    AppGlobalService, CommonUtilService, TelemetryGeneratorService, CourseUtilService, UtilityService, AppHeaderService,
     ComingSoonMessageService,
-    ContentShareHandlerService } from '../../services';
+    ContentShareHandlerService,
+} from '../../services';
+import {
+    Environment, ErrorType, ImpressionType, InteractSubtype, InteractType, Mode, PageId, ID
+} from '../../services/telemetry-constants';
 import { FileSizePipe } from '../../pipes/file-size/file-size';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TextbookTocService } from './textbook-toc-service';
 import { Location } from '@angular/common';
-import { mockEnrolledData } from '../enrolled-course-details-page/enrolled-course-details-page.spec.data';
-import { contentDetailsMcokResponse1,
+import {
+    contentDetailsMcokResponse1,
     contentDetailsMcokResponse2,
-    contentDetailsMcokResponse3 } from './collection-detail-etb-page.spec.data';
+    contentDetailsMcokResponse3,
+    mockcollectionData
+} from './collection-detail-etb-page.spec.data';
 import { of } from 'rxjs';
 
 describe('collectionDetailEtbPage', () => {
@@ -45,7 +55,7 @@ describe('collectionDetailEtbPage', () => {
     const mocklocation: Partial<Location> = {};
     const mockroute: Partial<ActivatedRoute> = {};
     const mockrouter: Partial<Router> = {
-        getCurrentNavigation: jest.fn(() => mockEnrolledData)
+        getCurrentNavigation: jest.fn(() => mockcollectionData)
     };
     const mockchangeDetectionRef: Partial<ChangeDetectorRef> = {};
     const mocktextbookTocService: Partial<TextbookTocService> = {};
@@ -90,7 +100,7 @@ describe('collectionDetailEtbPage', () => {
         expect(collectionDetailEtbPage).toBeTruthy();
     });
 
-    it('should get the appName' , () => {
+    it('should get the appName', () => {
         mockcommonUtilService.getAppName = jest.fn(() => Promise.resolve('diksha'));
         collectionDetailEtbPage.ngOnInit();
         expect(mockcommonUtilService.getAppName).toHaveBeenCalled();
@@ -132,8 +142,8 @@ describe('collectionDetailEtbPage', () => {
         const data = contentDetailsMcokResponse2;
         collectionDetailEtbPage.isUpdateAvailable = false;
         mockcommonUtilService.networkInfo = { isNetworkAvailable: false };
-        spyOn(collectionDetailEtbPage , 'setChildContents').and.stub();
-        spyOn(collectionDetailEtbPage , 'setCollectionStructure').and.stub();
+        spyOn(collectionDetailEtbPage, 'setChildContents').and.stub();
+        spyOn(collectionDetailEtbPage, 'setCollectionStructure').and.stub();
         collectionDetailEtbPage.extractApiResponse(data);
         // assert
         expect(collectionDetailEtbPage.isUpdateAvailable).toBeFalsy();
@@ -152,7 +162,22 @@ describe('collectionDetailEtbPage', () => {
     it('should generate license section telemetry', () => {
         const params = 'expanded';
         mocktelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+        const telemetry = {
+            id: 'do_21281258639073280011490',
+            type: undefined,
+            version: '2',
+        };
         collectionDetailEtbPage.licenseSectionClicked(params);
-        expect(mocktelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
+        expect(mocktelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+            InteractType.LICENSE_CARD_EXPANDED,
+            '',
+            undefined,
+            PageId.COLLECTION_DETAIL,
+            telemetry,
+            undefined,
+            {},
+            undefined,
+            ID.LICENSE_CARD_CLICKED
+        );
     });
 });
