@@ -267,7 +267,7 @@ export class FormAndFrameworkUtilService {
         };
         this.formService.getForm(req).toPromise()
             .then((res: any) => {
-                const data = res.data.fields;
+                const data = res.form ? res.form.data.fields : res.data.fields;
                 if (res && data.length) {
                     for (const ele of data) {
                         if (ele.code === 'dialcode') {
