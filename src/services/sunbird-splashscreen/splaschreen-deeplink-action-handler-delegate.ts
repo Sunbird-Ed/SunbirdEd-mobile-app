@@ -116,6 +116,9 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
                 if (isFromLink) {
                   this.limitedSharingContentLinkClickedTelemery();
                 }
+                if (!this.appGlobalServices.isUserLoggedIn() && !this.appGlobalServices.isProfileSettingsCompleted) {
+                  return;
+                }
                 if (!this.appGlobalServices.isSignInOnboardingCompleted && this.appGlobalServices.isUserLoggedIn()) {
                   return;
                 }
