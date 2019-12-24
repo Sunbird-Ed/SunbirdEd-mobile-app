@@ -418,6 +418,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   private async checkForTncUpdate() {
+    this.appGlobalService.isSignInOnboardingCompleted = false;
     await this.tncUpdateHandlerService.checkForTncUpdate();
   }
 

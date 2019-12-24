@@ -69,6 +69,7 @@ export class AppGlobalService implements OnDestroy {
         isRecordAudioAsked: false,
     };
     private _limitedShareQuizContent: any;
+    private _isSignInOnboardingCompleted: any;
 
     constructor(
         @Inject('PROFILE_SERVICE') private profile: ProfileService,
@@ -657,6 +658,14 @@ export class AppGlobalService implements OnDestroy {
 
     set limitedShareQuizContent(value) {
         this._limitedShareQuizContent = value;
+    }
+
+    get isSignInOnboardingCompleted() {
+        return this._isSignInOnboardingCompleted;
+    }
+
+    set isSignInOnboardingCompleted(value) {
+        this._isSignInOnboardingCompleted = value;
     }
 
 }
