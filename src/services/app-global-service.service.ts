@@ -70,7 +70,7 @@ export class AppGlobalService implements OnDestroy {
     };
     private _limitedShareQuizContent: any;
     private _isSignInOnboardingCompleted: any;
-    private isCheckedJoinTraningOnboarding: any;
+    private isJoinTraningOnboarding: any;
 
 
     constructor(
@@ -670,11 +670,11 @@ export class AppGlobalService implements OnDestroy {
         this._isSignInOnboardingCompleted = value;
     }
     get isJoinTraningOnboardingFlow() {
-        return this.isCheckedJoinTraningOnboarding;
+        return this.isJoinTraningOnboarding;
     }
 
     set isJoinTraningOnboardingFlow(value) {
-        this.isCheckedJoinTraningOnboarding = value;
+        this.isJoinTraningOnboarding = value;
     }
 
 }
