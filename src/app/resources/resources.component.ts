@@ -630,19 +630,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
   }
 
   ionViewDidEnter() {
-    this.preferences.getBoolean('coach_mark_seen').toPromise()
-      .then((value) => {
-        if (!value) {
-          this.events.publish('coach_mark_seen', { showWalkthroughBackDrop: true, appName: this.appLabel });
-          this.telemetryGeneratorService.generateImpressionTelemetry(
-            ImpressionType.VIEW,
-            ImpressionSubtype.QR_SCAN_WALKTHROUGH,
-            PageId.LIBRARY,
-            Environment.ONBOARDING
-          );
-        }
-      });
-    this.preferences.putBoolean('coach_mark_seen', true).toPromise().then();
+
   }
 
   ionViewWillEnter() {
