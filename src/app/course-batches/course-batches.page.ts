@@ -120,6 +120,7 @@ export class CourseBatchesPage implements OnInit {
   }
 
   ngOnInit(): void {
+    this.todayDate =  dayjs().format('YYYY-MM-DD');
     this.getUserId();
   }
 
@@ -265,7 +266,6 @@ export class CourseBatchesPage implements OnInit {
   getBatchesByCourseId(): void {
     this.ongoingBatches = this.ongoingBatches;
     this.upcommingBatches = this.upcommingBatches;
-    this.todayDate =  dayjs().format('YYYY-MM-DD');
     this.objRollup = this.objRollup;
     this.corRelationList = this.corRelationList;
     this.telemetryObject = this.telemetryObject;

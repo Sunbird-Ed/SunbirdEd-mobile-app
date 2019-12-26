@@ -49,6 +49,7 @@ export class DistrictMappingPage implements OnInit {
   isPopulatedLocationChanged = false;
   isKeyboardShown$;
   isLocationChanged = false;
+  disableSubmitButton = false;
 
   constructor(
     public headerService: AppHeaderService,
@@ -333,6 +334,7 @@ export class DistrictMappingPage implements OnInit {
           }
           this.generateLocationCaptured(false); // is dirtrict or location edit  = false
           this.commonUtilService.showToast(this.commonUtilService.translateMessage('PROFILE_UPDATE_SUCCESS'));
+          this.disableSubmitButton = true;
           this.events.publish('loggedInProfile:update', req);
           if (this.profile) {
             this.location.back();

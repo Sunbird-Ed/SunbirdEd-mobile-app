@@ -28,6 +28,7 @@ export class TermsAndConditionsPage implements OnInit {
   private unregisterBackButtonAction: Subscription;
   private userProfileDetails: ServerProfile;
   appName: string;
+  disableSubmitButton = false;
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -102,6 +103,7 @@ export class TermsAndConditionsPage implements OnInit {
 
   public async onAcceptanceClick(): Promise<void> {
     const tncUpdateHandlerService = this.injector.get(TncUpdateHandlerService);
+    let loader = await this.commonUtilService.getLoader();
     try {
       this.telemetryGeneratorService.generateInteractTelemetry(
         InteractType.TOUCH,
@@ -109,6 +111,7 @@ export class TermsAndConditionsPage implements OnInit {
         Environment.HOME,
         PageId.TERMS_N_CONDITIONS
       );
+      await loader.present();
       // await tncUpdateHandlerService.onAcceptTnc(this.userProfileDetails);
       const isTCAccepted = await this.profileService.acceptTermsAndConditions({ version: this.userProfileDetails.tncLatestVersion })
         .toPromise();
@@ -120,13 +123,18 @@ export class TermsAndConditionsPage implements OnInit {
           from: CachedItemRequestSourceFrom.SERVER
         }).toPromise();
 
-        // TODO: 
+        // TODO:
         const profile = await this.profileService.getActiveSessionProfile({
           requiredFields: ProfileConstants.REQUIRED_FIELDS
         }).toPromise();
 
         this.formAndFrameworkUtilService.updateLoggedInUser(serverProfile, profile)
           .then(async (value) => {
+            if (loader) {
+              await loader.dismiss();
+              loader = undefined;
+            }
+            this.disableSubmitButton = false;
             if (value['status']) {
               if (this.commonUtilService.isUserLocationAvalable(serverProfile)
               &&  await tncUpdateHandlerService.isSSOUser(profile)) {
@@ -154,12 +162,25 @@ export class TermsAndConditionsPage implements OnInit {
               });
             }
             console.log("inside can load");
+          }).catch(async e => {
+            if (loader) {
+              await loader.dismiss();
+              loader = undefined;
+            }
           });
       } else {
+        if (loader) {
+          await loader.dismiss();
+          loader = undefined;
+        }
         await this.logoutOnSecondBackNavigation();
       }
       await tncUpdateHandlerService.dismissTncPage();
     } catch (e) {
+      if (loader) {
+        await loader.dismiss();
+        loader = undefined;
+      }
       await this.logoutOnSecondBackNavigation();
     }
   }

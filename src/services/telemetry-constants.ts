@@ -162,7 +162,8 @@ export enum InteractType {
     VISIBLE = 'visible',
     NOT_VISIBLE = 'not-visible',
     LICENSE_CARD_COLLAPSED = 'license-card-collapsed',
-    LICENSE_CARD_EXPANDED = 'license-card-expanded'
+    LICENSE_CARD_EXPANDED = 'license-card-expanded',
+    QUIZ_DEEPLINK = 'quiz-deeplink'
 }
 
 export enum InteractSubtype {
@@ -387,8 +388,10 @@ export enum ID {
     USER_VERIFICATION_FAILED = 'ext-user-verify-fail',
     USER_VERIFICATION_SUCCESS = 'ext-user-verify-success',
     SUBMIT_CLICKED = 'submit-clicked',
+    LICENSE_CARD_CLICKED = 'license-card-cliked',
+    QUIZ = 'quiz',
     IP_BASED_LOCATION_SUGGESTION = 'ip-based-location-suggestion',
-    LICENSE_CARD_CLICKED = 'license-card-cliked'
+    DEEPLINK_CLICKED = 'deeplink-clicked'
 }
 
 export enum ActionButtonType {
@@ -407,7 +410,8 @@ export enum CorReleationDataType {
     DOWNLOADS = 'Downloads',
     SUBJECT = 'Subject',
     USERTYPE = 'UserType',
-    DISCOVERY_TYPE = 'DiscoveryType'
+    DISCOVERY_TYPE = 'DiscoveryType',
+    DEEPLINK = 'Deeplink'
 }
 
 

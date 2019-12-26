@@ -63,7 +63,7 @@
 <ion-footer>
   <ion-row class="padding-12">
     <ion-col size-md="10" offset-md="1">
-      <ion-button expand="block" [ngStyle]="{'background-color': btnColor}" [disabled]="profileEditForm.invalid"
+      <ion-button expand="block" [ngStyle]="{'background-color': btnColor}" [disabled]="profileEditForm.invalid || disableSubmitButton"
         (click)="onSubmit()">{{'SAVE' | translate}}</ion-button>
     </ion-col>
   </ion-row>

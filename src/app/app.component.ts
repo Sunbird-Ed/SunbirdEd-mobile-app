@@ -305,15 +305,13 @@ export class AppComponent implements OnInit, AfterViewInit {
    */
   triggerSignInEvent() {
     this.events.subscribe(EventTopics.SIGN_IN_RELOAD, async () => {
-      let batchDetails;
-      await this.preferences.getString(PreferenceKey.BATCH_DETAIL_KEY).toPromise()
-        .then(async (resp) => {
-          if (resp) {
-            batchDetails = resp;
-          } else {
-            this.toggleRouterOutlet = false;
-          }
-        });
+      const batchDetails = await this.preferences.getString(PreferenceKey.BATCH_DETAIL_KEY).toPromise();
+      const limitedSharingContentDetails = this.appGlobalService.limitedShareQuizContent;
+
+      if (!batchDetails && !limitedSharingContentDetails) {
+        this.toggleRouterOutlet = false;
+      }
+
       // this.toggleRouterOutlet = false;
       // This setTimeout is very important for reloading the Tabs page on SignIn.
       setTimeout(async () => {
@@ -428,6 +426,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   private async checkForTncUpdate() {
+    this.appGlobalService.isSignInOnboardingCompleted = false;
     await this.tncUpdateHandlerService.checkForTncUpdate();
   }
 
