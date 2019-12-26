@@ -70,6 +70,8 @@ export class AppGlobalService implements OnDestroy {
     };
     private _limitedShareQuizContent: any;
     private _isSignInOnboardingCompleted: any;
+    private isCheckedJoinTraningOnboarding: any;
+
 
     constructor(
         @Inject('PROFILE_SERVICE') private profile: ProfileService,
@@ -666,6 +668,13 @@ export class AppGlobalService implements OnDestroy {
 
     set isSignInOnboardingCompleted(value) {
         this._isSignInOnboardingCompleted = value;
+    }
+    get isCheckedJoinTraningOnboardingFlow() {
+        return this.isCheckedJoinTraningOnboarding;
+    }
+
+    set isCheckedJoinTraningOnboardingFlow(value) {
+        this.isCheckedJoinTraningOnboarding = value;
     }
 
 }
