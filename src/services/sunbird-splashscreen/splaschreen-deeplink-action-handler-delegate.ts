@@ -151,7 +151,12 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
     return Observable.of(undefined);
   }
 
-  checkCourseRedirect() {
+  async checkCourseRedirect() {
+    const isloogedInUser = await this.authService.getSession().toPromise();
+    if (!this.appGlobalServices.isSignInOnboardingCompleted && isloogedInUser) {
+      this.appGlobalServices.isJoinTraningOnboardingFlow = true;
+      return;
+    }
     this.preferences.getString(PreferenceKey.BATCH_DETAIL_KEY).toPromise()
       .then(resp => {
         if (resp) {
