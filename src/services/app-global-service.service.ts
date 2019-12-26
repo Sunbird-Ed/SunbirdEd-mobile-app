@@ -669,11 +669,11 @@ export class AppGlobalService implements OnDestroy {
     set isSignInOnboardingCompleted(value) {
         this._isSignInOnboardingCompleted = value;
     }
-    get isCheckedJoinTraningOnboardingFlow() {
+    get isJoinTraningOnboardingFlow() {
         return this.isCheckedJoinTraningOnboarding;
     }
 
-    set isCheckedJoinTraningOnboardingFlow(value) {
+    set isJoinTraningOnboardingFlow(value) {
         this.isCheckedJoinTraningOnboarding = value;
     }
 
