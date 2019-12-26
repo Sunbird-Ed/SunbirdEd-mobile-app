@@ -154,7 +154,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
   async checkCourseRedirect() {
     const isloogedInUser = await this.authService.getSession().toPromise();
     if (!this.appGlobalServices.isSignInOnboardingCompleted && isloogedInUser) {
-      this.appGlobalServices.isCheckedJoinTraningOnboardingFlow = true;
+      this.appGlobalServices.isJoinTraningOnboardingFlow = true;
       return;
     }
     this.preferences.getString(PreferenceKey.BATCH_DETAIL_KEY).toPromise()

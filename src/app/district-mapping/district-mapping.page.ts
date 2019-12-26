@@ -336,7 +336,7 @@ export class DistrictMappingPage implements OnInit {
           if (this.profile) {
             this.location.back();
           } else {
-            if (this.appGlobalService.isCheckedJoinTraningOnboardingFlow) {
+            if (this.appGlobalService.isJoinTraningOnboardingFlow) {
               window.history.go(-2);
             } else {
               this.router.navigate([`/${RouterLinks.TABS}`]);

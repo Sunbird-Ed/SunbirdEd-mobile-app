@@ -79,10 +79,10 @@ export class ExternalIdVerificationService {
       }
 
       checkJoinTraining() {
-          if (this.appGlobalService.isCheckedJoinTraningOnboardingFlow) {
+          if (this.appGlobalService.isJoinTraningOnboardingFlow) {
             return new Promise<boolean>(async (resolve) => {
             await this.splaschreenDeeplinkActionHandlerDelegate.checkCourseRedirect();
-            this.appGlobalService.isCheckedJoinTraningOnboardingFlow = false;
+            this.appGlobalService.isJoinTraningOnboardingFlow = false;
             resolve(true);
           });
         }
