@@ -122,7 +122,9 @@ export class LanguageSettingsPage implements OnInit {
         }
       }
     }
-
+    if (this.headerObservable) {
+      this.headerObservable.unsubscribe();
+    }
     if (this.unregisterBackButton) {
       this.unregisterBackButton.unsubscribe();
     }
