@@ -197,7 +197,8 @@ export class DistrictMappingPage implements OnInit {
   // validates the name input feild
   validateName() {
     if (this.name) {
-      return !Boolean(this.name.match(/^[a-zA-Z ]*$/));
+     // return !Boolean(this.name.match(/^[a-zA-Z0-9/./s]*$/));
+     return false;
     }
   }
 
