@@ -274,11 +274,10 @@ export const sunbirdSdkFactory =
       }));
 
       await SunbirdSdk.instance.init({
+        platform: 'cordova',
         fileConfig: {
-          debugMode: false
         },
         apiConfig: {
-          debugMode: false,
           host: buildConfigValues['BASE_URL'],
           user_authentication: {
             redirectUrl: buildConfigValues['OAUTH_REDIRECT_URL'],
@@ -302,7 +301,6 @@ export const sunbirdSdkFactory =
           debugMode: true
         },
         dbConfig: {
-          debugMode: false,
           dbName: 'GenieServices.db'
         },
         deviceRegisterConfig: {
@@ -356,7 +354,6 @@ export const sunbirdSdkFactory =
           telemetryLogMinAllowedOffset: 86400000
         },
         sharedPreferencesConfig: {
-          debugMode: false
         },
         playerConfig: {
           showEndPage: false,

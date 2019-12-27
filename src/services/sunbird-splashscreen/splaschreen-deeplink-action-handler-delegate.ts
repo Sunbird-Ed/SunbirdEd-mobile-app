@@ -98,10 +98,12 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
           // await loader.present();
           return this.contentService.getContentDetails({
             contentId: identifier || this.identifier
-          }).catch(async () => {
-            // await loader.dismiss();
-            return Observable.of(undefined);
-          }).do(async (content: Content) => {
+          }).pipe(
+            catchError(async () => {
+              // await loader.dismiss();
+              return of(undefined);
+            }),
+            tap(async (content: Content) => {
             // await loader.dismiss();
             if (content.contentType === ContentType.COURSE.toLowerCase()) {
               this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], { state: { content } });
@@ -130,8 +132,10 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
                 this.router.navigate([RouterLinks.CONTENT_DETAILS], { state: { content, autoPlayQuizContent: true } });
                 return;
               }
-            }),
-            mapTo(undefined) as any
+              this.router.navigate([RouterLinks.CONTENT_DETAILS], { state: { content } });
+            }
+          }),
+          mapTo(undefined) as any
           );
         }
         case 'dial': {
