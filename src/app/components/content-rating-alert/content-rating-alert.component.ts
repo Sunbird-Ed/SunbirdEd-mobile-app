@@ -6,7 +6,8 @@ import {
   ContentFeedback,
   ContentFeedbackService,
   TelemetryLogRequest,
-  TelemetryService
+  TelemetryService,
+  TelemetryObject
 } from 'sunbird-sdk';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { ProfileConstants } from '@app/app/app.constant';
@@ -21,6 +22,7 @@ import {
   LogLevel,
   LogType
 } from '@app/services/telemetry-constants';
+import { ContentUtil } from '@app/util/content-util';
 @Component({
   selector: 'app-content-rating-alert',
   templateUrl: './content-rating-alert.component.html',
@@ -37,7 +39,7 @@ export class ContentRatingAlertComponent implements OnInit {
   private pageId = '';
   userRating = 0;
   private popupType: string;
-
+  telemetryObject: TelemetryObject;
   constructor(
     private popOverCtrl: PopoverController,
     private platform: Platform,
@@ -58,7 +60,7 @@ export class ContentRatingAlertComponent implements OnInit {
     this.comment = this.navParams.get('comment');
     this.popupType = this.navParams.get('popupType');
     this.pageId = this.navParams.get('pageId');
-
+    this.telemetryObject = ContentUtil.getTelemetryObject(this.content);
     if (this.userRating) {
       this.showCommentBox = true;
     }
@@ -73,7 +75,9 @@ export class ContentRatingAlertComponent implements OnInit {
       ImpressionType.VIEW,
       ImpressionSubtype.RATING_POPUP,
       this.pageId,
-      Environment.HOME, '', '', '',
+      Environment.HOME, this.telemetryObject.id,
+      this.telemetryObject.type, 
+      this.telemetryObject.version
     );
 
     const log = new TelemetryLogRequest();
@@ -139,7 +143,7 @@ export class ContentRatingAlertComponent implements OnInit {
       InteractType.TOUCH,
       InteractSubtype.RATING_SUBMITTED,
       Environment.HOME,
-      this.pageId, undefined, paramsMap
+      this.pageId, this.telemetryObject, paramsMap
     );
 
     const viewDismissData = {
