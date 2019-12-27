@@ -1079,6 +1079,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
   async getChannelId() {
     return this.frameworkService.getActiveChannelId().subscribe((data) => {
       this.channelId = data;
-    }, error => {});
+    });
   }
 }

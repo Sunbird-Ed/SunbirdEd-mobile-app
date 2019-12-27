@@ -98,20 +98,27 @@ describe('ResourcesComponent', () => {
     it('should call relevant services when subscribeUtility() called upon', (done) => {
         // arrange
         mockQRScanner.startScanner = jest.fn();
+        spyOn(resourcesComponent, 'getGroupByPage').and.stub();
+        spyOn(resourcesComponent, 'loadRecentlyViewedContent').and.stub();
+        spyOn(resourcesComponent, 'getLocalContent').and.stub();
+        spyOn(resourcesComponent, 'getPopularContent').and.stub();
+        spyOn(resourcesComponent, 'swipeDownToRefresh').and.stub();
+
 
         mockTelemetryGeneratorService.generateStartSheenAnimationTelemetry = jest.fn();
         mockAppGlobalService.setSelectedBoardMediumGrade = jest.fn();
+        mockAppGlobalService.openPopover = jest.fn();
         mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
         mockContentService.searchContentGroupedByPageSection = jest.fn(() => {
-            of({name: 'sample_name', sections: {
-                count: 2, name: 'sample_string', contents: 2,
-                }});
+            of({
+                name: 'sample_name', sections: {
+                    count: 2, name: 'sample_string', contents: 2,
+                }
+            });
         });
         mockEvents.subscribe = jest.fn((topic, fn) => {
             if (topic === 'savedResources:update') {
                 fn({update: 'sample_update_result'});
-                spyOn(resourcesComponent, 'loadRecentlyViewedContent').and.stub();
-                spyOn(resourcesComponent, 'getLocalContent').and.stub();
             }
 
             if (topic === 'event:showScanner') {
@@ -120,11 +127,9 @@ describe('ResourcesComponent', () => {
             if (topic === 'onAfterLanguageChange:update') {
                 fn({selectedLanguage: 'ur'});
                 resourcesComponent.selectedLanguage = 'ur';
-                spyOn(resourcesComponent, 'getPopularContent').and.stub();
             }
 
             if (topic === 'app-global:profile-obj-changed') {
-                spyOn(resourcesComponent, 'swipeDownToRefresh').and.stub();
             }
             if (topic === 'force_optional_upgrade') {
                 fn({upgrade: 'sample_result'});
@@ -137,6 +142,20 @@ describe('ResourcesComponent', () => {
         // assert
         setTimeout(() => {
             expect(mockEvents.subscribe).toHaveBeenCalled();
+            done();
+        }, 0);
+    });
+
+    it('should getActive ChannelId when getActiveChannelId()', (done) => {
+        // arrange
+        mockframeworkService.getActiveChannelId = jest.fn(() => {
+           return  of('sample_channel');
+        });
+        // act
+        resourcesComponent.getChannelId();
+        setTimeout(() => {
+            // assert
+            expect(mockframeworkService.getActiveChannelId).toHaveBeenCalled();
             done();
         }, 0);
     });
