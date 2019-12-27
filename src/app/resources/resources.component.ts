@@ -26,6 +26,7 @@ import {
   SharedPreferences,
   TelemetryObject,
   ContentRequest,
+  FrameworkService
 } from 'sunbird-sdk';
 
 import {
@@ -47,7 +48,8 @@ import { AppVersion } from '@ionic-native/app-version/ngx';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { CommonUtilService } from '@app/services/common-util.service';
 import { FormAndFrameworkUtilService } from '@app/services/formandframeworkutil.service';
-import { Environment, InteractSubtype, InteractType, PageId, ImpressionType, ImpressionSubtype, CorReleationDataType } from '@app/services/telemetry-constants';
+import { Environment, InteractSubtype, InteractType, PageId, ImpressionType,
+  ImpressionSubtype, CorReleationDataType } from '@app/services/telemetry-constants';
 import { AppHeaderService } from '@app/services/app-header.service';
 import { SplaschreenDeeplinkActionHandlerDelegate } from '@app/services/sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
 import { ContentUtil } from '@app/util/content-util';
@@ -150,11 +152,13 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
   pageApiLoader = true;
   @ViewChild('contentView') contentView: ContentView;
   locallyDownloadResources;
+  channelId: string;
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     @Inject('EVENTS_BUS_SERVICE') private eventsBusService: EventsBusService,
     @Inject('FRAMEWORK_UTIL_SERVICE') private frameworkUtilService: FrameworkUtilService,
+    @Inject('FRAMEWORK_SERVICE') private frameworkService: FrameworkService,
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
     private splaschreenDeeplinkActionHandlerDelegate: SplaschreenDeeplinkActionHandlerDelegate,
@@ -190,7 +194,9 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
   }
 
   subscribeUtilityEvents() {
-    this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).subscribe((profile: Profile) => {
+    this.profileService.getActiveSessionProfile
+    ({ requiredFields: ProfileConstants.REQUIRED_FIELDS })
+        .subscribe((profile: Profile) => {
       this.profile = profile;
     });
     this.events.subscribe('savedResources:update', (res) => {
@@ -434,6 +440,9 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
     if (contentSearchCriteria.board) {
       this.getGroupByPageReq.board = [contentSearchCriteria.board[0]];
     }
+    if (contentSearchCriteria.board === undefined) {
+      this.getGroupByPageReq.channel = [this.channelId];
+    }
     this.getGroupByPageReq.mode = 'hard';
     this.getGroupByPageReq.facets = Search.FACETS_ETB;
     this.getGroupByPageReq.contentTypes = [ContentType.TEXTBOOK];
@@ -633,7 +642,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
 
   }
 
-  ionViewWillEnter() {
+  async ionViewWillEnter() {
     this.events.subscribe('update_header', () => {
       this.headerService.showHeaderWithHomeButton(['search', 'download', 'notification']);
     });
@@ -645,6 +654,8 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
     this.getCategoryData();
 
     this.getCurrentUser();
+
+    await this.getChannelId();
 
     if (!this.pageLoadedSuccess) {
       this.getPopularContent();
@@ -1065,4 +1076,9 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
     });
   }
 
+  async getChannelId() {
+    return this.frameworkService.getActiveChannelId().subscribe((data) => {
+      this.channelId = data;
+    }, error => {});
+  }
 }
