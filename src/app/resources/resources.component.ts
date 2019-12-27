@@ -194,9 +194,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
   }
 
   subscribeUtilityEvents() {
-    this.profileService.getActiveSessionProfile
-    ({ requiredFields: ProfileConstants.REQUIRED_FIELDS })
-        .subscribe((profile: Profile) => {
+    this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).subscribe((profile: Profile) => {
       this.profile = profile;
     });
     this.events.subscribe('savedResources:update', (res) => {
