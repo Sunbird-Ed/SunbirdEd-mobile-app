@@ -27,9 +27,6 @@ export class ExternalIdVerificationService {
         if (await this.checkQuizContent()) {
             return;
         }
-        if (await this.checkJoinTraining()) {
-            return;
-        }
         const session = await this.appGlobalService.authService.getSession().toPromise();
         const isCustodianUser = await this.isCustodianUser$.toPromise();
         const serverProfile = await this.profileService.getServerProfilesDetails({
@@ -61,6 +58,9 @@ export class ExternalIdVerificationService {
                 .catch((error) => {
                     console.log('error', error);
                 });
+        }
+        if (await this.checkJoinTraining()) {
+            return;
         }
     }
 
