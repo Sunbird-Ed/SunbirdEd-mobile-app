@@ -10,7 +10,8 @@ import {
     ProfileServiceImpl,
     SharedPreferences,
     StorageService,
-    TelemetryObject
+    TelemetryObject,
+    Content
 } from 'sunbird-sdk';
 import { ContentServiceImpl } from 'sunbird-sdk/content/impl/content-service-impl';
 import { EventsBusServiceImpl } from 'sunbird-sdk/events-bus/impl/events-bus-service-impl';
@@ -330,6 +331,26 @@ describe('ContentDetailsPage', () => {
             expect(contentDetailsPage.isLoginPromptOpen).toBeTruthy();
             done();
         }, 0);
+    });
+
+    it('should checked limitedShareContentFlag', () => {
+        // arrange
+        const request: Partial<Content> = {
+            contentData: {
+                status: 'Unlisted'
+            }
+        };
+        jest.spyOn(ContentUtil, 'getTelemetryObject').mockImplementation(() => {
+            return request;
+        });
+        jest.spyOn(contentDetailsPage, 'promptToLogin').mockImplementation(() => {
+            return;
+        });
+        // act
+        contentDetailsPage.checkLimitedContentSharingFlag(request);
+        // assert
+        expect(ContentUtil.getTelemetryObject).toHaveBeenCalled();
+        expect(contentDetailsPage.promptToLogin).toHaveBeenCalled();
     });
 
 });
