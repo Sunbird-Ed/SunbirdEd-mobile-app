@@ -333,9 +333,9 @@ describe('ContentDetailsPage', () => {
         }, 0);
     });
 
-    it('should checked limitedShareContentFlag', () => {
+    it('should check limitedShareContentFlag', () => {
         // arrange
-        const request: Partial<Content> = {
+        const request = {
             contentData: {
                 status: 'Unlisted'
             }
