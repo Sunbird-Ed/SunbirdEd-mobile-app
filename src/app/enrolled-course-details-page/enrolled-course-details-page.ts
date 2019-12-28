@@ -105,7 +105,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
   /**
    * Contains identifier(s) of locally not available content(s)
    */
-  downloadIdentifiers = [];
+  downloadIdentifiers = new Set();
 
   /**
    * Contains total size of locally not available content(s)
@@ -792,7 +792,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
    * @param identifiers contains list of content identifier(s)
    */
   importContent(identifiers, isChild: boolean, isDownloadAllClicked?) {
-    this.showChildrenLoader = this.downloadIdentifiers.length === 0;
+    this.showChildrenLoader = this.downloadIdentifiers.size === 0;
     const option: ContentImportRequest = {
       contentImportArray: this.getImportContentRequestBody(identifiers, isChild),
       contentStatusArray: ['Live'],
@@ -884,8 +884,8 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
   async showDownloadConfirmationAlert() {
     if (this.commonUtilService.networkInfo.isNetworkAvailable) {
       let contentTypeCount;
-      if (this.downloadIdentifiers.length) {
-        contentTypeCount = this.downloadIdentifiers.length;
+      if (this.downloadIdentifiers.size) {
+        contentTypeCount = this.downloadIdentifiers.size;
       } else {
         contentTypeCount = '';
       }
@@ -1188,7 +1188,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
           this.getContentsSize(value.children);
         }
         if (value.isAvailableLocally === false) {
-          this.downloadIdentifiers.push(value.contentData.identifier);
+          this.downloadIdentifiers.add(value.contentData.identifier);
           this.rollUpMap[value.contentData.identifier] = ContentUtil.generateRollUp(value.hierarchyInfo, undefined);
         }
       });
@@ -1278,7 +1278,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
     // if (this.courseCardData.batchId) {
     //   this.segmentType = 'modules';
     // }
-
+    this.downloadIdentifiers = new Set();
     this.setContentDetails(this.identifier);
     this.headerObservable = this.headerService.headerEventEmitted$.subscribe(eventName => {
       this.handleHeaderEvents(eventName);
@@ -1388,7 +1388,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
                 this.isDownloadStarted = false;
                 this.currentCount = 0;
                 this.showDownload = false;
-                this.downloadIdentifiers = [];
+                this.downloadIdentifiers = new Set();
                 this.queuedIdentifiers.length = 0;
               }
             } else {

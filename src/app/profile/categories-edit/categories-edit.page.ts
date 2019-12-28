@@ -161,6 +161,7 @@ export class CategoriesEditPage {
    */
   ionViewWillEnter() {
     this.getSyllabusDetails();
+    this.disableSubmitButton = false;
     this.headerConfig = this.headerService.getDefaultPageConfig();
     this.headerConfig.actionButtons = [];
     this.headerConfig.showHeader = false;

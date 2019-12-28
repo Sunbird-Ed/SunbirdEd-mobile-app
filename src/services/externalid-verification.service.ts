@@ -61,6 +61,9 @@ export class ExternalIdVerificationService {
                     console.log('error', error);
                 });
         }
+        if (await this.checkJoinTraining()) {
+            return;
+        }
     }
 
     checkQuizContent(): Promise<boolean> {
@@ -75,5 +78,15 @@ export class ExternalIdVerificationService {
                 resolve(false);
             }
         });
+      }
+
+      checkJoinTraining() {
+          if (this.appGlobalService.isJoinTraningOnboardingFlow) {
+            return new Promise<boolean>(async (resolve) => {
+            await this.splaschreenDeeplinkActionHandlerDelegate.checkCourseRedirect();
+            this.appGlobalService.isJoinTraningOnboardingFlow = false;
+            resolve(true);
+          });
+        }
       }
 }
