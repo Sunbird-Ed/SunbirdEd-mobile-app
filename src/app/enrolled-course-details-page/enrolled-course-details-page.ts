@@ -225,7 +225,6 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
     @Inject('EVENTS_BUS_SERVICE') private eventsBusService: EventsBusService,
     @Inject('COURSE_SERVICE') private courseService: CourseService,
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
-    @Inject('AUTH_SERVICE') private authService: AuthService,
     private loginHandlerService: LoginHandlerService,
     private zone: NgZone,
     private events: Events,
@@ -242,11 +241,8 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
     private contentShareHandler: ContentShareHandlerService,
     private location: Location,
     private router: Router,
-    private translate: TranslateService,
-    private popOverCtrl: PopoverController,
     private contentDeleteHandler: ContentDeleteHandler,
-    private localCourseService: LocalCourseService,
-    private appVersion: AppVersion
+    private localCourseService: LocalCourseService
   ) {
 
     this.objRollup = new Rollup();
@@ -1232,6 +1228,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
    */
   async ionViewWillEnter() {
     this.todayDate =  dayjs().format('YYYY-MM-DD');
+    console.log('coursecarddata' + this.courseCardData);
     this.identifier = this.courseCardData.contentId || this.courseCardData.identifier;
     this.downloadSize = 0;
     this.objRollup = ContentUtil.generateRollUp(this.courseCardData.hierarchyInfo, this.identifier);
