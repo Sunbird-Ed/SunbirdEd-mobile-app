@@ -104,11 +104,20 @@ export class DownloadsTabComponent implements OnInit {
     } else if (data.canDelete) {
       const valuesMap = {};
       valuesMap['type'] = ActionButtonType.POSITIVE;
+      let telemetryObject: TelemetryObject;
+      if (identifier) {
+        this.downloadedContents.forEach(element => {
+          if (element.identifier === identifier) {
+            telemetryObject = ContentUtil.getTelemetryObject(element);
+          }
+        });
+      }
       this.telemetryGeneratorService.generateInteractTelemetry(
         InteractType.TOUCH,
         InteractSubtype.ACTION_BUTTON_CLICKED,
         Environment.DOWNLOADS,
-        PageId.SINGLE_DELETE_CONFIRMATION_POPUP, undefined,
+        identifier ? PageId.SINGLE_DELETE_CONFIRMATION_POPUP : PageId.BULK_DELETE_CONFIRMATION_POPUP,
+        telemetryObject,
         valuesMap);
       this.deleteContent();
     }

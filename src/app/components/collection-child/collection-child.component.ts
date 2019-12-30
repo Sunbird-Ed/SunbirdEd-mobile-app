@@ -59,7 +59,8 @@ export class CollectionChildComponent implements OnInit {
 
   get isContentCompleted(): boolean {
     if (this.contentStatusData && this.isEnrolled) {
-      return !!this.contentStatusData.contentList.find(c => c.contentId === this.childData.identifier);
+      return !!this.contentStatusData.contentList.find(c => c.contentId === this.childData.identifier
+      && c.status === 2);
     }
 
     return false;

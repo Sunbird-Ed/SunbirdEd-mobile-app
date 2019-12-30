@@ -68,6 +68,10 @@ export class AppGlobalService implements OnDestroy {
         isStorageAsked: false,
         isRecordAudioAsked: false,
     };
+    private _limitedShareQuizContent: any;
+    private _isSignInOnboardingCompleted: any;
+    private isJoinTraningOnboarding: any;
+
 
     constructor(
         @Inject('PROFILE_SERVICE') private profile: ProfileService,
@@ -649,4 +653,28 @@ export class AppGlobalService implements OnDestroy {
                 }
             });
     }
+
+    get limitedShareQuizContent() {
+        return this._limitedShareQuizContent;
+    }
+
+    set limitedShareQuizContent(value) {
+        this._limitedShareQuizContent = value;
+    }
+
+    get isSignInOnboardingCompleted() {
+        return this._isSignInOnboardingCompleted;
+    }
+
+    set isSignInOnboardingCompleted(value) {
+        this._isSignInOnboardingCompleted = value;
+    }
+    get isJoinTraningOnboardingFlow() {
+        return this.isJoinTraningOnboarding;
+    }
+
+    set isJoinTraningOnboardingFlow(value) {
+        this.isJoinTraningOnboarding = value;
+    }
+
 }

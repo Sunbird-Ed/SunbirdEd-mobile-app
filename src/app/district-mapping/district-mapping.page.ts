@@ -49,6 +49,7 @@ export class DistrictMappingPage implements OnInit {
   isPopulatedLocationChanged = false;
   isKeyboardShown$;
   isLocationChanged = false;
+  disableSubmitButton = false;
 
   constructor(
     public headerService: AppHeaderService,
@@ -199,7 +200,8 @@ export class DistrictMappingPage implements OnInit {
   // validates the name input feild
   validateName() {
     if (this.name) {
-      return !Boolean(this.name.match(/^[a-zA-Z ]*$/));
+     // return !Boolean(this.name.match(/^[a-zA-Z0-9/./s]*$/));
+     return false;
     }
   }
 
@@ -333,11 +335,16 @@ export class DistrictMappingPage implements OnInit {
           }
           this.generateLocationCaptured(false); // is dirtrict or location edit  = false
           this.commonUtilService.showToast(this.commonUtilService.translateMessage('PROFILE_UPDATE_SUCCESS'));
+          this.disableSubmitButton = true;
           this.events.publish('loggedInProfile:update', req);
           if (this.profile) {
             this.location.back();
           } else {
-            this.router.navigate([`/${RouterLinks.TABS}`]);
+            if (this.appGlobalService.isJoinTraningOnboardingFlow) {
+              window.history.go(-2);
+            } else {
+              this.router.navigate([`/${RouterLinks.TABS}`]);
+            }
             this.externalIdVerificationService.showExternalIdVerificationPopup();
           }
         }).catch(async () => {

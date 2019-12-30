@@ -47,6 +47,7 @@ export class CategoriesEditPage {
   private _mediumList = [];
   private _gradeList = [];
   private _subjectList = [];
+  disableSubmitButton = false;
 
   get syllabusList() {
     return this._syllabusList;
@@ -160,6 +161,7 @@ export class CategoriesEditPage {
    */
   ionViewWillEnter() {
     this.getSyllabusDetails();
+    this.disableSubmitButton = false;
     this.headerConfig = this.headerService.getDefaultPageConfig();
     this.headerConfig.actionButtons = [];
     this.headerConfig.showHeader = false;
@@ -449,6 +451,7 @@ export class CategoriesEditPage {
       .then(async () => {
         await this.loader.dismiss();
         this.commonUtilService.showToast(this.commonUtilService.translateMessage('PROFILE_UPDATE_SUCCESS'));
+        this.disableSubmitButton = true;
         this.events.publish('loggedInProfile:update', req.framework);
 
         if (this.showOnlyMandatoryFields) {

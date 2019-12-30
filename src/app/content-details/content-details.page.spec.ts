@@ -1,5 +1,5 @@
-import {ContentDetailsPage} from '@app/app/content-details/content-details.page';
-import {Container} from 'inversify';
+import { ContentDetailsPage } from '@app/app/content-details/content-details.page';
+import { Container } from 'inversify';
 import {
     AuthService,
     ContentService,
@@ -9,14 +9,17 @@ import {
     ProfileService,
     ProfileServiceImpl,
     SharedPreferences,
-    StorageService
+    StorageService,
+    TelemetryObject,
+    Content
 } from 'sunbird-sdk';
-import {ContentServiceImpl} from 'sunbird-sdk/content/impl/content-service-impl';
-import {EventsBusServiceImpl} from 'sunbird-sdk/events-bus/impl/events-bus-service-impl';
-import {StorageServiceImpl} from 'sunbird-sdk/storage/impl/storage-service-impl';
-import {AuthServiceImpl} from 'sunbird-sdk/auth/impl/auth-service-impl';
-import {Events, Platform, PopoverController} from '@ionic/angular';
-import {NgZone} from '@angular/core';
+import { ContentServiceImpl } from 'sunbird-sdk/content/impl/content-service-impl';
+import { EventsBusServiceImpl } from 'sunbird-sdk/events-bus/impl/events-bus-service-impl';
+import { StorageServiceImpl } from 'sunbird-sdk/storage/impl/storage-service-impl';
+import { AuthServiceImpl } from 'sunbird-sdk/auth/impl/auth-service-impl';
+import { Events, Platform, PopoverController, ToastController } from '@ionic/angular';
+import { NgZone } from '@angular/core';
+import { SbPopoverComponent } from '../components/popups/sb-popover/sb-popover.component';
 import {
     AppGlobalService,
     AppHeaderService,
@@ -26,19 +29,29 @@ import {
     TelemetryGeneratorService,
     UtilityService,
 } from '@app/services';
-import {Network} from '@ionic-native/network/ngx';
-import {FileSizePipe} from '@app/pipes/file-size/file-size';
-import {AppVersion} from '@ionic-native/app-version/ngx';
-import {Location} from '@angular/common';
-import {ActivatedRoute, Router} from '@angular/router';
-import {ProfileSwitchHandler} from '@app/services/user-groups/profile-switch-handler';
-import {RatingHandler} from '@app/services/rating/rating-handler';
-import {ContentPlayerHandler} from '@app/services/content/player/content-player-handler';
-import {ChildContentHandler} from '@app/services/content/child-content-handler';
-import {ContentDeleteHandler} from '@app/services/content/content-delete-handler';
-import {of} from 'rxjs';
-import {mockContentData} from '@app/app/content-details/content-details.page.spec.data';
-import {EventTopics} from '@app/app/app.constant';
+import { Network } from '@ionic-native/network/ngx';
+import { FileSizePipe } from '@app/pipes/file-size/file-size';
+import { AppVersion } from '@ionic-native/app-version/ngx';
+import { Location } from '@angular/common';
+import { ActivatedRoute, Router } from '@angular/router';
+import { ProfileSwitchHandler } from '@app/services/user-groups/profile-switch-handler';
+import { RatingHandler } from '@app/services/rating/rating-handler';
+import { ContentPlayerHandler } from '@app/services/content/player/content-player-handler';
+import { ChildContentHandler } from '@app/services/content/child-content-handler';
+import { ContentDeleteHandler } from '@app/services/content/content-delete-handler';
+import { of } from 'rxjs';
+import { mockContentData } from '@app/app/content-details/content-details.page.spec.data';
+import { LoginHandlerService } from '@app/services/login-handler.service';
+import {
+    Environment,
+    ImpressionType,
+    InteractSubtype,
+    InteractType,
+    Mode,
+    PageId,
+} from '@app/services/telemetry-constants';
+import { ContentUtil } from '@app/util/content-util';
+import { EventTopics } from '../app.constant';
 
 describe('ContentDetailsPage', () => {
     let contentDetailsPage: ContentDetailsPage;
@@ -84,6 +97,8 @@ describe('ContentDetailsPage', () => {
     const mockContentPlayerHandler: Partial<ContentPlayerHandler> = {};
     const mockChildContentHandler: Partial<ChildContentHandler> = {};
     const mockContentDeleteHandler: Partial<ContentDeleteHandler> = {};
+    const mockLoginHandlerService: Partial<LoginHandlerService> = {};
+    const mockToastController: Partial<ToastController> = {};
 
     beforeAll(() => {
         contentDetailsPage = new ContentDetailsPage(
@@ -94,7 +109,7 @@ describe('ContentDetailsPage', () => {
             mockPlayerService as PlayerServiceImpl,
             mockStorageService as StorageServiceImpl,
             mockAuthService as AuthServiceImpl,
-            mockNgZone as MockNgZone,
+            mockNgZone as NgZone,
             mockEvents as Events,
             mockPopoverController as PopoverController,
             mockPlatform as Platform,
@@ -115,7 +130,8 @@ describe('ContentDetailsPage', () => {
             mockRatingHandler as RatingHandler,
             mockContentPlayerHandler as ContentPlayerHandler,
             mockChildContentHandler as ChildContentHandler,
-            mockContentDeleteHandler as ContentDeleteHandler
+            mockContentDeleteHandler as ContentDeleteHandler,
+            mockLoginHandlerService as LoginHandlerService
         );
     });
     beforeEach(() => {
@@ -224,6 +240,117 @@ describe('ContentDetailsPage', () => {
             expect(mockProfileSwitchHandler.switchUser).toHaveBeenCalledWith({profileType: 'Teacher'});
             done();
         }, 0);
+    });
+
+    it('should be logged in before play the content by invoked promptToLogin() if user loggedin', async (done) => {
+        // arrange
+        mockAppGlobalService.isUserLoggedIn = jest.fn(() => true);
+        contentDetailsPage.autoPlayQuizContent = true;
+        jest.spyOn(contentDetailsPage, 'handleContentPlay').mockImplementation(() => {
+            return 0;
+        });
+        // act
+        await contentDetailsPage.promptToLogin();
+        // assert
+        setTimeout(() => {
+            expect(mockAppGlobalService.isUserLoggedIn).toHaveBeenCalled();
+            done();
+        }, 1000);
+    });
+
+    it('should be logged in before play the content by invoked promptToLogin() if user is not loggedin', (done) => {
+        // arrange
+        mockAppGlobalService.isUserLoggedIn = jest.fn(() => false);
+
+        contentDetailsPage.telemetryObject = {
+            id: 'sample-id',
+            type: 'content-details',
+            version: 'v-7.0',
+            setRollup: jest.fn()
+        };
+
+        ContentUtil.prototype.getTelemetryObject = jest.fn(() => contentDetailsPage.telemetryObject);
+        mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn(() => { });
+        const dismissData = jest.fn(() => Promise.resolve({ data: { canDelete: true } }));
+        const presentFn = jest.fn(() => Promise.resolve());
+        mockPopoverController.create = jest.fn(() => Promise.resolve({
+            present: presentFn,
+            onDidDismiss: dismissData
+        }) as any);
+        mockCommonUtilService.translateMessage = jest.fn(() => 'you must loin to access quiz content');
+        mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn(() => { });
+        mockLoginHandlerService.signIn = jest.fn();
+        // act
+        contentDetailsPage.promptToLogin();
+        // assert
+        setTimeout(() => {
+            expect(mockAppGlobalService.isUserLoggedIn).toHaveBeenCalled();
+            expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenCalledWith(
+                ImpressionType.VIEW,
+                '', PageId.SIGNIN_POPUP,
+                Environment.HOME,
+                'sample-id',
+                'content-details',
+                'v-7.0',
+                undefined,
+                undefined
+            );
+            expect(mockCommonUtilService.translateMessage).toHaveBeenCalledWith('YOU_MUST_LOGIN_TO_ACCESS_QUIZ_CONTENT');
+            expect(mockPopoverController.create).toHaveBeenCalledWith({
+                component: SbPopoverComponent,
+                componentProps: {
+                    actionsButtons: [{
+                        btnClass: 'popover-color',
+                        btntext: 'you must loin to access quiz content',
+                    }
+                    ],
+                    isNotShowCloseIcon: true,
+                    metaInfo: 'you must loin to access quiz content',
+                    sbPopoverHeading: 'you must loin to access quiz content',
+                    sbPopoverMainTitle: 'you must loin to access quiz content',
+                }, cssClass: 'sb-popover info'
+            });
+            expect(presentFn).toHaveBeenCalled();
+            expect(dismissData).toHaveBeenCalled();
+            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
+            expect(mockLoginHandlerService.signIn).toHaveBeenCalled();
+            done();
+        }, 0);
+    });
+
+
+    it('should be logged in before play the content for isLoginPromptOpen() if user is not loggedin', (done) => {
+        // arrange
+        mockAppGlobalService.isUserLoggedIn = jest.fn(() => false);
+        contentDetailsPage.isLoginPromptOpen = true;
+        // act
+        contentDetailsPage.promptToLogin();
+        // assert
+        setTimeout(() => {
+            expect(mockAppGlobalService.isUserLoggedIn).toHaveBeenCalled();
+            expect(contentDetailsPage.isLoginPromptOpen).toBeTruthy();
+            done();
+        }, 0);
+    });
+
+    it('should check limitedShareContentFlag', () => {
+        // arrange
+        const request = {
+            contentData: {
+                status: 'Unlisted'
+            }
+        };
+        jest.spyOn(ContentUtil, 'getTelemetryObject').mockImplementation(() => {
+            return request;
+        });
+        jest.spyOn(contentDetailsPage, 'promptToLogin').mockImplementation(() => {
+            return;
+        });
+        // act
+        contentDetailsPage.checkLimitedContentSharingFlag(request);
+        // assert
+        expect(ContentUtil.getTelemetryObject).toHaveBeenCalled();
+        expect(contentDetailsPage.promptToLogin).toHaveBeenCalled();
     });
 
 });
