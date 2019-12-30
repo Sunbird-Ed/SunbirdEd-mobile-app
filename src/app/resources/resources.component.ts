@@ -47,9 +47,10 @@ import { AppVersion } from '@ionic-native/app-version/ngx';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { CommonUtilService } from '@app/services/common-util.service';
 import { FormAndFrameworkUtilService } from '@app/services/formandframeworkutil.service';
-import { Environment, InteractSubtype, InteractType, PageId, ImpressionType, ImpressionSubtype } from '@app/services/telemetry-constants';
+import { Environment, InteractSubtype, InteractType, PageId, ImpressionType, ImpressionSubtype, CorReleationDataType } from '@app/services/telemetry-constants';
 import { AppHeaderService } from '@app/services/app-header.service';
 import { SplaschreenDeeplinkActionHandlerDelegate } from '@app/services/sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
+import { ContentUtil } from '@app/util/content-util';
 
 @Component({
   selector: 'app-resources',
@@ -440,16 +441,14 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
   }
 
   getGroupByPage(isAfterLanguageChange = false, avoidRefreshList = false) {
-    const selectedBoardMediumGrade = this.getGroupByPageReq.board[0] + ', ' +
-      this.getGroupByPageReq.medium[0] + ' Medium, ' +
-      this.getGroupByPageReq.grade[0];
+    const selectedBoardMediumGrade = ((this.getGroupByPageReq.board && this.getGroupByPageReq.board.length
+        && this.getGroupByPageReq.board[0]) ? this.getGroupByPageReq.board[0] + ', ' : '') +
+        (this.getGroupByPageReq.medium && this.getGroupByPageReq.medium.length
+            && this.getGroupByPageReq.medium[0]) + ' Medium, ' +
+        (this.getGroupByPageReq.grade && this.getGroupByPageReq.grade.length && this.getGroupByPageReq.grade[0]);
     this.appGlobalService.setSelectedBoardMediumGrade(selectedBoardMediumGrade);
     this.storyAndWorksheets = [];
-    if (!this.refresh) {
-      this.searchApiLoader = true;
-    } else {
-      this.searchApiLoader = false;
-    }
+    this.searchApiLoader = !this.refresh;
     this.telemetryGeneratorService.generateStartSheenAnimationTelemetry(PageId.LIBRARY);
     const reqvalues = new Map();
     reqvalues['pageReq'] = this.getGroupByPageReq;
@@ -505,7 +504,8 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
             // check if locally available
             this.markLocallyAvailableTextBook();
             sectionInfo[sectionName] = count;
-            sectionInfo['board'] = this.getGroupByPageReq.board[0];
+            sectionInfo['board'] = (this.getGroupByPageReq.board && this.getGroupByPageReq.board.length
+                && this.getGroupByPageReq.board[0]) ? this.getGroupByPageReq.board[0] : '';
             sectionInfo['medium'] = this.getGroupByPageReq.medium[0];
             sectionInfo['grade'] = this.getGroupByPageReq.grade[0];
           }
@@ -630,19 +630,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
   }
 
   ionViewDidEnter() {
-    this.preferences.getBoolean('coach_mark_seen').toPromise()
-      .then((value) => {
-        if (!value) {
-          this.events.publish('coach_mark_seen', { showWalkthroughBackDrop: true, appName: this.appLabel });
-          this.telemetryGeneratorService.generateImpressionTelemetry(
-            ImpressionType.VIEW,
-            ImpressionSubtype.QR_SCAN_WALKTHROUGH,
-            PageId.LIBRARY,
-            Environment.ONBOARDING
-          );
-        }
-      });
-    this.preferences.putBoolean('coach_mark_seen', true).toPromise().then();
+
   }
 
   ionViewWillEnter() {
@@ -924,19 +912,21 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
 
   navigateToDetailPage(item, index, sectionName) {
     const identifier = item.contentId || item.identifier;
-    let telemetryObject: TelemetryObject;
-    telemetryObject = new TelemetryObject(identifier, item.contentType, undefined);
+    const telemetryObject: TelemetryObject = new TelemetryObject(identifier, item.contentType, item.pkgVersion);
+    const corRelationList = [{ id: sectionName, type: CorReleationDataType.SUBJECT }];
     const values = new Map();
     values['sectionName'] = item.subject;
     values['positionClicked'] = index;
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
       InteractSubtype.CONTENT_CLICKED,
-      'home',
-      'library',
+      Environment.HOME,
+      PageId.LIBRARY,
       telemetryObject,
-      values);
+      values,
+      ContentUtil.generateRollUp(undefined, identifier),
+      corRelationList);
     if (this.commonUtilService.networkInfo.isNetworkAvailable || item.isAvailableLocally) {
-      this.router.navigate([RouterLinks.COLLECTION_DETAIL_ETB], { state: { content: item } });
+      this.router.navigate([RouterLinks.COLLECTION_DETAIL_ETB], { state: { content: item, corRelation: corRelationList } });
     } else {
       this.presentToastForOffline('OFFLINE_WARNING_ETBUI_1');
     }

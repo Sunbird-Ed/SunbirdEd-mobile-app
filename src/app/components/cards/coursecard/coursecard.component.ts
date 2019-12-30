@@ -50,6 +50,8 @@ export class CourseCardComponent implements OnInit {
 
   @Input() enrolledCourses: any;
 
+  @Input() isFilterApplied = false;
+
   /**
    * Contains default image path.
    *
@@ -183,7 +185,12 @@ export class CourseCardComponent implements OnInit {
       id: identifier,
       type: CorReleationDataType.ROOT_ID
     }];
-
+    if (this.isFilterApplied) {
+     corRelationList.push({
+       id: 'filter',
+       type: CorReleationDataType.DISCOVERY_TYPE
+     });
+   }
     const values = new Map();
     values['sectionName'] = this.sectionName;
     values['positionClicked'] = this.index;

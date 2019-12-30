@@ -4,6 +4,8 @@ import { AfterViewInit, Component, Inject, NgZone, OnInit, EventEmitter, ViewChi
 import { Events, Platform, IonRouterOutlet, MenuController } from '@ionic/angular';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { TranslateService } from '@ngx-translate/core';
+import { Observable, combineLatest } from 'rxjs';
+import { mergeMap, filter, take, tap} from 'rxjs/operators';
 import { Network } from '@ionic-native/network/ngx';
 
 import {
@@ -37,8 +39,6 @@ import { NotificationService as localNotification } from '@app/services/notifica
 import { RouterLinks } from './app.constant';
 import { TncUpdateHandlerService } from '@app/services/handlers/tnc-update-handler.service';
 import { NetworkAvailabilityToastService } from '@app/services/network-availability-toast/network-availability-toast.service';
-import {Observable, combineLatest} from 'rxjs';
-import { mergeMap, filter, take, tap} from 'rxjs/operators';
 @Component({
   selector: 'app-root',
   templateUrl: 'app.component.html'
@@ -397,6 +397,15 @@ export class AppComponent implements OnInit, AfterViewInit {
   subscribeEvents() {
     this.events.subscribe('coach_mark_seen', (data) => {
       this.showWalkthroughBackDrop = data.showWalkthroughBackDrop;
+      setTimeout(() => {
+        const backdropClipCenter = document.getElementById('qrScannerIcon').getBoundingClientRect().left +
+        ((document.getElementById('qrScannerIcon').getBoundingClientRect().width) / 2);
+
+        (document.getElementById('backdrop').getElementsByClassName('bg')[0] as HTMLDivElement).setAttribute(
+          'style',
+          `background-image: radial-gradient(circle at ${backdropClipCenter}px 56px, rgba(0, 0, 0, 0) 30px, rgba(0, 0, 0, 0.9) 30px);`
+        );
+        }, 2000);
       this.appName = data.appName;
     });
     this.events.subscribe('tab.change', (data) => {

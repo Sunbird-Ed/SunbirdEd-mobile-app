@@ -249,7 +249,7 @@ export class ProfilePage implements OnInit {
                     }
                     that.formatRoles();
                     that.getOrgDetails();
-                    that.userLocation =  that.commonUtilService.getUserLocation(that.profile);
+                    that.userLocation = that.commonUtilService.getUserLocation(that.profile);
                     that.isCustodianOrgId = (that.profile.rootOrg.rootOrgId === this.custodianOrgId);
                     that.isStateValidated = that.profile.stateValidated;
                     resolve();
@@ -406,24 +406,24 @@ export class ProfilePage implements OnInit {
   //   });
   // }
 
-downloadTrainingCertificate(course: Course, certificate: CourseCertificate) {
-    const telemetryObject: TelemetryObject  = new TelemetryObject(certificate.id, ContentType.CERTIFICATE, undefined);
+  downloadTrainingCertificate(course: Course, certificate: CourseCertificate) {
+    const telemetryObject: TelemetryObject = new TelemetryObject(certificate.id, ContentType.CERTIFICATE, undefined);
 
     const values = new Map();
     values['courseId'] = course.courseId;
 
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
-    InteractSubtype.DOWNLOAD_CERTIFICATE_CLICKED,
-    Environment.USER, // env
-    PageId.PROFILE, // page name
-    telemetryObject,
-    values);
+      InteractSubtype.DOWNLOAD_CERTIFICATE_CLICKED,
+      Environment.USER, // env
+      PageId.PROFILE, // page name
+      telemetryObject,
+      values);
 
     this.courseService.downloadCurrentProfileCourseCertificate({
       courseId: course.courseId,
       certificateToken: certificate.token
     })
-    .subscribe();
+      .subscribe();
   }
 
   shareTrainingCertificate(course: Course, certificate: CourseCertificate) {
@@ -431,9 +431,9 @@ downloadTrainingCertificate(course: Course, certificate: CourseCertificate) {
       courseId: course.courseId,
       certificateToken: certificate.token
     })
-    .subscribe((res) => {
-      this.socialShare.share('', '', res.path, '');
-    });
+      .subscribe((res) => {
+        this.socialShare.share('', '', res.path, '');
+      });
   }
 
   isResource(contentType) {
@@ -619,7 +619,8 @@ downloadTrainingCertificate(course: Course, certificate: CourseCertificate) {
         phone: this.profile.phone,
         title: this.commonUtilService.translateMessage('VERIFY_PHONE_OTP_TITLE'),
         description: this.commonUtilService.translateMessage('VERIFY_PHONE_OTP_DESCRIPTION'),
-        type: ProfileConstants.CONTACT_TYPE_PHONE
+        type: ProfileConstants.CONTACT_TYPE_PHONE,
+        userId: this.profile.userId
       };
 
       const data = await this.openContactVerifyPopup(EditContactVerifyPopupComponent, componentProps, 'popover-alert input-focus');
@@ -632,7 +633,8 @@ downloadTrainingCertificate(course: Course, certificate: CourseCertificate) {
         phone: this.profile.email,
         title: this.commonUtilService.translateMessage('VERIFY_EMAIL_OTP_TITLE'),
         description: this.commonUtilService.translateMessage('VERIFY_EMAIL_OTP_DESCRIPTION'),
-        type: ProfileConstants.CONTACT_TYPE_EMAIL
+        type: ProfileConstants.CONTACT_TYPE_EMAIL,
+        userId: this.profile.userId
       };
 
       const data = await this.openContactVerifyPopup(EditContactVerifyPopupComponent, componentProps, 'popover-alert input-focus');

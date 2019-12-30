@@ -130,10 +130,10 @@
           <div class="font-14 view-credits" (click)="showLicensce()">
             <span><b>{{'CREDITS_LICENCE_INFO' | translate}}</b></span>
             <span *ngIf="showCredits">
-              <ion-icon name="ios-arrow-up"></ion-icon>
+              <ion-icon name="ios-arrow-up" (click)="licenseSectionClicked('collapsed')"></ion-icon>
             </span>
             <span *ngIf="!showCredits">
-              <ion-icon name="ios-arrow-down"></ion-icon>
+              <ion-icon name="ios-arrow-down" (click)="licenseSectionClicked('expanded')"></ion-icon>
             </span>
           </div>
         </div>
@@ -186,7 +186,7 @@
           <!--training derived from section starts-->
           <div class="origin-data" *ngIf="contentDetail?.contentData?.originData">
             <div class="font-14 traning-derived-label-background ion-padding-bottom">
-              <span><b>{{'TRAINING_DERIVED_FROM' | translate}}</b></span>
+              <span><b>{{'CONTENT_DERIVED_FROM' | translate}}</b></span>
             </div>
             <div class="ion-padding">
               <div *ngIf="contentDetail?.contentData?.originData.name">

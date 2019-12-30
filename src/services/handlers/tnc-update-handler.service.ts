@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import {
   AuthService, ProfileService,
-  ServerProfile, ServerProfileDetailsRequest, CachedItemRequestSourceFrom
+  ServerProfile, ServerProfileDetailsRequest, CachedItemRequestSourceFrom, Profile
 } from 'sunbird-sdk';
 import { ProfileConstants, RouterLinks } from '@app/app/app.constant';
 import { TermsAndConditionsPage } from '@app/app/terms-and-conditions/terms-and-conditions.page';
@@ -150,7 +150,17 @@ export class TncUpdateHandlerService {
     });
   }
 
-  private checkDistrictMapping(profile) {
+  async isSSOUser(profile: Profile): Promise<boolean> {
+    const custodianOrgId = await this.formAndFrameworkUtilService.getCustodianOrgId();
+    if (profile.serverProfile && profile.serverProfile.rootOrg &&
+      profile.serverProfile.rootOrg.rootOrgId === custodianOrgId) {
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+  checkDistrictMapping(profile) {
     this.formAndFrameworkUtilService.getCustodianOrgId()
       .then((custodianOrgId: string) => {
         const isCustodianOrgId = profile.rootOrg.rootOrgId === custodianOrgId;

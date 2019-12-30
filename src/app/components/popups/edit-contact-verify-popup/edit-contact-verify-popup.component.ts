@@ -14,6 +14,7 @@ export class EditContactVerifyPopupComponent implements OnInit {
   /**
    * Key may be phone or email depending on the verification flow from which it is called
    */
+  @Input() userId: string;
   @Input() key: string;
   @Input() title: string;
   @Input() description: string;
@@ -31,6 +32,7 @@ export class EditContactVerifyPopupComponent implements OnInit {
     private commonUtilService: CommonUtilService,
     private menuCtrl: MenuController
   ) {
+    this.userId = this.navParams.get('userId');
     this.key = this.navParams.get('key');
     this.title = this.navParams.get('title');
     this.description = this.navParams.get('description');
@@ -86,11 +88,13 @@ export class EditContactVerifyPopupComponent implements OnInit {
       let req: GenerateOtpRequest;
       if (this.type === ProfileConstants.CONTACT_TYPE_PHONE) {
         req = {
+          userId: this.userId,
           key: this.key,
           type: ProfileConstants.CONTACT_TYPE_PHONE
         };
       } else {
         req = {
+          userId: this.userId,
           key: this.key,
           type: ProfileConstants.CONTACT_TYPE_EMAIL
         };

@@ -54,8 +54,8 @@ export class QRScannerResultHandler {
   async parseDialCode(scannedData: string): Promise<string | undefined> {
     this.dailCodeRegExpression = await this.getDailCodeRegularExpression();
     const execArray = (new RegExp(this.dailCodeRegExpression)).exec(scannedData);
-    this.scannedUrlMap = execArray.groups;
     if (execArray && execArray.groups) {
+      this.scannedUrlMap = execArray.groups;
       return execArray.groups[Object.keys(execArray.groups).find((key) => !!execArray.groups[key])];
     }
 

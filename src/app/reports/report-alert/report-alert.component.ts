@@ -27,8 +27,7 @@ export class ReportAlertComponent implements OnInit {
     private popOverCtrl: PopoverController,
     private location: Location
   ) {
-    this.callback = navParams.get('callback');
-    this.assessmentDetails = this.callback['row'];
+    this.assessmentDetails = navParams.get('callback');
   }
 
   ngOnInit() { }

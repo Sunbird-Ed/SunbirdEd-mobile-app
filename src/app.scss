@@ -796,17 +796,14 @@ ion-toast.sb-toast.available-later {
   z-index: 11;
   color: #fff;
 
-  &::before {
-    content: "";
+  .bg {
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
 
-    -ms-transform: rotate(180deg); /* IE 9 */
-    -webkit-transform: rotate(180deg); /* Safari */
-    transform: rotate(180deg);
+    transform: scaleY(-1);
     background-image: radial-gradient(circle at center 55px, rgba(0, 0, 0, 0) 30px, rgba(0, 0, 0, 0.9) 30px);
   }
 }

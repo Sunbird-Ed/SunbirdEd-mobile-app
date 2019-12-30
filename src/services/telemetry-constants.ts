@@ -160,7 +160,9 @@ export enum InteractType {
     LOCATION_CHANGED = 'location-changed',
     LOCATION_UNCHANGED = 'location-unchanged',
     VISIBLE = 'visible',
-    NOT_VISIBLE = 'not-visible'
+    NOT_VISIBLE = 'not-visible',
+    LICENSE_CARD_COLLAPSED = 'license-card-collapsed',
+    LICENSE_CARD_EXPANDED = 'license-card-expanded'
 }
 
 export enum InteractSubtype {
@@ -385,7 +387,8 @@ export enum ID {
     USER_VERIFICATION_FAILED = 'ext-user-verify-fail',
     USER_VERIFICATION_SUCCESS = 'ext-user-verify-success',
     SUBMIT_CLICKED = 'submit-clicked',
-    IP_BASED_LOCATION_SUGGESTION = 'ip-based-location-suggestion'
+    IP_BASED_LOCATION_SUGGESTION = 'ip-based-location-suggestion',
+    LICENSE_CARD_CLICKED = 'license-card-cliked'
 }
 
 export enum ActionButtonType {
@@ -401,8 +404,10 @@ export enum CorReleationDataType {
     BOARD = 'Board',
     MEDIUM = 'Medium',
     CLASS = 'Class',
+    DOWNLOADS = 'Downloads',
+    SUBJECT = 'Subject',
     USERTYPE = 'UserType',
-    DOWNLOADS = 'Downloads'
+    DISCOVERY_TYPE = 'DiscoveryType'
 }
 
 
