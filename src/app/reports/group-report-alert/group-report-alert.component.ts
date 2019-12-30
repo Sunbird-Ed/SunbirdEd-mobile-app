@@ -74,7 +74,6 @@ export class GroupReportAlertComponent implements OnInit {
             that.fromUserAssessment['uiRows'] = data;
           }
         }).catch(async (error) => {
-          console.log('Error received', error);
           await loader.dismiss();
         });
     }
