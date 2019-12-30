@@ -7,6 +7,7 @@ import { FormAndFrameworkUtilService } from './formandframeworkutil.service';
 import { TeacherIdVerificationComponent } from '@app/app/components/popups/teacher-id-verification-popup/teacher-id-verification-popup.component';
 import { ProfileConstants } from '@app/app/app.constant';
 import { map } from 'rxjs/operators';
+import { SplaschreenDeeplinkActionHandlerDelegate } from './sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
 
 @Injectable()
 export class ExternalIdVerificationService {
@@ -16,7 +17,8 @@ export class ExternalIdVerificationService {
         @Inject('PROFILE_SERVICE') private profileService: ProfileService,
         private appGlobalService: AppGlobalService,
         private popoverCtrl: PopoverController,
-        private formAndFrameworkUtilService: FormAndFrameworkUtilService
+        private formAndFrameworkUtilService: FormAndFrameworkUtilService,
+        private splaschreenDeeplinkActionHandlerDelegate: SplaschreenDeeplinkActionHandlerDelegate,
     ) {
         this.isCustodianUser$ = this.profileService.isDefaultChannelProfile().pipe(
             map((isDefaultChannelProfile) => isDefaultChannelProfile) as any
@@ -24,6 +26,9 @@ export class ExternalIdVerificationService {
     }
 
     async showExternalIdVerificationPopup() {
+        if (await this.checkQuizContent()) {
+            return;
+        }
         const session = await this.appGlobalService.authService.getSession().toPromise();
         const isCustodianUser = await this.isCustodianUser$.toPromise();
         const serverProfile = await this.profileService.getServerProfilesDetails({
@@ -35,30 +40,53 @@ export class ExternalIdVerificationService {
         if (session && isCustodianUser) {
             await this.profileService.getUserFeed().toPromise()
                 .then(async (userFeed: UserFeed[]) => {
-                    if (userFeed[0]) {
-                        if ((userFeed[0].category).toLowerCase() === 'orgmigrationaction') {
-                            let popupLabels = {};
-                            if (tenantSpecificMessages && tenantSpecificMessages.length) {
-                                if (tenantSpecificMessages[0] && tenantSpecificMessages[0].range
-                                    && tenantSpecificMessages[0].range.length) {
-                                    popupLabels = tenantSpecificMessages[0].range[0];
-                                }
-                            }
-                            const popover = await this.popoverCtrl.create({
-                                component: TeacherIdVerificationComponent,
-                                backdropDismiss: false,
-                                cssClass: 'popover-alert popoverPosition',
-                                componentProps: {
-                                    userFeed: userFeed[0], tenantMessages: popupLabels
-                                }
-                            });
-                            await popover.present();
+                    if (userFeed[0] && (userFeed[0].category).toLowerCase() === 'orgmigrationaction') {
+                        let popupLabels = {};
+                        if (tenantSpecificMessages && tenantSpecificMessages.length && tenantSpecificMessages[0].range
+                            && tenantSpecificMessages[0].range.length) {
+                            popupLabels = tenantSpecificMessages[0].range[0];
                         }
+                        const popover = await this.popoverCtrl.create({
+                            component: TeacherIdVerificationComponent,
+                            backdropDismiss: false,
+                            cssClass: 'popover-alert popoverPosition',
+                            componentProps: {
+                                userFeed: userFeed[0], tenantMessages: popupLabels
+                            }
+                        });
+                        await popover.present();
                     }
                 })
                 .catch((error) => {
                     console.log('error', error);
                 });
         }
+        if (await this.checkJoinTraining()) {
+            return;
+        }
     }
+
+    checkQuizContent(): Promise<boolean> {
+        this.appGlobalService.isSignInOnboardingCompleted = true;
+        return new Promise<boolean>(async (resolve) => {
+            const limitedSharingContentDetails = this.appGlobalService.limitedShareQuizContent;
+            if (limitedSharingContentDetails) {
+                this.appGlobalService.limitedShareQuizContent = null;
+                await this.splaschreenDeeplinkActionHandlerDelegate.onAction('content', limitedSharingContentDetails, false).toPromise();
+                resolve(true);
+            } else {
+                resolve(false);
+            }
+        });
+      }
+
+      checkJoinTraining() {
+          if (this.appGlobalService.isJoinTraningOnboardingFlow) {
+            return new Promise<boolean>(async (resolve) => {
+            await this.splaschreenDeeplinkActionHandlerDelegate.checkCourseRedirect();
+            this.appGlobalService.isJoinTraningOnboardingFlow = false;
+            resolve(true);
+          });
+        }
+      }
 }

@@ -166,6 +166,7 @@ export class EventTopics {
     public static readonly TOC_COLLECTION_CHILD_ID = 'TOC_COLLECTION_CHILD_ID';
     public static readonly HAMBURGER_MENU_CLICKED = 'HAMBURGER_MENU_CLICKED';
     public static readonly NEXT_CONTENT = 'event:NextContent';
+    public static readonly DEEPLINK_CONTENT_PAGE_OPEN = 'DEEPLINK_CONTENT_PAGE_OPEN';
 }
 
 export class ShareUrl {
@@ -365,6 +366,7 @@ export class ContentFilterConfig {
     public static readonly NAME_DOWNLOADS = 'downloads';
     public static readonly NAME_DIALCODE = 'dialcode';
     public static readonly CODE_CONTENT_TYPE = 'contentType';
+    public static readonly CONTENT_STATUS_UNLISTED = 'Unlisted';
 }
 
 export class LocationConfig {
