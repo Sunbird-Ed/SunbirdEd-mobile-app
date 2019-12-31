@@ -359,7 +359,7 @@ describe('ContentDetailsPage', () => {
         expect(contentDetailsPage.promptToLogin).toHaveBeenCalled();
     });
 
-    fdescribe('openPDFPreview()', () => {
+    describe('openPDFPreview()', () => {
         it('should download pdf if not available locally', (done) => {
             // arrange
             const content: Partial<Content> = {

@@ -69,7 +69,6 @@ import { SbPopoverComponent } from '../components/popups/sb-popover/sb-popover.c
 import { LoginHandlerService } from '@app/services/login-handler.service';
 import { FileOpener } from '@ionic-native/file-opener/ngx';
 import { Components } from '@ionic/core/dist/types/components';
-import {FileUtil} from '../../../../sunbird-mobile-sdk/src/util/file/util/file-util';
 
 
 @Component({
@@ -1208,7 +1207,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
       if (!pdf.availableLocally) {
         this.fileTransfer = this.transfer.create();
         const entry = await this.fileTransfer
-            .download(pdf.url, cordova.file.cacheDirectory + FileUtil.getFileName(pdf.url));
+            .download(pdf.url, cordova.file.cacheDirectory + pdf.url.substring(pdf.url.lastIndexOf('/') + 1));
         url = entry.toURL();
       } else {
         url = pdf.url;
