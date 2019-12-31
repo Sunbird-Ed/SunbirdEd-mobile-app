@@ -206,6 +206,7 @@
   "ENTER_GROUP_NAME": "Enter group name",
   "ENTER_OTP": "Enter OTP",
   "ENTER_PHONE_POPUP_TITLE": "Enter Mobile Number",
+  "ERROR_COULD_NOT_OPEN_FILE": "Could not open file",
   "ERROR_BATCH_NOT_STARTED": "Batch not started",
   "ERROR_CANT_OPEN_EMPTY_CONTENT": "Cannot open blank file",
   "ERROR_CONTENT_NOT_AVAILABLE": "Content unavailable",

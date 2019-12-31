@@ -220,7 +220,7 @@
             <span class="sb-btn-footer-text">{{'UPDATE' | translate}}</span>
           </button>
           <button class="sb-btn-tile"
-            (click)="openPDF()" *ngIf="showPrint">
+            (click)="openPDFPreview(content)" *ngIf="content.contentData.itemSetPreviewUrl">
             <ion-icon ios="ios-print" md="md-print" class="sb-dt-card-blue-icon"></ion-icon>
             <span class="sb-btn-footer-text">{{'PRINT' | translate}}</span>
           </button>

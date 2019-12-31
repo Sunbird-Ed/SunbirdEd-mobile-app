@@ -52,6 +52,8 @@ import {
 } from '@app/services/telemetry-constants';
 import { ContentUtil } from '@app/util/content-util';
 import { EventTopics } from '../app.constant';
+import { FileOpener } from '@ionic-native/file-opener/ngx';
+import { FileTransfer } from '@ionic-native/file-transfer/ngx';
 
 describe('ContentDetailsPage', () => {
     let contentDetailsPage: ContentDetailsPage;
@@ -99,6 +101,8 @@ describe('ContentDetailsPage', () => {
     const mockContentDeleteHandler: Partial<ContentDeleteHandler> = {};
     const mockLoginHandlerService: Partial<LoginHandlerService> = {};
     const mockToastController: Partial<ToastController> = {};
+    const mockFileOpener: Partial<FileOpener> = {};
+    const mockFileTransfer: Partial<FileTransfer> = {};
 
     beforeAll(() => {
         contentDetailsPage = new ContentDetailsPage(
@@ -131,7 +135,9 @@ describe('ContentDetailsPage', () => {
             mockContentPlayerHandler as ContentPlayerHandler,
             mockChildContentHandler as ChildContentHandler,
             mockContentDeleteHandler as ContentDeleteHandler,
-            mockLoginHandlerService as LoginHandlerService
+            mockLoginHandlerService as LoginHandlerService,
+            mockFileOpener as FileOpener,
+            mockFileTransfer as FileTransfer,
         );
     });
     beforeEach(() => {
@@ -353,4 +359,115 @@ describe('ContentDetailsPage', () => {
         expect(contentDetailsPage.promptToLogin).toHaveBeenCalled();
     });
 
+    fdescribe('openPDFPreview()', () => {
+        it('should download pdf if not available locally', (done) => {
+            // arrange
+            const content: Partial<Content> = {
+                contentData: {
+                    itemSetPreviewUrl: 'http://some_domain.com/som_path.some_extension'
+                }
+            };
+            const mockPresent = jest.fn(() => Promise.resolve());
+            const mockDismiss = jest.fn(() => Promise.resolve());
+            const mockDownload = jest.fn(() => Promise.resolve({
+                toURL: () => 'SOME_TEMP_URL'
+            }));
+            mockCommonUtilService.getLoader = jest.fn(() => {
+               return Promise.resolve({
+                   present: mockPresent,
+                   dismiss: mockDismiss
+               });
+            });
+            mockCommonUtilService.showToast = jest.fn(() => {});
+            mockFileTransfer.create = jest.fn(() => {
+                return {
+                    download: mockDownload
+                };
+            });
+            mockFileOpener.open = jest.fn(() => Promise.resolve());
+            // act
+            contentDetailsPage.openPDFPreview(content as Content).then(() => {
+                // assert
+                expect(mockFileTransfer.create).toHaveBeenCalled();
+                expect(mockDownload).toHaveBeenCalledWith(content.contentData.itemSetPreviewUrl, expect.any(String));
+                expect(mockFileOpener.open).toHaveBeenCalledWith('SOME_TEMP_URL', 'application/pdf');
+                done();
+            });
+        });
+
+        it('should not download pdf if available locally', (done) => {
+            // arrange
+            const content: Partial<Content> = {
+                basePath: 'file://some_local_path/some_local_path',
+                contentData: {
+                    itemSetPreviewUrl: '/some_path.some_extension'
+                }
+            };
+            const mockPresent = jest.fn(() => Promise.resolve());
+            const mockDismiss = jest.fn(() => Promise.resolve());
+            const mockDownload = jest.fn(() => Promise.resolve({
+                toURL: () => 'SOME_TEMP_URL'
+            }));
+            mockCommonUtilService.getLoader = jest.fn(() => {
+                return Promise.resolve({
+                    present: mockPresent,
+                    dismiss: mockDismiss
+                });
+            });
+            mockCommonUtilService.showToast = jest.fn(() => {});
+            mockFileTransfer.create = jest.fn(() => {
+                return {
+                    download: mockDownload
+                };
+            });
+            mockFileOpener.open = jest.fn(() => Promise.resolve());
+            // act
+            contentDetailsPage.openPDFPreview(content as Content).then(() => {
+                // assert
+                expect(mockFileTransfer.create).not.toHaveBeenCalled();
+                expect(mockDownload).not.toHaveBeenCalled();
+                expect(mockFileOpener.open).toHaveBeenCalledWith(
+                    'file://some_local_path/some_local_path/some_path.some_extension', 'application/pdf'
+                );
+                done();
+            });
+        });
+
+        it('should dismiss loader on file open failure', (done) => {
+            // arrange
+            const content: Partial<Content> = {
+                basePath: 'file://some_local_path/some_local_path',
+                contentData: {
+                    itemSetPreviewUrl: '/some_path.some_extension'
+                }
+            };
+            const mockPresent = jest.fn(() => Promise.resolve());
+            const mockDismiss = jest.fn(() => Promise.resolve());
+            const mockDownload = jest.fn(() => Promise.resolve({
+                toURL: () => 'SOME_TEMP_URL'
+            }));
+            mockCommonUtilService.getLoader = jest.fn(() => {
+                return Promise.resolve({
+                    present: mockPresent,
+                    dismiss: mockDismiss
+                });
+            });
+            mockCommonUtilService.showToast = jest.fn(() => {});
+            mockFileTransfer.create = jest.fn(() => {
+                return {
+                    download: mockDownload
+                };
+            });
+            mockFileOpener.open = jest.fn(() => Promise.reject('UNEXPECTED_ERROR'));
+            // act
+            contentDetailsPage.openPDFPreview(content as Content).then(() => {
+                // assert
+                expect(mockFileOpener.open).toHaveBeenCalledWith(
+                    'file://some_local_path/some_local_path/some_path.some_extension', 'application/pdf'
+                );
+                expect(mockDismiss).toHaveBeenCalled();
+                done();
+            });
+        });
+    });
 });
