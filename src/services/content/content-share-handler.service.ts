@@ -16,7 +16,13 @@ import { ContentUtil } from '@app/util/content-util';
 })
 
 export class ContentShareHandlerService {
-  public telemetryObject :TelemetryObject;
+  public telemetryObject: TelemetryObject;
+  // enum shareParams = {
+  //   byLink: boolean | undefined,
+  //   link: string | undefined,
+  //   byFile: boolean | undefined,
+  //   saveFile: boolean | undefined
+  // }
   constructor(
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
     @Inject('STORAGE_SERVICE') private storageService: StorageService,
@@ -25,29 +31,11 @@ export class ContentShareHandlerService {
     private telemetryGeneratorService: TelemetryGeneratorService,
     private utilityService: UtilityService) {
   }
-  public async shareContent(content: Content, corRelationList?: CorrelationData[], rollup?: Rollup) {
+  public async shareContent(shareParams: any, content: Content, corRelationList?: CorrelationData[], rollup?: Rollup) {
     this.telemetryObject = ContentUtil.getTelemetryObject(content);
-    if (content.hierarchyInfo && content.hierarchyInfo.length > 0) {
-      const contentDetailRequest: ContentDetailRequest = {
-        contentId: content.hierarchyInfo[0].identifier,
-        attachFeedback: false,
-        attachContentAccess: false,
-        emitUpdateIfAny: false
-      };
-      await this.contentService.getContentDetails(contentDetailRequest).toPromise()
-        .then((contentDetail: Content) => {
-          content = contentDetail;
-        });
-    }
-
-    this.generateShareInteractEvents(InteractType.TOUCH,
-      InteractSubtype.SHARE_LIBRARY_INITIATED,
-      content.contentData.contentType, corRelationList, rollup);
     const loader = await this.commonUtilService.getLoader();
     await loader.present();
-    const baseUrl = await this.utilityService.getBuildConfigValue('BASE_URL');
-    const url = baseUrl + ShareUrl.CONTENT + content.identifier;
-    if (content.isAvailableLocally) {
+    if (shareParams && shareParams.byFile) {
       const exportContentRequest: ContentExportRequest = {
         contentIds: [content.identifier],
         destinationFolder: this.storageService.getStorageDestinationDirectoryPath()
@@ -57,17 +45,34 @@ export class ContentShareHandlerService {
           await loader.dismiss();
           this.generateShareInteractEvents(InteractType.OTHER,
             InteractSubtype.SHARE_LIBRARY_SUCCESS, content.contentData.contentType, corRelationList, rollup);
-          this.social.share('', '', '' + response.exportedFilePath, url);
+          this.social.share('', '', '' + response.exportedFilePath, shareParams.link);
         }).catch(async () => {
           await loader.dismiss();
           this.commonUtilService.showToast('SHARE_CONTENT_FAILED');
         });
-    } else {
+    } else if (shareParams && shareParams.byLink && shareParams.link) {
       await loader.dismiss();
       this.generateShareInteractEvents(InteractType.OTHER,
         InteractSubtype.SHARE_LIBRARY_SUCCESS,
         content.contentData.contentType, corRelationList, rollup);
-      this.social.share(null, null, null, url);
+      this.social.share(null, null, null, shareParams.link);
+    } else if (shareParams && shareParams.saveFile) {
+      const exportContentRequest: ContentExportRequest = {
+        contentIds: [content.identifier],
+        destinationFolder: cordova.file.externalRootDirectory + 'Download/'
+      };
+      console.log('exportContentRequest', exportContentRequest);
+      this.contentService.exportContent(exportContentRequest).toPromise()
+        .then(async (response: ContentExportResponse) => {
+          console.log('ContentExportResponse', response);
+          await loader.dismiss();
+          this.generateShareInteractEvents(InteractType.OTHER,
+            InteractSubtype.SHARE_LIBRARY_SUCCESS, content.contentData.contentType, corRelationList, rollup);
+        }).catch(async (err) => {
+          await loader.dismiss();
+          console.log('err', err);
+          this.commonUtilService.showToast('SHARE_CONTENT_FAILED');
+        });
     }
   }
 

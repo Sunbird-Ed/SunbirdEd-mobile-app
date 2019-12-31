@@ -1,0 +1,46 @@
+<ion-header class="sb-popover-header" *ngIf="showHeader">
+    <ion-toolbar class="sb-popover-toolbar">
+      <ion-title class="sb-popover-title">{{'SHARE' | translate}}
+        <ion-icon name="close" class="sb-modal-close" (click)="closePopover()"></ion-icon>
+      </ion-title>
+    </ion-toolbar>
+  </ion-header>
+  
+  <ion-content no-padding class="sb-popover-container">
+    <ion-list lines="none" class="content-share">
+        <ion-radio-group [(ngModel)]="shareType" (ionChange)="onShareTypeChange($event)">
+            <div [ngClass]="{'share-link': !contentDetail.isAvailableLocally}">
+              <ion-item>
+                  <ion-label>{{shareOptions.link.name | translate}}</ion-label>
+                  <ion-radio slot="start" value="{{shareOptions.link.value}}"></ion-radio>
+              </ion-item>
+              <p class="share-url">{{shareUrl}}</p>
+            </div>
+
+            <ion-item>
+                <ion-label>{{shareOptions.file.name | translate}}</ion-label>
+                <ion-radio slot="start" value="{{shareOptions.file.value}}" [disabled]="!contentDetail.isAvailableLocally"></ion-radio>
+            </ion-item>
+            <p class="share-desc">file size 30MB</p>
+
+            <ion-item>
+                <ion-label>{{shareOptions.save.name | translate}}</ion-label>
+                <ion-radio slot="start" value="{{shareOptions.save.value}}" [disabled]="!contentDetail.isAvailableLocally"></ion-radio>
+            </ion-item>
+            <p class="share-desc">Internal storage/Download</p>
+
+            <div *ngIf="!contentDetail.isAvailableLocally" class="share-info">
+              <ion-icon name="ios-information-circle-outline"></ion-icon>
+              {{'DOWNLOAD_FILE_INFO' | translate}}
+            </div>
+        </ion-radio-group>
+    </ion-list>
+</ion-content>
+  
+  <ion-footer>
+    <div class="sb-popover-footer">
+      <button class="sb-popover-action-btn width-100 popover-color" *ngIf="shareType === shareOptions.link.value" (click)="shareLink()">{{'SHARE' | translate}}</button>
+      <button class="sb-popover-action-btn width-100 popover-color" *ngIf="shareType === shareOptions.file.value" (click)="shareFile()">{{'SEND' | translate}}</button>
+      <button class="sb-popover-action-btn width-100 popover-color" *ngIf="shareType === shareOptions.save.value" (click)="saveFile()">{{'Save' | translate}}</button>
+    </div>
+  </ion-footer>

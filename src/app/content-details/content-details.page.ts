@@ -67,6 +67,7 @@ import { FileTransferObject } from '@ionic-native/file-transfer/ngx';
 import { map } from 'rxjs/operators';
 import { SbPopoverComponent } from '../components/popups/sb-popover/sb-popover.component';
 import { LoginHandlerService } from '@app/services/login-handler.service';
+import { SbSharePopupComponent } from '../components/popups/sb-share-popup/sb-share-popup.component';
 
 
 @Component({
@@ -1050,8 +1051,18 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
   /**
    * Shares content to external devices
    */
-  share() {
-    this.contentShareHandler.shareContent(this.content, this.corRelationList, this.objRollup);
+  async share() {
+    // this.contentShareHandler.shareContent(this.content, this.corRelationList, this.objRollup);
+    const popover = await this.popoverCtrl.create({
+      component: SbSharePopupComponent,
+      componentProps: {
+        contentDetail: this.content,
+        corRelationList: this.corRelationList,
+        objRollup: this.objRollup,
+      },
+      cssClass: 'sb-popover',
+    });
+    popover.present();
   }
 
   /**

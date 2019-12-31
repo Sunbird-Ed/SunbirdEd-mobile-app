@@ -1,0 +1,53 @@
+@import "src/assets/styles/base/_variables.scss";
+
+.flex-grow-1{
+    flex-grow: 1;
+}
+
+.sb-popover .sb-popover-footer .sb-popover-action-btn.sb-btn-outline-info {
+    color: $primary-color;
+    margin: 0 10px;
+}
+
+.content-share{
+    ion-radio{
+        margin-right: 10px !important;
+    }
+    .share-link{
+        border-bottom: 1px solid #eee;
+    }
+    .share-url{
+        margin-left: 50px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        margin-right: 15px;
+        border: 1px solid #EDF4F9;
+        padding: 5px;
+        color: #a4a4a4;
+        position: relative;
+        top: -10px;
+    }
+    .share-desc{
+        text-align: left;
+        margin-left: 50px;
+        color: #a4a4a4;
+        position: relative;
+        top: -10px;
+    }
+    .share-info{
+        background: #EDF4F9;
+        margin-left: 20px;
+        padding: 5px;
+        margin-right: 15px;
+        text-align: left;
+        margin-bottom: 20px;
+        color: #333333a1;
+        ion-icon{
+            color: #a4a4a4;
+            position: relative;
+            top: 3px;
+        }
+    }
+}
+
