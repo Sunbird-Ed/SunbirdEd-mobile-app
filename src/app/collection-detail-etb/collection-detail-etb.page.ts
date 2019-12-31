@@ -1552,6 +1552,7 @@ export class CollectionDetailEtbPage implements OnInit {
       this.headerService.hideHeader();
     }
     const option: ContentImportRequest = {
+      withPriority: 1,
       contentImportArray: this.getImportContentRequestBody(identifiers, isChild),
       contentStatusArray: ['Live'],
       fields: ['appIcon', 'name', 'subject', 'size', 'gradeLevel'],
