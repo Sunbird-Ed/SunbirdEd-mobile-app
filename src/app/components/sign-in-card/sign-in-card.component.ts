@@ -32,6 +32,7 @@ import {
 } from '@app/services/telemetry-constants';
 import { ContainerService } from '@app/services/container.services';
 import { Router } from '@angular/router';
+import { AppGlobalService } from '@app/services';
 
 @Component({
   selector: 'app-sign-in-card',
@@ -62,7 +63,8 @@ export class SignInCardComponent implements OnInit {
     private formAndFrameworkUtilService: FormAndFrameworkUtilService,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private router: Router,
-    private events: Events
+    private events: Events,
+    private appGlobalService: AppGlobalService
   ) {
 
     this.appVersion.getAppName()
@@ -76,6 +78,7 @@ export class SignInCardComponent implements OnInit {
   }
 
   async signIn() {
+    this.appGlobalService.resetSavedQuizContent();
     // clean the prefernces to avoid unnecessary enrolment
     if (!this.fromEnrol) {
       this.preferences.putString(PreferenceKey.BATCH_DETAIL_KEY, '').toPromise();
