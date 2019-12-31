@@ -1761,7 +1761,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
         this.objRollup,
         this.corRelationList
       );
-      this.resetSavedQuizContent();
+      this.appGlobalService.resetSavedQuizContent();
       this.loginHandlerService.signIn();
     }
   }
@@ -1806,10 +1806,5 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
     return ContentUtil.mergeProperties(this.course, mergeProp);
   }
 
-  // This method is used to reset if any quiz content data is previously saved before Joining a Training
-  // So it wont affect in the exterId verification page
-  resetSavedQuizContent() {
-    this.appGlobalService.limitedShareQuizContent = null;
-  }
 
 }
