@@ -6,7 +6,7 @@ import { File } from '@ionic-native/file/ngx';
 import { InteractSubtype, Environment, PageId } from '@app/services/telemetry-constants';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { ContentInfo } from '../content-info';
-import { RouterLinks, ContentType } from '@app/app/app.constant';
+import { RouterLinks, ContentType, ContentFilterConfig } from '@app/app/app.constant';
 import { Router } from '@angular/router';
 import { CommonUtilService } from '@app/services/common-util.service';
 import { Course, CourseService } from 'sunbird-sdk';
@@ -76,7 +76,8 @@ export class ContentPlayerHandler {
         }
         this.playerService.getPlayerConfig(content, request).subscribe((data) => {
             data['data'] = {};
-            if (isCourse) {
+            if (isCourse || (content.contentData &&
+                content.contentData.status === ContentFilterConfig.CONTENT_STATUS_UNLISTED)) {
                 data.config.overlay.enableUserSwitcher = false;
                 data.config.overlay.showUser = false;
             } else {
