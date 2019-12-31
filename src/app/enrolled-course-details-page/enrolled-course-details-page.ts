@@ -1761,6 +1761,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
         this.objRollup,
         this.corRelationList
       );
+      this.appGlobalService.resetSavedQuizContent();
       this.loginHandlerService.signIn();
     }
   }
@@ -1804,5 +1805,6 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
   mergeProperties(mergeProp) {
     return ContentUtil.mergeProperties(this.course, mergeProp);
   }
+
 
 }

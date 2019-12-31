@@ -90,6 +90,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
 
   onAction(type: string, action?: { identifier: string }, isFromLink = true): Observable<undefined> {
     const identifier: any = action !== undefined ? action.identifier : this.identifier;
+    this.appGlobalServices.resetSavedQuizContent();
     if (identifier) {
       switch (type) {
         case 'content': {
