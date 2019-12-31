@@ -77,8 +77,8 @@
   <div *ngFor="let firstChildren of childData?.children; let j = index;" [ngClass]="{'sb-collection-child-ftue': isTextbookTocPage}">
     <app-collection-child [renderLevel]="renderLevel + 1" [childData]="firstChildren" [breadCrumb]="breadCrumb"
       [activeMimeTypeFilter]="activeMimeTypeFilter" [rootUnitId]="rootUnitId" [isTextbookTocPage]="isTextbookTocPage"
-      [bookID]="bookID" [isEnrolled]="isEnrolled" [fromCourseToc]="fromCourseToc" [isBatchNotStarted]="isBatchNotStarted"
-      [stckyUnitTitle]="stckyUnitTitle" [contentStatusData]="contentStatusData" [latestParentNodes]="latestParentNodes"
-      [stckyindex]="stckyindex" [latestParentName]="latestParentName" [updatedCourseCardData]="updatedCourseCardData" [batch]="batchDetails"></app-collection-child>
+      [bookID]="bookID" [isEnrolled]="isEnrolled" [fromCourseToc]="fromCourseToc" [isBatchNotStarted]="isBatchNotStarted"  [stckyUnitTitle]="stckyUnitTitle"
+       [stckyindex]="stckyindex" [latestParentName]="latestParentName" [latestParentNodes]="latestParentNodes" [contentStatusData]="contentStatusData"
+                          [updatedCourseCardData]="updatedCourseCardData" [batch]="batch"></app-collection-child>
   </div>
 </div>

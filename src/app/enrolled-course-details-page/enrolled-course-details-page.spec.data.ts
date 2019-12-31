@@ -184,3 +184,168 @@ export const contentDetailsResponse: Content = {
         }
     ],
 };
+
+export const mockCourseCardData = {
+    mimeTypesCount: '{\'video/webm\':1,\'application/vnd.ekstep.content-collection\':2,\'video/mp4\':1}',
+    identifier: 'do_2127509908237926401406',
+    size: 73058,
+    name: 'Today today 29',
+    status: 'Live',
+    pkgVersion: 1,
+    compatibilityLevel: 4,
+    ownedBy: '0124784842112040965',
+    resourceType: 'Course',
+    node_id: 526456,
+    batch: {
+        identifier: '0127580528849387521',
+        endDate: null,
+        createdBy: 'ab467e6e-1f32-453c-b1d8-c6b5fa6c7b9e',
+        name: '9may open batch',
+        enrollmentType: 'open',
+        startDate: '2019-05-09',
+        status: 1
+    }
+};
+
+export const mockEnrolledCourses = [
+    {
+      dateTime: '2019-05-17 05:29:01.305Z',
+      lastReadContentStatus: 2,
+      contentId: 'do_2127509908237926401406',
+      batch: {
+        identifier: '0127580528849387521',
+        endDate: null,
+        createdBy: 'ab467e6e-1f32-453c-b1d8-c6b5fa6c7b9e',
+        name: '9may open batch',
+        enrollmentType: 'open',
+        startDate: '2019-05-09',
+        status: 1
+      },
+      description: 'Enter description for Course',
+      courseLogoUrl: 'https://ntpstagingall.blob.core.windows.net/ntp-content-staging/content/do_2127509908237926401406/artifact/4c1dbdc7d062dd11cd5b8bf5bbd25d61_1551854311088.thumb.jpg',
+      batchId: '0127580528849387521',
+      userId: '993230e2-d9f5-44fe-8b9c-fbfe5a1a3204'
+    }
+  ];
+
+export const mockGetChildDataResponse = [
+    {
+      identifier: 'do_2127509912525127681407',
+      contentData: {
+        identifier: 'do_2127509912525127681407',
+        pkgVersion: 1,
+        name: 'Unit 1',
+        lastUpdatedOn: '2019-04-29T05:59:21.903+0000',
+        contentType: 'CourseUnit',
+        status: 'Live'
+      },
+      isUpdateAvailable: false,
+      mimeType: 'application/vnd.ekstep.content-collection',
+      contentType: 'courseunit',
+      isAvailableLocally: false,
+      referenceCount: 1,
+      sizeOnDevice: 0,
+      hierarchyInfo: [
+        {
+          identifier: 'do_2127509908237926401406',
+          contentType: 'course'
+        },
+        {
+          identifier: 'do_2127509912525127681407',
+          contentType: 'courseunit'
+        }
+      ],
+      children: [
+        {
+          identifier: 'do_21274246255366963214046',
+          contentData: {
+            size: 2466640,
+            name: 'Sachin Mp4_1101'
+          },
+          isUpdateAvailable: false,
+          mimeType: 'video/mp4',
+          basePath: '/storage/emulated/0/Android/data/org.sunbird.app.staging/files/content/do_21274246255366963214046/',
+          contentType: 'resource',
+          isAvailableLocally: false,
+          referenceCount: 1,
+          sizeOnDevice: 2737,
+          hierarchyInfo: [
+            {
+              identifier: 'do_2127509908237926401406',
+              contentType: 'course'
+            },
+            {
+              identifier: 'do_2127509912525127681407',
+              contentType: 'courseunit'
+            }
+          ]
+        }
+      ]
+    },
+    {
+      identifier: 'do_2127509912525127681408',
+      contentData: {
+        identifier: 'do_2127509912525127681408',
+        name: 'Unit 2',
+        contentType: 'CourseUnit',
+        status: 'Live',
+        size: 27717357,
+      },
+      isUpdateAvailable: false,
+      mimeType: 'application/vnd.ekstep.content-collection',
+      basePath: '',
+      contentType: 'courseunit',
+      isAvailableLocally: false,
+      referenceCount: 1,
+      sizeOnDevice: 0,
+      hierarchyInfo: [
+        {
+          identifier: 'do_2127509908237926401406',
+          contentType: 'course'
+        },
+        {
+          identifier: 'do_2127509912525127681408',
+          contentType: 'courseunit'
+        }
+      ],
+      children: [
+        {
+          identifier: 'do_21274246302428364814048',
+          contentData: {
+            size: 27717357,
+            name: 'sachin webm_1011',
+            status: 'Live'
+          },
+          isUpdateAvailable: false,
+          mimeType: 'video/webm',
+          basePath: '/storage/emulated/0/Android/data/org.sunbird.app.staging/files/content/do_21274246302428364814048/',
+          contentType: 'resource',
+          isAvailableLocally: false,
+          referenceCount: 1,
+          sizeOnDevice: 2801,
+          hierarchyInfo: [
+            {
+              identifier: 'do_2127509908237926401406',
+              contentType: 'course'
+            },
+            {
+              identifier: 'do_2127509912525127681408',
+              contentType: 'courseunit'
+            }
+          ]
+        }
+      ]
+    }
+  ];
+
+export const mockImportContentResponse = [
+    {
+      identifier: 'do_21274246255366963214046',
+      status: 0
+    },
+    {
+      identifier: 'do_21274246302428364814048',
+      status: 0
+    }
+  ];
+

@@ -2,12 +2,12 @@ import { EnrolledCourseDetailsPage } from './enrolled-course-details-page';
 import {
     ProfileService, ContentService, EventsBusService, CourseService, SharedPreferences,
     AuthService, CorrelationData, TelemetryObject, FetchEnrolledCourseRequest,
-    Content, ContentFeedback, ProfileType, UnenrollCourseRequest, InteractType, Rollup, Batch, ContentDetailRequest, ServerProfileDetailsRequest, ServerProfile, ContentImportRequest
+    ProfileType, UnenrollCourseRequest, ContentDetailRequest, ServerProfileDetailsRequest, ServerProfile,
 } from 'sunbird-sdk';
 import {
     LoginHandlerService, CourseUtilService, AppGlobalService, TelemetryGeneratorService,
     CommonUtilService, UtilityService, AppHeaderService, ContentShareHandlerService,
-    LocalCourseService, PageId, InteractSubtype, Environment
+    LocalCourseService
 } from '../../services';
 import { NgZone } from '@angular/core';
 import { Events, PopoverController, Platform } from '@ionic/angular';
@@ -18,20 +18,22 @@ import { AppVersion } from '@ionic-native/app-version/ngx';
 import { FileSizePipe } from '../../pipes/file-size/file-size';
 import { ContentDeleteHandler } from '../../services/content/content-delete-handler';
 import { Location } from '@angular/common';
-import { mockEnrolledData, contentDetailsResponse } from './enrolled-course-details-page.spec.data';
+import {
+    mockEnrolledData, contentDetailsResponse, mockCourseCardData,
+    mockGetChildDataResponse, mockImportContentResponse
+} from './enrolled-course-details-page.spec.data';
 import { of, Subject, throwError } from 'rxjs';
 import { ContentInfo } from '../../services/content/content-info';
-import { ContentActionsComponent } from '../components';
-import { present } from '@ionic/core/dist/types/utils/overlays';
-import { rejects } from 'assert';
-import { identifier } from '@babel/types';
 import { PreferenceKey, ProfileConstants } from '../app.constant';
 import { isObject } from 'util';
+import dayjs from 'dayjs';
 
 describe('EnrolledCourseDetailsPage', () => {
     let enrolledCourseDetailsPage: EnrolledCourseDetailsPage;
     const mockProfileService: Partial<ProfileService> = {};
-    const mockContentService: Partial<ContentService> = {};
+    const mockContentService: Partial<ContentService> = {
+        importContent: jest.fn(() => of(mockImportContentResponse))
+    };
     const mockEventsBusService: Partial<EventsBusService> = {};
     const mockCourseService: Partial<CourseService> = {};
     const mockPreferences: Partial<SharedPreferences> = {};
@@ -73,7 +75,6 @@ describe('EnrolledCourseDetailsPage', () => {
             mockEventsBusService as EventsBusService,
             mockCourseService as CourseService,
             mockPreferences as SharedPreferences,
-            mockAuthService as AuthService,
             mockLoginHandlerService as LoginHandlerService,
             mockZone as NgZone,
             mockEvents as Events,
@@ -90,11 +91,8 @@ describe('EnrolledCourseDetailsPage', () => {
             mockContentShareHandler as ContentShareHandlerService,
             mockLocation as Location,
             mockRouter as Router,
-            mockTranslate as TranslateService,
-            mockPopOverCtrl as PopoverController,
             mockContentDeleteHandler as ContentDeleteHandler,
-            mockLocalCourseService as LocalCourseService,
-            mockAppVersion as AppVersion
+            mockLocalCourseService as LocalCourseService
         );
     });
 
@@ -634,8 +632,8 @@ describe('EnrolledCourseDetailsPage', () => {
             contentTypesCount: 'course'
         };
         JSON.parse = jest.fn().mockImplementationOnce(() => {
-             return enrolledCourseDetailsPage.course.contentTypesCount;
-          });
+            return enrolledCourseDetailsPage.course.contentTypesCount;
+        });
         // act
         enrolledCourseDetailsPage.setCourseStructure();
         // assert
@@ -661,8 +659,8 @@ describe('EnrolledCourseDetailsPage', () => {
             contentTypesCount: 'sample-content-count'
         };
         JSON.parse = jest.fn().mockImplementationOnce(() => {
-             return enrolledCourseDetailsPage.courseCardData.contentTypesCount;
-          });
+            return enrolledCourseDetailsPage.courseCardData.contentTypesCount;
+        });
         // act
         enrolledCourseDetailsPage.setCourseStructure();
         // assert
@@ -711,4 +709,39 @@ describe('EnrolledCourseDetailsPage', () => {
     //         done();
     //     }, 0);
     // });
+
+    it('should show DownloadConfirmation Popup', () => {
+        // arrange
+        const presentFn = jest.fn(() => ({}));
+        const onDidDismissFn = jest.fn(() => ({ data: { unenroll: true } }));
+        mockPopoverCtrl.create = jest.fn(() => ({
+            present: presentFn,
+            onDidDismiss: onDidDismissFn
+        }) as any);
+        mockFileSizePipe.transform = jest.fn();
+        mockDatePipe.transform = jest.fn();
+        enrolledCourseDetailsPage.courseCardData = mockCourseCardData;
+        mockCommonUtilService.networkInfo = { isNetworkAvailable: true };
+        enrolledCourseDetailsPage.downloadIdentifiers = new Set(['do_12345']);
+        // act
+        enrolledCourseDetailsPage.showDownloadConfirmationAlert();
+        // assert
+        expect(mockPopoverCtrl.create).toHaveBeenCalled();
+    });
+
+    it('should populate downloadIdentifiers', () => {
+        // arrange
+        // act
+        enrolledCourseDetailsPage.getContentsSize(mockGetChildDataResponse);
+        // assert
+        expect(enrolledCourseDetailsPage.downloadIdentifiers.size).toEqual(4);
+    });
+
+    it('should populate queuedIdentifiers', () => {
+        // arrange
+        // act
+        enrolledCourseDetailsPage.importContent(['do_21274246255366963214046', 'do_21274246302428364814048'], true, true);
+        // assert
+        expect(enrolledCourseDetailsPage.queuedIdentifiers).toEqual(['do_21274246255366963214046', 'do_21274246302428364814048']);
+    });
 });
