@@ -75,20 +75,20 @@ export class ContentUtil {
     return appIcon;
   }
 
-  public static resolvePDFUrl(content: Content): string | undefined {
-    let url: string | undefined;
+  public static resolvePDFPreview(content: Content): { url: string, availableLocally: boolean } | undefined {
+    let pdf: { url: string, availableLocally: boolean } | undefined;
 
     if (!content.contentData.itemSetPreviewUrl) {
       return undefined;
     }
 
     try {
-      url = (new URL(content.contentData.itemSetPreviewUrl)).toString();
+      pdf = { url: (new URL(content.contentData.itemSetPreviewUrl)).toString(), availableLocally: false };
     } catch (e) {
-      url = content.basePath + content.contentData.itemSetPreviewUrl;
+      pdf = { url: content.basePath + content.contentData.itemSetPreviewUrl, availableLocally: true };
     }
 
-    return url;
+    return pdf;
   }
 
   /**

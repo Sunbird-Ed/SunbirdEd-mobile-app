@@ -2,7 +2,7 @@ import {Content} from 'sunbird-sdk';
 import {ContentUtil} from '@app/util/content-util';
 
 describe('ContentUtil', () => {
-    describe('resolvePDFUrl()', () => {
+    describe('resolvePDFPreview()', () => {
         it('should return undefined if no itemSetPreviewUrl is set for Content', () => {
             // arrange
             const content: Partial<Content> = {
@@ -12,7 +12,7 @@ describe('ContentUtil', () => {
             };
 
             // act / assert
-            expect(ContentUtil.resolvePDFUrl(content as Content)).toEqual(undefined);
+            expect(ContentUtil.resolvePDFPreview(content as Content)).toEqual(undefined);
         });
 
         it('should return network url if itemSetPreviewUrl is set for Content as network url', () => {
@@ -24,7 +24,12 @@ describe('ContentUtil', () => {
             };
 
             // act / assert
-            expect(ContentUtil.resolvePDFUrl(content as Content)).toEqual('http://some_domain.com/som_path.some_extension');
+            expect(ContentUtil.resolvePDFPreview(content as Content)).toEqual(
+                expect.objectContaining({
+                    url: 'http://some_domain.com/som_path.some_extension',
+                    availableLocally: false
+                })
+            );
         });
 
         it('should return local url if itemSetPreviewUrl is set for Content as bundled relative path', () => {
@@ -37,7 +42,12 @@ describe('ContentUtil', () => {
             };
 
             // act / assert
-            expect(ContentUtil.resolvePDFUrl(content as Content)).toEqual('http://some_domain.com/some_path.some_extension');
+            expect(ContentUtil.resolvePDFPreview(content as Content)).toEqual(
+                expect.objectContaining({
+                    url: 'http://some_domain.com/some_path.some_extension',
+                    availableLocally: false
+                })
+            );
 
             content = {
                 basePath: 'file://some_local_path/some_local_path',
@@ -47,7 +57,12 @@ describe('ContentUtil', () => {
             };
 
             // act / assert
-            expect(ContentUtil.resolvePDFUrl(content as Content)).toEqual('file://some_local_path/some_local_path/some_path.some_extension');
+            expect(ContentUtil.resolvePDFPreview(content as Content)).toEqual(
+                expect.objectContaining({
+                    url: 'file://some_local_path/some_local_path/some_path.some_extension',
+                    availableLocally: true
+                })
+            );
         });
     });
 });
