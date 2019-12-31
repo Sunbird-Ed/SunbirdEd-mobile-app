@@ -34,7 +34,9 @@ describe('ResourcesComponent', () => {
     };
     const mockEventBusService: Partial<EventsBusService> = {};
     const mockFrameworkUtilService: Partial<FrameworkUtilService> = {};
-    const mockframeworkService: Partial<FrameworkService> = {};
+    const mockframeworkService: Partial<FrameworkService> = {
+        getActiveChannelId: jest.fn()
+    };
     const mockContentService: Partial<ContentService> = {};
     const mockSplashScreenDeeplinkActionHandlerDelegate: Partial<SplaschreenDeeplinkActionHandlerDelegate> = {};
     const mockNgZone: Partial<NgZone> = {};
@@ -42,13 +44,16 @@ describe('ResourcesComponent', () => {
     const mockEvents: Partial<Events> = {
         subscribe: jest.fn(() => 'playConfig')
     };
-    const mockAppGlobalService: Partial<AppGlobalService> = {};
+    const mockAppGlobalService: Partial<AppGlobalService> = {
+        selectedBoardMediumGrade: jest.fn()
+    };
     const mockAppVersion: Partial<AppVersion> = {
         getAppName: jest.fn(() => Promise.resolve('Sunbird'))
     };
     const mockNetwork: Partial<Network> = {};
     const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {
-        generateExtraInfoTelemetry: jest.fn()
+        generateExtraInfoTelemetry: jest.fn(),
+        generateStartSheenAnimationTelemetry: jest.fn()
     };
     const mockCommonUtilService: Partial<CommonUtilService> = {
         convertFileSrc: jest.fn()
@@ -149,7 +154,7 @@ describe('ResourcesComponent', () => {
     it('should getActive ChannelId when getActiveChannelId()', (done) => {
         // arrange
         mockframeworkService.getActiveChannelId = jest.fn(() => {
-           return  of('sample_channel');
+            return of('sample_channel');
         });
         // act
         resourcesComponent.getChannelId();
@@ -158,5 +163,38 @@ describe('ResourcesComponent', () => {
             expect(mockframeworkService.getActiveChannelId).toHaveBeenCalled();
             done();
         }, 0);
+    });
+
+    it('should configure and set details of board, medium and class when getPopularContent() is called', (done) => {
+        // arrange
+        spyOn(resourcesComponent, 'getGroupByPage').and.stub();
+        spyOn(mockTelemetryGeneratorService, 'generateStartSheenAnimationTelemetry').and.stub();
+        spyOn(mockframeworkService, 'getActiveChannelId').and.returnValue(of('sample_channelId'));
+        // act
+        resourcesComponent.getChannelId();
+        resourcesComponent.getPopularContent(false);
+        // assert
+        setTimeout(() => {
+            expect(resourcesComponent.getGroupByPage).toHaveBeenCalled();
+            expect(resourcesComponent.getGroupByPageReq.board).toBe(undefined);
+            expect(resourcesComponent.getGroupByPageReq.channel).toEqual(
+                (expect.arrayContaining(['sample_channelId']))
+            );
+            done();
+        }, 0);
+    });
+
+    it('should get board, medium and grade if available and search Data accordingly when called', () => {
+        // arrange
+        mockAppGlobalService.setSelectedBoardMediumGrade = jest.fn();
+        mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+        mockContentService.searchContentGroupedByPageSection = jest.fn(() => of());
+        mockNgZone.run = jest.fn();
+        // act
+        resourcesComponent.getGroupByPage();
+        // assert
+        expect(mockAppGlobalService.setSelectedBoardMediumGrade).toHaveBeenCalled();
+        expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
+        expect(mockContentService.searchContentGroupedByPageSection).toHaveBeenCalled();
     });
 });

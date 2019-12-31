@@ -437,10 +437,10 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
     }
     if (contentSearchCriteria.board) {
       this.getGroupByPageReq.board = [contentSearchCriteria.board[0]];
-    }
-    if (contentSearchCriteria.board === undefined) {
+    } else {
       this.getGroupByPageReq.channel = [this.channelId];
     }
+
     this.getGroupByPageReq.mode = 'hard';
     this.getGroupByPageReq.facets = Search.FACETS_ETB;
     this.getGroupByPageReq.contentTypes = [ContentType.TEXTBOOK];
