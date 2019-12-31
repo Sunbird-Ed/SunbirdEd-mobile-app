@@ -8,6 +8,7 @@ import { TeacherIdVerificationComponent } from '@app/app/components/popups/teach
 import { ProfileConstants } from '@app/app/app.constant';
 import { map } from 'rxjs/operators';
 import { SplaschreenDeeplinkActionHandlerDelegate } from './sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
+import { CommonUtilService } from './common-util.service';
 
 @Injectable()
 export class ExternalIdVerificationService {
@@ -19,6 +20,7 @@ export class ExternalIdVerificationService {
         private popoverCtrl: PopoverController,
         private formAndFrameworkUtilService: FormAndFrameworkUtilService,
         private splaschreenDeeplinkActionHandlerDelegate: SplaschreenDeeplinkActionHandlerDelegate,
+        private commonUtilService: CommonUtilService,
     ) {
         this.isCustodianUser$ = this.profileService.isDefaultChannelProfile().pipe(
             map((isDefaultChannelProfile) => isDefaultChannelProfile) as any
@@ -27,6 +29,9 @@ export class ExternalIdVerificationService {
 
     async showExternalIdVerificationPopup() {
         if (await this.checkQuizContent()) {
+            return;
+        }
+        if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
             return;
         }
         const session = await this.appGlobalService.authService.getSession().toPromise();
