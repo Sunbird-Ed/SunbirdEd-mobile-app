@@ -1,4 +1,4 @@
-import { Rollup, ContentData, TelemetryObject } from 'sunbird-sdk';
+import { Rollup, Content, ContentData, TelemetryObject } from 'sunbird-sdk';
 export class ContentUtil {
 
 
@@ -73,6 +73,22 @@ export class ContentUtil {
       }
     }
     return appIcon;
+  }
+
+  public static resolvePDFUrl(content: Content): string | undefined {
+    let url: string | undefined;
+
+    if (!content.contentData.itemSetPreviewUrl) {
+      return undefined;
+    }
+
+    try {
+      url = (new URL(content.contentData.itemSetPreviewUrl)).toString();
+    } catch (e) {
+      url = content.basePath + content.contentData.itemSetPreviewUrl;
+    }
+
+    return url;
   }
 
   /**
