@@ -27,6 +27,7 @@ import { ContentInfo } from '../../services/content/content-info';
 import { PreferenceKey, ProfileConstants } from '../app.constant';
 import { isObject } from 'util';
 import dayjs from 'dayjs';
+import { SbPopoverComponent } from '../components/popups';
 
 describe('EnrolledCourseDetailsPage', () => {
     let enrolledCourseDetailsPage: EnrolledCourseDetailsPage;
@@ -38,7 +39,9 @@ describe('EnrolledCourseDetailsPage', () => {
     const mockCourseService: Partial<CourseService> = {};
     const mockPreferences: Partial<SharedPreferences> = {};
     const mockAuthService: Partial<AuthService> = {};
-    const mockLoginHandlerService: Partial<LoginHandlerService> = {};
+    const mockLoginHandlerService: Partial<LoginHandlerService> = {
+        signIn: jest.fn()
+    };
     const mockZone: Partial<NgZone> = {
         run: jest.fn()
     };
@@ -50,9 +53,13 @@ describe('EnrolledCourseDetailsPage', () => {
     const mockAppGlobalService: Partial<AppGlobalService> = {
         getUserId: jest.fn(() => 'SAMPLE_USER'),
         isUserLoggedIn: jest.fn(() => false),
-        getGuestUserInfo: jest.fn(() => Promise.resolve('SAMPLE_GUEST_USER'))
+        getGuestUserInfo: jest.fn(() => Promise.resolve('SAMPLE_GUEST_USER')),
+        resetSavedQuizContent: jest.fn()
     };
-    const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {};
+    const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {
+        generateImpressionTelemetry: jest.fn(),
+        generateInteractTelemetry: jest.fn()
+    };
     const mockCommonUtilService: Partial<CommonUtilService> = {};
     const mockDatePipe: Partial<DatePipe> = {};
     const mockUtilityService: Partial<UtilityService> = {};
@@ -63,7 +70,6 @@ describe('EnrolledCourseDetailsPage', () => {
         getCurrentNavigation: jest.fn(() => mockEnrolledData)
     };
     const mockTranslate: Partial<TranslateService> = {};
-    const mockPopOverCtrl: Partial<PopoverController> = {};
     const mockContentDeleteHandler: Partial<ContentDeleteHandler> = {};
     const mockLocalCourseService: Partial<LocalCourseService> = {};
     const mockAppVersion: Partial<AppVersion> = {};
@@ -743,5 +749,54 @@ describe('EnrolledCourseDetailsPage', () => {
         enrolledCourseDetailsPage.importContent(['do_21274246255366963214046', 'do_21274246302428364814048'], true, true);
         // assert
         expect(enrolledCourseDetailsPage.queuedIdentifiers).toEqual(['do_21274246255366963214046', 'do_21274246302428364814048']);
+    });
+
+    it('should show the Login Popup', () => {
+        // arrange
+        mockPopoverCtrl.create = jest.fn(() => (Promise.resolve({
+            present: jest.fn(() => Promise.resolve({})),
+            onDidDismiss: jest.fn(() => Promise.resolve({ canDelete: '' }))
+        } as any)));
+        // act
+        enrolledCourseDetailsPage.promptToLogin({});
+        // assert
+        expect(mockPopoverCtrl.create).toHaveBeenCalledWith(
+            {
+                component: SbPopoverComponent,
+                componentProps: {
+                    actionsButtons: [
+                        {
+                            btnClass: 'popover-color',
+                            btntext: '',
+
+                        },
+
+                    ],
+                    isNotShowCloseIcon: true,
+                    metaInfo: '',
+                    sbPopoverHeading: '',
+                    sbPopoverMainTitle: '',
+
+                },
+                cssClass: 'sb-popover info',
+            });
+    });
+
+    it('should invoke LoginHandler sigin method', () => {
+        // arrange
+        mockPopoverCtrl.create = jest.fn(() => (Promise.resolve({
+            present: jest.fn(() => Promise.resolve({})),
+            onDidDismiss: jest.fn(() => Promise.resolve({ data: { canDelete: true } }))
+        } as any)));
+        jest.spyOn(mockLoginHandlerService, 'signIn');
+        // act
+        enrolledCourseDetailsPage.promptToLogin({ batchId: '0123456' });
+        // assert
+
+        setTimeout(() => {
+            expect(mockLoginHandlerService.signIn).toHaveBeenCalled();
+            expect(mockAppGlobalService.resetSavedQuizContent).toHaveBeenCalled();
+        }, 0);
+
     });
 });
