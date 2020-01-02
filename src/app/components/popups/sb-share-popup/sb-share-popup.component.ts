@@ -17,7 +17,6 @@ export class SbSharePopupComponent implements OnInit, OnDestroy {
   @Input() contentDetail: any;
   @Input() corRelationList: any;
   @Input() objRollup: any;
-  @Input() showHeader = true;
   backButtonFunc: Subscription;
   shareOptions = {
       link: {
@@ -40,18 +39,17 @@ export class SbSharePopupComponent implements OnInit, OnDestroy {
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
     public popoverCtrl: PopoverController,
     private platform: Platform,
-    private events: Events,
     private contentShareHandler: ContentShareHandlerService,
     private commonUtilService: CommonUtilService,
     private utilityService: UtilityService) { }
 
   async ngOnInit() {
     this.backButtonFunc = this.platform.backButton.subscribeWithPriority(11, () => {
-      this.popoverCtrl.dismiss({ isLeftButtonClicked: null });
+      this.popoverCtrl.dismiss();
       this.backButtonFunc.unsubscribe();
     });
     this.shareType = this.shareOptions.link.value;
-    console.log('in ngOnInit share popup', this.contentDetail);
+    
     if (this.contentDetail.hierarchyInfo && this.contentDetail.hierarchyInfo.length > 0) {
       const contentDetailRequest: ContentDetailRequest = {
         contentId: this.contentDetail.hierarchyInfo[0].identifier,
@@ -102,8 +100,5 @@ export class SbSharePopupComponent implements OnInit, OnDestroy {
     this.popoverCtrl.dismiss();
   }
 
-  onShareTypeChange(event) {
-    console.log('event', event);
-  }
 
 }
