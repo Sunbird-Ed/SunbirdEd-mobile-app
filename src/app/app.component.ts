@@ -371,7 +371,8 @@ export class AppComponent implements OnInit, AfterViewInit {
       console.log('URL' + this.router.url);
       if (this.router.url === RouterLinks.LIBRARY_TAB || this.router.url === RouterLinks.COURSE_TAB
         || this.router.url === RouterLinks.DOWNLOAD_TAB || this.router.url === RouterLinks.PROFILE_TAB ||
-        this.router.url === RouterLinks.GUEST_PROFILE_TAB) {
+        this.router.url === RouterLinks.GUEST_PROFILE_TAB || this.router.url === RouterLinks.ONBOARDING_DISTRICT_MAPPING
+      ) {
         if (await this.menuCtrl.isOpen()) {
           this.menuCtrl.close();
         } else {

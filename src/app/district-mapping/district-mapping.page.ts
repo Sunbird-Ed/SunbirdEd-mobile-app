@@ -26,19 +26,29 @@ import { ExternalIdVerificationService } from '@app/services/externalid-verifica
   templateUrl: './district-mapping.page.html',
   styleUrls: ['./district-mapping.page.scss'],
 })
-export class DistrictMappingPage implements OnInit {
+export class DistrictMappingPage {
+  get profile(): Profile | undefined {
+    return window.history.state.profile;
+  }
+  get isShowBackButton(): boolean {
+    if (window.history.state.isShowBackButton === undefined) {
+      return true;
+    }
+    return window.history.state.isShowBackButton;
+  }
+  get source() {
+    return window.history.state.source;
+  }
+
   stateName;
   districtName;
   name;
   stateList;
   districtList;
-  profile: Profile;
   showStates: boolean;
   showDistrict: boolean;
   stateCode;
   districtCode;
-  isShowBackButton = true;
-  source;
   backButtonFunc: Subscription;
   showNotNowFlag = false;
   availableLocationData: any;
@@ -68,25 +78,8 @@ export class DistrictMappingPage implements OnInit {
     private ngZone: NgZone,
     private externalIdVerificationService: ExternalIdVerificationService
   ) {
-    if (this.router.getCurrentNavigation().extras.state) {
-      this.profile = this.router.getCurrentNavigation().extras.state.profile;
-      this.isShowBackButton = this.router.getCurrentNavigation().extras.state.isShowBackButton;
-      this.source = this.router.getCurrentNavigation().extras.state.source;
-    }
     this.isKeyboardShown$ = deviceInfo.isKeyboardShown().do(() => this.changeDetectionRef.detectChanges());
   }
-
-  ngOnInit() {
-    this.handleDeviceBackButton();
-    this.checkLocationMandatory();
-    this.telemetryGeneratorService.generateImpressionTelemetry(
-      ImpressionType.VIEW,
-      '',
-      PageId.DISTRICT_MAPPING,
-      this.getEnvironment(), '', '', '', undefined,
-      featureIdMap.location.LOCATION_CAPTURE);
-  }
-
   selectState(name, id, code) {
     this.getState(name, id, code);
     this.districtName = '';
@@ -137,6 +130,15 @@ export class DistrictMappingPage implements OnInit {
   }
 
   async ionViewWillEnter() {
+    this.handleDeviceBackButton();
+    this.checkLocationMandatory();
+    this.telemetryGeneratorService.generateImpressionTelemetry(
+        ImpressionType.VIEW,
+        '',
+        PageId.DISTRICT_MAPPING,
+        this.getEnvironment(), '', '', '', undefined,
+        featureIdMap.location.LOCATION_CAPTURE);
+
     this.headerService.hideHeader();
     await this.checkLocationAvailability();
     await this.getStates();
