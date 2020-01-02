@@ -146,7 +146,7 @@ export class FormAndFrameworkUtilService {
         return new Promise((resolve, reject) => {
             console.log('checkNewAppVersion Called');
 
-            this.appVersion.getVersionCode()
+            return this.appVersion.getVersionCode()
                 .then((versionCode: any) => {
                     console.log('checkNewAppVersion Current app version - ' + versionCode);
                     let result: any;
@@ -158,7 +158,7 @@ export class FormAndFrameworkUtilService {
                         action: 'upgrade'
                     };
                     // form api call
-                    this.formService.getForm(req).toPromise()
+                    return this.formService.getForm(req).toPromise()
                         .then((res: any) => {
                             let fields: Array<any> = [];
                             let ranges: Array<any> = [];
@@ -187,7 +187,7 @@ export class FormAndFrameworkUtilService {
                                             type = element.type;
 
                                             if (type === forceType) {
-                                                return true; // this is to stop the foreach loop
+                                                break;
                                             }
                                         }
                                     }
@@ -198,7 +198,6 @@ export class FormAndFrameworkUtilService {
                                     }
                                 }
                             }
-
                             resolve(result);
                         }).catch((error: any) => {
                             reject(error);
