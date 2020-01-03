@@ -75,10 +75,6 @@ export class DistrictMappingPage {
   stateName;
   districtName;
   name;
-  stateList;
-  districtList;
-  showStates: boolean;
-  showDistrict: boolean;
   stateList = [];
   districtList = [];
   stateCode;
