@@ -191,7 +191,7 @@ export class FormConstant {
 
 export class PreferenceKey {
     public static readonly SELECTED_LANGUAGE_CODE = 'sunbirdselected_language_code';
-    public static readonly DEVICE_LOCATION = 'device_location';
+    public static readonly DEVICE_LOCATION = 'device_location_new';
     public static readonly IP_LOCATION = 'ip_location';
     public static readonly SELECTED_LANGUAGE = 'sunbirdselected_language';
     public static readonly SELECTED_USER_TYPE = 'sunbirdselected_user_type';
