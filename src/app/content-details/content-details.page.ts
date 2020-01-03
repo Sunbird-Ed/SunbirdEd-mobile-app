@@ -878,7 +878,8 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
         this.corRelationList);
     }
 
-    if (!AppGlobalService.isPlayerLaunched && this.userCount > 2 && this.network.type !== '2g' && !this.shouldOpenPlayAsPopup) {
+    if (!AppGlobalService.isPlayerLaunched && this.userCount > 2 && this.network.type !== '2g' && !this.shouldOpenPlayAsPopup
+      && !this.limitedShareContentFlag) {
       this.openPlayAsPopup(isStreaming);
     } else if (this.network.type === '2g' && !this.contentDownloadable[this.content.identifier]) {
       const popover = await this.popoverCtrl.create({
@@ -912,7 +913,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
         return;
       }
       if (data && data.isLeftButtonClicked) {
-        if (!AppGlobalService.isPlayerLaunched && this.userCount > 2 && !this.shouldOpenPlayAsPopup) {
+        if (!AppGlobalService.isPlayerLaunched && this.userCount > 2 && !this.shouldOpenPlayAsPopup && !this.limitedShareContentFlag) {
           this.openPlayAsPopup(isStreaming);
         } else {
           this.playContent(isStreaming);
