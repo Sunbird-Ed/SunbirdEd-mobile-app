@@ -59,9 +59,9 @@ export class ContentShareHandlerService {
     } else if (shareParams && shareParams.saveFile) {
       const exportContentRequest: ContentExportRequest = {
         contentIds: [content.identifier],
-        destinationFolder: cordova.file.externalRootDirectory + 'Download/'
+        destinationFolder: cordova.file.externalRootDirectory + 'Download/',
+        saveLocally: true
       };
-      console.log('exportContentRequest', exportContentRequest);
       this.contentService.exportContent(exportContentRequest).toPromise()
         .then(async (response: ContentExportResponse) => {
           console.log('ContentExportResponse', response);
