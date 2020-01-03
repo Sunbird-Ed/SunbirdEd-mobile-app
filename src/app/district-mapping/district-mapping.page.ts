@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject, ChangeDetectorRef, NgZone } from '@angular/core';
+import {Component, OnInit, Inject, ChangeDetectorRef, NgZone, ViewChild} from '@angular/core';
 import {
   LocationSearchCriteria, ProfileService,
   SharedPreferences, Profile, DeviceRegisterRequest, DeviceRegisterService, DeviceInfo
@@ -7,7 +7,7 @@ import { Location as loc, PreferenceKey, RouterLinks, LocationConfig } from '../
 import { AppHeaderService, CommonUtilService, AppGlobalService, FormAndFrameworkUtilService } from '@app/services';
 import { NavigationExtras, Router } from '@angular/router';
 import { Location } from '@angular/common';
-import { Events } from '@ionic/angular';
+import { Events, IonSelect } from '@ionic/angular';
 import { Subscription } from 'rxjs';
 import { Platform } from '@ionic/angular';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
@@ -22,24 +22,63 @@ import {
 import { featureIdMap } from '@app/feature-id-map';
 import { ExternalIdVerificationService } from '@app/services/externalid-verification.service';
 import { tap } from 'rxjs/operators';
+
 @Component({
   selector: 'app-district-mapping',
   templateUrl: './district-mapping.page.html',
   styleUrls: ['./district-mapping.page.scss'],
 })
-export class DistrictMappingPage implements OnInit {
+export class DistrictMappingPage {
+  get profile(): Profile | undefined {
+    return window.history.state.profile;
+  }
+  get isShowBackButton(): boolean {
+    if (window.history.state.isShowBackButton === undefined) {
+      return true;
+    }
+    return window.history.state.isShowBackButton;
+  }
+  get source() {
+    return window.history.state.source;
+  }
+
+  @ViewChild('stateSelect') stateSelect?: IonSelect;
+  @ViewChild('districtSelect') districtSelect?: IonSelect;
+
+  private _showStates: boolean;
+  private _showDistrict: boolean;
+
+  get showStates(): boolean {
+    return this._showStates;
+  }
+
+  set showStates(value: boolean) {
+    this._showStates = value;
+
+    if (this._showStates && this.stateSelect) {
+      this.stateSelect.open();
+    }
+  }
+
+  get showDistrict(): boolean {
+    return this._showDistrict;
+  }
+
+  set showDistrict(value: boolean) {
+    this._showDistrict = value;
+
+    if (this._showDistrict && this.districtSelect) {
+      this.districtSelect.open();
+    }
+  }
+
   stateName;
   districtName;
   name;
-  stateList;
-  districtList;
-  profile: Profile;
-  showStates: boolean;
-  showDistrict: boolean;
+  stateList = [];
+  districtList = [];
   stateCode;
   districtCode;
-  isShowBackButton = true;
-  source;
   backButtonFunc: Subscription;
   showNotNowFlag = false;
   availableLocationData: any;
@@ -69,27 +108,10 @@ export class DistrictMappingPage implements OnInit {
     private ngZone: NgZone,
     private externalIdVerificationService: ExternalIdVerificationService
   ) {
-    if (this.router.getCurrentNavigation().extras.state) {
-      this.profile = this.router.getCurrentNavigation().extras.state.profile;
-      this.isShowBackButton = this.router.getCurrentNavigation().extras.state.isShowBackButton;
-      this.source = this.router.getCurrentNavigation().extras.state.source;
-    }
     this.isKeyboardShown$ = deviceInfo.isKeyboardShown().pipe(
-      tap(() => this.changeDetectionRef.detectChanges())
+        tap(() => this.changeDetectionRef.detectChanges())
     );
   }
-
-  ngOnInit() {
-    this.handleDeviceBackButton();
-    this.checkLocationMandatory();
-    this.telemetryGeneratorService.generateImpressionTelemetry(
-      ImpressionType.VIEW,
-      '',
-      PageId.DISTRICT_MAPPING,
-      this.getEnvironment(), '', '', '', undefined,
-      featureIdMap.location.LOCATION_CAPTURE);
-  }
-
   selectState(name, id, code) {
     this.getState(name, id, code);
     this.districtName = '';
@@ -140,6 +162,15 @@ export class DistrictMappingPage implements OnInit {
   }
 
   async ionViewWillEnter() {
+    this.handleDeviceBackButton();
+    this.checkLocationMandatory();
+    this.telemetryGeneratorService.generateImpressionTelemetry(
+        ImpressionType.VIEW,
+        '',
+        PageId.DISTRICT_MAPPING,
+        this.getEnvironment(), '', '', '', undefined,
+        featureIdMap.location.LOCATION_CAPTURE);
+
     this.headerService.hideHeader();
     await this.checkLocationAvailability();
     await this.getStates();
@@ -190,13 +221,7 @@ export class DistrictMappingPage implements OnInit {
     }
   }
 
-  showStateList() {
-    this.districtName = '';
-    this.showStates = true;
-  }
-  showDistrictList() {
-    this.showDistrict = true;
-  }
+
   // validates the name input feild
   validateName() {
     if (this.name) {
@@ -228,7 +253,7 @@ export class DistrictMappingPage implements OnInit {
             this.generateAutoPopulatedTelemetry();
           }
         } else {
-          this.districtList = '';
+          this.districtList = [];
           this.showDistrict = !this.showDistrict;
           this.commonUtilService.showToast(this.commonUtilService.translateMessage('NO_DATA_FOUND'));
         }
