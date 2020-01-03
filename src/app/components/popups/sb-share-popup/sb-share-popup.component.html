@@ -8,7 +8,7 @@
   
   <ion-content no-padding class="sb-popover-container">
     <ion-list lines="none" class="content-share">
-        <ion-radio-group [(ngModel)]="shareType" (ionChange)="onShareTypeChange($event)">
+        <ion-radio-group [(ngModel)]="shareType">
             <div [ngClass]="{'share-link': !contentDetail.isAvailableLocally}">
               <ion-item>
                   <ion-label>{{shareOptions.link.name | translate}}</ion-label>
