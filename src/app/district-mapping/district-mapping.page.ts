@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject, ChangeDetectorRef, NgZone } from '@angular/core';
+import {Component, OnInit, Inject, ChangeDetectorRef, NgZone, ViewChild} from '@angular/core';
 import {
   LocationSearchCriteria, ProfileService,
   SharedPreferences, Profile, DeviceRegisterRequest, DeviceRegisterService, DeviceInfo
@@ -7,7 +7,7 @@ import { Location as loc, PreferenceKey, RouterLinks, LocationConfig } from '../
 import { AppHeaderService, CommonUtilService, AppGlobalService, FormAndFrameworkUtilService } from '@app/services';
 import { NavigationExtras, Router } from '@angular/router';
 import { Location } from '@angular/common';
-import { Events } from '@ionic/angular';
+import { Events, IonSelect } from '@ionic/angular';
 import { Subscription } from 'rxjs';
 import { Platform } from '@ionic/angular';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
@@ -21,6 +21,8 @@ import {
 } from '@app/services/telemetry-constants';
 import { featureIdMap } from '@app/feature-id-map';
 import { ExternalIdVerificationService } from '@app/services/externalid-verification.service';
+import { tap } from 'rxjs/operators';
+
 @Component({
   selector: 'app-district-mapping',
   templateUrl: './district-mapping.page.html',
@@ -40,13 +42,41 @@ export class DistrictMappingPage {
     return window.history.state.source;
   }
 
+  @ViewChild('stateSelect') stateSelect?: IonSelect;
+  @ViewChild('districtSelect') districtSelect?: IonSelect;
+
+  private _showStates: boolean;
+  private _showDistrict: boolean;
+
+  get showStates(): boolean {
+    return this._showStates;
+  }
+
+  set showStates(value: boolean) {
+    this._showStates = value;
+
+    if (this._showStates && this.stateSelect) {
+      this.stateSelect.open();
+    }
+  }
+
+  get showDistrict(): boolean {
+    return this._showDistrict;
+  }
+
+  set showDistrict(value: boolean) {
+    this._showDistrict = value;
+
+    if (this._showDistrict && this.districtSelect) {
+      this.districtSelect.open();
+    }
+  }
+
   stateName;
   districtName;
   name;
-  stateList;
-  districtList;
-  showStates: boolean;
-  showDistrict: boolean;
+  stateList = [];
+  districtList = [];
   stateCode;
   districtCode;
   backButtonFunc: Subscription;
@@ -78,7 +108,9 @@ export class DistrictMappingPage {
     private ngZone: NgZone,
     private externalIdVerificationService: ExternalIdVerificationService
   ) {
-    this.isKeyboardShown$ = deviceInfo.isKeyboardShown().do(() => this.changeDetectionRef.detectChanges());
+    this.isKeyboardShown$ = deviceInfo.isKeyboardShown().pipe(
+        tap(() => this.changeDetectionRef.detectChanges())
+    );
   }
   selectState(name, id, code) {
     this.getState(name, id, code);
@@ -189,13 +221,7 @@ export class DistrictMappingPage {
     }
   }
 
-  showStateList() {
-    this.districtName = '';
-    this.showStates = true;
-  }
-  showDistrictList() {
-    this.showDistrict = true;
-  }
+
   // validates the name input feild
   validateName() {
     if (this.name) {
@@ -227,7 +253,7 @@ export class DistrictMappingPage {
             this.generateAutoPopulatedTelemetry();
           }
         } else {
-          this.districtList = '';
+          this.districtList = [];
           this.showDistrict = !this.showDistrict;
           this.commonUtilService.showToast(this.commonUtilService.translateMessage('NO_DATA_FOUND'));
         }
