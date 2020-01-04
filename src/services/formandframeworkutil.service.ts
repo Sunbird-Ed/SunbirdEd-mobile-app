@@ -470,9 +470,8 @@ export class FormAndFrameworkUtilService {
                 .then((res: any) => {
                     const updateProfileRes = res;
                     this.events.publish('refresh:loggedInProfile');
-                    if (updateProfileRes.board && updateProfileRes.grade && updateProfileRes.medium &&
-                        updateProfileRes.board.length && updateProfileRes.grade.length
-                        && updateProfileRes.medium.length
+                    if (updateProfileRes.grade && updateProfileRes.medium &&
+                        updateProfileRes.grade.length && updateProfileRes.medium.length
                     ) {
                         resolve({ status: true });
                     } else {
