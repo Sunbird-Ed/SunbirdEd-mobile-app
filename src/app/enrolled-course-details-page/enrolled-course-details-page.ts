@@ -186,7 +186,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
   childContentsData;
   isBatchNotStarted = false;
   private eventSubscription: Subscription;
-  private corRelationList: Array<CorrelationData>;
+  corRelationList: Array<CorrelationData>;
   headerObservable: any;
   content: Content;
   appName: any;
