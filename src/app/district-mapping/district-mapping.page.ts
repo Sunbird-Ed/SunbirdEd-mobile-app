@@ -91,12 +91,12 @@ export class DistrictMappingPage {
   disableSubmitButton = false;
 
   constructor(
-    public headerService: AppHeaderService,
-    public commonUtilService: CommonUtilService,
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
     @Inject('DEVICE_REGISTER_SERVICE') private deviceRegisterService: DeviceRegisterService,
     @Inject('DEVICE_INFO') public deviceInfo: DeviceInfo,
+    public headerService: AppHeaderService,
+    public commonUtilService: CommonUtilService,
     private formAndFrameworkUtilService: FormAndFrameworkUtilService,
     public router: Router,
     public location: Location,
@@ -255,7 +255,7 @@ export class DistrictMappingPage {
         } else {
           this.districtList = [];
           this.showDistrict = !this.showDistrict;
-          this.commonUtilService.showToast(this.commonUtilService.translateMessage('NO_DATA_FOUND'));
+          this.commonUtilService.showToast('NO_DATA_FOUND');
         }
         await loader.dismiss();
       });
@@ -296,7 +296,7 @@ export class DistrictMappingPage {
           await loader.dismiss();
           this.districtList = [];
           this.showDistrict = !this.showDistrict;
-          this.commonUtilService.showToast(this.commonUtilService.translateMessage('NO_DATA_FOUND'));
+          this.commonUtilService.showToast('NO_DATA_FOUND');
         }
       });
     }, async (error) => {
@@ -359,7 +359,7 @@ export class DistrictMappingPage {
             await this.saveDeviceLocation();
           }
           this.generateLocationCaptured(false); // is dirtrict or location edit  = false
-          this.commonUtilService.showToast(this.commonUtilService.translateMessage('PROFILE_UPDATE_SUCCESS'));
+          this.commonUtilService.showToast('PROFILE_UPDATE_SUCCESS');
           this.disableSubmitButton = true;
           this.events.publish('loggedInProfile:update', req);
           if (this.profile) {
@@ -374,7 +374,7 @@ export class DistrictMappingPage {
           }
         }).catch(async () => {
           await loader.dismiss();
-          this.commonUtilService.showToast(this.commonUtilService.translateMessage('PROFILE_UPDATE_FAILED'));
+          this.commonUtilService.showToast('PROFILE_UPDATE_FAILED');
           if (this.profile) {
             this.location.back();
           } else {
