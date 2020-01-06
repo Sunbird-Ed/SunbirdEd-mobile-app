@@ -21,7 +21,7 @@
                 <ion-label>{{shareOptions.file.name | translate}}</ion-label>
                 <ion-radio slot="start" value="{{shareOptions.file.value}}" [disabled]="!contentDetail.isAvailableLocally"></ion-radio>
             </ion-item>
-            <p class="share-desc">file size 30MB</p>
+            <p class="share-desc">file size {{contentDetail.contentData?.size | fileSize}}</p>
 
             <ion-item>
                 <ion-label>{{shareOptions.save.name | translate}}</ion-label>
