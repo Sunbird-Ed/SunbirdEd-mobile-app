@@ -101,7 +101,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
    * Used to handle update content workflow
    */
   isUpdateAvail = false;
-  streamingUrl: any;
+  streamingUrl?: any;
   contentDownloadable: {
     [contentId: string]: boolean;
   } = {};
@@ -466,7 +466,8 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
       data.hierarchyInfo = this.cardData.hierarchyInfo;
       this.isChildContent = true;
     }
-    if (this.content.contentData.streamingUrl) {
+    if (this.content.contentData.streamingUrl &&
+        !(this.content.mimeType === 'application/vnd.ekstep.h5p-archive')) {
       this.streamingUrl = this.content.contentData.streamingUrl;
     }
 
@@ -728,7 +729,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
           this.zone.run(() => {
             const eventPayload = event.payload;
             if (eventPayload.contentId === this.content.identifier) {
-              if (eventPayload.streamingUrl) {
+              if (eventPayload.streamingUrl && !(this.content.mimeType === 'application/vnd.ekstep.h5p-archive')) {
                 this.streamingUrl = eventPayload.streamingUrl;
                 this.playingContent.contentData.streamingUrl = eventPayload.streamingUrl;
               } else {
