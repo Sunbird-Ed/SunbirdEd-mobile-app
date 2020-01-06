@@ -66,6 +66,7 @@ export class ContentShareHandlerService {
         .then(async (response: ContentExportResponse) => {
           console.log('ContentExportResponse', response);
           await loader.dismiss();
+          this.commonUtilService.showToast('FILE_SAVED');
           this.generateShareInteractEvents(InteractType.OTHER,
             InteractSubtype.SHARE_LIBRARY_SUCCESS, content.contentData.contentType, corRelationList, rollup);
         }).catch(async (err) => {

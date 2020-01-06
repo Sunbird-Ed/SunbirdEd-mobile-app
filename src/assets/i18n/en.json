@@ -645,5 +645,6 @@
   "SHARE_LINK": "Share link",
   "SEND_FILE": "Send file",
   "SAVE_FILE_ON_DEVICE": "Save file on device",
-  "DOWNLOAD_FILE_INFO": "Download the file to enable the disabled options"
+  "DOWNLOAD_FILE_INFO": "Download the file to enable the disabled options",
+  "FILE_SAVED": "File saved in Downloads"
 }
