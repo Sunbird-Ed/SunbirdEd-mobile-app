@@ -646,5 +646,7 @@
   "SEND_FILE": "Send file",
   "SAVE_FILE_ON_DEVICE": "Save file on device",
   "DOWNLOAD_FILE_INFO": "Download the file to enable the disabled options",
-  "FILE_SAVED": "File saved in Downloads"
+  "FILE_SAVED": "File saved in Downloads",
+  "DOWNLOAD_PATH": "Internal storage/Download",
+  "DOWNLOAD_FILE_SIZE": "File Size {{%s}}"
 }

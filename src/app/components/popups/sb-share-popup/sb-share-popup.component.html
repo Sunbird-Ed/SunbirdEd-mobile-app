@@ -21,13 +21,13 @@
                 <ion-label>{{shareOptions.file.name | translate}}</ion-label>
                 <ion-radio slot="start" value="{{shareOptions.file.value}}" [disabled]="!contentDetail.isAvailableLocally"></ion-radio>
             </ion-item>
-            <p class="share-desc">file size {{contentDetail.contentData?.size | fileSize}}</p>
+            <p class="share-desc">{{ 'DOWNLOAD_FILE_SIZE' | translate: {'%s': contentDetail.contentData?.size | fileSize } }}</p>
 
             <ion-item>
                 <ion-label>{{shareOptions.save.name | translate}}</ion-label>
                 <ion-radio slot="start" value="{{shareOptions.save.value}}" [disabled]="!contentDetail.isAvailableLocally"></ion-radio>
             </ion-item>
-            <p class="share-desc">Internal storage/Download</p>
+            <p class="share-desc">{{'DOWNLOAD_PATH' | translate}}</p>
 
             <div *ngIf="!contentDetail.isAvailableLocally" class="share-info">
               <ion-icon name="ios-information-circle-outline"></ion-icon>
@@ -41,6 +41,6 @@
     <div class="sb-popover-footer">
       <button class="sb-popover-action-btn width-100 popover-color" *ngIf="shareType === shareOptions.link.value" (click)="shareLink()">{{'SHARE' | translate}}</button>
       <button class="sb-popover-action-btn width-100 popover-color" *ngIf="shareType === shareOptions.file.value" (click)="shareFile()">{{'SEND' | translate}}</button>
-      <button class="sb-popover-action-btn width-100 popover-color" *ngIf="shareType === shareOptions.save.value" (click)="saveFile()">{{'Save' | translate}}</button>
+      <button class="sb-popover-action-btn width-100 popover-color" *ngIf="shareType === shareOptions.save.value" (click)="saveFile()">{{'SAVE' | translate}}</button>
     </div>
   </ion-footer>
