@@ -227,8 +227,9 @@ export class LanguageSettingsPage implements OnInit {
   handleHeaderEvents($event) {
     if ($event.name === 'back') {
       this.telemetryGeneratorService.generateBackClickedTelemetry(
-          this.isFromSettings ? Environment.SETTINGS : Environment.ONBOARDING,
-          this.isFromSettings ? PageId.SETTINGS : PageId.ONBOARDING_LANGUAGE_SETTING, true);
+        this.isFromSettings ? PageId.SETTINGS_LANGUAGE : PageId.ONBOARDING_LANGUAGE_SETTING,
+        this.isFromSettings ? Environment.SETTINGS : Environment.ONBOARDING,
+        true);
       this.location.back();
     }
   }

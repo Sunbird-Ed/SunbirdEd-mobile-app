@@ -47,9 +47,7 @@ export class TncUpdateHandlerService {
     this.profileService.getServerProfilesDetails(request).toPromise()
       .then((profile) => {
         if (!this.hasProfileTncUpdated(profile)) {
-          if (this.commonUtilService.networkInfo.isNetworkAvailable) {
-            this.checkBmc(profile);
-          }
+          this.checkBmc(profile);
           return;
         }
         this.presentTncPage({ profile });

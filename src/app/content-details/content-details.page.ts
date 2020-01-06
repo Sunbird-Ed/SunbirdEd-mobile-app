@@ -102,7 +102,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
    * Used to handle update content workflow
    */
   isUpdateAvail = false;
-  streamingUrl: any;
+  streamingUrl?: any;
   contentDownloadable: {
     [contentId: string]: boolean;
   } = {};
@@ -467,7 +467,8 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
       data.hierarchyInfo = this.cardData.hierarchyInfo;
       this.isChildContent = true;
     }
-    if (this.content.contentData.streamingUrl) {
+    if (this.content.contentData.streamingUrl &&
+        !(this.content.mimeType === 'application/vnd.ekstep.h5p-archive')) {
       this.streamingUrl = this.content.contentData.streamingUrl;
     }
 
@@ -729,7 +730,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
           this.zone.run(() => {
             const eventPayload = event.payload;
             if (eventPayload.contentId === this.content.identifier) {
-              if (eventPayload.streamingUrl) {
+              if (eventPayload.streamingUrl && !(this.content.mimeType === 'application/vnd.ekstep.h5p-archive')) {
                 this.streamingUrl = eventPayload.streamingUrl;
                 this.playingContent.contentData.streamingUrl = eventPayload.streamingUrl;
               } else {
@@ -879,7 +880,8 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
         this.corRelationList);
     }
 
-    if (!AppGlobalService.isPlayerLaunched && this.userCount > 2 && this.network.type !== '2g' && !this.shouldOpenPlayAsPopup) {
+    if (!AppGlobalService.isPlayerLaunched && this.userCount > 2 && this.network.type !== '2g' && !this.shouldOpenPlayAsPopup
+      && !this.limitedShareContentFlag) {
       this.openPlayAsPopup(isStreaming);
     } else if (this.network.type === '2g' && !this.contentDownloadable[this.content.identifier]) {
       const popover = await this.popoverCtrl.create({
@@ -913,7 +915,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
         return;
       }
       if (data && data.isLeftButtonClicked) {
-        if (!AppGlobalService.isPlayerLaunched && this.userCount > 2 && !this.shouldOpenPlayAsPopup) {
+        if (!AppGlobalService.isPlayerLaunched && this.userCount > 2 && !this.shouldOpenPlayAsPopup && !this.limitedShareContentFlag) {
           this.openPlayAsPopup(isStreaming);
         } else {
           this.playContent(isStreaming);

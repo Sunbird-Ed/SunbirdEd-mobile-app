@@ -64,14 +64,18 @@ describe('ContentDetailsPage', () => {
     const mockPlayerService: Partial<PlayerService> = {};
     const mockStorageService: Partial<StorageService> = {};
     const mockAuthService: Partial<AuthService> = {};
-    const mockNgZone: Partial<NgZone> = {};
+    const mockNgZone: Partial<NgZone> = {
+        run: jest.fn()
+    };
     const mockEvents: Partial<Events> = {
         subscribe: jest.fn(() => 'playConfig')
     };
     const mockPopoverController: Partial<PopoverController> = {};
     const mockPlatform: Partial<Platform> = {};
     const mockAppGlobalService: Partial<AppGlobalService> = {};
-    const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {};
+    const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {
+        generateInteractTelemetry: jest.fn()
+    };
     const mockCommonUtilService: Partial<CommonUtilService> = {};
     const mockCourseUtilService: Partial<CourseUtilService> = {};
     const mockUtilityService: Partial<UtilityService> = {
@@ -94,7 +98,9 @@ describe('ContentDetailsPage', () => {
     const mockRatingHandler: Partial<RatingHandler> = {
         resetRating: jest.fn()
     };
-    const mockContentPlayerHandler: Partial<ContentPlayerHandler> = {};
+    const mockContentPlayerHandler: Partial<ContentPlayerHandler> = {
+        launchContentPlayer: jest.fn()
+    };
     const mockChildContentHandler: Partial<ChildContentHandler> = {};
     const mockContentDeleteHandler: Partial<ContentDeleteHandler> = {};
     const mockLoginHandlerService: Partial<LoginHandlerService> = {};
@@ -175,14 +181,14 @@ describe('ContentDetailsPage', () => {
             called[topic] = true;
 
             if (topic === EventTopics.PLAYER_CLOSED) {
-                fn({selectedUser: 'sampleUser'});
+                fn({ selectedUser: 'sampleUser' });
             }
             if (topic === EventTopics.NEXT_CONTENT) {
-                fn({data: 'sample_data'});
+                fn({ data: 'sample_data' });
             }
         });
         mockProfileService.getActiveProfileSession = jest.fn(() =>
-            of({uid: 'sample_uid', sid: 'sample_session_id', createdTime: Date.now()}));
+            of({ uid: 'sample_uid', sid: 'sample_session_id', createdTime: Date.now() }));
         mockProfileSwitchHandler.switchUser = jest.fn();
         spyOn(contentDetailsPage, 'calculateAvailableUserCount').and.stub();
         spyOn(contentDetailsPage, 'generateEndEvent').and.stub();
@@ -219,7 +225,7 @@ describe('ContentDetailsPage', () => {
             called[topic] = true;
 
             if (topic === EventTopics.PLAYER_CLOSED) {
-                fn({selectedUser: {profileType: 'Teacher'} });
+                fn({ selectedUser: { profileType: 'Teacher' } });
             }
             // if (topic === EventTopics.NEXT_CONTENT) {
             //     fn({data: 'sample_data'});
@@ -237,7 +243,7 @@ describe('ContentDetailsPage', () => {
         setTimeout(() => {
             expect(mockAppVersion.getAppName).toHaveBeenCalled();
             expect(mockEvents.subscribe).toHaveBeenCalled();
-            expect(mockProfileSwitchHandler.switchUser).toHaveBeenCalledWith({profileType: 'Teacher'});
+            expect(mockProfileSwitchHandler.switchUser).toHaveBeenCalledWith({ profileType: 'Teacher' });
             done();
         }, 0);
     });
@@ -256,66 +262,6 @@ describe('ContentDetailsPage', () => {
             expect(mockAppGlobalService.isUserLoggedIn).toHaveBeenCalled();
             done();
         }, 1000);
-    });
-
-    it('should be logged in before play the content by invoked promptToLogin() if user is not loggedin', (done) => {
-        // arrange
-        mockAppGlobalService.isUserLoggedIn = jest.fn(() => false);
-
-        contentDetailsPage.telemetryObject = {
-            id: 'sample-id',
-            type: 'content-details',
-            version: 'v-7.0',
-            setRollup: jest.fn()
-        };
-
-        ContentUtil.prototype.getTelemetryObject = jest.fn(() => contentDetailsPage.telemetryObject);
-        mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn(() => { });
-        const dismissData = jest.fn(() => Promise.resolve({ data: { canDelete: true } }));
-        const presentFn = jest.fn(() => Promise.resolve());
-        mockPopoverController.create = jest.fn(() => Promise.resolve({
-            present: presentFn,
-            onDidDismiss: dismissData
-        }) as any);
-        mockCommonUtilService.translateMessage = jest.fn(() => 'you must loin to access quiz content');
-        mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn(() => { });
-        mockLoginHandlerService.signIn = jest.fn();
-        // act
-        contentDetailsPage.promptToLogin();
-        // assert
-        setTimeout(() => {
-            expect(mockAppGlobalService.isUserLoggedIn).toHaveBeenCalled();
-            expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenCalledWith(
-                ImpressionType.VIEW,
-                '', PageId.SIGNIN_POPUP,
-                Environment.HOME,
-                'sample-id',
-                'content-details',
-                'v-7.0',
-                undefined,
-                undefined
-            );
-            expect(mockCommonUtilService.translateMessage).toHaveBeenCalledWith('YOU_MUST_LOGIN_TO_ACCESS_QUIZ_CONTENT');
-            expect(mockPopoverController.create).toHaveBeenCalledWith({
-                component: SbPopoverComponent,
-                componentProps: {
-                    actionsButtons: [{
-                        btnClass: 'popover-color',
-                        btntext: 'you must loin to access quiz content',
-                    }
-                    ],
-                    isNotShowCloseIcon: true,
-                    metaInfo: 'you must loin to access quiz content',
-                    sbPopoverHeading: 'you must loin to access quiz content',
-                    sbPopoverMainTitle: 'you must loin to access quiz content',
-                }, cssClass: 'sb-popover info'
-            });
-            expect(presentFn).toHaveBeenCalled();
-            expect(dismissData).toHaveBeenCalled();
-            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
-            expect(mockLoginHandlerService.signIn).toHaveBeenCalled();
-            done();
-        }, 0);
     });
 
 
@@ -351,6 +297,79 @@ describe('ContentDetailsPage', () => {
         // assert
         expect(ContentUtil.getTelemetryObject).toHaveBeenCalled();
         expect(contentDetailsPage.promptToLogin).toHaveBeenCalled();
+    });
+
+    it('should check limitedShareContentFlag', () => {
+        // arrange
+        const request = {
+            contentData: {
+                status: 'Unlisted'
+            }
+        };
+        jest.spyOn(ContentUtil, 'getTelemetryObject').mockImplementation(() => {
+            return request;
+        });
+        jest.spyOn(contentDetailsPage, 'promptToLogin').mockImplementation(() => {
+            return;
+        });
+        // act
+        contentDetailsPage.checkLimitedContentSharingFlag(request);
+        // assert
+        expect(ContentUtil.getTelemetryObject).toHaveBeenCalled();
+        expect(contentDetailsPage.promptToLogin).toHaveBeenCalled();
+    });
+
+    it('shouldn\'t  show PlayAsPopup if limitedShareContentFlag flag is true', () => {
+        // arrange
+        contentDetailsPage.userCount = 3;
+        contentDetailsPage.shouldOpenPlayAsPopup = true;
+        mockNetwork.type = '3g';
+        contentDetailsPage.limitedShareContentFlag = true;
+        jest.spyOn(contentDetailsPage, 'openPlayAsPopup');
+        // act
+        contentDetailsPage.showSwitchUserAlert();
+        // assert
+        expect(contentDetailsPage.openPlayAsPopup).toHaveBeenCalledTimes(0);
+
+    });
+
+    it('should  show LowBandwidth Popup for 2g type network connection', () => {
+        // arrange
+        contentDetailsPage.content = { identifier: 'do_1234' };
+        contentDetailsPage.userCount = 3;
+        contentDetailsPage.shouldOpenPlayAsPopup = true;
+        mockNetwork.type = '2g';
+        mockCommonUtilService.translateMessage = jest.fn(() => '');
+        mockPopoverController.create = jest.fn(() => (Promise.resolve({
+            present: jest.fn(() => Promise.resolve({})),
+            onDidDismiss: jest.fn(() => Promise.resolve({ data: { canDelete: true } }))
+        } as any)));
+        // act
+        contentDetailsPage.showSwitchUserAlert();
+        // assert
+        expect(mockPopoverController.create).toHaveBeenCalled();
+    });
+
+    it('should  show PlayAs Popup  When LowBandwidth popup Ok button click', () => {
+        // arrange
+        contentDetailsPage.content = { identifier: 'do_1234' };
+        contentDetailsPage.userCount = 3;
+        contentDetailsPage.shouldOpenPlayAsPopup = false;
+        mockNetwork.type = '2g';
+        contentDetailsPage.limitedShareContentFlag = false;
+        mockCommonUtilService.translateMessage = jest.fn(() => '');
+        mockPopoverController.create = jest.fn(() => (Promise.resolve({
+            present: jest.fn(() => Promise.resolve({})),
+            onDidDismiss: jest.fn(() => Promise.resolve({ data: { isLeftButtonClicked: true } }))
+        } as any)));
+        jest.spyOn(contentDetailsPage, 'openPlayAsPopup');
+        // act
+        contentDetailsPage.showSwitchUserAlert();
+        // assert
+        setTimeout(() => {
+            expect(contentDetailsPage.openPlayAsPopup).toHaveBeenCalled();
+        }, 0);
+
     });
 
 });

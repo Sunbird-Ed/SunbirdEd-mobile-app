@@ -80,7 +80,9 @@ export class TeacherIdVerificationComponent implements OnInit {
       this.generateTelemetryForYesAndNo(ID.USER_VERIFICATION_REJECTED);
       const req: UserMigrateRequest = {
         userId: this.userFeed.userId,
-        action: 'reject'
+        action: 'reject',
+        channel: this.stateName ? this.stateName : this.userFeed.data.prospectChannels[0],
+        feedId: this.userFeed.id
       };
       this.profileService.userMigrate(req).toPromise()
         .then(async (response) => {
