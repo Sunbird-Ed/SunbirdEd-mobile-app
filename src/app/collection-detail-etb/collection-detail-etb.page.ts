@@ -36,6 +36,7 @@ import { Location } from '@angular/common';
 import {
   SbPopoverComponent
 } from '../components/popups/sb-popover/sb-popover.component';
+import { SbSharePopupComponent } from '../components/popups/sb-share-popup/sb-share-popup.component';
 
 import {
   ConfirmAlertComponent, ContentActionsComponent, ContentRatingAlertComponent
@@ -1053,8 +1054,18 @@ export class CollectionDetailEtbPage implements OnInit {
     });
   }
 
-  share() {
-    this.contentShareHandler.shareContent(this.contentDetail, this.corRelationList, this.objRollup);
+  async share() {
+    // this.contentShareHandler.shareContent(this.contentDetail, this.corRelationList, this.objRollup);
+    const popover = await this.popoverCtrl.create({
+      component: SbSharePopupComponent,
+      componentProps: {
+        contentDetail: this.contentDetail,
+        corRelationList: this.corRelationList,
+        objRollup: this.objRollup,
+      },
+      cssClass: 'sb-popover',
+    });
+    popover.present();
   }
 
   /**

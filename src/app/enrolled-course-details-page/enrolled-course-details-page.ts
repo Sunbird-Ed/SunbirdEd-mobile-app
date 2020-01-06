@@ -75,6 +75,7 @@ import * as dayjs from 'dayjs';
 import { LocalCourseService } from '@app/services';
 import { EnrollCourse } from './course.interface';
 import { AppVersion } from '@ionic-native/app-version/ngx';
+import { SbSharePopupComponent } from '../components/popups/sb-share-popup/sb-share-popup.component';
 declare const cordova;
 
 @Component({
@@ -1542,8 +1543,17 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
     }
   }
 
-  share() {
-    this.contentShareHandler.shareContent(this.content, this.corRelationList);
+  async share() {
+    // this.contentShareHandler.shareContent(this.content, this.corRelationList);
+    const popover = await this.popoverCtrl.create({
+      component: SbSharePopupComponent,
+      componentProps: {
+        contentDetail: this.content,
+        corRelationList: this.corRelationList,
+      },
+      cssClass: 'sb-popover',
+    });
+    popover.present();
   }
 
   handleNavBackButton() {
