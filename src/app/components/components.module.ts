@@ -22,7 +22,6 @@ import { IonicRatingModule, RatingComponent } from 'ionic4-rating';
 import { ContentRatingAlertComponent } from './content-rating-alert/content-rating-alert.component';
 import { DetailCardComponent } from './detail-card/detail-card.component';
 import { FileSizePipe } from '@app/pipes/file-size/file-size';
-import { BookmarkComponent } from './bookmark/bookmark.component';
 import { DialogPopupComponent } from './popups/dialog-popup/dialog-popup.component';
 import { SbDownloadPopupComponent } from './popups/sb-download-popup/sb-download-popup.component';
 import { UpgradePopoverComponent } from './popups/upgrade-popover/upgrade-popover.component';
@@ -62,7 +61,6 @@ import { TeacherIdVerificationComponent } from './popups/teacher-id-verification
     ContentActionsComponent,
     ContentRatingAlertComponent,
     DetailCardComponent,
-    BookmarkComponent,
     DialogPopupComponent,
     SbDownloadPopupComponent,
     UpgradePopoverComponent,
@@ -132,7 +130,6 @@ import { TeacherIdVerificationComponent } from './popups/teacher-id-verification
     ContentActionsComponent,
     ContentRatingAlertComponent,
     DetailCardComponent,
-    BookmarkComponent,
     DialogPopupComponent,
     SbDownloadPopupComponent,
     UpgradePopoverComponent,

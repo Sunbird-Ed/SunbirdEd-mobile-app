@@ -17,9 +17,6 @@ export class DialogPopupComponent {
     private utilityService: UtilityService
   ) { }
 
-  ngOnInit() { }
-
-
   ionViewWillEnter() {
     this.title = this.navParams.get('title');
     this.body = this.navParams.get('body');
