@@ -27,7 +27,7 @@
                   [placeholder]="'SEARCH_STATE' | translate"
                   [okText]="'BTN_SUBMIT' | translate"
                   [cancelText]="'CANCEL' | translate"
-                  (ionChange)="selectState(stateSelect.value.name , stateSelect.value.id, stateSelect.value.code); districtSelect.value = null;">
+                  (ionChange)="selectState(stateSelect.value.name , stateSelect.value.id, stateSelect.value.code);">
         <ion-select-option
                 *ngFor="let state of stateList"
                 [value]="state">
