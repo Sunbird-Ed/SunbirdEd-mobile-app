@@ -74,10 +74,13 @@ describe('DistrictMappingPage', () => {
         districtMappingPage.stateSelect = { open: jest.fn(() => {}) };
 
         // act
+        jest.useFakeTimers();
         districtMappingPage.showStates = true;
 
         // assert
+        jest.advanceTimersByTime(1000);
         expect(districtMappingPage.stateSelect.open).toHaveBeenCalled();
+        jest.clearAllTimers();
     });
 
     it('should open select overlay when showDistrict is set', () => {
@@ -85,9 +88,12 @@ describe('DistrictMappingPage', () => {
         districtMappingPage.districtSelect = { open: jest.fn(() => {}) };
 
         // act
+        jest.useFakeTimers();
         districtMappingPage.showDistrict = true;
 
         // assert
+        jest.advanceTimersByTime(1000);
         expect(districtMappingPage.districtSelect.open).toHaveBeenCalled();
+        jest.clearAllTimers();
     });
 });
