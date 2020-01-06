@@ -9,7 +9,7 @@
 
 <ion-content padding-vertical>
   <form [formGroup]="profileEditForm">
-    <ion-item>
+    <ion-item *ngIf="isBoardAvailable">
       <ion-label position="stacked" class="label-font">{{'BOARD' | translate}} &lrm;<ion-text>
           <span style="color: red;">&nbsp;*</span>
         </ion-text>
@@ -29,7 +29,7 @@
       </ion-label>
       <ion-select formControlName="medium" #mediumSelect multiple="true" [interfaceOptions]="mediumOptions"
         placeholder="{{ (mediumList.length ? 'MEDIUM_OPTION_TEXT':'NO_DATA_FOUND') | translate }}" okText="{{'BTN_SUBMIT' | translate}}"
-        cancelText="{{'CANCEL' | translate}}" [disabled]="(!mediumList.length || !(profileEditForm.value.boards != ''))"
+        cancelText="{{'CANCEL' | translate}}" [disabled]="(!mediumList.length || (profileEditForm.value.boards === '' && isBoardAvailable))"
         (ionChange)="resetForm(2)">
         <ion-select-option *ngFor="let medium of mediumList" value="{{medium?.code}}">{{medium?.name}}
         </ion-select-option>

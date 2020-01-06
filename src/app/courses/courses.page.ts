@@ -651,7 +651,7 @@ export class CoursesPage implements OnInit {
     const identifier = content.contentId || content.identifier;
     this.corRelationList = [
       {
-        id: content.batchId,
+        id: content.batchId ? content.batchId : '',
         type: CorReleationDataType.COURSE_BATCH
       }
     ];

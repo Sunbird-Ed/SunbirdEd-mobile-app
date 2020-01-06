@@ -60,7 +60,10 @@ describe('EnrolledCourseDetailsPage', () => {
         generateImpressionTelemetry: jest.fn(),
         generateInteractTelemetry: jest.fn()
     };
-    const mockCommonUtilService: Partial<CommonUtilService> = {};
+
+    const mockCommonUtilService: Partial<CommonUtilService> = {
+        deDupe: jest.fn(),
+    };
     const mockDatePipe: Partial<DatePipe> = {};
     const mockUtilityService: Partial<UtilityService> = {};
     const mockHeaderService: Partial<AppHeaderService> = {};
@@ -782,7 +785,7 @@ describe('EnrolledCourseDetailsPage', () => {
             });
     });
 
-    it('should invoke LoginHandler sigin method', () => {
+    it('should invoke LoginHandler signin method', () => {
         // arrange
         mockPopoverCtrl.create = jest.fn(() => (Promise.resolve({
             present: jest.fn(() => Promise.resolve({})),
@@ -797,6 +800,17 @@ describe('EnrolledCourseDetailsPage', () => {
             expect(mockLoginHandlerService.signIn).toHaveBeenCalled();
             expect(mockAppGlobalService.resetSavedQuizContent).toHaveBeenCalled();
         }, 0);
+
+    });
+
+    it('should populate correlationData', () => {
+        // arrange
+        enrolledCourseDetailsPage.corRelationList = undefined;
+        jest.spyOn(mockCommonUtilService, 'deDupe').mockReturnValue([{ id: '', type: 'CourseBatch'}]);
+        // act
+        enrolledCourseDetailsPage.populateCorRelationData(undefined);
+        // assert
+        expect(enrolledCourseDetailsPage.corRelationList).toEqual([{ id: '', type: 'CourseBatch'}]);
 
     });
 });

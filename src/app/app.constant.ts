@@ -192,8 +192,8 @@ export class FormConstant {
 
 export class PreferenceKey {
     public static readonly SELECTED_LANGUAGE_CODE = 'sunbirdselected_language_code';
-    public static readonly DEVICE_LOCATION = 'device_location';
-    public static readonly IP_LOCATION = 'ip_location';
+    public static readonly DEVICE_LOCATION = 'device_location_new';
+    public static readonly IP_LOCATION = 'ip_location_new';
     public static readonly SELECTED_LANGUAGE = 'sunbirdselected_language';
     public static readonly SELECTED_USER_TYPE = 'sunbirdselected_user_type';
     public static readonly COURSE_IDENTIFIER = 'sunbirdcourse_identifier';
@@ -484,6 +484,7 @@ export class RouterLinks {
     public static readonly PROFILE_TAB = `/${RouterLinks.TABS}/${RouterLinks.PROFILE}`;
     public static readonly GUEST_PROFILE_TAB = `/${RouterLinks.TABS}/${RouterLinks.GUEST_PROFILE}`;
     public static readonly DOWNLOAD_TAB = `/${RouterLinks.TABS}/${RouterLinks.DOWNLOAD_MANAGER}`;
+    public static readonly ONBOARDING_DISTRICT_MAPPING = `/${RouterLinks.DISTRICT_MAPPING}`;
 
 
     // TEXTBOOK view more page Routes

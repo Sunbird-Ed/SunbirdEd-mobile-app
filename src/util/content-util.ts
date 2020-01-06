@@ -1,4 +1,4 @@
-import { Rollup, ContentData, TelemetryObject } from 'sunbird-sdk';
+import { Rollup, Content, ContentData, TelemetryObject } from 'sunbird-sdk';
 export class ContentUtil {
 
 
@@ -73,6 +73,22 @@ export class ContentUtil {
       }
     }
     return appIcon;
+  }
+
+  public static resolvePDFPreview(content: Content): { url: string, availableLocally: boolean } | undefined {
+    let pdf: { url: string, availableLocally: boolean } | undefined;
+
+    if (!content.contentData.itemSetPreviewUrl) {
+      return undefined;
+    }
+
+    try {
+      pdf = { url: (new URL(content.contentData.itemSetPreviewUrl)).toString(), availableLocally: false };
+    } catch (e) {
+      pdf = { url: content.basePath + content.contentData.itemSetPreviewUrl, availableLocally: true };
+    }
+
+    return pdf;
   }
 
   /**

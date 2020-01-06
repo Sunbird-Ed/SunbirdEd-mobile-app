@@ -63,11 +63,13 @@ import { ContentPlayerHandler } from '@app/services/content/player/content-playe
 import { ChildContentHandler } from '@app/services/content/child-content-handler';
 import { ContentDeleteHandler } from '@app/services/content/content-delete-handler';
 import { ContentUtil } from '@app/util/content-util';
-import { FileTransferObject } from '@ionic-native/file-transfer/ngx';
+import { FileTransfer, FileTransferObject } from '@ionic-native/file-transfer/ngx';
 import { map } from 'rxjs/operators';
 import { SbPopoverComponent } from '../components/popups/sb-popover/sb-popover.component';
 import { LoginHandlerService } from '@app/services/login-handler.service';
 import { SbSharePopupComponent } from '../components/popups/sb-share-popup/sb-share-popup.component';
+import { FileOpener } from '@ionic-native/file-opener/ngx';
+import { Components } from '@ionic/core/dist/types/components';
 
 
 @Component({
@@ -149,7 +151,6 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
   fileTransfer: FileTransferObject;
   // Newly Added
   licenseDetails;
-  showPrint: false;
   resumedCourseCardData: any;
   limitedShareContentFlag = false;
   private isLoginPromptOpen = false;
@@ -186,6 +187,8 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
     private childContentHandler: ChildContentHandler,
     private contentDeleteHandler: ContentDeleteHandler,
     private loginHandlerService: LoginHandlerService,
+    private fileOpener: FileOpener,
+    private transfer: FileTransfer
   ) {
     this.subscribePlayEvent();
     this.checkDeviceAPILevel();
@@ -1204,4 +1207,31 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
     }
   }
 
+  async openPDFPreview(content: Content) {
+    // todo: add telemetry
+
+    let url: string;
+    const pdf = ContentUtil.resolvePDFPreview(content);
+
+    const loader: Components.IonLoading = await this.commonUtilService.getLoader();
+    await loader.present();
+
+    try {
+      if (!pdf.availableLocally) {
+        this.fileTransfer = this.transfer.create();
+        const entry = await this.fileTransfer
+            .download(pdf.url, cordova.file.cacheDirectory + pdf.url.substring(pdf.url.lastIndexOf('/') + 1));
+        url = entry.toURL();
+      } else {
+        url = pdf.url;
+      }
+
+      await this.fileOpener.open(url, 'application/pdf');
+    } catch (e) {
+      console.error(e);
+      this.commonUtilService.showToast('ERROR_COULD_NOT_OPEN_FILE');
+    } finally {
+      await loader.dismiss();
+    }
+  }
 }
