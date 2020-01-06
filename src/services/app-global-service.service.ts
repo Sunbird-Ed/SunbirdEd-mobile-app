@@ -461,7 +461,7 @@ export class AppGlobalService implements OnDestroy {
     async openPopover(upgradeType: any) {
         let shouldDismissAlert = true;
 
-        if (upgradeType.upgrade.type === 'force') {
+        if (upgradeType.upgrade.type === 'force' || upgradeType.upgrade.type === 'forced') {
             shouldDismissAlert = false;
         }
 
