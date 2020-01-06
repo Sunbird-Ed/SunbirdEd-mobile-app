@@ -186,7 +186,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
   childContentsData;
   isBatchNotStarted = false;
   private eventSubscription: Subscription;
-  private corRelationList: Array<CorrelationData>;
+  corRelationList: Array<CorrelationData>;
   headerObservable: any;
   content: Content;
   appName: any;
@@ -1319,7 +1319,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
     if (!this.corRelationList) {
       this.corRelationList = [];
     }
-    this.corRelationList.push({ id: batchId, type: CorReleationDataType.COURSE_BATCH });
+    this.corRelationList.push({ id: batchId ? batchId : '', type: CorReleationDataType.COURSE_BATCH });
     this.corRelationList.push({ id: this.identifier, type: CorReleationDataType.ROOT_ID });
     this.corRelationList = this.commonUtilService.deDupe(this.corRelationList, 'type');
   }
@@ -1765,6 +1765,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
         this.objRollup,
         this.corRelationList
       );
+      this.appGlobalService.resetSavedQuizContent();
       this.loginHandlerService.signIn();
     }
   }
@@ -1808,5 +1809,6 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
   mergeProperties(mergeProp) {
     return ContentUtil.mergeProperties(this.course, mergeProp);
   }
+
 
 }

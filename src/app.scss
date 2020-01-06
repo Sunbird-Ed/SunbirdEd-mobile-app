@@ -314,6 +314,12 @@ ul.rating .ion-md-star-outline:before {
   transform: translateY(0) !important;
   overflow-y: hidden;
 }
+.report-alert-popover-list{
+  .report-content{
+    max-height: 50vh;
+    overflow-y: scroll;
+  }
+}
 
 .report-alert ion-backdrop {
   background-color: #000 !important;

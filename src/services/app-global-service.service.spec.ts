@@ -110,4 +110,12 @@ describe('AppGlobalService', () => {
         // assert
         expect(appGlobalService.isJoinTraningOnboardingFlow).toBeTruthy();
     });
+
+    it('should reset limitedShareQuizContent Context', () => {
+        // arrange
+        // act
+        appGlobalService.resetSavedQuizContent();
+        // assert
+        expect(appGlobalService.limitedShareQuizContent).toBeNull();
+    });
 });

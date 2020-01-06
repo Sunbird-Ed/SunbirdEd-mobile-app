@@ -677,4 +677,10 @@ export class AppGlobalService implements OnDestroy {
         this.isJoinTraningOnboarding = value;
     }
 
+    // This method is used to reset if any quiz content data is previously saved before Joining a Training
+    // So it wont affect in the exterId verification page
+    resetSavedQuizContent() {
+        this.limitedShareQuizContent = null;
+    }
+
 }
