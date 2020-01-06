@@ -154,6 +154,7 @@ export class CategoriesEditPage {
       this.showOnlyMandatoryFields = false;
     }
     this.initializeForm();
+    this.appGlobalService.closeSigninOnboardingLoader();
   }
 
   /**

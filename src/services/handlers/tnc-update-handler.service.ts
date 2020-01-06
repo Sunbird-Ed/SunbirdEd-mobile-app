@@ -46,8 +46,8 @@ export class TncUpdateHandlerService {
 
     this.profileService.getServerProfilesDetails(request).toPromise()
       .then((profile) => {
+        this.appGlobalService.closeSigninOnboardingLoader();
         if (!this.hasProfileTncUpdated(profile)) {
-          this.appGlobalService.closeSigninOnboardingLoader();
           this.checkBmc(profile);
           return;
         }
