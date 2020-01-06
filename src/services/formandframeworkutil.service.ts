@@ -180,7 +180,7 @@ export class FormAndFrameworkUtilService {
 
                                 if (ranges && ranges.length > 0 && upgradeTypes && upgradeTypes.length > 0) {
                                     let type: string;
-                                    const forceType = 'force' || 'forced';
+                                    const forceType = 'force';
                                     for (const element of ranges) {
                                         if (versionCode >= element.minVersionCode && versionCode <= element.maxVersionCode) {
                                             console.log('App needs a upgrade of type - ' + element.type);
