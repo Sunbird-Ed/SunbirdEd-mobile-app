@@ -20,27 +20,31 @@
       <div class="panel-body">
         <p class="panelText" [innerHtml]="faq.description"></p>
       </div>
-      <div class="panel-interact"  *ngIf="!isNoClicked && !isYesClicked">
+      <div class="panel-interact" *ngIf="!isNoClicked && !isYesClicked">
         <p class="panelText">{{data?.constants?.helpMsg}} </p>
         <button type="button" class="btn" id="btn-no" (click)="noClicked(i)">{{data?.constants?.noMsg}}</button>
-        <button type="button" class="yesBtn"  id="btn-yes" (click)="yesClicked(i)">{{data?.constants?.yesMsg}}</button>
+        <button type="button" class="yesBtn" id="btn-yes" (click)="yesClicked(i)">{{data?.constants?.yesMsg}}</button>
       </div>
-      <div class="panel-interact" *ngIf="isYesClicked || isSubmitted"> <p class="yes-clicked"> {{data?.constants?.thanksMsg}}</p></div>
+      <div class="panel-interact" *ngIf="isYesClicked || isSubmitted">
+        <p class="yes-clicked"> {{data?.constants?.thanksMsg}}</p>
+      </div>
       <div class="panel-info" *ngIf="!isSubmitted && isNoClicked">
         <h6>{{data?.constants?.sorryMsg}}</h6>
         <p>{{data?.constants?.knowMoreMsg}}</p>
         <form action="#" id="know-more-form" class="know-more-form" *ngIf="!isSubmitted">
           <textarea type="text" name="moreInfo" placeholder="{{constants?.typeHere}}" class="input-text"
             maxlength="1000" [(ngModel)]="textValue"></textarea>
-          <input type="submit" value="{{constants?.submitButton}}" class="submit-button" (click)="submitClicked(textValue,i)">
+          <input type="submit" value="{{constants?.submitButton}}" class="submit-button"
+            (click)="submitClicked(textValue,i)">
         </form>
         <p class="no-clicked" hidden="true" *ngIf="isSubmitted"> {{data?.constants?.thanksMsg}} </p>
       </div>
     </div>
   </div>
   <div class="send-email">
-   <button class="report-button" (click)="navigateToReportIssue()"><img src="../../assets/faq/resources/images/Report.png"> <span class="report-text">{{ data?.constants?.reportIssueMsg }}</span></button>
+    <button class="report-button" (click)="navigateToReportIssue()"><img
+        src="../../assets/faq/resources/images/Report.png"> <span
+        class="report-text">{{ data?.constants?.reportIssueMsg }}</span></button>
   </div>
-
 
 </ion-content>
