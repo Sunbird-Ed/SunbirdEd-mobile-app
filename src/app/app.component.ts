@@ -150,14 +150,13 @@ export class AppComponent implements OnInit, AfterViewInit {
         }
       });
     })
-    .catch(function(error) { console.error('getAndroidWebViewPackageInfo err', error); });
+    .catch(function(error) { });
   }
 
   openPlaystore() {
-    console.log('openPlaystoreclicked');
     plugins['webViewChecker'].openGooglePlayPage()
-    .then(function() { console.log('Google Play page has been opened.'); })
-    .catch(function(error) { console.error(error); });
+    .then(function() { })
+    .catch(function(error) { });
   }
 
   getSystemConfig() {
