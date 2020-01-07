@@ -141,6 +141,7 @@ export class CategoriesEditPage {
     private tncUpdateHandlerService: TncUpdateHandlerService,
 
   ) {
+    this.appGlobalService.closeSigninOnboardingLoader();
     this.profile = this.appGlobalService.getCurrentUser();
     const extrasState = this.router.getCurrentNavigation().extras.state;
     if (extrasState && extrasState.showOnlyMandatoryFields) {
@@ -154,7 +155,6 @@ export class CategoriesEditPage {
       this.showOnlyMandatoryFields = false;
     }
     this.initializeForm();
-    this.appGlobalService.closeSigninOnboardingLoader();
   }
 
   /**

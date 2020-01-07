@@ -46,7 +46,6 @@ export class TncUpdateHandlerService {
 
     this.profileService.getServerProfilesDetails(request).toPromise()
       .then((profile) => {
-        this.appGlobalService.closeSigninOnboardingLoader();
         if (!this.hasProfileTncUpdated(profile)) {
           this.checkBmc(profile);
           return;
@@ -137,6 +136,7 @@ export class TncUpdateHandlerService {
         }
       })
       .catch((error) => {
+        this.appGlobalService.closeSigninOnboardingLoader();
         this.externalIdVerificationService.showExternalIdVerificationPopup();
         console.error('Error:', error);
       });

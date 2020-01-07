@@ -50,6 +50,7 @@ export class TermsAndConditionsPage implements OnInit {
   }
 
   public async ngOnInit() {
+    this.appGlobalService.closeSigninOnboardingLoader();
     this.appName = await this.appVersion.getAppName();
     this.headerService.hideHeader();
     this.userProfileDetails = (await this.profileService.getActiveSessionProfile(
@@ -150,7 +151,7 @@ export class TermsAndConditionsPage implements OnInit {
                 this.externalIdVerificationService.showExternalIdVerificationPopup();
                 this.splashScreenService.handleSunbirdSplashScreenActions();
               } else {
-                this.appGlobalService.closeSigninOnboardingLoader();
+                // closeSigninOnboardingLoader() is called in District-Mapping page
                 const navigationExtras: NavigationExtras = {
                   state: {
                     isShowBackButton: false

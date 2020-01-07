@@ -137,6 +137,7 @@ export class DistrictMappingPage {
     private ngZone: NgZone,
     private externalIdVerificationService: ExternalIdVerificationService
   ) {
+    this.appGlobalService.closeSigninOnboardingLoader();
     this.isKeyboardShown$ = deviceInfo.isKeyboardShown().pipe(
         tap(() => this.changeDetectionRef.detectChanges())
     );

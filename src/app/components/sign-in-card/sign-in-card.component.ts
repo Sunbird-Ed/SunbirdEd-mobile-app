@@ -132,6 +132,10 @@ export class SignInCardComponent implements OnInit {
         })
         .then(async () => {
           await loader.dismiss();
+          if (!this.appGlobalService.signinOnboardingLoader) {
+            this.appGlobalService.signinOnboardingLoader = await this.commonUtilService.getLoader();
+            await this.appGlobalService.signinOnboardingLoader.present();
+          }
           that.ngZone.run(() => {
             that.preferences.putString('SHOW_WELCOME_TOAST', 'true').toPromise().then();
 
