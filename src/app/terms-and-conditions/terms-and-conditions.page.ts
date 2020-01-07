@@ -12,7 +12,7 @@ import { CommonUtilService } from '@app/services/common-util.service';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { AppHeaderService } from '@app/services/app-header.service';
 import { ProfileConstants, RouterLinks } from '../app.constant';
-import { FormAndFrameworkUtilService } from '@app/services';
+import { FormAndFrameworkUtilService, AppGlobalService } from '@app/services';
 import { Router, NavigationExtras } from '@angular/router';
 import { SplashScreenService } from '@app/services/splash-screen.service';
 import { ExternalIdVerificationService } from '@app/services/externalid-verification.service';
@@ -44,11 +44,13 @@ export class TermsAndConditionsPage implements OnInit {
     private formAndFrameworkUtilService: FormAndFrameworkUtilService,
     private router: Router,
     private splashScreenService: SplashScreenService,
-    private externalIdVerificationService: ExternalIdVerificationService
+    private externalIdVerificationService: ExternalIdVerificationService,
+    private appGlobalService: AppGlobalService
   ) {
   }
 
   public async ngOnInit() {
+    this.appGlobalService.closeSigninOnboardingLoader();
     this.appName = await this.appVersion.getAppName();
     this.headerService.hideHeader();
     this.userProfileDetails = (await this.profileService.getActiveSessionProfile(
@@ -135,15 +137,21 @@ export class TermsAndConditionsPage implements OnInit {
               await loader.dismiss();
               loader = undefined;
             }
+            if (!this.appGlobalService.signinOnboardingLoader) {
+              this.appGlobalService.signinOnboardingLoader = await this.commonUtilService.getLoader();
+              await this.appGlobalService.signinOnboardingLoader.present();
+            }
             this.disableSubmitButton = false;
             if (value['status']) {
               if (this.commonUtilService.isUserLocationAvalable(serverProfile)
               &&  await tncUpdateHandlerService.isSSOUser(profile)) {
                 await tncUpdateHandlerService.dismissTncPage();
+                this.appGlobalService.closeSigninOnboardingLoader();
                 this.router.navigate(['/', RouterLinks.TABS]);
                 this.externalIdVerificationService.showExternalIdVerificationPopup();
                 this.splashScreenService.handleSunbirdSplashScreenActions();
               } else {
+                // closeSigninOnboardingLoader() is called in District-Mapping page
                 const navigationExtras: NavigationExtras = {
                   state: {
                     isShowBackButton: false
@@ -152,6 +160,7 @@ export class TermsAndConditionsPage implements OnInit {
                 this.router.navigate(['/', RouterLinks.DISTRICT_MAPPING] , navigationExtras);
               }
             } else {
+              // closeSigninOnboardingLoader() is called in CategoryEdit page
               await tncUpdateHandlerService.dismissTncPage();
               this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.CATEGORIES_EDIT}`], {
                 state: {
