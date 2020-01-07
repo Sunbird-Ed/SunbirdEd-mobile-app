@@ -7,26 +7,17 @@
     </app-detail-card>
     <!-- End of the Parent Card -->
 
-    <!-- Import content loader -->
-    <!-- <div *ngIf="showChildrenLoader">
-      <ion-row style="padding-top: 30px;" padding>
-        <ion-col text-center>
-          <p *ngIf="downloadProgress !== 100">{{ 'FETCHING_CONTENTS' | translate: {'%s': downloadProgress ?
-            downloadProgress : '0'} }}</p>
-          <p *ngIf="downloadProgress === 100">{{importProgressMessage}}</p>
-          <ion-spinner padding></ion-spinner>
-        </ion-col>
-      </ion-row>
-    </div> -->
     <!-- End import content -->
     <div class="m-n" *ngIf="showSheenAnimation">
-        <div class="skeleton-search-card" *ngFor="let i of [0,1,2,3,4,5,6,7,8,9,10,11,12,13]" >
-          <div style=" flex: 22 auto;">
-              <app-skeleton-item height="60px" width="100%" style="height:60px; width:100%; margin-bottom: 10px;"></app-skeleton-item>
-          </div>
+      <div class="skeleton-search-card" *ngFor="let i of [0,1,2,3,4,5,6,7,8,9,10,11,12,13]">
+        <div style=" flex: 22 auto;">
+          <app-skeleton-item height="60px" width="100%" style="height:60px; width:100%; margin-bottom: 10px;">
+          </app-skeleton-item>
         </div>
       </div>
-    <div #stickyPillsRef *ngIf="!showSheenAnimation && childrenData && childrenData?.length" class="collection-etb-filter">
+    </div>
+    <div #stickyPillsRef *ngIf="!showSheenAnimation && childrenData && childrenData?.length"
+      class="collection-etb-filter">
       <div class="sb-chapter-dd" (click)="openTextbookToc()">
         <span class="pull-left">{{stckyUnitTitle || ('SELECT_CHAPTER' | translate)}}</span>
         <span class="pull-right">
@@ -61,13 +52,8 @@
       </div>
       <ng-container *ngFor="let item of childrenData;  let i = index;">
         <ion-card class="sb-accordian-card" *ngIf="item | hasMimeType: activeMimeTypeFilter">
-          <div
-            class="sticky-header-title-box"
-            [attr.data-text]="item.contentData.name" 
-            [attr.data-render-level]="0"
-            [id]="item.mimeType === 'application/vnd.ekstep.content-collection' ? item.identifier : ''"
-            #filteredItems
-          >
+          <div class="sticky-header-title-box" [attr.data-text]="item.contentData.name" [attr.data-render-level]="0"
+            [id]="item.mimeType === 'application/vnd.ekstep.content-collection' ? item.identifier : ''" #filteredItems>
             <!-- new -->
             <ion-grid class="sb-accordian-header">
               <ion-row (click)="toggleGroup(i, item)" *ngIf="item?.children">
@@ -174,7 +160,7 @@
                 class="sb-legal-url">{{licenseDetails.url}}</span>
             </div>
             <div *ngIf="contentDetail?.contentData?.copyright">
-  
+
               <ion-card-title class="font-12 subtitle-color label-margin-bottom">
                 <b>{{ 'COPYRIGHT' | translate }}</b>:
               </ion-card-title>
@@ -196,20 +182,20 @@
                 <p>{{contentDetail?.contentData?.originData.name}}</p>
               </div>
               <div *ngIf="contentDetail?.contentData?.originData.author">
-  
+
                 <ion-card-title class="font-12 subtitle-color label-margin-bottom">
                   <b>{{ 'AUTHOR_OF_SOURCE_TRAINING' | translate }}</b>:
                 </ion-card-title>
                 <p>{{contentDetail?.contentData?.originData.author}}</p>
               </div>
-  
+
               <div *ngIf="contentDetail?.contentData?.originData.license">
                 <ion-card-title class="font-12 subtitle-color label-margin-bottom">
                   <b>{{ 'LICENSE' | translate }}</b>:
                 </ion-card-title>
                 <p>{{contentDetail?.contentData?.originData.license}}</p>
               </div>
-  
+
               <div *ngIf="contentDetail?.contentData?.originData.organisation">
                 <ion-card-title class="font-12 subtitle-color label-margin-bottom">
                   <b>{{ 'PUBLISHED_BY' | translate:{'%s': appName} }}</b>:
@@ -225,17 +211,6 @@
   </div>
 </ion-content>
 
-<!-- Page footer -->
-<!-- <div class="loading-backdrop" *ngIf="showLoading && !isDownloadStarted" text-center>
-  <div class="backdrop-container">
-    <ion-label>{{ 'LOADING_CONTENTS' | translate: {'%s': downloadProgress ? downloadProgress : 0} }}</ion-label>
-    <app-pb-horizontal [progress]="downloadProgress" isOnBoardCard="false"></app-pb-horizontal>
-  </div>
-
-  <div class="backdrop-footer">
-    <ion-button size="small" (click)="cancelDownload()">{{ 'CANCEL' | translate }}</ion-button>
-  </div>
-</div> -->
 <app-sb-download-popup *ngIf="showDownload" (cancelDownloadEmit)="cancelDownload($event)" [currentCount]="currentCount"
   [queuedIdentifiers]="queuedIdentifiers" [downloadSize]="downloadSize"
   [collectionName]="contentDetail?.contentData?.name" [showDownload]="showDownload"></app-sb-download-popup>
