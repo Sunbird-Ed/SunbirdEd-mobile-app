@@ -112,21 +112,21 @@ describe('DistrictMappingPage', () => {
         expect(districtMappingPage).toBeTruthy();
     });
 
-    it('should open select overlay when showStates is set', () => {
+    it('should open select overlay when showStates is set', (done) => {
         // arrange
         districtMappingPage.stateSelect = { open: jest.fn(() => { }) };
 
         // act
-        jest.useFakeTimers();
         districtMappingPage.showStates = true;
 
         // assert
-        jest.advanceTimersByTime(1000);
-        expect(districtMappingPage.stateSelect.open).toHaveBeenCalled();
-        jest.clearAllTimers();
+        setTimeout(() => {
+            expect(districtMappingPage.stateSelect.open).toHaveBeenCalledTimes(1);
+            done();
+        }, 510);
     });
 
-    it('should open select overlay when showDistrict is set', () => {
+    it('should open select overlay when showDistrict is set', (done) => {
         // arrange
         districtMappingPage.districtSelect = { open: jest.fn(() => { }) };
 
@@ -134,7 +134,10 @@ describe('DistrictMappingPage', () => {
         districtMappingPage.showDistrict = true;
 
         // assert
-        expect(districtMappingPage.districtSelect.open).toHaveBeenCalled();
+        setTimeout(() => {
+            expect(districtMappingPage.districtSelect.open).toHaveBeenCalledTimes(1);
+            done();
+        }, 510);
     });
 
     it('should populate the state name when getStates() is invoked ', () => {
@@ -207,7 +210,7 @@ describe('DistrictMappingPage', () => {
             expect(districtMappingPage.districtList).toEqual([]);
             expect(districtMappingPage.showDistrict).toBeTruthy();
             done();
-        }, 100);
+        }, 1);
 
     });
 
@@ -229,7 +232,7 @@ describe('DistrictMappingPage', () => {
         setTimeout(() => {
             expect(districtMappingPage.districtName).toEqual('');
             done();
-        }, 100);
+        }, 1);
 
     });
 
@@ -251,7 +254,7 @@ describe('DistrictMappingPage', () => {
         setTimeout(() => {
             expect(districtMappingPage.showDistrict).toBeTruthy();
             done();
-        }, 100);
+        }, 1);
 
     });
 
@@ -275,7 +278,7 @@ describe('DistrictMappingPage', () => {
             expect(districtMappingPage.districtList).toEqual([]);
             expect(districtMappingPage.showDistrict).toBeFalsy();
             done();
-        }, 100);
+        }, 1);
 
     });
 
@@ -304,7 +307,7 @@ describe('DistrictMappingPage', () => {
                 { firstName: 'sample_name', lastName: '', locationCodes: ['2', '2'], userId: '12345' });
             expect(mockLocation.back).toHaveBeenCalled();
             done();
-        }, 100);
+        }, 1);
     });
 
     it('should go 2 pages back  when submit clicked and profile is not available', (done) => {
@@ -322,7 +325,7 @@ describe('DistrictMappingPage', () => {
             expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('PROFILE_UPDATE_SUCCESS');
             expect(window.history.go).toHaveBeenCalledWith(-2);
             done();
-        }, 100);
+        }, 1);
     });
 
     it('should navigate to TAB page  when submit clicked and profile is not available', (done) => {
@@ -340,7 +343,7 @@ describe('DistrictMappingPage', () => {
             expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('PROFILE_UPDATE_SUCCESS');
             expect(mockRouter.navigate).toHaveBeenCalledWith(['/tabs']);
             done();
-        }, 100);
+        }, 1);
     });
 
     it('should naviigate to TABS page if API fails and profile is not available ', (done) => {
@@ -356,7 +359,7 @@ describe('DistrictMappingPage', () => {
             expect(mockRouter.navigate).toHaveBeenCalledWith(['/tabs']);
             expect(mockExternalIdVerificationService.showExternalIdVerificationPopup).toHaveBeenCalled();
             done();
-        }, 100);
+        }, 1);
     });
 
     it('should go back if API fails and profile  available ', (done) => {
@@ -372,7 +375,7 @@ describe('DistrictMappingPage', () => {
             expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('PROFILE_UPDATE_FAILED');
             expect(mockLocation.back).toHaveBeenCalled();
             done();
-        }, 100);
+        }, 1);
     });
 
     it('should save location if user is trying to edit the location', (done) => {
@@ -387,7 +390,7 @@ describe('DistrictMappingPage', () => {
             expect(mockLocation.back).toHaveBeenCalled();
             expect(mockEvents.publish).toHaveBeenCalledWith('refresh:profile');
             done();
-        }, 100);
+        }, 1);
         expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
 
     });
@@ -407,7 +410,7 @@ describe('DistrictMappingPage', () => {
                 }
             });
             done();
-        }, 100);
+        }, 1);
         expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
 
     });
@@ -492,7 +495,7 @@ describe('DistrictMappingPage', () => {
         setTimeout(() => {
             expect(districtMappingPage.showNotNowFlag).toBeTruthy();
             done();
-        }, 100);
+        }, 1);
 
     });
 
@@ -536,7 +539,7 @@ describe('DistrictMappingPage', () => {
         expect(districtMappingPage.profile).toBeDefined();
     });
 
-    it('should open district overlay when _showDistrict value is set', () => {
+    it('should open district overlay when _showDistrict value is set', (done) => {
         // arrange
         districtMappingPage.showStates = false;
         districtMappingPage.districtSelect = { open: jest.fn(() => { }) };
@@ -544,10 +547,12 @@ describe('DistrictMappingPage', () => {
         districtMappingPage.showDistrict = true;
 
         // assert
-        expect(districtMappingPage.showStates).toBeFalsy();
-        expect(districtMappingPage.showDistrict).toBeTruthy();
-        expect(districtMappingPage.districtSelect.open).toHaveBeenCalled();
-        jest.clearAllTimers();
+        setTimeout(() => {
+            expect(districtMappingPage.showDistrict).toBeTruthy();
+            expect(districtMappingPage.districtSelect.open).toHaveBeenCalled();
+            done();
+        }, 1000);
+
     });
 
     it('should generate IMPRESSION telemetry when ionViewWillEnter', () => {
