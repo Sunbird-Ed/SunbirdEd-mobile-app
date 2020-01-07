@@ -29,6 +29,14 @@ import { tap } from 'rxjs/operators';
   styleUrls: ['./district-mapping.page.scss'],
 })
 export class DistrictMappingPage {
+  @ViewChild('stateSelect') stateSelect?: IonSelect;
+  @ViewChild('districtSelect') districtSelect?: IonSelect;
+
+  private _showStates?: boolean;
+  private _showDistrict?: boolean;
+  private _stateName: string;
+  private _districtName: string;
+
   get profile(): Profile | undefined {
     return window.history.state.profile;
   }
@@ -42,38 +50,59 @@ export class DistrictMappingPage {
     return window.history.state.source;
   }
 
-  @ViewChild('stateSelect') stateSelect?: IonSelect;
-  @ViewChild('districtSelect') districtSelect?: IonSelect;
 
-  private _showStates: boolean;
-  private _showDistrict: boolean;
 
   get showStates(): boolean {
     return this._showStates;
   }
-
   set showStates(value: boolean) {
     this._showStates = value;
 
     if (this._showStates && this.stateSelect) {
-      this.stateSelect.open();
+      setTimeout(() => {
+        this.stateSelect.open();
+      }, 500);
     }
   }
 
   get showDistrict(): boolean {
     return this._showDistrict;
   }
-
   set showDistrict(value: boolean) {
     this._showDistrict = value;
 
     if (this._showDistrict && this.districtSelect) {
-      this.districtSelect.open();
+      setTimeout(() => {
+        this.districtSelect.open();
+      }, 500);
     }
   }
 
-  stateName;
-  districtName;
+
+  get stateName(): string {
+    return this._stateName;
+  }
+  set stateName(value: string) {
+    this._stateName = value;
+
+    if (this.stateSelect) {
+      const selectedState = this.stateList.find((state) => state.name === this._stateName);
+      this.stateSelect.selectedText = selectedState ? selectedState.name : '';
+    }
+  }
+
+  get districtName(): string {
+    return this._districtName;
+  }
+  set districtName(value: string) {
+    this._districtName = value;
+
+    if (this.districtSelect) {
+      const selectedDistrict = this.districtList.find((district) => district.name === this._districtName);
+      this.districtSelect.selectedText = selectedDistrict ? selectedDistrict.name : '';
+    }
+  }
+
   name;
   stateList = [];
   districtList = [];
