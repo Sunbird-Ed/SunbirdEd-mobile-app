@@ -117,10 +117,13 @@ describe('DistrictMappingPage', () => {
         districtMappingPage.stateSelect = { open: jest.fn(() => { }) };
 
         // act
+        jest.useFakeTimers();
         districtMappingPage.showStates = true;
 
         // assert
+        jest.advanceTimersByTime(1000);
         expect(districtMappingPage.stateSelect.open).toHaveBeenCalled();
+        jest.clearAllTimers();
     });
 
     it('should open select overlay when showDistrict is set', () => {
@@ -544,6 +547,7 @@ describe('DistrictMappingPage', () => {
         expect(districtMappingPage.showStates).toBeFalsy();
         expect(districtMappingPage.showDistrict).toBeTruthy();
         expect(districtMappingPage.districtSelect.open).toHaveBeenCalled();
+        jest.clearAllTimers();
     });
 
     it('should generate IMPRESSION telemetry when ionViewWillEnter', () => {
