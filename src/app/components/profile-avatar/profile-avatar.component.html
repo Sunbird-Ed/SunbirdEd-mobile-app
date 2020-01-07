@@ -2,11 +2,11 @@
 
 <div class="profile-avatar" *ngIf="!isStateUser" >  
     <span [style.color]="bgColor">
-      {{initial}}
+      {{initial | titlecase}}
     </span>
 </div>
 <div class="profile-avatar profileAvatar" *ngIf="isStateUser" >  
   <span [style.color]="bgColor">
-    {{initial}}
+    {{initial | titlecase}}
   </span>
 </div>
