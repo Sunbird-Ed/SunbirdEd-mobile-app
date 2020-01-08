@@ -1,7 +1,7 @@
 <ion-header>
   <ion-toolbar color="white">
     <ion-buttons class="sb-hamburger" slot="start">
-      <ion-button  class="f18 color" icon-only (click)="goBack()">
+      <ion-button class="f18 color" icon-only (click)="goBack()">
         <ion-icon name="arrow-back"></ion-icon>
       </ion-button>
     </ion-buttons>
@@ -77,7 +77,8 @@
             <ion-item *ngFor="let user of userList; let i=index;" class="item-background ug-mb-6 ion-no-padding">
               <ion-label class="ion-no-margin">
                 <ion-grid class="radius">
-                  <ion-row [ngClass]="i===selectedUserIndex ? 'blueBorder' : ''" class="bg-color-white ug-row-padding radius">
+                  <ion-row [ngClass]="i===selectedUserIndex ? 'blueBorder' : ''"
+                    class="bg-color-white ug-row-padding radius">
                     <ion-col size="11" class="bg-color-white" (click)="selectUser(i, user?.uid, user?.handle)">
                       <div class="bg-color-white padding-left-0 rm-label-margin" no-padding>
                         <ion-label>
@@ -90,16 +91,15 @@
                               *ngIf="user?.profileType === ProfileType.TEACHER">{{'USER_TYPE_1' | translate | titlecase}}</span>
                             <span
                               *ngIf="user?.profileType === ProfileType.STUDENT">{{'USER_TYPE_2' | translate | titlecase}}</span>
-                            <span *ngIf="user?.grade?.length" class="separator-dot"></span> {{ getGradeNameFromCode(user) }}
+                            <span *ngIf="user?.grade?.length" class="separator-dot"></span>
+                            {{ getGradeNameFromCode(user) }}
                           </p>
                         </ion-label>
                       </div>
                     </ion-col>
                     <ion-col size="1" class="advanced-menu" *ngIf="!playConfig">
-                      <!-- <div slot="end" class="bg-color-white item-padding-left"> -->
-                        <ion-icon class="ug-icon-font-size" name="more" item-end
-                          (click)="presentPopover($event ,i, true)"></ion-icon>
-                      <!-- </div> -->
+                      <ion-icon class="ug-icon-font-size" name="more" item-end
+                        (click)="presentPopover($event ,i, true)"></ion-icon>
                     </ion-col>
                   </ion-row>
                 </ion-grid>
@@ -131,49 +131,53 @@
           </ion-row>
         </div>
         <ion-list lines="none" *ngIf="!showEmptyGroupsMessage">
-            <ion-item *ngFor="let group of groupList; let i = index" class="item-background ug-mb-6 ion-no-padding">
-              <ion-label class="ion-no-margin">
-                <ion-grid class="radius">
-                  <ion-row class="bg-color-white ug-row-padding radius">
-                    <ion-col size="11" class="bg-color-white">
-                      <div class="bg-color-white padding-left-0 rm-label-margin" no-padding (click)="goToGroupDetail(i)">
-                        <ion-label>
-                          <h6 class="elipsis ion-no-margin"
-                            [ngStyle]="{'color': currentGroupId === group?.gid ? 'dodgerblue' : 'black'}">
-                            <strong>{{group?.name}}</strong>
-                          </h6>
-                          <p>
-                            <ion-text>
-                              <span color="text_gray" *ngIf="group?.grade && group?.grade[0]">{{ getGradeNameFromCode(group) }}
-                              </span>
-                            </ion-text>
-                              <ion-text>
-                              <span *ngIf="group?.grade?.length" class="separator-dot"></span>
-                            </ion-text> 
-                            <ion-text>
-                              <span color="text_gray" *ngIf="group?.profilesCount > 1" >{{group?.profilesCount}} {{'USERS'
-                              | translate}}</span>
-                            </ion-text>
-                            <ion-text>
-                              <span color="text_gray" *ngIf="group?.profilesCount === 1" >{{group?.profilesCount}} {{'USER'
-                              | translate}}</span>
-                            </ion-text>
-                            <ion-text>
-                              <span color="text_gray" *ngIf=" !group?.profilesCount || group?.profilesCount === 0" >{{'NO_USERS'
-                              | translate}}</span>
-                            </ion-text>
-                          </p>
-                        </ion-label>
-                      </div>
-                    </ion-col>
-                    <ion-col size="1" class="advanced-menu" *ngIf="!playConfig">
-                        <ion-icon class="ug-icon-font-size" name="more" item-end
-                          (click)="presentPopover($event, i , false)"></ion-icon>
-                    </ion-col>
-                  </ion-row>
-                  </ion-grid>
-              </ion-label>
-            </ion-item>
+          <ion-item *ngFor="let group of groupList; let i = index" class="item-background ug-mb-6 ion-no-padding">
+            <ion-label class="ion-no-margin">
+              <ion-grid class="radius">
+                <ion-row class="bg-color-white ug-row-padding radius">
+                  <ion-col size="11" class="bg-color-white">
+                    <div class="bg-color-white padding-left-0 rm-label-margin" no-padding (click)="goToGroupDetail(i)">
+                      <ion-label>
+                        <h6 class="elipsis ion-no-margin"
+                          [ngStyle]="{'color': currentGroupId === group?.gid ? 'dodgerblue' : 'black'}">
+                          <strong>{{group?.name}}</strong>
+                        </h6>
+                        <p>
+                          <ion-text>
+                            <span color="text_gray" *ngIf="group?.grade && group?.grade[0]">
+                              {{ getGradeNameFromCode(group) }}
+                            </span>
+                          </ion-text>
+                          <ion-text>
+                            <span *ngIf="group?.grade?.length" class="separator-dot"></span>
+                          </ion-text>
+                          <ion-text>
+                            <span color="text_gray" *ngIf="group?.profilesCount > 1">
+                              {{group?.profilesCount}} {{'USERS' | translate}}
+                            </span>
+                          </ion-text>
+                          <ion-text>
+                            <span color="text_gray" *ngIf="group?.profilesCount === 1">
+                              {{group?.profilesCount}} {{'USER' | translate}}
+                            </span>
+                          </ion-text>
+                          <ion-text>
+                            <span color="text_gray" *ngIf=" !group?.profilesCount || group?.profilesCount === 0">
+                              {{'NO_USERS' | translate}}
+                            </span>
+                          </ion-text>
+                        </p>
+                      </ion-label>
+                    </div>
+                  </ion-col>
+                  <ion-col size="1" class="advanced-menu" *ngIf="!playConfig">
+                    <ion-icon class="ug-icon-font-size" name="more" item-end
+                      (click)="presentPopover($event, i , false)"></ion-icon>
+                  </ion-col>
+                </ion-row>
+              </ion-grid>
+            </ion-label>
+          </ion-item>
         </ion-list>
       </div>
     </ion-list>
@@ -191,7 +195,8 @@
   <ion-row padding>
     <ion-col size-md="10" offset-md="1" *ngIf="!isLoggedIn; else disableSwitchButton">
       <div *ngIf="selectedUserIndex !== -1; else enableCreateButton">
-        <ion-button *ngIf="!playConfig" expand="block" center (click)="switchAccountConfirmBox()" [disabled]="!selectedUsername">
+        <ion-button *ngIf="!playConfig" expand="block" center (click)="switchAccountConfirmBox()"
+          [disabled]="!selectedUsername">
           {{'SWITCH_ACCOUNT' | translate}}
         </ion-button>
         <ion-button *ngIf="playConfig" expand="block" (click)="play()" [disabled]="isCurUserSelected">
@@ -199,12 +204,17 @@
         </ion-button>
       </div>
       <ng-template #enableCreateButton>
-        <ion-button fill="outline" expand="block" *ngIf="segmentType=='users' && !this.playConfig" (click)="createUser()">{{ 'CREATE_NEW_USER'
-          | translate}}</ion-button>
-        <ion-button expand="block" *ngIf="this.playConfig && segmentType=='users'" [disabled]="true">{{ 'PLAY' | translate}}
+        <ion-button fill="outline" expand="block" *ngIf="segmentType=='users' && !this.playConfig"
+          (click)="createUser()">
+          {{ 'CREATE_NEW_USER' | translate}}
         </ion-button>
-        <ion-button fill="outline" expand="block" *ngIf="segmentType=='groups' && !this.playConfig" (click)="createGroup()">{{ 'CREATE_NEW_GROUP'
-          | translate}}</ion-button>
+        <ion-button expand="block" *ngIf="this.playConfig && segmentType=='users'" [disabled]="true">
+          {{ 'PLAY' | translate}}
+        </ion-button>
+        <ion-button fill="outline" expand="block" *ngIf="segmentType=='groups' && !this.playConfig"
+          (click)="createGroup()">
+          {{ 'CREATE_NEW_GROUP' | translate}}
+        </ion-button>
       </ng-template>
     </ion-col>
     <ng-template #disableSwitchButton>
