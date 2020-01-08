@@ -66,7 +66,6 @@ export enum PageId {
     SETTINGS_DEVICE_TAGS = 'settings-device-tags',
     SETTINGS_SUPPORTS = 'settings-supports',
     SETTINGS_ABOUT_US = 'settings-about-us',
-    ABOUT_APP = 'about-app',
     USERS_GROUPS = 'users-groups',
     CREATE_USER = 'create-profile',
     CREATE_GROUP = 'create-group',

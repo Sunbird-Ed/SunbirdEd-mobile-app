@@ -439,9 +439,6 @@ export class RouterLinks {
     public static readonly LANGUAGE_SETTING = 'language-setting';
     public static readonly PERMISSION = 'permission';
     public static readonly ABOUT_US = 'about-us';
-    public static readonly ABOUT_APP = 'about-app';
-    public static readonly PRIVACY_POLICY = 'privacy-policy';
-    public static readonly TERMS_OF_SERVICE = 'terms-of-service';
     public static readonly DISTRICT_MAPPING = 'district-mapping';
 
     // Profile settings Routes
