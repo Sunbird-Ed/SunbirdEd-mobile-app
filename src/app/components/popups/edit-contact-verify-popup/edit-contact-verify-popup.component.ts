@@ -25,10 +25,10 @@ export class EditContactVerifyPopupComponent implements OnInit {
   unregisterBackButton: any;
 
   constructor(
+    @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     private navParams: NavParams,
     public popOverCtrl: PopoverController,
     public platform: Platform,
-    @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     private commonUtilService: CommonUtilService,
     private menuCtrl: MenuController
   ) {
@@ -103,7 +103,7 @@ export class EditContactVerifyPopupComponent implements OnInit {
       await loader.present();
       this.profileService.generateOTP(req).toPromise()
         .then(async () => {
-          this.description = this.commonUtilService.translateMessage('OTP_RESENT');
+          this.commonUtilService.showToast('OTP_RESENT');
           await loader.dismiss();
           loader = undefined;
         })

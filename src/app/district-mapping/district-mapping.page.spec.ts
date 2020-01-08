@@ -164,9 +164,8 @@ describe('DistrictMappingPage', () => {
 
     });
 
-    it('should generate TELEMETRY ehen device back clicked', () => {
+    it('should generate TELEMETRY when device back clicked', () => {
         // arrange
-        const data = jest.fn();
         const subscribeWithPriorityData = jest.fn((_, fn) => fn());
         mockPlatform.backButton = {
             subscribeWithPriority: subscribeWithPriorityData,
