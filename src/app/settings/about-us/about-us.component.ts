@@ -138,18 +138,6 @@ export class AboutUsComponent implements OnInit {
     });
   }
 
-  aboutApp() {
-    this.router.navigate([`/${RouterLinks.SETTINGS}/${RouterLinks.ABOUT_APP}`]);
-  }
-
-  termsOfService() {
-    this.router.navigate([`/${RouterLinks.SETTINGS}/${RouterLinks.TERMS_OF_SERVICE}`]);
-  }
-
-  privacyPolicy() {
-    this.router.navigate([`/${RouterLinks.SETTINGS}/${RouterLinks.PRIVACY_POLICY}`]);
-  }
-
   generateInteractTelemetry(interactionType, interactSubtype) {
     this.telemetryGeneratorService.generateInteractTelemetry(
       interactionType, interactSubtype,
