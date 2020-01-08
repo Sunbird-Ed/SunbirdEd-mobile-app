@@ -1,8 +1,6 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import {
-  ContentService,
-  DeviceInfo,
   ProfileService,
   SharedPreferences,
   TelemetryImpressionRequest,
@@ -13,7 +11,7 @@ import {
   WebviewManualMergeSessionProvider,
   WebviewSessionProviderConfig
 } from 'sunbird-sdk';
-import {AppHeaderService, CommonUtilService, FormAndFrameworkUtilService, TelemetryGeneratorService, UtilityService} from 'services';
+import { AppHeaderService, CommonUtilService, FormAndFrameworkUtilService, TelemetryGeneratorService, UtilityService } from 'services';
 import { PreferenceKey, RouterLinks } from '../app.constant';
 import { Environment, ImpressionType, InteractSubtype, InteractType, PageId } from 'services/telemetry-constants';
 import { SocialSharing } from '@ionic-native/social-sharing/ngx';
@@ -82,7 +80,6 @@ export class SettingsPage implements OnInit {
     this.handleBackButton();
   }
 
-
   ngOnInit() {
     const telemetryImpressionRequest = new TelemetryImpressionRequest();
     telemetryImpressionRequest.type = ImpressionType.VIEW;
@@ -105,11 +102,6 @@ export class SettingsPage implements OnInit {
       });
   }
 
-  goToLanguageSetting() {
-    this.generateInteractTelemetry(InteractType.TOUCH, InteractSubtype.LANGUAGE_CLICKED);
-    this.router.navigate(['settings/language-setting', true]);
-  }
-
   dataSync() {
     this.generateInteractTelemetry(InteractType.TOUCH, InteractSubtype.DATA_SYNC_CLICKED);
     this.router.navigate(['settings/data-sync']);
@@ -126,7 +118,6 @@ export class SettingsPage implements OnInit {
 
     this.generateInteractTelemetry(InteractType.TOUCH, InteractSubtype.SHARE_APP_CLICKED);
     this.generateInteractTelemetry(InteractType.TOUCH, InteractSubtype.SHARE_APP_INITIATED);
-
 
     this.utilityService.exportApk()
       .then(async (filepath) => {
@@ -150,7 +141,7 @@ export class SettingsPage implements OnInit {
   }
 
   showPermissionPage() {
-    const navigationExtras: NavigationExtras = { state: { changePermissionAccess: true }};
+    const navigationExtras: NavigationExtras = { state: { changePermissionAccess: true } };
     this.router.navigate([`/${RouterLinks.SETTINGS}/permission`], navigationExtras);
   }
 
@@ -161,7 +152,7 @@ export class SettingsPage implements OnInit {
         isNotShowCloseIcon: false,
         sbPopoverHeading: this.commonUtilService.translateMessage('ACCOUNT_MERGE_CONFIRMATION_HEADING'),
         sbPopoverHtmlContent: '<div class="text-left font-weight-normal padding-left-10 padding-right-10">'
-            + this.commonUtilService.translateMessage('ACCOUNT_MERGE_CONFIRMATION_CONTENT', await this.appVersion.getAppName()) + '</div>',
+          + this.commonUtilService.translateMessage('ACCOUNT_MERGE_CONFIRMATION_CONTENT', await this.appVersion.getAppName()) + '</div>',
         actionsButtons: [
           {
             btntext: this.commonUtilService.translateMessage('CANCEL'),
@@ -179,7 +170,7 @@ export class SettingsPage implements OnInit {
               InteractSubtype.CANCEL_CLICKED,
               Environment.SETTINGS,
               PageId.MERGE_ACCOUNT_POPUP
-          );
+            );
             confirm.dismiss();
           } else if (selectedButton === this.commonUtilService.translateMessage('ACCOUNT_MERGE_CONFIRMATION_BTN_MERGE')) {
             this.telemetryGeneratorService.generateInteractTelemetry(
@@ -187,7 +178,7 @@ export class SettingsPage implements OnInit {
               InteractSubtype.MERGE_CLICKED,
               Environment.SETTINGS,
               PageId.MERGE_ACCOUNT_POPUP
-          );
+            );
             confirm.dismiss();
             this.mergeAccount();
           }
@@ -203,10 +194,10 @@ export class SettingsPage implements OnInit {
     let loader: any | undefined;
 
     this.telemetryGeneratorService.generateInteractTelemetry(
-        InteractType.TOUCH,
-        InteractSubtype.MERGE_ACCOUNT_INITIATED,
-        Environment.SETTINGS,
-        PageId.SETTINGS
+      InteractType.TOUCH,
+      InteractSubtype.MERGE_ACCOUNT_INITIATED,
+      Environment.SETTINGS,
+      PageId.SETTINGS
     );
 
     const webviewSessionProviderConfigloader = await this.commonUtilService.getLoader();
@@ -226,7 +217,7 @@ export class SettingsPage implements OnInit {
       map((session) => session!),
       mergeMap(async (mergeToProfileSession) => {
         const mergeFromProfileSessionProvider = new WebviewManualMergeSessionProvider(
-            webviewMergeSessionProviderConfig
+          webviewMergeSessionProviderConfig
         );
         const mergeFromProfileSession = await mergeFromProfileSessionProvider.provide();
 
@@ -256,10 +247,10 @@ export class SettingsPage implements OnInit {
         }
 
         this.telemetryGeneratorService.generateInteractTelemetry(
-            InteractType.OTHER,
-            InteractSubtype.MERGE_ACCOUNT_FAILED,
-            Environment.SETTINGS,
-            PageId.SETTINGS
+          InteractType.OTHER,
+          InteractSubtype.MERGE_ACCOUNT_FAILED,
+          Environment.SETTINGS,
+          PageId.SETTINGS
         );
 
         const toast = await this.toastCtrl.create({
@@ -274,10 +265,10 @@ export class SettingsPage implements OnInit {
       }),
       tap(async () => {
         this.telemetryGeneratorService.generateInteractTelemetry(
-            InteractType.OTHER,
-            InteractSubtype.MERGE_ACCOUNT_SUCCESS,
-            Environment.SETTINGS,
-            PageId.SETTINGS
+          InteractType.OTHER,
+          InteractSubtype.MERGE_ACCOUNT_SUCCESS,
+          Environment.SETTINGS,
+          PageId.SETTINGS
         );
 
         const successPopover = await this.popoverCtrl.create({
@@ -305,6 +296,7 @@ export class SettingsPage implements OnInit {
       })
     ).subscribe();
   }
+
   handleBackButton() {
     this.backButtonFunc = this.platform.backButton.subscribeWithPriority(10, () => {
       this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.SETTINGS, Environment.SETTINGS, false);
