@@ -131,6 +131,12 @@
               </ion-card-title>
               <p>{{contentDetail?.contentData?.author}}</p>
             </div>
+            <div *ngIf="contentDetail?.contentData?.creator">
+              <ion-card-title class="font-12 subtitle-color label-margin-bottom">
+                <b>{{ 'CREATORS' | translate:{'%s': appName} }}</b>:
+              </ion-card-title>
+              <p>{{contentDetail?.contentData?.creator}} </p>
+            </div>
             <div *ngIf="contentDetail?.contentData?.organisation">
               <ion-card-title class="font-12 subtitle-color label-margin-bottom">
                 <b>{{ 'PUBLISHED_BY' | translate:{'%s': appName} }}</b>:
