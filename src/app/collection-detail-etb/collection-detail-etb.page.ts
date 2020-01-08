@@ -242,8 +242,15 @@ export class CollectionDetailEtbPage implements OnInit {
 
   public telemetryObject: TelemetryObject;
   public rollUpMap: { [key: string]: Rollup } = {};
-  licenseDetails: any;
-
+  _licenseDetails: any;
+  get licenseDetails() {
+    return this._licenseDetails;
+  }
+  set licenseDetails(val) {
+    if (!this._licenseDetails && val) {
+      this._licenseDetails = val;
+    }
+  }
   private previousHeaderBottomOffset?: number;
   constructor(
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
@@ -511,6 +518,7 @@ export class CollectionDetailEtbPage implements OnInit {
         // this.zone.run(() => {
         loader.dismiss().then(() => {
           if (data) {
+            this.licenseDetails = data.contentData.licenseDetails || this.licenseDetails;
             if (!data.isAvailableLocally) {
               this.contentDetail = data;
               this.generatefastLoadingTelemetry(InteractSubtype.FAST_LOADING_OF_TEXTBOOK_INITIATED);
@@ -572,7 +580,6 @@ export class CollectionDetailEtbPage implements OnInit {
    */
   extractApiResponse(data: Content) {
     this.contentDetail = data;
-    this.licenseDetails = data.contentData.licenseDetails || this.licenseDetails;
     // this.contentDetail.isAvailableLocally = data.isAvailableLocally;
 
     if (this.contentDetail.contentData.appIcon) {
