@@ -207,9 +207,15 @@ h6:first-child {
   --inner-padding-end: 0;
   // --background: #ECEFF0 !important;
   --padding-start: 10px;
-    --padding-end: 6px;
-    --padding-top: 10px;
-    --padding-bottom: 10px;
+  --padding-end: 6px;
+  --padding-top: 10px;
+  --padding-bottom: 10px;
+}
+
+.ug-logged-p0{
+  margin-bottom: 6px;
+  --border-radius: 5px;
+  --inner-padding-end: 0;
 }
 
 .ug-pt-30 {
