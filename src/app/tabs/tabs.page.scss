@@ -5,6 +5,11 @@ ion-tabs {
   ion-tab-button {
     overflow: inherit;
   }
+  .rm-before{
+    &::before {
+      background: none !important;
+    }
+  }
   ion-tab-bar {
     contain: none;
     background: none;
