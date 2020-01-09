@@ -144,7 +144,7 @@ export class TermsAndConditionsPage implements OnInit {
             this.disableSubmitButton = false;
             if (value['status']) {
               if (this.commonUtilService.isUserLocationAvalable(serverProfile)
-              &&  await tncUpdateHandlerService.isSSOUser(profile)) {
+              ||  await tncUpdateHandlerService.isSSOUser(profile)) {
                 await tncUpdateHandlerService.dismissTncPage();
                 this.appGlobalService.closeSigninOnboardingLoader();
                 this.router.navigate(['/', RouterLinks.TABS]);
