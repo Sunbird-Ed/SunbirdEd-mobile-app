@@ -636,10 +636,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
     return assembleFilter;
   }
 
-  ionViewDidEnter() {
-
-  }
-
   async ionViewWillEnter() {
     this.events.subscribe('update_header', () => {
       this.headerService.showHeaderWithHomeButton(['search', 'download', 'notification']);
