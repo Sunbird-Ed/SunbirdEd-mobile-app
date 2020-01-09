@@ -26,6 +26,7 @@ export class TabsPage implements OnInit {
     actionButtons: ['search', 'filter'],
   };
   selectedLanguage: string;
+  olderWebView = false;
 
   constructor(
     private container: ContainerService,
@@ -42,7 +43,7 @@ export class TabsPage implements OnInit {
 
   async ngOnInit() {
     console.log('Inside tabsPage');
-
+    this.checkAndroidWebViewVersion();
     const session = await this.appGlobalService.authService.getSession().toPromise();
     if (!session) {
       console.log(`Success Platform Session`, session);
@@ -71,6 +72,17 @@ export class TabsPage implements OnInit {
     this.events.subscribe('UPDATE_TABS', () => {
       this.tabs = this.container.getAllTabs();
     });
+  }
+
+  checkAndroidWebViewVersion() {
+    var that = this;
+    plugins['webViewChecker'].getCurrentWebViewPackageInfo()
+    .then(function(packageInfo) {
+      if (parseInt(packageInfo.versionName.split('.')[0], 10) <= 64) {
+        that.olderWebView = true;
+      }
+    })
+    .catch(function(error) { });
   }
 
   ionViewWillEnter() {
