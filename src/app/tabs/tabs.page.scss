@@ -7,7 +7,7 @@ ion-tabs {
   }
   .rm-before{
     &::before {
-      background: none !important;
+      position: relative !important;
     }
   }
   ion-tab-bar {
