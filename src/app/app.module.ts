@@ -306,7 +306,9 @@ export const sunbirdSdkFactory =
           dbName: 'GenieServices.db'
         },
         deviceRegisterConfig: {
-          apiPath: '/api/v3/device',
+          host: buildConfigValues['DEVICE_REGISTER_BASE_URL'],
+          apiPath: '/v3/device',
+          deviceProfileApiPath: '/api/v3/device',
         },
         contentServiceConfig: {
           apiPath: '/api/content/v1',
