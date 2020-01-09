@@ -133,7 +133,41 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.appRatingService.checkInitialDate();
       this.getUtmParameter();
       this.checkForCodeUpdates();
+      this.checkAndroidWebViewVersion();
     });
+  }
+
+  checkAndroidWebViewVersion() {
+    var that = this;
+    plugins['webViewChecker'].getCurrentWebViewPackageInfo()
+    .then(function(packageInfo) {
+      that.formAndFrameworkUtilService.getWebviewConfig().then(function(webviewVersion) {
+        if (parseInt(packageInfo.versionName.split('.')[0], 10) <= webviewVersion) {
+          document.getElementById('update-webview-container').style.display = 'block';
+          this.telemetryGeneratorService.generateImpressionTelemetry(
+            ImpressionType.VIEW, '',
+            PageId.UPDATE_WEBVIEW_POPUP,
+            Environment.HOME);
+        }
+      }).catch(function(err) {
+        if (parseInt(packageInfo.versionName.split('.')[0], 10) <= 54) {
+          document.getElementById('update-webview-container').style.display = 'block';
+        }
+      });
+    })
+    .catch(function(error) { });
+  }
+
+  openPlaystore() {
+    plugins['webViewChecker'].openGooglePlayPage()
+    .then(function() { })
+    .catch(function(error) { });
+
+    this.telemetryGeneratorService.generateInteractTelemetry(
+      InteractType.TOUCH,
+      InteractSubtype.UPDATE_WEBVIEW_CLICKED,
+      Environment.HOME,
+      PageId.UPDATE_WEBVIEW_POPUP);
   }
 
   getSystemConfig() {
