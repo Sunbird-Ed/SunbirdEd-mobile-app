@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import {
-  AuthService, ProfileService,
+  AuthService, ProfileService, SharedPreferences,
   ServerProfile, ServerProfileDetailsRequest, CachedItemRequestSourceFrom, Profile, UserFeed
 } from 'sunbird-sdk';
 import { ProfileConstants, RouterLinks } from '@app/app/app.constant';
@@ -11,6 +11,7 @@ import { CommonUtilService } from '../common-util.service';
 import { FormAndFrameworkUtilService } from '../formandframeworkutil.service';
 import { ExternalIdVerificationService } from '../externalid-verification.service';
 import { AppGlobalService } from '../app-global-service.service';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -22,6 +23,7 @@ export class TncUpdateHandlerService {
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     @Inject('AUTH_SERVICE') private authService: AuthService,
+    @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
     private commonUtilService: CommonUtilService,
     private formAndFrameworkUtilService: FormAndFrameworkUtilService,
     private modalCtrl: ModalController,
@@ -72,8 +74,8 @@ export class TncUpdateHandlerService {
 
   private async checkBmc(profile) {
     const userDetails = await this.appGlobalService.getCurrentUser();
-    if (userDetails && userDetails.grade && userDetails.medium && userDetails.syllabus &&
-      !userDetails.grade.length && !userDetails.medium.length && !userDetails.syllabus.length) {
+    if (userDetails && userDetails.board && userDetails.grade && userDetails.medium && userDetails.syllabus &&
+      !userDetails.board.length && !userDetails.grade.length && !userDetails.medium.length && !userDetails.syllabus.length) {
       this.preRequirementToBmcNavigation(profile.userId);
     } else {
       this.checkDistrictMapping(profile);
@@ -91,12 +93,12 @@ export class TncUpdateHandlerService {
       requiredFields: ProfileConstants.REQUIRED_FIELDS
     }).toPromise();
 
-    this.navigateToBmc(serverProfile, userprofile);
+    this.navigateToBmc(serverProfile, userprofile)
   }
 
   private async navigateToBmc(serverProfile, userprofile) {
     this.formAndFrameworkUtilService.updateLoggedInUser(serverProfile, userprofile)
-      .then((value) => {
+      .then(async (value) => {
         this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.CATEGORIES_EDIT}`], {
           state: {
             hasFilledLocation: this.commonUtilService.isUserLocationAvalable(serverProfile),
@@ -118,19 +120,22 @@ export class TncUpdateHandlerService {
     }
   }
 
-  private checkDistrictMapping(profile) {
+  checkDistrictMapping(profile) {
     this.formAndFrameworkUtilService.getCustodianOrgId()
       .then((custodianOrgId: string) => {
         const isCustodianOrgId = profile.rootOrg.rootOrgId === custodianOrgId;
         if (isCustodianOrgId
           && !this.commonUtilService.isUserLocationAvalable(profile)) {
           this.navigateToDistrictMapping();
+          return;
         } else {
           this.externalIdVerificationService.showExternalIdVerificationPopup();
+          return;
         }
       })
-      .catch(() => {
+      .catch((error) => {
         this.externalIdVerificationService.showExternalIdVerificationPopup();
+        console.error('Error:', error);
       });
   }
 
