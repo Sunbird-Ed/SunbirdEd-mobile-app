@@ -10,7 +10,6 @@ import { LogoutHandlerService } from '@app/services/handlers/logout-handler.serv
 import { TncUpdateHandlerService } from '@app/services/handlers/tnc-update-handler.service';
 import { CommonUtilService } from '@app/services/common-util.service';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
-import { AppHeaderService } from '@app/services/app-header.service';
 import { ProfileConstants, RouterLinks } from '../app.constant';
 import { FormAndFrameworkUtilService, AppGlobalService } from '@app/services';
 import { Router, NavigationExtras } from '@angular/router';
@@ -38,7 +37,6 @@ export class TermsAndConditionsPage implements OnInit {
     private sanitizer: DomSanitizer,
     private commonUtilService: CommonUtilService,
     private telemetryGeneratorService: TelemetryGeneratorService,
-    private headerService: AppHeaderService,
     private appVersion: AppVersion,
     private injector: Injector,
     private formAndFrameworkUtilService: FormAndFrameworkUtilService,
@@ -52,7 +50,6 @@ export class TermsAndConditionsPage implements OnInit {
   public async ngOnInit() {
     this.appGlobalService.closeSigninOnboardingLoader();
     this.appName = await this.appVersion.getAppName();
-    this.headerService.hideHeader();
     this.userProfileDetails = (await this.profileService.getActiveSessionProfile(
       { requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise()).serverProfile;
 
