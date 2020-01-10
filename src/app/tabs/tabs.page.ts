@@ -77,7 +77,7 @@ export class TabsPage implements OnInit {
     var that = this;
     plugins['webViewChecker'].getCurrentWebViewPackageInfo()
     .then(function(packageInfo) {
-      if (parseInt(packageInfo.versionName.split('.')[0], 10) <= 64) {
+      if (parseInt(packageInfo.versionName.split('.')[0], 10) <= 66) {
         that.olderWebView = true;
       }
     })
