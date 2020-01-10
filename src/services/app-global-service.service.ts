@@ -71,6 +71,7 @@ export class AppGlobalService implements OnDestroy {
     private _limitedShareQuizContent: any;
     private _isSignInOnboardingCompleted: any;
     private isJoinTraningOnboarding: any;
+    private _signinOnboardingLoader: any;
 
 
     constructor(
@@ -677,10 +678,24 @@ export class AppGlobalService implements OnDestroy {
         this.isJoinTraningOnboarding = value;
     }
 
+    get signinOnboardingLoader() {
+        return this._signinOnboardingLoader;
+    }
+    set signinOnboardingLoader(value) {
+        this._signinOnboardingLoader = value;
+    }
+
     // This method is used to reset if any quiz content data is previously saved before Joining a Training
     // So it wont affect in the exterId verification page
     resetSavedQuizContent() {
         this.limitedShareQuizContent = null;
     }
+
+    async closeSigninOnboardingLoader() {
+        if (this.signinOnboardingLoader) {
+          await this.signinOnboardingLoader.dismiss();
+          this.signinOnboardingLoader = null;
+        }
+      }
 
 }

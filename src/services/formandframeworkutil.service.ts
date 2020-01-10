@@ -601,4 +601,26 @@ export class FormAndFrameworkUtilService {
                 });
         });
     }
+
+    // get the required webview version
+    getWebviewConfig() {
+        return new Promise((resolve, reject) => {
+            const req: FormRequest = {
+                type: 'config',
+                subType: 'webview_version',
+                action: 'get',
+            };
+            // form api call
+            this.formService.getForm(req).toPromise()
+                .then((res: any) => {
+                    if (res.form && res.form.data && res.form.data.fields[0].version) {
+                        resolve(parseInt(res.form.data.fields[0].version, 10));
+                    } else {
+                        resolve(54);
+                    }
+                }).catch((error: any) => {
+                    reject(error);
+                });
+        });
+    }
 }

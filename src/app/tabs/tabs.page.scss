@@ -4,7 +4,11 @@
 ion-tabs {
   ion-tab-button {
   }
-
+  .rm-before{
+    &::before {
+      position: relative !important;
+    }
+  }
   ion-tab-bar {
     align-items: flex-end;
     contain: none;

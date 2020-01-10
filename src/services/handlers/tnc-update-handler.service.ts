@@ -51,6 +51,8 @@ export class TncUpdateHandlerService {
           return;
         }
         this.presentTncPage({ profile });
+      }).catch(e => {
+        this.appGlobalService.closeSigninOnboardingLoader();
       });
   }
 
@@ -134,6 +136,7 @@ export class TncUpdateHandlerService {
         }
       })
       .catch((error) => {
+        this.appGlobalService.closeSigninOnboardingLoader();
         this.externalIdVerificationService.showExternalIdVerificationPopup();
         console.error('Error:', error);
       });
