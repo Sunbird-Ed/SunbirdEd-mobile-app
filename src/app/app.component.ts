@@ -5,7 +5,7 @@ import { Events, Platform, IonRouterOutlet, MenuController } from '@ionic/angula
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable, combineLatest } from 'rxjs';
-import { mergeMap, filter, take, tap} from 'rxjs/operators';
+import { mergeMap, filter, tap} from 'rxjs/operators';
 import { Network } from '@ionic-native/network/ngx';
 
 import {
@@ -667,7 +667,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   private handleAuthAutoMigrateEvents() {
     this.eventsBusService.events(EventNamespace.AUTH).pipe(
       filter((e) => e.type === AuthEventType.AUTO_MIGRATE_SUCCESS || e.type === AuthEventType.AUTO_MIGRATE_FAIL),
-      take(1)).subscribe((e) => {
+    ).subscribe((e) => {
         switch (e.type) {
           case AuthEventType.AUTO_MIGRATE_SUCCESS: {
             this.commonUtilService.showToast('AUTO_MIGRATION_SUCCESS_MESSAGE');
@@ -684,8 +684,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   private handleAuthErrors() {
     this.eventsBusService.events(EventNamespace.ERROR).pipe(
       filter((e) => e.type === ErrorEventType.AUTH_TOKEN_REFRESH_ERROR),
-      take(1))
-      .subscribe(() => {
+    ).subscribe(() => {
         this.logoutHandlerService.onLogout();
       });
   }
