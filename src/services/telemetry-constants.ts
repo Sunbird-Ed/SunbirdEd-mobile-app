@@ -379,7 +379,8 @@ export enum InteractSubtype {
     STATE_DIST_CHANGED = 'state-dist-changed',
     STATE_CHANGED = 'state-changed',
     DIST_CHANGED = 'dist-changed',
-    UPDATE_WEBVIEW_CLICKED = 'update-webview-clicked'
+    UPDATE_WEBVIEW_CLICKED = 'update-webview-clicked',
+    CREDITS_CLICKED = 'credits-clicked'
 }
 
 export enum ID {

@@ -4,9 +4,9 @@ import { SbGenericPopoverComponent } from '../sb-generic-popover/sb-generic-popo
 describe('SbGenericPopoverComponent', () => {
     let sbGenericPopoverComponent: SbGenericPopoverComponent;
 
-    const mockEventsResponse = {selectedContents: ['do_1234']};
+    const mockEventsResponse = { selectedContents: ['do_1234'] };
     const mockEvents: Partial<Events> = {
-        subscribe: jest.fn(),
+        subscribe: jest.fn(() => mockEventsResponse),
         unsubscribe: jest.fn()
     };
 
@@ -40,17 +40,17 @@ describe('SbGenericPopoverComponent', () => {
             subscribeWithPriority: subscribeWithPriorityData,
         } as any;
 
+        const unsubscribeFn = jest.fn();
         sbGenericPopoverComponent.backButtonFunc = {
-            unsubscribe: jest.fn(),
+            unsubscribe: unsubscribeFn,
         } as any;
 
-        mockEvents.subscribe = jest.fn(() => (mockEventsResponse));
         // act
         sbGenericPopoverComponent.ngOnInit();
         // assert
-        expect(mockPopOverController.dismiss).toHaveBeenCalledWith({isLeftButtonClicked: null});
+        expect(mockPopOverController.dismiss).toHaveBeenCalledWith({ isLeftButtonClicked: null });
         // expect(sbGenericPopoverComponent.selectedContents).toEqual(mockEventsResponse);
-        // expect(sbGenericPopoverComponent.backButtonFunc.unsubscribe).toHaveBeenCalled();
+        expect(unsubscribeFn).toHaveBeenCalled();
     });
 
     it('should unsubscribe to back button and events on ngOnDestroy', () => {

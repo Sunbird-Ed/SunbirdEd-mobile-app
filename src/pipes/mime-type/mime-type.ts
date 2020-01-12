@@ -1,11 +1,9 @@
 import { MimeType } from './../../app/app.constant';
-import { Content, ContentData } from 'sunbird-sdk';
+import { Content } from 'sunbird-sdk';
 import { Pipe, PipeTransform } from '@angular/core';
-​
 /*
   Contents are filtered based on given mimetype
 */
-​
 @Pipe({
   name: 'hasMimeType',
 })
@@ -29,14 +27,13 @@ export class MimeTypePipe implements PipeTransform {
       return this.getFilteredItems(item.children, mimeTypes);
     }
   }
-​
-​
+
   getFilteredItems(contents: Content[] = [], mimeTypes: string[]): boolean {
     const t = this.flattenDeep(contents)
       .some((c) => !!mimeTypes.find(m => m === c.contentData.mimeType));
     return t;
   }
-​
+
   private flattenDeep(contents: Content[]): Content[] {
     return contents.reduce((acc, val) => {
       if (val.children) {
