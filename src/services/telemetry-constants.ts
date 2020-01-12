@@ -117,7 +117,8 @@ export enum PageId {
     DISTRICT_MAPPING = 'district-mapping',
     SIGNIN_POPUP = 'signin-popup',
     EXTERNAL_USER_VERIFICATION_POPUP = 'user-verification-popup',
-    FAQ_REPORT_ISSUE = 'faq-report-issue'
+    FAQ_REPORT_ISSUE = 'faq-report-issue',
+    UPDATE_WEBVIEW_POPUP = 'update-webview-popup',
 }
 export enum LogType {
     NOTIFICATION = 'notification'
@@ -377,7 +378,9 @@ export enum InteractSubtype {
     REPORT_ISSUE_CLICKED = 'report-issue-clicked',
     STATE_DIST_CHANGED = 'state-dist-changed',
     STATE_CHANGED = 'state-changed',
-    DIST_CHANGED = 'dist-changed'
+    DIST_CHANGED = 'dist-changed',
+    UPDATE_WEBVIEW_CLICKED = 'update-webview-clicked',
+    CREDITS_CLICKED = 'credits-clicked'
 }
 
 export enum ID {

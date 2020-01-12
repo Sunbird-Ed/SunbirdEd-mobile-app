@@ -15,6 +15,7 @@ import { SharedPreferences } from '../../../../sunbird-mobile-sdk/src/util/share
 import { EMPTY, of, throwError } from 'rxjs';
 import { LocationSearchResult } from '../../../../sunbird-mobile-sdk/src/profile/def/location-search-result';
 import { ProfileService, Profile, ProfileType, ProfileSource, DeviceRegisterResponse } from 'sunbird-sdk';
+import { PreferenceKey } from '@app/app/app.constant';
 
 describe('DistrictMappingPage', () => {
     let districtMappingPage: DistrictMappingPage;
@@ -53,7 +54,8 @@ describe('DistrictMappingPage', () => {
     };
     const mockAppGlobalService: Partial<AppGlobalService> = {
         isUserLoggedIn: jest.fn(() => true),
-        getCurrentUser: jest.fn(() => profile)
+        getCurrentUser: jest.fn(() => profile),
+        closeSigninOnboardingLoader: jest.fn()
     };
     const mockEvents: Partial<Events> = {
         publish: jest.fn()
@@ -291,11 +293,41 @@ describe('DistrictMappingPage', () => {
         expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('INTERNET_CONNECTIVITY_NEEDED');
     });
 
+    it('should invoke device register API and save it in the preference', (done) => {
+        // arrange
+        districtMappingPage.stateList = [{ type: 'state', name: 'Odisha', id: 'od_123' }];
+        districtMappingPage.districtList = [{ type: 'district', name: 'Cuttack', id: 'ct_123' }];
+        districtMappingPage.stateName = 'Odisha';
+        districtMappingPage.districtName = 'Cuttack';
+        mockCommonUtilService.networkInfo = { isNetworkAvailable: true };
+        const req = {
+            userDeclaredLocation: {
+                state: 'Odisha',
+                stateId: 'od_123',
+                district: 'Cuttack',
+                districtId: 'ct_123',
+                declaredOffline: false
+            }
+        };
+
+        // act
+        districtMappingPage.saveDeviceLocation();
+        // assert
+        setTimeout( () => {
+            expect(mockDeviceRegisterService.registerDevice).toHaveBeenCalledWith(req);
+            expect(mockPreferences.putString).toHaveBeenCalledWith(PreferenceKey.DEVICE_LOCATION, JSON.stringify(req.userDeclaredLocation));
+            expect(mockCommonUtilService.getLoader().dismiss).toHaveBeenCalled();
+            done();
+        }, 1);
+    });
+
     it('should invoke updateServerProfile when submit clicked', (done) => {
         // arrange
         window.history.replaceState({ profile }, 'MOCK');
         mockCommonUtilService.networkInfo = { isNetworkAvailable: true };
         districtMappingPage.name = 'sample_name';
+        mockCommonUtilService.isDeviceLocationAvailable = jest.fn(() => Promise.resolve(false));
+        jest.spyOn(districtMappingPage, 'saveDeviceLocation').mockImplementation();
         // act
         districtMappingPage.submit();
         // assert
@@ -381,11 +413,12 @@ describe('DistrictMappingPage', () => {
         // arrange
         window.history.replaceState({ source: 'guest-profile' }, 'MOCK');
         mockAppGlobalService.isUserLoggedIn = jest.fn(() => false);
+        jest.spyOn(districtMappingPage, 'saveDeviceLocation').mockImplementation();
         // act
         districtMappingPage.submit();
         // assert
         setTimeout(() => {
-            expect(mockDeviceRegisterService.registerDevice).toHaveBeenCalled();
+            expect(districtMappingPage.saveDeviceLocation).toHaveBeenCalled();
             expect(mockLocation.back).toHaveBeenCalled();
             expect(mockEvents.publish).toHaveBeenCalledWith('refresh:profile');
             done();
@@ -398,11 +431,13 @@ describe('DistrictMappingPage', () => {
         // arrange
         window.history.replaceState({ source: 'profile-setting' }, 'MOCK');
         mockAppGlobalService.isUserLoggedIn = jest.fn(() => false);
+        mockCommonUtilService.isDeviceLocationAvailable = jest.fn(() => Promise.resolve(false));
+        jest.spyOn(districtMappingPage, 'saveDeviceLocation').mockImplementation();
         // act
         districtMappingPage.submit();
         // assert
         setTimeout(() => {
-            expect(mockDeviceRegisterService.registerDevice).toHaveBeenCalled();
+            expect(districtMappingPage.saveDeviceLocation).toHaveBeenCalled();
             expect(mockRouter.navigate).toHaveBeenCalledWith(['/tabs'], {
                 state: {
                     loginMode: 'guest'

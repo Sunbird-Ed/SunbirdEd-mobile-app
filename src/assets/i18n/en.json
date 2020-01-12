@@ -649,5 +649,8 @@
   "DOWNLOAD_FILE_INFO": "Download the file to enable the disabled options",
   "FILE_SAVED": "File saved in Downloads",
   "DOWNLOAD_PATH": "Internal storage/Download",
-  "DOWNLOAD_FILE_SIZE": "File Size {{%s}}"
+  "DOWNLOAD_FILE_SIZE": "File Size {{%s}}",
+  "UPDATE_REQUIRED": "Update Required",
+  "DOWNLOAD_NOW": "Download Now",
+  "WEBVIEW_UPDATE_TEXT": "For an effective experience, download the latest version of webview from Google Play store."
 }
