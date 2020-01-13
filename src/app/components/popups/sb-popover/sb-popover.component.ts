@@ -30,12 +30,12 @@ export class SbPopoverComponent implements OnDestroy {
   public objRollup: Rollup;
   public commonUtilService: CommonUtilService;
 
-  private corRelationList: Array<CorrelationData>;
-  private sbPopoverDynamicMainTitle$?: Observable<string>;
-  private sbPopoverDynamicMainTitleSubscription?: Subscription;
-  private sbPopoverDynamicContent$?: Observable<string>;
-  private sbPopoverDynamicContentSubscription?: Subscription;
-  private sbPopoverDynamicButtonDisabledSubscription?: Subscription;
+  public corRelationList: Array<CorrelationData>;
+  public sbPopoverDynamicMainTitle$?: Observable<string>;
+  public sbPopoverDynamicMainTitleSubscription?: Subscription;
+  public sbPopoverDynamicContent$?: Observable<string>;
+  public sbPopoverDynamicContentSubscription?: Subscription;
+  public sbPopoverDynamicButtonDisabledSubscription?: Subscription;
   constructor(
     public navParams: NavParams,
     private platform: Platform,

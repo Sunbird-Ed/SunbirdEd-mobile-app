@@ -1,7 +1,7 @@
 import {Component, OnInit, Inject, ChangeDetectorRef, NgZone, ViewChild} from '@angular/core';
 import {
   LocationSearchCriteria, ProfileService,
-  SharedPreferences, Profile, DeviceRegisterRequest, DeviceRegisterService, DeviceInfo
+  SharedPreferences, Profile, DeviceRegisterRequest, DeviceRegisterService, DeviceInfo, LocationSearchResult
 } from 'sunbird-sdk';
 import { Location as loc, PreferenceKey, RouterLinks, LocationConfig } from '../../app/app.constant';
 import { AppHeaderService, CommonUtilService, AppGlobalService, FormAndFrameworkUtilService } from '@app/services';
@@ -104,8 +104,8 @@ export class DistrictMappingPage {
   }
 
   name;
-  stateList = [];
-  districtList = [];
+  stateList: LocationSearchResult[] = [];
+  districtList: LocationSearchResult[] = [];
   stateCode;
   districtCode;
   backButtonFunc: Subscription;
@@ -137,6 +137,7 @@ export class DistrictMappingPage {
     private ngZone: NgZone,
     private externalIdVerificationService: ExternalIdVerificationService
   ) {
+    this.appGlobalService.closeSigninOnboardingLoader();
     this.isKeyboardShown$ = deviceInfo.isKeyboardShown().pipe(
         tap(() => this.changeDetectionRef.detectChanges())
     );
@@ -435,15 +436,14 @@ export class DistrictMappingPage {
     const req: DeviceRegisterRequest = {
       userDeclaredLocation: {
         state: this.stateName,
+        stateId: this.stateList.find((s) => s.name === this.stateName).id,
         district: this.districtName,
+        districtId: this.districtList.find((d) => d.name === this.districtName).id,
+        declaredOffline: !this.commonUtilService.networkInfo.isNetworkAvailable
       }
     };
     this.deviceRegisterService.registerDevice(req).toPromise();
-
-    const locationMap = new Map();
-    locationMap['state'] = this.stateName ? this.stateName : this.availableLocationState;
-    locationMap['district'] = this.districtName ? this.districtName : this.availableLocationDistrict;
-    await this.preferences.putString(PreferenceKey.DEVICE_LOCATION, JSON.stringify(locationMap)).toPromise();
+    this.preferences.putString(PreferenceKey.DEVICE_LOCATION, JSON.stringify(req.userDeclaredLocation)).toPromise();
     await loader.dismiss();
   }
 

@@ -30,6 +30,7 @@ import {
 } from '@app/services/telemetry-constants';
 import { ContainerService } from '@app/services/container.services';
 import { Router } from '@angular/router';
+import { AppGlobalService } from './app-global-service.service';
 
 @Injectable()
 export class LoginHandlerService {
@@ -54,7 +55,8 @@ export class LoginHandlerService {
     private formAndFrameworkUtilService: FormAndFrameworkUtilService,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private router: Router,
-    private events: Events
+    private events: Events,
+    private appGlobalService: AppGlobalService
   ) {
 
     this.appVersion.getAppName()
@@ -112,6 +114,10 @@ export class LoginHandlerService {
         })
         .then(async () => {
           await loader.dismiss();
+          if (!this.appGlobalService.signinOnboardingLoader) {
+            this.appGlobalService.signinOnboardingLoader = await this.commonUtilService.getLoader();
+            await this.appGlobalService.signinOnboardingLoader.present();
+          }
           that.ngZone.run(() => {
             that.preferences.putString('SHOW_WELCOME_TOAST', 'true').toPromise().then();
             // this.events.publish('UPDATE_TABS');

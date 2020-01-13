@@ -40,5 +40,4 @@ export class UpgradePopoverComponent {
     this.utilityService.openPlayStore(appId);
     this.cancel();
   }
-
 }

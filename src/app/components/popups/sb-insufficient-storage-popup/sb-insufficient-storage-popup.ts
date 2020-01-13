@@ -12,12 +12,12 @@ export class SbInsufficientStoragePopupComponent {
   sbPopoverMessage = '';
 
   constructor(private navParams: NavParams,
-    private popoverCtrl: PopoverController,
-    private router: Router) {
+              private popoverCtrl: PopoverController,
+              private router: Router) {
     this.initParams();
   }
 
-  private initParams() {
+   initParams() {
     this.sbPopoverHeading = this.navParams.get('sbPopoverHeading');
     this.sbPopoverMessage = this.navParams.get('sbPopoverMessage');
   }
@@ -28,7 +28,6 @@ export class SbInsufficientStoragePopupComponent {
 
   navigateToStorageSettings() {
     this.popoverCtrl.dismiss();
-    // this.app.getActiveNav().push(StorageSettingsPage);
     this.router.navigate([RouterLinks.STORAGE_SETTINGS]);
   }
 

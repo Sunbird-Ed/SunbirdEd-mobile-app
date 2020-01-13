@@ -120,9 +120,7 @@ export class AccountRecoveryInfoComponent implements OnInit {
     this.telemetryGeneratorService.generateImpressionTelemetry(
       ImpressionType.VIEW, '',
       PageId.RECOVERY_ACCOUNT_ID_POPUP,
-      Environment.USER, '', '', '',
-      undefined,
-      undefined
+      Environment.USER
     );
   }
 

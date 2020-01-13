@@ -7,13 +7,17 @@ import { of } from 'rxjs';
 import { PreferenceKey } from '../app/app.constant';
 describe('AppGlobalService', () => {
     let appGlobalService: AppGlobalService;
-    const mockProfile: Partial<ProfileService> = {};
+    const profile  = { syllabus: 'tn'} as any;
+    const mockProfile: Partial<ProfileService> = {
+        getActiveSessionProfile: jest.fn(() => of(profile))
+    };
     const mockAuthService: Partial<AuthService> = {
         getSession: jest.fn(() => of())
     };
     const mockFrameworkService: Partial<FrameworkService> = {};
     const mockEvent: Partial<Events> = {
-        subscribe: jest.fn()
+        subscribe: jest.fn(),
+        publish: jest.fn()
     };
     const mockPopoverCtrl: Partial<PopoverController> = {};
     const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {};
@@ -117,5 +121,31 @@ describe('AppGlobalService', () => {
         appGlobalService.resetSavedQuizContent();
         // assert
         expect(appGlobalService.limitedShareQuizContent).toBeNull();
+    });
+
+    it('should set the signin Onboarding loader', () => {
+        // arrange
+        appGlobalService.signinOnboardingLoader =  {
+            dismiss: jest.fn((fn) => fn())
+        };
+        // act
+        // assert
+        expect(appGlobalService.signinOnboardingLoader).toBeDefined();
+    });
+
+    it('should dismiss the  signin Onboarding loader', (done) => {
+        // arrange
+        appGlobalService.signinOnboardingLoader =  {
+            dismiss:  jest.fn(() => Promise.resolve())
+        };
+        // act
+        appGlobalService.closeSigninOnboardingLoader();
+        // assert
+        expect(appGlobalService.signinOnboardingLoader.dismiss).toHaveBeenCalled();
+
+        setTimeout(() => {
+            expect(appGlobalService.signinOnboardingLoader).toBeNull();
+            done();
+        }, 1);
     });
 });
