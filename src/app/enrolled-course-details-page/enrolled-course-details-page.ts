@@ -1293,6 +1293,12 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
 
   showLicensce() {
     this.showCredits = !this.showCredits;
+
+    if (this.showCredits) {
+      this.licenseSectionClicked('expanded');
+    } else {
+      this.licenseSectionClicked('collapsed');
+    }
   }
 
   handleBackButton() {
@@ -1622,7 +1628,21 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
    * Opens up popup for the credits.
    */
   viewCredits() {
-    this.courseUtilService.showCredits(this.course, PageId.CONTENT_DETAIL, undefined, this.corRelationList);
+    this.courseUtilService.showCredits(this.course, PageId.COURSE_DETAIL, undefined, this.corRelationList);
+  }
+  licenseSectionClicked(params) {
+    const telemetryObject = new TelemetryObject(this.objId, this.objType, this.objVer);
+    this.telemetryGeneratorService.generateInteractTelemetry(
+        params === 'expanded' ? InteractType.LICENSE_CARD_EXPANDED : InteractType.LICENSE_CARD_COLLAPSED,
+        '',
+        undefined,
+        PageId.COURSE_DETAIL,
+        telemetryObject,
+        undefined,
+        this.objRollup,
+        this.corRelationList,
+        ID.LICENSE_CARD_CLICKED
+    );
   }
 
   getContentState(returnRefresh: boolean) {
@@ -1661,19 +1681,6 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
     } else {
       // to be handled when there won't be any batchId
     }
-  }
-
-  readLessorReadMore(param: string, objRollup, corRelationList) {
-    const telemetryObject = new TelemetryObject(this.objId, this.objType, this.objVer);
-    this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
-      param,
-      Environment.HOME,
-      PageId.COURSE_DETAIL,
-      undefined,
-      telemetryObject,
-      objRollup,
-      corRelationList
-    );
   }
 
   handleHeaderEvents($event) {
