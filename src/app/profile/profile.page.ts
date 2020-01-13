@@ -37,6 +37,7 @@ import {
 import { AccountRecoveryInfoComponent } from '../components/popups/account-recovery-id/account-recovery-id-popup.component';
 import { SocialSharing } from '@ionic-native/social-sharing/ngx';
 import { TeacherIdVerificationComponent } from '../components/popups/teacher-id-verification-popup/teacher-id-verification-popup.component';
+import { Observable } from 'rxjs/Observable';
 
 @Component({
   selector: 'app-profile',
@@ -85,6 +86,8 @@ export class ProfilePage implements OnInit {
   headerObservable: any;
   timer: any;
   mappedTrainingCertificates: CourseCertificate[] = [];
+  isDefaultChannelProfile$: Observable<boolean>;
+
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     @Inject('AUTH_SERVICE') private authService: AuthService,
@@ -144,6 +147,7 @@ export class ProfilePage implements OnInit {
       this.handleHeaderEvents(eventName);
     });
     this.headerService.showHeaderWithHomeButton();
+    this.isDefaultChannelProfile$ = this.profileService.isDefaultChannelProfile();
   }
 
   ionViewWillLeave(): void {

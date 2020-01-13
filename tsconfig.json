@@ -12,7 +12,11 @@
     "experimentalDecorators": true,
     "importHelpers": true,
     "target": "es5",
-    "types": ["node"],
+    "types": [
+      "node",
+      "reflect-metadata",
+      "jest"
+    ],
     "typeRoots": [
       "./node_modules/@types"
     ],
@@ -34,5 +38,5 @@
     "src/**/*.spec.ts",
     "src/**/*.spec.data.ts",
     "src/**/__tests__/*.ts"
-  ],
+  ]
 }

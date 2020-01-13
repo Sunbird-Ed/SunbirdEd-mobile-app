@@ -6,7 +6,7 @@ import { CommonUtilService } from '@app/services/common-util.service';
 import { ComingSoonMessageService } from '@app/services/coming-soon-message.service';
 import { PopoverController, Events } from '@ionic/angular';
 import { SbGenericPopoverComponent } from '@app/app/components/popups/sb-generic-popover/sb-generic-popover.component';
-import { Content,TelemetryObject,Rollup } from 'sunbird-sdk';
+import { Content, TelemetryObject, Rollup, ContentStateResponse } from 'sunbird-sdk';
 import { Router, NavigationExtras } from '@angular/router';
 import { TextbookTocService } from '@app/app/collection-detail-etb/textbook-toc-service';
 import {
@@ -18,7 +18,6 @@ import {
   PageId
 } from '@app/services/telemetry-constants';
 import { ContentUtil } from '@app/util/content-util';
-import * as moment from 'moment';
 
 @Component({
   selector: 'app-collection-child',
@@ -50,11 +49,22 @@ export class CollectionChildComponent implements OnInit {
   @Input() latestParentName: string;
   @Input() latestParentNodes: any;
   @Input() batch: any;
+  @Input() renderLevel: number;
+  @Input() contentStatusData: ContentStateResponse;
   public telemetryObject: TelemetryObject;
   public objRollup: Rollup;
   collectionChildIcon: any;
   sameHierarchy: boolean;
-    assessemtnAlert: HTMLIonPopoverElement;
+  assessemtnAlert: HTMLIonPopoverElement;
+
+  get isContentCompleted(): boolean {
+    if (this.contentStatusData && this.isEnrolled) {
+      return !!this.contentStatusData.contentList.find(c => c.contentId === this.childData.identifier
+      && c.status === 2);
+    }
+
+    return false;
+  }
 
   constructor(
     private zone: NgZone,
@@ -119,7 +129,6 @@ export class CollectionChildComponent implements OnInit {
   }
 
   navigateToDetailsPage(content: Content, depth) {
-    const todayDate =  moment(new Date()).format('YYYY-MM-DD');
     if (this.router.url.indexOf(RouterLinks.TEXTBOOK_TOC) !== -1) {
       const values = new Map();
       values['contentClicked'] = content.identifier;
@@ -130,7 +139,7 @@ export class CollectionChildComponent implements OnInit {
         Environment.HOME,
         PageId.TEXTBOOK_TOC, this.telemetryObject,
         values,
-        this.objRollup,this.corRelationList
+        this.objRollup, this.corRelationList
       );
       this.textbookTocService.setTextbookIds({ rootUnitId: this.rootUnitId, contentId: content.identifier });
       this.location.back();
@@ -175,8 +184,8 @@ export class CollectionChildComponent implements OnInit {
               InteractType.TOUCH,
               InteractSubtype.CONTENT_CLICKED,
               Environment.HOME,
-              PageId.COLLECTION_DETAIL,this.telemetryObject ,
-              values,this.objRollup,this.corRelationList
+              PageId.COLLECTION_DETAIL, this.telemetryObject ,
+              values, this.objRollup, this.corRelationList
             );
             const contentDetailsParams: NavigationExtras = {
               state: {
@@ -196,7 +205,8 @@ export class CollectionChildComponent implements OnInit {
               component: SbGenericPopoverComponent,
               componentProps: {
                 sbPopoverHeading: this.commonUtilService.translateMessage(content['status'] ? 'REDO_ASSESSMENT' : 'START_ASSESSMENT'),
-                sbPopoverMainTitle: this.commonUtilService.translateMessage(content['status'] ? 'TRAINING_ENDED_REDO_ASSESSMENT' : 'TRAINING_ENDED_START_ASSESSMENT'),
+                sbPopoverMainTitle: this.commonUtilService.translateMessage(content['status'] ?
+                    'TRAINING_ENDED_REDO_ASSESSMENT' : 'TRAINING_ENDED_START_ASSESSMENT'),
                 actionsButtons: [
                   {
                     btntext: this.commonUtilService.translateMessage('SKIP'),
@@ -279,5 +289,4 @@ export class CollectionChildComponent implements OnInit {
       return './assets/imgs/touch.svg';
     }
   }
-
 }

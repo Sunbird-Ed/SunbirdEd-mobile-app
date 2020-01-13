@@ -72,7 +72,7 @@ import { SbPopoverComponent } from '../components/popups';
 import { TranslateService } from '@ngx-translate/core';
 import { ContentInfo } from '@app/services/content/content-info';
 import { ContentDeleteHandler } from '@app/services/content/content-delete-handler';
-import * as moment from 'moment';
+import * as dayjs from 'dayjs';
 import { LocalCourseService } from '@app/services';
 import { EnrollCourse } from './course.interface';
 declare const cordova;
@@ -105,7 +105,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
   /**
    * Contains identifier(s) of locally not available content(s)
    */
-  downloadIdentifiers = [];
+  downloadIdentifiers = new Set();
 
   /**
    * Contains total size of locally not available content(s)
@@ -216,6 +216,8 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
   public showUnenroll: boolean;
   public todayDate: any;
   public rollUpMap: { [key: string]: Rollup } = {};
+  public lastReadContentId;
+  public courseCompletionData = {};
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -604,7 +606,6 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
     if (data.contentData) {
       // await loader.present();
       this.course = data.contentData;
-      // console.log('this.course', this.course);
       this.content = data;
       this.objId = this.course.identifier;
       this.objType = this.course.contentType;
@@ -789,7 +790,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
    * @param identifiers contains list of content identifier(s)
    */
   importContent(identifiers, isChild: boolean, isDownloadAllClicked?) {
-    this.showChildrenLoader = this.downloadIdentifiers.length === 0;
+    this.showChildrenLoader = this.downloadIdentifiers.size === 0;
     const option: ContentImportRequest = {
       contentImportArray: this.getImportContentRequestBody(identifiers, isChild),
       contentStatusArray: ['Live'],
@@ -881,8 +882,8 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
   async showDownloadConfirmationAlert() {
     if (this.commonUtilService.networkInfo.isNetworkAvailable) {
       let contentTypeCount;
-      if (this.downloadIdentifiers.length) {
-        contentTypeCount = this.downloadIdentifiers.length;
+      if (this.downloadIdentifiers.size) {
+        contentTypeCount = this.downloadIdentifiers.size;
       } else {
         contentTypeCount = '';
       }
@@ -938,71 +939,59 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
     }
   }
 
+  private async getLastReadContentId() {
+    this.lastReadContentId = this.courseCardData.lastReadContentId;
+    const userId = this.appGlobalService.getUserId();
+    const lastReadContentIdKey = 'lastReadContentId_' + userId + '_' + this.identifier
+        + this.courseCardData.batchId;
+    await this.preferences.getString(lastReadContentIdKey).toPromise().then((val) => {
+      if (val) {
+        this.courseCardData.lastReadContentId = val;
+        this.lastReadContentId = val;
+      }
+    });
+    return this.lastReadContentId;
+  }
+
+  private getLeafNodes(contents: Content[]) {
+    return contents.reduce((acc, content) => {
+      if (content.children) {
+        acc = acc.concat(this.getLeafNodes(content.children));
+      } else {
+        acc.push(content);
+      }
+      return acc;
+    }, []);
+  }
 
   /**
    * Function to get status of child contents
    */
-  async getStatusOfChildContent(childrenData) {
-    const contentStatusData = this.contentStatusData;
-    // console.log('this.contentStatusData', this.contentStatusData);
-    let lastReadContentId = this.courseCardData.lastReadContentId;
-    const userId = this.appGlobalService.getUserId();
-    const lastReadContentIdKey = 'lastReadContentId_' + userId + '_' + this.identifier + '_' + this.courseCardData.batchId;
-    await this.preferences.getString(lastReadContentIdKey).toPromise()
-      .then(val => {
-        this.courseCardData.lastReadContentId = val;
-        lastReadContentId = val;
-      });
-    // console.log('lastReadContentId', lastReadContentId);
-    this.getLastPlayedName(lastReadContentId);
-    this.zone.run(() => {
-      childrenData.forEach(childContent => {
-        // Inside First level
-        let contentLength = 0;
-        childContent.children.every(eachContent => {
-          // Inside resource level
-          if (childContent.hasOwnProperty('status') && !childContent.status) {
-            // checking for property status
-            return false;
-          } else {
-            // checking for getContentState result length
-            if (contentStatusData.contentList.length) {
-              contentStatusData.contentList.every(contentData => {
-                // checking for each content status
-                if (eachContent.identifier === contentData.contentId) {
-                  contentLength = contentLength + 1;
-                  // checking for contentId from getContentState and lastReadContentId
-                  if (contentData.contentId === lastReadContentId) {
-                    childContent.lastRead = true;
-                  }
-                  if (contentData.status === 0 || contentData.status === 1) {
-                    // manipulating the status
-                    childContent.status = false;
-                    return false;
-                  } else {
-                    // if content played completely
-                    eachContent.status = true;
-                    childContent.status = true;
-                    return true;
-                  }
-                }
-                return true;
-              });
-              return true;
-            } else {
-              childContent.status = false;
-              return false;
-            }
-          }
-        });
 
-        if (childContent.children.length === contentLength) {
-          return true;
-        } else {
-          childContent.status = false;
-          return true;
+  private getStatusOfCourseCompletion(childrenData: Content[]) {
+    const contentStatusData = this.contentStatusData;
+    this.getLastPlayedName(this.lastReadContentId);
+
+    this.zone.run(() => {
+      childrenData.forEach((childContent) => {
+        if (childContent.children && childContent.children.length) {
+          this.courseCompletionData[childContent.identifier] =
+            this.getLeafNodes(childContent.children).every((eachContent) => {
+              if (contentStatusData.contentList.length) {
+                const statusData = contentStatusData.contentList.find(c => c.contentId === eachContent.identifier);
+                if (statusData) {
+                  if (this.lastReadContentId === statusData.contentId) {
+                    childContent['lastRead'] = true;
+                  }
+                  return !(statusData.status === 0 || statusData.status === 1);
+                }
+                return false;
+              }
+              return false;
+            });
         }
       });
+      console.log('courseCompletionData ', this.courseCompletionData);
     });
   }
 
@@ -1197,7 +1186,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
           this.getContentsSize(value.children);
         }
         if (value.isAvailableLocally === false) {
-          this.downloadIdentifiers.push(value.contentData.identifier);
+          this.downloadIdentifiers.add(value.contentData.identifier);
           this.rollUpMap[value.contentData.identifier] = ContentUtil.generateRollUp(value.hierarchyInfo, undefined);
         }
       });
@@ -1239,7 +1228,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
    * Ionic life cycle hook
    */
   async ionViewWillEnter() {
-    this.todayDate =  moment(new Date()).format('YYYY-MM-DD');
+    this.todayDate =  dayjs().format('YYYY-MM-DD');
     this.identifier = this.courseCardData.contentId || this.courseCardData.identifier;
     this.downloadSize = 0;
     this.objRollup = ContentUtil.generateRollUp(this.courseCardData.hierarchyInfo, this.identifier);
@@ -1286,7 +1275,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
     // if (this.courseCardData.batchId) {
     //   this.segmentType = 'modules';
     // }
-
+    this.downloadIdentifiers = new Set();
     this.setContentDetails(this.identifier);
     this.headerObservable = this.headerService.headerEventEmitted$.subscribe(eventName => {
       this.handleHeaderEvents(eventName);
@@ -1298,6 +1287,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
     this.subscribeSdkEvent();
     this.populateCorRelationData(this.courseCardData.batchId);
     this.handleBackButton();
+    this.getLastReadContentId();
   }
 
   showLicensce() {
@@ -1329,7 +1319,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
     if (!this.corRelationList) {
       this.corRelationList = [];
     }
-    this.corRelationList.push({ id: batchId, type: CorReleationDataType.COURSE_BATCH });
+    this.corRelationList.push({ id: batchId ? batchId : '', type: CorReleationDataType.COURSE_BATCH });
     this.corRelationList.push({ id: this.identifier, type: CorReleationDataType.ROOT_ID });
     this.corRelationList = this.commonUtilService.deDupe(this.corRelationList, 'type');
   }
@@ -1395,7 +1385,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
                 this.isDownloadStarted = false;
                 this.currentCount = 0;
                 this.showDownload = false;
-                this.downloadIdentifiers = [];
+                this.downloadIdentifiers = new Set();
                 this.queuedIdentifiers.length = 0;
               }
             } else {
@@ -1562,7 +1552,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
 
   goBack() {
     this.events.publish('event:update_course_data');
-    if (this.isQrCodeLinkToContent === 0) {
+    if (this.isQrCodeLinkToContent) {
       window.history.go(-2);
     } else {
       this.location.back();
@@ -1650,7 +1640,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
           }
 
           if (this.childrenData) {
-            this.getStatusOfChildContent(this.childrenData);
+            this.getStatusOfCourseCompletion(this.childrenData);
           }
         }).catch((error: any) => {
         });
@@ -1771,6 +1761,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
         this.objRollup,
         this.corRelationList
       );
+      this.appGlobalService.resetSavedQuizContent();
       this.loginHandlerService.signIn();
     }
   }
@@ -1814,5 +1805,6 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
   mergeProperties(mergeProp) {
     return ContentUtil.mergeProperties(this.course, mergeProp);
   }
+
 
 }

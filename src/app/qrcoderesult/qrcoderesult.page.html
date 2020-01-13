@@ -2,7 +2,7 @@
   <ion-toolbar style="min-height: 56px;">
 
     <ion-buttons class="sb-hamburger" slot="start">
-      <ion-button icon-only (click)="goBack()">
+      <ion-button icon-only (click)="handleBackButton()">
         <ion-icon name="arrow-back"></ion-icon>
       </ion-button>
     </ion-buttons>
@@ -30,7 +30,7 @@
     <ion-row class="P010">
       <ul class="breadcrumbs">
         <!-- (click)="showSwitchUserAlert(true)" -->
-        <li *ngFor="let result of paths[i]" (click)="navigateToDetailsPage(result)">
+        <li *ngFor="let result of paths[i]" (click)="navigateToDetailsPage(paths[i][0], paths[i], content?.identifier)">
           {{ (result?.contentData?.name?.length>30)? (result?.contentData?.name | slice:0:30)+'...' :
           (result?.contentData?.name) }}
         </li>

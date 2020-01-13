@@ -5,9 +5,15 @@ ion-tabs {
   ion-tab-button {
     overflow: inherit;
   }
+  .rm-before{
+    &::before {
+      position: relative !important;
+    }
+  }
   ion-tab-bar {
     contain: none;
     background: none;
+    background-image: linear-gradient(#e6e6e6, #eee);
     box-shadow: none;
     border: none; 
 

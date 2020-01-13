@@ -4,13 +4,13 @@ import { AfterViewInit, Component, Inject, NgZone, OnInit, EventEmitter, ViewChi
 import { Events, Platform, IonRouterOutlet, MenuController } from '@ionic/angular';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { TranslateService } from '@ngx-translate/core';
-import { Observable } from 'rxjs/Observable';
-import { tap } from 'rxjs/operators';
+import { Observable, combineLatest } from 'rxjs';
+import { tap, mergeMap } from 'rxjs/operators';
 import { Network } from '@ionic-native/network/ngx';
 
 import {
   ErrorEventType, EventNamespace, EventsBusService, SharedPreferences,
-  SunbirdSdk, TelemetryAutoSyncUtil, TelemetryService, NotificationService, GetSystemSettingsRequest, SystemSettings, SystemSettingsService,
+  SunbirdSdk, TelemetryAutoSyncService, TelemetryService, NotificationService, GetSystemSettingsRequest, SystemSettings, SystemSettingsService,
   CodePushExperimentService, AuthEventType, CorrelationData, Profile, DeviceRegisterService
 } from 'sunbird-sdk';
 
@@ -55,7 +55,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   public sideMenuEvent = new EventEmitter<void>();
   public showWalkthroughBackDrop = false;
 
-  private telemetryAutoSyncUtil: TelemetryAutoSyncUtil;
+  private telemetryAutoSync: TelemetryAutoSyncService;
   toggleRouterOutlet = true;
   rootPageDisplayed = false;
   profile: any = {};
@@ -96,8 +96,9 @@ export class AppComponent implements OnInit, AfterViewInit {
     private networkAvailability: NetworkAvailabilityToastService,
     private splashScreenService: SplashScreenService
   ) {
-    this.telemetryAutoSyncUtil = new TelemetryAutoSyncUtil(this.telemetryService);
+    this.telemetryAutoSync = this.telemetryService.autoSync;
     platform.ready().then(async () => {
+      this.formAndFrameworkUtilService.init();
       this.networkAvailability.init();
       this.fcmTokenWatcher(); // Notification related
       this.getSystemConfig();
@@ -132,7 +133,41 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.appRatingService.checkInitialDate();
       this.getUtmParameter();
       this.checkForCodeUpdates();
+      this.checkAndroidWebViewVersion();
     });
+  }
+
+  checkAndroidWebViewVersion() {
+    var that = this;
+    plugins['webViewChecker'].getCurrentWebViewPackageInfo()
+    .then(function(packageInfo) {
+      that.formAndFrameworkUtilService.getWebviewConfig().then(function(webviewVersion) {
+        if (parseInt(packageInfo.versionName.split('.')[0], 10) <= webviewVersion) {
+          document.getElementById('update-webview-container').style.display = 'block';
+          that.telemetryGeneratorService.generateImpressionTelemetry(
+            ImpressionType.VIEW, '',
+            PageId.UPDATE_WEBVIEW_POPUP,
+            Environment.HOME);
+        }
+      }).catch(function(err) {
+        if (parseInt(packageInfo.versionName.split('.')[0], 10) <= 54) {
+          document.getElementById('update-webview-container').style.display = 'block';
+        }
+      });
+    })
+    .catch(function(error) { });
+  }
+
+  openPlaystore() {
+    plugins['webViewChecker'].openGooglePlayPage()
+    .then(function() { })
+    .catch(function(error) { });
+
+    this.telemetryGeneratorService.generateInteractTelemetry(
+      InteractType.TOUCH,
+      InteractSubtype.UPDATE_WEBVIEW_CLICKED,
+      Environment.HOME,
+      PageId.UPDATE_WEBVIEW_POPUP);
   }
 
   getSystemConfig() {
@@ -305,15 +340,13 @@ export class AppComponent implements OnInit, AfterViewInit {
    */
   triggerSignInEvent() {
     this.events.subscribe(EventTopics.SIGN_IN_RELOAD, async () => {
-      let batchDetails;
-      await this.preferences.getString(PreferenceKey.BATCH_DETAIL_KEY).toPromise()
-        .then(async (resp) => {
-          if (resp) {
-            batchDetails = resp;
-          } else {
-            this.toggleRouterOutlet = false;
-          }
-        });
+      const batchDetails = await this.preferences.getString(PreferenceKey.BATCH_DETAIL_KEY).toPromise();
+      const limitedSharingContentDetails = this.appGlobalService.limitedShareQuizContent;
+
+      if (!batchDetails && !limitedSharingContentDetails) {
+        this.toggleRouterOutlet = false;
+      }
+
       // this.toggleRouterOutlet = false;
       // This setTimeout is very important for reloading the Tabs page on SignIn.
       setTimeout(async () => {
@@ -372,7 +405,8 @@ export class AppComponent implements OnInit, AfterViewInit {
       console.log('URL' + this.router.url);
       if (this.router.url === RouterLinks.LIBRARY_TAB || this.router.url === RouterLinks.COURSE_TAB
         || this.router.url === RouterLinks.DOWNLOAD_TAB || this.router.url === RouterLinks.PROFILE_TAB ||
-        this.router.url === RouterLinks.GUEST_PROFILE_TAB) {
+        this.router.url === RouterLinks.GUEST_PROFILE_TAB || this.router.url === RouterLinks.ONBOARDING_DISTRICT_MAPPING
+      ) {
         if (await this.menuCtrl.isOpen()) {
           this.menuCtrl.close();
         } else {
@@ -419,6 +453,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   private async checkForTncUpdate() {
+    this.appGlobalService.isSignInOnboardingCompleted = false;
     await this.tncUpdateHandlerService.checkForTncUpdate();
   }
 
@@ -536,14 +571,14 @@ export class AppComponent implements OnInit, AfterViewInit {
 
 
   private autoSyncTelemetry() {
-    this.telemetryAutoSyncUtil.start(30 * 1000)
-      .mergeMap(() => {
-        return Observable.combineLatest(
-          this.platform.pause.pipe(tap(() => this.telemetryAutoSyncUtil.pause())),
-          this.platform.resume.pipe(tap(() => this.telemetryAutoSyncUtil.continue()))
-        );
-      })
-      .subscribe();
+    this.telemetryAutoSync.start(30 * 1000).pipe(
+        mergeMap(() => {
+          return combineLatest([
+            this.platform.pause.pipe(tap(() => this.telemetryAutoSync.pause())),
+            this.platform.resume.pipe(tap(() => this.telemetryAutoSync.continue()))
+          ]);
+        })
+    ).subscribe();
   }
 
   initializeApp() {
@@ -571,6 +606,7 @@ export class AppComponent implements OnInit, AfterViewInit {
         || (routeUrl.indexOf(RouterLinks.STORAGE_SETTINGS) !== -1)
         || (routeUrl.indexOf(RouterLinks.EXPLORE_BOOK) !== -1)
         || (routeUrl.indexOf(RouterLinks.PERMISSION) !== -1)
+        || (routeUrl.indexOf(RouterLinks.LANGUAGE_SETTING) !== -1)
         || (routeUrl.indexOf(RouterLinks.SHARE_USER_AND_GROUPS) !== -1)
       ) {
         this.headerService.sidebarEvent($event);
@@ -729,10 +765,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       && !(await this.commonUtilService.isIpLocationAvailable())) {
       this.deviceRegisterService.getDeviceProfile().toPromise().then(async (response) => {
         if (response.userDeclaredLocation) {
-          const locationMap = new Map();
-          locationMap['state'] = response.userDeclaredLocation.state;
-          locationMap['district'] = response.userDeclaredLocation.district;
-          await this.preferences.putString(PreferenceKey.DEVICE_LOCATION, JSON.stringify(locationMap)).toPromise();
+          await this.preferences.putString(PreferenceKey.DEVICE_LOCATION, JSON.stringify(response.userDeclaredLocation)).toPromise();
         } else if (response.ipLocation) {
           const ipLocationMap = new Map();
           if (response.ipLocation.state) {

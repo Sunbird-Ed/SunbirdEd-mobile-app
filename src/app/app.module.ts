@@ -13,7 +13,6 @@ import { AppVersion } from '@ionic-native/app-version/ngx';
 import { SocialSharing } from '@ionic-native/social-sharing/ngx';
 import { FileTransfer, FileTransferObject } from '@ionic-native/file-transfer/ngx';
 import { FileOpener } from '@ionic-native/file-opener/ngx';
-import { UniqueDeviceID } from '@ionic-native/unique-device-id/ngx';
 import { Device } from '@ionic-native/device/ngx';
 import { Network } from '@ionic-native/network/ngx';
 
@@ -66,6 +65,8 @@ import { SplashscreenImportActionHandlerDelegate } from '@app/services/sunbird-s
 import { SplaschreenDeeplinkActionHandlerDelegate } from '@app/services/sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
 import { LocalCourseService } from '@app/services/local-course.service';
 import { ContentType } from './app.constant';
+import { ExternalIdVerificationService } from '@app/services/externalid-verification.service';
+import { TextbookTocService } from '@app/app/collection-detail-etb/textbook-toc-service';
 
 // AoT requires an exported function for factories
 export function translateHttpLoaderFactory(httpClient: HttpClient) {
@@ -311,7 +312,8 @@ export const sunbirdSdkFactory =
         },
         contentServiceConfig: {
           apiPath: '/api/content/v1',
-          searchApiPath: '/api/composite/v1'
+          searchApiPath: '/api/composite/v1',
+          contentHeirarchyAPIPath: '/api/course/v1'
         },
         courseServiceConfig: {
           apiPath: '/api/course/v1'
@@ -444,7 +446,6 @@ declare const buildconfigreader;
     LoginHandlerService,
     TncUpdateHandlerService,
     ContainerService,
-    UniqueDeviceID,
     UtilityService,
     LocalCourseService,
     AppHeaderService,
@@ -461,6 +462,8 @@ declare const buildconfigreader;
     SplashscreenImportActionHandlerDelegate,
     SplaschreenDeeplinkActionHandlerDelegate,
     SplashScreenService,
+    ExternalIdVerificationService,
+    TextbookTocService,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     ...sunbirdSdkServicesProvidersFactory(),
     { provide: ErrorHandler, useClass: CrashAnalyticsErrorLogger },

@@ -10,11 +10,11 @@ import { LogoutHandlerService } from '@app/services/handlers/logout-handler.serv
 import { TncUpdateHandlerService } from '@app/services/handlers/tnc-update-handler.service';
 import { CommonUtilService } from '@app/services/common-util.service';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
-import { AppHeaderService } from '@app/services/app-header.service';
 import { ProfileConstants, RouterLinks } from '../app.constant';
-import { FormAndFrameworkUtilService } from '@app/services';
+import { FormAndFrameworkUtilService, AppGlobalService } from '@app/services';
 import { Router, NavigationExtras } from '@angular/router';
 import { SplashScreenService } from '@app/services/splash-screen.service';
+import { ExternalIdVerificationService } from '@app/services/externalid-verification.service';
 
 @Component({
   selector: 'app-terms-and-conditions',
@@ -28,6 +28,7 @@ export class TermsAndConditionsPage implements OnInit {
   private unregisterBackButtonAction: Subscription;
   private userProfileDetails: ServerProfile;
   appName: string;
+  disableSubmitButton = false;
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -36,18 +37,19 @@ export class TermsAndConditionsPage implements OnInit {
     private sanitizer: DomSanitizer,
     private commonUtilService: CommonUtilService,
     private telemetryGeneratorService: TelemetryGeneratorService,
-    private headerService: AppHeaderService,
     private appVersion: AppVersion,
     private injector: Injector,
     private formAndFrameworkUtilService: FormAndFrameworkUtilService,
     private router: Router,
-    private splashScreenService: SplashScreenService
+    private splashScreenService: SplashScreenService,
+    private externalIdVerificationService: ExternalIdVerificationService,
+    private appGlobalService: AppGlobalService
   ) {
   }
 
   public async ngOnInit() {
+    this.appGlobalService.closeSigninOnboardingLoader();
     this.appName = await this.appVersion.getAppName();
-    this.headerService.hideHeader();
     this.userProfileDetails = (await this.profileService.getActiveSessionProfile(
       { requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise()).serverProfile;
 
@@ -101,6 +103,7 @@ export class TermsAndConditionsPage implements OnInit {
 
   public async onAcceptanceClick(): Promise<void> {
     const tncUpdateHandlerService = this.injector.get(TncUpdateHandlerService);
+    let loader = await this.commonUtilService.getLoader();
     try {
       this.telemetryGeneratorService.generateInteractTelemetry(
         InteractType.TOUCH,
@@ -108,6 +111,7 @@ export class TermsAndConditionsPage implements OnInit {
         Environment.HOME,
         PageId.TERMS_N_CONDITIONS
       );
+      await loader.present();
       // await tncUpdateHandlerService.onAcceptTnc(this.userProfileDetails);
       const isTCAccepted = await this.profileService.acceptTermsAndConditions({ version: this.userProfileDetails.tncLatestVersion })
         .toPromise();
@@ -119,19 +123,32 @@ export class TermsAndConditionsPage implements OnInit {
           from: CachedItemRequestSourceFrom.SERVER
         }).toPromise();
 
-        // TODO: 
+        // TODO:
         const profile = await this.profileService.getActiveSessionProfile({
           requiredFields: ProfileConstants.REQUIRED_FIELDS
         }).toPromise();
 
         this.formAndFrameworkUtilService.updateLoggedInUser(serverProfile, profile)
           .then(async (value) => {
+            if (loader) {
+              await loader.dismiss();
+              loader = undefined;
+            }
+            if (!this.appGlobalService.signinOnboardingLoader) {
+              this.appGlobalService.signinOnboardingLoader = await this.commonUtilService.getLoader();
+              await this.appGlobalService.signinOnboardingLoader.present();
+            }
+            this.disableSubmitButton = false;
             if (value['status']) {
-              if (this.commonUtilService.isUserLocationAvalable(serverProfile)) {
+              if (this.commonUtilService.isUserLocationAvalable(serverProfile)
+              ||  await tncUpdateHandlerService.isSSOUser(profile)) {
                 await tncUpdateHandlerService.dismissTncPage();
+                this.appGlobalService.closeSigninOnboardingLoader();
                 this.router.navigate(['/', RouterLinks.TABS]);
+                this.externalIdVerificationService.showExternalIdVerificationPopup();
                 this.splashScreenService.handleSunbirdSplashScreenActions();
               } else {
+                // closeSigninOnboardingLoader() is called in District-Mapping page
                 const navigationExtras: NavigationExtras = {
                   state: {
                     isShowBackButton: false
@@ -140,6 +157,7 @@ export class TermsAndConditionsPage implements OnInit {
                 this.router.navigate(['/', RouterLinks.DISTRICT_MAPPING] , navigationExtras);
               }
             } else {
+              // closeSigninOnboardingLoader() is called in CategoryEdit page
               await tncUpdateHandlerService.dismissTncPage();
               this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.CATEGORIES_EDIT}`], {
                 state: {
@@ -151,12 +169,25 @@ export class TermsAndConditionsPage implements OnInit {
               });
             }
             console.log("inside can load");
+          }).catch(async e => {
+            if (loader) {
+              await loader.dismiss();
+              loader = undefined;
+            }
           });
       } else {
+        if (loader) {
+          await loader.dismiss();
+          loader = undefined;
+        }
         await this.logoutOnSecondBackNavigation();
       }
       await tncUpdateHandlerService.dismissTncPage();
     } catch (e) {
+      if (loader) {
+        await loader.dismiss();
+        loader = undefined;
+      }
       await this.logoutOnSecondBackNavigation();
     }
   }

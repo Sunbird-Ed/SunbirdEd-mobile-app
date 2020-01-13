@@ -1,12 +1,13 @@
 import { ProfileType, SharedPreferences, ProfileService } from 'sunbird-sdk';
 import { GUEST_TEACHER_TABS, initTabs, GUEST_STUDENT_TABS, LOGIN_TEACHER_TABS } from '@app/app/module.service';
-import { Component, ViewChild, ViewEncapsulation, Inject, NgZone, OnInit } from '@angular/core';
+import { Component, ViewChild, ViewEncapsulation, Inject, OnInit } from '@angular/core';
 
 import { IonTabs, Events, ToastController } from '@ionic/angular';
 import { ContainerService } from '@app/services/container.services';
 import { AppGlobalService } from '@app/services/app-global-service.service';
 import { ProfileConstants } from '@app/app/app.constant';
 import { CommonUtilService } from '@app/services/common-util.service';
+import { ExternalIdVerificationService } from '@app/services/externalid-verification.service';
 @Component({
   selector: 'app-tabs',
   templateUrl: './tabs.page.html',
@@ -25,6 +26,7 @@ export class TabsPage implements OnInit {
     actionButtons: ['search', 'filter'],
   };
   selectedLanguage: string;
+  olderWebView = false;
 
   constructor(
     private container: ContainerService,
@@ -34,14 +36,14 @@ export class TabsPage implements OnInit {
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     private commonUtilService: CommonUtilService,
-    private zone: NgZone
+    private externalIdVerificationService: ExternalIdVerificationService
   ) {
 
   }
 
   async ngOnInit() {
     console.log('Inside tabsPage');
-
+    this.checkAndroidWebViewVersion();
     const session = await this.appGlobalService.authService.getSession().toPromise();
     if (!session) {
       console.log(`Success Platform Session`, session);
@@ -70,6 +72,17 @@ export class TabsPage implements OnInit {
     this.events.subscribe('UPDATE_TABS', () => {
       this.tabs = this.container.getAllTabs();
     });
+  }
+
+  checkAndroidWebViewVersion() {
+    var that = this;
+    plugins['webViewChecker'].getCurrentWebViewPackageInfo()
+    .then(function(packageInfo) {
+      if (parseInt(packageInfo.versionName.split('.')[0], 10) <= 68) {
+        that.olderWebView = true;
+      }
+    })
+    .catch(function(error) { });
   }
 
   ionViewWillEnter() {
@@ -102,4 +115,39 @@ export class TabsPage implements OnInit {
       }
     }
   }
+
+
+  // async saveExternalUserAndShowPopup(userId) {
+  //   const isCustodianUser = await this.isCustodianUser$.toPromise();
+  //   const tenantSpecificMessages: any = await this.formAndFrameworkUtilService.getTenantSpecificMessages();
+  //   if (isCustodianUser) {
+  //     await this.profileService.getUserFeed().toPromise()
+  //       .then(async (userFeed: UserFeed[]) => {
+  //         userFeed = [this.userFeed];
+  //         console.log('UserFeedResponse in Resources', userFeed);
+  //         if (userFeed[0]) {
+  //           if ((userFeed[0].category).toLowerCase() === 'orgmigrationaction') {
+  //             let popupLabels = {};
+  //             if (tenantSpecificMessages && tenantSpecificMessages.length) {
+  //               if (tenantSpecificMessages[0] && tenantSpecificMessages[0].range && tenantSpecificMessages[0].range.length) {
+  //                    popupLabels = tenantSpecificMessages[0].range[0];
+  //               }
+  //             }
+  //             const popover = await this.popoverCtrl.create({
+  //               component: TeacherIdVerificationComponent,
+  //               backdropDismiss: false,
+  //               cssClass: 'popover-alert popoverPosition',
+  //               componentProps: {
+  //                 userFeed: userFeed[0], tenantMessages: popupLabels
+  //               }
+  //             });
+  //             await popover.present();
+  //           }
+  //         }
+  //       })
+  //       .catch((error) => {
+  //         console.log('error', error);
+  //       });
+  //   }
+  // }
 }

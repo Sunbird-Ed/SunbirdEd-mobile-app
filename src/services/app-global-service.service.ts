@@ -44,6 +44,11 @@ export class AppGlobalService implements OnDestroy {
     locationConfig: Array<any> = [];
 
     /**
+     * This property stores the dial code  configuration at the app level for non standard QR Code
+     */
+    dailCodeConfig?: RegExp;
+
+    /**
      * This property stores the organization at the app level for a particular app session
      */
     rootOrganizations: Array<any>;
@@ -63,6 +68,11 @@ export class AppGlobalService implements OnDestroy {
         isStorageAsked: false,
         isRecordAudioAsked: false,
     };
+    private _limitedShareQuizContent: any;
+    private _isSignInOnboardingCompleted: any;
+    private isJoinTraningOnboarding: any;
+    private _signinOnboardingLoader: any;
+
 
     constructor(
         @Inject('PROFILE_SERVICE') private profile: ProfileService,
@@ -190,6 +200,20 @@ export class AppGlobalService implements OnDestroy {
      */
     getCachedLocationConfig(): Array<any> {
         return this.locationConfig;
+    }
+
+    /**
+     * This method returns the cached dial code config
+     */
+    getCachedDialCodeConfig(): RegExp | undefined {
+        return this.dailCodeConfig;
+    }
+
+    /**
+     * This method stores the dial code config, for a non standard dial code
+     */
+    setDailCodeConfig(dialCodeConfig: RegExp) {
+        this.dailCodeConfig = dialCodeConfig;
     }
 
     /**
@@ -438,7 +462,7 @@ export class AppGlobalService implements OnDestroy {
     async openPopover(upgradeType: any) {
         let shouldDismissAlert = true;
 
-        if (upgradeType.upgrade.type === 'force') {
+        if (upgradeType.upgrade.type === 'force' || upgradeType.upgrade.type === 'forced') {
             shouldDismissAlert = false;
         }
 
@@ -630,4 +654,48 @@ export class AppGlobalService implements OnDestroy {
                 }
             });
     }
+
+    get limitedShareQuizContent() {
+        return this._limitedShareQuizContent;
+    }
+
+    set limitedShareQuizContent(value) {
+        this._limitedShareQuizContent = value;
+    }
+
+    get isSignInOnboardingCompleted() {
+        return this._isSignInOnboardingCompleted;
+    }
+
+    set isSignInOnboardingCompleted(value) {
+        this._isSignInOnboardingCompleted = value;
+    }
+    get isJoinTraningOnboardingFlow() {
+        return this.isJoinTraningOnboarding;
+    }
+
+    set isJoinTraningOnboardingFlow(value) {
+        this.isJoinTraningOnboarding = value;
+    }
+
+    get signinOnboardingLoader() {
+        return this._signinOnboardingLoader;
+    }
+    set signinOnboardingLoader(value) {
+        this._signinOnboardingLoader = value;
+    }
+
+    // This method is used to reset if any quiz content data is previously saved before Joining a Training
+    // So it wont affect in the exterId verification page
+    resetSavedQuizContent() {
+        this.limitedShareQuizContent = null;
+    }
+
+    async closeSigninOnboardingLoader() {
+        if (this.signinOnboardingLoader) {
+          await this.signinOnboardingLoader.dismiss();
+          this.signinOnboardingLoader = null;
+        }
+      }
+
 }

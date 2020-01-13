@@ -9,7 +9,7 @@ import { EventTopics } from '../../app/app.constant';
 import { CommonUtilService } from '../../services/common-util.service';
 import { InteractType, InteractSubtype, Environment, PageId, ImpressionType } from '../../services/telemetry-constants';
 import { AppHeaderService } from '../../services/app-header.service';
-import * as moment from 'moment';
+import * as dayjs from 'dayjs';
 import { Location } from '@angular/common';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs/Subscription';
@@ -120,6 +120,7 @@ export class CourseBatchesPage implements OnInit {
   }
 
   ngOnInit(): void {
+    this.todayDate =  dayjs().format('YYYY-MM-DD');
     this.getUserId();
   }
 
@@ -265,7 +266,6 @@ export class CourseBatchesPage implements OnInit {
   getBatchesByCourseId(): void {
     this.ongoingBatches = this.ongoingBatches;
     this.upcommingBatches = this.upcommingBatches;
-    this.todayDate =  moment(new Date()).format('YYYY-MM-DD');
     this.objRollup = this.objRollup;
     this.corRelationList = this.corRelationList;
     this.telemetryObject = this.telemetryObject;

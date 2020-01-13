@@ -32,6 +32,7 @@ import {
 } from '@app/services/telemetry-constants';
 import { ContainerService } from '@app/services/container.services';
 import { Router } from '@angular/router';
+import { AppGlobalService } from '@app/services';
 
 @Component({
   selector: 'app-sign-in-card',
@@ -62,7 +63,8 @@ export class SignInCardComponent implements OnInit {
     private formAndFrameworkUtilService: FormAndFrameworkUtilService,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private router: Router,
-    private events: Events
+    private events: Events,
+    private appGlobalService: AppGlobalService
   ) {
 
     this.appVersion.getAppName()
@@ -76,6 +78,7 @@ export class SignInCardComponent implements OnInit {
   }
 
   async signIn() {
+    this.appGlobalService.resetSavedQuizContent();
     // clean the prefernces to avoid unnecessary enrolment
     if (!this.fromEnrol) {
       this.preferences.putString(PreferenceKey.BATCH_DETAIL_KEY, '').toPromise();
@@ -129,6 +132,10 @@ export class SignInCardComponent implements OnInit {
         })
         .then(async () => {
           await loader.dismiss();
+          if (!this.appGlobalService.signinOnboardingLoader) {
+            this.appGlobalService.signinOnboardingLoader = await this.commonUtilService.getLoader();
+            await this.appGlobalService.signinOnboardingLoader.present();
+          }
           that.ngZone.run(() => {
             that.preferences.putString('SHOW_WELCOME_TOAST', 'true').toPromise().then();
 
@@ -209,8 +216,12 @@ export class SignInCardComponent implements OnInit {
     const tenantInfoRequest: TenantInfoRequest = {slug: tenantSlug};
     return new Promise((resolve, reject) => {
       this.profileService.getTenantInfo(tenantInfoRequest).toPromise()
-        .then((res) => {
-          this.preferences.putString(PreferenceKey.APP_LOGO, res.appLogo).toPromise().then();
+        .then(async (res) => {
+          const isDefaultChannelProfile = await this.profileService.isDefaultChannelProfile().toPromise();
+          if (isDefaultChannelProfile) {
+            title = await this.appVersion.getAppName();
+          }
+          this.preferences.putString(PreferenceKey.APP_LOGO, res.logo).toPromise().then();
           this.preferences.putString(PreferenceKey.APP_NAME, title).toPromise().then();
           (window as any).splashscreen.setContent(title, res.appLogo);
           resolve();

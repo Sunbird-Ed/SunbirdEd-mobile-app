@@ -39,6 +39,7 @@ export class LanguageSettingsPage implements OnInit {
   btnColor = '#8FC4FF';
   unregisterBackButton: Subscription;
   headerConfig: any;
+  headerObservable: any;
 
 
   constructor(
@@ -105,6 +106,9 @@ export class LanguageSettingsPage implements OnInit {
   ionViewWillEnter() {
     this.selectedLanguage = {};
     this.init();
+    this.headerObservable = this.headerService.headerEventEmitted$.subscribe(eventName => {
+      this.handleHeaderEvents(eventName);
+    });
     this.handleBackButton();
   }
 
@@ -118,7 +122,9 @@ export class LanguageSettingsPage implements OnInit {
         }
       }
     }
-
+    if (this.headerObservable) {
+      this.headerObservable.unsubscribe();
+    }
     if (this.unregisterBackButton) {
       this.unregisterBackButton.unsubscribe();
     }
@@ -215,6 +221,16 @@ export class LanguageSettingsPage implements OnInit {
       const dom = parser.parseFromString(`<!doctype html><body>&#9432; ${translatedString}`, 'text/html');
 
       this.commonUtilService.showToast(dom.body.textContent, false, 'redErrorToast');
+    }
+  }
+
+  handleHeaderEvents($event) {
+    if ($event.name === 'back') {
+      this.telemetryGeneratorService.generateBackClickedTelemetry(
+        this.isFromSettings ? PageId.SETTINGS_LANGUAGE : PageId.ONBOARDING_LANGUAGE_SETTING,
+        this.isFromSettings ? Environment.SETTINGS : Environment.ONBOARDING,
+        true);
+      this.location.back();
     }
   }
 }

@@ -1,42 +1,113 @@
-import { Component, OnInit, Inject, ChangeDetectorRef, NgZone } from '@angular/core';
+import {Component, OnInit, Inject, ChangeDetectorRef, NgZone, ViewChild} from '@angular/core';
 import {
   LocationSearchCriteria, ProfileService,
-  SharedPreferences, Profile, DeviceRegisterRequest, DeviceRegisterService, DeviceInfo
+  SharedPreferences, Profile, DeviceRegisterRequest, DeviceRegisterService, DeviceInfo, LocationSearchResult
 } from 'sunbird-sdk';
 import { Location as loc, PreferenceKey, RouterLinks, LocationConfig } from '../../app/app.constant';
 import { AppHeaderService, CommonUtilService, AppGlobalService, FormAndFrameworkUtilService } from '@app/services';
 import { NavigationExtras, Router } from '@angular/router';
 import { Location } from '@angular/common';
-import { Events } from '@ionic/angular';
+import { Events, IonSelect } from '@ionic/angular';
 import { Subscription } from 'rxjs';
 import { Platform } from '@ionic/angular';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import {
   Environment,
-  ImpressionSubtype,
   ImpressionType,
   InteractSubtype,
   InteractType,
-  PageId
+  PageId,
+  ID
 } from '@app/services/telemetry-constants';
+import { featureIdMap } from '@app/feature-id-map';
+import { ExternalIdVerificationService } from '@app/services/externalid-verification.service';
+import { tap } from 'rxjs/operators';
+
 @Component({
   selector: 'app-district-mapping',
   templateUrl: './district-mapping.page.html',
   styleUrls: ['./district-mapping.page.scss'],
 })
-export class DistrictMappingPage implements OnInit {
-  stateName;
-  districtName;
+export class DistrictMappingPage {
+  @ViewChild('stateSelect') stateSelect?: IonSelect;
+  @ViewChild('districtSelect') districtSelect?: IonSelect;
+
+  private _showStates?: boolean;
+  private _showDistrict?: boolean;
+  private _stateName: string;
+  private _districtName: string;
+
+  get profile(): Profile | undefined {
+    return window.history.state.profile;
+  }
+  get isShowBackButton(): boolean {
+    if (window.history.state.isShowBackButton === undefined) {
+      return true;
+    }
+    return window.history.state.isShowBackButton;
+  }
+  get source() {
+    return window.history.state.source;
+  }
+
+
+
+  get showStates(): boolean {
+    return this._showStates;
+  }
+  set showStates(value: boolean) {
+    this._showStates = value;
+
+    if (this._showStates && this.stateSelect) {
+      setTimeout(() => {
+        this.stateSelect.open();
+      }, 500);
+    }
+  }
+
+  get showDistrict(): boolean {
+    return this._showDistrict;
+  }
+  set showDistrict(value: boolean) {
+    this._showDistrict = value;
+
+    if (this._showDistrict && this.districtSelect) {
+      setTimeout(() => {
+        this.districtSelect.open();
+      }, 500);
+    }
+  }
+
+
+  get stateName(): string {
+    return this._stateName;
+  }
+  set stateName(value: string) {
+    this._stateName = value;
+
+    if (this.stateSelect) {
+      const selectedState = this.stateList.find((state) => state.name === this._stateName);
+      this.stateSelect.selectedText = selectedState ? selectedState.name : '';
+    }
+  }
+
+  get districtName(): string {
+    return this._districtName;
+  }
+  set districtName(value: string) {
+    this._districtName = value;
+
+    if (this.districtSelect) {
+      const selectedDistrict = this.districtList.find((district) => district.name === this._districtName);
+      this.districtSelect.selectedText = selectedDistrict ? selectedDistrict.name : '';
+    }
+  }
+
   name;
-  stateList;
-  districtList;
-  profile: Profile;
-  showStates: boolean;
-  showDistrict: boolean;
+  stateList: LocationSearchResult[] = [];
+  districtList: LocationSearchResult[] = [];
   stateCode;
   districtCode;
-  isShowBackButton = true;
-  source;
   backButtonFunc: Subscription;
   showNotNowFlag = false;
   availableLocationData: any;
@@ -46,6 +117,7 @@ export class DistrictMappingPage implements OnInit {
   isPopulatedLocationChanged = false;
   isKeyboardShown$;
   isLocationChanged = false;
+  disableSubmitButton = false;
 
   constructor(
     public headerService: AppHeaderService,
@@ -62,26 +134,14 @@ export class DistrictMappingPage implements OnInit {
     public platform: Platform,
     public telemetryGeneratorService: TelemetryGeneratorService,
     private changeDetectionRef: ChangeDetectorRef,
-    private ngZone: NgZone
+    private ngZone: NgZone,
+    private externalIdVerificationService: ExternalIdVerificationService
   ) {
-    if (this.router.getCurrentNavigation().extras.state) {
-      this.profile = this.router.getCurrentNavigation().extras.state.profile;
-      this.isShowBackButton = this.router.getCurrentNavigation().extras.state.isShowBackButton;
-      this.source = this.router.getCurrentNavigation().extras.state.source;
-    }
-    this.isKeyboardShown$ = deviceInfo.isKeyboardShown().do(() => this.changeDetectionRef.detectChanges());
+    this.appGlobalService.closeSigninOnboardingLoader();
+    this.isKeyboardShown$ = deviceInfo.isKeyboardShown().pipe(
+        tap(() => this.changeDetectionRef.detectChanges())
+    );
   }
-
-  ngOnInit() {
-    this.handleDeviceBackButton();
-    this.checkLocationMandatory();
-    this.telemetryGeneratorService.generateImpressionTelemetry(
-      ImpressionType.VIEW,
-      '',
-      PageId.DISTRICT_MAPPING,
-      Environment.HOME);
-  }
-
   selectState(name, id, code) {
     this.getState(name, id, code);
     this.districtName = '';
@@ -125,13 +185,22 @@ export class DistrictMappingPage implements OnInit {
     this.districtCode = '';
   }
 
-  goBack() {
-    this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.DISTRICT_MAPPING, Environment.HOME,
-      true);
+  goBack(isNavClicked: boolean) {
+    this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.DISTRICT_MAPPING, this.getEnvironment(),
+      isNavClicked);
     this.location.back();
   }
 
   async ionViewWillEnter() {
+    this.handleDeviceBackButton();
+    this.checkLocationMandatory();
+    this.telemetryGeneratorService.generateImpressionTelemetry(
+        ImpressionType.VIEW,
+        '',
+        PageId.DISTRICT_MAPPING,
+        this.getEnvironment(), '', '', '', undefined,
+        featureIdMap.location.LOCATION_CAPTURE);
+
     this.headerService.hideHeader();
     await this.checkLocationAvailability();
     await this.getStates();
@@ -171,26 +240,23 @@ export class DistrictMappingPage implements OnInit {
   handleDeviceBackButton() {
     if (this.isShowBackButton) {
       this.backButtonFunc = this.platform.backButton.subscribeWithPriority(10, () => {
-        this.goBack();
+        this.goBack(false);
       });
     }
   }
 
   ionViewWillLeave(): void {
+    if (this.backButtonFunc) {
     this.backButtonFunc.unsubscribe();
+    }
   }
 
-  showStateList() {
-    this.districtName = '';
-    this.showStates = true;
-  }
-  showDistrictList() {
-    this.showDistrict = true;
-  }
+
   // validates the name input feild
   validateName() {
     if (this.name) {
-      return !Boolean(this.name.match(/^[a-zA-Z ]*$/));
+     // return !Boolean(this.name.match(/^[a-zA-Z0-9/./s]*$/));
+     return false;
     }
   }
 
@@ -209,7 +275,6 @@ export class DistrictMappingPage implements OnInit {
           this.stateList = locations;
           if (this.availableLocationState) {
             const state = this.stateList.find(s => s.name === this.availableLocationState);
-            await loader.dismiss();
             if (state) {
               await this.getState(state.name, state.id, state.code);
             } else {
@@ -218,14 +283,14 @@ export class DistrictMappingPage implements OnInit {
             this.generateAutoPopulatedTelemetry();
           }
         } else {
-          this.districtList = '';
+          this.districtList = [];
           this.showDistrict = !this.showDistrict;
           this.commonUtilService.showToast(this.commonUtilService.translateMessage('NO_DATA_FOUND'));
-          await loader.dismiss();
         }
+        await loader.dismiss();
       });
     }, async (error) => {
-        await loader.dismiss();
+      await loader.dismiss();
     });
   }
 
@@ -253,8 +318,8 @@ export class DistrictMappingPage implements OnInit {
               this.districtName = '';
             }
           } else if (this.districtList) {
-              this.showDistrict = true;
-              await loader.dismiss();
+            this.showDistrict = true;
+            await loader.dismiss();
           }
         } else {
           this.availableLocationDistrict = '';
@@ -265,18 +330,23 @@ export class DistrictMappingPage implements OnInit {
         }
       });
     }, async (error) => {
-        await loader.dismiss();
+      await loader.dismiss();
     });
   }
 
+  isStateorDistrictChanged() {
+    if (this.availableLocationState !== this.stateName && this.availableLocationDistrict === this.districtName) {
+      return InteractSubtype.STATE_CHANGED;
+    } else if (this.availableLocationDistrict !== this.districtName && this.availableLocationState === this.stateName) {
+      return InteractSubtype.DIST_CHANGED;
+    } else if (this.availableLocationState !== this.stateName && this.availableLocationDistrict !== this.districtName) {
+      return InteractSubtype.STATE_DIST_CHANGED;
+    } else {
+      return '';
+    }
+  }
+
   async submit() {
-    this.telemetryGeneratorService.generateInteractTelemetry(
-      InteractType.OTHER,
-      InteractSubtype.AUTO_POPULATED_LOCATION,
-      Environment.HOME,
-      PageId.DISTRICT_MAPPING,
-      undefined,
-      { isPopulatedLocation: this.isPopulatedLocationChanged });
 
     let isLocationUpdated = false;
     if (this.stateName !== this.availableLocationState ||
@@ -285,12 +355,15 @@ export class DistrictMappingPage implements OnInit {
     }
 
     this.telemetryGeneratorService.generateInteractTelemetry(
-      InteractType.TOUCH,
-      InteractSubtype.SUBMIT_CLICKED,
-      Environment.HOME,
+      isLocationUpdated ? InteractType.LOCATION_CHANGED : InteractType.LOCATION_UNCHANGED,
+      this.isStateorDistrictChanged(),
+      this.getEnvironment(),
       PageId.DISTRICT_MAPPING,
       undefined,
-      { isLocationUpdated }
+      { isPopulatedLocation: this.isPopulatedLocationChanged },
+      undefined,
+      featureIdMap.location.LOCATION_CAPTURE,
+      ID.SUBMIT_CLICKED
     );
 
     if (this.appGlobalService.isUserLoggedIn()) {
@@ -317,19 +390,26 @@ export class DistrictMappingPage implements OnInit {
           }
           this.generateLocationCaptured(false); // is dirtrict or location edit  = false
           this.commonUtilService.showToast(this.commonUtilService.translateMessage('PROFILE_UPDATE_SUCCESS'));
+          this.disableSubmitButton = true;
           this.events.publish('loggedInProfile:update', req);
           if (this.profile) {
-            this.goBack();
+            this.location.back();
           } else {
-            this.router.navigate([`/${RouterLinks.TABS}`]);
+            if (this.appGlobalService.isJoinTraningOnboardingFlow) {
+              window.history.go(-2);
+            } else {
+              this.router.navigate([`/${RouterLinks.TABS}`]);
+            }
+            this.externalIdVerificationService.showExternalIdVerificationPopup();
           }
         }).catch(async () => {
           await loader.dismiss();
           this.commonUtilService.showToast(this.commonUtilService.translateMessage('PROFILE_UPDATE_FAILED'));
           if (this.profile) {
-            this.goBack();
+            this.location.back();
           } else {
             this.router.navigate([`/${RouterLinks.TABS}`]);
+            this.externalIdVerificationService.showExternalIdVerificationPopup();
           }
         });
     } else if (this.source === PageId.GUEST_PROFILE) { // block for editing the device location
@@ -338,7 +418,7 @@ export class DistrictMappingPage implements OnInit {
 
       await this.saveDeviceLocation();
       this.events.publish('refresh:profile');
-      this.goBack();
+      this.location.back();
     } else { // add or update the device loc
       await this.saveDeviceLocation();
       const navigationExtras: NavigationExtras = {
@@ -356,15 +436,14 @@ export class DistrictMappingPage implements OnInit {
     const req: DeviceRegisterRequest = {
       userDeclaredLocation: {
         state: this.stateName,
+        stateId: this.stateList.find((s) => s.name === this.stateName).id,
         district: this.districtName,
+        districtId: this.districtList.find((d) => d.name === this.districtName).id,
+        declaredOffline: !this.commonUtilService.networkInfo.isNetworkAvailable
       }
     };
     this.deviceRegisterService.registerDevice(req).toPromise();
-
-    const locationMap = new Map();
-    locationMap['state'] = this.stateName ? this.stateName : this.availableLocationState;
-    locationMap['district'] = this.districtName ? this.districtName : this.availableLocationDistrict;
-    await this.preferences.putString(PreferenceKey.DEVICE_LOCATION, JSON.stringify(locationMap)).toPromise();
+    this.preferences.putString(PreferenceKey.DEVICE_LOCATION, JSON.stringify(req.userDeclaredLocation)).toPromise();
     await loader.dismiss();
   }
 
@@ -397,25 +476,40 @@ export class DistrictMappingPage implements OnInit {
 
   generateAutoPopulatedTelemetry() {
     this.telemetryGeneratorService.generateInteractTelemetry(
-      InteractType.OTHER,
-      InteractSubtype.AUTO_POPULATED_LOCATION,
-      Environment.HOME,
+      this.isAutoPopulated ? InteractType.VISIBLE : InteractType.NOT_VISIBLE,
+      '',
+      this.getEnvironment(),
       PageId.DISTRICT_MAPPING,
       undefined,
-      { isAutoPopulated: this.isAutoPopulated });
+      { isAutoPopulated: this.isAutoPopulated },
+      undefined,
+      featureIdMap.location.LOCATION_CAPTURE,
+      ID.IP_BASED_LOCATION_SUGGESTION);
   }
 
   generateLocationCaptured(isEdited: boolean) {
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,
       InteractSubtype.LOCATION_CAPTURED,
-      Environment.HOME,
+      this.getEnvironment(),
       PageId.DISTRICT_MAPPING,
       undefined,
       {
         isAutoPopulated: this.isAutoPopulated,
         isEdited
-      });
+      }, undefined,
+      featureIdMap.location.LOCATION_CAPTURE);
+  }
+
+  getEnvironment(): string {
+    return this.source === PageId.GUEST_PROFILE ? Environment.USER : Environment.ONBOARDING;
+  }
+
+  isValid(input: string, objects: any[], key: 'code' | 'name'): boolean {
+    if (!objects) {
+      return false;
+    }
+    return !!objects.find(o => o[key] === input);
   }
 
   resetDistrictCode() {

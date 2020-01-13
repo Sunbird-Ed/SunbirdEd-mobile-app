@@ -22,7 +22,8 @@ export enum ObjectType {
     USER = 'User',
     GROUP = 'Group',
     CONTENT = 'Content',
-    QUESTION = 'Question'
+    QUESTION = 'Question',
+    QR = 'Qr'
 }
 export enum Mode {
     PLAY = 'play'
@@ -116,6 +117,9 @@ export enum PageId {
     MERGE_ACCOUNT_POPUP = 'merge-account-popup',
     DISTRICT_MAPPING = 'district-mapping',
     SIGNIN_POPUP = 'signin-popup',
+    EXTERNAL_USER_VERIFICATION_POPUP = 'user-verification-popup',
+    FAQ_REPORT_ISSUE = 'faq-report-issue',
+    UPDATE_WEBVIEW_POPUP = 'update-webview-popup',
 }
 export enum LogType {
     NOTIFICATION = 'notification'
@@ -153,7 +157,12 @@ export enum ImpressionSubtype {
 export enum InteractType {
     TOUCH = 'TOUCH',
     OTHER = 'OTHER',
-    SCROLL = 'SCROLL'
+    SCROLL = 'SCROLL',
+    LOCATION_CHANGED = 'location-changed',
+    LOCATION_UNCHANGED = 'location-unchanged',
+    VISIBLE = 'visible',
+    NOT_VISIBLE = 'not-visible',
+    QUIZ_DEEPLINK = 'quiz-deeplink'
 }
 
 export enum InteractSubtype {
@@ -360,7 +369,28 @@ export enum InteractSubtype {
     AUTO_POPULATED_LOCATION = 'auto-populate-location',
     EDIT_DISTRICT_MAPPING_CLICKED = 'edit-district-mapping-clicked',
     LOGIN_CLICKED = 'login-clicked',
-    TERMS_OF_USE_CLICKED = 'terms-of-use-clicked'
+    TERMS_OF_USE_CLICKED = 'terms-of-use-clicked',
+    USER_VERIFICATION_SUCCESS = 'user-verification-success',
+    USER_VERIFICATION_FAILURE = 'user-verification-failure',
+    FAST_LOADING_OF_TEXTBOOK_INITIATED = 'textbook-fast-loading-initiated',
+    FAST_LOADING_OF_TEXTBOOK_FINISHED = 'textbook-fast-loading-finished',
+    REPORT_ISSUE_CLICKED = 'report-issue-clicked',
+    STATE_DIST_CHANGED = 'state-dist-changed',
+    STATE_CHANGED = 'state-changed',
+    DIST_CHANGED = 'dist-changed',
+    UPDATE_WEBVIEW_CLICKED = 'update-webview-clicked'
+}
+
+export enum ID {
+    USER_VERIFICATION_REJECTED = 'ext-user-verify-reject',
+    USER_VERIFICATION_CONFIRMED = 'ext-user-verify-confirm',
+    USER_VERIFICATION_SUBMITED = 'ext-user-verify-submit',
+    USER_VERIFICATION_FAILED = 'ext-user-verify-fail',
+    USER_VERIFICATION_SUCCESS = 'ext-user-verify-success',
+    SUBMIT_CLICKED = 'submit-clicked',
+    QUIZ = 'quiz',
+    IP_BASED_LOCATION_SUGGESTION = 'ip-based-location-suggestion',
+    DEEPLINK_CLICKED = 'deeplink-clicked'
 }
 
 export enum ActionButtonType {
@@ -376,7 +406,9 @@ export enum CorReleationDataType {
     BOARD = 'Board',
     MEDIUM = 'Medium',
     CLASS = 'Class',
-    USERTYPE = 'UserType'
+    SUBJECT = 'Subject',
+    USERTYPE = 'UserType',
+    DEEPLINK = 'Deeplink'
 }
 
 

@@ -46,6 +46,7 @@
               "vendor": true
             },
             "styles": [
+              "node_modules/common-consumption-styles/assets/_styles.scss",
               {
                 "input": "src/global.scss"
               }
@@ -74,7 +75,7 @@
                 {
                   "type": "initial",
                   "maximumWarning": "2mb",
-                  "maximumError": "5mb"
+                  "maximumError": "7mb"
                 }
               ]
             },

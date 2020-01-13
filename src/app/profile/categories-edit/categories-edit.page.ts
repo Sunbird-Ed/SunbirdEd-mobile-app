@@ -28,6 +28,8 @@ import { ProfileConstants, RouterLinks } from '@app/app/app.constant';
 import { ActivatedRoute, Router, NavigationExtras } from '@angular/router';
 import { Location } from '@angular/common';
 import { Environment, ActivePageService } from '@app/services';
+import { ExternalIdVerificationService } from '@app/services/externalid-verification.service';
+import { TncUpdateHandlerService } from '@app/services/handlers/tnc-update-handler.service';
 
 
 @Component({
@@ -45,6 +47,7 @@ export class CategoriesEditPage {
   private _mediumList = [];
   private _gradeList = [];
   private _subjectList = [];
+  disableSubmitButton = false;
 
   get syllabusList() {
     return this._syllabusList;
@@ -133,9 +136,12 @@ export class CategoriesEditPage {
     private location: Location,
     private platform: Platform,
     private activePageService: ActivePageService,
-    private changeDetectionRef: ChangeDetectorRef
+    private changeDetectionRef: ChangeDetectorRef,
+    private externalIdVerificationService: ExternalIdVerificationService,
+    private tncUpdateHandlerService: TncUpdateHandlerService,
 
   ) {
+    this.appGlobalService.closeSigninOnboardingLoader();
     this.profile = this.appGlobalService.getCurrentUser();
     const extrasState = this.router.getCurrentNavigation().extras.state;
     if (extrasState && extrasState.showOnlyMandatoryFields) {
@@ -156,6 +162,7 @@ export class CategoriesEditPage {
    */
   ionViewWillEnter() {
     this.getSyllabusDetails();
+    this.disableSubmitButton = false;
     this.headerConfig = this.headerService.getDefaultPageConfig();
     this.headerConfig.actionButtons = [];
     this.headerConfig.showHeader = false;
@@ -445,6 +452,7 @@ export class CategoriesEditPage {
       .then(async () => {
         await this.loader.dismiss();
         this.commonUtilService.showToast(this.commonUtilService.translateMessage('PROFILE_UPDATE_SUCCESS'));
+        this.disableSubmitButton = true;
         this.events.publish('loggedInProfile:update', req.framework);
 
         if (this.showOnlyMandatoryFields) {
@@ -456,10 +464,11 @@ export class CategoriesEditPage {
           this.profileService.getServerProfilesDetails(reqObj).toPromise()
             .then(updatedProfile => {
               this.formAndFrameworkUtilService.updateLoggedInUser(updatedProfile, this.profile)
-                .then((value) => {
+                .then( async (value) => {
                   initTabs(this.container, LOGIN_TEACHER_TABS);
-                  if (this.hasFilledLocation) {
+                  if (this.hasFilledLocation || await this.tncUpdateHandlerService.isSSOUser(this.profile)) {
                     this.router.navigate([RouterLinks.TABS]);
+                    this.externalIdVerificationService.showExternalIdVerificationPopup();
                   } else {
                     const navigationExtras: NavigationExtras = {
                       state: {
@@ -473,6 +482,7 @@ export class CategoriesEditPage {
               initTabs(this.container, LOGIN_TEACHER_TABS);
               if (this.hasFilledLocation) {
                 this.router.navigate([RouterLinks.TABS]);
+                this.externalIdVerificationService.showExternalIdVerificationPopup();
               } else {
                 const navigationExtras: NavigationExtras = {
                   state: {
@@ -494,7 +504,7 @@ export class CategoriesEditPage {
 
   ionViewWillLeave() {
     if (this.backButtonFunc) {
-      this.platform.backButton.unsubscribe();
+      this.backButtonFunc.unsubscribe();
     }
   }
 }

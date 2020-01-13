@@ -12,6 +12,7 @@ import { InteractSubtype, Environment, PageId, ActionButtonType } from '../../..
 import { EmitedContents } from '../download-manager.interface';
 import { Router } from '@angular/router';
 import { AppHeaderService } from '@app/services';
+import { ContentUtil } from '@app/util/content-util';
 
 @Component({
   selector: 'app-downloads-tab',
@@ -85,36 +86,40 @@ export class DownloadsTabComponent implements OnInit {
     });
     await deleteConfirm.present();
     const { data } = await deleteConfirm.onDidDismiss();
-    console.log('downloads tab', data);
-    switch (data.canDelete) {
-      case undefined:
-        this.unSelectAllContents();
-        this.telemetryGeneratorService.generateInteractTelemetry(
-          InteractType.TOUCH,
-          InteractSubtype.CLOSE_CLICKED,
-          Environment.DOWNLOADS,
-          PageId.SINGLE_DELETE_CONFIRMATION_POPUP);
-        break;
-      case null:
-        if (identifier) {
-          this.unSelectAllContents();
-        }
-        this.telemetryGeneratorService.generateInteractTelemetry(
-          InteractType.TOUCH,
-          InteractSubtype.OUTSIDE_POPUP_AREA_CLICKED,
-          Environment.DOWNLOADS,
-          PageId.SINGLE_DELETE_CONFIRMATION_POPUP);
-        break;
-      default:
-        const valuesMap = {};
-        valuesMap['type'] = ActionButtonType.POSITIVE;
-        this.telemetryGeneratorService.generateInteractTelemetry(
-          InteractType.TOUCH,
-          InteractSubtype.ACTION_BUTTON_CLICKED,
-          Environment.DOWNLOADS,
-          PageId.SINGLE_DELETE_CONFIRMATION_POPUP, undefined,
-          valuesMap);
-        this.deleteContent();
+
+    if (data === undefined) { // Backdrop clicked
+      if (!identifier) { this.unSelectAllContents(); }
+      this.telemetryGeneratorService.generateInteractTelemetry(
+        InteractType.TOUCH,
+        InteractSubtype.OUTSIDE_POPUP_AREA_CLICKED,
+        Environment.DOWNLOADS,
+        PageId.SINGLE_DELETE_CONFIRMATION_POPUP);
+    } else if (data.closeDeletePopOver) { // Close clicked
+      if (!identifier) { this.unSelectAllContents(); }
+      this.telemetryGeneratorService.generateInteractTelemetry(
+        InteractType.TOUCH,
+        InteractSubtype.CLOSE_CLICKED,
+        Environment.DOWNLOADS,
+        PageId.SINGLE_DELETE_CONFIRMATION_POPUP);
+    } else if (data.canDelete) {
+      const valuesMap = {};
+      valuesMap['type'] = ActionButtonType.POSITIVE;
+      let telemetryObject: TelemetryObject;
+      if (identifier) {
+        this.downloadedContents.forEach(element => {
+          if (element.identifier === identifier) {
+            telemetryObject = ContentUtil.getTelemetryObject(element);
+          }
+        });
+      }
+      this.telemetryGeneratorService.generateInteractTelemetry(
+        InteractType.TOUCH,
+        InteractSubtype.ACTION_BUTTON_CLICKED,
+        Environment.DOWNLOADS,
+        identifier ? PageId.SINGLE_DELETE_CONFIRMATION_POPUP : PageId.BULK_DELETE_CONFIRMATION_POPUP,
+        telemetryObject,
+        valuesMap);
+      this.deleteContent();
     }
   }
 
@@ -259,6 +264,7 @@ export class DownloadsTabComponent implements OnInit {
           InteractSubtype.POPUP_DISMISSED,
           Environment.DOWNLOADS,
           PageId.BULK_DELETE_POPUP);
+        this.deleteAllConfirm = undefined;
         return;
       } else if (data.isLeftButtonClicked) {
         valuesMap['type'] = ActionButtonType.NEGATIVE;
@@ -273,6 +279,7 @@ export class DownloadsTabComponent implements OnInit {
           valuesMap);
         this.showDeletePopup();
       }
+      this.deleteAllConfirm = undefined;
       this.telemetryGeneratorService.generateInteractTelemetry(
         InteractType.TOUCH,
         InteractSubtype.ACTION_BUTTON_CLICKED,

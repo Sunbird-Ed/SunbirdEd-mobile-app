@@ -42,11 +42,13 @@ export class FormAndFrameworkUtilService {
         private appVersion: AppVersion,
         private translate: TranslateService,
         private events: Events
-    ) {
-        this.preferences.getString(PreferenceKey.SELECTED_LANGUAGE_CODE).toPromise()
-            .then(val => {
-                this.selectedLanguage = val ? val : 'en';
-            });
+    ) {}
+
+    async init() {
+        await this.preferences.getString(PreferenceKey.SELECTED_LANGUAGE_CODE).toPromise().then(val => {
+            this.selectedLanguage = val ? val : 'en' ;
+        });
+        await this.getDailCodeConfig();
     }
 
     getWebviewSessionProviderConfig(context: 'login' | 'merge' | 'migrate'): Promise<WebviewSessionProviderConfig> {
@@ -87,6 +89,14 @@ export class FormAndFrameworkUtilService {
                 resolve(libraryFilterConfig);
             }
         });
+    }
+    /**
+     *  this method gets the cached dial code config
+     */
+    async getDailCodeConfig() {
+        if (!this.appGlobalService.getCachedDialCodeConfig()) {
+            this.invokeDialCodeFormApi();
+        }
     }
 
     /**
@@ -136,7 +146,7 @@ export class FormAndFrameworkUtilService {
         return new Promise((resolve, reject) => {
             console.log('checkNewAppVersion Called');
 
-            this.appVersion.getVersionCode()
+            return this.appVersion.getVersionCode()
                 .then((versionCode: any) => {
                     console.log('checkNewAppVersion Current app version - ' + versionCode);
                     let result: any;
@@ -148,7 +158,7 @@ export class FormAndFrameworkUtilService {
                         action: 'upgrade'
                     };
                     // form api call
-                    this.formService.getForm(req).toPromise()
+                    return this.formService.getForm(req).toPromise()
                         .then((res: any) => {
                             let fields: Array<any> = [];
                             let ranges: Array<any> = [];
@@ -177,7 +187,7 @@ export class FormAndFrameworkUtilService {
                                             type = element.type;
 
                                             if (type === forceType) {
-                                                return true; // this is to stop the foreach loop
+                                                break;
                                             }
                                         }
                                     }
@@ -188,7 +198,6 @@ export class FormAndFrameworkUtilService {
                                     }
                                 }
                             }
-
                             resolve(result);
                         }).catch((error: any) => {
                             reject(error);
@@ -245,6 +254,31 @@ export class FormAndFrameworkUtilService {
                 console.log('Error - ' + error);
                 resolve(libraryFilterConfig);
             });
+    }
+    /**
+     * Network call to form api to fetch dial code config
+     */
+     async invokeDialCodeFormApi() {
+        const req: FormRequest = {
+            type: 'config',
+            subType: 'dialcode',
+            action: 'get'
+        };
+        this.formService.getForm(req).toPromise()
+            .then((res: any) => {
+                const data = res.form ? res.form.data.fields : res.data.fields;
+                if (res && data.length) {
+                    for (const ele of data) {
+                        if (ele.code === 'dialcode') {
+                            this.appGlobalService.setDailCodeConfig(ele.values);
+                        }
+                    }
+                }
+
+            }).catch((error: any) => {
+               console.error('error while fetching dial code reg ex ' , error);
+            });
+
     }
 
     /**
@@ -542,6 +576,49 @@ export class FormAndFrameworkUtilService {
                     resolve(res.value);
                 }).catch(err => {
                     reject(err);
+                });
+        });
+    }
+
+    async getTenantSpecificMessages(rootOrgId) {
+        return new Promise((resolve, reject) => {
+            const req: FormRequest = {
+                type: 'user',
+                subType: 'externalIdVerification',
+                action: 'onboarding',
+                rootOrgId
+            };
+            this.formService.getForm(req).toPromise()
+                .then((res: any) => {
+                    const data = res.form.data.fields;
+                    if (data && data.length) {
+                        resolve(data);
+                    }
+                }).catch((error: any) => {
+                    reject(error);
+                    console.error('error while fetching dial code reg ex ' , error);
+                });
+        });
+    }
+
+    // get the required webview version
+    getWebviewConfig() {
+        return new Promise((resolve, reject) => {
+            const req: FormRequest = {
+                type: 'config',
+                subType: 'webview_version',
+                action: 'get',
+            };
+            // form api call
+            this.formService.getForm(req).toPromise()
+                .then((res: any) => {
+                    if (res.form && res.form.data && res.form.data.fields[0].version) {
+                        resolve(parseInt(res.form.data.fields[0].version, 10));
+                    } else {
+                        resolve(54);
+                    }
+                }).catch((error: any) => {
+                    reject(error);
                 });
         });
     }

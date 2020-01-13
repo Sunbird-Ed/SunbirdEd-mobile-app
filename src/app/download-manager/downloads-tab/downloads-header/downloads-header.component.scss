@@ -1,3 +1,13 @@
-.padding-left-4em {
-    padding-left: 5rem;
+.flex-60{
+    flex: 0 0 60%;
+}
+.flex-40{
+    flex: 0 0 40%;
+}
+@media (max-width: 360px) {
+    .sb-view-all-title{
+        .d-flex{
+            font-size: 12px;
+        }
+    }
 }

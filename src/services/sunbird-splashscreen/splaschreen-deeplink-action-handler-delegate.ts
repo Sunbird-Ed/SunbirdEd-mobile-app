@@ -1,4 +1,4 @@
-import { PreferenceKey } from '@app/app/app.constant';
+import { PreferenceKey, ContentFilterConfig } from '@app/app/app.constant';
 import { Inject, Injectable, NgZone } from '@angular/core';
 import { Router } from '@angular/router';
 import { Events } from '@ionic/angular';
@@ -22,7 +22,7 @@ import { ContentType, MimeType, ActionType, EventTopics, RouterLinks } from '../
 import { AppGlobalService } from '../app-global-service.service';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { CommonUtilService } from '@app/services/common-util.service';
-import { PageId, InteractType, InteractSubtype, Environment } from '../telemetry-constants';
+import { PageId, InteractType, InteractSubtype, Environment, ID, CorReleationDataType } from '../telemetry-constants';
 import { UtilityService } from '..';
 import { Location } from '@angular/common';
 import { LocalCourseService } from '../local-course.service';
@@ -88,8 +88,9 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
     }
   }
 
-  onAction(type: string, action?: { identifier: string }): Observable<undefined> {
+  onAction(type: string, action?: { identifier: string }, isFromLink = true): Observable<undefined> {
     const identifier: any = action !== undefined ? action.identifier : this.identifier;
+    this.appGlobalServices.resetSavedQuizContent();
     if (identifier) {
       switch (type) {
         case 'content': {
@@ -107,6 +108,28 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
             } else if (content.mimeType === MimeType.COLLECTION) {
               this.router.navigate([RouterLinks.COLLECTION_DETAIL_ETB], { state: { content } });
             } else {
+              if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
+                this.commonUtilService.showToast('NEED_INTERNET_FOR_DEEPLINK_CONTENT');
+                return false;
+              }
+              if (content.contentData && content.contentData.status === ContentFilterConfig.CONTENT_STATUS_UNLISTED) {
+                this.appGlobalServices.limitedShareQuizContent = action;
+                if (isFromLink) {
+                  this.limitedSharingContentLinkClickedTelemery();
+                }
+                if (!this.appGlobalServices.isUserLoggedIn() && !this.appGlobalServices.isProfileSettingsCompleted) {
+                  return;
+                }
+                if (!this.appGlobalServices.isSignInOnboardingCompleted && this.appGlobalServices.isUserLoggedIn()) {
+                  return;
+                }
+                if (this.router.url && this.router.url.indexOf(RouterLinks.CONTENT_DETAILS) !== -1) {
+                  this.events.publish(EventTopics.DEEPLINK_CONTENT_PAGE_OPEN, { content, autoPlayQuizContent: true });
+                  return;
+                }
+                this.router.navigate([RouterLinks.CONTENT_DETAILS], { state: { content, autoPlayQuizContent: true } });
+                return;
+              }
               this.router.navigate([RouterLinks.CONTENT_DETAILS], { state: { content } });
             }
           }).mapTo(undefined) as any;
@@ -129,7 +152,12 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
     return Observable.of(undefined);
   }
 
-  checkCourseRedirect() {
+  async checkCourseRedirect() {
+    const isloogedInUser = await this.authService.getSession().toPromise();
+    if (!this.appGlobalServices.isSignInOnboardingCompleted && isloogedInUser) {
+      this.appGlobalServices.isJoinTraningOnboardingFlow = true;
+      return;
+    }
     this.preferences.getString(PreferenceKey.BATCH_DETAIL_KEY).toPromise()
       .then(resp => {
         if (resp) {
@@ -275,4 +303,21 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
         await loader.dismiss();
       });
   }
+
+  limitedSharingContentLinkClickedTelemery() {
+    const corRelationList = [];
+    corRelationList.push({ id: ID.QUIZ, type: CorReleationDataType.DEEPLINK });
+    this.telemetryGeneratorService.generateInteractTelemetry(
+      InteractType.QUIZ_DEEPLINK,
+      '',
+      Environment.HOME,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      corRelationList,
+      ID.DEEPLINK_CLICKED
+    );
+  }
+
 }

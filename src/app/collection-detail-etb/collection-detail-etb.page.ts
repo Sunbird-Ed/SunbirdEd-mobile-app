@@ -26,7 +26,8 @@ import {
 import { Subscription } from 'rxjs/Subscription';
 import { ContentType, MimeType, ShareUrl, RouterLinks } from '../../app/app.constant';
 import {
-  AppGlobalService, AppHeaderService, CommonUtilService, CourseUtilService, TelemetryGeneratorService, UtilityService, ContentShareHandlerService
+  AppGlobalService, AppHeaderService, CommonUtilService, CourseUtilService, TelemetryGeneratorService, UtilityService,
+  ContentShareHandlerService
 } from '../../services';
 import { SbGenericPopoverComponent } from '../components/popups/sb-generic-popover/sb-generic-popover.component';
 import { ComingSoonMessageService } from 'services/coming-soon-message.service';
@@ -233,10 +234,12 @@ export class CollectionDetailEtbPage implements OnInit {
   isChapterVisible = false;
   shouldPillsStick = false;
   importProgressMessage: string;
+  showSheenAnimation = true;
 
   public telemetryObject: TelemetryObject;
   public rollUpMap: { [key: string]: Rollup } = {};
 
+  private previousHeaderBottomOffset?: number;
   constructor(
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
     @Inject('EVENTS_BUS_SERVICE') private eventBusService: EventsBusService,
@@ -362,9 +365,9 @@ export class CollectionDetailEtbPage implements OnInit {
 
 
   // toggle the card
-  toggleGroup(group, content) {
+  toggleGroup(group, content, openCarousel?) {
     let isCollapsed = true;
-    if (this.isGroupShown(group)) {
+    if (!openCarousel && this.isGroupShown(group)) {
       isCollapsed = false;
       this.shownGroup = null;
     } else {
@@ -492,18 +495,36 @@ export class CollectionDetailEtbPage implements OnInit {
       attachContentAccess: true,
       emitUpdateIfAny: refreshContentDetails
     };
+    // console.time('getContentDetails');
     this.contentService.getContentDetails(option).toPromise()
       .then((data: Content) => {
-        this.zone.run(() => {
+        // this.zone.run(() => {
           loader.dismiss().then(() => {
             if (data) {
-              this.extractApiResponse(data);
+              if (!data.isAvailableLocally) {
+                this.contentDetail = data;
+                this.generatefastLoadingTelemetry(InteractSubtype.FAST_LOADING_OF_TEXTBOOK_INITIATED);
+                this.contentService.getContentHeirarchy(option).toPromise()
+                .then((content: Content) => {
+                  this.childrenData = content.children;
+                  this.showSheenAnimation = false;
+                  this.toggleGroup(0, this.content);
+                  this.generatefastLoadingTelemetry(InteractSubtype.FAST_LOADING_OF_TEXTBOOK_FINISHED);
+                }).catch((err) => {
+                  this.showSheenAnimation = false;
+                });
+                this.importContentInBackground([this.identifier], false);
+              } else {
+                this.showSheenAnimation = false;
+                this.extractApiResponse(data);
+              }
             }
           });
-        });
+        // });
       })
       .catch((error: any) => {
         console.log('error while loading content details', error);
+        this.showSheenAnimation = false;
         loader.dismiss();
         this.commonUtilService.showToast('ERROR_CONTENT_NOT_AVAILABLE');
         this.location.back();
@@ -537,7 +558,7 @@ export class CollectionDetailEtbPage implements OnInit {
    */
   extractApiResponse(data: Content) {
     this.contentDetail = data;
-    this.contentDetail.isAvailableLocally = data.isAvailableLocally;
+    // this.contentDetail.isAvailableLocally = data.isAvailableLocally;
 
     if (this.contentDetail.contentData.appIcon) {
       if (this.contentDetail.contentData.appIcon.includes('http:') || this.contentDetail.contentData.appIcon.includes('https:')) {
@@ -755,6 +776,7 @@ export class CollectionDetailEtbPage implements OnInit {
     this.contentService.getChildContents(option).toPromise()
       .then((data: Content) => {
         this.zone.run(() => {
+          // console.log('data setChildContents', data);
           if (data && data.children) {
             this.breadCrumb.set(data.identifier, data.contentData.name);
             if (this.textbookTocService.textbookIds.rootUnitId && this.activeMimeTypeFilter !== ['all']) {
@@ -775,22 +797,18 @@ export class CollectionDetailEtbPage implements OnInit {
             .findIndex((d: Content) => {
               return divElement.nativeElement.id === d.identifier;
             });
-
           if (this.textbookTocService.textbookIds.rootUnitId) {
             carouselIndex = this.childrenData.findIndex((content) => this.textbookTocService.textbookIds.rootUnitId === content.identifier);
             // carouselIndex = carouselIndex > 0 ? carouselIndex : 0;
           }
-          this.toggleGroup(carouselIndex, this.content);
+          this.toggleGroup(carouselIndex, this.content, true);
           if (this.textbookTocService.textbookIds.contentId) {
             setTimeout(() => {
               (this.stickyPillsRef.nativeElement as HTMLDivElement).classList.add('sticky');
-              window['scrollWindow'].getScrollElement()
-                .scrollTo({
-                  top: document.getElementById(this.textbookTocService.textbookIds.contentId).offsetTop - 165,
-                  left: 0,
-                  behavior: 'smooth'
-                });
-              this.textbookTocService.resetTextbookIds();
+              window['scrollWindow'].getScrollElement().then((v) => {
+                document.getElementById(this.textbookTocService.textbookIds.contentId).scrollIntoView({behavior: 'smooth'});
+                this.textbookTocService.resetTextbookIds();
+              });
             }, 0);
           }
 
@@ -966,6 +984,9 @@ export class CollectionDetailEtbPage implements OnInit {
                 this.refreshHeader();
                 this.updateSavedResources();
                 this.setChildContents();
+                // this.downloadSize = 0;
+                // this.localResourseCount = 0;
+                // this.getContentsSize(this.childrenData || []);
                 this.contentDetail.isAvailableLocally = true;
               }
 
@@ -1129,23 +1150,21 @@ export class CollectionDetailEtbPage implements OnInit {
         },
         cssClass: 'sb-popover info',
       });
-      
       await popover.present();
       /*
       * generate telemetry for the impression for download click from device button
       * type: impression
       */
-     this.telemetryGeneratorService.generateImpressionTelemetry(ImpressionType.VIEW, '',
-     PageId.COLLECTION_DETAIL,
-     Environment.HOME,
-     this.identifier,
-     "",
-     this.content.pkgVersion,
-     this.objRollup,
-     this.corRelationList);
+      this.telemetryGeneratorService.generateImpressionTelemetry(ImpressionType.VIEW, '',
+      PageId.COLLECTION_DETAIL,
+      Environment.HOME,
+      this.identifier,
+      '',
+      this.content.pkgVersion,
+      this.objRollup,
+      this.corRelationList);
 
       const response = await popover.onDidDismiss();
-      
       if (response && response.data) {
         this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
           InteractSubtype.DOWNLOAD_ALL_CLICKED,
@@ -1429,24 +1448,122 @@ export class CollectionDetailEtbPage implements OnInit {
     );
   }
 
-  onScroll(event) {
-    const titles = document.querySelectorAll('[data-sticky-unit]');
+onScroll(event) {
+  if (event.detail.scrollTop >= 205) {
+    (this.stickyPillsRef.nativeElement as HTMLDivElement).classList.add('sticky');
+    
+    const boxes: HTMLElement[] = Array.from(document.getElementsByClassName('sticky-header-title-box')) as HTMLElement[];
 
-    const currentTitle = Array.from(titles).filter((title) => {
-      return title.getBoundingClientRect().top < 150;
-    }).slice(-1)[0];
+    let headerBottomOffset = (this.stickyPillsRef.nativeElement as HTMLDivElement).getBoundingClientRect().bottom;
 
-    if (currentTitle) {
-      this.isChapterVisible = true;
-      this.zone.run(() => {
-        this.stckyUnitTitle = currentTitle.getAttribute('data-sticky-unit');
-      });
+    // TODO: Logic will Change if Header Height got fixed
+    if (this.previousHeaderBottomOffset && this.previousHeaderBottomOffset > headerBottomOffset) {
+      headerBottomOffset = this.previousHeaderBottomOffset;
     }
-    if (event.detail.scrollTop >= 205) {
-      (this.stickyPillsRef.nativeElement as HTMLDivElement).classList.add('sticky');
+
+    this.previousHeaderBottomOffset = headerBottomOffset;
+
+    const boxesData = boxes.map(b => {
+      return {
+        elem: b,
+        text: b.dataset['text'],
+        renderLevel: parseInt(b.dataset['renderLevel']),
+        offsetTop: b.getBoundingClientRect().top
+      };
+    });
+
+    const activeBoxes = boxesData.filter(data => {
+      return data.offsetTop < headerBottomOffset
+        && (data.offsetTop + data.elem.getBoundingClientRect().height) > headerBottomOffset;
+    });
+
+    if (!activeBoxes.length) {
       return;
     }
 
-    (this.stickyPillsRef.nativeElement as HTMLDivElement).classList.remove('sticky');
+    const activeBox = activeBoxes.reduce((acc, box) => {
+      if (acc.renderLevel > box.renderLevel) {
+        return acc;
+      } else {
+        return box;
+      }
+    }, activeBoxes[0]);
+
+    if (activeBox.text) {
+      this.stckyUnitTitle = activeBox.text;
+    }
+    return;
   }
+
+  (this.stickyPillsRef.nativeElement as HTMLDivElement).classList.remove('sticky');
+  }
+
+  importContentInBackground(identifiers: Array<string>, isChild: boolean, isDownloadAllClicked?) {
+    if (this.showLoading && !this.isDownloadStarted) {
+      this.headerService.hideHeader();
+    }
+    const option: ContentImportRequest = {
+      contentImportArray: this.getImportContentRequestBody(identifiers, isChild),
+      contentStatusArray: ['Live'],
+      fields: ['appIcon', 'name', 'subject', 'size', 'gradeLevel'],
+    };
+    // Call content service
+    this.contentService.importContent(option).toPromise()
+      .then((data: ContentImportResponse[]) => {
+        this.zone.run(() => {
+          if (data && data.length && this.isDownloadStarted) {
+            data.forEach((value) => {
+              if (value.status === ContentImportStatus.ENQUEUED_FOR_DOWNLOAD) {
+                this.queuedIdentifiers.push(value.identifier);
+              } else if (value.status === ContentImportStatus.NOT_FOUND) {
+                this.faultyIdentifiers.push(value.identifier);
+              }
+            });
+
+            if (this.faultyIdentifiers.length > 0) {
+              const stackTrace: any = {};
+              stackTrace.parentIdentifier = this.cardData.identifier;
+              stackTrace.faultyIdentifiers = this.faultyIdentifiers;
+              this.telemetryGeneratorService.generateErrorTelemetry(Environment.HOME,
+                TelemetryErrorCode.ERR_DOWNLOAD_FAILED,
+                ErrorType.SYSTEM,
+                PageId.COLLECTION_DETAIL,
+                JSON.stringify(stackTrace),
+              );
+              this.commonUtilService.showToast('UNABLE_TO_FETCH_CONTENT');
+            }
+          } else if (data && data[0].status === ContentImportStatus.NOT_FOUND) {
+            this.showLoading = false;
+            // this.refreshHeader();
+            this.showChildrenLoader = false;
+            this.childrenData.length = 0;
+          }
+        });
+      })
+      .catch((error: any) => {
+        this.zone.run(() => {
+          this.showDownloadBtn = true;
+          this.isDownloadStarted = false;
+          this.showLoading = false;
+          if (error && (error.error === 'NETWORK_ERROR' || error.error === 'CONNECTION_ERROR')) {
+            this.commonUtilService.showToast('NEED_INTERNET_TO_CHANGE');
+          } else {
+            this.commonUtilService.showToast('UNABLE_TO_FETCH_CONTENT');
+          }
+          this.showChildrenLoader = false;
+          this.location.back();
+        });
+      });
+  }
+  generatefastLoadingTelemetry(interactSubtype) {
+    this.telemetryGeneratorService.generateInteractTelemetry(InteractType.OTHER,
+      interactSubtype,
+      Environment.HOME,
+      PageId.COLLECTION_DETAIL,
+      this.telemetryObject,
+      undefined,
+      this.objRollup,
+      this.corRelationList);
+  }
+
 }

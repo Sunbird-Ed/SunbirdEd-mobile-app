@@ -1,10 +1,8 @@
 import {Inject, Injectable} from '@angular/core';
 import {TelemetryGeneratorService} from './telemetry-generator.service';
 import {Content, ContentDetailRequest, ContentService, CorrelationData, TelemetryObject, TelemetryService} from 'sunbird-sdk';
-// import {SearchPage} from '../search/search';
 import {ContentType, MimeType, RouterLinks} from '../app/app.constant';
-// import {EnrolledCourseDetailsPage} from '../enrolled-course-details/enrolled-course-details';
-// import {ContentDetailsPage} from '../content-details/content-details';
+
 import {CommonUtilService} from './common-util.service';
 import {
   Environment,
@@ -14,9 +12,12 @@ import {
   InteractType,
   Mode,
   PageId,
+  ObjectType,
 } from './telemetry-constants';
 import { NavigationExtras, Router } from '@angular/router';
 import { NavController, Events } from '@ionic/angular';
+import { AppGlobalService } from './app-global-service.service';
+import { FormAndFrameworkUtilService } from './formandframeworkutil.service';
 
 declare var cordova;
 
@@ -24,7 +25,9 @@ declare var cordova;
 export class QRScannerResultHandler {
   private static readonly CORRELATION_TYPE = 'qr';
   source: string;
-    inAppBrowserRef: any;
+  inAppBrowserRef: any;
+  dailCodeRegExpression: RegExp;
+  scannedUrlMap: object;
 
   constructor(
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
@@ -33,14 +36,30 @@ export class QRScannerResultHandler {
     private telemetryGeneratorService: TelemetryGeneratorService,
     private router: Router,
     private navCtrl: NavController,
-    private events: Events
+    private events: Events,
+    private appGlobalService: AppGlobalService,
+    private formFrameWorkUtilService: FormAndFrameworkUtilService
   ) {
   }
 
-  isDialCode(scannedData: string): boolean {
-    const results = scannedData.split('/');
-    const data = results[results.length - 2];
-    return data === 'dial';
+  private async getDailCodeRegularExpression(): Promise<RegExp> {
+    if (!this.appGlobalService.getCachedDialCodeConfig()) {
+      await this.formFrameWorkUtilService.getDailCodeConfig();
+      return this.appGlobalService.getCachedDialCodeConfig();
+    } else {
+      return this.appGlobalService.getCachedDialCodeConfig();
+    }
+  }
+
+  async parseDialCode(scannedData: string): Promise<string | undefined> {
+    this.dailCodeRegExpression = await this.getDailCodeRegularExpression();
+    const execArray = (new RegExp(this.dailCodeRegExpression)).exec(scannedData);
+    if (execArray && execArray.groups) {
+      this.scannedUrlMap = execArray.groups;
+      return execArray.groups[Object.keys(execArray.groups).find((key) => !!execArray.groups[key])];
+    }
+
+    return undefined;
   }
 
   isContentId(scannedData: string): boolean {
@@ -53,10 +72,8 @@ export class QRScannerResultHandler {
       (action === 'learn' && type === 'course');
   }
 
-  handleDialCode(source: string, scannedData: string) {
+  handleDialCode(source: string, scannedData, dialCode: string) {
     this.source = source;
-    const results = scannedData.split('/');
-    const dialCode = results[results.length - 1];
     this.generateQRScanSuccessInteractEvent(scannedData, 'SearchResult', dialCode);
 
     const navigationExtras: NavigationExtras = {
@@ -84,10 +101,10 @@ export class QRScannerResultHandler {
         this.navigateToDetailsPage(content,
           this.getCorRelationList(content.identifier, QRScannerResultHandler.CORRELATION_TYPE));
         this.telemetryGeneratorService.generateImpressionTelemetry(
-          ImpressionType.SEARCH, '',
-          ImpressionSubtype.QR_CODE_VALID,
+          ImpressionType.VIEW, ImpressionSubtype.QR_CODE_VALID,
           PageId.QRCodeScanner,
           Environment.HOME,
+          contentId , ObjectType.QR , ''
         );
       }).catch(() => {
       if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
@@ -95,11 +112,10 @@ export class QRScannerResultHandler {
       } else {
         this.commonUtilService.showToast('UNKNOWN_QR');
         this.telemetryGeneratorService.generateImpressionTelemetry(
-          ImpressionType.SEARCH, '',
-          ImpressionSubtype.INVALID_QR_CODE,
-          InteractType.OTHER,
+          ImpressionType.VIEW, ImpressionSubtype.INVALID_QR_CODE,
           PageId.QRCodeScanner,
           Environment.HOME,
+          contentId , ObjectType.QR , ''
         );
       }
     });
@@ -150,8 +166,9 @@ export class QRScannerResultHandler {
 
     if (content.contentData.contentType === ContentType.COURSE) {
       this.router.navigate([`/${RouterLinks.ENROLLED_COURSE_DETAILS}`], navigationExtras);
-     } 
-   else {
+     } else if (content.mimeType === MimeType.COLLECTION) {
+      this.router.navigate([`/${RouterLinks.COLLECTION_DETAIL_ETB}`], navigationExtras);
+    }  else {
       this.router.navigate([`/${RouterLinks.CONTENT_DETAILS}`], navigationExtras);
     }
   }
@@ -163,7 +180,9 @@ export class QRScannerResultHandler {
     values['scannedData'] = scannedData;
     values['action'] = action;
     values['compatibile'] = (action === 'OpenBrowser' || action === 'SearchResult' || action === 'ContentDetail') ? 1 : 0;
-
+    if (this.scannedUrlMap) {
+    values['dialCodeType'] = this.scannedUrlMap['sunbird'] ? 'standard' : 'non-standard';
+    }
     let telemetryObject: TelemetryObject;
 
     if (dialCode) {

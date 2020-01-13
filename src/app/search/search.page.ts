@@ -43,6 +43,7 @@ import { featureIdMap } from '@app/app/feature-id-map';
 import { from } from 'rxjs';
 import { EnrollmentDetailsComponent } from '../components/enrollment-details/enrollment-details.component';
 import { ContentUtil } from '@app/util/content-util';
+import { LibraryCardTypes } from '@project-sunbird/common-consumption';
 declare const cordova;
 @Component({
   selector: 'app-search',
@@ -100,6 +101,8 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
   gradeList: Array<any> = [];
   isProfileUpdated: boolean;
   isQrCodeLinkToContent: any;
+  LibraryCardTypes = LibraryCardTypes;
+
   @ViewChild('contentView') contentView: IonContent;
   constructor(
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
@@ -289,7 +292,6 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-
   openCollection(collection) {
     const identifier = collection.identifier;
     let telemetryObject: TelemetryObject;
@@ -308,21 +310,23 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
     this.showContentDetails(collection, true);
   }
 
-  openContent(collection, content, index) {
+  async openContent(collection, content, index?, isQrCodeLinkToSingleContent?) {
+    this.showLoader = false;
     this.parentContent = collection;
-    this.isQrCodeLinkToContent = index;
-    this.generateInteractEvent(content.identifier, content.contentType, content.pkgVersion, index);
+    this.isQrCodeLinkToContent = isQrCodeLinkToSingleContent;
+    this.generateInteractEvent(content.identifier, content.contentType, content.pkgVersion, index ? index : 0);
     if (collection !== undefined) {
       this.parentContent = collection;
       this.childContent = content;
       this.checkParent(collection, content);
     } else {
-      this.checkRetiredOpenBatch(content);
+      this.showLoader = false;
+      await this.checkRetiredOpenBatch(content);
     }
   }
 
   private async showContentDetails(content, isRootContent: boolean = false) {
-
+    this.showLoader = false;
     let params;
     if (this.shouldGenerateEndTelemetry) {
       params = {
@@ -626,7 +630,6 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
         }
       });
     }
-
     this.profileService.updateProfile(req).toPromise()
       .then((res: any) => {
         if (res.syllabus && res.syllabus.length && res.board && res.board.length
@@ -634,6 +637,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
           this.events.publish(AppGlobalService.USER_INFO_UPDATED);
           this.events.publish('refresh:profile');
         }
+        this.commonUtilService.handleToTopicBasedNotification();
         this.appGlobalService.guestUserProfile = res;
         this.telemetryGeneratorService.generateProfilePopulatedTelemetry(PageId.DIAL_CODE_SCAN_RESULT,
           req, 'auto');
@@ -849,6 +853,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private async checkRetiredOpenBatch(content: any, layoutName?: string) {
+    this.showLoader = false;
     this.loader = await this.commonUtilService.getLoader();
     await this.loader.present();
     this.loader.onDidDismiss(() => { this.loader = undefined; });
@@ -869,9 +874,9 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
     }
     if (anyOpenBatch || !retiredBatches.length) {
       // open the batch directly
-      this.showContentDetails(content, true);
+      await  this.showContentDetails(content, true);
     } else if (retiredBatches.length) {
-      this.navigateToBatchListPopup(content, layoutName, retiredBatches);
+      await this.navigateToBatchListPopup(content, layoutName, retiredBatches);
     }
   }
 
@@ -1138,7 +1143,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
 
       if (contentArray && contentArray.length === 1 && !isParentCheckStarted) {
         this.isSingleContent = true;
-        this.openContent(contentArray[0], contentArray[0], 0);
+        this.openContent(contentArray[0], contentArray[0], 0, true);
         // return;
       }
     });
@@ -1203,7 +1208,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
       this.location.back();
       // this.showContentDetails(contentArray[0], true);
       this.isSingleContent = true;
-      this.openContent(contentArray[0], contentArray[0], 0);
+      this.openContent(contentArray[0], contentArray[0], 0, true);
       return;
     }
 
@@ -1549,5 +1554,20 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
     this.telemetryGeneratorService.generateBackClickedTelemetry(ImpressionType.SEARCH,
           Environment.HOME, true, undefined, this.corRelationList);
     this.navCtrl.pop();
+  }
+
+  getContentCount(resultlist) {
+    let totalCount = 0;
+    if (resultlist.dialCodeResult.length) {
+      for (let i = 0; i < resultlist.dialCodeResult.length; i++){
+        if (resultlist.dialCodeResult[i].content && resultlist.dialCodeResult[i].content.length) {
+          totalCount += resultlist.dialCodeResult[i].content.length;
+        }
+      }
+    }
+    if (resultlist.dialCodeContentResult.length) {
+      totalCount += resultlist.dialCodeContentResult.length;
+    }
+    return totalCount;
   }
 }

@@ -164,6 +164,8 @@ export class EventTopics {
     public static readonly PLAYER_CLOSED = 'PLAYER_CLOSED';
     public static readonly SIGN_IN_RELOAD = 'SIGN_IN_RELOAD';
     public static readonly TOC_COLLECTION_CHILD_ID = 'TOC_COLLECTION_CHILD_ID';
+    public static readonly HAMBURGER_MENU_CLICKED = 'HAMBURGER_MENU_CLICKED';
+    public static readonly DEEPLINK_CONTENT_PAGE_OPEN = 'DEEPLINK_CONTENT_PAGE_OPEN';
 }
 
 export class ShareUrl {
@@ -189,8 +191,8 @@ export class FormConstant {
 
 export class PreferenceKey {
     public static readonly SELECTED_LANGUAGE_CODE = 'sunbirdselected_language_code';
-    public static readonly DEVICE_LOCATION = 'device_location';
-    public static readonly IP_LOCATION = 'ip_location';
+    public static readonly DEVICE_LOCATION = 'device_location_new';
+    public static readonly IP_LOCATION = 'ip_location_new';
     public static readonly SELECTED_LANGUAGE = 'sunbirdselected_language';
     public static readonly SELECTED_USER_TYPE = 'sunbirdselected_user_type';
     public static readonly COURSE_IDENTIFIER = 'sunbirdcourse_identifier';
@@ -210,6 +212,10 @@ export class PreferenceKey {
     public static readonly DEPLOYMENT_KEY = 'deployment_key';
     public static readonly COURSE_DATA_KEY = 'course_data';
     public static readonly BATCH_DETAIL_KEY = 'batch_detail';
+    public static readonly IS_LOCATION_MANDATORY = 'is_location_mandatory';
+    public static readonly SUBSCRIBE_TOPICS = 'subscribe_topics';
+    public static readonly SHOW_EXTERNAL_VERIFICATION = 'show_external_verification';
+    public static readonly CURRENT_USER_PROFILE = 'current_user_profile';
 }
 
 export class GenericAppConfig {
@@ -359,6 +365,7 @@ export class ContentFilterConfig {
     public static readonly NAME_DOWNLOADS = 'downloads';
     public static readonly NAME_DIALCODE = 'dialcode';
     public static readonly CODE_CONTENT_TYPE = 'contentType';
+    public static readonly CONTENT_STATUS_UNLISTED = 'Unlisted';
 }
 
 export class LocationConfig {
@@ -476,6 +483,7 @@ export class RouterLinks {
     public static readonly PROFILE_TAB = `/${RouterLinks.TABS}/${RouterLinks.PROFILE}`;
     public static readonly GUEST_PROFILE_TAB = `/${RouterLinks.TABS}/${RouterLinks.GUEST_PROFILE}`;
     public static readonly DOWNLOAD_TAB = `/${RouterLinks.TABS}/${RouterLinks.DOWNLOAD_MANAGER}`;
+    public static readonly ONBOARDING_DISTRICT_MAPPING = `/${RouterLinks.DISTRICT_MAPPING}`;
 
 
     // TEXTBOOK view more page Routes
@@ -487,5 +495,8 @@ export class RouterLinks {
     // routing to Term of use Web Page
     public static readonly TERM_OF_USE = '/term-of-use.html';
 
+}
 
+export class LibraryCardTypes {
+    public static readonly QRCODE_RESULT = 'qrcode_result';
 }

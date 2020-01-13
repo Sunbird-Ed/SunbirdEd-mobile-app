@@ -30,6 +30,7 @@ import {
 } from '@app/services/telemetry-constants';
 import { ContainerService } from '@app/services/container.services';
 import { Router } from '@angular/router';
+import { AppGlobalService } from './app-global-service.service';
 
 @Injectable()
 export class LoginHandlerService {
@@ -54,7 +55,8 @@ export class LoginHandlerService {
     private formAndFrameworkUtilService: FormAndFrameworkUtilService,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private router: Router,
-    private events: Events
+    private events: Events,
+    private appGlobalService: AppGlobalService
   ) {
 
     this.appVersion.getAppName()
@@ -112,6 +114,10 @@ export class LoginHandlerService {
         })
         .then(async () => {
           await loader.dismiss();
+          if (!this.appGlobalService.signinOnboardingLoader) {
+            this.appGlobalService.signinOnboardingLoader = await this.commonUtilService.getLoader();
+            await this.appGlobalService.signinOnboardingLoader.present();
+          }
           that.ngZone.run(() => {
             that.preferences.putString('SHOW_WELCOME_TOAST', 'true').toPromise().then();
             // this.events.publish('UPDATE_TABS');
@@ -184,17 +190,21 @@ export class LoginHandlerService {
   }
 
   refreshTenantData(slug: string, title: string) {
-    // return new Promise((resolve, reject) => {
-    //   this.profileService.getTenantInfo({ slug: '' }).toPromise()
-    //     .then((res) => {
-    //       this.preferences.putString(PreferenceKey.APP_LOGO, res.logo).toPromise().then();
-    //       this.preferences.putString(PreferenceKey.APP_NAME, title).toPromise().then();
-    //       (window as any).splashscreen.setContent(title, res.logo);
-    //       resolve();
-    //     }).catch(() => {
-    //       resolve(); // ignore
-    //     });
-    // });
+    return new Promise((resolve, reject) => {
+      this.profileService.getTenantInfo({ slug: '' }).toPromise()
+        .then(async (res) => {
+          const isDefaultChannelProfile = await this.profileService.isDefaultChannelProfile().toPromise();
+          if (isDefaultChannelProfile) {
+            title = await this.appVersion.getAppName();
+          }
+          this.preferences.putString(PreferenceKey.APP_LOGO, res.logo).toPromise().then();
+          this.preferences.putString(PreferenceKey.APP_NAME, title).toPromise().then();
+          (window as any).splashscreen.setContent(title, res.appLogo);
+          resolve();
+        }).catch(() => {
+          resolve(); // ignore
+        });
+    });
   }
 
   generateLoginInteractTelemetry(interactType, interactSubtype, uid) {
