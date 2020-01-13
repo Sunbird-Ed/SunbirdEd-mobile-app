@@ -7,7 +7,7 @@ import {
 import {
     LoginHandlerService, CourseUtilService, AppGlobalService, TelemetryGeneratorService,
     CommonUtilService, UtilityService, AppHeaderService, ContentShareHandlerService,
-    LocalCourseService
+    LocalCourseService, PageId, ID, InteractType
 } from '../../services';
 import { NgZone } from '@angular/core';
 import { Events, PopoverController, Platform } from '@ionic/angular';
@@ -841,7 +841,17 @@ describe('EnrolledCourseDetailsPage', () => {
         // act
         enrolledCourseDetailsPage.licenseSectionClicked('expanded');
         // assert
-        expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
+        expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+            InteractType.LICENSE_CARD_EXPANDED,
+            '',
+            undefined,
+            PageId.COURSE_DETAIL,
+            {id: 'do_21281258639073280011490', type: 'Course', version: '2'},
+            undefined,
+            enrolledCourseDetailsPage.objRollup,
+            [{id: '', type: 'CourseBatch'}],
+            ID.LICENSE_CARD_CLICKED
+        );
     });
     it('should generate telemetry license collapsed when licenseSectionClicked()', () => {
         // arrange
@@ -849,6 +859,16 @@ describe('EnrolledCourseDetailsPage', () => {
         // act
         enrolledCourseDetailsPage.licenseSectionClicked('collapsed');
         // assert
-        expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
+        expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+            InteractType.LICENSE_CARD_COLLAPSED,
+            '',
+            undefined,
+            PageId.COURSE_DETAIL,
+            {id: 'do_21281258639073280011490', type: 'Course', version: '2'},
+            undefined,
+            enrolledCourseDetailsPage.objRollup,
+            [{id: '', type: 'CourseBatch'}],
+            ID.LICENSE_CARD_CLICKED
+        );
     });
 });
