@@ -57,7 +57,8 @@ import {
   InteractType,
   Mode,
   PageId,
-  CorReleationDataType
+  CorReleationDataType,
+  ID
 } from '../../services/telemetry-constants';
 import { ProfileConstants, ContentType, EventTopics, MimeType, PreferenceKey, ShareUrl, RouterLinks } from '../app.constant';
 import { BatchConstants } from '../app.constant';

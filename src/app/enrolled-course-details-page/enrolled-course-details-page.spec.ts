@@ -107,6 +107,7 @@ describe('EnrolledCourseDetailsPage', () => {
 
     beforeEach(() => {
         jest.clearAllMocks();
+        jest.restoreAllMocks();
     });
 
     it('should create a instance of enrolledCourseDetailsPage', () => {
@@ -812,5 +813,42 @@ describe('EnrolledCourseDetailsPage', () => {
         // assert
         expect(enrolledCourseDetailsPage.corRelationList).toEqual([{ id: '', type: 'CourseBatch'}]);
 
+    });
+
+    it('should show license true when user clicked on credits and license', () => {
+        // arrange
+        enrolledCourseDetailsPage.showCredits = false;
+        jest.spyOn(enrolledCourseDetailsPage, 'licenseSectionClicked').mockImplementation();
+        // act
+        enrolledCourseDetailsPage.showLicensce();
+        // assert
+        expect(enrolledCourseDetailsPage.licenseSectionClicked).toHaveBeenCalledWith('expanded');
+    });
+
+    it('should not show license when user clicked on license and credits', () => {
+        // arrange
+        enrolledCourseDetailsPage.showCredits = true;
+        jest.spyOn(enrolledCourseDetailsPage, 'licenseSectionClicked').mockImplementation();
+        // act
+        enrolledCourseDetailsPage.showLicensce();
+        // assert
+        expect(enrolledCourseDetailsPage.licenseSectionClicked).toHaveBeenCalledWith('collapsed');
+    });
+
+    it('should generate telemetry license expanded when licenseSectionClicked()', () => {
+        // arrange
+        mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+        // act
+        enrolledCourseDetailsPage.licenseSectionClicked('expanded');
+        // assert
+        expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
+    });
+    it('should generate telemetry license collapsed when licenseSectionClicked()', () => {
+        // arrange
+        mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+        // act
+        enrolledCourseDetailsPage.licenseSectionClicked('collapsed');
+        // assert
+        expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
     });
 });
