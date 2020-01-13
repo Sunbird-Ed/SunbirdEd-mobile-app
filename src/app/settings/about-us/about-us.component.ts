@@ -14,7 +14,7 @@ import {
   Environment,
   ImpressionType
 } from '../../../services';
-import { ContentType, AudienceFilter, RouterLinks } from '../../app.constant';
+import { ContentType, AudienceFilter, RouterLinks, GenericAppConfig } from '../../app.constant';
 import { Router } from '@angular/router';
 import { Location } from '@angular/common';
 import { AppVersion } from '@ionic-native/app-version/ngx';
@@ -157,7 +157,7 @@ export class AboutUsComponent implements OnInit {
   }
 
   getVersionName(appName): any {
-    this.utilityService.getBuildConfigValue('VERSION_NAME')
+    this.utilityService.getBuildConfigValue(GenericAppConfig.VERSION_NAME)
       .then(response => {
         this.getVersionCode(appName, response);
         return response;
