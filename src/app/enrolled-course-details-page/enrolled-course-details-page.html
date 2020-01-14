@@ -212,8 +212,7 @@
 										</ion-card-title>
 										<div>{{licenseDetails.name}}</div>
 										<div>{{licenseDetails.description}}</div>
-										<span>{{'FOR_DETAILS' | translate}}-</span><span
-											(click)="openBrowser(licenseDetails.url)"
+										<span (click)="openBrowser(licenseDetails.url)"
 											class="sb-url">{{licenseDetails.url}}</span>
 									</div>
 								<div *ngIf="course?.copyright">

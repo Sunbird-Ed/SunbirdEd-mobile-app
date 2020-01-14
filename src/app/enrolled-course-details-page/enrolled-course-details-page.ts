@@ -75,7 +75,6 @@ import { ContentDeleteHandler } from '@app/services/content/content-delete-handl
 import * as dayjs from 'dayjs';
 import { LocalCourseService } from '@app/services';
 import { EnrollCourse } from './course.interface';
-import { AppVersion } from '@ionic-native/app-version/ngx';
 import { SbSharePopupComponent } from '../components/popups/sb-share-popup/sb-share-popup.component';
 declare const cordova;
 
@@ -688,7 +687,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
               this.batchDetails.courseId, this.courseCardData.batchId, this.batchDetails.status);
             this.preferences.getString(PreferenceKey.COURSE_IDENTIFIER).toPromise()
               .then(async val => {
-                if (val === this.batchDetails.identifier) {
+                if (val && val === this.batchDetails.identifier) {
                   this.batchExp = true;
                 } else if (this.batchDetails.status === 2) {
                   this.batchExp = true;
