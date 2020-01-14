@@ -675,7 +675,6 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
     this.showLoader = true;
     this.responseData.filterCriteria.mode = 'hard';
     this.responseData.filterCriteria.searchType = SearchType.FILTER;
-    this.telemetryGeneratorService.generateStartSheenAnimationTelemetry(this.source);
     this.contentService.searchContent(this.responseData.filterCriteria).toPromise()
       .then((responseData: ContentSearchResult) => {
 
@@ -699,7 +698,6 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
           } else {
             this.isEmptyResult = true;
           }
-          this.telemetryGeneratorService.generateEndSheenAnimationTelemetry(this.source);
           this.showLoader = false;
         });
       }).catch(() => {
@@ -726,9 +724,6 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
     this.addSearchHistoryEntry();
 
     this.showLoader = true;
-    if (this.showLoader) {
-      this.telemetryGeneratorService.generateStartSheenAnimationTelemetry(this.source);
-    }
 
     (window as any).cordova.plugins.Keyboard.close();
 
@@ -789,16 +784,10 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
           }
           this.showEmptyMessage = this.searchContentResult.length === 0;
           this.showLoader = false;
-          if (!this.showLoader) {
-            this.telemetryGeneratorService.generateEndSheenAnimationTelemetry(this.source);
-          }
         });
       }).catch(() => {
         this.zone.run(() => {
           this.showLoader = false;
-          if (!this.showLoader) {
-            this.telemetryGeneratorService.generateEndSheenAnimationTelemetry(this.source);
-          }
           if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
             this.commonUtilService.showToast('ERROR_OFFLINE_MODE');
           }
@@ -976,7 +965,6 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
     this.isDialCodeSearch = true;
 
     this.showLoader = true;
-    this.telemetryGeneratorService.generateStartSheenAnimationTelemetry(this.source);
 
     const contentTypes = await this.formAndFrameworkUtilService.getSupportedContentFilterConfig(
       ContentFilterConfig.NAME_DIALCODE);
@@ -1004,7 +992,6 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
             this.processDialCodeResult(sections);
             // this.updateFilterIcon();  // TO DO
           }
-          this.telemetryGeneratorService.generateEndSheenAnimationTelemetry(this.source);
           this.showLoader = false;
         });
       }).catch(error => {

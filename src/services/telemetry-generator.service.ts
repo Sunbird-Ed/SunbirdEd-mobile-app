@@ -328,18 +328,4 @@ export class TelemetryGeneratorService {
     isCollection(mimeType) {
         return mimeType === MimeType.COLLECTION;
     }
-
-    generateStartSheenAnimationTelemetry(pageId: string) {
-        this.generateInteractTelemetry(InteractType.OTHER,
-            InteractSubtype.SHEEN_ANIMATION_START,
-            Environment.HOME,
-            pageId);
-    }
-
-    generateEndSheenAnimationTelemetry(pageId: string) {
-        this.generateInteractTelemetry(InteractType.OTHER,
-            InteractSubtype.SHEEN_ANIMATION_END,
-            Environment.HOME,
-            pageId);
-    }
 }
