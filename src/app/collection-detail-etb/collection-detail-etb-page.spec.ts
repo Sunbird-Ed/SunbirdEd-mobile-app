@@ -204,4 +204,24 @@ describe('collectionDetailEtbPage', () => {
     //     collectionDetailEtbPage.ionViewWillEnter();
     //     expect(collectionDetailEtbPage.ionViewWillEnter).toHaveBeenCalled();
     // });
+    
+    it('should show license true when user clicked on credits and license', () => {
+        // arrange
+        collectionDetailEtbPage.showCredits = false;
+        jest.spyOn(collectionDetailEtbPage, 'licenseSectionClicked').mockImplementation();
+        // act
+        collectionDetailEtbPage.showLicensce();
+        // assert
+        expect(collectionDetailEtbPage.licenseSectionClicked).toHaveBeenCalledWith('expanded');
+    });
+
+    it('should not show license when user clicked on license and credits', () => {
+        // arrange
+        collectionDetailEtbPage.showCredits = true;
+        jest.spyOn(collectionDetailEtbPage, 'licenseSectionClicked').mockImplementation();
+        // act
+        collectionDetailEtbPage.showLicensce();
+        // assert
+        expect(collectionDetailEtbPage.licenseSectionClicked).toHaveBeenCalledWith('collapsed');
+    });
 });

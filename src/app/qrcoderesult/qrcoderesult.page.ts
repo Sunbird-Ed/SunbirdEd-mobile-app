@@ -386,7 +386,8 @@ export class QrcoderesultPage implements OnDestroy {
       !this.appGlobalService.isOnBoardingCompleted ? Environment.ONBOARDING : Environment.HOME,
       PageId.DIAL_CODE_SCAN_RESULT,
       telemetryObject);
-    if (content.contentData.streamingUrl && !content.isAvailableLocally) {
+    if (content.contentData.streamingUrl && !content.isAvailableLocally
+        && !(this.content.mimeType === 'application/vnd.ekstep.h5p-archive')) {
       this.playContent(content);
     } else {
       this.navigateToDetailsPage(content);

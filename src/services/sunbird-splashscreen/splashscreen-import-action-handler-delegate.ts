@@ -109,6 +109,7 @@ export class SplashscreenImportActionHandlerDelegate implements SplashscreenActi
         );
       }
       default:
+        this.commonUtilService.showToast('INVALID_FORMAT');
         return of(undefined);
     }
   }

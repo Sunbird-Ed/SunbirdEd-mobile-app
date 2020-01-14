@@ -1,7 +1,7 @@
 import {Component, OnInit, Inject, ChangeDetectorRef, NgZone, ViewChild} from '@angular/core';
 import {
   LocationSearchCriteria, ProfileService,
-  SharedPreferences, Profile, DeviceRegisterRequest, DeviceRegisterService, DeviceInfo
+  SharedPreferences, Profile, DeviceRegisterRequest, DeviceRegisterService, DeviceInfo, LocationSearchResult
 } from 'sunbird-sdk';
 import { Location as loc, PreferenceKey, RouterLinks, LocationConfig } from '../../app/app.constant';
 import { AppHeaderService, CommonUtilService, AppGlobalService, FormAndFrameworkUtilService } from '@app/services';
@@ -29,6 +29,14 @@ import { tap } from 'rxjs/operators';
   styleUrls: ['./district-mapping.page.scss'],
 })
 export class DistrictMappingPage {
+  @ViewChild('stateSelect') stateSelect?: IonSelect;
+  @ViewChild('districtSelect') districtSelect?: IonSelect;
+
+  private _showStates?: boolean;
+  private _showDistrict?: boolean;
+  private _stateName: string;
+  private _districtName: string;
+
   get profile(): Profile | undefined {
     return window.history.state.profile;
   }
@@ -42,41 +50,62 @@ export class DistrictMappingPage {
     return window.history.state.source;
   }
 
-  @ViewChild('stateSelect') stateSelect?: IonSelect;
-  @ViewChild('districtSelect') districtSelect?: IonSelect;
 
-  private _showStates: boolean;
-  private _showDistrict: boolean;
 
   get showStates(): boolean {
     return this._showStates;
   }
-
   set showStates(value: boolean) {
     this._showStates = value;
 
     if (this._showStates && this.stateSelect) {
-      this.stateSelect.open();
+      setTimeout(() => {
+        this.stateSelect.open();
+      }, 500);
     }
   }
 
   get showDistrict(): boolean {
     return this._showDistrict;
   }
-
   set showDistrict(value: boolean) {
     this._showDistrict = value;
 
     if (this._showDistrict && this.districtSelect) {
-      this.districtSelect.open();
+      setTimeout(() => {
+        this.districtSelect.open();
+      }, 500);
     }
   }
 
-  stateName;
-  districtName;
+
+  get stateName(): string {
+    return this._stateName;
+  }
+  set stateName(value: string) {
+    this._stateName = value;
+
+    if (this.stateSelect) {
+      const selectedState = this.stateList.find((state) => state.name === this._stateName);
+      this.stateSelect.selectedText = selectedState ? selectedState.name : '';
+    }
+  }
+
+  get districtName(): string {
+    return this._districtName;
+  }
+  set districtName(value: string) {
+    this._districtName = value;
+
+    if (this.districtSelect) {
+      const selectedDistrict = this.districtList.find((district) => district.name === this._districtName);
+      this.districtSelect.selectedText = selectedDistrict ? selectedDistrict.name : '';
+    }
+  }
+
   name;
-  stateList = [];
-  districtList = [];
+  stateList: LocationSearchResult[] = [];
+  districtList: LocationSearchResult[] = [];
   stateCode;
   districtCode;
   backButtonFunc: Subscription;
@@ -108,6 +137,7 @@ export class DistrictMappingPage {
     private ngZone: NgZone,
     private externalIdVerificationService: ExternalIdVerificationService
   ) {
+    this.appGlobalService.closeSigninOnboardingLoader();
     this.isKeyboardShown$ = deviceInfo.isKeyboardShown().pipe(
         tap(() => this.changeDetectionRef.detectChanges())
     );
@@ -406,15 +436,14 @@ export class DistrictMappingPage {
     const req: DeviceRegisterRequest = {
       userDeclaredLocation: {
         state: this.stateName,
+        stateId: this.stateList.find((s) => s.name === this.stateName).id,
         district: this.districtName,
+        districtId: this.districtList.find((d) => d.name === this.districtName).id,
+        declaredOffline: !this.commonUtilService.networkInfo.isNetworkAvailable
       }
     };
     this.deviceRegisterService.registerDevice(req).toPromise();
-
-    const locationMap = new Map();
-    locationMap['state'] = this.stateName ? this.stateName : this.availableLocationState;
-    locationMap['district'] = this.districtName ? this.districtName : this.availableLocationDistrict;
-    await this.preferences.putString(PreferenceKey.DEVICE_LOCATION, JSON.stringify(locationMap)).toPromise();
+    this.preferences.putString(PreferenceKey.DEVICE_LOCATION, JSON.stringify(req.userDeclaredLocation)).toPromise();
     await loader.dismiss();
   }
 

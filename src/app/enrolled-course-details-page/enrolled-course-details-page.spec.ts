@@ -7,7 +7,7 @@ import {
 import {
     LoginHandlerService, CourseUtilService, AppGlobalService, TelemetryGeneratorService,
     CommonUtilService, UtilityService, AppHeaderService, ContentShareHandlerService,
-    LocalCourseService
+    LocalCourseService, PageId, ID, InteractType
 } from '../../services';
 import { NgZone } from '@angular/core';
 import { Events, PopoverController, Platform } from '@ionic/angular';
@@ -107,6 +107,7 @@ describe('EnrolledCourseDetailsPage', () => {
 
     beforeEach(() => {
         jest.clearAllMocks();
+        jest.restoreAllMocks();
     });
 
     it('should create a instance of enrolledCourseDetailsPage', () => {
@@ -812,5 +813,62 @@ describe('EnrolledCourseDetailsPage', () => {
         // assert
         expect(enrolledCourseDetailsPage.corRelationList).toEqual([{ id: '', type: 'CourseBatch'}]);
 
+    });
+
+    it('should show license true when user clicked on credits and license', () => {
+        // arrange
+        enrolledCourseDetailsPage.showCredits = false;
+        jest.spyOn(enrolledCourseDetailsPage, 'licenseSectionClicked').mockImplementation();
+        // act
+        enrolledCourseDetailsPage.showLicensce();
+        // assert
+        expect(enrolledCourseDetailsPage.licenseSectionClicked).toHaveBeenCalledWith('expanded');
+    });
+
+    it('should not show license when user clicked on license and credits', () => {
+        // arrange
+        enrolledCourseDetailsPage.showCredits = true;
+        jest.spyOn(enrolledCourseDetailsPage, 'licenseSectionClicked').mockImplementation();
+        // act
+        enrolledCourseDetailsPage.showLicensce();
+        // assert
+        expect(enrolledCourseDetailsPage.licenseSectionClicked).toHaveBeenCalledWith('collapsed');
+    });
+
+    it('should generate telemetry license expanded when licenseSectionClicked()', () => {
+        // arrange
+        mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+        // act
+        enrolledCourseDetailsPage.licenseSectionClicked('expanded');
+        // assert
+        expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+            InteractType.LICENSE_CARD_EXPANDED,
+            '',
+            undefined,
+            PageId.COURSE_DETAIL,
+            {id: 'do_21281258639073280011490', type: 'Course', version: '2'},
+            undefined,
+            enrolledCourseDetailsPage.objRollup,
+            [{id: '', type: 'CourseBatch'}],
+            ID.LICENSE_CARD_CLICKED
+        );
+    });
+    it('should generate telemetry license collapsed when licenseSectionClicked()', () => {
+        // arrange
+        mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+        // act
+        enrolledCourseDetailsPage.licenseSectionClicked('collapsed');
+        // assert
+        expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+            InteractType.LICENSE_CARD_COLLAPSED,
+            '',
+            undefined,
+            PageId.COURSE_DETAIL,
+            {id: 'do_21281258639073280011490', type: 'Course', version: '2'},
+            undefined,
+            enrolledCourseDetailsPage.objRollup,
+            [{id: '', type: 'CourseBatch'}],
+            ID.LICENSE_CARD_CLICKED
+        );
     });
 });

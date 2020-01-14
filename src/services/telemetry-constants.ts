@@ -66,7 +66,6 @@ export enum PageId {
     SETTINGS_DEVICE_TAGS = 'settings-device-tags',
     SETTINGS_SUPPORTS = 'settings-supports',
     SETTINGS_ABOUT_US = 'settings-about-us',
-    ABOUT_APP = 'about-app',
     USERS_GROUPS = 'users-groups',
     CREATE_USER = 'create-profile',
     CREATE_GROUP = 'create-group',
@@ -118,7 +117,8 @@ export enum PageId {
     DISTRICT_MAPPING = 'district-mapping',
     SIGNIN_POPUP = 'signin-popup',
     EXTERNAL_USER_VERIFICATION_POPUP = 'user-verification-popup',
-    FAQ_REPORT_ISSUE = 'faq-report-issue'
+    FAQ_REPORT_ISSUE = 'faq-report-issue',
+    UPDATE_WEBVIEW_POPUP = 'update-webview-popup',
 }
 export enum LogType {
     NOTIFICATION = 'notification'
@@ -345,8 +345,6 @@ export enum InteractSubtype {
     HOTCODE_PUSH_PROGRESS = 'hotcode-push-progress',
     HOTCODE_PUSH_KEY_NOT_DEFINED = 'hotcode-push-key-not-defined',
     SEARCH_HISTORY_CLICKED = 'search-history-clicked',
-    SHEEN_ANIMATION_START = 'sheen-animation-started',
-    SHEEN_ANIMATION_END = 'sheen-animation-ended',
     FILTER_CLICKED = 'filter-clicked',
     DROPDOWN_CLICKED = 'drop-down-clicked',
     SUBUNIT_CLICKED = 'sub-unit-clicked',
@@ -378,7 +376,9 @@ export enum InteractSubtype {
     REPORT_ISSUE_CLICKED = 'report-issue-clicked',
     STATE_DIST_CHANGED = 'state-dist-changed',
     STATE_CHANGED = 'state-changed',
-    DIST_CHANGED = 'dist-changed'
+    DIST_CHANGED = 'dist-changed',
+    UPDATE_WEBVIEW_CLICKED = 'update-webview-clicked',
+    CREDITS_CLICKED = 'credits-clicked'
 }
 
 export enum ID {

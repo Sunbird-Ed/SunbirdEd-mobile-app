@@ -15,6 +15,7 @@ import { SharedPreferences } from '../../../../sunbird-mobile-sdk/src/util/share
 import { EMPTY, of, throwError } from 'rxjs';
 import { LocationSearchResult } from '../../../../sunbird-mobile-sdk/src/profile/def/location-search-result';
 import { ProfileService, Profile, ProfileType, ProfileSource, DeviceRegisterResponse } from 'sunbird-sdk';
+import { PreferenceKey } from '@app/app/app.constant';
 
 describe('DistrictMappingPage', () => {
     let districtMappingPage: DistrictMappingPage;
@@ -53,7 +54,8 @@ describe('DistrictMappingPage', () => {
     };
     const mockAppGlobalService: Partial<AppGlobalService> = {
         isUserLoggedIn: jest.fn(() => true),
-        getCurrentUser: jest.fn(() => profile)
+        getCurrentUser: jest.fn(() => profile),
+        closeSigninOnboardingLoader: jest.fn()
     };
     const mockEvents: Partial<Events> = {
         publish: jest.fn()
@@ -112,7 +114,7 @@ describe('DistrictMappingPage', () => {
         expect(districtMappingPage).toBeTruthy();
     });
 
-    it('should open select overlay when showStates is set', () => {
+    it('should open select overlay when showStates is set', (done) => {
         // arrange
         districtMappingPage.stateSelect = { open: jest.fn(() => { }) };
 
@@ -120,10 +122,13 @@ describe('DistrictMappingPage', () => {
         districtMappingPage.showStates = true;
 
         // assert
-        expect(districtMappingPage.stateSelect.open).toHaveBeenCalled();
+        setTimeout(() => {
+            expect(districtMappingPage.stateSelect.open).toHaveBeenCalledTimes(1);
+            done();
+        }, 510);
     });
 
-    it('should open select overlay when showDistrict is set', () => {
+    it('should open select overlay when showDistrict is set', (done) => {
         // arrange
         districtMappingPage.districtSelect = { open: jest.fn(() => { }) };
 
@@ -131,7 +136,10 @@ describe('DistrictMappingPage', () => {
         districtMappingPage.showDistrict = true;
 
         // assert
-        expect(districtMappingPage.districtSelect.open).toHaveBeenCalled();
+        setTimeout(() => {
+            expect(districtMappingPage.districtSelect.open).toHaveBeenCalledTimes(1);
+            done();
+        }, 510);
     });
 
     it('should populate the state name when getStates() is invoked ', () => {
@@ -158,9 +166,8 @@ describe('DistrictMappingPage', () => {
 
     });
 
-    it('should generate TELEMETRY ehen device back clicked', () => {
+    it('should generate TELEMETRY when device back clicked', () => {
         // arrange
-        const data = jest.fn();
         const subscribeWithPriorityData = jest.fn((_, fn) => fn());
         mockPlatform.backButton = {
             subscribeWithPriority: subscribeWithPriorityData,
@@ -204,7 +211,7 @@ describe('DistrictMappingPage', () => {
             expect(districtMappingPage.districtList).toEqual([]);
             expect(districtMappingPage.showDistrict).toBeTruthy();
             done();
-        }, 100);
+        }, 1);
 
     });
 
@@ -226,7 +233,7 @@ describe('DistrictMappingPage', () => {
         setTimeout(() => {
             expect(districtMappingPage.districtName).toEqual('');
             done();
-        }, 100);
+        }, 1);
 
     });
 
@@ -248,7 +255,7 @@ describe('DistrictMappingPage', () => {
         setTimeout(() => {
             expect(districtMappingPage.showDistrict).toBeTruthy();
             done();
-        }, 100);
+        }, 1);
 
     });
 
@@ -272,7 +279,7 @@ describe('DistrictMappingPage', () => {
             expect(districtMappingPage.districtList).toEqual([]);
             expect(districtMappingPage.showDistrict).toBeFalsy();
             done();
-        }, 100);
+        }, 1);
 
     });
 
@@ -286,11 +293,41 @@ describe('DistrictMappingPage', () => {
         expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('INTERNET_CONNECTIVITY_NEEDED');
     });
 
+    it('should invoke device register API and save it in the preference', (done) => {
+        // arrange
+        districtMappingPage.stateList = [{ type: 'state', name: 'Odisha', id: 'od_123' }];
+        districtMappingPage.districtList = [{ type: 'district', name: 'Cuttack', id: 'ct_123' }];
+        districtMappingPage.stateName = 'Odisha';
+        districtMappingPage.districtName = 'Cuttack';
+        mockCommonUtilService.networkInfo = { isNetworkAvailable: true };
+        const req = {
+            userDeclaredLocation: {
+                state: 'Odisha',
+                stateId: 'od_123',
+                district: 'Cuttack',
+                districtId: 'ct_123',
+                declaredOffline: false
+            }
+        };
+
+        // act
+        districtMappingPage.saveDeviceLocation();
+        // assert
+        setTimeout( () => {
+            expect(mockDeviceRegisterService.registerDevice).toHaveBeenCalledWith(req);
+            expect(mockPreferences.putString).toHaveBeenCalledWith(PreferenceKey.DEVICE_LOCATION, JSON.stringify(req.userDeclaredLocation));
+            expect(mockCommonUtilService.getLoader().dismiss).toHaveBeenCalled();
+            done();
+        }, 1);
+    });
+
     it('should invoke updateServerProfile when submit clicked', (done) => {
         // arrange
         window.history.replaceState({ profile }, 'MOCK');
         mockCommonUtilService.networkInfo = { isNetworkAvailable: true };
         districtMappingPage.name = 'sample_name';
+        mockCommonUtilService.isDeviceLocationAvailable = jest.fn(() => Promise.resolve(false));
+        jest.spyOn(districtMappingPage, 'saveDeviceLocation').mockImplementation();
         // act
         districtMappingPage.submit();
         // assert
@@ -301,7 +338,7 @@ describe('DistrictMappingPage', () => {
                 { firstName: 'sample_name', lastName: '', locationCodes: ['2', '2'], userId: '12345' });
             expect(mockLocation.back).toHaveBeenCalled();
             done();
-        }, 100);
+        }, 1);
     });
 
     it('should go 2 pages back  when submit clicked and profile is not available', (done) => {
@@ -319,7 +356,7 @@ describe('DistrictMappingPage', () => {
             expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('PROFILE_UPDATE_SUCCESS');
             expect(window.history.go).toHaveBeenCalledWith(-2);
             done();
-        }, 100);
+        }, 1);
     });
 
     it('should navigate to TAB page  when submit clicked and profile is not available', (done) => {
@@ -337,7 +374,7 @@ describe('DistrictMappingPage', () => {
             expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('PROFILE_UPDATE_SUCCESS');
             expect(mockRouter.navigate).toHaveBeenCalledWith(['/tabs']);
             done();
-        }, 100);
+        }, 1);
     });
 
     it('should naviigate to TABS page if API fails and profile is not available ', (done) => {
@@ -353,7 +390,7 @@ describe('DistrictMappingPage', () => {
             expect(mockRouter.navigate).toHaveBeenCalledWith(['/tabs']);
             expect(mockExternalIdVerificationService.showExternalIdVerificationPopup).toHaveBeenCalled();
             done();
-        }, 100);
+        }, 1);
     });
 
     it('should go back if API fails and profile  available ', (done) => {
@@ -369,22 +406,23 @@ describe('DistrictMappingPage', () => {
             expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('PROFILE_UPDATE_FAILED');
             expect(mockLocation.back).toHaveBeenCalled();
             done();
-        }, 100);
+        }, 1);
     });
 
     it('should save location if user is trying to edit the location', (done) => {
         // arrange
         window.history.replaceState({ source: 'guest-profile' }, 'MOCK');
         mockAppGlobalService.isUserLoggedIn = jest.fn(() => false);
+        jest.spyOn(districtMappingPage, 'saveDeviceLocation').mockImplementation();
         // act
         districtMappingPage.submit();
         // assert
         setTimeout(() => {
-            expect(mockDeviceRegisterService.registerDevice).toHaveBeenCalled();
+            expect(districtMappingPage.saveDeviceLocation).toHaveBeenCalled();
             expect(mockLocation.back).toHaveBeenCalled();
             expect(mockEvents.publish).toHaveBeenCalledWith('refresh:profile');
             done();
-        }, 100);
+        }, 1);
         expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
 
     });
@@ -393,18 +431,20 @@ describe('DistrictMappingPage', () => {
         // arrange
         window.history.replaceState({ source: 'profile-setting' }, 'MOCK');
         mockAppGlobalService.isUserLoggedIn = jest.fn(() => false);
+        mockCommonUtilService.isDeviceLocationAvailable = jest.fn(() => Promise.resolve(false));
+        jest.spyOn(districtMappingPage, 'saveDeviceLocation').mockImplementation();
         // act
         districtMappingPage.submit();
         // assert
         setTimeout(() => {
-            expect(mockDeviceRegisterService.registerDevice).toHaveBeenCalled();
+            expect(districtMappingPage.saveDeviceLocation).toHaveBeenCalled();
             expect(mockRouter.navigate).toHaveBeenCalledWith(['/tabs'], {
                 state: {
                     loginMode: 'guest'
                 }
             });
             done();
-        }, 100);
+        }, 1);
         expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
 
     });
@@ -489,7 +529,7 @@ describe('DistrictMappingPage', () => {
         setTimeout(() => {
             expect(districtMappingPage.showNotNowFlag).toBeTruthy();
             done();
-        }, 100);
+        }, 1);
 
     });
 
@@ -533,7 +573,7 @@ describe('DistrictMappingPage', () => {
         expect(districtMappingPage.profile).toBeDefined();
     });
 
-    it('should open district overlay when _showDistrict value is set', () => {
+    it('should open district overlay when _showDistrict value is set', (done) => {
         // arrange
         districtMappingPage.showStates = false;
         districtMappingPage.districtSelect = { open: jest.fn(() => { }) };
@@ -541,9 +581,12 @@ describe('DistrictMappingPage', () => {
         districtMappingPage.showDistrict = true;
 
         // assert
-        expect(districtMappingPage.showStates).toBeFalsy();
-        expect(districtMappingPage.showDistrict).toBeTruthy();
-        expect(districtMappingPage.districtSelect.open).toHaveBeenCalled();
+        setTimeout(() => {
+            expect(districtMappingPage.showDistrict).toBeTruthy();
+            expect(districtMappingPage.districtSelect.open).toHaveBeenCalled();
+            done();
+        }, 1000);
+
     });
 
     it('should generate IMPRESSION telemetry when ionViewWillEnter', () => {

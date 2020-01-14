@@ -36,6 +36,7 @@ import { Location } from '@angular/common';
 import {
   SbPopoverComponent
 } from '../components/popups/sb-popover/sb-popover.component';
+import { SbSharePopupComponent } from '../components/popups/sb-share-popup/sb-share-popup.component';
 
 import {
   ConfirmAlertComponent, ContentActionsComponent, ContentRatingAlertComponent
@@ -241,8 +242,15 @@ export class CollectionDetailEtbPage implements OnInit {
 
   public telemetryObject: TelemetryObject;
   public rollUpMap: { [key: string]: Rollup } = {};
-  licenseDetails: any;
-
+  _licenseDetails: any;
+  get licenseDetails() {
+    return this._licenseDetails;
+  }
+  set licenseDetails(val) {
+    if (!this._licenseDetails && val) {
+      this._licenseDetails = val;
+    }
+  }
   private previousHeaderBottomOffset?: number;
   constructor(
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
@@ -510,6 +518,7 @@ export class CollectionDetailEtbPage implements OnInit {
         // this.zone.run(() => {
         loader.dismiss().then(() => {
           if (data) {
+            this.licenseDetails = data.contentData.licenseDetails || this.licenseDetails;
             if (!data.isAvailableLocally) {
               this.contentDetail = data;
               this.generatefastLoadingTelemetry(InteractSubtype.FAST_LOADING_OF_TEXTBOOK_INITIATED);
@@ -542,6 +551,12 @@ export class CollectionDetailEtbPage implements OnInit {
 
   showLicensce() {
     this.showCredits = !this.showCredits;
+
+    if (this.showCredits) {
+      this.licenseSectionClicked('expanded');
+    } else {
+      this.licenseSectionClicked('collapsed');
+    }
   }
 
   async showCommingSoonPopup(childData: any) {
@@ -571,7 +586,6 @@ export class CollectionDetailEtbPage implements OnInit {
    */
   extractApiResponse(data: Content) {
     this.contentDetail = data;
-    this.licenseDetails = data.contentData.licenseDetails || this.licenseDetails;
     // this.contentDetail.isAvailableLocally = data.isAvailableLocally;
 
     if (this.contentDetail.contentData.appIcon) {
@@ -1053,8 +1067,18 @@ export class CollectionDetailEtbPage implements OnInit {
     });
   }
 
-  share() {
-    this.contentShareHandler.shareContent(this.contentDetail, this.corRelationList, this.objRollup);
+  async share() {
+    // this.contentShareHandler.shareContent(this.contentDetail, this.corRelationList, this.objRollup);
+    const popover = await this.popoverCtrl.create({
+      component: SbSharePopupComponent,
+      componentProps: {
+        contentDetail: this.contentDetail,
+        corRelationList: this.corRelationList,
+        objRollup: this.objRollup,
+      },
+      cssClass: 'sb-popover',
+    });
+    popover.present();
   }
 
   /**

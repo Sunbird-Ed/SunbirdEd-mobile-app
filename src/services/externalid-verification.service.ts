@@ -28,6 +28,7 @@ export class ExternalIdVerificationService {
     }
 
     async showExternalIdVerificationPopup() {
+        this.appGlobalService.closeSigninOnboardingLoader();
         if (await this.checkQuizContent()) {
             return;
         }

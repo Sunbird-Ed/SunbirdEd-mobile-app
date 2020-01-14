@@ -1,67 +1,50 @@
-import { Component, NgZone } from '@angular/core';
+import { Component, NgZone, OnInit } from '@angular/core';
 import { NavParams, Platform, PopoverController } from '@ionic/angular';
 import { TelemetryObject } from 'sunbird-sdk';
 
 import { ProfileConstants } from '@app/app/app.constant';
 import { AppGlobalService } from '@app/services/app-global-service.service';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
-import { Environment, InteractType } from '@app/services/telemetry-constants';
+import { Environment, InteractType, InteractSubtype } from '@app/services/telemetry-constants';
+import { ContentUtil } from '@app/util/content-util';
 
 @Component({
   selector: 'app-view-credits',
   templateUrl: './view-credits.component.html',
   styleUrls: ['./view-credits.component.scss'],
 })
-export class ViewCreditsComponent {
+export class ViewCreditsComponent implements OnInit {
 
   userId = '';
   backButtonFunc = undefined;
   content: any;
   rollUp: any;
   correlation: any;
-  private pageId = '';
-  private popupType: string;
+  pageId = '';
 
-  /**
-   * Default function of class ViewCreditsComponent
-   *
-   * @param navParams
-   * @param viewCtrl
-   * @param platform
-   * @param ngZone
-   * @param telemetrygeneratorService
-   * @param appGlobalService
-   */
   constructor(
     private navParams: NavParams,
     private platform: Platform,
-    private ngZone: NgZone,
-    private telemetrygeneratorService: TelemetryGeneratorService,
-    private appGlobalService: AppGlobalService,
-    private popOverCtrl: PopoverController
-  ) {
-    this.getUserId();
+    private popOverCtrl: PopoverController,
+    private telemetrygeneratorService: TelemetryGeneratorService
+  ) {}
+
+  ngOnInit(): void {
     this.backButtonFunc = this.platform.backButton.subscribeWithPriority(11, () => {
       this.popOverCtrl.dismiss();
       this.backButtonFunc.unsubscribe();
     });
-    this.ngZone.run(() => {
-      this.popupType = this.navParams.get('popupType');
-    });
   }
 
-  /**
-   * Ionic life cycle hook
-   */
   ionViewDidLoad(): void {
     this.content = this.navParams.get('content');
     this.pageId = this.navParams.get('pageId');
     this.rollUp = this.navParams.get('rollUp');
     this.correlation = this.navParams.get('correlation');
-    const telemetryObject = new TelemetryObject(this.content.identifier, this.content.contentType, this.content.pkgVersion);
+    const telemetryObject = ContentUtil.getTelemetryObject(this.content);
 
     this.telemetrygeneratorService.generateInteractTelemetry(InteractType.TOUCH,
-      'credits-clicked',
+      InteractSubtype.CREDITS_CLICKED,
       Environment.HOME,
       this.pageId,
       telemetryObject,
@@ -71,43 +54,13 @@ export class ViewCreditsComponent {
     );
   }
 
-  /* SUDO
-    if firstprperty is there and secondprperty is not there, then return firstprperty value
-    else if firstprperty is not there and secondprperty is there, then return secondprperty value
-    else do the merger of firstprperty and secondprperty value and return merged value
-  */
-  mergeProperties(firstProp, secondProp) {
-    if (this.content[firstProp] && !this.content[secondProp]) {
-      return this.content[firstProp];
-    } else if (!this.content[firstProp] && this.content[secondProp]) {
-      return this.content[secondProp];
-    } else {
-      let first: any;
-      let second: any;
-      first = this.content[firstProp].split(', ');
-      second = this.content[secondProp].split(', ');
-      first = second.concat(first);
-      first = Array.from(new Set(first));
-      return first.join(', ');
-    }
-  }
-
-  /**
-   * Get user id
-   */
-  getUserId() {
-    if (this.appGlobalService.getSessionData()) {
-      this.userId = this.appGlobalService.getSessionData()[
-        ProfileConstants.USER_TOKEN
-      ];
-    } else {
-      this.userId = '';
-    }
+  mergeProperties(mergeProp) {
+    return ContentUtil.mergeProperties(this.content, mergeProp);
   }
 
   cancel() {
     this.popOverCtrl.dismiss();
-    if(this.backButtonFunc) {
+    if (this.backButtonFunc) {
       this.backButtonFunc.unsubscribe();
     }
   }

@@ -1,276 +1,301 @@
 var https = require('https');
 var fs = require("fs");
-var request = require("request");
-var shell = require('shelljs');
-
-var frameworkIdentifier;
-var frameworkUrlParameter = '?categories=board,gradeLevel,subject,medium';
+var fsextra = require('fs-extra');
 
 
-var course_request_body = {
-  request: {
-    'type': 'pageassemble',
-    'subType': 'course',
-    'action': 'filter_v2'
-  }
-};
-
-var library_request_body = {
-  request: {
-    'type': 'pageassemble',
-    'subType': 'library',
-    'action': 'filter'
-  }
-};
+var formRequestArray = [{
+        'type': 'pageassemble',
+        'subType': 'course',
+        'action': 'filter_v2'
+    },
+    {
+        'type': 'pageassemble',
+        'subType': 'library',
+        'action': 'filter'
+    },
+    {
+        'type': 'config',
+        'subType': 'login',
+        'action': 'get'
+    },
+    {
+        'type': 'config',
+        'subType': 'location',
+        'action': 'get'
+    },
+    {
+        'type': 'config',
+        'subType': 'content',
+        'action': 'filter'
+    },
+    {
+        'type': 'config',
+        'subType': 'dialcode',
+        'action': 'get'
+    },
+    {
+        'type': 'user',
+        'subType': 'externalIdVerification',
+        'action': 'onboarding',
+        'rootOrgId': '*'
+    }
+];
 
 var state_list_request_body = {
-  request : {
-    'filters': {
-      'type': 'state'
-   },
-   "sort_by": {
-       "name": "ASC"
-   }
-  }
+    request: {
+        'filters': {
+            'type': 'state'
+        },
+        "sort_by": {
+            "name": "ASC"
+        }
+    }
 }
 
 var district_list_request_body = function(district_id) {
-  var objDistrict = {
-    request : {
-      filters : {
-         'type' : 'district',
-         'parentId' : district_id
-          },
-          "sort_by": {
-              "name": "ASC"
-          }
-      }
+    var objDistrict = {
+        request: {
+            filters: {
+                'type': 'district',
+                'parentId': district_id
+            },
+            "sort_by": {
+                "name": "ASC"
+            }
+        }
     }
-  return objDistrict;
+    return objDistrict;
 }
 
 readFileConfig();
 
 
-function readFileConfig() {
-  var obj = JSON.parse(fs.readFileSync('./data_config.json', 'utf8'));
-  var jsonArray = obj.config;
+async function readFileConfig() {
+    var obj = JSON.parse(fs.readFileSync('./data_config.json', 'utf8'));
+    var jsonArray = obj.config;
 
-  for (var i = 0; i < jsonArray.length; i++) {
-    var jsonObj = jsonArray[i];
-  
-    API_FRAMEWORK = jsonObj.apiFramework;
+    for (var i = 0; i < jsonArray.length; i++) {
+        var jsonObj = jsonArray[i];
 
-    getCourseFormResponse(jsonObj.apiKey, jsonObj.baseUrl, jsonObj.apiForm, jsonObj.filePathToSaveResonse);
-    getLibraryFormResponse(jsonObj.apiKey, jsonObj.baseUrl, jsonObj.apiForm, jsonObj.filePathToSaveResonse);
+        API_FRAMEWORK = jsonObj.apiFramework;
 
-    getSystemList(jsonObj.apiKey, jsonObj.apiChannel, jsonObj.baseUrl, jsonObj.apiChannelList, jsonObj.apiSystemSetting, jsonObj.filePathToSaveResonse,jsonObj.apiFramework);
+        await saveFormResponse(jsonObj.apiKey, jsonObj.baseUrl, jsonObj.apiForm, jsonObj.filePathToSaveResonse);
+        await saveSystemList(jsonObj.apiKey, jsonObj.apiChannel, jsonObj.baseUrl, jsonObj.apiChannelList, jsonObj.apiSystemSetting, jsonObj.filePathToSaveResonse, jsonObj.apiFramework);
+        await saveStateList(jsonObj.apiKey, jsonObj.baseUrl, jsonObj.apiSearch, jsonObj.filePathToSaveResonse);
 
-    getStateList(jsonObj.apiKey, jsonObj.baseUrl, jsonObj.apiSearch, jsonObj.filePathToSaveResonse);
-  }
+    }
 }
 
-//GET SYSTEM LIST RESPONSE HERE
-function getSystemList(apiKey, apiChannel, baseUrl, apiSystemSettingList, apiSystemSettingId, strFileDirectory,apiFramework) {
-  var getSystemListUrl = apiSystemSettingList
-  makeApiCall(apiKey, baseUrl, 'GET', getSystemListUrl, function (resp) {
-    getCustodianId(apiKey, apiChannel, baseUrl, resp, apiSystemSettingId, strFileDirectory,apiFramework);
-  })
-}
+async function saveStateList(apiKey, baseUrl, apiSearch, rootDir) {
 
-//GET STATE WISE LIST RESPONSE FUNCTION
-function getStateList(apiKey, baseUrl, apiSearch, strFileDirectory) {
-   var res = makePostApiCall(apiKey, baseUrl, 'POST', apiSearch, state_list_request_body, function (response) {
-       createMainDirectory(strFileDirectory, 'location', function (dirName) {
-          saveResponse(JSON.stringify(response.body), dirName, 'state', '');
+    await makeAPICall(apiKey, baseUrl, 'POST', apiSearch, state_list_request_body)
+        .then((response) => {
+            return createSubFolders(rootDir, 'location')
+                .then((dirName) => {
+                    return writeFile(response, dirName, 'state', '')
+                })
+                .then(async () => {
+                    await saveDistrictList(response, apiKey, baseUrl, apiSearch, rootDir)
+                })
+        }).catch((err) => {
+            console.error(err);
         });
-        //Call District wise api call
-        getDistrictList(response.body,apiKey,baseUrl,apiSearch,strFileDirectory);
-   });
 }
 
-//GET DISTRICT WISE API RESPONSE FUNCTION
-function getDistrictList(res,apiKey, baseUrl, apiSearch, strFileDirectory) {
-  var data = res.result.response;
-  for(var i=0;i<data.length;i++) {
-    let id = data[i].id;
-    makePostApiCall(apiKey, baseUrl, 'POST', apiSearch, district_list_request_body(data[i].id), function (response) {
-         createMainDirectory(strFileDirectory, 'location', function (dirName) {
-            saveResponse(JSON.stringify(response.body), dirName, 'district-', id);
+async function saveDistrictList(res, apiKey, baseUrl, apiSearch, rootDir) {
+    const data = JSON.parse(res).result.response;
+    for (let i = 0; i < data.length; i++) {
+        let id = data[i].id;
+        await makeAPICallnSaveResponse({
+            apiKey: apiKey,
+            baseUrl: baseUrl,
+            requestType: 'POST',
+            endPoint: apiSearch,
+            body: district_list_request_body(data[i].id)
+        }, {
+            rootDir: rootDir,
+            subFolder: 'location',
+            preFix: 'district-',
+            fileName: id
         });
+    }
+}
+
+function makeAPICallnSaveResponse(apiConfig, fileConfig) {
+    return makeAPICall(apiConfig.apiKey, apiConfig.baseUrl, apiConfig.requestType, apiConfig.endPoint, apiConfig.body)
+        .then((response) => {
+            return createSubFolders(fileConfig.rootDir, fileConfig.subFolder)
+                .then((dirName) => {
+                    return writeFile(response, dirName, fileConfig.preFix, fileConfig.fileName);
+                });
+        }).catch((err) => {
+            console.error(err);
+        });
+}
+
+async function saveSystemList(apiKey, apiChannel, baseUrl, apiSystemSettingList, apiSystemSettingId, rootDir, apiFramework) {
+    await makeAPICall(apiKey, baseUrl, 'GET', apiSystemSettingList)
+        .then(async (response) => {
+            const result = JSON.parse(response).result.response;
+            for (let i = 0; i < result.length; i++) {
+                const json = result[i];
+                const fieldName = json.field;
+                const systemSettingsId = json.id;
+                const systemSettingsValue = json.value;
+                if (fieldName === 'custodianOrgId') {
+                    await saveCustodianDetails(apiKey, apiChannel, baseUrl, systemSettingsValue, rootDir, apiFramework)
+                        .then(() => {
+                            return saveSystemSettingResponse(apiKey, baseUrl, apiSystemSettingId, rootDir, systemSettingsId)
+                        });
+                } else if (fieldName === 'courseFrameworkId') {
+                    await saveFrameworkResponse(apiKey, baseUrl, [{
+                            identifier: systemSettingsValue
+                        }], rootDir, apiFramework, true)
+                        .then(() => {
+                            return saveSystemSettingResponse(apiKey, baseUrl, apiSystemSettingId, rootDir, systemSettingsId)
+                        });;
+                }
+            }
+        })
+}
+
+async function saveSystemSettingResponse(apiKey, baseUrl, apiSystemSettingId, rootDir, id) {
+    await makeAPICallnSaveResponse({
+        apiKey: apiKey,
+        baseUrl: baseUrl,
+        requestType: 'GET',
+        endPoint: apiSystemSettingId + id
+    }, {
+        rootDir: rootDir,
+        subFolder: 'system',
+        preFix: 'system-setting-',
+        fileName: id
     });
-  }
 }
 
-//GET CUSTODIAN RESPONSE HERE
-function getCustodianId(apiKey, apiChannel, baseUrl, res, apiSystemSettingId, strFileDirectory,apiFramework) {
+async function saveCustodianDetails(apiKey, apiChannel, baseUrl, custodianOrgId, rootDir, apiFramework) {
 
-  var data = JSON.parse(res).result.response;
-  frameworkUrlParameter = '?categories=board,gradeLevel,subject,medium,topic,purpose';
+    await makeAPICall(apiKey, baseUrl, 'GET', apiChannel + custodianOrgId)
+        .then((response) => {
+            return createSubFolders(rootDir, 'channel')
+                .then((dirName) => {
+                    return writeFile(response, dirName, 'channel-', custodianOrgId)
+                })
+                .then(() => {
+                    return saveFrameworkResponse(apiKey, baseUrl, response, rootDir, apiFramework);
+                })
+        })
+}
+async function saveFrameworkResponse(apiKey, baseUrl, response, rootDir, apiFramework, isTPD) {
+    const frameworkList = !(response instanceof Array) ? JSON.parse(response).result.channel.frameworks : response;
 
-  for (var i = 0; i < data.length; i++) {
-    var json = data[i];
-    var fieldName = json.field;
-    if (fieldName === 'custodianOrgId') {
-      var KEY_CUSTODIAN_ORG_ID = json.id;
-      var KEY_CUSTODIAN_ORG_VALUE = json.value;
-      getChannelResponse(apiKey, apiChannel, baseUrl, KEY_CUSTODIAN_ORG_VALUE, strFileDirectory, apiFramework);
-      getSystemSettingResponse(apiKey, baseUrl, KEY_CUSTODIAN_ORG_ID, apiSystemSettingId, strFileDirectory);
+    urlParameter = '?categories=board,gradeLevel,subject,medium' + (isTPD ? ',topic,purpose' : '');
+    for (let i = 0; i < frameworkList.length; i++) {
+        const frameworkIdentifier = frameworkList[i].identifier;
+        await makeAPICallnSaveResponse({
+            apiKey: apiKey,
+            baseUrl: baseUrl,
+            requestType: 'GET',
+            endPoint: apiFramework + frameworkIdentifier + urlParameter
+        }, {
+            rootDir: rootDir,
+            subFolder: 'framework',
+            preFix: 'framework-',
+            fileName: frameworkIdentifier
+        });
+    }
+}
+
+async function saveFormResponse(apiKey, baseUrl, apiForm, rootDir) {
+    for (var i = 0; i < formRequestArray.length; i++) {
+        const formRequest = formRequestArray[i];
+        let fileName = formRequest.type + '_' + formRequest.subType + '_' + formRequest.action;;
+        if (formRequest.rootOrgId) {
+            fileName += ('_' + formRequest.rootOrgId);
+        }
+        await makeAPICallnSaveResponse({
+            apiKey: apiKey,
+            baseUrl: baseUrl,
+            requestType: 'POST',
+            endPoint: apiForm,
+            body: {
+                request: formRequest
+            }
+        }, {
+            rootDir: rootDir,
+            subFolder: 'form',
+            preFix: 'form-',
+            fileName: fileName
+        });
     }
 
-    if (fieldName === 'courseFrameworkId') {
-      var KEY_FRAMEWORK_ID = json.id;
-      var courseFrameworkId = json.value;
-      getFrameworkIdResponse(apiKey, baseUrl, courseFrameworkId, strFileDirectory, apiFramework, frameworkUrlParameter);
-      getSystemSettingResponse(apiKey, baseUrl, KEY_FRAMEWORK_ID, apiSystemSettingId, strFileDirectory);
-    }
-  }
 }
 
-//GET CHANNEL RESPONSE HERE
-function getChannelResponse(apiKey, apiChannel, baseUrl, custodianOrgId, strFileDirectory, apiFramework) {
-  var channelAPi = apiChannel + custodianOrgId;
-  makeApiCall(apiKey, baseUrl, 'GET', channelAPi, function (res) {
-
-    createMainDirectory(strFileDirectory, 'channel', function (dirName) {
-      saveResponse(res, dirName, 'channel-', custodianOrgId);
+function writeFile(response, dirName, preFix, identifier) {
+    return new Promise((resolve, reject) => {
+        var fileName = dirName + '/' + preFix + identifier + '.json';
+        fs.writeFile(fileName, response, (err) => {
+            if (err) {
+                reject(err);
+            } else {
+                console.log("File " + fileName + " saved")
+                resolve();
+            }
+        });
     });
-    getFrameworkResponse(apiKey, baseUrl, res, strFileDirectory, apiFramework);
 
-  });
 }
 
-
-function getFrameworkResponse(apiKey, baseUrl, response, strFileDirectory, apiFramework) {
-
-  // TODO: Add null/empty check for frameworks
-  var frameworkId = JSON.parse(response).result.channel.frameworks;
-  urlParameter = '?categories=board,gradeLevel,subject,medium';
-  for (var i = 0; i < frameworkId.length; i++) {
-    frameworkIdentifier = frameworkId[i].identifier;
-    getFrameworkIdResponse(apiKey, baseUrl, frameworkIdentifier, strFileDirectory, apiFramework, urlParameter);
-  }
-}
-
-//GET FRAMEWORK RESPONSE HERE
-function getFrameworkIdResponse(apiKey, baseUrl, id, strFileDirectory, apiFramework, urlParameter) {
-  url = apiFramework + id + urlParameter;
-  var res = makeApiCall(apiKey, baseUrl, 'GET', url, function (response) {
-    createMainDirectory(strFileDirectory, 'framework', function (dirName) {
-      saveResponse(response, dirName, 'framework-', id);
+function createSubFolders(rootDir, dirName) {
+    var dir = rootDir + '/' + dirName;
+    return new Promise((resolve, reject) => {
+        try {
+            if (!fs.existsSync(dir)) {
+                fsextra.ensureDirSync(dir);
+                resolve(dir);
+            } else {
+                resolve(dir)
+            }
+        } catch (err) {
+            reject(err);
+        }
     });
-  });
+
 }
 
-//GET SYSTEM SETTING RESPONSE HERE
-function getSystemSettingResponse(apiKey, baseUrl, id, apiSystemSettingId, strFileDirectory) {
-  var url = apiSystemSettingId + id;
-  var res = makeApiCall(apiKey, baseUrl, 'GET', url, function (res) {
-
-    createMainDirectory(strFileDirectory, 'system', function (dirName) {
-      saveResponse(res, dirName, 'system-setting-', id);
-
-    });
-  });
-}
-
-
-function getCourseFormResponse(apiKey, baseUrl, apiForm, strFileDirectory) {
-
-  //readFileConfig();
-  var res = makePostApiCall(apiKey, baseUrl, 'POST', apiForm, course_request_body, function (response) {
-
-    createMainDirectory(strFileDirectory, 'form', function (dirName) {
-      saveResponse(JSON.stringify(response.body), dirName, 'form-', 'pageassemble_course_filter');
-    });
-  });
-}
-
-function getLibraryFormResponse(apiKey, baseUrl, apiForm, strFileDirectory) {
-  var res = makePostApiCall(apiKey, baseUrl, 'POST', apiForm, library_request_body, function (response) {
-    createMainDirectory(strFileDirectory, 'form', function (dirName) {
-      saveResponse(JSON.stringify(response.body), dirName, 'form-', 'pageassemble_library_filter');
-    });
-  });
-}
-
-function saveResponse(response, dirName, preFixOfFileName, fileName) {
-
-  var strFileName = dirName + '/' +
-    preFixOfFileName + fileName + '.json';
-  console.log("File Name "+strFileName+" Saved")
-
-  fs.writeFile(strFileName, response, (err) => {
-    if (err) {
-      console.error(err);
-      return;
+function makeAPICall(apiKey, baseUrl, requestType, url, body) {
+    var options = {
+        hostname: baseUrl,
+        path: url,
+        method: requestType,
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + apiKey
+        }
     };
-  });
-}
-
-
-function createMainDirectory(strFileDirectory1, dirName, callback) {
-  var parentDir = strFileDirectory1;
-
-  var dir = parentDir + '/' + dirName;
-
-  if (!fs.existsSync(dir)) {
-    //fs.mkdirSync(dir);
-    shell.mkdir('-p', dir);
-    return callback(dir);
-  } else {
-    return callback(dir);
-  }
-}
-
-function makePostApiCall(apiKey, baseUrl, requestType, url, body, callback) {
-  request({
-    url: "https://" + baseUrl + url,
-    method: requestType,
-    json: true,   // <--Very important!!!
-    body: body,
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer ' + apiKey
+    var data;
+    if (body && requestType === 'POST') {
+        data = JSON.stringify(body);
+        options.headers['Content-Length'] = data.length;
     }
-  }, function (error, response, body) {
-    return callback(response);
-  });
-}
-
-function makeApiCall(apiKey, baseUrl, requestType, url, callback) {
-  var options = {
-    hostname: baseUrl,
-    path: url,
-    method: requestType,
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer ' + apiKey
-    }
-  };
-
-  var req = https.request(options, function(res) {
-    res.setEncoding('utf8');
-    var body = '';
-    res.on('data', function(chunk) {
-      body += chunk;
+    return new Promise((resolve, reject) => {
+        const req = https.request(options,
+            (res) => {
+                let body = '';
+                res.on('data', (chunk) => (body += chunk.toString()));
+                res.on('error', reject);
+                res.on('end', () => {
+                    if (res.statusCode >= 200 && res.statusCode <= 299) {
+                        resolve(body);
+                    } else {
+                        reject('Request failed. status: ' + res.statusCode + ', body: ' + body);
+                    }
+                });
+            });
+        req.on('error', reject);
+        if (body && requestType === 'POST') {
+            req.write(data);
+        }
+        req.end();
     });
-    res.on('end', function() {
-      if (res.statusCode == 200) {
-        //var data = JSON.parse(chunk).result;
-        console.log('API called--------', url);
-        return callback(body);
-      } else {
-        console.log('API failed--------', options.hostname + url);
-      }
-    });
-  });
-
-
-  req.on('error', function(e) {
-    console.error('problem with request: ' + e.message);
-  });
-
-  req.end();
-
 }

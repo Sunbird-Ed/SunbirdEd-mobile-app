@@ -20,7 +20,7 @@
     </div>
     <div padding-horizontal text-center style="margin-top: 16px">
         <p class="profile-head">
-            <span class="profile-name">{{ profile?.firstName }}{{ profile?.lastName }}</span>
+            <span class="profile-name">{{ profile?.firstName | titlecase }}{{ profile?.lastName | titlecase }}</span>
             <span *ngIf="!isCustodianOrgId && profile?.firstName" class="isymbol profile-symbol" item-right text-left (click)="toggleTooltips($event, 'name')">
                 <ion-icon name="information-circle" class="info-icon"></ion-icon>
                 <span class="asPerStateRecord" *ngIf="informationProfileName">{{'STATE_RECORDS' | translate}}</span>

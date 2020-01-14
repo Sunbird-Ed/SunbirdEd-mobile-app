@@ -31,6 +31,7 @@ export class TabsPage implements OnInit, AfterViewInit {
   };
   selectedLanguage: string;
   appLabel: any;
+  olderWebView = false;
 
   constructor(
     private container: ContainerService,
@@ -49,7 +50,7 @@ export class TabsPage implements OnInit, AfterViewInit {
 
   async ngOnInit() {
     console.log('Inside tabsPage');
-
+    this.checkAndroidWebViewVersion();
     const session = await this.appGlobalService.authService.getSession().toPromise();
     if (!session) {
       console.log(`Success Platform Session`, session);
@@ -109,6 +110,17 @@ export class TabsPage implements OnInit, AfterViewInit {
     this.preferences.putBoolean('coach_mark_seen', true).toPromise().then();
      }, 2000);
 
+  }
+
+  checkAndroidWebViewVersion() {
+    var that = this;
+    plugins['webViewChecker'].getCurrentWebViewPackageInfo()
+    .then(function(packageInfo) {
+      if (parseInt(packageInfo.versionName.split('.')[0], 10) <= 68) {
+        that.olderWebView = true;
+      }
+    })
+    .catch(function(error) { });
   }
 
   ionViewWillEnter() {

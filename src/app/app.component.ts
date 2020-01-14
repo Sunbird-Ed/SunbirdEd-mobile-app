@@ -5,7 +5,7 @@ import { Events, Platform, IonRouterOutlet, MenuController } from '@ionic/angula
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable, combineLatest } from 'rxjs';
-import { mergeMap, filter, take, tap} from 'rxjs/operators';
+import { mergeMap, filter, tap} from 'rxjs/operators';
 import { Network } from '@ionic-native/network/ngx';
 
 import {
@@ -132,7 +132,41 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.appRatingService.checkInitialDate();
       this.getUtmParameter();
       this.checkForCodeUpdates();
+      this.checkAndroidWebViewVersion();
     });
+  }
+
+  checkAndroidWebViewVersion() {
+    var that = this;
+    plugins['webViewChecker'].getCurrentWebViewPackageInfo()
+    .then(function(packageInfo) {
+      that.formAndFrameworkUtilService.getWebviewConfig().then(function(webviewVersion) {
+        if (parseInt(packageInfo.versionName.split('.')[0], 10) <= webviewVersion) {
+          document.getElementById('update-webview-container').style.display = 'block';
+          this.telemetryGeneratorService.generateImpressionTelemetry(
+            ImpressionType.VIEW, '',
+            PageId.UPDATE_WEBVIEW_POPUP,
+            Environment.HOME);
+        }
+      }).catch(function(err) {
+        if (parseInt(packageInfo.versionName.split('.')[0], 10) <= 54) {
+          document.getElementById('update-webview-container').style.display = 'block';
+        }
+      });
+    })
+    .catch(function(error) { });
+  }
+
+  openPlaystore() {
+    plugins['webViewChecker'].openGooglePlayPage()
+    .then(function() { })
+    .catch(function(error) { });
+
+    this.telemetryGeneratorService.generateInteractTelemetry(
+      InteractType.TOUCH,
+      InteractSubtype.UPDATE_WEBVIEW_CLICKED,
+      Environment.HOME,
+      PageId.UPDATE_WEBVIEW_POPUP);
   }
 
   getSystemConfig() {
@@ -667,7 +701,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   private handleAuthAutoMigrateEvents() {
     this.eventsBusService.events(EventNamespace.AUTH).pipe(
       filter((e) => e.type === AuthEventType.AUTO_MIGRATE_SUCCESS || e.type === AuthEventType.AUTO_MIGRATE_FAIL),
-      take(1)).subscribe((e) => {
+    ).subscribe((e) => {
         switch (e.type) {
           case AuthEventType.AUTO_MIGRATE_SUCCESS: {
             this.commonUtilService.showToast('AUTO_MIGRATION_SUCCESS_MESSAGE');
@@ -684,8 +718,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   private handleAuthErrors() {
     this.eventsBusService.events(EventNamespace.ERROR).pipe(
       filter((e) => e.type === ErrorEventType.AUTH_TOKEN_REFRESH_ERROR),
-      take(1))
-      .subscribe(() => {
+    ).subscribe(() => {
         this.logoutHandlerService.onLogout();
       });
   }
@@ -740,10 +773,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       && !(await this.commonUtilService.isIpLocationAvailable())) {
       this.deviceRegisterService.getDeviceProfile().toPromise().then(async (response) => {
         if (response.userDeclaredLocation) {
-          const locationMap = new Map();
-          locationMap['state'] = response.userDeclaredLocation.state;
-          locationMap['district'] = response.userDeclaredLocation.district;
-          await this.preferences.putString(PreferenceKey.DEVICE_LOCATION, JSON.stringify(locationMap)).toPromise();
+          await this.preferences.putString(PreferenceKey.DEVICE_LOCATION, JSON.stringify(response.userDeclaredLocation)).toPromise();
         } else if (response.ipLocation) {
           const ipLocationMap = new Map();
           if (response.ipLocation.state) {
