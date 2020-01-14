@@ -5,7 +5,7 @@ import {
   AuthService, ProfileService, ProfileType, SharedPreferences
 } from 'sunbird-sdk';
 import { PreferenceKey, RouterLinks } from '../../app/app.constant';
-import { AppGlobalService } from 'services/app-global-service.service';
+import { AppGlobalService } from '@app/services/app-global-service.service';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { CommonUtilService } from '@app/services/common-util.service';
 import {
