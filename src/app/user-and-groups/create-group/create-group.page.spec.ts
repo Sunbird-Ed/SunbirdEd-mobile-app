@@ -74,21 +74,21 @@ describe('createGroupPage', () => {
         jest.clearAllMocks();
     });
 
-    it('#classList getter setter testing', () => {
+    it('should initialise classlist by calling getter of classlist', () => {
         // act
         createGroupPage.classList.push(1);
         // // assert
         expect(createGroupPage.classList).toEqual([1]);
     });
 
-    it('#syllabusList getter setter testing', () => {
+    it('should initialise syllabuslist', () => {
         // act
         createGroupPage.syllabusList.push(1);
         // assert
         expect(createGroupPage.syllabusList).toEqual([1]);
     });
 
-    it('getClassList', (done) => {
+    it('should check for classlist to be initialised', (done) => {
         // arrange
         createGroupPage.groupEditForm = {
             patchValue: jest.fn()
@@ -104,24 +104,4 @@ describe('createGroupPage', () => {
             done();
         }, 0);
     });
-
-    // it('#getSyllabusDetails', (done) => {
-    //     jest.resetAllMocks();
-    //     // arrange
-    //     const data: Framework[] =  [{
-    //         name: 'dummy',
-    //         identifier: '123456',
-    //         code: 'qwqdqwd'
-    //     }];
-    //     jest.spyOn(mockFrameworkUtilService, 'getActiveChannelSuggestedFrameworkList').mockReturnValue(of(data as Framework[]));
-    //     // act
-    //     createGroupPage.getSyllabusDetails();
-    
-    //     // assert
-    //     setTimeout(() => {
-    //         expect(createGroupPage.syllabusList).toEqual([{name: 'dummy', code: '123456'}]);
-    //         done();
-    //     }, 0);
-        
-    // });
 });
