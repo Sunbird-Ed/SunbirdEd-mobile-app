@@ -111,7 +111,6 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.generateNetworkTelemetry();
       this.autoSyncTelemetry();
       this.subscribeEvents();
-      this.showAppWalkThroughScreen();
       this.startOpenrapDiscovery();
       this.saveDefaultSyncSetting();
       this.checkAppUpdateAvailable();
@@ -761,11 +760,6 @@ export class AppComponent implements OnInit, AfterViewInit {
       Environment.ONBOARDING,
       PageId.LIBRARY
     );
-  }
-
-  private async showAppWalkThroughScreen() {
-    const showAppWalkthrough: boolean = await this.preferences.getBoolean('coach_mark_seen').toPromise();
-    await this.preferences.putBoolean('coach_mark_seen', showAppWalkthrough).toPromise();
   }
 
   private async getDeviceProfile() {
