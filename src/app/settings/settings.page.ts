@@ -16,7 +16,7 @@ import { PreferenceKey, RouterLinks } from '../app.constant';
 import { Environment, ImpressionType, InteractSubtype, InteractType, PageId } from 'services/telemetry-constants';
 import { SocialSharing } from '@ionic-native/social-sharing/ngx';
 import { Router, NavigationExtras } from '@angular/router';
-import { SbPopoverComponent } from '@app/app/components/popups';
+import { SbPopoverComponent, SbAppSharePopupComponent } from '@app/app/components/popups';
 import { PopoverController, ToastController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { Location } from '@angular/common';
@@ -113,21 +113,14 @@ export class SettingsPage implements OnInit {
   }
 
   async shareApp() {
-    const loader = await this.commonUtilService.getLoader();
-    await loader.present();
-
     this.generateInteractTelemetry(InteractType.TOUCH, InteractSubtype.SHARE_APP_CLICKED);
     this.generateInteractTelemetry(InteractType.TOUCH, InteractSubtype.SHARE_APP_INITIATED);
-
-    this.utilityService.exportApk()
-      .then(async (filepath) => {
-        this.generateInteractTelemetry(InteractType.OTHER, InteractSubtype.SHARE_APP_SUCCESS);
-        await loader.dismiss();
-        this.socialSharing.share('', '', 'file://' + filepath, '');
-      }).catch(async (error) => {
-        await loader.dismiss();
-        console.log(error);
-      });
+    const popover = await this.popoverCtrl.create({
+      component: SbAppSharePopupComponent,
+      componentProps: {},
+      cssClass: 'sb-popover',
+    });
+    popover.present();
   }
 
   generateInteractTelemetry(interactionType, interactSubtype) {
