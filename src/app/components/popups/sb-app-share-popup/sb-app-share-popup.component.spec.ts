@@ -19,7 +19,9 @@ describe('SbAppSharePopupComponent', () => {
     const mocksocialSharing: Partial<SocialSharing> = {
         share: jest.fn()
     };
-    const mockCommonUtilService: Partial<CommonUtilService> = {};
+    const mockCommonUtilService: Partial<CommonUtilService> = {
+        showToast: jest.fn()
+    };
     const mockUtilityService: Partial<UtilityService> = {
         exportApk: jest.fn(() => Promise.resolve('filePath')),
         getApkSize: jest.fn(() => Promise.resolve('12345'))
@@ -52,6 +54,66 @@ describe('SbAppSharePopupComponent', () => {
 
     it('should create a instance of sbAppSharePopupComponent', () => {
         expect(sbAppSharePopupComponent).toBeTruthy();
+    });
+
+    describe('exportApk()', () => {
+
+        it('should share the APK if shareParams.byFile=true', (done) => {
+            // arrange
+            mockCommonUtilService.getLoader = jest.fn(() => ({
+                present: presentFn,
+                dismiss: dismissFn,
+            }));
+            // act
+            sbAppSharePopupComponent.exportApk({
+                byFile: true,
+              });
+            // assert
+            setTimeout(() => {
+                expect(mocksocialSharing.share).toHaveBeenCalledWith('', '', 'file://filePath' , '');
+                expect(presentFn).toHaveBeenCalled();
+                expect(dismissFn).toHaveBeenCalled();
+                done();
+            }, 0);
+        });
+
+        it('should show TOAST if shareParams.saveFile=true', (done) => {
+            // arrange
+            mockCommonUtilService.getLoader = jest.fn(() => ({
+                present: presentFn,
+                dismiss: dismissFn,
+            }));
+            // act
+            sbAppSharePopupComponent.exportApk({
+                saveFile: true,
+              });
+            // assert
+            setTimeout(() => {
+                expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('FILE_SAVED', '', 'green-toast');
+                expect(presentFn).toHaveBeenCalled();
+                expect(dismissFn).toHaveBeenCalled();
+                done();
+            }, 0);
+        });
+
+        it('should dismiss the loader in case of error scenarios', (done) => {
+            // arrange
+            mockCommonUtilService.getLoader = jest.fn(() => ({
+                present: presentFn,
+                dismiss: dismissFn,
+            }));
+            mockUtilityService.exportApk = jest.fn(() => Promise.reject());
+            // act
+            sbAppSharePopupComponent.exportApk({
+                saveFile: true,
+              });
+            // assert
+            setTimeout(() => {
+                expect(presentFn).toHaveBeenCalled();
+                expect(dismissFn).toHaveBeenCalled();
+                done();
+            }, 0);
+        });
     });
 
     it('should populate apk size and shareUrl', (done) => {
@@ -125,16 +187,5 @@ describe('SbAppSharePopupComponent', () => {
         expect(mockPopoverCtrl.dismiss).toHaveBeenCalled();
     });
 
-    // it('should get packagename on getPackageName', (done) => {
-    //     // arrange
-    //     // act
-    //     sbAppSharePopupComponent.getPackageName();
-    //     // assert
-    //     setTimeout(() => {
-    //         expect(sbAppSharePopupComponent.shareUrl).toBeDefined();
-    //         // expect(sbAppSharePopupComponent.shareUrl.indexOf('packagename')).toBeGreaterThan(0);
-    //         done();
-    //     }, 100 );
-    // });
 
 });
