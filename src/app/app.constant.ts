@@ -498,3 +498,16 @@ export class RouterLinks {
 export class LibraryCardTypes {
     public static readonly QRCODE_RESULT = 'qrcode_result';
 }
+
+export class ShareItemType {
+    public static readonly ROOT_CONTENT = 'root-content';
+    public static readonly ROOT_COLECTION = 'root-collection';
+    public static readonly LEAF_CONTENT = 'leaf-content';
+    public static readonly APP = 'app';
+}
+
+export class ShareMode {
+    public static readonly SHARE = 'share';
+    public static readonly SEND = 'send';
+    public static readonly SAVE = 'save';
+}

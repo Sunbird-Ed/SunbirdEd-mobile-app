@@ -21,12 +21,7 @@ export class ContentShareHandlerService {
   appName: string;
   shareUrl: string;
   shareUTMUrl: string;
-  // enum shareParams = {
-  //   byLink: boolean | undefined,
-  //   link: string | undefined,
-  //   byFile: boolean | undefined,
-  //   saveFile: boolean | undefined
-  // }
+
   constructor(
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
     @Inject('STORAGE_SERVICE') private storageService: StorageService,
@@ -34,13 +29,15 @@ export class ContentShareHandlerService {
     private commonUtilService: CommonUtilService,
     private social: SocialSharing,
     private telemetryGeneratorService: TelemetryGeneratorService,
-    private utilityService: UtilityService,
     private appVersion: AppVersion) {
       this.commonUtilService.getAppName().then((res) => { this.appName = res; });
   }
 
   public async shareContent(shareParams: any, content: Content, corRelationList?: CorrelationData[], rollup?: Rollup) {
     this.telemetryObject = ContentUtil.getTelemetryObject(content);
+    this.generateShareInteractEvents(InteractType.TOUCH,
+      InteractSubtype.SHARE_CONTENT_INITIATED,
+      content.contentData.contentType, corRelationList, rollup);
     let exportContentRequest: ContentExportRequest;
     if (shareParams && shareParams.byFile) {
       exportContentRequest = {
@@ -50,10 +47,11 @@ export class ContentShareHandlerService {
       this.exportContent(exportContentRequest, shareParams, content, corRelationList, rollup);
     } else if (shareParams && shareParams.byLink && shareParams.link) {
       this.generateShareInteractEvents(InteractType.OTHER,
-        InteractSubtype.SHARE_LIBRARY_SUCCESS,
+        InteractSubtype.SHARE_CONTENT_SUCCESS,
         content.contentData.contentType, corRelationList, rollup);
-      let shareLink = content.contentData.name + ' on ' + this.appName + ' ' + this.getContentUtm(shareParams.link, content);
-      shareLink = shareLink + `\n\n${this.commonUtilService.translateMessage('TRY_CONTENT_ON')}` + await this.getPackageNameWithUTM(true);
+      let shareLink = 'See \'' + content.contentData.name + '\' on ' + this.appName + '\n' + this.getContentUtm(shareParams.link, content);
+      shareLink = '\n' + shareLink +
+      `\n\n${this.commonUtilService.translateMessage('TRY_CONTENT_ON')}` + '\n' + await this.getPackageNameWithUTM(true);
       this.social.share(null, null, null, shareLink);
     } else if (shareParams && shareParams.saveFile) {
       exportContentRequest = {
@@ -61,7 +59,7 @@ export class ContentShareHandlerService {
         destinationFolder: cordova.file.externalRootDirectory + 'Download/',
         saveLocally: true
       };
-      this.exportContent(exportContentRequest, shareParams, content, corRelationList, rollup)
+      this.exportContent(exportContentRequest, shareParams, content, corRelationList, rollup);
     }
   }
 
@@ -79,7 +77,7 @@ export class ContentShareHandlerService {
             this.social.share('', '', '' + response.exportedFilePath, shareParams.link);
           }
           this.generateShareInteractEvents(InteractType.OTHER,
-            InteractSubtype.SHARE_LIBRARY_SUCCESS, content.contentData.contentType, corRelationList, rollup);
+            InteractSubtype.SHARE_CONTENT_SUCCESS, content.contentData.contentType, corRelationList, rollup);
         }).catch(async (err) => {
           await loader.dismiss();
           this.commonUtilService.showToast('SHARE_CONTENT_FAILED');
@@ -98,7 +96,8 @@ export class ContentShareHandlerService {
   }
 
   getContentUtm(contentLink: string, content: Content): string {
-    const contentUTM: string = `referrer=utm_source%3D${this.appName.toLocaleLowerCase()}_mobile%26utm_content%3D${content.identifier}%26utm_campaign%3Dshare_content`;
+    const contentUTM =
+    `referrer=utm_source%3D${this.appName.toLocaleLowerCase()}_mobile%26utm_content%3D${content.identifier}%26utm_campaign%3Dshare_content`;
     return contentLink + '?' + contentUTM;
   }
 

@@ -24,7 +24,7 @@ import {
   Environment, ErrorType, ImpressionType, InteractSubtype, InteractType, Mode, PageId, ID
 } from '../../services/telemetry-constants';
 import { Subscription } from 'rxjs';
-import { ContentType, MimeType, ShareUrl, RouterLinks } from '../../app/app.constant';
+import { ContentType, MimeType, ShareUrl, RouterLinks, ShareItemType } from '../../app/app.constant';
 import {
   AppGlobalService, AppHeaderService, CommonUtilService, CourseUtilService, TelemetryGeneratorService, UtilityService,
   ContentShareHandlerService
@@ -1075,6 +1075,8 @@ export class CollectionDetailEtbPage implements OnInit {
         contentDetail: this.contentDetail,
         corRelationList: this.corRelationList,
         objRollup: this.objRollup,
+        pageId: PageId.COLLECTION_DETAIL,
+        shareItemType: ShareItemType.ROOT_COLECTION
       },
       cssClass: 'sb-popover',
     });
