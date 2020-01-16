@@ -2,10 +2,11 @@ import { AppVersion } from '@ionic-native/app-version/ngx';
 import { SocialSharing } from '@ionic-native/social-sharing/ngx';
 import { UtilityService } from '../../../../services/utility-service';
 import { CommonUtilService } from '../../../../services/common-util.service';
-import { Component, Input, OnInit, OnDestroy, Inject } from '@angular/core';
-import { Events, Platform, PopoverController } from '@ionic/angular';
+import { Component, OnInit, OnDestroy, Inject } from '@angular/core';
+import { Platform, PopoverController } from '@ionic/angular';
 import { Subscription } from 'rxjs';
 import { FileService } from 'sunbird-sdk/dist/util/file/def/file-service';
+import { DeviceInfo } from 'sunbird-sdk';
 
 @Component({
   selector: 'app-sb-share-popup',
@@ -16,18 +17,18 @@ export class SbAppSharePopupComponent implements OnInit, OnDestroy {
 
   backButtonFunc: Subscription;
   shareOptions = {
-      link: {
-        name: 'SHARE_LINK',
-        value: 'link'
-      },
-      file: {
-        name: 'SEND_FILE',
-        value: 'file'
-      },
-      save: {
-        name: 'SAVE_FILE_ON_DEVICE',
-        value: 'save'
-      }
+    link: {
+      name: 'SHARE_LINK',
+      value: 'link'
+    },
+    file: {
+      name: 'SEND_FILE',
+      value: 'file'
+    },
+    save: {
+      name: 'SAVE_FILE_ON_DEVICE',
+      value: 'save'
+    }
   };
   shareType: string;
   shareUrl: string;
@@ -36,6 +37,7 @@ export class SbAppSharePopupComponent implements OnInit, OnDestroy {
 
   constructor(
     @Inject('CONTENT_SERVICE') private fileService: FileService,
+    @Inject('DEVICE_INFO') private deviceInfo: DeviceInfo,
     public popoverCtrl: PopoverController,
     private social: SocialSharing,
     private platform: Platform,
@@ -44,20 +46,17 @@ export class SbAppSharePopupComponent implements OnInit, OnDestroy {
     private appVersion: AppVersion) { }
 
   async ngOnInit() {
-    const loader = await this.commonUtilService.getLoader();
-    await loader.present();
     this.backButtonFunc = this.platform.backButton.subscribeWithPriority(11, () => {
       this.popoverCtrl.dismiss();
       this.backButtonFunc.unsubscribe();
     });
     this.shareType = this.shareOptions.link.value;
-    this.getPackageName();
-    this.utilityService.exportApk().then(async (filepath) => {
-      await loader.dismiss();
-      this.filePath = filepath;
-      // this.getfileSize();
+    const packageName = await this.appVersion.getPackageName();
+    const utmParams = `&referrer=utm_source%3D${this.deviceInfo.getDeviceID()}%26utm_campaign%3Dshareapp`;
+    this.shareUrl = `https://play.google.com/store/apps/details?id=${packageName}${utmParams}`;
+    this.utilityService.getApkSize().then(async (fileSize) => {
+      this.fileSize = Number(fileSize);
     }).catch(async (err) => {
-      await loader.dismiss();
     });
   }
 
@@ -96,34 +95,17 @@ export class SbAppSharePopupComponent implements OnInit, OnDestroy {
         resolve();
         this.social.share('', '', 'file://' + this.filePath, '');
       } else {
-          buildconfigreader.copyFile(
-            this.filePath.substr(0, this.filePath.lastIndexOf('/')),
-            cordova.file.externalRootDirectory + 'Download/', this.filePath.substring(this.filePath.lastIndexOf('/') + 1),
-            () => {
-              this.commonUtilService.showToast('FILE_SAVED', '', 'green-toast');
-              resolve();
-            }, err => {
-                reject(err);
-            }
-          );
+        buildconfigreader.copyFile(
+          this.filePath.substr(0, this.filePath.lastIndexOf('/')),
+          cordova.file.externalRootDirectory + 'Download/', this.filePath.substring(this.filePath.lastIndexOf('/') + 1),
+          () => {
+            this.commonUtilService.showToast('FILE_SAVED', '', 'green-toast');
+            resolve();
+          }, err => {
+            reject(err);
+          }
+        );
       }
     });
   }
-
-  // getfileSize() {
-  //   this.fileService.getMetaData('file://' + this.filePath).then((metadata) => {
-  //     console.log('getmetadata suc', metadata);
-  //     this.fileSize = metadata.size;
-  //   }).catch((err) => {
-  //     console.log('get metadata err', err);
-  //   });
-  // }
-
-  getPackageName() {
-    this.appVersion.getPackageName().then((pkg: any) => {
-      this.shareUrl = `https://play.google.com/store/apps/details?id=${pkg}&hl=en_IN`;
-    }).catch((err) => {
-    });
-  }
-
 }
