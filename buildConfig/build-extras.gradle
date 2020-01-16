@@ -113,7 +113,6 @@ android {
             //resValue("string", "app_code_push_id", "${dev_app_code_push_id}")
             buildConfigField 'String', 'BASE_URL', "\"${dev_base_url}\""
             buildConfigField 'String', 'MERGE_ACCOUNT_BASE_URL', "\"${dev_merge_account_base_url}\""
-            buildConfigField 'String', 'DEVICE_REGISTER_BASE_URL', "\"${dev_device_register_base_url}\""
             buildConfigField 'String', 'PRODUCER_ID', "\"${dev_producer_id}\""
             buildConfigField 'String', 'CHANNEL_ID', "\"${dev_channel_id}\""
             buildConfigField 'int', 'MAX_COMPATIBILITY_LEVEL', "4"
@@ -133,7 +132,6 @@ android {
             // resValue("string", "app_code_push_id", "${staging_app_code_push_id}")
             buildConfigField 'String', 'BASE_URL', "\"${staging_base_url}\""
             buildConfigField 'String', 'MERGE_ACCOUNT_BASE_URL', "\"${staging_merge_account_base_url}\""
-            buildConfigField 'String', 'DEVICE_REGISTER_BASE_URL', "\"${staging_device_register_base_url}\""
             buildConfigField 'String', 'PRODUCER_ID', "\"${staging_producer_id}\""
             buildConfigField 'String', 'CHANNEL_ID', "\"${staging_channel_id}\""
             buildConfigField 'int', 'MAX_COMPATIBILITY_LEVEL', "4"
@@ -153,7 +151,6 @@ android {
             //resValue("string", "app_code_push_id", "${production_app_code_push_id}")
             buildConfigField 'String', 'BASE_URL', "\"${production_base_url}\""
             buildConfigField 'String', 'MERGE_ACCOUNT_BASE_URL', "\"${production_merge_account_base_url}\""
-            buildConfigField 'String', 'DEVICE_REGISTER_BASE_URL', "\"${production_device_register_base_url}\""
             buildConfigField 'String', 'PRODUCER_ID', "\"${production_producer_id}\""
             buildConfigField 'String', 'CHANNEL_ID', "\"${production_channel_id}\""
             buildConfigField 'int', 'MAX_COMPATIBILITY_LEVEL', "4"
