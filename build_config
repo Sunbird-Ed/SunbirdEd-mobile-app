@@ -18,9 +18,9 @@ cordova-plugin=cordova-plugin-advanced-http
 cordova-plugin=cordova-plugin-android-permissions
 cordova-plugin=cordova-plugin-media
 cordova-plugin=cordova.plugins.diagnostic
-cordova-plugin=https://github.com/swayangjit/cordova-plugin-buildconfig-reader.git#release-2.6.5
+cordova-plugin=https://github.com/Sunbird-Ed/sb-cordova-plugin-utility#release-2.8.0
 cordova-plugin=https://github.com/swayangjit/cordova-plugin-android-downloadmanager.git
-cordova-plugin=https://github.com/swayangjit/sb-cordova-plugin-db.git
+cordova-plugin=https://github.com/Sunbird-Ed/sb-cordova-plugin-db.git
 cordova-plugin=cordova-android-support-gradle-release --variable ANDROID_SUPPORT_VERSION=28.0.0
 cordova-plugin=https://github.com/Sunbird-Ed/sb-cordova-plugin-customtabs.git --variable URL_SCHEME=@string/custom_scheme_url --variable URL_HOST=mobile
 sunbird-cordova-plugin=https://github.com/project-sunbird/cordova-plugin-openrap.git
