@@ -53,8 +53,7 @@ export class ContentShareHandlerService {
         InteractSubtype.SHARE_LIBRARY_SUCCESS,
         content.contentData.contentType, corRelationList, rollup);
       let shareLink = content.contentData.name + ' on ' + this.appName + ' ' + this.getContentUtm(shareParams.link, content);
-      const pkg = await this.getPackageNameWithUTM(true);
-      shareLink = shareLink + '\n\n' + pkg;
+      shareLink = shareLink + '\n\n' + await this.getPackageNameWithUTM(true);
       this.social.share(null, null, null, shareLink);
     } else if (shareParams && shareParams.saveFile) {
       exportContentRequest = {
@@ -89,7 +88,7 @@ export class ContentShareHandlerService {
 
   async getPackageNameWithUTM(utm: boolean): Promise<string> {
       const pkg = await this.appVersion.getPackageName();
-      if (utm){
+      if (utm) {
         const utmParams = `&referrer=utm_source%3D${this.deviceInfo.getDeviceID()}%26utm_campaign%3Dshare_app`;
         const shareUTMUrl = `https://play.google.com/store/apps/details?id=${pkg}${utmParams}`;
         return shareUTMUrl;
