@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { DeviceSpecification } from 'sunbird-sdk';
 
-declare const buildconfigreader;
+declare const sbutility;
 
 @Injectable()
 
@@ -9,7 +9,7 @@ export class UtilityService {
     getBuildConfigValue(property): Promise<string> {
         return new Promise<string>((resolve, reject) => {
             try {
-                buildconfigreader.getBuildConfigValue('org.sunbird.app', property, (entry: string) => {
+                sbutility.getBuildConfigValue('org.sunbird.app', property, (entry: string) => {
                     resolve(entry);
                 }, err => {
                     console.error(err);
@@ -24,7 +24,7 @@ export class UtilityService {
     rm(directoryPath, directoryToBeSkipped): Promise<string> {
         return new Promise<string>((resolve, reject) => {
             try {
-                buildconfigreader.rm(directoryPath, directoryToBeSkipped, (entry: string) => {
+                sbutility.rm(directoryPath, directoryToBeSkipped, (entry: string) => {
                     resolve(entry);
                 }, err => {
                     console.error(err);
@@ -39,7 +39,7 @@ export class UtilityService {
     openPlayStore(appId): Promise<string> {
         return new Promise<string>((resolve, reject) => {
             try {
-                buildconfigreader.openPlayStore(appId, (entry: string) => {
+                sbutility.openPlayStore(appId, (entry: string) => {
                     resolve(entry);
                 }, err => {
                     console.error(err);
@@ -54,7 +54,7 @@ export class UtilityService {
     getDeviceAPILevel(): Promise<string> {
         return new Promise<string>((resolve, reject) => {
             try {
-                buildconfigreader.getDeviceAPILevel((entry: string) => {
+                sbutility.getDeviceAPILevel((entry: string) => {
                     resolve(entry);
                 }, err => {
                     console.error(err);
@@ -69,7 +69,7 @@ export class UtilityService {
     checkAppAvailability(packageName): Promise<string> {
         return new Promise<string>((resolve, reject) => {
             try {
-                buildconfigreader.checkAppAvailability(packageName, (entry: string) => {
+                sbutility.checkAppAvailability(packageName, (entry: string) => {
                     resolve(entry);
                 }, err => {
                     console.error(err);
@@ -84,7 +84,7 @@ export class UtilityService {
     getDownloadDirectoryPath(): Promise<string> {
         return new Promise<string>((resolve, reject) => {
             try {
-                buildconfigreader.getDownloadDirectoryPath((entry: string) => {
+                sbutility.getDownloadDirectoryPath((entry: string) => {
                     resolve(entry);
                 }, err => {
                     console.error(err);
@@ -99,7 +99,7 @@ export class UtilityService {
     exportApk(): Promise<string> {
         return new Promise<string>((resolve, reject) => {
             try {
-                buildconfigreader.exportApk((entry: string) => {
+                sbutility.exportApk((entry: string) => {
                     resolve(entry);
                 }, err => {
                     console.error(err);
@@ -115,7 +115,7 @@ export class UtilityService {
     getDeviceSpec(): Promise<DeviceSpecification> {
         return new Promise<DeviceSpecification>((resolve, reject) => {
             try {
-                buildconfigreader.getDeviceSpec((deviceSpec: DeviceSpecification) => {
+                sbutility.getDeviceSpec((deviceSpec: DeviceSpecification) => {
                     resolve(deviceSpec);
                 }, err => {
                     console.error(err);
@@ -131,7 +131,7 @@ export class UtilityService {
     getUtmInfo(): Promise<any> {
         return new Promise<any>((resolve, reject) => {
             try {
-                buildconfigreader.getUtmInfo((utmInfo: any) => {
+                sbutility.getUtmInfo((utmInfo: any) => {
                     console.log('utm parameter', utmInfo);
                     resolve(utmInfo);
                 }, err => {
@@ -146,7 +146,7 @@ export class UtilityService {
     clearUtmInfo(): Promise<any> {
         return new Promise<any>((resolve, reject) => {
             try {
-                buildconfigreader.clearUtmInfo(() => {
+                sbutility.clearUtmInfo(() => {
                     console.log('utm paramter clear');
                     resolve();
                 }, err => {
@@ -162,7 +162,7 @@ export class UtilityService {
     readFileFromAssets(fileName: string): Promise<string> {
         return new Promise<string>((resolve, reject) => {
             try {
-                buildconfigreader.readFromAssets(fileName, (entry: string) => {
+                sbutility.readFromAssets(fileName, (entry: string) => {
                     resolve(entry);
                 }, err => {
                     reject(err);

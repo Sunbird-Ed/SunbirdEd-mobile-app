@@ -264,7 +264,7 @@ export const sunbirdSdkFactory =
     return async () => {
       const buildConfigValues = JSON.parse(await new Promise<string>((resolve, reject) => {
         document.addEventListener('deviceready', () => {
-          buildconfigreader.getBuildConfigValues('org.sunbird.app', (v) => {
+          sbutility.getBuildConfigValues('org.sunbird.app', (v) => {
             resolve(v);
           }, (err) => {
             reject(err);
@@ -392,7 +392,7 @@ export const sunbirdSdkFactory =
   };
 
 
-declare const buildconfigreader;
+declare const sbutility;
 @NgModule({
   declarations: [AppComponent],
   entryComponents: [PageFilterPage, PageFilterOptionsPage],
