@@ -15,7 +15,8 @@ describe('UtilityService', () => {
             getUtmInfo: jest.fn(() => { }),
             clearUtmInfo: jest.fn(() => { }),
             readFromAssets: jest.fn(() => { }),
-            rm: jest.fn(() => { })
+            rm: jest.fn(() => { }),
+            getApkSize: jest.fn(() => { })
         };
         utilityService = new UtilityService();
     });
@@ -601,6 +602,58 @@ describe('UtilityService', () => {
                 // assert
                 expect(window['buildconfigreader']['rm']).
                 toHaveBeenCalledWith('SOME_DIRPATH', 'SOME_DIRTOSKIP', expect.any(Function), expect.any(Function));
+                done();
+            });
+        });
+    });
+
+    describe('getApkSize()', () => {
+        it('should delegate to getApkSize', (done) => {
+            // arrange
+            (window['buildconfigreader']['getApkSize'] as jest.Mock).
+            mockImplementation(( successCallback, errorCallback) => {
+                setTimeout(() => {
+                    successCallback();
+                });
+            });
+
+            // act
+            utilityService.getApkSize().then(() => {
+                // assert
+                expect(window['buildconfigreader']['getApkSize']).
+                toHaveBeenCalledWith(expect.any(Function), expect.any(Function));
+                done();
+            });
+        });
+
+        it('should reject if getApkSize string for corresponding entryString was not found', (done) => {
+            // arrange
+            (window['buildconfigreader']['getApkSize'] as jest.Mock).
+            mockImplementation((successCallback, errorCallback) => {
+                setTimeout(() => {
+                    errorCallback();
+                });
+            });
+
+            // act
+            utilityService.getApkSize().catch(() => {
+                // assert
+                expect(window['buildconfigreader']['getApkSize']).toReturnWith(undefined);
+                done();
+            });
+        });
+
+        it('should reject getApkSize string for corresponding EntryString', (done) => {
+            // arrange
+            (window['buildconfigreader']['getApkSize'] as jest.Mock).
+            mockImplementation((successCallback, errorCallback) => {
+                throw Error;
+            });
+            // act
+            utilityService.getApkSize().catch(() => {
+                // assert
+                expect(window['buildconfigreader']['getApkSize']).
+                toHaveBeenCalledWith(expect.any(Function), expect.any(Function));
                 done();
             });
         });
