@@ -52,7 +52,7 @@ export class SbAppSharePopupComponent implements OnInit, OnDestroy {
     });
     this.shareType = this.shareOptions.link.value;
     const packageName = await this.appVersion.getPackageName();
-    const utmParams = `&referrer=utm_source%3D${this.deviceInfo.getDeviceID()}%26utm_campaign%3Dshareapp`;
+    const utmParams = `&referrer=utm_source%3D${this.deviceInfo.getDeviceID()}%26utm_campaign%3Dshare_app`;
     this.shareUrl = `https://play.google.com/store/apps/details?id=${packageName}${utmParams}`;
     this.utilityService.getApkSize().then(async (fileSize) => {
       this.fileSize = Number(fileSize);
@@ -68,8 +68,10 @@ export class SbAppSharePopupComponent implements OnInit, OnDestroy {
     this.popoverCtrl.dismiss();
   }
 
-  shareLink() {
-    this.social.share(null, null, null, this.shareUrl);
+  async shareLink() {
+    const appName = await this.appVersion.getAppName();
+    const url = '\n' + `Get ${appName} from the Play Store:` + '\n' + this.shareUrl;
+    this.social.share(null, null, null, url);
     this.popoverCtrl.dismiss();
   }
 

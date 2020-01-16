@@ -27,7 +27,8 @@ describe('SbAppSharePopupComponent', () => {
         getApkSize: jest.fn(() => Promise.resolve('12345'))
     };
     const mockAppversion: Partial<AppVersion> = {
-        getPackageName: jest.fn(() => Promise.resolve('org.sunbird.app'))
+        getPackageName: jest.fn(() => Promise.resolve('org.sunbird.app')),
+        getAppName: jest.fn(() => Promise.resolve('Sunbird'))
     };
     const dismissFn = jest.fn(() => Promise.resolve());
     const presentFn = jest.fn(() => Promise.resolve());
@@ -132,7 +133,7 @@ describe('SbAppSharePopupComponent', () => {
         expect(unsubscribeFn).toHaveBeenCalled();
         setTimeout(() => {
             expect(sbAppSharePopupComponent.shareUrl).toEqual(
-                'https://play.google.com/store/apps/details?id=org.sunbird.app&referrer=utm_source%3D0123456789%26utm_campaign%3Dshareapp');
+            'https://play.google.com/store/apps/details?id=org.sunbird.app&referrer=utm_source%3D0123456789%26utm_campaign%3Dshare_app');
             done();
         }, 0);
     });
@@ -158,13 +159,19 @@ describe('SbAppSharePopupComponent', () => {
         expect(mockPopoverCtrl.dismiss).toHaveBeenCalled();
     });
 
-    it('should call sharecontent on shareLink', () => {
+    it('should call sharecontent on shareLink', (done) => {
         // arrange
         mockPopoverCtrl.dismiss = jest.fn();
+        sbAppSharePopupComponent.shareUrl = 'sample_url';
         // act
         sbAppSharePopupComponent.shareLink();
         // assert
-        expect(mockPopoverCtrl.dismiss).toHaveBeenCalled();
+        setTimeout(() => {
+            const url = '\n' + `Get Sunbird from the Play Store:` + '\n' + 'sample_url';
+            expect(mocksocialSharing.share).toHaveBeenCalledWith(null, null, null, url);
+            expect(mockPopoverCtrl.dismiss).toHaveBeenCalled();
+            done();
+        }, 0);
     });
 
     it('should call sharecontent on shareFile', () => {
