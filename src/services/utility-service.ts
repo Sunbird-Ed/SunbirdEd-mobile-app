@@ -172,4 +172,18 @@ export class UtilityService {
             }
         });
     }
+
+    getApkSize(): Promise<string> {
+        return new Promise<string>((resolve, reject) => {
+            try {
+                buildconfigreader.getApkSize((entry: string) => {
+                    resolve(entry);
+                }, err => {
+                    reject(err);
+                });
+            } catch (xc) {
+                reject(xc);
+            }
+        });
+    }
 }
