@@ -37,7 +37,7 @@
 					<div>
 						<div>
 							<div class="sb-dt-card-actions">
-								<div class="wrapper sb-btn-tile-group" *ngIf="course?.progress !==100 && isAlreadyEnrolled">
+								<div class="wrapper sb-btn-tile-group" *ngIf="course?.progress !==100">
 									<div>
 										<button *ngIf="downloadIdentifiers.size" [disabled]="isDownloadStarted"
 											(click)="showDownloadConfirmationAlert()" slot="icon-only"
