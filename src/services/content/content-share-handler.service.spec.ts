@@ -15,7 +15,8 @@ describe('ContentShareHandlerService', () => {
     };
     const mockCommonUtilService: Partial<CommonUtilService> = {
         showToast: jest.fn(),
-        getAppName: jest.fn(() => Promise.resolve('resolved'))
+        getAppName: jest.fn(() => Promise.resolve('resolved')),
+        translateMessage: jest.fn(() => 'Try this: ')
     };
     const mockSocialSharing: Partial<SocialSharing> = {
         share: jest.fn()

@@ -53,7 +53,7 @@ export class ContentShareHandlerService {
         InteractSubtype.SHARE_LIBRARY_SUCCESS,
         content.contentData.contentType, corRelationList, rollup);
       let shareLink = content.contentData.name + ' on ' + this.appName + ' ' + this.getContentUtm(shareParams.link, content);
-      shareLink = shareLink + '\n\n' + await this.getPackageNameWithUTM(true);
+      shareLink = shareLink + `\n\n${this.commonUtilService.translateMessage('TRY_CONTENT_ON')}` + await this.getPackageNameWithUTM(true);
       this.social.share(null, null, null, shareLink);
     } else if (shareParams && shareParams.saveFile) {
       exportContentRequest = {
