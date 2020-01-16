@@ -17,7 +17,8 @@ import {
   CategoryTerm,
   UpdateServerProfileInfoRequest,
   ServerProfileDetailsRequest,
-  CachedItemRequestSourceFrom
+  CachedItemRequestSourceFrom,
+  Channel
 } from 'sunbird-sdk';
 import { CommonUtilService } from '@app/services/common-util.service';
 import { AppGlobalService } from '@app/services/app-global-service.service';
@@ -522,46 +523,35 @@ export class CategoriesEditPage {
     }
   }
 
-  getLoggedInFrameworkCategory() {
-    return new Promise(async (resolve, reject) => {
-      try {
-        const activeChannelId = await this.frameworkService.getActiveChannelId().toPromise();
-        const channelDetails = await this.frameworkService.getChannelDetails({ channelId: activeChannelId }).toPromise();
-        const frameworkData = await this.frameworkService.getFrameworkDetails({ frameworkId: channelDetails.defaultFramework, requiredCategories: [] }).toPromise();
-        if (frameworkData && frameworkData.categories && frameworkData.categories.length) {
-          this.loopFrameworkCategories(frameworkData.categories, channelDetails, channelDetails.defaultFramework);
-        }
-        resolve();
-      } catch (err) {
-        if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
-          this.commonUtilService.showToast(this.commonUtilService.translateMessage('NEED_INTERNET_TO_CHANGE'));
-        }
-        console.error('getFrameWorkCategoryOrder', err);
-        reject();
+  async getLoggedInFrameworkCategory() {
+    try {
+      const activeChannelDetails: Channel = await this.frameworkService.getChannelDetails({ channelId: this.frameworkService.activeChannelId }).toPromise()
+      const defaultFrameworkDetails: Framework = await this.frameworkService.getFrameworkDetails({
+        frameworkId: activeChannelDetails.defaultFramework, requiredCategories: []
+      }).toPromise();
+      const activeChannelSuggestedFrameworkList: Framework[] = await this.frameworkUtilService.getActiveChannelSuggestedFrameworkList({
+        language: '',
+        requiredCategories: []
+      }).toPromise();
+
+      const boardCategory = defaultFrameworkDetails.categories.find((c) => c.code === 'board');
+      const mediumCategory = defaultFrameworkDetails.categories.find((c) => c.code === 'medium');
+
+      if (boardCategory) {
+        this.syllabusList = activeChannelSuggestedFrameworkList.map(f => ({ name: f.name, code: f.code }));
+        this.isBoardAvailable = true;
+        this.resetForm(0);
+      } else {
+        this.categories.unshift([]);
+        this.isBoardAvailable = false;
+        this.mediumList = mediumCategory.terms;
+        this.resetForm(2);
       }
-    });
-  }
-
-  loopFrameworkCategories(categories, channelDetails, frameworkId) {
-    this.frameworkId = frameworkId;
-    const frameworkCategoryData: any = {};
-    for (const category of categories) {
-      frameworkCategoryData[String(category.code)] = category;
-    }
-    this.categories = categories;
-    if (frameworkCategoryData['board']) {
-      channelDetails.frameworks.forEach(element => {
-        const value = { name: element.name, code: element.identifier };
-        this.syllabusList.push(value);
-      });
-      this.isBoardAvailable = true;
-      this.resetForm(0);
-    } else {
-      this.categories.unshift([]);
-      this.isBoardAvailable = false;
-      this.mediumList = frameworkCategoryData.medium.terms;
-      this.resetForm(2);
+    } catch (err) {
+      if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
+        this.commonUtilService.showToast(this.commonUtilService.translateMessage('NEED_INTERNET_TO_CHANGE'));
+      }
+      console.error('getFrameWorkCategoryOrder', err);
     }
   }
-
 }
