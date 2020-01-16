@@ -10,7 +10,9 @@ describe('ContentShareHandlerService', () => {
     const mockStorageService: Partial<StorageService> = {
         getStorageDestinationDirectoryPath: jest.fn(() => 'dirpath')
     };
-    const mockDeviceInfo: Partial<DeviceInfo> = {};
+    const mockDeviceInfo: Partial<DeviceInfo> = {
+        getDeviceID: jest.fn(() => 'device_id')
+    };
     const mockCommonUtilService: Partial<CommonUtilService> = {
         showToast: jest.fn(),
         getAppName: jest.fn(() => Promise.resolve('resolved'))
@@ -84,7 +86,7 @@ describe('ContentShareHandlerService', () => {
         }, 100);
     });
 
-    it('should share link', () => {
+    it('should share link', (done) => {
         // arrange
         contentShareHandlerService.exportContent = jest.fn();
         contentShareHandlerService.generateShareInteractEvents = jest.fn();
@@ -103,8 +105,10 @@ describe('ContentShareHandlerService', () => {
         // act
         contentShareHandlerService.shareContent(shareParams, content as Content);
         // assert
-        
-        expect(mockSocialSharing.share).toHaveBeenCalled();
+        setTimeout(() => {
+            expect(mockSocialSharing.share).toHaveBeenCalled();
+            done();
+        }, 0);
     });
 
 

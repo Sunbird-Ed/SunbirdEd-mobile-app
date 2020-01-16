@@ -37,7 +37,6 @@ export class ContentShareHandlerService {
     private utilityService: UtilityService,
     private appVersion: AppVersion) {
       this.commonUtilService.getAppName().then((res) => { this.appName = res; });
-      this.getPackageNameWithUTM();
   }
 
   public async shareContent(shareParams: any, content: Content, corRelationList?: CorrelationData[], rollup?: Rollup) {
@@ -53,8 +52,9 @@ export class ContentShareHandlerService {
       this.generateShareInteractEvents(InteractType.OTHER,
         InteractSubtype.SHARE_LIBRARY_SUCCESS,
         content.contentData.contentType, corRelationList, rollup);
-      let shareLink = content.contentData.name + ' on ' + this.appName + ' ' + shareParams.link;
-      shareLink = shareLink + '\n\n' + this.shareUTMUrl
+      let shareLink = content.contentData.name + ' on ' + this.appName + ' ' + this.getContentUtm(shareParams.link, content);
+      const pkg = await this.getPackageNameWithUTM(true);
+      shareLink = shareLink + '\n\n' + pkg;
       this.social.share(null, null, null, shareLink);
     } else if (shareParams && shareParams.saveFile) {
       exportContentRequest = {
@@ -87,14 +87,20 @@ export class ContentShareHandlerService {
         });
   }
 
-  getPackageNameWithUTM() {
-    this.appVersion.getPackageName().then((pkg: any) => {
-      this.shareUrl = `https://play.google.com/store/apps/details?id=${pkg}&hl=en_IN`;
-      const utmParams = `&referrer=utm_source%3D${this.deviceInfo.getDeviceID()}%26utm_campaign%3Dshareapp`;
-      this.shareUTMUrl = `https://play.google.com/store/apps/details?id=${pkg}${utmParams}`;
-    }).catch((err) => {
-      console.log('Error: ', err);
-    });
+  async getPackageNameWithUTM(utm: boolean): Promise<string> {
+      const pkg = await this.appVersion.getPackageName();
+      if (utm){
+        const utmParams = `&referrer=utm_source%3D${this.deviceInfo.getDeviceID()}%26utm_campaign%3Dshare_app`;
+        const shareUTMUrl = `https://play.google.com/store/apps/details?id=${pkg}${utmParams}`;
+        return shareUTMUrl;
+      } else {
+        return `https://play.google.com/store/apps/details?id=${pkg}&hl=en_IN`;
+      }
+  }
+
+  getContentUtm(contentLink: string, content: Content): string {
+    const contentUTM: string = `referrer=utm_source%3D${this.appName.toLocaleLowerCase()}_mobile%26utm_content%3D${content.identifier}%26utm_campaign%3Dshare_content`;
+    return contentLink + '?' + contentUTM;
   }
 
   generateShareInteractEvents(interactType, subType, contentType, corRelationList, rollup) {
