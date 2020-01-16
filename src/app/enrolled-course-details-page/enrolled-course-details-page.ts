@@ -199,7 +199,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
   lastReadContentName: string;
   lastReadContentType: string;
   enrollmentEndDate: string;
-  loader: any;
+  loader?: HTMLIonLoadingElement;
   isQrCodeLinkToContent: any;
   leaveTrainigPopover: any;
   showOfflineSection = false;
@@ -313,6 +313,13 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
         this.batchId = res.batchId;
         if (this.identifier && res.courseId && this.identifier === res.courseId) {
           this.isAlreadyEnrolled = true;
+          this.zone.run(() => {
+            this.getContentsSize(this.childrenData);
+            if (this.loader) {
+              this.loader.dismiss();
+              this.loader = undefined;
+            }
+          });
         }
       }
     });
@@ -1698,8 +1705,10 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
       this.promptToLogin(item);
     } else {
       const enrollCourseRequest = this.localCourseService.prepareEnrollCourseRequest(this.userId, item);
-      const loader = await this.commonUtilService.getLoader();
-      await loader.present();
+      this.loader = await this.commonUtilService.getLoader();
+      if (this.loader) {
+        this.loader.present();
+      }
       this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
         InteractSubtype.ENROLL_CLICKED,
         Environment.HOME,
@@ -1719,7 +1728,6 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
       this.localCourseService.enrollIntoBatch(enrollCourse).toPromise()
         .then((data: boolean) => {
           this.zone.run(async () => {
-            await loader.dismiss();
             this.courseCardData.batchId = item.id;
             this.commonUtilService.showToast(this.commonUtilService.translateMessage('COURSE_ENROLLED'));
             this.events.publish(EventTopics.ENROL_COURSE_SUCCESS, {
@@ -1730,7 +1738,10 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
           });
         }, (error) => {
           this.zone.run(async () => {
-            await loader.dismiss();
+           if (this.loader) {
+             this.loader.dismiss();
+             this.loader = undefined;
+           }
           });
         });
     }
