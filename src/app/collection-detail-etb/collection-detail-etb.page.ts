@@ -551,6 +551,12 @@ export class CollectionDetailEtbPage implements OnInit {
 
   showLicensce() {
     this.showCredits = !this.showCredits;
+
+    if (this.showCredits) {
+      this.licenseSectionClicked('expanded');
+    } else {
+      this.licenseSectionClicked('collapsed');
+    }
   }
 
   async showCommingSoonPopup(childData: any) {

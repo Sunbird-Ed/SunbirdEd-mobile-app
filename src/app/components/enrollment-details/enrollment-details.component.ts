@@ -74,7 +74,7 @@ export class EnrollmentDetailsComponent {
             this.events.publish('course:resume', { content });
             this.close();
         } else {
-            this.close(() => {
+            this.close().then(() => {
                 this.router.navigate([`/${RouterLinks.ENROLLED_COURSE_DETAILS}`], { state: { content } });
             });
         }

@@ -253,7 +253,6 @@
   "FOLLOW": "Follow",
   "FREE_SPACE": "Free Space :",
   "FROM": "From",
-  "FOR_DETAILS": "For details",
   "FULL_NAME": "Name",
   "GOT_IT": "Got it",
   "GRADE_OPTION_TEXT": "Select Class",
@@ -652,5 +651,6 @@
   "DOWNLOAD_FILE_SIZE": "File Size {{%s}}",
   "UPDATE_REQUIRED": "Update Required",
   "DOWNLOAD_NOW": "Download Now",
-  "WEBVIEW_UPDATE_TEXT": "For an effective experience, download the latest version of webview from Google Play store."
+  "WEBVIEW_UPDATE_TEXT": "For an effective experience, download the latest version of webview from Google Play store.",
+  "INVALID_FORMAT": "Invalid format"
 }
