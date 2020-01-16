@@ -5,15 +5,14 @@ import { Events, Platform, IonRouterOutlet, MenuController } from '@ionic/angula
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable, combineLatest } from 'rxjs';
-import { mergeMap, filter, tap} from 'rxjs/operators';
+import { mergeMap, filter, tap } from 'rxjs/operators';
 import { Network } from '@ionic-native/network/ngx';
-
 import {
   ErrorEventType, EventNamespace, EventsBusService, SharedPreferences,
-  SunbirdSdk, TelemetryAutoSyncService, TelemetryService, NotificationService, GetSystemSettingsRequest, SystemSettings, SystemSettingsService,
+  SunbirdSdk, TelemetryAutoSyncService, TelemetryService, NotificationService,
+  GetSystemSettingsRequest, SystemSettings, SystemSettingsService,
   CodePushExperimentService, AuthEventType, CorrelationData, Profile, DeviceRegisterService
 } from 'sunbird-sdk';
-
 import {
   InteractType,
   InteractSubtype,
@@ -21,7 +20,7 @@ import {
   ImpressionType,
   CorReleationDataType
 } from 'services/telemetry-constants';
-import { PreferenceKey, EventTopics, SystemSettingsIds } from './app.constant';
+import { PreferenceKey, EventTopics, SystemSettingsIds, GenericAppConfig } from './app.constant';
 import { ActivePageService } from '@app/services/active-page/active-page-service';
 import {
   AppGlobalService,
@@ -101,9 +100,9 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.networkAvailability.init();
       this.fcmTokenWatcher(); // Notification related
       this.getSystemConfig();
-      this.utilityService.getBuildConfigValue('VERSION_NAME')
-        .then(response => {
-          this.appVersion = response;
+      this.utilityService.getBuildConfigValue(GenericAppConfig.VERSION_NAME)
+        .then(versionName => {
+          this.appVersion = versionName;
         });
       this.checkForExperiment();
       this.receiveNotification();
@@ -139,28 +138,28 @@ export class AppComponent implements OnInit, AfterViewInit {
   checkAndroidWebViewVersion() {
     var that = this;
     plugins['webViewChecker'].getCurrentWebViewPackageInfo()
-    .then(function(packageInfo) {
-      that.formAndFrameworkUtilService.getWebviewConfig().then(function(webviewVersion) {
-        if (parseInt(packageInfo.versionName.split('.')[0], 10) <= webviewVersion) {
-          document.getElementById('update-webview-container').style.display = 'block';
-          this.telemetryGeneratorService.generateImpressionTelemetry(
-            ImpressionType.VIEW, '',
-            PageId.UPDATE_WEBVIEW_POPUP,
-            Environment.HOME);
-        }
-      }).catch(function(err) {
-        if (parseInt(packageInfo.versionName.split('.')[0], 10) <= 54) {
-          document.getElementById('update-webview-container').style.display = 'block';
-        }
-      });
-    })
-    .catch(function(error) { });
+      .then(function (packageInfo) {
+        that.formAndFrameworkUtilService.getWebviewConfig().then(function (webviewVersion) {
+          if (parseInt(packageInfo.versionName.split('.')[0], 10) <= webviewVersion) {
+            document.getElementById('update-webview-container').style.display = 'block';
+            this.telemetryGeneratorService.generateImpressionTelemetry(
+              ImpressionType.VIEW, '',
+              PageId.UPDATE_WEBVIEW_POPUP,
+              Environment.HOME);
+          }
+        }).catch(function (err) {
+          if (parseInt(packageInfo.versionName.split('.')[0], 10) <= 54) {
+            document.getElementById('update-webview-container').style.display = 'block';
+          }
+        });
+      })
+      .catch(function (error) { });
   }
 
   openPlaystore() {
     plugins['webViewChecker'].openGooglePlayPage()
-    .then(function() { })
-    .catch(function(error) { });
+      .then(function () { })
+      .catch(function (error) { });
 
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,
@@ -432,13 +431,13 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.showWalkthroughBackDrop = data.showWalkthroughBackDrop;
       setTimeout(() => {
         const backdropClipCenter = document.getElementById('qrScannerIcon').getBoundingClientRect().left +
-        ((document.getElementById('qrScannerIcon').getBoundingClientRect().width) / 2);
+          ((document.getElementById('qrScannerIcon').getBoundingClientRect().width) / 2);
 
         (document.getElementById('backdrop').getElementsByClassName('bg')[0] as HTMLDivElement).setAttribute(
           'style',
           `background-image: radial-gradient(circle at ${backdropClipCenter}px 56px, rgba(0, 0, 0, 0) 30px, rgba(0, 0, 0, 0.9) 30px);`
         );
-        }, 2000);
+      }, 2000);
       this.appName = data.appName;
     });
     this.events.subscribe('tab.change', (data) => {
@@ -580,12 +579,12 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   private autoSyncTelemetry() {
     this.telemetryAutoSync.start(30 * 1000).pipe(
-        mergeMap(() => {
-          return combineLatest([
-            this.platform.pause.pipe(tap(() => this.telemetryAutoSync.pause())),
-            this.platform.resume.pipe(tap(() => this.telemetryAutoSync.continue()))
-          ]);
-        })
+      mergeMap(() => {
+        return combineLatest([
+          this.platform.pause.pipe(tap(() => this.telemetryAutoSync.pause())),
+          this.platform.resume.pipe(tap(() => this.telemetryAutoSync.continue()))
+        ]);
+      })
     ).subscribe();
   }
 
@@ -702,25 +701,25 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.eventsBusService.events(EventNamespace.AUTH).pipe(
       filter((e) => e.type === AuthEventType.AUTO_MIGRATE_SUCCESS || e.type === AuthEventType.AUTO_MIGRATE_FAIL),
     ).subscribe((e) => {
-        switch (e.type) {
-          case AuthEventType.AUTO_MIGRATE_SUCCESS: {
-            this.commonUtilService.showToast('AUTO_MIGRATION_SUCCESS_MESSAGE');
-            break;
-          }
-          case AuthEventType.AUTO_MIGRATE_FAIL: {
-            this.commonUtilService.showToast('AUTO_MIGRATION_FAIL_MESSAGE');
-            break;
-          }
+      switch (e.type) {
+        case AuthEventType.AUTO_MIGRATE_SUCCESS: {
+          this.commonUtilService.showToast('AUTO_MIGRATION_SUCCESS_MESSAGE');
+          break;
         }
-      });
+        case AuthEventType.AUTO_MIGRATE_FAIL: {
+          this.commonUtilService.showToast('AUTO_MIGRATION_FAIL_MESSAGE');
+          break;
+        }
+      }
+    });
   }
 
   private handleAuthErrors() {
     this.eventsBusService.events(EventNamespace.ERROR).pipe(
       filter((e) => e.type === ErrorEventType.AUTH_TOKEN_REFRESH_ERROR),
     ).subscribe(() => {
-        this.logoutHandlerService.onLogout();
-      });
+      this.logoutHandlerService.onLogout();
+    });
   }
 
   getUtmParameter() {
