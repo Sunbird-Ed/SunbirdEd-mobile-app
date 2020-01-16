@@ -1,7 +1,7 @@
 import { Injectable, Inject } from '@angular/core';
 import {
   ContentService, StorageService, ContentExportRequest, ContentExportResponse,
-  Content, Rollup, CorrelationData, ContentDetailRequest, TelemetryObject,
+  Content, Rollup, CorrelationData, ContentDetailRequest, TelemetryObject, DeviceInfo,
 } from 'sunbird-sdk';
 import { CommonUtilService } from '../common-util.service';
 import { InteractSubtype, InteractType, Environment, PageId } from '../telemetry-constants';
@@ -10,6 +10,7 @@ import { TelemetryGeneratorService } from '../telemetry-generator.service';
 import { ShareUrl, ContentType } from '../../app/app.constant';
 import { UtilityService } from '../utility-service';
 import { ContentUtil } from '@app/util/content-util';
+import { AppVersion } from '@ionic-native/app-version/ngx';
 
 @Injectable({
   providedIn: 'root'
@@ -17,6 +18,9 @@ import { ContentUtil } from '@app/util/content-util';
 
 export class ContentShareHandlerService {
   public telemetryObject: TelemetryObject;
+  appName: string;
+  shareUrl: string;
+  shareUTMUrl: string;
   // enum shareParams = {
   //   byLink: boolean | undefined,
   //   link: string | undefined,
@@ -26,11 +30,15 @@ export class ContentShareHandlerService {
   constructor(
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
     @Inject('STORAGE_SERVICE') private storageService: StorageService,
+    @Inject('DEVICE_INFO') private deviceInfo: DeviceInfo,
     private commonUtilService: CommonUtilService,
     private social: SocialSharing,
     private telemetryGeneratorService: TelemetryGeneratorService,
-    private utilityService: UtilityService) {
+    private utilityService: UtilityService,
+    private appVersion: AppVersion) {
+      this.commonUtilService.getAppName().then((res) => { this.appName = res; });
   }
+
   public async shareContent(shareParams: any, content: Content, corRelationList?: CorrelationData[], rollup?: Rollup) {
     this.telemetryObject = ContentUtil.getTelemetryObject(content);
     let exportContentRequest: ContentExportRequest;
@@ -44,7 +52,9 @@ export class ContentShareHandlerService {
       this.generateShareInteractEvents(InteractType.OTHER,
         InteractSubtype.SHARE_LIBRARY_SUCCESS,
         content.contentData.contentType, corRelationList, rollup);
-      this.social.share(null, null, null, shareParams.link);
+      let shareLink = content.contentData.name + ' on ' + this.appName + ' ' + this.getContentUtm(shareParams.link, content);
+      shareLink = shareLink + `\n\n${this.commonUtilService.translateMessage('TRY_CONTENT_ON')}` + await this.getPackageNameWithUTM(true);
+      this.social.share(null, null, null, shareLink);
     } else if (shareParams && shareParams.saveFile) {
       exportContentRequest = {
         contentIds: [content.identifier],
@@ -74,6 +84,22 @@ export class ContentShareHandlerService {
           await loader.dismiss();
           this.commonUtilService.showToast('SHARE_CONTENT_FAILED');
         });
+  }
+
+  async getPackageNameWithUTM(utm: boolean): Promise<string> {
+      const pkg = await this.appVersion.getPackageName();
+      if (utm) {
+        const utmParams = `&referrer=utm_source%3D${this.deviceInfo.getDeviceID()}%26utm_campaign%3Dshare_app`;
+        const shareUTMUrl = `https://play.google.com/store/apps/details?id=${pkg}${utmParams}`;
+        return shareUTMUrl;
+      } else {
+        return `https://play.google.com/store/apps/details?id=${pkg}&hl=en_IN`;
+      }
+  }
+
+  getContentUtm(contentLink: string, content: Content): string {
+    const contentUTM: string = `referrer=utm_source%3D${this.appName.toLocaleLowerCase()}_mobile%26utm_content%3D${content.identifier}%26utm_campaign%3Dshare_content`;
+    return contentLink + '?' + contentUTM;
   }
 
   generateShareInteractEvents(interactType, subType, contentType, corRelationList, rollup) {
