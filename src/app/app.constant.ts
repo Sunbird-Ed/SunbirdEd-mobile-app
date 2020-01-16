@@ -250,16 +250,46 @@ export const appLanguages = [
         name: 'English'
     },
     {
+        label: 'অসমিয়া',
+        code: 'as',
+        isApplied: false,
+        name: 'Assamese'
+    },
+    {
+        label: 'বাংলা',
+        code: 'bn',
+        isApplied: false,
+        name: 'Bengali'
+    },
+    {
+        label: 'ગુજરાતી',
+        code: 'gu',
+        isApplied: false,
+        name: 'Gujarati'
+    },
+    {
+        label: 'ಕನ್ನಡ',
+        code: 'kn',
+        isApplied: false,
+        name: 'Kannada'
+    },
+    {
         label: 'मराठी',
         code: 'mr',
         isApplied: false,
         name: 'Marathi'
     },
     {
-        label: 'తెలుగు',
-        code: 'te',
+        label: 'ଓଡ଼ିଆ',
+        code: 'or',
         isApplied: false,
-        name: 'Telugu'
+        name: 'Oriya'
+    },
+    {
+        label: 'ਪੰਜਾਬੀ',
+        code: 'pa',
+        isApplied: false,
+        name: 'Punjabi'
     },
     {
         label: 'தமிழ்',
@@ -268,10 +298,10 @@ export const appLanguages = [
         name: 'Tamil'
     },
     {
-        label: 'ಕನ್ನಡ',
-        code: 'kn',
+        label: 'తెలుగు',
+        code: 'te',
         isApplied: false,
-        name: 'Kannada'
+        name: 'Telugu'
     },
     {
         label: 'اردو',

@@ -178,7 +178,6 @@ export enum InteractSubtype {
     SIGNUP_INITIATE = 'signup-initiate',
     LOGOUT_INITIATE = 'logout-initiate',
     LOGOUT_SUCCESS = 'logout-success',
-    BROWSE_AS_GUEST_CLICKED = 'browse-as-guest-clicked',
     CONTINUE_CLICKED = 'continue-clicked',
     GRANT_ACCESS_CLICKED = 'grant-access-clicked',
     APP_PERMISSION_SETTING_CLICKED = 'app-permission-setting-clicked',
