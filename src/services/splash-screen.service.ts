@@ -2,6 +2,8 @@ import { Injectable } from '@angular/core';
 import { SplashscreenImportActionHandlerDelegate } from './sunbird-splashscreen/splashscreen-import-action-handler-delegate';
 import { SplashcreenTelemetryActionHandlerDelegate } from './sunbird-splashscreen/splashcreen-telemetry-action-handler-delegate';
 import { SplaschreenDeeplinkActionHandlerDelegate } from './sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
+// import {PopoverController} from '@ionic/angular';
+// import {ImportPopoverComponent} from '@app/app/components/import-popover/import-popover.component';
 
 @Injectable()
 export class SplashScreenService {
@@ -10,6 +12,7 @@ export class SplashScreenService {
         private splashScreenImportActionHandlerDelegate: SplashscreenImportActionHandlerDelegate,
         private splashScreenTelemetryActionHandlerDelegate: SplashcreenTelemetryActionHandlerDelegate,
         private splashScreenDeeplinkActionHandlerDelegate: SplaschreenDeeplinkActionHandlerDelegate,
+        // private popoverCtrl: PopoverController
     ) {
 
     }
@@ -31,6 +34,23 @@ export class SplashScreenService {
                         break;
                     }
                     case 'IMPORT': {
+                        // const popover = await this.popoverCtrl.create({
+                        //     component: ImportPopoverComponent,
+                        //     componentProps: {},
+                        //     cssClass: 'sb-popover',
+                        // });
+                        // popover.present();
+                        //
+                        // await new Promise(async (resolve) => {
+                        //     const result = await popover.onDidDismiss();
+                        //
+                        //     if (result.data.isDeleteChecked) {
+                        //     } else {
+                        //     }
+                        //
+                        //     resolve();
+                        // });
+
                         await this.splashScreenImportActionHandlerDelegate.onAction(action.type, action.payload).toPromise();
                         break;
                     }
