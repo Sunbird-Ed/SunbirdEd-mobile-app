@@ -96,10 +96,10 @@ export class UtilityService {
             }
         });
     }
-    exportApk(): Promise<string> {
+    exportApk(destination): Promise<string> {
         return new Promise<string>((resolve, reject) => {
             try {
-                buildconfigreader.exportApk((entry: string) => {
+                buildconfigreader.exportApk(destination, (entry: string) => {
                     resolve(entry);
                 }, err => {
                     console.error(err);

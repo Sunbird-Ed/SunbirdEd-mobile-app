@@ -113,11 +113,11 @@ export class SettingsPage implements OnInit {
   }
 
   async shareApp() {
-    this.generateInteractTelemetry(InteractType.TOUCH, InteractSubtype.SHARE_APP_CLICKED);
-    this.generateInteractTelemetry(InteractType.TOUCH, InteractSubtype.SHARE_APP_INITIATED);
     const popover = await this.popoverCtrl.create({
       component: SbAppSharePopupComponent,
-      componentProps: {},
+      componentProps: {
+        pageId: PageId.SETTINGS
+      },
       cssClass: 'sb-popover',
     });
     popover.present();
