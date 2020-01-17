@@ -511,3 +511,8 @@ export class ShareMode {
     public static readonly SEND = 'send';
     public static readonly SAVE = 'save';
 }
+
+export class LaunchType {
+    public static readonly DEEPLINK = 'deeplink';
+    public static readonly SIDELOAD = 'sideload';
+}

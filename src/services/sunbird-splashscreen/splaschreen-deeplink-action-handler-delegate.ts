@@ -18,7 +18,7 @@ import {
 } from 'sunbird-sdk';
 
 import { SplashscreenActionHandlerDelegate } from './splashscreen-action-handler-delegate';
-import { ContentType, MimeType, ActionType, EventTopics, RouterLinks } from '../../app/app.constant';
+import { ContentType, MimeType, ActionType, EventTopics, RouterLinks, LaunchType } from '../../app/app.constant';
 import { AppGlobalService } from '../app-global-service.service';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { CommonUtilService } from '@app/services/common-util.service';
@@ -105,38 +105,41 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
               return of(undefined);
             }),
             tap(async (content: Content) => {
-            // await loader.dismiss();
-            if (content.contentType === ContentType.COURSE.toLowerCase()) {
-              this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], { state: { content } });
-            } else if (content.mimeType === MimeType.COLLECTION) {
-              this.router.navigate([RouterLinks.COLLECTION_DETAIL_ETB], { state: { content } });
-            } else {
-              if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
-                this.commonUtilService.showToast('NEED_INTERNET_FOR_DEEPLINK_CONTENT');
-                return false;
+              // await loader.dismiss();
+              if (isFromLink) {
+                this.telemetryGeneratorService.generateAppLaunchTelemetry(LaunchType.DEEPLINK);
               }
-              if (content.contentData && content.contentData.status === ContentFilterConfig.CONTENT_STATUS_UNLISTED) {
-                this.appGlobalServices.limitedShareQuizContent = action;
-                if (isFromLink) {
-                  this.limitedSharingContentLinkClickedTelemery();
+              if (content.contentType === ContentType.COURSE.toLowerCase()) {
+                this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], { state: { content } });
+              } else if (content.mimeType === MimeType.COLLECTION) {
+                this.router.navigate([RouterLinks.COLLECTION_DETAIL_ETB], { state: { content } });
+              } else {
+                if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
+                  this.commonUtilService.showToast('NEED_INTERNET_FOR_DEEPLINK_CONTENT');
+                  return false;
                 }
-                if (!this.appGlobalServices.isUserLoggedIn() && !this.appGlobalServices.isProfileSettingsCompleted) {
+                if (content.contentData && content.contentData.status === ContentFilterConfig.CONTENT_STATUS_UNLISTED) {
+                  this.appGlobalServices.limitedShareQuizContent = action;
+                  if (isFromLink) {
+                    this.limitedSharingContentLinkClickedTelemery();
+                  }
+                  if (!this.appGlobalServices.isUserLoggedIn() && !this.appGlobalServices.isProfileSettingsCompleted) {
+                    return;
+                  }
+                  if (!this.appGlobalServices.isSignInOnboardingCompleted && this.appGlobalServices.isUserLoggedIn()) {
+                    return;
+                  }
+                  if (this.router.url && this.router.url.indexOf(RouterLinks.CONTENT_DETAILS) !== -1) {
+                    this.events.publish(EventTopics.DEEPLINK_CONTENT_PAGE_OPEN, { content, autoPlayQuizContent: true });
+                    return;
+                  }
+                  this.router.navigate([RouterLinks.CONTENT_DETAILS], { state: { content, autoPlayQuizContent: true } });
                   return;
                 }
-                if (!this.appGlobalServices.isSignInOnboardingCompleted && this.appGlobalServices.isUserLoggedIn()) {
-                  return;
-                }
-                if (this.router.url && this.router.url.indexOf(RouterLinks.CONTENT_DETAILS) !== -1) {
-                  this.events.publish(EventTopics.DEEPLINK_CONTENT_PAGE_OPEN, { content, autoPlayQuizContent: true });
-                  return;
-                }
-                this.router.navigate([RouterLinks.CONTENT_DETAILS], { state: { content, autoPlayQuizContent: true } });
-                return;
+                this.router.navigate([RouterLinks.CONTENT_DETAILS], { state: { content } });
               }
-              this.router.navigate([RouterLinks.CONTENT_DETAILS], { state: { content } });
-            }
-          }),
-          mapTo(undefined) as any
+            }),
+            mapTo(undefined) as any
           );
         }
         case 'dial': {
