@@ -188,6 +188,18 @@ android {
         }
     }
 
+    task copyDirFaq(type: Copy,overwrite: true) {
+        if (System.properties['os.name'].toLowerCase().contains('windows')){
+            from "$rootDir\\app\\data\\faq"
+            into "$rootDir\\app\\src\\main\\assets\\www\\assets\\data\\faq"
+            println "inside copydir faq windows OS"
+        } else {
+            from "$rootDir/app/data/faq"
+            into "$rootDir/app/src/main/assets/www/assets/data/faq"
+            println "inside copydir faq linux OS"
+        }
+    }
+
     task copyDirDev(type: Copy,overwrite: true) {
         if (System.properties['os.name'].toLowerCase().contains('windows')){
             from "$rootDir\\app\\data\\dev"
@@ -225,13 +237,13 @@ android {
     }
 
     task dev(type: GradleBuild) {
-        tasks = ['myclean', 'copyDirDev', 'copyDirNotificationConfig']
+        tasks = ['myclean', 'copyDirDev', 'copyDirNotificationConfig', 'copyDirFaq']
     }      
     task staging(type: GradleBuild) {
-        tasks = ['myclean', 'copyDirStaging', 'copyDirNotificationConfig']
+        tasks = ['myclean', 'copyDirStaging', 'copyDirNotificationConfig', 'copyDirFaq']
     }
     task prod(type: GradleBuild) {
-        tasks = ['myclean', 'copyDirProd', 'copyDirNotificationConfig']
+        tasks = ['myclean', 'copyDirProd', 'copyDirNotificationConfig', 'copyDirFaq']
     }
 
     applicationVariants.all { variant ->
