@@ -396,7 +396,8 @@ export enum ID {
     IP_BASED_LOCATION_SUGGESTION = 'ip-based-location-suggestion',
     DEEPLINK_CLICKED = 'deeplink-clicked',
     SHARE = 'share-clicked',
-    SHARE_CONFIRM = 'share-confirm-clicked'
+    SHARE_CONFIRM = 'share-confirm-clicked',
+    APP_LAUNCH = 'app-launch'
 }
 
 export enum ActionButtonType {
