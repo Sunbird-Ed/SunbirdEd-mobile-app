@@ -10,8 +10,10 @@ import { Network } from '@ionic-native/network/ngx';
 
 import {
   ErrorEventType, EventNamespace, EventsBusService, SharedPreferences,
-  SunbirdSdk, TelemetryAutoSyncService, TelemetryService, NotificationService, GetSystemSettingsRequest, SystemSettings, SystemSettingsService,
-  CodePushExperimentService, AuthEventType, CorrelationData, Profile, DeviceRegisterService
+  SunbirdSdk, TelemetryAutoSyncService, TelemetryService, NotificationService,
+  GetSystemSettingsRequest, SystemSettings, SystemSettingsService,
+  CodePushExperimentService, AuthEventType, CorrelationData, Profile, DeviceRegisterService, ContentEventType,
+  ContentService, ContentImportCompleted, Content
 } from 'sunbird-sdk';
 
 import {
@@ -21,7 +23,7 @@ import {
   ImpressionType,
   CorReleationDataType
 } from 'services/telemetry-constants';
-import { PreferenceKey, EventTopics, SystemSettingsIds } from './app.constant';
+import {PreferenceKey, EventTopics, SystemSettingsIds, ContentType, MimeType} from './app.constant';
 import { ActivePageService } from '@app/services/active-page/active-page-service';
 import {
   AppGlobalService,
@@ -71,6 +73,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     @Inject('SYSTEM_SETTINGS_SERVICE') private systemSettingsService: SystemSettingsService,
     @Inject('CODEPUSH_EXPERIMENT_SERVICE') private codePushExperimentService: CodePushExperimentService,
     @Inject('DEVICE_REGISTER_SERVICE') private deviceRegisterService: DeviceRegisterService,
+    @Inject('CONTENT_SERVICE') private contentService: ContentService,
     private platform: Platform,
     private statusBar: StatusBar,
     private translate: TranslateService,
@@ -132,6 +135,8 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.getUtmParameter();
       this.checkForCodeUpdates();
       this.checkAndroidWebViewVersion();
+      this.onContentImportComplete();
+
     });
   }
 
@@ -780,5 +785,23 @@ export class AppComponent implements OnInit, AfterViewInit {
         }
       });
     }
+  }
+
+  private onContentImportComplete() {
+    this.eventsBusService.events(EventNamespace.CONTENT).pipe(
+        filter(e => e.type === ContentEventType.IMPORT_COMPLETED),
+        tap(async (e: ContentImportCompleted) => {
+          return this.contentService.getContentDetails({contentId: e.payload.contentId})
+              .toPromise().then(async (content: Content) => {
+                if (content.contentType === ContentType.COURSE.toLowerCase()) {
+                  await this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], { state: { content } });
+                } else if (content.mimeType === MimeType.COLLECTION) {
+                  await this.router.navigate([RouterLinks.COLLECTION_DETAIL_ETB], { state: { content } });
+                } else {
+                   await this.router.navigate([RouterLinks.CONTENT_DETAILS], {state: { content } });
+                }
+              });
+        })
+    ).subscribe();
   }
 }
