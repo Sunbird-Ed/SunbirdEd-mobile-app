@@ -39,7 +39,7 @@ import { Map } from '@app/app/telemetryutil';
 import { ConfirmAlertComponent } from '@app/app/components';
 import { AppGlobalService } from '@app/services/app-global-service.service';
 import { AppHeaderService } from '@app/services/app-header.service';
-import { ContentConstants, EventTopics, XwalkConstants, RouterLinks, ContentFilterConfig, PreferenceKey } from '@app/app/app.constant';
+import { ContentConstants, EventTopics, XwalkConstants, RouterLinks, ContentFilterConfig, ShareItemType } from '@app/app/app.constant';
 import { CourseUtilService } from '@app/services/course-util.service';
 import { UtilityService } from '@app/services/utility-service';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
@@ -1061,9 +1061,11 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
     const popover = await this.popoverCtrl.create({
       component: SbSharePopupComponent,
       componentProps: {
-        contentDetail: this.content,
+        content: this.content,
         corRelationList: this.corRelationList,
         objRollup: this.objRollup,
+        pageId: PageId.CONTENT_DETAIL,
+        shareItemType: this.isChildContent ? ShareItemType.LEAF_CONTENT :ShareItemType.ROOT_CONTENT
       },
       cssClass: 'sb-popover',
     });

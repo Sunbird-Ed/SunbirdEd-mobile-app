@@ -47,7 +47,6 @@ describe('ContentShareHandlerService', () => {
         mockCommonUtilService as CommonUtilService,
         mockSocialSharing as SocialSharing,
         mockTelemetryGeneratorService as TelemetryGeneratorService,
-        mockUtilityService as UtilityService,
         mockAppVersion as AppVersion
         );
     });
@@ -119,8 +118,12 @@ describe('ContentShareHandlerService', () => {
         const shareParams = {
             byFile: true
         };
-        const content: Partial<Content> = {
+        const content = {
             identifier: 'id',
+            contentData: {
+                contentType: 'contentType',
+                pkgVersion: '1'
+            } as ContentData,
             contentType: 'contentType',
         };
         // act
@@ -135,8 +138,12 @@ describe('ContentShareHandlerService', () => {
         const shareParams = {
             saveFile: true
         };
-        const content: Partial<Content> = {
+        const content = {
             identifier: 'id',
+            contentData: {
+                contentType: 'contentType',
+                pkgVersion: '1'
+            } as ContentData,
             contentType: 'contentType',
         };
         // act

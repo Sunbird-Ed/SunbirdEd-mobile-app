@@ -60,7 +60,7 @@ import {
   CorReleationDataType,
   ID
 } from '../../services/telemetry-constants';
-import { ProfileConstants, ContentType, EventTopics, MimeType, PreferenceKey, ShareUrl, RouterLinks } from '../app.constant';
+import { ProfileConstants, ContentType, EventTopics, MimeType, PreferenceKey, ShareUrl, RouterLinks, ShareItemType } from '../app.constant';
 import { BatchConstants } from '../app.constant';
 import { ContentShareHandlerService } from '../../services/content/content-share-handler.service';
 import { SbGenericPopoverComponent } from '../components/popups/sb-generic-popover/sb-generic-popover.component';
@@ -1556,6 +1556,8 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
       componentProps: {
         contentDetail: this.content,
         corRelationList: this.corRelationList,
+        pageId: PageId.COURSE_DETAIL,
+        shareItemType: ShareItemType.ROOT_COLECTION
       },
       cssClass: 'sb-popover',
     });

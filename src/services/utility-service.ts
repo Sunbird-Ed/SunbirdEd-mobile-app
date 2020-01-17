@@ -96,10 +96,10 @@ export class UtilityService {
             }
         });
     }
-    exportApk(): Promise<string> {
+    exportApk(destination): Promise<string> {
         return new Promise<string>((resolve, reject) => {
             try {
-                buildconfigreader.exportApk((entry: string) => {
+                buildconfigreader.exportApk(destination, (entry: string) => {
                     resolve(entry);
                 }, err => {
                     console.error(err);
@@ -163,6 +163,20 @@ export class UtilityService {
         return new Promise<string>((resolve, reject) => {
             try {
                 buildconfigreader.readFromAssets(fileName, (entry: string) => {
+                    resolve(entry);
+                }, err => {
+                    reject(err);
+                });
+            } catch (xc) {
+                reject(xc);
+            }
+        });
+    }
+
+    getApkSize(): Promise<string> {
+        return new Promise<string>((resolve, reject) => {
+            try {
+                buildconfigreader.getApkSize((entry: string) => {
                     resolve(entry);
                 }, err => {
                     reject(err);
