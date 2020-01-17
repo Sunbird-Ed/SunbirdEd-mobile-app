@@ -14,7 +14,7 @@ import {
     DeviceSpecification
 } from 'sunbird-sdk';
 import { Map } from '../app/telemetryutil';
-import { Environment, ImpressionType, InteractSubtype, InteractType, Mode, PageId, CorReleationDataType } from './telemetry-constants';
+import { Environment, ImpressionType, InteractSubtype, InteractType, Mode, PageId, CorReleationDataType, ID } from './telemetry-constants';
 import { MimeType } from '../app/app.constant';
 import { ContentUtil } from '@app/util/content-util';
 
@@ -272,6 +272,19 @@ export class TelemetryGeneratorService {
             undefined,
             values, undefined,
             corRelationList);
+    }
+
+    generateAppLaunchTelemetry(type: string) {
+        this.generateInteractTelemetry(
+            type,
+            '',
+            Environment.HOME,
+            Environment.HOME,
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            ID.APP_LAUNCH);
     }
 
     generateExtraInfoTelemetry(values: Map, pageId) {
