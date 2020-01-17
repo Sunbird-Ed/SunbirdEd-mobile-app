@@ -5,13 +5,13 @@ import { Events, Platform, IonRouterOutlet, MenuController } from '@ionic/angula
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable, combineLatest } from 'rxjs';
-import { mergeMap, filter, tap } from 'rxjs/operators';
+import { mergeMap, filter, tap, mapTo } from 'rxjs/operators';
 import { Network } from '@ionic-native/network/ngx';
 import {
   ErrorEventType, EventNamespace, EventsBusService, SharedPreferences,
   SunbirdSdk, TelemetryAutoSyncService, TelemetryService, NotificationService,
   GetSystemSettingsRequest, SystemSettings, SystemSettingsService,
-  CodePushExperimentService, AuthEventType, CorrelationData, Profile, DeviceRegisterService
+  CodePushExperimentService, AuthEventType, CorrelationData, Profile, DeviceRegisterService,
 } from 'sunbird-sdk';
 import {
   InteractType,
@@ -110,7 +110,6 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.generateNetworkTelemetry();
       this.autoSyncTelemetry();
       this.subscribeEvents();
-      this.showAppWalkThroughScreen();
       this.startOpenrapDiscovery();
       this.saveDefaultSyncSetting();
       this.checkAppUpdateAvailable();
@@ -532,7 +531,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   private async startOpenrapDiscovery(): Promise<undefined> {
     if (this.appGlobalService.OPEN_RAPDISCOVERY_ENABLED) {
-      return Observable.create((observer) => {
+      return new Observable((observer) => {
         (window as any).openrap.startDiscovery(
           (response: { ip: string, actionType: 'connected' | 'disconnected' }) => {
             observer.next(response);
@@ -540,26 +539,29 @@ export class AppComponent implements OnInit, AfterViewInit {
             observer.error(e);
           }
         );
-      }).do((response: { ip?: string, actionType: 'connected' | 'disconnected' }) => {
-        const values = new Map();
-        values['openrapInfo'] = response;
-        this.telemetryGeneratorService.generateInteractTelemetry(InteractType.OTHER,
-          response.actionType === 'connected' ? InteractSubtype.OPENRAP_DEVICE_CONNECTED : InteractSubtype.OPENRAP_DEVICE_DISCONNECTED,
-          Environment.HOME,
-          Environment.HOME, undefined,
-          values);
-        SunbirdSdk.instance.updateContentServiceConfig({
-          host: response.actionType === 'connected' ? response.ip : undefined
-        });
+      }).pipe(
+        tap((response: { ip?: string, actionType: 'connected' | 'disconnected' }) => {
+          const values = new Map();
+          values['openrapInfo'] = response;
+          this.telemetryGeneratorService.generateInteractTelemetry(InteractType.OTHER,
+            response.actionType === 'connected' ? InteractSubtype.OPENRAP_DEVICE_CONNECTED : InteractSubtype.OPENRAP_DEVICE_DISCONNECTED,
+            Environment.HOME,
+            Environment.HOME, undefined,
+            values);
+          SunbirdSdk.instance.updateContentServiceConfig({
+            host: response.actionType === 'connected' ? response.ip : undefined
+          });
 
-        SunbirdSdk.instance.updatePageServiceConfig({
-          host: response.actionType === 'connected' ? response.ip : undefined
-        });
+          SunbirdSdk.instance.updatePageServiceConfig({
+            host: response.actionType === 'connected' ? response.ip : undefined
+          });
 
-        SunbirdSdk.instance.updateTelemetryConfig({
-          host: response.actionType === 'connected' ? response.ip : undefined
-        });
-      }).toPromise();
+          SunbirdSdk.instance.updateTelemetryConfig({
+            host: response.actionType === 'connected' ? response.ip : undefined
+          });
+        }),
+        mapTo(undefined)
+      ).toPromise();
     }
   }
 
@@ -762,11 +764,6 @@ export class AppComponent implements OnInit, AfterViewInit {
     );
   }
 
-  private async showAppWalkThroughScreen() {
-    const showAppWalkthrough: boolean = await this.preferences.getBoolean('coach_mark_seen').toPromise();
-    await this.preferences.putBoolean('coach_mark_seen', showAppWalkthrough).toPromise();
-  }
-
   private async getDeviceProfile() {
     if (!(await this.commonUtilService.isDeviceLocationAvailable())
       && !(await this.commonUtilService.isIpLocationAvailable())) {
@@ -786,4 +783,5 @@ export class AppComponent implements OnInit, AfterViewInit {
       });
     }
   }
+
 }

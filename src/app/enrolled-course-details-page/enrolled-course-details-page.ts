@@ -57,9 +57,10 @@ import {
   InteractType,
   Mode,
   PageId,
-  CorReleationDataType
+  CorReleationDataType,
+  ID
 } from '../../services/telemetry-constants';
-import { ProfileConstants, ContentType, EventTopics, MimeType, PreferenceKey, ShareUrl, RouterLinks } from '../app.constant';
+import { ProfileConstants, ContentType, EventTopics, MimeType, PreferenceKey, ShareUrl, RouterLinks, ShareItemType } from '../app.constant';
 import { BatchConstants } from '../app.constant';
 import { ContentShareHandlerService } from '../../services/content/content-share-handler.service';
 import { SbGenericPopoverComponent } from '../components/popups/sb-generic-popover/sb-generic-popover.component';
@@ -74,7 +75,6 @@ import { ContentDeleteHandler } from '@app/services/content/content-delete-handl
 import * as dayjs from 'dayjs';
 import { LocalCourseService } from '@app/services';
 import { EnrollCourse } from './course.interface';
-import { AppVersion } from '@ionic-native/app-version/ngx';
 import { SbSharePopupComponent } from '../components/popups/sb-share-popup/sb-share-popup.component';
 declare const cordova;
 
@@ -694,7 +694,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
               this.batchDetails.courseId, this.courseCardData.batchId, this.batchDetails.status);
             this.preferences.getString(PreferenceKey.COURSE_IDENTIFIER).toPromise()
               .then(async val => {
-                if (val === this.batchDetails.identifier) {
+                if (val && val === this.batchDetails.identifier) {
                   this.batchExp = true;
                 } else if (this.batchDetails.status === 2) {
                   this.batchExp = true;
@@ -1300,6 +1300,12 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
 
   showLicensce() {
     this.showCredits = !this.showCredits;
+
+    if (this.showCredits) {
+      this.licenseSectionClicked('expanded');
+    } else {
+      this.licenseSectionClicked('collapsed');
+    }
   }
 
   handleBackButton() {
@@ -1555,8 +1561,10 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
     const popover = await this.popoverCtrl.create({
       component: SbSharePopupComponent,
       componentProps: {
-        contentDetail: this.content,
+        content: this.content,
         corRelationList: this.corRelationList,
+        pageId: PageId.COURSE_DETAIL,
+        shareItemType: ShareItemType.ROOT_COLECTION
       },
       cssClass: 'sb-popover',
     });
@@ -1629,7 +1637,21 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
    * Opens up popup for the credits.
    */
   viewCredits() {
-    this.courseUtilService.showCredits(this.course, PageId.CONTENT_DETAIL, undefined, this.corRelationList);
+    this.courseUtilService.showCredits(this.course, PageId.COURSE_DETAIL, undefined, this.corRelationList);
+  }
+  licenseSectionClicked(params) {
+    const telemetryObject = new TelemetryObject(this.objId, this.objType, this.objVer);
+    this.telemetryGeneratorService.generateInteractTelemetry(
+        params === 'expanded' ? InteractType.LICENSE_CARD_EXPANDED : InteractType.LICENSE_CARD_COLLAPSED,
+        '',
+        undefined,
+        PageId.COURSE_DETAIL,
+        telemetryObject,
+        undefined,
+        this.objRollup,
+        this.corRelationList,
+        ID.LICENSE_CARD_CLICKED
+    );
   }
 
   getContentState(returnRefresh: boolean) {
@@ -1668,19 +1690,6 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
     } else {
       // to be handled when there won't be any batchId
     }
-  }
-
-  readLessorReadMore(param: string, objRollup, corRelationList) {
-    const telemetryObject = new TelemetryObject(this.objId, this.objType, this.objVer);
-    this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
-      param,
-      Environment.HOME,
-      PageId.COURSE_DETAIL,
-      undefined,
-      telemetryObject,
-      objRollup,
-      corRelationList
-    );
   }
 
   handleHeaderEvents($event) {

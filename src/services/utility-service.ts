@@ -96,10 +96,10 @@ export class UtilityService {
             }
         });
     }
-    exportApk(): Promise<string> {
+    exportApk(destination): Promise<string> {
         return new Promise<string>((resolve, reject) => {
             try {
-                sbutility.exportApk((entry: string) => {
+                sbutility.exportApk(destination, (entry: string) => {
                     resolve(entry);
                 }, err => {
                     console.error(err);
@@ -163,6 +163,20 @@ export class UtilityService {
         return new Promise<string>((resolve, reject) => {
             try {
                 sbutility.readFromAssets(fileName, (entry: string) => {
+                    resolve(entry);
+                }, err => {
+                    reject(err);
+                });
+            } catch (xc) {
+                reject(xc);
+            }
+        });
+    }
+
+    getApkSize(): Promise<string> {
+        return new Promise<string>((resolve, reject) => {
+            try {
+                sbutility.getApkSize((entry: string) => {
                     resolve(entry);
                 }, err => {
                     reject(err);
