@@ -7,12 +7,10 @@ import { ContentShareHandlerService, TelemetryGeneratorService } from '@app/serv
 import {
   Environment,
   ImpressionType,
-  InteractSubtype,
-  InteractType,
   ID,
   PageId,
 } from '@app/services/telemetry-constants';
-import { ContentDetailRequest, Content, ContentService, TelemetryObject } from 'sunbird-sdk';
+import { TelemetryObject } from 'sunbird-sdk';
 import { ShareUrl, ShareMode } from '../../../../app/app.constant';
 import { ContentUtil } from '@app/util/content-util';
 

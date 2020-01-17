@@ -3,16 +3,20 @@ import { ContentShareHandlerService, CommonUtilService, UtilityService, Telemetr
 import { ContentService } from 'sunbird-sdk';
 import { SbSharePopupComponent } from './sb-share-popup.component';
 import { PopoverController, Platform, NavParams } from '@ionic/angular';
-
+import {
+    Environment,
+    ImpressionType,
+    ID,
+    PageId,
+} from '@app/services/telemetry-constants';
+import { ShareUrl, ShareMode } from '../../../../app/app.constant';
 describe('SbSharePopupComponent', () => {
     let sbSharePopupComponent: SbSharePopupComponent;
     const mockPopoverCtrl: Partial<PopoverController> = {};
-    const mockContentService: Partial<ContentService> = {};
     const mockPlatform: Partial<Platform> = {};
     const mockContentShareHandler: Partial<ContentShareHandlerService> = {
         shareContent: jest.fn()
     };
-    const mockCommonUtilService: Partial<CommonUtilService> = {};
     const mockUtilityService: Partial<UtilityService> = {
         getBuildConfigValue: jest.fn(() => Promise.resolve('baseurl'))
     };
@@ -25,21 +29,18 @@ describe('SbSharePopupComponent', () => {
                         identifier: 'do_123',
                         contentData: {
                             contentType: 'Resource',
-                            pkgVersion: 1
+                            pkgVersion: '1'
                         }
                     } as any;
                     break;
-                case 'rating':
-                    value = 5;
-                    break;
-                case 'comment':
-                    value = 'Sample comment';
-                    break;
-                case 'popupType':
-                    value = 'manual';
-                    break;
                 case 'pageId':
                     value = 'content-detail';
+                    break;
+                case 'objRollup':
+                    value = { l1: 'do_1', l2: 'do_12' };
+                    break;
+                case 'shareItemType':
+                    value = 'root-content';
                     break;
             }
             return value;
@@ -66,6 +67,35 @@ describe('SbSharePopupComponent', () => {
 
     it('should create a instance of sbSharePopupComponent', () => {
         expect(sbSharePopupComponent).toBeTruthy();
+    });
+
+    it('should generate telemetry on ngOninit', () => {
+        // arrange
+        const unsubscribeFn = jest.fn();
+        sbSharePopupComponent.backButtonFunc = {
+            unsubscribe: unsubscribeFn
+        } as any;
+        // act
+        sbSharePopupComponent.ngOnInit();
+        // assert
+        expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith('root-content',
+            '',
+            Environment.HOME,
+            'content-detail',
+            { id: 'do_123', type: 'Resource', version: '1' },
+            undefined,
+            { l1: 'do_1', l2: 'do_12' },
+            undefined,
+            ID.SHARE);
+        expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenCalledWith(
+            ImpressionType.VIEW, '',
+            PageId.SHARE_CONTENT_POPUP,
+            Environment.HOME,
+            'do_123',
+            'Resource',
+            '1',
+            { l1: 'do_1', l2: 'do_12' },
+            undefined);
     });
 
 

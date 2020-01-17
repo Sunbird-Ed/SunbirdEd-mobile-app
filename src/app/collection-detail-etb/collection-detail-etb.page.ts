@@ -1072,7 +1072,7 @@ export class CollectionDetailEtbPage implements OnInit {
     const popover = await this.popoverCtrl.create({
       component: SbSharePopupComponent,
       componentProps: {
-        contentDetail: this.contentDetail,
+        content: this.contentDetail,
         corRelationList: this.corRelationList,
         objRollup: this.objRollup,
         pageId: PageId.COLLECTION_DETAIL,
