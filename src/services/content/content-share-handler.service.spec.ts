@@ -1,12 +1,15 @@
 import { of } from 'rxjs';
 import { SocialSharing } from '@ionic-native/social-sharing/ngx';
-import { ContentService, StorageService, Content, ContentData, DeviceInfo } from 'sunbird-sdk';
+import { ContentService, StorageService, Content, ContentData, DeviceInfo, ContentExportResponse, ContentExportRequest } from 'sunbird-sdk';
 import { ContentShareHandlerService, CommonUtilService, UtilityService, TelemetryGeneratorService } from '../../services';
 import { SbSharePopupComponent } from '../../app/components/popups/sb-share-popup/sb-share-popup.component';
 import { AppVersion } from '@ionic-native/app-version/ngx';
+import { CONNREFUSED } from 'dns';
 describe('ContentShareHandlerService', () => {
     let contentShareHandlerService: ContentShareHandlerService;
-    const mockContentService: Partial<ContentService> = {};
+    const mockContentService: Partial<ContentService> = {
+        exportContent: jest.fn(() => of({ exportedFilePath: 'sample_path'} as any))
+    };
     const mockStorageService: Partial<StorageService> = {
         getStorageDestinationDirectoryPath: jest.fn(() => 'dirpath')
     };
@@ -20,9 +23,6 @@ describe('ContentShareHandlerService', () => {
     };
     const mockSocialSharing: Partial<SocialSharing> = {
         share: jest.fn()
-    };
-    const mockUtilityService: Partial<UtilityService> = {
-        getBuildConfigValue: jest.fn(() => Promise.resolve('baseurl'))
     };
     const mockAppVersion: Partial<AppVersion> = {
         getPackageName: jest.fn(() => Promise.resolve('packageName'))
@@ -57,6 +57,34 @@ describe('ContentShareHandlerService', () => {
 
     it('should create a instance of sbSharePopupComponent', () => {
         expect(contentShareHandlerService).toBeTruthy();
+    });
+
+    describe('exportContent()', () => {
+        it('should export the content', (done) => {
+            // arrange
+            const shareParams = {
+                byFile: true
+            };
+            const content = {
+                identifier: 'id',
+                contentData: {
+                    contentType: 'contentType',
+                    pkgVersion: '1',
+                    name : 'Sample_name'
+                } as ContentData,
+                contentType: 'contentType',
+            } as Content;
+            // act
+            contentShareHandlerService.exportContent({
+                destinationFolder: 'destination_folder'
+            } as any, shareParams, content);
+            // assert
+            setTimeout(() => {
+                expect(mockSocialSharing.share).toHaveBeenCalled();
+                done();
+            }, 0);
+
+        });
     });
 
     it('should call export content', (done) => {
@@ -151,5 +179,6 @@ describe('ContentShareHandlerService', () => {
         // assert
         expect(contentShareHandlerService.exportContent).toBeCalled();
     });
+
 
 });
