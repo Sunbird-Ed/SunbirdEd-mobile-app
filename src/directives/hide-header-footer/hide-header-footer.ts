@@ -56,7 +56,7 @@ export class HideHeaderFooterDirective {
               switchMap(() =>
                 timer(100).pipe(
                   take(1)
-                ),
+                )
               )
             );
           })

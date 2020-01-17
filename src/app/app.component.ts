@@ -5,15 +5,14 @@ import { Events, Platform, IonRouterOutlet, MenuController } from '@ionic/angula
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable, combineLatest } from 'rxjs';
-import { mergeMap, filter, tap} from 'rxjs/operators';
+import { mergeMap, filter, tap, mapTo } from 'rxjs/operators';
 import { Network } from '@ionic-native/network/ngx';
 
 import {
   ErrorEventType, EventNamespace, EventsBusService, SharedPreferences,
   SunbirdSdk, TelemetryAutoSyncService, TelemetryService, NotificationService,
   GetSystemSettingsRequest, SystemSettings, SystemSettingsService,
-  CodePushExperimentService, AuthEventType, CorrelationData, Profile, DeviceRegisterService, ContentEventType,
-  ContentService, ContentImportCompleted, Content
+  CodePushExperimentService, AuthEventType, CorrelationData, Profile, DeviceRegisterService,
 } from 'sunbird-sdk';
 
 import {
@@ -23,7 +22,7 @@ import {
   ImpressionType,
   CorReleationDataType
 } from 'services/telemetry-constants';
-import {PreferenceKey, EventTopics, SystemSettingsIds, ContentType, MimeType} from './app.constant';
+import { PreferenceKey, EventTopics, SystemSettingsIds } from './app.constant';
 import { ActivePageService } from '@app/services/active-page/active-page-service';
 import {
   AppGlobalService,
@@ -73,7 +72,6 @@ export class AppComponent implements OnInit, AfterViewInit {
     @Inject('SYSTEM_SETTINGS_SERVICE') private systemSettingsService: SystemSettingsService,
     @Inject('CODEPUSH_EXPERIMENT_SERVICE') private codePushExperimentService: CodePushExperimentService,
     @Inject('DEVICE_REGISTER_SERVICE') private deviceRegisterService: DeviceRegisterService,
-    @Inject('CONTENT_SERVICE') private contentService: ContentService,
     private platform: Platform,
     private statusBar: StatusBar,
     private translate: TranslateService,
@@ -135,8 +133,6 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.getUtmParameter();
       this.checkForCodeUpdates();
       this.checkAndroidWebViewVersion();
-      this.onContentImportComplete();
-
     });
   }
 
@@ -537,7 +533,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   private async startOpenrapDiscovery(): Promise<undefined> {
     if (this.appGlobalService.OPEN_RAPDISCOVERY_ENABLED) {
-      return Observable.create((observer) => {
+      return new Observable((observer) => {
         (window as any).openrap.startDiscovery(
           (response: { ip: string, actionType: 'connected' | 'disconnected' }) => {
             observer.next(response);
@@ -545,26 +541,29 @@ export class AppComponent implements OnInit, AfterViewInit {
             observer.error(e);
           }
         );
-      }).do((response: { ip?: string, actionType: 'connected' | 'disconnected' }) => {
-        const values = new Map();
-        values['openrapInfo'] = response;
-        this.telemetryGeneratorService.generateInteractTelemetry(InteractType.OTHER,
-          response.actionType === 'connected' ? InteractSubtype.OPENRAP_DEVICE_CONNECTED : InteractSubtype.OPENRAP_DEVICE_DISCONNECTED,
-          Environment.HOME,
-          Environment.HOME, undefined,
-          values);
-        SunbirdSdk.instance.updateContentServiceConfig({
-          host: response.actionType === 'connected' ? response.ip : undefined
-        });
-
-        SunbirdSdk.instance.updatePageServiceConfig({
-          host: response.actionType === 'connected' ? response.ip : undefined
-        });
-
-        SunbirdSdk.instance.updateTelemetryConfig({
-          host: response.actionType === 'connected' ? response.ip : undefined
-        });
-      }).toPromise();
+      }).pipe(
+        tap((response: { ip?: string, actionType: 'connected' | 'disconnected' }) => {
+          const values = new Map();
+          values['openrapInfo'] = response;
+          this.telemetryGeneratorService.generateInteractTelemetry(InteractType.OTHER,
+            response.actionType === 'connected' ? InteractSubtype.OPENRAP_DEVICE_CONNECTED : InteractSubtype.OPENRAP_DEVICE_DISCONNECTED,
+            Environment.HOME,
+            Environment.HOME, undefined,
+            values);
+          SunbirdSdk.instance.updateContentServiceConfig({
+            host: response.actionType === 'connected' ? response.ip : undefined
+          });
+  
+          SunbirdSdk.instance.updatePageServiceConfig({
+            host: response.actionType === 'connected' ? response.ip : undefined
+          });
+  
+          SunbirdSdk.instance.updateTelemetryConfig({
+            host: response.actionType === 'connected' ? response.ip : undefined
+          });
+        }),
+        mapTo(undefined)
+      ).toPromise();
     }
   }
 
@@ -787,21 +786,4 @@ export class AppComponent implements OnInit, AfterViewInit {
     }
   }
 
-  private onContentImportComplete() {
-    this.eventsBusService.events(EventNamespace.CONTENT).pipe(
-        filter(e => e.type === ContentEventType.IMPORT_COMPLETED),
-        tap(async (e: ContentImportCompleted) => {
-          return this.contentService.getContentDetails({contentId: e.payload.contentId})
-              .toPromise().then(async (content: Content) => {
-                if (content.contentType === ContentType.COURSE.toLowerCase()) {
-                  await this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], { state: { content } });
-                } else if (content.mimeType === MimeType.COLLECTION) {
-                  await this.router.navigate([RouterLinks.COLLECTION_DETAIL_ETB], { state: { content } });
-                } else {
-                   await this.router.navigate([RouterLinks.CONTENT_DETAILS], {state: { content } });
-                }
-              });
-        })
-    ).subscribe();
-  }
 }

@@ -30,7 +30,7 @@ export class ContentShareHandlerService {
     private social: SocialSharing,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private appVersion: AppVersion) {
-      this.commonUtilService.getAppName().then((res) => { this.appName = res; });
+    this.commonUtilService.getAppName().then((res) => { this.appName = res; });
   }
 
   public async shareContent(shareParams: any, content: Content, corRelationList?: CorrelationData[], rollup?: Rollup) {
@@ -51,7 +51,7 @@ export class ContentShareHandlerService {
         content.contentData.contentType, corRelationList, rollup);
       let shareLink = 'See \'' + content.contentData.name + '\' on ' + this.appName + '\n' + this.getContentUtm(shareParams.link, content);
       shareLink = '\n' + shareLink +
-      `\n\n${this.commonUtilService.translateMessage('TRY_CONTENT_ON')}` + '\n' + await this.getPackageNameWithUTM(true);
+        `\n\n${this.commonUtilService.translateMessage('TRY_CONTENT_ON')}` + '\n' + await this.getPackageNameWithUTM(true);
       this.social.share(null, null, null, shareLink);
     } else if (shareParams && shareParams.saveFile) {
       exportContentRequest = {
@@ -69,35 +69,38 @@ export class ContentShareHandlerService {
     const loader = await this.commonUtilService.getLoader();
     await loader.present();
     this.contentService.exportContent(exportContentRequest).toPromise()
-        .then(async (response: ContentExportResponse) => {
-          await loader.dismiss();
-          if (shareParams.saveFile) {
-            this.commonUtilService.showToast('FILE_SAVED', '', 'green-toast');
-          } else if (shareParams.byFile) {
-            this.social.share('', '', '' + response.exportedFilePath, shareParams.link);
-          }
-          this.generateShareInteractEvents(InteractType.OTHER,
-            InteractSubtype.SHARE_CONTENT_SUCCESS, content.contentData.contentType, corRelationList, rollup);
-        }).catch(async (err) => {
-          await loader.dismiss();
-          this.commonUtilService.showToast('SHARE_CONTENT_FAILED');
-        });
+      .then(async (response: ContentExportResponse) => {
+        await loader.dismiss();
+        if (shareParams.saveFile) {
+          this.commonUtilService.showToast('FILE_SAVED', '', 'green-toast');
+        } else if (shareParams.byFile) {
+          let shareLink = this.appName + ': \'' + content.contentData.name + '\'' + '\n';
+          shareLink = '\n' + shareLink +
+            `\n\n${this.commonUtilService.translateMessage('TRY_CONTENT_ON')}` + '\n' + await this.getPackageNameWithUTM(true);
+          this.social.share(shareLink, '', '' + response.exportedFilePath, '');
+        }
+        this.generateShareInteractEvents(InteractType.OTHER,
+          InteractSubtype.SHARE_CONTENT_SUCCESS, content.contentData.contentType, corRelationList, rollup);
+      }).catch(async (err) => {
+        await loader.dismiss();
+        this.commonUtilService.showToast('SHARE_CONTENT_FAILED');
+      });
   }
 
   async getPackageNameWithUTM(utm: boolean): Promise<string> {
-      const pkg = await this.appVersion.getPackageName();
-      if (utm) {
-        const utmParams = `&referrer=utm_source%3D${this.deviceInfo.getDeviceID()}%26utm_campaign%3Dshare_app`;
-        const shareUTMUrl = `https://play.google.com/store/apps/details?id=${pkg}${utmParams}`;
-        return shareUTMUrl;
-      } else {
-        return `https://play.google.com/store/apps/details?id=${pkg}&hl=en_IN`;
-      }
+    const pkg = await this.appVersion.getPackageName();
+    if (utm) {
+      const utmParams = `&referrer=utm_source%3D${this.deviceInfo.getDeviceID()}%26utm_campaign%3Dshare_app`;
+      const shareUTMUrl = `https://play.google.com/store/apps/details?id=${pkg}${utmParams}`;
+      return shareUTMUrl;
+    } else {
+      return `https://play.google.com/store/apps/details?id=${pkg}&hl=en_IN`;
+    }
   }
 
   getContentUtm(contentLink: string, content: Content): string {
     const contentUTM =
-    `referrer=utm_source%3D${this.appName.toLocaleLowerCase()}_mobile%26utm_content%3D${content.identifier}%26utm_campaign%3Dshare_content`;
+      `referrer=utm_source%3D${this.appName.toLocaleLowerCase()}_mobile%26utm_content%3D${content.identifier}%26utm_campaign%3Dshare_content`;
     return contentLink + '?' + contentUTM;
   }
 

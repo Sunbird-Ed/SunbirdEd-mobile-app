@@ -1554,7 +1554,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
     const popover = await this.popoverCtrl.create({
       component: SbSharePopupComponent,
       componentProps: {
-        contentDetail: this.content,
+        content: this.content,
         corRelationList: this.corRelationList,
         pageId: PageId.COURSE_DETAIL,
         shareItemType: ShareItemType.ROOT_COLECTION

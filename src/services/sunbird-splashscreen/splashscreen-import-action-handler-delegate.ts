@@ -1,22 +1,23 @@
-import { SplashscreenActionHandlerDelegate } from './splashscreen-action-handler-delegate';
-import { Observable , of} from 'rxjs';
+import {SplashscreenActionHandlerDelegate} from './splashscreen-action-handler-delegate';
+import {Observable, of} from 'rxjs';
 import {
+  ContentEvent,
   ContentEventType,
-  ContentImportProgress,
+  ContentImportResponse,
+  ContentImportStatus,
   ContentService,
   EventNamespace,
   EventsBusService,
   ProfileService,
-  TelemetryService,
-  ContentImportResponse,
-  ContentImportStatus,
+  SunbirdSdk,
   TelemetryErrorRequest,
-  SunbirdSdk
+  TelemetryService
 } from 'sunbird-sdk';
-import { Inject, Injectable } from '@angular/core';
-import { CommonUtilService } from 'services/common-util.service';
-import { Events } from '@ionic/angular';
-import { mapTo, tap, takeUntil, filter, map, catchError} from 'rxjs/operators';
+import {Inject, Injectable} from '@angular/core';
+import {CommonUtilService} from 'services/common-util.service';
+import {Events} from '@ionic/angular';
+import {catchError, filter, map, mapTo, takeUntil, tap, reduce} from 'rxjs/operators';
+import {SplaschreenDeeplinkActionHandlerDelegate} from '@app/services/sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
 
 @Injectable()
 export class SplashscreenImportActionHandlerDelegate implements SplashscreenActionHandlerDelegate {
@@ -25,6 +26,7 @@ export class SplashscreenImportActionHandlerDelegate implements SplashscreenActi
     @Inject('EVENTS_BUS_SERVICE') private eventsBusService: EventsBusService,
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     @Inject('TELEMETRY_SERVICE') private telemetryService: TelemetryService,
+    private splashscreenDeeplinkActionHandlerDelegate: SplaschreenDeeplinkActionHandlerDelegate,
     private events: Events,
     private commonUtilService: CommonUtilService) {
   }
@@ -38,7 +40,7 @@ export class SplashscreenImportActionHandlerDelegate implements SplashscreenActi
         splashscreen.show();
 
         return this.eventsBusService.events(EventNamespace.CONTENT).pipe(
-          filter(e => e.type === ContentEventType.IMPORT_PROGRESS),
+          filter(e => e.type === ContentEventType.IMPORT_PROGRESS || e.type === ContentEventType.IMPORT_COMPLETED),
           takeUntil(
             this.contentService.importEcar({
               isChildContent: false,
@@ -46,7 +48,7 @@ export class SplashscreenImportActionHandlerDelegate implements SplashscreenActi
               sourceFilePath: filePath,
               correlationData: []
             }).pipe(
-                map((response: ContentImportResponse[]) => {
+              map((response: ContentImportResponse[]) => {
                 if (!response.length) {
                   this.commonUtilService.showToast('CONTENT_IMPORTED');
                   return;
@@ -68,11 +70,21 @@ export class SplashscreenImportActionHandlerDelegate implements SplashscreenActi
               })
             )
           ),
-          tap((event: ContentImportProgress) => {
-            splashscreen.setImportProgress(event.payload.currentCount, event.payload.totalCount);
+          tap((event: ContentEvent) => {
+            if (event.type === ContentEventType.IMPORT_PROGRESS) {
+              splashscreen.setImportProgress(event.payload.currentCount, event.payload.totalCount);
+            }
           }),
           catchError(() => {
             return of(undefined);
+          }),
+          reduce((acc, event) => event, undefined),
+          tap((event: ContentEvent) => {
+            if (event.type === ContentEventType.IMPORT_COMPLETED) {
+              this.splashscreenDeeplinkActionHandlerDelegate.onAction(
+                  'content', { identifier: event.payload.contentId }, false
+              ).toPromise();
+            }
           }),
           mapTo(undefined) as any
         );
