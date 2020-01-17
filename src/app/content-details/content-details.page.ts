@@ -1000,7 +1000,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
     if (this.apiLevel < 21 && this.appAvailability === 'false') {
       this.showPopupDialog();
     } else {
-      const hierachyInfo = this.childContentHandler.contentHierarchyInfo;
+      const hierachyInfo = this.childContentHandler.contentHierarchyInfo || this.content.hierarchyInfo;
       const contentInfo: ContentInfo = {
         telemetryObject: this.telemetryObject,
         rollUp: this.objRollup,
