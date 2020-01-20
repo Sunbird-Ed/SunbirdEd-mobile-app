@@ -303,7 +303,7 @@ export class AppComponent implements OnInit, AfterViewInit {
         this.events.publish('notification:received');
         this.events.publish('notification-status:update', { isUnreadNotifications: true });
       });
-      this.splaschreenDeeplinkActionHandlerDelegate.handleNotification(data);
+      this.notificationSrc.setNotificationDetails(data);
     },
       (success) => {
         console.log('Notification Sucess Callback');
@@ -353,7 +353,7 @@ export class AppComponent implements OnInit, AfterViewInit {
         this.reloadSigninEvents();
         this.events.publish('UPDATE_TABS');
         if (batchDetails) {
-          await this.splaschreenDeeplinkActionHandlerDelegate.onAction('content').toPromise();
+          this.splaschreenDeeplinkActionHandlerDelegate.checkCourseRedirect();
         } else {
           this.router.navigate([RouterLinks.TABS]);
         }

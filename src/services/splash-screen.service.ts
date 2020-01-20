@@ -27,15 +27,15 @@ export class SplashScreenService {
             for (const action of actions) {
                 switch (action.type) {
                     case 'TELEMETRY': {
-                        await this.splashScreenTelemetryActionHandlerDelegate.onAction(action.type, action.payload).toPromise();
+                        await this.splashScreenTelemetryActionHandlerDelegate.onAction(action.payload).toPromise();
                         break;
                     }
                     case 'IMPORT': {
-                        await this.splashScreenImportActionHandlerDelegate.onAction(action.type, action.payload).toPromise();
+                        await this.splashScreenImportActionHandlerDelegate.onAction(action.payload).toPromise();
                         break;
                     }
                     case 'DEEPLINK': {
-                        await this.splashScreenDeeplinkActionHandlerDelegate.onAction(action.payload.type, action.payload).toPromise();
+                        this.splashScreenDeeplinkActionHandlerDelegate.onAction(action.payload).toPromise();
                         break;
                     }
                     default:

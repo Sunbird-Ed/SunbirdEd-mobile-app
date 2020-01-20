@@ -4,6 +4,8 @@ import { ProfileService, SharedPreferences } from 'sunbird-sdk';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { LocalNotifications } from '@ionic-native/local-notifications/ngx';
 import { UtilityService } from './utility-service';
+import { ActionType } from '@app/app/app.constant';
+import { SplaschreenDeeplinkActionHandlerDelegate } from './sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
 
 declare const cordova;
 
@@ -14,10 +16,15 @@ export class NotificationService {
     configData: any;
     appName: any;
 
+    identifier: any;
+    externalUrl: any;
+    appId: any;
+
     constructor(
         private utilityService: UtilityService,
         private appVersion: AppVersion,
-        private localNotifications: LocalNotifications
+        private localNotifications: LocalNotifications,
+        private splaschreenDeeplinkActionHandlerDelegate: SplaschreenDeeplinkActionHandlerDelegate
     ) {
         this.getAppName();
     }
@@ -87,6 +94,40 @@ export class NotificationService {
             .then((appName: any) => {
                 this.appName = appName;
             });
+    }
+
+    setNotificationDetails(data) {
+        switch (data.actionData.actionType) {
+            case ActionType.EXT_URL:
+                this.externalUrl = data.actionData.deepLink;
+                break;
+            case ActionType.UPDATE_APP:
+                this.utilityService.getBuildConfigValue('APPLICATION_ID')
+                .then(value => {
+                    this.appId = value;
+                });
+                break;
+            case ActionType.COURSE_UPDATE:
+            case ActionType.CONTENT_UPDATE:
+            case ActionType.BOOK_UPDATE:
+                this.identifier = data.actionData.identifier;
+                break;
+        }
+    }
+
+    handleNotification() {
+        if (this.identifier) {
+            this.splaschreenDeeplinkActionHandlerDelegate.navigateContent(this.identifier);
+            this.identifier = null;
+        } else if (this.appId) {
+            this.utilityService.openPlayStore(this.appId);
+            this.appId = null;
+        } else if (this.externalUrl) {
+            open(this.externalUrl);
+            this.externalUrl = null;
+        } else {
+            this.splaschreenDeeplinkActionHandlerDelegate.checkCourseRedirect();
+        }
     }
 
 

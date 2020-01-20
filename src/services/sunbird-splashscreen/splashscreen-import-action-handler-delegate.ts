@@ -29,7 +29,7 @@ export class SplashscreenImportActionHandlerDelegate implements SplashscreenActi
     private commonUtilService: CommonUtilService) {
   }
 
-  onAction(type: string, payload: { filePath: string }): Observable<undefined> {
+  onAction(payload: { filePath: string }): Observable<undefined> {
     const filePath = 'file://' + payload.filePath;
     const fileExtenstion = filePath.split('.').pop();
 

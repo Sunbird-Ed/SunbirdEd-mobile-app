@@ -75,10 +75,10 @@ export class ExternalIdVerificationService {
     checkQuizContent(): Promise<boolean> {
         this.appGlobalService.isSignInOnboardingCompleted = true;
         return new Promise<boolean>(async (resolve) => {
-            const limitedSharingContentDetails = this.appGlobalService.limitedShareQuizContent;
-            if (limitedSharingContentDetails) {
+            const limitedSharingContentId = this.appGlobalService.limitedShareQuizContent;
+            if (limitedSharingContentId) {
                 this.appGlobalService.limitedShareQuizContent = null;
-                await this.splaschreenDeeplinkActionHandlerDelegate.onAction('content', limitedSharingContentDetails, false).toPromise();
+                this.splaschreenDeeplinkActionHandlerDelegate.navigateContent(limitedSharingContentId);
                 resolve(true);
             } else {
                 resolve(false);

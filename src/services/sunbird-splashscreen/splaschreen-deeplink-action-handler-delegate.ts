@@ -3,7 +3,7 @@ import { Inject, Injectable, NgZone } from '@angular/core';
 import { Router } from '@angular/router';
 import { Events } from '@ionic/angular';
 import { AppVersion } from '@ionic-native/app-version/ngx';
-import { Observable, of } from 'rxjs';
+import { Observable, of, from } from 'rxjs';
 import {
   ContentService,
   Content,
@@ -18,7 +18,7 @@ import {
 } from 'sunbird-sdk';
 
 import { SplashscreenActionHandlerDelegate } from './splashscreen-action-handler-delegate';
-import { ContentType, MimeType, ActionType, EventTopics, RouterLinks } from '../../app/app.constant';
+import { ContentType, MimeType, EventTopics, RouterLinks, LaunchType } from '../../app/app.constant';
 import { AppGlobalService } from '../app-global-service.service';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { CommonUtilService } from '@app/services/common-util.service';
@@ -63,98 +63,72 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
       });
   }
 
-  handleNotification(data) {
-    switch (data.actionData.actionType) {
-      case ActionType.EXT_URL:
-        this.externalUrl = data.actionData.deepLink;
-        break;
-      case ActionType.UPDATE_APP:
-        this.utillService.getBuildConfigValue('APPLICATION_ID')
-          .then(value => {
-            this.appId = value;
-          });
-        break;
-      case ActionType.COURSE_UPDATE:
-        this.identifier = data.actionData.identifier;
-        break;
-      case ActionType.CONTENT_UPDATE:
-        this.identifier = data.actionData.identifier;
-        break;
-      case ActionType.BOOK_UPDATE:
-        this.identifier = data.actionData.identifier;
-        break;
-      default:
-        console.log('Default Called');
-        break;
+  onAction(payload: any): Observable<undefined> {
+    // return from(async () => {
+      if (payload && payload.url) {
+        const quizTypeRegex = new RegExp(/(?:\/resources\/play\/content\/(?<quizId>\w+))/);
+        const dialTypeRegex = new RegExp(/(?:\/get\/dial\/(?<dialCode>\w+))/);
+        const contentTypeRegex = new RegExp(/(?:\/play\/(?:content|collection)\/(?<contentId>\w+))/);
+        const courseTypeRegex = new RegExp(/(?:\/(?:explore-course|learn)\/course\/(?<courseId>\w+))/);
+
+        const urlRegex = new RegExp(quizTypeRegex.source + '|' + dialTypeRegex.source + '|' +
+          contentTypeRegex.source + '|' + courseTypeRegex.source);
+        const urlMatch = payload.url.match(urlRegex.source);
+
+        if (urlMatch && urlMatch.groups) {
+          if (urlMatch.groups.dialCode) {
+            this.router.navigate([RouterLinks.SEARCH], { state: { dialCode: urlMatch.groups.dialCode, source: PageId.HOME } });
+          } else if (urlMatch.groups.quizId || urlMatch.groups.contentId || urlMatch.groups.courseId) {
+            this.navigateContent(urlMatch.groups.quizId || urlMatch.groups.contentId || urlMatch.groups.courseId, true);
+          }
+        }
+        return of(undefined);
+      }
+    // });
+  }
+
+  async navigateContent(identifier, isFromLink = false) {
+    this.appGlobalServices.resetSavedQuizContent();
+    const content = await this.contentService.getContentDetails({
+      contentId: identifier
+    }).toPromise();
+
+    if (isFromLink) {
+      this.telemetryGeneratorService.generateAppLaunchTelemetry(LaunchType.DEEPLINK);
+    }
+    if (content.contentType === ContentType.COURSE.toLowerCase()) {
+      this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], { state: { content } });
+    } else if (content.mimeType === MimeType.COLLECTION) {
+      this.router.navigate([RouterLinks.COLLECTION_DETAIL_ETB], { state: { content } });
+    } else {
+      if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
+        this.commonUtilService.showToast('NEED_INTERNET_FOR_DEEPLINK_CONTENT');
+        return;
+      }
+      if (content.contentData && content.contentData.status === ContentFilterConfig.CONTENT_STATUS_UNLISTED) {
+        this.quizContentNavigator(identifier, content, isFromLink);
+      } else {
+        await this.router.navigate([RouterLinks.CONTENT_DETAILS], { state: { content } });
+      }
     }
   }
 
-  onAction(type: string, action?: { identifier: string }, isFromLink = true): Observable<undefined> {
-    const identifier: any = action !== undefined ? action.identifier : this.identifier;
-    this.appGlobalServices.resetSavedQuizContent();
-    if (identifier) {
-      switch (type) {
-        case 'content': {
-          // const loader = await this.commonUtilService.getLoader();
-          // await loader.present();
-          return this.contentService.getContentDetails({
-            contentId: identifier || this.identifier
-          }).pipe(
-            catchError(async () => {
-              // await loader.dismiss();
-              return of(undefined);
-            }),
-            tap(async (content: Content) => {
-            // await loader.dismiss();
-            if (content.contentType === ContentType.COURSE.toLowerCase()) {
-              this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], { state: { content } });
-            } else if (content.mimeType === MimeType.COLLECTION) {
-              this.router.navigate([RouterLinks.COLLECTION_DETAIL_ETB], { state: { content } });
-            } else {
-              if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
-                this.commonUtilService.showToast('NEED_INTERNET_FOR_DEEPLINK_CONTENT');
-                return false;
-              }
-              if (content.contentData && content.contentData.status === ContentFilterConfig.CONTENT_STATUS_UNLISTED) {
-                this.appGlobalServices.limitedShareQuizContent = action;
-                if (isFromLink) {
-                  this.limitedSharingContentLinkClickedTelemery();
-                }
-                if (!this.appGlobalServices.isUserLoggedIn() && !this.appGlobalServices.isProfileSettingsCompleted) {
-                  return;
-                }
-                if (!this.appGlobalServices.isSignInOnboardingCompleted && this.appGlobalServices.isUserLoggedIn()) {
-                  return;
-                }
-                if (this.router.url && this.router.url.indexOf(RouterLinks.CONTENT_DETAILS) !== -1) {
-                  this.events.publish(EventTopics.DEEPLINK_CONTENT_PAGE_OPEN, { content, autoPlayQuizContent: true });
-                  return;
-                }
-                this.router.navigate([RouterLinks.CONTENT_DETAILS], { state: { content, autoPlayQuizContent: true } });
-                return;
-              }
-              this.router.navigate([RouterLinks.CONTENT_DETAILS], { state: { content } });
-            }
-          }),
-          mapTo(undefined) as any
-          );
-        }
-        case 'dial': {
-          this.router.navigate([RouterLinks.SEARCH], { state: { dialCode: identifier, source: PageId.HOME } });
-          return of(undefined);
-        }
-        default: {
-          return of(undefined);
-        }
-      }
-    } else if (this.appId) {
-      this.utillService.openPlayStore(this.appId);
-    } else if (this.externalUrl) {
-      open(this.externalUrl);
-    } else {
-      this.checkCourseRedirect();
+  async quizContentNavigator(identifier, content, isFromLink) {
+    this.appGlobalServices.limitedShareQuizContent = identifier;
+    if (isFromLink) {
+      this.limitedSharingContentLinkClickedTelemery();
     }
-    return of(undefined);
+    if (!this.appGlobalServices.isUserLoggedIn() && !this.appGlobalServices.isProfileSettingsCompleted) {
+      return;
+    }
+    if (!this.appGlobalServices.isSignInOnboardingCompleted && this.appGlobalServices.isUserLoggedIn()) {
+      return;
+    }
+    if (this.router.url && this.router.url.indexOf(RouterLinks.CONTENT_DETAILS) !== -1) {
+      this.events.publish(EventTopics.DEEPLINK_CONTENT_PAGE_OPEN, { content, autoPlayQuizContent: true });
+      return;
+    }
+    await this.router.navigate([RouterLinks.CONTENT_DETAILS], { state: { content, autoPlayQuizContent: true } });
   }
 
   async checkCourseRedirect() {
@@ -227,6 +201,10 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
           this.zone.run(async () => {
             await loader.dismiss();
             if (error && error.code !== 'NETWORK_ERROR') {
+              this.events.publish(EventTopics.ENROL_COURSE_SUCCESS, {
+                batchId: batch.id,
+                courseId: batch.courseId
+              });
               this.getEnrolledCourses();
             }
           });
