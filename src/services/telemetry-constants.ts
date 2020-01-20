@@ -119,6 +119,7 @@ export enum PageId {
     EXTERNAL_USER_VERIFICATION_POPUP = 'user-verification-popup',
     FAQ_REPORT_ISSUE = 'faq-report-issue',
     UPDATE_WEBVIEW_POPUP = 'update-webview-popup',
+    UPGRADE_POPUP = 'update-popup'
 }
 export enum LogType {
     NOTIFICATION = 'notification'
@@ -151,7 +152,8 @@ export enum ImpressionSubtype {
     COMINGSOON_POPUP = 'coming-soon-popup',
     EXPLORE_MORE_CONTENT = 'explore-more-content',
     RECOVERY_ACCOUNT_POPUP = 'recovery-account-popup',
-    DISTRICT_LOCATION_MAPPING = 'district-location-mapping'
+    DISTRICT_LOCATION_MAPPING = 'district-location-mapping',
+    UPGRADE_POPUP = 'upgrade-popup'
 }
 export enum InteractType {
     TOUCH = 'TOUCH',
@@ -381,6 +383,7 @@ export enum InteractSubtype {
     UPDATE_WEBVIEW_CLICKED = 'update-webview-clicked',
     CREDITS_CLICKED = 'credits-clicked',
     DISABLED_BUTTON_CLICKED = 'disabled-button-clicked',
+    UPGRADE_CLICKED = 'upgrade-clicked'
 }
 
 export enum ID {
