@@ -213,7 +213,7 @@ export class LanguageSettingsPage implements OnInit {
         this.router.navigate([RouterLinks.USER_TYPE_SELECTION]);
       }
     } else {
-      this.generateClickInteractEvent('n/a', InteractSubtype.CONTINUE_CLICKED);
+      this.generateClickInteractEvent('none', InteractSubtype.DISABLED_BUTTON_CLICKED);
       this.btnColor = '#8FC4FF';
 
       const parser = new DOMParser();
