@@ -534,6 +534,7 @@ export class CategoriesEditPage {
         requiredCategories: []
       }).toPromise();
 
+      this.categories = defaultFrameworkDetails.categories;
       const boardCategory = defaultFrameworkDetails.categories.find((c) => c.code === 'board');
       const mediumCategory = defaultFrameworkDetails.categories.find((c) => c.code === 'medium');
 
