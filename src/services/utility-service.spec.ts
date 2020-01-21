@@ -16,7 +16,8 @@ describe('UtilityService', () => {
             clearUtmInfo: jest.fn(() => { }),
             readFromAssets: jest.fn(() => { }),
             rm: jest.fn(() => { }),
-            getApkSize: jest.fn(() => { })
+            getApkSize: jest.fn(() => { }),
+            getMetaData: jest.fn(() => { }),
         };
         utilityService = new UtilityService();
     });
