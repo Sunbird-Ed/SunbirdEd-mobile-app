@@ -54,8 +54,10 @@ export class HideHeaderFooterDirective {
             return this.scrollEvent$.pipe(
               startWith(undefined),
               switchMap(() =>
-                timer(100),
-                take(1))
+                timer(100).pipe(
+                  take(1)
+                )
+              )
             );
           })
         );

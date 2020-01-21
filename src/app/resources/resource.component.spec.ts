@@ -489,16 +489,6 @@ describe('ResourcesComponent', () => {
     });
 
     describe('loadRecentlyViewed test suites', () => {
-        it('should check for hideLoaderFLag if loader is present start sheen Animation', () => {
-            // arrange
-            resourcesComponent.showLoader = true;
-            mockTelemetryGeneratorService.generateStartSheenAnimationTelemetry = jest.fn();
-            // act
-            resourcesComponent.loadRecentlyViewedContent(false);
-            // assert
-            expect(mockTelemetryGeneratorService.generateStartSheenAnimationTelemetry).toHaveBeenCalledWith(PageId.LIBRARY);
-        });
-
         it('should call getContents from contentService, then loop eachData and setContentData appIcon', (done) => {
             // arrange
             mockContentService.getContents = jest.fn(() => {
@@ -512,7 +502,6 @@ describe('ResourcesComponent', () => {
                 }]);
             });
             resourcesComponent.showLoader = true;
-            mockTelemetryGeneratorService.generateEndSheenAnimationTelemetry = jest.fn();
             mockNgZone.run = jest.fn((fn) => fn());
             mockCommonUtilService.networkInfo.isNetworkAvailable = true;
             constructComponent();
@@ -522,7 +511,6 @@ describe('ResourcesComponent', () => {
             setTimeout(() => {
                 expect(mockContentService.getContents).toHaveBeenCalled();
                 expect(mockNgZone.run).toHaveBeenCalled();
-                expect(mockTelemetryGeneratorService.generateEndSheenAnimationTelemetry).toHaveBeenCalledWith(PageId.LIBRARY);
                 done();
             }, 0);
         });
@@ -534,15 +522,132 @@ describe('ResourcesComponent', () => {
             });
             mockNgZone.run = jest.fn((fn) => fn());
             resourcesComponent.showLoader = true;
-            mockTelemetryGeneratorService.generateEndSheenAnimationTelemetry = jest.fn();
             // act
             resourcesComponent.loadRecentlyViewedContent(false);
             // assert
             setTimeout(() => {
                 expect(mockContentService.getContents).toHaveBeenCalled();
-                expect(mockTelemetryGeneratorService.generateEndSheenAnimationTelemetry).toHaveBeenCalledWith(PageId.LIBRARY);
                 done();
             }, 0);
         });
+    });
+
+    it('should order result data by Subject', () => {
+        // arrange
+        const searchResults = [
+            {
+                name: 'Mathematics'
+            }
+        ];
+        jest.spyOn(resourcesComponent, 'applyProfileFilter').mockReturnValue([
+            'Mathematics', 'Physics'
+        ]);
+        // act
+        resourcesComponent.orderBySubject(searchResults);
+        // assert
+        expect(resourcesComponent.applyProfileFilter).toHaveBeenCalled();
+    });
+
+    it('should check for Textbook which is locally Available', () => {
+        // arrange
+        resourcesComponent.locallyDownloadResources = [
+            {
+                identifier: 'sample_identifier',
+                contentData: {},
+                isAvailableLocally: true
+            }
+        ];
+        resourcesComponent.storyAndWorksheets = [
+            {
+                contents: [{
+                    identifier: 'sample_identifier',
+                    contentData: {},
+                    mimeType: 'sample_mimeType',
+                    basePath: 'sampleBasePath',
+                    contentType: 'sample_contentType',
+                    isAvailableLocally: true
+                }]
+            }
+        ];
+        // act
+        resourcesComponent.markLocallyAvailableTextBook();
+        // assert
+        expect(resourcesComponent.locallyDownloadResources).toEqual(resourcesComponent.locallyDownloadResources);
+        expect(resourcesComponent.storyAndWorksheets).toEqual(resourcesComponent.storyAndWorksheets);
+
+    });
+
+    it('should generateExtra info telemetry when generateExtraInfo Telemetry() called', () => {
+        // arrange
+        const mockSectionsCount = [
+            {
+                contents: [{
+                    identifier: 'sample_identifier',
+                    contentData: {},
+                    mimeType: 'sample_mimeType',
+                    basePath: 'sampleBasePath',
+                    contentType: 'sample_contentType',
+                    isAvailableLocally: true
+                }]
+            }
+        ];
+        mockTelemetryGeneratorService.generateExtraInfoTelemetry = jest.fn();
+        // act
+        resourcesComponent.generateExtraInfoTelemetry(mockSectionsCount.length);
+        // assert
+        expect(mockTelemetryGeneratorService.generateExtraInfoTelemetry).toHaveBeenCalled();
+    });
+
+    it('should filter the profile when applyProfileFilter() called', () => {
+        // arrange
+        const profileFilterForMedium = ['English', 'Bengali'];
+        const assembleFilterForMedium = ['English', 'Bengali'];
+        mockAppGlobalService.getNameForCodeInFramework = jest.fn(() => {
+            return 'en';
+        });
+        // act
+        resourcesComponent.applyProfileFilter(profileFilterForMedium, assembleFilterForMedium, 'medium');
+        // assert
+        expect(mockAppGlobalService.getNameForCodeInFramework).toHaveBeenCalled();
+    });
+
+    it('should subscribe events and other methods when ionViewWillEnter()', () => {
+        // arrange
+        resourcesComponent.pageLoadedSuccess = false;
+        mockHeaderService.showHeaderWithHomeButton = jest.fn();
+        mockEvents.subscribe = jest.fn((topic, fn) => {
+            if (topic === 'update_header') {
+                fn();
+            }
+        });
+        jest.spyOn(resourcesComponent, 'getCategoryData').mockImplementation();
+        jest.spyOn(resourcesComponent, 'getPopularContent').mockImplementation();
+        jest.spyOn(resourcesComponent, 'getCurrentUser').mockImplementation();
+        // act
+        resourcesComponent.ionViewWillEnter();
+        // assert
+        expect(mockHeaderService.showHeaderWithHomeButton).toHaveBeenCalled();
+
+    });
+
+    it('should call toastCtrller when in offline', (done) => {
+        // arrange
+        mockToastCtrlService.create = jest.fn(() => {
+            return Promise.resolve({
+                present: jest.fn(),
+                onDidDismiss: jest.fn((fn) => {
+                    fn();
+                })
+            });
+        });
+        mockCommonUtilService.translateMessage = jest.fn();
+        // act
+        resourcesComponent.presentToastForOffline('offline');
+        // assert
+        setTimeout(() => {
+            expect(mockToastCtrlService.create).toHaveBeenCalled();
+            expect(mockCommonUtilService.translateMessage).toHaveBeenCalled();
+            done();
+        }, 0);
     });
 });

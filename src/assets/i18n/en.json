@@ -253,7 +253,6 @@
   "FOLLOW": "Follow",
   "FREE_SPACE": "Free Space :",
   "FROM": "From",
-  "FOR_DETAILS": "For details",
   "FULL_NAME": "Name",
   "GOT_IT": "Got it",
   "GRADE_OPTION_TEXT": "Select Class",
@@ -583,6 +582,7 @@
   "TRY_AGAIN": "TRY AGAIN",
   "TRY_BEFORE_RATING": "Please try the content before rating it.",
   "TRY_DIFF_QR": "Try a different QR code?",
+  "TRY_CONTENT_ON": "Try this content on the mobile app: ",
   "UNABLE_TO_FETCH_CONTENT": "Unable to fetch retired content",
   "UNENROLL_CONFIRMATION_MESSAGE": "You can rejoin an active or upcoming batch later",
   "UNENROLL_FROM_COURSE": "Leave Training",
@@ -652,5 +652,6 @@
   "DOWNLOAD_FILE_SIZE": "File Size {{%s}}",
   "UPDATE_REQUIRED": "Update Required",
   "DOWNLOAD_NOW": "Download Now",
-  "WEBVIEW_UPDATE_TEXT": "For an effective experience, download the latest version of webview from Google Play store."
+  "WEBVIEW_UPDATE_TEXT": "For an effective experience, download the latest version of webview from Google Play store.",
+  "INVALID_FORMAT": "Invalid format"
 }

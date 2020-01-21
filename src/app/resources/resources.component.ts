@@ -346,9 +346,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
     this.recentlyViewedResources = [];
     if (!hideLoaderFlag) {
       this.showLoader = true;
-      if (this.showLoader) {
-        this.telemetryGeneratorService.generateStartSheenAnimationTelemetry(PageId.LIBRARY);
-      }
     }
     const requestParams: ContentRequest = {
       uid: this.profile ? this.profile.uid : undefined,
@@ -378,9 +375,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
           this.recentlyViewedResources = data;
           if (!hideLoaderFlag) {
             this.showLoader = false;
-            if (!this.showLoader) {
-              this.telemetryGeneratorService.generateEndSheenAnimationTelemetry(PageId.LIBRARY);
-            }
           }
         });
       })
@@ -388,9 +382,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
         this.ngZone.run(() => {
           if (!hideLoaderFlag) {
             this.showLoader = false;
-            if (!this.showLoader) {
-              this.telemetryGeneratorService.generateEndSheenAnimationTelemetry(PageId.LIBRARY);
-            }
           }
         });
       });
@@ -402,9 +393,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
   getPopularContent(isAfterLanguageChange = false, contentSearchCriteria?: ContentSearchCriteria, avoidRefreshList = false) {
     this.storyAndWorksheets = [];
     this.searchApiLoader = true;
-    if (this.searchApiLoader) {
-      this.telemetryGeneratorService.generateStartSheenAnimationTelemetry(PageId.LIBRARY);
-    }
 
     if (!contentSearchCriteria) {
       contentSearchCriteria = {
@@ -458,7 +446,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
     this.appGlobalService.setSelectedBoardMediumGrade(selectedBoardMediumGrade);
     this.storyAndWorksheets = [];
     this.searchApiLoader = !this.refresh;
-    this.telemetryGeneratorService.generateStartSheenAnimationTelemetry(PageId.LIBRARY);
     const reqvalues = new Map();
     reqvalues['pageReq'] = this.getGroupByPageReq;
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.OTHER,
@@ -529,9 +516,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
           this.pageLoadedSuccess = true;
           this.refresh = false;
           this.searchApiLoader = false;
-          if (!this.refresh || !this.searchApiLoader) {
-            this.telemetryGeneratorService.generateEndSheenAnimationTelemetry(PageId.LIBRARY);
-          }
           this.generateExtraInfoTelemetry(newSections.length);
         });
       })
@@ -540,9 +524,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
         this.ngZone.run(() => {
           this.refresh = false;
           this.searchApiLoader = false;
-          if (!this.refresh || !this.searchApiLoader) {
-            this.telemetryGeneratorService.generateEndSheenAnimationTelemetry(PageId.LIBRARY);
-          }
           if (error === 'SERVER_ERROR' || error === 'SERVER_AUTH_ERROR') {
             if (!isAfterLanguageChange) {
               this.commonUtilService.showToast('ERROR_FETCHING_DATA');

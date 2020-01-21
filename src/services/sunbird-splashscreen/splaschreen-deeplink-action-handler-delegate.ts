@@ -88,29 +88,32 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
   }
 
   async navigateContent(identifier, isFromLink = false) {
-    this.appGlobalServices.resetSavedQuizContent();
-    const content = await this.contentService.getContentDetails({
-      contentId: identifier
-    }).toPromise();
+    try {
+      this.appGlobalServices.resetSavedQuizContent();
+      const content = await this.contentService.getContentDetails({
+        contentId: identifier
+      }).toPromise();
 
-    if (isFromLink) {
-      this.telemetryGeneratorService.generateAppLaunchTelemetry(LaunchType.DEEPLINK);
-    }
-    if (content.contentType === ContentType.COURSE.toLowerCase()) {
-      this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], { state: { content } });
-    } else if (content.mimeType === MimeType.COLLECTION) {
-      this.router.navigate([RouterLinks.COLLECTION_DETAIL_ETB], { state: { content } });
-    } else {
-      if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
-        this.commonUtilService.showToast('NEED_INTERNET_FOR_DEEPLINK_CONTENT');
-        return;
+      if (isFromLink) {
+        this.telemetryGeneratorService.generateAppLaunchTelemetry(LaunchType.DEEPLINK);
       }
-      if (content.contentData && content.contentData.status === ContentFilterConfig.CONTENT_STATUS_UNLISTED) {
-        this.quizContentNavigator(identifier, content, isFromLink);
+
+      if (content.contentType === ContentType.COURSE.toLowerCase()) {
+        this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], { state: { content } });
+      } else if (content.mimeType === MimeType.COLLECTION) {
+        this.router.navigate([RouterLinks.COLLECTION_DETAIL_ETB], { state: { content } });
       } else {
-        await this.router.navigate([RouterLinks.CONTENT_DETAILS], { state: { content } });
+        if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
+          this.commonUtilService.showToast('NEED_INTERNET_FOR_DEEPLINK_CONTENT');
+          return;
+        }
+        if (content.contentData && content.contentData.status === ContentFilterConfig.CONTENT_STATUS_UNLISTED) {
+          this.quizContentNavigator(identifier, content, isFromLink);
+        } else {
+          await this.router.navigate([RouterLinks.CONTENT_DETAILS], { state: { content } });
+        }
       }
-    }
+    } catch (err) {}
   }
 
   async quizContentNavigator(identifier, content, isFromLink) {

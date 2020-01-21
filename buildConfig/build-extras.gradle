@@ -109,7 +109,6 @@ android {
             //resValue("string", "app_code_push_id", "${dev_app_code_push_id}")
             buildConfigField 'String', 'BASE_URL', "\"${dev_base_url}\""
             buildConfigField 'String', 'MERGE_ACCOUNT_BASE_URL', "\"${dev_merge_account_base_url}\""
-            buildConfigField 'String', 'DEVICE_REGISTER_BASE_URL', "\"${dev_device_register_base_url}\""
             buildConfigField 'String', 'PRODUCER_ID', "\"${dev_producer_id}\""
             buildConfigField 'String', 'CHANNEL_ID', "\"${dev_channel_id}\""
             buildConfigField 'int', 'MAX_COMPATIBILITY_LEVEL', "4"
@@ -129,7 +128,6 @@ android {
             // resValue("string", "app_code_push_id", "${staging_app_code_push_id}")
             buildConfigField 'String', 'BASE_URL', "\"${staging_base_url}\""
             buildConfigField 'String', 'MERGE_ACCOUNT_BASE_URL', "\"${staging_merge_account_base_url}\""
-            buildConfigField 'String', 'DEVICE_REGISTER_BASE_URL', "\"${staging_device_register_base_url}\""
             buildConfigField 'String', 'PRODUCER_ID', "\"${staging_producer_id}\""
             buildConfigField 'String', 'CHANNEL_ID', "\"${staging_channel_id}\""
             buildConfigField 'int', 'MAX_COMPATIBILITY_LEVEL', "4"
@@ -149,7 +147,6 @@ android {
             //resValue("string", "app_code_push_id", "${production_app_code_push_id}")
             buildConfigField 'String', 'BASE_URL', "\"${production_base_url}\""
             buildConfigField 'String', 'MERGE_ACCOUNT_BASE_URL', "\"${production_merge_account_base_url}\""
-            buildConfigField 'String', 'DEVICE_REGISTER_BASE_URL', "\"${production_device_register_base_url}\""
             buildConfigField 'String', 'PRODUCER_ID', "\"${production_producer_id}\""
             buildConfigField 'String', 'CHANNEL_ID', "\"${production_channel_id}\""
             buildConfigField 'int', 'MAX_COMPATIBILITY_LEVEL', "4"
@@ -184,6 +181,18 @@ android {
             from "$rootDir/app/data/notificationconfig"
             into "$rootDir/app/src/main/assets/www/assets/data"
             println "inside copydir notificationconfig linux OS"
+        }
+    }
+
+    task copyDirFaq(type: Copy,overwrite: true) {
+        if (System.properties['os.name'].toLowerCase().contains('windows')){
+            from "$rootDir\\app\\data\\faq"
+            into "$rootDir\\app\\src\\main\\assets\\www\\assets\\data\\faq"
+            println "inside copydir faq windows OS"
+        } else {
+            from "$rootDir/app/data/faq"
+            into "$rootDir/app/src/main/assets/www/assets/data/faq"
+            println "inside copydir faq linux OS"
         }
     }
 
@@ -224,13 +233,13 @@ android {
     }
 
     task dev(type: GradleBuild) {
-        tasks = ['myclean', 'copyDirDev', 'copyDirNotificationConfig']
+        tasks = ['myclean', 'copyDirDev', 'copyDirNotificationConfig', 'copyDirFaq']
     }      
     task staging(type: GradleBuild) {
-        tasks = ['myclean', 'copyDirStaging', 'copyDirNotificationConfig']
+        tasks = ['myclean', 'copyDirStaging', 'copyDirNotificationConfig', 'copyDirFaq']
     }
     task prod(type: GradleBuild) {
-        tasks = ['myclean', 'copyDirProd', 'copyDirNotificationConfig']
+        tasks = ['myclean', 'copyDirProd', 'copyDirNotificationConfig', 'copyDirFaq']
     }
 
     applicationVariants.all { variant ->

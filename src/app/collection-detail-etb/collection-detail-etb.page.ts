@@ -24,7 +24,7 @@ import {
   Environment, ErrorType, ImpressionType, InteractSubtype, InteractType, Mode, PageId, ID
 } from '../../services/telemetry-constants';
 import { Subscription } from 'rxjs';
-import { ContentType, MimeType, ShareUrl, RouterLinks } from '../../app/app.constant';
+import { ContentType, MimeType, ShareUrl, RouterLinks, ShareItemType } from '../../app/app.constant';
 import {
   AppGlobalService, AppHeaderService, CommonUtilService, CourseUtilService, TelemetryGeneratorService, UtilityService,
   ContentShareHandlerService
@@ -551,6 +551,12 @@ export class CollectionDetailEtbPage implements OnInit {
 
   showLicensce() {
     this.showCredits = !this.showCredits;
+
+    if (this.showCredits) {
+      this.licenseSectionClicked('expanded');
+    } else {
+      this.licenseSectionClicked('collapsed');
+    }
   }
 
   async showCommingSoonPopup(childData: any) {
@@ -1066,9 +1072,11 @@ export class CollectionDetailEtbPage implements OnInit {
     const popover = await this.popoverCtrl.create({
       component: SbSharePopupComponent,
       componentProps: {
-        contentDetail: this.contentDetail,
+        content: this.contentDetail,
         corRelationList: this.corRelationList,
         objRollup: this.objRollup,
+        pageId: PageId.COLLECTION_DETAIL,
+        shareItemType: ShareItemType.ROOT_COLECTION
       },
       cssClass: 'sb-popover',
     });

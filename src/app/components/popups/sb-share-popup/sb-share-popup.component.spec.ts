@@ -1,30 +1,64 @@
 import { of } from 'rxjs';
-import { ContentShareHandlerService, CommonUtilService, UtilityService } from '../../../../services';
+import { ContentShareHandlerService, CommonUtilService, UtilityService, TelemetryGeneratorService } from '../../../../services';
 import { ContentService } from 'sunbird-sdk';
 import { SbSharePopupComponent } from './sb-share-popup.component';
-import { PopoverController, Platform } from '@ionic/angular';
-
+import { PopoverController, Platform, NavParams } from '@ionic/angular';
+import {
+    Environment,
+    ImpressionType,
+    ID,
+    PageId,
+} from '@app/services/telemetry-constants';
+import { ShareUrl, ShareMode } from '../../../../app/app.constant';
 describe('SbSharePopupComponent', () => {
     let sbSharePopupComponent: SbSharePopupComponent;
     const mockPopoverCtrl: Partial<PopoverController> = {};
-    const mockContentService: Partial<ContentService> = {};
     const mockPlatform: Partial<Platform> = {};
     const mockContentShareHandler: Partial<ContentShareHandlerService> = {
         shareContent: jest.fn()
     };
-    const mockCommonUtilService: Partial<CommonUtilService> = {};
     const mockUtilityService: Partial<UtilityService> = {
         getBuildConfigValue: jest.fn(() => Promise.resolve('baseurl'))
+    };
+    const mockNavParams: Partial<NavParams> = {
+        get: jest.fn((arg) => {
+            let value;
+            switch (arg) {
+                case 'content':
+                    value = {
+                        identifier: 'do_123',
+                        contentData: {
+                            contentType: 'Resource',
+                            pkgVersion: '1'
+                        }
+                    } as any;
+                    break;
+                case 'pageId':
+                    value = 'content-detail';
+                    break;
+                case 'objRollup':
+                    value = { l1: 'do_1', l2: 'do_12' };
+                    break;
+                case 'shareItemType':
+                    value = 'root-content';
+                    break;
+            }
+            return value;
+        })
+    };
+    const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {
+        generateInteractTelemetry: jest.fn(),
+        generateImpressionTelemetry: jest.fn()
     };
 
     beforeAll(() => {
         sbSharePopupComponent = new SbSharePopupComponent(
-        mockContentService as ContentService,
-        mockPopoverCtrl as PopoverController,
-        mockPlatform as Platform,
-        mockContentShareHandler as ContentShareHandlerService,
-        mockCommonUtilService as CommonUtilService,
-        mockUtilityService as UtilityService);
+            mockPopoverCtrl as PopoverController,
+            mockPlatform as Platform,
+            mockContentShareHandler as ContentShareHandlerService,
+            mockUtilityService as UtilityService,
+            mockNavParams as NavParams,
+            mockTelemetryGeneratorService as TelemetryGeneratorService);
     });
 
     beforeEach(() => {
@@ -35,36 +69,35 @@ describe('SbSharePopupComponent', () => {
         expect(sbSharePopupComponent).toBeTruthy();
     });
 
-    it('should get content detail on ngoninit', (done) => {
+    it('should generate telemetry on ngOninit', () => {
         // arrange
-        const subscribeWithPriorityFn = jest.fn((_, fn) => fn());
-        mockPlatform.backButton = {
-            subscribeWithPriority: subscribeWithPriorityFn
-        } as any;
         const unsubscribeFn = jest.fn();
         sbSharePopupComponent.backButtonFunc = {
             unsubscribe: unsubscribeFn
         } as any;
-        mockPopoverCtrl.dismiss = jest.fn();
-        const mockContentDetailResponse = {
-            identifier: 'sampleId'
-        };
-        mockContentService.getContentDetails = jest.fn(() => of(mockContentDetailResponse));
-        const contentDetail = {
-            hierarchyInfo: [{identifier: 'sampleid'}]
-        };
-        sbSharePopupComponent.contentDetail = contentDetail;
         // act
         sbSharePopupComponent.ngOnInit();
         // assert
-        setTimeout(() => {
-            expect(mockContentService.getContentDetails).toHaveBeenCalled();
-            expect(mockPopoverCtrl.dismiss).toHaveBeenCalled();
-            expect(sbSharePopupComponent.shareUrl).toEqual('baseurl/play/content/sampleId');
-            expect(subscribeWithPriorityFn).toHaveBeenCalled();
-            done();
-        }, 0);
+        expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith('root-content',
+            '',
+            Environment.HOME,
+            'content-detail',
+            { id: 'do_123', type: 'Resource', version: '1' },
+            undefined,
+            { l1: 'do_1', l2: 'do_12' },
+            undefined,
+            ID.SHARE);
+        expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenCalledWith(
+            ImpressionType.VIEW, '',
+            PageId.SHARE_CONTENT_POPUP,
+            Environment.HOME,
+            'do_123',
+            'Resource',
+            '1',
+            { l1: 'do_1', l2: 'do_12' },
+            undefined);
     });
+
 
     it('should unsubscribe back button on ngondistroy', () => {
         // arrange
