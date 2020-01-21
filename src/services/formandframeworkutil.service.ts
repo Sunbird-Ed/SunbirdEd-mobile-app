@@ -316,7 +316,7 @@ export class FormAndFrameworkUtilService {
         return this.contentFilterConfig;
     }
 
-    private async invokeContentFilterConfigFormApi(): Promise<any> {
+    public async invokeContentFilterConfigFormApi(): Promise<any> {
         const req: FormRequest = {
             type: 'config',
             subType: 'content',
