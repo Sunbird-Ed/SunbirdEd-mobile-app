@@ -44,7 +44,7 @@ export class SplashscreenImportActionHandlerDelegate implements SplashscreenActi
           return defer(async () => {
               return new Promise<HTMLIonPopoverElement>(async (resolve, reject) => {
                   const fileSize = await this.utilityService.getMetaData(payload.filePath);
-                  const fileName: string = payload.filePath.substr(20);
+                  const fileName: string = filePath.substring(filePath.lastIndexOf('/') + 1);
                   const importPopover = await this.popoverCtrl.create({
                       component: ImportPopoverComponent,
                       componentProps: {
