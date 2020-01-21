@@ -781,6 +781,9 @@ ion-toast.sb-toast.available-later {
   padding: 0;
   box-shadow: 0 -1px 1px 0 rgba(0, 0, 0, 0.16), 0 2px 1px 0 rgba(0, 0, 0, 0.24);
 }
+ion-toast.green-toast{
+  --background: #008000;
+}
 
 .btn-block {
   margin: 0 !important;

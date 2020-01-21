@@ -25,13 +25,15 @@ import {
     contentDetailsMcokResponse3,
     mockcollectionData
 } from './collection-detail-etb-page.spec.data';
-import { of } from 'rxjs';
+import { of, Subscription, Observable } from 'rxjs';
 
 describe('collectionDetailEtbPage', () => {
     let collectionDetailEtbPage: CollectionDetailEtbPage;
     const mockContentService: Partial<ContentService> = {};
     const mockEventBusService: Partial<EventsBusService> = {};
-    const mockProfileService: Partial<ProfileService> = {};
+    const mockProfileService: Partial<ProfileService> = {
+        addContentAccess: jest.fn()
+    };
     const mockStorageService: Partial<StorageService> = {};
     const mockNavCtrl: Partial<NavController> = {};
     const mockzone: Partial<NgZone> = {};
@@ -41,18 +43,26 @@ describe('collectionDetailEtbPage', () => {
     const mocktranslate: Partial<TranslateService> = {};
     const mocksocial: Partial<SocialSharing> = {};
     const mockappGlobalService: Partial<AppGlobalService> = {
-        isUserLoggedIn: jest.fn(() => true)
+        isUserLoggedIn: jest.fn(() => true),
+        getCurrentUser: jest.fn()
     };
     const mockcommonUtilService: Partial<CommonUtilService> = {
 
     };
-    const mocktelemetryGeneratorService: Partial<TelemetryGeneratorService> = {};
+    const mocktelemetryGeneratorService: Partial<TelemetryGeneratorService> = {
+        generateBackClickedTelemetry: jest.fn(),
+        generateEndTelemetry: jest.fn(),
+        generateStartTelemetry: jest.fn(),
+        generateImpressionTelemetry: jest.fn()
+    };
     const mockcourseUtilService: Partial<CourseUtilService> = {};
     const mockutilityService: Partial<UtilityService> = {};
     const mockfileSizePipe: Partial<FileSizePipe> = {};
     const mockheaderService: Partial<AppHeaderService> = {};
     const mockcomingSoonMessageService: Partial<ComingSoonMessageService> = {};
-    const mocklocation: Partial<Location> = {};
+    const mocklocation: Partial<Location> = {
+        back: jest.fn()
+    };
     const mockroute: Partial<ActivatedRoute> = {};
     const mockrouter: Partial<Router> = {
         getCurrentNavigation: jest.fn(() => mockcollectionData)
@@ -179,5 +189,39 @@ describe('collectionDetailEtbPage', () => {
             undefined,
             ID.LICENSE_CARD_CLICKED
         );
+    });
+
+    // it('#ionViewWillEnter should call registerDeviceBackButton()', () => {
+    //     mockplatform.backButton  = {
+    //         subscribeWithPriority: jest.fn((x, fn) => fn())
+    //     };
+    //     const data = jest.fn(() => {});
+    //     mockProfileService.addContentAccess = jest.fn(() => Observable.create());
+    //     mockheaderService.headerEventEmitted$ = {
+    //         subscribe: data
+    //     } as any;
+    //     mockzone.run = jest.fn((fn) => fn());
+    //     collectionDetailEtbPage.ionViewWillEnter();
+    //     expect(collectionDetailEtbPage.ionViewWillEnter).toHaveBeenCalled();
+    // });
+    
+    it('should show license true when user clicked on credits and license', () => {
+        // arrange
+        collectionDetailEtbPage.showCredits = false;
+        jest.spyOn(collectionDetailEtbPage, 'licenseSectionClicked').mockImplementation();
+        // act
+        collectionDetailEtbPage.showLicensce();
+        // assert
+        expect(collectionDetailEtbPage.licenseSectionClicked).toHaveBeenCalledWith('expanded');
+    });
+
+    it('should not show license when user clicked on license and credits', () => {
+        // arrange
+        collectionDetailEtbPage.showCredits = true;
+        jest.spyOn(collectionDetailEtbPage, 'licenseSectionClicked').mockImplementation();
+        // act
+        collectionDetailEtbPage.showLicensce();
+        // assert
+        expect(collectionDetailEtbPage.licenseSectionClicked).toHaveBeenCalledWith('collapsed');
     });
 });
