@@ -62,7 +62,7 @@ android {
     defaultConfig {
         minSdkVersion 19
         ext.buildNumber = System.getenv("TRAVIS_BUILD_NUMBER") ?: "local"
-        versionName "2.7.$ext.buildNumber"
+        versionName "2.8.$ext.buildNumber"
         manifestPlaceholders = [fabricKey: "${release_fabric_api_key}", fabricSecret: "${release_fabric_api_secret}"]
         resValue("string", "_app_name", "${app_name}")
         multiDexEnabled true
@@ -267,9 +267,10 @@ android {
         if (variant.buildType.isDebuggable()) {
             versionName += '-debug';
         }
-        // flavor.versionName = versionName;
+        flavor.versionName = versionName;
         variant.buildConfigField("String", "REAL_VERSION_NAME", "\"${versionName}\"");
         variant.outputs.each { output ->
+            // output.versionNameOverride = versionName
             // output.outputFileName = new File(output.outputFile.parent, "${app_name}-".toLowerCase() + versionName + ".apk")
             output.outputFileName = "${variant.name}-${variant.versionName}.apk"
         }
