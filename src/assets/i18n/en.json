@@ -653,5 +653,9 @@
   "UPDATE_REQUIRED": "Update Required",
   "DOWNLOAD_NOW": "Download Now",
   "WEBVIEW_UPDATE_TEXT": "For an effective experience, download the latest version of webview from Google Play store.",
-  "INVALID_FORMAT": "Invalid format"
+  "INVALID_FORMAT": "Invalid format",
+  "FILE_NAME": "Loading \"{{%s}}\"",
+  "LOAD": "Load",
+  "LOAD_FILE": "Load File",
+  "SIZE": "Size: {{%s}}"
 }
