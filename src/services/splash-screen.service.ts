@@ -35,7 +35,7 @@ export class SplashScreenService {
                         break;
                     }
                     case 'DEEPLINK': {
-                        this.splashScreenDeeplinkActionHandlerDelegate.onAction(action.payload).toPromise();
+                        await this.splashScreenDeeplinkActionHandlerDelegate.onAction(action.payload).toPromise();
                         break;
                     }
                     default:

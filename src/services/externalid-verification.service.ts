@@ -9,6 +9,7 @@ import { ProfileConstants } from '@app/app/app.constant';
 import { map } from 'rxjs/operators';
 import { SplaschreenDeeplinkActionHandlerDelegate } from './sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
 import { CommonUtilService } from './common-util.service';
+import { LocalCourseService } from './local-course.service';
 
 @Injectable()
 export class ExternalIdVerificationService {
@@ -21,6 +22,7 @@ export class ExternalIdVerificationService {
         private formAndFrameworkUtilService: FormAndFrameworkUtilService,
         private splaschreenDeeplinkActionHandlerDelegate: SplaschreenDeeplinkActionHandlerDelegate,
         private commonUtilService: CommonUtilService,
+        private localCourseService: LocalCourseService
     ) {
         this.isCustodianUser$ = this.profileService.isDefaultChannelProfile().pipe(
             map((isDefaultChannelProfile) => isDefaultChannelProfile) as any
@@ -89,7 +91,7 @@ export class ExternalIdVerificationService {
       checkJoinTraining() {
           if (this.appGlobalService.isJoinTraningOnboardingFlow) {
             return new Promise<boolean>(async (resolve) => {
-            await this.splaschreenDeeplinkActionHandlerDelegate.checkCourseRedirect();
+            await this.localCourseService.checkCourseRedirect();
             this.appGlobalService.isJoinTraningOnboardingFlow = false;
             resolve(true);
           });

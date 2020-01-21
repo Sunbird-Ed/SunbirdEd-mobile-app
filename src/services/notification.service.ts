@@ -125,8 +125,6 @@ export class NotificationService {
         } else if (this.externalUrl) {
             open(this.externalUrl);
             this.externalUrl = null;
-        } else {
-            this.splaschreenDeeplinkActionHandlerDelegate.checkCourseRedirect();
         }
     }
 

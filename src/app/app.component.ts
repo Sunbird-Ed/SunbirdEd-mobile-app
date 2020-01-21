@@ -30,9 +30,9 @@ import {
   AppRatingService,
   AppHeaderService,
   FormAndFrameworkUtilService,
-  SplashScreenService
+  SplashScreenService,
+  LocalCourseService
 } from '../services';
-import { SplaschreenDeeplinkActionHandlerDelegate } from '@app/services/sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
 import { LogoutHandlerService } from '@app/services/handlers/logout-handler.service';
 import { NotificationService as localNotification } from '@app/services/notification.service';
 import { RouterLinks } from './app.constant';
@@ -81,7 +81,6 @@ export class AppComponent implements OnInit, AfterViewInit {
     private telemetryGeneratorService: TelemetryGeneratorService,
     private tncUpdateHandlerService: TncUpdateHandlerService,
     private utilityService: UtilityService,
-    private splaschreenDeeplinkActionHandlerDelegate: SplaschreenDeeplinkActionHandlerDelegate,
     private headerService: AppHeaderService,
     private logoutHandlerService: LogoutHandlerService,
     private network: Network,
@@ -92,7 +91,8 @@ export class AppComponent implements OnInit, AfterViewInit {
     private location: Location,
     private menuCtrl: MenuController,
     private networkAvailability: NetworkAvailabilityToastService,
-    private splashScreenService: SplashScreenService
+    private splashScreenService: SplashScreenService,
+    private localCourseService: LocalCourseService
   ) {
     this.telemetryAutoSync = this.telemetryService.autoSync;
     platform.ready().then(async () => {
@@ -352,7 +352,7 @@ export class AppComponent implements OnInit, AfterViewInit {
         this.reloadSigninEvents();
         this.events.publish('UPDATE_TABS');
         if (batchDetails) {
-          this.splaschreenDeeplinkActionHandlerDelegate.checkCourseRedirect();
+          await this.localCourseService.checkCourseRedirect();
         } else {
           this.router.navigate([RouterLinks.TABS]);
         }

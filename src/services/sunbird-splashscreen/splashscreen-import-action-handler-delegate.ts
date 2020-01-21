@@ -81,9 +81,7 @@ export class SplashscreenImportActionHandlerDelegate implements SplashscreenActi
           reduce((acc, event) => event, undefined),
           tap((event: ContentEvent) => {
             if (event.type === ContentEventType.IMPORT_COMPLETED) {
-              this.splashscreenDeeplinkActionHandlerDelegate.onAction(
-                  'content', { identifier: event.payload.contentId }, false
-              ).toPromise();
+              this.splashscreenDeeplinkActionHandlerDelegate.navigateContent(event.payload.contentId);
             }
           }),
           mapTo(undefined) as any
