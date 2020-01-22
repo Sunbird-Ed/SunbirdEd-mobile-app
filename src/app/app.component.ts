@@ -19,7 +19,7 @@ import {
   Environment, PageId,
   ImpressionType,
   CorReleationDataType
-} from 'services/telemetry-constants';
+} from '@app/services/telemetry-constants';
 import { PreferenceKey, EventTopics, SystemSettingsIds, GenericAppConfig } from './app.constant';
 import { ActivePageService } from '@app/services/active-page/active-page-service';
 import {
@@ -128,9 +128,13 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.statusBar.styleBlackTranslucent();
       this.handleBackButton();
       this.appRatingService.checkInitialDate();
-      this.getUtmParameter();
       this.checkForCodeUpdates();
       this.checkAndroidWebViewVersion();
+      this.preferences.getString('utm_data').toPromise().then((value) => {
+        if (!value) {
+          this.getUtmParameter();
+        }
+      });
     });
   }
 
