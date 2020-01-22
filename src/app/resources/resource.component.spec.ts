@@ -18,7 +18,6 @@ import {AppVersion} from '@ionic-native/app-version/ngx';
 import {Network} from '@ionic-native/network/ngx';
 import {TranslateService} from '@ngx-translate/core';
 import {Router} from '@angular/router';
-import {SplaschreenDeeplinkActionHandlerDelegate} from '@app/services/sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
 import {mockContentData} from '@app/app/content-details/content-details.page.spec.data';
 import {of, Subscription} from 'rxjs';
 import {
@@ -31,6 +30,7 @@ import {
     ProfileType,
     SearchType
 } from 'sunbird-sdk/dist';
+import { NotificationService } from '@app/services/notification.service';
 
 describe('ResourcesComponent', () => {
     let resourcesComponent: ResourcesComponent;
@@ -56,7 +56,6 @@ describe('ResourcesComponent', () => {
             }
         }]))
     };
-    const mockSplashScreenDeeplinkActionHandlerDelegate: Partial<SplaschreenDeeplinkActionHandlerDelegate> = {};
     const mockNgZone: Partial<NgZone> = {};
     const mockQRScanner: Partial<SunbirdQRScanner> = {};
     const mockEvents: Partial<Events> = {
@@ -91,6 +90,7 @@ describe('ResourcesComponent', () => {
     const mockRouter: Partial<Router> = {
         getCurrentNavigation: jest.fn(() => mockContentData)
     };
+    const mockAppNotificationService: Partial<NotificationService> = {};
     const constructComponent = () => {
         resourcesComponent = new ResourcesComponent(
             mockProfileService as ProfileServiceImpl,
@@ -99,7 +99,6 @@ describe('ResourcesComponent', () => {
             mockframeworkService as FrameworkService,
             mockContentService as ContentServiceImpl,
             mockSharedPreference as SharedPreferences,
-            mockSplashScreenDeeplinkActionHandlerDelegate as SplaschreenDeeplinkActionHandlerDelegate,
             mockNgZone as NgZone,
             mockQRScanner as SunbirdQRScanner,
             mockEvents as Events,
@@ -113,7 +112,8 @@ describe('ResourcesComponent', () => {
             mockToastCtrlService as ToastController,
             mockMenuController as MenuController,
             mockHeaderService as AppHeaderService,
-            mockRouter as Router
+            mockRouter as Router,
+            mockAppNotificationService as NotificationService
         );
     };
     beforeAll(() => {
@@ -301,7 +301,7 @@ describe('ResourcesComponent', () => {
         jest.spyOn(resourcesComponent, 'getPopularContent').mockImplementation();
         jest.spyOn(resourcesComponent, 'loadRecentlyViewedContent').mockImplementation();
         mockAppGlobalService.generateConfigInteractEvent = jest.fn();
-        mockSplashScreenDeeplinkActionHandlerDelegate.onAction = jest.fn(() => of());
+        mockAppNotificationService.handleNotification = jest.fn(() => of());
         mockEvents.subscribe = jest.fn((topic, fn) => {
             if (topic === 'tab.change') {
                 fn('LIBRARY');
@@ -321,7 +321,7 @@ describe('ResourcesComponent', () => {
             expect(resourcesComponent.getPopularContent).toHaveBeenCalled();
             expect(resourcesComponent.loadRecentlyViewedContent).toHaveBeenCalled();
             expect(mockAppGlobalService.generateConfigInteractEvent).toHaveBeenCalled();
-            expect(mockSplashScreenDeeplinkActionHandlerDelegate.onAction).toHaveBeenCalled();
+            expect(mockAppNotificationService.handleNotification).toHaveBeenCalled();
             expect(mockEvents.subscribe).toHaveBeenCalled();
             done();
         }, 0);
@@ -333,7 +333,7 @@ describe('ResourcesComponent', () => {
         jest.spyOn(resourcesComponent, 'getCurrentUser').mockImplementation();
         jest.spyOn(resourcesComponent, 'scrollToTop').mockImplementation();
         mockAppGlobalService.generateConfigInteractEvent = jest.fn();
-        mockSplashScreenDeeplinkActionHandlerDelegate.onAction = jest.fn(() => of());
+        mockAppNotificationService.handleNotification = jest.fn(() => of());
         jest.spyOn(mockAppGlobalService, 'getPageIdForTelemetry').mockReturnValue(PageId.LIBRARY);
         mockQRScanner.startScanner = jest.fn();
         mockEvents.subscribe = jest.fn((topic, fn) => {
