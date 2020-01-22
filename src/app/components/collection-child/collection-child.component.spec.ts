@@ -10,6 +10,14 @@ import {
   mockCompletedContentStatusData,
   mockInCompleteContentStatusData
 } from './collection-child.component.spec.data';
+import {
+  Environment,
+  ImpressionSubtype,
+  ImpressionType,
+  InteractSubtype,
+  InteractType,
+  PageId
+} from '@app/services/telemetry-constants';
 describe('CollectionChildComponent', () => {
   let collectionChildComponent: CollectionChildComponent;
   const mockZone: Partial<NgZone> = {};
@@ -18,9 +26,15 @@ describe('CollectionChildComponent', () => {
   };
   const mockPopoverCtrl: Partial<PopoverController> = {};
   const mockComingSoonMessageService: Partial<ComingSoonMessageService> = {};
-  const mockRouter: Partial<Router> = {};
-  const mockTextbookTocService: Partial<TextbookTocService> = {};
-  const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {};
+  const mockRouter: Partial<Router> = {
+    url: 'textbook-toc'
+  };
+  const mockTextbookTocService: Partial<TextbookTocService> = {
+    setTextbookIds: jest.fn()
+  };
+  const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {
+    generateInteractTelemetry: jest.fn(),
+  };
   const mockLocation: Partial<Location> = {};
   const mockEvents: Partial<Events> = {};
 
@@ -68,4 +82,27 @@ describe('CollectionChildComponent', () => {
     // assert
     expect(collectionChildComponent.isContentCompleted).toBeFalsy();
   });
+
+  it('should set textbookIds', () => {
+    // arrange
+    mockLocation.back = jest.fn();
+    const id = 'sampleId';
+    const values = new Map();
+    values['unitClicked'] = id;
+    // act
+    collectionChildComponent.setContentId(id);
+    // assert
+    expect(mockLocation.back).toHaveBeenCalled();
+    expect(mockTextbookTocService.setTextbookIds).toHaveBeenCalledWith({ rootUnitId: undefined, contentId: 'sampleId', unit: undefined});
+    expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+      InteractType.TOUCH,
+      InteractSubtype.SUBUNIT_CLICKED,
+      Environment.HOME,
+      PageId.TEXTBOOK_TOC,
+      undefined,
+      values,
+      undefined,
+      undefined);
+  });
+
 });
