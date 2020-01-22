@@ -1,8 +1,7 @@
 import { UpgradePopoverComponent } from './upgrade-popover.component';
 import { PopoverController, Platform, NavParams } from '@ionic/angular';
 import { UtilityService } from '../../../../services/utility-service';
-import { NgZone } from '@angular/core';
-import { of } from 'rxjs';
+import {Environment, ImpressionSubtype, ImpressionType, PageId, TelemetryGeneratorService} from '@app/services';
 
 describe('UpgradePopoverComponent', () => {
     let upgradePopoverComponent: UpgradePopoverComponent;
@@ -12,6 +11,11 @@ describe('UpgradePopoverComponent', () => {
 
     const mockPopOverController: Partial<PopoverController> = {
         dismiss: jest.fn()
+    };
+
+    const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {
+        generateInteractTelemetry: jest.fn(),
+        generateImpressionTelemetry: jest.fn()
     };
 
     const mockNavParams: Partial<NavParams> = {
@@ -42,7 +46,8 @@ describe('UpgradePopoverComponent', () => {
         upgradePopoverComponent = new UpgradePopoverComponent(
             mockUtilityService as UtilityService,
             mockPopOverController as PopoverController,
-            mockNavParams as NavParams
+            mockNavParams as NavParams,
+            mockTelemetryGeneratorService as TelemetryGeneratorService
         );
     });
 
@@ -70,6 +75,21 @@ describe('UpgradePopoverComponent', () => {
         // assert
         expect(mockUtilityService.openPlayStore).toHaveBeenCalledWith('org.sunbird.app');
         expect(upgradePopoverComponent.cancel).toHaveBeenCalled();
+    });
+
+    it('should generate impression when popoup shows', () => {
+        // arrange
+        jest.spyOn(mockTelemetryGeneratorService, 'generateImpressionTelemetry').mockImplementation();
+        // act
+        upgradePopoverComponent.init();
+        // assert
+        expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenCalledWith(
+            ImpressionType.VIEW,
+            ImpressionSubtype.UPGRADE_POPUP,
+            PageId.UPGRADE_POPUP,
+            Environment.HOME,
+            mockNavParams.get('type')
+        );
     });
 
 });
