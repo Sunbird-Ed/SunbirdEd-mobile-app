@@ -107,7 +107,7 @@ export class CollectionChildComponent implements OnInit {
     }
   }
 
-  setContentId(id: string) {
+  setContentId(id: string, collection?) {
     console.log('extractedUrl', this.router);
     if (this.router.url.indexOf(RouterLinks.TEXTBOOK_TOC) !== -1) {
       const values = new Map();
@@ -123,7 +123,7 @@ export class CollectionChildComponent implements OnInit {
         this.objRollup,
         this.corRelationList
       );
-      this.textbookTocService.setTextbookIds({ rootUnitId: this.rootUnitId, contentId: id });
+      this.textbookTocService.setTextbookIds({ rootUnitId: this.rootUnitId, contentId: id, unit: collection});
       this.location.back();
     }
   }
