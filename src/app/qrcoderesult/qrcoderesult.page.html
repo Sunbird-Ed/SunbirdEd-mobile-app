@@ -74,7 +74,7 @@
               {{'DOWNLOAD'| translate}}
             </button>
           </ion-col>
-          <ion-col no-padding *ngIf="content.contentData?.streamingUrl">
+          <ion-col no-padding *ngIf="content.contentData?.streamingUrl && !(content.mimeType === 'application/vnd.ekstep.h5p-archive')">
             <button no-padding class="custom-btn play qr-result-btn " expand="block" (click)="playContent(content)">
               <ion-icon name="play"></ion-icon>&nbsp;{{'PLAY' | translate}}
             </button>
