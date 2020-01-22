@@ -369,8 +369,7 @@ export class CategoriesEditPage {
         }
 
       })
-      .catch((e) => {
-        console.error(e);
+      .catch(() => {
       });
   }
 
