@@ -44,6 +44,7 @@ import { EnrollmentDetailsComponent } from './enrollment-details/enrollment-deta
 import { FilterPipe } from '@app/pipes/filter/filter.pipe';
 import { TeacherIdVerificationComponent } from './popups/teacher-id-verification-popup/teacher-id-verification-popup.component';
 import { SbSharePopupComponent } from './popups/sb-share-popup/sb-share-popup.component';
+import { SbAppSharePopupComponent } from './popups/sb-app-share-popup/sb-app-share-popup.component';
 
 @NgModule({
   declarations: [
@@ -82,7 +83,8 @@ import { SbSharePopupComponent } from './popups/sb-share-popup/sb-share-popup.co
     AccountRecoveryInfoComponent,
     EnrollmentDetailsComponent,
     TeacherIdVerificationComponent,
-    SbSharePopupComponent
+    SbSharePopupComponent,
+    SbAppSharePopupComponent
   ],
   imports: [
     CommonModule,
@@ -115,7 +117,8 @@ import { SbSharePopupComponent } from './popups/sb-share-popup/sb-share-popup.co
     AccountRecoveryInfoComponent,
     EnrollmentDetailsComponent,
     TeacherIdVerificationComponent,
-    SbSharePopupComponent
+    SbSharePopupComponent,
+    SbAppSharePopupComponent
   ],
   exports: [
     ApplicationHeaderComponent,
@@ -151,7 +154,8 @@ import { SbSharePopupComponent } from './popups/sb-share-popup/sb-share-popup.co
     AccountRecoveryInfoComponent,
     EnrollmentDetailsComponent,
     TeacherIdVerificationComponent,
-    SbSharePopupComponent
+    SbSharePopupComponent,
+    SbAppSharePopupComponent
   ],
   providers: [FileSizePipe, FilterPipe,  Keyboard]
 })

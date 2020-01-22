@@ -119,6 +119,8 @@ export enum PageId {
     EXTERNAL_USER_VERIFICATION_POPUP = 'user-verification-popup',
     FAQ_REPORT_ISSUE = 'faq-report-issue',
     UPDATE_WEBVIEW_POPUP = 'update-webview-popup',
+    SHARE_CONTENT_POPUP = 'share-content-popup',
+    SHARE_APP_POPUP = 'share-app-popup',
     UPGRADE_POPUP = 'update-popup'
 }
 export enum LogType {
@@ -168,6 +170,7 @@ export enum InteractType {
     QUIZ_DEEPLINK = 'quiz-deeplink'
 }
 
+
 export enum InteractSubtype {
     MERGE_ACCOUNT_INITIATED = 'merge-account-initiated',
     MERGE_ACCOUNT_SUCCESS = 'merge-account-success',
@@ -193,9 +196,9 @@ export enum InteractSubtype {
     BOOK_LIST_END_REACHED = 'book-list-end-reached',
     RECENTLY_VIEWED_END_REACHED = 'recently-viewed-end-reached',
     SHARE_COURSE_INITIATED = 'share-course-initiated',
-    SHARE_LIBRARY_INITIATED = 'share-library-initiated',
+    SHARE_CONTENT_INITIATED = 'share-content-initiated',
     SHARE_COURSE_SUCCESS = 'share-course-success',
-    SHARE_LIBRARY_SUCCESS = 'share-library-success',
+    SHARE_CONTENT_SUCCESS = 'share-content-success',
     FLAG_INITIATE = 'flag-initiated',
     FLAG_SUCCESS = 'flag-success',
     FLAG_FAILED = 'flag-failed',
@@ -346,8 +349,6 @@ export enum InteractSubtype {
     HOTCODE_PUSH_PROGRESS = 'hotcode-push-progress',
     HOTCODE_PUSH_KEY_NOT_DEFINED = 'hotcode-push-key-not-defined',
     SEARCH_HISTORY_CLICKED = 'search-history-clicked',
-    SHEEN_ANIMATION_START = 'sheen-animation-started',
-    SHEEN_ANIMATION_END = 'sheen-animation-ended',
     FILTER_CLICKED = 'filter-clicked',
     DROPDOWN_CLICKED = 'drop-down-clicked',
     SUBUNIT_CLICKED = 'sub-unit-clicked',
@@ -396,7 +397,10 @@ export enum ID {
     LICENSE_CARD_CLICKED = 'license-card-cliked',
     QUIZ = 'quiz',
     IP_BASED_LOCATION_SUGGESTION = 'ip-based-location-suggestion',
-    DEEPLINK_CLICKED = 'deeplink-clicked'
+    DEEPLINK_CLICKED = 'deeplink-clicked',
+    SHARE = 'share-clicked',
+    SHARE_CONFIRM = 'share-confirm-clicked',
+    APP_LAUNCH = 'app-launch'
 }
 
 export enum ActionButtonType {
