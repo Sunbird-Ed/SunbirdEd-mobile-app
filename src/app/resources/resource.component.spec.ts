@@ -18,8 +18,9 @@ import {AppVersion} from '@ionic-native/app-version/ngx';
 import {Network} from '@ionic-native/network/ngx';
 import {TranslateService} from '@ngx-translate/core';
 import {Router} from '@angular/router';
+import {SplaschreenDeeplinkActionHandlerDelegate} from '@app/services/sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
 import {mockContentData} from '@app/app/content-details/content-details.page.spec.data';
-import {of, Subscription} from 'rxjs';
+import {of, Subscription, NEVER} from 'rxjs';
 import {
     ContentSearchCriteria,
     ContentsGroupedByPageSection,
@@ -56,6 +57,7 @@ describe('ResourcesComponent', () => {
             }
         }]))
     };
+    const mockSplashScreenDeeplinkActionHandlerDelegate: Partial<SplaschreenDeeplinkActionHandlerDelegate> = {};
     const mockNgZone: Partial<NgZone> = {};
     const mockQRScanner: Partial<SunbirdQRScanner> = {};
     const mockEvents: Partial<Events> = {
@@ -99,6 +101,7 @@ describe('ResourcesComponent', () => {
             mockframeworkService as FrameworkService,
             mockContentService as ContentServiceImpl,
             mockSharedPreference as SharedPreferences,
+            mockSplashScreenDeeplinkActionHandlerDelegate as SplaschreenDeeplinkActionHandlerDelegate,
             mockNgZone as NgZone,
             mockQRScanner as SunbirdQRScanner,
             mockEvents as Events,
@@ -611,10 +614,11 @@ describe('ResourcesComponent', () => {
         expect(mockAppGlobalService.getNameForCodeInFramework).toHaveBeenCalled();
     });
 
-    it('should subscribe events and other methods when ionViewWillEnter()', () => {
+    fit('should subscribe events and other methods when ionViewWillEnter()', (done) => {
         // arrange
         resourcesComponent.pageLoadedSuccess = false;
         mockHeaderService.showHeaderWithHomeButton = jest.fn();
+        mockHeaderService.headerEventEmitted$ = NEVER;
         mockEvents.subscribe = jest.fn((topic, fn) => {
             if (topic === 'update_header') {
                 fn();
@@ -623,11 +627,15 @@ describe('ResourcesComponent', () => {
         jest.spyOn(resourcesComponent, 'getCategoryData').mockImplementation();
         jest.spyOn(resourcesComponent, 'getPopularContent').mockImplementation();
         jest.spyOn(resourcesComponent, 'getCurrentUser').mockImplementation();
+        jest.spyOn(resourcesComponent, 'getChannelId').mockImplementation();
+        jest.spyOn(resourcesComponent, 'subscribeSdkEvent').mockImplementation();
         // act
-        resourcesComponent.ionViewWillEnter();
-        // assert
-        expect(mockHeaderService.showHeaderWithHomeButton).toHaveBeenCalled();
-
+        resourcesComponent.ionViewWillEnter().then(() => {
+            // assert
+            expect(mockHeaderService.showHeaderWithHomeButton).toHaveBeenCalled();
+            expect(mockSplashScreenDeeplinkActionHandlerDelegate.isDelegateReady).toEqual(true);
+            done();
+        });
     });
 
     it('should call toastCtrller when in offline', (done) => {
