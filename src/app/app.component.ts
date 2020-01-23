@@ -465,7 +465,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   private async checkDeviceLocation() {
     if (!(await this.commonUtilService.isDeviceLocationAvailable())
-      && (await this.preferences.getBoolean(PreferenceKey.IS_ONBOARDING_COMPLETED).toPromise())) {
+      && (await this.preferences.getString(PreferenceKey.IS_ONBOARDING_COMPLETED).toPromise() === 'true')) {
       const navigationExtras: NavigationExtras = {
         state: {
           isShowBackButton: false

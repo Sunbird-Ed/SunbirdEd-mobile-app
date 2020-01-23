@@ -18,7 +18,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
   private savedUrlMatch: any;
 
   private _isDelegateReady = false;
-  isOnboardingCompleted = '';
+  private isOnboardingCompleted = false;
   // should delay the deeplinks until tabs is loaded
   set isDelegateReady(val: boolean) {
     this._isDelegateReady = val;
@@ -58,7 +58,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
 
   private async checkIfOnboardingComplete(urlMatch) {
     if (!this.isOnboardingCompleted) {
-      this.isOnboardingCompleted = await this.preferences.getString(PreferenceKey.IS_ONBOARDING_COMPLETED).toPromise();
+      this.isOnboardingCompleted = (await this.preferences.getString(PreferenceKey.IS_ONBOARDING_COMPLETED).toPromise() === 'true') ? true : false;
     }
     if (this.isOnboardingCompleted) {
       this.handleNavigation(urlMatch);

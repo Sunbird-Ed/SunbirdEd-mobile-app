@@ -16,7 +16,7 @@ export class HasNotBeenOnboardedGuard implements CanLoad {
     }
 
     async canLoad(): Promise<boolean> {
-        if (!(await this.sharedPreferences.getBoolean(PreferenceKey.IS_ONBOARDING_COMPLETED).toPromise())) {
+        if (!(await this.sharedPreferences.getString(PreferenceKey.IS_ONBOARDING_COMPLETED).toPromise() === 'true')) {
             this.appGlobalService.isProfileSettingsCompleted = false;
             return true;
         }
