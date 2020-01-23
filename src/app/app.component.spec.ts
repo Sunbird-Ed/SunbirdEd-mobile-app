@@ -8,7 +8,7 @@ import {
 import {
     EventsBusService, SharedPreferences,
     TelemetryService, NotificationService,
-    CodePushExperimentService, SystemSettingsService, DeviceRegisterService,
+    CodePushExperimentService, SystemSettingsService, DeviceRegisterService, TelemetryAutoSyncService
 } from 'sunbird-sdk';
 import { Platform, Events, MenuController } from '@ionic/angular';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
@@ -20,49 +20,82 @@ import { Router } from '@angular/router';
 import { NetworkAvailabilityToastService } from '@app/services/network-availability-toast/network-availability-toast.service';
 import { NotificationService as localNotification } from '@app/services/notification.service';
 import { TncUpdateHandlerService } from '@app/services/handlers/tnc-update-handler.service';
-import { of } from 'rxjs';
+import { of, Subject } from 'rxjs';
+
+declare const supportfile;
 
 describe('AppComponent', () => {
     let appComponent: AppComponent;
     const mockActivePageService: Partial<ActivePageService> = {};
-    const mockAppGlobalService: Partial<AppGlobalService> = {};
-    const mockAppRatingService: Partial<AppRatingService> = {};
+    const mockAppGlobalService: Partial<AppGlobalService> = {
+        getUserId: jest.fn(() => 'sample-device-id')
+    };
+    const mockAppRatingService: Partial<AppRatingService> = {
+        checkInitialDate: jest.fn()
+    };
     const mockCodePushExperimentService: Partial<CodePushExperimentService> = {};
-    const mockCommonUtilService: Partial<CommonUtilService> = {};
+    const mockCommonUtilService: Partial<CommonUtilService> = {
+        isDeviceLocationAvailable: jest.fn(() => Promise.resolve(true))
+    };
     const mockDeviceRegisterService: Partial<DeviceRegisterService> = {};
     const mockEvents: Partial<Events> = {};
-    const mockEventsBusService: Partial<EventsBusService> = {};
-    const mockFormAndFrameworkUtilService: Partial<FormAndFrameworkUtilService> = {};
+    const mockEventsBusService: Partial<EventsBusService> = {
+        events: jest.fn(() => of({}))
+    };
+    const mockFormAndFrameworkUtilService: Partial<FormAndFrameworkUtilService> = {
+        init: jest.fn(),
+        checkNewAppVersion: jest.fn(() => Promise.resolve({}))
+    };
     const mockHeaderService: Partial<AppHeaderService> = {};
     const mockLocation: Partial<Location> = {};
     const mockLogoutHandlerService: Partial<LogoutHandlerService> = {};
     const mockMenuCtrl: Partial<MenuController> = {};
     const mockNetwork: Partial<Network> = {};
-    const mockNetworkAvailability: Partial<NetworkAvailabilityToastService> = {};
+    const mockNetworkAvailability: Partial<NetworkAvailabilityToastService> = {
+        init: jest.fn(() => '')
+    };
     const mockNotificationServices: Partial<NotificationService> = {};
     const mockNotificationSrc: Partial<localNotification> = {};
+    const pauseData = new Subject<void>();
     const mockPlatform: Partial<Platform> = {
-        ready: jest.fn(() => Promise.resolve('ready'))
+        ready: jest.fn(() => new Promise(() => { })),
+        pause: pauseData,
+        resume: pauseData
     };
     const mockPreferences: Partial<SharedPreferences> = {
-        getString: jest.fn(() => of(''))
+        getString: jest.fn(() => of('')),
+        putString: jest.fn(() => of(undefined))
     };
     const mockRouter: Partial<Router> = {};
     const mockSplaschreenDeeplinkActionHandlerDelegate: Partial<SplaschreenDeeplinkActionHandlerDelegate> = {};
     const mockSplashScreenService: Partial<SplashScreenService> = {};
-    const mockStatusBar: Partial<StatusBar> = {};
-    const mockSystemSettingsService: Partial<SystemSettingsService> = {};
-    const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {};
-    const mockTelemetryService: Partial<TelemetryService> = {};
-    const mockTncUpdateHandlerService: Partial<TncUpdateHandlerService> = {};
+    const mockStatusBar: Partial<StatusBar> = {
+        styleBlackTranslucent: jest.fn()
+    };
+    const mockSystemSettingsService: Partial<SystemSettingsService> = {
+        getSystemSettings: jest.fn(() => of({}))
+    };
+    const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {
+        genererateAppStartTelemetry: jest.fn()
+    };
+    const data: Partial<TelemetryAutoSyncService> = {
+        start: jest.fn(() => of({}))
+    };
+    const mockTelemetryService: Partial<TelemetryService> = {
+        autoSync: data
+    };
+    const mockTncUpdateHandlerService: Partial<TncUpdateHandlerService> = {
+        checkForTncUpdate: jest.fn()
+    };
     const mockTranslate: Partial<TranslateService> = {};
-    const mockUtilityService: Partial<UtilityService> = {};
+    const mockUtilityService: Partial<UtilityService> = {
+        getBuildConfigValue: jest.fn(() => Promise.resolve('diksha')),
+        getDeviceSpec: jest.fn(() => Promise.resolve({}))
+    };
     const mockZone: Partial<NgZone> = {};
 
-
-    beforeAll(() => {
+    const constructComponent = () => {
         appComponent = new AppComponent(
-
             mockTelemetryService as TelemetryService,
             mockPreferences as SharedPreferences,
             mockEventsBusService as EventsBusService,
@@ -94,6 +127,10 @@ describe('AppComponent', () => {
             mockNetworkAvailability as NetworkAvailabilityToastService,
             mockSplashScreenService as SplashScreenService
         );
+    };
+
+    beforeAll(() => {
+        constructComponent();
     });
 
     beforeEach(() => {
@@ -102,6 +139,36 @@ describe('AppComponent', () => {
 
     it('should be create a instance of appComponent', () => {
         expect(appComponent).toBeTruthy();
+    });
+
+    describe('constructor', () => {
+        it('should call on platform ready', (done) => {
+            mockPlatform.ready = jest.fn(() => {
+                return new Promise((resolve) => {
+                    setTimeout(() => resolve(), 100);
+                });
+            });
+
+            constructComponent();
+
+            jest.spyOn(appComponent, 'fcmTokenWatcher').mockImplementation();
+            jest.spyOn(appComponent, 'checkForExperiment').mockImplementation();
+            jest.spyOn(appComponent, 'receiveNotification').mockImplementation();
+            jest.spyOn(appComponent, 'generateNetworkTelemetry').mockImplementation();
+            jest.spyOn(appComponent, 'subscribeEvents').mockImplementation();
+            jest.spyOn(appComponent, 'handleBackButton').mockImplementation();
+            jest.spyOn(appComponent, 'checkAndroidWebViewVersion').mockImplementation();
+            jest.spyOn(appComponent, 'getUtmParameter').mockImplementation();
+            spyOn(supportfile, 'makeEntryInSunbirdSupportFile').and.callFake((a, b) => {
+                setTimeout(() => {
+                    setTimeout(() => {
+                        a();
+                        done();
+                    }, 0);
+                });
+            });
+            jest.spyOn(appComponent, 'checkForCodeUpdates').mockImplementation();
+        });
     });
 
     describe('getUtmParameter', () => {
@@ -133,7 +200,9 @@ describe('AppComponent', () => {
             // act
             appComponent.getUtmParameter();
             // assert
-            expect(mockUtilityService.getUtmInfo).toHaveBeenCalled();
+            setTimeout(() => {
+                expect(mockUtilityService.getUtmInfo).toHaveBeenCalled();
+            }, 0);
         });
     });
 
