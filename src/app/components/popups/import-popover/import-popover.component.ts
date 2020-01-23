@@ -1,19 +1,20 @@
 import {Component, Inject, NgZone, OnDestroy, OnInit} from '@angular/core';
-import {Events, NavParams, Platform, PopoverController} from '@ionic/angular';
-import {Observable, of, Subscription} from 'rxjs';
+import {NavParams, Platform, PopoverController} from '@ionic/angular';
+import {Subscription} from 'rxjs';
 import {FileSizePipe} from '@app/pipes/file-size/file-size';
 import {
-    ContentEvent,
     ContentEventType,
-    ContentImportResponse,
-    ContentImportStatus, ContentService,
-    EventNamespace,
     EventsBusEvent,
     EventsBusService
 } from 'sunbird-sdk';
-import {catchError, filter, map, mapTo, reduce, takeUntil, tap} from 'rxjs/operators';
-import {SplaschreenDeeplinkActionHandlerDelegate} from '@app/services/sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
-import {CommonUtilService} from '@app/services';
+import {TelemetryGeneratorService, AppGlobalService} from '@app/services';
+import {
+    Environment,
+    ImpressionType,
+    PageId,
+    ID,
+    InteractType
+  } from '@app/services/telemetry-constants';
 
 @Component({
     selector: 'app-import-popover',
@@ -33,11 +34,13 @@ export class ImportPopoverComponent implements OnInit, OnDestroy {
     onLoadClicked: () => void;
 
     constructor(
+        @Inject('EVENTS_BUS_SERVICE') private eventsBusService: EventsBusService,
+        private telemetryGeneratorService: TelemetryGeneratorService,
+        private appGlobalService: AppGlobalService,
         private popoverCtrl: PopoverController,
         private platform: Platform,
         private navParams: NavParams,
         private fileSizePipe: FileSizePipe,
-        @Inject('EVENTS_BUS_SERVICE') private eventsBusService: EventsBusService,
         private zone: NgZone
     ) {
     }
@@ -51,6 +54,12 @@ export class ImportPopoverComponent implements OnInit, OnDestroy {
             this.popoverCtrl.dismiss();
             this.backButtonFunc.unsubscribe();
         });
+        this.telemetryGeneratorService.generateImpressionTelemetry(
+            ImpressionType.VIEW,
+            '',
+            PageId.IMPORT_CONTENT_POPUP,
+            this.appGlobalService.isOnBoardingCompleted ? Environment.HOME : Environment.ONBOARDING,
+        );
     }
 
     closePopover() {
@@ -68,6 +77,12 @@ export class ImportPopoverComponent implements OnInit, OnDestroy {
     importInitiated() {
         this.importingAndDisablingButton = true;
         this.onLoadClicked();
+        this.telemetryGeneratorService.generateInteractTelemetry(
+            this.deleteChecked ? InteractType.DELETE_CHECKED : InteractType.DELETE_UNCHECKED, '',
+            this.appGlobalService.isOnBoardingCompleted ? Environment.HOME : Environment.ONBOARDING,
+            PageId.IMPORT_CONTENT_POPUP, undefined, undefined, undefined, undefined,
+            ID.LOAD_CLICKED
+          );
         this.eventSubscription = this.eventsBusService.events().subscribe((event: EventsBusEvent) => {
             this.zone.run(() => {
                 if (event.type === ContentEventType.IMPORT_PROGRESS) {
