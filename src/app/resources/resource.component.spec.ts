@@ -614,7 +614,7 @@ describe('ResourcesComponent', () => {
         expect(mockAppGlobalService.getNameForCodeInFramework).toHaveBeenCalled();
     });
 
-    fit('should subscribe events and other methods when ionViewWillEnter()', (done) => {
+    it('should subscribe events and other methods when ionViewWillEnter()', (done) => {
         // arrange
         resourcesComponent.pageLoadedSuccess = false;
         mockHeaderService.showHeaderWithHomeButton = jest.fn();
