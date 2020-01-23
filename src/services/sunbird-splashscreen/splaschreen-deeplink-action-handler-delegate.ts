@@ -3,7 +3,7 @@ import { Inject, Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { Events } from '@ionic/angular';
 import { Observable, of } from 'rxjs';
-import { ContentService, SharedPreferences } from 'sunbird-sdk';
+import { ContentService, SharedPreferences, HttpServerError, NetworkError } from 'sunbird-sdk';
 
 import { SplashscreenActionHandlerDelegate } from './splashscreen-action-handler-delegate';
 import { ContentType, MimeType, EventTopics, RouterLinks, LaunchType } from '../../app/app.constant';
@@ -40,7 +40,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
 
   onAction(payload: any): Observable<undefined> {
     if (payload && payload.url) {
-      const quizTypeRegex = new RegExp(/(?:\/resources\/play\/content\/(?<quizId>\w+))/);
+      const quizTypeRegex = new RegExp(/(?:\/(?:resources\/play\/content|play\/quiz)\/(?<quizId>\w+))/);
       const dialTypeRegex = new RegExp(/(?:\/(?:dial|QR)\/(?<dialCode>\w+))/);
       const contentTypeRegex = new RegExp(/(?:\/play\/(?:content|collection)\/(?<contentId>\w+))/);
       const courseTypeRegex = new RegExp(/(?:\/(?:explore-course|learn)\/course\/(?<courseId>\w+))/);
@@ -103,7 +103,15 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
           await this.router.navigate([RouterLinks.CONTENT_DETAILS], { state: { content } });
         }
       }
-    } catch (err) { }
+    } catch (err) {
+      if (err instanceof HttpServerError) {
+        this.commonUtilService.showToast('ERROR_FETCHING_DATA');
+      } else if (err instanceof NetworkError) {
+        this.commonUtilService.showToast('ERROR_NO_INTERNET_MESSAGE');
+      } else {
+        this.commonUtilService.showToast('ERROR_CONTENT_NOT_AVAILABLE');
+      }
+    }
   }
 
   private async navigateQuizContent(identifier, content, isFromLink) {
