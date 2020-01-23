@@ -56,7 +56,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
     return of(undefined);
   }
 
-  async checkIfOnboardingComplete(urlMatch) {
+  private async checkIfOnboardingComplete(urlMatch) {
     if (!this.isOnboardingCompleted) {
       this.isOnboardingCompleted = await this.preferences.getString(PreferenceKey.IS_ONBOARDING_COMPLETED).toPromise();
     }
