@@ -351,7 +351,7 @@ export class AppGlobalService implements OnDestroy {
 
     setOnBoardingCompleted() {
         this.isOnBoardingCompleted = true;
-        this.preferences.putString(PreferenceKey.IS_ONBOARDING_COMPLETED, 'true').toPromise().then();
+        this.preferences.putBoolean(PreferenceKey.IS_ONBOARDING_COMPLETED, true).toPromise().then();
     }
 
     private initValues() {
@@ -369,9 +369,9 @@ export class AppGlobalService implements OnDestroy {
             this.getCurrentUserProfile();
         });
 
-        this.preferences.getString(PreferenceKey.IS_ONBOARDING_COMPLETED).toPromise()
+        this.preferences.getBoolean(PreferenceKey.IS_ONBOARDING_COMPLETED).toPromise()
             .then((result) => {
-                this.isOnBoardingCompleted = (result === 'true') ? true : false;
+                this.isOnBoardingCompleted = result ? true : false;
             });
     }
 

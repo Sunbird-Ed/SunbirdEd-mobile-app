@@ -638,6 +638,8 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
       this.getPopularContent();
     }
     this.subscribeSdkEvent();
+
+    this.splaschreenDeeplinkActionHandlerDelegate.isTabsReady = true;
   }
 
   // Offline Toast
