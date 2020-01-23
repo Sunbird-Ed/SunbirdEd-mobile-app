@@ -17,11 +17,11 @@ import { PageId, InteractType, Environment, ID, CorReleationDataType } from '../
 export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenActionHandlerDelegate {
   private savedUrlMatch: any;
 
-  private _isTabsReady = false;
+  private _isDelegateReady = false;
   isOnboardingCompleted = '';
   // should delay the deeplinks until tabs is loaded
-  set isTabsReady(val: boolean) {
-    this._isTabsReady = val;
+  set isDelegateReady(val: boolean) {
+    this._isDelegateReady = val;
     if (val && this.savedUrlMatch) {
       this.checkIfOnboardingComplete(this.savedUrlMatch);
       this.savedUrlMatch = null;
@@ -66,7 +66,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
   }
 
   private handleNavigation(urlMatch: any): void {
-    if (this._isTabsReady) {
+    if (this._isDelegateReady) {
       if (urlMatch.groups.dialCode) {
         this.router.navigate([RouterLinks.SEARCH], { state: { dialCode: urlMatch.groups.dialCode, source: PageId.HOME } });
       } else if (urlMatch.groups.quizId || urlMatch.groups.contentId || urlMatch.groups.courseId) {

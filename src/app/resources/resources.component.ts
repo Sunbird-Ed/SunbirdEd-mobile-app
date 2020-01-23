@@ -639,7 +639,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
     }
     this.subscribeSdkEvent();
 
-    this.splaschreenDeeplinkActionHandlerDelegate.isTabsReady = true;
+    this.splaschreenDeeplinkActionHandlerDelegate.isDelegateReady = true;
   }
 
   // Offline Toast
