@@ -165,7 +165,6 @@ export class FormAndFrameworkUtilService {
                             let fields: Array<any> = [];
                             let ranges: Array<any> = [];
                             let upgradeTypes: Array<any> = [];
-
                             if (res && res.form && res.form.data) {
                                 fields = res.form.data.fields;
                                 for (const element of fields) {
@@ -181,26 +180,21 @@ export class FormAndFrameworkUtilService {
                                 }
 
                                 if (ranges && ranges.length > 0 && upgradeTypes && upgradeTypes.length > 0) {
-                                    let type: string;
-                                    const forceType = 'force';
-                                    for (const element of ranges) {
-                                        if (versionCode >= element.minVersionCode && versionCode <= element.maxVersionCode) {
-                                            console.log('App needs a upgrade of type - ' + element.type);
-                                            type = element.type;
+                                    const range = ranges.find((r) => {
+                                        return r.type === 'force' &&
+                                            versionCode >= r.minVersionCode &&
+                                            versionCode <= r.maxVersionCode;
+                                    }) || ranges[ranges.length - 1];
 
-                                            if (type === forceType) {
-                                                break;
-                                            }
-                                        }
-                                    }
-                                    for (const upgradeElement of upgradeTypes) {
-                                        if (type === upgradeElement.type) {
-                                            result = upgradeElement;
-                                        }
-                                    }
+                                    const result = upgradeTypes.find((u) => u.type === range.type);
+                                    result.minVersionCode = range.minVersionCode;
+                                    result.maxVersionCode = range.maxVersionCode;
+                                    result.currentAppVersionCode = versionCode;
+                                    resolve(result);
+                                    return;
                                 }
                             }
-                            resolve(result);
+                            resolve(undefined);
                         }).catch((error: any) => {
                             reject(error);
                         });
