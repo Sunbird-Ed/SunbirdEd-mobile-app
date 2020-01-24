@@ -1,6 +1,4 @@
 import { Injectable, Inject } from '@angular/core';
-import { File } from '@ionic-native/file/ngx';
-import { ProfileService, SharedPreferences } from 'sunbird-sdk';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { LocalNotifications } from '@ionic-native/local-notifications/ngx';
 import { UtilityService } from './utility-service';
@@ -12,13 +10,12 @@ declare const cordova;
 @Injectable()
 export class NotificationService {
 
-    selectedLanguage: string;
+    private selectedLanguage: string;
     configData: any;
-    appName: any;
-
-    identifier: any;
-    externalUrl: any;
-    appId: any;
+    private appName: any;
+    private identifier: any;
+    private externalUrl: any;
+    private appId: any;
 
     constructor(
         private utilityService: UtilityService,
@@ -44,7 +41,7 @@ export class NotificationService {
         });
     }
 
-    triggerConfig() {
+    private triggerConfig() {
         let tempDate = this.configData.data.start;
         tempDate = tempDate.split(' ');
         const hour = +tempDate[1].split(':')[0];
@@ -76,7 +73,7 @@ export class NotificationService {
         return trigger;
     }
 
-    setLocalNotification() {
+    private setLocalNotification() {
         const trigger = this.triggerConfig();
         const translate = this.configData.data.translations[this.selectedLanguage] || this.configData.data.translations['default'];
         this.localNotifications.schedule({
@@ -89,11 +86,8 @@ export class NotificationService {
         });
     }
 
-    getAppName() {
-        this.appVersion.getAppName()
-            .then((appName: any) => {
-                this.appName = appName;
-            });
+    private async getAppName() {
+        this.appName = await this.appVersion.getAppName();
     }
 
     setNotificationDetails(data) {
@@ -115,12 +109,12 @@ export class NotificationService {
         }
     }
 
-    handleNotification() {
+    async handleNotification() {
         if (this.identifier) {
             this.splaschreenDeeplinkActionHandlerDelegate.navigateContent(this.identifier);
             this.identifier = null;
         } else if (this.appId) {
-            this.utilityService.openPlayStore(this.appId);
+            await this.utilityService.openPlayStore(this.appId);
             this.appId = null;
         } else if (this.externalUrl) {
             open(this.externalUrl);
