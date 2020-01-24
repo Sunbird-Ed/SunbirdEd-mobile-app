@@ -165,7 +165,6 @@ export class FormAndFrameworkUtilService {
                             let fields: Array<any> = [];
                             let ranges: Array<any> = [];
                             let upgradeTypes: Array<any> = [];
-
                             if (res && res.form && res.form.data) {
                                 fields = res.form.data.fields;
                                 for (const element of fields) {

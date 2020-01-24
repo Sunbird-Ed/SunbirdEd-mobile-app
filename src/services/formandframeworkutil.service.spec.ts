@@ -83,11 +83,77 @@ describe('FormAndFrameworkUtilService', () => {
   });
 
   it('should reject the error if API throws some error', () => {
-    // arrange
-    mockFormService.getForm = jest.fn(() => throwError({error: 'API_ERROR'}));
-    // act
-    // assert
-    expect(formAndFrameworkUtilService.getWebviewConfig()).rejects.toBe({error: 'API_ERROR'});
-  });
+        // arrange
+        mockFormService.getForm = jest.fn(() => throwError({error: 'API_ERROR'}));
+        // act
+        // assert
+        expect(formAndFrameworkUtilService.getWebviewConfig()).rejects.toEqual({error: 'API_ERROR'});
+    });
+
+  it('should check for appVersion and also get the data from form for it', (done) => {
+        // arrange
+        formAndFrameworkUtilService.selectedLanguage = 'en';
+        mockAppVersion.getVersionCode = jest.fn(() => Promise.resolve('29'));
+        mockFormService.getForm = jest.fn(() => of({
+            form: {
+                data: {
+                    fields: [
+                        {
+                            code: 'upgrade',
+                            name: 'Upgrade of app',
+                            language: 'en',
+                            range: [
+                                {
+                                    minVersionCode: 13,
+                                    maxVersionCode: 52,
+                                    versionName: '2.4.158',
+                                    type: 'forced'
+                                }
+                            ],
+                            upgradeTypes: [
+                                {
+                                    type: 'forced',
+                                    title: 'We have corrected' +
+                                        'problems faced for missing' +
+                                        'images and audio within the content. For a better experience, we recommend that' +
+                                        'you upgrade to the latest version of DIKSHA.',
+                                    desc: '',
+                                    actionButtons: [
+                                        {
+                                            action: 'yes',
+                                            label: 'Update Now',
+                                            link: 'https://play.google.com/store/apps/details?id=in.gov.diksha.app&hl=en'
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            }
+        }));
+        // act
+        formAndFrameworkUtilService.checkNewAppVersion();
+        // assert
+        expect(mockAppVersion.getVersionCode).toHaveBeenCalled();
+        setTimeout(() => {
+            expect(mockFormService.getForm).toHaveBeenCalled();
+            done();
+        }, 0);
+    });
+
+    it('should return undefined if data from is not available', (done) => {
+        // arrange
+        mockAppVersion.getVersionCode = jest.fn(() => Promise.resolve('29'));
+        mockFormService.getForm = jest.fn(() => of(undefined));
+        // act
+        formAndFrameworkUtilService.checkNewAppVersion();
+        // assert
+        expect(mockAppVersion.getVersionCode).toHaveBeenCalled();
+        setTimeout(() => {
+            expect(mockFormService.getForm).toHaveBeenCalled();
+            done();
+        }, 0);
+    });
 
 });
