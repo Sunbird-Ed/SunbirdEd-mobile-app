@@ -128,9 +128,9 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.statusBar.styleBlackTranslucent();
       this.handleBackButton();
       this.appRatingService.checkInitialDate();
+      this.getUtmParameter();
       this.checkForCodeUpdates();
       this.checkAndroidWebViewVersion();
-      this.getUtmParameter();
     });
   }
 
