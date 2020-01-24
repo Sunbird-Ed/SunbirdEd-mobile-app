@@ -384,7 +384,8 @@ export enum InteractSubtype {
     UPDATE_WEBVIEW_CLICKED = 'update-webview-clicked',
     CREDITS_CLICKED = 'credits-clicked',
     DISABLED_BUTTON_CLICKED = 'disabled-button-clicked',
-    UPGRADE_CLICKED = 'upgrade-clicked'
+    UPGRADE_CLICKED = 'upgrade-clicked',
+    FORCE_UPGRADE_INFO = 'force-upgrade-info'
 }
 
 export enum ID {

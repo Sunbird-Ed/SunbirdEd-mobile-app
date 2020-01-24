@@ -1,7 +1,8 @@
 import { UpgradePopoverComponent } from './upgrade-popover.component';
 import { PopoverController, Platform, NavParams } from '@ionic/angular';
 import { UtilityService } from '../../../../services/utility-service';
-import {Environment, ImpressionSubtype, ImpressionType, PageId, TelemetryGeneratorService} from '@app/services';
+import {Environment, ImpressionSubtype, ImpressionType, InteractSubtype, PageId, TelemetryGeneratorService} from '@app/services';
+import {InteractType} from 'sunbird-sdk';
 
 describe('UpgradePopoverComponent', () => {
     let upgradePopoverComponent: UpgradePopoverComponent;
@@ -24,17 +25,21 @@ describe('UpgradePopoverComponent', () => {
             switch (arg) {
                 case 'type':
                     value = {
-                        type: 'force',
-                        optional: 'forceful',
-                        title: 'We recommend that you upgrade to the latest version of Sunbird.',
-                        desc: '',
-                        actionButtons: [
-                          {
-                            action: 'yes',
-                            label: 'Update Now',
-                            link: 'https://play.google.com/store/apps/details?id=org.sunbird.app&hl=en'
-                          }
-                        ]
+                        upgrade: {
+                            type: 'force',
+                            optional: 'forceful',
+                            title: 'We recommend that you upgrade to the latest version of Sunbird.',
+                            desc: '',
+                            actionButtons: [
+                                {
+                                    action: 'yes',
+                                    label: 'Update Now',
+                                    link: 'https://play.google.com/store/apps/details?id=org.sunbird.app&hl=en'
+                                }
+                            ],
+                            minVersionCode: 13,
+                            maxVersionCode: 52
+                        }
                       };
                     break;
                 }
@@ -77,9 +82,10 @@ describe('UpgradePopoverComponent', () => {
         expect(upgradePopoverComponent.cancel).toHaveBeenCalled();
     });
 
-    it('should generate impression when popoup shows', () => {
+    it('should generate impression and interact when popoup shows', () => {
         // arrange
-        jest.spyOn(mockTelemetryGeneratorService, 'generateImpressionTelemetry').mockImplementation();
+        mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
+        mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
         // act
         upgradePopoverComponent.init();
         // assert
@@ -87,8 +93,18 @@ describe('UpgradePopoverComponent', () => {
             ImpressionType.VIEW,
             ImpressionSubtype.UPGRADE_POPUP,
             PageId.UPGRADE_POPUP,
+            Environment.HOME
+        );
+        expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+            InteractType.OTHER,
+            InteractSubtype.FORCE_UPGRADE_INFO,
             Environment.HOME,
-            mockNavParams.get('type')
+            PageId.UPGRADE_POPUP,
+            undefined,
+            {
+                minVersionCode: 13,
+                maxVersionCode: 52
+            }
         );
     });
 

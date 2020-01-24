@@ -20,8 +20,6 @@ import {TelemetryGeneratorService} from '../../../../services/telemetry-generato
 export class UpgradePopoverComponent {
 
   upgradeType: any;
-  upgradeTitle: string;
-  upgradeContent: string;
   isMandatoryUpgrade = false;
   pageId: PageId;
 
@@ -41,12 +39,23 @@ export class UpgradePopoverComponent {
     if (this.upgradeType && this.upgradeType.optional === 'forceful') {
       this.isMandatoryUpgrade = true;
     }
+    const values = {};
+    console.log(this.upgradeType.upgrade);
+    values['minVersionCode'] = this.upgradeType.upgrade.minVersionCode;
+    values['maxVersionCode'] = this.upgradeType.upgrade.maxVersionCode;
     this.telemetryGeneratorService.generateImpressionTelemetry(
         ImpressionType.VIEW,
         ImpressionSubtype.UPGRADE_POPUP,
         PageId.UPGRADE_POPUP,
+        Environment.HOME
+    );
+    this.telemetryGeneratorService.generateInteractTelemetry(
+        InteractType.OTHER,
+        InteractSubtype.FORCE_UPGRADE_INFO,
         Environment.HOME,
-        this.upgradeType
+        PageId.UPGRADE_POPUP,
+        undefined,
+        values
     );
   }
 
