@@ -121,7 +121,8 @@ export enum PageId {
     UPDATE_WEBVIEW_POPUP = 'update-webview-popup',
     SHARE_CONTENT_POPUP = 'share-content-popup',
     SHARE_APP_POPUP = 'share-app-popup',
-    UPGRADE_POPUP = 'update-popup'
+    UPGRADE_POPUP = 'update-popup',
+    IMPORT_CONTENT_POPUP = 'import-content-popup',
 }
 export enum LogType {
     NOTIFICATION = 'notification'
@@ -168,7 +169,9 @@ export enum InteractType {
     LICENSE_CARD_COLLAPSED = 'license-card-collapsed',
     LICENSE_CARD_EXPANDED = 'license-card-expanded',
     QUIZ_DEEPLINK = 'quiz-deeplink',
-    DISABLED = 'disabled'
+    DISABLED = 'disabled',
+    DELETE_CHECKED = 'delete-checked',
+    DELETE_UNCHECKED = 'delete-unchecked'
 }
 
 
@@ -402,7 +405,8 @@ export enum ID {
     SHARE = 'share-clicked',
     SHARE_CONFIRM = 'share-confirm-clicked',
     APP_LAUNCH = 'app-launch',
-    CONTINUE_CLICKED = 'continue-clicked'
+    CONTINUE_CLICKED = 'continue-clicked',
+    LOAD_CLICKED = 'load-clicked'
 }
 
 export enum ActionButtonType {

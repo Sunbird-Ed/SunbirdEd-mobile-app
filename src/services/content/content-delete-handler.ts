@@ -70,7 +70,7 @@ export class ContentDeleteHandler {
     /**
      * Deletes the content
      */
-    private async deleteContent(identifier: string, isChildContent: boolean, contentInfo: ContentInfo, pageId: string) {
+    public async deleteContent(identifier: string, isChildContent: boolean, contentInfo: ContentInfo, pageId: string) {
         this.telemetryGeneratorService.generateInteractTelemetry(
             InteractType.TOUCH,
             InteractSubtype.DELETE_CLICKED,
