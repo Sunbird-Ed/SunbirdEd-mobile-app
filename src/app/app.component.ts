@@ -130,11 +130,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.appRatingService.checkInitialDate();
       this.checkForCodeUpdates();
       this.checkAndroidWebViewVersion();
-      this.preferences.getString('utm_data').toPromise().then((value) => {
-        if (!value) {
-          this.getUtmParameter();
-        }
-      });
+      this.getUtmParameter();
     });
   }
 
