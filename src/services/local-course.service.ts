@@ -102,8 +102,8 @@ export class LocalCourseService {
     // This method is called when the user login immediately after pressing JOIN TRAINING from app-components
     // And after filling signinOnboarding completely from externalId service.
     async checkCourseRedirect() {
-      const isloogedInUser = await this.authService.getSession().toPromise();
-      if (!this.appGlobalService.isSignInOnboardingCompleted && isloogedInUser) {
+      const isloggedInUser = await this.authService.getSession().toPromise();
+      if (!this.appGlobalService.isSignInOnboardingCompleted && isloggedInUser) {
         this.appGlobalService.isJoinTraningOnboardingFlow = true;
         return;
       }
@@ -143,7 +143,7 @@ export class LocalCourseService {
         pageId: PageId.COURSE_BATCHES
       };
       this.enrollIntoBatch(enrollCourse).toPromise()
-        .then((data: boolean) => {
+        .then(() => {
           this.zone.run(async () => {
             await loader.dismiss();
             this.commonUtilService.showToast(this.commonUtilService.translateMessage('COURSE_ENROLLED'));
