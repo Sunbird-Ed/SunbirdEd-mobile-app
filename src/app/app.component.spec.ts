@@ -63,7 +63,7 @@ describe('AppComponent', () => {
         resume: pauseData
     };
     const mockPreferences: Partial<SharedPreferences> = {
-        getString: jest.fn(() => of('')),
+        getString: jest.fn(() => of(undefined)),
         putString: jest.fn(() => of(undefined))
     };
     const mockRouter: Partial<Router> = {};
@@ -89,7 +89,7 @@ describe('AppComponent', () => {
     };
     const mockTranslate: Partial<TranslateService> = {};
     const mockUtilityService: Partial<UtilityService> = {
-        getBuildConfigValue: jest.fn(() => Promise.resolve('diksha')),
+        getBuildConfigValue: jest.fn(() => Promise.resolve('sunbird')),
         getDeviceSpec: jest.fn(() => Promise.resolve({}))
     };
     const mockZone: Partial<NgZone> = {};
@@ -174,7 +174,7 @@ describe('AppComponent', () => {
     describe('getUtmParameter', () => {
         it('should generate utm-info telemetry if utm source is available for first time', () => {
             // arrange
-            mockUtilityService.getUtmInfo = jest.fn(() => Promise.resolve(`{'utm_source': 'diksha'}`));
+            mockUtilityService.getUtmInfo = jest.fn(() => Promise.resolve(`{'utm_source': 'sunbird'}`));
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             mockUtilityService.clearUtmInfo = jest.fn(() => Promise.resolve());
             // act
@@ -188,7 +188,7 @@ describe('AppComponent', () => {
                     Environment.HOME,
                     PageId.HOME,
                     undefined,
-                    `{'utm_source': 'diksha'}`
+                    `{'utm_source': 'sunbird'}`
                 );
                 expect(mockUtilityService.clearUtmInfo).toHaveBeenCalled();
             }, 0);
@@ -196,7 +196,7 @@ describe('AppComponent', () => {
 
         it('should not generate utm-info telemetry for Error response', () => {
             // arrange
-            mockUtilityService.getUtmInfo = jest.fn(() => Promise.reject(`{'utm_source': 'diksha'}`));
+            mockUtilityService.getUtmInfo = jest.fn(() => Promise.reject(`{'utm_source': 'sunbird'}`));
             // act
             appComponent.getUtmParameter();
             // assert
