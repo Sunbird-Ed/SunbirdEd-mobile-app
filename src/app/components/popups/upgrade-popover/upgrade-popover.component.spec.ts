@@ -38,7 +38,8 @@ describe('UpgradePopoverComponent', () => {
                                 }
                             ],
                             minVersionCode: 13,
-                            maxVersionCode: 52
+                            maxVersionCode: 52,
+                            currentAppVersionCode: 23
                         }
                       };
                     break;
@@ -103,7 +104,8 @@ describe('UpgradePopoverComponent', () => {
             undefined,
             {
                 minVersionCode: 13,
-                maxVersionCode: 52
+                maxVersionCode: 52,
+                currentAppVersionCode: 23
             }
         );
     });

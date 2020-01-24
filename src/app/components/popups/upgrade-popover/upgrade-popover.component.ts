@@ -40,9 +40,9 @@ export class UpgradePopoverComponent {
       this.isMandatoryUpgrade = true;
     }
     const values = {};
-    console.log(this.upgradeType.upgrade);
     values['minVersionCode'] = this.upgradeType.upgrade.minVersionCode;
     values['maxVersionCode'] = this.upgradeType.upgrade.maxVersionCode;
+    values['currentAppVersionCode'] = this.upgradeType.upgrade.currentAppVersionCode;
     this.telemetryGeneratorService.generateImpressionTelemetry(
         ImpressionType.VIEW,
         ImpressionSubtype.UPGRADE_POPUP,

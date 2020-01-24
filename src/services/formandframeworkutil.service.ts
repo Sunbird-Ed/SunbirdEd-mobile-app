@@ -189,6 +189,7 @@ export class FormAndFrameworkUtilService {
                                     const result = upgradeTypes.find((u) => u.type === range.type);
                                     result.minVersionCode = range.minVersionCode;
                                     result.maxVersionCode = range.maxVersionCode;
+                                    result.currentAppVersionCode = versionCode;
                                     resolve(result);
                                     return;
                                 }

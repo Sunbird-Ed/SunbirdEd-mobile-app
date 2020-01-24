@@ -167,7 +167,8 @@ export enum InteractType {
     NOT_VISIBLE = 'not-visible',
     LICENSE_CARD_COLLAPSED = 'license-card-collapsed',
     LICENSE_CARD_EXPANDED = 'license-card-expanded',
-    QUIZ_DEEPLINK = 'quiz-deeplink'
+    QUIZ_DEEPLINK = 'quiz-deeplink',
+    DISABLE = 'disable'
 }
 
 
@@ -383,7 +384,6 @@ export enum InteractSubtype {
     DIST_CHANGED = 'dist-changed',
     UPDATE_WEBVIEW_CLICKED = 'update-webview-clicked',
     CREDITS_CLICKED = 'credits-clicked',
-    DISABLED_BUTTON_CLICKED = 'disabled-button-clicked',
     UPGRADE_CLICKED = 'upgrade-clicked',
     FORCE_UPGRADE_INFO = 'force-upgrade-info'
 }
