@@ -168,7 +168,7 @@ export enum InteractType {
     LICENSE_CARD_COLLAPSED = 'license-card-collapsed',
     LICENSE_CARD_EXPANDED = 'license-card-expanded',
     QUIZ_DEEPLINK = 'quiz-deeplink',
-    DISABLE = 'disable'
+    DISABLED = 'disabled'
 }
 
 
@@ -401,7 +401,8 @@ export enum ID {
     DEEPLINK_CLICKED = 'deeplink-clicked',
     SHARE = 'share-clicked',
     SHARE_CONFIRM = 'share-confirm-clicked',
-    APP_LAUNCH = 'app-launch'
+    APP_LAUNCH = 'app-launch',
+    CONTINUE_CLICKED = 'continue-clicked'
 }
 
 export enum ActionButtonType {
