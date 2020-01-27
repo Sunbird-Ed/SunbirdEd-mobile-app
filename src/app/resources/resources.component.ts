@@ -53,6 +53,7 @@ import { Environment, InteractSubtype, InteractType, PageId, ImpressionType,
 import { AppHeaderService } from '@app/services/app-header.service';
 import { SplaschreenDeeplinkActionHandlerDelegate } from '@app/services/sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
 import { ContentUtil } from '@app/util/content-util';
+import { NotificationService } from '@app/services/notification.service';
 
 @Component({
   selector: 'app-resources',
@@ -175,7 +176,8 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
     public toastController: ToastController,
     public menuCtrl: MenuController,
     private headerService: AppHeaderService,
-    private router: Router
+    private router: Router,
+    private appNotificationService: NotificationService,
   ) {
     this.preferences.getString(PreferenceKey.SELECTED_LANGUAGE_CODE).toPromise()
       .then(val => {
@@ -231,7 +233,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
   async ngOnInit() {
     this.getCurrentUser();
     this.appGlobalService.generateConfigInteractEvent(PageId.LIBRARY, this.isOnBoardingCardCompleted);
-    await this.splaschreenDeeplinkActionHandlerDelegate.onAction('content').toPromise();
+    this.appNotificationService.handleNotification();
 
     this.events.subscribe('tab.change', (data: string) => {
       this.scrollToTop();
@@ -636,6 +638,8 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
       this.getPopularContent();
     }
     this.subscribeSdkEvent();
+
+    this.splaschreenDeeplinkActionHandlerDelegate.isDelegateReady = true;
   }
 
   // Offline Toast
