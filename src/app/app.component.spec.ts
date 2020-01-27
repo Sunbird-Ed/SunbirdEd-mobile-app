@@ -3,7 +3,8 @@ import { Location } from '@angular/common';
 import {
     FormAndFrameworkUtilService, AppGlobalService,
     CommonUtilService, TelemetryGeneratorService, UtilityService, AppHeaderService,
-    LogoutHandlerService, AppRatingService, ActivePageService, SplashScreenService, InteractType, InteractSubtype, Environment, PageId
+    LogoutHandlerService, AppRatingService, ActivePageService, SplashScreenService,
+    InteractType, InteractSubtype, Environment, PageId, LocalCourseService
 } from '../services';
 import {
     EventsBusService, SharedPreferences,
@@ -14,7 +15,6 @@ import { Platform, Events, MenuController } from '@ionic/angular';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { TranslateService } from '@ngx-translate/core';
 import { NgZone } from '@angular/core';
-import { SplaschreenDeeplinkActionHandlerDelegate } from '../services/sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
 import { Network } from '@ionic-native/network/ngx';
 import { Router } from '@angular/router';
 import { NetworkAvailabilityToastService } from '@app/services/network-availability-toast/network-availability-toast.service';
@@ -67,7 +67,6 @@ describe('AppComponent', () => {
         putString: jest.fn(() => of(undefined))
     };
     const mockRouter: Partial<Router> = {};
-    const mockSplaschreenDeeplinkActionHandlerDelegate: Partial<SplaschreenDeeplinkActionHandlerDelegate> = {};
     const mockSplashScreenService: Partial<SplashScreenService> = {};
     const mockStatusBar: Partial<StatusBar> = {
         styleBlackTranslucent: jest.fn()
@@ -93,6 +92,7 @@ describe('AppComponent', () => {
         getDeviceSpec: jest.fn(() => Promise.resolve({}))
     };
     const mockZone: Partial<NgZone> = {};
+    const mockLocalCourseService: Partial<LocalCourseService> = {};
 
     const constructComponent = () => {
         appComponent = new AppComponent(
@@ -114,7 +114,6 @@ describe('AppComponent', () => {
             mockTelemetryGeneratorService as TelemetryGeneratorService,
             mockTncUpdateHandlerService as TncUpdateHandlerService,
             mockUtilityService as UtilityService,
-            mockSplaschreenDeeplinkActionHandlerDelegate as SplaschreenDeeplinkActionHandlerDelegate,
             mockHeaderService as AppHeaderService,
             mockLogoutHandlerService as LogoutHandlerService,
             mockNetwork as Network,
@@ -125,7 +124,8 @@ describe('AppComponent', () => {
             mockLocation as Location,
             mockMenuCtrl as MenuController,
             mockNetworkAvailability as NetworkAvailabilityToastService,
-            mockSplashScreenService as SplashScreenService
+            mockSplashScreenService as SplashScreenService,
+            mockLocalCourseService as LocalCourseService
         );
     };
 
