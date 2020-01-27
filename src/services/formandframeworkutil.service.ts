@@ -151,7 +151,6 @@ export class FormAndFrameworkUtilService {
             return this.appVersion.getVersionCode()
                 .then((versionCode: any) => {
                     console.log('checkNewAppVersion Current app version - ' + versionCode);
-                    let result: any;
 
                     // form api request
                     const req: FormRequest = {
@@ -184,7 +183,12 @@ export class FormAndFrameworkUtilService {
                                         return r.type === 'force' &&
                                             versionCode >= r.minVersionCode &&
                                             versionCode <= r.maxVersionCode;
-                                    }) || ranges[ranges.length - 1];
+                                    });
+
+                                    if (!range) {
+                                        resolve(undefined);
+                                        return;
+                                    }
 
                                     const result = upgradeTypes.find((u) => u.type === range.type);
                                     result.minVersionCode = range.minVersionCode;
