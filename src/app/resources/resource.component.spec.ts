@@ -30,7 +30,7 @@ import {
     ProfileSource,
     ProfileType,
     SearchType
-} from 'sunbird-sdk/dist';
+} from 'sunbird-sdk';
 
 describe('ResourcesComponent', () => {
     let resourcesComponent: ResourcesComponent;
