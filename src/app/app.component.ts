@@ -19,7 +19,7 @@ import {
   Environment, PageId,
   ImpressionType,
   CorReleationDataType
-} from 'services/telemetry-constants';
+} from '@app/services/telemetry-constants';
 import { PreferenceKey, EventTopics, SystemSettingsIds, GenericAppConfig } from './app.constant';
 import { ActivePageService } from '@app/services/active-page/active-page-service';
 import {

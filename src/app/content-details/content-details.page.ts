@@ -222,6 +222,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
       this.isSingleContent = extras.isSingleContent;
       this.resultLength = extras.resultsSize;
       this.autoPlayQuizContent = extras.autoPlayQuizContent || false;
+      this.shouldOpenPlayAsPopup = extras.isCourse;
       this.checkLimitedContentSharingFlag(extras.content);
     }
   }

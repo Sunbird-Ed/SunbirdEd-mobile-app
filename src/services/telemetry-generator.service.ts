@@ -238,8 +238,8 @@ export class TelemetryGeneratorService {
 
     /**
      * method generates telemetry on click Read less or Read more
-     * @param {string} param string as read less or read more
-     * @param {object} objRollup object roll up
+     * @param string param string as read less or read more
+     * @param object objRollup object roll up
      * @param corRelationList corelationList
      */
     readLessOrReadMore(param, objRollup, corRelationList, telemetryObject) {
