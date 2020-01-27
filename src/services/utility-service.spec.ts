@@ -16,7 +16,8 @@ describe('UtilityService', () => {
             clearUtmInfo: jest.fn(() => { }),
             readFromAssets: jest.fn(() => { }),
             rm: jest.fn(() => { }),
-            getApkSize: jest.fn(() => { })
+            getApkSize: jest.fn(() => { }),
+            getMetaData: jest.fn(() => { }),
         };
         utilityService = new UtilityService();
     });
@@ -661,4 +662,100 @@ describe('UtilityService', () => {
         });
     });
 
+    describe('getMetaData()', () => {
+        it('should delegate to getMetaData Method', (done) => {
+            // arrange
+            (window['buildconfigreader']['getMetaData'] as jest.Mock).
+            mockImplementation((SOME_PATH, successCallback, errorCallback) => {
+                setTimeout(() => {
+                    successCallback({ecar: { size: 123}});
+                });
+            });
+            // act
+            utilityService.getMetaData('sample_destination').then(() => {
+                // assert
+                expect(window['buildconfigreader']['getMetaData']).toHaveBeenCalledWith([{identifier: 'ecar', path: 'sample_destination'}],
+                    expect.any(Function), expect.any(Function));
+                done();
+            });
+        });
+        it('should reject if getMetaData string for corresponding entryString was not found', (done) => {
+            // arrange
+            (window['buildconfigreader']['getMetaData'] as jest.Mock).
+            mockImplementation((SOME_PATH, successCallback, errorCallback) => {
+                setTimeout(() => {
+                    errorCallback();
+                });
+            });
+            // act
+            utilityService.getMetaData('sample_destination').catch(() => {
+                // assert
+                expect(window['buildconfigreader']['getMetaData']).
+                toReturnWith(undefined);
+                done();
+            });
+        });
+        it('should reject getMetaData string for corresponding EntryString', (done) => {
+            // arrange
+            (window['buildconfigreader']['getMetaData'] as jest.Mock).
+            mockImplementation((successCallback, errorCallback) => {
+                throw Error;
+            });
+            // act
+            utilityService.getMetaData('sample_destination').catch(() => {
+                // assert
+                expect(window['buildconfigreader']['getMetaData']).toHaveBeenCalledWith([{identifier: 'ecar', path: 'sample_destination'}],
+                    expect.any(Function), expect.any(Function));
+                done();
+            });
+        });
+    });
+    describe('removeFile()', () => {
+        it('should delegate to removeFile Method', (done) => {
+            // arrange
+            (window['buildconfigreader']['rm'] as jest.Mock).
+            mockImplementation(([SOME_PATH], SOME_VALUE, successCallback, errorCallback) => {
+                setTimeout(() => {
+                    successCallback();
+                });
+            });
+            // act
+            utilityService.removeFile('sample_destination').then(() => {
+                // assert
+                expect(window['buildconfigreader']['rm']).toHaveBeenCalledWith(['sample_destination'], false,
+                    expect.any(Function), expect.any(Function));
+                done();
+            });
+        });
+        it('should reject if removeFile string for corresponding entryString was not found', (done) => {
+            // arrange
+            (window['buildconfigreader']['rm'] as jest.Mock).
+            mockImplementation(([SOME_PATH], SOME_VALUE, successCallback, errorCallback) => {
+                setTimeout(() => {
+                    errorCallback();
+                });
+            });
+            // act
+            utilityService.removeFile('sample_destination').catch(() => {
+                // assert
+                expect(window['buildconfigreader']['rm']).
+                toReturnWith(undefined);
+                done();
+            });
+        });
+        it('should reject removeFile string for corresponding EntryString', (done) => {
+            // arrange
+            (window['buildconfigreader']['rm'] as jest.Mock).
+            mockImplementation(([SOME_PATH], SOME_VALUE, successCallback, errorCallback) => {
+                throw Error;
+            });
+            // act
+            utilityService.removeFile('sample_destination').catch(() => {
+                // assert
+                expect(window['buildconfigreader']['rm']).toHaveBeenCalledWith(['sample_destination'], false,
+                    expect.any(Function), expect.any(Function));
+                done();
+            });
+        });
+    });
 });
