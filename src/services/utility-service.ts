@@ -189,7 +189,7 @@ export class UtilityService {
 
     getMetaData(filePath: string): Promise<string> {
         return new Promise((resolve, reject) => {
-            buildconfigreader.getMetaData([{path: filePath, identifier: 'ecar'}], (data) => {
+            sbutility.getMetaData([{path: filePath, identifier: 'ecar'}], (data) => {
                 resolve(data.ecar.size);
             }, err => {
                 reject(err);
@@ -199,7 +199,7 @@ export class UtilityService {
 
     removeFile(filePath: string): Promise<boolean> {
         return new Promise((resolve, reject) => {
-            buildconfigreader.rm([filePath], false, (successfullyDeleted) => {
+            sbutility.rm([filePath], false, (successfullyDeleted) => {
                 resolve(successfullyDeleted);
             }, error => {
                 reject(error);
