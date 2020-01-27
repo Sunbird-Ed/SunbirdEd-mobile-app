@@ -4,6 +4,7 @@
 
     .assessment-card {
         position: relative;
+        padding-top: 10px;
         width: 90%;
         margin: 0 auto;
         box-shadow: 0px 0px 10px #aaaaaa;
@@ -113,7 +114,8 @@
     .rt-cell-question{
         font-weight: bold;
         color: #007aff;
-        padding-left: 20px;
+        padding: .9rem 1.2rem !important;
+        text-align: center;
     }
 }
 @media only screen and (max-width: 360px) {
