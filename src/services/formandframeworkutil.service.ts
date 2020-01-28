@@ -151,7 +151,6 @@ export class FormAndFrameworkUtilService {
             return this.appVersion.getVersionCode()
                 .then((versionCode: any) => {
                     console.log('checkNewAppVersion Current app version - ' + versionCode);
-
                     // form api request
                     const req: FormRequest = {
                         type: 'app',
@@ -179,11 +178,15 @@ export class FormAndFrameworkUtilService {
                                 }
 
                                 if (ranges && ranges.length > 0 && upgradeTypes && upgradeTypes.length > 0) {
-                                    const range = ranges.find((r) => {
-                                        return r.type === 'force' &&
-                                            versionCode >= r.minVersionCode &&
-                                            versionCode <= r.maxVersionCode;
-                                    });
+                                    const range = ranges.reduce((acc, r) => {
+                                        if (versionCode >= r.minVersionCode && versionCode <= r.maxVersionCode) {
+                                            if (acc && (acc.type === 'force' || acc.type === 'forced')) {
+                                                return acc;
+                                            }
+                                            return r;
+                                        }
+                                        return acc;
+                                    }, undefined);
 
                                     if (!range) {
                                         resolve(undefined);
