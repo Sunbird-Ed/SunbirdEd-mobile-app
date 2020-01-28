@@ -394,10 +394,10 @@ export class ExploreBooksPage implements OnInit, OnDestroy {
         medium: data.values.medium || []
       });
       this.corRelationList = [{
-        id: data.values.board,
+        id: ( data.values.board && data.values.board.length )  ?  data.values.board[0] : '',
         type: 'Board'
       }, {
-        id: data.values.medium,
+        id: (data.values.medium && data.values.medium.length) ? data.values.medium[0] : '' ,
         type: 'Medium'
       }];
       this.telemetryGeneratorService.generateInteractTelemetry(
