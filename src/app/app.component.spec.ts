@@ -175,7 +175,7 @@ describe('AppComponent', () => {
     });
 
     describe('getUtmParameter', () => {
-        it('should generate utm-info telemetry if utm source is available for first time', () => {
+        fit('should generate utm-info telemetry if utm source is available for first time', (done) => {
             // arrange
             const utmResponse = {
                 val: ''
@@ -197,12 +197,12 @@ describe('AppComponent', () => {
                     undefined,
                     `{'utm_source': 'sunbird'}`
                 );
-                expect(mockSplaschreenDeeplinkActionHandlerDelegate.checkUtmContent).toHaveBeenCalled();
                 expect(mockUtilityService.clearUtmInfo).toHaveBeenCalled();
+                done();
             }, 0);
         });
 
-        it('should generate utm-info telemetry if utm source is available for first time and check for utm content', () => {
+        it('should generate utm-info telemetry if utm source is available for first time and check for utm content', (done) => {
             // arrange
             const utmResponse = {
                 val: 'utm_content=https://test.com/sample/id_0000'
@@ -226,10 +226,11 @@ describe('AppComponent', () => {
                 );
                 expect(mockSplaschreenDeeplinkActionHandlerDelegate.checkUtmContent).toHaveBeenCalled();
                 expect(mockUtilityService.clearUtmInfo).toHaveBeenCalled();
+                done();
             }, 0);
         });
 
-        it('should not generate utm-info telemetry for Error response', () => {
+        it('should not generate utm-info telemetry for Error response', (done) => {
             // arrange
             mockUtilityService.getUtmInfo = jest.fn(() => Promise.reject(`{'utm_source': 'sunbird'}`));
             // act
@@ -237,6 +238,7 @@ describe('AppComponent', () => {
             // assert
             setTimeout(() => {
                 expect(mockUtilityService.getUtmInfo).toHaveBeenCalled();
+                done();
             }, 0);
         });
     });
