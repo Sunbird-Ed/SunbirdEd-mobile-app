@@ -693,9 +693,22 @@ export class AppGlobalService implements OnDestroy {
 
     async closeSigninOnboardingLoader() {
         if (this.signinOnboardingLoader) {
-          await this.signinOnboardingLoader.dismiss();
-          this.signinOnboardingLoader = null;
+            await this.signinOnboardingLoader.dismiss();
+            this.signinOnboardingLoader = null;
         }
-      }
+    }
+
+    getAppVersionCode(): Promise<number> {
+        return new Promise<number>((resolve, reject) => {
+            this.utilityService.getBuildConfigValue(GenericAppConfig.VERSION_CODE)
+                .then(response => {
+                    resolve(+response);
+                })
+                .catch(error => {
+                    console.log('Error--', error);
+                    resolve(0);
+                });
+        });
+    }
 
 }
