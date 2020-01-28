@@ -38,6 +38,7 @@ import { NotificationService as localNotification } from '@app/services/notifica
 import { RouterLinks } from './app.constant';
 import { TncUpdateHandlerService } from '@app/services/handlers/tnc-update-handler.service';
 import { NetworkAvailabilityToastService } from '@app/services/network-availability-toast/network-availability-toast.service';
+import { SplaschreenDeeplinkActionHandlerDelegate } from '@app/services/sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
 @Component({
   selector: 'app-root',
   templateUrl: 'app.component.html'
@@ -92,7 +93,8 @@ export class AppComponent implements OnInit, AfterViewInit {
     private menuCtrl: MenuController,
     private networkAvailability: NetworkAvailabilityToastService,
     private splashScreenService: SplashScreenService,
-    private localCourseService: LocalCourseService
+    private localCourseService: LocalCourseService,
+    private splaschreenDeeplinkActionHandlerDelegate: SplaschreenDeeplinkActionHandlerDelegate
   ) {
     this.telemetryAutoSync = this.telemetryService.autoSync;
     platform.ready().then(async () => {
@@ -728,6 +730,9 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.utilityService.getUtmInfo().then(response => {
       if (response) {
         const utmTelemetry = new Map();
+        if (response && response.val && response.val.length) {
+          this.splaschreenDeeplinkActionHandlerDelegate.checkUtmContent(response.val);
+        }
         utmTelemetry['utm_data'] = response;
         this.telemetryGeneratorService.generateInteractTelemetry(
           InteractType.OTHER,

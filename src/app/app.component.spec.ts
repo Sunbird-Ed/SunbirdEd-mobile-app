@@ -21,6 +21,7 @@ import { NetworkAvailabilityToastService } from '@app/services/network-availabil
 import { NotificationService as localNotification } from '@app/services/notification.service';
 import { TncUpdateHandlerService } from '@app/services/handlers/tnc-update-handler.service';
 import { of, Subject } from 'rxjs';
+import { SplaschreenDeeplinkActionHandlerDelegate } from '../services/sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
 
 declare const supportfile;
 
@@ -93,6 +94,7 @@ describe('AppComponent', () => {
     };
     const mockZone: Partial<NgZone> = {};
     const mockLocalCourseService: Partial<LocalCourseService> = {};
+    const mockSplaschreenDeeplinkActionHandlerDelegate: Partial<SplaschreenDeeplinkActionHandlerDelegate> = {};
 
     const constructComponent = () => {
         appComponent = new AppComponent(
@@ -125,7 +127,8 @@ describe('AppComponent', () => {
             mockMenuCtrl as MenuController,
             mockNetworkAvailability as NetworkAvailabilityToastService,
             mockSplashScreenService as SplashScreenService,
-            mockLocalCourseService as LocalCourseService
+            mockLocalCourseService as LocalCourseService,
+            mockSplaschreenDeeplinkActionHandlerDelegate as SplaschreenDeeplinkActionHandlerDelegate
         );
     };
 

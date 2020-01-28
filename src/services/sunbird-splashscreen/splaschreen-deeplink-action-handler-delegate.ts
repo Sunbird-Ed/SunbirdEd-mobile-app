@@ -62,6 +62,8 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
     }
     if (this.isOnboardingCompleted) {
       this.handleNavigation(urlMatch);
+    } else {
+      this.savedUrlMatch = urlMatch;
     }
   }
 
@@ -143,6 +145,14 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
       corRelationList,
       ID.DEEPLINK_CLICKED
     );
+  }
+
+  checkUtmContent(utmVal: string): void {
+    const res = /(?:utm_content=(?<utm_content>[^&]*))/.exec(utmVal);
+    if (res && res.groups && res.groups.utm_content && res.groups.utm_content.length) {
+      const payload = { url: res.groups.utm_content};
+      this.onAction(payload);
+    }
   }
 
 }
