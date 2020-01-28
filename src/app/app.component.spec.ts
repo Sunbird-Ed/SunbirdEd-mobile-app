@@ -177,9 +177,13 @@ describe('AppComponent', () => {
     describe('getUtmParameter', () => {
         it('should generate utm-info telemetry if utm source is available for first time', () => {
             // arrange
-            mockUtilityService.getUtmInfo = jest.fn(() => Promise.resolve(`{'utm_source': 'sunbird'}`));
+            const utmResponse = {
+                val: ''
+            };
+            mockUtilityService.getUtmInfo = jest.fn(() => Promise.resolve(utmResponse));
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             mockUtilityService.clearUtmInfo = jest.fn(() => Promise.resolve());
+            mockSplaschreenDeeplinkActionHandlerDelegate.checkUtmContent = jest.fn();
             // act
             appComponent.getUtmParameter();
             // assert
@@ -193,6 +197,34 @@ describe('AppComponent', () => {
                     undefined,
                     `{'utm_source': 'sunbird'}`
                 );
+                expect(mockSplaschreenDeeplinkActionHandlerDelegate.checkUtmContent).toHaveBeenCalled();
+                expect(mockUtilityService.clearUtmInfo).toHaveBeenCalled();
+            }, 0);
+        });
+
+        it('should generate utm-info telemetry if utm source is available for first time and check for utm content', () => {
+            // arrange
+            const utmResponse = {
+                val: 'utm_content=https://test.com/sample/id_0000'
+            };
+            mockUtilityService.getUtmInfo = jest.fn(() => Promise.resolve(utmResponse));
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            mockUtilityService.clearUtmInfo = jest.fn(() => Promise.resolve());
+            mockSplaschreenDeeplinkActionHandlerDelegate.checkUtmContent = jest.fn();
+            // act
+            appComponent.getUtmParameter();
+            // assert
+            setTimeout(() => {
+                expect(mockUtilityService.getUtmInfo).toHaveBeenCalled();
+                expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+                    InteractType.OTHER,
+                    InteractSubtype.UTM_INFO,
+                    Environment.HOME,
+                    PageId.HOME,
+                    undefined,
+                    `{'utm_source': 'sunbird'}`
+                );
+                expect(mockSplaschreenDeeplinkActionHandlerDelegate.checkUtmContent).toHaveBeenCalled();
                 expect(mockUtilityService.clearUtmInfo).toHaveBeenCalled();
             }, 0);
         });
