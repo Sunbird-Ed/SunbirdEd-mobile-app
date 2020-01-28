@@ -35,7 +35,7 @@ export class SplashscreenImportActionHandlerDelegate implements SplashscreenActi
         private utilityService: UtilityService) {
     }
 
-  onAction(type: string, payload: { filePath: string }): Observable<undefined> {
+  onAction(payload: { filePath: string }): Observable<undefined> {
     const filePath = 'file://' + payload.filePath;
     const fileExtenstion = filePath.split('.').pop();
 
@@ -110,9 +110,7 @@ export class SplashscreenImportActionHandlerDelegate implements SplashscreenActi
                                   } else {
                                       console.log('deleteNotChecked');
                                   }
-                                  this.splashscreenDeeplinkActionHandlerDelegate.onAction(
-                                      'content', { identifier: event.payload.contentId }, false
-                                  ).toPromise();
+                                  this.splashscreenDeeplinkActionHandlerDelegate.navigateContent(event.payload.contentId);
                               });
                           }
                       }),

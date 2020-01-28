@@ -17,7 +17,7 @@ export class SplashcreenTelemetryActionHandlerDelegate implements SplashscreenAc
   constructor(@Inject('TELEMETRY_SERVICE') private telemetryService: TelemetryService) {
   }
 
-  onAction(type: string, payload: TelemetryActionPayload): Observable<undefined> {
+  onAction(payload: TelemetryActionPayload): Observable<undefined> {
     switch (payload.eid) {
       case 'IMPRESSION': {
         return this.telemetryService.impression({

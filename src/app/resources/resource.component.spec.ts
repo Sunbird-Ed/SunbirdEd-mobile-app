@@ -20,7 +20,7 @@ import {TranslateService} from '@ngx-translate/core';
 import {Router} from '@angular/router';
 import {SplaschreenDeeplinkActionHandlerDelegate} from '@app/services/sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
 import {mockContentData} from '@app/app/content-details/content-details.page.spec.data';
-import {of, Subscription} from 'rxjs';
+import {of, Subscription, NEVER} from 'rxjs';
 import {
     ContentSearchCriteria,
     ContentsGroupedByPageSection,
@@ -31,6 +31,7 @@ import {
     ProfileType,
     SearchType
 } from 'sunbird-sdk';
+import { NotificationService } from '@app/services/notification.service';
 
 describe('ResourcesComponent', () => {
     let resourcesComponent: ResourcesComponent;
@@ -91,6 +92,7 @@ describe('ResourcesComponent', () => {
     const mockRouter: Partial<Router> = {
         getCurrentNavigation: jest.fn(() => mockContentData)
     };
+    const mockAppNotificationService: Partial<NotificationService> = {};
     const constructComponent = () => {
         resourcesComponent = new ResourcesComponent(
             mockProfileService as ProfileServiceImpl,
@@ -113,7 +115,8 @@ describe('ResourcesComponent', () => {
             mockToastCtrlService as ToastController,
             mockMenuController as MenuController,
             mockHeaderService as AppHeaderService,
-            mockRouter as Router
+            mockRouter as Router,
+            mockAppNotificationService as NotificationService
         );
     };
     beforeAll(() => {
@@ -301,7 +304,7 @@ describe('ResourcesComponent', () => {
         jest.spyOn(resourcesComponent, 'getPopularContent').mockImplementation();
         jest.spyOn(resourcesComponent, 'loadRecentlyViewedContent').mockImplementation();
         mockAppGlobalService.generateConfigInteractEvent = jest.fn();
-        mockSplashScreenDeeplinkActionHandlerDelegate.onAction = jest.fn(() => of());
+        mockAppNotificationService.handleNotification = jest.fn(() => of());
         mockEvents.subscribe = jest.fn((topic, fn) => {
             if (topic === 'tab.change') {
                 fn('LIBRARY');
@@ -321,7 +324,7 @@ describe('ResourcesComponent', () => {
             expect(resourcesComponent.getPopularContent).toHaveBeenCalled();
             expect(resourcesComponent.loadRecentlyViewedContent).toHaveBeenCalled();
             expect(mockAppGlobalService.generateConfigInteractEvent).toHaveBeenCalled();
-            expect(mockSplashScreenDeeplinkActionHandlerDelegate.onAction).toHaveBeenCalled();
+            expect(mockAppNotificationService.handleNotification).toHaveBeenCalled();
             expect(mockEvents.subscribe).toHaveBeenCalled();
             done();
         }, 0);
@@ -333,7 +336,7 @@ describe('ResourcesComponent', () => {
         jest.spyOn(resourcesComponent, 'getCurrentUser').mockImplementation();
         jest.spyOn(resourcesComponent, 'scrollToTop').mockImplementation();
         mockAppGlobalService.generateConfigInteractEvent = jest.fn();
-        mockSplashScreenDeeplinkActionHandlerDelegate.onAction = jest.fn(() => of());
+        mockAppNotificationService.handleNotification = jest.fn(() => of());
         jest.spyOn(mockAppGlobalService, 'getPageIdForTelemetry').mockReturnValue(PageId.LIBRARY);
         mockQRScanner.startScanner = jest.fn();
         mockEvents.subscribe = jest.fn((topic, fn) => {
@@ -611,10 +614,11 @@ describe('ResourcesComponent', () => {
         expect(mockAppGlobalService.getNameForCodeInFramework).toHaveBeenCalled();
     });
 
-    it('should subscribe events and other methods when ionViewWillEnter()', () => {
+    it('should subscribe events and other methods when ionViewWillEnter()', (done) => {
         // arrange
         resourcesComponent.pageLoadedSuccess = false;
         mockHeaderService.showHeaderWithHomeButton = jest.fn();
+        mockHeaderService.headerEventEmitted$ = NEVER;
         mockEvents.subscribe = jest.fn((topic, fn) => {
             if (topic === 'update_header') {
                 fn();
@@ -623,11 +627,15 @@ describe('ResourcesComponent', () => {
         jest.spyOn(resourcesComponent, 'getCategoryData').mockImplementation();
         jest.spyOn(resourcesComponent, 'getPopularContent').mockImplementation();
         jest.spyOn(resourcesComponent, 'getCurrentUser').mockImplementation();
+        jest.spyOn(resourcesComponent, 'getChannelId').mockImplementation();
+        jest.spyOn(resourcesComponent, 'subscribeSdkEvent').mockImplementation();
         // act
-        resourcesComponent.ionViewWillEnter();
-        // assert
-        expect(mockHeaderService.showHeaderWithHomeButton).toHaveBeenCalled();
-
+        resourcesComponent.ionViewWillEnter().then(() => {
+            // assert
+            expect(mockHeaderService.showHeaderWithHomeButton).toHaveBeenCalled();
+            expect(mockSplashScreenDeeplinkActionHandlerDelegate.isDelegateReady).toEqual(true);
+            done();
+        });
     });
 
     it('should call toastCtrller when in offline', (done) => {
