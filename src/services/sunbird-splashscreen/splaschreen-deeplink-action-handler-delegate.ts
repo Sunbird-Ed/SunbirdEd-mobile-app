@@ -11,7 +11,7 @@ import { TelemetryGeneratorService } from '@app/services/telemetry-generator.ser
 import { CommonUtilService } from '@app/services/common-util.service';
 import { PageId, InteractType, Environment, ID, CorReleationDataType } from '../telemetry-constants';
 import { AppVersion } from '@ionic-native/app-version/ngx';
-
+import { UtilityService } from '../utility-service';
 
 @Injectable()
 export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenActionHandlerDelegate {
@@ -37,6 +37,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
     private events: Events,
     private router: Router,
     private appVersion: AppVersion,
+    private utilityService: UtilityService
   ) { }
 
   onAction(payload: any): Observable<undefined> {
@@ -73,7 +74,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
   }
 
   private async isAppCompatible(requiredVersionCode) {
-    const currentAppVersionCode = await this.appGlobalServices.getAppVersionCode();
+    const currentAppVersionCode = await this.utilityService.getAppVersionCode();
 
     // If requiredVersionCode is available then should display upgrade popup is installed version is less than the expected appVesion.
     return (currentAppVersionCode
