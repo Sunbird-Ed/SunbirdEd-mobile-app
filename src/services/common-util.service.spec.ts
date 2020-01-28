@@ -260,6 +260,44 @@ describe('CommonUtilService', () => {
       expect(mockPopoverController.create).toHaveBeenCalled();
       expect(createMock.mock.calls[0][0]['component']).toEqual(QRScannerAlert);
     });
+
+    it('should generate INTERACT telemetry with given source', () => {
+      // arrange
+      const createMock = jest.spyOn(mockPopoverController, 'create').mockResolvedValue({
+            present: jest.fn(() => Promise.resolve({})),
+            onDidDismiss: jest.fn(() => Promise.resolve({ data: undefined })),
+            dismiss: jest.fn(() => Promise.resolve({}))
+          } as any);
+      // const createMock = jest.spyOn(mockPopoverController, 'create');
+      // act
+      commonUtilService.showContentComingSoonAlert('permission');
+      // assert
+      expect(mockPopoverController.create).toHaveBeenCalled();
+      expect(createMock.mock.calls[0][0]['component']).toEqual(QRScannerAlert);
+      expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(InteractType.OTHER,
+        InteractSubtype.QR_CODE_COMINGSOON,
+        Environment.HOME,
+       'permission');
+    });
+
+    it('should generate INTERACT telemetry if source is not provided', () => {
+      // arrange
+      const createMock = jest.spyOn(mockPopoverController, 'create').mockResolvedValue({
+            present: jest.fn(() => Promise.resolve({})),
+            onDidDismiss: jest.fn(() => Promise.resolve({ data: undefined })),
+            dismiss: jest.fn(() => Promise.resolve({}))
+          } as any);
+      // const createMock = jest.spyOn(mockPopoverController, 'create');
+      // act
+      commonUtilService.showContentComingSoonAlert(undefined);
+      // assert
+      expect(mockPopoverController.create).toHaveBeenCalled();
+      expect(createMock.mock.calls[0][0]['component']).toEqual(SbGenericPopoverComponent);
+      expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(InteractType.OTHER,
+        InteractSubtype.QR_CODE_COMINGSOON,
+        Environment.HOME,
+        PageId.HOME);
+    });
   });
 
   describe('getAppName()', () => {
