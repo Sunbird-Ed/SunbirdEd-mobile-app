@@ -41,6 +41,10 @@ describe('UpgradePopoverComponent', () => {
                             {
                                 action: 'no',
                                 label: 'Cancel'
+                            },
+                            {
+                                action: 'xyz',
+                                label: 'Cancel'
                             }
                         ],
                         minVersionCode: 13,
@@ -115,6 +119,72 @@ describe('UpgradePopoverComponent', () => {
                     currentAppVersionCode: 23
                 }
             );
+            done();
+        }, 0);
+    });
+
+});
+
+
+describe('UpgradePopoverComponent', () => {
+    let upgradePopoverComponent: UpgradePopoverComponent;
+    const mockUtilityService: Partial<UtilityService> = {
+        openPlayStore: jest.fn()
+    };
+    const mockAppVersion: Partial<AppVersion> = {
+        getAppName: jest.fn(() => Promise.resolve('some_string'))
+    };
+    const mockPopOverController: Partial<PopoverController> = {
+        dismiss: jest.fn()
+    };
+
+    const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {
+        generateInteractTelemetry: jest.fn(),
+        generateImpressionTelemetry: jest.fn()
+    };
+
+    const mockNavParams: Partial<NavParams> = {
+        get: jest.fn((arg) => {
+            let value;
+            switch (arg) {
+                case 'upgrade':
+                    value = {
+                        type: 'optional',
+                        title: 'We recommend that you upgrade to the latest version of Sunbird.',
+                        desc: '',
+                        minVersionCode: 13,
+                        maxVersionCode: 52,
+                        currentAppVersionCode: 23
+                    };
+                    break;
+            }
+            return value;
+        })
+    };
+
+    beforeAll(() => {
+        upgradePopoverComponent = new UpgradePopoverComponent(
+            mockUtilityService as UtilityService,
+            mockPopOverController as PopoverController,
+            mockNavParams as NavParams,
+            mockTelemetryGeneratorService as TelemetryGeneratorService,
+            mockAppVersion as AppVersion
+        );
+    });
+
+    beforeEach(() => {
+        jest.clearAllMocks();
+    });
+
+    it('isMandatoryUpgrade should be false when popoup shows', (done) => {
+        // arrange
+        mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
+        mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+        // act
+        upgradePopoverComponent.init();
+        // assert
+        setTimeout(() => {
+            expect(upgradePopoverComponent.isMandatoryUpgrade).toBeFalsy();
             done();
         }, 0);
     });
