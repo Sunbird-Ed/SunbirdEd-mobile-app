@@ -5,23 +5,19 @@
         <ion-spinner icon="spiral" class="refreshspinner"></ion-spinner>
     </div>
     <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
-    <ion-refresher-content refreshingSpinner="circles"></ion-refresher-content>
+        <ion-refresher-content refreshingSpinner="circles"></ion-refresher-content>
     </ion-refresher>
     <div padding-horizontal text-center class="MT15" *ngIf="profile?.firstName">
         <app-profile-avatar [username]="profile?.firstName" *ngIf="!isStateValidated"></app-profile-avatar>
         <img *ngIf="isStateValidated" src="./assets/imgs/avatar-tickmark.svg" alt="certified" class="avatar-tickmark">
         <app-profile-avatar [username]="profile?.firstName" [isStateUser]="isStateValidated" class="profileAvatar"
             *ngIf="isStateValidated"></app-profile-avatar>
-
-            <!-- <app-profile-avatar [username]="profile?.firstName" *ngIf="isCustodianOrgId"></app-profile-avatar>
-        <img *ngIf="!isCustodianOrgId" src="./assets/imgs/avatar-tickmark.svg" alt="certified" class="avatar-tickmark">
-        <app-profile-avatar [username]="profile?.firstName" [isStateUser]="!isCustodianOrgId" class="profileAvatar"
-            *ngIf="!isCustodianOrgId"></app-profile-avatar> -->
     </div>
     <div padding-horizontal text-center style="margin-top: 16px">
         <p class="profile-head">
             <span class="profile-name">{{ profile?.firstName | titlecase }}{{ profile?.lastName | titlecase }}</span>
-            <span *ngIf="!isCustodianOrgId && profile?.firstName" class="isymbol profile-symbol" item-right text-left (click)="toggleTooltips($event, 'name')">
+            <span *ngIf="!isCustodianOrgId && profile?.firstName" class="isymbol profile-symbol" item-right text-left
+                (click)="toggleTooltips($event, 'name')">
                 <ion-icon name="information-circle" class="info-icon"></ion-icon>
                 <span class="asPerStateRecord" *ngIf="informationProfileName">{{'STATE_RECORDS' | translate}}</span>
             </span>
@@ -57,7 +53,8 @@
         </p>
         <div *ngIf="orgDetails && orgDetails?.block?.name">Block: {{orgDetails?.block?.name}}</div>
         <div *ngIf="orgDetails">
-            <span *ngIf="orgDetails && orgDetails?.district?.name">{{'DISTRICT' | translate}}: {{orgDetails?.district?.name}}</span>
+            <span *ngIf="orgDetails && orgDetails?.district?.name">{{'DISTRICT' | translate}}:
+                {{orgDetails?.district?.name}}</span>
             <span *ngIf="orgDetails?.district?.name"> | </span>
             <span *ngIf="orgDetails?.state?.name">{{orgDetails?.state?.name}}</span>
         </div>
@@ -122,8 +119,11 @@
                 <span class="icon MR10 align-middle">
                     <ion-icon src="assets/imgs/recovery_icon.svg"></ion-icon>
                 </span>
-                <span class="value align-middle" *ngIf="profile?.recoveryEmail?.length > 0">{{ profile?.recoveryEmail }}</span>
-                <span class="value align-middle" *ngIf="profile?.recoveryPhone?.length > 0">+91 {{ profile?.recoveryPhone }}</span>
+                <span class="value align-middle"
+                    *ngIf="profile?.recoveryEmail?.length > 0">{{ profile?.recoveryEmail }}</span>
+                <span class="value align-middle" *ngIf="profile?.recoveryPhone?.length > 0">
+                    +91 {{ profile?.recoveryPhone }}
+                </span>
             </div>
         </div>
         <div class="MT10" *ngIf="(!profile?.recoveryEmail && !profile?.recoveryPhone) || 
@@ -183,23 +183,25 @@
                 {{'TRAININGS_ATTENDED' | translate}} ({{mappedTrainingCertificates?.length}})&lrm;
             </div>
             <div class="content">
-                    <div class="flex-nowrap"
-                        *ngFor="let certificate of (mappedTrainingCertificates | slice : startLimit:trainingsLimit);">
-                        <div class="training-1">
-                            <div class="fw">
-                                {{certificate.courseName}}
-                            </div>
-                            <div class="lighter">
-                                {{certificate.dateTime | date:'MMMM yyyy'}}
-                            </div>
+                <div class="flex-nowrap"
+                    *ngFor="let certificate of (mappedTrainingCertificates | slice : startLimit:trainingsLimit);">
+                    <div class="training-1">
+                        <div class="fw">
+                            {{certificate.courseName}}
                         </div>
-                        <div class="training-2" *ngIf="certificate?.certificate">
-                            <button class="sb-btn-tile" (click)="downloadTrainingCertificate(certificate, certificate?.certificate)">
-                                <img src="assets/imgs/ic_download_selected.png" class="cert-download">
-                                <span class="sb-btn-footer-text m-t-4">{{ 'DOWNLOAD' | translate }}</span>
-                            </button>
+                        <div class="lighter">
+                            {{certificate.dateTime | date:'MMMM yyyy'}}
                         </div>
                     </div>
+                    <div class="training-2" *ngIf="certificate?.certificate">
+                        <button class="sb-btn-tile"
+                            (click)="downloadTrainingCertificate(certificate, certificate?.certificate)">
+                            <img src="assets/imgs/ic_download_selected.png" class="cert-download"
+                                alt="download certificate">
+                            <span class="sb-btn-footer-text m-t-4">{{ 'DOWNLOAD' | translate }}</span>
+                        </button>
+                    </div>
+                </div>
                 <div text-center *ngIf="mapTrainingsToCertificates(trainingsCompleted).length >= trainingsLimit">
                     <ion-button shape="round" class="txt-capitalize custom-round"
                         *ngIf="trainingsLimit < mappedTrainingCertificates?.length" (click)="showMoreTrainings()">
@@ -219,7 +221,6 @@
                 {{'CONTRIBUTIONS' | translate}} ({{contentCreatedByMe.length}})&lrm;
             </div>
             <div class="cards-container" style="padding:0 5px; background-color: #fff; overflow-x: scroll; ">
-                <!-- migration -todo -->
                 <div style="width: 100%" no-padding>
                     <div class="flex-container" *ngIf="contentCreatedByMe  && isLoggedInUser">
                         <ion-card *ngFor="let courseItem of contentCreatedByMe; let i=index"
