@@ -23,12 +23,14 @@ import {
   LogType
 } from '@app/services/telemetry-constants';
 import { ContentUtil } from '@app/util/content-util';
+import { ContentRatingOptions } from './content-rating-options';
 @Component({
   selector: 'app-content-rating-alert',
   templateUrl: './content-rating-alert.component.html',
   styleUrls: ['./content-rating-alert.component.scss'],
 })
 export class ContentRatingAlertComponent implements OnInit {
+  private readonly COMMENT_PREFIX = 'other-';
   isDisable = false;
   userId = '';
   comment = '';
@@ -40,6 +42,11 @@ export class ContentRatingAlertComponent implements OnInit {
   userRating = 0;
   private popupType: string;
   telemetryObject: TelemetryObject;
+  contentRatingOptions = ContentRatingOptions;
+  ratingMetaInfo;
+  ratingOptions;
+  allComments;
+  commentText;
   constructor(
     @Inject('CONTENT_FEEDBACK_SERVICE') private contentService: ContentFeedbackService,
     @Inject('TELEMETRY_SERVICE') private telemetryService: TelemetryService,
@@ -57,13 +64,13 @@ export class ContentRatingAlertComponent implements OnInit {
     });
     this.content = this.navParams.get('content');
     this.userRating = this.navParams.get('rating');
-    this.comment = this.navParams.get('comment');
+    this.allComments = this.navParams.get('comment');
     this.popupType = this.navParams.get('popupType');
     this.pageId = this.navParams.get('pageId');
     this.telemetryObject = ContentUtil.getTelemetryObject(this.content);
-    if (this.userRating) {
-      this.showCommentBox = true;
-    }
+    // if (this.userRating) {
+    //   this.showCommentBox = true;
+    // }
   }
 
   ngOnInit() {
@@ -95,6 +102,10 @@ export class ContentRatingAlertComponent implements OnInit {
     }, err => {
       console.log(err);
     });
+    this.createRatingForm(this.userRating);
+    if (this.allComments) {
+      this.extractComments(this.allComments);
+    }
   }
 
   ionViewWillLeave() {
@@ -115,30 +126,41 @@ export class ContentRatingAlertComponent implements OnInit {
   }
 
   rateContent(ratingCount) {
-    this.showCommentBox = true;
+    // this.showCommentBox = true;
     this.ratingCount = ratingCount;
+    this.createRatingForm(ratingCount);
   }
 
   cancel() {
-    this.showCommentBox = false;
+    // this.showCommentBox = false;
     this.popOverCtrl.dismiss();
   }
   closePopover() {
-    this.showCommentBox = false;
+    // this.showCommentBox = false;
     this.popOverCtrl.dismiss();
   }
 
   submit() {
+    let comment = '';
+    this.ratingOptions.forEach(element => {
+      if (element.isChecked) {
+        comment += comment.length ? ',' + element.key :  element.key;
+      }
+    });
+    if (this.commentText) {
+      const text = this.COMMENT_PREFIX + this.commentText;
+      comment += comment.length ? ',' + text :  text;
+    }
+    this.allComments = comment;
     const option: ContentFeedback = {
       contentId: this.content.identifier,
       rating: this.ratingCount ? this.ratingCount : this.userRating,
-      comments: this.comment,
+      comments: this.allComments,
       contentVersion: this.content['versionKey']
     };
-    this.popOverCtrl.dismiss();
     const paramsMap = new Map();
     paramsMap['Ratings'] = this.ratingCount ? this.ratingCount : this.userRating;
-    paramsMap['Comment'] = this.comment;
+    paramsMap['Comment'] = this.allComments;
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,
       InteractSubtype.RATING_SUBMITTED,
@@ -147,20 +169,16 @@ export class ContentRatingAlertComponent implements OnInit {
     );
 
     const viewDismissData = {
-      rating: this.ratingCount,
-      comment: this.comment ? this.comment : '',
-      message: ''
+        rating: this.ratingCount ? this.ratingCount : this.userRating,
+        comment: this.allComments ? this.allComments : '',
+        message: ''
     };
 
     this.contentService.sendFeedback(option).subscribe((res) => {
-      console.log('success:', res);
       viewDismissData.message = 'rating.success';
-      viewDismissData.rating = this.ratingCount ? this.ratingCount : this.userRating;
-      viewDismissData.comment = this.comment;
       this.popOverCtrl.dismiss(viewDismissData);
       this.commonUtilService.showToast('THANK_FOR_RATING');
     }, (data) => {
-      console.log('error:', data);
       viewDismissData.message = 'rating.error';
       this.popOverCtrl.dismiss(viewDismissData);
     });
@@ -169,4 +187,37 @@ export class ContentRatingAlertComponent implements OnInit {
   showMessage(msg) {
     this.commonUtilService.showToast(this.commonUtilService.translateMessage(msg));
   }
+
+  createRatingForm(rating) {
+    this.ratingMetaInfo =  { ratingText: this.contentRatingOptions[rating].ratingText,
+                          ratingQuestion: this.contentRatingOptions[rating].question
+                        };
+    this.ratingOptions = this.contentRatingOptions[rating].options;
+    this.ratingOptions.forEach(element => {
+      element.isChecked = false;
+    });
+    this.commentText = '';
+  }
+
+  ratingOptsChanged(key) {
+    if (key === 'other') {
+      this.showCommentBox = !this.showCommentBox;
+    }
+  }
+
+  extractComments(comments) {
+    const options = comments.split(',');
+    options.forEach(e => {
+      if (e.indexOf(this.COMMENT_PREFIX) !== -1) {
+        this.commentText = e.substring(this.COMMENT_PREFIX.length);
+        // this.showCommentBox = true;
+      } else {
+        const opt = this.ratingOptions.find((v) => e === v.key);
+        if (opt) {
+          opt.isChecked = true;
+        }
+      }
+    });
+  }
+
 }

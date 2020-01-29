@@ -6,17 +6,34 @@
     </ion-toolbar>
   </ion-header>
   <ion-content no-padding class="sb-popover-container">
-      <div class="sb-popover-items popover-ratings">
+      <div class="sb-popover-items popover-ratings" style="height: 500px;overflow: auto;">
           <rating [(ngModel)]="userRating" (ngModelChange)="rateContent($event)"></rating>
           <div class="sb-popover-content-details" *ngIf="userRating">
             <div class="main-title">
               <div class="meta-info">
-               {{'RATED_STARS' | translate: {'%s': userRating} }}
+               <!-- {{'RATED_STARS' | translate: {'%s': userRating} }} -->
+               {{ratingMetaInfo?.ratingText}}
+              </div>
+              <div class="rating-qstn">
+                {{ratingMetaInfo?.ratingQuestion}}
+               </div>
+            </div>
+            <div class="rating-opts">
+              <div *ngFor="let opt of ratingOptions">
+                <ion-item class="rating-item">
+                  <ion-label class="rating-label">{{opt.value}}</ion-label>
+                  <ion-checkbox [(ngModel)]="opt.isChecked" (ionChange)="ratingOptsChanged(opt.key)" slot="end"></ion-checkbox>
+                </ion-item>
+              </div>
+              <div *ngIf="showCommentBox">
+                <ion-item>
+                  <textarea [(ngModel)]="commentText" name="" id="" cols="30" rows="4" placeholder="Type here"></textarea>
+                </ion-item>
               </div>
             </div>
           </div>
-          <ion-input *ngIf="showCommentBox" [(ngModel)]="comment" placeholder="{{'FEEDBACK_HINT' | translate}}" style="border-bottom : 2px;"></ion-input>
-          <div *ngIf="showCommentBox" class="sb-line"></div>
+          <!-- <ion-input *ngIf="showCommentBox" [(ngModel)]="comment" placeholder="{{'FEEDBACK_HINT' | translate}}" style="border-bottom : 2px;"></ion-input>
+          <div *ngIf="showCommentBox" class="sb-line"></div> -->
       </div>
   </ion-content>
   
