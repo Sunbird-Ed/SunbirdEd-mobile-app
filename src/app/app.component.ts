@@ -570,7 +570,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       .then(result => {
         if (result !== undefined) {
           setTimeout(() => {
-            this.events.publish('force_optional_upgrade', { upgrade: result });
+            this.events.publish('force_optional_upgrade', result);
           }, 5000);
         }
       }).catch(err => {
