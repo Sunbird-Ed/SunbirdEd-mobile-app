@@ -26,24 +26,26 @@ describe('UpgradePopoverComponent', () => {
         get: jest.fn((arg) => {
             let value;
             switch (arg) {
-                case 'type':
+                case 'upgrade':
                     value = {
-                        upgrade: {
-                            type: 'force',
-                            optional: 'forceful',
-                            title: 'We recommend that you upgrade to the latest version of Sunbird.',
-                            desc: '',
-                            actionButtons: [
-                                {
-                                    action: 'yes',
-                                    label: 'Update Now',
-                                    link: 'https://play.google.com/store/apps/details?id=org.sunbird.app&hl=en'
-                                }
-                            ],
-                            minVersionCode: 13,
-                            maxVersionCode: 52,
-                            currentAppVersionCode: 23
-                        }
+                        type: 'force',
+                        optional: 'forceful',
+                        title: 'We recommend that you upgrade to the latest version of Sunbird.',
+                        desc: '',
+                        actionButtons: [
+                            {
+                                action: 'yes',
+                                label: 'Update Now',
+                                link: 'https://play.google.com/store/apps/details?id=org.sunbird.app&hl=en'
+                            },
+                            {
+                                action: 'no',
+                                label: 'Cancel'
+                            }
+                        ],
+                        minVersionCode: 13,
+                        maxVersionCode: 52,
+                        currentAppVersionCode: 23
                     };
                     break;
             }
@@ -81,7 +83,7 @@ describe('UpgradePopoverComponent', () => {
         // arrange
         jest.spyOn(upgradePopoverComponent, 'cancel');
         // act
-        upgradePopoverComponent.upgrade('https://play.google.com/store/apps/details?id=org.sunbird.app');
+        upgradePopoverComponent.upgradeApp('https://play.google.com/store/apps/details?id=org.sunbird.app');
         // assert
         expect(mockUtilityService.openPlayStore).toHaveBeenCalledWith('org.sunbird.app');
         expect(upgradePopoverComponent.cancel).toHaveBeenCalled();
