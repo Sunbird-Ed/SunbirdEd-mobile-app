@@ -16,7 +16,8 @@ describe('UtilityService', () => {
             clearUtmInfo: jest.fn(() => { }),
             readFromAssets: jest.fn(() => { }),
             rm: jest.fn(() => { }),
-            getApkSize: jest.fn(() => { })
+            getApkSize: jest.fn(() => { }),
+            getMetaData: jest.fn(() => { }),
         };
         utilityService = new UtilityService();
     });
@@ -657,6 +658,126 @@ describe('UtilityService', () => {
                 expect(window['sbutility']['getApkSize']).
                     toHaveBeenCalledWith(expect.any(Function), expect.any(Function));
                 done();
+            });
+        });
+    });
+
+    describe('getMetaData()', () => {
+        it('should delegate to getMetaData Method', (done) => {
+            // arrange
+            (window['sbutility']['getMetaData'] as jest.Mock).
+                mockImplementation((SOME_PATH, successCallback, errorCallback) => {
+                    setTimeout(() => {
+                        successCallback({ ecar: { size: 123 } });
+                    });
+                });
+            // act
+            utilityService.getMetaData('sample_destination').then(() => {
+                // assert
+                expect(window['sbutility']['getMetaData']).toHaveBeenCalledWith([{ identifier: 'ecar', path: 'sample_destination' }],
+                    expect.any(Function), expect.any(Function));
+                done();
+            });
+        });
+        it('should reject if getMetaData string for corresponding entryString was not found', (done) => {
+            // arrange
+            (window['sbutility']['getMetaData'] as jest.Mock).
+                mockImplementation((SOME_PATH, successCallback, errorCallback) => {
+                    setTimeout(() => {
+                        errorCallback();
+                    });
+                });
+            // act
+            utilityService.getMetaData('sample_destination').catch(() => {
+                // assert
+                expect(window['sbutility']['getMetaData']).
+                    toReturnWith(undefined);
+                done();
+            });
+        });
+        it('should reject getMetaData string for corresponding EntryString', (done) => {
+            // arrange
+            (window['sbutility']['getMetaData'] as jest.Mock).
+                mockImplementation((successCallback, errorCallback) => {
+                    throw Error;
+                });
+            // act
+            utilityService.getMetaData('sample_destination').catch(() => {
+                // assert
+                expect(window['sbutility']['getMetaData']).toHaveBeenCalledWith([{ identifier: 'ecar', path: 'sample_destination' }],
+                    expect.any(Function), expect.any(Function));
+                done();
+            });
+        });
+    });
+    describe('removeFile()', () => {
+        it('should delegate to removeFile Method', (done) => {
+            // arrange
+            (window['sbutility']['rm'] as jest.Mock).
+                mockImplementation(([SOME_PATH], SOME_VALUE, successCallback, errorCallback) => {
+                    setTimeout(() => {
+                        successCallback();
+                    });
+                });
+            // act
+            utilityService.removeFile('sample_destination').then(() => {
+                // assert
+                expect(window['sbutility']['rm']).toHaveBeenCalledWith(['sample_destination'], false,
+                    expect.any(Function), expect.any(Function));
+                done();
+            });
+        });
+        it('should reject if removeFile string for corresponding entryString was not found', (done) => {
+            // arrange
+            (window['sbutility']['rm'] as jest.Mock).
+                mockImplementation(([SOME_PATH], SOME_VALUE, successCallback, errorCallback) => {
+                    setTimeout(() => {
+                        errorCallback();
+                    });
+                });
+            // act
+            utilityService.removeFile('sample_destination').catch(() => {
+                // assert
+                expect(window['sbutility']['rm']).
+                    toReturnWith(undefined);
+                done();
+            });
+        });
+        it('should reject removeFile string for corresponding EntryString', (done) => {
+            // arrange
+            (window['sbutility']['rm'] as jest.Mock).
+                mockImplementation(([SOME_PATH], SOME_VALUE, successCallback, errorCallback) => {
+                    throw Error;
+                });
+            // act
+            utilityService.removeFile('sample_destination').catch(() => {
+                // assert
+                expect(window['sbutility']['rm']).toHaveBeenCalledWith(['sample_destination'], false,
+                    expect.any(Function), expect.any(Function));
+                done();
+            });
+        });
+    });
+
+    describe('getAppVersionCode()', () => {
+        it('should delegate to getAppVersionCode Method with 1', () => {
+            // arrange
+            jest.spyOn(utilityService, 'getBuildConfigValue').mockResolvedValue(Promise.resolve('1'));
+            // act
+            // assert
+            utilityService.getAppVersionCode().then((response) => {
+                expect(response).toEqual(1);
+            });
+        });
+        it('should reject to getAppVersionCode Method with 0', () => {
+            // arrange
+            jest.spyOn(utilityService, 'getBuildConfigValue').mockRejectedValue('0');
+            // act
+            // assert
+            utilityService.getAppVersionCode().then((response) => {
+                expect(response).toEqual(1);
+            }).catch((err) => {
+                expect(err).toEqual(0);
             });
         });
     });

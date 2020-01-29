@@ -7,6 +7,7 @@ import { AppGlobalService } from '../../services/app-global-service.service';
 import { TelemetryGeneratorService } from '../../services/telemetry-generator.service';
 import find from 'lodash/find';
 import each from 'lodash/each';
+import { IonContent as iContent } from '@ionic/angular';
 // import map from 'lodash/map';
 import {
   ChildContentRequest,
@@ -118,6 +119,8 @@ export class QrcoderesultPage implements OnDestroy {
   stckyParent: any;
   latestParents: Array<any> = [];
   stckyindex: string;
+  chapterFirstChildId: string;
+  @ViewChild(iContent) ionContent: iContent;
 
   constructor(
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
@@ -157,6 +160,24 @@ export class QrcoderesultPage implements OnDestroy {
    * Ionic life cycle hook
    */
   ionViewWillEnter(): void {
+    if (this.textbookTocService.textbookIds.unit) {
+      this.chapterFirstChildId = '';
+      this.getFirstChildOfChapter(this.textbookTocService.textbookIds.unit);
+      if (this.chapterFirstChildId) {
+        setTimeout(() => {
+          if (document.getElementById(this.chapterFirstChildId)) {
+            this.ionContent.getScrollElement().then((v) => {
+              v.scrollTo({
+                top: document.getElementById(this.chapterFirstChildId).offsetTop - 50,
+                left: 0,
+                behavior: 'smooth'
+              });
+            });
+            this.textbookTocService.resetTextbookIds();
+          }
+        }, 100);
+      }
+    }
     this.headerService.hideHeader();
     this.content = this.navData.content;
     this.corRelationList = this.navData.corRelation;
@@ -214,6 +235,7 @@ export class QrcoderesultPage implements OnDestroy {
   }
 
   ngOnDestroy() {
+    this.textbookTocService.resetTextbookIds();
     if (this.eventSubscription) {
       this.eventSubscription.unsubscribe();
     }
@@ -386,8 +408,7 @@ export class QrcoderesultPage implements OnDestroy {
       !this.appGlobalService.isOnBoardingCompleted ? Environment.ONBOARDING : Environment.HOME,
       PageId.DIAL_CODE_SCAN_RESULT,
       telemetryObject);
-    if (content.contentData.streamingUrl && !content.isAvailableLocally
-        && !(this.content.mimeType === 'application/vnd.ekstep.h5p-archive')) {
+    if (content.contentData.streamingUrl && !content.isAvailableLocally) {
       this.playContent(content);
     } else {
       this.navigateToDetailsPage(content);
@@ -812,4 +833,20 @@ export class QrcoderesultPage implements OnDestroy {
 
     (this.stickyPillsRef.nativeElement as HTMLDivElement).classList.remove('sticky');
   }
+
+  // when coming back from toc page it has to scroll to the firstcontent of the selected chapter
+  getFirstChildOfChapter(unit) {
+    if (!this.chapterFirstChildId) {
+      if (unit.children === undefined) {
+        if (unit.mimeType !== MimeType.COLLECTION) {
+          this.chapterFirstChildId = unit.identifier;
+        }
+        return;
+      }
+      unit.children.forEach(child => {
+        this.getFirstChildOfChapter(child);
+      });
+    }
+  }
+
 }

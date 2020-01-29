@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
 import { DeviceSpecification } from 'sunbird-sdk';
+import { GenericAppConfig } from '@app/app/app.constant';
 
 declare const sbutility;
 
 @Injectable()
-
 export class UtilityService {
+
     getBuildConfigValue(property): Promise<string> {
         return new Promise<string>((resolve, reject) => {
             try {
@@ -21,6 +22,7 @@ export class UtilityService {
             }
         });
     }
+
     rm(directoryPath, directoryToBeSkipped): Promise<string> {
         return new Promise<string>((resolve, reject) => {
             try {
@@ -36,6 +38,7 @@ export class UtilityService {
             }
         });
     }
+
     openPlayStore(appId): Promise<string> {
         return new Promise<string>((resolve, reject) => {
             try {
@@ -51,6 +54,7 @@ export class UtilityService {
             }
         });
     }
+
     getDeviceAPILevel(): Promise<string> {
         return new Promise<string>((resolve, reject) => {
             try {
@@ -66,6 +70,7 @@ export class UtilityService {
             }
         });
     }
+
     checkAppAvailability(packageName): Promise<string> {
         return new Promise<string>((resolve, reject) => {
             try {
@@ -81,6 +86,7 @@ export class UtilityService {
             }
         });
     }
+
     getDownloadDirectoryPath(): Promise<string> {
         return new Promise<string>((resolve, reject) => {
             try {
@@ -96,6 +102,7 @@ export class UtilityService {
             }
         });
     }
+
     exportApk(destination): Promise<string> {
         return new Promise<string>((resolve, reject) => {
             try {
@@ -184,6 +191,39 @@ export class UtilityService {
             } catch (xc) {
                 reject(xc);
             }
+        });
+    }
+
+    getMetaData(filePath: string): Promise<string> {
+        return new Promise((resolve, reject) => {
+            sbutility.getMetaData([{ path: filePath, identifier: 'ecar' }], (data) => {
+                resolve(data.ecar.size);
+            }, err => {
+                reject(err);
+            });
+        });
+    }
+
+    removeFile(filePath: string): Promise<boolean> {
+        return new Promise((resolve, reject) => {
+            sbutility.rm([filePath], false, (successfullyDeleted) => {
+                resolve(successfullyDeleted);
+            }, error => {
+                reject(error);
+            });
+        });
+    }
+
+    getAppVersionCode(): Promise<number> {
+        return new Promise<number>((resolve, reject) => {
+            this.getBuildConfigValue(GenericAppConfig.VERSION_CODE)
+                .then(response => {
+                    resolve(+response);
+                })
+                .catch(error => {
+                    console.log('Error--', error);
+                    resolve(0);
+                });
         });
     }
 }

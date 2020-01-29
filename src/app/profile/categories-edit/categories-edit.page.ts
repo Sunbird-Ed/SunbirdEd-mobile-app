@@ -533,12 +533,13 @@ export class CategoriesEditPage {
         language: '',
         requiredCategories: []
       }).toPromise();
-
+      this.frameworkId =  activeChannelDetails.defaultFramework;
+      this.categories = defaultFrameworkDetails.categories;
       const boardCategory = defaultFrameworkDetails.categories.find((c) => c.code === 'board');
       const mediumCategory = defaultFrameworkDetails.categories.find((c) => c.code === 'medium');
 
       if (boardCategory) {
-        this.syllabusList = activeChannelSuggestedFrameworkList.map(f => ({ name: f.name, code: f.code }));
+        this.syllabusList = activeChannelSuggestedFrameworkList.map(f => ({ name: f.name, code: f.identifier }));
         this.isBoardAvailable = true;
         this.resetForm(0);
       } else {

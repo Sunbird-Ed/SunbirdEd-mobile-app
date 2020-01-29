@@ -10,7 +10,7 @@ import { AppGlobalService } from '@app/services/app-global-service.service';
 import { CommonUtilService } from '@app/services/common-util.service';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { AppHeaderService } from '@app/services/app-header.service';
-import { Environment, ImpressionType, InteractSubtype, InteractType, PageId } from '@app/services/telemetry-constants';
+import {Environment, ID, ImpressionType, InteractSubtype, InteractType, PageId} from '@app/services/telemetry-constants';
 import { NotificationService } from '@app/services/notification.service';
 import { Location } from '@angular/common';
 import { Subscription } from 'rxjs';
@@ -213,7 +213,17 @@ export class LanguageSettingsPage implements OnInit {
         this.router.navigate([RouterLinks.USER_TYPE_SELECTION]);
       }
     } else {
-      this.generateClickInteractEvent('n/a', InteractSubtype.CONTINUE_CLICKED);
+      this.telemetryGeneratorService.generateInteractTelemetry(
+          InteractType.DISABLED,
+          '',
+          Environment.ONBOARDING,
+          PageId.ONBOARDING_LANGUAGE_SETTING,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          ID.CONTINUE_CLICKED
+      );
       this.btnColor = '#8FC4FF';
 
       const parser = new DOMParser();

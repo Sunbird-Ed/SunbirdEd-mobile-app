@@ -7,7 +7,7 @@
     </div>
     <div
       [ngClass]="{'row sb-textbook-toc px-16': isTextbookTocPage, 'sb-highlighted-row' : (latestParentName === childData?.contentData?.name && sameHierarchy)}"
-      (click)="!fromCourseToc && setContentId(childData.identifier)" [id]="childData.identifier"
+      (click)="!fromCourseToc && setContentId(childData.identifier, childData)" [id]="childData.identifier"
       *ngIf="childData?.contentData?.mimeType === 'application/vnd.ekstep.content-collection' && childData?.children && isTextbookTocPage">
       <div class="pull-left px-16">
         {{childData?.contentData?.name}}

@@ -20,5 +20,6 @@ global.cordova = {
 };
 
 global.supportfile = {
-    shareSunbirdConfigurations: () => {}
+    shareSunbirdConfigurations: () => {},
+    makeEntryInSunbirdSupportFile: () => {}
 }

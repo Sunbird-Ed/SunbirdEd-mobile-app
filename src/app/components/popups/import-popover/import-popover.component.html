@@ -1,0 +1,30 @@
+<ion-header class="sb-popover-header">
+  <ion-toolbar class="sb-popover-toolbar">
+    <ion-title class="sb-popover-title"> {{'LOAD_FILE' | translate}}
+      <ion-icon name="close" class="sb-modal-close" (click)="closePopover()"></ion-icon>
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content no-padding class="sb-popover-container">
+    <ion-item lines="none" *ngIf="!importingAndDisablingButton">
+      <ion-label>{{'FILE_NAME' | translate: {'%s': fileName} }}</ion-label>
+    </ion-item>
+  <ion-item lines="none" *ngIf="importingAndDisablingButton">
+    <ion-label>{{'IMPORTING' | translate}} {{currentCount}} / {{totalCount}}</ion-label>
+  </ion-item>
+  <ion-item lines="none">
+    <p class="file-size" *ngIf="fileSize">{{'SIZE' | translate: {'%s': fileSize} }}</p>
+  </ion-item>
+
+  <ion-item lines="none">
+    <ion-checkbox slot="start" [disabled]="importingAndDisablingButton" (ionChange)="checkboxClicked($event)"></ion-checkbox>
+    <ion-label>Delete .ecar file after loading</ion-label>
+  </ion-item>
+</ion-content>
+
+<ion-footer>
+  <div class="sb-popover-footer">
+    <button class="sb-popover-action-btn width-100 popover-color" [disabled]="importingAndDisablingButton" (click)="importInitiated()">{{'LOAD' | translate}}</button>
+  </div>
+</ion-footer>

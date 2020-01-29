@@ -744,8 +744,8 @@ export class CoursesPage implements OnInit {
         isChildContent: true,
         resumedCourseCardData: content,
         isCourse: true,
-        corRelation: this.corRelationList
-
+        corRelation: this.corRelationList,
+        course: content
       }
     };
     this.router.navigate([RouterLinks.CONTENT_DETAILS], extras);
