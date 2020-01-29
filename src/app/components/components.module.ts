@@ -7,7 +7,6 @@ import { TranslateModule } from '@ngx-translate/core';
 import { ApplicationHeaderComponent } from './application-header/application-header.component';
 import { SignInCardComponent } from './sign-in-card/sign-in-card.component';
 import { TextBookCardComponent } from './text-book-card/text-book-card.component';
-import { NewCourseCardComponent } from './new-course-card/new-course-card.component';
 import { PipesModule } from '../../pipes/pipes.module';
 import { ViewAllCardComponent } from './view-all-card/view-all-card.component';
 import { ViewMoreCardComponent } from './view-more-card/view-more-card.component';
@@ -51,7 +50,6 @@ import { SbAppSharePopupComponent } from './popups/sb-app-share-popup/sb-app-sha
     ApplicationHeaderComponent,
     SignInCardComponent,
     TextBookCardComponent,
-    NewCourseCardComponent,
     ViewAllCardComponent,
     ViewMoreCardComponent,
     PbHorizontalComponent,
@@ -124,7 +122,6 @@ import { SbAppSharePopupComponent } from './popups/sb-app-share-popup/sb-app-sha
     ApplicationHeaderComponent,
     SignInCardComponent,
     TextBookCardComponent,
-    NewCourseCardComponent,
     ViewAllCardComponent,
     ViewMoreCardComponent,
     PbHorizontalComponent,
