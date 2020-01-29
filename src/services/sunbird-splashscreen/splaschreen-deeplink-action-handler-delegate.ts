@@ -4,14 +4,14 @@ import { Router } from '@angular/router';
 import { Events } from '@ionic/angular';
 import { Observable, of } from 'rxjs';
 import { ContentService, SharedPreferences, HttpServerError, NetworkError } from 'sunbird-sdk';
-
 import { SplashscreenActionHandlerDelegate } from './splashscreen-action-handler-delegate';
 import { ContentType, MimeType, EventTopics, RouterLinks, LaunchType } from '../../app/app.constant';
 import { AppGlobalService } from '../app-global-service.service';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { CommonUtilService } from '@app/services/common-util.service';
 import { PageId, InteractType, Environment, ID, CorReleationDataType } from '../telemetry-constants';
-
+import { AppVersion } from '@ionic-native/app-version/ngx';
+import { UtilityService } from '../utility-service';
 
 @Injectable()
 export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenActionHandlerDelegate {
@@ -36,6 +36,8 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
     private appGlobalServices: AppGlobalService,
     private events: Events,
     private router: Router,
+    private appVersion: AppVersion,
+    private utilityService: UtilityService
   ) { }
 
   onAction(payload: any): Observable<undefined> {
@@ -60,11 +62,43 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
     if (!this.isOnboardingCompleted) {
       this.isOnboardingCompleted = (await this.preferences.getString(PreferenceKey.IS_ONBOARDING_COMPLETED).toPromise() === 'true') ? true : false;
     }
-    if (this.isOnboardingCompleted) {
+
+    const url = new URL(urlMatch.input);
+    // Read version code from deeplink.
+    const requiredVersionCode = url.searchParams.get('vCode');
+    if (requiredVersionCode && !(await this.isAppCompatible(requiredVersionCode))) {
+      this.upgradeAppPopover();
+    } else if (this.isOnboardingCompleted) {
       this.handleNavigation(urlMatch);
     } else {
       this.savedUrlMatch = urlMatch;
     }
+  }
+
+  private async isAppCompatible(requiredVersionCode) {
+    const currentAppVersionCode = await this.utilityService.getAppVersionCode();
+
+    // If requiredVersionCode is available then should display upgrade popup is installed version is less than the expected appVesion.
+    return (currentAppVersionCode
+      && requiredVersionCode
+      && currentAppVersionCode >= requiredVersionCode);
+  }
+
+  private async upgradeAppPopover() {
+    const packageName = await this.appVersion.getPackageName();
+    const playStoreLink = `https://play.google.com/store/apps/details?id=${packageName}`;
+    const result: any = {
+      type: 'optional',
+      title: 'UPDATE_APP_SUPPORT_TITLE',
+      actionButtons: [
+        {
+          action: 'yes',
+          label: 'UPDATE_APP_BTN_ACTION_YES',
+          link: playStoreLink
+        }
+      ]
+    };
+    await this.appGlobalServices.openPopover({ upgrade: result });
   }
 
   private handleNavigation(urlMatch: any): void {
