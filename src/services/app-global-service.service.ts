@@ -459,16 +459,16 @@ export class AppGlobalService implements OnDestroy {
 
     }
 
-    async openPopover(upgradeType: any) {
+    async openPopover(upgradeData: any) {
         let shouldDismissAlert = true;
 
-        if (upgradeType.upgrade.type === 'force' || upgradeType.upgrade.type === 'forced') {
+        if (upgradeData.type === 'force' || upgradeData.type === 'forced') {
             shouldDismissAlert = false;
         }
 
         const options = {
             component: UpgradePopoverComponent,
-            componentProps: { type: upgradeType },
+            componentProps: { upgrade: upgradeData },
             cssClass: 'upgradePopover',
             showBackdrop: true,
             backdropDismiss: shouldDismissAlert

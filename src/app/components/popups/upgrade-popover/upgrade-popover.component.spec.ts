@@ -1,15 +1,18 @@
 import { UpgradePopoverComponent } from './upgrade-popover.component';
 import { PopoverController, Platform, NavParams } from '@ionic/angular';
 import { UtilityService } from '../../../../services/utility-service';
-import {Environment, ImpressionSubtype, ImpressionType, InteractSubtype, PageId, TelemetryGeneratorService} from '@app/services';
-import {InteractType} from 'sunbird-sdk';
+import { Environment, ImpressionSubtype, ImpressionType, InteractSubtype, PageId, TelemetryGeneratorService } from '@app/services';
+import { InteractType } from 'sunbird-sdk';
+import { AppVersion } from '@ionic-native/app-version/ngx';
 
 describe('UpgradePopoverComponent', () => {
     let upgradePopoverComponent: UpgradePopoverComponent;
     const mockUtilityService: Partial<UtilityService> = {
         openPlayStore: jest.fn()
     };
-
+    const mockAppVersion: Partial<AppVersion> = {
+        getAppName: jest.fn(() => Promise.resolve('some_string'))
+    };
     const mockPopOverController: Partial<PopoverController> = {
         dismiss: jest.fn()
     };
@@ -41,9 +44,9 @@ describe('UpgradePopoverComponent', () => {
                             maxVersionCode: 52,
                             currentAppVersionCode: 23
                         }
-                      };
+                    };
                     break;
-                }
+            }
             return value;
         })
     };
@@ -53,7 +56,8 @@ describe('UpgradePopoverComponent', () => {
             mockUtilityService as UtilityService,
             mockPopOverController as PopoverController,
             mockNavParams as NavParams,
-            mockTelemetryGeneratorService as TelemetryGeneratorService
+            mockTelemetryGeneratorService as TelemetryGeneratorService,
+            mockAppVersion as AppVersion
         );
     });
 
@@ -83,31 +87,34 @@ describe('UpgradePopoverComponent', () => {
         expect(upgradePopoverComponent.cancel).toHaveBeenCalled();
     });
 
-    it('should generate impression and interact when popoup shows', () => {
+    it('should generate impression and interact when popoup shows', (done) => {
         // arrange
         mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
         mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
         // act
         upgradePopoverComponent.init();
         // assert
-        expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenCalledWith(
-            ImpressionType.VIEW,
-            ImpressionSubtype.UPGRADE_POPUP,
-            PageId.UPGRADE_POPUP,
-            Environment.HOME
-        );
-        expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
-            InteractType.OTHER,
-            InteractSubtype.FORCE_UPGRADE_INFO,
-            Environment.HOME,
-            PageId.UPGRADE_POPUP,
-            undefined,
-            {
-                minVersionCode: 13,
-                maxVersionCode: 52,
-                currentAppVersionCode: 23
-            }
-        );
+        setTimeout(() => {
+            expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenCalledWith(
+                ImpressionType.VIEW,
+                ImpressionSubtype.UPGRADE_POPUP,
+                PageId.UPGRADE_POPUP,
+                Environment.HOME
+            );
+            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+                InteractType.OTHER,
+                InteractSubtype.FORCE_UPGRADE_INFO,
+                Environment.HOME,
+                PageId.UPGRADE_POPUP,
+                undefined,
+                {
+                    minVersionCode: 13,
+                    maxVersionCode: 52,
+                    currentAppVersionCode: 23
+                }
+            );
+            done();
+        }, 0);
     });
 
 });

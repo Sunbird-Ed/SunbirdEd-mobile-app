@@ -96,7 +96,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
         }
       ]
     };
-    await this.appGlobalServices.openPopover({ upgrade: result });
+    await this.appGlobalServices.openPopover(result);
   }
 
   private handleNavigation(urlMatch: any): void {
