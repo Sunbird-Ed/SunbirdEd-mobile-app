@@ -996,7 +996,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   navigateToDetailPage(event, sectionName) {
-    console.log('navigateToDetailPage', event);
     const item = event.data;
     const index = event.index;
     const identifier = item.contentId || item.identifier;
@@ -1047,7 +1046,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   handleHeaderEvents($event) {
-    console.log('inside handleHeaderEvents', $event);
     switch ($event.name) {
       case 'search':
         this.search();
@@ -1160,7 +1158,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   recentlyViewedCardClick(event, course) {
-    console.log('navigateToDetailPage', event);
     const item = event.data;
     const index = event.index;
 
