@@ -1,9 +1,9 @@
-import {ResourcesComponent} from '@app/app/resources/resources.component';
-import {Container} from 'inversify';
-import {ContentService, EventsBusService, ProfileService, ProfileServiceImpl, SharedPreferences} from 'sunbird-sdk';
-import {EventsBusServiceImpl} from 'sunbird-sdk/events-bus/impl/events-bus-service-impl';
-import {ContentServiceImpl} from 'sunbird-sdk/content/impl/content-service-impl';
-import {NgZone, ChangeDetectorRef} from '@angular/core';
+import { ResourcesComponent } from '@app/app/resources/resources.component';
+import { Container } from 'inversify';
+import { ContentService, EventsBusService, ProfileService, ProfileServiceImpl, SharedPreferences } from 'sunbird-sdk';
+import { EventsBusServiceImpl } from 'sunbird-sdk/events-bus/impl/events-bus-service-impl';
+import { ContentServiceImpl } from 'sunbird-sdk/content/impl/content-service-impl';
+import { NgZone, ChangeDetectorRef } from '@angular/core';
 import {
     AppGlobalService,
     AppHeaderService,
@@ -13,14 +13,14 @@ import {
     SunbirdQRScanner,
     TelemetryGeneratorService
 } from '@app/services';
-import {Events, MenuController, ToastController} from '@ionic/angular';
-import {AppVersion} from '@ionic-native/app-version/ngx';
-import {Network} from '@ionic-native/network/ngx';
-import {TranslateService} from '@ngx-translate/core';
-import {Router} from '@angular/router';
-import {SplaschreenDeeplinkActionHandlerDelegate} from '@app/services/sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
-import {mockContentData} from '@app/app/content-details/content-details.page.spec.data';
-import {of, Subscription, NEVER} from 'rxjs';
+import { Events, MenuController, ToastController } from '@ionic/angular';
+import { AppVersion } from '@ionic-native/app-version/ngx';
+import { Network } from '@ionic-native/network/ngx';
+import { TranslateService } from '@ngx-translate/core';
+import { Router } from '@angular/router';
+import { SplaschreenDeeplinkActionHandlerDelegate } from '@app/services/sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
+import { mockContentData } from '@app/app/content-details/content-details.page.spec.data';
+import { of, Subscription, NEVER } from 'rxjs';
 import {
     ContentSearchCriteria,
     ContentsGroupedByPageSection,
@@ -159,14 +159,14 @@ describe('ResourcesComponent', () => {
         });
         mockEvents.subscribe = jest.fn((topic, fn) => {
             if (topic === 'savedResources:update') {
-                fn({update: 'sample_update_result'});
+                fn({ update: 'sample_update_result' });
             }
 
             if (topic === 'event:showScanner') {
-                fn({pageName: 'library'});
+                fn({ pageName: 'library' });
             }
             if (topic === 'onAfterLanguageChange:update') {
-                fn({selectedLanguage: 'ur'});
+                fn({ selectedLanguage: 'ur' });
                 resourcesComponent.selectedLanguage = 'ur';
             }
 
@@ -174,7 +174,7 @@ describe('ResourcesComponent', () => {
                 fn();
             }
             if (topic === 'force_optional_upgrade') {
-                fn({upgrade: 'sample_result'});
+                fn({ upgrade: 'sample_result' });
                 mockAppGlobalService.openPopover = jest.fn(() => Promise.resolve());
                 resourcesComponent.isUpgradePopoverShown = true;
             }
@@ -270,7 +270,7 @@ describe('ResourcesComponent', () => {
                 done();
             }, 0);
         });
-    
+
         it('should not convert the courseLogoUrl if it is not there in the content, and skip this step', (done) => {
             // arrange
             const request: ContentSearchCriteria = {
@@ -364,7 +364,7 @@ describe('ResourcesComponent', () => {
                 done();
             }, 0);
         });
-    
+
         it('should handle catchPart when getGroupByPageSection() returns an error', (done) => {
             // arrange
             const request: ContentSearchCriteria = {
@@ -384,7 +384,7 @@ describe('ResourcesComponent', () => {
             mockCommonUtilService.showToast = jest.fn(() => {
                 return 'ERROR_FETCHING_DATA';
             });
-           
+
             // act
             resourcesComponent.getGroupByPage(false, false);
             setTimeout(() => {
@@ -397,9 +397,9 @@ describe('ResourcesComponent', () => {
                 done();
             }, 0);
         });
-    
+
     });
-   
+
     it('should call relevant methods inside when ngOnInit() called at the beginning', (done) => {
         // arrange
         resourcesComponent.appliedFilter = 'sample_filter';
@@ -634,8 +634,8 @@ describe('ResourcesComponent', () => {
         jest.spyOn(resourcesComponent, 'getCurrentUser').mockImplementation();
         jest.spyOn(resourcesComponent, 'getChannelId').mockImplementation();
         jest.spyOn(resourcesComponent, 'getPopularContent').mockImplementation();
-        const mockHeaderEventsSubscription = {unsubscribe: jest.fn()} as Partial<Subscription>;
-        const mockEventsBusSubscription = {unsubscribe: jest.fn()} as Partial<Subscription>;
+        const mockHeaderEventsSubscription = { unsubscribe: jest.fn() } as Partial<Subscription>;
+        const mockEventsBusSubscription = { unsubscribe: jest.fn() } as Partial<Subscription>;
         mockEventBusService.events = () => ({
             subscribe: jest.fn(() => mockEventsBusSubscription)
         });
@@ -914,4 +914,68 @@ describe('ResourcesComponent', () => {
             done();
         }, 0);
     });
+
+    it('should be invoked classClickEvent', () => {
+        // arrange
+        const event = { data: { index: 0 } };
+        jest.spyOn(resourcesComponent, 'classClickHandler').mockImplementation(() => {
+            return;
+        });
+        // act
+        resourcesComponent.classClickEvent(event, true);
+    });
+
+    it('should be handle medium click filter', () => {
+        // arrange
+        jest.spyOn(resourcesComponent, 'generateClassInteractTelemetry').mockImplementation(() => {
+            return;
+        });
+        const scrollIntoView = {
+            scrollIntoView: jest.fn()
+        } as any;
+        // Object.defineProperty(global.document, 'getElementById', {  scrollIntoView: jest.fn() } as any);
+        jest.spyOn(document, 'getElementById').mockReturnValue(scrollIntoView);
+        resourcesComponent.getGroupByPageReq = { grade: [{ name: 'sample' }] };
+        resourcesComponent.currentGrade = 'class-v';
+        resourcesComponent.categoryGradeLevelsArray[0] = 'sample';
+        resourcesComponent.categoryGradeLevels = [{ selected: 'classAnimate' }];
+        // act
+        resourcesComponent.classClickHandler(0, true);
+        // assert
+        expect(resourcesComponent.currentGrade).toBe('sample');
+        expect(resourcesComponent.categoryGradeLevelsArray[0]).toBe('sample');
+    });
+
+    describe('mediuClickedEvent', () => {
+        it('should be invoked mediumClickEvent', () => {
+            // arrange
+            const event = { data: { index: 0, text: 'sample-text' } };
+            jest.spyOn(resourcesComponent, 'mediumClickHandler').mockImplementation(() => {
+                return;
+            });
+            // act
+            resourcesComponent.mediumClickEvent(event, true);
+        });
+    
+        it('should be handle medium click filter', () => {
+            // arrange
+            jest.spyOn(resourcesComponent, 'generateClassInteractTelemetry').mockImplementation(() => {
+                return;
+            });
+            const scrollIntoView = {
+                scrollIntoView: jest.fn()
+            } as any;
+            // Object.defineProperty(global.document, 'getElementById', {  scrollIntoView: jest.fn() } as any);
+            jest.spyOn(document, 'getElementById').mockReturnValue(scrollIntoView);
+            resourcesComponent.getGroupByPageReq = { medium: [{ name: 'sample' }] };
+            resourcesComponent.currentMedium = 'hindi';
+            resourcesComponent.categoryGradeLevelsArray[0] = 'sample';
+            resourcesComponent.categoryMediumNamesArray = ['sample-text'];
+            // act
+            resourcesComponent.mediumClickHandler(0, 'sample-text', true);
+            // assert
+            expect(resourcesComponent.currentGrade).toBe('sample');
+            expect(resourcesComponent.categoryGradeLevelsArray[0]).toBe('sample');
+        });
+    })
 });
