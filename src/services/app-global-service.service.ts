@@ -693,9 +693,9 @@ export class AppGlobalService implements OnDestroy {
 
     async closeSigninOnboardingLoader() {
         if (this.signinOnboardingLoader) {
-          await this.signinOnboardingLoader.dismiss();
-          this.signinOnboardingLoader = null;
+            await this.signinOnboardingLoader.dismiss();
+            this.signinOnboardingLoader = null;
         }
-      }
+    }
 
 }
