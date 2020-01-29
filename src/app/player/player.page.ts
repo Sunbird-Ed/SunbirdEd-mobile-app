@@ -88,7 +88,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
         this.previewElement.nativeElement.contentWindow.addEventListener('message', resp => {
             console.log('Player Response', resp);
             if (resp.data === 'renderer:question:submitscore') {
-                this.courseService.syncAssessmentEvents();
+                this.courseService.syncAssessmentEvents().subscribe();
             }
         });
       }, 1000);

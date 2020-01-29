@@ -1,10 +1,8 @@
 import { of } from 'rxjs';
 import { SocialSharing } from '@ionic-native/social-sharing/ngx';
 import { ContentService, StorageService, Content, ContentData, DeviceInfo, ContentExportResponse, ContentExportRequest } from 'sunbird-sdk';
-import { ContentShareHandlerService, CommonUtilService, UtilityService, TelemetryGeneratorService } from '../../services';
-import { SbSharePopupComponent } from '../../app/components/popups/sb-share-popup/sb-share-popup.component';
+import { ContentShareHandlerService, CommonUtilService, TelemetryGeneratorService } from '../../services';
 import { AppVersion } from '@ionic-native/app-version/ngx';
-import { CONNREFUSED } from 'dns';
 describe('ContentShareHandlerService', () => {
     let contentShareHandlerService: ContentShareHandlerService;
     const mockContentService: Partial<ContentService> = {
@@ -25,7 +23,7 @@ describe('ContentShareHandlerService', () => {
         share: jest.fn()
     };
     const mockAppVersion: Partial<AppVersion> = {
-        getPackageName: jest.fn(() => Promise.resolve('packageName'))
+        getPackageName: jest.fn(() => Promise.resolve('org.sunbird.app'))
     };
     const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {
         generateImpressionTelemetry: jest.fn(),
@@ -81,6 +79,32 @@ describe('ContentShareHandlerService', () => {
             // assert
             setTimeout(() => {
                 expect(mockSocialSharing.share).toHaveBeenCalled();
+                done();
+            }, 0);
+
+        });
+
+        it('should show FILE_SAVED TOAST while saving the content', (done) => {
+            // arrange
+            const shareParams = {
+                saveFile: true
+            };
+            const content = {
+                identifier: 'id',
+                contentData: {
+                    contentType: 'contentType',
+                    pkgVersion: '1',
+                    name : 'Sample_name'
+                } as ContentData,
+                contentType: 'contentType',
+            } as Content;
+            // act
+            contentShareHandlerService.exportContent({
+                destinationFolder: 'destination_folder'
+            } as any, shareParams, content);
+            // assert
+            setTimeout(() => {
+                expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('FILE_SAVED', '', 'green-toast');
                 done();
             }, 0);
 
@@ -180,5 +204,22 @@ describe('ContentShareHandlerService', () => {
         expect(contentShareHandlerService.exportContent).toBeCalled();
     });
 
+    it('should return expected playstire URL without UTM', () => {
+        // arrange
+        // act
+        // assert
+        expect( contentShareHandlerService.getPackageNameWithUTM(false)).resolves.toEqual(
+            'https://play.google.com/store/apps/details?id=org.sunbird.app&hl=en_IN'
+        );
+    });
+
+    it('should return expected pageID', () => {
+        // arrange
+        // act
+        // assert
+        expect( contentShareHandlerService['getPageId']('Course')).toEqual('course-detail');
+        expect( contentShareHandlerService['getPageId']('TextBook')).toEqual('collection-detail');
+        expect( contentShareHandlerService['getPageId']('Collection')).toEqual('collection-detail');
+    });
 
 });
