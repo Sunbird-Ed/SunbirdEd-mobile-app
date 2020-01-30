@@ -6,7 +6,7 @@ import { CommonUtilService } from '@app/services/common-util.service';
 import { ComingSoonMessageService } from '@app/services/coming-soon-message.service';
 import { PopoverController, Events } from '@ionic/angular';
 import { SbGenericPopoverComponent } from '@app/app/components/popups/sb-generic-popover/sb-generic-popover.component';
-import {Content, TelemetryObject, Rollup, ContentStateResponse, ContentService} from 'sunbird-sdk';
+import {Content, TelemetryObject, Rollup, ContentStateResponse} from 'sunbird-sdk';
 import { Router, NavigationExtras } from '@angular/router';
 import { TextbookTocService } from '@app/app/collection-detail-etb/textbook-toc-service';
 import {
@@ -289,6 +289,6 @@ export class CollectionChildComponent implements OnInit {
   }
 
   playContent(content: Content) {
-    this.events.publish('content-toPlay', {content});
+    this.events.publish(EventTopics.CONTENT_TO_PLAY, {content});
   }
 }

@@ -23,7 +23,7 @@ import {
   Environment, ErrorType, ImpressionType, InteractSubtype, InteractType, Mode, PageId, ID
 } from '../../services/telemetry-constants';
 import { Subscription } from 'rxjs';
-import { ContentType, MimeType, RouterLinks, ShareItemType } from '../../app/app.constant';
+import {ContentType, EventTopics, MimeType, RouterLinks, ShareItemType} from '../../app/app.constant';
 import { AppGlobalService, AppHeaderService, CommonUtilService,
   CourseUtilService, TelemetryGeneratorService, UtilityService} from '../../services';
 import { SbGenericPopoverComponent } from '../components/popups/sb-generic-popover/sb-generic-popover.component';
@@ -354,7 +354,7 @@ export class CollectionDetailEtbPage implements OnInit {
 
       this.didViewLoad = true;
       this.setContentDetails(this.identifier, true);
-      this.events.subscribe('content-toPlay', (data) => {
+      this.events.subscribe(EventTopics.CONTENT_TO_PLAY, (data) => {
         this.playContent(data);
       });
       this.subscribeSdkEvent();
@@ -369,6 +369,7 @@ export class CollectionDetailEtbPage implements OnInit {
       this.ratingHandler.showRatingPopup(this.isContentPlayed, this.playingContent, 'automatic', this.corRelationList, this.objRollup);
       this.contentPlayerHandler.setLastPlayedContentId('');
       this.lastContentPlayed = undefined;
+      this.isContentPlayed = false;
     }
   }
 
