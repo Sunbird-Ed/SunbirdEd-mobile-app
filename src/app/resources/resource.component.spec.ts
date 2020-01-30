@@ -1111,4 +1111,18 @@ describe('ResourcesComponent', () => {
             values
         );
     });
+
+    it('should check for subscription and unsubscribe all those events on ngOnDestroy()', () => {
+        // arrange
+        resourcesComponent.networkSubscription = true;
+        resourcesComponent.networkSubscription = {
+            unsubscribe: jest.fn()
+        };
+
+        // act
+        resourcesComponent.ngOnDestroy();
+
+        // assert
+        expect(resourcesComponent.networkSubscription.unsubscribe).toHaveBeenCalled();
+    });
 });
