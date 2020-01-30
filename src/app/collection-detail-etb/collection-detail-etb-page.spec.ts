@@ -180,7 +180,6 @@ describe('collectionDetailEtbPage', () => {
     it('should call setchildcontents when isUpdateAvailable is falsy', (done) => {
         const data = contentDetailsMcokResponse2;
         collectionDetailEtbPage.isUpdateAvailable = false;
-        jest.spyOn(mockevents, 'publish').mockImplementation();
         jest.spyOn(collectionDetailEtbPage, 'registerDeviceBackButton').mockImplementation();
         jest.spyOn(mockzone, 'run').mockImplementation();
         mockIonContent.ionScroll.subscribe = jest.fn((fn) => {
@@ -191,7 +190,6 @@ describe('collectionDetailEtbPage', () => {
             showBurgerMenu: false,
             actionButtons: ['download']
         });
-        jest.spyOn(mockHeaderService, 'updatePageConfig').mockImplementation();
         mockcommonUtilService.networkInfo = {isNetworkAvailable: false};
         spyOn(collectionDetailEtbPage, 'setChildContents').and.stub();
         spyOn(collectionDetailEtbPage, 'setCollectionStructure').and.stub();
@@ -257,9 +255,6 @@ describe('collectionDetailEtbPage', () => {
             collectionDetailEtbPage.lastContentPlayed = 'do_212911645382959104165';
             jest.spyOn(mockContentPlayerHandler, 'getLastPlayedContentId').mockReturnValue('do_212911645382959104165');
             collectionDetailEtbPage.isContentPlayed = true;
-            jest.spyOn(mockContentPlayerHandler, 'setContentPlayerLaunchStatus').mockImplementation();
-            jest.spyOn(mockRatingHandler, 'showRatingPopup').mockImplementation();
-            jest.spyOn(mockContentPlayerHandler, 'setLastPlayedContentId').mockImplementation();
             // act
             collectionDetailEtbPage.ionViewWillEnter();
             // assert
@@ -290,7 +285,6 @@ describe('collectionDetailEtbPage', () => {
                 actionButtons: ['download']
             });
             jest.spyOn(collectionDetailEtbPage, 'markContent').mockImplementation();
-            jest.spyOn(mockHeaderService, 'updatePageConfig').mockImplementation();
             jest.spyOn(collectionDetailEtbPage, 'resetVariables').mockImplementation();
 
             jest.spyOn(collectionDetailEtbPage, 'playContent').mockImplementation();
@@ -342,8 +336,6 @@ describe('collectionDetailEtbPage', () => {
         jest.spyOn(ContentUtil, 'getTelemetryObject').mockReturnValue(
             new TelemetryObject(mockContentData.content.identifier,
                 mockContentData.content.contentData.contentType, mockContentData.content.contentData.pkgVersion));
-        jest.spyOn(mockrouter, 'navigate').mockImplementation();
-        jest.spyOn(mockHeaderService, 'hideHeader').mockImplementation();
         mockContentPlayerHandler.launchContentPlayer = jest.fn();
         // act
         collectionDetailEtbPage.playContent(mockContentData);
@@ -364,7 +356,6 @@ describe('collectionDetailEtbPage', () => {
 
     it('should generate Interact Telemetry when playContentClicked and streaming true', () => {
         // arrange
-        jest.spyOn(mocktelemetryGeneratorService, 'generateInteractTelemetry').mockImplementation();
         // act
         collectionDetailEtbPage.generateInteractTelemetry(true, mockContentInfo.telemetryObject, mockContentInfo.rollUp, undefined);
         // assert
@@ -382,8 +373,6 @@ describe('collectionDetailEtbPage', () => {
     });
 
     it('should generate Interact Telemetry when playContentClicked and streaming false', () => {
-        // arrange
-        jest.spyOn(mocktelemetryGeneratorService, 'generateInteractTelemetry').mockImplementation();
         // act
         collectionDetailEtbPage.generateInteractTelemetry(false, mockContentInfo.telemetryObject, mockContentInfo.rollUp, undefined);
         // assert
