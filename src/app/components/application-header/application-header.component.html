@@ -3,7 +3,7 @@
 
     <ion-buttons class="sb-hamburger" slot="start" *ngIf="headerConfig?.showBurgerMenu">
       <ion-button class="sb-hamburger-menu sb-hamburger-icon" icon-only (click)="toggleMenu()">
-        <img src="./assets/imgs/ic_burger_menu.png" class="tool-icon">
+        <img src="./assets/imgs/ic_burger_menu.png" class="tool-icon" alt="burger menu">
       </ion-button>
     </ion-buttons>
     <ion-buttons class="sb-hamburger" slot="start" *ngIf="!headerConfig?.showBurgerMenu">
@@ -54,7 +54,7 @@
       </ion-button>-->
       <ion-button icon-only *ngIf="headerConfig?.actionButtons?.indexOf('search') >=0"
         (click)="emitEvent($event, 'search');">
-        <img src="./assets/imgs/ic_search.png" class="tool-icon">
+        <img src="./assets/imgs/ic_search.png" class="tool-icon" alt="search">
       </ion-button>
 
       <ion-button icon-only *ngIf="headerConfig?.actionButtons?.indexOf('person') >=0"
@@ -63,11 +63,11 @@
       </ion-button>
       <ion-button icon-only *ngIf="headerConfig?.actionButtons?.indexOf('filter') >=0"
         (click)="emitEvent($event, 'filter');">
-        <img src="./assets/imgs/ic_filter.png" class="tool-icon">
+        <img src="./assets/imgs/ic_filter.png" class="tool-icon" alt="filter">
       </ion-button>
       <ion-button icon-only *ngIf="headerConfig?.actionButtons?.indexOf('filter-applied') >=0"
         (click)="emitEvent($event, 'filter');">
-        <img src="./assets/imgs/ic_action_filter_applied.png" class="tool-icon">
+        <img src="./assets/imgs/ic_action_filter_applied.png" class="tool-icon" alt="filter applied">
       </ion-button>
       <ion-button icon-only *ngIf="headerConfig?.actionButtons?.indexOf('share') >=0"
         (click)="emitEvent($event, 'share');">
@@ -87,7 +87,7 @@
   <ion-header>
     <ion-toolbar>
       <ion-title>
-        <img class="img-container" src="{{appLogo}}">
+        <img class="img-container" src="{{appLogo}}" alt="app logo">
         <span class="app-name">{{appName}}</span>
       </ion-title>
     </ion-toolbar>
@@ -97,21 +97,21 @@
 
       <ion-item (click)="emitSideMenuItemEvent($event, 'USERS_AND_GROUPS')">
         <span class="sb-menu-icon">
-          <img src="./assets/imgs/Users_and_Groups.png" class="tool-icon">
+          <img src="./assets/imgs/Users_and_Groups.png" class="tool-icon" alt="user and group">
         </span>
         <span class="sb-menu-item" menuClose>{{'USERS_AND_GROUPS' | translate}}</span>
       </ion-item>
 
       <ion-item (click)="emitSideMenuItemEvent($event, 'REPORTS')">
         <span class="sb-menu-icon">
-          <img src="./assets/imgs/Reports.png" class="tool-icon">
+          <img src="./assets/imgs/Reports.png" class="tool-icon" alt="user report">
         </span>
         <span class="sb-menu-item" menuClose>{{'REPORTS' | translate}}</span>
       </ion-item>
 
       <ion-item (click)="emitSideMenuItemEvent($event, 'LANGUAGE')">
         <span class="sb-menu-icon sb-pt-6">
-          <img src="./assets/imgs/Language.png" class="tool-icon">
+          <img src="./assets/imgs/Language.png" class="tool-icon" alt="select app language">
         </span>
         <div class="sb-language">
           <div class="sb-menu-item">{{'LANGUAGE' | translate}}</div>
@@ -121,21 +121,21 @@
 
       <ion-item (click)="emitSideMenuItemEvent($event, 'SETTINGS')">
         <span class="sb-menu-icon">
-          <img src="./assets/imgs/Settings.png" class="tool-icon">
+          <img src="./assets/imgs/Settings.png" class="tool-icon" alt="app settings">
         </span>
         <span class="sb-menu-item" menuClose>{{'SETTINGS' | translate}}</span>
       </ion-item>
 
       <ion-item (click)="emitSideMenuItemEvent($event, 'HELP')">
         <span class="sb-menu-icon">
-          <img src="./assets/imgs/Help.png" class="tool-icon">
+          <img src="./assets/imgs/Help.png" class="tool-icon" alt="help">
         </span>
         <span class="sb-menu-item" menuClose>{{'HELP' | translate}}</span>
       </ion-item>
 
       <ion-item (click)="emitSideMenuItemEvent($event, 'LOGOUT')" *ngIf="isLoggedIn">
         <span class="sb-menu-icon">
-          <img src="./assets/imgs/Sign_out.png" class="tool-icon">
+          <img src="./assets/imgs/Sign_out.png" class="tool-icon" alt="logout">
         </span>
         <span class="sb-menu-item" menuClose>{{'LOGOUT' | translate}}</span>
       </ion-item>
@@ -152,7 +152,7 @@
   <ion-header>
     <ion-toolbar>
       <ion-title>
-        <img class="img-container" src="{{appLogo}}">
+        <img class="img-container" src="{{appLogo}}" alt="app logo">
         <span class="app-name">{{appName}}</span>
       </ion-title>
     </ion-toolbar>
@@ -162,21 +162,21 @@
 
       <ion-item (click)="emitSideMenuItemEvent($event, 'USERS_AND_GROUPS')">
         <span class="sb-menu-icon">
-          <img src="./assets/imgs/Users_and_Groups.png" class="tool-icon">
+          <img src="./assets/imgs/Users_and_Groups.png" class="tool-icon" alt="user and group">
         </span>
         <span class="sb-menu-item" menuClose>{{'USERS_AND_GROUPS' | translate}}</span>
       </ion-item>
 
       <ion-item (click)="emitSideMenuItemEvent($event, 'REPORTS')">
         <span class="sb-menu-icon">
-          <img src="./assets/imgs/Reports.png" class="tool-icon">
+          <img src="./assets/imgs/Reports.png" class="tool-icon" alt="user report">
         </span>
         <span class="sb-menu-item" menuClose>{{'REPORTS' | translate}}</span>
       </ion-item>
 
       <ion-item (click)="emitSideMenuItemEvent($event, 'LANGUAGE')">
         <span class="sb-menu-icon sb-pt-6">
-          <img src="./assets/imgs/Language.png" class="tool-icon">
+          <img src="./assets/imgs/Language.png" class="tool-icon" alt="select app langugae">
         </span>
         <div class="sb-language">
           <div class="sb-menu-item">{{'LANGUAGE' | translate}}</div>
@@ -186,21 +186,21 @@
 
       <ion-item (click)="emitSideMenuItemEvent($event, 'SETTINGS')">
         <span class="sb-menu-icon">
-          <img src="./assets/imgs/Settings.png" class="tool-icon">
+          <img src="./assets/imgs/Settings.png" class="tool-icon" alt="app settings">
         </span>
         <span class="sb-menu-item" menuClose>{{'SETTINGS' | translate}}</span>
       </ion-item>
 
       <ion-item (click)="emitSideMenuItemEvent($event, 'HELP')">
         <span class="sb-menu-icon">
-          <img src="./assets/imgs/Help.png" class="tool-icon">
+          <img src="./assets/imgs/Help.png" class="tool-icon" alt="help">
         </span>
         <span class="sb-menu-item" menuClose>{{'HELP' | translate}}</span>
       </ion-item>
 
       <ion-item (click)="emitSideMenuItemEvent($event, 'LOGOUT')" *ngIf="isLoggedIn">
         <span class="sb-menu-icon">
-          <img src="./assets/imgs/Sign_out.png" class="tool-icon">
+          <img src="./assets/imgs/Sign_out.png" class="tool-icon" alt="logout">
         </span>
         <span class="sb-menu-item" menuClose>{{'LOGOUT' | translate}}</span>
       </ion-item>

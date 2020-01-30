@@ -592,7 +592,7 @@
   "UPDATE": "Update",
   "UPDATE_APP_BTN_ACTION_NO": "Update Later",
   "UPDATE_APP_BTN_ACTION_YES": "Update Now",
-  "UPDATE_APP_SUPPORT_TITLE": "Please upgrade your app to the latest version to use this content.",
+  "UPDATE_APP_SUPPORT_TITLE": "You are using an older version of the {{app_name}} app. Upgrade your app to the latest version to use this content.",
   "UPDATE_APP_TITLE": "New version of the App is available!",
   "UPDATE_CONFIRMATION_TEXT": "Update Content?",
   "UPDATE_CONTENT": "Update Content ({{%s}})",
