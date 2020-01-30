@@ -4,7 +4,6 @@ import {
   SharedPreferences,
   EnrollCourseRequest,
   AuthService,
-  CourseService,
   TelemetryObject,
   InteractType,
   CourseBatchesRequest,
@@ -43,7 +42,6 @@ export class EnrollmentDetailsComponent {
     constructor(
         @Inject('AUTH_SERVICE') private authService: AuthService,
         @Inject('SHARED_PREFERENCES') private preference: SharedPreferences,
-        @Inject('COURSE_SERVICE') private courseService: CourseService,
         public navCtrl: NavController,
         public navParams: NavParams,
         private events: Events,
@@ -57,7 +55,7 @@ export class EnrollmentDetailsComponent {
         this.ongoingBatches = this.navParams.get('ongoingBatches');
         this.upcommingBatches = this.navParams.get('upcommingBatches');
         this.retiredBatched = this.navParams.get('retiredBatched');
-        this.todayDate = dayjs().format('YYYY-MM-DD');
+        this.todayDate = (dayjs['default'] || dayjs)().format('YYYY-MM-DD');
         this.courseId = this.navParams.get('courseId');
         this.getUserId();
 

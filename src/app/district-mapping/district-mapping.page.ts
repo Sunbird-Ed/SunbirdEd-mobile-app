@@ -421,6 +421,7 @@ export class DistrictMappingPage {
       this.location.back();
     } else { // add or update the device loc
       await this.saveDeviceLocation();
+      this.appGlobalService.setOnBoardingCompleted();
       const navigationExtras: NavigationExtras = {
         state: {
           loginMode: 'guest'

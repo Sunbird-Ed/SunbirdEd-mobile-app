@@ -459,16 +459,16 @@ export class AppGlobalService implements OnDestroy {
 
     }
 
-    async openPopover(upgradeType: any) {
+    async openPopover(upgradeData: any) {
         let shouldDismissAlert = true;
 
-        if (upgradeType.upgrade.type === 'force' || upgradeType.upgrade.type === 'forced') {
+        if (upgradeData.type === 'force' || upgradeData.type === 'forced') {
             shouldDismissAlert = false;
         }
 
         const options = {
             component: UpgradePopoverComponent,
-            componentProps: { type: upgradeType },
+            componentProps: { upgrade: upgradeData },
             cssClass: 'upgradePopover',
             showBackdrop: true,
             backdropDismiss: shouldDismissAlert
@@ -623,7 +623,7 @@ export class AppGlobalService implements OnDestroy {
 
             this.preferences.getString(PreferenceKey.APP_PERMISSION_ASKED).subscribe(
                 (permissionAsked: string | undefined) => {
-                    if (!permissionAsked) {
+                    if (!permissionAsked) { 
                         this.preferences.putString(
                             PreferenceKey.APP_PERMISSION_ASKED, JSON.stringify(this.isPermissionAsked)).toPromise().then();
                         observer.next(false);
