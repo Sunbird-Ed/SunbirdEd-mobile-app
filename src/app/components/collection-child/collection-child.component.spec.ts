@@ -18,6 +18,7 @@ import {
   InteractType,
   PageId
 } from '@app/services/telemetry-constants';
+import {Content} from 'sunbird-sdk';
 describe('CollectionChildComponent', () => {
   let collectionChildComponent: CollectionChildComponent;
   const mockZone: Partial<NgZone> = {};
@@ -105,4 +106,24 @@ describe('CollectionChildComponent', () => {
       undefined);
   });
 
+  it('should getContentMetaData and publish events', (done) => {
+    // arrange
+    const mockContentData: Content = {
+      identifier: 'sample_doId',
+      contentData: {
+        identifier: 'sample_identifier',
+        name: 'content_name',
+        appIcon: 'sample_icon'
+      }
+    };
+    mockEvents.publish = jest.fn( );
+    // act
+    collectionChildComponent.playContent(mockContentData);
+    setTimeout(() => {
+      // assert
+      expect(mockEvents.publish).toHaveBeenCalledWith('content-toPlay', {content: mockContentData});
+      done();
+    }, 0);
+
+  });
 });

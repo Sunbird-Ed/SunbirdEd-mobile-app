@@ -1,18 +1,16 @@
 import { Location } from '@angular/common';
-import { Component, Input, NgZone, OnInit, Output, EventEmitter } from '@angular/core';
+import {Component, Input, NgZone, OnInit} from '@angular/core';
 import { ContentType, MimeType, RouterLinks, EventTopics } from '@app/app/app.constant';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { CommonUtilService } from '@app/services/common-util.service';
 import { ComingSoonMessageService } from '@app/services/coming-soon-message.service';
 import { PopoverController, Events } from '@ionic/angular';
 import { SbGenericPopoverComponent } from '@app/app/components/popups/sb-generic-popover/sb-generic-popover.component';
-import { Content, TelemetryObject, Rollup, ContentStateResponse } from 'sunbird-sdk';
+import {Content, TelemetryObject, Rollup, ContentStateResponse, ContentService} from 'sunbird-sdk';
 import { Router, NavigationExtras } from '@angular/router';
 import { TextbookTocService } from '@app/app/collection-detail-etb/textbook-toc-service';
 import {
   Environment,
-  ImpressionSubtype,
-  ImpressionType,
   InteractSubtype,
   InteractType,
   PageId
@@ -288,5 +286,9 @@ export class CollectionChildComponent implements OnInit {
     } else {
       return './assets/imgs/touch.svg';
     }
+  }
+
+  playContent(content: Content) {
+    this.events.publish('content-toPlay', {content});
   }
 }
