@@ -114,20 +114,26 @@ describe('ContentRatingAlertComponent', () => {
     it('should submit rating and generate INTERACT telemetry successfully', () => {
         // arrange
         mockPopoverCtrl.dismiss = jest.fn();
+        contentRatingAlertComponent.ratingOptions = [{
+            key: 'key',
+            value: 'val',
+            isChecked: true
+        }];
+        contentRatingAlertComponent.commentText = '';
         const feebackRequest: ContentFeedback = {
             contentId: 'do_12345',
             rating: 5,
-            comments: 'Sample comment',
+            comments: 'key',
             contentVersion: '1234'
         };
         const viewDissMissData = {
             message: 'rating.success',
             rating: 5,
-            comment: 'Sample comment'
+            comment: 'key'
         };
         const paramsMap = new Map();
         paramsMap['Ratings'] = 5;
-        paramsMap['Comment'] = 'Sample comment';
+        paramsMap['Comment'] = 'key';
         // act
         contentRatingAlertComponent.submit();
         // assert
