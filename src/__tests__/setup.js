@@ -23,3 +23,6 @@ global.supportfile = {
     shareSunbirdConfigurations: () => {},
     makeEntryInSunbirdSupportFile: () => {}
 }
+global.document = {
+    getElementById: () => {},
+}
