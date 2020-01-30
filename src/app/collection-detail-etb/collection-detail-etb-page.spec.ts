@@ -22,7 +22,9 @@ import {
     contentDetailsMcokResponse1,
     contentDetailsMcokResponse2,
     contentDetailsMcokResponse3,
-    mockcollectionData
+    mockcollectionData,
+    mockContentData,
+    mockContentInfo
 } from './collection-detail-etb-page.spec.data';
 import {of, Subscription, Observable} from 'rxjs';
 import {ContentPlayerHandler} from '@app/services/content/player/content-player-handler';
@@ -243,53 +245,12 @@ describe('collectionDetailEtbPage', () => {
         );
     });
 
-    it('should call relevant methods when ionViewWillEnter call', (done) => {
+    it('should registerDeviceBackButton and check for lastContentPlayed and to show RatingPopup', () => {
         // arrange
-        const mockContentData = {
-            content: {
-                identifier: 'do_21280756435836108811838',
-                contentData: {
-                    identifier: 'do_21280756435836108811838',
-                    name: 'content_name',
-                    appIcon: 'sample_icon',
-                    streamingUrl: 'https://ntp' +
-                        'stagingall.blob.core.windows.net/ntp-content-staging/content/ecml/do_21280756435836108811838-latest',
-                    contentType: 'resource',
-                    pkgVersion: 8
-                },
-                mimeType: 'application/vnd.ekstep.ecml-archive',
-                hierarchyInfo: [{identifier: 'do_212810592322265088178', contentType: 'textbook'}]
-            }
-        };
-        mockzone.run = jest.fn((fn) => fn());
-        const mockHeaderEventsSubscription = {unsubscribe: jest.fn()} as Partial<Subscription>;
-        mockHeaderService.headerEventEmitted$ = {
-            subscribe: jest.fn(() => mockHeaderEventsSubscription)
-        };
-
-        mockplatform.backButton = {
-            subscribeWithPriority: jest.fn((x, fn) => fn())
-        };
-        jest.spyOn(mockHeaderService, 'getDefaultPageConfig').mockReturnValue({
-            showHeader: false,
-            showBurgerMenu: false,
-            actionButtons: ['download']
-        });
-        mockHeaderService.updatePageConfig = jest.fn();
-        mockevents.publish = jest.fn();
-        jest.spyOn(collectionDetailEtbPage, 'setContentDetails').mockImplementation();
-        mockevents.subscribe = jest.fn((topic, fn) => {
-            if (topic === 'content-toPlay') {
-                fn({data: mockContentData});
-            }
-        });
-        jest.spyOn(collectionDetailEtbPage, 'playContent').mockImplementation();
-        jest.spyOn(collectionDetailEtbPage, 'subscribeSdkEvent').mockImplementation();
+        jest.spyOn(collectionDetailEtbPage, 'registerDeviceBackButton').mockImplementation();
         mockIonContent.ionScroll.subscribe = jest.fn((fn) => {
             fn({});
         });
-
-        jest.spyOn(collectionDetailEtbPage, 'markContent').mockImplementation();
         collectionDetailEtbPage.lastContentPlayed = 'do_212911645382959104165';
         jest.spyOn(mockContentPlayerHandler, 'getLastPlayedContentId').mockReturnValue('do_212911645382959104165');
         collectionDetailEtbPage.isContentPlayed = true;
@@ -299,17 +260,58 @@ describe('collectionDetailEtbPage', () => {
         // act
         collectionDetailEtbPage.ionViewWillEnter();
         // assert
-        setTimeout(() => {
-            expect(mockevents.publish).toHaveBeenCalledWith('header:setzIndexToNormal');
-            expect(mockevents.subscribe).toHaveBeenCalled();
-            expect(collectionDetailEtbPage.playContent).toHaveBeenCalled();
-            expect(mockzone.run).toHaveBeenCalled();
-            expect(collectionDetailEtbPage.setContentDetails).toHaveBeenCalledWith('do_212911645382959104165', true);
-            expect(collectionDetailEtbPage.subscribeSdkEvent).toHaveBeenCalled();
-            expect(mockContentPlayerHandler.setContentPlayerLaunchStatus).toHaveBeenCalled();
-            expect(mockContentPlayerHandler.setLastPlayedContentId).toHaveBeenCalled();
-            done();
-        }, 0);
+        expect(collectionDetailEtbPage.registerDeviceBackButton).toHaveBeenCalled();
+        expect(mockRatingHandler.showRatingPopup).toHaveBeenCalledWith(
+            true,
+            collectionDetailEtbPage.playingContent,
+            'automatic',
+            undefined,
+            {}
+        );
+        expect(mockContentPlayerHandler.setContentPlayerLaunchStatus).toHaveBeenCalled();
+        expect(mockContentPlayerHandler.setLastPlayedContentId).toHaveBeenCalled();
+    });
+
+    it('should set headerConfig, headerObservable, setContentDetails, and subscribeEvents', () => {
+        // arrange
+        jest.spyOn(collectionDetailEtbPage, 'registerDeviceBackButton').mockImplementation();
+        mockzone.run = jest.fn((fn) => fn());
+        const mockHeaderEventsSubscription = {unsubscribe: jest.fn()} as Partial<Subscription>;
+        mockHeaderService.headerEventEmitted$ = {
+            subscribe: jest.fn(() => mockHeaderEventsSubscription)
+        };
+        jest.spyOn(collectionDetailEtbPage, 'handleHeaderEvents').mockImplementation();
+        jest.spyOn(mockHeaderService, 'getDefaultPageConfig').mockReturnValue({
+            showHeader: false,
+            showBurgerMenu: false,
+            actionButtons: ['download']
+        });
+        jest.spyOn(collectionDetailEtbPage, 'markContent').mockImplementation();
+        jest.spyOn(mockHeaderService, 'updatePageConfig').mockImplementation();
+        jest.spyOn(collectionDetailEtbPage, 'resetVariables').mockImplementation();
+
+        jest.spyOn(collectionDetailEtbPage, 'playContent').mockImplementation();
+        jest.spyOn(collectionDetailEtbPage, 'subscribeSdkEvent').mockImplementation();
+        mockIonContent.ionScroll.subscribe = jest.fn((fn) => {
+            fn({});
+        });
+
+        mockevents.subscribe = jest.fn((topic, fn) => {
+            if (topic === 'content-toPlay') {
+                fn(mockContentData);
+            }
+        });
+
+        jest.spyOn(collectionDetailEtbPage, 'setContentDetails').mockImplementation();
+        // act
+        collectionDetailEtbPage.ionViewWillEnter();
+        // assert
+        expect(collectionDetailEtbPage.registerDeviceBackButton).toHaveBeenCalled();
+        expect(collectionDetailEtbPage.markContent).toHaveBeenCalled();
+        expect(collectionDetailEtbPage.resetVariables).toHaveBeenCalled();
+        expect(mockHeaderService.updatePageConfig).toHaveBeenCalled();
+        expect(collectionDetailEtbPage.playContent).toHaveBeenCalledWith(mockContentData);
+        expect(collectionDetailEtbPage.subscribeSdkEvent).toHaveBeenCalled();
     });
 
     it('should show license true when user clicked on credits and license', () => {
@@ -334,29 +336,8 @@ describe('collectionDetailEtbPage', () => {
 
     it('should start playingContent after organising content metaData', (done) => {
         // arrange
-        const mockContentData = {
-            content: {
-                identifier: 'do_21280756435836108811838',
-                contentData: {
-                    identifier: 'do_21280756435836108811838',
-                    name: 'content_name',
-                    appIcon: 'sample_icon',
-                    streamingUrl: 'https://ntp' +
-                        'stagingall.blob.core.windows.net/ntp-content-staging/content/ecml/do_21280756435836108811838-latest',
-                    contentType: 'resource',
-                    pkgVersion: 8
-                },
-                mimeType: 'application/vnd.ekstep.ecml-archive',
-                hierarchyInfo: [{identifier: 'do_212810592322265088178', contentType: 'textbook'}]
-            }
-        };
-        const mockContentInfo = {
-            correlationList: undefined, hierachyInfo: [
-                {contentType: 'textbook', identifier: 'do_212810592322265088178'}],
-                rollUp: {l1: 'do_212810592322265088178'}, telemetryObject: {id: undefined, type: 'resource', version: 8}};
-
         jest.spyOn(ContentUtil, 'getTelemetryObject').mockReturnValue(
-            new TelemetryObject(mockContentData.identifier,
+            new TelemetryObject(mockContentData.content.identifier,
                 mockContentData.content.contentData.contentType, mockContentData.content.contentData.pkgVersion));
         jest.spyOn(mockrouter, 'navigate').mockImplementation();
         jest.spyOn(mockHeaderService, 'hideHeader').mockImplementation();
@@ -380,29 +361,18 @@ describe('collectionDetailEtbPage', () => {
 
     it('should generate Interact Telemetry when playContentClicked and streaming true', () => {
         // arrange
-        const mockTelemetryObj: TelemetryObject = {
-            id: 'do_21280756435836108811838',
-            type: 'Resource',
-            version: 8
-        };
-        const mockRollup: Rollup = {
-            l1: 'do_212810592322265088178',
-            l2: 'do_212810592541261824179',
-            l3: 'do_2128084096298352641378',
-            l4: 'do_2128084109778042881382'
-        };
         jest.spyOn(mocktelemetryGeneratorService, 'generateInteractTelemetry').mockImplementation();
         // act
-        collectionDetailEtbPage.generateInteractTelemetry(true, mockTelemetryObj, mockRollup, undefined);
+        collectionDetailEtbPage.generateInteractTelemetry(true, mockContentInfo.telemetryObject, mockContentInfo.rollUp, undefined);
         // assert
         expect(mocktelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
             InteractType.TOUCH,
             InteractSubtype.PLAY_ONLINE,
             Environment.HOME,
             PageId.COLLECTION_DETAIL,
-            mockTelemetryObj,
+            mockContentInfo.telemetryObject,
             undefined,
-            mockRollup,
+            mockContentInfo.rollUp,
             undefined
         );
 
@@ -410,29 +380,18 @@ describe('collectionDetailEtbPage', () => {
 
     it('should generate Interact Telemetry when playContentClicked and streaming false', () => {
         // arrange
-        const mockTelemetryObj: TelemetryObject = {
-            id: 'do_21280756435836108811838',
-            type: 'Resource',
-            version: 8
-        };
-        const mockRollup: Rollup = {
-            l1: 'do_212810592322265088178',
-            l2: 'do_212810592541261824179',
-            l3: 'do_2128084096298352641378',
-            l4: 'do_2128084109778042881382'
-        };
         jest.spyOn(mocktelemetryGeneratorService, 'generateInteractTelemetry').mockImplementation();
         // act
-        collectionDetailEtbPage.generateInteractTelemetry(false, mockTelemetryObj, mockRollup, undefined);
+        collectionDetailEtbPage.generateInteractTelemetry(false, mockContentInfo.telemetryObject, mockContentInfo.rollUp, undefined);
         // assert
         expect(mocktelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
             InteractType.TOUCH,
             InteractSubtype.PLAY_FROM_DEVICE,
             Environment.HOME,
             PageId.COLLECTION_DETAIL,
-            mockTelemetryObj,
+            mockContentInfo.telemetryObject,
             undefined,
-            mockRollup,
+            mockContentInfo.rollUp,
             undefined
         );
 

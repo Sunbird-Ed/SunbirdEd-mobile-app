@@ -939,7 +939,7 @@ ion-split-pane {
     @include ltr() {
       margin-left: 14px;
     }
-    &.new-design {
+    &.etb-card-item {
       width: auto !important;
       margin-left: 0;
       margin-right: 0;
@@ -972,12 +972,12 @@ ion-split-pane {
       @include clearfix;
     }
 
-    &.new-design {
+    &.etb-card-item {
       border: 0.5px solid rgba(204, 204, 204, 1);
       margin: 0 !important;
     }
 
-    > div.new-design {
+    > div.etb-card-item {
       display: flex;
       justify-content: space-between;
       padding: 10px;

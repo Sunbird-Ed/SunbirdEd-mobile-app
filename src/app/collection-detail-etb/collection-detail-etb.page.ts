@@ -549,7 +549,6 @@ export class CollectionDetailEtbPage implements OnInit {
               this.importContentInBackground([this.identifier], false);
             } else {
               this.showSheenAnimation = false;
-              console.log('called');
               this.extractApiResponse(data);
             }
           }

@@ -20,9 +20,9 @@
     *ngIf="!isTextbookTocPage && childData?.contentData?.mimeType !== 'application/vnd.ekstep.content-collection' && hasMimeType(activeMimeTypeFilter, childData?.contentData?.mimeType, childData)"
     (click)="navigateToDetailsPage(childData, depth + '.' + (i + 1))">
 
-    <div class="sb-ftue-design new-design" *ngIf="!fromCourseToc  && !isTextbookTocPage">
+    <div class="sb-ftue-design etb-card-item" *ngIf="!fromCourseToc  && !isTextbookTocPage">
       <ng-container *ngIf="!isTextbookTocPage">
-        <div class="new-design" [ngClass]="{'sb-accordian-grey-text': !commonUtilService.networkInfo.isNetworkAvailable && !childData?.isAvailableLocally,
+        <div class="etb-card-item" [ngClass]="{'sb-accordian-grey-text': !commonUtilService.networkInfo.isNetworkAvailable && !childData?.isAvailableLocally,
            'sb-play-selected':childData?.isAvailableLocally,'sb-play-unselected':!childData?.isAvailableLocally}">
           <div style="flex: 3">
             <div class="image-position">
