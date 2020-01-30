@@ -60,7 +60,8 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
 
   private async checkIfOnboardingComplete(urlMatch) {
     if (!this.isOnboardingCompleted) {
-      this.isOnboardingCompleted = (await this.preferences.getString(PreferenceKey.IS_ONBOARDING_COMPLETED).toPromise() === 'true') ? true : false;
+      this.isOnboardingCompleted =
+      (await this.preferences.getString(PreferenceKey.IS_ONBOARDING_COMPLETED).toPromise() === 'true') ? true : false;
     }
 
     const url = new URL(urlMatch.input);
@@ -96,7 +97,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
         }
       ]
     };
-    await this.appGlobalServices.openPopover({ upgrade: result });
+    await this.appGlobalServices.openPopover(result);
   }
 
   private handleNavigation(urlMatch: any): void {

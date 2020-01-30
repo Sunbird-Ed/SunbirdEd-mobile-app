@@ -16,6 +16,11 @@ global.cordova = {
     },
     file: {
         applicationDirectory: "/path"
+    },  
+    InAppBrowser: {
+        open: () => ({
+            addEventListener: () => {},
+        }),
     }
 };
 
@@ -25,4 +30,17 @@ global.supportfile = {
 }
 global.document = {
     getElementById: () => {},
+}
+
+global.FCMPlugin = {
+    subscribeToTopic: (topic, success, error) => {
+        setTimeout(() => {
+            success();
+          });
+    },
+    unsubscribeFromTopic: (topic, success, error) => {
+        setTimeout(() => {
+            success();
+          });
+    }
 }

@@ -6,7 +6,6 @@ import { RouterModule } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 import { ComponentsModule } from '../components/components.module';
 import { DirectivesModule } from '@app/directives/directives.module';
-import { ExploreBooksSortComponent } from './explore-books-sort/explore-books-sort.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { CommonConsumptionModule } from '@project-sunbird/common-consumption';
 

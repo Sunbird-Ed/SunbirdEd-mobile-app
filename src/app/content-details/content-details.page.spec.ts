@@ -1,4 +1,4 @@
-import { ContentDetailsPage } from '@app/app/content-details/content-details.page';
+import { ContentDetailsPage } from '../content-details/content-details.page';
 import { Container } from 'inversify';
 import {
     AuthService,
@@ -51,7 +51,7 @@ import {
     PageId,
 } from '@app/services/telemetry-constants';
 import { ContentUtil } from '@app/util/content-util';
-import { EventTopics } from '../app.constant';
+import { EventTopics, ContentType } from '../app.constant';
 import { FileOpener } from '@ionic-native/file-opener/ngx';
 import { FileTransfer } from '@ionic-native/file-transfer/ngx';
 
@@ -76,7 +76,8 @@ describe('ContentDetailsPage', () => {
     const mockPlatform: Partial<Platform> = {};
     const mockAppGlobalService: Partial<AppGlobalService> = {};
     const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {
-        generateInteractTelemetry: jest.fn()
+        generateInteractTelemetry: jest.fn(),
+        generateEndTelemetry: jest.fn()
     };
     const mockCommonUtilService: Partial<CommonUtilService> = {};
     const mockCourseUtilService: Partial<CourseUtilService> = {};
@@ -109,6 +110,8 @@ describe('ContentDetailsPage', () => {
     const mockToastController: Partial<ToastController> = {};
     const mockFileOpener: Partial<FileOpener> = {};
     const mockFileTransfer: Partial<FileTransfer> = {};
+    const telemetryObject = new TelemetryObject('do_12345', 'Resource', '1');
+    const rollUp = { l1: 'do_123', l2: 'do_123', l3: 'do_1' };
 
     beforeAll(() => {
         contentDetailsPage = new ContentDetailsPage(
@@ -397,7 +400,7 @@ describe('ContentDetailsPage', () => {
                     dismiss: mockDismiss
                 });
             });
-            mockCommonUtilService.showToast = jest.fn(() => {});
+            mockCommonUtilService.showToast = jest.fn(() => { });
             mockFileTransfer.create = jest.fn(() => {
                 return {
                     download: mockDownload
@@ -433,7 +436,7 @@ describe('ContentDetailsPage', () => {
                     dismiss: mockDismiss
                 });
             });
-            mockCommonUtilService.showToast = jest.fn(() => {});
+            mockCommonUtilService.showToast = jest.fn(() => { });
             mockFileTransfer.create = jest.fn(() => {
                 return {
                     download: mockDownload
@@ -471,7 +474,7 @@ describe('ContentDetailsPage', () => {
                     dismiss: mockDismiss
                 });
             });
-            mockCommonUtilService.showToast = jest.fn(() => {});
+            mockCommonUtilService.showToast = jest.fn(() => { });
             mockFileTransfer.create = jest.fn(() => {
                 return {
                     download: mockDownload
@@ -487,6 +490,40 @@ describe('ContentDetailsPage', () => {
                 expect(mockDismiss).toHaveBeenCalled();
                 done();
             });
+        });
+    });
+
+    describe('generateEndEvent()', () => {
+        it('should generate END Telemetry with given contentType', () => {
+            // arrange
+            contentDetailsPage.telemetryObject = telemetryObject;
+            contentDetailsPage.objRollup = rollUp;
+            // act
+            contentDetailsPage.generateEndEvent();
+            // assert
+            expect(mockTelemetryGeneratorService.generateEndTelemetry).toHaveBeenCalledWith(ContentType.RESOURCE,
+                Mode.PLAY,
+                PageId.CONTENT_DETAIL,
+                Environment.HOME,
+                telemetryObject,
+                rollUp,
+                undefined);
+        });
+
+        it('should generate END Telemetry with  contentType if telemetryObject contentType is empty', () => {
+            // arrange
+            contentDetailsPage.telemetryObject = new TelemetryObject('do_12345', '', '1');
+            contentDetailsPage.objRollup = rollUp;
+            // act
+            contentDetailsPage.generateEndEvent();
+            // assert
+            expect(mockTelemetryGeneratorService.generateEndTelemetry).toHaveBeenCalledWith(ContentType.RESOURCE,
+                Mode.PLAY,
+                PageId.CONTENT_DETAIL,
+                Environment.HOME,
+                contentDetailsPage.telemetryObject,
+                rollUp,
+                undefined);
         });
     });
 });
