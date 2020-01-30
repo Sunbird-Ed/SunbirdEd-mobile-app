@@ -433,11 +433,14 @@ describe('DistrictMappingPage', () => {
         mockAppGlobalService.isUserLoggedIn = jest.fn(() => false);
         mockCommonUtilService.isDeviceLocationAvailable = jest.fn(() => Promise.resolve(false));
         jest.spyOn(districtMappingPage, 'saveDeviceLocation').mockImplementation();
+        mockAppGlobalService.setOnBoardingCompleted = jest.fn();
         // act
         districtMappingPage.submit();
         // assert
         setTimeout(() => {
             expect(districtMappingPage.saveDeviceLocation).toHaveBeenCalled();
+            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
+            expect(mockAppGlobalService.setOnBoardingCompleted).toHaveBeenCalled();
             expect(mockRouter.navigate).toHaveBeenCalledWith(['/tabs'], {
                 state: {
                     loginMode: 'guest'
@@ -445,8 +448,6 @@ describe('DistrictMappingPage', () => {
             });
             done();
         }, 1);
-        expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
-
     });
 
     it('should populate availableLocationState and availableLocationDistrict', () => {
