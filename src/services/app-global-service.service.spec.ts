@@ -5,9 +5,10 @@ import { TelemetryGeneratorService } from './telemetry-generator.service';
 import { UtilityService } from './utility-service';
 import { of } from 'rxjs';
 import { PreferenceKey } from '../app/app.constant';
+import { InteractSubtype, Environment, PageId, ImpressionType, InteractType } from './telemetry-constants';
 describe('AppGlobalService', () => {
     let appGlobalService: AppGlobalService;
-    const profile  = { syllabus: 'tn'} as any;
+    const profile = { syllabus: 'tn' } as any;
     const mockProfile: Partial<ProfileService> = {
         getActiveSessionProfile: jest.fn(() => of(profile))
     };
@@ -17,12 +18,16 @@ describe('AppGlobalService', () => {
     const mockFrameworkService: Partial<FrameworkService> = {};
     const mockEvent: Partial<Events> = {
         subscribe: jest.fn(),
-        publish: jest.fn()
+        publish: jest.fn(),
+        unsubscribe: jest.fn()
     };
     const mockPopoverCtrl: Partial<PopoverController> = {};
-    const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {};
+    const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {
+        generateInteractTelemetry: jest.fn()
+    };
     const mockPreferences: Partial<SharedPreferences> = {
-        getString: jest.fn(() => of(undefined))
+        getString: jest.fn(() => of(undefined)),
+        putString: jest.fn(() => of(undefined))
     };
     const mockUtilityService: Partial<UtilityService> = {
         getBuildConfigValue: jest.fn(() => Promise.resolve('org.sunbird.app'))
@@ -43,6 +48,19 @@ describe('AppGlobalService', () => {
 
     it('should be create a instance of appGlobalService', () => {
         expect(appGlobalService).toBeTruthy();
+    });
+
+    describe('getIsPermissionAsked()', () => {
+        it('should return value saved in preference', (done) => {
+            // arrange
+            mockPreferences.getString = jest.fn(() => of('{\"isCameraAsked\":true,\"isStorageAsked\":false,\"isRecordAudioAsked\":false}'));
+            // act
+            // assert
+            appGlobalService.getIsPermissionAsked('isCameraAsked').subscribe((response) => {
+                expect(response).toBeTruthy();
+                done();
+            });
+        });
     });
 
     it('should checked user iis loggedIn or Not', () => {
@@ -125,7 +143,7 @@ describe('AppGlobalService', () => {
 
     it('should set the signin Onboarding loader', () => {
         // arrange
-        appGlobalService.signinOnboardingLoader =  {
+        appGlobalService.signinOnboardingLoader = {
             dismiss: jest.fn((fn) => fn())
         };
         // act
@@ -135,8 +153,8 @@ describe('AppGlobalService', () => {
 
     it('should dismiss the  signin Onboarding loader', (done) => {
         // arrange
-        appGlobalService.signinOnboardingLoader =  {
-            dismiss:  jest.fn(() => Promise.resolve())
+        appGlobalService.signinOnboardingLoader = {
+            dismiss: jest.fn(() => Promise.resolve())
         };
         // act
         appGlobalService.closeSigninOnboardingLoader();
@@ -148,4 +166,340 @@ describe('AppGlobalService', () => {
             done();
         }, 1);
     });
+
+    describe('getPageIdForTelemetry()', () => {
+        it('should return expected pageId', () => {
+            // arrange
+            appGlobalService.currentPageId = PageId.LIBRARY;
+            // act
+            // assert
+            expect(appGlobalService.getPageIdForTelemetry()).toEqual(PageId.LIBRARY);
+
+            // arrange
+            appGlobalService.currentPageId = PageId.COURSES;
+            // act
+            // assert
+            expect(appGlobalService.getPageIdForTelemetry()).toEqual(PageId.COURSES);
+
+            // arrange
+            appGlobalService.currentPageId = PageId.DOWNLOADS;
+            // act
+            // assert
+            expect(appGlobalService.getPageIdForTelemetry()).toEqual(PageId.DOWNLOADS);
+
+            // arrange
+            appGlobalService.currentPageId = PageId.PROFILE;
+            // act
+            // assert
+            expect(appGlobalService.getPageIdForTelemetry()).toEqual(PageId.PROFILE);
+
+            // arrange
+            appGlobalService.currentPageId = PageId.CONTENT_DETAIL;
+            // act
+            // assert
+            expect(appGlobalService.getPageIdForTelemetry()).toEqual(PageId.LIBRARY);
+        });
+    });
+
+    describe('setAverageTime()', () => {
+        it('should set averageTime', () => {
+            // arrange
+            // act
+            appGlobalService.setAverageTime('10');
+            // assert
+            expect(appGlobalService.getAverageTime()).toEqual('10');
+        });
+    });
+
+    describe('setAverageScore()', () => {
+        it('should set AverageScore', () => {
+            // arrange
+            // act
+            appGlobalService.setAverageScore('91.5');
+            // assert
+            expect(appGlobalService.getAverageScore()).toEqual('91.5');
+        });
+    });
+
+    describe('getProfileSettingsStatus()', () => {
+        it('should return true if all profile attributes are available', (done) => {
+            // arrange
+            appGlobalService.guestUserProfile = {
+                syllabus: ['AP'],
+                board: ['AP'],
+                grade: ['class1'],
+                medium: ['English']
+            } as any;
+            appGlobalService.isGuestUser = true;
+            // act
+            // assert
+            appGlobalService.getProfileSettingsStatus().then((response) => {
+                expect(response).toBeTruthy();
+                done();
+            });
+        });
+
+        it('should return false if some profile attributes are missing', (done) => {
+            // arrange
+            appGlobalService.guestUserProfile = {
+                syllabus: ['AP'],
+                board: ['AP'],
+                medium: ['English']
+            } as any;
+            appGlobalService.isGuestUser = true;
+            // act
+            // assert
+            appGlobalService.getProfileSettingsStatus().then((response) => {
+                expect(response).toBeFalsy();
+                done();
+            });
+        });
+    });
+
+    describe('setBoardMediumGrade()', () => {
+        it('should set BoardMediumGrade', () => {
+            // arrange
+            // act
+            appGlobalService.setSelectedBoardMediumGrade('Board: AP, Grade: Class1, Medium: English');
+            // assert
+            expect(appGlobalService.getSelectedBoardMediumGrade()).toEqual('Board: AP, Grade: Class1, Medium: English');
+        });
+    });
+
+    describe('ngOnDestroy()', () => {
+        it('should unsubscribe events on ngOnDestroy', () => {
+            // arrange
+            // act
+            appGlobalService.ngOnDestroy();
+            // assert
+            expect(mockEvent.unsubscribe).toHaveBeenCalledWith(AppGlobalService.USER_INFO_UPDATED);
+            expect(mockEvent.unsubscribe).toHaveBeenCalledWith('refresh:profile');
+
+        });
+    });
+
+    describe('getIsPermissionAsked()', () => {
+        it('should return false if none of the preference value is saved in preference', (done) => {
+            // arrange
+            mockPreferences.getString = jest.fn(() => of(undefined));
+            appGlobalService.isPermissionAsked = {
+                isCameraAsked: false,
+                isStorageAsked: false,
+                isRecordAudioAsked: false,
+            };
+            // act
+            // assert
+            appGlobalService.getIsPermissionAsked('isCameraAsked').subscribe((response) => {
+                expect(response).toBeFalsy();
+                expect(mockPreferences.putString).toHaveBeenCalledWith(
+                    PreferenceKey.APP_PERMISSION_ASKED,
+                    JSON.stringify(appGlobalService.isPermissionAsked));
+                done();
+            });
+        });
+    });
+
+    describe('generateConfigInteractEvent()', () => {
+        it('should generate telemetry with LIBRARY page config for TEACHER profile type', () => {
+            // arrange
+            appGlobalService.guestProfileType = ProfileType.TEACHER;
+            appGlobalService.isGuestUser = true;
+            const paramsMap = new Map();
+            paramsMap['isProfileSettingsCompleted'] = true;
+            paramsMap['isSignInCardConfigEnabled'] = false;
+            // act
+            appGlobalService.generateConfigInteractEvent(PageId.LIBRARY, true);
+            // assert
+            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+                InteractType.OTHER,
+                InteractSubtype.INITIAL_CONFIG,
+                Environment.HOME,
+                PageId.LIBRARY,
+                undefined,
+                paramsMap);
+        });
+
+        it('should generate telemetry with COURSE page config for TEACHER profile type', () => {
+            // arrange
+            appGlobalService.guestProfileType = ProfileType.TEACHER;
+            appGlobalService.isGuestUser = true;
+            const paramsMap = new Map();
+            paramsMap['isProfileSettingsCompleted'] = true;
+            paramsMap['isSignInCardConfigEnabled'] = false;
+            // act
+            appGlobalService.generateConfigInteractEvent(PageId.COURSES, true);
+            // assert
+            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+                InteractType.OTHER,
+                InteractSubtype.INITIAL_CONFIG,
+                Environment.HOME,
+                PageId.LIBRARY,
+                undefined,
+                paramsMap);
+        });
+
+        it('should generate telemetry with GUEST_PROFILE page config for TEACHER profile type', () => {
+            // arrange
+            appGlobalService.guestProfileType = ProfileType.TEACHER;
+            appGlobalService.isGuestUser = true;
+            const paramsMap = new Map();
+            paramsMap['isProfileSettingsCompleted'] = true;
+            paramsMap['isSignInCardConfigEnabled'] = false;
+            // act
+            appGlobalService.generateConfigInteractEvent(PageId.GUEST_PROFILE, true);
+            // assert
+            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+                InteractType.OTHER,
+                InteractSubtype.INITIAL_CONFIG,
+                Environment.HOME,
+                PageId.LIBRARY,
+                undefined,
+                paramsMap);
+        });
+
+        it('should generate telemetry with GUEST_PROFILE page config for STUDENT profile type', () => {
+            // arrange
+            appGlobalService.guestProfileType = ProfileType.STUDENT;
+            appGlobalService.isGuestUser = true;
+            const paramsMap = new Map();
+            paramsMap['isProfileSettingsCompleted'] = true;
+            paramsMap['isSignInCardConfigEnabled'] = false;
+            // act
+            appGlobalService.generateConfigInteractEvent(PageId.LIBRARY, true);
+            // assert
+            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+                InteractType.OTHER,
+                InteractSubtype.INITIAL_CONFIG,
+                Environment.HOME,
+                PageId.LIBRARY,
+                undefined,
+                paramsMap);
+        });
+
+        it('should generate telemetry with GUEST_PROFILE page config for STUDENT profile type', () => {
+            // arrange
+            appGlobalService.guestProfileType = ProfileType.STUDENT;
+            appGlobalService.isGuestUser = true;
+            const paramsMap = new Map();
+            paramsMap['isProfileSettingsCompleted'] = true;
+            paramsMap['isSignInCardConfigEnabled'] = false;
+            // act
+            appGlobalService.generateConfigInteractEvent(PageId.GUEST_PROFILE, true);
+            // assert
+            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+                InteractType.OTHER,
+                InteractSubtype.INITIAL_CONFIG,
+                Environment.HOME,
+                PageId.LIBRARY,
+                undefined,
+                paramsMap);
+        });
+    });
+
+    describe('generateAttributeChangeTelemetry()', () => {
+        it('should generate attribute change telemetry with given env', () => {
+            // arrange
+            appGlobalService.TRACK_USER_TELEMETRY = true;
+            const values = new Map();
+            values['oldValue'] = ['Class 1'];
+            values['newValue'] = ['Class 1', 'Class 2'];
+            // act
+            appGlobalService.generateAttributeChangeTelemetry( ['Class 1'], ['Class 1', 'Class 2'], PageId.LIBRARY, Environment.HOME);
+            // assert
+            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+                InteractType.TOUCH,
+                InteractSubtype.PROFILE_ATTRIBUTE_CHANGED,
+                Environment.HOME,
+                PageId.LIBRARY,
+                undefined,
+                values);
+        });
+
+        it('should generate attribute change telemetry when env is not given', () => {
+            // arrange
+            appGlobalService.TRACK_USER_TELEMETRY = true;
+            const values = new Map();
+            values['oldValue'] = ['Class 1'];
+            values['newValue'] = ['Class 1', 'Class 2'];
+            // act
+            appGlobalService.generateAttributeChangeTelemetry( ['Class 1'], ['Class 1', 'Class 2'], PageId.LIBRARY);
+            // assert
+            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+                InteractType.TOUCH,
+                InteractSubtype.PROFILE_ATTRIBUTE_CHANGED,
+                Environment.USER,
+                PageId.LIBRARY,
+                undefined,
+                values);
+        });
+    });
+
+    describe('generateSaveClickedTelemetry()', () => {
+        it('should generate save clicked telemetry', () => {
+            // arrange
+            appGlobalService.TRACK_USER_TELEMETRY = true;
+            const values = new Map();
+            values['profile'] = profile;
+            values['validation'] = 'medium is required';
+            // act
+            appGlobalService.generateSaveClickedTelemetry( profile, 'medium is required', PageId.LIBRARY, 'medium-clicked');
+            // assert
+            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+                InteractType.TOUCH,
+                'medium-clicked',
+                Environment.USER,
+                PageId.LIBRARY,
+                undefined,
+                values);
+        });
+
+        it('should generate attribute change telemetry when env is not given', () => {
+            // arrange
+            appGlobalService.TRACK_USER_TELEMETRY = true;
+            const values = new Map();
+            values['oldValue'] = ['Class 1'];
+            values['newValue'] = ['Class 1', 'Class 2'];
+            // act
+            appGlobalService.generateAttributeChangeTelemetry( ['Class 1'], ['Class 1', 'Class 2'], PageId.LIBRARY);
+            // assert
+            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+                InteractType.TOUCH,
+                InteractSubtype.PROFILE_ATTRIBUTE_CHANGED,
+                Environment.USER,
+                PageId.LIBRARY,
+                undefined,
+                values);
+        });
+    });
+
+    describe('getSessionData()', () => {
+        it('should return the session data', () => {
+            // arrange
+            appGlobalService.session = { access_token: '', userToken: '', refresh_token: ''};
+            // act
+            // assert
+            expect(appGlobalService.getSessionData()).toEqual( { access_token: '', userToken: '', refresh_token: ''});
+        });
+    });
+
+    describe('getSelectedUser()', () => {
+        it('should return the selectedUser', () => {
+            // arrange
+            appGlobalService.setSelectedUser('0123456789');
+            // act
+            // assert
+            expect(appGlobalService.getSelectedUser()).toEqual('0123456789');
+        });
+    });
+
+    describe('getNameForCodeInFramework()', () => {
+        it('should return the name of the provided code in the framework', () => {
+            // arrange
+            appGlobalService.getNameForCodeInFramework('gradeLevel', 'class1');
+            // act
+            // assert
+            // expect(appGlobalService.getSelectedUser()).toEqual('0123456789');
+        });
+    });
+
 });

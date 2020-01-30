@@ -14,7 +14,8 @@ import {
   OAuthSession,
   AuthService,
   FetchEnrolledCourseRequest,
-  Course
+  Course,
+  TelemetryObject
 } from 'sunbird-sdk';
 
 import { SplashscreenActionHandlerDelegate } from './splashscreen-action-handler-delegate';
@@ -28,6 +29,7 @@ import { Location } from '@angular/common';
 import { LocalCourseService } from '../local-course.service';
 import { EnrollCourse } from '@app/app/enrolled-course-details-page/course.interface';
 import { tap, catchError, mapTo } from 'rxjs/operators';
+import { ContentUtil } from '@app/util/content-util';
 
 
 @Injectable()
@@ -180,7 +182,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
                     this.userId = session.userToken;
                   }
                   if (JSON.parse(courseDetail).createdBy !== this.userId) {
-                    this.enrollIntoBatch(JSON.parse(resp));
+                    this.enrollIntoBatch(JSON.parse(resp), JSON.parse(courseDetail));
                   } else {
                     this.events.publish('return_course');
                   }
@@ -198,21 +200,28 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
    *
    * @param batch contains details of select batch
    */
-  async enrollIntoBatch(batch: Batch) {
+  async enrollIntoBatch(batch: Batch, course: any) {
     if (!this.isGuestUser) {
       const enrollCourseRequest = this.localCourseService.prepareEnrollCourseRequest(this.userId, batch);
       const loader = await this.commonUtilService.getLoader();
       await loader.present();
+      const telemetryObject: TelemetryObject = ContentUtil.getTelemetryObject(course);
+      const corRelationList = await this.preferences.getString(PreferenceKey.CDATA_KEY).toPromise();
       this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
         InteractSubtype.ENROLL_CLICKED,
         Environment.HOME,
-        PageId.COURSE_BATCHES, undefined,
-        this.localCourseService.prepareRequestValue(enrollCourseRequest));
+        PageId.COURSE_BATCHES, telemetryObject,
+        this.localCourseService.prepareRequestValue(enrollCourseRequest),
+        ContentUtil.generateRollUp(undefined, telemetryObject.id),
+        corRelationList ? JSON.parse(corRelationList) : []);
 
       const enrollCourse: EnrollCourse = {
         userId: this.userId,
         batch,
-        pageId: PageId.COURSE_BATCHES
+        pageId: PageId.COURSE_BATCHES,
+        telemetryObject,
+        objRollup: ContentUtil.generateRollUp(undefined, telemetryObject.id),
+        corRelationList: corRelationList ? JSON.parse(corRelationList) : []
       };
       this.localCourseService.enrollIntoBatch(enrollCourse).toPromise()
         .then((data: boolean) => {
@@ -224,11 +233,13 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
               courseId: batch.courseId
             });
             this.events.publish('coach_mark_seen', { showWalkthroughBackDrop: false, appName: this.appLabel });
+            await this.preferences.putString(PreferenceKey.CDATA_KEY, '').toPromise();
             this.getEnrolledCourses();
           });
         }, (error) => {
           this.zone.run(async () => {
             await loader.dismiss();
+            await this.preferences.putString(PreferenceKey.CDATA_KEY, '').toPromise();
             if (error && error.code !== 'NETWORK_ERROR') {
               this.getEnrolledCourses();
             }
