@@ -1310,7 +1310,7 @@ export class CollectionDetailEtbPage implements OnInit {
   ionViewWillLeave() {
     this.downloadProgress = 0;
     this.headerObservable.unsubscribe();
-    this.events.unsubscribe('content-toPlay');
+    this.events.unsubscribe(EventTopics.CONTENT_TO_PLAY);
     this.events.publish('header:setzIndexToNormal');
     if (this.eventSubscription) {
       this.eventSubscription.unsubscribe();
