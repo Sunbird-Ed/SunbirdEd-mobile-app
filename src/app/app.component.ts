@@ -524,7 +524,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
     this.telemetryGeneratorService.generateImpressionTelemetry(
       ImpressionType.VIEW, '',
-      pageId,
+      pageId ? pageId : PageId.HOME,
       env, undefined, undefined, undefined, undefined,
       corRelationList);
   }

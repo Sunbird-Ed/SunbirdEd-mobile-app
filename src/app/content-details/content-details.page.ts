@@ -39,7 +39,10 @@ import { Map } from '@app/app/telemetryutil';
 import { ConfirmAlertComponent } from '@app/app/components';
 import { AppGlobalService } from '@app/services/app-global-service.service';
 import { AppHeaderService } from '@app/services/app-header.service';
-import { ContentConstants, EventTopics, XwalkConstants, RouterLinks, ContentFilterConfig, ShareItemType } from '@app/app/app.constant';
+import {
+  ContentConstants, EventTopics, XwalkConstants, RouterLinks, ContentFilterConfig,
+  ShareItemType, ContentType
+} from '@app/app/app.constant';
 import { CourseUtilService } from '@app/services/course-util.service';
 import { UtilityService } from '@app/services/utility-service';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
@@ -472,7 +475,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
       this.isChildContent = true;
     }
     if (this.content.contentData.streamingUrl &&
-        !(this.content.mimeType === 'application/vnd.ekstep.h5p-archive')) {
+      !(this.content.mimeType === 'application/vnd.ekstep.h5p-archive')) {
       this.streamingUrl = this.content.contentData.streamingUrl;
     }
 
@@ -578,7 +581,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
 
   generateEndEvent() {
     this.telemetryGeneratorService.generateEndTelemetry(
-      this.telemetryObject.type,
+      this.telemetryObject.type ? this.telemetryObject.type : ContentType.RESOURCE,
       Mode.PLAY,
       PageId.CONTENT_DETAIL,
       Environment.HOME,
@@ -985,7 +988,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
     if (data && data.isLeftButtonClicked) {
       this.playContent(isStreaming);
       // Incase of close button click data.isLeftButtonClicked = null so we have put the false condition check
-    } else if (data && data.isLeftButtonClicked  === false) {
+    } else if (data && data.isLeftButtonClicked === false) {
       const playConfig: any = {};
       playConfig.playContent = true;
       playConfig.streaming = isStreaming;
@@ -1066,7 +1069,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
         corRelationList: this.corRelationList,
         objRollup: this.objRollup,
         pageId: PageId.CONTENT_DETAIL,
-        shareItemType: this.isChildContent ? ShareItemType.LEAF_CONTENT :ShareItemType.ROOT_CONTENT
+        shareItemType: this.isChildContent ? ShareItemType.LEAF_CONTENT : ShareItemType.ROOT_CONTENT
       },
       cssClass: 'sb-popover',
     });
@@ -1223,7 +1226,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
       if (!pdf.availableLocally) {
         this.fileTransfer = this.transfer.create();
         const entry = await this.fileTransfer
-            .download(pdf.url, cordova.file.cacheDirectory + pdf.url.substring(pdf.url.lastIndexOf('/') + 1));
+          .download(pdf.url, cordova.file.cacheDirectory + pdf.url.substring(pdf.url.lastIndexOf('/') + 1));
         url = entry.toURL();
       } else {
         url = pdf.url;

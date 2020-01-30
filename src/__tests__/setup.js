@@ -16,10 +16,28 @@ global.cordova = {
     },
     file: {
         applicationDirectory: "/path"
+    },  
+    InAppBrowser: {
+        open: () => ({
+            addEventListener: () => {},
+        }),
     }
 };
 
 global.supportfile = {
     shareSunbirdConfigurations: () => {},
     makeEntryInSunbirdSupportFile: () => {}
+}
+
+global.FCMPlugin = {
+    subscribeToTopic: (topic, success, error) => {
+        setTimeout(() => {
+            success();
+          });
+    },
+    unsubscribeFromTopic: (topic, success, error) => {
+        setTimeout(() => {
+            success();
+          });
+    }
 }

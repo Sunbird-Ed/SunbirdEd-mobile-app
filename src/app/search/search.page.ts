@@ -1225,7 +1225,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.OTHER,
       InteractSubtype.DIAL_SEARCH_RESULT_FOUND,
-      this.source ? this.source : Environment.HOME,
+      this.source ? this.source : PageId.SEARCH,
       PageId.SEARCH,
       undefined,
       values
@@ -1482,7 +1482,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
   private generateImpressionEvent() {
     this.telemetryGeneratorService.generateImpressionTelemetry(
       ImpressionType.SEARCH, '',
-      this.source ? this.source : PageId.HOME,
+      this.source ? this.source : PageId.SEARCH,
       Environment.HOME, '', '', '',
       undefined,
       this.corRelationList);
@@ -1497,7 +1497,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
       paramsMap.SearchCriteria = searchResult.request;
       params.push(paramsMap);
       this.telemetryGeneratorService.generateLogEvent(LogLevel.INFO,
-        this.source,
+        this.source ? this.source : PageId.SEARCH,
         Environment.HOME,
         ImpressionType.SEARCH,
         params);
