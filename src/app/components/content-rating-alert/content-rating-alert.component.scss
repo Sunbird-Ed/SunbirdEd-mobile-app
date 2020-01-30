@@ -40,10 +40,23 @@
   .rating-opts{
     .rating-item{
       --min-height: 30px;
+      display: flex;
+      padding: 8px;
+      border-bottom: 1px solid #eee;
       .rating-label{
         color: #999;
         font-size: 14px;
         margin: 0;
+        flex: 1 1 0;
+        text-align: left;
+        &.active{
+          color: #074F9D;
+        }
+        &:last-child{
+          &.active{
+            border-bottom: none;
+          }
+        }
       }
       ion-checkbox{
         margin: 0;

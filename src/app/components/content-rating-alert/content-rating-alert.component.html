@@ -6,7 +6,7 @@
     </ion-toolbar>
   </ion-header>
   <ion-content no-padding class="sb-popover-container">
-      <div class="sb-popover-items popover-ratings" style="height: 500px;overflow: auto;">
+      <div class="sb-popover-items popover-ratings">
           <rating [(ngModel)]="userRating" (ngModelChange)="rateContent($event)"></rating>
           <div class="sb-popover-content-details" *ngIf="userRating">
             <div class="main-title">
@@ -20,15 +20,15 @@
             </div>
             <div class="rating-opts">
               <div *ngFor="let opt of ratingOptions">
-                <ion-item class="rating-item">
-                  <ion-label class="rating-label">{{opt.value}}</ion-label>
+                <div class="rating-item">
+                  <ion-label class="rating-label" [ngClass]="{'active': opt.isChecked}" (click)="opt.isChecked=!opt.isChecked">{{opt.value}}</ion-label>
                   <ion-checkbox [(ngModel)]="opt.isChecked" (ionChange)="ratingOptsChanged(opt.key)" slot="end"></ion-checkbox>
-                </ion-item>
+                </div>
               </div>
               <div *ngIf="showCommentBox">
-                <ion-item>
+                <div>
                   <textarea [(ngModel)]="commentText" name="" id="" cols="30" rows="4" placeholder="Type here"></textarea>
-                </ion-item>
+                </div>
               </div>
             </div>
           </div>

@@ -42,8 +42,8 @@ export class RatingHandler {
         const contentFeedback: any = content.contentFeedback;
         this.telemetryObject = ContentUtil.getTelemetryObject(content);
         if (contentFeedback && contentFeedback.length) {
-            this.userRating = contentFeedback[0].rating;
-            this.userComment = contentFeedback[0].comments;
+            this.userRating = this.userRating ? this.userRating : contentFeedback[0].rating;
+            this.userComment = this.userComment ? this.userComment : contentFeedback[0].comments;
         }
 
         if (isContentPlayed || content.contentAccess.length) {
@@ -89,8 +89,8 @@ export class RatingHandler {
     async showContentRatingPopup(content: Content, popupType: string) {
         const contentFeedback: any = content.contentFeedback;
         if (contentFeedback && contentFeedback.length) {
-            this.userRating = contentFeedback[0].rating;
-            this.userComment = contentFeedback[0].comments;
+            this.userRating = this.userRating ? this.userRating : contentFeedback[0].rating;
+            this.userComment = this.userComment ? this.userComment : contentFeedback[0].comments;
         }
         const popover = await this.popoverCtrl.create({
             component: ContentRatingAlertComponent,
