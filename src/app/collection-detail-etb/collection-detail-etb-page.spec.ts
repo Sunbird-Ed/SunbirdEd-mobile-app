@@ -30,6 +30,7 @@ import {of, Subscription, Observable} from 'rxjs';
 import {ContentPlayerHandler} from '@app/services/content/player/content-player-handler';
 import {RatingHandler} from '@app/services/rating/rating-handler';
 import {ContentUtil} from '@app/util/content-util';
+import {EventTopics} from '@app/app/app.constant';
 
 describe('collectionDetailEtbPage', () => {
     let collectionDetailEtbPage: CollectionDetailEtbPage;
@@ -245,75 +246,77 @@ describe('collectionDetailEtbPage', () => {
         );
     });
 
-    it('should registerDeviceBackButton and check for lastContentPlayed and to show RatingPopup', () => {
-        // arrange
-        jest.spyOn(collectionDetailEtbPage, 'registerDeviceBackButton').mockImplementation();
-        mockIonContent.ionScroll.subscribe = jest.fn((fn) => {
-            fn({});
+    describe('IonViewWillEnter', () => {
+
+        it('should registerDeviceBackButton and check for lastContentPlayed and to show RatingPopup', () => {
+            // arrange
+            jest.spyOn(collectionDetailEtbPage, 'registerDeviceBackButton').mockImplementation();
+            mockIonContent.ionScroll.subscribe = jest.fn((fn) => {
+                fn({});
+            });
+            collectionDetailEtbPage.lastContentPlayed = 'do_212911645382959104165';
+            jest.spyOn(mockContentPlayerHandler, 'getLastPlayedContentId').mockReturnValue('do_212911645382959104165');
+            collectionDetailEtbPage.isContentPlayed = true;
+            jest.spyOn(mockContentPlayerHandler, 'setContentPlayerLaunchStatus').mockImplementation();
+            jest.spyOn(mockRatingHandler, 'showRatingPopup').mockImplementation();
+            jest.spyOn(mockContentPlayerHandler, 'setLastPlayedContentId').mockImplementation();
+            // act
+            collectionDetailEtbPage.ionViewWillEnter();
+            // assert
+            expect(collectionDetailEtbPage.registerDeviceBackButton).toHaveBeenCalled();
+            expect(mockRatingHandler.showRatingPopup).toHaveBeenCalledWith(
+                true,
+                collectionDetailEtbPage.playingContent,
+                'automatic',
+                undefined,
+                {}
+            );
+            expect(mockContentPlayerHandler.setContentPlayerLaunchStatus).toHaveBeenCalled();
+            expect(mockContentPlayerHandler.setLastPlayedContentId).toHaveBeenCalled();
         });
-        collectionDetailEtbPage.lastContentPlayed = 'do_212911645382959104165';
-        jest.spyOn(mockContentPlayerHandler, 'getLastPlayedContentId').mockReturnValue('do_212911645382959104165');
-        collectionDetailEtbPage.isContentPlayed = true;
-        jest.spyOn(mockContentPlayerHandler, 'setContentPlayerLaunchStatus').mockImplementation();
-        jest.spyOn(mockRatingHandler, 'showRatingPopup').mockImplementation();
-        jest.spyOn(mockContentPlayerHandler, 'setLastPlayedContentId').mockImplementation();
-        // act
-        collectionDetailEtbPage.ionViewWillEnter();
-        // assert
-        expect(collectionDetailEtbPage.registerDeviceBackButton).toHaveBeenCalled();
-        expect(mockRatingHandler.showRatingPopup).toHaveBeenCalledWith(
-            true,
-            collectionDetailEtbPage.playingContent,
-            'automatic',
-            undefined,
-            {}
-        );
-        expect(mockContentPlayerHandler.setContentPlayerLaunchStatus).toHaveBeenCalled();
-        expect(mockContentPlayerHandler.setLastPlayedContentId).toHaveBeenCalled();
+
+        it('should set headerConfig, headerObservable, setContentDetails, and subscribeEvents', () => {
+            // arrange
+            jest.spyOn(collectionDetailEtbPage, 'registerDeviceBackButton').mockImplementation();
+            mockzone.run = jest.fn((fn) => fn());
+            const mockHeaderEventsSubscription = {unsubscribe: jest.fn()} as Partial<Subscription>;
+            mockHeaderService.headerEventEmitted$ = {
+                subscribe: jest.fn(() => mockHeaderEventsSubscription)
+            };
+            jest.spyOn(collectionDetailEtbPage, 'handleHeaderEvents').mockImplementation();
+            jest.spyOn(mockHeaderService, 'getDefaultPageConfig').mockReturnValue({
+                showHeader: false,
+                showBurgerMenu: false,
+                actionButtons: ['download']
+            });
+            jest.spyOn(collectionDetailEtbPage, 'markContent').mockImplementation();
+            jest.spyOn(mockHeaderService, 'updatePageConfig').mockImplementation();
+            jest.spyOn(collectionDetailEtbPage, 'resetVariables').mockImplementation();
+
+            jest.spyOn(collectionDetailEtbPage, 'playContent').mockImplementation();
+            jest.spyOn(collectionDetailEtbPage, 'subscribeSdkEvent').mockImplementation();
+            mockIonContent.ionScroll.subscribe = jest.fn((fn) => {
+                fn({});
+            });
+
+            mockevents.subscribe = jest.fn((topic, fn) => {
+                if (topic === EventTopics.CONTENT_TO_PLAY) {
+                    fn(mockContentData);
+                }
+            });
+
+            jest.spyOn(collectionDetailEtbPage, 'setContentDetails').mockImplementation();
+            // act
+            collectionDetailEtbPage.ionViewWillEnter();
+            // assert
+            expect(collectionDetailEtbPage.registerDeviceBackButton).toHaveBeenCalled();
+            expect(collectionDetailEtbPage.markContent).toHaveBeenCalled();
+            expect(collectionDetailEtbPage.resetVariables).toHaveBeenCalled();
+            expect(mockHeaderService.updatePageConfig).toHaveBeenCalled();
+            expect(collectionDetailEtbPage.playContent).toHaveBeenCalledWith(mockContentData);
+            expect(collectionDetailEtbPage.subscribeSdkEvent).toHaveBeenCalled();
+        });
     });
-
-    it('should set headerConfig, headerObservable, setContentDetails, and subscribeEvents', () => {
-        // arrange
-        jest.spyOn(collectionDetailEtbPage, 'registerDeviceBackButton').mockImplementation();
-        mockzone.run = jest.fn((fn) => fn());
-        const mockHeaderEventsSubscription = {unsubscribe: jest.fn()} as Partial<Subscription>;
-        mockHeaderService.headerEventEmitted$ = {
-            subscribe: jest.fn(() => mockHeaderEventsSubscription)
-        };
-        jest.spyOn(collectionDetailEtbPage, 'handleHeaderEvents').mockImplementation();
-        jest.spyOn(mockHeaderService, 'getDefaultPageConfig').mockReturnValue({
-            showHeader: false,
-            showBurgerMenu: false,
-            actionButtons: ['download']
-        });
-        jest.spyOn(collectionDetailEtbPage, 'markContent').mockImplementation();
-        jest.spyOn(mockHeaderService, 'updatePageConfig').mockImplementation();
-        jest.spyOn(collectionDetailEtbPage, 'resetVariables').mockImplementation();
-
-        jest.spyOn(collectionDetailEtbPage, 'playContent').mockImplementation();
-        jest.spyOn(collectionDetailEtbPage, 'subscribeSdkEvent').mockImplementation();
-        mockIonContent.ionScroll.subscribe = jest.fn((fn) => {
-            fn({});
-        });
-
-        mockevents.subscribe = jest.fn((topic, fn) => {
-            if (topic === 'content-toPlay') {
-                fn(mockContentData);
-            }
-        });
-
-        jest.spyOn(collectionDetailEtbPage, 'setContentDetails').mockImplementation();
-        // act
-        collectionDetailEtbPage.ionViewWillEnter();
-        // assert
-        expect(collectionDetailEtbPage.registerDeviceBackButton).toHaveBeenCalled();
-        expect(collectionDetailEtbPage.markContent).toHaveBeenCalled();
-        expect(collectionDetailEtbPage.resetVariables).toHaveBeenCalled();
-        expect(mockHeaderService.updatePageConfig).toHaveBeenCalled();
-        expect(collectionDetailEtbPage.playContent).toHaveBeenCalledWith(mockContentData);
-        expect(collectionDetailEtbPage.subscribeSdkEvent).toHaveBeenCalled();
-    });
-
     it('should show license true when user clicked on credits and license', () => {
         // arrange
         collectionDetailEtbPage.showCredits = false;
