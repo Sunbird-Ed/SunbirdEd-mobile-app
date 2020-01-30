@@ -837,11 +837,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       .then((res: CategoryTerm[]) => {
         this.categoryGradeLevels = res;
         this.categoryGradeLevelsArray = res.map(a => (a.name));
-        // for (let i = 0, len = this.categoryGradeLevels.length; i < len; i++) {
-        //   if (this.getGroupByPageReq.grade[0] === this.categoryGradeLevels[i].name) {
-        //     this.classClick(i);
-        //   }
-        // }
         for (let i = 0, len = this.categoryGradeLevelsArray.length; i < len; i++) {
           if (this.getGroupByPageReq.grade[0] === this.categoryGradeLevelsArray[i]) {
             this.classClickHandler(i);

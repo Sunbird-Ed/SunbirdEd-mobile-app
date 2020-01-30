@@ -29,7 +29,11 @@ import {
     Profile,
     ProfileSource,
     ProfileType,
-    SearchType
+    SearchType,
+    GetFrameworkCategoryTermsRequest,
+    FrameworkCategoryCode,
+    FrameworkCategoryCodesGroup,
+    TelemetryObject
 } from 'sunbird-sdk';
 import { NotificationService } from '../../services/notification.service';
 
@@ -977,5 +981,134 @@ describe('ResourcesComponent', () => {
             expect(resourcesComponent.currentGrade).toBe('sample');
             expect(resourcesComponent.categoryGradeLevelsArray[0]).toBe('sample');
         });
-    })
+    });
+
+    it('should fetch all the grade level data based on framework data from the api and call classclickHandler if found', () => {
+        // arrange
+        const frameworkId = 'frame-id';
+        const categories = {};
+
+        const req: GetFrameworkCategoryTermsRequest = {
+            currentCategoryCode: 'gradeLevel',
+            language: undefined,
+            requiredCategories: {},
+            frameworkId
+        };
+        mockFrameworkUtilService.getFrameworkCategoryTerms = jest.fn(() => of([{name: 'sunbird'}]));
+        jest.spyOn(resourcesComponent, 'classClickHandler').mockImplementation(() => {
+            return;
+        });
+        resourcesComponent.getGroupByPageReq = {
+            grade: ['sunbird']
+        };
+        // act
+        resourcesComponent.getGradeLevelData(frameworkId, categories);
+
+        // assert
+        expect(mockFrameworkUtilService.getFrameworkCategoryTerms).toHaveBeenLastCalledWith(req);
+
+    });
+
+    it('should fetch all the grade level data based on framework data from the api and do not call classclickHandler if not found', () => {
+        // arrange
+        const frameworkId = 'frame-id';
+        const categories = {};
+
+        const req: GetFrameworkCategoryTermsRequest = {
+            currentCategoryCode: 'gradeLevel',
+            language: undefined,
+            requiredCategories: {},
+            frameworkId
+        };
+        mockFrameworkUtilService.getFrameworkCategoryTerms = jest.fn(() => of([{name: 'sunbird1'}]));
+        jest.spyOn(resourcesComponent, 'classClickHandler').mockImplementation(() => {
+            return;
+        });
+        resourcesComponent.getGroupByPageReq = {
+            grade: ['sunbird-not-matched']
+        };
+        // act
+        resourcesComponent.getGradeLevelData(frameworkId, categories);
+
+        // assert
+        expect(mockFrameworkUtilService.getFrameworkCategoryTerms).toHaveBeenLastCalledWith(req);
+
+    });
+
+    it('should call recentlyViewedCardClick method and perform navigation to collection details page if mimetype is collection', () => {
+        // arrange
+        const event = {
+            data: {
+                identifier: 'do_123456789',
+                 mimeType: 'application/vnd.ekstep.content-collection',
+                 contentType: 'sample-content-type'
+            }
+        };
+        const course = {
+            isAvailableLocally: true,
+            mimeType: 'application/vnd.ekstep.content-collection'
+        };
+
+        const telemetryObject: Partial<TelemetryObject> = {
+            id: 'do_123456789',
+            type: 'sample-content-type',
+            version: ''
+        };
+        const values = {
+            sectionName: 'Recently Viewed',
+            positionClicked: undefined
+        };
+        mockTelemetryGeneratorService.isCollection = jest.fn(() => true);
+        mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+        // act
+        resourcesComponent.recentlyViewedCardClick(event, course);
+        // assert
+        expect(mockTelemetryGeneratorService.isCollection).toHaveBeenCalled();
+        expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+            'TOUCH',
+            'content-clicked',
+            'home',
+            'library',
+            telemetryObject,
+            values
+        );
+    });
+    it('should call recentlyViewedCardClick method and perform navigation to content details page if mimetype is non collection', () => {
+        // arrange
+        const event = {
+            data: {
+                identifier: 'do_123456789',
+                 mimeType: 'application/vnd.ekstep.content-collection',
+                 contentType: 'sample-content-type'
+            }
+        };
+        const course = {
+            isAvailableLocally: true,
+            mimeType: 'vide0/mp4'
+        };
+
+        const telemetryObject: Partial<TelemetryObject> = {
+            id: 'do_123456789',
+            type: 'sample-content-type',
+            version: ''
+        };
+        const values = {
+            sectionName: 'Recently Viewed',
+            positionClicked: undefined
+        };
+        mockTelemetryGeneratorService.isCollection = jest.fn(() => true);
+        mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+        // act
+        resourcesComponent.recentlyViewedCardClick(event, course);
+        // assert
+        expect(mockTelemetryGeneratorService.isCollection).toHaveBeenCalled();
+        expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+            'TOUCH',
+            'content-clicked',
+            'home',
+            'library',
+            telemetryObject,
+            values
+        );
+    });
 });
