@@ -19,6 +19,7 @@ import {
   PageId
 } from '@app/services/telemetry-constants';
 import {Content} from 'sunbird-sdk';
+import {EventTopics} from '@app/app/app.constant';
 describe('CollectionChildComponent', () => {
   let collectionChildComponent: CollectionChildComponent;
   const mockZone: Partial<NgZone> = {};
@@ -121,7 +122,7 @@ describe('CollectionChildComponent', () => {
     collectionChildComponent.playContent(mockContentData);
     setTimeout(() => {
       // assert
-      expect(mockEvents.publish).toHaveBeenCalledWith('content-toPlay', {content: mockContentData});
+      expect(mockEvents.publish).toHaveBeenCalledWith(EventTopics.CONTENT_TO_PLAY, {content: mockContentData});
       done();
     }, 0);
 
