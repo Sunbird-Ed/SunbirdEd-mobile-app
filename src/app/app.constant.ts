@@ -167,6 +167,7 @@ export class EventTopics {
     public static readonly HAMBURGER_MENU_CLICKED = 'HAMBURGER_MENU_CLICKED';
     public static readonly NEXT_CONTENT = 'event:NextContent';
     public static readonly DEEPLINK_CONTENT_PAGE_OPEN = 'DEEPLINK_CONTENT_PAGE_OPEN';
+    public static readonly CONTENT_TO_PLAY = 'event:ContentToPlay';
 }
 
 export class ShareUrl {
@@ -218,6 +219,8 @@ export class PreferenceKey {
     public static readonly SUBSCRIBE_TOPICS = 'subscribe_topics';
     public static readonly SHOW_EXTERNAL_VERIFICATION = 'show_external_verification';
     public static readonly CURRENT_USER_PROFILE = 'current_user_profile';
+    public static readonly FCM_TOKEN = 'fcm_token';
+    public static readonly SYNC_CONFIG = 'sync_config';
 }
 
 export class GenericAppConfig {
