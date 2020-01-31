@@ -1,5 +1,5 @@
-import { Content } from 'sunbird-sdk';
-import { Navigation } from '@angular/router';
+import {Content, Rollup, TelemetryObject} from 'sunbird-sdk';
+import {Navigation} from '@angular/router';
 
 export const mockcollectionData: Partial<Navigation> = {
     id: 7,
@@ -128,7 +128,7 @@ export const contentDetailsMcokResponse1: Content = {
         ],
         attributions: ['gd_1', 'gd_2'],
         me_totalRatings: 'diksha.org.app',
-        contentFeedback: [{ rating: 'SAMPLE_RATING' }],
+        contentFeedback: [{rating: 'SAMPLE_RATING'}],
         appId: 'staging.diksha.app',
         contentEncoding: 'gzip',
         c_Diksha_Stage_open_batch_count: 1,
@@ -235,7 +235,7 @@ export const contentDetailsMcokResponse1: Content = {
         leafNodesCount: 7,
         compatibilityLevel: 4,
         resourceType: 'Course',
-        licenseDetails: { description: '', name: '', url: '' },
+        licenseDetails: {description: '', name: '', url: ''},
         // isAvailableLocally: false
     },
     contentFeedback: [{
@@ -305,7 +305,7 @@ export const contentDetailsMcokResponse2: Content = {
         ],
         attributions: ['gd_1', 'gd_2'],
         me_totalRatings: 'diksha.org.app',
-        contentFeedback: [{ rating: 'SAMPLE_RATING' }],
+        contentFeedback: [{rating: 'SAMPLE_RATING'}],
         appId: 'staging.diksha.app',
         contentEncoding: 'gzip',
         c_Diksha_Stage_open_batch_count: 1,
@@ -412,7 +412,7 @@ export const contentDetailsMcokResponse2: Content = {
         leafNodesCount: 7,
         compatibilityLevel: 4,
         resourceType: 'Course',
-        licenseDetails: { description: '', name: '', url: '' },
+        licenseDetails: {description: '', name: '', url: ''},
         // isAvailableLocally: false
     },
     contentFeedback: [{
@@ -483,7 +483,7 @@ export const contentDetailsMcokResponse3: Content = {
         ],
         attributions: ['gd_1', 'gd_2'],
         me_totalRatings: 'diksha.org.app',
-        contentFeedback: [{ rating: 'SAMPLE_RATING' }],
+        contentFeedback: [{rating: 'SAMPLE_RATING'}],
         appId: 'staging.diksha.app',
         contentEncoding: 'gzip',
         c_Diksha_Stage_open_batch_count: 1,
@@ -590,7 +590,7 @@ export const contentDetailsMcokResponse3: Content = {
         leafNodesCount: 7,
         compatibilityLevel: 4,
         resourceType: 'Course',
-        licenseDetails: { description: '', name: '', url: '' },
+        licenseDetails: {description: '', name: '', url: ''},
     },
     contentFeedback: [{
         contentId: 'd0_123456',
@@ -613,4 +613,328 @@ export const contentDetailsMcokResponse3: Content = {
 
 };
 
+export const mockContentData = {
+    content: {
+        identifier: 'do_21280756435836108811838',
+        contentData: {
+            ownershipType: [
+                'createdBy'
+            ],
+            copyright: 'Odisha',
+            previewUrl: 'https://ntpstagingall.blob.core.windows.net/ntp-content-staging/content/ecml/do_21280756435836108811838-latest',
+            subject: [
+                'Civics'
+            ],
+            channel: '0124784842112040965',
+            downloadUrl: 'https://ntpstagingall.blob.core.windows.net/ntp-content-staging/ecar_files/do_21280756435836108811838/18-july-2019_1563444045023_do_21280756435836108811838_8.0.ecar',
+            questions: [
+                {
+                    identifier: 'do_21280770356321484812116',
+                    name: 'MCQ- Image,Text,Audio\n',
+                    description: null,
+                    objectType: 'AssessmentItem',
+                    relation: 'associatedTo',
+                    status: 'Live'
+                }
+            ],
+            organisation: [
+                'Odisha'
+            ],
+            language: [
+                'English'
+            ],
+            mimeType: 'application/vnd.ekstep.ecml-archive',
+            variants: {
+                spine: {
+                    ecarUrl: 'https://ntpstagingall.blob.core.windows.net/ntp-content-staging' +
+                        '/ecar_files/do_21280756435836108811838/18-july-2019_1563444045699_do_21280756435836108811838_8.0_spine.ecar',
+                    size: 8280
+                }
+            },
+            editorState: '{"plugin":{"noOfExtPlugins":14,"extPlugins":' +
+                '[{"plugin":"org.ekstep.contenteditorfunctions","version":"1.2"},{"plugin":"org.ekstep.keyboardshortcuts",' +
+                '"version":"1.0"},{"plugin":"org.ekstep.richtext","version":"1.0"},{"plugin":"org.ekstep.iterator",' +
+                '"version":"1.0"},{"plugin":"org.ekstep.navigation","version":"1.0"},{"plugin":"org.ekstep.reviewercomments",' +
+                '"version":"1.0"},{"plugin":"org.ekstep.mathtext","version":"1.0"},{"plugin":"org.ekstep.libs.ckeditor",' +
+                '"version":"1.1"},{"plugin":"org.ekstep.questionunit","version":"1.1"},{"plugin":"org.ekstep.questionunit.mtf","version":"1.2"},' +
+                '{"plugin":"org.ekstep.questionunit.mcq","version":"1.2"},{"plugin":"org.ekstep.keyboard","version":"1.1"},' +
+                '{"plugin":"org.ekstep.questionunit.reorder","version":"1.1"},' +
+                '{"plugin":"org.ekstep.questionunit.sequence","version":"1.1"}]},' +
+                '"stage":{"noOfStages":1,"currentStage":"1b201eab-5709-4765-a945-6753e3e4cc94",' +
+                '"selectedPluginObject":"45432c4a-6115-4289-8d69-c0d1b5372198"},"sidebar":{"selectedMenu":"settings"}}',
+            objectType: 'Content',
+            gradeLevel: [
+                'Class 1',
+                'Class 2'
+            ],
+            appIcon: 'https://ntpstagingall.blob.core.windows.net/ntp-content-staging/content/do_21280756435836108811838/artifact/1300_1560755642839.thumb.jpg',
+            collections: [
+                {
+                    identifier: 'do_21280774144907673612185',
+                    name: 'Course_Batch_Check',
+                    description: 'Enter description for Course',
+                    objectType: 'Content',
+                    relation: 'hasSequenceMember',
+                    status: 'Live'
+                },
+                {
+                    identifier: 'do_21280770501337907212120',
+                    name: 'book with max count',
+                    description: 'Testing',
+                    objectType: 'Content',
+                    relation: 'hasSequenceMember',
+                    status: 'Live'
+                },
+                {
+                    identifier: 'do_21281201129349120011354',
+                    name: 'Book Name',
+                    description: 'Enter description for TextBook',
+                    objectType: 'Content',
+                    relation: 'hasSequenceMember',
+                    status: 'Live'
+                },
+                {
+                    identifier: 'do_212832384395264000156',
+                    name: 'explore 1umesh',
+                    description: 'Enter description for TextBook',
+                    objectType: 'Content',
+                    relation: 'hasSequenceMember',
+                    status: 'Live'
+                },
+                {
+                    identifier: 'do_2128084233342238721390',
+                    name: 'R 2.2.0 Draft book',
+                    description: 'Enter description for TextBook',
+                    objectType: 'Content',
+                    relation: 'hasSequenceMember',
+                    status: 'Live'
+                },
+                {
+                    identifier: 'do_21281199177786982411021',
+                    name: '1200',
+                    description: 'Enter description for TextBook',
+                    objectType: 'Content',
+                    relation: 'hasSequenceMember',
+                    status: 'Retired'
+                },
+                {
+                    identifier: 'do_21271215675870412813168',
+                    name: 'Untitled Course',
+                    description: 'Enter description for Course',
+                    objectType: 'Content',
+                    relation: 'hasSequenceMember',
+                    status: 'Live'
+                },
+                {
+                    identifier: 'do_21280759918483046411875',
+                    name: 'SB-9759_ETB',
+                    description: 'Enter description for TextBook',
+                    objectType: 'Content',
+                    relation: 'hasSequenceMember',
+                    status: 'Live'
+                },
+                {
+                    identifier: 'do_212808294478184448161',
+                    name: 'Publish check',
+                    description: 'Test',
+                    objectType: 'Content',
+                    relation: 'hasSequenceMember',
+                    status: 'Live'
+                },
+                {
+                    identifier: 'do_21281199177786982411021',
+                    name: '1200',
+                    description: 'Enter description for TextBook',
+                    objectType: 'Content',
+                    relation: 'hasSequenceMember',
+                    status: 'Retired'
+                },
+                {
+                    identifier: 'do_2128084096298352641378',
+                    name: 'R 2.2.0 Published lesson plan 2',
+                    description: 'Enter description for Lessonplan',
+                    objectType: 'Content',
+                    relation: 'hasSequenceMember',
+                    status: 'Live'
+                },
+                {
+                    identifier: 'do_21285729783753932811482',
+                    name: 'Book Update',
+                    description: 'Enter description for TextBook',
+                    objectType: 'Content',
+                    relation: 'hasSequenceMember',
+                    status: 'Live'
+                },
+                {
+                    identifier: 'do_2128083230251253761149',
+                    name: '19 july book 1',
+                    description: 'Testing',
+                    objectType: 'Content',
+                    relation: 'hasSequenceMember',
+                    status: 'Live'
+                },
+                {
+                    identifier: 'do_2128084002645606401334',
+                    name: '2.2.0 Draft lesson plan',
+                    description: 'Enter description for Lessonplan',
+                    objectType: 'Content',
+                    relation: 'hasSequenceMember',
+                    status: 'Live'
+                },
+                {
+                    identifier: 'do_21280772977047961612180',
+                    name: 'C_55',
+                    description: 'vnrionrervinrie',
+                    objectType: 'Content',
+                    relation: 'hasSequenceMember',
+                    status: 'Live'
+                }
+            ],
+            appId: 'staging.diksha.app',
+            contentEncoding: 'gzip',
+            artifactUrl: 'https://ntpstagingall.blob.core.windows.net/ntp-content-staging/content/do_21280756435836108811838/artifact/1563444044487_do_21280756435836108811838.zip',
+            lockKey: '53ef7e47-9374-45c3-ad26-af42e979ff54',
+            sYS_INTERNAL_LAST_UPDATED_ON: '2019-07-25T00:35:35.201+0000',
+            contentType: 'Resource',
+            identifier: 'do_21280756435836108811838',
+            lastUpdatedBy: 'ab467e6e-1f32-453c-b1d8-c6b5fa6c7b9e',
+            audience: [
+                'Learner'
+            ],
+            visibility: 'Default',
+            consumerId: 'a9cb3a83-a164-4bf0-aa49-b834cebf1c07',
+            mediaType: 'content',
+            osId: 'org.ekstep.quiz.app',
+            languageCode: [
+                'en'
+            ],
+            lastPublishedBy: 'dca7518d-5886-4251-94aa-360c762b1182',
+            version: 2,
+            rejectReasons: [
+                'Has Hate speech, Abuse, Violence, Profanity',
+                'Has Sexual content, Nudity or Vulgarity',
+                'Has Discriminatory or Defamatory content',
+                'Is not suitable for children',
+                'Inappropriate Title or Description',
+                'Incorrect Board, Grade, Subject or Medium',
+                'Inappropriate tags such as Resource Type or Concepts',
+                'Irrelevant Keywords',
+                'Content is NOT playing correctly',
+                'CANNOT see the content clearly on Desktop and App',
+                'Audio is NOT clear or NOT easy to understand',
+                'Spelling mistakes found in text used',
+                'Language is NOT simple to understand',
+                'Others'
+            ],
+            license: 'CC BY-NC-SA 4.0',
+            prevState: 'Review',
+            size: 6194293,
+            lastPublishedOn: '2019-07-18T10:00:45.020+0000',
+            name: '18 july 2019',
+            rejectComment: 'I have used that',
+            topic: [
+                'Addition -subtraction Of Fraction'
+            ],
+            status: 'Live',
+            totalQuestions: 1,
+            code: 'org.sunbird.Qdh1qn',
+            description: 'Enter description for Resource',
+            streamingUrl: 'https://ntpstagingall.blob.core.windows.net/ntp-content-staging/content/ecml/do_21280756435836108811838-latest',
+            medium: [
+                'Hindi'
+            ],
+            posterImage: 'https://ntpstagingall.blob.core.windows.net/ntp-content-staging/content/do_2127857102249164801564/artifact/1300_1560755642839.jpg',
+            idealScreenSize: 'normal',
+            createdOn: '2019-07-18T04:16:23.588+0000',
+            copyrightYear: 2019,
+            contentDisposition: 'inline',
+            lastUpdatedOn: '2019-07-18T10:00:42.536+0000',
+            dialcodeRequired: 'No',
+            lastStatusChangedOn: '2019-07-18T10:00:42.521+0000',
+            createdFor: [
+                '0124784842112040965'
+            ],
+            creator: 'Qualitrix Content Creator Cr',
+            os: [
+                'All'
+            ],
+            totalScore: 1,
+            pkgVersion: 8,
+            versionKey: '1563444043023',
+            idealScreenDensity: 'hdpi',
+            framework: 'up_k-12_3',
+            s3Key: 'ecar_files/do_21280756435836108811838/18-july-2019_1563444045023_do_21280756435836108811838_8.0.ecar',
+            me_averageRating: 4,
+            lastSubmittedOn: '2019-07-18T09:59:59.807+0000',
+            createdBy: 'ab467e6e-1f32-453c-b1d8-c6b5fa6c7b9e',
+            compatibilityLevel: 2,
+            board: 'State (Uttar Pradesh)',
+            resourceType: 'Teach',
+            licenseDetails: {
+                name: 'CC BY-NC-SA 4.0',
+                url: 'https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode',
+                description: 'For details see below:'
+            }
+        },
+        isUpdateAvailable: false,
+        mimeType: 'application/vnd.ekstep.ecml-archive',
+        basePath: '/storage/emulated/0/Android/data/org.sunbird.app.staging/files/content/do_21280756435836108811838/',
+        contentType: 'resource',
+        isAvailableLocally: false,
+        referenceCount: 1,
+        sizeOnDevice: 9910,
+        lastUsedTime: 0,
+        lastUpdatedTime: 1580366707000,
+        hierarchyInfo: [
+            {
+                identifier: 'do_212810592322265088178',
+                contentType: 'textbook'
+            },
+            {
+                identifier: 'do_212810592541261824179',
+                contentType: 'textbookunit'
+            },
+            {
+                identifier: 'do_2128084096298352641378',
+                contentType: 'lessonplan'
+            },
+            {
+                identifier: 'do_2128084109778042881381',
+                contentType: 'lessonplanunit'
+            }
+        ]
+    }
+};
+
+export const mockContentInfo = {
+    telemetryObject: {
+        id: 'do_21280756435836108811838',
+        type: 'Resource',
+        version: 8
+    },
+    rollUp: {
+        l1: 'do_212810592322265088178',
+        l2: 'do_212810592541261824179',
+        l3: 'do_2128084096298352641378',
+        l4: 'do_2128084109778042881381'
+    },
+    hierachyInfo: [
+        {
+            identifier: 'do_212810592322265088178',
+            contentType: 'textbook'
+        },
+        {
+            identifier: 'do_212810592541261824179',
+            contentType: 'textbookunit'
+        },
+        {
+            identifier: 'do_2128084096298352641378',
+            contentType: 'lessonplan'
+        },
+        {
+            identifier: 'do_2128084109778042881381',
+            contentType: 'lessonplanunit'
+        }
+    ]
+};
 

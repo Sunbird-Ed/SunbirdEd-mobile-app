@@ -939,6 +939,16 @@ ion-split-pane {
     @include ltr() {
       margin-left: 14px;
     }
+    &.etb-card-item {
+      width: auto !important;
+      margin-left: 0;
+      margin-right: 0;
+    }
+    &.etb-topic-item {
+      width: auto;
+      margin-left: 0;
+      margin-right: 0;
+    }
   }
   .sb-ftue-design {
     width: 100%;
@@ -960,6 +970,17 @@ ion-split-pane {
       line-height: 20px;
       @include margin(6px);
       @include clearfix;
+    }
+
+    &.etb-card-item {
+      border: 0.5px solid rgba(204, 204, 204, 1);
+      margin: 0 !important;
+    }
+
+    > div.etb-card-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px;
     }
 
     .pull-left {
