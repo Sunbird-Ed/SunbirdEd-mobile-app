@@ -350,9 +350,12 @@ export class AppGlobalService implements OnDestroy {
             });
     }
 
-    setOnBoardingCompleted() {
-        this.isOnBoardingCompleted = true;
-        this.preferences.putString(PreferenceKey.IS_ONBOARDING_COMPLETED, 'true').toPromise().then();
+    async setOnBoardingCompleted() {
+        const session = await this.authService.getSession().toPromise();
+        if (!session) {
+            this.isOnBoardingCompleted = true;
+            this.preferences.putString(PreferenceKey.IS_ONBOARDING_COMPLETED, 'true').toPromise().then();
+        }
     }
 
     private initValues() {
