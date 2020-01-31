@@ -1,6 +1,6 @@
 import { Component, Inject, NgZone, OnInit } from '@angular/core';
 import { Events, Platform } from '@ionic/angular';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router, ActivatedRoute, NavigationExtras } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { SharedPreferences } from 'sunbird-sdk';
 
@@ -67,6 +67,7 @@ export class LanguageSettingsPage implements OnInit {
   }
 
   ionViewDidEnter() {
+    this.checkOnboardingAfterLogout();
     this.activatedRoute.params.subscribe(params => {
       this.isFromSettings = Boolean(params['isFromSettings']);
       console.log('FormSettings', this.isFromSettings);
@@ -85,6 +86,19 @@ export class LanguageSettingsPage implements OnInit {
     });
   }
 
+  async checkOnboardingAfterLogout() {
+    if (this.appGlobalService.logoutToOnboard) {
+      const loader = await this.commonUtilService.getLoader()
+      await loader.present();
+      const langCode = await this.preferences.getString(PreferenceKey.SELECTED_LANGUAGE_CODE).toPromise();
+      if (langCode) {
+        this.router.navigate([RouterLinks.USER_TYPE_SELECTION]);
+      } else {
+        this.appGlobalService.logoutToOnboard = false;
+      }
+      await loader.dismiss();
+    }
+  }
 
   handleBackButton() {
     this.unregisterBackButton = this.platform.backButton.subscribeWithPriority(10, () => {

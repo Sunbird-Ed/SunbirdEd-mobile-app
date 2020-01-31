@@ -2,7 +2,7 @@ import { Subscription } from 'rxjs';
 import { Component, Inject, NgZone, ViewChild, OnInit } from '@angular/core';
 import { IonRouterOutlet, Events, Platform } from '@ionic/angular';
 import { } from '@ionic/angular';
-import { Router, NavigationExtras } from '@angular/router';
+import { Router, NavigationExtras, ActivatedRoute } from '@angular/router';
 import { ProfileConstants, PreferenceKey, RouterLinks } from '@app/app/app.constant';
 import { AppGlobalService } from '@app/services/app-global-service.service';
 import { CommonUtilService } from '@app/services/common-util.service';
@@ -57,7 +57,8 @@ export class UserTypeSelectionPage implements OnInit {
     private headerService: AppHeaderService,
     private router: Router,
     public frameworkGuard: HasNotSelectedFrameworkGuard,
-    private splashScreenService: SplashScreenService
+    private splashScreenService: SplashScreenService,
+    private activatedRoute: ActivatedRoute
   ) {
     this.getNavParams();
   }
@@ -89,6 +90,7 @@ export class UserTypeSelectionPage implements OnInit {
   }
 
   ionViewWillEnter() {
+    this.checkOnboardingAfterLogout();
     this.headerObservable = this.headerService.headerEventEmitted$.subscribe(eventName => {
       this.handleHeaderEvents(eventName);
     });
@@ -99,6 +101,21 @@ export class UserTypeSelectionPage implements OnInit {
       this.handleBackButton();
       this.backButtonFunc.unsubscribe();
     });
+  }
+
+  async checkOnboardingAfterLogout() {
+    if (this.appGlobalService.logoutToOnboard) {
+      const loader = await this.commonUtilService.getLoader()
+      await loader.present();
+      const userType = await this.preferences.getString(PreferenceKey.SELECTED_USER_TYPE).toPromise();
+      if (userType === ProfileType.TEACHER) {
+        this.selectTeacherCard();
+        this.selectedUserType = userType;
+        this.continue();
+      }
+      await loader.dismiss();
+      this.appGlobalService.logoutToOnboard = false;
+    }
   }
 
   ionViewWillLeave() {

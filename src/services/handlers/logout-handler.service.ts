@@ -40,7 +40,6 @@ export class LogoutHandlerService {
     this.generateLogoutInteractTelemetry(InteractType.TOUCH,
       InteractSubtype.LOGOUT_INITIATE, '');
 
-
     this.preferences.getString(PreferenceKey.GUEST_USER_ID_BEFORE_LOGIN).pipe(
       tap(async (guest_user_id: string) => {
         if (!guest_user_id) {
@@ -71,8 +70,17 @@ export class LogoutHandlerService {
     }
 
     this.events.publish('UPDATE_TABS');
-    const navigationExtras: NavigationExtras = { state: { loginMode: 'guest' } };
-    this.router.navigate([`/${RouterLinks.TABS}`], navigationExtras);
+
+    const isOnboardingCompleted = (await this.preferences.getString(PreferenceKey.IS_ONBOARDING_COMPLETED).toPromise() === 'true') ?
+    true : false;
+    if (isOnboardingCompleted) {
+      const navigationExtras: NavigationExtras = { state: { loginMode: 'guest' } };
+      this.router.navigate([`/${RouterLinks.TABS}`], navigationExtras);
+    } else {
+      this.appGlobalService.logoutToOnboard = true;
+      const navigationExtras: NavigationExtras = { queryParams: { context: 'deeplink-logout' } };
+      this.router.navigate(['/'], navigationExtras);
+    }
 
     this.generateLogoutInteractTelemetry(InteractType.OTHER, InteractSubtype.LOGOUT_SUCCESS, '');
   }
