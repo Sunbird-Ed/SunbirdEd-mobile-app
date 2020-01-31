@@ -219,6 +219,8 @@ export class PreferenceKey {
     public static readonly SUBSCRIBE_TOPICS = 'subscribe_topics';
     public static readonly SHOW_EXTERNAL_VERIFICATION = 'show_external_verification';
     public static readonly CURRENT_USER_PROFILE = 'current_user_profile';
+    public static readonly FCM_TOKEN = 'fcm_token';
+    public static readonly SYNC_CONFIG = 'sync_config';
 }
 
 export class GenericAppConfig {

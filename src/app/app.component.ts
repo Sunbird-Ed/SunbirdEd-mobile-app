@@ -34,7 +34,7 @@ import {
   LocalCourseService
 } from '../services';
 import { LogoutHandlerService } from '@app/services/handlers/logout-handler.service';
-import { NotificationService as localNotification } from '@app/services/notification.service';
+import { NotificationService as LocalNotification } from '@app/services/notification.service';
 import { RouterLinks } from './app.constant';
 import { TncUpdateHandlerService } from '@app/services/handlers/tnc-update-handler.service';
 import { NetworkAvailabilityToastService } from '@app/services/network-availability-toast/network-availability-toast.service';
@@ -86,7 +86,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     private network: Network,
     private appRatingService: AppRatingService,
     private activePageService: ActivePageService,
-    private notificationSrc: localNotification,
+    private notificationSrc: LocalNotification,
     private router: Router,
     private location: Location,
     private menuCtrl: MenuController,
@@ -95,7 +95,10 @@ export class AppComponent implements OnInit, AfterViewInit {
     private localCourseService: LocalCourseService
   ) {
     this.telemetryAutoSync = this.telemetryService.autoSync;
-    platform.ready().then(async () => {
+  }
+
+  ngOnInit() {
+    this.platform.ready().then(async () => {
       this.formAndFrameworkUtilService.init();
       this.networkAvailability.init();
       this.fcmTokenWatcher(); // Notification related
@@ -106,7 +109,10 @@ export class AppComponent implements OnInit, AfterViewInit {
         });
       this.checkForExperiment();
       this.receiveNotification();
-      this.telemetryGeneratorService.genererateAppStartTelemetry(await utilityService.getDeviceSpec());
+      this.utilityService.getDeviceSpec()
+        .then((deviceSpec) => {
+          this.telemetryGeneratorService.genererateAppStartTelemetry(deviceSpec);
+        });
       this.generateNetworkTelemetry();
       this.autoSyncTelemetry();
       this.subscribeEvents();
@@ -132,8 +138,25 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.checkForCodeUpdates();
       this.checkAndroidWebViewVersion();
     });
+
+    this.headerService.headerConfigEmitted$.subscribe(config => {
+      this.headerConfig = config;
+    });
+
+    this.commonUtilService.networkAvailability$.subscribe((available: boolean) => {
+      const pageId: string = this.activePageService.computePageId(this.router.url);
+      if (available) {
+        this.addNetworkTelemetry(InteractSubtype.INTERNET_CONNECTED, pageId);
+      } else {
+        this.addNetworkTelemetry(InteractSubtype.INTERNET_DISCONNECTED, pageId);
+      }
+    });
+    this.notificationSrc.setupLocalNotification();
+
+    this.triggerSignInEvent();
   }
 
+  // TODO: make this as private
   checkAndroidWebViewVersion() {
     var that = this;
     plugins['webViewChecker'].getCurrentWebViewPackageInfo()
@@ -167,14 +190,14 @@ export class AppComponent implements OnInit, AfterViewInit {
       PageId.UPDATE_WEBVIEW_POPUP);
   }
 
-  getSystemConfig() {
+  private getSystemConfig() {
     const getSystemSettingsRequest: GetSystemSettingsRequest = {
       id: SystemSettingsIds.COURSE_FRAMEWORK_ID
     };
     this.systemSettingsService.getSystemSettings(getSystemSettingsRequest).toPromise()
       .then((res: SystemSettings) => {
         //   res['deploymentKey'] = '6Xhfs4-WVV8dhYN9U5OkZw6PukglrykIsJ8-B';
-        if (res['deploymentKey']) {
+        if (res && res['deploymentKey']) {
           this.codePushExperimentService.setDefaultDeploymentKey(res['deploymentKey']).subscribe();
         }
       }).catch(err => {
@@ -182,7 +205,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       });
   }
 
-  checkForCodeUpdates() {
+  private checkForCodeUpdates() {
     this.preferences.getString(PreferenceKey.DEPLOYMENT_KEY).toPromise().then(deploymentKey => {
       if (codePush != null && deploymentKey) {
         const value = new Map();
@@ -217,7 +240,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     }
   }
 
-  checkForExperiment() {
+  private checkForExperiment() {
     /**
      * TODO
      * call the update
@@ -257,8 +280,8 @@ export class AppComponent implements OnInit, AfterViewInit {
   /* Generates new FCM Token if not available
    * if available then on token refresh updates FCM token
    */
-  async fcmTokenWatcher() {
-    const fcmToken = await this.preferences.getString('fcm_token').toPromise();
+  private async fcmTokenWatcher() {
+    const fcmToken = await this.preferences.getString(PreferenceKey.FCM_TOKEN).toPromise();
     if (!fcmToken) {
       FCMPlugin.getToken((token) => {
         this.storeFCMToken(token);
@@ -272,13 +295,13 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   storeFCMToken(token: string) {
-    this.preferences.putString('fcm_token', token).toPromise();
+    this.preferences.putString(PreferenceKey.FCM_TOKEN, token).toPromise();
   }
 
   /* Notification data will be received in data variable
    * can take action on data variable
    */
-  receiveNotification() {
+  private receiveNotification() {
     FCMPlugin.onNotification((data) => {
       if (data.wasTapped) {
         // Notification was received on device tray and tapped by the user.
@@ -314,28 +337,10 @@ export class AppComponent implements OnInit, AfterViewInit {
       });
   }
 
-  ngOnInit() {
-    this.headerService.headerConfigEmitted$.subscribe(config => {
-      this.headerConfig = config;
-    });
-
-    this.commonUtilService.networkAvailability$.subscribe((available: boolean) => {
-      const pageId: string = this.activePageService.computePageId(this.router.url);
-      if (available) {
-        this.addNetworkTelemetry(InteractSubtype.INTERNET_CONNECTED, pageId);
-      } else {
-        this.addNetworkTelemetry(InteractSubtype.INTERNET_DISCONNECTED, pageId);
-      }
-    });
-    this.notificationSrc.setupLocalNotification();
-
-    this.triggerSignInEvent();
-  }
-
   /**
    * Initializing the event for reloading the Tabs on Signing-In.
    */
-  triggerSignInEvent() {
+  private triggerSignInEvent() {
     this.events.subscribe(EventTopics.SIGN_IN_RELOAD, async () => {
       const batchDetails = await this.preferences.getString(PreferenceKey.BATCH_DETAIL_KEY).toPromise();
       const limitedSharingContentDetails = this.appGlobalService.limitedShareQuizContent;
@@ -391,7 +396,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     });
   }
 
-  handleBackButton() {
+  private handleBackButton() {
     this.router.events.subscribe((event: Event) => {
       if (event instanceof NavigationStart) {
         // Show loading indicator
@@ -418,14 +423,14 @@ export class AppComponent implements OnInit, AfterViewInit {
     });
   }
 
-  generateNetworkTelemetry() {
+  private generateNetworkTelemetry() {
     const value = new Map();
     value['network-type'] = this.network.type;
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.OTHER,
       InteractSubtype.NETWORK_STATUS, Environment.HOME, PageId.SPLASH_SCREEN, undefined, value);
   }
 
-  subscribeEvents() {
+  private subscribeEvents() {
     this.events.subscribe('coach_mark_seen', (data) => {
       this.showWalkthroughBackDrop = data.showWalkthroughBackDrop;
       setTimeout(() => {
@@ -494,10 +499,10 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   private async saveDefaultSyncSetting() {
-    return this.preferences.getString('sync_config').toPromise()
+    return this.preferences.getString(PreferenceKey.SYNC_CONFIG).toPromise()
       .then(val => {
         if (val === undefined || val === '' || val === null) {
-          this.preferences.putString('sync_config', 'ALWAYS_ON').toPromise().then();
+          this.preferences.putString(PreferenceKey.SYNC_CONFIG, 'ALWAYS_ON').toPromise().then();
         }
       });
   }
@@ -568,7 +573,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   private async checkAppUpdateAvailable() {
     return this.formAndFrameworkUtilService.checkNewAppVersion()
       .then(result => {
-        if (result !== undefined) {
+        if (result) {
           setTimeout(() => {
             this.events.publish('force_optional_upgrade', result);
           }, 5000);
@@ -724,21 +729,23 @@ export class AppComponent implements OnInit, AfterViewInit {
     });
   }
 
-  getUtmParameter() {
-    this.utilityService.getUtmInfo().then(response => {
-      if (response) {
-        const utmTelemetry = new Map();
-        utmTelemetry['utm_data'] = response;
-        this.telemetryGeneratorService.generateInteractTelemetry(
-          InteractType.OTHER,
-          InteractSubtype.UTM_INFO,
-          Environment.HOME,
-          PageId.HOME,
-          undefined,
-          utmTelemetry);
-        this.utilityService.clearUtmInfo();
-      }
-    })
+  private getUtmParameter() {
+    this.utilityService.getUtmInfo()
+      .then(response => {
+        if (response) {
+          const utmTelemetry = {
+            utm_data: response
+          };
+          this.telemetryGeneratorService.generateInteractTelemetry(
+            InteractType.OTHER,
+            InteractSubtype.UTM_INFO,
+            Environment.HOME,
+            PageId.HOME,
+            undefined,
+            utmTelemetry);
+          this.utilityService.clearUtmInfo();
+        }
+      })
       .catch(error => {
         console.log('Error is', error);
       });

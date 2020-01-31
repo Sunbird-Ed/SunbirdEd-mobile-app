@@ -13,14 +13,16 @@ import {
 } from 'sunbird-sdk';
 import { Platform, Events, MenuController } from '@ionic/angular';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
-import { TranslateService } from '@ngx-translate/core';
-import { NgZone } from '@angular/core';
+import { TranslateService, LangChangeEvent } from '@ngx-translate/core';
+import { NgZone, EventEmitter } from '@angular/core';
 import { Network } from '@ionic-native/network/ngx';
 import { Router } from '@angular/router';
 import { NetworkAvailabilityToastService } from '@app/services/network-availability-toast/network-availability-toast.service';
-import { NotificationService as localNotification } from '@app/services/notification.service';
+import { NotificationService as LocalNotification } from '@app/services/notification.service';
 import { TncUpdateHandlerService } from '@app/services/handlers/tnc-update-handler.service';
-import { of, Subject } from 'rxjs';
+import { of, Subject, EMPTY } from 'rxjs';
+import { PreferenceKey } from './app.constant';
+import { BackButtonEmitter } from '@ionic/angular/dist/providers/platform';
 
 declare const supportfile;
 
@@ -38,7 +40,7 @@ describe('AppComponent', () => {
         isDeviceLocationAvailable: jest.fn(() => Promise.resolve(true))
     };
     const mockDeviceRegisterService: Partial<DeviceRegisterService> = {};
-    const mockEvents: Partial<Events> = {};
+    const mockEvents: Partial<Events> = { publish: jest.fn() };
     const mockEventsBusService: Partial<EventsBusService> = {
         events: jest.fn(() => of({}))
     };
@@ -55,18 +57,23 @@ describe('AppComponent', () => {
         init: jest.fn(() => '')
     };
     const mockNotificationServices: Partial<NotificationService> = {};
-    const mockNotificationSrc: Partial<localNotification> = {};
+    const mockNotificationSrc: Partial<LocalNotification> = {};
     const pauseData = new Subject<void>();
     const mockPlatform: Partial<Platform> = {
         ready: jest.fn(() => new Promise(() => { })),
         pause: pauseData,
-        resume: pauseData
+        resume: pauseData,
+        backButton: {
+            subscribeWithPriority: jest.fn()
+        } as Partial<BackButtonEmitter> as BackButtonEmitter
     };
     const mockPreferences: Partial<SharedPreferences> = {
         getString: jest.fn(() => of(undefined)),
         putString: jest.fn(() => of(undefined))
     };
-    const mockRouter: Partial<Router> = {};
+    const mockRouter: Partial<Router> = {
+        events: EMPTY
+    };
     const mockSplashScreenService: Partial<SplashScreenService> = {};
     const mockStatusBar: Partial<StatusBar> = {
         styleBlackTranslucent: jest.fn()
@@ -77,16 +84,18 @@ describe('AppComponent', () => {
     const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {
         genererateAppStartTelemetry: jest.fn()
     };
-    const data: Partial<TelemetryAutoSyncService> = {
+    const mockTelemetryAutoSyncService: Partial<TelemetryAutoSyncService> = {
         start: jest.fn(() => of({}))
     };
     const mockTelemetryService: Partial<TelemetryService> = {
-        autoSync: data
+        autoSync: mockTelemetryAutoSyncService
     };
     const mockTncUpdateHandlerService: Partial<TncUpdateHandlerService> = {
         checkForTncUpdate: jest.fn()
     };
-    const mockTranslate: Partial<TranslateService> = {};
+    const mockTranslate: Partial<TranslateService> = {
+        onLangChange: new EventEmitter<LangChangeEvent>()
+    };
     const mockUtilityService: Partial<UtilityService> = {
         getBuildConfigValue: jest.fn(() => Promise.resolve('sunbird')),
         getDeviceSpec: jest.fn(() => Promise.resolve({}))
@@ -94,7 +103,7 @@ describe('AppComponent', () => {
     const mockZone: Partial<NgZone> = {};
     const mockLocalCourseService: Partial<LocalCourseService> = {};
 
-    const constructComponent = () => {
+    beforeAll(() => {
         appComponent = new AppComponent(
             mockTelemetryService as TelemetryService,
             mockPreferences as SharedPreferences,
@@ -119,7 +128,7 @@ describe('AppComponent', () => {
             mockNetwork as Network,
             mockAppRatingService as AppRatingService,
             mockActivePageService as ActivePageService,
-            mockNotificationSrc as localNotification,
+            mockNotificationSrc as LocalNotification,
             mockRouter as Router,
             mockLocation as Location,
             mockMenuCtrl as MenuController,
@@ -127,10 +136,6 @@ describe('AppComponent', () => {
             mockSplashScreenService as SplashScreenService,
             mockLocalCourseService as LocalCourseService
         );
-    };
-
-    beforeAll(() => {
-        constructComponent();
     });
 
     beforeEach(() => {
@@ -141,68 +146,213 @@ describe('AppComponent', () => {
         expect(appComponent).toBeTruthy();
     });
 
-    describe('constructor', () => {
-        it('should call on platform ready', (done) => {
-            mockPlatform.ready = jest.fn(() => {
-                return new Promise((resolve) => {
-                    setTimeout(() => resolve(), 100);
-                });
-            });
-
-            constructComponent();
-
-            jest.spyOn(appComponent, 'fcmTokenWatcher').mockImplementation();
-            jest.spyOn(appComponent, 'checkForExperiment').mockImplementation();
-            jest.spyOn(appComponent, 'receiveNotification').mockImplementation();
-            jest.spyOn(appComponent, 'generateNetworkTelemetry').mockImplementation();
-            jest.spyOn(appComponent, 'subscribeEvents').mockImplementation();
-            jest.spyOn(appComponent, 'handleBackButton').mockImplementation();
-            jest.spyOn(appComponent, 'checkAndroidWebViewVersion').mockImplementation();
-            jest.spyOn(appComponent, 'getUtmParameter').mockImplementation();
-            spyOn(supportfile, 'makeEntryInSunbirdSupportFile').and.callFake((a, b) => {
-                setTimeout(() => {
-                    setTimeout(() => {
-                        a();
-                        done();
-                    }, 0);
-                });
-            });
-            jest.spyOn(appComponent, 'checkForCodeUpdates').mockImplementation();
-        });
-    });
+    // describe('constructor', () => {
+    //     it('should call on platform ready', (done) => {
+    //         spyOn(supportfile, 'makeEntryInSunbirdSupportFile').and.callFake((a, b) => {
+    //             setTimeout(() => {
+    //                 setTimeout(() => {
+    //                     a();
+    //                     done();
+    //                 }, 0);
+    //             });
+    //         });
+    //     });
+    // });
 
     describe('getUtmParameter', () => {
-        it('should generate utm-info telemetry if utm source is available for first time', () => {
+        beforeEach(() => {
             // arrange
-            mockUtilityService.getUtmInfo = jest.fn(() => Promise.resolve(`{'utm_source': 'sunbird'}`));
+            mockPlatform.ready = jest.fn(() => {
+                return new Promise((resolve) => {
+                    resolve('ready');
+                });
+            });
+            mockHeaderService.headerConfigEmitted$ = EMPTY;
+            mockCommonUtilService.networkAvailability$ = EMPTY;
+            mockCommonUtilService.isDeviceLocationAvailable = jest.fn(() => Promise.resolve(true));
+            mockEventsBusService.events = jest.fn(() => EMPTY);
+            mockNotificationSrc.setupLocalNotification = jest.fn();
+            mockSystemSettingsService.getSystemSettings = jest.fn(() => EMPTY);
+            mockUtilityService.getBuildConfigValue = jest.fn(() => Promise.resolve('some_app_name'));
+            mockTelemetryAutoSyncService.start = jest.fn(() => EMPTY);
+            mockEvents.subscribe = jest.fn();
+            mockPreferences.getString = jest.fn((key) => {
+                switch (key) {
+                    case PreferenceKey.SELECTED_LANGUAGE_CODE:
+                        return of('');
+                    case PreferenceKey.FCM_TOKEN:
+                        return of('some_token');
+                    case PreferenceKey.DEPLOYMENT_KEY:
+                        return of('');
+                    case PreferenceKey.SYNC_CONFIG:
+                        return of('some_config');
+                }
+            });
+            mockPreferences.putString = jest.fn(() => EMPTY);
+            mockFormAndFrameworkUtilService.checkNewAppVersion = jest.fn(() => Promise.resolve(''));
+            jest.spyOn(appComponent, 'checkAndroidWebViewVersion').mockImplementation();
+            mockUtilityService.getDeviceSpec = jest.fn(() => Promise.resolve());
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+        });
+        afterEach(() => {
+            jest.resetAllMocks();
+        });
+
+        it('should generate utm-info telemetry if utm source is available for first time', (done) => {
+            // arrange
+            mockUtilityService.getUtmInfo = jest.fn(() => Promise.resolve({ utm_source: 'sunbird' }));
             mockUtilityService.clearUtmInfo = jest.fn(() => Promise.resolve());
+
             // act
-            appComponent.getUtmParameter();
+            appComponent.ngOnInit();
             // assert
             setTimeout(() => {
                 expect(mockUtilityService.getUtmInfo).toHaveBeenCalled();
-                expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+                expect(mockTelemetryGeneratorService.generateInteractTelemetry).nthCalledWith(2,
                     InteractType.OTHER,
                     InteractSubtype.UTM_INFO,
                     Environment.HOME,
                     PageId.HOME,
                     undefined,
-                    `{'utm_source': 'sunbird'}`
+                    { utm_data: { utm_source: 'sunbird' } }
                 );
                 expect(mockUtilityService.clearUtmInfo).toHaveBeenCalled();
+                done();
             }, 0);
         });
 
-        it('should not generate utm-info telemetry for Error response', () => {
+        it('should not generate utm-info telemetry if utm source is not available', (done) => {
             // arrange
-            mockUtilityService.getUtmInfo = jest.fn(() => Promise.reject(`{'utm_source': 'sunbird'}`));
+            mockUtilityService.getUtmInfo = jest.fn(() => Promise.resolve(''));
+            mockUtilityService.clearUtmInfo = jest.fn(() => Promise.resolve());
             // act
-            appComponent.getUtmParameter();
+            appComponent.ngOnInit();
             // assert
             setTimeout(() => {
                 expect(mockUtilityService.getUtmInfo).toHaveBeenCalled();
+                expect(mockTelemetryGeneratorService.generateInteractTelemetry).not.nthCalledWith(2,
+                    InteractType.OTHER,
+                    InteractSubtype.UTM_INFO,
+                    Environment.HOME,
+                    PageId.HOME,
+                    undefined,
+                    { utm_data: { utm_source: 'sunbird' } }
+                );
+                expect(mockUtilityService.clearUtmInfo).not.toHaveBeenCalled();
+                done();
             }, 0);
+        });
+
+        it('should not generate utm-info telemetry for Error response', (done) => {
+            // arrange
+            mockUtilityService.getUtmInfo = jest.fn(() => Promise.reject('some_error'));
+            // act
+            appComponent.ngOnInit();
+            // assert
+            setTimeout(() => {
+                expect(mockUtilityService.getUtmInfo).toHaveBeenCalled();
+                done();
+            }, 0);
+        });
+    });
+
+    describe('checkAppUpdateAvailable', () => {
+        beforeEach(() => {
+            // arrange
+            mockPlatform.ready = jest.fn(() => {
+                return new Promise((resolve) => {
+                    resolve('ready');
+                });
+            });
+            mockHeaderService.headerConfigEmitted$ = EMPTY;
+            mockCommonUtilService.networkAvailability$ = EMPTY;
+            mockCommonUtilService.isDeviceLocationAvailable = jest.fn(() => Promise.resolve(true));
+            mockEventsBusService.events = jest.fn(() => EMPTY);
+            mockNotificationSrc.setupLocalNotification = jest.fn();
+            mockSystemSettingsService.getSystemSettings = jest.fn(() => EMPTY);
+            mockUtilityService.getBuildConfigValue = jest.fn(() => Promise.resolve('some_app_name'));
+            mockTelemetryAutoSyncService.start = jest.fn(() => EMPTY);
+            mockEvents.subscribe = jest.fn();
+            mockPreferences.getString = jest.fn((key) => {
+                switch (key) {
+                    case PreferenceKey.SELECTED_LANGUAGE_CODE:
+                        return of('');
+                    case PreferenceKey.FCM_TOKEN:
+                        return of('some_token');
+                    case PreferenceKey.DEPLOYMENT_KEY:
+                        return of('');
+                    case PreferenceKey.SYNC_CONFIG:
+                        return of('some_config');
+                }
+            });
+            mockPreferences.putString = jest.fn(() => EMPTY);
+            jest.spyOn(appComponent, 'checkAndroidWebViewVersion').mockImplementation();
+            mockUtilityService.getDeviceSpec = jest.fn(() => Promise.resolve());
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            mockUtilityService.getUtmInfo = jest.fn(() => Promise.resolve(''));
+        });
+        afterEach(() => {
+            jest.resetAllMocks();
+            jest.restoreAllMocks();
+        });
+
+        it('should check the app version', (done) => {
+            // arrange
+            const result = {
+                type: 'optional',
+                title: 'UPDATE_APP_SUPPORT_TITLE',
+                actionButtons: [
+                    {
+                        action: 'yes',
+                        label: 'UPDATE_APP_BTN_ACTION_YES',
+                        link: 'playStoreLink'
+                    }
+                ]
+            };
+            mockFormAndFrameworkUtilService.checkNewAppVersion = jest.fn(() => {
+                return {
+                    then: jest.fn((cb) => cb(result))
+                } as any;
+            });
+            mockPlatform.ready = jest.fn(() => {
+                return {
+                    then: jest.fn((cb) => cb('ready'))
+                } as any;
+            });
+            mockEvents.publish = jest.fn();
+
+            // act
+            jest.useFakeTimers();
+            appComponent.ngOnInit();
+            jest.advanceTimersByTime(5500);
+            // assert
+            expect(mockEvents.publish).toHaveBeenCalledWith('force_optional_upgrade', result);
+            done();
+            jest.useRealTimers();
+            jest.clearAllTimers();
+        });
+
+        it('should not publish event if result is undefined', (done) => {
+            // arrange
+            const result = undefined;
+            mockFormAndFrameworkUtilService.checkNewAppVersion = jest.fn(() => Promise.resolve(result));
+            // act
+            jest.useFakeTimers();
+            appComponent.ngOnInit();
+            // assert
+            jest.advanceTimersByTime(5100);
+            expect(mockEvents.publish).not.toHaveBeenCalled();
+            done();
+            jest.useRealTimers();
+            jest.clearAllTimers();
+        });
+
+        it('should go to catch block if checkNewAppVersion reject', (done) => {
+            // arrange
+            mockFormAndFrameworkUtilService.checkNewAppVersion = jest.fn(() => Promise.reject('error'));
+            // act
+            appComponent.ngOnInit();
+            done();
         });
     });
 
