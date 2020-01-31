@@ -305,5 +305,18 @@ describe('ContentRatingAlertComponent', () => {
             expect(contentRatingAlertComponent.ratingMetaInfo.ratingQuestion).toEqual('Would you like to tell us more?');
         });
     });
-    
+
+    describe('extractComments', () => {
+        it('should extract comments', () => {
+            // arrange
+            contentRatingAlertComponent.ratingOptions = [
+                {key: 'opt1', idx: 1, value: 'sample value'}
+            ];
+            // act
+            contentRatingAlertComponent.extractComments('opt1');
+            // assert
+            expect(contentRatingAlertComponent.ratingOptions[0].isChecked).toBe(true);
+        });
+    });
+
 });
