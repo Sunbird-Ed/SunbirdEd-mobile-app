@@ -23,6 +23,7 @@ import { Scanner } from 'typescript';
 import { Location } from '@angular/common';
 import { ImpressionType, PageId, Environment, InteractSubtype, InteractType } from '@app/services/telemetry-constants';
 import { of, Subscription } from 'rxjs';
+import { FormControl } from '@angular/forms';
 
 describe('ProfileSettingsPage', () => {
     let profileSettingsPage: ProfileSettingsPage;
@@ -205,5 +206,95 @@ describe('ProfileSettingsPage', () => {
             expect(mockHeaderService.showHeaderWithBackButton).toHaveBeenCalled();
             expect(mockHeaderService.hideHeader).toHaveBeenCalled();
         }, 0);
+    });
+
+    it('should submit form details for board blanked to call onSubmitAttempt()', () => {
+        // arrange
+        const syllabusData = new FormControl([], (c) => c.value.length ? undefined : { length: 'NOT_SELECTED' });
+        mockAppGlobalService.generateSaveClickedTelemetry = jest.fn();
+        mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+        const values = new Map();
+        values['board'] = 'na';
+        profileSettingsPage.boardSelect = {open: jest.fn()};
+        profileSettingsPage.mediumSelect = ['hindi'];
+        profileSettingsPage.gradeSelect = ['class1'];
+
+        // act
+        profileSettingsPage.onSubmitAttempt();
+        // assert
+        expect(mockAppGlobalService.generateSaveClickedTelemetry).toHaveBeenCalledWith(
+            expect.anything(),
+            'failed',
+            PageId.ONBOARDING_PROFILE_PREFERENCES,
+            InteractSubtype.FINISH_CLICKED
+        );
+        expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+            InteractType.TOUCH,
+            'submit-clicked',
+            Environment.HOME,
+            PageId.ONBOARDING_PROFILE_PREFERENCES,
+            undefined,
+            values
+        );
+    });
+
+    it('should submit form details for medium blank to call onSubmitAttempt()', () => {
+        // arrange
+        mockAppGlobalService.generateSaveClickedTelemetry = jest.fn();
+        mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+        const values = new Map();
+        values['board'] = 'na';
+        profileSettingsPage.profileSettingsForm = {
+            controls: {
+                syllabus: {
+                    validator: jest.fn()
+                }
+            },
+            value: {
+                syllabus: [], board: ['odisha'], medium: [], grade: []
+            }
+        } as any;
+        profileSettingsPage = new ProfileSettingsPage(
+            mockProfileService as ProfileService,
+            mockFrameworkService as FrameworkService,
+            mockFrameworkUtilService as FrameworkUtilService,
+            mockPreferences as SharedPreferences,
+            mockDeviceRegisterService as DeviceRegisterService,
+            mockTranslate as TranslateService,
+            mockTelemetryGeneratorService as TelemetryGeneratorService,
+            mockAppGlobalService as AppGlobalService,
+            mockEvents as Events,
+            mockScanner as SunbirdQRScanner,
+            mockPlatform as Platform,
+            mockCommonUtilService as CommonUtilService,
+            mockContainer as ContainerService,
+            mockHeaderService as AppHeaderService,
+            mockRouter as Router,
+            mockAppVersion as AppVersion,
+            mockAlertCtrl as AlertController,
+            mockLocation as Location,
+            mockSplashScreenService as SplashScreenService
+        );
+        profileSettingsPage.boardSelect = {open: jest.fn()};
+        profileSettingsPage.mediumSelect = ['hindi'];
+        profileSettingsPage.gradeSelect = ['class1'];
+
+        // act
+        profileSettingsPage.onSubmitAttempt();
+        // assert
+        expect(mockAppGlobalService.generateSaveClickedTelemetry).toHaveBeenCalledWith(
+            expect.anything(),
+            'failed',
+            PageId.ONBOARDING_PROFILE_PREFERENCES,
+            InteractSubtype.FINISH_CLICKED
+        );
+        expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+            InteractType.TOUCH,
+            'submit-clicked',
+            Environment.HOME,
+            PageId.ONBOARDING_PROFILE_PREFERENCES,
+            undefined,
+            values
+        );
     });
 });
