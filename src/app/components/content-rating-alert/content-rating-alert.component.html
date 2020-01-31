@@ -25,12 +25,10 @@
             </div>
           </div>
           <div *ngIf="showCommentBox" class="rate-content">
-            <textarea [(ngModel)]="commentText" name="" id="" cols="30" rows="4" placeholder="Tell us more..."></textarea>
+            <textarea [(ngModel)]="commentText" name="" id="" cols="30" rows="4" placeholder="{{'TELL_US_MORE' | translate}}"></textarea>
           </div>
         </div>
       </div>
-      <!-- <ion-input *ngIf="showCommentBox" [(ngModel)]="comment" placeholder="{{'FEEDBACK_HINT' | translate}}" style="border-bottom : 2px;"></ion-input>
-      <div *ngIf="showCommentBox" class="sb-line"></div> -->
   </div>
   <ion-footer>
     <div class="sb-popover-footer">

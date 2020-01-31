@@ -658,5 +658,6 @@
   "FILE_NAME": "Loading \"{{%s}}\"",
   "LOAD": "Load",
   "LOAD_FILE": "Load File",
-  "SIZE": "Size: {{%s}}"
+  "SIZE": "Size: {{%s}}",
+  "TELL_US_MORE": "Tell us more..."
 }
