@@ -101,7 +101,7 @@ export class RatingHandler {
                 comment: this.userComment,
                 popupType
             },
-            cssClass: 'sb-popover info'
+            cssClass: 'sb-popover info content-rating-alert'
         });
         await popover.present();
         const { data } = await popover.onDidDismiss();

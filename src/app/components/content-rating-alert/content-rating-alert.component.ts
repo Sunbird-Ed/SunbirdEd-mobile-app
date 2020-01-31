@@ -73,9 +73,6 @@ export class ContentRatingAlertComponent implements OnInit {
     this.popupType = this.navParams.get('popupType');
     this.pageId = this.navParams.get('pageId');
     this.telemetryObject = ContentUtil.getTelemetryObject(this.content);
-    // if (this.userRating) {
-    //   this.showCommentBox = true;
-    // }
   }
 
   ngOnInit() {
@@ -83,8 +80,6 @@ export class ContentRatingAlertComponent implements OnInit {
   }
 
   ionViewWillEnter() {
-    console.log('ionViewWillEnter userRating', this.userRating);
-    console.log('ionViewWillEnter allComments', this.allComments);
     this.telemetryGeneratorService.generateImpressionTelemetry(
       ImpressionType.VIEW,
       ImpressionSubtype.RATING_POPUP,
@@ -110,10 +105,6 @@ export class ContentRatingAlertComponent implements OnInit {
       console.log(err);
     });
     this.getContentRatingOptionsFromUrl();
-    // this.createRatingForm(this.userRating);
-    // if (this.allComments) {
-    //   this.extractComments(this.allComments);
-    // }
   }
 
   ionViewWillLeave() {
@@ -181,10 +172,8 @@ export class ContentRatingAlertComponent implements OnInit {
         comment: this.allComments ? this.allComments : '',
         message: ''
     };
-    console.log('sendFeedback req', option);
     this.contentService.sendFeedback(option).subscribe((res) => {
       viewDismissData.message = 'rating.success';
-      console.log('viewDismissData', viewDismissData);
       this.popOverCtrl.dismiss(viewDismissData);
       this.commonUtilService.showToast('THANK_FOR_RATING');
     }, (data) => {
@@ -207,12 +196,9 @@ export class ContentRatingAlertComponent implements OnInit {
     });
     this.commentText = '';
     this.showCommentBox = false;
-    console.log('createRatingForm ratingMetaInfo', this.ratingMetaInfo);
-    console.log('createRatingForm ratingOptions', this.ratingOptions);
   }
 
   ratingOptsChanged(key) {
-    console.log('ratingOptsChanged key', key);
     if (key === 'other') {
       this.showCommentBox = !this.showCommentBox;
     }
@@ -231,7 +217,6 @@ export class ContentRatingAlertComponent implements OnInit {
         }
       }
     });
-    console.log('extractComments this.ratingOptions', this.ratingOptions);
   }
 
   private async getContentRatingOptionsFromUrl() {
@@ -257,7 +242,6 @@ export class ContentRatingAlertComponent implements OnInit {
 
     this.contentRatingService.getContentRatingOptions(contentRatingRequest).subscribe(data => {
       this.contentRatingOptions = data.ContentRatingOptions;
-      console.log('new getContentRatingOptions', this.contentRatingOptions);
       this.createRatingForm(this.userRating);
       if (this.allComments) {
         this.extractComments(this.allComments);
