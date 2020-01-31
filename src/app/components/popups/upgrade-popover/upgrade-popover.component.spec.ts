@@ -47,10 +47,10 @@ describe('UpgradePopoverComponent', () => {
                                 label: 'Cancel'
                             }
                         ],
+                        isOnboardingCompleted: true,
                         minVersionCode: 13,
                         maxVersionCode: 52,
                         currentAppVersionCode: 23,
-                        requiredVersionCode: 2
                     };
                     break;
             }
@@ -102,21 +102,20 @@ describe('UpgradePopoverComponent', () => {
         setTimeout(() => {
             expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenCalledWith(
                 ImpressionType.VIEW,
-                ImpressionSubtype.DEEPLINK,
+                ImpressionSubtype.UPGRADE_POPUP,
                 PageId.UPGRADE_POPUP,
-                Environment.ONBOARDING
+                Environment.HOME
             );
             expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
                 InteractType.OTHER,
                 InteractSubtype.FORCE_UPGRADE_INFO,
-                Environment.ONBOARDING,
+                Environment.HOME,
                 PageId.UPGRADE_POPUP,
                 undefined,
                 {
                     minVersionCode: 13,
                     maxVersionCode: 52,
-                    currentAppVersionCode: 23,
-                    requiredVersionCode: 2
+                    currentAppVersionCode: 23
                 }
             );
             done();
@@ -126,7 +125,7 @@ describe('UpgradePopoverComponent', () => {
 });
 
 
-describe('UpgradePopoverComponent', () => {
+describe('UpgradeComponent in deeplink ', () => {
     let upgradePopoverComponent: UpgradePopoverComponent;
     const mockUtilityService: Partial<UtilityService> = {
         openPlayStore: jest.fn()
@@ -152,9 +151,9 @@ describe('UpgradePopoverComponent', () => {
                         type: 'optional',
                         title: 'We recommend that you upgrade to the latest version of Sunbird.',
                         desc: '',
-                        minVersionCode: 13,
-                        maxVersionCode: 52,
-                        currentAppVersionCode: 23
+                        isOnboardingCompleted: false,
+                        currentAppVersionCode: 1,
+                        requiredVersionCode: 2
                     };
                     break;
             }
@@ -188,5 +187,42 @@ describe('UpgradePopoverComponent', () => {
             done();
         }, 0);
     });
+
+    it('should generate impression and interact event when init() called', (done) => {
+        // arrange
+        // act
+        upgradePopoverComponent.init();
+
+        setTimeout(() => {
+            // assert
+            expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenCalledWith(
+                ImpressionType.VIEW,
+                ImpressionSubtype.DEEPLINK,
+                PageId.UPGRADE_POPUP,
+                Environment.ONBOARDING
+            );
+            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+                InteractType.OTHER,
+                InteractSubtype.OPTIONAL_UPGRADE,
+                Environment.ONBOARDING,
+                PageId.UPGRADE_POPUP,
+                undefined,
+                {
+                    currentAppVersionCode: 1,
+                    requiredVersionCode: 2
+                }
+            );
+            done();
+        }, 0);
+    });
+
+    it('should close popover', () => {
+        // arrange
+        // act
+        upgradePopoverComponent.cancel();
+        // assert
+        expect(mockPopOverController.dismiss).toHaveBeenCalled();
+    });
+
 
 });
