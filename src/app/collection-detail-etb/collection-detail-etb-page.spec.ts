@@ -1,7 +1,7 @@
 import {CollectionDetailEtbPage} from './collection-detail-etb.page';
 import {
     ContentService, EventsBusService, ProfileService,
-    StorageService, ContentImportResponse, ContentImportStatus, Content, TelemetryObject, Rollup, HierarchyInfo
+    StorageService, ContentImportResponse, ContentImportStatus, TelemetryObject
 } from 'sunbird-sdk';
 import {NavController, Events, PopoverController, Platform, IonContent} from '@ionic/angular';
 import {NgZone, ChangeDetectorRef} from '@angular/core';

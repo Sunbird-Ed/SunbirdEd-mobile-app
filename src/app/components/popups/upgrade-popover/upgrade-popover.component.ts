@@ -2,7 +2,7 @@ import { Component, Input } from '@angular/core';
 import { UtilityService } from '@app/services/utility-service';
 import { NavParams, PopoverController } from '@ionic/angular';
 import {
-  Environment,
+  Environment, ID,
   ImpressionSubtype,
   ImpressionType,
   InteractSubtype,
@@ -38,12 +38,17 @@ export class UpgradePopoverComponent {
   }
 
   async init() {
+    const values = {};
     this.appName = await this.appVersion.getAppName();
     this.upgradeType = this.navParams.get('upgrade');
     if (this.upgradeType.type === 'force' || this.upgradeType.type === 'forced') {
       this.isMandatoryUpgrade = true;
+      values['minVersionCode'] = this.upgradeType.minVersionCode;
+      values['maxVersionCode'] = this.upgradeType.maxVersionCode;
     }
-
+    values['currentAppVersionCode'] = this.upgradeType.currentAppVersionCode;
+    values['requiredVersionCode'] = this.upgradeType.requiredVersionCode;
+    const impressionSubtype: string = this.upgradeType.requiredVersionCode ? ImpressionSubtype.DEEPLINK : ImpressionSubtype.UPGRADE_POPUP;
     if (this.upgradeType.actionButtons) {
       for (const actionButton of this.upgradeType.actionButtons) {
         if (actionButton.action === 'yes') {
@@ -53,21 +58,19 @@ export class UpgradePopoverComponent {
         }
       }
     }
+    const interactSubType: string = this.upgradeType.type === 'force' || this.upgradeType.type === 'forced'
+        ? InteractSubtype.FORCE_UPGRADE_INFO : InteractSubtype.OPTIONAL_UPGRADE;
 
-    const values = {};
-    values['minVersionCode'] = this.upgradeType.minVersionCode;
-    values['maxVersionCode'] = this.upgradeType.maxVersionCode;
-    values['currentAppVersionCode'] = this.upgradeType.currentAppVersionCode;
     this.telemetryGeneratorService.generateImpressionTelemetry(
       ImpressionType.VIEW,
-      ImpressionSubtype.UPGRADE_POPUP,
+      impressionSubtype,
       PageId.UPGRADE_POPUP,
-      Environment.HOME
+      this.upgradeType.isOnboardingCompleted ? Environment.HOME : Environment.ONBOARDING
     );
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.OTHER,
-      InteractSubtype.FORCE_UPGRADE_INFO,
-      Environment.HOME,
+      interactSubType,
+  this.upgradeType.isOnboardingCompleted ? Environment.HOME : Environment.ONBOARDING,
       PageId.UPGRADE_POPUP,
       undefined,
       values
@@ -76,6 +79,17 @@ export class UpgradePopoverComponent {
 
   cancel() {
     this.popCtrl.dismiss();
+    this.telemetryGeneratorService.generateInteractTelemetry(
+        InteractType.CANCEL,
+        '',
+        this.upgradeType.isOnboardingCompleted ? Environment.HOME : Environment.ONBOARDING,
+        PageId.UPGRADE_POPUP,
+        undefined,
+        undefined,
+        undefined,
+undefined,
+        ID.CANCEL_CLICKED
+    );
   }
 
   upgradeApp(link) {
@@ -88,6 +102,6 @@ export class UpgradePopoverComponent {
       PageId.UPGRADE_POPUP,
       undefined
     );
-    this.cancel();
+    this.popCtrl.dismiss();
   }
 }

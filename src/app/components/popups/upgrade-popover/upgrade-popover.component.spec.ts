@@ -49,7 +49,8 @@ describe('UpgradePopoverComponent', () => {
                         ],
                         minVersionCode: 13,
                         maxVersionCode: 52,
-                        currentAppVersionCode: 23
+                        currentAppVersionCode: 23,
+                        requiredVersionCode: 2
                     };
                     break;
             }
@@ -85,12 +86,10 @@ describe('UpgradePopoverComponent', () => {
 
     it('should invoke openPlayStore', () => {
         // arrange
-        jest.spyOn(upgradePopoverComponent, 'cancel');
         // act
         upgradePopoverComponent.upgradeApp('https://play.google.com/store/apps/details?id=org.sunbird.app');
         // assert
         expect(mockUtilityService.openPlayStore).toHaveBeenCalledWith('org.sunbird.app');
-        expect(upgradePopoverComponent.cancel).toHaveBeenCalled();
     });
 
     it('should generate impression and interact when popoup shows', (done) => {
@@ -103,20 +102,21 @@ describe('UpgradePopoverComponent', () => {
         setTimeout(() => {
             expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenCalledWith(
                 ImpressionType.VIEW,
-                ImpressionSubtype.UPGRADE_POPUP,
+                ImpressionSubtype.DEEPLINK,
                 PageId.UPGRADE_POPUP,
-                Environment.HOME
+                Environment.ONBOARDING
             );
             expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
                 InteractType.OTHER,
                 InteractSubtype.FORCE_UPGRADE_INFO,
-                Environment.HOME,
+                Environment.ONBOARDING,
                 PageId.UPGRADE_POPUP,
                 undefined,
                 {
                     minVersionCode: 13,
                     maxVersionCode: 52,
-                    currentAppVersionCode: 23
+                    currentAppVersionCode: 23,
+                    requiredVersionCode: 2
                 }
             );
             done();

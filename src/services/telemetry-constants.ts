@@ -156,7 +156,8 @@ export enum ImpressionSubtype {
     EXPLORE_MORE_CONTENT = 'explore-more-content',
     RECOVERY_ACCOUNT_POPUP = 'recovery-account-popup',
     DISTRICT_LOCATION_MAPPING = 'district-location-mapping',
-    UPGRADE_POPUP = 'upgrade-popup'
+    UPGRADE_POPUP = 'upgrade-popup',
+    DEEPLINK = 'deeplink'
 }
 export enum InteractType {
     TOUCH = 'TOUCH',
@@ -171,7 +172,8 @@ export enum InteractType {
     QUIZ_DEEPLINK = 'quiz-deeplink',
     DISABLED = 'disabled',
     DELETE_CHECKED = 'delete-checked',
-    DELETE_UNCHECKED = 'delete-unchecked'
+    DELETE_UNCHECKED = 'delete-unchecked',
+    BACKDROP_DISMISSED = 'backdrop-dismissed'
 }
 
 
@@ -388,7 +390,9 @@ export enum InteractSubtype {
     UPDATE_WEBVIEW_CLICKED = 'update-webview-clicked',
     CREDITS_CLICKED = 'credits-clicked',
     UPGRADE_CLICKED = 'upgrade-clicked',
-    FORCE_UPGRADE_INFO = 'force-upgrade-info'
+    FORCE_UPGRADE_INFO = 'force-upgrade-info',
+    BACKDROP_CLICKED = 'backdrop-clicked',
+    OPTIONAL_UPGRADE = 'optional-upgrade'
 }
 
 export enum ID {
@@ -406,7 +410,9 @@ export enum ID {
     SHARE_CONFIRM = 'share-confirm-clicked',
     APP_LAUNCH = 'app-launch',
     CONTINUE_CLICKED = 'continue-clicked',
-    LOAD_CLICKED = 'load-clicked'
+    LOAD_CLICKED = 'load-clicked',
+    BACKDROP_CLICKED = 'backdrop-clicked',
+    CANCEL_CLICKED = 'cancel-clicked'
 }
 
 export enum ActionButtonType {
