@@ -18,14 +18,14 @@
             </div>
         </div>
         <div class="rating-opts">
-          <div *ngFor="let opt of ratingOptions">
+          <div *ngFor="let opt of ratingOptions | sortBy: 'idx' : 'asc'">
             <div class="rating-item" [ngClass]="{'active': opt.isChecked}">
               <ion-label class="rating-label" [ngClass]="{'active': opt.isChecked}" (click)="opt.isChecked=!opt.isChecked">{{opt.value}}</ion-label>
               <ion-checkbox [(ngModel)]="opt.isChecked" (ionChange)="ratingOptsChanged(opt.key)" slot="end"></ion-checkbox>
             </div>
           </div>
           <div *ngIf="showCommentBox" class="rate-content">
-            <textarea [(ngModel)]="commentText" name="" id="" cols="30" rows="4" placeholder="Type here..."></textarea>
+            <textarea [(ngModel)]="commentText" name="" id="" cols="30" rows="4" placeholder="Tell us more..."></textarea>
           </div>
         </div>
       </div>

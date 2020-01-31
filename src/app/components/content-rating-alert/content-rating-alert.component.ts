@@ -142,12 +142,12 @@ export class ContentRatingAlertComponent implements OnInit {
   submit() {
     let comment = '';
     this.ratingOptions.forEach(element => {
-      if (element.isChecked) {
+      if (element.key !== 'other' && element.isChecked) {
         comment += comment.length ? ',' + element.key :  element.key;
       }
     });
     if (this.commentText) {
-      const text = this.COMMENT_PREFIX + this.commentText;
+      const text = 'other,' + this.COMMENT_PREFIX + this.commentText;
       comment += comment.length ? ',' + text :  text;
     }
     this.allComments = comment;
@@ -209,7 +209,6 @@ export class ContentRatingAlertComponent implements OnInit {
     options.forEach(e => {
       if (e.indexOf(this.COMMENT_PREFIX) !== -1) {
         this.commentText = e.substring(this.COMMENT_PREFIX.length);
-        // this.showCommentBox = true;
       } else {
         const opt = this.ratingOptions.find((v) => e === v.key);
         if (opt) {
