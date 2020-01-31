@@ -177,7 +177,7 @@ export class CommonUtilService implements OnDestroy {
             InteractType.OTHER,
             InteractSubtype.QR_CODE_COMINGSOON,
             source === PageId.ONBOARDING_PROFILE_PREFERENCES ? Environment.ONBOARDING : Environment.HOME,
-            source
+            source ? source : PageId.HOME
         );
         if (source !== 'permission') {
             this.afterOnBoardQRErrorAlert('ERROR_CONTENT_NOT_FOUND', 'CONTENT_IS_BEING_ADDED');

@@ -1,7 +1,7 @@
 import { Injectable, Inject, NgZone } from '@angular/core';
 import {
   Batch, Course, CourseService, EnrollCourseRequest,
-  InteractType, AuthService, SharedPreferences, OAuthSession, FetchEnrolledCourseRequest
+  InteractType, AuthService, SharedPreferences, OAuthSession, FetchEnrolledCourseRequest, TelemetryObject
 } from 'sunbird-sdk';
 import { Observable } from 'rxjs';
 import { AppGlobalService } from './app-global-service.service';
@@ -14,6 +14,7 @@ import { map, catchError} from 'rxjs/operators';
 import { PreferenceKey, EventTopics } from '@app/app/app.constant';
 import { Events } from '@ionic/angular';
 import { AppVersion } from '@ionic-native/app-version/ngx';
+import { ContentUtil } from '@app/util/content-util';
 
 @Injectable()
 export class LocalCourseService {
@@ -119,7 +120,7 @@ export class LocalCourseService {
           this.userId = session.userToken;
         }
         if (JSON.parse(courseDetail).createdBy !== this.userId && !isGuestUser) {
-          this.enrollBatchAfterlogin(JSON.parse(batchDetails));
+          this.enrollBatchAfterlogin(JSON.parse(batchDetails), JSON.parse(courseDetail));
         } else {
           this.events.publish('return_course');
         }
@@ -127,20 +128,27 @@ export class LocalCourseService {
       }
     }
 
-    private async enrollBatchAfterlogin(batch: Batch) {
+    private async enrollBatchAfterlogin(batch: Batch, course: any) {
       const enrollCourseRequest = this.prepareEnrollCourseRequest(this.userId, batch);
       const loader = await this.commonUtilService.getLoader();
       await loader.present();
+      const telemetryObject: TelemetryObject = ContentUtil.getTelemetryObject(course);
+      const corRelationList = await this.preferences.getString(PreferenceKey.CDATA_KEY).toPromise();
       this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
         InteractSubtype.ENROLL_CLICKED,
         Environment.HOME,
-        PageId.COURSE_BATCHES, undefined,
-        this.prepareRequestValue(enrollCourseRequest));
+        PageId.COURSE_BATCHES, telemetryObject,
+        this.prepareRequestValue(enrollCourseRequest),
+        ContentUtil.generateRollUp(undefined, telemetryObject.id),
+        corRelationList ? JSON.parse(corRelationList) : []);
 
       const enrollCourse: EnrollCourse = {
         userId: this.userId,
         batch,
-        pageId: PageId.COURSE_BATCHES
+        pageId: PageId.COURSE_BATCHES,
+        telemetryObject,
+        objRollup: ContentUtil.generateRollUp(undefined, telemetryObject.id),
+        corRelationList: corRelationList ? JSON.parse(corRelationList) : []
       };
       this.enrollIntoBatch(enrollCourse).toPromise()
         .then(() => {
@@ -153,11 +161,13 @@ export class LocalCourseService {
             });
             const appLabel = await this.appVersion.getAppName();
             this.events.publish('coach_mark_seen', { showWalkthroughBackDrop: false, appName: appLabel });
+            await this.preferences.putString(PreferenceKey.CDATA_KEY, '').toPromise();
             this.getEnrolledCourses();
           });
         }, (error) => {
           this.zone.run(async () => {
             await loader.dismiss();
+            await this.preferences.putString(PreferenceKey.CDATA_KEY, '').toPromise();
             if (error && error.code !== 'USER_ALREADY_ENROLLED_COURSE') {
               this.events.publish(EventTopics.ENROL_COURSE_SUCCESS, {
                 batchId: batch.id,

@@ -167,6 +167,7 @@ export class EventTopics {
     public static readonly HAMBURGER_MENU_CLICKED = 'HAMBURGER_MENU_CLICKED';
     public static readonly NEXT_CONTENT = 'event:NextContent';
     public static readonly DEEPLINK_CONTENT_PAGE_OPEN = 'DEEPLINK_CONTENT_PAGE_OPEN';
+    public static readonly CONTENT_TO_PLAY = 'event:ContentToPlay';
 }
 
 export class ShareUrl {
@@ -213,6 +214,7 @@ export class PreferenceKey {
     public static readonly DEPLOYMENT_KEY = 'deployment_key';
     public static readonly COURSE_DATA_KEY = 'course_data';
     public static readonly BATCH_DETAIL_KEY = 'batch_detail';
+    public static readonly CDATA_KEY = 'correlation';
     public static readonly IS_LOCATION_MANDATORY = 'is_location_mandatory';
     public static readonly SUBSCRIBE_TOPICS = 'subscribe_topics';
     public static readonly SHOW_EXTERNAL_VERIFICATION = 'show_external_verification';
