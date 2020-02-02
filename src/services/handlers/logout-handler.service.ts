@@ -42,15 +42,21 @@ export class LogoutHandlerService {
 
     this.preferences.getString(PreferenceKey.GUEST_USER_ID_BEFORE_LOGIN).pipe(
       tap(async (guest_user_id: string) => {
+        console.log(guest_user_id);
         if (!guest_user_id) {
           await this.preferences.putString(PreferenceKey.SELECTED_USER_TYPE, ProfileType.TEACHER).toPromise();
         }
 
         splashscreen.clearPrefs();
       }),
-      mergeMap((guest_user_id: string) => this.profileService.setActiveSessionForProfile(guest_user_id)),
-      mergeMap(() => this.authService.resignSession()),
+      mergeMap((guest_user_id: string) => { console.log('value');
+        return this.profileService.setActiveSessionForProfile(guest_user_id);}),
+      mergeMap(() => { console.log('value2');
+        return this.authService.resignSession();}),
       tap(async () => {
+        console.log('adasd');
+        console.log('adasd');
+        console.log('adasd');
         await this.navigateToAptPage();
         this.events.publish(AppGlobalService.USER_INFO_UPDATED);
         this.appGlobalService.setEnrolledCourseList([]);
