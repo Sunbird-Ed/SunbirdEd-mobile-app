@@ -1,5 +1,5 @@
 import { Inject, Injectable, OnDestroy } from '@angular/core';
-import { Environment, InteractSubtype, InteractType, PageId } from './telemetry-constants';
+import { Environment, InteractSubtype, InteractType, PageId, ImpressionType, ImpressionSubtype } from './telemetry-constants';
 import { Events, PopoverController } from '@ionic/angular';
 import { GenericAppConfig, PreferenceKey } from '../app/app.constant';
 import { TelemetryGeneratorService } from './telemetry-generator.service';
@@ -12,6 +12,7 @@ import { ProfileConstants } from '../app/app.constant';
 import { Observable, Observer } from 'rxjs';
 import { PermissionAsked } from './android-permissions/android-permission';
 import { UpgradePopoverComponent } from '@app/app/components/popups';
+import { AppVersion } from '@ionic-native/app-version/ngx';
 
 @Injectable({
     providedIn: 'root'
@@ -83,7 +84,8 @@ export class AppGlobalService implements OnDestroy {
         private popoverCtrl: PopoverController,
         private telemetryGeneratorService: TelemetryGeneratorService,
         @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
-        private utilityService: UtilityService
+        private utilityService: UtilityService,
+        private appVersion: AppVersion
     ) {
 
         this.initValues();
@@ -713,6 +715,25 @@ export class AppGlobalService implements OnDestroy {
         if (this.signinOnboardingLoader) {
             await this.signinOnboardingLoader.dismiss();
             this.signinOnboardingLoader = null;
+        }
+    }
+
+    async showCouchMarkScreen() {
+        if (this.skipCoachScreenForDeeplink) {
+            this.skipCoachScreenForDeeplink = false;
+        } else {
+            const coachMarkSeen = await this.preferences.getBoolean('coach_mark_seen').toPromise();
+            if (!coachMarkSeen) {
+                const appLabel = await this.appVersion.getAppName();
+                this.event.publish('coach_mark_seen', { showWalkthroughBackDrop: true, appName: appLabel });
+                this.telemetryGeneratorService.generateImpressionTelemetry(
+                ImpressionType.VIEW,
+                ImpressionSubtype.QR_SCAN_WALKTHROUGH,
+                PageId.LIBRARY,
+                Environment.ONBOARDING
+                );
+                this.preferences.putBoolean('coach_mark_seen', true).toPromise().then();
+            }
         }
     }
 

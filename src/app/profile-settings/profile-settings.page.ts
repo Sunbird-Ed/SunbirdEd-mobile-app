@@ -1,7 +1,7 @@
 import { Component, Inject, ViewChild, OnInit, ChangeDetectorRef, OnDestroy } from '@angular/core';
 import { Subscription, Observable, combineLatest } from 'rxjs';
 import { tap, delay } from 'rxjs/operators';
-import { Router, NavigationExtras } from '@angular/router';
+import { Router, NavigationExtras, ActivatedRoute } from '@angular/router';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { TranslateService } from '@ngx-translate/core';
 import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
@@ -114,7 +114,8 @@ export class ProfileSettingsPage implements OnInit, OnDestroy {
     private appVersion: AppVersion,
     private alertCtrl: AlertController,
     private location: Location,
-    private splashScreenService: SplashScreenService
+    private splashScreenService: SplashScreenService,
+    private activatedRoute: ActivatedRoute
   ) {
     this.profileSettingsForm = new FormGroup({
       syllabus: new FormControl([], (c) => c.value.length ? undefined : { length: 'NOT_SELECTED' }),
@@ -156,6 +157,16 @@ export class ProfileSettingsPage implements OnInit, OnDestroy {
     ).subscribe();
 
     await this.fetchSyllabusList();
+    this.getQueryParams();
+  }
+
+  getQueryParams() {
+    const snapshot = this.activatedRoute.snapshot;
+    if (snapshot.queryParams && snapshot.queryParams.reOnboard) {
+      window.history.pushState({}, '', `/${RouterLinks.USER_TYPE_SELECTION}`);
+      window.history.pushState({}, '', `/${RouterLinks.LANGUAGE_SETTING}`);
+      this.events.publish('reOnboard');
+    }
   }
 
   ngOnDestroy() {

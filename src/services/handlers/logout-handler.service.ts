@@ -78,8 +78,8 @@ export class LogoutHandlerService {
       this.router.navigate([`/${RouterLinks.TABS}`], navigationExtras);
     } else {
       this.appGlobalService.logoutToOnboard = true;
-      const navigationExtras: NavigationExtras = { queryParams: { context: 'deeplink-logout' } };
-      this.router.navigate(['/'], navigationExtras);
+      const navigationExtras: NavigationExtras = { queryParams: { reOnboard: true } };
+      this.router.navigate([`/${RouterLinks.PROFILE_SETTINGS}`], navigationExtras);
     }
 
     this.generateLogoutInteractTelemetry(InteractType.OTHER, InteractSubtype.LOGOUT_SUCCESS, '');

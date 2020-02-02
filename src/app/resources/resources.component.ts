@@ -154,6 +154,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
   @ViewChild('contentView') contentView: ContentView;
   locallyDownloadResources;
   channelId: string;
+  private coachTimeout: any;
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -278,6 +279,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
     if (this.headerObservable) {
       this.headerObservable.unsubscribe();
     }
+    this.coachTimeout.clearTimeout();
   }
 
   /**
@@ -640,6 +642,12 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
     this.subscribeSdkEvent();
 
     this.splaschreenDeeplinkActionHandlerDelegate.isDelegateReady = true;
+  }
+
+  ionViewDidEnter() {
+    this.coachTimeout = setTimeout(() => {
+      this.appGlobalService.showCouchMarkScreen();
+    }, 2000);
   }
 
   // Offline Toast
