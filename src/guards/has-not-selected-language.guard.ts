@@ -1,7 +1,7 @@
 import { Injectable, Inject } from '@angular/core';
 import { Router, Resolve, NavigationExtras } from '@angular/router';
 import { SharedPreferences } from 'sunbird-sdk';
-import { PreferenceKey } from '@app/app/app.constant';
+import { PreferenceKey, EventTopics } from '@app/app/app.constant';
 import { SplashScreenService } from '@app/services/splash-screen.service';
 import { Events } from '@ionic/angular';
 
@@ -14,7 +14,7 @@ export class HasNotSelectedLanguageGuard implements Resolve<any> {
         private splashScreenService: SplashScreenService,
         private events: Events,
     ) {
-        this.events.subscribe('reOnboard', () => {
+        this.events.subscribe(EventTopics.REONBOARD_ENABLE_BACK_BTN, () => {
             this.guardActivated = true;
         });
     }
