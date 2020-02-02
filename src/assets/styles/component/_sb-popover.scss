@@ -330,3 +330,15 @@
   @extend .sb-popup-header-info;
   background-color: $success-color;
 }
+
+.content-rating-alert{
+  --height: 100vh !important;
+  --max-height: 100% !important;
+  .popover-content{
+    --max-height: 100% !important;
+    background: #fff !important;
+    .rating-full-height {
+      height: 100vh !important;
+    }
+  }
+}

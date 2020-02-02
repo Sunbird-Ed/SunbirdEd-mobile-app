@@ -7,7 +7,12 @@ import {
   ContentFeedbackService,
   TelemetryLogRequest,
   TelemetryService,
-  TelemetryObject
+  TelemetryObject,
+  GetContentRatingOptionsRequest,
+  GetSystemSettingsRequest,
+  SystemSettingsService,
+  ContentRatingService,
+  SystemSettings
 } from 'sunbird-sdk';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { ProfileConstants } from '@app/app/app.constant';
@@ -29,6 +34,7 @@ import { ContentUtil } from '@app/util/content-util';
   styleUrls: ['./content-rating-alert.component.scss'],
 })
 export class ContentRatingAlertComponent implements OnInit {
+  private readonly COMMENT_PREFIX = 'other-';
   isDisable = false;
   userId = '';
   comment = '';
@@ -40,9 +46,15 @@ export class ContentRatingAlertComponent implements OnInit {
   userRating = 0;
   private popupType: string;
   telemetryObject: TelemetryObject;
+  contentRatingOptions;
+  ratingMetaInfo;
+  ratingOptions;
+  allComments;
+  commentText;
   constructor(
     @Inject('CONTENT_FEEDBACK_SERVICE') private contentService: ContentFeedbackService,
     @Inject('TELEMETRY_SERVICE') private telemetryService: TelemetryService,
+    @Inject('CONTENT_RATING_SERVICE') private contentRatingService: ContentRatingService,
     private popOverCtrl: PopoverController,
     private platform: Platform,
     private navParams: NavParams,
@@ -57,13 +69,10 @@ export class ContentRatingAlertComponent implements OnInit {
     });
     this.content = this.navParams.get('content');
     this.userRating = this.navParams.get('rating');
-    this.comment = this.navParams.get('comment');
+    this.allComments = this.navParams.get('comment');
     this.popupType = this.navParams.get('popupType');
     this.pageId = this.navParams.get('pageId');
     this.telemetryObject = ContentUtil.getTelemetryObject(this.content);
-    if (this.userRating) {
-      this.showCommentBox = true;
-    }
   }
 
   ngOnInit() {
@@ -95,6 +104,7 @@ export class ContentRatingAlertComponent implements OnInit {
     }, err => {
       console.log(err);
     });
+    this.getContentRatingOptionsFromUrl();
   }
 
   ionViewWillLeave() {
@@ -115,30 +125,41 @@ export class ContentRatingAlertComponent implements OnInit {
   }
 
   rateContent(ratingCount) {
-    this.showCommentBox = true;
+    // this.showCommentBox = true;
     this.ratingCount = ratingCount;
+    this.createRatingForm(ratingCount);
   }
 
   cancel() {
-    this.showCommentBox = false;
+    // this.showCommentBox = false;
     this.popOverCtrl.dismiss();
   }
   closePopover() {
-    this.showCommentBox = false;
+    // this.showCommentBox = false;
     this.popOverCtrl.dismiss();
   }
 
   submit() {
+    let comment = '';
+    this.ratingOptions.forEach(element => {
+      if (element.key !== 'other' && element.isChecked) {
+        comment += comment.length ? ',' + element.key :  element.key;
+      }
+    });
+    if (this.commentText) {
+      const text = 'other,' + this.COMMENT_PREFIX + this.commentText;
+      comment += comment.length ? ',' + text :  text;
+    }
+    this.allComments = comment;
     const option: ContentFeedback = {
       contentId: this.content.identifier,
       rating: this.ratingCount ? this.ratingCount : this.userRating,
-      comments: this.comment,
+      comments: this.allComments,
       contentVersion: this.content['versionKey']
     };
-    this.popOverCtrl.dismiss();
     const paramsMap = new Map();
     paramsMap['Ratings'] = this.ratingCount ? this.ratingCount : this.userRating;
-    paramsMap['Comment'] = this.comment;
+    paramsMap['Comment'] = this.allComments;
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,
       InteractSubtype.RATING_SUBMITTED,
@@ -147,20 +168,15 @@ export class ContentRatingAlertComponent implements OnInit {
     );
 
     const viewDismissData = {
-      rating: this.ratingCount,
-      comment: this.comment ? this.comment : '',
-      message: ''
+        rating: this.ratingCount ? this.ratingCount : this.userRating,
+        comment: this.allComments ? this.allComments : '',
+        message: ''
     };
-
     this.contentService.sendFeedback(option).subscribe((res) => {
-      console.log('success:', res);
       viewDismissData.message = 'rating.success';
-      viewDismissData.rating = this.ratingCount ? this.ratingCount : this.userRating;
-      viewDismissData.comment = this.comment;
       this.popOverCtrl.dismiss(viewDismissData);
       this.commonUtilService.showToast('THANK_FOR_RATING');
     }, (data) => {
-      console.log('error:', data);
       viewDismissData.message = 'rating.error';
       this.popOverCtrl.dismiss(viewDismissData);
     });
@@ -169,4 +185,67 @@ export class ContentRatingAlertComponent implements OnInit {
   showMessage(msg) {
     this.commonUtilService.showToast(this.commonUtilService.translateMessage(msg));
   }
+
+  createRatingForm(rating) {
+    this.ratingMetaInfo =  { ratingText: this.contentRatingOptions[rating].ratingText,
+                          ratingQuestion: this.contentRatingOptions[rating].question
+                        };
+    this.ratingOptions = this.contentRatingOptions[rating].options;
+    this.ratingOptions.forEach(element => {
+      element.isChecked = false;
+    });
+    this.commentText = '';
+    this.showCommentBox = false;
+  }
+
+  ratingOptsChanged(key) {
+    if (key === 'other') {
+      this.showCommentBox = !this.showCommentBox;
+    }
+  }
+
+  extractComments(comments) {
+    const options = comments.split(',');
+    options.forEach(e => {
+      if (e.indexOf(this.COMMENT_PREFIX) !== -1) {
+        this.commentText = e.substring(this.COMMENT_PREFIX.length);
+      } else {
+        const opt = this.ratingOptions.find((v) => e === v.key);
+        if (opt) {
+          opt.isChecked = true;
+        }
+      }
+    });
+  }
+
+  private async getContentRatingOptionsFromUrl() {
+    const contentRatingRequest: GetContentRatingOptionsRequest = { language: '', ContentRatingUrl: '' };
+    // enable this code once the rating options url is available
+    // const getSystemSettingsRequest: GetSystemSettingsRequest = {
+    //   id: 'ContentRatingURL'
+    // };
+    // const selectedLanguage = await this.preferences.getString(PreferenceKey.SELECTED_LANGUAGE_CODE).toPromise();
+    // await this.systemSettingsService.getSystemSettings(getSystemSettingsRequest).toPromise()
+    // .then((res: SystemSettings) => {
+    //   console.log('ContentRatingdata', res);
+    //   contentRatingRequest.ContentRatingUrl = res.value;
+    // }).catch(err => {
+    // });
+    // this.loading = await this.commonUtilService.getLoader();
+    // await this.loading.present();
+    // if (this.selectedLanguage && this.commonUtilService.networkInfo.isNetworkAvailable) {
+    //   faqRequest.language = this.selectedLanguage;
+    // } else {
+    contentRatingRequest.language = 'en';
+    // }
+
+    this.contentRatingService.getContentRatingOptions(contentRatingRequest).subscribe(data => {
+      this.contentRatingOptions = data.ContentRatingOptions;
+      this.createRatingForm(this.userRating);
+      if (this.allComments) {
+        this.extractComments(this.allComments);
+      }
+    });
+  }
+
 }
