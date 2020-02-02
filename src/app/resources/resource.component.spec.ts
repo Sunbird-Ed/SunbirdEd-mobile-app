@@ -387,6 +387,7 @@ describe('ResourcesComponent', () => {
             subscribe: jest.fn(() => mockHeaderEventsSubscription)
         };
         mockEvents.unsubscribe = jest.fn();
+        resourcesComponent.coachTimeout = { clearTimeout: jest.fn() };
         // act
         resourcesComponent.ionViewWillEnter().then(() => {
             resourcesComponent.ionViewWillLeave();
@@ -636,6 +637,19 @@ describe('ResourcesComponent', () => {
             expect(mockSplashScreenDeeplinkActionHandlerDelegate.isDelegateReady).toEqual(true);
             done();
         });
+    });
+
+    it('should subscribe events and other methods when ionViewDidEnter()', (done) => {
+        // arrange
+        resourcesComponent.coachTimeout = { setTimeout: jest.fn() };
+        mockAppGlobalService.showCouchMarkScreen = jest.fn();
+        // act
+        resourcesComponent.ionViewDidEnter()
+        // assert
+        setTimeout(() => {
+            expect(mockAppGlobalService.showCouchMarkScreen).toHaveBeenCalled();
+            done();
+        }, 2000);
     });
 
     it('should call toastCtrller when in offline', (done) => {

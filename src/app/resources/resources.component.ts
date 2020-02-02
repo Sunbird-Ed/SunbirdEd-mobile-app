@@ -154,7 +154,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
   @ViewChild('contentView') contentView: ContentView;
   locallyDownloadResources;
   channelId: string;
-  private coachTimeout: any;
+  coachTimeout: any;
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -645,6 +645,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
   }
 
   ionViewDidEnter() {
+    // Need timer to load the coach screen and for the coach screen to hide if user comes from deeplink.
     this.coachTimeout = setTimeout(() => {
       this.appGlobalService.showCouchMarkScreen();
     }, 2000);
