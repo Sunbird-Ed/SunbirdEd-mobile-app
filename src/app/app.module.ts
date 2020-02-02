@@ -158,6 +158,9 @@ export function codePushExperimentService() {
 export function faqService() {
   return SunbirdSdk.instance.faqService;
 }
+export function contentRatingService() {
+  return SunbirdSdk.instance.contentRatingService;
+}
 
 export function sdkDriverFactory(): any {
   return [{
@@ -253,6 +256,9 @@ export function sdkDriverFactory(): any {
   }, {
     provide: 'FAQ_SERVICE',
     useFactory: faqService
+  }, {
+    provide: 'CONTENT_RATING_SERVICE',
+    useFactory: contentRatingService
   }
   ];
 }
@@ -382,6 +388,9 @@ export const sunbirdSdkFactory =
         },
         faqServiceConfig: {
           faqConfigDirPath: '/data/faq'
+        },
+        contentRatingServiceConfig: {
+          contentRatingConfigDirPath: '/data/content-rating'
         }
       });
 

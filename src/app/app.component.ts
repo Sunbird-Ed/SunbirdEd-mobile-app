@@ -226,7 +226,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     });
   }
 
-  syncStatus(status) {
+  private syncStatus(status) {
     switch (status) {
       case SyncStatus.DOWNLOADING_PACKAGE:
         const value = new Map();
@@ -272,7 +272,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     });
   }
 
-  downloadProgress(downloadProgress) {
+  private downloadProgress(downloadProgress) {
     if (downloadProgress) {
       console.log('Downloading ' + downloadProgress.receivedBytes + ' of ' +
         downloadProgress.totalBytes);
@@ -289,14 +289,15 @@ export class AppComponent implements OnInit, AfterViewInit {
         this.storeFCMToken(token);
         SunbirdSdk.instance.updateDeviceRegisterConfig({ fcmToken: token });
       });
+    } else {
+      FCMPlugin.onTokenRefresh((token) => {
+        this.storeFCMToken(token);
+        SunbirdSdk.instance.updateDeviceRegisterConfig({ fcmToken: token });
+      });
     }
-    FCMPlugin.onTokenRefresh((token) => {
-      this.storeFCMToken(token);
-      SunbirdSdk.instance.updateDeviceRegisterConfig({ fcmToken: token });
-    });
   }
 
-  storeFCMToken(token: string) {
+  private storeFCMToken(token: string) {
     this.preferences.putString(PreferenceKey.FCM_TOKEN, token).toPromise();
   }
 
@@ -310,8 +311,10 @@ export class AppComponent implements OnInit, AfterViewInit {
       } else {
         // Notification was received in foreground. Maybe the user needs to be notified.
       }
-      const value = new Map();
-      value['notification_id'] = data.id;
+
+      const value = {
+        notification_id: data.id
+      };
       this.telemetryGeneratorService.generateInteractTelemetry(
         InteractType.OTHER,
         InteractSubtype.NOTIFICATION_RECEIVED,
@@ -580,7 +583,8 @@ export class AppComponent implements OnInit, AfterViewInit {
             this.events.publish('force_optional_upgrade', result);
           }, 5000);
         }
-      }).catch(err => {
+      })
+      .catch(err => {
         console.error('checkNewAppVersion err', err);
       });
   }

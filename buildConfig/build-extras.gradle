@@ -196,6 +196,18 @@ android {
         }
     }
 
+    task copyDirContentRating(type: Copy,overwrite: true) {
+        if (System.properties['os.name'].toLowerCase().contains('windows')){
+            from "$rootDir\\app\\data\\content-rating"
+            into "$rootDir\\app\\src\\main\\assets\\www\\assets\\data\\content-rating"
+            println "inside copydir content-rating windows OS"
+        } else {
+            from "$rootDir/app/data/content-rating"
+            into "$rootDir/app/src/main/assets/www/assets/data/content-rating"
+            println "inside copydir content-rating linux OS"
+        }
+    }
+
     task copyDirDev(type: Copy,overwrite: true) {
         if (System.properties['os.name'].toLowerCase().contains('windows')){
             from "$rootDir\\app\\data\\dev"
@@ -233,13 +245,13 @@ android {
     }
 
     task dev(type: GradleBuild) {
-        tasks = ['myclean', 'copyDirDev', 'copyDirNotificationConfig', 'copyDirFaq']
+        tasks = ['myclean', 'copyDirDev', 'copyDirNotificationConfig', 'copyDirFaq', 'copyDirContentRating']
     }      
     task staging(type: GradleBuild) {
-        tasks = ['myclean', 'copyDirStaging', 'copyDirNotificationConfig', 'copyDirFaq']
+        tasks = ['myclean', 'copyDirStaging', 'copyDirNotificationConfig', 'copyDirFaq', 'copyDirContentRating']
     }
     task prod(type: GradleBuild) {
-        tasks = ['myclean', 'copyDirProd', 'copyDirNotificationConfig', 'copyDirFaq']
+        tasks = ['myclean', 'copyDirProd', 'copyDirNotificationConfig', 'copyDirFaq', 'copyDirContentRating']
     }
 
     applicationVariants.all { variant ->
