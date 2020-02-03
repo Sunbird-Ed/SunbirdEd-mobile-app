@@ -28,6 +28,9 @@ global.supportfile = {
     shareSunbirdConfigurations: () => { },
     makeEntryInSunbirdSupportFile: () => { }
 }
+global.document = {
+    getElementById: () => {},
+}
 
 global.FCMPlugin = {
     subscribeToTopic: (topic, success, error) => {
