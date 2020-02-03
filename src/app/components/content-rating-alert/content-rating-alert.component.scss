@@ -37,18 +37,18 @@
       padding: 8px 8px 8px 0;
       border-bottom: 1px solid #eeeeee8c;
       margin-left: 16px;
-      &:last-child{
-        &.active{
-          border-bottom: none;
-        }
-      }
+      // &:last-child{
+      //   &.active{
+      //     border-bottom: none;
+      //   }
+      // }
       .rating-label{
         color: #999;
         font-size: 14px;
         margin: 0;
         flex: 1 1 0;
         text-align: left;
-        &.active{
+        &.active-label{
           color: #074F9D;
         }
       }
