@@ -37,6 +37,11 @@
                 "glob": "**/*",
                 "input": "content-player",
                 "output": "content-player"
+              },
+              {
+                "glob": "**/*.*",
+                "input": "./node_modules/@project-sunbird/common-consumption/assets",
+                "output": "./assets/common-consumption"
               }
             ],
 
@@ -52,7 +57,8 @@
               }
             ],
             "scripts": [],
-            "es5BrowserSupport": true
+            "es5BrowserSupport": true,
+            "preserveSymlinks": true
           },
           "configurations": {
             "production": {
