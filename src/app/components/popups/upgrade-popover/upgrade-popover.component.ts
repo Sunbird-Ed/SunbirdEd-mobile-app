@@ -59,7 +59,8 @@ export class UpgradePopoverComponent {
       }
     }
     const interactSubType: string = this.upgradeType.type === 'force' || this.upgradeType.type === 'forced'
-        ? InteractSubtype.FORCE_UPGRADE_INFO : InteractSubtype.OPTIONAL_UPGRADE;
+        ? InteractSubtype.FORCE_UPGRADE_INFO : this.upgradeType.type === 'optional' &&
+        this.upgradeType.isFromDeeplink ? InteractSubtype.DEEPLINK_UPGRADE : InteractSubtype.OPTIONAL_UPGRADE;
 
     this.telemetryGeneratorService.generateImpressionTelemetry(
       ImpressionType.VIEW,
@@ -80,7 +81,7 @@ export class UpgradePopoverComponent {
   cancel() {
     this.popCtrl.dismiss();
     this.telemetryGeneratorService.generateInteractTelemetry(
-        InteractType.CANCEL,
+        InteractType.OTHER,
         '',
         this.upgradeType.isOnboardingCompleted ? Environment.HOME : Environment.ONBOARDING,
         PageId.UPGRADE_POPUP,

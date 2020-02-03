@@ -93,6 +93,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
       isOnboardingCompleted: this.isOnboardingCompleted,
       requiredVersionCode,
       currentAppVersionCode: (this.currentAppVersionCode).toString(),
+      isFromDeeplink: true,
       actionButtons: [
         {
           action: 'yes',

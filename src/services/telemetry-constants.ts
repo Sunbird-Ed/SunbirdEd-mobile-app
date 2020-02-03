@@ -391,8 +391,8 @@ export enum InteractSubtype {
     CREDITS_CLICKED = 'credits-clicked',
     UPGRADE_CLICKED = 'upgrade-clicked',
     FORCE_UPGRADE_INFO = 'force-upgrade-info',
-    BACKDROP_CLICKED = 'backdrop-clicked',
-    OPTIONAL_UPGRADE = 'optional-upgrade'
+    OPTIONAL_UPGRADE = 'optional-upgrade',
+    DEEPLINK_UPGRADE = 'deep-link-upgrade'
 }
 
 export enum ID {
