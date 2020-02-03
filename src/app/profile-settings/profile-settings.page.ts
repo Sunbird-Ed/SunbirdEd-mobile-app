@@ -108,7 +108,6 @@ export class ProfileSettingsPage implements OnInit, OnDestroy {
     private platform: Platform,
     private commonUtilService: CommonUtilService,
     private container: ContainerService,
-    private telemetryService: TelemetryGeneratorService,
     private headerService: AppHeaderService,
     private router: Router,
     private appVersion: AppVersion,
@@ -310,7 +309,7 @@ export class ProfileSettingsPage implements OnInit, OnDestroy {
             PageId.ONBOARDING_PROFILE_PREFERENCES, InteractSubtype.FINISH_CLICKED);
           const values = new Map();
           values['board'] = 'na';
-          this.telemetryService.generateInteractTelemetry(
+          this.telemetryGeneratorService.generateInteractTelemetry(
             InteractType.TOUCH,
             'submit-clicked',
             Environment.HOME,
@@ -323,7 +322,7 @@ export class ProfileSettingsPage implements OnInit, OnDestroy {
             PageId.ONBOARDING_PROFILE_PREFERENCES, InteractSubtype.FINISH_CLICKED);
           const values = new Map();
           values['medium'] = 'na';
-          this.telemetryService.generateInteractTelemetry(
+          this.telemetryGeneratorService.generateInteractTelemetry(
             InteractType.TOUCH,
             'submit-clicked',
             Environment.HOME,
@@ -336,7 +335,7 @@ export class ProfileSettingsPage implements OnInit, OnDestroy {
             PageId.ONBOARDING_PROFILE_PREFERENCES, InteractSubtype.FINISH_CLICKED);
           const values = new Map();
           values['grades'] = 'na';
-          this.telemetryService.generateInteractTelemetry(
+          this.telemetryGeneratorService.generateInteractTelemetry(
             InteractType.TOUCH,
             'submit-clicked',
             Environment.HOME,
