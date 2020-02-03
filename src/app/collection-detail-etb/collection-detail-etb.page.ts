@@ -520,49 +520,40 @@ export class CollectionDetailEtbPage implements OnInit {
    * @param identifier identifier of content / course
    */
   async setContentDetails(identifier, refreshContentDetails: boolean) {
-    const loader = await this.commonUtilService.getLoader();
-    await loader.present();
     const option: ContentDetailRequest = {
       contentId: identifier,
       attachFeedback: true,
       attachContentAccess: true,
       emitUpdateIfAny: refreshContentDetails
     };
-    // console.time('getContentDetails');
     this.contentService.getContentDetails(option).toPromise()
       .then((data: Content) => {
-        // this.zone.run(() => {
-        loader.dismiss().then(() => {
-          if (data) {
-            this.licenseDetails = data.contentData.licenseDetails || this.licenseDetails;
-            if (!data.isAvailableLocally) {
-              this.contentDetail = data;
-              this.generatefastLoadingTelemetry(InteractSubtype.FAST_LOADING_OF_TEXTBOOK_INITIATED);
-              this.contentService.getContentHeirarchy(option).toPromise()
+        if (data) {
+          this.licenseDetails = data.contentData.licenseDetails || this.licenseDetails;
+          if (!data.isAvailableLocally) {
+            this.contentDetail = data;
+            this.generatefastLoadingTelemetry(InteractSubtype.FAST_LOADING_OF_TEXTBOOK_INITIATED);
+            this.contentService.getContentHeirarchy(option).toPromise()
                 .then((content: Content) => {
                   this.childrenData = content.children;
                   this.showSheenAnimation = false;
                   this.toggleGroup(0, this.content);
                   this.generatefastLoadingTelemetry(InteractSubtype.FAST_LOADING_OF_TEXTBOOK_FINISHED);
                 }).catch((err) => {
-                  this.showSheenAnimation = false;
-                });
-              this.importContentInBackground([this.identifier], false);
-            } else {
               this.showSheenAnimation = false;
-              this.extractApiResponse(data);
-            }
+            });
+            this.importContentInBackground([this.identifier], false);
+          } else {
+            this.showSheenAnimation = false;
+            this.extractApiResponse(data);
           }
-        });
-        // });
-      })
-      .catch((error: any) => {
-        console.log('error while loading content details', error);
-        this.showSheenAnimation = false;
-        loader.dismiss();
-        this.commonUtilService.showToast('ERROR_CONTENT_NOT_AVAILABLE');
-        this.location.back();
-      });
+        }
+      }).catch((error) => {
+      console.log('error while loading content details', error);
+      this.showSheenAnimation = false;
+      this.commonUtilService.showToast('ERROR_CONTENT_NOT_AVAILABLE');
+      this.location.back();
+    });
   }
 
   showLicensce() {
