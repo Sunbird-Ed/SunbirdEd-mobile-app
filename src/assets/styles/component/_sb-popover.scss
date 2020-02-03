@@ -341,4 +341,11 @@
       height: 100vh !important;
     }
   }
+  .sb-popover-items{
+    overflow: auto;
+    .sb-popover-content-details{
+      height: calc(100vh - 150px);
+    }
+  }
+  
 }
