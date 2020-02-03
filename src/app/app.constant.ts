@@ -168,7 +168,6 @@ export class EventTopics {
     public static readonly NEXT_CONTENT = 'event:NextContent';
     public static readonly DEEPLINK_CONTENT_PAGE_OPEN = 'DEEPLINK_CONTENT_PAGE_OPEN';
     public static readonly CONTENT_TO_PLAY = 'event:ContentToPlay';
-    public static readonly REONBOARD_ENABLE_BACK_BTN = 'REONBOARD_ENABLE_BACK_BTN';
 }
 
 export class ShareUrl {

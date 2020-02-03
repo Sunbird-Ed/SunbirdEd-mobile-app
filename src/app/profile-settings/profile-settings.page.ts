@@ -157,15 +157,21 @@ export class ProfileSettingsPage implements OnInit, OnDestroy {
     ).subscribe();
 
     await this.fetchSyllabusList();
-    this.getQueryParams();
+    this.redirectToInitialRoute();
   }
 
-  getQueryParams() {
+  private redirectToInitialRoute() {
     const snapshot = this.activatedRoute.snapshot;
     if (snapshot.queryParams && snapshot.queryParams.reOnboard) {
-      window.history.pushState({}, '', `/${RouterLinks.USER_TYPE_SELECTION}`);
-      window.history.pushState({}, '', `/${RouterLinks.LANGUAGE_SETTING}`);
-      this.events.publish(EventTopics.REONBOARD_ENABLE_BACK_BTN);
+      const userTypeSelectionRoute = new URL(window.location.origin + `/${RouterLinks.USER_TYPE_SELECTION}`);
+      const languageSettingRoute = new URL(window.location.origin + `/${RouterLinks.LANGUAGE_SETTING}`);
+
+      userTypeSelectionRoute.searchParams.set('onReload', 'true');
+      languageSettingRoute.searchParams.set('onReload', 'true');
+
+      window.history.pushState({}, '', userTypeSelectionRoute.toString());
+      window.history.pushState({}, '', languageSettingRoute.toString());
+      this.hideBackButton = false;
     }
   }
 
