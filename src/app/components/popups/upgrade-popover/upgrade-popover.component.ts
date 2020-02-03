@@ -71,7 +71,7 @@ export class UpgradePopoverComponent {
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.OTHER,
       interactSubType,
-  this.upgradeType.isOnboardingCompleted ? Environment.HOME : Environment.ONBOARDING,
+      this.upgradeType.isOnboardingCompleted ? Environment.HOME : Environment.ONBOARDING,
       PageId.UPGRADE_POPUP,
       undefined,
       values
@@ -88,7 +88,7 @@ export class UpgradePopoverComponent {
         undefined,
         undefined,
         undefined,
-undefined,
+        undefined,
         ID.CANCEL_CLICKED
     );
   }
