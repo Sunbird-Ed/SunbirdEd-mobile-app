@@ -43,7 +43,6 @@ import {
   ContentFilterConfig,
   MimeType
 } from '@app/app/app.constant';
-import { Map as customMap } from '@app/app/telemetryutil';
 import { AppGlobalService } from '@app/services/app-global-service.service';
 import { SunbirdQRScanner } from '@app/services/sunbirdqrscanner.service';
 import { AppVersion } from '@ionic-native/app-version/ngx';
@@ -116,8 +115,8 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
    */
   mediumFilterLayout = LibraryFiltersLayout.SQUARE;
   classFilterLayout = LibraryFiltersLayout.ROUND;
-  cardDefaultImg = this.commonUtilService.convertFileSrc('assets/imgs/ic_launcher.png');
-  offlineImg = this.commonUtilService.convertFileSrc('assets/imgs/ic_offline_white_sm.png');
+  cardDefaultImg;
+  offlineImg;
   categoryMediumNamesArray = [];
   mediumsSelected = [];
   categoryGradeLevelsArray = [];
@@ -211,6 +210,8 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
         this.appLabel = appName;
       });
     this.defaultImg = this.commonUtilService.convertFileSrc('assets/imgs/ic_launcher.png');
+    this.cardDefaultImg = this.commonUtilService.convertFileSrc('assets/imgs/ic_launcher.png');
+    this.offlineImg = this.commonUtilService.convertFileSrc('assets/imgs/ic_offline_white_sm.png');
     this.generateNetworkType();
 
   }
@@ -276,7 +277,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   generateNetworkType() {
-    const values = new customMap();
+    const values = {};
     values['network-type'] = this.network.type;
     this.telemetryGeneratorService.generateExtraInfoTelemetry(
       values,
@@ -327,7 +328,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   navigateToViewMoreContentsPage(section: string) {
-    const values = new customMap();
+    const values = {};
     let headerTitle;
     let pageName;
     let showDownloadOnlyToggleBtn;
@@ -467,7 +468,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.appGlobalService.setSelectedBoardMediumGrade(selectedBoardMediumGrade);
     this.storyAndWorksheets = [];
     this.searchApiLoader = !this.refresh;
-    const reqvalues = new customMap();
+    const reqvalues = {};
     reqvalues['pageReq'] = this.getGroupByPageReq;
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.OTHER,
       InteractSubtype.RESOURCE_PAGE_REQUEST,
@@ -539,7 +540,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
             sectionInfo['grade'] = this.getGroupByPageReq.grade[0];
           }
 
-          const resValues = new customMap();
+          const resValues = {};
           resValues['pageRes'] = sectionInfo;
           this.telemetryGeneratorService.generateInteractTelemetry(InteractType.OTHER,
             InteractSubtype.RESOURCE_PAGE_LOADED,
@@ -562,7 +563,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
               this.commonUtilService.showToast('ERROR_FETCHING_DATA');
             }
           }
-          const errValues = new customMap();
+          const errValues = {};
           errValues['isNetworkAvailable'] = this.commonUtilService.networkInfo.isNetworkAvailable ? 'Y' : 'N';
           this.telemetryGeneratorService.generateInteractTelemetry(InteractType.OTHER,
             InteractSubtype.RESOURCE_PAGE_ERROR,
@@ -604,7 +605,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
   generateExtraInfoTelemetry(sectionsCount) {
-    const values = new customMap();
+    const values = {};
     values['pageSectionCount'] = sectionsCount;
     values['networkAvailable'] = this.commonUtilService.networkInfo.isNetworkAvailable ? 'Y' : 'N';
     this.telemetryGeneratorService.generateExtraInfoTelemetry(
@@ -877,7 +878,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   generateClassInteractTelemetry(currentClass: string, previousClass: string) {
-    const values = new customMap();
+    const values = {};
     values['currentSelected'] = currentClass;
     values['previousSelected'] = previousClass;
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
@@ -889,7 +890,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   generateMediumInteractTelemetry(currentMedium: string, previousMedium: string) {
-    const values = new customMap();
+    const values = {};
     values['currentSelected'] = currentMedium;
     values['previousSelected'] = previousMedium;
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
@@ -996,7 +997,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     const identifier = item.contentId || item.identifier;
     const telemetryObject: TelemetryObject = new TelemetryObject(identifier, item.contentType, item.pkgVersion);
     const corRelationList = [{ id: sectionName, type: CorReleationDataType.SUBJECT }];
-    const values = new customMap();
+    const values = {};
     values['sectionName'] = item.subject;
     values['positionClicked'] = index;
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
@@ -1065,7 +1066,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   redirectToNotifications() {
-    const valuesMap = new customMap();
+    const valuesMap = {};
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,
       InteractSubtype.NOTIFICATION_CLICKED,
@@ -1117,7 +1118,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     };
     this.router.navigate([RouterLinks.EXPLORE_BOOK], navigationExtras);
-    const values = new customMap();
+    const values = {};
     values['board'] = this.profile.board[0];
     values['class'] = this.currentGrade.name;
     values['medium'] = this.currentMedium;
@@ -1162,7 +1163,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       item.contentType : ContentType.RESOURCE;
 
     const telemetryObject: TelemetryObject = new TelemetryObject(identifier, type, '');
-    const values = new customMap();
+    const values = {};
     values['sectionName'] = this.recentViewedSection;
     values['positionClicked'] = index;
 
