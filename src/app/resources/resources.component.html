@@ -1,22 +1,12 @@
 <ion-content hide-header-footer class="main-container avoid-bottom-tabs-space" (ionScrollEnd)="logScrollEnd($event)"
   scrollEvents="true" #contentView>
   <div slot="fixed" class="fixed-container">
-    <div class="sb-slider-pills-container">
-      <div class="sb-pills-container sb-medium-pills-container">
-        <div class="pill" *ngFor="let medium of categoryMediums; let i = index;"
-          [ngClass]="{'active': medium?.selected}" [@appear]
-          (click)="mediumClick(medium?.name,'sendMediumClickedTelemetry')">{{medium?.name}} Medium
-        </div>
-      </div>
-    </div>
-    <div class="sb-slider-pills-container">
-      <div class="sb-pills-container sb-grade-pills-container" id="gradeScroll">
-        <div class="pill" *ngFor="let grade of categoryGradeLevels; let i = index; let first = first"
-          [ngClass]="{'active': grade?.selected, '': !grade?.selected}" attr.id="class{{i}}"
-          (click)="classClick(i,'sendClassClickedTelemetry');">
-          {{grade?.name}}</div>
-      </div>
-    </div>
+    <sb-library-filters [list]="categoryMediumNamesArray" [selectedItems]="mediumsSelected" [layout]="mediumFilterLayout" 
+      (selectedFilter)="mediumClickEvent($event, 'sendMediumClickedTelemetry')">
+    </sb-library-filters>
+    <sb-library-filters  [list]="categoryGradeLevelsArray" [selectedItems]="classSelected" 
+      [layout]="classFilterLayout" (selectedFilter)="classClickEvent($event, 'sendClassClickedTelemetry');">
+    </sb-library-filters>
   </div>
   <div class="scrollable-container">
     <ion-refresher (ionRefresh)="swipeDownToRefresh($event)"></ion-refresher>
@@ -47,9 +37,15 @@
           <div class="sb-card-scroll-container" (scroll)='onScroll($event)'>
             <!-- Card style -->
             <div class="sb-card-container sb-card-recently-container">
-              <app-new-course-card *ngFor="let course of recentlyViewedResources; let i=index" [course]="course" [pageName]="'library'"
+              <!-- <app-new-course-card *ngFor="let course of recentlyViewedResources; let i=index" [course]="course" [pageName]="'library'"
                 [env]="'home'" [index]="i" [sectionName]="'RecentlyViewed'" [layoutName]="'layoutSavedContent'">
-              </app-new-course-card>
+              </app-new-course-card> -->
+              <div class="recently-viewed-card-size" *ngFor="let content of recentlyViewedResources">
+                <sb-library-card 
+                [isOffline]="!content?.isAvailableLocally && !commonUtilService.networkInfo.isNetworkAvailable" [content]="content?.contentData" [type]="'recently_viewed'" (cardClick)="recentlyViewedCardClick($event, content);" 
+                [cardImg]="(!(!content.isAvailableLocally && !commonUtilService.networkInfo.isNetworkAvailable)) ? (commonUtilService.convertFileSrc(content?.contentData?.courseLogoUrl) || commonUtilService.convertFileSrc(content?.contentData?.appIcon) || defaultImg) : 'assets/imgs/ic_offline_white_sm.png'">
+                </sb-library-card>
+              </div>
             </div>
           </div>
         </div>
@@ -71,25 +67,10 @@
 
     <div *ngFor="let items of storyAndWorksheets">
       <div class="sb-textbook-container" *ngIf="items?.contents && items?.contents?.length">
-        <div class="sb-textbook-items">
-          <div class="sb-textbook-title-container">
-            <span class="textbook-icon">
-              <ion-icon ios="ios-albums" md="md-albums"></ion-icon>
-            </span>
-            <span class="textbook-title">
-              {{items.name}}
-            </span>
-          </div>
-          <!-- Card style -->
-          <div class="sb-card-container sb-card-textbook-container">
-            <div class="sb-card-textbook" *ngFor="let item of items?.contents | slice:0:3 ; let i = index">
-              <app-text-book-card [content]="item" [layoutName]='layoutName'
-                (click)="navigateToDetailPage(item, i, items.name)"></app-text-book-card>
-            </div>
-            <div class="sb-view-more" *ngIf="items?.contents?.length > 3"
-              (click)="navigateToTextbookPage(items?.contents, items.name)">{{'VIEW_MORE' | translate}}</div>
-          </div>
-        </div>
+        <sb-library-cards-stack [title]="items?.name" [contentList]="items?.contents" [isOffline]="!commonUtilService.networkInfo.isNetworkAvailable"
+          [viewMoreButtonText]="'VIEW_MORE' | translate" [maxCardCount]="3"
+          (buttonClick)="navigateToTextbookPage(items?.contents, items.name)" (cardClick)="navigateToDetailPage($event, items.name)">
+        </sb-library-cards-stack>
       </div>
     </div>
     <div class="sb-explore-container" *ngIf="storyAndWorksheets && storyAndWorksheets.length !== 0">

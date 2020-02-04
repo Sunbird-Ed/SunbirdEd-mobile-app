@@ -1,5 +1,6 @@
 <div class="close-container">
-    <ion-icon *ngIf="!isMandatoryUpgrade" name="close" class="sb-modal-close" (click)="cancel()"></ion-icon>
+    <ion-icon *ngIf="!isMandatoryUpgrade" name="close" class="sb-modal-close"
+              (click)="cancel(); $event.preventDefault(); $event.stopPropagation();"></ion-icon>
 </div>
 
 <ion-content padding-top padding-horizontal>

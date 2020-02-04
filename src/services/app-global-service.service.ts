@@ -1,5 +1,5 @@
 import { Inject, Injectable, OnDestroy } from '@angular/core';
-import { Environment, InteractSubtype, InteractType, PageId, ImpressionType, ImpressionSubtype } from './telemetry-constants';
+import { Environment, ID, InteractSubtype, InteractType, PageId, ImpressionType, ImpressionSubtype } from './telemetry-constants';
 import { Events, PopoverController } from '@ionic/angular';
 import { GenericAppConfig, PreferenceKey } from '../app/app.constant';
 import { TelemetryGeneratorService } from './telemetry-generator.service';
@@ -482,6 +482,20 @@ export class AppGlobalService implements OnDestroy {
 
         const popover = await this.popoverCtrl.create(options);
         await popover.present();
+
+        popover.onDidDismiss().then(() => {
+            this.telemetryGeneratorService.generateInteractTelemetry(
+                InteractType.BACKDROP_DISMISSED,
+                '',
+                upgradeData.isOnboardingCompleted ? Environment.HOME : Environment.ONBOARDING,
+                PageId.UPGRADE_POPUP,
+                undefined,
+                undefined,
+                undefined,
+                undefined,
+                ID.BACKDROP_CLICKED
+            );
+        });
     }
 
     generateConfigInteractEvent(pageId: string, isOnBoardingCompleted?: boolean) {
@@ -629,7 +643,7 @@ export class AppGlobalService implements OnDestroy {
 
             this.preferences.getString(PreferenceKey.APP_PERMISSION_ASKED).subscribe(
                 (permissionAsked: string | undefined) => {
-                    if (!permissionAsked) { 
+                    if (!permissionAsked) {
                         this.preferences.putString(
                             PreferenceKey.APP_PERMISSION_ASKED, JSON.stringify(this.isPermissionAsked)).toPromise().then();
                         observer.next(false);

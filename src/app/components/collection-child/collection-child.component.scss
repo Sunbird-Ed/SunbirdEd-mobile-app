@@ -123,6 +123,12 @@
     padding-left: 4px;
     color: #024f9d;
 }
+.play-button{
+    --border-color: #024f9d;
+    --border-width: 1px;
+    text-transform: none;
+    height: 3em;
+}
 .image-position{
     display: inline-block;
     position: relative;

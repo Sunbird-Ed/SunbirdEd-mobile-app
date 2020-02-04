@@ -23,6 +23,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
   private _isDelegateReady = false;
   private isOnboardingCompleted = false;
   private loginPopup: any;
+  private currentAppVersionCode: number;
   // should delay the deeplinks until tabs is loaded
   set isDelegateReady(val: boolean) {
     this._isDelegateReady = val;
@@ -79,7 +80,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
     // Read version code from deeplink.
     const requiredVersionCode = url.searchParams.get('vCode');
     if (requiredVersionCode && !(await this.isAppCompatible(requiredVersionCode))) {
-      this.upgradeAppPopover();
+      this.upgradeAppPopover(requiredVersionCode);
     } else if (this.isOnboardingCompleted || session) {
       this.handleNavigation(urlMatch);
     } else {
@@ -88,20 +89,24 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
   }
 
   private async isAppCompatible(requiredVersionCode) {
-    const currentAppVersionCode = await this.utilityService.getAppVersionCode();
+    this.currentAppVersionCode = await this.utilityService.getAppVersionCode();
 
     // If requiredVersionCode is available then should display upgrade popup is installed version is less than the expected appVesion.
-    return (currentAppVersionCode
+    return (this.currentAppVersionCode
       && requiredVersionCode
-      && currentAppVersionCode >= requiredVersionCode);
+      && this.currentAppVersionCode >= requiredVersionCode);
   }
 
-  private async upgradeAppPopover() {
+  private async upgradeAppPopover(requiredVersionCode) {
     const packageName = await this.appVersion.getPackageName();
     const playStoreLink = `https://play.google.com/store/apps/details?id=${packageName}`;
     const result: any = {
       type: 'optional',
       title: 'UPDATE_APP_SUPPORT_TITLE',
+      isOnboardingCompleted: this.isOnboardingCompleted,
+      requiredVersionCode,
+      currentAppVersionCode: (this.currentAppVersionCode).toString(),
+      isFromDeeplink: true,
       actionButtons: [
         {
           action: 'yes',
