@@ -32,7 +32,8 @@ export class ContentPlayerHandler {
      * Launches Content-Player with given configuration
      */
     public launchContentPlayer(
-        content: Content, isStreaming: boolean, shouldDownloadnPlay: boolean, contentInfo: ContentInfo, isCourse: boolean) {
+        content: Content, isStreaming: boolean, shouldDownloadnPlay: boolean, contentInfo: ContentInfo, isCourse: boolean,
+        isFromTextbookTOC?: boolean) {
         if (!AppGlobalService.isPlayerLaunched) {
             AppGlobalService.isPlayerLaunched = true;
         }
@@ -91,7 +92,8 @@ export class ContentPlayerHandler {
                     this.file.checkFile(`file://${data.metadata.basePath}/`, 'index.ecml').then((isAvailable) => {
                         this.canvasPlayerService.xmlToJSon(`${filePath}/index.ecml`).then((json) => {
                             data['data'] = JSON.stringify(json);
-                            this.router.navigate([RouterLinks.PLAYER], { state: { config: data,  course : contentInfo.course } });
+                            this.router.navigate([RouterLinks.PLAYER],
+                                { state: { config: data,  course : contentInfo.course, isFromTOC: isFromTextbookTOC } });
 
                         }).catch((error) => {
                             console.error('error1', error);
@@ -100,18 +102,21 @@ export class ContentPlayerHandler {
                         console.error('err', err);
                         this.canvasPlayerService.readJSON(`${filePath}/index.json`).then((json) => {
                             data['data'] = json;
-                            this.router.navigate([RouterLinks.PLAYER], { state: { config: data,  course : contentInfo.course } });
+                            this.router.navigate([RouterLinks.PLAYER],
+                                { state: { config: data,  course : contentInfo.course, isFromTOC: isFromTextbookTOC } });
 
                         }).catch((e) => {
                             console.error('readJSON error', e);
                         });
                     });
                 } else {
-                    this.router.navigate([RouterLinks.PLAYER], { state: { config: data, course : contentInfo.course } });
+                    this.router.navigate([RouterLinks.PLAYER],
+                        { state: { config: data, course : contentInfo.course, isFromTOC: isFromTextbookTOC } });
                 }
 
             } else {
-                this.router.navigate([RouterLinks.PLAYER], { state: { config: data,  course : contentInfo.course } });
+                this.router.navigate([RouterLinks.PLAYER],
+                    { state: { config: data,  course : contentInfo.course, isFromTOC: isFromTextbookTOC } });
             }
         });
     }
