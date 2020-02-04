@@ -81,10 +81,10 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
     });
     this.translate.onLangChange.subscribe((params) => {
       this.ngZone.run(() => {
-        if (params.lang === 'ur' && !this.platform.isRTL) {
+        if (params.lang === 'ur') {
           this.isRtl = true;
           this.menuSide = 'right';
-        } else if (this.platform.isRTL) {
+        } else {
           this.menuSide = 'left';
           this.isRtl = false;
         }
