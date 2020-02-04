@@ -73,7 +73,7 @@ export class SbSharePopupComponent implements OnInit, OnDestroy {
 
   getContentEndPoint(content) {
     let endPoint = '';
-    if (content.contentType === ContentType.COURSE.toLowerCase()) {
+    if (content.contentType.toLowerCase() === ContentType.COURSE.toLowerCase()) {
       endPoint = ShareUrl.COURSE;
     } else if (content.mimeType === MimeType.COLLECTION) {
       endPoint = ShareUrl.COLLECTION;

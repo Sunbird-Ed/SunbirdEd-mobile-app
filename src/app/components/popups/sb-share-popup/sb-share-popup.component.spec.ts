@@ -168,7 +168,8 @@ describe('SbSharePopupComponent', () => {
             // arrange
             // act
             // assert
-            expect(sbSharePopupComponent.getContentEndPoint({ mimeType: MimeType.COLLECTION } as any)).toEqual(ShareUrl.COLLECTION);
+            expect(sbSharePopupComponent.getContentEndPoint({ mimeType: MimeType.COLLECTION, 
+                contentType: ContentType.TEXTBOOK } as any)).toEqual(ShareUrl.COLLECTION);
         });
 
         it('should return content endpoint', () => {
