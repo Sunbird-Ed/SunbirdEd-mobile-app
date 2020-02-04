@@ -1,5 +1,5 @@
 import { Inject, Injectable, OnDestroy } from '@angular/core';
-import {Environment, ID, InteractSubtype, InteractType, PageId} from './telemetry-constants';
+import { Environment, ID, InteractSubtype, InteractType, PageId, ImpressionType, ImpressionSubtype } from './telemetry-constants';
 import { Events, PopoverController } from '@ionic/angular';
 import { GenericAppConfig, PreferenceKey } from '../app/app.constant';
 import { TelemetryGeneratorService } from './telemetry-generator.service';
@@ -12,6 +12,7 @@ import { ProfileConstants } from '../app/app.constant';
 import { Observable, Observer } from 'rxjs';
 import { PermissionAsked } from './android-permissions/android-permission';
 import { UpgradePopoverComponent } from '@app/app/components/popups';
+import { AppVersion } from '@ionic-native/app-version/ngx';
 
 @Injectable({
     providedIn: 'root'
@@ -72,7 +73,7 @@ export class AppGlobalService implements OnDestroy {
     private _isSignInOnboardingCompleted: any;
     private isJoinTraningOnboarding: any;
     private _signinOnboardingLoader: any;
-
+    private _skipCoachScreenForDeeplink = false;
 
     constructor(
         @Inject('PROFILE_SERVICE') private profile: ProfileService,
@@ -82,7 +83,8 @@ export class AppGlobalService implements OnDestroy {
         private popoverCtrl: PopoverController,
         private telemetryGeneratorService: TelemetryGeneratorService,
         @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
-        private utilityService: UtilityService
+        private utilityService: UtilityService,
+        private appVersion: AppVersion
     ) {
 
         this.initValues();
@@ -349,9 +351,12 @@ export class AppGlobalService implements OnDestroy {
             });
     }
 
-    setOnBoardingCompleted() {
-        this.isOnBoardingCompleted = true;
-        this.preferences.putString(PreferenceKey.IS_ONBOARDING_COMPLETED, 'true').toPromise().then();
+    async setOnBoardingCompleted() {
+        const session = await this.authService.getSession().toPromise();
+        if (!session) {
+            this.isOnBoardingCompleted = true;
+            this.preferences.putString(PreferenceKey.IS_ONBOARDING_COMPLETED, 'true').toPromise().then();
+        }
     }
 
     private initValues() {
@@ -699,6 +704,13 @@ export class AppGlobalService implements OnDestroy {
         this._signinOnboardingLoader = value;
     }
 
+    get skipCoachScreenForDeeplink() {
+        return this._skipCoachScreenForDeeplink;
+    }
+    set skipCoachScreenForDeeplink(value) {
+        this._skipCoachScreenForDeeplink = value;
+    }
+
     // This method is used to reset if any quiz content data is previously saved before Joining a Training
     // So it wont affect in the exterId verification page
     resetSavedQuizContent() {
@@ -709,6 +721,25 @@ export class AppGlobalService implements OnDestroy {
         if (this.signinOnboardingLoader) {
             await this.signinOnboardingLoader.dismiss();
             this.signinOnboardingLoader = null;
+        }
+    }
+
+    async showCouchMarkScreen() {
+        if (this.skipCoachScreenForDeeplink) {
+            this.skipCoachScreenForDeeplink = false;
+        } else {
+            const coachMarkSeen = await this.preferences.getBoolean('coach_mark_seen').toPromise();
+            if (!coachMarkSeen) {
+                const appLabel = await this.appVersion.getAppName();
+                this.event.publish('coach_mark_seen', { showWalkthroughBackDrop: true, appName: appLabel });
+                this.telemetryGeneratorService.generateImpressionTelemetry(
+                ImpressionType.VIEW,
+                ImpressionSubtype.QR_SCAN_WALKTHROUGH,
+                PageId.LIBRARY,
+                Environment.ONBOARDING
+                );
+                this.preferences.putBoolean('coach_mark_seen', true).toPromise().then();
+            }
         }
     }
 

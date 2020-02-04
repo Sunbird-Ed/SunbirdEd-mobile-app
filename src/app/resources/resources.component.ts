@@ -172,6 +172,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('contentView') contentView: ContentView;
   locallyDownloadResources;
   channelId: string;
+  coachTimeout: any;
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -300,6 +301,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.headerObservable) {
       this.headerObservable.unsubscribe();
     }
+    this.coachTimeout.clearTimeout();
   }
 
   /**
@@ -674,6 +676,13 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.subscribeSdkEvent();
 
     this.splaschreenDeeplinkActionHandlerDelegate.isDelegateReady = true;
+  }
+
+  ionViewDidEnter() {
+    // Need timer to load the coach screen and for the coach screen to hide if user comes from deeplink.
+    this.coachTimeout = setTimeout(() => {
+      this.appGlobalService.showCouchMarkScreen();
+    }, 2000);
   }
 
   // Offline Toast

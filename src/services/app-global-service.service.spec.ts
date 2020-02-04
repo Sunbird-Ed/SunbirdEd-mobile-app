@@ -6,6 +6,7 @@ import { UtilityService } from './utility-service';
 import { of } from 'rxjs';
 import { PreferenceKey } from '../app/app.constant';
 import { InteractSubtype, Environment, PageId, ImpressionType, InteractType } from './telemetry-constants';
+import { AppVersion } from '@ionic-native/app-version/ngx';
 describe('AppGlobalService', () => {
     let appGlobalService: AppGlobalService;
     const profile = { syllabus: 'tn' } as any;
@@ -32,6 +33,7 @@ describe('AppGlobalService', () => {
     const mockUtilityService: Partial<UtilityService> = {
         getBuildConfigValue: jest.fn(() => Promise.resolve('org.sunbird.app'))
     };
+    const mockAppVersion: Partial<AppVersion> = {};
 
     beforeAll(() => {
         appGlobalService = new AppGlobalService(
@@ -42,7 +44,8 @@ describe('AppGlobalService', () => {
             mockPopoverCtrl as PopoverController,
             mockTelemetryGeneratorService as TelemetryGeneratorService,
             mockPreferences as SharedPreferences,
-            mockUtilityService as UtilityService
+            mockUtilityService as UtilityService,
+            mockAppVersion as AppVersion
         );
     });
 
@@ -499,6 +502,70 @@ describe('AppGlobalService', () => {
             // act
             // assert
             // expect(appGlobalService.getSelectedUser()).toEqual('0123456789');
+        });
+    });
+
+    describe('setOnBoardingCompleted()', () => {
+        it('should set the value to indicate if the onboarding flow is completed', () => {
+            // arrange
+            mockAuthService.getSession = jest.fn(() => of('SESSION_DATA'));
+            mockPreferences.putString = jest.fn(() => of(undefined));
+            // act
+            appGlobalService.setOnBoardingCompleted().then(() => {
+                // assert
+                expect(appGlobalService.isOnBoardingCompleted).toEqual(true);
+            });
+        });
+
+        it('should not set the value to indicate if the onboarding flow is completed if user is not logged in', (done) => {
+            // arrange
+            mockAuthService.getSession = jest.fn(() => of(undefined));
+            // act
+            appGlobalService.setOnBoardingCompleted().then(() => {
+                // assert
+                done();
+            });
+        });
+    });
+
+    describe('showCouchMarkScreen()', () => {
+        it('should skip showig coachmark screen if "skipCoachScreenForDeeplink" is true', () => {
+            // arrange
+            appGlobalService.skipCoachScreenForDeeplink = true;
+            // act
+            appGlobalService.showCouchMarkScreen().then(() => {
+                // assert
+                expect(appGlobalService.skipCoachScreenForDeeplink).toEqual(false);
+            });
+        });
+
+        it('should save the onboarding completed flag if user is not logged in and display coach screen', (done) => {
+            // arrange
+            appGlobalService.skipCoachScreenForDeeplink = false;
+            mockPreferences.getBoolean = jest.fn(() => of(false));
+            mockAppVersion.getAppName = jest.fn(() => Promise.resolve('appname'));
+            mockEvent.publish = jest.fn();
+            mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
+            mockPreferences.putBoolean = jest.fn(() => of(undefined));
+            // act
+            appGlobalService.showCouchMarkScreen().then(() => {
+                // assert
+                expect(mockEvent.publish).toHaveBeenCalledWith('coach_mark_seen', { showWalkthroughBackDrop: true, appName: 'appname' });
+                expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenCalled();
+                expect(mockPreferences.putBoolean).toHaveBeenCalledWith('coach_mark_seen', true);
+                done();
+            });
+        });
+
+        it('should not show the coach mark screen if it is already shown', (done) => {
+            // arrange
+            appGlobalService.skipCoachScreenForDeeplink = false;
+            mockPreferences.getBoolean = jest.fn(() => of(true));
+            // act
+            appGlobalService.showCouchMarkScreen().then(() => {
+                // assert
+                done()
+            });
         });
     });
 
