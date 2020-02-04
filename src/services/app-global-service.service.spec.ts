@@ -4,7 +4,7 @@ import { Events, PopoverController } from '@ionic/angular';
 import { TelemetryGeneratorService } from './telemetry-generator.service';
 import { UtilityService } from './utility-service';
 import { of } from 'rxjs';
-import { PreferenceKey } from '../app/app.constant';
+import { PreferenceKey, EventTopics } from '../app/app.constant';
 import { InteractSubtype, Environment, PageId, ImpressionType, InteractType } from './telemetry-constants';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 describe('AppGlobalService', () => {
@@ -407,7 +407,7 @@ describe('AppGlobalService', () => {
             values['oldValue'] = ['Class 1'];
             values['newValue'] = ['Class 1', 'Class 2'];
             // act
-            appGlobalService.generateAttributeChangeTelemetry( ['Class 1'], ['Class 1', 'Class 2'], PageId.LIBRARY, Environment.HOME);
+            appGlobalService.generateAttributeChangeTelemetry(['Class 1'], ['Class 1', 'Class 2'], PageId.LIBRARY, Environment.HOME);
             // assert
             expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
                 InteractType.TOUCH,
@@ -425,7 +425,7 @@ describe('AppGlobalService', () => {
             values['oldValue'] = ['Class 1'];
             values['newValue'] = ['Class 1', 'Class 2'];
             // act
-            appGlobalService.generateAttributeChangeTelemetry( ['Class 1'], ['Class 1', 'Class 2'], PageId.LIBRARY);
+            appGlobalService.generateAttributeChangeTelemetry(['Class 1'], ['Class 1', 'Class 2'], PageId.LIBRARY);
             // assert
             expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
                 InteractType.TOUCH,
@@ -445,7 +445,7 @@ describe('AppGlobalService', () => {
             values['profile'] = profile;
             values['validation'] = 'medium is required';
             // act
-            appGlobalService.generateSaveClickedTelemetry( profile, 'medium is required', PageId.LIBRARY, 'medium-clicked');
+            appGlobalService.generateSaveClickedTelemetry(profile, 'medium is required', PageId.LIBRARY, 'medium-clicked');
             // assert
             expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
                 InteractType.TOUCH,
@@ -463,7 +463,7 @@ describe('AppGlobalService', () => {
             values['oldValue'] = ['Class 1'];
             values['newValue'] = ['Class 1', 'Class 2'];
             // act
-            appGlobalService.generateAttributeChangeTelemetry( ['Class 1'], ['Class 1', 'Class 2'], PageId.LIBRARY);
+            appGlobalService.generateAttributeChangeTelemetry(['Class 1'], ['Class 1', 'Class 2'], PageId.LIBRARY);
             // assert
             expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
                 InteractType.TOUCH,
@@ -478,10 +478,10 @@ describe('AppGlobalService', () => {
     describe('getSessionData()', () => {
         it('should return the session data', () => {
             // arrange
-            appGlobalService.session = { access_token: '', userToken: '', refresh_token: ''};
+            appGlobalService.session = { access_token: '', userToken: '', refresh_token: '' };
             // act
             // assert
-            expect(appGlobalService.getSessionData()).toEqual( { access_token: '', userToken: '', refresh_token: ''});
+            expect(appGlobalService.getSessionData()).toEqual({ access_token: '', userToken: '', refresh_token: '' });
         });
     });
 
@@ -550,9 +550,10 @@ describe('AppGlobalService', () => {
             // act
             appGlobalService.showCouchMarkScreen().then(() => {
                 // assert
-                expect(mockEvent.publish).toHaveBeenCalledWith('coach_mark_seen', { showWalkthroughBackDrop: true, appName: 'appname' });
+                expect(mockEvent.publish).toHaveBeenCalledWith(EventTopics.COACH_MARK_SEEN,
+                    { showWalkthroughBackDrop: true, appName: 'appname' });
                 expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenCalled();
-                expect(mockPreferences.putBoolean).toHaveBeenCalledWith('coach_mark_seen', true);
+                expect(mockPreferences.putBoolean).toHaveBeenCalledWith(PreferenceKey.COACH_MARK_SEEN, true);
                 done();
             });
         });
