@@ -347,7 +347,8 @@ describe('collectionDetailEtbPage', () => {
                 true,
                 false,
                 mockContentInfo,
-                false
+                false,
+                true
             );
             done();
         }, 0);
