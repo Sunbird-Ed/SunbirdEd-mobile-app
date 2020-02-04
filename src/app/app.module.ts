@@ -161,6 +161,9 @@ export function faqService() {
 export function contentRatingService() {
   return SunbirdSdk.instance.contentRatingService;
 }
+export function archiveService() {
+  return SunbirdSdk.instance.archiveService;
+}
 
 export function sdkDriverFactory(): any {
   return [{
@@ -259,6 +262,9 @@ export function sdkDriverFactory(): any {
   }, {
     provide: 'CONTENT_RATING_SERVICE',
     useFactory: contentRatingService
+  }, {
+    provide: 'ARCHIVE_SERVICE',
+    useFactory: archiveService
   }
   ];
 }
