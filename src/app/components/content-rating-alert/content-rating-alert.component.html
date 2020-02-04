@@ -20,7 +20,7 @@
         <div class="rating-opts">
           <div *ngFor="let opt of ratingOptions | sortBy: 'idx' : 'asc'">
             <div class="rating-item" [ngClass]="{'active': opt.isChecked}">
-              <ion-label class="rating-label" [ngClass]="{'active': opt.isChecked}" (click)="opt.isChecked=!opt.isChecked">{{opt.value}}</ion-label>
+              <ion-label class="rating-label" [ngClass]="{'active-label': opt.isChecked}" (click)="opt.isChecked=!opt.isChecked">{{opt.value}}</ion-label>
               <ion-checkbox [(ngModel)]="opt.isChecked" (ionChange)="ratingOptsChanged(opt.key)" slot="end"></ion-checkbox>
             </div>
           </div>
@@ -31,8 +31,8 @@
       </div>
   </div>
   <ion-footer>
-    <div class="sb-popover-footer">
-      <button class="sb-popover-action-btn popover-color" [disabled]="!userRating" (click)="submit()">{{ 'BTN_SUBMIT' | translate }}</button>
+    <div class="sb-popover-footer" *ngIf="userRating">
+      <button class="sb-popover-action-btn popover-color" (click)="submit()">{{ 'BTN_SUBMIT' | translate }}</button>
     </div>
   </ion-footer>
 </ion-content>
