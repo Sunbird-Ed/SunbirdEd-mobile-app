@@ -8,7 +8,7 @@ import {
 } from 'sunbird-sdk';
 import { TranslateService } from '@ngx-translate/core';
 import { Events, Platform, AlertController } from '@ionic/angular';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import {
     AppGlobalService,
@@ -52,7 +52,12 @@ describe('ProfileSettingsPage', () => {
         generateInteractTelemetry: jest.fn()
     };
     const mockTranslate: Partial<TranslateService> = {};
-
+    const mockActivatedRoute: Partial<ActivatedRoute> = {};
+    mockActivatedRoute.snapshot = {
+        queryParams:{
+            reOnBoard: {}
+        }
+    } as any;
     beforeAll(() => {
         profileSettingsPage = new ProfileSettingsPage(
             mockProfileService as ProfileService,
@@ -73,7 +78,8 @@ describe('ProfileSettingsPage', () => {
             mockAppVersion as AppVersion,
             mockAlertCtrl as AlertController,
             mockLocation as Location,
-            mockSplashScreenService as SplashScreenService
+            mockSplashScreenService as SplashScreenService,
+            mockActivatedRoute as ActivatedRoute
         );
     });
 

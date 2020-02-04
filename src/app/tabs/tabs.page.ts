@@ -7,11 +7,6 @@ import { ContainerService } from '@app/services/container.services';
 import { AppGlobalService } from '@app/services/app-global-service.service';
 import { ProfileConstants } from '@app/app/app.constant';
 import { CommonUtilService } from '@app/services/common-util.service';
-import { ExternalIdVerificationService } from '@app/services/externalid-verification.service';
-
-import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
-import { Environment, InteractSubtype, InteractType, PageId, ImpressionType, ImpressionSubtype } from '@app/services/telemetry-constants';
-import { AppVersion } from '@ionic-native/app-version/ngx';
 @Component({
   selector: 'app-tabs',
   templateUrl: './tabs.page.html',
@@ -41,9 +36,6 @@ export class TabsPage implements OnInit, AfterViewInit {
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     private commonUtilService: CommonUtilService,
-    private externalIdVerificationService: ExternalIdVerificationService,
-    private telemetryGeneratorService: TelemetryGeneratorService,
-    private appVersion: AppVersion,
   ) {
 
   }
@@ -79,35 +71,18 @@ export class TabsPage implements OnInit, AfterViewInit {
     this.events.subscribe('UPDATE_TABS', () => {
       this.tabs = this.container.getAllTabs();
     });
-    this.appVersion.getAppName()
-    .then((appName: any) => {
-      this.appLabel = appName;
-    });
   }
 
   ngAfterViewInit() {
-     setTimeout(() => {
-    const backdropClipCenter = document.getElementById('qrScannerIcon').getBoundingClientRect().left +
-    ((document.getElementById('qrScannerIcon').getBoundingClientRect().width) / 2);
+     setTimeout(async () => {
+      const backdropClipCenter = document.getElementById('qrScannerIcon').getBoundingClientRect().left +
+      ((document.getElementById('qrScannerIcon').getBoundingClientRect().width) / 2);
 
-    (document.getElementById('backdrop').getElementsByClassName('bg')[0] as HTMLDivElement).setAttribute(
-      'style',
-      `background-image: radial-gradient(circle at ${backdropClipCenter}px 56px, rgba(0, 0, 0, 0) 30px, rgba(0, 0, 0, 0.9) 30px);`
-    );
+      (document.getElementById('backdrop').getElementsByClassName('bg')[0] as HTMLDivElement).setAttribute(
+        'style',
+        `background-image: radial-gradient(circle at ${backdropClipCenter}px 56px, rgba(0, 0, 0, 0) 30px, rgba(0, 0, 0, 0.9) 30px);`
+      );
 
-    this.preferences.getBoolean('coach_mark_seen').toPromise()
-    .then((value) => {
-      if (!value) {
-        this.events.publish('coach_mark_seen', { showWalkthroughBackDrop: true, appName: this.appLabel });
-        this.telemetryGeneratorService.generateImpressionTelemetry(
-          ImpressionType.VIEW,
-          ImpressionSubtype.QR_SCAN_WALKTHROUGH,
-          PageId.LIBRARY,
-          Environment.ONBOARDING
-        );
-      }
-    });
-    this.preferences.putBoolean('coach_mark_seen', true).toPromise().then();
      }, 2000);
 
   }

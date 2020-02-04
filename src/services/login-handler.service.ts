@@ -106,6 +106,13 @@ export class LoginHandlerService {
         .toPromise()
         .then(async () => {
           await loader.present();
+          // set default guest user for Quiz deeplink
+          const isOnboardingCompleted = (await this.preferences.getString(PreferenceKey.IS_ONBOARDING_COMPLETED).toPromise() === 'true')
+            ? true : false;
+          if (!isOnboardingCompleted) {
+            await this.setDefaultProfileDetails();
+          }
+
           initTabs(that.container, LOGIN_TEACHER_TABS);
           return that.refreshProfileData();
         })
@@ -217,5 +224,34 @@ export class LoginHandlerService {
       PageId.LOGIN,
       undefined,
       valuesMap);
+  }
+
+  setDefaultProfileDetails(): Promise<string|void>{
+    const profileRequest = this.getDefaultProfileRequest();
+    return this.profileService.updateProfile(profileRequest).toPromise().then(() => {
+      return this.profileService.setActiveSessionForProfile(profileRequest.uid).toPromise().then(() => {
+        return this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise()
+          .then((success: any) => {
+            const userId = success.uid;
+            this.events.publish(AppGlobalService.USER_INFO_UPDATED);
+            if (userId !== 'null') {
+              this.preferences.putString(PreferenceKey.GUEST_USER_ID_BEFORE_LOGIN, userId).toPromise().then();
+            }
+          }).catch(() => {
+            return 'null';
+          });
+      });
+    });
+  }
+
+  getDefaultProfileRequest() {
+    const profile = this.appGlobalService.getCurrentUser();
+    const profileRequest: Profile = {
+      uid: profile.uid,
+      handle: 'Guest1',
+      profileType: ProfileType.TEACHER,
+      source: ProfileSource.LOCAL
+    };
+    return profileRequest;
   }
 }

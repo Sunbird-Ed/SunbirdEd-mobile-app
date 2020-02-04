@@ -23,6 +23,7 @@ import { TncUpdateHandlerService } from '@app/services/handlers/tnc-update-handl
 import { of, Subject, EMPTY } from 'rxjs';
 import { PreferenceKey } from './app.constant';
 import { BackButtonEmitter } from '@ionic/angular/dist/providers/platform';
+import { SplaschreenDeeplinkActionHandlerDelegate } from '../services/sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
 
 declare const supportfile;
 
@@ -112,6 +113,7 @@ describe('AppComponent', () => {
     const mockUtilityService: Partial<UtilityService> = {};
     const mockZone: Partial<NgZone> = {};
     const mockLocalCourseService: Partial<LocalCourseService> = {};
+    const mockSplaschreenDeeplinkActionHandlerDelegate: Partial<SplaschreenDeeplinkActionHandlerDelegate> = {};
 
     beforeAll(() => {
         appComponent = new AppComponent(
@@ -144,7 +146,8 @@ describe('AppComponent', () => {
             mockMenuCtrl as MenuController,
             mockNetworkAvailability as NetworkAvailabilityToastService,
             mockSplashScreenService as SplashScreenService,
-            mockLocalCourseService as LocalCourseService
+            mockLocalCourseService as LocalCourseService,
+            mockSplaschreenDeeplinkActionHandlerDelegate as SplaschreenDeeplinkActionHandlerDelegate
         );
     });
 
