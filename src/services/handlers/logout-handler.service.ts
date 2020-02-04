@@ -14,7 +14,7 @@ import {
 import { ContainerService } from '../container.services';
 import { GUEST_STUDENT_TABS, GUEST_TEACHER_TABS, initTabs } from '@app/app/module.service';
 import { Observable } from 'rxjs';
-import { mergeMap, tap} from 'rxjs/operators';
+import { mergeMap, tap } from 'rxjs/operators';
 @Injectable({
   providedIn: 'root'
 })
@@ -42,21 +42,19 @@ export class LogoutHandlerService {
 
     this.preferences.getString(PreferenceKey.GUEST_USER_ID_BEFORE_LOGIN).pipe(
       tap(async (guest_user_id: string) => {
-        console.log(guest_user_id);
         if (!guest_user_id) {
           await this.preferences.putString(PreferenceKey.SELECTED_USER_TYPE, ProfileType.TEACHER).toPromise();
         }
 
         splashscreen.clearPrefs();
       }),
-      mergeMap((guest_user_id: string) => { console.log('value');
-        return this.profileService.setActiveSessionForProfile(guest_user_id);}),
-      mergeMap(() => { console.log('value2');
-        return this.authService.resignSession();}),
+      mergeMap((guest_user_id: string) => {
+        return this.profileService.setActiveSessionForProfile(guest_user_id);
+      }),
+      mergeMap(() => {
+        return this.authService.resignSession();
+      }),
       tap(async () => {
-        console.log('adasd');
-        console.log('adasd');
-        console.log('adasd');
         await this.navigateToAptPage();
         this.events.publish(AppGlobalService.USER_INFO_UPDATED);
         this.appGlobalService.setEnrolledCourseList([]);
@@ -78,12 +76,11 @@ export class LogoutHandlerService {
     this.events.publish('UPDATE_TABS');
 
     const isOnboardingCompleted = (await this.preferences.getString(PreferenceKey.IS_ONBOARDING_COMPLETED).toPromise() === 'true') ?
-    true : false;
+      true : false;
     if (isOnboardingCompleted) {
       const navigationExtras: NavigationExtras = { state: { loginMode: 'guest' } };
       this.router.navigate([`/${RouterLinks.TABS}`], navigationExtras);
     } else {
-      this.appGlobalService.logoutToOnboard = true;
       const navigationExtras: NavigationExtras = { queryParams: { reOnboard: true } };
       this.router.navigate([`/${RouterLinks.PROFILE_SETTINGS}`], navigationExtras);
     }

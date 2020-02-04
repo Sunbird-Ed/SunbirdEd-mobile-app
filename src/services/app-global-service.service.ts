@@ -74,7 +74,6 @@ export class AppGlobalService implements OnDestroy {
     private isJoinTraningOnboarding: any;
     private _signinOnboardingLoader: any;
     private _skipCoachScreenForDeeplink = false;
-    private _logoutToOnboard = false;
 
     constructor(
         @Inject('PROFILE_SERVICE') private profile: ProfileService,
@@ -710,13 +709,6 @@ export class AppGlobalService implements OnDestroy {
     }
     set skipCoachScreenForDeeplink(value) {
         this._skipCoachScreenForDeeplink = value;
-    }
-
-    get logoutToOnboard() {
-        return this._logoutToOnboard;
-    }
-    set logoutToOnboard(value) {
-        this._logoutToOnboard = value;
     }
 
     // This method is used to reset if any quiz content data is previously saved before Joining a Training
