@@ -1,6 +1,4 @@
-import { of } from 'rxjs';
-import { ContentShareHandlerService, CommonUtilService, UtilityService, TelemetryGeneratorService } from '../../../../services';
-import { ContentService } from 'sunbird-sdk';
+import { ContentShareHandlerService, UtilityService, TelemetryGeneratorService } from '../../../../services';
 import { SbSharePopupComponent } from './sb-share-popup.component';
 import { PopoverController, Platform, NavParams } from '@ionic/angular';
 import {
@@ -9,11 +7,17 @@ import {
     ID,
     PageId,
 } from '@app/services/telemetry-constants';
-import { ShareUrl, ShareMode } from '../../../../app/app.constant';
+import { ContentType, MimeType, ShareUrl } from '../../../../app/app.constant';
+
 describe('SbSharePopupComponent', () => {
     let sbSharePopupComponent: SbSharePopupComponent;
-    const mockPopoverCtrl: Partial<PopoverController> = {};
+    const mockPopoverCtrl: Partial<PopoverController> = {
+        dismiss: jest.fn()
+    };
     const mockPlatform: Partial<Platform> = {};
+    mockPlatform.backButton = {
+        subscribeWithPriority: jest.fn((_, fn) => fn()),
+    } as any;
     const mockContentShareHandler: Partial<ContentShareHandlerService> = {
         shareContent: jest.fn()
     };
@@ -144,13 +148,35 @@ describe('SbSharePopupComponent', () => {
     it('should call sharecontent on saveFile', () => {
         // arrange
         mockPopoverCtrl.dismiss = jest.fn();
-        const shareParams = {
-            saveFile: true,
-        };
         // act
         sbSharePopupComponent.saveFile();
         // assert
         expect(mockPopoverCtrl.dismiss).toHaveBeenCalled();
         expect(mockContentShareHandler.shareContent).toHaveBeenCalled();
+    });
+
+    describe('getContentEndPoint()', () => {
+
+        it('should return course endpoint', () => {
+            // arrange
+            // act
+            // assert
+            expect(sbSharePopupComponent.getContentEndPoint({ contentType: ContentType.COURSE } as any)).toEqual(ShareUrl.COURSE);
+        });
+
+        it('should return collection endpoint', () => {
+            // arrange
+            // act
+            // assert
+            expect(sbSharePopupComponent.getContentEndPoint({ mimeType: MimeType.COLLECTION } as any)).toEqual(ShareUrl.COLLECTION);
+        });
+
+        it('should return content endpoint', () => {
+            // arrange
+            // act
+            // assert
+            expect(sbSharePopupComponent.getContentEndPoint(
+                { contentType: ContentType.RESOURCE } as any)).toEqual(ShareUrl.CONTENT);
+        });
     });
 });
