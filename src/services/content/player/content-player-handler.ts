@@ -103,7 +103,8 @@ export class ContentPlayerHandler {
                         this.canvasPlayerService.readJSON(`${filePath}/index.json`).then((json) => {
                             data['data'] = json;
                             this.router.navigate([RouterLinks.PLAYER],
-                                { state: { config: data,  course : contentInfo.course, isFromTOC: isFromTextbookTOC } });
+                                { state: { config: data,  course : contentInfo.course, isFromTOC: isFromTextbookTOC,
+                                        corRelation: contentInfo.correlationList } });
 
                         }).catch((e) => {
                             console.error('readJSON error', e);
@@ -111,12 +112,14 @@ export class ContentPlayerHandler {
                     });
                 } else {
                     this.router.navigate([RouterLinks.PLAYER],
-                        { state: { config: data, course : contentInfo.course, isFromTOC: isFromTextbookTOC } });
+                        { state: { config: data, course : contentInfo.course, isFromTOC: isFromTextbookTOC,
+                                corRelation: contentInfo.correlationList } });
                 }
 
             } else {
                 this.router.navigate([RouterLinks.PLAYER],
-                    { state: { config: data,  course : contentInfo.course, isFromTOC: isFromTextbookTOC } });
+                    { state: { config: data,  course : contentInfo.course, isFromTOC: isFromTextbookTOC,
+                            corRelation: contentInfo.correlationList } });
             }
         });
     }

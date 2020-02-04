@@ -23,6 +23,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
   course: Course;
   pauseSubscription: any;
   isFromToc: boolean;
+  corRelationList;
 
   @ViewChild('preview') previewElement: ElementRef;
   constructor(
@@ -49,6 +50,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
       this.config = this.router.getCurrentNavigation().extras.state.config;
       this.course = this.router.getCurrentNavigation().extras.state.course;
       this.isFromToc = this.router.getCurrentNavigation().extras.state.isFromTOC;
+      this.corRelationList = this.router.getCurrentNavigation().extras.state.corRelation;
     }
   }
 
@@ -177,7 +179,8 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
     if (this.isFromToc) {
       this.router.navigate([RouterLinks.CONTENT_DETAILS], {
         state: {
-          content: this.config['metadata']
+          content: this.config['metadata'],
+          corRelation: this.corRelationList
         },
         replaceUrl: true
       });
