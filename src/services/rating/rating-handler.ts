@@ -21,6 +21,7 @@ export class RatingHandler {
     private userRating = 0;
     private userComment: string;
     public telemetryObject: TelemetryObject;
+    useNewComments = false;
     constructor(
         @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
         private popoverCtrl: PopoverController,
@@ -43,7 +44,7 @@ export class RatingHandler {
         this.telemetryObject = ContentUtil.getTelemetryObject(content);
         if (contentFeedback && contentFeedback.length) {
             this.userRating = this.userRating ? this.userRating : contentFeedback[0].rating;
-            this.userComment = this.userComment ? this.userComment : contentFeedback[0].comments;
+            this.userComment = this.useNewComments ? this.userComment : contentFeedback[0].comments;
         }
 
         if (isContentPlayed || content.contentAccess.length) {
@@ -90,7 +91,7 @@ export class RatingHandler {
         const contentFeedback: any = content.contentFeedback;
         if (contentFeedback && contentFeedback.length) {
             this.userRating = this.userRating ? this.userRating : contentFeedback[0].rating;
-            this.userComment = this.userComment ? this.userComment : contentFeedback[0].comments;
+            this.userComment = this.useNewComments ? this.userComment : contentFeedback[0].comments;
         }
         const popover = await this.popoverCtrl.create({
             component: ContentRatingAlertComponent,
@@ -106,6 +107,7 @@ export class RatingHandler {
         await popover.present();
         const { data } = await popover.onDidDismiss();
         if (data && data.message === 'rating.success') {
+            this.useNewComments = true;
             this.userRating = data.rating;
             this.userComment = data.comment;
         }
