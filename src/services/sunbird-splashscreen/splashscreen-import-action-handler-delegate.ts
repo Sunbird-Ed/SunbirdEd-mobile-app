@@ -133,6 +133,27 @@ export class SplashscreenImportActionHandlerDelegate implements SplashscreenActi
           mapTo(undefined) as any
         );
       }
+      case 'gsa': {
+        return this.telemetryService.importTelemetry({
+          sourceFilePath: filePath
+        }).pipe(
+          tap((imported) => {
+            if (!imported) {
+              this.commonUtilService.showToast('CONTENT_IMPORTED_FAILED');
+            } else {
+              this.commonUtilService.showToast('CONTENT_IMPORTED');
+            }
+          }),
+          tap((imported) => {
+            if (imported) {
+              this.events.publish('savedResources:update', {
+                update: true
+              });
+            }
+          }),
+          mapTo(undefined) as any
+        );
+      }
       case 'zip': {
         return from(this.archiveService.import({
           objects: [ { type: ArchiveObjectType.TELEMETRY } ],
