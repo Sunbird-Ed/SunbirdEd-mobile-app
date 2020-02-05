@@ -194,7 +194,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   private getSystemConfig() {
     const getSystemSettingsRequest: GetSystemSettingsRequest = {
-      id: SystemSettingsIds.COURSE_FRAMEWORK_ID
+      id: SystemSettingsIds.HOT_CODE_PUSH_KEY
     };
     this.systemSettingsService.getSystemSettings(getSystemSettingsRequest).toPromise()
       .then((res: SystemSettings) => {
@@ -333,12 +333,10 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.notificationSrc.setNotificationDetails(data);
     },
       (success) => {
-        console.log('Notification Sucess Callback');
-        console.log(success);
+        console.log('Notification Sucess Callback', success);
       },
       (err) => {
-        console.log('Notification Error Callback');
-        console.log(err);
+        console.error('Notification Error Callback', err);
       });
   }
 
@@ -409,7 +407,6 @@ export class AppComponent implements OnInit, AfterViewInit {
       }
     });
     this.platform.backButton.subscribeWithPriority(0, async () => {
-      console.log('URL' + this.router.url);
       if (this.router.url === RouterLinks.LIBRARY_TAB || this.router.url === RouterLinks.COURSE_TAB
         || this.router.url === RouterLinks.DOWNLOAD_TAB || this.router.url === RouterLinks.PROFILE_TAB ||
         this.router.url === RouterLinks.GUEST_PROFILE_TAB || this.router.url === RouterLinks.ONBOARDING_DISTRICT_MAPPING
@@ -436,12 +433,11 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   private subscribeEvents() {
-    this.events.subscribe('coach_mark_seen', (data) => {
+    this.events.subscribe(EventTopics.COACH_MARK_SEEN, (data) => {
       this.showWalkthroughBackDrop = data.showWalkthroughBackDrop;
       setTimeout(() => {
         const backdropClipCenter = document.getElementById('qrScannerIcon').getBoundingClientRect().left +
           ((document.getElementById('qrScannerIcon').getBoundingClientRect().width) / 2);
-
         (document.getElementById('backdrop').getElementsByClassName('bg')[0] as HTMLDivElement).setAttribute(
           'style',
           `background-image: radial-gradient(circle at ${backdropClipCenter}px 56px, rgba(0, 0, 0, 0) 30px, rgba(0, 0, 0, 0.9) 30px);`
@@ -449,23 +445,50 @@ export class AppComponent implements OnInit, AfterViewInit {
       }, 2000);
       this.appName = data.appName;
     });
-    this.events.subscribe('tab.change', (data) => {
+    this.events.subscribe(EventTopics.TAB_CHANGE, (pageId) => {
       this.zone.run(() => {
-        this.generateInteractEvent(data);
+        this.generateInteractEvent(pageId);
         // Added below code to generate Impression Before Interact for Library,Courses,Profile
-        this.generateImpressionEvent(data);
+        this.generateImpressionEvent(pageId);
       });
     });
 
     this.translate.onLangChange.subscribe((params) => {
-      if (params.lang === 'ur' && !this.platform.isRTL) {
+      if (params.lang === 'ur') {
         // migration-TODO since platfrom is changed, this is a quick fix need to review later
         document.documentElement.dir = 'rtl';
-      } else if (this.platform.isRTL) {
+      } else {
         // migration-TODO since platfrom is changed, this is a quick fix need to review later
         document.documentElement.dir = 'ltr';
       }
     });
+  }
+
+  private generateInteractEvent(pageId: string) {
+    this.telemetryGeneratorService.generateInteractTelemetry(
+      InteractType.TOUCH,
+      InteractSubtype.TAB_CLICKED,
+      Environment.HOME,
+      pageId ? pageId.toLowerCase() : PageId.QRCodeScanner);
+  }
+
+  private generateImpressionEvent(pageId: string) {
+    pageId = pageId.toLowerCase();
+    const env = pageId.localeCompare(PageId.PROFILE) ? Environment.HOME : Environment.USER;
+    const corRelationList: Array<CorrelationData> = [];
+    if (pageId === 'resources') {
+      const currentProfile: Profile = this.appGlobalService.getCurrentUser();
+      corRelationList.push({ id: currentProfile.board ? currentProfile.board.join(',') : '', type: CorReleationDataType.BOARD });
+      corRelationList.push({ id: currentProfile.medium ? currentProfile.medium.join(',') : '', type: CorReleationDataType.MEDIUM });
+      corRelationList.push({ id: currentProfile.grade ? currentProfile.grade.join(',') : '', type: CorReleationDataType.CLASS });
+      corRelationList.push({ id: currentProfile.profileType, type: CorReleationDataType.USERTYPE });
+    }
+
+    this.telemetryGeneratorService.generateImpressionTelemetry(
+      ImpressionType.VIEW, '',
+      pageId ? pageId : PageId.HOME,
+      env, undefined, undefined, undefined, undefined,
+      corRelationList);
   }
 
   private async checkForTncUpdate() {
@@ -510,33 +533,6 @@ export class AppComponent implements OnInit, AfterViewInit {
           this.preferences.putString(PreferenceKey.SYNC_CONFIG, 'ALWAYS_ON').toPromise().then();
         }
       });
-  }
-
-  private generateInteractEvent(pageId: string) {
-    this.telemetryGeneratorService.generateInteractTelemetry(
-      InteractType.TOUCH,
-      InteractSubtype.TAB_CLICKED,
-      Environment.HOME,
-      pageId ? pageId.toLowerCase() : PageId.QRCodeScanner);
-  }
-
-  private generateImpressionEvent(pageId: string) {
-    pageId = pageId.toLowerCase();
-    const env = pageId.localeCompare(PageId.PROFILE) ? Environment.HOME : Environment.USER;
-    const corRelationList: Array<CorrelationData> = [];
-    if (pageId === 'resources') {
-      const currentProfile: Profile = this.appGlobalService.getCurrentUser();
-      corRelationList.push({ id: currentProfile.board ? currentProfile.board.join(',') : '', type: CorReleationDataType.BOARD });
-      corRelationList.push({ id: currentProfile.medium ? currentProfile.medium.join(',') : '', type: CorReleationDataType.MEDIUM });
-      corRelationList.push({ id: currentProfile.grade ? currentProfile.grade.join(',') : '', type: CorReleationDataType.CLASS });
-      corRelationList.push({ id: currentProfile.profileType, type: CorReleationDataType.USERTYPE });
-    }
-
-    this.telemetryGeneratorService.generateImpressionTelemetry(
-      ImpressionType.VIEW, '',
-      pageId ? pageId : PageId.HOME,
-      env, undefined, undefined, undefined, undefined,
-      corRelationList);
   }
 
   private async startOpenrapDiscovery(): Promise<undefined> {

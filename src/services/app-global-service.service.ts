@@ -1,7 +1,7 @@
 import { Inject, Injectable, OnDestroy } from '@angular/core';
 import { Environment, ID, InteractSubtype, InteractType, PageId, ImpressionType, ImpressionSubtype } from './telemetry-constants';
 import { Events, PopoverController } from '@ionic/angular';
-import { GenericAppConfig, PreferenceKey } from '../app/app.constant';
+import { GenericAppConfig, PreferenceKey, EventTopics } from '../app/app.constant';
 import { TelemetryGeneratorService } from './telemetry-generator.service';
 import {
     AuthService, Course, Framework, FrameworkCategoryCodesGroup, FrameworkDetailsRequest, FrameworkService,
@@ -728,17 +728,17 @@ export class AppGlobalService implements OnDestroy {
         if (this.skipCoachScreenForDeeplink) {
             this.skipCoachScreenForDeeplink = false;
         } else {
-            const coachMarkSeen = await this.preferences.getBoolean('coach_mark_seen').toPromise();
+            const coachMarkSeen = await this.preferences.getBoolean(PreferenceKey.COACH_MARK_SEEN).toPromise();
             if (!coachMarkSeen) {
                 const appLabel = await this.appVersion.getAppName();
-                this.event.publish('coach_mark_seen', { showWalkthroughBackDrop: true, appName: appLabel });
+                this.event.publish(EventTopics.COACH_MARK_SEEN, { showWalkthroughBackDrop: true, appName: appLabel });
                 this.telemetryGeneratorService.generateImpressionTelemetry(
-                ImpressionType.VIEW,
-                ImpressionSubtype.QR_SCAN_WALKTHROUGH,
-                PageId.LIBRARY,
-                Environment.ONBOARDING
+                    ImpressionType.VIEW,
+                    ImpressionSubtype.QR_SCAN_WALKTHROUGH,
+                    PageId.LIBRARY,
+                    Environment.ONBOARDING
                 );
-                this.preferences.putBoolean('coach_mark_seen', true).toPromise().then();
+                this.preferences.putBoolean(PreferenceKey.COACH_MARK_SEEN, true).toPromise().then();
             }
         }
     }
