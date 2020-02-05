@@ -3,10 +3,13 @@ import { ProfileService, AuthService, FrameworkService, SharedPreferences, Profi
 import { Events, PopoverController } from '@ionic/angular';
 import { TelemetryGeneratorService } from './telemetry-generator.service';
 import { UtilityService } from './utility-service';
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
 import { PreferenceKey, EventTopics } from '../app/app.constant';
-import { InteractSubtype, Environment, PageId, ImpressionType, InteractType } from './telemetry-constants';
+import { InteractSubtype, Environment, PageId, InteractType } from './telemetry-constants';
 import { AppVersion } from '@ionic-native/app-version/ngx';
+import { mockFrameworkData } from './app-global-service.service.spec.data';
+import { UpgradePopoverComponent } from '@app/app/components/popups';
+
 describe('AppGlobalService', () => {
     let appGlobalService: AppGlobalService;
     const profile = { syllabus: 'tn' } as any;
@@ -23,6 +26,10 @@ describe('AppGlobalService', () => {
         unsubscribe: jest.fn()
     };
     const mockPopoverCtrl: Partial<PopoverController> = {};
+    mockPopoverCtrl.create = jest.fn(() => (Promise.resolve({
+        present: jest.fn(() => Promise.resolve({})),
+        onDidDismiss: jest.fn(() => Promise.resolve({ data: { canDelete: true } }))
+    } as any)));
     const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {
         generateInteractTelemetry: jest.fn()
     };
@@ -40,10 +47,10 @@ describe('AppGlobalService', () => {
             mockProfile as ProfileService,
             mockAuthService as AuthService,
             mockFrameworkService as FrameworkService,
+            mockPreferences as SharedPreferences,
             mockEvent as Events,
             mockPopoverCtrl as PopoverController,
             mockTelemetryGeneratorService as TelemetryGeneratorService,
-            mockPreferences as SharedPreferences,
             mockUtilityService as UtilityService,
             mockAppVersion as AppVersion
         );
@@ -565,9 +572,327 @@ describe('AppGlobalService', () => {
             // act
             appGlobalService.showCouchMarkScreen().then(() => {
                 // assert
-                done()
+                done();
             });
         });
     });
 
+    describe('getSelectedUser()', () => {
+        it('should return the selectedUser', () => {
+            // arrange
+            appGlobalService.setSelectedUser('0123456789');
+            // act
+            // assert
+            expect(appGlobalService.getSelectedUser()).toEqual('0123456789');
+        });
+    });
+
+    describe('getSessionData()', () => {
+        it('should return the session data', () => {
+            // arrange
+            appGlobalService.session = { access_token: '', userToken: '', refresh_token: '' };
+            // act
+            // assert
+            expect(appGlobalService.getSessionData()).toEqual({ access_token: '', userToken: '', refresh_token: '' });
+        });
+    });
+
+    describe('getSelectedUser()', () => {
+        it('should return the selectedUser', () => {
+            // arrange
+            appGlobalService.setSelectedUser('0123456789');
+            // act
+            // assert
+            expect(appGlobalService.getSelectedUser()).toEqual('0123456789');
+        });
+    });
+
+    describe('EnrolledCourseList()', () => {
+        it('should return the name of the provided code in the framework', () => {
+            // arrange
+            appGlobalService.setEnrolledCourseList([]);
+            // act
+            // assert
+            expect(appGlobalService.getEnrolledCourseList()).toEqual([]);
+        });
+    });
+
+    describe('CourseFilterConfig()', () => {
+        it('should return cached course Filter config', () => {
+            // arrange
+            appGlobalService.setCourseFilterConfig([]);
+            // act
+            // assert
+            expect(appGlobalService.getCachedCourseFilterConfig()).toEqual([]);
+        });
+    });
+
+    describe('LibraryFilterConfig()', () => {
+        it('should return cached library Filter config', () => {
+            // arrange
+            appGlobalService.setLibraryFilterConfig([]);
+            // act
+            // assert
+            expect(appGlobalService.getCachedLibraryFilterConfig()).toEqual([]);
+        });
+    });
+
+    describe('setLocationConfig()', () => {
+        it('should return cached location config', () => {
+            // arrange
+            appGlobalService.setLocationConfig([]);
+            // act
+            // assert
+            expect(appGlobalService.getCachedLocationConfig()).toEqual([]);
+        });
+    });
+
+    describe('DialCodeConfig()', () => {
+        it('should return cached location config', () => {
+            // arrange
+            appGlobalService.setDailCodeConfig(new RegExp('sample_regex'));
+            // act
+            // assert
+            expect(appGlobalService.getCachedDialCodeConfig()).toEqual(new RegExp('sample_regex'));
+        });
+    });
+
+    describe('RootOrganizations()', () => {
+        it('should return cached location config', () => {
+            // arrange
+            appGlobalService.setRootOrganizations([]);
+            // act
+            // assert
+            expect(appGlobalService.getCachedRootOrganizations()).toEqual([]);
+        });
+    });
+
+    describe('CourseFrameworkId()', () => {
+        it('should return cached location config', () => {
+            // arrange
+            appGlobalService.setCourseFrameworkId('sample_course_frameworkid');
+            // act
+            // assert
+            expect(appGlobalService.getCachedCourseFrameworkId()).toEqual('sample_course_frameworkid');
+        });
+    });
+
+    describe('getUserId()', () => {
+        it('should return user id undefined if cached session id is empty', () => {
+            // arrange
+            appGlobalService.session = undefined;
+            mockAuthService.getSession = jest.fn(() => of({ userToken: '0123456789' } as any));
+            // act
+            // assert
+            expect(appGlobalService.getUserId()).toBeUndefined();
+        });
+
+        it('should return user id if cached session id is not empty', () => {
+            // arrange
+            appGlobalService.session = { userToken: '0123456789' } as any;
+            // act
+            // assert
+            expect(appGlobalService.getUserId()).toEqual('0123456789');
+        });
+    });
+
+    describe('getGuestUserInfo()', () => {
+        it('should return  profileType STUDENT', (done) => {
+            // arrange
+            mockPreferences.getString = jest.fn(() => of(ProfileType.STUDENT));
+            // act
+            // assert
+            appGlobalService.getGuestUserInfo().then((response) => {
+                expect(appGlobalService.isGuestUser).toBeTruthy();
+                expect(response).toEqual(ProfileType.STUDENT);
+                done();
+            });
+        });
+
+        it('should return  profileType TEACHER', (done) => {
+            // arrange
+            mockPreferences.getString = jest.fn(() => of(ProfileType.TEACHER));
+            // act
+            // assert
+            appGlobalService.getGuestUserInfo().then((response) => {
+                expect(appGlobalService.isGuestUser).toBeTruthy();
+                expect(response).toEqual(ProfileType.TEACHER);
+                done();
+            });
+        });
+
+        it('should handle error scenario', (done) => {
+            // arrange
+            mockPreferences.getString = jest.fn(() => throwError({}));
+            // act
+            // assert
+            appGlobalService.getGuestUserInfo().catch((error) => {
+                expect(error).toBeUndefined();
+                done();
+            });
+        });
+    });
+
+    describe('setOnBoardingCompleted()', () => {
+        it('should mark onboarding completed', () => {
+            // arrange
+            // act
+            appGlobalService.setOnBoardingCompleted();
+            // assert
+            expect(appGlobalService.isOnBoardingCompleted).toBeTruthy();
+            expect(mockPreferences.putString).toHaveBeenCalledWith(PreferenceKey.IS_ONBOARDING_COMPLETED, 'true');
+        });
+    });
+
+    describe('readConfig()', () => {
+        it('should mark all status to false if utility service API fails', () => {
+            // arrange
+            appGlobalService.TRACK_USER_TELEMETRY = false;
+            mockUtilityService.getBuildConfigValue = jest.fn(() => Promise.reject());
+            // act
+            appGlobalService.readConfig();
+            // assert
+            expect(appGlobalService.DISPLAY_FRAMEWORK_CATEGORIES_IN_PROFILE).toBeFalsy();
+            expect(appGlobalService.DISPLAY_SIGNIN_FOOTER_CARD_IN_COURSE_TAB_FOR_TEACHER).toBeFalsy();
+            expect(appGlobalService.DISPLAY_SIGNIN_FOOTER_CARD_IN_LIBRARY_TAB_FOR_TEACHER).toBeFalsy();
+            expect(appGlobalService.DISPLAY_SIGNIN_FOOTER_CARD_IN_PROFILE_TAB_FOR_STUDENT).toBeFalsy();
+            expect(appGlobalService.TRACK_USER_TELEMETRY).toBeFalsy();
+            expect(appGlobalService.CONTENT_STREAMING_ENABLED).toBeFalsy();
+            expect(appGlobalService.DISPLAY_ONBOARDING_CATEGORY_PAGE).toBeFalsy();
+            expect(appGlobalService.OPEN_RAPDISCOVERY_ENABLED).toBeFalsy();
+            // expect(appGlobalService.SUPPORT_EMAIL).toEqual('');
+
+            mockUtilityService.getBuildConfigValue = jest.fn(() => Promise.resolve('true'));
+            appGlobalService.readConfig();
+        });
+    });
+
+    describe('Constructor()', () => {
+        it('should poulate the frameworkdata of the respective profile', () => {
+            // arrange
+            mockFrameworkService.getFrameworkDetails = jest.fn(() => of(mockFrameworkData));
+            mockEvent.subscribe = jest.fn((arg, fn) => {
+                return fn('');
+            });
+            appGlobalService = new AppGlobalService(
+                mockProfile as ProfileService,
+                mockAuthService as AuthService,
+                mockFrameworkService as FrameworkService,
+                mockPreferences as SharedPreferences,
+                mockEvent as Events,
+                mockPopoverCtrl as PopoverController,
+                mockTelemetryGeneratorService as TelemetryGeneratorService,
+                mockUtilityService as UtilityService,
+                mockAppVersion as AppVersion
+            );
+            // act
+            // assert
+            expect(appGlobalService['frameworkData']).toEqual([]);
+            // expect(mockEvent.publish).toHaveBeenCalledWith(AppGlobalService.PROFILE_OBJ_CHANGED);
+        });
+
+        it('should poulate the frameworkdata to empty array of the respective profile', () => {
+            // arrange
+            mockFrameworkService.getFrameworkDetails = jest.fn(() => throwError({}));
+            appGlobalService = new AppGlobalService(
+                mockProfile as ProfileService,
+                mockAuthService as AuthService,
+                mockFrameworkService as FrameworkService,
+                mockPreferences as SharedPreferences,
+                mockEvent as Events,
+                mockPopoverCtrl as PopoverController,
+                mockTelemetryGeneratorService as TelemetryGeneratorService,
+                mockUtilityService as UtilityService,
+                mockAppVersion as AppVersion
+            );
+            // act
+            // assert
+            expect(appGlobalService['frameworkData']).toEqual([]);
+            expect(mockEvent.publish).toHaveBeenCalledWith(AppGlobalService.PROFILE_OBJ_CHANGED);
+        });
+
+        it('should poulate the frameworkdata to empty array of the respective profile', () => {
+            // arrange
+            mockProfile.getActiveSessionProfile = jest.fn(() => of({}));
+            appGlobalService = new AppGlobalService(
+                mockProfile as ProfileService,
+                mockAuthService as AuthService,
+                mockFrameworkService as FrameworkService,
+                mockPreferences as SharedPreferences,
+                mockEvent as Events,
+                mockPopoverCtrl as PopoverController,
+                mockTelemetryGeneratorService as TelemetryGeneratorService,
+                mockUtilityService as UtilityService,
+                mockAppVersion as AppVersion
+            );
+            // act
+            // assert
+            expect(appGlobalService['frameworkData']).toEqual([]);
+            expect(mockEvent.publish).toHaveBeenCalledWith(AppGlobalService.PROFILE_OBJ_CHANGED);
+        });
+
+        it('should poulate the frameworkdata to empty array of the respective profile', () => {
+            // arrange
+            mockProfile.getActiveSessionProfile = jest.fn(() => throwError({}));
+            appGlobalService = new AppGlobalService(
+                mockProfile as ProfileService,
+                mockAuthService as AuthService,
+                mockFrameworkService as FrameworkService,
+                mockPreferences as SharedPreferences,
+                mockEvent as Events,
+                mockPopoverCtrl as PopoverController,
+                mockTelemetryGeneratorService as TelemetryGeneratorService,
+                mockUtilityService as UtilityService,
+                mockAppVersion as AppVersion
+            );
+            // act
+            // assert
+            expect(appGlobalService['frameworkData']).toEqual([]);
+            expect(mockEvent.publish).toHaveBeenCalledWith(AppGlobalService.PROFILE_OBJ_CHANGED);
+        });
+    });
+
+    describe('openPopover()', () => {
+        it('should show force upgrade popup with shouldDismissAlert as false if type is force', () => {
+            // arrange
+            // act
+            appGlobalService.openPopover({type: 'force'});
+            // assert
+            expect(mockPopoverCtrl.create).toHaveBeenCalledWith({
+                component: UpgradePopoverComponent,
+                componentProps: { upgrade: {type: 'force'} },
+                cssClass: 'upgradePopover',
+                showBackdrop: true,
+                backdropDismiss: false
+            });
+        });
+
+        it('should show force upgrade popup with shouldDismissAlert as false if type is forced', () => {
+            // arrange
+            // act
+            appGlobalService.openPopover({type: 'forced'});
+            // assert
+            expect(mockPopoverCtrl.create).toHaveBeenCalledWith({
+                component: UpgradePopoverComponent,
+                componentProps: { upgrade: {type: 'forced'} },
+                cssClass: 'upgradePopover',
+                showBackdrop: true,
+                backdropDismiss: false
+            });
+        });
+
+        it('should show force upgrade popup with shouldDismissAlert as true if type is optional', () => {
+            // arrange
+            // act
+            appGlobalService.openPopover({type: 'optional'});
+            // assert
+            expect(mockPopoverCtrl.create).toHaveBeenCalledWith({
+                component: UpgradePopoverComponent,
+                componentProps: { upgrade: {type: 'optional'} },
+                cssClass: 'upgradePopover',
+                showBackdrop: true,
+                backdropDismiss: true
+            });
+        });
+    });
 });
