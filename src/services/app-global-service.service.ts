@@ -79,10 +79,10 @@ export class AppGlobalService implements OnDestroy {
         @Inject('PROFILE_SERVICE') private profile: ProfileService,
         @Inject('AUTH_SERVICE') public authService: AuthService,
         @Inject('FRAMEWORK_SERVICE') private frameworkService: FrameworkService,
+        @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
         private event: Events,
         private popoverCtrl: PopoverController,
         private telemetryGeneratorService: TelemetryGeneratorService,
-        @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
         private utilityService: UtilityService,
         private appVersion: AppVersion
     ) {
@@ -434,10 +434,6 @@ export class AppGlobalService implements OnDestroy {
                         if (val === ProfileType.STUDENT) {
                             this.guestProfileType = ProfileType.STUDENT;
                         } else if (val === ProfileType.TEACHER) {
-                            this.guestProfileType = ProfileType.TEACHER;
-                        } else if (val === 'student') {
-                            this.guestProfileType = ProfileType.STUDENT;
-                        } else if (val === 'teacher') {
                             this.guestProfileType = ProfileType.TEACHER;
                         }
                         this.isGuestUser = true;
