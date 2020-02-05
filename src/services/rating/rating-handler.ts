@@ -37,7 +37,8 @@ export class RatingHandler {
         content: Content,
         popupType: string,
         corRelationList: CorrelationData[],
-        rollUp: Rollup
+        rollUp: Rollup,
+        shouldNavigateBack?: boolean
     ) {
         const paramsMap = new Map();
         const contentFeedback: any = content.contentFeedback;
@@ -56,19 +57,19 @@ export class RatingHandler {
                             this.showAppRatingPopup();
                         } else {
                             paramsMap['isPlayed'] = 'Y';
-                            this.showContentRatingPopup(content, popupType);
+                            this.showContentRatingPopup(content, popupType, shouldNavigateBack);
                         }
                     }).catch(err => {
                         paramsMap['isPlayed'] = 'Y';
-                        this.showContentRatingPopup(content, popupType);
+                        this.showContentRatingPopup(content, popupType, shouldNavigateBack);
                     });
                 } else {
                     paramsMap['isPlayed'] = 'Y';
-                    this.showContentRatingPopup(content, popupType);
+                    this.showContentRatingPopup(content, popupType, shouldNavigateBack);
                 }
             } else if (popupType === 'manual') {
                 paramsMap['isPlayed'] = 'Y';
-                this.showContentRatingPopup(content, popupType);
+                this.showContentRatingPopup(content, popupType, shouldNavigateBack);
             }
 
         } else {
@@ -87,7 +88,7 @@ export class RatingHandler {
 
     }
 
-    async showContentRatingPopup(content: Content, popupType: string) {
+    async showContentRatingPopup(content: Content, popupType: string, shouldNavigateBack?: boolean) {
         const contentFeedback: any = content.contentFeedback;
         if (contentFeedback && contentFeedback.length) {
             this.userRating = this.userRating ? this.userRating : contentFeedback[0].rating;
@@ -100,6 +101,7 @@ export class RatingHandler {
                 pageId: PageId.CONTENT_DETAIL,
                 rating: this.userRating,
                 comment: this.userComment,
+                navigateBack: shouldNavigateBack,
                 popupType
             },
             cssClass: 'sb-popover info content-rating-alert'

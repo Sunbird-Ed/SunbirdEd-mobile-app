@@ -246,30 +246,6 @@ describe('collectionDetailEtbPage', () => {
 
     describe('IonViewWillEnter', () => {
 
-        it('should registerDeviceBackButton and check for lastContentPlayed and to show RatingPopup', () => {
-            // arrange
-            jest.spyOn(collectionDetailEtbPage, 'registerDeviceBackButton').mockImplementation();
-            mockIonContent.ionScroll.subscribe = jest.fn((fn) => {
-                fn({});
-            });
-            collectionDetailEtbPage.lastContentPlayed = 'do_212911645382959104165';
-            jest.spyOn(mockContentPlayerHandler, 'getLastPlayedContentId').mockReturnValue('do_212911645382959104165');
-            collectionDetailEtbPage.isContentPlayed = true;
-            // act
-            collectionDetailEtbPage.ionViewWillEnter();
-            // assert
-            expect(collectionDetailEtbPage.registerDeviceBackButton).toHaveBeenCalled();
-            expect(mockRatingHandler.showRatingPopup).toHaveBeenCalledWith(
-                true,
-                collectionDetailEtbPage.playingContent,
-                'automatic',
-                undefined,
-                {}
-            );
-            expect(mockContentPlayerHandler.setContentPlayerLaunchStatus).toHaveBeenCalled();
-            expect(mockContentPlayerHandler.setLastPlayedContentId).toHaveBeenCalled();
-        });
-
         it('should set headerConfig, headerObservable, setContentDetails, and subscribeEvents', () => {
             // arrange
             jest.spyOn(collectionDetailEtbPage, 'registerDeviceBackButton').mockImplementation();

@@ -180,7 +180,8 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
       this.router.navigate([RouterLinks.CONTENT_DETAILS], {
         state: {
           content: this.config['metadata'],
-          corRelation: this.corRelationList
+          corRelation: this.corRelationList,
+          shouldNavigateBack: true
         },
         replaceUrl: true
       });

@@ -28,6 +28,8 @@ import {
   LogType
 } from '@app/services/telemetry-constants';
 import { ContentUtil } from '@app/util/content-util';
+import {Location} from '@angular/common';
+
 @Component({
   selector: 'app-content-rating-alert',
   templateUrl: './content-rating-alert.component.html',
@@ -51,6 +53,7 @@ export class ContentRatingAlertComponent implements OnInit {
   ratingOptions;
   allComments;
   commentText;
+  navigateBack;
   constructor(
     @Inject('CONTENT_FEEDBACK_SERVICE') private contentService: ContentFeedbackService,
     @Inject('TELEMETRY_SERVICE') private telemetryService: TelemetryService,
@@ -60,7 +63,8 @@ export class ContentRatingAlertComponent implements OnInit {
     private navParams: NavParams,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private appGlobalService: AppGlobalService,
-    private commonUtilService: CommonUtilService
+    private commonUtilService: CommonUtilService,
+    private location: Location
   ) {
     this.getUserId();
     this.backButtonFunc = this.platform.backButton.subscribeWithPriority(11, () => {
@@ -73,6 +77,7 @@ export class ContentRatingAlertComponent implements OnInit {
     this.popupType = this.navParams.get('popupType');
     this.pageId = this.navParams.get('pageId');
     this.telemetryObject = ContentUtil.getTelemetryObject(this.content);
+    this.navigateBack = this.navParams.get('navigateBack');
   }
 
   ngOnInit() {
@@ -176,6 +181,9 @@ export class ContentRatingAlertComponent implements OnInit {
       viewDismissData.message = 'rating.success';
       this.popOverCtrl.dismiss(viewDismissData);
       this.commonUtilService.showToast('THANK_FOR_RATING');
+      if (this.navigateBack) {
+        this.location.back();
+      }
     }, (data) => {
       viewDismissData.message = 'rating.error';
       this.popOverCtrl.dismiss(viewDismissData);
