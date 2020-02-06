@@ -62,6 +62,7 @@ export class ShareUserAndGroupsPage implements OnInit, OnDestroy {
     this.zone.run(() => {
       this.backButtonFunc = this.platform.backButton.subscribeWithPriority(10, () => {
         this.location.back();
+        this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.SHARE_USER_GROUP, Environment.USER, false);
         this.backButtonFunc.unsubscribe();
       });
     });
