@@ -282,13 +282,6 @@ export class CommonUtilService implements OnDestroy {
     }
 
     /**
-     * It returns whether it is RTL or not
-     */
-    isRTL() {
-        return this.platform.isRTL;
-    }
-
-    /**
      * Creates a popup asking whether to exit from app or not
      */
     async showExitPopUp(pageId: string, environment: string, isNavBack: boolean) {

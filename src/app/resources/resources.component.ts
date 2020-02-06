@@ -41,7 +41,8 @@ import {
   ProfileConstants,
   RouterLinks,
   ContentFilterConfig,
-  MimeType
+  MimeType,
+  EventTopics
 } from '@app/app/app.constant';
 import { AppGlobalService } from '@app/services/app-global-service.service';
 import { SunbirdQRScanner } from '@app/services/sunbirdqrscanner.service';
@@ -172,6 +173,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('contentView') contentView: ContentView;
   locallyDownloadResources;
   channelId: string;
+  coachTimeout: any;
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -257,7 +259,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.appGlobalService.generateConfigInteractEvent(PageId.LIBRARY, this.isOnBoardingCardCompleted);
     this.appNotificationService.handleNotification();
 
-    this.events.subscribe('tab.change', (data: string) => {
+    this.events.subscribe(EventTopics.TAB_CHANGE, (data: string) => {
       this.scrollToTop();
       if (data.trim().toUpperCase() === 'LIBRARY') {
         if (this.appliedFilter) {
@@ -300,6 +302,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.headerObservable) {
       this.headerObservable.unsubscribe();
     }
+    this.coachTimeout.clearTimeout();
   }
 
   /**
@@ -502,7 +505,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
           const sectionInfo = {};
           for (let i = 0; i < this.storyAndWorksheets.length; i++) {
             const sectionName = this.storyAndWorksheets[i].name,
-            count = this.storyAndWorksheets[i].contents.length;
+              count = this.storyAndWorksheets[i].contents.length;
             // check if locally available
             this.markLocallyAvailableTextBook();
             for (let k = 0, len = this.storyAndWorksheets[i].contents.length; k < len; k++) {
@@ -674,6 +677,13 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.subscribeSdkEvent();
 
     this.splaschreenDeeplinkActionHandlerDelegate.isDelegateReady = true;
+  }
+
+  ionViewDidEnter() {
+    // Need timer to load the coach screen and for the coach screen to hide if user comes from deeplink.
+    this.coachTimeout = setTimeout(() => {
+      this.appGlobalService.showCouchMarkScreen();
+    }, 2000);
   }
 
   // Offline Toast

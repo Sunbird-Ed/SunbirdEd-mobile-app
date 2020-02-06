@@ -22,6 +22,8 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
   backButtonSubscription: Subscription;
   course: Course;
   pauseSubscription: any;
+  isFromToc: boolean;
+  corRelationList;
 
   @ViewChild('preview') previewElement: ElementRef;
   constructor(
@@ -47,6 +49,8 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
     if (this.router.getCurrentNavigation().extras.state) {
       this.config = this.router.getCurrentNavigation().extras.state.config;
       this.course = this.router.getCurrentNavigation().extras.state.course;
+      this.isFromToc = this.router.getCurrentNavigation().extras.state.isFromTOC;
+      this.corRelationList = this.router.getCurrentNavigation().extras.state.corRelation;
     }
   }
 
@@ -172,7 +176,18 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
       selectedUser: this.appGlobalService.getSelectedUser()
     });
 
-    this.location.back();
+    if (this.isFromToc) {
+      this.router.navigate([RouterLinks.CONTENT_DETAILS], {
+        state: {
+          content: this.config['metadata'],
+          corRelation: this.corRelationList,
+          shouldNavigateBack: true
+        },
+        replaceUrl: true
+      });
+    } else {
+      this.location.back();
+    }
   }
 
 

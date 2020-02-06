@@ -36,6 +36,7 @@ import {
     TelemetryObject
 } from 'sunbird-sdk';
 import { NotificationService } from '../../services/notification.service';
+import { EventTopics } from '../app.constant';
 
 describe('ResourcesComponent', () => {
     let resourcesComponent: ResourcesComponent;
@@ -418,7 +419,7 @@ describe('ResourcesComponent', () => {
         mockAppGlobalService.generateConfigInteractEvent = jest.fn();
         mockAppNotificationService.handleNotification = jest.fn(() => Promise.resolve());
         mockEvents.subscribe = jest.fn((topic, fn) => {
-            if (topic === 'tab.change') {
+            if (topic === EventTopics.TAB_CHANGE) {
                 fn('LIBRARY');
             }
             if (resourcesComponent.appliedFilter) {
@@ -464,7 +465,7 @@ describe('ResourcesComponent', () => {
         mockAppGlobalService.generateConfigInteractEvent = jest.fn();
         mockAppNotificationService.handleNotification = jest.fn(() => Promise.resolve());
         mockEvents.subscribe = jest.fn((topic, fn) => {
-            if (topic === 'tab.change') {
+            if (topic === EventTopics.TAB_CHANGE) {
                 fn('LIBRARY');
             }
             if (resourcesComponent.appliedFilter) {
@@ -510,7 +511,7 @@ describe('ResourcesComponent', () => {
         mockAppGlobalService.generateConfigInteractEvent = jest.fn();
         mockAppNotificationService.handleNotification = jest.fn(() => Promise.resolve());
         mockEvents.subscribe = jest.fn((topic, fn) => {
-            if (topic === 'tab.change') {
+            if (topic === EventTopics.TAB_CHANGE) {
                 fn('LIBRARY');
             }
             if (resourcesComponent.appliedFilter) {
@@ -557,7 +558,7 @@ describe('ResourcesComponent', () => {
     //     mockAppGlobalService.generateConfigInteractEvent = jest.fn();
     //     mockAppNotificationService.handleNotification = jest.fn(() => Promise.resolve());
     //     mockEvents.subscribe = jest.fn((topic, fn) => {
-    //         if (topic === 'tab.change') {
+    //         if (topic === EventTopics.TAB_CHANGE) {
     //             fn('LIBRARY');
     //         }
     //         if (resourcesComponent.appliedFilter) {
@@ -600,7 +601,7 @@ describe('ResourcesComponent', () => {
         jest.spyOn(mockAppGlobalService, 'getPageIdForTelemetry').mockReturnValue(PageId.LIBRARY);
         mockQRScanner.startScanner = jest.fn();
         mockEvents.subscribe = jest.fn((topic, fn) => {
-            if (topic === 'tab.change') {
+            if (topic === EventTopics.TAB_CHANGE) {
                 fn('');
             }
         });
@@ -647,6 +648,7 @@ describe('ResourcesComponent', () => {
             subscribe: jest.fn(() => mockHeaderEventsSubscription)
         };
         mockEvents.unsubscribe = jest.fn();
+        resourcesComponent.coachTimeout = { clearTimeout: jest.fn() };
         // act
         resourcesComponent.ionViewWillEnter().then(() => {
             resourcesComponent.ionViewWillLeave();
@@ -898,6 +900,19 @@ describe('ResourcesComponent', () => {
         });
     });
 
+    it('should subscribe events and other methods when ionViewDidEnter()', (done) => {
+        // arrange
+        resourcesComponent.coachTimeout = { setTimeout: jest.fn() };
+        mockAppGlobalService.showCouchMarkScreen = jest.fn();
+        // act
+        resourcesComponent.ionViewDidEnter()
+        // assert
+        setTimeout(() => {
+            expect(mockAppGlobalService.showCouchMarkScreen).toHaveBeenCalled();
+            done();
+        }, 2000);
+    });
+
     it('should call toastCtrller when in offline', (done) => {
         // arrange
         mockToastCtrlService.create = jest.fn(() => {
@@ -960,7 +975,7 @@ describe('ResourcesComponent', () => {
             // act
             resourcesComponent.mediumClickEvent(event, true);
         });
-    
+
         it('should be handle medium click filter', () => {
             // arrange
             jest.spyOn(resourcesComponent, 'generateClassInteractTelemetry').mockImplementation(() => {
@@ -994,7 +1009,7 @@ describe('ResourcesComponent', () => {
             requiredCategories: {},
             frameworkId
         };
-        mockFrameworkUtilService.getFrameworkCategoryTerms = jest.fn(() => of([{name: 'sunbird'}]));
+        mockFrameworkUtilService.getFrameworkCategoryTerms = jest.fn(() => of([{ name: 'sunbird' }]));
         jest.spyOn(resourcesComponent, 'classClickHandler').mockImplementation(() => {
             return;
         });
@@ -1020,7 +1035,7 @@ describe('ResourcesComponent', () => {
             requiredCategories: {},
             frameworkId
         };
-        mockFrameworkUtilService.getFrameworkCategoryTerms = jest.fn(() => of([{name: 'sunbird1'}]));
+        mockFrameworkUtilService.getFrameworkCategoryTerms = jest.fn(() => of([{ name: 'sunbird1' }]));
         jest.spyOn(resourcesComponent, 'classClickHandler').mockImplementation(() => {
             return;
         });
@@ -1040,8 +1055,8 @@ describe('ResourcesComponent', () => {
         const event = {
             data: {
                 identifier: 'do_123456789',
-                 mimeType: 'application/vnd.ekstep.content-collection',
-                 contentType: 'sample-content-type'
+                mimeType: 'application/vnd.ekstep.content-collection',
+                contentType: 'sample-content-type'
             }
         };
         const course = {
@@ -1078,8 +1093,8 @@ describe('ResourcesComponent', () => {
         const event = {
             data: {
                 identifier: 'do_123456789',
-                 mimeType: 'application/vnd.ekstep.content-collection',
-                 contentType: 'sample-content-type'
+                mimeType: 'application/vnd.ekstep.content-collection',
+                contentType: 'sample-content-type'
             }
         };
         const course = {

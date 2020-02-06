@@ -4,12 +4,13 @@ import {
     FormAndFrameworkUtilService, AppGlobalService,
     CommonUtilService, TelemetryGeneratorService, UtilityService, AppHeaderService,
     LogoutHandlerService, AppRatingService, ActivePageService, SplashScreenService,
-    InteractType, InteractSubtype, Environment, PageId, LocalCourseService
+    InteractType, InteractSubtype, Environment, PageId, LocalCourseService, ImpressionType, CorReleationDataType
 } from '../services';
 import {
     EventsBusService, SharedPreferences,
     TelemetryService, NotificationService,
-    CodePushExperimentService, SystemSettingsService, DeviceRegisterService, TelemetryAutoSyncService, SunbirdSdk
+    CodePushExperimentService, SystemSettingsService, DeviceRegisterService,
+    TelemetryAutoSyncService, SunbirdSdk, CorrelationData
 } from 'sunbird-sdk';
 import { Platform, Events, MenuController } from '@ionic/angular';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
@@ -21,8 +22,9 @@ import { NetworkAvailabilityToastService } from '@app/services/network-availabil
 import { NotificationService as LocalNotification } from '@app/services/notification.service';
 import { TncUpdateHandlerService } from '@app/services/handlers/tnc-update-handler.service';
 import { of, Subject, EMPTY } from 'rxjs';
-import { PreferenceKey } from './app.constant';
+import { PreferenceKey, EventTopics } from './app.constant';
 import { BackButtonEmitter } from '@ionic/angular/dist/providers/platform';
+import { SplaschreenDeeplinkActionHandlerDelegate } from '../services/sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
 
 declare const supportfile;
 
@@ -93,9 +95,12 @@ describe('AppComponent', () => {
     const mockTncUpdateHandlerService: Partial<TncUpdateHandlerService> = {
         checkForTncUpdate: jest.fn()
     };
-    const mockTranslate: Partial<TranslateService> = {
-        onLangChange: new EventEmitter<LangChangeEvent>()
-    };
+    class MockTranslateService {
+        public get onLangChange() {
+            return new EventEmitter<LangChangeEvent>();
+        }
+    }
+    const mockTranslate: Partial<TranslateService> = new MockTranslateService() as any;
     const mockDeviceSpec = {
         os: 'some_os',
         make: 'some_make',
@@ -112,6 +117,7 @@ describe('AppComponent', () => {
     const mockUtilityService: Partial<UtilityService> = {};
     const mockZone: Partial<NgZone> = {};
     const mockLocalCourseService: Partial<LocalCourseService> = {};
+    const mockSplaschreenDeeplinkActionHandlerDelegate: Partial<SplaschreenDeeplinkActionHandlerDelegate> = {};
 
     beforeAll(() => {
         appComponent = new AppComponent(
@@ -144,7 +150,8 @@ describe('AppComponent', () => {
             mockMenuCtrl as MenuController,
             mockNetworkAvailability as NetworkAvailabilityToastService,
             mockSplashScreenService as SplashScreenService,
-            mockLocalCourseService as LocalCourseService
+            mockLocalCourseService as LocalCourseService,
+            mockSplaschreenDeeplinkActionHandlerDelegate as SplaschreenDeeplinkActionHandlerDelegate
         );
     });
 
@@ -783,6 +790,341 @@ describe('AppComponent', () => {
             setTimeout(() => {
                 expect(codePush.getCurrentPackage).toHaveBeenCalled();
                 expect(mockCodePushExperimentService.getDefaultDeploymentKey).not.toHaveBeenCalled();
+                done();
+            });
+        });
+    });
+
+    describe('subscribeEvents', () => {
+        beforeEach(() => {
+            // arrange
+            mockPlatform.ready = jest.fn(() => {
+                return new Promise((resolve) => {
+                    resolve('ready');
+                });
+            });
+
+            mockPreferences.getString = jest.fn((key) => {
+                switch (key) {
+                    case PreferenceKey.SELECTED_LANGUAGE_CODE:
+                        return of('');
+                    case PreferenceKey.FCM_TOKEN:
+                        return of('some_token');
+                    case PreferenceKey.DEPLOYMENT_KEY:
+                        return of('');
+                    case PreferenceKey.SYNC_CONFIG:
+                        return of('some_config');
+                }
+            });
+
+            mockHeaderService.headerConfigEmitted$ = EMPTY;
+            mockCommonUtilService.networkAvailability$ = EMPTY;
+            mockCommonUtilService.isDeviceLocationAvailable = jest.fn(() => Promise.resolve(true));
+            mockEventsBusService.events = jest.fn(() => EMPTY);
+            mockNotificationSrc.setupLocalNotification = jest.fn();
+            mockUtilityService.getBuildConfigValue = jest.fn(() => Promise.resolve('some_app_name'));
+            mockSystemSettingsService.getSystemSettings = jest.fn(() => EMPTY);
+            mockTelemetryAutoSyncService.start = jest.fn(() => EMPTY);
+            mockPreferences.putString = jest.fn(() => EMPTY);
+            mockFormAndFrameworkUtilService.checkNewAppVersion = jest.fn(() => Promise.resolve(''));
+            jest.spyOn(appComponent, 'checkAndroidWebViewVersion').mockImplementation();
+            mockUtilityService.getDeviceSpec = jest.fn(() => Promise.resolve(mockDeviceSpec));
+            mockUtilityService.getUtmInfo = jest.fn(() => Promise.resolve(''));
+        });
+        afterEach(() => {
+            jest.resetAllMocks();
+            jest.restoreAllMocks();
+        });
+
+        it('should subscribe coach_mark_seen event', (done) => {
+            // arrange
+            mockPlatform.ready = jest.fn(() => {
+                return {
+                    then: jest.fn((cb) => cb('ready'))
+                } as any;
+            });
+            const mockData = {
+                showWalkthroughBackDrop: true,
+                appName: 'some_app_name'
+            };
+            mockEvents.subscribe = jest.fn((topic, fn) => {
+                switch (topic) {
+                    case EventTopics.COACH_MARK_SEEN:
+                        return fn(mockData);
+                }
+            });
+            const getBoundingClientRect = {
+                getBoundingClientRect: jest.fn(() => {
+                    const left = 0;
+                    return left;
+                }),
+                getElementsByClassName: jest.fn(() => {
+                    return [{
+                        className: 'bg',
+                        setAttribute: jest.fn()
+                    }];
+                })
+            } as any;
+            jest.spyOn(document, 'getElementById').mockReturnValue(getBoundingClientRect);
+
+            // act
+            jest.useFakeTimers();
+            appComponent.ngOnInit();
+            // assert
+            jest.advanceTimersByTime(2100);
+            expect(mockEvents.subscribe).toHaveBeenCalled();
+            expect(document.getElementById).toHaveBeenCalled();
+            expect(document.getElementById('qrScannerIcon').getBoundingClientRect).toHaveBeenCalled();
+            expect(document.getElementById('qrScannerIcon').getElementsByClassName).toHaveBeenCalled();
+            // expect(document.getElementById('backdrop').getElementsByClassName('bg')[0].setAttribute).toHaveBeenCalled();
+            jest.useRealTimers();
+            jest.clearAllTimers();
+            setTimeout(() => {
+                done();
+            });
+        });
+        it('should subscribe tab change event', (done) => {
+            // arrange
+            mockPlatform.ready = jest.fn(() => {
+                return {
+                    then: jest.fn((cb) => cb('ready'))
+                } as any;
+            });
+            mockEvents.subscribe = jest.fn((topic, fn) => {
+                switch (topic) {
+                    case EventTopics.TAB_CHANGE:
+                        return fn('some_page_id');
+                }
+            });
+            mockZone.run = jest.fn((fn) => fn());
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            const corRelationList: Array<CorrelationData> = [];
+            mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
+
+            // act
+            jest.useFakeTimers();
+            appComponent.ngOnInit();
+            // assert
+            jest.advanceTimersByTime(2100);
+            expect(mockEvents.subscribe).toHaveBeenCalled();
+            expect(mockTelemetryGeneratorService.generateInteractTelemetry).nthCalledWith(2,
+                InteractType.TOUCH,
+                InteractSubtype.TAB_CLICKED,
+                Environment.HOME,
+                'some_page_id');
+            expect(mockTelemetryGeneratorService.generateImpressionTelemetry).nthCalledWith(1,
+                ImpressionType.VIEW,
+                '',
+                'some_page_id',
+                Environment.HOME,
+                undefined, undefined, undefined, undefined,
+                corRelationList);
+            jest.useRealTimers();
+            jest.clearAllTimers();
+            setTimeout(() => {
+                done();
+            });
+        });
+        it('should subscribe tab change event with pageId undefined or empty', (done) => {
+            // arrange
+            mockPlatform.ready = jest.fn(() => {
+                return {
+                    then: jest.fn((cb) => cb('ready'))
+                } as any;
+            });
+            mockEvents.subscribe = jest.fn((topic, fn) => {
+                switch (topic) {
+                    case EventTopics.TAB_CHANGE:
+                        return fn('');
+                }
+            });
+            mockZone.run = jest.fn((fn) => fn());
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            const corRelationList: Array<CorrelationData> = [];
+            mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
+
+            // act
+            jest.useFakeTimers();
+            appComponent.ngOnInit();
+            // assert
+            jest.advanceTimersByTime(2100);
+            expect(mockEvents.subscribe).toHaveBeenCalled();
+            expect(mockTelemetryGeneratorService.generateInteractTelemetry).nthCalledWith(2,
+                InteractType.TOUCH,
+                InteractSubtype.TAB_CLICKED,
+                Environment.HOME,
+                PageId.QRCodeScanner);
+            expect(mockTelemetryGeneratorService.generateImpressionTelemetry).nthCalledWith(1,
+                ImpressionType.VIEW,
+                '',
+                PageId.HOME,
+                Environment.HOME,
+                undefined, undefined, undefined, undefined,
+                corRelationList);
+            jest.useRealTimers();
+            jest.clearAllTimers();
+            setTimeout(() => {
+                done();
+            });
+        });
+        it('should subscribe tab change event with pageId resources '
+            + 'and no board, medium and class is assigned to current profile', (done) => {
+                // arrange
+                mockPlatform.ready = jest.fn(() => {
+                    return {
+                        then: jest.fn((cb) => cb('ready'))
+                    } as any;
+                });
+                mockEvents.subscribe = jest.fn((topic, fn) => {
+                    switch (topic) {
+                        case EventTopics.TAB_CHANGE:
+                            return fn('resources');
+                    }
+                });
+                mockZone.run = jest.fn((fn) => fn());
+                mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+                const mockCurrentProfile = {
+                    profileType: 'some_type'
+                } as any;
+                mockAppGlobalService.getCurrentUser = jest.fn(() => mockCurrentProfile);
+
+                const corRelationList: Array<CorrelationData> = [];
+                corRelationList.push({ id: '', type: CorReleationDataType.BOARD });
+                corRelationList.push({ id: '', type: CorReleationDataType.MEDIUM });
+                corRelationList.push({ id: '', type: CorReleationDataType.CLASS });
+                corRelationList.push({ id: mockCurrentProfile.profileType, type: CorReleationDataType.USERTYPE });
+                mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
+
+                // act
+                jest.useFakeTimers();
+                appComponent.ngOnInit();
+                // assert
+                jest.advanceTimersByTime(2100);
+                expect(mockEvents.subscribe).toHaveBeenCalled();
+                expect(mockTelemetryGeneratorService.generateInteractTelemetry).nthCalledWith(2,
+                    InteractType.TOUCH,
+                    InteractSubtype.TAB_CLICKED,
+                    Environment.HOME,
+                    'resources');
+                expect(mockTelemetryGeneratorService.generateImpressionTelemetry).nthCalledWith(1,
+                    ImpressionType.VIEW,
+                    '',
+                    'resources',
+                    Environment.HOME,
+                    undefined, undefined, undefined, undefined,
+                    corRelationList);
+                jest.useRealTimers();
+                jest.clearAllTimers();
+                setTimeout(() => {
+                    done();
+                });
+            });
+        it('should subscribe tab change event with pageId library '
+            + 'and board, medium and class is assigned to current profile', (done) => {
+                // arrange
+                mockPlatform.ready = jest.fn(() => {
+                    return {
+                        then: jest.fn((cb) => cb('ready'))
+                    } as any;
+                });
+                mockEvents.subscribe = jest.fn((topic, fn) => {
+                    switch (topic) {
+                        case EventTopics.TAB_CHANGE:
+                            return fn('resources');
+                    }
+                });
+                mockZone.run = jest.fn((fn) => fn());
+                mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+                const mockCurrentProfile = {
+                    profileType: 'some_type',
+                    board: ['some_board'],
+                    medium: ['some_medium'],
+                    grade: ['some_grade']
+                } as any;
+                mockAppGlobalService.getCurrentUser = jest.fn(() => mockCurrentProfile);
+
+                const corRelationList: Array<CorrelationData> = [];
+                corRelationList.push({ id: mockCurrentProfile.board.join(','), type: CorReleationDataType.BOARD });
+                corRelationList.push({ id: mockCurrentProfile.medium.join(','), type: CorReleationDataType.MEDIUM });
+                corRelationList.push({ id: mockCurrentProfile.grade.join(','), type: CorReleationDataType.CLASS });
+                corRelationList.push({ id: mockCurrentProfile.profileType, type: CorReleationDataType.USERTYPE });
+                mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
+
+                // act
+                jest.useFakeTimers();
+                appComponent.ngOnInit();
+                // assert
+                jest.advanceTimersByTime(2100);
+                expect(mockEvents.subscribe).toHaveBeenCalled();
+                expect(mockTelemetryGeneratorService.generateInteractTelemetry).nthCalledWith(2,
+                    InteractType.TOUCH,
+                    InteractSubtype.TAB_CLICKED,
+                    Environment.HOME,
+                    'resources');
+                expect(mockTelemetryGeneratorService.generateImpressionTelemetry).nthCalledWith(1,
+                    ImpressionType.VIEW,
+                    '',
+                    'resources',
+                    Environment.HOME,
+                    undefined, undefined, undefined, undefined,
+                    corRelationList);
+                jest.useRealTimers();
+                jest.clearAllTimers();
+                setTimeout(() => {
+                    done();
+                });
+            });
+        it('should set document direction to rtl for ltr language change to ur', (done) => {
+            // arrange
+            mockPlatform.ready = jest.fn(() => {
+                return {
+                    then: jest.fn((cb) => cb('ready'))
+                } as any;
+            });
+            mockEvents.subscribe = jest.fn();
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
+            // jest.spyOn(mockPlatform, 'isRTL', 'get')
+            //     .mockImplementation(() => false);
+            jest.spyOn(mockTranslate, 'onLangChange', 'get')
+                .mockImplementation(() => of({ lang: 'ur' }) as any);
+
+            // act
+            jest.useFakeTimers();
+            appComponent.ngOnInit();
+            // assert
+            jest.advanceTimersByTime(2100);
+            jest.useRealTimers();
+            jest.clearAllTimers();
+            setTimeout(() => {
+                expect(document.documentElement.dir).toEqual('rtl');
+                done();
+            });
+        });
+        it('should set document direction to ltr for rtl language change to en', (done) => {
+            // arrange
+            mockPlatform.ready = jest.fn(() => {
+                return {
+                    then: jest.fn((cb) => cb('ready'))
+                } as any;
+            });
+            mockEvents.subscribe = jest.fn();
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
+            // jest.spyOn(mockPlatform, 'isRTL', 'get')
+            //     .mockImplementation(() => false);
+            jest.spyOn(mockTranslate, 'onLangChange', 'get')
+                .mockImplementation(() => of({ lang: 'en' }) as any);
+
+            // act
+            jest.useFakeTimers();
+            appComponent.ngOnInit();
+            // assert
+            jest.advanceTimersByTime(2100);
+            jest.useRealTimers();
+            jest.clearAllTimers();
+            setTimeout(() => {
+                expect(document.documentElement.dir).toEqual('ltr');
                 done();
             });
         });

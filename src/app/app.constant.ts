@@ -168,6 +168,8 @@ export class EventTopics {
     public static readonly NEXT_CONTENT = 'event:NextContent';
     public static readonly DEEPLINK_CONTENT_PAGE_OPEN = 'DEEPLINK_CONTENT_PAGE_OPEN';
     public static readonly CONTENT_TO_PLAY = 'event:ContentToPlay';
+    public static readonly COACH_MARK_SEEN = 'coach_mark_seen';
+    public static readonly TAB_CHANGE = 'tab.change';
 }
 
 export class ShareUrl {
@@ -221,6 +223,7 @@ export class PreferenceKey {
     public static readonly CURRENT_USER_PROFILE = 'current_user_profile';
     public static readonly FCM_TOKEN = 'fcm_token';
     public static readonly SYNC_CONFIG = 'sync_config';
+    public static readonly COACH_MARK_SEEN = 'coach_mark_seen';
 }
 
 export class GenericAppConfig {
@@ -377,6 +380,7 @@ export class SystemSettingsIds {
     public static readonly COURSE_FRAMEWORK_ID = 'courseFrameworkId';
     public static readonly CONTENT_COMING_SOON_MSG = 'contentComingSoonMsg';
     public static readonly CONSUMPTION_FAQS = 'consumptionFaqs';
+    public static readonly HOT_CODE_PUSH_KEY = 'hotCodePushKey';
 }
 
 export class StoreRating {

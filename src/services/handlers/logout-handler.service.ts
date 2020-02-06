@@ -14,7 +14,7 @@ import {
 import { ContainerService } from '../container.services';
 import { GUEST_STUDENT_TABS, GUEST_TEACHER_TABS, initTabs } from '@app/app/module.service';
 import { Observable } from 'rxjs';
-import { mergeMap, tap} from 'rxjs/operators';
+import { mergeMap, tap } from 'rxjs/operators';
 @Injectable({
   providedIn: 'root'
 })
@@ -40,7 +40,6 @@ export class LogoutHandlerService {
     this.generateLogoutInteractTelemetry(InteractType.TOUCH,
       InteractSubtype.LOGOUT_INITIATE, '');
 
-
     this.preferences.getString(PreferenceKey.GUEST_USER_ID_BEFORE_LOGIN).pipe(
       tap(async (guest_user_id: string) => {
         if (!guest_user_id) {
@@ -49,8 +48,12 @@ export class LogoutHandlerService {
 
         splashscreen.clearPrefs();
       }),
-      mergeMap((guest_user_id: string) => this.profileService.setActiveSessionForProfile(guest_user_id)),
-      mergeMap(() => this.authService.resignSession()),
+      mergeMap((guest_user_id: string) => {
+        return this.profileService.setActiveSessionForProfile(guest_user_id);
+      }),
+      mergeMap(() => {
+        return this.authService.resignSession();
+      }),
       tap(async () => {
         await this.navigateToAptPage();
         this.events.publish(AppGlobalService.USER_INFO_UPDATED);
@@ -71,8 +74,16 @@ export class LogoutHandlerService {
     }
 
     this.events.publish('UPDATE_TABS');
-    const navigationExtras: NavigationExtras = { state: { loginMode: 'guest' } };
-    this.router.navigate([`/${RouterLinks.TABS}`], navigationExtras);
+
+    const isOnboardingCompleted = (await this.preferences.getString(PreferenceKey.IS_ONBOARDING_COMPLETED).toPromise() === 'true') ?
+      true : false;
+    if (isOnboardingCompleted) {
+      const navigationExtras: NavigationExtras = { state: { loginMode: 'guest' } };
+      this.router.navigate([`/${RouterLinks.TABS}`], navigationExtras);
+    } else {
+      const navigationExtras: NavigationExtras = { queryParams: { reOnboard: true } };
+      this.router.navigate([`/${RouterLinks.PROFILE_SETTINGS}`], navigationExtras);
+    }
 
     this.generateLogoutInteractTelemetry(InteractType.OTHER, InteractSubtype.LOGOUT_SUCCESS, '');
   }
