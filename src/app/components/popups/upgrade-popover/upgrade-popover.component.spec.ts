@@ -86,10 +86,12 @@ describe('UpgradePopoverComponent', () => {
 
     it('should invoke openPlayStore', () => {
         // arrange
+        upgradePopoverComponent.upgradeType.type = 'optional';
         // act
         upgradePopoverComponent.upgradeApp('https://play.google.com/store/apps/details?id=org.sunbird.app');
         // assert
         expect(mockUtilityService.openPlayStore).toHaveBeenCalledWith('org.sunbird.app');
+        expect(mockPopOverController.dismiss).toHaveBeenCalled();
     });
 
     it('should generate impression and interact when popoup shows', (done) => {
