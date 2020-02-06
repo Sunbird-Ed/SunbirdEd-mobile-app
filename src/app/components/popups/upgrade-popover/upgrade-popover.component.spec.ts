@@ -94,6 +94,15 @@ describe('UpgradePopoverComponent', () => {
         expect(mockPopOverController.dismiss).toHaveBeenCalled();
     });
 
+    it('should invoke openPlayStore and upgradeType force', () => {
+        // arrange
+        upgradePopoverComponent.upgradeType.type = 'forced';
+        // act
+        upgradePopoverComponent.upgradeApp('https://play.google.com/store/apps/details?id=org.sunbird.app');
+        // assert
+        expect(mockUtilityService.openPlayStore).toHaveBeenCalledWith('org.sunbird.app');
+    });
+
     it('should generate impression and interact when popoup shows', (done) => {
         // arrange
         mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();

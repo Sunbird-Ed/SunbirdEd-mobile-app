@@ -105,6 +105,8 @@ export class UpgradePopoverComponent {
     );
     if (this.upgradeType.type === 'optional') {
       this.popCtrl.dismiss();
+    } else {
+      return;
     }
   }
 }
