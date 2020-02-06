@@ -54,7 +54,7 @@
 			<ion-select multiple="true" #gradeSelect text-capitalize formControlName="grade"
 				[interfaceOptions]="classOptions" okText="{{'BTN_SUBMIT' | translate}}"
 				cancelText="{{'CANCEL' | translate}}" [disabled]="!gradeList.length || !mediumControl.value.length" (ionCancel)="cancelEvent()"
-				(ionChange)="enableSubmit()" placeholder="{{'GRADE_OPTION_TEXT' | translate}}">
+				placeholder="{{'GRADE_OPTION_TEXT' | translate}}">
 				<ion-select-option *ngFor="let grade of gradeList" text-capitalize value="{{grade.code}}">
 					{{grade.name}}</ion-select-option>
 			</ion-select>

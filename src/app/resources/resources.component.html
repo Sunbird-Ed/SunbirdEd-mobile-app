@@ -2,10 +2,10 @@
   scrollEvents="true" #contentView>
   <div slot="fixed" class="fixed-container">
     <sb-library-filters [list]="categoryMediumNamesArray" [selectedItems]="mediumsSelected" [layout]="mediumFilterLayout" 
-      (selectedFilter)="mediumClickEvent($event, 'sendMediumClickedTelemetry')">
+      (selectedFilter)="mediumClickEvent($event, true)">
     </sb-library-filters>
     <sb-library-filters  [list]="categoryGradeLevelsArray" [selectedItems]="classSelected" 
-      [layout]="classFilterLayout" (selectedFilter)="classClickEvent($event, 'sendClassClickedTelemetry');">
+      [layout]="classFilterLayout" (selectedFilter)="classClickEvent($event, true);">
     </sb-library-filters>
   </div>
   <div class="scrollable-container">
