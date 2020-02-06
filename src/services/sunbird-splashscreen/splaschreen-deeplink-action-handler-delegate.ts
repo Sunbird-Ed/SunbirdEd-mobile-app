@@ -53,10 +53,10 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
 
   onAction(payload: any): Observable<undefined> {
     if (payload && payload.url) {
-      const quizTypeRegex = new RegExp(/(?:\/(?:resources\/play\/content|play\/quiz)\/(?<quizId>\w+))/);
-      const dialTypeRegex = new RegExp(/(?:\/(?:dial|QR)\/(?<dialCode>\w+))/);
-      const contentTypeRegex = new RegExp(/(?:\/play\/(?:content|collection)\/(?<contentId>\w+))/);
-      const courseTypeRegex = new RegExp(/(?:\/(?:explore-course|learn)\/course\/(?<courseId>\w+))/);
+      const quizTypeRegex = new RegExp(String.raw`(?:\/(?:resources\/play\/content|play\/quiz)\/(?<quizId>\w+))`);
+      const dialTypeRegex = new RegExp(String.raw`(?:\/(?:dial|QR)\/(?<dialCode>\w+))`);
+      const contentTypeRegex = new RegExp(String.raw`(?:\/play\/(?:content|collection)\/(?<contentId>\w+))`);
+      const courseTypeRegex = new RegExp(String.raw`(?:\/(?:explore-course|learn)\/course\/(?<courseId>\w+))`);
 
       const urlRegex = new RegExp(quizTypeRegex.source + '|' + dialTypeRegex.source + '|' +
         contentTypeRegex.source + '|' + courseTypeRegex.source);
@@ -214,7 +214,8 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
   }
 
   checkUtmContent(utmVal: string): void {
-    const res = /(?:utm_content=(?<utm_content>[^&]*))/.exec(utmVal);
+    const utmRegex = new RegExp(String.raw`(?:utm_content=(?<utm_content>[^&]*))`);
+    const res = utmRegex.exec(utmVal);
     if (res && res.groups && res.groups.utm_content && res.groups.utm_content.length) {
       const payload = { url: res.groups.utm_content};
       this.onAction(payload);
