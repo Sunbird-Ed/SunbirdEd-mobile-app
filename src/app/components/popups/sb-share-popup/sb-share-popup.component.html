@@ -21,7 +21,8 @@
                 <ion-label>{{shareOptions.file.name | translate}}</ion-label>
                 <ion-radio slot="start" value="{{shareOptions.file.value}}" [disabled]="!content.isAvailableLocally"></ion-radio>
             </ion-item>
-            <p class="share-desc">{{ 'DOWNLOAD_FILE_SIZE' | translate: {'%s': content.contentData?.size | fileSize } }}</p>
+            <p *ngIf="content?.contentData?.size" class="share-desc">{{ 'DOWNLOAD_FILE_SIZE' | translate: {'%s': content?.contentData?.size | fileSize } }}</p>
+            <p *ngIf="content?.sizeOnDevice" class="share-desc">{{ 'DOWNLOAD_FILE_SIZE' | translate: {'%s': content?.sizeOnDevice | fileSize } }}</p>
 
             <ion-item>
                 <ion-label>{{shareOptions.save.name | translate}}</ion-label>
