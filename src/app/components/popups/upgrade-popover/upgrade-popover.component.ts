@@ -103,6 +103,8 @@ export class UpgradePopoverComponent {
       PageId.UPGRADE_POPUP,
       undefined
     );
-    this.popCtrl.dismiss();
+    if (this.upgradeType.type === 'optional') {
+      this.popCtrl.dismiss();
+    }
   }
 }
