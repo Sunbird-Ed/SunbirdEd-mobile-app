@@ -163,6 +163,41 @@ describe('ContentShareHandlerService', () => {
         }, 0);
     });
 
+    it('should fetch roo content if heirararchyinfo is there', (done) => {
+        // arrange
+        contentShareHandlerService.exportContent = jest.fn();
+        const shareParams = {
+            byFile: true
+        };
+        const content = {
+            identifier: 'id',
+            contentData: {
+                contentType: 'contentType',
+                pkgVersion: '1',
+                name : 'Sample_name'
+            } as ContentData,
+            contentType: 'contentType',
+            hierarchyInfo: [{identifier: 'id1'}, {identifier: 'id2'}] as any
+        } as Content;
+        const contentResp = {
+            identifier: 'id',
+            contentData: {
+                contentType: 'contentType',
+                pkgVersion: '1',
+                name : 'Sample_name'
+            } as ContentData,
+            contentType: 'contentType',
+        } as Content;
+        mockContentService.getContentDetails = jest.fn(() => of(contentResp as any));
+        // act
+        contentShareHandlerService.shareContent(shareParams, content as Content);
+        // assert
+        expect(mockContentService.getContentDetails).toBeCalled();
+        setTimeout(() => {
+            expect(contentShareHandlerService.exportContent).toBeCalled();
+            done();
+        }, 0);
+    });
 
     it('should share file', () => {
         // arrange
