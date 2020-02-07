@@ -24,7 +24,7 @@
                   [disabled]="!stateList.length"
                   [multiple]="false"
                   [interfaceOptions]="{cssClass: 'select-box'}"
-                  [placeholder]="'SEARCH_STATE' | translate"
+                  [placeholder]="'STATE_OPTION_TEXT' | translate"
                   [okText]="'BTN_SUBMIT' | translate"
                   [cancelText]="'CANCEL' | translate"
                   (ionChange)="selectState(stateSelect.value.name , stateSelect.value.id, stateSelect.value.code);">
@@ -45,7 +45,7 @@
                   [disabled]="!districtList.length"
                   [multiple]="false"
                   [interfaceOptions]="{cssClass: 'select-box'}"
-                  [placeholder]="'SEARCH_DISTRICT' | translate"
+                  [placeholder]="'DISTRICT_OPTION_TEXT' | translate"
                   [okText]="'BTN_SUBMIT' | translate"
                   [cancelText]="'CANCEL' | translate"
                   (ionChange)="selectDistrict(districtSelect.value.name , districtSelect.value.code);">
