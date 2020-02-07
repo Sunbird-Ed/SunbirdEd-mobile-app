@@ -362,15 +362,6 @@ export class CollectionDetailEtbPage implements OnInit {
     this.ionContent.ionScroll.subscribe((event) => {
       this.scrollPosition = event.scrollTop;
     });
-
-    if (this.lastContentPlayed && this.lastContentPlayed === this.contentPlayerHandler.getLastPlayedContentId()) {
-      this.isContentPlayed = true;
-      this.contentPlayerHandler.setContentPlayerLaunchStatus(false);
-      this.ratingHandler.showRatingPopup(this.isContentPlayed, this.playingContent, 'automatic', this.corRelationList, this.objRollup);
-      this.contentPlayerHandler.setLastPlayedContentId('');
-      this.lastContentPlayed = undefined;
-      this.isContentPlayed = false;
-    }
   }
 
   openBrowser(url) {
@@ -1656,13 +1647,13 @@ export class CollectionDetailEtbPage implements OnInit {
       shouldDownloadAndPlay = false;
       this.lastContentPlayed = this.playingContent.identifier;
       this.generateInteractTelemetry(isStreaming, contentInfo.telemetryObject, contentInfo.rollUp, contentInfo.correlationList);
-      this.contentPlayerHandler.launchContentPlayer(this.playingContent, isStreaming, shouldDownloadAndPlay, contentInfo, false);
+      this.contentPlayerHandler.launchContentPlayer(this.playingContent, isStreaming, shouldDownloadAndPlay, contentInfo, false, true);
     } else if (!this.commonUtilService.networkInfo.isNetworkAvailable && this.playingContent.isAvailableLocally) {
       isStreaming = false;
       shouldDownloadAndPlay = false;
       this.lastContentPlayed = this.playingContent.identifier;
       this.generateInteractTelemetry(isStreaming, contentInfo.telemetryObject, contentInfo.rollUp, contentInfo.correlationList);
-      this.contentPlayerHandler.launchContentPlayer(this.playingContent, isStreaming, shouldDownloadAndPlay, contentInfo, false);
+      this.contentPlayerHandler.launchContentPlayer(this.playingContent, isStreaming, shouldDownloadAndPlay, contentInfo, false, true);
     } else if (!this.commonUtilService.networkInfo.isNetworkAvailable && !this.playingContent.isAvailableLocally) {
       const params: NavigationExtras = {
         state: {
