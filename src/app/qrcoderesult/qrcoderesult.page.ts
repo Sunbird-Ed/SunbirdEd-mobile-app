@@ -313,7 +313,8 @@ export class QrcoderesultPage implements OnDestroy {
             state: {
               content: this.results[0],
               isSingleContent: this.isSingleContent,
-              resultsSize: this.results.length
+              resultsSize: this.results.length,
+              corRelation: this.corRelationList
             }
            });
         }
@@ -389,7 +390,7 @@ export class QrcoderesultPage implements OnDestroy {
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,
       content.isAvailableLocally ? InteractSubtype.PLAY_FROM_DEVICE : InteractSubtype.PLAY_ONLINE,
-      !this.appGlobalService.isOnBoardingCompleted ? Environment.ONBOARDING : this.appGlobalService.getPageIdForTelemetry(),
+      !this.appGlobalService.isOnBoardingCompleted ? Environment.ONBOARDING : Environment.HOME,
       PageId.DIAL_CODE_SCAN_RESULT,
       telemetryObject,
       undefined,
