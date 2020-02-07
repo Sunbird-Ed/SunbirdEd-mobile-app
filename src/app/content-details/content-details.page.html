@@ -1,7 +1,7 @@
 <!-- New content details -->
 <ion-content *ngIf="content && appGlobalService?.CONTENT_STREAMING_ENABLED">
   <div class="sb-play-container sb-player-container" *ngIf="commonUtilService.networkInfo.isNetworkAvailable">
-    <div *ngIf="streamingUrl || limitedShareContentFlag">
+    <div *ngIf="streamingUrl">
       <div *ngIf="contentDownloadable[content?.identifier]">
         <img class="sb-player-container" src='{{content?.contentData?.appIcon}}' alt="">
         <div class="sb-overlay-container">
@@ -68,7 +68,7 @@
         </div>
       </div>
     </div>
-    <div *ngIf="!streamingUrl && !limitedShareContentFlag">
+    <div *ngIf="!streamingUrl">
       <div *ngIf="!contentDownloadable[content?.identifier]">
         <div class="sb-back-transparent" (click)="handleNavBackButton();$event.stopPropagation()">
           <div class="sb-circle">
