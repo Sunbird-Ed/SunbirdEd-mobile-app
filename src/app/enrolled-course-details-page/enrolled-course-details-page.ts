@@ -1403,6 +1403,9 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
 
           if (event.payload && event.type === ContentEventType.SERVER_CONTENT_DATA) {
               this.licenseDetails = event.payload.licenseDetails;
+              if (event.payload.size) {
+                this.content.contentData.size =  event.payload.size;
+              }
           }
 
           if (event.type === ContentEventType.IMPORT_PROGRESS) {
