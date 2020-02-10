@@ -41,7 +41,7 @@ export class SplashscreenImportActionHandlerDelegate implements SplashscreenActi
 
     switch (fileExtenstion) {
       case 'ecar': {
-          return defer(async () => {
+          defer(async () => {
               return new Promise<HTMLIonPopoverElement>(async (resolve, reject) => {
                   const fileSize = await this.utilityService.getMetaData(payload.filePath);
                   const fileName: string = filePath.substring(filePath.lastIndexOf('/') + 1);
@@ -93,11 +93,6 @@ export class SplashscreenImportActionHandlerDelegate implements SplashscreenActi
                               })
                           )
                       ),
-                      // tap((event: ContentEvent) => {
-                      //     if (event.type === ContentEventType.IMPORT_PROGRESS) {
-                      //         splashscreen.setImportProgress(event.payload.currentCount, event.payload.totalCount);
-                      //     }
-                      // }),
                       catchError(() => {
                           return of(undefined);
                       }),
@@ -119,7 +114,9 @@ export class SplashscreenImportActionHandlerDelegate implements SplashscreenActi
                       mapTo(undefined)
                   );
               })
-          );
+          ).toPromise();
+
+          return of(undefined);
       }
       case 'epar': {
         return this.profileService.importProfile({
