@@ -410,6 +410,12 @@ export class ExploreBooksPage implements OnInit, OnDestroy {
         undefined,
         this.corRelationList);
     }
+    if (!data) {
+      this.telemetryGeneratorService.generateBackClickedTelemetry(
+          PageId.EXPLORE_MORE_CONTENT,
+          Environment.HOME,
+          false);
+    }
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,
       InteractSubtype.SORT_BY_CLICKED,
