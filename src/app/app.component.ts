@@ -475,9 +475,6 @@ export class AppComponent implements OnInit, AfterViewInit {
       };
       await this.router.navigate(['/', RouterLinks.DISTRICT_MAPPING], navigationExtras);
       this.splashScreenService.handleSunbirdSplashScreenActions();
-    } else {
-      splashscreen.markImportDone();
-      splashscreen.hide();
     }
   }
 
