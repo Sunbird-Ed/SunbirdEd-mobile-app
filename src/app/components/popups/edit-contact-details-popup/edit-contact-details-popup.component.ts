@@ -129,13 +129,15 @@ export class EditContactDetailsPopupComponent implements OnInit {
     let req: GenerateOtpRequest;
     if (this.type === ProfileConstants.CONTACT_TYPE_PHONE) {
       req = {
-        userId: this.userId,
+        // todo sb-16814
+        // userId: this.userId,
         key: this.personEditForm.value.phone,
         type: ProfileConstants.CONTACT_TYPE_PHONE
       };
     } else {
       req = {
-        userId: this.userId,
+        // todo sb-16814
+        // userId: this.userId,
         key: this.personEditForm.value.email,
         type: ProfileConstants.CONTACT_TYPE_EMAIL
       };
