@@ -1211,7 +1211,15 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
   }
 
   async openPDFPreview(content: Content) {
-    // todo: add telemetry
+    this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
+        InteractSubtype.PRINT_PDF_CLICKED,
+        Environment.HOME,
+        PageId.CONTENT_DETAIL,
+        this.telemetryObject,
+        undefined,
+        this.objRollup,
+        this.corRelationList
+    );
 
     let url: string;
     const pdf = ContentUtil.resolvePDFPreview(content);
@@ -1229,7 +1237,16 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
         url = pdf.url;
       }
 
-      await this.fileOpener.open(url, 'application/pdf');
+      await new Promise<boolean>((resolve, reject) => {
+        window.cordova.plugins.printer.canPrintItem(url, (canPrint: boolean) => {
+          if (canPrint) {
+            window.cordova.plugins.printer.print(url);
+            return resolve();
+          }
+
+          return reject('Could not print item');
+        });
+      });
     } catch (e) {
       console.error(e);
       this.commonUtilService.showToast('ERROR_COULD_NOT_OPEN_FILE');

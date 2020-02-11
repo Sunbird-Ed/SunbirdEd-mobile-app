@@ -170,6 +170,7 @@ export enum InteractType {
 
 
 export enum InteractSubtype {
+    PRINT_PDF_CLICKED = 'print-pdf-clicked',
     MERGE_ACCOUNT_INITIATED = 'merge-account-initiated',
     MERGE_ACCOUNT_SUCCESS = 'merge-account-success',
     MERGE_ACCOUNT_FAILED = 'merge-account-failed',
