@@ -3,7 +3,8 @@ import { ContentFeedbackService,
     TelemetryService,
     Content,
     ContentFeedback,
-    ContentRatingService
+    FormService,
+    SharedPreferences
 } from 'sunbird-sdk';
 import { CommonUtilService, AppGlobalService, TelemetryGeneratorService } from '../../../services';
 import { PopoverController, Platform, NavParams } from '@ionic/angular';
@@ -17,8 +18,8 @@ import {
     PageId,
     ImpressionSubtype
 } from '@app/services/telemetry-constants';
-import { ContentRatingOptions } from './content-rating-options';
 import { declaredViewContainer } from '@angular/core/src/view/util';
+import { Location } from '@angular/common';
 describe('ContentRatingAlertComponent', () => {
     let contentRatingAlertComponent: ContentRatingAlertComponent;
     const mockContentFeedbackService: Partial<ContentFeedbackService> = {
@@ -65,7 +66,8 @@ describe('ContentRatingAlertComponent', () => {
         generateImpressionTelemetry: jest.fn(() => { }),
         generateInteractTelemetry: jest.fn(() => { })
     };
-    const mockContentRatingService: Partial<ContentRatingService> = {};
+    const mockFormServie: Partial<FormService> = {};
+    const mockPreferences: Partial<SharedPreferences> = {};
     const mockPlatform: Partial<Platform> = {
     };
     let subscribeWithPriorityCallback;
@@ -87,21 +89,23 @@ describe('ContentRatingAlertComponent', () => {
         showToast: jest.fn(() => { }),
         translateMessage: jest.fn(() => 'Message To Display')
     };
+    const mockLocation: Partial<Location> = {};
 
 
     beforeAll(() => {
         contentRatingAlertComponent = new ContentRatingAlertComponent(
             mockContentFeedbackService as ContentFeedbackService,
             mockTelemetryService as TelemetryService,
-            mockContentRatingService as ContentRatingService,
+            mockFormServie as FormService,
+            mockPreferences as SharedPreferences,
             mockPopoverCtrl as PopoverController,
             mockPlatform as Platform,
             mockNavParams as NavParams,
             mockTelemetryGeneratorService as TelemetryGeneratorService,
             mockAppGlobalService as AppGlobalService,
-            mockCommonUtilService as CommonUtilService
+            mockCommonUtilService as CommonUtilService,
+            mockLocation as Location
         );
-        
     });
 
     beforeEach(() => {
@@ -262,7 +266,6 @@ describe('ContentRatingAlertComponent', () => {
     describe('cancel', () => {
         it('should call dismiss', () => {
             // arrange
-            
             // act
             contentRatingAlertComponent.cancel();
             // assert
@@ -273,7 +276,6 @@ describe('ContentRatingAlertComponent', () => {
     describe('closePopover', () => {
         it('should call dismiss', () => {
             // arrange
-            
             // act
             contentRatingAlertComponent.closePopover();
             // assert
