@@ -47,6 +47,12 @@ global.FCMPlugin = {
     onNotification: () => { }
 }
 
+global.splashscreen = {
+    markImportDone: () => { },
+    hide: () => { },
+    clearPrefs: () => { },
+}
+
 global.codePush = {
     getCurrentPackage: () => { }
 }
