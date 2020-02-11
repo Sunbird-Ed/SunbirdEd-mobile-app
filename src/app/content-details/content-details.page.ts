@@ -858,6 +858,9 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
 
   handleContentPlay(isStreaming) {
     if (this.limitedShareContentFlag) {
+      if (!this.content || !this.content.contentData || !this.content.contentData.streamingUrl) {
+        return;
+      }
       if (!this.appGlobalService.isUserLoggedIn()) {
         this.promptToLogin();
       } else {
