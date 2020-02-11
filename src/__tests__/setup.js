@@ -11,7 +11,10 @@ global.cordova = {
             }
         },
         diagnostic: {
-            switchToSettings: () => {}
+            switchToSettings: () => { }
+        },
+        printer: {
+            print: () => {}
         }
     },
     file: {
