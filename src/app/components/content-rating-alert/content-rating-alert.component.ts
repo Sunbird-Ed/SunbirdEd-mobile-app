@@ -243,11 +243,11 @@ export class ContentRatingAlertComponent implements OnInit {
               }
           }
       }).catch((error: any) => {
-          this.getContentRatingFormApiEn();
+          this.getDefaultContentRatingFormApi();
       });
   }
 
-  private getContentRatingFormApiEn() {
+  private getDefaultContentRatingFormApi() {
     const req: FormRequest = {
       type: 'contentfeedback',
       subType: 'en',
