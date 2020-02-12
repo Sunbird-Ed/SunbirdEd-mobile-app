@@ -247,7 +247,7 @@ export class ContentRatingAlertComponent implements OnInit {
       });
   }
 
-  private getDefaultContentRatingFormApi() {
+  getDefaultContentRatingFormApi() {
     const req: FormRequest = {
       type: 'contentfeedback',
       subType: 'en',
