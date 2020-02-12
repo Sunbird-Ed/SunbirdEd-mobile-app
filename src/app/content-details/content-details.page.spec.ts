@@ -421,7 +421,7 @@ describe('ContentDetailsPage', () => {
         it('should not download pdf if available locally', (done) => {
             // arrange
             const content: Partial<Content> = {
-                basePath: 'file://some_local_path/some_local_path',
+                basePath: '/some_local_path/some_local_path',
                 contentData: {
                     itemSetPreviewUrl: '/some_path.some_extension'
                 }
@@ -451,16 +451,16 @@ describe('ContentDetailsPage', () => {
                 expect(mockFileTransfer.create).not.toHaveBeenCalled();
                 expect(mockDownload).not.toHaveBeenCalled();
                 expect(window.cordova.plugins.printer.print).toHaveBeenCalledWith(
-                    'file://some_local_path/some_local_path/some_path.some_extension'
+                    'file:///some_local_path/some_local_path/some_path.some_extension'
                 );
                 done();
             });
         });
 
-        it('should show error toast on file open failure', (done) => {
+        it('should show error toast on file print failure', (done) => {
             // arrange
             const content: Partial<Content> = {
-                basePath: 'file://some_local_path/some_local_path',
+                basePath: '/some_local_path/some_local_path',
                 contentData: {
                     itemSetPreviewUrl: '/some_path.some_extension'
                 }
@@ -488,7 +488,7 @@ describe('ContentDetailsPage', () => {
             contentDetailsPage.openPDFPreview(content as Content).then(() => {
                 // assert
                 expect(window.cordova.plugins.printer.print).toHaveBeenCalledWith(
-                    'file://some_local_path/some_local_path/some_path.some_extension'
+                    'file:///some_local_path/some_local_path/some_path.some_extension'
                 );
                 expect(mockDismiss).toHaveBeenCalled();
                 expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('ERROR_COULD_NOT_OPEN_FILE');
@@ -496,7 +496,7 @@ describe('ContentDetailsPage', () => {
             });
         });
 
-        it('should show error toast on file print failure', (done) => {
+        it('should show error toast on fileCanPrint() returns false', (done) => {
             // arrange
             const content: Partial<Content> = {
                 basePath: 'file://some_local_path/some_local_path',
@@ -522,7 +522,6 @@ describe('ContentDetailsPage', () => {
                 };
             });
             window.cordova.plugins.printer.canPrintItem = jest.fn((_, cb) => { cb(false); });
-            window.cordova.plugins.printer.print = jest.fn(() => { throw new Error('UNEXPECTED_ERROR'); });
             // act
             contentDetailsPage.openPDFPreview(content as Content).then(() => {
                 // assert
