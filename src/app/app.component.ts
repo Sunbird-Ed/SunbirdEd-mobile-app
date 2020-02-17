@@ -143,7 +143,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       that.formAndFrameworkUtilService.getWebviewConfig().then(function(webviewVersion) {
         if (parseInt(packageInfo.versionName.split('.')[0], 10) <= webviewVersion) {
           document.getElementById('update-webview-container').style.display = 'block';
-          this.telemetryGeneratorService.generateImpressionTelemetry(
+          that.telemetryGeneratorService.generateImpressionTelemetry(
             ImpressionType.VIEW, '',
             PageId.UPDATE_WEBVIEW_POPUP,
             Environment.HOME);
@@ -475,9 +475,6 @@ export class AppComponent implements OnInit, AfterViewInit {
       };
       await this.router.navigate(['/', RouterLinks.DISTRICT_MAPPING], navigationExtras);
       this.splashScreenService.handleSunbirdSplashScreenActions();
-    } else {
-      splashscreen.markImportDone();
-      splashscreen.hide();
     }
   }
 
