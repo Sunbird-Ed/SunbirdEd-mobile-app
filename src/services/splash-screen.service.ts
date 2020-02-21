@@ -23,28 +23,24 @@ export class SplashScreenService {
 
         const actions: { type: string, payload: any }[] = JSON.parse(stringifiedActions);
 
-        if (!actions.length) {
-            splashscreen.markImportDone();
-            splashscreen.hide();
-            return;
-        }
-
-        for (const action of actions) {
-            switch (action.type) {
-                case 'TELEMETRY': {
-                    await this.splashScreenTelemetryActionHandlerDelegate.onAction(action.type, action.payload).toPromise();
-                    break;
+        if (actions.length) {
+            for (const action of actions) {
+                switch (action.type) {
+                    case 'TELEMETRY': {
+                        await this.splashScreenTelemetryActionHandlerDelegate.onAction(action.type, action.payload).toPromise();
+                        break;
+                    }
+                    case 'IMPORT': {
+                        await this.splashScreenImportActionHandlerDelegate.onAction(action.type, action.payload).toPromise();
+                        break;
+                    }
+                    case 'DEEPLINK': {
+                        await this.splashScreenDeeplinkActionHandlerDelegate.onAction(action.payload.type, action.payload).toPromise();
+                        break;
+                    }
+                    default:
+                        return;
                 }
-                case 'IMPORT': {
-                    await this.splashScreenImportActionHandlerDelegate.onAction(action.type, action.payload).toPromise();
-                    break;
-                }
-                case 'DEEPLINK': {
-                    await this.splashScreenDeeplinkActionHandlerDelegate.onAction(action.payload.type, action.payload).toPromise();
-                    break;
-                }
-                default:
-                    return;
             }
         }
 

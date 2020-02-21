@@ -3,22 +3,20 @@
 
     <ion-buttons class="sb-hamburger" slot="start" *ngIf="headerConfig?.showBurgerMenu">
       <ion-button class="sb-hamburger-menu sb-hamburger-icon" icon-only (click)="toggleMenu()">
-        <!--<ion-icon name="menu"></ion-icon>-->
         <img src="./assets/imgs/ic_burger_menu.png" class="tool-icon">
       </ion-button>
-      <!--<ion-menu-button></ion-menu-button>-->
     </ion-buttons>
     <ion-buttons class="sb-hamburger" slot="start" *ngIf="!headerConfig?.showBurgerMenu">
       <ion-button icon-only (click)="emitEvent($event, 'back');">
         <ion-icon class="arrow-icon" name="arrow-back"></ion-icon>
       </ion-button>
     </ion-buttons>
-    <ion-title class="color f16"*ngIf="headerConfig?.pageTitle?.length >0">{{headerConfig?.pageTitle}}</ion-title>
+    <ion-title class="color f16" *ngIf="headerConfig?.pageTitle?.length >0">{{headerConfig?.pageTitle}}</ion-title>
     <ion-buttons class="sb-header-btn-group" slot="end">
       <ion-button icon-only *ngIf="headerConfig?.actionButtons?.indexOf('download') >=0 && showDownloadingIcon"
         (click)="emitEvent($event, 'download');">
         <svg [ngClass]="{'downloading': showDownloadingIcon}" class="active-downloads-icon" height="25"
-             viewBox="0 0 14 20" width="25" xmlns="http://www.w3.org/2000/svg">
+          viewBox="0 0 14 20" width="25" xmlns="http://www.w3.org/2000/svg">
           <title>F2562297-C67D-4A8E-831F-4BBA8FB569A4@1.5x</title>
           <desc>Created with sketchtool.</desc>
           <g>
@@ -96,10 +94,9 @@
   </ion-header>
   <ion-content>
     <ion-list class="sb-menu-list" lines="none">
-      
+
       <ion-item (click)="emitSideMenuItemEvent($event, 'USERS_AND_GROUPS')">
         <span class="sb-menu-icon">
-          <!-- <ion-icon ios="ios-contacts" md="md-contacts"></ion-icon> -->
           <img src="./assets/imgs/Users_and_Groups.png" class="tool-icon">
         </span>
         <span class="sb-menu-item" menuClose>{{'USERS_AND_GROUPS' | translate}}</span>
@@ -107,7 +104,6 @@
 
       <ion-item (click)="emitSideMenuItemEvent($event, 'REPORTS')">
         <span class="sb-menu-icon">
-          <!-- <ion-icon ios="ios-clipboard" md="md-clipboard" MR5></ion-icon> -->
           <img src="./assets/imgs/Reports.png" class="tool-icon">
         </span>
         <span class="sb-menu-item" menuClose>{{'REPORTS' | translate}}</span>
@@ -115,7 +111,6 @@
 
       <ion-item (click)="emitSideMenuItemEvent($event, 'LANGUAGE')">
         <span class="sb-menu-icon sb-pt-6">
-          <!-- <ion-icon ios="ios-planet" md="md-planet"></ion-icon> -->
           <img src="./assets/imgs/Language.png" class="tool-icon">
         </span>
         <div class="sb-language">
@@ -126,7 +121,6 @@
 
       <ion-item (click)="emitSideMenuItemEvent($event, 'SETTINGS')">
         <span class="sb-menu-icon">
-          <!-- <ion-icon ios="ios-settings" md="md-settings"></ion-icon> -->
           <img src="./assets/imgs/Settings.png" class="tool-icon">
         </span>
         <span class="sb-menu-item" menuClose>{{'SETTINGS' | translate}}</span>
@@ -134,7 +128,6 @@
 
       <ion-item (click)="emitSideMenuItemEvent($event, 'HELP')">
         <span class="sb-menu-icon">
-          <!-- <ion-icon ios="ios-settings" md="md-settings"></ion-icon> -->
           <img src="./assets/imgs/Help.png" class="tool-icon">
         </span>
         <span class="sb-menu-item" menuClose>{{'HELP' | translate}}</span>
@@ -142,7 +135,6 @@
 
       <ion-item (click)="emitSideMenuItemEvent($event, 'LOGOUT')" *ngIf="isLoggedIn">
         <span class="sb-menu-icon">
-          <!-- <ion-icon ios="ios-log-out" md="md-log-out"></ion-icon> -->
           <img src="./assets/imgs/Sign_out.png" class="tool-icon">
         </span>
         <span class="sb-menu-item" menuClose>{{'LOGOUT' | translate}}</span>
@@ -155,7 +147,8 @@
   </ion-footer>
 </ion-menu>
 
-<ion-menu contentId="mainContent" class="sb-side-menu" *ngIf="!isRtl" side="start" persistent="true" [swipeGesture]="headerConfig?.showBurgerMenu || false">
+<ion-menu contentId="mainContent" class="sb-side-menu" *ngIf="!isRtl" side="start" persistent="true"
+  [swipeGesture]="headerConfig?.showBurgerMenu || false">
   <ion-header>
     <ion-toolbar>
       <ion-title>
@@ -166,10 +159,9 @@
   </ion-header>
   <ion-content>
     <ion-list class="sb-menu-list" lines="none">
-     
+
       <ion-item (click)="emitSideMenuItemEvent($event, 'USERS_AND_GROUPS')">
         <span class="sb-menu-icon">
-          <!-- <ion-icon ios="ios-contacts" md="md-contacts"></ion-icon> -->
           <img src="./assets/imgs/Users_and_Groups.png" class="tool-icon">
         </span>
         <span class="sb-menu-item" menuClose>{{'USERS_AND_GROUPS' | translate}}</span>
@@ -177,15 +169,13 @@
 
       <ion-item (click)="emitSideMenuItemEvent($event, 'REPORTS')">
         <span class="sb-menu-icon">
-          <!-- <ion-icon ios="ios-clipboard" md="md-clipboard" MR5></ion-icon> -->
           <img src="./assets/imgs/Reports.png" class="tool-icon">
         </span>
         <span class="sb-menu-item" menuClose>{{'REPORTS' | translate}}</span>
       </ion-item>
-      
+
       <ion-item (click)="emitSideMenuItemEvent($event, 'LANGUAGE')">
         <span class="sb-menu-icon sb-pt-6">
-          <!-- <ion-icon ios="ios-planet" md="md-planet"></ion-icon> -->
           <img src="./assets/imgs/Language.png" class="tool-icon">
         </span>
         <div class="sb-language">
@@ -196,7 +186,6 @@
 
       <ion-item (click)="emitSideMenuItemEvent($event, 'SETTINGS')">
         <span class="sb-menu-icon">
-          <!-- <ion-icon ios="ios-settings" md="md-settings"></ion-icon> -->
           <img src="./assets/imgs/Settings.png" class="tool-icon">
         </span>
         <span class="sb-menu-item" menuClose>{{'SETTINGS' | translate}}</span>
@@ -204,7 +193,6 @@
 
       <ion-item (click)="emitSideMenuItemEvent($event, 'HELP')">
         <span class="sb-menu-icon">
-          <!-- <ion-icon ios="ios-settings" md="md-settings"></ion-icon> -->
           <img src="./assets/imgs/Help.png" class="tool-icon">
         </span>
         <span class="sb-menu-item" menuClose>{{'HELP' | translate}}</span>
@@ -212,12 +200,11 @@
 
       <ion-item (click)="emitSideMenuItemEvent($event, 'LOGOUT')" *ngIf="isLoggedIn">
         <span class="sb-menu-icon">
-          <!-- <ion-icon ios="ios-log-out" md="md-log-out"></ion-icon> -->
           <img src="./assets/imgs/Sign_out.png" class="tool-icon">
         </span>
         <span class="sb-menu-item" menuClose>{{'LOGOUT' | translate}}</span>
       </ion-item>
-      
+
     </ion-list>
   </ion-content>
   <ion-footer class="side-menu-footer">

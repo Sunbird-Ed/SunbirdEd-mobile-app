@@ -21,10 +21,10 @@ import {
   ProfileType, Rollup, StorageService, TelemetryErrorCode, TelemetryObject
 } from 'sunbird-sdk';
 import {
-  Environment, ErrorType, ImpressionType, InteractSubtype, InteractType, Mode, PageId
+  Environment, ErrorType, ImpressionType, InteractSubtype, InteractType, Mode, PageId, ID
 } from '../../services/telemetry-constants';
-import { Subscription } from 'rxjs/Subscription';
-import { ContentType, MimeType, ShareUrl, RouterLinks } from '../../app/app.constant';
+import { Subscription } from 'rxjs';
+import { ContentType, MimeType, ShareUrl, RouterLinks, ShareItemType } from '../../app/app.constant';
 import {
   AppGlobalService, AppHeaderService, CommonUtilService, CourseUtilService, TelemetryGeneratorService, UtilityService,
   ContentShareHandlerService
@@ -36,12 +36,14 @@ import { Location } from '@angular/common';
 import {
   SbPopoverComponent
 } from '../components/popups/sb-popover/sb-popover.component';
+import { SbSharePopupComponent } from '../components/popups/sb-share-popup/sb-share-popup.component';
 
 import {
   ConfirmAlertComponent, ContentActionsComponent, ContentRatingAlertComponent
 } from '../components';
 import { ActivatedRoute, Router, NavigationExtras } from '@angular/router';
 import { ContentUtil } from '@app/util/content-util';
+import { tap } from 'rxjs/operators';
 declare const cordova;
 
 @Component({
@@ -167,6 +169,7 @@ export class CollectionDetailEtbPage implements OnInit {
    * Child content size
    */
   downloadSize = 0;
+  showCredits = false;
 
   /**
    * Contains total size of locally not available content(s)
@@ -223,6 +226,7 @@ export class CollectionDetailEtbPage implements OnInit {
   scrollPosition = 0;
   currentFilter = 'ALL';
   localImage = '';
+  appName: any;
   @ViewChild(iContent) ionContent: iContent;
   @ViewChild('stickyPillsRef') stickyPillsRef: ElementRef;
   private eventSubscription: Subscription;
@@ -238,7 +242,15 @@ export class CollectionDetailEtbPage implements OnInit {
 
   public telemetryObject: TelemetryObject;
   public rollUpMap: { [key: string]: Rollup } = {};
-
+  _licenseDetails: any;
+  get licenseDetails() {
+    return this._licenseDetails;
+  }
+  set licenseDetails(val) {
+    if (!this._licenseDetails && val) {
+      this._licenseDetails = val;
+    }
+  }
   private previousHeaderBottomOffset?: number;
   constructor(
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
@@ -265,14 +277,14 @@ export class CollectionDetailEtbPage implements OnInit {
     private router: Router,
     private changeDetectionRef: ChangeDetectorRef,
     private textbookTocService: TextbookTocService,
-    private contentShareHandler: ContentShareHandlerService
+    private contentShareHandler: ContentShareHandlerService,
   ) {
     this.objRollup = new Rollup();
     this.checkLoggedInOrGuestUser();
     this.checkCurrentUserType();
     this.defaultAppIcon = 'assets/imgs/ic_launcher.png';
     const extras = this.router.getCurrentNavigation().extras.state;
-    
+
     if (extras) {
       this.content = extras.content;
       this.data = extras.data;
@@ -306,6 +318,7 @@ export class CollectionDetailEtbPage implements OnInit {
 	  * Angular life cycle hooks
 	  */
   ngOnInit() {
+    this.commonUtilService.getAppName().then((res) => { this.appName = res; });
     window['scrollWindow'] = this.ionContent;
   }
 
@@ -342,6 +355,10 @@ export class CollectionDetailEtbPage implements OnInit {
     this.ionContent.ionScroll.subscribe((event) => {
       this.scrollPosition = event.scrollTop;
     });
+  }
+
+  openBrowser(url) {
+    this.commonUtilService.openUrlInBrowser(url);
   }
 
   markContent() {
@@ -386,7 +403,7 @@ export class CollectionDetailEtbPage implements OnInit {
     }
     const values = new Map();
     values['isCollapsed'] = isCollapsed;
-  
+
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,
       InteractSubtype.UNIT_CLICKED,
@@ -499,12 +516,13 @@ export class CollectionDetailEtbPage implements OnInit {
     this.contentService.getContentDetails(option).toPromise()
       .then((data: Content) => {
         // this.zone.run(() => {
-          loader.dismiss().then(() => {
-            if (data) {
-              if (!data.isAvailableLocally) {
-                this.contentDetail = data;
-                this.generatefastLoadingTelemetry(InteractSubtype.FAST_LOADING_OF_TEXTBOOK_INITIATED);
-                this.contentService.getContentHeirarchy(option).toPromise()
+        loader.dismiss().then(() => {
+          if (data) {
+            this.licenseDetails = data.contentData.licenseDetails || this.licenseDetails;
+            if (!data.isAvailableLocally) {
+              this.contentDetail = data;
+              this.generatefastLoadingTelemetry(InteractSubtype.FAST_LOADING_OF_TEXTBOOK_INITIATED);
+              this.contentService.getContentHeirarchy(option).toPromise()
                 .then((content: Content) => {
                   this.childrenData = content.children;
                   this.showSheenAnimation = false;
@@ -513,13 +531,13 @@ export class CollectionDetailEtbPage implements OnInit {
                 }).catch((err) => {
                   this.showSheenAnimation = false;
                 });
-                this.importContentInBackground([this.identifier], false);
-              } else {
-                this.showSheenAnimation = false;
-                this.extractApiResponse(data);
-              }
+              this.importContentInBackground([this.identifier], false);
+            } else {
+              this.showSheenAnimation = false;
+              this.extractApiResponse(data);
             }
-          });
+          }
+        });
         // });
       })
       .catch((error: any) => {
@@ -529,6 +547,16 @@ export class CollectionDetailEtbPage implements OnInit {
         this.commonUtilService.showToast('ERROR_CONTENT_NOT_AVAILABLE');
         this.location.back();
       });
+  }
+
+  showLicensce() {
+    this.showCredits = !this.showCredits;
+
+    if (this.showCredits) {
+      this.licenseSectionClicked('expanded');
+    } else {
+      this.licenseSectionClicked('collapsed');
+    }
   }
 
   async showCommingSoonPopup(childData: any) {
@@ -946,6 +974,10 @@ export class CollectionDetailEtbPage implements OnInit {
           }
         }
 
+        if (event.payload && event.type === ContentEventType.SERVER_CONTENT_DATA) {
+          this.licenseDetails = event.payload.licenseDetails;
+      }
+
         // Get child content
         if (event.type === ContentEventType.CONTENT_EXTRACT_COMPLETED) {
           const contentImportedEvent = event as ContentImportCompleted;
@@ -1035,8 +1067,20 @@ export class CollectionDetailEtbPage implements OnInit {
     });
   }
 
-  share() {
-    this.contentShareHandler.shareContent(this.contentDetail, this.corRelationList, this.objRollup);
+  async share() {
+    // this.contentShareHandler.shareContent(this.contentDetail, this.corRelationList, this.objRollup);
+    const popover = await this.popoverCtrl.create({
+      component: SbSharePopupComponent,
+      componentProps: {
+        content: this.contentDetail,
+        corRelationList: this.corRelationList,
+        objRollup: this.objRollup,
+        pageId: PageId.COLLECTION_DETAIL,
+        shareItemType: ShareItemType.ROOT_COLECTION
+      },
+      cssClass: 'sb-popover',
+    });
+    popover.present();
   }
 
   /**
@@ -1088,7 +1132,7 @@ export class CollectionDetailEtbPage implements OnInit {
   generateEndEvent(objectId, objectType, objectVersion) {
     const telemetryObject = new TelemetryObject(objectId, objectType, objectVersion);
     this.telemetryGeneratorService.generateEndTelemetry(
-      objectType,
+      objectType ? objectType : ContentType.TEXTBOOK,
       Mode.PLAY,
       PageId.COLLECTION_DETAIL,
       Environment.HOME,
@@ -1156,13 +1200,13 @@ export class CollectionDetailEtbPage implements OnInit {
       * type: impression
       */
       this.telemetryGeneratorService.generateImpressionTelemetry(ImpressionType.VIEW, '',
-      PageId.COLLECTION_DETAIL,
-      Environment.HOME,
-      this.identifier,
-      '',
-      this.content.pkgVersion,
-      this.objRollup,
-      this.corRelationList);
+        PageId.COLLECTION_DETAIL,
+        Environment.HOME,
+        this.identifier,
+        '',
+        this.content.pkgVersion,
+        this.objRollup,
+        this.corRelationList);
 
       const response = await popover.onDidDismiss();
       if (response && response.data) {
@@ -1185,6 +1229,10 @@ export class CollectionDetailEtbPage implements OnInit {
     }
   }
 
+  mergeProperties(mergeProp) {
+    return ContentUtil.mergeProperties(this.contentDetail.contentData, mergeProp);
+  }
+
   cancelDownload() {
     this.telemetryGeneratorService.generateCancelDownloadTelemetry(this.contentDetail);
     this.contentService.cancelDownload(this.identifier).toPromise().finally(() => {
@@ -1203,7 +1251,7 @@ export class CollectionDetailEtbPage implements OnInit {
       Environment.HOME,
       PageId.COLLECTION_DETAIL,
       this.telemetryObject,
-      values,this.objRollup,
+      values, this.objRollup,
       this.corRelationList);
   }
 
@@ -1212,6 +1260,21 @@ export class CollectionDetailEtbPage implements OnInit {
    */
   viewCredits() {
     this.courseUtilService.showCredits(this.contentDetail, PageId.COLLECTION_DETAIL, this.objRollup, this.corRelationList);
+  }
+
+  licenseSectionClicked(params) {
+    const telemetryObject = new TelemetryObject(this.objId, this.objType, this.objVer);
+    this.telemetryGeneratorService.generateInteractTelemetry(
+       params === 'expanded' ? InteractType.LICENSE_CARD_EXPANDED : InteractType.LICENSE_CARD_COLLAPSED,
+       '',
+       undefined,
+       PageId.COLLECTION_DETAIL,
+       telemetryObject,
+       undefined,
+       this.objRollup,
+       this.corRelationList,
+       ID.LICENSE_CARD_CLICKED
+     );
   }
 
   /**
@@ -1290,20 +1353,20 @@ export class CollectionDetailEtbPage implements OnInit {
      * type: impression
      */
     this.telemetryGeneratorService.generateImpressionTelemetry(ImpressionType.VIEW, '',
-     PageId.SINGLE_DELETE_CONFIRMATION_POPUP,
-     Environment.HOME,
-     this.identifier,
-     "",
-     this.content.pkgVersion,
-     this.objRollup,
-     this.corRelationList);
+      PageId.SINGLE_DELETE_CONFIRMATION_POPUP,
+      Environment.HOME,
+      this.identifier,
+      "",
+      this.content.pkgVersion,
+      this.objRollup,
+      this.corRelationList);
     const { data } = await confirm.onDidDismiss();
     if (data && data.canDelete) {
       this.deleteContent();
-    } else if(data && data.closeDeletePopOver) {
+    } else if (data && data.closeDeletePopOver) {
       this.closePopOver();
     }
- }
+  }
 
   /**
    * Construct content delete request body
@@ -1399,7 +1462,7 @@ export class CollectionDetailEtbPage implements OnInit {
       Environment.HOME,
       PageId.COLLECTION_DETAIL,
       this.telemetryObject,
-      undefined,this.objRollup,
+      undefined, this.objRollup,
       this.corRelationList);
     this.router.navigate([RouterLinks.ACTIVE_DOWNLOADS]);
   }
@@ -1413,11 +1476,12 @@ export class CollectionDetailEtbPage implements OnInit {
       type.selected = false;
     });
     this.mimeTypes[idx].selected = true;
-    this.filteredItemsQueryList.changes
-      .do((v) => {
+    this.filteredItemsQueryList.changes.pipe(
+      tap((v) => {
         this.changeDetectionRef.detectChanges();
         values['contentLength'] = v.length;
       })
+    )
       .subscribe();
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,
@@ -1448,54 +1512,54 @@ export class CollectionDetailEtbPage implements OnInit {
     );
   }
 
-onScroll(event) {
-  if (event.detail.scrollTop >= 205) {
-    (this.stickyPillsRef.nativeElement as HTMLDivElement).classList.add('sticky');
-    
-    const boxes: HTMLElement[] = Array.from(document.getElementsByClassName('sticky-header-title-box')) as HTMLElement[];
+  onScroll(event) {
+    if (event.detail.scrollTop >= 205) {
+      (this.stickyPillsRef.nativeElement as HTMLDivElement).classList.add('sticky');
 
-    let headerBottomOffset = (this.stickyPillsRef.nativeElement as HTMLDivElement).getBoundingClientRect().bottom;
+      const boxes: HTMLElement[] = Array.from(document.getElementsByClassName('sticky-header-title-box')) as HTMLElement[];
 
-    // TODO: Logic will Change if Header Height got fixed
-    if (this.previousHeaderBottomOffset && this.previousHeaderBottomOffset > headerBottomOffset) {
-      headerBottomOffset = this.previousHeaderBottomOffset;
-    }
+      let headerBottomOffset = (this.stickyPillsRef.nativeElement as HTMLDivElement).getBoundingClientRect().bottom;
 
-    this.previousHeaderBottomOffset = headerBottomOffset;
+      // TODO: Logic will Change if Header Height got fixed
+      if (this.previousHeaderBottomOffset && this.previousHeaderBottomOffset > headerBottomOffset) {
+        headerBottomOffset = this.previousHeaderBottomOffset;
+      }
 
-    const boxesData = boxes.map(b => {
-      return {
-        elem: b,
-        text: b.dataset['text'],
-        renderLevel: parseInt(b.dataset['renderLevel']),
-        offsetTop: b.getBoundingClientRect().top
-      };
-    });
+      this.previousHeaderBottomOffset = headerBottomOffset;
 
-    const activeBoxes = boxesData.filter(data => {
-      return data.offsetTop < headerBottomOffset
-        && (data.offsetTop + data.elem.getBoundingClientRect().height) > headerBottomOffset;
-    });
+      const boxesData = boxes.map(b => {
+        return {
+          elem: b,
+          text: b.dataset['text'],
+          renderLevel: parseInt(b.dataset['renderLevel']),
+          offsetTop: b.getBoundingClientRect().top
+        };
+      });
 
-    if (!activeBoxes.length) {
+      const activeBoxes = boxesData.filter(data => {
+        return data.offsetTop < headerBottomOffset
+          && (data.offsetTop + data.elem.getBoundingClientRect().height) > headerBottomOffset;
+      });
+
+      if (!activeBoxes.length) {
+        return;
+      }
+
+      const activeBox = activeBoxes.reduce((acc, box) => {
+        if (acc.renderLevel > box.renderLevel) {
+          return acc;
+        } else {
+          return box;
+        }
+      }, activeBoxes[0]);
+
+      if (activeBox.text) {
+        this.stckyUnitTitle = activeBox.text;
+      }
       return;
     }
 
-    const activeBox = activeBoxes.reduce((acc, box) => {
-      if (acc.renderLevel > box.renderLevel) {
-        return acc;
-      } else {
-        return box;
-      }
-    }, activeBoxes[0]);
-
-    if (activeBox.text) {
-      this.stckyUnitTitle = activeBox.text;
-    }
-    return;
-  }
-
-  (this.stickyPillsRef.nativeElement as HTMLDivElement).classList.remove('sticky');
+    (this.stickyPillsRef.nativeElement as HTMLDivElement).classList.remove('sticky');
   }
 
   importContentInBackground(identifiers: Array<string>, isChild: boolean, isDownloadAllClicked?) {

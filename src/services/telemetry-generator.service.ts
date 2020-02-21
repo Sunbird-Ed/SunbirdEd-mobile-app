@@ -14,7 +14,7 @@ import {
     DeviceSpecification
 } from 'sunbird-sdk';
 import { Map } from '../app/telemetryutil';
-import { Environment, ImpressionType, InteractSubtype, InteractType, Mode, PageId, CorReleationDataType } from './telemetry-constants';
+import { Environment, ImpressionType, InteractSubtype, InteractType, Mode, PageId, CorReleationDataType, ID } from './telemetry-constants';
 import { MimeType } from '../app/app.constant';
 import { ContentUtil } from '@app/util/content-util';
 
@@ -238,8 +238,8 @@ export class TelemetryGeneratorService {
 
     /**
      * method generates telemetry on click Read less or Read more
-     * @param {string} param string as read less or read more
-     * @param {object} objRollup object roll up
+     * @param string param string as read less or read more
+     * @param object objRollup object roll up
      * @param corRelationList corelationList
      */
     readLessOrReadMore(param, objRollup, corRelationList, telemetryObject) {
@@ -272,6 +272,19 @@ export class TelemetryGeneratorService {
             undefined,
             values, undefined,
             corRelationList);
+    }
+
+    generateAppLaunchTelemetry(type: string) {
+        this.generateInteractTelemetry(
+            type,
+            '',
+            Environment.HOME,
+            Environment.HOME,
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            ID.APP_LAUNCH);
     }
 
     generateExtraInfoTelemetry(values: Map, pageId) {
@@ -327,19 +340,5 @@ export class TelemetryGeneratorService {
 
     isCollection(mimeType) {
         return mimeType === MimeType.COLLECTION;
-    }
-
-    generateStartSheenAnimationTelemetry(pageId: string) {
-        this.generateInteractTelemetry(InteractType.OTHER,
-            InteractSubtype.SHEEN_ANIMATION_START,
-            Environment.HOME,
-            pageId);
-    }
-
-    generateEndSheenAnimationTelemetry(pageId: string) {
-        this.generateInteractTelemetry(InteractType.OTHER,
-            InteractSubtype.SHEEN_ANIMATION_END,
-            Environment.HOME,
-            pageId);
     }
 }

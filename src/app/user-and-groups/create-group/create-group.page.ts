@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit, NgZone, OnDestroy } from '@angular/core';
+import { Component, Inject, OnInit, NgZone, OnDestroy, ChangeDetectorRef } from '@angular/core';
 // import { IonicPage, NavController, NavParams } from 'ionic-angular';
 import { TranslateService } from '@ngx-translate/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -28,7 +28,7 @@ import {
 import { ActivatedRoute, Router, NavigationExtras } from '@angular/router';
 import { Platform } from '@ionic/angular';
 import { Location } from '@angular/common';
-import { Subscription } from 'rxjs/Subscription';
+import { Subscription } from 'rxjs';
 import { RouterLinks } from '@app/app/app.constant';
 
 @Component({
@@ -38,15 +38,33 @@ import { RouterLinks } from '@app/app/app.constant';
 })
 export class CreateGroupPage implements OnInit {
   groupEditForm: FormGroup;
-  classList = [];
   group: Group;
   isEditGroup = false;
-  syllabusList: Array<any> = [];
   categories: Array<any> = [];
   loader: any;
   isFormValid = true;
   navData: any;
   backButtonFunc: Subscription;
+
+  private _classList = [];
+  private _syllabusList: Array<any> = [];
+
+  get syllabusList() {
+    return this._syllabusList;
+  }
+  set syllabusList(v) {
+    this._syllabusList = v;
+    this.changeDetectionRef.detectChanges();
+  }
+
+  get classList() {
+    return this._classList;
+  }
+  set classList(v) {
+    this._classList = v;
+    this.changeDetectionRef.detectChanges();
+  }
+
 
   /* Options for class ion-select box */
   classOptions = {
@@ -72,7 +90,8 @@ export class CreateGroupPage implements OnInit {
     private router: Router,
     private platform: Platform,
     private zone: NgZone,
-    private location: Location
+    private location: Location,
+    private changeDetectionRef: ChangeDetectorRef
   ) {
     this.navData = this.router.getCurrentNavigation().extras.state;
     this.group = (this.navData && this.navData.groupInfo) ? this.navData.groupInfo : {};
@@ -143,6 +162,7 @@ export class CreateGroupPage implements OnInit {
           });
 
           if (this.group && this.group.syllabus && this.group.syllabus[0] !== undefined) {
+            await loader.dismiss();
             this.getClassList(this.group.syllabus[0], false);
           } else {
             await loader.dismiss();
@@ -281,7 +301,7 @@ export class CreateGroupPage implements OnInit {
         if (isSyllabusChanged) {
           await this.loader.dismiss();
         }
-        this.classList = classes;
+    this.classList = classes;
 
         if (!isSyllabusChanged) {
           this.groupEditForm.patchValue({
@@ -294,7 +314,7 @@ export class CreateGroupPage implements OnInit {
           await this.loader.dismiss();
         }
         this.isFormValid = false;
-        if(!this.commonUtilService.networkInfo.isNetworkAvailable){
+        if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
           this.commonUtilService.showToast(this.commonUtilService.translateMessage('NEED_INTERNET_TO_CHANGE'));
         }
         console.error('Error : ' + error);

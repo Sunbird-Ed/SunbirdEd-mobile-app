@@ -165,12 +165,14 @@ export class EventTopics {
     public static readonly SIGN_IN_RELOAD = 'SIGN_IN_RELOAD';
     public static readonly TOC_COLLECTION_CHILD_ID = 'TOC_COLLECTION_CHILD_ID';
     public static readonly HAMBURGER_MENU_CLICKED = 'HAMBURGER_MENU_CLICKED';
+    public static readonly NEXT_CONTENT = 'event:NextContent';
     public static readonly DEEPLINK_CONTENT_PAGE_OPEN = 'DEEPLINK_CONTENT_PAGE_OPEN';
 }
 
 export class ShareUrl {
     public static readonly CONTENT = '/play/content/';
     public static readonly COLLECTION = '/play/collection/';
+    public static readonly COURSE = '/explore-course/course/';
 }
 
 export class MenuOverflow {
@@ -212,6 +214,7 @@ export class PreferenceKey {
     public static readonly DEPLOYMENT_KEY = 'deployment_key';
     public static readonly COURSE_DATA_KEY = 'course_data';
     public static readonly BATCH_DETAIL_KEY = 'batch_detail';
+    public static readonly CDATA_KEY = 'correlation';
     public static readonly IS_LOCATION_MANDATORY = 'is_location_mandatory';
     public static readonly SUBSCRIBE_TOPICS = 'subscribe_topics';
     public static readonly SHOW_EXTERNAL_VERIFICATION = 'show_external_verification';
@@ -438,9 +441,6 @@ export class RouterLinks {
     public static readonly LANGUAGE_SETTING = 'language-setting';
     public static readonly PERMISSION = 'permission';
     public static readonly ABOUT_US = 'about-us';
-    public static readonly ABOUT_APP = 'about-app';
-    public static readonly PRIVACY_POLICY = 'privacy-policy';
-    public static readonly TERMS_OF_SERVICE = 'terms-of-service';
     public static readonly DISTRICT_MAPPING = 'district-mapping';
 
     // Profile settings Routes
@@ -499,4 +499,22 @@ export class RouterLinks {
 
 export class LibraryCardTypes {
     public static readonly QRCODE_RESULT = 'qrcode_result';
+}
+
+export class ShareItemType {
+    public static readonly ROOT_CONTENT = 'root-content';
+    public static readonly ROOT_COLECTION = 'root-collection';
+    public static readonly LEAF_CONTENT = 'leaf-content';
+    public static readonly APP = 'app';
+}
+
+export class ShareMode {
+    public static readonly SHARE = 'share';
+    public static readonly SEND = 'send';
+    public static readonly SAVE = 'save';
+}
+
+export class LaunchType {
+    public static readonly DEEPLINK = 'deeplink';
+    public static readonly SIDELOAD = 'sideload';
 }

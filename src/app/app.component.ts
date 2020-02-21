@@ -5,13 +5,14 @@ import { Events, Platform, IonRouterOutlet, MenuController } from '@ionic/angula
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable, combineLatest } from 'rxjs';
-import { tap, mergeMap } from 'rxjs/operators';
+import { mergeMap, filter, tap, mapTo } from 'rxjs/operators';
 import { Network } from '@ionic-native/network/ngx';
 
 import {
   ErrorEventType, EventNamespace, EventsBusService, SharedPreferences,
-  SunbirdSdk, TelemetryAutoSyncService, TelemetryService, NotificationService, GetSystemSettingsRequest, SystemSettings, SystemSettingsService,
-  CodePushExperimentService, AuthEventType, CorrelationData, Profile, DeviceRegisterService
+  SunbirdSdk, TelemetryAutoSyncService, TelemetryService, NotificationService,
+  GetSystemSettingsRequest, SystemSettings, SystemSettingsService,
+  CodePushExperimentService, AuthEventType, CorrelationData, Profile, DeviceRegisterService,
 } from 'sunbird-sdk';
 
 import {
@@ -39,7 +40,6 @@ import { NotificationService as localNotification } from '@app/services/notifica
 import { RouterLinks } from './app.constant';
 import { TncUpdateHandlerService } from '@app/services/handlers/tnc-update-handler.service';
 import { NetworkAvailabilityToastService } from '@app/services/network-availability-toast/network-availability-toast.service';
-
 @Component({
   selector: 'app-root',
   templateUrl: 'app.component.html'
@@ -112,7 +112,6 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.generateNetworkTelemetry();
       this.autoSyncTelemetry();
       this.subscribeEvents();
-      this.showAppWalkThroughScreen();
       this.startOpenrapDiscovery();
       this.saveDefaultSyncSetting();
       this.checkAppUpdateAvailable();
@@ -431,6 +430,15 @@ export class AppComponent implements OnInit, AfterViewInit {
   subscribeEvents() {
     this.events.subscribe('coach_mark_seen', (data) => {
       this.showWalkthroughBackDrop = data.showWalkthroughBackDrop;
+      setTimeout(() => {
+        const backdropClipCenter = document.getElementById('qrScannerIcon').getBoundingClientRect().left +
+        ((document.getElementById('qrScannerIcon').getBoundingClientRect().width) / 2);
+
+        (document.getElementById('backdrop').getElementsByClassName('bg')[0] as HTMLDivElement).setAttribute(
+          'style',
+          `background-image: radial-gradient(circle at ${backdropClipCenter}px 56px, rgba(0, 0, 0, 0) 30px, rgba(0, 0, 0, 0.9) 30px);`
+        );
+        }, 2000);
       this.appName = data.appName;
     });
     this.events.subscribe('tab.change', (data) => {
@@ -518,14 +526,14 @@ export class AppComponent implements OnInit, AfterViewInit {
 
     this.telemetryGeneratorService.generateImpressionTelemetry(
       ImpressionType.VIEW, '',
-      pageId,
+      pageId ? pageId : PageId.HOME,
       env, undefined, undefined, undefined, undefined,
       corRelationList);
   }
 
   private async startOpenrapDiscovery(): Promise<undefined> {
     if (this.appGlobalService.OPEN_RAPDISCOVERY_ENABLED) {
-      return Observable.create((observer) => {
+      return new Observable((observer) => {
         (window as any).openrap.startDiscovery(
           (response: { ip: string, actionType: 'connected' | 'disconnected' }) => {
             observer.next(response);
@@ -533,26 +541,29 @@ export class AppComponent implements OnInit, AfterViewInit {
             observer.error(e);
           }
         );
-      }).do((response: { ip?: string, actionType: 'connected' | 'disconnected' }) => {
-        const values = new Map();
-        values['openrapInfo'] = response;
-        this.telemetryGeneratorService.generateInteractTelemetry(InteractType.OTHER,
-          response.actionType === 'connected' ? InteractSubtype.OPENRAP_DEVICE_CONNECTED : InteractSubtype.OPENRAP_DEVICE_DISCONNECTED,
-          Environment.HOME,
-          Environment.HOME, undefined,
-          values);
-        SunbirdSdk.instance.updateContentServiceConfig({
-          host: response.actionType === 'connected' ? response.ip : undefined
-        });
-
-        SunbirdSdk.instance.updatePageServiceConfig({
-          host: response.actionType === 'connected' ? response.ip : undefined
-        });
-
-        SunbirdSdk.instance.updateTelemetryConfig({
-          host: response.actionType === 'connected' ? response.ip : undefined
-        });
-      }).toPromise();
+      }).pipe(
+        tap((response: { ip?: string, actionType: 'connected' | 'disconnected' }) => {
+          const values = new Map();
+          values['openrapInfo'] = response;
+          this.telemetryGeneratorService.generateInteractTelemetry(InteractType.OTHER,
+            response.actionType === 'connected' ? InteractSubtype.OPENRAP_DEVICE_CONNECTED : InteractSubtype.OPENRAP_DEVICE_DISCONNECTED,
+            Environment.HOME,
+            Environment.HOME, undefined,
+            values);
+          SunbirdSdk.instance.updateContentServiceConfig({
+            host: response.actionType === 'connected' ? response.ip : undefined
+          });
+  
+          SunbirdSdk.instance.updatePageServiceConfig({
+            host: response.actionType === 'connected' ? response.ip : undefined
+          });
+  
+          SunbirdSdk.instance.updateTelemetryConfig({
+            host: response.actionType === 'connected' ? response.ip : undefined
+          });
+        }),
+        mapTo(undefined)
+      ).toPromise();
     }
   }
 
@@ -691,9 +702,9 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   private handleAuthAutoMigrateEvents() {
-    this.eventsBusService.events(EventNamespace.AUTH)
-      .filter((e) => e.type === AuthEventType.AUTO_MIGRATE_SUCCESS || e.type === AuthEventType.AUTO_MIGRATE_FAIL)
-      .take(1).subscribe((e) => {
+    this.eventsBusService.events(EventNamespace.AUTH).pipe(
+      filter((e) => e.type === AuthEventType.AUTO_MIGRATE_SUCCESS || e.type === AuthEventType.AUTO_MIGRATE_FAIL),
+    ).subscribe((e) => {
         switch (e.type) {
           case AuthEventType.AUTO_MIGRATE_SUCCESS: {
             this.commonUtilService.showToast('AUTO_MIGRATION_SUCCESS_MESSAGE');
@@ -708,9 +719,9 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   private handleAuthErrors() {
-    this.eventsBusService.events(EventNamespace.ERROR)
-      .filter((e) => e.type === ErrorEventType.AUTH_TOKEN_REFRESH_ERROR)
-      .take(1).subscribe(() => {
+    this.eventsBusService.events(EventNamespace.ERROR).pipe(
+      filter((e) => e.type === ErrorEventType.AUTH_TOKEN_REFRESH_ERROR),
+    ).subscribe(() => {
         this.logoutHandlerService.onLogout();
       });
   }
@@ -755,11 +766,6 @@ export class AppComponent implements OnInit, AfterViewInit {
     );
   }
 
-  private async showAppWalkThroughScreen() {
-    const showAppWalkthrough: boolean = await this.preferences.getBoolean('coach_mark_seen').toPromise();
-    await this.preferences.putBoolean('coach_mark_seen', showAppWalkthrough).toPromise();
-  }
-
   private async getDeviceProfile() {
     if (!(await this.commonUtilService.isDeviceLocationAvailable())
       && !(await this.commonUtilService.isIpLocationAvailable())) {
@@ -779,4 +785,5 @@ export class AppComponent implements OnInit, AfterViewInit {
       });
     }
   }
+
 }

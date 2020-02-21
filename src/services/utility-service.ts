@@ -96,10 +96,10 @@ export class UtilityService {
             }
         });
     }
-    exportApk(): Promise<string> {
+    exportApk(destination): Promise<string> {
         return new Promise<string>((resolve, reject) => {
             try {
-                buildconfigreader.exportApk((entry: string) => {
+                buildconfigreader.exportApk(destination, (entry: string) => {
                     resolve(entry);
                 }, err => {
                     console.error(err);
@@ -170,6 +170,40 @@ export class UtilityService {
             } catch (xc) {
                 reject(xc);
             }
+        });
+    }
+
+    getApkSize(): Promise<string> {
+        return new Promise<string>((resolve, reject) => {
+            try {
+                buildconfigreader.getApkSize((entry: string) => {
+                    resolve(entry);
+                }, err => {
+                    reject(err);
+                });
+            } catch (xc) {
+                reject(xc);
+            }
+        });
+    }
+
+    getMetaData(filePath: string): Promise<string> {
+        return new Promise((resolve, reject) => {
+            buildconfigreader.getMetaData([{path: filePath, identifier: 'ecar'}], (data) => {
+                resolve(data.ecar.size);
+            }, err => {
+                reject(err);
+            });
+        });
+    }
+
+    removeFile(filePath: string): Promise<boolean> {
+        return new Promise((resolve, reject) => {
+            buildconfigreader.rm([filePath], false, (successfullyDeleted) => {
+                resolve(successfullyDeleted);
+            }, error => {
+                reject(error);
+            });
         });
     }
 }

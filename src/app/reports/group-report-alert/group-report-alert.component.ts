@@ -48,8 +48,7 @@ export class GroupReportAlertComponent implements OnInit {
     private location: Location
   ) {
     this.report = 'questions';
-    this.callback = navParams.get('callback');
-    this.assessment = this.callback['row'];
+    this.assessment = navParams.get('callback');
   }
 
   ngOnInit() { }
@@ -75,7 +74,6 @@ export class GroupReportAlertComponent implements OnInit {
             that.fromUserAssessment['uiRows'] = data;
           }
         }).catch(async (error) => {
-          console.log('Error received', error);
           await loader.dismiss();
         });
     }

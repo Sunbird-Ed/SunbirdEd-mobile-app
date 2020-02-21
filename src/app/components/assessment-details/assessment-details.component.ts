@@ -1,11 +1,11 @@
-import { Component, Input, Output, OnInit, EventEmitter, ViewEncapsulation, OnDestroy } from '@angular/core';
+import { Component, Input, Output, OnInit, EventEmitter, ViewEncapsulation, OnDestroy, NgZone } from '@angular/core';
 import { TelemetryObject, ReportSummary } from 'sunbird-sdk';
 import { PopoverController, Platform } from '@ionic/angular';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { PageId, InteractSubtype, ObjectType, InteractType, Environment } from '@app/services/telemetry-constants';
 import { RouterLinks } from '@app/app/app.constant';
 import { NavigationExtras, Router } from '@angular/router';
-import { Subscription } from 'rxjs/Subscription';
+import { Subscription } from 'rxjs';
 import { Location } from '@angular/common';
 
 @Component({
@@ -23,12 +23,17 @@ export class AssessmentDetailsComponent implements OnInit, OnDestroy {
     private telemetryGeneratorService: TelemetryGeneratorService,
     private router: Router,
     private platform: Platform,
-    private location: Location
+    private location: Location,
+    private zone: NgZone,
   ) {
     this.showResult = true;
   }
 
   showResult: boolean;
+  sortProps =  {
+    key: 'index',
+    type: 'asc'
+  };
   @Input() assessmentData: any;
   @Input() columns: any;
   @Output() showQuestionFromUser = new EventEmitter<string>();
@@ -49,11 +54,7 @@ export class AssessmentDetailsComponent implements OnInit, OnDestroy {
     }
   }
 
-  async onActivate(event, showPopup, callback) {
-    console.log(event);
-    if (event.type !== 'click') {
-      return;
-    }
+  async onActivate(event, showPopup, callback, report?) {
     let subType: string;
     let pageId: string;
     let telemetryObject: TelemetryObject;
@@ -61,14 +62,14 @@ export class AssessmentDetailsComponent implements OnInit, OnDestroy {
       pageId = PageId.REPORTS_USER_ASSESMENT_DETAILS;
       subType = InteractSubtype.QUESTION_CLICKED;
 
-      telemetryObject = new TelemetryObject(event.row.qid ? event.row.qid : '', ObjectType.QUESTION, undefined);
+      telemetryObject = new TelemetryObject(report.qid ? report.qid : '', ObjectType.QUESTION, undefined);
 
     } else if (this.assessmentData && this.assessmentData.fromGroup) {
       pageId = PageId.REPORTS_GROUP_ASSESMENT_DETAILS;
-      const row = event.row;
+      const row = report;
       if (row.userName) {
         subType = InteractSubtype.USER_CLICKED;
-        telemetryObject = new TelemetryObject(event.row.qid ? event.row.qid : '', ObjectType.USER, undefined);
+        telemetryObject = new TelemetryObject(report.qid ? report.qid : '', ObjectType.USER, undefined);
 
         const reportSummaryRequest: Partial<ReportSummary> = {
           name: row.name,
@@ -81,7 +82,7 @@ export class AssessmentDetailsComponent implements OnInit, OnDestroy {
 
       } else if (row.qid) {
         subType = InteractSubtype.QUESTION_CLICKED;
-        telemetryObject = new TelemetryObject(event.row.uid ? event.row.uid : '', ObjectType.QUESTION, undefined);
+        telemetryObject = new TelemetryObject(report.uid ? report.uid : '', ObjectType.QUESTION, undefined);
       }
     }
 
@@ -95,12 +96,33 @@ export class AssessmentDetailsComponent implements OnInit, OnDestroy {
     if (showPopup && callback) {
       const popover = await this.popoverCtrl.create({
         component: callback,
-        componentProps: { callback: event },
+        componentProps: { callback: report },
         cssClass: 'report-alert'
       });
       await popover.present();
     } else {
       this.showQuestionFromUser.emit();
+    }
+  }
+
+  onSortChange(prop) {
+    if (this.sortProps.key === prop) {
+      switch (this.sortProps.type) {
+        case 'asc': {
+          this.sortProps.type = 'desc';
+          break;
+        }
+        case 'desc': {
+          this.sortProps.type = 'asc';
+          break;
+        }
+        default: this.sortProps.type = 'asc';
+      }
+    } else {
+      this.sortProps = {
+        key : prop,
+        type: 'asc'
+      };
     }
   }
 }

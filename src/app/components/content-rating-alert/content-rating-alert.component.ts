@@ -41,11 +41,11 @@ export class ContentRatingAlertComponent implements OnInit {
   private popupType: string;
   telemetryObject: TelemetryObject;
   constructor(
+    @Inject('CONTENT_FEEDBACK_SERVICE') private contentService: ContentFeedbackService,
+    @Inject('TELEMETRY_SERVICE') private telemetryService: TelemetryService,
     private popOverCtrl: PopoverController,
     private platform: Platform,
     private navParams: NavParams,
-    @Inject('CONTENT_FEEDBACK_SERVICE') private contentService: ContentFeedbackService,
-    @Inject('TELEMETRY_SERVICE') private telemetryService: TelemetryService,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private appGlobalService: AppGlobalService,
     private commonUtilService: CommonUtilService
@@ -76,7 +76,7 @@ export class ContentRatingAlertComponent implements OnInit {
       ImpressionSubtype.RATING_POPUP,
       this.pageId,
       Environment.HOME, this.telemetryObject.id,
-      this.telemetryObject.type, 
+      this.telemetryObject.type,
       this.telemetryObject.version
     );
 
@@ -158,11 +158,10 @@ export class ContentRatingAlertComponent implements OnInit {
       viewDismissData.rating = this.ratingCount ? this.ratingCount : this.userRating;
       viewDismissData.comment = this.comment;
       this.popOverCtrl.dismiss(viewDismissData);
-      this.commonUtilService.showToast(this.commonUtilService.translateMessage('THANK_FOR_RATING'));
+      this.commonUtilService.showToast('THANK_FOR_RATING');
     }, (data) => {
       console.log('error:', data);
       viewDismissData.message = 'rating.error';
-      // TODO: ask anil to show error message(s)
       this.popOverCtrl.dismiss(viewDismissData);
     });
   }

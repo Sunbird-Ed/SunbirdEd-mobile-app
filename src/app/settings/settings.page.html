@@ -1,9 +1,5 @@
 <ion-content>
   <ion-list mode="ios">
-    <!-- <ion-item (click)="goToLanguageSetting()" detail mode="ios">
-      <h2>{{ 'CHANGE_LANGUAGE' | translate }}</h2>
-      <p class="settings-item-style">{{ selectedLanguage }}</p>
-    </ion-item> -->
 
     <ion-item class="PT2 PB2" (click)="dataSync()" detail>
       <ion-label>
@@ -24,7 +20,8 @@
       </ion-label>
     </ion-item>
 
-    <ion-item class="PT2 PB2" *ngIf="(isUserLoggedIn$ | async) && (isNotDefaultChannelProfile$ | async)" (click)="showMergeAccountConfirmationPopup()" detail>
+    <ion-item class="PT2 PB2" *ngIf="(isUserLoggedIn$ | async) && (isNotDefaultChannelProfile$ | async)"
+      (click)="showMergeAccountConfirmationPopup()" detail>
       <ion-label>
         <p class="setting-label">{{ 'MERGE_ACCOUNT' | translate }}</p>
       </ion-label>

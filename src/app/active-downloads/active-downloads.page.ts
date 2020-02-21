@@ -1,8 +1,7 @@
 import { ChangeDetectorRef, Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { NavController, PopoverController, ToastController } from '@ionic/angular';
 import { ActiveDownloadsInterface } from './active-downloads.interface';
-import { Observable } from 'rxjs/Observable';
-import { Subscription } from 'rxjs/Subscription';
+import { Observable, Subscription} from 'rxjs';
 import { InteractSubtype, Environment, PageId, ActionButtonType, ImpressionType, InteractType } from '../../services/telemetry-constants';
 import {
   ContentDownloadRequest,
@@ -20,6 +19,7 @@ import { AppHeaderService, CommonUtilService, TelemetryGeneratorService } from '
 import { SbNoNetworkPopupComponent } from '../components/popups/sb-no-network-popup/sb-no-network-popup.component';
 import { SbPopoverComponent } from '../components/popups/sb-popover/sb-popover.component';
 import { featureIdMap } from '@app/feature-id-map';
+import { map, tap, filter, take} from 'rxjs/operators';
 @Component({
   selector: 'app-active-downloads',
   templateUrl: './active-downloads.page.html',
@@ -58,8 +58,9 @@ export class ActiveDownloadsPage implements OnInit, OnDestroy, ActiveDownloadsIn
   ) {
     this.downloadProgressMap = {};
     // @ts-ignore
-    this.activeDownloadRequests$ = this.downloadService.getActiveDownloadRequests()
-      .do(() => this.changeDetectionRef.detectChanges());
+    this.activeDownloadRequests$ = this.downloadService.getActiveDownloadRequests().pipe(
+      tap(() => this.changeDetectionRef.detectChanges())
+    );
   }
 
   ngOnInit() {
@@ -130,13 +131,14 @@ export class ActiveDownloadsPage implements OnInit, OnDestroy, ActiveDownloadsIn
   }
 
   private initDownloadProgress(): void {
-    this._downloadProgressSubscription = this.eventsBusService.events(EventNamespace.DOWNLOADS)
-      .filter((event) => event.type === DownloadEventType.PROGRESS)
-      .do((event) => {
+    this._downloadProgressSubscription = this.eventsBusService.events(EventNamespace.DOWNLOADS).pipe(
+       filter((event) => event.type === DownloadEventType.PROGRESS),
+       tap((event) => {
         const downloadEvent = event as DownloadProgress;
         this.downloadProgressMap[downloadEvent.payload.identifier] = downloadEvent.payload.progress;
         this.changeDetectionRef.detectChanges();
-      }).subscribe();
+      })
+    ).subscribe();
   }
 
   private initAppHeader() {
@@ -210,7 +212,8 @@ export class ActiveDownloadsPage implements OnInit, OnDestroy, ActiveDownloadsIn
         };
       } else {
         valuesMap = {
-          count: (await this.activeDownloadRequests$.take(1).toPromise()).length
+          count: (await this.activeDownloadRequests$.pipe(
+            take(1)).toPromise()).length
         };
       }
       this.telemetryGeneratorService.generateInteractTelemetry(
@@ -261,13 +264,13 @@ export class ActiveDownloadsPage implements OnInit, OnDestroy, ActiveDownloadsIn
   }
 
   private checkAvailableSpace() {
-    this.storageService.getStorageDestinationVolumeInfo()
-      .do((volumeInfo) => {
+    this.storageService.getStorageDestinationVolumeInfo().pipe(
+      tap((volumeInfo) => {
         if (volumeInfo.info.availableSize < 209715200) {
           this.presentPopupForLessStorageSpace();
         }
       })
-      .subscribe();
+    ).subscribe();
   }
 
 }

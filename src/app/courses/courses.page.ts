@@ -20,7 +20,7 @@ import {
   PageAssembleCriteria, PageAssembleService, PageName, ProfileType, SharedPreferences, NetworkError, CorrelationData
 } from 'sunbird-sdk';
 import { Environment, InteractSubtype, InteractType, PageId, CorReleationDataType } from '../../services/telemetry-constants';
-import { Subscription } from 'rxjs/Subscription';
+import { Subscription } from 'rxjs';
 import { AppHeaderService } from '../../services/app-header.service';
 
 @Component({
@@ -744,8 +744,8 @@ export class CoursesPage implements OnInit {
         isChildContent: true,
         resumedCourseCardData: content,
         isCourse: true,
-        corRelation: this.corRelationList
-
+        corRelation: this.corRelationList,
+        course: content
       }
     };
     this.router.navigate([RouterLinks.CONTENT_DETAILS], extras);

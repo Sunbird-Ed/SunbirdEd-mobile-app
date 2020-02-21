@@ -12,7 +12,7 @@ import { AppHeaderService } from '../../services/app-header.service';
 import * as dayjs from 'dayjs';
 import { Location } from '@angular/common';
 import { Router } from '@angular/router';
-import { Subscription } from 'rxjs/Subscription';
+import { Subscription } from 'rxjs';
 import { SbPopoverComponent } from '../components/popups';
 import { LocalCourseService } from '@app/services/local-course.service';
 import { EnrollCourse } from '../enrolled-course-details-page/course.interface';
@@ -139,8 +139,8 @@ export class CourseBatchesPage implements OnInit {
       this.backButtonFunc.unsubscribe();
     });
   }
-  
-  goBack(){
+
+  goBack() {
     this.location.back();
   }
 
@@ -228,12 +228,13 @@ export class CourseBatchesPage implements OnInit {
     if (data && data.canDelete) {
       this.preferences.putString(PreferenceKey.BATCH_DETAIL_KEY, JSON.stringify(batchDetails)).toPromise();
       this.preferences.putString(PreferenceKey.COURSE_DATA_KEY, JSON.stringify(this.course)).toPromise();
+      this.preferences.putString(PreferenceKey.CDATA_KEY, JSON.stringify(this.corRelationList)).toPromise();
       this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
         InteractSubtype.LOGIN_CLICKED,
         Environment.HOME,
         PageId.SIGNIN_POPUP,
-        undefined,
         this.telemetryObject,
+        undefined,
         this.objRollup,
         this.corRelationList);
       this.loginHandlerService.signIn();

@@ -3,7 +3,7 @@ import { NavParams, PopoverController, NavController, Events, Platform } from '@
 import orderBy from 'lodash/orderBy';
 import find from 'lodash/find';
 import { CommonUtilService } from '@app/services/common-util.service';
-import { Subscription } from 'rxjs/Subscription';
+import { Subscription } from 'rxjs';
 import { Location } from '@angular/common';
 import { Router } from '@angular/router';
 import { FilteroptionComponent } from '@app/app/components/filteroption/filteroption.component';

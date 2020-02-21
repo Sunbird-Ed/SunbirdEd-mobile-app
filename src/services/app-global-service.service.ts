@@ -623,7 +623,7 @@ export class AppGlobalService implements OnDestroy {
 
             this.preferences.getString(PreferenceKey.APP_PERMISSION_ASKED).subscribe(
                 (permissionAsked: string | undefined) => {
-                    if (!permissionAsked) {
+                    if (!permissionAsked) { 
                         this.preferences.putString(
                             PreferenceKey.APP_PERMISSION_ASKED, JSON.stringify(this.isPermissionAsked)).toPromise().then();
                         observer.next(false);

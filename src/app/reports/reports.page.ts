@@ -23,7 +23,7 @@ import {
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { ProfileConstants, RouterLinks } from '@app/app/app.constant';
 import { Location } from '@angular/common';
-import { Subscription } from 'rxjs/Subscription';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-reports',
@@ -112,12 +112,10 @@ export class ReportsPage implements OnInit {
               data = that.filterOutCurrentUser(data, profile);
               resolve([profile, data]);
             }).catch(error => {
-              console.error('Error', error);
               reject(error);
             });
         })
         .catch((error) => {
-          console.log('Something went wrong while fetching user list', error);
           reject(error);
         });
     });
@@ -132,7 +130,6 @@ export class ReportsPage implements OnInit {
         .subscribe((groups: Group[]) => {
           if (groups) {
             resolve(groups);
-            console.log('group details', groups);
           } else {
             resolve();
           }

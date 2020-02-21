@@ -14,4 +14,10 @@ declare var buildconfigreader: {
 
   clearUtmInfo: (success:
     (callbackUrl: any) => void, error: (error: string) => void) => void;
+
+  copyFile: (sourceDirectory: string, destinationDirectory: string, fileName: string,
+    onSuccess: () => void, onError: (error: any) => void) => void;
+
+  getMetaData: (fileMapList: any[], success:
+    (callbackUrl: any) => void, error: (error: string) => void) => void;  
 };

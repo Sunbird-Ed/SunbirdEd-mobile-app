@@ -3,7 +3,7 @@
   <div class="sb-play-container sb-player-container" *ngIf="commonUtilService.networkInfo.isNetworkAvailable">
     <div *ngIf="streamingUrl">
       <div *ngIf="contentDownloadable[content?.identifier]">
-        <img class="sb-player-container" src='{{content?.contentData.appIcon}}' alt="">
+        <img class="sb-player-container" src='{{content?.contentData?.appIcon}}' alt="">
         <div class="sb-overlay-container">
           <div class="sb-back-transparent" (click)="handleNavBackButton();$event.stopPropagation()">
             <div class="sb-circle">
@@ -35,7 +35,7 @@
         </div>
       </div>
       <div *ngIf="!contentDownloadable[content?.identifier]">
-        <img class="sb-player-container" src='{{content?.contentData.appIcon}}' alt="">
+        <img class="sb-player-container" src='{{content?.contentData?.appIcon}}' alt="">
         <div class="sb-overlay-container">
           <div class="sb-back-transparent" (click)="handleNavBackButton();$event.stopPropagation()">
             <div class="sb-circle">
@@ -218,6 +218,11 @@
             (click)="openConfirmPopUp()">
             <ion-icon ios="ios-refresh" md="md-refresh" class="sb-dt-card-blue-icon"></ion-icon>
             <span class="sb-btn-footer-text">{{'UPDATE' | translate}}</span>
+          </button>
+          <button class="sb-btn-tile"
+            (click)="openPDFPreview(content)" *ngIf="content?.contentData?.itemSetPreviewUrl">
+            <ion-icon ios="ios-print" md="md-print" class="sb-dt-card-blue-icon"></ion-icon>
+            <span class="sb-btn-footer-text">{{'PRINT' | translate}}</span>
           </button>
         </div>
       </div>

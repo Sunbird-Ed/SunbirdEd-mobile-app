@@ -7,14 +7,12 @@ import { TelemetryGeneratorService } from '@app/services/telemetry-generator.ser
 import { featureIdMap } from '@app/feature-id-map';
 import {
   Environment,
-  ImpressionSubtype,
   ImpressionType,
   InteractSubtype,
   InteractType,
   PageId,
   ID
 } from '@app/services/telemetry-constants';
-import { map } from 'rxjs-compat/operator/map';
 
 export enum TeacherIdPopupFlags {
   STATE_CONFIRMATION = 'stateConfirmation',
@@ -46,11 +44,11 @@ export class TeacherIdVerificationComponent implements OnInit {
   tenantMessages: any;
 
   constructor(
+    @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     private popOverCtrl: PopoverController,
     private navParams: NavParams,
     private telemetryGeneratorService: TelemetryGeneratorService,
-    private commonUtilService: CommonUtilService,
-    @Inject('PROFILE_SERVICE') private profileService: ProfileService) {
+    private commonUtilService: CommonUtilService) {
     if (this.navParams.data) {
       this.userFeed = this.navParams.data.userFeed;
       this.stateList = this.userFeed.data.prospectChannels;
@@ -86,7 +84,6 @@ export class TeacherIdVerificationComponent implements OnInit {
       };
       this.profileService.userMigrate(req).toPromise()
         .then(async (response) => {
-          console.log('UserMigrateResponse', response);
           this.count = 0;
           if ((response.responseCode).toLowerCase() === TeacherIdPopupFlags.OK) {
             this.teacherIdFlag = TeacherIdPopupFlags.VERIFIED_STATE_ID;
@@ -99,17 +96,15 @@ export class TeacherIdVerificationComponent implements OnInit {
     }
   }
 
-  private initializeFormFields() {
+   initializeFormFields() {
     this.teacherIdFlag = TeacherIdPopupFlags.STATE_ID_INPUT;
     this.teacherIdForm = new FormGroup({
       teacherId: new FormControl('', Validators.requiredTrue)
     });
-    console.log('teacherId initialise', this.teacherIdForm.value.teacherId);
   }
 
   submitTeacherId() {
     this.count++;
-    // this.disableButton = true;
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,
       '',
@@ -130,14 +125,12 @@ export class TeacherIdVerificationComponent implements OnInit {
         feedId: this.userFeed.id
       };
       this.externalUserVerfication(req);
-      console.log('UserMigrateRequest', req, this.count);
     }
   }
 
   externalUserVerfication(req) {
     this.profileService.userMigrate(req).toPromise()
       .then(async (response) => {
-        console.log('UserMigrateResponse', response);
         this.count = 0;
         if ((response.responseCode).toLowerCase() === TeacherIdPopupFlags.INVALIDEXTERNALID) {
           this.showTeacherIdIncorrectErr = true;
@@ -158,7 +151,6 @@ export class TeacherIdVerificationComponent implements OnInit {
         }
       })
       .catch((error) => {
-        console.log('error', error);
         if (error instanceof HttpClientError) {
           if (error.response.responseCode === 400) {
             this.generateTelemetryForFailedVerification();
@@ -168,13 +160,13 @@ export class TeacherIdVerificationComponent implements OnInit {
             this.teacherIdFlag = TeacherIdPopupFlags.FAILED_STATE_ID;
           } else if (error.response.responseCode === 429) {
             this.closePopup();
-            this.commonUtilService.showToast(this.commonUtilService.translateMessage('USER_IS_NOT_VERIFIED'));
+            this.commonUtilService.showToast('USER_IS_NOT_VERIFIED');
           } else if (error.response.responseCode === 401) {
             this.closePopup();
-            this.commonUtilService.showToast(this.commonUtilService.translateMessage('USER_IS_NOT_VERIFIED'));
+            this.commonUtilService.showToast('USER_IS_NOT_VERIFIED');
           } else {
             this.closePopup();
-            this.commonUtilService.showToast(this.commonUtilService.translateMessage('USER_IS_NOT_VERIFIED'));
+            this.commonUtilService.showToast('USER_IS_NOT_VERIFIED');
           }
         }
       });
@@ -194,7 +186,7 @@ export class TeacherIdVerificationComponent implements OnInit {
       undefined,
       undefined,
       undefined,
-      featureIdMap.userVerification.EXTERNAL_USER_VERIFICATION,
+      featureIdMap.userVerification.EXTERNAL_USER_VERIFICATION
      );
   }
   generateTelemetryForFailedVerification() {

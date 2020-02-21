@@ -1,4 +1,4 @@
-import { Subscription } from 'rxjs//Subscription';
+import { Subscription } from 'rxjs';
 import { Component, Inject, ViewChild, ChangeDetectorRef } from '@angular/core';
 import { Events, IonSelect, Platform } from '@ionic/angular';
 import { FormBuilder, FormGroup } from '@angular/forms';
@@ -17,7 +17,8 @@ import {
   CategoryTerm,
   UpdateServerProfileInfoRequest,
   ServerProfileDetailsRequest,
-  CachedItemRequestSourceFrom
+  CachedItemRequestSourceFrom,
+  Channel
 } from 'sunbird-sdk';
 import { CommonUtilService } from '@app/services/common-util.service';
 import { AppGlobalService } from '@app/services/app-global-service.service';
@@ -119,6 +120,8 @@ export class CategoriesEditPage {
     cssClass: 'select-box'
   };
 
+  isBoardAvailable = true;
+
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     @Inject('FRAMEWORK_SERVICE') private frameworkService: FrameworkService,
@@ -161,7 +164,12 @@ export class CategoriesEditPage {
    * Ionic life cycle event - Fires every time page visits
    */
   ionViewWillEnter() {
-    this.getSyllabusDetails();
+    this.initializeLoader();
+    if (this.appGlobalService.isUserLoggedIn()) {
+      this.getLoggedInFrameworkCategory();
+    } else {
+      this.getSyllabusDetails();
+    }
     this.disableSubmitButton = false;
     this.headerConfig = this.headerService.getDefaultPageConfig();
     this.headerConfig.actionButtons = [];
@@ -193,11 +201,14 @@ export class CategoriesEditPage {
     });
   }
 
+  async initializeLoader() {
+    this.loader = await this.commonUtilService.getLoader();
+  }
+
   /**
    * It will fetch the syllabus details
    */
   async getSyllabusDetails() {
-    this.loader = await this.commonUtilService.getLoader();
     if (this.profile.syllabus && this.profile.syllabus[0]) {
       this.frameworkId = this.profile.syllabus[0];
     }
@@ -344,9 +355,11 @@ export class CategoriesEditPage {
           }
         } else if (this.editData) {
           this.editData = false;
-          this.profileEditForm.patchValue({
-            medium: this.profile.medium || []
-          });
+          if (this.isBoardAvailable) {
+            this.profileEditForm.patchValue({
+              medium: this.profile.medium || []
+            });
+          }
           this.profileEditForm.patchValue({
             grades: this.profile.grade || []
           });
@@ -365,7 +378,7 @@ export class CategoriesEditPage {
    */
   onSubmit() {
     const formVal = this.profileEditForm.value;
-    if (!formVal.boards.length) {
+    if (!formVal.boards.length && this.syllabusList.length) {
       if (this.showOnlyMandatoryFields) {
         this.boardSelect.open();
       } else {
@@ -420,10 +433,12 @@ export class CategoriesEditPage {
       userId: this.profile.uid,
       framework: {}
     };
-    if (formVal.syllabus) {
+    if (!this.isBoardAvailable) {
+      req.framework['id'] = [this.frameworkId];
+    } else if (formVal.syllabus && formVal.syllabus.length) {
       req.framework['id'] = [formVal.syllabus];
     }
-    if (formVal.boards) {
+    if (formVal.boards && formVal.boards.length) {
       const code = typeof (formVal.boards) === 'string' ? formVal.boards : formVal.boards[0];
       req.framework['board'] = [this.boardList.find(board => code === board.code).name];
     }
@@ -505,6 +520,39 @@ export class CategoriesEditPage {
   ionViewWillLeave() {
     if (this.backButtonFunc) {
       this.backButtonFunc.unsubscribe();
+    }
+  }
+
+  async getLoggedInFrameworkCategory() {
+    try {
+      const activeChannelDetails: Channel = await this.frameworkService.getChannelDetails({ channelId: this.frameworkService.activeChannelId }).toPromise()
+      const defaultFrameworkDetails: Framework = await this.frameworkService.getFrameworkDetails({
+        frameworkId: activeChannelDetails.defaultFramework, requiredCategories: []
+      }).toPromise();
+      const activeChannelSuggestedFrameworkList: Framework[] = await this.frameworkUtilService.getActiveChannelSuggestedFrameworkList({
+        language: '',
+        requiredCategories: []
+      }).toPromise();
+      this.frameworkId =  activeChannelDetails.defaultFramework;
+      this.categories = defaultFrameworkDetails.categories;
+      const boardCategory = defaultFrameworkDetails.categories.find((c) => c.code === 'board');
+      const mediumCategory = defaultFrameworkDetails.categories.find((c) => c.code === 'medium');
+
+      if (boardCategory) {
+        this.syllabusList = activeChannelSuggestedFrameworkList.map(f => ({ name: f.name, code: f.identifier }));
+        this.isBoardAvailable = true;
+        this.resetForm(0);
+      } else {
+        this.categories.unshift([]);
+        this.isBoardAvailable = false;
+        this.mediumList = mediumCategory.terms;
+        this.resetForm(2);
+      }
+    } catch (err) {
+      if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
+        this.commonUtilService.showToast(this.commonUtilService.translateMessage('NEED_INTERNET_TO_CHANGE'));
+      }
+      console.error('getFrameWorkCategoryOrder', err);
     }
   }
 }

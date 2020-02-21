@@ -1,12 +1,12 @@
-import { Rollup, ContentData, TelemetryObject } from 'sunbird-sdk';
+import { Rollup, Content, ContentData, TelemetryObject } from 'sunbird-sdk';
 export class ContentUtil {
 
 
   /**
    * Returns values from ContentData in a comma-separated string
-   *  @param {ContentData} contentData
-   *  @param {string[]} properties
-   *  @returns {string}
+   *  @param ContentData contentData
+   *  @param string[] properties
+   *  @returns string
    */
 
   public static mergeProperties(contentData: ContentData, properties: string[]): string {
@@ -36,11 +36,11 @@ export class ContentUtil {
     }
   }
 
-  /**
+    /**
      * Returns rollup
-     * @param {HierarchyInfo[]} hierarchyInfoList
-     * @param {string} identifier
-     * @returns {Rollup}
+     * @param HierarchyInfo[] hierarchyInfoList
+     * @param string identifier
+     * @returns Rollup
      */
   public static generateRollUp(hierarchyInfoList, identifier): Rollup {
     const rollUp = new Rollup();
@@ -55,12 +55,12 @@ export class ContentUtil {
     return rollUp;
   }
 
-  /**
+    /**
      * Returns apt app icon
-     * @param {string} appIcon
-     * @param {string} basePath
-     * @param {boolean} isNetworkAvailable
-     * @returns {string}
+     * @param string appIcon
+     * @param string basePath
+     * @param boolean isNetworkAvailable
+     * @returns string
      */
   public static getAppIcon(appIcon: string, basePath: string, isNetworkAvailable: boolean): string {
     if (appIcon) {
@@ -75,10 +75,26 @@ export class ContentUtil {
     return appIcon;
   }
 
-  /**
+  public static resolvePDFPreview(content: Content): { url: string, availableLocally: boolean } | undefined {
+    let pdf: { url: string, availableLocally: boolean } | undefined;
+
+    if (!content.contentData.itemSetPreviewUrl) {
+      return undefined;
+    }
+
+    try {
+      pdf = { url: (new URL(content.contentData.itemSetPreviewUrl)).toString(), availableLocally: false };
+    } catch (e) {
+      pdf = { url: content.basePath + content.contentData.itemSetPreviewUrl, availableLocally: true };
+    }
+
+    return pdf;
+  }
+
+    /**
      * Returns TelemetryObject
-     * @param {any} content
-     * @returns {TelemetryObject}
+     * @param any content
+     * @returns TelemetryObject
      */
     public static getTelemetryObject(content): TelemetryObject {
       const identifier = content.identifier;

@@ -24,6 +24,7 @@ import {
 } from 'sunbird-sdk';
 
 import { ContentFilterConfig, ContentType, PreferenceKey, SystemSettingsIds } from '@app/app/app.constant';
+import { map } from 'rxjs/operators';
 
 @Injectable()
 export class FormAndFrameworkUtilService {
@@ -59,8 +60,8 @@ export class FormAndFrameworkUtilService {
             action: 'get'
         };
 
-        return this.formService.getForm(request)
-            .map((result) => {
+        return this.formService.getForm(request).pipe(
+            map((result) => {
                 const config = result['data']['fields'].find(c => c.context === context);
 
                 if (!config) {
@@ -68,7 +69,8 @@ export class FormAndFrameworkUtilService {
                 }
 
                 return config;
-            }).toPromise();
+            })
+        ).toPromise();
     }
 
     /**
@@ -314,7 +316,7 @@ export class FormAndFrameworkUtilService {
         return this.contentFilterConfig;
     }
 
-    private async invokeContentFilterConfigFormApi(): Promise<any> {
+    public async invokeContentFilterConfigFormApi(): Promise<any> {
         const req: FormRequest = {
             type: 'config',
             subType: 'content',
@@ -400,7 +402,7 @@ export class FormAndFrameworkUtilService {
                             currentCategoryCode: categoryKey,
                             language: this.translate.currentLang,
                             requiredCategories: FrameworkCategoryCodesGroup.DEFAULT_FRAMEWORK_CATEGORIES,
-                            frameworkId: profileRes.framework.id ? profileRes.framework.id[0] : undefined
+                            frameworkId: (profileRes.framework && profileRes.framework.id) ? profileRes.framework.id[0] : undefined
                         };
                         this.frameworkUtilService.getFrameworkCategoryTerms(request).toPromise()
                             .then((categoryList: CategoryTerm[]) => {
@@ -468,9 +470,8 @@ export class FormAndFrameworkUtilService {
                 .then((res: any) => {
                     const updateProfileRes = res;
                     this.events.publish('refresh:loggedInProfile');
-                    if (updateProfileRes.board && updateProfileRes.grade && updateProfileRes.medium &&
-                        updateProfileRes.board.length && updateProfileRes.grade.length
-                        && updateProfileRes.medium.length
+                    if (updateProfileRes.grade && updateProfileRes.medium &&
+                        updateProfileRes.grade.length && updateProfileRes.medium.length
                     ) {
                         resolve({ status: true });
                     } else {

@@ -7,7 +7,8 @@ import { AppGlobalService } from '../../services/app-global-service.service';
 import { TelemetryGeneratorService } from '../../services/telemetry-generator.service';
 import find from 'lodash/find';
 import each from 'lodash/each';
-import map from 'lodash/map';
+import { IonContent as iContent } from '@ionic/angular';
+// import map from 'lodash/map';
 import {
   ChildContentRequest,
   Content,
@@ -37,7 +38,7 @@ import {
   ProfileService,
   TelemetryObject
 } from 'sunbird-sdk';
-import { Subscription } from 'rxjs/Subscription';
+import { Subscription } from 'rxjs';
 import { Environment, ImpressionType, InteractSubtype, InteractType, PageId } from '../../services/telemetry-constants';
 import { CanvasPlayerService } from '../../services/canvas-player.service';
 import { File } from '@ionic-native/file/ngx';
@@ -47,6 +48,7 @@ import { NavigationExtras, Router } from '@angular/router';
 import { Platform, Events, NavController } from '@ionic/angular';
 import { RatingHandler } from '@app/services/rating/rating-handler';
 import { ContentPlayerHandler } from '@app/services/content/player/content-player-handler';
+import { mapTo, map } from 'rxjs/operators';
 declare const cordova;
 
 @Component({
@@ -117,6 +119,8 @@ export class QrcoderesultPage implements OnDestroy {
   stckyParent: any;
   latestParents: Array<any> = [];
   stckyindex: string;
+  chapterFirstChildId: string;
+  @ViewChild(iContent) ionContent: iContent;
 
   constructor(
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
@@ -156,6 +160,24 @@ export class QrcoderesultPage implements OnDestroy {
    * Ionic life cycle hook
    */
   ionViewWillEnter(): void {
+    if (this.textbookTocService.textbookIds.unit) {
+      this.chapterFirstChildId = '';
+      this.getFirstChildOfChapter(this.textbookTocService.textbookIds.unit);
+      if (this.chapterFirstChildId) {
+        setTimeout(() => {
+          if (document.getElementById(this.chapterFirstChildId)) {
+            this.ionContent.getScrollElement().then((v) => {
+              v.scrollTo({
+                top: document.getElementById(this.chapterFirstChildId).offsetTop - 50,
+                left: 0,
+                behavior: 'smooth'
+              });
+            });
+            this.textbookTocService.resetTextbookIds();
+          }
+        }, 100);
+      }
+    }
     this.headerService.hideHeader();
     this.content = this.navData.content;
     this.corRelationList = this.navData.corRelation;
@@ -213,6 +235,7 @@ export class QrcoderesultPage implements OnDestroy {
   }
 
   ngOnDestroy() {
+    this.textbookTocService.resetTextbookIds();
     if (this.eventSubscription) {
       this.eventSubscription.unsubscribe();
     }
@@ -290,7 +313,8 @@ export class QrcoderesultPage implements OnDestroy {
             state: {
               content: this.results[0],
               isSingleContent: this.isSingleContent,
-              resultsSize: this.results.length
+              resultsSize: this.results.length,
+              corRelation: this.corRelationList
             }
            });
         }
@@ -312,9 +336,9 @@ export class QrcoderesultPage implements OnDestroy {
       local: true,
       server: false
     };
-    this.profileService.getAllProfiles(profileRequest)
-      .map((profiles) => profiles.filter((profile) => !!profile.handle))
-      .subscribe(profiles => {
+    this.profileService.getAllProfiles(profileRequest).pipe(
+      map((profiles) => profiles.filter((profile) => !!profile.handle))
+      ).subscribe(profiles => {
         if (profiles) {
           this.userCount = profiles.length;
         }
@@ -366,7 +390,7 @@ export class QrcoderesultPage implements OnDestroy {
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,
       content.isAvailableLocally ? InteractSubtype.PLAY_FROM_DEVICE : InteractSubtype.PLAY_ONLINE,
-      !this.appGlobalService.isOnBoardingCompleted ? Environment.ONBOARDING : this.appGlobalService.getPageIdForTelemetry(),
+      !this.appGlobalService.isOnBoardingCompleted ? Environment.ONBOARDING : Environment.HOME,
       PageId.DIAL_CODE_SCAN_RESULT,
       telemetryObject,
       undefined,
@@ -810,4 +834,20 @@ export class QrcoderesultPage implements OnDestroy {
 
     (this.stickyPillsRef.nativeElement as HTMLDivElement).classList.remove('sticky');
   }
+
+  // when coming back from toc page it has to scroll to the firstcontent of the selected chapter
+  getFirstChildOfChapter(unit) {
+    if (!this.chapterFirstChildId) {
+      if (unit.children === undefined) {
+        if (unit.mimeType !== MimeType.COLLECTION) {
+          this.chapterFirstChildId = unit.identifier;
+        }
+        return;
+      }
+      unit.children.forEach(child => {
+        this.getFirstChildOfChapter(child);
+      });
+    }
+  }
+
 }

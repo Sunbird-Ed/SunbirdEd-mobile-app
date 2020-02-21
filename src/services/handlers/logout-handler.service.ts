@@ -1,12 +1,11 @@
 import { Inject, Injectable } from '@angular/core';
 import { Events } from '@ionic/angular';
-import { Observable } from 'rxjs';
 import { Router, NavigationExtras } from '@angular/router';
 import {
   AuthService, ProfileService, ProfileType, SharedPreferences
 } from 'sunbird-sdk';
 import { PreferenceKey, RouterLinks } from '../../app/app.constant';
-import { AppGlobalService } from 'services/app-global-service.service';
+import { AppGlobalService } from '@app/services/app-global-service.service';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { CommonUtilService } from '@app/services/common-util.service';
 import {
@@ -14,7 +13,8 @@ import {
 } from '../telemetry-constants';
 import { ContainerService } from '../container.services';
 import { GUEST_STUDENT_TABS, GUEST_TEACHER_TABS, initTabs } from '@app/app/module.service';
-
+import { Observable } from 'rxjs';
+import { mergeMap, tap} from 'rxjs/operators';
 @Injectable({
   providedIn: 'root'
 })
@@ -41,22 +41,22 @@ export class LogoutHandlerService {
       InteractSubtype.LOGOUT_INITIATE, '');
 
 
-    this.preferences.getString(PreferenceKey.GUEST_USER_ID_BEFORE_LOGIN)
-      .do(async (guest_user_id: string) => {
+    this.preferences.getString(PreferenceKey.GUEST_USER_ID_BEFORE_LOGIN).pipe(
+      tap(async (guest_user_id: string) => {
         if (!guest_user_id) {
           await this.preferences.putString(PreferenceKey.SELECTED_USER_TYPE, ProfileType.TEACHER).toPromise();
         }
 
         splashscreen.clearPrefs();
-      })
-      .mergeMap((guest_user_id: string) => this.profileService.setActiveSessionForProfile(guest_user_id))
-      .mergeMap(() => this.authService.resignSession())
-      .do(async () => {
+      }),
+      mergeMap((guest_user_id: string) => this.profileService.setActiveSessionForProfile(guest_user_id)),
+      mergeMap(() => this.authService.resignSession()),
+      tap(async () => {
         await this.navigateToAptPage();
         this.events.publish(AppGlobalService.USER_INFO_UPDATED);
         this.appGlobalService.setEnrolledCourseList([]);
       })
-      .subscribe();
+    ).subscribe();
   }
 
   private async navigateToAptPage() {

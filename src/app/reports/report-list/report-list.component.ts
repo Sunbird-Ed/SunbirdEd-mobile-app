@@ -7,7 +7,7 @@ import { Environment, ImpressionType, InteractSubtype, InteractType, ObjectType,
 import { CommonUtilService } from '@app/services/common-util.service';
 import { Router, NavigationExtras } from '@angular/router';
 import { RouterLinks } from '@app/app/app.constant';
-import { Subscription } from 'rxjs/Subscription';
+import { Subscription } from 'rxjs';
 import { Location } from '@angular/common';
 
 @Component({

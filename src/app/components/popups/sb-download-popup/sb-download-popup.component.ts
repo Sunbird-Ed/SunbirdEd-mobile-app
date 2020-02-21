@@ -22,10 +22,6 @@ import { FileSizePipe } from '@app/pipes/file-size/file-size';
   styleUrls: ['./sb-download-popup.component.scss'],
 })
 export class SbDownloadPopupComponent implements OnInit, OnChanges {
-  // migration-TODO
-  // @ViewChild(Navbar) navBar: Navbar;
-  public didViewLoad: boolean;
-
 
   @Output() cancelDownloadEmit = new EventEmitter();
   @Input() queuedIdentifiers: any;
@@ -40,11 +36,11 @@ export class SbDownloadPopupComponent implements OnInit, OnChanges {
   @Input() contentSize: any;
   popupUpdate: any;
   showPopover: any;
-  private constContentSize: any;
+  constContentSize: any;
+  didViewLoad: boolean;
+
   constructor(
     private events: Events,
-    private zone: NgZone,
-    private modalCtrl: ModalController,
     private fileSizePipe: FileSizePipe) {
   }
 
@@ -65,7 +61,6 @@ export class SbDownloadPopupComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    // only run when property "data" changed
     this.popupUpdate = this.isUpdateAvail && this.contentAvailableLocally;
     this.constContentSize = this.fileSizePipe.transform(this.contentSize, 2);
     if (changes['queuedIdentifiers']) {
@@ -73,29 +68,22 @@ export class SbDownloadPopupComponent implements OnInit, OnChanges {
     }
     if (changes['currentCount']) {
       this.currentCount = this.currentCount;
-      console.log('this.currentCount', this.currentCount);
     }
     if (changes['downloadSize']) {
       this.downloadSize = this.downloadSize;
-      console.log('this.downloadSize', this.currentCount);
     }
     if (changes['downloadProgress']) {
       this.downloadProgress = this.downloadProgress;
-      console.log('this.downloadProgress', this.downloadProgress);
       if (this.downloadProgress === 100 && this.contentName && this.contentAvailableLocally) {
-        console.log('DownloadProgress Dissmiss()');
         this.showDownload = false;
       } else if (this.contentName && this.downloadProgress && this.contentAvailableLocally) {
-        console.log('AvailableLocally Dismisss()');
         this.showDownload = false;
       } else if (this.contentName && this.contentAvailableLocally) {
-        console.log('AvailableLocally Dismisss()');
         this.showDownload = false;
       }
     }
     if (changes['contentName']) {
       this.contentName = this.contentName;
-      console.log('this.contentName', this.contentName);
     }
   }
 }

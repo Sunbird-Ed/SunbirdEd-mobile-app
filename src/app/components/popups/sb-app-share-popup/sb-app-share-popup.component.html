@@ -1,0 +1,42 @@
+<ion-header class="sb-popover-header">
+    <ion-toolbar class="sb-popover-toolbar">
+      <ion-title class="sb-popover-title">{{'SHARE' | translate}}
+        <ion-icon name="close" class="sb-modal-close" (click)="closePopover()"></ion-icon>
+      </ion-title>
+    </ion-toolbar>
+  </ion-header>
+  
+  <ion-content no-padding class="sb-popover-container">
+    <ion-list lines="none" class="content-share">
+        <ion-radio-group [(ngModel)]="shareType">
+            <div>
+              <ion-item>
+                  <ion-label>{{shareOptions.link.name | translate}}</ion-label>
+                  <ion-radio slot="start" value="{{shareOptions.link.value}}"></ion-radio>
+              </ion-item>
+              <p class="share-url">{{shareUrl}}</p>
+            </div>
+
+            <ion-item>
+                <ion-label>{{shareOptions.file.name | translate}}</ion-label>
+                <ion-radio slot="start" value="{{shareOptions.file.value}}"></ion-radio>
+            </ion-item>
+            <p class="share-desc" *ngIf="fileSize">{{ 'DOWNLOAD_FILE_SIZE' | translate: {'%s': fileSize | fileSize } }}</p>
+
+            <ion-item>
+                <ion-label>{{shareOptions.save.name | translate}}</ion-label>
+                <ion-radio slot="start" value="{{shareOptions.save.value}}"></ion-radio>
+            </ion-item>
+            <p class="share-desc">{{'DOWNLOAD_PATH' | translate}}</p>
+
+        </ion-radio-group>
+    </ion-list>
+</ion-content>
+  
+  <ion-footer>
+    <div class="sb-popover-footer">
+      <button class="sb-popover-action-btn width-100 popover-color" *ngIf="shareType === shareOptions.link.value" (click)="shareLink()">{{'SHARE' | translate}}</button>
+      <button class="sb-popover-action-btn width-100 popover-color" *ngIf="shareType === shareOptions.file.value" (click)="shareFile()">{{'SEND' | translate}}</button>
+      <button class="sb-popover-action-btn width-100 popover-color" *ngIf="shareType === shareOptions.save.value" (click)="saveFile()">{{'SAVE' | translate}}</button>
+    </div>
+  </ion-footer>

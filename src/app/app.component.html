@@ -10,6 +10,7 @@
   <div id="backdrop"
     (click)="$event.preventDefault(); $event.stopPropagation(); qrWalkthroughBackdropClicked(); showWalkthroughBackDrop = false"
     [hidden]="!showWalkthroughBackDrop">
+    <div class="bg"></div>
     <ion-grid style="height: 100%" class="gridClass ion-text-center">
       <ion-row style="height: 100%" align-items-end>
         <ion-col style="padding-bottom: 7em; text-align: center">

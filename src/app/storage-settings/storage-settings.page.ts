@@ -2,8 +2,7 @@ import { Component, Inject, OnInit, ChangeDetectorRef } from '@angular/core';
 import { AppHeaderService } from '@app/services/app-header.service';
 import { CommonUtilService, } from '@app/services/common-util.service';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
-import { Observable } from 'rxjs/Observable';
-import { Subscription } from 'rxjs/Subscription';
+import { Subscription, Observable } from 'rxjs';
 import { PopoverController, ToastController } from '@ionic/angular';
 import {
   ContentService,
@@ -16,7 +15,7 @@ import {
   StorageTransferProgress,
   StorageVolume
 } from 'sunbird-sdk';
-import { SbPopoverComponent } from "@app/app/components/popups";
+import { SbPopoverComponent } from '@app/app/components/popups';
 import { FileSizePipe } from '../../pipes/file-size/file-size';
 import { ImpressionType, Environment, PageId, InteractType, InteractSubtype, } from '@app/services/telemetry-constants';
 import { AppVersion } from '@ionic-native/app-version/ngx';
@@ -27,7 +26,7 @@ import { Router } from '@angular/router';
 import { RouterLinks } from '../app.constant';
 import { featureIdMap } from '../feature-id-map';
 import { async } from 'q';
-
+import { mergeMap, map, filter , takeWhile, skip, take, startWith, tap} from 'rxjs/operators';
 
 @Component({
   selector: 'app-storage-settings',
@@ -101,12 +100,13 @@ export class StorageSettingsPage implements OnInit {
     @Inject('DEVICE_INFO') private deviceInfo: DeviceInfo,
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
   ) {
-    this.spaceTakenBySunbird$ = this.storageService.getStorageDestinationVolumeInfo()
-      .mergeMap((storageVolume) => {
+    this.spaceTakenBySunbird$ = this.storageService.getStorageDestinationVolumeInfo().pipe(
+      mergeMap((storageVolume) => {
         return this.contentService
           .getContentSpaceUsageSummary({ paths: [storageVolume.info.contentStoragePath] });
-      })
-      .map((summary) => summary[0].sizeOnDevice) as any;
+      }),
+      map((summary) => summary[0].sizeOnDevice) as any
+    );
     this.appVersion.getAppName()
       .then((appName) => {
         this.appName = appName;
@@ -117,8 +117,8 @@ export class StorageSettingsPage implements OnInit {
     this.fetchStorageVolumes();
     this.fetchStorageDestination();
   }
-  
-  ionViewWillEnter(){
+
+  ionViewWillEnter() {
     this.initAppHeader();
   }
 
@@ -336,31 +336,30 @@ export class StorageSettingsPage implements OnInit {
 
     const totalTransferSize = await this.spaceTakenBySunbird$.toPromise();
 
-    const transferCompleteSubscription = this.eventsBusService
-      .events(EventNamespace.STORAGE)
-      .takeWhile(e => e.type !== StorageEventType.TRANSFER_COMPLETED)
-      .filter(e => e.type === StorageEventType.TRANSFER_FAILED_DUPLICATE_CONTENT ||
-        e.type === StorageEventType.TRANSFER_FAILED_LOW_MEMORY)
-      .take(1)
-      .subscribe(async (e) => {
-        if (e.type === StorageEventType.TRANSFER_FAILED_DUPLICATE_CONTENT) {
-          this.showDuplicateContentPopup();
-        } else if (e.type === StorageEventType.TRANSFER_FAILED_LOW_MEMORY) {
-          setTimeout(async () => {
-            if (this.transferringContentsPopup) {
-              await this.transferringContentsPopup.dismiss();
-            }
-          }, 1000);
-          this.showLowMemoryToast();
-          this.revertSelectedStorageDestination();
-        }
-      });
+    const transferCompleteSubscription = this.eventsBusService.events(EventNamespace.STORAGE).pipe(
+      takeWhile(e => e.type !== StorageEventType.TRANSFER_COMPLETED),
+      filter(e => e.type === StorageEventType.TRANSFER_FAILED_DUPLICATE_CONTENT ||
+        e.type === StorageEventType.TRANSFER_FAILED_LOW_MEMORY),
+      take(1)
+    ).subscribe(async (e) => {
+      if (e.type === StorageEventType.TRANSFER_FAILED_DUPLICATE_CONTENT) {
+        this.showDuplicateContentPopup();
+      } else if (e.type === StorageEventType.TRANSFER_FAILED_LOW_MEMORY) {
+        setTimeout(async () => {
+          if (this.transferringContentsPopup) {
+            await this.transferringContentsPopup.dismiss();
+          }
+        }, 1000);
+        this.showLowMemoryToast();
+        this.revertSelectedStorageDestination();
+      }
+    });
 
-    const transferProgress$ = this.eventsBusService
-      .events(EventNamespace.STORAGE)
-      .takeWhile(e => e.type !== StorageEventType.TRANSFER_COMPLETED)
-      .filter(e => e.type === StorageEventType.TRANSFER_PROGRESS)
-      .map((e: StorageTransferProgress) => e.payload.progress);
+    const transferProgress$ = this.eventsBusService.events(EventNamespace.STORAGE).pipe(
+      takeWhile(e => e.type !== StorageEventType.TRANSFER_COMPLETED),
+      filter(e => e.type === StorageEventType.TRANSFER_PROGRESS),
+      map((e: StorageTransferProgress) => e.payload.progress)
+    );
 
     const transferProgressSubscription = transferProgress$
       .subscribe(null, null, async () => {
@@ -374,52 +373,54 @@ export class StorageSettingsPage implements OnInit {
       component: SbPopoverComponent,
       componentProps: {
         sbPopoverHeading: this.commonUtilService.translateMessage('TRANSFERRING_FILES'),
-        sbPopoverDynamicMainTitle: transferProgress$
-          .startWith({
+        sbPopoverDynamicMainTitle: transferProgress$.pipe(
+          startWith({
             transferredCount: 0,
             totalCount: 0
-          })
-          .map(({ transferredCount, totalCount }) => {
+          }),
+          map(({ transferredCount, totalCount }) => {
             if (transferredCount && totalCount) {
               return Math.round((transferredCount / totalCount) * 100) + '%';
             } else {
               return '0%';
             }
-          }),
+          })
+        ),
         actionsButtons: [
           {
             btntext: this.commonUtilService.translateMessage('CANCEL'),
             btnClass: 'popover-color',
-            btnDisabled$: transferProgress$
-            .startWith({
-              transferredCount: 0,
-              totalCount: 0
-            })
-            .map(({ transferredCount, totalCount }) => {
-              if (transferredCount && totalCount) {
-                if ((Math.round((transferredCount / totalCount) * 100)) === 100) {
-                  return true;
+            btnDisabled$: transferProgress$.pipe(
+              startWith({
+                transferredCount: 0,
+                totalCount: 0
+              }),
+              map(({ transferredCount, totalCount }) => {
+                if (transferredCount && totalCount) {
+                  if ((Math.round((transferredCount / totalCount) * 100)) === 100) {
+                    return true;
+                  } else {
+                    return false;
+                  }
                 } else {
                   return false;
                 }
-              } else {
-                return false;
-              }
-            })
-            .do((v) => {
-            }),
+              }),
+              tap((v) => {
+              })
+            )
           },
         ],
         icon: null,
         metaInfo: (this.storageDestination === StorageDestination.INTERNAL_STORAGE) ?
           this.commonUtilService.translateMessage('TRANSFERRING_CONTENT_TO_PHONE') :
           this.commonUtilService.translateMessage('TRANSFERRING_CONTENT_TO_SDCARD'),
-        sbPopoverDynamicContent: transferProgress$
-          .startWith({
+        sbPopoverDynamicContent: transferProgress$.pipe(
+          startWith({
             transferredCount: 0,
             totalCount: 0
-          })
-          .map(({ transferredCount, totalCount }) => {
+          }),
+          map(({ transferredCount, totalCount }) => {
             if (transferredCount && totalCount) {
               return this.fileSizePipe.transform(
                 (transferredCount / totalCount) * totalTransferSize
@@ -429,6 +430,7 @@ export class StorageSettingsPage implements OnInit {
               return '0KB/0KB';
             }
           })
+        )
       },
       backdropDismiss: false,
       cssClass: 'sb-popover dw-active-downloads-popover',
@@ -473,14 +475,14 @@ export class StorageSettingsPage implements OnInit {
 
     this.storageService.cancelTransfer().toPromise();
 
-    this.eventsBusService
-      .events(EventNamespace.STORAGE)
-      .filter(e =>
+    this.eventsBusService.events(EventNamespace.STORAGE).pipe(
+      filter(e =>
         e.type === StorageEventType.TRANSFER_REVERT_COMPLETED ||
         e.type === StorageEventType.TRANSFER_COMPLETED
-      )
-      .take(1)
-      .subscribe(async (e) => {
+      ),
+      take(1)
+    )
+     .subscribe(async (e) => {
         if (e.type === StorageEventType.TRANSFER_REVERT_COMPLETED) {
           this.storageDestination = this.storageDestination === StorageDestination.INTERNAL_STORAGE ?
             StorageDestination.EXTERNAL_STORAGE :

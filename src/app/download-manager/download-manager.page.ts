@@ -29,9 +29,10 @@ import { SbPopoverComponent } from '@app/app/components/popups/sb-popover/sb-pop
 import { PageId, InteractType, Environment, InteractSubtype } from '@app/services/telemetry-constants';
 import { FormAndFrameworkUtilService } from '@app/services';
 import { featureIdMap } from '../feature-id-map';
-import { BehaviorSubject } from 'rxjs/BehaviorSubject';
+import { BehaviorSubject } from 'rxjs';
 import { SbInsufficientStoragePopupComponent } from '@app/app/components/popups/sb-insufficient-storage-popup/sb-insufficient-storage-popup';
 import { DownloadsTabComponent } from './downloads-tab/downloads-tab.component';
+import { finalize, tap, skip, takeWhile} from 'rxjs/operators';
 
 @Component({
   selector: 'app-download-manager',
@@ -241,8 +242,10 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
       }
     });
     this.contentService.enqueueContentDelete(contentDeleteRequest).toPromise();
-    this.contentService.getContentDeleteQueue().skip(1).takeWhile((list) => !!list.length)
-      .finally(async () => {
+    this.contentService.getContentDeleteQueue().pipe(
+      skip(1),
+      takeWhile((list) => !!list.length),
+      finalize(async () => {
         this.deletedContentListTitle$
           .next(`${contentDeleteRequest.contentDeleteList.length}/${contentDeleteRequest.contentDeleteList.length}`);
 
@@ -253,8 +256,9 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
           update: true
         });
       })
-      .subscribe((list) => {
-        this.deletedContentListTitle$
+    )
+    .subscribe((list) => {
+      this.deletedContentListTitle$
           .next(`${contentDeleteRequest.contentDeleteList.length - list.length}/${contentDeleteRequest.contentDeleteList.length}`);
       });
   }
@@ -345,13 +349,14 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
   }
 
   private checkAvailableSpace() {
-    this.storageService.getStorageDestinationVolumeInfo()
-      .do((volumeInfo) => {
+    this.storageService.getStorageDestinationVolumeInfo().pipe(
+      tap((volumeInfo) => {
         if (volumeInfo.info.availableSize < 209715200) {
           this.presentPopupForLessStorageSpace();
         }
       })
-      .subscribe();
+    )
+    .subscribe();
   }
 
   async closeSelectAllPopup() {

@@ -2,7 +2,7 @@
   <ion-refresher (ionRefresh)="refreshProfileData($event)"></ion-refresher>
   <div text-center class="padding-top-10 padding-bottom-10">
     <p class="profile-name">
-      <span class="user">{{profile?.handle}}</span>
+      <span class="user">{{profile?.handle | titlecase}}</span>
       <span>
         <ion-icon class="editIcon" name="md-create" color="primary" (click)="editGuestProfile(false,'edit-profile')"></ion-icon>
       </span>

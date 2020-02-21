@@ -18,8 +18,9 @@ import { ContentType, AudienceFilter, RouterLinks } from '../../app.constant';
 import { Router } from '@angular/router';
 import { Location } from '@angular/common';
 import { AppVersion } from '@ionic-native/app-version/ngx';
-import { Subscription } from 'rxjs/Subscription';
+import { Subscription } from 'rxjs';
 import { Platform } from '@ionic/angular';
+import { map } from 'rxjs/operators';
 const KEY_SUNBIRD_CONFIG_FILE_PATH = 'sunbird_config_file_path';
 
 @Component({
@@ -102,9 +103,12 @@ export class AboutUsComponent implements OnInit {
       contentTypes: ContentType.FOR_DOWNLOADED_TAB,
       audience: AudienceFilter.GUEST_TEACHER
     };
-    const getUserCount = await this.profileService.getAllProfiles(allUserProfileRequest).map((profile) => profile.length).toPromise();
-    const getLocalContentCount = await this.contentService.getContents(contentRequest)
-      .map((contentCount) => contentCount.length).toPromise();
+    const getUserCount = await this.profileService.getAllProfiles(allUserProfileRequest).pipe(
+      map((profile) => profile.length)
+    ).toPromise();
+    const getLocalContentCount = await this.contentService.getContents(contentRequest).pipe(
+      map((contentCount) => contentCount.length)
+    ).toPromise();
     let loader = await this.commonUtilService.getLoader();
     (<any>window).supportfile.shareSunbirdConfigurations(getUserCount, getLocalContentCount, async (result) => {
       await loader.present();
@@ -132,18 +136,6 @@ export class AboutUsComponent implements OnInit {
       }
       console.error('ERROR - ' + error);
     });
-  }
-
-  aboutApp() {
-    this.router.navigate([`/${RouterLinks.SETTINGS}/${RouterLinks.ABOUT_APP}`]);
-  }
-
-  termsOfService() {
-    this.router.navigate([`/${RouterLinks.SETTINGS}/${RouterLinks.TERMS_OF_SERVICE}`]);
-  }
-
-  privacyPolicy() {
-    this.router.navigate([`/${RouterLinks.SETTINGS}/${RouterLinks.PRIVACY_POLICY}`]);
   }
 
   generateInteractTelemetry(interactionType, interactSubtype) {
