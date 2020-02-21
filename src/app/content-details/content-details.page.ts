@@ -1242,7 +1242,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
           .download(pdf.url, cordova.file.cacheDirectory + pdf.url.substring(pdf.url.lastIndexOf('/') + 1));
         url = entry.toURL();
       } else {
-        url = pdf.url;
+        url = 'file://' + pdf.url;
       }
 
       await new Promise<boolean>((resolve, reject) => {
