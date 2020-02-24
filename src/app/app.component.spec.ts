@@ -978,7 +978,7 @@ describe('AppComponent', () => {
                 mockEvents.subscribe = jest.fn((topic, fn) => {
                     switch (topic) {
                         case EventTopics.TAB_CHANGE:
-                            return fn('resources');
+                            return fn('library');
                     }
                 });
                 mockZone.run = jest.fn((fn) => fn());
@@ -1005,11 +1005,11 @@ describe('AppComponent', () => {
                     InteractType.TOUCH,
                     InteractSubtype.TAB_CLICKED,
                     Environment.HOME,
-                    'resources');
+                    'library');
                 expect(mockTelemetryGeneratorService.generateImpressionTelemetry).nthCalledWith(1,
                     ImpressionType.VIEW,
                     '',
-                    'resources',
+                    'library',
                     Environment.HOME,
                     undefined, undefined, undefined, undefined,
                     corRelationList);
@@ -1030,7 +1030,7 @@ describe('AppComponent', () => {
                 mockEvents.subscribe = jest.fn((topic, fn) => {
                     switch (topic) {
                         case EventTopics.TAB_CHANGE:
-                            return fn('resources');
+                            return fn('library');
                     }
                 });
                 mockZone.run = jest.fn((fn) => fn());
@@ -1060,11 +1060,11 @@ describe('AppComponent', () => {
                     InteractType.TOUCH,
                     InteractSubtype.TAB_CLICKED,
                     Environment.HOME,
-                    'resources');
+                    'library');
                 expect(mockTelemetryGeneratorService.generateImpressionTelemetry).nthCalledWith(1,
                     ImpressionType.VIEW,
                     '',
-                    'resources',
+                    'library',
                     Environment.HOME,
                     undefined, undefined, undefined, undefined,
                     corRelationList);
