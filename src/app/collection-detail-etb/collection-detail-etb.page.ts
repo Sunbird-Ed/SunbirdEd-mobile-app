@@ -1663,6 +1663,15 @@ export class CollectionDetailEtbPage implements OnInit {
         }
       };
       this.router.navigate([RouterLinks.CONTENT_DETAILS], params);
+    } else {
+      const params: NavigationExtras = {
+        state: {
+          isChildContent: true,
+          content: this.playingContent,
+          corRelation: this.corRelationList,
+        }
+      };
+      this.router.navigate([RouterLinks.CONTENT_DETAILS], params);
     }
   }
 
