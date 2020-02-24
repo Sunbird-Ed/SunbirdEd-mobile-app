@@ -175,6 +175,7 @@ export class EventTopics {
 export class ShareUrl {
     public static readonly CONTENT = '/play/content/';
     public static readonly COLLECTION = '/play/collection/';
+    public static readonly COURSE = '/explore-course/course/';
 }
 
 export class MenuOverflow {
