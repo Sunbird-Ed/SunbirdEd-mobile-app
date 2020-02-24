@@ -97,8 +97,6 @@ export const GUEST_STUDENT_SWITCH_TABS = [
 ];
 
 export const initTabs = (container: ContainerService, tabs: Array<TabOptions>) => {
-    console.log('Inside initTabs', tabs);
-
     container.removeAllTabs();
 
     if (tabs && tabs.length > 0) {
