@@ -646,5 +646,6 @@
   "LOAD": "Load",
   "LOAD_FILE": "Load File",
   "SIZE": "Size: {{%s}}",
-  "TELL_US_MORE": "Tell us more..."
+  "TELL_US_MORE": "Tell us more...",
+  "RATING_QUESTION": "Would you like to tell us more?"
 }
