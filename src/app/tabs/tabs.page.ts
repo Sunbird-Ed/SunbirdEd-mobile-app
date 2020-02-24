@@ -110,7 +110,12 @@ export class TabsPage implements OnInit, AfterViewInit {
 
   ionTabsDidChange(event: any) {
     this.tabs[2].root = event.tab;
-    this.events.publish(EventTopics.TAB_CHANGE, event.tab);
+    if (event.tab === 'resources') {
+      event.tab = 'library';
+      this.events.publish(EventTopics.TAB_CHANGE, event.tab);
+    } else {
+      this.events.publish(EventTopics.TAB_CHANGE, event.tab);
+    }
     this.commonUtilService.currentTabName = this.tabRef.getSelected();
   }
 
