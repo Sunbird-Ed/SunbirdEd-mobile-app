@@ -1,7 +1,6 @@
 import { UtilityService } from '@app/services/utility-service';
-import { CommonUtilService } from '@app/services/common-util.service';
-import { Component, Input, OnInit, OnDestroy, Inject } from '@angular/core';
-import { Events, Platform, PopoverController, NavParams } from '@ionic/angular';
+import { Component, Input, OnInit, OnDestroy } from '@angular/core';
+import { Platform, PopoverController, NavParams } from '@ionic/angular';
 import { Subscription } from 'rxjs';
 import { ContentShareHandlerService, TelemetryGeneratorService } from '@app/services';
 import {
@@ -11,7 +10,7 @@ import {
   PageId,
 } from '@app/services/telemetry-constants';
 import { TelemetryObject } from 'sunbird-sdk';
-import { ShareUrl, ShareMode } from '../../../../app/app.constant';
+import { ShareUrl, ShareMode, ContentType, MimeType } from '@app/app/app.constant';
 import { ContentUtil } from '@app/util/content-util';
 
 @Component({
@@ -52,11 +51,11 @@ export class SbSharePopupComponent implements OnInit, OnDestroy {
     private utilityService: UtilityService,
     private navParams: NavParams,
     private telemetryGeneratorService: TelemetryGeneratorService) {
-      this.content = this.navParams.get('content');
-      this.corRelationList = this.navParams.get('corRelationList');
-      this.objRollup = this.navParams.get('objRollup');
-      this.shareItemType = this.navParams.get('shareItemType');
-      this.pageId = this.navParams.get('pageId');
+    this.content = this.navParams.get('content');
+    this.corRelationList = this.navParams.get('corRelationList');
+    this.objRollup = this.navParams.get('objRollup');
+    this.shareItemType = this.navParams.get('shareItemType');
+    this.pageId = this.navParams.get('pageId');
   }
 
   async ngOnInit() {
@@ -69,7 +68,19 @@ export class SbSharePopupComponent implements OnInit, OnDestroy {
     });
     this.shareType = this.shareOptions.link.value;
     const baseUrl = await this.utilityService.getBuildConfigValue('BASE_URL');
-    this.shareUrl = baseUrl + ShareUrl.CONTENT + this.content.identifier;
+    this.shareUrl = baseUrl + this.getContentEndPoint(this.content) + this.content.identifier;
+  }
+
+  getContentEndPoint(content) {
+    let endPoint = '';
+    if (content.contentType.toLowerCase() === ContentType.COURSE.toLowerCase()) {
+      endPoint = ShareUrl.COURSE;
+    } else if (content.mimeType === MimeType.COLLECTION) {
+      endPoint = ShareUrl.COLLECTION;
+    } else {
+      endPoint = ShareUrl.CONTENT;
+    }
+    return endPoint;
   }
 
   generateImpressionTelemetry() {
