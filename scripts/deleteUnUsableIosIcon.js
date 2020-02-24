@@ -49,7 +49,7 @@ function deleteUnUsableIosIcon(ionicIconFilePath) {
                 'md-mail',
                 'md-arrow-round-down',
                 'md-arrow-round-forward',
-                'md-download',
+                'md-download.svg',
                 'md-search',
                 'md-information-circle'
             ].includes(file))) {
