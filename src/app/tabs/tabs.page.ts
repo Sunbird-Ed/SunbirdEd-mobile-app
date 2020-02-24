@@ -6,6 +6,7 @@ import { ContainerService } from '@app/services/container.services';
 import { AppGlobalService } from '@app/services/app-global-service.service';
 import { ProfileConstants, EventTopics } from '@app/app/app.constant';
 import { CommonUtilService } from '@app/services/common-util.service';
+import {PageId} from '@app/services';
 
 @Component({
   selector: 'app-tabs',
@@ -111,7 +112,7 @@ export class TabsPage implements OnInit, AfterViewInit {
   ionTabsDidChange(event: any) {
     this.tabs[2].root = event.tab;
     if (event.tab === 'resources') {
-      event.tab = 'library';
+      event.tab = PageId.LIBRARY;
       this.events.publish(EventTopics.TAB_CHANGE, event.tab);
     } else {
       this.events.publish(EventTopics.TAB_CHANGE, event.tab);
