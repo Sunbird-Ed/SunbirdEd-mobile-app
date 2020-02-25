@@ -647,5 +647,6 @@
   "LOAD_FILE": "Load File",
   "SIZE": "Size: {{%s}}",
   "TELL_US_MORE": "Tell us more...",
-  "RATING_QUESTION": "Would you like to tell us more?"
+  "RATING_QUESTION": "Would you like to tell us more?",
+  "CONTENT_RATING_SUB_HEADING": "Tap on the stars to rate the content"
 }
