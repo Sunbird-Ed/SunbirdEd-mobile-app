@@ -34,7 +34,7 @@ import {Location} from '@angular/common';
   styleUrls: ['./content-rating-alert.component.scss'],
 })
 export class ContentRatingAlertComponent implements OnInit {
-  private readonly COMMENT_PREFIX = 'other-';
+  private readonly COMMENT_PREFIX = 'OTHER-';
   isDisable = false;
   userId = '';
   comment = '';
@@ -146,12 +146,12 @@ export class ContentRatingAlertComponent implements OnInit {
   submit() {
     let comment = '';
     this.ratingOptions.forEach(element => {
-      if (element.key !== 'other' && element.isChecked) {
+      if (element.key.toLowerCase() !== 'other' && element.isChecked) {
         comment += comment.length ? ',' + element.key :  element.key;
       }
     });
     if (this.commentText) {
-      const text = 'other,' + this.COMMENT_PREFIX + this.commentText;
+      const text = 'OTHER,' + this.COMMENT_PREFIX + this.commentText;
       comment += comment.length ? ',' + text :  text;
     }
     this.allComments = comment;
@@ -206,7 +206,7 @@ export class ContentRatingAlertComponent implements OnInit {
   }
 
   ratingOptsChanged(key) {
-    if (key === 'other') {
+    if (key.toLowerCase() === 'other') {
       this.showCommentBox = !this.showCommentBox;
     }
   }
