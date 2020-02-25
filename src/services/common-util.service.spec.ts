@@ -9,10 +9,9 @@ import {
 import { SharedPreferences, ProfileService } from 'sunbird-sdk';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { InteractType, InteractSubtype, PageId, Environment } from '@app/services/telemetry-constants';
-import { appLanguages } from '@app/app/app.constant';
-import { PreferenceKey, ProfileConstants } from '@app/app/app.constant';
+import { PreferenceKey } from '@app/app/app.constant';
 import { SbGenericPopoverComponent } from '@app/app/components/popups/sb-generic-popover/sb-generic-popover.component';
-import { QRAlertCallBack, QRScannerAlert } from '@app/app/qrscanner-alert/qrscanner-alert.page';
+import { QRScannerAlert } from '@app/app/qrscanner-alert/qrscanner-alert.page';
 import { TranslateService } from '@ngx-translate/core';
 import { Network } from '@ionic-native/network/ngx';
 import { NgZone } from '@angular/core';
@@ -54,8 +53,7 @@ describe('CommonUtilService', () => {
     } as any)))
   };
   const mockNetwork: Partial<Network> = {
-    onConnect: jest.fn(() => of({})),
-    onDisconnect: jest.fn(() => of({}))
+    onChange: jest.fn(() => of({ type: 'online' }))
   };
   const mockNgZone: Partial<NgZone> = {
     run: jest.fn((fn) => fn())
