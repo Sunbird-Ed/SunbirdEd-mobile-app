@@ -1654,7 +1654,22 @@ export class CollectionDetailEtbPage implements OnInit {
       this.lastContentPlayed = this.playingContent.identifier;
       this.generateInteractTelemetry(isStreaming, contentInfo.telemetryObject, contentInfo.rollUp, contentInfo.correlationList);
       this.contentPlayerHandler.launchContentPlayer(this.playingContent, isStreaming, shouldDownloadAndPlay, contentInfo, false, true);
+    } else if (this.commonUtilService.networkInfo.isNetworkAvailable && this.playingContent.isAvailableLocally) {
+      isStreaming = false;
+      shouldDownloadAndPlay = true;
+      this.lastContentPlayed = this.playingContent.identifier;
+      this.generateInteractTelemetry(isStreaming, contentInfo.telemetryObject, contentInfo.rollUp, contentInfo.correlationList);
+      this.contentPlayerHandler.launchContentPlayer(this.playingContent, isStreaming, shouldDownloadAndPlay, contentInfo, false, true);
     } else if (!this.commonUtilService.networkInfo.isNetworkAvailable && !this.playingContent.isAvailableLocally) {
+      const params: NavigationExtras = {
+        state: {
+          isChildContent: true,
+          content: this.playingContent,
+          corRelation: this.corRelationList,
+        }
+      };
+      this.router.navigate([RouterLinks.CONTENT_DETAILS], params);
+    } else {
       const params: NavigationExtras = {
         state: {
           isChildContent: true,
