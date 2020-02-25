@@ -1014,7 +1014,6 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
     await loader.present();
     this.courseService.getCourseBatches(this.courseBatchesRequest).toPromise()
       .then(async (data: Batch[]) => {
-        console.log('batch data', data);
         await loader.dismiss();
         this.handleUnenrollButton();
         this.showOfflineSection = false;
