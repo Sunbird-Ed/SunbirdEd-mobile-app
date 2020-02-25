@@ -10,7 +10,8 @@ import {
   TelemetryObject,
   FormRequest,
   FormService,
-  SharedPreferences
+  SharedPreferences,
+  TelemetryFeedbackRequest
 } from 'sunbird-sdk';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { ProfileConstants, PreferenceKey } from '@app/app/app.constant';
@@ -23,7 +24,8 @@ import {
   InteractSubtype,
   InteractType,
   LogLevel,
-  LogType
+  LogType,
+  ObjectType
 } from '@app/services/telemetry-constants';
 import { ContentUtil } from '@app/util/content-util';
 import {Location} from '@angular/common';
@@ -170,23 +172,10 @@ export class ContentRatingAlertComponent implements OnInit {
       Environment.HOME,
       this.pageId, this.telemetryObject, paramsMap
     );
-
-    const viewDismissData = {
-        rating: this.ratingCount ? this.ratingCount : this.userRating,
-        comment: this.allComments ? this.allComments : '',
-        message: ''
-    };
-    this.contentService.sendFeedback(option).subscribe((res) => {
-      viewDismissData.message = 'rating.success';
-      this.popOverCtrl.dismiss(viewDismissData);
-      this.commonUtilService.showToast('THANK_FOR_RATING');
-      if (this.navigateBack) {
-        this.location.back();
-      }
-    }, (data) => {
-      viewDismissData.message = 'rating.error';
-      this.popOverCtrl.dismiss(viewDismissData);
-    });
+    this.generateContentRatingTelemetry(option);
+    if (this.allComments) {
+      this.generateContentFeedbackTelemetry(option);
+    }
   }
 
   showMessage(msg) {
@@ -264,6 +253,49 @@ export class ContentRatingAlertComponent implements OnInit {
             }
         }
     }).catch((error: any) => {
+    });
+  }
+
+  generateContentRatingTelemetry(option) {
+    const viewDismissData = {
+      rating: this.ratingCount ? this.ratingCount : this.userRating,
+      comment: this.allComments ? this.allComments : '',
+      message: ''
+    };
+    this.contentService.sendFeedback(option).subscribe((res) => {
+      viewDismissData.message = 'rating.success';
+      this.popOverCtrl.dismiss(viewDismissData);
+      this.commonUtilService.showToast('THANK_FOR_RATING', false, 'green-toast');
+      if (this.navigateBack) {
+        this.location.back();
+      }
+    }, (data) => {
+      viewDismissData.message = 'rating.error';
+      this.popOverCtrl.dismiss(viewDismissData);
+    });
+  }
+
+  generateContentFeedbackTelemetry(option1) {
+    const opts = this.allComments.split(',');
+    opts.forEach(opt => {
+      const option: TelemetryFeedbackRequest = {
+        objId: this.content.identifier,
+        comments: this.allComments,
+        objVer: this.content['versionKey'],
+        env: Environment.HOME,
+        objType: ObjectType.CONTENT,
+      };
+      const coment = this.ratingOptions.find((v) => opt === v.key);
+      if (opt.indexOf(this.COMMENT_PREFIX) !== -1) {
+        option.commentid = opt;
+        option.commenttxt = this.commentText;
+      } else {
+        option.commentid = opt;
+        option.commenttxt = coment.value;
+      }
+      this.telemetryService.feedback(option).subscribe((res) => {
+      }, (err) => {
+      });
     });
   }
 
