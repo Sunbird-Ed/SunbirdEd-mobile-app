@@ -3,7 +3,8 @@ import { ContentFeedbackService,
     TelemetryService,
     Content,
     ContentFeedback,
-    ContentRatingService
+    FormService,
+    SharedPreferences
 } from 'sunbird-sdk';
 import { CommonUtilService, AppGlobalService, TelemetryGeneratorService } from '../../../services';
 import { PopoverController, Platform, NavParams } from '@ionic/angular';
@@ -17,8 +18,8 @@ import {
     PageId,
     ImpressionSubtype
 } from '@app/services/telemetry-constants';
-import { ContentRatingOptions } from './content-rating-options';
 import { declaredViewContainer } from '@angular/core/src/view/util';
+import { Location } from '@angular/common';
 describe('ContentRatingAlertComponent', () => {
     let contentRatingAlertComponent: ContentRatingAlertComponent;
     const mockContentFeedbackService: Partial<ContentFeedbackService> = {
@@ -65,7 +66,12 @@ describe('ContentRatingAlertComponent', () => {
         generateImpressionTelemetry: jest.fn(() => { }),
         generateInteractTelemetry: jest.fn(() => { })
     };
-    const mockContentRatingService: Partial<ContentRatingService> = {};
+    const mockFormService: Partial<FormService> = {
+        getForm: jest.fn(() => of('form' as any))
+    };
+    const mockPreferences: Partial<SharedPreferences> = {
+        getString: jest.fn(() => of('en' as any))
+    };
     const mockPlatform: Partial<Platform> = {
     };
     let subscribeWithPriorityCallback;
@@ -87,21 +93,23 @@ describe('ContentRatingAlertComponent', () => {
         showToast: jest.fn(() => { }),
         translateMessage: jest.fn(() => 'Message To Display')
     };
+    const mockLocation: Partial<Location> = {};
 
 
     beforeAll(() => {
         contentRatingAlertComponent = new ContentRatingAlertComponent(
             mockContentFeedbackService as ContentFeedbackService,
             mockTelemetryService as TelemetryService,
-            mockContentRatingService as ContentRatingService,
+            mockFormService as FormService,
+            mockPreferences as SharedPreferences,
             mockPopoverCtrl as PopoverController,
             mockPlatform as Platform,
             mockNavParams as NavParams,
             mockTelemetryGeneratorService as TelemetryGeneratorService,
             mockAppGlobalService as AppGlobalService,
-            mockCommonUtilService as CommonUtilService
+            mockCommonUtilService as CommonUtilService,
+            mockLocation as Location
         );
-        
     });
 
     beforeEach(() => {
@@ -112,20 +120,20 @@ describe('ContentRatingAlertComponent', () => {
         expect(contentRatingAlertComponent).toBeTruthy();
     });
 
-    it('should generate IMPRESSION telemetry in ionViewWillEnter()', () => {
-        // arrange
+    // it('should generate IMPRESSION telemetry in ionViewWillEnter()', () => {
+    //     // arrange
 
-        // act
-        contentRatingAlertComponent.ionViewWillEnter();
-        // assert
-        expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenCalledWith(
-            ImpressionType.VIEW,
-            ImpressionSubtype.RATING_POPUP,
-            'content-detail',
-            Environment.HOME, 'do_12345',
-            'Resource',
-            '1');
-    });
+    //     // act
+    //     contentRatingAlertComponent.ionViewWillEnter();
+    //     // assert
+    //     expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenCalledWith(
+    //         ImpressionType.VIEW,
+    //         ImpressionSubtype.RATING_POPUP,
+    //         'content-detail',
+    //         Environment.HOME, 'do_12345',
+    //         'Resource',
+    //         '1');
+    // });
 
     it('should submit rating and generate INTERACT telemetry successfully', () => {
         // arrange
@@ -167,7 +175,8 @@ describe('ContentRatingAlertComponent', () => {
 
     it('should generate IMPRESSION telemetry in ionViewWillEnter()', () => {
         // arrange
-
+        // jest.spyOn(contentRatingAlertComponent, 'invokeContentRatingFormApi').mockImplementation();
+        spyOn(contentRatingAlertComponent, 'invokeContentRatingFormApi').and.stub();
         // act
         contentRatingAlertComponent.ionViewWillEnter();
         // assert
@@ -262,7 +271,6 @@ describe('ContentRatingAlertComponent', () => {
     describe('cancel', () => {
         it('should call dismiss', () => {
             // arrange
-            
             // act
             contentRatingAlertComponent.cancel();
             // assert
@@ -273,7 +281,6 @@ describe('ContentRatingAlertComponent', () => {
     describe('closePopover', () => {
         it('should call dismiss', () => {
             // arrange
-            
             // act
             contentRatingAlertComponent.closePopover();
             // assert
@@ -316,6 +323,76 @@ describe('ContentRatingAlertComponent', () => {
             contentRatingAlertComponent.extractComments('opt1');
             // assert
             expect(contentRatingAlertComponent.ratingOptions[0].isChecked).toBe(true);
+        });
+    });
+
+    describe('invokeContentRatingFormApi', () => {
+        it('should call form API', (done) => {
+            // arrange
+            const form = {
+                    form: {
+                        data: {
+                            fields : [{1: {ratingText: 'poor'}}]
+                        }
+                    }
+            };
+            mockFormService.getForm = jest.fn(() => of(form as any));
+            mockPreferences.getString = jest.fn(() => of('ka' as any));
+            contentRatingAlertComponent.ratingOptions = [
+                {key: 'opt1', idx: 1, value: 'sample value'}
+            ];
+            spyOn(contentRatingAlertComponent, 'createRatingForm').and.stub();
+            spyOn(contentRatingAlertComponent, 'extractComments').and.stub();
+            // act
+            contentRatingAlertComponent.invokeContentRatingFormApi();
+            // assert
+            setTimeout(() => {
+                expect(mockFormService.getForm).toHaveBeenCalled();
+                done();
+            }, 100);
+        });
+        it('should fallback to form in english in case of error', (done) => {
+            // arrange
+            mockFormService.getForm = jest.fn(() => throwError('err' as any));
+            mockPreferences.getString = jest.fn(() => of('en' as any));
+            contentRatingAlertComponent.ratingOptions = [
+                {key: 'opt1', idx: 1, value: 'sample value'}
+            ];
+            spyOn(contentRatingAlertComponent, 'createRatingForm').and.stub();
+            spyOn(contentRatingAlertComponent, 'extractComments').and.stub();
+            // act
+            contentRatingAlertComponent.invokeContentRatingFormApi();
+            // assert
+            setTimeout(() => {
+                expect(mockFormService.getForm).toHaveBeenCalled();
+                done();
+            }, 100);
+        });
+        it('should call form in english', (done) => {
+            // arrange
+            const form = {
+                    form: {
+                        data: {
+                            fields : [{1: {ratingText: 'poor'}}]
+                        }
+                    }
+            };
+            mockFormService.getForm = jest.fn(() => of(form as any));
+            mockPreferences.getString = jest.fn(() => of('en' as any));
+            contentRatingAlertComponent.ratingOptions = [
+                {key: 'opt1', idx: 1, value: 'sample value'}
+            ];
+            spyOn(contentRatingAlertComponent, 'createRatingForm').and.stub();
+            spyOn(contentRatingAlertComponent, 'extractComments').and.stub();
+            // act
+            contentRatingAlertComponent.getDefaultContentRatingFormApi();
+            // assert
+            setTimeout(() => {
+                expect(mockFormService.getForm).toHaveBeenCalledWith(
+                    {action: 'get', subType: 'en', type: 'contentfeedback'}
+                );
+                done();
+            }, 100);
         });
     });
 

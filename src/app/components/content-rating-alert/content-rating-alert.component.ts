@@ -8,14 +8,12 @@ import {
   TelemetryLogRequest,
   TelemetryService,
   TelemetryObject,
-  GetContentRatingOptionsRequest,
-  GetSystemSettingsRequest,
-  SystemSettingsService,
-  ContentRatingService,
-  SystemSettings
+  FormRequest,
+  FormService,
+  SharedPreferences
 } from 'sunbird-sdk';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
-import { ProfileConstants } from '@app/app/app.constant';
+import { ProfileConstants, PreferenceKey } from '@app/app/app.constant';
 import { AppGlobalService } from '@app/services/app-global-service.service';
 import { CommonUtilService } from '@app/services/common-util.service';
 import {
@@ -57,7 +55,8 @@ export class ContentRatingAlertComponent implements OnInit {
   constructor(
     @Inject('CONTENT_FEEDBACK_SERVICE') private contentService: ContentFeedbackService,
     @Inject('TELEMETRY_SERVICE') private telemetryService: TelemetryService,
-    @Inject('CONTENT_RATING_SERVICE') private contentRatingService: ContentRatingService,
+    @Inject('FORM_SERVICE') private formService: FormService,
+    @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
     private popOverCtrl: PopoverController,
     private platform: Platform,
     private navParams: NavParams,
@@ -109,7 +108,7 @@ export class ContentRatingAlertComponent implements OnInit {
     }, err => {
       console.log(err);
     });
-    this.getContentRatingOptionsFromUrl();
+    this.invokeContentRatingFormApi();
   }
 
   ionViewWillLeave() {
@@ -226,33 +225,45 @@ export class ContentRatingAlertComponent implements OnInit {
     });
   }
 
-  private async getContentRatingOptionsFromUrl() {
-    const contentRatingRequest: GetContentRatingOptionsRequest = { language: '', ContentRatingUrl: '' };
-    // enable this code once the rating options url is available
-    // const getSystemSettingsRequest: GetSystemSettingsRequest = {
-    //   id: 'ContentRatingURL'
-    // };
-    // const selectedLanguage = await this.preferences.getString(PreferenceKey.SELECTED_LANGUAGE_CODE).toPromise();
-    // await this.systemSettingsService.getSystemSettings(getSystemSettingsRequest).toPromise()
-    // .then((res: SystemSettings) => {
-    //   console.log('ContentRatingdata', res);
-    //   contentRatingRequest.ContentRatingUrl = res.value;
-    // }).catch(err => {
-    // });
-    // this.loading = await this.commonUtilService.getLoader();
-    // await this.loading.present();
-    // if (this.selectedLanguage && this.commonUtilService.networkInfo.isNetworkAvailable) {
-    //   faqRequest.language = this.selectedLanguage;
-    // } else {
-    contentRatingRequest.language = 'en';
-    // }
+  async invokeContentRatingFormApi() {
+    const selectedLanguage = await this.preferences.getString(PreferenceKey.SELECTED_LANGUAGE_CODE).toPromise();
+    const req: FormRequest = {
+        type: 'contentfeedback',
+        subType: selectedLanguage,
+        action: 'get'
+    };
+    this.formService.getForm(req).toPromise()
+      .then((res: any) => {
+          const data = res.form ? res.form.data.fields : res.data.fields;
+          if (res && data.length) {
+              this.contentRatingOptions = data[0];
+              this.createRatingForm(this.userRating);
+              if (this.allComments) {
+                this.extractComments(this.allComments);
+              }
+          }
+      }).catch((error: any) => {
+          this.getDefaultContentRatingFormApi();
+      });
+  }
 
-    this.contentRatingService.getContentRatingOptions(contentRatingRequest).subscribe(data => {
-      this.contentRatingOptions = data.ContentRatingOptions;
-      this.createRatingForm(this.userRating);
-      if (this.allComments) {
-        this.extractComments(this.allComments);
-      }
+  getDefaultContentRatingFormApi() {
+    const req: FormRequest = {
+      type: 'contentfeedback',
+      subType: 'en',
+      action: 'get'
+    };
+    this.formService.getForm(req).toPromise()
+    .then((res: any) => {
+        const data = res.form ? res.form.data.fields : res.data.fields;
+        if (res && data.length) {
+            this.contentRatingOptions = data[0];
+            this.createRatingForm(this.userRating);
+            if (this.allComments) {
+              this.extractComments(this.allComments);
+            }
+        }
+    }).catch((error: any) => {
     });
   }
 
