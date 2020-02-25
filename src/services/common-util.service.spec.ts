@@ -9,16 +9,15 @@ import {
 import { SharedPreferences, ProfileService } from 'sunbird-sdk';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { InteractType, InteractSubtype, PageId, Environment } from '@app/services/telemetry-constants';
-import { appLanguages } from '@app/app/app.constant';
-import { PreferenceKey, ProfileConstants } from '@app/app/app.constant';
+import { PreferenceKey } from '@app/app/app.constant';
 import { SbGenericPopoverComponent } from '@app/app/components/popups/sb-generic-popover/sb-generic-popover.component';
-import { QRAlertCallBack, QRScannerAlert } from '@app/app/qrscanner-alert/qrscanner-alert.page';
+import { QRScannerAlert } from '@app/app/qrscanner-alert/qrscanner-alert.page';
 import { TranslateService } from '@ngx-translate/core';
 import { Network } from '@ionic-native/network/ngx';
 import { NgZone } from '@angular/core';
 import { WebView } from '@ionic-native/ionic-webview/ngx';
 import { AppVersion } from '@ionic-native/app-version/ngx';
-import {Observable, of} from 'rxjs';
+import { of } from 'rxjs';
 
 describe('CommonUtilService', () => {
   let commonUtilService: CommonUtilService;
