@@ -18,7 +18,7 @@ import { Network } from '@ionic-native/network/ngx';
 import { NgZone } from '@angular/core';
 import { WebView } from '@ionic-native/ionic-webview/ngx';
 import { AppVersion } from '@ionic-native/app-version/ngx';
-import { of } from 'rxjs';
+import {Observable, of} from 'rxjs';
 
 describe('CommonUtilService', () => {
   let commonUtilService: CommonUtilService;
@@ -54,8 +54,7 @@ describe('CommonUtilService', () => {
     } as any)))
   };
   const mockNetwork: Partial<Network> = {
-    onConnect: jest.fn(() => of({})),
-    onDisconnect: jest.fn(() => of({}))
+    onChange: jest.fn(() => of({ type: 'online' }))
   };
   const mockNgZone: Partial<NgZone> = {
     run: jest.fn((fn) => fn())
