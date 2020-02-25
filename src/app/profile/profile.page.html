@@ -18,7 +18,7 @@
             <span class="profile-name">{{ profile?.firstName | titlecase }}{{ profile?.lastName | titlecase }}</span>
             <span *ngIf="!isCustodianOrgId && profile?.firstName" class="isymbol profile-symbol" item-right text-left
                 (click)="toggleTooltips($event, 'name')">
-                <ion-icon name="information-circle" class="info-icon"></ion-icon>
+                <ion-icon name="information-circle" class="information-icon-style"></ion-icon>
                 <span class="asPerStateRecord" *ngIf="informationProfileName">{{'STATE_RECORDS' | translate}}</span>
             </span>
         </p>
@@ -47,7 +47,7 @@
         <p class="bolder MB5" style="position: relative;">{{organisationName}}
             <span *ngIf="!isCustodianOrgId && organisationName" class="isymbol" item-right text-left
                 (click)="toggleTooltips($event, 'org')">
-                <ion-icon name="information-circle" class="info-icon"></ion-icon>
+                <ion-icon name="information-circle" class="information-icon-style"></ion-icon>
                 <span class="asPerStateRecord" *ngIf="informationOrgName">{{'STATE_RECORDS' | translate}}</span>
             </span>
         </p>

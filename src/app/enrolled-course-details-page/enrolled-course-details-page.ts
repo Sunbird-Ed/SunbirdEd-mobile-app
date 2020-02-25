@@ -220,6 +220,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
   public rollUpMap: { [key: string]: Rollup } = {};
   public lastReadContentId;
   public courseCompletionData = {};
+  isCertifiedCourse: boolean;
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
@@ -690,6 +691,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
             this.batchDetails = data;
             // console.log('this.batchDetails', this.batchDetails);
             this.handleUnenrollButton();
+            this.isCertifiedCourse = data.cert_templates ? true : false;
             this.saveContentContext(this.appGlobalService.getUserId(),
               this.batchDetails.courseId, this.courseCardData.batchId, this.batchDetails.status);
             this.preferences.getString(PreferenceKey.COURSE_IDENTIFIER).toPromise()
