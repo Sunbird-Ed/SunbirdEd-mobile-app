@@ -1,4 +1,4 @@
-import { Injectable, NgZone, OnDestroy, Inject } from '@angular/core';
+import { Injectable, NgZone, Inject } from '@angular/core';
 import {
     ToastController,
     LoadingController,
@@ -19,7 +19,7 @@ import { InteractType, InteractSubtype, PageId, Environment } from '@app/service
 import { SbGenericPopoverComponent } from '@app/app/components/popups/sb-generic-popover/sb-generic-popover.component';
 import { QRAlertCallBack, QRScannerAlert } from '@app/app/qrscanner-alert/qrscanner-alert.page';
 import { Observable, merge } from 'rxjs';
-import { mapTo } from 'rxjs/operators';
+import { distinctUntilChanged, map, share, tap } from 'rxjs/operators';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 
 declare const FCMPlugin;
@@ -27,16 +27,13 @@ export interface NetworkInfo {
     isNetworkAvailable: boolean;
 }
 @Injectable()
-export class CommonUtilService implements OnDestroy {
+export class CommonUtilService {
     public networkAvailability$: Observable<boolean>;
 
     networkInfo: NetworkInfo = {
-        isNetworkAvailable: false
+        isNetworkAvailable: navigator.onLine
     };
 
-    connectSubscription: any;
-
-    disconnectSubscription: any;
     private alert?: any;
     private _currentTabName: string;
     appName: any;
@@ -56,20 +53,21 @@ export class CommonUtilService implements OnDestroy {
         private webView: WebView,
         private appVersion: AppVersion,
     ) {
-        this.listenForEvents();
-
         this.networkAvailability$ = merge(
-            this.network.onConnect().pipe(
-                mapTo(true)
-            ),
-            this.network.onDisconnect().pipe(
-                mapTo(false)
+            this.network.onChange().pipe(
+                map((v) => v.type === 'online'),
             )
+        ).pipe(
+            distinctUntilChanged(),
+            share(),
+            tap((status) => {
+                this.zone.run(() => {
+                    this.networkInfo = {
+                        isNetworkAvailable: status
+                    };
+                });
+            })
         );
-    }
-
-    listenForEvents() {
-        this.handleNetworkAvailability();
     }
 
     showToast(translationKey, isInactive?, cssToast?, duration?, position?) {
@@ -229,38 +227,6 @@ export class CommonUtilService implements OnDestroy {
             cssClass: 'sb-popover warning',
         });
         await qrAlert.present();
-    }
-    /**
-     * Its check for the network availability
-     * @returns status of the network
-     */
-    private handleNetworkAvailability(): boolean {
-        const updateNetworkAvailabilityStatus = (status: boolean) => {
-            this.zone.run(() => {
-                this.networkInfo.isNetworkAvailable = status;
-            });
-        };
-
-        if (this.network.type === 'none') {
-            updateNetworkAvailabilityStatus(false);
-        } else {
-            updateNetworkAvailabilityStatus(true);
-        }
-
-        this.connectSubscription = this.network.onDisconnect().subscribe(() => {
-            updateNetworkAvailabilityStatus(false);
-        });
-
-        this.disconnectSubscription = this.network.onConnect().subscribe(() => {
-            updateNetworkAvailabilityStatus(true);
-        });
-
-        return this.networkInfo.isNetworkAvailable;
-    }
-
-    ngOnDestroy() {
-        this.connectSubscription.unsubscribe();
-        this.disconnectSubscription.unsubscribe();
     }
 
     /**
