@@ -161,7 +161,7 @@ export class ContentRatingAlertComponent implements OnInit {
       contentId: this.content.identifier,
       rating: this.ratingCount ? this.ratingCount : this.userRating,
       comments: this.allComments,
-      contentVersion: this.content['versionKey']
+      contentVersion: this.content.contentData.pkgVersion
     };
     const paramsMap = new Map();
     paramsMap['Ratings'] = this.ratingCount ? this.ratingCount : this.userRating;
@@ -276,26 +276,26 @@ export class ContentRatingAlertComponent implements OnInit {
   }
 
   generateContentFeedbackTelemetry(option1) {
-    const opts = this.allComments.split(',');
-    opts.forEach(opt => {
+    this.ratingOptions.forEach(opt => {
       const option: TelemetryFeedbackRequest = {
         objId: this.content.identifier,
         comments: this.allComments,
-        objVer: this.content['versionKey'],
         env: Environment.HOME,
-        objType: ObjectType.CONTENT,
+        objType: this.content.contentData.contentType,
+        objVer: this.content.contentData.pkgVersion,
       };
-      const coment = this.ratingOptions.find((v) => opt === v.key);
-      if (opt.indexOf(this.COMMENT_PREFIX) !== -1) {
-        option.commentid = opt;
-        option.commenttxt = this.commentText;
-      } else {
-        option.commentid = opt;
-        option.commenttxt = coment.value;
+      if (opt.isChecked) {
+        if (opt.key.toLowerCase() === 'other') {
+          option.commentid = opt.key;
+          option.commenttxt = this.commentText;
+        } else {
+          option.commentid = opt.key;
+          option.commenttxt = opt.value;
+        }
+        this.telemetryService.feedback(option).subscribe((res) => {
+        }, (err) => {
+        });
       }
-      this.telemetryService.feedback(option).subscribe((res) => {
-      }, (err) => {
-      });
     });
   }
 

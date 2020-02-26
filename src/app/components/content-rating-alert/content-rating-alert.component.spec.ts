@@ -26,7 +26,8 @@ describe('ContentRatingAlertComponent', () => {
         sendFeedback: jest.fn(() => of(undefined))
     };
     const mockTelemetryService: Partial<TelemetryService> = {
-        log: jest.fn(() => of(undefined))
+        log: jest.fn(() => of(undefined)),
+        feedback: jest.fn(() => of(undefined))
     };
     const mockPopoverCtrl: Partial<PopoverController> = {
         dismiss: jest.fn(() => Promise.resolve(true) as any)
@@ -170,7 +171,11 @@ describe('ContentRatingAlertComponent', () => {
             paramsMap);
         expect(mockPopoverCtrl.dismiss).toHaveBeenCalledWith(viewDissMissData);
         expect(mockContentFeedbackService.sendFeedback).toHaveBeenCalledWith(feebackRequest);
-        expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('THANK_FOR_RATING');
+        expect(mockCommonUtilService.showToast).toHaveBeenCalledWith(
+            'THANK_FOR_RATING',
+            false,
+            'green-toast'
+        );
     });
 
     it('should generate IMPRESSION telemetry in ionViewWillEnter()', () => {
