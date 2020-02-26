@@ -489,9 +489,6 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
     }
 
     this.playingContent = data;
-    if (this.content.contentData.me_totalRatings) {
-      this.content.contentData.me_totalRatings = parseInt(this.content.contentData.me_totalRatings, 10) + '';
-    }
     this.telemetryObject = ContentUtil.getTelemetryObject(this.content);
 
     // Check locally available

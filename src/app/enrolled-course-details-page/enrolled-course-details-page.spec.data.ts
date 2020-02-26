@@ -106,7 +106,7 @@ const data: Partial<ContentData> = {
         'Class 2', 'Class 3'
     ],
     attributions: ['gd_1', 'gd_2'],
-    me_totalRatings: '4.0',
+    me_totalRatingsCount: 4,
     contentEncoding: 'gzip',
     contentType: 'Course',
     identifier: 'do_21281258639073280011490',
