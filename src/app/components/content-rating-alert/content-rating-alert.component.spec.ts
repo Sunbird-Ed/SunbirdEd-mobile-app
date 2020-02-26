@@ -149,7 +149,7 @@ describe('ContentRatingAlertComponent', () => {
             contentId: 'do_12345',
             rating: 5,
             comments: 'key',
-            contentVersion: '1234'
+            contentVersion: '1'
         };
         const viewDissMissData = {
             message: 'rating.success',
