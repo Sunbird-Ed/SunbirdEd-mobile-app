@@ -981,6 +981,24 @@ ion-split-pane {
       display: flex;
       justify-content: space-between;
       padding: 10px;
+
+      .etb-card-item-content {
+        display: flex;
+        align-items: center;
+        text-align: start;
+
+        flex-grow: 1;
+        flex-shrink: 0;
+
+        .content-name {
+          @include padding(0, 1rem);
+        }
+      }
+
+      .etb-card-item-play-container {
+        flex-grow: 0;
+        flex-shrink: 0;
+      }
     }
 
     .pull-left {
