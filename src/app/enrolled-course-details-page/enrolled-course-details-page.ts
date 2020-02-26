@@ -642,10 +642,10 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
         this.course.attributions = this.course.attributions.join(', ');
       }
 
-      if (this.course.me_totalRatings) {
-        const rating = this.course.me_totalRatings.split('.');
+      if (this.course.me_totalRatingsCount) {
+        const rating = this.course.me_totalRatingsCount;
         if (rating && rating[0]) {
-          this.course.me_totalRatings = rating[0];
+          this.course.me_totalRatingsCount = rating[0];
         }
       }
 

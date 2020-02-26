@@ -34,8 +34,8 @@
       </div> -->
     </div>
     <div class="right">
-      <div *ngIf="contentDetail?.contentData?.me_totalRatings" (click)="rateContent()" class="sb-rating-view">
-        <span class="sb-rating-value">{{ contentDetail?.contentData?.me_totalRatings }}</span>
+      <div *ngIf="contentDetail?.contentData?.me_totalRatingsCount" (click)="rateContent()" class="sb-rating-view">
+        <span class="sb-rating-value">{{ contentDetail?.contentData?.me_totalRatingsCount }}</span>
         <span class="sb-rating-star">
           <ion-icon ios="ios-star" md="md-star"></ion-icon>
         </span>
