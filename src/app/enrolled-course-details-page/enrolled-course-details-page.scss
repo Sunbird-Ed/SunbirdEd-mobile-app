@@ -16,6 +16,11 @@
       font-size: 14px;
       border-radius: 0 !important;
     }
+    .sb-url {
+      color: #0a55a0;
+      font-size: 14px;
+      text-decoration: underline;
+    }
     .fontBold {
         font-weight: bold;
     }
@@ -80,6 +85,10 @@
         left: 0;
         z-index: 10;
       }
+    }
+    .traning-derived-label-background {
+      background-color: #f2f2f2;
+      padding: 8px 0px 8px 15px;
     }
 
     ion-card ion-card-content p {
@@ -271,7 +280,9 @@
     ion-icon{
       padding: 0 0 4px 8px;
       vertical-align: middle;
-      font-size: 14px;
+      font-size: 18px;
+      margin-right: 2%;
+      float: right;
     }
     }
     

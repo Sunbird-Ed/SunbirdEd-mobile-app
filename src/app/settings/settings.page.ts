@@ -1,8 +1,6 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import {
-  ContentService,
-  DeviceInfo,
   ProfileService,
   SharedPreferences,
   TelemetryImpressionRequest,
@@ -13,17 +11,18 @@ import {
   WebviewManualMergeSessionProvider,
   WebviewSessionProviderConfig
 } from 'sunbird-sdk';
-import {AppHeaderService, CommonUtilService, FormAndFrameworkUtilService, TelemetryGeneratorService, UtilityService} from 'services';
+import { AppHeaderService, CommonUtilService, FormAndFrameworkUtilService, TelemetryGeneratorService, UtilityService } from 'services';
 import { PreferenceKey, RouterLinks } from '../app.constant';
 import { Environment, ImpressionType, InteractSubtype, InteractType, PageId } from 'services/telemetry-constants';
 import { SocialSharing } from '@ionic-native/social-sharing/ngx';
 import { Router, NavigationExtras } from '@angular/router';
-import { SbPopoverComponent } from '@app/app/components/popups';
+import { SbPopoverComponent, SbAppSharePopupComponent } from '@app/app/components/popups';
 import { PopoverController, ToastController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
-import { Observable, Subscription } from 'rxjs';
 import { Location } from '@angular/common';
 import { Platform } from '@ionic/angular';
+import { Observable, Subscription } from 'rxjs';
+import { map, mergeMap, catchError, finalize, tap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-settings',
@@ -62,11 +61,13 @@ export class SettingsPage implements OnInit {
     private platform: Platform,
     private location: Location
   ) {
-    this.isUserLoggedIn$ = this.authService.getSession()
-      .map((session) => !!session) as any;
+    this.isUserLoggedIn$ = this.authService.getSession().pipe(
+      map((session) => !!session)
+    );
 
-    this.isNotDefaultChannelProfile$ = this.profileService.isDefaultChannelProfile()
-      .map((isDefaultChannelProfile) => !isDefaultChannelProfile) as any;
+    this.isNotDefaultChannelProfile$ = this.profileService.isDefaultChannelProfile().pipe(
+      map((isDefaultChannelProfile) => !isDefaultChannelProfile)
+    );
   }
 
   ionViewWillEnter() {
@@ -78,7 +79,6 @@ export class SettingsPage implements OnInit {
       });
     this.handleBackButton();
   }
-
 
   ngOnInit() {
     const telemetryImpressionRequest = new TelemetryImpressionRequest();
@@ -102,11 +102,6 @@ export class SettingsPage implements OnInit {
       });
   }
 
-  goToLanguageSetting() {
-    this.generateInteractTelemetry(InteractType.TOUCH, InteractSubtype.LANGUAGE_CLICKED);
-    this.router.navigate(['settings/language-setting', true]);
-  }
-
   dataSync() {
     this.generateInteractTelemetry(InteractType.TOUCH, InteractSubtype.DATA_SYNC_CLICKED);
     this.router.navigate(['settings/data-sync']);
@@ -118,22 +113,14 @@ export class SettingsPage implements OnInit {
   }
 
   async shareApp() {
-    const loader = await this.commonUtilService.getLoader();
-    await loader.present();
-
-    this.generateInteractTelemetry(InteractType.TOUCH, InteractSubtype.SHARE_APP_CLICKED);
-    this.generateInteractTelemetry(InteractType.TOUCH, InteractSubtype.SHARE_APP_INITIATED);
-
-
-    this.utilityService.exportApk()
-      .then(async (filepath) => {
-        this.generateInteractTelemetry(InteractType.OTHER, InteractSubtype.SHARE_APP_SUCCESS);
-        await loader.dismiss();
-        this.socialSharing.share('', '', 'file://' + filepath, '');
-      }).catch(async (error) => {
-        await loader.dismiss();
-        console.log(error);
-      });
+    const popover = await this.popoverCtrl.create({
+      component: SbAppSharePopupComponent,
+      componentProps: {
+        pageId: PageId.SETTINGS
+      },
+      cssClass: 'sb-popover',
+    });
+    popover.present();
   }
 
   generateInteractTelemetry(interactionType, interactSubtype) {
@@ -147,7 +134,7 @@ export class SettingsPage implements OnInit {
   }
 
   showPermissionPage() {
-    const navigationExtras: NavigationExtras = { state: { changePermissionAccess: true }};
+    const navigationExtras: NavigationExtras = { state: { changePermissionAccess: true } };
     this.router.navigate([`/${RouterLinks.SETTINGS}/permission`], navigationExtras);
   }
 
@@ -158,7 +145,7 @@ export class SettingsPage implements OnInit {
         isNotShowCloseIcon: false,
         sbPopoverHeading: this.commonUtilService.translateMessage('ACCOUNT_MERGE_CONFIRMATION_HEADING'),
         sbPopoverHtmlContent: '<div class="text-left font-weight-normal padding-left-10 padding-right-10">'
-            + this.commonUtilService.translateMessage('ACCOUNT_MERGE_CONFIRMATION_CONTENT', await this.appVersion.getAppName()) + '</div>',
+          + this.commonUtilService.translateMessage('ACCOUNT_MERGE_CONFIRMATION_CONTENT', await this.appVersion.getAppName()) + '</div>',
         actionsButtons: [
           {
             btntext: this.commonUtilService.translateMessage('CANCEL'),
@@ -176,7 +163,7 @@ export class SettingsPage implements OnInit {
               InteractSubtype.CANCEL_CLICKED,
               Environment.SETTINGS,
               PageId.MERGE_ACCOUNT_POPUP
-          );
+            );
             confirm.dismiss();
           } else if (selectedButton === this.commonUtilService.translateMessage('ACCOUNT_MERGE_CONFIRMATION_BTN_MERGE')) {
             this.telemetryGeneratorService.generateInteractTelemetry(
@@ -184,7 +171,7 @@ export class SettingsPage implements OnInit {
               InteractSubtype.MERGE_CLICKED,
               Environment.SETTINGS,
               PageId.MERGE_ACCOUNT_POPUP
-          );
+            );
             confirm.dismiss();
             this.mergeAccount();
           }
@@ -200,10 +187,10 @@ export class SettingsPage implements OnInit {
     let loader: any | undefined;
 
     this.telemetryGeneratorService.generateInteractTelemetry(
-        InteractType.TOUCH,
-        InteractSubtype.MERGE_ACCOUNT_INITIATED,
-        Environment.SETTINGS,
-        PageId.SETTINGS
+      InteractType.TOUCH,
+      InteractSubtype.MERGE_ACCOUNT_INITIATED,
+      Environment.SETTINGS,
+      PageId.SETTINGS
     );
 
     const webviewSessionProviderConfigloader = await this.commonUtilService.getLoader();
@@ -219,89 +206,90 @@ export class SettingsPage implements OnInit {
       return;
     }
 
-    this.authService.getSession()
-        .map((session) => session!)
-        .mergeMap(async (mergeToProfileSession) => {
-          const mergeFromProfileSessionProvider = new WebviewManualMergeSessionProvider(
-              webviewMergeSessionProviderConfig
-          );
-          const mergeFromProfileSession = await mergeFromProfileSessionProvider.provide();
+    this.authService.getSession().pipe(
+      map((session) => session!),
+      mergeMap(async (mergeToProfileSession) => {
+        const mergeFromProfileSessionProvider = new WebviewManualMergeSessionProvider(
+          webviewMergeSessionProviderConfig
+        );
+        const mergeFromProfileSession = await mergeFromProfileSessionProvider.provide();
 
-          return {
-            from: {
-              userId: mergeFromProfileSession.userToken,
-              accessToken: mergeFromProfileSession.access_token
-            },
-            to: {
-              userId: mergeToProfileSession.userToken,
-              accessToken: mergeToProfileSession.access_token
-            }
-          } as MergeServerProfilesRequest;
-        })
-        .do(async () => {
-          loader = await (this.commonUtilService.getLoader() as Promise<any>);
-          loader.present();
-        })
-        .mergeMap((mergeServerProfilesRequest) => {
-          return this.profileService.mergeServerProfiles(mergeServerProfilesRequest);
-        })
-        .catch(async (e) => {
-          console.error(e);
-
-          if (e instanceof Error && e['code'] === 'INTERRUPT_ERROR') {
-            throw e;
+        return {
+          from: {
+            userId: mergeFromProfileSession.userToken,
+            accessToken: mergeFromProfileSession.access_token
+          },
+          to: {
+            userId: mergeToProfileSession.userToken,
+            accessToken: mergeToProfileSession.access_token
           }
+        } as MergeServerProfilesRequest;
+      }),
+      tap(async () => {
+        loader = await (this.commonUtilService.getLoader() as Promise<any>);
+        loader.present();
+      }),
+      mergeMap((mergeServerProfilesRequest) => {
+        return this.profileService.mergeServerProfiles(mergeServerProfilesRequest);
+      }),
+      catchError(async (e) => {
+        console.error(e);
 
-          this.telemetryGeneratorService.generateInteractTelemetry(
-              InteractType.OTHER,
-              InteractSubtype.MERGE_ACCOUNT_FAILED,
-              Environment.SETTINGS,
-              PageId.SETTINGS
-          );
-
-          const toast = await this.toastCtrl.create({
-            message: await this.translate.get('ACCOUNT_MERGE_FAILED').toPromise(),
-            duration: 2000,
-            position: 'bottom'
-          });
-
-          await toast.present();
-
+        if (e instanceof Error && e['code'] === 'INTERRUPT_ERROR') {
           throw e;
-        })
-        .do(async () => {
-          this.telemetryGeneratorService.generateInteractTelemetry(
-              InteractType.OTHER,
-              InteractSubtype.MERGE_ACCOUNT_SUCCESS,
-              Environment.SETTINGS,
-              PageId.SETTINGS
-          );
+        }
 
-          const successPopover = await this.popoverCtrl.create({
-            component: SbPopoverComponent,
-            componentProps: {
-              sbPopoverHeading: this.commonUtilService.translateMessage('ACCOUNT_MERGE_SUCCESS_POPOVER_HEADING'),
-              icon: null,
-              actionsButtons: [
-                {
-                  btntext: this.commonUtilService.translateMessage('OKAY'),
-                  btnClass: 'sb-btn sb-btn-sm  sb-btn-outline-info'
-                },
-              ],
-              sbPopoverContent: this.commonUtilService.translateMessage('ACCOUNT_MERGE_SUCCESS_POPOVER_CONTENT'),
-            },
-            cssClass: 'sb-popover'
-          });
+        this.telemetryGeneratorService.generateInteractTelemetry(
+          InteractType.OTHER,
+          InteractSubtype.MERGE_ACCOUNT_FAILED,
+          Environment.SETTINGS,
+          PageId.SETTINGS
+        );
 
-          await successPopover.present();
-        })
-        .finally(() => {
-          if (loader) {
-            loader.dismiss();
-          }
-        })
-        .subscribe();
+        const toast = await this.toastCtrl.create({
+          message: await this.translate.get('ACCOUNT_MERGE_FAILED').toPromise(),
+          duration: 2000,
+          position: 'bottom'
+        });
+
+        await toast.present();
+
+        throw e;
+      }),
+      tap(async () => {
+        this.telemetryGeneratorService.generateInteractTelemetry(
+          InteractType.OTHER,
+          InteractSubtype.MERGE_ACCOUNT_SUCCESS,
+          Environment.SETTINGS,
+          PageId.SETTINGS
+        );
+
+        const successPopover = await this.popoverCtrl.create({
+          component: SbPopoverComponent,
+          componentProps: {
+            sbPopoverHeading: this.commonUtilService.translateMessage('ACCOUNT_MERGE_SUCCESS_POPOVER_HEADING'),
+            icon: null,
+            actionsButtons: [
+              {
+                btntext: this.commonUtilService.translateMessage('OKAY'),
+                btnClass: 'sb-btn sb-btn-sm  sb-btn-outline-info'
+              },
+            ],
+            sbPopoverContent: this.commonUtilService.translateMessage('ACCOUNT_MERGE_SUCCESS_POPOVER_CONTENT'),
+          },
+          cssClass: 'sb-popover'
+        });
+
+        await successPopover.present();
+      }),
+      finalize(() => {
+        if (loader) {
+          loader.dismiss();
+        }
+      })
+    ).subscribe();
   }
+
   handleBackButton() {
     this.backButtonFunc = this.platform.backButton.subscribeWithPriority(10, () => {
       this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.SETTINGS, Environment.SETTINGS, false);

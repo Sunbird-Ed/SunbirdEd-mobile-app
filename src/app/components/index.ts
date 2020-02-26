@@ -5,8 +5,6 @@ export * from './content-rating-alert/content-rating-alert.component';
 export * from './pb-horizontal/pb-horizontal.component';
 export * from './sign-in-card/sign-in-card.component';
 export * from './view-more-card/view-more-card.component';
-export * from './bookmark/bookmark.component';
 export * from './collection-child/collection-child.component';
-export * from './bookmark/bookmark.component';
 export * from './rating-alert/rating-alert.component';
 export * from './content-rating-alert/content-rating-alert.component';

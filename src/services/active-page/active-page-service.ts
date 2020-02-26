@@ -11,7 +11,7 @@ export class ActivePageService {
    */
   computePageId(url): string {
     const routeUrl = url;
-    let pageId = '';
+    let pageId = PageId.HOME;
 
     if (routeUrl === RouterLinks.LIBRARY_TAB) {
       pageId = PageId.LIBRARY;

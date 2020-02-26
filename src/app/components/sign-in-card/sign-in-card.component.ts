@@ -2,14 +2,12 @@ import { Component, EventEmitter, Inject, Input, NgZone, Output, OnInit } from '
 import { NavController, Events } from '@ionic/angular';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import {
-  ApiService,
   AuthService,
   OAuthSession,
   Profile,
   ProfileService,
   ProfileSource,
   ProfileType,
-  SdkConfig,
   SignInError,
   ServerProfileDetailsRequest,
   SharedPreferences,
@@ -31,7 +29,6 @@ import {
   PageId
 } from '@app/services/telemetry-constants';
 import { ContainerService } from '@app/services/container.services';
-import { Router } from '@angular/router';
 import { AppGlobalService } from '@app/services';
 
 @Component({
@@ -41,19 +38,17 @@ import { AppGlobalService } from '@app/services';
 })
 export class SignInCardComponent implements OnInit {
 
-  appName = '';
   @Input() source = '';
   @Input() title = 'OVERLAY_LABEL_COMMON';
   @Input() description = 'OVERLAY_INFO_TEXT_COMMON';
   @Input() fromEnrol: boolean;
   @Output() valueChange = new EventEmitter();
+  appName = '';
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     @Inject('GROUP_SERVICE') private groupService: GroupService,
     @Inject('AUTH_SERVICE') private authService: AuthService,
-    @Inject('API_SERVICE') private apiService: ApiService,
-    @Inject('SDK_CONFIG') private sdkConfig: SdkConfig,
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
     public navCtrl: NavController,
     private container: ContainerService,
@@ -62,7 +57,6 @@ export class SignInCardComponent implements OnInit {
     private commonUtilService: CommonUtilService,
     private formAndFrameworkUtilService: FormAndFrameworkUtilService,
     private telemetryGeneratorService: TelemetryGeneratorService,
-    private router: Router,
     private events: Events,
     private appGlobalService: AppGlobalService
   ) {

@@ -5,7 +5,7 @@ import { TelemetryGeneratorService } from '@app/services/telemetry-generator.ser
 import { UtilityService } from '@app/services/utility-service';
 import { SharedPreferences, TelemetryService } from 'sunbird-sdk';
 import { AppVersion } from '@ionic-native/app-version/ngx';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
 import { PreferenceKey, StoreRating } from '@app/app/app.constant';
 import {
@@ -15,6 +15,7 @@ import {
   InteractSubtype,
   InteractType
 } from '@app/services/telemetry-constants';
+import { map } from 'rxjs/operators';
 
 enum ViewType {
   APP_RATE = 'appRate',
@@ -66,7 +67,9 @@ export class AppRatingAlertComponent implements OnInit {
     private navParams: NavParams,
   ) {
     this.getAppName();
-    this.appLogo$ = this.preference.getString('app_logo').map((logo) => logo || './assets/imgs/ic_launcher.png');
+    this.appLogo$ = this.preference.getString('app_logo').pipe(
+      map((logo) => logo || './assets/imgs/ic_launcher.png')
+    );
     this.currentViewText = this.appRateView[ViewType.APP_RATE];
     this.backButtonFunc = this.platform.backButton.subscribeWithPriority(11, () => {
       this.popOverCtrl.dismiss(null);

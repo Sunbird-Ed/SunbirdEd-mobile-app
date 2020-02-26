@@ -48,7 +48,7 @@ import {
   AuthService,
   Rollup
 } from 'sunbird-sdk';
-import { Subscription } from 'rxjs/Subscription';
+import { Subscription } from 'rxjs';
 import {
   Environment,
   ErrorType,
@@ -57,9 +57,10 @@ import {
   InteractType,
   Mode,
   PageId,
-  CorReleationDataType
+  CorReleationDataType,
+  ID
 } from '../../services/telemetry-constants';
-import { ProfileConstants, ContentType, EventTopics, MimeType, PreferenceKey, ShareUrl, RouterLinks } from '../app.constant';
+import { ProfileConstants, ContentType, EventTopics, MimeType, PreferenceKey, ShareUrl, RouterLinks, ShareItemType } from '../app.constant';
 import { BatchConstants } from '../app.constant';
 import { ContentShareHandlerService } from '../../services/content/content-share-handler.service';
 import { SbGenericPopoverComponent } from '../components/popups/sb-generic-popover/sb-generic-popover.component';
@@ -67,7 +68,6 @@ import { ContentActionsComponent, ContentRatingAlertComponent, ConfirmAlertCompo
 import { Location } from '@angular/common';
 import { Router, NavigationExtras } from '@angular/router';
 import { ContentUtil } from '@app/util/content-util';
-import { AppVersion } from '@ionic-native/app-version/ngx';
 import { SbPopoverComponent } from '../components/popups';
 import { TranslateService } from '@ngx-translate/core';
 import { ContentInfo } from '@app/services/content/content-info';
@@ -75,6 +75,7 @@ import { ContentDeleteHandler } from '@app/services/content/content-delete-handl
 import * as dayjs from 'dayjs';
 import { LocalCourseService } from '@app/services';
 import { EnrollCourse } from './course.interface';
+import { SbSharePopupComponent } from '../components/popups/sb-share-popup/sb-share-popup.component';
 declare const cordova;
 
 @Component({
@@ -186,7 +187,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
   childContentsData;
   isBatchNotStarted = false;
   private eventSubscription: Subscription;
-  private corRelationList: Array<CorrelationData>;
+  corRelationList: Array<CorrelationData>;
   headerObservable: any;
   content: Content;
   appName: any;
@@ -204,6 +205,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
   showOfflineSection = false;
   courseBatchesRequest: CourseBatchesRequest;
   showUnenrollButton = false;
+  licenseDetails;
 
   @ViewChild('stickyPillsRef') stickyPillsRef: ElementRef;
   public objRollup: Rollup;
@@ -218,14 +220,12 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
   public rollUpMap: { [key: string]: Rollup } = {};
   public lastReadContentId;
   public courseCompletionData = {};
-
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
     @Inject('EVENTS_BUS_SERVICE') private eventsBusService: EventsBusService,
     @Inject('COURSE_SERVICE') private courseService: CourseService,
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
-    @Inject('AUTH_SERVICE') private authService: AuthService,
     private loginHandlerService: LoginHandlerService,
     private zone: NgZone,
     private events: Events,
@@ -242,9 +242,6 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
     private contentShareHandler: ContentShareHandlerService,
     private location: Location,
     private router: Router,
-    private appVersion: AppVersion,
-    private translate: TranslateService,
-    private popOverCtrl: PopoverController,
     private contentDeleteHandler: ContentDeleteHandler,
     private localCourseService: LocalCourseService
   ) {
@@ -271,10 +268,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
    * Angular life cycle hooks
    */
   ngOnInit() {
-    this.appVersion.getAppName()
-      .then((appName: any) => {
-        this.appName = appName;
-      });
+    this.commonUtilService.getAppName().then((res) => { this.appName = res; });
     this.subscribeUtilityEvents();
     if (this.courseCardData.batchId) {
       this.segmentType = 'modules';
@@ -307,10 +301,10 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
       // console.log('ENROL_COURSE_SUCCESS enrolpage', res);
       this.updatedCourseCardData = await this.courseService
       .getEnrolledCourses({userId: this.appGlobalService.getUserId(), returnFreshCourses: true })
-      .toPromise()
-      .then((cData) => {
-        return cData.find((element) => element.courseId === this.identifier);
-      });
+        .toPromise()
+        .then((cData) => {
+          return cData.find((element) => element.courseId === this.identifier);
+        });
       this.courseCardData.batchId = res.batchId;
       this.getBatchDetails();
       this.segmentType = 'modules';
@@ -344,7 +338,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
           this.joinTraining();
         } else if (data.isEnrolled && data.isBatchNotStarted) {
           this.commonUtilService.showToast(this.commonUtilService.translateMessage('COURSE_WILL_BE_AVAILABLE',
-          this.datePipe.transform(this.courseStartDate, 'mediumDate')));
+            this.datePipe.transform(this.courseStartDate, 'mediumDate')));
         }
       }
     });
@@ -606,6 +600,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
     if (data.contentData) {
       // await loader.present();
       this.course = data.contentData;
+      this.licenseDetails = data.contentData.licenseDetails || this.licenseDetails;
       this.content = data;
       this.objId = this.course.identifier;
       this.objType = this.course.contentType;
@@ -692,7 +687,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
               this.batchDetails.courseId, this.courseCardData.batchId, this.batchDetails.status);
             this.preferences.getString(PreferenceKey.COURSE_IDENTIFIER).toPromise()
               .then(async val => {
-                if (val === this.batchDetails.identifier) {
+                if (val && val === this.batchDetails.identifier) {
                   this.batchExp = true;
                 } else if (this.batchDetails.status === 2) {
                   this.batchExp = true;
@@ -714,6 +709,10 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
             this.courseCardData.courseId, this.courseCardData.batchId, this.courseCardData.batch.status);
         }
       });
+  }
+  /** url opens in browser */
+  openBrowser(url) {
+    this.commonUtilService.openUrlInBrowser(url);
   }
 
   saveContentContext(userId, courseId, batchId, batchStatus) {
@@ -942,14 +941,12 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
   private async getLastReadContentId() {
     this.lastReadContentId = this.courseCardData.lastReadContentId;
     const userId = this.appGlobalService.getUserId();
-    const lastReadContentIdKey = 'lastReadContentId_' + userId + '_' + this.identifier
-        + this.courseCardData.batchId;
-    await this.preferences.getString(lastReadContentIdKey).toPromise().then((val) => {
-      if (val) {
-        this.courseCardData.lastReadContentId = val;
-        this.lastReadContentId = val;
-      }
-    });
+    const lastReadContentIdKey = 'lastReadContentId_' + userId + '_' + this.identifier + '_' + this.courseCardData.batchId;
+    const chacedLastReadContentId = await this.preferences.getString(lastReadContentIdKey).toPromise();
+    if (chacedLastReadContentId) {
+      this.lastReadContentId = chacedLastReadContentId;
+      this.courseCardData.lastReadContentId = chacedLastReadContentId;
+    }
     return this.lastReadContentId;
   }
 
@@ -1209,7 +1206,8 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
         isChildContent: true,
         resumedCourseCardData: this.courseCardData,
         corRelation: this.corRelationList,
-        isCourse: true
+        isCourse: true,
+        course: this.updatedCourseCardData
       }
     };
     this.router.navigate([RouterLinks.CONTENT_DETAILS], params);
@@ -1229,6 +1227,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
    */
   async ionViewWillEnter() {
     this.todayDate =  dayjs().format('YYYY-MM-DD');
+    console.log('coursecarddata' + this.courseCardData);
     this.identifier = this.courseCardData.contentId || this.courseCardData.identifier;
     this.downloadSize = 0;
     this.objRollup = ContentUtil.generateRollUp(this.courseCardData.hierarchyInfo, this.identifier);
@@ -1236,8 +1235,8 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
 
     if (!this.guestUser) {
       this.updatedCourseCardData = await this.courseService.getEnrolledCourses({userId: this.userId, returnFreshCourses: false})
-      .toPromise()
-      .then((data) => {
+        .toPromise()
+        .then((data) => {
           if (data.length > 0) {
             const courseList: Array<Course> = [];
             for (const course of data) {
@@ -1292,6 +1291,12 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
 
   showLicensce() {
     this.showCredits = !this.showCredits;
+
+    if (this.showCredits) {
+      this.licenseSectionClicked('expanded');
+    } else {
+      this.licenseSectionClicked('collapsed');
+    }
   }
 
   handleBackButton() {
@@ -1331,7 +1336,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
       for (const course of enrolledCourses) {
         if (course.courseId === identifier) {
           if (!this.guestUser && this.courseCardData.batch && course.batchId
-              === this.courseCardData.batch.identifier) {
+            === this.courseCardData.batch.identifier) {
             this.isAlreadyEnrolled = true;
             this.courseCardData = course;
           } else if (!this.courseCardData.batch) {
@@ -1394,9 +1399,16 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
             }
           }
 
+          if (event.payload && event.type === ContentEventType.SERVER_CONTENT_DATA) {
+            this.licenseDetails = event.payload.licenseDetails;
+            if (event.payload.size) {
+              this.content.contentData.size =  event.payload.size;
+            }
+          }
+
           if (event.type === ContentEventType.IMPORT_PROGRESS) {
             const totalCountMsg = Math.floor((event.payload.currentCount / event.payload.totalCount) * 100) +
-          '% (' + event.payload.currentCount + ' / ' + event.payload.totalCount + ')';
+              '% (' + event.payload.currentCount + ' / ' + event.payload.totalCount + ')';
             this.importProgressMessage = this.commonUtilService.translateMessage('EXTRACTING_CONTENT', totalCountMsg);
 
             if (event.payload.currentCount === event.payload.totalCount) {
@@ -1538,8 +1550,19 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
     }
   }
 
-  share() {
-    this.contentShareHandler.shareContent(this.content, this.corRelationList);
+  async share() {
+    // this.contentShareHandler.shareContent(this.content, this.corRelationList);
+    const popover = await this.popoverCtrl.create({
+      component: SbSharePopupComponent,
+      componentProps: {
+        content: this.content,
+        corRelationList: this.corRelationList,
+        pageId: PageId.COURSE_DETAIL,
+        shareItemType: ShareItemType.ROOT_COLECTION
+      },
+      cssClass: 'sb-popover',
+    });
+    popover.present();
   }
 
   handleNavBackButton() {
@@ -1608,7 +1631,21 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
    * Opens up popup for the credits.
    */
   viewCredits() {
-    this.courseUtilService.showCredits(this.course, PageId.CONTENT_DETAIL, undefined, this.corRelationList);
+    this.courseUtilService.showCredits(this.course, PageId.COURSE_DETAIL, undefined, this.corRelationList);
+  }
+  licenseSectionClicked(params) {
+    const telemetryObject = new TelemetryObject(this.objId, this.objType, this.objVer);
+    this.telemetryGeneratorService.generateInteractTelemetry(
+      params === 'expanded' ? InteractType.LICENSE_CARD_EXPANDED : InteractType.LICENSE_CARD_COLLAPSED,
+      '',
+      undefined,
+      PageId.COURSE_DETAIL,
+      telemetryObject,
+      undefined,
+      this.objRollup,
+      this.corRelationList,
+      ID.LICENSE_CARD_CLICKED
+    );
   }
 
   getContentState(returnRefresh: boolean) {
@@ -1649,19 +1686,6 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
     }
   }
 
-  readLessorReadMore(param: string, objRollup, corRelationList) {
-    const telemetryObject = new TelemetryObject(this.objId, this.objType, this.objVer);
-    this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
-      param,
-      Environment.HOME,
-      PageId.COURSE_DETAIL,
-      undefined,
-      telemetryObject,
-      objRollup,
-      corRelationList
-    );
-  }
-
   handleHeaderEvents($event) {
     switch ($event.name) {
       case 'share':
@@ -1693,13 +1717,13 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
         this.localCourseService.prepareRequestValue(enrollCourseRequest));
 
       const enrollCourse: EnrollCourse = {
-          userId: this.userId,
-          batch: item,
-          pageId: PageId.COURSE_BATCHES,
-          courseId: undefined,
-          telemetryObject: this.telemetryObject,
-          objRollup: this.objRollup,
-          corRelationList: this.corRelationList
+        userId: this.userId,
+        batch: item,
+        pageId: PageId.COURSE_BATCHES,
+        courseId: undefined,
+        telemetryObject: this.telemetryObject,
+        objRollup: this.objRollup,
+        corRelationList: this.corRelationList
       };
 
       this.localCourseService.enrollIntoBatch(enrollCourse).toPromise()
@@ -1752,12 +1776,13 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
     if (data && data.canDelete) {
       this.preferences.putString(PreferenceKey.BATCH_DETAIL_KEY, JSON.stringify(batchdetail)).toPromise();
       this.preferences.putString(PreferenceKey.COURSE_DATA_KEY, JSON.stringify(this.course)).toPromise();
+      this.preferences.putString(PreferenceKey.CDATA_KEY, JSON.stringify(this.corRelationList)).toPromise();
       this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
         InteractSubtype.LOGIN_CLICKED,
         Environment.HOME,
         PageId.SIGNIN_POPUP,
-        undefined,
         this.telemetryObject,
+        undefined,
         this.objRollup,
         this.corRelationList
       );
@@ -1790,15 +1815,15 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
       enrollmentType !== 'invite-only'));
 
     if (this.updatedCourseCardData) {
-        this.showUnenrollButton = (batchDetails !== 2 &&
-          (this.updatedCourseCardData.status === 0 || this.updatedCourseCardData.status === 1 || this.course.progress < 100) &&
-          enrollmentType !== 'invite-only');
+      this.showUnenrollButton = (batchDetails !== 2 &&
+        (this.updatedCourseCardData.status === 0 || this.updatedCourseCardData.status === 1 || this.course.progress < 100) &&
+        enrollmentType !== 'invite-only');
     } else {
       this.showUnenrollButton = (
         (batchDetails !== 2 &&
           (this.courseCardData.status === 0 || this.courseCardData.status === 1 || this.course.progress < 100) &&
           enrollmentType !== 'invite-only')
-        );
+      );
     }
   }
 

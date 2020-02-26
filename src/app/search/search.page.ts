@@ -1,9 +1,7 @@
 import { Component, Inject, NgZone, OnDestroy, ViewChild, ChangeDetectorRef, OnInit, AfterViewInit } from '@angular/core';
 import { Router, NavigationExtras } from '@angular/router';
-import { Events, Platform, PopoverController, IonContent, NavController } from '@ionic/angular';
+import { Events, Platform, PopoverController, IonContent, NavController, IonInput } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
-import { Subscription } from 'rxjs/Subscription';
-import { Observable } from 'rxjs/Observable';
 import { Location } from '@angular/common';
 import each from 'lodash/each';
 import find from 'lodash/find';
@@ -34,16 +32,18 @@ import { FormAndFrameworkUtilService } from '@app/services/formandframeworkutil.
 import { CommonUtilService } from '@app/services/common-util.service';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import {
-  Environment, ImpressionType, InteractSubtype, InteractType, LogLevel, Mode, PageId
+  Environment, ImpressionType, InteractSubtype, InteractType, LogLevel, Mode, PageId, CorReleationDataType
 } from '@app/services/telemetry-constants';
 import { AppHeaderService } from '@app/services/app-header.service';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { SearchHistoryNamespaces } from '@app/config/search-history-namespaces';
 import { featureIdMap } from '@app/app/feature-id-map';
-import { from } from 'rxjs';
 import { EnrollmentDetailsComponent } from '../components/enrollment-details/enrollment-details.component';
 import { ContentUtil } from '@app/util/content-util';
 import { LibraryCardTypes } from '@project-sunbird/common-consumption';
+import { Subscription, Observable, from } from 'rxjs';
+import { switchMap, tap, map as rxjsMap, share, startWith, debounceTime } from 'rxjs/operators';
+
 declare const cordova;
 @Component({
   selector: 'app-search',
@@ -174,12 +174,12 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit() {
-    this.searchHistory$ = this.searchBar && (this.searchBar as any).ionChange
-      .map((e) => e.target.value)
-      .share()
-      .startWith('')
-      .debounceTime(500)
-      .switchMap((v: string) => {
+    this.searchHistory$ = this.searchBar && (this.searchBar as any).ionChange.pipe(
+      rxjsMap((e: CustomEvent) => e.target['value']),
+      share(),
+      startWith(''),
+      debounceTime(500),
+      switchMap((v: string) => {
         if (v) {
           return from(this.searchHistoryService.getEntries({
             like: v,
@@ -192,12 +192,14 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
           limit: 10,
           namespace: this.source === PageId.LIBRARY ? SearchHistoryNamespaces.LIBRARY : SearchHistoryNamespaces.COURSE
         }).toPromise());
-      })
-      .do((v) => {
+      }),
+      tap((v) => {
         setTimeout(() => {
           this.changeDetectionRef.detectChanges();
         });
-      }) as any;
+      }) as any
+
+    );
   }
 
   onSearchHistoryTap(searchEntry: SearchEntry) {
@@ -673,7 +675,6 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
     this.showLoader = true;
     this.responseData.filterCriteria.mode = 'hard';
     this.responseData.filterCriteria.searchType = SearchType.FILTER;
-    this.telemetryGeneratorService.generateStartSheenAnimationTelemetry(this.source);
     this.contentService.searchContent(this.responseData.filterCriteria).toPromise()
       .then((responseData: ContentSearchResult) => {
 
@@ -697,7 +698,6 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
           } else {
             this.isEmptyResult = true;
           }
-          this.telemetryGeneratorService.generateEndSheenAnimationTelemetry(this.source);
           this.showLoader = false;
         });
       }).catch(() => {
@@ -724,9 +724,6 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
     this.addSearchHistoryEntry();
 
     this.showLoader = true;
-    if (this.showLoader) {
-      this.telemetryGeneratorService.generateStartSheenAnimationTelemetry(this.source);
-    }
 
     (window as any).cordova.plugins.Keyboard.close();
 
@@ -787,16 +784,10 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
           }
           this.showEmptyMessage = this.searchContentResult.length === 0;
           this.showLoader = false;
-          if (!this.showLoader) {
-            this.telemetryGeneratorService.generateEndSheenAnimationTelemetry(this.source);
-          }
         });
       }).catch(() => {
         this.zone.run(() => {
           this.showLoader = false;
-          if (!this.showLoader) {
-            this.telemetryGeneratorService.generateEndSheenAnimationTelemetry(this.source);
-          }
           if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
             this.commonUtilService.showToast('ERROR_OFFLINE_MODE');
           }
@@ -974,7 +965,6 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
     this.isDialCodeSearch = true;
 
     this.showLoader = true;
-    this.telemetryGeneratorService.generateStartSheenAnimationTelemetry(this.source);
 
     const contentTypes = await this.formAndFrameworkUtilService.getSupportedContentFilterConfig(
       ContentFilterConfig.NAME_DIALCODE);
@@ -1002,7 +992,6 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
             this.processDialCodeResult(sections);
             // this.updateFilterIcon();  // TO DO
           }
-          this.telemetryGeneratorService.generateEndSheenAnimationTelemetry(this.source);
           this.showLoader = false;
         });
       }).catch(error => {
@@ -1236,7 +1225,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.OTHER,
       InteractSubtype.DIAL_SEARCH_RESULT_FOUND,
-      this.source ? this.source : Environment.HOME,
+      this.source ? this.source : PageId.SEARCH,
       PageId.SEARCH,
       undefined,
       values
@@ -1262,10 +1251,13 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
 
     if (isFilterApplied) {
       this.filterIcon = './assets/imgs/ic_action_filter_applied.png';
+      this.corRelationList.push({
+        id: 'filter',
+        type: CorReleationDataType.DISCOVERY_TYPE
+      });
     } else {
       this.filterIcon = './assets/imgs/ic_action_filter.png';
     }
-
     if (this.isEmptyResult) {
       this.filterIcon = undefined;
     }
@@ -1490,7 +1482,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
   private generateImpressionEvent() {
     this.telemetryGeneratorService.generateImpressionTelemetry(
       ImpressionType.SEARCH, '',
-      this.source ? this.source : PageId.HOME,
+      this.source ? this.source : PageId.SEARCH,
       Environment.HOME, '', '', '',
       undefined,
       this.corRelationList);
@@ -1505,7 +1497,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
       paramsMap.SearchCriteria = searchResult.request;
       params.push(paramsMap);
       this.telemetryGeneratorService.generateLogEvent(LogLevel.INFO,
-        this.source,
+        this.source ? this.source : PageId.SEARCH,
         Environment.HOME,
         ImpressionType.SEARCH,
         params);
@@ -1553,7 +1545,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
   goBack() {
     this.telemetryGeneratorService.generateBackClickedTelemetry(ImpressionType.SEARCH,
           Environment.HOME, true, undefined, this.corRelationList);
-    this.navCtrl.pop();
+    this.navigateToPreviousPage();
   }
 
   getContentCount(resultlist) {

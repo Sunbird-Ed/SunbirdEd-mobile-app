@@ -10,7 +10,7 @@ import {
   ToastController,
   NavController
 } from '@ionic/angular';
-import { Subscription } from 'rxjs/Subscription';
+import { Subscription } from 'rxjs';
 import {
   AuthService,
   Content,
@@ -39,7 +39,10 @@ import { Map } from '@app/app/telemetryutil';
 import { ConfirmAlertComponent } from '@app/app/components';
 import { AppGlobalService } from '@app/services/app-global-service.service';
 import { AppHeaderService } from '@app/services/app-header.service';
-import { ContentConstants, EventTopics, XwalkConstants, RouterLinks, ContentFilterConfig, PreferenceKey } from '@app/app/app.constant';
+import {
+  ContentConstants, EventTopics, XwalkConstants, RouterLinks, ContentFilterConfig,
+  ShareItemType, ContentType
+} from '@app/app/app.constant';
 import { CourseUtilService } from '@app/services/course-util.service';
 import { UtilityService } from '@app/services/utility-service';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
@@ -63,8 +66,13 @@ import { ContentPlayerHandler } from '@app/services/content/player/content-playe
 import { ChildContentHandler } from '@app/services/content/child-content-handler';
 import { ContentDeleteHandler } from '@app/services/content/content-delete-handler';
 import { ContentUtil } from '@app/util/content-util';
+import { FileTransfer, FileTransferObject } from '@ionic-native/file-transfer/ngx';
+import { map } from 'rxjs/operators';
 import { SbPopoverComponent } from '../components/popups/sb-popover/sb-popover.component';
 import { LoginHandlerService } from '@app/services/login-handler.service';
+import { SbSharePopupComponent } from '../components/popups/sb-share-popup/sb-share-popup.component';
+import { FileOpener } from '@ionic-native/file-opener/ngx';
+import { Components } from '@ionic/core/dist/types/components';
 
 
 @Component({
@@ -99,7 +107,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
    * Used to handle update content workflow
    */
   isUpdateAvail = false;
-  streamingUrl: any;
+  streamingUrl?: any;
   contentDownloadable: {
     [contentId: string]: boolean;
   } = {};
@@ -143,6 +151,8 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
   isSingleContent: boolean;
   resultLength: any;
   course: Course;
+  fileTransfer: FileTransferObject;
+  // Newly Added
   licenseDetails;
   resumedCourseCardData: any;
   limitedShareContentFlag = false;
@@ -167,7 +177,6 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
     private courseUtilService: CourseUtilService,
     private utilityService: UtilityService,
     private network: Network,
-    public toastController: ToastController,
     private fileSizePipe: FileSizePipe,
     private headerService: AppHeaderService,
     private contentShareHandler: ContentShareHandlerService,
@@ -181,6 +190,8 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
     private childContentHandler: ChildContentHandler,
     private contentDeleteHandler: ContentDeleteHandler,
     private loginHandlerService: LoginHandlerService,
+    private fileOpener: FileOpener,
+    private transfer: FileTransfer
   ) {
     this.subscribePlayEvent();
     this.checkDeviceAPILevel();
@@ -194,10 +205,10 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
   }
 
   getNavParams() {
-    const extras = this.router.getCurrentNavigation().extras.state;
+    const extras = this.content || this.router.getCurrentNavigation().extras.state;
     if (extras) {
-      this.course = extras.course;
-      this.cardData = extras.content;
+      this.course = this.course || extras.course;
+      this.cardData = this.content || extras.content;
       this.isChildContent = extras.isChildContent;
       this.cardData.depth = extras.depth === undefined ? '' : extras.depth;
       this.corRelationList = extras.corRelation;
@@ -214,11 +225,16 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
       this.isSingleContent = extras.isSingleContent;
       this.resultLength = extras.resultsSize;
       this.autoPlayQuizContent = extras.autoPlayQuizContent || false;
+      this.shouldOpenPlayAsPopup = extras.isCourse;
       this.checkLimitedContentSharingFlag(extras.content);
     }
   }
 
   ngOnInit() {
+    this.subscribeEvents();
+  }
+
+  subscribeEvents() {
     // DEEPLINK_CONTENT_PAGE_OPEN is used to refresh the contend details on external deeplink clicked
     this.events.subscribe(EventTopics.DEEPLINK_CONTENT_PAGE_OPEN, (data) => {
       if (data && data.content) {
@@ -239,6 +255,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
     this.events.subscribe(EventTopics.PLAYER_CLOSED, (data) => {
       if (data.selectedUser) {
         if (!data.selectedUser['profileType']) {
+          console.log('data', !data.selectedUser['profileType']);
           this.profileService.getActiveProfileSession().toPromise()
             .then((profile) => {
               this.profileSwitchHandler.switchUser(profile);
@@ -248,17 +265,35 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
         }
       }
     });
+    this.events.subscribe(EventTopics.NEXT_CONTENT, (data) => {
+      this.generateEndEvent();
+      // this.events.unsubscribe(EventTopics.PLAYER_CLOSED);
+      // this.events.unsubscribe(EventTopics.NEXT_CONTENT);
+      const previousContent = this.content;
+      this.content = data.content;
+      this.course = data.course;
+      this.getNavParams();
+      // this.subscribeEvents();
+
+      // show popup for previous content
+      setTimeout(() => {
+        this.ratingHandler.showRatingPopup(this.isContentPlayed, previousContent, 'automatic', this.corRelationList, this.objRollup);
+        this.contentPlayerHandler.setLastPlayedContentId('');
+        this.generateTelemetry(true);
+      }, 1000);
+    });
   }
 
   ngOnDestroy() {
     this.events.unsubscribe(EventTopics.PLAYER_CLOSED);
+    this.events.unsubscribe(EventTopics.NEXT_CONTENT);
     this.events.unsubscribe(EventTopics.DEEPLINK_CONTENT_PAGE_OPEN);
   }
 
   /**
    * Ionic life cycle hook
    */
-  ionViewWillEnter(): void {
+  ionViewWillEnter() {
     this.headerService.hideHeader();
 
     if (this.isResumedCourse && !this.contentPlayerHandler.isContentPlayerLaunched()) {
@@ -333,8 +368,9 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
       local: true,
       server: false
     };
-    this.profileService.getAllProfiles(profileRequest)
-      .map((profiles) => profiles.filter((profile) => !!profile.handle))
+    this.profileService.getAllProfiles(profileRequest).pipe(
+      map((profiles) => profiles.filter((profile) => !!profile.handle))
+    )
       .toPromise()
       .then((profiles) => {
         if (profiles) {
@@ -438,7 +474,8 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
       data.hierarchyInfo = this.cardData.hierarchyInfo;
       this.isChildContent = true;
     }
-    if (this.content.contentData.streamingUrl) {
+    if (this.content.contentData.streamingUrl &&
+      !(this.content.mimeType === 'application/vnd.ekstep.h5p-archive')) {
       this.streamingUrl = this.content.contentData.streamingUrl;
     }
 
@@ -496,8 +533,8 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
     }
   }
 
-  generateTelemetry() {
-    if (!this.didViewLoad && !this.isContentPlayed) {
+  generateTelemetry(forceGenerate?: boolean) {
+    if (!this.didViewLoad && !this.isContentPlayed || forceGenerate) {
       this.objRollup = ContentUtil.generateRollUp(this.cardData.hierarchyInfo, this.identifier);
       this.telemetryObject = ContentUtil.getTelemetryObject(this.cardData);
       this.generateImpressionEvent(this.cardData.identifier, this.telemetryObject.type, this.cardData.pkgVersion);
@@ -544,7 +581,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
 
   generateEndEvent() {
     this.telemetryGeneratorService.generateEndTelemetry(
-      this.telemetryObject.type,
+      this.telemetryObject.type ? this.telemetryObject.type : ContentType.RESOURCE,
       Mode.PLAY,
       PageId.CONTENT_DETAIL,
       Environment.HOME,
@@ -643,8 +680,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
   }
 
   openinBrowser(url) {
-    const options = 'hardwareback=yes,clearcache=no,zoom=no,toolbar=yes,disallowoverscroll=yes';
-    (window as any).cordova.InAppBrowser.open(url, '_blank', options);
+    this.commonUtilService.openUrlInBrowser(url);
   }
 
   /**
@@ -701,7 +737,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
           this.zone.run(() => {
             const eventPayload = event.payload;
             if (eventPayload.contentId === this.content.identifier) {
-              if (eventPayload.streamingUrl) {
+              if (eventPayload.streamingUrl && !(this.content.mimeType === 'application/vnd.ekstep.h5p-archive')) {
                 this.streamingUrl = eventPayload.streamingUrl;
                 this.playingContent.contentData.streamingUrl = eventPayload.streamingUrl;
               } else {
@@ -952,7 +988,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
     if (data && data.isLeftButtonClicked) {
       this.playContent(isStreaming);
       // Incase of close button click data.isLeftButtonClicked = null so we have put the false condition check
-    } else if (data && data.isLeftButtonClicked  === false) {
+    } else if (data && data.isLeftButtonClicked === false) {
       const playConfig: any = {};
       playConfig.playContent = true;
       playConfig.streaming = isStreaming;
@@ -968,7 +1004,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
     if (this.apiLevel < 21 && this.appAvailability === 'false') {
       this.showPopupDialog();
     } else {
-      const hierachyInfo = this.childContentHandler.contentHierarchyInfo;
+      const hierachyInfo = this.childContentHandler.contentHierarchyInfo || this.content.hierarchyInfo;
       const contentInfo: ContentInfo = {
         telemetryObject: this.telemetryObject,
         rollUp: this.objRollup,
@@ -1024,8 +1060,20 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
   /**
    * Shares content to external devices
    */
-  share() {
-    this.contentShareHandler.shareContent(this.content, this.corRelationList, this.objRollup);
+  async share() {
+    // this.contentShareHandler.shareContent(this.content, this.corRelationList, this.objRollup);
+    const popover = await this.popoverCtrl.create({
+      component: SbSharePopupComponent,
+      componentProps: {
+        content: this.content,
+        corRelationList: this.corRelationList,
+        objRollup: this.objRollup,
+        pageId: PageId.CONTENT_DETAIL,
+        shareItemType: this.isChildContent ? ShareItemType.LEAF_CONTENT : ShareItemType.ROOT_CONTENT
+      },
+      cssClass: 'sb-popover',
+    });
+    popover.present();
   }
 
   /**
@@ -1165,4 +1213,48 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
     }
   }
 
+  async openPDFPreview(content: Content) {
+    this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
+        InteractSubtype.PRINT_PDF_CLICKED,
+        Environment.HOME,
+        PageId.CONTENT_DETAIL,
+        this.telemetryObject,
+        undefined,
+        this.objRollup,
+        this.corRelationList
+    );
+
+    let url: string;
+    const pdf = ContentUtil.resolvePDFPreview(content);
+
+    const loader: Components.IonLoading = await this.commonUtilService.getLoader();
+    await loader.present();
+
+    try {
+      if (!pdf.availableLocally) {
+        this.fileTransfer = this.transfer.create();
+        const entry = await this.fileTransfer
+          .download(pdf.url, cordova.file.cacheDirectory + pdf.url.substring(pdf.url.lastIndexOf('/') + 1));
+        url = entry.toURL();
+      } else {
+        url = 'file://' + pdf.url;
+      }
+
+      await new Promise<boolean>((resolve, reject) => {
+        window.cordova.plugins.printer.canPrintItem(url, (canPrint: boolean) => {
+          if (canPrint) {
+            window.cordova.plugins.printer.print(url);
+            return resolve();
+          }
+
+          return reject('Could not print item');
+        });
+      });
+    } catch (e) {
+      console.error(e);
+      this.commonUtilService.showToast('ERROR_COULD_NOT_OPEN_FILE');
+    } finally {
+      await loader.dismiss();
+    }
+  }
 }

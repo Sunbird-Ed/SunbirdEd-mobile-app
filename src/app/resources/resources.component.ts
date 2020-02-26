@@ -6,7 +6,7 @@ import { animate, group, state, style, transition, trigger } from '@angular/anim
 import { TranslateService } from '@ngx-translate/core';
 import has from 'lodash/has';
 import forEach from 'lodash/forEach';
-import { Subscription } from 'rxjs/Subscription';
+import { Subscription } from 'rxjs';
 import { Network } from '@ionic-native/network/ngx';
 import {
   CategoryTerm,
@@ -26,6 +26,7 @@ import {
   SharedPreferences,
   TelemetryObject,
   ContentRequest,
+  FrameworkService
 } from 'sunbird-sdk';
 
 import {
@@ -47,7 +48,8 @@ import { AppVersion } from '@ionic-native/app-version/ngx';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { CommonUtilService } from '@app/services/common-util.service';
 import { FormAndFrameworkUtilService } from '@app/services/formandframeworkutil.service';
-import { Environment, InteractSubtype, InteractType, PageId, ImpressionType, ImpressionSubtype, CorReleationDataType } from '@app/services/telemetry-constants';
+import { Environment, InteractSubtype, InteractType, PageId, ImpressionType,
+  ImpressionSubtype, CorReleationDataType } from '@app/services/telemetry-constants';
 import { AppHeaderService } from '@app/services/app-header.service';
 import { SplaschreenDeeplinkActionHandlerDelegate } from '@app/services/sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
 import { ContentUtil } from '@app/util/content-util';
@@ -150,11 +152,13 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
   pageApiLoader = true;
   @ViewChild('contentView') contentView: ContentView;
   locallyDownloadResources;
+  channelId: string;
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     @Inject('EVENTS_BUS_SERVICE') private eventsBusService: EventsBusService,
     @Inject('FRAMEWORK_UTIL_SERVICE') private frameworkUtilService: FrameworkUtilService,
+    @Inject('FRAMEWORK_SERVICE') private frameworkService: FrameworkService,
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
     private splaschreenDeeplinkActionHandlerDelegate: SplaschreenDeeplinkActionHandlerDelegate,
@@ -340,9 +344,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
     this.recentlyViewedResources = [];
     if (!hideLoaderFlag) {
       this.showLoader = true;
-      if (this.showLoader) {
-        this.telemetryGeneratorService.generateStartSheenAnimationTelemetry(PageId.LIBRARY);
-      }
     }
     const requestParams: ContentRequest = {
       uid: this.profile ? this.profile.uid : undefined,
@@ -372,9 +373,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
           this.recentlyViewedResources = data;
           if (!hideLoaderFlag) {
             this.showLoader = false;
-            if (!this.showLoader) {
-              this.telemetryGeneratorService.generateEndSheenAnimationTelemetry(PageId.LIBRARY);
-            }
           }
         });
       })
@@ -382,9 +380,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
         this.ngZone.run(() => {
           if (!hideLoaderFlag) {
             this.showLoader = false;
-            if (!this.showLoader) {
-              this.telemetryGeneratorService.generateEndSheenAnimationTelemetry(PageId.LIBRARY);
-            }
           }
         });
       });
@@ -396,9 +391,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
   getPopularContent(isAfterLanguageChange = false, contentSearchCriteria?: ContentSearchCriteria, avoidRefreshList = false) {
     this.storyAndWorksheets = [];
     this.searchApiLoader = true;
-    if (this.searchApiLoader) {
-      this.telemetryGeneratorService.generateStartSheenAnimationTelemetry(PageId.LIBRARY);
-    }
 
     if (!contentSearchCriteria) {
       contentSearchCriteria = {
@@ -433,7 +425,10 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
     }
     if (contentSearchCriteria.board) {
       this.getGroupByPageReq.board = [contentSearchCriteria.board[0]];
+    } else {
+      this.getGroupByPageReq.channel = [this.channelId];
     }
+
     this.getGroupByPageReq.mode = 'hard';
     this.getGroupByPageReq.facets = Search.FACETS_ETB;
     this.getGroupByPageReq.contentTypes = [ContentType.TEXTBOOK];
@@ -441,17 +436,14 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
   }
 
   getGroupByPage(isAfterLanguageChange = false, avoidRefreshList = false) {
-    const selectedBoardMediumGrade = this.getGroupByPageReq.board[0] + ', ' +
-      this.getGroupByPageReq.medium[0] + ' Medium, ' +
-      this.getGroupByPageReq.grade[0];
+    const selectedBoardMediumGrade = ((this.getGroupByPageReq.board && this.getGroupByPageReq.board.length
+        && this.getGroupByPageReq.board[0]) ? this.getGroupByPageReq.board[0] + ', ' : '') +
+        (this.getGroupByPageReq.medium && this.getGroupByPageReq.medium.length
+            && this.getGroupByPageReq.medium[0]) + ' Medium, ' +
+        (this.getGroupByPageReq.grade && this.getGroupByPageReq.grade.length && this.getGroupByPageReq.grade[0]);
     this.appGlobalService.setSelectedBoardMediumGrade(selectedBoardMediumGrade);
     this.storyAndWorksheets = [];
-    if (!this.refresh) {
-      this.searchApiLoader = true;
-    } else {
-      this.searchApiLoader = false;
-    }
-    this.telemetryGeneratorService.generateStartSheenAnimationTelemetry(PageId.LIBRARY);
+    this.searchApiLoader = !this.refresh;
     const reqvalues = new Map();
     reqvalues['pageReq'] = this.getGroupByPageReq;
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.OTHER,
@@ -506,7 +498,8 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
             // check if locally available
             this.markLocallyAvailableTextBook();
             sectionInfo[sectionName] = count;
-            sectionInfo['board'] = this.getGroupByPageReq.board[0];
+            sectionInfo['board'] = (this.getGroupByPageReq.board && this.getGroupByPageReq.board.length
+                && this.getGroupByPageReq.board[0]) ? this.getGroupByPageReq.board[0] : '';
             sectionInfo['medium'] = this.getGroupByPageReq.medium[0];
             sectionInfo['grade'] = this.getGroupByPageReq.grade[0];
           }
@@ -521,9 +514,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
           this.pageLoadedSuccess = true;
           this.refresh = false;
           this.searchApiLoader = false;
-          if (!this.refresh || !this.searchApiLoader) {
-            this.telemetryGeneratorService.generateEndSheenAnimationTelemetry(PageId.LIBRARY);
-          }
           this.generateExtraInfoTelemetry(newSections.length);
         });
       })
@@ -532,9 +522,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
         this.ngZone.run(() => {
           this.refresh = false;
           this.searchApiLoader = false;
-          if (!this.refresh || !this.searchApiLoader) {
-            this.telemetryGeneratorService.generateEndSheenAnimationTelemetry(PageId.LIBRARY);
-          }
           if (error === 'SERVER_ERROR' || error === 'SERVER_AUTH_ERROR') {
             if (!isAfterLanguageChange) {
               this.commonUtilService.showToast('ERROR_FETCHING_DATA');
@@ -630,23 +617,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
     return assembleFilter;
   }
 
-  ionViewDidEnter() {
-    this.preferences.getBoolean('coach_mark_seen').toPromise()
-      .then((value) => {
-        if (!value) {
-          this.events.publish('coach_mark_seen', { showWalkthroughBackDrop: true, appName: this.appLabel });
-          this.telemetryGeneratorService.generateImpressionTelemetry(
-            ImpressionType.VIEW,
-            ImpressionSubtype.QR_SCAN_WALKTHROUGH,
-            PageId.LIBRARY,
-            Environment.ONBOARDING
-          );
-        }
-      });
-    this.preferences.putBoolean('coach_mark_seen', true).toPromise().then();
-  }
-
-  ionViewWillEnter() {
+  async ionViewWillEnter() {
     this.events.subscribe('update_header', () => {
       this.headerService.showHeaderWithHomeButton(['search', 'download', 'notification']);
     });
@@ -658,6 +629,8 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
     this.getCategoryData();
 
     this.getCurrentUser();
+
+    await this.getChannelId();
 
     if (!this.pageLoadedSuccess) {
       this.getPopularContent();
@@ -1078,4 +1051,9 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
     });
   }
 
+  async getChannelId() {
+    return this.frameworkService.getActiveChannelId().subscribe((data) => {
+      this.channelId = data;
+    });
+  }
 }

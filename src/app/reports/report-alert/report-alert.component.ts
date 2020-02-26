@@ -1,7 +1,7 @@
 import { Component, OnInit , ViewEncapsulation } from '@angular/core';
 import { NavParams, Platform, NavController, PopoverController } from '@ionic/angular';
 import { Location } from '@angular/common';
-import { Subscription } from 'rxjs/Subscription';
+import { Subscription } from 'rxjs';
 
 export interface QRAlertCallBack {
   cancel(): any;
@@ -27,8 +27,7 @@ export class ReportAlertComponent implements OnInit {
     private popOverCtrl: PopoverController,
     private location: Location
   ) {
-    this.callback = navParams.get('callback');
-    this.assessmentDetails = this.callback['row'];
+    this.assessmentDetails = navParams.get('callback');
   }
 
   ngOnInit() { }

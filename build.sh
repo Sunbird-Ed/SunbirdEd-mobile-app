@@ -46,3 +46,5 @@ NODE_OPTIONS=--max-old-space-size=4096 ionic cordova platforms add android@8.1.0
 
 NODE_OPTIONS=--max-old-space-size=4096 ionic cordova build android --prod --release --buildConfig ./buildConfig/build.json
 
+npm run ionic-build
+

@@ -9,7 +9,7 @@ import { PlayerActionHandlerDelegate, HierarchyInfo, User } from './player-actio
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { EventTopics, RouterLinks } from '../app.constant';
 import { Location } from '@angular/common';
-import { Subscription } from 'rxjs/Subscription';
+import { Subscription } from 'rxjs';
 import { CourseService, Course } from 'sunbird-sdk';
 
 @Component({
@@ -88,7 +88,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
         this.previewElement.nativeElement.contentWindow.addEventListener('message', resp => {
             console.log('Player Response', resp);
             if (resp.data === 'renderer:question:submitscore') {
-                this.courseService.syncAssessmentEvents();
+                this.courseService.syncAssessmentEvents().subscribe();
             }
         });
       }, 1000);
@@ -141,7 +141,13 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
           this.navCtrl.remove(this.navCtrl.length() - 2);
         });
      */
-    this.router.navigate([RouterLinks.CONTENT_DETAILS , identifier], { state: { content, course: this.course } , replaceUrl: true, });
+    setTimeout(() => {
+        this.closeIframe();
+    }, 1000);
+    this.events.publish(EventTopics.NEXT_CONTENT, {
+        content,
+        course: this.course
+    });
   }
 
   /**

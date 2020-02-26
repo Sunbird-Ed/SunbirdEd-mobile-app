@@ -1,25 +1,22 @@
 <div>
   <ng-container *ngIf="childData | hasMimeType: activeMimeTypeFilter : isTextbookTocPage">
-    <!-- <div class="unit-hierachy sb-topic-item" -->
-      <div [ngClass] = "{'unit-hierachy sb-topic-item': !isTextbookTocPage}"
-     (click)="!fromCourseToc && setContentId(childData.identifier)" [id]="childData.identifier"
+    <div [ngClass]="{'unit-hierachy sb-topic-item': !isTextbookTocPage}"
+      (click)="!fromCourseToc && setContentId(childData.identifier)" [id]="childData.identifier"
       *ngIf="childData?.contentData?.mimeType === 'application/vnd.ekstep.content-collection' && childData?.children && !isTextbookTocPage">
       {{childData?.contentData?.name}}
     </div>
-    <div [ngClass] = "{'row sb-textbook-toc px-16': isTextbookTocPage, 'sb-highlighted-row' : (latestParentName === childData?.contentData?.name && sameHierarchy)}"
-    (click)="!fromCourseToc && setContentId(childData.identifier)" [id]="childData.identifier"
-     *ngIf="childData?.contentData?.mimeType === 'application/vnd.ekstep.content-collection' && childData?.children && isTextbookTocPage">
-     <div class="pull-left px-16">
+    <div
+      [ngClass]="{'row sb-textbook-toc px-16': isTextbookTocPage, 'sb-highlighted-row' : (latestParentName === childData?.contentData?.name && sameHierarchy)}"
+      (click)="!fromCourseToc && setContentId(childData.identifier, childData)" [id]="childData.identifier"
+      *ngIf="childData?.contentData?.mimeType === 'application/vnd.ekstep.content-collection' && childData?.children && isTextbookTocPage">
+      <div class="pull-left px-16">
         {{childData?.contentData?.name}}
-     </div>
+      </div>
     </div>
   </ng-container>
-  <div [id]="childData.identifier"
-  [ngClass] ="{'row sb-topic-item': !stckyUnitTitle, 'sb-highlighted-row' : (latestParentName === childData?.contentData?.name) ,
-   'row sb-topic-item':  (stckyUnitTitle !== childData?.contentData?.name)}"
-   class="sticky-header-title-box"
-   [attr.data-text] = "childData.contentData.name" 
-   [attr.data-render-level] = "renderLevel"
+  <div [id]="childData.identifier" [ngClass]="{'row sb-topic-item': !stckyUnitTitle, 'sb-highlighted-row' : (latestParentName === childData?.contentData?.name) ,
+   'row sb-topic-item':  (stckyUnitTitle !== childData?.contentData?.name)}" class="sticky-header-title-box"
+    [attr.data-text]="childData.contentData.name" [attr.data-render-level]="renderLevel"
     *ngIf="!isTextbookTocPage && childData?.contentData?.mimeType !== 'application/vnd.ekstep.content-collection' && hasMimeType(activeMimeTypeFilter, childData?.contentData?.mimeType, childData)"
     (click)="navigateToDetailsPage(childData, depth + '.' + (i + 1))">
 
@@ -27,7 +24,7 @@
       <div class="clearfix" [ngClass]="{'sb-accordian-grey-text': !commonUtilService.networkInfo.isNetworkAvailable && !childData?.isAvailableLocally,
            'sb-play-selected':childData?.isAvailableLocally,'sb-play-unselected':!childData?.isAvailableLocally}">
         <div class="pull-left">
-            {{childData?.contentData?.name}}
+          {{childData?.contentData?.name}}
           <span *ngIf="childData?.isAvailableLocally">
             <ion-icon class="sb-checkmark-icon" name="md-checkmark-circle"></ion-icon>
           </span>
@@ -44,26 +41,26 @@
     <div class="sb-ftue-design" *ngIf="!fromCourseToc && isTextbookTocPage">
       <div class="clearfix" class="sb-blue-text">
         <div class="pull-left px-16">
-            {{childData?.contentData?.name}}
+          {{childData?.contentData?.name}}
         </div>
       </div>
     </div>
     <!-- only for course toc -->
     <div class="sb-ftue-design sb-ftue-design-course-toc" *ngIf="fromCourseToc">
-        <div class="clearfix" [ngClass]="{'sb-accordian-grey-text': !commonUtilService.networkInfo.isNetworkAvailable && !childData?.isAvailableLocally,
+      <div class="clearfix" [ngClass]="{'sb-accordian-grey-text': !commonUtilService.networkInfo.isNetworkAvailable && !childData?.isAvailableLocally,
              'sb-play-selected':childData?.isAvailableLocally,'sb-play-unselected':!childData?.isAvailableLocally}">
-          <div class="pull-left">
-              <span class="content-type-container">
-                <img [src]="getContentTypeIcon(childData)" alt="">
-              </span>
-              {{childData?.contentData?.name}}
-          </div>
-          <div class="pull-right done-pt-8" *ngIf="isContentCompleted">
-            <!--'DONE' text doesnot need translation-->
-            <span class="done">Done</span>
-          </div>
+        <div class="pull-left">
+          <span class="content-type-container">
+            <img [src]="getContentTypeIcon(childData)" alt="">
+          </span>
+          {{childData?.contentData?.name}}
+        </div>
+        <div class="pull-right done-pt-8" *ngIf="isContentCompleted">
+          <!--'DONE' text doesnot need translation-->
+          <span class="done">Done</span>
         </div>
       </div>
+    </div>
   </div>
 
   <div class="row sb-topic-item" (click)="showComingSoonPopup(childData)"
@@ -72,13 +69,14 @@
     <ion-icon ios="ios-alert" md="md-alert" class="grey-icon mt-4"></ion-icon>
   </div>
 
-  <!-- <div *ngIf="childData?.children && childData?.contentData?.mimeType === 'application/vnd.ekstep.content-collection'"
-       class="sb-separator-line ml8 mtb-8"></div> -->
-  <div *ngFor="let firstChildren of childData?.children; let j = index;" [ngClass]="{'sb-collection-child-ftue': isTextbookTocPage}">
+  <div *ngFor="let firstChildren of childData?.children; let j = index;"
+    [ngClass]="{'sb-collection-child-ftue': isTextbookTocPage}">
     <app-collection-child [renderLevel]="renderLevel + 1" [childData]="firstChildren" [breadCrumb]="breadCrumb"
       [activeMimeTypeFilter]="activeMimeTypeFilter" [rootUnitId]="rootUnitId" [isTextbookTocPage]="isTextbookTocPage"
-      [bookID]="bookID" [isEnrolled]="isEnrolled" [fromCourseToc]="fromCourseToc" [isBatchNotStarted]="isBatchNotStarted"  [stckyUnitTitle]="stckyUnitTitle"
-       [stckyindex]="stckyindex" [latestParentName]="latestParentName" [latestParentNodes]="latestParentNodes" [contentStatusData]="contentStatusData"
-                          [updatedCourseCardData]="updatedCourseCardData" [batch]="batch"></app-collection-child>
+      [bookID]="bookID" [isEnrolled]="isEnrolled" [fromCourseToc]="fromCourseToc"
+      [isBatchNotStarted]="isBatchNotStarted" [stckyUnitTitle]="stckyUnitTitle" [stckyindex]="stckyindex"
+      [latestParentName]="latestParentName" [latestParentNodes]="latestParentNodes"
+      [contentStatusData]="contentStatusData" [updatedCourseCardData]="updatedCourseCardData" [batch]="batch">
+    </app-collection-child>
   </div>
 </div>

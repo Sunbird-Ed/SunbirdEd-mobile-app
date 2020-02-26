@@ -6,7 +6,8 @@ import { Profile, ProfileService, UpdateServerProfileInfoRequest } from 'sunbird
 import { AppGlobalService } from '@app/services/app-global-service.service';
 import { CommonUtilService } from '@app/services/common-util.service';
 import { PopoverController, Platform, MenuController } from '@ionic/angular';
-import { Subscription } from 'rxjs/Subscription';
+import { Subscription } from 'rxjs';
+import { finalize } from 'rxjs/operators';
 
 enum RecoveryType {
   PHONE = 'phone',
@@ -35,12 +36,12 @@ export class AccountRecoveryInfoComponent implements OnInit {
   samePhoneErr = false;
 
   constructor(@Inject('PROFILE_SERVICE') private profileService: ProfileService,
-    private telemetryGeneratorService: TelemetryGeneratorService,
-    private appGlobalService: AppGlobalService,
-    private commonUtilService: CommonUtilService,
-    private popOverCtrl: PopoverController,
-    public platform: Platform,
-    private menuCtrl: MenuController) { }
+              private telemetryGeneratorService: TelemetryGeneratorService,
+              private appGlobalService: AppGlobalService,
+              private commonUtilService: CommonUtilService,
+              private popOverCtrl: PopoverController,
+              public  platform: Platform,
+              private menuCtrl: MenuController) { }
 
   ngOnInit() {
     this.recoveryIdType = (this.recoveryPhone.length > 0) ? RecoveryType.PHONE : RecoveryType.EMAIL;
@@ -77,13 +78,14 @@ export class AccountRecoveryInfoComponent implements OnInit {
       let loader = await this.commonUtilService.getLoader();
       const req: UpdateServerProfileInfoRequest = await this.getReqPayload(type);
       await loader.present();
-      this.profileService.updateServerProfile(req)
-        .finally(async () => {
+      this.profileService.updateServerProfile(req).pipe(
+        finalize(async () => {
           if (loader) {
             await loader.dismiss();
             loader = undefined;
           }
         })
+      )
         .subscribe((data: any) => {
           if (data && data.response === 'SUCCESS') {
             this.popOverCtrl.dismiss({ isEdited: true });
@@ -118,9 +120,7 @@ export class AccountRecoveryInfoComponent implements OnInit {
     this.telemetryGeneratorService.generateImpressionTelemetry(
       ImpressionType.VIEW, '',
       PageId.RECOVERY_ACCOUNT_ID_POPUP,
-      Environment.USER, '', '', '',
-      undefined,
-      undefined
+      Environment.USER
     );
   }
 

@@ -1,5 +1,5 @@
 import { Location } from '@angular/common';
-import { Subscription } from 'rxjs/Subscription';
+import { Subscription } from 'rxjs';
 import { SbGenericPopoverComponent } from 'app/components/popups/sb-generic-popover/sb-generic-popover.component';
 import { ActivatedRoute, Router, NavigationExtras } from '@angular/router';
 import { Component, Inject, NgZone } from '@angular/core';
@@ -42,6 +42,7 @@ import { Map } from 'app/telemetryutil';
 import { PreferenceKey, RouterLinks } from 'app/app.constant';
 import { EditDeletePopoverComponent } from '../edit-delete-popover/edit-delete-popover.component';
 import { GroupDetailNavPopover } from '../group-detail-nav-popover/group-detail-nav-popover';
+import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-group-details',
@@ -108,9 +109,10 @@ export class GroupDetailsPage {
     };
 
     this.zone.run(() => {
-      this.profileService.getAllProfiles(profileRequest)
-        .map((profiles) => profiles.filter((profile) => !!profile.handle))
-        .toPromise()
+      this.profileService.getAllProfiles(profileRequest).pipe(
+        map((profiles) => profiles.filter((profile) => !!profile.handle))
+      )
+      .toPromise()
         .then((profiles) => {
           this.zone.run(async () => {
             await loader.dismiss();

@@ -66,7 +66,6 @@ export enum PageId {
     SETTINGS_DEVICE_TAGS = 'settings-device-tags',
     SETTINGS_SUPPORTS = 'settings-supports',
     SETTINGS_ABOUT_US = 'settings-about-us',
-    ABOUT_APP = 'about-app',
     USERS_GROUPS = 'users-groups',
     CREATE_USER = 'create-profile',
     CREATE_GROUP = 'create-group',
@@ -120,6 +119,9 @@ export enum PageId {
     EXTERNAL_USER_VERIFICATION_POPUP = 'user-verification-popup',
     FAQ_REPORT_ISSUE = 'faq-report-issue',
     UPDATE_WEBVIEW_POPUP = 'update-webview-popup',
+    SHARE_CONTENT_POPUP = 'share-content-popup',
+    SHARE_APP_POPUP = 'share-app-popup',
+    IMPORT_CONTENT_POPUP = 'import-content-popup'
 }
 export enum LogType {
     NOTIFICATION = 'notification'
@@ -162,10 +164,16 @@ export enum InteractType {
     LOCATION_UNCHANGED = 'location-unchanged',
     VISIBLE = 'visible',
     NOT_VISIBLE = 'not-visible',
-    QUIZ_DEEPLINK = 'quiz-deeplink'
+    LICENSE_CARD_COLLAPSED = 'license-card-collapsed',
+    LICENSE_CARD_EXPANDED = 'license-card-expanded',
+    QUIZ_DEEPLINK = 'quiz-deeplink',
+    DELETE_CHECKED = 'delete-checked',
+    DELETE_UNCHECKED = 'delete-unchecked'
 }
 
+
 export enum InteractSubtype {
+    PRINT_PDF_CLICKED = 'print-pdf-clicked',
     MERGE_ACCOUNT_INITIATED = 'merge-account-initiated',
     MERGE_ACCOUNT_SUCCESS = 'merge-account-success',
     MERGE_ACCOUNT_FAILED = 'merge-account-failed',
@@ -191,9 +199,9 @@ export enum InteractSubtype {
     BOOK_LIST_END_REACHED = 'book-list-end-reached',
     RECENTLY_VIEWED_END_REACHED = 'recently-viewed-end-reached',
     SHARE_COURSE_INITIATED = 'share-course-initiated',
-    SHARE_LIBRARY_INITIATED = 'share-library-initiated',
+    SHARE_CONTENT_INITIATED = 'share-content-initiated',
     SHARE_COURSE_SUCCESS = 'share-course-success',
-    SHARE_LIBRARY_SUCCESS = 'share-library-success',
+    SHARE_CONTENT_SUCCESS = 'share-content-success',
     FLAG_INITIATE = 'flag-initiated',
     FLAG_SUCCESS = 'flag-success',
     FLAG_FAILED = 'flag-failed',
@@ -344,8 +352,6 @@ export enum InteractSubtype {
     HOTCODE_PUSH_PROGRESS = 'hotcode-push-progress',
     HOTCODE_PUSH_KEY_NOT_DEFINED = 'hotcode-push-key-not-defined',
     SEARCH_HISTORY_CLICKED = 'search-history-clicked',
-    SHEEN_ANIMATION_START = 'sheen-animation-started',
-    SHEEN_ANIMATION_END = 'sheen-animation-ended',
     FILTER_CLICKED = 'filter-clicked',
     DROPDOWN_CLICKED = 'drop-down-clicked',
     SUBUNIT_CLICKED = 'sub-unit-clicked',
@@ -378,7 +384,8 @@ export enum InteractSubtype {
     STATE_DIST_CHANGED = 'state-dist-changed',
     STATE_CHANGED = 'state-changed',
     DIST_CHANGED = 'dist-changed',
-    UPDATE_WEBVIEW_CLICKED = 'update-webview-clicked'
+    UPDATE_WEBVIEW_CLICKED = 'update-webview-clicked',
+    CREDITS_CLICKED = 'credits-clicked'
 }
 
 export enum ID {
@@ -388,9 +395,14 @@ export enum ID {
     USER_VERIFICATION_FAILED = 'ext-user-verify-fail',
     USER_VERIFICATION_SUCCESS = 'ext-user-verify-success',
     SUBMIT_CLICKED = 'submit-clicked',
+    LICENSE_CARD_CLICKED = 'license-card-cliked',
     QUIZ = 'quiz',
     IP_BASED_LOCATION_SUGGESTION = 'ip-based-location-suggestion',
-    DEEPLINK_CLICKED = 'deeplink-clicked'
+    DEEPLINK_CLICKED = 'deeplink-clicked',
+    SHARE = 'share-clicked',
+    SHARE_CONFIRM = 'share-confirm-clicked',
+    APP_LAUNCH = 'app-launch',
+    LOAD_CLICKED = 'load-clicked'
 }
 
 export enum ActionButtonType {
@@ -406,8 +418,10 @@ export enum CorReleationDataType {
     BOARD = 'Board',
     MEDIUM = 'Medium',
     CLASS = 'Class',
+    DOWNLOADS = 'Downloads',
     SUBJECT = 'Subject',
     USERTYPE = 'UserType',
+    DISCOVERY_TYPE = 'DiscoveryType',
     DEEPLINK = 'Deeplink'
 }
 

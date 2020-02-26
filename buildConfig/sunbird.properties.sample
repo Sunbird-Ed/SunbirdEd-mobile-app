@@ -6,7 +6,6 @@ app_name = APP_NAME
 app_version_code = APP_VERSION_CODE
 // Dev Enironment properties
 dev_base_url = DEV_BASE_URL
-dev_device_register_base_url= DEV_DEVICE_REGISTER_BASE_URL
 dev_mobile_app_key = DEV_MOBILE_APP_KEY
 dev_mobile_app_secret = DEV_MOBILE_APP_SECRET
 dev_channel_id = DEV_CHANNEL_ID
@@ -16,7 +15,6 @@ dev_deeplink_ncert_url = DEV_DEEPLINK_NCERT_URL
 dev_oauth_redirect_url = DEV_OATH_REDIRECT_URL
 // Staging envornment properties.
 staging_base_url = STAGING_BASE_URL
-staging_device_register_base_url= STAGING_DEVICE_REGISTER_BASE_URL
 staging_mobile_app_key = STAGING_MOBILE_APP_KEY
 staging_mobile_app_secret = STAGING_MOBILE_APP_SECRET
 staging_channel_id = STAGING_CHANNEL_ID
@@ -26,7 +24,6 @@ staging_deeplink_ncert_url = STAGING_DEEPLINK_NCERT_URL
 staging_oauth_redirect_url = STAGING_OATH_REDIRECT_URL
 // Production envornment properties.
 production_base_url = PRODUCTION_BASE_URL
-production_device_register_base_url= PRODUCTION_DEVICE_REGISTER_BASE_URL
 production_mobile_app_key = PRODUCTION_MOBILE_APP_KEY
 production_mobile_app_secret = PRODUCTION_MOBILE_APP_SECRET
 production_channel_id = PRODUCTION_CHANNEL_ID

@@ -5,5 +5,5 @@ export interface ContentInfo {
     rollUp: Rollup;
     correlationList: CorrelationData[];
     hierachyInfo: HierarchyInfo[];
-    course?:Course
+    course?: Course;
 }

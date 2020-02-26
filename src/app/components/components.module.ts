@@ -22,7 +22,6 @@ import { IonicRatingModule, RatingComponent } from 'ionic4-rating';
 import { ContentRatingAlertComponent } from './content-rating-alert/content-rating-alert.component';
 import { DetailCardComponent } from './detail-card/detail-card.component';
 import { FileSizePipe } from '@app/pipes/file-size/file-size';
-import { BookmarkComponent } from './bookmark/bookmark.component';
 import { DialogPopupComponent } from './popups/dialog-popup/dialog-popup.component';
 import { SbDownloadPopupComponent } from './popups/sb-download-popup/sb-download-popup.component';
 import { UpgradePopoverComponent } from './popups/upgrade-popover/upgrade-popover.component';
@@ -36,7 +35,6 @@ import { ReportAlertComponent } from '../reports/report-alert/report-alert.compo
 import { ProfileAvatarComponent } from './profile-avatar/profile-avatar.component';
 import { NotificationItemComponent } from './notification-item/notification-item.component';
 import { AssessmentDetailsComponent } from './assessment-details/assessment-details.component';
-import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 import { ViewCreditsComponent } from './popups/view-credits/view-credits.component';
 import { SkeletonItemComponent } from './skeleton-item/skeleton-item.component';
 import { FilteroptionComponent } from './filteroption/filteroption.component';
@@ -45,6 +43,9 @@ import { AccountRecoveryInfoComponent } from './popups/account-recovery-id/accou
 import { EnrollmentDetailsComponent } from './enrollment-details/enrollment-details.component';
 import { FilterPipe } from '@app/pipes/filter/filter.pipe';
 import { TeacherIdVerificationComponent } from './popups/teacher-id-verification-popup/teacher-id-verification-popup.component';
+import { SbSharePopupComponent } from './popups/sb-share-popup/sb-share-popup.component';
+import { SbAppSharePopupComponent } from './popups/sb-app-share-popup/sb-app-share-popup.component';
+import {ImportPopoverComponent} from './popups/import-popover/import-popover.component';
 
 @NgModule({
   declarations: [
@@ -63,7 +64,6 @@ import { TeacherIdVerificationComponent } from './popups/teacher-id-verification
     ContentActionsComponent,
     ContentRatingAlertComponent,
     DetailCardComponent,
-    BookmarkComponent,
     DialogPopupComponent,
     SbDownloadPopupComponent,
     UpgradePopoverComponent,
@@ -83,7 +83,10 @@ import { TeacherIdVerificationComponent } from './popups/teacher-id-verification
     SbInsufficientStoragePopupComponent,
     AccountRecoveryInfoComponent,
     EnrollmentDetailsComponent,
-    TeacherIdVerificationComponent
+    TeacherIdVerificationComponent,
+    SbSharePopupComponent,
+    SbAppSharePopupComponent,
+    ImportPopoverComponent
   ],
   imports: [
     CommonModule,
@@ -92,7 +95,6 @@ import { TeacherIdVerificationComponent } from './popups/teacher-id-verification
     IonicModule,
     ReactiveFormsModule,
     PipesModule,
-    NgxDatatableModule,
     IonicRatingModule,
     TranslateModule.forChild(),
   ],
@@ -116,7 +118,10 @@ import { TeacherIdVerificationComponent } from './popups/teacher-id-verification
     SbInsufficientStoragePopupComponent,
     AccountRecoveryInfoComponent,
     EnrollmentDetailsComponent,
-    TeacherIdVerificationComponent
+    TeacherIdVerificationComponent,
+    SbSharePopupComponent,
+    SbAppSharePopupComponent,
+    ImportPopoverComponent
   ],
   exports: [
     ApplicationHeaderComponent,
@@ -134,7 +139,6 @@ import { TeacherIdVerificationComponent } from './popups/teacher-id-verification
     ContentActionsComponent,
     ContentRatingAlertComponent,
     DetailCardComponent,
-    BookmarkComponent,
     DialogPopupComponent,
     SbDownloadPopupComponent,
     UpgradePopoverComponent,
@@ -152,7 +156,10 @@ import { TeacherIdVerificationComponent } from './popups/teacher-id-verification
     SbInsufficientStoragePopupComponent,
     AccountRecoveryInfoComponent,
     EnrollmentDetailsComponent,
-    TeacherIdVerificationComponent
+    TeacherIdVerificationComponent,
+    SbSharePopupComponent,
+    SbAppSharePopupComponent,
+    ImportPopoverComponent
   ],
   providers: [FileSizePipe, FilterPipe,  Keyboard]
 })
