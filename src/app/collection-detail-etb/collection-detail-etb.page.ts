@@ -605,12 +605,6 @@ export class CollectionDetailEtbPage implements OnInit {
     if (this.contentDetail.contentData.attributions && this.contentDetail.contentData.attributions.length) {
       this.contentDetail.contentData.attributions ? this.contentDetail.contentData.attributions.join(', ') : '';
     }
-    if (this.contentDetail.contentData.me_totalRatingsCount) {
-      const rating = this.contentDetail.contentData.me_totalRatingsCount;
-      if (rating && rating[0]) {
-        this.contentDetail.contentData.me_totalRatingsCount = rating[0];
-      }
-    }
 
     // User Rating
     const contentFeedback: any = data.contentFeedback ? data.contentFeedback : [];
