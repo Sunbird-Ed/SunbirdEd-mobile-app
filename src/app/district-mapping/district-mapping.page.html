@@ -19,11 +19,18 @@
           <span style="color: red;">&nbsp;*</span>
         </ion-text>
       </ion-label>
-      <ion-select #stateSelect [selectedText]="stateSelect?.value?.name" [disabled]="!stateList.length"
-        [multiple]="false" [interfaceOptions]="{cssClass: 'select-box'}" [placeholder]="'SEARCH_STATE' | translate"
-        [okText]="'BTN_SUBMIT' | translate" [cancelText]="'CANCEL' | translate"
-        (ionChange)="selectState(stateSelect.value.name , stateSelect.value.id, stateSelect.value.code);">
-        <ion-select-option *ngFor="let state of stateList" [value]="state">
+      <ion-select #stateSelect
+                  [selectedText]="stateSelect?.value?.name"
+                  [disabled]="!stateList.length"
+                  [multiple]="false"
+                  [interfaceOptions]="{cssClass: 'select-box'}"
+                  [placeholder]="'STATE_OPTION_TEXT' | translate"
+                  [okText]="'BTN_SUBMIT' | translate"
+                  [cancelText]="'CANCEL' | translate"
+                  (ionChange)="selectState(stateSelect.value.name , stateSelect.value.id, stateSelect.value.code);">
+        <ion-select-option
+                *ngFor="let state of stateList"
+                [value]="state">
           {{state?.name}}
           &lrm;
         </ion-select-option>
@@ -34,11 +41,18 @@
           <span style="color: red;">&nbsp;*</span>
         </ion-text>
       </ion-label>
-      <ion-select #districtSelect [selectedText]="districtSelect?.value?.name" [disabled]="!districtList.length"
-        [multiple]="false" [interfaceOptions]="{cssClass: 'select-box'}" [placeholder]="'SEARCH_DISTRICT' | translate"
-        [okText]="'BTN_SUBMIT' | translate" [cancelText]="'CANCEL' | translate"
-        (ionChange)="selectDistrict(districtSelect.value.name , districtSelect.value.code);">
-        <ion-select-option *ngFor="let district of districtList" [value]="district">
+      <ion-select #districtSelect
+                  [selectedText]="districtSelect?.value?.name"
+                  [disabled]="!districtList.length"
+                  [multiple]="false"
+                  [interfaceOptions]="{cssClass: 'select-box'}"
+                  [placeholder]="'DISTRICT_OPTION_TEXT' | translate"
+                  [okText]="'BTN_SUBMIT' | translate"
+                  [cancelText]="'CANCEL' | translate"
+                  (ionChange)="selectDistrict(districtSelect.value.name , districtSelect.value.code);">
+        <ion-select-option
+                *ngFor="let district of districtList"
+                [value]="district">
           {{district?.name}}
           &lrm;
         </ion-select-option>

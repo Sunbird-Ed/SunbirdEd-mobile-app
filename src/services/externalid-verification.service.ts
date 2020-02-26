@@ -4,7 +4,9 @@ import { AppGlobalService } from './app-global-service.service';
 import { Observable } from 'rxjs';
 import { PopoverController } from '@ionic/angular';
 import { FormAndFrameworkUtilService } from './formandframeworkutil.service';
-import { TeacherIdVerificationComponent } from '@app/app/components/popups/teacher-id-verification-popup/teacher-id-verification-popup.component';
+import {
+    TeacherIdVerificationComponent
+} from '@app/app/components/popups/teacher-id-verification-popup/teacher-id-verification-popup.component';
 import { ProfileConstants } from '@app/app/app.constant';
 import { map } from 'rxjs/operators';
 import { SplaschreenDeeplinkActionHandlerDelegate } from './sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
@@ -86,15 +88,15 @@ export class ExternalIdVerificationService {
                 resolve(false);
             }
         });
-      }
+    }
 
-      checkJoinTraining() {
-          if (this.appGlobalService.isJoinTraningOnboardingFlow) {
+    checkJoinTraining() {
+        if (this.appGlobalService.isJoinTraningOnboardingFlow) {
             return new Promise<boolean>(async (resolve) => {
-            await this.localCourseService.checkCourseRedirect();
-            this.appGlobalService.isJoinTraningOnboardingFlow = false;
-            resolve(true);
-          });
+                await this.localCourseService.checkCourseRedirect();
+                this.appGlobalService.isJoinTraningOnboardingFlow = false;
+                resolve(true);
+            });
         }
-      }
+    }
 }

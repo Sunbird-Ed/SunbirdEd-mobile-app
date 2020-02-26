@@ -41,15 +41,15 @@ export class LogoutHandlerService {
       InteractSubtype.LOGOUT_INITIATE, '');
 
     this.preferences.getString(PreferenceKey.GUEST_USER_ID_BEFORE_LOGIN).pipe(
-      tap(async (guest_user_id: string) => {
-        if (!guest_user_id) {
+      tap(async (guestUserId: string) => {
+        if (!guestUserId) {
           await this.preferences.putString(PreferenceKey.SELECTED_USER_TYPE, ProfileType.TEACHER).toPromise();
         }
 
         splashscreen.clearPrefs();
       }),
-      mergeMap((guest_user_id: string) => {
-        return this.profileService.setActiveSessionForProfile(guest_user_id);
+      mergeMap((guestUserId: string) => {
+        return this.profileService.setActiveSessionForProfile(guestUserId);
       }),
       mergeMap(() => {
         return this.authService.resignSession();
@@ -89,8 +89,8 @@ export class LogoutHandlerService {
   }
 
   private generateLogoutInteractTelemetry(interactType: InteractType, interactSubtype: InteractSubtype, uid: string) {
-    const valuesMap = new Map();
-    valuesMap.set('UID', uid);
+    const valuesMap = {};
+    valuesMap['UID'] = uid;
     this.telemetryGeneratorService.generateInteractTelemetry(interactType,
       interactSubtype,
       Environment.HOME,

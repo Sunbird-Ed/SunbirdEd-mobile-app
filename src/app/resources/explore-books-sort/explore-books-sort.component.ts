@@ -3,7 +3,6 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { NavParams, Platform, ModalController } from '@ionic/angular';
 import { CommonUtilService } from '@app/services/common-util.service';
 import { FilterValue } from 'sunbird-sdk';
-import { Environment, InteractSubtype, InteractType, PageId } from '@app/services/telemetry-constants';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 
 @Component({
@@ -41,22 +40,7 @@ export class ExploreBooksSortComponent implements OnInit {
     this.initForm();
   }
 
-  ngOnInit() {
-    this.backButtonFunc = this.platform.backButton.subscribeWithPriority(11, () => {
-      this.boardSelect.close();
-      this.mediumSelect.close();
-      this.modalCtrl.dismiss(null);
-
-      this.telemetryGeneratorService.generateInteractTelemetry(
-        InteractType.TOUCH,
-        InteractSubtype.DEVICE_BACK_CLICKED,
-        Environment.HOME,
-        PageId.EXPLORE_MORE_CONTENT,
-      );
-
-      this.backButtonFunc.unsubscribe();
-    });
-  }
+  ngOnInit() {}
 
   initForm() {
     this.searchForm = this.navParams.get('searchForm');

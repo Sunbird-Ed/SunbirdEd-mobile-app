@@ -12,6 +12,9 @@ global.cordova = {
         },
         diagnostic: {
             switchToSettings: () => { }
+        },
+        printer: {
+            print: () => {}
         }
     },
     file: {
@@ -45,6 +48,12 @@ global.FCMPlugin = {
     },
     onTokenRefresh: () => { },
     onNotification: () => { }
+}
+
+global.splashscreen = {
+    markImportDone: () => { },
+    hide: () => { },
+    clearPrefs: () => { },
 }
 
 global.codePush = {

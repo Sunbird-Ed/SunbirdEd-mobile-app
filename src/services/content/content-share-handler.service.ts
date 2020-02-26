@@ -38,6 +38,18 @@ export class ContentShareHandlerService {
     this.generateShareInteractEvents(InteractType.TOUCH,
       InteractSubtype.SHARE_CONTENT_INITIATED,
       content.contentData.contentType, corRelationList, rollup);
+    if (content.hierarchyInfo && content.hierarchyInfo.length > 0) {
+      const contentDetailRequest: ContentDetailRequest = {
+        contentId: content.hierarchyInfo[0].identifier,
+        attachFeedback: false,
+        attachContentAccess: false,
+        emitUpdateIfAny: false
+      };
+      await this.contentService.getContentDetails(contentDetailRequest).toPromise()
+        .then((contentDetail: Content) => {
+          content = contentDetail;
+        });
+    }
     let exportContentRequest: ContentExportRequest;
     if (shareParams && shareParams.byFile) {
       exportContentRequest = {

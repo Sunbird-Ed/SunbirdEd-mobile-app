@@ -7,6 +7,7 @@
   </ion-header>
   <div class="sb-popover-items popover-ratings">
       <rating [(ngModel)]="userRating" (ngModelChange)="rateContent($event)"></rating>
+    <p class="content-rating-detail ion-padding-bottom ion-padding-top" *ngIf="!userRating">{{'CONTENT_RATING_SUB_HEADING' | translate}}</p>
       <div class="sb-popover-content-details" *ngIf="userRating">
         <div class="main-title">
           <div class="meta-info">
@@ -14,7 +15,7 @@
             {{ratingMetaInfo?.ratingText}}
           </div>
           <div class="rating-qstn">
-            {{ratingMetaInfo?.ratingQuestion}}
+            {{'RATING_QUESTION' | translate}}
             </div>
         </div>
         <div class="rating-opts">

@@ -21,7 +21,7 @@ export class RatingHandler {
     private userRating = 0;
     private userComment: string;
     public telemetryObject: TelemetryObject;
-    useNewComments = false;
+    public useNewComments = false;
     constructor(
         @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
         private popoverCtrl: PopoverController,
@@ -118,6 +118,7 @@ export class RatingHandler {
     public resetRating() {
         this.userRating = 0;
         this.userComment = '';
+        this.useNewComments = false;
     }
 
     private async showAppRatingPopup() {

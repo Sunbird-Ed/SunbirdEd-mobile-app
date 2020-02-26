@@ -111,7 +111,8 @@ export class BatchConstants {
         'creatorLastName',
         'identifier',
         'id',
-        'enrollmentEndDate'
+        'enrollmentEndDate',
+        'cert_templates'
     ];
     // createdFor ,courseAdditionalInfo, participant, updatedDate, createdDate, courseCreator, mentors
 }
@@ -175,6 +176,7 @@ export class EventTopics {
 export class ShareUrl {
     public static readonly CONTENT = '/play/content/';
     public static readonly COLLECTION = '/play/collection/';
+    public static readonly COURSE = '/explore-course/course/';
 }
 
 export class MenuOverflow {
