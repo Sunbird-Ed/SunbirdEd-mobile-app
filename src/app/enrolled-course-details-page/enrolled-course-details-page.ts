@@ -642,13 +642,6 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
         this.course.attributions = this.course.attributions.join(', ');
       }
 
-      if (this.course.me_totalRatings) {
-        const rating = this.course.me_totalRatings.split('.');
-        if (rating && rating[0]) {
-          this.course.me_totalRatings = rating[0];
-        }
-      }
-
       // User Rating
       const contentFeedback: any = data.contentFeedback ? data.contentFeedback : [];
       if (contentFeedback !== undefined && contentFeedback.length !== 0) {
