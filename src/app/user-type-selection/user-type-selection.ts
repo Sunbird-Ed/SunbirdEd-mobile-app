@@ -215,7 +215,7 @@ export class UserTypeSelectionPage implements OnInit {
       initTabs(this.container, GUEST_STUDENT_TABS);
     }
 
-    if (this.appGlobalService.isProfileSettingsCompleted) {
+    if (this.appGlobalService.isProfileSettingsCompleted && this.appGlobalService.isOnBoardingCompleted) {
       this.navigateToTabsAsGuest();
     } else if (this.appGlobalService.DISPLAY_ONBOARDING_CATEGORY_PAGE) {
       if (isUserTypeChanged) {
