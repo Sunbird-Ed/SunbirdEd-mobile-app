@@ -516,7 +516,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     pageId = pageId.toLowerCase();
     const env = pageId.localeCompare(PageId.PROFILE) ? Environment.HOME : Environment.USER;
     const corRelationList: Array<CorrelationData> = [];
-    if (pageId === 'resources') {
+    if (pageId === PageId.LIBRARY) {
       const currentProfile: Profile = this.appGlobalService.getCurrentUser();
       corRelationList.push({ id: currentProfile.board ? currentProfile.board.join(',') : '', type: CorReleationDataType.BOARD });
       corRelationList.push({ id: currentProfile.medium ? currentProfile.medium.join(',') : '', type: CorReleationDataType.MEDIUM });
@@ -553,11 +553,11 @@ export class AppComponent implements OnInit, AfterViewInit {
           SunbirdSdk.instance.updateContentServiceConfig({
             host: response.actionType === 'connected' ? response.ip : undefined
           });
-  
+
           SunbirdSdk.instance.updatePageServiceConfig({
             host: response.actionType === 'connected' ? response.ip : undefined
           });
-  
+
           SunbirdSdk.instance.updateTelemetryConfig({
             host: response.actionType === 'connected' ? response.ip : undefined
           });

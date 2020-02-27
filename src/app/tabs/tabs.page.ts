@@ -5,7 +5,7 @@ import { Component, ViewChild, ViewEncapsulation, Inject, OnInit, AfterViewInit 
 import { IonTabs, Events, ToastController } from '@ionic/angular';
 import { ContainerService } from '@app/services/container.services';
 import { AppGlobalService } from '@app/services/app-global-service.service';
-import { ProfileConstants } from '@app/app/app.constant';
+import {EventTopics, ProfileConstants} from '@app/app/app.constant';
 import { CommonUtilService } from '@app/services/common-util.service';
 import { ExternalIdVerificationService } from '@app/services/externalid-verification.service';
 
@@ -140,7 +140,13 @@ export class TabsPage implements OnInit, AfterViewInit {
 
   ionTabsDidChange(event: any) {
     this.tabs[2].root = event.tab;
-    this.events.publish('tab.change', event.tab);
+    this.events.publish(EventTopics.TAB_CHANGE, event.tab);
+    if (event.tab === 'resources') {
+      event.tab = PageId.LIBRARY;
+      this.events.publish(EventTopics.TAB_CHANGE, event.tab);
+    } else {
+      this.events.publish(EventTopics.TAB_CHANGE, event.tab);
+    }
     this.commonUtilService.currentTabName = this.tabRef.getSelected();
   }
 
