@@ -48,7 +48,7 @@ describe('FormAndFrameworkUtilService', () => {
   const mockAppGlobalService: Partial<AppGlobalService> = {
     setLibraryFilterConfig: jest.fn(),
     setCourseFilterConfig: jest.fn(),
-    setDailCodeConfig: jest.fn(),
+    setSupportedUrlRegexConfig: jest.fn(),
     setLocationConfig: jest.fn(),
     setRootOrganizations: jest.fn()
   };
@@ -551,49 +551,6 @@ describe('FormAndFrameworkUtilService', () => {
     });
   });
 
-  describe('getDailCodeConfig()', () => {
-
-    it('should invoke invokeDialCodeFormApi() if cached response is not available', (done) => {
-      // arrange
-      mockAppGlobalService.getCachedDialCodeConfig = jest.fn(() => undefined);
-      mockFormService.getForm = jest.fn(() => of(mockDialCodeConfigResponse));
-      jest.spyOn<any, any>(formAndFrameworkUtilService, 'invokeDialCodeFormApi');
-      // act
-      // assert
-      formAndFrameworkUtilService.getDailCodeConfig().then((response) => {
-        expect(formAndFrameworkUtilService['invokeDialCodeFormApi']).toHaveBeenCalled();
-        done();
-      });
-    });
-  });
-
-  describe('invokeDialCodeFormApi()', () => {
-
-    it('should return dialcode config', (done) => {
-      // arrange
-      mockFormService.getForm = jest.fn(() => of(mockDialCodeConfigResponse));
-      // act
-      // assert
-      formAndFrameworkUtilService['invokeDialCodeFormApi']();
-      setTimeout(() => {
-        expect(mockAppGlobalService.setDailCodeConfig).toHaveBeenCalledWith('sample_regex');
-        done();
-      }, 0);
-    });
-
-    it('should reject the error if API throws some error', (done) => {
-      // arrange
-      mockFormService.getForm = jest.fn(() => throwError({ error: 'API_ERROR' }));
-      // act
-      // assert
-      formAndFrameworkUtilService['invokeDialCodeFormApi']();
-      setTimeout(() => {
-        expect(mockAppGlobalService.setDailCodeConfig).not.toHaveBeenCalledWith('sample_regex');
-        done();
-      }, 0);
-    });
-  });
-
   describe('getLocationConfig()', () => {
 
     it('should invoke invokeLocationConfigFormApi if cached response is not available', (done) => {
@@ -665,12 +622,12 @@ describe('FormAndFrameworkUtilService', () => {
 
     it('should invoke getDailCodeConfig', (done) => {
       // arrange
-      jest.spyOn(formAndFrameworkUtilService, 'getDailCodeConfig');
+      jest.spyOn(formAndFrameworkUtilService, 'invokeUrlRegexFormApi');
       // act
       // assert
       formAndFrameworkUtilService.init();
       setTimeout((() => {
-        expect(formAndFrameworkUtilService.getDailCodeConfig).toHaveBeenCalled();
+        expect(formAndFrameworkUtilService.invokeUrlRegexFormApi).toHaveBeenCalled();
         done();
       }), 0);
     });
