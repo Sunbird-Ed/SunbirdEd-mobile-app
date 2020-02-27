@@ -15,7 +15,7 @@
             {{ratingMetaInfo?.ratingText}}
           </div>
           <div class="rating-qstn">
-            {{'RATING_QUESTION' | translate}}
+            {{ratingMetaInfo?.question ? ratingMetaInfo.question : 'RATING_QUESTION' | translate}}
             </div>
         </div>
         <div class="rating-opts">
