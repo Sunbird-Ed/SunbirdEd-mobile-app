@@ -272,6 +272,7 @@ export class SunbirdQRScanner {
         if (scannedData === 'skip') {
           if (this.appGlobalService.DISPLAY_ONBOARDING_CATEGORY_PAGE) {
             const navigationExtras: NavigationExtras = { state: { stopScanner: true } };
+            this.stopScanner();
             this.router.navigate([`/${RouterLinks.PROFILE_SETTINGS}`], navigationExtras);
           } else {
             this.getProfileSettingConfig();

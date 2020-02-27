@@ -656,6 +656,6 @@ export class ProfileSettingsPage implements OnInit {
       Environment.ONBOARDING,
       PageId.ONBOARDING_PROFILE_PREFERENCES,
     );
-    this.scanner.startScanner(PageId.ONBOARDING_PROFILE_PREFERENCES, false);
+    this.scanner.startScanner(PageId.ONBOARDING_PROFILE_PREFERENCES, true);
   }
 }
