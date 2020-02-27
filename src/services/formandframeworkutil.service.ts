@@ -49,7 +49,7 @@ export class FormAndFrameworkUtilService {
         await this.preferences.getString(PreferenceKey.SELECTED_LANGUAGE_CODE).toPromise().then(val => {
             this.selectedLanguage = val ? val : 'en' ;
         });
-        await this.getDailCodeConfig();
+        this.invokeUrlRegexFormApi();
     }
 
     getWebviewSessionProviderConfig(context: 'login' | 'merge' | 'migrate'): Promise<WebviewSessionProviderConfig> {
@@ -92,13 +92,29 @@ export class FormAndFrameworkUtilService {
             }
         });
     }
-    /**
-     *  this method gets the cached dial code config
-     */
-    async getDailCodeConfig() {
-        if (!this.appGlobalService.getCachedDialCodeConfig()) {
-            this.invokeDialCodeFormApi();
+
+    async getDialcodeRegexFormApi(): Promise<string> {
+        const urlRegexConfig = this.appGlobalService.getCachedSupportedUrlRegexConfig();
+        if (!urlRegexConfig || !urlRegexConfig.dialcode) {
+            const regObj = await this.invokeUrlRegexFormApi();
+            if (regObj && regObj.dialcode) {
+                return regObj.dialcode;
+            }
+            return '';
         }
+        return urlRegexConfig.dialcode;
+    }
+
+    async getDeeplinkRegexFormApi(): Promise<string> {
+        const urlRegexConfig = this.appGlobalService.getCachedSupportedUrlRegexConfig();
+        if (!urlRegexConfig || !urlRegexConfig.identifier) {
+            const regObj = await this.invokeUrlRegexFormApi();
+            if (regObj && regObj.identifier) {
+                return regObj.identifier;
+            }
+            return '';
+        }
+        return urlRegexConfig.identifier;
     }
 
     /**
@@ -259,29 +275,28 @@ export class FormAndFrameworkUtilService {
             });
     }
     /**
-     * Network call to form api to fetch dial code config
+     * Network call to form api to fetch Supported URL regex
      */
-     async invokeDialCodeFormApi() {
+    invokeUrlRegexFormApi(): Promise<any> {
         const req: FormRequest = {
             type: 'config',
-            subType: 'dialcode',
-            action: 'get'
+            subType: 'supportedUrl',
+            action: 'regex'
         };
-        this.formService.getForm(req).toPromise()
-            .then((res: any) => {
-                const data = res.form ? res.form.data.fields : res.data.fields;
-                if (res && data.length) {
-                    for (const ele of data) {
-                        if (ele.code === 'dialcode') {
-                            this.appGlobalService.setDailCodeConfig(ele.values);
-                        }
-                    }
+        return this.formService.getForm(req).toPromise().then((res: any) => {
+            const data = res.form ? res.form.data.fields : res.data.fields;
+            if (res && data.length) {
+                const regObj = {};
+                for (const ele of data) {
+                    regObj[ele.code] = ele.values;
                 }
-
-            }).catch((error: any) => {
-               console.error('error while fetching dial code reg ex ' , error);
-            });
-
+                this.appGlobalService.setSupportedUrlRegexConfig(regObj);
+                return regObj;
+            }
+        }).catch((error: any) => {
+            console.error('error while fetching supported url reg ex ', error);
+            return undefined;
+        });
     }
 
     /**

@@ -26,7 +26,6 @@ export class QRScannerResultHandler {
   private static readonly CORRELATION_TYPE = 'qr';
   source: string;
   inAppBrowserRef: any;
-  dailCodeRegExpression: RegExp;
   scannedUrlMap: object;
 
   constructor(
@@ -42,23 +41,16 @@ export class QRScannerResultHandler {
   ) {
   }
 
-  private async getDailCodeRegularExpression(): Promise<RegExp> {
-    if (!this.appGlobalService.getCachedDialCodeConfig()) {
-      await this.formFrameWorkUtilService.getDailCodeConfig();
-      return this.appGlobalService.getCachedDialCodeConfig();
-    } else {
-      return this.appGlobalService.getCachedDialCodeConfig();
-    }
-  }
 
   async parseDialCode(scannedData: string): Promise<string | undefined> {
-    this.dailCodeRegExpression = await this.getDailCodeRegularExpression();
-    const execArray = (new RegExp(this.dailCodeRegExpression)).exec(scannedData);
-    if (execArray && execArray.groups) {
-      this.scannedUrlMap = execArray.groups;
-      return execArray.groups[Object.keys(execArray.groups).find((key) => !!execArray.groups[key])];
+    const dialCodeRegExpression = await this.formFrameWorkUtilService.getDialcodeRegexFormApi();
+    if (dialCodeRegExpression) {
+      const execArray = (new RegExp(dialCodeRegExpression)).exec(scannedData);
+      if (execArray && execArray.groups) {
+        this.scannedUrlMap = execArray.groups;
+        return execArray.groups[Object.keys(execArray.groups).find((key) => !!execArray.groups[key])];
+      }
     }
-
     return undefined;
   }
 
