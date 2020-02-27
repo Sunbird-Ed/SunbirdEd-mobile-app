@@ -290,36 +290,32 @@ export class CollectionDetailEtbPage implements OnInit {
     const extras = this.router.getCurrentNavigation().extras.state;
 
     if (extras) {
-      this.setExtrasData(extras);
-    }
-  }
+      this.content = extras.content;
+      this.data = extras.data;
+      this.cardData = extras.content;
+      this.batchDetails = extras.batchDetails;
+      this.pageName = extras.pageName;
+      this.depth = extras.depth;
+      this.corRelationList = extras.corRelation;
+      this.shouldGenerateEndTelemetry = extras.shouldGenerateEndTelemetry;
+      this.source = extras.source;
+      this.fromCoursesPage = extras.fromCoursesPage;
+      this.isAlreadyEnrolled = extras.isAlreadyEnrolled;
+      this.isChildClickable = extras.isChildClickable;
+      this.facets = extras.facets;
+      this.telemetryObject = ContentUtil.getTelemetryObject(extras.content);
+      // check for parent content
+      this.parentContent = extras.parentContent;
 
-  private setExtrasData(extras) {
-    this.content = extras.content;
-    this.data = extras.data;
-    this.cardData = extras.content;
-    this.batchDetails = extras.batchDetails;
-    this.pageName = extras.pageName;
-    this.depth = extras.depth;
-    this.corRelationList = extras.corRelation;
-    this.shouldGenerateEndTelemetry = extras.shouldGenerateEndTelemetry;
-    this.source = extras.source;
-    this.fromCoursesPage = extras.fromCoursesPage;
-    this.isAlreadyEnrolled = extras.isAlreadyEnrolled;
-    this.isChildClickable = extras.isChildClickable;
-    this.facets = extras.facets;
-    this.telemetryObject = ContentUtil.getTelemetryObject(extras.content);
-    // check for parent content
-    this.parentContent = extras.parentContent;
-
-    // check for parent content
-    if (this.depth) {
-      this.showDownloadBtn = false;
-      this.isDepthChild = true;
-    } else {
-      this.isDepthChild = false;
+      // check for parent content
+      if (this.depth) {
+        this.showDownloadBtn = false;
+        this.isDepthChild = true;
+      } else {
+        this.isDepthChild = false;
+      }
+      this.identifier = this.cardData.contentId || this.cardData.identifier;
     }
-    this.identifier = this.cardData.contentId || this.cardData.identifier;
   }
 
   /**
@@ -347,8 +343,16 @@ export class CollectionDetailEtbPage implements OnInit {
       this.resetVariables();
       this.shownGroup = null;
 
-      this.assignCardData();
+      if (!this.didViewLoad) {
+        this.generateRollUp();
+        const contentType = this.cardData.contentData ? this.cardData.contentData.contentType : this.cardData.contentType;
+        this.objType = contentType;
+        this.generateStartEvent(this.cardData.identifier, contentType, this.cardData.pkgVersion);
+        this.generateImpressionEvent(this.cardData.identifier, contentType, this.cardData.pkgVersion);
+        this.markContent();
+      }
 
+      this.didViewLoad = true;
       this.setContentDetails(this.identifier, true);
       this.events.subscribe(EventTopics.CONTENT_TO_PLAY, (data) => {
         this.playContent(data);
@@ -358,36 +362,6 @@ export class CollectionDetailEtbPage implements OnInit {
     this.ionContent.ionScroll.subscribe((event) => {
       this.scrollPosition = event.scrollTop;
     });
-
-    this.events.subscribe(EventTopics.DEEPLINK_COLLECTION_PAGE_OPEN, (data) => {
-      if (data.content) {
-        this.refreshContentDetails(data);
-      }
-    });
-  }
-
-  private assignCardData() {
-    if (!this.didViewLoad) {
-      this.generateRollUp();
-      const contentType = this.cardData.contentData ? this.cardData.contentData.contentType : this.cardData.contentType;
-      this.objType = contentType;
-      this.generateStartEvent(this.cardData.identifier, contentType, this.cardData.pkgVersion);
-      this.generateImpressionEvent(this.cardData.identifier, contentType, this.cardData.pkgVersion);
-      this.markContent();
-    }
-    this.didViewLoad = true;
-  }
-
-  refreshContentDetails(data) {
-    this.resetVariables();
-    this.shownGroup = null;
-
-    this.setExtrasData(data);
-
-    this.didViewLoad = false;
-    this.assignCardData();
-    this.setContentDetails(this.identifier, true);
-    this.subscribeSdkEvent();
   }
 
   openBrowser(url) {
