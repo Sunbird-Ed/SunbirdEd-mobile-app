@@ -27,37 +27,36 @@
 	<div class="fill-in-style msg-size">
 		{{'FILL_IN' | translate}}
 	</div>
-	<form novalidate [formGroup]="userForm" class="form-position">
-
+	<form novalidate [formGroup]="profileSettingsForm" class="form-position">
 		<ion-item>
 			<ion-label position="stacked" class="label-font text-uppercase align-text">{{'BOARD' | translate }}</ion-label>
-			<ion-select multiple="false" #boardSelect text-capitalize formControlName="syllabus"
-				[interfaceOptions]="boardOptions" (ionCancel)="cancelEvent()" (ionChange)="resetForm(0, true)" okText="{{'BTN_SUBMIT' | translate}}"
+			<ion-select multiple="false" #boardSelect text-capitalize formControlName="syllabus" [disabled]="!syllabusList.length"
+				[interfaceOptions]="boardOptions" (ionCancel)="cancelEvent()" okText="{{'BTN_SUBMIT' | translate}}"
 				cancelText="{{'CANCEL' | translate}}" placeholder="{{'BOARD_OPTION_TEXT' | translate}}">
-				<ion-select-option *ngFor="let eachSyllabus of syllabusList" value="{{eachSyllabus?.code}}">
-					{{eachSyllabus?.name}}&lrm;</ion-select-option>
+				<ion-select-option *ngFor="let eachSyllabus of syllabusList" value="{{eachSyllabus.code}}">
+					{{eachSyllabus.name}}&lrm;</ion-select-option>
 			</ion-select>
 		</ion-item>
 
 		<ion-item>
 			<ion-label position="stacked" class="label-font text-uppercase align-text">{{'MEDIUM' | translate }}</ion-label>
 			<ion-select formControlName="medium" #mediumSelect multiple="true" text-capitalize
-				[interfaceOptions]="mediumOptions" (ionCancel)="cancelEvent()" (ionChange)="resetForm(2, false)"
+				[interfaceOptions]="mediumOptions" (ionCancel)="cancelEvent()"
 				okText="{{'BTN_SUBMIT' | translate}}" cancelText="{{'CANCEL' | translate}}"
-				[disabled]="!(userForm.value.boards != '')" placeholder="{{'MEDIUM_OPTION_TEXT' | translate}}">
-				<ion-select-option *ngFor="let medium of mediumList" text-capitalize value="{{medium?.code}}">
-					{{medium?.name}}</ion-select-option>
+				[disabled]="!mediumList.length || !boardControl.value.length" placeholder="{{'MEDIUM_OPTION_TEXT' | translate}}">
+				<ion-select-option *ngFor="let medium of mediumList" text-capitalize value="{{medium.code}}">
+					{{medium.name}}</ion-select-option>
 			</ion-select>
 		</ion-item>
 
 		<ion-item>
 			<ion-label position="stacked" class="label-font text-uppercase align-text">{{'CLASS' | translate }}</ion-label>
-			<ion-select multiple="true" #gradeSelect text-capitalize formControlName="grades"
+			<ion-select multiple="true" #gradeSelect text-capitalize formControlName="grade"
 				[interfaceOptions]="classOptions" okText="{{'BTN_SUBMIT' | translate}}"
-				cancelText="{{'CANCEL' | translate}}" [disabled]="!(userForm.value.medium != '')" (ionCancel)="cancelEvent()"
-				(ionChange)="enableSubmit()" placeholder="{{'GRADE_OPTION_TEXT' | translate}}">
-				<ion-select-option *ngFor="let grade of gradeList" text-capitalize value="{{grade?.code}}">
-					{{grade?.name}}</ion-select-option>
+				cancelText="{{'CANCEL' | translate}}" [disabled]="!gradeList.length || !mediumControl.value.length" (ionCancel)="cancelEvent()"
+				placeholder="{{'GRADE_OPTION_TEXT' | translate}}">
+				<ion-select-option *ngFor="let grade of gradeList" text-capitalize value="{{grade.code}}">
+					{{grade.name}}</ion-select-option>
 			</ion-select>
 		</ion-item>
 
@@ -66,7 +65,7 @@
 
 <ion-footer padding no-border style="background: white;">
 	<button class="sb-btn sb-btn-md sb-btn-primary PR35 W100 ellipsis btn-block" [style.background-color]="btnColor"
-		(click)="onSubmit()" [disabled]="userForm.invalid" text-uppercase>
+		(click)="onSubmitAttempt()" text-uppercase>
 		{{ 'BTN_SUBMIT' | translate }}
 		<ion-icon class="arrow-icon" name="arrow-round-forward"></ion-icon>
 	</button>
