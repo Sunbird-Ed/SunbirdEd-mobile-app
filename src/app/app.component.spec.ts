@@ -10,7 +10,7 @@ import {
     EventsBusService, SharedPreferences,
     TelemetryService, NotificationService,
     CodePushExperimentService, SystemSettingsService, DeviceRegisterService,
-    TelemetryAutoSyncService, SunbirdSdk, CorrelationData
+    TelemetryAutoSyncService, SunbirdSdk, CorrelationData, ProfileService
 } from 'sunbird-sdk';
 import { Platform, Events, MenuController } from '@ionic/angular';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
@@ -42,6 +42,7 @@ describe('AppComponent', () => {
         isDeviceLocationAvailable: jest.fn(() => Promise.resolve(true))
     };
     const mockDeviceRegisterService: Partial<DeviceRegisterService> = {};
+    const mockProfileService: Partial<ProfileService> = {};
     const mockEvents: Partial<Events> = { publish: jest.fn() };
     const mockEventsBusService: Partial<EventsBusService> = {
         events: jest.fn(() => of({}))
@@ -128,6 +129,7 @@ describe('AppComponent', () => {
             mockSystemSettingsService as SystemSettingsService,
             mockCodePushExperimentService as CodePushExperimentService,
             mockDeviceRegisterService as DeviceRegisterService,
+            mockProfileService as ProfileService,
             mockPlatform as Platform,
             mockStatusBar as StatusBar,
             mockTranslate as TranslateService,
