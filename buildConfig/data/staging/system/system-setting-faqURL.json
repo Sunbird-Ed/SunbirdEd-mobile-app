@@ -1,0 +1,2 @@
+﻿{"id":"api.system.settings.get.faqURL","ver":"v1","ts":"2019-11-04 10:07:39:064+0000","params":{"resmsgid":null,"msgid":null,"err":null,"status":"success","errmsg":null},"responseCode":"OK","result":{"response":{"id":"faqURL","field":"faqURL","value":"https://ntpstagingall.blob.core.windows.net/public/faq/resources/res"}}}
+
