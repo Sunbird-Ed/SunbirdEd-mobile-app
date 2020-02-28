@@ -95,26 +95,26 @@ export class ProfileSettingsPage implements OnInit, OnDestroy {
   }
 
   constructor(
-      @Inject('PROFILE_SERVICE') private profileService: ProfileService,
-      @Inject('FRAMEWORK_SERVICE') private frameworkService: FrameworkService,
-      @Inject('FRAMEWORK_UTIL_SERVICE') private frameworkUtilService: FrameworkUtilService,
-      @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
-      @Inject('DEVICE_REGISTER_SERVICE') private deviceRegisterService: DeviceRegisterService,
-      private translate: TranslateService,
-      private telemetryGeneratorService: TelemetryGeneratorService,
-      private appGlobalService: AppGlobalService,
-      private events: Events,
-      private scanner: SunbirdQRScanner,
-      private platform: Platform,
-      private commonUtilService: CommonUtilService,
-      private container: ContainerService,
-      private headerService: AppHeaderService,
-      private router: Router,
-      private appVersion: AppVersion,
-      private alertCtrl: AlertController,
-      private location: Location,
-      private splashScreenService: SplashScreenService,
-      private activatedRoute: ActivatedRoute
+    @Inject('PROFILE_SERVICE') private profileService: ProfileService,
+    @Inject('FRAMEWORK_SERVICE') private frameworkService: FrameworkService,
+    @Inject('FRAMEWORK_UTIL_SERVICE') private frameworkUtilService: FrameworkUtilService,
+    @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
+    @Inject('DEVICE_REGISTER_SERVICE') private deviceRegisterService: DeviceRegisterService,
+    private translate: TranslateService,
+    private telemetryGeneratorService: TelemetryGeneratorService,
+    private appGlobalService: AppGlobalService,
+    private events: Events,
+    private scanner: SunbirdQRScanner,
+    private platform: Platform,
+    private commonUtilService: CommonUtilService,
+    private container: ContainerService,
+    private headerService: AppHeaderService,
+    private router: Router,
+    private appVersion: AppVersion,
+    private alertCtrl: AlertController,
+    private location: Location,
+    private splashScreenService: SplashScreenService,
+    private activatedRoute: ActivatedRoute
   ) {
     this.profileSettingsForm = new FormGroup({
       syllabus: new FormControl([], (c) => c.value.length ? undefined : { length: 'NOT_SELECTED' }),
@@ -144,15 +144,15 @@ export class ProfileSettingsPage implements OnInit, OnDestroy {
     this.handleBackButton();
 
     this.formControlSubscriptions = combineLatest(
-        this.onSyllabusChange(),
-        this.onMediumChange(),
-        this.profileSettingsForm.valueChanges.pipe(
-            delay(250),
-            tap(() => {
-              this.btnColor = this.profileSettingsForm.valid ? '#006DE5' : '#8FC4FF';
-              this.updateStyle();
-            })
-        )
+      this.onSyllabusChange(),
+      this.onMediumChange(),
+      this.profileSettingsForm.valueChanges.pipe(
+          delay(250),
+          tap(() => {
+            this.btnColor = this.profileSettingsForm.valid ? '#006DE5' : '#8FC4FF';
+            this.updateStyle();
+          })
+      )
     ).subscribe();
 
     await this.fetchSyllabusList();
@@ -228,7 +228,7 @@ export class ProfileSettingsPage implements OnInit, OnDestroy {
     if (defaultSelectElement) {
       defaultSelectElement.forEach((element) => {
         element['shadowRoot'].querySelector('.select-icon-inner')
-            .setAttribute('style', 'border: solid blue;border-width: 0 2px 2px 0;display: inline-block;padding: 4px;transform: rotate(45deg);animation: upDownAnimate 5s linear infinite;animation-duration: 0.9s;');
+          .setAttribute('style', 'border: solid blue;border-width: 0 2px 2px 0;display: inline-block;padding: 4px;transform: rotate(45deg);animation: upDownAnimate 5s linear infinite;animation-duration: 0.9s;');
       });
     }
 
@@ -268,10 +268,10 @@ export class ProfileSettingsPage implements OnInit, OnDestroy {
 
   cancelEvent() {
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
-        InteractSubtype.CANCEL_CLICKED,
-        Environment.ONBOARDING,
-        PageId.ONBOARDING_PROFILE_PREFERENCES,
-        undefined);
+      InteractSubtype.CANCEL_CLICKED,
+      Environment.ONBOARDING,
+      PageId.ONBOARDING_PROFILE_PREFERENCES,
+      undefined);
   }
 
   extractProfileForTelemetry(formVal): any {
@@ -299,10 +299,10 @@ export class ProfileSettingsPage implements OnInit, OnDestroy {
 
   openQRScanner() {
     this.telemetryGeneratorService.generateInteractTelemetry(
-        InteractType.TOUCH,
-        InteractSubtype.QRCodeScanClicked,
-        Environment.ONBOARDING,
-        PageId.ONBOARDING_PROFILE_PREFERENCES,
+      InteractType.TOUCH,
+      InteractSubtype.QRCodeScanClicked,
+      Environment.ONBOARDING,
+      PageId.ONBOARDING_PROFILE_PREFERENCES,
     );
     this.scanner.startScanner(PageId.ONBOARDING_PROFILE_PREFERENCES, true);
   }
@@ -310,7 +310,7 @@ export class ProfileSettingsPage implements OnInit, OnDestroy {
   onSubmitAttempt() {
     if (this.profileSettingsForm.valid) {
       this.appGlobalService.generateSaveClickedTelemetry(this.extractProfileForTelemetry(this.profileSettingsForm.value), 'passed',
-          PageId.ONBOARDING_PROFILE_PREFERENCES, InteractSubtype.FINISH_CLICKED);
+        PageId.ONBOARDING_PROFILE_PREFERENCES, InteractSubtype.FINISH_CLICKED);
       this.submitProfileSettingsForm();
       return;
     }
@@ -323,42 +323,42 @@ export class ProfileSettingsPage implements OnInit, OnDestroy {
       if (!control.value.length) {
         if (!this.profileSettingsForm.value.board.length) {
           this.appGlobalService.generateSaveClickedTelemetry(this.extractProfileForTelemetry(this.profileSettingsForm.value), 'failed',
-              PageId.ONBOARDING_PROFILE_PREFERENCES, InteractSubtype.FINISH_CLICKED);
+            PageId.ONBOARDING_PROFILE_PREFERENCES, InteractSubtype.FINISH_CLICKED);
           const values = new Map();
           values['board'] = 'na';
           this.telemetryGeneratorService.generateInteractTelemetry(
-              InteractType.TOUCH,
-              'submit-clicked',
-              Environment.HOME,
-              PageId.ONBOARDING_PROFILE_PREFERENCES,
-              undefined,
-              values
+            InteractType.TOUCH,
+            'submit-clicked',
+            Environment.HOME,
+            PageId.ONBOARDING_PROFILE_PREFERENCES,
+            undefined,
+            values
           );
         } else if (!this.profileSettingsForm.value.medium.length) {
           this.appGlobalService.generateSaveClickedTelemetry(this.extractProfileForTelemetry(this.profileSettingsForm.value), 'failed',
-              PageId.ONBOARDING_PROFILE_PREFERENCES, InteractSubtype.FINISH_CLICKED);
+             PageId.ONBOARDING_PROFILE_PREFERENCES, InteractSubtype.FINISH_CLICKED);
           const values = new Map();
           values['medium'] = 'na';
           this.telemetryGeneratorService.generateInteractTelemetry(
-              InteractType.TOUCH,
-              'submit-clicked',
-              Environment.HOME,
-              PageId.ONBOARDING_PROFILE_PREFERENCES,
-              undefined,
-              values
+            InteractType.TOUCH,
+            'submit-clicked',
+            Environment.HOME,
+            PageId.ONBOARDING_PROFILE_PREFERENCES,
+            undefined,
+            values
           );
         } else if (!this.profileSettingsForm.value.grade.length) {
           this.appGlobalService.generateSaveClickedTelemetry(this.extractProfileForTelemetry(this.profileSettingsForm.value), 'failed',
-              PageId.ONBOARDING_PROFILE_PREFERENCES, InteractSubtype.FINISH_CLICKED);
+            PageId.ONBOARDING_PROFILE_PREFERENCES, InteractSubtype.FINISH_CLICKED);
           const values = new Map();
           values['grades'] = 'na';
           this.telemetryGeneratorService.generateInteractTelemetry(
-              InteractType.TOUCH,
-              'submit-clicked',
-              Environment.HOME,
-              PageId.ONBOARDING_PROFILE_PREFERENCES,
-              undefined,
-              values
+            InteractType.TOUCH,
+            'submit-clicked',
+            Environment.HOME,
+            PageId.ONBOARDING_PROFILE_PREFERENCES,
+            undefined,
+            values
           );
         }
         selector.open();
@@ -379,35 +379,35 @@ export class ProfileSettingsPage implements OnInit, OnDestroy {
     };
 
     await this.frameworkUtilService.getActiveChannelSuggestedFrameworkList(getSuggestedFrameworksRequest).toPromise()
-        .then(async (frameworks: Framework[]) => {
-          if (!frameworks || !frameworks.length) {
-            this.loader.dismiss();
-            this.commonUtilService.showToast('NO_DATA_FOUND');
-            return;
-          }
-
-          this.syllabusList = frameworks.map(r => ({ name: r.name, code: r.identifier }));
-
+      .then(async (frameworks: Framework[]) => {
+        if (!frameworks || !frameworks.length) {
           this.loader.dismiss();
-        });
+          this.commonUtilService.showToast('NO_DATA_FOUND');
+          return;
+        }
+
+        this.syllabusList = frameworks.map(r => ({ name: r.name, code: r.identifier }));
+
+        this.loader.dismiss();
+      });
   }
 
   private onSyllabusChange(): Observable<string[]> {
     return this.syllabusControl.valueChanges.pipe(
-        tap(async (value) => {
-          if (!Array.isArray(value)) {
-            this.syllabusControl.patchValue([value]);
-            return;
-          }
+      tap(async (value) => {
+        if (!Array.isArray(value)) {
+          this.syllabusControl.patchValue([value]);
+          return;
+        }
 
-          await this.commonUtilService.getLoader().then((loader) => {
+        await this.commonUtilService.getLoader().then((loader) => {
             this.loader = loader;
             this.loader.present();
           });
 
-          try {
+        try {
             this.framework = await this.frameworkService.getFrameworkDetails({
-              frameworkId: value[0],
+                frameworkId: value[0],
               requiredCategories: FrameworkCategoryCodesGroup.DEFAULT_FRAMEWORK_CATEGORIES
             }).toPromise();
 
@@ -449,36 +449,36 @@ export class ProfileSettingsPage implements OnInit, OnDestroy {
 
   private onMediumChange(): Observable<string[]> {
     return this.mediumControl.valueChanges.pipe(
-        tap(async () => {
-          await this.commonUtilService.getLoader().then((loader) => {
-            this.loader = loader;
-            this.loader.present();
-          });
+      tap(async () => {
+        await this.commonUtilService.getLoader().then((loader) => {
+          this.loader = loader;
+          this.loader.present();
+        });
 
-          try {
-            const nextCategoryTermsRequet: GetFrameworkCategoryTermsRequest = {
-              frameworkId: this.framework.identifier,
-              requiredCategories: [FrameworkCategoryCode.GRADE_LEVEL],
-              prevCategoryCode: FrameworkCategoryCode.MEDIUM,
-              currentCategoryCode: FrameworkCategoryCode.GRADE_LEVEL,
-              language: this.translate.currentLang,
-              selectedTermsCodes: this.mediumControl.value
-            };
+        try {
+          const nextCategoryTermsRequet: GetFrameworkCategoryTermsRequest = {
+            frameworkId: this.framework.identifier,
+            requiredCategories: [FrameworkCategoryCode.GRADE_LEVEL],
+            prevCategoryCode: FrameworkCategoryCode.MEDIUM,
+            currentCategoryCode: FrameworkCategoryCode.GRADE_LEVEL,
+            language: this.translate.currentLang,
+            selectedTermsCodes: this.mediumControl.value
+          };
 
-            this.gradeList = (await this.frameworkUtilService.getFrameworkCategoryTerms(nextCategoryTermsRequet).toPromise())
-                .map(t => ({ name: t.name, code: t.code }));
+          this.gradeList = (await this.frameworkUtilService.getFrameworkCategoryTerms(nextCategoryTermsRequet).toPromise())
+          .map(t => ({ name: t.name, code: t.code }));
 
-            this.gradeControl.patchValue([]);
-          } catch (e) {
-            // todo
-            console.error(e);
-          } finally {
-            // todo
-            this.loader.dismiss();
-          }
-        })
-    );
-  }
+          this.gradeControl.patchValue([]);
+        } catch (e) {
+          // todo
+          console.error(e);
+        } finally {
+          // todo
+          this.loader.dismiss();
+        }
+      })
+      );
+    }
 
   private async submitProfileSettingsForm() {
     await this.commonUtilService.getLoader().then((loader) => {
@@ -494,43 +494,43 @@ export class ProfileSettingsPage implements OnInit, OnDestroy {
     };
 
     this.profileService.updateProfile(updateProfileRequest).toPromise()
-        .then(async (profile: Profile) => {
-          if (updateProfileRequest.profileType === ProfileType.TEACHER) {
-            initTabs(this.container, GUEST_TEACHER_TABS);
-          } else if (updateProfileRequest.profileType === ProfileType.STUDENT) {
+    .then(async (profile: Profile) => {
+      if (updateProfileRequest.profileType === ProfileType.TEACHER) {
+        initTabs(this.container, GUEST_TEACHER_TABS);
+      } else if (updateProfileRequest.profileType === ProfileType.STUDENT) {
             initTabs(this.container, GUEST_STUDENT_TABS);
           }
-          this.events.publish('refresh:profile');
-          this.appGlobalService.guestUserProfile = profile;
-          await this.commonUtilService.handleToTopicBasedNotification();
-          setTimeout(async () => {
-            this.commonUtilService.showToast('PROFILE_UPDATE_SUCCESS');
-            if (await this.commonUtilService.isDeviceLocationAvailable()) {
-              this.appGlobalService.setOnBoardingCompleted();
-              this.router.navigate([`/${RouterLinks.TABS}`]);
-            } else {
-              const navigationExtras: NavigationExtras = {
-                state: {
-                  isShowBackButton: true
-                }
-              };
-              this.router.navigate([RouterLinks.DISTRICT_MAPPING], navigationExtras);
-            }
-          }, 2000);
-          this.events.publish('onboarding-card:completed', { isOnBoardingCardCompleted: true });
-          this.events.publish('refresh:profile');
-          this.appGlobalService.guestUserProfile = profile;
+      this.events.publish('refresh:profile');
+      this.appGlobalService.guestUserProfile = profile;
+      await this.commonUtilService.handleToTopicBasedNotification();
+      setTimeout(async () => {
+        this.commonUtilService.showToast('PROFILE_UPDATE_SUCCESS');
+        if (await this.commonUtilService.isDeviceLocationAvailable()) {
+           this.appGlobalService.setOnBoardingCompleted();
+           this.router.navigate([`/${RouterLinks.TABS}`]);
+          } else {
+            const navigationExtras: NavigationExtras = {
+              state: {
+                isShowBackButton: true
+              }
+            };
+            this.router.navigate([RouterLinks.DISTRICT_MAPPING], navigationExtras);
+          }
+        }, 2000);
+      this.events.publish('onboarding-card:completed', { isOnBoardingCardCompleted: true });
+      this.events.publish('refresh:profile');
+      this.appGlobalService.guestUserProfile = profile;
 
-          this.telemetryGeneratorService.generateProfilePopulatedTelemetry(
+      this.telemetryGeneratorService.generateProfilePopulatedTelemetry(
               PageId.ONBOARDING_PROFILE_PREFERENCES, profile, 'manual', Environment.ONBOARDING
           );
-          this.loader = await this.commonUtilService.getLoader(2000);
-          await this.loader.present();
-        })
-        .catch(async () => {
-          // todo
-          await this.loader.dismiss();
-          this.commonUtilService.showToast('PROFILE_UPDATE_FAILED');
-        });
-  }
-}
+      this.loader = await this.commonUtilService.getLoader(2000);
+      await this.loader.present();
+     })
+     .catch(async () => {
+       // todo
+       await this.loader.dismiss();
+       this.commonUtilService.showToast('PROFILE_UPDATE_FAILED');
+       });
+      }
+    }
