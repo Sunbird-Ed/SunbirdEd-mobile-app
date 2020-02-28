@@ -38,6 +38,16 @@ var formRequestArray = [{
         'subType': 'externalIdVerification',
         'action': 'onboarding',
         'rootOrgId': '*'
+    },
+    {
+        'type':'contentfeedback',
+        'subType':'en',
+        'action':'get'
+    },
+    {
+        'type': 'config',
+        'subType': 'webview_version',
+        'action': 'get'
     }
 ];
 
