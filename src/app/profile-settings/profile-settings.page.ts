@@ -129,7 +129,7 @@ export class ProfileSettingsPage implements OnInit, OnDestroy {
       ImpressionType.VIEW, '',
       PageId.ONBOARDING_PROFILE_PREFERENCES,
       Environment.ONBOARDING
-      );
+    );
 
     this.handleActiveScanner();
 
@@ -419,7 +419,7 @@ export class ProfileSettingsPage implements OnInit, OnDestroy {
           };
 
           const boardTerm = (await this.frameworkUtilService.getFrameworkCategoryTerms(boardCategoryTermsRequet).toPromise())
-              .find(b => b.name === (this.syllabusList.find((s) => s.code === value[0])!.name));
+          .find(b => b.name === (this.syllabusList.find((s) => s.code === value[0])!.name));
 
           this.boardControl.patchValue([boardTerm.code]);
 
@@ -436,14 +436,14 @@ export class ProfileSettingsPage implements OnInit, OnDestroy {
             .map(t => ({ name: t.name, code: t.code }));
 
           this.mediumControl.patchValue([]);
-          } catch (e) {
-             // todo
-             console.error(e);
-          } finally {
-            // todo
-            this.loader.dismiss();
-          }
-        })
+        } catch (e) {
+           // todo
+           console.error(e);
+        } finally {
+          // todo
+          this.loader.dismiss();
+        }
+      })
     );
   }
 
@@ -466,7 +466,7 @@ export class ProfileSettingsPage implements OnInit, OnDestroy {
           };
 
           this.gradeList = (await this.frameworkUtilService.getFrameworkCategoryTerms(nextCategoryTermsRequet).toPromise())
-          .map(t => ({ name: t.name, code: t.code }));
+            .map(t => ({ name: t.name, code: t.code }));
 
           this.gradeControl.patchValue([]);
         } catch (e) {
@@ -477,8 +477,8 @@ export class ProfileSettingsPage implements OnInit, OnDestroy {
           this.loader.dismiss();
         }
       })
-      );
-    }
+    );
+  }
 
   private async submitProfileSettingsForm() {
     await this.commonUtilService.getLoader().then((loader) => {
@@ -494,38 +494,38 @@ export class ProfileSettingsPage implements OnInit, OnDestroy {
     };
 
     this.profileService.updateProfile(updateProfileRequest).toPromise()
-    .then(async (profile: Profile) => {
-      if (updateProfileRequest.profileType === ProfileType.TEACHER) {
-        initTabs(this.container, GUEST_TEACHER_TABS);
-      } else if (updateProfileRequest.profileType === ProfileType.STUDENT) {
-            initTabs(this.container, GUEST_STUDENT_TABS);
-          }
-      this.events.publish('refresh:profile');
-      this.appGlobalService.guestUserProfile = profile;
-      await this.commonUtilService.handleToTopicBasedNotification();
-      setTimeout(async () => {
-        this.commonUtilService.showToast('PROFILE_UPDATE_SUCCESS');
-        if (await this.commonUtilService.isDeviceLocationAvailable()) {
-           this.appGlobalService.setOnBoardingCompleted();
-           this.router.navigate([`/${RouterLinks.TABS}`]);
-          } else {
-            const navigationExtras: NavigationExtras = {
-              state: {
-                isShowBackButton: true
-              }
-            };
-            this.router.navigate([RouterLinks.DISTRICT_MAPPING], navigationExtras);
-          }
-        }, 2000);
-      this.events.publish('onboarding-card:completed', { isOnBoardingCardCompleted: true });
-      this.events.publish('refresh:profile');
-      this.appGlobalService.guestUserProfile = profile;
+      .then(async (profile: Profile) => {
+        if (updateProfileRequest.profileType === ProfileType.TEACHER) {
+          initTabs(this.container, GUEST_TEACHER_TABS);
+        } else if (updateProfileRequest.profileType === ProfileType.STUDENT) {
+          initTabs(this.container, GUEST_STUDENT_TABS);
+        }
+        this.events.publish('refresh:profile');
+        this.appGlobalService.guestUserProfile = profile;
+        await this.commonUtilService.handleToTopicBasedNotification();
+        setTimeout(async () => {
+          this.commonUtilService.showToast('PROFILE_UPDATE_SUCCESS');
+          if (await this.commonUtilService.isDeviceLocationAvailable()) {
+            this.appGlobalService.setOnBoardingCompleted();
+            this.router.navigate([`/${RouterLinks.TABS}`]);
+            } else {
+              const navigationExtras: NavigationExtras = {
+                state: {
+                  isShowBackButton: true
+                }
+              };
+              this.router.navigate([RouterLinks.DISTRICT_MAPPING], navigationExtras);
+            }
+          }, 2000);
+        this.events.publish('onboarding-card:completed', { isOnBoardingCardCompleted: true });
+        this.events.publish('refresh:profile');
+        this.appGlobalService.guestUserProfile = profile;
 
-      this.telemetryGeneratorService.generateProfilePopulatedTelemetry(
+        this.telemetryGeneratorService.generateProfilePopulatedTelemetry(
               PageId.ONBOARDING_PROFILE_PREFERENCES, profile, 'manual', Environment.ONBOARDING
           );
-      this.loader = await this.commonUtilService.getLoader(2000);
-      await this.loader.present();
+        this.loader = await this.commonUtilService.getLoader(2000);
+        await this.loader.present();
      })
      .catch(async () => {
        // todo
