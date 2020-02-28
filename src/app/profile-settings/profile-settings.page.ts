@@ -268,10 +268,10 @@ export class ProfileSettingsPage implements OnInit, OnDestroy {
 
   cancelEvent() {
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
-      InteractSubtype.CANCEL_CLICKED,
-      Environment.ONBOARDING,
-      PageId.ONBOARDING_PROFILE_PREFERENCES,
-      undefined);
+        InteractSubtype.CANCEL_CLICKED,
+        Environment.ONBOARDING,
+        PageId.ONBOARDING_PROFILE_PREFERENCES,
+        undefined);
   }
 
   extractProfileForTelemetry(formVal): any {
