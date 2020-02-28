@@ -280,8 +280,8 @@ export class FormAndFrameworkUtilService {
     invokeUrlRegexFormApi(): Promise<any> {
         const req: FormRequest = {
             type: 'config',
-            subType: 'supportedUrl',
-            action: 'regex'
+            subType: 'supportedUrlRegex',
+            action: 'get'
         };
         return this.formService.getForm(req).toPromise().then((res: any) => {
             const data = res.form ? res.form.data.fields : res.data.fields;
