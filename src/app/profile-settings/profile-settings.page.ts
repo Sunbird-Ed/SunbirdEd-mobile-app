@@ -336,7 +336,7 @@ export class ProfileSettingsPage implements OnInit, OnDestroy {
           );
         } else if (!this.profileSettingsForm.value.medium.length) {
           this.appGlobalService.generateSaveClickedTelemetry(this.extractProfileForTelemetry(this.profileSettingsForm.value), 'failed',
-          PageId.ONBOARDING_PROFILE_PREFERENCES, InteractSubtype.FINISH_CLICKED);
+            PageId.ONBOARDING_PROFILE_PREFERENCES, InteractSubtype.FINISH_CLICKED);
           const values = new Map();
           values['medium'] = 'na';
           this.telemetryGeneratorService.generateInteractTelemetry(
@@ -419,7 +419,7 @@ export class ProfileSettingsPage implements OnInit, OnDestroy {
           };
 
           const boardTerm = (await this.frameworkUtilService.getFrameworkCategoryTerms(boardCategoryTermsRequet).toPromise())
-          .find(b => b.name === (this.syllabusList.find((s) => s.code === value[0])!.name));
+            .find(b => b.name === (this.syllabusList.find((s) => s.code === value[0])!.name));
 
           this.boardControl.patchValue([boardTerm.code]);
 
@@ -437,8 +437,8 @@ export class ProfileSettingsPage implements OnInit, OnDestroy {
 
           this.mediumControl.patchValue([]);
         } catch (e) {
-           // todo
-           console.error(e);
+          // todo
+          console.error(e);
         } finally {
           // todo
           this.loader.dismiss();
@@ -508,29 +508,29 @@ export class ProfileSettingsPage implements OnInit, OnDestroy {
           if (await this.commonUtilService.isDeviceLocationAvailable()) {
             this.appGlobalService.setOnBoardingCompleted();
             this.router.navigate([`/${RouterLinks.TABS}`]);
-            } else {
-              const navigationExtras: NavigationExtras = {
-                state: {
-                  isShowBackButton: true
-                }
-              };
-              this.router.navigate([RouterLinks.DISTRICT_MAPPING], navigationExtras);
-            }
-          }, 2000);
+          } else {
+            const navigationExtras: NavigationExtras = {
+              state: {
+                isShowBackButton: true
+              }
+            };
+            this.router.navigate([RouterLinks.DISTRICT_MAPPING], navigationExtras);
+          }
+        }, 2000);
         this.events.publish('onboarding-card:completed', { isOnBoardingCardCompleted: true });
         this.events.publish('refresh:profile');
         this.appGlobalService.guestUserProfile = profile;
 
         this.telemetryGeneratorService.generateProfilePopulatedTelemetry(
-              PageId.ONBOARDING_PROFILE_PREFERENCES, profile, 'manual', Environment.ONBOARDING
-          );
+          PageId.ONBOARDING_PROFILE_PREFERENCES, profile, 'manual', Environment.ONBOARDING
+        );
         this.loader = await this.commonUtilService.getLoader(2000);
         await this.loader.present();
-     })
-     .catch(async () => {
-       // todo
-       await this.loader.dismiss();
-       this.commonUtilService.showToast('PROFILE_UPDATE_FAILED');
-       });
-      }
+      })
+      .catch(async () => {
+        // todo
+        await this.loader.dismiss();
+        this.commonUtilService.showToast('PROFILE_UPDATE_FAILED');
+      });
     }
+  }
