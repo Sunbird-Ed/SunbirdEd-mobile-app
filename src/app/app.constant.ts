@@ -167,6 +167,7 @@ export class EventTopics {
     public static readonly HAMBURGER_MENU_CLICKED = 'HAMBURGER_MENU_CLICKED';
     public static readonly NEXT_CONTENT = 'event:NextContent';
     public static readonly DEEPLINK_CONTENT_PAGE_OPEN = 'DEEPLINK_CONTENT_PAGE_OPEN';
+    public static readonly DEEPLINK_COLLECTION_PAGE_OPEN = 'DEEPLINK_COLLECTION_PAGE_OPEN';
     public static readonly CONTENT_TO_PLAY = 'event:ContentToPlay';
     public static readonly COACH_MARK_SEEN = 'coach_mark_seen';
     public static readonly TAB_CHANGE = 'tab.change';

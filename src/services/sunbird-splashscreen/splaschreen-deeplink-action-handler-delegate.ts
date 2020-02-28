@@ -15,21 +15,24 @@ import { UtilityService } from '../utility-service';
 import { SbPopoverComponent } from '@app/app/components/popups/sb-popover/sb-popover.component';
 import { LoginHandlerService } from '../login-handler.service';
 import { TranslateService } from '@ngx-translate/core';
+import { FormAndFrameworkUtilService } from '../formandframeworkutil.service';
+import { QRScannerResultHandler } from '../qrscanresulthandler.service';
 
 @Injectable()
 export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenActionHandlerDelegate {
-  private savedUrlMatch: any;
+  private savedUrl: any;
 
   private _isDelegateReady = false;
   private isOnboardingCompleted = false;
   private loginPopup: any;
   private currentAppVersionCode: number;
-  // should delay the deeplinks until tabs is loaded
+
+  // should delay the deeplinks until tabs is loaded- gets triggered from Resource components
   set isDelegateReady(val: boolean) {
     this._isDelegateReady = val;
-    if (val && this.savedUrlMatch) {
-      this.checkIfOnboardingComplete(this.savedUrlMatch);
-      this.savedUrlMatch = null;
+    if (val && this.savedUrl) {
+      this.checkDeeplinkMatch(this.savedUrl);
+      this.savedUrl = null;
     }
   }
 
@@ -46,45 +49,46 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
     private utilityService: UtilityService,
     private popoverCtrl: PopoverController,
     private loginHandlerService: LoginHandlerService,
-    public translateService: TranslateService
+    public translateService: TranslateService,
+    private formFrameWorkUtilService: FormAndFrameworkUtilService,
+    private qrScannerResultHandler: QRScannerResultHandler,
   ) {
     this.eventToSetDefaultOnboardingData();
    }
 
   onAction(payload: any): Observable<undefined> {
     if (payload && payload.url) {
-      const quizTypeRegex = new RegExp(String.raw`(?:\/(?:resources\/play\/content|play\/quiz)\/(?<quizId>\w+))`);
-      const dialTypeRegex = new RegExp(String.raw`(?:\/(?:dial|QR)\/(?<dialCode>\w+))`);
-      const contentTypeRegex = new RegExp(String.raw`(?:\/play\/(?:content|collection)\/(?<contentId>\w+))`);
-      const courseTypeRegex = new RegExp(String.raw`(?:\/(?:explore-course|learn)\/course\/(?<courseId>\w+))`);
-
-      const urlRegex = new RegExp(quizTypeRegex.source + '|' + dialTypeRegex.source + '|' +
-        contentTypeRegex.source + '|' + courseTypeRegex.source);
-      const urlMatch = payload.url.match(urlRegex.source);
-
-      if (urlMatch && urlMatch.groups) {
-        this.checkIfOnboardingComplete(urlMatch);
-      }
+      this.checkDeeplinkMatch(payload.url);
     }
     return of(undefined);
   }
 
-  private async checkIfOnboardingComplete(urlMatch) {
+  private async checkDeeplinkMatch(url: string) {
+    const dialCode = await this.qrScannerResultHandler.parseDialCode(url);
+    const urlRegex = new RegExp(await this.formFrameWorkUtilService.getDeeplinkRegexFormApi());
+    const urlMatch = url.match(urlRegex);
+
+    if ((urlMatch && urlMatch.groups) || dialCode) {
+      this.checkIfOnboardingComplete(urlMatch, dialCode, url);
+    }
+  }
+
+  private async checkIfOnboardingComplete(urlMatch, dialCode, inputUrl) {
     if (!this.isOnboardingCompleted) {
       this.isOnboardingCompleted =
         (await this.preferences.getString(PreferenceKey.IS_ONBOARDING_COMPLETED).toPromise() === 'true') ? true : false;
     }
     const session = await this.authService.getSession().toPromise();
 
-    const url = new URL(urlMatch.input);
+    const url = new URL(inputUrl);
     // Read version code from deeplink.
     const requiredVersionCode = url.searchParams.get('vCode');
     if (requiredVersionCode && !(await this.isAppCompatible(requiredVersionCode))) {
       this.upgradeAppPopover(requiredVersionCode);
     } else if (this.isOnboardingCompleted || session) {
-      this.handleNavigation(urlMatch);
+      this.handleNavigation(urlMatch, dialCode, inputUrl);
     } else {
-      this.checkForQuizWithoutOnboarding(urlMatch);
+      this.checkForDeeplinkWithoutOnboarding(urlMatch, inputUrl);
     }
   }
 
@@ -118,28 +122,28 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
     await this.appGlobalServices.openPopover(result);
   }
 
-  async checkForQuizWithoutOnboarding(urlMatch: any): Promise<void> {
-    this.savedUrlMatch = null;
+  private async checkForDeeplinkWithoutOnboarding(urlMatch: any, inputUrl: string): Promise<void> {
+    this.savedUrl = null;
     if (this.loginPopup) {
       await this.loginPopup.dismiss();
     }
-    if (urlMatch.groups.quizId) {
+    if (urlMatch && urlMatch.groups.quizId) {
       this.showLoginWithoutOnboardingPopup(urlMatch.groups.quizId);
     } else {
-      this.savedUrlMatch = urlMatch;
+      this.savedUrl = inputUrl;
     }
   }
 
-  private handleNavigation(urlMatch: any): void {
+  private handleNavigation(urlMatch: any, dialCode, inputUrl): void {
     if (this._isDelegateReady) {
-      if (urlMatch.groups.dialCode) {
+      if (dialCode) {
         this.appGlobalServices.skipCoachScreenForDeeplink = true;
-        this.router.navigate([RouterLinks.SEARCH], { state: { dialCode: urlMatch.groups.dialCode, source: PageId.HOME } });
+        this.router.navigate([RouterLinks.SEARCH], { state: { dialCode, source: PageId.HOME } });
       } else if (urlMatch.groups.quizId || urlMatch.groups.contentId || urlMatch.groups.courseId) {
         this.navigateContent(urlMatch.groups.quizId || urlMatch.groups.contentId || urlMatch.groups.courseId, true);
       }
     } else {
-      this.savedUrlMatch = urlMatch;
+      this.savedUrl = inputUrl;
     }
   }
 
@@ -158,6 +162,10 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
       if (content.contentType === ContentType.COURSE.toLowerCase()) {
         this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], { state: { content } });
       } else if (content.mimeType === MimeType.COLLECTION) {
+        if (this.router.url && this.router.url.indexOf(RouterLinks.COLLECTION_DETAIL_ETB) !== -1) {
+          this.events.publish(EventTopics.DEEPLINK_COLLECTION_PAGE_OPEN, { content });
+          return;
+        }
         this.router.navigate([RouterLinks.COLLECTION_DETAIL_ETB], { state: { content } });
       } else {
         if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
@@ -213,6 +221,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
     );
   }
 
+  // This method is called only when the user redirects directly from the Playstore
   checkUtmContent(utmVal: string): void {
     const utmRegex = new RegExp(String.raw`(?:utm_content=(?<utm_content>[^&]*))`);
     const res = utmRegex.exec(utmVal);
@@ -222,7 +231,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
     }
   }
 
-  async showLoginWithoutOnboardingPopup(quizId) {
+  private async showLoginWithoutOnboardingPopup(quizId) {
     this.appGlobalServices.resetSavedQuizContent();
     this.loginPopup = await this.popoverCtrl.create({
       component: SbPopoverComponent,
@@ -251,7 +260,8 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
     this.loginPopup = null;
   }
 
-  eventToSetDefaultOnboardingData(): void {
+  // This method is called only when a deeplink is clicked before Onboarding is not completed
+  private eventToSetDefaultOnboardingData(): void {
     this.events.subscribe(EventTopics.SIGN_IN_RELOAD, async () => {
       this.isOnboardingCompleted =
         (await this.preferences.getString(PreferenceKey.IS_ONBOARDING_COMPLETED).toPromise() === 'true') ? true : false;
@@ -262,7 +272,8 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
     });
   }
 
-  async setDefaultLanguage() {
+  // This method is called only when a deeplink is clicked before Onboarding is not completed
+  private async setDefaultLanguage() {
     const langCode = await this.preferences.getString(PreferenceKey.SELECTED_LANGUAGE_CODE).toPromise();
     if (!langCode) {
       await this.preferences.putString(PreferenceKey.SELECTED_LANGUAGE_CODE, 'en').toPromise();
@@ -274,7 +285,8 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
     }
   }
 
-  async setDefaultUserType(): Promise<void> {
+  // This method is called only when a deeplink is clicked before Onboarding is not completed
+  private async setDefaultUserType(): Promise<void> {
     const userType = await this.preferences.getString(PreferenceKey.SELECTED_USER_TYPE).toPromise();
     if (!userType) {
       await this.preferences.putString(PreferenceKey.SELECTED_USER_TYPE, ProfileType.TEACHER).toPromise();
