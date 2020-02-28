@@ -669,7 +669,7 @@ export class QrcoderesultPage implements OnDestroy {
   skipSteps() {
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,
-      InteractSubtype.SKIP_CLICKED,
+      InteractSubtype.NO_QR_CODE_CLICKED,
       !this.appGlobalService.isOnBoardingCompleted ? Environment.ONBOARDING : Environment.HOME,
       PageId.DIAL_CODE_SCAN_RESULT
     );

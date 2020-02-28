@@ -490,7 +490,7 @@
   "SIGNED_OUT_ACCOUNT_MESSAGE": "You will be logged out from your currently logged in account",
   "SIGNIN_TO_USE_FEATURE": "Login to use this feature",
   "SIGN_IN": "LOGIN",
-  "SKIP": "I don't have a QR code ",
+  "SKIP": "Skip",
   "SOMETHING_WENT_WRONG": "Due to a technical problem, we are unable to process the request",
   "SORT_BY": "SORT BY",
   "SPACE_AVAILABLE_ON_SDCARD": "Space available on SD Card:",
@@ -644,5 +644,6 @@
   "FILE_NAME": "Loading \"{{%s}}\"",
   "LOAD": "Load",
   "LOAD_FILE": "Load File",
-  "SIZE": "Size: {{%s}}"
+  "SIZE": "Size: {{%s}}",
+  "NO_QR_CODE": "I don't have a QR Code "
 }

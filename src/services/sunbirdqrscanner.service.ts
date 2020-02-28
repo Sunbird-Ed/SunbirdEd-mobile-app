@@ -35,7 +35,7 @@ export class SunbirdQRScanner {
     'SCAN_QR_CODE',
     'SCAN_QR_INSTRUCTION',
     'UNKNOWN_QR',
-    'SKIP',
+    'NO_QR_CODE',
     'CANCEL',
     'TRY_AGAIN',
   ];
@@ -78,7 +78,7 @@ export class SunbirdQRScanner {
     screenTitle = this.mQRScannerText['SCAN_QR_CODE'],
     displayText = this.mQRScannerText['SCAN_QR_INSTRUCTION'],
     displayTextColor = '#0b0b0b',
-    buttonText = this.mQRScannerText['SKIP']
+    buttonText = this.mQRScannerText['NO_QR_CODE']
   ) {
     this.source = source;
     this.showButton = showButton;
@@ -279,7 +279,7 @@ export class SunbirdQRScanner {
           }
           this.telemetryGeneratorService.generateInteractTelemetry(
             InteractType.TOUCH,
-            InteractSubtype.SKIP_CLICKED,
+            InteractSubtype.NO_QR_CODE_CLICKED,
             Environment.ONBOARDING,
             PageId.QRCodeScanner);
           this.generateEndEvent(source, '');
