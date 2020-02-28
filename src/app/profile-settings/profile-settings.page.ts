@@ -532,5 +532,5 @@ export class ProfileSettingsPage implements OnInit, OnDestroy {
         await this.loader.dismiss();
         this.commonUtilService.showToast('PROFILE_UPDATE_FAILED');
       });
-    }
   }
+}
