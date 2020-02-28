@@ -1,0 +1,33 @@
+﻿{
+    "id": "api.form.read",
+    "params": {
+        "resmsgid": "cc557f06-5fcf-4feb-919d-627944163857",
+        "msgid": "f0dcdf53-4949-431c-b804-2dbf21886153",
+        "status": "successful"
+    },
+    "responseCode": "OK",
+    "result": {
+        "form": {
+            "type": "config",
+            "subtype": "webview_version",
+            "action": "get",
+            "component": "*",
+            "framework": "*",
+            "data": {
+                "templateName": "webview_version",
+                "action": "get",
+                "fields": [
+                    {
+                        "version": "54"
+                    }
+                ]
+            },
+            "created_on": "2020-01-07T10:51:43.203Z",
+            "last_modified_on": null,
+            "rootOrgId": "*"
+        }
+    },
+    "ts": "2020-01-07T10:52:04.924Z",
+    "ver": "1.0"
+}
+
