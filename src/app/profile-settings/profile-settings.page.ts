@@ -126,10 +126,10 @@ export class ProfileSettingsPage implements OnInit, OnDestroy {
 
   async ngOnInit() {
     this.telemetryGeneratorService.generateImpressionTelemetry(
-        ImpressionType.VIEW, '',
-        PageId.ONBOARDING_PROFILE_PREFERENCES,
-        Environment.ONBOARDING
-    );
+      ImpressionType.VIEW, '',
+      PageId.ONBOARDING_PROFILE_PREFERENCES,
+      Environment.ONBOARDING
+      );
 
     this.handleActiveScanner();
 
@@ -147,11 +147,11 @@ export class ProfileSettingsPage implements OnInit, OnDestroy {
       this.onSyllabusChange(),
       this.onMediumChange(),
       this.profileSettingsForm.valueChanges.pipe(
-          delay(250),
-          tap(() => {
-            this.btnColor = this.profileSettingsForm.valid ? '#006DE5' : '#8FC4FF';
-            this.updateStyle();
-          })
+        delay(250),
+        tap(() => {
+          this.btnColor = this.profileSettingsForm.valid ? '#006DE5' : '#8FC4FF';
+          this.updateStyle();
+        })
       )
     ).subscribe();
 
@@ -336,7 +336,7 @@ export class ProfileSettingsPage implements OnInit, OnDestroy {
           );
         } else if (!this.profileSettingsForm.value.medium.length) {
           this.appGlobalService.generateSaveClickedTelemetry(this.extractProfileForTelemetry(this.profileSettingsForm.value), 'failed',
-             PageId.ONBOARDING_PROFILE_PREFERENCES, InteractSubtype.FINISH_CLICKED);
+          PageId.ONBOARDING_PROFILE_PREFERENCES, InteractSubtype.FINISH_CLICKED);
           const values = new Map();
           values['medium'] = 'na';
           this.telemetryGeneratorService.generateInteractTelemetry(
@@ -401,44 +401,44 @@ export class ProfileSettingsPage implements OnInit, OnDestroy {
         }
 
         await this.commonUtilService.getLoader().then((loader) => {
-            this.loader = loader;
-            this.loader.present();
-          });
+          this.loader = loader;
+          this.loader.present();
+        });
 
         try {
-            this.framework = await this.frameworkService.getFrameworkDetails({
-                frameworkId: value[0],
-              requiredCategories: FrameworkCategoryCodesGroup.DEFAULT_FRAMEWORK_CATEGORIES
-            }).toPromise();
+          this.framework = await this.frameworkService.getFrameworkDetails({
+            frameworkId: value[0],
+            requiredCategories: FrameworkCategoryCodesGroup.DEFAULT_FRAMEWORK_CATEGORIES
+          }).toPromise();
 
-            const boardCategoryTermsRequet: GetFrameworkCategoryTermsRequest = {
-              frameworkId: this.framework.identifier,
-              requiredCategories: [FrameworkCategoryCode.BOARD],
-              currentCategoryCode: FrameworkCategoryCode.BOARD,
-              language: this.translate.currentLang
-            };
+          const boardCategoryTermsRequet: GetFrameworkCategoryTermsRequest = {
+            frameworkId: this.framework.identifier,
+            requiredCategories: [FrameworkCategoryCode.BOARD],
+            currentCategoryCode: FrameworkCategoryCode.BOARD,
+            language: this.translate.currentLang
+          };
 
-            const boardTerm = (await this.frameworkUtilService.getFrameworkCategoryTerms(boardCategoryTermsRequet).toPromise())
-                .find(b => b.name === (this.syllabusList.find((s) => s.code === value[0])!.name));
+          const boardTerm = (await this.frameworkUtilService.getFrameworkCategoryTerms(boardCategoryTermsRequet).toPromise())
+              .find(b => b.name === (this.syllabusList.find((s) => s.code === value[0])!.name));
 
-            this.boardControl.patchValue([boardTerm.code]);
+          this.boardControl.patchValue([boardTerm.code]);
 
-            const nextCategoryTermsRequet: GetFrameworkCategoryTermsRequest = {
-              frameworkId: this.framework.identifier,
-              requiredCategories: [FrameworkCategoryCode.MEDIUM],
-              prevCategoryCode: FrameworkCategoryCode.BOARD,
-              currentCategoryCode: FrameworkCategoryCode.MEDIUM,
-              language: this.translate.currentLang,
-              selectedTermsCodes: this.boardControl.value
-            };
+          const nextCategoryTermsRequet: GetFrameworkCategoryTermsRequest = {
+            frameworkId: this.framework.identifier,
+            requiredCategories: [FrameworkCategoryCode.MEDIUM],
+            prevCategoryCode: FrameworkCategoryCode.BOARD,
+            currentCategoryCode: FrameworkCategoryCode.MEDIUM,
+            language: this.translate.currentLang,
+            selectedTermsCodes: this.boardControl.value
+          };
 
-            this.mediumList = (await this.frameworkUtilService.getFrameworkCategoryTerms(nextCategoryTermsRequet).toPromise())
-                .map(t => ({ name: t.name, code: t.code }));
+          this.mediumList = (await this.frameworkUtilService.getFrameworkCategoryTerms(nextCategoryTermsRequet).toPromise())
+            .map(t => ({ name: t.name, code: t.code }));
 
-            this.mediumControl.patchValue([]);
+          this.mediumControl.patchValue([]);
           } catch (e) {
-            // todo
-            console.error(e);
+             // todo
+             console.error(e);
           } finally {
             // todo
             this.loader.dismiss();
