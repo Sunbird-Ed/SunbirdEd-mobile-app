@@ -3,7 +3,7 @@ import { Inject, Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { Events, PopoverController } from '@ionic/angular';
 import { Observable, of } from 'rxjs';
-import { ContentService, SharedPreferences, HttpServerError, NetworkError, AuthService, ProfileType } from 'sunbird-sdk';
+import { ContentService, SharedPreferences, HttpServerError, NetworkError, AuthService, ProfileType, Content } from 'sunbird-sdk';
 import { SplashscreenActionHandlerDelegate } from './splashscreen-action-handler-delegate';
 import { ContentType, MimeType, EventTopics, RouterLinks, LaunchType } from '../../app/app.constant';
 import { AppGlobalService } from '../app-global-service.service';
@@ -79,12 +79,18 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
     const url = new URL(urlMatch.input);
     // Read version code from deeplink.
     const requiredVersionCode = url.searchParams.get('vCode');
+    let content = null;
+    if (urlMatch.groups.quizId || urlMatch.groups.contentId) {
+      content = await this.contentService.getContentDetails({
+        contentId: urlMatch.groups.quizId || urlMatch.groups.contentId
+      }).toPromise();
+    }
     if (requiredVersionCode && !(await this.isAppCompatible(requiredVersionCode))) {
       this.upgradeAppPopover(requiredVersionCode);
     } else if (this.isOnboardingCompleted || session) {
-      this.handleNavigation(urlMatch);
+      this.handleNavigation(urlMatch, content);
     } else {
-      this.checkForQuizWithoutOnboarding(urlMatch);
+      this.checkForQuizWithoutOnboarding(urlMatch, content);
     }
   }
 
@@ -118,37 +124,39 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
     await this.appGlobalServices.openPopover(result);
   }
 
-  async checkForQuizWithoutOnboarding(urlMatch: any): Promise<void> {
+  async checkForQuizWithoutOnboarding(urlMatch: any, content: Content|null): Promise<void> {
     this.savedUrlMatch = null;
     if (this.loginPopup) {
       await this.loginPopup.dismiss();
     }
-    if (urlMatch.groups.quizId) {
-      this.showLoginWithoutOnboardingPopup(urlMatch.groups.quizId);
+    if (content && content.contentData && content.contentData.status === ContentFilterConfig.CONTENT_STATUS_UNLISTED) {
+      this.showLoginWithoutOnboardingPopup(urlMatch.groups.quizId || urlMatch.groups.contentId);
     } else {
       this.savedUrlMatch = urlMatch;
     }
   }
 
-  private handleNavigation(urlMatch: any): void {
+  private handleNavigation(urlMatch: any, content?: Content|null): void {
     if (this._isDelegateReady) {
       if (urlMatch.groups.dialCode) {
         this.appGlobalServices.skipCoachScreenForDeeplink = true;
         this.router.navigate([RouterLinks.SEARCH], { state: { dialCode: urlMatch.groups.dialCode, source: PageId.HOME } });
       } else if (urlMatch.groups.quizId || urlMatch.groups.contentId || urlMatch.groups.courseId) {
-        this.navigateContent(urlMatch.groups.quizId || urlMatch.groups.contentId || urlMatch.groups.courseId, true);
+        this.navigateContent(urlMatch.groups.quizId || urlMatch.groups.contentId || urlMatch.groups.courseId, true, content);
       }
     } else {
       this.savedUrlMatch = urlMatch;
     }
   }
 
-  async navigateContent(identifier, isFromLink = false) {
+  async navigateContent(identifier, isFromLink = false, content?: Content|null) {
     try {
       this.appGlobalServices.resetSavedQuizContent();
-      const content = await this.contentService.getContentDetails({
-        contentId: identifier
-      }).toPromise();
+      if (!content) {
+        content = await this.contentService.getContentDetails({
+          contentId: identifier
+        }).toPromise();
+      }
 
       if (isFromLink) {
         this.telemetryGeneratorService.generateAppLaunchTelemetry(LaunchType.DEEPLINK);
