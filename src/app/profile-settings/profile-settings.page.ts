@@ -142,7 +142,7 @@ export class ProfileSettingsPage implements OnInit, OnDestroy {
       requiredFields: ProfileConstants.REQUIRED_FIELDS
     }).toPromise();
 
-    this.handleBackButton();
+    this.handleDeviceBackButton();
 
     this.formControlSubscriptions = combineLatest(
       this.onSyllabusChange(),
@@ -283,18 +283,26 @@ export class ProfileSettingsPage implements OnInit, OnDestroy {
     return profileReq;
   }
 
-  handleBackButton() {
+  handleDeviceBackButton() {
     this.unregisterBackButton = this.platform.backButton.subscribeWithPriority(10, () => {
-      this.dismissPopup();
+      this.handleBackButton(false);
     });
   }
 
   handleHeaderEvents($event) {
     switch ($event.name) {
       case 'back':
-        this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.ONBOARDING_PROFILE_PREFERENCES, Environment.ONBOARDING, true);
-        this.dismissPopup();
+        this.handleBackButton(true);
         break;
+    }
+  }
+
+  handleBackButton(isNavBack) {
+    if (this.showQRScanner === false) {
+      this.showQRScanner = true;
+    } else {
+      this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.ONBOARDING_PROFILE_PREFERENCES, Environment.ONBOARDING, isNavBack);
+      this.dismissPopup();
     }
   }
 
@@ -544,4 +552,5 @@ export class ProfileSettingsPage implements OnInit, OnDestroy {
       this.boardSelect.open();
     }, 0);
   }
+  
 }
