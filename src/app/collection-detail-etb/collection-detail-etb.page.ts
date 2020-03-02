@@ -631,12 +631,6 @@ export class CollectionDetailEtbPage implements OnInit {
     if (this.contentDetail.contentData.attributions && this.contentDetail.contentData.attributions.length) {
       this.contentDetail.contentData.attributions ? this.contentDetail.contentData.attributions.join(', ') : '';
     }
-    if (this.contentDetail.contentData.me_totalRatings) {
-      const rating = this.contentDetail.contentData.me_totalRatings.split('.');
-      if (rating && rating[0]) {
-        this.contentDetail.contentData.me_totalRatings = rating[0];
-      }
-    }
 
     // User Rating
     const contentFeedback: any = data.contentFeedback ? data.contentFeedback : [];
@@ -1680,7 +1674,22 @@ export class CollectionDetailEtbPage implements OnInit {
       this.lastContentPlayed = this.playingContent.identifier;
       this.generateInteractTelemetry(isStreaming, contentInfo.telemetryObject, contentInfo.rollUp, contentInfo.correlationList);
       this.contentPlayerHandler.launchContentPlayer(this.playingContent, isStreaming, shouldDownloadAndPlay, contentInfo, false, true);
+    } else if (this.commonUtilService.networkInfo.isNetworkAvailable && this.playingContent.isAvailableLocally) {
+      isStreaming = false;
+      shouldDownloadAndPlay = true;
+      this.lastContentPlayed = this.playingContent.identifier;
+      this.generateInteractTelemetry(isStreaming, contentInfo.telemetryObject, contentInfo.rollUp, contentInfo.correlationList);
+      this.contentPlayerHandler.launchContentPlayer(this.playingContent, isStreaming, shouldDownloadAndPlay, contentInfo, false, true);
     } else if (!this.commonUtilService.networkInfo.isNetworkAvailable && !this.playingContent.isAvailableLocally) {
+      const params: NavigationExtras = {
+        state: {
+          isChildContent: true,
+          content: this.playingContent,
+          corRelation: this.corRelationList,
+        }
+      };
+      this.router.navigate([RouterLinks.CONTENT_DETAILS], params);
+    } else {
       const params: NavigationExtras = {
         state: {
           isChildContent: true,

@@ -127,7 +127,7 @@ export const contentDetailsMcokResponse1: Content = {
             'Class 2', 'Class 3'
         ],
         attributions: ['gd_1', 'gd_2'],
-        me_totalRatings: 'diksha.org.app',
+        me_totalRatingsCount: 1,
         contentFeedback: [{rating: 'SAMPLE_RATING'}],
         appId: 'staging.diksha.app',
         contentEncoding: 'gzip',
@@ -304,7 +304,7 @@ export const contentDetailsMcokResponse2: Content = {
             'Class 2', 'Class 3'
         ],
         attributions: ['gd_1', 'gd_2'],
-        me_totalRatings: 'diksha.org.app',
+        me_totalRatingsCount: 1,
         contentFeedback: [{rating: 'SAMPLE_RATING'}],
         appId: 'staging.diksha.app',
         contentEncoding: 'gzip',
@@ -482,7 +482,7 @@ export const contentDetailsMcokResponse3: Content = {
             'Class 2', 'Class 3'
         ],
         attributions: ['gd_1', 'gd_2'],
-        me_totalRatings: 'diksha.org.app',
+        me_totalRatingsCount: 1,
         contentFeedback: [{rating: 'SAMPLE_RATING'}],
         appId: 'staging.diksha.app',
         contentEncoding: 'gzip',
