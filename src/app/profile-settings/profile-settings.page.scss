@@ -121,6 +121,7 @@
     // background-color: $light-grey;
     // border-bottom: 2px solid $gray-200;
     .qr-content {
+      padding-top: 7%;
       &::after {
         clear: both;
         content: "";
@@ -148,14 +149,16 @@
       }
       .qr-instruction-container {
         // width: calc(100% - 65px);
+        padding-top: 4%;
         padding-left: 10px;
         .qr-instruction {
           .title {
             display: block;
-            color: #006de5;
+            font-weight: bold;
+            color: #024F9D;
           }
-          .sub-titile {
-            display: block;
+          .sub-title {
+            padding: 4% 14% 0 14%;
             font-size: 12px;
           }
         }
@@ -163,7 +166,7 @@
     }
     .qr-btn-container {
       text-align: center;
-      margin-top: 5px;
+      margin-top: 5%;
       .qr-btn {
         display: inline-block;
         background-color: #006de5;
@@ -187,6 +190,7 @@
 
   .item-label-stacked ion-select {
     border: 1px solid #006de5;
+    border-radius: 5px;
     margin-top: 16px;
     padding-right: 10px !important;
     .select-icon {
