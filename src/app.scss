@@ -1010,3 +1010,49 @@ ion-split-pane {
   font-size: 11px !important;
   line-height: 32px !important;
 }
+
+.ftue-changes .alert-wrapper{
+  --min-height: 100%;
+  --min-width: 100%;
+}
+
+.ftue-changes {
+  .alert-head {
+    @include padding(13px 24px !important);
+  }
+  .alert-title {
+    font-size: 1.2rem !important;
+    font-weight: 700;
+  }
+}
+
+.ftue-changes .alert-button-group {
+  display: inline-block !important;
+  text-align: center;
+  .alert-button {
+    border-color: map-get($colors, primary);
+    text-transform: uppercase;
+    border-style: solid;
+    border-width: 1px;
+    border-radius: 4px !important;
+    overflow: hidden;
+    height: 2.8rem;
+    font-size: 1rem;
+    width: 46% !important;
+    font-weight: 700;
+
+    .alert-button-inner {
+      justify-content: center !important;
+    }
+  }
+}
+.ftue-changes .alert-radio-group {
+  max-height: 100%;
+}
+
+
+.ftue-changes.select-alert .alert-button:last-child:not(:only-child) {
+  background: map-get($colors, primary) !important;
+  color: map-get($colors, white) !important;
+  // margin-left: 5%;
+}
