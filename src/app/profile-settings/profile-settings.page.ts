@@ -67,7 +67,7 @@ export class ProfileSettingsPage implements OnInit, OnDestroy {
 
   boardOptions = {
     title: this.commonUtilService.translateMessage('BOARD_OPTION_TEXT'),
-    cssClass: 'select-box'
+    cssClass: 'ftue-changes'
   };
   mediumOptions = {
     title: this.commonUtilService.translateMessage('MEDIUM_OPTION_TEXT'),
