@@ -67,11 +67,59 @@
   .padding-bottom-if-header {
     padding-bottom: 80px !important;
   }
+  .board-select-dummy{
+    width: 100vw;
+    margin: 0 auto;
+    ion-item{
+      // z-index: -1;
+      pointer-events: none;
+    }
+  }
+  
+  // .parent{
+  //   background: #333;
+  //   height: 400px;
+  //   position: relative;
+  //   overflow: hidden;
+  // }
+  .qr-board{
+      background-color:white;
+      height:175px;
+      position: absolute;
+      bottom: 0;
+      left: -40px;
+      right: -40px;
+      border-radius: 70%/100px 100px 0 0;
+      .or-container{
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: -15px;
+        .or-circle {
+          display: block;
+          width: 60px;
+          height: 30px;
+          border-radius: 15px;
+          // position: relative;
+          // top: 15px;
+          // background-color: $gray-800;
+          background-color: #999999;
+          text-align: center;
+          color: #fff;
+          font-size: 16px;
+          line-height: 30px;
+          margin: 0 auto;
+        }
+      }
+  }
 
   .qr-container {
+    height: calc(100vh - 175px);
+    background-color: #EDF4F9;
+
     padding: 10px 20px 0px 20px;
-    background-color: $light-grey;
-    border-bottom: 2px solid $gray-200;
+    // background-color: $light-grey;
+    // border-bottom: 2px solid $gray-200;
     .qr-content {
       &::after {
         clear: both;
@@ -79,14 +127,14 @@
         display: block;
       }
       .qr-img {
-        border-right: 2px solid $gray-100;
+        // border-right: 2px solid $gray-100;
         text-align: right;
         padding-right: 10px;
         .qr-img-container {
-          width: 50px;
-          img {
-            display: block;
-          }
+          // width: 50px;
+          // img {
+          //   // display: block;
+          // }
           .qr-text {
             text-align: center;
             width: 50px;
@@ -99,7 +147,7 @@
         }
       }
       .qr-instruction-container {
-        width: calc(100% - 65px);
+        // width: calc(100% - 65px);
         padding-left: 10px;
         .qr-instruction {
           .title {
@@ -134,20 +182,6 @@
           padding-left: 10px;
         }
       }
-    }
-    .or-circle {
-      display: block;
-      width: 60px;
-      height: 30px;
-      border-radius: 15px;
-      position: relative;
-      top: 15px;
-      background-color: $gray-800;
-      text-align: center;
-      color: #fff;
-      font-size: 16px;
-      line-height: 30px;
-      margin: 0 auto;
     }
   }
 

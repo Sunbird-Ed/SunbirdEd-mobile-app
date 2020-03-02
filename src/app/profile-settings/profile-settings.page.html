@@ -1,33 +1,56 @@
 <ion-content class="padding-bottom-if-header">
-	<div class="qr-container">
-		<div class="qr-content">
-			<div class="qr-img pull-left">
-				<div class="qr-img-container">
-					<img src="assets/imgs/qr_sample.png" alt="" width="50px" height="50px">
-					<div class="qr-text">
-						<span>ABC123</span>
+	<div class="qr-container" *ngIf="showQRScanner">
+		<div>
+			<div class="qr-content">
+				<div class="qr-img">
+					<div class="qr-img-container text-center">
+						<img src="assets/imgs/qr_with_book.svg" alt="" width="80%">
+						<!-- <div class="qr-text">
+							<span>ABC123</span>
+						</div> -->
+					</div>
+				</div>
+				<div class="qr-instruction-container text-center">
+					<div class="qr-instruction">
+						<span class="title">{{'APP_QR_CODE' | translate: {'%s': appName} }}</span>
+						<span class="sub-title">{{'QR_CODE_DETAILS' | translate}}</span>
 					</div>
 				</div>
 			</div>
-			<div class="qr-instruction-container pull-left">
-				<div class="qr-instruction">
-					<span class="title">{{'APP_QR_CODE' | translate: {'%s': appName} }}</span>
-					<span class="sub-title">{{'QR_CODE_DETAILS' | translate}}</span>
+			<div class="qr-btn-container">
+				<div class="qr-btn" (click)="openQRScanner()">
+					<img src="assets/imgs/ic_qr_scanner.svg" alt="">
+					<span>{{'SCAN_TAP' | translate}}</span>
 				</div>
 			</div>
+			<!-- <div>
+				<span class="or-circle">{{'OR' | translate}}</span>
+			</div> -->
+			
 		</div>
-		<div class="qr-btn-container">
-			<div class="qr-btn" (click)="openQRScanner()">
-				<img src="assets/imgs/ic_qr_scanner.svg" alt="">
-				<span>{{'SCAN_TAP' | translate}}</span>
+		<div class="qr-board" (click)="boardClicked($event)">
+			<div class="or-container">
+				<span class="or-circle">{{'OR' | translate}}</span>
+			</div>
+			<div class="fill-in-style msg-size">
+				{{'FILL_IN' | translate}}
+			</div>
+			<div class="board-select-dummy" (click)="boardClicked($event)">
+				<ion-item>
+					<ion-label position="stacked" class="label-font text-uppercase align-text">{{'BOARD' | translate }}</ion-label>
+					<ion-select multiple="false" text-capitalize [disabled]="!syllabusList.length"
+						[interfaceOptions]="boardOptions" placeholder="{{'BOARD_OPTION_TEXT' | translate}}">
+						<!-- <ion-select-option *ngFor="let eachSyllabus of syllabusList" value="{{eachSyllabus.code}}">
+							{{eachSyllabus.name}}&lrm;
+						</ion-select-option> -->
+					</ion-select>
+				</ion-item>
 			</div>
 		</div>
-		<span class="or-circle">{{'OR' | translate}}</span>
+		
 	</div>
-	<div class="fill-in-style msg-size">
-		{{'FILL_IN' | translate}}
-	</div>
-	<form novalidate [formGroup]="profileSettingsForm" class="form-position">
+	
+	<form novalidate [formGroup]="profileSettingsForm" class="form-position" *ngIf="!showQRScanner">
 		<ion-item>
 			<ion-label position="stacked" class="label-font text-uppercase align-text">{{'BOARD' | translate }}</ion-label>
 			<ion-select multiple="false" #boardSelect text-capitalize formControlName="syllabus" [disabled]="!syllabusList.length"
@@ -63,7 +86,7 @@
 	</form>
 </ion-content>
 
-<ion-footer padding no-border style="background: white;">
+<ion-footer padding no-border style="background: white;" *ngIf="!showQRScanner">
 	<button class="sb-btn sb-btn-md sb-btn-primary PR35 W100 ellipsis btn-block" [style.background-color]="btnColor"
 		(click)="onSubmitAttempt()" text-uppercase>
 		{{ 'BTN_SUBMIT' | translate }}

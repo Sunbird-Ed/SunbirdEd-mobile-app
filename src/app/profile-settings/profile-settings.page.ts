@@ -57,6 +57,7 @@ export class ProfileSettingsPage implements OnInit, OnDestroy {
   loader: any;
   btnColor = '#8FC4FF';
   appName: string;
+  showQRScanner = true;
 
   public profileSettingsForm: FormGroup;
   public hideBackButton = true;
@@ -532,5 +533,15 @@ export class ProfileSettingsPage implements OnInit, OnDestroy {
         await this.loader.dismiss();
         this.commonUtilService.showToast('PROFILE_UPDATE_FAILED');
       });
+  }
+
+  boardClicked(e) {
+    console.log('in boardClicked');
+    e.stopPropagation();
+    e.preventDefault();
+    this.showQRScanner = false;
+    setTimeout(() => {
+      this.boardSelect.open();
+    }, 0);
   }
 }
