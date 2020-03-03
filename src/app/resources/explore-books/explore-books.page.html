@@ -1,4 +1,4 @@
-<ion-content no-padding>
+<ion-content class="ion-no-padding">
   <form [formGroup]="searchForm">
     <div class="sb-slider-pills-container">
       <div class="sb-pills-container sb-grade-pills-container" id="gradeScroll">
@@ -44,7 +44,7 @@
   </form>
 
 
-  <div class="empty-search-result" *ngIf="!showLoader && !contentSearchResult.length" text-center padding-top>
+  <div class="empty-search-result ion-text-center" *ngIf="!showLoader && !contentSearchResult.length" padding-top>
     {{ 'EMPTY_SEARCH_RESULTS' | translate }}
   </div>
 
@@ -59,11 +59,11 @@
     </div>
   </ng-container>
 
-  <div padding text-center class="mt-32 mb-32" *ngIf="!commonUtilService?.networkInfo?.isNetworkAvailable">
+  <div padding class="mt-32 mb-32 ion-text-center" *ngIf="!commonUtilService?.networkInfo?.isNetworkAvailable">
     <img src="assets/imgs/outline-cloud_off.svg" />
     <ion-text>
       <h6 class="offline-header">
-        <b>{{ 'NO_INTERNET_TITLE' | translate }}</b>
+        <strong>{{ 'NO_INTERNET_TITLE' | translate }}</strong>
       </h6>
     </ion-text>
     <p class="offline-content">{{ 'OFFLINE_WARNING_ETBUI' | translate }}</p>

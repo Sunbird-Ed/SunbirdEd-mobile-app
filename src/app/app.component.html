@@ -12,7 +12,7 @@
     [hidden]="!showWalkthroughBackDrop">
     <div class="bg"></div>
     <ion-grid style="height: 100%" class="gridClass ion-text-center">
-      <ion-row style="height: 100%" align-items-end>
+      <ion-row style="height: 100%" class="ion-align-items-end">
         <ion-col style="padding-bottom: 7em; text-align: center">
           <ion-row>
             <ion-col>
@@ -41,12 +41,12 @@
   </div>
 
   <div id="update-webview-container"
-  style="position: fixed;top: 0;left: 0;right: 0;bottom: 0;z-index: 10;background-color: rgba(0, 0, 0, 0.59);opacity: 1;display: none;">
-    <div id="update-webview-content" 
+    style="position: fixed;top: 0;left: 0;right: 0;bottom: 0;z-index: 10;background-color: rgba(0, 0, 0, 0.59);opacity: 1;display: none;">
+    <div id="update-webview-content"
       style="position: fixed;top: 0;left: 0;right: 0;bottom: 0;z-index: 11;width: 80%;height: 195px;background-color: #eee; margin: auto;">
       <div style="height:195px;position: relative;">
         <div>
-          <h3 
+          <h3
             style="text-align: center;background-color: #024f9d; color: #fff;margin: 0;padding: 8px; font-size: 18px;">
             {{'UPDATE_REQUIRED' | translate}}
           </h3>
@@ -55,10 +55,11 @@
           <p style="margin: 0;">{{'WEBVIEW_UPDATE_TEXT' | translate}}</p>
         </div>
         <div style="position: absolute; width: 100%; bottom: 15px;text-align: center;">
-          <button (click)="openPlaystore()" style="color: #fff;background: #024f9d;padding: 10px;width: 80%;margin: auto;">{{'DOWNLOAD_NOW' | translate}}</button>
+          <button (click)="openPlaystore()"
+            style="color: #fff;background: #024f9d;padding: 10px;width: 80%;margin: auto;">{{'DOWNLOAD_NOW' | translate}}</button>
         </div>
       </div>
     </div>
   </div>
-  
+
 </ion-app>

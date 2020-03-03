@@ -1,10 +1,11 @@
 <ion-content overflow-scroll="true" class="main-container avoid-bottom-tabs-space">
   <ion-refresher (ionRefresh)="refreshProfileData($event)"></ion-refresher>
-  <div text-center class="padding-top-10 padding-bottom-10">
+  <div class="padding-top-10 padding-bottom-10 ion-text-center">
     <p class="profile-name">
       <span class="user">{{profile?.handle | titlecase}}</span>
       <span>
-        <ion-icon class="editIcon" name="md-create" color="primary" (click)="editGuestProfile(false,'edit-profile')"></ion-icon>
+        <ion-icon class="editIcon" name="md-create" color="primary" (click)="editGuestProfile(false,'edit-profile')">
+        </ion-icon>
       </span>
     </p>
 
@@ -16,7 +17,7 @@
   </div>
 
   <div class="details-container" *ngIf="appGlobalService?.DISPLAY_FRAMEWORK_CATEGORIES_IN_PROFILE">
-    <h2 class="section-title padding-left-10" no-padding>
+    <h2 class="section-title padding-left-10 ion-no-padding">
       {{'PROFILE_DETAILS_TITLE' | translate}}
     </h2>
 
@@ -93,10 +94,10 @@
       </div>
     </div>
 
-    <h2 class="section-title padding-left-10" no-padding>
+    <h2 class="section-title padding-left-10 ion-no-padding">
       {{'DEVICE_LOCATION' | translate}}
     </h2>
-    
+
     <div class="grid-container">
       <div text-uppercase class="grid-item info-title text-align-start">{{'STATE' | translate}}</div>
       <div class="grid-item text-align-end" (click)="redirectToDistrictMappingPage()">
@@ -117,10 +118,10 @@
       </div>
 
     </div>
-    
+
   </div>
 
   <div *ngIf="showSignInCard" class="signin-card-bg">
     <app-sign-in-card [source]="'profile'" (valueChange)="buttonClick($event)"></app-sign-in-card>
   </div>
-</ion-content>  
+</ion-content>
