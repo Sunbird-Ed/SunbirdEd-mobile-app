@@ -199,11 +199,12 @@ export class ProfileSettingsPage implements OnInit, OnDestroy {
     if (this.navParams) {
       this.hideBackButton = Boolean(this.navParams.hideBackButton);
     }
-    if (!this.hideBackButton) {
-      this.headerService.showHeaderWithBackButton();
-    } else {
-      this.headerService.hideHeader();
-    }
+    // if (!this.hideBackButton) {
+    //   this.headerService.showHeaderWithBackButton();
+    // } else {
+    //   this.headerService.hideHeader();
+    // }
+    this.headerService.hideHeader();
   }
 
   ionViewDidEnter() {
