@@ -6,7 +6,7 @@
       </div>
     </ion-col>
     <ion-col size="2">
-        <ion-button class="close-button" icon-only clear (click)="close()">
+        <ion-button class="close-button" icon-only fill="clear" (click)="close()">
           <ion-icon item-right name="close"></ion-icon>
         </ion-button>
     </ion-col>
@@ -15,7 +15,7 @@
   <ion-row class="alert-content-body"> {{body}} </ion-row>
   
   <ion-row>
-    <ion-button full class="alert-button" (click)="redirectToPlaystore()" text-capitalize> {{buttonText}} </ion-button>
+    <ion-button expand="full" class="alert-button" (click)="redirectToPlaystore()" text-capitalize> {{buttonText}} </ion-button>
   </ion-row>
   </ion-content>
   
