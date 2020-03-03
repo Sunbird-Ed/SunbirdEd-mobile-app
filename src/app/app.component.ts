@@ -11,7 +11,7 @@ import {
   ErrorEventType, EventNamespace, EventsBusService, SharedPreferences,
   SunbirdSdk, TelemetryAutoSyncService, TelemetryService, NotificationService,
   GetSystemSettingsRequest, SystemSettings, SystemSettingsService,
-  CodePushExperimentService, AuthEventType, CorrelationData, Profile, DeviceRegisterService,
+  CodePushExperimentService, AuthEventType, CorrelationData, Profile, DeviceRegisterService, ProfileService,
 } from 'sunbird-sdk';
 import {
   InteractType,
@@ -20,7 +20,7 @@ import {
   ImpressionType,
   CorReleationDataType
 } from '@app/services/telemetry-constants';
-import { PreferenceKey, EventTopics, SystemSettingsIds, GenericAppConfig } from './app.constant';
+import { PreferenceKey, EventTopics, SystemSettingsIds, GenericAppConfig, ProfileConstants } from './app.constant';
 import { ActivePageService } from '@app/services/active-page/active-page-service';
 import {
   AppGlobalService,
@@ -71,6 +71,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     @Inject('SYSTEM_SETTINGS_SERVICE') private systemSettingsService: SystemSettingsService,
     @Inject('CODEPUSH_EXPERIMENT_SERVICE') private codePushExperimentService: CodePushExperimentService,
     @Inject('DEVICE_REGISTER_SERVICE') private deviceRegisterService: DeviceRegisterService,
+    @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     private platform: Platform,
     private statusBar: StatusBar,
     private translate: TranslateService,
@@ -497,15 +498,17 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   private async checkDeviceLocation() {
-    if (!(await this.commonUtilService.isDeviceLocationAvailable())
-      && (await this.preferences.getString(PreferenceKey.IS_ONBOARDING_COMPLETED).toPromise() === 'true')) {
-      const navigationExtras: NavigationExtras = {
-        state: {
-          isShowBackButton: false
-        }
-      };
-      await this.router.navigate(['/', RouterLinks.DISTRICT_MAPPING], navigationExtras);
-      this.splashScreenService.handleSunbirdSplashScreenActions();
+    if (!(await this.commonUtilService.isDeviceLocationAvailable())) {
+      const profile = await this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise();
+      if (await this.appGlobalService.getProfileSettingsStatus(profile)) {
+        const navigationExtras: NavigationExtras = {
+          state: {
+            isShowBackButton: false
+          }
+        };
+        await this.router.navigate(['/', RouterLinks.DISTRICT_MAPPING], navigationExtras);
+        this.splashScreenService.handleSunbirdSplashScreenActions();
+      }
     }
   }
 

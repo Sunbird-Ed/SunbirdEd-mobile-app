@@ -366,4 +366,29 @@ describe('collectionDetailEtbPage', () => {
 
     });
 
+    it('should play the content and content is locally available', (done) => {
+        // arrange
+        jest.spyOn(ContentUtil, 'getTelemetryObject').mockReturnValue(
+            new TelemetryObject(mockContentData.content.identifier,
+                mockContentData.content.contentData.contentType, mockContentData.content.contentData.pkgVersion));
+        mockContentPlayerHandler.launchContentPlayer = jest.fn();
+        mockContentData.content.isAvailableLocally  = true;
+        mockContentData.content.mimeType  = 'application/vnd.ekstep.h5p-archive';
+        mockcommonUtilService.networkInfo.isNetworkAvailable = true;
+        // act
+        collectionDetailEtbPage.playContent(mockContentData);
+        // assert
+        setTimeout(() => {
+            expect(mockContentPlayerHandler.launchContentPlayer).toHaveBeenCalledWith(
+                mockContentData.content,
+                false,
+                true,
+                mockContentInfo,
+                false,
+                true
+            );
+            done();
+        }, 0);
+    });
+
 });

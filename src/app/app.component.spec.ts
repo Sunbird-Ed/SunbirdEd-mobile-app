@@ -10,7 +10,7 @@ import {
     EventsBusService, SharedPreferences,
     TelemetryService, NotificationService,
     CodePushExperimentService, SystemSettingsService, DeviceRegisterService,
-    TelemetryAutoSyncService, SunbirdSdk, CorrelationData
+    TelemetryAutoSyncService, SunbirdSdk, CorrelationData, ProfileService
 } from 'sunbird-sdk';
 import { Platform, Events, MenuController } from '@ionic/angular';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
@@ -32,7 +32,8 @@ describe('AppComponent', () => {
     let appComponent: AppComponent;
     const mockActivePageService: Partial<ActivePageService> = {};
     const mockAppGlobalService: Partial<AppGlobalService> = {
-        getUserId: jest.fn(() => 'some_user_id')
+        getUserId: jest.fn(() => 'some_user_id'),
+        getProfileSettingsStatus: jest.fn()
     };
     const mockAppRatingService: Partial<AppRatingService> = {
         checkInitialDate: jest.fn()
@@ -42,6 +43,9 @@ describe('AppComponent', () => {
         isDeviceLocationAvailable: jest.fn(() => Promise.resolve(true))
     };
     const mockDeviceRegisterService: Partial<DeviceRegisterService> = {};
+    const mockProfileService: Partial<ProfileService> = {
+        getActiveSessionProfile: jest.fn()
+    };
     const mockEvents: Partial<Events> = { publish: jest.fn() };
     const mockEventsBusService: Partial<EventsBusService> = {
         events: jest.fn(() => of({}))
@@ -74,7 +78,8 @@ describe('AppComponent', () => {
         // putString: jest.fn(() => of(undefined))
     };
     const mockRouter: Partial<Router> = {
-        events: EMPTY
+        events: EMPTY,
+        navigate: jest.fn()
     };
     const mockSplashScreenService: Partial<SplashScreenService> = {};
     const mockStatusBar: Partial<StatusBar> = {
@@ -128,6 +133,7 @@ describe('AppComponent', () => {
             mockSystemSettingsService as SystemSettingsService,
             mockCodePushExperimentService as CodePushExperimentService,
             mockDeviceRegisterService as DeviceRegisterService,
+            mockProfileService as ProfileService,
             mockPlatform as Platform,
             mockStatusBar as StatusBar,
             mockTranslate as TranslateService,
@@ -1129,5 +1135,47 @@ describe('AppComponent', () => {
             });
         });
     });
+
+    describe('checkDeviceLocation()', () => {
+
+        it('shouldn\'t show location selection page if location available', () => {
+          // arrange
+          mockCommonUtilService.isDeviceLocationAvailable = jest.fn(() => Promise.resolve(true));
+          // act
+          appComponent.reloadGuestEvents();
+          // assert
+          expect(mockRouter.navigate).not.toHaveBeenCalled();
+        });
+
+        it('shouldn\'t show location selection page if BMC value is not selected', () => {
+          // arrange
+          mockCommonUtilService.isDeviceLocationAvailable = jest.fn(() => Promise.resolve(false));
+          mockProfileService.getActiveSessionProfile = jest.fn(() => of({} as any));
+          mockAppGlobalService.getProfileSettingsStatus = jest.fn(() => Promise.resolve(false));
+          // act
+          appComponent.reloadGuestEvents();
+          // assert
+          expect(mockRouter.navigate).not.toHaveBeenCalled();
+        });
+
+        it('should show location selection page if BMC value is not selected', () => {
+            // arrange
+            mockCommonUtilService.isDeviceLocationAvailable = jest.fn(() => Promise.resolve(false));
+            mockProfileService.getActiveSessionProfile = jest.fn(() => of({} as any));
+            mockAppGlobalService.getProfileSettingsStatus = jest.fn(() => Promise.resolve(true));
+            // act
+            appComponent.reloadGuestEvents();
+            // assert
+
+            setTimeout(() => {
+                expect(mockRouter.navigate).toHaveBeenCalledWith(['/', 'district-mapping'], {
+                    state: {
+                      isShowBackButton: false
+                    }
+                  });
+            }, 0);
+
+          });
+      });
 
 });

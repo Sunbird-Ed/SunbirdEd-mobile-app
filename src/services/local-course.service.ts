@@ -11,10 +11,13 @@ import { Map } from '@app/app/telemetryutil';
 import { CommonUtilService } from './common-util.service';
 import { EnrollCourse } from './../app/enrolled-course-details-page/course.interface';
 import { map, catchError } from 'rxjs/operators';
-import { PreferenceKey, EventTopics } from '@app/app/app.constant';
+import { PreferenceKey, EventTopics, RouterLinks } from '@app/app/app.constant';
 import { Events } from '@ionic/angular';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { ContentUtil } from '@app/util/content-util';
+import { Location } from '@angular/common';
+import { Router } from '@angular/router';
+
 
 @Injectable()
 export class LocalCourseService {
@@ -30,6 +33,8 @@ export class LocalCourseService {
     private events: Events,
     private zone: NgZone,
     private appVersion: AppVersion,
+    private router: Router,
+    private location: Location
   ) {
   }
 
@@ -163,6 +168,7 @@ export class LocalCourseService {
           this.events.publish(EventTopics.COACH_MARK_SEEN, { showWalkthroughBackDrop: false, appName: appLabel });
           await this.preferences.putString(PreferenceKey.CDATA_KEY, '').toPromise();
           this.getEnrolledCourses();
+          this.navigateTocourseDetails();
         });
       }, (error) => {
         this.zone.run(async () => {
@@ -177,8 +183,16 @@ export class LocalCourseService {
           if (error && error.code !== 'NETWORK_ERROR') {
             this.getEnrolledCourses();
           }
+          this.navigateTocourseDetails();
         });
       });
+  }
+
+  navigateTocourseDetails() {
+    const routeUrl = this.router.url;
+    if ((routeUrl.indexOf(RouterLinks.ENROLLED_COURSE_DETAILS) === -1) && (routeUrl.indexOf(RouterLinks.COURSE_BATCHES) !== -1)) {
+      this.location.back();
+    }
   }
 
   private async getEnrolledCourses(returnRefreshedCourses: boolean = false) {

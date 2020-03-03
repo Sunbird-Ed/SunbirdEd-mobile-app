@@ -69,7 +69,7 @@
       <div class="sb-textbook-container" *ngIf="items?.contents && items?.contents?.length">
         <sb-library-cards-stack [title]="items?.name" [contentList]="items?.contents" [isOffline]="!commonUtilService.networkInfo.isNetworkAvailable"
           [viewMoreButtonText]="'VIEW_MORE' | translate" [maxCardCount]="3"
-          (buttonClick)="navigateToTextbookPage(items?.contents, items.name)" (cardClick)="navigateToDetailPage($event, items.name)">
+          (viewMoreClick)="navigateToTextbookPage(items?.contents, items.name)" (cardClick)="navigateToDetailPage($event, items.name)">
         </sb-library-cards-stack>
       </div>
     </div>
