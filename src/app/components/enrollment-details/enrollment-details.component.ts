@@ -92,7 +92,7 @@ export class EnrollmentDetailsComponent {
         this.preference.putString(PreferenceKey.CONTENT_CONTEXT, JSON.stringify(contentContextMap));
     }
 
-    enrollIntoBatch(content: any): void {
+    async enrollIntoBatch(content: any) {
 
         const enrollCourseRequest = this.localCourseService.prepareEnrollCourseRequest(this.userId, content, this.courseId);
         this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
@@ -101,8 +101,8 @@ export class EnrollmentDetailsComponent {
             PageId.CONTENT_DETAIL, undefined,
             this.localCourseService.prepareRequestValue(enrollCourseRequest));
 
-        const loader = this.commonUtilService.getLoader();
-        loader.present();
+        const loader = await this.commonUtilService.getLoader();
+        await loader.present();
         const enrollCourse: EnrollCourse = {
             userId: this.userId,
             batch: content,

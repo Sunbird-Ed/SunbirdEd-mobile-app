@@ -647,13 +647,13 @@ describe('AppGlobalService', () => {
         });
     });
 
-    describe('DialCodeConfig()', () => {
+    describe('SupportedUrlRegexConfig()', () => {
         it('should return cached location config', () => {
             // arrange
-            appGlobalService.setDailCodeConfig(new RegExp('sample_regex'));
+            appGlobalService.setSupportedUrlRegexConfig('sample_regex');
             // act
             // assert
-            expect(appGlobalService.getCachedDialCodeConfig()).toEqual(new RegExp('sample_regex'));
+            expect(appGlobalService.getCachedSupportedUrlRegexConfig()).toEqual('sample_regex');
         });
     });
 

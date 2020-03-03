@@ -73,27 +73,6 @@ describe('QRScannerResultHandler', () => {
     expect(qRScannerResultHandler).toBeTruthy();
   });
 
-  describe('getDailCodeRegularExpression()', () => {
-    it('should return cached dialcode config if cache is available', async () => {
-      // arrange
-      const regEx: RegExp = new RegExp('sample_regex');
-      mockAppglobalService.getCachedDialCodeConfig = jest.fn(() => new RegExp('sample_regex'));
-      // act
-      const response = await qRScannerResultHandler['getDailCodeRegularExpression']();
-      // assert
-      expect(response).toEqual(regEx);
-    });
-
-    it('should return cached dialcode config if cache is not available', async () => {
-      // arrange
-      const regEx: RegExp = new RegExp('sample_regex');
-      mockAppglobalService.getCachedDialCodeConfig = jest.fn(() => undefined);
-      // act
-      const response = await qRScannerResultHandler['getDailCodeRegularExpression']();
-      // assert
-      expect(response).toEqual(undefined);
-    });
-  });
 
   // describe('parseDialCode()', () => {
   //   it('should return parsed data from the link', (done) => {
