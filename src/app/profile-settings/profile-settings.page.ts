@@ -444,12 +444,12 @@ export class ProfileSettingsPage implements OnInit, OnDestroy {
           this.mediumList = (await this.frameworkUtilService.getFrameworkCategoryTerms(nextCategoryTermsRequet).toPromise())
             .map(t => ({ name: t.name, code: t.code }));
 
-          this.mediumControl.patchValue([]);
         } catch (e) {
           // todo
           console.error(e);
         } finally {
           // todo
+          this.mediumControl.patchValue([]);
           this.loader.dismiss();
         }
       })
@@ -477,12 +477,12 @@ export class ProfileSettingsPage implements OnInit, OnDestroy {
           this.gradeList = (await this.frameworkUtilService.getFrameworkCategoryTerms(nextCategoryTermsRequet).toPromise())
             .map(t => ({ name: t.name, code: t.code }));
 
-          this.gradeControl.patchValue([]);
         } catch (e) {
           // todo
           console.error(e);
         } finally {
           // todo
+          this.gradeControl.patchValue([]);
           this.loader.dismiss();
         }
       })
@@ -552,5 +552,4 @@ export class ProfileSettingsPage implements OnInit, OnDestroy {
       this.boardSelect.open();
     }, 0);
   }
-  
 }
