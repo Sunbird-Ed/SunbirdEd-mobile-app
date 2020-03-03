@@ -423,7 +423,7 @@ describe('TelemetryGeneratorService', () => {
 
   });
 
-  describe('generateAppLaunchTelemetry', () => {
+  describe('generateUtmInfoTelemetry', () => {
     it('should invoke interact() for generate UtmInfo telemetry', () => {
       // arrange
       const value = [
