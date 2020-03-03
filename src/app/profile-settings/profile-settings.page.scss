@@ -172,7 +172,7 @@
     flex-grow: 0;
     flex-shrink: 0;
     padding-top: 4%;
-    padding-bottom: 32px;
+    padding-bottom: 7vh;
     .qr-instruction {
       .title {
         display: block;
@@ -241,21 +241,21 @@
 
   .item-label-stacked.item-select-disabled {
     ion-label {
-      color: #cccccc;
+      color: #333;
     }
 
     ion-select {
-      border-color: #cccccc;
+      border-color: #333;
       // Inside Shadow DOM
       .select-icon {
         .select-icon-inner {
-          border-color: #cccccc;
+          border-color: #333;
           animation: none;
         }
       }
       // Inside Shadow DOM
       .select-placeholder {
-        color: #cccccc;
+        color: #333;
       }
     }
   }
