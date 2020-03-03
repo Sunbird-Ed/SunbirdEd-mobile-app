@@ -60,7 +60,7 @@
   .item-select-disabled {
     .label-md {
       color: #{map-get($colors, medium_gray)};
-      opacity: 0.5;
+      opacity: 1;
     }
   }
 
@@ -300,7 +300,7 @@
   }
 
   ion-label {
-    opacity: 0.5;
+    opacity: 1;
     color: #979797;
   }; 
 }
