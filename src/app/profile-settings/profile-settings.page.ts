@@ -53,7 +53,6 @@ export class ProfileSettingsPage implements OnInit, OnDestroy {
   private unregisterBackButton: Subscription;
   private headerObservable: any;
   private formControlSubscriptions: Subscription;
-
   loader: any;
   btnColor = '#8FC4FF';
   appName: string;
@@ -185,7 +184,7 @@ export class ProfileSettingsPage implements OnInit, OnDestroy {
       this.navParams = navigation.extras.state;
     }
 
-    if (this.navParams && this.navParams.stopScanner && this.navParams.stopScanner) {
+    if (this.navParams && this.navParams.stopScanner) {
       setTimeout(() => {
         this.scanner.stopScanner();
       }, 500);
@@ -314,7 +313,11 @@ export class ProfileSettingsPage implements OnInit, OnDestroy {
       Environment.ONBOARDING,
       PageId.ONBOARDING_PROFILE_PREFERENCES,
     );
-    this.scanner.startScanner(PageId.ONBOARDING_PROFILE_PREFERENCES, true);
+    this.scanner.startScanner(PageId.ONBOARDING_PROFILE_PREFERENCES, true).then((scannedData) => {
+      if (scannedData === 'skip') {
+        this.showQRScanner = false;
+      }
+    });
   }
 
   onSubmitAttempt() {
@@ -544,10 +547,12 @@ export class ProfileSettingsPage implements OnInit, OnDestroy {
       });
   }
 
-  boardClicked(e) {
-    console.log('in boardClicked');
-    e.stopPropagation();
-    e.preventDefault();
+  boardClicked(e?: Event) {
+    if (e) {
+      e.stopPropagation();
+      e.preventDefault();
+    }
+
     this.showQRScanner = false;
     setTimeout(() => {
       this.boardSelect.open();

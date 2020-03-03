@@ -79,7 +79,7 @@ export class SunbirdQRScanner {
     displayText = this.mQRScannerText['SCAN_QR_INSTRUCTION'],
     displayTextColor = '#0b0b0b',
     buttonText = this.mQRScannerText['NO_QR_CODE']
-  ) {
+  ): Promise<string | undefined> {
     this.source = source;
     this.showButton = showButton;
 
@@ -144,14 +144,16 @@ export class SunbirdQRScanner {
       }
 
       if (status.isPermissionAlwaysDenied) {
-        return this.showSettingErrorToast();
+        this.showSettingErrorToast();
+        return undefined;
       }
 
       if (status.hasPermission) {
-        this.startQRScanner(screenTitle, displayText, displayTextColor, buttonText, showButton, source);
+        return this.startQRScanner(screenTitle, displayText, displayTextColor, buttonText, showButton, source);
       } else if (!status.hasPermission) {
         this.showPopover();
       }
+      return undefined;
     });
   }
 
@@ -259,59 +261,61 @@ export class SunbirdQRScanner {
     this.router.navigate(['/tabs'], navigationExtras);
   }
 
-  private startQRScanner(
+  private async startQRScanner(
     screenTitle: string, displayText: string, displayTextColor: string,
-    buttonText: string, showButton: boolean, source: string) {
+    buttonText: string, showButton: boolean, source: string): Promise<string | undefined> {
 
     if (this.isScannerActive) {
       return;
     }
     this.isScannerActive = true;
-    (window as any).qrScanner.startScanner(screenTitle, displayText,
-      displayTextColor, buttonText, showButton, this.platform.isRTL, async (scannedData) => {
-        if (scannedData === 'skip') {
-          if (this.appGlobalService.DISPLAY_ONBOARDING_CATEGORY_PAGE) {
-            const navigationExtras: NavigationExtras = { state: { stopScanner: true } };
-            this.stopScanner();
-            this.router.navigate([`/${RouterLinks.PROFILE_SETTINGS}`], navigationExtras);
-          } else {
-            this.getProfileSettingConfig();
-          }
-          this.telemetryGeneratorService.generateInteractTelemetry(
-            InteractType.TOUCH,
-            InteractSubtype.NO_QR_CODE_CLICKED,
-            Environment.ONBOARDING,
-            PageId.QRCodeScanner);
-          this.generateEndEvent(source, '');
-        } else {
-          const dialCode = await this.qrScannerResultHandler.parseDialCode(scannedData);
-          if (scannedData === 'cancel' ||
-            scannedData === 'cancel_hw_back' ||
-            scannedData === 'cancel_nav_back') {
-            this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.QRCodeScanner,
-              source === PageId.ONBOARDING_PROFILE_PREFERENCES ? Environment.ONBOARDING : Environment.HOME,
-              scannedData === 'cancel_nav_back');
+    return new Promise<string | undefined>((resolve, reject) => {
+      (window as any).qrScanner.startScanner(screenTitle, displayText,
+        displayTextColor, buttonText, showButton, this.platform.isRTL, async (scannedData) => {
+          if (scannedData === 'skip') {
+            if (this.appGlobalService.DISPLAY_ONBOARDING_CATEGORY_PAGE) {
+              this.stopScanner();
+            } else {
+              this.getProfileSettingConfig();
+            }
             this.telemetryGeneratorService.generateInteractTelemetry(
-              InteractType.OTHER,
-              InteractSubtype.QRCodeScanCancelled,
-              Environment.HOME,
+              InteractType.TOUCH,
+              InteractSubtype.NO_QR_CODE_CLICKED,
+              Environment.ONBOARDING,
               PageId.QRCodeScanner);
             this.generateEndEvent(source, '');
-          } else if (dialCode) {
-            this.qrScannerResultHandler.handleDialCode(source, scannedData, dialCode);
-          } else if (this.qrScannerResultHandler.isContentId(scannedData)) {
-            this.qrScannerResultHandler.handleContentId(source, scannedData);
-          } else if (scannedData.includes('/certs/')) {
-            this.qrScannerResultHandler.handleCertsQR(source, scannedData);
           } else {
-            this.qrScannerResultHandler.handleInvalidQRCode(source, scannedData);
-            this.showInvalidCodeAlert();
+            const dialCode = await this.qrScannerResultHandler.parseDialCode(scannedData);
+            if (scannedData === 'cancel' ||
+              scannedData === 'cancel_hw_back' ||
+              scannedData === 'cancel_nav_back') {
+              this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.QRCodeScanner,
+                source === PageId.ONBOARDING_PROFILE_PREFERENCES ? Environment.ONBOARDING : Environment.HOME,
+                scannedData === 'cancel_nav_back');
+              this.telemetryGeneratorService.generateInteractTelemetry(
+                InteractType.OTHER,
+                InteractSubtype.QRCodeScanCancelled,
+                Environment.HOME,
+                PageId.QRCodeScanner);
+              this.generateEndEvent(source, '');
+            } else if (dialCode) {
+              this.qrScannerResultHandler.handleDialCode(source, scannedData, dialCode);
+            } else if (this.qrScannerResultHandler.isContentId(scannedData)) {
+              this.qrScannerResultHandler.handleContentId(source, scannedData);
+            } else if (scannedData.includes('/certs/')) {
+              this.qrScannerResultHandler.handleCertsQR(source, scannedData);
+            } else {
+              this.qrScannerResultHandler.handleInvalidQRCode(source, scannedData);
+              this.showInvalidCodeAlert();
+            }
+            this.stopScanner();
           }
+          resolve(scannedData);
+        }, (e) => {
+          reject(e);
           this.stopScanner();
-        }
-      }, () => {
-        this.stopScanner();
-      });
+        });
+    });
   }
 
   generateImpressionTelemetry(source) {
