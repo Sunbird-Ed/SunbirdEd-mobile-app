@@ -70,6 +70,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
 
     if ((urlMatch && urlMatch.groups) || dialCode) {
       this.checkIfOnboardingComplete(urlMatch, dialCode, url);
+      this.generateUTMInfoTelemetry(url);
     }
   }
 
@@ -292,5 +293,15 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
       await this.preferences.putString(PreferenceKey.SELECTED_USER_TYPE, ProfileType.TEACHER).toPromise();
     }
   }
+
+  generateUTMInfoTelemetry(deeplinkUrl) {
+    const utmHashes = deeplinkUrl.slice(deeplinkUrl.indexOf('?') + 1).split('&');
+    const utmParams = {};
+    utmHashes.map(hash => {
+        const [key, val] = hash.split('=');
+        utmParams[key] = decodeURIComponent(val);
+    });
+    this.telemetryGeneratorService.generateUtmInfoTelemetry(utmParams, LaunchType.DEEPLINK);
+   }
 
 }

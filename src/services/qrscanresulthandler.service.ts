@@ -65,6 +65,7 @@ export class QRScannerResultHandler {
   }
 
   handleDialCode(source: string, scannedData, dialCode: string) {
+    this.generateUTMInfoTelemetry(scannedData);
     this.source = source;
     this.generateQRScanSuccessInteractEvent(scannedData, 'SearchResult', dialCode);
 
@@ -98,6 +99,7 @@ export class QRScannerResultHandler {
           Environment.HOME,
           contentId , ObjectType.QR , ''
         );
+        this.generateUTMInfoTelemetry(scannedData);
       }).catch(() => {
       if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
         this.commonUtilService.showToast('ERROR_NO_INTERNET_MESSAGE');
@@ -207,5 +209,15 @@ export class QRScannerResultHandler {
       );
     }
   }
+
+  generateUTMInfoTelemetry(scannedData) {
+    const utmHashes = scannedData.slice(scannedData.indexOf('?') + 1).split('&');
+    const utmParams = {};
+    utmHashes.map(hash => {
+        const [key, val] = hash.split('=');
+        utmParams[key] = decodeURIComponent(val);
+    });
+    this.telemetryGeneratorService.generateUtmInfoTelemetry(utmParams, PageId.QRCodeScanner);
+   }
 
 }
