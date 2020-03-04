@@ -76,7 +76,7 @@ describe('QRScannerResultHandler', () => {
 
 
   describe('parseDialCode()', () => {
-    it('should return parsed data from the link', (done) => {
+    it('should return parsed data from the link', async (done) => {
       // arrange
       const formValResponse =  {values: '(\\/dial\\/(?<sunbird>[a-zA-Z0-9]+)|(\\/QR\\/\\?id=(?<epathshala>[a-zA-Z0-9]+)))'};
       const regexExp = formValResponse.values;
@@ -85,13 +85,13 @@ describe('QRScannerResultHandler', () => {
        Promise.resolve('(\\/dial\\/(?<sunbird>[a-zA-Z0-9]+)|(\\/QR\\/\\?id=(?<epathshala>[a-zA-Z0-9]+)))'));
       // act
       // assert
-      qRScannerResultHandler.parseDialCode('https//www.sunbirded.org/get/dial/ABCDEF').then((response) => {
+      await qRScannerResultHandler.parseDialCode('https//www.sunbirded.org/get/dial/ABCDEF').then((response) => {
         expect(response).toEqual('ABCDEF');
         done();
       });
     });
 
-    it('should not return parsed data if scannData does not match to regex', (done) => {
+    it('should not return parsed data if scannData does not match to regex', async (done) => {
       // arrange
       const formValResponse =  {values: '(\\/dial\\/(?<sunbird>[a-zA-Z0-9]+)|(\\/QR\\/\\?id=(?<epathshala>[a-zA-Z0-9]+)))'};
       const regexExp = formValResponse.values;
@@ -100,7 +100,7 @@ describe('QRScannerResultHandler', () => {
        Promise.resolve('(\\/dial\\/(?<sunbird>[a-zA-Z0-9]+)|(\\/QR\\/\\?id=(?<epathshala>[a-zA-Z0-9]+)))'));
       // act
       // assert
-      qRScannerResultHandler.parseDialCode('https//www.sunbirded.org/get/content/ABCDEF').then((response) => {
+      await qRScannerResultHandler.parseDialCode('https//www.sunbirded.org/get/content/ABCDEF').then((response) => {
         expect(response).toBeUndefined();
         done();
       });
