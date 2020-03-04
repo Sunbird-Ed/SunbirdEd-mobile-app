@@ -19,19 +19,14 @@
 
     <div class="right">
       <div class="img-container">
-        <img
+        <img alt="icon"
           [src]="commonUtil.convertFileSrc(localImage) || commonUtil.convertFileSrc(contentDetail?.contentData?.appIcon) || defaultAppIcon">
       </div>
-
     </div>
-
   </div>
 
   <div class="sb-dt-content pt-0">
     <div class="left">
-      <!-- <div class="sb-practice">
-        <button ion-button outline small>{{contentDetail?.contentData?.resourceType}}</button>
-      </div> -->
     </div>
     <div class="right">
       <div *ngIf="contentDetail?.contentData?.me_totalRatingsCount" (click)="rateContent()" class="sb-rating-view">
@@ -41,10 +36,7 @@
         </span>
       </div>
     </div>
-
   </div>
-
-
 
   <div class="sb-separator-line"></div>
 

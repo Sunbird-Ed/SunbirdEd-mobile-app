@@ -25,7 +25,7 @@
     <ng-container *ngIf="(activeDownloadRequests$ | async) as activeDownloadRequests">
       <div class="img-mt-88" *ngIf="!activeDownloadRequests.length">
         <div class="ion-text-center">
-          <img src="./assets/imgs/no_downloads.png" alt="">
+          <img src="./assets/imgs/no_downloads.png" alt="no_downloads">
         </div>
         <div class="ion-text-center">
           <p>
@@ -42,7 +42,8 @@
               <ion-col class="ion-no-padding" size="10">
                 <div class="sb-card">
                   <div start class="img-container">
-                    <img [src]="commonUtilService.convertFileSrc(activeDownload.contentMeta.appIcon) || defaultImg">
+                    <img [src]="commonUtilService.convertFileSrc(activeDownload.contentMeta.appIcon) || defaultImg"
+                      alt="icon">
                   </div>
                   <div end class="sb-card-details">
                     <div class="title">{{activeDownload?.contentMeta.name}}</div>
@@ -84,7 +85,8 @@
               <ion-col class="ion-no-padding" size="10">
                 <div class="sb-card">
                   <div start class="img-container">
-                    <img [src]="commonUtilService.convertFileSrc(activeDownload.contentMeta.appIcon) || defaultImg">
+                    <img [src]="commonUtilService.convertFileSrc(activeDownload.contentMeta.appIcon) || defaultImg"
+                      alt="icon">
                   </div>
                   <div end class="sb-card-details">
                     <div class="title">{{activeDownload?.contentMeta.name}}</div>
