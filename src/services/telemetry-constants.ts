@@ -154,7 +154,8 @@ export enum ImpressionSubtype {
     COMINGSOON_POPUP = 'coming-soon-popup',
     EXPLORE_MORE_CONTENT = 'explore-more-content',
     RECOVERY_ACCOUNT_POPUP = 'recovery-account-popup',
-    DISTRICT_LOCATION_MAPPING = 'district-location-mapping'
+    DISTRICT_LOCATION_MAPPING = 'district-location-mapping',
+    
 }
 export enum InteractType {
     TOUCH = 'TOUCH',
