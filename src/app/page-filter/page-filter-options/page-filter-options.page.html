@@ -8,7 +8,7 @@
     <ion-grid class="scroll-list" *ngIf="facets?.name !== 'Organization' && facets?.name !== 'Purpose'">
       <ion-row *ngIf="facets?.values && facets?.values?.length">
         <ion-col size="6" *ngFor="let facetValue of facets?.values; let index=index">
-          <ion-item no-lines no-padding>
+          <ion-item no-lines class="ion-no-padding">
             <ion-label text-capitalize>{{ facetValue }}</ion-label>
             <ion-checkbox [checked]="isSelected(facetValue)" (ionChange)="changeValue(facetValue, index)">
             </ion-checkbox>
@@ -19,9 +19,10 @@
     <ion-grid class="scroll-list" *ngIf="facets?.name === 'Purpose'">
       <ion-row *ngIf="facets?.values && facets?.values?.length">
         <ion-col size="12" *ngFor="let facetValue of facets?.values; let index=index">
-          <ion-item no-lines no-padding>
+          <ion-item no-lines class="ion-no-padding">
             <ion-label text-capitalize>{{ facetValue }}</ion-label>
-            <ion-checkbox [checked]="isSelected(facetValue)" (ionChange)="changeValue(facetValue, index)"></ion-checkbox>
+            <ion-checkbox [checked]="isSelected(facetValue)" (ionChange)="changeValue(facetValue, index)">
+            </ion-checkbox>
           </ion-item>
         </ion-col>
       </ion-row>
@@ -29,7 +30,7 @@
     <ion-grid class="scroll-list" *ngIf="facets?.name === 'Organization'">
       <ion-row *ngIf="facets?.values && facets?.values?.length">
         <ion-col size="6" *ngFor="let facetValue of facets?.values; let index=index">
-          <ion-item no-lines no-padding>
+          <ion-item no-lines class="ion-no-padding">
             <ion-label text-capitalize>{{ facetValue.orgName }}</ion-label>
             <ion-checkbox [checked]="isSelected(facetValue.hashTagId)"
               (ionChange)="changeValue(facetValue.hashTagId, index)"></ion-checkbox>
@@ -55,7 +56,7 @@
         {{getSelectedOptionCount(facets)}} </ion-title>
     </ion-toolbar>
   </ion-header>
-  <ion-content [fullscreen]="true" no-padding>
+  <ion-content [fullscreen]="true" class="ion-no-padding">
     <ion-searchbar (ionInput)="getItems($event)" #input debounce="1000" [spellcheck]="true" [autocomplete]="true"
       class="subtitle"></ion-searchbar>
     <div class="scroll-list" *ngIf="showTopicFilterList">
@@ -70,7 +71,7 @@
     </div>
     <div class="scroll-list" *ngIf="!showTopicFilterList">
       <ion-list class="topic-item">
-        <ion-item *ngFor="let facetValue of topicsArr; let i=index" no-lines no-padding class="div-space">
+        <ion-item *ngFor="let facetValue of topicsArr; let i=index" no-lines class="div-space ion-no-padding">
           <div text-wrap (click)="toggleGroup(i)" [ngClass]="{active: isGroupShown(i)}" style="font-size: 16px;">
             <ion-col size="1" style="margin-left:15px;padding: 0;">
               <ion-icon class="icon-margin" item-left [name]="isGroupShown(i) ? 'remove' : 'add'"></ion-icon>

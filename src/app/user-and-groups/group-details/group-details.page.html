@@ -18,7 +18,7 @@
     <ion-list>
       <div *ngIf="isNoUsers" text-center>
         <div class="img-container">
-          <img class="image_style" src="assets/imgs/ic_businessman.png">
+          <img class="image_style" src="assets/imgs/ic_businessman.png" alt="no-user">
         </div>
         <br />
         <ion-row margin-top>
@@ -40,8 +40,8 @@
           <ion-grid class="radius ion-no-padding">
             <ion-row class="bg-color-white gd-row-padding radius">
               <ion-col size="10" class="bg-color-white">
-                <div (click)="selectUser(i, user?.handle)" class="bg-color-white padding-left-0 rm-label-margin"
-                  no-padding>
+                <div (click)="selectUser(i, user?.handle)"
+                  class="bg-color-white padding-left-0 rm-label-margin ion-no-padding">
                   <h6 class="elipsis ion-no-margin"
                     [ngStyle]="{'color': currentUserId === user?.uid ? 'dodgerblue' : 'black'}">
                     <strong>{{user?.handle | titlecase}}</strong>
