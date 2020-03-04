@@ -1,5 +1,5 @@
 <ion-content class="padding-bottom-if-header">
-	<div class="ps-container">
+	<form [formGroup]="profileSettingsForm" class="ps-container">
 		<div class="back-btn-container" [ngClass]="{'active-bg' : showQRScanner }">
 			<ion-icon *ngIf="!hideBackButton" ios="ios-arrow-back" md="md-arrow-back" (click)="handleBackButton(true)"
 			class="top-back-button"></ion-icon>
@@ -30,17 +30,17 @@
 				<div class="board-select-dummy" (click)="boardClicked($event)">
 					<ion-item appCustomIonSelect>
 						<ion-label position="stacked" class="label-font text-uppercase align-text">{{'BOARD' | translate }}</ion-label>
-						<ion-select multiple="false" text-capitalize [disabled]="!syllabusList.length"
-							[interfaceOptions]="boardOptions" placeholder="{{'BOARD_OPTION_TEXT' | translate}}">
-							<!-- <ion-select-option *ngFor="let eachSyllabus of syllabusList" value="{{eachSyllabus.code}}">
-								{{eachSyllabus.name}}&lrm;
-							</ion-select-option> -->
+						<ion-select multiple="false" text-capitalize formControlName="syllabus"
+							[interfaceOptions]="boardOptions" (ionCancel)="cancelEvent()" okText="{{'BTN_SUBMIT' | translate}}"
+							cancelText="{{'CANCEL' | translate}}" placeholder="{{'BOARD_OPTION_TEXT' | translate}}">
+							<ion-select-option *ngFor="let eachSyllabus of syllabusList" value="{{eachSyllabus.code}}">
+								{{eachSyllabus.name}}&lrm;</ion-select-option>
 						</ion-select>
 					</ion-item>
 				</div>
 			</div>
 		</div>
-		<form novalidate [formGroup]="profileSettingsForm" class="form-position" *ngIf="!showQRScanner">
+		<div novalidate class="form-position" *ngIf="!showQRScanner">
 			<ion-item appCustomIonSelect>
 				<ion-label position="stacked" class="label-font text-uppercase align-text">{{'BOARD' | translate }}</ion-label>
 				<ion-select multiple="false" #boardSelect text-capitalize formControlName="syllabus" [disabled]="!syllabusList.length"
@@ -73,8 +73,8 @@
 				</ion-select>
 			</ion-item>
 
-		</form>
-	</div>
+		</div>
+	</form>
 </ion-content>
 
 <ion-footer padding no-border style="background: white;" *ngIf="!showQRScanner">

@@ -265,6 +265,7 @@ export class ProfileSettingsPage implements OnInit, OnDestroy {
   handleBackButton(isNavBack) {
     if (this.showQRScanner === false) {
       this.showQRScanner = true;
+      this.resetProfileSettingsForm();
     } else {
       this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.ONBOARDING_PROFILE_PREFERENCES, Environment.ONBOARDING, isNavBack);
       this.dismissPopup();
@@ -281,6 +282,8 @@ export class ProfileSettingsPage implements OnInit, OnDestroy {
     this.scanner.startScanner(PageId.ONBOARDING_PROFILE_PREFERENCES, true).then((scannedData) => {
       if (scannedData === 'skip') {
         this.showQRScanner = false;
+
+        this.resetProfileSettingsForm();
       }
     });
   }
@@ -375,6 +378,10 @@ export class ProfileSettingsPage implements OnInit, OnDestroy {
       tap(async (value) => {
         if (!Array.isArray(value)) {
           this.syllabusControl.patchValue([value]);
+          return;
+        }
+
+        if (!value.length) {
           return;
         }
 
@@ -510,6 +517,15 @@ export class ProfileSettingsPage implements OnInit, OnDestroy {
         await this.loader.dismiss();
         this.commonUtilService.showToast('PROFILE_UPDATE_FAILED');
       });
+  }
+
+  private resetProfileSettingsForm() {
+    this.profileSettingsForm.reset({
+      syllabus: [],
+      board: [],
+      medium: [],
+      grade: []
+    });
   }
 
   boardClicked(e?: Event) {
