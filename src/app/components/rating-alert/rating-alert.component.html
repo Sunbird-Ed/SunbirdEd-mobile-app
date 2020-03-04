@@ -2,7 +2,7 @@
   <div class="sb-popover-items">
     <ion-icon end name="close" float-right class="sb-modal-close" (click)="closePopover()"></ion-icon>
 
-    <img class="img-container app-rating-img" src="{{appLogo$ | async}}">
+    <img class="img-container app-rating-img" src="{{appLogo$ | async}}" alt="rating">
     <div class="app-rate-appname" *ngIf="appName?.length"><strong>{{appName}}</strong></div>
     <div class="app-rate-heading"><strong>{{currentViewText.heading | translate}}</strong></div>
     <div class="app-rate-message ion-padding-bottom" [ngClass]="{'app-rate-ptb-16':currentViewText.type !== 'appRate'}">

@@ -1,6 +1,6 @@
 <ion-content padding-horizontal padding-top>
-  <iframe (load)="onIFrameLoad()" *ngIf="tncLatestVersionUrl" height="100%" width="100%" [src]="tncLatestVersionUrl"
-    frameborder="0"></iframe>
+  <iframe title="terms-and-condition" (load)="onIFrameLoad()" *ngIf="tncLatestVersionUrl" height="100%" width="100%"
+    [src]="tncLatestVersionUrl" frameborder="0"></iframe>
 </ion-content>
 
 <ion-footer tappable padding no-border>
@@ -10,7 +10,8 @@
         <ion-checkbox class="ion-no-padding" no-margin (ionChange)="onConfirmationChange($event)"></ion-checkbox>
       </ion-col>
       <ion-col col>
-        <ion-label class="ion-no-padding" no-margin padding-horizontal text-wrap>{{"I_AGREE_TO_TNC" | translate}}
+        <ion-label class="ion-no-padding" no-margin padding-horizontal text-wrap>
+          {{"I_AGREE_TO_TNC" | translate}}
         </ion-label>
       </ion-col>
     </ion-row>
