@@ -137,24 +137,17 @@
     flex-grow: 0;
     flex-shrink: 0;
     position: absolute;
-    // &.active-bg{
-    //   background-color: #EDF4F9;
-    // }
     .top-back-button{
       position: relative;
-
+      font-size: 22px;
       @include ltr() {
         top: 20px;
         left: 20px;
       }
-
       @include rtl() {
         top: 20px;
         right: 20px;
       }
-
-      font-size: 22px;
-      // float: left !important;
     }
   }
   .qr-content {
