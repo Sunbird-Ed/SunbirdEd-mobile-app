@@ -7,7 +7,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
 import { PreferenceKey, ProfileConstants, RouterLinks, EventTopics } from '@app/app/app.constant';
 import { GUEST_STUDENT_TABS, GUEST_TEACHER_TABS, initTabs } from '@app/app/module.service';
-import { ImpressionType, PageId, Environment, InteractSubtype, InteractType, ImpressionSubtype } from '@app/services/telemetry-constants';
+import { ImpressionType, PageId, Environment, InteractSubtype, InteractType } from '@app/services/telemetry-constants';
 import {
   CategoryTerm,
   Framework,
