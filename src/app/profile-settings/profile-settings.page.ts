@@ -150,7 +150,6 @@ export class ProfileSettingsPage implements OnInit, OnDestroy {
         delay(250),
         tap(() => {
           this.btnColor = this.profileSettingsForm.valid ? '#006DE5' : '#8FC4FF';
-          this.updateStyle();
         })
       )
     ).subscribe();
@@ -207,46 +206,12 @@ export class ProfileSettingsPage implements OnInit, OnDestroy {
   }
 
   ionViewDidEnter() {
-    this.updateStyle();
     this.hideOnboardingSplashScreen();
   }
 
   async hideOnboardingSplashScreen() {
     if (this.navParams && this.navParams.forwardMigration) {
       this.splashScreenService.handleSunbirdSplashScreenActions();
-    }
-  }
-
-  updateStyle() {
-    const ionSelectElement = Array.from(document.querySelectorAll('ion-item ion-select'));
-    if (ionSelectElement) {
-      ionSelectElement.forEach((element) => {
-        element['shadowRoot'].querySelector('.select-text').setAttribute('style', 'color:#006de5;padding-left: 10px;opacity: inherit');
-      });
-    }
-
-    const defaultSelectElement = Array.from(document.querySelectorAll('.item-label-stacked ion-select'));
-    if (defaultSelectElement) {
-      defaultSelectElement.forEach((element) => {
-        element['shadowRoot'].querySelector('.select-icon-inner')
-          .setAttribute('style', 'border: solid blue;border-width: 0 2px 2px 0;display: inline-block;padding: 4px;transform: rotate(45deg);animation: upDownAnimate 5s linear infinite;animation-duration: 0.9s;');
-      });
-    }
-
-    const disabledSelectElement = Array.from(document.querySelectorAll('.item-label-stacked.item-select-disabled ion-select'));
-    if (disabledSelectElement) {
-      disabledSelectElement.forEach((element) => {
-        element['shadowRoot'].querySelector('.select-text.select-placeholder').setAttribute('style', 'color: #979797 !important;padding-left: 10px;opacity: 1;');
-        element['shadowRoot'].querySelector('.select-icon-inner').setAttribute('style', 'border-color: #979797 !important;animation: none;border: solid;border-width: 0 2px 2px 0;display: inline-block;padding: 4px;transform: rotate(45deg);opacity: 1;');
-      });
-    }
-
-    const hasValueSelectElement = Array.from(document.querySelectorAll('.item-label-stacked.item-has-value ion-select'));
-    if (hasValueSelectElement) {
-      hasValueSelectElement.forEach((element) => {
-        element['shadowRoot'].querySelector('.select-text').setAttribute('style', 'font-weight: bold;color: #333333;padding-left: 10px;');
-        element['shadowRoot'].querySelector('.select-icon-inner').setAttribute('style', 'border-color: #333333;animation: none;border: solid;border-width: 0 2px 2px 0;display: inline-block;padding: 4px;transform: rotate(45deg);');
-      });
     }
   }
 

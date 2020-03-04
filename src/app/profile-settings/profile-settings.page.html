@@ -28,7 +28,7 @@
 					{{'FILL_IN' | translate}}
 				</div>
 				<div class="board-select-dummy" (click)="boardClicked($event)">
-					<ion-item>
+					<ion-item appCustomIonSelect>
 						<ion-label position="stacked" class="label-font text-uppercase align-text">{{'BOARD' | translate }}</ion-label>
 						<ion-select multiple="false" text-capitalize [disabled]="!syllabusList.length"
 							[interfaceOptions]="boardOptions" placeholder="{{'BOARD_OPTION_TEXT' | translate}}">
@@ -41,7 +41,7 @@
 			</div>
 		</div>
 		<form novalidate [formGroup]="profileSettingsForm" class="form-position" *ngIf="!showQRScanner">
-			<ion-item>
+			<ion-item appCustomIonSelect>
 				<ion-label position="stacked" class="label-font text-uppercase align-text">{{'BOARD' | translate }}</ion-label>
 				<ion-select multiple="false" #boardSelect text-capitalize formControlName="syllabus" [disabled]="!syllabusList.length"
 					[interfaceOptions]="boardOptions" (ionCancel)="cancelEvent()" okText="{{'BTN_SUBMIT' | translate}}"
@@ -51,7 +51,7 @@
 				</ion-select>
 			</ion-item>
 
-			<ion-item>
+			<ion-item appCustomIonSelect>
 				<ion-label position="stacked" class="label-font text-uppercase align-text">{{'MEDIUM' | translate }}</ion-label>
 				<ion-select formControlName="medium" #mediumSelect multiple="true" text-capitalize
 					[interfaceOptions]="mediumOptions" (ionCancel)="cancelEvent()"
@@ -62,7 +62,7 @@
 				</ion-select>
 			</ion-item>
 
-			<ion-item>
+			<ion-item appCustomIonSelect>
 				<ion-label position="stacked" class="label-font text-uppercase align-text">{{'CLASS' | translate }}</ion-label>
 				<ion-select multiple="true" #gradeSelect text-capitalize formControlName="grade"
 					[interfaceOptions]="classOptions" okText="{{'BTN_SUBMIT' | translate}}"
