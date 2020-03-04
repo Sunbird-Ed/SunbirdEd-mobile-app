@@ -9,7 +9,11 @@ export class CustomIonSelectDirective implements DoCheck {
     constructor(private ref: ElementRef) {}
 
     ngDoCheck() {
-        this.updateStyle();
+        try {
+            this.updateStyle();
+        } catch (e) {
+
+        }
     }
 
     updateStyle() {

@@ -6,10 +6,6 @@
     padding-bottom: 53px;
   }
 
-  .form-position {
-    margin-top: 10px;
-  }
-
   /* This should be item-ios only as we are targeting mode as iOS for radio-button */
   .item-ios {
     background-color: #{map-get($colors, white_f7)};
@@ -54,7 +50,8 @@
   .fill-in-style {
     font-size: 12px;
     text-align: center;
-    margin-top: 30px;
+    margin-top: 40px;
+    margin-bottom: 10px;
     @include padding(0, 5px);
   }
   .item-select-disabled {
@@ -90,24 +87,25 @@
     .form-position{
       flex-grow: 1;
       flex-shrink: 1;
+      margin-top: 50px;
     }
   }
   .qr-board{
       flex-grow: 0;
       flex-shrink: 0;
-      padding-bottom: 24px;
+      padding-bottom: 32px;
       position: relative;
       &::after{
         content: '';
         display: block;
-        width: 150%;
+        width: 125%;
         height: 100%;
         background: white;
         border-top-left-radius: 50%;
         border-top-right-radius: 50%;
         position: absolute;
         top: 0;
-        left: -25%;
+        left: -12.5%;
         z-index: 0;
       }
 
@@ -136,17 +134,27 @@
       }
   }
   .back-btn-container{
-    @include clearfix;
     flex-grow: 0;
     flex-shrink: 0;
-    &.active-bg{
-      background-color: #EDF4F9;
-    }
+    position: absolute;
+    // &.active-bg{
+    //   background-color: #EDF4F9;
+    // }
     .top-back-button{
+      position: relative;
+
+      @include ltr() {
+        top: 20px;
+        left: 20px;
+      }
+
+      @include rtl() {
+        top: 20px;
+        right: 20px;
+      }
+
       font-size: 22px;
-      padding-top: 20px;
-      padding-left: 20px;
-      float: left !important;
+      // float: left !important;
     }
   }
   .qr-content {
@@ -172,7 +180,7 @@
     flex-grow: 0;
     flex-shrink: 0;
     padding-top: 4%;
-    padding-bottom: 7vh;
+    padding-bottom: 20%;
     .qr-instruction {
       .title {
         display: block;

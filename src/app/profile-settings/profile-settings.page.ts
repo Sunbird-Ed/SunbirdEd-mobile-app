@@ -1,4 +1,5 @@
-import { Component, Inject, ViewChild, OnInit, ChangeDetectorRef, OnDestroy } from '@angular/core';
+import { FormAndFrameworkUtilService } from './../../services/formandframeworkutil.service';
+import { Component, Inject, ViewChild, OnInit, ChangeDetectorRef, OnDestroy, ElementRef, AfterViewInit } from '@angular/core';
 import { Subscription, Observable, combineLatest } from 'rxjs';
 import { tap, delay } from 'rxjs/operators';
 import { Router, NavigationExtras, ActivatedRoute } from '@angular/router';
@@ -41,11 +42,12 @@ import { SplashScreenService } from '@app/services/splash-screen.service';
   templateUrl: './profile-settings.page.html',
   styleUrls: ['./profile-settings.page.scss'],
 })
-export class ProfileSettingsPage implements OnInit, OnDestroy {
+export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
   public pageId = 'ProfileSettingsPage';
   @ViewChild('boardSelect') boardSelect: any;
   @ViewChild('mediumSelect') mediumSelect: any;
   @ViewChild('gradeSelect') gradeSelect: any;
+  @ViewChild('animatedQRImage') animatedQRImageRef: ElementRef;
 
   private framework: Framework;
   private navParams: any;
@@ -100,6 +102,7 @@ export class ProfileSettingsPage implements OnInit, OnDestroy {
     @Inject('FRAMEWORK_UTIL_SERVICE') private frameworkUtilService: FrameworkUtilService,
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
     @Inject('DEVICE_REGISTER_SERVICE') private deviceRegisterService: DeviceRegisterService,
+    private formAndFrameworkUtilService: FormAndFrameworkUtilService,
     private translate: TranslateService,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private appGlobalService: AppGlobalService,
@@ -156,6 +159,27 @@ export class ProfileSettingsPage implements OnInit, OnDestroy {
 
     await this.fetchSyllabusList();
     this.redirectToInitialRoute();
+  }
+
+  ngAfterViewInit() {
+    plugins['webViewChecker'].getCurrentWebViewPackageInfo()
+      .then((packageInfo) => {
+        this.formAndFrameworkUtilService.getWebviewConfig().then((webviewVersion) => {
+          if (parseInt(packageInfo.versionName.split('.')[0], 10) <= webviewVersion) {
+            this.animatedQRImageRef.nativeElement.style.width =
+            this.animatedQRImageRef.nativeElement.style.height = 'auto';
+            this.animatedQRImageRef.nativeElement.style.minWidth =
+            this.animatedQRImageRef.nativeElement.style.minHeight = 0;
+          }
+        }).catch((err) => {
+          if (parseInt(packageInfo.versionName.split('.')[0], 10) <= 54) {
+            this.animatedQRImageRef.nativeElement.style.width =
+            this.animatedQRImageRef.nativeElement.style.height = 'auto';
+            this.animatedQRImageRef.nativeElement.style.minWidth =
+            this.animatedQRImageRef.nativeElement.style.minHeight = 0;
+          }
+        });
+      });
   }
 
   private redirectToInitialRoute() {
