@@ -4,7 +4,7 @@
       <ion-icon slot="start" name="arrow-back" class="batches-header-text"></ion-icon>
     </ion-buttons>
     <ion-title class="batches-header-text font-size-20">
-      <b>{{ 'BATCHES_FOR_THIS_COURSE' | translate }}</b>
+      <strong>{{ 'BATCHES_FOR_THIS_COURSE' | translate }}</strong>
     </ion-title>
   </ion-toolbar>
 </ion-header>
@@ -106,7 +106,7 @@
 
   <div *ngIf="showLoader">
     <ion-row class="padding-top-30" padding>
-      <ion-col text-center>
+      <ion-col class="ion-text-center">
         <p>{{ 'MSG_LOADING_BATCHES' | translate }}</p>
         <ion-spinner padding></ion-spinner>
       </ion-col>

@@ -14,7 +14,7 @@
   </ion-toolbar>
 
   <ion-toolbar no-border-top>
-    <ion-segment no-padding [(ngModel)]="segmentType" (ionChange)="onSegmentChange($event)">
+    <ion-segment class="ion-no-padding" [(ngModel)]="segmentType" (ionChange)="onSegmentChange($event)">
       <ion-segment-button value="users">
         <ion-label>{{'USERS' | translate}}</ion-label>
       </ion-segment-button>
@@ -40,7 +40,7 @@
                   <ion-row class="bg-color-white ug-row-padding radius">
                     <ion-col size="12" class="bg-color-white"
                       (click)="selectUser(i,  profileDetails?.uid, profileDetails?.handle)">
-                      <div class="bg-color-white padding-left-0 rm-label-margin" no-padding>
+                      <div class="bg-color-white padding-left-0 rm-label-margin ion-no-padding">
                         <ion-label>
                           <h6 [ngStyle]="{'color': currentUserId === profileDetails?.uid ? 'dodgerblue' : 'black'}"
                             class="padding-left-2 ion-no-margin elipsis" color="primary">
@@ -64,12 +64,12 @@
           </ion-label>
           <div *ngIf="noUsersPresent" class="nouser">
             <h6>{{'NO_USERS_CREATED_YET' | translate}}</h6>
-            <div text-center class="description">
+            <div class="description ion-text-center">
               {{ 'NO_USERS_CREATED_YET_MSG' | translate }}
             </div>
           </div>
           <div *ngIf="loadingUserList" class="nouser margin-bottom">
-            <div text-center class="description">
+            <div class="description ion-text-center">
               <strong>{{'LOADING_USER_LIST' | translate}}</strong>
             </div>
           </div>
@@ -80,7 +80,7 @@
                   <ion-row [ngClass]="i===selectedUserIndex ? 'blueBorder' : ''"
                     class="bg-color-white ug-row-padding radius">
                     <ion-col size="11" class="bg-color-white" (click)="selectUser(i, user?.uid, user?.handle)">
-                      <div class="bg-color-white padding-left-0 rm-label-margin" no-padding>
+                      <div class="bg-color-white padding-left-0 rm-label-margin ion-no-padding">
                         <ion-label>
                           <p class="elipsis"
                             [ngStyle]="{'color': currentUserId === user?.uid ? 'dodgerblue' : 'black'}">
@@ -123,7 +123,7 @@
                 <h6>
                   <strong>{{'NO_GROUPS_CREATED_YET' | translate}}</strong>
                 </h6>
-                <div text-center class="description">
+                <div class="description ion-text-center">
                   {{ 'NO_GROUP_MESSAGE' | translate }}
                 </div>
               </div>
@@ -136,7 +136,8 @@
               <ion-grid class="radius">
                 <ion-row class="bg-color-white ug-row-padding radius">
                   <ion-col size="11" class="bg-color-white">
-                    <div class="bg-color-white padding-left-0 rm-label-margin" no-padding (click)="goToGroupDetail(i)">
+                    <div class="bg-color-white padding-left-0 rm-label-margin ion-no-padding"
+                      (click)="goToGroupDetail(i)">
                       <ion-label>
                         <h6 class="elipsis ion-no-margin"
                           [ngStyle]="{'color': currentGroupId === group?.gid ? 'dodgerblue' : 'black'}">
