@@ -434,14 +434,24 @@ describe('TelemetryGeneratorService', () => {
           utm_term: 'ABCDEF'
         }
       ];
+      const cData = [{
+        id: 'scan',
+        type: 'accessType'
+      }];
+      const object = {
+        id: 'sample-id',
+        type: 'sample-type',
+        version: 'sample-version'
+      };
       // act
-      telemetryGeneratorService.generateUtmInfoTelemetry(value, 'sample-pageId');
+      telemetryGeneratorService.generateUtmInfoTelemetry(value, 'sample-pageId', cData, object);
       // assert
       const mockInteract = jest.spyOn(mockTelemetryService, 'interact');
       expect(mockInteract.mock.calls[0][0]['type']).toEqual('OTHER');
       expect(mockInteract.mock.calls[0][0]['subType']).toEqual('utm-info');
       expect(mockInteract.mock.calls[0][0]['env']).toEqual(Environment.HOME);
       expect(mockInteract.mock.calls[0][0]['pageId']).toEqual('sample-pageId');
+      expect(mockInteract.mock.calls[0][0]['correlationData']).toEqual(cData);
     });
   });
 

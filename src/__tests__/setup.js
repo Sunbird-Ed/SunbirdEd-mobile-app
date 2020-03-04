@@ -22,8 +22,9 @@ global.cordova = {
     },
     InAppBrowser: {
         open: () => ({
-            addEventListener: () => { },
-        }),
+             addEventListener: () => {},
+             close: () => {}
+       })
     }
 };
 

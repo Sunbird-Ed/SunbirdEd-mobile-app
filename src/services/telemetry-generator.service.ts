@@ -342,13 +342,15 @@ export class TelemetryGeneratorService {
         return mimeType === MimeType.COLLECTION;
     }
 
-    generateUtmInfoTelemetry(values: Map, pageId) {
+    generateUtmInfoTelemetry(values: Map, pageId, cData: CorrelationData[], object?: TelemetryObject) {
         this.generateInteractTelemetry(
             InteractType.OTHER,
             InteractSubtype.UTM_INFO,
             Environment.HOME,
             pageId,
+            object,
+            values,
             undefined,
-            values);
+            cData);
     }
 }
