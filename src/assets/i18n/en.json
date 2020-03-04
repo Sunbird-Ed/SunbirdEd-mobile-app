@@ -186,7 +186,7 @@
   "DOWNLOAD_CONTENT": "Download ({{%s}})",
   "DOWNLOAD_FILE_INFO": "Download the file to enable the disabled options",
   "DOWNLOAD_FILE_SIZE": "File Size {{%s}}",
-  "DOWNLOAD_NOT_ALLOWED_FOR_QUIZ": "Download is not allowed for this content.",
+  "DOWNLOAD_NOT_ALLOWED_FOR_QUIZ": "This content cannot be downloaded.",
   "DOWNLOAD_NOW": "Download Now",
   "DOWNLOAD_PATH": "Internal storage/Download",
   "EDIT": "Edit",
