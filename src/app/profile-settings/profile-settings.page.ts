@@ -300,6 +300,7 @@ export class ProfileSettingsPage implements OnInit, OnDestroy {
   handleBackButton(isNavBack) {
     if (this.showQRScanner === false) {
       this.showQRScanner = true;
+      this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.ONBOARDING_PROFILE_PREFERENCES, Environment.ONBOARDING, isNavBack);
     } else {
       this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.ONBOARDING_PROFILE_PREFERENCES, Environment.ONBOARDING, isNavBack);
       this.dismissPopup();
@@ -315,6 +316,11 @@ export class ProfileSettingsPage implements OnInit, OnDestroy {
     );
     this.scanner.startScanner(PageId.ONBOARDING_PROFILE_PREFERENCES, true).then((scannedData) => {
       if (scannedData === 'skip') {
+        this.telemetryGeneratorService.generateImpressionTelemetry(
+          ImpressionType.VIEW, '',
+          PageId.ONBOARDING_PROFILE_PREFERENCES,
+          Environment.ONBOARDING
+        );
         this.showQRScanner = false;
       }
     });
