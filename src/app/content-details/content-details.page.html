@@ -3,7 +3,7 @@
   <div class="sb-play-container sb-player-container" *ngIf="commonUtilService.networkInfo.isNetworkAvailable">
     <div *ngIf="streamingUrl">
       <div *ngIf="contentDownloadable[content?.identifier]">
-        <img class="sb-player-container" src='{{content?.contentData?.appIcon}}' alt="">
+        <img class="sb-player-container" src='{{content?.contentData?.appIcon}}' alt="content-icon">
         <div class="sb-overlay-container">
           <div class="sb-back-transparent" (click)="handleNavBackButton();$event.stopPropagation()">
             <div class="sb-circle">
@@ -35,7 +35,7 @@
         </div>
       </div>
       <div *ngIf="!contentDownloadable[content?.identifier]">
-        <img class="sb-player-container" src='{{content?.contentData?.appIcon}}' alt="">
+        <img class="sb-player-container" src='{{content?.contentData?.appIcon}}' alt="content-icon">
         <div class="sb-overlay-container">
           <div class="sb-back-transparent" (click)="handleNavBackButton();$event.stopPropagation()">
             <div class="sb-circle">
@@ -101,7 +101,7 @@
         </div>
       </div>
       <div *ngIf="contentDownloadable[content?.identifier]">
-        <img class="sb-player-container" src='{{content?.contentData?.appIcon}}'>
+        <img class="sb-player-container" src='{{content?.contentData?.appIcon}}' alt="content-icon">
         <div class="sb-overlay-container">
           <div class="sb-back-transparent" (click)="handleNavBackButton();$event.stopPropagation()">
             <div class="sb-circle">
@@ -136,7 +136,7 @@
   </div>
   <div *ngIf="!commonUtilService.networkInfo.isNetworkAvailable">
     <div class="sb-play-container sb-player-container" *ngIf="contentDownloadable[content?.identifier]">
-      <img class="sb-player-container" src='{{content?.contentData?.appIcon}}' alt="">
+      <img class="sb-player-container" src='{{content?.contentData?.appIcon}}' alt="content-icon">
       <div class="sb-overlay-container">
         <div class="sb-back-transparent" (click)="handleNavBackButton();$event.stopPropagation()">
           <div class="sb-circle">
@@ -177,7 +177,7 @@
       </div>
       <div class="sb-common-player-group sb-common-title-group">
         <div class="sb-offline-title">
-          <img src="assets/imgs/ic_offline_white_sm.png" alt="" />
+          <img src="assets/imgs/ic_offline_white_sm.png" alt="offline" />
         </div>
         <div class="sb-common-footer-text">{{'YOU_ARE_NOT_CONNECTED_TO_THE_INTERNET' | translate}}</div>
         <div class="sb-common-footer-text sb-sub-footer">{{'ONLY_DOWNLOADED_CONTENT_CAN_BE_PLAYED_OFFLINE' |
@@ -219,8 +219,7 @@
             <ion-icon ios="ios-refresh" md="md-refresh" class="sb-dt-card-blue-icon"></ion-icon>
             <span class="sb-btn-footer-text">{{'UPDATE' | translate}}</span>
           </button>
-          <button class="sb-btn-tile"
-            (click)="openPDFPreview(content)" *ngIf="content?.contentData?.itemSetPreviewUrl">
+          <button class="sb-btn-tile" (click)="openPDFPreview(content)" *ngIf="content?.contentData?.itemSetPreviewUrl">
             <ion-icon ios="ios-print" md="md-print" class="sb-dt-card-blue-icon"></ion-icon>
             <span class="sb-btn-footer-text">{{'PRINT' | translate}}</span>
           </button>
@@ -258,13 +257,13 @@
             <div class="sb-content-title-data">{{content?.contentData?.subject | csa}}</div>
           </div>
           <div class="sb-info" *ngIf="content?.contentData?.license && !licenseDetails">
-              <div class="sb-content-title">{{'LICENSE' | translate}}</div>
-              <div class="sb-content-title-data">{{content?.contentData?.license}}</div>
-            </div>
-            <div class="sb-info" *ngIf="!content?.contentData?.license && !licenseDetails">
-              <div class="sb-content-title">{{'LICENSE' | translate}}</div>
-              <div class="sb-content-title-data">{{defaultLicense}}</div>
-            </div>
+            <div class="sb-content-title">{{'LICENSE' | translate}}</div>
+            <div class="sb-content-title-data">{{content?.contentData?.license}}</div>
+          </div>
+          <div class="sb-info" *ngIf="!content?.contentData?.license && !licenseDetails">
+            <div class="sb-content-title">{{'LICENSE' | translate}}</div>
+            <div class="sb-content-title-data">{{defaultLicense}}</div>
+          </div>
           <div class="sb-info" *ngIf="licenseDetails">
             <div class="sb-content-title">{{'MULTIPLE_LICENSE' | translate:{'%s': licenseDetails?.name} }}</div>
             {{licenseDetails.description}}
@@ -284,7 +283,9 @@
           </div>
           <div class="sb-info" *ngIf="content?.contentData?.copyright">
             <div class="sb-content-title">{{'COPYRIGHT' | translate}}</div>
-            <div class="sb-content-title-data">{{content?.contentData?.copyright}}{{content?.contentData.copyrightYear ? ", " + content?.contentData.copyrightYear : ""}}</div>
+            <div class="sb-content-title-data">
+              {{content?.contentData?.copyright}}{{content?.contentData.copyrightYear ? ", " + content?.contentData.copyrightYear : ""}}
+            </div>
           </div>
           <div class="sb-info"
             *ngIf="content?.contentData?.attributions && !content?.contentData?.contributors && !content?.contentData?.creators">
@@ -310,7 +311,8 @@
             <div class="sb-content-title-data">{{content?.contentData?.originData?.author}}</div>
           </div>
           <div class="sb-info" *ngIf="content?.contentData?.originData?.license">
-            <div class="sb-content-title">{{'MULTIPLE_LICENSE' | translate:{'%s': content?.contentData?.originData?.license} }}</div>
+            <div class="sb-content-title">
+              {{'MULTIPLE_LICENSE' | translate:{'%s': content?.contentData?.originData?.license} }}</div>
           </div>
           <div class="sb-info" *ngIf="content?.contentData?.originData?.organisation">
             <div class="sb-content-title">{{ 'PUBLISHED_BY' | translate:{'%s': appName} }}</div>
@@ -337,7 +339,6 @@
 </ion-content>
 
 <!-- Page footer -->
-
 <app-sb-download-popup *ngIf="showDownload" (cancelDownloadEmit)="cancelDownload($event)"
   [downloadProgress]="downloadProgress" [contentName]="content?.contentData?.name" [isUpdateAvail]="isUpdateAvail"
   [showDownload]="showDownload" [contentAvailableLocally]="contentDownloadable[content?.identifier]"

@@ -88,7 +88,8 @@
 									<div *ngIf="course?.progress && course?.progress === 100"
 										class="sb-course-complete-container ion-padding">
 										<div class="img-container">
-											<img class="success-badge" src='assets/imgs/Badge green.svg'>
+											<img class="success-badge" src='assets/imgs/Badge green.svg'
+												alt="completed">
 										</div>
 										<div class="text-container">
 											<p><strong>{{'TRAINING_COMPLETED_SUCCESSFULLY' | translate}}</strong></p>
@@ -107,13 +108,13 @@
 						<ion-card-title class="last-read-content padding-bottom-8">{{lastReadContentName}}
 						</ion-card-title>
 						<button *ngIf="!showResumeBtn && childrenData?.length && lastReadContentType !== 'SelfAssess'"
-							class="enrolled-course-card-button" (click)="startContent()"><span><img class="play-icon"
-									src="assets/imgs/Play@1.5x.svg" alt="play-icon">
+							class="enrolled-course-card-button" (click)="startContent()"><span>
+								<img class="play-icon" src="assets/imgs/Play@1.5x.svg" alt="play-icon">
 								{{ 'START_COURSE_NOW' | translate }} </span></button>
 						<button *ngIf="showResumeBtn && lastReadContentType !== 'SelfAssess'"
 							class="enrolled-course-card-button"
-							(click)="resumeContent(courseCardData?.lastReadContentId)"><span><img class="play-icon"
-									src="assets/imgs/Play@1.5x.svg" alt="play-icon">
+							(click)="resumeContent(courseCardData?.lastReadContentId)"><span>
+								<img class="play-icon" src="assets/imgs/Play@1.5x.svg" alt="play-icon">
 								{{ 'CONTINUE_NOW' | translate }} </span></button>
 						<button *ngIf="lastReadContentType === 'SelfAssess'" class="enrolled-course-card-button"
 							(click)="resumeContent(courseCardData?.lastReadContentId)"><span>
@@ -330,7 +331,7 @@
 		</div>
 	</div>
 	<div padding class="mt-32 mb-32 ion-text-center" *ngIf="showOfflineSection">
-		<img src="assets/imgs/outline-cloud_off.svg" alt="" />
+		<img src="assets/imgs/outline-cloud_off.svg" alt="offline" />
 		<ion-text>
 			<h6 class="offline-header">
 				<strong>{{ 'NO_INTERNET_TITLE' | translate }}</strong>
