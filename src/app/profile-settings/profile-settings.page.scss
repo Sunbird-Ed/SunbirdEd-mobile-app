@@ -53,6 +53,11 @@
     margin-top: 40px;
     margin-bottom: 10px;
     @include padding(0, 5px);
+    .fill-in-head{
+      font-weight: bold;
+      font-size: 16px;
+      margin-bottom: 8px;
+    }
   }
   .item-select-disabled {
     .label-md {
