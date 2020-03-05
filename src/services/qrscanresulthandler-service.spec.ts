@@ -48,7 +48,6 @@ describe('QRScannerResultHandler', () => {
   };
 
   const mockFormAndFrameworkUtilService: Partial<FormAndFrameworkUtilService> = {
-    getDailCodeConfig: jest.fn(() => Promise.resolve())
   };
 
 
@@ -76,43 +75,41 @@ describe('QRScannerResultHandler', () => {
 
 
   describe('parseDialCode()', () => {
-    it('should return parsed data from the link', async (done) => {
+    it('should return parsed data from the link', (done) => {
       // arrange
-      const formValResponse =  {values: '(\\/dial\\/(?<sunbird>[a-zA-Z0-9]+)|(\\/QR\\/\\?id=(?<epathshala>[a-zA-Z0-9]+)))'};
-      const regexExp = formValResponse.values;
-      qRScannerResultHandler['getDailCodeRegularExpression'] = jest.fn(() => Promise.resolve(regexExp));
       mockFormAndFrameworkUtilService.getDialcodeRegexFormApi = jest.fn(() =>
-       Promise.resolve('(\\/dial\\/(?<sunbird>[a-zA-Z0-9]+)|(\\/QR\\/\\?id=(?<epathshala>[a-zA-Z0-9]+)))'));
+        Promise.resolve('(\\/dial\\/(?<sunbird>[a-zA-Z0-9]+)|(\\/QR\\/\\?id=(?<epathshala>[a-zA-Z0-9]+)))'));
       // act
       // assert
-      await qRScannerResultHandler.parseDialCode('https//www.sunbirded.org/get/dial/ABCDEF').then((response) => {
+      qRScannerResultHandler.parseDialCode('https//www.sunbirded.org/get/dial/ABCDEF').then((response) => {
         expect(response).toEqual('ABCDEF');
         done();
       });
     });
 
-    it('should not return parsed data if scannData does not match to regex', async (done) => {
+    it('should not return parsed data if scannData does not match to regex', (done) => {
       // arrange
-      const formValResponse =  {values: '(\\/dial\\/(?<sunbird>[a-zA-Z0-9]+)|(\\/QR\\/\\?id=(?<epathshala>[a-zA-Z0-9]+)))'};
+      const formValResponse = { values: '(\\/dial\\/(?<sunbird>[a-zA-Z0-9]+)|(\\/QR\\/\\?id=(?<epathshala>[a-zA-Z0-9]+)))' };
       const regexExp = formValResponse.values;
       qRScannerResultHandler['getDailCodeRegularExpression'] = jest.fn(() => Promise.resolve(regexExp));
       mockFormAndFrameworkUtilService.getDialcodeRegexFormApi = jest.fn(() =>
-       Promise.resolve('(\\/dial\\/(?<sunbird>[a-zA-Z0-9]+)|(\\/QR\\/\\?id=(?<epathshala>[a-zA-Z0-9]+)))'));
+        Promise.resolve('(\\/dial\\/([a-zA-Z0-9]+)|(\\/QR\\/\\?id=([a-zA-Z0-9]+)))'));
       // act
       // assert
-      await qRScannerResultHandler.parseDialCode('https//www.sunbirded.org/get/content/ABCDEF').then((response) => {
+      qRScannerResultHandler.parseDialCode('https//www.sunbirded.org/get/content/ABCDEF').then((response) => {
         expect(response).toBeUndefined();
         done();
       });
+
     });
 
     it('should return undefined if dailCode regex is undefined', (done) => {
       // arrange
-      const formValResponse =  {values: '(\\/dial\\/(?<sunbird>[a-zA-Z0-9]+)|(\\/QR\\/\\?id=(?<epathshala>[a-zA-Z0-9]+)))'};
+      const formValResponse = { values: '(\\/dial\\/(?<sunbird>[a-zA-Z0-9]+)|(\\/QR\\/\\?id=(?<epathshala>[a-zA-Z0-9]+)))' };
       const regexExp = formValResponse.values;
       qRScannerResultHandler['getDailCodeRegularExpression'] = jest.fn(() => Promise.resolve(regexExp));
       mockFormAndFrameworkUtilService.getDialcodeRegexFormApi = jest.fn(() =>
-       Promise.resolve(undefined));
+        Promise.resolve(undefined));
       // act
       // assert
       qRScannerResultHandler.parseDialCode('https//www.sunbirded.org/get/dial/ABCDEF').then((response) => {
@@ -366,9 +363,9 @@ describe('QRScannerResultHandler', () => {
           Environment.HOME,
           PageId.QRCodeScanner,
           undefined, values
-          );
+        );
         done();
-       }, 0);
+      }, 0);
     });
   });
 
@@ -380,9 +377,9 @@ describe('QRScannerResultHandler', () => {
       jest.spyOn(global['cordova']['InAppBrowser'], 'open').mockImplementation(() => {
         return {
           addEventListener: (_, cb) => {
-            cb({url: 'explore-course'});
+            cb({ url: 'explore-course' });
           },
-          close: () => {}
+          close: () => { }
         };
       });
       mockEvents.publish = jest.fn(() => []);
@@ -413,9 +410,9 @@ describe('QRScannerResultHandler', () => {
       jest.spyOn(global['cordova']['InAppBrowser'], 'open').mockImplementation(() => {
         return {
           addEventListener: (_, cb) => {
-            cb({url: 'course'});
+            cb({ url: 'course' });
           },
-          close: () => {}
+          close: () => { }
         };
       });
       mockEvents.publish = jest.fn(() => []);
@@ -446,9 +443,9 @@ describe('QRScannerResultHandler', () => {
       jest.spyOn(global['cordova']['InAppBrowser'], 'open').mockImplementation(() => {
         return {
           addEventListener: (_, cb) => {
-            cb({path: 'course'});
+            cb({ path: 'course' });
           },
-          close: () => {}
+          close: () => { }
         };
       });
       mockEvents.publish = jest.fn(() => []);
@@ -475,20 +472,20 @@ describe('QRScannerResultHandler', () => {
 
   describe('generateUTMInfoTelemetry', () => {
     it('should generate UtmInfo telemetry', () => {
-     // arrange
-     const URL = 'https://staging.ntp.net.in/dial/A7S6V8?utm_source=diksha&utm_medium=search&utm_campaign=dial&utm_term=ABCDEF';
-     const value = {
+      // arrange
+      const URL = 'https://staging.ntp.net.in/dial/A7S6V8?utm_source=diksha&utm_medium=search&utm_campaign=dial&utm_term=ABCDEF';
+      const value = {
         utm_source: 'sunbird',
         utm_medium: 'search',
         utm_campaign: 'dial',
         utm_term: 'ABCDEF'
       };
-     // act
-     qRScannerResultHandler.generateUTMInfoTelemetry(URL, {});
-     // assert
-     setTimeout(() => {
-      expect(mockTelemetryGeneratorService.generateUtmInfoTelemetry).toHaveBeenCalledWith(value, 'qr-code-scanner');
-     }, 0);
+      // act
+      qRScannerResultHandler.generateUTMInfoTelemetry(URL, {});
+      // assert
+      setTimeout(() => {
+        expect(mockTelemetryGeneratorService.generateUtmInfoTelemetry).toHaveBeenCalledWith(value, 'qr-code-scanner');
+      }, 0);
     });
   });
 

@@ -1,5 +1,6 @@
 require('reflect-metadata');
 require('babel-polyfill');
+require('./regexp-polyfill.min')
 
 global.cordova = {
     plugins: {
