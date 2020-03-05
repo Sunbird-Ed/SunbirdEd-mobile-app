@@ -151,7 +151,7 @@ export class SunbirdQRScanner {
       if (status.hasPermission) {
         return this.startQRScanner(screenTitle, displayText, displayTextColor, buttonText, showButton, source);
       } else if (!status.hasPermission) {
-        this.showPopover();
+        return this.showPopover();
       }
       return undefined;
     });
@@ -185,59 +185,64 @@ export class SunbirdQRScanner {
     });
 
   }
-  async showPopover() {
-    const confirm = await this.popCtrl.create({
-      component: SbPopoverComponent,
-      componentProps: {
-        isNotShowCloseIcon: false,
-        sbPopoverHeading: this.commonUtilService.translateMessage('PERMISSION_REQUIRED'),
-        sbPopoverMainTitle: this.commonUtilService.translateMessage('CAMERA'),
-        actionsButtons: [
-          {
-            btntext: this.commonUtilService.translateMessage('NOT_NOW'),
-            btnClass: (this.commonUtilService.translateMessage('NOT_NOW').length > 10) ?
-            'popover-button-cancel-longlength' : 'popover-button-cancel',
+
+  async showPopover(): Promise<string | undefined> {
+    return new Promise<string | undefined>(async (resolve, reject) => {
+      const confirm = await this.popCtrl.create({
+        component: SbPopoverComponent,
+        componentProps: {
+          isNotShowCloseIcon: false,
+          sbPopoverHeading: this.commonUtilService.translateMessage('PERMISSION_REQUIRED'),
+          sbPopoverMainTitle: this.commonUtilService.translateMessage('CAMERA'),
+          actionsButtons: [
+            {
+              btntext: this.commonUtilService.translateMessage('NOT_NOW'),
+              btnClass: (this.commonUtilService.translateMessage('NOT_NOW').length > 10) ?
+                  'popover-button-cancel-longlength' : 'popover-button-cancel',
+            },
+            {
+              btntext: this.commonUtilService.translateMessage('ALLOW'),
+              btnClass: 'popover-button-allow',
+            }
+          ],
+          handler: (whichBtnClicked: string) => {
+            if (whichBtnClicked === this.commonUtilService.translateMessage('NOT_NOW')) {
+              this.telemetryGeneratorService.generateInteractTelemetry(
+                  InteractType.TOUCH,
+                  InteractSubtype.PERMISSION_POPOVER_NOT_NOW_CLICKED,
+                  Environment.ONBOARDING,
+                  PageId.QRCodeScanner);
+              this.showSettingErrorToast();
+              resolve(undefined);
+            } else {
+              this.telemetryGeneratorService.generateInteractTelemetry(
+                  InteractType.TOUCH,
+                  InteractSubtype.PERMISSION_POPOVER_ALLOW_CLICKED,
+                  Environment.ONBOARDING,
+                  PageId.QRCodeScanner);
+              this.appGlobalService.setIsPermissionAsked(PermissionAskedEnum.isCameraAsked, true);
+              this.permission.requestPermissions(this.permissionList).subscribe((status: AndroidPermissionsStatus) => {
+                if (status && status.hasPermission) {
+                  resolve(this.startScanner(this.source, this.showButton));
+                } else {
+                  this.showSettingErrorToast();
+                  resolve(undefined);
+                }
+              }, (e) => { reject(e); });
+            }
           },
-          {
-            btntext: this.commonUtilService.translateMessage('ALLOW'),
-            btnClass: 'popover-button-allow',
-          }
-        ],
-        handler: (whichBtnClicked: string) => {
-          if (whichBtnClicked === this.commonUtilService.translateMessage('NOT_NOW')) {
-            this.telemetryGeneratorService.generateInteractTelemetry(
-              InteractType.TOUCH,
-              InteractSubtype.PERMISSION_POPOVER_NOT_NOW_CLICKED,
-              Environment.ONBOARDING,
-              PageId.QRCodeScanner);
-            this.showSettingErrorToast();
-          } else {
-            this.telemetryGeneratorService.generateInteractTelemetry(
-              InteractType.TOUCH,
-              InteractSubtype.PERMISSION_POPOVER_ALLOW_CLICKED,
-              Environment.ONBOARDING,
-              PageId.QRCodeScanner);
-            this.appGlobalService.setIsPermissionAsked(PermissionAskedEnum.isCameraAsked, true);
-            this.permission.requestPermissions(this.permissionList).subscribe((status: AndroidPermissionsStatus) => {
-              if (status && status.hasPermission) {
-                this.startScanner(this.source, this.showButton);
-              } else {
-                this.showSettingErrorToast();
-              }
-            });
-          }
+          img: {
+            path: './assets/imgs/ic_photo_camera.png',
+          },
+          metaInfo: this.commonUtilService.translateMessage('CAMERA_PERMISSION_DESCRIPTION', this.appName),
         },
-        img: {
-          path: './assets/imgs/ic_photo_camera.png',
-        },
-        metaInfo: this.commonUtilService.translateMessage('CAMERA_PERMISSION_DESCRIPTION', this.appName),
-      },
-      cssClass: 'sb-popover sb-popover-permissions primary dw-active-downloads-popover',
+        cssClass: 'sb-popover sb-popover-permissions primary dw-active-downloads-popover',
+      });
+
+      await confirm.present();
     });
-
-    await confirm.present();
-
   }
+
   public stopScanner() {
     if (!this.isScannerActive) {
       return;
