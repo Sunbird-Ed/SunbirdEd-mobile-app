@@ -144,8 +144,6 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
       requiredFields: ProfileConstants.REQUIRED_FIELDS
     }).toPromise();
 
-    this.handleDeviceBackButton();
-
     this.formControlSubscriptions = combineLatest(
       this.onSyllabusChange(),
       this.onMediumChange(),
@@ -215,6 +213,11 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ionViewWillEnter() {
+    this.handleDeviceBackButton();
+    // after qr scan if bmc is not populated then show only BMC
+    if (history.state && history.state.showFrameworkCategoriesMenu) {
+      this.showQRScanner = false;
+    }
     this.headerObservable = this.headerService.headerEventEmitted$.subscribe(eventName => {
       this.handleHeaderEvents(eventName);
     });
