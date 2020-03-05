@@ -10,7 +10,6 @@
     </div>
   </div>
 
-
   <!-- Shows various types of notifications with sliding delete buttons-->
   <ion-list lines="none" *ngIf="notificationList?.length && commonUtilService?.networkInfo?.isNetworkAvailable">
     <ion-item-sliding style="margin-bottom: 8px;" *ngFor="let item of notificationList;let index = index" #slidingItem>
@@ -37,14 +36,5 @@
     </div>
     <h4>{{'MSG_NO_NEW_NOTIFICATION' | translate}}</h4>
   </div>
-
-  <!-- <div class="oval-wrapper" *ngIf="!commonUtilService?.networkInfo?.isNetworkAvailable">
-    <div class="oval">
-      <img src="./assets/imgs/outline-cloud_off.svg" alt="No Network Available" />
-    </div>
-    <h4>{{'NO_INTERNET_TITLE' | translate}}</h4>
-    <p>{{'CONNECT_TO_INTERNET_SUGGESTION' | translate}}</p>
-  </div> -->
-
 
 </ion-content>

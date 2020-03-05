@@ -13,7 +13,6 @@
           <ion-col size="12" class="text-center ion-no-padding" *ngIf="err">
             <p class="error">{{'ERROR_PHONE_EXISTS' | translate}}</p>
           </ion-col>
-          <!-- TODO Need to check validation -->
           <ion-col size="12" class="text-center ion-no-padding"
             *ngIf="!personEditForm.controls.phone.valid && personEditForm.controls.phone.dirty">
             <p class="error">{{'ERROR_PHONE_INVALID' | translate}}</p>
