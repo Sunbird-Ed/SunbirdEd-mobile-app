@@ -1,12 +1,12 @@
 <ion-content class="padding-bottom-if-header">
 	<form [formGroup]="profileSettingsForm" class="ps-container">
-		<div class="back-btn-container" [ngClass]="{'active-bg' : showQRScanner }">
+		<div class="back-btn-container">
 			<ion-icon *ngIf="!hideBackButton" ios="ios-arrow-back" md="md-arrow-back" (click)="handleBackButton(true)"
 			class="top-back-button"></ion-icon>
 		</div>
 		<div class="qr-container" *ngIf="showQRScanner">
 			<div class="qr-content">
-				<img class="qr-img" src="assets/imgs/qr_with_book.svg" alt="">
+				<img #animatedQRImage class="qr-img" src="assets/imgs/qr_with_book.svg" alt="">
 				<div class="qr-instruction-container text-center">
 					<div class="qr-instruction">
 						<span class="title">{{'APP_QR_CODE' | translate: {'%s': appName} }}</span>
@@ -25,7 +25,8 @@
 					<span class="or-circle">{{'OR' | translate}}</span>
 				</div>
 				<div class="fill-in-style msg-size">
-					{{'FILL_IN' | translate}}
+					<p class="fill-in-head">{{'NO_QR_CODE_QSTN' | translate}}</p>
+					<p class="fill-in-content">{{'PROVIDE_BELOW_INFO' | translate}}</p>
 				</div>
 				<div class="board-select-dummy" (click)="boardClicked($event)">
 					<ion-item appCustomIonSelect>

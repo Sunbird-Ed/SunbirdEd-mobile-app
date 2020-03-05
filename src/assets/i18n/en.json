@@ -645,5 +645,7 @@
   "LOAD": "Load",
   "LOAD_FILE": "Load File",
   "SIZE": "Size: {{%s}}",
-  "NO_QR_CODE": "I don't have a QR Code "
+  "NO_QR_CODE": "I don't have a QR Code ",
+  "NO_QR_CODE_QSTN": "Don't have a QR Code ?",
+  "PROVIDE_BELOW_INFO": "Provide below information"
 }
