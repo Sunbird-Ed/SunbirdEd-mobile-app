@@ -11,16 +11,16 @@
 <!-- Page body -->
 <ion-content padding overflow-scroll="true">
 
-  <!-- <div class="my-overlay" padding *ngIf="showSignInCard"> -->
-    <!--<div class="guest-user-info" text-center>
+  <!-- <div class="my-overlay" padding *ngIf="showSignInCard"> 
+    <div class="guest-user-info" text-center>
           <p> {{ 'OVERLAY_LABEL_TAKE_COURSE' | translate }} </p>
           <br/>
           <span>{{ 'OVERLAY_INFO_TEXT_TAKE_COURSE' | translate }} </span>
           <br/>
           <br/>
           <button ion-button block (click)="signIn()">{{ 'OVERLAY_SIGN_IN' | translate }}</button>
-        </div>-->
-    <!-- <div class="guest-user-info" text-center>
+        </div>
+     <div class="guest-user-info" text-center>
       <app-sign-in-card (valueChange)="buttonClick($event)" [source]="'course-batches'"
         [title]="'OVERLAY_LABEL_TAKE_COURSE'" [description]="'OVERLAY_INFO_TEXT_TAKE_COURSE'"></app-sign-in-card>
     </div>
@@ -56,9 +56,9 @@
             </p>
           </div>
           <div class="card-icon">
-          <button class="sb-btn sb-btn-sm sb-btn-outline-info view-all-p8" float-end
-          (click)="enrollIntoBatch(batch);" [disabled]="(batch.enrollmentEndDate && (todayDate > batch.enrollmentEndDate))">
-          {{ 'ENROLL' | translate }}</button>
+            <button class="sb-btn sb-btn-sm sb-btn-outline-info view-all-p8" float-end (click)="enrollIntoBatch(batch);"
+              [disabled]="(batch.enrollmentEndDate && (todayDate > batch.enrollmentEndDate))">
+              {{ 'ENROLL' | translate }}</button>
           </div>
         </div>
       </div>
@@ -94,10 +94,11 @@
             </p>
           </div>
           <div class="card-icon">
-            <button class="sb-btn sb-btn-sm sb-btn-outline-info view-all-p8" float-end  (click)="enrollIntoBatch(batch)" [disabled]="(batch.enrollmentEndDate && (todayDate > batch.enrollmentEndDate))"
+            <button class="sb-btn sb-btn-sm sb-btn-outline-info view-all-p8" float-end (click)="enrollIntoBatch(batch)"
+              [disabled]="(batch.enrollmentEndDate && (todayDate > batch.enrollmentEndDate))"
               [ngClass]="{'enroll-style' : (batch.enrollmentEndDate && (todayDate > batch.enrollmentEndDate))}">
-             {{ 'ENROLL' | translate }}
-           </button>
+              {{ 'ENROLL' | translate }}
+            </button>
           </div>
         </div>
       </div>
