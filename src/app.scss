@@ -988,8 +988,6 @@ ion-split-pane {
         text-align: start;
 
         flex-grow: 1;
-        flex-shrink: 0;
-
         .content-name {
           @include padding(0, 1rem);
         }
