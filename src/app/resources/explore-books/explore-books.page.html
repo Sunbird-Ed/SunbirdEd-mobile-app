@@ -23,13 +23,12 @@
           [class.active]="mimeType?.selected"
           (click)="searchForm.get('mimeType').patchValue(mimeType.value); onMimeTypeClicked(mimeType, i)">
           <span class="img-align" *ngIf="mimeType?.iconNormal && mimeType?.selected">
-            <img class="filter-icon" src="{{mimeType?.iconActive}}" alt="">
+            <img class="filter-icon" src="{{mimeType?.iconActive}}" alt="filter">
           </span>
           <span class="img-align" *ngIf="mimeType?.iconNormal && !mimeType?.selected">
-            <img class="filter-icon" src="{{mimeType?.iconNormal}}" alt="">
+            <img class="filter-icon" src="{{mimeType?.iconNormal}}" alt="filter">
           </span>
           <span class="allign-middle">{{mimeType?.name | translate}}</span>
-
         </div>
       </div>
     </div>
@@ -43,11 +42,9 @@
     </div>
   </form>
 
-
   <div class="empty-search-result ion-text-center" *ngIf="!showLoader && !contentSearchResult.length" padding-top>
     {{ 'EMPTY_SEARCH_RESULTS' | translate }}
   </div>
-
 
   <div class="spinner-container" *ngIf="showLoader">
     <ion-spinner padding class="loader"></ion-spinner>
@@ -60,7 +57,7 @@
   </ng-container>
 
   <div padding class="mt-32 mb-32 ion-text-center" *ngIf="!commonUtilService?.networkInfo?.isNetworkAvailable">
-    <img src="assets/imgs/outline-cloud_off.svg" />
+    <img src="assets/imgs/outline-cloud_off.svg" alt="offline" />
     <ion-text>
       <h6 class="offline-header">
         <strong>{{ 'NO_INTERNET_TITLE' | translate }}</strong>
@@ -69,7 +66,6 @@
     <p class="offline-content">{{ 'OFFLINE_WARNING_ETBUI' | translate }}</p>
   </div>
 
-  
 </ion-content>
-<ion-button expand="block" class="sort-by" *ngIf="!showLoader && contentSearchResult.length && checkedSortByButton" (click)="openSortOptionsModal()"> {{'SORT_BY' | translate}}</ion-button>
-  
+<ion-button expand="block" class="sort-by" *ngIf="!showLoader && contentSearchResult.length && checkedSortByButton"
+  (click)="openSortOptionsModal()"> {{'SORT_BY' | translate}}</ion-button>
