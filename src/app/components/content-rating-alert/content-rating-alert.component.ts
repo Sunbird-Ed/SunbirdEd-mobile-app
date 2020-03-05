@@ -224,7 +224,7 @@ export class ContentRatingAlertComponent implements OnInit {
     this.formService.getForm(req).toPromise()
       .then((res: any) => {
           const data = res.form ? res.form.data.fields : res.data.fields;
-          if (res && data.length) {
+          if (data.length) {
               this.contentRatingOptions = data[0];
               this.createRatingForm(this.userRating);
               if (this.allComments) {
@@ -245,7 +245,7 @@ export class ContentRatingAlertComponent implements OnInit {
     this.formService.getForm(req).toPromise()
     .then((res: any) => {
         const data = res.form ? res.form.data.fields : res.data.fields;
-        if (res && data.length) {
+        if (data.length) {
             this.contentRatingOptions = data[0];
             this.createRatingForm(this.userRating);
             if (this.allComments) {
