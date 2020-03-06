@@ -1,4 +1,4 @@
-<ion-content padding-vertical>
+<ion-content class="ion-padding-vertical">
   <form [formGroup]="profileEditForm">
     <ion-item>
       <ion-label position="stacked" class="label-font">
@@ -18,7 +18,7 @@
       <ion-select  [disabled]="!stateList.length" formControlName="states" #stateSelect multiple="false"
       placeholder="{{ (stateList.length ? 'STATE_OPTION_TEXT':'NO_DATA_FOUND') | translate }}" okText="{{'BTN_SUBMIT' | translate}}"
         cancelText="{{'CANCEL' | translate}}" (ionChange)="getDistrict(stateSelect.value, true);">
-        <ion-select-option *ngFor="let state of stateList" text-capitalize value="{{state?.id}}">{{state?.name}}
+        <ion-select-option *ngFor="let state of stateList" class="ion-text-capitalize" value="{{state?.id}}">{{state?.name}}
         </ion-select-option>
       </ion-select>
     </ion-item>
