@@ -86,7 +86,8 @@ export class CustomIonSelectDirective implements DoCheck {
             if (selectIconInnerRef) {
                 selectIconInnerRef.setAttribute(
                     'style',
-                    `border: solid blue;
+                    `border: solid #006de5;
+                    opacity:1;
                     border-width: 0 2px 2px 0;
                     display: inline-block;
                     padding: 4px;
