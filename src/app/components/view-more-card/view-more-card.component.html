@@ -9,11 +9,11 @@
         [ngClass]="{'blurbackground': batchExp}"></app-pb-horizontal>
       <ion-row style="height: 50%;" class="pl-5">
         <ion-col size="12">
-          <h6 class="meta-name" text-wrap *ngIf="content.name && content.name.length">
+          <h6 class="meta-name ion-text-wrap" *ngIf="content.name && content.name.length">
             {{(content.name.length > 20) ? (content.name | slice:0:20) + '...' : (content.name)}}</h6>
-          <h6 class="meta-name" text-wrap *ngIf="content.courseName && content.courseName.length">
+          <h6 class="meta-name ion-text-wrap" *ngIf="content.courseName && content.courseName.length">
             {{(content.courseName.length > 22) ? (content.courseName | slice:0:22) + '...' : (content.courseName)}}</h6>
-          <h6 class="meta-name" text-wrap
+          <h6 class="meta-name ion-text-wrap"
             *ngIf="content.contentData && content.contentData.name && content.contentData.name.length">
             {{(content.contentData.name.length > 22) ? (content.contentData.name | slice:0:22) + '...' : (content.contentData.name)}}
           </h6>

@@ -150,7 +150,7 @@
             </p>
           </div>
           <!-- Collection List -->
-          <div no-margin *ngFor="let result of resultlist.dialCodeResult" class="ion-no-padding">
+          <div *ngFor="let result of resultlist.dialCodeResult" class="ion-no-padding ion-no-margin">
 
             <div *ngIf="result && result.content && result.content.length">
               <div *ngFor="let content of result.content; let last = last, let i = index"
