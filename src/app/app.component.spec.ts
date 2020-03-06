@@ -536,7 +536,7 @@ describe('AppComponent', () => {
             jest.restoreAllMocks();
         });
 
-        it('should get the hotCodePushKey', (done) => {
+        it('should get the hotCodePush', (done) => {
             // arrange
             // mockFormAndFrameworkUtilService.checkNewAppVersion = jest.fn(() => {
             //     return {
@@ -553,7 +553,7 @@ describe('AppComponent', () => {
                     then: jest.fn((cb) => cb('ready'))
                 } as any;
             });
-            mockSystemSettingsService.getSystemSettings = jest.fn(() => of({value: 'SOME_KEY'}));
+            mockSystemSettingsService.getSystemSettings = jest.fn(() => of({value: '{ \"deploymentKey\": \"\"}'}));
 
             // act
             jest.useFakeTimers();

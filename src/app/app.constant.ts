@@ -382,7 +382,7 @@ export class SystemSettingsIds {
     public static readonly COURSE_FRAMEWORK_ID = 'courseFrameworkId';
     public static readonly CONTENT_COMING_SOON_MSG = 'contentComingSoonMsg';
     public static readonly CONSUMPTION_FAQS = 'consumptionFaqs';
-    public static readonly HOT_CODE_PUSH_KEY = 'hotCodePushKey';
+    public static readonly HOT_CODE_PUSH_KEY = 'hotCodePush';
 }
 
 export class StoreRating {

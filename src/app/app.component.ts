@@ -201,7 +201,10 @@ export class AppComponent implements OnInit, AfterViewInit {
       .then((res: SystemSettings) => {
         //   res['deploymentKey'] = '6Xhfs4-WVV8dhYN9U5OkZw6PukglrykIsJ8-B';
         if (res && res.value) {
-          this.codePushExperimentService.setDefaultDeploymentKey(res.value).subscribe();
+          const value = JSON.parse(res.value);
+          if (value.deploymentKey) {
+            this.codePushExperimentService.setDefaultDeploymentKey(res.value).subscribe();
+          }
         }
       }).catch(err => {
         console.log('error :', err);
