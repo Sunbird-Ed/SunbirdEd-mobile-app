@@ -10,7 +10,7 @@
 				<div class="qr-instruction-container text-center">
 					<div class="qr-instruction">
 						<span class="title">{{'APP_QR_CODE' | translate: {'%s': appName} }}</span>
-						<p class="sub-title">{{'QR_CODE_DETAILS' | translate}}</p>
+						<div class="sub-title">{{'QR_CODE_DETAILS' | translate}}</div>
 					</div>
 					<div class="qr-btn-container">
 						<div class="qr-btn" (click)="openQRScanner()">
@@ -25,8 +25,8 @@
 					<span class="or-circle">{{'OR' | translate}}</span>
 				</div>
 				<div class="fill-in-style msg-size">
-					<p class="fill-in-head">{{'NO_QR_CODE_QSTN' | translate}}</p>
-					<p class="fill-in-content">{{'PROVIDE_BELOW_INFO' | translate}}</p>
+					<div class="fill-in-head">{{'NO_QR_CODE_QSTN' | translate}}</div>
+					<div class="fill-in-content">{{'PROVIDE_BELOW_INFO' | translate}}</div>
 				</div>
 				<div class="board-select-dummy" (click)="boardClicked($event)">
 					<ion-item appCustomIonSelect>

@@ -51,7 +51,6 @@
     font-size: 12px;
     text-align: center;
     margin-top: 40px;
-    margin-bottom: 10px;
     @include padding(0, 5px);
     .fill-in-head{
       font-weight: bold;
@@ -98,7 +97,7 @@
   .qr-board{
       flex-grow: 0;
       flex-shrink: 0;
-      padding-bottom: 32px;
+      padding-bottom: 40px;
       position: relative;
       &::after{
         content: '';
@@ -163,7 +162,7 @@
     height: 0;
     padding: 0 32px;
 
-    padding-top: 7%;
+    padding-top: 50px;
     
     .qr-img{
       object-fit: contain;
@@ -177,8 +176,8 @@
   .qr-instruction-container {
     flex-grow: 0;
     flex-shrink: 0;
-    padding-top: 4%;
-    padding-bottom: 20%;
+    padding-top: 16px;
+    padding-bottom: 40px;
     .qr-instruction {
       .title {
         display: block;
@@ -186,13 +185,13 @@
         color: #024F9D;
       }
       .sub-title {
-        padding: 4% 10% 0 10%;
+        padding: 8px 10% 0 10%;
         font-size: 12px;
       }
     }
     .qr-btn-container {
       text-align: center;
-      margin-top: 5%;
+      margin-top: 16px;
       .qr-btn {
         display: inline-block;
         background-color: #006de5;
