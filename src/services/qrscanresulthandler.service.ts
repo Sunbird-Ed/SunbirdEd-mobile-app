@@ -13,6 +13,7 @@ import {
   Mode,
   PageId,
   ObjectType,
+  CorReleationDataType,
 } from './telemetry-constants';
 import { NavigationExtras, Router } from '@angular/router';
 import { NavController, Events } from '@ionic/angular';
@@ -61,7 +62,7 @@ export class QRScannerResultHandler {
     const scope = results[results.length - 4];
     return (type === 'content' && scope === 'public') ||
       (action === 'play' && (type === 'collection' || type === 'content')) ||
-      (action === 'learn' && type === 'course');
+      (action === 'explore-course' && type === 'course');
   }
 
   handleDialCode(source: string, scannedData, dialCode: string) {
@@ -76,6 +77,12 @@ export class QRScannerResultHandler {
         shouldGenerateEndTelemetry: true
       }
     };
+    const telemetryObject = new TelemetryObject(dialCode, 'qr', ' ');
+    const cData: CorrelationData[] = [{
+      id: CorReleationDataType.SCAN,
+      type: CorReleationDataType.ACCESS_TYPE
+    }];
+    this.commonUtilService.generateUTMInfoTelemetry(scannedData, cData, telemetryObject);
     this.navCtrl.navigateForward([`/${RouterLinks.SEARCH}`], navigationExtras);
   }
 
@@ -98,6 +105,12 @@ export class QRScannerResultHandler {
           Environment.HOME,
           contentId , ObjectType.QR , ''
         );
+        const telemetryObject = new TelemetryObject(content.identifier, content.contentData.contentType, content.contentData.pkgVersion);
+        const cData: CorrelationData[] = [{
+          id: CorReleationDataType.SCAN,
+          type: CorReleationDataType.ACCESS_TYPE
+        }];
+        this.commonUtilService.generateUTMInfoTelemetry(scannedData, cData, telemetryObject);
       }).catch(() => {
       if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
         this.commonUtilService.showToast('ERROR_NO_INTERNET_MESSAGE');
@@ -143,6 +156,10 @@ export class QRScannerResultHandler {
     corRelation.id = identifier;
     corRelation.type = type;
     corRelationList.push(corRelation);
+    corRelationList.push({
+      id: CorReleationDataType.SCAN,
+      type: CorReleationDataType.ACCESS_TYPE
+    });
     return corRelationList;
   }
 
@@ -207,5 +224,19 @@ export class QRScannerResultHandler {
       );
     }
   }
+
+  generateUTMInfoTelemetry(scannedData, object) {
+    const utmHashes = scannedData.slice(scannedData.indexOf('?') + 1).split('&');
+    const utmParams = {};
+    utmHashes.map(hash => {
+        const [key, val] = hash.split('=');
+        utmParams[key] = decodeURIComponent(val);
+    });
+    const cData: CorrelationData[] = [{
+      id: CorReleationDataType.SCAN,
+      type: CorReleationDataType.ACCESS_TYPE
+    }];
+    this.telemetryGeneratorService.generateUtmInfoTelemetry(utmParams, PageId.QRCodeScanner, cData, object);
+   }
 
 }

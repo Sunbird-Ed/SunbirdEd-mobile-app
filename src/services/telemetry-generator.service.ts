@@ -341,4 +341,16 @@ export class TelemetryGeneratorService {
     isCollection(mimeType) {
         return mimeType === MimeType.COLLECTION;
     }
+
+    generateUtmInfoTelemetry(values: Map, pageId, cData: CorrelationData[], object?: TelemetryObject) {
+        this.generateInteractTelemetry(
+            InteractType.OTHER,
+            InteractSubtype.UTM_INFO,
+            Environment.HOME,
+            pageId,
+            object,
+            values,
+            undefined,
+            cData);
+    }
 }
