@@ -76,7 +76,11 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
       }
       this.checkIfOnboardingComplete(urlMatch, dialCode, url);
       const telemetryObject = new TelemetryObject(identifier ? identifier : dialCode, identifier ? 'Content' : 'qr', undefined);
-      this.generateUTMInfoTelemetry(url, telemetryObject);
+      const cData: CorrelationData[] = [{
+        id: CorReleationDataType.DEEPLINK,
+        type: CorReleationDataType.ACCESS_TYPE
+      }];
+      this.commonUtilService.generateUTMInfoTelemetry(url, cData, telemetryObject);
     }
   }
 

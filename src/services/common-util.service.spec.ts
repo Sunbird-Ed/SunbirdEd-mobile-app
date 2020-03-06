@@ -510,4 +510,25 @@ describe('CommonUtilService', () => {
     });
   });
 
+
+  describe('generateUTMInfoTelemetry', () => {
+    it('should generate UtmInfo telemetry', () => {
+      // arrange
+      const URL = 'https://staging.ntp.net.in/dial/A7S6V8?utm_source=diksha&utm_medium=search&utm_campaign=dial&utm_term=ABCDEF';
+      const value = {
+        utm_source: 'sunbird',
+        utm_medium: 'search',
+        utm_campaign: 'dial',
+        utm_term: 'ABCDEF'
+      };
+      mockTelemetryGeneratorService.generateUtmInfoTelemetry = jest.fn();
+      // act
+      commonUtilService.generateUTMInfoTelemetry(URL, {}, {});
+      // assert
+      setTimeout(() => {
+        expect(mockTelemetryGeneratorService.generateUtmInfoTelemetry).toHaveBeenCalledWith(value, 'c-data', 'qr-code-scanner');
+      }, 0);
+    });
+  });
+
 });

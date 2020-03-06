@@ -30,7 +30,6 @@ describe('QRScannerResultHandler', () => {
     generateInteractTelemetry: jest.fn(),
     generateImpressionTelemetry: jest.fn(),
     generateEndTelemetry: jest.fn(),
-    generateUtmInfoTelemetry: jest.fn()
   };
 
   const mockRouter: Partial<Router> = {
@@ -145,6 +144,7 @@ describe('QRScannerResultHandler', () => {
   describe('handleDialCode()', () => {
     it('should navigate to Search page if the scanned data is a dialocde link', () => {
       // arrange
+      mockCommonUtilService.generateUTMInfoTelemetry = jest.fn();
       // act
       qRScannerResultHandler.handleDialCode('profile-settings',
         'https://sunbirded.org/get/dial/ABCDEF', 'ABCDEF');
@@ -469,24 +469,4 @@ describe('QRScannerResultHandler', () => {
       });
     });
   });
-
-  describe('generateUTMInfoTelemetry', () => {
-    it('should generate UtmInfo telemetry', () => {
-      // arrange
-      const URL = 'https://staging.ntp.net.in/dial/A7S6V8?utm_source=diksha&utm_medium=search&utm_campaign=dial&utm_term=ABCDEF';
-      const value = {
-        utm_source: 'sunbird',
-        utm_medium: 'search',
-        utm_campaign: 'dial',
-        utm_term: 'ABCDEF'
-      };
-      // act
-      qRScannerResultHandler.generateUTMInfoTelemetry(URL, {});
-      // assert
-      setTimeout(() => {
-        expect(mockTelemetryGeneratorService.generateUtmInfoTelemetry).toHaveBeenCalledWith(value, 'qr-code-scanner');
-      }, 0);
-    });
-  });
-
 });

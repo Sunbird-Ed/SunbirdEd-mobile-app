@@ -78,7 +78,11 @@ export class QRScannerResultHandler {
       }
     };
     const telemetryObject = new TelemetryObject(dialCode, 'qr', ' ');
-    this.generateUTMInfoTelemetry(scannedData, telemetryObject);
+    const cData: CorrelationData[] = [{
+      id: CorReleationDataType.SCAN,
+      type: CorReleationDataType.ACCESS_TYPE
+    }];
+    this.commonUtilService.generateUTMInfoTelemetry(scannedData, cData, telemetryObject);
     this.navCtrl.navigateForward([`/${RouterLinks.SEARCH}`], navigationExtras);
   }
 
@@ -102,7 +106,11 @@ export class QRScannerResultHandler {
           contentId , ObjectType.QR , ''
         );
         const telemetryObject = new TelemetryObject(content.identifier, content.contentData.contentType, content.contentData.pkgVersion);
-        this.generateUTMInfoTelemetry(scannedData, telemetryObject);
+        const cData: CorrelationData[] = [{
+          id: CorReleationDataType.SCAN,
+          type: CorReleationDataType.ACCESS_TYPE
+        }];
+        this.commonUtilService.generateUTMInfoTelemetry(scannedData, cData, telemetryObject);
       }).catch(() => {
       if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
         this.commonUtilService.showToast('ERROR_NO_INTERNET_MESSAGE');
