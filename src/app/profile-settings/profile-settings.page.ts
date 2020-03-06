@@ -156,7 +156,6 @@ export class ProfileSettingsPage implements OnInit, OnDestroy {
     ).subscribe();
 
     await this.fetchSyllabusList();
-    this.redirectToInitialRoute();
   }
 
   private redirectToInitialRoute() {
@@ -172,6 +171,7 @@ export class ProfileSettingsPage implements OnInit, OnDestroy {
       window.history.pushState({}, '', languageSettingRoute.toString());
       this.hideBackButton = false;
     }
+    this.hideOrShowHeader();
   }
 
   ngOnDestroy() {
@@ -195,6 +195,17 @@ export class ProfileSettingsPage implements OnInit, OnDestroy {
     this.headerObservable = this.headerService.headerEventEmitted$.subscribe(eventName => {
       this.handleHeaderEvents(eventName);
     });
+
+    // should be caleed everytime when entered to this page
+    this.redirectToInitialRoute();
+  }
+
+  ionViewDidEnter() {
+    this.updateStyle();
+    this.hideOnboardingSplashScreen();
+  }
+
+  hideOrShowHeader() {
     if (this.navParams) {
       this.hideBackButton = Boolean(this.navParams.hideBackButton);
     }
@@ -203,11 +214,6 @@ export class ProfileSettingsPage implements OnInit, OnDestroy {
     } else {
       this.headerService.hideHeader();
     }
-  }
-
-  ionViewDidEnter() {
-    this.updateStyle();
-    this.hideOnboardingSplashScreen();
   }
 
   async hideOnboardingSplashScreen() {

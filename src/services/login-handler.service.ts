@@ -111,6 +111,11 @@ export class LoginHandlerService {
             ? true : false;
           if (!isOnboardingCompleted) {
             await this.setDefaultProfileDetails();
+
+            // To avoid race condition
+            if (this.appGlobalService.limitedShareQuizContent) {
+              this.appGlobalService.skipCoachScreenForDeeplink = true;
+            }
           }
 
           initTabs(that.container, LOGIN_TEACHER_TABS);
