@@ -29,7 +29,7 @@
 
         <div class="sb-recently-viewed-items">
           <div class="sb-recenlty-viewed-title">{{ 'RECENTLY_VIEWED' | translate }}
-            <button class="sb-btn sb-btn-sm sb-btn-outline-info view-all-p8" float-end
+            <button class="sb-btn sb-btn-sm sb-btn-outline-info view-all-p8 ion-float-end"
               (click)="navigateToViewMoreContentsPage(recentViewedSection);">
               {{ 'VIEW_ALL' | translate }}</button>
           </div>
@@ -111,7 +111,7 @@
       </ion-list>
     </div>
 
-    <div padding text-center class="mt-32 mb-32" *ngIf="!commonUtilService?.networkInfo?.isNetworkAvailable">
+    <div class="ion-padding" text-center class="mt-32 mb-32" *ngIf="!commonUtilService?.networkInfo?.isNetworkAvailable">
       <img src="assets/imgs/outline-cloud_off.svg" alt="" />
       <ion-text>
         <h6 class="offline-header">

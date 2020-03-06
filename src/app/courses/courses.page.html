@@ -8,15 +8,16 @@
   <div *ngIf="!guestUser && enrolledCourses && enrolledCourses.length" class="course-page-color"
     [ngClass]="{'height-130': showLoader}">
     <div class="item padding-11">
-      <span float-start class="scroll-heading">
+      <span class="scroll-heading ion-float-start">
         {{ 'COURSES_IN_PROGRESS' | translate }}
       </span>
-      <span float-end class="view-all-link" *ngIf="enrolledCourses && enrolledCourses.length"
+      <span class="view-all-link ion-float-end" *ngIf="enrolledCourses && enrolledCourses.length"
         (click)="navigateToViewMoreContentsPage(true)">
         <a>{{ 'VIEW_ALL' | translate }}</a>
       </span>
     </div>
-    <div *ngIf="enrolledCourses && enrolledCourses.length" scrollX="true" style="width: 100%;height: auto;" no-padding>
+    <div *ngIf="enrolledCourses && enrolledCourses.length" class="ion-no-padding" scrollX="true"
+      style="width: 100%;height: auto;">
       <div class="inner inprogress-courses" style="display:flex">
         <app-coursecard *ngFor="let course of enrolledCourses; let i=index" [env]="'home'" [index]="i"
           [sectionName]="inProgressSection" [pageName]="'course'" [course]="course" [guestUser]="guestUser"
@@ -31,13 +32,13 @@
     <div *ngIf="course?.contents?.length">
       <div class="course-scroll-holder">
         <div class="item padding-11">
-          <span float-start class="scroll-heading">{{course?.name}}</span>
-          <span float-end class="view-all-link"
+          <span class="scroll-heading ion-float-start">{{course?.name}}</span>
+          <span class="view-all-link ion-float-end"
             (click)="navigateToViewMoreContentsPage(false,course.searchQuery, course.name)">
             <a>{{ 'VIEW_ALL' | translate }}</a>
           </span>
         </div>
-        <div scrollX="true" style="width: 100%; height: 186px;" no-padding style=" width: 100%;
+        <div class="ion-no-padding" scrollX="true" style="width: 100%; height: 186px;" style=" width: 100%;
         display: flex;">
           <app-coursecard *ngFor="let item of course.contents; let i=index" [env]="'home'" [index]="i"
             [sectionName]="course.name" [enrolledCourses]="enrolledCourses" [pageName]="'course'" [course]="item"
@@ -53,8 +54,8 @@
     </div>
   </div>
 
-  <div padding class="ion-text-center" *ngIf="!commonUtilService?.networkInfo?.isNetworkAvailable">
-    <img height="80" width="100" src="assets/imgs/ic_offline.png" alt="offline"/>
+  <div class="ion-text-center ion-padding" *ngIf="!commonUtilService?.networkInfo?.isNetworkAvailable">
+    <img height="80" width="100" src="assets/imgs/ic_offline.png" alt="offline" />
     <ion-text>
       <h6 color="secondary_black">
         <strong>{{ 'NO_INTERNET_TITLE' | translate }}</strong>
@@ -62,7 +63,7 @@
     </ion-text>
     <p color="dark_gray">{{ 'OFFLINE_WARNING' | translate }}</p>
     <ion-text>
-      <strong text-uppercase color="primary"
+      <strong class="ion-text-uppercase" color="primary"
         (click)="retryShowingPopularCourses(true); showOfflineWarning();">{{'RETRY_ACTION' | translate}}</strong>
     </ion-text>
   </div>

@@ -1,4 +1,4 @@
-<ion-content padding>
+<ion-content class="ion-padding">
   <div *ngIf="!checkUserGroups()">
     <div text-center>
       <img class="rounded image-style" src="assets/imgs/ic_businessman.png" alt="no_user" />
@@ -17,18 +17,19 @@
     <ion-row>
       <ion-col size-md="6">
         <ion-text>
-          <p *ngIf="groupList.length" item-start color="title" text-uppercase>
+          <p *ngIf="groupList.length" item-start color="title" class="ion-text-uppercase">
             <strong>{{'GROUPS' | translate}}</strong> {{ '(' + groupList?.length + ')'}}&lrm;
           </p>
         </ion-text>
       </ion-col>
       <ion-col size-md="6" class="padding-right0">
-        <ion-button float-end fill="clear" class="padding-right0" (click)="selectAll()">{{'SELECT_ALL' | translate}}
+        <ion-button fill="clear" class="padding-right0 ion-float-end" (click)="selectAll()">{{'SELECT_ALL' | translate}}
         </ion-button>
       </ion-col>
     </ion-row>
 
-    <ion-item (click)="toggleGroupSelected(i)" *ngFor="let group of groupList; let i = index;" class="item-background" margin-bottom no-lines>
+    <ion-item (click)="toggleGroupSelected(i)" *ngFor="let group of groupList; let i = index;" class="item-background"
+      margin-bottom no-lines>
       <ion-label>
         <h6 class="padding-top">
           <strong>{{group?.name}}</strong>
@@ -48,11 +49,12 @@
     </ion-item>
 
     <ion-text>
-      <p *ngIf="userList.length" item-start color="title" text-uppercase>
+      <p *ngIf="userList.length" item-start color="title" class="ion-text-uppercase">
         <strong>{{'USERS' | translate}}</strong> {{ '(' + userList?.length + ')'}}&lrm;
       </p>
     </ion-text>
-    <ion-item (click)="toggleUserSelected(i)" *ngFor="let user of userList; let i = index;" class="item-background" margin-bottom no-lines>
+    <ion-item (click)="toggleUserSelected(i)" *ngFor="let user of userList; let i = index;" class="item-background"
+      margin-bottom no-lines>
       <ion-label>
         <h6 class="padding-top">
           <strong>{{user?.handle}}</strong>
@@ -65,9 +67,10 @@
   </div>
 </ion-content>
 <ion-footer>
-  <ion-row padding>
+  <ion-row class="ion-padding">
     <ion-col size-md="10" offset-md="1">
-      <ion-button expand="block" (click)="share()" [disabled]="!isShareEnabled()" text-uppercase>{{'SHARE' | translate }}
+      <ion-button class="ion-text-uppercase" expand="block" (click)="share()" [disabled]="!isShareEnabled()">
+        {{'SHARE' | translate }}
       </ion-button>
     </ion-col>
   </ion-row>

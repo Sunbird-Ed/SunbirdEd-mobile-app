@@ -1,4 +1,4 @@
-<ion-content padding *ngIf="!changePermissionAccess">
+<ion-content class="ion-padding" *ngIf="!changePermissionAccess">
   <p class="permission-title">{{'PERMISSION_REQUIRED_TITLE' | translate: {'%s': appName} }}</p>
   <div class="permission-container">
     <div *ngFor="let item of permissionListDetails" class="item-row d-flex mb-16">
@@ -20,7 +20,7 @@
 </ion-footer>
 
 <!-- For Edit permission page -->
-<ion-content padding-vertical *ngIf="changePermissionAccess" class="changePermissionAccess ion-padding-vertical">
+<ion-content *ngIf="changePermissionAccess" class="changePermissionAccess ion-padding-vertical">
   <div>
     <p class="permission-title" class="pl-16">{{'PERMISSION_EDIT_TITLE' | translate:{'%s': appName} }}</p>
   </div>

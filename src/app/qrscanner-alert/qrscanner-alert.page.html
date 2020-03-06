@@ -20,7 +20,7 @@
       </ion-row>
     </ion-grid>
   </ion-content>
-  <ion-footer padding>
+  <ion-footer class="ion-padding">
     <ion-button expand="block" slot="end" (click)="cancel()"> {{ skipKey | translate }}
       <ion-icon name="arrow-round-forward" role="img" class="icon icon-md ion-md-arrow-round-forward pull-right"
         aria-label="arrow round-forward" ng-reflect-name="arrow-round-forward"></ion-icon>
@@ -28,7 +28,7 @@
   </ion-footer>
 </div>
 <div class="invalidContent" *ngIf="invalidContent">
-  <ion-content padding>
+  <ion-content class="ion-padding">
     <ion-grid>
       <ion-row>
         <ion-col size="12" class="img-container">
@@ -50,7 +50,7 @@
     </ion-grid>
   </ion-content>
 
-  <ion-footer padding>
+  <ion-footer class="ion-padding">
     <ion-button class="arrow-icon" expand="block" slot="end" (click)="cancel()"> {{ skipKey | translate }}
       <ion-icon name="arrow-round-forward" role="img" class="icon icon-md ion-md-arrow-round-forward pull-right"
         aria-label="arrow round-forward" ng-reflect-name="arrow-round-forward"></ion-icon>

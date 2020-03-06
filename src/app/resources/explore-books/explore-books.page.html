@@ -47,7 +47,7 @@
   </div>
 
   <div class="spinner-container" *ngIf="showLoader">
-    <ion-spinner padding class="loader"></ion-spinner>
+    <ion-spinner class="loader ion-padding"></ion-spinner>
   </div>
   <ng-container *ngFor="let content of contentSearchResult; let i = index">
     <div class="sb-card-container sb-card-textbook-container">
@@ -56,7 +56,7 @@
     </div>
   </ng-container>
 
-  <div padding class="mt-32 mb-32 ion-text-center" *ngIf="!commonUtilService?.networkInfo?.isNetworkAvailable">
+  <div class="mt-32 mb-32 ion-text-center ion-padding" *ngIf="!commonUtilService?.networkInfo?.isNetworkAvailable">
     <img src="assets/imgs/outline-cloud_off.svg" alt="offline" />
     <ion-text>
       <h6 class="offline-header">

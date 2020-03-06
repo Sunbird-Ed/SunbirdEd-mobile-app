@@ -1,4 +1,4 @@
-<ion-content padding>
+<ion-content class="ion-padding">
 
   <div class="label PT16">
     {{ 'AUTOMATIC_SYNC' | translate }}
@@ -23,12 +23,15 @@
     </ion-radio-group>
   </ion-list>
 
-  <ion-label *ngIf="(lastSyncDateTime | async) as lastSyncDateTime">{{ 'LAST_SYNC' | translate }} {{lastSyncDateTime}}
+  <ion-label *ngIf="(lastSyncDateTime | async) as lastSyncDateTime">
+    {{ 'LAST_SYNC' | translate }} {{lastSyncDateTime}}
   </ion-label>
-
-  <ion-button expand="block" class="MT16" (click)="onSyncClick()">{{ 'SYNC_NOW' | translate }}</ion-button>
+  <ion-button expand="block" class="MT16" (click)="onSyncClick()">
+    {{ 'SYNC_NOW' | translate }}
+  </ion-button>
   <hr>
-  <ion-button (click)="shareTelemetry()" class="ion-no-padding" fill="clear">{{ 'SHARE_TELEMETRY' | translate }}
+  <ion-button (click)="shareTelemetry()" class="ion-no-padding" fill="clear">
+    {{ 'SHARE_TELEMETRY' | translate }}
   </ion-button>
 
 </ion-content>

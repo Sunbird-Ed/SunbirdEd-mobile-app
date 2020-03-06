@@ -9,7 +9,7 @@
   </ion-toolbar>
 </ion-header>
 <!-- Page body -->
-<ion-content padding overflow-scroll="true">
+<ion-content class="ion-padding" overflow-scroll="true">
 
   <!-- <div class="my-overlay" padding *ngIf="showSignInCard"> 
     <div class="guest-user-info" text-center>
@@ -56,7 +56,8 @@
             </p>
           </div>
           <div class="card-icon">
-            <button class="sb-btn sb-btn-sm sb-btn-outline-info view-all-p8" float-end (click)="enrollIntoBatch(batch);"
+            <button class="sb-btn sb-btn-sm sb-btn-outline-info view-all-p8 ion-float-end"
+              (click)="enrollIntoBatch(batch);"
               [disabled]="(batch.enrollmentEndDate && (todayDate > batch.enrollmentEndDate))">
               {{ 'ENROLL' | translate }}</button>
           </div>
@@ -94,7 +95,8 @@
             </p>
           </div>
           <div class="card-icon">
-            <button class="sb-btn sb-btn-sm sb-btn-outline-info view-all-p8" float-end (click)="enrollIntoBatch(batch)"
+            <button class="sb-btn sb-btn-sm sb-btn-outline-info view-all-p8 ion-float-end"
+              (click)="enrollIntoBatch(batch)"
               [disabled]="(batch.enrollmentEndDate && (todayDate > batch.enrollmentEndDate))"
               [ngClass]="{'enroll-style' : (batch.enrollmentEndDate && (todayDate > batch.enrollmentEndDate))}">
               {{ 'ENROLL' | translate }}
