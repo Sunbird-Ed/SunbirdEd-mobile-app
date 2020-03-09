@@ -31,6 +31,7 @@ import {ContentPlayerHandler} from '@app/services/content/player/content-player-
 import {RatingHandler} from '@app/services/rating/rating-handler';
 import {ContentUtil} from '@app/util/content-util';
 import {EventTopics} from '@app/app/app.constant';
+import { ShareItemType } from '../app.constant';
 
 describe('collectionDetailEtbPage', () => {
     let collectionDetailEtbPage: CollectionDetailEtbPage;
@@ -48,7 +49,7 @@ describe('collectionDetailEtbPage', () => {
         publish: jest.fn(),
         subscribe: jest.fn()
     };
-    const mockpopoverCtrl: Partial<PopoverController> = {};
+    const mockPopoverController: Partial<PopoverController> = {};
     const mockplatform: Partial<Platform> = {};
     const mocktranslate: Partial<TranslateService> = {};
     const mocksocial: Partial<SocialSharing> = {};
@@ -56,7 +57,7 @@ describe('collectionDetailEtbPage', () => {
         isUserLoggedIn: jest.fn(() => true),
         getCurrentUser: jest.fn()
     };
-    const mockcommonUtilService: Partial<CommonUtilService> = {
+    const mockCommonUtilService: Partial<CommonUtilService> = {
         networkInfo: {}
     };
     const mocktelemetryGeneratorService: Partial<TelemetryGeneratorService> = {
@@ -106,12 +107,12 @@ describe('collectionDetailEtbPage', () => {
             mockNavCtrl as NavController,
             mockzone as NgZone,
             mockevents as Events,
-            mockpopoverCtrl as PopoverController,
+            mockPopoverController as PopoverController,
             mockplatform as Platform,
             mocktranslate as TranslateService,
             mocksocial as SocialSharing,
             mockappGlobalService as AppGlobalService,
-            mockcommonUtilService as CommonUtilService,
+            mockCommonUtilService as CommonUtilService,
             mocktelemetryGeneratorService as TelemetryGeneratorService,
             mockcourseUtilService as CourseUtilService,
             mockutilityService as UtilityService,
@@ -140,16 +141,16 @@ describe('collectionDetailEtbPage', () => {
     });
 
     it('should get the appName', () => {
-        mockcommonUtilService.getAppName = jest.fn(() => Promise.resolve('diksha'));
+        mockCommonUtilService.getAppName = jest.fn(() => Promise.resolve('diksha'));
         collectionDetailEtbPage.ngOnInit();
-        expect(mockcommonUtilService.getAppName).toHaveBeenCalled();
+        expect(mockCommonUtilService.getAppName).toHaveBeenCalled();
     });
 
     it('should extract content data', () => {
         const data = contentDetailsMcokResponse1;
         collectionDetailEtbPage.isUpdateAvailable = false;
         collectionDetailEtbPage.showLoading = true;
-        mockcommonUtilService.networkInfo = {isNetworkAvailable: true};
+        mockCommonUtilService.networkInfo = {isNetworkAvailable: true};
         mocktelemetryGeneratorService.generateSpineLoadingTelemetry = jest.fn();
         mockHeaderService.hideHeader = jest.fn();
         mockStorageService.getStorageDestinationDirectoryPath = jest.fn();
@@ -190,7 +191,7 @@ describe('collectionDetailEtbPage', () => {
             showBurgerMenu: false,
             actionButtons: ['download']
         });
-        mockcommonUtilService.networkInfo = {isNetworkAvailable: false};
+        mockCommonUtilService.networkInfo = {isNetworkAvailable: false};
         spyOn(collectionDetailEtbPage, 'setChildContents').and.stub();
         spyOn(collectionDetailEtbPage, 'setCollectionStructure').and.stub();
         collectionDetailEtbPage.ionViewWillEnter();
@@ -207,7 +208,7 @@ describe('collectionDetailEtbPage', () => {
 
     it('should call setCollectionStructure when content is not available locally', (done) => {
         const data = contentDetailsMcokResponse3;
-        mockcommonUtilService.networkInfo.isNetworkAvailable = true;
+        mockCommonUtilService.networkInfo.isNetworkAvailable = true;
         mocktelemetryGeneratorService.generateSpineLoadingTelemetry = jest.fn();
         mockHeaderService.hideHeader = jest.fn();
         mockStorageService.getStorageDestinationDirectoryPath = jest.fn();
@@ -374,7 +375,7 @@ describe('collectionDetailEtbPage', () => {
         mockContentPlayerHandler.launchContentPlayer = jest.fn();
         mockContentData.content.isAvailableLocally  = true;
         mockContentData.content.mimeType  = 'application/vnd.ekstep.h5p-archive';
-        mockcommonUtilService.networkInfo.isNetworkAvailable = true;
+        mockCommonUtilService.networkInfo.isNetworkAvailable = true;
         // act
         collectionDetailEtbPage.playContent(mockContentData);
         // assert
@@ -389,6 +390,30 @@ describe('collectionDetailEtbPage', () => {
             );
             done();
         }, 0);
+    });
+
+    describe('share()', () => {
+        describe('shouldn create share popover', () => {
+            it('shareItemType should be root-content', (done) => {
+                // arrange
+                mockCommonUtilService.translateMessage = jest.fn(() => '');
+                mockPopoverController.create = jest.fn(() => (Promise.resolve({
+                    present: jest.fn(() => Promise.resolve({})),
+                    onDidDismiss: jest.fn(() => Promise.resolve({ data: { canDelete: true } }))
+                } as any)));
+                // act
+                collectionDetailEtbPage.share().then(() => {
+                    // assert
+                    expect(mockPopoverController.create).toHaveBeenCalledTimes(1);
+                    expect(mockPopoverController.create).toHaveBeenCalledWith(expect.objectContaining({
+                        componentProps: expect.objectContaining({
+                            shareItemType: ShareItemType.ROOT_COLECTION
+                        })
+                    }));
+                    done();
+                });
+            });
+        });
     });
 
 });

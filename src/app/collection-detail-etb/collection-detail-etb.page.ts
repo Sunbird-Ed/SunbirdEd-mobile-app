@@ -585,28 +585,6 @@ export class CollectionDetailEtbPage implements OnInit {
     }
   }
 
-  async showCommingSoonPopup(childData: any) {
-    const message = await this.comingSoonMessageService.getComingSoonMessage(childData);
-    if (childData.contentData.mimeType === MimeType.COLLECTION && !childData.children) {
-      const popover = await this.popoverCtrl.create({
-        component: SbGenericPopoverComponent,
-        componentProps: {
-          sbPopoverHeading: this.commonUtilService.translateMessage('CONTENT_COMMING_SOON'),
-          sbPopoverMainTitle: message ? this.commonUtilService.translateMessage(message) :
-            this.commonUtilService.translateMessage('CONTENT_IS_BEEING_ADDED') + childData.contentData.name,
-          actionsButtons: [
-            {
-              btntext: this.commonUtilService.translateMessage('OKAY'),
-              btnClass: 'popover-color'
-            }
-          ],
-        },
-        cssClass: 'sb-popover warning',
-      });
-      await popover.present();
-    }
-  }
-
   /**
    * Function to extract api response.
    */
