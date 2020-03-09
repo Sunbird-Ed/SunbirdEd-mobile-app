@@ -1068,4 +1068,28 @@ describe('EnrolledCourseDetailsPage', () => {
             }, 0);
         });
     });
+
+    describe('onSegmentChange()', () => {
+        it('should call generateInteractTelemetry()', () => {
+            // act
+            enrolledCourseDetailsPage.onSegmentChange({
+                detail: {
+                    value: 'value'
+                }
+            });
+            // assert
+            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toBeCalled();
+        });
+    });
+
+    describe('handleUnenrollButton()', () => {
+        it('should call generateInteractTelemetry()', () => {
+            // arrange
+
+            // act
+            enrolledCourseDetailsPage.handleUnenrollButton();
+            // assert
+            expect(enrolledCourseDetailsPage.showUnenrollButton).toEqual(false);
+        });
+    });
 });
