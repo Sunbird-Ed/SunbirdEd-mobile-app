@@ -996,10 +996,11 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
       });
     }
   }
+
   /**
    * Play content
    */
-  playContent(isStreaming: boolean) {
+  private playContent(isStreaming: boolean) {
     if (this.apiLevel < 21 && this.appAvailability === 'false') {
       this.showPopupDialog();
     } else {
@@ -1109,7 +1110,8 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
       corRelationList
     );
   }
-  async showPopupDialog() {
+
+  private async showPopupDialog() {
     const popover = await this.popoverCtrl.create({
       component: DialogPopupComponent,
       componentProps: {
