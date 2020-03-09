@@ -23,9 +23,11 @@ import {
   Environment, ErrorType, ImpressionType, InteractSubtype, InteractType, Mode, PageId, ID
 } from '../../services/telemetry-constants';
 import { Subscription } from 'rxjs';
-import {ContentType, EventTopics, MimeType, RouterLinks, ShareItemType} from '../../app/app.constant';
-import { AppGlobalService, AppHeaderService, CommonUtilService,
-  CourseUtilService, TelemetryGeneratorService, UtilityService} from '../../services';
+import { ContentType, EventTopics, MimeType, RouterLinks, ShareItemType } from '../../app/app.constant';
+import {
+  AppGlobalService, AppHeaderService, CommonUtilService,
+  CourseUtilService, TelemetryGeneratorService, UtilityService
+} from '../../services';
 import { SbGenericPopoverComponent } from '../components/popups/sb-generic-popover/sb-generic-popover.component';
 import { ComingSoonMessageService } from 'services/coming-soon-message.service';
 import { Location } from '@angular/common';
@@ -41,9 +43,9 @@ import {
 import { ActivatedRoute, Router, NavigationExtras } from '@angular/router';
 import { ContentUtil } from '@app/util/content-util';
 import { tap } from 'rxjs/operators';
-import {ContentPlayerHandler} from '@app/services/content/player/content-player-handler';
-import {RatingHandler} from '@app/services/rating/rating-handler';
-import {ContentInfo} from '@app/services/content/content-info';
+import { ContentPlayerHandler } from '@app/services/content/player/content-player-handler';
+import { RatingHandler } from '@app/services/rating/rating-handler';
+import { ContentInfo } from '@app/services/content/content-info';
 declare const cordova;
 
 @Component({
@@ -551,14 +553,14 @@ export class CollectionDetailEtbPage implements OnInit {
             this.contentDetail = data;
             this.generatefastLoadingTelemetry(InteractSubtype.FAST_LOADING_OF_TEXTBOOK_INITIATED);
             this.contentService.getContentHeirarchy(option).toPromise()
-                .then((content: Content) => {
-                  this.childrenData = content.children;
-                  this.showSheenAnimation = false;
-                  this.toggleGroup(0, this.content);
-                  this.generatefastLoadingTelemetry(InteractSubtype.FAST_LOADING_OF_TEXTBOOK_FINISHED);
-                }).catch((err) => {
-              this.showSheenAnimation = false;
-            });
+              .then((content: Content) => {
+                this.childrenData = content.children;
+                this.showSheenAnimation = false;
+                this.toggleGroup(0, this.content);
+                this.generatefastLoadingTelemetry(InteractSubtype.FAST_LOADING_OF_TEXTBOOK_FINISHED);
+              }).catch((err) => {
+                this.showSheenAnimation = false;
+              });
             this.importContentInBackground([this.identifier], false);
           } else {
             this.showSheenAnimation = false;
@@ -566,11 +568,11 @@ export class CollectionDetailEtbPage implements OnInit {
           }
         }
       }).catch((error) => {
-      console.log('error while loading content details', error);
-      this.showSheenAnimation = false;
-      this.commonUtilService.showToast('ERROR_CONTENT_NOT_AVAILABLE');
-      this.location.back();
-    });
+        console.log('error while loading content details', error);
+        this.showSheenAnimation = false;
+        this.commonUtilService.showToast('ERROR_CONTENT_NOT_AVAILABLE');
+        this.location.back();
+      });
   }
 
   showLicensce() {
@@ -601,7 +603,7 @@ export class CollectionDetailEtbPage implements OnInit {
         },
         cssClass: 'sb-popover warning',
       });
-      popover.present();
+      await popover.present();
     }
   }
 
@@ -852,7 +854,7 @@ export class CollectionDetailEtbPage implements OnInit {
             setTimeout(() => {
               (this.stickyPillsRef.nativeElement as HTMLDivElement).classList.add('sticky');
               window['scrollWindow'].getScrollElement().then((v) => {
-                document.getElementById(this.textbookTocService.textbookIds.contentId).scrollIntoView({behavior: 'smooth'});
+                document.getElementById(this.textbookTocService.textbookIds.contentId).scrollIntoView({ behavior: 'smooth' });
                 this.textbookTocService.resetTextbookIds();
               });
             }, 0);
@@ -994,7 +996,7 @@ export class CollectionDetailEtbPage implements OnInit {
 
         if (event.payload && event.type === ContentEventType.SERVER_CONTENT_DATA) {
           this.licenseDetails = event.payload.licenseDetails;
-      }
+        }
 
         // Get child content
         if (event.type === ContentEventType.CONTENT_EXTRACT_COMPLETED) {
@@ -1098,7 +1100,7 @@ export class CollectionDetailEtbPage implements OnInit {
       },
       cssClass: 'sb-popover',
     });
-    popover.present();
+    await popover.present();
   }
 
   /**
@@ -1283,16 +1285,16 @@ export class CollectionDetailEtbPage implements OnInit {
   licenseSectionClicked(params) {
     const telemetryObject = new TelemetryObject(this.objId, this.objType, this.objVer);
     this.telemetryGeneratorService.generateInteractTelemetry(
-       params === 'expanded' ? InteractType.LICENSE_CARD_EXPANDED : InteractType.LICENSE_CARD_COLLAPSED,
-       '',
-       undefined,
-       PageId.COLLECTION_DETAIL,
-       telemetryObject,
-       undefined,
-       this.objRollup,
-       this.corRelationList,
-       ID.LICENSE_CARD_CLICKED
-     );
+      params === 'expanded' ? InteractType.LICENSE_CARD_EXPANDED : InteractType.LICENSE_CARD_COLLAPSED,
+      '',
+      undefined,
+      PageId.COLLECTION_DETAIL,
+      telemetryObject,
+      undefined,
+      this.objRollup,
+      this.corRelationList,
+      ID.LICENSE_CARD_CLICKED
+    );
   }
 
   /**
@@ -1662,7 +1664,7 @@ export class CollectionDetailEtbPage implements OnInit {
     let isStreaming: boolean;
     let shouldDownloadAndPlay: boolean;
     if (this.playingContent.contentData.streamingUrl &&
-        this.commonUtilService.networkInfo.isNetworkAvailable && !(this.playingContent.mimeType === 'application/vnd.ekstep.h5p-archive')) {
+      this.commonUtilService.networkInfo.isNetworkAvailable && !(this.playingContent.mimeType === 'application/vnd.ekstep.h5p-archive')) {
       isStreaming = true;
       shouldDownloadAndPlay = false;
       this.lastContentPlayed = this.playingContent.identifier;
@@ -1704,14 +1706,14 @@ export class CollectionDetailEtbPage implements OnInit {
   private generateInteractTelemetry(isStreaming: boolean, telemetryObject, rollup, correlationData) {
     const subType: string = isStreaming ? InteractSubtype.PLAY_ONLINE : InteractSubtype.PLAY_FROM_DEVICE;
     this.telemetryGeneratorService.generateInteractTelemetry(
-        InteractType.TOUCH,
-        subType,
-        Environment.HOME,
-        PageId.COLLECTION_DETAIL,
-        telemetryObject,
-        undefined,
-        rollup,
-        correlationData,
+      InteractType.TOUCH,
+      subType,
+      Environment.HOME,
+      PageId.COLLECTION_DETAIL,
+      telemetryObject,
+      undefined,
+      rollup,
+      correlationData,
     );
   }
 }

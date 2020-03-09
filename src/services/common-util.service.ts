@@ -130,8 +130,8 @@ export class CommonUtilService {
      * Returns Loading object with default config
      * @returns Loading object
      */
-    getLoader(duration?): any {
-        return this.loadingCtrl.create({
+    async getLoader(duration?) {
+        return await this.loadingCtrl.create({
             duration: duration ? duration : 30000,
             spinner: 'crescent',
             cssClass: 'custom-loader-class'
@@ -308,13 +308,13 @@ export class CommonUtilService {
     }
 
     async getAppName() {
-       return this.appVersion.getAppName();
+        return this.appVersion.getAppName();
     }
 
     openUrlInBrowser(url) {
         const options = 'hardwareback=yes,clearcache=no,zoom=no,toolbar=yes,disallowoverscroll=yes';
         (window as any).cordova.InAppBrowser.open(url, '_blank', options);
-      }
+    }
 
     fileSizeInMB(bytes) {
         if (!bytes) {
@@ -460,5 +460,5 @@ export class CommonUtilService {
             utmParams[key] = decodeURIComponent(val);
         });
         this.telemetryGeneratorService.generateUtmInfoTelemetry(utmParams, PageId.QRCodeScanner, cData, object);
-       }
+    }
 }

@@ -18,7 +18,6 @@ import {
   StorageService,
   StorageDestination
 } from 'sunbird-sdk';
-
 import { AppGlobalService } from '@app/services/app-global-service.service';
 import { AppHeaderService, } from '@app/services/app-header.service';
 import { CommonUtilService, } from '@app/services/common-util.service';
@@ -30,9 +29,11 @@ import { PageId, InteractType, Environment, InteractSubtype } from '@app/service
 import { FormAndFrameworkUtilService } from '@app/services';
 import { featureIdMap } from '../feature-id-map';
 import { BehaviorSubject } from 'rxjs';
-import { SbInsufficientStoragePopupComponent } from '@app/app/components/popups/sb-insufficient-storage-popup/sb-insufficient-storage-popup';
+import {
+  SbInsufficientStoragePopupComponent
+} from '@app/app/components/popups/sb-insufficient-storage-popup/sb-insufficient-storage-popup';
 import { DownloadsTabComponent } from './downloads-tab/downloads-tab.component';
-import { finalize, tap, skip, takeWhile} from 'rxjs/operators';
+import { finalize, tap, skip, takeWhile } from 'rxjs/operators';
 
 @Component({
   selector: 'app-download-manager',
@@ -234,7 +235,7 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
       },
       cssClass: 'sb-popover danger sb-popover-cancel-delete',
     });
-    this.deleteAllConfirm.present();
+    await this.deleteAllConfirm.present();
 
     this.deleteAllConfirm.onDidDismiss().then((response) => {
       if (response) {
@@ -257,8 +258,8 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
         });
       })
     )
-    .subscribe((list) => {
-      this.deletedContentListTitle$
+      .subscribe((list) => {
+        this.deletedContentListTitle$
           .next(`${contentDeleteRequest.contentDeleteList.length - list.length}/${contentDeleteRequest.contentDeleteList.length}`);
       });
   }
@@ -356,7 +357,7 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
         }
       })
     )
-    .subscribe();
+      .subscribe();
   }
 
   async closeSelectAllPopup() {

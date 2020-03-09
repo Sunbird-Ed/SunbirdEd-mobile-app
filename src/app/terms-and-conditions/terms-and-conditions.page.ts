@@ -61,7 +61,7 @@ export class TermsAndConditionsPage implements OnInit {
       Environment.HOME
     );
     this.loading = await this.commonUtilService.getLoader();
-    this.loading.present();
+    await this.loading.present();
   }
 
   ionViewWillEnter() {

@@ -696,7 +696,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       closeButtonText: 'X',
       cssClass: ['toastHeader', 'offline']
     });
-    this.toast.present();
+    await this.toast.present();
     this.toast.onDidDismiss(() => {
       this.toast = undefined;
     });
