@@ -587,7 +587,7 @@
   "TRY_BEFORE_RATING": "Please try the content before rating it.",
   "SHARE_CONTENT_LINK": "See {{content_name}} on {{app_name}}: {{content_link}} \n Try this content on the mobile app: {{play_store_url}}",
   "SHARE_APP_LINK": "Get {{app_name}} from the Play Store: {{play_store_url}}",
-  "SHARE_CONTENT_FILE": "{{app_name}}: {{content_name}} \n {{play_store_url}}",
+  "SHARE_CONTENT_FILE": "{{app_name}}: {{content_name}} \n Try this content on the mobile app: {{play_store_url}}",
   "TRY_DIFF_QR": "Try a different QR code?",
   "UNABLE_TO_FETCH_CONTENT": "Unable to fetch retired content",
   "UNENROLL_CONFIRMATION_MESSAGE": "You can rejoin an active or upcoming batch later",
