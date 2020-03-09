@@ -231,7 +231,7 @@ export class LoginHandlerService {
       valuesMap);
   }
 
-  setDefaultProfileDetails(): Promise<string|void>{
+  setDefaultProfileDetails(): Promise<string | void> {
     const profileRequest = this.getDefaultProfileRequest();
     return this.profileService.updateProfile(profileRequest).toPromise().then(() => {
       return this.profileService.setActiveSessionForProfile(profileRequest.uid).toPromise().then(() => {
