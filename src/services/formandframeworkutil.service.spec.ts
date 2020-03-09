@@ -1,12 +1,14 @@
 import { FormAndFrameworkUtilService } from './formandframeworkutil.service';
-import { ProfileService,
+import {
+  ProfileService,
   SystemSettingsService,
   FrameworkUtilService,
   FormService,
   FrameworkService,
   SharedPreferences,
   ProfileType,
-  ProfileSource } from 'sunbird-sdk';
+  ProfileSource
+} from 'sunbird-sdk';
 import { AppGlobalService } from './app-global-service.service';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { TranslateService } from '@ngx-translate/core';
@@ -681,7 +683,7 @@ describe('FormAndFrameworkUtilService', () => {
       // act
       // assert
       formAndFrameworkUtilService.getSupportedContentFilterConfig('library').then((response) => {
-        expect(response).toEqual(['Story', 'Worksheet', 'Game', 'Resource', 'Collection', 'TextBook', 'LessonPlan']);
+        expect(response).toEqual(['Story', 'Worksheet', 'Game', 'Resource', 'Collection', 'TextBook', 'eTextBook', 'LessonPlan']);
         done();
       });
     });
@@ -707,7 +709,8 @@ describe('FormAndFrameworkUtilService', () => {
       // act
       // assert
       formAndFrameworkUtilService.getSupportedContentFilterConfig('downloads').then((response) => {
-        expect(response).toEqual(['Story', 'Worksheet', 'Game', 'Resource', 'Collection', 'TextBook', 'LessonPlan', 'Course', 'FocusSpot',
+        expect(response).toEqual(['Story', 'Worksheet', 'Game', 'Resource', 'Collection', 'TextBook', 'eTextBook',
+          'LessonPlan', 'Course', 'FocusSpot',
           'LearningOutcomeDefinition',
           'PracticeQuestionSet',
           'CuriosityQuestions',
@@ -802,7 +805,7 @@ describe('FormAndFrameworkUtilService', () => {
 
     it('should update the profile information successfully', (done) => {
       // arrange
-      mockProfileService.updateProfile = jest.fn(() => of({ medium: ['English'], grade: ['class1']} as any));
+      mockProfileService.updateProfile = jest.fn(() => of({ medium: ['English'], grade: ['class1'] } as any));
       const profile = { syllabus: ['tn'], board: ['tn', 'ap'], medium: ['English'], grade: ['class1'] };
       const profileData = { profileType: ProfileType.TEACHER, source: ProfileSource.SERVER };
       // act
@@ -816,14 +819,14 @@ describe('FormAndFrameworkUtilService', () => {
 
     it('should update the profile information successfully and send the response back', (done) => {
       // arrange
-      mockProfileService.updateProfile = jest.fn(() => of({ grade: ['class1']} as any));
+      mockProfileService.updateProfile = jest.fn(() => of({ grade: ['class1'] } as any));
       const profile = { syllabus: ['tn'], board: ['tn', 'ap'], medium: ['English'], grade: ['class1'] };
       const profileData = { profileType: ProfileType.TEACHER, source: ProfileSource.SERVER };
       // act
       // assert
       formAndFrameworkUtilService.updateProfileInfo(profile, profileData).then((response) => {
         expect(mockEvents.publish).toHaveBeenCalledWith('refresh:loggedInProfile');
-        expect(response).toEqual({ status: false, profile: { grade: ['class1']} });
+        expect(response).toEqual({ status: false, profile: { grade: ['class1'] } });
         done();
       });
     });
@@ -847,25 +850,27 @@ describe('FormAndFrameworkUtilService', () => {
     it('should update logged in user information successfully', (done) => {
       // arrange
       mockFrameworkUtilService.getFrameworkCategoryTerms = jest.fn(() => of(mockCategoryTermsResponse));
-      mockProfileService.updateProfile = jest.fn(() => of({ medium: ['English'], grade: ['class1']} as any));
+      mockProfileService.updateProfile = jest.fn(() => of({ medium: ['English'], grade: ['class1'] } as any));
       const profile = { syllabus: ['tn'], board: ['tn', 'ap'], medium: ['English'], grade: ['class1'] };
-      const profileRes = { framework: {
-        gradeLevel : [
-          'Class 1'
-       ],
-        subject : [
-          'Telugu'
-       ],
-        id : [
-          'ts_k-12_2'
-       ],
-        medium : [
-          'English'
-       ],
-        board : [
-          'State (Andhra Pradesh)'
-       ]
-     }};
+      const profileRes = {
+        framework: {
+          gradeLevel: [
+            'Class 1'
+          ],
+          subject: [
+            'Telugu'
+          ],
+          id: [
+            'ts_k-12_2'
+          ],
+          medium: [
+            'English'
+          ],
+          board: [
+            'State (Andhra Pradesh)'
+          ]
+        }
+      };
       // act
       // assert
       formAndFrameworkUtilService.updateLoggedInUser(profileRes, profile).then((response) => {
@@ -876,26 +881,28 @@ describe('FormAndFrameworkUtilService', () => {
 
     it('should update logged in user information successfully if getFramework API fails', (done) => {
       // arrange
-      mockFrameworkUtilService.getFrameworkCategoryTerms = jest.fn(() =>  throwError({ error: 'API_ERROR' }));
-      mockProfileService.updateProfile = jest.fn(() => of({ medium: ['English'], grade: ['class1']} as any));
+      mockFrameworkUtilService.getFrameworkCategoryTerms = jest.fn(() => throwError({ error: 'API_ERROR' }));
+      mockProfileService.updateProfile = jest.fn(() => of({ medium: ['English'], grade: ['class1'] } as any));
       const profile = { syllabus: ['tn'], board: ['tn', 'ap'], medium: ['English'], grade: ['class1'] };
-      const profileRes = { framework: {
-        gradeLevel : [
-          'Class 1'
-       ],
-        subject : [
-          'Telugu'
-       ],
-        id : [
-          'ts_k-12_2'
-       ],
-        medium : [
-          'English'
-       ],
-        board : [
-          'State (Andhra Pradesh)'
-       ]
-     }};
+      const profileRes = {
+        framework: {
+          gradeLevel: [
+            'Class 1'
+          ],
+          subject: [
+            'Telugu'
+          ],
+          id: [
+            'ts_k-12_2'
+          ],
+          medium: [
+            'English'
+          ],
+          board: [
+            'State (Andhra Pradesh)'
+          ]
+        }
+      };
       // act
       // assert
       formAndFrameworkUtilService.updateLoggedInUser(profileRes, profile).then((response) => {
@@ -906,10 +913,10 @@ describe('FormAndFrameworkUtilService', () => {
 
     it('should resolve if  framework info is not available', (done) => {
       // arrange
-      mockFrameworkUtilService.getFrameworkCategoryTerms = jest.fn(() =>  throwError({ error: 'API_ERROR' }));
-      mockProfileService.updateProfile = jest.fn(() => of({ medium: ['English'], grade: ['class1']} as any));
+      mockFrameworkUtilService.getFrameworkCategoryTerms = jest.fn(() => throwError({ error: 'API_ERROR' }));
+      mockProfileService.updateProfile = jest.fn(() => of({ medium: ['English'], grade: ['class1'] } as any));
       const profile = { syllabus: ['tn'], board: ['tn', 'ap'], medium: ['English'], grade: ['class1'] };
-      const profileRes = { framework: {}};
+      const profileRes = { framework: {} };
       // act
       // assert
       formAndFrameworkUtilService.updateLoggedInUser(profileRes, profile).then((response) => {

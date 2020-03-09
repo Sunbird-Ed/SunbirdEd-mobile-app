@@ -5,6 +5,7 @@ export class ContentType {
     public static readonly RESOURCE = 'Resource';
     public static readonly COLLECTION = 'Collection';
     public static readonly TEXTBOOK = 'TextBook';
+    public static readonly E_TEXTBOOK = 'eTextBook';
     public static readonly LESSON_PLAN = 'LessonPlan';
     public static readonly COURSE = 'Course';
     public static readonly CERTIFICATE = 'Certificate';
@@ -30,6 +31,7 @@ export class ContentType {
         ContentType.RESOURCE,
         ContentType.COLLECTION,
         ContentType.TEXTBOOK,
+        ContentType.E_TEXTBOOK,
         ContentType.LESSON_PLAN
     ];
     // TODO: not need to pass content types, by default all the content types should display
@@ -40,6 +42,7 @@ export class ContentType {
         ContentType.RESOURCE,
         ContentType.COLLECTION,
         ContentType.TEXTBOOK,
+        ContentType.E_TEXTBOOK,
         ContentType.LESSON_PLAN,
         ContentType.COURSE,
         ContentType.FOCUS_SPOT,
