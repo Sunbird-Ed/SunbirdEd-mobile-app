@@ -7,30 +7,30 @@
     <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
         <ion-refresher-content refreshingSpinner="circles"></ion-refresher-content>
     </ion-refresher>
-    <div padding-horizontal text-center class="MT15" *ngIf="profile?.firstName">
+    <div padding-horizontal class="MT15 ion-text-center" *ngIf="profile?.firstName">
         <app-profile-avatar [username]="profile?.firstName" *ngIf="!isStateValidated"></app-profile-avatar>
         <img *ngIf="isStateValidated" src="./assets/imgs/avatar-tickmark.svg" alt="certified" class="avatar-tickmark">
         <app-profile-avatar [username]="profile?.firstName" [isStateUser]="isStateValidated" class="profileAvatar"
             *ngIf="isStateValidated"></app-profile-avatar>
     </div>
-    <div padding-horizontal text-center style="margin-top: 16px">
+    <div padding-horizontal style="margin-top: 16px" class="ion-text-center">
         <p class="profile-head">
             <span class="profile-name">{{ profile?.firstName | titlecase }}{{ profile?.lastName | titlecase }}</span>
             <span *ngIf="!isCustodianOrgId && profile?.firstName" class="isymbol profile-symbol" item-right text-left
                 (click)="toggleTooltips($event, 'name')">
-                <ion-icon name="information-circle" class="info-icon"></ion-icon>
+                <ion-icon name="information-circle" class="information-icon-style"></ion-icon>
                 <span class="asPerStateRecord" *ngIf="informationProfileName">{{'STATE_RECORDS' | translate}}</span>
             </span>
         </p>
         <p class="MT0 MB30"><span>{{'USER_ID' | translate}}:</span><span>{{profile?.userName}}</span></p>
     </div>
-    <div padding-horizontal text-center class="roles-container">
-        <div class="MB5" text-center *ngFor="let role of roles | slice : startLimit:rolesLimit;">
+    <div padding-horizontal class="roles-container ion-text-center">
+        <div class="MB5 ion-text-center" *ngFor="let role of roles | slice : startLimit:rolesLimit;">
             <div class="roles">
                 {{role}}
             </div>
         </div>
-        <div class="" text-center>
+        <div class="ion-text-center">
             <ion-button fill="clear" *ngIf="rolesLimit < roles?.length" (click)="showMoreItems()"
                 class="txt-capitalize">
                 + {{roles?.length - 2}} {{'MORE' | translate}}
@@ -47,7 +47,7 @@
         <p class="bolder MB5" style="position: relative;">{{organisationName}}
             <span *ngIf="!isCustodianOrgId && organisationName" class="isymbol" item-right text-left
                 (click)="toggleTooltips($event, 'org')">
-                <ion-icon name="information-circle" class="info-icon"></ion-icon>
+                <ion-icon name="information-circle" class="information-icon-style"></ion-icon>
                 <span class="asPerStateRecord" *ngIf="informationOrgName">{{'STATE_RECORDS' | translate}}</span>
             </span>
         </p>
@@ -159,12 +159,12 @@
             </ion-button>
         </div>
     </div>
-    <div class="badges" padding-horizontal text-center *ngIf="profile?.badgeAssertions?.length > 0">
+    <div class="badges ion-text-center" padding-horizontal *ngIf="profile?.badgeAssertions?.length > 0">
         <p class="bolder f16">{{'MY_BADGES' | translate }} ({{profile?.badgeAssertions?.length}})&lrm;</p>
         <ion-avatar item-center="" *ngFor="let batch of profile.badgeAssertions | slice : startLimit:badgesLimit;">
             <img height="80px" width="auto" alt="badge" [src]="commonUtilService.convertFileSrc(batch.badgeClassImage)">
         </ion-avatar>
-        <div class="" text-center>
+        <div class="ion-text-center">
             <ion-button shape="round" *ngIf="badgesLimit < profile?.badgeAssertions?.length" (click)="showMoreBadges()"
                 class="txt-capitalize custom-round">
                 + {{profile?.badgeAssertions?.length - 2}} {{'MORE' | translate}}
@@ -202,7 +202,8 @@
                         </button>
                     </div>
                 </div>
-                <div text-center *ngIf="mapTrainingsToCertificates(trainingsCompleted).length >= trainingsLimit">
+                <div class="ion-text-center"
+                    *ngIf="mapTrainingsToCertificates(trainingsCompleted).length >= trainingsLimit">
                     <ion-button shape="round" class="txt-capitalize custom-round"
                         *ngIf="trainingsLimit < mappedTrainingCertificates?.length" (click)="showMoreTrainings()">
                         + {{mappedTrainingCertificates?.length - 2}} {{'MORE' | translate}}
@@ -221,7 +222,7 @@
                 {{'CONTRIBUTIONS' | translate}} ({{contentCreatedByMe.length}})&lrm;
             </div>
             <div class="cards-container" style="padding:0 5px; background-color: #fff; overflow-x: scroll; ">
-                <div style="width: 100%" no-padding>
+                <div style="width: 100%" class="ion-no-padding">
                     <div class="flex-container" *ngIf="contentCreatedByMe  && isLoggedInUser">
                         <ion-card *ngFor="let courseItem of contentCreatedByMe; let i=index"
                             (click)="navigateToDetailPage(courseItem, layoutPopular, i);"

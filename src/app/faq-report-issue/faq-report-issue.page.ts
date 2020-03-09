@@ -149,9 +149,9 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
     const userProfile: Profile = this.appGlobalService.getCurrentUser();
     let ticketSummary: string;
     if (mailBody.length) {
-      ticketSummary = '.<br> <br> <b>' + this.commonUtilService.translateMessage('TICKET_SUMMARY') + '</b> <br> <br>';
+      ticketSummary = '.<br> <br> <strong>' + this.commonUtilService.translateMessage('TICKET_SUMMARY') + '</strong> <br> <br>';
     } else {
-      ticketSummary = '.<br> <br> <b>' + this.commonUtilService.translateMessage('MORE_DETAILS') + '</b> <br> <br>';
+      ticketSummary = '.<br> <br> <strong>' + this.commonUtilService.translateMessage('MORE_DETAILS') + '</strong> <br> <br>';
     }
     const userDetails: string = 'From: ' + userProfile.profileType[0].toUpperCase() + userProfile.profileType.slice(1) + ', ' +
       this.appGlobalService.getSelectedBoardMediumGrade() +

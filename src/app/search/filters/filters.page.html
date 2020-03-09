@@ -1,5 +1,5 @@
 <ion-content>
-  <h6 no-margin padding class="subtitle">{{ 'FILTER_BY' | translate }} </h6>
+  <h6 class="subtitle ion-padding ion-no-margin">{{ 'FILTER_BY' | translate }} </h6>
   <div *ngIf="facetsFilter && facetsFilter.length">
     <div *ngFor="let facet of facetsFilter">
       <div class="flex-card-container filter-item" (click)="openFilterOptions(facet)">

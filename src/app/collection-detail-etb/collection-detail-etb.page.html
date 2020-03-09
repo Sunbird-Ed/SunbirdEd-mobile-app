@@ -1,4 +1,4 @@
-<ion-content no-padding [scrollEvents]="true" (ionScroll)="onScroll($event)">
+<ion-content class="ion-no-padding" [scrollEvents]="true" (ionScroll)="onScroll($event)">
   <div class="content-padding">
     <app-detail-card (downloadAllContent)="showDownloadConfirmationAlert($event)" (shareEvent)="share()"
       (showOverflowMenuEvent)="showPopOver($event)" [contentDetail]="contentDetail" [currentCount]="currentCount"
@@ -30,10 +30,10 @@
             [ngClass]="{'active': type?.selected, '': !type?.selected}" attr.id="class{{i}}"
             (click)="onFilterMimeTypeChange(type.value, i, type.name);">
             <span class="img-align" *ngIf="type?.iconNormal && type?.selected">
-              <img class="filter-icon" src="{{type?.iconActive}}">
+              <img class="filter-icon" src="{{type?.iconActive}}" alt="video">
             </span>
             <span class="img-align" *ngIf="type?.iconNormal && !type?.selected">
-              <img class="filter-icon" src="{{type?.iconNormal}}">
+              <img class="filter-icon" src="{{type?.iconNormal}}" alt="interactive">
             </span>
             <span class="allign-middle">{{type?.name | translate}}</span>
 

@@ -606,9 +606,12 @@ export class AppGlobalService implements OnDestroy {
         return this.averageScore;
     }
 
-    getProfileSettingsStatus(): Promise<any> {
+    getProfileSettingsStatus(profileDetails?): Promise<any> {
         return new Promise((resolve, reject) => {
-            const profile = this.getCurrentUser();
+            let profile = this.getCurrentUser();
+            if (profileDetails) {
+                profile = profileDetails;
+            }
             this.isProfileSettingsCompleted = Boolean(this.isGuestUser
                 && profile
                 && profile.syllabus && profile.syllabus[0]

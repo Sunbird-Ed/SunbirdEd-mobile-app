@@ -1,30 +1,43 @@
 <ion-content class="ion-no-padding sb-popover-container app-rate-center">
-    <div class="sb-popover-items">
-      <ion-icon end name="close" float-right class="sb-modal-close" (click)="closePopover()"></ion-icon>
-  
-      <img class="img-container app-rating-img" src="{{appLogo$ | async}}">
-      <div class="app-rate-appname" *ngIf="appName?.length" ><b>{{appName}}</b></div>
-      <div class="app-rate-heading"><b>{{currentViewText.heading | translate}}</b></div>
-      <div class="app-rate-message ion-padding-bottom" [ngClass]="{'app-rate-ptb-16':currentViewText.type !== 'appRate'}" >{{currentViewText.message | translate}}</div>
-  
-      <div class="popover-ratings" *ngIf="currentViewText.type === 'appRate'">
-        <rating [(ngModel)]="appRate"></rating>
-        <ion-row class="ion-padding-top ion-padding-bottom">
-          <ion-col size="6" class="btn-pr-8"><ion-button fill="outline" expand="block" class="app-rate-btn-outline" (click)="rateLater()">{{'BTN_LATER' | translate}}</ion-button></ion-col>
-          <ion-col size="6" class="btn-pl-8"><ion-button [disabled]="!appRate" expand="block" class="app-rate-btn" (click)="submitRating()">{{'BTN_SUBMIT' | translate}}</ion-button></ion-col>
-        </ion-row>
-      </div>
-  
-      <div *ngIf="currentViewText.type === 'storeRate'">
-        <ion-row padding-bottom>
-          <ion-col size="5" class="btn-pr-8"><ion-button fill="outline" expand="block" class="app-rate-btn-outline" (click)="rateLater()">{{'BTN_LATER' | translate}}</ion-button></ion-col>
-          <ion-col size="7" class="btn-pl-8"><ion-button expand="block" class="app-rate-btn app-rate-btn-ellipsis" (click)="rateOnStore()">{{'BTN_RATE_ON_PLAYSTORE' | translate}}</ion-button></ion-col>
-        </ion-row>
-      </div>
-  
-      <div padding-bottom *ngIf="currentViewText.type === 'helpDesk'">
-        <button margin-bottom  class="sb-popover-action-btn" (click)="goToHelpSection()">{{'BTN_VISIT_HELP_SECTION' | translate}}</button>
-      </div>
+  <div class="sb-popover-items">
+    <ion-icon end name="close" float-right class="sb-modal-close" (click)="closePopover()"></ion-icon>
+
+    <img class="img-container app-rating-img" src="{{appLogo$ | async}}" alt="rating">
+    <div class="app-rate-appname" *ngIf="appName?.length"><strong>{{appName}}</strong></div>
+    <div class="app-rate-heading"><strong>{{currentViewText.heading | translate}}</strong></div>
+    <div class="app-rate-message ion-padding-bottom" [ngClass]="{'app-rate-ptb-16':currentViewText.type !== 'appRate'}">
+      {{currentViewText.message | translate}}</div>
+
+    <div class="popover-ratings" *ngIf="currentViewText.type === 'appRate'">
+      <rating [(ngModel)]="appRate"></rating>
+      <ion-row class="ion-padding-top ion-padding-bottom">
+        <ion-col size="6" class="btn-pr-8">
+          <ion-button fill="outline" expand="block" class="app-rate-btn-outline" (click)="rateLater()">
+            {{'BTN_LATER' | translate}}</ion-button>
+        </ion-col>
+        <ion-col size="6" class="btn-pl-8">
+          <ion-button [disabled]="!appRate" expand="block" class="app-rate-btn" (click)="submitRating()">
+            {{'BTN_SUBMIT' | translate}}</ion-button>
+        </ion-col>
+      </ion-row>
     </div>
-  </ion-content>
-  
+
+    <div *ngIf="currentViewText.type === 'storeRate'">
+      <ion-row padding-bottom>
+        <ion-col size="5" class="btn-pr-8">
+          <ion-button fill="outline" expand="block" class="app-rate-btn-outline" (click)="rateLater()">
+            {{'BTN_LATER' | translate}}</ion-button>
+        </ion-col>
+        <ion-col size="7" class="btn-pl-8">
+          <ion-button expand="block" class="app-rate-btn app-rate-btn-ellipsis" (click)="rateOnStore()">
+            {{'BTN_RATE_ON_PLAYSTORE' | translate}}</ion-button>
+        </ion-col>
+      </ion-row>
+    </div>
+
+    <div padding-bottom *ngIf="currentViewText.type === 'helpDesk'">
+      <button margin-bottom class="sb-popover-action-btn"
+        (click)="goToHelpSection()">{{'BTN_VISIT_HELP_SECTION' | translate}}</button>
+    </div>
+  </div>
+</ion-content>

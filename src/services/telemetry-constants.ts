@@ -433,7 +433,9 @@ export enum CorReleationDataType {
     SUBJECT = 'Subject',
     USERTYPE = 'UserType',
     DISCOVERY_TYPE = 'DiscoveryType',
-    DEEPLINK = 'Deeplink'
+    DEEPLINK = 'Deeplink',
+    ACCESS_TYPE = 'AccessType',
+    SCAN = 'Scan'
 }
 
 

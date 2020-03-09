@@ -257,7 +257,7 @@ describe('EnrolledCourseDetailsPage', () => {
             expect(enrolledCourseDetailsPage.generateStartEvent).toBeCalled();
             expect(response.contentData.status).not.toBe('Live');
             expect(mockCommonUtilService.showToast).toHaveBeenCalled();
-            expect(response.contentData.me_totalRatings).toBe('4');
+            expect(response.contentData.me_totalRatingsCount).toBe(4);
             expect(mockLocation.back).toHaveBeenCalled();
         });
     
