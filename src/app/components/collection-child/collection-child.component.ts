@@ -49,6 +49,7 @@ export class CollectionChildComponent implements OnInit {
   @Input() batch: any;
   @Input() renderLevel: number;
   @Input() contentStatusData: ContentStateResponse;
+
   public telemetryObject: TelemetryObject;
   public objRollup: Rollup;
   collectionChildIcon: any;
@@ -108,8 +109,9 @@ export class CollectionChildComponent implements OnInit {
   setContentId(id: string, collection?) {
     console.log('extractedUrl', this.router);
     if (this.router.url.indexOf(RouterLinks.TEXTBOOK_TOC) !== -1) {
-      const values = new Map();
-      values['unitClicked'] = id;
+      const values = {
+        unitClicked: id
+      };
       // values['parentId'] = this.parentId;
       this.telemetryService.generateInteractTelemetry(
         InteractType.TOUCH,
@@ -128,9 +130,9 @@ export class CollectionChildComponent implements OnInit {
 
   navigateToDetailsPage(content: Content, depth) {
     if (this.router.url.indexOf(RouterLinks.TEXTBOOK_TOC) !== -1) {
-      const values = new Map();
-      values['contentClicked'] = content.identifier;
-      // values['parentId'] = this.parentId;
+      const values = {
+        contentClicked: content.identifier
+      };
       this.telemetryService.generateInteractTelemetry(
         InteractType.TOUCH,
         InteractSubtype.CONTENT_CLICKED,
@@ -148,8 +150,9 @@ export class CollectionChildComponent implements OnInit {
     } else {
       //   migration-TODO : remove unnecessary
       //   const stateData = this.navParams.get('contentState');
-      const values = new Map();
-      values['contentClicked'] = content.identifier;
+      const values = {
+        contentClicked: content.identifier
+      };
       // values['parentId'] = this.bookID;
       this.zone.run(async () => {
         if (content.contentType === ContentType.COURSE) {
@@ -198,7 +201,8 @@ export class CollectionChildComponent implements OnInit {
             this.router.navigate([RouterLinks.CONTENT_DETAILS], contentDetailsParams);
           };
 
-          if (content.contentData.contentType === ContentType.SELF_ASSESS && this.batch && this.batch.status === 2) {
+          if (content.contentData.contentType === ContentType.SELF_ASSESS
+            && this.batch && this.batch.status === 2) {
             this.assessemtnAlert = await this.popoverCtrl.create({
               component: SbGenericPopoverComponent,
               componentProps: {
@@ -270,6 +274,7 @@ export class CollectionChildComponent implements OnInit {
       return !!activeMimeType.find(m => m === mimeType);
     }
   }
+
   // course-toc: for showing respective contenttype icons
   getContentTypeIcon(content: Content) {
     const mimeType = content.mimeType;
