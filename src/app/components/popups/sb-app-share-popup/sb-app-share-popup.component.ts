@@ -68,6 +68,7 @@ export class SbAppSharePopupComponent implements OnInit, OnDestroy {
     });
     this.shareType = this.shareOptions.link.value;
     const packageName = await this.appVersion.getPackageName();
+    this.appName = await this.appVersion.getAppName();
     const utmParams = `&referrer=utm_source%3D${this.deviceInfo.getDeviceID()}%26utm_campaign%3Dshare_app`;
     this.shareUrl = `https://play.google.com/store/apps/details?id=${packageName}${utmParams}`;
     this.utilityService.getApkSize().then(async (fileSize) => {
@@ -120,7 +121,6 @@ export class SbAppSharePopupComponent implements OnInit, OnDestroy {
   async shareLink() {
     this.generateConfirmClickTelemetry(ShareMode.SHARE);
     this.generateInteractTelemetry(InteractType.TOUCH, InteractSubtype.SHARE_APP_INITIATED);
-    this.appName = await this.appVersion.getAppName();
     const url = '\n' + `Get ${this.appName} from the Play Store:` + '\n' + this.shareUrl;
     this.social.share(null, null, null, url);
     this.popoverCtrl.dismiss();
@@ -139,7 +139,7 @@ export class SbAppSharePopupComponent implements OnInit, OnDestroy {
         this.popoverCtrl.dismiss();
         this.generateInteractTelemetry(InteractType.OTHER, InteractSubtype.SHARE_APP_SUCCESS);
       } else {
-        this.showSettingsPageToast();
+        this.commonUtilService.showSettingsPageToast('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName);
       }
     });
   }
@@ -156,7 +156,7 @@ export class SbAppSharePopupComponent implements OnInit, OnDestroy {
         this.popoverCtrl.dismiss();
         this.generateInteractTelemetry(InteractType.OTHER, InteractSubtype.SHARE_APP_SUCCESS);
       } else {
-        this.showSettingsPageToast();
+        this.commonUtilService.showSettingsPageToast('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName);
       }
     });
   }
@@ -187,7 +187,7 @@ export class SbAppSharePopupComponent implements OnInit, OnDestroy {
       if (permissionStatus.hasPermission) {
         resolve(true);
       } else if (permissionStatus.isPermissionAlwaysDenied) {
-        this.showSettingsPageToast();
+        await this.commonUtilService.showSettingsPageToast('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName);
         reject(false);
       } else {
         this.showStoragePermissionPopup().then((result) => {
@@ -207,70 +207,29 @@ export class SbAppSharePopupComponent implements OnInit, OnDestroy {
     )[AndroidPermission.WRITE_EXTERNAL_STORAGE];
   }
 
-  private async showSettingsPageToast() {
-    const toast = await this.toastController.create({
-      message: this.commonUtilService.translateMessage('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName),
-      cssClass: 'permissionSettingToast',
-      showCloseButton: true,
-      closeButtonText: this.commonUtilService.translateMessage('SETTINGS'),
-      position: 'bottom',
-      duration: 3000
-    });
-
-    toast.present();
-
-    toast.onWillDismiss().then((res) => {
-      if (res.role === 'cancel') {
-        this.router.navigate([`/${RouterLinks.SETTINGS}/${RouterLinks.PERMISSION}`], { state: { changePermissionAccess: true } });
-      }
-    });
-
-  }
-
   private async showStoragePermissionPopup(): Promise<boolean | undefined> {
     await this.popoverCtrl.dismiss();
     return new Promise<boolean | undefined>(async (resolve, reject) => {
-      const confirm = await this.popoverCtrl.create({
-        component: SbPopoverComponent,
-        componentProps: {
-          isNotShowCloseIcon: false,
-          sbPopoverHeading: this.commonUtilService.translateMessage('PERMISSION_REQUIRED'),
-          sbPopoverMainTitle: this.commonUtilService.translateMessage('FILE_MANAGER'),
-          actionsButtons: [
-            {
-              btntext: this.commonUtilService.translateMessage('NOT_NOW'),
-              btnClass: 'popover-button-cancel',
-            },
-            {
-              btntext: this.commonUtilService.translateMessage('ALLOW'),
-              btnClass: 'popover-button-allow',
-            }
-          ],
-          handler: (selectedButton: string) => {
+      const confirm = await this.commonUtilService.buildPermissionPopover(
+          async (selectedButton: string) => {
             if (selectedButton === this.commonUtilService.translateMessage('NOT_NOW')) {
-              this.showSettingsPageToast();
+              await this.commonUtilService.showSettingsPageToast('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName);
             } else if (selectedButton === this.commonUtilService.translateMessage('ALLOW')) {
               this.permissionService.requestPermission(AndroidPermission.WRITE_EXTERNAL_STORAGE)
                   .subscribe(async (status: AndroidPermissionsStatus) => {
                     if (status.hasPermission) {
                       resolve(true);
                     } else if (status.isPermissionAlwaysDenied) {
-                      this.showSettingsPageToast();
+                      await this.commonUtilService.showSettingsPageToast('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName);
                       reject(false);
                     } else {
-                      this.showSettingsPageToast();
+                      await this.commonUtilService.showSettingsPageToast('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName);
                     }
                     reject(undefined);
                   });
             }
-          },
-          img: {
-            path: './assets/imgs/ic_folder_open.png',
-          },
-          metaInfo: this.commonUtilService.translateMessage('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName),
-        },
-        cssClass: 'sb-popover sb-popover-permissions primary dw-active-downloads-popover',
-      });
+          }, this.appName
+      );
       await confirm.present();
     });
   }

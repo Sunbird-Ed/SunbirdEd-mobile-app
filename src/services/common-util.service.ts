@@ -11,7 +11,7 @@ import { Network } from '@ionic-native/network/ngx';
 import { WebView } from '@ionic-native/ionic-webview/ngx';
 import { SharedPreferences, ProfileService, Profile } from 'sunbird-sdk';
 
-import { PreferenceKey, ProfileConstants } from '@app/app/app.constant';
+import {PreferenceKey, ProfileConstants, RouterLinks} from '@app/app/app.constant';
 import { appLanguages } from '@app/app/app.constant';
 
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
@@ -21,6 +21,8 @@ import { QRAlertCallBack, QRScannerAlert } from '@app/app/qrscanner-alert/qrscan
 import { Observable, merge } from 'rxjs';
 import { mapTo } from 'rxjs/operators';
 import { AppVersion } from '@ionic-native/app-version/ngx';
+import { Router } from '@angular/router';
+import { SbPopoverComponent } from '@app/app/components/popups';
 
 declare const FCMPlugin;
 export interface NetworkInfo {
@@ -55,6 +57,8 @@ export class CommonUtilService implements OnDestroy {
         private telemetryGeneratorService: TelemetryGeneratorService,
         private webView: WebView,
         private appVersion: AppVersion,
+        private router: Router,
+        private toastController: ToastController
     ) {
         this.listenForEvents();
 
@@ -491,5 +495,51 @@ export class CommonUtilService implements OnDestroy {
                 await this.preferences.putString(PreferenceKey.CURRENT_USER_PROFILE, JSON.stringify(profile)).toPromise();
                 await this.preferences.putString(PreferenceKey.SUBSCRIBE_TOPICS, JSON.stringify(subscribeTopic)).toPromise();
             });
+    }
+
+    public async showSettingsPageToast(description: string, appName: string) {
+        const toast = await this.toastController.create({
+            message: this.translateMessage(description, appName),
+            cssClass: 'permissionSettingToast',
+            showCloseButton: true,
+            closeButtonText: this.translateMessage('SETTINGS'),
+            position: 'bottom',
+            duration: 3000
+        });
+
+        toast.present();
+
+        toast.onWillDismiss().then((res) => {
+            if (res.role === 'cancel') {
+                this.router.navigate([`/${RouterLinks.SETTINGS}/${RouterLinks.PERMISSION}`], { state: { changePermissionAccess: true } });
+            }
+        });
+    }
+
+    public async buildPermissionPopover(handler: (selectedButton: string) => void, appName: string): Promise<HTMLIonPopoverElement> {
+        return this.popOverCtrl.create({
+            component: SbPopoverComponent,
+            componentProps: {
+                isNotShowCloseIcon: false,
+                sbPopoverHeading: this.translateMessage('PERMISSION_REQUIRED'),
+                sbPopoverMainTitle: this.translateMessage('FILE_MANAGER'),
+                actionsButtons: [
+                    {
+                        btntext: this.translateMessage('NOT_NOW'),
+                        btnClass: 'popover-button-cancel',
+                    },
+                    {
+                        btntext: this.translateMessage('ALLOW'),
+                        btnClass: 'popover-button-allow',
+                    }
+                ],
+                handler,
+                img: {
+                    path: './assets/imgs/ic_folder_open.png',
+                },
+                metaInfo: this.translateMessage('FILE_MANAGER_PERMISSION_DESCRIPTION', appName),
+            },
+            cssClass: 'sb-popover sb-popover-permissions primary dw-active-downloads-popover',
+        });
     }
 }
