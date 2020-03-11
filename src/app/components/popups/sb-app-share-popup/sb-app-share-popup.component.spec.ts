@@ -1,11 +1,14 @@
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { SocialSharing } from '@ionic-native/social-sharing/ngx';
-import { CommonUtilService, UtilityService, TelemetryGeneratorService } from '../../../../services';
+import {CommonUtilService, UtilityService, TelemetryGeneratorService, AndroidPermissionsService} from '../../../../services';
 import { DeviceInfo } from 'sunbird-sdk';
 import { SbAppSharePopupComponent } from './sb-app-share-popup.component';
-import { PopoverController, Platform, NavParams } from '@ionic/angular';
+import {PopoverController, Platform, NavParams, ToastController} from '@ionic/angular';
 import { ImpressionType, PageId, Environment, ID, InteractType, InteractSubtype } from '@app/services';
 import { ShareMode, ShareItemType } from '@app/app/app.constant';
+import {Router} from '@angular/router';
+import {of} from 'rxjs';
+import {AndroidPermission} from '@app/services/android-permissions/android-permission';
 
 
 describe('SbAppSharePopupComponent', () => {
@@ -46,6 +49,16 @@ describe('SbAppSharePopupComponent', () => {
         generateInteractTelemetry: jest.fn(),
         generateImpressionTelemetry: jest.fn()
     };
+    const mockPermissionService: Partial<AndroidPermissionsService> = {
+        checkPermission: jest.fn(() => {Promise.resolve(true); })
+    };
+    const mockRouter: Partial<Router> = {
+        navigate: jest.fn()
+    };
+    const mockToastController: Partial<ToastController> = {
+        create: jest.fn(),
+        dismiss: jest.fn()
+    };
 
     beforeAll(() => {
         sbAppSharePopupComponent = new SbAppSharePopupComponent(
@@ -57,6 +70,9 @@ describe('SbAppSharePopupComponent', () => {
             mockAppversion as AppVersion,
             mockNavParams as NavParams,
             mockTelemetryGeneratorService as TelemetryGeneratorService,
+            mockPermissionService as AndroidPermissionsService,
+            mockRouter as Router,
+            mockToastController as ToastController,
             mockCommonUtilService as CommonUtilService);
     });
 
@@ -203,52 +219,60 @@ describe('SbAppSharePopupComponent', () => {
         }, 0);
     });
 
-    it('should call sharecontent on shareFile', () => {
+    it('should call sharecontent on shareFile', (done) => {
         // arrange
         sbAppSharePopupComponent.exportApk = jest.fn(() => Promise.resolve());
         mockPopoverCtrl.dismiss = jest.fn();
+        mockPermissionService.checkPermissions = jest.fn(() => of({ [AndroidPermission.WRITE_EXTERNAL_STORAGE]: {hasPermission: true}}));
         // act
         sbAppSharePopupComponent.shareFile();
         // assert
-        expect(mockPopoverCtrl.dismiss).toHaveBeenCalled();
-        expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(ShareMode.SEND,
-            '',
-            Environment.SETTINGS,
-            PageId.SHARE_APP_POPUP,
-            undefined, undefined, undefined, undefined,
-            ID.SHARE_CONFIRM);
-        expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
-            InteractType.TOUCH, InteractSubtype.SHARE_APP_INITIATED,
-            PageId.SETTINGS,
-            Environment.SETTINGS);
-        expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
-            InteractType.OTHER, InteractSubtype.SHARE_APP_SUCCESS,
-            PageId.SETTINGS,
-            Environment.SETTINGS);
+        setTimeout(() => {
+            expect(mockPopoverCtrl.dismiss).toHaveBeenCalled();
+            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(ShareMode.SEND,
+                '',
+                Environment.SETTINGS,
+                PageId.SHARE_APP_POPUP,
+                undefined, undefined, undefined, undefined,
+                ID.SHARE_CONFIRM);
+            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+                InteractType.TOUCH, InteractSubtype.SHARE_APP_INITIATED,
+                PageId.SETTINGS,
+                Environment.SETTINGS);
+            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+                InteractType.OTHER, InteractSubtype.SHARE_APP_SUCCESS,
+                PageId.SETTINGS,
+                Environment.SETTINGS);
+            done();
+        }, 0);
     });
 
-    it('should call sharecontent on saveFile', () => {
+    it('should call sharecontent on saveFile', (done) => {
         // arrange
         sbAppSharePopupComponent.exportApk = jest.fn(() => Promise.resolve());
         mockPopoverCtrl.dismiss = jest.fn();
+        mockPermissionService.checkPermissions = jest.fn(() => of({ [AndroidPermission.WRITE_EXTERNAL_STORAGE]: {hasPermission: true}}));
         // act
         sbAppSharePopupComponent.saveFile();
         // assert
-        expect(mockPopoverCtrl.dismiss).toHaveBeenCalled();
-        expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(ShareMode.SAVE,
-            '',
-            Environment.SETTINGS,
-            PageId.SHARE_APP_POPUP,
-            undefined, undefined, undefined, undefined,
-            ID.SHARE_CONFIRM);
-        expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
-            InteractType.TOUCH, InteractSubtype.SHARE_APP_INITIATED,
-            PageId.SETTINGS,
-            Environment.SETTINGS);
-        expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
-            InteractType.OTHER, InteractSubtype.SHARE_APP_SUCCESS,
-            PageId.SETTINGS,
-            Environment.SETTINGS);
+        setTimeout(() => {
+            expect(mockPopoverCtrl.dismiss).toHaveBeenCalled();
+            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(ShareMode.SAVE,
+                '',
+                Environment.SETTINGS,
+                PageId.SHARE_APP_POPUP,
+                undefined, undefined, undefined, undefined,
+                ID.SHARE_CONFIRM);
+            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+                InteractType.TOUCH, InteractSubtype.SHARE_APP_INITIATED,
+                PageId.SETTINGS,
+                Environment.SETTINGS);
+            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+                InteractType.OTHER, InteractSubtype.SHARE_APP_SUCCESS,
+                PageId.SETTINGS,
+                Environment.SETTINGS);
+            done();
+        }, 0);
     });
 
 
