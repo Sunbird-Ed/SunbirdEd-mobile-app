@@ -241,7 +241,7 @@ export class ActiveDownloadsPage implements OnInit, OnDestroy, ActiveDownloadsIn
       cssClass: 'sb-popover no-network',
     });
 
-    this._toast.present();
+    await this._toast.present();
   }
   private async fetchStorageDestination() {
     this.storageDestination = await this.storageService.getStorageDestination().toPromise();
@@ -260,7 +260,7 @@ export class ActiveDownloadsPage implements OnInit, OnDestroy, ActiveDownloadsIn
       cssClass: 'sb-popover no-network',
     });
 
-    this._toast.present();
+    await this._toast.present();
   }
 
   private checkAvailableSpace() {

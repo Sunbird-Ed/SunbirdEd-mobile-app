@@ -51,7 +51,7 @@ import {
     PageId,
 } from '@app/services/telemetry-constants';
 import { ContentUtil } from '@app/util/content-util';
-import { EventTopics, ContentType } from '../app.constant';
+import { EventTopics, ContentType, ShareItemType } from '../app.constant';
 import { FileOpener } from '@ionic-native/file-opener/ngx';
 import { FileTransfer } from '@ionic-native/file-transfer/ngx';
 
@@ -74,7 +74,9 @@ describe('ContentDetailsPage', () => {
     };
     const mockPopoverController: Partial<PopoverController> = {};
     const mockPlatform: Partial<Platform> = {};
-    const mockAppGlobalService: Partial<AppGlobalService> = {};
+    const mockAppGlobalService: Partial<AppGlobalService> = {
+        getCurrentUser: jest.fn()
+    };
     const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {
         generateInteractTelemetry: jest.fn(),
         generateEndTelemetry: jest.fn()
@@ -151,6 +153,7 @@ describe('ContentDetailsPage', () => {
     });
     beforeEach(() => {
         jest.clearAllMocks();
+        jest.resetAllMocks();
     });
 
     it('should create instance of contentDetailsPage', () => {
@@ -196,6 +199,7 @@ describe('ContentDetailsPage', () => {
                 fn({ data: 'sample_data' });
             }
         });
+        mockRouter.getCurrentNavigation = jest.fn(() => mockContentData);
         mockProfileService.getActiveProfileSession = jest.fn(() =>
             of({ uid: 'sample_uid', sid: 'sample_session_id', createdTime: Date.now() }));
         mockProfileSwitchHandler.switchUser = jest.fn();
@@ -328,7 +332,7 @@ describe('ContentDetailsPage', () => {
         expect(contentDetailsPage.promptToLogin).toHaveBeenCalled();
     });
 
-    it('shouldn\'t  show PlayAsPopup if limitedShareContentFlag flag is true', () => {
+    it('shouldn\'t  show PlayAsPopup if limitedShareContentFlag flag is true', (done) => {
         // arrange
         contentDetailsPage.userCount = 3;
         contentDetailsPage.shouldOpenPlayAsPopup = true;
@@ -336,13 +340,35 @@ describe('ContentDetailsPage', () => {
         contentDetailsPage.limitedShareContentFlag = true;
         jest.spyOn(contentDetailsPage, 'openPlayAsPopup');
         // act
-        contentDetailsPage.showSwitchUserAlert();
+        contentDetailsPage.showSwitchUserAlert(false);
         // assert
         expect(contentDetailsPage.openPlayAsPopup).toHaveBeenCalledTimes(0);
-
+        done();
     });
 
-    it('should  show LowBandwidth Popup for 2g type network connection', () => {
+    it('shouldn playContent if network is available and more than 2g and user count is not more than 2', (done) => {
+        // arrange
+        contentDetailsPage.userCount = 2;
+        contentDetailsPage.apiLevel = 19;
+        contentDetailsPage.appAvailability = 'false';
+        contentDetailsPage.shouldOpenPlayAsPopup = true;
+        mockNetwork.type = '3g';
+        contentDetailsPage.limitedShareContentFlag = false;
+        mockCommonUtilService.translateMessage = jest.fn(() => '');
+        mockCommonUtilService.networkInfo = { isNetworkAvailable: true };
+        mockPopoverController.create = jest.fn(() => (Promise.resolve({
+            present: jest.fn(() => Promise.resolve({})),
+            onDidDismiss: jest.fn(() => Promise.resolve({ data: { canDelete: true } }))
+        } as any)));
+        // act
+        contentDetailsPage.showSwitchUserAlert(true).then(() => {
+            // assert
+            expect(mockPopoverController.create).toHaveBeenCalledTimes(1);
+            done();
+        });
+    });
+
+    it('should  show LowBandwidth Popup for 2g type network connection', (done) => {
         // arrange
         contentDetailsPage.content = { identifier: 'do_1234' };
         contentDetailsPage.userCount = 3;
@@ -354,12 +380,13 @@ describe('ContentDetailsPage', () => {
             onDidDismiss: jest.fn(() => Promise.resolve({ data: { canDelete: true } }))
         } as any)));
         // act
-        contentDetailsPage.showSwitchUserAlert();
+        contentDetailsPage.showSwitchUserAlert(false);
         // assert
         expect(mockPopoverController.create).toHaveBeenCalled();
+        done();
     });
 
-    it('should  show PlayAs Popup  When LowBandwidth popup Ok button click', () => {
+    it('should  show PlayAs Popup  When LowBandwidth popup Ok button click', (done) => {
         // arrange
         contentDetailsPage.content = { identifier: 'do_1234' };
         contentDetailsPage.userCount = 3;
@@ -371,12 +398,17 @@ describe('ContentDetailsPage', () => {
             present: jest.fn(() => Promise.resolve({})),
             onDidDismiss: jest.fn(() => Promise.resolve({ data: { isLeftButtonClicked: true } }))
         } as any)));
+        const profile = {
+            handle: 'handle'
+        };
+        mockAppGlobalService.getCurrentUser = jest.fn(() => profile);
         jest.spyOn(contentDetailsPage, 'openPlayAsPopup');
         // act
-        contentDetailsPage.showSwitchUserAlert();
+        contentDetailsPage.showSwitchUserAlert(false);
         // assert
         setTimeout(() => {
             expect(contentDetailsPage.openPlayAsPopup).toHaveBeenCalled();
+            done();
         }, 0);
 
     });
@@ -515,7 +547,7 @@ describe('ContentDetailsPage', () => {
                     dismiss: mockDismiss
                 });
             });
-            mockCommonUtilService.showToast = jest.fn(() => {});
+            mockCommonUtilService.showToast = jest.fn(() => { });
             mockFileTransfer.create = jest.fn(() => {
                 return {
                     download: mockDownload
@@ -566,6 +598,50 @@ describe('ContentDetailsPage', () => {
                 contentDetailsPage.telemetryObject,
                 rollUp,
                 undefined);
+        });
+    });
+
+    describe('share()', () => {
+        describe('shouldn create share popover', () => {
+            it('shareItemType should be root-content', (done) => {
+                // arrange
+                mockCommonUtilService.translateMessage = jest.fn(() => '');
+                mockPopoverController.create = jest.fn(() => (Promise.resolve({
+                    present: jest.fn(() => Promise.resolve({})),
+                    onDidDismiss: jest.fn(() => Promise.resolve({ data: { canDelete: true } }))
+                } as any)));
+                // act
+                contentDetailsPage.share().then(() => {
+                    // assert
+                    expect(mockPopoverController.create).toHaveBeenCalledTimes(1);
+                    expect(mockPopoverController.create).toHaveBeenCalledWith(expect.objectContaining({
+                        componentProps: expect.objectContaining({
+                            shareItemType: ShareItemType.ROOT_CONTENT
+                        })
+                    }));
+                    done();
+                });
+            });
+            it('shareItemType should be leaf-content', (done) => {
+                // arrange
+                contentDetailsPage.isChildContent = true;
+                mockCommonUtilService.translateMessage = jest.fn(() => '');
+                mockPopoverController.create = jest.fn(() => (Promise.resolve({
+                    present: jest.fn(() => Promise.resolve({})),
+                    onDidDismiss: jest.fn(() => Promise.resolve({ data: { canDelete: true } }))
+                } as any)));
+                // act
+                contentDetailsPage.share().then(() => {
+                    // assert
+                    expect(mockPopoverController.create).toHaveBeenCalledTimes(1);
+                    expect(mockPopoverController.create).toHaveBeenCalledWith(expect.objectContaining({
+                        componentProps: expect.objectContaining({
+                            shareItemType: ShareItemType.LEAF_CONTENT
+                        })
+                    }));
+                    done();
+                });
+            });
         });
     });
 });

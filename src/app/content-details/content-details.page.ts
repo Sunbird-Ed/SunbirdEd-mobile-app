@@ -6,9 +6,7 @@ import { Component, Inject, NgZone, OnInit, ViewEncapsulation, OnDestroy } from 
 import {
   Events,
   Platform,
-  PopoverController,
-  ToastController,
-  NavController
+  PopoverController
 } from '@ionic/angular';
 import { Subscription } from 'rxjs';
 import {
@@ -32,7 +30,7 @@ import {
   SharedPreferences,
   StorageService,
   TelemetryObject,
-  Course, ContentData
+  Course
 } from 'sunbird-sdk';
 
 import { Map } from '@app/app/telemetryutil';
@@ -73,7 +71,6 @@ import { LoginHandlerService } from '@app/services/login-handler.service';
 import { SbSharePopupComponent } from '../components/popups/sb-share-popup/sb-share-popup.component';
 import { FileOpener } from '@ionic-native/file-opener/ngx';
 import { Components } from '@ionic/core/dist/types/components';
-
 
 @Component({
   selector: 'app-content-details',
@@ -999,10 +996,11 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
       });
     }
   }
+
   /**
    * Play content
    */
-  playContent(isStreaming: boolean) {
+  private playContent(isStreaming: boolean) {
     if (this.apiLevel < 21 && this.appAvailability === 'false') {
       this.showPopupDialog();
     } else {
@@ -1075,7 +1073,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
       },
       cssClass: 'sb-popover',
     });
-    popover.present();
+    await popover.present();
   }
 
   /**
@@ -1112,7 +1110,8 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
       corRelationList
     );
   }
-  async showPopupDialog() {
+
+  private async showPopupDialog() {
     const popover = await this.popoverCtrl.create({
       component: DialogPopupComponent,
       componentProps: {
@@ -1122,7 +1121,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
       },
       cssClass: 'popover-alert'
     });
-    popover.present();
+    await popover.present();
   }
 
   mergeProperties(mergeProp) {
@@ -1217,13 +1216,13 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
 
   async openPDFPreview(content: Content) {
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
-        InteractSubtype.PRINT_PDF_CLICKED,
-        Environment.HOME,
-        PageId.CONTENT_DETAIL,
-        this.telemetryObject,
-        undefined,
-        this.objRollup,
-        this.corRelationList
+      InteractSubtype.PRINT_PDF_CLICKED,
+      Environment.HOME,
+      PageId.CONTENT_DETAIL,
+      this.telemetryObject,
+      undefined,
+      this.objRollup,
+      this.corRelationList
     );
 
     let url: string;
