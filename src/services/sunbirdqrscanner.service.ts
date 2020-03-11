@@ -40,7 +40,6 @@ export class SunbirdQRScanner {
     'TRY_AGAIN',
   ];
   private mQRScannerText;
-  readonly permissionList = [AndroidPermission.CAMERA];
   backButtonFunc = undefined;
   source: string;
   showButton = false;
@@ -89,72 +88,20 @@ export class SunbirdQRScanner {
     this.generateImpressionTelemetry(source);
     this.generateStartEvent(source);
 
-    return this.permission.checkPermissions(this.permissionList).pipe(
-      mergeMap((statusMap: { [key: string]: AndroidPermissionsStatus }) => {
-        const toRequest: AndroidPermission[] = [];
+    const permissionStatus = await this.getCameraPermissionStatus();
 
-        for (const permission in statusMap) {
-          if (!statusMap[permission].hasPermission) {
-            toRequest.push(permission as AndroidPermission);
-          }
-        }
-
-        if (!toRequest.length) {
-          return of({ hasPermission: true });
-        }
-
-        return new Observable((observer: Observer<AndroidPermissionsStatus>) => {
-          cordova.plugins.diagnostic.getPermissionAuthorizationStatus((status) => {
-            switch (status) {
-              case cordova.plugins.diagnostic.permissionStatus.NOT_REQUESTED:
-              case cordova.plugins.diagnostic.permissionStatus.DENIED_ALWAYS:
-                // call popover
-                this.appGlobalService.getIsPermissionAsked(PermissionAskedEnum.isCameraAsked).toPromise()
-                  .then((isPemissionAsked: boolean) => {
-                    if (!isPemissionAsked) {
-                      observer.next({ hasPermission: false } as AndroidPermissionsStatus);
-                      observer.complete();
-                      return;
-                    }
-                    observer.next({ isPermissionAlwaysDenied: true } as AndroidPermissionsStatus);
-                    observer.complete();
-                    return;
-                  });
-                break;
-              case cordova.plugins.diagnostic.permissionStatus.DENIED_ONCE:
-                // call popover
-                observer.next({ hasPermission: false } as AndroidPermissionsStatus);
-                observer.complete();
-                return;
-              // call permission settings error
-              default:
-                observer.next(undefined);
-                observer.complete();
-            }
-          }, (e) => {
-            console.error(e);
-            observer.next(undefined);
-            observer.complete();
-          }, cordova.plugins.diagnostic.permission.CAMERA);
-        });
-      })
-    ).toPromise().then((status?: AndroidPermissionsStatus) => {
-      if (!status) {
-        this.commonUtilService.showToast('PERMISSION_DENIED');
-      }
-
-      if (status.isPermissionAlwaysDenied) {
-        this.showSettingErrorToast();
-        return undefined;
-      }
-
-      if (status.hasPermission) {
-        return this.startQRScanner(screenTitle, displayText, displayTextColor, buttonText, showButton, source);
-      } else if (!status.hasPermission) {
-        return this.showPopover();
-      }
-      return undefined;
-    });
+    if (permissionStatus.hasPermission) {
+      return this.startQRScanner(screenTitle, displayText, displayTextColor, buttonText, showButton, source);
+    } else if (permissionStatus.isPermissionAlwaysDenied) {
+      this.showSettingErrorToast();
+    } else {
+      this.showPopover();
+    }
+  }
+  private async getCameraPermissionStatus(): Promise<AndroidPermissionsStatus> {
+    return (
+        await this.permission.checkPermissions([AndroidPermission.CAMERA]).toPromise()
+    )[AndroidPermission.CAMERA];
   }
 
   async showSettingErrorToast() {
@@ -221,7 +168,7 @@ export class SunbirdQRScanner {
                   Environment.ONBOARDING,
                   PageId.QRCodeScanner);
               this.appGlobalService.setIsPermissionAsked(PermissionAskedEnum.isCameraAsked, true);
-              this.permission.requestPermissions(this.permissionList).subscribe((status: AndroidPermissionsStatus) => {
+              this.permission.requestPermissions([AndroidPermission.CAMERA]).subscribe((status: AndroidPermissionsStatus) => {
                 if (status && status.hasPermission) {
                   resolve(this.startScanner(this.source, this.showButton));
                 } else {
