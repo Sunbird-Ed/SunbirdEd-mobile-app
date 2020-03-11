@@ -496,7 +496,7 @@ describe('CollectionChildComponent', () => {
         };
         constructComponent();
       });
-      it('Shpuld go to course page if contentType is course', () => {
+      it('Should go to course page if contentType is course', () => {
         // arrange
         const content = {
           identifier: 'some_identifier',
@@ -528,7 +528,7 @@ describe('CollectionChildComponent', () => {
           })
         );
       });
-      it('Shpuld go to content detail page if mimeType is not application/vnd.ekstep.content-collection' +
+      it('Should go to content detail page if mimeType is not application/vnd.ekstep.content-collection' +
         'content type is other than TextBook and SelfAssess', () => {
           // arrange
           const content = {
@@ -565,43 +565,213 @@ describe('CollectionChildComponent', () => {
             undefined,
             undefined);
         });
-      // it('Shpuld go to content detail page if mimeType is not application/vnd.ekstep.content-collection' +
-      //   'content type is other than TextBook and SelfAssess', () => {
-      //     // arrange
-      //     const content = {
-      //       identifier: 'some_identifier',
-      //       contentType: ContentType.RESOURCE,
-      //       contentData: {
-      //         contentType: ContentType.RESOURCE
-      //       }
-      //     };
-      //     mockZone.run = jest.fn((fn) => fn());
-      //     // act
-      //     collectionChildComponent.navigateToDetailsPage(content, '');
-      //     // assert
-      //     expect(mockTextbookTocService.setTextbookIds).toHaveBeenCalledWith({
-      //       rootUnitId: undefined, contentId: content.identifier, unit: undefined
-      //     });
-      //     expect(mockRouter.navigate).toHaveBeenCalledWith(
-      //       expect.arrayContaining([RouterLinks.CONTENT_DETAILS]),
-      //       expect.objectContaining({
-      //         state: expect.objectContaining({
-      //           isChildContent: true,
-      //           content,
-      //           depth: ''
-      //         })
-      //       })
-      //     );
-      //     expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
-      //       InteractType.TOUCH,
-      //       InteractSubtype.CONTENT_CLICKED,
-      //       Environment.HOME,
-      //       PageId.COLLECTION_DETAIL,
-      //       undefined,
-      //       { contentClicked: content.identifier },
-      //       undefined,
-      //       undefined);
-      //   });
+      it('Should show redo assessment and should go to content detail page if mimeType is not ' +
+        'application/vnd.ekstep.content-collection content type is SelfAssess', (done) => {
+          // arrange
+          mockPopoverCtrl.create = jest.fn(() => (Promise.resolve({
+            present: jest.fn(() => Promise.resolve({})),
+            onDidDismiss: jest.fn(() => Promise.resolve({ data: { isLeftButtonClicked: false } }))
+          } as any)));
+          mockCommonUtilService.translateMessage = jest.fn((key) => {
+            switch (key) {
+              case 'REDO_ASSESSMENT':
+                return 'REDO_ASSESSMENT';
+              case 'TRAINING_ENDED_REDO_ASSESSMENT':
+                return 'TRAINING_ENDED_REDO_ASSESSMENT';
+              case 'SKIP':
+                return 'SKIP';
+              case 'REDO':
+                return 'REDO';
+            }
+          });
+          const content = {
+            identifier: 'some_identifier',
+            contentType: ContentType.SELF_ASSESS,
+            contentData: {
+              contentType: ContentType.SELF_ASSESS
+            },
+            status: '2'
+          };
+          collectionChildComponent.batch = {
+            status: 2
+          };
+          mockZone.run = jest.fn((fn) => fn());
+          // act
+          collectionChildComponent.navigateToDetailsPage(content, '');
+          // assert
+          setTimeout(() => {
+            // assert
+            expect(mockPopoverCtrl.create).toHaveBeenCalled();
+            expect(mockPopoverCtrl.create).toHaveBeenCalledWith(expect.objectContaining({
+              componentProps: expect.objectContaining({
+                sbPopoverHeading: 'REDO_ASSESSMENT',
+                sbPopoverMainTitle: 'TRAINING_ENDED_REDO_ASSESSMENT',
+                actionsButtons: expect.arrayContaining([
+                  expect.objectContaining({
+                    btntext: 'SKIP'
+                  }),
+                  expect.objectContaining({
+                    btntext: 'REDO'
+                  })
+                ])
+              })
+            }));
+            expect(mockTextbookTocService.setTextbookIds).toHaveBeenCalledWith({
+              rootUnitId: undefined, contentId: content.identifier, unit: undefined
+            });
+            expect(mockRouter.navigate).toHaveBeenCalledWith(
+              expect.arrayContaining([RouterLinks.CONTENT_DETAILS]),
+              expect.objectContaining({
+                state: expect.objectContaining({
+                  isChildContent: true,
+                  content,
+                  depth: ''
+                })
+              })
+            );
+            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+              InteractType.TOUCH,
+              InteractSubtype.CONTENT_CLICKED,
+              Environment.HOME,
+              PageId.COLLECTION_DETAIL,
+              undefined,
+              { contentClicked: content.identifier },
+              undefined,
+              undefined);
+            done();
+          }, 0);
+        });
+      it('Should show start assessment and should go to content detail page if mimeType is not ' +
+        'application/vnd.ekstep.content-collection content type is SelfAssess and content.status not available', (done) => {
+          // arrange
+          mockPopoverCtrl.create = jest.fn(() => (Promise.resolve({
+            present: jest.fn(() => Promise.resolve({})),
+            onDidDismiss: jest.fn(() => Promise.resolve({ data: { isLeftButtonClicked: false } }))
+          } as any)));
+          mockCommonUtilService.translateMessage = jest.fn((key) => {
+            switch (key) {
+              case 'START_ASSESSMENT':
+                return 'START_ASSESSMENT';
+              case 'TRAINING_ENDED_START_ASSESSMENT':
+                return 'TRAINING_ENDED_START_ASSESSMENT';
+              case 'SKIP':
+                return 'SKIP';
+              case 'START':
+                return 'START';
+            }
+          });
+          const content = {
+            identifier: 'some_identifier',
+            contentType: ContentType.SELF_ASSESS,
+            contentData: {
+              contentType: ContentType.SELF_ASSESS
+            }
+          };
+          collectionChildComponent.batch = {
+            status: 2
+          };
+          mockZone.run = jest.fn((fn) => fn());
+          // act
+          collectionChildComponent.navigateToDetailsPage(content, '');
+          // assert
+          setTimeout(() => {
+            // assert
+            expect(mockPopoverCtrl.create).toHaveBeenCalled();
+            expect(mockPopoverCtrl.create).toHaveBeenCalledWith(expect.objectContaining({
+              componentProps: expect.objectContaining({
+                sbPopoverHeading: 'START_ASSESSMENT',
+                sbPopoverMainTitle: 'TRAINING_ENDED_START_ASSESSMENT',
+                actionsButtons: expect.arrayContaining([
+                  expect.objectContaining({
+                    btntext: 'SKIP'
+                  }),
+                  expect.objectContaining({
+                    btntext: 'START'
+                  })
+                ])
+              })
+            }));
+            expect(mockTextbookTocService.setTextbookIds).toHaveBeenCalledWith({
+              rootUnitId: undefined, contentId: content.identifier, unit: undefined
+            });
+            expect(mockRouter.navigate).toHaveBeenCalledWith(
+              expect.arrayContaining([RouterLinks.CONTENT_DETAILS]),
+              expect.objectContaining({
+                state: expect.objectContaining({
+                  isChildContent: true,
+                  content,
+                  depth: ''
+                })
+              })
+            );
+            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+              InteractType.TOUCH,
+              InteractSubtype.CONTENT_CLICKED,
+              Environment.HOME,
+              PageId.COLLECTION_DETAIL,
+              undefined,
+              { contentClicked: content.identifier },
+              undefined,
+              undefined);
+            done();
+          }, 0);
+        });
+      it('Should show start assessment and should not go to content detail page if user clicked on skip and ' +
+        'mimeType is not application/vnd.ekstep.content-collection content type is SelfAssess and content.status not available', (done) => {
+          // arrange
+          mockPopoverCtrl.create = jest.fn(() => (Promise.resolve({
+            present: jest.fn(() => Promise.resolve({})),
+            onDidDismiss: jest.fn(() => Promise.resolve({ data: { } }))
+          } as any)));
+          mockCommonUtilService.translateMessage = jest.fn((key) => {
+            switch (key) {
+              case 'START_ASSESSMENT':
+                return 'START_ASSESSMENT';
+              case 'TRAINING_ENDED_START_ASSESSMENT':
+                return 'TRAINING_ENDED_START_ASSESSMENT';
+              case 'SKIP':
+                return 'SKIP';
+              case 'START':
+                return 'START';
+            }
+          });
+          const content = {
+            identifier: 'some_identifier',
+            contentType: ContentType.SELF_ASSESS,
+            contentData: {
+              contentType: ContentType.SELF_ASSESS
+            }
+          };
+          collectionChildComponent.batch = {
+            status: 2
+          };
+          mockZone.run = jest.fn((fn) => fn());
+          // act
+          collectionChildComponent.navigateToDetailsPage(content, '');
+          // assert
+          setTimeout(() => {
+            // assert
+            expect(mockPopoverCtrl.create).toHaveBeenCalled();
+            expect(mockPopoverCtrl.create).toHaveBeenCalledWith(expect.objectContaining({
+              componentProps: expect.objectContaining({
+                sbPopoverHeading: 'START_ASSESSMENT',
+                sbPopoverMainTitle: 'TRAINING_ENDED_START_ASSESSMENT',
+                actionsButtons: expect.arrayContaining([
+                  expect.objectContaining({
+                    btntext: 'SKIP'
+                  }),
+                  expect.objectContaining({
+                    btntext: 'START'
+                  })
+                ])
+              })
+            }));
+            expect(mockTextbookTocService.setTextbookIds).not.toHaveBeenCalled();
+            expect(mockRouter.navigate).not.toHaveBeenCalled();
+            expect(mockTelemetryGeneratorService.generateInteractTelemetry).not.toHaveBeenCalled();
+            done();
+          }, 0);
+        });
     });
   });
 

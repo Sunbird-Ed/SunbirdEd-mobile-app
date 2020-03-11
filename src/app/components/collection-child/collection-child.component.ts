@@ -274,6 +274,7 @@ export class CollectionChildComponent implements OnInit {
       return !!activeMimeType.find(m => m === mimeType);
     }
   }
+
   // course-toc: for showing respective contenttype icons
   getContentTypeIcon(content: Content) {
     const mimeType = content.mimeType;
