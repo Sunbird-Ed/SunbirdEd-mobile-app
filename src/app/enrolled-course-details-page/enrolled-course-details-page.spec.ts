@@ -28,17 +28,19 @@ import { PreferenceKey, ProfileConstants } from '../app.constant';
 import { isObject } from 'util';
 import dayjs from 'dayjs';
 import { SbPopoverComponent } from '../components/popups';
-import { EnrollmentDetailsComponent } from '../components/enrollment-details/enrollment-details.component';
+import { ContentUtil } from '@app/util/content-util';
 
 describe('EnrolledCourseDetailsPage', () => {
     let enrolledCourseDetailsPage: EnrolledCourseDetailsPage;
     const mockProfileService: Partial<ProfileService> = {};
     const mockContentService: Partial<ContentService> = {
-        importContent: jest.fn(() => of(mockImportContentResponse))
+        importContent: jest.fn(() => of(mockImportContentResponse)),
+        getChildContents: jest.fn()
     };
     const mockEventsBusService: Partial<EventsBusService> = {};
     const mockCourseService: Partial<CourseService> = {
-        getContentState: jest.fn(() => of('success'))
+        getContentState: jest.fn(() => of('success')),
+        getCourseBatches: jest.fn()
     };
     const mockPreferences: Partial<SharedPreferences> = {};
     const mockAuthService: Partial<AuthService> = {};
@@ -1064,6 +1066,156 @@ describe('EnrolledCourseDetailsPage', () => {
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toBeCalled();
                 expect(dismissFn).toBeCalled();
                 expect(enrolledCourseDetailsPage.loader).toBeUndefined();
+                done();
+            }, 0);
+        });
+    });
+
+    describe('onSegmentChange()', () => {
+        it('should call generateInteractTelemetry()', () => {
+            // act
+            enrolledCourseDetailsPage.onSegmentChange({
+                detail: {
+                    value: 'value'
+                }
+            });
+            // assert
+            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toBeCalled();
+        });
+    });
+
+    describe('handleUnenrollButton()', () => {
+        it('should set showUnenrollButton to true', () => {
+            // arrange
+            enrolledCourseDetailsPage.batchDetails = {
+                status: 1,
+                enrollmentType: 'open'
+            };
+            enrolledCourseDetailsPage.courseCardData = {
+                status: 0
+            };
+            enrolledCourseDetailsPage.course = {
+                progress: 100
+            };
+            // act
+            enrolledCourseDetailsPage.handleUnenrollButton();
+            // assert
+            expect(enrolledCourseDetailsPage.showUnenrollButton).toEqual(true);
+        });
+
+        it('should be set updatedCourseCardData and set showUnenrollButton to true', () => {
+            // arrange
+            enrolledCourseDetailsPage.updatedCourseCardData = {
+                status: 0
+            };
+            enrolledCourseDetailsPage.batchDetails = {
+                status: 1,
+                enrollmentType: 'open'
+            };
+            enrolledCourseDetailsPage.course = {
+                progress: 100
+            };
+            // act
+            enrolledCourseDetailsPage.handleUnenrollButton();
+            // assert
+            expect(enrolledCourseDetailsPage.showUnenrollButton).toEqual(true);
+        });
+
+        it('should set showUnenrollButton to false', () => {
+            // arrange
+            enrolledCourseDetailsPage.updatedCourseCardData = {
+                status: 0
+            };
+            enrolledCourseDetailsPage.batchDetails = {
+                status: 1,
+                enrollmentType: 'invite-only'
+            };
+            enrolledCourseDetailsPage.course = {
+                progress: 100
+            };
+            // act
+            enrolledCourseDetailsPage.handleUnenrollButton();
+            // assert
+            expect(enrolledCourseDetailsPage.showUnenrollButton).toEqual(false);
+        });
+    });
+
+    describe('mergeProperties()', () => {
+        it('should show all properties merged', () => {
+            // arrange
+            enrolledCourseDetailsPage.course = {
+                prop1: 'prop1',
+                prop2: 'prop2'
+            };
+            // act
+            const returnVal = enrolledCourseDetailsPage.mergeProperties(['prop1', 'prop2']);
+            // assert
+            expect(returnVal).toEqual('prop1, prop2');
+        });
+    });
+
+    describe('setChildContents()', () => {
+        it('should fetch child contents ', (done)=> {
+            // arrange
+            const data = {
+                mimeType: 'content',
+                children: [],
+                identifier: 'do_1212123123'
+            };
+            enrolledCourseDetailsPage.courseCardData = {
+                batchId: '123123123'
+            };
+            spyOn(enrolledCourseDetailsPage, 'toggleGroup').and.stub();
+            jest.spyOn(mockContentService, 'getChildContents').mockReturnValue(of(data));
+            jest.spyOn(enrolledCourseDetailsPage, 'getContentState');
+            jest.spyOn(enrolledCourseDetailsPage, 'getContentsSize');
+            // act
+            enrolledCourseDetailsPage.setChildContents();
+            // assert
+            setTimeout(() => {
+                expect(enrolledCourseDetailsPage.enrolledCourseMimeType).toEqual(data.mimeType);
+                expect(enrolledCourseDetailsPage.childrenData).toEqual(data.children);
+                expect(enrolledCourseDetailsPage.childContentsData).toEqual(data);
+                expect(enrolledCourseDetailsPage.getContentState).toBeCalledWith(true);
+                expect(enrolledCourseDetailsPage.getContentsSize).toBeCalledWith(data.children);
+                done();
+            }, 0);
+        });
+        it('should setshowChildrenLoader to false', (done)=> {
+            // arrange
+            const data = {
+                mimeType: 'content',
+                children: [],
+                identifier: 'do_1212123123'
+            };
+            enrolledCourseDetailsPage.courseCardData = {
+                batchId: '123123123'
+            };
+            spyOn(enrolledCourseDetailsPage, 'toggleGroup').and.stub();
+            jest.spyOn(mockContentService, 'getChildContents').mockReturnValue(of(Promise.reject()));
+            jest.spyOn(enrolledCourseDetailsPage, 'getContentState');
+            jest.spyOn(enrolledCourseDetailsPage, 'getContentsSize');
+            // act
+            enrolledCourseDetailsPage.setChildContents();
+            // assert
+            setTimeout(() => {
+                expect(enrolledCourseDetailsPage.showChildrenLoader).toEqual(false);
+                done();
+            }, 0);
+        });
+    });
+
+    describe('getAllBatches()', () => {
+        it('should fetch all batch list', (done) => {
+            // arrange
+            spyOn(enrolledCourseDetailsPage, 'handleUnenrollButton');
+            jest.spyOn(mockCourseService, 'getCourseBatches').mockReturnValue(of({}));
+            // act
+            enrolledCourseDetailsPage.getAllBatches();
+            // assert
+            setTimeout(() => {
+                expect(enrolledCourseDetailsPage.handleUnenrollButton).toBeCalled();
+                expect(enrolledCourseDetailsPage.showOfflineSection).toEqual(false);
                 done();
             }, 0);
         });
