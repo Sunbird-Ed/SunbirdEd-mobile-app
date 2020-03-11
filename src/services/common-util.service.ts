@@ -23,6 +23,8 @@ import { mapTo } from 'rxjs/operators';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { Router } from '@angular/router';
 import { SbPopoverComponent } from '@app/app/components/popups';
+import {AndroidPermission, AndroidPermissionsStatus} from '@app/services/android-permissions/android-permission';
+import {AndroidPermissionsService} from '@app/services/android-permissions/android-permissions.service';
 
 declare const FCMPlugin;
 export interface NetworkInfo {
@@ -58,7 +60,8 @@ export class CommonUtilService implements OnDestroy {
         private webView: WebView,
         private appVersion: AppVersion,
         private router: Router,
-        private toastController: ToastController
+        private toastController: ToastController,
+        private permissionService: AndroidPermissionsService
     ) {
         this.listenForEvents();
 
@@ -495,6 +498,12 @@ export class CommonUtilService implements OnDestroy {
                 await this.preferences.putString(PreferenceKey.CURRENT_USER_PROFILE, JSON.stringify(profile)).toPromise();
                 await this.preferences.putString(PreferenceKey.SUBSCRIBE_TOPICS, JSON.stringify(subscribeTopic)).toPromise();
             });
+    }
+
+    public async getStoragePermissionStatus(): Promise<AndroidPermissionsStatus> {
+        return (
+            await this.permissionService.checkPermissions([AndroidPermission.WRITE_EXTERNAL_STORAGE]).toPromise()
+        )[AndroidPermission.WRITE_EXTERNAL_STORAGE];
     }
 
     public async showSettingsPageToast(description: string, appName: string) {

@@ -127,7 +127,7 @@ export class StorageSettingsPage implements OnInit {
       return;
     }
 
-    const permissionStatus = await this.getStoragePermissionStatus();
+    const permissionStatus = await this.commonUtilService.getStoragePermissionStatus();
 
     if (permissionStatus.hasPermission) {
       this.showShouldTransferContentsPopup();
@@ -178,12 +178,6 @@ export class StorageSettingsPage implements OnInit {
     return this._storageVolumes
       .find((storageVolume) => storageVolume.storageDestination === storageDestination)
       .info.contentStoragePath;
-  }
-
-  private async getStoragePermissionStatus(): Promise<AndroidPermissionsStatus> {
-    return (
-      await this.permissionsService.checkPermissions([AndroidPermission.WRITE_EXTERNAL_STORAGE]).toPromise()
-    )[AndroidPermission.WRITE_EXTERNAL_STORAGE];
   }
 
   private async showStoragePermissionPopup() {

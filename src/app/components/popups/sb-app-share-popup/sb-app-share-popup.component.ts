@@ -182,7 +182,7 @@ export class SbAppSharePopupComponent implements OnInit, OnDestroy {
 
   private async checkForPermissions(): Promise<boolean | undefined> {
     return new Promise < boolean | undefined>(async (resolve, reject) => {
-      const permissionStatus = await this.getStoragePermissionStatus();
+      const permissionStatus = await this.commonUtilService.getStoragePermissionStatus();
 
       if (permissionStatus.hasPermission) {
         resolve(true);
@@ -200,13 +200,6 @@ export class SbAppSharePopupComponent implements OnInit, OnDestroy {
       }
     });
   }
-
-  private async getStoragePermissionStatus(): Promise<AndroidPermissionsStatus> {
-    return (
-        await this.permissionService.checkPermissions([AndroidPermission.WRITE_EXTERNAL_STORAGE]).toPromise()
-    )[AndroidPermission.WRITE_EXTERNAL_STORAGE];
-  }
-
   private async showStoragePermissionPopup(): Promise<boolean | undefined> {
     await this.popoverCtrl.dismiss();
     return new Promise<boolean | undefined>(async (resolve, reject) => {
