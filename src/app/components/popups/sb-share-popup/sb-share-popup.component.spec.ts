@@ -16,8 +16,6 @@ import {
 import { ContentType, MimeType, ShareUrl } from '../../../../app/app.constant';
 import {AppVersion} from '@ionic-native/app-version/ngx';
 import {Router} from '@angular/router';
-import {of} from 'rxjs';
-import {AndroidPermission} from '@app/services/android-permissions/android-permission';
 
 describe('SbSharePopupComponent', () => {
     let sbSharePopupComponent: SbSharePopupComponent;
@@ -101,6 +99,7 @@ describe('SbSharePopupComponent', () => {
         sbSharePopupComponent.backButtonFunc = {
             unsubscribe: unsubscribeFn
         } as any;
+        jest.spyOn(sbSharePopupComponent, 'getContentEndPoint').mockImplementation();
         // act
         sbSharePopupComponent.ngOnInit();
         // assert
@@ -160,7 +159,8 @@ describe('SbSharePopupComponent', () => {
     it('should call sharecontent on shareFile', (done) => {
         // arrange
         mockPopoverCtrl.dismiss = jest.fn();
-        mockPermissionService.checkPermissions = jest.fn(() => of({ [AndroidPermission.WRITE_EXTERNAL_STORAGE]: {hasPermission: true}}));
+        mockCommonUtilService.getGivenPermissionStatus = jest.fn(() => Promise.resolve(
+            {hasPermission: true}));
         // act
         sbSharePopupComponent.shareFile();
         // assert
@@ -174,7 +174,8 @@ describe('SbSharePopupComponent', () => {
     it('should call sharecontent on saveFile', (done) => {
         // arrange
         mockPopoverCtrl.dismiss = jest.fn();
-        mockPermissionService.checkPermissions = jest.fn(() => of({ [AndroidPermission.WRITE_EXTERNAL_STORAGE]: {hasPermission: true}}));
+        mockCommonUtilService.getGivenPermissionStatus = jest.fn(() => Promise.resolve(
+            {hasPermission: true}));
         // act
         sbSharePopupComponent.saveFile();
         // assert
@@ -187,6 +188,20 @@ describe('SbSharePopupComponent', () => {
 
     describe('getContentEndPoint()', () => {
 
+        beforeAll(() => {
+            sbSharePopupComponent = new SbSharePopupComponent(
+                mockPopoverCtrl as PopoverController,
+                mockPlatform as Platform,
+                mockContentShareHandler as ContentShareHandlerService,
+                mockUtilityService as UtilityService,
+                mockNavParams as NavParams,
+                mockTelemetryGeneratorService as TelemetryGeneratorService,
+                mockAppVersion as AppVersion,
+                mockCommonUtilService as CommonUtilService,
+                mockPermissionService as AndroidPermissionsService,
+            );
+        });
+
         it('should return course endpoint', () => {
             // arrange
             // act
@@ -197,6 +212,7 @@ describe('SbSharePopupComponent', () => {
         it('should return collection endpoint', () => {
             // arrange
             // act
+            sbSharePopupComponent.ngOnInit();
             // assert
             expect(sbSharePopupComponent.getContentEndPoint({ mimeType: MimeType.COLLECTION,
                 contentType: ContentType.TEXTBOOK } as any)).toEqual(ShareUrl.COLLECTION);
@@ -205,6 +221,7 @@ describe('SbSharePopupComponent', () => {
         it('should return content endpoint', () => {
             // arrange
             // act
+            sbSharePopupComponent.ngOnInit();
             // assert
             expect(sbSharePopupComponent.getContentEndPoint(
                 { contentType: ContentType.RESOURCE } as any)).toEqual(ShareUrl.CONTENT);
