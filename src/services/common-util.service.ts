@@ -500,13 +500,13 @@ export class CommonUtilService implements OnDestroy {
             });
     }
 
-    public async getStoragePermissionStatus(): Promise<AndroidPermissionsStatus> {
+    public async getGivenPermissionStatus(permissions): Promise<AndroidPermissionsStatus> {
         return (
-            await this.permissionService.checkPermissions([AndroidPermission.WRITE_EXTERNAL_STORAGE]).toPromise()
-        )[AndroidPermission.WRITE_EXTERNAL_STORAGE];
+            await this.permissionService.checkPermissions([permissions]).toPromise()
+        )[permissions];
     }
 
-    public async showSettingsPageToast(description: string, appName: string) {
+    public async showSettingsPageToast(description: string, appName: string, pageId: string, isOnboardingCompleted: boolean) {
         const toast = await this.toastController.create({
             message: this.translateMessage(description, appName),
             cssClass: 'permissionSettingToast',
@@ -520,18 +520,25 @@ export class CommonUtilService implements OnDestroy {
 
         toast.onWillDismiss().then((res) => {
             if (res.role === 'cancel') {
+                this.telemetryGeneratorService.generateInteractTelemetry(
+                    InteractType.TOUCH,
+                    InteractSubtype.SETTINGS_CLICKED,
+                    isOnboardingCompleted ? Environment.HOME : Environment.ONBOARDING,
+                    pageId);
                 this.router.navigate([`/${RouterLinks.SETTINGS}/${RouterLinks.PERMISSION}`], { state: { changePermissionAccess: true } });
             }
         });
     }
 
-    public async buildPermissionPopover(handler: (selectedButton: string) => void, appName: string): Promise<HTMLIonPopoverElement> {
+    public async buildPermissionPopover(handler: (selectedButton: string) => void,
+                                        appName: string, whichPermission: string,
+                                        permissionDescription: string): Promise<HTMLIonPopoverElement> {
         return this.popOverCtrl.create({
             component: SbPopoverComponent,
             componentProps: {
                 isNotShowCloseIcon: false,
                 sbPopoverHeading: this.translateMessage('PERMISSION_REQUIRED'),
-                sbPopoverMainTitle: this.translateMessage('FILE_MANAGER'),
+                sbPopoverMainTitle: this.translateMessage(whichPermission),
                 actionsButtons: [
                     {
                         btntext: this.translateMessage('NOT_NOW'),
@@ -546,7 +553,7 @@ export class CommonUtilService implements OnDestroy {
                 img: {
                     path: './assets/imgs/ic_folder_open.png',
                 },
-                metaInfo: this.translateMessage('FILE_MANAGER_PERMISSION_DESCRIPTION', appName),
+                metaInfo: this.translateMessage(permissionDescription, appName),
             },
             cssClass: 'sb-popover sb-popover-permissions primary dw-active-downloads-popover',
         });

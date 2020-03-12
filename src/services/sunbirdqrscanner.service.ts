@@ -26,6 +26,7 @@ import { QRScannerAlert, QRAlertCallBack } from '@app/app/qrscanner-alert/qrscan
 import { RouterLinks } from '@app/app/app.constant';
 import { mergeMap, take } from 'rxjs/operators';
 import { of } from 'rxjs';
+import { async } from '@angular/core/testing';
 
 declare const cordova;
 @Injectable()
@@ -88,103 +89,47 @@ export class SunbirdQRScanner {
     this.generateImpressionTelemetry(source);
     this.generateStartEvent(source);
 
-    const permissionStatus = await this.getCameraPermissionStatus();
+    const permissionStatus = await this.commonUtilService.getGivenPermissionStatus(AndroidPermission.CAMERA);
 
     if (permissionStatus.hasPermission) {
       return this.startQRScanner(screenTitle, displayText, displayTextColor, buttonText, showButton, source);
     } else if (permissionStatus.isPermissionAlwaysDenied) {
-      this.showSettingErrorToast();
+      this.commonUtilService.showSettingsPageToast('CAMERA_PERMISSION_DESCRIPTION', this.appName, PageId.QRCodeScanner, false);
     } else {
       this.showPopover();
     }
   }
-  private async getCameraPermissionStatus(): Promise<AndroidPermissionsStatus> {
-    return (
-        await this.permission.checkPermissions([AndroidPermission.CAMERA]).toPromise()
-    )[AndroidPermission.CAMERA];
-  }
-
-  async showSettingErrorToast() {
-    const toast = await this.toastController.create({
-      message: this.commonUtilService.translateMessage('CAMERA_PERMISSION_DESCRIPTION', this.appName),
-      cssClass: 'permissionSettingToast',
-      showCloseButton: true,
-      closeButtonText: this.commonUtilService.translateMessage('SETTINGS'),
-      position: 'bottom',
-      duration: 3000
-    });
-
-    await toast.present();
-    toast.onWillDismiss().then((res) => {
-      if (res.role === 'cancel') {
-
-        this.telemetryGeneratorService.generateInteractTelemetry(
-          InteractType.TOUCH,
-          InteractSubtype.SETTINGS_CLICKED,
-          Environment.ONBOARDING,
-          PageId.QRCodeScanner);
-        const navigationExtras: NavigationExtras = { state: { changePermissionAccess: true } };
-        this.router.navigate([`/${RouterLinks.SETTINGS}/${RouterLinks.PERMISSION}`], navigationExtras);
-      }
-
-    }).catch((error) => {
-      console.error('Unable to dismiss toast', error);
-    });
-
-  }
 
   async showPopover(): Promise<string | undefined> {
     return new Promise<string | undefined>(async (resolve, reject) => {
-      const confirm = await this.popCtrl.create({
-        component: SbPopoverComponent,
-        componentProps: {
-          isNotShowCloseIcon: false,
-          sbPopoverHeading: this.commonUtilService.translateMessage('PERMISSION_REQUIRED'),
-          sbPopoverMainTitle: this.commonUtilService.translateMessage('CAMERA'),
-          actionsButtons: [
-            {
-              btntext: this.commonUtilService.translateMessage('NOT_NOW'),
-              btnClass: (this.commonUtilService.translateMessage('NOT_NOW').length > 10) ?
-                  'popover-button-cancel-longlength' : 'popover-button-cancel',
-            },
-            {
-              btntext: this.commonUtilService.translateMessage('ALLOW'),
-              btnClass: 'popover-button-allow',
-            }
-          ],
-          handler: (whichBtnClicked: string) => {
-            if (whichBtnClicked === this.commonUtilService.translateMessage('NOT_NOW')) {
-              this.telemetryGeneratorService.generateInteractTelemetry(
-                  InteractType.TOUCH,
-                  InteractSubtype.PERMISSION_POPOVER_NOT_NOW_CLICKED,
-                  Environment.ONBOARDING,
-                  PageId.QRCodeScanner);
-              this.showSettingErrorToast();
-              resolve(undefined);
-            } else {
-              this.telemetryGeneratorService.generateInteractTelemetry(
-                  InteractType.TOUCH,
-                  InteractSubtype.PERMISSION_POPOVER_ALLOW_CLICKED,
-                  Environment.ONBOARDING,
-                  PageId.QRCodeScanner);
-              this.appGlobalService.setIsPermissionAsked(PermissionAskedEnum.isCameraAsked, true);
-              this.permission.requestPermissions([AndroidPermission.CAMERA]).subscribe((status: AndroidPermissionsStatus) => {
-                if (status && status.hasPermission) {
-                  resolve(this.startScanner(this.source, this.showButton));
-                } else {
-                  this.showSettingErrorToast();
-                  resolve(undefined);
-                }
-              }, (e) => { reject(e); });
-            }
-          },
-          img: {
-            path: './assets/imgs/ic_photo_camera.png',
-          },
-          metaInfo: this.commonUtilService.translateMessage('CAMERA_PERMISSION_DESCRIPTION', this.appName),
-        },
-        cssClass: 'sb-popover sb-popover-permissions primary dw-active-downloads-popover',
-      });
+      const confirm = await this.commonUtilService.buildPermissionPopover(
+        async (whichBtnClicked: string) => {
+          if (whichBtnClicked === this.commonUtilService.translateMessage('NOT_NOW')) {
+            this.telemetryGeneratorService.generateInteractTelemetry(
+                InteractType.TOUCH,
+                InteractSubtype.PERMISSION_POPOVER_NOT_NOW_CLICKED,
+                Environment.ONBOARDING,
+                PageId.QRCodeScanner);
+            this.commonUtilService.showSettingsPageToast('CAMERA_PERMISSION_DESCRIPTION', this.appName, PageId.QRCodeScanner, false);
+            resolve(undefined);
+          } else {
+            this.telemetryGeneratorService.generateInteractTelemetry(
+                InteractType.TOUCH,
+                InteractSubtype.PERMISSION_POPOVER_ALLOW_CLICKED,
+                Environment.ONBOARDING,
+                PageId.QRCodeScanner);
+            this.appGlobalService.setIsPermissionAsked(PermissionAskedEnum.isCameraAsked, true);
+            this.permission.requestPermissions([AndroidPermission.CAMERA]).subscribe((status: AndroidPermissionsStatus) => {
+              if (status && status.hasPermission) {
+                resolve(this.startScanner(this.source, this.showButton));
+              } else {
+                this.commonUtilService.showSettingsPageToast('CAMERA_PERMISSION_DESCRIPTION', this.appName, PageId.QRCodeScanner, false);
+                resolve(undefined);
+              }
+            }, (e) => { reject(e); });
+          }
+        }, this.appName, this.commonUtilService.translateMessage('CAMERA'), 'CAMERA_PERMISSION_DESCRIPTION'
+      );
 
       await confirm.present();
     });
@@ -201,7 +146,7 @@ export class SunbirdQRScanner {
     }, 100);
   }
 
-  getProfileSettingConfig() {
+getProfileSettingConfig() {
     this.profile = this.appGlobalService.getCurrentUser();
     if (this.profile.profileType === ProfileType.TEACHER) {
       initTabs(this.container, GUEST_TEACHER_TABS);
@@ -270,7 +215,7 @@ export class SunbirdQRScanner {
     });
   }
 
-  generateImpressionTelemetry(source) {
+generateImpressionTelemetry(source) {
     this.telemetryGeneratorService.generateImpressionTelemetry(
       ImpressionType.VIEW,
       ImpressionSubtype.QRCodeScanInitiate,
@@ -278,14 +223,14 @@ export class SunbirdQRScanner {
       source === PageId.ONBOARDING_PROFILE_PREFERENCES ? Environment.ONBOARDING : Environment.HOME);
   }
 
-  generateStartEvent(pageId: string) {
+generateStartEvent(pageId: string) {
     const telemetryObject = new TelemetryObject('', 'qr', undefined);
     this.telemetryGeneratorService.generateStartTelemetry(
       PageId.QRCodeScanner,
       telemetryObject);
   }
 
-  generateEndEvent(pageId: string, qrData: string) {
+generateEndEvent(pageId: string, qrData: string) {
     if (pageId) {
       const telemetryObject: TelemetryObject = new TelemetryObject(qrData, 'qr', undefined);
 

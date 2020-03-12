@@ -158,7 +158,7 @@ export class SbSharePopupComponent implements OnInit, OnDestroy {
         this.contentShareHandler.shareContent(shareParams, this.content, this.corRelationList, this.objRollup);
         this.popoverCtrl.dismiss();
       } else {
-        this.commonUtilService.showSettingsPageToast('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName);
+        this.commonUtilService.showSettingsPageToast('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName, this.pageId, true);
       }
     });
   }
@@ -173,19 +173,19 @@ export class SbSharePopupComponent implements OnInit, OnDestroy {
         this.contentShareHandler.shareContent(shareParams, this.content, this.corRelationList, this.objRollup);
         this.popoverCtrl.dismiss();
       } else {
-        this.commonUtilService.showSettingsPageToast('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName);
+        this.commonUtilService.showSettingsPageToast('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName, this.pageId, true);
       }
     });
   }
 
   private async checkForPermissions(): Promise<boolean | undefined> {
     return new Promise < boolean | undefined>(async (resolve, reject) => {
-      const permissionStatus = await this.commonUtilService.getStoragePermissionStatus();
+      const permissionStatus = await this.commonUtilService.getGivenPermissionStatus(AndroidPermission.WRITE_EXTERNAL_STORAGE);
 
       if (permissionStatus.hasPermission) {
         resolve(true);
       } else if (permissionStatus.isPermissionAlwaysDenied) {
-        await this.commonUtilService.showSettingsPageToast('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName);
+        await this.commonUtilService.showSettingsPageToast('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName, this.pageId, true);
         reject(false);
       } else {
         this.showStoragePermissionPopup().then((result) => {
@@ -205,22 +205,24 @@ export class SbSharePopupComponent implements OnInit, OnDestroy {
       const confirm = await this.commonUtilService.buildPermissionPopover(
           async (selectedButton: string) => {
               if (selectedButton === this.commonUtilService.translateMessage('NOT_NOW')) {
-                await this.commonUtilService.showSettingsPageToast('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName);
+                await this.commonUtilService.showSettingsPageToast('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName, this.pageId, true);
               } else if (selectedButton === this.commonUtilService.translateMessage('ALLOW')) {
                 this.permissionService.requestPermission(AndroidPermission.WRITE_EXTERNAL_STORAGE)
                     .subscribe(async (status: AndroidPermissionsStatus) => {
                       if (status.hasPermission) {
                         resolve(true);
                       } else if (status.isPermissionAlwaysDenied) {
-                        await this.commonUtilService.showSettingsPageToast('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName);
+                        await this.commonUtilService.showSettingsPageToast
+                        ('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName, this.pageId, true);
                         reject(false);
                       } else {
-                        await this.commonUtilService.showSettingsPageToast('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName);
+                        await this.commonUtilService.showSettingsPageToast
+                        ('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName, this.pageId, true);
                       }
                       reject(undefined);
                     });
               }
-          }, this.appName
+          }, this.appName, this.commonUtilService.translateMessage('FILE_MANAGER'), 'FILE_MANAGER_DESCRIPTION'
       );
       await confirm.present();
     });

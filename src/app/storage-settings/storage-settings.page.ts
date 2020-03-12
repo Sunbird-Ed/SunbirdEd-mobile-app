@@ -22,8 +22,6 @@ import { AppVersion } from '@ionic-native/app-version/ngx';
 import { AndroidPermissionsService } from 'services/android-permissions/android-permissions.service';
 import { AndroidPermission, AndroidPermissionsStatus } from 'services/android-permissions/android-permission';
 import { Location } from '@angular/common';
-import { Router } from '@angular/router';
-import { RouterLinks } from '../app.constant';
 import { featureIdMap } from '../feature-id-map';
 import { async } from 'q';
 import { mergeMap, map, filter , takeWhile, skip, take, startWith, tap} from 'rxjs/operators';
@@ -92,9 +90,7 @@ export class StorageSettingsPage implements OnInit {
     private telemetryGeneratorService: TelemetryGeneratorService,
     private appVersion: AppVersion,
     private permissionsService: AndroidPermissionsService,
-    private toastController: ToastController,
     private location: Location,
-    private router: Router,
     @Inject('EVENTS_BUS_SERVICE') private eventsBusService: EventsBusService,
     @Inject('STORAGE_SERVICE') private storageService: StorageService,
     @Inject('DEVICE_INFO') private deviceInfo: DeviceInfo,
@@ -127,13 +123,14 @@ export class StorageSettingsPage implements OnInit {
       return;
     }
 
-    const permissionStatus = await this.commonUtilService.getStoragePermissionStatus();
+    const permissionStatus = await this.commonUtilService.getGivenPermissionStatus(AndroidPermission.WRITE_EXTERNAL_STORAGE);
 
     if (permissionStatus.hasPermission) {
       this.showShouldTransferContentsPopup();
     } else if (permissionStatus.isPermissionAlwaysDenied) {
       this.revertSelectedStorageDestination();
-      await this.commonUtilService.showSettingsPageToast('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName);
+      await this.commonUtilService.showSettingsPageToast
+      ('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName, PageId.TRANSFERING_CONTENT_POPUP, false);
     } else {
       this.showStoragePermissionPopup();
     }
@@ -182,10 +179,11 @@ export class StorageSettingsPage implements OnInit {
 
   private async showStoragePermissionPopup() {
     const confirm = await this.commonUtilService.buildPermissionPopover(
-        async(selectedButton: string) => {
+        async (selectedButton: string) => {
           if (selectedButton === this.commonUtilService.translateMessage('NOT_NOW')) {
             this.revertSelectedStorageDestination();
-            await this.commonUtilService.showSettingsPageToast('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName);
+            await this.commonUtilService.showSettingsPageToast
+            ('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName, PageId.TRANSFERING_CONTENT_POPUP, false);
           } else if (selectedButton === this.commonUtilService.translateMessage('ALLOW')) {
             this.permissionsService.requestPermission(AndroidPermission.WRITE_EXTERNAL_STORAGE)
                 .subscribe((status: AndroidPermissionsStatus) => {
@@ -193,13 +191,14 @@ export class StorageSettingsPage implements OnInit {
                     this.showShouldTransferContentsPopup();
                   } else if (status.isPermissionAlwaysDenied) {
                     this.revertSelectedStorageDestination();
-                    this.commonUtilService.showSettingsPageToast('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName);
+                    this.commonUtilService.showSettingsPageToast
+                    ('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName, PageId.TRANSFERING_CONTENT_POPUP, false);
                   } else {
                     this.revertSelectedStorageDestination();
                   }
                 });
           }
-        }, this.appName
+        }, this.appName, this.commonUtilService.translateMessage('FILE_MANAGER'), 'FILE_MANAGER_PERMISSION_DESCRIPTION'
     );
     await confirm.present();
 

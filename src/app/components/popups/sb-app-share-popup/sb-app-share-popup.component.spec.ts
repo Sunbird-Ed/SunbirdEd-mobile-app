@@ -50,7 +50,7 @@ describe('SbAppSharePopupComponent', () => {
         generateImpressionTelemetry: jest.fn()
     };
     const mockPermissionService: Partial<AndroidPermissionsService> = {
-        checkPermission: jest.fn(() => {Promise.resolve(true); })
+        checkPermissions: jest.fn()
     };
     const mockRouter: Partial<Router> = {
         navigate: jest.fn()

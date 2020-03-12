@@ -84,8 +84,6 @@ describe('SbSharePopupComponent', () => {
             mockAppVersion as AppVersion,
             mockCommonUtilService as CommonUtilService,
             mockPermissionService as AndroidPermissionsService,
-            mockToastController as ToastController,
-            mockRouter as Router
         );
     });
 
