@@ -262,7 +262,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
         && this.appGlobalService.isOnBoardingCompleted) {
         if (this.appGlobalService.isProfileSettingsCompleted || !this.appGlobalService.DISPLAY_ONBOARDING_CATEGORY_PAGE) {
           if (await this.commonUtilService.isDeviceLocationAvailable()) {
-            this.router.navigate([`/${RouterLinks.TABS}`], { state: { loginMode: 'guest' } });
+            this.router.navigate([`/${RouterLinks.TABS}`], { state: { loginMode: 'guest' }, replaceUrl: true });
           } else {
             const navigationExtras: NavigationExtras = {
               state: {
