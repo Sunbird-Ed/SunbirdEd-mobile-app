@@ -1,24 +1,40 @@
-import { LoginHandlerService }  from './login-handler.service';
+import { LoginHandlerService } from './login-handler.service';
 import { AppGlobalService } from './app-global-service.service';
 import { Events, NavController } from '@ionic/angular';
 import { Router } from '@angular/router';
 import { TelemetryGeneratorService } from './telemetry-generator.service';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { NgZone } from '@angular/core';
-import { ContainerService } from '@app/services/container.services';
-import { CommonUtilService } from '@app/services/common-util.service';
-import { FormAndFrameworkUtilService } from '@app/services/formandframeworkutil.service';
-import { 
+import { ContainerService } from './../services/container.services';
+import { CommonUtilService } from './../services/common-util.service';
+import { FormAndFrameworkUtilService } from './../services/formandframeworkutil.service';
+import {
     ProfileService,
     AuthService,
     ApiService,
     SdkConfig,
     SharedPreferences,
     ProfileType,
-    ProfileSource
+    ProfileSource,
 } from 'sunbird-sdk';
 import { isRegExp } from 'util';
 import { of } from 'rxjs';
+
+jest.mock('sunbird-sdk', () => {
+    const actual = require.requireActual('sunbird-sdk');
+    return {
+        ...actual,
+        WebviewLoginSessionProvider: function () {}
+    };
+});
+
+jest.mock('@app/app/module.service', () => {
+    const actual = require.requireActual('@app/app/module.service');
+    return {
+        ...actual,
+        initTabs: jest.fn().mockImplementation(() => { })
+    };
+});
 
 describe('LoginHandlerService', () => {
     let loginHandlerService: LoginHandlerService;
@@ -41,7 +57,9 @@ describe('LoginHandlerService', () => {
     };
     const mockNavController: Partial<NavController> = {};
     const mockContainerService: Partial<ContainerService> = {};
-    const mockNgZone: Partial<NgZone> = {};
+    const mockNgZone: Partial<NgZone> = {
+        run: jest.fn()
+    };
     const mockAppVersion: Partial<AppVersion> = {
         getAppName: jest.fn(() => Promise.resolve('version'))
     };
@@ -85,29 +103,92 @@ describe('LoginHandlerService', () => {
 
     beforeEach(() => {
         jest.resetAllMocks();
+        jest.restoreAllMocks();
     });
 
-    describe('loginHandlerService', () => {
-        it('initialisation', () => {
+    describe('LoginHandlerService', () => {
+        it('should be able to create an instance', () => {
             expect(loginHandlerService).toBeDefined();
         });
     });
 
-    xdescribe('signIn', () => {
-        it('', async () => {
+    describe('signIn()', () => {
+        it('should in-memory preference skipCoachScreenForDeeplink if limitedShareQuizContent', (done) => {
             // arrange
-            mockCommonUtilService.networkInfo = {
-                isNetworkAvailable: true
-            };
-            jest.spyOn(mockCommonUtilService, 'getLoader').mockReturnValue(loader);
-            jest.spyOn(mockAuthService, 'setSession').mockReturnValue(of());
+            mockCommonUtilService.networkInfo = { isNetworkAvailable: true };
+            const dismissFn = jest.fn(() => Promise.resolve());
+            const presentFn = jest.fn(() => Promise.resolve());
+            mockCommonUtilService.getLoader = jest.fn(() => ({
+                present: presentFn,
+                dismiss: dismissFn,
+            }));
+            mockFormAndFrameworkUtilService.getWebviewSessionProviderConfig = jest.fn(() => Promise.resolve({
+                access_token: 'SOME_ACCESS_TOKEN',
+                refresh_token: 'SOME_REFRESH_TOKEN',
+                userToken: 'SOME_USER_TOKEN'
+            }));
+            jest.spyOn(mockAuthService, 'setSession').mockImplementation(() => of(undefined));
+            mockSharedPreferences.getString = jest.fn(() => of('false'));
+            jest.spyOn(loginHandlerService, 'setDefaultProfileDetails').mockImplementation(() => {
+                return Promise.resolve('profile');
+            });
+            jest.spyOn(loginHandlerService, 'refreshProfileData').mockImplementation(() => {
+                return Promise.resolve({ slug: 'SOME_SLUG', title: 'SOME_TITLE' });
+            });
+            jest.spyOn(loginHandlerService, 'refreshTenantData').mockImplementation(() => {
+                return Promise.resolve(undefined);
+            });
+            mockAppGlobalService.limitedShareQuizContent = 'limit';
             // act
-            await loginHandlerService.signIn();
-            // assert
+            loginHandlerService.signIn().then(() => {
+                // assert
+                expect(dismissFn).toHaveBeenCalled();
+                expect(presentFn).toHaveBeenCalled();
+                expect(mockAuthService.setSession).toHaveBeenCalled();
+                expect(mockAppGlobalService.limitedShareQuizContent).toEqual("limit");
+                done();
+            });
+        });
+
+        it('should in-memory preference showCoachScreenForDeeplink if nolimitedShareQuizContent', (done) => {
+            // arrange
+            mockCommonUtilService.networkInfo = { isNetworkAvailable: true };
+            const dismissFn = jest.fn(() => Promise.resolve());
+            const presentFn = jest.fn(() => Promise.resolve());
+            mockCommonUtilService.getLoader = jest.fn(() => ({
+                present: presentFn,
+                dismiss: dismissFn,
+            }));
+            mockFormAndFrameworkUtilService.getWebviewSessionProviderConfig = jest.fn(() => Promise.resolve({
+                access_token: 'SOME_ACCESS_TOKEN',
+                refresh_token: 'SOME_REFRESH_TOKEN',
+                userToken: 'SOME_USER_TOKEN'
+            }));
+            jest.spyOn(mockAuthService, 'setSession').mockImplementation(() => of(undefined));
+            mockSharedPreferences.getString = jest.fn(() => of('false'));
+            jest.spyOn(loginHandlerService, 'setDefaultProfileDetails').mockImplementation(() => {
+                return Promise.resolve('profile');
+            });
+            jest.spyOn(loginHandlerService, 'refreshProfileData').mockImplementation(() => {
+                return Promise.resolve({ slug: 'SOME_SLUG', title: 'SOME_TITLE' });
+            });
+            jest.spyOn(loginHandlerService, 'refreshTenantData').mockImplementation(() => {
+                return Promise.resolve(undefined);
+            });
+            mockAppGlobalService.limitedShareQuizContent = undefined;
+            // act
+            loginHandlerService.signIn().then(() => {
+                // assert
+                expect(dismissFn).toHaveBeenCalled();
+                expect(presentFn).toHaveBeenCalled();
+                expect(mockAuthService.setSession).toHaveBeenCalled();
+                expect(mockAppGlobalService.limitedShareQuizContent).toEqual(undefined);
+                done();
+            });
         });
     });
 
-    describe('getDefaultProfileRequest', () => {
+    describe('getDefaultProfileRequest()', () => {
         it('should return profile', () => {
             // arrange
             jest.spyOn(mockAppGlobalService, 'getCurrentUser').mockReturnValue({ uid: 'uid' });
@@ -123,10 +204,10 @@ describe('LoginHandlerService', () => {
         });
     });
 
-    describe('setDefaultProfileDetails', () => {
+    describe('setDefaultProfileDetails()', () => {
         it('should call publish and putString methods', (done) => {
             // arrange
-            jest.spyOn(loginHandlerService, 'getDefaultProfileRequest').mockReturnValue({ uid: 'uid' })
+            jest.spyOn(loginHandlerService, 'getDefaultProfileRequest').mockReturnValue({ uid: 'uid' });
             jest.spyOn(mockProfileService, 'updateProfile').mockReturnValue(of({}));
             jest.spyOn(mockProfileService, 'setActiveSessionForProfile').mockReturnValue(of({}));
             jest.spyOn(mockProfileService, 'getActiveSessionProfile').mockReturnValue(of(Promise.resolve({ uid: 'uid' })));
@@ -134,18 +215,17 @@ describe('LoginHandlerService', () => {
             jest.spyOn(mockSharedPreferences, 'putString');
 
             // act
-            loginHandlerService.setDefaultProfileDetails();
-            // assert
-            setTimeout(() => {
+            loginHandlerService.setDefaultProfileDetails().then(() => {
+                // assert
                 expect(mockEvents.publish).toBeCalledTimes(1);
                 expect(mockSharedPreferences.putString).toBeCalled();
                 done();
-            }, 0);
+            });
         });
 
         it('should call publish, not putString', (done) => {
             // arrange
-            jest.spyOn(loginHandlerService, 'getDefaultProfileRequest').mockReturnValue({ uid: 'uid' })
+            jest.spyOn(loginHandlerService, 'getDefaultProfileRequest').mockReturnValue({ uid: 'uid' });
             jest.spyOn(mockProfileService, 'updateProfile').mockReturnValue(of({}));
             jest.spyOn(mockProfileService, 'setActiveSessionForProfile').mockReturnValue(of({}));
             jest.spyOn(mockProfileService, 'getActiveSessionProfile').mockReturnValue(of({ uid: 'null' }));
@@ -153,15 +233,12 @@ describe('LoginHandlerService', () => {
             jest.spyOn(mockSharedPreferences, 'putString');
 
             // act
-            loginHandlerService.setDefaultProfileDetails();
-            // assert
-            setTimeout(() => {
+            loginHandlerService.setDefaultProfileDetails().then(() => {
+                // assert
                 expect(mockEvents.publish).toBeCalledTimes(1);
                 expect(mockSharedPreferences.putString).not.toBeCalled();
                 done();
-            }, 0);
+            });
         });
-
-        
     });
 });

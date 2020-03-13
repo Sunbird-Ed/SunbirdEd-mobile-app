@@ -111,6 +111,11 @@ export class LoginHandlerService {
             ? true : false;
           if (!isOnboardingCompleted) {
             await this.setDefaultProfileDetails();
+
+            // To avoid race condition
+            if (this.appGlobalService.limitedShareQuizContent) {
+              this.appGlobalService.skipCoachScreenForDeeplink = true;
+            }
           }
 
           initTabs(that.container, LOGIN_TEACHER_TABS);
@@ -226,7 +231,7 @@ export class LoginHandlerService {
       valuesMap);
   }
 
-  setDefaultProfileDetails(): Promise<string|void>{
+  setDefaultProfileDetails(): Promise<string | void> {
     const profileRequest = this.getDefaultProfileRequest();
     return this.profileService.updateProfile(profileRequest).toPromise().then(() => {
       return this.profileService.setActiveSessionForProfile(profileRequest.uid).toPromise().then(() => {

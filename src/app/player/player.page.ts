@@ -146,7 +146,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
         });
      */
     setTimeout(() => {
-        this.closeIframe();
+        this.closeIframe(content);
     }, 1000);
     this.events.publish(EventTopics.NEXT_CONTENT, {
         content,
@@ -165,7 +165,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
   /**
    * This will close the player page and will fire some end telemetry events from the player
    */
-  closeIframe() {
+  closeIframe(content?: any) {
     const stageId = this.previewElement.nativeElement.contentWindow['EkstepRendererAPI'].getCurrentStageId();
     try {
       this.previewElement.nativeElement.contentWindow['TelemetryService'].exit(stageId);
@@ -179,7 +179,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
     if (this.isFromToc) {
       this.router.navigate([RouterLinks.CONTENT_DETAILS], {
         state: {
-          content: this.config['metadata'],
+          content: content ? content : this.config['metadata'],
           corRelation: this.corRelationList,
           shouldNavigateBack: true
         },

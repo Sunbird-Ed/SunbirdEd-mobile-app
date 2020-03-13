@@ -20,6 +20,7 @@ import {
 } from '@app/services/telemetry-constants';
 import { declaredViewContainer } from '@angular/core/src/view/util';
 import { Location } from '@angular/common';
+
 describe('ContentRatingAlertComponent', () => {
     let contentRatingAlertComponent: ContentRatingAlertComponent;
     const mockContentFeedbackService: Partial<ContentFeedbackService> = {
@@ -76,10 +77,10 @@ describe('ContentRatingAlertComponent', () => {
     const mockPlatform: Partial<Platform> = {
     };
     let subscribeWithPriorityCallback;
-    const mockBackBtnFunc = { unsubscribe: jest.fn() }
-    const subscribeWithPriorityData = jest.fn((val, callback) => { 
+    const mockBackBtnFunc = { unsubscribe: jest.fn() };
+    const subscribeWithPriorityData = jest.fn((val, callback) => {
         subscribeWithPriorityCallback = callback;
-        return mockBackBtnFunc
+        return mockBackBtnFunc;
     });
     mockPlatform.backButton = {
         subscribeWithPriority: subscribeWithPriorityData,
@@ -94,7 +95,9 @@ describe('ContentRatingAlertComponent', () => {
         showToast: jest.fn(() => { }),
         translateMessage: jest.fn(() => 'Message To Display')
     };
-    const mockLocation: Partial<Location> = {};
+    const mockLocation: Partial<Location> = {
+        back: jest.fn( () => {})
+    };
 
 
     beforeAll(() => {
@@ -159,6 +162,8 @@ describe('ContentRatingAlertComponent', () => {
         const paramsMap = new Map();
         paramsMap['Ratings'] = 5;
         paramsMap['Comment'] = 'key';
+        contentRatingAlertComponent.navigateBack = 'navigateBack';
+        jest.spyOn(mockLocation, 'back').mockImplementation();
         // act
         contentRatingAlertComponent.submit();
         // assert
@@ -176,6 +181,7 @@ describe('ContentRatingAlertComponent', () => {
             false,
             'green-toast'
         );
+        expect(mockLocation.back).toHaveBeenCalled();
     });
 
     it('should generate IMPRESSION telemetry in ionViewWillEnter()', () => {
@@ -398,6 +404,64 @@ describe('ContentRatingAlertComponent', () => {
                 );
                 done();
             }, 100);
+        });
+
+        it('should return undefined if there is no data in form', (done) => {
+            // arrange
+            mockFormService.getForm = jest.fn(() => of({ data: { fields: [] } }));
+            // act
+            contentRatingAlertComponent.invokeContentRatingFormApi().then(() => {
+                // assert
+                expect(mockFormService.getForm).toHaveBeenCalled();
+                done();
+            }).catch((e) => {
+                fail(e);
+            });
+        });
+
+        it('should return undefined if there is no allComments', (done) => {
+            // arrange
+            mockFormService.getForm = jest.fn(() => of({data: { fields: [{5: {ratingText: 'G0od'}}]}}));
+            contentRatingAlertComponent.allComments = undefined;
+            contentRatingAlertComponent.ratingOptions = [
+                    {key: 'opt1', idx: 1, value: 'sample value'}
+                ];
+            spyOn(contentRatingAlertComponent, 'createRatingForm').and.stub();
+            // act
+            contentRatingAlertComponent.invokeContentRatingFormApi().then(() => {
+                // assert
+                expect(mockFormService.getForm).toHaveBeenCalled();
+                expect(contentRatingAlertComponent.allComments).toBeUndefined();
+                done();
+            }).catch((e) => {
+                fail(e);
+            });
+        });
+    });
+
+    describe('getDefaultContentRatingFromApi', () => {
+        it('should return undefined if there is no data in form', (done) => {
+            // arrange
+            mockFormService.getForm = jest.fn(() => of({ data: { fields: [] } }));
+            // act
+            contentRatingAlertComponent.getDefaultContentRatingFormApi();
+            expect(mockFormService.getForm).toHaveBeenCalled();
+            done();
+        });
+        it('should return undefined if there is no allComments', (done) => {
+            // arrange
+            mockFormService.getForm = jest.fn(() => of({data: { fields: [{5: {ratingText: 'G0od'}}]}}));
+            contentRatingAlertComponent.allComments = undefined;
+            contentRatingAlertComponent.ratingOptions = [
+                {key: 'opt1', idx: 1, value: 'sample value'}
+            ];
+            spyOn(contentRatingAlertComponent, 'createRatingForm').and.stub();
+            // act
+            contentRatingAlertComponent.getDefaultContentRatingFormApi();
+            // assert
+            expect(mockFormService.getForm).toHaveBeenCalled();
+            expect(contentRatingAlertComponent.allComments).toBeUndefined();
+            done();
         });
     });
 

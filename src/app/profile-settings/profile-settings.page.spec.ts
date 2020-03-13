@@ -380,7 +380,8 @@ describe('ProfileSettingsPage', () => {
             mockAppVersion as AppVersion,
             mockAlertCtrl as AlertController,
             mockLocation as Location,
-            mockSplashScreenService as SplashScreenService
+            mockSplashScreenService as SplashScreenService,
+            mockActivatedRoute as ActivatedRoute
         );
         mockScanner.stopScanner = jest.fn();
         // act
@@ -397,16 +398,41 @@ describe('ProfileSettingsPage', () => {
         const data = jest.fn((fn => fn()));
         mockHeaderService.headerEventEmitted$ = {
             subscribe: data
-        }as any;
+        } as any;
+        mockHeaderService.hideHeader = jest.fn();
         mockHeaderService.showHeaderWithBackButton = jest.fn();
         jest.spyOn(profileSettingsPage, 'handleHeaderEvents').mockImplementation(() => {
             return;
         });
+        mockActivatedRoute.snapshot.queryParams = { reOnboard: true };
+        profileSettingsPage.hideBackButton = true;
         // act
         profileSettingsPage.ionViewWillEnter();
         // assert
-        expect(data).toHaveBeenCalled();
         expect(mockHeaderService.showHeaderWithBackButton).toHaveBeenCalled();
+    });
+
+    it('should not reload the onboarding screens id reOnboard is null ionViewWillEnter()', () => {
+        // arrange
+        const data = jest.fn((fn => fn()));
+        mockHeaderService.headerEventEmitted$ = {
+            subscribe: data
+        } as any;
+        mockHeaderService.hideHeader = jest.fn();
+        mockHeaderService.showHeaderWithBackButton = jest.fn();
+        jest.spyOn(profileSettingsPage, 'handleHeaderEvents').mockImplementation(() => {
+            return;
+        });
+        mockActivatedRoute.snapshot.queryParams = null;
+        profileSettingsPage.hideBackButton = false;
+        // act
+        profileSettingsPage.ionViewWillEnter();
+        // assert
+        setTimeout(() => {
+            expect(mockHeaderService.showHeaderWithBackButton).toHaveBeenCalled();
+            expect(mockHeaderService.hideHeader).toHaveBeenCalled();
+        }, 0);
+
     });
 
     it('should handle hideHeader events by invoked ionViewWillEnter()', () => {
@@ -502,7 +528,8 @@ describe('ProfileSettingsPage', () => {
             mockAppVersion as AppVersion,
             mockAlertCtrl as AlertController,
             mockLocation as Location,
-            mockSplashScreenService as SplashScreenService
+            mockSplashScreenService as SplashScreenService,
+            mockActivatedRoute as ActivatedRoute
         );
         profileSettingsPage.boardSelect = {open: jest.fn()};
         profileSettingsPage.mediumSelect = ['hindi'];
