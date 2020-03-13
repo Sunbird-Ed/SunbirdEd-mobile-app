@@ -22,7 +22,6 @@ import { Location } from '@angular/common';
 import { Platform } from '@ionic/angular';
 import { Subscription, Observable } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
-import * as dayjs from 'dayjs';
 
 declare const cordova;
 
@@ -53,7 +52,7 @@ export class DataSyncComponent implements OnInit {
     this.lastSyncDateTime = this.telemetryService.lastSyncedTimestamp().pipe(
         map((ts) => {
           if (ts) {
-            return dayjs(ts).format('DD/MM/YYYY, hh:mm a');
+            return window.dayjs(ts).format('DD/MM/YYYY, hh:mm a');
           }
 
           return undefined;

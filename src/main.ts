@@ -4,6 +4,9 @@ import { AppModule } from './app/app.module';
 import { environment } from './environments/environment';
 import { hmrBootstrap } from './hmr';
 import 'reflect-metadata';
+import * as dayjs from 'dayjs';
+
+window.dayjs = dayjs;
 
 if (environment.production) {
   enableProdMode();

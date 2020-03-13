@@ -2,6 +2,8 @@ require('reflect-metadata');
 require('babel-polyfill');
 require('./regexp-polyfill.min')
 
+window.dayjs = require('dayjs')
+
 global.cordova = {
     plugins: {
         notification: {
