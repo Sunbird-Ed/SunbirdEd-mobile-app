@@ -178,11 +178,12 @@ describe('SbAppSharePopupComponent', () => {
         // arrange
         mockPopoverCtrl.dismiss = jest.fn();
         sbAppSharePopupComponent.shareUrl = 'sample_url';
+        const url = `Get Sunbird from the Play Store:` + '\n' + 'sample_url';
+        mockCommonUtilService.translateMessage = jest.fn(() => url);
         // act
         sbAppSharePopupComponent.shareLink();
         // assert
         setTimeout(() => {
-            const url = '\n' + `Get Sunbird from the Play Store:` + '\n' + 'sample_url';
             expect(mocksocialSharing.share).toHaveBeenCalledWith(null, null, null, url);
             expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(ShareMode.SHARE,
                 '',
@@ -199,6 +200,7 @@ describe('SbAppSharePopupComponent', () => {
                 PageId.SETTINGS,
                 Environment.SETTINGS);
             expect(mockPopoverCtrl.dismiss).toHaveBeenCalled();
+            expect(mockCommonUtilService.translateMessage).toHaveBeenCalled();
             done();
         }, 0);
     });

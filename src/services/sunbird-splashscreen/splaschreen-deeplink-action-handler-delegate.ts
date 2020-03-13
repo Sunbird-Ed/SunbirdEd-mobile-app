@@ -94,6 +94,12 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
     const url = new URL(inputUrl);
     // Read version code from deeplink.
     const requiredVersionCode = url.searchParams.get('vCode');
+    let content = null;
+    if (urlMatch.groups.quizId || urlMatch.groups.contentId) {
+      content = await this.contentService.getContentDetails({
+        contentId: urlMatch.groups.quizId || urlMatch.groups.contentId
+      }).toPromise();
+    }
     if (requiredVersionCode && !(await this.isAppCompatible(requiredVersionCode))) {
       this.upgradeAppPopover(requiredVersionCode);
     } else if (this.isOnboardingCompleted || session) {
