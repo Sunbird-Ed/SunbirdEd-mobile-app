@@ -25,8 +25,6 @@ import { SbPopoverComponent } from '@app/app/components/popups/sb-popover/sb-pop
 import { QRScannerAlert, QRAlertCallBack } from '@app/app/qrscanner-alert/qrscanner-alert.page';
 import { RouterLinks } from '@app/app/app.constant';
 import { mergeMap, take } from 'rxjs/operators';
-import { of } from 'rxjs';
-import { async } from '@angular/core/testing';
 
 declare const cordova;
 @Injectable()
