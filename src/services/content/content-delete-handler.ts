@@ -56,7 +56,8 @@ export class ContentDeleteHandler {
                 ],
                 icon: null,
                 metaInfo: content.contentData.name,
-                sbPopoverContent: ' 1 item' + ' (' + this.fileSizePipe.transform(content.sizeOnDevice, 2) + ')',
+                sbPopoverContent: ' 1 item' + ' (' + this.fileSizePipe.transform(content.sizeOnDevice ?
+                    content.sizeOnDevice : content.contentData.size, 2) + ')',
             },
             cssClass: 'sb-popover danger',
         });
