@@ -19,8 +19,6 @@ import {
   Profile,
   ProfileService,
   ProfileType,
-  SharedPreferences,
-  DeviceRegisterService,
   FrameworkCategoryCode
 } from 'sunbird-sdk';
 import {
@@ -217,19 +215,12 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
       this.handleHeaderEvents(eventName);
     });
 
-    // should be called everytime when entered to this page
-    this.redirectToInitialRoute();
-  }
-
-  hideOrShowHeader() {
     if (this.navParams) {
       this.hideBackButton = Boolean(this.navParams.hideBackButton);
     }
-    // if (!this.hideBackButton) {
-    //   this.headerService.showHeaderWithBackButton();
-    // } else {
-    //   this.headerService.hideHeader();
-    // }
+
+    // should be called everytime when entered to this page
+    this.redirectToInitialRoute();
     this.headerService.hideHeader();
   }
 
