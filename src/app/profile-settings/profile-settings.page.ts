@@ -176,6 +176,7 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
   private redirectToInitialRoute() {
     const snapshot = this.activatedRoute.snapshot;
     if (snapshot.queryParams && snapshot.queryParams.reOnboard) {
+      this.showQRScanner = false;
       const userTypeSelectionRoute = new URL(window.location.origin + `/${RouterLinks.USER_TYPE_SELECTION}`);
       const languageSettingRoute = new URL(window.location.origin + `/${RouterLinks.LANGUAGE_SETTING}`);
 
