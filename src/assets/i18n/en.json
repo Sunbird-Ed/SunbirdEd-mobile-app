@@ -155,6 +155,7 @@
   "DELETE": "Delete",
   "DELETE_ALL_CONTENT_WARNING": "Deleting content will remove selected content(s) from the device",
   "DELETE_CONTENT": "Delete Content?",
+  "DELETE_CONTENT_SIZE": " 1 item ({{content_size}})",
   "DELETE_CONTENT_WARNING": "Deleting content will remove content from the device",
   "DELETE_GROUP": "Delete Group",
   "DELETE_PROGRESS": "Deleting Selected Content",
