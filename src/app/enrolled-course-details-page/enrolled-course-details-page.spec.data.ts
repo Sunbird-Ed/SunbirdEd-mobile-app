@@ -212,6 +212,7 @@ export const mockEnrolledCourses = [
       dateTime: '2019-05-17 05:29:01.305Z',
       lastReadContentStatus: 2,
       contentId: 'do_2127509908237926401406',
+      courseId: 'do_091231312312',
       batch: {
         identifier: '0127580528849387521',
         endDate: null,

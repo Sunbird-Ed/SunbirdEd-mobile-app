@@ -70,7 +70,6 @@ import { ContentUtil } from '@app/util/content-util';
 import { SbPopoverComponent } from '../components/popups';
 import { ContentInfo } from '@app/services/content/content-info';
 import { ContentDeleteHandler } from '@app/services/content/content-delete-handler';
-import * as dayjs from 'dayjs';
 import { LocalCourseService } from '@app/services';
 import { EnrollCourse } from './course.interface';
 import { SbSharePopupComponent } from '../components/popups/sb-share-popup/sb-share-popup.component';
@@ -244,7 +243,6 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
     private contentDeleteHandler: ContentDeleteHandler,
     private localCourseService: LocalCourseService
   ) {
-
     this.objRollup = new Rollup();
     this.userId = this.appGlobalService.getUserId();
     // console.log('this.userId', this.userId);
@@ -1225,7 +1223,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
    * Ionic life cycle hook
    */
   async ionViewWillEnter() {
-    this.todayDate = dayjs().format('YYYY-MM-DD');
+    this.todayDate = window.dayjs().format('YYYY-MM-DD');
     console.log('coursecarddata' + this.courseCardData);
     this.identifier = this.courseCardData.contentId || this.courseCardData.identifier;
     this.downloadSize = 0;

@@ -8,7 +8,7 @@
       <section class="text-center W100" *ngIf="type==='phone'">
         <ion-label class="font-weight-bold ion-text-center">{{'ENTER_OTP' | translate}}</ion-label>
         <ion-col size="12" class="text-center ion-no-padding" *ngIf="invalidOtp">
-          <p class="error">{{'ERROR_OTP' | translate}}</p>
+          <p class="error">{{'ERROR_OTP' | translate:{'%s': remainingAttempts} }}</p>
         </ion-col>
         <ion-col size="12" class="text-center ion-no-padding">
           <div class="W100 merged-input-container MT10">
@@ -23,7 +23,7 @@
             <strong>{{'ENTER_OTP' | translate}}</strong>
           </ion-col>
           <ion-col size="12" class="text-center ion-no-padding" *ngIf="invalidOtp">
-            <p class="error">{{'ERROR_OTP' | translate}}</p>
+            <p class="error">{{'ERROR_OTP' | translate:{'%s': remainingAttempts} }}</p>
           </ion-col>
           <ion-col size="12" class="text-center ion-no-padding">
             <div class="W100 merged-input-container MT10">

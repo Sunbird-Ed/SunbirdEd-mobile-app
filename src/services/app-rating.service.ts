@@ -1,7 +1,6 @@
 import { Injectable, Inject } from '@angular/core';
 import { SharedPreferences } from 'sunbird-sdk';
 import { PreferenceKey, StoreRating } from '../app/app.constant';
-import * as dayjs from 'dayjs';
 import { File } from '@ionic-native/file/ngx';
 
 @Injectable()
@@ -22,7 +21,7 @@ export class AppRatingService {
   }
 
   setInitialDate() {
-    const presentDate = dayjs().format();
+    const presentDate = window.dayjs().format();
     this.preference.putString(PreferenceKey.APP_RATING_DATE, String(presentDate)).toPromise().then();
   }
 
