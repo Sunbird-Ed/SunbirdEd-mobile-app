@@ -56,25 +56,6 @@ export class LanguageSettingsPage {
     private activatedRoute: ActivatedRoute
   ) { }
 
-  ionViewDidEnter() {
-    const params = this.activatedRoute.snapshot.params;
-
-    this.isFromSettings = Boolean(params['isFromSettings']);
-
-    if (!this.isFromSettings) {
-      this.headerService.hideHeader();
-    } else {
-      this.headerService.showHeaderWithBackButton();
-    }
-
-    this.telemetryGeneratorService.generateImpressionTelemetry(
-        ImpressionType.VIEW, '',
-        this.isFromSettings ? PageId.SETTINGS_LANGUAGE : PageId.ONBOARDING_LANGUAGE_SETTING,
-        this.isFromSettings ? Environment.SETTINGS : Environment.ONBOARDING,
-    );
-  }
-
-
   handleBackButton() {
     this.unregisterBackButton = this.platform.backButton.subscribeWithPriority(10, () => {
       this.telemetryGeneratorService.generateInteractTelemetry(
@@ -93,6 +74,24 @@ export class LanguageSettingsPage {
   }
 
   ionViewWillEnter() {
+    const params = this.activatedRoute.snapshot.params;
+
+    this.isFromSettings = Boolean(params['isFromSettings']);
+
+    if (!this.isFromSettings) {
+      this.headerService.hideHeader();
+    } else {
+      this.headerService.showHeaderWithBackButton();
+    }
+
+    if (this.router.url === '/' + RouterLinks.LANGUAGE_SETTING || this.router.url === '/' + RouterLinks.LANGUAGE_SETTING + '/' + 'true') {
+      this.telemetryGeneratorService.generateImpressionTelemetry(
+          ImpressionType.VIEW, '',
+          this.isFromSettings ? PageId.SETTINGS_LANGUAGE : PageId.ONBOARDING_LANGUAGE_SETTING,
+          this.isFromSettings ? Environment.SETTINGS : Environment.ONBOARDING,
+      );
+    }
+
     this.selectedLanguage = {};
     this.init();
     this.headerObservable = this.headerService.headerEventEmitted$.subscribe(eventName => {

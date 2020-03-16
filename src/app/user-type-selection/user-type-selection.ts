@@ -30,7 +30,7 @@ const borderColor = '#F7F7F7';
   styleUrls: ['./user-type-selection.scss']
 })
 
-export class UserTypeSelectionPage implements OnInit {
+export class UserTypeSelectionPage {
   teacherCardBorderColor = '#F7F7F7';
   studentCardBorderColor = '#F7F7F7';
   userTypeSelected = false;
@@ -59,14 +59,10 @@ export class UserTypeSelectionPage implements OnInit {
     public frameworkGuard: HasNotSelectedFrameworkGuard,
     private splashScreenService: SplashScreenService
   ) {
-    this.getNavParams();
   }
 
   getNavParams() {
-    const navigation = this.router.getCurrentNavigation();
-    if (navigation && navigation.extras && navigation.extras.state) {
-      this.navParams = navigation.extras.state;
-    }
+    this.navParams = window.history.state;
   }
 
   ionViewDidEnter() {
@@ -81,14 +77,16 @@ export class UserTypeSelectionPage implements OnInit {
     }
   }
 
-  ngOnInit() {
-    this.telemetryGeneratorService.generateImpressionTelemetry(
-      ImpressionType.VIEW, '',
-      PageId.USER_TYPE_SELECTION,
-      this.appGlobalService.isOnBoardingCompleted ? Environment.HOME : Environment.ONBOARDING);
-  }
-
   ionViewWillEnter() {
+    if (this.router.url === '/' + RouterLinks.USER_TYPE_SELECTION) {
+      setTimeout(() => {
+        this.telemetryGeneratorService.generateImpressionTelemetry(
+            ImpressionType.VIEW, '',
+            PageId.USER_TYPE_SELECTION,
+            this.appGlobalService.isOnBoardingCompleted ? Environment.HOME : Environment.ONBOARDING);
+      }, 1000);
+    }
+    this.getNavParams();
     this.headerObservable = this.headerService.headerEventEmitted$.subscribe(eventName => {
       this.handleHeaderEvents(eventName);
     });
