@@ -55,7 +55,6 @@ export class EnrollmentDetailsComponent {
         this.upcommingBatches = this.navParams.get('upcommingBatches');
         this.retiredBatched = this.navParams.get('retiredBatched');
         this.todayDate = window.dayjs().format('YYYY-MM-DD');
-        console.log(window.dayjs);
         this.courseId = this.navParams.get('courseId');
         this.getUserId();
 
