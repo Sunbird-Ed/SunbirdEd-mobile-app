@@ -219,12 +219,12 @@ export class UserTypeSelectionPage implements OnInit {
       this.navigateToTabsAsGuest();
     } else if (this.appGlobalService.DISPLAY_ONBOARDING_CATEGORY_PAGE) {
       if (isUserTypeChanged) {
-        this.updateProfile('PermissionPage', { showProfileSettingPage: true });
+        this.updateProfile('ProfileSettingsPage', { showProfileSettingPage: true });
       } else {
-        this.navigateToPermissions({ showProfileSettingPage: true });
+        this.navigateToProfileSettingsPage({ showProfileSettingPage: true });
       }
     } else {
-      this.updateProfile('PermissionPage', { showTabsPage: true });
+      this.updateProfile('ProfileSettingsPage', { showTabsPage: true });
     }
   }
 
@@ -252,7 +252,7 @@ export class UserTypeSelectionPage implements OnInit {
         if (page === 'TabsPage') {
           this.navigateToTabsAsGuest();
         } else {
-          this.navigateToPermissions(params);
+          this.navigateToProfileSettingsPage(params);
         }
       }).catch(error => {
         console.error('Error=', error);
@@ -264,8 +264,8 @@ export class UserTypeSelectionPage implements OnInit {
     this.router.navigate(['/tabs'], navigationExtras);
   }
 
-  navigateToPermissions(params) {
+  navigateToProfileSettingsPage(params) {
     const navigationExtras: NavigationExtras = { state: params };
-    this.router.navigate([`/${RouterLinks.SETTINGS}/${RouterLinks.PERMISSION}`], navigationExtras);
+    this.router.navigate([`/${RouterLinks.PROFILE_SETTINGS}`], navigationExtras);
   }
 }
