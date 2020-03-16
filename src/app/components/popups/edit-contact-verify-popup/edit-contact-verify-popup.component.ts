@@ -1,6 +1,6 @@
 import { Component, OnInit, Inject, Input } from '@angular/core';
 import { NavParams, Platform, PopoverController, MenuController } from '@ionic/angular';
-import { GenerateOtpRequest, ProfileService, VerifyOtpRequest } from 'sunbird-sdk';
+import { GenerateOtpRequest, ProfileService, VerifyOtpRequest, HttpClientError, Response } from 'sunbird-sdk';
 
 import { ProfileConstants } from '@app/app/app.constant';
 import { CommonUtilService } from '@app/services/common-util.service';
@@ -23,6 +23,7 @@ export class EditContactVerifyPopupComponent implements OnInit {
   invalidOtp = false;
   enableResend = true;
   unregisterBackButton: any;
+  remainingAttempts: any;
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -71,16 +72,23 @@ export class EditContactVerifyPopupComponent implements OnInit {
           this.popOverCtrl.dismiss({ OTPSuccess: true, value: this.key });
         })
         .catch(error => {
-          if (error.response.body.params.err === 'ERROR_INVALID_OTP') {
-            this.invalidOtp = true;
+          if (error instanceof HttpClientError && error.response.responseCode === 400) {
+            if (typeof error.response.body  === 'object') {
+              if (error.response.body.params.err === 'OTP_VERIFICATION_FAILED' &&
+              error.response.body.result.remainingAttempt > 0) {
+                this.remainingAttempts = error.response.body.result.remainingAttempt;
+                this.invalidOtp = true;
+              } else {
+                this.popOverCtrl.dismiss();
+                this.commonUtilService.showToast('OTP_FAILED');
+              }
+            }
           }
         });
     } else {
       this.commonUtilService.showToast('INTERNET_CONNECTIVITY_NEEDED');
     }
   }
-
-
 
   async resendOTP() {
     if (this.commonUtilService.networkInfo.isNetworkAvailable) {

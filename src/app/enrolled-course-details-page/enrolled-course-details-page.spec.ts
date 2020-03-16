@@ -21,7 +21,7 @@ import { ContentDeleteHandler } from '../../services/content/content-delete-hand
 import { Location } from '@angular/common';
 import {
     mockEnrolledData, contentDetailsResponse, mockCourseCardData,
-    mockGetChildDataResponse, mockImportContentResponse
+    mockGetChildDataResponse, mockImportContentResponse, mockEnrolledCourses
 } from './enrolled-course-details-page.spec.data';
 import { of, Subject, throwError } from 'rxjs';
 import { ContentInfo } from '../../services/content/content-info';
@@ -29,7 +29,6 @@ import { PreferenceKey, ProfileConstants } from '../app.constant';
 import { isObject } from 'util';
 import { SbPopoverComponent } from '../components/popups';
 import { Mode, Environment, ImpressionType } from '../../services/telemetry-constants';
-
 
 describe('EnrolledCourseDetailsPage', () => {
     let enrolledCourseDetailsPage: EnrolledCourseDetailsPage;
@@ -63,7 +62,9 @@ describe('EnrolledCourseDetailsPage', () => {
         getUserId: jest.fn(() => 'SAMPLE_USER'),
         isUserLoggedIn: jest.fn(() => false),
         getGuestUserInfo: jest.fn(() => Promise.resolve('SAMPLE_GUEST_USER')),
-        resetSavedQuizContent: jest.fn()
+        resetSavedQuizContent: jest.fn(),
+        setEnrolledCourseList: jest.fn(),
+        getEnrolledCourseList: jest.fn(() => mockEnrolledCourses)
     };
     const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {
         generateImpressionTelemetry: jest.fn(),
@@ -1448,6 +1449,93 @@ describe('EnrolledCourseDetailsPage', () => {
             // assert
             expect(mockEvents.publish).toBeCalledWith('event:update_course_data');
             expect(window.history.go).toBeCalledWith(-2);
+        });
+    });
+
+    describe('handleNavBackButton()', () => {
+        it('should generate end event', () => {
+            // arrange
+            jest.spyOn(enrolledCourseDetailsPage, 'generateEndEvent');
+            // act
+            enrolledCourseDetailsPage.handleNavBackButton();
+            // assert
+            expect(enrolledCourseDetailsPage.generateEndEvent).toBeCalled();
+        });
+        it('should generate QR session end event', () => {
+            // arrange
+            enrolledCourseDetailsPage.shouldGenerateEndTelemetry = true;
+            jest.spyOn(enrolledCourseDetailsPage, 'generateEndEvent');
+            jest.spyOn(enrolledCourseDetailsPage, 'generateQRSessionEndEvent');
+            // act
+            enrolledCourseDetailsPage.handleNavBackButton();
+            // assert
+            expect(enrolledCourseDetailsPage.generateEndEvent).toBeCalled();
+            expect(enrolledCourseDetailsPage.generateQRSessionEndEvent).toBeCalled();
+        });
+    });
+
+    describe('ionViewWillEnter()', () => {
+        it('should be aguest user, ', () => {
+            // act
+            mockHeaderService.headerEventEmitted$ = {
+                subscribe: jest.fn(() => {})
+            };
+            enrolledCourseDetailsPage.guestUser = true;
+            enrolledCourseDetailsPage.isAlreadyEnrolled = true;
+            spyOn(enrolledCourseDetailsPage, 'isCourseEnrolled').and.stub();
+            spyOn(enrolledCourseDetailsPage, 'subscribeSdkEvent').and.stub();
+            spyOn(enrolledCourseDetailsPage, 'populateCorRelationData');
+            spyOn(enrolledCourseDetailsPage, 'handleBackButton').and.stub();
+            spyOn(enrolledCourseDetailsPage, 'getLastReadContentId');
+            enrolledCourseDetailsPage.ionViewWillEnter();
+            // assert
+            expect(enrolledCourseDetailsPage.guestUser).toEqual(true);
+            expect(mockHeaderService.showHeaderWithBackButton).toBeCalled();
+            expect(enrolledCourseDetailsPage.isCourseEnrolled).toBeCalled();
+            expect(enrolledCourseDetailsPage.subscribeSdkEvent).toBeCalled();
+            expect(enrolledCourseDetailsPage.populateCorRelationData).toBeCalled();
+            expect(enrolledCourseDetailsPage.handleBackButton).toBeCalled();
+            expect(enrolledCourseDetailsPage.getLastReadContentId).toBeCalled();
+        });
+
+        it('should be aguest user, ', () => {
+            // act
+            const data = {
+
+            };
+            mockAppGlobalService.setEnrolledCourseList = jest.fn();
+            enrolledCourseDetailsPage.guestUser = false;
+            mockHeaderService.headerEventEmitted$ = {
+                subscribe: jest.fn(() => {})
+            };
+            mockCourseService.getEnrolledCourses = jest.fn(() => of(mockEnrolledCourses));
+            // act
+            enrolledCourseDetailsPage.ionViewWillEnter();
+            // assert
+            
+        });
+    });
+    
+    describe('isCourseEnrolled()', () => {
+        it('should unenrolled course', () => {
+            // arrange
+            enrolledCourseDetailsPage.courseCardData = mockCourseCardData;
+            // act
+            enrolledCourseDetailsPage.isCourseEnrolled('do_091231312312');
+            // assert
+            expect(enrolledCourseDetailsPage.isAlreadyEnrolled).toEqual(true);
+            expect(enrolledCourseDetailsPage.courseCardData).toEqual(mockEnrolledCourses[0]);
+        });
+        
+        it('should course already enrolled', () => {
+            // arrange
+            enrolledCourseDetailsPage.isAlreadyEnrolled = false;
+            enrolledCourseDetailsPage.courseCardData = {};
+            // act
+            enrolledCourseDetailsPage.isCourseEnrolled('do_091231312312');
+            // assert
+            expect(enrolledCourseDetailsPage.isAlreadyEnrolled).toEqual(false);
+            expect(enrolledCourseDetailsPage.courseCardData).toEqual(mockEnrolledCourses[0]);
         });
     });
 });
