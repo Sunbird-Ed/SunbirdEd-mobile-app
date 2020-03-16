@@ -1519,23 +1519,22 @@ describe('EnrolledCourseDetailsPage', () => {
     describe('isCourseEnrolled()', () => {
         it('should unenrolled course', () => {
             // arrange
-            // enrolledCourseDetailsPage.guestUser = true;
-            enrolledCourseDetailsPage.courseCardData = {};
-            // act
-            enrolledCourseDetailsPage.isCourseEnrolled('do_091231312312');
-            // assert
-            expect(enrolledCourseDetailsPage.isAlreadyEnrolled).toEqual(false);
-            expect(enrolledCourseDetailsPage.courseCardData).toEqual(mockEnrolledCourses[0]);
-        });
-        
-        it('should course already enrolled', () => {
-            // arrange
-            // enrolledCourseDetailsPage.guestUser = true;
             enrolledCourseDetailsPage.courseCardData = mockCourseCardData;
             // act
             enrolledCourseDetailsPage.isCourseEnrolled('do_091231312312');
             // assert
             expect(enrolledCourseDetailsPage.isAlreadyEnrolled).toEqual(true);
+            expect(enrolledCourseDetailsPage.courseCardData).toEqual(mockEnrolledCourses[0]);
+        });
+        
+        it('should course already enrolled', () => {
+            // arrange
+            enrolledCourseDetailsPage.isAlreadyEnrolled = false;
+            enrolledCourseDetailsPage.courseCardData = {};
+            // act
+            enrolledCourseDetailsPage.isCourseEnrolled('do_091231312312');
+            // assert
+            expect(enrolledCourseDetailsPage.isAlreadyEnrolled).toEqual(false);
             expect(enrolledCourseDetailsPage.courseCardData).toEqual(mockEnrolledCourses[0]);
         });
     });
