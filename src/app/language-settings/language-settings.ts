@@ -85,11 +85,13 @@ export class LanguageSettingsPage {
     }
 
     if (this.router.url === '/' + RouterLinks.LANGUAGE_SETTING || this.router.url === '/' + RouterLinks.LANGUAGE_SETTING + '/' + 'true') {
-      this.telemetryGeneratorService.generateImpressionTelemetry(
-          ImpressionType.VIEW, '',
-          this.isFromSettings ? PageId.SETTINGS_LANGUAGE : PageId.ONBOARDING_LANGUAGE_SETTING,
-          this.isFromSettings ? Environment.SETTINGS : Environment.ONBOARDING,
-      );
+      setTimeout(() => {
+        this.telemetryGeneratorService.generateImpressionTelemetry(
+            ImpressionType.VIEW, '',
+            this.isFromSettings ? PageId.SETTINGS_LANGUAGE : PageId.ONBOARDING_LANGUAGE_SETTING,
+            this.isFromSettings ? Environment.SETTINGS : Environment.ONBOARDING,
+        );
+      }, 350);
     }
 
     this.selectedLanguage = {};

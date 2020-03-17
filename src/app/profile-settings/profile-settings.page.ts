@@ -215,7 +215,7 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
             PageId.ONBOARDING_PROFILE_PREFERENCES,
             Environment.ONBOARDING
         );
-      }, 1000);
+      }, 350);
     }
 
     this.handleDeviceBackButton();

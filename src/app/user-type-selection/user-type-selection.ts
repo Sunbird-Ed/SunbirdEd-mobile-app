@@ -84,7 +84,7 @@ export class UserTypeSelectionPage {
             ImpressionType.VIEW, '',
             PageId.USER_TYPE_SELECTION,
             this.appGlobalService.isOnBoardingCompleted ? Environment.HOME : Environment.ONBOARDING);
-      }, 1000);
+      }, 350);
     }
     this.getNavParams();
     this.headerObservable = this.headerService.headerEventEmitted$.subscribe(eventName => {
