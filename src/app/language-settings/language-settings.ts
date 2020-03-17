@@ -1,12 +1,11 @@
 import { Component, Inject, NgZone, OnInit } from '@angular/core';
 import { Events, Platform } from '@ionic/angular';
-import { Router, ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { SharedPreferences } from 'sunbird-sdk';
 
 import { appLanguages, PreferenceKey, RouterLinks } from '@app/app/app.constant';
 import { Map } from '@app/app/telemetryutil';
-import { AppGlobalService } from '@app/services/app-global-service.service';
 import { CommonUtilService } from '@app/services/common-util.service';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { AppHeaderService } from '@app/services/app-header.service';
@@ -27,7 +26,7 @@ export interface ILanguages {
   templateUrl: 'language-settings.html',
   styleUrls: ['./language-settings.scss']
 })
-export class LanguageSettingsPage implements OnInit {
+export class LanguageSettingsPage {
 
   languages: Array<ILanguages> = [];
   language: string;
@@ -57,29 +56,6 @@ export class LanguageSettingsPage implements OnInit {
     private activatedRoute: ActivatedRoute
   ) { }
 
-  ngOnInit() {
-    // To add up a delay so that IMPRESSION event will be generated after Splash IMPRESSION
-    setTimeout(() => {
-      this.telemetryGeneratorService.generateImpressionTelemetry(
-        ImpressionType.VIEW, '',
-        this.isFromSettings ? PageId.SETTINGS_LANGUAGE : PageId.ONBOARDING_LANGUAGE_SETTING,
-        this.isFromSettings ? Environment.SETTINGS : Environment.ONBOARDING,
-      );
-    }, 500);
-  }
-
-  ionViewDidEnter() {
-    this.activatedRoute.params.subscribe(params => {
-      this.isFromSettings = Boolean(params['isFromSettings']);
-      if (!this.isFromSettings) {
-        this.headerService.hideHeader();
-      } else {
-        this.headerService.showHeaderWithBackButton();
-      }
-    });
-  }
-
-
   handleBackButton() {
     this.unregisterBackButton = this.platform.backButton.subscribeWithPriority(10, () => {
       this.telemetryGeneratorService.generateInteractTelemetry(
@@ -98,6 +74,26 @@ export class LanguageSettingsPage implements OnInit {
   }
 
   ionViewWillEnter() {
+    const params = this.activatedRoute.snapshot.params;
+
+    this.isFromSettings = Boolean(params['isFromSettings']);
+
+    if (!this.isFromSettings) {
+      this.headerService.hideHeader();
+    } else {
+      this.headerService.showHeaderWithBackButton();
+    }
+
+    if (this.router.url === '/' + RouterLinks.LANGUAGE_SETTING || this.router.url === '/' + RouterLinks.LANGUAGE_SETTING + '/' + 'true') {
+      setTimeout(() => {
+        this.telemetryGeneratorService.generateImpressionTelemetry(
+            ImpressionType.VIEW, '',
+            this.isFromSettings ? PageId.SETTINGS_LANGUAGE : PageId.ONBOARDING_LANGUAGE_SETTING,
+            this.isFromSettings ? Environment.SETTINGS : Environment.ONBOARDING,
+        );
+      }, 350);
+    }
+
     this.selectedLanguage = {};
     this.init();
     this.headerObservable = this.headerService.headerEventEmitted$.subscribe(eventName => {
@@ -177,7 +173,7 @@ export class LanguageSettingsPage implements OnInit {
       InteractType.TOUCH,
       interactSubType,
       this.isFromSettings ? Environment.SETTINGS : Environment.ONBOARDING,
-      this.isFromSettings ? PageId.SETTINGS : PageId.ONBOARDING_LANGUAGE_SETTING,
+      this.isFromSettings ? PageId.SETTINGS_LANGUAGE : PageId.ONBOARDING_LANGUAGE_SETTING,
       undefined,
       valuesMap
     );
