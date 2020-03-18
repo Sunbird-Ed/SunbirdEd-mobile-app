@@ -207,12 +207,28 @@ export const mockCourseCardData = {
     }
 };
 
+export const mockCourseCardData_2 = {
+  mimeTypesCount: '{\'video/webm\':1,\'application/vnd.ekstep.content-collection\':2,\'video/mp4\':1}',
+  identifier: 'do_2127509908237926401406',
+  size: 73058,
+  name: 'Today today 29',
+  status: 'Live',
+  contentId: 'do_091231312312',
+  pkgVersion: 1,
+  compatibilityLevel: 4,
+  ownedBy: '0124784842112040965',
+  resourceType: 'Course',
+  node_id: 526456,
+  batchId: '0127580528849387521'
+};
+
 export const mockEnrolledCourses = [
     {
       dateTime: '2019-05-17 05:29:01.305Z',
       lastReadContentStatus: 2,
       contentId: 'do_2127509908237926401406',
       courseId: 'do_091231312312',
+      progress: 50,
       batch: {
         identifier: '0127580528849387521',
         endDate: null,
@@ -350,3 +366,36 @@ export const mockImportContentResponse = [
     }
   ];
 
+export const mockChildrenData = [
+  {
+    children: [
+      {
+        identifier: 'do_135241341148'
+      },
+      {
+        identifier: 'do_135241345727'
+      }
+    ]
+  },
+  {
+    children: [
+      {
+        identifier: 'do_135241341784'
+      },
+      {
+        identifier: 'do_135521312312'
+      }
+    ]
+  }
+];
+
+export const mockContentStatusData = {
+  contentList: [
+    {
+      contentId: 'do_135241341148'
+    },
+    {
+      contentId: 'do_135241345727'
+    }
+  ]
+};
