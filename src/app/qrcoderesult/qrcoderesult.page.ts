@@ -262,7 +262,7 @@ export class QrcoderesultPage implements OnDestroy {
         this.navCtrl.navigateForward([`/${RouterLinks.DISTRICT_MAPPING}`], navigationExtras);
       }
     } else if (this.appGlobalService.isGuestUser && this.isSingleContent && !this.appGlobalService.isProfileSettingsCompleted) {
-      const navigationExtras: NavigationExtras = { state: { isCreateNavigationStack: false, hideBackButton: true } };
+      const navigationExtras: NavigationExtras = { state: { isCreateNavigationStack: false, hideBackButton: true, showFrameworkCategoriesMenu: true  } };
       this.router.navigate([`/${RouterLinks.PROFILE_SETTINGS}`], navigationExtras);
     } else {
       this.goBack();
@@ -669,7 +669,7 @@ export class QrcoderesultPage implements OnDestroy {
   skipSteps() {
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,
-      InteractSubtype.SKIP_CLICKED,
+      InteractSubtype.NO_QR_CODE_CLICKED,
       !this.appGlobalService.isOnBoardingCompleted ? Environment.ONBOARDING : Environment.HOME,
       PageId.DIAL_CODE_SCAN_RESULT
     );
@@ -679,7 +679,7 @@ export class QrcoderesultPage implements OnDestroy {
       const navigationExtras: NavigationExtras = { state: { loginMode: 'guest' } };
       this.router.navigate([`/${RouterLinks.TABS}`], navigationExtras);
     } else {
-      this.router.navigate([`/${RouterLinks.PROFILE_SETTINGS}`]);
+      this.router.navigate([`/${RouterLinks.PROFILE_SETTINGS}`], { state: {showFrameworkCategoriesMenu: true } });
     }
   }
 

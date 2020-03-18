@@ -393,7 +393,8 @@ export enum InteractSubtype {
     UPGRADE_CLICKED = 'upgrade-clicked',
     FORCE_UPGRADE_INFO = 'force-upgrade-info',
     OPTIONAL_UPGRADE = 'optional-upgrade',
-    DEEPLINK_UPGRADE = 'deep-link-upgrade'
+    DEEPLINK_UPGRADE = 'deep-link-upgrade',
+    NO_QR_CODE_CLICKED = 'no-qr-code-clicked'
 }
 
 export enum ID {

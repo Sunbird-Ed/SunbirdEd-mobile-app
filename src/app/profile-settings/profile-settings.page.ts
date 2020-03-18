@@ -1,18 +1,17 @@
-import { Component, Inject, ViewChild, OnInit, ChangeDetectorRef, OnDestroy } from '@angular/core';
+import { FormAndFrameworkUtilService } from './../../services/formandframeworkutil.service';
+import { Component, Inject, ViewChild, OnInit, OnDestroy, ElementRef, AfterViewInit } from '@angular/core';
 import { Subscription, Observable, combineLatest } from 'rxjs';
 import { tap, delay } from 'rxjs/operators';
 import { Router, NavigationExtras, ActivatedRoute } from '@angular/router';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { TranslateService } from '@ngx-translate/core';
-import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
-import { PreferenceKey, ProfileConstants, RouterLinks, EventTopics } from '@app/app/app.constant';
+import { FormGroup, FormControl } from '@angular/forms';
+import { ProfileConstants, RouterLinks } from '@app/app/app.constant';
 import { GUEST_STUDENT_TABS, GUEST_TEACHER_TABS, initTabs } from '@app/app/module.service';
 import { ImpressionType, PageId, Environment, InteractSubtype, InteractType } from '@app/services/telemetry-constants';
 import {
-  CategoryTerm,
   Framework,
   FrameworkCategoryCodesGroup,
-  FrameworkDetailsRequest,
   FrameworkService,
   FrameworkUtilService,
   GetFrameworkCategoryTermsRequest,
@@ -20,8 +19,6 @@ import {
   Profile,
   ProfileService,
   ProfileType,
-  SharedPreferences,
-  DeviceRegisterService,
   FrameworkCategoryCode
 } from 'sunbird-sdk';
 import {
@@ -41,11 +38,12 @@ import { SplashScreenService } from '@app/services/splash-screen.service';
   templateUrl: './profile-settings.page.html',
   styleUrls: ['./profile-settings.page.scss'],
 })
-export class ProfileSettingsPage implements OnInit, OnDestroy {
+export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
   public pageId = 'ProfileSettingsPage';
   @ViewChild('boardSelect') boardSelect: any;
   @ViewChild('mediumSelect') mediumSelect: any;
   @ViewChild('gradeSelect') gradeSelect: any;
+  @ViewChild('animatedQRImage') animatedQRImageRef: ElementRef;
 
   private framework: Framework;
   private navParams: any;
@@ -53,10 +51,10 @@ export class ProfileSettingsPage implements OnInit, OnDestroy {
   private unregisterBackButton: Subscription;
   private headerObservable: any;
   private formControlSubscriptions: Subscription;
-
   loader: any;
   btnColor = '#8FC4FF';
   appName: string;
+  showQRScanner = true;
 
   public profileSettingsForm: FormGroup;
   public hideBackButton = true;
@@ -67,7 +65,7 @@ export class ProfileSettingsPage implements OnInit, OnDestroy {
 
   boardOptions = {
     title: this.commonUtilService.translateMessage('BOARD_OPTION_TEXT'),
-    cssClass: 'select-box'
+    cssClass: 'ftue-changes'
   };
   mediumOptions = {
     title: this.commonUtilService.translateMessage('MEDIUM_OPTION_TEXT'),
@@ -98,8 +96,7 @@ export class ProfileSettingsPage implements OnInit, OnDestroy {
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     @Inject('FRAMEWORK_SERVICE') private frameworkService: FrameworkService,
     @Inject('FRAMEWORK_UTIL_SERVICE') private frameworkUtilService: FrameworkUtilService,
-    @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
-    @Inject('DEVICE_REGISTER_SERVICE') private deviceRegisterService: DeviceRegisterService,
+    private formAndFrameworkUtilService: FormAndFrameworkUtilService,
     private translate: TranslateService,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private appGlobalService: AppGlobalService,
@@ -141,8 +138,6 @@ export class ProfileSettingsPage implements OnInit, OnDestroy {
       requiredFields: ProfileConstants.REQUIRED_FIELDS
     }).toPromise();
 
-    this.handleBackButton();
-
     this.formControlSubscriptions = combineLatest(
       this.onSyllabusChange(),
       this.onMediumChange(),
@@ -150,7 +145,6 @@ export class ProfileSettingsPage implements OnInit, OnDestroy {
         delay(250),
         tap(() => {
           this.btnColor = this.profileSettingsForm.valid ? '#006DE5' : '#8FC4FF';
-          this.updateStyle();
         })
       )
     ).subscribe();
@@ -158,9 +152,31 @@ export class ProfileSettingsPage implements OnInit, OnDestroy {
     await this.fetchSyllabusList();
   }
 
+  ngAfterViewInit() {
+    plugins['webViewChecker'].getCurrentWebViewPackageInfo()
+      .then((packageInfo) => {
+        this.formAndFrameworkUtilService.getWebviewConfig().then((webviewVersion) => {
+          if (parseInt(packageInfo.versionName.split('.')[0], 10) <= webviewVersion) {
+            this.animatedQRImageRef.nativeElement.style.width =
+            this.animatedQRImageRef.nativeElement.style.height = 'auto';
+            this.animatedQRImageRef.nativeElement.style.minWidth =
+            this.animatedQRImageRef.nativeElement.style.minHeight = 0;
+          }
+        }).catch(() => {
+          if (parseInt(packageInfo.versionName.split('.')[0], 10) <= 54) {
+            this.animatedQRImageRef.nativeElement.style.width =
+            this.animatedQRImageRef.nativeElement.style.height = 'auto';
+            this.animatedQRImageRef.nativeElement.style.minWidth =
+            this.animatedQRImageRef.nativeElement.style.minHeight = 0;
+          }
+        });
+      });
+  }
+
   private redirectToInitialRoute() {
     const snapshot = this.activatedRoute.snapshot;
     if (snapshot.queryParams && snapshot.queryParams.reOnboard) {
+      this.showQRScanner = false;
       const userTypeSelectionRoute = new URL(window.location.origin + `/${RouterLinks.USER_TYPE_SELECTION}`);
       const languageSettingRoute = new URL(window.location.origin + `/${RouterLinks.LANGUAGE_SETTING}`);
 
@@ -171,7 +187,6 @@ export class ProfileSettingsPage implements OnInit, OnDestroy {
       window.history.pushState({}, '', languageSettingRoute.toString());
       this.hideBackButton = false;
     }
-    this.hideOrShowHeader();
   }
 
   ngOnDestroy() {
@@ -184,7 +199,7 @@ export class ProfileSettingsPage implements OnInit, OnDestroy {
       this.navParams = navigation.extras.state;
     }
 
-    if (this.navParams && this.navParams.stopScanner && this.navParams.stopScanner) {
+    if (this.navParams && this.navParams.stopScanner) {
       setTimeout(() => {
         this.scanner.stopScanner();
       }, 500);
@@ -192,66 +207,31 @@ export class ProfileSettingsPage implements OnInit, OnDestroy {
   }
 
   ionViewWillEnter() {
+    this.handleDeviceBackButton();
+    // after qr scan if bmc is not populated then show only BMC
+    if (history.state && history.state.showFrameworkCategoriesMenu) {
+      this.showQRScanner = false;
+    }
     this.headerObservable = this.headerService.headerEventEmitted$.subscribe(eventName => {
       this.handleHeaderEvents(eventName);
     });
 
-    // should be caleed everytime when entered to this page
-    this.redirectToInitialRoute();
-  }
-
-  ionViewDidEnter() {
-    this.updateStyle();
-    this.hideOnboardingSplashScreen();
-  }
-
-  hideOrShowHeader() {
     if (this.navParams) {
       this.hideBackButton = Boolean(this.navParams.hideBackButton);
     }
-    if (!this.hideBackButton) {
-      this.headerService.showHeaderWithBackButton();
-    } else {
-      this.headerService.hideHeader();
-    }
+
+    // should be called everytime when entered to this page
+    this.redirectToInitialRoute();
+    this.headerService.hideHeader();
   }
 
-  hideOnboardingSplashScreen() {
+  ionViewDidEnter() {
+    this.hideOnboardingSplashScreen();
+  }
+
+  async hideOnboardingSplashScreen() {
     if (this.navParams && this.navParams.forwardMigration) {
       this.splashScreenService.handleSunbirdSplashScreenActions();
-    }
-  }
-
-  updateStyle() {
-    const ionSelectElement = Array.from(document.querySelectorAll('ion-item ion-select'));
-    if (ionSelectElement) {
-      ionSelectElement.forEach((element) => {
-        element['shadowRoot'].querySelector('.select-text').setAttribute('style', 'color:#006de5;padding-left: 10px;opacity: inherit');
-      });
-    }
-
-    const defaultSelectElement = Array.from(document.querySelectorAll('.item-label-stacked ion-select'));
-    if (defaultSelectElement) {
-      defaultSelectElement.forEach((element) => {
-        element['shadowRoot'].querySelector('.select-icon-inner')
-          .setAttribute('style', 'border: solid blue;border-width: 0 2px 2px 0;display: inline-block;padding: 4px;transform: rotate(45deg);animation: upDownAnimate 5s linear infinite;animation-duration: 0.9s;');
-      });
-    }
-
-    const disabledSelectElement = Array.from(document.querySelectorAll('.item-label-stacked.item-select-disabled ion-select'));
-    if (disabledSelectElement) {
-      disabledSelectElement.forEach((element) => {
-        element['shadowRoot'].querySelector('.select-text.select-placeholder').setAttribute('style', 'color: #979797 !important;padding-left: 10px;opacity: 1;');
-        element['shadowRoot'].querySelector('.select-icon-inner').setAttribute('style', 'border-color: #979797 !important;animation: none;border: solid;border-width: 0 2px 2px 0;display: inline-block;padding: 4px;transform: rotate(45deg);opacity: 1;');
-      });
-    }
-
-    const hasValueSelectElement = Array.from(document.querySelectorAll('.item-label-stacked.item-has-value ion-select'));
-    if (hasValueSelectElement) {
-      hasValueSelectElement.forEach((element) => {
-        element['shadowRoot'].querySelector('.select-text').setAttribute('style', 'font-weight: bold;color: #333333;padding-left: 10px;');
-        element['shadowRoot'].querySelector('.select-icon-inner').setAttribute('style', 'border-color: #333333;animation: none;border: solid;border-width: 0 2px 2px 0;display: inline-block;padding: 4px;transform: rotate(45deg);');
-      });
     }
   }
 
@@ -288,18 +268,28 @@ export class ProfileSettingsPage implements OnInit, OnDestroy {
     return profileReq;
   }
 
-  handleBackButton() {
+  handleDeviceBackButton() {
     this.unregisterBackButton = this.platform.backButton.subscribeWithPriority(10, () => {
-      this.dismissPopup();
+      this.handleBackButton(false);
     });
   }
 
   handleHeaderEvents($event) {
     switch ($event.name) {
       case 'back':
-        this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.ONBOARDING_PROFILE_PREFERENCES, Environment.ONBOARDING, true);
-        this.dismissPopup();
+        this.handleBackButton(true);
         break;
+    }
+  }
+
+  handleBackButton(isNavBack) {
+    if (this.showQRScanner === false) {
+      this.showQRScanner = true;
+      this.resetProfileSettingsForm();
+      this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.ONBOARDING_PROFILE_PREFERENCES, Environment.ONBOARDING, isNavBack);
+    } else {
+      this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.ONBOARDING_PROFILE_PREFERENCES, Environment.ONBOARDING, isNavBack);
+      this.dismissPopup();
     }
   }
 
@@ -310,7 +300,18 @@ export class ProfileSettingsPage implements OnInit, OnDestroy {
       Environment.ONBOARDING,
       PageId.ONBOARDING_PROFILE_PREFERENCES,
     );
-    this.scanner.startScanner(PageId.ONBOARDING_PROFILE_PREFERENCES, false);
+    this.scanner.startScanner(PageId.ONBOARDING_PROFILE_PREFERENCES, true).then((scannedData) => {
+      if (scannedData === 'skip') {
+        this.telemetryGeneratorService.generateImpressionTelemetry(
+          ImpressionType.VIEW, '',
+          PageId.ONBOARDING_PROFILE_PREFERENCES,
+          Environment.ONBOARDING
+        );
+        this.showQRScanner = false;
+
+        this.resetProfileSettingsForm();
+      }
+    });
   }
 
   onSubmitAttempt() {
@@ -406,6 +407,10 @@ export class ProfileSettingsPage implements OnInit, OnDestroy {
           return;
         }
 
+        if (!value.length) {
+          return;
+        }
+
         await this.commonUtilService.getLoader().then((loader) => {
           this.loader = loader;
           this.loader.present();
@@ -441,12 +446,12 @@ export class ProfileSettingsPage implements OnInit, OnDestroy {
           this.mediumList = (await this.frameworkUtilService.getFrameworkCategoryTerms(nextCategoryTermsRequet).toPromise())
             .map(t => ({ name: t.name, code: t.code }));
 
-          this.mediumControl.patchValue([]);
         } catch (e) {
           // todo
           console.error(e);
         } finally {
           // todo
+          this.mediumControl.patchValue([]);
           this.loader.dismiss();
         }
       })
@@ -474,12 +479,12 @@ export class ProfileSettingsPage implements OnInit, OnDestroy {
           this.gradeList = (await this.frameworkUtilService.getFrameworkCategoryTerms(nextCategoryTermsRequet).toPromise())
             .map(t => ({ name: t.name, code: t.code }));
 
-          this.gradeControl.patchValue([]);
         } catch (e) {
           // todo
           console.error(e);
         } finally {
           // todo
+          this.gradeControl.patchValue([]);
           this.loader.dismiss();
         }
       })
@@ -538,5 +543,26 @@ export class ProfileSettingsPage implements OnInit, OnDestroy {
         await this.loader.dismiss();
         this.commonUtilService.showToast('PROFILE_UPDATE_FAILED');
       });
+  }
+
+  private resetProfileSettingsForm() {
+    this.profileSettingsForm.reset({
+      syllabus: [],
+      board: [],
+      medium: [],
+      grade: []
+    });
+  }
+
+  boardClicked(e?: Event) {
+    if (e) {
+      e.stopPropagation();
+      e.preventDefault();
+    }
+
+    this.showQRScanner = false;
+    setTimeout(() => {
+      this.boardSelect.open();
+    }, 0);
   }
 }
