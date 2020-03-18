@@ -143,6 +143,13 @@ export class GroupMembersPage implements OnInit {
       console.log(this.userSelectionMap.get(this.userList[i].uid));
       console.log(this.userSelectionMap);
     }
+    this.telemetryGeneratorService.generateInteractTelemetry(
+        InteractType.TOUCH,
+        InteractSubtype.SELECT_ALL_CLICKED,
+        Environment.USER,
+        PageId.CREATE_GROUP,
+        undefined
+    );
     // });
   }
 
