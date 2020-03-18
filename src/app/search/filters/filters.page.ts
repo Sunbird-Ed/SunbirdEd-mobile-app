@@ -12,7 +12,6 @@ import { TelemetryGeneratorService } from '@app/services/telemetry-generator.ser
 import {
   Environment, InteractSubtype, InteractType, PageId
 } from '@app/services/telemetry-constants';
-import {Map} from '@app/app/telemetryutil';
 @Component({
   selector: 'app-filters',
   templateUrl: './filters.page.html',
@@ -66,7 +65,9 @@ export class FiltersPage {
 
   applyFilter() {
     this.navCtrl.pop();
-    const values = new Map();
+    const values = {
+      appliedFilter: {}
+    };
     values.appliedFilter = this.filterCriteria;
     this.telemetryGeneratorService.generateInteractTelemetry(
         InteractType.TOUCH,
