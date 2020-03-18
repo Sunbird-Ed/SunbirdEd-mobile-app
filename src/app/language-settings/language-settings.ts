@@ -49,7 +49,6 @@ export class LanguageSettingsPage implements OnInit {
     private zone: NgZone,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private platform: Platform,
-    private appGlobalService: AppGlobalService,
     private commonUtilService: CommonUtilService,
     private headerService: AppHeaderService,
     private notification: NotificationService,
@@ -59,24 +58,19 @@ export class LanguageSettingsPage implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.telemetryGeneratorService.generateImpressionTelemetry(
-      ImpressionType.VIEW, '',
-      this.isFromSettings ? PageId.SETTINGS_LANGUAGE : PageId.ONBOARDING_LANGUAGE_SETTING,
-      this.isFromSettings ? Environment.SETTINGS : Environment.ONBOARDING,
-    );
-  }
-
-  ionViewDidEnter() {
-    this.activatedRoute.params.subscribe(params => {
-      this.isFromSettings = Boolean(params['isFromSettings']);
-      console.log('FormSettings', this.isFromSettings);
-
+    // To add up a delay so that IMPRESSION event will be generated after Splash IMPRESSION
+    setTimeout(() => {
       this.telemetryGeneratorService.generateImpressionTelemetry(
         ImpressionType.VIEW, '',
         this.isFromSettings ? PageId.SETTINGS_LANGUAGE : PageId.ONBOARDING_LANGUAGE_SETTING,
         this.isFromSettings ? Environment.SETTINGS : Environment.ONBOARDING,
       );
+    }, 500);
+  }
 
+  ionViewDidEnter() {
+    this.activatedRoute.params.subscribe(params => {
+      this.isFromSettings = Boolean(params['isFromSettings']);
       if (!this.isFromSettings) {
         this.headerService.hideHeader();
       } else {

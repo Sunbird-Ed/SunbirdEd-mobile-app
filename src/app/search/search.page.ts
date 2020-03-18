@@ -272,10 +272,14 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
             this.navCtrl.navigateForward([`/${RouterLinks.DISTRICT_MAPPING}`], navigationExtras);
           }
         } else {
-          this.router.navigate([`/${RouterLinks.PROFILE_SETTINGS}`], { state: { isCreateNavigationStack: false, hideBackButton: true } });
+          this.router.navigate([`/${RouterLinks.PROFILE_SETTINGS}`], { state: { isCreateNavigationStack: false, hideBackButton: true, showFrameworkCategoriesMenu: true  } });
         }
       } else {
-        this.popCurrentPage();
+        if (this.source === PageId.ONBOARDING_PROFILE_PREFERENCES) {
+          this.router.navigate([`/${RouterLinks.PROFILE_SETTINGS}`], { state: {showFrameworkCategoriesMenu: true  }, replaceUrl: true });
+        } else {
+          this.popCurrentPage();
+        }
       }
     } else {
       this.popCurrentPage();

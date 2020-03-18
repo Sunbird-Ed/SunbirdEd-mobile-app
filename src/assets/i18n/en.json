@@ -31,7 +31,7 @@
   "ANSWER": "Answer",
   "APPLY": "APPLY",
   "APPLY_FILTER": "APPLY FILTER",
-  "APP_QR_CODE": "Have a {{%s}} QR code?",
+  "APP_QR_CODE": "Have a {{%s}} QR Code?",
   "APP_RATING_RATE_EXPERIENCE": "Rate your app experience",
   "APP_RATING_RATE_ON_PLAYSTORE": "Would you like to submit your rating to the Play Store?",
   "APP_RATING_REPORT_AN_ISSUE": "We are sorry you are having a bad experience. Would you like to report an issue?",
@@ -436,7 +436,7 @@
   "PUBLIC": "Public",
   "PUBLISHED_BY": "Published on {{%s}} by",
   "PUBLISHED_DATE": "Published date",
-  "QR_CODE_DETAILS": "Get instant access to digital content by scanning a QR code from your textbook",
+  "QR_CODE_DETAILS": "Get instant access to digital content by scanning a QR code from your textbook.",
   "QR_SHOWING_MULTIPLE_BOOK_RESULT": "Showing {{%s}} results for",
   "QUESTION": "Question",
   "QUESTIONS": "Questions",
@@ -655,5 +655,5 @@
   "YOU_ARE_NOT_CONNECTED_TO_THE_INTERNET": "You are not connected to the Internet",
   "YOU_MUST_JOIN_AN_ACTIVE_BATCH": "You must join an active batch to view and access training details",
   "YOU_MUST_JOIN_TO_ACCESS_TRAINING_DETAIL": "You must log in to access training details",
-  "YOU_MUST_LOGIN_TO_ACCESS_QUIZ_CONTENT": "You must log in to access this content"
+  "YOU_MUST_LOGIN_TO_ACCESS_QUIZ_CONTENT": "You must login to access this content"
 }
