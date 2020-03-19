@@ -61,9 +61,9 @@ export class ContentShareHandlerService {
       this.generateShareInteractEvents(InteractType.OTHER,
         InteractSubtype.SHARE_CONTENT_SUCCESS,
         content.contentData.contentType, corRelationList, rollup);
-      let shareLink = 'See \'' + content.contentData.name + '\' on ' + this.appName + '\n' + this.getContentUtm(shareParams.link, content);
-      shareLink = '\n' + shareLink +
-        `\n\n${this.commonUtilService.translateMessage('TRY_CONTENT_ON')}` + '\n' + await this.getPackageNameWithUTM(true);
+      const shareLink = this.commonUtilService.translateMessage('SHARE_CONTENT_LINK', {app_name: this.appName,
+         content_name: content.contentData.name, content_link: this.getContentUtm(shareParams.link, content),
+           play_store_url: await this.getPackageNameWithUTM(true)});
       this.social.share(null, null, null, shareLink);
     } else if (shareParams && shareParams.saveFile) {
       exportContentRequest = {
@@ -75,7 +75,7 @@ export class ContentShareHandlerService {
     }
   }
 
-  async exportContent(
+  private async exportContent(
     exportContentRequest: ContentExportRequest, shareParams, content: Content, corRelationList?: CorrelationData[], rollup?: Rollup
   ) {
     const loader = await this.commonUtilService.getLoader();
@@ -86,9 +86,9 @@ export class ContentShareHandlerService {
         if (shareParams.saveFile) {
           this.commonUtilService.showToast('FILE_SAVED', '', 'green-toast');
         } else if (shareParams.byFile) {
-          let shareLink = this.appName + ': \'' + content.contentData.name + '\'' + '\n';
-          shareLink = '\n' + shareLink +
-            `\n\n${this.commonUtilService.translateMessage('TRY_CONTENT_ON')}` + '\n' + await this.getPackageNameWithUTM(true);
+          const shareLink = this.commonUtilService.translateMessage('SHARE_CONTENT_FILE', {
+            app_name: this.appName, content_name: content.contentData.name, play_store_url: await this.getPackageNameWithUTM(true)
+          });
           this.social.share(shareLink, '', '' + response.exportedFilePath, '');
         }
         this.generateShareInteractEvents(InteractType.OTHER,

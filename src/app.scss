@@ -674,7 +674,7 @@ ion-toolbar {
   line-height: 12px;
   margin-left: 5px;
 }
-.info-icon {
+.information-icon-style {
   vertical-align: sub;
   margin-right: 13px;
   font-size: 1.8em !important;
@@ -939,6 +939,16 @@ ion-split-pane {
     @include ltr() {
       margin-left: 14px;
     }
+    &.etb-card-item {
+      width: auto !important;
+      margin-left: 0;
+      margin-right: 0;
+    }
+    &.etb-topic-item {
+      width: auto;
+      margin-left: 0;
+      margin-right: 0;
+    }
   }
   .sb-ftue-design {
     width: 100%;
@@ -960,6 +970,33 @@ ion-split-pane {
       line-height: 20px;
       @include margin(6px);
       @include clearfix;
+    }
+
+    &.etb-card-item {
+      border: 0.5px solid rgba(204, 204, 204, 1);
+      margin: 0 !important;
+    }
+
+    > div.etb-card-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px;
+
+      .etb-card-item-content {
+        display: flex;
+        align-items: center;
+        text-align: start;
+
+        flex-grow: 1;
+        .content-name {
+          @include padding(0, 1rem);
+        }
+      }
+
+      .etb-card-item-play-container {
+        flex-grow: 0;
+        flex-shrink: 0;
+      }
     }
 
     .pull-left {
@@ -1009,4 +1046,50 @@ ion-split-pane {
 [dir="rtl"] .search-input .native-input.sc-ion-input-md::placeholder {
   font-size: 11px !important;
   line-height: 32px !important;
+}
+
+.ftue-changes .alert-wrapper{
+  --min-height: 100%;
+  --min-width: 100%;
+}
+
+.ftue-changes {
+  .alert-head {
+    @include padding(13px 24px !important);
+  }
+  .alert-title {
+    font-size: 1.2rem !important;
+    font-weight: 700;
+  }
+}
+
+.ftue-changes .alert-button-group {
+  display: inline-block !important;
+  text-align: center;
+  .alert-button {
+    border-color: map-get($colors, primary);
+    text-transform: uppercase;
+    border-style: solid;
+    border-width: 1px;
+    border-radius: 4px !important;
+    overflow: hidden;
+    height: 2.8rem;
+    font-size: 1rem;
+    width: 46% !important;
+    font-weight: 700;
+
+    .alert-button-inner {
+      justify-content: center !important;
+    }
+  }
+}
+.ftue-changes .alert-radio-group {
+  max-height: 100%;
+}
+
+
+.ftue-changes.select-alert .alert-button:last-child:not(:only-child) {
+  background: map-get($colors, primary) !important;
+  color: map-get($colors, white) !important;
+  // margin-left: 5%;
 }

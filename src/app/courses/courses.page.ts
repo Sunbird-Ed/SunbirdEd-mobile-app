@@ -228,7 +228,7 @@ export class CoursesPage implements OnInit {
       }
     });
 
-    this.events.subscribe('tab.change', (data: string) => {
+    this.events.subscribe(EventTopics.TAB_CHANGE, (data: string) => {
       this.ngZone.run(() => {
         if (data.trim().toUpperCase() === 'COURSES') {
           if (this.appliedFilter) {

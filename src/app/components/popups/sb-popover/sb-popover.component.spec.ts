@@ -1,5 +1,6 @@
 import { SbPopoverComponent } from './sb-popover.component';
 import { PopoverController, Platform, NavParams } from '@ionic/angular';
+import { CommonUtilService } from '@app/services/common-util.service';
 import { NgZone } from '@angular/core';
 import { of } from 'rxjs';
 
@@ -17,6 +18,11 @@ describe('SbPopoverComponent', () => {
                             btnDisabled$: of([])
                         }
                     ];
+                    break;
+                case 'content':
+                    value = {
+                        identifier: "identifier"
+                    };
                     break;
                 case 'sbPopoverDynamicContent':
                     value = of([]);
@@ -49,13 +55,17 @@ describe('SbPopoverComponent', () => {
     const mockPopOverController: Partial<PopoverController> = {
         dismiss: jest.fn()
     };
+    const mockCommonUtilService: Partial<CommonUtilService> = {
+        showToast: jest.fn()
+    };
 
     beforeAll(() => {
         sbPopoverComponent = new SbPopoverComponent(
             mockNavParams as NavParams,
             mockPlatform as Platform,
             mockNgZone as NgZone,
-            mockPopOverController as PopoverController
+            mockPopOverController as PopoverController,
+            mockCommonUtilService as CommonUtilService
         );
     });
 
@@ -84,20 +94,54 @@ describe('SbPopoverComponent', () => {
     });
 
     describe('deleteContent()', () => {
-        it('should close popover', () => {
+        it('should invoke handler method passed by navparams', async (done) => {
             // arrange
+            const btn = {
+                isInternetNeededMessage: 'Message',
+                btntext: 'button'
+            };
+            mockCommonUtilService.networkInfo = {
+                isNetworkAvailable: false
+            };
             // act
-            sbPopoverComponent.deleteContent(true);
+            await sbPopoverComponent.deleteContent(true, btn);
             // assert
-            expect(mockPopOverController.dismiss).toHaveBeenCalledWith({ canDelete: true });
+            setTimeout(() => {
+                expect(mockCommonUtilService.showToast).toBeCalledWith(btn.isInternetNeededMessage);
+                done();
+            }, 0);
+        });
+        
+        it('should close popover', async (done) => {
+            // arrange
+            const btn = {
+                isInternetNeededMessage: 'Message',
+                btntext: 'button'
+            };
+            mockCommonUtilService.networkInfo = {
+                isNetworkAvailable: true
+            };
+            const handler = jest.fn();
+            jest.spyOn(mockNavParams, 'get').mockReturnValue(handler);
+            // act
+            await sbPopoverComponent.deleteContent(false, btn);
+            // assert
+            setTimeout(() => {
+                expect(mockPopOverController.dismiss).toHaveBeenCalledWith({ canDelete: false });
+                expect(handler).toBeCalledWith(btn.btntext);
+                done();
+            }, 0);
         });
 
-        it('should invoke handler method passed by navparams', () => {
+        it('should test else condition', async () => {
             // arrange
+            mockCommonUtilService.networkInfo = {
+                isNetworkAvailable: true
+            };
+            jest.spyOn(mockNavParams, 'get').mockReturnValue(undefined);
             // act
-            sbPopoverComponent.deleteContent(true, 'clickedButtonText');
+            await sbPopoverComponent.deleteContent();
             // assert
-            expect(mockPopOverController.dismiss).toHaveBeenCalledWith({ canDelete: true });
         });
     });
 
@@ -121,6 +165,24 @@ describe('SbPopoverComponent', () => {
     });
 
     describe('ngOnDestroy()', () => {
+        it('should else cases', () => {
+            // arrange
+            const unsubscribeFn = jest.fn();
+
+            sbPopoverComponent.sbPopoverDynamicMainTitleSubscription = undefined;
+
+            sbPopoverComponent.sbPopoverDynamicButtonDisabledSubscription = undefined;
+
+            sbPopoverComponent.sbPopoverDynamicContentSubscription = undefined;
+
+            sbPopoverComponent.backButtonFunc = undefined;
+
+            // act
+            sbPopoverComponent.ngOnDestroy();
+            // assert
+            expect(unsubscribeFn).toHaveBeenCalledTimes(0);
+        });
+
         it('should unsubscribe all subscription', () => {
             // arrange
             const unsubscribeFn = jest.fn();

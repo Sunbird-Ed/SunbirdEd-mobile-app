@@ -1,5 +1,5 @@
 import { PageFilterCallback } from './../page-filter/page-filter.page';
-import { Component, OnInit, AfterViewInit, Inject, NgZone, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, AfterViewInit, Inject, NgZone, ViewChild, ViewEncapsulation, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { IonContent as ContentView, Events, ToastController, MenuController } from '@ionic/angular';
 import { NavigationExtras, Router } from '@angular/router';
 import { animate, group, state, style, transition, trigger } from '@angular/animations';
@@ -8,6 +8,7 @@ import has from 'lodash/has';
 import forEach from 'lodash/forEach';
 import { Subscription } from 'rxjs';
 import { Network } from '@ionic-native/network/ngx';
+import { LibraryFiltersLayout } from '@project-sunbird/common-consumption';
 import {
   CategoryTerm,
   ContentEventType,
@@ -39,20 +40,24 @@ import {
   Search,
   ProfileConstants,
   RouterLinks,
-  ContentFilterConfig
+  ContentFilterConfig,
+  MimeType,
+  EventTopics
 } from '@app/app/app.constant';
-import { Map } from '@app/app/telemetryutil';
 import { AppGlobalService } from '@app/services/app-global-service.service';
 import { SunbirdQRScanner } from '@app/services/sunbirdqrscanner.service';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { CommonUtilService } from '@app/services/common-util.service';
 import { FormAndFrameworkUtilService } from '@app/services/formandframeworkutil.service';
-import { Environment, InteractSubtype, InteractType, PageId, ImpressionType,
-  ImpressionSubtype, CorReleationDataType } from '@app/services/telemetry-constants';
+import {
+  Environment, InteractSubtype, InteractType, PageId, ImpressionType,
+  ImpressionSubtype, CorReleationDataType
+} from '@app/services/telemetry-constants';
 import { AppHeaderService } from '@app/services/app-header.service';
 import { SplaschreenDeeplinkActionHandlerDelegate } from '@app/services/sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
 import { ContentUtil } from '@app/util/content-util';
+import { NotificationService } from '@app/services/notification.service';
 
 @Component({
   selector: 'app-resources',
@@ -64,7 +69,7 @@ import { ContentUtil } from '@app/util/content-util';
         left: '{{left_indent}}',
       }), { params: { left_indent: 0 } }), // default parameters values required
 
-      transition('* => classAnimate', [
+      transition('* => active', [
         style({ width: 5, opacity: 0 }),
         group([
           animate('0.3s 0.2s ease', style({
@@ -82,7 +87,7 @@ import { ContentUtil } from '@app/util/content-util';
         transform: 'translateX(-100px)',
       }), { params: { left_indent: 0 } }), // default parameters values required
 
-      transition('* => classAnimate', [
+      transition('* => active', [
         // style({ width: 5, transform: 'translateX(-100px)', opacity: 0 }),
         group([
           animate('0.3s 0.5s ease', style({
@@ -96,7 +101,7 @@ import { ContentUtil } from '@app/util/content-util';
     ])
   ]
 })
-export class ResourcesComponent implements OnInit, AfterViewInit {
+export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   pageLoadedSuccess = false;
   storyAndWorksheets: Array<any>;
   selectedValue: Array<string> = [];
@@ -105,6 +110,21 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
   recentlyViewedResources: Array<any>;
   userId: string;
   showLoader = false;
+
+  /**
+   * Common consumption
+   */
+  mediumFilterLayout = LibraryFiltersLayout.SQUARE;
+  classFilterLayout = LibraryFiltersLayout.ROUND;
+  cardDefaultImg;
+  offlineImg;
+  categoryMediumNamesArray = [];
+  mediumsSelected = [];
+  categoryGradeLevelsArray = [];
+  classSelected = [];
+  private networkSubscription?: Subscription;
+  networkFlag: boolean;
+  public imageSrcMap = new Map();
 
   /**
    * Flag to show latest and popular course loader
@@ -153,6 +173,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
   @ViewChild('contentView') contentView: ContentView;
   locallyDownloadResources;
   channelId: string;
+  coachTimeout: any;
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -175,7 +196,9 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
     public toastController: ToastController,
     public menuCtrl: MenuController,
     private headerService: AppHeaderService,
-    private router: Router
+    private router: Router,
+    private changeRef: ChangeDetectorRef,
+    private appNotificationService: NotificationService,
   ) {
     this.preferences.getString(PreferenceKey.SELECTED_LANGUAGE_CODE).toPromise()
       .then(val => {
@@ -189,6 +212,8 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
         this.appLabel = appName;
       });
     this.defaultImg = this.commonUtilService.convertFileSrc('assets/imgs/ic_launcher.png');
+    this.cardDefaultImg = this.commonUtilService.convertFileSrc('assets/imgs/ic_launcher.png');
+    this.offlineImg = this.commonUtilService.convertFileSrc('assets/imgs/ic_offline_white_sm.png');
     this.generateNetworkType();
 
   }
@@ -230,10 +255,11 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
 
   async ngOnInit() {
     this.getCurrentUser();
+    this.initNetworkDetection();
     this.appGlobalService.generateConfigInteractEvent(PageId.LIBRARY, this.isOnBoardingCardCompleted);
-    await this.splaschreenDeeplinkActionHandlerDelegate.onAction('content').toPromise();
+    this.appNotificationService.handleNotification();
 
-    this.events.subscribe('tab.change', (data: string) => {
+    this.events.subscribe(EventTopics.TAB_CHANGE, (data: string) => {
       this.scrollToTop();
       if (data.trim().toUpperCase() === 'LIBRARY') {
         if (this.appliedFilter) {
@@ -253,7 +279,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
   }
 
   generateNetworkType() {
-    const values = new Map();
+    const values = {};
     values['network-type'] = this.network.type;
     this.telemetryGeneratorService.generateExtraInfoTelemetry(
       values,
@@ -276,6 +302,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
     if (this.headerObservable) {
       this.headerObservable.unsubscribe();
     }
+    this.coachTimeout.clearTimeout();
   }
 
   /**
@@ -304,7 +331,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
   }
 
   navigateToViewMoreContentsPage(section: string) {
-    const values = new Map();
+    const values = {};
     let headerTitle;
     let pageName;
     let showDownloadOnlyToggleBtn;
@@ -437,14 +464,14 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
 
   getGroupByPage(isAfterLanguageChange = false, avoidRefreshList = false) {
     const selectedBoardMediumGrade = ((this.getGroupByPageReq.board && this.getGroupByPageReq.board.length
-        && this.getGroupByPageReq.board[0]) ? this.getGroupByPageReq.board[0] + ', ' : '') +
-        (this.getGroupByPageReq.medium && this.getGroupByPageReq.medium.length
-            && this.getGroupByPageReq.medium[0]) + ' Medium, ' +
-        (this.getGroupByPageReq.grade && this.getGroupByPageReq.grade.length && this.getGroupByPageReq.grade[0]);
+      && this.getGroupByPageReq.board[0]) ? this.getGroupByPageReq.board[0] + ', ' : '') +
+      (this.getGroupByPageReq.medium && this.getGroupByPageReq.medium.length
+        && this.getGroupByPageReq.medium[0]) + ' Medium, ' +
+      (this.getGroupByPageReq.grade && this.getGroupByPageReq.grade.length && this.getGroupByPageReq.grade[0]);
     this.appGlobalService.setSelectedBoardMediumGrade(selectedBoardMediumGrade);
     this.storyAndWorksheets = [];
     this.searchApiLoader = !this.refresh;
-    const reqvalues = new Map();
+    const reqvalues = {};
     reqvalues['pageReq'] = this.getGroupByPageReq;
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.OTHER,
       InteractSubtype.RESOURCE_PAGE_REQUEST,
@@ -476,10 +503,11 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
             this.storyAndWorksheets = newSections;
           }
           const sectionInfo = {};
-          for(let i = 0; i < this.storyAndWorksheets.length; i++) {
+          for (let i = 0; i < this.storyAndWorksheets.length; i++) {
             const sectionName = this.storyAndWorksheets[i].name,
               count = this.storyAndWorksheets[i].contents.length;
-
+            // check if locally available
+            this.markLocallyAvailableTextBook();
             for (let k = 0, len = this.storyAndWorksheets[i].contents.length; k < len; k++) {
               const content = this.storyAndWorksheets[i].contents[k];
               if (content.appIcon) {
@@ -487,24 +515,35 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
                   if (this.commonUtilService.networkInfo.isNetworkAvailable) {
                     content.appIcon = content.appIcon;
                   } else {
+                    this.imageSrcMap.set(content.identifier, content.appIcon);
                     content.appIcon = this.defaultImg;
                   }
                 } else if (content.basePath) {
                   content.appIcon = content.basePath + '/' + content.appIcon;
                 }
               }
+              // add custom attribute('cardImg') for common consumption
+              if (!(!content.isAvailableLocally && !this.commonUtilService.networkInfo.isNetworkAvailable)) {
+                if (this.commonUtilService.convertFileSrc(content.courseLogoUrl)) {
+                  this.storyAndWorksheets[i].contents[k].cardImg = this.commonUtilService.convertFileSrc(content.courseLogoUrl);
+                } else if (this.commonUtilService.convertFileSrc(content.appIcon)) {
+                  this.storyAndWorksheets[i].contents[k].cardImg = this.commonUtilService.convertFileSrc(content.appIcon);
+                } else {
+                  this.storyAndWorksheets[i].contents[k].cardImg = this.defaultImg;
+                }
+              } else {
+                this.storyAndWorksheets[i].contents[k].cardImg = 'assets/imgs/ic_offline_white_sm.png';
+              }
             }
 
-            // check if locally available
-            this.markLocallyAvailableTextBook();
             sectionInfo[sectionName] = count;
             sectionInfo['board'] = (this.getGroupByPageReq.board && this.getGroupByPageReq.board.length
-                && this.getGroupByPageReq.board[0]) ? this.getGroupByPageReq.board[0] : '';
+              && this.getGroupByPageReq.board[0]) ? this.getGroupByPageReq.board[0] : '';
             sectionInfo['medium'] = this.getGroupByPageReq.medium[0];
             sectionInfo['grade'] = this.getGroupByPageReq.grade[0];
           }
 
-          const resValues = new Map();
+          const resValues = {};
           resValues['pageRes'] = sectionInfo;
           this.telemetryGeneratorService.generateInteractTelemetry(InteractType.OTHER,
             InteractSubtype.RESOURCE_PAGE_LOADED,
@@ -527,7 +566,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
               this.commonUtilService.showToast('ERROR_FETCHING_DATA');
             }
           }
-          const errValues = new Map();
+          const errValues = {};
           errValues['isNetworkAvailable'] = this.commonUtilService.networkInfo.isNetworkAvailable ? 'Y' : 'N';
           this.telemetryGeneratorService.generateInteractTelemetry(InteractType.OTHER,
             InteractSubtype.RESOURCE_PAGE_ERROR,
@@ -569,7 +608,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
     }
   }
   generateExtraInfoTelemetry(sectionsCount) {
-    const values = new Map();
+    const values = {};
     values['pageSectionCount'] = sectionsCount;
     values['networkAvailable'] = this.commonUtilService.networkInfo.isNetworkAvailable ? 'Y' : 'N';
     this.telemetryGeneratorService.generateExtraInfoTelemetry(
@@ -636,6 +675,15 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
       this.getPopularContent();
     }
     this.subscribeSdkEvent();
+
+    this.splaschreenDeeplinkActionHandlerDelegate.isDelegateReady = true;
+  }
+
+  ionViewDidEnter() {
+    // Need timer to load the coach screen and for the coach screen to hide if user comes from deeplink.
+    this.coachTimeout = setTimeout(() => {
+      this.appGlobalService.showCouchMarkScreen();
+    }, 2000);
   }
 
   // Offline Toast
@@ -735,7 +783,9 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
     this.frameworkUtilService.getFrameworkCategoryTerms(req).toPromise()
       .then((res: CategoryTerm[]) => {
         this.categoryMediums = res;
-        this.arrangeMediumsByUserData(this.categoryMediums.map(a => ({ ...a })));
+        this.categoryMediumNamesArray = res.map(a => (a.name));
+        // this.arrangeMediumsByUserData(this.categoryMediums.map(a => ({ ...a })));
+        this.arrangeMediumsByUserData([...this.categoryMediumNamesArray]);
       })
       .catch(() => {
       });
@@ -755,19 +805,33 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
     if (this.appGlobalService.getCurrentUser() &&
       this.appGlobalService.getCurrentUser().medium &&
       this.appGlobalService.getCurrentUser().medium.length) {
-      const mediumIndex = this.findWithAttr(categoryMediumsParam, 'name', this.appGlobalService.getCurrentUser().medium[0]);
+      // const mediumIndex = this.findWithAttr(categoryMediumsParam, 'name', this.appGlobalService.getCurrentUser().medium[0]);
+      const matchedIndex = this.categoryMediumNamesArray.map(x => x.toLocaleLowerCase())
+        .indexOf(this.appGlobalService.getCurrentUser().medium[0].toLocaleLowerCase());
 
-      for (let i = mediumIndex; i > 0; i--) {
+      // for (let i = mediumIndex; i > 0; i--) {
+      //   categoryMediumsParam[i] = categoryMediumsParam[i - 1];
+      //   if (i === 1) {
+      //     categoryMediumsParam[0] = this.categoryMediums[mediumIndex];
+      //   }
+      // }
+      for (let i = matchedIndex; i > 0; i--) {
         categoryMediumsParam[i] = categoryMediumsParam[i - 1];
         if (i === 1) {
-          categoryMediumsParam[0] = this.categoryMediums[mediumIndex];
+          categoryMediumsParam[0] = this.categoryMediumNamesArray[matchedIndex];
         }
       }
-      this.categoryMediums = categoryMediumsParam;
+      // this.categoryMediums = categoryMediumsParam;
+      this.categoryMediumNamesArray = categoryMediumsParam;
 
-      for (let i = 0, len = this.categoryMediums.length; i < len; i++) {
-        if (this.getGroupByPageReq.medium[0].toLowerCase().trim() === this.categoryMediums[i].name.toLowerCase().trim()) {
-          this.mediumClick(this.categoryMediums[i].name);
+      // for (let i = 0, len = this.categoryMediums.length; i < len; i++) {
+      //   if (this.getGroupByPageReq.medium[0].toLowerCase().trim() === this.categoryMediums[i].name.toLowerCase().trim()) {
+      //     this.mediumClick(this.categoryMediums[i].name);
+      //   }
+      // }
+      for (let i = 0, len = this.categoryMediumNamesArray.length; i < len; i++) {
+        if (this.getGroupByPageReq.medium[0].toLowerCase().trim() === this.categoryMediumNamesArray[i].toLowerCase().trim()) {
+          this.mediumClickHandler(i, this.categoryMediumNamesArray[i]);
         }
       }
     }
@@ -783,9 +847,10 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
     this.frameworkUtilService.getFrameworkCategoryTerms(req).toPromise()
       .then((res: CategoryTerm[]) => {
         this.categoryGradeLevels = res;
-        for (let i = 0, len = this.categoryGradeLevels.length; i < len; i++) {
-          if (this.getGroupByPageReq.grade[0] === this.categoryGradeLevels[i].name) {
-            this.classClick(i);
+        this.categoryGradeLevelsArray = res.map(a => (a.name));
+        for (let i = 0, len = this.categoryGradeLevelsArray.length; i < len; i++) {
+          if (this.getGroupByPageReq.grade[0] === this.categoryGradeLevelsArray[i]) {
+            this.classClickHandler(i);
           }
         }
       })
@@ -823,7 +888,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
   }
 
   generateClassInteractTelemetry(currentClass: string, previousClass: string) {
-    const values = new Map();
+    const values = {};
     values['currentSelected'] = currentClass;
     values['previousSelected'] = previousClass;
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
@@ -835,7 +900,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
   }
 
   generateMediumInteractTelemetry(currentMedium: string, previousMedium: string) {
-    const values = new Map();
+    const values = {};
     values['currentSelected'] = currentMedium;
     values['previousSelected'] = previousMedium;
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
@@ -846,24 +911,44 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
       values);
   }
 
-  classClick(index, isClassClicked?: boolean) {
+  classClickEvent(event, isClassClicked?: boolean) {
+    this.classClickHandler(event.data.index, isClassClicked);
+  }
+
+  classClickHandler(index, isClassClicked?: boolean) {
+    // if (isClassClicked) {
+    //   this.generateClassInteractTelemetry(this.categoryGradeLevels[index].name, this.getGroupByPageReq.grade[0]);
+    // }
     if (isClassClicked) {
-      this.generateClassInteractTelemetry(this.categoryGradeLevels[index].name, this.getGroupByPageReq.grade[0]);
+      this.generateClassInteractTelemetry(this.categoryGradeLevelsArray[index], this.getGroupByPageReq.grade[0]);
     }
-    this.getGroupByPageReq.grade = [this.categoryGradeLevels[index].name];
-    // [grade.name];
-    if ((this.currentGrade) && (this.currentGrade.name !== this.categoryGradeLevels[index].name) && isClassClicked) {
+    // this.getGroupByPageReq.grade = [this.categoryGradeLevels[index].name];
+    this.getGroupByPageReq.grade = [this.categoryGradeLevelsArray[index]];
+    // if ((this.currentGrade) && (this.currentGrade.name !== this.categoryGradeLevels[index].name) && isClassClicked) {
+    //   this.getGroupByPage(false, !isClassClicked);
+    // }
+    if ((this.currentGrade) && (this.currentGrade !== this.categoryGradeLevelsArray[index]) && isClassClicked) {
       this.getGroupByPage(false, !isClassClicked);
     }
-    for (let i = 0, len = this.categoryGradeLevels.length; i < len; i++) {
+    // for (let i = 0, len = this.categoryGradeLevels.length; i < len; i++) {
+    //   if (i === index) {
+    //     this.currentGrade = this.categoryGradeLevels[i];
+    //     this.current_index = this.categoryGradeLevels[i];
+    //     this.categoryGradeLevels[i].selected = 'classAnimate';
+    //   } else {
+    //     this.categoryGradeLevels[i].selected = '';
+    //   }
+    // }
+    for (let i = 0, len = this.categoryGradeLevelsArray.length; i < len; i++) {
       if (i === index) {
-        this.currentGrade = this.categoryGradeLevels[i];
+        this.currentGrade = this.categoryGradeLevelsArray[i];
         this.current_index = this.categoryGradeLevels[i];
         this.categoryGradeLevels[i].selected = 'classAnimate';
       } else {
         this.categoryGradeLevels[i].selected = '';
       }
     }
+    this.classSelected = [index];
     let el: HTMLElement | null = document.getElementById('class' + index);
     if (el) {
       el.scrollIntoView({ behavior: 'smooth', block: 'end', inline: 'start' });
@@ -889,18 +974,40 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
     for (let i = 0, len = this.categoryMediums.length; i < len; i++) {
       if (this.categoryMediums[i].name === mediumName) {
         this.currentMedium = this.categoryMediums[i].name;
-        this.categoryMediums[i].selected = true;
+        // this.categoryMediums[i].selected = true;
       } else {
         this.categoryMediums[i].selected = false;
       }
     }
   }
 
-  navigateToDetailPage(item, index, sectionName) {
+  mediumClickEvent(event, isMediumClicked?: boolean) {
+    this.mediumClickHandler(event.data.index, event.data.text, isMediumClicked);
+  }
+
+  mediumClickHandler(index: number, mediumName, isMediumClicked?: boolean) {
+    if (isMediumClicked) {
+      this.generateMediumInteractTelemetry(mediumName, this.getGroupByPageReq.medium[0]);
+    }
+    this.getGroupByPageReq.medium = [mediumName];
+    if (this.currentMedium !== mediumName && isMediumClicked) {
+      this.getGroupByPage(false, !isMediumClicked);
+    }
+    for (let i = 0, len = this.categoryMediumNamesArray.length; i < len; i++) {
+      if (this.categoryMediumNamesArray[i] === mediumName) {
+        this.currentMedium = this.categoryMediumNamesArray[i];
+      }
+    }
+    this.mediumsSelected = [index];
+  }
+
+  navigateToDetailPage(event, sectionName) {
+    const item = event.data;
+    const index = event.index;
     const identifier = item.contentId || item.identifier;
     const telemetryObject: TelemetryObject = new TelemetryObject(identifier, item.contentType, item.pkgVersion);
     const corRelationList = [{ id: sectionName, type: CorReleationDataType.SUBJECT }];
-    const values = new Map();
+    const values = {};
     values['sectionName'] = item.subject;
     values['positionClicked'] = index;
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
@@ -945,7 +1052,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
   }
 
   handleHeaderEvents($event) {
-    console.log('inside handleHeaderEvents', $event);
     switch ($event.name) {
       case 'search':
         this.search();
@@ -970,7 +1076,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
   }
 
   redirectToNotifications() {
-    const valuesMap = new Map();
+    const valuesMap = {};
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,
       InteractSubtype.NOTIFICATION_CLICKED,
@@ -1022,7 +1128,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
       }
     };
     this.router.navigate([RouterLinks.EXPLORE_BOOK], navigationExtras);
-    const values = new Map();
+    const values = {};
     values['board'] = this.profile.board[0];
     values['class'] = this.currentGrade.name;
     values['medium'] = this.currentMedium;
@@ -1055,5 +1161,98 @@ export class ResourcesComponent implements OnInit, AfterViewInit {
     return this.frameworkService.getActiveChannelId().subscribe((data) => {
       this.channelId = data;
     });
+  }
+
+  recentlyViewedCardClick(event, course) {
+    const item = event.data;
+    const index = event.index;
+
+    const identifier = item.contentId || item.identifier;
+
+    const type = this.telemetryGeneratorService.isCollection(item.mimeType) ?
+      item.contentType : ContentType.RESOURCE;
+
+    const telemetryObject: TelemetryObject = new TelemetryObject(identifier, type, '');
+    const values = {};
+    values['sectionName'] = this.recentViewedSection;
+    values['positionClicked'] = index;
+
+    if (!course.isAvailableLocally && !this.commonUtilService.networkInfo.isNetworkAvailable) {
+      return false;
+    }
+
+    this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
+      InteractSubtype.CONTENT_CLICKED,
+      'home',
+      'library',
+      telemetryObject,
+      values);
+    if (course.mimeType === MimeType.COLLECTION) {
+      this.router.navigate([RouterLinks.COLLECTION_DETAIL_ETB], {
+        state: {
+          content: course
+        }
+      });
+    } else {
+      this.router.navigate([RouterLinks.CONTENT_DETAILS], {
+        state: {
+          content: course.contentData
+        }
+      });
+    }
+  }
+
+  private initNetworkDetection() {
+    this.networkFlag = this.commonUtilService.networkInfo.isNetworkAvailable;
+    this.networkSubscription = this.commonUtilService.networkAvailability$.subscribe(async (available: boolean) => {
+      if (this.networkFlag !== available) {
+        if (this.storyAndWorksheets.length) {
+          for (let i = 0, leng = this.storyAndWorksheets.length; i < leng; i++) {
+            for (let k = 0, len = this.storyAndWorksheets[i].contents.length; k < len; k++) {
+              const content = this.storyAndWorksheets[i].contents[k];
+              if (content.appIcon) {
+                if (content.appIcon.includes('http:') || content.appIcon.includes('https:')) {
+                  if (this.commonUtilService.networkInfo.isNetworkAvailable) {
+                    content.appIcon = content.appIcon;
+                  } else {
+                    this.imageSrcMap.set(content.identifier, content.appIcon);
+                    // this.imageSrcMap[content.identifier] = content.appIcon;
+                    content.appIcon = this.defaultImg;
+                  }
+                } else if (content.basePath) {
+                  content.appIcon = content.basePath + '/' + content.appIcon;
+                }
+              }
+              if (!available) {
+                // add custom attribute('cardImg') for common consumption
+                if (!(!content.isAvailableLocally && !this.commonUtilService.networkInfo.isNetworkAvailable)) {
+                  if (this.commonUtilService.convertFileSrc(content.courseLogoUrl)) {
+                    this.storyAndWorksheets[i].contents[k].cardImg = this.commonUtilService.convertFileSrc(content.courseLogoUrl);
+                  } else if (this.commonUtilService.convertFileSrc(content.appIcon)) {
+                    this.storyAndWorksheets[i].contents[k].cardImg = this.commonUtilService.convertFileSrc(content.appIcon);
+                  } else {
+                    this.storyAndWorksheets[i].contents[k].cardImg = this.defaultImg;
+                  }
+                } else {
+                  this.storyAndWorksheets[i].contents[k].cardImg = 'assets/imgs/ic_offline_white_sm.png';
+                }
+              } else {
+                content.cardImg = this.commonUtilService.convertFileSrc(this.imageSrcMap.get(content.identifier));
+                content.appIcon = this.commonUtilService.convertFileSrc(this.imageSrcMap.get(content.identifier));
+              }
+            }
+          }
+        }
+      }
+      this.networkFlag = available;
+      this.storyAndWorksheets = [...this.storyAndWorksheets];
+      this.changeRef.detectChanges();
+    });
+  }
+
+  ngOnDestroy() {
+    if (this.networkSubscription) {
+      this.networkSubscription.unsubscribe();
+    }
   }
 }

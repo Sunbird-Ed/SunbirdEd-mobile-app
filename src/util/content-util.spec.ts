@@ -1,5 +1,5 @@
-import {Content} from 'sunbird-sdk';
-import {ContentUtil} from '@app/util/content-util';
+import { Content } from 'sunbird-sdk';
+import { ContentUtil } from '@app/util/content-util';
 
 describe('ContentUtil', () => {
     describe('resolvePDFPreview()', () => {
@@ -63,6 +63,29 @@ describe('ContentUtil', () => {
                     availableLocally: true
                 })
             );
+        });
+    });
+
+    describe('arrayEmptyStringCheck()', () => {
+        it('should return true if an array contains an empty string', () => {
+            // arrange
+            // act / assert
+            expect(ContentUtil.arrayEmptyStringCheck(['sample', ''])).toBeTruthy();
+        });
+    });
+
+    describe('getAppIcon()', () => {
+        it('should return app icon if network is not available and its a http url', () => {
+            // arrange
+            // act / assert
+            expect(ContentUtil.getAppIcon('http://sample_aap_icon.png', 'sample_basepath', false)).toEqual('assets/imgs/ic_launcher.png');
+        });
+
+        it('should return basepath + app icon if app icon is not a  http url', () => {
+            // arrange
+            // act / assert
+            expect(ContentUtil.getAppIcon('content/sample_aap_icon.png', 'sample_basepath', false)).toEqual(
+                'sample_basepath/content/sample_aap_icon.png');
         });
     });
 });

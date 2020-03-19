@@ -11,8 +11,10 @@
     <div data-toggle="collapse" (click)="toggleGroup(i)">
       <div class="panel-heading">
         <div [ngClass]="{'panel-title': !isGroupShown(i), 'panel-title-blue': isGroupShown(i)}">{{ faq?.topic}}
-          <img class="btn-arrow" src="../../assets/faq/resources/images/Arrow.png" *ngIf="!isGroupShown(i)">
-          <img class="btn-arrow" src="../../assets/faq/resources/images/UpArrow.png" *ngIf="isGroupShown(i)">
+          <img class="btn-arrow" src="../../assets/faq/resources/images/Arrow.png" *ngIf="!isGroupShown(i)"
+            alt="group shown">
+          <img class="btn-arrow" src="../../assets/faq/resources/images/UpArrow.png" *ngIf="isGroupShown(i)"
+            alt="group not shown">
         </div>
       </div>
     </div>
@@ -42,9 +44,10 @@
     </div>
   </div>
   <div class="send-email">
-    <button class="report-button" (click)="navigateToReportIssue()"><img
-        src="../../assets/faq/resources/images/Report.png"> <span
-        class="report-text">{{ data?.constants?.reportIssueMsg }}</span></button>
+    <button class="report-button" (click)="navigateToReportIssue()">
+      <img src="../../assets/faq/resources/images/Report.png" alt="navigate to report issue.">
+      <span class="report-text">{{ data?.constants?.reportIssueMsg }}</span>
+    </button>
   </div>
 
 </ion-content>

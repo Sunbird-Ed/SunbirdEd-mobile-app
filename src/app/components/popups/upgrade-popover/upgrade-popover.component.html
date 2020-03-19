@@ -1,18 +1,24 @@
+<div class="close-container">
+    <ion-icon *ngIf="!isMandatoryUpgrade" name="close" class="sb-modal-close"
+              (click)="cancel(); $event.preventDefault(); $event.stopPropagation();"></ion-icon>
+</div>
+
 <ion-content padding-top padding-horizontal>
     <div text-center>
         <img src="assets/imgs/ic_launcher.png" alt="app" height="70" width="70" />
         <h6>
-            <strong>{{upgradeType?.upgrade?.title}}</strong>
+            <strong>{{upgradeType?.title | translate: {'app_name': appName} }}</strong>
         </h6>
-        <p class="scroll">{{upgradeType?.upgrade?.desc}}</p>
+        <p class="scroll">{{upgradeType?.desc | translate }}</p>
     </div>
 
 </ion-content>
 <ion-footer no-border padding>
-    <ion-button *ngIf="!isMandatoryUpgrade && upgradeType?.upgrade?.actionButtons[1]?.action === 'no'" expand="block"
-        fill="outline" size="small" (click)="cancel() ">
-        {{ upgradeType?.upgrade?.actionButtons[1]?.label }}</ion-button>
-    <ion-button *ngIf="upgradeType?.upgrade?.actionButtons[0]?.action === 'yes'" expand="block" size="small"
-        (click)="upgrade(upgradeType?.upgrade?.actionButtons[0]?.link) ">
-        {{ upgradeType?.upgrade?.actionButtons[0]?.label }}</ion-button>
+    <ion-button *ngIf="!isMandatoryUpgrade && actionButtonNo" expand="block" fill="outline" size="small"
+        (click)="cancel() ">
+        {{ actionButtonNo.label | translate }}
+    </ion-button>
+    <ion-button *ngIf="actionButtonYes" expand="block" size="small" (click)="upgradeApp(actionButtonYes.link)">
+        {{ actionButtonYes.label | translate }}
+    </ion-button>
 </ion-footer>

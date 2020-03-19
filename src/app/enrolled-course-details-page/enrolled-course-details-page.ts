@@ -199,7 +199,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
   lastReadContentName: string;
   lastReadContentType: string;
   enrollmentEndDate: string;
-  loader: any;
+  loader?: HTMLIonLoadingElement;
   isQrCodeLinkToContent: any;
   leaveTrainigPopover: any;
   showOfflineSection = false;
@@ -220,6 +220,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
   public rollUpMap: { [key: string]: Rollup } = {};
   public lastReadContentId;
   public courseCompletionData = {};
+  isCertifiedCourse: boolean;
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
@@ -313,6 +314,13 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
         this.batchId = res.batchId;
         if (this.identifier && res.courseId && this.identifier === res.courseId) {
           this.isAlreadyEnrolled = true;
+          this.zone.run(() => {
+            this.getContentsSize(this.childrenData);
+            if (this.loader) {
+              this.loader.dismiss();
+              this.loader = undefined;
+            }
+          });
         }
       }
     });
@@ -634,13 +642,6 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
         this.course.attributions = this.course.attributions.join(', ');
       }
 
-      if (this.course.me_totalRatings) {
-        const rating = this.course.me_totalRatings.split('.');
-        if (rating && rating[0]) {
-          this.course.me_totalRatings = rating[0];
-        }
-      }
-
       // User Rating
       const contentFeedback: any = data.contentFeedback ? data.contentFeedback : [];
       if (contentFeedback !== undefined && contentFeedback.length !== 0) {
@@ -683,6 +684,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
             this.batchDetails = data;
             // console.log('this.batchDetails', this.batchDetails);
             this.handleUnenrollButton();
+            this.isCertifiedCourse = data.cert_templates ? true : false;
             this.saveContentContext(this.appGlobalService.getUserId(),
               this.batchDetails.courseId, this.courseCardData.batchId, this.batchDetails.status);
             this.preferences.getString(PreferenceKey.COURSE_IDENTIFIER).toPromise()
@@ -1708,8 +1710,10 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
       this.promptToLogin(item);
     } else {
       const enrollCourseRequest = this.localCourseService.prepareEnrollCourseRequest(this.userId, item);
-      const loader = await this.commonUtilService.getLoader();
-      await loader.present();
+      this.loader = await this.commonUtilService.getLoader();
+      if (this.loader) {
+        this.loader.present();
+      }
       this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
         InteractSubtype.ENROLL_CLICKED,
         Environment.HOME,
@@ -1729,7 +1733,6 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
       this.localCourseService.enrollIntoBatch(enrollCourse).toPromise()
         .then((data: boolean) => {
           this.zone.run(async () => {
-            await loader.dismiss();
             this.courseCardData.batchId = item.id;
             this.commonUtilService.showToast(this.commonUtilService.translateMessage('COURSE_ENROLLED'));
             this.events.publish(EventTopics.ENROL_COURSE_SUCCESS, {
@@ -1740,7 +1743,10 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
           });
         }, (error) => {
           this.zone.run(async () => {
-            await loader.dismiss();
+           if (this.loader) {
+             this.loader.dismiss();
+             this.loader = undefined;
+           }
           });
         });
     }

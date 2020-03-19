@@ -2,7 +2,7 @@ import { Component, NgZone, OnDestroy } from '@angular/core';
 import { Platform, NavParams, PopoverController } from '@ionic/angular';
 import { CorrelationData, Rollup } from 'sunbird-sdk';
 import { Observable, Subscription} from 'rxjs';
-import { CommonUtilService } from '@app/services/';
+import { CommonUtilService } from '@app/services/common-util.service';
 import { map, tap } from 'rxjs/operators';
 
 @Component({
@@ -28,7 +28,6 @@ export class SbPopoverComponent implements OnDestroy {
   showFlagMenu = true;
   img: any;
   public objRollup: Rollup;
-  public commonUtilService: CommonUtilService;
 
   public corRelationList: Array<CorrelationData>;
   public sbPopoverDynamicMainTitle$?: Observable<string>;
@@ -40,7 +39,8 @@ export class SbPopoverComponent implements OnDestroy {
     public navParams: NavParams,
     private platform: Platform,
     private ngZone: NgZone,
-    private popoverCtrl: PopoverController
+    private popoverCtrl: PopoverController,
+    private commonUtilService: CommonUtilService
   ) {
     this.content = this.navParams.get('content');
     this.actionsButtons = this.navParams.get('actionsButtons');
@@ -133,10 +133,14 @@ export class SbPopoverComponent implements OnDestroy {
    await this.popoverCtrl.dismiss({closeDeletePopOver});
   }
 
-  async deleteContent(canDelete: boolean = false, clickedButtonText?) {
+  async deleteContent(canDelete: boolean = false, btn?) {
+    if (!this.commonUtilService.networkInfo.isNetworkAvailable && btn.isInternetNeededMessage) {
+      this.commonUtilService.showToast(btn.isInternetNeededMessage);
+      return false;
+    }
     this.popoverCtrl.dismiss({ canDelete });
     if (this.navParams.get('handler')) {
-      this.navParams.get('handler')(clickedButtonText);
+      this.navParams.get('handler')(btn.btntext);
     }
   }
 }

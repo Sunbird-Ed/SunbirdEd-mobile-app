@@ -76,6 +76,11 @@
         height: 38px;
         border: 0.5px solid #D6D6D6;
         background-color: #CCCCCC;
+        display: inline-block;
+    }
+    .content-name {
+        padding-left: 1em;
+        color: black;
     }
     .sb-checkmark-icon{
         color : $secondary-200;
@@ -112,4 +117,27 @@
 
 .done-pt-8 {
     padding-top: 8px !important;
+}
+
+.content-playbutton {
+    padding-left: 4px;
+    color: #024f9d;
+}
+.play-button{
+    --border-color: #024f9d;
+    --border-width: 1px;
+    text-transform: none;
+    height: 3em;
+}
+.image-position{
+    display: inline-block;
+    position: relative;
+    .icon-position {
+        position: absolute;
+        top: -8px;
+        right: -8px;
+    }
+}
+.sub-unit {
+    padding-left: 16px !important;
 }

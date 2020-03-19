@@ -121,6 +121,7 @@ export enum PageId {
     UPDATE_WEBVIEW_POPUP = 'update-webview-popup',
     SHARE_CONTENT_POPUP = 'share-content-popup',
     SHARE_APP_POPUP = 'share-app-popup',
+    UPGRADE_POPUP = 'update-popup',
     IMPORT_CONTENT_POPUP = 'import-content-popup'
 }
 export enum LogType {
@@ -154,7 +155,9 @@ export enum ImpressionSubtype {
     COMINGSOON_POPUP = 'coming-soon-popup',
     EXPLORE_MORE_CONTENT = 'explore-more-content',
     RECOVERY_ACCOUNT_POPUP = 'recovery-account-popup',
-    DISTRICT_LOCATION_MAPPING = 'district-location-mapping'
+    DISTRICT_LOCATION_MAPPING = 'district-location-mapping',
+    UPGRADE_POPUP = 'upgrade-popup',
+    DEEPLINK = 'deeplink'
 }
 export enum InteractType {
     TOUCH = 'TOUCH',
@@ -167,8 +170,10 @@ export enum InteractType {
     LICENSE_CARD_COLLAPSED = 'license-card-collapsed',
     LICENSE_CARD_EXPANDED = 'license-card-expanded',
     QUIZ_DEEPLINK = 'quiz-deeplink',
+    DISABLED = 'disabled',
     DELETE_CHECKED = 'delete-checked',
-    DELETE_UNCHECKED = 'delete-unchecked'
+    DELETE_UNCHECKED = 'delete-unchecked',
+    BACKDROP_DISMISSED = 'backdrop-dismissed'
 }
 
 
@@ -185,7 +190,6 @@ export enum InteractSubtype {
     SIGNUP_INITIATE = 'signup-initiate',
     LOGOUT_INITIATE = 'logout-initiate',
     LOGOUT_SUCCESS = 'logout-success',
-    BROWSE_AS_GUEST_CLICKED = 'browse-as-guest-clicked',
     CONTINUE_CLICKED = 'continue-clicked',
     GRANT_ACCESS_CLICKED = 'grant-access-clicked',
     APP_PERMISSION_SETTING_CLICKED = 'app-permission-setting-clicked',
@@ -385,7 +389,12 @@ export enum InteractSubtype {
     STATE_CHANGED = 'state-changed',
     DIST_CHANGED = 'dist-changed',
     UPDATE_WEBVIEW_CLICKED = 'update-webview-clicked',
-    CREDITS_CLICKED = 'credits-clicked'
+    CREDITS_CLICKED = 'credits-clicked',
+    UPGRADE_CLICKED = 'upgrade-clicked',
+    FORCE_UPGRADE_INFO = 'force-upgrade-info',
+    OPTIONAL_UPGRADE = 'optional-upgrade',
+    DEEPLINK_UPGRADE = 'deep-link-upgrade',
+    NO_QR_CODE_CLICKED = 'no-qr-code-clicked'
 }
 
 export enum ID {
@@ -402,7 +411,10 @@ export enum ID {
     SHARE = 'share-clicked',
     SHARE_CONFIRM = 'share-confirm-clicked',
     APP_LAUNCH = 'app-launch',
-    LOAD_CLICKED = 'load-clicked'
+    CONTINUE_CLICKED = 'continue-clicked',
+    LOAD_CLICKED = 'load-clicked',
+    BACKDROP_CLICKED = 'backdrop-clicked',
+    CANCEL_CLICKED = 'cancel-clicked'
 }
 
 export enum ActionButtonType {

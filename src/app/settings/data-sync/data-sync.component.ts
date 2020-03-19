@@ -3,9 +3,9 @@ import {
   TelemetrySyncStat,
   TelemetryService,
   TelemetryImpressionRequest,
-  TelemetryExportResponse,
-  TelemetryExportRequest,
-  TelemetryAutoSyncModes
+  TelemetryAutoSyncModes,
+  ArchiveService,
+  ArchiveObjectType
 } from 'sunbird-sdk';
 import { CommonUtilService } from 'services/common-util.service';
 import { TelemetryGeneratorService } from 'services/telemetry-generator.service';
@@ -41,6 +41,7 @@ export class DataSyncComponent implements OnInit {
 
   constructor(
     @Inject('TELEMETRY_SERVICE') private telemetryService: TelemetryService,
+    @Inject('ARCHIVE_SERVICE') private archiveService: ArchiveService,
     public zone: NgZone,
     private changeDetectionRef: ChangeDetectorRef,
     private social: SocialSharing,
@@ -107,21 +108,24 @@ export class DataSyncComponent implements OnInit {
   async shareTelemetry() {
     const loader = await this.commonUtilService.getLoader();
     await loader.present();
-    const telemetryExportRequest: TelemetryExportRequest = {
-      destinationFolder: cordova.file.externalDataDirectory
-    };
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
       InteractSubtype.SHARE_TELEMETRY_CLICKED,
       Environment.SETTINGS,
       PageId.SETTINGS_DATASYNC,
       undefined);
-    this.telemetryService.exportTelemetry(telemetryExportRequest).subscribe(async (data: TelemetryExportResponse) => {
-      await loader.dismiss();
-      this.social.share('', '', 'file://' + data.exportedFilePath, '');
-    }, async () => {
-      await loader.dismiss();
-      this.commonUtilService.showToast('SHARE_TELEMETRY_FAILED');
-    });
+    return this.archiveService.export(
+      { objects: [{ type: ArchiveObjectType.TELEMETRY }],
+      filePath: cordova.file.externalCacheDirectory + '/tmp' })
+        .toPromise()
+        .then(async (r) => {
+          await loader.dismiss();
+          return this.social.share('', '', r.filePath, '');
+        })
+        .catch(async (e) => {
+          console.error(e);
+          await loader.dismiss();
+          this.commonUtilService.showToast('SHARE_TELEMETRY_FAILED');
+        });
   }
 
   async onSyncClick() {

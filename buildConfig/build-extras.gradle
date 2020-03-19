@@ -3,7 +3,7 @@ buildscript {
         maven {
             url 'https://maven.fabric.io/public'
         }
-        maven { url 'https://maven.google.com' }
+        google()
         jcenter()
         mavenCentral()
     }
@@ -13,9 +13,7 @@ buildscript {
 }
 
 repositories {
-    maven {
-        url 'https://maven.google.com/'
-    }
+    google()
     maven { 
         url 'https://maven.fabric.io/public' 
     }
@@ -25,9 +23,7 @@ apply plugin: com.crashlytics.tools.gradle.CrashlyticsPlugin
 
 allprojects {
     repositories {
-        maven {
-            url "https://maven.google.com"
-        }
+        google()
         jcenter()
 
         flatDir {
@@ -66,7 +62,7 @@ android {
     defaultConfig {
         minSdkVersion 19
         ext.buildNumber = System.getenv("TRAVIS_BUILD_NUMBER") ?: "local"
-        versionName "2.7.$ext.buildNumber"
+        versionName "2.8.$ext.buildNumber"
         manifestPlaceholders = [fabricKey: "${release_fabric_api_key}", fabricSecret: "${release_fabric_api_secret}"]
         resValue("string", "_app_name", "${app_name}")
         multiDexEnabled true
@@ -200,6 +196,18 @@ android {
         }
     }
 
+    task copyDirContentRating(type: Copy,overwrite: true) {
+        if (System.properties['os.name'].toLowerCase().contains('windows')){
+            from "$rootDir\\app\\data\\content-rating"
+            into "$rootDir\\app\\src\\main\\assets\\www\\assets\\data\\content-rating"
+            println "inside copydir content-rating windows OS"
+        } else {
+            from "$rootDir/app/data/content-rating"
+            into "$rootDir/app/src/main/assets/www/assets/data/content-rating"
+            println "inside copydir content-rating linux OS"
+        }
+    }
+
     task copyDirDev(type: Copy,overwrite: true) {
         if (System.properties['os.name'].toLowerCase().contains('windows')){
             from "$rootDir\\app\\data\\dev"
@@ -237,13 +245,13 @@ android {
     }
 
     task dev(type: GradleBuild) {
-        tasks = ['myclean', 'copyDirDev', 'copyDirNotificationConfig', 'copyDirFaq']
+        tasks = ['myclean', 'copyDirDev', 'copyDirNotificationConfig', 'copyDirFaq', 'copyDirContentRating']
     }      
     task staging(type: GradleBuild) {
-        tasks = ['myclean', 'copyDirStaging', 'copyDirNotificationConfig', 'copyDirFaq']
+        tasks = ['myclean', 'copyDirStaging', 'copyDirNotificationConfig', 'copyDirFaq', 'copyDirContentRating']
     }
     task prod(type: GradleBuild) {
-        tasks = ['myclean', 'copyDirProd', 'copyDirNotificationConfig', 'copyDirFaq']
+        tasks = ['myclean', 'copyDirProd', 'copyDirNotificationConfig', 'copyDirFaq', 'copyDirContentRating']
     }
 
     applicationVariants.all { variant ->
@@ -272,7 +280,9 @@ android {
             versionName += '-debug';
         }
         flavor.versionName = versionName;
+        variant.buildConfigField("String", "REAL_VERSION_NAME", "\"${versionName}\"");
         variant.outputs.each { output ->
+            // output.versionNameOverride = versionName
             // output.outputFileName = new File(output.outputFile.parent, "${app_name}-".toLowerCase() + versionName + ".apk")
             output.outputFileName = "${variant.name}-${variant.versionName}.apk"
         }

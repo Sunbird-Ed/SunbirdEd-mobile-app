@@ -1,6 +1,6 @@
 <div>
   <ng-container *ngIf="childData | hasMimeType: activeMimeTypeFilter : isTextbookTocPage">
-    <div [ngClass]="{'unit-hierachy sb-topic-item': !isTextbookTocPage}"
+    <div [ngClass]="{'unit-hierachy sb-topic-item': !isTextbookTocPage, 'sub-unit': !isTextbookTocPage}"
       (click)="!fromCourseToc && setContentId(childData.identifier)" [id]="childData.identifier"
       *ngIf="childData?.contentData?.mimeType === 'application/vnd.ekstep.content-collection' && childData?.children && !isTextbookTocPage">
       {{childData?.contentData?.name}}
@@ -14,27 +14,53 @@
       </div>
     </div>
   </ng-container>
-  <div [id]="childData.identifier" [ngClass]="{'row sb-topic-item': !stckyUnitTitle, 'sb-highlighted-row' : (latestParentName === childData?.contentData?.name) ,
+  <div [id]="childData.identifier" [ngClass]="{'etb-topic-item': !isTextbookTocPage && !fromCourseToc, 'row sb-topic-item': !stckyUnitTitle, 'sb-highlighted-row' : (latestParentName === childData?.contentData?.name) ,
    'row sb-topic-item':  (stckyUnitTitle !== childData?.contentData?.name)}" class="sticky-header-title-box"
     [attr.data-text]="childData.contentData.name" [attr.data-render-level]="renderLevel"
     *ngIf="!isTextbookTocPage && childData?.contentData?.mimeType !== 'application/vnd.ekstep.content-collection' && hasMimeType(activeMimeTypeFilter, childData?.contentData?.mimeType, childData)"
     (click)="navigateToDetailsPage(childData, depth + '.' + (i + 1))">
 
-    <div class="sb-ftue-design" *ngIf="!fromCourseToc  && !isTextbookTocPage">
-      <div class="clearfix" [ngClass]="{'sb-accordian-grey-text': !commonUtilService.networkInfo.isNetworkAvailable && !childData?.isAvailableLocally,
+    <div class="sb-ftue-design etb-card-item" *ngIf="!fromCourseToc  && !isTextbookTocPage">
+      <ng-container *ngIf="!isTextbookTocPage">
+        <div class="etb-card-item" [ngClass]="{'sb-accordian-grey-text': !commonUtilService.networkInfo.isNetworkAvailable && !childData?.isAvailableLocally,
            'sb-play-selected':childData?.isAvailableLocally,'sb-play-unselected':!childData?.isAvailableLocally}">
-        <div class="pull-left">
-          {{childData?.contentData?.name}}
-          <span *ngIf="childData?.isAvailableLocally">
+          <div class="etb-card-item-content">
+            <div class="image-position">
+              <img class="content-icon" alt=""
+                   [src]="commonUtilService.convertFileSrc(localImage) || commonUtilService.convertFileSrc(collectionChildIcon) ||
+               commonUtilService.convertFileSrc(childData?.contentData?.appIcon) || defaultAppIcon">
+              <span class="icon-position" *ngIf="childData?.isAvailableLocally">
+              <ion-icon class="sb-checkmark-icon" name="md-checkmark-circle"></ion-icon>
+            </span>
+            </div>
+            <span class="content-name">{{childData?.contentData?.name}}</span>
+          </div>
+
+          <div class="etb-card-item-play-container">
+            <ion-button class="play-button" shape="round" fill="outline" size="small"
+                        (click)="$event.stopPropagation(); $event.preventDefault(); playContent(childData)">
+              <img style="display: inline-block; width: 16px" src="./assets/imgs/play.svg" alt="">
+              <span class="content-playbutton">{{'PLAY' | translate}}</span>
+            </ion-button>
+          </div>
+        </div>
+      </ng-container>
+      <ng-container *ngIf="fromCourseToc">
+        <div class="clearfix" [ngClass]="{'sb-accordian-grey-text': !commonUtilService.networkInfo.isNetworkAvailable && !childData?.isAvailableLocally,
+           'sb-play-selected':childData?.isAvailableLocally,'sb-play-unselected':!childData?.isAvailableLocally}">
+          <div class="pull-left">
+            {{childData?.contentData?.name}}
+            <span *ngIf="childData?.isAvailableLocally">
             <ion-icon class="sb-checkmark-icon" name="md-checkmark-circle"></ion-icon>
           </span>
-        </div>
+          </div>
 
-        <div class="pull-right">
-          <img class="content-icon" alt=""
-            [src]="commonUtilService.convertFileSrc(localImage) || commonUtilService.convertFileSrc(collectionChildIcon) || commonUtilService.convertFileSrc(childData?.contentData?.appIcon) || defaultAppIcon">
+          <div class="pull-right">
+            <img class="content-icon" alt=""
+                 [src]="commonUtilService.convertFileSrc(localImage) || commonUtilService.convertFileSrc(collectionChildIcon) || commonUtilService.convertFileSrc(childData?.contentData?.appIcon) || defaultAppIcon">
+          </div>
         </div>
-      </div>
+      </ng-container>
     </div>
     <!-- only for QR CODE SCanner-->
 
@@ -63,7 +89,7 @@
     </div>
   </div>
 
-  <div class="row sb-topic-item" (click)="showComingSoonPopup(childData)"
+  <div class="row sb-topic-item"(click)="showComingSoonPopup(childData)"
     *ngIf="isTextbookTocPage && childData?.contentData?.mimeType === 'application/vnd.ekstep.content-collection' && !childData?.children">
     <div class="sb-accordian-grey-text">{{childData?.contentData?.name}}</div>
     <ion-icon ios="ios-alert" md="md-alert" class="grey-icon mt-4"></ion-icon>

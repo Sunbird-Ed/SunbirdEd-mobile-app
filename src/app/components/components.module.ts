@@ -7,7 +7,6 @@ import { TranslateModule } from '@ngx-translate/core';
 import { ApplicationHeaderComponent } from './application-header/application-header.component';
 import { SignInCardComponent } from './sign-in-card/sign-in-card.component';
 import { TextBookCardComponent } from './text-book-card/text-book-card.component';
-import { NewCourseCardComponent } from './new-course-card/new-course-card.component';
 import { PipesModule } from '../../pipes/pipes.module';
 import { ViewAllCardComponent } from './view-all-card/view-all-card.component';
 import { ViewMoreCardComponent } from './view-more-card/view-more-card.component';
@@ -52,7 +51,6 @@ import {ImportPopoverComponent} from './popups/import-popover/import-popover.com
     ApplicationHeaderComponent,
     SignInCardComponent,
     TextBookCardComponent,
-    NewCourseCardComponent,
     ViewAllCardComponent,
     ViewMoreCardComponent,
     PbHorizontalComponent,
@@ -127,7 +125,6 @@ import {ImportPopoverComponent} from './popups/import-popover/import-popover.com
     ApplicationHeaderComponent,
     SignInCardComponent,
     TextBookCardComponent,
-    NewCourseCardComponent,
     ViewAllCardComponent,
     ViewMoreCardComponent,
     PbHorizontalComponent,

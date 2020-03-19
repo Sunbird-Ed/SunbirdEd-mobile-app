@@ -1,9 +1,9 @@
-import {ResourcesComponent} from '@app/app/resources/resources.component';
-import {Container} from 'inversify';
-import {ContentService, EventsBusService, ProfileService, ProfileServiceImpl, SharedPreferences} from 'sunbird-sdk';
-import {EventsBusServiceImpl} from 'sunbird-sdk/events-bus/impl/events-bus-service-impl';
-import {ContentServiceImpl} from 'sunbird-sdk/content/impl/content-service-impl';
-import {NgZone} from '@angular/core';
+import { ResourcesComponent } from '@app/app/resources/resources.component';
+import { Container } from 'inversify';
+import { ContentService, EventsBusService, ProfileService, ProfileServiceImpl, SharedPreferences } from 'sunbird-sdk';
+import { EventsBusServiceImpl } from 'sunbird-sdk/events-bus/impl/events-bus-service-impl';
+import { ContentServiceImpl } from 'sunbird-sdk/content/impl/content-service-impl';
+import { NgZone, ChangeDetectorRef } from '@angular/core';
 import {
     AppGlobalService,
     AppHeaderService,
@@ -13,14 +13,14 @@ import {
     SunbirdQRScanner,
     TelemetryGeneratorService
 } from '@app/services';
-import {Events, MenuController, ToastController} from '@ionic/angular';
-import {AppVersion} from '@ionic-native/app-version/ngx';
-import {Network} from '@ionic-native/network/ngx';
-import {TranslateService} from '@ngx-translate/core';
-import {Router} from '@angular/router';
-import {SplaschreenDeeplinkActionHandlerDelegate} from '@app/services/sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
-import {mockContentData} from '@app/app/content-details/content-details.page.spec.data';
-import {of, Subscription} from 'rxjs';
+import { Events, MenuController, ToastController } from '@ionic/angular';
+import { AppVersion } from '@ionic-native/app-version/ngx';
+import { Network } from '@ionic-native/network/ngx';
+import { TranslateService } from '@ngx-translate/core';
+import { Router } from '@angular/router';
+import { SplaschreenDeeplinkActionHandlerDelegate } from '@app/services/sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
+import { mockContentData } from '@app/app/content-details/content-details.page.spec.data';
+import { of, Subscription, NEVER } from 'rxjs';
 import {
     ContentSearchCriteria,
     ContentsGroupedByPageSection,
@@ -29,8 +29,14 @@ import {
     Profile,
     ProfileSource,
     ProfileType,
-    SearchType
-} from 'sunbird-sdk/dist';
+    SearchType,
+    GetFrameworkCategoryTermsRequest,
+    FrameworkCategoryCode,
+    FrameworkCategoryCodesGroup,
+    TelemetryObject
+} from 'sunbird-sdk';
+import { NotificationService } from '../../services/notification.service';
+import { EventTopics } from '../app.constant';
 
 describe('ResourcesComponent', () => {
     let resourcesComponent: ResourcesComponent;
@@ -91,6 +97,10 @@ describe('ResourcesComponent', () => {
     const mockRouter: Partial<Router> = {
         getCurrentNavigation: jest.fn(() => mockContentData)
     };
+    const mockAppNotificationService: Partial<NotificationService> = {
+    };
+    const mockChangeRef: Partial<ChangeDetectorRef> = {};
+
     const constructComponent = () => {
         resourcesComponent = new ResourcesComponent(
             mockProfileService as ProfileServiceImpl,
@@ -113,7 +123,9 @@ describe('ResourcesComponent', () => {
             mockToastCtrlService as ToastController,
             mockMenuController as MenuController,
             mockHeaderService as AppHeaderService,
-            mockRouter as Router
+            mockRouter as Router,
+            mockChangeRef as ChangeDetectorRef,
+            mockAppNotificationService as NotificationService
         );
     };
     beforeAll(() => {
@@ -152,14 +164,14 @@ describe('ResourcesComponent', () => {
         });
         mockEvents.subscribe = jest.fn((topic, fn) => {
             if (topic === 'savedResources:update') {
-                fn({update: 'sample_update_result'});
+                fn({ update: 'sample_update_result' });
             }
 
             if (topic === 'event:showScanner') {
-                fn({pageName: 'library'});
+                fn({ pageName: 'library' });
             }
             if (topic === 'onAfterLanguageChange:update') {
-                fn({selectedLanguage: 'ur'});
+                fn({ selectedLanguage: 'ur' });
                 resourcesComponent.selectedLanguage = 'ur';
             }
 
@@ -167,7 +179,7 @@ describe('ResourcesComponent', () => {
                 fn();
             }
             if (topic === 'force_optional_upgrade') {
-                fn({upgrade: 'sample_result'});
+                fn({ upgrade: 'sample_result' });
                 mockAppGlobalService.openPopover = jest.fn(() => Promise.resolve());
                 resourcesComponent.isUpgradePopoverShown = true;
             }
@@ -216,81 +228,181 @@ describe('ResourcesComponent', () => {
         }, 0);
     });
 
-    it('should get board, medium and grade if available and search Data accordingly when called', (done) => {
-        // arrange
-        const request: ContentSearchCriteria = {
-            searchType: SearchType.SEARCH,
-            mode: 'hard',
-            board: ['Tripura', 'Assam'],
-            medium: ['English', 'Bengali'],
-            grade: ['Mathematics', 'Science']
-        };
-        mockAppGlobalService.setSelectedBoardMediumGrade = jest.fn();
-        mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
-        mockTelemetryGeneratorService.generateEndSheenAnimationTelemetry = jest.fn();
-        jest.spyOn(resourcesComponent, 'generateExtraInfoTelemetry').mockImplementation();
-        mockContentService.searchContentGroupedByPageSection = jest.fn(() => of({
-            name: 'sample_name',
-            sections: [
-                {
-                    contents: [
-                        {
-                            appIcon: 'https:',
-                        }
-                    ],
-                    name: 'mathematics',
-                    display: {
-                        name: {
-                            en: 'Mathematics'
-                        }
+    describe('getGroupByPage', () => {
+        it('should convert the courseLogoUrl if it is there in the content', (done) => {
+            // arrange
+            const request: ContentSearchCriteria = {
+                searchType: SearchType.SEARCH,
+                mode: 'hard',
+                board: ['Tripura', 'Assam'],
+                medium: ['English', 'Bengali'],
+                grade: ['Mathematics', 'Science']
+            };
+            mockAppGlobalService.setSelectedBoardMediumGrade = jest.fn();
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            mockTelemetryGeneratorService.generateEndSheenAnimationTelemetry = jest.fn();
+            jest.spyOn(resourcesComponent, 'generateExtraInfoTelemetry').mockImplementation();
+            mockContentService.searchContentGroupedByPageSection = jest.fn(() => of({
+                name: 'sample_name',
+                sections: [
+                    {
+                        contents: [
+                            {
+                                appIcon: 'https:',
+                            }
+                        ],
+                        name: 'mathematics',
+                        display: {
+                            name: {
+                                en: 'Mathematics'
+                            }
+                        },
                     },
-                },
-            ]
-        } as ContentsGroupedByPageSection));
-        mockCommonUtilService.networkInfo.isNetworkAvailable = true;
-        mockNgZone.run = jest.fn((fn) => fn());
-        // act
-        resourcesComponent.getPopularContent(false, request);
-        resourcesComponent.getGroupByPage(false, false);
-        setTimeout(() => {
-            // assert
-            expect(mockAppGlobalService.setSelectedBoardMediumGrade).toHaveBeenCalled();
-            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
-            expect(mockContentService.searchContentGroupedByPageSection).toHaveBeenCalled();
-            expect(mockNgZone.run).toHaveBeenCalled();
-            done();
-        }, 0);
-    });
+                ]
+            } as ContentsGroupedByPageSection));
+            mockCommonUtilService.networkInfo.isNetworkAvailable = true;
+            mockNgZone.run = jest.fn((fn) => fn());
+            mockCommonUtilService.convertFileSrc = jest.fn(() => 'http://sample.png');
+            // act
+            resourcesComponent.getPopularContent(false, request);
+            resourcesComponent.getGroupByPage(false, false);
+            setTimeout(() => {
+                // assert
+                expect(mockAppGlobalService.setSelectedBoardMediumGrade).toHaveBeenCalled();
+                expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
+                expect(mockContentService.searchContentGroupedByPageSection).toHaveBeenCalled();
+                expect(mockNgZone.run).toHaveBeenCalled();
+                done();
+            }, 0);
+        });
 
-    it('should handle catchPart when getGroupByPageSection() returns an error', (done) => {
-        // arrange
-        const request: ContentSearchCriteria = {
-            searchType: SearchType.SEARCH,
-            mode: 'hard',
-            board: ['Tripura', 'Assam'],
-            medium: ['English', 'Bengali'],
-            grade: ['Mathematics', 'Science']
-        };
-        mockAppGlobalService.setSelectedBoardMediumGrade = jest.fn();
-        mockTelemetryGeneratorService.generateEndSheenAnimationTelemetry = jest.fn();
-        mockContentService.searchContentGroupedByPageSection = jest.fn(() => {
-            return of(Promise.reject('SERVER_ERROR'));
+        it('should not convert the courseLogoUrl if it is not there in the content, and skip this step', (done) => {
+            // arrange
+            const request: ContentSearchCriteria = {
+                searchType: SearchType.SEARCH,
+                mode: 'hard',
+                board: ['Tripura', 'Assam'],
+                medium: ['English', 'Bengali'],
+                grade: ['Mathematics', 'Science']
+            };
+            mockAppGlobalService.setSelectedBoardMediumGrade = jest.fn();
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            mockTelemetryGeneratorService.generateEndSheenAnimationTelemetry = jest.fn();
+            jest.spyOn(resourcesComponent, 'generateExtraInfoTelemetry').mockImplementation();
+            mockContentService.searchContentGroupedByPageSection = jest.fn(() => of({
+                name: 'sample_name',
+                sections: [
+                    {
+                        contents: [
+                            {
+                                appIcon: 'https:',
+                            }
+                        ],
+                        name: 'mathematics',
+                        display: {
+                            name: {
+                                en: 'Mathematics'
+                            }
+                        },
+                    },
+                ]
+            } as ContentsGroupedByPageSection));
+            mockCommonUtilService.networkInfo.isNetworkAvailable = true;
+            mockNgZone.run = jest.fn((fn) => fn());
+            const fileSrcStack = [undefined, 'appIcon'];
+            mockCommonUtilService.convertFileSrc = jest.fn(() => fileSrcStack.shift());
+            // act
+            resourcesComponent.getPopularContent(false, request);
+            resourcesComponent.getGroupByPage(false, false);
+            setTimeout(() => {
+                // assert
+                expect(mockAppGlobalService.setSelectedBoardMediumGrade).toHaveBeenCalled();
+                expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
+                expect(mockContentService.searchContentGroupedByPageSection).toHaveBeenCalled();
+                expect(mockNgZone.run).toHaveBeenCalled();
+                done();
+            }, 0);
         });
-        mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
-        mockNgZone.run = jest.fn((fn) => fn());
-        mockCommonUtilService.showToast = jest.fn(() => {
-            return 'ERROR_FETCHING_DATA';
+
+        it('should assign white cloud image if content is not locally avaialable and network is not there', (done) => {
+            // arrange
+            const request: ContentSearchCriteria = {
+                searchType: SearchType.SEARCH,
+                mode: 'hard',
+                board: ['Tripura', 'Assam'],
+                medium: ['English', 'Bengali'],
+                grade: ['Mathematics', 'Science']
+            };
+            mockAppGlobalService.setSelectedBoardMediumGrade = jest.fn();
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            mockTelemetryGeneratorService.generateEndSheenAnimationTelemetry = jest.fn();
+            jest.spyOn(resourcesComponent, 'generateExtraInfoTelemetry').mockImplementation();
+            mockContentService.searchContentGroupedByPageSection = jest.fn(() => of({
+                name: 'sample_name',
+                sections: [
+                    {
+                        contents: [
+                            {
+                                appIcon: 'https:',
+                            }
+                        ],
+                        name: 'mathematics',
+                        display: {
+                            name: {
+                                en: 'Mathematics'
+                            }
+                        },
+                    },
+                ]
+            } as ContentsGroupedByPageSection));
+            mockCommonUtilService.networkInfo.isNetworkAvailable = false;
+            mockNgZone.run = jest.fn((fn) => fn());
+            // act
+            resourcesComponent.getPopularContent(false, request);
+            resourcesComponent.getGroupByPage(false, false);
+            setTimeout(() => {
+                // assert
+                expect(mockAppGlobalService.setSelectedBoardMediumGrade).toHaveBeenCalled();
+                expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
+                expect(mockContentService.searchContentGroupedByPageSection).toHaveBeenCalled();
+                expect(mockNgZone.run).toHaveBeenCalled();
+                done();
+            }, 0);
         });
-        // act
-        resourcesComponent.getGroupByPage(false, false);
-        setTimeout(() => {
-            // assert
-            expect(mockAppGlobalService.setSelectedBoardMediumGrade).toHaveBeenCalled();
-            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
-            expect(mockContentService.searchContentGroupedByPageSection).toHaveBeenCalled();
-            expect(mockNgZone.run).toHaveBeenCalled();
-            done();
-        }, 0);
+
+        it('should handle catchPart when getGroupByPageSection() returns an error', (done) => {
+            // arrange
+            const request: ContentSearchCriteria = {
+                searchType: SearchType.SEARCH,
+                mode: 'hard',
+                board: ['Tripura', 'Assam'],
+                medium: ['English', 'Bengali'],
+                grade: ['Mathematics', 'Science']
+            };
+            mockAppGlobalService.setSelectedBoardMediumGrade = jest.fn();
+            mockTelemetryGeneratorService.generateEndSheenAnimationTelemetry = jest.fn();
+            mockContentService.searchContentGroupedByPageSection = jest.fn(() => {
+                return of(Promise.reject('SERVER_ERROR'));
+            });
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            mockNgZone.run = jest.fn((fn) => fn());
+            mockCommonUtilService.showToast = jest.fn(() => {
+                return 'ERROR_FETCHING_DATA';
+            });
+
+            // act
+            resourcesComponent.getGroupByPage(false, false);
+            setTimeout(() => {
+                // assert
+                expect(mockAppGlobalService.setSelectedBoardMediumGrade).toHaveBeenCalled();
+                expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
+                expect(mockContentService.searchContentGroupedByPageSection).toHaveBeenCalled();
+                expect(mockNgZone.run).toHaveBeenCalled();
+                // expect(mockCommonUtilService.convertFileSrc).toHaveBeenCalledWith('http://sample.path');
+                done();
+            }, 0);
+        });
+
     });
 
     it('should call relevant methods inside when ngOnInit() called at the beginning', (done) => {
@@ -300,10 +412,14 @@ describe('ResourcesComponent', () => {
         jest.spyOn(resourcesComponent, 'scrollToTop').mockImplementation();
         jest.spyOn(resourcesComponent, 'getPopularContent').mockImplementation();
         jest.spyOn(resourcesComponent, 'loadRecentlyViewedContent').mockImplementation();
+        const data = jest.fn((fn) => fn());
+        mockCommonUtilService.networkAvailability$ = {
+            subscribe: data
+        } as any;
         mockAppGlobalService.generateConfigInteractEvent = jest.fn();
-        mockSplashScreenDeeplinkActionHandlerDelegate.onAction = jest.fn(() => of());
+        mockAppNotificationService.handleNotification = jest.fn(() => Promise.resolve());
         mockEvents.subscribe = jest.fn((topic, fn) => {
-            if (topic === 'tab.change') {
+            if (topic === EventTopics.TAB_CHANGE) {
                 fn('LIBRARY');
             }
             if (resourcesComponent.appliedFilter) {
@@ -312,6 +428,14 @@ describe('ResourcesComponent', () => {
                 fn();
             }
         });
+        resourcesComponent.storyAndWorksheets = [{
+            contents: [{
+                name: 'sunbird',
+                appIcon: 'http:appIcon'
+            }]
+        }];
+        mockCommonUtilService.networkInfo.isNetworkAvailable = true;
+        mockChangeRef.detectChanges = jest.fn();
         // act
         resourcesComponent.ngOnInit();
         // assert
@@ -321,11 +445,151 @@ describe('ResourcesComponent', () => {
             expect(resourcesComponent.getPopularContent).toHaveBeenCalled();
             expect(resourcesComponent.loadRecentlyViewedContent).toHaveBeenCalled();
             expect(mockAppGlobalService.generateConfigInteractEvent).toHaveBeenCalled();
-            expect(mockSplashScreenDeeplinkActionHandlerDelegate.onAction).toHaveBeenCalled();
+            expect(mockAppNotificationService.handleNotification).toHaveBeenCalled();
             expect(mockEvents.subscribe).toHaveBeenCalled();
             done();
         }, 0);
     });
+
+    it('should appIcon is not avilable', (done) => {
+        // arrange
+        resourcesComponent.appliedFilter = 'sample_filter';
+        jest.spyOn(resourcesComponent, 'getCurrentUser').mockImplementation();
+        jest.spyOn(resourcesComponent, 'scrollToTop').mockImplementation();
+        jest.spyOn(resourcesComponent, 'getPopularContent').mockImplementation();
+        jest.spyOn(resourcesComponent, 'loadRecentlyViewedContent').mockImplementation();
+        const data = jest.fn((fn) => fn());
+        mockCommonUtilService.networkAvailability$ = {
+            subscribe: data
+        } as any;
+        mockAppGlobalService.generateConfigInteractEvent = jest.fn();
+        mockAppNotificationService.handleNotification = jest.fn(() => Promise.resolve());
+        mockEvents.subscribe = jest.fn((topic, fn) => {
+            if (topic === EventTopics.TAB_CHANGE) {
+                fn('LIBRARY');
+            }
+            if (resourcesComponent.appliedFilter) {
+            }
+            if (topic === 'event:update_recently_viewed') {
+                fn();
+            }
+        });
+        resourcesComponent.storyAndWorksheets = [{
+            contents: [{
+                name: 'sunbird',
+            }]
+        }];
+        mockCommonUtilService.networkInfo.isNetworkAvailable = true;
+        mockChangeRef.detectChanges = jest.fn();
+        mockCommonUtilService.convertFileSrc = jest.fn(() => 'http://sample.png');
+        // act
+        resourcesComponent.ngOnInit();
+        // assert
+        setTimeout(() => {
+            expect(resourcesComponent.getCurrentUser).toHaveBeenCalled();
+            expect(resourcesComponent.scrollToTop).toHaveBeenCalled();
+            expect(resourcesComponent.getPopularContent).toHaveBeenCalled();
+            expect(resourcesComponent.loadRecentlyViewedContent).toHaveBeenCalled();
+            expect(mockAppGlobalService.generateConfigInteractEvent).toHaveBeenCalled();
+            expect(mockAppNotificationService.handleNotification).toHaveBeenCalled();
+            expect(mockEvents.subscribe).toHaveBeenCalled();
+            done();
+        }, 0);
+    });
+
+    it('should appIcon is not avilable', (done) => {
+        // arrange
+        resourcesComponent.appliedFilter = 'sample_filter';
+        jest.spyOn(resourcesComponent, 'getCurrentUser').mockImplementation();
+        jest.spyOn(resourcesComponent, 'scrollToTop').mockImplementation();
+        jest.spyOn(resourcesComponent, 'getPopularContent').mockImplementation();
+        jest.spyOn(resourcesComponent, 'loadRecentlyViewedContent').mockImplementation();
+        const data = jest.fn((fn) => fn());
+        mockCommonUtilService.networkAvailability$ = {
+            subscribe: data
+        } as any;
+        mockAppGlobalService.generateConfigInteractEvent = jest.fn();
+        mockAppNotificationService.handleNotification = jest.fn(() => Promise.resolve());
+        mockEvents.subscribe = jest.fn((topic, fn) => {
+            if (topic === EventTopics.TAB_CHANGE) {
+                fn('LIBRARY');
+            }
+            if (resourcesComponent.appliedFilter) {
+            }
+            if (topic === 'event:update_recently_viewed') {
+                fn();
+            }
+        });
+        resourcesComponent.storyAndWorksheets = [{
+            contents: [{
+                name: 'sunbird',
+            }]
+        }];
+        mockCommonUtilService.networkInfo.isNetworkAvailable = true;
+        mockChangeRef.detectChanges = jest.fn();
+        const fileSrcData = [undefined, 'sample'];
+        mockCommonUtilService.convertFileSrc = jest.fn(() => fileSrcData.shift());
+        // act
+        resourcesComponent.ngOnInit();
+        // assert
+        setTimeout(() => {
+            expect(resourcesComponent.getCurrentUser).toHaveBeenCalled();
+            expect(resourcesComponent.scrollToTop).toHaveBeenCalled();
+            expect(resourcesComponent.getPopularContent).toHaveBeenCalled();
+            expect(resourcesComponent.loadRecentlyViewedContent).toHaveBeenCalled();
+            expect(mockAppGlobalService.generateConfigInteractEvent).toHaveBeenCalled();
+            expect(mockAppNotificationService.handleNotification).toHaveBeenCalled();
+            expect(mockEvents.subscribe).toHaveBeenCalled();
+            done();
+        }, 0);
+    });
+
+    // it('should appIcon is not avilable', (done) => {
+    //     // arrange
+    //     resourcesComponent.appliedFilter = 'sample_filter';
+    //     jest.spyOn(resourcesComponent, 'getCurrentUser').mockImplementation();
+    //     jest.spyOn(resourcesComponent, 'scrollToTop').mockImplementation();
+    //     jest.spyOn(resourcesComponent, 'getPopularContent').mockImplementation();
+    //     jest.spyOn(resourcesComponent, 'loadRecentlyViewedContent').mockImplementation();
+    //     const data = jest.fn((fn) => fn());
+    //     mockCommonUtilService.networkAvailability$ = {
+    //         subscribe: data
+    //     } as any;
+    //     mockAppGlobalService.generateConfigInteractEvent = jest.fn();
+    //     mockAppNotificationService.handleNotification = jest.fn(() => Promise.resolve());
+    //     mockEvents.subscribe = jest.fn((topic, fn) => {
+    //         if (topic === EventTopics.TAB_CHANGE) {
+    //             fn('LIBRARY');
+    //         }
+    //         if (resourcesComponent.appliedFilter) {
+    //         }
+    //         if (topic === 'event:update_recently_viewed') {
+    //             fn();
+    //         }
+    //     });
+    //     resourcesComponent.storyAndWorksheets = [{
+    //         contents: [{
+    //             name: 'sunbird',
+    //         }]
+    //     }];
+    //     mockCommonUtilService.networkInfo.isNetworkAvailable = true;
+    //     mockChangeRef.detectChanges = jest.fn();
+    //     const fileSrcData = [undefined, undefined];
+    //     mockCommonUtilService.convertFileSrc = jest.fn(() => fileSrcData.shift());
+    //     // act
+    //     resourcesComponent.ngOnInit();
+    //     // assert
+    //     setTimeout(() => {
+    //         expect(resourcesComponent.getCurrentUser).toHaveBeenCalled();
+    //         expect(resourcesComponent.scrollToTop).toHaveBeenCalled();
+    //         expect(resourcesComponent.getPopularContent).toHaveBeenCalled();
+    //         expect(resourcesComponent.loadRecentlyViewedContent).toHaveBeenCalled();
+    //         expect(mockAppGlobalService.generateConfigInteractEvent).toHaveBeenCalled();
+    //         expect(mockAppNotificationService.handleNotification).toHaveBeenCalled();
+    //         expect(mockEvents.subscribe).toHaveBeenCalled();
+    //         done();
+    //     }, 0);
+    // });
 
     it('should call qrScanner else if part when subscribeMethod returns emptyString', (done) => {
         // arrange
@@ -333,11 +597,11 @@ describe('ResourcesComponent', () => {
         jest.spyOn(resourcesComponent, 'getCurrentUser').mockImplementation();
         jest.spyOn(resourcesComponent, 'scrollToTop').mockImplementation();
         mockAppGlobalService.generateConfigInteractEvent = jest.fn();
-        mockSplashScreenDeeplinkActionHandlerDelegate.onAction = jest.fn(() => of());
+        mockAppNotificationService.handleNotification = jest.fn(() => Promise.resolve());
         jest.spyOn(mockAppGlobalService, 'getPageIdForTelemetry').mockReturnValue(PageId.LIBRARY);
         mockQRScanner.startScanner = jest.fn();
         mockEvents.subscribe = jest.fn((topic, fn) => {
-            if (topic === 'tab.change') {
+            if (topic === EventTopics.TAB_CHANGE) {
                 fn('');
             }
         });
@@ -375,8 +639,8 @@ describe('ResourcesComponent', () => {
         jest.spyOn(resourcesComponent, 'getCurrentUser').mockImplementation();
         jest.spyOn(resourcesComponent, 'getChannelId').mockImplementation();
         jest.spyOn(resourcesComponent, 'getPopularContent').mockImplementation();
-        const mockHeaderEventsSubscription = {unsubscribe: jest.fn()} as Partial<Subscription>;
-        const mockEventsBusSubscription = {unsubscribe: jest.fn()} as Partial<Subscription>;
+        const mockHeaderEventsSubscription = { unsubscribe: jest.fn() } as Partial<Subscription>;
+        const mockEventsBusSubscription = { unsubscribe: jest.fn() } as Partial<Subscription>;
         mockEventBusService.events = () => ({
             subscribe: jest.fn(() => mockEventsBusSubscription)
         });
@@ -384,6 +648,7 @@ describe('ResourcesComponent', () => {
             subscribe: jest.fn(() => mockHeaderEventsSubscription)
         };
         mockEvents.unsubscribe = jest.fn();
+        resourcesComponent.coachTimeout = { clearTimeout: jest.fn() };
         // act
         resourcesComponent.ionViewWillEnter().then(() => {
             resourcesComponent.ionViewWillLeave();
@@ -611,10 +876,11 @@ describe('ResourcesComponent', () => {
         expect(mockAppGlobalService.getNameForCodeInFramework).toHaveBeenCalled();
     });
 
-    it('should subscribe events and other methods when ionViewWillEnter()', () => {
+    it('should subscribe events and other methods when ionViewWillEnter()', (done) => {
         // arrange
         resourcesComponent.pageLoadedSuccess = false;
         mockHeaderService.showHeaderWithHomeButton = jest.fn();
+        mockHeaderService.headerEventEmitted$ = NEVER;
         mockEvents.subscribe = jest.fn((topic, fn) => {
             if (topic === 'update_header') {
                 fn();
@@ -623,11 +889,28 @@ describe('ResourcesComponent', () => {
         jest.spyOn(resourcesComponent, 'getCategoryData').mockImplementation();
         jest.spyOn(resourcesComponent, 'getPopularContent').mockImplementation();
         jest.spyOn(resourcesComponent, 'getCurrentUser').mockImplementation();
+        jest.spyOn(resourcesComponent, 'getChannelId').mockImplementation();
+        jest.spyOn(resourcesComponent, 'subscribeSdkEvent').mockImplementation();
         // act
-        resourcesComponent.ionViewWillEnter();
-        // assert
-        expect(mockHeaderService.showHeaderWithHomeButton).toHaveBeenCalled();
+        resourcesComponent.ionViewWillEnter().then(() => {
+            // assert
+            expect(mockHeaderService.showHeaderWithHomeButton).toHaveBeenCalled();
+            expect(mockSplashScreenDeeplinkActionHandlerDelegate.isDelegateReady).toEqual(true);
+            done();
+        });
+    });
 
+    it('should subscribe events and other methods when ionViewDidEnter()', (done) => {
+        // arrange
+        resourcesComponent.coachTimeout = { setTimeout: jest.fn() };
+        mockAppGlobalService.showCouchMarkScreen = jest.fn();
+        // act
+        resourcesComponent.ionViewDidEnter()
+        // assert
+        setTimeout(() => {
+            expect(mockAppGlobalService.showCouchMarkScreen).toHaveBeenCalled();
+            done();
+        }, 2000);
     });
 
     it('should call toastCtrller when in offline', (done) => {
@@ -649,5 +932,212 @@ describe('ResourcesComponent', () => {
             expect(mockCommonUtilService.translateMessage).toHaveBeenCalled();
             done();
         }, 0);
+    });
+
+    it('should be invoked classClickEvent', () => {
+        // arrange
+        const event = { data: { index: 0 } };
+        jest.spyOn(resourcesComponent, 'classClickHandler').mockImplementation(() => {
+            return;
+        });
+        // act
+        resourcesComponent.classClickEvent(event, true);
+    });
+
+    it('should be handle medium click filter', () => {
+        // arrange
+        jest.spyOn(resourcesComponent, 'generateClassInteractTelemetry').mockImplementation(() => {
+            return;
+        });
+        const scrollIntoView = {
+            scrollIntoView: jest.fn()
+        } as any;
+        // Object.defineProperty(global.document, 'getElementById', {  scrollIntoView: jest.fn() } as any);
+        jest.spyOn(document, 'getElementById').mockReturnValue(scrollIntoView);
+        resourcesComponent.getGroupByPageReq = { grade: [{ name: 'sample' }] };
+        resourcesComponent.currentGrade = 'class-v';
+        resourcesComponent.categoryGradeLevelsArray[0] = 'sample';
+        resourcesComponent.categoryGradeLevels = [{ selected: 'classAnimate' }];
+        // act
+        resourcesComponent.classClickHandler(0, true);
+        // assert
+        expect(resourcesComponent.currentGrade).toBe('sample');
+        expect(resourcesComponent.categoryGradeLevelsArray[0]).toBe('sample');
+    });
+
+    describe('mediuClickedEvent', () => {
+        it('should be invoked mediumClickEvent', () => {
+            // arrange
+            const event = { data: { index: 0, text: 'sample-text' } };
+            jest.spyOn(resourcesComponent, 'mediumClickHandler').mockImplementation(() => {
+                return;
+            });
+            // act
+            resourcesComponent.mediumClickEvent(event, true);
+        });
+
+        it('should be handle medium click filter', () => {
+            // arrange
+            jest.spyOn(resourcesComponent, 'generateClassInteractTelemetry').mockImplementation(() => {
+                return;
+            });
+            const scrollIntoView = {
+                scrollIntoView: jest.fn()
+            } as any;
+            // Object.defineProperty(global.document, 'getElementById', {  scrollIntoView: jest.fn() } as any);
+            jest.spyOn(document, 'getElementById').mockReturnValue(scrollIntoView);
+            resourcesComponent.getGroupByPageReq = { medium: [{ name: 'sample' }] };
+            resourcesComponent.currentMedium = 'hindi';
+            resourcesComponent.categoryGradeLevelsArray[0] = 'sample';
+            resourcesComponent.categoryMediumNamesArray = ['sample-text'];
+            // act
+            resourcesComponent.mediumClickHandler(0, 'sample-text', true);
+            // assert
+            expect(resourcesComponent.currentGrade).toBe('sample');
+            expect(resourcesComponent.categoryGradeLevelsArray[0]).toBe('sample');
+        });
+    });
+
+    it('should fetch all the grade level data based on framework data from the api and call classclickHandler if found', () => {
+        // arrange
+        const frameworkId = 'frame-id';
+        const categories = {};
+
+        const req: GetFrameworkCategoryTermsRequest = {
+            currentCategoryCode: 'gradeLevel',
+            language: undefined,
+            requiredCategories: {},
+            frameworkId
+        };
+        mockFrameworkUtilService.getFrameworkCategoryTerms = jest.fn(() => of([{ name: 'sunbird' }]));
+        jest.spyOn(resourcesComponent, 'classClickHandler').mockImplementation(() => {
+            return;
+        });
+        resourcesComponent.getGroupByPageReq = {
+            grade: ['sunbird']
+        };
+        // act
+        resourcesComponent.getGradeLevelData(frameworkId, categories);
+
+        // assert
+        expect(mockFrameworkUtilService.getFrameworkCategoryTerms).toHaveBeenLastCalledWith(req);
+
+    });
+
+    it('should fetch all the grade level data based on framework data from the api and do not call classclickHandler if not found', () => {
+        // arrange
+        const frameworkId = 'frame-id';
+        const categories = {};
+
+        const req: GetFrameworkCategoryTermsRequest = {
+            currentCategoryCode: 'gradeLevel',
+            language: undefined,
+            requiredCategories: {},
+            frameworkId
+        };
+        mockFrameworkUtilService.getFrameworkCategoryTerms = jest.fn(() => of([{ name: 'sunbird1' }]));
+        jest.spyOn(resourcesComponent, 'classClickHandler').mockImplementation(() => {
+            return;
+        });
+        resourcesComponent.getGroupByPageReq = {
+            grade: ['sunbird-not-matched']
+        };
+        // act
+        resourcesComponent.getGradeLevelData(frameworkId, categories);
+
+        // assert
+        expect(mockFrameworkUtilService.getFrameworkCategoryTerms).toHaveBeenLastCalledWith(req);
+
+    });
+
+    it('should call recentlyViewedCardClick method and perform navigation to collection details page if mimetype is collection', () => {
+        // arrange
+        const event = {
+            data: {
+                identifier: 'do_123456789',
+                mimeType: 'application/vnd.ekstep.content-collection',
+                contentType: 'sample-content-type'
+            }
+        };
+        const course = {
+            isAvailableLocally: true,
+            mimeType: 'application/vnd.ekstep.content-collection'
+        };
+
+        const telemetryObject: Partial<TelemetryObject> = {
+            id: 'do_123456789',
+            type: 'sample-content-type',
+            version: ''
+        };
+        const values = {
+            sectionName: 'Recently Viewed',
+            positionClicked: undefined
+        };
+        mockTelemetryGeneratorService.isCollection = jest.fn(() => true);
+        mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+        // act
+        resourcesComponent.recentlyViewedCardClick(event, course);
+        // assert
+        expect(mockTelemetryGeneratorService.isCollection).toHaveBeenCalled();
+        expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+            'TOUCH',
+            'content-clicked',
+            'home',
+            'library',
+            telemetryObject,
+            values
+        );
+    });
+    it('should call recentlyViewedCardClick method and perform navigation to content details page if mimetype is non collection', () => {
+        // arrange
+        const event = {
+            data: {
+                identifier: 'do_123456789',
+                mimeType: 'application/vnd.ekstep.content-collection',
+                contentType: 'sample-content-type'
+            }
+        };
+        const course = {
+            isAvailableLocally: true,
+            mimeType: 'vide0/mp4'
+        };
+
+        const telemetryObject: Partial<TelemetryObject> = {
+            id: 'do_123456789',
+            type: 'sample-content-type',
+            version: ''
+        };
+        const values = {
+            sectionName: 'Recently Viewed',
+            positionClicked: undefined
+        };
+        mockTelemetryGeneratorService.isCollection = jest.fn(() => true);
+        mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+        // act
+        resourcesComponent.recentlyViewedCardClick(event, course);
+        // assert
+        expect(mockTelemetryGeneratorService.isCollection).toHaveBeenCalled();
+        expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+            'TOUCH',
+            'content-clicked',
+            'home',
+            'library',
+            telemetryObject,
+            values
+        );
+    });
+
+    it('should check for subscription and unsubscribe all those events on ngOnDestroy()', () => {
+        // arrange
+        resourcesComponent.networkSubscription = true;
+        resourcesComponent.networkSubscription = {
+            unsubscribe: jest.fn()
+        };
+
+        // act
+        resourcesComponent.ngOnDestroy();
+
+        // assert
+        expect(resourcesComponent.networkSubscription.unsubscribe).toHaveBeenCalled();
     });
 });

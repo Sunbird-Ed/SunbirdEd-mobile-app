@@ -111,7 +111,8 @@ export class BatchConstants {
         'creatorLastName',
         'identifier',
         'id',
-        'enrollmentEndDate'
+        'enrollmentEndDate',
+        'cert_templates'
     ];
     // createdFor ,courseAdditionalInfo, participant, updatedDate, createdDate, courseCreator, mentors
 }
@@ -167,6 +168,9 @@ export class EventTopics {
     public static readonly HAMBURGER_MENU_CLICKED = 'HAMBURGER_MENU_CLICKED';
     public static readonly NEXT_CONTENT = 'event:NextContent';
     public static readonly DEEPLINK_CONTENT_PAGE_OPEN = 'DEEPLINK_CONTENT_PAGE_OPEN';
+    public static readonly CONTENT_TO_PLAY = 'event:ContentToPlay';
+    public static readonly COACH_MARK_SEEN = 'coach_mark_seen';
+    public static readonly TAB_CHANGE = 'tab.change';
 }
 
 export class ShareUrl {
@@ -219,6 +223,9 @@ export class PreferenceKey {
     public static readonly SUBSCRIBE_TOPICS = 'subscribe_topics';
     public static readonly SHOW_EXTERNAL_VERIFICATION = 'show_external_verification';
     public static readonly CURRENT_USER_PROFILE = 'current_user_profile';
+    public static readonly FCM_TOKEN = 'fcm_token';
+    public static readonly SYNC_CONFIG = 'sync_config';
+    public static readonly COACH_MARK_SEEN = 'coach_mark_seen';
 }
 
 export class GenericAppConfig {
@@ -234,7 +241,7 @@ export class GenericAppConfig {
     public static readonly DISPLAY_ONBOARDING_CATEGORY_PAGE = 'DISPLAY_ONBOARDING_CATEGORY_PAGE';
     public static readonly OPEN_RAPDISCOVERY_ENABLED = 'OPEN_RAPDISCOVERY_ENABLED';
     public static readonly SUPPORT_EMAIL = 'SUPPORT_EMAIL';
-    public static readonly VERSION_NAME = 'VERSION_NAME';
+    public static readonly VERSION_NAME = 'REAL_VERSION_NAME';
     public static readonly VERSION_CODE = 'VERSION_CODE';
 }
 
@@ -252,16 +259,46 @@ export const appLanguages = [
         name: 'English'
     },
     {
+        label: 'অসমিয়া',
+        code: 'as',
+        isApplied: false,
+        name: 'Assamese'
+    },
+    {
+        label: 'বাংলা',
+        code: 'bn',
+        isApplied: false,
+        name: 'Bengali'
+    },
+    {
+        label: 'ગુજરાતી',
+        code: 'gu',
+        isApplied: false,
+        name: 'Gujarati'
+    },
+    {
+        label: 'ಕನ್ನಡ',
+        code: 'kn',
+        isApplied: false,
+        name: 'Kannada'
+    },
+    {
         label: 'मराठी',
         code: 'mr',
         isApplied: false,
         name: 'Marathi'
     },
     {
-        label: 'తెలుగు',
-        code: 'te',
+        label: 'ଓଡ଼ିଆ',
+        code: 'or',
         isApplied: false,
-        name: 'Telugu'
+        name: 'Oriya'
+    },
+    {
+        label: 'ਪੰਜਾਬੀ',
+        code: 'pa',
+        isApplied: false,
+        name: 'Punjabi'
     },
     {
         label: 'தமிழ்',
@@ -270,10 +307,10 @@ export const appLanguages = [
         name: 'Tamil'
     },
     {
-        label: 'ಕನ್ನಡ',
-        code: 'kn',
+        label: 'తెలుగు',
+        code: 'te',
         isApplied: false,
-        name: 'Kannada'
+        name: 'Telugu'
     },
     {
         label: 'اردو',
@@ -345,6 +382,7 @@ export class SystemSettingsIds {
     public static readonly COURSE_FRAMEWORK_ID = 'courseFrameworkId';
     public static readonly CONTENT_COMING_SOON_MSG = 'contentComingSoonMsg';
     public static readonly CONSUMPTION_FAQS = 'consumptionFaqs';
+    public static readonly HOT_CODE_PUSH_KEY = 'hotCodePush';
 }
 
 export class StoreRating {

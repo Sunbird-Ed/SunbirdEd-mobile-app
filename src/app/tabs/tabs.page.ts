@@ -1,17 +1,13 @@
 import { ProfileType, SharedPreferences, ProfileService } from 'sunbird-sdk';
 import { GUEST_TEACHER_TABS, initTabs, GUEST_STUDENT_TABS, LOGIN_TEACHER_TABS } from '@app/app/module.service';
 import { Component, ViewChild, ViewEncapsulation, Inject, OnInit, AfterViewInit } from '@angular/core';
-
 import { IonTabs, Events, ToastController } from '@ionic/angular';
 import { ContainerService } from '@app/services/container.services';
 import { AppGlobalService } from '@app/services/app-global-service.service';
-import { ProfileConstants } from '@app/app/app.constant';
+import { ProfileConstants, EventTopics } from '@app/app/app.constant';
 import { CommonUtilService } from '@app/services/common-util.service';
-import { ExternalIdVerificationService } from '@app/services/externalid-verification.service';
+import { PageId } from '@app/services';
 
-import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
-import { Environment, InteractSubtype, InteractType, PageId, ImpressionType, ImpressionSubtype } from '@app/services/telemetry-constants';
-import { AppVersion } from '@ionic-native/app-version/ngx';
 @Component({
   selector: 'app-tabs',
   templateUrl: './tabs.page.html',
@@ -41,20 +37,14 @@ export class TabsPage implements OnInit, AfterViewInit {
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     private commonUtilService: CommonUtilService,
-    private externalIdVerificationService: ExternalIdVerificationService,
-    private telemetryGeneratorService: TelemetryGeneratorService,
-    private appVersion: AppVersion,
   ) {
 
   }
 
   async ngOnInit() {
-    console.log('Inside tabsPage');
     this.checkAndroidWebViewVersion();
     const session = await this.appGlobalService.authService.getSession().toPromise();
     if (!session) {
-      console.log(`Success Platform Session`, session);
-
       const profileType = this.appGlobalService.guestProfileType;
       if (profileType === ProfileType.TEACHER) {
         initTabs(this.container, GUEST_TEACHER_TABS);
@@ -79,55 +69,36 @@ export class TabsPage implements OnInit, AfterViewInit {
     this.events.subscribe('UPDATE_TABS', () => {
       this.tabs = this.container.getAllTabs();
     });
-    this.appVersion.getAppName()
-    .then((appName: any) => {
-      this.appLabel = appName;
-    });
   }
 
   ngAfterViewInit() {
-     setTimeout(() => {
-    const backdropClipCenter = document.getElementById('qrScannerIcon').getBoundingClientRect().left +
-    ((document.getElementById('qrScannerIcon').getBoundingClientRect().width) / 2);
+    setTimeout(async () => {
+      const backdropClipCenter = document.getElementById('qrScannerIcon').getBoundingClientRect().left +
+        ((document.getElementById('qrScannerIcon').getBoundingClientRect().width) / 2);
 
-    (document.getElementById('backdrop').getElementsByClassName('bg')[0] as HTMLDivElement).setAttribute(
-      'style',
-      `background-image: radial-gradient(circle at ${backdropClipCenter}px 56px, rgba(0, 0, 0, 0) 30px, rgba(0, 0, 0, 0.9) 30px);`
-    );
+      (document.getElementById('backdrop').getElementsByClassName('bg')[0] as HTMLDivElement).setAttribute(
+        'style',
+        `background-image: radial-gradient(circle at ${backdropClipCenter}px 56px, rgba(0, 0, 0, 0) 30px, rgba(0, 0, 0, 0.9) 30px);`
+      );
 
-    this.preferences.getBoolean('coach_mark_seen').toPromise()
-    .then((value) => {
-      if (!value) {
-        this.events.publish('coach_mark_seen', { showWalkthroughBackDrop: true, appName: this.appLabel });
-        this.telemetryGeneratorService.generateImpressionTelemetry(
-          ImpressionType.VIEW,
-          ImpressionSubtype.QR_SCAN_WALKTHROUGH,
-          PageId.LIBRARY,
-          Environment.ONBOARDING
-        );
-      }
-    });
-    this.preferences.putBoolean('coach_mark_seen', true).toPromise().then();
-     }, 2000);
-
+    }, 2000);
   }
 
   checkAndroidWebViewVersion() {
     var that = this;
     plugins['webViewChecker'].getCurrentWebViewPackageInfo()
-    .then(function(packageInfo) {
-      if (parseInt(packageInfo.versionName.split('.')[0], 10) <= 68) {
-        that.olderWebView = true;
-      }
-    })
-    .catch(function(error) { });
+      .then(function (packageInfo) {
+        if (parseInt(packageInfo.versionName.split('.')[0], 10) <= 68) {
+          that.olderWebView = true;
+        }
+      })
+      .catch(function (error) { });
   }
 
   ionViewWillEnter() {
     this.tabs = this.container.getAllTabs();
     this.events.publish('update_header');
     this.events.subscribe('return_course', () => {
-      console.log('tabs');
       setTimeout(() => {
         this.tabRef.select('courses');
       }, 300);
@@ -135,12 +106,18 @@ export class TabsPage implements OnInit, AfterViewInit {
   }
 
   openScanner(tab) {
-    this.events.publish('tab.change', tab.label);
+    this.events.publish(EventTopics.TAB_CHANGE, tab.label);
   }
 
   ionTabsDidChange(event: any) {
     this.tabs[2].root = event.tab;
-    this.events.publish('tab.change', event.tab);
+    this.events.publish(EventTopics.TAB_CHANGE, event.tab);
+    if (event.tab === 'resources') {
+      event.tab = PageId.LIBRARY;
+      this.events.publish(EventTopics.TAB_CHANGE, event.tab);
+    } else {
+      this.events.publish(EventTopics.TAB_CHANGE, event.tab);
+    }
     this.commonUtilService.currentTabName = this.tabRef.getSelected();
   }
 
@@ -154,38 +131,4 @@ export class TabsPage implements OnInit, AfterViewInit {
     }
   }
 
-
-  // async saveExternalUserAndShowPopup(userId) {
-  //   const isCustodianUser = await this.isCustodianUser$.toPromise();
-  //   const tenantSpecificMessages: any = await this.formAndFrameworkUtilService.getTenantSpecificMessages();
-  //   if (isCustodianUser) {
-  //     await this.profileService.getUserFeed().toPromise()
-  //       .then(async (userFeed: UserFeed[]) => {
-  //         userFeed = [this.userFeed];
-  //         console.log('UserFeedResponse in Resources', userFeed);
-  //         if (userFeed[0]) {
-  //           if ((userFeed[0].category).toLowerCase() === 'orgmigrationaction') {
-  //             let popupLabels = {};
-  //             if (tenantSpecificMessages && tenantSpecificMessages.length) {
-  //               if (tenantSpecificMessages[0] && tenantSpecificMessages[0].range && tenantSpecificMessages[0].range.length) {
-  //                    popupLabels = tenantSpecificMessages[0].range[0];
-  //               }
-  //             }
-  //             const popover = await this.popoverCtrl.create({
-  //               component: TeacherIdVerificationComponent,
-  //               backdropDismiss: false,
-  //               cssClass: 'popover-alert popoverPosition',
-  //               componentProps: {
-  //                 userFeed: userFeed[0], tenantMessages: popupLabels
-  //               }
-  //             });
-  //             await popover.present();
-  //           }
-  //         }
-  //       })
-  //       .catch((error) => {
-  //         console.log('error', error);
-  //       });
-  //   }
-  // }
 }

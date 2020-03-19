@@ -6,10 +6,6 @@
     padding-bottom: 53px;
   }
 
-  .form-position {
-    margin-top: 10px;
-  }
-
   /* This should be item-ios only as we are targeting mode as iOS for radio-button */
   .item-ios {
     background-color: #{map-get($colors, white_f7)};
@@ -54,8 +50,13 @@
   .fill-in-style {
     font-size: 12px;
     text-align: center;
-    margin-top: 30px;
+    margin-top: 40px;
     @include padding(0, 5px);
+    .fill-in-head{
+      font-weight: bold;
+      font-size: 16px;
+      margin-bottom: 8px;
+    }
   }
   .item-select-disabled {
     .label-md {
@@ -67,55 +68,130 @@
   .padding-bottom-if-header {
     padding-bottom: 80px !important;
   }
-
-  .qr-container {
-    padding: 10px 20px 0px 20px;
-    background-color: $light-grey;
-    border-bottom: 2px solid $gray-200;
-    .qr-content {
-      &::after {
-        clear: both;
-        content: "";
+  .board-select-dummy{
+    width: 100vw;
+    margin: 0 auto;
+    ion-item{
+      // z-index: -1;
+      pointer-events: none;
+    }
+  }
+  .ps-container{
+    display: flex;
+    flex-direction: column;
+    width: 100vw;
+    height: 100%;
+    .qr-container {
+      background-color: #EDF4F9;
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
+      flex-shrink: 1;
+    }
+    .form-position{
+      flex-grow: 1;
+      flex-shrink: 1;
+      margin-top: 50px;
+    }
+  }
+  .qr-board{
+      flex-grow: 0;
+      flex-shrink: 0;
+      padding-bottom: 40px;
+      position: relative;
+      &::after{
+        content: '';
         display: block;
+        width: 125%;
+        height: 100%;
+        background: white;
+        border-top-left-radius: 50%;
+        border-top-right-radius: 50%;
+        position: absolute;
+        top: 0;
+        left: -12.5%;
+        z-index: 0;
       }
-      .qr-img {
-        border-right: 2px solid $gray-100;
-        text-align: right;
-        padding-right: 10px;
-        .qr-img-container {
-          width: 50px;
-          img {
-            display: block;
-          }
-          .qr-text {
-            text-align: center;
-            width: 50px;
-            background: #fff;
-            span {
-              font-weight: bold;
-              font-size: 10px;
-            }
-          }
+
+      & > div {
+        position: relative;
+        z-index: 1;
+      }
+
+      .or-container{
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: -15px;
+        .or-circle {
+          display: block;
+          width: 60px;
+          height: 30px;
+          border-radius: 15px;
+          background-color: #999999;
+          text-align: center;
+          color: #fff;
+          font-size: 16px;
+          line-height: 30px;
+          margin: 0 auto;
         }
       }
-      .qr-instruction-container {
-        width: calc(100% - 65px);
-        padding-left: 10px;
-        .qr-instruction {
-          .title {
-            display: block;
-            color: #006de5;
-          }
-          .sub-titile {
-            display: block;
-            font-size: 12px;
-          }
-        }
+  }
+  .back-btn-container{
+    flex-grow: 0;
+    flex-shrink: 0;
+    position: absolute;
+    .top-back-button{
+      position: relative;
+      font-size: 22px;
+      @include ltr() {
+        top: 20px;
+        left: 20px;
+      }
+      @include rtl() {
+        top: 20px;
+        right: 20px;
+      }
+    }
+  }
+  .qr-content {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    flex-shrink: 1;
+    height: 0;
+    padding: 0 32px;
+
+    padding-top: 50px;
+    
+    .qr-img{
+      object-fit: contain;
+      min-width: 0;
+      min-height: 0;
+      width: auto;
+      height: 100%;
+      flex-shrink: 1;
+    }
+  }
+  .qr-instruction-container {
+    flex-grow: 0;
+    flex-shrink: 0;
+    padding-top: 16px;
+    padding-bottom: 40px;
+    .qr-instruction {
+      .title {
+        display: block;
+        font-weight: bold;
+        color: #024F9D;
+      }
+      .sub-title {
+        padding: 8px 10% 0 10%;
+        font-size: 12px;
       }
     }
     .qr-btn-container {
       text-align: center;
-      margin-top: 5px;
+      margin-top: 16px;
       .qr-btn {
         display: inline-block;
         background-color: #006de5;
@@ -135,25 +211,13 @@
         }
       }
     }
-    .or-circle {
-      display: block;
-      width: 60px;
-      height: 30px;
-      border-radius: 15px;
-      position: relative;
-      top: 15px;
-      background-color: $gray-800;
-      text-align: center;
-      color: #fff;
-      font-size: 16px;
-      line-height: 30px;
-      margin: 0 auto;
-    }
   }
 
   .item-label-stacked ion-select {
     border: 1px solid #006de5;
+    border-radius: 5px;
     margin-top: 16px;
+    padding-left: 8px;
     padding-right: 10px !important;
     .select-icon {
       .select-icon-inner {
@@ -174,6 +238,7 @@
   }
   ion-item.item-label-stacked {
     --border-width: 0;
+    --highlight-background: transparent;
   }
   .item-select ion-label {
     color: #006de5;
@@ -181,21 +246,21 @@
 
   .item-label-stacked.item-select-disabled {
     ion-label {
-      color: #cccccc;
+      color: #333;
     }
 
     ion-select {
-      border-color: #cccccc;
+      border-color: #333;
       // Inside Shadow DOM
       .select-icon {
         .select-icon-inner {
-          border-color: #cccccc;
+          border-color: #333;
           animation: none;
         }
       }
       // Inside Shadow DOM
       .select-placeholder {
-        color: #cccccc;
+        color: #333;
       }
     }
   }
