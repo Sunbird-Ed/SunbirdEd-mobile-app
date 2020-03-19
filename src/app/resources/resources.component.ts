@@ -557,7 +557,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
         });
       })
       .catch(error => {
-        console.log('error while getting popular resources...', error);
         this.ngZone.run(() => {
           this.refresh = false;
           this.searchApiLoader = false;
