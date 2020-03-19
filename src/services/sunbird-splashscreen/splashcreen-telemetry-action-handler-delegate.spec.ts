@@ -47,7 +47,7 @@ describe('SplaschreenDeeplinkActionHandlerDelegate', () => {
       const payload: TelemetryActionPayload = {
         eid: 'INTERACT'
       };
-      mockTelemetryService.impression = jest.fn(() => {
+      mockTelemetryService.interact = jest.fn(() => {
         return of(undefined);
       });
       // act
