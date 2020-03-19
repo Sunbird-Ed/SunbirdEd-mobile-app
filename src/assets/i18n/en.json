@@ -501,6 +501,7 @@
   "SHARE_LINK": "Share link",
   "SHARE_TELEMETRY": "Share Telemetry",
   "SHARE_TELEMETRY_FAILED": "Unable to share telemetry",
+  "SHARE_TELEMETRY_NO_DATA_FOUND": "No telemetry data found",
   "SHARE_THIS": "Share",
   "SHOW": "Show",
   "SHOWING_RESULTS_FOR": "Showing {{%count}} results for '{{%query}}'",
