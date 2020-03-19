@@ -224,19 +224,4 @@ export class QRScannerResultHandler {
       );
     }
   }
-
-  generateUTMInfoTelemetry(scannedData, object) {
-    const utmHashes = scannedData.slice(scannedData.indexOf('?') + 1).split('&');
-    const utmParams = {};
-    utmHashes.map(hash => {
-        const [key, val] = hash.split('=');
-        utmParams[key] = decodeURIComponent(val);
-    });
-    const cData: CorrelationData[] = [{
-      id: CorReleationDataType.SCAN,
-      type: CorReleationDataType.ACCESS_TYPE
-    }];
-    this.telemetryGeneratorService.generateUtmInfoTelemetry(utmParams, PageId.QRCodeScanner, cData, object);
-   }
-
 }

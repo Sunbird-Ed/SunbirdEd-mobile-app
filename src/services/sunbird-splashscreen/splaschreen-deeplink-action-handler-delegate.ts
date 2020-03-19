@@ -314,20 +314,6 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
     }
   }
 
-  generateUTMInfoTelemetry(deeplinkUrl, telemetryObject) {
-    const utmHashes = deeplinkUrl.slice(deeplinkUrl.indexOf('?') + 1).split('&');
-    const utmParams = {};
-    utmHashes.map(hash => {
-        const [key, val] = hash.split('=');
-        utmParams[key] = decodeURIComponent(val);
-    });
-    const cData: CorrelationData[] = [{
-      id: CorReleationDataType.DEEPLINK,
-      type: CorReleationDataType.ACCESS_TYPE
-    }];
-    this.telemetryGeneratorService.generateUtmInfoTelemetry(utmParams, PageId.HOME, cData, telemetryObject);
-   }
-
    getCorRelationList() {
     const corRelationList: Array<CorrelationData> = new Array<CorrelationData>();
     corRelationList.push({
