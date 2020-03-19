@@ -8,6 +8,7 @@ import { NgZone } from '@angular/core';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { of, throwError } from 'rxjs';
 import { PreferenceKey } from '../app/app.constant';
+import {Router} from '@angular/router';
 
 
 describe('LocalCourseService', () => {
@@ -22,6 +23,12 @@ describe('LocalCourseService', () => {
   const mockEvents: Partial<Events> = {};
   const mockNgZone: Partial<NgZone> = {};
   const mockAppVersion: Partial<AppVersion> = {};
+  const mockRouter: Partial<Router> = {
+    url: 'localhost:8080/enrolled-course-details'
+  };
+  const mockLocation: Partial<Location> = {
+    back: jest.fn()
+  };
 
   beforeAll(() => {
     localCourseService = new LocalCourseService(
@@ -33,7 +40,9 @@ describe('LocalCourseService', () => {
       mockCommonUtilService as CommonUtilService,
       mockEvents as Events,
       mockNgZone as NgZone,
-      mockAppVersion as AppVersion
+      mockAppVersion as AppVersion,
+        mockRouter as Router,
+        mockLocation as Location
     );
   });
 
