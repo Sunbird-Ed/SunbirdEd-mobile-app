@@ -6,7 +6,7 @@ import {
   PopoverController,
   Platform,
 } from '@ionic/angular';
-import { SharedPreferences, ProfileService } from 'sunbird-sdk';
+import { SharedPreferences, ProfileService, CorrelationData } from 'sunbird-sdk';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { InteractType, InteractSubtype, PageId, Environment } from '@app/services/telemetry-constants';
 import { PreferenceKey } from '@app/app/app.constant';
@@ -521,12 +521,16 @@ describe('CommonUtilService', () => {
         utm_campaign: 'dial',
         utm_term: 'ABCDEF'
       };
+      const cData: CorrelationData[] = [{
+        id: 'Scan',
+        type: 'accessType'
+      }];
       mockTelemetryGeneratorService.generateUtmInfoTelemetry = jest.fn();
       // act
-      commonUtilService.generateUTMInfoTelemetry(URL, {}, {});
+      commonUtilService.generateUTMInfoTelemetry(URL, cData, {});
       // assert
       setTimeout(() => {
-        expect(mockTelemetryGeneratorService.generateUtmInfoTelemetry).toHaveBeenCalledWith(value, 'c-data', 'qr-code-scanner');
+        expect(mockTelemetryGeneratorService.generateUtmInfoTelemetry).toHaveBeenCalledWith(value, cData, 'qr-code-scanner');
       }, 0);
     });
   });
