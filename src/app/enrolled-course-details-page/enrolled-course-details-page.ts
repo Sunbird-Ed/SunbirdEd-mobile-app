@@ -966,7 +966,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
   private getStatusOfCourseCompletion(childrenData: Content[]) {
     const contentStatusData = this.contentStatusData;
     this.getLastPlayedName(this.lastReadContentId);
-
+    const that = this;
     this.zone.run(() => {
       childrenData.forEach((childContent) => {
         if (childContent.children && childContent.children.length) {
@@ -975,7 +975,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
               if (contentStatusData.contentList.length) {
                 const statusData = contentStatusData.contentList.find(c => c.contentId === eachContent.identifier);
                 if (statusData) {
-                  if (this.lastReadContentId === statusData.contentId) {
+                  if (that.lastReadContentId === statusData.contentId) {
                     childContent['lastRead'] = true;
                   }
                   return !(statusData.status === 0 || statusData.status === 1);
@@ -1831,6 +1831,4 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
   mergeProperties(mergeProp) {
     return ContentUtil.mergeProperties(this.course, mergeProp);
   }
-
-
 }
