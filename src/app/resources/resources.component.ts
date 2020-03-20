@@ -783,21 +783,10 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       .then((res: CategoryTerm[]) => {
         this.categoryMediums = res;
         this.categoryMediumNamesArray = res.map(a => (a.name));
-        // this.arrangeMediumsByUserData(this.categoryMediums.map(a => ({ ...a })));
         this.arrangeMediumsByUserData([...this.categoryMediumNamesArray]);
       })
       .catch(() => {
       });
-  }
-
-
-  findWithAttr(array, attr, value) {
-    for (let i = 0; i < array.length; i += 1) {
-      if (array[i][attr].toLowerCase() === value.toLowerCase()) {
-        return i;
-      }
-    }
-    return -1;
   }
 
   arrangeMediumsByUserData(categoryMediumsParam) {

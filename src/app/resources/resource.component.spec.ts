@@ -27,6 +27,8 @@ import {
     AppHeaderService,
     CommonUtilService, Environment,
     FormAndFrameworkUtilService,
+    InteractSubtype,
+    InteractType,
     PageId,
     SunbirdQRScanner,
     TelemetryGeneratorService
@@ -40,7 +42,7 @@ import { SplaschreenDeeplinkActionHandlerDelegate } from '@app/services/sunbird-
 import { mockContentData } from '@app/app/content-details/content-details.page.spec.data';
 import { NEVER, of, Subscription } from 'rxjs';
 import { NotificationService } from '../../services/notification.service';
-import { EventTopics } from '../app.constant';
+import {ContentFilterConfig, EventTopics} from '../app.constant';
 
 describe('ResourcesComponent', () => {
     let resourcesComponent: ResourcesComponent;
@@ -811,7 +813,7 @@ describe('ResourcesComponent', () => {
             // assert
             setTimeout(() => {
                 expect(mockContentService.getContents).toHaveBeenCalled();
-                expect(mockNgZone.run).toHaveBeenCalled();
+                expect(mockCommonUtilService.networkInfo.isNetworkAvailable).toBe(false);
                 done();
             }, 0);
         });
@@ -835,7 +837,6 @@ describe('ResourcesComponent', () => {
             // assert
             setTimeout(() => {
                 expect(mockContentService.getContents).toHaveBeenCalled();
-                expect(mockNgZone.run).toHaveBeenCalled();
                 done();
             }, 0);
         });
@@ -1239,5 +1240,83 @@ describe('ResourcesComponent', () => {
                done();
            }, 0);
        });
+    });
+
+    it('should generate interact telemetry and call QR scanner service when called upon', (done) => {
+        // arrange
+        mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+        mockQRScanner.startScanner = jest.fn(() => Promise.resolve('qr_scanner called'));
+        // act
+        resourcesComponent.scanQRCode();
+        // assert
+        setTimeout(() => {
+            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+                InteractType.TOUCH,
+                InteractSubtype.QRCodeScanClicked,
+                Environment.HOME,
+                PageId.LIBRARY
+            );
+            expect(mockQRScanner.startScanner).toHaveBeenCalledWith(PageId.LIBRARY);
+            done();
+        }, 0);
+    });
+
+    it('should navigate, getFilteredConfig and navigate to search page', (done) => {
+        // arrange
+        mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+        mockFormAndFrameworkUtilService.getSupportedContentFilterConfig = jest.fn(() => Promise.resolve('supported_config'));
+        mockRouter.navigate = jest.fn(() => Promise.resolve(true));
+        // act
+        resourcesComponent.search();
+        // assert
+        setTimeout(() => {
+            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+                InteractType.TOUCH,
+                InteractSubtype.SEARCH_BUTTON_CLICKED,
+                Environment.HOME,
+                PageId.LIBRARY
+            );
+            expect(mockFormAndFrameworkUtilService.getSupportedContentFilterConfig)
+                .toHaveBeenCalledWith(ContentFilterConfig.NAME_LIBRARY);
+            expect(mockRouter.navigate).toHaveBeenCalled();
+            done();
+        }, 0);
+    });
+
+    it('should fetch current user data and call board, medium and grade methods ', () => {
+        // arrange
+        mockAppGlobalService.getCurrentUser = jest.fn(() => ['sample_syllabus']);
+        jest.spyOn(resourcesComponent, 'getMediumData').mockImplementation();
+        jest.spyOn(resourcesComponent, 'getGradeLevelData').mockImplementation();
+        jest.spyOn(resourcesComponent, 'getSubjectData').mockImplementation();
+        // act
+        resourcesComponent.getCategoryData();
+        // assert
+        expect(resourcesComponent.getMediumData).toHaveBeenCalled();
+        expect(resourcesComponent.getGradeLevelData).toHaveBeenCalled();
+        expect(resourcesComponent.getSubjectData).toHaveBeenCalled();
+    });
+
+    it('should fetch framework category terms and set into subjects ', () => {
+        // arrange
+        mockFrameworkUtilService.getFrameworkCategoryTerms = jest.fn(() => of());
+        // act
+        resourcesComponent.getSubjectData();
+        // assert
+        expect(mockFrameworkUtilService.getFrameworkCategoryTerms).toHaveBeenCalled();
+    });
+
+    it('should fetch medium data from framework category ', (done) => {
+        // arrange
+        mockFrameworkUtilService.getFrameworkCategoryTerms = jest.fn(() => of(['sample_data']));
+        jest.spyOn(resourcesComponent, 'arrangeMediumsByUserData').mockImplementation();
+        // act
+        resourcesComponent.getMediumData();
+        // assert
+        setTimeout(() => {
+            expect(mockFrameworkUtilService.getFrameworkCategoryTerms).toHaveBeenCalled();
+            expect(resourcesComponent.arrangeMediumsByUserData).toHaveBeenCalled();
+            done();
+        }, 0);
     });
 });
