@@ -988,14 +988,11 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   redirectToNotifications() {
-    const valuesMap = {};
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,
       InteractSubtype.NOTIFICATION_CLICKED,
       Environment.HOME,
-      PageId.LIBRARY,
-      undefined,
-      valuesMap);
+      PageId.LIBRARY);
     this.router.navigate([RouterLinks.NOTIFICATION]);
   }
 
