@@ -557,7 +557,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
         });
       })
       .catch(error => {
-        console.log('error while getting popular resources...', error);
         this.ngZone.run(() => {
           this.refresh = false;
           this.searchApiLoader = false;
@@ -784,51 +783,26 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       .then((res: CategoryTerm[]) => {
         this.categoryMediums = res;
         this.categoryMediumNamesArray = res.map(a => (a.name));
-        // this.arrangeMediumsByUserData(this.categoryMediums.map(a => ({ ...a })));
         this.arrangeMediumsByUserData([...this.categoryMediumNamesArray]);
       })
       .catch(() => {
       });
   }
 
-
-  findWithAttr(array, attr, value) {
-    for (let i = 0; i < array.length; i += 1) {
-      if (array[i][attr].toLowerCase() === value.toLowerCase()) {
-        return i;
-      }
-    }
-    return -1;
-  }
-
   arrangeMediumsByUserData(categoryMediumsParam) {
     if (this.appGlobalService.getCurrentUser() &&
       this.appGlobalService.getCurrentUser().medium &&
       this.appGlobalService.getCurrentUser().medium.length) {
-      // const mediumIndex = this.findWithAttr(categoryMediumsParam, 'name', this.appGlobalService.getCurrentUser().medium[0]);
       const matchedIndex = this.categoryMediumNamesArray.map(x => x.toLocaleLowerCase())
         .indexOf(this.appGlobalService.getCurrentUser().medium[0].toLocaleLowerCase());
-
-      // for (let i = mediumIndex; i > 0; i--) {
-      //   categoryMediumsParam[i] = categoryMediumsParam[i - 1];
-      //   if (i === 1) {
-      //     categoryMediumsParam[0] = this.categoryMediums[mediumIndex];
-      //   }
-      // }
       for (let i = matchedIndex; i > 0; i--) {
         categoryMediumsParam[i] = categoryMediumsParam[i - 1];
         if (i === 1) {
           categoryMediumsParam[0] = this.categoryMediumNamesArray[matchedIndex];
         }
       }
-      // this.categoryMediums = categoryMediumsParam;
       this.categoryMediumNamesArray = categoryMediumsParam;
 
-      // for (let i = 0, len = this.categoryMediums.length; i < len; i++) {
-      //   if (this.getGroupByPageReq.medium[0].toLowerCase().trim() === this.categoryMediums[i].name.toLowerCase().trim()) {
-      //     this.mediumClick(this.categoryMediums[i].name);
-      //   }
-      // }
       for (let i = 0, len = this.categoryMediumNamesArray.length; i < len; i++) {
         if (this.getGroupByPageReq.medium[0].toLowerCase().trim() === this.categoryMediumNamesArray[i].toLowerCase().trim()) {
           this.mediumClickHandler(i, this.categoryMediumNamesArray[i]);
@@ -856,35 +830,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       })
       .catch(err => {
       });
-  }
-
-  checkEmptySearchResult(isAfterLanguageChange = false) {
-    const flags = [];
-    forEach(this.storyAndWorksheets, (value, key) => {
-      if (value.contents && value.contents.length) {
-        flags[key] = true;
-      }
-    });
-
-    if (flags.length && flags.includes(true)) {
-    } else {
-      if (!isAfterLanguageChange) {
-        if (this.commonUtilService.currentTabName === 'resources') {
-          this.commonUtilService.showToast('NO_CONTENTS_FOUND');
-        }
-      }
-    }
-  }
-
-  checkNetworkStatus(showRefresh = false) {
-    if (this.commonUtilService.networkInfo.isNetworkAvailable && showRefresh) {
-      this.swipeDownToRefresh();
-    }
-  }
-
-
-  showDisabled(resource) {
-    return !resource.isAvailableLocally && !this.commonUtilService.networkInfo.isNetworkAvailable;
   }
 
   generateClassInteractTelemetry(currentClass: string, previousClass: string) {
@@ -916,29 +861,15 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   classClickHandler(index, isClassClicked?: boolean) {
-    // if (isClassClicked) {
-    //   this.generateClassInteractTelemetry(this.categoryGradeLevels[index].name, this.getGroupByPageReq.grade[0]);
-    // }
     if (isClassClicked) {
       this.generateClassInteractTelemetry(this.categoryGradeLevelsArray[index], this.getGroupByPageReq.grade[0]);
     }
-    // this.getGroupByPageReq.grade = [this.categoryGradeLevels[index].name];
     this.getGroupByPageReq.grade = [this.categoryGradeLevelsArray[index]];
-    // if ((this.currentGrade) && (this.currentGrade.name !== this.categoryGradeLevels[index].name) && isClassClicked) {
-    //   this.getGroupByPage(false, !isClassClicked);
-    // }
+
     if ((this.currentGrade) && (this.currentGrade !== this.categoryGradeLevelsArray[index]) && isClassClicked) {
       this.getGroupByPage(false, !isClassClicked);
     }
-    // for (let i = 0, len = this.categoryGradeLevels.length; i < len; i++) {
-    //   if (i === index) {
-    //     this.currentGrade = this.categoryGradeLevels[i];
-    //     this.current_index = this.categoryGradeLevels[i];
-    //     this.categoryGradeLevels[i].selected = 'classAnimate';
-    //   } else {
-    //     this.categoryGradeLevels[i].selected = '';
-    //   }
-    // }
+
     for (let i = 0, len = this.categoryGradeLevelsArray.length; i < len; i++) {
       if (i === index) {
         this.currentGrade = this.categoryGradeLevelsArray[i];
@@ -959,25 +890,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
           el.scrollIntoView({ behavior: 'smooth', block: 'end', inline: 'start' });
         }
       }, 1000);
-    }
-  }
-
-  mediumClick(mediumName: string, isMediumClicked?: boolean) {
-    if (isMediumClicked) {
-      this.generateMediumInteractTelemetry(mediumName, this.getGroupByPageReq.medium[0]);
-    }
-    this.getGroupByPageReq.medium = [mediumName];
-    if (this.currentMedium !== mediumName && isMediumClicked) {
-      this.getGroupByPage(false, !isMediumClicked);
-    }
-
-    for (let i = 0, len = this.categoryMediums.length; i < len; i++) {
-      if (this.categoryMediums[i].name === mediumName) {
-        this.currentMedium = this.categoryMediums[i].name;
-        // this.categoryMediums[i].selected = true;
-      } else {
-        this.categoryMediums[i].selected = false;
-      }
     }
   }
 
@@ -1085,11 +997,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       undefined,
       valuesMap);
     this.router.navigate([RouterLinks.NOTIFICATION]);
-  }
-
-
-  toggleMenu() {
-    this.menuCtrl.toggle();
   }
 
   logScrollEnd(event) {
