@@ -618,21 +618,85 @@ describe('SearchPage', () => {
         it('should open content', () => {
             // arrange
             jest.spyOn(searchPage, 'generateInteractEvent').mockImplementation();
+            jest.spyOn(searchPage, 'checkParent').mockImplementation();
             // act
             searchPage.openContent('collection', 'content');
             // assert
             expect(searchPage.generateInteractEvent).toHaveBeenCalled();
             expect(searchPage.parentContent).toEqual('collection');
         });
-        it('should open content', () => {
+        // it('should open content', () => {
+        //     // arrange
+        //     jest.spyOn(searchPage, 'generateInteractEvent').mockImplementation();
+        //     jest.spyOn(searchPage, 'checkRetiredOpenBatch').mockImplementation();
+        //     // act
+        //     searchPage.openContent(undefined, 'content');
+        //     // assert
+        //     expect(searchPage.generateInteractEvent).toHaveBeenCalled();
+        //     // expect(searchPage.parentContent).toEqual('collection');
+        // });
+    });
+    describe('showFilter', () => {
+        it('should showFilter', (done) => {
             // arrange
-            jest.spyOn(searchPage, 'generateInteractEvent').mockImplementation();
+            searchPage.responseData = {
+                filterCriteria: {
+                    facetFilters: [{name: 'name'}]
+                }
+            };
+            const getLibraryFilterConfigResp = [
+                {name: 'name', code: 'code'}
+            ];
+            mockCommonUtilService.getTranslatedValue = jest.fn(() => 'translation');
+            mockFormAndFrameworkUtilService.getLibraryFilterConfig = jest.fn(() => Promise.resolve(getLibraryFilterConfigResp))
             // act
-            searchPage.openContent(undefined, 'content');
+            searchPage.showFilter();
             // assert
-            expect(searchPage.generateInteractEvent).toHaveBeenCalled();
-            // expect(searchPage.parentContent).toEqual('collection');
+            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+                InteractType.TOUCH,
+                InteractSubtype.FILTER_BUTTON_CLICKED,
+                Environment.HOME,
+                'source',
+                undefined
+            );
+            setTimeout(() => {
+                expect(mockRouter.navigate).toHaveBeenCalled();
+                done();
+            }, 0);
         });
     });
+    describe('applyFilter and handleCancel', () => {
+        it('should apply filter', (done) => {
+            // arrange
+            const searchContentResp = {
+                contentDataList:  {}
+            };
+            mockContentService.searchContent = jest.fn(() => of(searchContentResp));
+            // act
+            searchPage.applyFilter();
+            // assert
+            setTimeout(() => {
+                expect(mockTelemetryGeneratorService.generateExtraInfoTelemetry).toHaveBeenCalled();
+                done();
+            }, 0);
+        });
+
+        it('should handle cancel', () => {
+            // arrange
+            // act
+            searchPage.handleCancel();
+            // assert
+            expect(searchPage.isEmptyResult).toEqual(false);
+        });
+    });
+
+    // describe('handleSearch', () => {
+    //     it('should handle search', () => {
+    //         // arange
+    //         // act
+    //         searchPage.handleSearch();
+    //         // assert
+    //     });
+    // });
 
 });
