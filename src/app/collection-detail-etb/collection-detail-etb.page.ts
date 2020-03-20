@@ -23,13 +23,15 @@ import { Subscription } from 'rxjs';
 import { ContentType, EventTopics, MimeType, RouterLinks, ShareItemType } from '../../app/app.constant';
 import {
   AppGlobalService, AppHeaderService, CommonUtilService,
-  TelemetryGeneratorService} from '../../services';
+  TelemetryGeneratorService
+} from '../../services';
 import { Location } from '@angular/common';
 
 import { SbSharePopupComponent } from '../components/popups/sb-share-popup/sb-share-popup.component';
 
 import {
-  ConfirmAlertComponent} from '../components';
+  ConfirmAlertComponent
+} from '../components';
 import { Router, NavigationExtras } from '@angular/router';
 import { ContentUtil } from '@app/util/content-util';
 import { tap } from 'rxjs/operators';
@@ -1006,28 +1008,16 @@ export class CollectionDetailEtbPage implements OnInit {
   }
 
   async showDownloadConfirmationAlert() {
+    this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
+      InteractSubtype.DOWNLOAD_CLICKED,
+      Environment.HOME,
+      PageId.COLLECTION_DETAIL,
+      this.telemetryObject,
+      undefined,
+      this.objRollup,
+      this.corRelationList);
     if (this.commonUtilService.networkInfo.isNetworkAvailable) {
-      let contentTypeCount;
-      if (this.downloadIdentifiers.size) {
-        contentTypeCount = this.downloadIdentifiers.size;
-      } else {
-        contentTypeCount = '';
-      }
-      /* generate telemetry on download click from device button
-       * type: interaction
-       */
-      const telemetryObject = new TelemetryObject(this.content.identifier || this.content.contentId,
-        this.content.contentType, this.content.pkgVersion);
-      const values = new Map();
-      this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
-        InteractSubtype.DOWNLOAD_CLICKED,
-        Environment.HOME,
-        PageId.COLLECTION_DETAIL,
-        telemetryObject,
-        values,
-        this.objRollup,
-        this.corRelationList);
-
+      const contentTypeCount = this.downloadIdentifiers.size ? this.downloadIdentifiers.size : '';
       const popover = await this.popoverCtrl.create({
         component: ConfirmAlertComponent,
         componentProps: {
@@ -1046,16 +1036,12 @@ export class CollectionDetailEtbPage implements OnInit {
         cssClass: 'sb-popover info',
       });
       await popover.present();
-      /*
-      * generate telemetry for the impression for download click from device button
-      * type: impression
-      */
       this.telemetryGeneratorService.generateImpressionTelemetry(ImpressionType.VIEW, '',
-        PageId.COLLECTION_DETAIL,
+        PageId.DOWNLOAD_ALL_CONFIRMATION_POPUP,
         Environment.HOME,
-        this.identifier,
-        '',
-        this.content.pkgVersion,
+        this.contentDetail.identifier,
+        this.contentDetail.contentData.contentType,
+        this.contentDetail.contentData.pkgVersion,
         this.objRollup,
         this.corRelationList);
 
@@ -1072,7 +1058,6 @@ export class CollectionDetailEtbPage implements OnInit {
         this.downloadAllContent();
         this.events.publish('header:decreasezIndex');
       } else {
-        // Cancel Clicked Telemetry
         this.generateCancelDownloadTelemetry();
       }
     } else {

@@ -122,7 +122,8 @@ export enum PageId {
     SHARE_CONTENT_POPUP = 'share-content-popup',
     SHARE_APP_POPUP = 'share-app-popup',
     UPGRADE_POPUP = 'update-popup',
-    IMPORT_CONTENT_POPUP = 'import-content-popup'
+    IMPORT_CONTENT_POPUP = 'import-content-popup',
+    DOWNLOAD_ALL_CONFIRMATION_POPUP = 'download-all-confirmation-popup'
 }
 export enum LogType {
     NOTIFICATION = 'notification'

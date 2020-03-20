@@ -1,23 +1,21 @@
-import {CollectionDetailEtbPage} from './collection-detail-etb.page';
+import { CollectionDetailEtbPage } from './collection-detail-etb.page';
 import {
     ContentService, EventsBusService, ProfileService,
     StorageService, ContentImportResponse, ContentImportStatus, TelemetryObject
 } from 'sunbird-sdk';
-import {NavController, Events, PopoverController, Platform, IonContent} from '@ionic/angular';
-import {NgZone, ChangeDetectorRef} from '@angular/core';
-import {TranslateService} from '@ngx-translate/core';
-import {SocialSharing} from '@ionic-native/social-sharing/ngx';
+import { Events, PopoverController, Platform, IonContent } from '@ionic/angular';
+import { NgZone, ChangeDetectorRef } from '@angular/core';
 import {
-    AppGlobalService, CommonUtilService, TelemetryGeneratorService, CourseUtilService, UtilityService, AppHeaderService,
-    ComingSoonMessageService, InteractSubtype, Environment
+    AppGlobalService, CommonUtilService, TelemetryGeneratorService, AppHeaderService,
+    ComingSoonMessageService, InteractSubtype, Environment, ImpressionType
 } from '../../services';
 import {
     InteractType, PageId, ID
 } from '../../services/telemetry-constants';
-import {FileSizePipe} from '../../pipes/file-size/file-size';
-import {ActivatedRoute, Router} from '@angular/router';
-import {TextbookTocService} from './textbook-toc-service';
-import {Location} from '@angular/common';
+import { FileSizePipe } from '../../pipes/file-size/file-size';
+import { Router } from '@angular/router';
+import { TextbookTocService } from './textbook-toc-service';
+import { Location } from '@angular/common';
 import {
     contentDetailsMcokResponse1,
     contentDetailsMcokResponse2,
@@ -26,11 +24,11 @@ import {
     mockContentData,
     mockContentInfo
 } from './collection-detail-etb-page.spec.data';
-import {of, Subscription, Observable} from 'rxjs';
-import {ContentPlayerHandler} from '@app/services/content/player/content-player-handler';
-import {ContentUtil} from '@app/util/content-util';
-import {EventTopics} from '@app/app/app.constant';
-import { ShareItemType } from '../app.constant';
+import { of, Subscription } from 'rxjs';
+import { ContentPlayerHandler } from '@app/services/content/player/content-player-handler';
+import { ContentUtil } from '@app/util/content-util';
+import { EventTopics } from '@app/app/app.constant';
+import { ShareItemType, ContentType } from '../app.constant';
 import { ContentDeleteHandler } from '../../services/content/content-delete-handler'
 
 describe('collectionDetailEtbPage', () => {
@@ -41,7 +39,6 @@ describe('collectionDetailEtbPage', () => {
         addContentAccess: jest.fn()
     };
     const mockStorageService: Partial<StorageService> = {};
-    const mockNavCtrl: Partial<NavController> = {};
     const mockzone: Partial<NgZone> = {
         run: jest.fn()
     };
@@ -51,14 +48,14 @@ describe('collectionDetailEtbPage', () => {
     };
     const mockPopoverController: Partial<PopoverController> = {};
     const mockplatform: Partial<Platform> = {};
-    const mocktranslate: Partial<TranslateService> = {};
-    const mocksocial: Partial<SocialSharing> = {};
+
     const mockappGlobalService: Partial<AppGlobalService> = {
         isUserLoggedIn: jest.fn(() => true),
         getCurrentUser: jest.fn()
     };
     const mockCommonUtilService: Partial<CommonUtilService> = {
-        networkInfo: {} as any
+        networkInfo: {} as any,
+        showToast: jest.fn()
     };
     const mocktelemetryGeneratorService: Partial<TelemetryGeneratorService> = {
         generateBackClickedTelemetry: jest.fn(),
@@ -67,19 +64,18 @@ describe('collectionDetailEtbPage', () => {
         generateImpressionTelemetry: jest.fn(),
         generateInteractTelemetry: jest.fn()
     };
-    const mockcourseUtilService: Partial<CourseUtilService> = {};
-    const mockutilityService: Partial<UtilityService> = {};
-    const mockfileSizePipe: Partial<FileSizePipe> = {};
+
+    const mockfileSizePipe: Partial<FileSizePipe> = {
+        transform: jest.fn()
+    };
     const mockHeaderService: Partial<AppHeaderService> = {
         getDefaultPageConfig: jest.fn(),
         updatePageConfig: jest.fn(),
         hideHeader: jest.fn()
     };
-    const mockcomingSoonMessageService: Partial<ComingSoonMessageService> = {};
     const mocklocation: Partial<Location> = {
         back: jest.fn()
     };
-    const mockroute: Partial<ActivatedRoute> = {};
     const mockrouter: Partial<Router> = {
         getCurrentNavigation: jest.fn(() => mockcollectionData as any),
         navigate: jest.fn(() => Promise.resolve(true))
@@ -98,6 +94,7 @@ describe('collectionDetailEtbPage', () => {
     };
 
     const mockContentDeleteHandler: Partial<ContentDeleteHandler> = {
+        showContentDeletePopup: jest.fn()
     };
 
     beforeEach(() => {
@@ -145,7 +142,7 @@ describe('collectionDetailEtbPage', () => {
         const data = contentDetailsMcokResponse1;
         collectionDetailEtbPage.isUpdateAvailable = false;
         collectionDetailEtbPage.showLoading = true;
-        mockCommonUtilService.networkInfo = {isNetworkAvailable: true};
+        mockCommonUtilService.networkInfo = { isNetworkAvailable: true };
         mocktelemetryGeneratorService.generateSpineLoadingTelemetry = jest.fn();
         mockHeaderService.hideHeader = jest.fn();
         mockStorageService.getStorageDestinationDirectoryPath = jest.fn();
@@ -185,8 +182,8 @@ describe('collectionDetailEtbPage', () => {
             showHeader: false,
             showBurgerMenu: false,
             actionButtons: ['download']
-        });
-        mockCommonUtilService.networkInfo = {isNetworkAvailable: false};
+        } as any);
+        mockCommonUtilService.networkInfo = { isNetworkAvailable: false };
         spyOn(collectionDetailEtbPage, 'setChildContents').and.stub();
         spyOn(collectionDetailEtbPage, 'setCollectionStructure').and.stub();
         collectionDetailEtbPage.ionViewWillEnter();
@@ -246,16 +243,16 @@ describe('collectionDetailEtbPage', () => {
             // arrange
             jest.spyOn(collectionDetailEtbPage, 'registerDeviceBackButton').mockImplementation();
             mockzone.run = jest.fn((fn) => fn());
-            const mockHeaderEventsSubscription = {unsubscribe: jest.fn()} as Partial<Subscription>;
+            const mockHeaderEventsSubscription = { unsubscribe: jest.fn() } as Partial<Subscription>;
             mockHeaderService.headerEventEmitted$ = {
-                subscribe: jest.fn(() => mockHeaderEventsSubscription)
-            };
+                subscribe: jest.fn(() => mockHeaderEventsSubscription as any)
+            } as any;
             jest.spyOn(collectionDetailEtbPage, 'handleHeaderEvents').mockImplementation();
             jest.spyOn(mockHeaderService, 'getDefaultPageConfig').mockReturnValue({
                 showHeader: false,
                 showBurgerMenu: false,
                 actionButtons: ['download']
-            });
+            } as any);
             jest.spyOn(collectionDetailEtbPage, 'markContent').mockImplementation();
             jest.spyOn(collectionDetailEtbPage, 'resetVariables').mockImplementation();
 
@@ -368,8 +365,8 @@ describe('collectionDetailEtbPage', () => {
             new TelemetryObject(mockContentData.content.identifier,
                 mockContentData.content.contentData.contentType, mockContentData.content.contentData.pkgVersion));
         mockContentPlayerHandler.launchContentPlayer = jest.fn();
-        mockContentData.content.isAvailableLocally  = true;
-        mockContentData.content.mimeType  = 'application/vnd.ekstep.h5p-archive';
+        mockContentData.content.isAvailableLocally = true;
+        mockContentData.content.mimeType = 'application/vnd.ekstep.h5p-archive';
         mockCommonUtilService.networkInfo.isNetworkAvailable = true;
         // act
         collectionDetailEtbPage.playContent(mockContentData);
@@ -411,4 +408,89 @@ describe('collectionDetailEtbPage', () => {
         });
     });
 
+    describe('showDeletePopOver()', () => {
+        const mockTelemetryObject = new TelemetryObject('do_12345', ContentType.TEXTBOOK, '1');
+        const mockCorRelationList = [];
+        const mockObjRollup = { l1: 'do_12345' };
+        mockContentDeleteHandler.contentDeleteCompleted$ = of({});
+        it('should invoke showContentDeletePopup method', () => {
+            // arrange
+            collectionDetailEtbPage.telemetryObject = mockTelemetryObject;
+            collectionDetailEtbPage.corRelationList = mockCorRelationList;
+            collectionDetailEtbPage.objRollup = mockObjRollup;
+            // act
+            collectionDetailEtbPage.showDeletePopOver();
+            // assert
+            expect(mockContentDeleteHandler.showContentDeletePopup).toHaveBeenCalledWith(undefined, false, {
+                telemetryObject: mockTelemetryObject,
+                rollUp: mockObjRollup,
+                correlationList: mockCorRelationList,
+                hierachyInfo: undefined,
+            }, PageId.COLLECTION_DETAIL);
+        });
+
+        it('should navigate back if deletion is complete', () => {
+            // arrange
+            collectionDetailEtbPage.telemetryObject = mockTelemetryObject;
+            collectionDetailEtbPage.corRelationList = mockCorRelationList;
+            collectionDetailEtbPage.objRollup = mockObjRollup;
+            // act
+            collectionDetailEtbPage.showDeletePopOver();
+            // assert
+            expect(mocklocation.back).toHaveBeenCalled();
+        });
+    });
+
+    describe('showDownloadConfirmationAlert()', () => {
+        const mockTelemetryObject = new TelemetryObject('do_12345', ContentType.TEXTBOOK, '1');
+        const mockCorRelationList = [];
+        const mockObjRollup = { l1: 'do_12345' };
+        mockPopoverController.create = jest.fn(() => (Promise.resolve({
+            present: jest.fn(() => Promise.resolve({})),
+            onDidDismiss: jest.fn(() => Promise.resolve({ data: { isEnrolled: true } }))
+        } as any)));
+        it('should show error toast if network is not available', () => {
+            // arrange
+            collectionDetailEtbPage.telemetryObject = mockTelemetryObject;
+            collectionDetailEtbPage.corRelationList = mockCorRelationList;
+            collectionDetailEtbPage.objRollup = mockObjRollup;
+            mockCommonUtilService.networkInfo = { isNetworkAvailable: false };
+            // act
+            collectionDetailEtbPage.showDownloadConfirmationAlert();
+            // assert
+            expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('ERROR_NO_INTERNET_MESSAGE');
+            expect(mocktelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(InteractType.TOUCH,
+                InteractSubtype.DOWNLOAD_CLICKED,
+                Environment.HOME,
+                PageId.COLLECTION_DETAIL,
+                mockTelemetryObject,
+                undefined,
+                mockObjRollup,
+                mockCorRelationList);
+        });
+
+        it('should show download all confirmation pop up if network is available', (done) => {
+            // arrange
+            collectionDetailEtbPage.telemetryObject = mockTelemetryObject;
+            collectionDetailEtbPage.corRelationList = mockCorRelationList;
+            collectionDetailEtbPage.objRollup = mockObjRollup;
+            mockCommonUtilService.networkInfo = { isNetworkAvailable: true };
+            collectionDetailEtbPage.contentDetail = contentDetailsMcokResponse1;
+            // act
+            collectionDetailEtbPage.showDownloadConfirmationAlert();
+            // assert
+            setTimeout(() => {
+                expect(mockPopoverController.create).toHaveBeenCalled();
+                expect(mocktelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenCalledWith(ImpressionType.VIEW, '',
+                PageId.DOWNLOAD_ALL_CONFIRMATION_POPUP,
+                Environment.HOME,
+                contentDetailsMcokResponse1.identifier,
+                contentDetailsMcokResponse1.contentData.contentType,
+                contentDetailsMcokResponse1.contentData.pkgVersion,
+                mockObjRollup,
+                mockCorRelationList);
+                done();
+            }, 0);
+        });
+    });
 });
