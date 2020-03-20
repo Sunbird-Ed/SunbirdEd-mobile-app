@@ -229,7 +229,7 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
     this.hideOnboardingSplashScreen();
   }
 
-  async hideOnboardingSplashScreen() {
+  hideOnboardingSplashScreen() {
     if (this.navParams && this.navParams.forwardMigration) {
       this.splashScreenService.handleSunbirdSplashScreenActions();
     }
