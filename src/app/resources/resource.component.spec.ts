@@ -1548,4 +1548,14 @@ describe('ResourcesComponent', () => {
         // assert
         expect(mockTelemetryGeneratorService.generateInteractTelemetry).not.toHaveBeenCalled();
     });
+
+    it('should fetch localContent when called upon', () => {
+        // arrange
+        mockContentService.getContents = jest.fn((data) => of(data));
+        mockNgZone.run = jest.fn((fn) => fn());
+        // act
+        resourcesComponent.getLocalContent();
+        // assert
+        expect(mockContentService.getContents).toHaveBeenCalled();
+    });
 });
