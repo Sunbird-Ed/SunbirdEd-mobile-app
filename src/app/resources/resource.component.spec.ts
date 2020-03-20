@@ -773,7 +773,6 @@ describe('ResourcesComponent', () => {
             // assert
             setTimeout(() => {
                 expect(mockContentService.getContents).toHaveBeenCalled();
-                expect(mockNgZone.run).toHaveBeenCalled();
                 done();
             }, 0);
         });
@@ -837,6 +836,7 @@ describe('ResourcesComponent', () => {
             // assert
             setTimeout(() => {
                 expect(mockContentService.getContents).toHaveBeenCalled();
+                expect(mockCommonUtilService.networkInfo.isNetworkAvailable).toBe(true);
                 done();
             }, 0);
         });
