@@ -637,7 +637,7 @@ describe('SearchPage', () => {
         // });
     });
     describe('showFilter', () => {
-        it('should showFilter', (done) => {
+        it('should goto filter page on showFilter', (done) => {
             // arrange
             searchPage.responseData = {
                 filterCriteria: {
@@ -666,22 +666,24 @@ describe('SearchPage', () => {
         });
     });
     describe('applyFilter and handleCancel', () => {
-        it('should apply filter', (done) => {
+        it('should updateFilterIcon on applyFilter', (done) => {
             // arrange
             const searchContentResp = {
                 contentDataList:  {}
             };
+            jest.spyOn(searchPage, 'updateFilterIcon').mockImplementation();
             mockContentService.searchContent = jest.fn(() => of(searchContentResp));
             // act
             searchPage.applyFilter();
             // assert
             setTimeout(() => {
                 expect(mockTelemetryGeneratorService.generateExtraInfoTelemetry).toHaveBeenCalled();
+                expect(searchPage.updateFilterIcon).toHaveBeenCalled();
                 done();
             }, 0);
         });
 
-        it('should handle cancel', () => {
+        it('should reset values on handle cancel', () => {
             // arrange
             // act
             searchPage.handleCancel();
@@ -693,9 +695,15 @@ describe('SearchPage', () => {
     // describe('handleSearch', () => {
     //     it('should handle search', () => {
     //         // arange
+    //         jest.spyOn(searchPage, 'scrollToTop').mockImplementation();
+    //         const searchContentResp = {
+    //             contentDataList:  {}
+    //         };
+    //         mockContentService.searchContent = jest.fn(() => of(searchContentResp));
     //         // act
     //         searchPage.handleSearch();
     //         // assert
+    //         expect(searchPage.isDialCodeSearch).toEqual(false);
     //     });
     // });
 
