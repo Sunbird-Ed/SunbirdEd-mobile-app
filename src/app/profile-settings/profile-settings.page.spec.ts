@@ -3,8 +3,8 @@ import {
     FrameworkService,
     FrameworkUtilService,
     ProfileService,
-    SharedPreferences,
-    DeviceRegisterService
+    GetSuggestedFrameworksRequest,
+    FrameworkCategoryCodesGroup
 } from 'sunbird-sdk';
 import { TranslateService } from '@ngx-translate/core';
 import { Events, Platform, AlertController } from '@ionic/angular';
@@ -17,12 +17,13 @@ import {
     SunbirdQRScanner,
     ContainerService,
     AppHeaderService, FormAndFrameworkUtilService
-} from 'services';
-import { SplashScreenService } from '@app/services/splash-screen.service';
+} from '../../services';
+import { SplashScreenService } from '../../services/splash-screen.service';
 import { Location } from '@angular/common';
-import { ImpressionType, PageId, Environment, InteractSubtype, InteractType } from '@app/services/telemetry-constants';
+import { ImpressionType, PageId, Environment, InteractSubtype, InteractType } from '../../services/telemetry-constants';
 import { of, Subscription } from 'rxjs';
 import { FormControl } from '@angular/forms';
+import { doesNotReject } from 'assert';
 
 describe('ProfileSettingsPage', () => {
     let profileSettingsPage: ProfileSettingsPage;
@@ -175,6 +176,9 @@ describe('ProfileSettingsPage', () => {
                         case 'syllabus':
                             value = { value: { board: []}};
                             break;
+                        case 'board':
+                            value = { value: { board: []}};
+                            break;
                         case 'medium':
                             value = { value: { medium: []}};
                             break;
@@ -200,9 +204,10 @@ describe('ProfileSettingsPage', () => {
                 },
                 value: {
                     syllabus: [], board: [], medium: [], grade: []
-                }
+                },
             } as any;
-            profileSettingsPage.boardSelect = {open: jest.fn()};
+            profileSettingsPage.boardSelect = { open: jest.fn() };
+            mockAppGlobalService.generateSaveClickedTelemetry = jest.fn();
             // act
             profileSettingsPage.onSubmitAttempt();
             // assert
@@ -231,6 +236,9 @@ describe('ProfileSettingsPage', () => {
                     let value;
                     switch (arg) {
                         case 'syllabus':
+                            value = { value: { board: ['AP']}};
+                            break;
+                        case 'board':
                             value = { value: { board: ['AP']}};
                             break;
                         case 'medium':
@@ -291,6 +299,9 @@ describe('ProfileSettingsPage', () => {
                         case 'syllabus':
                             value = { value: { board: ['AP']}};
                             break;
+                        case 'board':
+                            value = { value: { board: ['AP']}};
+                            break;
                         case 'medium':
                             value = { value: { medium: ['English']}};
                             break;
@@ -340,11 +351,48 @@ describe('ProfileSettingsPage', () => {
       });
 
     it('should control Scanner to called handleActiveScanner()', (done) => {
+    // arrange
+    mockRouter.getCurrentNavigation = jest.fn(() => ({
+        extras: null
+    }as any));
+    profileSettingsPage = new ProfileSettingsPage(
+        mockProfileService as ProfileService,
+        mockFrameworkService as FrameworkService,
+        mockFrameworkUtilService as FrameworkUtilService,
+        mockFormAndFrameworkUtilService as FormAndFrameworkUtilService,
+        mockTranslate as TranslateService,
+        mockTelemetryGeneratorService as TelemetryGeneratorService,
+        mockAppGlobalService as AppGlobalService,
+        mockEvents as Events,
+        mockScanner as SunbirdQRScanner,
+        mockPlatform as Platform,
+        mockCommonUtilService as CommonUtilService,
+        mockContainer as ContainerService,
+        mockHeaderService as AppHeaderService,
+        mockRouter as Router,
+        mockAppVersion as AppVersion,
+        mockAlertCtrl as AlertController,
+        mockLocation as Location,
+        mockSplashScreenService as SplashScreenService,
+        mockActivatedRoute as ActivatedRoute
+    );
+    mockScanner.stopScanner = jest.fn();
+    // act
+    profileSettingsPage.handleActiveScanner();
+    // assert
+    setTimeout(() => {
+        expect(mockRouter.getCurrentNavigation).toHaveBeenCalled();
+        done();
+    }, 0);
+    });
+
+    it('should control Scanner to called handleActiveScanner()', (done) => {
         // arrange
         mockRouter.getCurrentNavigation = jest.fn(() => ({
             extras: {
                 state: {
-                    stopScanner: true
+                    stopScanner: true,
+                    forwardMigration: true
                 }
             }
         }as any));
@@ -375,8 +423,9 @@ describe('ProfileSettingsPage', () => {
         // assert
         setTimeout(() => {
             expect(mockRouter.getCurrentNavigation).toHaveBeenCalled();
+            expect(mockScanner.stopScanner).toHaveBeenCalled();
             done();
-        }, 0);
+        }, 500);
     });
 
     it('should handle all header events by invoked ionViewWillEnter()', (done) => {
@@ -427,6 +476,7 @@ describe('ProfileSettingsPage', () => {
 
         } as any;
         jest.spyOn(profileSettingsPage, 'handleBackButton').mockImplementation();
+        window.history.state['showFrameworkCategoriesMenu'] = true;
         // act
         profileSettingsPage.ionViewWillEnter();
         // assert
@@ -462,12 +512,25 @@ describe('ProfileSettingsPage', () => {
 
         } as any;
         jest.spyOn(profileSettingsPage, 'handleBackButton').mockImplementation();
+        window.history.state['showFrameworkCategoriesMenu'] = true;
         // act
         profileSettingsPage.ionViewWillEnter();
         // assert
         setTimeout(() => {
             expect(data).toHaveBeenCalled();
             expect(mockHeaderService.hideHeader).toHaveBeenCalled();
+            done();
+        }, 0);
+    });
+
+    it('should handle all header events by invoked ionViewDidEnter()', (done) => {
+        // arrange
+        profileSettingsPage.hideOnboardingSplashScreen = jest.fn();
+        // act
+        profileSettingsPage.ionViewDidEnter();
+        // assert
+        setTimeout(() => {
+            expect(profileSettingsPage.hideOnboardingSplashScreen).toHaveBeenCalled();
             done();
         }, 0);
     });
@@ -562,4 +625,120 @@ describe('ProfileSettingsPage', () => {
         );
 
     });
+
+    describe('boardClicked', () => {
+
+        it('should prevent assigning default values and open board details popup', (done) => {
+            // arrange
+            const payloadEvent: any = {
+                stopPropagation: jest.fn(),
+                preventDefault: jest.fn()
+            };
+            profileSettingsPage.boardSelect.open = jest.fn();
+            // act
+            profileSettingsPage.boardClicked(payloadEvent);
+            // assert
+            expect(profileSettingsPage.showQRScanner).toEqual(false);
+            setTimeout(() => {
+                expect(profileSettingsPage.boardSelect.open).toHaveBeenCalled();
+                done();
+            }, 0);
+        });
+
+        it('should skip assigning default values', () => {
+            // arrange
+            const payloadEvent: any = null;
+            profileSettingsPage.boardSelect.open = jest.fn();
+            // act
+            profileSettingsPage.boardClicked(payloadEvent);
+            // assert
+            expect(profileSettingsPage.showQRScanner).toEqual(false);
+            setTimeout(() => {
+                expect(profileSettingsPage.boardSelect.open).toHaveBeenCalled();
+            }, 0);
+        });
+
+    });
+
+    describe('handleBackButton', () => {
+
+        it('should reset profile setting if QR scanner is dissabled', () => {
+            // arrange
+            profileSettingsPage.showQRScanner = false;
+
+            mockTelemetryGeneratorService.generateBackClickedTelemetry = jest.fn();
+            // act
+            profileSettingsPage.handleBackButton(true);
+
+            // assert
+            expect(profileSettingsPage.showQRScanner).toEqual(true);
+            expect(mockTelemetryGeneratorService.generateBackClickedTelemetry).toHaveBeenCalled();
+        });
+
+        it('should dismiss the popup if QR scanner is open', () => {
+            // arrange
+            profileSettingsPage.showQRScanner = true;
+
+            mockTelemetryGeneratorService.generateBackClickedTelemetry = jest.fn();
+            // act
+            profileSettingsPage.handleBackButton(true);
+
+            // assert
+            expect(mockTelemetryGeneratorService.generateBackClickedTelemetry).toHaveBeenCalled();
+        });
+
+    });
+
+    describe('handleHeaderEvents', () => {
+
+        it('should trigger back button functionality if header-back button is clicked', () => {
+            // arrange
+            const eventPayload = { name: 'back' };
+            profileSettingsPage.handleBackButton = jest.fn();
+            // act
+            profileSettingsPage.handleHeaderEvents(eventPayload);
+            // assert
+            expect(profileSettingsPage.handleBackButton).toHaveBeenCalledWith(true);
+        });
+
+    });
+
+    describe('cancelEvent', () => {
+
+        it('should generate interact event when event is canceled', () => {
+            // arrange
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            // act
+            profileSettingsPage.cancelEvent();
+            // assert
+            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
+        });
+
+    });
+
+    describe('openQRScanner', () => {
+
+        it('should open the QR scanner', () => {
+            // arrange
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
+            mockScanner.startScanner = jest.fn(() => Promise.resolve('skip'));
+            // act
+            profileSettingsPage.openQRScanner();
+            // assert
+            expect(profileSettingsPage.showQRScanner).toEqual(true);
+        });
+
+        it('should open the QR scanner but skip generating telemetry event', () => {
+            // arrange
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
+            mockScanner.startScanner = jest.fn(() => Promise.resolve(''));
+            // act
+            profileSettingsPage.openQRScanner();
+            // assert
+        });
+
+    });
+
 });
