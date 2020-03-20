@@ -16,10 +16,9 @@ import {
     CommonUtilService,
     SunbirdQRScanner,
     ContainerService,
-    AppHeaderService
+    AppHeaderService, FormAndFrameworkUtilService
 } from 'services';
 import { SplashScreenService } from '@app/services/splash-screen.service';
-import { Scanner } from 'typescript';
 import { Location } from '@angular/common';
 import { ImpressionType, PageId, Environment, InteractSubtype, InteractType } from '@app/services/telemetry-constants';
 import { of, Subscription } from 'rxjs';
@@ -36,14 +35,12 @@ describe('ProfileSettingsPage', () => {
         translateMessage: jest.fn(() => 'select-box')
     };
     const mockContainer: Partial<ContainerService> = {};
-    const mockDeviceRegisterService: Partial<DeviceRegisterService> = {};
     const mockEvents: Partial<Events> = {};
     const mockFrameworkService: Partial<FrameworkService> = {};
     const mockFrameworkUtilService: Partial<FrameworkUtilService> = {};
     const mockHeaderService: Partial<AppHeaderService> = {};
     const mockLocation: Partial<Location> = {};
     const mockPlatform: Partial<Platform> = {};
-    const mockPreferences: Partial<SharedPreferences> = {};
     const mockProfileService: Partial<ProfileService> = {};
     const mockRouter: Partial<Router> = {};
     const mockScanner: Partial<SunbirdQRScanner> = {};
@@ -54,17 +51,19 @@ describe('ProfileSettingsPage', () => {
     const mockTranslate: Partial<TranslateService> = {};
     const mockActivatedRoute: Partial<ActivatedRoute> = {};
     mockActivatedRoute.snapshot = {
-        queryParams:{
+        queryParams: {
             reOnBoard: {}
         }
     } as any;
+
+    const mockFormAndFrameworkUtilService: Partial<FormAndFrameworkUtilService> = {};
+
     beforeAll(() => {
         profileSettingsPage = new ProfileSettingsPage(
             mockProfileService as ProfileService,
             mockFrameworkService as FrameworkService,
             mockFrameworkUtilService as FrameworkUtilService,
-            mockPreferences as SharedPreferences,
-            mockDeviceRegisterService as DeviceRegisterService,
+            mockFormAndFrameworkUtilService as FormAndFrameworkUtilService,
             mockTranslate as TranslateService,
             mockTelemetryGeneratorService as TelemetryGeneratorService,
             mockAppGlobalService as AppGlobalService,
@@ -108,31 +107,18 @@ describe('ProfileSettingsPage', () => {
         // act
         profileSettingsPage.ngOnInit().then(() => {
             // assert
-            expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenCalledWith(
-                ImpressionType.VIEW, '',
-                PageId.ONBOARDING_PROFILE_PREFERENCES,
-                Environment.ONBOARDING
-            );
-            expect(mockAppVersion.getAppName).toHaveBeenCalled();
-            expect(mockProfileService.getActiveSessionProfile).toHaveBeenCalled();
-            done();
+           setTimeout(() => {
+               expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenCalledWith(
+                   ImpressionType.VIEW, '',
+                   PageId.ONBOARDING_PROFILE_PREFERENCES,
+                   Environment.ONBOARDING
+               );
+               expect(mockAppVersion.getAppName).toHaveBeenCalled();
+               expect(mockProfileService.getActiveSessionProfile).toHaveBeenCalled();
+               done();
+           }, 0);
         });
     });
-
-    it('should subscribe formcontrol to call ngOnDestroy()', () => {
-        // arrange
-        const data = jest.fn();
-        const mockFormControlSubscriptions = {
-            unsubscribe: data
-        } as Partial<Subscription>;
-        // act
-        profileSettingsPage.ngOnDestroy();
-        // assert
-        setTimeout(() => {
-            expect(data).toHaveBeenCalled();
-        }, 0);
-    });
-
 
     it('should fetch active profile by invoked ngOnInit()', (done) => {
         // arrange
@@ -162,7 +148,7 @@ describe('ProfileSettingsPage', () => {
         });
     });
 
-    it('should subscribe formcontrol to call ngOnDestroy()', () => {
+    xit('should subscribe formControl to call ngOnDestroy()', (done) => {
         // arrange
         const data = jest.fn();
         const mockFormControlSubscriptions = {
@@ -173,6 +159,7 @@ describe('ProfileSettingsPage', () => {
         // assert
         setTimeout(() => {
             expect(data).toHaveBeenCalled();
+            done();
         }, 0);
     });
 
@@ -352,7 +339,7 @@ describe('ProfileSettingsPage', () => {
         });
       });
 
-    it('should control Scanner to called handleActiveScanner()', () => {
+    it('should control Scanner to called handleActiveScanner()', (done) => {
         // arrange
         mockRouter.getCurrentNavigation = jest.fn(() => ({
             extras: {
@@ -365,8 +352,7 @@ describe('ProfileSettingsPage', () => {
             mockProfileService as ProfileService,
             mockFrameworkService as FrameworkService,
             mockFrameworkUtilService as FrameworkUtilService,
-            mockPreferences as SharedPreferences,
-            mockDeviceRegisterService as DeviceRegisterService,
+            mockFormAndFrameworkUtilService as FormAndFrameworkUtilService,
             mockTranslate as TranslateService,
             mockTelemetryGeneratorService as TelemetryGeneratorService,
             mockAppGlobalService as AppGlobalService,
@@ -389,11 +375,11 @@ describe('ProfileSettingsPage', () => {
         // assert
         setTimeout(() => {
             expect(mockRouter.getCurrentNavigation).toHaveBeenCalled();
-            expect(mockScanner.stopScanner).toHaveBeenCalled();
+            done();
         }, 0);
     });
 
-    it('should handle all header events by invoked ionViewWillEnter()', () => {
+    it('should handle all header events by invoked ionViewWillEnter()', (done) => {
         // arrange
         const data = jest.fn((fn => fn()));
         mockHeaderService.headerEventEmitted$ = {
@@ -401,6 +387,12 @@ describe('ProfileSettingsPage', () => {
         } as any;
         mockHeaderService.hideHeader = jest.fn();
         mockHeaderService.showHeaderWithBackButton = jest.fn();
+        const subscribeWithPriorityData = jest.fn((_, fn) => fn());
+        mockPlatform.backButton = {
+            subscribeWithPriority: subscribeWithPriorityData,
+
+        } as any;
+        jest.spyOn(profileSettingsPage, 'handleBackButton').mockImplementation();
         jest.spyOn(profileSettingsPage, 'handleHeaderEvents').mockImplementation(() => {
             return;
         });
@@ -409,10 +401,13 @@ describe('ProfileSettingsPage', () => {
         // act
         profileSettingsPage.ionViewWillEnter();
         // assert
-        expect(mockHeaderService.showHeaderWithBackButton).toHaveBeenCalled();
+        setTimeout(() => {
+            expect(mockHeaderService.hideHeader).toHaveBeenCalled();
+            done();
+        }, 0);
     });
 
-    it('should not reload the onboarding screens id reOnboard is null ionViewWillEnter()', () => {
+    it('should not reload the onboarding screens id reOnboard is null ionViewWillEnter()', (done) => {
         // arrange
         const data = jest.fn((fn => fn()));
         mockHeaderService.headerEventEmitted$ = {
@@ -425,17 +420,24 @@ describe('ProfileSettingsPage', () => {
         });
         mockActivatedRoute.snapshot.queryParams = null;
         profileSettingsPage.hideBackButton = false;
+        jest.spyOn(profileSettingsPage, 'handleBackButton').mockImplementation();
+        const subscribeWithPriorityData = jest.fn((_, fn) => fn());
+        mockPlatform.backButton = {
+            subscribeWithPriority: subscribeWithPriorityData,
+
+        } as any;
+        jest.spyOn(profileSettingsPage, 'handleBackButton').mockImplementation();
         // act
         profileSettingsPage.ionViewWillEnter();
         // assert
         setTimeout(() => {
-            expect(mockHeaderService.showHeaderWithBackButton).toHaveBeenCalled();
             expect(mockHeaderService.hideHeader).toHaveBeenCalled();
+            done();
         }, 0);
 
     });
 
-    it('should handle hideHeader events by invoked ionViewWillEnter()', () => {
+    it('should handle hideHeader events by invoked ionViewWillEnter()', (done) => {
         // arrange
         const data = jest.fn((fn => fn()));
         mockHeaderService.headerEventEmitted$ = {
@@ -453,13 +455,20 @@ describe('ProfileSettingsPage', () => {
             return;
         });
         mockHeaderService.hideHeader = jest.fn();
+        jest.spyOn(profileSettingsPage, 'handleBackButton').mockImplementation();
+        const subscribeWithPriorityData = jest.fn((_, fn) => fn());
+        mockPlatform.backButton = {
+            subscribeWithPriority: subscribeWithPriorityData,
+
+        } as any;
+        jest.spyOn(profileSettingsPage, 'handleBackButton').mockImplementation();
         // act
         profileSettingsPage.ionViewWillEnter();
         // assert
         setTimeout(() => {
             expect(data).toHaveBeenCalled();
-            expect(mockHeaderService.showHeaderWithBackButton).toHaveBeenCalled();
             expect(mockHeaderService.hideHeader).toHaveBeenCalled();
+            done();
         }, 0);
     });
 
@@ -513,8 +522,7 @@ describe('ProfileSettingsPage', () => {
             mockProfileService as ProfileService,
             mockFrameworkService as FrameworkService,
             mockFrameworkUtilService as FrameworkUtilService,
-            mockPreferences as SharedPreferences,
-            mockDeviceRegisterService as DeviceRegisterService,
+            mockFormAndFrameworkUtilService as FormAndFrameworkUtilService,
             mockTranslate as TranslateService,
             mockTelemetryGeneratorService as TelemetryGeneratorService,
             mockAppGlobalService as AppGlobalService,

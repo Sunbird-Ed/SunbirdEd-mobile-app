@@ -95,7 +95,9 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
     // Read version code from deeplink.
     const requiredVersionCode = url.searchParams.get('vCode');
     let content = null;
-    if (urlMatch.groups.quizId || urlMatch.groups.contentId) {
+
+    // checking only for quizId or content Id, since only contents can be considered as quiz.
+    if (urlMatch && urlMatch.groups && (urlMatch.groups.quizId || urlMatch.groups.contentId)) {
       content = await this.contentService.getContentDetails({
         contentId: urlMatch.groups.quizId || urlMatch.groups.contentId
       }).toPromise();
@@ -105,7 +107,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
     } else if (this.isOnboardingCompleted || session) {
       this.handleNavigation(urlMatch, dialCode, inputUrl);
     } else {
-      this.checkForDeeplinkWithoutOnboarding(urlMatch, inputUrl);
+      this.checkForDeeplinkWithoutOnboarding(content, inputUrl);
     }
   }
 
@@ -139,13 +141,14 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
     await this.appGlobalServices.openPopover(result);
   }
 
-  private async checkForDeeplinkWithoutOnboarding(urlMatch: any, inputUrl: string): Promise<void> {
+  private async checkForDeeplinkWithoutOnboarding(content: any, inputUrl: string): Promise<void> {
     this.savedUrl = null;
     if (this.loginPopup) {
       await this.loginPopup.dismiss();
     }
-    if (urlMatch && urlMatch.groups.quizId) {
-      this.showLoginWithoutOnboardingPopup(urlMatch.groups.quizId);
+    if (content && content.contentData && content.contentData.status === ContentFilterConfig.CONTENT_STATUS_UNLISTED &&
+      (content.identifier || content.contentId)) {
+        this.showLoginWithoutOnboardingPopup(content.identifier || content.contentId);
     } else {
       this.savedUrl = inputUrl;
     }
@@ -156,7 +159,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
       if (dialCode) {
         this.appGlobalServices.skipCoachScreenForDeeplink = true;
         this.router.navigate([RouterLinks.SEARCH], { state: { dialCode, source: PageId.HOME, corRelation: this.getCorRelationList()} });
-      } else if (urlMatch.groups.quizId || urlMatch.groups.contentId || urlMatch.groups.courseId) {
+      } else if (urlMatch && urlMatch.groups && (urlMatch.groups.quizId || urlMatch.groups.contentId || urlMatch.groups.courseId)) {
         this.navigateContent(urlMatch.groups.quizId || urlMatch.groups.contentId || urlMatch.groups.courseId, true);
       }
     } else {
@@ -310,20 +313,6 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
       await this.preferences.putString(PreferenceKey.SELECTED_USER_TYPE, ProfileType.TEACHER).toPromise();
     }
   }
-
-  generateUTMInfoTelemetry(deeplinkUrl, telemetryObject) {
-    const utmHashes = deeplinkUrl.slice(deeplinkUrl.indexOf('?') + 1).split('&');
-    const utmParams = {};
-    utmHashes.map(hash => {
-        const [key, val] = hash.split('=');
-        utmParams[key] = decodeURIComponent(val);
-    });
-    const cData: CorrelationData[] = [{
-      id: CorReleationDataType.DEEPLINK,
-      type: CorReleationDataType.ACCESS_TYPE
-    }];
-    this.telemetryGeneratorService.generateUtmInfoTelemetry(utmParams, PageId.HOME, cData, telemetryObject);
-   }
 
    getCorRelationList() {
     const corRelationList: Array<CorrelationData> = new Array<CorrelationData>();

@@ -65,6 +65,17 @@ export class FiltersPage {
 
   applyFilter() {
     this.navCtrl.pop();
+    const values = {
+      appliedFilter: {}
+    };
+    values.appliedFilter = this.filterCriteria;
+    this.telemetryGeneratorService.generateInteractTelemetry(
+        InteractType.TOUCH,
+        InteractSubtype.APPLY_FILTER_CLICKED,
+        Environment.HOME,
+        PageId.LIBRARY_SEARCH_FILTER,
+        undefined,
+        values);
     this.events.publish('search.applyFilter', this.filterCriteria);
   }
 
