@@ -820,6 +820,26 @@ describe('EnrolledCourseDetailsPage', () => {
             // assert
             expect(enrolledCourseDetailsPage.queuedIdentifiers).toEqual(['do_21274246255366963214046', 'do_21274246302428364814048']);
         });
+
+        it('should populate queuedIdentifiers', (done) => {
+            // arrange
+            const data = mockImportContentResponse;
+            data[0].status = -1;
+            mockContentService.importContent = jest.fn(() => of(data));
+            enrolledCourseDetailsPage.isDownloadStarted = true;
+            enrolledCourseDetailsPage.queuedIdentifiers = [];
+            enrolledCourseDetailsPage.faultyIdentifiers = [
+                {}
+            ];
+            // act
+            enrolledCourseDetailsPage.importContent(['do_21274246255366963214046', 'do_21274246302428364814048'], true, false);
+            // assert
+            setTimeout(() => {
+                expect(mockHeaderService.showHeaderWithBackButton).toBeCalled();
+                expect(mockCommonUtilService.showToast).toBeCalledWith('UNABLE_TO_FETCH_CONTENT');
+                done();
+            }, 0);
+        });
     });
 
 
@@ -1786,8 +1806,139 @@ describe('EnrolledCourseDetailsPage', () => {
             // assert
             expect(mockChildrenData[0].lastRead).toBe(true);
             done();
+        }); 
+    });
+
+    describe('subscribeSdkEvent()', () => {
+        it('should be PROGRESS event', () => {
+            // arrange
+            const event = {
+                type: 'PROGRESS',
+                payload: {
+                    identifier: 'do_83424628349',
+                    progress: 100
+                }
+            };
+            enrolledCourseDetailsPage.identifier = 'do_83424628349';
+            mockEventsBusService.events = jest.fn(() => of(event));
+            mockZone.run = jest.fn((cb) => cb());
+            spyOn(enrolledCourseDetailsPage, 'getBatchDetails').and.stub();
+            // act
+            enrolledCourseDetailsPage.subscribeSdkEvent();
+            // assert
+            expect(enrolledCourseDetailsPage.downloadProgress).toBe(100);
+            expect(enrolledCourseDetailsPage.getBatchDetails).toBeCalled();
+            expect(mockHeaderService.showHeaderWithBackButton).toBeCalled();
+
         });
 
+        it('should be IMPORT_COMPLETED event', () => {
+            // arrange
+            const event = {
+                type: 'IMPORT_COMPLETED',
+                payload: {
+                    contentId: 'do_83424628349',
+                    progress: 100
+                }
+            };
+            const queuedIdentifiers = [
+                'do_83424628349'
+            ];
+            enrolledCourseDetailsPage.queuedIdentifiers = queuedIdentifiers;
+            enrolledCourseDetailsPage.identifier = 'do_83424628349';
+            enrolledCourseDetailsPage.isDownloadStarted = true;
+            mockEventsBusService.events = jest.fn(() => of(event));
+            mockZone.run = jest.fn((cb) => cb());
+            spyOn(enrolledCourseDetailsPage, 'getBatchDetails').and.stub();
+            // act
+            enrolledCourseDetailsPage.subscribeSdkEvent();
+            // assert
+            expect(enrolledCourseDetailsPage.isDownloadStarted).toBe(false);
+            expect(enrolledCourseDetailsPage.queuedIdentifiers.length).toBe(0);
+            expect(mockHeaderService.showHeaderWithBackButton).toBeCalled();
+        });
+
+        it('should be IMPORT_COMPLETED event download not started', () => {
+            // arrange
+            const event = {
+                type: 'IMPORT_COMPLETED',
+                payload: {
+                    contentId: 'do_83424628349',
+                    progress: 100
+                }
+            };
+            const queuedIdentifiers = [
+                'do_83424628349'
+            ];
+            enrolledCourseDetailsPage.queuedIdentifiers = queuedIdentifiers;
+            enrolledCourseDetailsPage.identifier = 'do_83424628349';
+            enrolledCourseDetailsPage.isDownloadStarted = false;
+            mockEventsBusService.events = jest.fn(() => of(event));
+            mockZone.run = jest.fn((cb) => cb());
+            spyOn(enrolledCourseDetailsPage, 'setContentDetails').and.stub();
+            // act
+            enrolledCourseDetailsPage.subscribeSdkEvent();
+            // assert
+            expect(enrolledCourseDetailsPage.setContentDetails).toBeCalled();
+        });
         
+        it('should be SERVER_CONTENT_DATA event', () => {
+            // arrange
+            const event = {
+                type: 'SERVER_CONTENT_DATA',
+                payload: {
+                    contentId: 'do_83424628349',
+                    progress: 100,
+                    licenseDetails: 'SAMPLE_LICENSE',
+                    size: '234'
+                }
+            };
+            mockEventsBusService.events = jest.fn(() => of(event));
+            mockZone.run = jest.fn((cb) => cb());
+            // act
+            enrolledCourseDetailsPage.subscribeSdkEvent();
+            // assert
+            expect(enrolledCourseDetailsPage.content.contentData.size).toBe('234');
+        });
+
+        it('should be IMPORT_PROGRESS event', () => {
+            // arrange
+            const event = {
+                type: 'IMPORT_PROGRESS',
+                payload: {
+                    contentId: 'do_83424628349',
+                    currentCount: 14,
+                    totalCount: 14
+                }
+            };
+            mockEventsBusService.events = jest.fn(() => of(event));
+            mockZone.run = jest.fn((cb) => cb());
+            // act
+            enrolledCourseDetailsPage.subscribeSdkEvent();
+            // assert
+
+        });
+
+        it('should be UPDATE event', () => {
+            // arrange
+            const event = {
+                type: 'UPDATE',
+                payload: {
+                    contentId: 'do_83424628349',
+                    currentCount: 14,
+                    totalCount: 14
+                }
+            };
+            enrolledCourseDetailsPage.identifier = 'do_83424628349';
+            mockEventsBusService.events = jest.fn(() => of(event));
+            spyOn(enrolledCourseDetailsPage, 'importContent').and.stub();
+            mockZone.run = jest.fn((cb) => cb());
+            // act
+            enrolledCourseDetailsPage.subscribeSdkEvent();
+            // assert
+            expect(mockHeaderService.hideHeader).toBeCalled();
+            expect(enrolledCourseDetailsPage.importContent).toBeCalled();
+        });
+
     });
 });

@@ -89,7 +89,9 @@ describe('ContentDetailsPage', () => {
     };
     const mockNetwork: Partial<Network> = {};
     const mockFileSizePipe: Partial<FileSizePipe> = {};
-    const mockHeaderService: Partial<AppHeaderService> = {};
+    const mockHeaderService: Partial<AppHeaderService> = {
+        hideHeader: jest.fn()
+    };
     const mockContentShareHandler: Partial<ContentShareHandlerService> = {};
     const mockAppVersion: Partial<AppVersion> = {};
     const mockLocation: Partial<Location> = {};
@@ -104,7 +106,8 @@ describe('ContentDetailsPage', () => {
         resetRating: jest.fn()
     };
     const mockContentPlayerHandler: Partial<ContentPlayerHandler> = {
-        launchContentPlayer: jest.fn()
+        launchContentPlayer: jest.fn(),
+        getLastPlayedContentId: jest.fn()
     };
     const mockChildContentHandler: Partial<ChildContentHandler> = {};
     const mockContentDeleteHandler: Partial<ContentDeleteHandler> = {};
@@ -644,4 +647,55 @@ describe('ContentDetailsPage', () => {
             });
         });
     });
+
+    describe('ngOnDestroy()', () => {
+        it('should unsubscribe events', () => {
+            // arrange
+            // act
+            contentDetailsPage.ngOnDestroy();
+            // assert
+            expect(mockEvents.unsubscribe).toBeCalledTimes(3);
+        });
+    });
+
+    describe('ionViewWillEnter()', () => {
+        it('should unsubscribe events', () => {
+            // arrange
+            spyOn(contentDetailsPage, 'generateTelemetry').and.stub();
+            spyOn(contentDetailsPage, 'subscribeSdkEvent').and.stub();
+            spyOn(contentDetailsPage, 'handleDeviceBackButton').and.stub();
+            spyOn(contentDetailsPage, 'isPlayedFromCourse').and.stub();
+            spyOn(contentDetailsPage, 'setContentDetails').and.stub();
+            spyOn(contentDetailsPage, 'findHierarchyOfContent').and.stub();
+            // act
+            contentDetailsPage.ionViewWillEnter();
+            // assert
+            expect(mockHeaderService.hideHeader).toBeCalled();
+            expect(contentDetailsPage.isPlayedFromCourse).toBeCalled();
+            expect(contentDetailsPage.setContentDetails).toBeCalled();
+            expect(contentDetailsPage.findHierarchyOfContent).toBeCalled();
+            expect(contentDetailsPage.handleDeviceBackButton).toBeCalled();
+        });
+    });
+
+    describe('ionViewWillLeave()', () => {
+        it('should', () => {
+            // arrange
+            const unsubscribe = jest.fn();
+            contentDetailsPage.eventSubscription = {
+                unsubscribe
+            };
+            contentDetailsPage.contentDeleteObservable = {
+                unsubscribe
+            };
+            contentDetailsPage.backButtonFunc = {
+                unsubscribe
+            };
+            // act
+            contentDetailsPage.ionViewWillLeave();
+            // assert
+            expect(unsubscribe).toBeCalledTimes(3);
+        });
+    });
+
 });
