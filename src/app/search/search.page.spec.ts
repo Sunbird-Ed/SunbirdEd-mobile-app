@@ -342,27 +342,6 @@ describe('SearchPage', () => {
             expect(searchPage.editProfile).toHaveBeenCalled();
         });
     });
-    describe('editProfile', () => {
-        it('should edit Profile', (done) => {
-            // arrange
-            searchPage.gradeList = [{code: 'grade1', name: 'grade1'}];
-            searchPage.profile = {
-                grade: ['grade1'],
-                gradeValue: {
-                    grade1: 'grade1'
-                }
-            };
-            mockProfileService.updateProfile = jest.fn(() => of({syllabus: 'sylabus'}));
-            mockCommonUtilService.handleToTopicBasedNotification = jest.fn();
-            // act
-            searchPage.editProfile();
-            // assert
-            setTimeout(() => {
-                expect(mockCommonUtilService.handleToTopicBasedNotification).toHaveBeenCalled();
-                done();
-            }, 0);
-        });
-    });
     describe('checkProfileData', () => {
         it('should set profile data accordingly', () => {
             // arrange
@@ -403,6 +382,329 @@ describe('SearchPage', () => {
                 done();
             }, 0);
         });
+        it('should set profile data accordingly', (done) => {
+            // arrange
+            const data = {
+                framework: 'framework1',
+                board: 'board',
+                medium: ['medium1'],
+                gradeLevel: ['grade1']
+            };
+            const profile = {
+                syllabus : ['framework']
+            };
+            const getActiveChannelSuggestedFrameworkListResp = [{identifier: 'framework1', name: 'framework1'}];
+            const getFrameworkDetailsResp = {
+                categories : [
+                    {
+                        code: 'board',
+                        terms: [
+                            {code: 'boardcode', name: 'board'}
+                        ]
+                    },
+                    {
+                        code: 'medium',
+                        terms: [
+                            {code: 'medium1code', name: 'medium1'}
+                        ]
+                    },
+                    {
+                        code: 'gradeLevel',
+                        terms: [
+                            {code: 'grade1code', name: 'grade1'}
+                        ]
+                    }
+                ]
+            };
+            jest.spyOn(searchPage, 'setCurrentProfile').mockImplementation();
+            mockFrameworkUtilService.getActiveChannelSuggestedFrameworkList = jest.fn(() => of(getActiveChannelSuggestedFrameworkListResp));
+            mockFrameworkService.getFrameworkDetails = jest.fn(() => of(getFrameworkDetailsResp));
+            // act
+            searchPage.checkProfileData(data, profile);
+            // assert
+            setTimeout(() => {
+                expect(searchPage.isProfileUpdated).toEqual(true);
+                expect(mockFrameworkService.getFrameworkDetails).toHaveBeenCalled();
+                expect(searchPage.boardList).toEqual(getFrameworkDetailsResp.categories[0].terms);
+                expect(searchPage.setCurrentProfile).toHaveBeenCalledWith(
+                    0,
+                    data
+                );
+                done();
+            }, 0);
+        });
+        it('should set profile data accordingly', (done) => {
+            // arrange
+            const data = {
+                framework: 'framework1',
+                board: 'board',
+                medium: ['medium1'],
+                gradeLevel: ['grade1']
+            };
+            const profile = {
+                syllabus : ['framework1'],
+                board: ['b1', 'b2']
+            };
+            const getActiveChannelSuggestedFrameworkListResp = [{identifier: 'framework1', name: 'framework1'}];
+            const getFrameworkDetailsResp = {
+                categories : [
+                    {
+                        code: 'board',
+                        terms: [
+                            {code: 'boardcode', name: 'board'}
+                        ]
+                    },
+                    {
+                        code: 'medium',
+                        terms: [
+                            {code: 'medium1code', name: 'medium1'}
+                        ]
+                    },
+                    {
+                        code: 'gradeLevel',
+                        terms: [
+                            {code: 'grade1code', name: 'grade1'}
+                        ]
+                    }
+                ]
+            };
+            jest.spyOn(searchPage, 'setCurrentProfile').mockImplementation();
+            mockFrameworkUtilService.getActiveChannelSuggestedFrameworkList = jest.fn(() => of(getActiveChannelSuggestedFrameworkListResp));
+            mockFrameworkService.getFrameworkDetails = jest.fn(() => of(getFrameworkDetailsResp));
+            // act
+            searchPage.checkProfileData(data, profile);
+            // assert
+            setTimeout(() => {
+                expect(searchPage.isProfileUpdated).toEqual(true);
+                expect(mockFrameworkService.getFrameworkDetails).toHaveBeenCalled();
+                expect(searchPage.boardList).toEqual(getFrameworkDetailsResp.categories[0].terms);
+                expect(searchPage.setCurrentProfile).toHaveBeenCalledWith(
+                    1,
+                    data
+                );
+                done();
+            }, 0);
+        });
+        it('should set profile data accordingly', (done) => {
+            // arrange
+            const data = {
+                framework: 'framework1',
+                board: 'board',
+                medium: ['medium1'],
+                gradeLevel: ['grade1']
+            };
+            const profile = {
+                syllabus : ['framework1'],
+                board: ['boardcode']
+            };
+            const getActiveChannelSuggestedFrameworkListResp = [{identifier: 'framework1', name: 'framework1'}];
+            const getFrameworkDetailsResp = {
+                categories : [
+                    {
+                        code: 'board',
+                        terms: [
+                            {code: 'boardcode', name: 'board'}
+                        ]
+                    },
+                    {
+                        code: 'medium',
+                        terms: [
+                            {code: 'medium1code', name: 'medium1'}
+                        ]
+                    },
+                    {
+                        code: 'gradeLevel',
+                        terms: [
+                            {code: 'grade1code', name: 'grade1'}
+                        ]
+                    }
+                ]
+            };
+            jest.spyOn(searchPage, 'setCurrentProfile').mockImplementation();
+            mockFrameworkUtilService.getActiveChannelSuggestedFrameworkList = jest.fn(() => of(getActiveChannelSuggestedFrameworkListResp));
+            mockFrameworkService.getFrameworkDetails = jest.fn(() => of(getFrameworkDetailsResp));
+            // act
+            searchPage.checkProfileData(data, profile);
+            // assert
+            setTimeout(() => {
+                expect(searchPage.isProfileUpdated).toEqual(true);
+                expect(mockFrameworkService.getFrameworkDetails).toHaveBeenCalled();
+                expect(searchPage.boardList).toEqual(getFrameworkDetailsResp.categories[0].terms);
+                expect(searchPage.setCurrentProfile).toHaveBeenCalledWith(
+                    2,
+                    data
+                );
+                expect(searchPage.setCurrentProfile).toHaveBeenCalledWith(
+                    3,
+                    data
+                );
+                done();
+            }, 0);
+        });
+        it('should set profile data accordingly', (done) => {
+            // arrange
+            const data = {
+                framework: 'framework1',
+                board: 'board',
+                medium: ['medium1'],
+                gradeLevel: ['grade1']
+            };
+            const profile = {
+                syllabus : ['framework1'],
+                board: ['boardcode'],
+                medium: ['medium1'],
+                grade: ['grade1']
+            };
+            const getActiveChannelSuggestedFrameworkListResp = [{identifier: 'framework1', name: 'framework1'}];
+            const getFrameworkDetailsResp = {
+                categories : [
+                    {
+                        code: 'board',
+                        terms: [
+                            {code: 'boardcode', name: 'board'}
+                        ]
+                    },
+                    {
+                        code: 'medium',
+                        terms: [
+                            {code: 'medium1', name: 'medium1'}
+                        ]
+                    },
+                    {
+                        code: 'gradeLevel',
+                        terms: [
+                            {code: 'grade1', name: 'grade1'}
+                        ]
+                    }
+                ]
+            };
+            jest.spyOn(searchPage, 'setCurrentProfile').mockImplementation();
+            mockFrameworkUtilService.getActiveChannelSuggestedFrameworkList = jest.fn(() => of(getActiveChannelSuggestedFrameworkListResp));
+            mockFrameworkService.getFrameworkDetails = jest.fn(() => of(getFrameworkDetailsResp));
+            // act
+            searchPage.checkProfileData(data, profile);
+            // assert
+            setTimeout(() => {
+                expect(searchPage.isProfileUpdated).toEqual(true);
+                expect(mockFrameworkService.getFrameworkDetails).toHaveBeenCalled();
+                expect(searchPage.boardList).toEqual(getFrameworkDetailsResp.categories[0].terms);
+                done();
+            }, 10);
+        });
+
     });
+    describe('editProfile', () => {
+        it('should edit Profile', (done) => {
+            // arrange
+            searchPage.gradeList = [{code: 'grade1', name: 'grade1'}];
+            searchPage.profile = {
+                grade: ['grade1'],
+                gradeValue: {
+                    grade1: 'grade1'
+                }
+            };
+            mockProfileService.updateProfile = jest.fn(() => of({syllabus: 'sylabus'}));
+            mockCommonUtilService.handleToTopicBasedNotification = jest.fn();
+            // act
+            searchPage.editProfile();
+            // assert
+            setTimeout(() => {
+                expect(mockCommonUtilService.handleToTopicBasedNotification).toHaveBeenCalled();
+                done();
+            }, 0);
+        });
+    });
+    describe('openContent', () => {
+        it('should open content', () => {
+            // arrange
+            jest.spyOn(searchPage, 'generateInteractEvent').mockImplementation();
+            jest.spyOn(searchPage, 'checkParent').mockImplementation();
+            // act
+            searchPage.openContent('collection', 'content');
+            // assert
+            expect(searchPage.generateInteractEvent).toHaveBeenCalled();
+            expect(searchPage.parentContent).toEqual('collection');
+        });
+        // it('should open content', () => {
+        //     // arrange
+        //     jest.spyOn(searchPage, 'generateInteractEvent').mockImplementation();
+        //     jest.spyOn(searchPage, 'checkRetiredOpenBatch').mockImplementation();
+        //     // act
+        //     searchPage.openContent(undefined, 'content');
+        //     // assert
+        //     expect(searchPage.generateInteractEvent).toHaveBeenCalled();
+        //     // expect(searchPage.parentContent).toEqual('collection');
+        // });
+    });
+    describe('showFilter', () => {
+        it('should goto filter page on showFilter', (done) => {
+            // arrange
+            searchPage.responseData = {
+                filterCriteria: {
+                    facetFilters: [{name: 'name'}]
+                }
+            };
+            const getLibraryFilterConfigResp = [
+                {name: 'name', code: 'code'}
+            ];
+            mockCommonUtilService.getTranslatedValue = jest.fn(() => 'translation');
+            mockFormAndFrameworkUtilService.getLibraryFilterConfig = jest.fn(() => Promise.resolve(getLibraryFilterConfigResp))
+            // act
+            searchPage.showFilter();
+            // assert
+            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+                InteractType.TOUCH,
+                InteractSubtype.FILTER_BUTTON_CLICKED,
+                Environment.HOME,
+                'source',
+                undefined
+            );
+            setTimeout(() => {
+                expect(mockRouter.navigate).toHaveBeenCalled();
+                done();
+            }, 0);
+        });
+    });
+    describe('applyFilter and handleCancel', () => {
+        it('should updateFilterIcon on applyFilter', (done) => {
+            // arrange
+            const searchContentResp = {
+                contentDataList:  {}
+            };
+            jest.spyOn(searchPage, 'updateFilterIcon').mockImplementation();
+            mockContentService.searchContent = jest.fn(() => of(searchContentResp));
+            // act
+            searchPage.applyFilter();
+            // assert
+            setTimeout(() => {
+                expect(mockTelemetryGeneratorService.generateExtraInfoTelemetry).toHaveBeenCalled();
+                expect(searchPage.updateFilterIcon).toHaveBeenCalled();
+                done();
+            }, 0);
+        });
+
+        it('should reset values on handle cancel', () => {
+            // arrange
+            // act
+            searchPage.handleCancel();
+            // assert
+            expect(searchPage.isEmptyResult).toEqual(false);
+        });
+    });
+
+    // describe('handleSearch', () => {
+    //     it('should handle search', () => {
+    //         // arange
+    //         jest.spyOn(searchPage, 'scrollToTop').mockImplementation();
+    //         const searchContentResp = {
+    //             contentDataList:  {}
+    //         };
+    //         mockContentService.searchContent = jest.fn(() => of(searchContentResp));
+    //         // act
+    //         searchPage.handleSearch();
+    //         // assert
+    //         expect(searchPage.isDialCodeSearch).toEqual(false);
+    //     });
+    // });
 
 });
