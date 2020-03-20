@@ -21,6 +21,7 @@ export class RatingHandler {
     private userRating = 0;
     private userComment: string;
     public telemetryObject: TelemetryObject;
+    public useNewComments = false;
     constructor(
         @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
         private popoverCtrl: PopoverController,
@@ -36,14 +37,15 @@ export class RatingHandler {
         content: Content,
         popupType: string,
         corRelationList: CorrelationData[],
-        rollUp: Rollup
+        rollUp: Rollup,
+        shouldNavigateBack?: boolean
     ) {
         const paramsMap = new Map();
         const contentFeedback: any = content.contentFeedback;
         this.telemetryObject = ContentUtil.getTelemetryObject(content);
         if (contentFeedback && contentFeedback.length) {
-            this.userRating = contentFeedback[0].rating;
-            this.userComment = contentFeedback[0].comments;
+            this.userRating = this.userRating ? this.userRating : contentFeedback[0].rating;
+            this.userComment = this.useNewComments ? this.userComment : contentFeedback[0].comments;
         }
 
         if (isContentPlayed || content.contentAccess.length) {
@@ -55,19 +57,19 @@ export class RatingHandler {
                             this.showAppRatingPopup();
                         } else {
                             paramsMap['isPlayed'] = 'Y';
-                            this.showContentRatingPopup(content, popupType);
+                            this.showContentRatingPopup(content, popupType, shouldNavigateBack);
                         }
                     }).catch(err => {
                         paramsMap['isPlayed'] = 'Y';
-                        this.showContentRatingPopup(content, popupType);
+                        this.showContentRatingPopup(content, popupType, shouldNavigateBack);
                     });
                 } else {
                     paramsMap['isPlayed'] = 'Y';
-                    this.showContentRatingPopup(content, popupType);
+                    this.showContentRatingPopup(content, popupType, shouldNavigateBack);
                 }
             } else if (popupType === 'manual') {
                 paramsMap['isPlayed'] = 'Y';
-                this.showContentRatingPopup(content, popupType);
+                this.showContentRatingPopup(content, popupType, shouldNavigateBack);
             }
 
         } else {
@@ -86,11 +88,11 @@ export class RatingHandler {
 
     }
 
-    async showContentRatingPopup(content: Content, popupType: string) {
+    async showContentRatingPopup(content: Content, popupType: string, shouldNavigateBack?: boolean) {
         const contentFeedback: any = content.contentFeedback;
         if (contentFeedback && contentFeedback.length) {
-            this.userRating = contentFeedback[0].rating;
-            this.userComment = contentFeedback[0].comments;
+            this.userRating = this.userRating ? this.userRating : contentFeedback[0].rating;
+            this.userComment = this.useNewComments ? this.userComment : contentFeedback[0].comments;
         }
         const popover = await this.popoverCtrl.create({
             component: ContentRatingAlertComponent,
@@ -99,13 +101,15 @@ export class RatingHandler {
                 pageId: PageId.CONTENT_DETAIL,
                 rating: this.userRating,
                 comment: this.userComment,
+                navigateBack: shouldNavigateBack,
                 popupType
             },
-            cssClass: 'sb-popover info'
+            cssClass: 'sb-popover info content-rating-alert'
         });
         await popover.present();
         const { data } = await popover.onDidDismiss();
         if (data && data.message === 'rating.success') {
+            this.useNewComments = true;
             this.userRating = data.rating;
             this.userComment = data.comment;
         }
@@ -114,6 +118,7 @@ export class RatingHandler {
     public resetRating() {
         this.userRating = 0;
         this.userComment = '';
+        this.useNewComments = false;
     }
 
     private async showAppRatingPopup() {

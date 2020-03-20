@@ -3,7 +3,6 @@ import {
   Component, Inject, NgZone, OnInit, ViewChild, ViewEncapsulation, QueryList, ViewChildren,
   ElementRef, ChangeDetectorRef
 } from '@angular/core';
-import * as _ from 'lodash';
 import isObject from 'lodash/isObject';
 import forEach from 'lodash/forEach';
 import { TranslateService } from '@ngx-translate/core';
@@ -24,11 +23,9 @@ import {
   Environment, ErrorType, ImpressionType, InteractSubtype, InteractType, Mode, PageId, ID
 } from '../../services/telemetry-constants';
 import { Subscription } from 'rxjs';
-import { ContentType, MimeType, ShareUrl, RouterLinks, ShareItemType } from '../../app/app.constant';
-import {
-  AppGlobalService, AppHeaderService, CommonUtilService, CourseUtilService, TelemetryGeneratorService, UtilityService,
-  ContentShareHandlerService
-} from '../../services';
+import {ContentType, EventTopics, MimeType, RouterLinks, ShareItemType} from '../../app/app.constant';
+import { AppGlobalService, AppHeaderService, CommonUtilService,
+  CourseUtilService, TelemetryGeneratorService, UtilityService} from '../../services';
 import { SbGenericPopoverComponent } from '../components/popups/sb-generic-popover/sb-generic-popover.component';
 import { ComingSoonMessageService } from 'services/coming-soon-message.service';
 import { Location } from '@angular/common';
@@ -39,11 +36,14 @@ import {
 import { SbSharePopupComponent } from '../components/popups/sb-share-popup/sb-share-popup.component';
 
 import {
-  ConfirmAlertComponent, ContentActionsComponent, ContentRatingAlertComponent
+  ConfirmAlertComponent, ContentRatingAlertComponent
 } from '../components';
 import { ActivatedRoute, Router, NavigationExtras } from '@angular/router';
 import { ContentUtil } from '@app/util/content-util';
 import { tap } from 'rxjs/operators';
+import {ContentPlayerHandler} from '@app/services/content/player/content-player-handler';
+import {RatingHandler} from '@app/services/rating/rating-handler';
+import {ContentInfo} from '@app/services/content/content-info';
 declare const cordova;
 
 @Component({
@@ -252,6 +252,9 @@ export class CollectionDetailEtbPage implements OnInit {
     }
   }
   private previousHeaderBottomOffset?: number;
+  lastContentPlayed: string;
+  isContentPlayed = false;
+  playingContent: Content;
   constructor(
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
     @Inject('EVENTS_BUS_SERVICE') private eventBusService: EventsBusService,
@@ -277,7 +280,8 @@ export class CollectionDetailEtbPage implements OnInit {
     private router: Router,
     private changeDetectionRef: ChangeDetectorRef,
     private textbookTocService: TextbookTocService,
-    private contentShareHandler: ContentShareHandlerService,
+    private contentPlayerHandler: ContentPlayerHandler,
+    private ratingHandler: RatingHandler
   ) {
     this.objRollup = new Rollup();
     this.checkLoggedInOrGuestUser();
@@ -350,6 +354,9 @@ export class CollectionDetailEtbPage implements OnInit {
 
       this.didViewLoad = true;
       this.setContentDetails(this.identifier, true);
+      this.events.subscribe(EventTopics.CONTENT_TO_PLAY, (data) => {
+        this.playContent(data);
+      });
       this.subscribeSdkEvent();
     });
     this.ionContent.ionScroll.subscribe((event) => {
@@ -504,49 +511,40 @@ export class CollectionDetailEtbPage implements OnInit {
    * @param identifier identifier of content / course
    */
   async setContentDetails(identifier, refreshContentDetails: boolean) {
-    const loader = await this.commonUtilService.getLoader();
-    await loader.present();
     const option: ContentDetailRequest = {
       contentId: identifier,
       attachFeedback: true,
       attachContentAccess: true,
       emitUpdateIfAny: refreshContentDetails
     };
-    // console.time('getContentDetails');
     this.contentService.getContentDetails(option).toPromise()
       .then((data: Content) => {
-        // this.zone.run(() => {
-        loader.dismiss().then(() => {
-          if (data) {
-            this.licenseDetails = data.contentData.licenseDetails || this.licenseDetails;
-            if (!data.isAvailableLocally) {
-              this.contentDetail = data;
-              this.generatefastLoadingTelemetry(InteractSubtype.FAST_LOADING_OF_TEXTBOOK_INITIATED);
-              this.contentService.getContentHeirarchy(option).toPromise()
+        if (data) {
+          this.licenseDetails = data.contentData.licenseDetails || this.licenseDetails;
+          if (!data.isAvailableLocally) {
+            this.contentDetail = data;
+            this.generatefastLoadingTelemetry(InteractSubtype.FAST_LOADING_OF_TEXTBOOK_INITIATED);
+            this.contentService.getContentHeirarchy(option).toPromise()
                 .then((content: Content) => {
                   this.childrenData = content.children;
                   this.showSheenAnimation = false;
                   this.toggleGroup(0, this.content);
                   this.generatefastLoadingTelemetry(InteractSubtype.FAST_LOADING_OF_TEXTBOOK_FINISHED);
                 }).catch((err) => {
-                  this.showSheenAnimation = false;
-                });
-              this.importContentInBackground([this.identifier], false);
-            } else {
               this.showSheenAnimation = false;
-              this.extractApiResponse(data);
-            }
+            });
+            this.importContentInBackground([this.identifier], false);
+          } else {
+            this.showSheenAnimation = false;
+            this.extractApiResponse(data);
           }
-        });
-        // });
-      })
-      .catch((error: any) => {
-        console.log('error while loading content details', error);
-        this.showSheenAnimation = false;
-        loader.dismiss();
-        this.commonUtilService.showToast('ERROR_CONTENT_NOT_AVAILABLE');
-        this.location.back();
-      });
+        }
+      }).catch((error) => {
+      console.log('error while loading content details', error);
+      this.showSheenAnimation = false;
+      this.commonUtilService.showToast('ERROR_CONTENT_NOT_AVAILABLE');
+      this.location.back();
+    });
   }
 
   showLicensce() {
@@ -606,12 +604,6 @@ export class CollectionDetailEtbPage implements OnInit {
     }
     if (this.contentDetail.contentData.attributions && this.contentDetail.contentData.attributions.length) {
       this.contentDetail.contentData.attributions ? this.contentDetail.contentData.attributions.join(', ') : '';
-    }
-    if (this.contentDetail.contentData.me_totalRatings) {
-      const rating = this.contentDetail.contentData.me_totalRatings.split('.');
-      if (rating && rating[0]) {
-        this.contentDetail.contentData.me_totalRatings = rating[0];
-      }
     }
 
     // User Rating
@@ -1294,6 +1286,7 @@ export class CollectionDetailEtbPage implements OnInit {
   ionViewWillLeave() {
     this.downloadProgress = 0;
     this.headerObservable.unsubscribe();
+    this.events.unsubscribe(EventTopics.CONTENT_TO_PLAY);
     this.events.publish('header:setzIndexToNormal');
     if (this.eventSubscription) {
       this.eventSubscription.unsubscribe();
@@ -1630,4 +1623,69 @@ export class CollectionDetailEtbPage implements OnInit {
       this.corRelationList);
   }
 
+  playContent(event) {
+    this.headerService.hideHeader();
+
+    this.playingContent = event.content;
+    const contentInfo: ContentInfo = {
+      telemetryObject: ContentUtil.getTelemetryObject(this.playingContent),
+      rollUp: ContentUtil.generateRollUp(this.playingContent.hierarchyInfo, this.playingContent.identifier),
+      correlationList: this.corRelationList,
+      hierachyInfo: this.playingContent.hierarchyInfo
+    };
+    let isStreaming: boolean;
+    let shouldDownloadAndPlay: boolean;
+    if (this.playingContent.contentData.streamingUrl &&
+        this.commonUtilService.networkInfo.isNetworkAvailable && !(this.playingContent.mimeType === 'application/vnd.ekstep.h5p-archive')) {
+      isStreaming = true;
+      shouldDownloadAndPlay = false;
+      this.lastContentPlayed = this.playingContent.identifier;
+      this.generateInteractTelemetry(isStreaming, contentInfo.telemetryObject, contentInfo.rollUp, contentInfo.correlationList);
+      this.contentPlayerHandler.launchContentPlayer(this.playingContent, isStreaming, shouldDownloadAndPlay, contentInfo, false, true);
+    } else if (!this.commonUtilService.networkInfo.isNetworkAvailable && this.playingContent.isAvailableLocally) {
+      isStreaming = false;
+      shouldDownloadAndPlay = false;
+      this.lastContentPlayed = this.playingContent.identifier;
+      this.generateInteractTelemetry(isStreaming, contentInfo.telemetryObject, contentInfo.rollUp, contentInfo.correlationList);
+      this.contentPlayerHandler.launchContentPlayer(this.playingContent, isStreaming, shouldDownloadAndPlay, contentInfo, false, true);
+    } else if (this.commonUtilService.networkInfo.isNetworkAvailable && this.playingContent.isAvailableLocally) {
+      isStreaming = false;
+      shouldDownloadAndPlay = true;
+      this.lastContentPlayed = this.playingContent.identifier;
+      this.generateInteractTelemetry(isStreaming, contentInfo.telemetryObject, contentInfo.rollUp, contentInfo.correlationList);
+      this.contentPlayerHandler.launchContentPlayer(this.playingContent, isStreaming, shouldDownloadAndPlay, contentInfo, false, true);
+    } else if (!this.commonUtilService.networkInfo.isNetworkAvailable && !this.playingContent.isAvailableLocally) {
+      const params: NavigationExtras = {
+        state: {
+          isChildContent: true,
+          content: this.playingContent,
+          corRelation: this.corRelationList,
+        }
+      };
+      this.router.navigate([RouterLinks.CONTENT_DETAILS], params);
+    } else {
+      const params: NavigationExtras = {
+        state: {
+          isChildContent: true,
+          content: this.playingContent,
+          corRelation: this.corRelationList,
+        }
+      };
+      this.router.navigate([RouterLinks.CONTENT_DETAILS], params);
+    }
+  }
+
+  private generateInteractTelemetry(isStreaming: boolean, telemetryObject, rollup, correlationData) {
+    const subType: string = isStreaming ? InteractSubtype.PLAY_ONLINE : InteractSubtype.PLAY_FROM_DEVICE;
+    this.telemetryGeneratorService.generateInteractTelemetry(
+        InteractType.TOUCH,
+        subType,
+        Environment.HOME,
+        PageId.COLLECTION_DETAIL,
+        telemetryObject,
+        undefined,
+        rollup,
+        correlationData,
+    );
+  }
 }

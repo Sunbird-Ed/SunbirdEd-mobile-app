@@ -1,15 +1,16 @@
 import { Injectable } from '@angular/core';
 import { DeviceSpecification } from 'sunbird-sdk';
+import { GenericAppConfig } from '@app/app/app.constant';
 
-declare const buildconfigreader;
+declare const sbutility;
 
 @Injectable()
-
 export class UtilityService {
+
     getBuildConfigValue(property): Promise<string> {
         return new Promise<string>((resolve, reject) => {
             try {
-                buildconfigreader.getBuildConfigValue('org.sunbird.app', property, (entry: string) => {
+                sbutility.getBuildConfigValue('org.sunbird.app', property, (entry: string) => {
                     resolve(entry);
                 }, err => {
                     console.error(err);
@@ -21,10 +22,11 @@ export class UtilityService {
             }
         });
     }
+
     rm(directoryPath, directoryToBeSkipped): Promise<string> {
         return new Promise<string>((resolve, reject) => {
             try {
-                buildconfigreader.rm(directoryPath, directoryToBeSkipped, (entry: string) => {
+                sbutility.rm(directoryPath, directoryToBeSkipped, (entry: string) => {
                     resolve(entry);
                 }, err => {
                     console.error(err);
@@ -36,10 +38,11 @@ export class UtilityService {
             }
         });
     }
+
     openPlayStore(appId): Promise<string> {
         return new Promise<string>((resolve, reject) => {
             try {
-                buildconfigreader.openPlayStore(appId, (entry: string) => {
+                sbutility.openPlayStore(appId, (entry: string) => {
                     resolve(entry);
                 }, err => {
                     console.error(err);
@@ -51,10 +54,11 @@ export class UtilityService {
             }
         });
     }
+
     getDeviceAPILevel(): Promise<string> {
         return new Promise<string>((resolve, reject) => {
             try {
-                buildconfigreader.getDeviceAPILevel((entry: string) => {
+                sbutility.getDeviceAPILevel((entry: string) => {
                     resolve(entry);
                 }, err => {
                     console.error(err);
@@ -66,10 +70,11 @@ export class UtilityService {
             }
         });
     }
+
     checkAppAvailability(packageName): Promise<string> {
         return new Promise<string>((resolve, reject) => {
             try {
-                buildconfigreader.checkAppAvailability(packageName, (entry: string) => {
+                sbutility.checkAppAvailability(packageName, (entry: string) => {
                     resolve(entry);
                 }, err => {
                     console.error(err);
@@ -81,10 +86,11 @@ export class UtilityService {
             }
         });
     }
+
     getDownloadDirectoryPath(): Promise<string> {
         return new Promise<string>((resolve, reject) => {
             try {
-                buildconfigreader.getDownloadDirectoryPath((entry: string) => {
+                sbutility.getDownloadDirectoryPath((entry: string) => {
                     resolve(entry);
                 }, err => {
                     console.error(err);
@@ -96,10 +102,11 @@ export class UtilityService {
             }
         });
     }
+
     exportApk(destination): Promise<string> {
         return new Promise<string>((resolve, reject) => {
             try {
-                buildconfigreader.exportApk(destination, (entry: string) => {
+                sbutility.exportApk(destination, (entry: string) => {
                     resolve(entry);
                 }, err => {
                     console.error(err);
@@ -115,7 +122,7 @@ export class UtilityService {
     getDeviceSpec(): Promise<DeviceSpecification> {
         return new Promise<DeviceSpecification>((resolve, reject) => {
             try {
-                buildconfigreader.getDeviceSpec((deviceSpec: DeviceSpecification) => {
+                sbutility.getDeviceSpec((deviceSpec: DeviceSpecification) => {
                     resolve(deviceSpec);
                 }, err => {
                     console.error(err);
@@ -131,7 +138,7 @@ export class UtilityService {
     getUtmInfo(): Promise<any> {
         return new Promise<any>((resolve, reject) => {
             try {
-                buildconfigreader.getUtmInfo((utmInfo: any) => {
+                sbutility.getUtmInfo((utmInfo: any) => {
                     console.log('utm parameter', utmInfo);
                     resolve(utmInfo);
                 }, err => {
@@ -146,7 +153,7 @@ export class UtilityService {
     clearUtmInfo(): Promise<any> {
         return new Promise<any>((resolve, reject) => {
             try {
-                buildconfigreader.clearUtmInfo(() => {
+                sbutility.clearUtmInfo(() => {
                     console.log('utm paramter clear');
                     resolve();
                 }, err => {
@@ -162,7 +169,7 @@ export class UtilityService {
     readFileFromAssets(fileName: string): Promise<string> {
         return new Promise<string>((resolve, reject) => {
             try {
-                buildconfigreader.readFromAssets(fileName, (entry: string) => {
+                sbutility.readFromAssets(fileName, (entry: string) => {
                     resolve(entry);
                 }, err => {
                     reject(err);
@@ -176,7 +183,7 @@ export class UtilityService {
     getApkSize(): Promise<string> {
         return new Promise<string>((resolve, reject) => {
             try {
-                buildconfigreader.getApkSize((entry: string) => {
+                sbutility.getApkSize((entry: string) => {
                     resolve(entry);
                 }, err => {
                     reject(err);
@@ -189,7 +196,7 @@ export class UtilityService {
 
     getMetaData(filePath: string): Promise<string> {
         return new Promise((resolve, reject) => {
-            buildconfigreader.getMetaData([{path: filePath, identifier: 'ecar'}], (data) => {
+            sbutility.getMetaData([{ path: filePath, identifier: 'ecar' }], (data) => {
                 resolve(data.ecar.size);
             }, err => {
                 reject(err);
@@ -199,11 +206,24 @@ export class UtilityService {
 
     removeFile(filePath: string): Promise<boolean> {
         return new Promise((resolve, reject) => {
-            buildconfigreader.rm([filePath], false, (successfullyDeleted) => {
+            sbutility.rm([filePath], false, (successfullyDeleted) => {
                 resolve(successfullyDeleted);
             }, error => {
                 reject(error);
             });
+        });
+    }
+
+    getAppVersionCode(): Promise<number> {
+        return new Promise<number>((resolve, reject) => {
+            this.getBuildConfigValue(GenericAppConfig.VERSION_CODE)
+                .then(response => {
+                    resolve(+response);
+                })
+                .catch(error => {
+                    console.log('Error--', error);
+                    resolve(0);
+                });
         });
     }
 }

@@ -158,6 +158,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
   limitedShareContentFlag = false;
   private isLoginPromptOpen = false;
   private autoPlayQuizContent = false;
+  shouldNavigateBack = false;
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -226,6 +227,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
       this.resultLength = extras.resultsSize;
       this.autoPlayQuizContent = extras.autoPlayQuizContent || false;
       this.shouldOpenPlayAsPopup = extras.isCourse;
+      this.shouldNavigateBack = extras.shouldNavigateBack;
       this.checkLimitedContentSharingFlag(extras.content);
     }
   }
@@ -420,7 +422,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
 
         if (showRating) {
           this.contentPlayerHandler.setContentPlayerLaunchStatus(false);
-          this.ratingHandler.showRatingPopup(this.isContentPlayed, data, 'automatic', this.corRelationList, this.objRollup);
+          this.ratingHandler.showRatingPopup(this.isContentPlayed, data, 'automatic', this.corRelationList, this.objRollup, this.shouldNavigateBack);
           this.contentPlayerHandler.setLastPlayedContentId('');
         }
       })
@@ -487,9 +489,6 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
     }
 
     this.playingContent = data;
-    if (this.content.contentData.me_totalRatings) {
-      this.content.contentData.me_totalRatings = parseInt(this.content.contentData.me_totalRatings, 10) + '';
-    }
     this.telemetryObject = ContentUtil.getTelemetryObject(this.content);
 
     // Check locally available
@@ -856,6 +855,9 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
 
   handleContentPlay(isStreaming) {
     if (this.limitedShareContentFlag) {
+      if (!this.content || !this.content.contentData || !this.content.contentData.streamingUrl) {
+        return;
+      }
       if (!this.appGlobalService.isUserLoggedIn()) {
         this.promptToLogin();
       } else {

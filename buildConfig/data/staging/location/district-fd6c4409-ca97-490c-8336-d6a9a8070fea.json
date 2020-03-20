@@ -1,0 +1,1 @@
+{"id":"api.location.search","ver":"v1","ts":"2020-02-26 07:41:45:524+0000","params":{"resmsgid":null,"msgid":null,"err":null,"status":"success","errmsg":null},"responseCode":"OK","result":{"response":[{"code":"Kanchipuram1211","name":"Kanchipuram","id":"217021e9-20c4-4bff-86e9-b5622ee59b8c","type":"district","parentId":"fd6c4409-ca97-490c-8336-d6a9a8070fea"}],"count":1}}

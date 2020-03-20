@@ -14,7 +14,7 @@ import {
   Environment,
   ImpressionType
 } from '../../../services';
-import { ContentType, AudienceFilter, RouterLinks } from '../../app.constant';
+import { ContentType, AudienceFilter, RouterLinks, GenericAppConfig } from '../../app.constant';
 import { Router } from '@angular/router';
 import { Location } from '@angular/common';
 import { AppVersion } from '@ionic-native/app-version/ngx';
@@ -157,7 +157,7 @@ export class AboutUsComponent implements OnInit {
   }
 
   getVersionName(appName): any {
-    this.utilityService.getBuildConfigValue('VERSION_NAME')
+    this.utilityService.getBuildConfigValue(GenericAppConfig.VERSION_NAME)
       .then(response => {
         this.getVersionCode(appName, response);
         return response;
@@ -168,7 +168,7 @@ export class AboutUsComponent implements OnInit {
   }
 
   getVersionCode(appName, versionName): any {
-    this.utilityService.getBuildConfigValue('VERSION_CODE')
+    this.utilityService.getBuildConfigValue(GenericAppConfig.VERSION_CODE)
       .then(response => {
         this.version = appName + ' v' + versionName + '.' + response;
         return response;
@@ -195,7 +195,7 @@ export class AboutUsComponent implements OnInit {
     const baseUrl = await this.utilityService.getBuildConfigValue('BASE_URL');
     const url = baseUrl + RouterLinks.TERM_OF_USE;
     const options
-            = 'hardwareback=yes,clearcache=no,zoom=no,toolbar=yes,disallowoverscroll=yes';
+      = 'hardwareback=yes,clearcache=no,zoom=no,toolbar=yes,disallowoverscroll=yes';
 
     (window as any).cordova.InAppBrowser.open(url, '_blank', options);
   }

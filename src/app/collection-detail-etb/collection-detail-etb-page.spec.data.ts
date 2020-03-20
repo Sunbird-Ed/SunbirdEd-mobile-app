@@ -1,5 +1,5 @@
-import { Content } from 'sunbird-sdk';
-import { Navigation } from '@angular/router';
+import {Content, Rollup, TelemetryObject} from 'sunbird-sdk';
+import {Navigation} from '@angular/router';
 
 export const mockcollectionData: Partial<Navigation> = {
     id: 7,
@@ -127,8 +127,8 @@ export const contentDetailsMcokResponse1: Content = {
             'Class 2', 'Class 3'
         ],
         attributions: ['gd_1', 'gd_2'],
-        me_totalRatings: 'diksha.org.app',
-        contentFeedback: [{ rating: 'SAMPLE_RATING' }],
+        me_totalRatingsCount: 1,
+        contentFeedback: [{rating: 'SAMPLE_RATING'}],
         appId: 'staging.diksha.app',
         contentEncoding: 'gzip',
         c_Diksha_Stage_open_batch_count: 1,
@@ -235,7 +235,7 @@ export const contentDetailsMcokResponse1: Content = {
         leafNodesCount: 7,
         compatibilityLevel: 4,
         resourceType: 'Course',
-        licenseDetails: { description: '', name: '', url: '' },
+        licenseDetails: {description: '', name: '', url: ''},
         // isAvailableLocally: false
     },
     contentFeedback: [{
@@ -304,8 +304,8 @@ export const contentDetailsMcokResponse2: Content = {
             'Class 2', 'Class 3'
         ],
         attributions: ['gd_1', 'gd_2'],
-        me_totalRatings: 'diksha.org.app',
-        contentFeedback: [{ rating: 'SAMPLE_RATING' }],
+        me_totalRatingsCount: 1,
+        contentFeedback: [{rating: 'SAMPLE_RATING'}],
         appId: 'staging.diksha.app',
         contentEncoding: 'gzip',
         c_Diksha_Stage_open_batch_count: 1,
@@ -412,7 +412,7 @@ export const contentDetailsMcokResponse2: Content = {
         leafNodesCount: 7,
         compatibilityLevel: 4,
         resourceType: 'Course',
-        licenseDetails: { description: '', name: '', url: '' },
+        licenseDetails: {description: '', name: '', url: ''},
         // isAvailableLocally: false
     },
     contentFeedback: [{
@@ -482,8 +482,8 @@ export const contentDetailsMcokResponse3: Content = {
             'Class 2', 'Class 3'
         ],
         attributions: ['gd_1', 'gd_2'],
-        me_totalRatings: 'diksha.org.app',
-        contentFeedback: [{ rating: 'SAMPLE_RATING' }],
+        me_totalRatingsCount: 1,
+        contentFeedback: [{rating: 'SAMPLE_RATING'}],
         appId: 'staging.diksha.app',
         contentEncoding: 'gzip',
         c_Diksha_Stage_open_batch_count: 1,
@@ -590,7 +590,7 @@ export const contentDetailsMcokResponse3: Content = {
         leafNodesCount: 7,
         compatibilityLevel: 4,
         resourceType: 'Course',
-        licenseDetails: { description: '', name: '', url: '' },
+        licenseDetails: {description: '', name: '', url: ''},
     },
     contentFeedback: [{
         contentId: 'd0_123456',
@@ -613,4 +613,73 @@ export const contentDetailsMcokResponse3: Content = {
 
 };
 
+export const mockContentData = {
+    content: {
+        identifier: 'do_21280756435836108811838',
+        contentData: {
+            mimeType: 'application/vnd.ekstep.ecml-archive',
+            contentType: 'Resource',
+            identifier: 'do_21280756435836108811838',
+            version: 2,
+            size: 6194293,
+            streamingUrl: 'https://ntpstagingall.blob.core.windows.net/ntp-content-staging/content/ecml/do_21280756435836108811838-latest',
+            totalScore: 1,
+            pkgVersion: 8,
+        },
+        isUpdateAvailable: false,
+        mimeType: 'application/vnd.ekstep.ecml-archive',
+        contentType: 'resource',
+        isAvailableLocally: false,
+        hierarchyInfo: [
+            {
+                identifier: 'do_212810592322265088178',
+                contentType: 'textbook'
+            },
+            {
+                identifier: 'do_212810592541261824179',
+                contentType: 'textbookunit'
+            },
+            {
+                identifier: 'do_2128084096298352641378',
+                contentType: 'lessonplan'
+            },
+            {
+                identifier: 'do_2128084109778042881381',
+                contentType: 'lessonplanunit'
+            }
+        ]
+    }
+};
+
+export const mockContentInfo = {
+    telemetryObject: {
+        id: 'do_21280756435836108811838',
+        type: 'Resource',
+        version: 8
+    },
+    rollUp: {
+        l1: 'do_212810592322265088178',
+        l2: 'do_212810592541261824179',
+        l3: 'do_2128084096298352641378',
+        l4: 'do_2128084109778042881381'
+    },
+    hierachyInfo: [
+        {
+            identifier: 'do_212810592322265088178',
+            contentType: 'textbook'
+        },
+        {
+            identifier: 'do_212810592541261824179',
+            contentType: 'textbookunit'
+        },
+        {
+            identifier: 'do_2128084096298352641378',
+            contentType: 'lessonplan'
+        },
+        {
+            identifier: 'do_2128084109778042881381',
+            contentType: 'lessonplanunit'
+        }
+    ]
+};
 

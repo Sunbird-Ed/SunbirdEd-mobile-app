@@ -158,6 +158,9 @@ export function codePushExperimentService() {
 export function faqService() {
   return SunbirdSdk.instance.faqService;
 }
+export function archiveService() {
+  return SunbirdSdk.instance.archiveService;
+}
 
 export function sdkDriverFactory(): any {
   return [{
@@ -253,6 +256,9 @@ export function sdkDriverFactory(): any {
   }, {
     provide: 'FAQ_SERVICE',
     useFactory: faqService
+  }, {
+    provide: 'ARCHIVE_SERVICE',
+    useFactory: archiveService
   }
   ];
 }
@@ -264,7 +270,7 @@ export const sunbirdSdkFactory =
     return async () => {
       const buildConfigValues = JSON.parse(await new Promise<string>((resolve, reject) => {
         document.addEventListener('deviceready', () => {
-          buildconfigreader.getBuildConfigValues('org.sunbird.app', (v) => {
+          sbutility.getBuildConfigValues('org.sunbird.app', (v) => {
             resolve(v);
           }, (err) => {
             reject(err);
@@ -390,7 +396,7 @@ export const sunbirdSdkFactory =
   };
 
 
-declare const buildconfigreader;
+declare const sbutility;
 @NgModule({
   declarations: [AppComponent],
   entryComponents: [PageFilterPage, PageFilterOptionsPage],

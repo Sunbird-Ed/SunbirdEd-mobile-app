@@ -22,6 +22,8 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
   backButtonSubscription: Subscription;
   course: Course;
   pauseSubscription: any;
+  isFromToc: boolean;
+  corRelationList;
 
   @ViewChild('preview') previewElement: ElementRef;
   constructor(
@@ -47,6 +49,8 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
     if (this.router.getCurrentNavigation().extras.state) {
       this.config = this.router.getCurrentNavigation().extras.state.config;
       this.course = this.router.getCurrentNavigation().extras.state.course;
+      this.isFromToc = this.router.getCurrentNavigation().extras.state.isFromTOC;
+      this.corRelationList = this.router.getCurrentNavigation().extras.state.corRelation;
     }
   }
 
@@ -142,7 +146,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
         });
      */
     setTimeout(() => {
-        this.closeIframe();
+        this.closeIframe(content);
     }, 1000);
     this.events.publish(EventTopics.NEXT_CONTENT, {
         content,
@@ -161,7 +165,7 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
   /**
    * This will close the player page and will fire some end telemetry events from the player
    */
-  closeIframe() {
+  closeIframe(content?: any) {
     const stageId = this.previewElement.nativeElement.contentWindow['EkstepRendererAPI'].getCurrentStageId();
     try {
       this.previewElement.nativeElement.contentWindow['TelemetryService'].exit(stageId);
@@ -172,7 +176,18 @@ export class PlayerPage implements OnInit, OnDestroy, PlayerActionHandlerDelegat
       selectedUser: this.appGlobalService.getSelectedUser()
     });
 
-    this.location.back();
+    if (this.isFromToc) {
+      this.router.navigate([RouterLinks.CONTENT_DETAILS], {
+        state: {
+          content: content ? content : this.config['metadata'],
+          corRelation: this.corRelationList,
+          shouldNavigateBack: true
+        },
+        replaceUrl: true
+      });
+    } else {
+      this.location.back();
+    }
   }
 
 

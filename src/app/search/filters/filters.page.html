@@ -1,41 +1,26 @@
 <ion-content>
   <h6 no-margin padding class="subtitle">{{ 'FILTER_BY' | translate }} </h6>
-  <!-- <div>
-    <ion-list *ngIf="facetsFilter && facetsFilter.length" no-lines>
-      <ion-item class="filter-item" *ngFor="let facet of facetsFilter" (click)="openFilterOptions(facet)">
-         <ion-label *ngIf="facet?.name !== 'gradeLevel' && facet?.name !== 'contentType'" text-capitalize>{{ facet.name }}</ion-label>
-        <ion-label *ngIf="facet?.name === 'board'" text-capitalize>{{ 'BOARD' | translate }}</ion-label>
-        <ion-label *ngIf="facet?.name === 'subject'" text-capitalize>{{ 'SUBJECT' | translate }}</ion-label>
-        <ion-label *ngIf="facet?.name === 'medium'" text-capitalize>{{ 'MEDIUM' | translate }}</ion-label>
-        <ion-label *ngIf="facet?.name === 'gradeLevel'" text-capitalize>{{ 'CLASS' | translate }}</ion-label>
-        <ion-label *ngIf="facet?.name === 'resourceType'" text-capitalize>{{ 'RESOURCE_TYPE' | translate }}</ion-label>
-        <ion-label text-end>{{ getSelectedOptionCount(facet) }}</ion-label>
-        <ion-icon name="ios-arrow-forward" item-end></ion-icon>
-      </ion-item>
-    </ion-list>
-  </div> -->
   <div *ngIf="facetsFilter && facetsFilter.length">
-  <div *ngFor="let facet of facetsFilter">
-    <div class="flex-card-container filter-item" (click)="openFilterOptions(facet)">
-      <div class="card-text">
-        <!-- <ion-label *ngIf="facet?.name !== 'gradeLevel' && facet?.name !== 'contentType'" text-capitalize>{{ facet.name }}</ion-label> -->
-        <ion-label *ngIf="facet?.name === 'board'" text-capitalize>{{ 'BOARD' | translate }}</ion-label>
-        <ion-label *ngIf="facet?.name === 'subject'" text-capitalize>{{ 'SUBJECT' | translate }}</ion-label>
-        <ion-label *ngIf="facet?.name === 'medium'" text-capitalize>{{ 'MEDIUM' | translate }}</ion-label>
-        <ion-label *ngIf="facet?.name === 'gradeLevel'" text-capitalize>{{ 'CLASS' | translate }}</ion-label>
-        <ion-label *ngIf="facet?.name === 'resourceType'" text-capitalize>{{ 'RESOURCE_TYPE' | translate }}</ion-label>
-        <ion-label class="text-end">{{ getSelectedOptionCount(facet) }}</ion-label>
-      </div>
-      <div class="card-icon">
-        <ion-icon name="ios-arrow-forward"></ion-icon>
+    <div *ngFor="let facet of facetsFilter">
+      <div class="flex-card-container filter-item" (click)="openFilterOptions(facet)">
+        <div class="card-text">
+          <ion-label *ngIf="facet?.name === 'board'" text-capitalize>{{ 'BOARD' | translate }}</ion-label>
+          <ion-label *ngIf="facet?.name === 'subject'" text-capitalize>{{ 'SUBJECT' | translate }}</ion-label>
+          <ion-label *ngIf="facet?.name === 'medium'" text-capitalize>{{ 'MEDIUM' | translate }}</ion-label>
+          <ion-label *ngIf="facet?.name === 'gradeLevel'" text-capitalize>{{ 'CLASS' | translate }}</ion-label>
+          <ion-label *ngIf="facet?.name === 'resourceType'" text-capitalize>{{ 'RESOURCE_TYPE' | translate }}
+          </ion-label>
+          <ion-label class="text-end">{{ getSelectedOptionCount(facet) }}</ion-label>
+        </div>
+        <div class="card-icon">
+          <ion-icon name="ios-arrow-forward"></ion-icon>
+        </div>
       </div>
     </div>
   </div>
-</div>
 </ion-content>
 <ion-footer>
   <ion-toolbar padding-left padding-right>
-    <!-- <button ion-button block (click)="applyFilter()">{{ 'APPLY_FILTER' | translate }}</button> -->
-    <ion-button expand="full"  color="primary" (click)="applyFilter()" >{{ 'APPLY_FILTER' | translate }}</ion-button>
+    <ion-button expand="full" color="primary" (click)="applyFilter()">{{ 'APPLY_FILTER' | translate }}</ion-button>
   </ion-toolbar>
 </ion-footer>

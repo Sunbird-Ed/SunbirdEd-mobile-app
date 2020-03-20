@@ -1,5 +1,5 @@
 // @ts-ignore
-declare var buildconfigreader: {
+declare var sbutility: {
   getBuildConfigValue: (packageName: string, property: string, success:
     (callbackUrl: string) => void, error: (error: string) => void) => void;
 

@@ -10,7 +10,7 @@ import { AppGlobalService } from '@app/services/app-global-service.service';
 import { CommonUtilService } from '@app/services/common-util.service';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { AppHeaderService } from '@app/services/app-header.service';
-import { Environment, ImpressionType, InteractSubtype, InteractType, PageId } from '@app/services/telemetry-constants';
+import {Environment, ID, ImpressionType, InteractSubtype, InteractType, PageId} from '@app/services/telemetry-constants';
 import { NotificationService } from '@app/services/notification.service';
 import { Location } from '@angular/common';
 import { Subscription } from 'rxjs';
@@ -49,7 +49,6 @@ export class LanguageSettingsPage implements OnInit {
     private zone: NgZone,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private platform: Platform,
-    private appGlobalService: AppGlobalService,
     private commonUtilService: CommonUtilService,
     private headerService: AppHeaderService,
     private notification: NotificationService,
@@ -59,24 +58,19 @@ export class LanguageSettingsPage implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.telemetryGeneratorService.generateImpressionTelemetry(
-      ImpressionType.VIEW, '',
-      this.isFromSettings ? PageId.SETTINGS_LANGUAGE : PageId.ONBOARDING_LANGUAGE_SETTING,
-      this.isFromSettings ? Environment.SETTINGS : Environment.ONBOARDING,
-    );
-  }
-
-  ionViewDidEnter() {
-    this.activatedRoute.params.subscribe(params => {
-      this.isFromSettings = Boolean(params['isFromSettings']);
-      console.log('FormSettings', this.isFromSettings);
-
+    // To add up a delay so that IMPRESSION event will be generated after Splash IMPRESSION
+    setTimeout(() => {
       this.telemetryGeneratorService.generateImpressionTelemetry(
         ImpressionType.VIEW, '',
         this.isFromSettings ? PageId.SETTINGS_LANGUAGE : PageId.ONBOARDING_LANGUAGE_SETTING,
         this.isFromSettings ? Environment.SETTINGS : Environment.ONBOARDING,
       );
+    }, 500);
+  }
 
+  ionViewDidEnter() {
+    this.activatedRoute.params.subscribe(params => {
+      this.isFromSettings = Boolean(params['isFromSettings']);
       if (!this.isFromSettings) {
         this.headerService.hideHeader();
       } else {
@@ -213,7 +207,17 @@ export class LanguageSettingsPage implements OnInit {
         this.router.navigate([RouterLinks.USER_TYPE_SELECTION]);
       }
     } else {
-      this.generateClickInteractEvent('n/a', InteractSubtype.CONTINUE_CLICKED);
+      this.telemetryGeneratorService.generateInteractTelemetry(
+          InteractType.DISABLED,
+          '',
+          Environment.ONBOARDING,
+          PageId.ONBOARDING_LANGUAGE_SETTING,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          ID.CONTINUE_CLICKED
+      );
       this.btnColor = '#8FC4FF';
 
       const parser = new DOMParser();

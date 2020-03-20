@@ -7,10 +7,14 @@ import {
   ContentFeedbackService,
   TelemetryLogRequest,
   TelemetryService,
-  TelemetryObject
+  TelemetryObject,
+  FormRequest,
+  FormService,
+  SharedPreferences,
+  TelemetryFeedbackRequest
 } from 'sunbird-sdk';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
-import { ProfileConstants } from '@app/app/app.constant';
+import { ProfileConstants, PreferenceKey } from '@app/app/app.constant';
 import { AppGlobalService } from '@app/services/app-global-service.service';
 import { CommonUtilService } from '@app/services/common-util.service';
 import {
@@ -20,15 +24,19 @@ import {
   InteractSubtype,
   InteractType,
   LogLevel,
-  LogType
+  LogType,
+  ObjectType
 } from '@app/services/telemetry-constants';
 import { ContentUtil } from '@app/util/content-util';
+import {Location} from '@angular/common';
+
 @Component({
   selector: 'app-content-rating-alert',
   templateUrl: './content-rating-alert.component.html',
   styleUrls: ['./content-rating-alert.component.scss'],
 })
 export class ContentRatingAlertComponent implements OnInit {
+  private readonly COMMENT_PREFIX = 'OTHER-';
   isDisable = false;
   userId = '';
   comment = '';
@@ -40,15 +48,24 @@ export class ContentRatingAlertComponent implements OnInit {
   userRating = 0;
   private popupType: string;
   telemetryObject: TelemetryObject;
+  contentRatingOptions;
+  ratingMetaInfo;
+  ratingOptions;
+  allComments;
+  commentText;
+  navigateBack;
   constructor(
     @Inject('CONTENT_FEEDBACK_SERVICE') private contentService: ContentFeedbackService,
     @Inject('TELEMETRY_SERVICE') private telemetryService: TelemetryService,
+    @Inject('FORM_SERVICE') private formService: FormService,
+    @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
     private popOverCtrl: PopoverController,
     private platform: Platform,
     private navParams: NavParams,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private appGlobalService: AppGlobalService,
-    private commonUtilService: CommonUtilService
+    private commonUtilService: CommonUtilService,
+    private location: Location
   ) {
     this.getUserId();
     this.backButtonFunc = this.platform.backButton.subscribeWithPriority(11, () => {
@@ -57,13 +74,11 @@ export class ContentRatingAlertComponent implements OnInit {
     });
     this.content = this.navParams.get('content');
     this.userRating = this.navParams.get('rating');
-    this.comment = this.navParams.get('comment');
+    this.allComments = this.navParams.get('comment');
     this.popupType = this.navParams.get('popupType');
     this.pageId = this.navParams.get('pageId');
     this.telemetryObject = ContentUtil.getTelemetryObject(this.content);
-    if (this.userRating) {
-      this.showCommentBox = true;
-    }
+    this.navigateBack = this.navParams.get('navigateBack');
   }
 
   ngOnInit() {
@@ -95,6 +110,7 @@ export class ContentRatingAlertComponent implements OnInit {
     }, err => {
       console.log(err);
     });
+    this.invokeContentRatingFormApi();
   }
 
   ionViewWillLeave() {
@@ -115,58 +131,172 @@ export class ContentRatingAlertComponent implements OnInit {
   }
 
   rateContent(ratingCount) {
-    this.showCommentBox = true;
+    // this.showCommentBox = true;
     this.ratingCount = ratingCount;
+    this.createRatingForm(ratingCount);
   }
 
   cancel() {
-    this.showCommentBox = false;
+    // this.showCommentBox = false;
     this.popOverCtrl.dismiss();
   }
   closePopover() {
-    this.showCommentBox = false;
+    // this.showCommentBox = false;
     this.popOverCtrl.dismiss();
   }
 
   submit() {
+    let comment = '';
+    this.ratingOptions.forEach(element => {
+      if (element.key.toLowerCase() !== 'other' && element.isChecked) {
+        comment += comment.length ? ',' + element.key :  element.key;
+      }
+    });
+    if (this.commentText) {
+      const text = 'OTHER,' + this.COMMENT_PREFIX + this.commentText;
+      comment += comment.length ? ',' + text :  text;
+    }
+    this.allComments = comment;
     const option: ContentFeedback = {
       contentId: this.content.identifier,
       rating: this.ratingCount ? this.ratingCount : this.userRating,
-      comments: this.comment,
-      contentVersion: this.content['versionKey']
+      comments: this.allComments,
+      contentVersion: this.content.contentData.pkgVersion
     };
-    this.popOverCtrl.dismiss();
     const paramsMap = new Map();
     paramsMap['Ratings'] = this.ratingCount ? this.ratingCount : this.userRating;
-    paramsMap['Comment'] = this.comment;
+    paramsMap['Comment'] = this.allComments;
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,
       InteractSubtype.RATING_SUBMITTED,
       Environment.HOME,
       this.pageId, this.telemetryObject, paramsMap
     );
-
-    const viewDismissData = {
-      rating: this.ratingCount,
-      comment: this.comment ? this.comment : '',
-      message: ''
-    };
-
-    this.contentService.sendFeedback(option).subscribe((res) => {
-      console.log('success:', res);
-      viewDismissData.message = 'rating.success';
-      viewDismissData.rating = this.ratingCount ? this.ratingCount : this.userRating;
-      viewDismissData.comment = this.comment;
-      this.popOverCtrl.dismiss(viewDismissData);
-      this.commonUtilService.showToast('THANK_FOR_RATING');
-    }, (data) => {
-      console.log('error:', data);
-      viewDismissData.message = 'rating.error';
-      this.popOverCtrl.dismiss(viewDismissData);
-    });
+    this.generateContentRatingTelemetry(option);
+    if (this.allComments) {
+      this.generateContentFeedbackTelemetry(option);
+    }
   }
 
   showMessage(msg) {
     this.commonUtilService.showToast(this.commonUtilService.translateMessage(msg));
   }
+
+  createRatingForm(rating) {
+    this.ratingMetaInfo =  { ratingText: this.contentRatingOptions[rating].ratingText,
+                          ratingQuestion: this.contentRatingOptions[rating].question
+                        };
+    this.ratingOptions = this.contentRatingOptions[rating].options;
+    this.ratingOptions.forEach(element => {
+      element.isChecked = false;
+    });
+    this.commentText = '';
+    this.showCommentBox = false;
+  }
+
+  ratingOptsChanged(key) {
+    if (key.toLowerCase() === 'other') {
+      this.showCommentBox = !this.showCommentBox;
+    }
+  }
+
+  extractComments(comments) {
+    const options = comments.split(',');
+    options.forEach(e => {
+      if (e.indexOf(this.COMMENT_PREFIX) !== -1) {
+        this.commentText = e.substring(this.COMMENT_PREFIX.length);
+      } else {
+        const opt = this.ratingOptions.find((v) => e === v.key);
+        if (opt) {
+          opt.isChecked = true;
+        }
+      }
+    });
+  }
+
+  async invokeContentRatingFormApi() {
+    const selectedLanguage = await this.preferences.getString(PreferenceKey.SELECTED_LANGUAGE_CODE).toPromise();
+    const req: FormRequest = {
+        type: 'contentfeedback',
+        subType: selectedLanguage,
+        action: 'get'
+    };
+    this.formService.getForm(req).toPromise()
+      .then((res: any) => {
+          const data = res.form ? res.form.data.fields : res.data.fields;
+          if (data.length) {
+              this.contentRatingOptions = data[0];
+              this.createRatingForm(this.userRating);
+              if (this.allComments) {
+                this.extractComments(this.allComments);
+              }
+          }
+      }).catch((error: any) => {
+          this.getDefaultContentRatingFormApi();
+      });
+  }
+
+  getDefaultContentRatingFormApi() {
+    const req: FormRequest = {
+      type: 'contentfeedback',
+      subType: 'en',
+      action: 'get'
+    };
+    this.formService.getForm(req).toPromise()
+    .then((res: any) => {
+        const data = res.form ? res.form.data.fields : res.data.fields;
+        if (data.length) {
+            this.contentRatingOptions = data[0];
+            this.createRatingForm(this.userRating);
+            if (this.allComments) {
+              this.extractComments(this.allComments);
+            }
+        }
+    }).catch((error: any) => {
+    });
+  }
+
+  generateContentRatingTelemetry(option) {
+    const viewDismissData = {
+      rating: this.ratingCount ? this.ratingCount : this.userRating,
+      comment: this.allComments ? this.allComments : '',
+      message: ''
+    };
+    this.contentService.sendFeedback(option).subscribe((res) => {
+      viewDismissData.message = 'rating.success';
+      this.popOverCtrl.dismiss(viewDismissData);
+      this.commonUtilService.showToast('THANK_FOR_RATING', false, 'green-toast');
+      if (this.navigateBack) {
+        this.location.back();
+      }
+    }, (data) => {
+      viewDismissData.message = 'rating.error';
+      this.popOverCtrl.dismiss(viewDismissData);
+    });
+  }
+
+  generateContentFeedbackTelemetry(option1) {
+    this.ratingOptions.forEach(opt => {
+      const option: TelemetryFeedbackRequest = {
+        objId: this.content.identifier,
+        comments: this.allComments,
+        env: Environment.HOME,
+        objType: this.content.contentData.contentType,
+        objVer: this.content.contentData.pkgVersion,
+      };
+      if (opt.isChecked) {
+        if (opt.key.toLowerCase() === 'other') {
+          option.commentid = opt.key;
+          option.commenttxt = this.commentText;
+        } else {
+          option.commentid = opt.key;
+          option.commenttxt = opt.value;
+        }
+        this.telemetryService.feedback(option).subscribe((res) => {
+        }, (err) => {
+        });
+      }
+    });
+  }
+
 }

@@ -1,6 +1,6 @@
 import { Injectable, Inject } from '@angular/core';
 import { CanLoad, Router } from '@angular/router';
-import { SharedPreferences } from 'sunbird-sdk';
+import { SharedPreferences, AuthService } from 'sunbird-sdk';
 import { PreferenceKey } from '@app/app/app.constant';
 import { AppGlobalService } from '@app/services/app-global-service.service';
 import { SplashScreenService} from '@app/services/splash-screen.service';
@@ -9,6 +9,7 @@ import { SplashScreenService} from '@app/services/splash-screen.service';
 export class HasNotBeenOnboardedGuard implements CanLoad {
     constructor(
         @Inject('SHARED_PREFERENCES') private sharedPreferences: SharedPreferences,
+        @Inject('AUTH_SERVICE') public authService: AuthService,
         private appGlobalService: AppGlobalService,
         private router: Router,
         private splashScreenService: SplashScreenService
@@ -16,7 +17,9 @@ export class HasNotBeenOnboardedGuard implements CanLoad {
     }
 
     async canLoad(): Promise<boolean> {
-        if (!(await this.sharedPreferences.getString(PreferenceKey.IS_ONBOARDING_COMPLETED).toPromise() === 'true')) {
+        const isOnboardCompleted = (await this.sharedPreferences.getString(PreferenceKey.IS_ONBOARDING_COMPLETED).toPromise() === 'true');
+        const session = await this.authService.getSession().toPromise();
+        if (!isOnboardCompleted && !session) {
             this.appGlobalService.isProfileSettingsCompleted = false;
             return true;
         }

@@ -6,8 +6,8 @@ global.cordova = {
         notification: {
             local: {
                 lanchDetails: {},
-                getScheduledIds: () => {},
-                schedule: () => {}
+                getScheduledIds: () => { },
+                schedule: () => { }
             }
         },
         diagnostic: {
@@ -19,27 +19,43 @@ global.cordova = {
     },
     file: {
         applicationDirectory: "/path"
-    },  
+    },
     InAppBrowser: {
         open: () => ({
-            addEventListener: () => {},
+            addEventListener: () => { },
         }),
     }
 };
 
 global.supportfile = {
-    shareSunbirdConfigurations: () => {}
+    shareSunbirdConfigurations: () => { },
+    makeEntryInSunbirdSupportFile: () => { }
+}
+global.document = {
+    getElementById: () => {},
 }
 
 global.FCMPlugin = {
     subscribeToTopic: (topic, success, error) => {
         setTimeout(() => {
             success();
-          });
+        });
     },
     unsubscribeFromTopic: (topic, success, error) => {
         setTimeout(() => {
             success();
-          });
-    }
+        });
+    },
+    onTokenRefresh: () => { },
+    onNotification: () => { }
+}
+
+global.splashscreen = {
+    markImportDone: () => { },
+    hide: () => { },
+    clearPrefs: () => { },
+}
+
+global.codePush = {
+    getCurrentPackage: () => { }
 }

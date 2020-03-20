@@ -113,7 +113,7 @@ export class SbAppSharePopupComponent implements OnInit, OnDestroy {
     this.generateConfirmClickTelemetry(ShareMode.SHARE);
     this.generateInteractTelemetry(InteractType.TOUCH, InteractSubtype.SHARE_APP_INITIATED);
     const appName = await this.appVersion.getAppName();
-    const url = '\n' + `Get ${appName} from the Play Store:` + '\n' + this.shareUrl;
+    const url = this.commonUtilService.translateMessage('SHARE_APP_LINK', {app_name: appName, play_store_url: this.shareUrl})
     this.social.share(null, null, null, url);
     this.popoverCtrl.dismiss();
     this.generateInteractTelemetry(InteractType.OTHER, InteractSubtype.SHARE_APP_SUCCESS);

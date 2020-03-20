@@ -7,22 +7,20 @@ import { TranslateService } from '@ngx-translate/core';
 import { Observable, combineLatest } from 'rxjs';
 import { mergeMap, filter, tap, mapTo } from 'rxjs/operators';
 import { Network } from '@ionic-native/network/ngx';
-
 import {
   ErrorEventType, EventNamespace, EventsBusService, SharedPreferences,
   SunbirdSdk, TelemetryAutoSyncService, TelemetryService, NotificationService,
   GetSystemSettingsRequest, SystemSettings, SystemSettingsService,
-  CodePushExperimentService, AuthEventType, CorrelationData, Profile, DeviceRegisterService,
+  CodePushExperimentService, AuthEventType, CorrelationData, Profile, DeviceRegisterService, ProfileService,
 } from 'sunbird-sdk';
-
 import {
   InteractType,
   InteractSubtype,
   Environment, PageId,
   ImpressionType,
   CorReleationDataType
-} from 'services/telemetry-constants';
-import { PreferenceKey, EventTopics, SystemSettingsIds } from './app.constant';
+} from '@app/services/telemetry-constants';
+import { PreferenceKey, EventTopics, SystemSettingsIds, GenericAppConfig, ProfileConstants } from './app.constant';
 import { ActivePageService } from '@app/services/active-page/active-page-service';
 import {
   AppGlobalService,
@@ -32,14 +30,15 @@ import {
   AppRatingService,
   AppHeaderService,
   FormAndFrameworkUtilService,
-  SplashScreenService
+  SplashScreenService,
+  LocalCourseService
 } from '../services';
-import { SplaschreenDeeplinkActionHandlerDelegate } from '@app/services/sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
 import { LogoutHandlerService } from '@app/services/handlers/logout-handler.service';
-import { NotificationService as localNotification } from '@app/services/notification.service';
+import { NotificationService as LocalNotification } from '@app/services/notification.service';
 import { RouterLinks } from './app.constant';
 import { TncUpdateHandlerService } from '@app/services/handlers/tnc-update-handler.service';
 import { NetworkAvailabilityToastService } from '@app/services/network-availability-toast/network-availability-toast.service';
+import { SplaschreenDeeplinkActionHandlerDelegate } from '@app/services/sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
 @Component({
   selector: 'app-root',
   templateUrl: 'app.component.html'
@@ -72,6 +71,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     @Inject('SYSTEM_SETTINGS_SERVICE') private systemSettingsService: SystemSettingsService,
     @Inject('CODEPUSH_EXPERIMENT_SERVICE') private codePushExperimentService: CodePushExperimentService,
     @Inject('DEVICE_REGISTER_SERVICE') private deviceRegisterService: DeviceRegisterService,
+    @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     private platform: Platform,
     private statusBar: StatusBar,
     private translate: TranslateService,
@@ -83,32 +83,39 @@ export class AppComponent implements OnInit, AfterViewInit {
     private telemetryGeneratorService: TelemetryGeneratorService,
     private tncUpdateHandlerService: TncUpdateHandlerService,
     private utilityService: UtilityService,
-    private splaschreenDeeplinkActionHandlerDelegate: SplaschreenDeeplinkActionHandlerDelegate,
     private headerService: AppHeaderService,
     private logoutHandlerService: LogoutHandlerService,
     private network: Network,
     private appRatingService: AppRatingService,
     private activePageService: ActivePageService,
-    private notificationSrc: localNotification,
+    private notificationSrc: LocalNotification,
     private router: Router,
     private location: Location,
     private menuCtrl: MenuController,
     private networkAvailability: NetworkAvailabilityToastService,
-    private splashScreenService: SplashScreenService
+    private splashScreenService: SplashScreenService,
+    private localCourseService: LocalCourseService,
+    private splaschreenDeeplinkActionHandlerDelegate: SplaschreenDeeplinkActionHandlerDelegate
   ) {
     this.telemetryAutoSync = this.telemetryService.autoSync;
-    platform.ready().then(async () => {
+  }
+
+  ngOnInit() {
+    this.platform.ready().then(async () => {
       this.formAndFrameworkUtilService.init();
       this.networkAvailability.init();
       this.fcmTokenWatcher(); // Notification related
       this.getSystemConfig();
-      this.utilityService.getBuildConfigValue('VERSION_NAME')
-        .then(response => {
-          this.appVersion = response;
+      this.utilityService.getBuildConfigValue(GenericAppConfig.VERSION_NAME)
+        .then(versionName => {
+          this.appVersion = versionName;
         });
       this.checkForExperiment();
       this.receiveNotification();
-      this.telemetryGeneratorService.genererateAppStartTelemetry(await utilityService.getDeviceSpec());
+      this.utilityService.getDeviceSpec()
+        .then((deviceSpec) => {
+          this.telemetryGeneratorService.genererateAppStartTelemetry(deviceSpec);
+        });
       this.generateNetworkTelemetry();
       this.autoSyncTelemetry();
       this.subscribeEvents();
@@ -134,33 +141,50 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.checkForCodeUpdates();
       this.checkAndroidWebViewVersion();
     });
+
+    this.headerService.headerConfigEmitted$.subscribe(config => {
+      this.headerConfig = config;
+    });
+
+    this.commonUtilService.networkAvailability$.subscribe((available: boolean) => {
+      const pageId: string = this.activePageService.computePageId(this.router.url);
+      if (available) {
+        this.addNetworkTelemetry(InteractSubtype.INTERNET_CONNECTED, pageId);
+      } else {
+        this.addNetworkTelemetry(InteractSubtype.INTERNET_DISCONNECTED, pageId);
+      }
+    });
+    this.notificationSrc.setupLocalNotification();
+
+    this.triggerSignInEvent();
   }
 
+  // TODO: make this as private
   checkAndroidWebViewVersion() {
     var that = this;
     plugins['webViewChecker'].getCurrentWebViewPackageInfo()
-    .then(function(packageInfo) {
-      that.formAndFrameworkUtilService.getWebviewConfig().then(function(webviewVersion) {
-        if (parseInt(packageInfo.versionName.split('.')[0], 10) <= webviewVersion) {
-          document.getElementById('update-webview-container').style.display = 'block';
-          that.telemetryGeneratorService.generateImpressionTelemetry(
-            ImpressionType.VIEW, '',
-            PageId.UPDATE_WEBVIEW_POPUP,
-            Environment.HOME);
-        }
-      }).catch(function(err) {
-        if (parseInt(packageInfo.versionName.split('.')[0], 10) <= 54) {
-          document.getElementById('update-webview-container').style.display = 'block';
-        }
-      });
-    })
-    .catch(function(error) { });
+      .then(function (packageInfo) {
+        that.formAndFrameworkUtilService.getWebviewConfig().then(function (webviewVersion) {
+          if (parseInt(packageInfo.versionName.split('.')[0], 10) <= webviewVersion) {
+            document.getElementById('update-webview-container').style.display = 'block';
+            that.telemetryGeneratorService.generateImpressionTelemetry(
+              ImpressionType.VIEW, '',
+              PageId.UPDATE_WEBVIEW_POPUP,
+              Environment.HOME);
+          }
+        }).catch(function (err) {
+          if (parseInt(packageInfo.versionName.split('.')[0], 10) <= 54) {
+            document.getElementById('update-webview-container').style.display = 'block';
+          }
+        });
+      })
+      .catch(function (error) { });
   }
 
   openPlaystore() {
     plugins['webViewChecker'].openGooglePlayPage()
-    .then(function() { })
-    .catch(function(error) { });
+      .then(function () { })
+      .catch(function (error) { });
 
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,
@@ -169,22 +193,25 @@ export class AppComponent implements OnInit, AfterViewInit {
       PageId.UPDATE_WEBVIEW_POPUP);
   }
 
-  getSystemConfig() {
+  private getSystemConfig() {
     const getSystemSettingsRequest: GetSystemSettingsRequest = {
-      id: SystemSettingsIds.COURSE_FRAMEWORK_ID
+      id: SystemSettingsIds.HOT_CODE_PUSH_KEY
     };
     this.systemSettingsService.getSystemSettings(getSystemSettingsRequest).toPromise()
       .then((res: SystemSettings) => {
         //   res['deploymentKey'] = '6Xhfs4-WVV8dhYN9U5OkZw6PukglrykIsJ8-B';
-        if (res['deploymentKey']) {
-          this.codePushExperimentService.setDefaultDeploymentKey(res['deploymentKey']).subscribe();
+        if (res && res.value) {
+          const value = JSON.parse(res.value);
+          if (value.deploymentKey) {
+            this.codePushExperimentService.setDefaultDeploymentKey(res.value).subscribe();
+          }
         }
       }).catch(err => {
         console.log('error :', err);
       });
   }
 
-  checkForCodeUpdates() {
+  private checkForCodeUpdates() {
     this.preferences.getString(PreferenceKey.DEPLOYMENT_KEY).toPromise().then(deploymentKey => {
       if (codePush != null && deploymentKey) {
         const value = new Map();
@@ -203,7 +230,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     });
   }
 
-  syncStatus(status) {
+  private syncStatus(status) {
     switch (status) {
       case SyncStatus.DOWNLOADING_PACKAGE:
         const value = new Map();
@@ -219,7 +246,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     }
   }
 
-  checkForExperiment() {
+  private checkForExperiment() {
     /**
      * TODO
      * call the update
@@ -249,7 +276,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     });
   }
 
-  downloadProgress(downloadProgress) {
+  private downloadProgress(downloadProgress) {
     if (downloadProgress) {
       console.log('Downloading ' + downloadProgress.receivedBytes + ' of ' +
         downloadProgress.totalBytes);
@@ -259,36 +286,39 @@ export class AppComponent implements OnInit, AfterViewInit {
   /* Generates new FCM Token if not available
    * if available then on token refresh updates FCM token
    */
-  async fcmTokenWatcher() {
-    const fcmToken = await this.preferences.getString('fcm_token').toPromise();
+  private async fcmTokenWatcher() {
+    const fcmToken = await this.preferences.getString(PreferenceKey.FCM_TOKEN).toPromise();
     if (!fcmToken) {
       FCMPlugin.getToken((token) => {
         this.storeFCMToken(token);
         SunbirdSdk.instance.updateDeviceRegisterConfig({ fcmToken: token });
       });
+    } else {
+      FCMPlugin.onTokenRefresh((token) => {
+        this.storeFCMToken(token);
+        SunbirdSdk.instance.updateDeviceRegisterConfig({ fcmToken: token });
+      });
     }
-    FCMPlugin.onTokenRefresh((token) => {
-      this.storeFCMToken(token);
-      SunbirdSdk.instance.updateDeviceRegisterConfig({ fcmToken: token });
-    });
   }
 
-  storeFCMToken(token: string) {
-    this.preferences.putString('fcm_token', token).toPromise();
+  private storeFCMToken(token: string) {
+    this.preferences.putString(PreferenceKey.FCM_TOKEN, token).toPromise();
   }
 
   /* Notification data will be received in data variable
    * can take action on data variable
    */
-  receiveNotification() {
+  private receiveNotification() {
     FCMPlugin.onNotification((data) => {
       if (data.wasTapped) {
         // Notification was received on device tray and tapped by the user.
       } else {
         // Notification was received in foreground. Maybe the user needs to be notified.
       }
-      const value = new Map();
-      value['notification_id'] = data.id;
+
+      const value = {
+        notification_id: data.id
+      };
       this.telemetryGeneratorService.generateInteractTelemetry(
         InteractType.OTHER,
         InteractSubtype.NOTIFICATION_RECEIVED,
@@ -304,40 +334,20 @@ export class AppComponent implements OnInit, AfterViewInit {
         this.events.publish('notification:received');
         this.events.publish('notification-status:update', { isUnreadNotifications: true });
       });
-      this.splaschreenDeeplinkActionHandlerDelegate.handleNotification(data);
+      this.notificationSrc.setNotificationDetails(data);
     },
       (success) => {
-        console.log('Notification Sucess Callback');
-        console.log(success);
+        console.log('Notification Sucess Callback', success);
       },
       (err) => {
-        console.log('Notification Error Callback');
-        console.log(err);
+        console.error('Notification Error Callback', err);
       });
-  }
-
-  ngOnInit() {
-    this.headerService.headerConfigEmitted$.subscribe(config => {
-      this.headerConfig = config;
-    });
-
-    this.commonUtilService.networkAvailability$.subscribe((available: boolean) => {
-      const pageId: string = this.activePageService.computePageId(this.router.url);
-      if (available) {
-        this.addNetworkTelemetry(InteractSubtype.INTERNET_CONNECTED, pageId);
-      } else {
-        this.addNetworkTelemetry(InteractSubtype.INTERNET_DISCONNECTED, pageId);
-      }
-    });
-    this.notificationSrc.setupLocalNotification();
-
-    this.triggerSignInEvent();
   }
 
   /**
    * Initializing the event for reloading the Tabs on Signing-In.
    */
-  triggerSignInEvent() {
+  private triggerSignInEvent() {
     this.events.subscribe(EventTopics.SIGN_IN_RELOAD, async () => {
       const batchDetails = await this.preferences.getString(PreferenceKey.BATCH_DETAIL_KEY).toPromise();
       const limitedSharingContentDetails = this.appGlobalService.limitedShareQuizContent;
@@ -354,7 +364,7 @@ export class AppComponent implements OnInit, AfterViewInit {
         this.reloadSigninEvents();
         this.events.publish('UPDATE_TABS');
         if (batchDetails) {
-          await this.splaschreenDeeplinkActionHandlerDelegate.onAction('content').toPromise();
+          await this.localCourseService.checkCourseRedirect();
         } else {
           this.router.navigate([RouterLinks.TABS]);
         }
@@ -393,7 +403,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     });
   }
 
-  handleBackButton() {
+  private handleBackButton() {
     this.router.events.subscribe((event: Event) => {
       if (event instanceof NavigationStart) {
         // Show loading indicator
@@ -401,7 +411,6 @@ export class AppComponent implements OnInit, AfterViewInit {
       }
     });
     this.platform.backButton.subscribeWithPriority(0, async () => {
-      console.log('URL' + this.router.url);
       if (this.router.url === RouterLinks.LIBRARY_TAB || this.router.url === RouterLinks.COURSE_TAB
         || this.router.url === RouterLinks.DOWNLOAD_TAB || this.router.url === RouterLinks.PROFILE_TAB ||
         this.router.url === RouterLinks.GUEST_PROFILE_TAB || this.router.url === RouterLinks.ONBOARDING_DISTRICT_MAPPING
@@ -420,88 +429,43 @@ export class AppComponent implements OnInit, AfterViewInit {
     });
   }
 
-  generateNetworkTelemetry() {
+  private generateNetworkTelemetry() {
     const value = new Map();
     value['network-type'] = this.network.type;
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.OTHER,
       InteractSubtype.NETWORK_STATUS, Environment.HOME, PageId.SPLASH_SCREEN, undefined, value);
   }
 
-  subscribeEvents() {
-    this.events.subscribe('coach_mark_seen', (data) => {
+  private subscribeEvents() {
+    this.events.subscribe(EventTopics.COACH_MARK_SEEN, (data) => {
       this.showWalkthroughBackDrop = data.showWalkthroughBackDrop;
       setTimeout(() => {
         const backdropClipCenter = document.getElementById('qrScannerIcon').getBoundingClientRect().left +
-        ((document.getElementById('qrScannerIcon').getBoundingClientRect().width) / 2);
-
+          ((document.getElementById('qrScannerIcon').getBoundingClientRect().width) / 2);
         (document.getElementById('backdrop').getElementsByClassName('bg')[0] as HTMLDivElement).setAttribute(
           'style',
           `background-image: radial-gradient(circle at ${backdropClipCenter}px 56px, rgba(0, 0, 0, 0) 30px, rgba(0, 0, 0, 0.9) 30px);`
         );
-        }, 2000);
+      }, 2000);
       this.appName = data.appName;
     });
-    this.events.subscribe('tab.change', (data) => {
+    this.events.subscribe(EventTopics.TAB_CHANGE, (pageId) => {
       this.zone.run(() => {
-        this.generateInteractEvent(data);
+        this.generateInteractEvent(pageId);
         // Added below code to generate Impression Before Interact for Library,Courses,Profile
-        this.generateImpressionEvent(data);
+        this.generateImpressionEvent(pageId);
       });
     });
 
     this.translate.onLangChange.subscribe((params) => {
-      if (params.lang === 'ur' && !this.platform.isRTL) {
+      if (params.lang === 'ur') {
         // migration-TODO since platfrom is changed, this is a quick fix need to review later
         document.documentElement.dir = 'rtl';
-      } else if (this.platform.isRTL) {
+      } else {
         // migration-TODO since platfrom is changed, this is a quick fix need to review later
         document.documentElement.dir = 'ltr';
       }
     });
-  }
-
-  private async checkForTncUpdate() {
-    this.appGlobalService.isSignInOnboardingCompleted = false;
-    await this.tncUpdateHandlerService.checkForTncUpdate();
-  }
-
-  private async checkDeviceLocation() {
-    if (!(await this.commonUtilService.isDeviceLocationAvailable())
-      && (await this.preferences.getString(PreferenceKey.IS_ONBOARDING_COMPLETED).toPromise() === 'true')) {
-      const navigationExtras: NavigationExtras = {
-        state: {
-          isShowBackButton: false
-        }
-      };
-      await this.router.navigate(['/', RouterLinks.DISTRICT_MAPPING], navigationExtras);
-      this.splashScreenService.handleSunbirdSplashScreenActions();
-    }
-  }
-
-  private async getSelectedLanguage() {
-    const selectedLanguage = await this.preferences.getString(PreferenceKey.SELECTED_LANGUAGE_CODE).toPromise();
-    if (selectedLanguage) {
-      await this.translate.use(selectedLanguage).toPromise();
-    }
-  }
-
-  private async makeEntryInSupportFolder() {
-    return new Promise((resolve => {
-      (window as any).supportfile.makeEntryInSunbirdSupportFile((result) => {
-        this.preferences.putString(PreferenceKey.KEY_SUNBIRD_SUPPORT_FILE_PATH, result).toPromise().then();
-        resolve();
-      }, () => {
-      });
-    }));
-  }
-
-  private async saveDefaultSyncSetting() {
-    return this.preferences.getString('sync_config').toPromise()
-      .then(val => {
-        if (val === undefined || val === '' || val === null) {
-          this.preferences.putString('sync_config', 'ALWAYS_ON').toPromise().then();
-        }
-      });
   }
 
   private generateInteractEvent(pageId: string) {
@@ -531,6 +495,52 @@ export class AppComponent implements OnInit, AfterViewInit {
       corRelationList);
   }
 
+  private async checkForTncUpdate() {
+    this.appGlobalService.isSignInOnboardingCompleted = false;
+    await this.tncUpdateHandlerService.checkForTncUpdate();
+  }
+
+  private async checkDeviceLocation() {
+    if (!(await this.commonUtilService.isDeviceLocationAvailable())) {
+      const profile = await this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise();
+      if (await this.appGlobalService.getProfileSettingsStatus(profile)) {
+        const navigationExtras: NavigationExtras = {
+          state: {
+            isShowBackButton: false
+          }
+        };
+        await this.router.navigate(['/', RouterLinks.DISTRICT_MAPPING], navigationExtras);
+        this.splashScreenService.handleSunbirdSplashScreenActions();
+      }
+    }
+  }
+
+  private async getSelectedLanguage() {
+    const selectedLanguage = await this.preferences.getString(PreferenceKey.SELECTED_LANGUAGE_CODE).toPromise();
+    if (selectedLanguage) {
+      await this.translate.use(selectedLanguage).toPromise();
+    }
+  }
+
+  private async makeEntryInSupportFolder() {
+    return new Promise((resolve => {
+      (window as any).supportfile.makeEntryInSunbirdSupportFile((result) => {
+        this.preferences.putString(PreferenceKey.KEY_SUNBIRD_SUPPORT_FILE_PATH, result).toPromise().then();
+        resolve();
+      }, () => {
+      });
+    }));
+  }
+
+  private async saveDefaultSyncSetting() {
+    return this.preferences.getString(PreferenceKey.SYNC_CONFIG).toPromise()
+      .then(val => {
+        if (val === undefined || val === '' || val === null) {
+          this.preferences.putString(PreferenceKey.SYNC_CONFIG, 'ALWAYS_ON').toPromise().then();
+        }
+      });
+  }
+
   private async startOpenrapDiscovery(): Promise<undefined> {
     if (this.appGlobalService.OPEN_RAPDISCOVERY_ENABLED) {
       return new Observable((observer) => {
@@ -553,11 +563,11 @@ export class AppComponent implements OnInit, AfterViewInit {
           SunbirdSdk.instance.updateContentServiceConfig({
             host: response.actionType === 'connected' ? response.ip : undefined
           });
-  
+
           SunbirdSdk.instance.updatePageServiceConfig({
             host: response.actionType === 'connected' ? response.ip : undefined
           });
-  
+
           SunbirdSdk.instance.updateTelemetryConfig({
             host: response.actionType === 'connected' ? response.ip : undefined
           });
@@ -570,12 +580,13 @@ export class AppComponent implements OnInit, AfterViewInit {
   private async checkAppUpdateAvailable() {
     return this.formAndFrameworkUtilService.checkNewAppVersion()
       .then(result => {
-        if (result !== undefined) {
+        if (result) {
           setTimeout(() => {
-            this.events.publish('force_optional_upgrade', { upgrade: result });
+            this.events.publish('force_optional_upgrade', result);
           }, 5000);
         }
-      }).catch(err => {
+      })
+      .catch(err => {
         console.error('checkNewAppVersion err', err);
       });
   }
@@ -583,12 +594,12 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   private autoSyncTelemetry() {
     this.telemetryAutoSync.start(30 * 1000).pipe(
-        mergeMap(() => {
-          return combineLatest([
-            this.platform.pause.pipe(tap(() => this.telemetryAutoSync.pause())),
-            this.platform.resume.pipe(tap(() => this.telemetryAutoSync.continue()))
-          ]);
-        })
+      mergeMap(() => {
+        return combineLatest([
+          this.platform.pause.pipe(tap(() => this.telemetryAutoSync.pause())),
+          this.platform.resume.pipe(tap(() => this.telemetryAutoSync.continue()))
+        ]);
+      })
     ).subscribe();
   }
 
@@ -705,42 +716,47 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.eventsBusService.events(EventNamespace.AUTH).pipe(
       filter((e) => e.type === AuthEventType.AUTO_MIGRATE_SUCCESS || e.type === AuthEventType.AUTO_MIGRATE_FAIL),
     ).subscribe((e) => {
-        switch (e.type) {
-          case AuthEventType.AUTO_MIGRATE_SUCCESS: {
-            this.commonUtilService.showToast('AUTO_MIGRATION_SUCCESS_MESSAGE');
-            break;
-          }
-          case AuthEventType.AUTO_MIGRATE_FAIL: {
-            this.commonUtilService.showToast('AUTO_MIGRATION_FAIL_MESSAGE');
-            break;
-          }
+      switch (e.type) {
+        case AuthEventType.AUTO_MIGRATE_SUCCESS: {
+          this.commonUtilService.showToast('AUTO_MIGRATION_SUCCESS_MESSAGE');
+          break;
         }
-      });
+        case AuthEventType.AUTO_MIGRATE_FAIL: {
+          this.commonUtilService.showToast('AUTO_MIGRATION_FAIL_MESSAGE');
+          break;
+        }
+      }
+    });
   }
 
   private handleAuthErrors() {
     this.eventsBusService.events(EventNamespace.ERROR).pipe(
       filter((e) => e.type === ErrorEventType.AUTH_TOKEN_REFRESH_ERROR),
     ).subscribe(() => {
-        this.logoutHandlerService.onLogout();
-      });
+      this.logoutHandlerService.onLogout();
+    });
   }
 
-  getUtmParameter() {
-    this.utilityService.getUtmInfo().then(response => {
-      if (response) {
-        const utmTelemetry = new Map();
-        utmTelemetry['utm_data'] = response;
-        this.telemetryGeneratorService.generateInteractTelemetry(
-          InteractType.OTHER,
-          InteractSubtype.UTM_INFO,
-          Environment.HOME,
-          PageId.HOME,
-          undefined,
-          utmTelemetry);
-        this.utilityService.clearUtmInfo();
-      }
-    })
+  private getUtmParameter() {
+    this.utilityService.getUtmInfo()
+      .then(response => {
+        if (response) {
+          if (response.val && response.val.length) {
+            this.splaschreenDeeplinkActionHandlerDelegate.checkUtmContent(response.val);
+          }
+          const utmTelemetry = {
+            utm_data: response
+          };
+          this.telemetryGeneratorService.generateInteractTelemetry(
+            InteractType.OTHER,
+            InteractSubtype.UTM_INFO,
+            Environment.HOME,
+            PageId.HOME,
+            undefined,
+            utmTelemetry);
+          this.utilityService.clearUtmInfo();
+        }
+      })
       .catch(error => {
         console.log('Error is', error);
       });

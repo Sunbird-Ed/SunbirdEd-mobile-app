@@ -4,11 +4,14 @@ import { AppGlobalService } from './app-global-service.service';
 import { Observable } from 'rxjs';
 import { PopoverController } from '@ionic/angular';
 import { FormAndFrameworkUtilService } from './formandframeworkutil.service';
-import { TeacherIdVerificationComponent } from '@app/app/components/popups/teacher-id-verification-popup/teacher-id-verification-popup.component';
+import {
+    TeacherIdVerificationComponent
+} from '@app/app/components/popups/teacher-id-verification-popup/teacher-id-verification-popup.component';
 import { ProfileConstants } from '@app/app/app.constant';
 import { map } from 'rxjs/operators';
 import { SplaschreenDeeplinkActionHandlerDelegate } from './sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
 import { CommonUtilService } from './common-util.service';
+import { LocalCourseService } from './local-course.service';
 
 @Injectable()
 export class ExternalIdVerificationService {
@@ -21,6 +24,7 @@ export class ExternalIdVerificationService {
         private formAndFrameworkUtilService: FormAndFrameworkUtilService,
         private splaschreenDeeplinkActionHandlerDelegate: SplaschreenDeeplinkActionHandlerDelegate,
         private commonUtilService: CommonUtilService,
+        private localCourseService: LocalCourseService
     ) {
         this.isCustodianUser$ = this.profileService.isDefaultChannelProfile().pipe(
             map((isDefaultChannelProfile) => isDefaultChannelProfile) as any
@@ -75,24 +79,24 @@ export class ExternalIdVerificationService {
     checkQuizContent(): Promise<boolean> {
         this.appGlobalService.isSignInOnboardingCompleted = true;
         return new Promise<boolean>(async (resolve) => {
-            const limitedSharingContentDetails = this.appGlobalService.limitedShareQuizContent;
-            if (limitedSharingContentDetails) {
+            const limitedSharingContentId = this.appGlobalService.limitedShareQuizContent;
+            if (limitedSharingContentId) {
                 this.appGlobalService.limitedShareQuizContent = null;
-                await this.splaschreenDeeplinkActionHandlerDelegate.onAction('content', limitedSharingContentDetails, false).toPromise();
+                this.splaschreenDeeplinkActionHandlerDelegate.navigateContent(limitedSharingContentId);
                 resolve(true);
             } else {
                 resolve(false);
             }
         });
-      }
+    }
 
-      checkJoinTraining() {
-          if (this.appGlobalService.isJoinTraningOnboardingFlow) {
+    checkJoinTraining() {
+        if (this.appGlobalService.isJoinTraningOnboardingFlow) {
             return new Promise<boolean>(async (resolve) => {
-            await this.splaschreenDeeplinkActionHandlerDelegate.checkCourseRedirect();
-            this.appGlobalService.isJoinTraningOnboardingFlow = false;
-            resolve(true);
-          });
+                await this.localCourseService.checkCourseRedirect();
+                this.appGlobalService.isJoinTraningOnboardingFlow = false;
+                resolve(true);
+            });
         }
-      }
+    }
 }

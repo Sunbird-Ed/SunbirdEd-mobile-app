@@ -1,23 +1,11 @@
 <ion-content>
   <h4 no-margin padding class="subtitle">{{ 'AVAILABLE_FILTERS' | translate }} </h4>
-  <!-- <div class="scroll-list">
-    <ion-list *ngIf="facetsFilter && facetsFilter.length" no-lines>
-      <ion-item class="filter-item" *ngFor="let facet of facetsFilter" (click)="openFilterOptions(facet)">
-        <ion-label *ngIf = "facet.name" text-capitalize>{{ facet?.name | translate  }}</ion-label>
-        <ion-label *ngIf = "facet.orgName" text-capitalize>{{ facet?.orgName | translate  }}</ion-label>
-        <ion-label text-end>{{ getSelectedOptionCount(facet) }}</ion-label>
-        <ion-icon name="ios-arrow-forward" item-end></ion-icon>
-      </ion-item>
-    </ion-list>
-  </div> -->
-
   <div *ngIf="facetsFilter && facetsFilter.length">
     <div *ngFor="let facet of facetsFilter">
       <div class="flex-card-container filter-item" (click)="openFilterOptions(facet)">
         <div class="card-text">
-          <!-- <ion-label *ngIf="facet?.name !== 'gradeLevel' && facet?.name !== 'contentType'" text-capitalize>{{ facet.name }}</ion-label> -->
-          <ion-label *ngIf = "facet.name" text-capitalize>{{ facet?.name | translate  }}</ion-label>
-          <ion-label *ngIf = "facet.orgName" text-capitalize>{{ facet?.orgName | translate  }}</ion-label>
+          <ion-label *ngIf="facet.name" text-capitalize>{{ facet?.name | translate  }}</ion-label>
+          <ion-label *ngIf="facet.orgName" text-capitalize>{{ facet?.orgName | translate  }}</ion-label>
           <ion-label class="text-end">{{ getSelectedOptionCount(facet) }}</ion-label>
         </div>
         <div class="card-icon">
@@ -32,7 +20,6 @@
     <ion-col size="6">
       <ion-button fill="outline" expand="block" (click)="cancel()"> {{ 'CANCEL' | translate }}</ion-button>
     </ion-col>
-
     <ion-col size="6">
       <ion-button expand="block" (click)="apply()"> {{ 'APPLY' | translate }}</ion-button>
     </ion-col>

@@ -819,7 +819,10 @@ describe('FormAndFrameworkUtilService', () => {
               action: 'yes', label: 'Update Now',
               link: 'https://play.google.com/store/apps/details?id=org.sunbird.app&hl=en'
             }],
-            desc: '', title: 'Sample_title', type: 'forced'
+            desc: '', title: 'Sample_title', type: 'forced',
+            currentAppVersionCode: 48,
+            maxVersionCode: 52,
+            minVersionCode: 13
           }
         );
         done();

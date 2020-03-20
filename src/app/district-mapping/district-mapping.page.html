@@ -16,8 +16,8 @@
   <form>
     <ion-item>
       <ion-label position="stacked" class="label-font">{{'STATE' | translate}} &lrm;<ion-text>
-        <span style="color: red;">&nbsp;*</span>
-      </ion-text>
+          <span style="color: red;">&nbsp;*</span>
+        </ion-text>
       </ion-label>
       <ion-select #stateSelect
                   [selectedText]="stateSelect?.value?.name"
@@ -32,13 +32,14 @@
                 *ngFor="let state of stateList"
                 [value]="state">
           {{state?.name}}
-          &lrm;</ion-select-option>
+          &lrm;
+        </ion-select-option>
       </ion-select>
     </ion-item>
     <ion-item>
       <ion-label position="stacked" class="label-font">{{'DISTRICT' | translate}} &lrm;<ion-text>
-        <span style="color: red;">&nbsp;*</span>
-      </ion-text>
+          <span style="color: red;">&nbsp;*</span>
+        </ion-text>
       </ion-label>
       <ion-select #districtSelect
                   [selectedText]="districtSelect?.value?.name"
@@ -53,20 +54,17 @@
                 *ngFor="let district of districtList"
                 [value]="district">
           {{district?.name}}
-          &lrm;</ion-select-option>
+          &lrm;
+        </ion-select-option>
       </ion-select>
     </ion-item>
   </form>
 
-<!--  <div class="district" *ngIf="!showStates">-->
-<!--    <div class="input-container margin-top" [ngClass]="(!stateName && !availableLocationState) ? 'disableInput' : ''">-->
-<!--    </div>-->
-<!--  </div>-->
-
   <div style="display:none">{{!(isKeyboardShown$ | async)}}</div>
 </ion-content>
 <div class="footer" *ngIf="!(isKeyboardShown$ | async)">
-  <button class="block-button" [disabled]="!isValid(stateName, stateList, 'name') || !isValid(districtName, districtList, 'name') || disableSubmitButton"
+  <button class="block-button"
+    [disabled]="!isValid(stateName, stateList, 'name') || !isValid(districtName, districtList, 'name') || disableSubmitButton"
     [ngClass]="!isValid(stateName, stateList, 'name') || !isValid(districtName, districtList, 'name') ? 'disabled-button': ''"
     (click)="submit()">{{'BTN_SUBMIT' | translate}}</button>
 </div>

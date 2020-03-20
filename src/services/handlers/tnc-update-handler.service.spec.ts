@@ -20,9 +20,19 @@ describe('TncUpdateHandlerService', () => {
   const mockCommonUtilService: Partial<CommonUtilService> = {};
   const mockFormAndFrameworkUtilService: Partial<FormAndFrameworkUtilService> = {};
   const mockModalCtrl: Partial<ModalController> = {};
-  const mockRouter: Partial<Router> = {};
-  const mockExternalIdVerificationService: Partial<ExternalIdVerificationService> = {};
-  const mockAppGlobalService: Partial<AppGlobalService> = {};
+  mockModalCtrl.create = jest.fn(() => (Promise.resolve({
+    present: jest.fn(() => Promise.resolve({})),
+    dismiss: jest.fn(() => Promise.resolve({})),
+  } as any)));
+  const mockRouter: Partial<Router> = {
+    navigate: jest.fn()
+  };
+  const mockExternalIdVerificationService: Partial<ExternalIdVerificationService> = {
+    showExternalIdVerificationPopup: jest.fn()
+  };
+  const mockAppGlobalService: Partial<AppGlobalService> = {
+    closeSigninOnboardingLoader: jest.fn()
+  };
 
   beforeAll(() => {
     tncUpdateHandlerService = new TncUpdateHandlerService(

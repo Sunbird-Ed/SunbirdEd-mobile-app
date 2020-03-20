@@ -11,11 +11,14 @@ import {
   ProfileService,
   SunbirdSdk,
   TelemetryErrorRequest,
-  TelemetryService
+  TelemetryService,
+  ArchiveService,
+  ArchiveObjectType
 } from 'sunbird-sdk';
 import {Inject, Injectable} from '@angular/core';
 import {CommonUtilService} from 'services/common-util.service';
 import {Events, PopoverController} from '@ionic/angular';
+import {from} from 'rxjs';
 import {catchError, concatMap, filter, map, mapTo, mergeMap, reduce, takeUntil, tap} from 'rxjs/operators';
 import {SplaschreenDeeplinkActionHandlerDelegate} from '@app/services/sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
 import {ImportPopoverComponent} from '@app/app/components/popups/import-popover/import-popover.component';
@@ -28,6 +31,7 @@ export class SplashscreenImportActionHandlerDelegate implements SplashscreenActi
         @Inject('EVENTS_BUS_SERVICE') private eventsBusService: EventsBusService,
         @Inject('PROFILE_SERVICE') private profileService: ProfileService,
         @Inject('TELEMETRY_SERVICE') private telemetryService: TelemetryService,
+        @Inject('ARCHIVE_SERVICE') private archiveService: ArchiveService,
         private splashscreenDeeplinkActionHandlerDelegate: SplaschreenDeeplinkActionHandlerDelegate,
         private events: Events,
         private commonUtilService: CommonUtilService,
@@ -35,7 +39,7 @@ export class SplashscreenImportActionHandlerDelegate implements SplashscreenActi
         private utilityService: UtilityService) {
     }
 
-  onAction(type: string, payload: { filePath: string }): Observable<undefined> {
+  onAction(payload: { filePath: string }): Observable<undefined> {
     const filePath = 'file://' + payload.filePath;
     const fileExtenstion = filePath.split('.').pop();
 
@@ -105,9 +109,7 @@ export class SplashscreenImportActionHandlerDelegate implements SplashscreenActi
                                   } else {
                                       console.log('deleteNotChecked');
                                   }
-                                  this.splashscreenDeeplinkActionHandlerDelegate.onAction(
-                                      'content', { identifier: event.payload.contentId }, false
-                                  ).toPromise();
+                                  this.splashscreenDeeplinkActionHandlerDelegate.navigateContent(event.payload.contentId);
                               });
                           }
                       }),
@@ -147,6 +149,21 @@ export class SplashscreenImportActionHandlerDelegate implements SplashscreenActi
             }
           }),
           mapTo(undefined) as any
+        );
+      }
+      case 'zip': {
+        return from(this.archiveService.import({
+          objects: [ { type: ArchiveObjectType.TELEMETRY } ],
+          filePath
+        }).toPromise().then(() => {
+          this.commonUtilService.showToast('CONTENT_IMPORTED');
+          this.events.publish('savedResources:update', {
+            update: true
+          });
+        }).catch(() => {
+          this.commonUtilService.showToast('CONTENT_IMPORTED_FAILED');
+        })).pipe(
+          mapTo(undefined)
         );
       }
       default:
