@@ -28,10 +28,10 @@ import {
 } from './collection-detail-etb-page.spec.data';
 import {of, Subscription, Observable} from 'rxjs';
 import {ContentPlayerHandler} from '@app/services/content/player/content-player-handler';
-import {RatingHandler} from '@app/services/rating/rating-handler';
 import {ContentUtil} from '@app/util/content-util';
 import {EventTopics} from '@app/app/app.constant';
 import { ShareItemType } from '../app.constant';
+import { ContentDeleteHandler } from '../../services/content/content-delete-handler'
 
 describe('collectionDetailEtbPage', () => {
     let collectionDetailEtbPage: CollectionDetailEtbPage;
@@ -58,7 +58,7 @@ describe('collectionDetailEtbPage', () => {
         getCurrentUser: jest.fn()
     };
     const mockCommonUtilService: Partial<CommonUtilService> = {
-        networkInfo: {}
+        networkInfo: {} as any
     };
     const mocktelemetryGeneratorService: Partial<TelemetryGeneratorService> = {
         generateBackClickedTelemetry: jest.fn(),
@@ -81,7 +81,7 @@ describe('collectionDetailEtbPage', () => {
     };
     const mockroute: Partial<ActivatedRoute> = {};
     const mockrouter: Partial<Router> = {
-        getCurrentNavigation: jest.fn(() => mockcollectionData),
+        getCurrentNavigation: jest.fn(() => mockcollectionData as any),
         navigate: jest.fn(() => Promise.resolve(true))
     };
     const mockchangeDetectionRef: Partial<ChangeDetectorRef> = {};
@@ -92,43 +92,38 @@ describe('collectionDetailEtbPage', () => {
         setLastPlayedContentId: jest.fn(),
         launchContentPlayer: jest.fn()
     };
-    const mockRatingHandler: Partial<RatingHandler> = {
-        showRatingPopup: jest.fn()
-    };
+
     const mockIonContent: Partial<IonContent> = {
-        ionScroll: {}
+        ionScroll: {} as any
     };
+
+    const mockContentDeleteHandler: Partial<ContentDeleteHandler> = {
+    };
+
     beforeEach(() => {
         collectionDetailEtbPage = new CollectionDetailEtbPage(
             mockContentService as ContentService,
             mockEventBusService as EventsBusService,
             mockProfileService as ProfileService,
             mockStorageService as StorageService,
-            mockNavCtrl as NavController,
             mockzone as NgZone,
             mockevents as Events,
             mockPopoverController as PopoverController,
             mockplatform as Platform,
-            mocktranslate as TranslateService,
-            mocksocial as SocialSharing,
             mockappGlobalService as AppGlobalService,
             mockCommonUtilService as CommonUtilService,
             mocktelemetryGeneratorService as TelemetryGeneratorService,
-            mockcourseUtilService as CourseUtilService,
-            mockutilityService as UtilityService,
             mockfileSizePipe as FileSizePipe,
             mockHeaderService as AppHeaderService,
-            mockcomingSoonMessageService as ComingSoonMessageService,
             mocklocation as Location,
-            mockroute as ActivatedRoute,
             mockrouter as Router,
             mockchangeDetectionRef as ChangeDetectorRef,
             mocktextbookTocService as TextbookTocService,
             mockContentPlayerHandler as ContentPlayerHandler,
-            mockRatingHandler as RatingHandler
+            mockContentDeleteHandler as ContentDeleteHandler
         );
 
-        collectionDetailEtbPage.ionContent = mockIonContent;
+        collectionDetailEtbPage.ionContent = mockIonContent as any;
     });
 
     beforeEach(() => {

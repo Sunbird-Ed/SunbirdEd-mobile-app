@@ -44,7 +44,7 @@ export class ContentDeleteHandler {
                 content,
                 isChild: isChildContent,
                 objRollup: contentInfo.rollUp,
-                pageName: PageId.CONTENT_DETAIL,
+                pageName: pageId,
                 corRelationList: contentInfo.correlationList,
                 sbPopoverHeading: this.commonUtilService.translateMessage('DELETE'),
                 sbPopoverMainTitle: this.commonUtilService.translateMessage('CONTENT_DELETE'),
