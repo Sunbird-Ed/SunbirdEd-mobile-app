@@ -19,7 +19,7 @@ export class EditContactVerifyPopupComponent implements OnInit {
   @Input() title: string;
   @Input() description: string;
   @Input() type: string;
-  otp;
+  otp = '';
   invalidOtp = false;
   enableResend = true;
   unregisterBackButton: any;
@@ -77,6 +77,7 @@ export class EditContactVerifyPopupComponent implements OnInit {
               if (error.response.body.params.err === 'OTP_VERIFICATION_FAILED' &&
               error.response.body.result.remainingAttempt > 0) {
                 this.remainingAttempts = error.response.body.result.remainingAttempt;
+                this.otp = '';
                 this.invalidOtp = true;
               } else {
                 this.popOverCtrl.dismiss();

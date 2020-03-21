@@ -68,7 +68,6 @@ import {ImportPopoverComponent} from './popups/import-popover/import-popover.com
     EditContactDetailsPopupComponent,
     EditContactVerifyPopupComponent,
     ConfirmAlertComponent,
-    EditContactVerifyPopupComponent,
     AppRatingAlertComponent,
     OverflowMenuComponent,
     ReportAlertComponent,
