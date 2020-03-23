@@ -11,7 +11,7 @@ import { Network } from '@ionic-native/network/ngx';
 import { WebView } from '@ionic-native/ionic-webview/ngx';
 import { SharedPreferences, ProfileService, Profile } from 'sunbird-sdk';
 
-import { PreferenceKey, ProfileConstants } from '@app/app/app.constant';
+import {PreferenceKey, ProfileConstants, RouterLinks} from '@app/app/app.constant';
 import { appLanguages } from '@app/app/app.constant';
 
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
@@ -21,6 +21,10 @@ import { QRAlertCallBack, QRScannerAlert } from '@app/app/qrscanner-alert/qrscan
 import { Observable, merge } from 'rxjs';
 import { mapTo } from 'rxjs/operators';
 import { AppVersion } from '@ionic-native/app-version/ngx';
+import { Router } from '@angular/router';
+import { SbPopoverComponent } from '@app/app/components/popups';
+import {AndroidPermission, AndroidPermissionsStatus} from '@app/services/android-permissions/android-permission';
+import {AndroidPermissionsService} from '@app/services/android-permissions/android-permissions.service';
 
 declare const FCMPlugin;
 export interface NetworkInfo {
@@ -55,6 +59,9 @@ export class CommonUtilService implements OnDestroy {
         private telemetryGeneratorService: TelemetryGeneratorService,
         private webView: WebView,
         private appVersion: AppVersion,
+        private router: Router,
+        private toastController: ToastController,
+        private permissionService: AndroidPermissionsService
     ) {
         this.listenForEvents();
 
@@ -484,5 +491,64 @@ export class CommonUtilService implements OnDestroy {
                 await this.preferences.putString(PreferenceKey.CURRENT_USER_PROFILE, JSON.stringify(profile)).toPromise();
                 await this.preferences.putString(PreferenceKey.SUBSCRIBE_TOPICS, JSON.stringify(subscribeTopic)).toPromise();
             });
+    }
+
+    public async getGivenPermissionStatus(permissions): Promise<AndroidPermissionsStatus> {
+        return (
+            await this.permissionService.checkPermissions([permissions]).toPromise()
+        )[permissions];
+    }
+
+    public async showSettingsPageToast(description: string, appName: string, pageId: string, isOnboardingCompleted: boolean) {
+        const toast = await this.toastController.create({
+            message: this.translateMessage(description, appName),
+            cssClass: 'permissionSettingToast',
+            showCloseButton: true,
+            closeButtonText: this.translateMessage('SETTINGS'),
+            position: 'bottom',
+            duration: 3000
+        });
+
+        toast.present();
+
+        toast.onWillDismiss().then((res) => {
+            if (res.role === 'cancel') {
+                this.telemetryGeneratorService.generateInteractTelemetry(
+                    InteractType.TOUCH,
+                    InteractSubtype.SETTINGS_CLICKED,
+                    isOnboardingCompleted ? Environment.HOME : Environment.ONBOARDING,
+                    pageId);
+                this.router.navigate([`/${RouterLinks.SETTINGS}/${RouterLinks.PERMISSION}`], { state: { changePermissionAccess: true } });
+            }
+        });
+    }
+
+    public async buildPermissionPopover(handler: (selectedButton: string) => void,
+                                        appName: string, whichPermission: string,
+                                        permissionDescription: string): Promise<HTMLIonPopoverElement> {
+        return this.popOverCtrl.create({
+            component: SbPopoverComponent,
+            componentProps: {
+                isNotShowCloseIcon: false,
+                sbPopoverHeading: this.translateMessage('PERMISSION_REQUIRED'),
+                sbPopoverMainTitle: this.translateMessage(whichPermission),
+                actionsButtons: [
+                    {
+                        btntext: this.translateMessage('NOT_NOW'),
+                        btnClass: 'popover-button-cancel',
+                    },
+                    {
+                        btntext: this.translateMessage('ALLOW'),
+                        btnClass: 'popover-button-allow',
+                    }
+                ],
+                handler,
+                img: {
+                    path: './assets/imgs/ic_folder_open.png',
+                },
+                metaInfo: this.translateMessage(permissionDescription, appName),
+            },
+            cssClass: 'sb-popover sb-popover-permissions primary dw-active-downloads-popover',
+        });
     }
 }

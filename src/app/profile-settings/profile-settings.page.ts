@@ -122,11 +122,6 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
   }
 
   async ngOnInit() {
-    this.telemetryGeneratorService.generateImpressionTelemetry(
-      ImpressionType.VIEW, '',
-      PageId.ONBOARDING_PROFILE_PREFERENCES,
-      Environment.ONBOARDING
-    );
 
     this.handleActiveScanner();
 
@@ -207,6 +202,16 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ionViewWillEnter() {
+    if (this.router.url === '/' + RouterLinks.PROFILE_SETTINGS) {
+      setTimeout(() => {
+        this.telemetryGeneratorService.generateImpressionTelemetry(
+            ImpressionType.VIEW, '',
+            PageId.ONBOARDING_PROFILE_PREFERENCES,
+            Environment.ONBOARDING
+        );
+      }, 350);
+    }
+
     this.handleDeviceBackButton();
     // after qr scan if bmc is not populated then show only BMC
     if (history.state && history.state.showFrameworkCategoriesMenu) {
