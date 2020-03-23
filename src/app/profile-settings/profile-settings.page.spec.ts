@@ -3,8 +3,9 @@ import {
     FrameworkService,
     FrameworkUtilService,
     ProfileService,
-    GetSuggestedFrameworksRequest,
-    FrameworkCategoryCodesGroup
+    Framework,
+    FrameworkCategoryCodesGroup,
+    GetSuggestedFrameworksRequest
 } from 'sunbird-sdk';
 import { TranslateService } from '@ngx-translate/core';
 import { Events, Platform, AlertController } from '@ionic/angular';
@@ -513,6 +514,7 @@ describe('ProfileSettingsPage', () => {
         } as any;
         jest.spyOn(profileSettingsPage, 'handleBackButton').mockImplementation();
         window.history.state['showFrameworkCategoriesMenu'] = true;
+        profileSettingsPage['navParams'] = null;
         // act
         profileSettingsPage.ionViewWillEnter();
         // assert
@@ -726,17 +728,140 @@ describe('ProfileSettingsPage', () => {
             // act
             profileSettingsPage.openQRScanner();
             // assert
+            expect(mockScanner.startScanner).toHaveBeenCalled();
             expect(profileSettingsPage.showQRScanner).toEqual(true);
         });
 
         it('should open the QR scanner but skip generating telemetry event', () => {
             // arrange
-            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
-            mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
             mockScanner.startScanner = jest.fn(() => Promise.resolve(''));
             // act
-            profileSettingsPage.openQRScanner();
+            profileSettingsPage.openQRScanner()
             // assert
+            expect(mockScanner.startScanner).toHaveBeenCalled();
+        });
+
+    });
+
+    describe('ionViewWillLeave', () => {
+        it('should unsubscribe the subscriptions', () => {
+            // arrange
+            profileSettingsPage['headerObservable'] = {
+                unsubscribe: jest.fn()
+            };
+            profileSettingsPage['unregisterBackButton'] = {
+                unsubscribe: jest.fn()
+            } as any;
+            // act
+            profileSettingsPage.ionViewWillLeave();
+            // assert
+            expect(profileSettingsPage['headerObservable'].unsubscribe).toHaveBeenCalled();
+            expect(profileSettingsPage['unregisterBackButton'].unsubscribe).toHaveBeenCalled();
+        });
+
+        it('should unsubscribe the subscriptions except backbutton subscription', () => {
+            // arrange
+            profileSettingsPage['headerObservable'] = {
+                unsubscribe: jest.fn()
+            };
+            profileSettingsPage['unregisterBackButton'] = null;
+            // act
+            profileSettingsPage.ionViewWillLeave();
+            // assert
+            expect(profileSettingsPage['headerObservable'].unsubscribe).toHaveBeenCalled();
+        });
+    });
+
+    describe('hideOnboardingSplashScreen', () => {
+        it('should hide the splash screen when the user reopens the onboarding profile page', () => {
+            // arrange
+            profileSettingsPage['navParams'] = { forwardMigration: true };
+            mockSplashScreenService.handleSunbirdSplashScreenActions = jest.fn(() => Promise.resolve(undefined));
+            // act
+            profileSettingsPage.hideOnboardingSplashScreen();
+            // assert
+            expect(mockSplashScreenService.handleSunbirdSplashScreenActions).toHaveBeenCalled();
+        });
+
+        it('should skip hide the splash screen when the splash screen is already closed', () => {
+            // arrange
+            profileSettingsPage['navParams'] = { forwardMigration: false };
+            mockSplashScreenService.handleSunbirdSplashScreenActions = jest.fn(() => Promise.resolve(undefined));
+            // act
+            profileSettingsPage.hideOnboardingSplashScreen();
+            // assert
+            expect(profileSettingsPage['navParams'].forwardMigration).toEqual(false);
+        });
+    });
+
+    describe('ngOnDestroy', () => {
+        it('should stop detecting the profile setting changes on leaving the page', () => {
+            // arrange
+            profileSettingsPage['formControlSubscriptions'] = {
+                unsubscribe: jest.fn()
+            } as any;
+            // act
+            profileSettingsPage.ngOnDestroy();
+            // commonUtilService.getLoader
+            expect(profileSettingsPage['formControlSubscriptions'].unsubscribe).toHaveBeenCalled();
+        });
+    });
+
+    describe('fetchSyllabusList', () => {
+
+        it('should fetch all the syllabus list details', () => {
+            // arrange
+            const dismissFn = jest.fn(() => Promise.resolve());
+            const presentFn = jest.fn(() => Promise.resolve());
+            mockCommonUtilService.getLoader = jest.fn(() => ({
+                present: presentFn,
+                dismiss: dismissFn,
+            })) as any;
+            profileSettingsPage.loader = mockCommonUtilService.getLoader;
+            const frameworkRes: Framework[] = [{
+                name: 'SAMPLE_STRING',
+                identifier: 'SAMPLE_STRING'
+            }];
+            const getSuggestedFrameworksRequest: GetSuggestedFrameworksRequest = {
+                language: 'en',
+                requiredCategories: FrameworkCategoryCodesGroup.DEFAULT_FRAMEWORK_CATEGORIES
+            };
+            mockCommonUtilService.showToast = jest.fn();
+            mockFrameworkUtilService.getActiveChannelSuggestedFrameworkList = jest.fn(() => of(frameworkRes));
+            // act
+            profileSettingsPage.fetchSyllabusList();
+            // assert
+            setTimeout(() => {
+                expect(mockCommonUtilService.getLoader).toHaveBeenCalled();
+                expect(mockFrameworkUtilService.getActiveChannelSuggestedFrameworkList).toHaveBeenCalledWith(getSuggestedFrameworksRequest);
+                expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('SAMPLE_TEXT');
+            }, 0);
+        });
+
+        it('should show data not found toast message if syllabus list is empty.', () => {
+            // arrange
+            const dismissFn = jest.fn(() => Promise.resolve());
+            const presentFn = jest.fn(() => Promise.resolve());
+            mockCommonUtilService.getLoader = jest.fn(() => ({
+                present: presentFn,
+                dismiss: dismissFn,
+            })) as any;
+            profileSettingsPage.loader = mockCommonUtilService.getLoader;
+            const frameworkRes: Framework[] = [];
+            const getSuggestedFrameworksRequest: GetSuggestedFrameworksRequest = {
+                language: 'en',
+                requiredCategories: FrameworkCategoryCodesGroup.DEFAULT_FRAMEWORK_CATEGORIES
+            };
+            mockCommonUtilService.showToast = jest.fn();
+            mockFrameworkUtilService.getActiveChannelSuggestedFrameworkList = jest.fn(() => of(frameworkRes));
+            // act
+            profileSettingsPage.fetchSyllabusList();
+            // assert
+            setTimeout(() => {
+                expect(mockCommonUtilService.getLoader).toHaveBeenCalled();
+                expect(mockFrameworkUtilService.getActiveChannelSuggestedFrameworkList).toHaveBeenCalledWith(getSuggestedFrameworksRequest);
+                expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('SAMPLE_TEXT');
+            }, 0);
         });
 
     });
