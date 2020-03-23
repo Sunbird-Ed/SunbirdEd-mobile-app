@@ -1,6 +1,6 @@
 <ion-content class="ion-no-padding" [scrollEvents]="true" (ionScroll)="onScroll($event)">
   <div class="content-padding">
-    <app-detail-card (downloadAllContent)="showDownloadConfirmationAlert($event)" (shareEvent)="share()"
+    <app-detail-card (downloadAllContent)="showDownloadConfirmationAlert()" (shareEvent)="share()"
       (showOverflowMenuEvent)="showDeletePopOver()" [contentDetail]="contentDetail" [currentCount]="currentCount"
       [queuedIdentifiers]="queuedIdentifiers" [localImage]="contentDetail?.contentData?.appIcon" [showDownloadBtn]="showDownloadBtn"
       [isDepthChild]='isDepthChild' [isDownloadStarted]="isDownloadStarted" [defaultAppIcon]="defaultAppIcon">
