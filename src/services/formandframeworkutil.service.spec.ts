@@ -683,7 +683,9 @@ describe('FormAndFrameworkUtilService', () => {
       // act
       // assert
       formAndFrameworkUtilService.getSupportedContentFilterConfig('library').then((response) => {
-        expect(response).toEqual(['Story', 'Worksheet', 'Game', 'Resource', 'Collection', 'TextBook', 'eTextBook', 'LessonPlan']);
+        expect(response).toEqual(['Story', 'Worksheet', 'Game', 'Resource', 'Collection', 'TextBook', 'eTextBook',
+          'LessonPlan', 'FocusSpot', 'LearningOutcomeDefinition', 'PracticeQuestionSet', 'CuriosityQuestions',
+          'MarkingSchemeRubric', 'ExplanationResource', 'ExperientialResource']);
         done();
       });
     });
@@ -710,13 +712,9 @@ describe('FormAndFrameworkUtilService', () => {
       // assert
       formAndFrameworkUtilService.getSupportedContentFilterConfig('downloads').then((response) => {
         expect(response).toEqual(['Story', 'Worksheet', 'Game', 'Resource', 'Collection', 'TextBook', 'eTextBook',
-          'LessonPlan', 'Course', 'FocusSpot',
-          'LearningOutcomeDefinition',
-          'PracticeQuestionSet',
-          'CuriosityQuestions',
-          'MarkingSchemeRubric',
-          'ExplanationResource',
-          'ExperientialResource']);
+          'LessonPlan', 'FocusSpot', 'LearningOutcomeDefinition', 'PracticeQuestionSet', 'CuriosityQuestions',
+          'MarkingSchemeRubric', 'ExplanationResource', 'ExperientialResource',
+          'Course']);
         done();
       });
     });

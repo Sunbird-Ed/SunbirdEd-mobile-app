@@ -32,19 +32,7 @@ export class ContentType {
         ContentType.COLLECTION,
         ContentType.TEXTBOOK,
         ContentType.E_TEXTBOOK,
-        ContentType.LESSON_PLAN
-    ];
-    // TODO: not need to pass content types, by default all the content types should display
-    public static readonly FOR_DOWNLOADED_TAB = [
-        ContentType.STORY,
-        ContentType.WORKSHEET,
-        ContentType.GAME,
-        ContentType.RESOURCE,
-        ContentType.COLLECTION,
-        ContentType.TEXTBOOK,
-        ContentType.E_TEXTBOOK,
         ContentType.LESSON_PLAN,
-        ContentType.COURSE,
         ContentType.FOCUS_SPOT,
         ContentType.LEARNING_OUTCOME_DEFINITION,
         ContentType.PRACTICE_QUESTION_SET,
@@ -52,6 +40,11 @@ export class ContentType {
         ContentType.MARKING_SCHEME_RUBRIC,
         ContentType.EXPLANATION_RESOURCE,
         ContentType.EXPERIENTIAL_RESOURCE
+    ];
+    // TODO: not need to pass content types, by default all the content types should display
+    public static readonly FOR_DOWNLOADED_TAB = [
+        ...ContentType.FOR_LIBRARY_TAB,
+        ...ContentType.FOR_COURSE_TAB
     ];
     public static readonly FOR_DIAL_CODE_SEARCH = [
         ContentType.TEXTBOOK,
