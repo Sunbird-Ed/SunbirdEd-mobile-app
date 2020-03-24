@@ -208,14 +208,14 @@ export class SbAppSharePopupComponent implements OnInit, OnDestroy {
             if (selectedButton === this.commonUtilService.translateMessage('NOT_NOW')) {
               this.telemetryGeneratorService.generateInteractTelemetry(
                   InteractType.TOUCH,
-                  InteractSubtype.PERMISSION_POPOVER_NOT_NOW_CLICKED,
+                  InteractSubtype.NOT_NOW_CLICKED,
                   Environment.SETTINGS,
                   PageId.PERMISSION_POPUP);
               await this.commonUtilService.showSettingsPageToast('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName, this.pageId, true);
             } else if (selectedButton === this.commonUtilService.translateMessage('ALLOW')) {
               this.telemetryGeneratorService.generateInteractTelemetry(
                   InteractType.TOUCH,
-                  InteractSubtype.PERMISSION_POPOVER_ALLOW_CLICKED,
+                  InteractSubtype.ALLOW_CLICKED,
                   Environment.SETTINGS,
                   PageId.PERMISSION_POPUP);
               this.permissionService.requestPermission(AndroidPermission.WRITE_EXTERNAL_STORAGE)

@@ -107,7 +107,7 @@ export class SunbirdQRScanner {
           if (whichBtnClicked === this.commonUtilService.translateMessage('NOT_NOW')) {
             this.telemetryGeneratorService.generateInteractTelemetry(
                 InteractType.TOUCH,
-                InteractSubtype.PERMISSION_POPOVER_NOT_NOW_CLICKED,
+                InteractSubtype.NOT_NOW_CLICKED,
                 pageId === PageId.ONBOARDING_PROFILE_PREFERENCES ? Environment.ONBOARDING : Environment.HOME,
                 PageId.PERMISSION_POPUP);
             await this.commonUtilService.showSettingsPageToast
@@ -116,7 +116,7 @@ export class SunbirdQRScanner {
           } else {
             this.telemetryGeneratorService.generateInteractTelemetry(
                 InteractType.TOUCH,
-                InteractSubtype.PERMISSION_POPOVER_ALLOW_CLICKED,
+                InteractSubtype.ALLOW_CLICKED,
                 pageId === PageId.ONBOARDING_PROFILE_PREFERENCES ? Environment.ONBOARDING : Environment.HOME,
                 PageId.PERMISSION_POPUP);
             this.appGlobalService.setIsPermissionAsked(PermissionAskedEnum.isCameraAsked, true);

@@ -182,7 +182,7 @@ export class StorageSettingsPage implements OnInit {
           if (selectedButton === this.commonUtilService.translateMessage('NOT_NOW')) {
             this.telemetryGeneratorService.generateInteractTelemetry(
                 InteractType.TOUCH,
-                InteractSubtype.PERMISSION_POPOVER_NOT_NOW_CLICKED,
+                InteractSubtype.NOT_NOW_CLICKED,
                 Environment.HOME,
                 PageId.PERMISSION_POPUP);
             this.revertSelectedStorageDestination();
@@ -191,7 +191,7 @@ export class StorageSettingsPage implements OnInit {
           } else if (selectedButton === this.commonUtilService.translateMessage('ALLOW')) {
             this.telemetryGeneratorService.generateInteractTelemetry(
                 InteractType.TOUCH,
-                InteractSubtype.PERMISSION_POPOVER_ALLOW_CLICKED,
+                InteractSubtype.ALLOW_CLICKED,
                 Environment.HOME,
                 PageId.PERMISSION_POPUP);
             this.permissionsService.requestPermission(AndroidPermission.WRITE_EXTERNAL_STORAGE)
