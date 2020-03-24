@@ -78,24 +78,26 @@ export class SunbirdQRScanner {
     displayTextColor = '#0b0b0b',
     buttonText = this.mQRScannerText['NO_QR_CODE']
   ): Promise<string | undefined> {
-    this.source = source;
-    this.showButton = showButton;
+    return new Promise<string | undefined>(async (resolve, reject) => {
+      this.source = source;
+      this.showButton = showButton;
 
-    this.platform.pause.pipe(
-    take(1)
-    ).subscribe(() => this.stopScanner());
-    this.generateImpressionTelemetry(source);
-    this.generateStartEvent(source);
+      this.platform.pause.pipe(
+          take(1)
+      ).subscribe(() => this.stopScanner());
+      this.generateImpressionTelemetry(source);
+      this.generateStartEvent(source);
 
-    const permissionStatus = await this.commonUtilService.getGivenPermissionStatus(AndroidPermission.CAMERA);
+      const permissionStatus = await this.commonUtilService.getGivenPermissionStatus(AndroidPermission.CAMERA);
 
-    if (permissionStatus.hasPermission) {
-      return this.startQRScanner(screenTitle, displayText, displayTextColor, buttonText, showButton, source);
-    } else if (permissionStatus.isPermissionAlwaysDenied) {
-      this.commonUtilService.showSettingsPageToast('CAMERA_PERMISSION_DESCRIPTION', this.appName, PageId.QRCodeScanner, false);
-    } else {
-      this.showPopover();
-    }
+      if (permissionStatus.hasPermission) {
+        resolve(this.startQRScanner(screenTitle, displayText, displayTextColor, buttonText, showButton, source));
+      } else if (permissionStatus.isPermissionAlwaysDenied) {
+        reject(this.commonUtilService.showSettingsPageToast('CAMERA_PERMISSION_DESCRIPTION', this.appName, PageId.QRCodeScanner, false));
+      } else {
+        resolve(this.showPopover());
+      }
+    });
   }
 
   async showPopover(): Promise<string | undefined> {
@@ -108,7 +110,7 @@ export class SunbirdQRScanner {
                 InteractSubtype.PERMISSION_POPOVER_NOT_NOW_CLICKED,
                 Environment.ONBOARDING,
                 PageId.QRCodeScanner);
-            this.commonUtilService.showSettingsPageToast('CAMERA_PERMISSION_DESCRIPTION', this.appName, PageId.QRCodeScanner, false);
+            await this.commonUtilService.showSettingsPageToast('CAMERA_PERMISSION_DESCRIPTION', this.appName, PageId.QRCodeScanner, false);
             resolve(undefined);
           } else {
             this.telemetryGeneratorService.generateInteractTelemetry(
