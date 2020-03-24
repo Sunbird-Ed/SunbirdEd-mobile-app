@@ -180,10 +180,20 @@ export class StorageSettingsPage implements OnInit {
     const confirm = await this.commonUtilService.buildPermissionPopover(
         async (selectedButton: string) => {
           if (selectedButton === this.commonUtilService.translateMessage('NOT_NOW')) {
+            this.telemetryGeneratorService.generateInteractTelemetry(
+                InteractType.TOUCH,
+                InteractSubtype.PERMISSION_POPOVER_NOT_NOW_CLICKED,
+                Environment.HOME,
+                PageId.PERMISSION_POPUP);
             this.revertSelectedStorageDestination();
             await this.commonUtilService.showSettingsPageToast
             ('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName, PageId.TRANSFERING_CONTENT_POPUP, false);
           } else if (selectedButton === this.commonUtilService.translateMessage('ALLOW')) {
+            this.telemetryGeneratorService.generateInteractTelemetry(
+                InteractType.TOUCH,
+                InteractSubtype.PERMISSION_POPOVER_ALLOW_CLICKED,
+                Environment.HOME,
+                PageId.PERMISSION_POPUP);
             this.permissionsService.requestPermission(AndroidPermission.WRITE_EXTERNAL_STORAGE)
                 .subscribe((status: AndroidPermissionsStatus) => {
                   if (status.hasPermission) {

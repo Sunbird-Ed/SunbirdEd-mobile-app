@@ -8,14 +8,14 @@ import {
   ImpressionType,
   ID,
   PageId,
+  InteractType,
+  InteractSubtype
 } from '@app/services/telemetry-constants';
 import { TelemetryObject } from 'sunbird-sdk';
-import {ShareUrl, ShareMode, ContentType, MimeType, RouterLinks} from '@app/app/app.constant';
+import {ShareUrl, ShareMode, ContentType, MimeType} from '@app/app/app.constant';
 import { ContentUtil } from '@app/util/content-util';
 import {AndroidPermission, AndroidPermissionsStatus} from '@app/services/android-permissions/android-permission';
-import {SbPopoverComponent} from '@app/app/components/popups';
 import {AppVersion} from '@ionic-native/app-version/ngx';
-import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-sb-share-popup',
@@ -205,8 +205,18 @@ export class SbSharePopupComponent implements OnInit, OnDestroy {
       const confirm = await this.commonUtilService.buildPermissionPopover(
           async (selectedButton: string) => {
               if (selectedButton === this.commonUtilService.translateMessage('NOT_NOW')) {
+                this.telemetryGeneratorService.generateInteractTelemetry(
+                    InteractType.TOUCH,
+                    InteractSubtype.PERMISSION_POPOVER_NOT_NOW_CLICKED,
+                    Environment.HOME,
+                    PageId.PERMISSION_POPUP);
                 await this.commonUtilService.showSettingsPageToast('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName, this.pageId, true);
               } else if (selectedButton === this.commonUtilService.translateMessage('ALLOW')) {
+                this.telemetryGeneratorService.generateInteractTelemetry(
+                    InteractType.TOUCH,
+                    InteractSubtype.PERMISSION_POPOVER_ALLOW_CLICKED,
+                    Environment.HOME,
+                    PageId.PERMISSION_POPUP);
                 this.permissionService.requestPermission(AndroidPermission.WRITE_EXTERNAL_STORAGE)
                     .subscribe(async (status: AndroidPermissionsStatus) => {
                       if (status.hasPermission) {
