@@ -543,31 +543,13 @@ export class CommonUtilService implements OnDestroy {
             },
             cssClass: 'sb-popover sb-popover-permissions primary dw-active-downloads-popover',
         }).then((popover) => {
-            const subType = this.checkForWhichPermission(pageId);
             this.telemetryGeneratorService.generateImpressionTelemetry(
-                ImpressionType.VIEW,
-                subType,
+                whichPermission === 'Camera' ? ImpressionType.CAMERA : ImpressionType.FILE_MANAGEMENT,
+                pageId,
                 PageId.PERMISSION_POPUP,
                 isOnboardingCompleted ? Environment.HOME : Environment.ONBOARDING
             );
             return popover;
         });
-    }
-
-    private checkForWhichPermission(pageId: string): string {
-
-        if (pageId === PageId.QRCodeScanner) {
-            return ImpressionSubtype.CAMERA_PERMISSION;
-        } else if (pageId === PageId.TRANSFERING_CONTENT_POPUP) {
-            return ImpressionSubtype.FILE_TRANSFER_PERMISSION;
-        } else if (pageId === PageId.SETTINGS) {
-            return ImpressionSubtype.APP_STORAGE_PERMISSION;
-        } else if (pageId === PageId.COLLECTION_DETAIL) {
-            return ImpressionSubtype.TEXTBOOK_STORAGE_PERMISSION;
-        } else if (pageId === PageId.COURSE_DETAIL) {
-            return ImpressionSubtype.COURSE_STORAGE_PERMISSION;
-        } else if (pageId === PageId.CONTENT_DETAIL) {
-            return ImpressionSubtype.RESOURCE_STORAGE_PERMISSION;
-        }
     }
 }

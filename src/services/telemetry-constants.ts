@@ -144,7 +144,9 @@ export enum ImpressionType {
     VIEW = 'view',
     EDIT = 'edit',
     WORKFLOW = 'workflow',
-    DISTRICT_MAPPING = 'district-mapping'
+    DISTRICT_MAPPING = 'district-mapping',
+    CAMERA = 'camera',
+    FILE_MANAGEMENT = 'file-management'
 }
 export enum ImpressionSubtype {
     QRCodeScanInitiate = 'qr-code-scan-initiate',
@@ -158,13 +160,7 @@ export enum ImpressionSubtype {
     RECOVERY_ACCOUNT_POPUP = 'recovery-account-popup',
     DISTRICT_LOCATION_MAPPING = 'district-location-mapping',
     UPGRADE_POPUP = 'upgrade-popup',
-    DEEPLINK = 'deeplink',
-    CAMERA_PERMISSION = 'camera-permission',
-    RESOURCE_STORAGE_PERMISSION = 'resource-storage-permission',
-    TEXTBOOK_STORAGE_PERMISSION = 'textbook-storage-permission',
-    COURSE_STORAGE_PERMISSION = 'course-sotrage-permission',
-    APP_STORAGE_PERMISSION = 'app-storage-permission',
-    FILE_TRANSFER_PERMISSION = 'file-transfer-permission'
+    DEEPLINK = 'deeplink'
 }
 export enum InteractType {
     TOUCH = 'TOUCH',
