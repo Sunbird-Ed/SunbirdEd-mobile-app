@@ -109,7 +109,7 @@ export class SunbirdQRScanner {
                 InteractType.TOUCH,
                 InteractSubtype.PERMISSION_POPOVER_NOT_NOW_CLICKED,
                 pageId === PageId.ONBOARDING_PROFILE_PREFERENCES ? Environment.ONBOARDING : Environment.HOME,
-                pageId);
+                PageId.PERMISSION_POPUP);
             await this.commonUtilService.showSettingsPageToast('CAMERA_PERMISSION_DESCRIPTION', this.appName, PageId.QRCodeScanner, false);
             resolve(undefined);
           } else {
@@ -117,7 +117,7 @@ export class SunbirdQRScanner {
                 InteractType.TOUCH,
                 InteractSubtype.PERMISSION_POPOVER_ALLOW_CLICKED,
                 pageId === PageId.ONBOARDING_PROFILE_PREFERENCES ? Environment.ONBOARDING : Environment.HOME,
-                pageId);
+                PageId.PERMISSION_POPUP);
             this.appGlobalService.setIsPermissionAsked(PermissionAskedEnum.isCameraAsked, true);
             this.permission.requestPermissions([AndroidPermission.CAMERA]).subscribe((status: AndroidPermissionsStatus) => {
               if (status && status.hasPermission) {
