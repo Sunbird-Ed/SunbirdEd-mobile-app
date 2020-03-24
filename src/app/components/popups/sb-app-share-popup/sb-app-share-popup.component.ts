@@ -233,7 +233,7 @@ export class SbAppSharePopupComponent implements OnInit, OnDestroy {
                     reject(undefined);
                   });
             }
-          }, this.appName, this.commonUtilService.translateMessage('FILE_MANAGER'), 'FILE_MANAGER_PERMISSION_DESCRIPTION'
+          }, this.appName, this.commonUtilService.translateMessage('FILE_MANAGER'), 'FILE_MANAGER_PERMISSION_DESCRIPTION', this.pageId, true
       );
       await confirm.present();
     });

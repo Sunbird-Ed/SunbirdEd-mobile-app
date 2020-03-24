@@ -110,7 +110,8 @@ export class SunbirdQRScanner {
                 InteractSubtype.PERMISSION_POPOVER_NOT_NOW_CLICKED,
                 pageId === PageId.ONBOARDING_PROFILE_PREFERENCES ? Environment.ONBOARDING : Environment.HOME,
                 PageId.PERMISSION_POPUP);
-            await this.commonUtilService.showSettingsPageToast('CAMERA_PERMISSION_DESCRIPTION', this.appName, PageId.QRCodeScanner, false);
+            await this.commonUtilService.showSettingsPageToast
+            ('CAMERA_PERMISSION_DESCRIPTION', this.appName, PageId.QRCodeScanner, this.appGlobalService.isOnBoardingCompleted);
             resolve(undefined);
           } else {
             this.telemetryGeneratorService.generateInteractTelemetry(
@@ -123,12 +124,14 @@ export class SunbirdQRScanner {
               if (status && status.hasPermission) {
                 resolve(this.startScanner(this.source, this.showButton));
               } else {
-                this.commonUtilService.showSettingsPageToast('CAMERA_PERMISSION_DESCRIPTION', this.appName, PageId.QRCodeScanner, false);
+                this.commonUtilService.showSettingsPageToast
+                ('CAMERA_PERMISSION_DESCRIPTION', this.appName, PageId.QRCodeScanner, this.appGlobalService.isOnBoardingCompleted);
                 resolve(undefined);
               }
             }, (e) => { reject(e); });
           }
-        }, this.appName, this.commonUtilService.translateMessage('CAMERA'), 'CAMERA_PERMISSION_DESCRIPTION'
+        }, this.appName, this.commonUtilService.translateMessage('CAMERA'), 'CAMERA_PERMISSION_DESCRIPTION', PageId.QRCodeScanner,
+          this.appGlobalService.isOnBoardingCompleted
       );
 
       await confirm.present();

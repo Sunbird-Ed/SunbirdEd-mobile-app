@@ -3,7 +3,7 @@ import { AppHeaderService } from '@app/services/app-header.service';
 import { CommonUtilService, } from '@app/services/common-util.service';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { Subscription, Observable } from 'rxjs';
-import { PopoverController, ToastController } from '@ionic/angular';
+import { PopoverController } from '@ionic/angular';
 import {
   ContentService,
   DeviceInfo,
@@ -187,7 +187,7 @@ export class StorageSettingsPage implements OnInit {
                 PageId.PERMISSION_POPUP);
             this.revertSelectedStorageDestination();
             await this.commonUtilService.showSettingsPageToast
-            ('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName, PageId.TRANSFERING_CONTENT_POPUP, false);
+            ('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName, PageId.TRANSFERING_CONTENT_POPUP, true);
           } else if (selectedButton === this.commonUtilService.translateMessage('ALLOW')) {
             this.telemetryGeneratorService.generateInteractTelemetry(
                 InteractType.TOUCH,
@@ -201,13 +201,14 @@ export class StorageSettingsPage implements OnInit {
                   } else if (status.isPermissionAlwaysDenied) {
                     this.revertSelectedStorageDestination();
                     this.commonUtilService.showSettingsPageToast
-                    ('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName, PageId.TRANSFERING_CONTENT_POPUP, false);
+                    ('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName, PageId.TRANSFERING_CONTENT_POPUP, true);
                   } else {
                     this.revertSelectedStorageDestination();
                   }
                 });
           }
-        }, this.appName, this.commonUtilService.translateMessage('FILE_MANAGER'), 'FILE_MANAGER_PERMISSION_DESCRIPTION'
+        }, this.appName, this.commonUtilService.translateMessage('FILE_MANAGER'),
+        'FILE_MANAGER_PERMISSION_DESCRIPTION', PageId.TRANSFERING_CONTENT_POPUP, true
     );
     await confirm.present();
 
