@@ -95,12 +95,12 @@ export class SunbirdQRScanner {
       } else if (permissionStatus.isPermissionAlwaysDenied) {
         reject(this.commonUtilService.showSettingsPageToast('CAMERA_PERMISSION_DESCRIPTION', this.appName, PageId.QRCodeScanner, false));
       } else {
-        resolve(this.showPopover());
+        resolve(this.showPopover(source));
       }
     });
   }
 
-  async showPopover(): Promise<string | undefined> {
+  async showPopover(pageId: string): Promise<string | undefined> {
     return new Promise<string | undefined>(async (resolve, reject) => {
       const confirm = await this.commonUtilService.buildPermissionPopover(
         async (whichBtnClicked: string) => {
@@ -108,16 +108,16 @@ export class SunbirdQRScanner {
             this.telemetryGeneratorService.generateInteractTelemetry(
                 InteractType.TOUCH,
                 InteractSubtype.PERMISSION_POPOVER_NOT_NOW_CLICKED,
-                Environment.ONBOARDING,
-                PageId.QRCodeScanner);
+                pageId === PageId.ONBOARDING_PROFILE_PREFERENCES ? Environment.ONBOARDING : Environment.HOME,
+                pageId);
             await this.commonUtilService.showSettingsPageToast('CAMERA_PERMISSION_DESCRIPTION', this.appName, PageId.QRCodeScanner, false);
             resolve(undefined);
           } else {
             this.telemetryGeneratorService.generateInteractTelemetry(
                 InteractType.TOUCH,
                 InteractSubtype.PERMISSION_POPOVER_ALLOW_CLICKED,
-                Environment.ONBOARDING,
-                PageId.QRCodeScanner);
+                pageId === PageId.ONBOARDING_PROFILE_PREFERENCES ? Environment.ONBOARDING : Environment.HOME,
+                pageId);
             this.appGlobalService.setIsPermissionAsked(PermissionAskedEnum.isCameraAsked, true);
             this.permission.requestPermissions([AndroidPermission.CAMERA]).subscribe((status: AndroidPermissionsStatus) => {
               if (status && status.hasPermission) {
