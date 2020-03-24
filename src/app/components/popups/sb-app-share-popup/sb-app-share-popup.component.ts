@@ -10,7 +10,6 @@ import { ImpressionType, PageId, Environment, ID, InteractType, InteractSubtype 
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import {ShareMode, ShareItemType, RouterLinks} from '@app/app/app.constant';
 import {AndroidPermissionsService} from '../../../../services/android-permissions/android-permissions.service';
-import {SbPopoverComponent} from '@app/app/components/popups';
 import {Router} from '@angular/router';
 import {AndroidPermission, AndroidPermissionsStatus} from '@app/services/android-permissions/android-permission';
 
@@ -207,8 +206,18 @@ export class SbAppSharePopupComponent implements OnInit, OnDestroy {
       const confirm = await this.commonUtilService.buildPermissionPopover(
           async (selectedButton: string) => {
             if (selectedButton === this.commonUtilService.translateMessage('NOT_NOW')) {
+              this.telemetryGeneratorService.generateInteractTelemetry(
+                  InteractType.TOUCH,
+                  InteractSubtype.NOT_NOW_CLICKED,
+                  Environment.SETTINGS,
+                  PageId.PERMISSION_POPUP);
               await this.commonUtilService.showSettingsPageToast('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName, this.pageId, true);
             } else if (selectedButton === this.commonUtilService.translateMessage('ALLOW')) {
+              this.telemetryGeneratorService.generateInteractTelemetry(
+                  InteractType.TOUCH,
+                  InteractSubtype.ALLOW_CLICKED,
+                  Environment.SETTINGS,
+                  PageId.PERMISSION_POPUP);
               this.permissionService.requestPermission(AndroidPermission.WRITE_EXTERNAL_STORAGE)
                   .subscribe(async (status: AndroidPermissionsStatus) => {
                     if (status.hasPermission) {
@@ -224,7 +233,7 @@ export class SbAppSharePopupComponent implements OnInit, OnDestroy {
                     reject(undefined);
                   });
             }
-          }, this.appName, this.commonUtilService.translateMessage('FILE_MANAGER'), 'FILE_MANAGER_PERMISSION_DESCRIPTION'
+          }, this.appName, this.commonUtilService.translateMessage('FILE_MANAGER'), 'FILE_MANAGER_PERMISSION_DESCRIPTION', this.pageId, true
       );
       await confirm.present();
     });
