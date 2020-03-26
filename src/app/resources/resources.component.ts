@@ -305,6 +305,12 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.coachTimeout.clearTimeout();
   }
 
+  ionViewDidLeave() {
+    if (this.coachTimeout && this.coachTimeout.clearTimeout) {
+      this.coachTimeout.clearTimeout();
+    }
+  }
+
   /**
    * It will fetch the guest user profile details
    */
