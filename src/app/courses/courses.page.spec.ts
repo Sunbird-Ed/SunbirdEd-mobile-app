@@ -358,7 +358,6 @@ describe('CoursesPage', () => {
                 grade: [],
                 subject: []
             };
-            const rqst = { filters: {}, mode: 'soft', name: 'Course', source: 'app' };
             coursesPage.appliedFilter = undefined;
             mockPageService.getPageAssemble = jest.fn(() => of({
                 sections: [{ display: '{}' }]
