@@ -1,11 +1,12 @@
 import { Component, Inject, NgZone, OnInit } from '@angular/core';
-import { Router, NavigationExtras, ActivatedRoute } from '@angular/router';
+import { Router, NavigationExtras } from '@angular/router';
 import { Events, ToastController, PopoverController } from '@ionic/angular';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { QRResultCallback, SunbirdQRScanner } from '../../services/sunbirdqrscanner.service';
 import has from 'lodash/has';
 import forEach from 'lodash/forEach';
-import { ContentCard, EventTopics, PreferenceKey, ProfileConstants, ViewMore, RouterLinks, ContentType, ContentFilterConfig } from '../../app/app.constant';
+import { ContentCard, EventTopics, PreferenceKey, ProfileConstants,
+   ViewMore, RouterLinks, ContentFilterConfig } from '../../app/app.constant';
 import { PageFilterPage, PageFilterCallback } from '../page-filter/page-filter.page';
 import { Network } from '@ionic-native/network/ngx';
 import { AppGlobalService } from '../../services/app-global-service.service';
@@ -107,8 +108,7 @@ export class CoursesPage implements OnInit {
     private network: Network,
     private router: Router,
     private toastController: ToastController,
-    private headerService: AppHeaderService,
-    private route: ActivatedRoute
+    private headerService: AppHeaderService
   ) {
     this.tabBarElement = document.querySelector('.tabbar.show-tabbar');
     this.preferences.getString(PreferenceKey.SELECTED_LANGUAGE_CODE).toPromise()
@@ -257,7 +257,7 @@ export class CoursesPage implements OnInit {
    */
   getEnrolledCourses(refreshEnrolledCourses: boolean = true, returnRefreshedCourses: boolean = false): void {
     this.spinner(true);
-
+    
     const option: FetchEnrolledCourseRequest = {
       userId: this.userId,
       returnFreshCourses: returnRefreshedCourses
