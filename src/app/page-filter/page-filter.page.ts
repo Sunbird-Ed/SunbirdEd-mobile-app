@@ -9,8 +9,7 @@ import {
   FrameworkCategoryCodesGroup,
   FrameworkUtilService,
   GetFrameworkCategoryTermsRequest,
-  PageAssembleFilter,
-  InteractType
+  PageAssembleFilter
 } from 'sunbird-sdk';
 
 import { PageFilterOptionsPage } from './page-filter-options/page-filter-options.page';
@@ -18,7 +17,7 @@ import { AppGlobalService } from 'services/app-global-service.service';
 import { TelemetryGeneratorService } from 'services/telemetry-generator.service';
 import { CommonUtilService } from 'services/common-util.service';
 import { FormAndFrameworkUtilService } from 'services/formandframeworkutil.service';
-import { PageId, ImpressionType, Environment, InteractSubtype } from '@app/services';
+import { PageId, ImpressionType, Environment, InteractSubtype, InteractType } from '@app/services';
 
 @Component({
   selector: 'app-page-filter',
