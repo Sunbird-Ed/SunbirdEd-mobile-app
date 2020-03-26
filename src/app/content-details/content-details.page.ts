@@ -215,7 +215,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
       this.corRelationList = extras.corRelation;
       this.identifier = this.cardData.contentId || this.cardData.identifier;
       this.isResumedCourse = Boolean(extras.isResumedCourse);
-      this.source = extras.source;
+      this.source = extras.source || this.source;
       this.shouldGenerateEndTelemetry = extras.shouldGenerateEndTelemetry;
       this.downloadAndPlay = extras.downloadAndPlay;
       this.playOnlineSpinner = true;
