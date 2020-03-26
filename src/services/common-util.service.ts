@@ -1,29 +1,22 @@
-import { Injectable, NgZone, OnDestroy, Inject } from '@angular/core';
-import {
-    ToastController,
-    LoadingController,
-    Events,
-    PopoverController,
-    Platform,
-} from '@ionic/angular';
-import { TranslateService } from '@ngx-translate/core';
-import { Network } from '@ionic-native/network/ngx';
-import { WebView } from '@ionic-native/ionic-webview/ngx';
-import { SharedPreferences, ProfileService, Profile } from 'sunbird-sdk';
+import {Inject, Injectable, NgZone, OnDestroy} from '@angular/core';
+import {Events, LoadingController, Platform, PopoverController, ToastController,} from '@ionic/angular';
+import {TranslateService} from '@ngx-translate/core';
+import {Network} from '@ionic-native/network/ngx';
+import {WebView} from '@ionic-native/ionic-webview/ngx';
+import {Profile, ProfileService, SharedPreferences} from 'sunbird-sdk';
 
-import {PreferenceKey, ProfileConstants, RouterLinks} from '@app/app/app.constant';
-import { appLanguages } from '@app/app/app.constant';
+import {appLanguages, PreferenceKey, ProfileConstants, RouterLinks} from '@app/app/app.constant';
 
-import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
-import { InteractType, InteractSubtype, PageId, Environment } from '@app/services/telemetry-constants';
-import { SbGenericPopoverComponent } from '@app/app/components/popups/sb-generic-popover/sb-generic-popover.component';
-import { QRAlertCallBack, QRScannerAlert } from '@app/app/qrscanner-alert/qrscanner-alert.page';
-import { Observable, merge } from 'rxjs';
-import { mapTo } from 'rxjs/operators';
-import { AppVersion } from '@ionic-native/app-version/ngx';
-import { Router } from '@angular/router';
-import { SbPopoverComponent } from '@app/app/components/popups';
-import {AndroidPermission, AndroidPermissionsStatus} from '@app/services/android-permissions/android-permission';
+import {TelemetryGeneratorService} from '@app/services/telemetry-generator.service';
+import {Environment, ImpressionSubtype, ImpressionType, InteractSubtype, InteractType, PageId} from '@app/services/telemetry-constants';
+import {SbGenericPopoverComponent} from '@app/app/components/popups/sb-generic-popover/sb-generic-popover.component';
+import {QRAlertCallBack, QRScannerAlert} from '@app/app/qrscanner-alert/qrscanner-alert.page';
+import {merge, Observable} from 'rxjs';
+import {mapTo} from 'rxjs/operators';
+import {AppVersion} from '@ionic-native/app-version/ngx';
+import {Router} from '@angular/router';
+import {SbPopoverComponent} from '@app/app/components/popups';
+import {AndroidPermissionsStatus} from '@app/services/android-permissions/android-permission';
 import {AndroidPermissionsService} from '@app/services/android-permissions/android-permissions.service';
 
 declare const FCMPlugin;
@@ -525,7 +518,7 @@ export class CommonUtilService implements OnDestroy {
 
     public async buildPermissionPopover(handler: (selectedButton: string) => void,
                                         appName: string, whichPermission: string,
-                                        permissionDescription: string): Promise<HTMLIonPopoverElement> {
+                                        permissionDescription: string, pageId, isOnboardingCompleted): Promise<HTMLIonPopoverElement> {
         return this.popOverCtrl.create({
             component: SbPopoverComponent,
             componentProps: {
@@ -549,6 +542,14 @@ export class CommonUtilService implements OnDestroy {
                 metaInfo: this.translateMessage(permissionDescription, appName),
             },
             cssClass: 'sb-popover sb-popover-permissions primary dw-active-downloads-popover',
+        }).then((popover) => {
+            this.telemetryGeneratorService.generateImpressionTelemetry(
+                whichPermission === 'Camera' ? ImpressionType.CAMERA : ImpressionType.FILE_MANAGEMENT,
+                pageId,
+                PageId.PERMISSION_POPUP,
+                isOnboardingCompleted ? Environment.HOME : Environment.ONBOARDING
+            );
+            return popover;
         });
     }
 }
