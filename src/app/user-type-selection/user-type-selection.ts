@@ -20,6 +20,8 @@ import { ContainerService } from '@app/services/container.services';
 import { initTabs, GUEST_STUDENT_TABS, GUEST_TEACHER_TABS } from '@app/app/module.service';
 import { HasNotSelectedFrameworkGuard } from '@app/guards/has-not-selected-framework.guard';
 import { SplashScreenService } from '@app/services/splash-screen.service';
+import {NativePageTransitions, NativeTransitionOptions} from '@ionic-native/native-page-transitions/ngx';
+
 
 const selectedCardBorderColor = '#006DE5';
 const borderColor = '#F7F7F7';
@@ -43,6 +45,7 @@ export class UserTypeSelectionPage {
   teacherImageUri = 'assets/imgs/ic_teacher.png';
   private navParams: any;
   @ViewChild(IonRouterOutlet) routerOutlet: IonRouterOutlet;
+  appName = '';
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -57,7 +60,8 @@ export class UserTypeSelectionPage {
     private headerService: AppHeaderService,
     private router: Router,
     public frameworkGuard: HasNotSelectedFrameworkGuard,
-    private splashScreenService: SplashScreenService
+    private splashScreenService: SplashScreenService,
+    private nativePageTransitions: NativePageTransitions
   ) {
   }
 
@@ -77,7 +81,7 @@ export class UserTypeSelectionPage {
     }
   }
 
-  ionViewWillEnter() {
+  async ionViewWillEnter() {
     if (this.router.url === '/' + RouterLinks.USER_TYPE_SELECTION) {
       setTimeout(() => {
         this.telemetryGeneratorService.generateImpressionTelemetry(
@@ -90,7 +94,8 @@ export class UserTypeSelectionPage {
     this.headerObservable = this.headerService.headerEventEmitted$.subscribe(eventName => {
       this.handleHeaderEvents(eventName);
     });
-    this.headerService.showHeaderWithBackButton();
+    this.appName = await this.commonUtilService.getAppName();
+    this.headerService.hideHeader();
     this.profile = this.appGlobalService.getCurrentUser();
     this.backButtonFunc = this.platform.backButton.subscribeWithPriority(10, () => {
       this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.USER_TYPE_SELECTION, Environment.HOME, false);
@@ -113,22 +118,27 @@ export class UserTypeSelectionPage {
     this.router.navigate([`/${RouterLinks.LANGUAGE_SETTING}`]);
   }
   handleHeaderEvents($event) {
-    switch ($event.name) {
-      case 'back': this.telemetryGeneratorService.generateBackClickedTelemetry(
+    if ($event.name === 'back') {
+      this.telemetryGeneratorService.generateBackClickedTelemetry(
           PageId.USER_TYPE_SELECTION,
           this.appGlobalService.isOnBoardingCompleted ? Environment.HOME : Environment.ONBOARDING,
           true);
-                   this.handleBackButton();
-                   break;
+      this.handleBackButton();
     }
   }
 
   selectTeacherCard() {
     this.selectCard('USER_TYPE_1', ProfileType.TEACHER);
+    setTimeout(() => {
+      this.continue();
+    }, 350);
   }
 
   selectStudentCard() {
     this.selectCard('USER_TYPE_2', ProfileType.STUDENT);
+    setTimeout(() => {
+      this.continue();
+    }, 350);
   }
 
   selectCard(userType, profileType) {
@@ -264,6 +274,14 @@ export class UserTypeSelectionPage {
 
   navigateToProfileSettingsPage(params) {
     const navigationExtras: NavigationExtras = { state: params };
+    const options: NativeTransitionOptions = {
+      direction: 'left',
+      duration: 500,
+      androiddelay: 20,
+      fixedPixelsTop: 0,
+      fixedPixelsBottom: 0
+    };
+    this.nativePageTransitions.slide(options);
     this.router.navigate([`/${RouterLinks.PROFILE_SETTINGS}`], navigationExtras);
   }
 }

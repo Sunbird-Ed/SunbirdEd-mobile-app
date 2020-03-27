@@ -28,3 +28,4 @@ sunbird-cordova-plugin=https://github.com/project-sunbird/cordova-plugin-openrap
 sunbird-cordova-plugin=https://github.com/project-sunbird/cordova-plugin-qr-scanner.git#release-2.8.0
 sunbird-cordova-plugin=https://github.com/project-sunbird/cordova-plugin-sunbirdsplash.git#release-2.8.0
 sunbird-cordova-plugin=https://github.com/project-sunbird/cordova-plugin-file-support.git#release-2.8.2
+cordova-plugin=com.telerik.plugins.nativepagetransitions

@@ -1,4 +1,4 @@
-import { Component, Inject, NgZone, OnInit } from '@angular/core';
+import { Component, Inject, NgZone } from '@angular/core';
 import { Events, Platform } from '@ionic/angular';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
@@ -13,6 +13,7 @@ import {Environment, ID, ImpressionType, InteractSubtype, InteractType, PageId} 
 import { NotificationService } from '@app/services/notification.service';
 import { Location } from '@angular/common';
 import { Subscription } from 'rxjs';
+import {NativePageTransitions, NativeTransitionOptions} from '@ionic-native/native-page-transitions/ngx';
 
 
 export interface ILanguages {
@@ -39,7 +40,7 @@ export class LanguageSettingsPage {
   unregisterBackButton: Subscription;
   headerConfig: any;
   headerObservable: any;
-
+  appName = '';
 
   constructor(
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
@@ -53,7 +54,9 @@ export class LanguageSettingsPage {
     private notification: NotificationService,
     private router: Router,
     private location: Location,
-    private activatedRoute: ActivatedRoute
+    private activatedRoute: ActivatedRoute,
+    private nativePageTransitions: NativePageTransitions,
+
   ) { }
 
   handleBackButton() {
@@ -73,7 +76,7 @@ export class LanguageSettingsPage {
     });
   }
 
-  ionViewWillEnter() {
+  async ionViewWillEnter() {
     const params = this.activatedRoute.snapshot.params;
 
     this.isFromSettings = Boolean(params['isFromSettings']);
@@ -83,6 +86,8 @@ export class LanguageSettingsPage {
     } else {
       this.headerService.showHeaderWithBackButton();
     }
+
+    this.appName = await this.commonUtilService.getAppName();
 
     if (this.router.url === '/' + RouterLinks.LANGUAGE_SETTING || this.router.url === '/' + RouterLinks.LANGUAGE_SETTING + '/' + 'true') {
       setTimeout(() => {
@@ -200,6 +205,14 @@ export class LanguageSettingsPage {
       if (this.isFromSettings) {
         this.location.back();
       } else {
+        const options: NativeTransitionOptions = {
+          direction: 'up',
+          duration: 500,
+          androiddelay: 20,
+          fixedPixelsTop: 0,
+          fixedPixelsBottom: 0
+        };
+        this.nativePageTransitions.slide(options);
         this.router.navigate([RouterLinks.USER_TYPE_SELECTION]);
       }
     } else {
