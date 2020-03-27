@@ -46,6 +46,8 @@ export class UserTypeSelectionPage {
   private navParams: any;
   @ViewChild(IonRouterOutlet) routerOutlet: IonRouterOutlet;
   appName = '';
+  public hideBackButton = true;
+
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -102,6 +104,7 @@ export class UserTypeSelectionPage {
       this.handleBackButton();
       this.backButtonFunc.unsubscribe();
     });
+    this.hideBackButton = false;
   }
 
   ionViewWillLeave() {
@@ -114,7 +117,13 @@ export class UserTypeSelectionPage {
     }
   }
 
-  handleBackButton() {
+  handleBackButton(isBackClicked?) {
+    if (isBackClicked) {
+      this.telemetryGeneratorService.generateBackClickedTelemetry(
+          PageId.USER_TYPE_SELECTION,
+          this.appGlobalService.isOnBoardingCompleted ? Environment.HOME : Environment.ONBOARDING,
+          true);
+    }
     this.router.navigate([`/${RouterLinks.LANGUAGE_SETTING}`]);
   }
   handleHeaderEvents($event) {
