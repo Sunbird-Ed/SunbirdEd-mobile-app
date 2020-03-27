@@ -1,4 +1,5 @@
 <ion-content padding>
+  <ion-title text-center class="title-class">{{'APP_TITLE' | translate:{'%s': appName } }}</ion-title>
   <h6 class="gray-color" text-center>{{ 'ROLE_SELECTOR_QUERY' | translate }}</h6>
 
   <!-- Student card -->
@@ -41,12 +42,3 @@
   </ion-card>
 
 </ion-content>
-
-<ion-footer padding no-border style="background: white;">
-  <button class="sb-btn sb-btn-md sb-btn-primary PR35 W100 ellipsis text-uppercase btn-block"
-    [style.background-color]="'#006DE5'" *ngIf="userTypeSelected" (click)="continue()">
-    {{continueAs}}
-    <ion-icon class="arrow-icon" name="arrow-round-forward"></ion-icon>
-  </button>
-
-</ion-footer>

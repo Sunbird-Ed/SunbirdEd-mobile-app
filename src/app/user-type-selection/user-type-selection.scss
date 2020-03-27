@@ -65,4 +65,11 @@
   .gray-color {
     color: map-get($colors, primary_black);
   }
+  .title-class {
+    font-size: 24px;
+    font-weight: bold;
+    padding: 16px;
+    color: #024F9D;
+    margin-top: 8vh;
+  }
 }
