@@ -82,14 +82,14 @@
               </span>
             </ion-col>
           </div>
-          <div *ngIf="isGroupShown(i)">
+          <div *ngIf="isGroupShown(i)" style="width: 60%">
             <div *ngFor="let items of topicsVal[i]; let item = index">
               <div [ngClass]="{'text-selected':isSelected(items.name),'text-unselected':!isSelected(items.name)}"
-                (click)="changeValue(items.name, index)">
-                {{items.name}}
-                <span>
-                  <ion-icon class="icon-margin" item-right name='checkmark' *ngIf="isSelected(items.name)"
-                    style="color : green; margin:0 10px;"></ion-icon>
+                (click)="changeValue(items.name, index)"><span>
+                {{items.name}}</span>
+                <span style="margin-top: 20%">
+                  <ion-icon item-right name='checkmark' *ngIf="isSelected(items.name)"
+                    style="color : green; margin:0 5px;"></ion-icon>
                 </span>
               </div>
             </div>
