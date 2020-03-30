@@ -28,20 +28,20 @@
     <ion-spinner name="crescent" class="ion-padding" *ngIf="showLoader" style="padding-top: 100px;"></ion-spinner>
   </div>
 
-  <div *ngFor="let course of popularAndLatestCourses">
-    <div *ngIf="course?.contents?.length">
+  <div *ngFor="let section of popularAndLatestCourses">
+    <div *ngIf="section?.contents?.length">
       <div class="course-scroll-holder">
         <div class="item padding-11">
-          <span class="scroll-heading ion-float-start">{{course?.name}}</span>
+          <span class="scroll-heading ion-float-start">{{section?.name}}</span>
           <span class="view-all-link ion-float-end"
-            (click)="navigateToViewMoreContentsPage(false,course.searchQuery, course.name)">
+            (click)="navigateToViewMoreContentsPage(section.id, false, section.searchQuery, section.name)">
             <a>{{ 'VIEW_ALL' | translate }}</a>
           </span>
         </div>
         <div class="ion-no-padding" scrollX="true" style="width: 100%; height: 186px;" style=" width: 100%;
         display: flex;">
-          <app-coursecard *ngFor="let item of course.contents; let i=index" [env]="'home'" [index]="i"
-            [sectionName]="course.name" [enrolledCourses]="enrolledCourses" [pageName]="'course'" [course]="item"
+          <app-coursecard *ngFor="let item of section.contents; let i=index" [env]="'home'" [index]="i"
+            [sectionName]="section.name" [enrolledCourses]="enrolledCourses" [pageName]="'course'" [course]="item"
             [layoutName]="layoutPopular" [guestUser]="guestUser" [isFilterApplied]="isFilterApplied">
           </app-coursecard>
         </div>
