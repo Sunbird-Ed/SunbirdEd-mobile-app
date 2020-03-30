@@ -43,7 +43,7 @@
 							<div class="sb-dt-card-actions">
 								<div class="wrapper sb-btn-tile-group" *ngIf="course?.progress !==100">
 									<div>
-										<button *ngIf="downloadIdentifiers.size" [disabled]="isDownloadStarted"
+										<button *ngIf="downloadIdentifiers.size && !isAvailableLocally" [disabled]="isDownloadStarted"
 											(click)="showDownloadConfirmationAlert()" slot="icon-only"
 											class="card-button">
 											<ion-icon ios="ios-cloud-download" md="md-cloud-download"
@@ -52,7 +52,7 @@
 											<p class="card-text">{{'DOWNLOAD' | translate}}
 											</p>
 										</button>
-										<button (click)="showDeletePopup()" slot="icon-only" class="card-button">
+										<button *ngIf="isDownloadComplete || course?.isAvailableLocally" (click)="showDeletePopup()" slot="icon-only" class="card-button">
 											<ion-icon ios="ios-trash" md="md-trash" class="card-icons-red"></ion-icon>
 											<p class="card-text">{{'REMOVE' | translate}}
 											</p>
@@ -341,7 +341,7 @@
 		<button (click)="getAllBatches()" class="sb-btn sb-btn-outline-info retry-btn">{{'RETRY' | translate}}</button>
 	</div>
 </ion-content>
-<div class="loading-backdrop ion-text-center" *ngIf="showLoading && !isDownloadStarted">
+<!-- <div class="loading-backdrop ion-text-center" *ngIf="showLoading && !isDownloadStarted">
 	<div class="backdrop-container">
 		<ion-label>{{ 'LOADING_CONTENTS' | translate: {'%s': downloadProgress ? downloadProgress : 0} }}</ion-label>
 		<app-pb-horizontal [progress]="downloadProgress" isOnBoardCard="false"></app-pb-horizontal>
@@ -350,7 +350,7 @@
 	<div class="backdrop-footer">
 		<ion-button size="small" (click)="cancelDownload()">{{ 'CANCEL' | translate }}</ion-button>
 	</div>
-</div>
+</div> -->
 <app-sb-download-popup *ngIf="showDownload" (cancelDownloadEmit)="cancelDownload($event)" [currentCount]="currentCount"
 	[queuedIdentifiers]="queuedIdentifiers" [downloadSize]="downloadSize" [collectionName]="course?.name"
 	[showDownload]="showDownload"></app-sb-download-popup>

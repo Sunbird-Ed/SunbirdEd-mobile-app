@@ -582,7 +582,25 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
     this.contentService.getContentDetails(option).toPromise()
       .then((data: Content) => {
         this.zone.run(() => {
-          this.extractApiResponse(data);
+          if (!data.isAvailableLocally) {
+            this.contentService.getContentHeirarchy(option).toPromise()
+            .then((content: Content) => {
+              // set child content here
+              this.enrolledCourseMimeType = content.mimeType;
+              this.childrenData = content.children;
+              this.toggleGroup(0, this.childrenData[0]);
+              this.startData = content.children;
+              this.childContentsData = content;
+              this.getContentState(true);
+              this.extractApiResponse(data);
+            })
+            .catch(error => {
+              console.log('Error Fetching Childrens', error);
+              this.extractApiResponse(data);
+            });
+          } else {
+            this.extractApiResponse(data);
+          }
         });
       })
       .catch((error: any) => {
@@ -650,10 +668,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
       this.commonUtilService.showToast('ERROR_CONTENT_NOT_AVAILABLE');
       this.location.back();
     }
-
-    if (data.isAvailableLocally) {
-      this.getBatchDetails();
-    }
+    this.getBatchDetails();
     this.course.isAvailableLocally = data.isAvailableLocally;
 
 
@@ -1376,6 +1391,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
           // Get child content
           if (event.payload && event.type === ContentEventType.IMPORT_COMPLETED) {
             this.showLoading = false;
+            this.isDownloadComplete = true;
             this.headerService.showHeaderWithBackButton();
             const contentImportCompleted = event as ContentImportCompleted;
             if (this.queuedIdentifiers.length && this.isDownloadStarted) {
