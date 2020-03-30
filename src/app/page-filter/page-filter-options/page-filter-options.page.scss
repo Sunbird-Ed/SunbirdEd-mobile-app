@@ -1,11 +1,10 @@
 @import "src/assets/styles/_custom-mixins.scss";
 @import "src/assets/styles/_variables.scss";
-:host {
-    .subtitle {
+.subtitle {
       text-transform: capitalize;
       font-size: 1.3em;
       font-weight: 700 !important;
-      color: map-get($colors, primary_black);
+      color: #3b5998;
     }
     ion-item {
       padding-left: 0 !important;
@@ -40,7 +39,6 @@
     bottom: 0;
     color: #fff
    }
-  }
   
   .resource-filter-options .popover-content {
     margin: 0;
