@@ -19,7 +19,16 @@
 
   <button class="sb-btn sb-btn-md sb-btn-primary PR35 W100 ellipsis text-uppercase btn-block continue"
           [style.background-color]="btnColor" (click)="continue()">
-    {{ 'CONTINUE' | translate }}
-    <ion-icon class="arrow-icon" name='arrow-round-forward'></ion-icon>
+    <ion-grid class="ion-no-padding">
+      <ion-row class="ion-justify-content-between">
+        <ion-col class="ion-no-padding">
+          <ion-icon class="arrow-icon" style="visibility: hidden" [class.animate]="isLanguageSelected" name='arrow-round-forward'></ion-icon>
+        </ion-col>
+        <ion-col class="ion-no-padding">{{ 'CONTINUE' | translate }}</ion-col>
+        <ion-col class="ion-no-padding text-align-end ion-align-self-center">
+          <ion-icon class="arrow-icon" [class.animate]="isLanguageSelected" name='arrow-round-forward'></ion-icon>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
   </button>
 </ion-content>

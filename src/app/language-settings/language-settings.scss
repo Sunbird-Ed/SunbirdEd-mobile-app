@@ -5,30 +5,28 @@
   background-color: #EDF4F9;
   /* This should be item-ios only as we are targeting mode as iOS for radio-button */
 
-  ion-icon {
-    @include rtl {
-      float: left !important;
-      left: 15px !important;
-    }
-    @include ltr {
-      float: right !important;
-      right: 15px !important;
-    }
-  }
-
   ion-icon.arrow-icon{
-    position: absolute;
-    transform: translateY(-50%);
+    display: inline-block;
     width: 22px;
-
+    &.animate {
+      position: relative;
+      animation: dropDown 5s linear infinite;
+      animation-duration: 0.9s;
+    }
     @include rtl {
-      top: 33%;
+
       transform: rotate(180deg);
     }
     @include ltr {
-      top: 50%;
+
     }
   }
+  @keyframes dropDown {
+    0% {right: 0;}
+    50% {right: 10px;}
+    100% {right: 0;}
+  }
+
   .gray-color {
     color: #{map-get($colors, secondary_black)};
     font-size: 1rem;

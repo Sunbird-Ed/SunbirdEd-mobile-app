@@ -250,7 +250,7 @@ export class UserTypeSelectionPage {
     values['userType'] = (userType).toUpperCase();
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,
-      InteractSubtype.CONTINUE_CLICKED,
+      '',
       this.appGlobalService.isOnBoardingCompleted ? Environment.HOME : Environment.ONBOARDING,
       PageId.USER_TYPE_SELECTION,
       undefined,
