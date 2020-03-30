@@ -15,7 +15,7 @@ import { ImpressionType, PageId, Environment, InteractSubtype, InteractType } fr
 import {
     ContentService, Course, PageAssembleCriteria,
     CourseService, EventsBusService,
-    PageAssembleService, SharedPreferences
+    PageAssembleService, SharedPreferences, FrameWorkService
 } from 'sunbird-sdk';
 import { of, throwError } from 'rxjs';
 import { PageName } from '../app.constant';
@@ -29,6 +29,9 @@ describe('CoursesPage', () => {
     const mockCommonUtilService: Partial<CommonUtilService> = {};
     const mockContentService: Partial<ContentService> = {};
     const mockCourseService: Partial<CourseService> = {
+
+    };
+    const mockFrameworkService: Partial<FrameWorkService> = {
 
     };
     const mockCourseUtilService: Partial<CourseUtilService> = {};
@@ -65,6 +68,7 @@ describe('CoursesPage', () => {
             mockPreferences as SharedPreferences,
             mockCourseService as CourseService,
             mockContentService as ContentService,
+            mockFrameworkService as FrameWorkService,
             mockFormAndFrameworkUtilService as FormAndFrameworkUtilService,
             mockAppVersion as AppVersion,
             mockNgZone as NgZone,

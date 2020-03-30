@@ -18,7 +18,8 @@ import { TelemetryGeneratorService } from '../../services/telemetry-generator.se
 import {
   Content, ContentEventType, ContentImportRequest, ContentImportResponse, ContentImportStatus, ContentService, Course,
   CourseService, DownloadEventType, DownloadProgress, EventsBusEvent, EventsBusService, FetchEnrolledCourseRequest,
-  PageAssembleCriteria, PageAssembleService, PageName, ProfileType, SharedPreferences, NetworkError, CorrelationData
+  PageAssembleCriteria, PageAssembleService, PageName, ProfileType, SharedPreferences, NetworkError, CorrelationData,
+  PageAssemble, FrameworkService
 } from 'sunbird-sdk';
 import { Environment, InteractSubtype, InteractType, PageId, CorReleationDataType } from '../../services/telemetry-constants';
 import { Subscription } from 'rxjs';
@@ -88,6 +89,7 @@ export class CoursesPage implements OnInit {
   headerObservable: any;
   private corRelationList: Array<CorrelationData>;
   isFilterOpen: boolean = false;
+  private ssoSectionId?: string;
 
   constructor(
     @Inject('EVENTS_BUS_SERVICE') private eventBusService: EventsBusService,
@@ -95,6 +97,7 @@ export class CoursesPage implements OnInit {
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
     @Inject('COURSE_SERVICE') private courseService: CourseService,
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
+    @Inject('FRAMEWORK_SERVICE') private frameworkService: FrameworkService,
     private formAndFrameworkUtilService: FormAndFrameworkUtilService,
     private appVersion: AppVersion,
     private ngZone: NgZone,
@@ -340,16 +343,18 @@ export class CoursesPage implements OnInit {
     // pageAssembleCriteria.hardRefresh = hardRefresh;
 
     this.pageService.getPageAssemble(pageAssembleCriteria).toPromise()
-      .then((res: any) => {
+      .then((res: PageAssemble) => {
+        this.ssoSectionId = res.ssoSectionId;
+
         this.ngZone.run(() => {
           const sections = res.sections;
           const newSections = [];
           sections.forEach(element => {
-            element.display = JSON.parse(element.display);
-            if (element.display.name) {
-              if (has(element.display.name, this.selectedLanguage)) {
+            const display = JSON.parse(element.display);
+            if (display.name) {
+              if (has(display.name, this.selectedLanguage)) {
                 const langs = [];
-                forEach(element.display.name, (value, key) => {
+                forEach(display.name, (value, key) => {
                   langs[key] = value;
                 });
                 element.name = langs[this.selectedLanguage];
@@ -686,7 +691,7 @@ export class CoursesPage implements OnInit {
     this.importContent([identifier], false);
   }
 
-  navigateToViewMoreContentsPage(showEnrolledCourses: boolean, searchQuery?: any, headerTitle?: string) {
+  navigateToViewMoreContentsPage(sectionId: string, showEnrolledCourses: boolean, searchQuery?: any, headerTitle?: string) {
     if (this.commonUtilService.networkInfo.isNetworkAvailable) {
 
     } else {
@@ -706,6 +711,11 @@ export class CoursesPage implements OnInit {
     } else {
       searchQuery = updateFilterInSearchQuery(searchQuery, this.appliedFilter, this.profile,
         this.mode, this.isFilterApplied, this.appGlobalService);
+
+      if (this.ssoSectionId && sectionId === this.ssoSectionId) {
+        searchQuery.request.filters['batches.createdFor'] = [this.frameworkService.activeChannelId];
+      }
+
       title = headerTitle;
       params = {
         state: {
@@ -713,7 +723,7 @@ export class CoursesPage implements OnInit {
           pageName: ViewMore.PAGE_COURSE_POPULAR,
           requestParams: searchQuery,
           enrolledCourses: this.enrolledCourses,
-          guestUser: this.guestUser
+          guestUser: this.guestUser,
         }
 
       };
