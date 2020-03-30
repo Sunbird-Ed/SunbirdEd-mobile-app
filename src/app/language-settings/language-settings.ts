@@ -33,7 +33,6 @@ export class LanguageSettingsPage {
   language: string;
   isLanguageSelected = false;
   isFromSettings = false;
-  defaultDeviceLang = '';
   previousLanguage: any;
   selectedLanguage: any = {};
   btnColor = '#8FC4FF';
