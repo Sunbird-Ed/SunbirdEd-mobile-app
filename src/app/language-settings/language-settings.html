@@ -18,7 +18,7 @@
   </ion-radio-group>
 
   <button class="sb-btn sb-btn-md sb-btn-primary PR35 W100 ellipsis text-uppercase btn-block continue"
-          [style.background-color]="btnColor" (click)="continue()">
+          [style.background-color]="btnColor" *ngIf="isLanguageSelected" (click)="continue()">
     <ion-grid class="ion-no-padding">
       <ion-row class="ion-justify-content-between">
         <ion-col class="ion-no-padding">
