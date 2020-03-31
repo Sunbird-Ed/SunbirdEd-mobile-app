@@ -2,11 +2,12 @@ import { AppVersion } from '@ionic-native/app-version/ngx';
 import { SocialSharing } from '@ionic-native/social-sharing/ngx';
 import {CommonUtilService, UtilityService, TelemetryGeneratorService, AndroidPermissionsService} from '../../../../services';
 import { DeviceInfo } from 'sunbird-sdk';
-import { SbAppSharePopupComponent } from './sb-app-share-popup.component';
+import { SbAppSharePopupComponent } from '@app/app/components/popups';
 import {PopoverController, Platform, NavParams, ToastController} from '@ionic/angular';
 import { ImpressionType, PageId, Environment, ID, InteractType, InteractSubtype } from '@app/services';
-import { ShareMode, ShareItemType } from '@app/app/app.constant';
+import { ShareMode } from '@app/app/app.constant';
 import {Router} from '@angular/router';
+import {of} from 'rxjs';
 
 
 describe('SbAppSharePopupComponent', () => {
@@ -328,6 +329,131 @@ describe('SbAppSharePopupComponent', () => {
         setTimeout(() => {
             expect(mockCommonUtilService.buildPermissionPopover).toHaveBeenCalled();
             expect(presentFN).toHaveBeenCalled();
+            done();
+        }, 0);
+    });
+
+    it('should show Error Toast in share File method if permission is given always denied and reject false', (done) => {
+        // arrange
+        mockCommonUtilService.getGivenPermissionStatus = jest.fn(() => Promise.resolve(
+            {isPermissionAlwaysDenied: true}));
+        mockCommonUtilService.showSettingsPageToast = jest.fn();
+        mockNavParams.get = jest.fn();
+        // act
+        sbAppSharePopupComponent.shareFile();
+        // assert
+        setTimeout(() => {
+            expect(mockCommonUtilService.showSettingsPageToast).toHaveBeenNthCalledWith(
+                1,
+                'FILE_MANAGER_PERMISSION_DESCRIPTION',
+                'Sunbird',
+                undefined,
+                true
+            );
+            expect(mockCommonUtilService.showSettingsPageToast).toHaveBeenNthCalledWith(
+                2,
+                'FILE_MANAGER_PERMISSION_DESCRIPTION',
+                'Sunbird',
+                undefined,
+                true
+            );
+            done();
+        }, 0);
+    });
+
+    it('should show Error Toast in save File method if permission is given always denied and reject false', (done) => {
+        // arrange
+        mockCommonUtilService.getGivenPermissionStatus = jest.fn(() => Promise.resolve(
+            {isPermissionAlwaysDenied: true}));
+        mockCommonUtilService.showSettingsPageToast = jest.fn();
+        mockNavParams.get = jest.fn();
+        // act
+        sbAppSharePopupComponent.saveFile();
+        // assert
+        setTimeout(() => {
+            expect(mockCommonUtilService.showSettingsPageToast).toHaveBeenNthCalledWith(
+                1,
+                'FILE_MANAGER_PERMISSION_DESCRIPTION',
+                'Sunbird',
+                undefined,
+                true
+            );
+            expect(mockCommonUtilService.showSettingsPageToast).toHaveBeenNthCalledWith(
+                2,
+                'FILE_MANAGER_PERMISSION_DESCRIPTION',
+                'Sunbird',
+                undefined,
+                true
+            );
+            done();
+        }, 0);
+    });
+
+    it('should call storage permission pop-up and NOT_NOW clicked ', (done) => {
+        // arrange
+        mockCommonUtilService.getGivenPermissionStatus = jest.fn(() => Promise.resolve(
+            {hasPermission: false}));
+        mockPopoverCtrl.dismiss = jest.fn();
+
+        mockCommonUtilService.translateMessage = jest.fn(v => v);
+        mockCommonUtilService.buildPermissionPopover = jest.fn(async (callback) => {
+            await callback(mockCommonUtilService.translateMessage('NOT_NOW'));
+            return {
+                present: jest.fn(() => Promise.resolve())
+            };
+        });
+        mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+        mockCommonUtilService.showSettingsPageToast = jest.fn();
+        // act
+        sbAppSharePopupComponent.saveFile();
+        // assert
+        setTimeout(() => {
+            // assert
+            expect(mockCommonUtilService.buildPermissionPopover).toHaveBeenCalled();
+            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+                InteractType.TOUCH,
+                InteractSubtype.NOT_NOW_CLICKED,
+                Environment.SETTINGS,
+                PageId.PERMISSION_POPUP
+            );
+            expect(mockCommonUtilService.showSettingsPageToast).toHaveBeenCalledWith(
+                'FILE_MANAGER_PERMISSION_DESCRIPTION',
+                'Sunbird',
+                undefined,
+                true
+            );
+            done();
+        }, 0);
+    });
+
+    it('should call storage permission pop-up and ALLOW clicked ', (done) => {
+        // arrange
+        mockPermissionService.requestPermission = jest.fn(() => of({hasPermission: false}));
+        mockCommonUtilService.getGivenPermissionStatus = jest.fn(() => Promise.resolve(
+            {hasPermission: false}));
+        mockPopoverCtrl.dismiss = jest.fn();
+
+        mockCommonUtilService.translateMessage = jest.fn(v => v);
+        mockCommonUtilService.buildPermissionPopover = jest.fn(async (callback) => {
+            await callback(mockCommonUtilService.translateMessage('ALLOW'));
+            return {
+                present: jest.fn(() => Promise.resolve())
+            };
+        });
+        mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+        mockCommonUtilService.showSettingsPageToast = jest.fn();
+        // act
+        sbAppSharePopupComponent.shareFile();
+        // assert
+        setTimeout(() => {
+            // assert
+            expect(mockCommonUtilService.buildPermissionPopover).toHaveBeenCalled();
+            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+                InteractType.TOUCH,
+                InteractSubtype.ALLOW_CLICKED,
+                Environment.SETTINGS,
+                PageId.PERMISSION_POPUP
+            );
             done();
         }, 0);
     });

@@ -93,7 +93,7 @@ export class SunbirdQRScanner {
       if (permissionStatus.hasPermission) {
         resolve(this.startQRScanner(screenTitle, displayText, displayTextColor, buttonText, showButton, source));
       } else if (permissionStatus.isPermissionAlwaysDenied) {
-        reject(this.commonUtilService.showSettingsPageToast('CAMERA_PERMISSION_DESCRIPTION', this.appName, PageId.QRCodeScanner, false));
+        await this.commonUtilService.showSettingsPageToast('CAMERA_PERMISSION_DESCRIPTION', this.appName, PageId.QRCodeScanner, false);
       } else {
         resolve(this.showPopover(source));
       }
