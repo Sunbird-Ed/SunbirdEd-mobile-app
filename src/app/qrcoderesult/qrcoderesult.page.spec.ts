@@ -71,7 +71,9 @@ describe('QrcoderesultPage', () => {
         generateBackClickedTelemetry: jest.fn()
     };
     const mockTranslate: Partial<TranslateService> = {};
-    const mockContentService: Partial<ContentService> = {};
+    const mockContentService: Partial<ContentService> = {
+        getContentHeirarchy : jest.fn(() => of(undefined))
+    };
     const mockEventsBusService: Partial<EventsBusService> = {};
     const mockPlayerService: Partial<PlayerService> = {};
     const mockZone: Partial<NgZone> = {
