@@ -331,7 +331,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  private async showContentDetails(content, isRootContent: boolean = false) {
+  private async showContentDetails(content, isRootContent: boolean = false, isAvailableLocally: boolean = true) {
     this.showLoader = false;
     let params;
     if (this.shouldGenerateEndTelemetry) {
@@ -344,7 +344,8 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
         isSingleContent: this.isSingleContent,
         onboarding: this.appGlobalService.isOnBoardingCompleted,
         isProfileUpdated: this.isProfileUpdated,
-        isQrCodeLinkToContent: this.isQrCodeLinkToContent
+        isQrCodeLinkToContent: this.isQrCodeLinkToContent,
+        isAvailableLocally
       };
     } else {
       params = {
@@ -354,7 +355,8 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
         isSingleContent: this.isSingleContent,
         onboarding: this.appGlobalService.isOnBoardingCompleted,
         isProfileUpdated: this.isProfileUpdated,
-        isQrCodeLinkToContent: this.isQrCodeLinkToContent
+        isQrCodeLinkToContent: this.isQrCodeLinkToContent,
+        isAvailableLocally
       };
     }
     if (this.loader) {
@@ -406,7 +408,8 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
             onboarding: params.onboarding,
             parentContent: params.parentContent,
             isProfileUpdated: params.isProfileUpdated,
-            isQrCodeLinkToContent: params.isQrCodeLinkToContent
+            isQrCodeLinkToContent: params.isQrCodeLinkToContent,
+            isAvailableLocally: params.isAvailableLocally
           }
         });
         if (this.isSingleContent) {
@@ -1272,19 +1275,38 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
     const contentRequest: ContentDetailRequest = {
       contentId: identifier
     };
-
+    const getContentHeirarchyRequest: ContentDetailRequest = {
+      contentId: child.identifier
+    };
     this.contentService.getContentDetails(contentRequest).toPromise()
       .then((data: Content) => {
         if (data) {
           if (data.isAvailableLocally) {
             this.zone.run(() => {
-              this.showContentDetails(child);
+              this.showContentDetails(child, false, true);
             });
           } else {
+            console.log('data not available locally from searchpage', data);
+            // if (this.isDialCodeSearch) {
+            //   this.contentService.getContentHeirarchy(getContentHeirarchyRequest).toPromise()
+            //   .then((content: Content) => {
+            //     console.log('fastloading content', content);
+            //     this.showContentDetails(content, false, false);
+            //     // this.childrenData = content.children;
+            //     // this.showSheenAnimation = false;
+            //     // this.generatefastLoadingTelemetry(InteractSubtype.FAST_LOADING_OF_TEXTBOOK_FINISHED);
+            //   }).catch((err) => {
+            //     // this.showSheenAnimation = false;
+            //     console.log('fast loading err', err);
+            //   });
+            //   // this.importContentInBackground([this.identifier], false);
+            // }
+            
             this.subscribeSdkEvent();
             this.downloadParentContent(parent);
             this.profile = this.appGlobalService.getCurrentUser();
             this.checkProfileData(data.contentData, this.profile);
+            this.showContentDetails(this.childContent, false, false);
           }
         } else {
           this.zone.run(() => {
@@ -1301,7 +1323,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
   downloadParentContent(parent) {
     this.zone.run(() => {
       this.downloadProgress = 0;
-      this.showLoading = true;
+      // this.showLoading = true;
       this.isDownloadStarted = true;
     });
 
@@ -1402,7 +1424,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
                 undefined,
                 this.corRelationList
               );
-              this.showContentDetails(this.childContent);
+              // this.showContentDetails(this.childContent);
               this.events.publish('savedResources:update', {
                 update: true
               });
