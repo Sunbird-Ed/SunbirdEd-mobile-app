@@ -68,7 +68,6 @@ export class CoursesPage implements OnInit {
   courseFilter: any;
   appliedFilter: any;
   filterIcon = './assets/imgs/ic_action_filter.png';
-  profile: any;
   isVisible = false;
   inProgressSection = 'My Courses';
 
@@ -84,11 +83,10 @@ export class CoursesPage implements OnInit {
   callback: QRResultCallback;
   pageFilterCallBack: PageFilterCallback;
   isUpgradePopoverShown = false;
-  private mode = 'soft';
   private eventSubscription: Subscription;
   headerObservable: any;
   private corRelationList: Array<CorrelationData>;
-  isFilterOpen: boolean = false;
+  isFilterOpen = false;
   private ssoSectionId?: string;
 
   constructor(
@@ -299,7 +297,6 @@ export class CoursesPage implements OnInit {
         filters: {},
         source: 'app'
       };
-      criteria.mode = 'soft';
 
       if (this.appliedFilter) {
         let filterApplied = false;
@@ -309,35 +306,9 @@ export class CoursesPage implements OnInit {
           }
         });
 
-        if (filterApplied && !hardRefresh) {
-          criteria.mode = 'hard';
-        }
         criteria.filters = this.appliedFilter;
       }
       pageAssembleCriteria = criteria;
-    }
-
-    this.mode = pageAssembleCriteria.mode;
-
-    if (this.profile && !this.isFilterApplied) {
-
-      if (this.profile.board && this.profile.board.length) {
-        pageAssembleCriteria.filters.board = this.applyProfileFilter(this.profile.board, pageAssembleCriteria.filters.board, 'board');
-      }
-
-      if (this.profile.medium && this.profile.medium.length) {
-        pageAssembleCriteria.filters.medium = this.applyProfileFilter(this.profile.medium, pageAssembleCriteria.filters.medium, 'medium');
-      }
-
-      if (this.profile.grade && this.profile.grade.length) {
-        pageAssembleCriteria.filters.gradeLevel = this.applyProfileFilter(this.profile.grade,
-          pageAssembleCriteria.filters.gradeLevel, 'gradeLevel');
-      }
-
-      if (this.profile.subject && this.profile.subject.length) {
-        pageAssembleCriteria.filters.subject = this.applyProfileFilter(this.profile.subject,
-          pageAssembleCriteria.filters.subject, 'subject');
-      }
     }
 
     // pageAssembleCriteria.hardRefresh = hardRefresh;
@@ -390,44 +361,6 @@ export class CoursesPage implements OnInit {
     );
   }
 
-  applyProfileFilter(profileFilter: Array<any>, assembleFilter: Array<any>, categoryKey?: string) {
-    if (categoryKey) {
-      const nameArray = [];
-      profileFilter.forEach(filterCode => {
-        let nameForCode = this.appGlobalService.getNameForCodeInFramework(categoryKey, filterCode);
-
-        if (!nameForCode) {
-          nameForCode = filterCode;
-        }
-
-        nameArray.push(nameForCode);
-      });
-
-      profileFilter = nameArray;
-    }
-
-    if (!assembleFilter) {
-      assembleFilter = [];
-    }
-    assembleFilter = assembleFilter.concat(profileFilter);
-
-    const uniqueArray = [];
-
-    for (let i = 0; i < assembleFilter.length; i++) {
-      if (uniqueArray.indexOf(assembleFilter[i]) === -1 && assembleFilter[i].length > 0) {
-        uniqueArray.push(assembleFilter[i]);
-      }
-    }
-
-    assembleFilter = uniqueArray;
-
-    if (assembleFilter.length === 0) {
-      return undefined;
-    }
-
-    return assembleFilter;
-  }
-
   /**
    * To start / stop spinner
    */
@@ -451,7 +384,6 @@ export class CoursesPage implements OnInit {
         this.appGlobalService.setEnrolledCourseList([]);
         reject('session expired');
       } else {
-        this.profile = this.appGlobalService.getCurrentUser();
         const sessionObj = this.appGlobalService.getSessionData();
         this.userId = sessionObj[ProfileConstants.USER_TOKEN];
         this.getEnrolledCourses(false, true);
@@ -515,7 +447,7 @@ export class CoursesPage implements OnInit {
   }
 
   showFilter() {
-    if(this.isFilterOpen){
+    if (this.isFilterOpen) {
       return;
     }
     this.isFilterOpen = true;
@@ -558,10 +490,8 @@ export class CoursesPage implements OnInit {
           });
 
           if (filterApplied) {
-            criteria.mode = 'hard';
             that.filterIcon = './assets/imgs/ic_action_filter_applied.png';
           } else {
-            criteria.mode = 'soft';
             that.filterIcon = './assets/imgs/ic_action_filter.png';
           }
           if (isChecked) {
@@ -709,8 +639,7 @@ export class CoursesPage implements OnInit {
         }
       };
     } else {
-      searchQuery = updateFilterInSearchQuery(searchQuery, this.appliedFilter, this.profile,
-        this.mode, this.isFilterApplied, this.appGlobalService);
+      searchQuery = updateFilterInSearchQuery(searchQuery, this.appliedFilter, this.isFilterApplied);
 
       if (this.ssoSectionId && sectionId === this.ssoSectionId) {
         searchQuery.request.filters['batches.createdFor'] = [this.frameworkService.activeChannelId];
