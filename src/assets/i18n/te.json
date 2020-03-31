@@ -495,6 +495,7 @@
   "SHARE_APP": "{{%s}} ని షేర్ చెయ్యండి.",
   "SHARE_APP_LINK": "{{app_name}} పొందండి ప్లే స్టోర్ నుండి:{{play_store_url}}",
   "SHARE_CONTENT_FAILED": "కంటెంటు షేర్ చెయ్యడం కుదరలేదు",
+  "SHARE_CONTENT_FILE": "నుండి పంపిన ఫైల్: {{app_name}}\nపేరు: {{content_name}} \nదీని నుండి {{app_name}} అనువర్తనం పొందండి: {{play_store_url}}",
   "SHARE_CONTENT_LINK": "{{content_name}} చూడండి {{app_name}} {{content_link}}  లో ఈ కంటెంట్‌ను ప్రయత్నించండి మొబైల్ అనువర్తనం: {{play_store_url}}",
   "SHARE_LINK": "భాగస్వామ్యం లింక్",
   "SHARE_TELEMETRY": "టెలిమెట్రీని షేర్ చేయండి",
