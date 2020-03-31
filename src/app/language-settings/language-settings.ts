@@ -207,7 +207,7 @@ export class LanguageSettingsPage {
         const options: NativeTransitionOptions = {
           direction: 'up',
           duration: 500,
-          androiddelay: 20,
+          androiddelay: 500,
           fixedPixelsTop: 0,
           fixedPixelsBottom: 0
         };

@@ -41,8 +41,8 @@ export class UserTypeSelectionPage {
   profile: Profile;
   backButtonFunc: Subscription;
   headerObservable: any;
-  studentImageUri = 'assets/imgs/ic_student.png';
-  teacherImageUri = 'assets/imgs/ic_teacher.png';
+  studentImageUri = 'assets/imgs/ic_student.svg';
+  teacherImageUri = 'assets/imgs/ic_teacher.svg';
   private navParams: any;
   @ViewChild(IonRouterOutlet) routerOutlet: IonRouterOutlet;
   appName = '';
@@ -286,7 +286,7 @@ export class UserTypeSelectionPage {
     const options: NativeTransitionOptions = {
       direction: 'left',
       duration: 500,
-      androiddelay: 20,
+      androiddelay: 500,
       fixedPixelsTop: 0,
       fixedPixelsBottom: 0
     };
