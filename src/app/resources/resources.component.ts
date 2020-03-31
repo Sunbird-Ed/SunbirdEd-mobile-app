@@ -27,7 +27,8 @@ import {
   SharedPreferences,
   TelemetryObject,
   ContentRequest,
-  FrameworkService
+  FrameworkService,
+  SortOrder
 } from 'sunbird-sdk';
 
 import {
@@ -305,6 +306,12 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.coachTimeout.clearTimeout();
   }
 
+  ionViewDidLeave() {
+    if (this.coachTimeout && this.coachTimeout.clearTimeout) {
+      this.coachTimeout.clearTimeout();
+    }
+  }
+
   /**
    * It will fetch the guest user profile details
    */
@@ -478,6 +485,10 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       Environment.HOME,
       this.source, undefined,
       reqvalues);
+    this.getGroupByPageReq.sortCriteria = [{
+        sortAttribute: 'name',
+        sortOrder: SortOrder.ASC
+      }];
     this.contentService.searchContentGroupedByPageSection(this.getGroupByPageReq).toPromise()
       .then((response: any) => {
         this.ngZone.run(() => {

@@ -17,7 +17,7 @@ import { AppGlobalService } from 'services/app-global-service.service';
 import { TelemetryGeneratorService } from 'services/telemetry-generator.service';
 import { CommonUtilService } from 'services/common-util.service';
 import { FormAndFrameworkUtilService } from 'services/formandframeworkutil.service';
-import { Environment, ImpressionType, InteractSubtype, InteractType, PageId } from 'services/telemetry-constants';
+import { PageId, ImpressionType, Environment, InteractSubtype, InteractType } from '@app/services';
 
 @Component({
   selector: 'app-page-filter',

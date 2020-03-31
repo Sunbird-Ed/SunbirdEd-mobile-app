@@ -92,7 +92,7 @@ export class SplashscreenImportActionHandlerDelegate implements SplashscreenActi
                           this.commonUtilService.showToast('CONTENT_IMPORTED_FAILED');
                           throw ContentImportStatus.IMPORT_FAILED;
                         case ContentImportStatus.NOT_FOUND:
-                          this.generateImportErrorTelemetry('NOT_FOUNT');
+                          this.generateImportErrorTelemetry('NOT_FOUND');
                           this.commonUtilService.showToast('CONTENT_IMPORTED_FAILED');
                           throw ContentImportStatus.NOT_FOUND;
                       }

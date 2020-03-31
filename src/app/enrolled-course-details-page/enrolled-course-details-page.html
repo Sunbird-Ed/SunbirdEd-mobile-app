@@ -247,19 +247,19 @@
 								<!--training derived from section starts-->
 								<div class="origin-data" *ngIf="course?.originData">
 									<div class="font-14 traning-derived-label-background ion-padding-bottom">
-										<span><strong>{{'TRAINING_DERIVED_FROM' | translate}}</strong></span>
+										<span><strong>{{'CONTENT_DERIVED_FROM' | translate}}</strong></span>
 									</div>
 									<div class="ion-padding">
 										<div *ngIf="course?.originData.name">
 											<ion-card-title class="font-12 subtitle-color label-margin-bottom">
-												<strong> {{'TRAINING' | translate}}</strong>:
+												<strong> {{'ORIGINAL_CONTENT' | translate}}</strong>:
 											</ion-card-title>
 											<p>{{course?.originData.name}}</p>
 										</div>
 										<div *ngIf="course?.originData.author">
 
 											<ion-card-title class="font-12 subtitle-color label-margin-bottom">
-												<strong>{{ 'AUTHOR_OF_SOURCE_TRAINING' | translate }}</strong>:
+												<strong>{{ 'ORIGINAL_AUTHOR' | translate }}</strong>:
 											</ion-card-title>
 											<p>{{course?.originData.author}}</p>
 										</div>
