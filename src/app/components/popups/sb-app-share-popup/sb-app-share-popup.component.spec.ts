@@ -426,7 +426,7 @@ describe('SbAppSharePopupComponent', () => {
         }, 0);
     });
 
-    it('should call storage permission pop-up and ALLOW clicked ', (done) => {
+    it('should call storage permission pop-up and ALLOW clicked and provide has permission false', (done) => {
         // arrange
         mockPermissionService.requestPermission = jest.fn(() => of({hasPermission: false}));
         mockCommonUtilService.getGivenPermissionStatus = jest.fn(() => Promise.resolve(
@@ -447,7 +447,43 @@ describe('SbAppSharePopupComponent', () => {
         // assert
         setTimeout(() => {
             // assert
-            expect(mockCommonUtilService.buildPermissionPopover).toHaveBeenCalled();
+            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+                InteractType.TOUCH,
+                InteractSubtype.ALLOW_CLICKED,
+                Environment.SETTINGS,
+                PageId.PERMISSION_POPUP
+            );
+            expect(mockCommonUtilService.showSettingsPageToast).toHaveBeenCalledWith(
+                'FILE_MANAGER_PERMISSION_DESCRIPTION',
+                'Sunbird',
+                undefined,
+                true
+            );
+            done();
+        }, 0);
+    });
+
+    it('should call storage permission pop-up and ALLOW clicked and provide has permission true ', (done) => {
+        // arrange
+        mockPermissionService.requestPermission = jest.fn(() => of({hasPermission: true}));
+        mockCommonUtilService.getGivenPermissionStatus = jest.fn(() => Promise.resolve(
+            {hasPermission: false}));
+        mockPopoverCtrl.dismiss = jest.fn();
+
+        mockCommonUtilService.translateMessage = jest.fn(v => v);
+        mockCommonUtilService.buildPermissionPopover = jest.fn(async (callback) => {
+            await callback(mockCommonUtilService.translateMessage('ALLOW'));
+            return {
+                present: jest.fn(() => Promise.resolve())
+            };
+        });
+        mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+        mockCommonUtilService.showSettingsPageToast = jest.fn();
+        // act
+        sbAppSharePopupComponent.shareFile();
+        // assert
+        setTimeout(() => {
+            // assert
             expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
                 InteractType.TOUCH,
                 InteractSubtype.ALLOW_CLICKED,
@@ -457,4 +493,43 @@ describe('SbAppSharePopupComponent', () => {
             done();
         }, 0);
     });
+
+    it('should call storage permission pop-up and ALLOW clicked and provide has permission true ', (done) => {
+        // arrange
+        mockPermissionService.requestPermission = jest.fn(() => of({isPermissionAlwaysDenied: true}));
+        mockCommonUtilService.getGivenPermissionStatus = jest.fn(() => Promise.resolve(
+            {hasPermission: false}));
+        mockPopoverCtrl.dismiss = jest.fn();
+
+        mockCommonUtilService.translateMessage = jest.fn(v => v);
+        mockCommonUtilService.buildPermissionPopover = jest.fn(async (callback) => {
+            await callback(mockCommonUtilService.translateMessage('ALLOW'));
+            return {
+                present: jest.fn(() => Promise.resolve())
+            };
+        });
+        mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+        mockCommonUtilService.showSettingsPageToast = jest.fn();
+        // act
+        sbAppSharePopupComponent.shareFile();
+        // assert
+        setTimeout(() => {
+            // assert
+            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+                InteractType.TOUCH,
+                InteractSubtype.ALLOW_CLICKED,
+                Environment.SETTINGS,
+                PageId.PERMISSION_POPUP
+            );
+            expect(mockCommonUtilService.showSettingsPageToast).toHaveBeenCalledWith(
+                'FILE_MANAGER_PERMISSION_DESCRIPTION',
+                'Sunbird',
+                undefined,
+                true
+            );
+            done();
+        }, 0);
+    });
+
+
 });
