@@ -1158,71 +1158,6 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  processDialCodeResultPrev(searchResult) {
-    const collectionArray: Array<any> = searchResult.collectionDataList;
-    const contentArray: Array<any> = searchResult.contentDataList;
-
-    this.dialCodeResult = [];
-    const addedContent = new Array<any>();
-
-    if (collectionArray && collectionArray.length > 0) {
-      collectionArray.forEach((collection) => {
-        contentArray.forEach((content) => {
-          if (collection.childNodes.includes(content.identifier)) {
-            if (collection.content === undefined) {
-              collection.content = [];
-            }
-            collection.content.push(content);
-            addedContent.push(content.identifier);
-          }
-        });
-        this.dialCodeResult.push(collection);
-      });
-    }
-    this.dialCodeContentResult = [];
-
-    let isParentCheckStarted = false;
-
-    const isAllContentMappedToCollection = contentArray.length === addedContent.length;
-
-    if (this.dialCodeResult.length === 1 && this.dialCodeResult[0].content.length === 1 && isAllContentMappedToCollection) {
-      this.parentContent = this.dialCodeResult[0];
-      this.childContent = this.dialCodeResult[0].content[0];
-      this.checkParent(this.dialCodeResult[0], this.dialCodeResult[0].content[0]);
-      isParentCheckStarted = true;
-    }
-    this.generateQRScanSuccessInteractEvent(this.dialCodeResult, this.dialCode);
-    if (contentArray && contentArray.length > 1) {
-      contentArray.forEach((content) => {
-        if (addedContent.indexOf(content.identifier) < 0) {
-          this.dialCodeContentResult.push(content);
-        }
-      });
-    }
-
-    if (contentArray && contentArray.length === 1 && !isParentCheckStarted) {
-      this.location.back();
-      // this.showContentDetails(contentArray[0], true);
-      this.isSingleContent = true;
-      this.openContent(contentArray[0], contentArray[0], 0, true);
-      return;
-    }
-
-    if (this.dialCodeResult.length === 0 && this.dialCodeContentResult.length === 0) {
-      this.location.back();
-      if (this.shouldGenerateEndTelemetry) {
-        this.generateQRSessionEndEvent(this.source, this.dialCode);
-      }
-      this.telemetryGeneratorService.generateImpressionTelemetry(ImpressionType.VIEW,
-        '',
-        PageId.DIAL_NOT_LINKED,
-        Environment.HOME);
-      this.commonUtilService.showContentComingSoonAlert(this.source);
-    } else {
-      this.isEmptyResult = false;
-    }
-  }
-
   generateQRScanSuccessInteractEvent(dialCodeResultCount, dialCode) {
     const values = new Map();
     values.networkAvailable = this.commonUtilService.networkInfo.isNetworkAvailable ? 'Y' : 'N';
@@ -1275,9 +1210,6 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
     const contentRequest: ContentDetailRequest = {
       contentId: identifier
     };
-    const getContentHeirarchyRequest: ContentDetailRequest = {
-      contentId: child.identifier
-    };
     this.contentService.getContentDetails(contentRequest).toPromise()
       .then((data: Content) => {
         if (data) {
@@ -1286,22 +1218,6 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
               this.showContentDetails(child, false, true);
             });
           } else {
-            console.log('data not available locally from searchpage', data);
-            // if (this.isDialCodeSearch) {
-            //   this.contentService.getContentHeirarchy(getContentHeirarchyRequest).toPromise()
-            //   .then((content: Content) => {
-            //     console.log('fastloading content', content);
-            //     this.showContentDetails(content, false, false);
-            //     // this.childrenData = content.children;
-            //     // this.showSheenAnimation = false;
-            //     // this.generatefastLoadingTelemetry(InteractSubtype.FAST_LOADING_OF_TEXTBOOK_FINISHED);
-            //   }).catch((err) => {
-            //     // this.showSheenAnimation = false;
-            //     console.log('fast loading err', err);
-            //   });
-            //   // this.importContentInBackground([this.identifier], false);
-            // }
-            
             this.subscribeSdkEvent();
             this.downloadParentContent(parent);
             this.profile = this.appGlobalService.getCurrentUser();

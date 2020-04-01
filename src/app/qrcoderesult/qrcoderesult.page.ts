@@ -120,7 +120,7 @@ export class QrcoderesultPage implements OnDestroy {
   latestParents: Array<any> = [];
   stckyindex: string;
   chapterFirstChildId: string;
-  contentCount = 0;
+  showSheenAnimation = true;
   @ViewChild(iContent) ionContent: iContent;
 
   constructor(
@@ -208,10 +208,12 @@ export class QrcoderesultPage implements OnDestroy {
         };
         this.contentService.getContentHeirarchy(getContentHeirarchyRequest).toPromise()
           .then((content: Content) => {
-            console.log('fastloading content', content);
-            // this.childrenData = content.children;
-            // this.showSheenAnimation = false;
+            this.showSheenAnimation = false;
+            this.childrenData = content.children;
             // this.generatefastLoadingTelemetry(InteractSubtype.FAST_LOADING_OF_TEXTBOOK_FINISHED);
+            this.parents.splice(0, this.parents.length);
+            this.parents.push(content);
+            this.results = [];
             this.findContentNode(content);
             if (this.results && this.results.length === 1) {
               this.backToPreviusPage = false;
@@ -226,8 +228,7 @@ export class QrcoderesultPage implements OnDestroy {
               });
             }
           }).catch((err) => {
-            // this.showSheenAnimation = false;
-            console.log('fast loading err', err);
+            this.showSheenAnimation = false;
           });
           // this.importContentInBackground([this.identifier], false);
       }
@@ -301,6 +302,7 @@ export class QrcoderesultPage implements OnDestroy {
   }
 
   getChildContents() {
+    this.showSheenAnimation = false;
     const request: ChildContentRequest = { contentId: this.identifier, hierarchyInfo: [] };
     this.contentService.getChildContents(
       request).toPromise()
@@ -715,8 +717,6 @@ export class QrcoderesultPage implements OnDestroy {
     }
   }
   private showAllChild(content: any) {
-    this.contentCount++;
-    console.log('this.contentCount', this.contentCount);
     this.zone.run(() => {
       if (content.children === undefined || !content.children.length) {
         if (content.mimeType !== MimeType.COLLECTION) {
@@ -739,14 +739,10 @@ export class QrcoderesultPage implements OnDestroy {
           this.parents.forEach(ele => {
             path.push(ele);
           });
-          console.log('path before splice', path);
           path.splice(-1, 1);
-          console.log('path after splice', path);
           this.paths.push(path);
           this.latestParents.push(latestParent);
         }
-        console.log('this.results', this.results);
-        console.log('this.paths', this.paths);
         return;
       }
       content.children.forEach(child => {
