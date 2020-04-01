@@ -61,8 +61,15 @@ describe('QrcoderesultPage', () => {
     };
     const mockPlatform: Partial<Platform> = {};
     const mockProfileService: Partial<ProfileService> = {};
+    const mockRoterExtras = {
+        extras: {
+            state: {
+                isAvailableLocally: false
+            }
+        }
+    };
     const mockRouter: Partial<Router> = {
-        getCurrentNavigation: jest.fn(() => undefined),
+        getCurrentNavigation: jest.fn(() => mockRoterExtras as any),
         navigate: jest.fn(() => Promise.resolve(true))
     };
     const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {
@@ -157,12 +164,33 @@ describe('QrcoderesultPage', () => {
         it('should assign varaibles from navigation extras', (done) => {
             // arrange
             // qrcoderesultPage.getFirstChildOfChapter.and.stub();
-            const unit = {
-                identifier: 'parentid',
-                contentData: {identifier: 'parentid'},
-                mimeType: MimeType.COLLECTION,
-                children: [{identifier: 'childid', basePath: 'basePath'}]
+            // const unit = {
+            //     identifier: 'parentid',
+            //     contentData: {identifier: 'parentid'},
+            //     mimeType: MimeType.COLLECTION,
+            //     children: [{identifier: 'childid', basePath: 'basePath'}]
+            // };
+            const mockContentHeirarchy = {
+                identifier: 'id',
+                children: [
+                    {
+                        identifier: 'id2',
+                        children : [],
+                        mimeType: 'mime',
+                        contentData: {}
+                    },
+                    {
+                        identifier: 'id3',
+                        children : [],
+                        mimeType: 'mime',
+                        contentData: {}
+                    }
+                ],
+                contentData: {
+                    name: 'name1'
+                }
             };
+            mockContentService.getContentHeirarchy = jest.fn(() => of(mockContentHeirarchy));
             mockTextbookTocService.textbookIds = { unit : {
                 identifier: 'parentid',
                 contentData: {identifier: 'parentid'},
@@ -188,6 +216,8 @@ describe('QrcoderesultPage', () => {
             expect(qrcoderesultPage.content).toEqual({identifier: 'id'});
             setTimeout(() => {
                 expect(mockTextbookTocService.resetTextbookIds).toHaveBeenCalled();
+                expect(qrcoderesultPage.showSheenAnimation).toEqual(false);
+                expect(qrcoderesultPage.results.length).toEqual(2);
                 done();
             }, 200);
         });
