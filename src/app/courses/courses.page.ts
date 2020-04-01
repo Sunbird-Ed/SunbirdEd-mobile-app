@@ -621,7 +621,7 @@ export class CoursesPage implements OnInit {
     this.importContent([identifier], false);
   }
 
-  navigateToViewMoreContentsPage(sectionId: string, showEnrolledCourses: boolean, searchQuery?: any, headerTitle?: string) {
+  navigateToViewMoreContentsPage(showEnrolledCourses: boolean, sectionId?: string, searchQuery?: any, headerTitle?: string) {
     if (this.commonUtilService.networkInfo.isNetworkAvailable) {
 
     } else {
