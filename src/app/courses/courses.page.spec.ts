@@ -339,7 +339,6 @@ describe('CoursesPage', () => {
             setTimeout(() => {
                 expect(mockPageService.getPageAssemble).toHaveBeenCalled();
                 expect(mockTelemetryGeneratorService.generateExtraInfoTelemetry).toHaveBeenCalled();
-                expect(mockAppGlobalService.getNameForCodeInFramework).toHaveBeenCalled();
                 done();
             }, 0);
         });
@@ -529,7 +528,7 @@ describe('CoursesPage', () => {
             }, 0);
         });
 
-        it('should not applied filter for tab change and data trim is not course', (done) => {
+        it('should not apply filter for tab change and data trim is not course', (done) => {
             // arrange
             const data = { trim: jest.fn(() => 'library') };
             coursesPage.isUpgradePopoverShown = false;
