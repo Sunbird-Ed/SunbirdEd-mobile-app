@@ -68,9 +68,7 @@ export class LanguageSettingsPage {
       if (this.isFromSettings) {
         this.location.back();
       } else {
-        const pId = this.isFromSettings ? PageId.SETTINGS_LANGUAGE : PageId.ONBOARDING_LANGUAGE_SETTING;
-        const env = this.isFromSettings ? Environment.SETTINGS : Environment.ONBOARDING;
-        this.commonUtilService.showExitPopUp(pId, env, false);
+        this.commonUtilService.showExitPopUp(PageId.ONBOARDING_LANGUAGE_SETTING, Environment.ONBOARDING, false);
       }
     });
   }
