@@ -691,6 +691,25 @@ describe('SearchPage', () => {
             expect(searchPage.isEmptyResult).toEqual(false);
         });
     });
+    describe('generateInteractEvent', () => {
+        it('should generate interact event', () => {
+            // arrange
+            searchPage.isDialCodeSearch = true;
+            // act
+            searchPage.generateInteractEvent('identifier', 'collection', 'ver', 1);
+            // assert
+            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+                InteractType.TOUCH,
+                InteractSubtype.CONTENT_CLICKED,
+                Environment.ONBOARDING,
+                PageId.DIAL_SEARCH,
+                expect.anything(),
+                expect.anything(),
+                expect.anything(),
+                expect.anything(),
+            );
+        });
+    });
 
     // describe('handleSearch', () => {
     //     it('should handle search', () => {

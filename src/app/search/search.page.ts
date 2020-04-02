@@ -331,7 +331,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  private async showContentDetails(content, isRootContent: boolean = false) {
+  private async showContentDetails(content, isRootContent: boolean = false, isAvailableLocally: boolean = true) {
     this.showLoader = false;
     let params;
     if (this.shouldGenerateEndTelemetry) {
@@ -344,7 +344,8 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
         isSingleContent: this.isSingleContent,
         onboarding: this.appGlobalService.isOnBoardingCompleted,
         isProfileUpdated: this.isProfileUpdated,
-        isQrCodeLinkToContent: this.isQrCodeLinkToContent
+        isQrCodeLinkToContent: this.isQrCodeLinkToContent,
+        isAvailableLocally
       };
     } else {
       params = {
@@ -354,7 +355,8 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
         isSingleContent: this.isSingleContent,
         onboarding: this.appGlobalService.isOnBoardingCompleted,
         isProfileUpdated: this.isProfileUpdated,
-        isQrCodeLinkToContent: this.isQrCodeLinkToContent
+        isQrCodeLinkToContent: this.isQrCodeLinkToContent,
+        isAvailableLocally
       };
     }
     if (this.loader) {
@@ -406,7 +408,8 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
             onboarding: params.onboarding,
             parentContent: params.parentContent,
             isProfileUpdated: params.isProfileUpdated,
-            isQrCodeLinkToContent: params.isQrCodeLinkToContent
+            isQrCodeLinkToContent: params.isQrCodeLinkToContent,
+            isAvailableLocally: params.isAvailableLocally
           }
         });
         if (this.isSingleContent) {
@@ -1155,71 +1158,6 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  processDialCodeResultPrev(searchResult) {
-    const collectionArray: Array<any> = searchResult.collectionDataList;
-    const contentArray: Array<any> = searchResult.contentDataList;
-
-    this.dialCodeResult = [];
-    const addedContent = new Array<any>();
-
-    if (collectionArray && collectionArray.length > 0) {
-      collectionArray.forEach((collection) => {
-        contentArray.forEach((content) => {
-          if (collection.childNodes.includes(content.identifier)) {
-            if (collection.content === undefined) {
-              collection.content = [];
-            }
-            collection.content.push(content);
-            addedContent.push(content.identifier);
-          }
-        });
-        this.dialCodeResult.push(collection);
-      });
-    }
-    this.dialCodeContentResult = [];
-
-    let isParentCheckStarted = false;
-
-    const isAllContentMappedToCollection = contentArray.length === addedContent.length;
-
-    if (this.dialCodeResult.length === 1 && this.dialCodeResult[0].content.length === 1 && isAllContentMappedToCollection) {
-      this.parentContent = this.dialCodeResult[0];
-      this.childContent = this.dialCodeResult[0].content[0];
-      this.checkParent(this.dialCodeResult[0], this.dialCodeResult[0].content[0]);
-      isParentCheckStarted = true;
-    }
-    this.generateQRScanSuccessInteractEvent(this.dialCodeResult, this.dialCode);
-    if (contentArray && contentArray.length > 1) {
-      contentArray.forEach((content) => {
-        if (addedContent.indexOf(content.identifier) < 0) {
-          this.dialCodeContentResult.push(content);
-        }
-      });
-    }
-
-    if (contentArray && contentArray.length === 1 && !isParentCheckStarted) {
-      this.location.back();
-      // this.showContentDetails(contentArray[0], true);
-      this.isSingleContent = true;
-      this.openContent(contentArray[0], contentArray[0], 0, true);
-      return;
-    }
-
-    if (this.dialCodeResult.length === 0 && this.dialCodeContentResult.length === 0) {
-      this.location.back();
-      if (this.shouldGenerateEndTelemetry) {
-        this.generateQRSessionEndEvent(this.source, this.dialCode);
-      }
-      this.telemetryGeneratorService.generateImpressionTelemetry(ImpressionType.VIEW,
-        '',
-        PageId.DIAL_NOT_LINKED,
-        Environment.HOME);
-      this.commonUtilService.showContentComingSoonAlert(this.source);
-    } else {
-      this.isEmptyResult = false;
-    }
-  }
-
   generateQRScanSuccessInteractEvent(dialCodeResultCount, dialCode) {
     const values = new Map();
     values.networkAvailable = this.commonUtilService.networkInfo.isNetworkAvailable ? 'Y' : 'N';
@@ -1272,19 +1210,19 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
     const contentRequest: ContentDetailRequest = {
       contentId: identifier
     };
-
     this.contentService.getContentDetails(contentRequest).toPromise()
       .then((data: Content) => {
         if (data) {
           if (data.isAvailableLocally) {
             this.zone.run(() => {
-              this.showContentDetails(child);
+              this.showContentDetails(child, false, true);
             });
           } else {
             this.subscribeSdkEvent();
             this.downloadParentContent(parent);
             this.profile = this.appGlobalService.getCurrentUser();
             this.checkProfileData(data.contentData, this.profile);
+            this.showContentDetails(this.childContent, false, false);
           }
         } else {
           this.zone.run(() => {
@@ -1301,7 +1239,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
   downloadParentContent(parent) {
     this.zone.run(() => {
       this.downloadProgress = 0;
-      this.showLoading = true;
+      // this.showLoading = true;
       this.isDownloadStarted = true;
     });
 
@@ -1402,7 +1340,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
                 undefined,
                 this.corRelationList
               );
-              this.showContentDetails(this.childContent);
+              // this.showContentDetails(this.childContent);
               this.events.publish('savedResources:update', {
                 update: true
               });

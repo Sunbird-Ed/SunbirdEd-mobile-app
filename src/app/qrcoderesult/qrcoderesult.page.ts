@@ -120,6 +120,7 @@ export class QrcoderesultPage implements OnDestroy {
   latestParents: Array<any> = [];
   stckyindex: string;
   chapterFirstChildId: string;
+  showSheenAnimation = true;
   @ViewChild(iContent) ionContent: iContent;
 
   constructor(
@@ -199,7 +200,38 @@ export class QrcoderesultPage implements OnDestroy {
       this.identifier = this.content.identifier;
     }
     if (this.backToPreviusPage) {
-      this.getChildContents();
+      if (this.navData.isAvailableLocally) {
+        this.getChildContents();
+      } else {
+        const getContentHeirarchyRequest: ContentDetailRequest = {
+          contentId: this.identifier
+        };
+        this.contentService.getContentHeirarchy(getContentHeirarchyRequest).toPromise()
+          .then((content: Content) => {
+            this.showSheenAnimation = false;
+            this.childrenData = content.children;
+            // this.generatefastLoadingTelemetry(InteractSubtype.FAST_LOADING_OF_TEXTBOOK_FINISHED);
+            this.parents.splice(0, this.parents.length);
+            this.parents.push(content);
+            this.results = [];
+            this.findContentNode(content);
+            if (this.results && this.results.length === 1) {
+              this.backToPreviusPage = false;
+              this.events.unsubscribe(EventTopics.PLAYER_CLOSED);
+              this.navCtrl.navigateForward([RouterLinks.CONTENT_DETAILS], {
+                state: {
+                  content: this.results[0],
+                  isSingleContent: this.isSingleContent,
+                  resultsSize: this.results.length,
+                  corRelation: this.corRelationList
+                }
+              });
+            }
+          }).catch((err) => {
+            this.showSheenAnimation = false;
+          });
+          // this.importContentInBackground([this.identifier], false);
+      }
       this.backToPreviusPage = false;
     }
     this.unregisterBackButton = this.platform.backButton.subscribeWithPriority(10, () => {
@@ -270,10 +302,12 @@ export class QrcoderesultPage implements OnDestroy {
   }
 
   getChildContents() {
+    this.showSheenAnimation = false;
     const request: ChildContentRequest = { contentId: this.identifier, hierarchyInfo: [] };
     this.contentService.getChildContents(
       request).toPromise()
       .then(async (data: Content) => {
+        console.log('getChildContents', data);
         if (data && data.contentData) {
           this.childrenData = data.children;
         }
@@ -318,9 +352,9 @@ export class QrcoderesultPage implements OnDestroy {
             }
            });
         }
-
       })
-      .catch(() => {
+      .catch((err) => {
+        console.log('err1-->', err);
         this.zone.run(() => {
           this.showChildrenLoader = false;
         });
@@ -682,10 +716,9 @@ export class QrcoderesultPage implements OnDestroy {
       this.router.navigate([`/${RouterLinks.PROFILE_SETTINGS}`], { state: {showFrameworkCategoriesMenu: true } });
     }
   }
-
   private showAllChild(content: any) {
     this.zone.run(() => {
-      if (content.children === undefined) {
+      if (content.children === undefined || !content.children.length) {
         if (content.mimeType !== MimeType.COLLECTION) {
           if (content.contentData.appIcon) {
             if (content.contentData.appIcon.includes('http:') || content.contentData.appIcon.includes('https:')) {

@@ -112,9 +112,12 @@ export class FiltersPage {
 
     this.filterCriteria.facetFilters.forEach(facet => {
       if (facet.values && facet.values.length > 0) {
-        if (facet.name !== 'gradeLevel') {
-          facet.values = orderBy(facet.values, ['name'], ['asc']);
-        }
+        if (facet.name === 'gradeLevel') {
+          const maxIndex: number = facet.values.reduce((acc, val) => (val.index && (val.index > acc)) ? val.index : acc, 0);
+          facet.values.sort((i, j) => (i.index || maxIndex + 1) - (j.index || maxIndex + 1));
+      } else {
+        facet.values.sort((i, j) => i.name.localeCompare(j.name));
+      }
         facet.values.forEach((element, index) => {
           if (element.name.toUpperCase() === 'other'.toUpperCase()) {
             const elementVal = element;
