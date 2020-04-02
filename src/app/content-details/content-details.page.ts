@@ -770,33 +770,33 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
       this.objRollup,
       this.corRelationList);
     if (this.commonUtilService.networkInfo.isNetworkAvailable) {
-        const popover = await this.popoverCtrl.create({
-          component: ConfirmAlertComponent,
-          componentProps: {
-            sbPopoverMainTitle: this.content.contentData.name,
-            icon: null,
-            metaInfo:
-              '1 item ' + '(' + this.fileSizePipe.transform(this.content.contentData.size || this.contentSize, 2) + ')',
-            isUpdateAvail: this.contentDownloadable[this.content.identifier] && this.isUpdateAvail,
-          },
-          cssClass: 'sb-popover info',
-        });
-        await popover.present();
-        const { data } = await popover.onDidDismiss();
-        if (data) {
-          this.downloadContent();
-        } else {
-          // const telemetryObject = new TelemetryObject(this.content.identifier, this.content.contentType,
-          // this.content.contentData.pkgVersion);
-          this.telemetryGeneratorService.generateInteractTelemetry(
-            InteractType.TOUCH,
-            InteractSubtype.CLOSE_CLICKED,
-            Environment.HOME,
-            PageId.CONTENT_DETAIL,
-            this.telemetryObject, undefined,
-            this.objRollup,
-            this.corRelationList);
-        }
+       const popover = await this.popoverCtrl.create({
+         component: ConfirmAlertComponent,
+         componentProps: {
+           sbPopoverMainTitle: this.content.contentData.name,
+           icon: null,
+           metaInfo:
+             '1 item ' + '(' + this.fileSizePipe.transform(this.content.contentData.size || this.contentSize, 2) + ')',
+           isUpdateAvail: this.contentDownloadable[this.content.identifier] && this.isUpdateAvail,
+         },
+         cssClass: 'sb-popover info',
+       });
+       await popover.present();
+       const { data } = await popover.onDidDismiss();
+       if (data) {
+         this.downloadContent();
+       } else {
+         // const telemetryObject = new TelemetryObject(this.content.identifier, this.content.contentType,
+         // this.content.contentData.pkgVersion);
+         this.telemetryGeneratorService.generateInteractTelemetry(
+           InteractType.TOUCH,
+           InteractSubtype.CLOSE_CLICKED,
+           Environment.HOME,
+           PageId.CONTENT_DETAIL,
+           this.telemetryObject, undefined,
+           this.objRollup,
+           this.corRelationList);
+       }
     } else {
       this.commonUtilService.showToast('ERROR_NO_INTERNET_MESSAGE');
     }
@@ -1075,16 +1075,16 @@ showDeletePopup() {
       this.content.contentData['size'] = this.contentSize;
     }
     const popover = await this.popoverCtrl.create({
-        component: SbSharePopupComponent,
-        componentProps: {
-          content: this.content,
-          corRelationList: this.corRelationList,
-          objRollup: this.objRollup,
-          pageId: PageId.CONTENT_DETAIL,
-          shareItemType: this.isChildContent ? ShareItemType.LEAF_CONTENT : ShareItemType.ROOT_CONTENT
-        },
-        cssClass: 'sb-popover',
-      });
+       component: SbSharePopupComponent,
+       componentProps: {
+         content: this.content,
+         corRelationList: this.corRelationList,
+         objRollup: this.objRollup,
+         pageId: PageId.CONTENT_DETAIL,
+         shareItemType: this.isChildContent ? ShareItemType.LEAF_CONTENT : ShareItemType.ROOT_CONTENT
+       },
+       cssClass: 'sb-popover',
+     });
     await popover.present();
   }
 
