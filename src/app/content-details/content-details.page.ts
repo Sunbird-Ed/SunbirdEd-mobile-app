@@ -1060,7 +1060,7 @@ showDeletePopup() {
     };
     // when content size and sizeOn device is undefined
     if (!this.content.contentData.size) {
-      this.content.contentData['size'] = this.contentSize;
+      this.content.contentData.size = this.contentSize;
     }
     this.contentDeleteHandler.showContentDeletePopup(this.content, this.isChildContent, contentInfo, PageId.CONTENT_DETAIL);
   }
@@ -1072,7 +1072,7 @@ showDeletePopup() {
     // this.contentShareHandler.shareContent(this.content, this.corRelationList, this.objRollup);
     // when content size and sizeOn device is undefined
     if (!this.content.contentData.size) {
-      this.content.contentData['size'] = this.contentSize;
+      this.content.contentData.size = this.contentSize;
     }
     const popover = await this.popoverCtrl.create({
       component: SbSharePopupComponent,
