@@ -33,7 +33,6 @@ export class LanguageSettingsPage {
   language: string;
   isLanguageSelected = false;
   isFromSettings = false;
-  defaultDeviceLang = '';
   previousLanguage: any;
   selectedLanguage: any = {};
   btnColor = '#8FC4FF';
@@ -69,9 +68,7 @@ export class LanguageSettingsPage {
       if (this.isFromSettings) {
         this.location.back();
       } else {
-        const pId = this.isFromSettings ? PageId.SETTINGS_LANGUAGE : PageId.ONBOARDING_LANGUAGE_SETTING;
-        const env = this.isFromSettings ? Environment.SETTINGS : Environment.ONBOARDING;
-        this.commonUtilService.showExitPopUp(pId, env, false);
+        this.commonUtilService.showExitPopUp(PageId.ONBOARDING_LANGUAGE_SETTING, Environment.ONBOARDING, false);
       }
     });
   }
@@ -208,7 +205,7 @@ export class LanguageSettingsPage {
         const options: NativeTransitionOptions = {
           direction: 'up',
           duration: 500,
-          androiddelay: 20,
+          androiddelay: 500,
           fixedPixelsTop: 0,
           fixedPixelsBottom: 0
         };

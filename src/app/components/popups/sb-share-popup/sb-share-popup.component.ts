@@ -186,13 +186,13 @@ export class SbSharePopupComponent implements OnInit, OnDestroy {
         resolve(true);
       } else if (permissionStatus.isPermissionAlwaysDenied) {
         await this.commonUtilService.showSettingsPageToast('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName, this.pageId, true);
-        reject(false);
+        resolve(false);
       } else {
         this.showStoragePermissionPopup().then((result) => {
           if (result) {
             resolve(true);
           } else {
-            reject(false);
+            resolve(false);
           }
         });
       }
@@ -224,12 +224,12 @@ export class SbSharePopupComponent implements OnInit, OnDestroy {
                       } else if (status.isPermissionAlwaysDenied) {
                         await this.commonUtilService.showSettingsPageToast
                         ('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName, this.pageId, true);
-                        reject(false);
+                        resolve(false);
                       } else {
                         await this.commonUtilService.showSettingsPageToast
                         ('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName, this.pageId, true);
                       }
-                      reject(undefined);
+                      resolve(undefined);
                     });
               }
           }, this.appName, this.commonUtilService.translateMessage('FILE_MANAGER'), 'FILE_MANAGER_PERMISSION_DESCRIPTION', this.pageId, true

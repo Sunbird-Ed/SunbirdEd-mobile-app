@@ -41,11 +41,13 @@ export class UserTypeSelectionPage {
   profile: Profile;
   backButtonFunc: Subscription;
   headerObservable: any;
-  studentImageUri = 'assets/imgs/ic_student.png';
-  teacherImageUri = 'assets/imgs/ic_teacher.png';
+  studentImageUri = 'assets/imgs/ic_student.svg';
+  teacherImageUri = 'assets/imgs/ic_teacher.svg';
   private navParams: any;
   @ViewChild(IonRouterOutlet) routerOutlet: IonRouterOutlet;
   appName = '';
+  public hideBackButton = true;
+
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -102,6 +104,7 @@ export class UserTypeSelectionPage {
       this.handleBackButton();
       this.backButtonFunc.unsubscribe();
     });
+    this.hideBackButton = false;
   }
 
   ionViewWillLeave() {
@@ -114,7 +117,13 @@ export class UserTypeSelectionPage {
     }
   }
 
-  handleBackButton() {
+  handleBackButton(isBackClicked?) {
+    if (isBackClicked) {
+      this.telemetryGeneratorService.generateBackClickedTelemetry(
+          PageId.USER_TYPE_SELECTION,
+          this.appGlobalService.isOnBoardingCompleted ? Environment.HOME : Environment.ONBOARDING,
+          true);
+    }
     this.router.navigate([`/${RouterLinks.LANGUAGE_SETTING}`]);
   }
   handleHeaderEvents($event) {
@@ -240,12 +249,12 @@ export class UserTypeSelectionPage {
     const values = new Map();
     values['userType'] = (userType).toUpperCase();
     this.telemetryGeneratorService.generateInteractTelemetry(
-      InteractType.TOUCH,
-      InteractSubtype.CONTINUE_CLICKED,
+        InteractType.TOUCH,
+        InteractSubtype.USER_TYPE_SELECTED,
       this.appGlobalService.isOnBoardingCompleted ? Environment.HOME : Environment.ONBOARDING,
-      PageId.USER_TYPE_SELECTION,
+        PageId.USER_TYPE_SELECTION,
       undefined,
-      values);
+        values);
   }
 
   /**
@@ -277,7 +286,7 @@ export class UserTypeSelectionPage {
     const options: NativeTransitionOptions = {
       direction: 'left',
       duration: 500,
-      androiddelay: 20,
+      androiddelay: 500,
       fixedPixelsTop: 0,
       fixedPixelsBottom: 0
     };
