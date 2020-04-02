@@ -249,12 +249,12 @@ export class UserTypeSelectionPage {
     const values = new Map();
     values['userType'] = (userType).toUpperCase();
     this.telemetryGeneratorService.generateInteractTelemetry(
-      InteractType.TOUCH,
-      '',
+        InteractType.TOUCH,
+        InteractSubtype.USER_TYPE_SELECTED,
       this.appGlobalService.isOnBoardingCompleted ? Environment.HOME : Environment.ONBOARDING,
-      PageId.USER_TYPE_SELECTION,
+        PageId.USER_TYPE_SELECTION,
       undefined,
-      values);
+        values);
   }
 
   /**
