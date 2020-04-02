@@ -109,4 +109,16 @@
     overflow-x: auto;
     overflow-y: hidden;
   }
+
+  .enrolled-course-bg {
+    background: linear-gradient(#008840, #008840 100px, white 100px, white 100%);
+  }
+
+  .course-grid-bg{
+    background-color: #E0F5EA;
+  }
+
+  .course-card-pd{
+    padding: 2px 8px 12px;
+  }
 }

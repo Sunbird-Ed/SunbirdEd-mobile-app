@@ -5,47 +5,24 @@
     <ion-refresher-content refreshingSpinner="circles"></ion-refresher-content>
   </ion-refresher>
 
-  <div *ngIf="!guestUser && enrolledCourses && enrolledCourses.length" class="course-page-color"
-    [ngClass]="{'height-130': showLoader}">
-    <div class="item padding-11">
-      <span class="scroll-heading ion-float-start">
-        {{ 'COURSES_IN_PROGRESS' | translate }}
-      </span>
-      <span class="view-all-link ion-float-end" *ngIf="enrolledCourses && enrolledCourses.length"
-        (click)="navigateToViewMoreContentsPage(true)">
-        <a>{{ 'VIEW_ALL' | translate }}</a>
-      </span>
-    </div>
-    <div *ngIf="enrolledCourses && enrolledCourses.length" class="ion-no-padding" scrollX="true"
-      style="width: 100%;height: auto;">
-      <div class="inner inprogress-courses" style="display:flex">
-        <app-coursecard *ngFor="let course of enrolledCourses; let i=index" [env]="'home'" [index]="i"
-          [sectionName]="inProgressSection" [pageName]="'course'" [course]="course" [guestUser]="guestUser"
-          [layoutName]="layoutInProgress"></app-coursecard>
-      </div>
-    </div>
+  <div *ngIf="showSignInCard" class="enrolled-course-bg">
+    <app-sign-in-card [source]="'courses'" (valueChange)="showOfflineWarning($event)"></app-sign-in-card>
+  </div>
+
+  <div *ngIf="!guestUser && enrolledCourses && enrolledCourses.length" class="p-8 enrolled-course-bg">
+    <sb-course-cards-hlist [title]="'COURSES_IN_PROGRESS' | translate" [type]="courseCardType.MY_COURSE_RECENTLY_VIEWED_CARD_GRID" 
+    [contentList]="enrolledCourses" [viewMoreButtonText]="'VIEW_ALL' | translate" 
+    (viewMoreClick)="navigateToViewMoreContentsPage(true)" (cardClick)="openEnrolledCourseDetails($event)" ></sb-course-cards-hlist>
+
     <div *ngIf="enrolledCourses && enrolledCourses.length === 0 && !showLoader">{{ 'NO_DATA_FOUND' | translate }}</div>
     <ion-spinner name="crescent" class="ion-padding" *ngIf="showLoader" style="padding-top: 100px;"></ion-spinner>
   </div>
 
-  <div *ngFor="let section of popularAndLatestCourses">
-    <div *ngIf="section?.contents?.length">
-      <div class="course-scroll-holder">
-        <div class="item padding-11">
-          <span class="scroll-heading ion-float-start">{{section?.name}}</span>
-          <span class="view-all-link ion-float-end"
-            (click)="navigateToViewMoreContentsPage(false, section.id, section.searchQuery, section.name)">
-            <a>{{ 'VIEW_ALL' | translate }}</a>
-          </span>
-        </div>
-        <div class="ion-no-padding" scrollX="true" style="width: 100%; height: 186px;" style=" width: 100%;
-        display: flex;">
-          <app-coursecard *ngFor="let item of section.contents; let i=index" [env]="'home'" [index]="i"
-            [sectionName]="section.name" [enrolledCourses]="enrolledCourses" [pageName]="'course'" [course]="item"
-            [layoutName]="layoutPopular" [guestUser]="guestUser" [isFilterApplied]="isFilterApplied">
-          </app-coursecard>
-        </div>
-      </div>
+  <div *ngFor="let section of popularAndLatestCourses; let i=index;">
+    <div *ngIf="section?.contents?.length" class="course-card-pd" [ngClass]="{'course-grid-bg': i%2 !== 0}">
+      <sb-course-cards-hlist [title]="section?.name" [type]="courseCardType.COURSE_CARD_GRID" [viewMoreButtonText]="'VIEW_ALL' | translate"
+      [contentList]="section?.contents" (viewMoreClick)="navigateToViewMoreContentsPage(false, section.id, section.searchQuery, section.name)"
+      [maxCardCount]="5" (cardClick)="openCourseDetails($event)"></sb-course-cards-hlist>
     </div>
   </div>
   <div *ngIf="pageApiLoader && popularAndLatestCourses && popularAndLatestCourses.length === 0">
@@ -66,9 +43,6 @@
       <strong class="ion-text-uppercase" color="primary"
         (click)="retryShowingPopularCourses(true); showOfflineWarning();">{{'RETRY_ACTION' | translate}}</strong>
     </ion-text>
-  </div>
-  <div *ngIf="showSignInCard" class="signin-card-bg">
-    <app-sign-in-card [source]="'courses'" (valueChange)="showOfflineWarning($event)"></app-sign-in-card>
   </div>
 </ion-content>
 <ion-backdrop class="loading-backdrop ion-text-center" *ngIf="showOverlay">

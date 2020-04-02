@@ -1,5 +1,5 @@
 <ion-content overflow-scroll="true">
-  <div [ngClass]="{'p-16': !localContentsCard}">
+  <div>
     <div class="sb-view-all-container" *ngIf="localContentsCard">
 
       <div class="sb-view-all-items">
@@ -16,12 +16,17 @@
     </div>
 
     <div *ngIf="searchList && searchList.length">
-      <ng-container *ngIf="!localContentsCard">
-        <app-view-more-card *ngFor="let item of searchList" [content]="item" [type]="pageType"
-          [cardDisabled]="showDisabled(item)" [enrolledCourses]="enrolledCourses" [guestUser]="guestUser">
-        </app-view-more-card>
-
-      </ng-container>
+      <div class="view-more-course-bg">
+        <p class="title" *ngIf="!localContentsCard && pageType === 'enrolledCourse'">{{'COURSES_IN_PROGRESS' | translate}}</p>
+        <p class="title" *ngIf="!localContentsCard && pageType === 'popularCourses'">{{title}}</p>
+        <p class="count-text">{{'SHOWING_ITEMS' | translate:{'%s': searchList.length} }}</p>
+        <div *ngFor="let item of searchList" class="mb-8">
+          <sb-my-course-card *ngIf="!localContentsCard && pageType === 'enrolledCourse'" [course]="item" [section]="getEnrolledSectionHTMLData(item)"
+          [cardImg]="getContentImg(item)" (click)="openCourseDetails(item)"></sb-my-course-card>
+          <sb-course-card *ngIf="!localContentsCard && pageType === 'popularCourses'" [course]="item" [section]="getSectionHTMLData(item)"
+          [cardImg]="getContentImg(item)" (click)="openCourseDetails(item)"></sb-course-card>
+        </div>
+      </div>
 
       <ng-container *ngIf="localContentsCard">
         <div class="sb-view-all-container">

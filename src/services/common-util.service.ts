@@ -462,4 +462,17 @@ export class CommonUtilService {
         this.telemetryGeneratorService.generateUtmInfoTelemetry(utmParams,
             (cData[0].id === CorReleationDataType.SCAN) ? PageId.QRCodeScanner : PageId.HOME, cData, object);
     }
+
+    formatDate(date: string|Date) {
+        const inputDate = new Date(date).toDateString();
+        const [, month, day, year] = inputDate.split(' ');
+        const formattedDate = [day, month, year].join('-');
+        return formattedDate;
+    }
+
+    getContentImg(content) {
+    const defaultImg = this.convertFileSrc('assets/imgs/ic_launcher.png');
+    return this.convertFileSrc(content.courseLogoUrl) ||
+        this.convertFileSrc(content.appIcon) || defaultImg;
+    }
 }

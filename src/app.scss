@@ -1093,3 +1093,19 @@ ion-split-pane {
   color: map-get($colors, white) !important;
   // margin-left: 5%;
 }
+
+.enrolled-course-bg > sb-course-cards-hlist > .layout-course > .header > .title{
+  color: white !important;
+}
+
+sb-course-cards-hlist > .layout-course > .header > .sb-btn-outline-secondary{
+    color: #024F9D;
+}
+
+sb-course-card, sb-my-course-card{
+  .sb--card__meta_c_data{
+    color: #666666;
+    font-family: "Noto Sans";
+    font-size: 12px !important;
+  }
+}
