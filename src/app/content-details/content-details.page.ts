@@ -149,6 +149,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
   resultLength: any;
   course: Course;
   fileTransfer: FileTransferObject;
+  contentSize: any;
   // Newly Added
   licenseDetails;
   resumedCourseCardData: any;
@@ -404,6 +405,9 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
     this.contentService.getContentDetails(req).toPromise()
       .then(async (data: Content) => {
         if (data) {
+          if (data.contentData.size) {
+            this.contentSize = data.contentData.size;
+          }
           this.extractApiResponse(data);
           if (!showRating) {
             await loader.dismiss();
@@ -419,7 +423,8 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
 
         if (showRating) {
           this.contentPlayerHandler.setContentPlayerLaunchStatus(false);
-          this.ratingHandler.showRatingPopup(this.isContentPlayed, data, 'automatic', this.corRelationList, this.objRollup, this.shouldNavigateBack);
+          this.ratingHandler.showRatingPopup(this.isContentPlayed, data, 'automatic', this.corRelationList, this.objRollup,
+           this.shouldNavigateBack);
           this.contentPlayerHandler.setLastPlayedContentId('');
         }
       })
@@ -430,10 +435,9 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
           // this.content.downloadable = false;
           this.isDownloadStarted = false;
         }
-        if (error.hasOwnProperty('CONNECTION_ERROR') === 'CONNECTION_ERROR') {
+        if (error.hasOwnProperty('CONNECTION_ERROR')) {
           this.commonUtilService.showToast('ERROR_NO_INTERNET_MESSAGE');
-        } else if (error.hasOwnProperty('SERVER_ERROR') === 'SERVER_ERROR' ||
-          error.hasOwnProperty('SERVER_AUTH_ERROR') === 'SERVER_AUTH_ERROR') {
+        } else if (error.hasOwnProperty('SERVER_ERROR') || error.hasOwnProperty('SERVER_AUTH_ERROR')) {
           this.commonUtilService.showToast('ERROR_FETCHING_DATA');
         } else {
           this.commonUtilService.showToast('ERROR_CONTENT_NOT_AVAILABLE');
@@ -766,33 +770,33 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
       this.objRollup,
       this.corRelationList);
     if (this.commonUtilService.networkInfo.isNetworkAvailable) {
-      const popover = await this.popoverCtrl.create({
-        component: ConfirmAlertComponent,
-        componentProps: {
-          sbPopoverMainTitle: this.content.contentData.name,
-          icon: null,
-          metaInfo:
-            '1 item ' + '(' + this.fileSizePipe.transform(this.content.contentData.size, 2) + ')',
-          isUpdateAvail: this.contentDownloadable[this.content.identifier] && this.isUpdateAvail,
-        },
-        cssClass: 'sb-popover info',
-      });
-      await popover.present();
-      const { data } = await popover.onDidDismiss();
-      if (data) {
-        this.downloadContent();
-      } else {
-        // const telemetryObject = new TelemetryObject(this.content.identifier, this.content.contentType,
-        // this.content.contentData.pkgVersion);
-        this.telemetryGeneratorService.generateInteractTelemetry(
-          InteractType.TOUCH,
-          InteractSubtype.CLOSE_CLICKED,
-          Environment.HOME,
-          PageId.CONTENT_DETAIL,
-          this.telemetryObject, undefined,
-          this.objRollup,
-          this.corRelationList);
-      }
+        const popover = await this.popoverCtrl.create({
+          component: ConfirmAlertComponent,
+          componentProps: {
+            sbPopoverMainTitle: this.content.contentData.name,
+            icon: null,
+            metaInfo:
+              '1 item ' + '(' + this.fileSizePipe.transform(this.content.contentData.size || this.contentSize, 2) + ')',
+            isUpdateAvail: this.contentDownloadable[this.content.identifier] && this.isUpdateAvail,
+          },
+          cssClass: 'sb-popover info',
+        });
+        await popover.present();
+        const { data } = await popover.onDidDismiss();
+        if (data) {
+          this.downloadContent();
+        } else {
+          // const telemetryObject = new TelemetryObject(this.content.identifier, this.content.contentType,
+          // this.content.contentData.pkgVersion);
+          this.telemetryGeneratorService.generateInteractTelemetry(
+            InteractType.TOUCH,
+            InteractSubtype.CLOSE_CLICKED,
+            Environment.HOME,
+            PageId.CONTENT_DETAIL,
+            this.telemetryObject, undefined,
+            this.objRollup,
+            this.corRelationList);
+        }
     } else {
       this.commonUtilService.showToast('ERROR_NO_INTERNET_MESSAGE');
     }
@@ -1040,7 +1044,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
       });
   }
 
-  showDeletePopup() {
+showDeletePopup() {
     this.contentDeleteObservable = this.contentDeleteHandler.contentDeleteCompleted$.subscribe(() => {
       this.content.contentData.streamingUrl = this.streamingUrl;
       this.contentDownloadable[this.content.identifier] = false;
@@ -1054,6 +1058,10 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
       correlationList: this.corRelationList,
       hierachyInfo: undefined
     };
+    // when content size and sizeOn device is undefined
+    if (!this.content.contentData.size) {
+      this.content.contentData['size'] = this.contentSize;
+    }
     this.contentDeleteHandler.showContentDeletePopup(this.content, this.isChildContent, contentInfo, PageId.CONTENT_DETAIL);
   }
 
@@ -1062,17 +1070,21 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
    */
   async share() {
     // this.contentShareHandler.shareContent(this.content, this.corRelationList, this.objRollup);
+    // when content size and sizeOn device is undefined
+    if (!this.content.contentData.size) {
+      this.content.contentData['size'] = this.contentSize;
+    }
     const popover = await this.popoverCtrl.create({
-      component: SbSharePopupComponent,
-      componentProps: {
-        content: this.content,
-        corRelationList: this.corRelationList,
-        objRollup: this.objRollup,
-        pageId: PageId.CONTENT_DETAIL,
-        shareItemType: this.isChildContent ? ShareItemType.LEAF_CONTENT : ShareItemType.ROOT_CONTENT
-      },
-      cssClass: 'sb-popover',
-    });
+        component: SbSharePopupComponent,
+        componentProps: {
+          content: this.content,
+          corRelationList: this.corRelationList,
+          objRollup: this.objRollup,
+          pageId: PageId.CONTENT_DETAIL,
+          shareItemType: this.isChildContent ? ShareItemType.LEAF_CONTENT : ShareItemType.ROOT_CONTENT
+        },
+        cssClass: 'sb-popover',
+      });
     await popover.present();
   }
 
@@ -1252,7 +1264,6 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
         });
       });
     } catch (e) {
-      console.error(e);
       this.commonUtilService.showToast('ERROR_COULD_NOT_OPEN_FILE');
     } finally {
       await loader.dismiss();
