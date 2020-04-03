@@ -215,7 +215,7 @@ export class UserTypeSelectionPage implements OnInit {
     // Update the Global variable in the AppGlobalService
     this.event.publish(AppGlobalService.USER_INFO_UPDATED);
 
-    if (this.selectedUserType === ProfileType.TEACHER || this.selectedUserType === ProfileType.OTHER) {
+    if (this.commonUtilService.isAccessibleForNonStudentRole(this.selectedUserType)) {
       initTabs(this.container, GUEST_TEACHER_TABS);
     } else if (this.selectedUserType === ProfileType.STUDENT) {
       initTabs(this.container, GUEST_STUDENT_TABS);
