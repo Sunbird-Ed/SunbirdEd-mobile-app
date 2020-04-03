@@ -502,7 +502,7 @@ export class AppGlobalService implements OnDestroy {
                 paramsMap['isProfileSettingsCompleted'] = isOnBoardingCompleted;
             }
             const profileType = this.getGuestUserType();
-            if (profileType === ProfileType.TEACHER) {
+            if (profileType === ProfileType.TEACHER || profileType === ProfileType.OTHER) {
                 switch (pageId) {
                     case PageId.LIBRARY: {
                         paramsMap['isSignInCardConfigEnabled'] = this.DISPLAY_SIGNIN_FOOTER_CARD_IN_LIBRARY_TAB_FOR_TEACHER;
