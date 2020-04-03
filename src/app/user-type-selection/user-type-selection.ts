@@ -33,6 +33,7 @@ const borderColor = '#F7F7F7';
 export class UserTypeSelectionPage implements OnInit {
   teacherCardBorderColor = '#F7F7F7';
   studentCardBorderColor = '#F7F7F7';
+  otherCardBorderColor = '#F7F7F7';
   userTypeSelected = false;
   selectedUserType: ProfileType;
   continueAs = '';
@@ -133,11 +134,16 @@ export class UserTypeSelectionPage implements OnInit {
     this.selectCard('USER_TYPE_2', ProfileType.STUDENT);
   }
 
+  selectOtherCard() {
+    this.selectCard('USER_TYPE_3', ProfileType.OTHER);
+  }
+
   selectCard(userType, profileType) {
     this.zone.run(() => {
       this.userTypeSelected = true;
       this.teacherCardBorderColor = (userType === 'USER_TYPE_1') ? selectedCardBorderColor : borderColor;
-      this.studentCardBorderColor = (userType === 'USER_TYPE_1') ? borderColor : selectedCardBorderColor;
+      this.studentCardBorderColor = (userType === 'USER_TYPE_2') ? selectedCardBorderColor : borderColor;
+      this.otherCardBorderColor = (userType === 'USER_TYPE_3') ? selectedCardBorderColor : borderColor;
       this.selectedUserType = profileType;
       this.continueAs = this.commonUtilService.translateMessage(
         'CONTINUE_AS_ROLE',
@@ -209,7 +215,7 @@ export class UserTypeSelectionPage implements OnInit {
     // Update the Global variable in the AppGlobalService
     this.event.publish(AppGlobalService.USER_INFO_UPDATED);
 
-    if (this.selectedUserType === ProfileType.TEACHER) {
+    if (this.selectedUserType === ProfileType.TEACHER || this.selectedUserType === ProfileType.OTHER) {
       initTabs(this.container, GUEST_TEACHER_TABS);
     } else if (this.selectedUserType === ProfileType.STUDENT) {
       initTabs(this.container, GUEST_STUDENT_TABS);
