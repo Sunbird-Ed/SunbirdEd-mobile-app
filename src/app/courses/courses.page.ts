@@ -27,6 +27,7 @@ import { AppHeaderService } from '../../services/app-header.service';
 import { CourseCardGridTypes } from '@project-sunbird/common-consumption';
 import { EnrollmentDetailsComponent } from '../components/enrollment-details/enrollment-details.component';
 import { ContentUtil } from '@app/util/content-util';
+import { LocalCourseService } from '@app/services/local-course.service';
 
 @Component({
   selector: 'app-courses',
@@ -117,6 +118,7 @@ export class CoursesPage implements OnInit {
     private router: Router,
     private toastController: ToastController,
     private headerService: AppHeaderService,
+    private localCourseService: LocalCourseService
   ) {
     this.tabBarElement = document.querySelector('.tabbar.show-tabbar');
     this.preferences.getString(PreferenceKey.SELECTED_LANGUAGE_CODE).toPromise()
@@ -278,13 +280,8 @@ export class CoursesPage implements OnInit {
               const courseList: Array<Course> = [];
               for (let count = 0; count < this.enrolledCourses.length; count++){
                 courseList.push(this.enrolledCourses[count]);
-                if (this.enrolledCourses[count].batch && this.enrolledCourses[count].batch.endDate) {
-                  this.enrolledCourses[count]['info_to_display'] =
-                    `<div>
-                      <img src="assets/imgs/ic_info.svg">
-                      <span> Complete by ${this.commonUtilService.formatDate(this.enrolledCourses[count].batch.endDate)}</span>
-                    </div>`;
-                }
+                this.enrolledCourses[count]['info_to_display'] =
+                  this.localCourseService.getEnrolledCourseSectionHTMLData(this.enrolledCourses[count]);
                 this.enrolledCourses[count]['cardImg'] = this.commonUtilService.getContentImg(this.enrolledCourses[count]);
               }
 
@@ -352,14 +349,7 @@ export class CoursesPage implements OnInit {
         if (newSections.length) {
           for (let i = 0; i < newSections.length; i++){
             for (let j = 0; j < newSections[i].contents.length; j++) {
-              const contentData = newSections[i].contents[j]
-              if (contentData.batches && (contentData.batches.length === 1) && contentData.batches[0].enrollmentEndDate) {
-                newSections[i].contents[j]['info_to_display'] =
-                `<div>
-                  <img src="assets/imgs/ic_info.svg">
-                  <span> Last date to join ${this.commonUtilService.formatDate(contentData.batches[0].enrollmentEndDate)} </span>
-                </div>`;
-              }
+              newSections[i].contents[j]['info_to_display'] = this.localCourseService.getCourseSectionHTMLData(newSections[i].contents[j]);
               newSections[i].contents[j]['cardImg'] = this.commonUtilService.getContentImg(newSections[i].contents[j]);
             }
           }
@@ -809,9 +799,10 @@ export class CoursesPage implements OnInit {
   }
 
   openEnrolledCourseDetails(event) {
+    const contentIndex = this.getContentIndexOf(this.enrolledCourses, event.data);
     const params = {
       env: 'home',
-      index: 'i',
+      index: contentIndex,
       sectionName: this.inProgressSection,
       pageName: 'course',
       course: event.data,
@@ -821,10 +812,11 @@ export class CoursesPage implements OnInit {
     this.checkRetiredOpenBatch(params.course, params);
   }
 
-  openCourseDetails(event) {
+  openCourseDetails(event, index) {
+    const contentIndex = this.getContentIndexOf(this.popularAndLatestCourses[index].contents, event.data);
     const params = {
       env: 'home',
-      index: 'i',
+      index: contentIndex,
       sectionName: event.data.name,
       pageName: 'course',
       course: event.data,
@@ -988,6 +980,11 @@ export class CoursesPage implements OnInit {
         }
       });
     }
+  }
+
+  private getContentIndexOf(contentList, content) {
+    const contentIndex = contentList.findIndex(val => val.identifier === content.identifier);
+    return contentIndex;
   }
 
 }

@@ -22,7 +22,7 @@
     <div *ngIf="section?.contents?.length" class="course-card-pd" [ngClass]="{'course-grid-bg': i%2 !== 0}">
       <sb-course-cards-hlist [title]="section?.name" [type]="courseCardType.COURSE_CARD_GRID" [viewMoreButtonText]="'VIEW_ALL' | translate"
       [contentList]="section?.contents" (viewMoreClick)="navigateToViewMoreContentsPage(false, section.id, section.searchQuery, section.name)"
-      [maxCardCount]="5" (cardClick)="openCourseDetails($event)"></sb-course-cards-hlist>
+      [maxCardCount]="9" (cardClick)="openCourseDetails($event, i)"></sb-course-cards-hlist>
     </div>
   </div>
   <div *ngIf="pageApiLoader && popularAndLatestCourses && popularAndLatestCourses.length === 0">

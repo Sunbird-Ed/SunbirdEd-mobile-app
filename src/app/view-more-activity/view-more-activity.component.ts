@@ -28,7 +28,8 @@ import {
   CourseBatchStatus,
   Batch,
   CourseBatchesRequest,
-  FetchEnrolledCourseRequest
+  FetchEnrolledCourseRequest,
+  SharedPreferences,
 } from 'sunbird-sdk';
 
 import {
@@ -38,15 +39,15 @@ import {
   InteractType,
   PageId
 } from '@app/services/telemetry-constants';
-import { ContentType, ViewMore, MimeType, RouterLinks, ContentFilterConfig, ContentCard, BatchConstants } from '@app/app/app.constant';
+import { ContentType, ViewMore, MimeType, RouterLinks, ContentFilterConfig, ContentCard, BatchConstants, PreferenceKey } from '@app/app/app.constant';
 import { FormAndFrameworkUtilService } from '@app/services/formandframeworkutil.service';
 import { CourseUtilService } from '@app/services/course-util.service';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { CommonUtilService } from '@app/services/common-util.service';
 import { AppHeaderService } from '@app/services/app-header.service';
-import { LocalCourseService } from '@app/services/local-course.service';
 import { EnrollmentDetailsComponent } from '../components/enrollment-details/enrollment-details.component';
 import { AppGlobalService } from '@app/services/app-global-service.service';
+import { LocalCourseService } from '@app/services/local-course.service';
 
 @Component({
   selector: 'app-view-more-activity',
@@ -136,6 +137,7 @@ export class ViewMoreActivityComponent implements OnInit {
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
     @Inject('EVENTS_BUS_SERVICE') private eventBusService: EventsBusService,
     @Inject('COURSE_SERVICE') private courseService: CourseService,
+    @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
     private events: Events,
     private ngZone: NgZone,
     private courseUtilService: CourseUtilService,
@@ -149,7 +151,8 @@ export class ViewMoreActivityComponent implements OnInit {
     private zone: NgZone,
     private formAndFrameworkUtilService: FormAndFrameworkUtilService,
     private appGlobalService: AppGlobalService,
-    private popoverCtrl: PopoverController
+    private popoverCtrl: PopoverController,
+    private localCourseService: LocalCourseService
   ) {
     this.route.queryParams.subscribe(params => {
       if (this.router.getCurrentNavigation().extras.state) {
@@ -228,8 +231,10 @@ export class ViewMoreActivityComponent implements OnInit {
   async search() {
     const loader = await this.commonUtilService.getLoader();
     await loader.present();
+    const selectedLanguage = await this.preferences.getString(PreferenceKey.SELECTED_LANGUAGE_CODE).toPromise();
     const searchCriteria: ContentSearchCriteria = {
-      searchType: SearchType.FILTER
+      searchType: SearchType.FILTER,
+      languageCode: selectedLanguage
     };
     this.searchQuery.request['searchType'] = SearchType.FILTER;
     this.searchQuery.request['offset'] = this.offset;
@@ -584,25 +589,11 @@ export class ViewMoreActivityComponent implements OnInit {
   }
 
   getEnrolledSectionHTMLData(content) {
-    let sectionHtml = '';
-    if (content && content.batch && content.batch.endDate) {
-      sectionHtml = `<div>
-        <img src="assets/imgs/ic_info.svg">
-        <span> Complete training by ${content.batch.endDate}</span>
-      </div>`;
-    }
-    return sectionHtml;
+    return this.localCourseService.getEnrolledCourseSectionHTMLData(content);
   }
 
   getSectionHTMLData(content) {
-    let sectionHtml = '';
-    if (content.batches && content.batches.length === 1 && content.batches[0].enrollmentEndDate) {
-      sectionHtml = `<div>
-        <img src="assets/imgs/ic_info.svg">
-        <span> Complete training by ${content.batches[0].enrollmentEndDate}</span>
-      </div>`;
-    }
-    return sectionHtml;
+    return this.localCourseService.getCourseSectionHTMLData(content);
   }
 
   getContentImg(content) {

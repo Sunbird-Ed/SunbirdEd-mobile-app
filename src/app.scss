@@ -1102,10 +1102,12 @@ sb-course-cards-hlist > .layout-course > .header > .sb-btn-outline-secondary{
     color: #024F9D;
 }
 
-sb-course-card, sb-my-course-card{
-  .sb--card__meta_c_data{
-    color: #666666;
-    font-family: "Noto Sans";
-    font-size: 12px !important;
-  }
+.card-section-secondary{
+  color: #666666;
+  font-family: "Noto Sans";
+}
+
+.card-section-danger{
+  color: #E55A28;
+  font-family: "Noto Sans";
 }

@@ -22,7 +22,7 @@
 							</div>
 							<div *ngIf="enrollmentEndDate">
 								<ion-icon class="information-icon" name="information-circle"></ion-icon>
-								{{'LAST_DATE_TO_JOIN' | translate }} {{enrollmentEndDate | date}}
+								{{'LAST_DATE_TO_JOIN' | translate:{'%s': enrollmentEndDate | date} }}
 							</div>
 							<div *ngIf="!enrollmentEndDate && batchEndDate">
 								{{'TRAINING_ENDS_ON' | translate}} {{batchEndDate | date}}
