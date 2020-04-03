@@ -233,7 +233,7 @@ export class ExploreBooksPage implements OnInit, OnDestroy {
       const userType = this.appGlobalService.getGuestUserType();
       if (userType === ProfileType.STUDENT) {
         this.audienceFilter = AudienceFilter.GUEST_STUDENT;
-      } else if (userType === ProfileType.TEACHER) {
+      } else if (this.commonUtilService.isAccessibleForNonStudentRole(userType)) {
         this.audienceFilter = AudienceFilter.GUEST_TEACHER;
       }
     } else {

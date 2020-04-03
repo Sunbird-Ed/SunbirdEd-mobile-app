@@ -506,7 +506,7 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
 
     this.profileService.updateProfile(updateProfileRequest).toPromise()
       .then(async (profile: Profile) => {
-        if (updateProfileRequest.profileType === ProfileType.TEACHER) {
+        if (this.commonUtilService.isAccessibleForNonStudentRole(updateProfileRequest.profileType)) {
           initTabs(this.container, GUEST_TEACHER_TABS);
         } else if (updateProfileRequest.profileType === ProfileType.STUDENT) {
           initTabs(this.container, GUEST_STUDENT_TABS);
