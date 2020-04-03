@@ -342,13 +342,13 @@ export class CommonUtilService implements OnDestroy {
     }
 
     async getAppName() {
-       return this.appVersion.getAppName();
+        return this.appVersion.getAppName();
     }
 
     openUrlInBrowser(url) {
         const options = 'hardwareback=yes,clearcache=no,zoom=no,toolbar=yes,disallowoverscroll=yes';
         (window as any).cordova.InAppBrowser.open(url, '_blank', options);
-      }
+    }
 
     fileSizeInMB(bytes) {
         if (!bytes) {
@@ -489,5 +489,5 @@ export class CommonUtilService implements OnDestroy {
     isAccessibleForNonStudentRole(profileType) {
         return profileType === ProfileType.TEACHER || profileType == ProfileType.OTHER;
     }
-    
+
 }
