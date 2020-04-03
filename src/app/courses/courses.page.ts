@@ -481,7 +481,7 @@ export class CoursesPage implements OnInit {
    */
   getCurrentUser(): void {
     const profileType = this.appGlobalService.getGuestUserType();
-    if (profileType === ProfileType.TEACHER && this.appGlobalService.DISPLAY_SIGNIN_FOOTER_CARD_IN_COURSE_TAB_FOR_TEACHER) {
+    if (this.commonUtilService.isAccessibleForNonStudentRole(profileType) && this.appGlobalService.DISPLAY_SIGNIN_FOOTER_CARD_IN_COURSE_TAB_FOR_TEACHER) {
       this.showSignInCard = true;
     } else {
       this.showSignInCard = false;

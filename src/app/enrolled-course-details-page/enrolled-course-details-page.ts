@@ -467,7 +467,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
         this.commonUtilService.showToast('TRY_BEFORE_RATING');
       }
     } else {
-      if (this.profileType === ProfileType.TEACHER) {
+      if (this.commonUtilService.isAccessibleForNonStudentRole(this.profileType)) {
         this.commonUtilService.showToast('SIGNIN_TO_USE_FEATURE');
       }
     }

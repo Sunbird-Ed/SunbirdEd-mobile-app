@@ -9,7 +9,7 @@ import {
 import { TranslateService } from '@ngx-translate/core';
 import { Network } from '@ionic-native/network/ngx';
 import { WebView } from '@ionic-native/ionic-webview/ngx';
-import { SharedPreferences, ProfileService, Profile } from 'sunbird-sdk';
+import { SharedPreferences, ProfileService, Profile, ProfileType } from 'sunbird-sdk';
 
 import { PreferenceKey, ProfileConstants } from '@app/app/app.constant';
 import { appLanguages } from '@app/app/app.constant';
@@ -485,4 +485,9 @@ export class CommonUtilService implements OnDestroy {
                 await this.preferences.putString(PreferenceKey.SUBSCRIBE_TOPICS, JSON.stringify(subscribeTopic)).toPromise();
             });
     }
+
+    isAccessibleForNonStudentRole(profileType) {
+        return profileType === ProfileType.TEACHER || profileType == ProfileType.OTHER;
+    }
+    
 }

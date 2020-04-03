@@ -314,7 +314,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.showSignInCard = false;
 
     if (this.guestUser) {
-      if (profileType === ProfileType.TEACHER) {
+      if (this.commonUtilService.isAccessibleForNonStudentRole(profileType)) {
         this.showSignInCard = this.appGlobalService.DISPLAY_SIGNIN_FOOTER_CARD_IN_LIBRARY_TAB_FOR_TEACHER;
         this.audienceFilter = AudienceFilter.GUEST_TEACHER;
       } else if (profileType === ProfileType.STUDENT) {
