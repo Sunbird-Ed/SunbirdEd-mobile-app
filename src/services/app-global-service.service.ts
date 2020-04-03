@@ -435,6 +435,8 @@ export class AppGlobalService implements OnDestroy {
                             this.guestProfileType = ProfileType.STUDENT;
                         } else if (val === ProfileType.TEACHER) {
                             this.guestProfileType = ProfileType.TEACHER;
+                        } else if (val === ProfileType.OTHER) {
+                            this.guestProfileType = ProfileType.OTHER;
                         }
                         this.isGuestUser = true;
                         resolve(this.guestProfileType);
