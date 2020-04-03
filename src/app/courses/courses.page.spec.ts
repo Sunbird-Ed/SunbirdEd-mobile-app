@@ -19,6 +19,7 @@ import {
 } from 'sunbird-sdk';
 import { of, throwError } from 'rxjs';
 import { PageName } from '../app.constant';
+import { LocalCourseService } from '../../services/local-course.service';
 
 describe('CoursesPage', () => {
     let coursesPage: CoursesPage;
@@ -60,6 +61,7 @@ describe('CoursesPage', () => {
         generateExtraInfoTelemetry: jest.fn()
     };
     const mockToastController: Partial<ToastController> = {};
+    const mockLocalCourseService: Partial<LocalCourseService> = {};
 
     beforeAll(() => {
         coursesPage = new CoursesPage(
@@ -82,7 +84,8 @@ describe('CoursesPage', () => {
             mockNetwork as Network,
             mockRouter as Router,
             mockToastController as ToastController,
-            mockHeaderService as AppHeaderService
+            mockHeaderService as AppHeaderService,
+            mockLocalCourseService as LocalCourseService
         );
     });
 

@@ -225,7 +225,8 @@ export class LocalCourseService {
 
   getEnrolledCourseSectionHTMLData(content) {
     let sectionHtml = '';
-    if (content && content.batch && content.batch.endDate) {
+    if (content && content.batch && content.batch.endDate && content.completionPercentage &&
+      String(content.completionPercentage) !== '100') {
       const endDate = new Date(content.batch.endDate);
       const dateVal = this.commonUtilService.formatDate(content.batch.endDate);
       let message = '';
