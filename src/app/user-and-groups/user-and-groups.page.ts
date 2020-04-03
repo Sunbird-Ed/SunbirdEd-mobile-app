@@ -676,11 +676,7 @@ export class UserAndGroupsPage implements OnInit {
       setTimeout(() => {
         if (isBeingPlayed) {
           this.playConfig.selectedUser = selectedUser;
-          if (selectedUser.profileType === ProfileType.STUDENT) {
-            this.preferences.putString(PreferenceKey.SELECTED_USER_TYPE, ProfileType.STUDENT).toPromise().then();
-          } else {
-            this.preferences.putString(PreferenceKey.SELECTED_USER_TYPE, ProfileType.TEACHER).toPromise().then();
-          }
+          this.preferences.putString(PreferenceKey.SELECTED_USER_TYPE, selectedUser.profileType).toPromise().then();
           this.event.publish('playConfig', this.playConfig);
           this.location.back();
 
