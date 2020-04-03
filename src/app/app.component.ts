@@ -222,7 +222,7 @@ export class AppComponent implements OnInit, AfterViewInit {
           this.syncStatus(status);
         }), {
           deploymentKey
-        }, this.downloadProgress);
+        }, (progress) => this.downloadProgress(progress));
       } else {
         this.telemetryGeneratorService.generateInteractTelemetry(InteractType.OTHER, InteractSubtype.HOTCODE_PUSH_KEY_NOT_DEFINED,
           Environment.HOME, PageId.HOME);
@@ -243,6 +243,13 @@ export class AppComponent implements OnInit, AfterViewInit {
       case SyncStatus.ERROR:
         const value2 = new Map();
         value2['codepushUpdate'] = 'error-in-update';
+    }
+  }
+
+  private downloadProgress(downloadProgress) {
+    if (downloadProgress) {
+      console.log('Downloading ' + downloadProgress.receivedBytes + ' of ' +
+        downloadProgress.totalBytes);
     }
   }
 
@@ -274,13 +281,6 @@ export class AppComponent implements OnInit, AfterViewInit {
         this.codePushExperimentService.setExperimentAppVersion('').subscribe();
       }
     });
-  }
-
-  private downloadProgress(downloadProgress) {
-    if (downloadProgress) {
-      console.log('Downloading ' + downloadProgress.receivedBytes + ' of ' +
-        downloadProgress.totalBytes);
-    }
   }
 
   /* Generates new FCM Token if not available
