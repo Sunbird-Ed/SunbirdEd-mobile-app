@@ -1,9 +1,9 @@
-import { ContentFilterConfig, PreferenceKey } from '@app/app/app.constant';
+import { ContentFilterConfig, PreferenceKey, ProfileConstants } from '@app/app/app.constant';
 import { Inject, Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { Events, PopoverController } from '@ionic/angular';
 import { Observable, of } from 'rxjs';
-import { ContentService, SharedPreferences, HttpServerError, NetworkError, AuthService, ProfileType, Content } from 'sunbird-sdk';
+import { ContentService, SharedPreferences, HttpServerError, NetworkError, AuthService, ProfileType, Content, ProfileService } from 'sunbird-sdk';
 import { SplashscreenActionHandlerDelegate } from './splashscreen-action-handler-delegate';
 import { ContentType, MimeType, EventTopics, RouterLinks, LaunchType } from '../../app/app.constant';
 import { AppGlobalService } from '../app-global-service.service';
@@ -37,6 +37,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
     @Inject('AUTH_SERVICE') public authService: AuthService,
+    @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private commonUtilService: CommonUtilService,
     private appGlobalServices: AppGlobalService,
@@ -80,15 +81,21 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
     // Read version code from deeplink.
     const requiredVersionCode = url.searchParams.get('vCode');
     let content = null;
-    if (urlMatch.groups.quizId || urlMatch.groups.contentId) {
+    if (urlMatch.groups.quizId || urlMatch.groups.contentId || urlMatch.groups.courseId) {
       content = await this.contentService.getContentDetails({
-        contentId: urlMatch.groups.quizId || urlMatch.groups.contentId
+        contentId: urlMatch.groups.quizId || urlMatch.groups.contentId || urlMatch.groups.courseId
       }).toPromise();
     }
     if (requiredVersionCode && !(await this.isAppCompatible(requiredVersionCode))) {
       this.upgradeAppPopover(requiredVersionCode);
     } else if (this.isOnboardingCompleted || session) {
       this.handleNavigation(urlMatch, content);
+    } else if (content.contentType === ContentType.COURSE.toLowerCase()) {
+      const params = {
+        userType: ProfileType.OTHER
+      };
+      this.setDefaultOnboardingData(params);
+      this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], { state: { content, isOnboardingSkipped: true } });
     } else {
       this.checkForQuizWithoutOnboarding(urlMatch, content);
     }
@@ -260,32 +267,35 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
   }
 
   eventToSetDefaultOnboardingData(): void {
-    this.events.subscribe(EventTopics.SIGN_IN_RELOAD, async () => {
-      this.isOnboardingCompleted =
-        (await this.preferences.getString(PreferenceKey.IS_ONBOARDING_COMPLETED).toPromise() === 'true') ? true : false;
-      if (!this.isOnboardingCompleted) {
-        this.setDefaultLanguage();
-        this.setDefaultUserType();
-      }
+    this.events.subscribe(EventTopics.SIGN_IN_RELOAD, () => {
+      this.setDefaultOnboardingData();
     });
   }
 
-  async setDefaultLanguage() {
-    const langCode = await this.preferences.getString(PreferenceKey.SELECTED_LANGUAGE_CODE).toPromise();
-    if (!langCode) {
-      await this.preferences.putString(PreferenceKey.SELECTED_LANGUAGE_CODE, 'en').toPromise();
-      this.translateService.use('en');
-    }
-    const langLabel = await this.preferences.getString(PreferenceKey.SELECTED_LANGUAGE).toPromise();
-    if (!langLabel) {
-      await this.preferences.putString(PreferenceKey.SELECTED_LANGUAGE, 'English').toPromise();
+  private async setDefaultOnboardingData(params?) {
+    this.isOnboardingCompleted =
+      (await this.preferences.getString(PreferenceKey.IS_ONBOARDING_COMPLETED).toPromise() === 'true') ? true : false;
+    if (!this.isOnboardingCompleted) {
+      this.setDefaultLanguageAndUserType(params);
     }
   }
 
-  async setDefaultUserType(): Promise<void> {
+  private async setDefaultLanguageAndUserType(params?) {
+    const langCode = await this.preferences.getString(PreferenceKey.SELECTED_LANGUAGE_CODE).toPromise();
+    if (!langCode) {
+      await this.preferences.putString(PreferenceKey.SELECTED_LANGUAGE_CODE, (params && params.langCode) || 'en').toPromise();
+      this.translateService.use('en');
+    }
+
+    const langLabel = await this.preferences.getString(PreferenceKey.SELECTED_LANGUAGE).toPromise();
+    if (!langLabel) {
+      await this.preferences.putString(PreferenceKey.SELECTED_LANGUAGE, (params && params.langName) || 'English').toPromise();
+    }
+
+    // usertyoe == "TEACHER" for Quiz-link | "OTHER" for course link
     const userType = await this.preferences.getString(PreferenceKey.SELECTED_USER_TYPE).toPromise();
     if (!userType) {
-      await this.preferences.putString(PreferenceKey.SELECTED_USER_TYPE, ProfileType.TEACHER).toPromise();
+      await this.preferences.putString(PreferenceKey.SELECTED_USER_TYPE, (params && params.userType) || ProfileType.TEACHER).toPromise();
     }
   }
 

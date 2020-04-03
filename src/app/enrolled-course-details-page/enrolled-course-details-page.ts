@@ -221,12 +221,15 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
   public lastReadContentId;
   public courseCompletionData = {};
   isCertifiedCourse: boolean;
+  isOnboardingSkipped: any;
+
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
     @Inject('EVENTS_BUS_SERVICE') private eventsBusService: EventsBusService,
     @Inject('COURSE_SERVICE') private courseService: CourseService,
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
+    @Inject('AUTH_SERVICE') public authService: AuthService,
     private loginHandlerService: LoginHandlerService,
     private zone: NgZone,
     private events: Events,
@@ -257,6 +260,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
     const extrasState = this.router.getCurrentNavigation().extras.state;
     if (extrasState) {
       this.courseCardData = extrasState.content;
+      this.isOnboardingSkipped = extrasState.isOnboardingSkipped;
       // console.log('this.courseCardData', this.courseCardData);
       this.identifier = this.courseCardData.contentId || this.courseCardData.identifier;
       this.corRelationList = extrasState.corRelation;
@@ -352,11 +356,15 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
     });
 
     this.events.subscribe('header:setzIndexToNormal', () => {
-      this.stickyPillsRef.nativeElement.classList.remove('z-index-0');
+      if (this.stickyPillsRef && this.stickyPillsRef.nativeElement) {
+        this.stickyPillsRef.nativeElement.classList.remove('z-index-0');
+      }
     });
 
     this.events.subscribe('header:decreasezIndex', () => {
-      this.stickyPillsRef.nativeElement.classList.add('z-index-0');
+      if (this.stickyPillsRef && this.stickyPillsRef.nativeElement) {
+        this.stickyPillsRef.nativeElement.classList.add('z-index-0');
+      }
     });
 
   }
@@ -1098,7 +1106,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
           // await loader.dismiss();
           if (data && data.children) {
             setTimeout(() => {
-              if (this.stickyPillsRef) {
+              if (this.stickyPillsRef && this.stickyPillsRef.nativeElement) {
                 this.stickyPillsRef.nativeElement.classList.add('sticky');
               }
             }, 1000);
@@ -1249,6 +1257,10 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
           return data.find((element) =>
             (this.courseCardData.batchId && element.batchId === this.courseCardData.batchId)
             || (!this.courseCardData.batchId && element.courseId === this.identifier));
+        })
+        .catch(e => {
+          console.log(e);
+          return null;
         });
       if (this.updatedCourseCardData && !this.courseCardData.batch) {
         this.courseCardData.batch = this.updatedCourseCardData.batch;
@@ -1302,7 +1314,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
   }
 
   handleBackButton() {
-    this.backButtonFunc = this.platform.backButton.subscribeWithPriority(10, () => {
+    this.backButtonFunc = this.platform.backButton.subscribeWithPriority(10, async () => {
       this.telemetryGeneratorService.generateBackClickedTelemetry(
         PageId.COURSE_DETAIL,
         Environment.HOME,
@@ -1317,6 +1329,12 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
 
       if (this.shouldGenerateEndTelemetry) {
         this.generateQRSessionEndEvent(this.source, this.course.identifier);
+      }
+
+      const session = await this.authService.getSession().toPromise();
+      if (this.isOnboardingSkipped && session) {
+        this.router.navigate(['/', 'tabs']);
+        return;
       }
       this.goBack();
     });
@@ -1688,7 +1706,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
     }
   }
 
-  handleHeaderEvents($event) {
+  async handleHeaderEvents($event) {
     switch ($event.name) {
       case 'share':
         this.share();
@@ -1700,6 +1718,12 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
         this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.COURSE_DETAIL, Environment.HOME,
           true, this.identifier, this.corRelationList, this.objRollup, this.telemetryObject);
         this.handleNavBackButton();
+        const session = await this.authService.getSession().toPromise();
+
+        if (this.isOnboardingSkipped && session) {
+          this.router.navigate(['/', 'tabs']);
+          return;
+        }
         this.goBack();
         break;
     }
