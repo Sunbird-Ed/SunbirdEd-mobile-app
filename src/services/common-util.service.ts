@@ -463,7 +463,7 @@ export class CommonUtilService {
             (cData[0].id === CorReleationDataType.SCAN) ? PageId.QRCodeScanner : PageId.HOME, cData, object);
     }
 
-    formatDate(date: string|Date) {
+    getFormattedDate(date: string|Date) {
         const inputDate = new Date(date).toDateString();
         const [, month, day, year] = inputDate.split(' ');
         const formattedDate = [day, month, year].join('-');
@@ -471,8 +471,8 @@ export class CommonUtilService {
     }
 
     getContentImg(content) {
-    const defaultImg = this.convertFileSrc('assets/imgs/ic_launcher.png');
-    return this.convertFileSrc(content.courseLogoUrl) ||
-        this.convertFileSrc(content.appIcon) || defaultImg;
+        const defaultImg = this.convertFileSrc('assets/imgs/ic_launcher.png');
+        return this.convertFileSrc(content.courseLogoUrl) ||
+            this.convertFileSrc(content.appIcon) || defaultImg;
     }
 }

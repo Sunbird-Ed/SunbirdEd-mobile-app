@@ -228,7 +228,7 @@ export class LocalCourseService {
     if (content && content.batch && content.batch.endDate && content.completionPercentage &&
       String(content.completionPercentage) !== '100') {
       const endDate = new Date(content.batch.endDate);
-      const dateVal = this.commonUtilService.formatDate(content.batch.endDate);
+      const dateVal = this.commonUtilService.getFormattedDate(content.batch.endDate);
       let message = '';
       let styleClass = '';
 
@@ -248,7 +248,7 @@ export class LocalCourseService {
     let sectionHtml = '';
     if (content.batches && content.batches.length === 1 && content.batches[0].enrollmentEndDate) {
       const endDate = new Date(content.batches[0].enrollmentEndDate);
-      const dateVal = this.commonUtilService.formatDate(content.batches[0].enrollmentEndDate);
+      const dateVal = this.commonUtilService.getFormattedDate(content.batches[0].enrollmentEndDate);
       let message = '';
       let styleClass = '';
 

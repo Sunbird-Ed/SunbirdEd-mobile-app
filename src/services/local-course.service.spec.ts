@@ -309,14 +309,14 @@ describe('LocalCourseService', () => {
           endDate: '2100 04 21'
         },
         completionPercentage: 80
-      }
-      mockCommonUtilService.formatDate = jest.fn(() => '21 Apr 2100');
+      };
+      mockCommonUtilService.getFormattedDate = jest.fn(() => '21 Apr 2100');
       mockCommonUtilService.translateMessage = jest.fn(() => 'sample_message');
 
       // act
       localCourseService.getEnrolledCourseSectionHTMLData(content);
       // assert
-      expect(mockCommonUtilService.formatDate).toHaveBeenCalled();
+      expect(mockCommonUtilService.getFormattedDate).toHaveBeenCalled();
       expect(mockCommonUtilService.translateMessage).toHaveBeenCalled();
     });
 
@@ -324,17 +324,17 @@ describe('LocalCourseService', () => {
       // arrange
       const content = {
         batch: {
-          endDate: '2020 04 01'
+          endDate: '2019 04 01'
         },
         completionPercentage: 80
-      }
-      mockCommonUtilService.formatDate = jest.fn(() => '01 Apr 2020');
+      };
+      mockCommonUtilService.getFormattedDate = jest.fn(() => '01 Apr 2019');
       mockCommonUtilService.translateMessage = jest.fn(() => 'sample_message');
 
       // act
       localCourseService.getEnrolledCourseSectionHTMLData(content);
       // assert
-      expect(mockCommonUtilService.formatDate).toHaveBeenCalled();
+      expect(mockCommonUtilService.getFormattedDate).toHaveBeenCalled();
       expect(mockCommonUtilService.translateMessage).toHaveBeenCalled();
     });
 
@@ -361,13 +361,13 @@ describe('LocalCourseService', () => {
         }],
         completionPercentage: 80
       };
-      mockCommonUtilService.formatDate = jest.fn(() => '21 Apr 2100');
+      mockCommonUtilService.getFormattedDate = jest.fn(() => '21 Apr 2100');
       mockCommonUtilService.translateMessage = jest.fn(() => 'sample_message');
 
       // act
       localCourseService.getCourseSectionHTMLData(content);
       // assert
-      expect(mockCommonUtilService.formatDate).toHaveBeenCalled();
+      expect(mockCommonUtilService.getFormattedDate).toHaveBeenCalled();
       expect(mockCommonUtilService.translateMessage).toHaveBeenCalled();
     });
 
@@ -375,17 +375,17 @@ describe('LocalCourseService', () => {
       // arrange
       const content = {
         batches: [{
-          enrollmentEndDate: '2020 04 01'
+          enrollmentEndDate: '2019 04 01'
         }],
         completionPercentage: 80
       };
-      mockCommonUtilService.formatDate = jest.fn(() => '01 Apr 2020');
+      mockCommonUtilService.getFormattedDate = jest.fn(() => '01 Apr 2019');
       mockCommonUtilService.translateMessage = jest.fn(() => 'sample_message');
 
       // act
       localCourseService.getCourseSectionHTMLData(content);
       // assert
-      expect(mockCommonUtilService.formatDate).toHaveBeenCalled();
+      expect(mockCommonUtilService.getFormattedDate).toHaveBeenCalled();
       expect(mockCommonUtilService.translateMessage).toHaveBeenCalled();
     });
 
