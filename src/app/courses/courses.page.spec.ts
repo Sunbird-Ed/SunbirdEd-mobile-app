@@ -108,12 +108,16 @@ describe('CoursesPage', () => {
                 identifier: 'do_0123'
             }];
             mockCourseService.getEnrolledCourses = jest.fn(() => of(course));
+            mockLocalCourseService.getEnrolledCourseSectionHTMLData = jest.fn();
+            mockCommonUtilService.getContentImg = jest.fn();
             // act
             coursesPage.ngOnInit();
             // assert
             setTimeout(() => {
                 expect(coursesPage.getCourseTabData).toHaveBeenCalled();
                 expect(mockEvents.subscribe).toHaveBeenCalled();
+                expect(mockLocalCourseService.getEnrolledCourseSectionHTMLData).toHaveBeenCalled();
+                expect(mockCommonUtilService.getContentImg).toHaveBeenCalled();
                 expect(mockAppGlobalService.setEnrolledCourseList).toHaveBeenCalled();
                 expect(mockCourseService.getEnrolledCourses).toHaveBeenCalledWith({ returnFreshCourses: false, userId: undefined });
                 done();
@@ -282,24 +286,31 @@ describe('CoursesPage', () => {
             }, 0);
         });
 
-        it('should return pageAssemble data when PageAssembleCriteria is undefined', (done) => {
+        it('should return pageAssemble data when PageAssembleCriteria is not undefined', (done) => {
             const rqst = { filters: {}, mode: 'soft', name: 'Course', source: 'app' };
             coursesPage.appliedFilter = { board: 'cbsc', medium: 'english' };
             mockPageService.getPageAssemble = jest.fn(() => of({
-                sections: [{ display: '{"name": {"en": "example"}}' }]
+                sections: [{
+                    display: '{"name": {"en": "example"}}',
+                    contents: [{identifier: 'sample_id'}]
+                }]
             }));
             coursesPage.selectedLanguage = 'en';
             const values = new Map();
             values['pageSectionCount'] = 1;
             mockCommonUtilService.networkInfo = {isNetworkAvailable: true};
             mockTelemetryGeneratorService.generateExtraInfoTelemetry = jest.fn();
-            mockTelemetryGeneratorService.generateExtraInfoTelemetry = jest.fn();
+            mockLocalCourseService.getCourseSectionHTMLData = jest.fn();
+            mockCommonUtilService.getContentImg = jest.fn();
+            // mockTelemetryGeneratorService.generateExtraInfoTelemetry = jest.fn();
             jest.spyOn(coursesPage, 'checkEmptySearchResult').mockReturnValue();
             // act
             coursesPage.getPopularAndLatestCourses(false);
             // assert
             setTimeout(() => {
                 expect(mockPageService.getPageAssemble).toHaveBeenCalled();
+                expect(mockLocalCourseService.getCourseSectionHTMLData).toHaveBeenCalled();
+                expect(mockCommonUtilService.getContentImg).toHaveBeenCalled();
                 expect(mockTelemetryGeneratorService.generateExtraInfoTelemetry).toHaveBeenCalled();
                 done();
             }, 0);
@@ -326,13 +337,15 @@ describe('CoursesPage', () => {
             const rqst = { filters: {}, mode: 'soft', name: 'Course', source: 'app' };
             coursesPage.appliedFilter = { board: 'cbsc', medium: 'english' };
             mockPageService.getPageAssemble = jest.fn(() => of({
-                sections: [{ display: '{"name": {"en": "example"}}' }]
+                sections: [{
+                    display: '{"name": {"en": "example"}}',
+                    contents: [{ identifier: 'sample_id' }]
+                }]
             }));
             coursesPage.selectedLanguage = 'hindi';
             const values = new Map();
             values['pageSectionCount'] = 1;
             mockCommonUtilService.networkInfo = {isNetworkAvailable: false};
-            mockTelemetryGeneratorService.generateExtraInfoTelemetry = jest.fn();
             mockTelemetryGeneratorService.generateExtraInfoTelemetry = jest.fn();
             jest.spyOn(coursesPage, 'checkEmptySearchResult').mockReturnValue();
             mockAppGlobalService.getNameForCodeInFramework = jest.fn();
