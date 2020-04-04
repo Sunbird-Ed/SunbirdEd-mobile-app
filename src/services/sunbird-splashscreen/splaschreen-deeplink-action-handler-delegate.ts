@@ -171,7 +171,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
       if (content && content.contentType === ContentType.COURSE.toLowerCase()) {
         this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], { state: { content } });
       } else if (content && content.mimeType === MimeType.COLLECTION) {
-      this.router.navigate([RouterLinks.COLLECTION_DETAIL_ETB], { state: { content } });
+        this.router.navigate([RouterLinks.COLLECTION_DETAIL_ETB], { state: { content } });
       } else {
         if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
           this.commonUtilService.showToast('NEED_INTERNET_FOR_DEEPLINK_CONTENT');
