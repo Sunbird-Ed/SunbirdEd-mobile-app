@@ -82,15 +82,13 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
     const requiredVersionCode = url.searchParams.get('vCode');
     let content = null;
     if (urlMatch.groups.quizId || urlMatch.groups.contentId || urlMatch.groups.courseId) {
-      content = await this.contentService.getContentDetails({
-        contentId: urlMatch.groups.quizId || urlMatch.groups.contentId || urlMatch.groups.courseId
-      }).toPromise();
+      content = await this.getContentData(urlMatch.groups.quizId || urlMatch.groups.contentId || urlMatch.groups.courseId);
     }
     if (requiredVersionCode && !(await this.isAppCompatible(requiredVersionCode))) {
       this.upgradeAppPopover(requiredVersionCode);
     } else if (this.isOnboardingCompleted || session) {
       this.handleNavigation(urlMatch, content);
-    } else if (content.contentType === ContentType.COURSE.toLowerCase()) {
+    } else if (content && content.contentType === ContentType.COURSE.toLowerCase()) {
       const params = {
         userType: ProfileType.OTHER
       };
@@ -160,9 +158,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
     try {
       this.appGlobalServices.resetSavedQuizContent();
       if (!content) {
-        content = await this.contentService.getContentDetails({
-          contentId: identifier
-        }).toPromise();
+        content = await this.getContentData(identifier);
       }
 
       if (isFromLink) {
@@ -170,9 +166,9 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
       }
 
       this.appGlobalServices.skipCoachScreenForDeeplink = true;
-      if (content.contentType === ContentType.COURSE.toLowerCase()) {
+      if (content && content.contentType === ContentType.COURSE.toLowerCase()) {
         this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], { state: { content } });
-      } else if (content.mimeType === MimeType.COLLECTION) {
+      } else if (content && content.mimeType === MimeType.COLLECTION) {
         this.router.navigate([RouterLinks.COLLECTION_DETAIL_ETB], { state: { content } });
       } else {
         if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
@@ -180,20 +176,14 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
           this.appGlobalServices.skipCoachScreenForDeeplink = false;
           return;
         }
-        if (content.contentData && content.contentData.status === ContentFilterConfig.CONTENT_STATUS_UNLISTED) {
+        if (content && content.contentData && content.contentData.status === ContentFilterConfig.CONTENT_STATUS_UNLISTED) {
           this.navigateQuizContent(identifier, content, isFromLink);
         } else {
           await this.router.navigate([RouterLinks.CONTENT_DETAILS], { state: { content } });
         }
       }
     } catch (err) {
-      if (err instanceof HttpServerError) {
-        this.commonUtilService.showToast('ERROR_FETCHING_DATA');
-      } else if (err instanceof NetworkError) {
-        this.commonUtilService.showToast('ERROR_NO_INTERNET_MESSAGE');
-      } else {
-        this.commonUtilService.showToast('ERROR_CONTENT_NOT_AVAILABLE');
-      }
+      console.log(err);
     }
   }
 
@@ -210,6 +200,23 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
       return;
     }
     await this.router.navigate([RouterLinks.CONTENT_DETAILS], { state: { content, autoPlayQuizContent: true } });
+  }
+
+  getContentData(contentId): Promise<Content|null> {
+    return new Promise(async resolve => {
+      const content = await this.contentService.getContentDetails({ contentId }).toPromise()
+        .catch(e => {
+          if (e instanceof HttpServerError) {
+            this.commonUtilService.showToast('ERROR_FETCHING_DATA');
+          } else if (e instanceof NetworkError) {
+            this.commonUtilService.showToast('NEED_INTERNET_FOR_DEEPLINK_CONTENT');
+          } else {
+            this.commonUtilService.showToast('ERROR_CONTENT_NOT_AVAILABLE');
+          }
+          return null;
+        });
+      resolve(content);
+    });
   }
 
   private limitedSharingContentLinkClickedTelemery(): void {

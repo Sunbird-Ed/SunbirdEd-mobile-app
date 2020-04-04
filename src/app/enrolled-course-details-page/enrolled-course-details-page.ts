@@ -281,7 +281,10 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
   }
 
   showDeletePopup() {
-    this.contentDeleteObservable = this.contentDeleteHandler.contentDeleteCompleted$.subscribe(() => {
+    this.contentDeleteObservable = this.contentDeleteHandler.contentDeleteCompleted$.subscribe(async () => {
+      if (await this.onboardingSkippedBackAction()) {
+        return;
+      }
       this.location.back();
     });
     const contentInfo: ContentInfo = {
@@ -292,7 +295,6 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
     };
     this.contentDeleteHandler.showContentDeletePopup(this.content, this.isChild, contentInfo, PageId.COURSE_DETAIL);
   }
-
 
   subscribeUtilityEvents() {
     this.utilityService.getBuildConfigValue('BASE_URL')
@@ -1331,9 +1333,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
         this.generateQRSessionEndEvent(this.source, this.course.identifier);
       }
 
-      const session = await this.authService.getSession().toPromise();
-      if (this.isOnboardingSkipped && session) {
-        this.router.navigate(['/', 'tabs']);
+      if (await this.onboardingSkippedBackAction()) {
         return;
       }
       this.goBack();
@@ -1718,10 +1718,8 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
         this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.COURSE_DETAIL, Environment.HOME,
           true, this.identifier, this.corRelationList, this.objRollup, this.telemetryObject);
         this.handleNavBackButton();
-        const session = await this.authService.getSession().toPromise();
 
-        if (this.isOnboardingSkipped && session) {
-          this.router.navigate(['/', 'tabs']);
+        if (await this.onboardingSkippedBackAction()) {
           return;
         }
         this.goBack();
@@ -1861,5 +1859,20 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
     return ContentUtil.mergeProperties(this.course, mergeProp);
   }
 
+  onboardingSkippedBackAction(): Promise<boolean> {
+    return new Promise(async resolve => {
+      try {
+        const session = await this.authService.getSession().toPromise();
+        if (this.isOnboardingSkipped && session) {
+          this.isOnboardingSkipped = false;
+          resolve(true);
+          this.router.navigate(['/', 'tabs'], { replaceUrl: true });
+        }
+        resolve(false);
+      } catch {
+        resolve(false);
+      }
+    });
+  }
 
 }
