@@ -42,6 +42,7 @@ export class UserTypeSelectionPage implements OnInit {
   headerObservable: any;
   studentImageUri = 'assets/imgs/ic_student.png';
   teacherImageUri = 'assets/imgs/ic_teacher.png';
+  otherImageUri = 'assets/imgs/ic_other.png';
   private navParams: any;
   @ViewChild(IonRouterOutlet) routerOutlet: IonRouterOutlet;
 
