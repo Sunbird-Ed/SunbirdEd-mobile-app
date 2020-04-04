@@ -399,8 +399,9 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
    * Get the session to know if the user is logged-in or guest
    *
    */
-  checkLoggedInOrGuestUser() {
-    this.guestUser = !this.appGlobalService.isUserLoggedIn();
+  async checkLoggedInOrGuestUser() {
+    const session = await this.authService.getSession().toPromise();
+    this.guestUser = session ? false : true;
   }
 
   checkCurrentUserType() {
@@ -1866,7 +1867,13 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
         if (this.isOnboardingSkipped && session) {
           this.isOnboardingSkipped = false;
           resolve(true);
-          this.router.navigate(['/', 'tabs'], { replaceUrl: true });
+          const navigationExtras: NavigationExtras = { replaceUrl: true };
+          this.router.navigate([`/${RouterLinks.TABS}`], navigationExtras);
+        } else if (this.isOnboardingSkipped && !session) {
+          this.isOnboardingSkipped = false;
+          resolve(true);
+          const navigationExtras: NavigationExtras = { queryParams: { reOnboard: true }, replaceUrl: true };
+          this.router.navigate([`/${RouterLinks.PROFILE_SETTINGS}`], navigationExtras);
         }
         resolve(false);
       } catch {

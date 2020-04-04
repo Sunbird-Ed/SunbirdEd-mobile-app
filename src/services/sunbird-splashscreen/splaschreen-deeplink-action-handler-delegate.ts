@@ -83,6 +83,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
     let content = null;
     if (urlMatch.groups.quizId || urlMatch.groups.contentId || urlMatch.groups.courseId) {
       content = await this.getContentData(urlMatch.groups.quizId || urlMatch.groups.contentId || urlMatch.groups.courseId);
+      if (!content && !urlMatch.groups.dialCode) { return; }
     }
     if (requiredVersionCode && !(await this.isAppCompatible(requiredVersionCode))) {
       this.upgradeAppPopover(requiredVersionCode);
@@ -134,7 +135,8 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
     if (this.loginPopup) {
       await this.loginPopup.dismiss();
     }
-    if (content && content.contentData && content.contentData.status === ContentFilterConfig.CONTENT_STATUS_UNLISTED) {
+    if (content && content.contentData && content.contentData.status === ContentFilterConfig.CONTENT_STATUS_UNLISTED &&
+      content.contentType !== ContentType.COURSE.toLowerCase() && content.mimeType !== MimeType.COLLECTION) {
       this.showLoginWithoutOnboardingPopup(urlMatch.groups.quizId || urlMatch.groups.contentId);
     } else {
       this.savedUrlMatch = urlMatch;
@@ -169,7 +171,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
       if (content && content.contentType === ContentType.COURSE.toLowerCase()) {
         this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], { state: { content } });
       } else if (content && content.mimeType === MimeType.COLLECTION) {
-        this.router.navigate([RouterLinks.COLLECTION_DETAIL_ETB], { state: { content } });
+      this.router.navigate([RouterLinks.COLLECTION_DETAIL_ETB], { state: { content } });
       } else {
         if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
           this.commonUtilService.showToast('NEED_INTERNET_FOR_DEEPLINK_CONTENT');
