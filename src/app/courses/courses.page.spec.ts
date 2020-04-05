@@ -18,7 +18,7 @@ import {
     PageAssembleService, SharedPreferences, FrameWorkService
 } from 'sunbird-sdk';
 import { of, throwError } from 'rxjs';
-import { PageName } from '../app.constant';
+import { PageName, ContentCard } from '../app.constant';
 import { LocalCourseService } from '../../services/local-course.service';
 
 describe('CoursesPage', () => {
@@ -562,4 +562,148 @@ describe('CoursesPage', () => {
             }, 0);
         });
     });
+
+    describe('checkRetiredOpenBatch', () => {
+        it('should skip the execution, if course already in progress', (done) => {
+            // arrange
+            const dismissFn = jest.fn(() => Promise.resolve());
+            const presentFn = jest.fn(() => Promise.resolve());
+            mockCommonUtilService.getLoader = jest.fn(() => ({
+                present: presentFn,
+                dismiss: dismissFn,
+            })) as any;
+            coursesPage.loader = mockCommonUtilService.getLoader;
+            const enrolledCourses = [{
+                batch: { status: 1 },
+                cProgress: 80,
+                contentId: 'sample_id1'
+            }];
+            const courseDetails = {
+                enrolledCourses,
+                layoutName: ContentCard.LAYOUT_INPROGRESS
+            };
+            const content = {
+                identifier: 'sample_id1',
+                batch: {}
+            };
+            coursesPage.navigateToDetailPage = jest.fn();
+            // act
+            coursesPage.checkRetiredOpenBatch(content, courseDetails);
+            // assert
+            setTimeout(() => {
+                expect(mockCommonUtilService.getLoader).toHaveBeenCalled();
+                done();
+            }, 0);
+        });
+
+        it('should check the course status equal to 1, which is a non retired course', (done) => {
+            // arrange
+            const dismissFn = jest.fn(() => Promise.resolve());
+            const presentFn = jest.fn(() => Promise.resolve());
+            mockCommonUtilService.getLoader = jest.fn(() => ({
+                present: presentFn,
+                dismiss: dismissFn,
+            })) as any;
+            coursesPage.loader = mockCommonUtilService.getLoader;
+            const enrolledCourses = [{
+                batch: { status: 1 },
+                cProgress: 80,
+                contentId: 'sample_id1'
+            }];
+            const courseDetails = {
+                enrolledCourses,
+                layoutName: 'sample_name'
+            }
+            const content = {
+                identifier: 'sample_id1',
+                batch: {}
+            };
+            coursesPage.navigateToDetailPage = jest.fn();
+            // act
+            coursesPage.checkRetiredOpenBatch(content, courseDetails);
+            // assert
+            setTimeout(() => {
+                expect(mockCommonUtilService.getLoader).toHaveBeenCalled();
+                expect(coursesPage.navigateToDetailPage).toHaveBeenCalled();
+                done();
+            }, 0);
+        });
+
+        it('should check the course status equal to 2, which is a retired course', (done) => {
+            // arrange
+            const dismissFn = jest.fn(() => Promise.resolve());
+            const presentFn = jest.fn(() => Promise.resolve());
+            mockCommonUtilService.getLoader = jest.fn(() => ({
+                present: presentFn,
+                dismiss: dismissFn,
+            })) as any;
+            coursesPage.loader = mockCommonUtilService.getLoader;
+            const enrolledCourses = [{
+                batch: { status: 2 },
+                cProgress: 80,
+                contentId: 'sample_id1'
+            }];
+            const courseDetails = {
+                enrolledCourses,
+                layoutName: 'sample_name'
+            };
+            const content = {
+                identifier: 'sample_id1',
+                batch: {}
+            };
+            coursesPage.navigateToBatchListPopup = jest.fn();
+            // act
+            coursesPage.checkRetiredOpenBatch(content, courseDetails);
+            // assert
+            setTimeout(() => {
+                expect(coursesPage.navigateToBatchListPopup).toHaveBeenCalled();
+                done();
+            }, 0);
+        });
+
+    });
+
+
+    describe('openEnrolledCourseDetails', () => {
+        it('should prepare the request parameters to open the enrolled training', () => {
+            // arrange
+            const contentData = {
+                data: { name: 'sample_name' }
+            };
+            coursesPage.checkRetiredOpenBatch = jest.fn();
+            // act
+            coursesPage.openEnrolledCourseDetails(contentData);
+            // assert
+            expect(coursesPage.checkRetiredOpenBatch).toHaveBeenCalled();
+        });
+    });
+
+    describe('openCourseDetails', () => {
+        it('should prepare the request parameters to open the un-enrolled training', () => {
+            // arrange
+            const contentData = {
+                data: {
+                    name: 'sample_name',
+                    identifier: 'sample_id2'
+                }
+            };
+            const index = 0;
+            coursesPage.popularAndLatestCourses = [{
+                    contents: [{
+                        identifier: 'sample_id1'
+                    }, {
+                        identifier: 'sample_id2'
+                    }, {
+                        identifier: 'sample_id3'
+                    }]
+                }];
+            coursesPage.checkRetiredOpenBatch = jest.fn();
+            // act
+            coursesPage.openCourseDetails(contentData, index);
+            // assert
+            expect(coursesPage.checkRetiredOpenBatch).toHaveBeenCalled();
+        });
+    });
+
 });
+
