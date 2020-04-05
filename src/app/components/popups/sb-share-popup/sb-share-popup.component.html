@@ -23,7 +23,7 @@
         </ion-radio>
       </ion-item>
       <p class="share-desc">
-        {{ 'DOWNLOAD_FILE_SIZE' | translate: {'%s': (content.contentData?.size ? content.contentData?.size: content?.sizeOnDevice) | fileSize } }}
+        {{ 'DOWNLOAD_FILE_SIZE' | translate: {'%s': (content.sizeOnDevice ? content.sizeOnDevice: content.contentData.size) | fileSize } }}
       </p>
 
       <ion-item>
