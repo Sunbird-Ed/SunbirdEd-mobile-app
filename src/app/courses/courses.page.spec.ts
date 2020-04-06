@@ -11,14 +11,14 @@ import { TelemetryGeneratorService } from '../../services/telemetry-generator.se
 import { Network } from '@ionic-native/network/ngx';
 import { Router } from '@angular/router';
 import { AppHeaderService } from '../../services/app-header.service';
-import { ImpressionType, PageId, Environment, InteractSubtype, InteractType } from '../../services/telemetry-constants';
+import { PageId } from '../../services/telemetry-constants';
 import {
-    ContentService, Course, PageAssembleCriteria,
-    CourseService, EventsBusService,
+    ContentService, Course, PageAssembleCriteria, CourseBatchStatus,
+    CourseService, EventsBusService, CourseEnrollmentType,
     PageAssembleService, SharedPreferences, FrameWorkService
 } from 'sunbird-sdk';
 import { of, throwError } from 'rxjs';
-import { PageName, ContentCard } from '../app.constant';
+import { PageName, ContentCard, BatchConstants } from '../app.constant';
 import { LocalCourseService } from '../../services/local-course.service';
 
 describe('CoursesPage', () => {
@@ -563,6 +563,135 @@ describe('CoursesPage', () => {
         });
     });
 
+    describe('navigateToBatchListPopup', () => {
+        it('should show a message saying, the user is offline', (done) => {
+            // arrange
+            mockCommonUtilService.networkInfo = { isNetworkAvailable: false };
+            const content = {
+                identifier: 'sample_id'
+            };
+            const courseDetails = {
+                guestUser: true
+            };
+            mockCommonUtilService.showToast = jest.fn();
+            // act
+            coursesPage.navigateToBatchListPopup(content, courseDetails);
+            // assert
+            setTimeout(() => {
+                expect(mockCommonUtilService.showToast).toHaveBeenCalled();
+                done();
+            }, 0);
+        });
+
+        it('should navigate tocourse batchs page if user is not logged in', (done) => {
+            // arrange
+            mockCommonUtilService.networkInfo = { isNetworkAvailable: true };
+            const content = {
+                identifier: 'sample_id'
+            };
+            const courseDetails = {
+                guestUser: true
+            };
+            mockRouter.navigate = jest.fn();
+            // act
+            coursesPage.navigateToBatchListPopup(content, courseDetails);
+            // assert
+            setTimeout(() => {
+                expect(mockRouter.navigate).toHaveBeenCalled();
+                done();
+            }, 0);
+        });
+
+        it('should navigate tocourse batchs page if user is logged in and batchlist is not empty', (done) => {
+            // arrange
+            mockCommonUtilService.networkInfo = { isNetworkAvailable: true };
+            const content = {
+                identifier: 'sample_id',
+                contentId: 'sample_id'
+            };
+            const courseDetails = {
+                guestUser: false,
+                layoutName: ContentCard.LAYOUT_INPROGRESS
+            };
+            mockRouter.navigate = jest.fn();
+            const courseBatchesRequest = {
+                filters: {
+                  courseId: courseDetails.layoutName === ContentCard.LAYOUT_INPROGRESS ? content.contentId : content.identifier,
+                  enrollmentType: CourseEnrollmentType.OPEN,
+                  status: [CourseBatchStatus.NOT_STARTED, CourseBatchStatus.IN_PROGRESS]
+                },
+                fields: BatchConstants.REQUIRED_FIELDS
+            };
+            const data = [{
+                status: 1
+            }, {
+                status: 2
+            }
+            ];
+            mockPopCtrl.create = jest.fn(() => (Promise.resolve({
+                present: jest.fn(() => Promise.resolve({})),
+                onDidDismiss: jest.fn(() => Promise.resolve({ data: { canDelete: true } }))
+            } as any)));
+            mockCourseService.getCourseBatches = jest.fn(() => of(data));
+            coursesPage.loader = {
+                dismiss: jest.fn()
+            };
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            // act
+            coursesPage.navigateToBatchListPopup(content, courseDetails);
+            // assert
+            setTimeout(() => {
+                expect(mockCourseService.getCourseBatches).toHaveBeenCalledWith(courseBatchesRequest);
+                expect(mockPopCtrl.create).toHaveBeenCalled();
+                expect(mockNgZone.run).toHaveBeenCalled();
+                expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
+                done();
+            }, 0);
+        });
+
+        it('should navigate tocourse batchs page if user is logged in and batchlist is empty', (done) => {
+            // arrange
+            mockCommonUtilService.networkInfo = { isNetworkAvailable: true };
+            const content = {
+                identifier: 'sample_id',
+                contentId: 'sample_id'
+            };
+            const courseDetails = {
+                guestUser: false,
+                layoutName: ContentCard.LAYOUT_INPROGRESS
+            };
+            mockRouter.navigate = jest.fn();
+            const courseBatchesRequest = {
+                filters: {
+                  courseId: courseDetails.layoutName === ContentCard.LAYOUT_INPROGRESS ? content.contentId : content.identifier,
+                  enrollmentType: CourseEnrollmentType.OPEN,
+                  status: [CourseBatchStatus.NOT_STARTED, CourseBatchStatus.IN_PROGRESS]
+                },
+                fields: BatchConstants.REQUIRED_FIELDS
+            };
+            const data = [];
+            mockPopCtrl.create = jest.fn(() => (Promise.resolve({
+                present: jest.fn(() => Promise.resolve({})),
+                onDidDismiss: jest.fn(() => Promise.resolve({ data: { canDelete: true } }))
+            } as any)));
+            mockCourseService.getCourseBatches = jest.fn(() => of(data));
+            coursesPage.loader = {
+                dismiss: jest.fn()
+            };
+            coursesPage.navigateToDetailPage = jest.fn();
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            // act
+            coursesPage.navigateToBatchListPopup(content, courseDetails);
+            // assert
+            setTimeout(() => {
+                expect(mockCourseService.getCourseBatches).toHaveBeenCalledWith(courseBatchesRequest);
+                expect(coursesPage.navigateToDetailPage).toHaveBeenCalled();
+                done();
+            }, 0);
+        });
+
+    });
+
     describe('checkRetiredOpenBatch', () => {
         it('should skip the execution, if course already in progress', (done) => {
             // arrange
@@ -662,7 +791,6 @@ describe('CoursesPage', () => {
         });
 
     });
-
 
     describe('openEnrolledCourseDetails', () => {
         it('should prepare the request parameters to open the enrolled training', () => {
