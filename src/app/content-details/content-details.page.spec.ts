@@ -11,7 +11,8 @@ import {
     SharedPreferences,
     StorageService,
     TelemetryObject,
-    Content
+    Content,
+    GetAllProfileRequest
 } from 'sunbird-sdk';
 import { ContentServiceImpl } from 'sunbird-sdk/content/impl/content-service-impl';
 import { EventsBusServiceImpl } from 'sunbird-sdk/events-bus/impl/events-bus-service-impl';
@@ -54,6 +55,7 @@ import { ContentUtil } from '@app/util/content-util';
 import { EventTopics, ContentType, ShareItemType } from '../app.constant';
 import { FileOpener } from '@ionic-native/file-opener/ngx';
 import { FileTransfer } from '@ionic-native/file-transfer/ngx';
+import { truncate } from 'fs';
 
 describe('ContentDetailsPage', () => {
     let contentDetailsPage: ContentDetailsPage;
@@ -110,8 +112,8 @@ describe('ContentDetailsPage', () => {
         getLastPlayedContentId: jest.fn()
     };
     const mockChildContentHandler: Partial<ChildContentHandler> = {};
-    const contentDeleteCompleted = {subscribe: jest.fn((fn) => fn({closed: false}))};
-    const mockContentDeleteHandler: Partial<ContentDeleteHandler> = {contentDeleteCompleted$: of(contentDeleteCompleted)};
+    const contentDeleteCompleted = { subscribe: jest.fn((fn) => fn({ closed: false })) };
+    const mockContentDeleteHandler: Partial<ContentDeleteHandler> = { contentDeleteCompleted$: of(contentDeleteCompleted) };
     const mockLoginHandlerService: Partial<LoginHandlerService> = {};
     const mockToastController: Partial<ToastController> = {};
     const mockFileOpener: Partial<FileOpener> = {};
@@ -814,6 +816,54 @@ describe('ContentDetailsPage', () => {
         });
     });
 
+    describe('extractApiResponse', () => {
+        it('should be', () => {
+            // arrange
+            const request: Content = {
+                contentData: {
+                    licenseDetails: {
+                        description: 'descript',
+                        name: 'sample-name',
+                        url: 'sample-url'
+                    },
+                    appIcon: 'sample-app-icon',
+                    streamingUrl: 'streamingUrl'
+                },
+                mimeType: 'application/vnd.ekstep.h5p',
+                contentMarker: [{
+                    extraInfoMap: {hierarchyInfo: [{id: 'do-123'}]}
+                }],
+                isAvailableLocally: true,
+                contentAccess: 'content-access',
+                isUpdateAvailable: true
+            };
+            contentDetailsPage.isResumedCourse = true;
+            contentDetailsPage.resumedCourseCardData = {
+                contentId: 'sample-content-id',
+                identifier: 'sample-id'
+            };
+            mockChildContentHandler.setChildContents = jest.fn();
+            jest.spyOn(ContentUtil, 'getAppIcon').mockReturnValue('sample-app-icon');
+            mockCommonUtilService.convertFileSrc = jest.fn();
+            jest.spyOn(contentDetailsPage, 'generateTelemetry').mockReturnValue();
+            mockContentPlayerHandler.isContentPlayerLaunched = jest.fn(() => true);
+            contentDetailsPage.cardData = {
+                hierarchyInfo: truncate
+            };
+            if (contentDetailsPage.isChildContent) {
+                contentDetailsPage.isChildContent = false;
+            }
+            // act
+            contentDetailsPage.extractApiResponse(request);
+            // assert
+            expect(contentDetailsPage.isResumedCourse).toBeTruthy();
+            expect(mockChildContentHandler.setChildContents).toHaveBeenCalledWith(
+                contentDetailsPage.resumedCourseCardData.contentId, 0, undefined);
+            expect(mockCommonUtilService.convertFileSrc).toHaveBeenCalledWith('sample-app-icon');
+            expect(mockContentPlayerHandler.isContentPlayerLaunched).toHaveBeenCalled();
+        })
+    })
+
     describe('setContentDetails', () => {
         it('should return content data by invoked setContentDetails', (done) => {
             // arrange
@@ -1030,7 +1080,7 @@ describe('ContentDetailsPage', () => {
             mockCommonUtilService.networkInfo = {
                 isNetworkAvailable: true
             };
-            contentDetailsPage.content = {contentData: {name: 'matrix', size: 101100}};
+            contentDetailsPage.content = { contentData: { name: 'matrix', size: 101100 } };
             mockFileSizePipe.transform = jest.fn(() => '10KB');
             const presentFN = jest.fn(() => Promise.resolve({}));
             const onDismissFN = jest.fn(() => Promise.resolve({ data: { canDelete: true } }));
@@ -1058,10 +1108,10 @@ describe('ContentDetailsPage', () => {
             mockCommonUtilService.networkInfo = {
                 isNetworkAvailable: true
             };
-            contentDetailsPage.content = {contentData: {name: 'matrix', size: 101100}};
+            contentDetailsPage.content = { contentData: { name: 'matrix', size: 101100 } };
             mockFileSizePipe.transform = jest.fn(() => '10KB');
             const presentFN = jest.fn(() => Promise.resolve({}));
-            const onDismissFN = jest.fn(() => Promise.resolve({undefined}));
+            const onDismissFN = jest.fn(() => Promise.resolve({ undefined }));
             mockPopoverController.create = jest.fn(() => (Promise.resolve({
                 present: presentFN,
                 onDidDismiss: onDismissFN
@@ -1086,7 +1136,7 @@ describe('ContentDetailsPage', () => {
             mockCommonUtilService.networkInfo = {
                 isNetworkAvailable: false
             };
-            contentDetailsPage.content = {contentData: {name: 'matrix', size: 101100}};
+            contentDetailsPage.content = { contentData: { name: 'matrix', size: 101100 } };
             // act
             contentDetailsPage.openConfirmPopUp();
             // assert
@@ -1108,6 +1158,84 @@ describe('ContentDetailsPage', () => {
                 done();
             }, 0);
         });
+    });
+
+    describe('calculateAvailableUserCount', () => {
+        it('should calculate loggedin user', (done) => {
+            // arrange
+            const profileRequest: GetAllProfileRequest = {
+                local: true,
+                server: false
+            };
+            mockProfileService.getAllProfiles = jest.fn(() => of([{
+                uid: 'SAMPLE_UID',
+                handle: 'SAMPLE_HANDLE',
+                profileType: 'student',
+                source: 'local'
+            }]));
+            mockAppGlobalService.isUserLoggedIn = jest.fn(() => true);
+            // act
+            contentDetailsPage.calculateAvailableUserCount();
+            // assert
+            setTimeout(() => {
+                expect(mockProfileService.getAllProfiles).toHaveBeenCalledWith(profileRequest);
+                expect(mockAppGlobalService.isUserLoggedIn).toHaveBeenCalled();
+                expect(contentDetailsPage.userCount).toBe(2);
+                done();
+            }, 0);
+        });
+
+        it('should not increment users count for no active user', (done) => {
+            // arrange
+            const profileRequest: GetAllProfileRequest = {
+                local: true,
+                server: false
+            };
+            mockProfileService.getAllProfiles = jest.fn(() => of([]));
+            mockAppGlobalService.isUserLoggedIn = jest.fn(() => false);
+            // act
+            contentDetailsPage.calculateAvailableUserCount();
+            // assert
+            setTimeout(() => {
+                expect(mockProfileService.getAllProfiles).toHaveBeenCalledWith(profileRequest);
+                expect(mockAppGlobalService.isUserLoggedIn).toHaveBeenCalled();
+                expect(contentDetailsPage.userCount).toBe(0);
+                done();
+            }, 0);
+        });
+
+        it('should not calculate loggedin user for catch part', (done) => {
+            // arrange
+            const profileRequest: GetAllProfileRequest = {
+                local: true,
+                server: false
+            };
+            mockProfileService.getAllProfiles = jest.fn(() => throwError({ error: 'server-error' }));
+            // act
+            contentDetailsPage.calculateAvailableUserCount();
+            // assert
+            setTimeout(() => {
+                expect(mockProfileService.getAllProfiles).toHaveBeenCalledWith(profileRequest);
+                expect(contentDetailsPage.userCount).toBe(0);
+                done();
+            }, 0);
+        });
+    });
+
+    it('should return rateing for content', () => {
+        // arrange
+        const popUpType = 'rating';
+        mockRatingHandler.showRatingPopup = jest.fn(() => Promise.resolve({}));
+        // act
+        contentDetailsPage.rateContent(popUpType);
+        // assert
+        expect(mockRatingHandler.showRatingPopup).toHaveBeenCalledWith(
+            false,
+            { contentData: { name: 'matrix', size: 101100 } },
+            'rating',
+            undefined,
+            { l1: 'do_123', l2: 'do_123', l3: 'do_1'}
+        );
     });
 
 });
