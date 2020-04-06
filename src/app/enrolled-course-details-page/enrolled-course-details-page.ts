@@ -617,7 +617,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.OTHER,
       interactSubtype,
       Environment.HOME,
-      PageId.COLLECTION_DETAIL,
+      PageId.COURSE_DETAIL,
       this.telemetryObject,
       undefined,
       this.objRollup,
