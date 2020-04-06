@@ -152,7 +152,7 @@ describe('LocalCourseService', () => {
       mockCommonUtilService.getLoader = jest.fn(() => ({
           present: presentFn,
           dismiss: dismissFn,
-      }));
+      })) as any;
       mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
       jest.spyOn(localCourseService, 'enrollIntoBatch').mockReturnValue(of(undefined));
       mockNgZone.run = jest.fn((fn) => fn());
@@ -183,7 +183,7 @@ describe('LocalCourseService', () => {
       mockCommonUtilService.getLoader = jest.fn(() => ({
           present: presentFn,
           dismiss: dismissFn,
-      }));
+      })) as any;
       mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
       jest.spyOn(localCourseService, 'enrollIntoBatch').mockReturnValue(of(undefined));
       mockNgZone.run = jest.fn((fn) => fn());
@@ -213,7 +213,7 @@ describe('LocalCourseService', () => {
       mockCommonUtilService.getLoader = jest.fn(() => ({
           present: presentFn,
           dismiss: dismissFn,
-      }));
+      })) as any;
       mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
       jest.spyOn(localCourseService, 'enrollIntoBatch').mockReturnValue(of(undefined));
       mockNgZone.run = jest.fn((fn) => fn());
@@ -243,7 +243,7 @@ describe('LocalCourseService', () => {
       mockCommonUtilService.getLoader = jest.fn(() => ({
           present: presentFn,
           dismiss: dismissFn,
-      }));
+      })) as any;
       mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
       mockCommonUtilService.translateMessage = jest.fn(() => 'some_string');
       mockCommonUtilService.showToast = jest.fn();
@@ -287,6 +287,108 @@ describe('LocalCourseService', () => {
       // assert
       expect(mockLocation.back).toHaveBeenCalled();
     });
+  });
+
+  describe('getEnrolledCourseSectionHTMLData()', () => {
+
+    it('shouldn return empty string id the content batch details are not present', () => {
+      // arrange
+      const content = {
+        batch: null
+      };
+      // act
+      localCourseService.getEnrolledCourseSectionHTMLData(content);
+      // assert
+      expect(content.batch).toEqual(null);
+    });
+
+    it('shouldn return HTML string when batch end date is higher than present date and content completion percent is not 100', () => {
+      // arrange
+      const content = {
+        batch: {
+          endDate: '2100 04 21'
+        },
+        completionPercentage: 80
+      };
+      mockCommonUtilService.getFormattedDate = jest.fn(() => '21 Apr 2100');
+      mockCommonUtilService.translateMessage = jest.fn(() => 'sample_message');
+
+      // act
+      localCourseService.getEnrolledCourseSectionHTMLData(content);
+      // assert
+      expect(mockCommonUtilService.getFormattedDate).toHaveBeenCalled();
+      expect(mockCommonUtilService.translateMessage).toHaveBeenCalled();
+    });
+
+    it('shouldn return HTML string when batch end date is lower than present date, content completion percent is not 100', () => {
+      // arrange
+      const content = {
+        batch: {
+          endDate: '2019 04 01'
+        },
+        completionPercentage: 80
+      };
+      mockCommonUtilService.getFormattedDate = jest.fn(() => '01 Apr 2019');
+      mockCommonUtilService.translateMessage = jest.fn(() => 'sample_message');
+
+      // act
+      localCourseService.getEnrolledCourseSectionHTMLData(content);
+      // assert
+      expect(mockCommonUtilService.getFormattedDate).toHaveBeenCalled();
+      expect(mockCommonUtilService.translateMessage).toHaveBeenCalled();
+    });
+
+  });
+
+  describe('getCourseSectionHTMLData()', () => {
+
+    it('shouldn return empty string id the content batch details are not present', () => {
+      // arrange
+      const content = {
+        batches: null
+      };
+      // act
+      localCourseService.getCourseSectionHTMLData(content);
+      // assert
+      expect(content.batches).toEqual(null);
+    });
+
+    it('shouldn return HTML string when batch end date is higher than present date and content completion percent is not 100', () => {
+      // arrange
+      const content = {
+        batches: [{
+          enrollmentEndDate: '2100 04 21'
+        }],
+        completionPercentage: 80
+      };
+      mockCommonUtilService.getFormattedDate = jest.fn(() => '21 Apr 2100');
+      mockCommonUtilService.translateMessage = jest.fn(() => 'sample_message');
+
+      // act
+      localCourseService.getCourseSectionHTMLData(content);
+      // assert
+      expect(mockCommonUtilService.getFormattedDate).toHaveBeenCalled();
+      expect(mockCommonUtilService.translateMessage).toHaveBeenCalled();
+    });
+
+    it('shouldn return HTML string when batch end date is lower than present date, content completion percent is not 100', () => {
+      // arrange
+      const content = {
+        batches: [{
+          enrollmentEndDate: '2019 04 01'
+        }],
+        completionPercentage: 80
+      };
+      mockCommonUtilService.getFormattedDate = jest.fn(() => '01 Apr 2019');
+      mockCommonUtilService.translateMessage = jest.fn(() => 'sample_message');
+
+      // act
+      localCourseService.getCourseSectionHTMLData(content);
+      // assert
+      expect(mockCommonUtilService.getFormattedDate).toHaveBeenCalled();
+      expect(mockCommonUtilService.translateMessage).toHaveBeenCalled();
+    });
+
   });
 
 });
