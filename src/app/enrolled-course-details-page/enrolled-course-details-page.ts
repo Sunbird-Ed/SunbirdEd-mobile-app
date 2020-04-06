@@ -581,6 +581,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
       .then((data: Content) => {
         this.zone.run(() => {
           if (!data.isAvailableLocally) {
+            this.generatefastLoadingTelemetry(InteractSubtype.FAST_LOADING_OF_TEXTBOOK_INITIATED);
             this.contentService.getContentHeirarchy(option).toPromise()
             .then((content: Content) => {
               /* setting child content here */
@@ -591,6 +592,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
               this.childContentsData = content;
               this.getContentState(true);
               this.extractApiResponse(data);
+              this.generatefastLoadingTelemetry(InteractSubtype.FAST_LOADING_OF_TEXTBOOK_FINISHED);
             })
             .catch(error => {
               console.log('Error Fetching Childrens', error);
@@ -609,6 +611,17 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
         }
         this.location.back();
       });
+  }
+
+  generatefastLoadingTelemetry(interactSubtype) {
+    this.telemetryGeneratorService.generateInteractTelemetry(InteractType.OTHER,
+      interactSubtype,
+      Environment.HOME,
+      PageId.COLLECTION_DETAIL,
+      this.telemetryObject,
+      undefined,
+      this.objRollup,
+      this.corRelationList);
   }
 
   /**
@@ -1098,25 +1111,17 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
     };
     this.contentService.getChildContents(option).toPromise()
       .then((data: Content) => {
-        // console.log('getChildContents', data);
-        // this.contentService.nextContent(data.hierarchyInfo, this.courseCardData.lastReadContentId).subscribe((content) => {
-        //   console.log('next content', content);
-        // });
         this.zone.run(async () => {
-          // await loader.dismiss();
           if (data && data.children) {
             setTimeout(() => {
               if (this.stickyPillsRef) {
                 this.stickyPillsRef.nativeElement.classList.add('sticky');
               }
             }, 1000);
-
             this.enrolledCourseMimeType = data.mimeType;
             this.childrenData = data.children;
-            this.toggleGroup(0, this.childrenData[0]);
             this.startData = data.children;
             this.childContentsData = data;
-            // this.getContentState(!this.isNavigatingWithinCourse);
             this.getContentState(true);
           }
           if (this.courseCardData.batchId) {
