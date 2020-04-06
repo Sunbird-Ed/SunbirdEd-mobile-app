@@ -581,7 +581,14 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
       .then((data: Content) => {
         this.zone.run(() => {
           if (!data.isAvailableLocally) {
-            this.generatefastLoadingTelemetry(InteractSubtype.FAST_LOADING_OF_TEXTBOOK_INITIATED);
+            this.telemetryGeneratorService.generatefastLoadingTelemetry(
+              InteractSubtype.FAST_LOADING_INITIATED,
+              PageId.COURSE_DETAIL,
+              this.telemetryObject,
+              undefined,
+              this.objRollup,
+              this.corRelationList
+            );
             this.contentService.getContentHeirarchy(option).toPromise()
             .then((content: Content) => {
               /* setting child content here */
@@ -592,7 +599,14 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
               this.childContentsData = content;
               this.getContentState(true);
               this.extractApiResponse(data);
-              this.generatefastLoadingTelemetry(InteractSubtype.FAST_LOADING_OF_TEXTBOOK_FINISHED);
+              this.telemetryGeneratorService.generatefastLoadingTelemetry(
+                InteractSubtype.FAST_LOADING_FINISHED,
+                PageId.COURSE_DETAIL,
+                this.telemetryObject,
+                undefined,
+                this.objRollup,
+                this.corRelationList
+              );
             })
             .catch(error => {
               console.log('Error Fetching Childrens', error);
@@ -611,17 +625,6 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
         }
         this.location.back();
       });
-  }
-
-  generatefastLoadingTelemetry(interactSubtype) {
-    this.telemetryGeneratorService.generateInteractTelemetry(InteractType.OTHER,
-      interactSubtype,
-      Environment.HOME,
-      PageId.COURSE_DETAIL,
-      this.telemetryObject,
-      undefined,
-      this.objRollup,
-      this.corRelationList);
   }
 
   /**
