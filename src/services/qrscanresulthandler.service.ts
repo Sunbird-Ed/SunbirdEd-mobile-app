@@ -1,7 +1,7 @@
 import {Inject, Injectable} from '@angular/core';
 import {TelemetryGeneratorService} from './telemetry-generator.service';
 import {FrameworkService, PageAssembleService, Content, ContentDetailRequest, ContentService, CorrelationData, TelemetryObject, TelemetryService} from 'sunbird-sdk';
-import {ContentType, MimeType, RouterLinks} from '../app/app.constant';
+import {ContentType, EventTopics, MimeType, RouterLinks} from '../app/app.constant';
 
 import {CommonUtilService} from './common-util.service';
 import {
@@ -74,6 +74,10 @@ export class QRScannerResultHandler {
               this.pageAssembleService.setPageAssembleChannel({
                 channelId: org.identifier
               });
+
+              setTimeout(() => {
+                this.events.publish(EventTopics.COURSE_PAGE_ASSEMBLE_CHANNEL_CHANGE);
+              }, 500);
             }
           });
         }

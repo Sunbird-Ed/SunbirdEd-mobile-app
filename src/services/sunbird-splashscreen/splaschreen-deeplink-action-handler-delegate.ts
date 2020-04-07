@@ -82,6 +82,10 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
               this.pageAssembleService.setPageAssembleChannel({
                 channelId: org.identifier
               });
+
+              setTimeout(() => {
+                this.events.publish(EventTopics.COURSE_PAGE_ASSEMBLE_CHANNEL_CHANGE);
+              }, 500);
             }
           });
         }
