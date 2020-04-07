@@ -228,6 +228,12 @@ export class CoursesPage implements OnInit {
       }
     });
 
+    this.events.subscribe(EventTopics.COURSE_PAGE_ASSEMBLE_CHANNEL_CHANGE, () => {
+      this.ngZone.run(() => {
+        this.getPopularAndLatestCourses();
+      });
+    });
+
     this.events.subscribe(EventTopics.TAB_CHANGE, (data: string) => {
       this.ngZone.run(() => {
         if (data.trim().toUpperCase() === 'COURSES') {

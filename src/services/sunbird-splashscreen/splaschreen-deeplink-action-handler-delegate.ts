@@ -3,7 +3,7 @@ import { Inject, Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { Events, PopoverController } from '@ionic/angular';
 import { Observable, of } from 'rxjs';
-import { ContentService, SharedPreferences, HttpServerError, NetworkError, AuthService, ProfileType, Content, ProfileService } from 'sunbird-sdk';
+import { PageAssembleService, FrameworkService, ContentService, SharedPreferences, HttpServerError, NetworkError, AuthService, ProfileType, Content, ProfileService } from 'sunbird-sdk';
 import { SplashscreenActionHandlerDelegate } from './splashscreen-action-handler-delegate';
 import { ContentType, MimeType, EventTopics, RouterLinks, LaunchType } from '../../app/app.constant';
 import { AppGlobalService } from '../app-global-service.service';
@@ -38,6 +38,8 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
     @Inject('AUTH_SERVICE') public authService: AuthService,
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
+    @Inject('PAGE_ASSEMBLE_SERVICE') private pageAssembleService: PageAssembleService,
+    @Inject('FRAMEWORK_SERVICE') private frameworkService: FrameworkService,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private commonUtilService: CommonUtilService,
     private appGlobalServices: AppGlobalService,
@@ -62,6 +64,34 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
       const urlRegex = new RegExp(quizTypeRegex.source + '|' + dialTypeRegex.source + '|' +
         contentTypeRegex.source + '|' + courseTypeRegex.source);
       const urlMatch = payload.url.match(urlRegex.source);
+
+      try {
+        const url: URL = new URL(payload.url);
+        const overrideChannelSlug = url.searchParams.get('channel');
+
+        if (overrideChannelSlug) {
+          this.frameworkService.searchOrganization({
+            filters: {
+              slug: overrideChannelSlug,
+              isRootOrg: true
+            } as any
+          }).toPromise().then((result) => {
+            const org: any = result.content && result.content[0];
+
+            if (org) {
+              this.pageAssembleService.setPageAssembleChannel({
+                channelId: org.identifier
+              });
+
+              setTimeout(() => {
+                this.events.publish(EventTopics.COURSE_PAGE_ASSEMBLE_CHANNEL_CHANGE);
+              }, 500);
+            }
+          });
+        }
+      } catch (e) {
+        console.error(e);
+      }
 
       if (urlMatch && urlMatch.groups) {
         this.checkIfOnboardingComplete(urlMatch);
