@@ -203,6 +203,14 @@ export class QrcoderesultPage implements OnDestroy {
       if (this.navData.isAvailableLocally) {
         this.getChildContents();
       } else {
+        this.telemetryGeneratorService.generatefastLoadingTelemetry(
+            InteractSubtype.FAST_LOADING_INITIATED,
+            PageId.DIAL_CODE_SCAN_RESULT,
+            undefined,
+            undefined,
+            undefined,
+            this.corRelationList
+        );
         const getContentHeirarchyRequest: ContentDetailRequest = {
           contentId: this.identifier
         };
@@ -210,11 +218,18 @@ export class QrcoderesultPage implements OnDestroy {
           .then((content: Content) => {
             this.showSheenAnimation = false;
             this.childrenData = content.children;
-            // this.generatefastLoadingTelemetry(InteractSubtype.FAST_LOADING_OF_TEXTBOOK_FINISHED);
             this.parents.splice(0, this.parents.length);
             this.parents.push(content);
             this.results = [];
             this.findContentNode(content);
+            this.telemetryGeneratorService.generatefastLoadingTelemetry(
+                InteractSubtype.FAST_LOADING_FINISHED,
+                PageId.DIAL_CODE_SCAN_RESULT,
+                undefined,
+                undefined,
+                undefined,
+                this.corRelationList
+            );
             if (this.results && this.results.length === 1) {
               this.backToPreviusPage = false;
               this.events.unsubscribe(EventTopics.PLAYER_CLOSED);
