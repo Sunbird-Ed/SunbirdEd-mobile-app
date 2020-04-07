@@ -1,6 +1,6 @@
 import {Inject, Injectable} from '@angular/core';
 import {TelemetryGeneratorService} from './telemetry-generator.service';
-import {Content, ContentDetailRequest, ContentService, CorrelationData, TelemetryObject, TelemetryService} from 'sunbird-sdk';
+import {FrameworkService, PageAssembleService, Content, ContentDetailRequest, ContentService, CorrelationData, TelemetryObject, TelemetryService} from 'sunbird-sdk';
 import {ContentType, MimeType, RouterLinks} from '../app/app.constant';
 
 import {CommonUtilService} from './common-util.service';
@@ -32,6 +32,8 @@ export class QRScannerResultHandler {
   constructor(
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
     @Inject('TELEMETRY_SERVICE') private telemetryService: TelemetryService,
+    @Inject('PAGE_ASSEMBLE_SERVICE') private pageAssembleService: PageAssembleService,
+    @Inject('FRAMEWORK_SERVICE') private frameworkService: FrameworkService,
     private commonUtilService: CommonUtilService,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private router: Router,
@@ -55,6 +57,30 @@ export class QRScannerResultHandler {
     this.dailCodeRegExpression = await this.getDailCodeRegularExpression();
     const execArray = (new RegExp(this.dailCodeRegExpression)).exec(scannedData);
     if (execArray && execArray.groups) {
+      try {
+        const url: URL = new URL(scannedData);
+        const overrideChannelSlug = url.searchParams.get('channel');
+
+        if (overrideChannelSlug) {
+          this.frameworkService.searchOrganization({
+            filters: {
+              slug: overrideChannelSlug,
+              isRootOrg: true
+            } as any
+          }).toPromise().then((result) => {
+            const org: any = result.content && result.content[0];
+
+            if (org) {
+              this.pageAssembleService.setPageAssembleChannel({
+                channelId: org.identifier
+              });
+            }
+          });
+        }
+      } catch (e) {
+        console.error(e);
+      }
+
       this.scannedUrlMap = execArray.groups;
       return execArray.groups[Object.keys(execArray.groups).find((key) => !!execArray.groups[key])];
     }
