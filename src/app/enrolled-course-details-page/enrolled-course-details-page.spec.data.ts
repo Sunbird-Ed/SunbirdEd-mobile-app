@@ -399,3 +399,7 @@ export const mockContentStatusData = {
     }
   ]
 };
+
+export const mockcontentHirerachyResponse = {
+  children: mockChildrenData
+};

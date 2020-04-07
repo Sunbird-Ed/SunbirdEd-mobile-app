@@ -79,4 +79,27 @@
       }
     }
   }
+
+  .view-more-course-bg {
+    background: linear-gradient(#008840, #008840 100px, white 100px, white 100%);
+    padding: 8px;
+    .title {
+      color: #FFFFFF;
+      font-family: "Noto Sans";
+      font-size: 16px;
+      font-weight: bold;
+      margin: 12px 0 0;
+    }
+    .count-text {
+      color: #FAFAFA;
+      font-family: "Noto Sans";
+      font-size: 12px;
+      margin: 0 0 12px;
+    }
+    sb-my-course-card, my-course-card {
+      margin-bottom: 8px;
+      border-radius: 2px;
+      box-shadow: 0 2px 7px 0 rgba(0,0,0,0.16)
+     }
+  }
 }

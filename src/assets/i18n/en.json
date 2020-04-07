@@ -113,7 +113,7 @@
   "CONTENT_DERIVED_FROM": "This content is derived from",
   "CONTENT_IMPORTED": "Successfully imported",
   "CONTENT_IMPORTED_FAILED": "Import Failed",
-  "CONTENT_IS_BEEING_ADDED": "Content is being added to {{%s}}",
+  "CONTENT_IS_BEEING_ADDED": "Content is being added to {{content_name}}",
   "CONTENT_IS_BEING_ADDED": "Your state will soon add content for this QR code. It will be available shortly",
   "CONTENT_NOT_AVAILABLE": "Content not available",
   "CONTENT_PLAYER_EXIT_PERMISSION": "Would you like to leave this content?",
@@ -301,7 +301,7 @@
   "JOIN_TRAINING": "Join Training",
   "LANGUAGE": "Language",
   "LANGUAGE_SETTINGS": "Language Settings",
-  "LAST_DATE_TO_JOIN": "Last Date To Join",
+  "LAST_DATE_TO_JOIN": "Last Date To Join {{%s}}",
   "LAST_SYNC": "Last synced on ",
   "LAST_VIEWED": "Last viewed",
   "LATEST_COURSES": "Latest Trainings",
@@ -657,5 +657,9 @@
   "YOU_ARE_NOT_CONNECTED_TO_THE_INTERNET": "You are not connected to the Internet",
   "YOU_MUST_JOIN_AN_ACTIVE_BATCH": "You must join an active batch to view and access training details",
   "YOU_MUST_JOIN_TO_ACCESS_TRAINING_DETAIL": "You must log in to access training details",
-  "YOU_MUST_LOGIN_TO_ACCESS_QUIZ_CONTENT": "You must login to access this content"
+  "YOU_MUST_LOGIN_TO_ACCESS_QUIZ_CONTENT": "You must login to access this content",
+  "IF_YES_LOGIN": "If yes, click Login",
+  "SHOWING_ITEMS": "Showing {{%s}} items",
+  "COMPLETE_BY": "Complete by {{%s}}",
+  "COURSE_ENDED_ON": "Course ended on {{%s}}"
 }

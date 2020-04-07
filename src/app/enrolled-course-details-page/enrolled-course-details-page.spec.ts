@@ -21,7 +21,7 @@ import { ContentDeleteHandler } from '../../services/content/content-delete-hand
 import { Location } from '@angular/common';
 import {
     mockEnrolledData, contentDetailsResponse, mockCourseCardData,
-    mockGetChildDataResponse, mockImportContentResponse, mockEnrolledCourses, mockCourseCardData_2, mockChildrenData, mockContentStatusData
+    mockGetChildDataResponse, mockImportContentResponse, mockEnrolledCourses, mockCourseCardData_2, mockChildrenData, mockContentStatusData, mockcontentHirerachyResponse
 } from './enrolled-course-details-page.spec.data';
 import { of, Subject, throwError, Subscription } from 'rxjs';
 import { ContentInfo } from '../../services/content/content-info';
@@ -37,7 +37,8 @@ describe('EnrolledCourseDetailsPage', () => {
     const mockContentService: Partial<ContentService> = {
         importContent: jest.fn(() => of(mockImportContentResponse)),
         getChildContents: jest.fn(),
-        cancelDownload: jest.fn()
+        cancelDownload: jest.fn(),
+        getContentHeirarchy: jest.fn()
     };
     const mockEventsBusService: Partial<EventsBusService> = {
         events: jest.fn()
@@ -286,6 +287,7 @@ describe('EnrolledCourseDetailsPage', () => {
             mockHeaderService.hideHeader = jest.fn();
             spyOn(enrolledCourseDetailsPage, 'importContent').and.stub();
             spyOn(enrolledCourseDetailsPage, 'setCourseStructure').and.stub();
+            spyOn(enrolledCourseDetailsPage, 'getBatchDetails').and.stub();
             // act
             enrolledCourseDetailsPage.extractApiResponse(response);
             // assert
@@ -313,8 +315,10 @@ describe('EnrolledCourseDetailsPage', () => {
                 present: jest.fn(() => Promise.resolve({})),
                 onDidDismiss: jest.fn(() => Promise.resolve({ canDelete: '' }))
             } as any)));
+            mockCourseService.getBatchDetails = jest.fn(() => of(enrolledCourseDetailsPage.batchDetails));
             mockCommonUtilService.translateMessage = jest.fn(() => '');
             spyOn(enrolledCourseDetailsPage, 'navigateToBatchListPage').and.stub();
+            spyOn(mockCourseService, 'getBatchDetails').and.stub();
             // act
             enrolledCourseDetailsPage.joinTraining();
             // assert
@@ -506,15 +510,72 @@ describe('EnrolledCourseDetailsPage', () => {
                 emitUpdateIfAny: true,
                 attachContentAccess: true
             };
+            contentDetailsResponse.isAvailableLocally = false;
             mockContentService.getContentDetails = jest.fn(() => of(contentDetailsResponse));
+            jest.spyOn(mockContentService, 'getContentHeirarchy').mockReturnValue(of(mockcontentHirerachyResponse));
             mockZone.run = jest.fn((fn) => fn());
             spyOn(enrolledCourseDetailsPage, 'extractApiResponse').and.stub();
+            spyOn(enrolledCourseDetailsPage, 'getContentState').and.stub();
             // act
             enrolledCourseDetailsPage.setContentDetails('do_21281258639073280011490');
             // assert
             setTimeout(() => {
                 expect(mockContentService.getContentDetails).toHaveBeenCalledWith(option);
                 expect(mockZone.run).toHaveBeenCalled();
+                expect(mockContentService.getContentHeirarchy).toBeCalled();
+                expect(enrolledCourseDetailsPage.getContentState).toBeCalled();
+                expect(enrolledCourseDetailsPage.extractApiResponse).toHaveBeenCalled();
+                done();
+            }, 0);
+        });
+
+        it('should fail getContentHeirarchy() response', (done) => {
+            // arrange
+            const option: ContentDetailRequest = {
+                contentId: 'do_21281258639073280011490',
+                attachFeedback: true,
+                emitUpdateIfAny: true,
+                attachContentAccess: true
+            };
+            contentDetailsResponse.isAvailableLocally = false;
+            mockContentService.getContentDetails = jest.fn(() => of(contentDetailsResponse));
+            mockZone.run = jest.fn((fn) => fn());
+            spyOn(enrolledCourseDetailsPage, 'extractApiResponse').and.stub();
+            spyOn(enrolledCourseDetailsPage, 'getContentState').and.stub();
+            jest.spyOn(mockContentService, 'getContentHeirarchy').mockReturnValue(of(Promise.reject({})));
+            // act
+            enrolledCourseDetailsPage.setContentDetails('do_21281258639073280011490');
+            // assert
+            setTimeout(() => {
+                expect(mockContentService.getContentDetails).toHaveBeenCalledWith(option);
+                expect(mockZone.run).toHaveBeenCalled();
+                expect(mockContentService.getContentHeirarchy).toBeCalled();
+                expect(enrolledCourseDetailsPage.getContentState).not.toBeCalled();
+                expect(enrolledCourseDetailsPage.extractApiResponse).toHaveBeenCalled();
+                done();
+            }, 0);
+        });
+
+        it('should fail getContentHeirarchy() response', (done) => {
+            // arrange
+            const option: ContentDetailRequest = {
+                contentId: 'do_21281258639073280011490',
+                attachFeedback: true,
+                emitUpdateIfAny: true,
+                attachContentAccess: true
+            };
+            contentDetailsResponse.isAvailableLocally = true;
+            mockContentService.getContentDetails = jest.fn(() => of(contentDetailsResponse));
+            mockZone.run = jest.fn((fn) => fn());
+            spyOn(enrolledCourseDetailsPage, 'extractApiResponse').and.stub();
+            jest.spyOn(mockContentService, 'getContentHeirarchy');
+            // act
+            enrolledCourseDetailsPage.setContentDetails('do_21281258639073280011490');
+            // assert
+            setTimeout(() => {
+                expect(mockContentService.getContentDetails).toHaveBeenCalledWith(option);
+                expect(mockZone.run).toHaveBeenCalled();
+                expect(mockContentService.getContentHeirarchy).not.toBeCalled();
                 expect(enrolledCourseDetailsPage.extractApiResponse).toHaveBeenCalled();
                 done();
             }, 0);
@@ -1310,6 +1371,7 @@ describe('EnrolledCourseDetailsPage', () => {
     describe('toggleGroup()', () => {
         it('should show group', () => {
             // arrange
+            enrolledCourseDetailsPage.shownGroup = null;
             // act
             enrolledCourseDetailsPage.toggleGroup(0, {});
             // assert

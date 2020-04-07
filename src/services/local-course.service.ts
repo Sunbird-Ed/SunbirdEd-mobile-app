@@ -222,4 +222,52 @@ export class LocalCourseService {
         await loader.dismiss();
       });
   }
+
+  getEnrolledCourseSectionHTMLData(content) {
+    let sectionHtml = '';
+    if (content && content.batch && content.batch.endDate && content.completionPercentage &&
+      String(content.completionPercentage) !== '100') {
+      const endDate = new Date(content.batch.endDate);
+      const dateVal = this.commonUtilService.getFormattedDate(content.batch.endDate);
+      let message = '';
+      let styleClass = '';
+
+      if (endDate && endDate < new Date()) {
+        message = this.commonUtilService.translateMessage('COURSE_ENDED_ON', dateVal);
+        styleClass = 'card-section-danger';
+      } else {
+        message = this.commonUtilService.translateMessage('COMPLETE_BY', dateVal);
+        styleClass = 'card-section-secondary';
+      }
+      sectionHtml = this.courseSectionHtml(message, styleClass);
+    }
+    return sectionHtml;
+  }
+
+  getCourseSectionHTMLData(content) {
+    let sectionHtml = '';
+    if (content.batches && content.batches.length === 1 && content.batches[0].enrollmentEndDate) {
+      const endDate = new Date(content.batches[0].enrollmentEndDate);
+      const dateVal = this.commonUtilService.getFormattedDate(content.batches[0].enrollmentEndDate);
+      let message = '';
+      let styleClass = '';
+
+      if (endDate && endDate < new Date()) {
+        message = this.commonUtilService.translateMessage('COURSE_ENDED', dateVal);
+        styleClass = 'card-section-danger';
+      } else {
+        message = this.commonUtilService.translateMessage('LAST_DATE_TO_JOIN', dateVal);
+        styleClass = 'card-section-secondary';
+      }
+      sectionHtml = this.courseSectionHtml(message, styleClass);
+    }
+    return sectionHtml;
+  }
+
+  private courseSectionHtml(message, styleClass) {
+    return `<div class="${styleClass}">
+      <img src="assets/imgs/ic_info.svg">
+      <span> ${message}</span>
+    </div>`;
+  }
 }

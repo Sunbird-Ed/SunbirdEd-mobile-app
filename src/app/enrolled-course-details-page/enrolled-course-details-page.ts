@@ -295,7 +295,6 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
       });
 
     this.events.subscribe(EventTopics.ENROL_COURSE_SUCCESS, async (res) => {
-      // console.log('ENROL_COURSE_SUCCESS enrolpage', res);
       this.updatedCourseCardData = await this.courseService
         .getEnrolledCourses({ userId: this.appGlobalService.getUserId(), returnFreshCourses: true })
         .toPromise()
@@ -476,7 +475,6 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
       cssClass: 'leave-training-popup',
       showBackdrop: false,
       componentProps: {
-        // overFlowMenuData,
         content: this.course,
         batchDetails: this.batchDetails,
         pageName: PageId.COURSE_DETAIL
@@ -582,7 +580,25 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
     this.contentService.getContentDetails(option).toPromise()
       .then((data: Content) => {
         this.zone.run(() => {
-          this.extractApiResponse(data);
+          if (!data.isAvailableLocally) {
+            this.contentService.getContentHeirarchy(option).toPromise()
+            .then((content: Content) => {
+              /* setting child content here */
+              this.enrolledCourseMimeType = content.mimeType;
+              this.childrenData = content.children;
+              this.toggleGroup(0, this.childrenData[0]);
+              this.startData = content.children;
+              this.childContentsData = content;
+              this.getContentState(true);
+              this.extractApiResponse(data);
+            })
+            .catch(error => {
+              console.log('Error Fetching Childrens', error);
+              this.extractApiResponse(data);
+            });
+          } else {
+            this.extractApiResponse(data);
+          }
         });
       })
       .catch((error: any) => {
@@ -600,9 +616,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
    * If locally available then make childContents api call else make import content api call
    */
   async extractApiResponse(data: Content) {
-    // const loader = await this.commonUtilService.getLoader();
     if (data.contentData) {
-      // await loader.present();
       this.course = data.contentData;
       this.licenseDetails = data.contentData.licenseDetails || this.licenseDetails;
       this.content = data;
@@ -645,15 +659,14 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
         this.ratingComment = contentFeedback[0].comments;
       }
       this.getCourseProgress();
-      // await loader.dismiss();
     } else {
       this.commonUtilService.showToast('ERROR_CONTENT_NOT_AVAILABLE');
       this.location.back();
     }
 
-    if (data.isAvailableLocally) {
-      this.getBatchDetails();
-    }
+    /* getting batch details for the course 
+       Check Point: should be called on the condition of already enrolled courses only */
+    this.getBatchDetails();
     this.course.isAvailableLocally = data.isAvailableLocally;
 
 
@@ -1376,6 +1389,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
           // Get child content
           if (event.payload && event.type === ContentEventType.IMPORT_COMPLETED) {
             this.showLoading = false;
+            this.isDownloadComplete = true;
             this.headerService.showHeaderWithBackButton();
             const contentImportCompleted = event as ContentImportCompleted;
             if (this.queuedIdentifiers.length && this.isDownloadStarted) {

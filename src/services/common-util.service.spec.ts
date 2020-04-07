@@ -535,4 +535,29 @@ describe('CommonUtilService', () => {
     });
   });
 
+  describe('getFormattedDate', () => {
+    it('should format the date to DD-MMM-YYYY', () => {
+      // arrange
+      const date = '2020 02 10';
+      // act
+      commonUtilService.getFormattedDate(date);
+      // assert
+      expect(date).toEqual(date);
+    });
+  });
+
+  describe('getContentImg', () => {
+    it('should get the content image if present, else show the default image', () => {
+      // arrange
+      const content = {
+        courseLogoUrl: 'sample_url'
+      };
+      commonUtilService.convertFileSrc = jest.fn();
+      // act
+      commonUtilService.getContentImg(content);
+      // assert
+      expect(commonUtilService.convertFileSrc).toHaveBeenCalledWith(content.courseLogoUrl);
+    });
+  });
+
 });

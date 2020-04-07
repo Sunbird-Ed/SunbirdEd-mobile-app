@@ -247,7 +247,7 @@ export class CollectionChildComponent implements OnInit {
         componentProps: {
           sbPopoverHeading: this.commonUtilService.translateMessage('CONTENT_COMMING_SOON'),
           sbPopoverMainTitle: message ? this.commonUtilService.translateMessage(message) :
-            this.commonUtilService.translateMessage('CONTENT_IS_BEEING_ADDED', childData.contentData.name),
+            this.commonUtilService.translateMessage('CONTENT_IS_BEEING_ADDED', {content_name : childData.contentData.name }),
           actionsButtons: [
             {
               btntext: this.commonUtilService.translateMessage('OKAY'),

@@ -11,7 +11,8 @@ import {
     SharedPreferences,
     StorageService,
     TelemetryObject,
-    Content
+    Content,
+    GetAllProfileRequest
 } from 'sunbird-sdk';
 import { ContentServiceImpl } from 'sunbird-sdk/content/impl/content-service-impl';
 import { EventsBusServiceImpl } from 'sunbird-sdk/events-bus/impl/events-bus-service-impl';
@@ -39,7 +40,7 @@ import { RatingHandler } from '@app/services/rating/rating-handler';
 import { ContentPlayerHandler } from '@app/services/content/player/content-player-handler';
 import { ChildContentHandler } from '@app/services/content/child-content-handler';
 import { ContentDeleteHandler } from '@app/services/content/content-delete-handler';
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
 import { mockContentData } from '@app/app/content-details/content-details.page.spec.data';
 import { LoginHandlerService } from '@app/services/login-handler.service';
 import {
@@ -54,6 +55,7 @@ import { ContentUtil } from '@app/util/content-util';
 import { EventTopics, ContentType, ShareItemType } from '../app.constant';
 import { FileOpener } from '@ionic-native/file-opener/ngx';
 import { FileTransfer } from '@ionic-native/file-transfer/ngx';
+import { truncate } from 'fs';
 
 describe('ContentDetailsPage', () => {
     let contentDetailsPage: ContentDetailsPage;
@@ -110,7 +112,8 @@ describe('ContentDetailsPage', () => {
         getLastPlayedContentId: jest.fn()
     };
     const mockChildContentHandler: Partial<ChildContentHandler> = {};
-    const mockContentDeleteHandler: Partial<ContentDeleteHandler> = {};
+    const contentDeleteCompleted = { subscribe: jest.fn((fn) => fn({ closed: false })) };
+    const mockContentDeleteHandler: Partial<ContentDeleteHandler> = { contentDeleteCompleted$: of(contentDeleteCompleted) };
     const mockLoginHandlerService: Partial<LoginHandlerService> = {};
     const mockToastController: Partial<ToastController> = {};
     const mockFileOpener: Partial<FileOpener> = {};
@@ -608,6 +611,7 @@ describe('ContentDetailsPage', () => {
         describe('shouldn create share popover', () => {
             it('shareItemType should be root-content', (done) => {
                 // arrange
+                contentDetailsPage.content = { identifier: 'do_1234', contentData: { size: undefined } };
                 mockCommonUtilService.translateMessage = jest.fn(() => '');
                 mockPopoverController.create = jest.fn(() => (Promise.resolve({
                     present: jest.fn(() => Promise.resolve({})),
@@ -627,6 +631,7 @@ describe('ContentDetailsPage', () => {
             });
             it('shareItemType should be leaf-content', (done) => {
                 // arrange
+                contentDetailsPage.content = { identifier: 'do_1234', contentData: { size: '10.00KB' } };
                 contentDetailsPage.isChildContent = true;
                 mockCommonUtilService.translateMessage = jest.fn(() => '');
                 mockPopoverController.create = jest.fn(() => (Promise.resolve({
@@ -679,7 +684,7 @@ describe('ContentDetailsPage', () => {
     });
 
     describe('ionViewWillLeave()', () => {
-        it('should', () => {
+        it('should unsubscribe', () => {
             // arrange
             const unsubscribe = jest.fn();
             contentDetailsPage.eventSubscription = {
@@ -696,6 +701,541 @@ describe('ContentDetailsPage', () => {
             // assert
             expect(unsubscribe).toBeCalledTimes(3);
         });
+
+        it('should unsubscribe for else part', () => {
+            // arrange
+            contentDetailsPage.eventSubscription = undefined;
+            contentDetailsPage.contentDeleteObservable = undefined;
+            contentDetailsPage.backButtonFunc = undefined;
+            // act
+            contentDetailsPage.ionViewWillLeave();
+            // assert
+        });
+    });
+
+    describe('handleNavBackButton', () => {
+        it('should handle nav backbutton by invoked handleNavBackButton', () => {
+            // arrange
+            mockTelemetryGeneratorService.generateBackClickedTelemetry = jest.fn();
+            jest.spyOn(contentDetailsPage, 'generateEndEvent').mockReturnValue();
+            jest.spyOn(contentDetailsPage, 'popToPreviousPage').mockReturnValue();
+            // act
+            contentDetailsPage.handleNavBackButton();
+            // assert
+            expect(mockTelemetryGeneratorService.generateBackClickedTelemetry).toHaveBeenCalledWith(
+                PageId.CONTENT_DETAIL,
+                Environment.HOME,
+                true,
+                'do_212911645382959104165',
+                undefined,
+                { l1: 'do_123', l2: 'do_123', l3: 'do_1' },
+                { id: 'do_12345', type: '', version: '1' }
+            );
+        });
+
+        it('should generate shouldGenerateEndTelemetry by invoked handleNavBackButton', () => {
+            // arrange
+            mockTelemetryGeneratorService.generateBackClickedTelemetry = jest.fn();
+            jest.spyOn(contentDetailsPage, 'generateEndEvent').mockReturnValue();
+            contentDetailsPage.shouldGenerateEndTelemetry = true;
+            jest.spyOn(contentDetailsPage, 'popToPreviousPage').mockReturnValue();
+            mockTelemetryGeneratorService.generateQRSessionEndEvent = jest.fn();
+            // act
+            contentDetailsPage.handleNavBackButton();
+            // assert
+            expect(mockTelemetryGeneratorService.generateBackClickedTelemetry).toHaveBeenCalledWith(
+                PageId.CONTENT_DETAIL,
+                Environment.HOME,
+                true,
+                'do_212911645382959104165',
+                undefined,
+                { l1: 'do_123', l2: 'do_123', l3: 'do_1' },
+                { id: 'do_12345', type: '', version: '1' }
+            );
+        });
+    });
+
+    describe('handleDeviceBackButton', () => {
+        it('should handle device back button', () => {
+            const subscribeWithPriorityData = jest.fn((_, fn) => fn());
+            mockPlatform.backButton = {
+                subscribeWithPriority: subscribeWithPriorityData,
+            } as any;
+            mockTelemetryGeneratorService.generateBackClickedTelemetry = jest.fn();
+            contentDetailsPage.handleDeviceBackButton();
+            expect(mockTelemetryGeneratorService.generateBackClickedTelemetry).toHaveBeenCalledWith(
+                PageId.CONTENT_DETAIL,
+                Environment.HOME,
+                false,
+                'do_212911645382959104165',
+                undefined,
+                { l1: 'do_123', l2: 'do_123', l3: 'do_1' },
+                { id: 'do_12345', type: '', version: '1' }
+            );
+        });
+
+        it('should handle device back button', () => {
+            const subscribeWithPriorityData = jest.fn((_, fn) => fn());
+            mockPlatform.backButton = {
+                subscribeWithPriority: subscribeWithPriorityData,
+            } as any;
+            contentDetailsPage.shouldGenerateEndTelemetry = contentDetailsPage.shouldGenerateEndTelemetry ? false : true;
+            mockTelemetryGeneratorService.generateBackClickedTelemetry = jest.fn();
+            contentDetailsPage.handleDeviceBackButton();
+            expect(mockTelemetryGeneratorService.generateBackClickedTelemetry).toHaveBeenCalledWith(
+                PageId.CONTENT_DETAIL,
+                Environment.HOME,
+                false,
+                'do_212911645382959104165',
+                undefined,
+                { l1: 'do_123', l2: 'do_123', l3: 'do_1' },
+                { id: 'do_12345', type: '', version: '1' }
+            );
+        });
+    });
+
+    it('should subscribe play content', () => {
+        mockEvents.subscribe = jest.fn((_, fn) => {
+            fn({ selectedUser: 'user-1' });
+        });
+        mockAppGlobalService.setSelectedUser = jest.fn();
+        const presentf = jest.fn(() => Promise.resolve());
+        mockPopoverController.create = jest.fn(() => Promise.resolve({
+            present: presentf
+        }) as any);
+        contentDetailsPage.subscribePlayEvent();
+        expect(mockAppGlobalService.setSelectedUser).toHaveBeenCalledWith('user-1');
+    });
+
+    describe('calculateAvailableUserCount', () => {
+        it('should be calaulate all available users', () => {
+            // arrange
+            mockProfileService.getAllProfiles = jest.fn();
+            // act
+            // assert
+        });
+    });
+
+    describe('extractApiResponse', () => {
+        it('should be', () => {
+            // arrange
+            const request: Content = {
+                contentData: {
+                    licenseDetails: {
+                        description: 'descript',
+                        name: 'sample-name',
+                        url: 'sample-url'
+                    },
+                    appIcon: 'sample-app-icon',
+                    streamingUrl: 'streamingUrl'
+                },
+                mimeType: 'application/vnd.ekstep.h5p',
+                contentMarker: [{
+                    extraInfoMap: {hierarchyInfo: [{id: 'do-123'}]}
+                }],
+                isAvailableLocally: true,
+                contentAccess: 'content-access',
+                isUpdateAvailable: true
+            };
+            contentDetailsPage.isResumedCourse = true;
+            contentDetailsPage.resumedCourseCardData = {
+                contentId: 'sample-content-id',
+                identifier: 'sample-id'
+            };
+            mockChildContentHandler.setChildContents = jest.fn();
+            jest.spyOn(ContentUtil, 'getAppIcon').mockReturnValue('sample-app-icon');
+            mockCommonUtilService.convertFileSrc = jest.fn();
+            jest.spyOn(contentDetailsPage, 'generateTelemetry').mockReturnValue();
+            mockContentPlayerHandler.isContentPlayerLaunched = jest.fn(() => true);
+            contentDetailsPage.cardData = {
+                hierarchyInfo: truncate
+            };
+            if (contentDetailsPage.isChildContent) {
+                contentDetailsPage.isChildContent = false;
+            }
+            // act
+            contentDetailsPage.extractApiResponse(request);
+            // assert
+            expect(contentDetailsPage.isResumedCourse).toBeTruthy();
+            expect(mockChildContentHandler.setChildContents).toHaveBeenCalledWith(
+                contentDetailsPage.resumedCourseCardData.contentId, 0, undefined);
+            expect(mockCommonUtilService.convertFileSrc).toHaveBeenCalledWith('sample-app-icon');
+            expect(mockContentPlayerHandler.isContentPlayerLaunched).toHaveBeenCalled();
+        })
+    })
+
+    describe('setContentDetails', () => {
+        it('should return content data by invoked setContentDetails', (done) => {
+            // arrange
+            const identifier = 'do_123', refreshContentDetails = true, showRating = false;
+            const dismissFn = jest.fn(() => Promise.resolve());
+            const presentFn = jest.fn(() => Promise.resolve());
+            mockCommonUtilService.getLoader = jest.fn(() => ({
+                present: presentFn,
+                dismiss: dismissFn,
+            }));
+            mockContentService.getContentDetails = jest.fn(() => of({ contentData: { size: '12KB', status: 'Retired' } }));
+            mockCommonUtilService.showToast = jest.fn();
+            mockLocation.back = jest.fn();
+            jest.spyOn(contentDetailsPage, 'extractApiResponse').mockReturnValue();
+            jest.spyOn(contentDetailsPage, 'showRetiredContentPopup').mockImplementation(() => {
+                return Promise.resolve();
+            });
+            // act
+            contentDetailsPage.setContentDetails(identifier, refreshContentDetails, showRating);
+            // assert
+            setTimeout(() => {
+                expect(presentFn).toHaveBeenCalled();
+                expect(mockContentService.getContentDetails).toHaveBeenCalled();
+                expect(dismissFn).toHaveBeenCalled();
+                done();
+            }, 0);
+        });
+
+        it('should return content data by invoked setContentDetails if size and status are null', (done) => {
+            // arrange
+            const identifier = 'do_123', refreshContentDetails = true, showRating = false;
+            const dismissFn = jest.fn(() => Promise.resolve());
+            const presentFn = jest.fn(() => Promise.resolve());
+            mockCommonUtilService.getLoader = jest.fn(() => ({
+                present: presentFn,
+                dismiss: dismissFn,
+            }));
+            mockContentService.getContentDetails = jest.fn(() => of({ contentData: {} }));
+            mockCommonUtilService.showToast = jest.fn();
+            mockLocation.back = jest.fn();
+            jest.spyOn(contentDetailsPage, 'extractApiResponse').mockReturnValue();
+            jest.spyOn(contentDetailsPage, 'showRetiredContentPopup').mockImplementation(() => {
+                return Promise.resolve();
+            });
+            // act
+            contentDetailsPage.setContentDetails(identifier, refreshContentDetails, showRating);
+            // assert
+            setTimeout(() => {
+                expect(presentFn).toHaveBeenCalled();
+                expect(mockContentService.getContentDetails).toHaveBeenCalled();
+                expect(dismissFn).toHaveBeenCalled();
+                done();
+            }, 0);
+        });
+
+        it('should return content data by invoked setContentDetails for empty content', (done) => {
+            // arrange
+            const identifier = 'do_123', refreshContentDetails = true, showRating = false;
+            const dismissFn = jest.fn(() => Promise.resolve());
+            const presentFn = jest.fn(() => Promise.resolve());
+            mockCommonUtilService.getLoader = jest.fn(() => ({
+                present: presentFn,
+                dismiss: dismissFn,
+            }));
+            mockContentService.getContentDetails = jest.fn(() => of(undefined));
+            mockCommonUtilService.showToast = jest.fn();
+            mockLocation.back = jest.fn();
+            jest.spyOn(contentDetailsPage, 'extractApiResponse').mockReturnValue();
+            jest.spyOn(contentDetailsPage, 'showRetiredContentPopup').mockImplementation(() => {
+                return Promise.resolve();
+            });
+            // act
+            contentDetailsPage.setContentDetails(identifier, refreshContentDetails, showRating);
+            // assert
+            setTimeout(() => {
+                expect(presentFn).toHaveBeenCalled();
+                expect(mockContentService.getContentDetails).toHaveBeenCalled();
+                expect(dismissFn).toHaveBeenCalled();
+                done();
+            }, 0);
+        });
+
+        it('should return content data by invoked setContentDetails for showRating', (done) => {
+            // arrange
+            const identifier = 'do_123', refreshContentDetails = true, showRating = true;
+            mockContentService.getContentDetails = jest.fn(() => of({ contentData: { size: '12KB', status: 'Retired' } }));
+            mockCommonUtilService.showToast = jest.fn();
+            mockLocation.back = jest.fn();
+            jest.spyOn(contentDetailsPage, 'extractApiResponse').mockReturnValue();
+            jest.spyOn(contentDetailsPage, 'showRetiredContentPopup').mockImplementation(() => {
+                return Promise.resolve();
+            });
+            mockContentPlayerHandler.setContentPlayerLaunchStatus = jest.fn();
+            mockRatingHandler.showRatingPopup = jest.fn(() => Promise.resolve({}));
+            // act
+            contentDetailsPage.setContentDetails(identifier, refreshContentDetails, showRating);
+            // assert
+            setTimeout(() => {
+                expect(mockContentService.getContentDetails).toHaveBeenCalled();
+                expect(mockContentPlayerHandler.setContentPlayerLaunchStatus).toHaveBeenCalled();
+                expect(mockRatingHandler.showRatingPopup).toHaveBeenCalled();
+                done();
+            }, 0);
+        });
+
+        it('should return content data by invoked setContentDetails for catch part for ERROR_CONTENT_NOT_AVAILABLE', (done) => {
+            // arrange
+            const identifier = 'do_123', refreshContentDetails = true, showRating = false;
+            contentDetailsPage.content = { identifier: 'd0_123' };
+            mockContentService.getContentDetails = jest.fn(() => throwError('error'));
+            mockCommonUtilService.showToast = jest.fn();
+            const dismissFn = jest.fn(() => Promise.resolve());
+            const presentFn = jest.fn(() => Promise.resolve());
+            mockCommonUtilService.getLoader = jest.fn(() => ({
+                present: presentFn,
+                dismiss: dismissFn,
+            }));
+            contentDetailsPage.isDownloadStarted = false;
+            mockLocation.back = jest.fn();
+            // act
+            contentDetailsPage.setContentDetails(identifier, refreshContentDetails, showRating);
+            // assert
+            setTimeout(() => {
+                expect(mockContentService.getContentDetails).toHaveBeenCalled();
+                expect(presentFn).toHaveBeenCalled();
+                expect(dismissFn).toHaveBeenCalled();
+                expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('ERROR_CONTENT_NOT_AVAILABLE');
+                expect(mockLocation.back).toHaveBeenCalled();
+                done();
+            }, 0);
+        });
+
+        it('should return content data by invoked setContentDetails for catch part for CONNECTION_ERROR', (done) => {
+            // arrange
+            const identifier = 'do_123', refreshContentDetails = true, showRating = false;
+            contentDetailsPage.content = { identifier: 'd0_123' };
+            mockContentService.getContentDetails = jest.fn(() => throwError({ CONNECTION_ERROR: 'CONNECTION_ERROR' }));
+            mockCommonUtilService.showToast = jest.fn();
+            const dismissFn = jest.fn(() => Promise.resolve());
+            const presentFn = jest.fn(() => Promise.resolve());
+            mockCommonUtilService.getLoader = jest.fn(() => ({
+                present: presentFn,
+                dismiss: dismissFn,
+            }));
+            contentDetailsPage.isDownloadStarted = true;
+            mockLocation.back = jest.fn();
+            // act
+            contentDetailsPage.setContentDetails(identifier, refreshContentDetails, showRating);
+            // assert
+            setTimeout(() => {
+                expect(mockContentService.getContentDetails).toHaveBeenCalled();
+                expect(presentFn).toHaveBeenCalled();
+                expect(dismissFn).toHaveBeenCalled();
+                expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('ERROR_NO_INTERNET_MESSAGE');
+                expect(mockLocation.back).toHaveBeenCalled();
+                done();
+            }, 0);
+        });
+
+        it('should return content data by invoked setContentDetails for catch part for SERVER_ERROR', (done) => {
+            // arrange
+            const identifier = 'do_123', refreshContentDetails = true, showRating = false;
+            contentDetailsPage.content = { identifier: 'd0_123' };
+            mockContentService.getContentDetails = jest.fn(() => throwError({ SERVER_ERROR: 'CONNECTION_ERROR' }));
+            mockCommonUtilService.showToast = jest.fn();
+            const dismissFn = jest.fn(() => Promise.resolve());
+            const presentFn = jest.fn(() => Promise.resolve());
+            mockCommonUtilService.getLoader = jest.fn(() => ({
+                present: presentFn,
+                dismiss: dismissFn,
+            }));
+            contentDetailsPage.isDownloadStarted = true;
+            mockLocation.back = jest.fn();
+            // act
+            contentDetailsPage.setContentDetails(identifier, refreshContentDetails, showRating);
+            // assert
+            setTimeout(() => {
+                expect(mockContentService.getContentDetails).toHaveBeenCalled();
+                expect(presentFn).toHaveBeenCalled();
+                expect(dismissFn).toHaveBeenCalled();
+                expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('ERROR_FETCHING_DATA');
+                expect(mockLocation.back).toHaveBeenCalled();
+                done();
+            }, 0);
+        });
+    });
+
+    describe('showDeletePopup', () => {
+        it('should delete a content if content size is not available', () => {
+            // arrange
+            contentDetailsPage.content = { contentData: { size: undefined } };
+            mockContentDeleteHandler.showContentDeletePopup = jest.fn();
+            // act
+            contentDetailsPage.showDeletePopup();
+            // assert
+            expect(mockContentDeleteHandler.showContentDeletePopup).toHaveBeenCalled();
+        });
+    });
+
+    it('should delete a content if content size available', () => {
+        // arrange
+        contentDetailsPage.content = { contentData: { size: '10KB' } };
+        mockContentDeleteHandler.showContentDeletePopup = jest.fn();
+        // act
+        contentDetailsPage.showDeletePopup();
+        // assert
+        expect(mockContentDeleteHandler.showContentDeletePopup).toHaveBeenCalled();
+    });
+
+    describe('openConfirmPopUp', () => {
+        it('should open a content download popup for dismiss data', (done) => {
+            // arrange
+            contentDetailsPage.limitedShareContentFlag = false;
+            mockCommonUtilService.networkInfo = {
+                isNetworkAvailable: true
+            };
+            contentDetailsPage.content = { contentData: { name: 'matrix', size: 101100 } };
+            mockFileSizePipe.transform = jest.fn(() => '10KB');
+            const presentFN = jest.fn(() => Promise.resolve({}));
+            const onDismissFN = jest.fn(() => Promise.resolve({ data: { canDelete: true } }));
+            mockPopoverController.create = jest.fn(() => (Promise.resolve({
+                present: presentFN,
+                onDidDismiss: onDismissFN
+            } as any)));
+            jest.spyOn(contentDetailsPage, 'downloadContent').mockReturnValue();
+            // act
+            contentDetailsPage.openConfirmPopUp();
+            // assert
+            setTimeout(() => {
+                expect(mockCommonUtilService.networkInfo.isNetworkAvailable).toBeTruthy();
+                expect(mockFileSizePipe.transform).toHaveBeenLastCalledWith(101100, 2);
+                expect(mockPopoverController.create).toHaveBeenCalledTimes(1);
+                expect(presentFN).toHaveBeenCalled();
+                expect(onDismissFN).toHaveBeenCalled();
+                done();
+            }, 0);
+        });
+
+        it('should open a content download popup for dismiss data is undefined', (done) => {
+            // arrange
+            contentDetailsPage.limitedShareContentFlag = false;
+            mockCommonUtilService.networkInfo = {
+                isNetworkAvailable: true
+            };
+            contentDetailsPage.content = { contentData: { name: 'matrix', size: 101100 } };
+            mockFileSizePipe.transform = jest.fn(() => '10KB');
+            const presentFN = jest.fn(() => Promise.resolve({}));
+            const onDismissFN = jest.fn(() => Promise.resolve({ undefined }));
+            mockPopoverController.create = jest.fn(() => (Promise.resolve({
+                present: presentFN,
+                onDidDismiss: onDismissFN
+            } as any)));
+            jest.spyOn(contentDetailsPage, 'downloadContent').mockReturnValue();
+            // act
+            contentDetailsPage.openConfirmPopUp();
+            // assert
+            setTimeout(() => {
+                expect(mockCommonUtilService.networkInfo.isNetworkAvailable).toBeTruthy();
+                expect(mockFileSizePipe.transform).toHaveBeenLastCalledWith(101100, 2);
+                expect(mockPopoverController.create).toHaveBeenCalledTimes(1);
+                expect(presentFN).toHaveBeenCalled();
+                expect(onDismissFN).toHaveBeenCalled();
+                done();
+            }, 0);
+        });
+
+        it('should not open a content download popup for offline ', (done) => {
+            // arrange
+            contentDetailsPage.limitedShareContentFlag = false;
+            mockCommonUtilService.networkInfo = {
+                isNetworkAvailable: false
+            };
+            contentDetailsPage.content = { contentData: { name: 'matrix', size: 101100 } };
+            // act
+            contentDetailsPage.openConfirmPopUp();
+            // assert
+            setTimeout(() => {
+                expect(mockCommonUtilService.networkInfo.isNetworkAvailable).toBeFalsy();
+                done();
+            }, 0);
+        });
+
+        it('should open a content download popup for download not allow ', (done) => {
+            // arrange
+            contentDetailsPage.limitedShareContentFlag = true;
+            mockCommonUtilService.showToast = jest.fn();
+            // act
+            contentDetailsPage.openConfirmPopUp();
+            // assert
+            setTimeout(() => {
+                expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('DOWNLOAD_NOT_ALLOWED_FOR_QUIZ');
+                done();
+            }, 0);
+        });
+    });
+
+    describe('calculateAvailableUserCount', () => {
+        it('should calculate loggedin user', (done) => {
+            // arrange
+            const profileRequest: GetAllProfileRequest = {
+                local: true,
+                server: false
+            };
+            mockProfileService.getAllProfiles = jest.fn(() => of([{
+                uid: 'SAMPLE_UID',
+                handle: 'SAMPLE_HANDLE',
+                profileType: 'student',
+                source: 'local'
+            }]));
+            mockAppGlobalService.isUserLoggedIn = jest.fn(() => true);
+            // act
+            contentDetailsPage.calculateAvailableUserCount();
+            // assert
+            setTimeout(() => {
+                expect(mockProfileService.getAllProfiles).toHaveBeenCalledWith(profileRequest);
+                expect(mockAppGlobalService.isUserLoggedIn).toHaveBeenCalled();
+                expect(contentDetailsPage.userCount).toBe(2);
+                done();
+            }, 0);
+        });
+
+        it('should not increment users count for no active user', (done) => {
+            // arrange
+            const profileRequest: GetAllProfileRequest = {
+                local: true,
+                server: false
+            };
+            mockProfileService.getAllProfiles = jest.fn(() => of([]));
+            mockAppGlobalService.isUserLoggedIn = jest.fn(() => false);
+            // act
+            contentDetailsPage.calculateAvailableUserCount();
+            // assert
+            setTimeout(() => {
+                expect(mockProfileService.getAllProfiles).toHaveBeenCalledWith(profileRequest);
+                expect(mockAppGlobalService.isUserLoggedIn).toHaveBeenCalled();
+                expect(contentDetailsPage.userCount).toBe(0);
+                done();
+            }, 0);
+        });
+
+        it('should not calculate loggedin user for catch part', (done) => {
+            // arrange
+            const profileRequest: GetAllProfileRequest = {
+                local: true,
+                server: false
+            };
+            mockProfileService.getAllProfiles = jest.fn(() => throwError({ error: 'server-error' }));
+            // act
+            contentDetailsPage.calculateAvailableUserCount();
+            // assert
+            setTimeout(() => {
+                expect(mockProfileService.getAllProfiles).toHaveBeenCalledWith(profileRequest);
+                expect(contentDetailsPage.userCount).toBe(0);
+                done();
+            }, 0);
+        });
+    });
+
+    it('should return rateing for content', () => {
+        // arrange
+        const popUpType = 'rating';
+        mockRatingHandler.showRatingPopup = jest.fn(() => Promise.resolve({}));
+        // act
+        contentDetailsPage.rateContent(popUpType);
+        // assert
+        expect(mockRatingHandler.showRatingPopup).toHaveBeenCalledWith(
+            false,
+            { contentData: { name: 'matrix', size: 101100 } },
+            'rating',
+            undefined,
+            { l1: 'do_123', l2: 'do_123', l3: 'do_1'}
+        );
     });
 
 });

@@ -112,7 +112,8 @@ export class TextBookTocPage implements OnInit, OnDestroy {
                 component: SbGenericPopoverComponent,
                 componentProps: {
                     sbPopoverHeading: this.commonUtilService.translateMessage('CONTENT_COMMING_SOON'),
-                    sbPopoverMainTitle: this.commonUtilService.translateMessage('CONTENT_IS_BEEING_ADDED') + childData.contentData.name,
+                    sbPopoverMainTitle: this.commonUtilService.translateMessage('CONTENT_IS_BEEING_ADDED',
+                        {content_name : childData.contentData.name }),
                     actionsButtons: [
                         {
                             btntext: this.commonUtilService.translateMessage('OKAY'),

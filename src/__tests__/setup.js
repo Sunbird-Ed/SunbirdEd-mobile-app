@@ -17,7 +17,7 @@ global.cordova = {
             switchToSettings: () => { }
         },
         printer: {
-            print: () => {}
+            print: () => { }
         }
     },
     file: {
@@ -25,9 +25,9 @@ global.cordova = {
     },
     InAppBrowser: {
         open: () => ({
-             addEventListener: () => {},
-             close: () => {}
-       })
+            addEventListener: () => { },
+            close: () => { }
+        })
     }
 };
 
@@ -36,7 +36,7 @@ global.supportfile = {
     makeEntryInSunbirdSupportFile: () => { }
 }
 global.document = {
-    getElementById: () => {},
+    getElementById: () => { },
 }
 
 global.FCMPlugin = {
@@ -61,5 +61,12 @@ global.splashscreen = {
 }
 
 global.codePush = {
-    getCurrentPackage: () => { }
+    getCurrentPackage: () => { },
+    sync: () => { }
+}
+
+global.SyncStatus = {
+    DOWNLOADING_PACKAGE: 'DOWNLOADING_PACKAGE',
+    INSTALLING_UPDATE: 'INSTALLING_UPDATE',
+    ERROR: 'ERROR'
 }
