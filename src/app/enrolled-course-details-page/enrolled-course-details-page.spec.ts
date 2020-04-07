@@ -76,7 +76,8 @@ describe('EnrolledCourseDetailsPage', () => {
         generateBackClickedTelemetry: jest.fn(),
         generateCancelDownloadTelemetry: jest.fn(),
         generateEndTelemetry: jest.fn(),
-        generateStartTelemetry: jest.fn()
+        generateStartTelemetry: jest.fn(),
+        generatefastLoadingTelemetry: jest.fn()
     };
 
     const mockCommonUtilService: Partial<CommonUtilService> = {
