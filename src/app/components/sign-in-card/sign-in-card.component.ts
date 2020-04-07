@@ -30,6 +30,7 @@ import {
 } from '@app/services/telemetry-constants';
 import { ContainerService } from '@app/services/container.services';
 import { AppGlobalService } from '@app/services';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-sign-in-card',
@@ -58,7 +59,8 @@ export class SignInCardComponent implements OnInit {
     private formAndFrameworkUtilService: FormAndFrameworkUtilService,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private events: Events,
-    private appGlobalService: AppGlobalService
+    private appGlobalService: AppGlobalService,
+    private router: Router
   ) {
 
     this.appVersion.getAppName()
@@ -118,6 +120,7 @@ export class SignInCardComponent implements OnInit {
         .toPromise()
         .then(async () => {
           await loader.present();
+          console.log("Hello");
           initTabs(that.container, LOGIN_TEACHER_TABS);
           return that.refreshProfileData();
         })
@@ -131,6 +134,14 @@ export class SignInCardComponent implements OnInit {
             await this.appGlobalService.signinOnboardingLoader.present();
           }
           that.ngZone.run(() => {
+            setTimeout(function() {
+              if(that.source === 'courses') {
+                that.router.navigateByUrl("tabs/courses");
+              } else if (that.source === 'profile') {
+                that.router.navigateByUrl("tabs/profile");
+              }
+              
+            },1000);
             that.preferences.putString('SHOW_WELCOME_TOAST', 'true').toPromise().then();
 
             // note: Navigating back to Resourses is though the below event from App-Components.
