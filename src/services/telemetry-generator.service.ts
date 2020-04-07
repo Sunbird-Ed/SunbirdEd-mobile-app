@@ -274,14 +274,14 @@ export class TelemetryGeneratorService {
             corRelationList);
     }
 
-    generateAppLaunchTelemetry(type: string) {
+    generateAppLaunchTelemetry(type: string, source?: string) {
         this.generateInteractTelemetry(
             type,
             '',
             Environment.HOME,
             Environment.HOME,
             undefined,
-            undefined,
+            { source },
             undefined,
             undefined,
             ID.APP_LAUNCH);
