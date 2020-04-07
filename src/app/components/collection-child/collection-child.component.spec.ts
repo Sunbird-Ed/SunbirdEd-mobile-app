@@ -210,7 +210,7 @@ describe('CollectionChildComponent', () => {
           expect(mockPopoverCtrl.create).toHaveBeenCalledWith(expect.objectContaining({
             componentProps: expect.objectContaining({
               sbPopoverHeading: 'CONTENT_COMMING_SOON',
-              sbPopoverMainTitle: 'CONTENT_IS_BEEING_ADDED CONTENT_NAME',
+              sbPopoverMainTitle: 'CONTENT_IS_BEEING_ADDED ' + {content_name: 'content_name'},
               actionsButtons: expect.arrayContaining([
                 expect.objectContaining({
                   btntext: 'OKAY'
