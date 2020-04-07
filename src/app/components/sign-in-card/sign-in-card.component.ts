@@ -135,7 +135,12 @@ export class SignInCardComponent implements OnInit {
           }
           that.ngZone.run(() => {
             setTimeout(function() {
-              that.router.navigateByUrl("tabs/courses");
+              if(that.source === 'courses') {
+                that.router.navigateByUrl("tabs/courses");
+              } else if (that.source === 'profile') {
+                that.router.navigateByUrl("tabs/profile");
+              }
+              
             },1000);
             that.preferences.putString('SHOW_WELCOME_TOAST', 'true').toPromise().then();
 
