@@ -163,7 +163,9 @@ async function saveSystemList(apiKey, apiChannel, baseUrl, apiSystemSettingList,
                         }], rootDir, apiFramework, true)
                         .then(() => {
                             return saveSystemSettingResponse(apiKey, baseUrl, apiSystemSettingId, rootDir, systemSettingsId)
-                        });;
+                        });
+                } else if (fieldName === 'tenantCoursePage') {
+                    await saveSystemSettingResponse(apiKey, baseUrl, apiSystemSettingId, rootDir, systemSettingsId);
                 }
             }
         })
