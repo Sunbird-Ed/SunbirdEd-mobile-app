@@ -113,7 +113,7 @@
   "CONTENT_DERIVED_FROM": "This content is derived from",
   "CONTENT_IMPORTED": "Successfully imported",
   "CONTENT_IMPORTED_FAILED": "Import Failed",
-  "CONTENT_IS_BEEING_ADDED": "Content is being added to {{%s}}",
+  "CONTENT_IS_BEEING_ADDED": "Content is being added to {{content_name}}",
   "CONTENT_IS_BEING_ADDED": "Your state will soon add content for this QR code. It will be available shortly",
   "CONTENT_NOT_AVAILABLE": "Content not available",
   "CONTENT_PLAYER_EXIT_PERMISSION": "Would you like to leave this content?",

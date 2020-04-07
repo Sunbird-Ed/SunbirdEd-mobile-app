@@ -59,7 +59,7 @@ export class ComingSoonMessageService {
           return tenantMessageTranslations[selectedLanguage] || tenantMessage.value;
         }
       }
-      return this.commonUtilService.translateMessage('CONTENT_IS_BEEING_ADDED') + content.contentData.name;
+      return this.commonUtilService.translateMessage('CONTENT_IS_BEEING_ADDED', {content_name : content.contentData.name });
     }
   }
 }
