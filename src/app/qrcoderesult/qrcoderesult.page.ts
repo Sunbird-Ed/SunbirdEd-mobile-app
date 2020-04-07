@@ -283,7 +283,8 @@ export class QrcoderesultPage implements OnDestroy {
       this.goBack();
     } else if (this.isSingleContent && this.appGlobalService.isProfileSettingsCompleted) {
       if (await this.commonUtilService.isDeviceLocationAvailable()) {
-        const navigationExtras: NavigationExtras = { state: { loginMode: 'guest' } };
+        this.navCtrl.pop();
+        const navigationExtras: NavigationExtras = { state: { loginMode: 'guest' }, replaceUrl: true };
         this.router.navigate([`/${RouterLinks.TABS}`], navigationExtras);
       } else {
         const navigationExtras: NavigationExtras = {
