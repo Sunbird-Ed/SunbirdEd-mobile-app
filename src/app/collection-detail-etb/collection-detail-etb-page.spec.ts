@@ -10,7 +10,7 @@ import {
     ComingSoonMessageService, InteractSubtype, Environment, ImpressionType
 } from '../../services';
 import {
-    InteractType, PageId, ID
+    InteractType, PageId, ID, Mode
 } from '../../services/telemetry-constants';
 import { FileSizePipe } from '../../pipes/file-size/file-size';
 import { Router } from '@angular/router';
@@ -30,6 +30,7 @@ import { ContentUtil } from '@app/util/content-util';
 import { EventTopics } from '@app/app/app.constant';
 import { ShareItemType, ContentType } from '../app.constant';
 import { ContentDeleteHandler } from '../../services/content/content-delete-handler'
+import { connect } from 'http2';
 
 describe('collectionDetailEtbPage', () => {
     let collectionDetailEtbPage: CollectionDetailEtbPage;
@@ -98,6 +99,8 @@ describe('collectionDetailEtbPage', () => {
     };
 
     beforeEach(() => {
+        const div = document.createElement('div');
+        document.body.appendChild(div);
         collectionDetailEtbPage = new CollectionDetailEtbPage(
             mockContentService as ContentService,
             mockEventBusService as EventsBusService,
@@ -245,7 +248,7 @@ describe('collectionDetailEtbPage', () => {
             mockzone.run = jest.fn((fn) => fn());
             const mockHeaderEventsSubscription = { unsubscribe: jest.fn() } as Partial<Subscription>;
             mockHeaderService.headerEventEmitted$ = {
-                subscribe: jest.fn(() => mockHeaderEventsSubscription as any)
+                subscribe: jest.fn((fn) => fn(mockHeaderEventsSubscription) as any)
             } as any;
             jest.spyOn(collectionDetailEtbPage, 'handleHeaderEvents').mockImplementation();
             jest.spyOn(mockHeaderService, 'getDefaultPageConfig').mockReturnValue({
@@ -265,6 +268,51 @@ describe('collectionDetailEtbPage', () => {
             mockevents.subscribe = jest.fn((topic, fn) => {
                 if (topic === EventTopics.CONTENT_TO_PLAY) {
                     fn(mockContentData);
+                } else if (EventTopics.DEEPLINK_COLLECTION_PAGE_OPEN) {
+                    fn(mockContentData);
+                }
+            });
+
+            jest.spyOn(collectionDetailEtbPage, 'setContentDetails').mockImplementation();
+            // act
+            collectionDetailEtbPage.ionViewWillEnter();
+            // assert
+            expect(collectionDetailEtbPage.registerDeviceBackButton).toHaveBeenCalled();
+            expect(collectionDetailEtbPage.markContent).toHaveBeenCalled();
+            expect(collectionDetailEtbPage.resetVariables).toHaveBeenCalled();
+            expect(mockHeaderService.updatePageConfig).toHaveBeenCalled();
+            expect(collectionDetailEtbPage.playContent).toHaveBeenCalledWith(mockContentData);
+            expect(collectionDetailEtbPage.subscribeSdkEvent).toHaveBeenCalled();
+        });
+
+        it('should set headerConfig, headerObservable, setContentDetails, and subscribeEvents for else part', () => {
+            // arrange
+            jest.spyOn(collectionDetailEtbPage, 'registerDeviceBackButton').mockImplementation();
+            mockzone.run = jest.fn((fn) => fn());
+            const mockHeaderEventsSubscription = { unsubscribe: jest.fn() } as Partial<Subscription>;
+            mockHeaderService.headerEventEmitted$ = {
+                subscribe: jest.fn((fn) => mockHeaderEventsSubscription as any)
+            } as any;
+            jest.spyOn(collectionDetailEtbPage, 'handleHeaderEvents').mockImplementation();
+            jest.spyOn(mockHeaderService, 'getDefaultPageConfig').mockReturnValue({
+                showHeader: false,
+                showBurgerMenu: false,
+                actionButtons: ['download']
+            } as any);
+            jest.spyOn(collectionDetailEtbPage, 'markContent').mockImplementation();
+            jest.spyOn(collectionDetailEtbPage, 'resetVariables').mockImplementation();
+
+            jest.spyOn(collectionDetailEtbPage, 'playContent').mockImplementation();
+            jest.spyOn(collectionDetailEtbPage, 'subscribeSdkEvent').mockImplementation();
+            mockIonContent.ionScroll.subscribe = jest.fn((fn) => {
+                fn({});
+            });
+
+            mockevents.subscribe = jest.fn((topic, fn) => {
+                if (topic === EventTopics.CONTENT_TO_PLAY) {
+                    fn(mockContentData);
+                } else if (EventTopics.DEEPLINK_COLLECTION_PAGE_OPEN) {
+                    fn({});
                 }
             });
 
@@ -482,15 +530,217 @@ describe('collectionDetailEtbPage', () => {
             setTimeout(() => {
                 expect(mockPopoverController.create).toHaveBeenCalled();
                 expect(mocktelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenCalledWith(ImpressionType.VIEW, '',
-                PageId.DOWNLOAD_ALL_CONFIRMATION_POPUP,
-                Environment.HOME,
-                contentDetailsMcokResponse1.identifier,
-                contentDetailsMcokResponse1.contentData.contentType,
-                contentDetailsMcokResponse1.contentData.pkgVersion,
-                mockObjRollup,
-                mockCorRelationList);
+                    PageId.DOWNLOAD_ALL_CONFIRMATION_POPUP,
+                    Environment.HOME,
+                    contentDetailsMcokResponse1.identifier,
+                    contentDetailsMcokResponse1.contentData.contentType,
+                    contentDetailsMcokResponse1.contentData.pkgVersion,
+                    mockObjRollup,
+                    mockCorRelationList);
                 done();
             }, 0);
+        });
+    });
+
+    it('should open url in browser', () => {
+        mockCommonUtilService.openUrlInBrowser = jest.fn();
+        collectionDetailEtbPage.openBrowser('sample-url');
+        expect(mockCommonUtilService.openUrlInBrowser).toHaveBeenCalledWith('sample-url');
+    });
+
+    describe('licenseDetails', () => {
+        it('should get and set licenseDetails', () => {
+            collectionDetailEtbPage.licenseDetails = true;
+            expect(collectionDetailEtbPage.licenseDetails).toBeTruthy();
+        });
+
+        it('should get and set licenseDetails for else part', () => {
+            collectionDetailEtbPage.licenseDetails = false;
+            expect(collectionDetailEtbPage.licenseDetails).toBeFalsy();
+        });
+    });
+
+    it('should return content marker', () => {
+        // arrange
+        mockappGlobalService.getCurrentUser = jest.fn(() => ({ uid: 'sample-uid' }));
+        mockProfileService.addContentAccess = jest.fn(() => of(true));
+        mockContentService.setContentMarker = jest.fn(() => of(true));
+        // act
+        collectionDetailEtbPage.markContent();
+        // assert
+        expect(mockappGlobalService.getCurrentUser).toHaveBeenCalled();
+        expect(mockProfileService.addContentAccess).toHaveBeenCalled();
+        expect(mockContentService.setContentMarker).toHaveBeenCalled();
+    });
+
+    describe('toggleGroup', () => {
+        const mockTelemetryObject = new TelemetryObject('do_12345', ContentType.TEXTBOOK, '1');
+        it('should scroll the page', () => {
+            // arrange
+            const group = {}, content = {}, openCarousel = false;
+            jest.spyOn(collectionDetailEtbPage, 'isGroupShown').mockReturnValue(true);
+            mocktelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            collectionDetailEtbPage.telemetryObject = mockTelemetryObject;
+            const values = new Map();
+            values['isCollapsed'] = false;
+            // act
+            collectionDetailEtbPage.toggleGroup(group, content, openCarousel);
+            // assert
+            expect(mocktelemetryGeneratorService.generateInteractTelemetry).toHaveBeenLastCalledWith(
+                InteractType.TOUCH,
+                InteractSubtype.UNIT_CLICKED,
+                Environment.HOME,
+                PageId.COLLECTION_DETAIL,
+                mockTelemetryObject,
+                values,
+                {},
+                undefined
+            );
+        });
+
+        it('should scroll the page', (done) => {
+            // arrange
+            const group = {}, content = { identifier: 'identifier' }, openCarousel = true;
+            jest.spyOn(collectionDetailEtbPage, 'isGroupShown').mockReturnValue(true);
+            mocktelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            collectionDetailEtbPage.telemetryObject = mockTelemetryObject;
+            const values = new Map();
+            values['isCollapsed'] = false;
+            // act
+            collectionDetailEtbPage.toggleGroup(group, content, openCarousel);
+            // assert
+            setTimeout(() => {
+                // document.body.innerHTML =
+                // '<div>' +
+                // '  <span identifier="identifier" />' +
+                // '  <button id="button" />' +
+                // '</div>';
+                // document.createElement = { identifier: 'd0-123' } as any;
+                done();
+            }, 100);
+
+            expect(mocktelemetryGeneratorService.generateInteractTelemetry).toHaveBeenLastCalledWith(
+                InteractType.TOUCH,
+                InteractSubtype.UNIT_CLICKED,
+                Environment.HOME,
+                PageId.COLLECTION_DETAIL,
+                mockTelemetryObject,
+                values,
+                {},
+                undefined
+            );
+        });
+    });
+
+    it('should return true or false for isGroupShown()', () => {
+        const group = { gid: 'gid-123' };
+        collectionDetailEtbPage.shownGroup = group;
+        collectionDetailEtbPage.isGroupShown(group);
+        expect(collectionDetailEtbPage.shownGroup).toBeTruthy();
+    });
+
+    describe('changeValue', () => {
+        it('should not change value if is selected', () => {
+            // arrange
+            const text = 'sample-text';
+            // act
+            collectionDetailEtbPage.changeValue(text);
+            // assert
+            expect(collectionDetailEtbPage.isSelected).toBeTruthy();
+        });
+
+        it('should change value if is not text', () => {
+            // arrange
+            const text = '';
+            // act
+            collectionDetailEtbPage.changeValue(text);
+            // assert
+            expect(collectionDetailEtbPage.isSelected).toBeFalsy();
+        });
+    });
+
+    describe('handleBackButton', () => {
+        const mockTelemetryObject = new TelemetryObject('do_12345', ContentType.TEXTBOOK, '1');
+        it('should be handle device back button', () => {
+            // arrange
+            collectionDetailEtbPage.objId = 'do_12345';
+            collectionDetailEtbPage.objType = ContentType.TEXTBOOK;
+            collectionDetailEtbPage.objVer = '1';
+            mocktelemetryGeneratorService.generateEndTelemetry = jest.fn();
+            collectionDetailEtbPage.telemetryObject = mockTelemetryObject;
+            collectionDetailEtbPage.shouldGenerateEndTelemetry = true;
+            collectionDetailEtbPage.source = 'collection-detail';
+            collectionDetailEtbPage.cardData = {
+                identifier: 'do-123'
+            };
+            // act
+            collectionDetailEtbPage.handleBackButton();
+            // assert
+            expect(mocktelemetryGeneratorService.generateEndTelemetry).toHaveBeenCalledWith(
+                ContentType.TEXTBOOK,
+                Mode.PLAY,
+                PageId.COLLECTION_DETAIL,
+                Environment.HOME,
+                mockTelemetryObject,
+                {},
+                undefined
+            );
+            expect(mocktelemetryGeneratorService.generateEndTelemetry).toHaveBeenCalledWith(
+                'qr',
+                Mode.PLAY,
+                collectionDetailEtbPage.source,
+                Environment.HOME,
+                {id: 'do-123', type: 'qr', version: ''},
+                undefined,
+                undefined
+            );
+        });
+
+        it('should be handle device back button for undefined pageId', () => {
+            // arrange
+            collectionDetailEtbPage.objId = 'do_12345';
+            collectionDetailEtbPage.objType = undefined;
+            collectionDetailEtbPage.objVer = '1';
+            mocktelemetryGeneratorService.generateEndTelemetry = jest.fn();
+            collectionDetailEtbPage.shouldGenerateEndTelemetry = true;
+            collectionDetailEtbPage.source = undefined;
+            collectionDetailEtbPage.cardData = {
+                identifier: 'do-123'
+            };
+            // act
+            collectionDetailEtbPage.handleBackButton();
+            // assert
+            expect(mocktelemetryGeneratorService.generateEndTelemetry).toHaveBeenCalledWith(
+                ContentType.TEXTBOOK,
+                Mode.PLAY,
+                PageId.COLLECTION_DETAIL,
+                Environment.HOME,
+                {id: 'do_12345', type: undefined, version: '1'},
+                {},
+                undefined
+            );
+        });
+
+        it('should be handle device back button if shouldGenerateEndTelemetry is false', () => {
+            // arrange
+            collectionDetailEtbPage.objId = 'do_12345';
+            collectionDetailEtbPage.objType = ContentType.TEXTBOOK;
+            collectionDetailEtbPage.objVer = '1';
+            mocktelemetryGeneratorService.generateEndTelemetry = jest.fn();
+            collectionDetailEtbPage.telemetryObject = mockTelemetryObject;
+            collectionDetailEtbPage.shouldGenerateEndTelemetry = false;
+            // act
+            collectionDetailEtbPage.handleBackButton();
+            // assert
+            expect(mocktelemetryGeneratorService.generateEndTelemetry).toHaveBeenCalledWith(
+                ContentType.TEXTBOOK,
+                Mode.PLAY,
+                PageId.COLLECTION_DETAIL,
+                Environment.HOME,
+                mockTelemetryObject,
+                {},
+                undefined
+            );
         });
     });
 });

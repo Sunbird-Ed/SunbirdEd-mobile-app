@@ -90,7 +90,8 @@ describe('QrcoderesultPage', () => {
     const mockFile: Partial<File> = {};
 
     const mockNavCtrl: Partial<NavController> = {
-        navigateForward: jest.fn(() => Promise.resolve(true))
+        navigateForward: jest.fn(() => Promise.resolve(true)),
+        pop: jest.fn(() => Promise.resolve())
     };
     const mockRatingHandler: Partial<RatingHandler> = {};
     const mockContentPlayerHandler: Partial<ContentPlayerHandler> = {};

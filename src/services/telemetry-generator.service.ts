@@ -353,4 +353,18 @@ export class TelemetryGeneratorService {
             undefined,
             cData);
     }
+
+    /* Fast loading telemetry generator */
+    generatefastLoadingTelemetry(interactSubtype, pageId, telemetryObject?, objRollup?, value?, corRelationList?) {
+        this.generateInteractTelemetry(
+            InteractType.OTHER,
+            interactSubtype,
+            Environment.HOME,
+            pageId,
+            telemetryObject,
+            value,
+            objRollup,
+            corRelationList
+        );
+    }
 }
