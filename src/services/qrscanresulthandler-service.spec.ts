@@ -1,5 +1,5 @@
 import { QRScannerResultHandler } from './qrscanresulthandler.service';
-import { TelemetryService, TelemetryObject, Mode, ContentService } from 'sunbird-sdk';
+import { TelemetryService, TelemetryObject, Mode, ContentService, FrameworkService, PageAssembleService } from 'sunbird-sdk';
 import {
   Environment, ImpressionSubtype, ImpressionType, InteractSubtype, InteractType, ObjectType, PageId,
   LogLevel
@@ -50,11 +50,16 @@ describe('QRScannerResultHandler', () => {
     getDailCodeConfig: jest.fn(() => Promise.resolve())
   };
 
+  const mockPageAssembleService: Partial<PageAssembleService> = {};
+  const mockFrameworkService: Partial<FrameworkService> = {};
+
 
   beforeAll(() => {
     qRScannerResultHandler = new QRScannerResultHandler(
       mockContentService as ContentService,
       mockTelemetryService as TelemetryService,
+      mockPageAssembleService as PageAssembleService,
+      mockFrameworkService as FrameworkService,
       mockCommonUtilService as CommonUtilService,
       mockTelemetryGeneratorService as TelemetryGeneratorService,
       mockRouter as Router,
