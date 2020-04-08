@@ -275,6 +275,10 @@ export class TelemetryGeneratorService {
     }
 
     generateAppLaunchTelemetry(type: string, source?: string) {
+        const corRelationList: Array<CorrelationData> = [{
+            id: ContentUtil.extractBaseUrl(source),
+            type: CorReleationDataType.SOURCE
+          }];
         this.generateInteractTelemetry(
             type,
             '',
@@ -283,7 +287,7 @@ export class TelemetryGeneratorService {
             undefined,
             { source },
             undefined,
-            undefined,
+            corRelationList,
             ID.APP_LAUNCH);
     }
 

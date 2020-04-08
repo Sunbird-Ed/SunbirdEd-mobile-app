@@ -177,6 +177,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
     if (this._isDelegateReady) {
       if (urlMatch.groups.dialCode) {
         this.appGlobalServices.skipCoachScreenForDeeplink = true;
+        this.telemetryGeneratorService.generateAppLaunchTelemetry(LaunchType.DEEPLINK, urlMatch.input);
         this.router.navigate([RouterLinks.SEARCH], { state: { dialCode: urlMatch.groups.dialCode, source: PageId.HOME } });
       } else if (urlMatch.groups.quizId || urlMatch.groups.contentId || urlMatch.groups.courseId) {
         this.navigateContent(urlMatch.groups.quizId || urlMatch.groups.contentId || urlMatch.groups.courseId, true,
