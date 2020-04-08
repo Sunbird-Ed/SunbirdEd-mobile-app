@@ -661,5 +661,6 @@
   "IF_YES_LOGIN": "If yes, click Login",
   "SHOWING_ITEMS": "Showing {{%s}} items",
   "COMPLETE_BY": "Complete by {{%s}}",
-  "COURSE_ENDED_ON": "Course ended on {{%s}}"
+  "COURSE_ENDED_ON": "Course ended on {{%s}}",
+  "WANT_TO_CHECK_FREE_TRAININGS": "Want to check free trainings?"
 }
