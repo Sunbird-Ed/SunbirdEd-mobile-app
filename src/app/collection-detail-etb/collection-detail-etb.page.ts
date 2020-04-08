@@ -469,13 +469,27 @@ export class CollectionDetailEtbPage implements OnInit {
           this.licenseDetails = data.contentData.licenseDetails || this.licenseDetails;
           if (!data.isAvailableLocally) {
             this.contentDetail = data;
-            this.generatefastLoadingTelemetry(InteractSubtype.FAST_LOADING_OF_TEXTBOOK_INITIATED);
+            this.telemetryGeneratorService.generatefastLoadingTelemetry(
+              InteractSubtype.FAST_LOADING_INITIATED,
+              PageId.COLLECTION_DETAIL,
+              this.telemetryObject,
+              undefined,
+              this.objRollup,
+              this.corRelationList
+            );
             this.contentService.getContentHeirarchy(option).toPromise()
               .then((content: Content) => {
                 this.childrenData = content.children;
                 this.showSheenAnimation = false;
                 this.toggleGroup(0, this.content);
-                this.generatefastLoadingTelemetry(InteractSubtype.FAST_LOADING_OF_TEXTBOOK_FINISHED);
+                this.telemetryGeneratorService.generatefastLoadingTelemetry(
+                  InteractSubtype.FAST_LOADING_FINISHED,
+                  PageId.COLLECTION_DETAIL,
+                  this.telemetryObject,
+                  undefined,
+                  this.objRollup,
+                  this.corRelationList
+                );
               }).catch(() => {
                 this.showSheenAnimation = false;
               });
@@ -1321,16 +1335,6 @@ export class CollectionDetailEtbPage implements OnInit {
           this.location.back();
         });
       });
-  }
-  generatefastLoadingTelemetry(interactSubtype) {
-    this.telemetryGeneratorService.generateInteractTelemetry(InteractType.OTHER,
-      interactSubtype,
-      Environment.HOME,
-      PageId.COLLECTION_DETAIL,
-      this.telemetryObject,
-      undefined,
-      this.objRollup,
-      this.corRelationList);
   }
 
   playContent(event) {

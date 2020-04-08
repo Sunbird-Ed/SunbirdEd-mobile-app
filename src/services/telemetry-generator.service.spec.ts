@@ -455,4 +455,15 @@ describe('TelemetryGeneratorService', () => {
     });
   });
 
+  describe('generatefastLoadingTelemetry()', () => {
+    it('should invoke interact() for generate fastloading telemetry', () => {
+      // arrange
+      jest.spyOn(telemetryGeneratorService, 'generateInteractTelemetry');
+      // act
+      telemetryGeneratorService.generatefastLoadingTelemetry('INITIATED', 'pageID');
+      // assert
+      expect(telemetryGeneratorService.generateInteractTelemetry).toBeCalled();
+    });
+  });
+
 });
