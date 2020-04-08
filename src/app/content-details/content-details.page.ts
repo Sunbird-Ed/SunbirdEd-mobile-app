@@ -8,7 +8,7 @@ import {
   Platform,
   PopoverController
 } from '@ionic/angular';
-import { Subscription } from 'rxjs';
+import { Subscription, Observable } from 'rxjs';
 import {
   AuthService,
   Content,
@@ -30,7 +30,8 @@ import {
   SharedPreferences,
   StorageService,
   TelemetryObject,
-  Course
+  Course,
+  DownloadService
 } from 'sunbird-sdk';
 
 import { Map } from '@app/app/telemetryutil';
@@ -157,15 +158,14 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
   private isLoginPromptOpen = false;
   private autoPlayQuizContent = false;
   shouldNavigateBack = false;
+  isContentDownloading$: Observable<boolean>;
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
     @Inject('EVENTS_BUS_SERVICE') private eventBusService: EventsBusService,
-    @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
-    @Inject('PLAYER_SERVICE') private playerService: PlayerService,
     @Inject('STORAGE_SERVICE') private storageService: StorageService,
-    @Inject('AUTH_SERVICE') private authService: AuthService,
+    @Inject('DOWNLOAD_SERVICE') private downloadService: DownloadService,
     private zone: NgZone,
     private events: Events,
     private popoverCtrl: PopoverController,
@@ -228,6 +228,9 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
       this.shouldNavigateBack = extras.shouldNavigateBack;
       this.checkLimitedContentSharingFlag(extras.content);
     }
+    this.isContentDownloading$ = this.downloadService.getActiveDownloadRequests().pipe(
+      map((requests) => !!requests.find((request) => request.identifier === this.identifier))
+    );
   }
 
   ngOnInit() {
