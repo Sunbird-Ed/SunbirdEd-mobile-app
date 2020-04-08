@@ -1,11 +1,10 @@
 import { ContentDetailsPage } from '../content-details/content-details.page';
 import { Container } from 'inversify';
 import {
-    AuthService,
     ContentService,
     EventsBusService,
     PlayerService,
-    PlayerServiceImpl,
+    DownloadService,
     ProfileService,
     ProfileServiceImpl,
     SharedPreferences,
@@ -17,10 +16,8 @@ import {
 import { ContentServiceImpl } from 'sunbird-sdk/content/impl/content-service-impl';
 import { EventsBusServiceImpl } from 'sunbird-sdk/events-bus/impl/events-bus-service-impl';
 import { StorageServiceImpl } from 'sunbird-sdk/storage/impl/storage-service-impl';
-import { AuthServiceImpl } from 'sunbird-sdk/auth/impl/auth-service-impl';
 import { Events, Platform, PopoverController, ToastController } from '@ionic/angular';
 import { NgZone } from '@angular/core';
-import { SbPopoverComponent } from '../components/popups/sb-popover/sb-popover.component';
 import {
     AppGlobalService,
     AppHeaderService,
@@ -40,7 +37,7 @@ import { RatingHandler } from '@app/services/rating/rating-handler';
 import { ContentPlayerHandler } from '@app/services/content/player/content-player-handler';
 import { ChildContentHandler } from '@app/services/content/child-content-handler';
 import { ContentDeleteHandler } from '@app/services/content/content-delete-handler';
-import { of, throwError } from 'rxjs';
+import { of, throwError, EMPTY } from 'rxjs';
 import { mockContentData } from '@app/app/content-details/content-details.page.spec.data';
 import { LoginHandlerService } from '@app/services/login-handler.service';
 import {
@@ -67,7 +64,9 @@ describe('ContentDetailsPage', () => {
     const mockPreferences: Partial<SharedPreferences> = {};
     const mockPlayerService: Partial<PlayerService> = {};
     const mockStorageService: Partial<StorageService> = {};
-    const mockAuthService: Partial<AuthService> = {};
+    const mockDownloadService: Partial<DownloadService> = {
+        getActiveDownloadRequests: jest.fn(() => EMPTY)
+    };
     const mockNgZone: Partial<NgZone> = {
         run: jest.fn()
     };
@@ -126,10 +125,8 @@ describe('ContentDetailsPage', () => {
             mockProfileService as ProfileServiceImpl,
             mockContentService as ContentServiceImpl,
             mockEventBusService as EventsBusServiceImpl,
-            mockPreferences as SharedPreferences,
-            mockPlayerService as PlayerServiceImpl,
             mockStorageService as StorageServiceImpl,
-            mockAuthService as AuthServiceImpl,
+            mockDownloadService as DownloadService,
             mockNgZone as NgZone,
             mockEvents as Events,
             mockPopoverController as PopoverController,
@@ -216,6 +213,7 @@ describe('ContentDetailsPage', () => {
             called[topic] = false;
         });
         spyOn(contentDetailsPage, 'generateTelemetry').and.stub();
+        mockDownloadService.getActiveDownloadRequests = jest.fn(() => EMPTY);
         // act
         contentDetailsPage.subscribeEvents();
         // assert
@@ -1236,6 +1234,30 @@ describe('ContentDetailsPage', () => {
             undefined,
             { l1: 'do_123', l2: 'do_123', l3: 'do_1'}
         );
+    });
+
+    describe('getNavParams', () => {
+        it('should check the active download list', (done) => {
+            // arrange
+            contentDetailsPage.content = {
+                content: {
+                    contentData: {},
+                    identifier: 'sample_id1'
+                },
+                contentData: {},
+                identifier: 'sample_id1'
+            };
+            const resp = [{ identifier: 'sample_id1' }, { identifier: 'sample_id2' }];
+            mockDownloadService.getActiveDownloadRequests = jest.fn(() => of(resp));
+            // act
+            contentDetailsPage.getNavParams();
+            // assert
+            expect(mockDownloadService.getActiveDownloadRequests).toHaveBeenCalled();
+            contentDetailsPage.isContentDownloading$.subscribe((res) => {
+                expect(res).toBeTruthy();
+                done();
+            });
+        });
     });
 
 });
