@@ -13,11 +13,13 @@ import {
   Mode,
   PageId,
   ObjectType,
+  CorReleationDataType,
 } from './telemetry-constants';
 import { NavigationExtras, Router } from '@angular/router';
 import { NavController, Events } from '@ionic/angular';
 import { AppGlobalService } from './app-global-service.service';
 import { FormAndFrameworkUtilService } from './formandframeworkutil.service';
+import { ContentUtil } from '@app/util/content-util';
 
 declare var cordova;
 
@@ -223,12 +225,19 @@ export class QRScannerResultHandler {
       telemetryObject = new TelemetryObject(certificate.certificateId, 'certificate', undefined);
     }
 
+    const corRelationList: Array<CorrelationData> = [{
+      id: ContentUtil.extractBaseUrl(scannedData),
+      type: CorReleationDataType.SOURCE
+    }];
+
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.OTHER,
       InteractSubtype.QRCodeScanSuccess,
       Environment.HOME,
       PageId.QRCodeScanner, telemetryObject,
-      values
+      values,
+      undefined,
+      corRelationList
     );
   }
 
