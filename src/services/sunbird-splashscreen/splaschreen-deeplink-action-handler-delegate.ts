@@ -117,7 +117,11 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
               }
             }
           };
-          if (await this.onChannelDetected(event)) {
+          const loader = await this.commonUtilService.getLoader(null, 'Initilizing profile...');
+          await loader.present();
+          const isChannelDetected = await this.onChannelDetected(event);
+          await loader.dismiss();
+          if (isChannelDetected) {
             return;
           }
         }
@@ -445,7 +449,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
           grade: categoryData[FrameworkCategoryCode.GRADE_LEVEL],
           courseId: event.courseId
         };
-        this.submitProfileSettings(payload);
+        await this.submitProfileSettings(payload);
         resolve(true);
       } catch (e) {
         resolve(false);
@@ -491,6 +495,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
     } catch (e) {
       console.log(e);
     }
+    return;
   }
 
 }

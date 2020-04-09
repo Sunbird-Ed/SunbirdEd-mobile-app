@@ -44,3 +44,9 @@
   --height:50px;
   --width:50px;
 }
+
+.custom-loader-message-class {
+  .loading-wrapper.sc-ion-loading-md {
+    border-radius: 2px;
+  }
+}
