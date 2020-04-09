@@ -551,6 +551,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
       setTimeout(async () => {
         this.appGlobalServices.setOnBoardingCompleted();
         this.navigateToCourse(payload.courseId, payloadUrl);
+        this.loginHandlerService.setDefaultProfileDetails();
       }, 1000);
 
       this.events.publish('onboarding-card:completed', { isOnBoardingCardCompleted: true });

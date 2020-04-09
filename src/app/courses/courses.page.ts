@@ -1,4 +1,4 @@
-import { Component, Inject, NgZone, OnInit } from '@angular/core';
+import {Component, Inject, NgZone, OnDestroy, OnInit} from '@angular/core';
 import { Router, NavigationExtras, ActivatedRoute } from '@angular/router';
 import { Events, ToastController, PopoverController } from '@ionic/angular';
 import { AppVersion } from '@ionic-native/app-version/ngx';
@@ -28,7 +28,7 @@ import { AppHeaderService } from '../../services/app-header.service';
   templateUrl: './courses.page.html',
   styleUrls: ['./courses.page.scss'],
 })
-export class CoursesPage implements OnInit {
+export class CoursesPage implements OnInit, OnDestroy {
   /**
    * Contains enrolled course
    */
@@ -134,6 +134,21 @@ export class CoursesPage implements OnInit {
 
     this.events.subscribe('event:update_course_data', () => {
         this.getEnrolledCourses();
+    });
+  }
+
+  ngOnDestroy() {
+    if (this.headerObservable) {
+      this.headerObservable.unsubscribe();
+    }
+    this.events.unsubscribe('update_header');
+    this.ngZone.run(() => {
+      if (this.eventSubscription) {
+        this.eventSubscription.unsubscribe();
+      }
+      this.isVisible = false;
+      this.showOverlay = false;
+      this.downloadPercentage = 0;
     });
   }
 
@@ -451,7 +466,7 @@ export class CoursesPage implements OnInit {
   }
 
   showFilter() {
-    if(this.isFilterOpen){
+    if (this.isFilterOpen) {
       return;
     }
     this.isFilterOpen = true;
