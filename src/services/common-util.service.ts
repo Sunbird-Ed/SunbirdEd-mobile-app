@@ -132,11 +132,12 @@ export class CommonUtilService implements OnDestroy {
      * Returns Loading object with default config
      * @returns Loading object
      */
-    getLoader(duration?): any {
+    getLoader(duration?, message?): any {
         return this.loadingCtrl.create({
+            message,
             duration: duration ? duration : 30000,
             spinner: 'crescent',
-            cssClass: 'custom-loader-class'
+            cssClass: message ? 'custom-loader-message-class' : 'custom-loader-class'
         });
     }
 
