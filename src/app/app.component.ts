@@ -782,7 +782,7 @@ export class AppComponent implements OnInit, AfterViewInit {
             this.splaschreenDeeplinkActionHandlerDelegate.checkUtmContent(response.val);
           }
           const utmTelemetry = {
-            utm_data: response
+            utm_data: utmValue
           };
           this.telemetryGeneratorService.generateInteractTelemetry(
             InteractType.OTHER,
@@ -790,7 +790,7 @@ export class AppComponent implements OnInit, AfterViewInit {
             Environment.HOME,
             PageId.HOME,
             undefined,
-            undefined,
+            utmTelemetry,
             undefined,
             cData);
           this.utilityService.clearUtmInfo();
