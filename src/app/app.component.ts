@@ -742,7 +742,8 @@ export class AppComponent implements OnInit, AfterViewInit {
       .then(response => {
         if (response) {
           let cData: CorrelationData[] = [];
-          const utmHashes = response.split('&');
+          const utmValue = response['val'];
+          const utmHashes = utmValue.split('&');
           const utmParams = {};
           utmHashes.map(hash => {
               const [key, val] = hash.split('=');
