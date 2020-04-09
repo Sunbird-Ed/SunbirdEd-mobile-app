@@ -741,6 +741,24 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.utilityService.getUtmInfo()
       .then(response => {
         if (response) {
+          let cData: CorrelationData[] = [];
+          const utmHashes = response.split('&');
+          const utmParams = {};
+          utmHashes.map(hash => {
+              const [key, val] = hash.split('=');
+              const chengeKeyUpperCase = key.split('_').map((elem) => {
+                return (elem.charAt(0).toUpperCase() + elem.slice(1));
+                 });
+
+              utmParams[chengeKeyUpperCase.join('')] = decodeURIComponent(val);
+          });
+          if (Object.keys(utmParams)) {
+            cData = Object.keys(utmParams).map((key) => {
+              if (utmParams[key] !== undefined) {
+                return {id: key, type: utmParams[key]};
+              }
+            });
+          }
           if (response.val && response.val.length) {
             this.splaschreenDeeplinkActionHandlerDelegate.checkUtmContent(response.val);
           }
@@ -753,7 +771,9 @@ export class AppComponent implements OnInit, AfterViewInit {
             Environment.HOME,
             PageId.HOME,
             undefined,
-            utmTelemetry);
+            undefined,
+            undefined,
+            cData);
           this.utilityService.clearUtmInfo();
         }
       })
