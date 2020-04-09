@@ -39,6 +39,7 @@ import { RouterLinks } from './app.constant';
 import { TncUpdateHandlerService } from '@app/services/handlers/tnc-update-handler.service';
 import { NetworkAvailabilityToastService } from '@app/services/network-availability-toast/network-availability-toast.service';
 import { SplaschreenDeeplinkActionHandlerDelegate } from '@app/services/sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
+import * as qs from 'qs';
 @Component({
   selector: 'app-root',
   templateUrl: 'app.component.html'
@@ -743,23 +744,35 @@ export class AppComponent implements OnInit, AfterViewInit {
         if (response) {
           let cData: CorrelationData[] = [];
           const utmValue = response['val'];
-          const utmHashes = utmValue.split('&');
+          const params: {[param: string]: string} = qs.parse(utmValue);
           const utmParams = {};
-          utmHashes.map(hash => {
-              const [key, val] = hash.split('=');
-              const chengeKeyUpperCase = key.split('_').map((elem) => {
-                return (elem.charAt(0).toUpperCase() + elem.slice(1));
-                 });
+          Object.entries(params).forEach(([key, value]) => {
+            const chengeKeyUpperCase = key.split('_').map((elem) => {
+              return (elem.charAt(0).toUpperCase() + elem.slice(1));
+               });
 
-              utmParams[chengeKeyUpperCase.join('')] = decodeURIComponent(val);
-          });
+            utmParams[chengeKeyUpperCase.join('')] = decodeURIComponent(value);
+        });
           if (Object.keys(utmParams)) {
-            cData = Object.keys(utmParams).map((key) => {
-              if (utmParams[key] !== undefined) {
-                return {id: key, type: utmParams[key]};
-              }
-            });
-          }
+          cData = Object.keys(utmParams).map((key) => {
+            if (utmParams[key] !== undefined) {
+
+              return {id: key, type: utmParams[key]};
+            }
+          });
+        }
+          try {
+            const url: URL = new URL(params['utm_content']);
+            const overrideChannelSlug = url.searchParams.get('channel');
+            if (overrideChannelSlug) {
+              cData.push({
+                id: CorReleationDataType.SOURCE,
+                type: overrideChannelSlug
+              });
+            }} catch (e) {
+              console.error(e);
+
+            }
           if (response.val && response.val.length) {
             this.splaschreenDeeplinkActionHandlerDelegate.checkUtmContent(response.val);
           }
@@ -776,7 +789,7 @@ export class AppComponent implements OnInit, AfterViewInit {
             undefined,
             cData);
           this.utilityService.clearUtmInfo();
-        }
+      }
       })
       .catch(error => {
         console.log('Error is', error);
