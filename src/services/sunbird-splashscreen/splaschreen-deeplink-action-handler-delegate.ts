@@ -1,9 +1,26 @@
 import { ContentFilterConfig, PreferenceKey, ProfileConstants, appLanguages } from '@app/app/app.constant';
 import { Inject, Injectable } from '@angular/core';
-import { Router, NavigationExtras } from '@angular/router';
+import { Router } from '@angular/router';
 import { Events, PopoverController } from '@ionic/angular';
 import { Observable, of } from 'rxjs';
-import { PageAssembleService, FrameworkService, ContentService, SharedPreferences, HttpServerError, NetworkError, AuthService, ProfileType, Content, ProfileService, Channel, GetFrameworkCategoryTermsRequest, CachedItemRequestSourceFrom, FrameworkCategoryCode, FrameworkUtilService, Profile, FrameworkCategoryCodesGroup, ProfileSource } from 'sunbird-sdk';
+import {
+  PageAssembleService,
+  FrameworkService,
+  ContentService,
+  SharedPreferences,
+  HttpServerError,
+  NetworkError,
+  AuthService, ProfileType, Content,
+  ProfileService, Channel,
+  GetFrameworkCategoryTermsRequest,
+  CachedItemRequestSourceFrom,
+  FrameworkCategoryCode,
+  FrameworkUtilService,
+  Profile,
+  FrameworkCategoryCodesGroup,
+  ProfileSource,
+  CorrelationData
+} from 'sunbird-sdk';
 import { SplashscreenActionHandlerDelegate } from './splashscreen-action-handler-delegate';
 import { ContentType, MimeType, EventTopics, RouterLinks, LaunchType } from '../../app/app.constant';
 import { AppGlobalService } from '../app-global-service.service';
@@ -16,9 +33,9 @@ import { SbPopoverComponent } from '@app/app/components/popups/sb-popover/sb-pop
 import { LoginHandlerService } from '../login-handler.service';
 import { TranslateService } from '@ngx-translate/core';
 import { ExternalChannelOverrideListener } from './external-channel-override-interface';
-import { resolve } from 'dns';
 import { initTabs, GUEST_TEACHER_TABS } from '@app/app/module.service';
 import { ContainerService } from '../container.services';
+import { ContentUtil } from '@app/util/content-util';
 
 @Injectable()
 export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenActionHandlerDelegate, ExternalChannelOverrideListener {
@@ -159,7 +176,14 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
         userType: ProfileType.OTHER
       };
       this.setDefaultOnboardingData(params);
-      this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], { state: { content, isOnboardingSkipped: true } });
+      this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS],
+        {
+          state: {
+            content,
+            isOnboardingSkipped: true,
+            corRelation: this.getCorrelationList(urlMatch.input)
+          }
+        });
     } else {
       this.checkForQuizWithoutOnboarding(urlMatch, content);
     }
@@ -213,7 +237,14 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
       if (urlMatch.groups.dialCode) {
         this.appGlobalServices.skipCoachScreenForDeeplink = true;
         this.telemetryGeneratorService.generateAppLaunchTelemetry(LaunchType.DEEPLINK, urlMatch.input);
-        this.router.navigate([RouterLinks.SEARCH], { state: { dialCode: urlMatch.groups.dialCode, source: PageId.HOME } });
+        this.router.navigate([RouterLinks.SEARCH],
+          {
+            state: {
+              dialCode: urlMatch.groups.dialCode,
+              source: PageId.HOME,
+              corRelation: this.getCorrelationList(urlMatch.input)
+            }
+          });
       } else if (urlMatch.groups.quizId || urlMatch.groups.contentId || urlMatch.groups.courseId) {
         this.navigateContent(urlMatch.groups.quizId || urlMatch.groups.contentId || urlMatch.groups.courseId, true,
           content, urlMatch.input);
@@ -236,9 +267,21 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
 
       this.appGlobalServices.skipCoachScreenForDeeplink = true;
       if (content && content.contentType === ContentType.COURSE.toLowerCase()) {
-        this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], { state: { content } });
+        this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS],
+          {
+            state: {
+              content,
+              corRelation: this.getCorrelationList(source)
+            }
+          });
       } else if (content && content.mimeType === MimeType.COLLECTION) {
-        this.router.navigate([RouterLinks.COLLECTION_DETAIL_ETB], { state: { content } });
+        this.router.navigate([RouterLinks.COLLECTION_DETAIL_ETB],
+          {
+            state: {
+              content,
+              corRelation: this.getCorrelationList(source)
+            }
+          });
       } else {
         if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
           this.commonUtilService.showToast('NEED_INTERNET_FOR_DEEPLINK_CONTENT');
@@ -246,9 +289,16 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
           return;
         }
         if (content && content.contentData && content.contentData.status === ContentFilterConfig.CONTENT_STATUS_UNLISTED) {
-          this.navigateQuizContent(identifier, content, isFromLink);
+          this.navigateQuizContent(identifier, content, isFromLink, source);
         } else {
-          await this.router.navigate([RouterLinks.CONTENT_DETAILS], { state: { content } });
+          await this.router.navigate([RouterLinks.CONTENT_DETAILS],
+            {
+              state:
+              {
+                content,
+                corRelation: this.getCorrelationList(source)
+              }
+            });
         }
       }
     } catch (err) {
@@ -256,7 +306,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
     }
   }
 
-  private async navigateQuizContent(identifier, content, isFromLink) {
+  private async navigateQuizContent(identifier, content, isFromLink, source) {
     this.appGlobalServices.limitedShareQuizContent = identifier;
     if (isFromLink) {
       this.limitedSharingContentLinkClickedTelemery();
@@ -268,7 +318,14 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
       this.events.publish(EventTopics.DEEPLINK_CONTENT_PAGE_OPEN, { content, autoPlayQuizContent: true });
       return;
     }
-    await this.router.navigate([RouterLinks.CONTENT_DETAILS], { state: { content, autoPlayQuizContent: true } });
+    await this.router.navigate([RouterLinks.CONTENT_DETAILS],
+      {
+        state:
+        {
+          content, autoPlayQuizContent: true,
+          corRelation: this.getCorrelationList(source)
+        }
+      });
   }
 
   getContentData(contentId): Promise<Content | null> {
@@ -365,13 +422,15 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
 
     const langCode = await this.preferences.getString(PreferenceKey.SELECTED_LANGUAGE_CODE).toPromise();
     if (!langCode) {
-      await this.preferences.putString(PreferenceKey.SELECTED_LANGUAGE_CODE, (selectedLanguage && selectedLanguage.code) || 'en').toPromise();
+      await this.preferences.putString(PreferenceKey.SELECTED_LANGUAGE_CODE,
+        (selectedLanguage && selectedLanguage.code) || 'en').toPromise();
       this.translateService.use('en');
     }
 
     const langLabel = await this.preferences.getString(PreferenceKey.SELECTED_LANGUAGE).toPromise();
     if (!langLabel) {
-      await this.preferences.putString(PreferenceKey.SELECTED_LANGUAGE, (selectedLanguage && selectedLanguage.name) || 'English').toPromise();
+      await this.preferences.putString(PreferenceKey.SELECTED_LANGUAGE,
+        (selectedLanguage && selectedLanguage.name) || 'English').toPromise();
     }
 
     // usertyoe == "TEACHER" for Quiz-link | "OTHER" for course link
@@ -387,7 +446,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
         (await this.preferences.getString(PreferenceKey.IS_ONBOARDING_COMPLETED).toPromise() === 'true') ? true : false;
     }
     if (this.isOnboardingCompleted) {
-      this.navigateToCourse(event.courseId);
+      this.navigateToCourse(event.courseId, event.url);
       return true;
     }
 
@@ -404,11 +463,17 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
     return false;
   }
 
-  async navigateToCourse(courseId) {
+  async navigateToCourse(courseId, payloadUrl) {
     if (courseId) {
       const content: any = await this.getContentData(courseId);
       if (content && content.contentType === ContentType.COURSE.toLowerCase()) {
-        this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], { state: { content, isFromChannelDeeplink: true } });
+        this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS],
+          {
+            state: {
+              content, isFromChannelDeeplink: true,
+              corRelation: this.getCorrelationList(payloadUrl)
+            }
+          });
       }
     } else {
       this.router.navigateByUrl(RouterLinks.TABS_COURSE);
@@ -449,7 +514,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
           grade: categoryData[FrameworkCategoryCode.GRADE_LEVEL],
           courseId: event.courseId
         };
-        await this.submitProfileSettings(payload);
+        await this.submitProfileSettings(payload, event.url);
         resolve(true);
       } catch (e) {
         resolve(false);
@@ -458,7 +523,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
     });
   }
 
-  private async submitProfileSettings(payload) {
+  private async submitProfileSettings(payload, payloadUrl) {
     try {
       const activeSessionProfile = await this.profileService.getActiveSessionProfile({
         requiredFields: ProfileConstants.REQUIRED_FIELDS
@@ -485,7 +550,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
 
       setTimeout(async () => {
         this.appGlobalServices.setOnBoardingCompleted();
-        this.navigateToCourse(payload.courseId);
+        this.navigateToCourse(payload.courseId, payloadUrl);
       }, 1000);
 
       this.events.publish('onboarding-card:completed', { isOnBoardingCardCompleted: true });
@@ -496,6 +561,14 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
       console.log(e);
     }
     return;
+  }
+
+  private getCorrelationList(source): Array<CorrelationData> {
+    const corRelationList: Array<CorrelationData> = [{
+      id: ContentUtil.extractBaseUrl(source),
+      type: CorReleationDataType.SOURCE
+    }];
+    return corRelationList;
   }
 
 }

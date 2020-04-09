@@ -227,6 +227,7 @@ export class PreferenceKey {
     public static readonly FCM_TOKEN = 'fcm_token';
     public static readonly SYNC_CONFIG = 'sync_config';
     public static readonly COACH_MARK_SEEN = 'coach_mark_seen';
+    public static readonly PAGE_ASSEMBLE_ORGANISATION_ID = 'page_assemble_organisation_id';
 }
 
 export class GenericAppConfig {
