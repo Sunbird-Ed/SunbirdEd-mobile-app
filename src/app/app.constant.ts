@@ -427,6 +427,7 @@ export class ActionType {
 
 export class RouterLinks {
     public static readonly TABS = 'tabs';
+    public static readonly TABS_COURSE = 'tabs/courses';
 
     // Users and Groups Routs
     public static readonly USER_AND_GROUPS = 'user-and-groups';

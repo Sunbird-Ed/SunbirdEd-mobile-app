@@ -426,7 +426,6 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
           }).toPromise();
 
           const boardCategoryTermsRequet: GetFrameworkCategoryTermsRequest = {
-            from: CachedItemRequestSourceFrom.SERVER,
             frameworkId: this.framework.identifier,
             requiredCategories: [FrameworkCategoryCode.BOARD],
             currentCategoryCode: FrameworkCategoryCode.BOARD,
@@ -439,7 +438,6 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
           this.boardControl.patchValue([boardTerm.code]);
 
           const nextCategoryTermsRequet: GetFrameworkCategoryTermsRequest = {
-            from: CachedItemRequestSourceFrom.SERVER,
             frameworkId: this.framework.identifier,
             requiredCategories: [FrameworkCategoryCode.MEDIUM],
             prevCategoryCode: FrameworkCategoryCode.BOARD,
@@ -473,7 +471,6 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
 
         try {
           const nextCategoryTermsRequet: GetFrameworkCategoryTermsRequest = {
-            from: CachedItemRequestSourceFrom.SERVER,
             frameworkId: this.framework.identifier,
             requiredCategories: [FrameworkCategoryCode.GRADE_LEVEL],
             prevCategoryCode: FrameworkCategoryCode.MEDIUM,

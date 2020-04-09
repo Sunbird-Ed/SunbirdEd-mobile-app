@@ -221,7 +221,8 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
   public lastReadContentId;
   public courseCompletionData = {};
   isCertifiedCourse: boolean;
-  isOnboardingSkipped: any;
+  private isOnboardingSkipped: any;
+  private isFromChannelDeeplink: any;
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -261,6 +262,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
     if (extrasState) {
       this.courseCardData = extrasState.content;
       this.isOnboardingSkipped = extrasState.isOnboardingSkipped;
+      this.isFromChannelDeeplink = extrasState.isFromChannelDeeplink;
       // console.log('this.courseCardData', this.courseCardData);
       this.identifier = this.courseCardData.contentId || this.courseCardData.identifier;
       this.corRelationList = extrasState.corRelation;
@@ -1864,13 +1866,11 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
     return new Promise(async resolve => {
       try {
         const session = await this.authService.getSession().toPromise();
-        if (this.isOnboardingSkipped && session) {
-          this.isOnboardingSkipped = false;
+        if ((this.isOnboardingSkipped && session) || this.isFromChannelDeeplink) {
           resolve(true);
           const navigationExtras: NavigationExtras = { replaceUrl: true };
-          this.router.navigate([`/${RouterLinks.TABS}`], navigationExtras);
+          this.router.navigate([`/${RouterLinks.TABS_COURSE}`], navigationExtras);
         } else if (this.isOnboardingSkipped && !session) {
-          this.isOnboardingSkipped = false;
           resolve(true);
           const navigationExtras: NavigationExtras = { queryParams: { reOnboard: true }, replaceUrl: true };
           this.router.navigate([`/${RouterLinks.PROFILE_SETTINGS}`], navigationExtras);
