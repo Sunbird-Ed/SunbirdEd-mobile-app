@@ -477,7 +477,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       pageId ? pageId.toLowerCase() : PageId.QRCodeScanner);
   }
 
-  private generateImpressionEvent(pageId: string) {
+  private async generateImpressionEvent(pageId: string) {
     pageId = pageId.toLowerCase();
     const env = pageId.localeCompare(PageId.PROFILE) ? Environment.HOME : Environment.USER;
     const corRelationList: Array<CorrelationData> = [];
@@ -487,6 +487,11 @@ export class AppComponent implements OnInit, AfterViewInit {
       corRelationList.push({ id: currentProfile.medium ? currentProfile.medium.join(',') : '', type: CorReleationDataType.MEDIUM });
       corRelationList.push({ id: currentProfile.grade ? currentProfile.grade.join(',') : '', type: CorReleationDataType.CLASS });
       corRelationList.push({ id: currentProfile.profileType, type: CorReleationDataType.USERTYPE });
+    } else if (pageId === 'courses') {
+      const channelId = await this.preferences.getString(PreferenceKey.PAGE_ASSEMBLE_ORGANISATION_ID).toPromise();
+      if (channelId) {
+        corRelationList.push({ id: channelId, type: CorReleationDataType.SOURCE });
+      }
     }
 
     this.telemetryGeneratorService.generateImpressionTelemetry(
