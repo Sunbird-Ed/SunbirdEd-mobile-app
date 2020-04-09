@@ -101,9 +101,8 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
     try {
       const url: URL = new URL(payload.url);
       const overrideChannelSlug = url.searchParams.get('channel');
-      const isUrlTypeCourse = (new RegExp(String.raw`explore-course`)).test(payload.url);
 
-      if (overrideChannelSlug && isUrlTypeCourse) {
+      if (overrideChannelSlug) {
         const filters = {
           slug: overrideChannelSlug,
           isRootOrg: true
@@ -134,12 +133,15 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
               }
             }
           };
-          const loader = await this.commonUtilService.getLoader(null, 'Initilizing profile...');
-          await loader.present();
-          const isChannelDetected = await this.onChannelDetected(event);
-          await loader.dismiss();
-          if (isChannelDetected) {
-            return;
+          const isUrlTypeCourse = (new RegExp(String.raw`explore-course`)).test(event.url);
+          if (isUrlTypeCourse) {
+            const loader = await this.commonUtilService.getLoader(null, 'Initilizing profile...');
+            await loader.present();
+            const isChannelDetected = await this.onChannelDetected(event);
+            await loader.dismiss();
+            if (isChannelDetected) {
+              return;
+            }
           }
         }
       }
