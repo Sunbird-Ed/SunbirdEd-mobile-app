@@ -254,7 +254,6 @@ export class LoginHandlerService {
     const profileRequest: Profile = {
       uid: profile.uid,
       handle: profile.handle || 'Guest1',
-      createdAt: profile.createdAt || undefined,
       medium: profile.medium || [],
       board: profile.board || [],
       subject: profile.subject || [],
