@@ -111,7 +111,7 @@ export class QRScannerResultHandler {
     const navigationExtras: NavigationExtras = {
       state: {
         dialCode: dialCode,
-        corRelation: this.getCorRelationList(dialCode, QRScannerResultHandler.CORRELATION_TYPE),
+        corRelation: this.getCorRelationList(dialCode, QRScannerResultHandler.CORRELATION_TYPE, scannedData),
         source: this.source,
         shouldGenerateEndTelemetry: true
       }
@@ -131,7 +131,7 @@ export class QRScannerResultHandler {
     this.contentService.getContentDetails(request).toPromise()
       .then((content: Content) => {
         this.navigateToDetailsPage(content,
-          this.getCorRelationList(content.identifier, QRScannerResultHandler.CORRELATION_TYPE));
+          this.getCorRelationList(content.identifier, QRScannerResultHandler.CORRELATION_TYPE, scannedData));
         this.telemetryGeneratorService.generateImpressionTelemetry(
           ImpressionType.VIEW, ImpressionSubtype.QR_CODE_VALID,
           PageId.QRCodeScanner,
@@ -177,12 +177,16 @@ export class QRScannerResultHandler {
     this.generateEndEvent(this.source, scannedData);
   }
 
-  getCorRelationList(identifier: string, type: string): Array<CorrelationData> {
+  getCorRelationList(identifier: string, type: string, scannedData): Array<CorrelationData> {
     const corRelationList: Array<CorrelationData> = new Array<CorrelationData>();
     const corRelation: CorrelationData = new CorrelationData();
     corRelation.id = identifier;
     corRelation.type = type;
     corRelationList.push(corRelation);
+    corRelationList.push({
+      id: ContentUtil.extractBaseUrl(scannedData),
+      type: CorReleationDataType.SOURCE
+    });
     return corRelationList;
   }
 
