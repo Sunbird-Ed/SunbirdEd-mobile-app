@@ -24,13 +24,14 @@ import {
     mockContentData,
     mockContentInfo
 } from './collection-detail-etb-page.spec.data';
-import { of, Subscription } from 'rxjs';
+import { of, Subscription, throwError } from 'rxjs';
 import { ContentPlayerHandler } from '@app/services/content/player/content-player-handler';
 import { ContentUtil } from '@app/util/content-util';
 import { EventTopics } from '@app/app/app.constant';
 import { ShareItemType, ContentType } from '../app.constant';
 import { ContentDeleteHandler } from '../../services/content/content-delete-handler'
 import { connect } from 'http2';
+import { isObject } from 'util';
 
 describe('collectionDetailEtbPage', () => {
     let collectionDetailEtbPage: CollectionDetailEtbPage;
@@ -690,7 +691,7 @@ describe('collectionDetailEtbPage', () => {
                 Mode.PLAY,
                 collectionDetailEtbPage.source,
                 Environment.HOME,
-                {id: 'do-123', type: 'qr', version: ''},
+                { id: 'do-123', type: 'qr', version: '' },
                 undefined,
                 undefined
             );
@@ -715,7 +716,7 @@ describe('collectionDetailEtbPage', () => {
                 Mode.PLAY,
                 PageId.COLLECTION_DETAIL,
                 Environment.HOME,
-                {id: 'do_12345', type: undefined, version: '1'},
+                { id: 'do_12345', type: undefined, version: '1' },
                 {},
                 undefined
             );
@@ -741,6 +742,195 @@ describe('collectionDetailEtbPage', () => {
                 {},
                 undefined
             );
+        });
+    });
+
+    it('should generate back Clicked Telemetry', () => {
+        // arrange
+        const subscribeWithPriorityData = jest.fn((_, fn) => fn());
+        mockplatform.backButton = {
+            subscribeWithPriority: subscribeWithPriorityData
+        } as any;
+        mocktelemetryGeneratorService.generateBackClickedTelemetry = jest.fn();
+        // act
+        collectionDetailEtbPage.registerDeviceBackButton();
+        // assert
+        expect(subscribeWithPriorityData).toBeTruthy();
+        expect(mocktelemetryGeneratorService.generateBackClickedTelemetry).toHaveBeenCalledWith(
+            PageId.COLLECTION_DETAIL,
+            Environment.HOME,
+            false,
+            'do_212911645382959104165',
+            undefined
+        );
+    });
+
+    describe('setContentDetails', () => {
+        it('should return content details and is not available localy', (done) => {
+            // arrange
+            const content = {
+                identifier: 'do_212911645382959104165',
+                contentData: { licenseDetails: undefined },
+                isAvailableLocally: false,
+                children: { identifier: 'do_212911645382959104166' }
+            };
+            mockContentService.getContentDetails = jest.fn(() => of(content));
+            mocktelemetryGeneratorService.generatefastLoadingTelemetry = jest.fn();
+            mockContentService.getContentHeirarchy = jest.fn(() => of(content));
+            jest.spyOn(collectionDetailEtbPage, 'importContentInBackground').mockReturnValue();
+            const mockTelemetryObject = new TelemetryObject('do_212911645382959104165', ContentType.COURSE, undefined);
+            // act
+            collectionDetailEtbPage.setContentDetails('do_212911645382959104165', true).then(() => {
+                // assert
+                expect(mockContentService.getContentDetails).toHaveBeenCalled();
+                expect(mocktelemetryGeneratorService.generatefastLoadingTelemetry).toHaveBeenCalledWith(
+                    InteractSubtype.FAST_LOADING_INITIATED,
+                    PageId.COLLECTION_DETAIL,
+                    mockTelemetryObject,
+                    undefined,
+                    {},
+                    undefined
+                );
+                expect(mockContentService.getContentHeirarchy).toHaveBeenCalled();
+                done();
+            });
+        });
+
+        it('should return content details and is available localy', (done) => {
+            // arrange
+            const content = {
+                identifier: 'do_212911645382959104165',
+                contentData: { licenseDetails: 'sample-license' },
+                isAvailableLocally: true,
+                children: { identifier: 'do_212911645382959104166' }
+            };
+            mockContentService.getContentDetails = jest.fn(() => of(content));
+            // act
+            collectionDetailEtbPage.setContentDetails('do_212911645382959104165', true).then(() => {
+                // assert
+                expect(mockContentService.getContentDetails).toHaveBeenCalled();
+                done();
+            });
+        });
+
+        it('should not return content details if data is undefined', (done) => {
+            // arrange
+            mockContentService.getContentDetails = jest.fn(() => of(undefined));
+            // act
+            collectionDetailEtbPage.setContentDetails('do_212911645382959104165', true).then(() => {
+                // assert
+                expect(mockContentService.getContentDetails).toHaveBeenCalled();
+                done();
+            });
+        });
+
+        it('should return content details for getContentHeirarchy catch part', (done) => {
+            // arrange
+            const content = {
+                identifier: 'do_212911645382959104165',
+                contentData: { licenseDetails: 'sample-license' },
+                isAvailableLocally: false,
+                children: { identifier: 'do_212911645382959104166' }
+            };
+            mockContentService.getContentDetails = jest.fn(() => of(content));
+            mocktelemetryGeneratorService.generatefastLoadingTelemetry = jest.fn();
+            mockContentService.getContentHeirarchy = jest.fn(() => throwError({ erroe: 'sample-error' }));
+            // act
+            collectionDetailEtbPage.setContentDetails('do_212911645382959104165', true).then(() => {
+                // assert
+                expect(mockContentService.getContentDetails).toHaveBeenCalled();
+                expect(mocktelemetryGeneratorService.generatefastLoadingTelemetry).toHaveBeenCalled();
+                expect(mockContentService.getContentHeirarchy).toHaveBeenCalled();
+                done();
+            });
+        });
+
+        it('should not return content for getContentDetails catch part', (done) => {
+            // arrange
+            mockContentService.getContentDetails = jest.fn(() => throwError(undefined));
+            // act
+            collectionDetailEtbPage.setContentDetails('do_212911645382959104165', true).then(() => {
+                // assert
+                expect(mockContentService.getContentDetails).toHaveBeenCalled();
+                done();
+            });
+        });
+    });
+
+    describe('setCollectionStructure', () => {
+        it('should return contentTypesCount if isObject', () => {
+            // arrange
+            collectionDetailEtbPage.contentDetail = {
+                contentData: {
+                    contentTypesCount: { id: 'do-123' }
+                }
+            };
+            // act
+            collectionDetailEtbPage.setCollectionStructure();
+            // assert
+            expect(isObject(collectionDetailEtbPage.contentDetail.contentData.contentTypesCount)).toBeTruthy();
+        });
+
+        it('should return contentTypesCount if is not object', () => {
+            // arrange
+            collectionDetailEtbPage.contentDetail = {
+                contentData: {
+                    contentTypesCount: '{"identifier": "do-123"}'
+                }
+            };
+            // act
+            collectionDetailEtbPage.setCollectionStructure();
+            // assert
+            expect(isObject(collectionDetailEtbPage.contentDetail.contentData.contentTypesCount)).toBeFalsy();
+        });
+
+        it('should return contentTypesCount if is not object for card data', () => {
+            // arrange
+            collectionDetailEtbPage.cardData = {
+                contentTypesCount: '{"identifier": "do-123"}'
+            };
+            collectionDetailEtbPage.contentDetail = {
+                contentData: {
+                    contentTypesCount: undefined
+                }
+            };
+            // act
+            collectionDetailEtbPage.setCollectionStructure();
+            // assert
+            expect(isObject(collectionDetailEtbPage.cardData.contentTypesCount)).toBeFalsy();
+        });
+
+        it('should not return contentTypesCount if not object for card data', () => {
+            // arrange
+            collectionDetailEtbPage.cardData = {
+                contentTypesCount: {id: 'do-123'}
+            };
+            collectionDetailEtbPage.contentDetail = {
+                contentData: {
+                    contentTypesCount: undefined
+                }
+            };
+            // act
+            collectionDetailEtbPage.setCollectionStructure();
+            // assert
+            expect(isObject(collectionDetailEtbPage.cardData.contentTypesCount)).toBeTruthy();
+        });
+
+        it('should not return anything if contentTypesCount is undefined', () => {
+            // arrange
+            collectionDetailEtbPage.cardData = {
+                contentTypesCount: undefined
+            };
+            collectionDetailEtbPage.contentDetail = {
+                contentData: {
+                    contentTypesCount: undefined
+                }
+            };
+            // act
+            collectionDetailEtbPage.setCollectionStructure();
+            // assert
+            expect(isObject(collectionDetailEtbPage.cardData.contentTypesCount)).toBeFalsy();
+            expect(isObject(collectionDetailEtbPage.contentDetail.contentData.contentTypesCount)).toBeFalsy();
         });
     });
 });
