@@ -30,7 +30,7 @@ var formRequestArray = [{
     },
     {
         'type': 'config',
-        'subType': 'dialcode',
+        'subType': 'supportedUrlRegex',
         'action': 'get'
     },
     {
@@ -49,6 +49,7 @@ var formRequestArray = [{
         'subType': 'webview_version',
         'action': 'get'
     }
+    
 ];
 
 var state_list_request_body = {
