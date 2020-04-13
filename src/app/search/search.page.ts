@@ -17,7 +17,7 @@ import {
   FrameworkDetailsRequest,
   FrameworkService,
   FrameworkUtilService,
-  GetSuggestedFrameworksRequest, SearchEntry, SearchHistoryService
+  GetSuggestedFrameworksRequest, SearchEntry, SearchHistoryService, SortOrder
 } from 'sunbird-sdk';
 
 import { Map } from '@app/app/telemetryutil';
@@ -889,6 +889,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
         enrollmentType: CourseEnrollmentType.OPEN,
         status: [CourseBatchStatus.NOT_STARTED, CourseBatchStatus.IN_PROGRESS]
       },
+      sort_by: { createdDate: SortOrder.DESC},
       fields: BatchConstants.REQUIRED_FIELDS
     };
     const reqvalues = new Map();

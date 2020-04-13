@@ -734,8 +734,10 @@ describe('EnrolledCourseDetailsPage', () => {
             enrolledCourseDetailsPage.batchDetails = {
                 courseId: 'sample_course_id',
                 createdBy: 'sample-creator',
-                creatorFirstName: '',
-                creatorLastName: ''
+                creatorDetails: {
+                    firstName: '',
+                    lastName: ''
+                }
             };
             const req: ServerProfileDetailsRequest = {
                 userId: enrolledCourseDetailsPage.batchDetails.createdBy,

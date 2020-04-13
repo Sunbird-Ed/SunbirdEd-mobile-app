@@ -1,16 +1,12 @@
 import { Component, NgZone, Inject } from '@angular/core';
 import { NavController, Events, PopoverController, NavParams } from '@ionic/angular';
 import {
-  SharedPreferences,
-  EnrollCourseRequest,
-  AuthService,
-  TelemetryObject,
-  InteractType,
-  CourseBatchesRequest,
-  CourseEnrollmentType,
-  CourseBatchStatus
+    SharedPreferences,
+    AuthService,
+    TelemetryObject,
+    InteractType,
 } from 'sunbird-sdk';
-import { PreferenceKey, ProfileConstants, EventTopics, ContentType, MimeType, BatchConstants, RouterLinks } from '@app/app/app.constant';
+import { PreferenceKey, ProfileConstants, EventTopics, ContentType, RouterLinks } from '@app/app/app.constant';
 import { CommonUtilService } from '@app/services/common-util.service';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { InteractSubtype, Environment, PageId } from '@app/services/telemetry-constants';

@@ -19,7 +19,7 @@ import {
   Content, ContentEventType, ContentImportRequest, ContentImportResponse, ContentImportStatus, ContentService, Course,
   CourseService, DownloadEventType, DownloadProgress, EventsBusEvent, EventsBusService, FetchEnrolledCourseRequest,
   PageAssembleCriteria, PageAssembleService, PageName, ProfileType, SharedPreferences, NetworkError, CorrelationData,
-  PageAssemble, FrameworkService, CourseEnrollmentType, CourseBatchStatus, CourseBatchesRequest, TelemetryObject
+  PageAssemble, FrameworkService, CourseEnrollmentType, CourseBatchStatus, CourseBatchesRequest, TelemetryObject, SortOrder
 } from 'sunbird-sdk';
 import { Environment, InteractSubtype, InteractType, PageId, CorReleationDataType } from '../../services/telemetry-constants';
 import { Subscription } from 'rxjs';
@@ -862,6 +862,7 @@ export class CoursesPage implements OnInit {
         enrollmentType: CourseEnrollmentType.OPEN,
         status: [CourseBatchStatus.NOT_STARTED, CourseBatchStatus.IN_PROGRESS]
       },
+      sort_by: { createdDate: SortOrder.DESC},
       fields: BatchConstants.REQUIRED_FIELDS
     };
     const reqvalues = new Map();

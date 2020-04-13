@@ -23,13 +23,13 @@ import {
   TelemetryObject,
   CorrelationData,
   LogLevel,
-  Mode,
   CourseEnrollmentType,
   CourseBatchStatus,
   Batch,
   CourseBatchesRequest,
   FetchEnrolledCourseRequest,
   SharedPreferences,
+  SortOrder,
 } from 'sunbird-sdk';
 
 import {
@@ -39,7 +39,10 @@ import {
   InteractType,
   PageId
 } from '@app/services/telemetry-constants';
-import { ContentType, ViewMore, MimeType, RouterLinks, ContentFilterConfig, ContentCard, BatchConstants, PreferenceKey } from '@app/app/app.constant';
+import {
+  ContentType, ViewMore, MimeType, RouterLinks, ContentFilterConfig,
+  ContentCard, BatchConstants, PreferenceKey
+} from '@app/app/app.constant';
 import { FormAndFrameworkUtilService } from '@app/services/formandframeworkutil.service';
 import { CourseUtilService } from '@app/services/course-util.service';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
@@ -604,7 +607,7 @@ export class ViewMoreActivityComponent implements OnInit {
     const payload = {
       guestUser: this.guestUser,
       enrolledCourses: this.enrolledCourses
-    }
+    };
 
     this.checkRetiredOpenBatch(course, this.pageType, payload);
   }
@@ -644,6 +647,7 @@ export class ViewMoreActivityComponent implements OnInit {
         enrollmentType: CourseEnrollmentType.OPEN,
         status: [CourseBatchStatus.NOT_STARTED, CourseBatchStatus.IN_PROGRESS]
       },
+      sort_by: { createdDate: SortOrder.DESC },
       fields: BatchConstants.REQUIRED_FIELDS
     };
     const reqvalues = new Map();
