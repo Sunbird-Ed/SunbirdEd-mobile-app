@@ -377,8 +377,9 @@ describe('QRScannerResultHandler', () => {
           InteractSubtype.QRCodeScanSuccess,
           Environment.HOME,
           PageId.QRCodeScanner,
-          undefined, values
-        );
+          undefined, values,
+          undefined,
+          [{id: '', type: 'Source'}]);
         done();
       }, 0);
     });
@@ -413,7 +414,9 @@ describe('QRScannerResultHandler', () => {
           InteractSubtype.QRCodeScanSuccess,
           Environment.HOME,
           PageId.QRCodeScanner, { id: 'do_12345', type: 'certificate', version: undefined },
-          values);
+          values,
+          undefined,
+        [{id: 'https://sunbirded.org', type: 'Source'}]);
         done();
       });
     });
@@ -481,7 +484,8 @@ describe('QRScannerResultHandler', () => {
           InteractSubtype.QRCodeScanSuccess,
           Environment.HOME,
           PageId.QRCodeScanner, { id: 'do_12345', type: 'certificate', version: undefined },
-          values);
+          values, undefined,
+          [{id: 'https://sunbirded.org', type: 'Source'}]);
         done();
       });
     });
