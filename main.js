@@ -30,7 +30,7 @@ var formRequestArray = [{
     },
     {
         'type': 'config',
-        'subType': 'dialcode',
+        'subType': 'supportedUrlRegex',
         'action': 'get'
     },
     {
