@@ -39,6 +39,7 @@ import { RouterLinks } from './app.constant';
 import { TncUpdateHandlerService } from '@app/services/handlers/tnc-update-handler.service';
 import { NetworkAvailabilityToastService } from '@app/services/network-availability-toast/network-availability-toast.service';
 import { SplaschreenDeeplinkActionHandlerDelegate } from '@app/services/sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
+import * as qs from 'qs';
 @Component({
   selector: 'app-root',
   templateUrl: 'app.component.html'
@@ -476,7 +477,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       pageId ? pageId.toLowerCase() : PageId.QRCodeScanner);
   }
 
-  private generateImpressionEvent(pageId: string) {
+  private async generateImpressionEvent(pageId: string) {
     pageId = pageId.toLowerCase();
     const env = pageId.localeCompare(PageId.PROFILE) ? Environment.HOME : Environment.USER;
     const corRelationList: Array<CorrelationData> = [];
@@ -486,6 +487,11 @@ export class AppComponent implements OnInit, AfterViewInit {
       corRelationList.push({ id: currentProfile.medium ? currentProfile.medium.join(',') : '', type: CorReleationDataType.MEDIUM });
       corRelationList.push({ id: currentProfile.grade ? currentProfile.grade.join(',') : '', type: CorReleationDataType.CLASS });
       corRelationList.push({ id: currentProfile.profileType, type: CorReleationDataType.USERTYPE });
+    } else if (pageId === 'courses') {
+      const channelId = await this.preferences.getString(PreferenceKey.PAGE_ASSEMBLE_ORGANISATION_ID).toPromise();
+      if (channelId) {
+        corRelationList.push({ id: channelId, type: CorReleationDataType.SOURCE });
+      }
     }
 
     this.telemetryGeneratorService.generateImpressionTelemetry(
@@ -741,11 +747,42 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.utilityService.getUtmInfo()
       .then(response => {
         if (response) {
+          let cData: CorrelationData[] = [];
+          const utmValue = response['val'];
+          const params: {[param: string]: string} = qs.parse(utmValue);
+          const utmParams = {};
+          Object.entries(params).forEach(([key, value]) => {
+            const chengeKeyUpperCase = key.split('_').map((elem) => {
+              return (elem.charAt(0).toUpperCase() + elem.slice(1));
+               });
+
+            utmParams[chengeKeyUpperCase.join('')] = decodeURIComponent(value);
+        });
+          if (Object.keys(utmParams)) {
+          cData = Object.keys(utmParams).map((key) => {
+            if (utmParams[key] !== undefined) {
+
+              return {id: key, type: utmParams[key]};
+            }
+          });
+        }
+          try {
+            const url: URL = new URL(params['utm_content']);
+            const overrideChannelSlug = url.searchParams.get('channel');
+            if (overrideChannelSlug) {
+              cData.push({
+                id: CorReleationDataType.SOURCE,
+                type: overrideChannelSlug
+              });
+            }} catch (e) {
+              console.error(e);
+
+            }
           if (response.val && response.val.length) {
             this.splaschreenDeeplinkActionHandlerDelegate.checkUtmContent(response.val);
           }
           const utmTelemetry = {
-            utm_data: response
+            utm_data: utmValue
           };
           this.telemetryGeneratorService.generateInteractTelemetry(
             InteractType.OTHER,
@@ -753,9 +790,11 @@ export class AppComponent implements OnInit, AfterViewInit {
             Environment.HOME,
             PageId.HOME,
             undefined,
-            utmTelemetry);
+            utmTelemetry,
+            undefined,
+            cData);
           this.utilityService.clearUtmInfo();
-        }
+      }
       })
       .catch(error => {
         console.log('Error is', error);

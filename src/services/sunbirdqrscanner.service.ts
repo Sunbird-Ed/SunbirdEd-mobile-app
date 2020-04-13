@@ -256,7 +256,7 @@ export class SunbirdQRScanner {
 
   getProfileSettingConfig() {
     this.profile = this.appGlobalService.getCurrentUser();
-    if (this.profile.profileType === ProfileType.TEACHER) {
+    if (this.commonUtilService.isAccessibleForNonStudentRole(this.profile.profileType)) {
       initTabs(this.container, GUEST_TEACHER_TABS);
     } else if (this.profile.profileType === ProfileType.STUDENT) {
       initTabs(this.container, GUEST_STUDENT_TABS);

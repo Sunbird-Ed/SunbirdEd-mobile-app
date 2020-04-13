@@ -69,7 +69,7 @@ export class LogoutHandlerService {
 
     if (selectedUserType === ProfileType.STUDENT) {
       initTabs(this.containerService, GUEST_STUDENT_TABS);
-    } else if (selectedUserType === ProfileType.TEACHER) {
+    } else if (this.commonUtilService.isAccessibleForNonStudentRole(selectedUserType)) {
       initTabs(this.containerService, GUEST_TEACHER_TABS);
     }
 
