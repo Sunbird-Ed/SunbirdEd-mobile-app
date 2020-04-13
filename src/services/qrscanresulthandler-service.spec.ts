@@ -148,7 +148,7 @@ describe('QRScannerResultHandler', () => {
       expect(mockNavController.navigateForward).toHaveBeenCalledWith(['/search'], {
         state: {
           dialCode: 'ABCDEF',
-          corRelation: [{ id: 'ABCDEF', type: 'qr' }],
+          corRelation: [{ id: 'ABCDEF', type: 'qr' }, {id: 'https://sunbirded.org', type: 'Source'}],
           source: 'profile-settings',
           shouldGenerateEndTelemetry: true
         }
@@ -162,7 +162,9 @@ describe('QRScannerResultHandler', () => {
         InteractSubtype.QRCodeScanSuccess,
         Environment.HOME,
         PageId.QRCodeScanner, { id: 'ABCDEF', type: 'qr', version: undefined },
-        values);
+        values,
+        undefined,
+        [{id: 'https://sunbirded.org', type: 'Source'}]);
     });
   });
 
@@ -183,7 +185,7 @@ describe('QRScannerResultHandler', () => {
         expect(mockRouter.navigate).toHaveBeenCalledWith(['/content-details'], {
           state: {
             content,
-            corRelation: [{ id: 'do_12345', type: 'qr' }],
+            corRelation: [{id: 'do_12345', type: 'qr'}, { id: 'https://sunbirded.org', type: 'Source' }],
             source: 'profile-settings',
             shouldGenerateEndTelemetry: true
           }
@@ -193,7 +195,9 @@ describe('QRScannerResultHandler', () => {
           InteractSubtype.QRCodeScanSuccess,
           Environment.HOME,
           PageId.QRCodeScanner, { id: 'do_12345', type: 'qr', version: undefined },
-          values);
+          values,
+          undefined,
+          [{id: 'https://sunbirded.org', type: 'Source'}]);
         expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenCalledWith(
           ImpressionType.VIEW, ImpressionSubtype.QR_CODE_VALID,
           PageId.QRCodeScanner,
@@ -222,7 +226,7 @@ describe('QRScannerResultHandler', () => {
         expect(mockRouter.navigate).toHaveBeenCalledWith(['/collection-detail-etb'], {
           state: {
             content,
-            corRelation: [{ id: 'do_12345', type: 'qr' }],
+            corRelation: [{ id: 'do_12345', type: 'qr' }, {id: 'https://sunbirded.org', type: 'Source'}],
             source: 'profile-settings',
             shouldGenerateEndTelemetry: true
           }
@@ -232,7 +236,9 @@ describe('QRScannerResultHandler', () => {
           InteractSubtype.QRCodeScanSuccess,
           Environment.HOME,
           PageId.QRCodeScanner, { id: 'do_12345', type: 'qr', version: undefined },
-          values);
+          values,
+          undefined,
+          [{id: 'https://sunbirded.org', type: 'Source'}]);
         expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenCalledWith(
           ImpressionType.VIEW, ImpressionSubtype.QR_CODE_VALID,
           PageId.QRCodeScanner,
@@ -261,7 +267,7 @@ describe('QRScannerResultHandler', () => {
         expect(mockRouter.navigate).toHaveBeenCalledWith(['/enrolled-course-details'], {
           state: {
             content,
-            corRelation: [{ id: 'do_12345', type: 'qr' }],
+            corRelation: [{ id: 'do_12345', type: 'qr' }, {id: 'https://sunbirded.org', type: 'Source'}],
             source: 'profile-settings',
             shouldGenerateEndTelemetry: true
           }
@@ -271,7 +277,9 @@ describe('QRScannerResultHandler', () => {
           InteractSubtype.QRCodeScanSuccess,
           Environment.HOME,
           PageId.QRCodeScanner, { id: 'do_12345', type: 'qr', version: undefined },
-          values);
+          values,
+          undefined,
+          [{id: 'https://sunbirded.org', type: 'Source'}]);
         expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenCalledWith(
           ImpressionType.VIEW, ImpressionSubtype.QR_CODE_VALID,
           PageId.QRCodeScanner,
@@ -332,7 +340,9 @@ describe('QRScannerResultHandler', () => {
         InteractSubtype.QRCodeScanSuccess,
         Environment.HOME,
         PageId.QRCodeScanner, undefined,
-        values);
+        values,
+        undefined,
+        [{id: '', type: 'Source'}]);
 
       expect(mockTelemetryGeneratorService.generateEndTelemetry).toHaveBeenCalledWith(
         'qr',
@@ -363,7 +373,9 @@ describe('QRScannerResultHandler', () => {
           InteractSubtype.QRCodeScanSuccess,
           Environment.HOME,
           PageId.QRCodeScanner, { id: 'do_12345', type: 'certificate', version: undefined },
-          values);
+          values,
+          undefined,
+          [{id: 'https://sunbirded.org', type: 'Source'}]);
         done();
       });
 
