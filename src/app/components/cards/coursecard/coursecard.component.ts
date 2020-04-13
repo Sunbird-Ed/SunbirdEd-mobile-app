@@ -5,7 +5,7 @@ import { CourseUtilService } from '../../../../services/course-util.service';
 import { TelemetryGeneratorService } from '../../../../services/telemetry-generator.service';
 import {
   SharedPreferences, TelemetryObject,
-  CourseService, CourseBatchesRequest, CourseEnrollmentType, CourseBatchStatus, GetContentStateRequest, CorrelationData
+  CourseService, CourseBatchesRequest, CourseEnrollmentType, CourseBatchStatus, GetContentStateRequest, CorrelationData, SortOrder
 } from 'sunbird-sdk';
 import { InteractSubtype, InteractType, Environment, PageId, CorReleationDataType } from '../../../../services/telemetry-constants';
 import { CommonUtilService } from '../../../../services/common-util.service';
@@ -112,6 +112,7 @@ export class CourseCardComponent implements OnInit {
         enrollmentType: CourseEnrollmentType.OPEN,
         status: [CourseBatchStatus.NOT_STARTED, CourseBatchStatus.IN_PROGRESS]
       },
+      sort_by: { createdDate: SortOrder.DESC},
       fields: BatchConstants.REQUIRED_FIELDS
     };
     const reqvalues = new Map();

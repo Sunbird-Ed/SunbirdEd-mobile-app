@@ -94,19 +94,18 @@ export class Search {
 
 export class BatchConstants {
     public static readonly REQUIRED_FIELDS = [
-        'endDate',
-        'description',
+        'identifier',
+        'id',
         'name',
         'enrollmentType',
+        'description',
         'hashTagId',
-        'startDate',
         'courseId',
         'status',
         'createdBy',
-        'creatorFirstName',
-        'creatorLastName',
-        'identifier',
-        'id',
+        // 'creatorDetails',
+        'startDate',
+        'endDate',
         'enrollmentEndDate',
         'cert_templates'
     ];

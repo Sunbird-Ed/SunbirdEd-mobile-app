@@ -41,10 +41,11 @@
             <span class="text-gray-color">
               {{batch.startDate | date: 'mediumDate' }} - {{ batch.endDate | date: 'mediumDate' }}
             </span>
-            <p *ngIf="batch.creatorFirstName">
+            <p *ngIf="batch?.creatorDetails?.firstName">
               <span class="text-gray-color">{{ 'BATCH_CREATED_BY' | translate }}</span>&nbsp;
-              <span class="text-gray-color">{{ batch.creatorFirstName }}</span>&nbsp;<span class="text-gray-color"
-                *ngIf="batch.creatorLastName">{{batch.creatorLastName}}</span>
+              <span class="text-gray-color">{{ batch.creatorDetails.firstName }}</span>&nbsp;
+              <span class="text-gray-color"
+                *ngIf="batch?.creatorDetails?.lastName">{{batch?.creatorDetails?.lastName}}</span>
             </p>
             <p *ngIf="batch?.enrollmentEndDate">
               <span *ngIf="(todayDate > batch?.enrollmentEndDate); else lastDateForEnrollment"
@@ -80,10 +81,11 @@
             <span class="text-gray-color">
               {{batch.startDate | date: 'mediumDate' }} - {{ batch.endDate | date: 'mediumDate' }}
             </span>
-            <p *ngIf="batch.creatorFirstName">
+            <p *ngIf="batch?.creatorDetails?.firstName">
               <span class="text-gray-color">{{ 'BATCH_CREATED_BY' | translate }}</span>&nbsp;
-              <span class="text-gray-color">{{ batch.creatorFirstName }}</span>&nbsp;<span class="text-gray-color"
-                *ngIf="batch.creatorLastName">{{batch.creatorLastName}}</span>
+              <span class="text-gray-color">{{ batch.creatorDetails.firstName }}</span>&nbsp;
+              <span class="text-gray-color"
+                *ngIf="batch?.creatorDetails?.lastName">{{batch.creatorDetails.lastName}}</span>
             </p>
             <p *ngIf="batch?.enrollmentEndDate">
               <span *ngIf="(todayDate > batch?.enrollmentEndDate); else lastDateForEnrollment"
