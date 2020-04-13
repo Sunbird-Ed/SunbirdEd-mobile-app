@@ -745,7 +745,7 @@ describe('FormAndFrameworkUtilService', () => {
       formAndFrameworkUtilService.getRootOrganizations();
       // assert
       setTimeout(() => {
-        expect(mockAppGlobalService.setRootOrganizations).toHaveBeenCalledWith(['sample_org']);
+        expect(mockAppGlobalService.getCachedRootOrganizations).toHaveBeenCalled();
         done();
       }, 0);
     });
