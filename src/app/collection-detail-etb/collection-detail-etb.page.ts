@@ -322,6 +322,7 @@ export class CollectionDetailEtbPage implements OnInit {
       this.headerService.updatePageConfig(this.headerConfig);
       this.shownGroup = null;
       this.assignCardData();
+      this.resetVariables();
       this.setContentDetails(this.identifier, true);
       this.events.subscribe(EventTopics.CONTENT_TO_PLAY, (data) => {
         this.playContent(data);

@@ -1694,7 +1694,7 @@ describe('EnrolledCourseDetailsPage', () => {
             // assert
             expect(enrolledCourseDetailsPage.generateEndEvent).toBeCalled();
             expect(enrolledCourseDetailsPage.generateQRSessionEndEvent).toBeCalled();
-            expect(enrolledCourseDetailsPage.goBack).toBeCalled();
+            expect(enrolledCourseDetailsPage.goBack).not.toBeCalled();
 
         });
     });
