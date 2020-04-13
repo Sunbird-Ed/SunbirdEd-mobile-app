@@ -340,7 +340,6 @@ export class CollectionDetailEtbPage implements OnInit {
       this.headerConfig.showHeader = false;
       this.headerConfig.showBurgerMenu = false;
       this.headerService.updatePageConfig(this.headerConfig);
-      this.resetVariables();
       this.shownGroup = null;
 
       if (!this.didViewLoad) {
@@ -351,7 +350,7 @@ export class CollectionDetailEtbPage implements OnInit {
         this.generateImpressionEvent(this.cardData.identifier, contentType, this.cardData.pkgVersion);
         this.markContent();
       }
-
+      this.resetVariables();
       this.didViewLoad = true;
       this.setContentDetails(this.identifier, true);
       this.events.subscribe(EventTopics.CONTENT_TO_PLAY, (data) => {
