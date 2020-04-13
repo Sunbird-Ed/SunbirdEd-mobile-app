@@ -80,7 +80,6 @@ export class CanvasPlayerService {
                         resolve(json);
                     });
                 } catch (error) {
-                    console.log('In error', error);
                     reject('Unable to convert');
                 }
             });
@@ -102,7 +101,6 @@ export class CanvasPlayerService {
                         resolve(data);
                     });
                 } catch (error) {
-                    console.log('', error);
                     reject('Unable to read JSON');
                 }
             });
