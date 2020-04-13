@@ -647,8 +647,11 @@ export class GuestEditPage implements OnInit {
       if (formVal.profileType === ProfileType.STUDENT) {
         this.preferences.putString(PreferenceKey.SELECTED_USER_TYPE, ProfileType.STUDENT).toPromise().then();
         initTabs(this.container, GUEST_STUDENT_TABS);
-      } else {
+      } else if (formVal.profileType === ProfileType.TEACHER) {
         this.preferences.putString(PreferenceKey.SELECTED_USER_TYPE, ProfileType.TEACHER).toPromise().then();
+        initTabs(this.container, GUEST_TEACHER_TABS);
+      } else {
+        this.preferences.putString(PreferenceKey.SELECTED_USER_TYPE, ProfileType.OTHER).toPromise().then();
         initTabs(this.container, GUEST_TEACHER_TABS);
       }
     }

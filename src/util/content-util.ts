@@ -103,4 +103,18 @@ export class ContentUtil {
       return new TelemetryObject(identifier, contentType, pkgVersion);
     }
 
+    public static extractBaseUrl(url: string): string {
+      if (url) {
+          const pathArray = url.split('/');
+          const protocol = pathArray[0];
+          const host = pathArray[2];
+          if (protocol && host) {
+              return protocol + '//' + host;
+          } else {
+              return '';
+          }
+      }
+      return '';
+  }
+
 }

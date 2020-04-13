@@ -253,9 +253,14 @@ export class LoginHandlerService {
     const profile = this.appGlobalService.getCurrentUser();
     const profileRequest: Profile = {
       uid: profile.uid,
-      handle: 'Guest1',
-      profileType: ProfileType.TEACHER,
-      source: ProfileSource.LOCAL
+      handle: profile.handle || 'Guest1',
+      medium: profile.medium || [],
+      board: profile.board || [],
+      subject: profile.subject || [],
+      profileType: profile.profileType || ProfileType.TEACHER,
+      grade: profile.grade || [],
+      syllabus: profile.syllabus || [],
+      source: profile.source || ProfileSource.LOCAL
     };
     return profileRequest;
   }

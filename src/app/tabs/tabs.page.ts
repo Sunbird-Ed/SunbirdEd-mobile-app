@@ -46,7 +46,7 @@ export class TabsPage implements OnInit, AfterViewInit {
     const session = await this.appGlobalService.authService.getSession().toPromise();
     if (!session) {
       const profileType = this.appGlobalService.guestProfileType;
-      if (profileType === ProfileType.TEACHER) {
+      if (this.commonUtilService.isAccessibleForNonStudentRole(profileType)) {
         initTabs(this.container, GUEST_TEACHER_TABS);
       } else {
         initTabs(this.container, GUEST_STUDENT_TABS);

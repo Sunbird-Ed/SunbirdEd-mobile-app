@@ -9,7 +9,7 @@ import {
 import { TranslateService } from '@ngx-translate/core';
 import { Network } from '@ionic-native/network/ngx';
 import { WebView } from '@ionic-native/ionic-webview/ngx';
-import { SharedPreferences, ProfileService, Profile } from 'sunbird-sdk';
+import { SharedPreferences, ProfileService, Profile, ProfileType } from 'sunbird-sdk';
 
 import { PreferenceKey, ProfileConstants } from '@app/app/app.constant';
 import { appLanguages } from '@app/app/app.constant';
@@ -130,11 +130,12 @@ export class CommonUtilService {
      * Returns Loading object with default config
      * @returns Loading object
      */
-    async getLoader(duration?) {
-        return await this.loadingCtrl.create({
+    getLoader(duration?, message?): any {
+        return this.loadingCtrl.create({
+            message,
             duration: duration ? duration : 30000,
             spinner: 'crescent',
-            cssClass: 'custom-loader-class'
+            cssClass: message ? 'custom-loader-message-class' : 'custom-loader-class'
         });
     }
 
@@ -462,4 +463,9 @@ export class CommonUtilService {
         this.telemetryGeneratorService.generateUtmInfoTelemetry(utmParams,
             (cData[0].id === CorReleationDataType.SCAN) ? PageId.QRCodeScanner : PageId.HOME, cData, object);
     }
+    
+    isAccessibleForNonStudentRole(profileType) {
+        return profileType === ProfileType.TEACHER || profileType == ProfileType.OTHER;
+    }
+
 }

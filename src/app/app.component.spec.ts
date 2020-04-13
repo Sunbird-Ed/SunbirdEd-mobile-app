@@ -119,7 +119,14 @@ describe('AppComponent', () => {
         sims: 0,
         cap: ['some_cap']
     };
-    const mockUtilityService: Partial<UtilityService> = {};
+    const mockUtilityService: Partial<UtilityService> = {
+        getUtmInfo: jest.fn(() => Promise.resolve({
+            'val': 'utm_source=googleplay&utm_content=https://diksha.gov.in/explore-course',
+            'code': '0',
+            'clk': '0',
+            'install': '0'
+        }))
+    };
     const mockZone: Partial<NgZone> = {};
     const mockLocalCourseService: Partial<LocalCourseService> = {};
     const mockSplaschreenDeeplinkActionHandlerDelegate: Partial<SplaschreenDeeplinkActionHandlerDelegate> = {};
@@ -328,23 +335,28 @@ describe('AppComponent', () => {
 
         it('should generate utm-info telemetry if utm source is available for first time', (done) => {
             // arrange
-            mockUtilityService.getUtmInfo = jest.fn(() => Promise.resolve({ utm_source: 'sunbird' }));
+            mockUtilityService.getUtmInfo = jest.fn(() => Promise.resolve({
+                'val': 'utm_source=googleplay&utm_content=https://diksha.gov.in/explore-course',
+                'code': '0',
+                'clk': '0',
+                'install': '0'
+            }));
             mockUtilityService.clearUtmInfo = jest.fn(() => Promise.resolve());
-
+            const value = new Map();
+            mockSplaschreenDeeplinkActionHandlerDelegate.checkUtmContent = jest.fn();
             // act
             appComponent.ngOnInit();
             // assert
             setTimeout(() => {
                 expect(mockUtilityService.getUtmInfo).toHaveBeenCalled();
-                expect(mockTelemetryGeneratorService.generateInteractTelemetry).nthCalledWith(2,
+                expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
                     InteractType.OTHER,
-                    InteractSubtype.UTM_INFO,
+                    'networkStatus',
                     Environment.HOME,
-                    PageId.HOME,
+                    'splash',
                     undefined,
-                    { utm_data: { utm_source: 'sunbird' } }
+                    value
                 );
-                expect(mockUtilityService.clearUtmInfo).toHaveBeenCalled();
                 done();
             }, 0);
         });

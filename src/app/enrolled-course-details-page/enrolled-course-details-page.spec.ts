@@ -47,7 +47,9 @@ describe('EnrolledCourseDetailsPage', () => {
         getCourseBatches: jest.fn()
     };
     const mockPreferences: Partial<SharedPreferences> = {};
-    const mockAuthService: Partial<AuthService> = {};
+    const mockAuthService: Partial<AuthService> = {
+        getSession: jest.fn(() => of({}))
+    };
     const mockLoginHandlerService: Partial<LoginHandlerService> = {
         signIn: jest.fn()
     };
@@ -89,7 +91,8 @@ describe('EnrolledCourseDetailsPage', () => {
     const mockLocation: Partial<Location> = {};
     const mockRouter: Partial<Router> = {
         getCurrentNavigation: jest.fn(() => mockEnrolledData),
-        navigate: jest.fn()
+        navigate: jest.fn(),
+        getCurrentNavigation: jest.fn(() => mockEnrolledData) as any
     };
     const mockTranslate: Partial<TranslateService> = {};
     const mockContentDeleteHandler: Partial<ContentDeleteHandler> = {};
@@ -107,6 +110,7 @@ describe('EnrolledCourseDetailsPage', () => {
             mockEventsBusService as EventsBusService,
             mockCourseService as CourseService,
             mockPreferences as SharedPreferences,
+            mockAuthService as AuthService,
             mockLoginHandlerService as LoginHandlerService,
             mockZone as NgZone,
             mockEvents as Events,
@@ -154,7 +158,7 @@ describe('EnrolledCourseDetailsPage', () => {
 
     describe('showDeletePopup()', () => {
         it('should show delete popup by invoked showDeletePopup()', () => {
-            //  
+            // arrange
             const contentDelete = new Subject<any>();
             mockContentDeleteHandler.contentDeleteCompleted$ = contentDelete.asObservable();
             mockContentDeleteHandler.showContentDeletePopup = jest.fn();
@@ -181,7 +185,7 @@ describe('EnrolledCourseDetailsPage', () => {
         });
     });
 
-    describe('subscribeUtilityEvents()', ()=> {
+    describe('subscribeUtilityEvents()', () => {
         it('#subscribeUtilityEvents should handle error condition', (done) => {
             // arrange
             mockUtilityService.getBuildConfigValue = jest.fn(() => Promise.reject(true));
@@ -198,7 +202,7 @@ describe('EnrolledCourseDetailsPage', () => {
                 done();
             }, 0);
         });
-    
+
         it('should update courseCard data and return base url by invoked subscribeUtilityEvents()', (done) => {
             // arrange
             mockUtilityService.getBuildConfigValue = jest.fn(() => Promise.resolve('SAMPLE_BASE_URL'));
@@ -274,7 +278,7 @@ describe('EnrolledCourseDetailsPage', () => {
             expect(response.contentData.me_totalRatingsCount).toBe(4);
             expect(mockLocation.back).toHaveBeenCalled();
         });
-    
+
         it('should return import content if data is not available for extractApiResponse', () => {
             // assert
             const response = mockEnrolledData.extras.state.content;
@@ -298,6 +302,7 @@ describe('EnrolledCourseDetailsPage', () => {
     describe('checkCurrentUserType', () => {
         it('should checked current user type for cath part by invoked checkCurrentUserType()', () => {
             // arrange
+            enrolledCourseDetailsPage.guestUser = true;
             mockAppGlobalService.getGuestUserInfo = jest.fn(() => Promise.reject('SAMPLE_USER'));
             // act
             enrolledCourseDetailsPage.checkCurrentUserType();
@@ -338,7 +343,7 @@ describe('EnrolledCourseDetailsPage', () => {
             expect(contentDetailsResponse.contentData['isAvailableLocally']).toBeTruthy();
             expect(enrolledCourseDetailsPage.guestUser).toBeFalsy();
         });
-    
+
         it('should show user rating for content if content is not available locally', () => {
             // arrange
             enrolledCourseDetailsPage.guestUser = false;
@@ -351,18 +356,23 @@ describe('EnrolledCourseDetailsPage', () => {
             expect(enrolledCourseDetailsPage.guestUser).toBeFalsy();
             expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('TRY_BEFORE_RATING');
         });
-    
-        it('should show user rating for content for guest user', () => {
+
+        it('should show user rating for content for guest user', (done) => {
             // arrange
             enrolledCourseDetailsPage.guestUser = true;
             enrolledCourseDetailsPage.profileType = ProfileType.TEACHER;
+            mockCommonUtilService.isAccessibleForNonStudentRole = jest.fn(() => true);
             mockCommonUtilService.showToast = jest.fn(() => 'signin to use feature');
             // act
             enrolledCourseDetailsPage.rateContent('');
             // assert
-            expect(enrolledCourseDetailsPage.guestUser).toBeTruthy();
-            expect(enrolledCourseDetailsPage.profileType).toBe(ProfileType.TEACHER);
-            expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('SIGNIN_TO_USE_FEATURE');
+            setTimeout(() => {
+                expect(enrolledCourseDetailsPage.guestUser).toBeTruthy();
+                expect(enrolledCourseDetailsPage.profileType).toBe(ProfileType.TEACHER);
+                expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('SIGNIN_TO_USE_FEATURE');
+                expect(mockCommonUtilService.isAccessibleForNonStudentRole).toHaveBeenCalled();
+                done();
+            }, 0);
         });
     });
 
@@ -460,7 +470,7 @@ describe('EnrolledCourseDetailsPage', () => {
                 done();
             }, 0);
         });
-    
+
         it('should handle unenrolled for enrolled course for error part of ERROR_NO_INTERNET_MESSAGE', (done) => {
             // arrange
             const presentFn = jest.fn(() => Promise.resolve());
@@ -519,7 +529,7 @@ describe('EnrolledCourseDetailsPage', () => {
                 done();
             }, 0);
         });
-    
+
         it('should not return content details for networkError  by called setContentDetails()', (done) => {
             // arrange
             const option: ContentDetailRequest = {
@@ -567,7 +577,7 @@ describe('EnrolledCourseDetailsPage', () => {
                 done();
             }, 0);
         });
-    
+
         it('should return course batch details of expire date start date by invoked getBatchDetails() for status 2', (done) => {
             // arrange
             enrolledCourseDetailsPage.batchDetails = {
@@ -591,7 +601,7 @@ describe('EnrolledCourseDetailsPage', () => {
                 done();
             }, 0);
         });
-    
+
         it('should return course batch details of expire date start date by invoked getBatchDetails() for status zero', (done) => {
             // arrange
             enrolledCourseDetailsPage.batchDetails = {
@@ -615,7 +625,7 @@ describe('EnrolledCourseDetailsPage', () => {
                 done();
             }, 0);
         });
-    
+
         it('should saved content context by invoked getBatchDetails() for catch part', (done) => {
             // arrange
             enrolledCourseDetailsPage.batchDetails = {
@@ -633,7 +643,8 @@ describe('EnrolledCourseDetailsPage', () => {
             enrolledCourseDetailsPage.getBatchDetails();
             // assert
             setTimeout(() => {
-                expect(mockCourseService.getBatchDetails).toHaveBeenCalledWith({ batchId: enrolledCourseDetailsPage.courseCardData.batchId });
+                expect(mockCourseService.getBatchDetails).toHaveBeenCalledWith(
+                    { batchId: enrolledCourseDetailsPage.courseCardData.batchId });
                 done();
             }, 0);
         });
@@ -705,7 +716,7 @@ describe('EnrolledCourseDetailsPage', () => {
             // assert
             expect(isObject(enrolledCourseDetailsPage.course.contentTypesCount)).toBeFalsy();
         });
-    
+
         it('should be set course structure if contentTypesCount is object for course', () => {
             // arrange
             enrolledCourseDetailsPage.course = {
@@ -716,7 +727,7 @@ describe('EnrolledCourseDetailsPage', () => {
             // assert
             expect(isObject(enrolledCourseDetailsPage.course.contentTypesCount)).toBeTruthy();
         });
-    
+
         it('should be set course structure if contentTypesCount is not object for courseCard', () => {
             // arrange
             enrolledCourseDetailsPage.course = {
@@ -745,7 +756,7 @@ describe('EnrolledCourseDetailsPage', () => {
         });
     });
 
-    describe('refreshHeader()',() => {
+    describe('refreshHeader()', () => {
         it('should refreshed header for refreshHeader()', () => {
             // arrange
             mockEvents.publish = jest.fn();
@@ -861,20 +872,20 @@ describe('EnrolledCourseDetailsPage', () => {
                             {
                                 btnClass: 'popover-color',
                                 btntext: '',
-    
+
                             },
-    
+
                         ],
                         isNotShowCloseIcon: true,
                         metaInfo: '',
                         sbPopoverHeading: '',
                         sbPopoverMainTitle: '',
-    
+
                     },
                     cssClass: 'sb-popover info',
                 });
         });
-    
+
         it('should invoke LoginHandler signin method', (done) => {
             // arrange
             mockPopoverCtrl.create = jest.fn(() => (Promise.resolve({
@@ -885,13 +896,13 @@ describe('EnrolledCourseDetailsPage', () => {
             // act
             enrolledCourseDetailsPage.promptToLogin({ batchId: '0123456' });
             // assert
-    
+
             setTimeout(() => {
                 expect(mockLoginHandlerService.signIn).toHaveBeenCalled();
                 expect(mockAppGlobalService.resetSavedQuizContent).toHaveBeenCalled();
                 done();
             }, 0);
-    
+
         });
     });
 
@@ -899,12 +910,12 @@ describe('EnrolledCourseDetailsPage', () => {
         it('should populate correlationData', () => {
             // arrange
             enrolledCourseDetailsPage.corRelationList = undefined;
-            jest.spyOn(mockCommonUtilService, 'deDupe').mockReturnValue([{ id: '', type: 'CourseBatch'}]);
+            jest.spyOn(mockCommonUtilService, 'deDupe').mockReturnValue([{ id: '', type: 'CourseBatch' }]);
             // act
             enrolledCourseDetailsPage.populateCorRelationData(undefined);
             // assert
-            expect(enrolledCourseDetailsPage.corRelationList).toEqual([{ id: '', type: 'CourseBatch'}]);
-    
+            expect(enrolledCourseDetailsPage.corRelationList).toEqual([{ id: '', type: 'CourseBatch' }]);
+
         });
     });
 
@@ -918,7 +929,7 @@ describe('EnrolledCourseDetailsPage', () => {
             // assert
             expect(enrolledCourseDetailsPage.licenseSectionClicked).toHaveBeenCalledWith('expanded');
         });
-    
+
         it('should not show license when user clicked on license and credits', () => {
             // arrange
             enrolledCourseDetailsPage.showCredits = true;
@@ -942,10 +953,10 @@ describe('EnrolledCourseDetailsPage', () => {
                 '',
                 undefined,
                 PageId.COURSE_DETAIL,
-                {id: 'do_21281258639073280011490', type: 'Course', version: '2'},
+                { id: 'do_21281258639073280011490', type: 'Course', version: '2' },
                 undefined,
                 enrolledCourseDetailsPage.objRollup,
-                [{id: '', type: 'CourseBatch'}],
+                [{ id: '', type: 'CourseBatch' }],
                 ID.LICENSE_CARD_CLICKED
             );
         });
@@ -961,18 +972,18 @@ describe('EnrolledCourseDetailsPage', () => {
                 '',
                 undefined,
                 PageId.COURSE_DETAIL,
-                {id: 'do_21281258639073280011490', type: 'Course', version: '2'},
+                { id: 'do_21281258639073280011490', type: 'Course', version: '2' },
                 undefined,
                 enrolledCourseDetailsPage.objRollup,
-                [{id: '', type: 'CourseBatch'}],
+                [{ id: '', type: 'CourseBatch' }],
                 ID.LICENSE_CARD_CLICKED
             );
         });
     });
 
     describe('getContentState()', () => {
-        it('progress should be initialised', (done) => {
-            //arrange
+        it('check', (done) => {
+            // arrange
             const contentState = {
                 contentList: [
                     {

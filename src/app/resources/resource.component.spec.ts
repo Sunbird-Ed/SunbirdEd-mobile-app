@@ -91,7 +91,8 @@ describe('ResourcesComponent', () => {
     };
     const mockCommonUtilService: Partial<CommonUtilService> = {
         convertFileSrc: jest.fn(),
-        networkInfo: jest.fn()
+        networkInfo: jest.fn(),
+        isAccessibleForNonStudentRole: jest.fn()
     };
     const mockFormAndFrameworkUtilService: Partial<FormAndFrameworkUtilService> = {};
     const mockTranslateService: Partial<TranslateService> = {};

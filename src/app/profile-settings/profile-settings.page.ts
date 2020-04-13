@@ -1,16 +1,17 @@
-import { FormAndFrameworkUtilService } from './../../services/formandframeworkutil.service';
-import { Component, Inject, ViewChild, OnInit, OnDestroy, ElementRef, AfterViewInit } from '@angular/core';
-import { Subscription, Observable, combineLatest } from 'rxjs';
-import { tap, delay } from 'rxjs/operators';
-import { Router, NavigationExtras, ActivatedRoute } from '@angular/router';
-import { AppVersion } from '@ionic-native/app-version/ngx';
-import { TranslateService } from '@ngx-translate/core';
-import { FormGroup, FormControl } from '@angular/forms';
-import { ProfileConstants, RouterLinks } from '@app/app/app.constant';
-import { GUEST_STUDENT_TABS, GUEST_TEACHER_TABS, initTabs } from '@app/app/module.service';
-import { ImpressionType, PageId, Environment, InteractSubtype, InteractType } from '@app/services/telemetry-constants';
+import {FormAndFrameworkUtilService} from './../../services/formandframeworkutil.service';
+import {AfterViewInit, Component, ElementRef, Inject, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {combineLatest, Observable, Subscription} from 'rxjs';
+import {delay, tap} from 'rxjs/operators';
+import {ActivatedRoute, NavigationExtras, Router} from '@angular/router';
+import {AppVersion} from '@ionic-native/app-version/ngx';
+import {TranslateService} from '@ngx-translate/core';
+import {FormControl, FormGroup} from '@angular/forms';
+import {ProfileConstants, RouterLinks} from '@app/app/app.constant';
+import {GUEST_STUDENT_TABS, GUEST_TEACHER_TABS, initTabs} from '@app/app/module.service';
+import {Environment, ImpressionType, InteractSubtype, InteractType, PageId} from '@app/services/telemetry-constants';
 import {
   Framework,
+  FrameworkCategoryCode,
   FrameworkCategoryCodesGroup,
   FrameworkService,
   FrameworkUtilService,
@@ -18,20 +19,20 @@ import {
   GetSuggestedFrameworksRequest,
   Profile,
   ProfileService,
-  ProfileType,
-  FrameworkCategoryCode
+  ProfileType
 } from 'sunbird-sdk';
 import {
   AppGlobalService,
-  TelemetryGeneratorService,
+  AppHeaderService,
   CommonUtilService,
-  SunbirdQRScanner,
   ContainerService,
-  AppHeaderService
+  SunbirdQRScanner,
+  TelemetryGeneratorService
 } from 'services';
-import { Platform, Events, AlertController } from '@ionic/angular';
-import { Location } from '@angular/common';
-import { SplashScreenService } from '@app/services/splash-screen.service';
+import {AlertController, Events, Platform} from '@ionic/angular';
+import {Location} from '@angular/common';
+import {SplashScreenService} from '@app/services/splash-screen.service';
+import {CachedItemRequestSourceFrom} from '@project-sunbird/sunbird-sdk';
 
 @Component({
   selector: 'app-profile-settings',
@@ -379,6 +380,7 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
     await this.loader.present();
 
     const getSuggestedFrameworksRequest: GetSuggestedFrameworksRequest = {
+      from: CachedItemRequestSourceFrom.SERVER,
       language: this.translate.currentLang,
       requiredCategories: FrameworkCategoryCodesGroup.DEFAULT_FRAMEWORK_CATEGORIES
     };
@@ -414,6 +416,7 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
 
         try {
           this.framework = await this.frameworkService.getFrameworkDetails({
+            from: CachedItemRequestSourceFrom.SERVER,
             frameworkId: value[0],
             requiredCategories: FrameworkCategoryCodesGroup.DEFAULT_FRAMEWORK_CATEGORIES
           }).toPromise();
@@ -502,7 +505,7 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
 
     this.profileService.updateProfile(updateProfileRequest).toPromise()
       .then(async (profile: Profile) => {
-        if (updateProfileRequest.profileType === ProfileType.TEACHER) {
+        if (this.commonUtilService.isAccessibleForNonStudentRole(updateProfileRequest.profileType)) {
           initTabs(this.container, GUEST_TEACHER_TABS);
         } else if (updateProfileRequest.profileType === ProfileType.STUDENT) {
           initTabs(this.container, GUEST_STUDENT_TABS);

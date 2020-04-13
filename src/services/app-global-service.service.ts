@@ -435,6 +435,8 @@ export class AppGlobalService implements OnDestroy {
                             this.guestProfileType = ProfileType.STUDENT;
                         } else if (val === ProfileType.TEACHER) {
                             this.guestProfileType = ProfileType.TEACHER;
+                        } else if (val === ProfileType.OTHER) {
+                            this.guestProfileType = ProfileType.OTHER;
                         }
                         this.isGuestUser = true;
                         resolve(this.guestProfileType);
@@ -500,7 +502,7 @@ export class AppGlobalService implements OnDestroy {
                 paramsMap['isProfileSettingsCompleted'] = isOnBoardingCompleted;
             }
             const profileType = this.getGuestUserType();
-            if (profileType === ProfileType.TEACHER) {
+            if (profileType === ProfileType.TEACHER || profileType === ProfileType.OTHER) {
                 switch (pageId) {
                     case PageId.LIBRARY: {
                         paramsMap['isSignInCardConfigEnabled'] = this.DISPLAY_SIGNIN_FOOTER_CARD_IN_LIBRARY_TAB_FOR_TEACHER;

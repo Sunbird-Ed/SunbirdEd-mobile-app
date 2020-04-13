@@ -1,4 +1,4 @@
-import { Component, Inject, NgZone, OnInit } from '@angular/core';
+import {Component, Inject, NgZone, OnDestroy, OnInit} from '@angular/core';
 import { Router, NavigationExtras, ActivatedRoute } from '@angular/router';
 import { Events, ToastController, PopoverController } from '@ionic/angular';
 import { AppVersion } from '@ionic-native/app-version/ngx';
@@ -29,7 +29,7 @@ import { AppHeaderService } from '../../services/app-header.service';
   templateUrl: './courses.page.html',
   styleUrls: ['./courses.page.scss'],
 })
-export class CoursesPage implements OnInit {
+export class CoursesPage implements OnInit, OnDestroy {
   /**
    * Contains enrolled course
    */
@@ -139,6 +139,21 @@ export class CoursesPage implements OnInit {
     });
   }
 
+  ngOnDestroy() {
+    if (this.headerObservable) {
+      this.headerObservable.unsubscribe();
+    }
+    this.events.unsubscribe('update_header');
+    this.ngZone.run(() => {
+      if (this.eventSubscription) {
+        this.eventSubscription.unsubscribe();
+      }
+      this.isVisible = false;
+      this.showOverlay = false;
+      this.downloadPercentage = 0;
+    });
+  }
+
   ionViewWillEnter() {
     this.isVisible = true;
     this.events.subscribe('update_header', () => {
@@ -227,6 +242,12 @@ export class CoursesPage implements OnInit {
         this.selectedLanguage = res.selectedLanguage;
         this.getPopularAndLatestCourses();
       }
+    });
+
+    this.events.subscribe(EventTopics.COURSE_PAGE_ASSEMBLE_CHANNEL_CHANGE, () => {
+      this.ngZone.run(() => {
+        this.getPopularAndLatestCourses();
+      });
     });
 
     this.events.subscribe(EventTopics.TAB_CHANGE, (data: string) => {
@@ -418,7 +439,7 @@ export class CoursesPage implements OnInit {
    */
   getCurrentUser(): void {
     const profileType = this.appGlobalService.getGuestUserType();
-    if (profileType === ProfileType.TEACHER && this.appGlobalService.DISPLAY_SIGNIN_FOOTER_CARD_IN_COURSE_TAB_FOR_TEACHER) {
+    if (this.commonUtilService.isAccessibleForNonStudentRole(profileType) && this.appGlobalService.DISPLAY_SIGNIN_FOOTER_CARD_IN_COURSE_TAB_FOR_TEACHER) {
       this.showSignInCard = true;
     } else {
       this.showSignInCard = false;

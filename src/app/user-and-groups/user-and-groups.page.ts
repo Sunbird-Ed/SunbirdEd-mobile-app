@@ -682,21 +682,17 @@ export class UserAndGroupsPage implements OnInit {
       setTimeout(() => {
         if (isBeingPlayed) {
           this.playConfig.selectedUser = selectedUser;
-          if (selectedUser.profileType === ProfileType.STUDENT) {
-            this.preferences.putString(PreferenceKey.SELECTED_USER_TYPE, ProfileType.STUDENT).toPromise().then();
-          } else {
-            this.preferences.putString(PreferenceKey.SELECTED_USER_TYPE, ProfileType.TEACHER).toPromise().then();
-          }
+          this.preferences.putString(PreferenceKey.SELECTED_USER_TYPE, selectedUser.profileType).toPromise().then();
           this.event.publish('playConfig', this.playConfig);
           this.location.back();
 
         } else {
           if (selectedUser.profileType === ProfileType.STUDENT) {
             initTabs(this.container, isBeingPlayed ? GUEST_STUDENT_TABS : GUEST_STUDENT_SWITCH_TABS);
-            this.preferences.putString(PreferenceKey.SELECTED_USER_TYPE, ProfileType.STUDENT).toPromise().then();
+            this.preferences.putString(PreferenceKey.SELECTED_USER_TYPE, selectedUser.profileType).toPromise().then();
           } else {
             initTabs(this.container, isBeingPlayed ? GUEST_TEACHER_TABS : GUEST_TEACHER_SWITCH_TABS);
-            this.preferences.putString(PreferenceKey.SELECTED_USER_TYPE, ProfileType.TEACHER).toPromise().then();
+            this.preferences.putString(PreferenceKey.SELECTED_USER_TYPE, selectedUser.profileType).toPromise().then();
           }
           this.event.publish('refresh:profile');
           this.event.publish(AppGlobalService.USER_INFO_UPDATED);
