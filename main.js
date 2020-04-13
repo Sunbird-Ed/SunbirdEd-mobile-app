@@ -49,7 +49,6 @@ var formRequestArray = [{
         'subType': 'webview_version',
         'action': 'get'
     }
-    
 ];
 
 var state_list_request_body = {
