@@ -45,7 +45,8 @@ import {
   TelemetryErrorCode,
   TelemetryObject,
   UnenrollCourseRequest,
-  Rollup
+  Rollup,
+  SortOrder
 } from 'sunbird-sdk';
 import { Subscription } from 'rxjs';
 import {
@@ -590,28 +591,28 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
               this.corRelationList
             );
             this.contentService.getContentHeirarchy(option).toPromise()
-            .then((content: Content) => {
-              /* setting child content here */
-              this.enrolledCourseMimeType = content.mimeType;
-              this.childrenData = content.children;
-              this.toggleGroup(0, this.childrenData[0]);
-              this.startData = content.children;
-              this.childContentsData = content;
-              this.getContentState(true);
-              this.extractApiResponse(data);
-              this.telemetryGeneratorService.generatefastLoadingTelemetry(
-                InteractSubtype.FAST_LOADING_FINISHED,
-                PageId.COURSE_DETAIL,
-                this.telemetryObject,
-                undefined,
-                this.objRollup,
-                this.corRelationList
-              );
-            })
-            .catch(error => {
-              console.log('Error Fetching Childrens', error);
-              this.extractApiResponse(data);
-            });
+              .then((content: Content) => {
+                /* setting child content here */
+                this.enrolledCourseMimeType = content.mimeType;
+                this.childrenData = content.children;
+                this.toggleGroup(0, this.childrenData[0]);
+                this.startData = content.children;
+                this.childContentsData = content;
+                this.getContentState(true);
+                this.extractApiResponse(data);
+                this.telemetryGeneratorService.generatefastLoadingTelemetry(
+                  InteractSubtype.FAST_LOADING_FINISHED,
+                  PageId.COURSE_DETAIL,
+                  this.telemetryObject,
+                  undefined,
+                  this.objRollup,
+                  this.corRelationList
+                );
+              })
+              .catch(error => {
+                console.log('Error Fetching Childrens', error);
+                this.extractApiResponse(data);
+              });
           } else {
             this.extractApiResponse(data);
           }
@@ -680,7 +681,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
       this.location.back();
     }
 
-    /* getting batch details for the course 
+    /* getting batch details for the course
        Check Point: should be called on the condition of already enrolled courses only */
     this.getBatchDetails();
     this.course.isAvailableLocally = data.isAvailableLocally;
@@ -762,10 +763,10 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
       requiredFields: ProfileConstants.REQUIRED_FIELDS
     };
     this.profileService.getServerProfilesDetails(req).toPromise()
-      .then((data) => {
-        if (data) {
-          this.batchDetails.creatorFirstName = data.firstName ? data.firstName : '';
-          this.batchDetails.creatorLastName = data.lastName ? data.lastName : '';
+      .then((serverProfile) => {
+        if (serverProfile) {
+          this.batchDetails.creatorDetails.firstName = serverProfile.firstName ? serverProfile.firstName : '';
+          this.batchDetails.creatorDetails.lastName = serverProfile.lastName ? serverProfile.lastName : '';
         }
       }).catch(() => {
       });
@@ -1027,6 +1028,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
         status: [CourseBatchStatus.NOT_STARTED, CourseBatchStatus.IN_PROGRESS],
         enrollmentType: CourseEnrollmentType.OPEN
       },
+      sort_by: { createdDate: SortOrder.DESC },
       fields: BatchConstants.REQUIRED_FIELDS
     };
     await loader.present();

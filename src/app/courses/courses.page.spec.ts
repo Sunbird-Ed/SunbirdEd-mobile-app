@@ -620,6 +620,9 @@ describe('CoursesPage', () => {
                   enrollmentType: CourseEnrollmentType.OPEN,
                   status: [CourseBatchStatus.NOT_STARTED, CourseBatchStatus.IN_PROGRESS]
                 },
+                sort_by: {
+                    createdDate: 'desc',
+                },
                 fields: BatchConstants.REQUIRED_FIELDS
             };
             const data = [{
@@ -666,6 +669,9 @@ describe('CoursesPage', () => {
                   courseId: courseDetails.layoutName === ContentCard.LAYOUT_INPROGRESS ? content.contentId : content.identifier,
                   enrollmentType: CourseEnrollmentType.OPEN,
                   status: [CourseBatchStatus.NOT_STARTED, CourseBatchStatus.IN_PROGRESS]
+                },
+                sort_by: {
+                    createdDate: 'desc',
                 },
                 fields: BatchConstants.REQUIRED_FIELDS
             };
@@ -742,7 +748,7 @@ describe('CoursesPage', () => {
             const courseDetails = {
                 enrolledCourses,
                 layoutName: 'sample_name'
-            }
+            };
             const content = {
                 identifier: 'sample_id1',
                 batch: {}

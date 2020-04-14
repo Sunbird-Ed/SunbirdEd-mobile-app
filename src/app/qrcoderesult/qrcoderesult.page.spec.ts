@@ -6,8 +6,6 @@ import {
     FrameworkService,
     FrameworkUtilService,
     ProfileService,
-    SharedPreferences,
-    DeviceRegisterService,
     ContentService,
     EventsBusService,
     PlayerService,
@@ -15,23 +13,17 @@ import {
     ContentEventType
 } from 'sunbird-sdk';
 import { TranslateService } from '@ngx-translate/core';
-import { Events, Platform, AlertController, NavController } from '@ionic/angular';
+import { Events, Platform, NavController } from '@ionic/angular';
 import { Router } from '@angular/router';
-import { AppVersion } from '@ionic-native/app-version/ngx';
 import {
     AppGlobalService,
     TelemetryGeneratorService,
     CommonUtilService,
-    SunbirdQRScanner,
-    ContainerService,
     AppHeaderService
 } from 'services';
-import { SplashScreenService } from '@app/services/splash-screen.service';
-import { Scanner } from 'typescript';
 import { Location } from '@angular/common';
 import { ImpressionType, PageId, Environment, InteractSubtype, InteractType } from '@app/services/telemetry-constants';
-import { of, Subscription, throwError } from 'rxjs';
-import { FormControl } from '@angular/forms';
+import { of, throwError } from 'rxjs';
 import { NgZone } from '@angular/core';
 import { CanvasPlayerService } from '../../services';
 import { File } from '@ionic-native/file/ngx';
@@ -164,13 +156,7 @@ describe('QrcoderesultPage', () => {
         });
         it('should assign varaibles from navigation extras', (done) => {
             // arrange
-            // qrcoderesultPage.getFirstChildOfChapter.and.stub();
-            // const unit = {
-            //     identifier: 'parentid',
-            //     contentData: {identifier: 'parentid'},
-            //     mimeType: MimeType.COLLECTION,
-            //     children: [{identifier: 'childid', basePath: 'basePath'}]
-            // };
+            mockTelemetryGeneratorService.generatefastLoadingTelemetry = jest.fn();
             const mockContentHeirarchy = {
                 identifier: 'id',
                 children: [
@@ -215,6 +201,14 @@ describe('QrcoderesultPage', () => {
             // assert
             expect(mockHeaderService.hideHeader).toHaveBeenCalled();
             expect(qrcoderesultPage.content).toEqual({identifier: 'id'});
+            expect(mockTelemetryGeneratorService.generatefastLoadingTelemetry).toHaveBeenCalledWith(
+                InteractSubtype.FAST_LOADING_INITIATED,
+                PageId.DIAL_CODE_SCAN_RESULT,
+                undefined,
+                undefined,
+                undefined,
+                undefined
+            );
             setTimeout(() => {
                 expect(mockTextbookTocService.resetTextbookIds).toHaveBeenCalled();
                 expect(qrcoderesultPage.showSheenAnimation).toEqual(false);

@@ -1,7 +1,7 @@
 import { CollectionDetailEtbPage } from './collection-detail-etb.page';
 import {
-    ContentService, EventsBusService, ProfileService,
-    StorageService, ContentImportResponse, ContentImportStatus, TelemetryObject
+    ContentService, EventsBusService, ProfileService, TelemetryErrorCode,
+    StorageService, ContentImportResponse, ContentImportStatus, TelemetryObject,
 } from 'sunbird-sdk';
 import { Events, PopoverController, Platform, IonContent } from '@ionic/angular';
 import { NgZone, ChangeDetectorRef } from '@angular/core';
@@ -10,7 +10,7 @@ import {
     ComingSoonMessageService, InteractSubtype, Environment, ImpressionType
 } from '../../services';
 import {
-    InteractType, PageId, ID
+    InteractType, PageId, ID, Mode, ErrorType
 } from '../../services/telemetry-constants';
 import { FileSizePipe } from '../../pipes/file-size/file-size';
 import { Router } from '@angular/router';
@@ -24,12 +24,14 @@ import {
     mockContentData,
     mockContentInfo
 } from './collection-detail-etb-page.spec.data';
-import { of, Subscription } from 'rxjs';
+import { of, Subscription, throwError } from 'rxjs';
 import { ContentPlayerHandler } from '@app/services/content/player/content-player-handler';
 import { ContentUtil } from '@app/util/content-util';
 import { EventTopics } from '@app/app/app.constant';
 import { ShareItemType, ContentType } from '../app.constant';
 import { ContentDeleteHandler } from '../../services/content/content-delete-handler'
+import { connect } from 'http2';
+import { isObject } from 'util';
 
 describe('collectionDetailEtbPage', () => {
     let collectionDetailEtbPage: CollectionDetailEtbPage;
@@ -98,6 +100,8 @@ describe('collectionDetailEtbPage', () => {
     };
 
     beforeEach(() => {
+        const div = document.createElement('div');
+        document.body.appendChild(div);
         collectionDetailEtbPage = new CollectionDetailEtbPage(
             mockContentService as ContentService,
             mockEventBusService as EventsBusService,
@@ -245,7 +249,7 @@ describe('collectionDetailEtbPage', () => {
             mockzone.run = jest.fn((fn) => fn());
             const mockHeaderEventsSubscription = { unsubscribe: jest.fn() } as Partial<Subscription>;
             mockHeaderService.headerEventEmitted$ = {
-                subscribe: jest.fn(() => mockHeaderEventsSubscription as any)
+                subscribe: jest.fn((fn) => fn(mockHeaderEventsSubscription) as any)
             } as any;
             jest.spyOn(collectionDetailEtbPage, 'handleHeaderEvents').mockImplementation();
             jest.spyOn(mockHeaderService, 'getDefaultPageConfig').mockReturnValue({
@@ -265,6 +269,51 @@ describe('collectionDetailEtbPage', () => {
             mockevents.subscribe = jest.fn((topic, fn) => {
                 if (topic === EventTopics.CONTENT_TO_PLAY) {
                     fn(mockContentData);
+                } else if (EventTopics.DEEPLINK_COLLECTION_PAGE_OPEN) {
+                    fn(mockContentData);
+                }
+            });
+
+            jest.spyOn(collectionDetailEtbPage, 'setContentDetails').mockImplementation();
+            // act
+            collectionDetailEtbPage.ionViewWillEnter();
+            // assert
+            expect(collectionDetailEtbPage.registerDeviceBackButton).toHaveBeenCalled();
+            expect(collectionDetailEtbPage.markContent).toHaveBeenCalled();
+            expect(collectionDetailEtbPage.resetVariables).toHaveBeenCalled();
+            expect(mockHeaderService.updatePageConfig).toHaveBeenCalled();
+            expect(collectionDetailEtbPage.playContent).toHaveBeenCalledWith(mockContentData);
+            expect(collectionDetailEtbPage.subscribeSdkEvent).toHaveBeenCalled();
+        });
+
+        it('should set headerConfig, headerObservable, setContentDetails, and subscribeEvents for else part', () => {
+            // arrange
+            jest.spyOn(collectionDetailEtbPage, 'registerDeviceBackButton').mockImplementation();
+            mockzone.run = jest.fn((fn) => fn());
+            const mockHeaderEventsSubscription = { unsubscribe: jest.fn() } as Partial<Subscription>;
+            mockHeaderService.headerEventEmitted$ = {
+                subscribe: jest.fn((fn) => mockHeaderEventsSubscription as any)
+            } as any;
+            jest.spyOn(collectionDetailEtbPage, 'handleHeaderEvents').mockImplementation();
+            jest.spyOn(mockHeaderService, 'getDefaultPageConfig').mockReturnValue({
+                showHeader: false,
+                showBurgerMenu: false,
+                actionButtons: ['download']
+            } as any);
+            jest.spyOn(collectionDetailEtbPage, 'markContent').mockImplementation();
+            jest.spyOn(collectionDetailEtbPage, 'resetVariables').mockImplementation();
+
+            jest.spyOn(collectionDetailEtbPage, 'playContent').mockImplementation();
+            jest.spyOn(collectionDetailEtbPage, 'subscribeSdkEvent').mockImplementation();
+            mockIonContent.ionScroll.subscribe = jest.fn((fn) => {
+                fn({});
+            });
+
+            mockevents.subscribe = jest.fn((topic, fn) => {
+                if (topic === EventTopics.CONTENT_TO_PLAY) {
+                    fn(mockContentData);
+                } else if (EventTopics.DEEPLINK_COLLECTION_PAGE_OPEN) {
+                    fn({});
                 }
             });
 
@@ -482,13 +531,554 @@ describe('collectionDetailEtbPage', () => {
             setTimeout(() => {
                 expect(mockPopoverController.create).toHaveBeenCalled();
                 expect(mocktelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenCalledWith(ImpressionType.VIEW, '',
-                PageId.DOWNLOAD_ALL_CONFIRMATION_POPUP,
+                    PageId.DOWNLOAD_ALL_CONFIRMATION_POPUP,
+                    Environment.HOME,
+                    contentDetailsMcokResponse1.identifier,
+                    contentDetailsMcokResponse1.contentData.contentType,
+                    contentDetailsMcokResponse1.contentData.pkgVersion,
+                    mockObjRollup,
+                    mockCorRelationList);
+                done();
+            }, 0);
+        });
+    });
+
+    it('should open url in browser', () => {
+        mockCommonUtilService.openUrlInBrowser = jest.fn();
+        collectionDetailEtbPage.openBrowser('sample-url');
+        expect(mockCommonUtilService.openUrlInBrowser).toHaveBeenCalledWith('sample-url');
+    });
+
+    describe('licenseDetails', () => {
+        it('should get and set licenseDetails', () => {
+            collectionDetailEtbPage.licenseDetails = true;
+            expect(collectionDetailEtbPage.licenseDetails).toBeTruthy();
+        });
+
+        it('should get and set licenseDetails for else part', () => {
+            collectionDetailEtbPage.licenseDetails = false;
+            expect(collectionDetailEtbPage.licenseDetails).toBeFalsy();
+        });
+    });
+
+    it('should return content marker', () => {
+        // arrange
+        mockappGlobalService.getCurrentUser = jest.fn(() => ({ uid: 'sample-uid' }));
+        mockProfileService.addContentAccess = jest.fn(() => of(true));
+        mockContentService.setContentMarker = jest.fn(() => of(true));
+        // act
+        collectionDetailEtbPage.markContent();
+        // assert
+        expect(mockappGlobalService.getCurrentUser).toHaveBeenCalled();
+        expect(mockProfileService.addContentAccess).toHaveBeenCalled();
+        expect(mockContentService.setContentMarker).toHaveBeenCalled();
+    });
+
+    describe('toggleGroup', () => {
+        const mockTelemetryObject = new TelemetryObject('do_12345', ContentType.TEXTBOOK, '1');
+        it('should scroll the page', () => {
+            // arrange
+            const group = {}, content = {}, openCarousel = false;
+            jest.spyOn(collectionDetailEtbPage, 'isGroupShown').mockReturnValue(true);
+            mocktelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            collectionDetailEtbPage.telemetryObject = mockTelemetryObject;
+            const values = new Map();
+            values['isCollapsed'] = false;
+            // act
+            collectionDetailEtbPage.toggleGroup(group, content, openCarousel);
+            // assert
+            expect(mocktelemetryGeneratorService.generateInteractTelemetry).toHaveBeenLastCalledWith(
+                InteractType.TOUCH,
+                InteractSubtype.UNIT_CLICKED,
                 Environment.HOME,
-                contentDetailsMcokResponse1.identifier,
-                contentDetailsMcokResponse1.contentData.contentType,
-                contentDetailsMcokResponse1.contentData.pkgVersion,
-                mockObjRollup,
-                mockCorRelationList);
+                PageId.COLLECTION_DETAIL,
+                mockTelemetryObject,
+                values,
+                {},
+                undefined
+            );
+        });
+
+        it('should scroll the page', (done) => {
+            // arrange
+            const group = {}, content = { identifier: 'identifier' }, openCarousel = true;
+            jest.spyOn(collectionDetailEtbPage, 'isGroupShown').mockReturnValue(true);
+            mocktelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            collectionDetailEtbPage.telemetryObject = mockTelemetryObject;
+            const values = new Map();
+            values['isCollapsed'] = false;
+            // act
+            collectionDetailEtbPage.toggleGroup(group, content, openCarousel);
+            // assert
+            setTimeout(() => {
+                // document.body.innerHTML =
+                // '<div>' +
+                // '  <span identifier="identifier" />' +
+                // '  <button id="button" />' +
+                // '</div>';
+                // document.createElement = { identifier: 'd0-123' } as any;
+                done();
+            }, 100);
+
+            expect(mocktelemetryGeneratorService.generateInteractTelemetry).toHaveBeenLastCalledWith(
+                InteractType.TOUCH,
+                InteractSubtype.UNIT_CLICKED,
+                Environment.HOME,
+                PageId.COLLECTION_DETAIL,
+                mockTelemetryObject,
+                values,
+                {},
+                undefined
+            );
+        });
+    });
+
+    it('should return true or false for isGroupShown()', () => {
+        const group = { gid: 'gid-123' };
+        collectionDetailEtbPage.shownGroup = group;
+        collectionDetailEtbPage.isGroupShown(group);
+        expect(collectionDetailEtbPage.shownGroup).toBeTruthy();
+    });
+
+    describe('changeValue', () => {
+        it('should not change value if is selected', () => {
+            // arrange
+            const text = 'sample-text';
+            // act
+            collectionDetailEtbPage.changeValue(text);
+            // assert
+            expect(collectionDetailEtbPage.isSelected).toBeTruthy();
+        });
+
+        it('should change value if is not text', () => {
+            // arrange
+            const text = '';
+            // act
+            collectionDetailEtbPage.changeValue(text);
+            // assert
+            expect(collectionDetailEtbPage.isSelected).toBeFalsy();
+        });
+    });
+
+    describe('handleBackButton', () => {
+        const mockTelemetryObject = new TelemetryObject('do_12345', ContentType.TEXTBOOK, '1');
+        it('should be handle device back button', () => {
+            // arrange
+            collectionDetailEtbPage.objId = 'do_12345';
+            collectionDetailEtbPage.objType = ContentType.TEXTBOOK;
+            collectionDetailEtbPage.objVer = '1';
+            mocktelemetryGeneratorService.generateEndTelemetry = jest.fn();
+            collectionDetailEtbPage.telemetryObject = mockTelemetryObject;
+            collectionDetailEtbPage.shouldGenerateEndTelemetry = true;
+            collectionDetailEtbPage.source = 'collection-detail';
+            collectionDetailEtbPage.cardData = {
+                identifier: 'do-123'
+            };
+            // act
+            collectionDetailEtbPage.handleBackButton();
+            // assert
+            expect(mocktelemetryGeneratorService.generateEndTelemetry).toHaveBeenCalledWith(
+                ContentType.TEXTBOOK,
+                Mode.PLAY,
+                PageId.COLLECTION_DETAIL,
+                Environment.HOME,
+                mockTelemetryObject,
+                {},
+                undefined
+            );
+            expect(mocktelemetryGeneratorService.generateEndTelemetry).toHaveBeenCalledWith(
+                'qr',
+                Mode.PLAY,
+                collectionDetailEtbPage.source,
+                Environment.HOME,
+                { id: 'do-123', type: 'qr', version: '' },
+                undefined,
+                undefined
+            );
+        });
+
+        it('should be handle device back button for undefined pageId', () => {
+            // arrange
+            collectionDetailEtbPage.objId = 'do_12345';
+            collectionDetailEtbPage.objType = undefined;
+            collectionDetailEtbPage.objVer = '1';
+            mocktelemetryGeneratorService.generateEndTelemetry = jest.fn();
+            collectionDetailEtbPage.shouldGenerateEndTelemetry = true;
+            collectionDetailEtbPage.source = undefined;
+            collectionDetailEtbPage.cardData = {
+                identifier: 'do-123'
+            };
+            // act
+            collectionDetailEtbPage.handleBackButton();
+            // assert
+            expect(mocktelemetryGeneratorService.generateEndTelemetry).toHaveBeenCalledWith(
+                ContentType.TEXTBOOK,
+                Mode.PLAY,
+                PageId.COLLECTION_DETAIL,
+                Environment.HOME,
+                { id: 'do_12345', type: undefined, version: '1' },
+                {},
+                undefined
+            );
+        });
+
+        it('should be handle device back button if shouldGenerateEndTelemetry is false', () => {
+            // arrange
+            collectionDetailEtbPage.objId = 'do_12345';
+            collectionDetailEtbPage.objType = ContentType.TEXTBOOK;
+            collectionDetailEtbPage.objVer = '1';
+            mocktelemetryGeneratorService.generateEndTelemetry = jest.fn();
+            collectionDetailEtbPage.telemetryObject = mockTelemetryObject;
+            collectionDetailEtbPage.shouldGenerateEndTelemetry = false;
+            // act
+            collectionDetailEtbPage.handleBackButton();
+            // assert
+            expect(mocktelemetryGeneratorService.generateEndTelemetry).toHaveBeenCalledWith(
+                ContentType.TEXTBOOK,
+                Mode.PLAY,
+                PageId.COLLECTION_DETAIL,
+                Environment.HOME,
+                mockTelemetryObject,
+                {},
+                undefined
+            );
+        });
+    });
+
+    it('should generate back Clicked Telemetry', () => {
+        // arrange
+        const subscribeWithPriorityData = jest.fn((_, fn) => fn());
+        mockplatform.backButton = {
+            subscribeWithPriority: subscribeWithPriorityData
+        } as any;
+        mocktelemetryGeneratorService.generateBackClickedTelemetry = jest.fn();
+        // act
+        collectionDetailEtbPage.registerDeviceBackButton();
+        // assert
+        expect(subscribeWithPriorityData).toBeTruthy();
+        expect(mocktelemetryGeneratorService.generateBackClickedTelemetry).toHaveBeenCalledWith(
+            PageId.COLLECTION_DETAIL,
+            Environment.HOME,
+            false,
+            'do_212911645382959104165',
+            undefined
+        );
+    });
+
+    describe('setContentDetails', () => {
+        it('should return content details and is not available localy', (done) => {
+            // arrange
+            const content = {
+                identifier: 'do_212911645382959104165',
+                contentData: { licenseDetails: undefined },
+                isAvailableLocally: false,
+                children: { identifier: 'do_212911645382959104166' }
+            };
+            mockContentService.getContentDetails = jest.fn(() => of(content));
+            mocktelemetryGeneratorService.generatefastLoadingTelemetry = jest.fn();
+            mockContentService.getContentHeirarchy = jest.fn(() => of(content));
+            jest.spyOn(collectionDetailEtbPage, 'importContentInBackground').mockReturnValue();
+            const mockTelemetryObject = new TelemetryObject('do_212911645382959104165', ContentType.COURSE, undefined);
+            // act
+            collectionDetailEtbPage.setContentDetails('do_212911645382959104165', true).then(() => {
+                // assert
+                expect(mockContentService.getContentDetails).toHaveBeenCalled();
+                expect(mocktelemetryGeneratorService.generatefastLoadingTelemetry).toHaveBeenCalledWith(
+                    InteractSubtype.FAST_LOADING_INITIATED,
+                    PageId.COLLECTION_DETAIL,
+                    mockTelemetryObject,
+                    undefined,
+                    {},
+                    undefined
+                );
+                expect(mockContentService.getContentHeirarchy).toHaveBeenCalled();
+                done();
+            });
+        });
+
+        it('should return content details and is available localy', (done) => {
+            // arrange
+            const content = {
+                identifier: 'do_212911645382959104165',
+                contentData: { licenseDetails: 'sample-license' },
+                isAvailableLocally: true,
+                children: { identifier: 'do_212911645382959104166' }
+            };
+            mockContentService.getContentDetails = jest.fn(() => of(content));
+            // act
+            collectionDetailEtbPage.setContentDetails('do_212911645382959104165', true).then(() => {
+                // assert
+                expect(mockContentService.getContentDetails).toHaveBeenCalled();
+                done();
+            });
+        });
+
+        it('should not return content details if data is undefined', (done) => {
+            // arrange
+            mockContentService.getContentDetails = jest.fn(() => of(undefined));
+            // act
+            collectionDetailEtbPage.setContentDetails('do_212911645382959104165', true).then(() => {
+                // assert
+                expect(mockContentService.getContentDetails).toHaveBeenCalled();
+                done();
+            });
+        });
+
+        it('should return content details for getContentHeirarchy catch part', (done) => {
+            // arrange
+            const content = {
+                identifier: 'do_212911645382959104165',
+                contentData: { licenseDetails: 'sample-license' },
+                isAvailableLocally: false,
+                children: { identifier: 'do_212911645382959104166' }
+            };
+            mockContentService.getContentDetails = jest.fn(() => of(content));
+            mocktelemetryGeneratorService.generatefastLoadingTelemetry = jest.fn();
+            mockContentService.getContentHeirarchy = jest.fn(() => throwError({ erroe: 'sample-error' }));
+            // act
+            collectionDetailEtbPage.setContentDetails('do_212911645382959104165', true).then(() => {
+                // assert
+                expect(mockContentService.getContentDetails).toHaveBeenCalled();
+                expect(mocktelemetryGeneratorService.generatefastLoadingTelemetry).toHaveBeenCalled();
+                expect(mockContentService.getContentHeirarchy).toHaveBeenCalled();
+                done();
+            });
+        });
+
+        it('should not return content for getContentDetails catch part', (done) => {
+            // arrange
+            mockContentService.getContentDetails = jest.fn(() => throwError(undefined));
+            // act
+            collectionDetailEtbPage.setContentDetails('do_212911645382959104165', true).then(() => {
+                // assert
+                expect(mockContentService.getContentDetails).toHaveBeenCalled();
+                done();
+            });
+        });
+    });
+
+    describe('setCollectionStructure', () => {
+        it('should return contentTypesCount if isObject', () => {
+            // arrange
+            collectionDetailEtbPage.contentDetail = {
+                contentData: {
+                    contentTypesCount: { id: 'do-123' }
+                }
+            };
+            // act
+            collectionDetailEtbPage.setCollectionStructure();
+            // assert
+            expect(isObject(collectionDetailEtbPage.contentDetail.contentData.contentTypesCount)).toBeTruthy();
+        });
+
+        it('should return contentTypesCount if is not object', () => {
+            // arrange
+            collectionDetailEtbPage.contentDetail = {
+                contentData: {
+                    contentTypesCount: '{"identifier": "do-123"}'
+                }
+            };
+            // act
+            collectionDetailEtbPage.setCollectionStructure();
+            // assert
+            expect(isObject(collectionDetailEtbPage.contentDetail.contentData.contentTypesCount)).toBeFalsy();
+        });
+
+        it('should return contentTypesCount if is not object for card data', () => {
+            // arrange
+            collectionDetailEtbPage.cardData = {
+                contentTypesCount: '{"identifier": "do-123"}'
+            };
+            collectionDetailEtbPage.contentDetail = {
+                contentData: {
+                    contentTypesCount: undefined
+                }
+            };
+            // act
+            collectionDetailEtbPage.setCollectionStructure();
+            // assert
+            expect(isObject(collectionDetailEtbPage.cardData.contentTypesCount)).toBeFalsy();
+        });
+
+        it('should not return contentTypesCount if not object for card data', () => {
+            // arrange
+            collectionDetailEtbPage.cardData = {
+                contentTypesCount: { id: 'do-123' }
+            };
+            collectionDetailEtbPage.contentDetail = {
+                contentData: {
+                    contentTypesCount: undefined
+                }
+            };
+            // act
+            collectionDetailEtbPage.setCollectionStructure();
+            // assert
+            expect(isObject(collectionDetailEtbPage.cardData.contentTypesCount)).toBeTruthy();
+        });
+
+        it('should not return anything if contentTypesCount is undefined', () => {
+            // arrange
+            collectionDetailEtbPage.cardData = {
+                contentTypesCount: undefined
+            };
+            collectionDetailEtbPage.contentDetail = {
+                contentData: {
+                    contentTypesCount: undefined
+                }
+            };
+            // act
+            collectionDetailEtbPage.setCollectionStructure();
+            // assert
+            expect(isObject(collectionDetailEtbPage.cardData.contentTypesCount)).toBeFalsy();
+            expect(isObject(collectionDetailEtbPage.contentDetail.contentData.contentTypesCount)).toBeFalsy();
+        });
+    });
+
+    describe('importContent', () => {
+        it('should DownloadStarted for queuedIdentifiers empty', (done) => {
+            // arrange
+            const identifiers = ['do-123', 'do-234'], isChild = true, isDownloadAllClicked = false;
+            collectionDetailEtbPage.isDownloadStarted = true;
+            collectionDetailEtbPage.queuedIdentifiers = [];
+            mockContentService.importContent = jest.fn(() => of([{
+                identifier: 'do-123',
+                status: ContentImportStatus.DOWNLOAD_STARTED
+            }, {
+                identifier: 'do-234',
+                status: ContentImportStatus.DOWNLOAD_FAILED
+            }]));
+            jest.spyOn(collectionDetailEtbPage, 'getImportContentRequestBody').mockReturnValue([{
+                isChildContent: true,
+                destinationFolder: 'sample-dest-folder',
+                contentId: 'do-123'
+            }]);
+            mockzone.run = jest.fn((fn) => fn());
+            jest.spyOn(collectionDetailEtbPage, 'refreshHeader').mockReturnValue();
+            // act
+            collectionDetailEtbPage.importContent(identifiers, isChild, isDownloadAllClicked);
+            // assert
+            setTimeout(() => {
+                expect(mockContentService.importContent).toHaveBeenCalled();
+                expect(mockzone.run).toHaveBeenCalled();
+                expect(collectionDetailEtbPage.showDownloadBtn).toBeTruthy();
+                expect(collectionDetailEtbPage.isDownloadStarted).toBeFalsy();
+                expect(collectionDetailEtbPage.showLoading).toBeFalsy();
+                done();
+            }, 0);
+        });
+
+        it('should import all downloaded content for ENQUEUED_FOR_DOWNLOAD', (done) => {
+            // arrange
+            const identifiers = ['do-123', 'do-234'], isChild = true, isDownloadAllClicked = true;
+            collectionDetailEtbPage.isDownloadStarted = true;
+            mockContentService.importContent = jest.fn(() => of([{
+                identifier: 'do-123',
+                status: ContentImportStatus.ENQUEUED_FOR_DOWNLOAD
+            }, {
+                identifier: 'do-234',
+                status: ContentImportStatus.NOT_FOUND
+            }]));
+            jest.spyOn(collectionDetailEtbPage, 'getImportContentRequestBody').mockReturnValue([{
+                isChildContent: true,
+                destinationFolder: 'sample-dest-folder',
+                contentId: 'do-123'
+            }]);
+            mockzone.run = jest.fn((fn) => fn());
+            mocktelemetryGeneratorService.generateDownloadAllClickTelemetry = jest.fn();
+            mocktelemetryGeneratorService.generateErrorTelemetry = jest.fn();
+            mockCommonUtilService.showToast = jest.fn();
+            // act
+            collectionDetailEtbPage.importContent(identifiers, isChild, isDownloadAllClicked);
+            // assert
+            setTimeout(() => {
+                expect(mockContentService.importContent).toHaveBeenCalled();
+                expect(mockzone.run).toHaveBeenCalled();
+                expect(mocktelemetryGeneratorService.generateDownloadAllClickTelemetry).toHaveBeenCalledWith(
+                    'collection-detail',
+                    undefined,
+                    ['do-123'],
+                    2
+                );
+                expect(mocktelemetryGeneratorService.generateErrorTelemetry).toHaveBeenCalledWith(
+                    Environment.HOME,
+                    TelemetryErrorCode.ERR_DOWNLOAD_FAILED,
+                    ErrorType.SYSTEM,
+                    PageId.COLLECTION_DETAIL,
+                    '{"parentIdentifier":"do_212911645382959104165","faultyIdentifiers":["do-234"]}'
+                );
+                expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('UNABLE_TO_FETCH_CONTENT');
+                done();
+            }, 0);
+        });
+
+        it('should import all downloaded content for ENQUEUED_FOR_DOWNLOAD', (done) => {
+            // arrange
+            const identifiers = ['do-123', 'do-234'], isChild = true, isDownloadAllClicked = true;
+            collectionDetailEtbPage.isDownloadStarted = false;
+            mockContentService.importContent = jest.fn(() => of([
+                {
+                    identifier: 'do-234',
+                    status: ContentImportStatus.NOT_FOUND
+                }]));
+            jest.spyOn(collectionDetailEtbPage, 'getImportContentRequestBody').mockReturnValue([{
+                isChildContent: true,
+                destinationFolder: 'sample-dest-folder',
+                contentId: 'do-123'
+            }]);
+            mockzone.run = jest.fn((fn) => fn());
+            jest.spyOn(collectionDetailEtbPage, 'refreshHeader').mockReturnValue();
+            // act
+            collectionDetailEtbPage.importContent(identifiers, isChild, isDownloadAllClicked);
+            // assert
+            setTimeout(() => {
+                expect(mockContentService.importContent).toHaveBeenCalled();
+                expect(mockzone.run).toHaveBeenCalled();
+                done();
+            }, 0);
+        });
+
+        it('should not start download for NETWORK_ERROR cath part', (done) => {
+            // arrange
+            const identifiers = ['do-123', 'do-234'], isChild = true, isDownloadAllClicked = true;
+            collectionDetailEtbPage.isDownloadStarted = false;
+            mockContentService.importContent = jest.fn(() => throwError({error: 'NETWORK_ERROR'}));
+            jest.spyOn(collectionDetailEtbPage, 'getImportContentRequestBody').mockReturnValue([{
+                isChildContent: true,
+                destinationFolder: 'sample-dest-folder',
+                contentId: 'do-123'
+            }]);
+            mockzone.run = jest.fn((fn) => fn());
+            mockCommonUtilService.showToast = jest.fn();
+            // act
+            collectionDetailEtbPage.importContent(identifiers, isChild, isDownloadAllClicked);
+            // assert
+            setTimeout(() => {
+                expect(mockContentService.importContent).toHaveBeenCalled();
+                expect(mockzone.run).toHaveBeenCalled();
+                done();
+            }, 0);
+        });
+
+        it('should update if update is available for catch part', (done) => {
+            // arrange
+            const identifiers = ['do-123', 'do-234'], isChild = true, isDownloadAllClicked = true;
+            collectionDetailEtbPage.isDownloadStarted = false;
+            mockContentService.importContent = jest.fn(() => throwError({error: 'NETWORK_ERROR'}));
+            jest.spyOn(collectionDetailEtbPage, 'getImportContentRequestBody').mockReturnValue([{
+                isChildContent: true,
+                destinationFolder: 'sample-dest-folder',
+                contentId: 'do-123'
+            }]);
+            mockzone.run = jest.fn((fn) => fn());
+            mockCommonUtilService.showToast = jest.fn();
+            collectionDetailEtbPage.isUpdateAvailable = true;
+            jest.spyOn(collectionDetailEtbPage, 'setChildContents').mockReturnValue();
+            // act
+            collectionDetailEtbPage.importContent(identifiers, isChild, isDownloadAllClicked);
+            // assert
+            setTimeout(() => {
+                expect(mockContentService.importContent).toHaveBeenCalled();
+                expect(mockzone.run).toHaveBeenCalled();
                 done();
             }, 0);
         });

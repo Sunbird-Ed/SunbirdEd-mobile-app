@@ -43,11 +43,11 @@ export class FormAndFrameworkUtilService {
         private appVersion: AppVersion,
         private translate: TranslateService,
         private events: Events
-    ) {}
+    ) { }
 
     async init() {
         await this.preferences.getString(PreferenceKey.SELECTED_LANGUAGE_CODE).toPromise().then(val => {
-            this.selectedLanguage = val ? val : 'en' ;
+            this.selectedLanguage = val ? val : 'en';
         });
         this.invokeUrlRegexFormApi();
     }
@@ -518,10 +518,11 @@ export class FormAndFrameworkUtilService {
 
             // if data not cached
             if (rootOrganizations === undefined || rootOrganizations.length === 0) {
-                const searchOrganizationReq: OrganizationSearchCriteria<{ any }> = {
+                const searchOrganizationReq: OrganizationSearchCriteria<{ hashTagId: string; orgName: string; slug: string; }> = {
                     filters: {
                         isRootOrg: true
-                    }
+                    },
+                    fields: ['hashTagId', 'orgName', 'slug']
                 };
                 rootOrganizations = await this.frameworkService.searchOrganization(searchOrganizationReq).toPromise();
                 console.log('rootOrganizations', rootOrganizations);
@@ -613,7 +614,7 @@ export class FormAndFrameworkUtilService {
                     }
                 }).catch((error: any) => {
                     reject(error);
-                    console.error('error while fetching dial code reg ex ' , error);
+                    console.error('error while fetching dial code reg ex ', error);
                 });
         });
     }
