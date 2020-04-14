@@ -1,7 +1,7 @@
 import { CollectionDetailEtbPage } from './collection-detail-etb.page';
 import {
-    ContentService, EventsBusService, ProfileService,
-    StorageService, ContentImportResponse, ContentImportStatus, TelemetryObject
+    ContentService, EventsBusService, ProfileService, TelemetryErrorCode,
+    StorageService, ContentImportResponse, ContentImportStatus, TelemetryObject,
 } from 'sunbird-sdk';
 import { Events, PopoverController, Platform, IonContent } from '@ionic/angular';
 import { NgZone, ChangeDetectorRef } from '@angular/core';
@@ -10,7 +10,7 @@ import {
     ComingSoonMessageService, InteractSubtype, Environment, ImpressionType
 } from '../../services';
 import {
-    InteractType, PageId, ID, Mode
+    InteractType, PageId, ID, Mode, ErrorType
 } from '../../services/telemetry-constants';
 import { FileSizePipe } from '../../pipes/file-size/file-size';
 import { Router } from '@angular/router';
@@ -903,7 +903,7 @@ describe('collectionDetailEtbPage', () => {
         it('should not return contentTypesCount if not object for card data', () => {
             // arrange
             collectionDetailEtbPage.cardData = {
-                contentTypesCount: {id: 'do-123'}
+                contentTypesCount: { id: 'do-123' }
             };
             collectionDetailEtbPage.contentDetail = {
                 contentData: {
@@ -931,6 +931,156 @@ describe('collectionDetailEtbPage', () => {
             // assert
             expect(isObject(collectionDetailEtbPage.cardData.contentTypesCount)).toBeFalsy();
             expect(isObject(collectionDetailEtbPage.contentDetail.contentData.contentTypesCount)).toBeFalsy();
+        });
+    });
+
+    describe('importContent', () => {
+        it('should DownloadStarted for queuedIdentifiers empty', (done) => {
+            // arrange
+            const identifiers = ['do-123', 'do-234'], isChild = true, isDownloadAllClicked = false;
+            collectionDetailEtbPage.isDownloadStarted = true;
+            collectionDetailEtbPage.queuedIdentifiers = [];
+            mockContentService.importContent = jest.fn(() => of([{
+                identifier: 'do-123',
+                status: ContentImportStatus.DOWNLOAD_STARTED
+            }, {
+                identifier: 'do-234',
+                status: ContentImportStatus.DOWNLOAD_FAILED
+            }]));
+            jest.spyOn(collectionDetailEtbPage, 'getImportContentRequestBody').mockReturnValue([{
+                isChildContent: true,
+                destinationFolder: 'sample-dest-folder',
+                contentId: 'do-123'
+            }]);
+            mockzone.run = jest.fn((fn) => fn());
+            jest.spyOn(collectionDetailEtbPage, 'refreshHeader').mockReturnValue();
+            // act
+            collectionDetailEtbPage.importContent(identifiers, isChild, isDownloadAllClicked);
+            // assert
+            setTimeout(() => {
+                expect(mockContentService.importContent).toHaveBeenCalled();
+                expect(mockzone.run).toHaveBeenCalled();
+                expect(collectionDetailEtbPage.showDownloadBtn).toBeTruthy();
+                expect(collectionDetailEtbPage.isDownloadStarted).toBeFalsy();
+                expect(collectionDetailEtbPage.showLoading).toBeFalsy();
+                done();
+            }, 0);
+        });
+
+        it('should import all downloaded content for ENQUEUED_FOR_DOWNLOAD', (done) => {
+            // arrange
+            const identifiers = ['do-123', 'do-234'], isChild = true, isDownloadAllClicked = true;
+            collectionDetailEtbPage.isDownloadStarted = true;
+            mockContentService.importContent = jest.fn(() => of([{
+                identifier: 'do-123',
+                status: ContentImportStatus.ENQUEUED_FOR_DOWNLOAD
+            }, {
+                identifier: 'do-234',
+                status: ContentImportStatus.NOT_FOUND
+            }]));
+            jest.spyOn(collectionDetailEtbPage, 'getImportContentRequestBody').mockReturnValue([{
+                isChildContent: true,
+                destinationFolder: 'sample-dest-folder',
+                contentId: 'do-123'
+            }]);
+            mockzone.run = jest.fn((fn) => fn());
+            mocktelemetryGeneratorService.generateDownloadAllClickTelemetry = jest.fn();
+            mocktelemetryGeneratorService.generateErrorTelemetry = jest.fn();
+            mockCommonUtilService.showToast = jest.fn();
+            // act
+            collectionDetailEtbPage.importContent(identifiers, isChild, isDownloadAllClicked);
+            // assert
+            setTimeout(() => {
+                expect(mockContentService.importContent).toHaveBeenCalled();
+                expect(mockzone.run).toHaveBeenCalled();
+                expect(mocktelemetryGeneratorService.generateDownloadAllClickTelemetry).toHaveBeenCalledWith(
+                    'collection-detail',
+                    undefined,
+                    ['do-123'],
+                    2
+                );
+                expect(mocktelemetryGeneratorService.generateErrorTelemetry).toHaveBeenCalledWith(
+                    Environment.HOME,
+                    TelemetryErrorCode.ERR_DOWNLOAD_FAILED,
+                    ErrorType.SYSTEM,
+                    PageId.COLLECTION_DETAIL,
+                    '{"parentIdentifier":"do_212911645382959104165","faultyIdentifiers":["do-234"]}'
+                );
+                expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('UNABLE_TO_FETCH_CONTENT');
+                done();
+            }, 0);
+        });
+
+        it('should import all downloaded content for ENQUEUED_FOR_DOWNLOAD', (done) => {
+            // arrange
+            const identifiers = ['do-123', 'do-234'], isChild = true, isDownloadAllClicked = true;
+            collectionDetailEtbPage.isDownloadStarted = false;
+            mockContentService.importContent = jest.fn(() => of([
+                {
+                    identifier: 'do-234',
+                    status: ContentImportStatus.NOT_FOUND
+                }]));
+            jest.spyOn(collectionDetailEtbPage, 'getImportContentRequestBody').mockReturnValue([{
+                isChildContent: true,
+                destinationFolder: 'sample-dest-folder',
+                contentId: 'do-123'
+            }]);
+            mockzone.run = jest.fn((fn) => fn());
+            jest.spyOn(collectionDetailEtbPage, 'refreshHeader').mockReturnValue();
+            // act
+            collectionDetailEtbPage.importContent(identifiers, isChild, isDownloadAllClicked);
+            // assert
+            setTimeout(() => {
+                expect(mockContentService.importContent).toHaveBeenCalled();
+                expect(mockzone.run).toHaveBeenCalled();
+                done();
+            }, 0);
+        });
+
+        it('should not start download for NETWORK_ERROR cath part', (done) => {
+            // arrange
+            const identifiers = ['do-123', 'do-234'], isChild = true, isDownloadAllClicked = true;
+            collectionDetailEtbPage.isDownloadStarted = false;
+            mockContentService.importContent = jest.fn(() => throwError({error: 'NETWORK_ERROR'}));
+            jest.spyOn(collectionDetailEtbPage, 'getImportContentRequestBody').mockReturnValue([{
+                isChildContent: true,
+                destinationFolder: 'sample-dest-folder',
+                contentId: 'do-123'
+            }]);
+            mockzone.run = jest.fn((fn) => fn());
+            mockCommonUtilService.showToast = jest.fn();
+            // act
+            collectionDetailEtbPage.importContent(identifiers, isChild, isDownloadAllClicked);
+            // assert
+            setTimeout(() => {
+                expect(mockContentService.importContent).toHaveBeenCalled();
+                expect(mockzone.run).toHaveBeenCalled();
+                done();
+            }, 0);
+        });
+
+        it('should update if update is available for catch part', (done) => {
+            // arrange
+            const identifiers = ['do-123', 'do-234'], isChild = true, isDownloadAllClicked = true;
+            collectionDetailEtbPage.isDownloadStarted = false;
+            mockContentService.importContent = jest.fn(() => throwError({error: 'NETWORK_ERROR'}));
+            jest.spyOn(collectionDetailEtbPage, 'getImportContentRequestBody').mockReturnValue([{
+                isChildContent: true,
+                destinationFolder: 'sample-dest-folder',
+                contentId: 'do-123'
+            }]);
+            mockzone.run = jest.fn((fn) => fn());
+            mockCommonUtilService.showToast = jest.fn();
+            collectionDetailEtbPage.isUpdateAvailable = true;
+            jest.spyOn(collectionDetailEtbPage, 'setChildContents').mockReturnValue();
+            // act
+            collectionDetailEtbPage.importContent(identifiers, isChild, isDownloadAllClicked);
+            // assert
+            setTimeout(() => {
+                expect(mockContentService.importContent).toHaveBeenCalled();
+                expect(mockzone.run).toHaveBeenCalled();
+                done();
+            }, 0);
         });
     });
 });

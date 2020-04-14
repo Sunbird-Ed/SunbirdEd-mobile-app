@@ -17,7 +17,7 @@ import {
   FrameworkDetailsRequest,
   FrameworkService,
   FrameworkUtilService,
-  GetSuggestedFrameworksRequest, SearchEntry, SearchHistoryService
+  GetSuggestedFrameworksRequest, SearchEntry, SearchHistoryService, SortOrder
 } from 'sunbird-sdk';
 
 import { Map } from '@app/app/telemetryutil';
@@ -387,7 +387,8 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
           isSingleContent: params.isSingleContent,
           onboarding: params.onboarding,
           parentContent: params.parentContent,
-          isQrCodeLinkToContent: params.isQrCodeLinkToContent
+          isQrCodeLinkToContent: params.isQrCodeLinkToContent,
+          isOnboardingSkipped: !this.appGlobalService.isOnBoardingCompleted
         }
       });
       if (this.isSingleContent) {
@@ -889,6 +890,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
         enrollmentType: CourseEnrollmentType.OPEN,
         status: [CourseBatchStatus.NOT_STARTED, CourseBatchStatus.IN_PROGRESS]
       },
+      sort_by: { createdDate: SortOrder.DESC},
       fields: BatchConstants.REQUIRED_FIELDS
     };
     const reqvalues = new Map();
@@ -1403,7 +1405,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
       const userType = this.appGlobalService.getGuestUserType();
       if (userType === ProfileType.STUDENT) {
         this.audienceFilter = AudienceFilter.GUEST_STUDENT;
-      } else if (userType === ProfileType.TEACHER) {
+      } else if (this.commonUtilService.isAccessibleForNonStudentRole(userType)) {
         this.audienceFilter = AudienceFilter.GUEST_TEACHER;
       }
     } else {

@@ -52,6 +52,8 @@
                             {{'USER_TYPE_1' | translate | titlecase}}</p>
                           <p *ngIf="profileDetails?.profileType === ProfileType.STUDENT">
                             {{'USER_TYPE_2' | translate | titlecase}}</p>
+                            <p *ngIf="profileDetails?.profileType === ProfileType.OTHER">
+                              {{'USER_TYPE_3' | translate | titlecase}}</p>
                         </ion-label>
                       </div>
                     </ion-col>
@@ -88,10 +90,12 @@
                             <strong>{{user?.handle}}</strong>
                           </p>
                           <p>
-                            <span *ngIf="user?.profileType === ProfileType.TEACHER">
-                              {{'USER_TYPE_1' | translate | titlecase}}</span>
-                            <span *ngIf="user?.profileType === ProfileType.STUDENT">
-                              {{'USER_TYPE_2' | translate | titlecase}}</span>
+                            <span
+                              *ngIf="user?.profileType === ProfileType.TEACHER">{{'USER_TYPE_1' | translate | titlecase}}</span>
+                            <span
+                              *ngIf="user?.profileType === ProfileType.STUDENT">{{'USER_TYPE_2' | translate | titlecase}}</span>
+                              <span
+                              *ngIf="user?.profileType === ProfileType.OTHER">{{'USER_TYPE_3' | translate | titlecase}}</span>
                             <span *ngIf="user?.grade?.length" class="separator-dot"></span>
                             {{ getGradeNameFromCode(user) }}
                           </p>

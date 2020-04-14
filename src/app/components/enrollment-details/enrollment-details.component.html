@@ -21,8 +21,8 @@
                         <h5 class="subtitle title">{{ batches.batch.name }}</h5>
                         <p>{{batches.batch.startDate | date: 'mediumDate' }} -
                             {{ batches.batch.endDate | date: 'mediumDate' }}</p>
-                        <p *ngIf="batch?.creatorFirstName">{{ 'BATCH_CREATED_BY' | translate }}
-                            {{ batches.creatorFirstName }}</p>
+                        <p *ngIf="batch?.creatorDetails?.firstName">{{ 'BATCH_CREATED_BY' | translate }}
+                            {{ batch.creatorDetails.firstName }}</p>
                     </div>
                     <ion-button fill="clear" item-end class="subtitle buttontext" (click)="resumeCourse(batches)">
                         {{ 'RESUME' | translate }}</ion-button>
@@ -34,11 +34,10 @@
                     <div item-start  class="width-80">
                         <h5 class="subtitle title">{{ batch.name }}</h5>
                         <p>{{batch.startDate | date: 'mediumDate' }} - {{ batch.endDate | date: 'mediumDate' }}</p>
-                        <p *ngIf="batch?.creatorFirstName">
+                        <p *ngIf="batch?.creatorDetails?.firstName">
                             <span>{{ 'BATCH_CREATED_BY' | translate }}</span>&nbsp;
-                            <span *ngIf="batch?.creatorFirstName"
-                                class="text-gray-color">{{ batch.creatorFirstName }}</span>&nbsp;
-                            <span class="text-gray-color" *ngIf="batch?.creatorLastName">{{batch.creatorLastName}}</span>
+                            <span class="text-gray-color">{{ batch.creatorDetails.firstName }}</span>&nbsp;
+                            <span class="text-gray-color" *ngIf="batch?.creatorDetails?.lastName">{{batch?.creatorDetails?.lastName}}</span>
                         </p>
                         <p *ngIf="batch?.enrollmentEndDate">
                             <span *ngIf="(todayDate > batch?.enrollmentEndDate); else lastDateForEnrollment"
@@ -63,11 +62,10 @@
                     <div item-start class="width-80">
                         <h5 class="subtitle title">{{ batch.name }}</h5>
                         <p>{{batch.startDate | date: 'mediumDate' }} - {{ batch.endDate | date: 'mediumDate' }}</p>
-                        <p *ngIf="batch?.creatorFirstName">
+                        <p *ngIf="batch?.creatorDetails?.firstName">
                             <span>{{ 'BATCH_CREATED_BY' | translate }}</span>&nbsp;
-                            <span *ngIf="batch?.creatorFirstName"
-                                class="text-gray-color">{{ batch.creatorFirstName }}</span>&nbsp;
-                            <span class="text-gray-color" *ngIf="batch?.creatorLastName">{{batch.creatorLastName}}</span>
+                            <span class="text-gray-color">{{ batch.creatorDetails.firstName }}</span>&nbsp;
+                            <span class="text-gray-color" *ngIf="batch?.creatorDetails?.lastName">{{batch.creatorDetails.lastName}}</span>
                         </p>
                         <p *ngIf="batch?.enrollmentEndDate">
                             <span *ngIf="(todayDate > batch?.enrollmentEndDate); else lastDateForEnrollment"

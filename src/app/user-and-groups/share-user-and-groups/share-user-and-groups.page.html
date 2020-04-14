@@ -61,6 +61,7 @@
         </h6>
         <p *ngIf="user?.profileType === ProfileType.TEACHER">{{'USER_TYPE_1' | translate | titlecase}}</p>
         <p *ngIf="user?.profileType === ProfileType.STUDENT">{{'USER_TYPE_2' | translate | titlecase}}</p>
+        <p *ngIf="user?.profileType === ProfileType.OTHER">{{'USER_TYPE_3' | translate | titlecase}}</p>
       </ion-label>
       <ion-checkbox item-end mode="ios" [checked]="isUserSelected(user?.uid)"></ion-checkbox>
     </ion-item>

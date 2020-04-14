@@ -32,6 +32,7 @@
             <h6><strong>{{currentUser?.handle}}</strong></h6>
             <p *ngIf="currentUser?.profileType === ProfileType.TEACHER">{{'USER_TYPE_1' | translate | titlecase}}</p>
             <p *ngIf="currentUser?.profileType === ProfileType.STUDENT">{{'USER_TYPE_2' | translate | titlecase}}</p>
+            <p *ngIf="currentUser?.profileType === ProfileType.OTHER">{{'USER_TYPE_3' | translate | titlecase}}</p>
           </ion-label>
         </div>
         <div class="card-icon">
@@ -51,6 +52,7 @@
                 <h6><strong>{{user?.handle}}</strong></h6>
                 <p *ngIf="user?.profileType === ProfileType.TEACHER">{{'USER_TYPE_1' | translate | titlecase}}</p>
                 <p *ngIf="user?.profileType === ProfileType.STUDENT">{{'USER_TYPE_2' | translate | titlecase}}</p>
+                <p *ngIf="user?.profileType === ProfileType.OTHER">{{'USER_TYPE_3' | translate | titlecase}}</p>
               </ion-label>
             </div>
             <div class="card-icon">
