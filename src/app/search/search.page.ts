@@ -326,7 +326,6 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
       this.childContent = content;
       this.checkParent(collection, content);
     } else {
-      console.log('in else');
       this.showLoader = false;
       await this.checkRetiredOpenBatch(content);
     }
