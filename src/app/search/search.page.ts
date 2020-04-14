@@ -988,8 +988,8 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
       source: 'app',
       from: CachedItemRequestSourceFrom.SERVER
     };
-    if (this.profile.board && this.profile.board.length) {
-      pageAssembleCriteria.userProfile = { board: this.profile.board}
+    if (this.profile && this.profile.board && this.profile.board.length) {
+      pageAssembleCriteria.userProfile = { board: this.profile.board };
     }
     // pageAssembleCriteria.hardRefresh = true;
 
