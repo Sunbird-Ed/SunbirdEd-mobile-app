@@ -12,6 +12,7 @@ dev_channel_id = DEV_CHANNEL_ID
 dev_producer_id = DEV_PRODUCER_ID
 dev_deeplink_base_url = DEV_DEEPLINK_BASE_URL
 dev_deeplink_ncert_url = DEV_DEEPLINK_NCERT_URL
+dev_deeplink_igot_url = DEV_DEEPLINK_IGOT_URL
 dev_oauth_redirect_url = DEV_OATH_REDIRECT_URL
 // Staging envornment properties.
 staging_base_url = STAGING_BASE_URL
@@ -21,6 +22,7 @@ staging_channel_id = STAGING_CHANNEL_ID
 staging_producer_id = STAGING_PRODUCER_ID
 staging_deeplink_base_url = STAGING_DEEPLINK_BASE_URL
 staging_deeplink_ncert_url = STAGING_DEEPLINK_NCERT_URL
+staging_deeplink_igot_url = STAGING_DEEPLINK_IGOT_URL
 staging_oauth_redirect_url = STAGING_OATH_REDIRECT_URL
 // Production envornment properties.
 production_base_url = PRODUCTION_BASE_URL
@@ -30,6 +32,8 @@ production_channel_id = PRODUCTION_CHANNEL_ID
 production_producer_id = PRODUCTION_PRODUCER_ID
 production_deeplink_base_url = PRODUCTION_DEEPLINK_BASE_URL
 production_deeplink_base_url = PRODUCTION_DEEPLINK_BASE_URL
+staging_deeplink_ncert_url = PRODUCTION_DEEPLINK_NCERT_URL
+staging_deeplink_igot_url = PRODUCTION_DEEPLINK_IGOT_URL
 production_oauth_redirect_url = PRODUCTION_OATH_REDIRECT_URL
 // Fabric Keys
 release_fabric_api_key = RELEASE_FABRIC_API_KEY
