@@ -326,6 +326,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
       this.childContent = content;
       this.checkParent(collection, content);
     } else {
+      console.log('in else');
       this.showLoader = false;
       await this.checkRetiredOpenBatch(content);
     }
@@ -767,10 +768,8 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
       }
 
     }
-
     this.contentService.searchContent(contentSearchRequest).toPromise()
       .then((response: ContentSearchResult) => {
-
         this.zone.run(() => {
           this.responseData = response;
           if (response) {
@@ -847,7 +846,6 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
     if (assembleFilter.length === 0) {
       return undefined;
     }
-
     return assembleFilter;
   }
 
@@ -989,6 +987,9 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
       source: 'app',
       from: CachedItemRequestSourceFrom.SERVER
     };
+    if (this.profile.board && this.profile.board.length) {
+      pageAssembleCriteria.userProfile = { board: this.profile.board}
+    }
     // pageAssembleCriteria.hardRefresh = true;
 
     this.pageService.getPageAssemble(pageAssembleCriteria).toPromise()
