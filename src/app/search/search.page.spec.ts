@@ -1276,6 +1276,9 @@ describe('SearchPage', () => {
                 sections: [{identifier: 'id1'}]
             };
             mockpageService.getPageAssemble = jest.fn(() => of(dialAssembleResp));
+            searchPage.profile = {
+                board: ['baord1']
+            };
             // act
             searchPage.getContentForDialCode();
             // assert
