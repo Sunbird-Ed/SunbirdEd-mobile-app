@@ -1,4 +1,3 @@
-export * from './cards/coursecard/coursecard.component';
 export * from './confirm-alert/confirm-alert.component';
 export * from './content-actions/content-actions.component';
 export * from './content-rating-alert/content-rating-alert.component';
