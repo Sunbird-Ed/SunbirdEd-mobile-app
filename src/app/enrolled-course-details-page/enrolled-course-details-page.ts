@@ -39,14 +39,14 @@ import {
   FetchEnrolledCourseRequest,
   GetContentStateRequest, NetworkError,
   ProfileService,
-  ProfileType,
   ServerProfileDetailsRequest,
   SharedPreferences,
   TelemetryErrorCode,
   TelemetryObject,
   UnenrollCourseRequest,
   Rollup,
-  SortOrder
+  SortOrder,
+  AuthService
 } from 'sunbird-sdk';
 import { Subscription } from 'rxjs';
 import {
