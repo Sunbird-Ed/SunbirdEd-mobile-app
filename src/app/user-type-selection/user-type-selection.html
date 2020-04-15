@@ -36,7 +36,7 @@
                     </ion-grid>
                 </ion-card>
             </ion-col>
-
+            <!-- Other card -->
             <ion-col size="6">
                 <ion-card (click)="selectOtherCard()" class="card-related-style" [class.selected]="selectedUserType === ProfileType.OTHER">
                     <img class="icon-check" alt="" [class.selected]="selectedUserType === ProfileType.OTHER" [src]="selectCardImageUri"/>
@@ -51,42 +51,5 @@
                 </ion-card>
             </ion-col>
         </ion-row>
-
-        <!--    <ion-row class="ion-justify-content-center">-->
-        <!--      <ion-col size="6">-->
-        <!--        <ion-card (click)="selectStudentCard()" class="card-related-style" [ngStyle]="{'border-color': studentCardBorderColor}">-->
-        <!--          <ion-grid>-->
-        <!--            <ion-row>-->
-        <!--              <ion-col>-->
-        <!--                <img class="thumbnail" alt="" [src]="studentImageUri" />-->
-        <!--              </ion-col>-->
-        <!--            </ion-row>-->
-        <!--            <ion-row>-->
-        <!--              <ion-col>-->
-        <!--                <h4 class="card-title">{{ 'USER_TYPE_2' | translate }}</h4>-->
-        <!--              </ion-col>-->
-        <!--            </ion-row>-->
-        <!--          </ion-grid>-->
-        <!--        </ion-card>-->
-        <!--      </ion-col>-->
-        <!--    </ion-row>-->
-
-        <ion-row class="ion-justify-content-start">
-
-        </ion-row>
-
-        <!-- Other card -->
-        <!--  <ion-card (click)="selectOtherCard()" class="card-related-style"-->
-        <!--    [ngStyle]="{'border-color': otherCardBorderColor}">-->
-        <!--    <ion-grid>-->
-        <!--      <ion-row>-->
-        <!--        <ion-col size="3">-->
-        <!--          <img class="thumbnail" alt="" [src]="otherImageUri" />-->
-        <!--        </ion-col>-->
-        <!--        <ion-col size="9">-->
-        <!--        </ion-col>-->
-        <!--      </ion-row>-->
-        <!--    </ion-grid>-->
-        <!--  </ion-card>-->
     </ion-grid>
 </ion-content>
