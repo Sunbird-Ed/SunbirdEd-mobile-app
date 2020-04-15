@@ -13,7 +13,7 @@
                 <ion-card (click)="selectTeacherCard()" class="card-related-style" [class.selected]="selectedUserType === ProfileType.TEACHER">
                     <img class="icon-check" alt="" [class.selected]="selectedUserType === ProfileType.TEACHER" [src]="selectCardImageUri"/>
                     <ion-grid>
-                        <ion-row class="ion-align-items-end">
+                        <ion-row class="ion-align-items-end" style="height: 100%">
                             <ion-col>
                                 <img class="thumbnail" alt="" [src]="teacherImageUri"/>
                                 <h4 class="card-title">{{ 'USER_TYPE_1' | translate }}</h4>
@@ -27,7 +27,7 @@
                 <ion-card (click)="selectStudentCard()" class="card-related-style" [class.selected]="selectedUserType === ProfileType.STUDENT">
                     <img class="icon-check" alt="" [class.selected]="selectedUserType === ProfileType.STUDENT" [src]="selectCardImageUri"/>
                     <ion-grid>
-                        <ion-row class="ion-align-items-end">
+                        <ion-row class="ion-align-items-end" style="height: 100%">
                             <ion-col>
                                 <img class="thumbnail" alt="" [src]="studentImageUri"/>
                                 <h4 class="card-title">{{ 'USER_TYPE_2' | translate }}</h4>
@@ -41,7 +41,7 @@
                 <ion-card (click)="selectOtherCard()" class="card-related-style" [class.selected]="selectedUserType === ProfileType.OTHER">
                     <img class="icon-check" alt="" [class.selected]="selectedUserType === ProfileType.OTHER" [src]="selectCardImageUri"/>
                     <ion-grid>
-                        <ion-row class="ion-align-items-end">
+                        <ion-row class="ion-align-items-end" style="height: 100%">
                             <ion-col>
                                 <img class="thumbnail" alt="" [src]="otherImageUri"/>
                                 <h4 class="card-title">{{ 'USER_TYPE_3' | translate }}</h4>
