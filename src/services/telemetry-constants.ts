@@ -174,7 +174,9 @@ export enum InteractType {
     DISABLED = 'disabled',
     DELETE_CHECKED = 'delete-checked',
     DELETE_UNCHECKED = 'delete-unchecked',
-    BACKDROP_DISMISSED = 'backdrop-dismissed'
+    BACKDROP_DISMISSED = 'backdrop-dismissed',
+    LOCAL_NOTIFICATION = "local-notification",
+    FCM_NOTIFICATION = "fcm-notification"
 }
 
 
@@ -415,7 +417,8 @@ export enum ID {
     CONTINUE_CLICKED = 'continue-clicked',
     LOAD_CLICKED = 'load-clicked',
     BACKDROP_CLICKED = 'backdrop-clicked',
-    CANCEL_CLICKED = 'cancel-clicked'
+    CANCEL_CLICKED = 'cancel-clicked',
+    NOTIFICATION_CLICKED = 'notification-clicked'
 }
 
 export enum ActionButtonType {
