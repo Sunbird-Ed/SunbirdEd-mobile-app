@@ -375,11 +375,14 @@ export class TelemetryGeneratorService {
     generateNotificationClickedTelemetry(type, pageId, value?) {
         this.generateInteractTelemetry(
             type,
-            InteractSubtype.NOTIFICATION_CLICKED,
+            '',
             Environment.HOME,
             pageId,
             undefined,
-            value
+            value,
+            undefined,
+            undefined,
+            ID.NOTIFICATION_CLICKED
         );
     }
 }

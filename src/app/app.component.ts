@@ -161,12 +161,9 @@ export class AppComponent implements OnInit, AfterViewInit {
     });
 
     if (cordova.plugins.notification.local.launchDetails.action = NotificationActionType.ACTION_CLICK) {
-    const  value = {
-        notification_id: ID.NOTIFICATION_CLICKED
-    };
       this.telemetryGeneratorService.generateNotificationClickedTelemetry(
         InteractType.LOCAL_NOTIFICATION,
-        this.activePageService.computePageId(this.router.url),
+        this.activePageService.computePageId(this.router.url)
       );
     }
     

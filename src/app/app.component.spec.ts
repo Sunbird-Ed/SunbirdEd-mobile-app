@@ -30,6 +30,15 @@ declare const supportfile;
 
 describe('AppComponent', () => {
     let appComponent: AppComponent;
+    window.cordova.plugins = {
+        notification: {
+            local: {
+                launchDetails: {
+                    action: 'click'
+                }
+            }
+        }
+    };
     const mockActivePageService: Partial<ActivePageService> = {};
     const mockAppGlobalService: Partial<AppGlobalService> = {
         getUserId: jest.fn(() => 'some_user_id'),
@@ -89,7 +98,8 @@ describe('AppComponent', () => {
         getSystemSettings: jest.fn(() => of({}))
     };
     const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {
-        genererateAppStartTelemetry: jest.fn()
+        genererateAppStartTelemetry: jest.fn(),
+        generateNotificationClickedTelemetry: jest.fn()
     };
     const mockTelemetryAutoSyncService: Partial<TelemetryAutoSyncService> = {
         // start: jest.fn(() => of({}))
@@ -851,12 +861,9 @@ describe('AppComponent', () => {
             // assert
             setTimeout(() => {
                 expect(FCMPlugin.onNotification).toHaveBeenCalled();
-                expect(mockTelemetryGeneratorService.generateInteractTelemetry).nthCalledWith(1,
-                    InteractType.OTHER,
-                    InteractSubtype.NOTIFICATION_RECEIVED,
-                    Environment.HOME,
+                expect(mockTelemetryGeneratorService.generateNotificationClickedTelemetry).nthCalledWith(1,
+                    InteractType.FCM_NOTIFICATION,
                     'some_page_id',
-                    undefined,
                     { notification_id: 'some_id' }
                 );
                 done();
@@ -889,12 +896,9 @@ describe('AppComponent', () => {
             // assert
             setTimeout(() => {
                 expect(FCMPlugin.onNotification).toHaveBeenCalled();
-                expect(mockTelemetryGeneratorService.generateInteractTelemetry).nthCalledWith(1,
-                    InteractType.OTHER,
-                    InteractSubtype.NOTIFICATION_RECEIVED,
-                    Environment.HOME,
+                expect(mockTelemetryGeneratorService.generateNotificationClickedTelemetry).nthCalledWith(1,
+                    InteractType.FCM_NOTIFICATION,
                     'some_page_id',
-                    undefined,
                     { notification_id: 'some_id' }
                 );
                 done();
