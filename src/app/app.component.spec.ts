@@ -246,6 +246,7 @@ describe('AppComponent', () => {
                 actionButtons: ['search'],
             };
             mockHeaderService.headerConfigEmitted$ = of(mockConfig);
+            mockActivePageService.computePageId = jest.fn(() => 'some_page_id');
             // act
             jest.useFakeTimers();
             appComponent.ngOnInit();
