@@ -21,7 +21,7 @@ import {
   CorReleationDataType,
   ID
 } from '@app/services/telemetry-constants';
-import { PreferenceKey, EventTopics, SystemSettingsIds, GenericAppConfig, ProfileConstants, NotificationActionType } from './app.constant';
+import { PreferenceKey, EventTopics, SystemSettingsIds, GenericAppConfig, ProfileConstants } from './app.constant';
 import { ActivePageService } from '@app/services/active-page/active-page-service';
 import {
   AppGlobalService,
