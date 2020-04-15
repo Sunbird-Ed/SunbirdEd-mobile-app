@@ -35,6 +35,17 @@
     width: 100%;
     height: auto;
   }
+  .icon-check {
+    visibility: hidden;
+    width: auto;
+    height: auto;
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    &.selected {
+     visibility: visible;
+    }
+  }
 
   .card-content-md {
     @include padding(null, null, null, 0 !important);
@@ -43,7 +54,14 @@
   ion-card {
     background-color: map-get($colors, white_f7) !important;
     @include margin(20px, 0, 0, 0 !important);
+    height: calc(100% - 20px);
     width: 100% !important;
+    &.selected {
+      border:3px solid #0076FE;
+    }
+    > ion-grid {
+      height: 100%;
+    }
   }
 
   ion-icon {
