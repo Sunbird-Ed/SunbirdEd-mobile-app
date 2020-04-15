@@ -1102,6 +1102,10 @@ sb-course-cards-hlist > .layout-course > .header > .sb-btn-outline-secondary{
     color: #024F9D;
 }
 
+sb-course-cards-hlist > .layout-course > .header{
+  padding: 0 8px !important;
+}
+
 .card-section-secondary{
   color: #666666;
   font-family: "Noto Sans";
@@ -1110,4 +1114,13 @@ sb-course-cards-hlist > .layout-course > .header > .sb-btn-outline-secondary{
 .card-section-danger{
   color: #E55A28;
   font-family: "Noto Sans";
+}
+
+.card-section-invisible{
+  visibility: hidden;
+}
+
+sb-course-cards-hlist > .layout-course > .sb--scrolling-wrapper-flexbox {
+  padding-right: 8px;
+  padding-left: 8px;
 }

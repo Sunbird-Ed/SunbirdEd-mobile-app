@@ -9,7 +9,7 @@
     <app-sign-in-card [source]="'courses'" (valueChange)="showOfflineWarning($event)"></app-sign-in-card>
   </div>
 
-  <div *ngIf="!guestUser && enrolledCourses && enrolledCourses.length" class="p-8 enrolled-course-bg">
+  <div *ngIf="!guestUser && enrolledCourses && enrolledCourses.length" class="pt-8 enrolled-course-bg">
     <sb-course-cards-hlist [title]="'COURSES_IN_PROGRESS' | translate" [type]="courseCardType.MY_COURSE_RECENTLY_VIEWED_CARD_GRID" 
     [contentList]="enrolledCourses" [viewMoreButtonText]="'VIEW_ALL' | translate" 
     (viewMoreClick)="navigateToViewMoreContentsPage(true)" (cardClick)="openEnrolledCourseDetails($event)" ></sb-course-cards-hlist>
