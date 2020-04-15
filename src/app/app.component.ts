@@ -18,7 +18,8 @@ import {
   InteractSubtype,
   Environment, PageId,
   ImpressionType,
-  CorReleationDataType
+  CorReleationDataType,
+  ID
 } from '@app/services/telemetry-constants';
 import { PreferenceKey, EventTopics, SystemSettingsIds, GenericAppConfig, ProfileConstants } from './app.constant';
 import { ActivePageService } from '@app/services/active-page/active-page-service';
@@ -40,6 +41,9 @@ import { TncUpdateHandlerService } from '@app/services/handlers/tnc-update-handl
 import { NetworkAvailabilityToastService } from '@app/services/network-availability-toast/network-availability-toast.service';
 import { SplaschreenDeeplinkActionHandlerDelegate } from '@app/services/sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
 import * as qs from 'qs';
+
+declare const cordova;
+
 @Component({
   selector: 'app-root',
   templateUrl: 'app.component.html'
@@ -155,6 +159,14 @@ export class AppComponent implements OnInit, AfterViewInit {
         this.addNetworkTelemetry(InteractSubtype.INTERNET_DISCONNECTED, pageId);
       }
     });
+
+    if (cordova.plugins.notification.local.launchDetails.action = 'click') {
+      this.telemetryGeneratorService.generateNotificationClickedTelemetry(
+        InteractType.LOCAL,
+        this.activePageService.computePageId(this.router.url)
+      );
+    }
+    
     this.notificationSrc.setupLocalNotification();
 
     this.triggerSignInEvent();
@@ -320,12 +332,9 @@ export class AppComponent implements OnInit, AfterViewInit {
       const value = {
         notification_id: data.id
       };
-      this.telemetryGeneratorService.generateInteractTelemetry(
-        InteractType.OTHER,
-        InteractSubtype.NOTIFICATION_RECEIVED,
-        Environment.HOME,
+      this.telemetryGeneratorService.generateNotificationClickedTelemetry(
+        InteractType.FCM,
         this.activePageService.computePageId(this.router.url),
-        undefined,
         value
       );
 

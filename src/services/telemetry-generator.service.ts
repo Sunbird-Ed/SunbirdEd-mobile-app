@@ -371,4 +371,18 @@ export class TelemetryGeneratorService {
             corRelationList
         );
     }
+
+    generateNotificationClickedTelemetry(type, pageId, value?) {
+        this.generateInteractTelemetry(
+            type,
+            '',
+            Environment.HOME,
+            pageId,
+            undefined,
+            value,
+            undefined,
+            undefined,
+            ID.NOTIFICATION_CLICKED
+        );
+    }
 }
