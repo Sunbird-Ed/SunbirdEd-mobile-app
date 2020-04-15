@@ -555,7 +555,3 @@ export class LaunchType {
     public static readonly DEEPLINK = 'deeplink';
     public static readonly SIDELOAD = 'sideload';
 }
-
-export class NotificationActionType {
-    public static readonly ACTION_CLICK = 'click';
-}

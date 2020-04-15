@@ -862,7 +862,7 @@ describe('AppComponent', () => {
             setTimeout(() => {
                 expect(FCMPlugin.onNotification).toHaveBeenCalled();
                 expect(mockTelemetryGeneratorService.generateNotificationClickedTelemetry).nthCalledWith(1,
-                    InteractType.FCM_NOTIFICATION,
+                    InteractType.FCM,
                     'some_page_id',
                     { notification_id: 'some_id' }
                 );
@@ -897,7 +897,7 @@ describe('AppComponent', () => {
             setTimeout(() => {
                 expect(FCMPlugin.onNotification).toHaveBeenCalled();
                 expect(mockTelemetryGeneratorService.generateNotificationClickedTelemetry).nthCalledWith(1,
-                    InteractType.FCM_NOTIFICATION,
+                    InteractType.FCM,
                     'some_page_id',
                     { notification_id: 'some_id' }
                 );

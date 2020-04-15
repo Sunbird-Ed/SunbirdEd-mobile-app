@@ -175,8 +175,8 @@ export enum InteractType {
     DELETE_CHECKED = 'delete-checked',
     DELETE_UNCHECKED = 'delete-unchecked',
     BACKDROP_DISMISSED = 'backdrop-dismissed',
-    LOCAL_NOTIFICATION = "local",
-    FCM_NOTIFICATION = "fcm"
+    LOCAL = "local",
+    FCM = "fcm"
 }
 
 

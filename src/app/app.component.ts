@@ -160,9 +160,9 @@ export class AppComponent implements OnInit, AfterViewInit {
       }
     });
 
-    if (cordova.plugins.notification.local.launchDetails.action = NotificationActionType.ACTION_CLICK) {
+    if (cordova.plugins.notification.local.launchDetails.action = 'click') {
       this.telemetryGeneratorService.generateNotificationClickedTelemetry(
-        InteractType.LOCAL_NOTIFICATION,
+        InteractType.LOCAL,
         this.activePageService.computePageId(this.router.url)
       );
     }
@@ -333,7 +333,7 @@ export class AppComponent implements OnInit, AfterViewInit {
         notification_id: data.id
       };
       this.telemetryGeneratorService.generateNotificationClickedTelemetry(
-        InteractType.FCM_NOTIFICATION,
+        InteractType.FCM,
         this.activePageService.computePageId(this.router.url),
         value
       );
