@@ -22,10 +22,6 @@ import { HasNotSelectedFrameworkGuard } from '@app/guards/has-not-selected-frame
 import { SplashScreenService } from '@app/services/splash-screen.service';
 import {NativePageTransitions, NativeTransitionOptions} from '@ionic-native/native-page-transitions/ngx';
 
-
-const selectedCardBorderColor = '#006DE5';
-const borderColor = '#F7F7F7';
-
 @Component({
   selector: 'page-user-type-selection',
   templateUrl: 'user-type-selection.html',
@@ -33,23 +29,20 @@ const borderColor = '#F7F7F7';
 })
 
 export class UserTypeSelectionPage {
-  teacherCardBorderColor = '#F7F7F7';
-  studentCardBorderColor = '#F7F7F7';
-  otherCardBorderColor = '#F7F7F7';
-  userTypeSelected = false;
-  selectedUserType: ProfileType;
+  selectedUserType?: ProfileType;
   continueAs = '';
   profile: Profile;
   backButtonFunc: Subscription;
   headerObservable: any;
   studentImageUri = 'assets/imgs/ic_student.svg';
   teacherImageUri = 'assets/imgs/ic_teacher.svg';
-  otherImageUri = 'assets/imgs/ic_other.png';
+  otherImageUri = 'assets/imgs/ic_other.svg';
+  selectCardImageUri = 'assets/imgs/ic_check.svg';
   private navParams: any;
   @ViewChild(IonRouterOutlet) routerOutlet: IonRouterOutlet;
   appName = '';
   public hideBackButton = true;
-
+  ProfileType = ProfileType;
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -154,14 +147,13 @@ export class UserTypeSelectionPage {
 
   selectOtherCard() {
     this.selectCard('USER_TYPE_3', ProfileType.OTHER);
+    setTimeout(() => {
+      this.continue();
+    }, 350);
   }
 
   selectCard(userType, profileType) {
     this.zone.run(() => {
-      this.userTypeSelected = true;
-      this.teacherCardBorderColor = (userType === 'USER_TYPE_1') ? selectedCardBorderColor : borderColor;
-      this.studentCardBorderColor = (userType === 'USER_TYPE_2') ? selectedCardBorderColor : borderColor;
-      this.otherCardBorderColor = (userType === 'USER_TYPE_3') ? selectedCardBorderColor : borderColor;
       this.selectedUserType = profileType;
       this.continueAs = this.commonUtilService.translateMessage(
         'CONTINUE_AS_ROLE',
