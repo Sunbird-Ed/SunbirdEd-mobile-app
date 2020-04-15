@@ -11,16 +11,20 @@ import { Network } from '@ionic-native/network/ngx';
 import { WebView } from '@ionic-native/ionic-webview/ngx';
 import { SharedPreferences, ProfileService, Profile, ProfileType } from 'sunbird-sdk';
 
-import { PreferenceKey, ProfileConstants } from '@app/app/app.constant';
+import { PreferenceKey, ProfileConstants, RouterLinks } from '@app/app/app.constant';
 import { appLanguages } from '@app/app/app.constant';
 
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
-import { InteractType, InteractSubtype, PageId, Environment } from '@app/services/telemetry-constants';
+import { InteractType, InteractSubtype, PageId, Environment, ImpressionType } from '@app/services/telemetry-constants';
 import { SbGenericPopoverComponent } from '@app/app/components/popups/sb-generic-popover/sb-generic-popover.component';
 import { QRAlertCallBack, QRScannerAlert } from '@app/app/qrscanner-alert/qrscanner-alert.page';
 import { Observable, merge } from 'rxjs';
 import { mapTo } from 'rxjs/operators';
 import { AppVersion } from '@ionic-native/app-version/ngx';
+import { SbPopoverComponent } from '@app/app/components/popups';
+import { AndroidPermissionsStatus } from './android-permissions/android-permission';
+import { Router } from '@angular/router';
+import { AndroidPermissionsService } from './android-permissions/android-permissions.service';
 
 declare const FCMPlugin;
 export interface NetworkInfo {
@@ -55,6 +59,9 @@ export class CommonUtilService implements OnDestroy {
         private telemetryGeneratorService: TelemetryGeneratorService,
         private webView: WebView,
         private appVersion: AppVersion,
+        private router: Router,
+        private toastController: ToastController,
+        private permissionService: AndroidPermissionsService
     ) {
         this.listenForEvents();
 
@@ -491,4 +498,70 @@ export class CommonUtilService implements OnDestroy {
         return profileType === ProfileType.TEACHER || profileType == ProfileType.OTHER;
     }
 
+    public async getGivenPermissionStatus(permissions): Promise<AndroidPermissionsStatus> {
+        return (
+            await this.permissionService.checkPermissions([permissions]).toPromise()
+        )[permissions];
+    }
+
+    public async showSettingsPageToast(description: string, appName: string, pageId: string, isOnboardingCompleted: boolean) {
+        const toast = await this.toastController.create({
+            message: this.translateMessage(description, appName),
+            cssClass: 'permissionSettingToast',
+            showCloseButton: true,
+            closeButtonText: this.translateMessage('SETTINGS'),
+            position: 'bottom',
+            duration: 3000
+        });
+
+        toast.present();
+
+        toast.onWillDismiss().then((res) => {
+            if (res.role === 'cancel') {
+                this.telemetryGeneratorService.generateInteractTelemetry(
+                    InteractType.TOUCH,
+                    InteractSubtype.SETTINGS_CLICKED,
+                    isOnboardingCompleted ? Environment.HOME : Environment.ONBOARDING,
+                    pageId);
+                this.router.navigate([`/${RouterLinks.SETTINGS}/${RouterLinks.PERMISSION}`], { state: { changePermissionAccess: true } });
+            }
+        });
+    }
+
+    public async buildPermissionPopover(handler: (selectedButton: string) => void,
+                                        appName: string, whichPermission: string,
+                                        permissionDescription: string, pageId, isOnboardingCompleted): Promise<HTMLIonPopoverElement> {
+        return this.popOverCtrl.create({
+            component: SbPopoverComponent,
+            componentProps: {
+                isNotShowCloseIcon: false,
+                sbPopoverHeading: this.translateMessage('PERMISSION_REQUIRED'),
+                sbPopoverMainTitle: this.translateMessage(whichPermission),
+                actionsButtons: [
+                    {
+                        btntext: this.translateMessage('NOT_NOW'),
+                        btnClass: 'popover-button-cancel',
+                    },
+                    {
+                        btntext: this.translateMessage('ALLOW'),
+                        btnClass: 'popover-button-allow',
+                    }
+                ],
+                handler,
+                img: {
+                    path: './assets/imgs/ic_folder_open.png',
+                },
+                metaInfo: this.translateMessage(permissionDescription, appName),
+            },
+            cssClass: 'sb-popover sb-popover-permissions primary dw-active-downloads-popover',
+        }).then((popover) => {
+            this.telemetryGeneratorService.generateImpressionTelemetry(
+                whichPermission === 'Camera' ? ImpressionType.CAMERA : ImpressionType.FILE_MANAGEMENT,
+                pageId,
+                PageId.PERMISSION_POPUP,
+                isOnboardingCompleted ? Environment.HOME : Environment.ONBOARDING
+            );
+            return popover;
+        });
+    }
 }
