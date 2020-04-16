@@ -176,7 +176,9 @@ export enum InteractType {
     DISABLED = 'disabled',
     DELETE_CHECKED = 'delete-checked',
     DELETE_UNCHECKED = 'delete-unchecked',
-    BACKDROP_DISMISSED = 'backdrop-dismissed'
+    BACKDROP_DISMISSED = 'backdrop-dismissed',
+    WITHOUT_CONTENT = 'without-content',
+    WITH_CONTENT = 'with-content'
 }
 
 
@@ -417,7 +419,8 @@ export enum ID {
     CONTINUE_CLICKED = 'continue-clicked',
     LOAD_CLICKED = 'load-clicked',
     BACKDROP_CLICKED = 'backdrop-clicked',
-    CANCEL_CLICKED = 'cancel-clicked'
+    CANCEL_CLICKED = 'cancel-clicked',
+    SEE_MORE_CONTENT_BUTTON_CLICKED = 'see-more-content-button-clicked'
 }
 
 export enum ActionButtonType {
