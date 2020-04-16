@@ -27,7 +27,7 @@ import {
   SharedPreferences,
   TelemetryObject,
   ContentRequest,
-  FrameworkService
+  FrameworkService, CorrelationData
 } from 'sunbird-sdk';
 
 import {
@@ -52,7 +52,7 @@ import { CommonUtilService } from '@app/services/common-util.service';
 import { FormAndFrameworkUtilService } from '@app/services/formandframeworkutil.service';
 import {
   Environment, InteractSubtype, InteractType, PageId, ImpressionType,
-  ImpressionSubtype, CorReleationDataType
+  ImpressionSubtype, CorReleationDataType, ID
 } from '@app/services/telemetry-constants';
 import { AppHeaderService } from '@app/services/app-header.service';
 import { SplaschreenDeeplinkActionHandlerDelegate } from '@app/services/sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
@@ -1128,18 +1128,20 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     };
     this.router.navigate([RouterLinks.EXPLORE_BOOK], navigationExtras);
-    const values = {};
-    values['board'] = this.profile.board[0];
-    values['class'] = this.currentGrade.name;
-    values['medium'] = this.currentMedium;
+
+    const corRelationList: Array<CorrelationData> = [];
+    corRelationList.push({id: this.profile.board ? this.profile.board.join(',') : '', type: CorReleationDataType.BOARD});
+    corRelationList.push({id: this.currentGrade ? this.currentGrade : '', type: CorReleationDataType.CLASS});
+    corRelationList.push({id: this.currentMedium ? this.currentMedium : '', type: CorReleationDataType.MEDIUM});
 
     this.telemetryGeneratorService.generateInteractTelemetry(
-      InteractType.TOUCH,
-      InteractSubtype.SEE_MORE_CONTENT_CLICKED,
+        this.storyAndWorksheets.length === 0 ? InteractType.WITHOUT_CONTENT : InteractType.WITH_CONTENT,
+      '',
       Environment.LIBRARY,
       PageId.LIBRARY,
       undefined,
-      values);
+      undefined, undefined, corRelationList,
+    ID.SEE_MORE_CONTENT_BUTTON_CLICKED);
   }
   async getLocalContent() {
     this.locallyDownloadResources = [];

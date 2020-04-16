@@ -468,14 +468,19 @@ export class CommonUtilService implements OnDestroy {
         this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise()
             .then(async (response: Profile) => {
                 const profile = response;
-                const subscribeTopic = [];
+                const subscribeTopic: Array<string> = [];
                 subscribeTopic.push(profile.board[0]);
-                profile.medium.map(m => subscribeTopic.push(m));
-                await this.preferences.getString(PreferenceKey.DEVICE_LOCATION).subscribe((data) => {
-                    subscribeTopic.push(JSON.parse(data).state);
-                    subscribeTopic.push(JSON.parse(data).district);
+                profile.medium.forEach((m) => {
+                    subscribeTopic.push(profile.board[0].concat('-', m));
+                    profile.grade.forEach((g) => {
+                        subscribeTopic.push(profile.board[0].concat('-', g));
+                        subscribeTopic.push(profile.board[0].concat('-', m.concat('-', g)));
+                    });
                 });
-
+                await this.preferences.getString(PreferenceKey.DEVICE_LOCATION).subscribe((data) => {
+                    subscribeTopic.push(JSON.parse(data).state.replace(/[^a-zA-Z0-9-_.~%]/gi, '-'));
+                    subscribeTopic.push(JSON.parse(data).district.replace(/[^a-zA-Z0-9-_.~%]/gi, '-'));
+                });
                 await this.preferences.getString(PreferenceKey.SUBSCRIBE_TOPICS).toPromise().then(async (data) => {
                     const previuslySubscribeTopics = JSON.parse(data);
                     await new Promise<undefined>((resolve, reject) => {

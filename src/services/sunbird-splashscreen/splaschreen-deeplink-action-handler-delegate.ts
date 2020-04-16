@@ -559,6 +559,9 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
       this.events.publish('onboarding-card:completed', { isOnBoardingCardCompleted: true });
       this.events.publish('refresh:profile');
       this.appGlobalServices.guestUserProfile = profile;
+      this.telemetryGeneratorService.generateProfilePopulatedTelemetry(
+          PageId.HOME, profile, 'auto', Environment.ONBOARDING, ContentUtil.extractBaseUrl(payloadUrl)
+      );
 
     } catch (e) {
       console.log(e);

@@ -18,15 +18,15 @@
   </ion-radio-group>
 
   <button class="sb-btn sb-btn-md sb-btn-primary PR35 W100 ellipsis text-uppercase btn-block continue"
-          [style.background-color]="btnColor" *ngIf="isLanguageSelected" (click)="continue()">
+          [style.background-color]="btnColor" [hidden]="!isLanguageSelected" (click)="continue()">
     <ion-grid class="ion-no-padding">
       <ion-row class="ion-justify-content-between">
         <ion-col class="ion-no-padding">
-          <ion-icon class="arrow-icon" style="visibility: hidden" [class.animate]="isLanguageSelected" name='arrow-round-forward'></ion-icon>
+          <img class="arrow-icon" src="assets/imgs/ic_back.svg" style="visibility: hidden" [class.animate]="isLanguageSelected" >
         </ion-col>
         <ion-col class="ion-no-padding">{{ 'CONTINUE' | translate }}</ion-col>
         <ion-col class="ion-no-padding text-align-end ion-align-self-center">
-          <ion-icon class="arrow-icon" [class.animate]="isLanguageSelected" name='arrow-round-forward'></ion-icon>
+          <img class="arrow-icon" src="assets/imgs/ic_back.svg" [class.animate]="isLanguageSelected">
         </ion-col>
       </ion-row>
     </ion-grid>

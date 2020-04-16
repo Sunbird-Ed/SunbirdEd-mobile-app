@@ -5,9 +5,10 @@
   background-color: #EDF4F9;
   /* This should be item-ios only as we are targeting mode as iOS for radio-button */
 
-  ion-icon.arrow-icon{
+  img.arrow-icon{
     display: inline-block;
     width: 22px;
+    margin-top: -3px;
     &.animate {
       position: relative;
       animation: dropDown 5s linear infinite;
@@ -42,7 +43,7 @@
 .language-card {
   text-align: center;
   position: relative;
-  box-shadow: 0 20px 40px -10px rgba(2,79,157,0.3);
+  box-shadow: 0 20px 40px -10px #D8D8D8;
   background-color: #FFFFFF;
   ion-radio {
     display: none;
@@ -57,6 +58,7 @@
   }
   &.selected {
     background-color: #0076FE;
+    box-shadow: 0 20px 40px -10px rgba(2,79,157,0.3);
     ion-label {
       color: white;
     }
