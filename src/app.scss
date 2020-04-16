@@ -1100,14 +1100,15 @@ app-resources{
     sb-library-filters{
       .pill{
         font-size: 14px !important;
-        padding-top: 8px !important;
-        padding-bottom: 8px !important;
       }
       .rounded{ 
-        padding-top: 16px !important;
-        padding-bottom: 16px !important;
+        font-size: 16px !important;
       }
     }
+  }
+
+  sb-library-cards-stack{
+    font-size: 18px !important;
   }
 
   .sb-textbook-container{
@@ -1119,11 +1120,6 @@ app-resources{
     .sb--card__meta1{
       padding-top: 8px;
     }
-  }
-
-  .sb-medium-pills-container{
-    padding-top: 16px !important;
-    padding-bottom: 16px !important;
   }
 
 }
