@@ -135,21 +135,21 @@ export class UserTypeSelectionPage {
     this.selectCard('USER_TYPE_1', ProfileType.TEACHER);
     setTimeout(() => {
       this.continue();
-    }, 350);
+    }, 50);
   }
 
   selectStudentCard() {
     this.selectCard('USER_TYPE_2', ProfileType.STUDENT);
     setTimeout(() => {
       this.continue();
-    }, 350);
+    }, 50);
   }
 
   selectOtherCard() {
     this.selectCard('USER_TYPE_3', ProfileType.OTHER);
     setTimeout(() => {
       this.continue();
-    }, 350);
+    }, 50);
   }
 
   selectCard(userType, profileType) {
