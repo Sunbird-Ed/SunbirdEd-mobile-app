@@ -560,7 +560,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
       this.events.publish('refresh:profile');
       this.appGlobalServices.guestUserProfile = profile;
       this.telemetryGeneratorService.generateProfilePopulatedTelemetry(
-          PageId.HOME, profile, 'auto', Environment.ONBOARDING
+          PageId.HOME, profile, 'auto', Environment.ONBOARDING, ContentUtil.extractBaseUrl(payloadUrl)
       );
 
     } catch (e) {
