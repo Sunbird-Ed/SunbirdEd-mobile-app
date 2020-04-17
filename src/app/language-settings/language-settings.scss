@@ -1,8 +1,11 @@
 @import "src/assets/styles/_variables";
 @import "src/assets/styles/_custom-mixins";
 @import "src/assets/styles/fonts";
+
+ion-content {
+  --ion-background-color: #EDF4F9;
+}
 :host {
-  background-color: #EDF4F9;
   /* This should be item-ios only as we are targeting mode as iOS for radio-button */
 
   img.arrow-icon{
@@ -43,6 +46,7 @@
 .language-card {
   text-align: center;
   position: relative;
+  margin-bottom: 0;
   box-shadow: 0 20px 40px -10px #D8D8D8;
   background-color: #FFFFFF;
   ion-radio {
@@ -85,7 +89,6 @@
 .app-title {
   font-size: 24px;
   font-weight: bold;
-  padding: 16px;
   color: #024F9D;
   margin-top: 5vh;
 }
