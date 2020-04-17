@@ -240,6 +240,8 @@ export class LocalCourseService {
         styleClass = 'card-section-secondary';
       }
       sectionHtml = this.courseSectionHtml(message, styleClass);
+    } else {
+      sectionHtml = this.courseSectionHtml('', '');
     }
     return sectionHtml;
   }
@@ -260,14 +262,26 @@ export class LocalCourseService {
         styleClass = 'card-section-secondary';
       }
       sectionHtml = this.courseSectionHtml(message, styleClass);
+    } else {
+      sectionHtml = this.courseSectionHtml('', '');
     }
     return sectionHtml;
   }
 
   private courseSectionHtml(message, styleClass) {
-    return `<div class="${styleClass}">
-      <img src="assets/imgs/ic_info.svg">
-      <span> ${message}</span>
-    </div>`;
+    let htmlText = '';
+    if (message === '') {
+      htmlText =
+      `<div class="card-section-invisible">
+        <img src="assets/imgs/ic_info.svg">
+      </div>`;
+    } else {
+      htmlText =
+      `<div class="${styleClass}">
+        <img src="assets/imgs/ic_info.svg">
+        <span> ${message}</span>
+      </div>`;
+    }
+    return htmlText;
   }
 }

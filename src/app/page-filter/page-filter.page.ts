@@ -9,7 +9,8 @@ import {
   FrameworkCategoryCodesGroup,
   FrameworkUtilService,
   GetFrameworkCategoryTermsRequest,
-  PageAssembleFilter
+  PageAssembleFilter,
+  CachedItemRequestSourceFrom
 } from 'sunbird-sdk';
 
 import { PageFilterOptionsPage } from './page-filter-options/page-filter-options.page';
@@ -171,6 +172,7 @@ export class PageFilterPage {
   async getFrameworkData(frameworkId: string, currentCategory: string, index: number) {
     return new Promise((resolve, reject) => {
       const req: GetFrameworkCategoryTermsRequest = {
+        from: CachedItemRequestSourceFrom.SERVER,
         currentCategoryCode: currentCategory,
         language: this.translate.currentLang,
         requiredCategories: this.categories,

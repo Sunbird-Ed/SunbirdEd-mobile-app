@@ -1,5 +1,5 @@
 import { SearchPage } from './search.page';
-import { MimeType, ContentType, RouterLinks, EventTopics } from '@app/app/app.constant';
+import { MimeType, ContentType, RouterLinks } from '@app/app/app.constant';
 import {
     FrameworkService,
     FrameworkUtilService,
@@ -7,8 +7,6 @@ import {
     SharedPreferences,
     ContentService,
     EventsBusService,
-    DownloadEventType,
-    ContentEventType,
     CourseService,
     SearchHistoryService,
     PageAssembleService,
@@ -16,21 +14,18 @@ import {
     ContentImportStatus
 } from 'sunbird-sdk';
 import { TranslateService } from '@ngx-translate/core';
-import { Events, Platform,  NavController, PopoverController } from '@ionic/angular';
+import { Events, Platform, NavController, PopoverController } from '@ionic/angular';
 import { Router } from '@angular/router';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import {
     AppGlobalService,
     TelemetryGeneratorService,
     CommonUtilService,
-    SunbirdQRScanner,
-    ContainerService,
     AppHeaderService
 } from 'services';
-import { Scanner } from 'typescript';
 import { Location } from '@angular/common';
 import { ImpressionType, PageId, Environment, InteractSubtype, InteractType, LogLevel, Mode } from '@app/services/telemetry-constants';
-import { of, Subscription, throwError } from 'rxjs';
+import { of, throwError } from 'rxjs';
 import { NgZone, ChangeDetectorRef } from '@angular/core';
 import { FormAndFrameworkUtilService } from '../../services';
 
@@ -39,7 +34,7 @@ describe('SearchPage', () => {
     const mockAppGlobalService: Partial<AppGlobalService> = {
         generateSaveClickedTelemetry: jest.fn(),
         isUserLoggedIn: jest.fn(() => true),
-        getCurrentUser: jest.fn(() => {})
+        getCurrentUser: jest.fn(() => { })
     };
     const dismissFn = jest.fn(() => Promise.resolve());
     const presentFn = jest.fn(() => Promise.resolve());
@@ -388,7 +383,7 @@ describe('SearchPage', () => {
             searchPage.guestUser = false;
             searchPage.isSingleContent = true;
             mockAppGlobalService.setEnrolledCourseList = jest.fn();
-            const kgetEnrolledCoursesResp = [{identifier: 'identifier'}];
+            const kgetEnrolledCoursesResp = [{ identifier: 'identifier' }];
             mockCourseService.getEnrolledCourses = jest.fn(() => of(kgetEnrolledCoursesResp));
             // act
             searchPage.openCollection(collection);
@@ -426,7 +421,7 @@ describe('SearchPage', () => {
             // arrange
             const collection = {
                 identifier: 'identifier',
-                mimeType:  MimeType.COLLECTION
+                mimeType: MimeType.COLLECTION
             };
             mockTelemetryGeneratorService.isCollection = jest.fn(() => true);
             searchPage.isDialCodeSearch = true;
@@ -447,7 +442,7 @@ describe('SearchPage', () => {
             // arrange
             const collection = {
                 identifier: 'identifier',
-                mimeType:  'MimeType.COLLECTION'
+                mimeType: 'MimeType.COLLECTION'
             };
             mockTelemetryGeneratorService.isCollection = jest.fn(() => true);
             searchPage.isDialCodeSearch = true;
@@ -504,16 +499,16 @@ describe('SearchPage', () => {
         it('should find code of a category', () => {
             // arrange
             const categoryType = 'grade';
-            const categoryList = [{name: 'sampleName', code: 'sampleCode'}];
-            const data = {grade: 'sampleName'};
+            const categoryList = [{ name: 'sampleName', code: 'sampleCode' }];
+            const data = { grade: 'sampleName' };
             // assert
             expect(searchPage.findCode(categoryList, data, categoryType)).toEqual('sampleCode');
         });
         it('should find code of a category', () => {
             // arrange
             const categoryType = 'grade';
-            const categoryList = [{name: 'sampleName', code: 'sampleCode'}];
-            const data = {grade: 'Name'};
+            const categoryList = [{ name: 'sampleName', code: 'sampleCode' }];
+            const data = { grade: 'Name' };
             // assert
             expect(searchPage.findCode(categoryList, data, categoryType)).toBeUndefined();
         });
@@ -603,9 +598,9 @@ describe('SearchPage', () => {
                 framework: 'framework1'
             };
             const profile = {
-                syllabus : ['framework1']
+                syllabus: ['framework1']
             };
-            mockFrameworkUtilService.getActiveChannelSuggestedFrameworkList = jest.fn(() => of({identifier: 'fm', name: 'fm'}));
+            mockFrameworkUtilService.getActiveChannelSuggestedFrameworkList = jest.fn(() => of({ identifier: 'fm', name: 'fm' }));
             // act
             searchPage.checkProfileData(data, profile);
             // assert
@@ -622,9 +617,9 @@ describe('SearchPage', () => {
                 framework: 'framework1'
             };
             const profile = {
-                syllabus : ['framework1']
+                syllabus: ['framework1']
             };
-            const getActiveChannelSuggestedFrameworkListResp = [{identifier: 'framework1', name: 'framework1'}];
+            const getActiveChannelSuggestedFrameworkListResp = [{ identifier: 'framework1', name: 'framework1' }];
             mockFrameworkUtilService.getActiveChannelSuggestedFrameworkList = jest.fn(() => of(getActiveChannelSuggestedFrameworkListResp));
             mockFrameworkService.getFrameworkDetails = jest.fn(() => throwError('err' as any));
             // act
@@ -645,27 +640,27 @@ describe('SearchPage', () => {
                 gradeLevel: ['grade1']
             };
             const profile = {
-                syllabus : ['framework']
+                syllabus: ['framework']
             };
-            const getActiveChannelSuggestedFrameworkListResp = [{identifier: 'framework1', name: 'framework1'}];
+            const getActiveChannelSuggestedFrameworkListResp = [{ identifier: 'framework1', name: 'framework1' }];
             const getFrameworkDetailsResp = {
-                categories : [
+                categories: [
                     {
                         code: 'board',
                         terms: [
-                            {code: 'boardcode', name: 'board'}
+                            { code: 'boardcode', name: 'board' }
                         ]
                     },
                     {
                         code: 'medium',
                         terms: [
-                            {code: 'medium1code', name: 'medium1'}
+                            { code: 'medium1code', name: 'medium1' }
                         ]
                     },
                     {
                         code: 'gradeLevel',
                         terms: [
-                            {code: 'grade1code', name: 'grade1'}
+                            { code: 'grade1code', name: 'grade1' }
                         ]
                     }
                 ]
@@ -696,28 +691,28 @@ describe('SearchPage', () => {
                 gradeLevel: ['grade1']
             };
             const profile = {
-                syllabus : ['framework1'],
+                syllabus: ['framework1'],
                 board: ['b1', 'b2']
             };
-            const getActiveChannelSuggestedFrameworkListResp = [{identifier: 'framework1', name: 'framework1'}];
+            const getActiveChannelSuggestedFrameworkListResp = [{ identifier: 'framework1', name: 'framework1' }];
             const getFrameworkDetailsResp = {
-                categories : [
+                categories: [
                     {
                         code: 'board',
                         terms: [
-                            {code: 'boardcode', name: 'board'}
+                            { code: 'boardcode', name: 'board' }
                         ]
                     },
                     {
                         code: 'medium',
                         terms: [
-                            {code: 'medium1code', name: 'medium1'}
+                            { code: 'medium1code', name: 'medium1' }
                         ]
                     },
                     {
                         code: 'gradeLevel',
                         terms: [
-                            {code: 'grade1code', name: 'grade1'}
+                            { code: 'grade1code', name: 'grade1' }
                         ]
                     }
                 ]
@@ -748,28 +743,28 @@ describe('SearchPage', () => {
                 gradeLevel: ['grade1']
             };
             const profile = {
-                syllabus : ['framework1'],
+                syllabus: ['framework1'],
                 board: ['boardcode']
             };
-            const getActiveChannelSuggestedFrameworkListResp = [{identifier: 'framework1', name: 'framework1'}];
+            const getActiveChannelSuggestedFrameworkListResp = [{ identifier: 'framework1', name: 'framework1' }];
             const getFrameworkDetailsResp = {
-                categories : [
+                categories: [
                     {
                         code: 'board',
                         terms: [
-                            {code: 'boardcode', name: 'board'}
+                            { code: 'boardcode', name: 'board' }
                         ]
                     },
                     {
                         code: 'medium',
                         terms: [
-                            {code: 'medium1code', name: 'medium1'}
+                            { code: 'medium1code', name: 'medium1' }
                         ]
                     },
                     {
                         code: 'gradeLevel',
                         terms: [
-                            {code: 'grade1code', name: 'grade1'}
+                            { code: 'grade1code', name: 'grade1' }
                         ]
                     }
                 ]
@@ -804,30 +799,30 @@ describe('SearchPage', () => {
                 gradeLevel: ['grade1']
             };
             const profile = {
-                syllabus : ['framework1'],
+                syllabus: ['framework1'],
                 board: ['boardcode'],
                 medium: ['medium1'],
                 grade: ['grade1']
             };
-            const getActiveChannelSuggestedFrameworkListResp = [{identifier: 'framework1', name: 'framework1'}];
+            const getActiveChannelSuggestedFrameworkListResp = [{ identifier: 'framework1', name: 'framework1' }];
             const getFrameworkDetailsResp = {
-                categories : [
+                categories: [
                     {
                         code: 'board',
                         terms: [
-                            {code: 'boardcode', name: 'board'}
+                            { code: 'boardcode', name: 'board' }
                         ]
                     },
                     {
                         code: 'medium',
                         terms: [
-                            {code: 'medium1', name: 'medium1'}
+                            { code: 'medium1', name: 'medium1' }
                         ]
                     },
                     {
                         code: 'gradeLevel',
                         terms: [
-                            {code: 'grade1', name: 'grade1'}
+                            { code: 'grade1', name: 'grade1' }
                         ]
                     }
                 ]
@@ -850,14 +845,14 @@ describe('SearchPage', () => {
     describe('editProfile', () => {
         it('should edit Profile', (done) => {
             // arrange
-            searchPage.gradeList = [{code: 'grade1', name: 'grade1'}];
+            searchPage.gradeList = [{ code: 'grade1', name: 'grade1' }];
             searchPage.profile = {
                 grade: ['grade1'],
                 gradeValue: {
                     grade1: 'grade1'
                 }
             };
-            mockProfileService.updateProfile = jest.fn(() => of({syllabus: 'sylabus'}));
+            mockProfileService.updateProfile = jest.fn(() => of({ syllabus: 'sylabus' }));
             mockCommonUtilService.handleToTopicBasedNotification = jest.fn();
             // act
             searchPage.editProfile();
@@ -887,7 +882,7 @@ describe('SearchPage', () => {
                 contentMock.pkgVersion,
                 0
             );
-            expect(searchPage.parentContent).toEqual('collection', );
+            expect(searchPage.parentContent).toEqual('collection');
             expect(searchPage.checkParent).toHaveBeenCalled();
 
         });
@@ -927,14 +922,14 @@ describe('SearchPage', () => {
             searchPage.source = 'source';
             searchPage.responseData = {
                 filterCriteria: {
-                    facetFilters: [{name: 'name'}]
+                    facetFilters: [{ name: 'name' }]
                 }
             };
             const getLibraryFilterConfigResp = [
-                {name: 'name', code: 'code'}
+                { name: 'name', code: 'code' }
             ];
             mockCommonUtilService.getTranslatedValue = jest.fn(() => 'translation');
-            mockFormAndFrameworkUtilService.getLibraryFilterConfig = jest.fn(() => Promise.resolve(getLibraryFilterConfigResp))
+            mockFormAndFrameworkUtilService.getLibraryFilterConfig = jest.fn(() => Promise.resolve(getLibraryFilterConfigResp));
             // act
             searchPage.showFilter();
             // assert
@@ -955,7 +950,7 @@ describe('SearchPage', () => {
         it('should updateFilterIcon on applyFilter', (done) => {
             // arrange
             const searchContentResp = {
-                contentDataList:  {}
+                contentDataList: {}
             };
             jest.spyOn(searchPage, 'updateFilterIcon').mockImplementation();
             mockContentService.searchContent = jest.fn(() => of(searchContentResp));
@@ -987,87 +982,20 @@ describe('SearchPage', () => {
             searchPage.handleSearch();
             // assert
         });
-        it('should set profile filter with board', (done) => {
-            // arange
-            jest.spyOn(searchPage, 'scrollToTop').mockImplementation();
-            searchPage.searchKeywords = 'abcd';
-            mockCommonUtilService.networkInfo = {
-                isNetworkAvailable: false
-            };
-            const searchContentResp = {
-                contentDataList:  {}
-            };
-            mockContentService.searchContent = jest.fn(() => of(undefined));
-            mocksearchHistoryService.addEntry = jest.fn(() => of(undefined));
-            window.cordova.plugins = {
-                Keyboard : {close: jest.fn()}
-            };
-            jest.spyOn(searchPage, 'applyProfileFilter').mockImplementation();
-            jest.spyOn(searchPage, 'updateFilterIcon').mockImplementation();
-            searchPage.profile = {
-                board: ['board1']
-            };
-            // act
-            searchPage.handleSearch();
-            // assert
-            expect(searchPage.showLoader).toEqual(true);
-            expect(mocksearchHistoryService.addEntry).toHaveBeenCalled();
-            expect(searchPage.applyProfileFilter).toHaveBeenCalledWith(
-                ['board1'],
-                undefined,
-                'board'
-            );
-            setTimeout(() => {
-                expect(searchPage.isEmptyResult).toEqual(true);
-                done();
-            }, 0);
-        });
-        it('should set profile filter with medium', () => {
-            // arange
-            jest.spyOn(searchPage, 'scrollToTop').mockImplementation();
-            searchPage.searchKeywords = 'abcd';
-            mockCommonUtilService.networkInfo = {
-                isNetworkAvailable: false
-            };
-            const searchContentResp = {
-                contentDataList:  {}
-            };
-            mockContentService.searchContent = jest.fn(() => of(searchContentResp));
-            mocksearchHistoryService.addEntry = jest.fn(() => of(undefined));
-            window.cordova.plugins = {
-                Keyboard : {close: jest.fn()}
-            };
-            jest.spyOn(searchPage, 'applyProfileFilter').mockImplementation();
-            jest.spyOn(searchPage, 'updateFilterIcon').mockImplementation();
-            searchPage.profile = {
-                medium: ['medium1']
-            };
-            // act
-            searchPage.handleSearch();
-            // assert
-            expect(searchPage.showLoader).toEqual(true);
-            expect(mocksearchHistoryService.addEntry).toHaveBeenCalled();
-            expect(searchPage.applyProfileFilter).toHaveBeenCalledWith(
-                ['medium1'],
-                undefined,
-                'medium'
-            );
-        });
         it('should handle success search scenario', (done) => {
             // arange
             jest.spyOn(searchPage, 'scrollToTop').mockImplementation();
             searchPage.searchKeywords = 'abcd';
             const searchContentResp = {
-                contentDataList:  {
+                contentDataList: {
                     identifier: 'id'
                 }
             };
             mockContentService.searchContent = jest.fn(() => of(searchContentResp));
             mocksearchHistoryService.addEntry = jest.fn(() => of(undefined));
             window.cordova.plugins = {
-                Keyboard : {close: jest.fn()}
+                Keyboard: { close: jest.fn() }
             };
-            jest.spyOn(searchPage, 'applyProfileFilter').mockImplementation();
             jest.spyOn(searchPage, 'updateFilterIcon').mockImplementation();
             searchPage.profile = {
                 grade: ['grade1']
@@ -1081,11 +1009,6 @@ describe('SearchPage', () => {
             // assert
             expect(searchPage.showLoader).toEqual(true);
             expect(mocksearchHistoryService.addEntry).toHaveBeenCalled();
-            expect(searchPage.applyProfileFilter).toHaveBeenCalledWith(
-                ['grade1'],
-                undefined,
-                'gradeLevel'
-            );
             setTimeout(() => {
                 expect(searchPage.searchContentResult).toEqual(searchContentResp.contentDataList);
                 expect(searchPage.isEmptyResult).toBe(false);
@@ -1100,20 +1023,6 @@ describe('SearchPage', () => {
                 );
                 done();
             }, 0);
-        });
-    });
-    describe('applyProfileFilter', () => {
-        it('should return concatinated board and assembled filters array', () => {
-            // arrange
-            mockAppGlobalService.getNameForCodeInFramework = jest.fn(() => 'board');
-            // act & assert
-            expect(searchPage.applyProfileFilter(['board'], ['medium'], 'board')).toEqual([ 'medium', 'board' ]);
-        });
-        it('should return profile filter', () => {
-            // arrange
-            mockAppGlobalService.getNameForCodeInFramework = jest.fn(() => undefined);
-            // act & assert
-            expect(searchPage.applyProfileFilter(['board'], undefined, 'board')).toEqual([ 'board' ]);
         });
     });
     describe('navigateToBatchListPopup', () => {
@@ -1146,7 +1055,7 @@ describe('SearchPage', () => {
                 identifier: 'id'
             };
             const getCourseBatchesResp = [
-                {identifier: 'id1', status: 1}
+                { identifier: 'id1', status: 1 }
             ];
             mockCourseService.getCourseBatches = jest.fn(() => of(getCourseBatchesResp));
             mockPopoverController.create = jest.fn(() => (Promise.resolve({
@@ -1182,7 +1091,7 @@ describe('SearchPage', () => {
                 identifier: 'id'
             };
             const getCourseBatchesResp = [
-                {identifier: 'id1'}
+                { identifier: 'id1' }
             ];
             mockCourseService.getCourseBatches = jest.fn(() => of(getCourseBatchesResp));
             mockPopoverController.create = jest.fn(() => (Promise.resolve({
@@ -1272,9 +1181,10 @@ describe('SearchPage', () => {
             searchPage.dialCode = 'abcdef';
             jest.spyOn(searchPage, 'processDialCodeResult').mockImplementation();
             const getSupportedContentFilterConfigResp = ['textbook', 'resource'];
-            mockFormAndFrameworkUtilService.getSupportedContentFilterConfig = jest.fn(() => Promise.resolve(getSupportedContentFilterConfigResp))
+            mockFormAndFrameworkUtilService.getSupportedContentFilterConfig = jest.fn(
+                () => Promise.resolve(getSupportedContentFilterConfigResp));
             const dialAssembleResp = {
-                sections: [{identifier: 'id1'}]
+                sections: [{ identifier: 'id1' }]
             };
             mockpageService.getPageAssemble = jest.fn(() => of(dialAssembleResp));
             searchPage.profile = {
@@ -1299,7 +1209,8 @@ describe('SearchPage', () => {
                 isNetworkAvailable: true
             };
             const getSupportedContentFilterConfigResp = ['textbook', 'resource'];
-            mockFormAndFrameworkUtilService.getSupportedContentFilterConfig = jest.fn(() => Promise.resolve(getSupportedContentFilterConfigResp))
+            mockFormAndFrameworkUtilService.getSupportedContentFilterConfig = jest.fn(
+                () => Promise.resolve(getSupportedContentFilterConfigResp));
             mockpageService.getPageAssemble = jest.fn(() => throwError({}));
             // act
             searchPage.getContentForDialCode();
@@ -1319,7 +1230,8 @@ describe('SearchPage', () => {
                 isNetworkAvailable: false
             };
             const getSupportedContentFilterConfigResp = ['textbook', 'resource'];
-            mockFormAndFrameworkUtilService.getSupportedContentFilterConfig = jest.fn(() => Promise.resolve(getSupportedContentFilterConfigResp))
+            mockFormAndFrameworkUtilService.getSupportedContentFilterConfig = jest.fn(
+                () => Promise.resolve(getSupportedContentFilterConfigResp));
             mockpageService.getPageAssemble = jest.fn(() => throwError({}));
             // act
             searchPage.getContentForDialCode();
@@ -1382,7 +1294,7 @@ describe('SearchPage', () => {
                 expect.anything(),
                 PageId.SEARCH,
                 undefined,
-                {count: 2, networkAvailable: 'Y', scannedData: 'ABCDEF'}
+                { count: 2, networkAvailable: 'Y', scannedData: 'ABCDEF' }
             );
         });
         it('should generate QRScanSuccess Interact Event offline', () => {
@@ -1399,7 +1311,7 @@ describe('SearchPage', () => {
                 expect.anything(),
                 PageId.SEARCH,
                 undefined,
-                {count: 2, networkAvailable: 'N', scannedData: 'ABCDEF'}
+                { count: 2, networkAvailable: 'N', scannedData: 'ABCDEF' }
             );
         });
     });
@@ -1415,7 +1327,7 @@ describe('SearchPage', () => {
             searchPage.responseData = {
                 filterCriteria: {
                     facetFilters: [
-                        {values: [{apply: true}]}
+                        { values: [{ apply: true }] }
                     ]
                 }
             };
@@ -1429,7 +1341,7 @@ describe('SearchPage', () => {
             searchPage.responseData = {
                 filterCriteria: {
                     facetFilters: [
-                        {values: [{apply: false}]}
+                        { values: [{ apply: false }] }
                     ]
                 }
             };
@@ -1464,7 +1376,7 @@ describe('SearchPage', () => {
                 }
             };
             mockContentService.getContentDetails = jest.fn(() => of(getContentDetailsResp));
-            mockAppGlobalService.getCurrentUser = jest.fn(() => {});
+            mockAppGlobalService.getCurrentUser = jest.fn(() => { });
             // act
             searchPage.checkParent('parent', 'child');
             // assert
@@ -1480,7 +1392,7 @@ describe('SearchPage', () => {
             // arrange
             const getContentDetailsResp = undefined;
             mockContentService.getContentDetails = jest.fn(() => of(getContentDetailsResp));
-            mockAppGlobalService.getCurrentUser = jest.fn(() => {});
+            mockAppGlobalService.getCurrentUser = jest.fn(() => { });
             // act
             searchPage.checkParent('parent', 'child');
             // assert
@@ -1501,7 +1413,7 @@ describe('SearchPage', () => {
                 }
             };
             mockContentService.getContentDetails = jest.fn(() => of(getContentDetailsResp));
-            mockAppGlobalService.getCurrentUser = jest.fn(() => {});
+            mockAppGlobalService.getCurrentUser = jest.fn(() => { });
             jest.spyOn(searchPage, 'subscribeSdkEvent').mockImplementation();
             jest.spyOn(searchPage, 'downloadParentContent').mockImplementation();
             jest.spyOn(searchPage, 'checkProfileData').mockImplementation();

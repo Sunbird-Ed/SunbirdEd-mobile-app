@@ -320,9 +320,9 @@ export class CollectionDetailEtbPage implements OnInit {
       this.headerConfig.showHeader = false;
       this.headerConfig.showBurgerMenu = false;
       this.headerService.updatePageConfig(this.headerConfig);
-      this.resetVariables();
       this.shownGroup = null;
       this.assignCardData();
+      this.resetVariables();
       this.setContentDetails(this.identifier, true);
       this.events.subscribe(EventTopics.CONTENT_TO_PLAY, (data) => {
         this.playContent(data);

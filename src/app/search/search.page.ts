@@ -1,6 +1,6 @@
 import { Component, Inject, NgZone, OnDestroy, ViewChild, ChangeDetectorRef, OnInit, AfterViewInit } from '@angular/core';
 import { Router, NavigationExtras } from '@angular/router';
-import { Events, Platform, PopoverController, IonContent, NavController, IonInput } from '@ionic/angular';
+import { Events, Platform, PopoverController, IonContent, NavController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { Location } from '@angular/common';
 import each from 'lodash/each';
@@ -19,7 +19,6 @@ import {
   FrameworkUtilService,
   GetSuggestedFrameworksRequest, SearchEntry, SearchHistoryService, SortOrder
 } from 'sunbird-sdk';
-
 import { Map } from '@app/app/telemetryutil';
 import {
   BatchConstants,
@@ -272,11 +271,12 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
             this.navCtrl.navigateForward([`/${RouterLinks.DISTRICT_MAPPING}`], navigationExtras);
           }
         } else {
-          this.router.navigate([`/${RouterLinks.PROFILE_SETTINGS}`], { state: { isCreateNavigationStack: false, hideBackButton: true, showFrameworkCategoriesMenu: true  } });
+          this.router.navigate([`/${RouterLinks.PROFILE_SETTINGS}`],
+            { state: { isCreateNavigationStack: false, hideBackButton: true, showFrameworkCategoriesMenu: true } });
         }
       } else {
         if (this.source === PageId.ONBOARDING_PROFILE_PREFERENCES) {
-          this.router.navigate([`/${RouterLinks.PROFILE_SETTINGS}`], { state: {showFrameworkCategoriesMenu: true  }, replaceUrl: true });
+          this.router.navigate([`/${RouterLinks.PROFILE_SETTINGS}`], { state: { showFrameworkCategoriesMenu: true }, replaceUrl: true });
         } else {
           this.popCurrentPage();
         }
@@ -387,7 +387,8 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
           isSingleContent: params.isSingleContent,
           onboarding: params.onboarding,
           parentContent: params.parentContent,
-          isQrCodeLinkToContent: params.isQrCodeLinkToContent
+          isQrCodeLinkToContent: params.isQrCodeLinkToContent,
+          isOnboardingSkipped: !this.appGlobalService.isOnBoardingCompleted
         }
       });
       if (this.isSingleContent) {
@@ -752,21 +753,6 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
     this.dialCodeResult = undefined;
     this.corRelationList = [];
 
-    if (this.profile) {
-
-      if (this.profile.board && this.profile.board.length) {
-        contentSearchRequest.board = this.applyProfileFilter(this.profile.board, contentSearchRequest.board, 'board');
-      }
-
-      if (this.profile.medium && this.profile.medium.length) {
-        contentSearchRequest.medium = this.applyProfileFilter(this.profile.medium, contentSearchRequest.medium, 'medium');
-      }
-
-      if (this.profile.grade && this.profile.grade.length) {
-        contentSearchRequest.grade = this.applyProfileFilter(this.profile.grade, contentSearchRequest.grade, 'gradeLevel');
-      }
-
-    }
     this.contentService.searchContent(contentSearchRequest).toPromise()
       .then((response: ContentSearchResult) => {
         this.zone.run(() => {
@@ -810,44 +796,6 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
       .toPromise();
   }
 
-  applyProfileFilter(profileFilter: Array<any>, assembleFilter: Array<any>, categoryKey?: string) {
-    if (categoryKey) {
-      const nameArray = [];
-      profileFilter.forEach(filterCode => {
-        let nameForCode = this.appGlobalService.getNameForCodeInFramework(categoryKey, filterCode);
-
-        if (!nameForCode) {
-          nameForCode = filterCode;
-        }
-
-        nameArray.push(nameForCode);
-      });
-
-      profileFilter = nameArray;
-    }
-
-
-    if (!assembleFilter) {
-      assembleFilter = [];
-    }
-    assembleFilter = assembleFilter.concat(profileFilter);
-
-    const unique_array = [];
-
-    for (let i = 0; i < assembleFilter.length; i++) {
-      if (unique_array.indexOf(assembleFilter[i]) === -1 && assembleFilter[i].length > 0) {
-        unique_array.push(assembleFilter[i]);
-      }
-    }
-
-    assembleFilter = unique_array;
-
-    if (assembleFilter.length === 0) {
-      return undefined;
-    }
-    return assembleFilter;
-  }
-
   private async checkRetiredOpenBatch(content: any, layoutName?: string) {
     this.showLoader = false;
     this.loader = await this.commonUtilService.getLoader();
@@ -870,7 +818,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
     }
     if (anyOpenBatch || !retiredBatches.length) {
       // open the batch directly
-      await  this.showContentDetails(content, true);
+      await this.showContentDetails(content, true);
     } else if (retiredBatches.length) {
       await this.navigateToBatchListPopup(content, layoutName, retiredBatches);
     }
@@ -886,7 +834,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
         enrollmentType: CourseEnrollmentType.OPEN,
         status: [CourseBatchStatus.NOT_STARTED, CourseBatchStatus.IN_PROGRESS]
       },
-      sort_by: { createdDate: SortOrder.DESC},
+      sort_by: { createdDate: SortOrder.DESC },
       fields: BatchConstants.REQUIRED_FIELDS
     };
     const reqvalues = new Map();
@@ -900,11 +848,11 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
               this.batches = res;
               if (this.batches.length) {
                 this.batches.forEach((batch, key) => {
-                    if (batch.status === 1) {
-                      ongoingBatches.push(batch);
-                    } else {
-                      upcommingBatches.push(batch);
-                    }
+                  if (batch.status === 1) {
+                    ongoingBatches.push(batch);
+                  } else {
+                    upcommingBatches.push(batch);
+                  }
                 });
                 this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
                   'ongoing-batch-popup',
@@ -1298,64 +1246,64 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
   subscribeSdkEvent() {
     this.eventSubscription = this.eventsBusService.events()
       .subscribe((event: EventsBusEvent) => {
-      this.zone.run(() => {
-        if (event.type === DownloadEventType.PROGRESS && event.payload.progress) {
-          const downloadEvent = event as DownloadProgress;
-          this.downloadProgress =  downloadEvent.payload.progress === -1 ? 0 : downloadEvent.payload.progress;
-          this.loadingDisplayText = this.commonUtilService.translateMessage('LOADING_CONTENT') + ' ' + this.downloadProgress + ' %';
+        this.zone.run(() => {
+          if (event.type === DownloadEventType.PROGRESS && event.payload.progress) {
+            const downloadEvent = event as DownloadProgress;
+            this.downloadProgress = downloadEvent.payload.progress === -1 ? 0 : downloadEvent.payload.progress;
+            this.loadingDisplayText = this.commonUtilService.translateMessage('LOADING_CONTENT') + ' ' + this.downloadProgress + ' %';
 
-          if (this.downloadProgress === 100) {
-            // this.showLoading = false;
-            this.loadingDisplayText = this.commonUtilService.translateMessage('LOADING_CONTENT') + ' ';
-          }
-        }
-
-        if (event.type === ContentEventType.IMPORT_PROGRESS) {
-          const totalCountMsg = Math.floor((event.payload.currentCount / event.payload.totalCount) * 100) +
-          '% (' + event.payload.currentCount + ' / ' + event.payload.totalCount + ')';
-          this.loadingDisplayText = this.commonUtilService.translateMessage('EXTRACTING_CONTENT', totalCountMsg);
-          if (event.payload.currentCount === event.payload.totalCount) {
-            let timer = 30;
-            const interval = setInterval(() => {
-              this.loadingDisplayText = `Getting things ready in ${timer--}  seconds`;
-              if (timer === 0) {
-                this.loadingDisplayText = 'Getting things ready';
-                clearInterval(interval);
-              }
-            }, 1000);
-          }
-        }
-        // if (event.payload && event.payload.status === 'IMPORT_COMPLETED' && event.type === 'contentImport') {
-        if (event.payload && event.type === ContentEventType.IMPORT_COMPLETED) {
-          if (this.queuedIdentifiers.length && this.isDownloadStarted) {
-            if (this.queuedIdentifiers.includes(event.payload.contentId)) {
-              this.currentCount++;
+            if (this.downloadProgress === 100) {
+              // this.showLoading = false;
+              this.loadingDisplayText = this.commonUtilService.translateMessage('LOADING_CONTENT') + ' ';
             }
-            if (this.queuedIdentifiers.length === this.currentCount) {
-              this.showLoading = false;
-              this.telemetryGeneratorService.generateInteractTelemetry(InteractType.OTHER,
-                InteractSubtype.LOADING_SPINE_COMPLETED,
-                this.source === PageId.USER_TYPE_SELECTION ? Environment.ONBOARDING : Environment.HOME,
-                PageId.DIAL_SEARCH,
-                undefined,
-                undefined,
-                undefined,
-                this.corRelationList
-              );
-              // this.showContentDetails(this.childContent);
+          }
+
+          if (event.type === ContentEventType.IMPORT_PROGRESS) {
+            const totalCountMsg = Math.floor((event.payload.currentCount / event.payload.totalCount) * 100) +
+              '% (' + event.payload.currentCount + ' / ' + event.payload.totalCount + ')';
+            this.loadingDisplayText = this.commonUtilService.translateMessage('EXTRACTING_CONTENT', totalCountMsg);
+            if (event.payload.currentCount === event.payload.totalCount) {
+              let timer = 30;
+              const interval = setInterval(() => {
+                this.loadingDisplayText = `Getting things ready in ${timer--}  seconds`;
+                if (timer === 0) {
+                  this.loadingDisplayText = 'Getting things ready';
+                  clearInterval(interval);
+                }
+              }, 1000);
+            }
+          }
+          // if (event.payload && event.payload.status === 'IMPORT_COMPLETED' && event.type === 'contentImport') {
+          if (event.payload && event.type === ContentEventType.IMPORT_COMPLETED) {
+            if (this.queuedIdentifiers.length && this.isDownloadStarted) {
+              if (this.queuedIdentifiers.includes(event.payload.contentId)) {
+                this.currentCount++;
+              }
+              if (this.queuedIdentifiers.length === this.currentCount) {
+                this.showLoading = false;
+                this.telemetryGeneratorService.generateInteractTelemetry(InteractType.OTHER,
+                  InteractSubtype.LOADING_SPINE_COMPLETED,
+                  this.source === PageId.USER_TYPE_SELECTION ? Environment.ONBOARDING : Environment.HOME,
+                  PageId.DIAL_SEARCH,
+                  undefined,
+                  undefined,
+                  undefined,
+                  this.corRelationList
+                );
+                // this.showContentDetails(this.childContent);
+                this.events.publish('savedResources:update', {
+                  update: true
+                });
+              }
+            } else {
               this.events.publish('savedResources:update', {
                 update: true
               });
             }
-          } else {
-            this.events.publish('savedResources:update', {
-              update: true
-            });
           }
-        }
 
-      });
-    }) as any;
+        });
+      }) as any;
   }
 
   /**
@@ -1404,7 +1352,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
       const userType = this.appGlobalService.getGuestUserType();
       if (userType === ProfileType.STUDENT) {
         this.audienceFilter = AudienceFilter.GUEST_STUDENT;
-      } else if (userType === ProfileType.TEACHER) {
+      } else if (this.commonUtilService.isAccessibleForNonStudentRole(userType)) {
         this.audienceFilter = AudienceFilter.GUEST_TEACHER;
       }
     } else {
@@ -1488,14 +1436,14 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
 
   goBack() {
     this.telemetryGeneratorService.generateBackClickedTelemetry(ImpressionType.SEARCH,
-          Environment.HOME, true, undefined, this.corRelationList);
+      Environment.HOME, true, undefined, this.corRelationList);
     this.navigateToPreviousPage();
   }
 
   getContentCount(resultlist) {
     let totalCount = 0;
     if (resultlist.dialCodeResult.length) {
-      for (let i = 0; i < resultlist.dialCodeResult.length; i++){
+      for (let i = 0; i < resultlist.dialCodeResult.length; i++) {
         if (resultlist.dialCodeResult[i].content && resultlist.dialCodeResult[i].content.length) {
           totalCount += resultlist.dialCodeResult[i].content.length;
         }

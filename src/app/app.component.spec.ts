@@ -30,6 +30,15 @@ declare const supportfile;
 
 describe('AppComponent', () => {
     let appComponent: AppComponent;
+    window.cordova.plugins = {
+        notification: {
+            local: {
+                launchDetails: {
+                    action: 'click'
+                }
+            }
+        }
+    };
     const mockActivePageService: Partial<ActivePageService> = {};
     const mockAppGlobalService: Partial<AppGlobalService> = {
         getUserId: jest.fn(() => 'some_user_id'),
@@ -89,7 +98,8 @@ describe('AppComponent', () => {
         getSystemSettings: jest.fn(() => of({}))
     };
     const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {
-        genererateAppStartTelemetry: jest.fn()
+        genererateAppStartTelemetry: jest.fn(),
+        generateNotificationClickedTelemetry: jest.fn()
     };
     const mockTelemetryAutoSyncService: Partial<TelemetryAutoSyncService> = {
         // start: jest.fn(() => of({}))
@@ -119,7 +129,14 @@ describe('AppComponent', () => {
         sims: 0,
         cap: ['some_cap']
     };
-    const mockUtilityService: Partial<UtilityService> = {};
+    const mockUtilityService: Partial<UtilityService> = {
+        getUtmInfo: jest.fn(() => Promise.resolve({
+            'val': 'utm_source=googleplay&utm_content=https://diksha.gov.in/explore-course',
+            'code': '0',
+            'clk': '0',
+            'install': '0'
+        }))
+    };
     const mockZone: Partial<NgZone> = {};
     const mockLocalCourseService: Partial<LocalCourseService> = {};
     const mockSplaschreenDeeplinkActionHandlerDelegate: Partial<SplaschreenDeeplinkActionHandlerDelegate> = {};
@@ -229,6 +246,7 @@ describe('AppComponent', () => {
                 actionButtons: ['search'],
             };
             mockHeaderService.headerConfigEmitted$ = of(mockConfig);
+            mockActivePageService.computePageId = jest.fn(() => 'some_page_id');
             // act
             jest.useFakeTimers();
             appComponent.ngOnInit();
@@ -328,23 +346,28 @@ describe('AppComponent', () => {
 
         it('should generate utm-info telemetry if utm source is available for first time', (done) => {
             // arrange
-            mockUtilityService.getUtmInfo = jest.fn(() => Promise.resolve({ utm_source: 'sunbird' }));
+            mockUtilityService.getUtmInfo = jest.fn(() => Promise.resolve({
+                'val': 'utm_source=googleplay&utm_content=https://diksha.gov.in/explore-course',
+                'code': '0',
+                'clk': '0',
+                'install': '0'
+            }));
             mockUtilityService.clearUtmInfo = jest.fn(() => Promise.resolve());
-
+            const value = new Map();
+            mockSplaschreenDeeplinkActionHandlerDelegate.checkUtmContent = jest.fn();
             // act
             appComponent.ngOnInit();
             // assert
             setTimeout(() => {
                 expect(mockUtilityService.getUtmInfo).toHaveBeenCalled();
-                expect(mockTelemetryGeneratorService.generateInteractTelemetry).nthCalledWith(2,
+                expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
                     InteractType.OTHER,
-                    InteractSubtype.UTM_INFO,
+                    'networkStatus',
                     Environment.HOME,
-                    PageId.HOME,
+                    'splash',
                     undefined,
-                    { utm_data: { utm_source: 'sunbird' } }
+                    value
                 );
-                expect(mockUtilityService.clearUtmInfo).toHaveBeenCalled();
                 done();
             }, 0);
         });
@@ -839,12 +862,9 @@ describe('AppComponent', () => {
             // assert
             setTimeout(() => {
                 expect(FCMPlugin.onNotification).toHaveBeenCalled();
-                expect(mockTelemetryGeneratorService.generateInteractTelemetry).nthCalledWith(1,
-                    InteractType.OTHER,
-                    InteractSubtype.NOTIFICATION_RECEIVED,
-                    Environment.HOME,
+                expect(mockTelemetryGeneratorService.generateNotificationClickedTelemetry).nthCalledWith(1,
+                    InteractType.FCM,
                     'some_page_id',
-                    undefined,
                     { notification_id: 'some_id' }
                 );
                 done();
@@ -877,12 +897,9 @@ describe('AppComponent', () => {
             // assert
             setTimeout(() => {
                 expect(FCMPlugin.onNotification).toHaveBeenCalled();
-                expect(mockTelemetryGeneratorService.generateInteractTelemetry).nthCalledWith(1,
-                    InteractType.OTHER,
-                    InteractSubtype.NOTIFICATION_RECEIVED,
-                    Environment.HOME,
+                expect(mockTelemetryGeneratorService.generateNotificationClickedTelemetry).nthCalledWith(1,
+                    InteractType.FCM,
                     'some_page_id',
-                    undefined,
                     { notification_id: 'some_id' }
                 );
                 done();

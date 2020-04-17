@@ -6,7 +6,6 @@ import {
     ContentService,
     ContentsGroupedByPageSection,
     EventsBusService,
-    FrameworkCategoryCode,
     FrameworkService,
     FrameworkUtilService,
     GetFrameworkCategoryTermsRequest,
@@ -91,7 +90,8 @@ describe('ResourcesComponent', () => {
     };
     const mockCommonUtilService: Partial<CommonUtilService> = {
         convertFileSrc: jest.fn(),
-        networkInfo: jest.fn()
+        networkInfo: jest.fn(),
+        isAccessibleForNonStudentRole: jest.fn()
     };
     const mockFormAndFrameworkUtilService: Partial<FormAndFrameworkUtilService> = {};
     const mockTranslateService: Partial<TranslateService> = {};
@@ -841,22 +841,6 @@ describe('ResourcesComponent', () => {
         });
     });
 
-    it('should order result data by Subject', () => {
-        // arrange
-        const searchResults = [
-            {
-                name: 'Mathematics'
-            }
-        ];
-        jest.spyOn(resourcesComponent, 'applyProfileFilter').mockReturnValue([
-            'Mathematics', 'Physics'
-        ]);
-        // act
-        resourcesComponent.orderBySubject(searchResults);
-        // assert
-        expect(resourcesComponent.applyProfileFilter).toHaveBeenCalled();
-    });
-
     it('should check for Textbook which is locally Available', () => {
         // arrange
         resourcesComponent.locallyDownloadResources = [
@@ -905,19 +889,6 @@ describe('ResourcesComponent', () => {
         resourcesComponent.generateExtraInfoTelemetry(mockSectionsCount.length);
         // assert
         expect(mockTelemetryGeneratorService.generateExtraInfoTelemetry).toHaveBeenCalled();
-    });
-
-    it('should filter the profile when applyProfileFilter() called', () => {
-        // arrange
-        const profileFilterForMedium = ['English', 'Bengali'];
-        const assembleFilterForMedium = ['English', 'Bengali'];
-        mockAppGlobalService.getNameForCodeInFramework = jest.fn(() => {
-            return 'en';
-        });
-        // act
-        resourcesComponent.applyProfileFilter(profileFilterForMedium, assembleFilterForMedium, 'medium');
-        // assert
-        expect(mockAppGlobalService.getNameForCodeInFramework).toHaveBeenCalled();
     });
 
     it('should subscribe events and other methods when ionViewWillEnter()', (done) => {

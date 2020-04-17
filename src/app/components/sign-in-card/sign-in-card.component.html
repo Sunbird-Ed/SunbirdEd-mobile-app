@@ -14,7 +14,7 @@
 
 <div *ngIf="source == 'courses'">
   <div class="sign-in-card-success">
-    <p class="sign-in-card-title">{{ title | translate: {'%s': appName } }}</p>
+    <p class="sign-in-card-title">{{ 'WANT_TO_CHECK_FREE_TRAININGS' | translate }}</p>
     <div class="sign-in-block">
       <p>{{ 'IF_YES_LOGIN' | translate }}</p>
       <ion-button expand="block" (click)="signIn()">{{ 'OVERLAY_SIGN_IN' | translate }}</ion-button>

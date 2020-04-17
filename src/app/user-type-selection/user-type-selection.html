@@ -40,6 +40,26 @@
     <!-- <p class="ion-padding-start black-color">{{ "IAM_ABOVE_18_YEARS_AGE" | translate }}</p> -->
   </ion-card>
 
+  <!-- Other card -->
+  <ion-card (click)="selectOtherCard()" class="card-related-style"
+    [ngStyle]="{'border-color': otherCardBorderColor}">
+    <ion-grid>
+      <ion-row>
+        <ion-col size="3">
+          <img class="thumbnail" alt="" [src]="otherImageUri" />
+        </ion-col>
+        <ion-col size="9">
+          <h4 class="card-title">{{ 'USER_TYPE_3' | translate }}</h4>
+          <ul class="description">
+            <li>{{ 'OTHER_ROLE_DESC_1' | translate }}</li>
+            <li>{{ 'OTHER_ROLE_DESC_2' | translate }}</li>
+          </ul>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+    <!-- <p class="ion-padding-start black-color">{{ "IAM_ABOVE_18_YEARS_AGE" | translate }}</p> -->
+  </ion-card>
+
 </ion-content>
 
 <ion-footer padding no-border style="background: white;">

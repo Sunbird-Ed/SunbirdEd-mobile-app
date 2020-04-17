@@ -59,6 +59,7 @@ import { AppHeaderService } from '@app/services/app-header.service';
 import { SplaschreenDeeplinkActionHandlerDelegate } from '@app/services/sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
 import { ContentUtil } from '@app/util/content-util';
 import { NotificationService } from '@app/services/notification.service';
+import { applyProfileFilter } from '@app/util/filter.util';
 
 @Component({
   selector: 'app-resources',
@@ -321,7 +322,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.showSignInCard = false;
 
     if (this.guestUser) {
-      if (profileType === ProfileType.TEACHER) {
+      if (this.commonUtilService.isAccessibleForNonStudentRole(profileType)) {
         this.showSignInCard = this.appGlobalService.DISPLAY_SIGNIN_FOOTER_CARD_IN_LIBRARY_TAB_FOR_TEACHER;
         this.audienceFilter = AudienceFilter.GUEST_TEACHER;
       } else if (profileType === ProfileType.STUDENT) {
@@ -437,15 +438,17 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.profile && !this.isFilterApplied) {
 
       if (this.profile.board && this.profile.board.length) {
-        contentSearchCriteria.board = this.applyProfileFilter(this.profile.board, contentSearchCriteria.board, 'board');
+        contentSearchCriteria.board = applyProfileFilter(this.appGlobalService, this.profile.board,
+          contentSearchCriteria.board, 'board');
       }
 
       if (this.profile.medium && this.profile.medium.length) {
-        contentSearchCriteria.medium = this.applyProfileFilter(this.profile.medium, contentSearchCriteria.medium, 'medium');
+        contentSearchCriteria.medium = applyProfileFilter(this.appGlobalService, this.profile.medium,
+          contentSearchCriteria.medium, 'medium');
       }
 
       if (this.profile.grade && this.profile.grade.length) {
-        contentSearchCriteria.grade = this.applyProfileFilter(this.profile.grade,
+        contentSearchCriteria.grade = applyProfileFilter(this.appGlobalService, this.profile.grade,
           contentSearchCriteria.grade, 'gradeLevel');
       }
 
@@ -486,9 +489,9 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       this.source, undefined,
       reqvalues);
     this.getGroupByPageReq.sortCriteria = [{
-        sortAttribute: 'name',
-        sortOrder: SortOrder.ASC
-      }];
+      sortAttribute: 'name',
+      sortOrder: SortOrder.ASC
+    }];
     this.contentService.searchContentGroupedByPageSection(this.getGroupByPageReq).toPromise()
       .then((response: any) => {
         this.ngZone.run(() => {
@@ -590,7 +593,8 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   orderBySubject(searchResults: any[]) {
     let selectedSubject: string[];
     const filteredSubject: string[] = [];
-    selectedSubject = this.applyProfileFilter(this.profile.subject, selectedSubject, 'subject');
+    selectedSubject = applyProfileFilter(this.appGlobalService, this.profile.subject, selectedSubject, 'subject');
+
     for (let i = 0; i < selectedSubject.length; i++) {
       const index = searchResults.findIndex((el) => {
         return el.name.toLowerCase().trim() === selectedSubject[i].toLowerCase().trim();
@@ -625,45 +629,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       values,
       PageId.LIBRARY
     );
-  }
-
-  applyProfileFilter(profileFilter: Array<any>, assembleFilter: Array<any>, categoryKey?: string) {
-    if (categoryKey) {
-      const nameArray = [];
-      profileFilter.forEach(filterCode => {
-        let nameForCode = this.appGlobalService.getNameForCodeInFramework(categoryKey, filterCode);
-
-        if (!nameForCode) {
-          nameForCode = filterCode;
-        }
-
-        nameArray.push(nameForCode);
-      });
-
-      profileFilter = nameArray;
-    }
-
-
-    if (!assembleFilter) {
-      assembleFilter = [];
-    }
-    assembleFilter = assembleFilter.concat(profileFilter);
-
-    const unique_array = [];
-
-    for (let i = 0; i < assembleFilter.length; i++) {
-      if (unique_array.indexOf(assembleFilter[i]) === -1 && assembleFilter[i].length > 0) {
-        unique_array.push(assembleFilter[i]);
-      }
-    }
-
-    assembleFilter = unique_array;
-
-    if (assembleFilter.length === 0) {
-      return undefined;
-    }
-
-    return assembleFilter;
   }
 
   async ionViewWillEnter() {

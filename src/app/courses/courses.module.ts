@@ -9,7 +9,6 @@ import { CoursesPage } from './courses.page';
 import { TranslateModule } from '@ngx-translate/core';
 import { PipesModule } from '../../pipes/pipes.module';
 import { DirectivesModule } from '@app/directives/directives.module';
-import { CourseCardComponent } from '../components/cards/coursecard/coursecard.component';
 import { ComponentsModule } from '../components/components.module';
 import { CommonConsumptionModule } from '@project-sunbird/common-consumption';
 
