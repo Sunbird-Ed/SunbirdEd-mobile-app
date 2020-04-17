@@ -9,10 +9,9 @@ import {
 import { SharedPreferences, ProfileService } from 'sunbird-sdk';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { InteractType, InteractSubtype, PageId, Environment } from '@app/services/telemetry-constants';
-import { appLanguages } from '@app/app/app.constant';
-import { PreferenceKey, ProfileConstants } from '@app/app/app.constant';
+import { PreferenceKey } from '@app/app/app.constant';
 import { SbGenericPopoverComponent } from '@app/app/components/popups/sb-generic-popover/sb-generic-popover.component';
-import { QRAlertCallBack, QRScannerAlert } from '@app/app/qrscanner-alert/qrscanner-alert.page';
+import { QRScannerAlert } from '@app/app/qrscanner-alert/qrscanner-alert.page';
 import { TranslateService } from '@ngx-translate/core';
 import { Network } from '@ionic-native/network/ngx';
 import { NgZone } from '@angular/core';
@@ -487,7 +486,7 @@ describe('CommonUtilService', () => {
   describe('handleToTopicBasedNotification()', () => {
     it('should return true if IP location is available', (done) => {
       // arrange
-      const profile = {board: ['AP'], medium: ['English']} as any;
+      const profile = {board: ['AP'], medium: ['English', 'Hindi', 'Bengali'], grade: ['class 8', 'class9', 'class10']} as any;
       mockProfileService.getActiveSessionProfile = jest.fn(() => of(profile));
       mockSharedPreferences.getString = jest.fn((arg) => {
         let value;

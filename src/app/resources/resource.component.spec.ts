@@ -901,18 +901,18 @@ describe('ResourcesComponent', () => {
         });
     });
 
-    it('should subscribe events and other methods when ionViewDidEnter()', (done) => {
-        // arrange
-        resourcesComponent.coachTimeout = { setTimeout: jest.fn() };
-        mockAppGlobalService.showCouchMarkScreen = jest.fn();
-        // act
-        resourcesComponent.ionViewDidEnter()
-        // assert
-        setTimeout(() => {
-            expect(mockAppGlobalService.showCouchMarkScreen).toHaveBeenCalled();
-            done();
-        }, 2000);
-    });
+    // it('should subscribe events and other methods when ionViewDidEnter()', (done) => {
+    //     // arrange
+    //     resourcesComponent.coachTimeout = { setTimeout: jest.fn() };
+    //     mockAppGlobalService.showCouchMarkScreen = jest.fn();
+    //     // act
+    //     resourcesComponent.ionViewDidEnter();
+    //     // assert
+    //     setTimeout(() => {
+    //         expect(mockAppGlobalService.showCouchMarkScreen).toHaveBeenCalled();
+    //         done();
+    //     }, 2000);
+    // });
 
     it('should call toastCtrller when in offline', (done) => {
         // arrange

@@ -309,6 +309,7 @@ describe('DistrictMappingPage', () => {
                 declaredOffline: false
             }
         };
+        mockCommonUtilService.handleToTopicBasedNotification = jest.fn();
 
         // act
         districtMappingPage.saveDeviceLocation();
@@ -316,6 +317,7 @@ describe('DistrictMappingPage', () => {
         setTimeout( () => {
             expect(mockDeviceRegisterService.registerDevice).toHaveBeenCalledWith(req);
             expect(mockPreferences.putString).toHaveBeenCalledWith(PreferenceKey.DEVICE_LOCATION, JSON.stringify(req.userDeclaredLocation));
+            expect(mockCommonUtilService.handleToTopicBasedNotification).toHaveBeenCalled();
             expect(mockCommonUtilService.getLoader().dismiss).toHaveBeenCalled();
             done();
         }, 1);

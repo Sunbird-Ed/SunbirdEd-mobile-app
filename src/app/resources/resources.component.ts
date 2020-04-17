@@ -1,5 +1,5 @@
 import { PageFilterCallback } from './../page-filter/page-filter.page';
-import { Component, OnInit, AfterViewInit, Inject, NgZone, ViewChild, ViewEncapsulation, OnDestroy, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, AfterViewInit, Inject, NgZone, ViewChild, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { IonContent as ContentView, Events, ToastController, MenuController } from '@ionic/angular';
 import { NavigationExtras, Router } from '@angular/router';
 import { animate, group, state, style, transition, trigger } from '@angular/animations';
@@ -51,8 +51,7 @@ import { TelemetryGeneratorService } from '@app/services/telemetry-generator.ser
 import { CommonUtilService } from '@app/services/common-util.service';
 import { FormAndFrameworkUtilService } from '@app/services/formandframeworkutil.service';
 import {
-  Environment, InteractSubtype, InteractType, PageId, ImpressionType,
-  ImpressionSubtype, CorReleationDataType, ID
+  Environment, InteractSubtype, InteractType, PageId, CorReleationDataType, ID
 } from '@app/services/telemetry-constants';
 import { AppHeaderService } from '@app/services/app-header.service';
 import { SplaschreenDeeplinkActionHandlerDelegate } from '@app/services/sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
@@ -681,9 +680,9 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ionViewDidEnter() {
     // Need timer to load the coach screen and for the coach screen to hide if user comes from deeplink.
-    this.coachTimeout = setTimeout(() => {
-      this.appGlobalService.showCouchMarkScreen();
-    }, 2000);
+    // this.coachTimeout = setTimeout(() => {
+    //   this.appGlobalService.showCouchMarkScreen();
+    // }, 2000);
   }
 
   // Offline Toast
