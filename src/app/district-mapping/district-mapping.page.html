@@ -66,5 +66,7 @@
   <button class="block-button"
     [disabled]="!isValid(stateName, stateList, 'name') || !isValid(districtName, districtList, 'name') || disableSubmitButton"
     [ngClass]="!isValid(stateName, stateList, 'name') || !isValid(districtName, districtList, 'name') ? 'disabled-button': ''"
-    (click)="submit()">{{'BTN_SUBMIT' | translate}}</button>
+    (click)="submit()">{{'BTN_SUBMIT' | translate}}
+    <ion-icon class="arrow-icon" [class.animate]="isValid(districtName, districtList, 'name') ? 'disabled-button': ''" name="arrow-round-forward"></ion-icon>
+  </button>
 </div>
