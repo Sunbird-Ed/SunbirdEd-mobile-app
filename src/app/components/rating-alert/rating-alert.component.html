@@ -1,6 +1,6 @@
 <ion-content class="ion-no-padding sb-popover-container app-rate-center">
   <div class="sb-popover-items">
-    <ion-icon end name="close" float-right class="sb-modal-close" (click)="closePopover()"></ion-icon>
+    <ion-icon end name="close" class="sb-modal-close ion-float-right" (click)="closePopover()"></ion-icon>
 
     <img class="img-container app-rating-img" src="{{appLogo$ | async}}" alt="rating">
     <div class="app-rate-appname" *ngIf="appName?.length"><strong>{{appName}}</strong></div>
@@ -23,7 +23,7 @@
     </div>
 
     <div *ngIf="currentViewText.type === 'storeRate'">
-      <ion-row padding-bottom>
+      <ion-row class="ion-padding-bottom">
         <ion-col size="5" class="btn-pr-8">
           <ion-button fill="outline" expand="block" class="app-rate-btn-outline" (click)="rateLater()">
             {{'BTN_LATER' | translate}}</ion-button>
@@ -35,8 +35,8 @@
       </ion-row>
     </div>
 
-    <div padding-bottom *ngIf="currentViewText.type === 'helpDesk'">
-      <button margin-bottom class="sb-popover-action-btn"
+    <div class="ion-padding-bottom" *ngIf="currentViewText.type === 'helpDesk'">
+      <button class="sb-popover-action-btn ion-margin-bottom"
         (click)="goToHelpSection()">{{'BTN_VISIT_HELP_SECTION' | translate}}</button>
     </div>
   </div>

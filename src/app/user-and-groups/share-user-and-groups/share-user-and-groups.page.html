@@ -1,6 +1,6 @@
 <ion-content class="ion-padding">
   <div *ngIf="!checkUserGroups()">
-    <div text-center>
+    <div class="ion-text-center">
       <img class="rounded image-style" src="assets/imgs/ic_businessman.png" alt="no_user" />
       <h6>
         <strong>{{'NO_USERS_ON_THIS_DEVICE' | translate}}</strong>
@@ -28,8 +28,8 @@
       </ion-col>
     </ion-row>
 
-    <ion-item (click)="toggleGroupSelected(i)" *ngFor="let group of groupList; let i = index;" class="item-background"
-      margin-bottom no-lines>
+    <ion-item (click)="toggleGroupSelected(i)" *ngFor="let group of groupList; let i = index;"
+      class="item-background ion-margin-bottom" no-lines>
       <ion-label>
         <h6 class="padding-top">
           <strong>{{group?.name}}</strong>
@@ -53,8 +53,8 @@
         <strong>{{'USERS' | translate}}</strong> {{ '(' + userList?.length + ')'}}&lrm;
       </p>
     </ion-text>
-    <ion-item (click)="toggleUserSelected(i)" *ngFor="let user of userList; let i = index;" class="item-background"
-      margin-bottom no-lines>
+    <ion-item (click)="toggleUserSelected(i)" *ngFor="let user of userList; let i = index;"
+      class="item-background ion-margin-bottom" no-lines>
       <ion-label>
         <h6 class="padding-top">
           <strong>{{user?.handle}}</strong>
