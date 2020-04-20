@@ -33,7 +33,7 @@
             <ion-text class="ion-padding-top ion-padding-start">
               <p color="dark_gray" class="subTitle M0 ion-text-uppercase">{{ 'LOGGED_IN_AS' | translate}}</p>
             </ion-text>
-            <ion-item class="item-background ug-logged-p0 ion-no-padding" margin-bottom lines="none"
+            <ion-item class="item-background ug-logged-p0 ion-no-padding ion-margin-bottom" lines="none"
               [ngClass]="i===selectedUserIndex ? 'blueBorder' : ''">
               <ion-label class="ion-no-margin">
                 <ion-grid class="radius ion-no-padding">
@@ -52,8 +52,8 @@
                             {{'USER_TYPE_1' | translate | titlecase}}</p>
                           <p *ngIf="profileDetails?.profileType === ProfileType.STUDENT">
                             {{'USER_TYPE_2' | translate | titlecase}}</p>
-                            <p *ngIf="profileDetails?.profileType === ProfileType.OTHER">
-                              {{'USER_TYPE_3' | translate | titlecase}}</p>
+                          <p *ngIf="profileDetails?.profileType === ProfileType.OTHER">
+                            {{'USER_TYPE_3' | translate | titlecase}}</p>
                         </ion-label>
                       </div>
                     </ion-col>
@@ -94,7 +94,7 @@
                               *ngIf="user?.profileType === ProfileType.TEACHER">{{'USER_TYPE_1' | translate | titlecase}}</span>
                             <span
                               *ngIf="user?.profileType === ProfileType.STUDENT">{{'USER_TYPE_2' | translate | titlecase}}</span>
-                              <span
+                            <span
                               *ngIf="user?.profileType === ProfileType.OTHER">{{'USER_TYPE_3' | translate | titlecase}}</span>
                             <span *ngIf="user?.grade?.length" class="separator-dot"></span>
                             {{ getGradeNameFromCode(user) }}

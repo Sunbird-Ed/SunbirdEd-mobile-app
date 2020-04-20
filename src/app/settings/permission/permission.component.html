@@ -13,7 +13,7 @@
   </div>
 </ion-content>
 
-<ion-footer padding *ngIf="!changePermissionAccess" style="background: white;">
+<ion-footer class="ion-padding" *ngIf="!changePermissionAccess" style="background: white;">
   <ion-button expand="block" (click)="grantAccess()">{{'GRANT_ACCESS' | translate}}</ion-button>
   <ion-button expand="block" fill="outline" class="mt-8 btn-outline" (click)="skipAccess()">{{'NOT_NOW' | translate}}
   </ion-button>
