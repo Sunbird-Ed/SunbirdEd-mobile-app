@@ -482,3 +482,45 @@ ion-segment-button{
   box-shadow: 0px 5px 5px 3px #ddd;
 }
 
+.animation-card{
+  padding:8px 16px;
+  .animation-card-content{
+    display:flex;
+    justify-content:space-between;
+    align-items: center;
+    .skeleton-search-card{
+      width:45%;
+    }
+  }
+}
+
+.animation-bottom-card {
+  .skeleton-animation-item-1{
+    width:40%; margin-bottom:20px
+  }
+  .skeleton-animation-item-2, .skeleton-animation-item-4, .skeleton-animation-item-6{
+    width:48%; margin-bottom:8px
+  }
+  .skeleton-animation-item-3{
+   width:25%;margin-bottom:8px
+  }
+  .skeleton-animation-item-5{
+   width:25%;margin-bottom:20px
+  }
+  .skeleton-animation-item-7{
+    width:25%;margin-bottom:16px;
+  }
+  .skeleton-animation-item-8, .skeleton-animation-item-9{
+    width:100%;margin-bottom:8px;
+  }
+  .skeleton-animation-item-10 {
+    width:48%;
+  }
+  .skeleton-animation-item-11 {
+    width:25%;
+  }
+}
+
+.bg-grey {
+  background: #f0f0f0 !important;
+}

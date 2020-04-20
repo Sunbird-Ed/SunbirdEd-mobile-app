@@ -161,9 +161,12 @@ export class AppComponent implements OnInit, AfterViewInit {
     });
 
     if (cordova.plugins.notification.local.launchDetails.action = 'click') {
+      let corRelationList: Array<CorrelationData> = [];
+      corRelationList.push({ id: cordova.plugins.notification.local.launchDetails.id, type: CorReleationDataType.NOTIFICATION_ID });
       this.telemetryGeneratorService.generateNotificationClickedTelemetry(
         InteractType.LOCAL,
-        this.activePageService.computePageId(this.router.url)
+        this.activePageService.computePageId(this.router.url),
+        corRelationList
       );
     }
     
@@ -332,10 +335,13 @@ export class AppComponent implements OnInit, AfterViewInit {
       const value = {
         notification_id: data.id
       };
+      let corRelationList: Array<CorrelationData> = [];
+      corRelationList.push({ id: data.id, type: CorReleationDataType.NOTIFICATION_ID });
       this.telemetryGeneratorService.generateNotificationClickedTelemetry(
         InteractType.FCM,
         this.activePageService.computePageId(this.router.url),
-        value
+        value,
+        corRelationList
       );
 
       data['isRead'] = data.wasTapped ? 1 : 0;

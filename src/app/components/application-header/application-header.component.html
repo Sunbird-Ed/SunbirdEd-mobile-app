@@ -68,7 +68,7 @@
       </ion-button>
       <ion-button icon-only *ngIf="headerConfig?.actionButtons?.indexOf('share') >=0"
         (click)="emitEvent($event, 'share');">
-        <ion-icon md="md-share" float-right></ion-icon>
+        <ion-icon md="md-share" class="ion-float-right"></ion-icon>
       </ion-button>
       <ion-button icon-only *ngIf="headerConfig?.actionButtons?.indexOf('more') >=0"
         (click)="emitEvent($event, 'more');" style="font-size: 1.8rem;">

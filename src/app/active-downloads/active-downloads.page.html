@@ -76,7 +76,7 @@
               </ion-col>
               <ion-col size="2">
                 <button *ngIf="downloadProgress !== 100"
-                  class="action-btn float-end delete mr-8 ad-action-btn ion-no-margin" margin-right
+                  class="action-btn float-end delete mr-8 ad-action-btn ion-no-margin ion-margin-right"
                   (click)="cancelDownload(activeDownload)">
                   {{'CANCEL' | translate}}
                 </button>
@@ -105,7 +105,7 @@
                 </div>
               </ion-col>
               <ion-col size="2">
-                <button class="action-btn float-end delete mr-8 ad-action-btn ion-no-margin" margin-right
+                <button class="action-btn float-end delete mr-8 ad-action-btn ion-no-margin ion-margin-right"
                   (click)="cancelDownload(activeDownload)">
                   {{'CANCEL' | translate}}
                 </button>
