@@ -299,7 +299,6 @@ describe('EnrolledCourseDetailsPage', () => {
             expect(mockCommonUtilService.showToast).toHaveBeenCalled();
             expect(mockLocation.back).toHaveBeenCalled();
             expect(enrolledCourseDetailsPage.didViewLoad).toBeTruthy();
-            expect(mockHeaderService.hideHeader).toHaveBeenCalled();
         });
     });
     describe('checkCurrentUserType', () => {
