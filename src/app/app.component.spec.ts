@@ -865,7 +865,8 @@ describe('AppComponent', () => {
                 expect(mockTelemetryGeneratorService.generateNotificationClickedTelemetry).nthCalledWith(1,
                     InteractType.FCM,
                     'some_page_id',
-                    { notification_id: 'some_id' }
+                    { notification_id: 'some_id' },
+                    [{"id": "some_id", "type": "NotificationID"}]
                 );
                 done();
             });
@@ -900,7 +901,8 @@ describe('AppComponent', () => {
                 expect(mockTelemetryGeneratorService.generateNotificationClickedTelemetry).nthCalledWith(1,
                     InteractType.FCM,
                     'some_page_id',
-                    { notification_id: 'some_id' }
+                    { notification_id: 'some_id' },
+                    [{"id": "some_id", "type": "NotificationID"}]
                 );
                 done();
             });

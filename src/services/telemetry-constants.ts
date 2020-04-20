@@ -442,6 +442,7 @@ export enum CorReleationDataType {
     ACCESS_TYPE = 'AccessType',
     SCAN = 'Scan',
     SOURCE = 'Source',
+    NOTIFICATION_ID = 'NotificationID'
 }
 
 
