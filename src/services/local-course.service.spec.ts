@@ -55,6 +55,182 @@ describe('LocalCourseService', () => {
     expect(localCourseService).toBeTruthy();
   });
 
+  describe('enrollIntoBatch', () => {
+    it('should Enrol into batch, and when the return is true', (done) => {
+      // arrange
+      const enrollCourse = {
+        userId: 'sample_userid',
+        batch: {
+          id: '',
+          courseId: '',
+          status: 0
+        },
+        courseId: 'sample_courseid',
+        pageId: 'sample_pageid',
+        telemetryObject: {},
+        objRollup: {},
+        corRelationList: [],
+      };
+      mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+      mockCourseService.enrollCourse = jest.fn(() => of(true));
+
+      // act
+      localCourseService.enrollIntoBatch(enrollCourse).subscribe(() => {
+        expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
+        done();
+      });
+    });
+
+    it('should Enrol into batch, and when the return is false', (done) => {
+      // arrange
+      const enrollCourse = {
+        userId: 'sample_userid',
+        batch: {
+          id: '',
+          courseId: '',
+          status: 0
+        },
+        courseId: 'sample_courseid',
+        pageId: 'sample_pageid',
+        telemetryObject: {},
+        objRollup: {},
+        corRelationList: [],
+      };
+      mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+      mockCourseService.enrollCourse = jest.fn(() => of(false));
+
+      // act
+      localCourseService.enrollIntoBatch(enrollCourse).subscribe(() => {
+        expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
+        done();
+      });
+    });
+
+    it('should raise a telemetry event when error is thrown', (done) => {
+      // arrange
+      const enrollCourse = {
+        userId: 'sample_userid',
+        batch: {
+          id: '',
+          courseId: '',
+          status: 0
+        },
+        courseId: 'sample_courseid',
+        pageId: 'sample_pageid',
+        telemetryObject: {},
+        objRollup: {},
+        corRelationList: [],
+      };
+      mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+
+      mockCourseService.enrollCourse = jest.fn(() => throwError(''));
+
+      // act
+      localCourseService.enrollIntoBatch(enrollCourse).toPromise().catch(() => {
+        // assert
+        expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
+        done();
+      });
+
+    });
+
+    it('should raise a telemetry event when Network error is thrown', (done) => {
+      // arrange
+      const enrollCourse = {
+        userId: 'sample_userid',
+        batch: {
+          id: '',
+          courseId: '',
+          status: 0
+        },
+        courseId: 'sample_courseid',
+        pageId: 'sample_pageid',
+        telemetryObject: {},
+        objRollup: {},
+        corRelationList: [],
+      };
+      mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+      const networkError = new NetworkError({code: 'samp'});
+      mockCourseService.enrollCourse = jest.fn(() => throwError(networkError));
+      mockCommonUtilService.translateMessage = jest.fn();
+      mockCommonUtilService.showToast = jest.fn();
+
+      // act
+      localCourseService.enrollIntoBatch(enrollCourse).toPromise().catch(() => {
+        // assert
+        expect(mockCommonUtilService.showToast).toHaveBeenCalled();
+        expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
+        done();
+      });
+
+    });
+
+    it('should raise a telemetry event when HttpClient error is thrown and already enrolled', (done) => {
+      // arrange
+      const enrollCourse = {
+        userId: 'sample_userid',
+        batch: {
+          id: '',
+          courseId: '',
+          status: 0
+        },
+        courseId: 'sample_courseid',
+        pageId: 'sample_pageid',
+        telemetryObject: {},
+        objRollup: {},
+        corRelationList: [],
+      };
+      mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+      const httpClientError = new HttpClientError('http_clicnt_error', { body: { params: { status: 'USER_ALREADY_ENROLLED_COURSE' } } });
+
+      mockCourseService.enrollCourse = jest.fn(() => throwError(httpClientError));
+      mockCommonUtilService.translateMessage = jest.fn();
+      mockCommonUtilService.showToast = jest.fn();
+
+      // act
+      localCourseService.enrollIntoBatch(enrollCourse).toPromise().catch(() => {
+        // assert
+        expect(mockCommonUtilService.showToast).toHaveBeenCalled();
+        expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
+        done();
+      });
+
+    });
+
+    it('should raise a telemetry event when Httpclient error is thrown but not already enrolled', (done) => {
+      // arrange
+      const enrollCourse = {
+        userId: 'sample_userid',
+        batch: {
+          id: '',
+          courseId: '',
+          status: 0
+        },
+        courseId: 'sample_courseid',
+        pageId: 'sample_pageid',
+        telemetryObject: {},
+        objRollup: {},
+        corRelationList: [],
+      };
+      mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+      const httpClientError = new HttpClientError('http_clicnt_error', { body: {} });
+
+      mockCourseService.enrollCourse = jest.fn(() => throwError(httpClientError));
+      mockCommonUtilService.translateMessage = jest.fn();
+      mockCommonUtilService.showToast = jest.fn();
+
+      // act
+      localCourseService.enrollIntoBatch(enrollCourse).toPromise().catch(() => {
+        // assert
+        expect(mockCommonUtilService.showToast).toHaveBeenCalled();
+        expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
+        done();
+      });
+
+    });
+
+  });
+
   describe('checkCourseRedirect', () => {
     const authSession = {
       access_token: 'access_token',
