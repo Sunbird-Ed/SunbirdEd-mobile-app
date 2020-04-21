@@ -1,5 +1,5 @@
 import { LocalCourseService } from './local-course.service';
-import { ContentService, SharedPreferences, CourseService, AuthService, Batch } from 'sunbird-sdk';
+import { ContentService, SharedPreferences, CourseService, AuthService, Batch, NetworkError } from 'sunbird-sdk';
 import { CommonUtilService } from './common-util.service';
 import { Events } from '@ionic/angular';
 import { AppGlobalService } from './app-global-service.service';
@@ -150,8 +150,8 @@ describe('LocalCourseService', () => {
       const dismissFn = jest.fn(() => Promise.resolve());
       const presentFn = jest.fn(() => Promise.resolve());
       mockCommonUtilService.getLoader = jest.fn(() => ({
-          present: presentFn,
-          dismiss: dismissFn,
+        present: presentFn,
+        dismiss: dismissFn,
       })) as any;
       mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
       jest.spyOn(localCourseService, 'enrollIntoBatch').mockReturnValue(of(undefined));
@@ -181,12 +181,12 @@ describe('LocalCourseService', () => {
       const dismissFn = jest.fn(() => Promise.resolve());
       const presentFn = jest.fn(() => Promise.resolve());
       mockCommonUtilService.getLoader = jest.fn(() => ({
-          present: presentFn,
-          dismiss: dismissFn,
+        present: presentFn,
+        dismiss: dismissFn,
       })) as any;
       mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
       jest.spyOn(localCourseService, 'enrollIntoBatch').mockReturnValue(of(undefined));
-      mockNgZone.run = jest.fn((fn) => fn());
+      mockNgZone.run = jest.fn((fn) => fn()); 
       mockCommonUtilService.translateMessage = jest.fn(() => 'some_string');
       mockCommonUtilService.showToast = jest.fn();
       mockAppVersion.getAppName = jest.fn(() => Promise.resolve('some_string'));
@@ -211,8 +211,8 @@ describe('LocalCourseService', () => {
       const dismissFn = jest.fn(() => Promise.resolve());
       const presentFn = jest.fn(() => Promise.resolve());
       mockCommonUtilService.getLoader = jest.fn(() => ({
-          present: presentFn,
-          dismiss: dismissFn,
+        present: presentFn,
+        dismiss: dismissFn,
       })) as any;
       mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
       jest.spyOn(localCourseService, 'enrollIntoBatch').mockReturnValue(of(undefined));
@@ -230,6 +230,42 @@ describe('LocalCourseService', () => {
         expect(mockCommonUtilService.translateMessage).toHaveBeenCalledWith('COURSE_ENROLLED');
         done();
       }, 0);
+    });
+
+    it('should allow the enrolling flow if created id and the userId are saved in the preference, and api throws error.', (done) => {
+      // arrange
+      authSession['userToken'] = 'userId';
+      mockAppGlobalService.isSignInOnboardingCompleted = true;
+      mockAuthService.getSession = jest.fn(() => of(authSession));
+      mockPreferences.getString = jest.fn(() => of(courseAndBatchData));
+      const dismissFn = jest.fn(() => Promise.resolve());
+      const presentFn = jest.fn(() => Promise.resolve());
+      mockCommonUtilService.getLoader = jest.fn(() => ({
+        present: presentFn,
+        dismiss: dismissFn,
+      })) as any;
+      mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+      mockCommonUtilService.translateMessage = jest.fn(() => 'some_string');
+      mockCommonUtilService.showToast = jest.fn();
+      mockAppVersion.getAppName = jest.fn(() => Promise.resolve('some_string'));
+      mockCourseService.getEnrolledCourses = jest.fn(() => of([]));
+      mockAppGlobalService.setEnrolledCourseList = jest.fn();
+      mockPreferences.putString = jest.fn(() => of(undefined));
+      const networkError = new NetworkError('sample_error');
+      jest.spyOn(localCourseService, 'enrollIntoBatch').mockReturnValue(throwError(networkError));
+      // act
+      localCourseService.checkCourseRedirect();
+      // assert
+      mockNgZone.run = jest.fn((cb) => {
+        cb();
+        expect(mockCourseService.getEnrolledCourses).toHaveBeenCalledWith(expect.objectContaining(
+          {
+            userId: 'userId',
+            returnFreshCourses: false
+          }
+        ));
+        done();
+      }) as any;
     });
 
   });
