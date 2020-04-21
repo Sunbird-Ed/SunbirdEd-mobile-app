@@ -178,7 +178,6 @@ export class LocalCourseService {
         this.zone.run(async () => {
           await loader.dismiss();
           await this.preferences.putString(PreferenceKey.CDATA_KEY, '').toPromise();
-
           if (err instanceof NetworkError) {
             this.commonUtilService.showToast(this.commonUtilService.translateMessage('ERROR_NO_INTERNET_MESSAGE'));
             this.getEnrolledCourses();
