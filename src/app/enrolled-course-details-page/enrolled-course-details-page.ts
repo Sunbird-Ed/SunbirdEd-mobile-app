@@ -250,10 +250,6 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
     private localCourseService: LocalCourseService
   ) {
     this.objRollup = new Rollup();
-    this.userId = this.appGlobalService.getUserId();
-    // console.log('this.userId', this.userId);
-    this.checkLoggedInOrGuestUser();
-    this.checkCurrentUserType();
     // this.getUserId();
 
     const extrasState = this.router.getCurrentNavigation().extras.state;
@@ -312,9 +308,10 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
           return cData.find((element) => element.courseId === this.identifier);
         });
       this.courseCardData.batchId = res.batchId;
-      this.getBatchDetails();
+      await this.getBatchDetails();
       this.segmentType = 'modules';
       this.getCourseProgress();
+      this.getContentState(true);
       if (res && res.batchId) {
         this.batchId = res.batchId;
         if (this.identifier && res.courseId && this.identifier === res.courseId) {
@@ -400,7 +397,10 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
    */
   async checkLoggedInOrGuestUser() {
     const session = await this.authService.getSession().toPromise();
-    this.guestUser = session ? false : true;
+    this.guestUser = !session;
+    if (session) {
+      this.userId = session.userToken;
+    }
   }
 
   checkCurrentUserType() {
@@ -1268,8 +1268,9 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
    * Ionic life cycle hook
    */
   async ionViewWillEnter() {
+    await this.checkLoggedInOrGuestUser();
+    this.checkCurrentUserType();
     this.todayDate = window.dayjs().format('YYYY-MM-DD');
-    console.log('coursecarddata' + this.courseCardData);
     this.identifier = this.courseCardData.contentId || this.courseCardData.identifier;
     this.downloadSize = 0;
     this.objRollup = ContentUtil.generateRollUp(this.courseCardData.hierarchyInfo, this.identifier);
