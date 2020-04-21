@@ -2,7 +2,7 @@ import { Injectable, Inject, NgZone } from '@angular/core';
 import {
   Batch, Course, CourseService, EnrollCourseRequest,
   InteractType, AuthService, SharedPreferences, OAuthSession,
-  FetchEnrolledCourseRequest, TelemetryObject, HttpClientError, HttpServerError, NetworkError
+  FetchEnrolledCourseRequest, TelemetryObject, HttpClientError, NetworkError
 } from 'sunbird-sdk';
 import { Observable } from 'rxjs';
 import { AppGlobalService } from './app-global-service.service';
