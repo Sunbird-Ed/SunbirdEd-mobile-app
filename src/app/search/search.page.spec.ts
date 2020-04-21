@@ -10,7 +10,8 @@ import {
     CourseService,
     SearchHistoryService,
     PageAssembleService,
-    FrameworkCategoryCodesGroup
+    FrameworkCategoryCodesGroup,
+    ContentImportStatus
 } from 'sunbird-sdk';
 import { TranslateService } from '@ngx-translate/core';
 import { Events, Platform, NavController, PopoverController } from '@ionic/angular';
@@ -1433,6 +1434,102 @@ describe('SearchPage', () => {
         //     searchPage.checkParent('parent', 'child');
         //     // assert
         //     setTimeout(() => {
+        //         expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('ERROR_OFFLINE_MODE');
+        //         done();
+        //     }, 0);
+        // });
+    });
+    // describe('processDialCodeResult', () => {
+    //     it('processDialCodeResult', () => {
+
+    //     });
+    // });
+    describe('downloadParentContent', () => {
+        it('should push not downloaded identifiers in to queue', (done) => {
+            // arrange
+            const importContentResp = [
+                {status: ContentImportStatus.ENQUEUED_FOR_DOWNLOAD, identifier: 'id1'}];
+            mockContentService.importContent = jest.fn(() => of(importContentResp));
+            const parent = {identifier: 'id'};
+            // act
+            searchPage.downloadParentContent(parent);
+            // assert
+            expect(searchPage.downloadProgress).toEqual(0);
+            expect(searchPage.isDownloadStarted).toEqual(true);
+            setTimeout(() => {
+                expect(searchPage.queuedIdentifiers).toEqual(['id1']);
+                expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+                    InteractType.OTHER,
+                    InteractSubtype.LOADING_SPINE,
+                    Environment.HOME,
+                    PageId.DIAL_SEARCH,
+                    undefined,
+                    undefined,
+                    undefined,
+                    expect.anything()
+                );
+                done();
+            }, 0);
+        });
+        // it('should show toast when content not available', (done) => {
+        //     // arrange
+        //     mockCommonUtilService.networkInfo = {
+        //         isNetworkAvailable: true
+        //     };
+        //     const importContentResp = [
+        //         {status: 'status', identifier: 'id1'}];
+        //     mockContentService.importContent = jest.fn(() => of(importContentResp));
+        //     const parent = {identifier: 'id'};
+        //     // act
+        //     searchPage.downloadParentContent(parent);
+        //     // assert
+        //     expect(searchPage.downloadProgress).toEqual(0);
+        //     expect(searchPage.isDownloadStarted).toEqual(true);
+        //     setTimeout(() => {
+        //         expect(searchPage.showLoading).toBe(false);
+        //         expect(searchPage.isDownloadStarted).toBe(false);
+        //         expect(searchPage.queuedIdentifiers.length).toEqual(0);
+        //         expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('ERROR_CONTENT_NOT_AVAILABLE');
+        //         done();
+        //     }, 0);
+        // });
+        // it('should show toast when network not available', (done) => {
+        //     // arrange
+        //     mockCommonUtilService.networkInfo = {
+        //         isNetworkAvailable: false
+        //     };
+        //     const importContentResp = [
+        //         {status: 'status', identifier: 'id1'}];
+        //     mockContentService.importContent = jest.fn(() => of(importContentResp));
+        //     const parent = {identifier: 'id'};
+        //     // act
+        //     searchPage.downloadParentContent(parent);
+        //     // assert
+        //     expect(searchPage.downloadProgress).toEqual(0);
+        //     expect(searchPage.isDownloadStarted).toEqual(true);
+        //     setTimeout(() => {
+        //         expect(searchPage.showLoading).toBe(false);
+        //         expect(searchPage.isDownloadStarted).toBe(false);
+        //         expect(searchPage.queuedIdentifiers.length).toEqual(0);
+        //         expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('ERROR_OFFLINE_MODE');
+        //         done();
+        //     }, 0);
+        // });
+        // it('should handle error scenario while importing', (done) => {
+        //     // arrange
+        //     mockCommonUtilService.networkInfo = {
+        //         isNetworkAvailable: true
+        //     };
+        //     mockContentService.importContent = jest.fn(() => throwError({ CONNECTION_ERROR: 'CONNECTION_ERROR' }));
+        //     const parent = {identifier: 'id'};
+        //     // act
+        //     searchPage.downloadParentContent(parent);
+        //     // assert
+        //     expect(searchPage.downloadProgress).toEqual(0);
+        //     expect(searchPage.isDownloadStarted).toEqual(true);
+        //     setTimeout(() => {
+        //         expect(searchPage.showLoading).toBe(false);
+        //         expect(searchPage.isDownloadStarted).toBe(false);
         //         expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('ERROR_OFFLINE_MODE');
         //         done();
         //     }, 0);
