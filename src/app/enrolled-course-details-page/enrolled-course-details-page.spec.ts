@@ -3,7 +3,7 @@ import {
     ProfileService, ContentService, EventsBusService, CourseService, SharedPreferences,
     AuthService, CorrelationData, TelemetryObject, FetchEnrolledCourseRequest,
     ProfileType, UnenrollCourseRequest, ContentDetailRequest, ServerProfileDetailsRequest, ServerProfile,
-    NetworkError
+    NetworkError, DownloadService
 } from 'sunbird-sdk';
 import {
     LoginHandlerService, CourseUtilService, AppGlobalService, TelemetryGeneratorService,
@@ -48,6 +48,7 @@ describe('EnrolledCourseDetailsPage', () => {
         getCourseBatches: jest.fn()
     };
     const mockPreferences: Partial<SharedPreferences> = {};
+    const mockDownloadService: Partial<DownloadService> = {};
     const mockAuthService: Partial<AuthService> = {
         getSession: jest.fn(() => of({}))
     };
@@ -113,6 +114,7 @@ describe('EnrolledCourseDetailsPage', () => {
             mockCourseService as CourseService,
             mockPreferences as SharedPreferences,
             mockAuthService as AuthService,
+            mockDownloadService as DownloadService,
             mockLoginHandlerService as LoginHandlerService,
             mockZone as NgZone,
             mockEvents as Events,
@@ -149,12 +151,14 @@ describe('EnrolledCourseDetailsPage', () => {
         it('should get App name and subscribe utility service by invoked ngOnInit()', () => {
             // arrange
             mockCommonUtilService.getAppName = jest.fn(() => Promise.resolve('DIKSHA'));
+            mockDownloadService.trackDownloads = jest.fn(() => of());
             spyOn(enrolledCourseDetailsPage, 'subscribeUtilityEvents').and.returnValue('BASE_URL');
             // act
             enrolledCourseDetailsPage.ngOnInit();
             // assert
             expect(mockCommonUtilService.getAppName).toHaveBeenCalled();
             expect(enrolledCourseDetailsPage.subscribeUtilityEvents).toHaveBeenCalled();
+            expect(mockDownloadService.trackDownloads).toHaveBeenCalled();
         });
     });
 
