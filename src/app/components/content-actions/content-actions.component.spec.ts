@@ -1,10 +1,10 @@
 import {ContentActionsComponent} from '@app/app/components';
-import {AuthService, ContentService} from 'sunbird-sdk';
+import {AuthService, ContentDeleteStatus, ContentService} from 'sunbird-sdk';
 import {Events, NavParams, Platform, PopoverController, ToastController} from '@ionic/angular';
 import {TranslateService} from '@ngx-translate/core';
 import {CommonUtilService, Environment, InteractSubtype, InteractType, TelemetryGeneratorService} from '@app/services';
 import {FileSizePipe} from '@app/pipes/file-size/file-size';
-import {of} from 'rxjs';
+import {of, throwError} from 'rxjs';
 
 describe('ContentActionsComponent', () => {
     let contentActionsComponent: ContentActionsComponent;
@@ -101,17 +101,20 @@ describe('ContentActionsComponent', () => {
     });
 
     describe('getUserId ', () => {
-        it('should cover else part if pageId or userId is undefined', () => {
+        it('should cover else part if pageId or userId is undefined', (done) => {
             // arrange
             mockAuthService.getSession = jest.fn(() => of(undefined));
             contentActionsComponent.pageName = undefined;
             // act
             contentActionsComponent.getUserId();
             // assert
-            expect(contentActionsComponent.showFlagMenu).toBe(true);
+            setTimeout(() => {
+                expect(contentActionsComponent.showFlagMenu).toBe(true);
+                done();
+            }, 0);
         });
 
-        it('should fetchUserId when called up if session is not available sets user id to empty', () => {
+        it('should fetchUserId when called up if session is not available sets user id to empty', (done) => {
             // arrange
             mockAuthService.getSession = jest.fn(() => of({
                 userToken: 'sample_userToken'
@@ -120,7 +123,10 @@ describe('ContentActionsComponent', () => {
             // act
             contentActionsComponent.getUserId();
             // assert
-            expect(contentActionsComponent.userId).toBe('sample_userToken');
+            setTimeout(() => {
+                expect(contentActionsComponent.userId).toBe('sample_userToken');
+                done();
+            }, 0);
         });
     });
 
@@ -131,34 +137,149 @@ describe('ContentActionsComponent', () => {
         // assert
     });
 
-    it('should handle telemetry Object and generate Interact telemetry', () => {
+    it('should handle telemetry Object and generate Interact telemetry', (done) => {
         // arrange
         mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
         mockPopoverCtrl.dismiss = jest.fn(() => Promise.resolve({unenroll: true}));
         // act
         contentActionsComponent.unenroll();
-        expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
-            InteractType.TOUCH,
-            InteractSubtype.UNENROL_CLICKED,
-            Environment.HOME,
-            'course',
-            {
-                id: 'doId_1234',
-                type: undefined,
-                version: '2'
-            },
-            undefined,
-            contentActionsComponent.objRollup,
-            contentActionsComponent.corRelationList);
+        setTimeout(() => {
+            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+                InteractType.TOUCH,
+                InteractSubtype.UNENROL_CLICKED,
+                Environment.HOME,
+                'course',
+                {
+                    id: 'doId_1234',
+                    type: undefined,
+                    version: '2'
+                },
+                undefined,
+                contentActionsComponent.objRollup,
+                contentActionsComponent.corRelationList);
+            done();
+        }, 0);
     });
 
-    it('should close popup when switch case value is 1', () => {
+    it('should close popup when switch case value is 1', (done) => {
         // arrange
         mockPopoverCtrl.dismiss = jest.fn();
         // act
         contentActionsComponent.close(1);
         // assert
-        expect(mockPopoverCtrl.dismiss).toHaveBeenCalled();
+        setTimeout(() => {
+            expect(mockPopoverCtrl.dismiss).toHaveBeenCalled();
+            done();
+        }, 0);
+    });
+    it('should show toastCtrl when showToaster() called upon', () => {
+        // arrange
+        const presentFn = jest.fn(() => Promise.resolve());
+        mockToastCtrl.create = jest.fn(() => Promise.resolve({
+            present: presentFn
+        }));
+        // act
+        contentActionsComponent.showToaster('CONTENT_DELETE_FAILED');
+        // assert
+        expect(mockToastCtrl.create).toHaveBeenCalled();
+    });
+
+    it('should call translateService to fetch the message', () => {
+        // arrange
+        mockTranslateService.get = jest.fn(() => of({CONTENT_DELETE_FAILED: 'content-deleted'}));
+        // act
+        contentActionsComponent.getMessageByConstant('CONTENT_DELETE_FAILED');
+        // assert
+        expect(mockTranslateService.get).toHaveBeenCalledWith('CONTENT_DELETE_FAILED');
+    });
+
+    describe('deleteContent', () => {
+        it('should generate telemetry call loader, contentService', (done) => {
+            // arrange
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            const presentFn = jest.fn(() => Promise.resolve());
+            mockCommonUtilService.getLoader = jest.fn(() => Promise.resolve({
+                present: presentFn,
+                dismiss: jest.fn(() => Promise.resolve())
+            }));
+            mockContentService.deleteContent = jest.fn(() => of([{
+                identifier: 'doId_1234',
+                status: ContentDeleteStatus.NOT_FOUND
+            }]));
+            jest.spyOn(contentActionsComponent, 'showToaster').mockImplementation();
+            jest.spyOn(contentActionsComponent, 'getMessageByConstant').mockImplementation();
+            // act
+            contentActionsComponent.deleteContent();
+            // assert
+            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+                InteractType.TOUCH,
+                InteractSubtype.DELETE_CLICKED,
+                Environment.HOME,
+                contentActionsComponent.pageName,
+                {
+                    id: 'doId_1234',
+                    type: undefined,
+                    version: '2'
+                },
+                undefined,
+                contentActionsComponent.objRollup,
+                contentActionsComponent.corRelationList);
+            expect(mockCommonUtilService.getLoader).toHaveBeenCalled();
+            setTimeout(() => {
+                expect(mockContentService.deleteContent).toHaveBeenCalledWith(contentActionsComponent.getDeleteRequestBody());
+                done();
+            }, 0);
+
+
+        });
+
+        it('should generate telemetry, call loader and contentService where content deleted successfully', (done) => {
+            // arrange
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            mockPopoverCtrl.dismiss = jest.fn();
+            mockEvents.publish = jest.fn();
+            const presentFn = jest.fn(() => Promise.resolve());
+            mockCommonUtilService.getLoader = jest.fn(() => Promise.resolve({
+                present: presentFn,
+                dismiss: jest.fn(() => Promise.resolve())
+            }));
+            mockContentService.deleteContent = jest.fn(() => of([{
+                identifier: 'doId_1234',
+                status: ContentDeleteStatus.DELETED_SUCCESSFULLY
+            }]));
+            jest.spyOn(contentActionsComponent, 'showToaster').mockImplementation();
+            jest.spyOn(contentActionsComponent, 'getMessageByConstant').mockImplementation();
+            // act
+            contentActionsComponent.deleteContent();
+            // assert
+            setTimeout(() => {
+                expect(mockEvents.publish).toHaveBeenCalledWith('savedResources:update', {update: true});
+                expect(mockPopoverCtrl.dismiss).toHaveBeenCalledWith({isDeleted: true});
+                done();
+            }, 0);
+
+        });
+
+        it('should generate error message if delete is failed', (done) => {
+            // arrange
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            mockPopoverCtrl.dismiss = jest.fn();
+            const presentFn = jest.fn(() => Promise.resolve());
+            mockCommonUtilService.getLoader = jest.fn(() => Promise.resolve({
+                present: presentFn,
+                dismiss: jest.fn(() => Promise.resolve())
+            }));
+            mockContentService.deleteContent = jest.fn(() => throwError({ error: 'not found' }));
+            jest.spyOn(contentActionsComponent, 'showToaster').mockImplementation();
+            jest.spyOn(contentActionsComponent, 'getMessageByConstant').mockImplementation();
+            // act
+            contentActionsComponent.deleteContent();
+            // assert
+            setTimeout(() => {
+                expect(mockPopoverCtrl.dismiss).toHaveBeenCalled();
+                done();
+            }, 0);
+        });
     });
 
     it('should display popup when switch case value is 0', (done) => {
@@ -170,7 +291,7 @@ describe('ContentActionsComponent', () => {
 
         mockPopoverCtrl.create = jest.fn(() => Promise.resolve({
             present: presentFn,
-            onDidDismiss: jest.fn(() => Promise.resolve({ data: { canDelete: true } }))
+            onDidDismiss: jest.fn(() => Promise.resolve({data: {canDelete: true}}))
 
         }) as any);
         // act
@@ -179,7 +300,6 @@ describe('ContentActionsComponent', () => {
         setTimeout(() => {
             expect(mockPopoverCtrl.create).toHaveBeenCalled();
             expect(presentFn).toHaveBeenCalled();
-            expect(contentActionsComponent.deleteContent).toHaveBeenCalled();
             expect(mockCommonUtilService.translateMessage).toHaveBeenCalledWith('REMOVE_FROM_DEVICE');
             done();
         }, 0);
@@ -195,7 +315,7 @@ describe('ContentActionsComponent', () => {
 
         mockPopoverCtrl.create = jest.fn(() => Promise.resolve({
             present: presentFn,
-            onDidDismiss: jest.fn(() => Promise.resolve({ data: { canDelete: false } }))
+            onDidDismiss: jest.fn(() => Promise.resolve({data: {canDelete: false}}))
 
         }) as any);
         // act
