@@ -35,7 +35,7 @@
     </ion-row>
   </div>
   <div *ngIf="!userList?.length && !loading">
-    <div text-center>
+    <div class="ion-text-center">
       <img class="rounded image-style" src="assets/imgs/ic_businessman.png" alt="no-user" />
       <h6>
         <strong>{{'NO_USERS_ON_THIS_DEVICE' | translate}}</strong>
@@ -49,7 +49,7 @@
     </div>
   </div>
   <div *ngIf="userList?.length">
-    <ion-item *ngFor="let user of userList; let i = index;" class="gm-item-background" margin-bottom no-lines
+    <ion-item *ngFor="let user of userList; let i = index;" class="gm-item-background ion-margin-bottom" no-lines
       (click)="toggleSelect(i)">
       <ion-label class="PL16">
         <h6 class="MT0">

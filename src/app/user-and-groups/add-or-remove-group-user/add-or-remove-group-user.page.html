@@ -24,7 +24,7 @@
     </ion-col>
   </ion-row>
 
-  <ion-item *ngFor="let user of groupMembers; let i = index;" class="item-background" margin-bottom no-lines
+  <ion-item *ngFor="let user of groupMembers; let i = index;" class="item-background ion-margin-bottom" no-lines
     (click)="toggleMemberSelect(i)">
     <ion-label>
       <h6 class="line-height-2">
@@ -41,7 +41,7 @@
   </ion-item>
 
   <div *ngIf="addUsers">
-    <ion-item *ngFor="let user of uniqueUserList; let i = index;" class="item-background" margin-bottom no-lines
+    <ion-item *ngFor="let user of uniqueUserList; let i = index;" class="item-background ion-margin-bottom" no-lines
       (click)="toggleSelect(i)">
       <ion-label>
         <h6 class="line-height-2">

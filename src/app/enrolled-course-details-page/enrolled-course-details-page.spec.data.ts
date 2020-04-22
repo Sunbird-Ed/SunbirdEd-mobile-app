@@ -239,7 +239,8 @@ export const mockEnrolledCourses = [
         status: 1
       },
       description: 'Enter description for Course',
-      courseLogoUrl: 'https://ntpstagingall.blob.core.windows.net/ntp-content-staging/content/do_2127509908237926401406/artifact/4c1dbdc7d062dd11cd5b8bf5bbd25d61_1551854311088.thumb.jpg',
+      courseLogoUrl: 'https://ntpstagingall.blob.core.windows.net' +
+          '/ntp-content-staging/content/do_2127509908237926401406/artifact/4c1dbdc7d062dd11cd5b8bf5bbd25d61_1551854311088.thumb.jpg',
       batchId: '0127580528849387521',
       userId: '993230e2-d9f5-44fe-8b9c-fbfe5a1a3204'
     }

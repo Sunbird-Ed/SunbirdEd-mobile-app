@@ -369,9 +369,12 @@ export class CoursesPage implements OnInit, OnDestroy {
 
         if (newSections.length) {
           for (let i = 0; i < newSections.length; i++){
-            for (let j = 0; j < newSections[i].contents.length; j++) {
-              newSections[i].contents[j]['info_to_display'] = this.localCourseService.getCourseSectionHTMLData(newSections[i].contents[j]);
-              newSections[i].contents[j]['cardImg'] = this.commonUtilService.getContentImg(newSections[i].contents[j]);
+            if (newSections[i].contents) {
+              for (let j = 0; j < newSections[i].contents.length; j++) {
+                newSections[i].contents[j]['info_to_display'] =
+                  this.localCourseService.getCourseSectionHTMLData(newSections[i].contents[j]);
+                newSections[i].contents[j]['cardImg'] = this.commonUtilService.getContentImg(newSections[i].contents[j]);
+              }
             }
           }
         }

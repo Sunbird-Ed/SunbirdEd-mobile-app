@@ -46,9 +46,11 @@ import {
   UnenrollCourseRequest,
   Rollup,
   SortOrder,
-  AuthService
+  AuthService,
+  DownloadTracking,
+  DownloadService
 } from 'sunbird-sdk';
-import { Subscription } from 'rxjs';
+import { Subscription, Observable } from 'rxjs';
 import {
   Environment,
   ErrorType,
@@ -74,6 +76,7 @@ import { ContentDeleteHandler } from '@app/services/content/content-delete-handl
 import { LocalCourseService } from '@app/services';
 import { EnrollCourse } from './course.interface';
 import { SbSharePopupComponent } from '../components/popups/sb-share-popup/sb-share-popup.component';
+import { share } from 'rxjs/operators';
 declare const cordova;
 
 @Component({
@@ -219,8 +222,11 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
   public lastReadContentId;
   public courseCompletionData = {};
   isCertifiedCourse: boolean;
+  showSheenAnimation: boolean = true;
   private isOnboardingSkipped: any;
   private isFromChannelDeeplink: any;
+  trackDownloads$: Observable<DownloadTracking>;
+  showCollapsedPopup = true;
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -229,6 +235,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
     @Inject('COURSE_SERVICE') private courseService: CourseService,
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
     @Inject('AUTH_SERVICE') public authService: AuthService,
+    @Inject('DOWNLOAD_SERVICE') private downloadService: DownloadService,
     private loginHandlerService: LoginHandlerService,
     private zone: NgZone,
     private events: Events,
@@ -249,10 +256,6 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
     private localCourseService: LocalCourseService
   ) {
     this.objRollup = new Rollup();
-    this.userId = this.appGlobalService.getUserId();
-    // console.log('this.userId', this.userId);
-    this.checkLoggedInOrGuestUser();
-    this.checkCurrentUserType();
     // this.getUserId();
 
     const extrasState = this.router.getCurrentNavigation().extras.state;
@@ -277,6 +280,8 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
     if (this.courseCardData.batchId) {
       this.segmentType = 'modules';
     }
+    this.trackDownloads$ = this.downloadService.trackDownloads({ groupBy: { fieldPath: 'rollUp.l1', value: this.identifier } }).pipe(
+      share());
   }
 
   showDeletePopup() {
@@ -311,9 +316,10 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
           return cData.find((element) => element.courseId === this.identifier);
         });
       this.courseCardData.batchId = res.batchId;
-      this.getBatchDetails();
+      await this.getBatchDetails();
       this.segmentType = 'modules';
       this.getCourseProgress();
+      this.getContentState(true);
       if (res && res.batchId) {
         this.batchId = res.batchId;
         if (this.identifier && res.courseId && this.identifier === res.courseId) {
@@ -399,7 +405,10 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
    */
   async checkLoggedInOrGuestUser() {
     const session = await this.authService.getSession().toPromise();
-    this.guestUser = session ? false : true;
+    this.guestUser = !session;
+    if (session) {
+      this.userId = session.userToken;
+    }
   }
 
   checkCurrentUserType() {
@@ -595,39 +604,11 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
       .then((data: Content) => {
         this.zone.run(() => {
           if (!data.isAvailableLocally) {
-            this.telemetryGeneratorService.generatefastLoadingTelemetry(
-              InteractSubtype.FAST_LOADING_INITIATED,
-              PageId.COURSE_DETAIL,
-              this.telemetryObject,
-              undefined,
-              this.objRollup,
-              this.corRelationList
-            );
-            this.contentService.getContentHeirarchy(option).toPromise()
-              .then((content: Content) => {
-                /* setting child content here */
-                this.enrolledCourseMimeType = content.mimeType;
-                this.childrenData = content.children;
-                this.toggleGroup(0, this.childrenData[0]);
-                this.startData = content.children;
-                this.childContentsData = content;
-                this.getContentState(true);
-                this.extractApiResponse(data);
-                this.telemetryGeneratorService.generatefastLoadingTelemetry(
-                  InteractSubtype.FAST_LOADING_FINISHED,
-                  PageId.COURSE_DETAIL,
-                  this.telemetryObject,
-                  undefined,
-                  this.objRollup,
-                  this.corRelationList
-                );
-              })
-              .catch(error => {
-                console.log('Error Fetching Childrens', error);
-                this.extractApiResponse(data);
-              });
+            this.extractApiResponse(data);
+            this.getCourseHierarchy(option, data);
           } else {
             this.extractApiResponse(data);
+            this.showSheenAnimation = false;
           }
         });
       })
@@ -637,8 +618,44 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
         } else {
           this.commonUtilService.showToast('ERROR_FETCHING_DATA');
         }
+        this.showSheenAnimation = false;
         this.location.back();
       });
+  }
+
+  async getCourseHierarchy(request: ContentDetailRequest, data: Content) {
+    this.telemetryGeneratorService.generatefastLoadingTelemetry(
+      InteractSubtype.FAST_LOADING_INITIATED,
+      PageId.COURSE_DETAIL,
+      this.telemetryObject,
+      undefined,
+      this.objRollup,
+      this.corRelationList
+    );
+    this.contentService.getContentHeirarchy(request).toPromise()
+    .then((content: Content) => {
+      /* setting child content here */
+      this.showSheenAnimation = false;
+      this.enrolledCourseMimeType = content.mimeType;
+      this.childrenData = content.children;
+      this.toggleGroup(0, this.childrenData[0]);
+      this.startData = content.children;
+      this.childContentsData = content;
+      this.getContentState(true);
+      this.telemetryGeneratorService.generatefastLoadingTelemetry(
+        InteractSubtype.FAST_LOADING_FINISHED,
+        PageId.COURSE_DETAIL,
+        this.telemetryObject,
+        undefined,
+        this.objRollup,
+        this.corRelationList
+      );
+    })
+    .catch(error => {
+      console.log('Error Fetching Childrens', error);
+      this.extractApiResponse(data);
+      this.showSheenAnimation = false;
+    });
   }
 
   /**
@@ -704,7 +721,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
       this.setChildContents();
     } else {
       this.showLoading = true;
-      this.headerService.hideHeader();
+      // this.headerService.hideHeader();
       this.telemetryGeneratorService.generateSpineLoadingTelemetry(data, true);
       this.importContent([this.identifier], false);
     }
@@ -956,6 +973,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
       const response = await popover.onDidDismiss();
       if (response && response.data) {
         this.isDownloadStarted = true;
+        this.showCollapsedPopup = false;
         this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
           'download-all-button-clicked',
           Environment.HOME,
@@ -1034,7 +1052,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
   }
 
   async getAllBatches() {
-    const loader = await this.commonUtilService.getLoader();
+    // const loader = await this.commonUtilService.getLoader();
     this.courseBatchesRequest = {
       filters: {
         courseId: this.identifier,
@@ -1044,10 +1062,10 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
       sort_by: { createdDate: SortOrder.DESC },
       fields: BatchConstants.REQUIRED_FIELDS
     };
-    await loader.present();
+    // await loader.present();
     this.courseService.getCourseBatches(this.courseBatchesRequest).toPromise()
       .then(async (data: Batch[]) => {
-        await loader.dismiss();
+        // await loader.dismiss();
         this.handleUnenrollButton();
         this.showOfflineSection = false;
         this.batches = data || [];
@@ -1060,7 +1078,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
         }
       })
       .catch(async (error: any) => {
-        await loader.dismiss();
+        // await loader.dismiss();
         if (error instanceof NetworkError) {
           this.showOfflineSection = true;
         } else {
@@ -1259,8 +1277,9 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
    * Ionic life cycle hook
    */
   async ionViewWillEnter() {
+    await this.checkLoggedInOrGuestUser();
+    this.checkCurrentUserType();
     this.todayDate = window.dayjs().format('YYYY-MM-DD');
-    console.log('coursecarddata' + this.courseCardData);
     this.identifier = this.courseCardData.contentId || this.courseCardData.identifier;
     this.downloadSize = 0;
     this.objRollup = ContentUtil.generateRollUp(this.courseCardData.hierarchyInfo, this.identifier);

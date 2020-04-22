@@ -7,13 +7,13 @@
     <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
         <ion-refresher-content refreshingSpinner="circles"></ion-refresher-content>
     </ion-refresher>
-    <div padding-horizontal class="MT15 ion-text-center" *ngIf="profile?.firstName">
+    <div class="MT15 ion-text-center ion-padding-horizontal" *ngIf="profile?.firstName">
         <app-profile-avatar [username]="profile?.firstName" *ngIf="!isStateValidated"></app-profile-avatar>
         <img *ngIf="isStateValidated" src="./assets/imgs/avatar-tickmark.svg" alt="certified" class="avatar-tickmark">
         <app-profile-avatar [username]="profile?.firstName" [isStateUser]="isStateValidated" class="profileAvatar"
             *ngIf="isStateValidated"></app-profile-avatar>
     </div>
-    <div padding-horizontal style="margin-top: 16px" class="ion-text-center">
+    <div style="margin-top: 16px" class="ion-text-center ion-padding-horizontal">
         <p class="profile-head">
             <span class="profile-name">{{ profile?.firstName | titlecase }}{{ profile?.lastName | titlecase }}</span>
             <span *ngIf="!isCustodianOrgId && profile?.firstName" class="isymbol profile-symbol" item-right text-left
@@ -24,7 +24,7 @@
         </p>
         <p class="MT0 MB30"><span>{{'USER_ID' | translate}}:</span><span>{{profile?.userName}}</span></p>
     </div>
-    <div padding-horizontal class="roles-container ion-text-center">
+    <div class="roles-container ion-text-center ion-padding-horizontal">
         <div class="MB5 ion-text-center" *ngFor="let role of roles | slice : startLimit:rolesLimit;">
             <div class="roles">
                 {{role}}
@@ -164,7 +164,7 @@
             </ion-button>
         </div>
     </div>
-    <div class="badges ion-text-center" padding-horizontal *ngIf="profile?.badgeAssertions?.length > 0">
+    <div class="badges ion-text-center ion-padding-horizontal" *ngIf="profile?.badgeAssertions?.length > 0">
         <p class="bolder f16">{{'MY_BADGES' | translate }} ({{profile?.badgeAssertions?.length}})&lrm;</p>
         <ion-avatar item-center="" *ngFor="let batch of profile.badgeAssertions | slice : startLimit:badgesLimit;">
             <img height="80px" width="auto" alt="badge" [src]="commonUtilService.convertFileSrc(batch.badgeClassImage)">

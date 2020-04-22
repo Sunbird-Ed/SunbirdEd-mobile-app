@@ -14,12 +14,12 @@ import {
   ContentImport, ContentImportCompleted, ContentImportRequest,
   ContentImportResponse, ContentImportStatus, ContentMarkerRequest, ContentService, ContentUpdate, CorrelationData,
   DownloadEventType, DownloadProgress, EventsBusEvent, EventsBusService, MarkerType, Profile, ProfileService,
-  Rollup, StorageService, TelemetryErrorCode, TelemetryObject
+  Rollup, StorageService, TelemetryErrorCode, TelemetryObject, DownloadService, DownloadTracking
 } from 'sunbird-sdk';
 import {
   Environment, ErrorType, ImpressionType, InteractSubtype, InteractType, Mode, PageId, ID
 } from '../../services/telemetry-constants';
-import { Subscription } from 'rxjs';
+import { Subscription, Observable } from 'rxjs';
 import { ContentType, EventTopics, MimeType, RouterLinks, ShareItemType } from '../../app/app.constant';
 import {
   AppGlobalService, AppHeaderService, CommonUtilService,
@@ -34,7 +34,7 @@ import {
 } from '../components';
 import { Router, NavigationExtras } from '@angular/router';
 import { ContentUtil } from '@app/util/content-util';
-import { tap } from 'rxjs/operators';
+import { tap, share } from 'rxjs/operators';
 import { ContentPlayerHandler } from '@app/services/content/player/content-player-handler';
 import { ContentInfo } from '@app/services/content/content-info';
 import { ContentDeleteHandler } from '@app/services/content/content-delete-handler';
@@ -240,6 +240,8 @@ export class CollectionDetailEtbPage implements OnInit {
   contentDeleteObservable: any;
 
   _licenseDetails: any;
+  trackDownloads$: Observable<DownloadTracking>;
+  showCollapsedPopup = true;
   get licenseDetails() {
     return this._licenseDetails;
   }
@@ -254,6 +256,7 @@ export class CollectionDetailEtbPage implements OnInit {
     @Inject('EVENTS_BUS_SERVICE') private eventBusService: EventsBusService,
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     @Inject('STORAGE_SERVICE') private storageService: StorageService,
+    @Inject('DOWNLOAD_SERVICE') private downloadService: DownloadService,
     private zone: NgZone,
     private events: Events,
     private popoverCtrl: PopoverController,
@@ -307,6 +310,8 @@ export class CollectionDetailEtbPage implements OnInit {
   ngOnInit() {
     this.commonUtilService.getAppName().then((res) => { this.appName = res; });
     window['scrollWindow'] = this.ionContent;
+    this.trackDownloads$ = this.downloadService.trackDownloads({ groupBy: { fieldPath: 'rollUp.l1', value: this.identifier } }).pipe(
+      share());
   }
 
   ionViewWillEnter() {
@@ -971,6 +976,7 @@ export class CollectionDetailEtbPage implements OnInit {
     this.isDownloadStarted = true;
     this.downloadPercentage = 0;
     this.showDownload = true;
+    this.showCollapsedPopup = false;
     this.importContent(Array.from(this.downloadIdentifiers), true, true);
   }
 
