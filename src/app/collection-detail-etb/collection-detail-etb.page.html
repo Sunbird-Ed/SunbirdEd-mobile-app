@@ -1,9 +1,15 @@
 <ion-content class="ion-no-padding" [scrollEvents]="true" (ionScroll)="onScroll($event)">
   <div class="content-padding">
-    <app-detail-card (downloadAllContent)="showDownloadConfirmationAlert()" (shareEvent)="share()"
-      (showOverflowMenuEvent)="showDeletePopOver()" [contentDetail]="contentDetail" [currentCount]="currentCount"
-      [queuedIdentifiers]="queuedIdentifiers" [localImage]="contentDetail?.contentData?.appIcon" [showDownloadBtn]="showDownloadBtn"
-      [isDepthChild]='isDepthChild' [isDownloadStarted]="isDownloadStarted" [defaultAppIcon]="defaultAppIcon">
+    <app-detail-card 
+    (downloadAllContent)="showDownloadConfirmationAlert()" 
+    (shareEvent)="share()"  
+    (showOverflowMenuEvent)="showDeletePopOver()" 
+    [contentDetail]="contentDetail" 
+    [localImage]="contentDetail?.contentData?.appIcon" 
+    [showDownloadBtn]="showDownloadBtn"
+    [isDepthChild]='isDepthChild' 
+    [defaultAppIcon]="defaultAppIcon"
+    [trackDownloads]="trackDownloads$">
     </app-detail-card>
     <!-- End of the Parent Card -->
 
@@ -216,6 +222,14 @@
   </div>
 </ion-content>
 
-<app-sb-download-popup *ngIf="showDownload" (cancelDownloadEmit)="cancelDownload($event)" [currentCount]="currentCount"
-  [queuedIdentifiers]="queuedIdentifiers" [downloadSize]="downloadSize"
-  [collectionName]="contentDetail?.contentData?.name" [showDownload]="showDownload"></app-sb-download-popup>
+<ng-container *ngIf="trackDownloads$ | async; let downloads">
+  <app-sb-download-popup *ngIf="downloads.queued.length"
+    (cancelDownloadEmit)="cancelDownload($event)" 
+    [currentCount]="downloads.completed.length"
+    [queuedIdentifiers]="(downloads.queued.length+downloads.completed.length)" 
+    [downloadSize]="downloadSize"
+    [collectionName]="contentDetail?.contentData?.name" 
+    [showDownload]="true"
+    [showPopover]="showCollapsedPopup">
+  </app-sb-download-popup>
+</ng-container>
