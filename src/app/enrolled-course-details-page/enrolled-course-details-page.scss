@@ -524,3 +524,9 @@ ion-segment-button{
 .bg-grey {
   background: #f0f0f0 !important;
 }
+
+.card-button[disabled]{
+  opacity: 0.7 !important;
+  pointer-events: none;
+  cursor: default;
+}

@@ -42,17 +42,17 @@
 						<div>
 							<div class="sb-dt-card-actions">
 								<div class="wrapper sb-btn-tile-group" *ngIf="course?.progress !==100">
-									<div>
-										<button *ngIf="downloadIdentifiers.size && !isAvailableLocally" [disabled]="isDownloadStarted"
+									<div *ngIf="trackDownloads$ | async; let downloads">
+										<button *ngIf="downloadIdentifiers.size && !isAvailableLocally" [disabled]="downloads.queued.length"
 											(click)="showDownloadConfirmationAlert()" slot="icon-only"
 											class="card-button">
 											<ion-icon ios="ios-cloud-download" md="md-cloud-download"
-												[ngClass]="(isDownloadStarted)? 'card-icons-downloadStarted': 'card-icons'">
+												[ngClass]="(downloads.queued.length)? 'card-icons-downloadStarted': 'card-icons'">
 											</ion-icon>
 											<p class="card-text">{{'DOWNLOAD' | translate}}
 											</p>
 										</button>
-										<button *ngIf="isDownloadComplete || course?.isAvailableLocally" (click)="showDeletePopup()" slot="icon-only" class="card-button">
+										<button *ngIf="isDownloadComplete || course?.isAvailableLocally" [disabled]="downloads.queued.length" (click)="showDeletePopup()" slot="icon-only" class="card-button">
 											<ion-icon ios="ios-trash" md="md-trash" class="card-icons-red"></ion-icon>
 											<p class="card-text">{{'REMOVE' | translate}}
 											</p>
@@ -404,6 +404,15 @@
 		<button (click)="getAllBatches()" class="sb-btn sb-btn-outline-info retry-btn">{{'RETRY' | translate}}</button>
 	</div>
 </ion-content>
-<app-sb-download-popup *ngIf="showDownload" (cancelDownloadEmit)="cancelDownload($event)" [currentCount]="currentCount"
-	[queuedIdentifiers]="queuedIdentifiers" [downloadSize]="downloadSize" [collectionName]="course?.name"
-	[showDownload]="showDownload"></app-sb-download-popup>
+
+	<ng-container *ngIf="trackDownloads$ | async; let downloads">
+		<app-sb-download-popup *ngIf="downloads.queued.length"
+			(cancelDownloadEmit)="cancelDownload($event)" 
+			[currentCount]="downloads.completed.length"
+			[queuedIdentifiers]="(downloads.queued.length+downloads.completed.length)" 
+			[downloadSize]="downloadSize"
+			[collectionName]="course?.name" 
+			[showDownload]="true"
+			[showPopover]="showCollapsedPopup">
+		</app-sb-download-popup>
+	</ng-container>

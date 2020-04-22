@@ -2,6 +2,7 @@ import { CollectionDetailEtbPage } from './collection-detail-etb.page';
 import {
     ContentService, EventsBusService, ProfileService, TelemetryErrorCode,
     StorageService, ContentImportResponse, ContentImportStatus, TelemetryObject,
+    DownloadService
 } from 'sunbird-sdk';
 import { Events, PopoverController, Platform, IonContent } from '@ionic/angular';
 import { NgZone, ChangeDetectorRef } from '@angular/core';
@@ -38,6 +39,7 @@ describe('collectionDetailEtbPage', () => {
     let collectionDetailEtbPage: CollectionDetailEtbPage;
     const mockContentService: Partial<ContentService> = {};
     const mockEventBusService: Partial<EventsBusService> = {};
+    const mockDownloadService: Partial<DownloadService> = {};
     const mockProfileService: Partial<ProfileService> = {
         addContentAccess: jest.fn()
     };
@@ -108,6 +110,7 @@ describe('collectionDetailEtbPage', () => {
             mockEventBusService as EventsBusService,
             mockProfileService as ProfileService,
             mockStorageService as StorageService,
+            mockDownloadService as DownloadService,
             mockzone as NgZone,
             mockevents as Events,
             mockPopoverController as PopoverController,
