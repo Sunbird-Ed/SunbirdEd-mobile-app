@@ -46,9 +46,11 @@ import {
   UnenrollCourseRequest,
   Rollup,
   SortOrder,
-  AuthService
+  AuthService,
+  DownloadTracking,
+  DownloadService
 } from 'sunbird-sdk';
-import { Subscription } from 'rxjs';
+import { Subscription, Observable } from 'rxjs';
 import {
   Environment,
   ErrorType,
@@ -74,6 +76,7 @@ import { ContentDeleteHandler } from '@app/services/content/content-delete-handl
 import { LocalCourseService } from '@app/services';
 import { EnrollCourse } from './course.interface';
 import { SbSharePopupComponent } from '../components/popups/sb-share-popup/sb-share-popup.component';
+import { share } from 'rxjs/operators';
 declare const cordova;
 
 @Component({
@@ -222,6 +225,8 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
   showSheenAnimation: boolean = true;
   private isOnboardingSkipped: any;
   private isFromChannelDeeplink: any;
+  trackDownloads$: Observable<DownloadTracking>;
+  showCollapsedPopup = true;
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -230,6 +235,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
     @Inject('COURSE_SERVICE') private courseService: CourseService,
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
     @Inject('AUTH_SERVICE') public authService: AuthService,
+    @Inject('DOWNLOAD_SERVICE') private downloadService: DownloadService,
     private loginHandlerService: LoginHandlerService,
     private zone: NgZone,
     private events: Events,
@@ -274,6 +280,8 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
     if (this.courseCardData.batchId) {
       this.segmentType = 'modules';
     }
+    this.trackDownloads$ = this.downloadService.trackDownloads({ groupBy: { fieldPath: 'rollUp.l1', value: this.identifier } }).pipe(
+      share());
   }
 
   showDeletePopup() {
@@ -965,6 +973,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
       const response = await popover.onDidDismiss();
       if (response && response.data) {
         this.isDownloadStarted = true;
+        this.showCollapsedPopup = false;
         this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
           'download-all-button-clicked',
           Environment.HOME,
