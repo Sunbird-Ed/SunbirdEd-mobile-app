@@ -60,113 +60,115 @@ export const mockWebsessionConfigResponse = {
   type: 'config',
   subType: 'login',
   action: 'get',
-  data: {
-    templateName: 'login',
-    action: 'get',
-    fields: [
-      {
-        context: 'login',
-        target: {
-          host: 'sample_base_url',
-          path: 'base_path',
-          params: [
+  form: {
+    data: {
+      templateName: 'login',
+      action: 'get',
+      fields: [
+        {
+          context: 'login',
+          target: {
+            host: 'sample_base_url',
+            path: 'base_path',
+            params: [
+              {
+                key: 'redirect_uri',
+                value: 'sample_redirect_uri'
+              },
+              {
+                key: 'response_type',
+                value: 'code'
+              },
+              {
+                key: 'scope',
+                value: 'offline_access'
+              },
+              {
+                key: 'client_id',
+                value: 'android'
+              },
+              {
+                key: 'version',
+                value: 4
+              }
+            ]
+          },
+          return: [
             {
-              key: 'redirect_uri',
-              value: 'sample_redirect_uri'
+              type: 'state-error',
+              when: {
+                host: 'sample_host',
+                path: 'sample_path',
+                params: [
+                  {
+                    key: 'error_message',
+                    resolveTo: 'error_message'
+                  }
+                ]
+              }
             },
             {
-              key: 'response_type',
-              value: 'code'
+              type: 'password-reset-success',
+              when: {
+                host: 'sample_host',
+                path: 'sample_path',
+                params: [
+                  {
+                    key: 'client_id',
+                    resolveTo: 'client_id'
+                  }
+                ]
+              }
             },
             {
-              key: 'scope',
-              value: 'offline_access'
-            },
-            {
-              key: 'client_id',
-              value: 'android'
-            },
-            {
-              key: 'version',
-              value: 4
+              type: 'password',
+              when: {
+                host: 'sample_host',
+                path: 'sample_path',
+                params: [
+                  {
+                    key: 'code',
+                    resolveTo: 'code'
+                  }
+                ]
+              }
             }
           ]
         },
-        return: [
-          {
-            type: 'state-error',
-            when: {
-              host: 'sample_host',
-              path: 'sample_path',
-              params: [
-                {
-                  key: 'error_message',
-                  resolveTo: 'error_message'
-                }
-              ]
-            }
+        {
+          context: 'migrate',
+          target: {
+            host: 'sample_host',
+            path: 'sample_path',
+            params: [
+              {
+                key: 'redirect_uri',
+                value: 'sample_callback'
+              },
+              {
+                key: 'response_type',
+                value: 'code'
+              }
+            ]
           },
-          {
-            type: 'password-reset-success',
-            when: {
-              host: 'sample_host',
-              path: 'sample_path',
-              params: [
-                {
-                  key: 'client_id',
-                  resolveTo: 'client_id'
-                }
-              ]
-            }
-          },
-          {
-            type: 'password',
-            when: {
-              host: 'sample_host',
-              path: 'sample_path',
-              params: [
-                {
-                  key: 'code',
-                  resolveTo: 'code'
-                }
-              ]
-            }
-          }
-        ]
-      },
-      {
-        context: 'migrate',
-        target: {
-          host: 'sample_host',
-          path: 'sample_path',
-          params: [
+          return: [
             {
-              key: 'redirect_uri',
-              value: 'sample_callback'
-            },
-            {
-              key: 'response_type',
-              value: 'code'
+              type: 'password',
+              when: {
+                host: 'sample_host',
+                path: 'sample_callback',
+                params: [
+                  {
+                    key: 'code',
+                    resolveTo: 'code'
+                  }
+                ]
+              }
             }
           ]
-        },
-        return: [
-          {
-            type: 'password',
-            when: {
-              host: 'sample_host',
-              path: 'sample_callback',
-              params: [
-                {
-                  key: 'code',
-                  resolveTo: 'code'
-                }
-              ]
-            }
-          }
-        ]
-      }
-    ]
+        }
+      ]
+    }
   }
 } as any;
 
