@@ -2,7 +2,7 @@ import { TelemetryGeneratorService } from '../../../services/telemetry-generator
 import { TranslateService } from '@ngx-translate/core';
 import { Events, PopoverController, NavParams } from '@ionic/angular';
 import { Platform, ToastController } from '@ionic/angular';
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import {
   AuthService,
   ContentDeleteResponse,
@@ -17,7 +17,6 @@ import { CommonUtilService } from '../../../services/common-util.service';
 import { Environment, InteractSubtype, InteractType } from '../../../services/telemetry-constants';
 import { SbPopoverComponent } from '../popups/sb-popover/sb-popover.component';
 import { FileSizePipe } from '@app/pipes/file-size/file-size';
-import { SbGenericPopoverComponent } from '../popups/sb-generic-popover/sb-generic-popover.component';
 @Component({
   selector: 'app-content-actions',
   templateUrl: './content-actions.component.html',
@@ -160,7 +159,6 @@ export class ContentActionsComponent {
       this.objRollup,
       this.corRelationList);
     this.popOverCtrl.dismiss({ unenroll: true });
-   
   }
 
   async deleteContent() {
@@ -218,17 +216,5 @@ export class ContentActionsComponent {
       }
     );
     return msg;
-  }
-  // check wheather to show Unenroll button in overflow menu or not
-  showUnenrollButton(): boolean {
-    return (this.data &&
-      (this.data.batchStatus !== 2 &&
-        (this.data.contentStatus === 0 || this.data.contentStatus === 1 || this.data.courseProgress < 100) &&
-        this.data.enrollmentType !== 'invite-only'));
-  }
-
-
-  private isObjectEmpty(obj) {
-    return Object.keys(obj).length === 0 && obj.constructor === Object;
   }
 }

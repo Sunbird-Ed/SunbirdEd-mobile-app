@@ -15,20 +15,28 @@
       {{ 'EMPTY_SEARCH_RESULTS' | translate }}
     </div>
 
-    <div *ngIf="searchList && searchList.length">
-      <div class="view-more-course-bg">
-        <p class="title" *ngIf="!localContentsCard && pageType === 'enrolledCourse'">{{'COURSES_IN_PROGRESS' | translate}}</p>
-        <p class="title" *ngIf="!localContentsCard && pageType === 'popularCourses'">{{title}}</p>
-        <p class="count-text">{{'SHOWING_ITEMS' | translate:{'%s': searchList.length} }}</p>
-        <div *ngFor="let item of searchList" class="mb-8">
-          <sb-my-course-card *ngIf="!localContentsCard && pageType === 'enrolledCourse'" [course]="item" [section]="getEnrolledSectionHTMLData(item)"
-          [cardImg]="getContentImg(item)" (click)="openCourseDetails(item)"></sb-my-course-card>
-          <sb-course-card *ngIf="!localContentsCard && pageType === 'popularCourses'" [course]="item" [section]="getSectionHTMLData(item)"
-          [cardImg]="getContentImg(item)" (click)="openCourseDetails(item)"></sb-course-card>
-        </div>
+    <div>
+      <div class="view-more-course-bg" *ngIf="!localContentsCard">
+        <p class="title" *ngIf="pageType === 'enrolledCourse'">{{'COURSES_IN_PROGRESS' | translate}}</p>
+        <p class="title" *ngIf="pageType === 'popularCourses'">{{title}}</p>
+        <p *ngIf="searchList && searchList.length" class="count-text">{{'SHOWING_ITEMS' | translate:{'%s': searchList.length} }}</p>
+        <ng-container *ngIf="!isLoading">
+          <div *ngFor="let item of searchList" class="mb-8">
+            <sb-my-course-card *ngIf="pageType === 'enrolledCourse'" [course]="item" [section]="null"
+            [cardImg]="getContentImg(item)" (click)="openCourseDetails(item)"></sb-my-course-card>
+            <sb-course-card *ngIf="pageType === 'popularCourses'" [course]="item"  [section]="null"
+            [cardImg]="getContentImg(item)" (click)="openCourseDetails(item)"></sb-course-card>
+          </div>
+        </ng-container>
+        <ng-container *ngIf="isLoading">
+          <div *ngFor="let item of [0,1,2,3,4,5,6,7,8,9,10,11,12,13]" class="mb-8 mt-8">
+            <sb-my-course-card *ngIf="pageType === 'enrolledCourse'" [isLoading]="isLoading"></sb-my-course-card>
+            <sb-course-card *ngIf="pageType === 'popularCourses'" [isLoading]="isLoading"></sb-course-card>
+          </div>
+        </ng-container>
       </div>
 
-      <ng-container *ngIf="localContentsCard">
+      <ng-container *ngIf="localContentsCard && searchList && searchList.length">
         <div class="sb-view-all-container">
           <div class="sb-card-container sb-card-view-all-container">
             <app-view-all-card *ngFor="let item of searchList" [userId]="userId" [content]="item" [type]="pageType"

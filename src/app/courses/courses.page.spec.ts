@@ -108,7 +108,6 @@ describe('CoursesPage', () => {
                 identifier: 'do_0123'
             }];
             mockCourseService.getEnrolledCourses = jest.fn(() => of(course));
-            mockLocalCourseService.getEnrolledCourseSectionHTMLData = jest.fn();
             mockCommonUtilService.getContentImg = jest.fn();
             // act
             coursesPage.ngOnInit();
@@ -116,7 +115,6 @@ describe('CoursesPage', () => {
             setTimeout(() => {
                 expect(coursesPage.getCourseTabData).toHaveBeenCalled();
                 expect(mockEvents.subscribe).toHaveBeenCalled();
-                expect(mockLocalCourseService.getEnrolledCourseSectionHTMLData).toHaveBeenCalled();
                 expect(mockCommonUtilService.getContentImg).toHaveBeenCalled();
                 expect(mockAppGlobalService.setEnrolledCourseList).toHaveBeenCalled();
                 expect(mockCourseService.getEnrolledCourses).toHaveBeenCalledWith({ returnFreshCourses: false, userId: undefined });
@@ -300,7 +298,6 @@ describe('CoursesPage', () => {
             values['pageSectionCount'] = 1;
             mockCommonUtilService.networkInfo = {isNetworkAvailable: true};
             mockTelemetryGeneratorService.generateExtraInfoTelemetry = jest.fn();
-            mockLocalCourseService.getCourseSectionHTMLData = jest.fn();
             mockCommonUtilService.getContentImg = jest.fn();
             // mockTelemetryGeneratorService.generateExtraInfoTelemetry = jest.fn();
             jest.spyOn(coursesPage, 'checkEmptySearchResult').mockReturnValue();
@@ -309,7 +306,6 @@ describe('CoursesPage', () => {
             // assert
             setTimeout(() => {
                 expect(mockPageService.getPageAssemble).toHaveBeenCalled();
-                expect(mockLocalCourseService.getCourseSectionHTMLData).toHaveBeenCalled();
                 expect(mockCommonUtilService.getContentImg).toHaveBeenCalled();
                 expect(mockTelemetryGeneratorService.generateExtraInfoTelemetry).toHaveBeenCalled();
                 done();
