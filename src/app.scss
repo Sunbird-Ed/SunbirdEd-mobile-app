@@ -1124,3 +1124,40 @@ sb-course-cards-hlist > .layout-course > .sb--scrolling-wrapper-flexbox {
   padding-right: 8px;
   padding-left: 8px;
 }
+
+app-resources{
+
+  .fixed-container{
+    sb-library-filters{
+      .pill{
+        font-size: 14px !important;
+        padding-top: 8px !important;
+        padding-bottom: 8px !important;
+      }
+      .rounded{ 
+        padding-top: 18px !important;
+        padding-bottom: 18px !important;
+        border-radius: 18px !important;
+      }
+    }
+  }
+
+  sb-library-cards-stack{
+    .title{
+      font-size: 18px !important;
+      font-weight: bold;
+    }
+  }
+
+  .sb-textbook-container{
+    padding-bottom: 0 !important;
+    padding-top: 0 !important;
+  }
+
+  sb-library-card{
+    .sb--card__meta1{
+      padding-top: 8px;
+    }
+  }
+
+}
