@@ -3,7 +3,7 @@ import {
     ProfileService, ContentService, EventsBusService, CourseService, SharedPreferences,
     AuthService, CorrelationData, TelemetryObject, FetchEnrolledCourseRequest,
     ProfileType, UnenrollCourseRequest, ContentDetailRequest, ServerProfileDetailsRequest, ServerProfile,
-    NetworkError
+    NetworkError, DownloadService
 } from 'sunbird-sdk';
 import {
     LoginHandlerService, CourseUtilService, AppGlobalService, TelemetryGeneratorService,
@@ -21,15 +21,15 @@ import { ContentDeleteHandler } from '../../services/content/content-delete-hand
 import { Location } from '@angular/common';
 import {
     mockEnrolledData, contentDetailsResponse, mockCourseCardData,
-    mockGetChildDataResponse, mockImportContentResponse, mockEnrolledCourses, mockCourseCardData_2, mockChildrenData, mockContentStatusData, mockcontentHirerachyResponse
+    mockGetChildDataResponse, mockImportContentResponse, mockEnrolledCourses,
+    mockCourseCardData_2, mockChildrenData, mockContentStatusData, mockcontentHirerachyResponse
 } from './enrolled-course-details-page.spec.data';
-import { of, Subject, throwError, Subscription } from 'rxjs';
+import { of, Subject, throwError } from 'rxjs';
 import { ContentInfo } from '../../services/content/content-info';
-import { PreferenceKey, ProfileConstants, EventTopics, RouterLinks } from '../app.constant';
+import { PreferenceKey, ProfileConstants, EventTopics } from '../app.constant';
 import { isObject } from 'util';
 import { SbPopoverComponent } from '../components/popups';
 import { Mode, Environment, ImpressionType } from '../../services/telemetry-constants';
-import { async } from 'rxjs/internal/scheduler/async';
 
 describe('EnrolledCourseDetailsPage', () => {
     let enrolledCourseDetailsPage: EnrolledCourseDetailsPage;
@@ -48,6 +48,7 @@ describe('EnrolledCourseDetailsPage', () => {
         getCourseBatches: jest.fn()
     };
     const mockPreferences: Partial<SharedPreferences> = {};
+    const mockDownloadService: Partial<DownloadService> = {};
     const mockAuthService: Partial<AuthService> = {
         getSession: jest.fn(() => of({}))
     };
@@ -113,6 +114,7 @@ describe('EnrolledCourseDetailsPage', () => {
             mockCourseService as CourseService,
             mockPreferences as SharedPreferences,
             mockAuthService as AuthService,
+            mockDownloadService as DownloadService,
             mockLoginHandlerService as LoginHandlerService,
             mockZone as NgZone,
             mockEvents as Events,
@@ -149,12 +151,14 @@ describe('EnrolledCourseDetailsPage', () => {
         it('should get App name and subscribe utility service by invoked ngOnInit()', () => {
             // arrange
             mockCommonUtilService.getAppName = jest.fn(() => Promise.resolve('DIKSHA'));
+            mockDownloadService.trackDownloads = jest.fn(() => of());
             spyOn(enrolledCourseDetailsPage, 'subscribeUtilityEvents').and.returnValue('BASE_URL');
             // act
             enrolledCourseDetailsPage.ngOnInit();
             // assert
             expect(mockCommonUtilService.getAppName).toHaveBeenCalled();
             expect(enrolledCourseDetailsPage.subscribeUtilityEvents).toHaveBeenCalled();
+            expect(mockDownloadService.trackDownloads).toHaveBeenCalled();
         });
     });
 
@@ -1072,7 +1076,7 @@ describe('EnrolledCourseDetailsPage', () => {
         it('should call share()', () => {
             // arrange
             const event = {
-                name: "share"
+                name: 'share'
             };
             jest.spyOn(enrolledCourseDetailsPage, 'share');
             // act
@@ -1084,7 +1088,7 @@ describe('EnrolledCourseDetailsPage', () => {
         it('should call showOverflowMenu()', () => {
             // arrange
             const event = {
-                name: "more"
+                name: 'more'
             };
             jest.spyOn(enrolledCourseDetailsPage, 'showOverflowMenu');
             // act
@@ -1096,7 +1100,7 @@ describe('EnrolledCourseDetailsPage', () => {
         it('should call handleNavBackButton() and goBack()', () => {
             // arrange
             const event = {
-                name: "back"
+                name: 'back'
             };
             spyOn(enrolledCourseDetailsPage, 'handleNavBackButton').and.stub();
             // act
@@ -1110,7 +1114,7 @@ describe('EnrolledCourseDetailsPage', () => {
         it('should call promptToLogin()', () => {
             // arrange
             const batch = {
-                id: "121232312"
+                id: '121232312'
             };
             jest.spyOn(enrolledCourseDetailsPage, 'promptToLogin');
             // act
@@ -1128,7 +1132,7 @@ describe('EnrolledCourseDetailsPage', () => {
                 dismiss: dismissFn,
             }));
             const batch = {
-                id: "121232312"
+                id: '121232312'
             };
             enrolledCourseDetailsPage.guestUser = false;
             spyOn(mockLocalCourseService, 'prepareEnrollCourseRequest').and.stub();
@@ -1156,7 +1160,7 @@ describe('EnrolledCourseDetailsPage', () => {
                 dismiss: dismissFn,
             }));
             const batch = {
-                id: "121232312"
+                id: '121232312'
             };
             enrolledCourseDetailsPage.guestUser = false;
             spyOn(mockLocalCourseService, 'prepareEnrollCourseRequest').and.stub();
@@ -1259,7 +1263,7 @@ describe('EnrolledCourseDetailsPage', () => {
     });
 
     describe('setChildContents()', () => {
-        it('should fetch child contents ', (done)=> {
+        it('should fetch child contents ', (done) => {
             // arrange
             const data = {
                 mimeType: 'content',
@@ -1286,7 +1290,7 @@ describe('EnrolledCourseDetailsPage', () => {
             }, 0);
         });
 
-        it('should setshowChildrenLoader to false', (done)=> {
+        it('should setshowChildrenLoader to false', (done) => {
             // arrange
             const data = {
                 mimeType: 'content',
@@ -1437,7 +1441,7 @@ describe('EnrolledCourseDetailsPage', () => {
             // assert
             expect(mockCourseUtilService.showCredits).toBeCalled();
         });
-    }); 
+    });
 
     describe('generateEndEvent()', () => {
         it('should generate end event', () => {
@@ -1459,7 +1463,7 @@ describe('EnrolledCourseDetailsPage', () => {
                 [{ id: '', type: 'CourseBatch'}]
             );
         });
-    }); 
+    });
 
     describe('generateStartEvent()', () => {
         it('should generate start event', () => {
@@ -1479,7 +1483,7 @@ describe('EnrolledCourseDetailsPage', () => {
             );
         });
     });
-    
+
     describe('generateImpressionEvent()', () => {
         it('should generate impression event', () => {
             // arrange
@@ -1575,26 +1579,35 @@ describe('EnrolledCourseDetailsPage', () => {
 
     describe('ionViewWillEnter()', () => {
         it('should be aguest user, ', () => {
+            mockAppGlobalService.getUserId = jest.fn(() => {
+                return 'sample_user_id';
+            });
             // act
             mockHeaderService.headerEventEmitted$ = {
                 subscribe: jest.fn(() => {})
             };
             enrolledCourseDetailsPage.guestUser = true;
             enrolledCourseDetailsPage.isAlreadyEnrolled = false;
+            jest.spyOn(enrolledCourseDetailsPage, 'checkLoggedInOrGuestUser').mockImplementation();
+            jest.spyOn(enrolledCourseDetailsPage, 'checkCurrentUserType').mockImplementation();
             spyOn(enrolledCourseDetailsPage, 'isCourseEnrolled').and.stub();
             spyOn(enrolledCourseDetailsPage, 'subscribeSdkEvent').and.stub();
             spyOn(enrolledCourseDetailsPage, 'populateCorRelationData');
             spyOn(enrolledCourseDetailsPage, 'handleBackButton').and.stub();
             spyOn(enrolledCourseDetailsPage, 'getLastReadContentId');
-            enrolledCourseDetailsPage.ionViewWillEnter();
+            enrolledCourseDetailsPage.ionViewWillEnter().then(() => {
+                expect(enrolledCourseDetailsPage.checkCurrentUserType).toHaveBeenCalled();
+                expect(mockAppGlobalService.getUserId).toHaveBeenCalled();
+                expect(enrolledCourseDetailsPage.guestUser).toEqual(true);
+                expect(mockHeaderService.showHeaderWithBackButton).toBeCalled();
+                expect(enrolledCourseDetailsPage.isCourseEnrolled).toBeCalled();
+                expect(enrolledCourseDetailsPage.subscribeSdkEvent).toBeCalled();
+                expect(enrolledCourseDetailsPage.populateCorRelationData).toBeCalled();
+                expect(enrolledCourseDetailsPage.handleBackButton).toBeCalled();
+                expect(enrolledCourseDetailsPage.getLastReadContentId).toBeCalled();
+            });
             // assert
-            expect(enrolledCourseDetailsPage.guestUser).toEqual(true);
-            expect(mockHeaderService.showHeaderWithBackButton).toBeCalled();
-            expect(enrolledCourseDetailsPage.isCourseEnrolled).toBeCalled();
-            expect(enrolledCourseDetailsPage.subscribeSdkEvent).toBeCalled();
-            expect(enrolledCourseDetailsPage.populateCorRelationData).toBeCalled();
-            expect(enrolledCourseDetailsPage.handleBackButton).toBeCalled();
-            expect(enrolledCourseDetailsPage.getLastReadContentId).toBeCalled();
+            expect(enrolledCourseDetailsPage.checkLoggedInOrGuestUser).toHaveBeenCalled();
         });
 
         it('should be a guest user, ', () => {
@@ -1615,35 +1628,19 @@ describe('EnrolledCourseDetailsPage', () => {
             // assert
             expect(enrolledCourseDetailsPage.courseCardData.batch).toEqual(enrolledCourseDetailsPage.updatedCourseCardData.batch);
         });
-
-        // it('should be aguest user, ', () => {
-        //     // act
-        //     const data = {
-
-        //     };
-        //     mockAppGlobalService.setEnrolledCourseList = jest.fn();
-        //     enrolledCourseDetailsPage.guestUser = false;
-        //     mockHeaderService.headerEventEmitted$ = {
-        //         subscribe: jest.fn(() => {})
-        //     };
-        //     mockCourseService.getEnrolledCourses = jest.fn(() => of(mockEnrolledCourses));
-        //     // act
-        //     enrolledCourseDetailsPage.ionViewWillEnter();
-        //     // assert
-        // });
     });
-    
+
     describe('isCourseEnrolled()', () => {
-        xit('should unenrolled course', () => {
+        it('should unenrolled course', () => {
             // arrange
             enrolledCourseDetailsPage.courseCardData = mockCourseCardData;
             // act
             enrolledCourseDetailsPage.isCourseEnrolled('do_091231312312');
             // assert
             expect(enrolledCourseDetailsPage.isAlreadyEnrolled).toEqual(true);
-            expect(enrolledCourseDetailsPage.courseCardData).toEqual(mockEnrolledCourses[0]);
+            expect(enrolledCourseDetailsPage.courseCardData).toEqual(mockCourseCardData);
         });
-        
+
         it('should course already enrolled', () => {
             // arrange
             enrolledCourseDetailsPage.isAlreadyEnrolled = false;
@@ -1703,12 +1700,12 @@ describe('EnrolledCourseDetailsPage', () => {
             // arrange
             const unsubscribe = jest.fn();
             enrolledCourseDetailsPage.headerObservable = {
-                unsubscribe: unsubscribe
+                unsubscribe
             };
             enrolledCourseDetailsPage.backButtonFunc = {
-                unsubscribe: unsubscribe
+                unsubscribe
             };
-            //act
+            // act
             enrolledCourseDetailsPage.ionViewWillLeave();
             // assert
             expect(mockEvents.publish).toBeCalledWith('header:setzIndexToNormal');
@@ -1729,7 +1726,6 @@ describe('EnrolledCourseDetailsPage', () => {
             expect(mockEvents.unsubscribe).toBeCalledWith(EventTopics.UNENROL_COURSE_SUCCESS);
             expect(mockEvents.unsubscribe).toBeCalledWith('header:setzIndexToNormal');
             expect(mockEvents.unsubscribe).toBeCalledWith('header:decreasezIndex');
-            
         });
     });
 
@@ -1749,7 +1745,7 @@ describe('EnrolledCourseDetailsPage', () => {
             const batches = [
                 {
                     status: 1
-                },{
+                }, {
                     status: 0
                 }
             ];
@@ -1787,7 +1783,7 @@ describe('EnrolledCourseDetailsPage', () => {
             // arrange
             jest.resetAllMocks();
             const data = {};
-            
+
             // act
             const result = enrolledCourseDetailsPage.loadFirstChildren(data);
             // assert
@@ -1825,13 +1821,17 @@ describe('EnrolledCourseDetailsPage', () => {
     describe('getLastReadContentId()', () => {
         it('should set lastReadContentId in courseCardData', async () => {
             // arrange
-
+            mockAppGlobalService.getUserId = jest.fn(() => {
+                return 'sample_user_id';
+            });
             // ** for ionViewWillEnter
             mockHeaderService.headerEventEmitted$ = {
                 subscribe: jest.fn(() => {})
             };
             enrolledCourseDetailsPage.guestUser = true;
             enrolledCourseDetailsPage.isAlreadyEnrolled = false;
+            jest.spyOn(enrolledCourseDetailsPage, 'checkLoggedInOrGuestUser').mockImplementation();
+            jest.spyOn(enrolledCourseDetailsPage, 'checkCurrentUserType').mockImplementation();
             mockHeaderService.showHeaderWithBackButton = jest.fn(() => { });
             spyOn(enrolledCourseDetailsPage, 'isCourseEnrolled').and.stub();
             spyOn(enrolledCourseDetailsPage, 'subscribeSdkEvent').and.stub();
@@ -1881,7 +1881,7 @@ describe('EnrolledCourseDetailsPage', () => {
             // assert
             expect(mockChildrenData[0].lastRead).toBe(true);
             done();
-        }); 
+        });
     });
 
     describe('subscribeSdkEvent()', () => {
@@ -1956,7 +1956,7 @@ describe('EnrolledCourseDetailsPage', () => {
             // assert
             expect(enrolledCourseDetailsPage.setContentDetails).toBeCalled();
         });
-        
+
         it('should be SERVER_CONTENT_DATA event', () => {
             // arrange
             const event = {

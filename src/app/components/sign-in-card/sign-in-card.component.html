@@ -17,7 +17,7 @@
     <p class="sign-in-card-title">{{ 'WANT_TO_CHECK_FREE_TRAININGS' | translate }}</p>
     <div class="sign-in-block">
       <p>{{ 'IF_YES_LOGIN' | translate }}</p>
-      <ion-button expand="block" (click)="signIn()">{{ 'OVERLAY_SIGN_IN' | translate }}</ion-button>
+      <ion-button expand="block" class="ion-text-capitalize" (click)="signIn()">{{ 'OVERLAY_SIGN_IN' | translate | titlecase }}</ion-button>
     </div>
   </div>
 </div>

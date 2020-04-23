@@ -62,7 +62,7 @@ export class FormAndFrameworkUtilService {
 
         return this.formService.getForm(request).pipe(
             map((result) => {
-                const config = result['data']['fields'].find(c => c.context === context);
+                const config = result['form']['data']['fields'].find(c => c.context === context);
 
                 if (!config) {
                     throw new SignInError('SESSION_PROVIDER_CONFIG_NOT_FOUND');
@@ -284,7 +284,7 @@ export class FormAndFrameworkUtilService {
             action: 'get'
         };
         return this.formService.getForm(req).toPromise().then((res: any) => {
-            const data = res.form ? res.form.data.fields : res.data.fields;
+            const data = res.form.data.fields;
             if (res && data.length) {
                 const regObj = {};
                 for (const ele of data) {

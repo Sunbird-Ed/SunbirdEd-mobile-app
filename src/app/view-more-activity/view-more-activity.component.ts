@@ -135,6 +135,7 @@ export class ViewMoreActivityComponent implements OnInit {
   objType;
   objVer;
   loader: any;
+  isLoading = false;
 
   constructor(
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
@@ -199,7 +200,9 @@ export class ViewMoreActivityComponent implements OnInit {
   ionViewWillEnter(): void {
     this.zone.run(() => {
       this.headerService.showHeaderWithBackButton();
-      this.tabBarElement.style.display = 'none';
+      if (this.tabBarElement) {
+        this.tabBarElement.style.display = 'none';
+      }
       this.handleBackButton();
     });
   }
@@ -232,8 +235,7 @@ export class ViewMoreActivityComponent implements OnInit {
    * Search content
    */
   async search() {
-    const loader = await this.commonUtilService.getLoader();
-    await loader.present();
+    this.isLoading = true;
     const selectedLanguage = await this.preferences.getString(PreferenceKey.SELECTED_LANGUAGE_CODE).toPromise();
     const searchCriteria: ContentSearchCriteria = {
       searchType: SearchType.FILTER,
@@ -243,7 +245,7 @@ export class ViewMoreActivityComponent implements OnInit {
     this.searchQuery.request['offset'] = this.offset;
     this.contentService.searchContent(searchCriteria, this.searchQuery).toPromise()
       .then((data: ContentSearchResult) => {
-        this.ngZone.run(async () => {
+        this.ngZone.run(() => {
           if (data && data.contentDataList) {
             this.loadMoreBtn = data.contentDataList.length >= this.searchLimit;
             if (this.isLoadMore) {
@@ -256,14 +258,14 @@ export class ViewMoreActivityComponent implements OnInit {
           } else {
             this.loadMoreBtn = false;
           }
-          await loader.dismiss();
+          this.isLoading = false;
         });
         this.generateImpressionEvent();
         this.generateLogEvent(data);
       })
-      .catch(async () => {
+      .catch(() => {
         console.error('Error: while fetching view more content');
-        await loader.dismiss();
+        this.isLoading = false;
       });
   }
 
@@ -320,9 +322,8 @@ export class ViewMoreActivityComponent implements OnInit {
   /**
    * Get enrolled courses
    */
-  async getEnrolledCourse() {
-    const loader = await this.commonUtilService.getLoader();
-    await loader.present();
+  getEnrolledCourse() {
+    this.isLoading = true;
     this.pageType = 'enrolledCourse';
     const option = {
       userId: this.userId,
@@ -330,16 +331,16 @@ export class ViewMoreActivityComponent implements OnInit {
       returnRefreshedEnrolledCourses: true
     };
     this.courseService.getEnrolledCourses(option).toPromise()
-      .then(async (data: Course[]) => {
+      .then((data: Course[]) => {
         if (data) {
           this.searchList = data;
           this.loadMoreBtn = false;
         }
-        await loader.dismiss();
+        this.isLoading = false;
       })
-      .catch(async (error: any) => {
+      .catch((error: any) => {
         console.error('error while loading enrolled courses', error);
-        await loader.dismiss();
+        this.isLoading = false;
       });
   }
 
@@ -534,7 +535,9 @@ export class ViewMoreActivityComponent implements OnInit {
       if (this.eventSubscription) {
         this.eventSubscription.unsubscribe();
       }
-      this.tabBarElement.style.display = 'flex';
+      if (this.tabBarElement) {
+        this.tabBarElement.style.display = 'flex';
+      }
       this.isLoadMore = false;
       this.showOverlay = false;
       this.backButtonFunc.unsubscribe();
@@ -591,16 +594,9 @@ export class ViewMoreActivityComponent implements OnInit {
     }
   }
 
-  getEnrolledSectionHTMLData(content) {
-    return this.localCourseService.getEnrolledCourseSectionHTMLData(content);
-  }
-
-  getSectionHTMLData(content) {
-    return this.localCourseService.getCourseSectionHTMLData(content);
-  }
-
   getContentImg(content) {
-    return this.commonUtilService.getContentImg(content);
+    const img = this.commonUtilService.getContentImg(content);
+    return img;
   }
 
   openCourseDetails(course) {
