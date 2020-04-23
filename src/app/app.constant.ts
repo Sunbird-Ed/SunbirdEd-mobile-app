@@ -257,7 +257,7 @@ export const appLanguages = [
         name: 'English'
     },
     {
-        label: 'অসমিয়া',
+        label: 'অসমীয়া',
         code: 'as',
         isApplied: false,
         name: 'Assamese'
