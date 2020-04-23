@@ -78,7 +78,7 @@ export class GuestProfilePage implements OnInit {
       this.refreshProfileData(false, false);
     });
 
-    this.events.subscribe(AppGlobalService.USER_INFO_UPDATED, () => {
+    this.events.subscribe(AppGlobalService.PROFILE_OBJ_CHANGED, () => {
       this.refreshProfileData(false, false);
     });
 
