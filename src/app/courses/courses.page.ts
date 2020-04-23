@@ -301,8 +301,6 @@ export class CoursesPage implements OnInit, OnDestroy {
               const courseList: Array<Course> = [];
               for (let count = 0; count < this.enrolledCourses.length; count++){
                 courseList.push(this.enrolledCourses[count]);
-                this.enrolledCourses[count]['info_to_display'] =
-                  this.localCourseService.getEnrolledCourseSectionHTMLData(this.enrolledCourses[count]);
                 this.enrolledCourses[count]['cardImg'] = this.commonUtilService.getContentImg(this.enrolledCourses[count]);
               }
 
@@ -371,8 +369,6 @@ export class CoursesPage implements OnInit, OnDestroy {
           for (let i = 0; i < newSections.length; i++){
             if (newSections[i].contents) {
               for (let j = 0; j < newSections[i].contents.length; j++) {
-                newSections[i].contents[j]['info_to_display'] =
-                  this.localCourseService.getCourseSectionHTMLData(newSections[i].contents[j]);
                 newSections[i].contents[j]['cardImg'] = this.commonUtilService.getContentImg(newSections[i].contents[j]);
               }
             }
