@@ -170,7 +170,6 @@ export class AppComponent implements OnInit, AfterViewInit {
         corRelationList
       );
     }
-
     this.notificationSrc.setupLocalNotification();
 
     this.triggerSignInEvent();
