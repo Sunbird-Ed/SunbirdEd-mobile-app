@@ -849,8 +849,6 @@ export class CoursesPage implements OnInit, OnDestroy {
   }
 
   async checkRetiredOpenBatch(content: any, courseDetails) {
-    this.loader = await this.commonUtilService.getLoader();
-    await this.loader.present();
     let anyRunningBatch = false;
     let retiredBatches: Array<any> = [];
     const enrolledCourses = courseDetails.enrolledCourses || [];
@@ -907,7 +905,6 @@ export class CoursesPage implements OnInit, OnDestroy {
                   Environment.HOME,
                   PageId.CONTENT_DETAIL, undefined,
                   reqvalues);
-                await this.loader.dismiss();
                 const popover = await this.popCtrl.create({
                   component: EnrollmentDetailsComponent,
                   componentProps: {
@@ -920,7 +917,6 @@ export class CoursesPage implements OnInit, OnDestroy {
                 });
                 await popover.present();
               } else {
-                await this.loader.dismiss();
                 this.navigateToDetailPage(content, courseDetails);
               }
             });
@@ -974,10 +970,7 @@ export class CoursesPage implements OnInit, OnDestroy {
       values,
       ContentUtil.generateRollUp(undefined, identifier),
       this.commonUtilService.deDupe(corRelationList, 'type'));
-    if (this.loader) {
-      await this.loader.dismiss();
-    }
-    if (courseDetails.layoutName === ContentCard.LAYOUT_INPROGRESS || content.contentType === ContentType.COURSE) {
+      if (courseDetails.layoutName === ContentCard.LAYOUT_INPROGRESS || content.contentType === ContentType.COURSE) {
       this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], {
         state: {
           content,

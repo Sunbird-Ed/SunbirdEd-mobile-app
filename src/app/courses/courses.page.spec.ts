@@ -722,7 +722,6 @@ describe('CoursesPage', () => {
             coursesPage.checkRetiredOpenBatch(content, courseDetails);
             // assert
             setTimeout(() => {
-                expect(mockCommonUtilService.getLoader).toHaveBeenCalled();
                 done();
             }, 0);
         });
@@ -735,7 +734,6 @@ describe('CoursesPage', () => {
                 present: presentFn,
                 dismiss: dismissFn,
             })) as any;
-            coursesPage.loader = mockCommonUtilService.getLoader;
             const enrolledCourses = [{
                 batch: { status: 1 },
                 cProgress: 80,
@@ -754,7 +752,6 @@ describe('CoursesPage', () => {
             coursesPage.checkRetiredOpenBatch(content, courseDetails);
             // assert
             setTimeout(() => {
-                expect(mockCommonUtilService.getLoader).toHaveBeenCalled();
                 expect(coursesPage.navigateToDetailPage).toHaveBeenCalled();
                 done();
             }, 0);
