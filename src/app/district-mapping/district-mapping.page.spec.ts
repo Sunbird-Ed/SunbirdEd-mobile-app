@@ -335,7 +335,7 @@ describe('DistrictMappingPage', () => {
             expect(mockProfileService.updateServerProfile).toHaveBeenCalledTimes(1);
             expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('PROFILE_UPDATE_SUCCESS');
             expect(mockEvents.publish).toHaveBeenCalledWith('loggedInProfile:update',
-                { firstName: 'sample_name', lastName: '', locationCodes: ['2', '2'], userId: '12345' });
+                { firstName: 'samplename', lastName: '', locationCodes: ['2', '2'], userId: '12345' });
             expect(mockLocation.back).toHaveBeenCalled();
             done();
         }, 1);
