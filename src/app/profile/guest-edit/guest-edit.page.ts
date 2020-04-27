@@ -40,7 +40,7 @@ import {
 import { ContainerService, } from '@app/services/container.services';
 import { AppHeaderService } from '@app/services/app-header.service';
 import { GUEST_STUDENT_TABS, GUEST_TEACHER_TABS, initTabs } from '@app/app/module.service';
-import { PreferenceKey, RouterLinks } from '@app/app/app.constant';
+import { PreferenceKey, RouterLinks, RegexPatterns } from '@app/app/app.constant';
 import { SbGenericPopoverComponent } from '@app/app/components/popups/sb-generic-popover/sb-generic-popover.component';
 import { Location } from '@angular/common';
 import { Observable, merge, Subscription, combineLatest } from 'rxjs';
@@ -538,7 +538,7 @@ export class GuestEditPage implements OnInit, OnDestroy {
     req.subject = formVal.subjects;
     req.medium = formVal.medium;
     req.uid = this.profile.uid;
-    req.handle = formVal.name.trim();
+    req.handle = (formVal.name.replace(RegexPatterns.SPECIALCHARECTERSANDEMOJIS, '')).trim();
     req.profileType = formVal.profileType;
     req.source = this.profile.source;
     req.createdAt = this.profile.createdAt;

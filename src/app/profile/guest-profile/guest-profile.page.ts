@@ -73,7 +73,12 @@ export class GuestProfilePage implements OnInit {
 
     // TODO: Need to make an get Profile user details API call.
     this.refreshProfileData();
+
     this.events.subscribe('refresh:profile', () => {
+      this.refreshProfileData(false, false);
+    });
+
+    this.events.subscribe(AppGlobalService.PROFILE_OBJ_CHANGED, () => {
       this.refreshProfileData(false, false);
     });
 

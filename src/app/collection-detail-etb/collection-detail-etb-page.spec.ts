@@ -105,6 +105,7 @@ describe('collectionDetailEtbPage', () => {
     beforeEach(() => {
         const div = document.createElement('div');
         document.body.appendChild(div);
+        window['scrollWindow'] = { getScrollElement: () => Promise.resolve({ scrollTo: jest.fn() }) };
         collectionDetailEtbPage = new CollectionDetailEtbPage(
             mockContentService as ContentService,
             mockEventBusService as EventsBusService,
@@ -1130,7 +1131,6 @@ describe('collectionDetailEtbPage', () => {
                     classList: clases
                 }
             };
-            window['scrollWindow'] = { getScrollElement: jest.fn(() => Promise.resolve([{}])) };
             document.getElementById = jest.fn(() => ({ scrollIntoView: jest.fn() })) as any;
             mocktextbookTocService.resetTextbookIds = jest.fn();
             mocktelemetryGeneratorService.generateInteractTelemetry = jest.fn();
