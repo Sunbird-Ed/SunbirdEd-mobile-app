@@ -9,13 +9,13 @@ import {
 import { TranslateService } from '@ngx-translate/core';
 import { Network } from '@ionic-native/network/ngx';
 import { WebView } from '@ionic-native/ionic-webview/ngx';
-import { SharedPreferences, ProfileService, Profile, ProfileType, CorrelationData } from 'sunbird-sdk';
+import { SharedPreferences, ProfileService, Profile, ProfileType } from 'sunbird-sdk';
 
 import { PreferenceKey, ProfileConstants } from '@app/app/app.constant';
 import { appLanguages } from '@app/app/app.constant';
 
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
-import { InteractType, InteractSubtype, PageId, Environment, CorReleationDataType } from '@app/services/telemetry-constants';
+import { InteractType, InteractSubtype, PageId, Environment } from '@app/services/telemetry-constants';
 import { SbGenericPopoverComponent } from '@app/app/components/popups/sb-generic-popover/sb-generic-popover.component';
 import { QRAlertCallBack, QRScannerAlert } from '@app/app/qrscanner-alert/qrscanner-alert.page';
 import { Observable, merge } from 'rxjs';
