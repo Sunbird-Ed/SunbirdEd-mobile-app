@@ -427,8 +427,15 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
     if (!this.batches.length) {
       this.commonUtilService.showToast('NO_BATCHES_AVAILABLE');
       return;
-    } else if (this.batches.every(b => b.enrollmentEndDate)) {
-      this.commonUtilService.showToast('COURSE_ENDED', null, null, null, null, this.batchEndDate);
+    } else if (this.batches.every(b => b.enrollmentEndDate && (new Date() > new Date(b.enrollmentEndDate)))) {
+      const lastBatchEndDate = this.batches.reduce((acc, batch) => {
+        if (new Date(acc) < new Date(batch.enrollmentEndDate)) {
+          return batch.enrollmentEndDate;
+        }
+
+        return acc;
+      }, this.batches[0].enrollmentEndDate);
+      this.commonUtilService.showToast('COURSE_ENDED', null, null, null, null, lastBatchEndDate);
       return;
     }
 

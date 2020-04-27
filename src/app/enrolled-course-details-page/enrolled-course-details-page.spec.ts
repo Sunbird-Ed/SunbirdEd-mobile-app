@@ -337,33 +337,31 @@ describe('EnrolledCourseDetailsPage', () => {
         it('should show error toast if all batches have ended', async (done) => {
             // arrange
             enrolledCourseDetailsPage.batches = [{
-                enrollmentEndDate: 'SOME_DATE'
+                enrollmentEndDate: '2020-04-23'
             }, {
-                enrollmentEndDate: 'SOME_DATE'
+                enrollmentEndDate: '2020-04-26'
+            }, {
+                enrollmentEndDate: '2020-04-25'
             }];
-            enrolledCourseDetailsPage.batchEndDate = new Date().toISOString();
             mockCommonUtilService.showToast = jest.fn();
             // act
             await enrolledCourseDetailsPage.joinTraining();
             // assert
-            expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('COURSE_ENDED', null, null, null, null, enrolledCourseDetailsPage.batchEndDate);
+            expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('COURSE_ENDED', null, null, null, null, '2020-04-26');
             done();
         });
 
         it('should show error toast if no internet available', async (done) => {
             // arrange
             enrolledCourseDetailsPage.batches = [{
-                enrollmentEndDate: 'SOME_DATE'
-            }, {
-                enrollmentEndDate: 'SOME_DATE'
+                enrollmentEndDate: new Date(Date.now() + 10000)
             }];
-            enrolledCourseDetailsPage.batchEndDate = new Date().toISOString();
             mockCommonUtilService.networkInfo.isNetworkAvailable = false;
             mockCommonUtilService.showToast = jest.fn();
             // act
             await enrolledCourseDetailsPage.joinTraining();
             // assert
-            expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('COURSE_ENDED', null, null, null, null, enrolledCourseDetailsPage.batchEndDate);
+            expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('ERROR_NO_INTERNET_MESSAGE');
             done();
         });
 
