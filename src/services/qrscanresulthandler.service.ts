@@ -29,6 +29,7 @@ import { NavController, Events } from '@ionic/angular';
 import { AppGlobalService } from './app-global-service.service';
 import { FormAndFrameworkUtilService } from './formandframeworkutil.service';
 import { ContentUtil } from '@app/util/content-util';
+import * as qs from 'qs';
 
 declare var cordova;
 
@@ -106,11 +107,17 @@ export class QRScannerResultHandler {
     this.source = source;
     this.generateQRScanSuccessInteractEvent(scannedData, 'SearchResult', dialCode);
     const telemetryObject = new TelemetryObject(dialCode, 'qr', ' ');
-    let cData: CorrelationData[] = [{
+    const utmUrl = scannedData.slice(scannedData.indexOf('?') + 1);
+    const params: {[param: string]: string} = qs.parse(utmUrl);
+    const cData: CorrelationData[] = [{
       id: CorReleationDataType.SCAN,
       type: CorReleationDataType.ACCESS_TYPE
     }];
-    cData = this.commonUtilService.generateUTMInfoTelemetry(scannedData, cData, telemetryObject);
+
+    ContentUtil.generateUTMInfoTelemetry(params).forEach((element) => {
+      cData.push(element);
+    });
+    this.telemetryGeneratorService.generateUtmInfoTelemetry(params, PageId.QRCodeScanner, cData, telemetryObject);
     const navigationExtras: NavigationExtras = {
       state: {
         dialCode,
@@ -128,18 +135,24 @@ export class QRScannerResultHandler {
     const results = scannedData.split('/');
     const contentId = results[results.length - 1];
     this.generateQRScanSuccessInteractEvent(scannedData, 'ContentDetail', contentId);
+    const utmUrl = scannedData.slice(scannedData.indexOf('?') + 1);
+    const params: {[param: string]: string} = qs.parse(utmUrl);
+    const cData: CorrelationData[] = [{
+      id: CorReleationDataType.SCAN,
+      type: CorReleationDataType.ACCESS_TYPE
+    }];
+
+    ContentUtil.generateUTMInfoTelemetry(params).forEach((element) => {
+      cData.push(element);
+    });
     const request: ContentDetailRequest = {
       contentId
     };
-
     this.contentService.getContentDetails(request).toPromise()
       .then((content: Content) => {
         const telemetryObject = new TelemetryObject(content.identifier, content.contentData.contentType, content.contentData.pkgVersion);
-        let cData: CorrelationData[] = [{
-          id: CorReleationDataType.SCAN,
-          type: CorReleationDataType.ACCESS_TYPE
-        }];
-        cData = this.commonUtilService.generateUTMInfoTelemetry(scannedData, cData, telemetryObject);
+        this.telemetryGeneratorService.generateUtmInfoTelemetry(params, PageId.QRCodeScanner, cData, telemetryObject);
+
         this.navigateToDetailsPage(content,
           this.getCorRelationList(content.identifier, QRScannerResultHandler.CORRELATION_TYPE, scannedData, cData));
         this.telemetryGeneratorService.generateImpressionTelemetry(

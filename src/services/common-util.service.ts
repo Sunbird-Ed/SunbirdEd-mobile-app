@@ -461,34 +461,6 @@ export class CommonUtilService {
             });
     }
 
-    generateUTMInfoTelemetry(scannedData, cData, object) {
-        const utmHashes = scannedData.slice(scannedData.indexOf('?') + 1).split('&');
-        const params: {[param: string]: string} = {};
-        const utmParams = {};
-        utmHashes.map(hash => {
-            const [key, val] = hash.split('=');
-            params[key] = decodeURIComponent(val);
-        });
-        Object.entries(params).forEach(([key, value]) => {
-            const chengeKeyUpperCase = key.split('_').map((elem) => {
-              return (elem.charAt(0).toUpperCase() + elem.slice(1));
-               });
-
-            utmParams[chengeKeyUpperCase.join('')] = decodeURIComponent(value);
-        });
-        if (Object.keys(utmParams)) {
-          Object.keys(utmParams).map((key) => {
-            if (utmParams[key] !== undefined) {
-              cData.push({id: key, type: utmParams[key]});
-            }
-        });
-    }
-        this.telemetryGeneratorService.generateUtmInfoTelemetry(params,
-            (cData[0].id === CorReleationDataType.SCAN) ? PageId.QRCodeScanner : PageId.HOME, cData, object);
-
-        return cData;
-    }
-
     getFormattedDate(date: string|Date) {
         const inputDate = new Date(date).toDateString();
         const [, month, day, year] = inputDate.split(' ');

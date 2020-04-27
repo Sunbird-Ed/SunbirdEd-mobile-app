@@ -1,4 +1,4 @@
-import { Rollup, Content, ContentData, TelemetryObject } from 'sunbird-sdk';
+import { Rollup, Content, ContentData, TelemetryObject, CorrelationData } from 'sunbird-sdk';
 export class ContentUtil {
 
 
@@ -116,5 +116,27 @@ export class ContentUtil {
       }
       return '';
   }
+
+
+  public static generateUTMInfoTelemetry(params: {[param: string]: string}): CorrelationData[] {
+    const utmParams = {};
+    const cData: CorrelationData[] = [];
+    Object.entries(params).forEach(([key, value]) => {
+        const chengeKeyUpperCase = key.split('_').map((elem) => {
+            return (elem.charAt(0).toUpperCase() + elem.slice(1));
+        });
+
+        utmParams[chengeKeyUpperCase.join('')] = decodeURIComponent(value);
+    });
+    if (Object.keys(utmParams)) {
+        Object.keys(utmParams).map((key) => {
+            if (utmParams[key] !== undefined) {
+                cData.push({ id: key, type: utmParams[key] });
+            }
+        });
+    }
+
+    return cData;
+}
 
 }

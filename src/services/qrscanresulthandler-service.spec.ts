@@ -30,6 +30,7 @@ describe('QRScannerResultHandler', () => {
     generateInteractTelemetry: jest.fn(),
     generateImpressionTelemetry: jest.fn(),
     generateEndTelemetry: jest.fn(),
+    generateUtmInfoTelemetry: jest.fn()
   };
 
   const mockRouter: Partial<Router> = {
@@ -149,16 +150,18 @@ describe('QRScannerResultHandler', () => {
   describe('handleDialCode()', () => {
     it('should navigate to Search page if the scanned data is a dialocde link', () => {
       // arrange
-      mockCommonUtilService.generateUTMInfoTelemetry = jest.fn();
+      mockTelemetryGeneratorService.generateUtmInfoTelemetry = jest.fn();
       // act
       qRScannerResultHandler.handleDialCode('profile-settings',
         'https://sunbirded.org/get/dial/ABCDEF', 'ABCDEF');
-      mockCommonUtilService.generateUTMInfoTelemetry = jest.fn(() => [{id: 'whatsApp', type: 'content'}]);
       // assert
       expect(mockNavController.navigateForward).toHaveBeenCalledWith(['/search'], {
         state: {
           dialCode: 'ABCDEF',
-          corRelation: [{ id: 'ABCDEF', type: 'qr' }, {id: 'https://sunbirded.org', type: 'Source'}],
+          corRelation: [{ id: 'ABCDEF', type: 'qr' },
+           {id: 'https://sunbirded.org', type: 'Source'},
+           {id: 'Scan', type: 'AccessType'},
+           {id: 'Https://sunbirded.org/get/dial/ABCDEF', type: ''}],
           source: 'profile-settings',
           shouldGenerateEndTelemetry: true
         }
@@ -196,9 +199,10 @@ describe('QRScannerResultHandler', () => {
         expect(mockRouter.navigate).toHaveBeenCalledWith(['/content-details'], {
           state: {
             content,
-            corRelation: [{id: 'do_12345', type: 'qr'},
-            { id: 'https://sunbirded.org', type: 'Source' },
-            {id: 'whatsApp', type: 'content'}],
+            corRelation: [{ id: 'do_12345', type: 'qr' },
+            {id: 'https://sunbirded.org', type: 'Source'},
+            {id: 'Scan', type: 'AccessType'},
+            {id: 'Https://sunbirded.org/resources/play/content/do12345', type: ''}],
             source: 'profile-settings',
             shouldGenerateEndTelemetry: true
           }
@@ -242,7 +246,8 @@ describe('QRScannerResultHandler', () => {
             content,
             corRelation: [{ id: 'do_12345', type: 'qr' },
             {id: 'https://sunbirded.org', type: 'Source'},
-            {id: 'whatsApp', type: 'content'}],
+            {id: 'Scan', type: 'AccessType'},
+            {id: 'Https://sunbirded.org/resources/play/collection/do12345', type: ''}],
             source: 'profile-settings',
             shouldGenerateEndTelemetry: true
           }
@@ -286,7 +291,8 @@ describe('QRScannerResultHandler', () => {
             content,
             corRelation: [{ id: 'do_12345', type: 'qr' },
             {id: 'https://sunbirded.org', type: 'Source'},
-            {id: 'whatsApp', type: 'content'}],
+            {id: 'Scan', type: 'AccessType'},
+            {id: 'Https://sunbirded.org/learn/course/do12345', type: ''}],
             source: 'profile-settings',
             shouldGenerateEndTelemetry: true
           }

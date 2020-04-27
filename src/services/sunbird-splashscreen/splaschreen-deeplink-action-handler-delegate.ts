@@ -3,7 +3,7 @@ import { Inject, Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { Events, PopoverController } from '@ionic/angular';
 import { Observable, of } from 'rxjs';
-import { 
+import {
   PageAssembleService,
   FrameworkService,
   ContentService,
@@ -39,6 +39,7 @@ import { ExternalChannelOverrideListener } from './external-channel-override-int
 import { initTabs, GUEST_TEACHER_TABS } from '@app/app/module.service';
 import { ContainerService } from '../container.services';
 import { ContentUtil } from '@app/util/content-util';
+import * as qs from 'qs';
 
 @Injectable()
 export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenActionHandlerDelegate, ExternalChannelOverrideListener {
@@ -48,7 +49,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
   private isOnboardingCompleted = false;
   private loginPopup: any;
   private currentAppVersionCode: number;
-  cData = [];
+  cData: Array<CorrelationData> = [];
 
   // should delay the deeplinks until tabs is loaded- gets triggered from Resource components
   set isDelegateReady(val: boolean) {
@@ -412,13 +413,19 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
     }
 
     const telemetryObject = new TelemetryObject(identifier ? identifier : dialCode, identifier ? 'Content' : 'qr', undefined);
-    let cData: CorrelationData[] = [{
+    const utmUrl = url.slice(url.indexOf('?') + 1);
+    const params: {[param: string]: string} = qs.parse(utmUrl);
+    const utmcData: CorrelationData[] = [{
       id: CorReleationDataType.DEEPLINK,
       type: CorReleationDataType.ACCESS_TYPE
     }];
-    cData = this.commonUtilService.generateUTMInfoTelemetry(url, cData, telemetryObject);
 
-    return cData;
+    ContentUtil.generateUTMInfoTelemetry(params).forEach((element) => {
+      utmcData.push(element);
+    });
+    this.telemetryGeneratorService.generateUtmInfoTelemetry(params, PageId.HOME, utmcData, telemetryObject);
+
+    return utmcData;
   }
 
   private async checkCourseChannelSlug(payload, urlMatch) {
