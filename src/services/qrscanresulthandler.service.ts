@@ -105,21 +105,21 @@ export class QRScannerResultHandler {
   handleDialCode(source: string, scannedData, dialCode: string) {
     this.source = source;
     this.generateQRScanSuccessInteractEvent(scannedData, 'SearchResult', dialCode);
-
+    const telemetryObject = new TelemetryObject(dialCode, 'qr', ' ');
+    let cData: CorrelationData[] = [{
+      id: CorReleationDataType.SCAN,
+      type: CorReleationDataType.ACCESS_TYPE
+    }];
+    cData = this.commonUtilService.generateUTMInfoTelemetry(scannedData, cData, telemetryObject);
     const navigationExtras: NavigationExtras = {
       state: {
         dialCode,
-        corRelation: this.getCorRelationList(dialCode, QRScannerResultHandler.CORRELATION_TYPE, scannedData),
+        corRelation: this.getCorRelationList(dialCode, QRScannerResultHandler.CORRELATION_TYPE, scannedData, cData),
         source: this.source,
         shouldGenerateEndTelemetry: true
       }
     };
-    const telemetryObject = new TelemetryObject(dialCode, 'qr', ' ');
-    const cData: CorrelationData[] = [{
-      id: CorReleationDataType.SCAN,
-      type: CorReleationDataType.ACCESS_TYPE
-    }];
-    this.commonUtilService.generateUTMInfoTelemetry(scannedData, cData, telemetryObject);
+
     this.navCtrl.navigateForward([`/${RouterLinks.SEARCH}`], navigationExtras);
   }
 
@@ -134,20 +134,20 @@ export class QRScannerResultHandler {
 
     this.contentService.getContentDetails(request).toPromise()
       .then((content: Content) => {
+        const telemetryObject = new TelemetryObject(content.identifier, content.contentData.contentType, content.contentData.pkgVersion);
+        let cData: CorrelationData[] = [{
+          id: CorReleationDataType.SCAN,
+          type: CorReleationDataType.ACCESS_TYPE
+        }];
+        cData = this.commonUtilService.generateUTMInfoTelemetry(scannedData, cData, telemetryObject);
         this.navigateToDetailsPage(content,
-          this.getCorRelationList(content.identifier, QRScannerResultHandler.CORRELATION_TYPE, scannedData));
+          this.getCorRelationList(content.identifier, QRScannerResultHandler.CORRELATION_TYPE, scannedData, cData));
         this.telemetryGeneratorService.generateImpressionTelemetry(
           ImpressionType.VIEW, ImpressionSubtype.QR_CODE_VALID,
           PageId.QRCodeScanner,
           Environment.HOME,
           contentId, ObjectType.QR, ''
         );
-        const telemetryObject = new TelemetryObject(content.identifier, content.contentData.contentType, content.contentData.pkgVersion);
-        const cData: CorrelationData[] = [{
-          id: CorReleationDataType.SCAN,
-          type: CorReleationDataType.ACCESS_TYPE
-        }];
-        this.commonUtilService.generateUTMInfoTelemetry(scannedData, cData, telemetryObject);
       }).catch(() => {
         if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
           this.commonUtilService.showToast('ERROR_NO_INTERNET_MESSAGE');
@@ -187,7 +187,7 @@ export class QRScannerResultHandler {
     this.generateEndEvent(this.source, scannedData);
   }
 
-  getCorRelationList(identifier: string, type: string, scannedData): Array<CorrelationData> {
+  getCorRelationList(identifier: string, type: string, scannedData, cData): Array<CorrelationData> {
     const corRelationList: Array<CorrelationData> = new Array<CorrelationData>();
     const corRelation: CorrelationData = new CorrelationData();
     corRelation.id = identifier;
@@ -197,6 +197,11 @@ export class QRScannerResultHandler {
       id: ContentUtil.extractBaseUrl(scannedData),
       type: CorReleationDataType.SOURCE
     });
+    if (cData) {
+     cData.forEach(element => {
+       corRelationList.push(element);
+     });
+    }
     return corRelationList;
   }
 

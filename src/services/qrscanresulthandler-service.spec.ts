@@ -153,6 +153,7 @@ describe('QRScannerResultHandler', () => {
       // act
       qRScannerResultHandler.handleDialCode('profile-settings',
         'https://sunbirded.org/get/dial/ABCDEF', 'ABCDEF');
+      mockCommonUtilService.generateUTMInfoTelemetry = jest.fn(() => [{id: 'whatsApp', type: 'content'}]);
       // assert
       expect(mockNavController.navigateForward).toHaveBeenCalledWith(['/search'], {
         state: {
@@ -185,6 +186,7 @@ describe('QRScannerResultHandler', () => {
       // act
       qRScannerResultHandler.handleContentId('profile-settings',
         'https://sunbirded.org/resources/play/content/do_12345');
+      mockCommonUtilService.generateUTMInfoTelemetry = jest.fn(() => [{id: 'whatsApp', type: 'content'}]);
       // assert
       const values = new Map();
       values['networkAvailable'] = 'Y';
@@ -194,7 +196,9 @@ describe('QRScannerResultHandler', () => {
         expect(mockRouter.navigate).toHaveBeenCalledWith(['/content-details'], {
           state: {
             content,
-            corRelation: [{id: 'do_12345', type: 'qr'}, { id: 'https://sunbirded.org', type: 'Source' }],
+            corRelation: [{id: 'do_12345', type: 'qr'},
+            { id: 'https://sunbirded.org', type: 'Source' },
+            {id: 'whatsApp', type: 'content'}],
             source: 'profile-settings',
             shouldGenerateEndTelemetry: true
           }
@@ -226,6 +230,7 @@ describe('QRScannerResultHandler', () => {
       // act
       qRScannerResultHandler.handleContentId('profile-settings',
         'https://sunbirded.org/resources/play/collection/do_12345');
+      mockCommonUtilService.generateUTMInfoTelemetry = jest.fn(() => [{id: 'whatsApp', type: 'content'}])
       // assert
       const values = new Map();
       values['networkAvailable'] = 'Y';
@@ -235,7 +240,9 @@ describe('QRScannerResultHandler', () => {
         expect(mockRouter.navigate).toHaveBeenCalledWith(['/collection-detail-etb'], {
           state: {
             content,
-            corRelation: [{ id: 'do_12345', type: 'qr' }, {id: 'https://sunbirded.org', type: 'Source'}],
+            corRelation: [{ id: 'do_12345', type: 'qr' },
+            {id: 'https://sunbirded.org', type: 'Source'},
+            {id: 'whatsApp', type: 'content'}],
             source: 'profile-settings',
             shouldGenerateEndTelemetry: true
           }
@@ -267,6 +274,7 @@ describe('QRScannerResultHandler', () => {
       // act
       qRScannerResultHandler.handleContentId('profile-settings',
         'https://sunbirded.org/learn/course/do_12345');
+      mockCommonUtilService.generateUTMInfoTelemetry = jest.fn(() => [{id: 'whatsApp', type: 'content'}])
       // assert
       const values = new Map();
       values['networkAvailable'] = 'Y';
@@ -276,7 +284,9 @@ describe('QRScannerResultHandler', () => {
         expect(mockRouter.navigate).toHaveBeenCalledWith(['/enrolled-course-details'], {
           state: {
             content,
-            corRelation: [{ id: 'do_12345', type: 'qr' }, {id: 'https://sunbirded.org', type: 'Source'}],
+            corRelation: [{ id: 'do_12345', type: 'qr' },
+            {id: 'https://sunbirded.org', type: 'Source'},
+            {id: 'whatsApp', type: 'content'}],
             source: 'profile-settings',
             shouldGenerateEndTelemetry: true
           }

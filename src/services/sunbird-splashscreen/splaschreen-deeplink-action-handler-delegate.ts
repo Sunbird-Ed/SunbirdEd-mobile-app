@@ -48,6 +48,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
   private isOnboardingCompleted = false;
   private loginPopup: any;
   private currentAppVersionCode: number;
+  cData = [];
 
   // should delay the deeplinks until tabs is loaded- gets triggered from Resource components
   set isDelegateReady(val: boolean) {
@@ -97,7 +98,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
 
     const payload = { url };
 
-    this.generateUtmTelemetryEvent(urlMatch, dialCode, url);
+    this.cData = this.generateUtmTelemetryEvent(urlMatch, dialCode, url);
 
     // checks if the channel slug is present, else the normal deeplink flow executes
     if (await this.checkCourseChannelSlug(payload, urlMatch)) {
@@ -411,11 +412,13 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
     }
 
     const telemetryObject = new TelemetryObject(identifier ? identifier : dialCode, identifier ? 'Content' : 'qr', undefined);
-    const cData: CorrelationData[] = [{
+    let cData: CorrelationData[] = [{
       id: CorReleationDataType.DEEPLINK,
       type: CorReleationDataType.ACCESS_TYPE
     }];
-    this.commonUtilService.generateUTMInfoTelemetry(url, cData, telemetryObject);
+    cData = this.commonUtilService.generateUTMInfoTelemetry(url, cData, telemetryObject);
+
+    return cData;
   }
 
   private async checkCourseChannelSlug(payload, urlMatch) {
@@ -606,6 +609,11 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
       id: ContentUtil.extractBaseUrl(source),
       type: CorReleationDataType.SOURCE
     }];
+    if (this.cData) {
+      this.cData.forEach(element => {
+        corRelationList.push(element);
+      });
+    }
     return corRelationList;
   }
 
