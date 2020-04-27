@@ -67,6 +67,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   appName: string;
   appVersion: string;
   @ViewChild('mainContent', { read: IonRouterOutlet }) routerOutlet: IonRouterOutlet;
+  isForeground: boolean;
 
   constructor(
     @Inject('TELEMETRY_SERVICE') private telemetryService: TelemetryService,
@@ -351,6 +352,9 @@ export class AppComponent implements OnInit, AfterViewInit {
         this.events.publish('notification-status:update', { isUnreadNotifications: true });
       });
       this.notificationSrc.setNotificationDetails(data);
+      if (this.isForeground) {
+        this.notificationSrc.handleNotification();
+      }
     },
       (success) => {
         console.log('Notification Sucess Callback', success);
@@ -412,10 +416,13 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.telemetryGeneratorService.generateInterruptTelemetry('resume', '');
       this.splashScreenService.handleSunbirdSplashScreenActions();
       this.checkForCodeUpdates();
+      this.notificationSrc.handleNotification();
+      this.isForeground = true;
     });
 
     this.platform.pause.subscribe(() => {
       this.telemetryGeneratorService.generateInterruptTelemetry('background', '');
+      this.isForeground = false;
     });
   }
 
