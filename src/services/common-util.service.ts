@@ -70,12 +70,20 @@ export class CommonUtilService {
         );
     }
 
-    showToast(translationKey, isInactive?, cssToast?, duration?, position?) {
+    showToast(translationKey, isInactive?, cssToast?, duration?, position?, fields?: string | any) {
         if (Boolean(isInactive)) {
             return;
         }
 
-        this.translate.get(translationKey).subscribe(
+        let replaceObject: any = '';
+
+        if (typeof (fields) === 'object') {
+            replaceObject = fields;
+        } else {
+            replaceObject = { '%s': fields };
+        }
+
+        this.translate.get(translationKey, replaceObject).subscribe(
             async (translatedMsg: any) => {
                 const toastOptions = {
                     message: translatedMsg,

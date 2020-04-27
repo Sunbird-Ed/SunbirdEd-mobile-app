@@ -424,6 +424,19 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
   }
 
   async joinTraining() {
+    if (!this.batches.length) {
+      this.commonUtilService.showToast('NO_BATCHES_AVAILABLE');
+      return;
+    } else if (this.batches.every(b => b.enrollmentEndDate)) {
+      this.commonUtilService.showToast('COURSE_ENDED', null, null, null, null, this.batchEndDate);
+      return;
+    }
+
+    if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
+      this.commonUtilService.showToast('ERROR_NO_INTERNET_MESSAGE');
+      return;
+    }
+
     const confirm = await this.popoverCtrl.create({
       component: SbPopoverComponent,
       componentProps: {
