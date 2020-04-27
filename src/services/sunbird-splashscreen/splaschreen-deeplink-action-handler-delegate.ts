@@ -49,7 +49,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
   private isOnboardingCompleted = false;
   private loginPopup: any;
   private currentAppVersionCode: number;
-  cData: Array<CorrelationData> = [];
+  private cData: Array<CorrelationData> = [];
 
   // should delay the deeplinks until tabs is loaded- gets triggered from Resource components
   set isDelegateReady(val: boolean) {
@@ -420,7 +420,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
       type: CorReleationDataType.ACCESS_TYPE
     }];
 
-    ContentUtil.generateUTMInfoTelemetry(params).forEach((element) => {
+    ContentUtil.genrateUTMCData(params).forEach((element) => {
       utmcData.push(element);
     });
     this.telemetryGeneratorService.generateUtmInfoTelemetry(params, PageId.HOME, utmcData, telemetryObject);

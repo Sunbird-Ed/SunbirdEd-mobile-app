@@ -189,7 +189,6 @@ describe('QRScannerResultHandler', () => {
       // act
       qRScannerResultHandler.handleContentId('profile-settings',
         'https://sunbirded.org/resources/play/content/do_12345');
-      mockCommonUtilService.generateUTMInfoTelemetry = jest.fn(() => [{id: 'whatsApp', type: 'content'}]);
       // assert
       const values = new Map();
       values['networkAvailable'] = 'Y';
@@ -234,7 +233,6 @@ describe('QRScannerResultHandler', () => {
       // act
       qRScannerResultHandler.handleContentId('profile-settings',
         'https://sunbirded.org/resources/play/collection/do_12345');
-      mockCommonUtilService.generateUTMInfoTelemetry = jest.fn(() => [{id: 'whatsApp', type: 'content'}])
       // assert
       const values = new Map();
       values['networkAvailable'] = 'Y';
@@ -279,7 +277,6 @@ describe('QRScannerResultHandler', () => {
       // act
       qRScannerResultHandler.handleContentId('profile-settings',
         'https://sunbirded.org/learn/course/do_12345');
-      mockCommonUtilService.generateUTMInfoTelemetry = jest.fn(() => [{id: 'whatsApp', type: 'content'}])
       // assert
       const values = new Map();
       values['networkAvailable'] = 'Y';

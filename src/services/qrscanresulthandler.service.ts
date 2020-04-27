@@ -114,7 +114,7 @@ export class QRScannerResultHandler {
       type: CorReleationDataType.ACCESS_TYPE
     }];
 
-    ContentUtil.generateUTMInfoTelemetry(params).forEach((element) => {
+    ContentUtil.genrateUTMCData(params).forEach((element) => {
       cData.push(element);
     });
     this.telemetryGeneratorService.generateUtmInfoTelemetry(params, PageId.QRCodeScanner, cData, telemetryObject);
@@ -142,7 +142,7 @@ export class QRScannerResultHandler {
       type: CorReleationDataType.ACCESS_TYPE
     }];
 
-    ContentUtil.generateUTMInfoTelemetry(params).forEach((element) => {
+    ContentUtil.genrateUTMCData(params).forEach((element) => {
       cData.push(element);
     });
     const request: ContentDetailRequest = {

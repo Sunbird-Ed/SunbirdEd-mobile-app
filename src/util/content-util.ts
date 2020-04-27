@@ -118,7 +118,7 @@ export class ContentUtil {
   }
 
 
-  public static generateUTMInfoTelemetry(params: {[param: string]: string}): CorrelationData[] {
+  public static genrateUTMCData(params: {[param: string]: string}): CorrelationData[] {
     const utmParams = {};
     const cData: CorrelationData[] = [];
     Object.entries(params).forEach(([key, value]) => {

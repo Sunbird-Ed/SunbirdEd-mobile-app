@@ -773,7 +773,7 @@ export class AppComponent implements OnInit, AfterViewInit {
           let cData: CorrelationData[] = [];
           const utmValue = response['val'];
           const params: {[param: string]: string} = qs.parse(utmValue);
-          cData = ContentUtil.generateUTMInfoTelemetry(params);
+          cData = ContentUtil.genrateUTMCData(params);
           try {
             const url: URL = new URL(params['utm_content']);
             const overrideChannelSlug = url.searchParams.get('channel');

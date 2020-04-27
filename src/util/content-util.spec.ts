@@ -89,7 +89,7 @@ describe('ContentUtil', () => {
         });
     });
 
-    describe('generateUTMInfoTelemetry', () => {
+    describe('genrateUTMCData', () => {
         it('should return utm parameter', () => {
           // arrange
           const value = {
@@ -99,7 +99,7 @@ describe('ContentUtil', () => {
 
           // act
           // assert
-          expect(ContentUtil.generateUTMInfoTelemetry(value)).toEqual([{
+          expect(ContentUtil.genrateUTMCData(value)).toEqual([{
               id: 'UtmSource',
               type: 'whatsApp'
           }, {
