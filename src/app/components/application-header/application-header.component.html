@@ -123,6 +123,13 @@
         <span class="sb-menu-item" menuClose>{{'SETTINGS' | translate}}</span>
       </ion-item>
 
+      <ion-item (click)="emitSideMenuItemEvent($event, 'TEST')">
+        <span class="sb-menu-icon">
+          <img src="./assets/imgs/Settings.png" class="tool-icon" alt="app settings">
+        </span>
+        <span class="sb-menu-item" menuClose>test</span>
+      </ion-item>
+
       <ion-item (click)="emitSideMenuItemEvent($event, 'HELP')">
         <span class="sb-menu-icon">
           <img src="./assets/imgs/Help.png" class="tool-icon" alt="help">
@@ -186,6 +193,13 @@
           <img src="./assets/imgs/Settings.png" class="tool-icon" alt="app settings">
         </span>
         <span class="sb-menu-item" menuClose>{{'SETTINGS' | translate}}</span>
+      </ion-item>
+
+      <ion-item (click)="emitSideMenuItemEvent($event, 'TEST')">
+        <span class="sb-menu-icon">
+          <img src="./assets/imgs/Settings.png" class="tool-icon" alt="app settings">
+        </span>
+        <span class="sb-menu-item" menuClose>test</span>
       </ion-item>
 
       <ion-item (click)="emitSideMenuItemEvent($event, 'HELP')">

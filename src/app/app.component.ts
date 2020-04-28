@@ -41,6 +41,7 @@ import { TncUpdateHandlerService } from '@app/services/handlers/tnc-update-handl
 import { NetworkAvailabilityToastService } from '@app/services/network-availability-toast/network-availability-toast.service';
 import { SplaschreenDeeplinkActionHandlerDelegate } from '@app/services/sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
 import * as qs from 'qs';
+import {SbProgressLoader} from 'sb-progress-loader.service.ts';
 
 declare const cordova;
 
@@ -101,7 +102,8 @@ export class AppComponent implements OnInit, AfterViewInit {
     private networkAvailability: NetworkAvailabilityToastService,
     private splashScreenService: SplashScreenService,
     private localCourseService: LocalCourseService,
-    private splaschreenDeeplinkActionHandlerDelegate: SplaschreenDeeplinkActionHandlerDelegate
+    private splaschreenDeeplinkActionHandlerDelegate: SplaschreenDeeplinkActionHandlerDelegate,
+    private sbProgressLoader: SbProgressLoader
   ) {
     this.telemetryAutoSync = this.telemetryService.autoSync;
   }
@@ -708,6 +710,10 @@ export class AppComponent implements OnInit, AfterViewInit {
           Environment.USER,
           PageId.PROFILE);
         this.router.navigate([`/${RouterLinks.SETTINGS}`]);
+        break;
+      }
+      case 'TEST' : {
+        this.sbProgressLoader.show();
         break;
       }
       case 'LANGUAGE': {
