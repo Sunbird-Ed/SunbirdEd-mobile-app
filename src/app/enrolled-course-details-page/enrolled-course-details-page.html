@@ -31,9 +31,16 @@
 					</div>
 				</div>
 				<div class="sb-course-end-container"
-					*ngIf="(batches && !isAlreadyEnrolled && !batches.length) || (batches && !isAlreadyEnrolled && batches.length === 1 && (todayDate > batches[0].enrollmentEndDate))">
+					*ngIf="batches && !isAlreadyEnrolled && !batches.length">
 					<p class="main-heading">
-						<strong>{{'COURSE_ENDED'  | translate : {'%s': enrollmentEndDate ? (enrollmentEndDate | date) : ''} }}</strong>
+						<strong>{{'NO_BATCHES_AVAILABLE'  | translate}}</strong>
+					</p>
+					<p class="sub-heading">{{'THERE_ARE_NO_BATCHES_AVAILABLE_FOR_THIS_TRAINING' | translate}}</p>
+				</div>
+				<div class="sb-course-end-container"
+					 *ngIf="batches && !isAlreadyEnrolled && batches.length === 1 && (todayDate > batches[0].enrollmentEndDate)">
+					<p class="main-heading">
+						<strong>{{'ENROLLMENT_ENDED_ON'  | translate : {'%s': enrollmentEndDate ? (enrollmentEndDate | date) : ''} }}</strong>
 					</p>
 					<p class="sub-heading">{{'THERE_ARE_NO_BATCHES_AVAILABLE_FOR_THIS_TRAINING' | translate}}</p>
 				</div>
