@@ -85,7 +85,10 @@ describe('EnrolledCourseDetailsPage', () => {
 
     const mockCommonUtilService: Partial<CommonUtilService> = {
         deDupe: jest.fn(),
-        translateMessage: jest.fn()
+        translateMessage: jest.fn(),
+        networkInfo: {
+            isNetworkAvailable: true
+        }
     };
     const mockDatePipe: Partial<DatePipe> = {};
     const mockUtilityService: Partial<UtilityService> = {};
@@ -139,6 +142,8 @@ describe('EnrolledCourseDetailsPage', () => {
     beforeEach(() => {
         jest.clearAllMocks();
         jest.restoreAllMocks();
+
+        mockCommonUtilService.networkInfo.isNetworkAvailable = true;
     });
 
     describe('enrolledCourseDetailsPage', () => {
@@ -318,6 +323,48 @@ describe('EnrolledCourseDetailsPage', () => {
     });
 
     describe('joinTraining()', () => {
+        it('should show error toast if no batches available', async (done) => {
+            // arrange
+            enrolledCourseDetailsPage.batches = [];
+            mockCommonUtilService.showToast = jest.fn();
+            // act
+            await enrolledCourseDetailsPage.joinTraining();
+            // assert
+            expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('NO_BATCHES_AVAILABLE');
+            done();
+        });
+
+        it('should show error toast if all batches have ended', async (done) => {
+            // arrange
+            enrolledCourseDetailsPage.batches = [{
+                enrollmentEndDate: '2020-04-23'
+            }, {
+                enrollmentEndDate: '2020-04-26'
+            }, {
+                enrollmentEndDate: '2020-04-25'
+            }];
+            mockCommonUtilService.showToast = jest.fn();
+            // act
+            await enrolledCourseDetailsPage.joinTraining();
+            // assert
+            expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('COURSE_ENDED', null, null, null, null, '2020-04-26');
+            done();
+        });
+
+        it('should show error toast if no internet available', async (done) => {
+            // arrange
+            enrolledCourseDetailsPage.batches = [{
+                enrollmentEndDate: new Date(Date.now() + 10000)
+            }];
+            mockCommonUtilService.networkInfo.isNetworkAvailable = false;
+            mockCommonUtilService.showToast = jest.fn();
+            // act
+            await enrolledCourseDetailsPage.joinTraining();
+            // assert
+            expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('ERROR_NO_INTERNET_MESSAGE');
+            done();
+        });
+
         it('should be joined training for logged in user', async (done) => {
             // arrange
             mockPopoverCtrl.create = jest.fn(() => (Promise.resolve({
@@ -326,8 +373,10 @@ describe('EnrolledCourseDetailsPage', () => {
             } as any)));
             mockCourseService.getBatchDetails = jest.fn(() => of(enrolledCourseDetailsPage.batchDetails));
             mockCommonUtilService.translateMessage = jest.fn(() => '');
+            mockCommonUtilService.networkInfo.isNetworkAvailable = true;
             spyOn(enrolledCourseDetailsPage, 'navigateToBatchListPage').and.stub();
             spyOn(mockCourseService, 'getBatchDetails').and.stub();
+            enrolledCourseDetailsPage.batches = [{}, {}];
             // act
             enrolledCourseDetailsPage.joinTraining();
             // assert
