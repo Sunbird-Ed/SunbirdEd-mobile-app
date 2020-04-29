@@ -1,39 +1,83 @@
 import {Injectable} from '@angular/core';
 import {ModalController} from '@ionic/angular';
 import {SbProgressLoaderPage} from '@app/app/components/popups/sb-progress-loader/sb-progress-loader.page';
+import {BehaviorSubject} from 'rxjs';
+
+interface Context {
+    id: string;
+    ignoreTelemetry?: {
+        when: {
+            [key: string]: RegExp
+        };
+    };
+}
 
 @Injectable({
     providedIn: 'root'
 })
 export class SbProgressLoader {
-    private modal?;
-    private progress = 0;
+    private modal?: HTMLIonModalElement;
+    private progress: BehaviorSubject<number> = BehaviorSubject(0);
+
+    readonly contexts =  new Map<string, Context>();
 
     constructor(
         private modalCtrl: ModalController
     ) {
     }
 
-    async show() {
-        this.progress = 0;
-        this.modal = await this.modalCtrl.create({
-            component: SbProgressLoaderPage,
-            componentProps: {
-                data: 'sample_data',
+    show(context: Context = { id: 'DEFAULT' }) {
+        (async () => {
+            this.contexts.set(context.id, context);
+
+            if (this.modal) {
+                return;
             }
-        });
-        this.modal.present();
+
+            this.progress.next(0);
+
+            this.modal = await this.modalCtrl.create({
+                component: SbProgressLoaderPage,
+                componentProps: {
+                    progress: this.progress.asObservable(),
+                }
+            });
+
+            await this.modal.present();
+
+            setTimeout(() => {
+                this.hide(context);
+            }, 30 * 1000);
+        })();
     }
 
     updateProgress(progress: number) {
-        if (progress >= this.progress && progress <= 100) {
-            this.progress = progress;
+        if (!this.modal) {
+            return;
         }
-        console.log('checkProgressStatus');
+
+        if (progress >= this.progress && progress <= 100) {
+            this.progress.next(progress);
+        }
     }
 
-    hide() {
-        this.progress = 100;
-        this.modal.dismiss();
+    hide(context: Context = { id: 'DEFAULT' }) {
+        (async () => {
+            if (!this.contexts.has(context.id)) {
+                return;
+            }
+
+            this.contexts.delete(context.id);
+
+            if (!this.modal || this.contexts.size) {
+                return;
+            }
+
+            this.progress.next(100);
+
+            setTimeout(() => {
+                this.modal.dismiss();
+            }, 250);
+        })();
     }
 }

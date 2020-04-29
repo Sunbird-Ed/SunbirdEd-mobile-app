@@ -1,5 +1,6 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import {ModalController, NavParams} from '@ionic/angular';
+import {Observable} from 'rxjs';
 
 @Component({
     selector: 'app-sb-progress-loader',
@@ -7,23 +8,12 @@ import {ModalController, NavParams} from '@ionic/angular';
     styleUrls: ['./sb-progress-loader.page.scss'],
 })
 export class SbProgressLoaderPage implements OnInit {
-    private readonly testData;
+    @Input('progress')
+    public progress$: Observable<number>;
 
-    constructor(
-        private navParams: NavParams,
-        private modalController: ModalController
-    ) {
-       this.testData = this.navParams.get('dataSent');
+    constructor() {
     }
 
     ngOnInit() {
-    }
-
-    async close() {
-        this.modalController.dismiss(this.testData);
-    }
-
-    async setProgress() {
-
     }
 }
