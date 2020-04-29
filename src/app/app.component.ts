@@ -41,6 +41,7 @@ import { TncUpdateHandlerService } from '@app/services/handlers/tnc-update-handl
 import { NetworkAvailabilityToastService } from '@app/services/network-availability-toast/network-availability-toast.service';
 import { SplaschreenDeeplinkActionHandlerDelegate } from '@app/services/sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
 import * as qs from 'qs';
+import { ContentUtil } from '@app/util/content-util';
 import {SbProgressLoader} from '@app/services/sb-progress-loader.service';
 
 declare const cordova;
@@ -778,22 +779,7 @@ export class AppComponent implements OnInit, AfterViewInit {
           let cData: CorrelationData[] = [];
           const utmValue = response['val'];
           const params: {[param: string]: string} = qs.parse(utmValue);
-          const utmParams = {};
-          Object.entries(params).forEach(([key, value]) => {
-            const chengeKeyUpperCase = key.split('_').map((elem) => {
-              return (elem.charAt(0).toUpperCase() + elem.slice(1));
-               });
-
-            utmParams[chengeKeyUpperCase.join('')] = decodeURIComponent(value);
-        });
-          if (Object.keys(utmParams)) {
-          cData = Object.keys(utmParams).map((key) => {
-            if (utmParams[key] !== undefined) {
-
-              return {id: key, type: utmParams[key]};
-            }
-          });
-        }
+          cData = ContentUtil.genrateUTMCData(params);
           try {
             const url: URL = new URL(params['utm_content']);
             const overrideChannelSlug = url.searchParams.get('channel');
