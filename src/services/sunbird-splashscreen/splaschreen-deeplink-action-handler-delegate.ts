@@ -3,7 +3,7 @@ import { Inject, Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { Events, PopoverController } from '@ionic/angular';
 import { Observable, of } from 'rxjs';
-import { 
+import {
   PageAssembleService,
   FrameworkService,
   ContentService,
@@ -39,6 +39,7 @@ import { ExternalChannelOverrideListener } from './external-channel-override-int
 import { initTabs, GUEST_TEACHER_TABS } from '@app/app/module.service';
 import { ContainerService } from '../container.services';
 import { ContentUtil } from '@app/util/content-util';
+import * as qs from 'qs';
 
 @Injectable()
 export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenActionHandlerDelegate, ExternalChannelOverrideListener {
@@ -97,19 +98,19 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
 
     const payload = { url };
 
-    this.generateUtmTelemetryEvent(urlMatch, dialCode, url);
+    const cData: CorrelationData[] = this.generateUtmTelemetryEvent(urlMatch, dialCode, url);
 
     // checks if the channel slug is present, else the normal deeplink flow executes
-    if (await this.checkCourseChannelSlug(payload, urlMatch)) {
+    if (await this.checkCourseChannelSlug(payload, urlMatch, cData)) {
       return;
     }
 
     if ((urlMatch && urlMatch.groups) || dialCode) {
-      this.checkIfOnboardingComplete(urlMatch, dialCode, url);
+      this.checkIfOnboardingComplete(urlMatch, dialCode, url, cData);
     }
   }
 
-  private async checkIfOnboardingComplete(urlMatch, dialCode, inputUrl) {
+  private async checkIfOnboardingComplete(urlMatch, dialCode, inputUrl, cData?) {
     if (!this.isOnboardingCompleted) {
       this.isOnboardingCompleted =
         (await this.preferences.getString(PreferenceKey.IS_ONBOARDING_COMPLETED).toPromise() === 'true') ? true : false;
@@ -129,7 +130,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
     if (requiredVersionCode && !(await this.isAppCompatible(requiredVersionCode))) {
       this.upgradeAppPopover(requiredVersionCode);
     } else if (this.isOnboardingCompleted || session) {
-      this.handleNavigation(urlMatch, content, dialCode, inputUrl);
+      this.handleNavigation(urlMatch, content, dialCode, inputUrl, cData);
     } else if (content && content.contentType === ContentType.COURSE.toLowerCase()) {
       const params = {
         userType: ProfileType.OTHER
@@ -140,7 +141,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
           state: {
             content,
             isOnboardingSkipped: true,
-            corRelation: this.getCorrelationList(urlMatch.input)
+            corRelation: this.getCorrelationList(urlMatch.input, cData)
           }
         });
     } else {
@@ -191,7 +192,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
     }
   }
 
-  private handleNavigation(urlMatch: any, content?: Content | null, dialCode?, inputUrl?): void {
+  private handleNavigation(urlMatch: any, content?: Content | null, dialCode?, inputUrl?, cData?): void {
     if (this._isDelegateReady) {
       if (dialCode) {
         this.appGlobalServices.skipCoachScreenForDeeplink = true;
@@ -207,14 +208,14 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
           });
       } else if (urlMatch && urlMatch.groups && (urlMatch.groups.quizId || urlMatch.groups.contentId || urlMatch.groups.courseId)) {
         this.navigateContent(urlMatch.groups.quizId || urlMatch.groups.contentId || urlMatch.groups.courseId, true,
-          content, inputUrl);
+          content, inputUrl, cData);
       }
     } else {
       this.savedUrl = inputUrl;
     }
   }
 
-  async navigateContent(identifier, isFromLink = false, content?: Content | null, source?: string) {
+  async navigateContent(identifier, isFromLink = false, content?: Content | null, source?: string, cData?) {
     try {
       this.appGlobalServices.resetSavedQuizContent();
       if (!content) {
@@ -231,7 +232,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
           {
             state: {
               content,
-              corRelation: this.getCorrelationList(source)
+              corRelation: this.getCorrelationList(source, cData)
             }
           });
       } else if (content.mimeType === MimeType.COLLECTION) {
@@ -243,7 +244,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
           {
             state: {
               content,
-              corRelation: this.getCorrelationList(source)
+              corRelation: this.getCorrelationList(source, cData)
             }
           });
       } else {
@@ -253,13 +254,13 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
           return;
         }
         if (content && content.contentData && content.contentData.status === ContentFilterConfig.CONTENT_STATUS_UNLISTED) {
-          this.navigateQuizContent(identifier, content, isFromLink, source);
+          this.navigateQuizContent(identifier, content, isFromLink, source, cData);
         } else {
           await this.router.navigate([RouterLinks.CONTENT_DETAILS],
             {
               state: {
                 content,
-                corRelation: this.getCorrelationList(source)
+                corRelation: this.getCorrelationList(source, cData)
               }
             });
         }
@@ -269,7 +270,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
     }
   }
 
-  private async navigateQuizContent(identifier, content, isFromLink, source) {
+  private async navigateQuizContent(identifier, content, isFromLink, source, cData?) {
     this.appGlobalServices.limitedShareQuizContent = identifier;
     if (isFromLink) {
       this.limitedSharingContentLinkClickedTelemery();
@@ -285,7 +286,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
       {
         state: {
           content, autoPlayQuizContent: true,
-          corRelation: this.getCorrelationList(source)
+          corRelation: this.getCorrelationList(source, cData)
         }
       });
   }
@@ -411,14 +412,22 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
     }
 
     const telemetryObject = new TelemetryObject(identifier ? identifier : dialCode, identifier ? 'Content' : 'qr', undefined);
-    const cData: CorrelationData[] = [{
+    const utmUrl = url.slice(url.indexOf('?') + 1);
+    const params: {[param: string]: string} = qs.parse(utmUrl);
+    const utmcData: CorrelationData[] = [{
       id: CorReleationDataType.DEEPLINK,
       type: CorReleationDataType.ACCESS_TYPE
     }];
-    this.commonUtilService.generateUTMInfoTelemetry(url, cData, telemetryObject);
+
+    ContentUtil.genrateUTMCData(params).forEach((element) => {
+      utmcData.push(element);
+    });
+    this.telemetryGeneratorService.generateUtmInfoTelemetry(params, PageId.HOME, utmcData, telemetryObject);
+
+    return utmcData;
   }
 
-  private async checkCourseChannelSlug(payload, urlMatch) {
+  private async checkCourseChannelSlug(payload, urlMatch, cData?) {
     if (!this.isOnboardingCompleted) {
       this.isOnboardingCompleted =
         (await this.preferences.getString(PreferenceKey.IS_ONBOARDING_COMPLETED).toPromise() === 'true') ? true : false;
@@ -463,7 +472,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
           if (isUrlTypeCourse) {
             const loader = await this.commonUtilService.getLoader(null, 'Initilizing profile...');
             await loader.present();
-            const isChannelDetected = await this.onChannelDetected(event);
+            const isChannelDetected = await this.onChannelDetected(event, cData);
             await loader.dismiss();
             if (isChannelDetected) {
               return true;
@@ -477,13 +486,13 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
     return false;
   }
 
-  async onChannelDetected(event): Promise<boolean> {
+  async onChannelDetected(event, cData?): Promise<boolean> {
     if (!this.isOnboardingCompleted) {
       this.isOnboardingCompleted =
         (await this.preferences.getString(PreferenceKey.IS_ONBOARDING_COMPLETED).toPromise() === 'true') ? true : false;
     }
     if (this.isOnboardingCompleted) {
-      this.navigateToCourse(event.courseId, event.url);
+      this.navigateToCourse(event.courseId, event.url, cData);
       return true;
     }
 
@@ -500,7 +509,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
     return false;
   }
 
-  async navigateToCourse(courseId, payloadUrl) {
+  async navigateToCourse(courseId, payloadUrl, cData?) {
     if (courseId) {
       const content: any = await this.getContentData(courseId);
       if (content && content.contentType === ContentType.COURSE.toLowerCase()) {
@@ -508,7 +517,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
           {
             state: {
               content, isFromChannelDeeplink: true,
-              corRelation: this.getCorrelationList(payloadUrl)
+              corRelation: this.getCorrelationList(payloadUrl, cData)
             }
           });
       }
@@ -601,11 +610,16 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
     return;
   }
 
-  private getCorrelationList(source): Array<CorrelationData> {
+  private getCorrelationList(source, cData?): Array<CorrelationData> {
     const corRelationList: Array<CorrelationData> = [{
       id: ContentUtil.extractBaseUrl(source),
       type: CorReleationDataType.SOURCE
     }];
+    if (cData) {
+      cData.forEach(element => {
+        corRelationList.push(element);
+      });
+    }
     return corRelationList;
   }
 
