@@ -1,19 +1,29 @@
-import {Component, Input, OnInit} from '@angular/core';
-import {ModalController, NavParams} from '@ionic/angular';
-import {Observable} from 'rxjs';
+import {Component, Input, OnDestroy, OnInit} from '@angular/core';
+import {ModalController, NavParams, Platform} from '@ionic/angular';
+import {Observable, Subscription} from 'rxjs';
 
 @Component({
     selector: 'app-sb-progress-loader',
     templateUrl: './sb-progress-loader.page.html',
     styleUrls: ['./sb-progress-loader.page.scss'],
 })
-export class SbProgressLoaderPage implements OnInit {
-    @Input('progress')
-    public progress$: Observable<number>;
+export class SbProgressLoaderPage implements OnInit, OnDestroy {
+    private backButtonSubscription: Subscription;
+    @Input()
+    public progress: Observable<number>;
 
-    constructor() {
+    constructor(private platform: Platform
+    ) {
     }
 
     ngOnInit() {
+        this.backButtonSubscription = this.platform.backButton.subscribeWithPriority(11, () => {
+        });
+    }
+
+    ngOnDestroy(): void {
+        if (this.backButtonSubscription) {
+            this.backButtonSubscription.unsubscribe();
+        }
     }
 }

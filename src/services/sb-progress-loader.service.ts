@@ -17,12 +17,12 @@ interface Context {
 })
 export class SbProgressLoader {
     private modal?: HTMLIonModalElement;
-    private progress: BehaviorSubject<number> = BehaviorSubject(0);
+    private progress: BehaviorSubject<number> = new BehaviorSubject(0);
 
     readonly contexts =  new Map<string, Context>();
 
     constructor(
-        private modalCtrl: ModalController
+        private modalCtrl: ModalController,
     ) {
     }
 
@@ -55,10 +55,7 @@ export class SbProgressLoader {
         if (!this.modal) {
             return;
         }
-
-        if (progress >= this.progress && progress <= 100) {
-            this.progress.next(progress);
-        }
+        this.progress.next(progress);
     }
 
     hide(context: Context = { id: 'DEFAULT' }) {
@@ -77,7 +74,8 @@ export class SbProgressLoader {
 
             setTimeout(() => {
                 this.modal.dismiss();
-            }, 250);
+                this.modal = undefined;
+            }, 500);
         })();
     }
 }
