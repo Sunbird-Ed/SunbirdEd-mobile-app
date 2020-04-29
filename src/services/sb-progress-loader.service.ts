@@ -7,7 +7,7 @@ interface Context {
     id: string;
     ignoreTelemetry?: {
         when: {
-            [key: string]: RegExp
+            [key: string]: RegExp | undefined
         };
     };
 }
