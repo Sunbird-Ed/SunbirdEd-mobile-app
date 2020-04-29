@@ -41,7 +41,7 @@ import { TncUpdateHandlerService } from '@app/services/handlers/tnc-update-handl
 import { NetworkAvailabilityToastService } from '@app/services/network-availability-toast/network-availability-toast.service';
 import { SplaschreenDeeplinkActionHandlerDelegate } from '@app/services/sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
 import * as qs from 'qs';
-import {SbProgressLoader} from 'sb-progress-loader.service.ts';
+import {SbProgressLoader} from '@app/services/sb-progress-loader.service';
 
 declare const cordova;
 

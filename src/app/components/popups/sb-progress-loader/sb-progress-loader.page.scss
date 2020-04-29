@@ -2,5 +2,11 @@ ion-content {
   --ion-background-color: #EDF4F9;
 }
 .content {
-  align-content: center;
+  margin-top: 50%;
+}
+
+.load-status {
+  text-align: center;
+  font-size: 19px;
+  font-weight: bold;
 }
