@@ -17,10 +17,14 @@ import { Map } from '../app/telemetryutil';
 import { Environment, ImpressionType, InteractSubtype, InteractType, Mode, PageId, CorReleationDataType, ID } from './telemetry-constants';
 import { MimeType } from '../app/app.constant';
 import { ContentUtil } from '@app/util/content-util';
+import { SbProgressLoader } from '@app/services/sb-progress-loader.service';
 
 @Injectable()
 export class TelemetryGeneratorService {
-    constructor(@Inject('TELEMETRY_SERVICE') private telemetryService: TelemetryService) {
+    constructor(
+        @Inject('TELEMETRY_SERVICE') private telemetryService: TelemetryService,
+        private sbProgressLoader: SbProgressLoader,
+    ) {
     }
 
     generateInteractTelemetry(interactType, interactSubtype, env, pageId, object?: TelemetryObject, values?: Map,
@@ -57,6 +61,16 @@ export class TelemetryGeneratorService {
 
     generateImpressionTelemetry(type, subtype, pageid, env, objectId?: string, objectType?: string,
         objectVersion?: string, rollup?: Rollup, corRelationList?: Array<CorrelationData>) {
+        if (
+            Array.from(this.sbProgressLoader.contexts.entries()).some(([_, context]) => {
+                return ['type', 'subtype', 'pageid', 'env'].every((arg) => {
+                    return context.ignoreTelemetry.when[arg] ? type.match(context.ignoreTelemetry.when[arg]) : true;
+                });
+            })
+        ) {
+            return;
+        }
+
         const telemetryImpressionRequest = new TelemetryImpressionRequest();
         telemetryImpressionRequest.type = type;
         telemetryImpressionRequest.subType = subtype;
