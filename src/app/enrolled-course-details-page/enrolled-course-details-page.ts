@@ -77,6 +77,7 @@ import { LocalCourseService } from '@app/services';
 import { EnrollCourse } from './course.interface';
 import { SbSharePopupComponent } from '../components/popups/sb-share-popup/sb-share-popup.component';
 import { share } from 'rxjs/operators';
+import { SbProgressLoader } from '@app/services/sb-progress-loader.service';
 declare const cordova;
 
 @Component({
@@ -253,7 +254,8 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
     private location: Location,
     private router: Router,
     private contentDeleteHandler: ContentDeleteHandler,
-    private localCourseService: LocalCourseService
+    private localCourseService: LocalCourseService,
+    private sbProgressLoader: SbProgressLoader
   ) {
     this.objRollup = new Rollup();
     // this.getUserId();
@@ -1363,6 +1365,10 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
     this.populateCorRelationData(this.courseCardData.batchId);
     this.handleBackButton();
     this.getLastReadContentId();
+  }
+
+  ionViewDidEnter() {
+    this.sbProgressLoader.hide();
   }
 
   showLicensce() {
