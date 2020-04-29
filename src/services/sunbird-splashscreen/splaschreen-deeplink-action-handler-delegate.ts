@@ -39,6 +39,7 @@ import { ExternalChannelOverrideListener } from './external-channel-override-int
 import { initTabs, GUEST_TEACHER_TABS } from '@app/app/module.service';
 import { ContainerService } from '../container.services';
 import { ContentUtil } from '@app/util/content-util';
+import { SbProgressLoader } from '../sb-progress-loader.service';
 
 @Injectable()
 export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenActionHandlerDelegate, ExternalChannelOverrideListener {
@@ -78,7 +79,8 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
     public translateService: TranslateService,
     private formFrameWorkUtilService: FormAndFrameworkUtilService,
     private qrScannerResultHandler: QRScannerResultHandler,
-    private container: ContainerService
+    private container: ContainerService,
+    private sbProgressLoader: SbProgressLoader
   ) {
     this.eventToSetDefaultOnboardingData();
    }
@@ -91,6 +93,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
   }
 
   private async checkDeeplinkMatch(url: string) {
+    await this.sbProgressLoader.show();
     const dialCode = await this.qrScannerResultHandler.parseDialCode(url);
     const urlRegex = new RegExp(await this.formFrameWorkUtilService.getDeeplinkRegexFormApi());
     const urlMatch = url.match(urlRegex);
@@ -106,6 +109,8 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
 
     if ((urlMatch && urlMatch.groups) || dialCode) {
       this.checkIfOnboardingComplete(urlMatch, dialCode, url);
+    } else {
+      this.sbProgressLoader.hide();
     }
   }
 
@@ -124,9 +129,13 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
     // checking only for quizId or content Id, since only contents can be considered as quiz.
     if (urlMatch && urlMatch.groups && (urlMatch.groups.quizId || urlMatch.groups.contentId || urlMatch.groups.courseId)) {
       content = await this.getContentData(urlMatch.groups.quizId || urlMatch.groups.contentId || urlMatch.groups.courseId);
-      if (!content && !dialCode) { return; }
+      if (!content && !dialCode) {
+        this.sbProgressLoader.hide();
+        return;
+      }
     }
     if (requiredVersionCode && !(await this.isAppCompatible(requiredVersionCode))) {
+      this.sbProgressLoader.hide();
       this.upgradeAppPopover(requiredVersionCode);
     } else if (this.isOnboardingCompleted || session) {
       this.handleNavigation(urlMatch, content, dialCode, inputUrl);
@@ -183,6 +192,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
     if (this.loginPopup) {
       await this.loginPopup.dismiss();
     }
+    this.sbProgressLoader.hide();
     if (content && content.contentData && content.contentData.status === ContentFilterConfig.CONTENT_STATUS_UNLISTED &&
       content.contentType !== ContentType.COURSE.toLowerCase() && content.mimeType !== MimeType.COLLECTION) {
         this.showLoginWithoutOnboardingPopup(content.identifier || content.contentId);
@@ -210,6 +220,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
           content, inputUrl);
       }
     } else {
+      this.sbProgressLoader.hide();
       this.savedUrl = inputUrl;
     }
   }
@@ -237,6 +248,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
       } else if (content.mimeType === MimeType.COLLECTION) {
         if (this.router.url && this.router.url.indexOf(RouterLinks.COLLECTION_DETAIL_ETB) !== -1) {
           this.events.publish(EventTopics.DEEPLINK_COLLECTION_PAGE_OPEN, { content });
+          this.sbProgressLoader.hide();
           return;
         }
         this.router.navigate([RouterLinks.COLLECTION_DETAIL_ETB],
@@ -250,6 +262,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
         if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
           this.commonUtilService.showToast('NEED_INTERNET_FOR_DEEPLINK_CONTENT');
           this.appGlobalServices.skipCoachScreenForDeeplink = false;
+          this.sbProgressLoader.hide();
           return;
         }
         if (content && content.contentData && content.contentData.status === ContentFilterConfig.CONTENT_STATUS_UNLISTED) {
@@ -265,6 +278,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
         }
       }
     } catch (err) {
+      this.sbProgressLoader.hide();
       console.log(err);
     }
   }
@@ -275,10 +289,12 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
       this.limitedSharingContentLinkClickedTelemery();
     }
     if (!this.appGlobalServices.isSignInOnboardingCompleted && this.appGlobalServices.isUserLoggedIn()) {
+      this.sbProgressLoader.hide();
       return;
     }
     if (this.router.url && this.router.url.indexOf(RouterLinks.CONTENT_DETAILS) !== -1) {
       this.events.publish(EventTopics.DEEPLINK_CONTENT_PAGE_OPEN, { content, autoPlayQuizContent: true });
+      this.sbProgressLoader.hide();
       return;
     }
     await this.router.navigate([RouterLinks.CONTENT_DETAILS],
@@ -461,10 +477,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
           };
           const isUrlTypeCourse = (new RegExp(String.raw`explore-course`)).test(event.url);
           if (isUrlTypeCourse) {
-            const loader = await this.commonUtilService.getLoader(null, 'Initilizing profile...');
-            await loader.present();
             const isChannelDetected = await this.onChannelDetected(event);
-            await loader.dismiss();
             if (isChannelDetected) {
               return true;
             }
@@ -555,7 +568,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
         resolve(true);
       } catch (e) {
         resolve(false);
-        console.log(e);
+        this.sbProgressLoader.hide();
       }
     });
   }
