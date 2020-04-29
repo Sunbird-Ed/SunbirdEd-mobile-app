@@ -2,6 +2,7 @@ import { Injectable, Inject } from '@angular/core';
 import { Router, ActivatedRoute, Resolve, NavigationExtras, ActivatedRouteSnapshot } from '@angular/router';
 import { SharedPreferences } from 'sunbird-sdk';
 import { PreferenceKey } from '@app/app/app.constant';
+import {SplashScreenService} from '@app/services';
 
 @Injectable()
 export class HasNotSelectedUserTypeGuard implements Resolve<any> {
@@ -10,6 +11,7 @@ export class HasNotSelectedUserTypeGuard implements Resolve<any> {
         @Inject('SHARED_PREFERENCES') private sharedPreferences: SharedPreferences,
         private router: Router,
         private activatedRoute: ActivatedRoute,
+        private splashScreenService: SplashScreenService
     ) { }
 
     resolve(route: ActivatedRouteSnapshot): any {
@@ -35,6 +37,7 @@ export class HasNotSelectedUserTypeGuard implements Resolve<any> {
                 };
                 this.router.navigate(['/', 'profile-settings'], navigationExtras);
             } else {
+                this.splashScreenService.handleSunbirdSplashScreenActions();
                 return true;
             }
         });
