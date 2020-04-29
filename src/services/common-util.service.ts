@@ -15,7 +15,7 @@ import { PreferenceKey, ProfileConstants } from '@app/app/app.constant';
 import { appLanguages } from '@app/app/app.constant';
 
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
-import { InteractType, InteractSubtype, PageId, Environment, CorReleationDataType } from '@app/services/telemetry-constants';
+import { InteractType, InteractSubtype, PageId, Environment } from '@app/services/telemetry-constants';
 import { SbGenericPopoverComponent } from '@app/app/components/popups/sb-generic-popover/sb-generic-popover.component';
 import { QRAlertCallBack, QRScannerAlert } from '@app/app/qrscanner-alert/qrscanner-alert.page';
 import { Observable, merge } from 'rxjs';
@@ -459,17 +459,6 @@ export class CommonUtilService {
                 await this.preferences.putString(PreferenceKey.CURRENT_USER_PROFILE, JSON.stringify(profile)).toPromise();
                 await this.preferences.putString(PreferenceKey.SUBSCRIBE_TOPICS, JSON.stringify(subscribeTopic)).toPromise();
             });
-    }
-
-    generateUTMInfoTelemetry(scannedData, cData, object) {
-        const utmHashes = scannedData.slice(scannedData.indexOf('?') + 1).split('&');
-        const utmParams = {};
-        utmHashes.map(hash => {
-            const [key, val] = hash.split('=');
-            utmParams[key] = decodeURIComponent(val);
-        });
-        this.telemetryGeneratorService.generateUtmInfoTelemetry(utmParams,
-            (cData[0].id === CorReleationDataType.SCAN) ? PageId.QRCodeScanner : PageId.HOME, cData, object);
     }
 
     getFormattedDate(date: string|Date) {
