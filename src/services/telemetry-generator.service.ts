@@ -175,7 +175,6 @@ export class TelemetryGeneratorService {
             values,
             objRollup,
             corRelationList);
-
     }
 
     generatePageViewTelemetry(pageId, env, subType?) {
@@ -384,4 +383,31 @@ export class TelemetryGeneratorService {
             corRelationList
         );
     }
+
+
+    /* New Telemetry 
+    any old telemetry methods should be written outside this block
+    */
+    generateBackClickedNewTelemetry(isDeviceBack, env, pageId) {
+        this.generateInteractTelemetry(
+            InteractType.SELECT_BACK,
+            isDeviceBack ? InteractSubtype.DEVICE_BACK_CLICKED : InteractSubtype.UI,
+            env,
+            pageId
+        );
+    }
+
+    generatePageLoadedTelemetry(pageId, env, objId?, objType?, objversion?, rollup?, correlationList?) {
+        this.generateImpressionTelemetry(
+            ImpressionType.PAGE_LOADED, '',
+            pageId,
+            env,
+            correlationList,
+            objId,
+            objType,
+            objversion,
+            rollup
+        );
+    }
+    /* ** */
 }

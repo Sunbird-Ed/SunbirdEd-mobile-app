@@ -123,7 +123,13 @@ export enum PageId {
     SHARE_APP_POPUP = 'share-app-popup',
     UPGRADE_POPUP = 'update-popup',
     IMPORT_CONTENT_POPUP = 'import-content-popup',
-    DOWNLOAD_ALL_CONFIRMATION_POPUP = 'download-all-confirmation-popup'
+    DOWNLOAD_ALL_CONFIRMATION_POPUP = 'download-all-confirmation-popup',
+    /* New Telemetry */
+    LANGUAGE = 'language',
+    USER_TYPE = 'usertype',
+    SCAN_OR_MANUAL = 'scan-or-manual',
+    PROFILE_SETTINGS = 'profile-settings',
+    POPUP_CATEGORY = 'popup-category'
 }
 export enum LogType {
     NOTIFICATION = 'notification'
@@ -144,7 +150,11 @@ export enum ImpressionType {
     VIEW = 'view',
     EDIT = 'edit',
     WORKFLOW = 'workflow',
-    DISTRICT_MAPPING = 'district-mapping'
+    DISTRICT_MAPPING = 'district-mapping',
+    /* New Telemetry */
+    PAGE_LOADED = 'page-loaded',
+    PAGE_REQUEST = 'page-request',
+    SET_LANGUAGE = 'set-language'
 }
 export enum ImpressionSubtype {
     QRCodeScanInitiate = 'qr-code-scan-initiate',
@@ -176,7 +186,17 @@ export enum InteractType {
     DELETE_UNCHECKED = 'delete-unchecked',
     BACKDROP_DISMISSED = 'backdrop-dismissed',
     LOCAL = "local",
-    FCM = "fcm"
+    FCM = "fcm",
+    /* New Telemetry */
+    SELECT_LANGUAGE = 'select-language',
+    SELECT_CONTINUE = 'select-continue',
+    SELECT_USERTYPE = 'select-usertype',
+    SELECT_BACK = 'select-back',
+    SELECT_QRSCANER = 'select-qrscanner',
+    SELECT_CATEGORY = 'select-category',
+    SELECT_ATTRIBUTE = 'select-attribute',
+    SELECT_SUBMIT = 'select-submit',
+    SELECT_CANCEL = 'select-cancel'
 }
 
 
@@ -397,7 +417,13 @@ export enum InteractSubtype {
     FORCE_UPGRADE_INFO = 'force-upgrade-info',
     OPTIONAL_UPGRADE = 'optional-upgrade',
     DEEPLINK_UPGRADE = 'deep-link-upgrade',
-    NO_QR_CODE_CLICKED = 'no-qr-code-clicked'
+    NO_QR_CODE_CLICKED = 'no-qr-code-clicked',
+    /* New Telemetry */
+    SUCCESS = 'success',
+    FAIL = 'fail',
+    UI = 'ui',
+    DEVICE = 'device'
+    /* ** */
 }
 
 export enum ID {
@@ -442,7 +468,12 @@ export enum CorReleationDataType {
     ACCESS_TYPE = 'AccessType',
     SCAN = 'Scan',
     SOURCE = 'Source',
-    NOTIFICATION_ID = 'NotificationID'
+    NOTIFICATION_ID = 'NotificationID',
+    /* New Telemetry */
+    BOARD_COUNT = 'CountBoard',
+    MEDIUM_COUNT = 'CountMedium',
+    CLASS_COUNT = 'CountClass',
+    FIRST_TIME_USER = 'FirstTimeUser'
 }
 
 

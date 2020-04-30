@@ -8,13 +8,14 @@ import { AppGlobalService } from '@app/services/app-global-service.service';
 import { CommonUtilService } from '@app/services/common-util.service';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { AppHeaderService } from '@app/services/app-header.service';
-import { Profile, ProfileService, ProfileSource, ProfileType, SharedPreferences, } from 'sunbird-sdk';
+import { Profile, ProfileService, ProfileSource, ProfileType, SharedPreferences, CorrelationData, } from 'sunbird-sdk';
 import {
   Environment,
   ImpressionType,
   InteractSubtype,
   InteractType,
   PageId,
+  CorReleationDataType,
 } from '@app/services/telemetry-constants';
 import { ContainerService } from '@app/services/container.services';
 import { initTabs, GUEST_STUDENT_TABS, GUEST_TEACHER_TABS } from '@app/app/module.service';
@@ -87,7 +88,14 @@ export class UserTypeSelectionPage implements OnInit {
     this.telemetryGeneratorService.generateImpressionTelemetry(
       ImpressionType.VIEW, '',
       PageId.USER_TYPE_SELECTION,
-      this.appGlobalService.isOnBoardingCompleted ? Environment.HOME : Environment.ONBOARDING);
+      this.appGlobalService.isOnBoardingCompleted ? Environment.HOME : Environment.ONBOARDING
+    );
+    /* New Telemetry */
+    this.telemetryGeneratorService.generatePageLoadedTelemetry(
+      PageId.USER_TYPE,
+      this.appGlobalService.isOnBoardingCompleted ? Environment.HOME : Environment.ONBOARDING
+    );
+    /* ** */
   }
 
   ionViewWillEnter() {
@@ -98,6 +106,13 @@ export class UserTypeSelectionPage implements OnInit {
     this.profile = this.appGlobalService.getCurrentUser();
     this.backButtonFunc = this.platform.backButton.subscribeWithPriority(10, () => {
       this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.USER_TYPE_SELECTION, Environment.HOME, false);
+      /* New Telemetry */
+      this.telemetryGeneratorService.generateBackClickedNewTelemetry(
+        true,
+        this.appGlobalService.isOnBoardingCompleted ? Environment.HOME : Environment.ONBOARDING,
+        PageId.USER_TYPE
+      );
+      /* ** */
       this.handleBackButton();
       this.backButtonFunc.unsubscribe();
     });
@@ -118,25 +133,51 @@ export class UserTypeSelectionPage implements OnInit {
   }
   handleHeaderEvents($event) {
     switch ($event.name) {
-      case 'back': this.telemetryGeneratorService.generateBackClickedTelemetry(
+      case 'back': 
+        this.telemetryGeneratorService.generateBackClickedTelemetry(
           PageId.USER_TYPE_SELECTION,
           this.appGlobalService.isOnBoardingCompleted ? Environment.HOME : Environment.ONBOARDING,
-          true);
-                   this.handleBackButton();
-                   break;
+          true
+        );
+        /* New Telemetry */
+        this.telemetryGeneratorService.generateBackClickedNewTelemetry(
+          false,
+          this.appGlobalService.isOnBoardingCompleted ? Environment.HOME : Environment.ONBOARDING,
+          PageId.USER_TYPE
+        );
+        /* ** */
+        this.handleBackButton();
+        break;
     }
   }
 
   selectTeacherCard() {
     this.selectCard('USER_TYPE_1', ProfileType.TEACHER);
+    this.generateUserTypeClicktelemetry(ProfileType.TEACHER);
   }
 
   selectStudentCard() {
     this.selectCard('USER_TYPE_2', ProfileType.STUDENT);
+    this.generateUserTypeClicktelemetry(ProfileType.STUDENT);
   }
 
   selectOtherCard() {
     this.selectCard('USER_TYPE_3', ProfileType.OTHER);
+    this.generateUserTypeClicktelemetry(ProfileType.OTHER);
+  }
+
+  generateUserTypeClicktelemetry(userType: string) {
+    const correlationlist: Array<CorrelationData> = [];
+    correlationlist.push({ id: userType, type: CorReleationDataType.USERTYPE });
+    this.telemetryGeneratorService.generateInteractTelemetry(
+      InteractType.SELECT_USERTYPE, '',
+      Environment.ONBOARDING,
+      PageId.USER_TYPE,
+      undefined,
+      undefined,
+      undefined,
+      correlationlist
+    );
   }
 
   selectCard(userType, profileType) {
@@ -245,6 +286,20 @@ export class UserTypeSelectionPage implements OnInit {
       PageId.USER_TYPE_SELECTION,
       undefined,
       values);
+
+      /* New Telemetry */
+      const correlationlist: Array<CorrelationData> = [];
+      correlationlist.push({ id: userType, type: CorReleationDataType.USERTYPE });
+      this.telemetryGeneratorService.generateInteractTelemetry(
+        InteractType.SELECT_CONTINUE, '',
+        this.appGlobalService.isOnBoardingCompleted ? Environment.HOME : Environment.ONBOARDING,
+        PageId.USER_TYPE,
+        undefined,
+        values,
+        undefined,
+        correlationlist
+      );
+      /* ** */
   }
 
   /**
