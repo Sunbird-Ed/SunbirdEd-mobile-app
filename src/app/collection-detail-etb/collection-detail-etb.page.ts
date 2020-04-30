@@ -348,7 +348,7 @@ export class CollectionDetailEtbPage implements OnInit {
   }
 
   ionViewDidEnter() {
-    this.sbProgressLoader.hide();
+    this.sbProgressLoader.hide({ id: this.identifier });
   }
 
   private assignCardData() {

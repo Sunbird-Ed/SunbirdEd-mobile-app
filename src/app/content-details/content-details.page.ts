@@ -323,7 +323,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
   }
 
   ionViewDidEnter() {
-    this.sbProgressLoader.hide();
+    this.sbProgressLoader.hide({ id: this.identifier });
   }
 
   /**

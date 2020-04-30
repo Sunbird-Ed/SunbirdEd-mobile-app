@@ -170,7 +170,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
         this.searchBar.setFocus();
       }, 100);
     }
-    this.sbProgressLoader.hide();
+    this.sbProgressLoader.hide({ id: this.dialCode });
 
     this.checkUserSession();
   }
