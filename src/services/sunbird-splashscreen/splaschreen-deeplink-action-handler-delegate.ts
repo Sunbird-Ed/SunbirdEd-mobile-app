@@ -655,7 +655,13 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
       (urlMatch.groups.quizId || urlMatch.groups.contentId || urlMatch.groups.courseId)) || ProgressPopupContext.DEEPLINK;
 
     return {
-      id: this.progressLoaderId
+      id: this.progressLoaderId,
+      ignoreTelemetry: {
+        when: {
+          type: /view/,
+          pageid: /resources|library/
+        }
+      }
     };
   }
 

@@ -20,6 +20,7 @@ import {
 import { of, throwError } from 'rxjs';
 import { PageName, ContentCard, BatchConstants } from '../app.constant';
 import { LocalCourseService } from '../../services/local-course.service';
+import {SbProgressLoader} from '@app/services/sb-progress-loader.service';
 
 describe('CoursesPage', () => {
     let coursesPage: CoursesPage;
@@ -62,6 +63,7 @@ describe('CoursesPage', () => {
     };
     const mockToastController: Partial<ToastController> = {};
     const mockLocalCourseService: Partial<LocalCourseService> = {};
+    const mockSbProgressLoader: Partial<SbProgressLoader> = {};
 
     beforeAll(() => {
         coursesPage = new CoursesPage(
@@ -85,7 +87,8 @@ describe('CoursesPage', () => {
             mockRouter as Router,
             mockToastController as ToastController,
             mockHeaderService as AppHeaderService,
-            mockLocalCourseService as LocalCourseService
+            mockLocalCourseService as LocalCourseService,
+            mockSbProgressLoader as SbProgressLoader
         );
     });
 
@@ -204,12 +207,14 @@ describe('CoursesPage', () => {
             mockAppGlobalService.generateConfigInteractEvent = jest.fn();
             mockEvents.subscribe = jest.fn((_, fn) => fn(data));
             mockQrScanner.startScanner = jest.fn(() => Promise.resolve('start'));
+            mockSbProgressLoader.hide = jest.fn();
             // act
             coursesPage.ionViewDidEnter();
             // assert
             expect(mockAppGlobalService.generateConfigInteractEvent).toHaveBeenCalledWith(PageId.COURSES, isOnboardingComplete);
             expect(mockEvents.subscribe).toHaveBeenCalled();
             expect(mockQrScanner.startScanner).toHaveBeenCalledWith(PageId.COURSES, false);
+            expect(mockSbProgressLoader.hide).toHaveBeenCalled();
         });
 
         it('should not start qrScanner if pageId is not course', () => {
@@ -218,11 +223,13 @@ describe('CoursesPage', () => {
             const data = { pageName: 'library' };
             mockAppGlobalService.generateConfigInteractEvent = jest.fn();
             mockEvents.subscribe = jest.fn((_, fn) => fn(data));
+            mockSbProgressLoader.hide = jest.fn();
             // act
             coursesPage.ionViewDidEnter();
             // assert
             expect(mockAppGlobalService.generateConfigInteractEvent).toHaveBeenCalledWith(PageId.COURSES, isOnboardingComplete);
             expect(mockEvents.subscribe).toHaveBeenCalled();
+            expect(mockSbProgressLoader.hide).toHaveBeenCalled();
         });
     });
 

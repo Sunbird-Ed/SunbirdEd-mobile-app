@@ -64,10 +64,12 @@ export class TelemetryGeneratorService {
         const args = {type, subtype, pageid, env};
         if (
             Array.from(this.sbProgressLoader.contexts.entries()).some(([_, context]) => {
-                return Object.keys(args).every((arg) => {
-                    return context.ignoreTelemetry && context.ignoreTelemetry.when[arg] ?
-                        args[arg].match(context.ignoreTelemetry.when[arg]) : false;
-                });
+                if (context.ignoreTelemetry && context.ignoreTelemetry.when) {
+                    return Object.keys(context.ignoreTelemetry.when).every((w) => {
+                        return args[w] && args[w].match(context.ignoreTelemetry.when[w]);
+                    });
+                }
+                return false;
             })
         ) {
             return;

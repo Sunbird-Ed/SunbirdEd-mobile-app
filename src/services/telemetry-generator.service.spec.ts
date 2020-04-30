@@ -5,6 +5,7 @@ import {
   LogLevel
 } from '@app/services/telemetry-constants';
 import { of } from 'rxjs';
+import {SbProgressLoader} from '@app/services/sb-progress-loader.service';
 
 describe('TelemetryGeneratorService', () => {
   let telemetryGeneratorService: TelemetryGeneratorService;
@@ -33,10 +34,12 @@ describe('TelemetryGeneratorService', () => {
       pkgVersion: '1'
     }
   } as any;
+  const mockSbProgressLoader: Partial<SbProgressLoader> = {};
 
   beforeAll(() => {
     telemetryGeneratorService = new TelemetryGeneratorService(
-      mockTelemetryService as TelemetryService
+      mockTelemetryService as TelemetryService,
+      mockSbProgressLoader as SbProgressLoader
     );
   });
 
@@ -74,6 +77,7 @@ describe('TelemetryGeneratorService', () => {
 
   it('should invoke impression() with proper arguments', () => {
     // arrange
+    mockSbProgressLoader.contexts = new Map<>();
     // act
     telemetryGeneratorService.generateImpressionTelemetry(ImpressionType.DETAIL, '',
       PageId.COLLECTION_DETAIL,

@@ -713,10 +713,6 @@ export class AppComponent implements OnInit, AfterViewInit {
         this.router.navigate([`/${RouterLinks.SETTINGS}`]);
         break;
       }
-      case 'TEST' : {
-        this.sbProgressLoader.show();
-        break;
-      }
       case 'LANGUAGE': {
         this.telemetryGeneratorService.generateInteractTelemetry(
           InteractType.TOUCH,
