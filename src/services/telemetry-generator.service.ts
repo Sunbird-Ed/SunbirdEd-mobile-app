@@ -66,7 +66,7 @@ export class TelemetryGeneratorService {
             Array.from(this.sbProgressLoader.contexts.entries()).some(([_, context]) => {
                 return Object.keys(args).every((arg) => {
                     return context.ignoreTelemetry && context.ignoreTelemetry.when[arg] ?
-                        args[arg].match(context.ignoreTelemetry.when[arg]) : true;
+                        args[arg].match(context.ignoreTelemetry.when[arg]) : false;
                 });
             })
         ) {
