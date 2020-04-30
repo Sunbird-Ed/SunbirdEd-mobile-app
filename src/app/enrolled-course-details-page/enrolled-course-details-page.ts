@@ -424,6 +424,25 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
   }
 
   async joinTraining() {
+    if (!this.batches.length) {
+      this.commonUtilService.showToast('NO_BATCHES_AVAILABLE');
+      return;
+    } else if (
+        this.batches.length === 1 &&
+        this.batches[0].enrollmentEndDate &&
+        (new Date() > new Date(this.batches[0].enrollmentEndDate))
+    ) {
+      this.commonUtilService.showToast(
+          'ENROLLMENT_ENDED_ON',
+          null,
+          null,
+          null,
+          null,
+          this.datePipe.transform(this.batches[0].enrollmentEndDate)
+      );
+      return;
+    }
+
     const confirm = await this.popoverCtrl.create({
       component: SbPopoverComponent,
       componentProps: {
