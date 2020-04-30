@@ -658,8 +658,10 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
       id: this.progressLoaderId,
       ignoreTelemetry: {
         when: {
-          type: /view/,
-          pageid: /resources|library/
+          impression: {
+            type: /view/,
+            pageid: /resources|library/
+          }
         }
       }
     };

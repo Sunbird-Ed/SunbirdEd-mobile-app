@@ -7,7 +7,12 @@ export interface Context {
     id: string;
     ignoreTelemetry?: {
         when: {
-            [key: string]: RegExp | undefined
+            interact: {
+                [key: string]: RegExp | undefined
+            } | undefined,
+            impression: {
+                [key: string]: RegExp | undefined
+            } | undefined,
         };
     };
 }
