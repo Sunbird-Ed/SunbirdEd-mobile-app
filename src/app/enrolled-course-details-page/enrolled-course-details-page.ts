@@ -753,32 +753,36 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
    * Get batch details
    */
   async getBatchDetails() {
+    if (!this.courseCardData || !this.courseCardData.batchId) {
+      return;
+    }
     this.courseService.getBatchDetails({ batchId: this.courseCardData.batchId }).toPromise()
       .then((data: Batch) => {
         this.zone.run(() => {
-          if (data) {
-            this.batchDetails = data;
-            // console.log('this.batchDetails', this.batchDetails);
-            this.handleUnenrollButton();
-            this.isCertifiedCourse = data.cert_templates ? true : false;
-            this.saveContentContext(this.appGlobalService.getUserId(),
-              this.batchDetails.courseId, this.courseCardData.batchId, this.batchDetails.status);
-            this.preferences.getString(PreferenceKey.COURSE_IDENTIFIER).toPromise()
-              .then(async val => {
-                if (val && val === this.batchDetails.identifier) {
-                  this.batchExp = true;
-                } else if (this.batchDetails.status === 2) {
-                  this.batchExp = true;
-                } else if (this.batchDetails.status === 0) {
-                  this.isBatchNotStarted = true;
-                  this.courseStartDate = this.batchDetails.startDate;
-                }
-              })
-              .catch((error) => {
-              });
-
-            this.getBatchCreatorName();
+          if (!data) {
+            return;
           }
+          this.batchDetails = data;
+          // console.log('this.batchDetails', this.batchDetails);
+          this.handleUnenrollButton();
+          this.isCertifiedCourse = data.cert_templates ? true : false;
+          this.saveContentContext(this.appGlobalService.getUserId(),
+            this.batchDetails.courseId, this.courseCardData.batchId, this.batchDetails.status);
+          this.preferences.getString(PreferenceKey.COURSE_IDENTIFIER).toPromise()
+            .then(async val => {
+              if (val && val === this.batchDetails.identifier) {
+                this.batchExp = true;
+              } else if (this.batchDetails.status === 2) {
+                this.batchExp = true;
+              } else if (this.batchDetails.status === 0) {
+                this.isBatchNotStarted = true;
+                this.courseStartDate = this.batchDetails.startDate;
+              }
+            })
+            .catch((error) => {
+            });
+
+          this.getBatchCreatorName();
         });
       })
       .catch((error: any) => {
