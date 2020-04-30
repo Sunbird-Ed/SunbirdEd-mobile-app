@@ -510,31 +510,6 @@ describe('CommonUtilService', () => {
     });
   });
 
-
-  describe('generateUTMInfoTelemetry', () => {
-    it('should generate UtmInfo telemetry', () => {
-      // arrange
-      const URL = 'https://staging.ntp.net.in/dial/A7S6V8?utm_source=diksha&utm_medium=search&utm_campaign=dial&utm_term=ABCDEF';
-      const value = {
-        utm_source: 'sunbird',
-        utm_medium: 'search',
-        utm_campaign: 'dial',
-        utm_term: 'ABCDEF'
-      };
-      const cData: CorrelationData[] = [{
-        id: 'Scan',
-        type: 'accessType'
-      }];
-      mockTelemetryGeneratorService.generateUtmInfoTelemetry = jest.fn();
-      // act
-      commonUtilService.generateUTMInfoTelemetry(URL, cData, {});
-      // assert
-      setTimeout(() => {
-        expect(mockTelemetryGeneratorService.generateUtmInfoTelemetry).toHaveBeenCalledWith(value, cData, 'qr-code-scanner');
-      }, 0);
-    });
-  });
-
   describe('getFormattedDate', () => {
     it('should format the date to DD-MMM-YYYY', () => {
       // arrange
