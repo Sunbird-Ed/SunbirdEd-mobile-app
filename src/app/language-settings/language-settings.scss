@@ -1,51 +1,34 @@
 @import "src/assets/styles/_variables";
 @import "src/assets/styles/_custom-mixins";
 @import "src/assets/styles/fonts";
+
+ion-content {
+  --ion-background-color: #EDF4F9;
+}
 :host {
   /* This should be item-ios only as we are targeting mode as iOS for radio-button */
-  ion-item {
-    --ion-background-color: #{map-get($colors, white_f7)};
-  }
 
-  ion-icon {
-    @include rtl {
-      float: left !important;
-      left: 15px !important;
-    }
-    @include ltr {
-      float: right !important;
-      right: 15px !important;
-    }
-  }
-
-  ion-icon.arrow-icon{
-    position: absolute;
-    transform: translateY(-50%);
+  img.arrow-icon{
+    display: inline-block;
     width: 22px;
-
+    margin-top: -3px;
+    &.animate {
+      position: relative;
+      animation: dropDown 5s linear infinite;
+      animation-duration: 0.9s;
+    }
     @include rtl {
-      top: 33%;
+
       transform: rotate(180deg);
     }
     @include ltr {
-      top: 50%;
+
     }
   }
-
-  .list-wrap {
-    margin-bottom: 8px;
-    padding-bottom: 16px;
-  }
-
-  ion-list[inset] {
-    margin: 0 !important;
-  }
-
-  /* Change height of the ion-item*/
-  ion-radio-group {
-    ion-item {
-      --min-height: 4rem !important;
-    }
+  @keyframes dropDown {
+    0% {right: 0;}
+    50% {right: 10px;}
+    100% {right: 0;}
   }
 
   .gray-color {
@@ -54,16 +37,59 @@
     font-weight: 500;
   }
 
-  .item-radio-checked ion-label {
-    color: #{map-get($colors, primary_black)};
-    @extend .font-weight-700;
-  }
-
-  .arrow-icon {
-
+  .font-size-17 {
+    font-size: 17px !important;
   }
 }
 
-.font-size-17 {
-  font-size: 17px !important;
+
+.language-card {
+  text-align: center;
+  position: relative;
+  margin-bottom: 0;
+  box-shadow: 0 20px 40px -10px #D8D8D8;
+  background-color: #FFFFFF;
+  ion-radio {
+    display: none;
+  }
+  ion-label {
+    padding-top: 32px;
+    padding-bottom: 32px;
+    font-size: 20px;
+    display: inline-block;
+    width: 100%;
+    text-align: center;
+  }
+  &.selected {
+    background-color: #0076FE;
+    box-shadow: 0 20px 40px -10px rgba(2,79,157,0.3);
+    ion-label {
+      color: white;
+    }
+    ion-radio {
+      display: block;
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      background: white;
+      border-radius: 100%;
+      width: 16px;
+      height: 16px;
+    }
+  }
 }
+.continue {
+  position: fixed;
+  z-index: 2;
+  bottom: 32px;
+  width: 90vw;
+  left: 5vw;
+}
+
+.app-title {
+  font-size: 24px;
+  font-weight: bold;
+  color: #024F9D;
+  margin-top: 5vh;
+}
+
