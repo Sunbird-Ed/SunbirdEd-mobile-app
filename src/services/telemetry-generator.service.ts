@@ -29,6 +29,20 @@ export class TelemetryGeneratorService {
 
     generateInteractTelemetry(interactType, interactSubtype, env, pageId, object?: TelemetryObject, values?: Map,
                               rollup?: Rollup, corRelationList?: Array<CorrelationData>, id?: string) {
+        const args = {interactType, interactSubtype, pageId, env};
+        if (
+            Array.from(this.sbProgressLoader.contexts.entries()).some(([_, context]) => {
+                if (context.ignoreTelemetry && context.ignoreTelemetry.when && context.ignoreTelemetry.when.interact) {
+                    return Object.keys(context.ignoreTelemetry.when).every((w) => {
+                        return args[w] && args[w].match(context.ignoreTelemetry.when.interact[w]);
+                    });
+                }
+                return false;
+            })
+        ) {
+            return;
+        }
+
         const telemetryInteractRequest = new TelemetryInteractRequest();
         telemetryInteractRequest.type = interactType;
         telemetryInteractRequest.subType = interactSubtype;
@@ -64,9 +78,9 @@ export class TelemetryGeneratorService {
         const args = {type, subtype, pageid, env};
         if (
             Array.from(this.sbProgressLoader.contexts.entries()).some(([_, context]) => {
-                if (context.ignoreTelemetry && context.ignoreTelemetry.when) {
+                if (context.ignoreTelemetry && context.ignoreTelemetry.when && context.ignoreTelemetry.when.impression) {
                     return Object.keys(context.ignoreTelemetry.when).every((w) => {
-                        return args[w] && args[w].match(context.ignoreTelemetry.when[w]);
+                        return args[w] && args[w].match(context.ignoreTelemetry.when.impression[w]);
                     });
                 }
                 return false;
