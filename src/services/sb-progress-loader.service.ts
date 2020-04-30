@@ -3,7 +3,7 @@ import {ModalController} from '@ionic/angular';
 import {SbProgressLoaderPage} from '@app/app/components/popups/sb-progress-loader/sb-progress-loader.page';
 import {BehaviorSubject} from 'rxjs';
 
-interface Context {
+export interface Context {
     id: string;
     ignoreTelemetry?: {
         when: {
@@ -26,29 +26,27 @@ export class SbProgressLoader {
     ) {
     }
 
-    show(context: Context = { id: 'DEFAULT' }) {
-        (async () => {
-            this.contexts.set(context.id, context);
+    async show(context: Context = { id: 'DEFAULT' }) {
+        this.contexts.set(context.id, context);
 
-            if (this.modal) {
-                return;
+        if (this.modal) {
+            return;
+        }
+
+        this.progress.next(0);
+
+        this.modal = await this.modalCtrl.create({
+            component: SbProgressLoaderPage,
+            componentProps: {
+                progress: this.progress.asObservable(),
             }
+        });
 
-            this.progress.next(0);
+        await this.modal.present();
 
-            this.modal = await this.modalCtrl.create({
-                component: SbProgressLoaderPage,
-                componentProps: {
-                    progress: this.progress.asObservable(),
-                }
-            });
-
-            await this.modal.present();
-
-            setTimeout(() => {
-                this.hide(context);
-            }, 30 * 1000);
-        })();
+        setTimeout(() => {
+            this.hide(context);
+        }, 30 * 1000);
     }
 
     updateProgress(progress: number) {
@@ -58,24 +56,22 @@ export class SbProgressLoader {
         this.progress.next(progress);
     }
 
-    hide(context: Context = { id: 'DEFAULT' }) {
-        (async () => {
-            if (!this.contexts.has(context.id)) {
-                return;
-            }
+    async hide(context: Context = { id: 'DEFAULT' }) {
+        if (!this.contexts.has(context.id)) {
+            return;
+        }
 
-            this.contexts.delete(context.id);
+        this.contexts.delete(context.id);
 
-            if (!this.modal || this.contexts.size) {
-                return;
-            }
+        if (!this.modal || this.contexts.size) {
+            return;
+        }
 
-            this.progress.next(100);
+        this.progress.next(100);
 
-            setTimeout(() => {
-                this.modal.dismiss();
-                this.modal = undefined;
-            }, 500);
-        })();
+        setTimeout(() => {
+            this.modal.dismiss();
+            this.modal = undefined;
+        }, 500);
     }
 }

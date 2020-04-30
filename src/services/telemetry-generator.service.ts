@@ -61,10 +61,12 @@ export class TelemetryGeneratorService {
 
     generateImpressionTelemetry(type, subtype, pageid, env, objectId?: string, objectType?: string,
         objectVersion?: string, rollup?: Rollup, corRelationList?: Array<CorrelationData>) {
+        const args = {type, subtype, pageid, env};
         if (
             Array.from(this.sbProgressLoader.contexts.entries()).some(([_, context]) => {
-                return ['type', 'subtype', 'pageid', 'env'].every((arg) => {
-                    return context.ignoreTelemetry.when[arg] ? type.match(context.ignoreTelemetry.when[arg]) : true;
+                return Object.keys(args).every((arg) => {
+                    return context.ignoreTelemetry && context.ignoreTelemetry.when[arg] ?
+                        args[arg].match(context.ignoreTelemetry.when[arg]) : true;
                 });
             })
         ) {

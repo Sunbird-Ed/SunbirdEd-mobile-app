@@ -6,7 +6,7 @@ import { QRResultCallback, SunbirdQRScanner } from '../../services/sunbirdqrscan
 import has from 'lodash/has';
 import forEach from 'lodash/forEach';
 import { ContentCard, EventTopics, PreferenceKey, ProfileConstants,
-   ViewMore, RouterLinks, ContentFilterConfig, BatchConstants, ContentType, MimeType } from '../../app/app.constant';
+   ViewMore, RouterLinks, ContentFilterConfig, BatchConstants, ContentType, MimeType, ProgressPopupContext } from '../../app/app.constant';
 import { PageFilterPage, PageFilterCallback } from '../page-filter/page-filter.page';
 import { Network } from '@ionic-native/network/ngx';
 import { AppGlobalService } from '../../services/app-global-service.service';
@@ -177,7 +177,7 @@ export class CoursesPage implements OnInit, OnDestroy {
   }
 
   ionViewDidEnter() {
-    this.sbProgressLoader.hide();
+    this.sbProgressLoader.hide({ id: ProgressPopupContext.DEEPLINK });
     this.appGlobalService.generateConfigInteractEvent(PageId.COURSES, this.isOnBoardingCardCompleted);
 
     this.events.subscribe('event:showScanner', (data) => {
