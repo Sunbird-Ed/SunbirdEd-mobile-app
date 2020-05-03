@@ -8,9 +8,10 @@ import {
   ContentService,
   CorrelationData,
   TelemetryObject,
-  TelemetryService
+  TelemetryService,
+  SharedPreferences
 } from 'sunbird-sdk';
-import { ContentType, EventTopics, MimeType, RouterLinks } from '../app/app.constant';
+import { ContentType, EventTopics, MimeType, RouterLinks, PreferenceKey } from '../app/app.constant';
 
 import { CommonUtilService } from './common-util.service';
 import {
@@ -117,11 +118,12 @@ export class QRScannerResultHandler {
     ContentUtil.genrateUTMCData(params).forEach((element) => {
       cData.push(element);
     });
-    this.telemetryGeneratorService.generateUtmInfoTelemetry(params, PageId.QRCodeScanner, cData, telemetryObject);
+    this.telemetryService.updateUtmParameters(cData);
+    this.telemetryGeneratorService.generateUtmInfoTelemetry(params, PageId.QRCodeScanner, telemetryObject);
     const navigationExtras: NavigationExtras = {
       state: {
         dialCode,
-        corRelation: this.getCorRelationList(dialCode, QRScannerResultHandler.CORRELATION_TYPE, scannedData, cData),
+        corRelation: this.getCorRelationList(dialCode, QRScannerResultHandler.CORRELATION_TYPE, scannedData),
         source: this.source,
         shouldGenerateEndTelemetry: true
       }
@@ -145,16 +147,18 @@ export class QRScannerResultHandler {
     ContentUtil.genrateUTMCData(params).forEach((element) => {
       cData.push(element);
     });
+    this.telemetryService.updateUtmParameters(cData);
     const request: ContentDetailRequest = {
       contentId
     };
     this.contentService.getContentDetails(request).toPromise()
       .then((content: Content) => {
         const telemetryObject = new TelemetryObject(content.identifier, content.contentData.contentType, content.contentData.pkgVersion);
-        this.telemetryGeneratorService.generateUtmInfoTelemetry(params, PageId.QRCodeScanner, cData, telemetryObject);
+
+        this.telemetryGeneratorService.generateUtmInfoTelemetry(params, PageId.QRCodeScanner, telemetryObject);
 
         this.navigateToDetailsPage(content,
-          this.getCorRelationList(content.identifier, QRScannerResultHandler.CORRELATION_TYPE, scannedData, cData));
+          this.getCorRelationList(content.identifier, QRScannerResultHandler.CORRELATION_TYPE, scannedData));
         this.telemetryGeneratorService.generateImpressionTelemetry(
           ImpressionType.VIEW, ImpressionSubtype.QR_CODE_VALID,
           PageId.QRCodeScanner,
@@ -200,7 +204,7 @@ export class QRScannerResultHandler {
     this.generateEndEvent(this.source, scannedData);
   }
 
-  getCorRelationList(identifier: string, type: string, scannedData, cData): Array<CorrelationData> {
+  getCorRelationList(identifier: string, type: string, scannedData): Array<CorrelationData> {
     const corRelationList: Array<CorrelationData> = new Array<CorrelationData>();
     const corRelation: CorrelationData = new CorrelationData();
     corRelation.id = identifier;
@@ -210,11 +214,6 @@ export class QRScannerResultHandler {
       id: ContentUtil.extractBaseUrl(scannedData),
       type: CorReleationDataType.SOURCE
     });
-    if (cData) {
-     cData.forEach(element => {
-       corRelationList.push(element);
-     });
-    }
     return corRelationList;
   }
 

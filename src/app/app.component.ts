@@ -767,25 +767,25 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   private getUtmParameter() {
-    this.utilityService.getUtmInfo()
-      .then(response => {
-        if (response) {
-          let cData: CorrelationData[] = [];
+    this.preferences.getString(PreferenceKey.UTM_PARAMETERS).toPromise().then((data) => {
+        if (data) {
+          const response = JSON.parse(data);
+          const cData: CorrelationData[] = [];
           const utmValue = response['val'];
           const params: {[param: string]: string} = qs.parse(utmValue);
-          cData = ContentUtil.genrateUTMCData(params);
-          try {
-            const url: URL = new URL(params['utm_content']);
-            const overrideChannelSlug = url.searchParams.get('channel');
-            if (overrideChannelSlug) {
-              cData.push({
-                id: CorReleationDataType.SOURCE,
-                type: overrideChannelSlug
-              });
-            }} catch (e) {
-              console.error(e);
-
-            }
+          if (params['utm_content']) {
+            try {
+              const url: URL = new URL(params['utm_content']);
+              const overrideChannelSlug = url.searchParams.get('channel');
+              if (overrideChannelSlug) {
+                cData.push({
+                  id: CorReleationDataType.SOURCE,
+                  type: overrideChannelSlug
+                });
+              }} catch (e) {
+                console.error(e);
+              }
+          }
           if (response.val && response.val.length) {
             this.splaschreenDeeplinkActionHandlerDelegate.checkUtmContent(response.val);
           }
@@ -801,7 +801,7 @@ export class AppComponent implements OnInit, AfterViewInit {
             utmTelemetry,
             undefined,
             cData);
-          this.utilityService.clearUtmInfo();
+          this.preferences.putString(PreferenceKey.UTM_PARAMETERS, '').toPromise();
       }
       })
       .catch(error => {
