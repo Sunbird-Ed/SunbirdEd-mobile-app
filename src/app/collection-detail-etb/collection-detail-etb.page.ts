@@ -446,7 +446,11 @@ export class CollectionDetailEtbPage implements OnInit {
     if (this.shouldGenerateEndTelemetry) {
       this.generateQRSessionEndEvent(this.source, this.cardData.identifier);
     }
-    this.location.back();
+    if (this.source === PageId.ONBOARDING_PROFILE_PREFERENCES) {
+      this.router.navigate([`/${RouterLinks.PROFILE_SETTINGS}`], { state: {showFrameworkCategoriesMenu: true  }, replaceUrl: true });
+    } else {
+      this.location.back();
+    }
   }
 
   registerDeviceBackButton() {

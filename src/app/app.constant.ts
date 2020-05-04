@@ -258,7 +258,7 @@ export const appLanguages = [
         name: 'English'
     },
     {
-        label: 'অসমিয়া',
+        label: 'অসমীয়া',
         code: 'as',
         isApplied: false,
         name: 'Assamese'
@@ -531,7 +531,7 @@ export class RouterLinks {
     public static readonly FAQ_REPORT_ISSUE = 'faq-report-issue';
 
     // routing to Term of use Web Page
-    public static readonly TERM_OF_USE = '/term-of-use.html';
+    public static readonly TERM_OF_USE = '/privacy-policy/terms-of-use.html';
 
 }
 

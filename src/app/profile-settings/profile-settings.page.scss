@@ -284,24 +284,15 @@
       }
     }
   }
-  @keyframes upDownAnimate {
-    0% {
-      top: 0;
-    }
-    50% {
-      top: 10px;
-    }
-    100% {
-      top: 0;
-    }
-  }
-
   .arrow-icon {
     right: 15px;
-    //position: absolute;
     top: 50%;
-    //transform: translateY(-50%);
     width: 22px;
+    &.animate {
+      position: relative;
+      animation: upDownAnimate 5s linear infinite;
+      animation-duration: 0.9s;
+    }
   }
 
   ion-label {
@@ -334,13 +325,7 @@
 }
 
 @keyframes upDownAnimate {
-  0% {
-    top: 0;
-  }
-  50% {
-    top: 10px;
-  }
-  100% {
-    top: 0;
-  }
+  0% {right: 0;}
+  50% {right: 10px;}
+  100% {right: 0;}
 }
