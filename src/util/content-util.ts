@@ -131,7 +131,7 @@ export class ContentUtil {
     if (Object.keys(utmParams)) {
         Object.keys(utmParams).map((key) => {
             if (utmParams[key] !== undefined) {
-                cData.push({ id: key, type: utmParams[key] });
+                cData.push({ id: utmParams[key] , type: key});
             }
         });
     }
