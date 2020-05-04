@@ -71,7 +71,6 @@ export class LanguageSettingsPage implements OnInit {
         this.isFromSettings ? PageId.SETTINGS_LANGUAGE : PageId.LANGUAGE,
         this.isFromSettings ? Environment.SETTINGS : Environment.ONBOARDING
       );
-      /* *** */
     }, 500);
   }
 
@@ -164,7 +163,6 @@ export class LanguageSettingsPage implements OnInit {
       undefined,
       this.language
     );
-    /* ** */
     if (this.language) {
       this.zone.run(() => {
         this.translateService.use(this.language);
@@ -195,7 +193,6 @@ export class LanguageSettingsPage implements OnInit {
     Environment.ONBOARDING,
     PageId.LANGUAGE
   );
-  /* ** */
   }
   
 
@@ -223,7 +220,6 @@ export class LanguageSettingsPage implements OnInit {
       undefined,
       this.language
     );
-    /* ** */
   }
 
   generateClickInteractEvent(selectedLanguage: string, interactSubType) {

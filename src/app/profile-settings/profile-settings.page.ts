@@ -137,7 +137,6 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
       PageId.SCAN_OR_MANUAL,
       Environment.ONBOARDING
     );
-    /* ** */
 
     this.handleActiveScanner();
 
@@ -170,7 +169,6 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
       Environment.ONBOARDING,
       correlationList
     );
-    /* ** */
   }
 
   subscribeFormFieldValueChage() {
@@ -322,7 +320,6 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
       rollUpObj,
       correlationList
     );
-    /* ** */
   }
 
   extractProfileForTelemetry(formVal): any {
@@ -355,7 +352,6 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
       Environment.ONBOARDING,
       this.showQRScanner ? PageId.SCAN_OR_MANUAL : PageId.PROFILE_SETTINGS
     );
-    /* ** */
 
     if (this.showQRScanner === false) {
       this.showQRScanner = true;
@@ -378,7 +374,6 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
       Environment.ONBOARDING,
       PageId.SCAN_OR_MANUAL
     );
-    /* ** */
     this.scanner.startScanner(PageId.ONBOARDING_PROFILE_PREFERENCES, true).then((scannedData) => {
       if (scannedData === 'skip') {
         this.telemetryGeneratorService.generateImpressionTelemetry(
@@ -411,7 +406,6 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
         undefined,
         correlationList
       );
-      /* ** */
       this.submitProfileSettingsForm();
       return;
     }
@@ -517,19 +511,6 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
           /* New Telemetry */
           this.generateCategorySubmitTelemetry('board');
 
-          // const correlationList: Array<CorrelationData> = [];
-          // correlationList.push({ id: this.boardControl.value, type: 'Board' });
-          // this.telemetryGeneratorService.generateInteractTelemetry(
-          //   InteractType.SELECT_SUBMIT, '',
-          //   Environment.ONBOARDING,
-          //   PageId.POPUP_CATEGORY,
-          //   undefined,
-          //   undefined,
-          //   undefined,
-          //   correlationList
-          // );
-          /* ** */
-
           const boardCategoryTermsRequet: GetFrameworkCategoryTermsRequest = {
             frameworkId: this.framework.identifier,
             requiredCategories: [FrameworkCategoryCode.BOARD],
@@ -573,19 +554,6 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
         /* New Telemetry */
         this.generateCategorySubmitTelemetry('medium');
 
-        // const correlationList: Array<CorrelationData> = [];
-        // correlationList.push({ id: this.mediumControl.value, type: 'Medium' });
-        // this.telemetryGeneratorService.generateInteractTelemetry(
-        //   InteractType.SELECT_SUBMIT, '',
-        //   Environment.ONBOARDING,
-        //   PageId.POPUP_CATEGORY,
-        //   undefined,
-        //   undefined,
-        //   undefined,
-        //   correlationList
-        // );
-        /* ** */
-
         await this.commonUtilService.getLoader().then((loader) => {
           this.loader = loader;
           this.loader.present();
@@ -623,18 +591,6 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
         /* New Telemetry */
         this.generateCategorySubmitTelemetry('grade');
 
-        // const correlationList: Array<CorrelationData> = [];
-        // correlationList.push({ id: this.gradeControl.value, type: 'Grade' });
-        // this.telemetryGeneratorService.generateInteractTelemetry(
-        //   InteractType.SELECT_SUBMIT, '',
-        //   Environment.ONBOARDING,
-        //   PageId.POPUP_CATEGORY,
-        //   undefined,
-        //   undefined,
-        //   undefined,
-        //   correlationList
-        // );
-        /* ** */
       })
     );
   }
@@ -708,7 +664,6 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
       undefined,
       correlationList
     );
-    /* ** */
   }
 
   private resetProfileSettingsForm() {
@@ -745,27 +700,11 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
       undefined,
       correlationList
     );
-    /* *** */
+
     setTimeout(() => {
       this.boardSelect.open();
     }, 0);
   }
-
-  // onBoardSelected() {
-  //   /* New Telemetry */
-  //   const correlationList: Array<CorrelationData> = [];
-  //   correlationList.push({ id: this.boardSelect, type:  CorReleationDataType.board});
-  //   this.telemetryGeneratorService.generateInteractTelemetry(
-  //     InteractType.SELECT_ATTRIBUTE, '',
-  //     Environment.ONBOARDING,
-  //     PageId.SCAN_OR_MANUAL,
-  //     undefined,
-  //     undefined,
-  //     undefined,
-  //     correlationList
-  //   );
-  //   /* ** */
-  // }
 
   onCategoryCliked(category: string) {
     const correlationList: Array<CorrelationData> = [];

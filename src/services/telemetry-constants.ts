@@ -423,7 +423,6 @@ export enum InteractSubtype {
     FAIL = 'fail',
     UI = 'ui',
     DEVICE = 'device'
-    /* ** */
 }
 
 export enum ID {

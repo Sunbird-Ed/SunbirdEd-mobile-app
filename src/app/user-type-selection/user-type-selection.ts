@@ -95,7 +95,6 @@ export class UserTypeSelectionPage implements OnInit {
       PageId.USER_TYPE,
       this.appGlobalService.isOnBoardingCompleted ? Environment.HOME : Environment.ONBOARDING
     );
-    /* ** */
   }
 
   ionViewWillEnter() {
@@ -112,7 +111,6 @@ export class UserTypeSelectionPage implements OnInit {
         this.appGlobalService.isOnBoardingCompleted ? Environment.HOME : Environment.ONBOARDING,
         PageId.USER_TYPE
       );
-      /* ** */
       this.handleBackButton();
       this.backButtonFunc.unsubscribe();
     });
@@ -145,7 +143,6 @@ export class UserTypeSelectionPage implements OnInit {
           this.appGlobalService.isOnBoardingCompleted ? Environment.HOME : Environment.ONBOARDING,
           PageId.USER_TYPE
         );
-        /* ** */
         this.handleBackButton();
         break;
     }
@@ -299,7 +296,6 @@ export class UserTypeSelectionPage implements OnInit {
         undefined,
         correlationlist
       );
-      /* ** */
   }
 
   /**

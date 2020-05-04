@@ -385,9 +385,7 @@ export class TelemetryGeneratorService {
     }
 
 
-    /* New Telemetry 
-    any old telemetry methods should be written outside this block
-    */
+    /* New Telemetry */
     generateBackClickedNewTelemetry(isDeviceBack, env, pageId) {
         this.generateInteractTelemetry(
             InteractType.SELECT_BACK,
@@ -409,5 +407,4 @@ export class TelemetryGeneratorService {
             rollup
         );
     }
-    /* ** */
 }
