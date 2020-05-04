@@ -192,7 +192,7 @@ export class AboutUsComponent implements OnInit {
 
   async openTermsOfUse() {
     this.generateInteractTelemetry(InteractType.TOUCH, InteractSubtype.TERMS_OF_USE_CLICKED);
-    const baseUrl = await this.utilityService.getBuildConfigValue('BASE_URL');
+    const baseUrl = await this.utilityService.getBuildConfigValue('TOU_BASE_URL');
     const url = baseUrl + RouterLinks.TERM_OF_USE;
     const options
       = 'hardwareback=yes,clearcache=no,zoom=no,toolbar=yes,disallowoverscroll=yes';

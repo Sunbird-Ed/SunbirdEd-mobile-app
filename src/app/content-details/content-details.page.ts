@@ -213,7 +213,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
       this.corRelationList = extras.corRelation;
       this.identifier = this.cardData.contentId || this.cardData.identifier;
       this.isResumedCourse = Boolean(extras.isResumedCourse);
-      this.source = extras.source;
+      this.source = extras.source || this.source;
       this.shouldGenerateEndTelemetry = extras.shouldGenerateEndTelemetry;
       this.downloadAndPlay = extras.downloadAndPlay;
       this.playOnlineSpinner = true;
@@ -619,7 +619,9 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
     // }
 
     // Tested in ionic 4 working as expected
-    if (this.isSingleContent) {
+    if (this.source === PageId.ONBOARDING_PROFILE_PREFERENCES) {
+      this.router.navigate([`/${RouterLinks.PROFILE_SETTINGS}`], { state: {showFrameworkCategoriesMenu: true  }, replaceUrl: true });
+    } else if (this.isSingleContent) {
       window.history.go(-3);
     } else if (this.resultLength === 1) {
       // this.navCtrl.navigateBack([RouterLinks.SEARCH]);
