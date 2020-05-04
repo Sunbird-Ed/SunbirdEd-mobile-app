@@ -110,11 +110,6 @@ describe('ProfileSettingsPage', () => {
         profileSettingsPage.ngOnInit().then(() => {
             // assert
            setTimeout(() => {
-               expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenCalledWith(
-                   ImpressionType.VIEW, '',
-                   PageId.ONBOARDING_PROFILE_PREFERENCES,
-                   Environment.ONBOARDING
-               );
                expect(mockAppVersion.getAppName).toHaveBeenCalled();
                expect(mockProfileService.getActiveSessionProfile).toHaveBeenCalled();
                done();
@@ -139,11 +134,6 @@ describe('ProfileSettingsPage', () => {
         // act
         profileSettingsPage.ngOnInit().then(() => {
             // assert
-            expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenCalledWith(
-                ImpressionType.VIEW, '',
-                PageId.ONBOARDING_PROFILE_PREFERENCES,
-                Environment.ONBOARDING
-            );
             expect(mockAppVersion.getAppName).toHaveBeenCalled();
             expect(mockProfileService.getActiveSessionProfile).toHaveBeenCalled();
             done();

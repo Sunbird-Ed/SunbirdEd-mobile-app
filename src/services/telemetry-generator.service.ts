@@ -285,7 +285,7 @@ export class TelemetryGeneratorService {
             corRelationList);
     }
 
-    generateProfilePopulatedTelemetry(pageId, profile, mode, env?) {
+    generateProfilePopulatedTelemetry(pageId, profile, mode, env?, source?) {
         const values = new Map();
         values['board'] = profile.board[0];
         values['medium'] = profile.medium;
@@ -296,6 +296,9 @@ export class TelemetryGeneratorService {
         corRelationList.push({ id: profile.medium ? profile.medium.join(',') : '' , type: CorReleationDataType.MEDIUM });
         corRelationList.push({ id: profile.grade ? profile.grade.join(',') : '', type: CorReleationDataType.CLASS });
         corRelationList.push({ id: profile.profileType, type: CorReleationDataType.USERTYPE });
+        if (source) {
+            corRelationList.push({id: source, type: CorReleationDataType.SOURCE});
+        }
         this.generateInteractTelemetry(
             InteractType.OTHER,
             InteractSubtype.PROFILE_ATTRIBUTE_POPULATION,

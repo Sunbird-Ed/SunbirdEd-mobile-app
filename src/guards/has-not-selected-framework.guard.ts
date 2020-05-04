@@ -35,6 +35,7 @@ export class HasNotSelectedFrameworkGuard implements Resolve<any> {
             this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise()
                 .then((profile) => {
                     if (shouldDisplay && !HasNotSelectedFrameworkGuard.isProfileComplete(profile)) {
+                        this.splashScreenService.handleSunbirdSplashScreenActions();
                         return true;
                     } else {
                         this.appGlobalService.isProfileSettingsCompleted = true;
