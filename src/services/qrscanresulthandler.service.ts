@@ -118,7 +118,7 @@ export class QRScannerResultHandler {
     ContentUtil.genrateUTMCData(params).forEach((element) => {
       cData.push(element);
     });
-    this.telemetryService.updateUtmParameters(cData);
+    this.telemetryService.updateCampaignParameters(cData);
     this.telemetryGeneratorService.generateUtmInfoTelemetry(params, PageId.QRCodeScanner, telemetryObject);
     const navigationExtras: NavigationExtras = {
       state: {
@@ -147,7 +147,7 @@ export class QRScannerResultHandler {
     ContentUtil.genrateUTMCData(params).forEach((element) => {
       cData.push(element);
     });
-    this.telemetryService.updateUtmParameters(cData);
+    this.telemetryService.updateCampaignParameters(cData);
     const request: ContentDetailRequest = {
       contentId
     };

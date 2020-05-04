@@ -215,7 +215,7 @@ describe('AppComponent', () => {
                         return of('');
                     case PreferenceKey.SYNC_CONFIG:
                         return of('some_config');
-                    case PreferenceKey.UTM_PARAMETERS:
+                    case PreferenceKey.CAMPAIGN_PARAMETERS:
                         return of('[{"utmSource": "playstore"}, {"utmMedium": "sample"}]');
                 }
             });
@@ -240,6 +240,7 @@ describe('AppComponent', () => {
             };
             mockHeaderService.headerConfigEmitted$ = of(mockConfig);
             mockActivePageService.computePageId = jest.fn(() => 'some_page_id');
+            mockUtilityService.clearUtmInfo = jest.fn(() => Promise.resolve());
             // act
             jest.useFakeTimers();
             appComponent.ngOnInit();
@@ -249,6 +250,7 @@ describe('AppComponent', () => {
             // assert
             setTimeout(() => {
                 expect(appComponent.headerConfig).toBe(mockConfig);
+                expect(mockUtilityService.clearUtmInfo).toHaveBeenCalled();
                 done();
             }, 0);
         });
@@ -325,7 +327,7 @@ describe('AppComponent', () => {
                         return of('');
                     case PreferenceKey.SYNC_CONFIG:
                         return of('some_config');
-                    case PreferenceKey.UTM_PARAMETERS:
+                    case PreferenceKey.CAMPAIGN_PARAMETERS:
                         return of('[{"utmSource": "playstore"}, {"utmMedium": "sample"}]');
                 }
             });
@@ -357,7 +359,7 @@ describe('AppComponent', () => {
                     'sample-page',
                     [{id: undefined, type: 'NotificationID'}]
                 );
-                expect(mockPreferences.getString).toHaveBeenCalledWith(PreferenceKey.UTM_PARAMETERS);
+                expect(mockPreferences.getString).toHaveBeenCalledWith(PreferenceKey.CAMPAIGN_PARAMETERS);
                 expect(mockTranslate.use).toHaveBeenCalled();
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
                     InteractType.OTHER,
@@ -443,7 +445,7 @@ describe('AppComponent', () => {
                         return of('');
                     case PreferenceKey.SYNC_CONFIG:
                         return of('some_config');
-                    case PreferenceKey.UTM_PARAMETERS:
+                    case PreferenceKey.CAMPAIGN_PARAMETERS:
                         return of('[{"utmSource": "playstore"}, {"utmMedium": "sample"}]');
                     default:
                         return of('');
@@ -754,7 +756,7 @@ describe('AppComponent', () => {
                         return of('');
                     case PreferenceKey.SYNC_CONFIG:
                         return of('some_config');
-                    case PreferenceKey.UTM_PARAMETERS:
+                    case PreferenceKey.CAMPAIGN_PARAMETERS:
                         return of('[{"utmSource": "playstore"}, {"utmMedium": "sample"}]');
                 }
             });
@@ -797,7 +799,7 @@ describe('AppComponent', () => {
                         return of('');
                     case PreferenceKey.SYNC_CONFIG:
                         return of('some_config');
-                    case PreferenceKey.UTM_PARAMETERS:
+                    case PreferenceKey.CAMPAIGN_PARAMETERS:
                         return of('[{"utmSource": "playstore"}, {"utmMedium": "sample"}]');
                 }
             });
@@ -843,7 +845,7 @@ describe('AppComponent', () => {
                         return of('');
                     case PreferenceKey.SYNC_CONFIG:
                         return of('some_config');
-                    case PreferenceKey.UTM_PARAMETERS:
+                    case PreferenceKey.CAMPAIGN_PARAMETERS:
                         return of('[{"utmSource": "playstore"}, {"utmMedium": "sample"}]');
                 }
             });
@@ -961,7 +963,7 @@ describe('AppComponent', () => {
                         return of('');
                     case PreferenceKey.SYNC_CONFIG:
                         return of('some_config');
-                    case PreferenceKey.UTM_PARAMETERS:
+                    case PreferenceKey.CAMPAIGN_PARAMETERS:
                         return of('[{"utmSource": "playstore"}, {"utmMedium": "sample"}]');
                 }
             });
@@ -1154,7 +1156,7 @@ describe('AppComponent', () => {
                         return of('');
                     case PreferenceKey.SYNC_CONFIG:
                         return of('some_config');
-                    case PreferenceKey.UTM_PARAMETERS:
+                    case PreferenceKey.CAMPAIGN_PARAMETERS:
                         return of('[{"utmSource": "playstore"}, {"utmMedium": "sample"}]');
                 }
             });

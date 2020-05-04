@@ -144,7 +144,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.statusBar.styleBlackTranslucent();
       this.handleBackButton();
       this.appRatingService.checkInitialDate();
-      this.getUtmParameter();
+      this.getCampaignParameter();
       this.checkForCodeUpdates();
       this.checkAndroidWebViewVersion();
     });
@@ -766,8 +766,8 @@ export class AppComponent implements OnInit, AfterViewInit {
     });
   }
 
-  private getUtmParameter() {
-    this.preferences.getString(PreferenceKey.UTM_PARAMETERS).toPromise().then((data) => {
+  private getCampaignParameter() {
+    this.preferences.getString(PreferenceKey.CAMPAIGN_PARAMETERS).toPromise().then((data) => {
         if (data) {
           const response = JSON.parse(data);
           const cData: CorrelationData[] = [];
@@ -801,7 +801,7 @@ export class AppComponent implements OnInit, AfterViewInit {
             utmTelemetry,
             undefined,
             cData);
-          this.preferences.putString(PreferenceKey.UTM_PARAMETERS, '').toPromise();
+          this.utilityService.clearUtmInfo();
       }
       })
       .catch(error => {

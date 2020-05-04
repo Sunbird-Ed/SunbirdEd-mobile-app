@@ -425,7 +425,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
       utmcData.push(element);
     });
 
-    this.telemetryService.updateUtmParameters(utmcData);
+    this.telemetryService.updateCampaignParameters(utmcData);
     this.telemetryGeneratorService.generateUtmInfoTelemetry(params, PageId.HOME, telemetryObject);
 
     return utmcData;
