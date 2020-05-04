@@ -473,17 +473,6 @@ export class CommonUtilService {
             });
     }
 
-    generateUTMInfoTelemetry(scannedData, cData, object) {
-        const utmHashes = scannedData.slice(scannedData.indexOf('?') + 1).split('&');
-        const utmParams = {};
-        utmHashes.map(hash => {
-            const [key, val] = hash.split('=');
-            utmParams[key] = decodeURIComponent(val);
-        });
-        this.telemetryGeneratorService.generateUtmInfoTelemetry(utmParams,
-            (cData[0].id === CorReleationDataType.SCAN) ? PageId.QRCodeScanner : PageId.HOME, cData, object);
-    }
-
     getFormattedDate(date: string | Date) {
         const inputDate = new Date(date).toDateString();
         const [, month, day, year] = inputDate.split(' ');
