@@ -1,69 +1,55 @@
-<ion-content class="ion-padding">
-  <h6 class="gray-color ion-text-center">{{ 'ROLE_SELECTOR_QUERY' | translate }}</h6>
+<ion-content padding>
+    <div class="back-btn-container">
+        <ion-icon *ngIf="!hideBackButton" ios="ios-arrow-back" md="md-arrow-back" (click)="handleBackButton(true)"
+                  class="top-back-button"></ion-icon>
+    </div>
+    <ion-title text-center class="title-class">{{'APP_TITLE' | translate:{'%s': appName} }}</ion-title>
+    <h6 class="gray-color" text-center>{{ 'ROLE_SELECTOR_QUERY' | translate }}</h6>
 
-  <!-- Student card -->
-  <ion-card (click)="selectStudentCard()" class="card-related-style" style="margin-top:20px"
-    [ngStyle]="{'border-color': studentCardBorderColor}">
     <ion-grid>
-      <ion-row>
-        <ion-col size="3">
-          <img class="thumbnail" alt="" [src]="studentImageUri" />
-        </ion-col>
-        <ion-col size="9">
-          <h4 class="card-title">{{ 'USER_TYPE_2' | translate }}</h4>
-          <ul class="description">
-            <li>{{ 'STUDENT_ROLE_DESC_1' | translate }}</li>
-          </ul>
-        </ion-col>
-      </ion-row>
+        <!--    Teacher Card-->
+        <ion-row class="ion-justify-content-start ion-align-items-stretch">
+            <ion-col size="6">
+                <ion-card (click)="selectTeacherCard()" class="card-related-style" [class.selected]="selectedUserType === ProfileType.TEACHER">
+                    <img class="icon-check" alt="" [class.selected]="selectedUserType === ProfileType.TEACHER" [src]="selectCardImageUri"/>
+                    <ion-grid>
+                        <ion-row class="ion-align-items-end" style="height: 100%">
+                            <ion-col>
+                                <img class="thumbnail" alt="" [src]="teacherImageUri"/>
+                                <h4 class="card-title">{{ 'USER_TYPE_1' | translate }}</h4>
+                            </ion-col>
+                        </ion-row>
+                    </ion-grid>
+                </ion-card>
+            </ion-col>
+            <!-- Student card -->
+            <ion-col size="6">
+                <ion-card (click)="selectStudentCard()" class="card-related-style" [class.selected]="selectedUserType === ProfileType.STUDENT">
+                    <img class="icon-check" alt="" [class.selected]="selectedUserType === ProfileType.STUDENT" [src]="selectCardImageUri"/>
+                    <ion-grid>
+                        <ion-row class="ion-align-items-end" style="height: 100%">
+                            <ion-col>
+                                <img class="thumbnail" alt="" [src]="studentImageUri"/>
+                                <h4 class="card-title">{{ 'USER_TYPE_2' | translate }}</h4>
+                            </ion-col>
+                        </ion-row>
+                    </ion-grid>
+                </ion-card>
+            </ion-col>
+            <!-- Other card -->
+            <ion-col size="6">
+                <ion-card (click)="selectOtherCard()" class="card-related-style" [class.selected]="selectedUserType === ProfileType.OTHER">
+                    <img class="icon-check" alt="" [class.selected]="selectedUserType === ProfileType.OTHER" [src]="selectCardImageUri"/>
+                    <ion-grid>
+                        <ion-row class="ion-align-items-end" style="height: 100%">
+                            <ion-col>
+                                <img class="thumbnail" alt="" [src]="otherImageUri"/>
+                                <h4 class="card-title">{{ 'USER_TYPE_3' | translate }}</h4>
+                            </ion-col>
+                        </ion-row>
+                    </ion-grid>
+                </ion-card>
+            </ion-col>
+        </ion-row>
     </ion-grid>
-  </ion-card>
-
-  <!-- Teacher card -->
-  <ion-card (click)="selectTeacherCard()" class="card-related-style"
-    [ngStyle]="{'border-color': teacherCardBorderColor}">
-    <ion-grid>
-      <ion-row>
-        <ion-col size="3">
-          <img class="thumbnail" alt="" [src]="teacherImageUri" />
-        </ion-col>
-        <ion-col size="9">
-          <h4 class="card-title">{{ 'USER_TYPE_1' | translate }}</h4>
-          <ul class="description">
-            <li>{{ 'TEACHER_ROLE_DESC_1' | translate }}</li>
-            <li>{{ 'TEACHER_ROLE_DESC_2' | translate }}</li>
-            <li>{{ 'TEACHER_ROLE_DESC_3' | translate }}</li>
-          </ul>
-        </ion-col>
-      </ion-row>
-    </ion-grid>
-  </ion-card>
-
-  <!-- Other card -->
-  <ion-card (click)="selectOtherCard()" class="card-related-style" [ngStyle]="{'border-color': otherCardBorderColor}">
-    <ion-grid>
-      <ion-row>
-        <ion-col size="3">
-          <img class="thumbnail" alt="" [src]="otherImageUri" />
-        </ion-col>
-        <ion-col size="9">
-          <h4 class="card-title">{{ 'USER_TYPE_3' | translate }}</h4>
-          <ul class="description">
-            <li>{{ 'OTHER_ROLE_DESC_1' | translate }}</li>
-            <li>{{ 'OTHER_ROLE_DESC_2' | translate }}</li>
-          </ul>
-        </ion-col>
-      </ion-row>
-    </ion-grid>
-  </ion-card>
-
 </ion-content>
-
-<ion-footer class="ion-padding" no-border style="background: white;">
-  <button class="sb-btn sb-btn-md sb-btn-primary PR35 W100 ellipsis text-uppercase btn-block"
-    [style.background-color]="'#006DE5'" *ngIf="userTypeSelected" (click)="continue()">
-    {{continueAs}}
-    <ion-icon class="arrow-icon" name="arrow-round-forward"></ion-icon>
-  </button>
-
-</ion-footer>

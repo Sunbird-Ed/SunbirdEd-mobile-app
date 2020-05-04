@@ -1,4 +1,5 @@
 @import "src/assets/styles/_variables.scss";
+@import "src/assets/styles/_custom-mixins";
 
 :host {
     .input-container {
@@ -129,6 +130,9 @@
 
     .top-back-button {
         font-size: 20px;
+        @include rtl() {
+            float: right;
+        }
     }
 
     ::-webkit-scrollbar {
@@ -158,4 +162,25 @@
         background-color: #0076fe;
         text-transform: uppercase;
     }
+    .arrow-icon {
+        right: 15px;
+        top: 50%;
+        width: 22px;
+        float: right;
+        @include rtl {
+            float: left;
+            margin-left: 10px;
+        }
+        &.animate {
+            position: relative;
+            animation: upDownAnimate 5s linear infinite;
+            animation-duration: 0.9s;
+        }
+    }
+}
+
+@keyframes upDownAnimate {
+    0% {right: 0;}
+    50% {right: 10px;}
+    100% {right: 0;}
 }
