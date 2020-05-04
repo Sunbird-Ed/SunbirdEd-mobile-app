@@ -122,7 +122,8 @@ export enum PageId {
     SHARE_CONTENT_POPUP = 'share-content-popup',
     SHARE_APP_POPUP = 'share-app-popup',
     UPGRADE_POPUP = 'update-popup',
-    IMPORT_CONTENT_POPUP = 'import-content-popup'
+    IMPORT_CONTENT_POPUP = 'import-content-popup',
+    PERMISSION_POPUP = 'permission-popup'
 }
 export enum LogType {
     NOTIFICATION = 'notification'
@@ -143,7 +144,9 @@ export enum ImpressionType {
     VIEW = 'view',
     EDIT = 'edit',
     WORKFLOW = 'workflow',
-    DISTRICT_MAPPING = 'district-mapping'
+    DISTRICT_MAPPING = 'district-mapping',
+    CAMERA = 'camera',
+    FILE_MANAGEMENT = 'file-management'
 }
 export enum ImpressionSubtype {
     QRCodeScanInitiate = 'qr-code-scan-initiate',
@@ -173,7 +176,9 @@ export enum InteractType {
     DISABLED = 'disabled',
     DELETE_CHECKED = 'delete-checked',
     DELETE_UNCHECKED = 'delete-unchecked',
-    BACKDROP_DISMISSED = 'backdrop-dismissed'
+    BACKDROP_DISMISSED = 'backdrop-dismissed',
+    WITHOUT_CONTENT = 'without-content',
+    WITH_CONTENT = 'with-content'
 }
 
 
@@ -217,8 +222,8 @@ export enum InteractSubtype {
     ANNOUNCEMENT_CLICKED = 'announcement-clicked',
     SIGNIN_OVERLAY_CLICKED = 'signin-overlay-clicked',
     SETTINGS_CLICKED = 'settings-clicked',
-    PERMISSION_POPOVER_NOT_NOW_CLICKED = 'permission-popover-not-now-clicked',
-    PERMISSION_POPOVER_ALLOW_CLICKED = 'permission-popover-allow-clicked',
+    NOT_NOW_CLICKED = 'not-now-clicked',
+    ALLOW_CLICKED = 'allow-clicked',
     LANGUAGE_CLICKED = 'language-clicked',
     HELP_CLICKED = 'help-clicked',
     DATA_SYNC_CLICKED = 'data-sync-clicked',
@@ -414,7 +419,8 @@ export enum ID {
     CONTINUE_CLICKED = 'continue-clicked',
     LOAD_CLICKED = 'load-clicked',
     BACKDROP_CLICKED = 'backdrop-clicked',
-    CANCEL_CLICKED = 'cancel-clicked'
+    CANCEL_CLICKED = 'cancel-clicked',
+    SEE_MORE_CONTENT_BUTTON_CLICKED = 'see-more-content-button-clicked'
 }
 
 export enum ActionButtonType {
@@ -434,7 +440,8 @@ export enum CorReleationDataType {
     SUBJECT = 'Subject',
     USERTYPE = 'UserType',
     DISCOVERY_TYPE = 'DiscoveryType',
-    DEEPLINK = 'Deeplink'
+    DEEPLINK = 'Deeplink',
+    SOURCE = 'Source',
 }
 
 

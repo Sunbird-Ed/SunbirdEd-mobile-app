@@ -197,9 +197,14 @@ describe('LoginHandlerService', () => {
             // assert
             expect(response).toEqual({
                 uid: 'uid',
+                board: [],
+                grade: [],
                 handle: 'Guest1',
+                medium: [],
                 profileType: ProfileType.TEACHER,
-                source: ProfileSource.LOCAL
+                source: ProfileSource.LOCAL,
+                subject: [],
+                syllabus: []
             });
         });
     });

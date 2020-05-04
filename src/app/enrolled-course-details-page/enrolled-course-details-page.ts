@@ -221,12 +221,16 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
   public lastReadContentId;
   public courseCompletionData = {};
   isCertifiedCourse: boolean;
+  private isOnboardingSkipped: any;
+  private isFromChannelDeeplink: any;
+
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
     @Inject('EVENTS_BUS_SERVICE') private eventsBusService: EventsBusService,
     @Inject('COURSE_SERVICE') private courseService: CourseService,
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
+    @Inject('AUTH_SERVICE') public authService: AuthService,
     private loginHandlerService: LoginHandlerService,
     private zone: NgZone,
     private events: Events,
@@ -257,6 +261,8 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
     const extrasState = this.router.getCurrentNavigation().extras.state;
     if (extrasState) {
       this.courseCardData = extrasState.content;
+      this.isOnboardingSkipped = extrasState.isOnboardingSkipped;
+      this.isFromChannelDeeplink = extrasState.isFromChannelDeeplink;
       // console.log('this.courseCardData', this.courseCardData);
       this.identifier = this.courseCardData.contentId || this.courseCardData.identifier;
       this.corRelationList = extrasState.corRelation;
@@ -277,7 +283,10 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
   }
 
   showDeletePopup() {
-    this.contentDeleteObservable = this.contentDeleteHandler.contentDeleteCompleted$.subscribe(() => {
+    this.contentDeleteObservable = this.contentDeleteHandler.contentDeleteCompleted$.subscribe(async () => {
+      if (await this.onboardingSkippedBackAction()) {
+        return;
+      }
       this.location.back();
     });
     const contentInfo: ContentInfo = {
@@ -288,7 +297,6 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
     };
     this.contentDeleteHandler.showContentDeletePopup(this.content, this.isChild, contentInfo, PageId.COURSE_DETAIL);
   }
-
 
   subscribeUtilityEvents() {
     this.utilityService.getBuildConfigValue('BASE_URL')
@@ -352,11 +360,15 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
     });
 
     this.events.subscribe('header:setzIndexToNormal', () => {
-      this.stickyPillsRef.nativeElement.classList.remove('z-index-0');
+      if (this.stickyPillsRef && this.stickyPillsRef.nativeElement) {
+        this.stickyPillsRef.nativeElement.classList.remove('z-index-0');
+      }
     });
 
     this.events.subscribe('header:decreasezIndex', () => {
-      this.stickyPillsRef.nativeElement.classList.add('z-index-0');
+      if (this.stickyPillsRef && this.stickyPillsRef.nativeElement) {
+        this.stickyPillsRef.nativeElement.classList.add('z-index-0');
+      }
     });
 
   }
@@ -389,8 +401,9 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
    * Get the session to know if the user is logged-in or guest
    *
    */
-  checkLoggedInOrGuestUser() {
-    this.guestUser = !this.appGlobalService.isUserLoggedIn();
+  async checkLoggedInOrGuestUser() {
+    const session = await this.authService.getSession().toPromise();
+    this.guestUser = session ? false : true;
   }
 
   checkCurrentUserType() {
@@ -467,7 +480,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
         this.commonUtilService.showToast('TRY_BEFORE_RATING');
       }
     } else {
-      if (this.profileType === ProfileType.TEACHER) {
+      if (this.commonUtilService.isAccessibleForNonStudentRole(this.profileType)) {
         this.commonUtilService.showToast('SIGNIN_TO_USE_FEATURE');
       }
     }
@@ -1098,7 +1111,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
           // await loader.dismiss();
           if (data && data.children) {
             setTimeout(() => {
-              if (this.stickyPillsRef) {
+              if (this.stickyPillsRef && this.stickyPillsRef.nativeElement) {
                 this.stickyPillsRef.nativeElement.classList.add('sticky');
               }
             }, 1000);
@@ -1249,6 +1262,10 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
           return data.find((element) =>
             (this.courseCardData.batchId && element.batchId === this.courseCardData.batchId)
             || (!this.courseCardData.batchId && element.courseId === this.identifier));
+        })
+        .catch(e => {
+          console.log(e);
+          return null;
         });
       if (this.updatedCourseCardData && !this.courseCardData.batch) {
         this.courseCardData.batch = this.updatedCourseCardData.batch;
@@ -1302,7 +1319,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
   }
 
   handleBackButton() {
-    this.backButtonFunc = this.platform.backButton.subscribeWithPriority(10, () => {
+    this.backButtonFunc = this.platform.backButton.subscribeWithPriority(10, async () => {
       this.telemetryGeneratorService.generateBackClickedTelemetry(
         PageId.COURSE_DETAIL,
         Environment.HOME,
@@ -1317,6 +1334,10 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
 
       if (this.shouldGenerateEndTelemetry) {
         this.generateQRSessionEndEvent(this.source, this.course.identifier);
+      }
+
+      if (await this.onboardingSkippedBackAction()) {
+        return;
       }
       this.goBack();
     });
@@ -1688,7 +1709,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
     }
   }
 
-  handleHeaderEvents($event) {
+  async handleHeaderEvents($event) {
     switch ($event.name) {
       case 'share':
         this.share();
@@ -1700,6 +1721,10 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
         this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.COURSE_DETAIL, Environment.HOME,
           true, this.identifier, this.corRelationList, this.objRollup, this.telemetryObject);
         this.handleNavBackButton();
+
+        if (await this.onboardingSkippedBackAction()) {
+          return;
+        }
         this.goBack();
         break;
     }
@@ -1837,5 +1862,24 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
     return ContentUtil.mergeProperties(this.course, mergeProp);
   }
 
+  onboardingSkippedBackAction(): Promise<boolean> {
+    return new Promise(async resolve => {
+      try {
+        const session = await this.authService.getSession().toPromise();
+        if ((this.isOnboardingSkipped && session) || this.isFromChannelDeeplink) {
+          resolve(true);
+          const navigationExtras: NavigationExtras = { replaceUrl: true };
+          this.router.navigate([`/${RouterLinks.TABS_COURSE}`], navigationExtras);
+        } else if (this.isOnboardingSkipped && !session) {
+          resolve(true);
+          const navigationExtras: NavigationExtras = { queryParams: { reOnboard: true }, replaceUrl: true };
+          this.router.navigate([`/${RouterLinks.PROFILE_SETTINGS}`], navigationExtras);
+        }
+        resolve(false);
+      } catch {
+        resolve(false);
+      }
+    });
+  }
 
 }

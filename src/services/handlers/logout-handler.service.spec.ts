@@ -34,7 +34,8 @@ describe('LogoutHandlerService', () => {
         putString: jest.fn(() => of(undefined))
     };
     const mockCommonUtilService: Partial<CommonUtilService> = {
-        showToast: jest.fn()
+        showToast: jest.fn(),
+        isAccessibleForNonStudentRole: jest.fn(() => true)
     };
     const mockEvents: Partial<Events> = {
         publish: jest.fn()
@@ -137,12 +138,16 @@ describe('LogoutHandlerService', () => {
                 isNetworkAvailable: true
             };
             mockSharedPreferences.getString = jest.fn(() => of('1234567890'));
+            if (mockCommonUtilService.networkInfo.isNetworkAvailable) {
+                mockCommonUtilService.isAccessibleForNonStudentRole = jest.fn(() => true);
+            }
             // act
             logoutHandlerService.onLogout();
             // assert
             setTimeout(() => {
                 expect(mockEvents.publish).toHaveBeenCalledWith(AppGlobalService.USER_INFO_UPDATED);
                 expect(mockAppGlobalService.setEnrolledCourseList).toHaveBeenCalledWith([]);
+                expect(mockCommonUtilService.isAccessibleForNonStudentRole).toHaveBeenCalled();
                 done();
             }, 0);
         });

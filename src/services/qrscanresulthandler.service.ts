@@ -1,7 +1,7 @@
 import {Inject, Injectable} from '@angular/core';
 import {TelemetryGeneratorService} from './telemetry-generator.service';
-import {Content, ContentDetailRequest, ContentService, CorrelationData, TelemetryObject, TelemetryService} from 'sunbird-sdk';
-import {ContentType, MimeType, RouterLinks} from '../app/app.constant';
+import {FrameworkService, PageAssembleService, Content, ContentDetailRequest, ContentService, CorrelationData, TelemetryObject, TelemetryService} from 'sunbird-sdk';
+import {ContentType, EventTopics, MimeType, RouterLinks} from '../app/app.constant';
 
 import {CommonUtilService} from './common-util.service';
 import {
@@ -13,11 +13,13 @@ import {
   Mode,
   PageId,
   ObjectType,
+  CorReleationDataType,
 } from './telemetry-constants';
 import { NavigationExtras, Router } from '@angular/router';
 import { NavController, Events } from '@ionic/angular';
 import { AppGlobalService } from './app-global-service.service';
 import { FormAndFrameworkUtilService } from './formandframeworkutil.service';
+import { ContentUtil } from '@app/util/content-util';
 
 declare var cordova;
 
@@ -32,6 +34,8 @@ export class QRScannerResultHandler {
   constructor(
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
     @Inject('TELEMETRY_SERVICE') private telemetryService: TelemetryService,
+    @Inject('PAGE_ASSEMBLE_SERVICE') private pageAssembleService: PageAssembleService,
+    @Inject('FRAMEWORK_SERVICE') private frameworkService: FrameworkService,
     private commonUtilService: CommonUtilService,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private router: Router,
@@ -55,6 +59,34 @@ export class QRScannerResultHandler {
     this.dailCodeRegExpression = await this.getDailCodeRegularExpression();
     const execArray = (new RegExp(this.dailCodeRegExpression)).exec(scannedData);
     if (execArray && execArray.groups) {
+      try {
+        const url: URL = new URL(scannedData);
+        const overrideChannelSlug = url.searchParams.get('channel');
+
+        if (overrideChannelSlug) {
+          this.frameworkService.searchOrganization({
+            filters: {
+              slug: overrideChannelSlug,
+              isRootOrg: true
+            } as any
+          }).toPromise().then((result) => {
+            const org: any = result.content && result.content[0];
+
+            if (org) {
+              this.pageAssembleService.setPageAssembleChannel({
+                channelId: org.identifier
+              });
+
+              setTimeout(() => {
+                this.events.publish(EventTopics.COURSE_PAGE_ASSEMBLE_CHANNEL_CHANGE);
+              }, 500);
+            }
+          });
+        }
+      } catch (e) {
+        console.error(e);
+      }
+
       this.scannedUrlMap = execArray.groups;
       return execArray.groups[Object.keys(execArray.groups).find((key) => !!execArray.groups[key])];
     }
@@ -79,7 +111,7 @@ export class QRScannerResultHandler {
     const navigationExtras: NavigationExtras = {
       state: {
         dialCode: dialCode,
-        corRelation: this.getCorRelationList(dialCode, QRScannerResultHandler.CORRELATION_TYPE),
+        corRelation: this.getCorRelationList(dialCode, QRScannerResultHandler.CORRELATION_TYPE, scannedData),
         source: this.source,
         shouldGenerateEndTelemetry: true
       }
@@ -99,7 +131,7 @@ export class QRScannerResultHandler {
     this.contentService.getContentDetails(request).toPromise()
       .then((content: Content) => {
         this.navigateToDetailsPage(content,
-          this.getCorRelationList(content.identifier, QRScannerResultHandler.CORRELATION_TYPE));
+          this.getCorRelationList(content.identifier, QRScannerResultHandler.CORRELATION_TYPE, scannedData));
         this.telemetryGeneratorService.generateImpressionTelemetry(
           ImpressionType.VIEW, ImpressionSubtype.QR_CODE_VALID,
           PageId.QRCodeScanner,
@@ -145,12 +177,16 @@ export class QRScannerResultHandler {
     this.generateEndEvent(this.source, scannedData);
   }
 
-  getCorRelationList(identifier: string, type: string): Array<CorrelationData> {
+  getCorRelationList(identifier: string, type: string, scannedData): Array<CorrelationData> {
     const corRelationList: Array<CorrelationData> = new Array<CorrelationData>();
     const corRelation: CorrelationData = new CorrelationData();
     corRelation.id = identifier;
     corRelation.type = type;
     corRelationList.push(corRelation);
+    corRelationList.push({
+      id: ContentUtil.extractBaseUrl(scannedData),
+      type: CorReleationDataType.SOURCE
+    });
     return corRelationList;
   }
 
@@ -193,12 +229,19 @@ export class QRScannerResultHandler {
       telemetryObject = new TelemetryObject(certificate.certificateId, 'certificate', undefined);
     }
 
+    const corRelationList: Array<CorrelationData> = [{
+      id: ContentUtil.extractBaseUrl(scannedData),
+      type: CorReleationDataType.SOURCE
+    }];
+
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.OTHER,
       InteractSubtype.QRCodeScanSuccess,
       Environment.HOME,
       PageId.QRCodeScanner, telemetryObject,
-      values
+      values,
+      undefined,
+      corRelationList
     );
   }
 

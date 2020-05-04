@@ -158,6 +158,7 @@ export class AudienceFilter {
 }
 
 export class EventTopics {
+    public static readonly COURSE_PAGE_ASSEMBLE_CHANNEL_CHANGE = 'COURSE_PAGE_ASSEMBLE_CHANNEL_CHANGE';
     public static readonly ENROL_COURSE_SUCCESS = 'ENROL_COURSE_SUCCESS';
     public static readonly UNENROL_COURSE_SUCCESS = 'UNENROL_COURSE_SUCCESS';
     public static readonly COURSE_STATUS_UPDATED_SUCCESSFULLY = 'COURSE_STATUS_UPDATED_SUCCESSFULLY';
@@ -226,6 +227,7 @@ export class PreferenceKey {
     public static readonly FCM_TOKEN = 'fcm_token';
     public static readonly SYNC_CONFIG = 'sync_config';
     public static readonly COACH_MARK_SEEN = 'coach_mark_seen';
+    public static readonly PAGE_ASSEMBLE_ORGANISATION_ID = 'page_assemble_organisation_id';
 }
 
 export class GenericAppConfig {
@@ -259,7 +261,7 @@ export const appLanguages = [
         name: 'English'
     },
     {
-        label: 'অসমিয়া',
+        label: 'অসমীয়া',
         code: 'as',
         isApplied: false,
         name: 'Assamese'
@@ -426,6 +428,7 @@ export class ActionType {
 
 export class RouterLinks {
     public static readonly TABS = 'tabs';
+    public static readonly TABS_COURSE = 'tabs/courses';
 
     // Users and Groups Routs
     public static readonly USER_AND_GROUPS = 'user-and-groups';
@@ -531,7 +534,7 @@ export class RouterLinks {
     public static readonly FAQ_REPORT_ISSUE = 'faq-report-issue';
 
     // routing to Term of use Web Page
-    public static readonly TERM_OF_USE = '/term-of-use.html';
+    public static readonly TERM_OF_USE = '/privacy-policy/terms-of-use.html';
 
 }
 

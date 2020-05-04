@@ -340,7 +340,6 @@ export class CollectionDetailEtbPage implements OnInit {
       this.headerConfig.showHeader = false;
       this.headerConfig.showBurgerMenu = false;
       this.headerService.updatePageConfig(this.headerConfig);
-      this.resetVariables();
       this.shownGroup = null;
 
       if (!this.didViewLoad) {
@@ -351,7 +350,7 @@ export class CollectionDetailEtbPage implements OnInit {
         this.generateImpressionEvent(this.cardData.identifier, contentType, this.cardData.pkgVersion);
         this.markContent();
       }
-
+      this.resetVariables();
       this.didViewLoad = true;
       this.setContentDetails(this.identifier, true);
       this.events.subscribe(EventTopics.CONTENT_TO_PLAY, (data) => {
@@ -443,7 +442,11 @@ export class CollectionDetailEtbPage implements OnInit {
     if (this.shouldGenerateEndTelemetry) {
       this.generateQRSessionEndEvent(this.source, this.cardData.identifier);
     }
-    this.location.back();
+    if (this.source === PageId.ONBOARDING_PROFILE_PREFERENCES) {
+      this.router.navigate([`/${RouterLinks.PROFILE_SETTINGS}`], { state: {showFrameworkCategoriesMenu: true  }, replaceUrl: true });
+    } else {
+      this.location.back();
+    }
   }
 
   registerDeviceBackButton() {
@@ -480,7 +483,7 @@ export class CollectionDetailEtbPage implements OnInit {
         this.commonUtilService.showToast('TRY_BEFORE_RATING');
       }
     } else {
-      if (this.profileType === ProfileType.TEACHER) {
+      if (this.commonUtilService.isAccessibleForNonStudentRole(this.profileType)) {
         this.commonUtilService.showToast('SIGNIN_TO_USE_FEATURE');
       }
     }
