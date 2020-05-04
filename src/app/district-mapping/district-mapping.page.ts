@@ -447,6 +447,7 @@ export class DistrictMappingPage {
     };
     this.deviceRegisterService.registerDevice(req).toPromise();
     this.preferences.putString(PreferenceKey.DEVICE_LOCATION, JSON.stringify(req.userDeclaredLocation)).toPromise();
+    this.commonUtilService.handleToTopicBasedNotification();
     await loader.dismiss();
   }
 

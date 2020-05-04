@@ -485,7 +485,7 @@ describe('CommonUtilService', () => {
   describe('handleToTopicBasedNotification()', () => {
     it('should return true if IP location is available', (done) => {
       // arrange
-      const profile = {board: ['AP'], medium: ['English']} as any;
+      const profile = {board: ['AP'], medium: ['English', 'Hindi', 'Bengali'], grade: ['class 8', 'class9', 'class10']} as any;
       mockProfileService.getActiveSessionProfile = jest.fn(() => of(profile));
       mockSharedPreferences.getString = jest.fn((arg) => {
         let value;
