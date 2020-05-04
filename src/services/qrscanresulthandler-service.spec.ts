@@ -209,7 +209,7 @@ describe('QRScannerResultHandler', () => {
         expect(mockTelemetryService.updateCampaignParameters).toHaveBeenCalledWith([{
           id: 'Scan', type: 'AccessType'
         }, {
-          id: 'Https://sunbirded.org/resources/play/content/do12345', type: ''
+          id: '', type: 'Https://sunbirded.org/resources/play/content/do12345'
         }]);
 
         expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(InteractType.OTHER,
@@ -256,7 +256,7 @@ describe('QRScannerResultHandler', () => {
         });
         expect(mockTelemetryService.updateCampaignParameters).toHaveBeenCalledWith([
           {id: 'Scan', type: 'AccessType'},
-          {id: 'Https://sunbirded.org/resources/play/collection/do12345', type: ''}
+          {id: '', type: 'Https://sunbirded.org/resources/play/collection/do12345'}
         ]);
 
         expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(InteractType.OTHER,
@@ -303,7 +303,7 @@ describe('QRScannerResultHandler', () => {
         });
         expect(mockTelemetryService.updateCampaignParameters).toHaveBeenCalledWith([
           {id: 'Scan', type: 'AccessType'},
-          {id: 'Https://sunbirded.org/learn/course/do12345', type: ''}
+          {type: 'Https://sunbirded.org/learn/course/do12345', id: ''}
         ]);
 
         expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(InteractType.OTHER,

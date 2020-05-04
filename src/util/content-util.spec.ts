@@ -93,18 +93,18 @@ describe('ContentUtil', () => {
         it('should return utm parameter', () => {
           // arrange
           const value = {
-            utm_source: 'whatsApp',
-            utm_medium: 'search',
+            utm_source: 'https://sunbirded.org/learn/course/do_12345',
+            utm_medium: 'playstore',
           };
 
           // act
           // assert
           expect(ContentUtil.genrateUTMCData(value)).toEqual([{
-              id: 'UtmSource',
-              type: 'whatsApp'
+              id: 'https://sunbirded.org/learn/course/do_12345',
+              type: 'UtmSource'
           }, {
-              id: 'UtmMedium',
-              type: 'search'
+              id: 'playstore',
+              type: 'UtmMedium'
           }]);
         });
       });
