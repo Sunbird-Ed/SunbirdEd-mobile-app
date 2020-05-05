@@ -69,13 +69,10 @@ export class AndroidPermissionsService {
   private async getAlwaysDeniedStatus(androidPermission: AndroidPermission): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
       cordova.plugins.diagnostic.getPermissionAuthorizationStatus((status) => {
-        switch (status) {
-          case cordova.plugins.diagnostic.permissionStatus.NOT_REQUESTED:
-          case cordova.plugins.diagnostic.permissionStatus.DENIED_ALWAYS:
-            resolve(true);
-            break;
-          default:
-            resolve(false);
+        if (status === cordova.plugins.diagnostic.permissionStatus.DENIED_ALWAYS) {
+          resolve(true);
+        } else {
+          resolve(false);
         }
       }, (e) => {
         reject(e);

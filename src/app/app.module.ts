@@ -67,6 +67,7 @@ import { LocalCourseService } from '@app/services/local-course.service';
 import { ContentType } from './app.constant';
 import { ExternalIdVerificationService } from '@app/services/externalid-verification.service';
 import { TextbookTocService } from '@app/app/collection-detail-etb/textbook-toc-service';
+import {NativePageTransitions} from '@ionic-native/native-page-transitions/ngx';
 
 // AoT requires an exported function for factories
 export function translateHttpLoaderFactory(httpClient: HttpClient) {
@@ -465,6 +466,7 @@ declare const sbutility;
     SplashScreenService,
     ExternalIdVerificationService,
     TextbookTocService,
+      NativePageTransitions,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     ...sunbirdSdkServicesProvidersFactory(),
     { provide: ErrorHandler, useClass: CrashAnalyticsErrorLogger },

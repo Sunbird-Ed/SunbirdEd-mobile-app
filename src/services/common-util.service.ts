@@ -11,16 +11,20 @@ import { Network } from '@ionic-native/network/ngx';
 import { WebView } from '@ionic-native/ionic-webview/ngx';
 import { SharedPreferences, ProfileService, Profile, ProfileType } from 'sunbird-sdk';
 
-import { PreferenceKey, ProfileConstants } from '@app/app/app.constant';
+import { PreferenceKey, ProfileConstants, RouterLinks } from '@app/app/app.constant';
 import { appLanguages } from '@app/app/app.constant';
 
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
-import { InteractType, InteractSubtype, PageId, Environment, CorReleationDataType } from '@app/services/telemetry-constants';
+import { InteractType, InteractSubtype, PageId, Environment, CorReleationDataType, ImpressionType } from '@app/services/telemetry-constants';
 import { SbGenericPopoverComponent } from '@app/app/components/popups/sb-generic-popover/sb-generic-popover.component';
 import { QRAlertCallBack, QRScannerAlert } from '@app/app/qrscanner-alert/qrscanner-alert.page';
 import { Observable, merge } from 'rxjs';
 import { distinctUntilChanged, map, share, tap } from 'rxjs/operators';
 import { AppVersion } from '@ionic-native/app-version/ngx';
+import { SbPopoverComponent } from '@app/app/components/popups';
+import { AndroidPermissionsStatus } from './android-permissions/android-permission';
+import { Router } from '@angular/router';
+import { AndroidPermissionsService } from './android-permissions/android-permissions.service';
 
 declare const FCMPlugin;
 export interface NetworkInfo {
@@ -52,6 +56,9 @@ export class CommonUtilService {
         private telemetryGeneratorService: TelemetryGeneratorService,
         private webView: WebView,
         private appVersion: AppVersion,
+        private router: Router,
+        private toastController: ToastController,
+        private permissionService: AndroidPermissionsService
     ) {
         this.networkAvailability$ = merge(
             this.network.onChange().pipe(
@@ -435,14 +442,19 @@ export class CommonUtilService {
         this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise()
             .then(async (response: Profile) => {
                 const profile = response;
-                const subscribeTopic = [];
+                const subscribeTopic: Array<string> = [];
                 subscribeTopic.push(profile.board[0]);
-                profile.medium.map(m => subscribeTopic.push(m));
-                await this.preferences.getString(PreferenceKey.DEVICE_LOCATION).subscribe((data) => {
-                    subscribeTopic.push(JSON.parse(data).state);
-                    subscribeTopic.push(JSON.parse(data).district);
+                profile.medium.forEach((m) => {
+                    subscribeTopic.push(profile.board[0].concat('-', m));
+                    profile.grade.forEach((g) => {
+                        subscribeTopic.push(profile.board[0].concat('-', g));
+                        subscribeTopic.push(profile.board[0].concat('-', m.concat('-', g)));
+                    });
                 });
-
+                await this.preferences.getString(PreferenceKey.DEVICE_LOCATION).subscribe((data) => {
+                    subscribeTopic.push(JSON.parse(data).state.replace(/[^a-zA-Z0-9-_.~%]/gi, '-'));
+                    subscribeTopic.push(JSON.parse(data).district.replace(/[^a-zA-Z0-9-_.~%]/gi, '-'));
+                });
                 await this.preferences.getString(PreferenceKey.SUBSCRIBE_TOPICS).toPromise().then(async (data) => {
                     const previuslySubscribeTopics = JSON.parse(data);
                     await new Promise<undefined>((resolve, reject) => {
@@ -472,7 +484,7 @@ export class CommonUtilService {
             (cData[0].id === CorReleationDataType.SCAN) ? PageId.QRCodeScanner : PageId.HOME, cData, object);
     }
 
-    getFormattedDate(date: string|Date) {
+    getFormattedDate(date: string | Date) {
         const inputDate = new Date(date).toDateString();
         const [, month, day, year] = inputDate.split(' ');
         const formattedDate = [day, month, year].join('-');
@@ -489,4 +501,70 @@ export class CommonUtilService {
         return profileType === ProfileType.TEACHER || profileType === ProfileType.OTHER;
     }
 
+    public async getGivenPermissionStatus(permissions): Promise<AndroidPermissionsStatus> {
+        return (
+            await this.permissionService.checkPermissions([permissions]).toPromise()
+        )[permissions];
+    }
+
+    public async showSettingsPageToast(description: string, appName: string, pageId: string, isOnboardingCompleted: boolean) {
+        const toast = await this.toastController.create({
+            message: this.translateMessage(description, appName),
+            cssClass: 'permissionSettingToast',
+            showCloseButton: true,
+            closeButtonText: this.translateMessage('SETTINGS'),
+            position: 'bottom',
+            duration: 3000
+        });
+
+        toast.present();
+
+        toast.onWillDismiss().then((res) => {
+            if (res.role === 'cancel') {
+                this.telemetryGeneratorService.generateInteractTelemetry(
+                    InteractType.TOUCH,
+                    InteractSubtype.SETTINGS_CLICKED,
+                    isOnboardingCompleted ? Environment.HOME : Environment.ONBOARDING,
+                    pageId);
+                this.router.navigate([`/${RouterLinks.SETTINGS}/${RouterLinks.PERMISSION}`], { state: { changePermissionAccess: true } });
+            }
+        });
+    }
+
+    public async buildPermissionPopover(handler: (selectedButton: string) => void,
+        appName: string, whichPermission: string,
+        permissionDescription: string, pageId, isOnboardingCompleted): Promise<HTMLIonPopoverElement> {
+        return this.popOverCtrl.create({
+            component: SbPopoverComponent,
+            componentProps: {
+                isNotShowCloseIcon: false,
+                sbPopoverHeading: this.translateMessage('PERMISSION_REQUIRED'),
+                sbPopoverMainTitle: this.translateMessage(whichPermission),
+                actionsButtons: [
+                    {
+                        btntext: this.translateMessage('NOT_NOW'),
+                        btnClass: 'popover-button-cancel',
+                    },
+                    {
+                        btntext: this.translateMessage('ALLOW'),
+                        btnClass: 'popover-button-allow',
+                    }
+                ],
+                handler,
+                img: {
+                    path: './assets/imgs/ic_folder_open.png',
+                },
+                metaInfo: this.translateMessage(permissionDescription, appName),
+            },
+            cssClass: 'sb-popover sb-popover-permissions primary dw-active-downloads-popover',
+        }).then((popover) => {
+            this.telemetryGeneratorService.generateImpressionTelemetry(
+                whichPermission === 'Camera' ? ImpressionType.CAMERA : ImpressionType.FILE_MANAGEMENT,
+                pageId,
+                PageId.PERMISSION_POPUP,
+                isOnboardingCompleted ? Environment.HOME : Environment.ONBOARDING
+            );
+            return popover;
+        });
+    }
 }

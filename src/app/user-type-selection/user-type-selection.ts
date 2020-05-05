@@ -21,9 +21,7 @@ import { ContainerService } from '@app/services/container.services';
 import { initTabs, GUEST_STUDENT_TABS, GUEST_TEACHER_TABS } from '@app/app/module.service';
 import { HasNotSelectedFrameworkGuard } from '@app/guards/has-not-selected-framework.guard';
 import { SplashScreenService } from '@app/services/splash-screen.service';
-
-const selectedCardBorderColor = '#006DE5';
-const borderColor = '#F7F7F7';
+import {NativePageTransitions, NativeTransitionOptions} from '@ionic-native/native-page-transitions/ngx';
 
 @Component({
   selector: 'page-user-type-selection',
@@ -31,21 +29,21 @@ const borderColor = '#F7F7F7';
   styleUrls: ['./user-type-selection.scss']
 })
 
-export class UserTypeSelectionPage implements OnInit {
-  teacherCardBorderColor = '#F7F7F7';
-  studentCardBorderColor = '#F7F7F7';
-  otherCardBorderColor = '#F7F7F7';
-  userTypeSelected = false;
-  selectedUserType: ProfileType;
+export class UserTypeSelectionPage {
+  selectedUserType?: ProfileType;
   continueAs = '';
   profile: Profile;
   backButtonFunc: Subscription;
   headerObservable: any;
-  studentImageUri = 'assets/imgs/ic_student.png';
-  teacherImageUri = 'assets/imgs/ic_teacher.png';
-  otherImageUri = 'assets/imgs/ic_other.png';
+  studentImageUri = 'assets/imgs/ic_student.svg';
+  teacherImageUri = 'assets/imgs/ic_teacher.svg';
+  otherImageUri = 'assets/imgs/ic_other.svg';
+  selectCardImageUri = 'assets/imgs/ic_check.svg';
   private navParams: any;
   @ViewChild(IonRouterOutlet) routerOutlet: IonRouterOutlet;
+  appName = '';
+  public hideBackButton = true;
+  ProfileType = ProfileType;
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -60,16 +58,13 @@ export class UserTypeSelectionPage implements OnInit {
     private headerService: AppHeaderService,
     private router: Router,
     public frameworkGuard: HasNotSelectedFrameworkGuard,
-    private splashScreenService: SplashScreenService
+    private splashScreenService: SplashScreenService,
+    private nativePageTransitions: NativePageTransitions
   ) {
-    this.getNavParams();
   }
 
   getNavParams() {
-    const navigation = this.router.getCurrentNavigation();
-    if (navigation && navigation.extras && navigation.extras.state) {
-      this.navParams = navigation.extras.state;
-    }
+    this.navParams = window.history.state;
   }
 
   ionViewDidEnter() {
@@ -84,24 +79,26 @@ export class UserTypeSelectionPage implements OnInit {
     }
   }
 
-  ngOnInit() {
-    this.telemetryGeneratorService.generateImpressionTelemetry(
-      ImpressionType.VIEW, '',
-      PageId.USER_TYPE_SELECTION,
-      this.appGlobalService.isOnBoardingCompleted ? Environment.HOME : Environment.ONBOARDING
-    );
-    /* New Telemetry */
-    this.telemetryGeneratorService.generatePageLoadedTelemetry(
-      PageId.USER_TYPE,
-      this.appGlobalService.isOnBoardingCompleted ? Environment.HOME : Environment.ONBOARDING
-    );
-  }
-
-  ionViewWillEnter() {
+  async ionViewWillEnter() {
+    if (this.router.url === '/' + RouterLinks.USER_TYPE_SELECTION) {
+      setTimeout(() => {
+        this.telemetryGeneratorService.generateImpressionTelemetry(
+            ImpressionType.VIEW, '',
+            PageId.USER_TYPE_SELECTION,
+            this.appGlobalService.isOnBoardingCompleted ? Environment.HOME : Environment.ONBOARDING);
+        /* New Telemetry */
+        this.telemetryGeneratorService.generatePageLoadedTelemetry(
+          PageId.USER_TYPE,
+          this.appGlobalService.isOnBoardingCompleted ? Environment.HOME : Environment.ONBOARDING
+        );
+      }, 350);
+    }
+    this.getNavParams();
     this.headerObservable = this.headerService.headerEventEmitted$.subscribe(eventName => {
       this.handleHeaderEvents(eventName);
     });
-    this.headerService.showHeaderWithBackButton();
+    this.appName = await this.commonUtilService.getAppName();
+    this.headerService.hideHeader();
     this.profile = this.appGlobalService.getCurrentUser();
     this.backButtonFunc = this.platform.backButton.subscribeWithPriority(10, () => {
       this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.USER_TYPE_SELECTION, Environment.HOME, false);
@@ -114,6 +111,7 @@ export class UserTypeSelectionPage implements OnInit {
       this.handleBackButton();
       this.backButtonFunc.unsubscribe();
     });
+    this.hideBackButton = false;
   }
 
   ionViewWillLeave() {
@@ -126,41 +124,54 @@ export class UserTypeSelectionPage implements OnInit {
     }
   }
 
-  handleBackButton() {
-    this.router.navigate([`/${RouterLinks.LANGUAGE_SETTING}`]);
-  }
-  handleHeaderEvents($event) {
-    switch ($event.name) {
-      case 'back': 
-        this.telemetryGeneratorService.generateBackClickedTelemetry(
+  handleBackButton(isBackClicked?) {
+    if (isBackClicked) {
+      this.telemetryGeneratorService.generateBackClickedTelemetry(
           PageId.USER_TYPE_SELECTION,
           this.appGlobalService.isOnBoardingCompleted ? Environment.HOME : Environment.ONBOARDING,
-          true
-        );
-        /* New Telemetry */
-        this.telemetryGeneratorService.generateBackClickedNewTelemetry(
-          false,
+          true);
+    }
+    this.router.navigate([`/${RouterLinks.LANGUAGE_SETTING}`]);
+  }
+
+  handleHeaderEvents($event) {
+    if ($event.name === 'back') {
+      this.telemetryGeneratorService.generateBackClickedTelemetry(
+          PageId.USER_TYPE_SELECTION,
           this.appGlobalService.isOnBoardingCompleted ? Environment.HOME : Environment.ONBOARDING,
-          PageId.USER_TYPE
-        );
-        this.handleBackButton();
-        break;
+          true);
+      /* New Telemetry */
+      this.telemetryGeneratorService.generateBackClickedNewTelemetry(
+        false,
+        this.appGlobalService.isOnBoardingCompleted ? Environment.HOME : Environment.ONBOARDING,
+        PageId.USER_TYPE
+      );
+      this.handleBackButton();
     }
   }
 
   selectTeacherCard() {
     this.selectCard('USER_TYPE_1', ProfileType.TEACHER);
     this.generateUserTypeClicktelemetry(ProfileType.TEACHER);
+    setTimeout(() => {
+      this.continue();
+    }, 50);
   }
 
   selectStudentCard() {
     this.selectCard('USER_TYPE_2', ProfileType.STUDENT);
     this.generateUserTypeClicktelemetry(ProfileType.STUDENT);
+    setTimeout(() => {
+      this.continue();
+    }, 50);
   }
 
   selectOtherCard() {
     this.selectCard('USER_TYPE_3', ProfileType.OTHER);
     this.generateUserTypeClicktelemetry(ProfileType.OTHER);
+    setTimeout(() => {
+      this.continue();
+    }, 50);
   }
 
   generateUserTypeClicktelemetry(userType: string) {
@@ -174,15 +185,11 @@ export class UserTypeSelectionPage implements OnInit {
       undefined,
       undefined,
       correlationlist
-    );
+    ); 
   }
 
   selectCard(userType, profileType) {
     this.zone.run(() => {
-      this.userTypeSelected = true;
-      this.teacherCardBorderColor = (userType === 'USER_TYPE_1') ? selectedCardBorderColor : borderColor;
-      this.studentCardBorderColor = (userType === 'USER_TYPE_2') ? selectedCardBorderColor : borderColor;
-      this.otherCardBorderColor = (userType === 'USER_TYPE_3') ? selectedCardBorderColor : borderColor;
       this.selectedUserType = profileType;
       this.continueAs = this.commonUtilService.translateMessage(
         'CONTINUE_AS_ROLE',
@@ -264,12 +271,12 @@ export class UserTypeSelectionPage implements OnInit {
       this.navigateToTabsAsGuest();
     } else if (this.appGlobalService.DISPLAY_ONBOARDING_CATEGORY_PAGE) {
       if (isUserTypeChanged) {
-        this.updateProfile('PermissionPage', { showProfileSettingPage: true });
+        this.updateProfile('ProfileSettingsPage', { showProfileSettingPage: true });
       } else {
-        this.navigateToPermissions({ showProfileSettingPage: true });
+        this.navigateToProfileSettingsPage({ showProfileSettingPage: true });
       }
     } else {
-      this.updateProfile('PermissionPage', { showTabsPage: true });
+      this.updateProfile('ProfileSettingsPage', { showTabsPage: true });
     }
   }
 
@@ -278,24 +285,25 @@ export class UserTypeSelectionPage implements OnInit {
     values['userType'] = (userType).toUpperCase();
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,
-      InteractSubtype.CONTINUE_CLICKED,
+      InteractSubtype.USER_TYPE_SELECTED,
       this.appGlobalService.isOnBoardingCompleted ? Environment.HOME : Environment.ONBOARDING,
       PageId.USER_TYPE_SELECTION,
       undefined,
-      values);
+      values
+    );
 
-      /* New Telemetry */
-      const correlationlist: Array<CorrelationData> = [];
-      correlationlist.push({ id: userType, type: CorReleationDataType.USERTYPE });
-      this.telemetryGeneratorService.generateInteractTelemetry(
-        InteractType.SELECT_CONTINUE, '',
-        this.appGlobalService.isOnBoardingCompleted ? Environment.HOME : Environment.ONBOARDING,
-        PageId.USER_TYPE,
-        undefined,
-        values,
-        undefined,
-        correlationlist
-      );
+    /* New Telemetry */
+    const correlationlist: Array<CorrelationData> = [];
+    correlationlist.push({ id: userType, type: CorReleationDataType.USERTYPE });
+    this.telemetryGeneratorService.generateInteractTelemetry(
+      InteractType.SELECT_CONTINUE, '',
+      this.appGlobalService.isOnBoardingCompleted ? Environment.HOME : Environment.ONBOARDING,
+      PageId.USER_TYPE,
+      undefined,
+      values,
+      undefined,
+      correlationlist
+    );
   }
 
   /**
@@ -310,7 +318,7 @@ export class UserTypeSelectionPage implements OnInit {
         if (page === 'TabsPage') {
           this.navigateToTabsAsGuest();
         } else {
-          this.navigateToPermissions(params);
+          this.navigateToProfileSettingsPage(params);
         }
       }).catch(error => {
         console.error('Error=', error);
@@ -322,8 +330,16 @@ export class UserTypeSelectionPage implements OnInit {
     this.router.navigate(['/tabs'], navigationExtras);
   }
 
-  navigateToPermissions(params) {
+  navigateToProfileSettingsPage(params) {
     const navigationExtras: NavigationExtras = { state: params };
-    this.router.navigate([`/${RouterLinks.SETTINGS}/${RouterLinks.PERMISSION}`], navigationExtras);
+    const options: NativeTransitionOptions = {
+      direction: 'left',
+      duration: 500,
+      androiddelay: 500,
+      fixedPixelsTop: 0,
+      fixedPixelsBottom: 0
+    };
+    this.nativePageTransitions.slide(options);
+    this.router.navigate([`/${RouterLinks.PROFILE_SETTINGS}`], navigationExtras);
   }
 }
