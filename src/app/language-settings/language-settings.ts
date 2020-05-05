@@ -2,7 +2,7 @@ import { Component, Inject, NgZone } from '@angular/core';
 import { Events, Platform } from '@ionic/angular';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
-import { SharedPreferences, InteractSubType } from 'sunbird-sdk';
+import { SharedPreferences, InteractSubType, TelemetryAuditRequest, Actor, AuditState } from 'sunbird-sdk';
 
 import { appLanguages, PreferenceKey, RouterLinks } from '@app/app/app.constant';
 import { Map } from '@app/app/telemetryutil';
@@ -271,7 +271,16 @@ export class LanguageSettingsPage {
         selectedLanguage: this.language
       });
       this.notification.setupLocalNotification(this.language);
-
+      const actor = new Actor();
+      actor.id = this.language;
+      actor.type = 'set-language';
+      const telemetryAuditRequest: TelemetryAuditRequest = {
+        env: Environment.ONBOARDING,
+        actor,
+        updatedProperties: [this.language],
+        currentState: AuditState.AUDIT_UPDATED
+      };
+      this.telemetryGeneratorService.generateAuditTelemetry(telemetryAuditRequest);
       if (this.isFromSettings) {
         this.location.back();
       } else {

@@ -8,7 +8,7 @@ import { AppGlobalService } from '@app/services/app-global-service.service';
 import { CommonUtilService } from '@app/services/common-util.service';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { AppHeaderService } from '@app/services/app-header.service';
-import { Profile, ProfileService, ProfileSource, ProfileType, SharedPreferences, CorrelationData, } from 'sunbird-sdk';
+import { Profile, ProfileService, ProfileSource, ProfileType, SharedPreferences, CorrelationData, Actor, TelemetryAuditRequest, AuditState, } from 'sunbird-sdk';
 import {
   Environment,
   ImpressionType,
@@ -211,7 +211,7 @@ export class UserTypeSelectionPage {
   }
 
   continue() {
-    this.generateInteractEvent(this.selectedUserType);
+    // this.generateInteractEvent(this.selectedUserType);
     // When user is changing the role via the Guest Profile screen
     if (this.profile !== undefined && this.profile.handle) {
       // if role types are same
@@ -244,6 +244,19 @@ export class UserTypeSelectionPage {
             }
             this.profile = success;
             this.gotoNextPage();
+            const correlationlist: Array<CorrelationData> = [];
+            correlationlist.push({ id: this.selectedUserType, type: CorReleationDataType.USERTYPE });
+            const actor = new Actor();
+            actor.id = this.selectedUserType;
+            actor.type = 'set-usertype';
+            const telemetryAuditRequest: TelemetryAuditRequest = {
+              env: Environment.ONBOARDING,
+              actor,
+              updatedProperties: [this.selectedUserType],
+              currentState: AuditState.AUDIT_UPDATED,
+              correlationData: correlationlist
+            };
+            this.telemetryGeneratorService.generateAuditTelemetry(telemetryAuditRequest);
           }).catch(() => {
             return 'null';
           });

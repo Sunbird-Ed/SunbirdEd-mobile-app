@@ -50,7 +50,7 @@
 				<ion-select multiple="false" #boardSelect class="ion-text-capitalize" formControlName="syllabus"
 					[disabled]="!syllabusList.length" [interfaceOptions]="boardOptions" (ionCancel)="cancelEvent('board')"
 					okText="{{'BTN_SUBMIT' | translate}}" cancelText="{{'CANCEL' | translate}}"
-					 placeholder="{{'BOARD_OPTION_TEXT' | translate}}"></ion-select>
+					 placeholder="{{'BOARD_OPTION_TEXT' | translate}}">
 					<ion-select-option *ngFor="let eachSyllabus of syllabusList" value="{{eachSyllabus.code}}">
 						{{eachSyllabus.name}}&lrm;</ion-select-option>
 				</ion-select>

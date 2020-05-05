@@ -21,7 +21,10 @@ import {
   ProfileService,
   ProfileType,
   CorrelationData,
-  Rollup
+  Rollup,
+  Actor,
+  TelemetryAuditRequest,
+  AuditState
 } from 'sunbird-sdk';
 import {
   AppGlobalService,
@@ -644,6 +647,20 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
         this.telemetryGeneratorService.generateProfilePopulatedTelemetry(
           PageId.ONBOARDING_PROFILE_PREFERENCES, profile, 'manual', Environment.ONBOARDING
         );
+        const correlationlist: Array<CorrelationData> = [];
+        correlationlist.push({ id: this.boardControl.value, type: CorReleationDataType.BOARD });
+        correlationlist.push({ id: this.mediumControl.value, type: CorReleationDataType.MEDIUM });
+        correlationlist.push({ id: this.gradeControl.value, type: CorReleationDataType.CLASS });
+        const actor = new Actor();
+        actor.id = '';
+        actor.type = 'set-profile';
+        const telemetryAuditRequest: TelemetryAuditRequest = {
+        env: Environment.ONBOARDING,
+        actor,
+        currentState: AuditState.AUDIT_UPDATED,
+        correlationData: correlationlist
+        };
+        this.telemetryGeneratorService.generateAuditTelemetry(telemetryAuditRequest);
         this.loader = await this.commonUtilService.getLoader(2000);
         await this.loader.present();
       })

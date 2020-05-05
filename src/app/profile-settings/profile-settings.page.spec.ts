@@ -48,7 +48,9 @@ describe('ProfileSettingsPage', () => {
     const mockScanner: Partial<SunbirdQRScanner> = {};
     const mockSplashScreenService: Partial<SplashScreenService> = {};
     const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {
-        generateInteractTelemetry: jest.fn()
+        generateInteractTelemetry: jest.fn(),
+        generateBackClickedNewTelemetry: jest.fn(),
+        generatePageLoadedTelemetry: jest.fn()
     };
     const mockTranslate: Partial<TranslateService> = {};
     const mockActivatedRoute: Partial<ActivatedRoute> = {};

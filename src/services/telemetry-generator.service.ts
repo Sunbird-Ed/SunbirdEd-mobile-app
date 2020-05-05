@@ -6,12 +6,15 @@ import {
     TelemetryErrorRequest,
     TelemetryImpressionRequest,
     TelemetryInteractRequest,
+    TelemetryAuditRequest,
     TelemetryLogRequest,
     TelemetryObject,
     TelemetryService,
     TelemetryStartRequest,
     TelemetryInterruptRequest,
-    DeviceSpecification
+    DeviceSpecification,
+    Actor,
+    AuditState
 } from 'sunbird-sdk';
 import { Map } from '../app/telemetryutil';
 import { Environment, ImpressionType, InteractSubtype, InteractType, Mode, PageId, CorReleationDataType, ID } from './telemetry-constants';
@@ -21,6 +24,10 @@ import { ContentUtil } from '@app/util/content-util';
 @Injectable()
 export class TelemetryGeneratorService {
     constructor(@Inject('TELEMETRY_SERVICE') private telemetryService: TelemetryService) {
+    }
+
+    generateAuditTelemetry(telemetryAuditRequest: TelemetryAuditRequest) {
+        this.telemetryService.audit(telemetryAuditRequest);
     }
 
     generateInteractTelemetry(interactType, interactSubtype, env, pageId, object?: TelemetryObject, values?: Map,
