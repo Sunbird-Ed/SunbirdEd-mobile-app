@@ -72,7 +72,7 @@ import { LoginHandlerService } from '@app/services/login-handler.service';
 import { SbSharePopupComponent } from '../components/popups/sb-share-popup/sb-share-popup.component';
 import { FileOpener } from '@ionic-native/file-opener/ngx';
 import { Components } from '@ionic/core/dist/types/components';
-import { SbProgressLoader } from '@app/services/sb-progress-loader.service';
+import { SbProgressLoader } from '../../services/sb-progress-loader.service';
 
 @Component({
   selector: 'app-content-details',

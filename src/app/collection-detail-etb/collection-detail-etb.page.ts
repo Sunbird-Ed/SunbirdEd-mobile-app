@@ -38,7 +38,7 @@ import { tap, share } from 'rxjs/operators';
 import { ContentPlayerHandler } from '@app/services/content/player/content-player-handler';
 import { ContentInfo } from '@app/services/content/content-info';
 import { ContentDeleteHandler } from '@app/services/content/content-delete-handler';
-import { SbProgressLoader } from '@app/services/sb-progress-loader.service';
+import { SbProgressLoader } from '../../services/sb-progress-loader.service';
 
 @Component({
   selector: 'app-collection-detail-etb',

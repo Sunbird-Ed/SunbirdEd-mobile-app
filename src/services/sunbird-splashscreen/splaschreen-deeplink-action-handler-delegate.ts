@@ -99,16 +99,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
     const urlRegex = new RegExp(await this.formFrameWorkUtilService.getDeeplinkRegexFormApi());
     const urlMatch = url.match(urlRegex);
 
-    // const context: SbProgressLoaderContext = {
-    //   id: 'test',
-    //   ignoreTelemetry: {
-    //     when: {
-    //       'type': /view|search/,
-    //     }
-    //   }
-    // };
-
-    await this.sbProgressLoader.show(this.generateProgressLoaderContext(urlMatch, dialCode));
+    await this.sbProgressLoader.show(this.generateProgressLoaderContext(url, urlMatch, dialCode));
 
     const payload = { url };
 
@@ -649,32 +640,53 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
     }
     return corRelationList;
   }
-
-  private generateProgressLoaderContext(urlMatch, dialCode): SbProgressLoaderContext {
+  private generateProgressLoaderContext(url, urlMatch, dialCode): SbProgressLoaderContext {
     if (this.progressLoaderId) {
       this.closeProgressLoader();
     }
     this.progressLoaderId = dialCode || (urlMatch && urlMatch.groups &&
-      (urlMatch.groups.quizId || urlMatch.groups.contentId || urlMatch.groups.courseId)) || ProgressPopupContext.DEEPLINK;
-
-    return {
-      id: this.progressLoaderId,
-      ignoreTelemetry: {
-        when: {
-          impression: {
-            type: /view/,
-            pageid: /resources|library/
+        (urlMatch.groups.quizId || urlMatch.groups.contentId || urlMatch.groups.courseId)) || ProgressPopupContext.DEEPLINK;
+    const deeplinkUrl: URL = new URL(url);
+    const overrideChannelSlug = deeplinkUrl.searchParams.get('channel');
+    if (overrideChannelSlug) {
+      return {
+        id: this.progressLoaderId,
+        ignoreTelemetry: {
+          when: {
+            interact: /{"pageId":"resources"}|{"pageId":"library"}|{"pageId":"home"}/,
+            impression: /{"pageId":"resources"}|{"pageId":"library"}|{"pageId":"home"}|{"pageId":"onboarding-language-setting"}|{"pageId":"user-type-selection"}|{"pageId":profile-settings"}/
           }
         }
-      }
+      };
+    } else if (dialCode) {
+      return {
+        id: this.progressLoaderId,
+        ignoreTelemetry: {
+          when: {
+            interact: /{"pageId":"resources"}|{"pageId":"library"}|{"pageId":"home"}|{"pageId":"search"}/,
+            impression: /{"pageId":"resources"}|{"pageId":"library"}|{"pageId":"home"}/
+          }
+        }
+      };
+    } else if (urlMatch && urlMatch.groups && (urlMatch.groups.quizId || urlMatch.groups.contentId || urlMatch.groups.courseId)) {
+      return {
+        id: this.progressLoaderId,
+        ignoreTelemetry: {
+          when: {
+            interact: /{"pageId":"resources"}|{"pageId":"library"}|{"pageId":"home"}/,
+            impression: /{"pageId":"resources"}|{"pageId":"library"}|{"pageId":"home"}/
+          }
+        }
+      };
+    }
+    return {
+      id: this.progressLoaderId
     };
   }
-
-  private closeProgressLoader() {
-    this.sbProgressLoader.hide({
-      id: this.progressLoaderId
-    });
-    this.progressLoaderId = undefined;
-  }
-
+    private closeProgressLoader() {
+        this.sbProgressLoader.hide({
+            id: this.progressLoaderId
+        });
+        this.progressLoaderId = undefined;
+    }
 }

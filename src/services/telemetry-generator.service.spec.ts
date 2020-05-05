@@ -53,6 +53,7 @@ describe('TelemetryGeneratorService', () => {
 
   it('should invoke interact() with proper arguments', () => {
     // arrange
+    mockSbProgressLoader.contexts = new Map<>();
     // act
     telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
       InteractSubtype.UNIT_CLICKED,

@@ -17,7 +17,7 @@ import { Map } from '../app/telemetryutil';
 import { Environment, ImpressionType, InteractSubtype, InteractType, Mode, PageId, CorReleationDataType, ID } from './telemetry-constants';
 import { MimeType } from '../app/app.constant';
 import { ContentUtil } from '@app/util/content-util';
-import { SbProgressLoader } from '@app/services/sb-progress-loader.service';
+import { SbProgressLoader } from '../services/sb-progress-loader.service';
 
 @Injectable()
 export class TelemetryGeneratorService {
@@ -29,13 +29,12 @@ export class TelemetryGeneratorService {
 
     generateInteractTelemetry(interactType, interactSubtype, env, pageId, object?: TelemetryObject, values?: Map,
                               rollup?: Rollup, corRelationList?: Array<CorrelationData>, id?: string) {
-        const args = {interactType, interactSubtype, pageId, env};
+        const hash: string =
+            JSON.stringify({ pageId: pageId || undefined });
         if (
             Array.from(this.sbProgressLoader.contexts.entries()).some(([_, context]) => {
                 if (context.ignoreTelemetry && context.ignoreTelemetry.when && context.ignoreTelemetry.when.interact) {
-                    return Object.keys(context.ignoreTelemetry.when).every((w) => {
-                        return args[w] && args[w].match(context.ignoreTelemetry.when.interact[w]);
-                    });
+                    return !!hash.match(context.ignoreTelemetry.when.interact);
                 }
                 return false;
             })
@@ -73,15 +72,14 @@ export class TelemetryGeneratorService {
         this.telemetryService.interact(telemetryInteractRequest).subscribe();
     }
 
-    generateImpressionTelemetry(type, subtype, pageid, env, objectId?: string, objectType?: string,
-        objectVersion?: string, rollup?: Rollup, corRelationList?: Array<CorrelationData>) {
-        const args = {type, subtype, pageid, env};
+    generateImpressionTelemetry(type, subtype, pageId, env, objectId?: string, objectType?: string,
+                                objectVersion?: string, rollup?: Rollup, corRelationList?: Array<CorrelationData>) {
+        const hash: string =
+            JSON.stringify({ pageId: pageId || undefined });
         if (
             Array.from(this.sbProgressLoader.contexts.entries()).some(([_, context]) => {
                 if (context.ignoreTelemetry && context.ignoreTelemetry.when && context.ignoreTelemetry.when.impression) {
-                    return Object.keys(context.ignoreTelemetry.when).every((w) => {
-                        return args[w] && args[w].match(context.ignoreTelemetry.when.impression[w]);
-                    });
+                    return !!hash.match(context.ignoreTelemetry.when.impression);
                 }
                 return false;
             })
@@ -92,7 +90,7 @@ export class TelemetryGeneratorService {
         const telemetryImpressionRequest = new TelemetryImpressionRequest();
         telemetryImpressionRequest.type = type;
         telemetryImpressionRequest.subType = subtype;
-        telemetryImpressionRequest.pageId = pageid;
+        telemetryImpressionRequest.pageId = pageId;
         telemetryImpressionRequest.env = env;
         telemetryImpressionRequest.objId = objectId ? objectId : '';
         telemetryImpressionRequest.objType = objectType ? objectType : '';

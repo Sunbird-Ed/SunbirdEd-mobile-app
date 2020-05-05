@@ -20,7 +20,7 @@ import {
 import { of, throwError } from 'rxjs';
 import { PageName, ContentCard, BatchConstants } from '../app.constant';
 import { LocalCourseService } from '../../services/local-course.service';
-import {SbProgressLoader} from '@app/services/sb-progress-loader.service';
+import {SbProgressLoader} from '../../services/sb-progress-loader.service';
 
 describe('CoursesPage', () => {
     let coursesPage: CoursesPage;
