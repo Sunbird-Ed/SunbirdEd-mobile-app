@@ -271,16 +271,11 @@ export class LanguageSettingsPage {
         selectedLanguage: this.language
       });
       this.notification.setupLocalNotification(this.language);
-      const actor = new Actor();
-      actor.id = this.language;
-      actor.type = 'set-language';
-      const telemetryAuditRequest: TelemetryAuditRequest = {
-        env: Environment.ONBOARDING,
-        actor,
-        updatedProperties: [this.language],
-        currentState: AuditState.AUDIT_UPDATED
-      };
-      this.telemetryGeneratorService.generateAuditTelemetry(telemetryAuditRequest);
+      this.telemetryGeneratorService.generateAuditTelemetry(
+        Environment.ONBOARDING,
+        AuditState.AUDIT_UPDATED,
+        [this.language]
+      );
       if (this.isFromSettings) {
         this.location.back();
       } else {

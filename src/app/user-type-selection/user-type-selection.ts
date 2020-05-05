@@ -246,17 +246,12 @@ export class UserTypeSelectionPage {
             this.gotoNextPage();
             const correlationlist: Array<CorrelationData> = [];
             correlationlist.push({ id: this.selectedUserType, type: CorReleationDataType.USERTYPE });
-            const actor = new Actor();
-            actor.id = this.selectedUserType;
-            actor.type = 'set-usertype';
-            const telemetryAuditRequest: TelemetryAuditRequest = {
-              env: Environment.ONBOARDING,
-              actor,
-              updatedProperties: [this.selectedUserType],
-              currentState: AuditState.AUDIT_UPDATED,
-              correlationData: correlationlist
-            };
-            this.telemetryGeneratorService.generateAuditTelemetry(telemetryAuditRequest);
+            this.telemetryGeneratorService.generateAuditTelemetry(
+              Environment.ONBOARDING,
+              AuditState.AUDIT_UPDATED,
+              this.selectedUserType,
+              correlationlist
+            );
           }).catch(() => {
             return 'null';
           });
