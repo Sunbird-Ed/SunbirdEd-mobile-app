@@ -1,13 +1,21 @@
 @import "src/assets/styles/variables";
 @import "src/assets/styles/_custom-mixins";
 
+ion-content {
+  --ion-background-color: #EDF4F9;
+}
 :host {
   .card-related-style {
-    border-style: solid;
-    border-width: 2px;
-    border-radius: 6px !important;
-    margin-inline-start: unset !important;
-    margin-inline-end: unset !important;
+    //border-style: solid;
+    //border-width: 2px;
+    //border-radius: 6px !important;
+    //margin-inline-start: unset !important;
+    //margin-inline-end: unset !important;
+    text-align: center;
+    position: relative;
+    box-shadow: 0 20px 40px -10px #D8D8D8;
+    background-color: #FFFFFF;
+    border-radius: 4px;
   }
 
   .description {
@@ -19,17 +27,26 @@
   }
 
   .card-title {
-    @include padding(null, null, null, 10px !important);
     font-weight: 700 !important;
-    font-size: 1.2rem;
+    font-size: 1.4rem;
     color: map-get($colors, secondary_black);
-    margin-top: 10px !important;
+    //margin-top: 10px !important;
   }
 
   .thumbnail {
-    width: 70px;
+    width: 100%;
     height: auto;
-    border-radius: 5px;
+  }
+  .icon-check {
+    visibility: hidden;
+    width: auto;
+    height: auto;
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    &.selected {
+     visibility: visible;
+    }
   }
 
   .card-content-md {
@@ -39,7 +56,14 @@
   ion-card {
     background-color: map-get($colors, white_f7) !important;
     @include margin(20px, 0, 0, 0 !important);
+    height: calc(100% - 20px);
     width: 100% !important;
+    &.selected {
+      border:3px solid #0076FE;
+    }
+    > ion-grid {
+      height: 100%;
+    }
   }
 
   ion-icon {
@@ -64,5 +88,43 @@
   }
   .gray-color {
     color: map-get($colors, primary_black);
+    padding: 0;
+    margin-top: 4px;
+    margin-bottom: 0;
+    line-height: 30px;
+    font-weight: bold;
+    font-size: 24px;
+  }
+  .title-class {
+    font-size: 24px;
+    font-weight: bold;
+    color: #024F9D;
+    margin-top: 4vh;
+  }
+
+  .back-btn-container{
+    @include ltr() {
+      top: 0;
+      left: 0;
+    }
+    @include rtl() {
+      top: 0;
+      right: 0;
+    }
+    flex-grow: 0;
+    flex-shrink: 0;
+    position: absolute;
+    .top-back-button{
+      position: relative;
+      font-size: 22px;
+      @include ltr() {
+        top: 20px;
+        left: 20px;
+      }
+      @include rtl() {
+        top: 20px;
+        right: 20px;
+      }
+    }
   }
 }
