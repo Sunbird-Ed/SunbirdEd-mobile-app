@@ -122,11 +122,15 @@ export class ContentUtil {
     const utmParams = {};
     const cData: CorrelationData[] = [];
     Object.entries(params).forEach(([key, value]) => {
+      if ((key === 'utm_campaign') || (key === 'channel')) {
+        cData.push({ id: params[key] , type: 'Source'});
+      } else {
         const chengeKeyUpperCase = key.split('_').map((elem) => {
-            return (elem.charAt(0).toUpperCase() + elem.slice(1));
-        });
+          return (elem.charAt(0).toUpperCase() + elem.slice(1));
+      });
 
         utmParams[chengeKeyUpperCase.join('')] = decodeURIComponent(value);
+      }
     });
     if (Object.keys(utmParams)) {
         Object.keys(utmParams).map((key) => {

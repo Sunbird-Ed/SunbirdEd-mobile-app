@@ -90,22 +90,50 @@ describe('ContentUtil', () => {
     });
 
     describe('genrateUTMCData', () => {
-        it('should return utm parameter', () => {
-          // arrange
-          const value = {
-            utm_source: 'https://sunbirded.org/learn/course/do_12345',
-            utm_medium: 'playstore',
-          };
+        it('should return utm parameter for utm_campaign', () => {
+            // arrange
+            const value = {
+                utm_source: 'https://sunbirded.org/learn/course/do_12345',
+                utm_medium: 'playstore',
+                utm_campaign: 'igot'
+            };
 
-          // act
-          // assert
-          expect(ContentUtil.genrateUTMCData(value)).toEqual([{
-              id: 'https://sunbirded.org/learn/course/do_12345',
-              type: 'UtmSource'
-          }, {
-              id: 'playstore',
-              type: 'UtmMedium'
-          }]);
+            // act
+            // assert
+            expect(ContentUtil.genrateUTMCData(value)).toEqual([{
+                id: 'igot',
+                type: 'Source'
+            },
+            {
+                id: 'https://sunbirded.org/learn/course/do_12345',
+                type: 'UtmSource'
+            }, {
+                id: 'playstore',
+                type: 'UtmMedium'
+            }]);
         });
-      });
+
+        it('should return utm parameter for channel', () => {
+            // arrange
+            const value = {
+                utm_source: 'https://sunbirded.org/learn/course/do_12345',
+                utm_medium: 'playstore',
+                channel: 'igot'
+            };
+
+            // act
+            // assert
+            expect(ContentUtil.genrateUTMCData(value)).toEqual([{
+                id: 'igot',
+                type: 'Source'
+            },
+            {
+                id: 'https://sunbirded.org/learn/course/do_12345',
+                type: 'UtmSource'
+            }, {
+                id: 'playstore',
+                type: 'UtmMedium'
+            }]);
+        });
+    });
 });
