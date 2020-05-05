@@ -169,17 +169,6 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
     );
   }
 
-  subscribeFormFieldValueChage() {
-    this.profileSettingsForm.get('syllabus').valueChanges.subscribe(() => {
-      alert('1');
-    });
-    this.profileSettingsForm.get('medium').valueChanges.subscribe(() => {
-      alert('2');
-    });
-    this.profileSettingsForm.get('grade').valueChanges.subscribe(() => {
-      alert('3');
-    });
-  }
 
   ngAfterViewInit() {
     plugins['webViewChecker'].getCurrentWebViewPackageInfo()
@@ -651,16 +640,15 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
         correlationlist.push({ id: this.boardControl.value, type: CorReleationDataType.BOARD });
         correlationlist.push({ id: this.mediumControl.value, type: CorReleationDataType.MEDIUM });
         correlationlist.push({ id: this.gradeControl.value, type: CorReleationDataType.CLASS });
-        const actor = new Actor();
-        actor.id = '';
-        actor.type = 'set-profile';
-        const telemetryAuditRequest: TelemetryAuditRequest = {
-        env: Environment.ONBOARDING,
-        actor,
-        currentState: AuditState.AUDIT_UPDATED,
-        correlationData: correlationlist
-        };
-        this.telemetryGeneratorService.generateAuditTelemetry(telemetryAuditRequest);
+        this.telemetryGeneratorService.generateAuditTelemetry(
+          Environment.ONBOARDING,
+          AuditState.AUDIT_UPDATED,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          correlationlist
+        );
         this.loader = await this.commonUtilService.getLoader(2000);
         await this.loader.present();
       })

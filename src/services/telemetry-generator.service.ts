@@ -26,8 +26,18 @@ export class TelemetryGeneratorService {
     constructor(@Inject('TELEMETRY_SERVICE') private telemetryService: TelemetryService) {
     }
 
-    generateAuditTelemetry(telemetryAuditRequest: TelemetryAuditRequest) {
-        this.telemetryService.audit(telemetryAuditRequest);
+    generateAuditTelemetry(env, currentSate?, updatedProperties?, objId?, objType?, objVer?, correlationData?) {
+        const telemetryAuditRequest: TelemetryAuditRequest = {
+            env: env ? env : undefined,
+            currentState: currentSate ? currentSate : undefined,
+            updatedProperties: updatedProperties ? updatedProperties : undefined,
+            objId: objId ? objId: undefined,
+            objType: objType ? objType : undefined,
+            objVer: objVer ? objVer : undefined,
+            correlationData: correlationData ? correlationData : undefined,
+            actor: new Actor()
+        };
+        this.telemetryService.audit(telemetryAuditRequest).subscribe();
     }
 
     generateInteractTelemetry(interactType, interactSubtype, env, pageId, object?: TelemetryObject, values?: Map,
