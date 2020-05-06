@@ -5,7 +5,7 @@ import {
   LogLevel
 } from '@app/services/telemetry-constants';
 import { of } from 'rxjs';
-import {SbProgressLoader} from '@app/services/sb-progress-loader.service';
+import {Context, SbProgressLoader} from '@app/services/sb-progress-loader.service';
 
 describe('TelemetryGeneratorService', () => {
   let telemetryGeneratorService: TelemetryGeneratorService;
@@ -53,7 +53,15 @@ describe('TelemetryGeneratorService', () => {
 
   it('should invoke interact() with proper arguments', () => {
     // arrange
-    mockSbProgressLoader.contexts = new Map<>();
+    mockSbProgressLoader.contexts = new Map<string, Context>();
+    mockSbProgressLoader.contexts.set('SAMPLE_ID', {
+      id: 'SAMPLE_ID',
+      ignoreTelemetry: {
+        when: {
+          interact: /{“pageid”:“collection-detail”}/
+        }
+      }
+    });
     // act
     telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
       InteractSubtype.UNIT_CLICKED,
@@ -78,7 +86,15 @@ describe('TelemetryGeneratorService', () => {
 
   it('should invoke impression() with proper arguments', () => {
     // arrange
-    mockSbProgressLoader.contexts = new Map<>();
+    mockSbProgressLoader.contexts = new Map<string, Context>();
+    mockSbProgressLoader.contexts.set('SAMPLE_ID', {
+      id: 'SAMPLE_ID',
+      ignoreTelemetry: {
+        when: {
+          impression: /{“pageid”:“collection-detail”}/
+        }
+      }
+    });
     // act
     telemetryGeneratorService.generateImpressionTelemetry(ImpressionType.DETAIL, '',
       PageId.COLLECTION_DETAIL,

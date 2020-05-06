@@ -30,6 +30,7 @@ import { PreferenceKey, ProfileConstants, EventTopics } from '../app.constant';
 import { isObject } from 'util';
 import { SbPopoverComponent } from '../components/popups';
 import { Mode, Environment, ImpressionType } from '../../services/telemetry-constants';
+import {SbProgressLoader} from '@app/services/sb-progress-loader.service';
 
 describe('EnrolledCourseDetailsPage', () => {
     let enrolledCourseDetailsPage: EnrolledCourseDetailsPage;
@@ -108,6 +109,7 @@ describe('EnrolledCourseDetailsPage', () => {
         prepareRequestValue: jest.fn()
     };
     const mockAppVersion: Partial<AppVersion> = {};
+    const mockSbProgressLoader: Partial<SbProgressLoader> = {};
 
     beforeAll(() => {
         enrolledCourseDetailsPage = new EnrolledCourseDetailsPage(
@@ -135,7 +137,8 @@ describe('EnrolledCourseDetailsPage', () => {
             mockLocation as Location,
             mockRouter as Router,
             mockContentDeleteHandler as ContentDeleteHandler,
-            mockLocalCourseService as LocalCourseService
+            mockLocalCourseService as LocalCourseService,
+            mockSbProgressLoader as SbProgressLoader
         );
     });
 
@@ -2046,6 +2049,15 @@ describe('EnrolledCourseDetailsPage', () => {
             expect(mockHeaderService.hideHeader).toBeCalled();
             expect(enrolledCourseDetailsPage.importContent).toBeCalled();
         });
+    });
 
+    it('should hide deeplink progress loader', () => {
+        // arrange
+        enrolledCourseDetailsPage.identifier = 'sample_doId';
+        mockSbProgressLoader.hide = jest.fn();
+        // act
+        enrolledCourseDetailsPage.ionViewDidEnter();
+        // assert
+        expect(mockSbProgressLoader.hide).toHaveBeenCalledWith({id: 'sample_doId'});
     });
 });
