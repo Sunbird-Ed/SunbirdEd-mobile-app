@@ -6,12 +6,15 @@ import {
     TelemetryErrorRequest,
     TelemetryImpressionRequest,
     TelemetryInteractRequest,
+    TelemetryAuditRequest,
     TelemetryLogRequest,
     TelemetryObject,
     TelemetryService,
     TelemetryStartRequest,
     TelemetryInterruptRequest,
-    DeviceSpecification
+    DeviceSpecification,
+    Actor,
+    AuditState
 } from 'sunbird-sdk';
 import { Map } from '../app/telemetryutil';
 import { Environment, ImpressionType, InteractSubtype, InteractType, Mode, PageId, CorReleationDataType, ID } from './telemetry-constants';
@@ -21,6 +24,20 @@ import { ContentUtil } from '@app/util/content-util';
 @Injectable()
 export class TelemetryGeneratorService {
     constructor(@Inject('TELEMETRY_SERVICE') private telemetryService: TelemetryService) {
+    }
+
+    generateAuditTelemetry(env, currentSate?, updatedProperties?, objId?, objType?, objVer?, correlationData?) {
+        const telemetryAuditRequest: TelemetryAuditRequest = {
+            env: env ? env : undefined,
+            currentState: currentSate ? currentSate : undefined,
+            updatedProperties: updatedProperties ? updatedProperties : undefined,
+            objId: objId ? objId: undefined,
+            objType: objType ? objType : undefined,
+            objVer: objVer ? objVer : undefined,
+            correlationData: correlationData ? correlationData : undefined,
+            actor: new Actor()
+        };
+        this.telemetryService.audit(telemetryAuditRequest).subscribe();
     }
 
     generateInteractTelemetry(interactType, interactSubtype, env, pageId, object?: TelemetryObject, values?: Map,
@@ -175,7 +192,6 @@ export class TelemetryGeneratorService {
             values,
             objRollup,
             corRelationList);
-
     }
 
     generatePageViewTelemetry(pageId, env, subType?) {
@@ -384,6 +400,30 @@ export class TelemetryGeneratorService {
             value,
             undefined,
             corRelationList
+        );
+    }
+
+
+    /* New Telemetry */
+    generateBackClickedNewTelemetry(isDeviceBack, env, pageId) {
+        this.generateInteractTelemetry(
+            InteractType.SELECT_BACK,
+            isDeviceBack ? InteractSubtype.DEVICE_BACK_CLICKED : InteractSubtype.UI,
+            env,
+            pageId
+        );
+    }
+
+    generatePageLoadedTelemetry(pageId, env, objId?, objType?, objversion?, rollup?, correlationList?) {
+        this.generateImpressionTelemetry(
+            ImpressionType.PAGE_LOADED, '',
+            pageId,
+            env,
+            correlationList,
+            objId,
+            objType,
+            objversion,
+            rollup
         );
     }
 }

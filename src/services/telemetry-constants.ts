@@ -124,7 +124,13 @@ export enum PageId {
     UPGRADE_POPUP = 'update-popup',
     IMPORT_CONTENT_POPUP = 'import-content-popup',
     DOWNLOAD_ALL_CONFIRMATION_POPUP = 'download-all-confirmation-popup',
-    PERMISSION_POPUP = 'permission-popup'
+    PERMISSION_POPUP = 'permission-popup',
+    /* New Telemetry */
+    LANGUAGE = 'language',
+    USER_TYPE = 'usertype',
+    SCAN_OR_MANUAL = 'scan-or-manual',
+    PROFILE_SETTINGS = 'profile-settings',
+    POPUP_CATEGORY = 'popup-category'
 }
 export enum LogType {
     NOTIFICATION = 'notification'
@@ -147,7 +153,11 @@ export enum ImpressionType {
     WORKFLOW = 'workflow',
     DISTRICT_MAPPING = 'district-mapping',
     CAMERA = 'camera',
-    FILE_MANAGEMENT = 'file-management'
+    FILE_MANAGEMENT = 'file-management',
+    /* New Telemetry */
+    PAGE_LOADED = 'page-loaded',
+    PAGE_REQUEST = 'page-request',
+    SET_LANGUAGE = 'set-language'
 }
 export enum ImpressionSubtype {
     QRCodeScanInitiate = 'qr-code-scan-initiate',
@@ -178,10 +188,20 @@ export enum InteractType {
     DELETE_CHECKED = 'delete-checked',
     DELETE_UNCHECKED = 'delete-unchecked',
     BACKDROP_DISMISSED = 'backdrop-dismissed',
-    LOCAL = 'local',
-    FCM = 'fcm',
+    LOCAL = "local",
+    FCM = "fcm",
     WITHOUT_CONTENT = 'without-content',
-    WITH_CONTENT = 'with-content'
+    WITH_CONTENT = 'with-content',
+    /* New Telemetry */
+    SELECT_LANGUAGE = 'select-language',
+    SELECT_CONTINUE = 'select-continue',
+    SELECT_USERTYPE = 'select-usertype',
+    SELECT_BACK = 'select-back',
+    SELECT_QRSCANER = 'select-qrscanner',
+    SELECT_CATEGORY = 'select-category',
+    SELECT_ATTRIBUTE = 'select-attribute',
+    SELECT_SUBMIT = 'select-submit',
+    SELECT_CANCEL = 'select-cancel'
 }
 
 
@@ -402,7 +422,12 @@ export enum InteractSubtype {
     FORCE_UPGRADE_INFO = 'force-upgrade-info',
     OPTIONAL_UPGRADE = 'optional-upgrade',
     DEEPLINK_UPGRADE = 'deep-link-upgrade',
-    NO_QR_CODE_CLICKED = 'no-qr-code-clicked'
+    NO_QR_CODE_CLICKED = 'no-qr-code-clicked',
+    /* New Telemetry */
+    SUCCESS = 'success',
+    FAIL = 'fail',
+    UI = 'ui',
+    DEVICE = 'device'
 }
 
 export enum ID {
@@ -448,7 +473,12 @@ export enum CorReleationDataType {
     ACCESS_TYPE = 'AccessType',
     SCAN = 'Scan',
     SOURCE = 'Source',
-    NOTIFICATION_ID = 'NotificationID'
+    NOTIFICATION_ID = 'NotificationID',
+    /* New Telemetry */
+    BOARD_COUNT = 'CountBoard',
+    MEDIUM_COUNT = 'CountMedium',
+    CLASS_COUNT = 'CountClass',
+    FIRST_TIME_USER = 'FirstTimeUser'
 }
 
 
