@@ -8,13 +8,14 @@ import { AppGlobalService } from '@app/services/app-global-service.service';
 import { CommonUtilService } from '@app/services/common-util.service';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { AppHeaderService } from '@app/services/app-header.service';
-import { Profile, ProfileService, ProfileSource, ProfileType, SharedPreferences, } from 'sunbird-sdk';
+import { Profile, ProfileService, ProfileSource, ProfileType, SharedPreferences, CorrelationData, Actor, TelemetryAuditRequest, AuditState, } from 'sunbird-sdk';
 import {
   Environment,
   ImpressionType,
   InteractSubtype,
   InteractType,
   PageId,
+  CorReleationDataType,
 } from '@app/services/telemetry-constants';
 import { ContainerService } from '@app/services/container.services';
 import { initTabs, GUEST_STUDENT_TABS, GUEST_TEACHER_TABS } from '@app/app/module.service';
@@ -85,6 +86,11 @@ export class UserTypeSelectionPage {
             ImpressionType.VIEW, '',
             PageId.USER_TYPE_SELECTION,
             this.appGlobalService.isOnBoardingCompleted ? Environment.HOME : Environment.ONBOARDING);
+        /* New Telemetry */
+        this.telemetryGeneratorService.generatePageLoadedTelemetry(
+          PageId.USER_TYPE,
+          this.appGlobalService.isOnBoardingCompleted ? Environment.HOME : Environment.ONBOARDING
+        );
       }, 350);
     }
     this.getNavParams();
@@ -96,6 +102,12 @@ export class UserTypeSelectionPage {
     this.profile = this.appGlobalService.getCurrentUser();
     this.backButtonFunc = this.platform.backButton.subscribeWithPriority(10, () => {
       this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.USER_TYPE_SELECTION, Environment.HOME, false);
+      /* New Telemetry */
+      this.telemetryGeneratorService.generateBackClickedNewTelemetry(
+        true,
+        this.appGlobalService.isOnBoardingCompleted ? Environment.HOME : Environment.ONBOARDING,
+        PageId.USER_TYPE
+      );
       this.handleBackButton();
       this.backButtonFunc.unsubscribe();
     });
@@ -121,18 +133,26 @@ export class UserTypeSelectionPage {
     }
     this.router.navigate([`/${RouterLinks.LANGUAGE_SETTING}`]);
   }
+
   handleHeaderEvents($event) {
     if ($event.name === 'back') {
       this.telemetryGeneratorService.generateBackClickedTelemetry(
           PageId.USER_TYPE_SELECTION,
           this.appGlobalService.isOnBoardingCompleted ? Environment.HOME : Environment.ONBOARDING,
           true);
+      /* New Telemetry */
+      this.telemetryGeneratorService.generateBackClickedNewTelemetry(
+        false,
+        this.appGlobalService.isOnBoardingCompleted ? Environment.HOME : Environment.ONBOARDING,
+        PageId.USER_TYPE
+      );
       this.handleBackButton();
     }
   }
 
   selectTeacherCard() {
     this.selectCard('USER_TYPE_1', ProfileType.TEACHER);
+    this.generateUserTypeClicktelemetry(ProfileType.TEACHER);
     setTimeout(() => {
       this.continue();
     }, 50);
@@ -140,6 +160,7 @@ export class UserTypeSelectionPage {
 
   selectStudentCard() {
     this.selectCard('USER_TYPE_2', ProfileType.STUDENT);
+    this.generateUserTypeClicktelemetry(ProfileType.STUDENT);
     setTimeout(() => {
       this.continue();
     }, 50);
@@ -147,9 +168,24 @@ export class UserTypeSelectionPage {
 
   selectOtherCard() {
     this.selectCard('USER_TYPE_3', ProfileType.OTHER);
+    this.generateUserTypeClicktelemetry(ProfileType.OTHER);
     setTimeout(() => {
       this.continue();
     }, 50);
+  }
+
+  generateUserTypeClicktelemetry(userType: string) {
+    const correlationlist: Array<CorrelationData> = [];
+    correlationlist.push({ id: userType, type: CorReleationDataType.USERTYPE });
+    this.telemetryGeneratorService.generateInteractTelemetry(
+      InteractType.SELECT_USERTYPE, '',
+      Environment.ONBOARDING,
+      PageId.USER_TYPE,
+      undefined,
+      undefined,
+      undefined,
+      correlationlist
+    ); 
   }
 
   selectCard(userType, profileType) {
@@ -175,7 +211,7 @@ export class UserTypeSelectionPage {
   }
 
   continue() {
-    this.generateInteractEvent(this.selectedUserType);
+    // this.generateInteractEvent(this.selectedUserType);
     // When user is changing the role via the Guest Profile screen
     if (this.profile !== undefined && this.profile.handle) {
       // if role types are same
@@ -208,6 +244,14 @@ export class UserTypeSelectionPage {
             }
             this.profile = success;
             this.gotoNextPage();
+            const correlationlist: Array<CorrelationData> = [];
+            correlationlist.push({ id: this.selectedUserType, type: CorReleationDataType.USERTYPE });
+            this.telemetryGeneratorService.generateAuditTelemetry(
+              Environment.ONBOARDING,
+              AuditState.AUDIT_UPDATED,
+              this.selectedUserType,
+              correlationlist
+            );
           }).catch(() => {
             return 'null';
           });
@@ -248,12 +292,26 @@ export class UserTypeSelectionPage {
     const values = new Map();
     values['userType'] = (userType).toUpperCase();
     this.telemetryGeneratorService.generateInteractTelemetry(
-        InteractType.TOUCH,
-        InteractSubtype.USER_TYPE_SELECTED,
+      InteractType.TOUCH,
+      InteractSubtype.USER_TYPE_SELECTED,
       this.appGlobalService.isOnBoardingCompleted ? Environment.HOME : Environment.ONBOARDING,
-        PageId.USER_TYPE_SELECTION,
+      PageId.USER_TYPE_SELECTION,
       undefined,
-        values);
+      values
+    );
+
+    /* New Telemetry */
+    const correlationlist: Array<CorrelationData> = [];
+    correlationlist.push({ id: userType, type: CorReleationDataType.USERTYPE });
+    this.telemetryGeneratorService.generateInteractTelemetry(
+      InteractType.SELECT_CONTINUE, '',
+      this.appGlobalService.isOnBoardingCompleted ? Environment.HOME : Environment.ONBOARDING,
+      PageId.USER_TYPE,
+      undefined,
+      values,
+      undefined,
+      correlationlist
+    );
   }
 
   /**
