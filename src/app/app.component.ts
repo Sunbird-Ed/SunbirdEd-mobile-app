@@ -774,18 +774,6 @@ export class AppComponent implements OnInit, AfterViewInit {
           const utmValue = response['val'];
           const params: {[param: string]: string} = qs.parse(utmValue);
           cData = ContentUtil.genrateUTMCData(params);
-          try {
-            const url: URL = new URL(params['utm_content']);
-            const overrideChannelSlug = url.searchParams.get('channel');
-            if (overrideChannelSlug) {
-              cData.push({
-                id: CorReleationDataType.SOURCE,
-                type: overrideChannelSlug
-              });
-            }} catch (e) {
-              console.error(e);
-
-            }
           if (response.val && response.val.length) {
             this.splaschreenDeeplinkActionHandlerDelegate.checkUtmContent(response.val);
           }
