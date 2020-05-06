@@ -12,7 +12,7 @@ export class ContentUtil {
 
   public static mergeProperties(contentData: ContentData, properties: string[]): string {
     let displayStr: string;
-    properties.forEach(ele => {
+    properties.forEach( ele => {
       if (contentData[ele]) {
         contentData[ele] = this.arrayEmptyStringCheck(contentData[ele]);
         if (displayStr) {
@@ -37,12 +37,12 @@ export class ContentUtil {
     }
   }
 
-  /**
-   * Returns rollup
-   * @param HierarchyInfo[] hierarchyInfoList
-   * @param string identifier
-   * @returns Rollup
-   */
+   /**
+    * Returns rollup
+    * @param HierarchyInfo[] hierarchyInfoList
+    * @param string identifier
+    * @returns Rollup
+    */
   public static generateRollUp(hierarchyInfoList, identifier): Rollup {
     const rollUp = new Rollup();
     if (!hierarchyInfoList) {
@@ -56,13 +56,13 @@ export class ContentUtil {
     return rollUp;
   }
 
-  /**
-   * Returns apt app icon
-   * @param string appIcon
-   * @param string basePath
-   * @param boolean isNetworkAvailable
-   * @returns string
-   */
+   /**
+    * Returns apt app icon
+    * @param string appIcon
+    * @param string basePath
+    * @param boolean isNetworkAvailable
+    * @returns string
+    */
   public static getAppIcon(appIcon: string, basePath: string, isNetworkAvailable: boolean): string {
     if (appIcon) {
       if (appIcon.startsWith('http')) {
@@ -92,31 +92,31 @@ export class ContentUtil {
     return pdf;
   }
 
-  /**
-   * Returns TelemetryObject
-   * @param any content
-   * @returns TelemetryObject
-   */
-  public static getTelemetryObject(content): TelemetryObject {
-    const identifier = content.identifier;
-    const contentType = content.contentData ? content.contentData.contentType : content.contentType;
-    const pkgVersion = content.contentData ? content.contentData.pkgVersion : content.pkgVersion;
-    return new TelemetryObject(identifier, contentType, pkgVersion);
-  }
+   /**
+    * Returns TelemetryObject
+    * @param any content
+    * @returns TelemetryObject
+    */
+   public static getTelemetryObject(content): TelemetryObject {
+     const identifier = content.identifier;
+     const contentType = content.contentData ? content.contentData.contentType : content.contentType;
+     const pkgVersion = content.contentData ? content.contentData.pkgVersion : content.pkgVersion;
+     return new TelemetryObject(identifier, contentType, pkgVersion);
+   }
 
-  public static extractBaseUrl(url: string): string {
-    if (url) {
-      const pathArray = url.split('/');
-      const protocol = pathArray[0];
-      const host = pathArray[2];
-      if (protocol && host) {
-        return protocol + '//' + host;
-      } else {
-        return '';
-      }
-    }
-    return '';
-  }
+   public static extractBaseUrl(url: string): string {
+     if (url) {
+       const pathArray = url.split('/');
+       const protocol = pathArray[0];
+       const host = pathArray[2];
+       if (protocol && host) {
+         return protocol + '//' + host;
+       } else {
+         return '';
+       }
+     }
+     return '';
+   }
 
 
   public static genrateUTMCData(params: { [param: string]: string }): CorrelationData[] {
