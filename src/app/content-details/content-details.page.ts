@@ -72,6 +72,7 @@ import { LoginHandlerService } from '@app/services/login-handler.service';
 import { SbSharePopupComponent } from '../components/popups/sb-share-popup/sb-share-popup.component';
 import { FileOpener } from '@ionic-native/file-opener/ngx';
 import { Components } from '@ionic/core/dist/types/components';
+import { SbProgressLoader } from '../../services/sb-progress-loader.service';
 
 @Component({
   selector: 'app-content-details',
@@ -190,7 +191,8 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
     private contentDeleteHandler: ContentDeleteHandler,
     private loginHandlerService: LoginHandlerService,
     private fileOpener: FileOpener,
-    private transfer: FileTransfer
+    private transfer: FileTransfer,
+    private sbProgressLoader: SbProgressLoader
   ) {
     this.subscribePlayEvent();
     this.checkDeviceAPILevel();
@@ -318,6 +320,10 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
     this.subscribeSdkEvent();
     this.findHierarchyOfContent();
     this.handleDeviceBackButton();
+  }
+
+  ionViewDidEnter() {
+    this.sbProgressLoader.hide({ id: this.identifier });
   }
 
   /**

@@ -53,6 +53,7 @@ import { EventTopics, ContentType, ShareItemType } from '../app.constant';
 import { FileOpener } from '@ionic-native/file-opener/ngx';
 import { FileTransfer } from '@ionic-native/file-transfer/ngx';
 import { truncate } from 'fs';
+import {SbProgressLoader} from '@app/services/sb-progress-loader.service';
 
 describe('ContentDetailsPage', () => {
     let contentDetailsPage: ContentDetailsPage;
@@ -119,6 +120,7 @@ describe('ContentDetailsPage', () => {
     const mockFileTransfer: Partial<FileTransfer> = {};
     const telemetryObject = new TelemetryObject('do_12345', 'Resource', '1');
     const rollUp = { l1: 'do_123', l2: 'do_123', l3: 'do_1' };
+    const mockSbProgressLoader: Partial<SbProgressLoader> = {};
 
     beforeAll(() => {
         contentDetailsPage = new ContentDetailsPage(
@@ -152,6 +154,7 @@ describe('ContentDetailsPage', () => {
             mockLoginHandlerService as LoginHandlerService,
             mockFileOpener as FileOpener,
             mockFileTransfer as FileTransfer,
+            mockSbProgressLoader as SbProgressLoader
         );
     });
     beforeEach(() => {
@@ -442,7 +445,7 @@ describe('ContentDetailsPage', () => {
                     download: mockDownload
                 };
             });
-            window.cordova.plugins.printer.canPrintItem = jest.fn((_, cb) => { cb(true) });
+            window.cordova.plugins.printer.canPrintItem = jest.fn((_, cb) => { cb(true); });
             window.cordova.plugins.printer.print = jest.fn();
             // act
             contentDetailsPage.openPDFPreview(content as Content).then(() => {
@@ -859,8 +862,8 @@ describe('ContentDetailsPage', () => {
                 contentDetailsPage.resumedCourseCardData.contentId, 0, undefined);
             expect(mockCommonUtilService.convertFileSrc).toHaveBeenCalledWith('sample-app-icon');
             expect(mockContentPlayerHandler.isContentPlayerLaunched).toHaveBeenCalled();
-        })
-    })
+        });
+    });
 
     describe('setContentDetails', () => {
         it('should return content data by invoked setContentDetails', (done) => {
@@ -1260,4 +1263,13 @@ describe('ContentDetailsPage', () => {
         });
     });
 
+    it('should hide deeplink progress loader', () => {
+        // arrange
+        contentDetailsPage.identifier = 'sample_doId';
+        mockSbProgressLoader.hide = jest.fn();
+        // act
+        contentDetailsPage.ionViewDidEnter();
+        // assert
+        expect(mockSbProgressLoader.hide).toHaveBeenCalledWith({id: 'sample_doId'});
+    });
 });

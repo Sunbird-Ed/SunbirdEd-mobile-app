@@ -1,4 +1,11 @@
-import { ContentFilterConfig, PreferenceKey, ProfileConstants, appLanguages } from '@app/app/app.constant';
+import {
+  ContentFilterConfig,
+  PreferenceKey,
+  ProfileConstants,
+  appLanguages,
+  ProgressPopupContext,
+  IgnoreTelemetryPatters
+} from '@app/app/app.constant';
 import { Inject, Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { Events, PopoverController } from '@ionic/angular';
@@ -41,6 +48,7 @@ import { initTabs, GUEST_TEACHER_TABS } from '@app/app/module.service';
 import { ContainerService } from '../container.services';
 import { ContentUtil } from '@app/util/content-util';
 import * as qs from 'qs';
+import { SbProgressLoader, Context as SbProgressLoaderContext } from '../sb-progress-loader.service';
 
 @Injectable()
 export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenActionHandlerDelegate, ExternalChannelOverrideListener {
@@ -50,6 +58,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
   private isOnboardingCompleted = false;
   private loginPopup: any;
   private currentAppVersionCode: number;
+  private progressLoaderId: string;
 
   // should delay the deeplinks until tabs is loaded- gets triggered from Resource components
   set isDelegateReady(val: boolean) {
@@ -81,7 +90,8 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
     public translateService: TranslateService,
     private formFrameWorkUtilService: FormAndFrameworkUtilService,
     private qrScannerResultHandler: QRScannerResultHandler,
-    private container: ContainerService
+    private container: ContainerService,
+    private sbProgressLoader: SbProgressLoader
   ) {
     this.eventToSetDefaultOnboardingData();
    }
@@ -98,6 +108,8 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
     const urlRegex = new RegExp(await this.formFrameWorkUtilService.getDeeplinkRegexFormApi());
     const urlMatch = url.match(urlRegex);
 
+    await this.sbProgressLoader.show(this.generateProgressLoaderContext(url, urlMatch, dialCode));
+
     const payload = { url };
 
     this.generateUtmTelemetryEvent(urlMatch, dialCode, url);
@@ -109,6 +121,8 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
 
     if ((urlMatch && urlMatch.groups) || dialCode) {
       this.checkIfOnboardingComplete(urlMatch, dialCode, url);
+    } else {
+      this.closeProgressLoader();
     }
   }
 
@@ -127,9 +141,13 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
     // checking only for quizId or content Id, since only contents can be considered as quiz.
     if (urlMatch && urlMatch.groups && (urlMatch.groups.quizId || urlMatch.groups.contentId || urlMatch.groups.courseId)) {
       content = await this.getContentData(urlMatch.groups.quizId || urlMatch.groups.contentId || urlMatch.groups.courseId);
-      if (!content && !dialCode) { return; }
+      if (!content && !dialCode) {
+        this.closeProgressLoader();
+        return;
+      }
     }
     if (requiredVersionCode && !(await this.isAppCompatible(requiredVersionCode))) {
+      this.closeProgressLoader();
       this.upgradeAppPopover(requiredVersionCode);
     } else if (this.isOnboardingCompleted || session) {
       this.handleNavigation(urlMatch, content, dialCode, inputUrl);
@@ -186,6 +204,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
     if (this.loginPopup) {
       await this.loginPopup.dismiss();
     }
+    this.closeProgressLoader();
     if (content && content.contentData && content.contentData.status === ContentFilterConfig.CONTENT_STATUS_UNLISTED &&
       content.contentType !== ContentType.COURSE.toLowerCase() && content.mimeType !== MimeType.COLLECTION) {
         this.showLoginWithoutOnboardingPopup(content.identifier || content.contentId);
@@ -213,6 +232,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
           content, inputUrl);
       }
     } else {
+      this.closeProgressLoader();
       this.savedUrl = inputUrl;
     }
   }
@@ -240,6 +260,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
       } else if (content.mimeType === MimeType.COLLECTION) {
         if (this.router.url && this.router.url.indexOf(RouterLinks.COLLECTION_DETAIL_ETB) !== -1) {
           this.events.publish(EventTopics.DEEPLINK_COLLECTION_PAGE_OPEN, { content });
+          this.closeProgressLoader();
           return;
         }
         this.router.navigate([RouterLinks.COLLECTION_DETAIL_ETB],
@@ -253,6 +274,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
         if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
           this.commonUtilService.showToast('NEED_INTERNET_FOR_DEEPLINK_CONTENT');
           this.appGlobalServices.skipCoachScreenForDeeplink = false;
+          this.closeProgressLoader();
           return;
         }
         if (content && content.contentData && content.contentData.status === ContentFilterConfig.CONTENT_STATUS_UNLISTED) {
@@ -268,6 +290,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
         }
       }
     } catch (err) {
+      this.closeProgressLoader();
       console.log(err);
     }
   }
@@ -278,10 +301,12 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
       this.limitedSharingContentLinkClickedTelemery();
     }
     if (!this.appGlobalServices.isSignInOnboardingCompleted && this.appGlobalServices.isUserLoggedIn()) {
+      this.closeProgressLoader();
       return;
     }
     if (this.router.url && this.router.url.indexOf(RouterLinks.CONTENT_DETAILS) !== -1) {
       this.events.publish(EventTopics.DEEPLINK_CONTENT_PAGE_OPEN, { content, autoPlayQuizContent: true });
+      this.closeProgressLoader();
       return;
     }
     await this.router.navigate([RouterLinks.CONTENT_DETAILS],
@@ -568,7 +593,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
         resolve(true);
       } catch (e) {
         resolve(false);
-        console.log(e);
+        this.closeProgressLoader();
       }
     });
   }
@@ -624,5 +649,53 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
     }];
     return corRelationList;
   }
-
+  private generateProgressLoaderContext(url, urlMatch, dialCode): SbProgressLoaderContext {
+    if (this.progressLoaderId) {
+      this.closeProgressLoader();
+    }
+    this.progressLoaderId = dialCode || (urlMatch && urlMatch.groups &&
+        (urlMatch.groups.quizId || urlMatch.groups.contentId || urlMatch.groups.courseId)) || ProgressPopupContext.DEEPLINK;
+    const deeplinkUrl: URL = new URL(url);
+    const overrideChannelSlug = deeplinkUrl.searchParams.get('channel');
+    if (overrideChannelSlug) {
+      return {
+        id: this.progressLoaderId,
+        ignoreTelemetry: {
+          when: {
+            interact: IgnoreTelemetryPatters.IGNORE_PAGE_ID_EVENTS,
+            impression: IgnoreTelemetryPatters.IGNORE_CHANNEL_IMPRESSION_EVENTS
+          }
+        }
+      };
+    } else if (dialCode) {
+      return {
+        id: this.progressLoaderId,
+        ignoreTelemetry: {
+          when: {
+            interact: IgnoreTelemetryPatters.IGNORE_DIAL_CODE_PAGE_ID_EVENTS,
+            impression: IgnoreTelemetryPatters.IGNORE_PAGE_ID_EVENTS
+          }
+        }
+      };
+    } else if (urlMatch && urlMatch.groups && (urlMatch.groups.quizId || urlMatch.groups.contentId || urlMatch.groups.courseId)) {
+      return {
+        id: this.progressLoaderId,
+        ignoreTelemetry: {
+          when: {
+            interact: IgnoreTelemetryPatters.IGNORE_PAGE_ID_EVENTS,
+            impression: IgnoreTelemetryPatters.IGNORE_PAGE_ID_EVENTS
+          }
+        }
+      };
+    }
+    return {
+      id: this.progressLoaderId
+    };
+  }
+    private closeProgressLoader() {
+        this.sbProgressLoader.hide({
+            id: this.progressLoaderId
+        });
+        this.progressLoaderId = undefined;
+    }
 }

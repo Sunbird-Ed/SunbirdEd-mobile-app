@@ -30,10 +30,11 @@ import { ContentPlayerHandler } from '@app/services/content/player/content-playe
 import { ContentUtil } from '@app/util/content-util';
 import { EventTopics } from '@app/app/app.constant';
 import { ShareItemType, ContentType } from '../app.constant';
-import { ContentDeleteHandler } from '../../services/content/content-delete-handler'
+import { ContentDeleteHandler } from '../../services/content/content-delete-handler';
 import { connect } from 'http2';
 import { isObject } from 'util';
 import { MimeType } from '../../app/app.constant';
+import {SbProgressLoader} from '@app/services/sb-progress-loader.service';
 
 describe('collectionDetailEtbPage', () => {
     let collectionDetailEtbPage: CollectionDetailEtbPage;
@@ -102,6 +103,8 @@ describe('collectionDetailEtbPage', () => {
         showContentDeletePopup: jest.fn()
     };
 
+    const mockSbProgressLoader: Partial<SbProgressLoader> = {};
+
     beforeEach(() => {
         const div = document.createElement('div');
         document.body.appendChild(div);
@@ -126,7 +129,8 @@ describe('collectionDetailEtbPage', () => {
             mockchangeDetectionRef as ChangeDetectorRef,
             mocktextbookTocService as TextbookTocService,
             mockContentPlayerHandler as ContentPlayerHandler,
-            mockContentDeleteHandler as ContentDeleteHandler
+            mockContentDeleteHandler as ContentDeleteHandler,
+            mockSbProgressLoader as SbProgressLoader
         );
 
         collectionDetailEtbPage.ionContent = mockIonContent as any;
@@ -1785,4 +1789,13 @@ describe('collectionDetailEtbPage', () => {
 
     });
 
+    it('should hide deeplink progress loader', () => {
+        // arrange
+        collectionDetailEtbPage.identifier = 'sample_doId';
+        mockSbProgressLoader.hide = jest.fn();
+        // act
+        collectionDetailEtbPage.ionViewDidEnter();
+        // assert
+        expect(mockSbProgressLoader.hide).toHaveBeenCalledWith({id: 'sample_doId'});
+    });
 });
