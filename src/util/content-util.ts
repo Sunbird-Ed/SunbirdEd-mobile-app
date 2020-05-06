@@ -1,4 +1,5 @@
 import { Rollup, Content, ContentData, TelemetryObject, CorrelationData } from 'sunbird-sdk';
+import { CorReleationDataType } from '@app/services/telemetry-constants';
 export class ContentUtil {
 
 
@@ -122,6 +123,17 @@ export class ContentUtil {
     const utmParams = {};
     const cData: CorrelationData[] = [];
     Object.entries(params).forEach(([key, value]) => {
+      try {
+        const url: URL = new URL(value);
+        const overrideChannelSlug = url.searchParams.get('channel');
+        if (overrideChannelSlug) {
+          cData.push({
+            id: overrideChannelSlug,
+            type: CorReleationDataType.SOURCE
+          });
+        }} catch (e) {
+          console.error(e);
+        }
       if ((key === 'utm_campaign') || (key === 'channel')) {
         cData.push({ id: params[key] , type: 'Source'});
       } else {

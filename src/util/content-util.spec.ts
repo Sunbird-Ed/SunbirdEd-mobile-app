@@ -113,6 +113,27 @@ describe('ContentUtil', () => {
             }]);
         });
 
+        it('should return utm parameter for utm_campaign', () => {
+            // arrange
+            const value = {
+                utm_source: 'https://sunbirded.org/learn/course/do_12345?channel=abc',
+                utm_medium: 'playstore',
+            };
+
+            // act
+            // assert
+            expect(ContentUtil.genrateUTMCData(value)).toEqual([{
+                id: 'abc',
+                type: 'Source'
+            },
+            {
+                id: 'https://sunbirded.org/learn/course/do_12345?channel=abc',
+                type: 'UtmSource'
+            }, {
+                id: 'playstore',
+                type: 'UtmMedium'
+            }]);
+        });
         it('should return utm parameter for channel', () => {
             // arrange
             const value = {
