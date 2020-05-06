@@ -20,7 +20,8 @@ describe('QRScannerResultHandler', () => {
     getContentDetails: jest.fn()
   };
   const mockTelemetryService: Partial<TelemetryService> = {
-    buildContext: jest.fn()
+    buildContext: jest.fn(),
+    updateUtmParameters: jest.fn()
   };
   const mockCommonUtilService: Partial<CommonUtilService> = {
     showToast: jest.fn()
@@ -151,17 +152,17 @@ describe('QRScannerResultHandler', () => {
     it('should navigate to Search page if the scanned data is a dialocde link', () => {
       // arrange
       mockTelemetryGeneratorService.generateUtmInfoTelemetry = jest.fn();
+      mockTelemetryService.updateCampaignParameters = jest.fn();
       // act
       qRScannerResultHandler.handleDialCode('profile-settings',
         'https://sunbirded.org/get/dial/ABCDEF', 'ABCDEF');
       // assert
+      expect(mockTelemetryService.updateCampaignParameters).toHaveBeenCalled();
       expect(mockNavController.navigateForward).toHaveBeenCalledWith(['/search'], {
         state: {
           dialCode: 'ABCDEF',
           corRelation: [{ id: 'ABCDEF', type: 'qr' },
-           {id: 'https://sunbirded.org', type: 'Source'},
-           {id: 'Scan', type: 'AccessType'},
-           {id: 'Https://sunbirded.org/get/dial/ABCDEF', type: ''}],
+           {id: 'https://sunbirded.org', type: 'Source'}],
           source: 'profile-settings',
           shouldGenerateEndTelemetry: true
         }
@@ -186,6 +187,7 @@ describe('QRScannerResultHandler', () => {
       // arrange
       const content = { identifier: 'do_12345', contentData: { contentType: 'Resource' } } as any;
       mockContentService.getContentDetails = jest.fn(() => of(content));
+      mockTelemetryService.updateCampaignParameters = jest.fn();
       // act
       qRScannerResultHandler.handleContentId('profile-settings',
         'https://sunbirded.org/resources/play/content/do_12345');
@@ -199,13 +201,16 @@ describe('QRScannerResultHandler', () => {
           state: {
             content,
             corRelation: [{ id: 'do_12345', type: 'qr' },
-            {id: 'https://sunbirded.org', type: 'Source'},
-            {id: 'Scan', type: 'AccessType'},
-            {id: 'Https://sunbirded.org/resources/play/content/do12345', type: ''}],
+            {id: 'https://sunbirded.org', type: 'Source'}],
             source: 'profile-settings',
             shouldGenerateEndTelemetry: true
           }
         });
+        expect(mockTelemetryService.updateCampaignParameters).toHaveBeenCalledWith([{
+          id: 'Scan', type: 'AccessType'
+        }, {
+          id: '', type: 'Https://sunbirded.org/resources/play/content/do12345'
+        }]);
 
         expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(InteractType.OTHER,
           InteractSubtype.QRCodeScanSuccess,
@@ -230,6 +235,7 @@ describe('QRScannerResultHandler', () => {
         contentData: { contentType: 'Resource' }
       } as any;
       mockContentService.getContentDetails = jest.fn(() => of(content));
+      mockTelemetryService.updateCampaignParameters = jest.fn();
       // act
       qRScannerResultHandler.handleContentId('profile-settings',
         'https://sunbirded.org/resources/play/collection/do_12345');
@@ -243,13 +249,15 @@ describe('QRScannerResultHandler', () => {
           state: {
             content,
             corRelation: [{ id: 'do_12345', type: 'qr' },
-            {id: 'https://sunbirded.org', type: 'Source'},
-            {id: 'Scan', type: 'AccessType'},
-            {id: 'Https://sunbirded.org/resources/play/collection/do12345', type: ''}],
+            {id: 'https://sunbirded.org', type: 'Source'}],
             source: 'profile-settings',
             shouldGenerateEndTelemetry: true
           }
         });
+        expect(mockTelemetryService.updateCampaignParameters).toHaveBeenCalledWith([
+          {id: 'Scan', type: 'AccessType'},
+          {id: '', type: 'Https://sunbirded.org/resources/play/collection/do12345'}
+        ]);
 
         expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(InteractType.OTHER,
           InteractSubtype.QRCodeScanSuccess,
@@ -274,6 +282,7 @@ describe('QRScannerResultHandler', () => {
         contentData: { contentType: 'Course' }
       } as any;
       mockContentService.getContentDetails = jest.fn(() => of(content));
+      mockTelemetryService.updateCampaignParameters = jest.fn();
       // act
       qRScannerResultHandler.handleContentId('profile-settings',
         'https://sunbirded.org/learn/course/do_12345');
@@ -287,13 +296,15 @@ describe('QRScannerResultHandler', () => {
           state: {
             content,
             corRelation: [{ id: 'do_12345', type: 'qr' },
-            {id: 'https://sunbirded.org', type: 'Source'},
-            {id: 'Scan', type: 'AccessType'},
-            {id: 'Https://sunbirded.org/learn/course/do12345', type: ''}],
+            {id: 'https://sunbirded.org', type: 'Source'}],
             source: 'profile-settings',
             shouldGenerateEndTelemetry: true
           }
         });
+        expect(mockTelemetryService.updateCampaignParameters).toHaveBeenCalledWith([
+          {id: 'Scan', type: 'AccessType'},
+          {type: 'Https://sunbirded.org/learn/course/do12345', id: ''}
+        ]);
 
         expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(InteractType.OTHER,
           InteractSubtype.QRCodeScanSuccess,
@@ -315,6 +326,7 @@ describe('QRScannerResultHandler', () => {
       // arrange
       mockCommonUtilService.networkInfo = { isNetworkAvailable: false };
       mockContentService.getContentDetails = jest.fn(() => throwError({ errror: 'API_ERROR' }));
+      mockTelemetryService.updateCampaignParameters = jest.fn();
       // act
       qRScannerResultHandler.handleContentId('profile-settings',
         'https://sunbirded.org/learn/course/do_12345');
@@ -329,6 +341,7 @@ describe('QRScannerResultHandler', () => {
       // arrange
       mockCommonUtilService.networkInfo = { isNetworkAvailable: true };
       mockContentService.getContentDetails = jest.fn(() => throwError({ errror: 'API_ERROR' }));
+      mockTelemetryService.updateCampaignParameters = jest.fn();
       // act
       qRScannerResultHandler.handleContentId('profile-settings',
         'https://sunbirded.org/learn/course/do_12345');

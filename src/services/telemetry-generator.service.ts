@@ -365,7 +365,7 @@ export class TelemetryGeneratorService {
         return mimeType === MimeType.COLLECTION;
     }
 
-    generateUtmInfoTelemetry(values: Map, pageId, cData: CorrelationData[], object?: TelemetryObject) {
+    generateUtmInfoTelemetry(values: Map, pageId, object?: TelemetryObject) {
         this.generateInteractTelemetry(
             InteractType.OTHER,
             InteractSubtype.UTM_INFO,
@@ -373,8 +373,7 @@ export class TelemetryGeneratorService {
             pageId,
             object,
             values,
-            undefined,
-            cData);
+            undefined);
     }
 
     /* Fast loading telemetry generator */
