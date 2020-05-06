@@ -135,7 +135,7 @@ export class ContentUtil {
           console.error(e);
         }
       if ((key === 'utm_campaign') || (key === 'channel')) {
-        cData.push({ id: params[key] , type: 'Source'});
+        cData.push({ id: params[key] , type: CorReleationDataType.SOURCE});
       } else {
         const chengeKeyUpperCase = key.split('_').map((elem) => {
           return (elem.charAt(0).toUpperCase() + elem.slice(1));
