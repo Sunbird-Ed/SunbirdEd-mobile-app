@@ -1,4 +1,11 @@
-import { ContentFilterConfig, PreferenceKey, ProfileConstants, appLanguages, ProgressPopupContext } from '@app/app/app.constant';
+import {
+  ContentFilterConfig,
+  PreferenceKey,
+  ProfileConstants,
+  appLanguages,
+  ProgressPopupContext,
+  IgnoreTelemetryPatters
+} from '@app/app/app.constant';
 import { Inject, Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { Events, PopoverController } from '@ionic/angular';
@@ -653,8 +660,8 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
         id: this.progressLoaderId,
         ignoreTelemetry: {
           when: {
-            interact: /{"pageId":"resources"}|{"pageId":"library"}|{"pageId":"home"}/,
-            impression: /{"pageId":"resources"}|{"pageId":"library"}|{"pageId":"home"}|{"pageId":"onboarding-language-setting"}|{"pageId":"user-type-selection"}|{"pageId":profile-settings"}/
+            interact: IgnoreTelemetryPatters.IGNORE_PAGE_ID_EVENTS,
+            impression: IgnoreTelemetryPatters.IGNORE_CHANNEL_IMPRESSION_EVENTS
           }
         }
       };
@@ -663,8 +670,8 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
         id: this.progressLoaderId,
         ignoreTelemetry: {
           when: {
-            interact: /{"pageId":"resources"}|{"pageId":"library"}|{"pageId":"home"}|{"pageId":"search"}/,
-            impression: /{"pageId":"resources"}|{"pageId":"library"}|{"pageId":"home"}/
+            interact: IgnoreTelemetryPatters.IGNORE_DIAL_CODE_PAGE_ID_EVENTS,
+            impression: IgnoreTelemetryPatters.IGNORE_PAGE_ID_EVENTS
           }
         }
       };
@@ -673,8 +680,8 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
         id: this.progressLoaderId,
         ignoreTelemetry: {
           when: {
-            interact: /{"pageId":"resources"}|{"pageId":"library"}|{"pageId":"home"}/,
-            impression: /{"pageId":"resources"}|{"pageId":"library"}|{"pageId":"home"}/
+            interact: IgnoreTelemetryPatters.IGNORE_PAGE_ID_EVENTS,
+            impression: IgnoreTelemetryPatters.IGNORE_PAGE_ID_EVENTS
           }
         }
       };

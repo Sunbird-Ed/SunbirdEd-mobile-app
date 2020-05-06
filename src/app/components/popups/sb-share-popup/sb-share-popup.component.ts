@@ -220,10 +220,6 @@ export class SbSharePopupComponent implements OnInit, OnDestroy {
                 this.permissionService.requestPermission(AndroidPermission.WRITE_EXTERNAL_STORAGE)
                     .subscribe(async (status: AndroidPermissionsStatus) => {
                       if (status.hasPermission) {
-                       
-                       
-                       
-                       
                         resolve(true);
                       } else if (status.isPermissionAlwaysDenied) {
                         await this.commonUtilService.showSettingsPageToast
