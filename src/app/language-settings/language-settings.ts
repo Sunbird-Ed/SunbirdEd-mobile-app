@@ -2,14 +2,14 @@ import { Component, Inject, NgZone } from '@angular/core';
 import { Events, Platform } from '@ionic/angular';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
-import { SharedPreferences } from 'sunbird-sdk';
+import { SharedPreferences, InteractSubType, TelemetryAuditRequest, Actor, AuditState } from 'sunbird-sdk';
 
 import { appLanguages, PreferenceKey, RouterLinks } from '@app/app/app.constant';
 import { Map } from '@app/app/telemetryutil';
 import { CommonUtilService } from '@app/services/common-util.service';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { AppHeaderService } from '@app/services/app-header.service';
-import {Environment, ID, ImpressionType, InteractSubtype, InteractType, PageId} from '@app/services/telemetry-constants';
+import {Environment, ID, ImpressionType, InteractSubtype, InteractType, PageId, ImpressionSubtype} from '@app/services/telemetry-constants';
 import { NotificationService } from '@app/services/notification.service';
 import { Location } from '@angular/common';
 import { Subscription } from 'rxjs';
@@ -54,9 +54,36 @@ export class LanguageSettingsPage {
     private router: Router,
     private location: Location,
     private activatedRoute: ActivatedRoute,
-    private nativePageTransitions: NativePageTransitions,
-
+    private nativePageTransitions: NativePageTransitions
   ) { }
+
+  ngOnInit() {
+    // To add up a delay so that IMPRESSION event will be generated after Splash IMPRESSION
+    setTimeout(() => {
+      this.telemetryGeneratorService.generateImpressionTelemetry(
+        ImpressionType.VIEW, '',
+        this.isFromSettings ? PageId.SETTINGS_LANGUAGE : PageId.ONBOARDING_LANGUAGE_SETTING,
+        this.isFromSettings ? Environment.SETTINGS : Environment.ONBOARDING,
+      );
+
+      /* New Telemetry */
+      this.telemetryGeneratorService.generatePageLoadedTelemetry(
+        this.isFromSettings ? PageId.SETTINGS_LANGUAGE : PageId.LANGUAGE,
+        this.isFromSettings ? Environment.SETTINGS : Environment.ONBOARDING
+      );
+    }, 500);
+  }
+
+  ionViewDidEnter() {
+    this.activatedRoute.params.subscribe(params => {
+      this.isFromSettings = Boolean(params['isFromSettings']);
+      if (!this.isFromSettings) {
+        this.headerService.hideHeader();
+      } else {
+        this.headerService.showHeaderWithBackButton();
+      }
+    });
+  }
 
   handleBackButton() {
     this.unregisterBackButton = this.platform.backButton.subscribeWithPriority(10, () => {
@@ -143,6 +170,18 @@ export class LanguageSettingsPage {
    * It will set app language
    */
   onLanguageSelected() {
+    /* New Telemetry */
+    this.telemetryGeneratorService.generateInteractTelemetry(
+      InteractType.SELECT_LANGUAGE,
+      '',
+      Environment.ONBOARDING,
+      PageId.LANGUAGE,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      this.language
+    );
     if (this.language) {
       this.zone.run(() => {
         this.translateService.use(this.language);
@@ -153,6 +192,28 @@ export class LanguageSettingsPage {
       this.btnColor = '#8FC4FF';
     }
   }
+
+   generateLanguageFailedInteractEvent() {
+    this.telemetryGeneratorService.generateInteractTelemetry(
+      InteractType.DISABLED,
+      '',
+      Environment.ONBOARDING,
+      PageId.ONBOARDING_LANGUAGE_SETTING,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      ID.CONTINUE_CLICKED
+  );
+  /* New Telemetry */
+  this.telemetryGeneratorService.generateInteractTelemetry(
+    InteractType.SELECT_CONTINUE,
+    InteractSubtype.FAIL,
+    Environment.ONBOARDING,
+    PageId.LANGUAGE
+  );
+  }
+  
 
   generateLanguageSuccessInteractEvent(previousLanguage: string, currentLanguage: string) {
     const valuesMap = new Map();
@@ -165,6 +226,18 @@ export class LanguageSettingsPage {
       this.isFromSettings ? PageId.SETTINGS_LANGUAGE : PageId.ONBOARDING_LANGUAGE_SETTING,
       undefined,
       valuesMap
+    );
+    /* New Telemetry */
+    this.telemetryGeneratorService.generateInteractTelemetry(
+      InteractType.SELECT_CONTINUE,
+      InteractSubtype.SUCCESS,
+      this.isFromSettings ? Environment.SETTINGS : Environment.ONBOARDING,
+      this.isFromSettings ? PageId.SETTINGS_LANGUAGE : PageId.LANGUAGE,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      this.language
     );
   }
 
@@ -198,7 +271,11 @@ export class LanguageSettingsPage {
         selectedLanguage: this.language
       });
       this.notification.setupLocalNotification(this.language);
-
+      this.telemetryGeneratorService.generateAuditTelemetry(
+        Environment.ONBOARDING,
+        AuditState.AUDIT_UPDATED,
+        [this.language]
+      );
       if (this.isFromSettings) {
         this.location.back();
       } else {
@@ -213,17 +290,8 @@ export class LanguageSettingsPage {
         this.router.navigate([RouterLinks.USER_TYPE_SELECTION]);
       }
     } else {
-      this.telemetryGeneratorService.generateInteractTelemetry(
-          InteractType.DISABLED,
-          '',
-          Environment.ONBOARDING,
-          PageId.ONBOARDING_LANGUAGE_SETTING,
-          undefined,
-          undefined,
-          undefined,
-          undefined,
-          ID.CONTINUE_CLICKED
-      );
+      this.generateLanguageFailedInteractEvent();
+      
       this.btnColor = '#8FC4FF';
 
       const parser = new DOMParser();
