@@ -1784,4 +1784,5 @@ describe('collectionDetailEtbPage', () => {
 
 
     });
+
 });
