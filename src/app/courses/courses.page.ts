@@ -6,7 +6,7 @@ import { QRResultCallback, SunbirdQRScanner } from '../../services/sunbirdqrscan
 import has from 'lodash/has';
 import forEach from 'lodash/forEach';
 import { ContentCard, EventTopics, PreferenceKey, ProfileConstants,
-   ViewMore, RouterLinks, ContentFilterConfig, BatchConstants, ContentType, MimeType } from '../../app/app.constant';
+   ViewMore, RouterLinks, ContentFilterConfig, BatchConstants, ContentType, MimeType, ProgressPopupContext } from '../../app/app.constant';
 import { PageFilterPage, PageFilterCallback } from '../page-filter/page-filter.page';
 import { Network } from '@ionic-native/network/ngx';
 import { AppGlobalService } from '../../services/app-global-service.service';
@@ -28,6 +28,7 @@ import { CourseCardGridTypes } from '@project-sunbird/common-consumption';
 import { EnrollmentDetailsComponent } from '../components/enrollment-details/enrollment-details.component';
 import { ContentUtil } from '@app/util/content-util';
 import { LocalCourseService } from '@app/services/local-course.service';
+import { SbProgressLoader } from '../../services/sb-progress-loader.service';
 
 @Component({
   selector: 'app-courses',
@@ -118,7 +119,8 @@ export class CoursesPage implements OnInit, OnDestroy {
     private router: Router,
     private toastController: ToastController,
     private headerService: AppHeaderService,
-    private localCourseService: LocalCourseService
+    private localCourseService: LocalCourseService,
+    private sbProgressLoader: SbProgressLoader
   ) {
     this.tabBarElement = document.querySelector('.tabbar.show-tabbar');
     this.preferences.getString(PreferenceKey.SELECTED_LANGUAGE_CODE).toPromise()
@@ -175,6 +177,7 @@ export class CoursesPage implements OnInit, OnDestroy {
   }
 
   ionViewDidEnter() {
+    this.sbProgressLoader.hide({ id: ProgressPopupContext.DEEPLINK });
     this.appGlobalService.generateConfigInteractEvent(PageId.COURSES, this.isOnBoardingCardCompleted);
 
     this.events.subscribe('event:showScanner', (data) => {

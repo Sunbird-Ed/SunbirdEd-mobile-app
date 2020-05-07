@@ -40,8 +40,6 @@ import { RouterLinks } from './app.constant';
 import { TncUpdateHandlerService } from '@app/services/handlers/tnc-update-handler.service';
 import { NetworkAvailabilityToastService } from '@app/services/network-availability-toast/network-availability-toast.service';
 import { SplaschreenDeeplinkActionHandlerDelegate } from '@app/services/sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
-import * as qs from 'qs';
-import { ContentUtil } from '@app/util/content-util';
 
 declare const cordova;
 
@@ -102,7 +100,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     private networkAvailability: NetworkAvailabilityToastService,
     private splashScreenService: SplashScreenService,
     private localCourseService: LocalCourseService,
-    private splaschreenDeeplinkActionHandlerDelegate: SplaschreenDeeplinkActionHandlerDelegate
+    private splaschreenDeeplinkActionHandlerDelegate: SplaschreenDeeplinkActionHandlerDelegate,
   ) {
     this.telemetryAutoSync = this.telemetryService.autoSync;
   }
@@ -144,7 +142,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.statusBar.styleBlackTranslucent();
       this.handleBackButton();
       this.appRatingService.checkInitialDate();
-      this.getUtmParameter();
+      this.getCampaignParameter();
       this.checkForCodeUpdates();
       this.checkAndroidWebViewVersion();
     });
@@ -766,26 +764,11 @@ export class AppComponent implements OnInit, AfterViewInit {
     });
   }
 
-  private getUtmParameter() {
-    this.utilityService.getUtmInfo()
-      .then(response => {
-        if (response) {
-          let cData: CorrelationData[] = [];
+  private getCampaignParameter() {
+    this.preferences.getString(PreferenceKey.CAMPAIGN_PARAMETERS).toPromise().then((data) => {
+        if (data) {
+          const response = JSON.parse(data);
           const utmValue = response['val'];
-          const params: {[param: string]: string} = qs.parse(utmValue);
-          cData = ContentUtil.genrateUTMCData(params);
-          try {
-            const url: URL = new URL(params['utm_content']);
-            const overrideChannelSlug = url.searchParams.get('channel');
-            if (overrideChannelSlug) {
-              cData.push({
-                id: CorReleationDataType.SOURCE,
-                type: overrideChannelSlug
-              });
-            }} catch (e) {
-              console.error(e);
-
-            }
           if (response.val && response.val.length) {
             this.splaschreenDeeplinkActionHandlerDelegate.checkUtmContent(response.val);
           }
@@ -799,8 +782,7 @@ export class AppComponent implements OnInit, AfterViewInit {
             PageId.HOME,
             undefined,
             utmTelemetry,
-            undefined,
-            cData);
+            undefined);
           this.utilityService.clearUtmInfo();
       }
       })

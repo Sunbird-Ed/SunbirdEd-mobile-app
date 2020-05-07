@@ -20,10 +20,14 @@ import { Map } from '../app/telemetryutil';
 import { Environment, ImpressionType, InteractSubtype, InteractType, Mode, PageId, CorReleationDataType, ID } from './telemetry-constants';
 import { MimeType } from '../app/app.constant';
 import { ContentUtil } from '@app/util/content-util';
+import { SbProgressLoader } from '../services/sb-progress-loader.service';
 
 @Injectable()
 export class TelemetryGeneratorService {
-    constructor(@Inject('TELEMETRY_SERVICE') private telemetryService: TelemetryService) {
+    constructor(
+        @Inject('TELEMETRY_SERVICE') private telemetryService: TelemetryService,
+        private sbProgressLoader: SbProgressLoader,
+    ) {
     }
 
     generateAuditTelemetry(env, currentSate?, updatedProperties?, objId?, objType?, objVer?, correlationData?) {
@@ -42,6 +46,19 @@ export class TelemetryGeneratorService {
 
     generateInteractTelemetry(interactType, interactSubtype, env, pageId, object?: TelemetryObject, values?: Map,
                               rollup?: Rollup, corRelationList?: Array<CorrelationData>, id?: string) {
+        const hash: string =
+            JSON.stringify({ pageId: pageId || undefined });
+        if (
+            Array.from(this.sbProgressLoader.contexts.entries()).some(([_, context]) => {
+                if (context.ignoreTelemetry && context.ignoreTelemetry.when && context.ignoreTelemetry.when.interact) {
+                    return !!hash.match(context.ignoreTelemetry.when.interact);
+                }
+                return false;
+            })
+        ) {
+            return;
+        }
+
         const telemetryInteractRequest = new TelemetryInteractRequest();
         telemetryInteractRequest.type = interactType;
         telemetryInteractRequest.subType = interactSubtype;
@@ -72,12 +89,25 @@ export class TelemetryGeneratorService {
         this.telemetryService.interact(telemetryInteractRequest).subscribe();
     }
 
-    generateImpressionTelemetry(type, subtype, pageid, env, objectId?: string, objectType?: string,
-        objectVersion?: string, rollup?: Rollup, corRelationList?: Array<CorrelationData>) {
+    generateImpressionTelemetry(type, subtype, pageId, env, objectId?: string, objectType?: string,
+                                objectVersion?: string, rollup?: Rollup, corRelationList?: Array<CorrelationData>) {
+        const hash: string =
+            JSON.stringify({ pageId: pageId || undefined });
+        if (
+            Array.from(this.sbProgressLoader.contexts.entries()).some(([_, context]) => {
+                if (context.ignoreTelemetry && context.ignoreTelemetry.when && context.ignoreTelemetry.when.impression) {
+                    return !!hash.match(context.ignoreTelemetry.when.impression);
+                }
+                return false;
+            })
+        ) {
+            return;
+        }
+
         const telemetryImpressionRequest = new TelemetryImpressionRequest();
         telemetryImpressionRequest.type = type;
         telemetryImpressionRequest.subType = subtype;
-        telemetryImpressionRequest.pageId = pageid;
+        telemetryImpressionRequest.pageId = pageId;
         telemetryImpressionRequest.env = env;
         telemetryImpressionRequest.objId = objectId ? objectId : '';
         telemetryImpressionRequest.objType = objectType ? objectType : '';
@@ -365,7 +395,7 @@ export class TelemetryGeneratorService {
         return mimeType === MimeType.COLLECTION;
     }
 
-    generateUtmInfoTelemetry(values: Map, pageId, cData: CorrelationData[], object?: TelemetryObject) {
+    generateUtmInfoTelemetry(values: Map, pageId, object?: TelemetryObject) {
         this.generateInteractTelemetry(
             InteractType.OTHER,
             InteractSubtype.UTM_INFO,
@@ -373,8 +403,7 @@ export class TelemetryGeneratorService {
             pageId,
             object,
             values,
-            undefined,
-            cData);
+            undefined);
     }
 
     /* Fast loading telemetry generator */
