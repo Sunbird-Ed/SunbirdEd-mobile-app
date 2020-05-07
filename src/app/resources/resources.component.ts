@@ -176,6 +176,8 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   locallyDownloadResources;
   channelId: string;
   coachTimeout: any;
+  contentList = [];
+  themeColors = ['#EA5B5D', '#CBA3F7', '#7BA1F9', '#57B59C'];
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -375,49 +377,50 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   /**
 	 * Load/get recently viewed content
 	 */
+  // hide recently viewed as part of school@home
   async loadRecentlyViewedContent(hideLoaderFlag?: boolean) {
-    this.recentlyViewedResources = [];
-    if (!hideLoaderFlag) {
-      this.showLoader = true;
-    }
-    const requestParams: ContentRequest = {
-      uid: this.profile ? this.profile.uid : undefined,
-      contentTypes: [],
-      audience: this.audienceFilter,
-      recentlyViewed: true,
-      limit: 20
-    };
+    // this.recentlyViewedResources = [];
+    // if (!hideLoaderFlag) {
+    //   this.showLoader = true;
+    // }
+    // const requestParams: ContentRequest = {
+    //   uid: this.profile ? this.profile.uid : undefined,
+    //   contentTypes: [],
+    //   audience: this.audienceFilter,
+    //   recentlyViewed: true,
+    //   limit: 20
+    // };
 
-    this.contentService.getContents(requestParams).toPromise()
-      .then(data => {
-        data.forEach((value) => {
-          value.contentData['lastUpdatedOn'] = value.lastUpdatedTime;
-          if (value.contentData.appIcon) {
-            if (value.contentData.appIcon.includes('http:') || value.contentData.appIcon.includes('https:')) {
-              if (this.commonUtilService.networkInfo.isNetworkAvailable) {
-                value.contentData.appIcon = value.contentData.appIcon;
-              } else {
-                value.contentData.appIcon = this.defaultImg;
-              }
-            } else if (value.basePath) {
-              value.contentData.appIcon = value.basePath + '/' + value.contentData.appIcon;
-            }
-          }
-        });
-        this.ngZone.run(() => {
-          this.recentlyViewedResources = data;
-          if (!hideLoaderFlag) {
-            this.showLoader = false;
-          }
-        });
-      })
-      .catch(() => {
-        this.ngZone.run(() => {
-          if (!hideLoaderFlag) {
-            this.showLoader = false;
-          }
-        });
-      });
+    // this.contentService.getContents(requestParams).toPromise()
+    //   .then(data => {
+    //     data.forEach((value) => {
+    //       value.contentData['lastUpdatedOn'] = value.lastUpdatedTime;
+    //       if (value.contentData.appIcon) {
+    //         if (value.contentData.appIcon.includes('http:') || value.contentData.appIcon.includes('https:')) {
+    //           if (this.commonUtilService.networkInfo.isNetworkAvailable) {
+    //             value.contentData.appIcon = value.contentData.appIcon;
+    //           } else {
+    //             value.contentData.appIcon = this.defaultImg;
+    //           }
+    //         } else if (value.basePath) {
+    //           value.contentData.appIcon = value.basePath + '/' + value.contentData.appIcon;
+    //         }
+    //       }
+    //     });
+    //     this.ngZone.run(() => {
+    //       this.recentlyViewedResources = data;
+    //       if (!hideLoaderFlag) {
+    //         this.showLoader = false;
+    //       }
+    //     });
+    //   })
+    //   .catch(() => {
+    //     this.ngZone.run(() => {
+    //       if (!hideLoaderFlag) {
+    //         this.showLoader = false;
+    //       }
+    //     });
+    //   });
   }
 
   /**
@@ -482,6 +485,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.storyAndWorksheets = [];
     this.searchApiLoader = !this.refresh;
     const reqvalues = {};
+    this.contentList = [];
     reqvalues['pageReq'] = this.getGroupByPageReq;
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.OTHER,
       InteractSubtype.RESOURCE_PAGE_REQUEST,
@@ -499,6 +503,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
           const newSections = [];
           sections.forEach(element => {
             // element.display = JSON.parse(element.display);
+            let contentListObj;
             if (element.display.name) {
               if (has(element.display.name, this.selectedLanguage)) {
                 const langs = [];
@@ -508,6 +513,12 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
                 element.name = langs[this.selectedLanguage];
               }
             }
+            contentListObj = {
+              title : element.name,
+              count : element.contents ? element.contents.length + ' courses' : 'no courses',
+              theme: this.themeColors[Math.floor(Math.random() * this.themeColors.length)]
+            };
+            this.contentList.push(contentListObj);
             newSections.push(element);
           });
           // END OF TEMPORARY CODE
