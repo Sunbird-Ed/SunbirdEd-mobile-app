@@ -78,7 +78,7 @@
   <ion-row class="padding-12">
     <ion-col size-md="10" offset-md="1">
       <ion-button class="ion-text-capitalize" expand="block" [ngStyle]="{'background-color': btnColor}"
-        [disabled]="profileEditForm.invalid || disableSubmitButton" (click)="onSubmit()">Create classroom
+        [disabled]="profileEditForm.invalid || disableSubmitButton" (click)="onSubmit()">{{'CREATE_CLASSROOM' | translate}}
       </ion-button>
     </ion-col>
   </ion-row>

@@ -673,8 +673,8 @@
   "LOADER_PROGRESS_DESC_SUB_HEADING": "Hold On...",
   "MY_CLASSROOMS": "My classrooms",
   "CLASSROOM_NAME": "Classroom Name",
-  "YOU_HAVE_TO_LOG_IN_TO_CREATE_CLASSROOMS": "You have to log in to create classroms",
-  "CURRENTLY_YOU_DO_NOT_HAVE_ANY_CLASSROOMS": "Currently, you do not have any Classroms",
-  "CREATE_CLASSROOM": "Create Classrom",
-  "ENTER_THE_FOLLOWING_INFORMATION": "Enter the following information",
+  "YOU_HAVE_TO_LOG_IN_TO_CREATE_CLASSROOMS": "You have to log in to create classrooms",
+  "CURRENTLY_YOU_DO_NOT_HAVE_ANY_CLASSROOMS": "Currently, you do not have any Classrooms",
+  "CREATE_CLASSROOM": "Create classroom",
+  "ENTER_THE_FOLLOWING_INFORMATION": "Enter the following information"
 }
