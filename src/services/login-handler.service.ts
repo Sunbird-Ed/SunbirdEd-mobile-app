@@ -65,7 +65,7 @@ export class LoginHandlerService {
       });
   }
 
-  async signIn() {
+  async signIn(skipNavigation?) {
 
     if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
     //   this.valueChange.emit(true);
@@ -135,7 +135,7 @@ export class LoginHandlerService {
             // this.events.publish('UPDATE_TABS');
             // this.router.navigate([RouterLinks.TABS]);
             // window.location.reload();
-            this.events.publish(EventTopics.SIGN_IN_RELOAD);
+            this.events.publish(EventTopics.SIGN_IN_RELOAD, skipNavigation);
           });
         })
         .catch(async (err) => {

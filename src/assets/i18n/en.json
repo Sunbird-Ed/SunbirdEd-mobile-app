@@ -428,6 +428,7 @@
   "PLEASE_SELECT": "Select {{%s}}",
   "PLEASE_SELECT_A_LANGUAGE": "Select a language",
   "PLEASE_SELECT_USER": "Select a user",
+  "PLEASE_ENTER": "Enter {{%s}}",
   "POPULAR_COURSES": "Popular Trainings",
   "PREVIEWS": "PREVIEWS",
   "PREVIOUS_USER_SETTINGS": "Continue with previous user settings?",
@@ -669,5 +670,11 @@
   "COURSE_ENDED_ON": "Course ended on {{%s}}",
   "WANT_TO_CHECK_FREE_TRAININGS": "Want to check free trainings?",
   "LOADER_PROGRESS_DESCRIPTION": "We are getting things ready.",
-  "LOADER_PROGRESS_DESC_SUB_HEADING": "Hold On..."
+  "LOADER_PROGRESS_DESC_SUB_HEADING": "Hold On...",
+  "MY_CLASSROOMS": "My classrooms",
+  "CLASSROOM_NAME": "Classroom Name",
+  "YOU_HAVE_TO_LOG_IN_TO_CREATE_CLASSROOMS": "You have to log in to create classroms",
+  "CURRENTLY_YOU_DO_NOT_HAVE_ANY_CLASSROOMS": "Currently, you do not have any Classroms",
+  "CREATE_CLASSROOM": "Create Classrom",
+  "ENTER_THE_FOLLOWING_INFORMATION": "Enter the following information"
 }

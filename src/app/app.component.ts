@@ -367,7 +367,7 @@ export class AppComponent implements OnInit, AfterViewInit {
    * Initializing the event for reloading the Tabs on Signing-In.
    */
   private triggerSignInEvent() {
-    this.events.subscribe(EventTopics.SIGN_IN_RELOAD, async () => {
+    this.events.subscribe(EventTopics.SIGN_IN_RELOAD, async (skipNavigation) => {
       const batchDetails = await this.preferences.getString(PreferenceKey.BATCH_DETAIL_KEY).toPromise();
       const limitedSharingContentDetails = this.appGlobalService.limitedShareQuizContent;
 
@@ -384,7 +384,7 @@ export class AppComponent implements OnInit, AfterViewInit {
         this.events.publish('UPDATE_TABS');
         if (batchDetails) {
           await this.localCourseService.checkCourseRedirect();
-        } else {
+        } else if (!skipNavigation || !skipNavigation.skipRootNavigation) {
           this.router.navigate([RouterLinks.TABS]);
         }
       }, 0);
@@ -679,15 +679,15 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   menuItemAction(menuName) {
     switch (menuName.menuItem) {
-      case 'USERS_AND_GROUPS':
+      case 'MY_CLASSROOMS':
         this.telemetryGeneratorService.generateInteractTelemetry(
           InteractType.TOUCH,
-          InteractSubtype.USER_GROUP_CLICKED,
+          InteractSubtype.MY_CLASSROOMS_CLICKED,
           Environment.USER,
           PageId.PROFILE
         );
         const navigationExtrasUG: NavigationExtras = { state: { profile: this.profile } };
-        this.router.navigate([`/${RouterLinks.USER_AND_GROUPS}`], navigationExtrasUG);
+        this.router.navigate([`/${RouterLinks.MY_CLASSROOMS}`], navigationExtrasUG);
         break;
 
       case 'REPORTS':

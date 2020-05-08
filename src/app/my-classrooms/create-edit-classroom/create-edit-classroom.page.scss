@@ -1,0 +1,80 @@
+@import "src/assets/styles/_variables.scss";
+:host {
+  .label-font {
+    font-weight: 600 !important;
+    color: #979797 !important;
+    font-size: 1.4rem !important;
+  }
+  .select-text {
+    //font-size: 1.2rem !important;
+  }
+  .select-text:first-letter {
+    text-transform: capitalize;
+  }
+
+  .custom-footer-background .toolbar-background-ios,
+  .custom-footer-background .toolbar-background-md {
+    background: unset !important;
+  }
+  .padding-12 {
+    padding: 12px !important;
+  }
+  .item-select-disabled {
+    .label-md {
+      color: map-get($colors, medium_gray);
+      opacity: 1;
+    }
+  }
+}
+
+.cr-title{
+  font-size: 16px;
+  font-weight: bold;
+  color: #044F9D;
+  margin: 0;
+}
+
+ion-button{
+  --background: #044F9D !important;
+}
+
+.cr-input-title{
+  color: #333333;
+  font-family: "Noto Sans";
+  font-size: 14px;
+  letter-spacing: 0;
+  line-height: 19px;
+  margin: 16px 0 8px;
+}
+
+.cr-input-box{
+  border: 0.5px solid #333333;
+  border-radius: 2px;
+  ion-input{
+    margin: 0 8px;
+  }
+}
+
+.cr-error{
+  display: block;
+  font-size: 12px;
+  color: red;
+  line-height: 10px;
+}
+
+ion-select{
+  .select-icon{
+    .select-icon-inner{
+      border: solid #333333 !important;
+      border-width: 0 2px 2px 0 !important;
+      display: inline-block !important;
+      padding: 3px !important;
+      transform: rotate(45deg) !important;
+      -webkit-transform: rotate(45deg) !important;
+      left: -5px !important;
+      opacity: 0.5 !important;
+    }
+  }
+}
+
+

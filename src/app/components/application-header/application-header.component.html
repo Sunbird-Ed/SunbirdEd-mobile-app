@@ -92,11 +92,13 @@
   <ion-content>
     <ion-list class="sb-menu-list" lines="none">
 
-      <ion-item (click)="emitSideMenuItemEvent($event, 'USERS_AND_GROUPS')">
+      <ion-item (click)="emitSideMenuItemEvent($event, 'MY_CLASSROOMS')">
         <span class="sb-menu-icon">
-          <img src="./assets/imgs/Users_and_Groups.png" class="tool-icon" alt="user and group">
+          <img src="./assets/imgs/my_classroom.svg" class="tool-icon" alt="user and group">
         </span>
-        <span class="sb-menu-item" menuClose>{{'USERS_AND_GROUPS' | translate}}</span>
+        <span class="sb-menu-item" menuClose>{{'MY_CLASSROOMS' | translate}}
+          <!-- <span class="new-feature-badge"></span> -->
+        </span>
       </ion-item>
 
       <ion-item (click)="emitSideMenuItemEvent($event, 'REPORTS')">
@@ -157,11 +159,13 @@
   <ion-content>
     <ion-list class="sb-menu-list" lines="none">
 
-      <ion-item (click)="emitSideMenuItemEvent($event, 'USERS_AND_GROUPS')">
+      <ion-item (click)="emitSideMenuItemEvent($event, 'MY_CLASSROOMS')">
         <span class="sb-menu-icon">
-          <img src="./assets/imgs/Users_and_Groups.png" class="tool-icon" alt="user and group">
+          <img src="./assets/imgs/my_classroom.svg" class="tool-icon" alt="my classroom">
         </span>
-        <span class="sb-menu-item" menuClose>{{'USERS_AND_GROUPS' | translate}}</span>
+        <span class="sb-menu-item" menuClose>{{'MY_CLASSROOMS' | translate}}
+          <!-- <span class="new-feature-badge"></span> -->
+        </span>
       </ion-item>
 
       <ion-item (click)="emitSideMenuItemEvent($event, 'REPORTS')">
