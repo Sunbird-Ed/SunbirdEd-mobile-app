@@ -1,5 +1,5 @@
 import {Component, Input, OnDestroy, OnInit} from '@angular/core';
-import {ModalController, NavParams, Platform} from '@ionic/angular';
+import {Platform} from '@ionic/angular';
 import {Observable, Subscription} from 'rxjs';
 
 @Component({

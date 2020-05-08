@@ -90,22 +90,71 @@ describe('ContentUtil', () => {
     });
 
     describe('genrateUTMCData', () => {
-        it('should return utm parameter', () => {
-          // arrange
-          const value = {
-            utm_source: 'whatsApp',
-            utm_medium: 'search',
-          };
+        it('should return utm parameter for utm_campaign', () => {
+            // arrange
+            const value = {
+                utm_source: 'https://sunbirded.org/learn/course/do_12345',
+                utm_medium: 'playstore',
+                utm_campaign: 'igot'
+            };
 
-          // act
-          // assert
-          expect(ContentUtil.genrateUTMCData(value)).toEqual([{
-              id: 'UtmSource',
-              type: 'whatsApp'
-          }, {
-              id: 'UtmMedium',
-              type: 'search'
-          }]);
+            // act
+            // assert
+            expect(ContentUtil.genrateUTMCData(value)).toEqual([{
+                id: 'igot',
+                type: 'Source'
+            },
+            {
+                id: 'https://sunbirded.org/learn/course/do_12345',
+                type: 'UtmSource'
+            }, {
+                id: 'playstore',
+                type: 'UtmMedium'
+            }]);
         });
-      });
+
+        it('should return utm parameter for utm_campaign', () => {
+            // arrange
+            const value = {
+                utm_source: 'https://sunbirded.org/learn/course/do_12345?channel=abc',
+                utm_medium: 'playstore',
+            };
+
+            // act
+            // assert
+            expect(ContentUtil.genrateUTMCData(value)).toEqual([{
+                id: 'abc',
+                type: 'Source'
+            },
+            {
+                id: 'https://sunbirded.org/learn/course/do_12345?channel=abc',
+                type: 'UtmSource'
+            }, {
+                id: 'playstore',
+                type: 'UtmMedium'
+            }]);
+        });
+        it('should return utm parameter for channel', () => {
+            // arrange
+            const value = {
+                utm_source: 'https://sunbirded.org/learn/course/do_12345',
+                utm_medium: 'playstore',
+                channel: 'igot'
+            };
+
+            // act
+            // assert
+            expect(ContentUtil.genrateUTMCData(value)).toEqual([{
+                id: 'igot',
+                type: 'Source'
+            },
+            {
+                id: 'https://sunbirded.org/learn/course/do_12345',
+                type: 'UtmSource'
+            }, {
+                id: 'playstore',
+                type: 'UtmMedium'
+            }]);
+        });
+    });
 });

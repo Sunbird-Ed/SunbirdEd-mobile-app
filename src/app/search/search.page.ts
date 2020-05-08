@@ -42,7 +42,7 @@ import { ContentUtil } from '@app/util/content-util';
 import { LibraryCardTypes } from '@project-sunbird/common-consumption';
 import { Subscription, Observable, from } from 'rxjs';
 import { switchMap, tap, map as rxjsMap, share, startWith, debounceTime } from 'rxjs/operators';
-import { SbProgressLoader } from '@app/services/sb-progress-loader.service';
+import { SbProgressLoader } from '../../services/sb-progress-loader.service';
 
 declare const cordova;
 @Component({

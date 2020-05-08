@@ -77,7 +77,7 @@ import { LocalCourseService } from '@app/services';
 import { EnrollCourse } from './course.interface';
 import { SbSharePopupComponent } from '../components/popups/sb-share-popup/sb-share-popup.component';
 import { share } from 'rxjs/operators';
-import { SbProgressLoader } from '@app/services/sb-progress-loader.service';
+import { SbProgressLoader } from '../../services/sb-progress-loader.service';
 declare const cordova;
 
 @Component({

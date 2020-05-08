@@ -6,18 +6,21 @@ import {
     TelemetryErrorRequest,
     TelemetryImpressionRequest,
     TelemetryInteractRequest,
+    TelemetryAuditRequest,
     TelemetryLogRequest,
     TelemetryObject,
     TelemetryService,
     TelemetryStartRequest,
     TelemetryInterruptRequest,
-    DeviceSpecification
+    DeviceSpecification,
+    Actor,
+    AuditState
 } from 'sunbird-sdk';
 import { Map } from '../app/telemetryutil';
 import { Environment, ImpressionType, InteractSubtype, InteractType, Mode, PageId, CorReleationDataType, ID } from './telemetry-constants';
 import { MimeType } from '../app/app.constant';
 import { ContentUtil } from '@app/util/content-util';
-import { SbProgressLoader } from '@app/services/sb-progress-loader.service';
+import { SbProgressLoader } from '../services/sb-progress-loader.service';
 
 @Injectable()
 export class TelemetryGeneratorService {
@@ -27,15 +30,28 @@ export class TelemetryGeneratorService {
     ) {
     }
 
+    generateAuditTelemetry(env, currentSate?, updatedProperties?, objId?, objType?, objVer?, correlationData?) {
+        const telemetryAuditRequest: TelemetryAuditRequest = {
+            env: env ? env : undefined,
+            currentState: currentSate ? currentSate : undefined,
+            updatedProperties: updatedProperties ? updatedProperties : undefined,
+            objId: objId ? objId: undefined,
+            objType: objType ? objType : undefined,
+            objVer: objVer ? objVer : undefined,
+            correlationData: correlationData ? correlationData : undefined,
+            actor: new Actor()
+        };
+        this.telemetryService.audit(telemetryAuditRequest).subscribe();
+    }
+
     generateInteractTelemetry(interactType, interactSubtype, env, pageId, object?: TelemetryObject, values?: Map,
                               rollup?: Rollup, corRelationList?: Array<CorrelationData>, id?: string) {
-        const args = {interactType, interactSubtype, pageId, env};
+        const hash: string =
+            JSON.stringify({ pageId: pageId || undefined });
         if (
             Array.from(this.sbProgressLoader.contexts.entries()).some(([_, context]) => {
                 if (context.ignoreTelemetry && context.ignoreTelemetry.when && context.ignoreTelemetry.when.interact) {
-                    return Object.keys(context.ignoreTelemetry.when).every((w) => {
-                        return args[w] && args[w].match(context.ignoreTelemetry.when.interact[w]);
-                    });
+                    return !!hash.match(context.ignoreTelemetry.when.interact);
                 }
                 return false;
             })
@@ -73,15 +89,14 @@ export class TelemetryGeneratorService {
         this.telemetryService.interact(telemetryInteractRequest).subscribe();
     }
 
-    generateImpressionTelemetry(type, subtype, pageid, env, objectId?: string, objectType?: string,
-        objectVersion?: string, rollup?: Rollup, corRelationList?: Array<CorrelationData>) {
-        const args = {type, subtype, pageid, env};
+    generateImpressionTelemetry(type, subtype, pageId, env, objectId?: string, objectType?: string,
+                                objectVersion?: string, rollup?: Rollup, corRelationList?: Array<CorrelationData>) {
+        const hash: string =
+            JSON.stringify({ pageId: pageId || undefined });
         if (
             Array.from(this.sbProgressLoader.contexts.entries()).some(([_, context]) => {
                 if (context.ignoreTelemetry && context.ignoreTelemetry.when && context.ignoreTelemetry.when.impression) {
-                    return Object.keys(context.ignoreTelemetry.when).every((w) => {
-                        return args[w] && args[w].match(context.ignoreTelemetry.when.impression[w]);
-                    });
+                    return !!hash.match(context.ignoreTelemetry.when.impression);
                 }
                 return false;
             })
@@ -92,7 +107,7 @@ export class TelemetryGeneratorService {
         const telemetryImpressionRequest = new TelemetryImpressionRequest();
         telemetryImpressionRequest.type = type;
         telemetryImpressionRequest.subType = subtype;
-        telemetryImpressionRequest.pageId = pageid;
+        telemetryImpressionRequest.pageId = pageId;
         telemetryImpressionRequest.env = env;
         telemetryImpressionRequest.objId = objectId ? objectId : '';
         telemetryImpressionRequest.objType = objectType ? objectType : '';
@@ -207,7 +222,6 @@ export class TelemetryGeneratorService {
             values,
             objRollup,
             corRelationList);
-
     }
 
     generatePageViewTelemetry(pageId, env, subType?) {
@@ -381,7 +395,7 @@ export class TelemetryGeneratorService {
         return mimeType === MimeType.COLLECTION;
     }
 
-    generateUtmInfoTelemetry(values: Map, pageId, cData: CorrelationData[], object?: TelemetryObject) {
+    generateUtmInfoTelemetry(values: Map, pageId, object?: TelemetryObject) {
         this.generateInteractTelemetry(
             InteractType.OTHER,
             InteractSubtype.UTM_INFO,
@@ -389,8 +403,7 @@ export class TelemetryGeneratorService {
             pageId,
             object,
             values,
-            undefined,
-            cData);
+            undefined);
     }
 
     /* Fast loading telemetry generator */
@@ -417,6 +430,30 @@ export class TelemetryGeneratorService {
             value,
             undefined,
             corRelationList
+        );
+    }
+
+
+    /* New Telemetry */
+    generateBackClickedNewTelemetry(isDeviceBack, env, pageId) {
+        this.generateInteractTelemetry(
+            InteractType.SELECT_BACK,
+            isDeviceBack ? InteractSubtype.DEVICE_BACK_CLICKED : InteractSubtype.UI,
+            env,
+            pageId
+        );
+    }
+
+    generatePageLoadedTelemetry(pageId, env, objId?, objType?, objversion?, rollup?, correlationList?) {
+        this.generateImpressionTelemetry(
+            ImpressionType.PAGE_LOADED, '',
+            pageId,
+            env,
+            correlationList,
+            objId,
+            objType,
+            objversion,
+            rollup
         );
     }
 }

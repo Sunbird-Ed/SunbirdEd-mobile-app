@@ -28,7 +28,7 @@ import { CourseCardGridTypes } from '@project-sunbird/common-consumption';
 import { EnrollmentDetailsComponent } from '../components/enrollment-details/enrollment-details.component';
 import { ContentUtil } from '@app/util/content-util';
 import { LocalCourseService } from '@app/services/local-course.service';
-import { SbProgressLoader } from '@app/services/sb-progress-loader.service';
+import { SbProgressLoader } from '../../services/sb-progress-loader.service';
 
 @Component({
   selector: 'app-courses',

@@ -34,21 +34,32 @@ describe('ProfileSettingsPage', () => {
     };
     const mockAppVersion: Partial<AppVersion> = {};
     const mockCommonUtilService: Partial<CommonUtilService> = {
-        translateMessage: jest.fn(() => 'select-box')
+        translateMessage: jest.fn(() => 'select-box'),
+        isAccessibleForNonStudentRole: jest.fn(),
+        isDeviceLocationAvailable: jest.fn(),
+        handleToTopicBasedNotification: jest.fn()
     };
     const mockContainer: Partial<ContainerService> = {};
-    const mockEvents: Partial<Events> = {};
+    const mockEvents: Partial<Events> = {
+        publish: jest.fn()
+    };
     const mockFrameworkService: Partial<FrameworkService> = {};
     const mockFrameworkUtilService: Partial<FrameworkUtilService> = {};
     const mockHeaderService: Partial<AppHeaderService> = {};
     const mockLocation: Partial<Location> = {};
     const mockPlatform: Partial<Platform> = {};
-    const mockProfileService: Partial<ProfileService> = {};
+    const mockProfileService: Partial<ProfileService> = {
+        updateProfile: jest.fn()
+    };
     const mockRouter: Partial<Router> = {};
     const mockScanner: Partial<SunbirdQRScanner> = {};
     const mockSplashScreenService: Partial<SplashScreenService> = {};
     const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {
-        generateInteractTelemetry: jest.fn()
+        generateInteractTelemetry: jest.fn(),
+        generateBackClickedNewTelemetry: jest.fn(),
+        generatePageLoadedTelemetry: jest.fn(),
+        generateAuditTelemetry: jest.fn(),
+        generateProfilePopulatedTelemetry: jest.fn()
     };
     const mockTranslate: Partial<TranslateService> = {};
     const mockActivatedRoute: Partial<ActivatedRoute> = {};
@@ -339,6 +350,63 @@ describe('ProfileSettingsPage', () => {
                 values
             );
         });
+
+        it('should generate submit clicked telemetry  if grades is empty onSubmitAttempt()', () => {
+            // arrange
+            const dismissFn = jest.fn(() => Promise.resolve());
+            const presentFn = jest.fn(() => Promise.resolve());
+            mockCommonUtilService.getLoader = jest.fn(() => Promise.resolve({
+                present: presentFn,
+                dismiss: dismissFn,
+            }));
+            jest.spyOn(mockProfileService, 'updateProfile').mockReturnValue(of({}));
+            mockCommonUtilService.showToast = jest.fn();
+            const values = new Map();
+            values['board'] = 'na';
+            profileSettingsPage.profileSettingsForm = {
+                valid: true,
+                get: jest.fn((arg) => {
+                    let value;
+                    switch (arg) {
+                        case 'syllabus':
+                            value = { value: { board: ['AP']}};
+                            break;
+                        case 'board':
+                            value = { value: { board: ['AP']}};
+                            break;
+                        case 'medium':
+                            value = { value: { medium: ['English']}};
+                            break;
+                        case 'grade':
+                            value = { value: { medium: []}};
+                            break;
+                    }
+                    return value;
+                }),
+                controls: {
+                    syllabus: {
+                        validator: jest.fn()
+                    },
+                    board: {
+                        validator: jest.fn()
+                    },
+                    medium: {
+                        validator: jest.fn()
+                    },
+                    grade: {
+                        validator: jest.fn()
+                    }
+                },
+                value: {
+                    syllabus: [], board: ['AP'], medium: ['English'], grade: []
+                }
+            } as any;
+            profileSettingsPage.boardSelect = {open: jest.fn()};
+            // act
+            profileSettingsPage.onSubmitAttempt();
+            // assert
+
+        });
       });
 
     it('should control Scanner to called handleActiveScanner()', (done) => {
@@ -615,7 +683,6 @@ describe('ProfileSettingsPage', () => {
             undefined,
             values
         );
-
     });
 
     describe('boardClicked', () => {
@@ -697,11 +764,29 @@ describe('ProfileSettingsPage', () => {
 
     describe('cancelEvent', () => {
 
-        it('should generate interact event when event is canceled', () => {
+        it('should generate interact event when event is canceled board', () => {
             // arrange
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             // act
-            profileSettingsPage.cancelEvent();
+            profileSettingsPage.cancelEvent('board');
+            // assert
+            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
+        });
+
+        it('should generate interact event when event is canceled medium', () => {
+            // arrange
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            // act
+            profileSettingsPage.cancelEvent('board');
+            // assert
+            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
+        });
+
+        it('should generate interact event when event is canceled grade', () => {
+            // arrange
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            // act
+            profileSettingsPage.cancelEvent('grade');
             // assert
             expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
         });
@@ -854,6 +939,48 @@ describe('ProfileSettingsPage', () => {
             }, 0);
         });
 
+    });
+
+    describe('onCategoryCliked()', () => {
+        it('onCategoryCliked clicked for board', () => {
+            // act
+            profileSettingsPage.onCategoryCliked('board');
+            // assert
+            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toBeCalled();
+        });
+        it('onCategoryCliked clicked for medium', () => {
+            // act
+            profileSettingsPage.onCategoryCliked('medium');
+            // assert
+            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toBeCalled();
+        });
+        it('onCategoryCliked clicked for grade', () => {
+            // act
+            profileSettingsPage.onCategoryCliked('grade');
+            // assert
+            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toBeCalled();
+        });
+    });
+
+    describe('generateCategorySubmitTelemetry()', () => {
+        it('generateCategorySubmitTelemetry clicked for board', () => {
+            // act
+            profileSettingsPage.generateCategorySubmitTelemetry('board');
+            // assert
+            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toBeCalled();
+        });
+        it('generateCategorySubmitTelemetry clicked for medium', () => {
+            // act
+            profileSettingsPage.generateCategorySubmitTelemetry('medium');
+            // assert
+            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toBeCalled();
+        });
+        it('generateCategorySubmitTelemetry clicked for grade', () => {
+            // act
+            profileSettingsPage.generateCategorySubmitTelemetry('grade');
+            // assert
+            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toBeCalled();
+        });
     });
 
 });

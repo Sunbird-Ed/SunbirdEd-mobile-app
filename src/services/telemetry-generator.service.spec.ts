@@ -5,7 +5,7 @@ import {
   LogLevel
 } from '@app/services/telemetry-constants';
 import { of } from 'rxjs';
-import {SbProgressLoader} from '@app/services/sb-progress-loader.service';
+import {Context, SbProgressLoader} from '@app/services/sb-progress-loader.service';
 
 describe('TelemetryGeneratorService', () => {
   let telemetryGeneratorService: TelemetryGeneratorService;
@@ -53,6 +53,15 @@ describe('TelemetryGeneratorService', () => {
 
   it('should invoke interact() with proper arguments', () => {
     // arrange
+    mockSbProgressLoader.contexts = new Map<string, Context>();
+    mockSbProgressLoader.contexts.set('SAMPLE_ID', {
+      id: 'SAMPLE_ID',
+      ignoreTelemetry: {
+        when: {
+          interact: /{“pageid”:“collection-detail”}/
+        }
+      }
+    });
     // act
     telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
       InteractSubtype.UNIT_CLICKED,
@@ -77,7 +86,15 @@ describe('TelemetryGeneratorService', () => {
 
   it('should invoke impression() with proper arguments', () => {
     // arrange
-    mockSbProgressLoader.contexts = new Map<>();
+    mockSbProgressLoader.contexts = new Map<string, Context>();
+    mockSbProgressLoader.contexts.set('SAMPLE_ID', {
+      id: 'SAMPLE_ID',
+      ignoreTelemetry: {
+        when: {
+          impression: /{“pageid”:“collection-detail”}/
+        }
+      }
+    });
     // act
     telemetryGeneratorService.generateImpressionTelemetry(ImpressionType.DETAIL, '',
       PageId.COLLECTION_DETAIL,
@@ -438,24 +455,19 @@ describe('TelemetryGeneratorService', () => {
           utm_term: 'ABCDEF'
         }
       ];
-      const cData = [{
-        id: 'scan',
-        type: 'accessType'
-      }];
       const object = {
         id: 'sample-id',
         type: 'sample-type',
         version: 'sample-version'
       };
       // act
-      telemetryGeneratorService.generateUtmInfoTelemetry(value, 'sample-pageId', cData, object);
+      telemetryGeneratorService.generateUtmInfoTelemetry(value, 'sample-pageId', object);
       // assert
       const mockInteract = jest.spyOn(mockTelemetryService, 'interact');
       expect(mockInteract.mock.calls[0][0]['type']).toEqual('OTHER');
       expect(mockInteract.mock.calls[0][0]['subType']).toEqual('utm-info');
       expect(mockInteract.mock.calls[0][0]['env']).toEqual(Environment.HOME);
       expect(mockInteract.mock.calls[0][0]['pageId']).toEqual('sample-pageId');
-      expect(mockInteract.mock.calls[0][0]['correlationData']).toEqual(cData);
     });
   });
 

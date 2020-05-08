@@ -1,18 +1,14 @@
 import {Injectable} from '@angular/core';
 import {ModalController} from '@ionic/angular';
-import {SbProgressLoaderPage} from '@app/app/components/popups/sb-progress-loader/sb-progress-loader.page';
+import {SbProgressLoaderPage} from '../app/components/popups/sb-progress-loader/sb-progress-loader.page';
 import {BehaviorSubject} from 'rxjs';
 
 export interface Context {
     id: string;
     ignoreTelemetry?: {
         when: {
-            interact: {
-                [key: string]: RegExp | undefined
-            } | undefined,
-            impression: {
-                [key: string]: RegExp | undefined
-            } | undefined,
+            interact?: RegExp;
+            impression?: RegExp;
         };
     };
 }
@@ -24,14 +20,14 @@ export class SbProgressLoader {
     private modal?: HTMLIonModalElement;
     private progress: BehaviorSubject<number> = new BehaviorSubject(0);
 
-    readonly contexts =  new Map<string, Context>();
+    readonly contexts = new Map<string, Context>();
 
     constructor(
         private modalCtrl: ModalController,
     ) {
     }
 
-    async show(context: Context = { id: 'DEFAULT' }) {
+    async show(context: Context = {id: 'DEFAULT'}) {
         this.contexts.set(context.id, context);
 
         if (this.modal) {
@@ -61,7 +57,7 @@ export class SbProgressLoader {
         this.progress.next(progress);
     }
 
-    async hide(context: Context = { id: 'DEFAULT' }) {
+    async hide(context: Context = {id: 'DEFAULT'}) {
         if (!this.contexts.has(context.id)) {
             return;
         }
