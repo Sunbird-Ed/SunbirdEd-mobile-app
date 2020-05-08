@@ -178,6 +178,9 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   coachTimeout: any;
   contentList = [];
   themeColors = ['#EA5B5D', '#CBA3F7', '#7BA1F9', '#57B59C'];
+  subjectIcons = ['https://i.ya-webdesign.com/images/protractor-vector-360-degree-14.png',
+                  'https://www.valimenta.com/wp-content/uploads/icon-microscope.png',
+                  'https://punchcard.io/wp-content/uploads/2016/03/icon-dna-white.svg'];
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -516,7 +519,8 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
             contentListObj = {
               title : element.name,
               count : element.contents ? element.contents.length + ' courses' : 'no courses',
-              theme: this.themeColors[Math.floor(Math.random() * this.themeColors.length)]
+              theme: this.themeColors[Math.floor(Math.random() * this.themeColors.length)],
+              cardImg: this.subjectIcons[Math.floor(Math.random() * this.subjectIcons.length)]
             };
             this.contentList.push(contentListObj);
             newSections.push(element);
