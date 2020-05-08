@@ -19,7 +19,7 @@
     z-index: 2;
   }
   .scrollable-container{
-    margin-top:108px;
+    // margin-top:108px;
     z-index: 1;
    }
   .main-container {
@@ -111,6 +111,17 @@
     }
   }
 }
+.sb-course-container{
+  margin-top: 120px;
+  .sb-course-heading{
+    background: #E5EDF5;
+    padding: 12px 8px;
+    font-size: 16px;
+    font-weight: bold;
+    line-height: 16px;
+  }
+}
+
 
 
 // }
