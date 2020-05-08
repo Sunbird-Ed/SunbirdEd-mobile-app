@@ -8,6 +8,10 @@
       (selectedFilter)="classClickEvent($event, true);">
     </sb-library-filters>
   </div>
+  <div class="sb-course-container" *ngIf="contentList.length">
+    <sb-course-cards-hlist [multiRow]="contentList > 3" [contentList]="contentList" [type]="'curiculum_course_card_grid'" [title]="'Courses'" [isLoading]="isLoading"></sb-course-cards-hlist>
+    <div class="sb-course-heading">{{'TEXTBOOKS' | translate}}</div>
+  </div>
   <div class="scrollable-container">
     <ion-refresher (ionRefresh)="swipeDownToRefresh($event)"></ion-refresher>
 
@@ -24,7 +28,8 @@
       </ion-item>
     </ion-list>
 
-    <div *ngIf="recentlyViewedResources && recentlyViewedResources.length">
+    <!-- hide recently viewed as part of school@home -->
+    <!-- <div *ngIf="recentlyViewedResources && recentlyViewedResources.length">
       <div class="sb-recently-viewed-container" style="padding-bottom:40px;">
 
         <div class="sb-recently-viewed-items">
@@ -35,7 +40,7 @@
           </div>
 
           <div class="sb-card-scroll-container" (scroll)='onScroll($event)'>
-            <!-- Card style -->
+            Card style
             <div class="sb-card-container sb-card-recently-container">
               <div class="recently-viewed-card-size" *ngFor="let content of recentlyViewedResources">
                 <sb-library-card
@@ -49,7 +54,7 @@
           </div>
         </div>
       </div>
-    </div>
+    </div> -->
 
     <ion-list class="m-n" *ngIf="searchApiLoader && storyAndWorksheets && storyAndWorksheets.length === 0">
       <app-skeleton-item height="16px" width="40%" style="padding: 16px;"></app-skeleton-item>

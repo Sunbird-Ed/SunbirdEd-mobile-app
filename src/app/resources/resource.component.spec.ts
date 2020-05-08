@@ -750,7 +750,7 @@ describe('ResourcesComponent', () => {
         });
     });
 
-    describe('loadRecentlyViewed test suites', () => {
+    xdescribe('loadRecentlyViewed test suites', () => {
         it('should call getContents from contentService, then loop eachData and setContentData appIcon', (done) => {
             // arrange
             mockContentService.getContents = jest.fn(() => {
