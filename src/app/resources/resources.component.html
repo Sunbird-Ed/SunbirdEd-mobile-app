@@ -9,7 +9,7 @@
     </sb-library-filters>
   </div>
   <div class="sb-course-container" *ngIf="contentList.length">
-    <sb-course-cards-hlist [multiRow]="contentList > 3" [contentList]="contentList" [type]="'curiculum_course_card_grid'" [title]="'COURSES' | translate" [isLoading]="isLoading"></sb-course-cards-hlist>
+    <sb-course-cards-hlist [multiRow]="contentList.length > 3" [contentList]="contentList" [type]="'curiculum_course_card_grid'" [title]="'COURSES' | translate" [isLoading]="isLoading"></sb-course-cards-hlist>
     <div class="sb-course-heading">{{'TEXTBOOK' | translate}}</div>
   </div>
   <div class="scrollable-container">
