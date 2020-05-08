@@ -177,14 +177,14 @@ export class ShareUrl {
 }
 
 export class MenuOverflow {
-    public static readonly MENU_GUEST = ['USERS_AND_GROUPS', 'REPORTS', 'SETTINGS'];
-    public static readonly MENU_LOGIN = ['USERS_AND_GROUPS', 'REPORTS', 'SETTINGS', 'LOGOUT'];
+    public static readonly MENU_GUEST = ['MY_CLASSROOMS', 'REPORTS', 'SETTINGS'];
+    public static readonly MENU_LOGIN = ['MY_CLASSROOMS', 'REPORTS', 'SETTINGS', 'LOGOUT'];
     public static readonly DOWNLOAD_FILTERS = ['CONTENT_SIZE', 'LAST_VIEWED'];
 }
 
 export class SideMenu {
-    public static readonly MENU_GUEST = ['USERS_AND_GROUPS', 'REPORTS', 'LANGUAGE', 'SETTINGS'];
-    public static readonly MENU_LOGIN = ['USERS_AND_GROUPS', 'REPORTS', 'LANGUAGE', 'SETTINGS', 'LOGOUT'];
+    public static readonly MENU_GUEST = ['MY_CLASSROOMS', 'REPORTS', 'LANGUAGE', 'SETTINGS'];
+    public static readonly MENU_LOGIN = ['MY_CLASSROOMS', 'REPORTS', 'LANGUAGE', 'SETTINGS', 'LOGOUT'];
 }
 
 export class FormConstant {
@@ -532,6 +532,10 @@ export class RouterLinks {
 
     // routing to Term of use Web Page
     public static readonly TERM_OF_USE = '/privacy-policy/terms-of-use.html';
+
+    // Class Rooms
+    public static readonly MY_CLASSROOMS = 'my-classrooms';
+    public static readonly CREATE_EDIT_CLASSROOM = 'create-edit-classroom';
 
 }
 

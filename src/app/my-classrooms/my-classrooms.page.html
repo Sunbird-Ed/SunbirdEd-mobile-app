@@ -1,0 +1,34 @@
+<ion-content>
+
+  <div class="my-cr-bg">
+    <p class="my-cr-title">{{'MY_CLASSROOMS' | translate}}</p>
+    
+    <div *ngIf="isGuestUser" class="my-cr-card">
+      <div class="my-cr-card-img">
+        <img src="assets/imgs/classroom_school.svg">
+      </div>
+      <p class="my-cr-subtitle">{{'YOU_HAVE_TO_LOG_IN_TO_CREATE_CLASSROOMS' | translate}}</p>
+
+      <div class="my-cr-btn">
+        <ion-button class="ion-text-capitalize" expand="block" (click)="login()">
+          {{'OVERLAY_SIGN_IN' | translate}}
+        </ion-button>
+      </div>
+    </div>
+
+    <div *ngIf="!isGuestUser" class="my-cr-card">
+      <div class="my-cr-card-img">
+        <img src="assets/imgs/classroom_school.svg">
+      </div>
+      <p class="my-cr-subtitle">{{'CURRENTLY_YOU_DO_NOT_HAVE_ANY_CLASSROOMS' | translate}}</p>
+
+      <div class="my-cr-btn">
+        <ion-button class="ion-text-capitalize" expand="block" (click)="createClassroom()">
+          {{'CREATE_CLASSROOM' | translate}}
+        </ion-button>
+      </div>
+    </div>
+    
+  </div>
+  
+</ion-content>

@@ -127,8 +127,12 @@ describe('LoginHandlerService', () => {
                 refresh_token: 'SOME_REFRESH_TOKEN',
                 userToken: 'SOME_USER_TOKEN'
             }));
+            mockNgZone.run = jest.fn((cb) => {
+                cb();
+            }) as any;
             jest.spyOn(mockAuthService, 'setSession').mockImplementation(() => of(undefined));
             mockSharedPreferences.getString = jest.fn(() => of('false'));
+            mockSharedPreferences.putString = jest.fn(() => of(undefined));
             jest.spyOn(loginHandlerService, 'setDefaultProfileDetails').mockImplementation(() => {
                 return Promise.resolve('profile');
             });
@@ -164,8 +168,12 @@ describe('LoginHandlerService', () => {
                 refresh_token: 'SOME_REFRESH_TOKEN',
                 userToken: 'SOME_USER_TOKEN'
             }));
+            mockNgZone.run = jest.fn((cb) => {
+                cb();
+            }) as any;
             jest.spyOn(mockAuthService, 'setSession').mockImplementation(() => of(undefined));
             mockSharedPreferences.getString = jest.fn(() => of('false'));
+            mockSharedPreferences.putString = jest.fn(() => of(undefined));
             jest.spyOn(loginHandlerService, 'setDefaultProfileDetails').mockImplementation(() => {
                 return Promise.resolve('profile');
             });

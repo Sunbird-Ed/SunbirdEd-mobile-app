@@ -10,7 +10,7 @@
   </div>
   <div class="sb-course-container" *ngIf="contentList.length">
     <sb-course-cards-hlist [multiRow]="contentList > 3" [contentList]="contentList" [type]="'curiculum_course_card_grid'" [title]="'COURSES' | translate" [isLoading]="isLoading"></sb-course-cards-hlist>
-    <div class="sb-course-heading">{{'TEXTBOOKS' | translate}}</div>
+    <div class="sb-course-heading">{{'TEXTBOOK' | translate}}</div>
   </div>
   <div class="scrollable-container">
     <ion-refresher (ionRefresh)="swipeDownToRefresh($event)"></ion-refresher>
