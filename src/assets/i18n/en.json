@@ -670,5 +670,6 @@
   "WANT_TO_CHECK_FREE_TRAININGS": "Want to check free trainings?",
   "LOADER_PROGRESS_DESCRIPTION": "We are getting things ready.",
   "LOADER_PROGRESS_DESC_SUB_HEADING": "Hold On...",
-  "TEXTBOOKS": "Textbooks"
+  "TEXTBOOKS": "Textbooks",
+  "COURSES": "Courses"
 }
