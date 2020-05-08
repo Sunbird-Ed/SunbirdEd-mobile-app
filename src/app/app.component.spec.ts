@@ -22,7 +22,7 @@ import { NetworkAvailabilityToastService } from '@app/services/network-availabil
 import { NotificationService as LocalNotification } from '@app/services/notification.service';
 import { TncUpdateHandlerService } from '@app/services/handlers/tnc-update-handler.service';
 import { of, Subject, EMPTY, Observable, Subscription } from 'rxjs';
-import { PreferenceKey, EventTopics } from './app.constant';
+import { PreferenceKey, EventTopics, RouterLinks } from './app.constant';
 import { BackButtonEmitter } from '@ionic/angular/dist/providers/platform';
 import { SplaschreenDeeplinkActionHandlerDelegate } from '../services/sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
 
@@ -1513,6 +1513,22 @@ describe('AppComponent', () => {
                 });
             }, 0);
 
+        });
+    });
+
+    describe('menuItemAction', () => {
+        it('should navigate to classroom page when classroom is clicked in menu', () => {
+            // arrange
+            const menuName = {
+                menuItem: 'MY_CLASSROOMS'
+            };
+            const routeUrl = [`/${RouterLinks.MY_CLASSROOMS}`];
+
+            // act
+            appComponent.menuItemAction(menuName);
+
+            // assert
+            expect(mockRouter.navigate).toHaveBeenCalledWith(routeUrl, expect.anything());
         });
     });
 

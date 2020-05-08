@@ -1,0 +1,49 @@
+.my-cr-bg {
+  height: 100%;
+  background: linear-gradient(#E5EDF5, #E5EDF5 88px, white 88px, white 100%);
+}
+
+.my-cr-title{
+  color: #024F9D;
+  font-family: "Noto Sans";
+  font-size: 16px;
+  font-weight: bold;
+  letter-spacing: 0;
+  line-height: 16px;
+  padding: 24px 16px 16px;
+  margin: 0;
+}
+
+.my-cr-card{
+  border-radius: 2px;
+  background-color: #FFFFFF;
+  box-shadow: 0 3px 5px 4px rgba(0,0,0,0.05);
+  margin: 0 8px;
+  text-align: center;
+}
+
+.my-cr-card-img{
+  padding-top: 48px;
+  padding-bottom: 16px;
+  img{
+    height: 100px;
+    width: 100px;
+  }
+}
+
+.my-cr-subtitle{
+  color: #333333;
+  font-family: "Noto Sans";
+  font-size: 16px;
+  letter-spacing: 0;
+  line-height: 22px;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.my-cr-btn{
+  padding: 0px 8px 24px;
+  ion-button{
+    --background: #044F9D !important;
+  }
+}

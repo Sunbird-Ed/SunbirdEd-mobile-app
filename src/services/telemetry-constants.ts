@@ -280,7 +280,7 @@ export enum InteractSubtype {
     DELETE_ALL_CLICKED = 'delete-from-device-button-clicked',
     SHARE_USER_GROUP_INITIATE = 'share-usergroup-initiate',
     SHARE_USER_GROUP_SUCCESS = 'share-usergroup-success',
-    USER_GROUP_CLICKED = 'users-groups-clicked',
+    MY_CLASSROOMS_CLICKED = 'my-classrooms-clicked',
     REPORTS_CLICKED = 'reports-clicked',
     USERS_TAB_CLICKED = 'users-tab-clicked',
     GROUPS_TAB_CLICKED = 'groups-tab-clicked',

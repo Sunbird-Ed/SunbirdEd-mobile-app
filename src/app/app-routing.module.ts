@@ -87,7 +87,8 @@ const routes: Routes = [
   {
     path: RouterLinks.DISTRICT_MAPPING,
     loadChildren: './district-mapping/district-mapping.module#DistrictMappingPageModule'
-  }
+  },
+  { path: RouterLinks.MY_CLASSROOMS, loadChildren: './my-classrooms/my-classrooms.module#MyClassroomsPageModule' },
 ];
 
 @NgModule({
