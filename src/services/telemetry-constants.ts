@@ -442,6 +442,7 @@ export enum CorReleationDataType {
     CLASS = 'Class',
     DOWNLOADS = 'Downloads',
     SUBJECT = 'Subject',
+    MIMETYPE = 'MimeType',
     USERTYPE = 'UserType',
     DISCOVERY_TYPE = 'DiscoveryType',
     DEEPLINK = 'Deeplink',
