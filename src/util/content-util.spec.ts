@@ -88,4 +88,24 @@ describe('ContentUtil', () => {
                 'sample_basepath/content/sample_aap_icon.png');
         });
     });
+
+    describe('genrateUTMCData', () => {
+        it('should return utm parameter', () => {
+          // arrange
+          const value = {
+            utm_source: 'whatsApp',
+            utm_medium: 'search',
+          };
+
+          // act
+          // assert
+          expect(ContentUtil.genrateUTMCData(value)).toEqual([{
+              id: 'UtmSource',
+              type: 'whatsApp'
+          }, {
+              id: 'UtmMedium',
+              type: 'search'
+          }]);
+        });
+      });
 });

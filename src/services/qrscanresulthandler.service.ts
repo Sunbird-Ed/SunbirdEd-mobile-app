@@ -29,6 +29,7 @@ import { NavController, Events } from '@ionic/angular';
 import { AppGlobalService } from './app-global-service.service';
 import { FormAndFrameworkUtilService } from './formandframeworkutil.service';
 import { ContentUtil } from '@app/util/content-util';
+import * as qs from 'qs';
 
 declare var cordova;
 
@@ -105,21 +106,27 @@ export class QRScannerResultHandler {
   handleDialCode(source: string, scannedData, dialCode: string) {
     this.source = source;
     this.generateQRScanSuccessInteractEvent(scannedData, 'SearchResult', dialCode);
-
-    const navigationExtras: NavigationExtras = {
-      state: {
-        dialCode,
-        corRelation: this.getCorRelationList(dialCode, QRScannerResultHandler.CORRELATION_TYPE, scannedData),
-        source: this.source,
-        shouldGenerateEndTelemetry: true
-      }
-    };
     const telemetryObject = new TelemetryObject(dialCode, 'qr', ' ');
+    const utmUrl = scannedData.slice(scannedData.indexOf('?') + 1);
+    const params: {[param: string]: string} = qs.parse(utmUrl);
     const cData: CorrelationData[] = [{
       id: CorReleationDataType.SCAN,
       type: CorReleationDataType.ACCESS_TYPE
     }];
-    this.commonUtilService.generateUTMInfoTelemetry(scannedData, cData, telemetryObject);
+
+    ContentUtil.genrateUTMCData(params).forEach((element) => {
+      cData.push(element);
+    });
+    this.telemetryGeneratorService.generateUtmInfoTelemetry(params, PageId.QRCodeScanner, cData, telemetryObject);
+    const navigationExtras: NavigationExtras = {
+      state: {
+        dialCode,
+        corRelation: this.getCorRelationList(dialCode, QRScannerResultHandler.CORRELATION_TYPE, scannedData, cData),
+        source: this.source,
+        shouldGenerateEndTelemetry: true
+      }
+    };
+
     this.navCtrl.navigateForward([`/${RouterLinks.SEARCH}`], navigationExtras);
   }
 
@@ -128,26 +135,32 @@ export class QRScannerResultHandler {
     const results = scannedData.split('/');
     const contentId = results[results.length - 1];
     this.generateQRScanSuccessInteractEvent(scannedData, 'ContentDetail', contentId);
+    const utmUrl = scannedData.slice(scannedData.indexOf('?') + 1);
+    const params: {[param: string]: string} = qs.parse(utmUrl);
+    const cData: CorrelationData[] = [{
+      id: CorReleationDataType.SCAN,
+      type: CorReleationDataType.ACCESS_TYPE
+    }];
+
+    ContentUtil.genrateUTMCData(params).forEach((element) => {
+      cData.push(element);
+    });
     const request: ContentDetailRequest = {
       contentId
     };
-
     this.contentService.getContentDetails(request).toPromise()
       .then((content: Content) => {
+        const telemetryObject = new TelemetryObject(content.identifier, content.contentData.contentType, content.contentData.pkgVersion);
+        this.telemetryGeneratorService.generateUtmInfoTelemetry(params, PageId.QRCodeScanner, cData, telemetryObject);
+
         this.navigateToDetailsPage(content,
-          this.getCorRelationList(content.identifier, QRScannerResultHandler.CORRELATION_TYPE, scannedData));
+          this.getCorRelationList(content.identifier, QRScannerResultHandler.CORRELATION_TYPE, scannedData, cData));
         this.telemetryGeneratorService.generateImpressionTelemetry(
           ImpressionType.VIEW, ImpressionSubtype.QR_CODE_VALID,
           PageId.QRCodeScanner,
           Environment.HOME,
           contentId, ObjectType.QR, ''
         );
-        const telemetryObject = new TelemetryObject(content.identifier, content.contentData.contentType, content.contentData.pkgVersion);
-        const cData: CorrelationData[] = [{
-          id: CorReleationDataType.SCAN,
-          type: CorReleationDataType.ACCESS_TYPE
-        }];
-        this.commonUtilService.generateUTMInfoTelemetry(scannedData, cData, telemetryObject);
       }).catch(() => {
         if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
           this.commonUtilService.showToast('ERROR_NO_INTERNET_MESSAGE');
@@ -187,7 +200,7 @@ export class QRScannerResultHandler {
     this.generateEndEvent(this.source, scannedData);
   }
 
-  getCorRelationList(identifier: string, type: string, scannedData): Array<CorrelationData> {
+  getCorRelationList(identifier: string, type: string, scannedData, cData): Array<CorrelationData> {
     const corRelationList: Array<CorrelationData> = new Array<CorrelationData>();
     const corRelation: CorrelationData = new CorrelationData();
     corRelation.id = identifier;
@@ -197,6 +210,11 @@ export class QRScannerResultHandler {
       id: ContentUtil.extractBaseUrl(scannedData),
       type: CorReleationDataType.SOURCE
     });
+    if (cData) {
+     cData.forEach(element => {
+       corRelationList.push(element);
+     });
+    }
     return corRelationList;
   }
 
