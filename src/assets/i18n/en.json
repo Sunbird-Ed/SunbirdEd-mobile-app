@@ -673,9 +673,11 @@
   "LOADER_PROGRESS_DESC_SUB_HEADING": "Hold On...",
   "MY_CLASSROOMS": "My classrooms",
   "CLASSROOM_NAME": "Classroom Name",
+  "ENTER_CLASSROOM_NAME": "Enter classroom name",
   "YOU_HAVE_TO_LOG_IN_TO_CREATE_CLASSROOMS": "You have to log in to create classrooms",
   "CURRENTLY_YOU_DO_NOT_HAVE_ANY_CLASSROOMS": "Currently, you do not have any Classrooms",
   "CREATE_CLASSROOM": "Create classroom",
+  "CLASSROOM_NAME_IS_REQUIRED": "Classroom name is required.",
   "ENTER_THE_FOLLOWING_INFORMATION": "Enter the following information",
   "COURSES": "Courses"
 }

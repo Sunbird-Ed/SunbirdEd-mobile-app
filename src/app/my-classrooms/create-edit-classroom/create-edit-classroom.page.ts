@@ -22,7 +22,6 @@ import { AppGlobalService } from '@app/services/app-global-service.service';
 import { AppHeaderService } from '@app/services/app-header.service';
 import { Router } from '@angular/router';
 import { Location } from '@angular/common';
-import { Environment, ActivePageService } from '@app/services';
 
 
 @Component({
@@ -35,6 +34,7 @@ export class CreateEditClassroomPage implements OnInit, OnDestroy {
   @ViewChild('boardSelect') boardSelect: IonSelect;
   @ViewChild('mediumSelect') mediumSelect: IonSelect;
   @ViewChild('gradeSelect') gradeSelect: IonSelect;
+  @ViewChild('subjectSelect') subjectSelect: IonSelect;
 
   private initialAutoFill = true;
   private framework: Framework;
@@ -88,7 +88,6 @@ export class CreateEditClassroomPage implements OnInit, OnDestroy {
   };
 
   isBoardAvailable = true;
-  submitAttempted: boolean;
 
   get syllabusControl(): FormControl {
     return this.profileEditForm.get('syllabus') as FormControl;
@@ -113,23 +112,7 @@ export class CreateEditClassroomPage implements OnInit, OnDestroy {
   errorMessages = {
     className: {
       show: false,
-      message: this.showErrorToastMessage('PLEASE_ENTER', 'CLASSROOM_NAME')
-    },
-    board: {
-      show: false,
-      message: this.showErrorToastMessage('PLEASE_SELECT', 'BOARD')
-    },
-    medium: {
-      show: false,
-      message: this.showErrorToastMessage('PLEASE_SELECT', 'MEDIUM')
-    },
-    grade: {
-      show: false,
-      message: this.showErrorToastMessage('PLEASE_SELECT', 'CLASS')
-    },
-    subject: {
-      show: false,
-      message: this.showErrorToastMessage('PLEASE_SELECT', 'SUBJECT')
+      message: this.commonUtilService.translateMessage('CLASSROOM_NAME_IS_REQUIRED')
     }
   };
 
@@ -167,8 +150,7 @@ export class CreateEditClassroomPage implements OnInit, OnDestroy {
     this.formControlSubscriptions = combineLatest(
       this.onSyllabusChange(),
       this.onMediumChange(),
-      this.onGradeChange(),
-      this.onSubjectChange(),
+      this.onGradeChange()
     ).subscribe();
   }
 
@@ -187,6 +169,12 @@ export class CreateEditClassroomPage implements OnInit, OnDestroy {
     this.headerService.showHeaderWithBackButton();
 
     this.handleBackButtonEvents();
+  }
+
+  ionViewWillLeave() {
+    if (this.backButtonFunc) {
+      this.backButtonFunc.unsubscribe();
+    }
   }
 
   handleBackButtonEvents() {
@@ -299,10 +287,6 @@ export class CreateEditClassroomPage implements OnInit, OnDestroy {
           } else {
             this.mediumControl.patchValue([]);
           }
-          if (this.submitAttempted) {
-            this.onInputFields('BOARD');
-            this.onInputFields('MEDIUM');
-          }
         } catch (e) {
           console.error(e);
         } finally {
@@ -341,10 +325,6 @@ export class CreateEditClassroomPage implements OnInit, OnDestroy {
           } else {
             this.gradeControl.patchValue([]);
           }
-          if (this.submitAttempted) {
-            this.onInputFields('MEDIUM');
-            this.onInputFields('GRADE');
-          }
         } catch (e) {
           console.error(e);
         } finally {
@@ -377,10 +357,6 @@ export class CreateEditClassroomPage implements OnInit, OnDestroy {
           } else {
             this.subjectControl.patchValue([]);
           }
-          if (this.submitAttempted) {
-            this.onInputFields('GRADE');
-            this.onInputFields('SUBJECT');
-          }
         } catch (e) {
           console.error(e);
         } finally {
@@ -390,110 +366,42 @@ export class CreateEditClassroomPage implements OnInit, OnDestroy {
     );
   }
 
-  private onSubjectChange(): Observable<string[]> {
-    return this.subjectControl.valueChanges.pipe(
-      tap(async () => {
-        if (this.submitAttempted) {
-          this.onInputFields('SUBJECT');
-        }
-      })
-    );
-  }
-
   onSubmit() {
-    this.submitAttempted = true;
-    let skipSubmit = false;
     const formVal = this.profileEditForm.value;
     if (!formVal.classroomName.trim().length) {
       this.errorMessages.className.show = true;
-      skipSubmit = true;
+      return;
+    } else if (!formVal.boards.length && this.syllabusList.length) {
+      this.boardSelect.open();
+      return;
+    } else if (!formVal.medium || !formVal.medium.length) {
+      this.mediumSelect.open();
+      return;
+    } else if (!formVal.grades || !formVal.grades.length) {
+      this.gradeSelect.open();
+      return;
+    } else if (!formVal.subjects || !formVal.subjects.length) {
+      this.subjectSelect.open();
+      return;
     }
-    if (!formVal.boards.length && this.syllabusList.length) {
-      this.errorMessages.board.show = true;
-      skipSubmit = true;
-    }
-    if (!formVal.medium.length) {
-      this.errorMessages.medium.show = true;
-      skipSubmit = true;
-    }
-    if (!formVal.grades.length) {
-      this.errorMessages.grade.show = true;
-      skipSubmit = true;
-    }
-    if (!formVal.subjects.length) {
-      this.errorMessages.subject.show = true;
-      skipSubmit = true;
-    }
-    if (!skipSubmit) {
-      // TODO
-      // this.submitForm(formVal);
-    }
+
+    // TODO
+    // this.submitForm(formVal);
   }
 
-  onInputFields(inputType) {
-    const formVal = this.profileEditForm.value;
+  onInputFields(inputType, event) {
+    console.log(event.data);
     if (inputType === 'CLASSNAME') {
-      if (!formVal.classroomName.trim().length) {
+      if (!event && !event.data && !event.data.trim().length) {
         this.errorMessages.className.show = true;
       } else {
         this.errorMessages.className.show = false;
       }
     }
-    if (inputType === 'BOARD') {
-      if (!formVal.boards.length && this.syllabusList.length) {
-        this.errorMessages.board.show = true;
-      } else {
-        this.errorMessages.board.show = false;
-      }
-    }
-    if (inputType === 'MEDIUM') {
-      if (!formVal.medium.length) {
-        this.errorMessages.medium.show = true;
-      } else {
-        this.errorMessages.medium.show = false;
-      }
-    }
-    if (inputType === 'GRADE') {
-      if (!formVal.grades.length) {
-        this.errorMessages.grade.show = true;
-      } else {
-        this.errorMessages.grade.show = false;
-      }
-    }
-    if (inputType === 'SUBJECT') {
-      if (!formVal.subjects.length) {
-        this.errorMessages.subject.show = true;
-      } else {
-        this.errorMessages.subject.show = false;
-      }
-    }
-  }
-
-  showErrorToastMessage(prefixMessage: string, fieldName: string) {
-    this.btnColor = '#8FC4FF';
-    if (!prefixMessage) {
-      prefixMessage = 'PLEASE_SELECT';
-    }
-    return this.commonUtilService.translateMessage(prefixMessage, this.commonUtilService
-      .translateMessage(fieldName));
-  }
-
-  enableSubmitButton() {
-    if (this.profileEditForm.value.grades.length) {
-      this.btnColor = '#006DE5';
-    } else {
-      this.btnColor = '#8FC4FF';
-    }
   }
 
   async submitForm(formVal) {
 
-  }
-
-  ionViewWillLeave() {
-    if (this.backButtonFunc) {
-      this.backButtonFunc.unsubscribe();
-    }
   }
 
   async getLoggedInFrameworkCategory() {
