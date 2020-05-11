@@ -80,6 +80,12 @@ export class SettingsPage implements OnInit {
     this.handleBackButton();
   }
 
+  ionViewWillLeave() {
+    if (this.backButtonFunc) {
+      this.backButtonFunc.unsubscribe();
+    }
+  }
+
   ngOnInit() {
     const telemetryImpressionRequest = new TelemetryImpressionRequest();
     telemetryImpressionRequest.type = ImpressionType.VIEW;

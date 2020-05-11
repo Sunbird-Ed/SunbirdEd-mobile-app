@@ -334,34 +334,17 @@ describe('EnrolledCourseDetailsPage', () => {
             done();
         });
 
-        it('should show error toast if all batches have ended', async (done) => {
+        it('should show error toast if single enrolment expired batch', async (done) => {
             // arrange
             enrolledCourseDetailsPage.batches = [{
                 enrollmentEndDate: '2020-04-23'
-            }, {
-                enrollmentEndDate: '2020-04-26'
-            }, {
-                enrollmentEndDate: '2020-04-25'
             }];
             mockCommonUtilService.showToast = jest.fn();
+            mockDatePipe.transform = jest.fn((v) => v);
             // act
             await enrolledCourseDetailsPage.joinTraining();
             // assert
-            expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('COURSE_ENDED', null, null, null, null, '2020-04-26');
-            done();
-        });
-
-        it('should show error toast if no internet available', async (done) => {
-            // arrange
-            enrolledCourseDetailsPage.batches = [{
-                enrollmentEndDate: new Date(Date.now() + 10000)
-            }];
-            mockCommonUtilService.networkInfo.isNetworkAvailable = false;
-            mockCommonUtilService.showToast = jest.fn();
-            // act
-            await enrolledCourseDetailsPage.joinTraining();
-            // assert
-            expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('ERROR_NO_INTERNET_MESSAGE');
+            expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('ENROLLMENT_ENDED_ON', null, null, null, null, '2020-04-23');
             done();
         });
 

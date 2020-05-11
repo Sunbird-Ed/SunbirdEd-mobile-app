@@ -1170,6 +1170,9 @@ describe('SearchPage', () => {
         });
     });
     describe('getContentForDialCode', () => {
+        beforeEach(() => {
+            mockAppGlobalService.getNameForCodeInFramework = jest.fn(() => 'name');
+        });
         it('should return without any action', () => {
             // arrange
             searchPage.dialCode = undefined;

@@ -1,4 +1,5 @@
-import { Rollup, Content, ContentData, TelemetryObject } from 'sunbird-sdk';
+import { Rollup, Content, ContentData, TelemetryObject, CorrelationData } from 'sunbird-sdk';
+import { CorReleationDataType } from '@app/services/telemetry-constants';
 export class ContentUtil {
 
 
@@ -117,4 +118,41 @@ export class ContentUtil {
       return '';
   }
 
+
+  public static genrateUTMCData(params: { [param: string]: string }): CorrelationData[] {
+    const utmParams = {};
+    const cData: CorrelationData[] = [];
+    Object.entries(params).forEach(([key, value]) => {
+      try {
+        const url: URL = new URL(value);
+        const overrideChannelSlug = url.searchParams.get('channel');
+        if (overrideChannelSlug) {
+          cData.push({
+            id: overrideChannelSlug,
+            type: CorReleationDataType.SOURCE
+          });
+        }
+      } catch (e) {
+        console.error(e);
+      }
+      if ((key === 'utm_campaign') || (key === 'channel')) {
+        cData.push({ id: params[key], type: CorReleationDataType.SOURCE });
+      } else {
+        const chengeKeyUpperCase = key.split('_').map((elem) => {
+          return (elem.charAt(0).toUpperCase() + elem.slice(1));
+        });
+
+        utmParams[chengeKeyUpperCase.join('')] = decodeURIComponent(value);
+      }
+    });
+    if (Object.keys(utmParams)) {
+      Object.keys(utmParams).map((key) => {
+        if (utmParams[key] !== undefined) {
+          cData.push({ id: utmParams[key], type: key });
+        }
+      });
+    }
+
+    return cData;
+  }
 }

@@ -42,6 +42,8 @@ import { ContentUtil } from '@app/util/content-util';
 import { LibraryCardTypes } from '@project-sunbird/common-consumption';
 import { Subscription, Observable, from } from 'rxjs';
 import { switchMap, tap, map as rxjsMap, share, startWith, debounceTime } from 'rxjs/operators';
+import { applyProfileFilter } from '@app/util/filter.util';
+
 
 declare const cordova;
 @Component({
@@ -936,7 +938,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
       from: CachedItemRequestSourceFrom.SERVER
     };
     if (this.profile && this.profile.board && this.profile.board.length) {
-      pageAssembleCriteria.userProfile = { board: this.profile.board };
+      pageAssembleCriteria.userProfile = { board: applyProfileFilter(this.appGlobalService, this.profile.board, [], 'board') };
     }
     // pageAssembleCriteria.hardRefresh = true;
 

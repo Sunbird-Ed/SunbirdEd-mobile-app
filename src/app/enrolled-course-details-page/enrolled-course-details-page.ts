@@ -427,20 +427,19 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
     if (!this.batches.length) {
       this.commonUtilService.showToast('NO_BATCHES_AVAILABLE');
       return;
-    } else if (this.batches.every(b => b.enrollmentEndDate && (new Date() > new Date(b.enrollmentEndDate)))) {
-      const lastBatchEndDate = this.batches.reduce((acc, batch) => {
-        if (new Date(acc) < new Date(batch.enrollmentEndDate)) {
-          return batch.enrollmentEndDate;
-        }
-
-        return acc;
-      }, this.batches[0].enrollmentEndDate);
-      this.commonUtilService.showToast('COURSE_ENDED', null, null, null, null, lastBatchEndDate);
-      return;
-    }
-
-    if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
-      this.commonUtilService.showToast('ERROR_NO_INTERNET_MESSAGE');
+    } else if (
+        this.batches.length === 1 &&
+        this.batches[0].enrollmentEndDate &&
+        (new Date() > new Date(this.batches[0].enrollmentEndDate))
+    ) {
+      this.commonUtilService.showToast(
+          'ENROLLMENT_ENDED_ON',
+          null,
+          null,
+          null,
+          null,
+          this.datePipe.transform(this.batches[0].enrollmentEndDate)
+      );
       return;
     }
 
@@ -753,32 +752,36 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
    * Get batch details
    */
   async getBatchDetails() {
+    if (!this.courseCardData || !this.courseCardData.batchId) {
+      return;
+    }
     this.courseService.getBatchDetails({ batchId: this.courseCardData.batchId }).toPromise()
       .then((data: Batch) => {
         this.zone.run(() => {
-          if (data) {
-            this.batchDetails = data;
-            // console.log('this.batchDetails', this.batchDetails);
-            this.handleUnenrollButton();
-            this.isCertifiedCourse = data.cert_templates ? true : false;
-            this.saveContentContext(this.appGlobalService.getUserId(),
-              this.batchDetails.courseId, this.courseCardData.batchId, this.batchDetails.status);
-            this.preferences.getString(PreferenceKey.COURSE_IDENTIFIER).toPromise()
-              .then(async val => {
-                if (val && val === this.batchDetails.identifier) {
-                  this.batchExp = true;
-                } else if (this.batchDetails.status === 2) {
-                  this.batchExp = true;
-                } else if (this.batchDetails.status === 0) {
-                  this.isBatchNotStarted = true;
-                  this.courseStartDate = this.batchDetails.startDate;
-                }
-              })
-              .catch((error) => {
-              });
-
-            this.getBatchCreatorName();
+          if (!data) {
+            return;
           }
+          this.batchDetails = data;
+          // console.log('this.batchDetails', this.batchDetails);
+          this.handleUnenrollButton();
+          this.isCertifiedCourse = data.cert_templates ? true : false;
+          this.saveContentContext(this.appGlobalService.getUserId(),
+            this.batchDetails.courseId, this.courseCardData.batchId, this.batchDetails.status);
+          this.preferences.getString(PreferenceKey.COURSE_IDENTIFIER).toPromise()
+            .then(async val => {
+              if (val && val === this.batchDetails.identifier) {
+                this.batchExp = true;
+              } else if (this.batchDetails.status === 2) {
+                this.batchExp = true;
+              } else if (this.batchDetails.status === 0) {
+                this.isBatchNotStarted = true;
+                this.courseStartDate = this.batchDetails.startDate;
+              }
+            })
+            .catch((error) => {
+            });
+
+          this.getBatchCreatorName();
         });
       })
       .catch((error: any) => {
