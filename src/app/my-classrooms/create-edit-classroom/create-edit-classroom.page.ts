@@ -412,7 +412,8 @@ export class CreateEditClassroomPage implements OnInit, OnDestroy {
       }).toPromise();
       const activeChannelSuggestedFrameworkList: Framework[] = await this.frameworkUtilService.getActiveChannelSuggestedFrameworkList({
         language: '',
-        requiredCategories: []
+        requiredCategories: [],
+        ignoreActiveChannel: true
       }).toPromise();
       this.frameworkId = activeChannelDetails.defaultFramework;
       this.categories = defaultFrameworkDetails.categories;
