@@ -536,6 +536,9 @@ export class RouterLinks {
     // Class Rooms
     public static readonly MY_CLASSROOMS = 'my-classrooms';
     public static readonly CREATE_EDIT_CLASSROOM = 'create-edit-classroom';
+    public static readonly CLASS_DETAILS = 'class-details';
+
+    public static readonly ADD_USER_TO_CLASS = 'add-user-to-class';
 
 }
 

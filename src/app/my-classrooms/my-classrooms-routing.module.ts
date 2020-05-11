@@ -10,6 +10,10 @@ const routes: Routes = [
         path: RouterLinks.CREATE_EDIT_CLASSROOM,
         loadChildren: './create-edit-classroom/create-edit-classroom.module#CreateEditClassroomPageModule'
     },
+    {
+        path: RouterLinks.CLASS_DETAILS,
+        loadChildren: './class-details/class-details.module#ClassDetailsPageModule'
+    },
 ];
 
 @NgModule({
