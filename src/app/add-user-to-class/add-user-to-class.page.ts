@@ -97,6 +97,10 @@ export class AddUserToClassPage {
     this.isUserIdVerified = false;
   }
 
+  onAddToClass() {
+    this.router.navigate([`/${RouterLinks.MY_CLASSROOMS}/${RouterLinks.CLASS_DETAILS}`]);
+  }
+
   ionViewWillLeave() {
     this.headerObservable.unsubscribe();
     if (this.unregisterBackButton) {
