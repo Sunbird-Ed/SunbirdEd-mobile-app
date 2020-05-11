@@ -29,7 +29,7 @@
     border: 1px solid #006de5;
     border-radius: 5px;
     margin-top: 16px;
-    padding-left: 16px;
+    padding-left: 8px;
     padding-right: 16px !important;
     font-size: 14px;
     font-family: "Noto Sans Bold" serif;
@@ -43,11 +43,6 @@
         animation: upDownAnimate 5s linear infinite;
         animation-duration: 0.9s;
       }
-    }
-    // Not getting used because of shadow DOM
-    .select-placeholder {
-      color: #006de5;
-      padding-left: 10px;
     }
   }
 
@@ -79,59 +74,10 @@
     color: #006de5;
   }
 
-  .item-label-stacked.item-select-disabled {
-    ion-label {
-      color: #333;
-    }
 
-    ion-select {
-      border-color: #333;
-      // Inside Shadow DOM  eng hindi
-      .select-icon {
-        .select-icon-inner {   
-          border-color: #333;
-          animation: none;
-        }
-      }
-      // Inside Shadow DOM
-      .select-placeholder {
-        color: #333;
-      }
-    }
-  }
 
-  .item-label-stacked.item-has-value {
-    ion-label {
-      color: #{$gray-800};
-    }
-    ion-select {
-      border-color: #{$gray-300};
-      .select-text {
-        padding-left: 10px;
-        font-weight: bold;
-        color: #{$gray-800};
-      }
-      .select-icon {
-        .select-icon-inner {
-          border-color: #{$gray-800};
-          animation: none;
-        }
-      }
-    }
-  }
-  .arrow-icon {
-    right: 15px;
-    top: 50%;
-    width: 22px;
-    &.animate {
-      position: relative;
-      animation: upDownAnimate 5s linear infinite;
-      animation-duration: 0.9s;
-    }
-  }
 
   ion-label {
-    // opacity: 1;
     color: #333333;
     font-family: "Noto Sans";
     font-size: 14px;
@@ -146,10 +92,6 @@
   font-weight: bold;
   color: #044F9D;
   margin: 16px 16px 0;
-}
-
-ion-button{
-  --background: #044F9D !important;
 }
 
 .cr-input-title{
