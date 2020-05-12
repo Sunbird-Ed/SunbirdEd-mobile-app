@@ -8,7 +8,7 @@ import { AppGlobalService } from '@app/services/app-global-service.service';
 import { CommonUtilService } from '@app/services/common-util.service';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { AppHeaderService } from '@app/services/app-header.service';
-import { Profile, ProfileService, ProfileSource, ProfileType, SharedPreferences, CorrelationData, Actor, TelemetryAuditRequest, AuditState, } from 'sunbird-sdk';
+import { Profile, ProfileService, ProfileSource, ProfileType, SharedPreferences, CorrelationData, AuditState, } from 'sunbird-sdk';
 import {
   Environment,
   ImpressionType,
@@ -16,12 +16,13 @@ import {
   InteractType,
   PageId,
   CorReleationDataType,
+  AuditProps
 } from '@app/services/telemetry-constants';
 import { ContainerService } from '@app/services/container.services';
 import { initTabs, GUEST_STUDENT_TABS, GUEST_TEACHER_TABS } from '@app/app/module.service';
 import { HasNotSelectedFrameworkGuard } from '@app/guards/has-not-selected-framework.guard';
 import { SplashScreenService } from '@app/services/splash-screen.service';
-import {NativePageTransitions, NativeTransitionOptions} from '@ionic-native/native-page-transitions/ngx';
+import { NativePageTransitions, NativeTransitionOptions } from '@ionic-native/native-page-transitions/ngx';
 
 @Component({
   selector: 'page-user-type-selection',
@@ -83,9 +84,9 @@ export class UserTypeSelectionPage {
     if (this.router.url === '/' + RouterLinks.USER_TYPE_SELECTION) {
       setTimeout(() => {
         this.telemetryGeneratorService.generateImpressionTelemetry(
-            ImpressionType.VIEW, '',
-            PageId.USER_TYPE_SELECTION,
-            this.appGlobalService.isOnBoardingCompleted ? Environment.HOME : Environment.ONBOARDING);
+          ImpressionType.VIEW, '',
+          PageId.USER_TYPE_SELECTION,
+          this.appGlobalService.isOnBoardingCompleted ? Environment.HOME : Environment.ONBOARDING);
         /* New Telemetry */
         this.telemetryGeneratorService.generatePageLoadedTelemetry(
           PageId.USER_TYPE,
@@ -127,9 +128,15 @@ export class UserTypeSelectionPage {
   handleBackButton(isBackClicked?) {
     if (isBackClicked) {
       this.telemetryGeneratorService.generateBackClickedTelemetry(
-          PageId.USER_TYPE_SELECTION,
-          this.appGlobalService.isOnBoardingCompleted ? Environment.HOME : Environment.ONBOARDING,
-          true);
+        PageId.USER_TYPE_SELECTION,
+        this.appGlobalService.isOnBoardingCompleted ? Environment.HOME : Environment.ONBOARDING,
+        true);
+      /* New Telemetry */
+      this.telemetryGeneratorService.generateBackClickedNewTelemetry(
+        false,
+        this.appGlobalService.isOnBoardingCompleted ? Environment.HOME : Environment.ONBOARDING,
+        PageId.USER_TYPE
+      );
     }
     this.router.navigate([`/${RouterLinks.LANGUAGE_SETTING}`]);
   }
@@ -137,15 +144,9 @@ export class UserTypeSelectionPage {
   handleHeaderEvents($event) {
     if ($event.name === 'back') {
       this.telemetryGeneratorService.generateBackClickedTelemetry(
-          PageId.USER_TYPE_SELECTION,
-          this.appGlobalService.isOnBoardingCompleted ? Environment.HOME : Environment.ONBOARDING,
-          true);
-      /* New Telemetry */
-      this.telemetryGeneratorService.generateBackClickedNewTelemetry(
-        false,
+        PageId.USER_TYPE_SELECTION,
         this.appGlobalService.isOnBoardingCompleted ? Environment.HOME : Environment.ONBOARDING,
-        PageId.USER_TYPE
-      );
+        true);
       this.handleBackButton();
     }
   }
@@ -185,7 +186,7 @@ export class UserTypeSelectionPage {
       undefined,
       undefined,
       correlationlist
-    ); 
+    );
   }
 
   selectCard(userType, profileType) {
@@ -249,7 +250,7 @@ export class UserTypeSelectionPage {
             this.telemetryGeneratorService.generateAuditTelemetry(
               Environment.ONBOARDING,
               AuditState.AUDIT_UPDATED,
-              this.selectedUserType,
+              [AuditProps.PROFILE_TYPE],
               correlationlist
             );
           }).catch(() => {
