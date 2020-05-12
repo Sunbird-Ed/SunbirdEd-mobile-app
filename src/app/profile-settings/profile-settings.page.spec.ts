@@ -963,7 +963,44 @@ describe('ProfileSettingsPage', () => {
     });
 
     describe('generateCategorySubmitTelemetry()', () => {
+        beforeAll(() => {
+            profileSettingsPage.profileSettingsForm = {
+                get: jest.fn((arg) => {
+                    let value;
+                    switch (arg) {
+                        case 'syllabus':
+                            value = { value: ['AP'] };
+                            break;
+                        case 'board':
+                            value = { value: ['AP']};
+                            break;
+                        case 'medium':
+                            value = { value: ['English']};
+                            break;
+                        case 'grade':
+                            value = { value: ['Class 1']};
+                            break;
+                    }
+                    return value;
+                }),
+                controls: {
+                    syllabus: {
+                        validator: jest.fn()
+                    },
+                    board: {
+                        validator: jest.fn()
+                    },
+                    medium: {
+                        validator: jest.fn()
+                    },
+                    grade: {
+                        validator: jest.fn()
+                    }
+                },
+            } as any;
+        });
         it('generateCategorySubmitTelemetry clicked for board', () => {
+            // arrange
             // act
             profileSettingsPage.generateCategorySubmitTelemetry('board');
             // assert
