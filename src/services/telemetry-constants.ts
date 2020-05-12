@@ -124,7 +124,8 @@ export enum PageId {
     UPGRADE_POPUP = 'update-popup',
     IMPORT_CONTENT_POPUP = 'import-content-popup',
     DOWNLOAD_ALL_CONFIRMATION_POPUP = 'download-all-confirmation-popup',
-    PERMISSION_POPUP = 'permission-popup'
+    PERMISSION_POPUP = 'permission-popup',
+    APP_PERMISSION_POPUP = 'app-permission-popup'
 }
 export enum LogType {
     NOTIFICATION = 'notification'
@@ -402,7 +403,8 @@ export enum InteractSubtype {
     FORCE_UPGRADE_INFO = 'force-upgrade-info',
     OPTIONAL_UPGRADE = 'optional-upgrade',
     DEEPLINK_UPGRADE = 'deep-link-upgrade',
-    NO_QR_CODE_CLICKED = 'no-qr-code-clicked'
+    NO_QR_CODE_CLICKED = 'no-qr-code-clicked',
+    DENY_CLICKED = 'deny-clicked',
 }
 
 export enum ID {
