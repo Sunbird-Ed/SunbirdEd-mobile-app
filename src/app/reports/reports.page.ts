@@ -63,8 +63,8 @@ export class ReportsPage implements OnInit {
     this.telemetryGeneratorService.generateImpressionTelemetry(
       ImpressionType.VIEW,
       '',
-      Environment.USER,
-      PageId.REPORTS_USER_GROUP
+      PageId.REPORTS_USER_GROUP,
+      Environment.USER
     );
     const loader = await this.commonUtilService.getLoader();
     await loader.present();
@@ -195,8 +195,8 @@ export class ReportsPage implements OnInit {
     this.telemetryGeneratorService.generateImpressionTelemetry(
       ImpressionType.VIEW,
       '',
-      Environment.USER,
-      PageId.REPORTS_USER_GROUP
+      PageId.REPORTS_USER_GROUP,
+      Environment.USER
     );
   }
 

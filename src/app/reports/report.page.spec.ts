@@ -92,8 +92,8 @@ describe('ReportsPage', () => {
             expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenCalledWith(
                 ImpressionType.VIEW,
                 '',
-                Environment.USER,
-                PageId.REPORTS_USER_GROUP
+                PageId.REPORTS_USER_GROUP,
+                Environment.USER
             );
             expect(mockCommonUtilService.getLoader).toHaveBeenCalled();
             expect(presentFn).toHaveBeenCalled();
@@ -125,8 +125,8 @@ describe('ReportsPage', () => {
             expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenCalledWith(
                 ImpressionType.VIEW,
                 '',
-                Environment.USER,
-                PageId.REPORTS_USER_GROUP
+                PageId.REPORTS_USER_GROUP,
+                Environment.USER
             );
             expect(mockCommonUtilService.getLoader).toHaveBeenCalled();
             expect(presentFn).toHaveBeenCalled();
@@ -359,8 +359,8 @@ describe('ReportsPage', () => {
         expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenCalledWith(
             ImpressionType.VIEW,
             '',
-            Environment.USER,
-            PageId.REPORTS_USER_GROUP
+            PageId.REPORTS_USER_GROUP,
+            Environment.USER
         );
     });
 
@@ -382,8 +382,8 @@ describe('ReportsPage', () => {
         expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenCalledWith(
             ImpressionType.VIEW,
             '',
-            Environment.USER,
-            PageId.REPORTS_USER_GROUP
+            PageId.REPORTS_USER_GROUP,
+            Environment.USER
         );
     });
 

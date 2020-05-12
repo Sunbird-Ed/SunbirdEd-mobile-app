@@ -986,7 +986,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
       InteractSubtype.CONTENT_CLICKED,
       !this.appGlobalService.isOnBoardingCompleted ? Environment.ONBOARDING : Environment.HOME,
-      this.isDialCodeSearch ? PageId.DIAL_SEARCH : this.source,
+      this.isDialCodeSearch ? PageId.DIAL_SEARCH : (this.source || PageId.SEARCH),
       telemetryObject,
       values,
       ContentUtil.generateRollUp(undefined, identifier),
@@ -1368,7 +1368,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
       this.corRelationList = new Array<CorrelationData>();
     }
     const corRelation: CorrelationData = new CorrelationData();
-    corRelation.id = id;
+    corRelation.id = id || '';
     corRelation.type = type;
     this.corRelationList.push(corRelation);
   }
