@@ -449,11 +449,11 @@ export class TelemetryGeneratorService {
             ImpressionType.PAGE_LOADED, '',
             pageId,
             env,
-            correlationList,
             objId,
             objType,
             objversion,
-            rollup
+            rollup,
+            correlationList
         );
     }
 }
