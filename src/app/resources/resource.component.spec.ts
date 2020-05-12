@@ -286,7 +286,8 @@ describe('ResourcesComponent', () => {
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             mockTelemetryGeneratorService.generateEndSheenAnimationTelemetry = jest.fn();
             jest.spyOn(resourcesComponent, 'generateExtraInfoTelemetry').mockImplementation();
-            mockContentService.searchContentGroupedByPageSection = jest.fn(() => of({
+            jest.spyOn(resourcesComponent, 'getCategoryData').mockImplementation();
+            mockContentService.searchAndGroupContent = jest.fn(() => of({
                 name: 'sample_name',
                 sections: [
                     {
@@ -312,9 +313,10 @@ describe('ResourcesComponent', () => {
             resourcesComponent.getGroupByPage(false, false);
             setTimeout(() => {
                 // assert
+                expect(resourcesComponent.getCategoryData).toHaveBeenCalled();
                 expect(mockAppGlobalService.setSelectedBoardMediumGrade).toHaveBeenCalled();
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
-                expect(mockContentService.searchContentGroupedByPageSection).toHaveBeenCalled();
+                expect(mockContentService.searchAndGroupContent).toHaveBeenCalled();
                 expect(mockNgZone.run).toHaveBeenCalled();
                 done();
             }, 0);
@@ -333,7 +335,8 @@ describe('ResourcesComponent', () => {
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             mockTelemetryGeneratorService.generateEndSheenAnimationTelemetry = jest.fn();
             jest.spyOn(resourcesComponent, 'generateExtraInfoTelemetry').mockImplementation();
-            mockContentService.searchContentGroupedByPageSection = jest.fn(() => of({
+            jest.spyOn(resourcesComponent, 'getCategoryData').mockImplementation();
+            mockContentService.searchAndGroupContent = jest.fn(() => of({
                 name: 'sample_name',
                 sections: [
                     {
@@ -360,9 +363,10 @@ describe('ResourcesComponent', () => {
             resourcesComponent.getGroupByPage(false, false);
             setTimeout(() => {
                 // assert
+                expect(resourcesComponent.getCategoryData).toHaveBeenCalled();
                 expect(mockAppGlobalService.setSelectedBoardMediumGrade).toHaveBeenCalled();
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
-                expect(mockContentService.searchContentGroupedByPageSection).toHaveBeenCalled();
+                expect(mockContentService.searchAndGroupContent).toHaveBeenCalled();
                 expect(mockNgZone.run).toHaveBeenCalled();
                 done();
             }, 0);
@@ -380,8 +384,9 @@ describe('ResourcesComponent', () => {
             mockAppGlobalService.setSelectedBoardMediumGrade = jest.fn();
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             mockTelemetryGeneratorService.generateEndSheenAnimationTelemetry = jest.fn();
+            jest.spyOn(resourcesComponent, 'getCategoryData').mockImplementation();
             jest.spyOn(resourcesComponent, 'generateExtraInfoTelemetry').mockImplementation();
-            mockContentService.searchContentGroupedByPageSection = jest.fn(() => of({
+            mockContentService.searchAndGroupContent = jest.fn(() => of({
                 name: 'sample_name',
                 sections: [
                     {
@@ -406,9 +411,10 @@ describe('ResourcesComponent', () => {
             resourcesComponent.getGroupByPage(false, false);
             setTimeout(() => {
                 // assert
+                expect(resourcesComponent.getCategoryData).toHaveBeenCalled();
                 expect(mockAppGlobalService.setSelectedBoardMediumGrade).toHaveBeenCalled();
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
-                expect(mockContentService.searchContentGroupedByPageSection).toHaveBeenCalled();
+                expect(mockContentService.searchAndGroupContent).toHaveBeenCalled();
                 expect(mockNgZone.run).toHaveBeenCalled();
                 done();
             }, 0);
@@ -425,7 +431,7 @@ describe('ResourcesComponent', () => {
             };
             mockAppGlobalService.setSelectedBoardMediumGrade = jest.fn();
             mockTelemetryGeneratorService.generateEndSheenAnimationTelemetry = jest.fn();
-            mockContentService.searchContentGroupedByPageSection = jest.fn(() => {
+            mockContentService.searchAndGroupContent = jest.fn(() => {
                 return of(Promise.reject('SERVER_ERROR'));
             });
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
@@ -440,7 +446,7 @@ describe('ResourcesComponent', () => {
                 // assert
                 expect(mockAppGlobalService.setSelectedBoardMediumGrade).toHaveBeenCalled();
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
-                expect(mockContentService.searchContentGroupedByPageSection).toHaveBeenCalled();
+                expect(mockContentService.searchAndGroupContent).toHaveBeenCalled();
                 expect(mockNgZone.run).toHaveBeenCalled();
                 // expect(mockCommonUtilService.convertFileSrc).toHaveBeenCalledWith('http://sample.path');
                 done();
@@ -1177,7 +1183,6 @@ describe('ResourcesComponent', () => {
         it('calls getCurrentUser and getCategoryData when called upon', (done) => {
             // arrange
             const refresher = {target: {complete: jest.fn()}};
-            jest.spyOn(resourcesComponent, 'getCategoryData').mockImplementation();
             jest.spyOn(resourcesComponent, 'getCurrentUser').mockImplementation();
             mockTelemetryGeneratorService.generatePullToRefreshTelemetry = jest.fn();
             jest.spyOn(resourcesComponent, 'getGroupByPage').mockImplementation();
@@ -1185,7 +1190,6 @@ describe('ResourcesComponent', () => {
             resourcesComponent.swipeDownToRefresh(refresher);
             // assert
             setTimeout(() => {
-                expect(resourcesComponent.getCategoryData).toHaveBeenCalled();
                 expect(resourcesComponent.getCurrentUser).toHaveBeenCalled();
                 expect(mockTelemetryGeneratorService.generatePullToRefreshTelemetry).toHaveBeenCalledWith(
                     PageId.LIBRARY, Environment.HOME
