@@ -335,6 +335,9 @@ export class ViewMoreActivityComponent implements OnInit {
         if (data) {
           this.searchList = data;
           this.loadMoreBtn = false;
+          for (const course of data) {
+            course.completionPercentage = course.completionPercentage || 0;
+          }
         }
         this.isLoading = false;
       })
@@ -740,6 +743,7 @@ export class ViewMoreActivityComponent implements OnInit {
             if (this.enrolledCourses.length > 0) {
               const courseList: Array<Course> = [];
               for (const course of this.enrolledCourses) {
+                course.completionPercentage = course.completionPercentage || 0;
                 courseList.push(course);
               }
 
