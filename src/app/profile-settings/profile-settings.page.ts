@@ -1,14 +1,21 @@
-import {FormAndFrameworkUtilService} from './../../services/formandframeworkutil.service';
-import {AfterViewInit, Component, ElementRef, Inject, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {combineLatest, Observable, Subscription} from 'rxjs';
-import {delay, tap} from 'rxjs/operators';
-import {ActivatedRoute, NavigationExtras, Router} from '@angular/router';
-import {AppVersion} from '@ionic-native/app-version/ngx';
-import {TranslateService} from '@ngx-translate/core';
-import {FormControl, FormGroup} from '@angular/forms';
-import {ProfileConstants, RouterLinks} from '@app/app/app.constant';
-import {GUEST_STUDENT_TABS, GUEST_TEACHER_TABS, initTabs} from '@app/app/module.service';
-import {Environment, ImpressionType, InteractSubtype, InteractType, PageId, CorReleationDataType} from '@app/services/telemetry-constants';
+import { FormAndFrameworkUtilService } from './../../services/formandframeworkutil.service';
+import { AfterViewInit, Component, ElementRef, Inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { combineLatest, Observable, Subscription } from 'rxjs';
+import { delay, tap } from 'rxjs/operators';
+import { ActivatedRoute, NavigationExtras, Router } from '@angular/router';
+import { AppVersion } from '@ionic-native/app-version/ngx';
+import { TranslateService } from '@ngx-translate/core';
+import { FormControl, FormGroup } from '@angular/forms';
+import { ProfileConstants, RouterLinks } from '@app/app/app.constant';
+import { GUEST_STUDENT_TABS, GUEST_TEACHER_TABS, initTabs } from '@app/app/module.service';
+import {
+  Environment,
+  ImpressionType,
+  InteractSubtype,
+  InteractType,
+  PageId,
+  CorReleationDataType
+} from '@app/services/telemetry-constants';
 import {
   Framework,
   FrameworkCategoryCode,
@@ -34,10 +41,10 @@ import {
   SunbirdQRScanner,
   TelemetryGeneratorService
 } from 'services';
-import {AlertController, Events, Platform} from '@ionic/angular';
-import {Location} from '@angular/common';
-import {SplashScreenService} from '@app/services/splash-screen.service';
-import {CachedItemRequestSourceFrom} from '@project-sunbird/sunbird-sdk';
+import { AlertController, Events, Platform } from '@ionic/angular';
+import { Location } from '@angular/common';
+import { SplashScreenService } from '@app/services/splash-screen.service';
+import { CachedItemRequestSourceFrom } from '@project-sunbird/sunbird-sdk';
 
 @Component({
   selector: 'app-profile-settings',
@@ -128,14 +135,6 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
   }
 
   async ngOnInit() {
-
-    /* New Telemetry */
-    this.telemetryGeneratorService.generateImpressionTelemetry(
-      ImpressionType.PAGE_REQUEST, '',
-      PageId.SCAN_OR_MANUAL,
-      Environment.ONBOARDING
-    );
-
     this.handleActiveScanner();
 
     this.appVersion.getAppName().then((appName) => {
@@ -149,6 +148,7 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
     this.formControlSubscriptions = combineLatest(
       this.onSyllabusChange(),
       this.onMediumChange(),
+      this.onGradeChange(),
       this.profileSettingsForm.valueChanges.pipe(
         delay(250),
         tap(() => {
@@ -158,15 +158,6 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
     ).subscribe();
 
     await this.fetchSyllabusList();
-
-    /* New Telemetry */
-    const correlationList: Array<CorrelationData> = [];
-    correlationList.push({ id: this.syllabusList.length.toString(), type:  CorReleationDataType.BOARD_COUNT});
-    this.telemetryGeneratorService.generatePageLoadedTelemetry(
-      PageId.SCAN_OR_MANUAL,
-      Environment.ONBOARDING,
-      correlationList
-    );
   }
 
 
@@ -176,16 +167,16 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
         this.formAndFrameworkUtilService.getWebviewConfig().then((webviewVersion) => {
           if (parseInt(packageInfo.versionName.split('.')[0], 10) <= webviewVersion) {
             this.animatedQRImageRef.nativeElement.style.width =
-            this.animatedQRImageRef.nativeElement.style.height = 'auto';
+              this.animatedQRImageRef.nativeElement.style.height = 'auto';
             this.animatedQRImageRef.nativeElement.style.minWidth =
-            this.animatedQRImageRef.nativeElement.style.minHeight = 0;
+              this.animatedQRImageRef.nativeElement.style.minHeight = 0;
           }
         }).catch(() => {
           if (parseInt(packageInfo.versionName.split('.')[0], 10) <= 54) {
             this.animatedQRImageRef.nativeElement.style.width =
-            this.animatedQRImageRef.nativeElement.style.height = 'auto';
+              this.animatedQRImageRef.nativeElement.style.height = 'auto';
             this.animatedQRImageRef.nativeElement.style.minWidth =
-            this.animatedQRImageRef.nativeElement.style.minHeight = 0;
+              this.animatedQRImageRef.nativeElement.style.minHeight = 0;
           }
         });
       });
@@ -228,9 +219,16 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
     if (this.router.url === '/' + RouterLinks.PROFILE_SETTINGS) {
       setTimeout(() => {
         this.telemetryGeneratorService.generateImpressionTelemetry(
-            ImpressionType.VIEW, '',
-            PageId.ONBOARDING_PROFILE_PREFERENCES,
-            Environment.ONBOARDING
+          ImpressionType.VIEW, '',
+          PageId.ONBOARDING_PROFILE_PREFERENCES,
+          Environment.ONBOARDING
+        );
+
+        /* New Telemetry */
+        this.telemetryGeneratorService.generateImpressionTelemetry(
+          ImpressionType.PAGE_REQUEST, '',
+          PageId.SCAN_OR_MANUAL,
+          Environment.ONBOARDING
         );
       }, 350);
     }
@@ -289,32 +287,25 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
     );
 
     /* New Telemetry */
-    const correlationList: Array<CorrelationData> = [];
-    let correlationData: CorrelationData = new CorrelationData();
-    switch(category) {
+    let correlationList: Array<CorrelationData> = [];
+    switch (category) {
       case 'board':
-        correlationData.id = this.syllabusControl.value;
-        correlationData.type = CorReleationDataType.BOARD;
+        correlationList = this.populateCData(this.syllabusControl.value, CorReleationDataType.BOARD);
         break;
       case 'medium':
-        correlationData.id = this.mediumControl.value;
-        correlationData.type = CorReleationDataType.MEDIUM;
+        correlationList = this.populateCData(this.mediumControl.value, CorReleationDataType.MEDIUM);
         break;
       case 'grade':
-        correlationData.id = this.gradeControl.value;
-        correlationData.type = CorReleationDataType.CLASS;
+        correlationList = this.populateCData(this.gradeControl.value, CorReleationDataType.CLASS);
         break;
     }
-    correlationList.push(correlationData);
-    const rollUpObj: Rollup = new Rollup();
-    rollUpObj.l1 = PageId.PROFILE_SETTINGS;
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.SELECT_CANCEL, '',
       Environment.ONBOARDING,
       PageId.POPUP_CATEGORY,
       undefined,
       undefined,
-      rollUpObj,
+      undefined,
       correlationList
     );
   }
@@ -471,12 +462,27 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
 
     this.frameworkUtilService.getActiveChannelSuggestedFrameworkList(getSuggestedFrameworksRequest).toPromise()
       .then(async (frameworks: Framework[]) => {
+
         if (!frameworks || !frameworks.length) {
           await this.loader.dismiss();
           this.commonUtilService.showToast('NO_DATA_FOUND');
           return;
         }
         this.syllabusList = frameworks.map(r => ({ name: r.name, code: r.identifier }));
+
+
+        /* New Telemetry */
+        const correlationList: Array<CorrelationData> = [];
+        correlationList.push({ id: this.syllabusList.length.toString(), type: CorReleationDataType.BOARD_COUNT });
+        this.telemetryGeneratorService.generatePageLoadedTelemetry(
+          PageId.SCAN_OR_MANUAL,
+          Environment.ONBOARDING,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          correlationList
+        );
         await this.loader.dismiss();
       });
   }
@@ -516,7 +522,7 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
           };
 
           const boardTerm = (await this.frameworkUtilService.getFrameworkCategoryTerms(boardCategoryTermsRequet).toPromise())
-            .find(b => b.name === (this.syllabusList.find((s) => s.code === value[0])!.name));
+            .find(b => b.name === (this.syllabusList.find((s) => s.code === value[0]).name));
 
           this.boardControl.patchValue([boardTerm.code]);
 
@@ -637,9 +643,9 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
           PageId.ONBOARDING_PROFILE_PREFERENCES, profile, 'manual', Environment.ONBOARDING
         );
         const correlationlist: Array<CorrelationData> = [];
-        correlationlist.push({ id: this.boardControl.value, type: CorReleationDataType.BOARD });
-        correlationlist.push({ id: this.mediumControl.value, type: CorReleationDataType.MEDIUM });
-        correlationlist.push({ id: this.gradeControl.value, type: CorReleationDataType.CLASS });
+        correlationlist.concat(this.populateCData(this.boardControl.value, CorReleationDataType.BOARD));
+        correlationlist.concat(this.populateCData(this.mediumControl.value, CorReleationDataType.MEDIUM));
+        correlationlist.concat(this.populateCData(this.gradeControl.value, CorReleationDataType.CLASS));
         this.telemetryGeneratorService.generateAuditTelemetry(
           Environment.ONBOARDING,
           AuditState.AUDIT_UPDATED,
@@ -659,21 +665,18 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
       });
   }
 
-  generateProfileSetTelemetry() {
-    /* New Telemetry */
+
+  private populateCData(formControllerValues, correlationType): Array<CorrelationData> {
     const correlationList: Array<CorrelationData> = [];
-    correlationList.push({ id: this.syllabusControl.value, type: CorReleationDataType.BOARD });
-    correlationList.push({ id: this.mediumControl.value, type: CorReleationDataType.MEDIUM });
-    correlationList.push({ id: this.gradeControl.value, type: CorReleationDataType.BOARD });
-    this.telemetryGeneratorService.generateInteractTelemetry(
-      InteractType.SELECT_SUBMIT, '',
-      Environment.ONBOARDING,
-      PageId.PROFILE_SETTINGS,
-      undefined,
-      undefined,
-      undefined,
-      correlationList
-    );
+    if (formControllerValues) {
+      formControllerValues.forEach((value) => {
+        correlationList.push({
+          id: value,
+          type: correlationType
+        });
+      });
+    }
+    return correlationList;
   }
 
   private resetProfileSettingsForm() {
@@ -698,9 +701,9 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
       PageId.PROFILE_SETTINGS,
       Environment.ONBOARDING
     );
-    
+
     const correlationList: Array<CorrelationData> = [];
-    correlationList.push({ id: this.syllabusList.length.toString(), type:  CorReleationDataType.BOARD_COUNT});
+    correlationList.push({ id: this.syllabusList.length.toString(), type: CorReleationDataType.BOARD_COUNT });
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.SELECT_CATEGORY, '',
       Environment.ONBOARDING,
@@ -718,8 +721,8 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
 
   onCategoryCliked(category: string) {
     const correlationList: Array<CorrelationData> = [];
-    let correlationData: CorrelationData = new CorrelationData();
-    switch(category) {
+    const correlationData: CorrelationData = new CorrelationData();
+    switch (category) {
       case 'board':
         correlationData.id = this.syllabusList.length.toString();
         correlationData.type = CorReleationDataType.BOARD_COUNT;
@@ -746,32 +749,35 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
   }
 
   generateCategorySubmitTelemetry(category: string) {
-    const correlationList: Array<CorrelationData> = [];
-    let correlationData: CorrelationData = new CorrelationData();
-    switch(category) {
+    let correlationList: Array<CorrelationData> = [];
+    switch (category) {
       case 'board':
-        correlationData.id = this.syllabusControl.value;
-        correlationData.type = CorReleationDataType.BOARD;
+        if (!this.syllabusControl.value.length) {
+          return;
+        }
+        correlationList = this.populateCData(this.syllabusControl.value, CorReleationDataType.BOARD);
         break;
       case 'medium':
-        correlationData.id = this.mediumControl.value;
-        correlationData.type = CorReleationDataType.MEDIUM;
+        if (!this.mediumControl.value.length) {
+          return;
+        }
+        correlationList = this.populateCData(this.mediumControl.value, CorReleationDataType.MEDIUM);
         break;
       case 'grade':
-        correlationData.id = this.gradeControl.value;
-        correlationData.type = CorReleationDataType.CLASS;
+        if (!this.gradeControl.value.length) {
+          return;
+        }
+        correlationList = this.populateCData(this.gradeControl.value, CorReleationDataType.CLASS);
         break;
     }
-    correlationList.push(correlationData);
-    const rollUpObj: Rollup = new Rollup();
-    rollUpObj.l1 = PageId.PROFILE_SETTINGS;
+
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.SELECT_SUBMIT, '',
       Environment.ONBOARDING,
       PageId.POPUP_CATEGORY,
       undefined,
       undefined,
-      rollUpObj,
+      undefined,
       correlationList
     );
   }

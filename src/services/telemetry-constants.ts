@@ -481,4 +481,10 @@ export enum CorReleationDataType {
     FIRST_TIME_USER = 'FirstTimeUser'
 }
 
+export enum AuditProps {
+    LANGUAGE = 'language',
+    PROFILE_TYPE = 'profile_type'
+}
+
+
 
