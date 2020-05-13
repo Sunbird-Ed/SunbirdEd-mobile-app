@@ -680,8 +680,11 @@
   "COURSES": "Courses",
   "TEXTBOOKS": "Textbooks",
   "VERIFY": "Verify",
-  "ENTER_STUDENT_ID": "Enter Student's ID",
-  "STUDENT_ID": "Student ID",
-  "ADD_NEW_STUDENT": "Add new student",
-  "ADD_TO_CLASSROOM": "Add to classroom"
+  "ENTER_MEMBER_ID": "Enter a valid member ID",
+  "INVALID_MEMBER_ID": "Invalid member ID",
+  "MEMBER_ID": "Member ID",
+  "ADD_MEMBER": "Add member",
+  "ADD_NEW_MEMBER": "Add new member",
+  "ADD_MEMBER_CONFIRMATION":  "Do you want to add <b>{{%s}}</b> as a member",
+  "ADD_TO_GROUPS": "Add to groups"
 }
