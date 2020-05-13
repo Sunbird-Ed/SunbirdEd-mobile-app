@@ -49,7 +49,7 @@ export class CreateEditClassroomPage implements OnInit, OnDestroy {
   disableSubmitButton = false;
 
   profile: Profile;
-  profileEditForm: FormGroup;
+  classroomEditForm: FormGroup;
   frameworkId: string;
   categories = [];
   btnColor = '#8FC4FF';
@@ -90,23 +90,23 @@ export class CreateEditClassroomPage implements OnInit, OnDestroy {
   isBoardAvailable = true;
 
   get syllabusControl(): FormControl {
-    return this.profileEditForm.get('syllabus') as FormControl;
+    return this.classroomEditForm.get('syllabus') as FormControl;
   }
 
   get boardControl(): FormControl {
-    return this.profileEditForm.get('boards') as FormControl;
+    return this.classroomEditForm.get('boards') as FormControl;
   }
 
   get mediumControl(): FormControl {
-    return this.profileEditForm.get('medium') as FormControl;
+    return this.classroomEditForm.get('medium') as FormControl;
   }
 
   get gradeControl(): FormControl {
-    return this.profileEditForm.get('grades') as FormControl;
+    return this.classroomEditForm.get('grades') as FormControl;
   }
 
   get subjectControl(): FormControl {
-    return this.profileEditForm.get('subjects') as FormControl;
+    return this.classroomEditForm.get('subjects') as FormControl;
   }
 
   errorMessages = {
@@ -199,7 +199,7 @@ export class CreateEditClassroomPage implements OnInit, OnDestroy {
     if (this.profile.board && this.profile.board.length > 1) {
       this.profile.board.splice(1, this.profile.board.length);
     }
-    this.profileEditForm = this.fb.group({
+    this.classroomEditForm = this.fb.group({
       classroomName: '',
       syllabus: [],
       boards: [],
@@ -386,7 +386,7 @@ export class CreateEditClassroomPage implements OnInit, OnDestroy {
   }
 
   onSubmit() {
-    const formVal = this.profileEditForm.value;
+    const formVal = this.classroomEditForm.value;
     if (!formVal.classroomName.trim().length) {
       this.errorMessages.className.show = true;
       return;

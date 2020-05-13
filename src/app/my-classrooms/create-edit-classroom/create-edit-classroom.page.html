@@ -1,5 +1,5 @@
 <ion-content>
-  <form [formGroup]="profileEditForm">
+  <form [formGroup]="classroomEditForm">
     <p class="cr-title">{{'ENTER_THE_FOLLOWING_INFORMATION' | translate}}</p>
 
     <ion-item class="input-item" [ngClass]="{'cr-input-primary': !errorMessages.className.show ,'cr-input-error': errorMessages.className.show }">
@@ -26,7 +26,7 @@
       <ion-select [selectedText]="selectedText.medium" formControlName="medium" #mediumSelect multiple="true" [interfaceOptions]="mediumOptions"
         placeholder="{{ (mediumList.length ? 'MEDIUM_OPTION_TEXT':'NO_DATA_FOUND') | translate }}"
         okText="{{'BTN_SUBMIT' | translate}}" cancelText="{{'CANCEL' | translate}}"
-        [disabled]="(!mediumList.length || (profileEditForm.value.boards === '' && isBoardAvailable))">
+        [disabled]="(!mediumList.length || (classroomEditForm.value.boards === '' && isBoardAvailable))">
         <ion-select-option *ngFor="let medium of mediumList" value="{{medium?.code}}">{{medium?.name}}
         </ion-select-option>
       </ion-select>
@@ -38,7 +38,7 @@
       <ion-select [selectedText]="selectedText.grade" formControlName="grades" #gradeSelect multiple="true" [interfaceOptions]="classOptions"
         placeholder="{{ (gradeList.length ? 'GRADE_OPTION_TEXT':'NO_DATA_FOUND') | translate }}"
         okText="{{'BTN_SUBMIT' | translate}}" cancelText="{{'CANCEL' | translate}}"
-        [disabled]="(!gradeList.length || !(profileEditForm.value.medium != ''))">
+        [disabled]="(!gradeList.length || !(classroomEditForm.value.medium != ''))">
         <ion-select-option *ngFor="let grade of gradeList" class="ion-text-capitalize" value="{{grade?.code}}">
           {{grade?.name}}
         </ion-select-option>
@@ -51,7 +51,7 @@
       <ion-select [selectedText]="selectedText.subject" formControlName="subjects" multiple="true" [interfaceOptions]="subjectOptions"
         placeholder="{{ (subjectList.length ? 'SUBJECT_OPTION_TEXT':'NO_DATA_FOUND') | translate }}"
         okText="{{'BTN_SUBMIT' | translate}}" #subjectSelect
-        [disabled]="(!subjectList.length || !(profileEditForm.value.grades != ''))"
+        [disabled]="(!subjectList.length || !(classroomEditForm.value.grades != ''))"
         cancelText="{{'CANCEL' | translate}}">
         <ion-select-option *ngFor="let subject of subjectList" value="{{subject?.code}}">{{subject?.name}}
         </ion-select-option>
@@ -65,7 +65,7 @@
   <ion-row class="padding-12">
     <ion-col size-md="10" offset-md="1">
       <ion-button class="ion-text-capitalize" expand="block" [ngStyle]="{'background-color': btnColor}"
-        [disabled]="profileEditForm.invalid || disableSubmitButton" (click)="onSubmit()">{{'CREATE_GROUP' | translate}}
+        [disabled]="classroomEditForm.invalid || disableSubmitButton" (click)="onSubmit()">{{'CREATE_GROUP' | translate}}
       </ion-button>
     </ion-col>
   </ion-row>
