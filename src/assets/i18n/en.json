@@ -677,5 +677,11 @@
   "CURRENTLY_YOU_DO_NOT_HAVE_ANY_GROUPS": "Currently, you do not have any Groups",
   "GROUP_NAME_IS_REQUIRED": "Group name is required.",
   "ENTER_THE_FOLLOWING_INFORMATION": "Enter the following information",
-  "COURSES": "Courses"
+  "COURSES": "Courses",
+  "TEXTBOOKS": "Textbooks",
+  "VERIFY": "Verify",
+  "ENTER_STUDENT_ID": "Enter Student's ID",
+  "STUDENT_ID": "Student ID",
+  "ADD_NEW_STUDENT": "Add new student",
+  "ADD_TO_CLASSROOM": "Add to classroom"
 }

@@ -42,4 +42,9 @@ export class MyClassroomsPage implements OnInit {
     this.loginHandlerService.signIn({skipRootNavigation: true});
   }
 
+  // remove later
+  navigateToClassDetails() {
+    this.router.navigate([`/${RouterLinks.MY_CLASSROOMS}/${RouterLinks.CLASS_DETAILS}`]);
+  }
+
 }

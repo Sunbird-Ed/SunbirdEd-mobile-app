@@ -1,0 +1,30 @@
+<ion-content overflow-scroll="true">
+    <div class="au-container" *ngIf="!isUserIdVerified">
+        <h3 class="au-title">{{'ADD_NEW_STUDENT' | translate}}</h3>
+        <div class="au-ip">
+            <p>{{'STUDENT_ID' | translate}}</p>
+            <input type="text" placeholder="{{'ENTER_STUDENT_ID' | translate}}" [(ngModel)]="studentId">
+        </div>
+        <div>
+            <ion-button class="ion-text-capitalize" expand="block" (click)="onVerify()">{{'VERIFY' | translate}}</ion-button>
+        </div>
+    </div>
+    <div class="au-container" *ngIf="isUserIdVerified">
+        <h3 class="au-title">{{'ADD_NEW_STUDENT' | translate}}</h3>
+        <div class="au-ip">
+            <p>{{'STUDENT_ID' | translate}}</p>
+            <input type="text" placeholder="{{'ENTER_STUDENT_ID' | translate}}" [(ngModel)]="userDetails.userId">
+            <ion-icon class="au-clear-icon" ios="ios-close" md="md-close" (click)="onClearUser()"></ion-icon>
+        </div>
+        <div class="au-avatar">
+            <app-profile-avatar [username]="userName"></app-profile-avatar>
+            <h3>{{userName}}</h3>
+        </div>  
+        <div class="au-desc">
+            Do you want to add <span>{{userName}}</span> as a student?
+        </div>
+        <div>
+            <ion-button class="ion-text-capitalize" expand="block" (click)="onAddToClass()">{{'ADD_TO_CLASSROOM' | translate}}</ion-button>
+        </div>
+    </div>
+</ion-content>
