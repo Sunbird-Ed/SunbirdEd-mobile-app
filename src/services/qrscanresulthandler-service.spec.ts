@@ -155,17 +155,14 @@ describe('QRScannerResultHandler', () => {
       mockTelemetryService.updateCampaignParameters = jest.fn();
       // act
       qRScannerResultHandler.handleDialCode('profile-settings',
-        'https://sunbirded.org/get/dial/ABCDEF?utm_source=google-play&channel=igot', 'ABCDEF');
+        'https://sunbirded.org/get/dial/ABCDEF', 'ABCDEF');
       // assert
       expect(mockTelemetryService.updateCampaignParameters).toHaveBeenCalled();
       expect(mockNavController.navigateForward).toHaveBeenCalledWith(['/search'], {
         state: {
           dialCode: 'ABCDEF',
           corRelation: [{ id: 'ABCDEF', type: 'qr' },
-           {id: 'https://sunbirded.org', type: 'Source'},
-           {id: 'Scan', type: 'AccessType'},
-           {id: 'igot', type: 'Source'},
-            {id: 'google-play', type: 'UtmSource'}],
+           {id: 'https://sunbirded.org', type: 'Source'}],
           source: 'profile-settings',
           shouldGenerateEndTelemetry: true
         }
@@ -193,7 +190,7 @@ describe('QRScannerResultHandler', () => {
       mockTelemetryService.updateCampaignParameters = jest.fn();
       // act
       qRScannerResultHandler.handleContentId('profile-settings',
-        'https://sunbirded.org/resources/play/content/do_12345?utm_source=google-play&channel=igot');
+        'https://sunbirded.org/resources/play/content/do_12345');
       // assert
       const values = new Map();
       values['networkAvailable'] = 'Y';
@@ -204,10 +201,7 @@ describe('QRScannerResultHandler', () => {
           state: {
             content,
             corRelation: [{ id: 'do_12345', type: 'qr' },
-            {id: 'https://sunbirded.org', type: 'Source'},
-            {id: 'Scan', type: 'AccessType'},
-            {id: 'igot', type: 'Source'},
-            {id: 'google-play', type: 'UtmSource'}],
+            {id: 'https://sunbirded.org', type: 'Source'}],
             source: 'profile-settings',
             shouldGenerateEndTelemetry: true
           }
@@ -221,7 +215,7 @@ describe('QRScannerResultHandler', () => {
         expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(InteractType.OTHER,
           InteractSubtype.QRCodeScanSuccess,
           Environment.HOME,
-          PageId.QRCodeScanner, { id: 'do_12345?utm_source=google-play&channel=igot', type: 'qr', version: undefined },
+          PageId.QRCodeScanner, { id: 'do_12345', type: 'qr', version: undefined },
           values,
           undefined,
           [{id: 'https://sunbirded.org', type: 'Source'}]);
@@ -229,7 +223,7 @@ describe('QRScannerResultHandler', () => {
           ImpressionType.VIEW, ImpressionSubtype.QR_CODE_VALID,
           PageId.QRCodeScanner,
           Environment.HOME,
-          'do_12345?utm_source=google-play&channel=igot', ObjectType.QR, '');
+          'do_12345', ObjectType.QR, '');
         done();
       });
     });
@@ -244,7 +238,7 @@ describe('QRScannerResultHandler', () => {
       mockTelemetryService.updateCampaignParameters = jest.fn();
       // act
       qRScannerResultHandler.handleContentId('profile-settings',
-        'https://sunbirded.org/resources/play/collection/do_12345?utm_source=google-play&channel=igot');
+        'https://sunbirded.org/resources/play/collection/do_12345');
       // assert
       const values = new Map();
       values['networkAvailable'] = 'Y';
@@ -255,10 +249,7 @@ describe('QRScannerResultHandler', () => {
           state: {
             content,
             corRelation: [{ id: 'do_12345', type: 'qr' },
-            {id: 'https://sunbirded.org', type: 'Source'},
-            {id: 'Scan', type: 'AccessType'},
-            {id: 'igot', type: 'Source'},
-            {id: 'google-play', type: 'UtmSource'}],
+            {id: 'https://sunbirded.org', type: 'Source'}],
             source: 'profile-settings',
             shouldGenerateEndTelemetry: true
           }
@@ -271,7 +262,7 @@ describe('QRScannerResultHandler', () => {
         expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(InteractType.OTHER,
           InteractSubtype.QRCodeScanSuccess,
           Environment.HOME,
-          PageId.QRCodeScanner, { id: 'do_12345?utm_source=google-play&channel=igot', type: 'qr', version: undefined },
+          PageId.QRCodeScanner, { id: 'do_12345', type: 'qr', version: undefined },
           values,
           undefined,
           [{id: 'https://sunbirded.org', type: 'Source'}]);
@@ -279,7 +270,7 @@ describe('QRScannerResultHandler', () => {
           ImpressionType.VIEW, ImpressionSubtype.QR_CODE_VALID,
           PageId.QRCodeScanner,
           Environment.HOME,
-          'do_12345?utm_source=google-play&channel=igot', ObjectType.QR, '');
+          'do_12345', ObjectType.QR, '');
         done();
       });
     });
@@ -294,7 +285,7 @@ describe('QRScannerResultHandler', () => {
       mockTelemetryService.updateCampaignParameters = jest.fn();
       // act
       qRScannerResultHandler.handleContentId('profile-settings',
-        'https://sunbirded.org/learn/course/do_12345?utm_source=google-play&channel=igot');
+        'https://sunbirded.org/learn/course/do_12345');
       // assert
       const values = new Map();
       values['networkAvailable'] = 'Y';
@@ -305,10 +296,7 @@ describe('QRScannerResultHandler', () => {
           state: {
             content,
             corRelation: [{ id: 'do_12345', type: 'qr' },
-            {id: 'https://sunbirded.org', type: 'Source'},
-            {id: 'Scan', type: 'AccessType'},
-            {id: 'igot', type: 'Source'},
-            {id: 'google-play', type: 'UtmSource'}],
+            {id: 'https://sunbirded.org', type: 'Source'}],
             source: 'profile-settings',
             shouldGenerateEndTelemetry: true
           }
@@ -321,7 +309,7 @@ describe('QRScannerResultHandler', () => {
         expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(InteractType.OTHER,
           InteractSubtype.QRCodeScanSuccess,
           Environment.HOME,
-          PageId.QRCodeScanner, { id: 'do_12345?utm_source=google-play&channel=igot', type: 'qr', version: undefined },
+          PageId.QRCodeScanner, { id: 'do_12345', type: 'qr', version: undefined },
           values,
           undefined,
           [{id: 'https://sunbirded.org', type: 'Source'}]);
@@ -329,7 +317,7 @@ describe('QRScannerResultHandler', () => {
           ImpressionType.VIEW, ImpressionSubtype.QR_CODE_VALID,
           PageId.QRCodeScanner,
           Environment.HOME,
-          'do_12345?utm_source=google-play&channel=igot', ObjectType.QR, '');
+          'do_12345', ObjectType.QR, '');
         done();
       });
     });
