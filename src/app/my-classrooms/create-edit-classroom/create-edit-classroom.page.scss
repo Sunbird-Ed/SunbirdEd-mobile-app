@@ -50,6 +50,10 @@
     --border-color: var(--ion-color-danger, #f1453d);
   }
 
+  ion-button{
+    --background: #044F9D !important;
+  }
+
   .item-label-stacked ion-input {
     border-radius: 5px;
     margin-top: 16px;

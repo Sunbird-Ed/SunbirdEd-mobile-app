@@ -112,8 +112,14 @@ export class CreateEditClassroomPage implements OnInit, OnDestroy {
   errorMessages = {
     className: {
       show: false,
-      message: this.commonUtilService.translateMessage('CLASSROOM_NAME_IS_REQUIRED')
+      message: this.commonUtilService.translateMessage('GROUP_NAME_IS_REQUIRED')
     }
+  };
+
+  selectedText = {
+    medium: '',
+    grade: '',
+    subject: '',
   };
 
   constructor(
@@ -150,7 +156,8 @@ export class CreateEditClassroomPage implements OnInit, OnDestroy {
     this.formControlSubscriptions = combineLatest(
       this.onSyllabusChange(),
       this.onMediumChange(),
-      this.onGradeChange()
+      this.onGradeChange(),
+      this.onSubjectChange()
     ).subscribe();
   }
 
@@ -304,6 +311,8 @@ export class CreateEditClassroomPage implements OnInit, OnDestroy {
           this.loader.present();
         });
 
+        this.selectedText.medium = this.formatSelectBoxDisplayText(this.mediumControl, this.mediumList);
+
         try {
           const nextCategoryTermsRequet: GetFrameworkCategoryTermsRequest = {
             frameworkId: this.framework.identifier,
@@ -347,6 +356,8 @@ export class CreateEditClassroomPage implements OnInit, OnDestroy {
             selectedTermsCodes: this.gradeControl.value
           };
 
+          this.selectedText.grade = this.formatSelectBoxDisplayText(this.gradeControl, this.gradeList);
+
           this.subjectList = (await this.frameworkUtilService.getFrameworkCategoryTerms(nextCategoryTermsRequet).toPromise())
             .map(t => ({ name: t.name, code: t.code }));
           if (!this.subjectControl.value && this.initialAutoFill) {
@@ -362,6 +373,14 @@ export class CreateEditClassroomPage implements OnInit, OnDestroy {
         } finally {
           this.loader.dismiss();
         }
+      })
+    );
+  }
+
+  private onSubjectChange(): Observable<string[]> {
+    return this.gradeControl.valueChanges.pipe(
+      tap(async () => {
+        this.selectedText.subject = this.formatSelectBoxDisplayText(this.subjectControl, this.subjectList);
       })
     );
   }
@@ -436,6 +455,21 @@ export class CreateEditClassroomPage implements OnInit, OnDestroy {
       }
       console.error('getFrameWorkCategoryOrder', err);
     }
+  }
+
+  formatSelectBoxDisplayText(selectedCategory: FormControl, categoryList: { name: string, code: string }[]) {
+    let displayText = '';
+    if (selectedCategory && selectedCategory.value && selectedCategory.value.length && categoryList.length) {
+      selectedCategory.value.forEach((categoryCode: string) => {
+        categoryList.forEach(categoryData => {
+          if (categoryData.code === categoryCode) {
+            displayText += (displayText.length) ? ', ' + categoryData.name : categoryData.name;
+            return;
+          }
+        });
+      });
+    }
+    return displayText;
   }
 
 }

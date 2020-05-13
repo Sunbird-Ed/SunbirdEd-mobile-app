@@ -3,8 +3,8 @@
     <p class="cr-title">{{'ENTER_THE_FOLLOWING_INFORMATION' | translate}}</p>
 
     <ion-item class="input-item" [ngClass]="{'cr-input-primary': !errorMessages.className.show ,'cr-input-error': errorMessages.className.show }">
-      <ion-label position="stacked" class="label-font align-text">{{'CLASSROOM_NAME' | translate }}</ion-label>
-      <ion-input formControlName="classroomName" (input)="onInputFields('CLASSNAME', $event)" placeholder="{{'ENTER_CLASSROOM_NAME' | translate}}"></ion-input>
+      <ion-label position="stacked" class="label-font align-text">{{'GROUP_NAME' | translate }}</ion-label>
+      <ion-input formControlName="classroomName" (input)="onInputFields('CLASSNAME', $event)" placeholder="{{'ENTER_GROUP_NAME' | translate}}"></ion-input>
       <span *ngIf="errorMessages.className.show" class="cr-error">{{ errorMessages.className.message }}</span>
     </ion-item>
 
@@ -23,7 +23,7 @@
     <ion-item class="input-item" appCustomIonSelect>
       <ion-label position="stacked" class="label-font align-text">{{'MEDIUM' | translate }}
       </ion-label>
-      <ion-select formControlName="medium" #mediumSelect multiple="true" [interfaceOptions]="mediumOptions"
+      <ion-select [selectedText]="selectedText.medium" formControlName="medium" #mediumSelect multiple="true" [interfaceOptions]="mediumOptions"
         placeholder="{{ (mediumList.length ? 'MEDIUM_OPTION_TEXT':'NO_DATA_FOUND') | translate }}"
         okText="{{'BTN_SUBMIT' | translate}}" cancelText="{{'CANCEL' | translate}}"
         [disabled]="(!mediumList.length || (profileEditForm.value.boards === '' && isBoardAvailable))">
@@ -35,7 +35,7 @@
     <ion-item class="input-item" appCustomIonSelect>
       <ion-label position="stacked" class="label-font align-text">{{'CLASS' | translate }}
       </ion-label>
-      <ion-select formControlName="grades" #gradeSelect multiple="true" [interfaceOptions]="classOptions"
+      <ion-select [selectedText]="selectedText.grade" formControlName="grades" #gradeSelect multiple="true" [interfaceOptions]="classOptions"
         placeholder="{{ (gradeList.length ? 'GRADE_OPTION_TEXT':'NO_DATA_FOUND') | translate }}"
         okText="{{'BTN_SUBMIT' | translate}}" cancelText="{{'CANCEL' | translate}}"
         [disabled]="(!gradeList.length || !(profileEditForm.value.medium != ''))">
@@ -48,7 +48,7 @@
     <ion-item class="input-item" appCustomIonSelect>
       <ion-label position="stacked" class="label-font align-text">{{'SUBJECT' | translate }}
       </ion-label>
-      <ion-select formControlName="subjects" multiple="true" [interfaceOptions]="subjectOptions"
+      <ion-select [selectedText]="selectedText.subject" formControlName="subjects" multiple="true" [interfaceOptions]="subjectOptions"
         placeholder="{{ (subjectList.length ? 'SUBJECT_OPTION_TEXT':'NO_DATA_FOUND') | translate }}"
         okText="{{'BTN_SUBMIT' | translate}}" #subjectSelect
         [disabled]="(!subjectList.length || !(profileEditForm.value.grades != ''))"
@@ -65,7 +65,7 @@
   <ion-row class="padding-12">
     <ion-col size-md="10" offset-md="1">
       <ion-button class="ion-text-capitalize" expand="block" [ngStyle]="{'background-color': btnColor}"
-        [disabled]="profileEditForm.invalid || disableSubmitButton" (click)="onSubmit()">{{'CREATE_CLASSROOM' | translate}}
+        [disabled]="profileEditForm.invalid || disableSubmitButton" (click)="onSubmit()">{{'CREATE_GROUP' | translate}}
       </ion-button>
     </ion-col>
   </ion-row>
