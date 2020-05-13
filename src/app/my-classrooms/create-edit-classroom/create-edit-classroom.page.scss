@@ -46,6 +46,24 @@
     }
   }
 
+  .item-label-stacked.item-select-disabled {
+    ion-label {
+      color: #333;
+    }
+    ion-select {
+      border-color: #333;
+      .select-icon {
+        .select-icon-inner {
+          border-color: #333;
+          animation: none;
+        }
+      }
+      .select-placeholder {
+        color: #333;
+      }
+    }
+  }
+
   ion-item {
     --border-color: var(--ion-color-danger, #f1453d);
   }
