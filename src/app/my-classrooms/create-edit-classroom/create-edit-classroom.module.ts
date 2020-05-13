@@ -6,6 +6,7 @@ import { IonicModule } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
 
 import { CreateEditClassroomPage } from './create-edit-classroom.page';
+import { DirectivesModule } from '@app/directives/directives.module';
 
 const routes: Routes = [
   {
@@ -21,6 +22,7 @@ const routes: Routes = [
     FormsModule,
     ReactiveFormsModule,
     IonicModule,
+    DirectivesModule,
     RouterModule.forChild(routes),
     TranslateModule.forChild()
   ],

@@ -24,19 +24,21 @@ ion-icon {
 .new-feature-badge{
     color: #FFFFFF;
     margin-left: 8px;
-    background-color: #FFA11D;
-    font-size: 10px;
-    height: 16px;
+    background-color: #FF6979;
+    font-size: 8px;
+    font-weight: bold;
+    height: 12px;
     .square-badge{
-        padding: 0 8px;
+        padding: 0 6px;
         float: left;
+        line-height: 1.5;
     }
     .circle-badge{
         float: right;
         border: 1px solid white;
         border-radius: 16px 0 0 16px;
         background-color: white;
-        height: 16px;
+        height: 12px;
         width: 16px;
     }
 }
