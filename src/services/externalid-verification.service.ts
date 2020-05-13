@@ -36,10 +36,10 @@ export class ExternalIdVerificationService {
         if (await this.checkQuizContent()) {
             return;
         }
-        if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
+        const session = await this.appGlobalService.authService.getSession().toPromise();
+        if (!this.commonUtilService.networkInfo.isNetworkAvailable || !session) {
             return;
         }
-        const session = await this.appGlobalService.authService.getSession().toPromise();
         const isCustodianUser = await this.isCustodianUser$.toPromise();
         const serverProfile = await this.profileService.getServerProfilesDetails({
             userId: session.userToken,
@@ -47,7 +47,7 @@ export class ExternalIdVerificationService {
         }).toPromise();
         const tenantSpecificMessages: any = await this.formAndFrameworkUtilService.
             getTenantSpecificMessages(serverProfile.rootOrg.rootOrgId);
-        if (session && isCustodianUser) {
+        if (isCustodianUser) {
             await this.profileService.getUserFeed().toPromise()
                 .then(async (userFeed: UserFeed[]) => {
                     if (userFeed[0] && (userFeed[0].category).toLowerCase() === 'orgmigrationaction') {
