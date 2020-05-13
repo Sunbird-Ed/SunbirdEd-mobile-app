@@ -138,7 +138,7 @@
   "COURSE_PROGRESS_COMPLETED": "Completed: {{%s}} %",
   "COURSE_UNENROLLED": "You have left the training",
   "COURSE_WILL_BE_AVAILABLE": "The batch is available from {{%s}}",
-  "CREATE_GROUP": "Create Group",
+  "CREATE_GROUP": "Create group",
   "CREATE_NEW_GROUP": "Create New Group",
   "CREATE_NEW_USER": "Create New User",
   "CREATE_USER": "Create User",
@@ -672,10 +672,10 @@
   "LOADER_PROGRESS_DESCRIPTION": "We are getting things ready.",
   "LOADER_PROGRESS_DESC_SUB_HEADING": "Hold On...",
   "MY_CLASSROOMS": "My classrooms",
-  "CLASSROOM_NAME": "Classroom Name",
-  "YOU_HAVE_TO_LOG_IN_TO_CREATE_CLASSROOMS": "You have to log in to create classrooms",
-  "CURRENTLY_YOU_DO_NOT_HAVE_ANY_CLASSROOMS": "Currently, you do not have any Classrooms",
-  "CREATE_CLASSROOM": "Create classroom",
+  "MY_GROUPS": "My groups",
+  "YOU_HAVE_TO_LOG_IN_TO_CREATE_GROUPS": "You have to log in to create groups",
+  "CURRENTLY_YOU_DO_NOT_HAVE_ANY_GROUPS": "Currently, you do not have any Groups",
+  "GROUP_NAME_IS_REQUIRED": "Group name is required.",
   "ENTER_THE_FOLLOWING_INFORMATION": "Enter the following information",
   "COURSES": "Courses"
 }
