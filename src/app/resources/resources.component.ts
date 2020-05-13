@@ -29,7 +29,9 @@ import {
   ContentRequest,
   FrameworkService,
   SortOrder,
-  CorrelationData
+  CorrelationData,
+  ContentsGroupedByPageSection,
+  SearchAndGroupContentRequest
 } from 'sunbird-sdk';
 
 import {
@@ -168,6 +170,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   headerObservable: any;
   scrollEventRemover: any;
   subjects: any;
+  searchGroupingContents: any;
   /**
    * Flag to show latest and popular course loader
    */
@@ -455,13 +458,13 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     }
     // swipe down to refresh should not over write current selected options
     if (contentSearchCriteria.grade) {
-      this.getGroupByPageReq.grade = [contentSearchCriteria.grade[0]];
+      this.getGroupByPageReq.grade = contentSearchCriteria.grade;
     }
     if (contentSearchCriteria.medium) {
-      this.getGroupByPageReq.medium = [contentSearchCriteria.medium[0]];
+      this.getGroupByPageReq.medium = contentSearchCriteria.medium;
     }
     if (contentSearchCriteria.board) {
-      this.getGroupByPageReq.board = [contentSearchCriteria.board[0]];
+      this.getGroupByPageReq.board = contentSearchCriteria.board;
     } else {
       this.getGroupByPageReq.channel = [this.channelId];
     }
@@ -492,17 +495,25 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       sortAttribute: 'name',
       sortOrder: SortOrder.ASC
     }];
-    this.contentService.searchContentGroupedByPageSection(this.getGroupByPageReq).toPromise()
-      .then((response: any) => {
+    const request: SearchAndGroupContentRequest =  {
+      groupBy: 'subject',
+      combination: {
+        medium: this.getGroupByPageReq.medium,
+        gradeLevel: this.getGroupByPageReq.grade
+      },
+      searchCriteria: this.getGroupByPageReq
+    };
+    this.contentService.searchAndGroupContent(JSON.parse(JSON.stringify(request))).toPromise()
+      .then((response: ContentsGroupedByPageSection) => {
         this.ngZone.run(() => {
-          const sections = response.sections;
+          this.searchGroupingContents = response;
           const newSections = [];
-          sections.forEach(element => {
-            // element.display = JSON.parse(element.display);
-            if (element.display.name) {
-              if (has(element.display.name, this.selectedLanguage)) {
+          this.getCategoryData();
+          this.searchGroupingContents.sections.forEach(element => {
+            if (element.name) {
+              if (has(element.name, this.selectedLanguage)) {
                 const langs = [];
-                forEach(element.display.name, (value, key) => {
+                forEach(element.name, (value, key) => {
                   langs[key] = value;
                 });
                 element.name = langs[this.selectedLanguage];
@@ -690,7 +701,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.refresh = true;
     this.storyAndWorksheets = [];
 
-    this.getCategoryData();
     this.getCurrentUser();
     if (refresher) {
       refresher.target.complete();
@@ -778,10 +788,14 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
         }
       }
       this.categoryMediumNamesArray = categoryMediumsParam;
-
-      for (let i = 0, len = this.categoryMediumNamesArray.length; i < len; i++) {
-        if (this.getGroupByPageReq.medium[0].toLowerCase().trim() === this.categoryMediumNamesArray[i].toLowerCase().trim()) {
-          this.mediumClickHandler(i, this.categoryMediumNamesArray[i]);
+      if (this.searchGroupingContents.combination.medium) {
+        const indexOfSelectedmediums = this.categoryMediumNamesArray.indexOf(this.searchGroupingContents.combination.medium);
+        this.mediumClickHandler(indexOfSelectedmediums, this.categoryMediumNamesArray[indexOfSelectedmediums]);
+      } else {
+        for (let i = 0, len = this.categoryMediumNamesArray.length; i < len; i++) {
+          if ((this.getGroupByPageReq.medium[0].toLowerCase().trim()) === this.categoryMediumNamesArray[i].toLowerCase().trim()) {
+            this.mediumClickHandler(i, this.categoryMediumNamesArray[i]);
+          }
         }
       }
     }
@@ -798,9 +812,15 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       .then((res: CategoryTerm[]) => {
         this.categoryGradeLevels = res;
         this.categoryGradeLevelsArray = res.map(a => (a.name));
-        for (let i = 0, len = this.categoryGradeLevelsArray.length; i < len; i++) {
-          if (this.getGroupByPageReq.grade[0] === this.categoryGradeLevelsArray[i]) {
-            this.classClickHandler(i);
+        if (this.searchGroupingContents.combination.gradeLevel) {
+          const indexOfselectedClass =
+            this.categoryGradeLevelsArray.indexOf(this.searchGroupingContents.combination.gradeLevel);
+          this.classClickHandler(indexOfselectedClass);
+        } else {
+          for (let i = 0, len = this.categoryGradeLevelsArray.length; i < len; i++) {
+            if (this.getGroupByPageReq.grade[0] === this.categoryGradeLevelsArray[i]) {
+              this.classClickHandler(i);
+            }
           }
         }
       })
