@@ -1,0 +1,15 @@
+<ion-content>
+  <div>
+    <div>
+      <span></span>
+      <span>
+        {{ subjectName }}
+      </span>
+    </div>
+    <div></div>
+  </div>
+  <div *ngFor="let course of courseList" class="mb-8">
+    <sb-course-card [course]="course" [section]="null"
+      [cardImg]="getContentImg(course)" (click)="openCourseDetails(course)"></sb-course-card>
+  </div>
+</ion-content>

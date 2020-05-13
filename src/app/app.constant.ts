@@ -540,6 +540,9 @@ export class RouterLinks {
 
     public static readonly ADD_USER_TO_CLASS = 'add-user-to-class';
 
+    // Curriculum courses
+    public static readonly CURRICULUM_COURSES = 'curriculum-courses';
+    public static readonly CURRICULUM_COURSE_DETAILS = 'curriculum-course-details';
 }
 
 export class LibraryCardTypes {

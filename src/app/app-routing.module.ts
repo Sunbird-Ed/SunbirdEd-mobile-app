@@ -90,6 +90,7 @@ const routes: Routes = [
   },
   { path: RouterLinks.MY_CLASSROOMS, loadChildren: './my-classrooms/my-classrooms.module#MyClassroomsPageModule' },
   { path: RouterLinks.ADD_USER_TO_CLASS, loadChildren: './add-user-to-class/add-user-to-class.module#AddUserToClassPageSModule' },
+  { path: RouterLinks.CURRICULUM_COURSES, loadChildren: './curriculum-courses/curriculum-courses.module#CurriculumCoursesPageModule' },
 
 ];
 
