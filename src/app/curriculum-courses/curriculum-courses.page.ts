@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AppHeaderService, CommonUtilService } from '@app/services';
-import { Router } from '@angular/router';
+import { Router, NavigationExtras } from '@angular/router';
+import { RouterLinks } from '../app.constant';
 import { TranslateService } from '@ngx-translate/core';
 
 @Component({
@@ -12,6 +13,7 @@ export class CurriculumCoursesPage implements OnInit {
 
   subjectName: string;
   courseList: [];
+  theme: string;
 
   constructor(
     private appHeaderService: AppHeaderService,
@@ -22,7 +24,8 @@ export class CurriculumCoursesPage implements OnInit {
     const extrasState = this.router.getCurrentNavigation().extras.state;
     this.subjectName = extrasState.subjectName;
     this.courseList = extrasState.curriculumCourseList;
-   }
+    this.theme = extrasState.theme;
+  }
 
   ionViewWillEnter() {
     this.appHeaderService.showHeaderWithBackButton();
@@ -37,7 +40,15 @@ export class CurriculumCoursesPage implements OnInit {
   }
 
   openCourseDetails(course) {
+    const curriculumCourseParams: NavigationExtras = {
+      state: {
+        textbookName: 'TextBook Name',
+        curriculumCourse: course,
+      }
+    };
 
+    this.router.navigate([`/${RouterLinks.CURRICULUM_COURSES}/${RouterLinks.CURRICULUM_COURSE_DETAILS}`],
+      curriculumCourseParams);
   }
 
 }
