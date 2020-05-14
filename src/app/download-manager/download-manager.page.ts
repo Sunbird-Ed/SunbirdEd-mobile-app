@@ -332,7 +332,7 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
       InteractType.TOUCH,
       InteractSubtype.SETTINGS_CLICKED,
       Environment.DOWNLOADS,
-      PageId.ACTIVE_DOWNLOADS, undefined,
+      PageId.DOWNLOADS, undefined,
       undefined,
       undefined,
       undefined);
