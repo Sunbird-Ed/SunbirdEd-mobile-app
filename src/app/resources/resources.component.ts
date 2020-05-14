@@ -529,7 +529,9 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
             }
             contentListObj = {
               title: element.name,
-              count: element.contents ? element.contents.length + ' courses' : 'no courses',
+              count: element.contents ?
+                this.commonUtilService.translateMessage('NUMBER_OF_COURSES', element.contents.length)
+                : this.commonUtilService.translateMessage('NO_COURSES'),
               theme: this.themeColors[Math.floor(Math.random() * this.themeColors.length)],
               cardImg: this.subjectIcons[Math.floor(Math.random() * this.subjectIcons.length)]
             };
@@ -647,6 +649,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     }
   }
+
   generateExtraInfoTelemetry(sectionsCount) {
     const values = {};
     values['pageSectionCount'] = sectionsCount;

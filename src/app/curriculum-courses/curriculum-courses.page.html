@@ -1,15 +1,17 @@
 <ion-content>
   <div>
     <div>
-      <span></span>
       <span>
         {{ subjectName }}
       </span>
     </div>
-    <div></div>
+    <div>
+      <!-- <p class="sub-heading">{{'NUMBER_OF_COURSES' | translate:{'%s': courseList.length} }}</p> -->
+    </div>
   </div>
   <div *ngFor="let course of courseList" class="mb-8">
-    <sb-course-card [course]="course" [section]="null"
-      [cardImg]="getContentImg(course)" (click)="openCourseDetails(course)"></sb-course-card>
+    <sb-my-course-card [course]="course" [section]="null" [cardImg]="getContentImg(course)"
+      (click)="openCourseDetails(course)">
+    </sb-my-course-card>
   </div>
 </ion-content>

@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AppHeaderService, CommonUtilService } from '@app/services';
 import { Router } from '@angular/router';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-curriculum-courses',
@@ -14,6 +15,7 @@ export class CurriculumCoursesPage implements OnInit {
 
   constructor(
     private appHeaderService: AppHeaderService,
+    private translate: TranslateService,
     private commonUtilService: CommonUtilService,
     private router: Router
   ) {
