@@ -124,7 +124,8 @@ export enum PageId {
     UPGRADE_POPUP = 'update-popup',
     IMPORT_CONTENT_POPUP = 'import-content-popup',
     DOWNLOAD_ALL_CONFIRMATION_POPUP = 'download-all-confirmation-popup',
-    PERMISSION_POPUP = 'permission-popup'
+    PERMISSION_POPUP = 'permission-popup',
+    STORAGE_SETTINGS = 'storage-settings'
 }
 export enum LogType {
     NOTIFICATION = 'notification'
