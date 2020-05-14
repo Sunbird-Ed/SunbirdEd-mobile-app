@@ -379,6 +379,8 @@
   "NO_USERS_ON_THIS_DEVICE": "No users on this device",
   "NO_USERS_SUGGESTION_MESSAGE": "A group must have at least one user ",
   "NUMBER_OF_VOTES": "Number of votes",
+  "NUMBER_OF_COURSES": "{{%s}} courses",
+  "NO_COURSES": "no courses",
   "OFF": "Off",
   "OFFLINE_DOWNLOAD_MESSAGE": "Downloads will resume automatically when there is internet connectivity",
   "OFFLINE_WARNING": "Ensure your device is connected to the internet",

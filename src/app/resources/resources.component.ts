@@ -182,8 +182,8 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   contentList = [];
   themeColors = ['#EA5B5D', '#CBA3F7', '#7BA1F9', '#57B59C'];
   subjectIcons = ['https://i.ya-webdesign.com/images/protractor-vector-360-degree-14.png',
-                  'https://www.valimenta.com/wp-content/uploads/icon-microscope.png',
-                  'https://punchcard.io/wp-content/uploads/2016/03/icon-dna-white.svg'];
+    'https://www.valimenta.com/wp-content/uploads/icon-microscope.png',
+    'https://punchcard.io/wp-content/uploads/2016/03/icon-dna-white.svg'];
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -502,7 +502,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       sortAttribute: 'name',
       sortOrder: SortOrder.ASC
     }];
-    const request: SearchAndGroupContentRequest =  {
+    const request: SearchAndGroupContentRequest = {
       groupBy: 'subject',
       combination: {
         medium: this.getGroupByPageReq.medium,
@@ -517,6 +517,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
           const newSections = [];
           this.getCategoryData();
           this.searchGroupingContents.sections.forEach(element => {
+            let contentListObj;
             if (element.name) {
               if (has(element.name, this.selectedLanguage)) {
                 const langs = [];
@@ -527,8 +528,10 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
               }
             }
             contentListObj = {
-              title : element.name,
-              count : element.contents ? element.contents.length + ' courses' : 'no courses',
+              title: element.name,
+              count: element.contents ?
+                this.commonUtilService.translateMessage('NUMBER_OF_COURSES', element.contents.length)
+                : this.commonUtilService.translateMessage('NO_COURSES'),
               theme: this.themeColors[Math.floor(Math.random() * this.themeColors.length)],
               cardImg: this.subjectIcons[Math.floor(Math.random() * this.subjectIcons.length)]
             };
@@ -646,6 +649,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     }
   }
+
   generateExtraInfoTelemetry(sectionsCount) {
     const values = {};
     values['pageSectionCount'] = sectionsCount;
@@ -1044,18 +1048,18 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.router.navigate([RouterLinks.EXPLORE_BOOK], navigationExtras);
 
     const corRelationList: Array<CorrelationData> = [];
-    corRelationList.push({id: this.profile.board ? this.profile.board.join(',') : '', type: CorReleationDataType.BOARD});
-    corRelationList.push({id: this.currentGrade ? this.currentGrade : '', type: CorReleationDataType.CLASS});
-    corRelationList.push({id: this.currentMedium ? this.currentMedium : '', type: CorReleationDataType.MEDIUM});
+    corRelationList.push({ id: this.profile.board ? this.profile.board.join(',') : '', type: CorReleationDataType.BOARD });
+    corRelationList.push({ id: this.currentGrade ? this.currentGrade : '', type: CorReleationDataType.CLASS });
+    corRelationList.push({ id: this.currentMedium ? this.currentMedium : '', type: CorReleationDataType.MEDIUM });
 
     this.telemetryGeneratorService.generateInteractTelemetry(
-        this.storyAndWorksheets.length === 0 ? InteractType.WITHOUT_CONTENT : InteractType.WITH_CONTENT,
+      this.storyAndWorksheets.length === 0 ? InteractType.WITHOUT_CONTENT : InteractType.WITH_CONTENT,
       '',
       Environment.LIBRARY,
       PageId.LIBRARY,
       undefined,
       undefined, undefined, corRelationList,
-    ID.SEE_MORE_CONTENT_BUTTON_CLICKED);
+      ID.SEE_MORE_CONTENT_BUTTON_CLICKED);
   }
   async getLocalContent() {
     this.locallyDownloadResources = [];
@@ -1170,5 +1174,20 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.networkSubscription) {
       this.networkSubscription.unsubscribe();
     }
+  }
+
+  navigateToCurriculumCourses(event) {
+    const subject = this.storyAndWorksheets.find(s => {
+      return s.name === event.data.title;
+    });
+
+    const curriculumCourseParams: NavigationExtras = {
+      state: {
+        subjectName: subject.name,
+        curriculumCourseList: subject.contents,
+      }
+    };
+
+    this.router.navigate([RouterLinks.CURRICULUM_COURSES], curriculumCourseParams);
   }
 }
