@@ -29,7 +29,9 @@ import {
   ContentRequest,
   FrameworkService,
   SortOrder,
-  CorrelationData
+  CorrelationData,
+  ContentsGroupedByPageSection,
+  SearchAndGroupContentRequest
 } from 'sunbird-sdk';
 
 import {
@@ -168,6 +170,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   headerObservable: any;
   scrollEventRemover: any;
   subjects: any;
+  searchGroupingContents: any;
   /**
    * Flag to show latest and popular course loader
    */
@@ -176,11 +179,21 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   locallyDownloadResources;
   channelId: string;
   coachTimeout: any;
-  contentList = [];
+  courseList = [];
+  subjectThemeAndIconsMap = {
+    Science: {
+      color: '#EA5B5D',
+      icon: 'https://i.ya-webdesign.com/images/protractor-vector-360-degree-14.png'
+    },
+    Mathematics: {
+      color: '#CBA3F7',
+      icon: 'https://www.valimenta.com/wp-content/uploads/icon-microscope.png'
+    }
+  };
   themeColors = ['#EA5B5D', '#CBA3F7', '#7BA1F9', '#57B59C'];
   subjectIcons = ['https://i.ya-webdesign.com/images/protractor-vector-360-degree-14.png',
-                  'https://www.valimenta.com/wp-content/uploads/icon-microscope.png',
-                  'https://punchcard.io/wp-content/uploads/2016/03/icon-dna-white.svg'];
+    'https://www.valimenta.com/wp-content/uploads/icon-microscope.png',
+    'https://punchcard.io/wp-content/uploads/2016/03/icon-dna-white.svg'];
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -461,13 +474,13 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     }
     // swipe down to refresh should not over write current selected options
     if (contentSearchCriteria.grade) {
-      this.getGroupByPageReq.grade = [contentSearchCriteria.grade[0]];
+      this.getGroupByPageReq.grade = contentSearchCriteria.grade;
     }
     if (contentSearchCriteria.medium) {
-      this.getGroupByPageReq.medium = [contentSearchCriteria.medium[0]];
+      this.getGroupByPageReq.medium = contentSearchCriteria.medium;
     }
     if (contentSearchCriteria.board) {
-      this.getGroupByPageReq.board = [contentSearchCriteria.board[0]];
+      this.getGroupByPageReq.board = contentSearchCriteria.board;
     } else {
       this.getGroupByPageReq.channel = [this.channelId];
     }
@@ -478,6 +491,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.getGroupByPage(isAfterLanguageChange, avoidRefreshList);
   }
 
+  // Make this method as private
   getGroupByPage(isAfterLanguageChange = false, avoidRefreshList = false) {
     const selectedBoardMediumGrade = ((this.getGroupByPageReq.board && this.getGroupByPageReq.board.length
       && this.getGroupByPageReq.board[0]) ? this.getGroupByPageReq.board[0] + ', ' : '') +
@@ -488,7 +502,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.storyAndWorksheets = [];
     this.searchApiLoader = !this.refresh;
     const reqvalues = {};
-    this.contentList = [];
+    this.courseList = [];
     reqvalues['pageReq'] = this.getGroupByPageReq;
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.OTHER,
       InteractSubtype.RESOURCE_PAGE_REQUEST,
@@ -499,30 +513,54 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       sortAttribute: 'name',
       sortOrder: SortOrder.ASC
     }];
-    this.contentService.searchContentGroupedByPageSection(this.getGroupByPageReq).toPromise()
-      .then((response: any) => {
+    const request: SearchAndGroupContentRequest = {
+      groupBy: 'subject',
+      combination: {
+        medium: this.getGroupByPageReq.medium,
+        gradeLevel: this.getGroupByPageReq.grade
+      },
+      searchCriteria: this.getGroupByPageReq
+    };
+
+    // Get the course data
+    this.contentService.searchAndGroupContent(JSON.parse(JSON.stringify(request))).toPromise()
+      .then((response: ContentsGroupedByPageSection) => {
         this.ngZone.run(() => {
-          const sections = response.sections;
+          response.sections.forEach(element => {
+            const contentListObj = {
+              title: element.name,
+              count: element.contents ?
+                this.commonUtilService.translateMessage('NUMBER_OF_COURSES', element.contents.length)
+                : this.commonUtilService.translateMessage('NO_COURSES'),
+              theme: this.themeColors[Math.floor(Math.random() * this.themeColors.length)],
+              cardImg: this.subjectIcons[Math.floor(Math.random() * this.subjectIcons.length)]
+            };
+            this.courseList.push(contentListObj);
+          });
+        });
+      })
+      .catch(error => {
+        this.ngZone.run(() => {
+        });
+      });
+
+    // Get the book data
+    this.contentService.searchAndGroupContent(JSON.parse(JSON.stringify(request))).toPromise()
+      .then((response: ContentsGroupedByPageSection) => {
+        this.ngZone.run(() => {
+          this.searchGroupingContents = response;
           const newSections = [];
-          sections.forEach(element => {
-            // element.display = JSON.parse(element.display);
-            let contentListObj;
-            if (element.display.name) {
-              if (has(element.display.name, this.selectedLanguage)) {
+          this.getCategoryData();
+          this.searchGroupingContents.sections.forEach(element => {
+            if (element.name) {
+              if (has(element.name, this.selectedLanguage)) {
                 const langs = [];
-                forEach(element.display.name, (value, key) => {
+                forEach(element.name, (value, key) => {
                   langs[key] = value;
                 });
                 element.name = langs[this.selectedLanguage];
               }
             }
-            contentListObj = {
-              title : element.name,
-              count : element.contents ? element.contents.length + ' courses' : 'no courses',
-              theme: this.themeColors[Math.floor(Math.random() * this.themeColors.length)],
-              cardImg: this.subjectIcons[Math.floor(Math.random() * this.subjectIcons.length)]
-            };
-            this.contentList.push(contentListObj);
             newSections.push(element);
           });
           // END OF TEMPORARY CODE
@@ -636,6 +674,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     }
   }
+
   generateExtraInfoTelemetry(sectionsCount) {
     const values = {};
     values['pageSectionCount'] = sectionsCount;
@@ -705,7 +744,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.refresh = true;
     this.storyAndWorksheets = [];
 
-    this.getCategoryData();
     this.getCurrentUser();
     if (refresher) {
       refresher.target.complete();
@@ -740,6 +778,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
+  
   getCategoryData() {
     const syllabus: Array<string> = this.appGlobalService.getCurrentUser().syllabus;
     const frameworkId = (syllabus && syllabus.length > 0) ? syllabus[0] : undefined;
@@ -793,10 +832,14 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
         }
       }
       this.categoryMediumNamesArray = categoryMediumsParam;
-
-      for (let i = 0, len = this.categoryMediumNamesArray.length; i < len; i++) {
-        if (this.getGroupByPageReq.medium[0].toLowerCase().trim() === this.categoryMediumNamesArray[i].toLowerCase().trim()) {
-          this.mediumClickHandler(i, this.categoryMediumNamesArray[i]);
+      if (this.searchGroupingContents.combination.medium) {
+        const indexOfSelectedmediums = this.categoryMediumNamesArray.indexOf(this.searchGroupingContents.combination.medium);
+        this.mediumClickHandler(indexOfSelectedmediums, this.categoryMediumNamesArray[indexOfSelectedmediums]);
+      } else {
+        for (let i = 0, len = this.categoryMediumNamesArray.length; i < len; i++) {
+          if ((this.getGroupByPageReq.medium[0].toLowerCase().trim()) === this.categoryMediumNamesArray[i].toLowerCase().trim()) {
+            this.mediumClickHandler(i, this.categoryMediumNamesArray[i]);
+          }
         }
       }
     }
@@ -813,9 +856,15 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       .then((res: CategoryTerm[]) => {
         this.categoryGradeLevels = res;
         this.categoryGradeLevelsArray = res.map(a => (a.name));
-        for (let i = 0, len = this.categoryGradeLevelsArray.length; i < len; i++) {
-          if (this.getGroupByPageReq.grade[0] === this.categoryGradeLevelsArray[i]) {
-            this.classClickHandler(i);
+        if (this.searchGroupingContents.combination.gradeLevel) {
+          const indexOfselectedClass =
+            this.categoryGradeLevelsArray.indexOf(this.searchGroupingContents.combination.gradeLevel);
+          this.classClickHandler(indexOfselectedClass);
+        } else {
+          for (let i = 0, len = this.categoryGradeLevelsArray.length; i < len; i++) {
+            if (this.getGroupByPageReq.grade[0] === this.categoryGradeLevelsArray[i]) {
+              this.classClickHandler(i);
+            }
           }
         }
       })
@@ -1025,18 +1074,18 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.router.navigate([RouterLinks.EXPLORE_BOOK], navigationExtras);
 
     const corRelationList: Array<CorrelationData> = [];
-    corRelationList.push({id: this.profile.board ? this.profile.board.join(',') : '', type: CorReleationDataType.BOARD});
-    corRelationList.push({id: this.currentGrade ? this.currentGrade : '', type: CorReleationDataType.CLASS});
-    corRelationList.push({id: this.currentMedium ? this.currentMedium : '', type: CorReleationDataType.MEDIUM});
+    corRelationList.push({ id: this.profile.board ? this.profile.board.join(',') : '', type: CorReleationDataType.BOARD });
+    corRelationList.push({ id: this.currentGrade ? this.currentGrade : '', type: CorReleationDataType.CLASS });
+    corRelationList.push({ id: this.currentMedium ? this.currentMedium : '', type: CorReleationDataType.MEDIUM });
 
     this.telemetryGeneratorService.generateInteractTelemetry(
-        this.storyAndWorksheets.length === 0 ? InteractType.WITHOUT_CONTENT : InteractType.WITH_CONTENT,
+      this.storyAndWorksheets.length === 0 ? InteractType.WITHOUT_CONTENT : InteractType.WITH_CONTENT,
       '',
       Environment.LIBRARY,
       PageId.LIBRARY,
       undefined,
       undefined, undefined, corRelationList,
-    ID.SEE_MORE_CONTENT_BUTTON_CLICKED);
+      ID.SEE_MORE_CONTENT_BUTTON_CLICKED);
   }
   async getLocalContent() {
     this.locallyDownloadResources = [];
@@ -1151,5 +1200,21 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.networkSubscription) {
       this.networkSubscription.unsubscribe();
     }
+  }
+
+  navigateToCurriculumCourses(event) {
+    const subject = this.storyAndWorksheets.find(s => {
+      return s.name === event.data.title;
+    });
+
+    const curriculumCourseParams: NavigationExtras = {
+      state: {
+        theme: event.data.theme,
+        subjectName: subject.name,
+        curriculumCourseList: subject.contents,
+      }
+    };
+
+    this.router.navigate([RouterLinks.CURRICULUM_COURSES], curriculumCourseParams);
   }
 }
