@@ -114,7 +114,7 @@ export class SbAppSharePopupComponent implements OnInit, OnDestroy {
   }
 
   closePopover() {
-    this.generateInteractTelemetry(ShareMode.SHARE, InteractSubtype.CLOSE_CLICKED);
+    this.generateInteractTelemetry(InteractType.TOUCH, InteractSubtype.CLOSE_CLICKED);
     this.popoverCtrl.dismiss();
   }
 
