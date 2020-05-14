@@ -8,14 +8,6 @@
       (selectedFilter)="classClickEvent($event, true);">
     </sb-library-filters>
   </div>
-  <div class="sb-course-container" *ngIf="contentList.length">
-    <sb-course-cards-hlist [multiRow]="contentList.length > 3" [contentList]="contentList" 
-      [type]="'curiculum_course_card_grid'" [title]="'COURSES' | translate" [isLoading]="isLoading"
-      (cardClick)="navigateToCurriculumCourses($event)"
-      [maxCardCount]="20">
-    </sb-course-cards-hlist>
-    <div class="sb-course-heading">{{'TEXTBOOK' | translate}}</div>
-  </div>
   <div class="scrollable-container">
     <ion-refresher (ionRefresh)="swipeDownToRefresh($event)"></ion-refresher>
 
@@ -31,6 +23,13 @@
         </ion-label>
       </ion-item>
     </ion-list>
+
+    <div class="sb-course-container" *ngIf="courseList.length">
+      <sb-course-cards-hlist [multiRow]="courseList.length > 3" [contentList]="courseList"
+        [type]="'curiculum_course_card_grid'" [title]="'COURSES' | translate" [isLoading]="isLoading"
+        (cardClick)="navigateToCurriculumCourses($event)" [maxCardCount]="20">
+      </sb-course-cards-hlist>
+    </div>
 
     <!-- hide recently viewed as part of school@home -->
     <!-- <div *ngIf="recentlyViewedResources && recentlyViewedResources.length">
@@ -73,6 +72,8 @@
       </ion-item>
     </ion-list>
 
+    <div class="sb-course-heading" *ngIf="storyAndWorksheets && storyAndWorksheets.length">{{'TEXTBOOK' | translate}}
+    </div>
     <div *ngFor="let items of storyAndWorksheets">
       <div class="sb-textbook-container" *ngIf="items?.contents && items?.contents?.length">
         <sb-library-cards-stack [title]="items?.name" [contentList]="items?.contents"
@@ -120,7 +121,8 @@
       </ion-list>
     </div>
 
-    <div class="ion-padding" text-center class="mt-32 mb-32" *ngIf="!commonUtilService?.networkInfo?.isNetworkAvailable">
+    <div class="ion-padding" text-center class="mt-32 mb-32"
+      *ngIf="!commonUtilService?.networkInfo?.isNetworkAvailable">
       <img src="assets/imgs/outline-cloud_off.svg" alt="" />
       <ion-text>
         <h6 class="offline-header">

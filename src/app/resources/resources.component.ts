@@ -179,7 +179,17 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   locallyDownloadResources;
   channelId: string;
   coachTimeout: any;
-  contentList = [];
+  courseList = [];
+  subjectThemeAndIconsMap = {
+    Science: {
+      color: '#EA5B5D',
+      icon: 'https://i.ya-webdesign.com/images/protractor-vector-360-degree-14.png'
+    },
+    Mathematics: {
+      color: '#CBA3F7',
+      icon: 'https://www.valimenta.com/wp-content/uploads/icon-microscope.png'
+    }
+  };
   themeColors = ['#EA5B5D', '#CBA3F7', '#7BA1F9', '#57B59C'];
   subjectIcons = ['https://i.ya-webdesign.com/images/protractor-vector-360-degree-14.png',
     'https://www.valimenta.com/wp-content/uploads/icon-microscope.png',
@@ -481,6 +491,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.getGroupByPage(isAfterLanguageChange, avoidRefreshList);
   }
 
+  // Make this method as private
   getGroupByPage(isAfterLanguageChange = false, avoidRefreshList = false) {
     const selectedBoardMediumGrade = ((this.getGroupByPageReq.board && this.getGroupByPageReq.board.length
       && this.getGroupByPageReq.board[0]) ? this.getGroupByPageReq.board[0] + ', ' : '') +
@@ -491,7 +502,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.storyAndWorksheets = [];
     this.searchApiLoader = !this.refresh;
     const reqvalues = {};
-    this.contentList = [];
+    this.courseList = [];
     reqvalues['pageReq'] = this.getGroupByPageReq;
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.OTHER,
       InteractSubtype.RESOURCE_PAGE_REQUEST,
@@ -510,6 +521,30 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       },
       searchCriteria: this.getGroupByPageReq
     };
+
+    // Get the course data
+    this.contentService.searchAndGroupContent(JSON.parse(JSON.stringify(request))).toPromise()
+      .then((response: ContentsGroupedByPageSection) => {
+        this.ngZone.run(() => {
+          response.sections.forEach(element => {
+            const contentListObj = {
+              title: element.name,
+              count: element.contents ?
+                this.commonUtilService.translateMessage('NUMBER_OF_COURSES', element.contents.length)
+                : this.commonUtilService.translateMessage('NO_COURSES'),
+              theme: this.themeColors[Math.floor(Math.random() * this.themeColors.length)],
+              cardImg: this.subjectIcons[Math.floor(Math.random() * this.subjectIcons.length)]
+            };
+            this.courseList.push(contentListObj);
+          });
+        });
+      })
+      .catch(error => {
+        this.ngZone.run(() => {
+        });
+      });
+
+    // Get the book data
     this.contentService.searchAndGroupContent(JSON.parse(JSON.stringify(request))).toPromise()
       .then((response: ContentsGroupedByPageSection) => {
         this.ngZone.run(() => {
@@ -517,7 +552,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
           const newSections = [];
           this.getCategoryData();
           this.searchGroupingContents.sections.forEach(element => {
-            let contentListObj;
             if (element.name) {
               if (has(element.name, this.selectedLanguage)) {
                 const langs = [];
@@ -527,15 +561,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
                 element.name = langs[this.selectedLanguage];
               }
             }
-            contentListObj = {
-              title: element.name,
-              count: element.contents ?
-                this.commonUtilService.translateMessage('NUMBER_OF_COURSES', element.contents.length)
-                : this.commonUtilService.translateMessage('NO_COURSES'),
-              theme: this.themeColors[Math.floor(Math.random() * this.themeColors.length)],
-              cardImg: this.subjectIcons[Math.floor(Math.random() * this.subjectIcons.length)]
-            };
-            this.contentList.push(contentListObj);
             newSections.push(element);
           });
           // END OF TEMPORARY CODE
@@ -753,6 +778,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
+  
   getCategoryData() {
     const syllabus: Array<string> = this.appGlobalService.getCurrentUser().syllabus;
     const frameworkId = (syllabus && syllabus.length > 0) ? syllabus[0] : undefined;
@@ -1183,6 +1209,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
 
     const curriculumCourseParams: NavigationExtras = {
       state: {
+        theme: event.data.theme,
         subjectName: subject.name,
         curriculumCourseList: subject.contents,
       }
