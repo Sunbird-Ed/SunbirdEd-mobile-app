@@ -1105,6 +1105,7 @@ describe('collectionDetailEtbPage', () => {
             collectionDetailEtbPage.cardData = {
                 hierarchyInfo: { identifier: 'do-345' }
             };
+
             mocktextbookTocService.textbookIds = {
                 contentId: 'sample-content-id',
                 rootUnitId: 'sample-id',

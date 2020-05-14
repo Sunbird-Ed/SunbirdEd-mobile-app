@@ -125,7 +125,8 @@ export enum PageId {
     IMPORT_CONTENT_POPUP = 'import-content-popup',
     DOWNLOAD_ALL_CONFIRMATION_POPUP = 'download-all-confirmation-popup',
     PERMISSION_POPUP = 'permission-popup',
-    APP_PERMISSION_POPUP = 'app-permission-popup'
+    APP_PERMISSION_POPUP = 'app-permission-popup',
+    APP_TUTORIAL_POPUP = 'app-tutorial-popup'
 }
 export enum LogType {
     NOTIFICATION = 'notification'
@@ -156,7 +157,7 @@ export enum ImpressionSubtype {
     QR_CODE_VALID = 'qr-code-valid',
     INVALID_QR_CODE = 'invalid-qr-code',
     APP_RATING_POPUP = 'app-rating-popup',
-    QR_SCAN_WALKTHROUGH = 'qr-scan-walkthrough',
+    TUTORIAL_WALKTHROUGH = 'tutorial-walkthrough',
     COMINGSOON_POPUP = 'coming-soon-popup',
     EXPLORE_MORE_CONTENT = 'explore-more-content',
     RECOVERY_ACCOUNT_POPUP = 'recovery-account-popup',
@@ -405,6 +406,7 @@ export enum InteractSubtype {
     DEEPLINK_UPGRADE = 'deep-link-upgrade',
     NO_QR_CODE_CLICKED = 'no-qr-code-clicked',
     DENY_CLICKED = 'deny-clicked',
+    INFORMATION_ICON_CLICKED = 'information-icon-clicked'
 }
 
 export enum ID {

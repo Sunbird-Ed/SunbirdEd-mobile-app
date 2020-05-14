@@ -13,6 +13,7 @@ import { Observable, Observer } from 'rxjs';
 import { PermissionAsked } from './android-permissions/android-permission';
 import { UpgradePopoverComponent } from '@app/app/components/popups';
 import { AppVersion } from '@ionic-native/app-version/ngx';
+import {SbTutorialPopupComponent} from '@app/app/components/popups/sb-tutorial-popup/sb-tutorial-popup.component';
 
 @Injectable({
     providedIn: 'root'
@@ -726,19 +727,33 @@ export class AppGlobalService implements OnDestroy {
         }
     }
 
-    async showCouchMarkScreen() {
+    async showTutorialScreen() {
         if (this.skipCoachScreenForDeeplink) {
             this.skipCoachScreenForDeeplink = false;
         } else {
-            const coachMarkSeen = await this.preferences.getBoolean(PreferenceKey.COACH_MARK_SEEN).toPromise();
-            if (!coachMarkSeen) {
+            const tutorialScreen = await this.preferences.getBoolean(PreferenceKey.COACH_MARK_SEEN).toPromise();
+            if (!tutorialScreen) {
                 const appLabel = await this.appVersion.getAppName();
-                this.event.publish(EventTopics.COACH_MARK_SEEN, { showWalkthroughBackDrop: true, appName: appLabel });
+                const tutorialPopover = await this.popoverCtrl.create({
+                    component: SbTutorialPopupComponent,
+                    componentProps: {appLabel},
+                    showBackdrop: true,
+                    backdropDismiss: false,
+                    cssClass: 'tutorial-popover'
+                });
+                tutorialPopover.present();
                 this.telemetryGeneratorService.generateImpressionTelemetry(
                     ImpressionType.VIEW,
-                    ImpressionSubtype.QR_SCAN_WALKTHROUGH,
+                    ImpressionSubtype.TUTORIAL_WALKTHROUGH,
                     PageId.LIBRARY,
                     Environment.ONBOARDING
+                );
+                const {data} = await tutorialPopover.onDidDismiss();
+                this.telemetryGeneratorService.generateInteractTelemetry(
+                    InteractType.TOUCH,
+                    data.continueClicked ? 'tutorial-continue-clicked' : 'tutorial-close-clicked',
+                    Environment.HOME,
+                    PageId.APP_TUTORIAL_POPUP
                 );
                 this.preferences.putBoolean(PreferenceKey.COACH_MARK_SEEN, true).toPromise().then();
             }

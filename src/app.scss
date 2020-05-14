@@ -1167,3 +1167,22 @@ app-resources{
 .popover-viewport{
   animation-name: none !important;
 }
+.tutorial-popover {
+  .popover-wrapper {
+    width: 85vw;
+    height: 85vh;
+    .popover-content {
+      width: 85vw;
+      height: 85vh;
+      transform-origin: right top !important;
+      overflow: visible;
+      border-radius: 6px;
+      transition-duration: 1000s !important;
+      transition-timing-function: ease-in-out;
+    }
+  }
+}
+.focus-content {
+  color: #0ec254;
+  font-weight: bold;
+}

@@ -662,5 +662,8 @@
   "YOU_ARE_NOT_CONNECTED_TO_THE_INTERNET": "You are not connected to the Internet",
   "YOU_MUST_JOIN_AN_ACTIVE_BATCH": "You must join an active batch to view and access training details",
   "YOU_MUST_JOIN_TO_ACCESS_TRAINING_DETAIL": "You must log in to access training details",
-  "YOU_MUST_LOGIN_TO_ACCESS_QUIZ_CONTENT": "You must login to access this content"
+  "YOU_MUST_LOGIN_TO_ACCESS_QUIZ_CONTENT": "You must login to access this content",
+  "TUTORIAL_HEADING": "Videos, Interactive content and more...",
+  "DETAIL_TUTORIAL": "{{%s}}'s library is a host of videos, <span class=\"focus-content\">interactive content</span> and <span class=\"focus-content\">videos</span> for you to learn and practice concepts from your textbooks. Click on a textbook to get started!",
+  "TUTORIAL_BUTTON": "Lets get started"
 }

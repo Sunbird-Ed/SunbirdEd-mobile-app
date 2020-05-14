@@ -1,0 +1,50 @@
+img.arrow-icon{
+  display: inline-block;
+  width: 22px;
+  margin-top: -3px;
+  &.animate {
+    position: relative;
+    animation: dropDown 5s linear infinite;
+    animation-duration: 0.9s;
+  }
+}
+@keyframes dropDown {
+  0% {right: 0;}
+  50% {right: 10px;}
+  100% {right: 0;}
+}
+
+.tutorial-content {
+  height: 80vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.close-icon {
+  display: inline-block;
+  float: right;
+  position: absolute;
+  top: -10px;
+  right: -6px;
+}
+
+#details-text {
+  font-size: 14px;
+  line-height: 19px;
+  text-align: center;
+  color: #333333;
+  margin-top: 2rem;
+}
+
+#heading-text {
+  margin-top: 1rem;
+  color: #333333;
+  font-weight: bold;
+  padding-left: 5em;
+  padding-right: 4em;
+}
+#main-content {
+  height: 85vh;
+  padding: 16px;
+}
