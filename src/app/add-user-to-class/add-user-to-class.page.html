@@ -1,19 +1,20 @@
 <ion-content overflow-scroll="true">
     <div class="au-container" *ngIf="!isUserIdVerified">
-        <h3 class="au-title">{{'ADD_NEW_STUDENT' | translate}}</h3>
+        <h3 class="au-title">{{'ADD_MEMBER' | translate}}</h3>
         <div class="au-ip">
-            <p>{{'STUDENT_ID' | translate}}</p>
-            <input type="text" placeholder="{{'ENTER_STUDENT_ID' | translate}}" [(ngModel)]="studentId">
+            <p>{{'MEMBER_ID' | translate}}</p>
+            <input [ngClass]="{'error' : showErrorMsg}" type="text" placeholder="{{'ENTER_MEMBER_ID' | translate}}" [(ngModel)]="userId">
+            <p *ngIf="showErrorMsg" class="au-ip-error-msg">{{'INVALID_MEMBER_ID' | translate}}</p>
         </div>
         <div>
             <ion-button class="ion-text-capitalize" expand="block" (click)="onVerify()">{{'VERIFY' | translate}}</ion-button>
         </div>
     </div>
     <div class="au-container" *ngIf="isUserIdVerified">
-        <h3 class="au-title">{{'ADD_NEW_STUDENT' | translate}}</h3>
+        <h3 class="au-title">{{'ADD_NEW_MEMBER' | translate}}</h3>
         <div class="au-ip">
-            <p>{{'STUDENT_ID' | translate}}</p>
-            <input type="text" placeholder="{{'ENTER_STUDENT_ID' | translate}}" [(ngModel)]="userDetails.userId">
+            <p>{{'MEMBER_ID' | translate}}</p>
+            <input type="text" placeholder="{{'ENTER_MEMBER_ID' | translate}}" [(ngModel)]="userDetails.userId" disabled>
             <ion-icon class="au-clear-icon" ios="ios-close" md="md-close" (click)="onClearUser()"></ion-icon>
         </div>
         <div class="au-avatar">
@@ -21,10 +22,13 @@
             <h3>{{userName}}</h3>
         </div>  
         <div class="au-desc">
-            Do you want to add <span>{{userName}}</span> as a student?
+            {{'ADD_MEMBER_CONFIRMATION' | translate : {'%s': userName } }}
         </div>
-        <div>
-            <ion-button class="ion-text-capitalize" expand="block" (click)="onAddToClass()">{{'ADD_TO_CLASSROOM' | translate}}</ion-button>
+        <div class="au-btn">
+            <button class="sb-btn-large" (click)="onAddToGroup()">
+                <img src="assets/imgs/ic_person_add_white.svg">
+                {{'ADD_TO_GROUP' | translate}}
+              </button>
         </div>
     </div>
 </ion-content>

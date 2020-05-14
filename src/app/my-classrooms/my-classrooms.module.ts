@@ -7,6 +7,7 @@ import { TranslateModule } from '@ngx-translate/core';
 
 import { MyClassroomsPage } from './my-classrooms.page';
 import { MyClassroomsRoutingModule } from './my-classrooms-routing.module';
+import { CommonConsumptionModule } from '@project-sunbird/common-consumption';
 
 @NgModule({
   imports: [
@@ -14,7 +15,8 @@ import { MyClassroomsRoutingModule } from './my-classrooms-routing.module';
     FormsModule,
     IonicModule,
     TranslateModule.forChild(),
-    MyClassroomsRoutingModule
+    MyClassroomsRoutingModule,
+    CommonConsumptionModule
   ],
   declarations: [
     MyClassroomsPage,

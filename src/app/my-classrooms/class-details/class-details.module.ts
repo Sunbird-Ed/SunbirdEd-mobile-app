@@ -6,6 +6,9 @@ import { IonicModule } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
 
 import { ClassDetailsPage } from './class-details.page';
+import { CommonConsumptionModule } from '@project-sunbird/common-consumption';
+import { ComponentsModule } from '../../components/components.module';
+import { OverflowMenuComponent } from '../../profile/overflow-menu/overflow-menu.component';
 
 const routes: Routes = [
   {
@@ -22,8 +25,11 @@ const routes: Routes = [
     ReactiveFormsModule,
     IonicModule,
     RouterModule.forChild(routes),
-    TranslateModule.forChild()
+    TranslateModule.forChild(),
+    CommonConsumptionModule,
+    ComponentsModule
   ],
-  exports: [ClassDetailsPage]
+  exports: [ClassDetailsPage],
+  entryComponents: [OverflowMenuComponent]
 })
 export class ClassDetailsPageModule {}

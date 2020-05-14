@@ -1,0 +1,65 @@
+@import "src/assets/styles/base/_variables.scss";
+@import "src/assets/styles/_custom-mixins.scss";
+
+.gd-page{
+    padding: 8px;
+}
+.gd-header{
+    box-shadow: 0 3px 5px 4px rgba(0,0,0,0.05);
+    .gd-title{
+        font-size: 18px;
+        font-weight: bold;
+        padding: 16px;
+        position: relative;
+        .gd-opts{
+            position: absolute;
+            right: 8px;
+            top: 16px;
+            .add-member-icon{
+                position: relative;
+                bottom: 6px;
+                margin-right: 8px;
+            }
+            ion-icon{
+                color: $blue;
+            }
+        }
+    }
+    
+}
+.gd-tab-header{
+    background-color: #E5EDF5;
+    @include clearfix;
+    .gd-tab{
+        float: left;
+        width: 50%;
+        &.active{
+            border-bottom: 2px solid $blue;
+            .gd-tab-name{
+                font-weight: bold;
+            }
+        }
+    }
+    .gd-tab-name{
+        padding: 4px;
+        text-align: center;
+        margin-bottom: 5px;
+        margin-top: 8px;
+        color: #024f9d;
+        font-size: 16px;
+        &.gd-tab-border{
+            border-right: 1px solid #999999;
+        }
+    }
+}
+.cd-btn{
+    padding: 0px 8px 24px;
+    .sb-btn-large{
+      padding: 8px 0px 8px 0px;
+      img{
+        margin-right: 8px;
+        position: relative;
+        bottom: 2px;
+      }
+    }
+}

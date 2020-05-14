@@ -180,6 +180,7 @@ export class MenuOverflow {
     public static readonly MENU_GUEST = ['MY_CLASSROOMS', 'REPORTS', 'SETTINGS'];
     public static readonly MENU_LOGIN = ['MY_CLASSROOMS', 'REPORTS', 'SETTINGS', 'LOGOUT'];
     public static readonly DOWNLOAD_FILTERS = ['CONTENT_SIZE', 'LAST_VIEWED'];
+    public static readonly GROUP_OPTIONS = ['EDIT_NAME'];
 }
 
 export class SideMenu {
