@@ -682,7 +682,7 @@
   "MEMBER_ID": "Member ID",
   "ADD_MEMBER": "Add member",
   "ADD_NEW_MEMBER": "Add new member",
-  "ADD_MEMBER_CONFIRMATION":  "Do you want to add {{%s}} as a member",
+  "ADD_MEMBER_CONFIRMATION":  "Do you want to add <b>{{%s}}</b> as a member",
   "ADD_TO_GROUP": "Add to group",
   "MEMBER_ADDED_TO_GROUP": "Member added to group successfully",
   "GROUP_CREATED": "Group created successfully",

@@ -21,8 +21,7 @@
             <app-profile-avatar [username]="userName"></app-profile-avatar>
             <h3>{{userName}}</h3>
         </div>  
-        <div class="au-desc">
-            {{'ADD_MEMBER_CONFIRMATION' | translate : {'%s': userName } }}
+        <div class="au-desc" [innerHtml]="'ADD_MEMBER_CONFIRMATION' | translate : {'%s': userName } ">
         </div>
         <div class="au-btn">
             <button class="sb-btn-large" (click)="onAddToGroup()">
