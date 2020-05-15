@@ -14,6 +14,8 @@ import { PermissionAsked } from './android-permissions/android-permission';
 import { UpgradePopoverComponent } from '@app/app/components/popups';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import {SbTutorialPopupComponent} from '@app/app/components/popups/sb-tutorial-popup/sb-tutorial-popup.component';
+import {animationGrowInTopRight} from '@app/app/animations/animation-grow-in-top-right';
+import {animationShrinkOutTopRight} from '@app/app/animations/animation-shrink-out-top-right';
 
 @Injectable({
     providedIn: 'root'
@@ -739,7 +741,8 @@ export class AppGlobalService implements OnDestroy {
                     componentProps: {appLabel},
                     showBackdrop: true,
                     backdropDismiss: false,
-                    cssClass: 'tutorial-popover'
+                    enterAnimation: animationGrowInTopRight,
+                    leaveAnimation: animationShrinkOutTopRight
                 });
                 tutorialPopover.present();
                 this.telemetryGeneratorService.generateImpressionTelemetry(

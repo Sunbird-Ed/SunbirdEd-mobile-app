@@ -63,6 +63,8 @@ import { ContentUtil } from '@app/util/content-util';
 import { NotificationService } from '@app/services/notification.service';
 import { applyProfileFilter } from '@app/util/filter.util';
 import {SbTutorialPopupComponent} from '@app/app/components/popups/sb-tutorial-popup/sb-tutorial-popup.component';
+import {animationGrowInTopRight} from '../animations/animation-grow-in-top-right';
+import {animationShrinkOutTopRight} from '../animations/animation-shrink-out-top-right';
 
 @Component({
   selector: 'app-resources',
@@ -987,7 +989,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
         Environment.HOME,
         PageId.LIBRARY
     );
-     this.telemetryGeneratorService.generateImpressionTelemetry(
+    this.telemetryGeneratorService.generateImpressionTelemetry(
          ImpressionType.VIEW,
          ImpressionSubtype.TUTORIAL_WALKTHROUGH,
          PageId.LIBRARY,
@@ -996,9 +998,10 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.tutorialPopover = await this.popoverCtrl.create({
       component: SbTutorialPopupComponent,
       componentProps: {appLabel: this.appLabel},
-      showBackdrop: true,
+      enterAnimation: animationGrowInTopRight,
+      leaveAnimation: animationShrinkOutTopRight,
       backdropDismiss: false,
-      cssClass: 'tutorial-popover'
+      showBackdrop: true
     });
     this.tutorialPopover.present();
     const {data} = await this.tutorialPopover.onDidDismiss();

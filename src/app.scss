@@ -1169,16 +1169,14 @@ app-resources{
 }
 .tutorial-popover {
   .popover-wrapper {
-    width: 85vw;
-    height: 85vh;
+    width: calc(100vw - 50px);
+    height: calc(100vh - 52px);
     .popover-content {
-      width: 85vw;
-      height: 85vh;
-      transform-origin: right top !important;
+      width: calc(100vw - 50px);
+      height: calc(100vh - 52px);
+      max-height: calc(100vh - 52px);
       overflow: visible;
       border-radius: 6px;
-      transition-duration: 1000s !important;
-      transition-timing-function: ease-in-out;
     }
   }
 }
