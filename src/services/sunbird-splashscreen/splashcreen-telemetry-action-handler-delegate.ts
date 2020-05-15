@@ -23,7 +23,7 @@ export class SplashcreenTelemetryActionHandlerDelegate implements SplashscreenAc
         /* New Telemetry */
         const correlationList: Array<CorrelationData> = [];
         
-        correlationList.push({id: payload.extraInfo.isFirstTime ? 'true' : 'false', type: CorReleationDataType.FIRST_TIME_USER});
+        correlationList.push({id:  payload.extraInfo && payload.extraInfo.isFirstTime ? 'true' : 'false', type: CorReleationDataType.FIRST_TIME_USER});
 
         this.telemetryService.impression({
           env: Environment.ONBOARDING,

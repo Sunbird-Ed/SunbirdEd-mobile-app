@@ -22,6 +22,8 @@ import { AppGlobalService } from '@app/services/app-global-service.service';
 import { AppHeaderService } from '@app/services/app-header.service';
 import { Router } from '@angular/router';
 import { Location } from '@angular/common';
+import {  ClassRoomService, ClassRoom, ClassRoomCreateRequest } from '@project-sunbird/sunbird-sdk';
+import { RouterLinks } from '@app/app/app.constant';
 
 
 @Component({
@@ -126,6 +128,7 @@ export class CreateEditClassroomPage implements OnInit, OnDestroy {
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     @Inject('FRAMEWORK_SERVICE') private frameworkService: FrameworkService,
     @Inject('FRAMEWORK_UTIL_SERVICE') private frameworkUtilService: FrameworkUtilService,
+    @Inject('CLASS_ROOM_SERVICE') public classRoomService: ClassRoomService,
     private commonUtilService: CommonUtilService,
     private fb: FormBuilder,
     private translate: TranslateService,
@@ -404,8 +407,27 @@ export class CreateEditClassroomPage implements OnInit, OnDestroy {
       return;
     }
 
-    // TODO
-    // this.submitForm(formVal);
+    this.createGroup(formVal);
+  }
+
+  async createGroup(formVal) {
+    const loader = await this.commonUtilService.getLoader();
+    await loader.present();
+    const createClassRoomReq: ClassRoomCreateRequest = {
+      name: formVal.classroomName,
+      board: formVal.boards[0],
+      medium: formVal.medium,
+      gradeLevel: formVal.grades,
+      subject: formVal.subjects
+    };
+    this.classRoomService.create(createClassRoomReq).toPromise().then(async (res) => {
+      await loader.dismiss();
+      this.commonUtilService.showToast('GROUP_CREATED');
+      this.location.back();
+    }).catch(async (err) => {
+      await loader.dismiss();
+      this.commonUtilService.showToast('SOMETHING_WENT_WRONG');
+    });
   }
 
   onInputFields(inputType, event) {
@@ -419,9 +441,7 @@ export class CreateEditClassroomPage implements OnInit, OnDestroy {
     }
   }
 
-  async submitForm(formVal) {
-
-  }
+  
 
   async getLoggedInFrameworkCategory() {
     try {
