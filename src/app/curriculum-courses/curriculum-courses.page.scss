@@ -1,4 +1,6 @@
+@import "src/assets/styles/_custom-mixins.scss";
 .cc-header{
+    @include clearfix;
     background: #FFDFD9;
     padding: 16px;
     text-align: left;
@@ -15,6 +17,13 @@
         color: #666666;
         font-size: 8px;
         text-transform: uppercase;
+    }
+
+    .cd-header-icon {
+        img {
+            height: 36px;
+            width: 36px;
+        }
     }
 }
 
