@@ -7,7 +7,7 @@ import { AppGlobalService } from '../../services/app-global-service.service';
 import { TelemetryGeneratorService } from '../../services/telemetry-generator.service';
 import find from 'lodash/find';
 import each from 'lodash/each';
-import { IonContent as iContent } from '@ionic/angular';
+import { IonContent as iContent, ToastController } from '@ionic/angular';
 // import map from 'lodash/map';
 import {
   ChildContentRequest,
@@ -121,6 +121,7 @@ export class QrcoderesultPage implements OnDestroy {
   stckyindex: string;
   chapterFirstChildId: string;
   showSheenAnimation = true;
+  toast: any;
   @ViewChild(iContent) ionContent: iContent;
 
   constructor(
@@ -145,7 +146,8 @@ export class QrcoderesultPage implements OnDestroy {
     private navCtrl: NavController,
     private ratingHandler: RatingHandler,
     private contentPlayerHandler: ContentPlayerHandler,
-    private textbookTocService: TextbookTocService
+    private textbookTocService: TextbookTocService,
+    public toastController: ToastController
   ) {
     this.getNavData();
   }
@@ -436,7 +438,11 @@ export class QrcoderesultPage implements OnDestroy {
       values,
       undefined,
       this.corRelationList);
-    this.openPlayer(content, request);
+    if (this.commonUtilService.networkInfo.isNetworkAvailable || content.isAvailableLocally) {
+      this.openPlayer(content, request);
+    } else {
+      this.presentToastForOffline('OFFLINE_WARNING_ETBUI_1');
+    }
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,
       content.isAvailableLocally ? InteractSubtype.PLAY_FROM_DEVICE : InteractSubtype.PLAY_ONLINE,
@@ -493,27 +499,31 @@ export class QrcoderesultPage implements OnDestroy {
         }
       });
     } else {
-      this.telemetryGeneratorService.generateInteractTelemetry(
-        InteractType.TOUCH,
-        Boolean(content.isAvailableLocally) ? InteractSubtype.PLAY_FROM_DEVICE : InteractSubtype.DOWNLOAD_PLAY_CLICKED,
-        !this.appGlobalService.isOnBoardingCompleted ? Environment.ONBOARDING : Environment.HOME,
-        PageId.DIAL_CODE_SCAN_RESULT);
-      // this.navCtrl.push(ContentDetailsPage, {
-      //   content: content,
-      //   depth: '1',
-      //   isChildContent: true,
-      //   downloadAndPlay: true,
-      //   corRelation: this.corRelationList
-      // });
-      this.router.navigate([RouterLinks.CONTENT_DETAILS], {
-        state: {
-          content: content,
-          depth: '1',
-          isChildContent: true,
-          downloadAndPlay: true,
-          corRelation: this.corRelationList
-        }
-      });
+      if (this.commonUtilService.networkInfo.isNetworkAvailable || content.isAvailableLocally) {
+        this.telemetryGeneratorService.generateInteractTelemetry(
+          InteractType.TOUCH,
+          Boolean(content.isAvailableLocally) ? InteractSubtype.PLAY_FROM_DEVICE : InteractSubtype.DOWNLOAD_PLAY_CLICKED,
+          !this.appGlobalService.isOnBoardingCompleted ? Environment.ONBOARDING : Environment.HOME,
+          PageId.DIAL_CODE_SCAN_RESULT);
+        // this.navCtrl.push(ContentDetailsPage, {
+        //   content: content,
+        //   depth: '1',
+        //   isChildContent: true,
+        //   downloadAndPlay: true,
+        //   corRelation: this.corRelationList
+        // });
+        this.router.navigate([RouterLinks.CONTENT_DETAILS], {
+          state: {
+            content: content,
+            depth: '1',
+            isChildContent: true,
+            downloadAndPlay: true,
+            corRelation: this.corRelationList
+          }
+        });
+      } else {
+        this.presentToastForOffline('OFFLINE_WARNING_ETBUI_1');
+      }
     }
   }
 
@@ -897,6 +907,21 @@ export class QrcoderesultPage implements OnDestroy {
         this.getFirstChildOfChapter(child);
       });
     }
+  }
+
+  async presentToastForOffline(msg: string) {
+    this.toast = await this.toastController.create({
+      duration: 3000,
+      message: this.commonUtilService.translateMessage(msg),
+      showCloseButton: true,
+      position: 'top',
+      closeButtonText: 'X',
+      cssClass: ['toastHeader', 'offline']
+    });
+    await this.toast.present();
+    this.toast.onDidDismiss(() => {
+      this.toast = undefined;
+    });
   }
 
 }

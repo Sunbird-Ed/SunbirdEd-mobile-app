@@ -13,7 +13,7 @@ import {
     ContentEventType
 } from 'sunbird-sdk';
 import { TranslateService } from '@ngx-translate/core';
-import { Events, Platform, NavController } from '@ionic/angular';
+import { Events, Platform, NavController, ToastController } from '@ionic/angular';
 import { Router } from '@angular/router';
 import {
     AppGlobalService,
@@ -95,6 +95,7 @@ describe('QrcoderesultPage', () => {
         },
         resetTextbookIds: jest.fn()
     };
+    const mockToastController: Partial<ToastController> = {};
 
     beforeAll(() => {
         qrcoderesultPage = new QrcoderesultPage(
@@ -119,7 +120,8 @@ describe('QrcoderesultPage', () => {
             mockNavCtrl as NavController,
             mockRatingHandler as RatingHandler,
             mockContentPlayerHandler as ContentPlayerHandler,
-            mockTextbookTocService as TextbookTocService
+            mockTextbookTocService as TextbookTocService,
+            mockToastController as ToastController,
         );
     });
 
@@ -474,6 +476,9 @@ describe('QrcoderesultPage', () => {
                 identifier: 'id'
             };
             mockTextbookTocService.setTextbookIds = jest.fn();
+            mockCommonUtilService.networkInfo = {
+                isNetworkAvailable: true
+            };
             // act
             qrcoderesultPage.navigateToDetailsPage(content);
             // assert
@@ -482,6 +487,30 @@ describe('QrcoderesultPage', () => {
                 expect.anything()
             );
             expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
+            expect(mockCommonUtilService.networkInfo.isNetworkAvailable).toBeTruthy();
+        });
+
+        it('should not navigate to content details page for offline', () => {
+            // arrange
+            const content = {
+                identifier: 'id'
+            };
+            mockTextbookTocService.setTextbookIds = jest.fn();
+            mockCommonUtilService.networkInfo = {
+                isNetworkAvailable: false
+            };
+            mockToastController.create = jest.fn(() => {
+                return Promise.resolve({
+                    present: jest.fn(),
+                    onDidDismiss: jest.fn((fn) => {
+                        fn();
+                    })
+                });
+            });
+            // act
+            qrcoderesultPage.navigateToDetailsPage(content);
+            // assert
+            expect(mockCommonUtilService.networkInfo.isNetworkAvailable).toBeFalsy();
         });
     });
 
