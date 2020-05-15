@@ -754,7 +754,7 @@ export class AppGlobalService implements OnDestroy {
                 const {data} = await tutorialPopover.onDidDismiss();
                 this.telemetryGeneratorService.generateInteractTelemetry(
                     InteractType.TOUCH,
-                    data.continueClicked ? 'tutorial-continue-clicked' : 'tutorial-close-clicked',
+                    data.continueClicked ? InteractSubtype.TUTORIAL_CONTINUE_CLICKED : InteractSubtype.CLOSE_CLICKED,
                     Environment.HOME,
                     PageId.APP_TUTORIAL_POPUP
                 );

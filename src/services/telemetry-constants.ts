@@ -406,7 +406,8 @@ export enum InteractSubtype {
     DEEPLINK_UPGRADE = 'deep-link-upgrade',
     NO_QR_CODE_CLICKED = 'no-qr-code-clicked',
     DENY_CLICKED = 'deny-clicked',
-    INFORMATION_ICON_CLICKED = 'information-icon-clicked'
+    INFORMATION_ICON_CLICKED = 'information-icon-clicked',
+    TUTORIAL_CONTINUE_CLICKED = 'tutorial-continue-clicked',
 }
 
 export enum ID {

@@ -972,9 +972,9 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       case 'download':
         this.redirectToActivedownloads();
         break;
-      case 'notification':
-        this.redirectToNotifications();
-        break;
+      // case 'notification':
+      //   this.redirectToNotifications();
+      //   break;
       case 'information':
         this.appTutorialScreen();
         break;
@@ -982,7 +982,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-   private async appTutorialScreen() {
+  async appTutorialScreen() {
     this.telemetryGeneratorService.generateInteractTelemetry(
         InteractType.TOUCH,
         InteractSubtype.INFORMATION_ICON_CLICKED,
@@ -1008,7 +1008,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.telemetryGeneratorService.generateInteractTelemetry(
         InteractType.TOUCH,
-        data.continueClicked ? 'tutorial-continue-clicked' : 'tutorial-close-clicked',
+        data.continueClicked ? InteractSubtype.TUTORIAL_CONTINUE_CLICKED : InteractSubtype.CLOSE_CLICKED,
         Environment.HOME,
         PageId.APP_TUTORIAL_POPUP
     );
