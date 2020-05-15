@@ -441,6 +441,8 @@ export class RouterLinks {
     public static readonly GUEST_PROFILE = 'guest-profile';
     public static readonly PERSONAL_DETAILS_EDIT = 'personal-details-edit';
     public static readonly CATEGORIES_EDIT = 'categories-edit';
+    public static readonly SUB_PROFILE_EDIT = 'sub-profile-edit';
+    public static readonly MANAGE_USER_PROFILES = 'manage-user-profiles';
 
     // Courses Routs
     public static readonly COURSES = 'courses';
