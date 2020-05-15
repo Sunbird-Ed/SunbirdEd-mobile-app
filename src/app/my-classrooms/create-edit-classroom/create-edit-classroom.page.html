@@ -65,7 +65,9 @@
   <ion-row class="padding-12">
     <ion-col size-md="10" offset-md="1">
       <ion-button class="ion-text-capitalize" expand="block" [ngStyle]="{'background-color': btnColor}"
-        [disabled]="classroomEditForm.invalid || disableSubmitButton" (click)="onSubmit()">{{'CREATE_GROUP' | translate}}
+        [disabled]="classroomEditForm.invalid || disableSubmitButton" (click)="onSubmit()">
+        <img src="assets/imgs/ic_group_add_white.svg">
+        {{'CREATE_GROUP' | translate}}
       </ion-button>
     </ion-col>
   </ion-row>

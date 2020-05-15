@@ -1,6 +1,7 @@
 .my-cr-bg {
   height: 100%;
   background: linear-gradient(#E5EDF5, #E5EDF5 88px, white 88px, white 100%);
+  padding: 0 8px;
 }
 
 .my-cr-title{
@@ -12,6 +13,12 @@
   line-height: 16px;
   padding: 24px 16px 16px;
   margin: 0;
+  position: relative;
+  img{
+    position: absolute;
+    right: 16px;
+    top: 20px;
+  }
 }
 
 .my-cr-card{
@@ -38,12 +45,21 @@
   letter-spacing: 0;
   line-height: 22px;
   text-align: center;
-  margin-bottom: 20px;
+  padding: 10% 10% 24px 10%;
 }
 
 .my-cr-btn{
   padding: 0px 8px 24px;
   ion-button{
     --background: #024F9D !important;
+    
+  }
+  .sb-btn-large{
+    padding: 8px 0px 8px 0px;
+    img{
+      margin-right: 8px;
+      position: relative;
+      bottom: 2px;
+    }
   }
 }

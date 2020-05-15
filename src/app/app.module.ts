@@ -162,6 +162,9 @@ export function faqService() {
 export function archiveService() {
   return SunbirdSdk.instance.archiveService;
 }
+export function classRoomService() {
+  return SunbirdSdk.instance.classRoomService;
+}
 
 export function sdkDriverFactory(): any {
   return [{
@@ -260,6 +263,9 @@ export function sdkDriverFactory(): any {
   }, {
     provide: 'ARCHIVE_SERVICE',
     useFactory: archiveService
+  }, {
+    provide: 'CLASS_ROOM_SERVICE',
+    useFactory: classRoomService
   }
   ];
 }

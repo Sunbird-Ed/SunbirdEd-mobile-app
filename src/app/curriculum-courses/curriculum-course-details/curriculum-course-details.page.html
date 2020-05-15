@@ -1,5 +1,28 @@
 <ion-content>
-  <div>
-    course.name
+  <div class="ccd-header-container">
+    <div class="ccd-header">
+      <div class="ccd-header-icon img-container">
+        <img alt="icon" src='{{course?.appIcon}}'>
+        <!-- <img alt="icon" src='{{course?.contentData?.appIcon}}'> -->
+      </div>
+      <div class="ccd-header-desc">
+        <div class="ccd-header-name">TextBook Name</div>
+        <div class="ccd-header-title">{{course.name}}</div>
+      </div>
+    </div>
+    <div class="ccd-header-action">
+      <div>
+        <div class="font-14">Start Learning</div>
+        <div class="font-8">Chaper 01</div>
+      </div>
+      <div class="ccd-action-icon">
+        <ion-icon md="md-arrow-round-forward"></ion-icon>
+      </div>
+    </div>
+
+  </div>
+  <div class="ccd-container">
+    <div class="ccd-container-header">Chapters</div>
+    <sb-toc-curriculum [isMobile]="true"></sb-toc-curriculum>
   </div>
 </ion-content>
