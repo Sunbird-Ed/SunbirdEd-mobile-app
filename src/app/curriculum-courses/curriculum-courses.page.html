@@ -1,17 +1,22 @@
 <ion-content>
   <div class="cc-header" [ngStyle]="{'background': theme}">
-    <div class="cc-header-name">
-      {{ subjectName }}
+    <div class="pull-left">
+      <div class="cc-header-name">
+        {{ subjectName }}
+      </div>
+      <div class="cc-header-desc">
+        {{'NUMBER_OF_COURSES' | translate:{'%s': courseList.length} }}
+      </div>
     </div>
-    <div class="cc-header-desc">
-      <p>{{'NUMBER_OF_COURSES' | translate:{'%s': courseList.length} }}</p>
+    <div class="cd-header-icon pull-right">
+      <img src="assets/imgs/mathematics.svg" alt="subject-icon">
     </div>
   </div>
   <div class="cc-container">
     <div *ngFor="let course of courseList" class="mb-16">
-      <sb-my-course-card [course]="course" [section]="null" [cardImg]="getContentImg(course)"
-        (click)="openCourseDetails(course)" >
-      </sb-my-course-card>
+      <sb-course-card [course]="course" [section]="null" [cardImg]="getContentImg(course)"
+        (click)="openCourseDetails(course)">
+      </sb-course-card>
     </div>
   </div>
 </ion-content>

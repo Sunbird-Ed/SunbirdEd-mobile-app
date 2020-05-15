@@ -182,18 +182,26 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   courseList = [];
   subjectThemeAndIconsMap = {
     Science: {
-      color: '#EA5B5D',
-      icon: 'https://i.ya-webdesign.com/images/protractor-vector-360-degree-14.png'
+      background: '#FFD6EB',
+      fontColor: '#CBA3F7',
+      icon: 'assets/imgs/science.svg'
     },
     Mathematics: {
-      color: '#CBA3F7',
-      icon: 'https://www.valimenta.com/wp-content/uploads/icon-microscope.png'
+      background: '#FFDFD9',
+      fontColor: '#CBA3F7',
+      icon: 'assets/imgs/mathematics.svg'
+    },
+    English: {
+      background: '#DAFFD8',
+      fontColor: '#CBA3F7'
+    },
+    Social: {
+      background: '#DAD4FF',
+      fontColor: '#CBA3F7',
+      icon: 'assets/imgs/social.svg'
     }
   };
-  themeColors = ['#EA5B5D', '#CBA3F7', '#7BA1F9', '#57B59C'];
-  subjectIcons = ['https://i.ya-webdesign.com/images/protractor-vector-360-degree-14.png',
-    'https://www.valimenta.com/wp-content/uploads/icon-microscope.png',
-    'https://punchcard.io/wp-content/uploads/2016/03/icon-dna-white.svg'];
+
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -532,8 +540,17 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
               count: element.contents ?
                 this.commonUtilService.translateMessage('NUMBER_OF_COURSES', element.contents.length)
                 : this.commonUtilService.translateMessage('NO_COURSES'),
-              theme: this.themeColors[Math.floor(Math.random() * this.themeColors.length)],
-              cardImg: this.subjectIcons[Math.floor(Math.random() * this.subjectIcons.length)]
+              theme: this.subjectThemeAndIconsMap[element.name] ?
+                this.subjectThemeAndIconsMap[element.name].background
+                : null,
+
+              titleColor: this.subjectThemeAndIconsMap[element.name] ?
+                this.subjectThemeAndIconsMap[element.name].fontColor
+                : null,
+
+              cardImg: this.subjectThemeAndIconsMap[element.name] ?
+                this.subjectThemeAndIconsMap[element.name].icon
+                : null
             };
             this.courseList.push(contentListObj);
           });
@@ -778,7 +795,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  
+
   getCategoryData() {
     const syllabus: Array<string> = this.appGlobalService.getCurrentUser().syllabus;
     const frameworkId = (syllabus && syllabus.length > 0) ? syllabus[0] : undefined;
