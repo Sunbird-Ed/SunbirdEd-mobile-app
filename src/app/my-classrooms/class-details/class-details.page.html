@@ -22,6 +22,10 @@
 
   <div class="gd-tab-container">
     <div class="gd-tab-content" *ngIf="activeTab=='members'">
+      <div class="gd-member-search">
+        <ion-icon class="gd-member-search-icon" md="md-search"></ion-icon>
+        <input type="text" [(ngModel)]="searchMember" (ngModelChange)="onSearch(searchMember)">
+      </div>
       <sb-member-list [memberList]="memberList" [isMenu]="true"></sb-member-list>
       <div class="cd-btn" *ngIf="!memberList.length">
         <button class="sb-btn-large" (click)="navigateToAddUserPage()">

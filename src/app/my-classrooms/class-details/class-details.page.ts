@@ -13,6 +13,8 @@ import { RouterLinks, MenuOverflow } from '@app/app/app.constant';
 import { Platform, PopoverController } from '@ionic/angular';
 import { ClassRoomGetByIdRequest, ClassRoomService, ClassRoom } from '@project-sunbird/sunbird-sdk';
 import { OverflowMenuComponent } from '@app/app/profile/overflow-menu/overflow-menu.component';
+import GraphemeSplitter from 'grapheme-splitter';
+import { FilterPipe } from '@app/pipes/filter/filter.pipe'
 
 @Component({
   selector: 'app-class-details',
@@ -25,28 +27,24 @@ export class ClassDetailsPage {
   groupId: string;
   groupDetails: ClassRoom;
   activeTab = 'members';
-  memberList = [
+  memberList = [];
+  memberListDummy = [
     {
-      title: 'Bala',
-      initial: 'B',
+      name: 'Anil',
+    },
+    {
+      name: 'Bala',
       isAdmin: true,
     },
     {
-      title: 'Anil',
-      initial: 'A'
+      name: 'Mani',
     },
     {
-      title: 'Sharath',
-      initial: 'S'
+      name: 'Naveen',
     },
     {
-      title: 'Mani',
-      initial: 'M'
+      name: 'Sharath',
     },
-    {
-      title: 'naveen',
-      initial: 'N'
-    }
   ];
   private unregisterBackButton: Subscription;
 
@@ -57,6 +55,7 @@ export class ClassDetailsPage {
     private location: Location,
     private platform: Platform,
     private popoverCtrl: PopoverController,
+    private filter: FilterPipe
   ) {
     const extras = this.router.getCurrentNavigation().extras.state;
     this.groupId = extras.groupId;
@@ -109,12 +108,29 @@ export class ClassDetailsPage {
   }
 
   async fetchGroupDetails() {
+    this.memberList = [];
     const classRoomGetByIdRequest: ClassRoomGetByIdRequest = {
       id: this.groupId
     };
+    this.memberListDummy.forEach(m => {
+      const member = {
+        title: m.name,
+        initial: this.extractInitial(m.name),
+        isAdmin: m.isAdmin ? true : false
+      };
+      this.memberList.push(member);
+    });
     try {
       this.groupDetails = await this.classRoomService.getById(classRoomGetByIdRequest).toPromise();
       console.log('this.groupDetails', this.groupDetails);
+      this.groupDetails.members.forEach(m => {
+        const member = {
+          title: m.firstName,
+          initial: this.extractInitial(m.firstName),
+          isAdmin: false
+        };
+        this.memberList.push(member);
+      });
     } catch {
 
     }
@@ -143,6 +159,17 @@ export class ClassDetailsPage {
     if (data) {
       console.log('dataon dismiss', data);
     }
+  }
+
+  onSearch(text) {
+    console.log('onsearch', text);
+    // this.memberList = this.filter.transform(this.memberList, text);
+  }
+
+  extractInitial(name) {
+    const splitter = new GraphemeSplitter();
+    const split: string[] = splitter.splitGraphemes(name.trim());
+    return split[0];
   }
 
 }

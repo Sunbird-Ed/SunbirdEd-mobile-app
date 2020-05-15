@@ -269,7 +269,7 @@
   "GROUP_DELETE_CONFIRM_MESSAGE": "This action will delete the Group but not the users. Users can be found under 'Users' tab",
   "GROUP_MEMBER_ADD_SUCCESS": "Members added successfully",
   "GROUP_MEMBER_DELETE_SUCCESS": "Group members deleted successfully",
-  "GROUP_NAME": "Group Name",
+  "GROUP_NAME": "Group name",
   "GROUP_UPDATE_SUCCESS": "Group details updated successfully",
   "HABIT_REMINDER_NOTIFICATION_MESSAGE": "Learn something new on {{%s}} today!",
   "HELP": "Help",
@@ -688,6 +688,7 @@
   "GROUP_CREATED": "Group created successfully",
   "MEMBERS": "Members",
   "EDIT_NAME": "Edit name",
+  "SEARCH_WITHIN_GROUP": "Search within group",
   "CREATE_GROUP_DESCRIPTION": "Bring people together with a few clicks. Create your own group, classroom or study circle to share, monitor and connect.",
   "LOGIN_TO_CREATE_GROUP_DESCRIPTION": "Login and bring people together with a few clicks. Create your own group, classroom or study circle to share, monitor and connect."
 }
