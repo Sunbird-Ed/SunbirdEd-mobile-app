@@ -6,6 +6,7 @@ import { Routes, RouterModule } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 
 import { CurriculumCourseDetailsPage } from './curriculum-course-details.page';
+import { CommonConsumptionModule } from '@project-sunbird/common-consumption';
 
 const routes: Routes = [
   {
@@ -19,6 +20,7 @@ const routes: Routes = [
     CommonModule,
     FormsModule,
     IonicModule,
+    CommonConsumptionModule,
     RouterModule.forChild(routes)
   ],
   declarations: [CurriculumCourseDetailsPage]
