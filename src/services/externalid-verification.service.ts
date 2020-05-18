@@ -45,27 +45,33 @@ export class ExternalIdVerificationService {
             userId: session.userToken,
             requiredFields: ProfileConstants.REQUIRED_FIELDS,
         }).toPromise();
-        const tenantSpecificMessages: any = await this.formAndFrameworkUtilService.
-            getTenantSpecificMessages(serverProfile.rootOrg.rootOrgId);
         if (isCustodianUser) {
             await this.profileService.getUserFeed().toPromise()
-                .then(async (userFeed: UserFeed[]) => {
-                    if (userFeed[0] && (userFeed[0].category).toLowerCase() === 'orgmigrationaction') {
-                        let popupLabels = {};
-                        if (tenantSpecificMessages && tenantSpecificMessages.length && tenantSpecificMessages[0].range
-                            && tenantSpecificMessages[0].range.length) {
-                            popupLabels = tenantSpecificMessages[0].range[0];
+                .then(async (userFeed: any) => {
+                        let tenantSpecificMessages: any;
+                        if (userFeed[0].data.prospectChannelsIds.length > 1) {
+                             tenantSpecificMessages = await this.formAndFrameworkUtilService.
+                            getTenantSpecificMessages(serverProfile.rootOrg.rootOrgId);
+                        } else {
+                            tenantSpecificMessages = await this.formAndFrameworkUtilService.
+                            getTenantSpecificMessages(userFeed[0].data.prospectChannelsIds[0].id);
                         }
-                        const popover = await this.popoverCtrl.create({
-                            component: TeacherIdVerificationComponent,
-                            backdropDismiss: false,
-                            cssClass: 'popover-alert popoverPosition',
-                            componentProps: {
-                                userFeed: userFeed[0], tenantMessages: popupLabels
+                        if (userFeed[0] && (userFeed[0].category).toLowerCase() === 'orgmigrationaction') {
+                            let popupLabels = {};
+                            if (tenantSpecificMessages && tenantSpecificMessages.length && tenantSpecificMessages[0].range
+                                && tenantSpecificMessages[0].range.length) {
+                                popupLabels = tenantSpecificMessages[0].range[0];
                             }
-                        });
-                        await popover.present();
-                    }
+                            const popover = await this.popoverCtrl.create({
+                                component: TeacherIdVerificationComponent,
+                                backdropDismiss: false,
+                                cssClass: 'popover-alert popoverPosition',
+                                componentProps: {
+                                    userFeed: userFeed[0], tenantMessages: popupLabels
+                                }
+                            });
+                            await popover.present();
+                        }
                 })
                 .catch((error) => {
                     console.log('error', error);
