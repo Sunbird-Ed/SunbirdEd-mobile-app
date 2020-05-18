@@ -47,7 +47,7 @@
     "@ionic/angular": "^4.11.2",
     "@ngx-translate/core": "^11.0.1",
     "@ngx-translate/http-loader": "^4.0.0",
-    "@project-sunbird/common-consumption": "^3.0.4",
+    "@project-sunbird/common-consumption": "^3.0.5",
     "@project-sunbird/content-player": "2.9.1",
     "@project-sunbird/sunbird-sdk": "~3.0.3",
     "code-push": "^3.0.1",
