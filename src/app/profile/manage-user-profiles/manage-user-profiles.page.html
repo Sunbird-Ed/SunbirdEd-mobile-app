@@ -4,11 +4,10 @@
     <div>
       <p class="mu-title">{{'CHOOSE_USER' | translate}}</p>
     </div>
-    <!-- <sb-member-list [memberList]="manageProfileList" (cardClick)="selectedUser($event)"></sb-member-list> -->
 
     <div class="mx-8">
       <div [ngClass]="{'mu-selected-user':selectedUserIndex===i, '':selectedUserIndex!==i}" *ngFor="let user of manageProfileList; let i = index">
-        <sb-member-card [title]="user.title" [identifier]="user.id" (cardClick)="selectedUser(user, i)" ></sb-member-card>
+        <sb-member-card [title]="user.title" [identifier]="user.id" [initial]="user.title && user.title[0]" (cardClick)="selectedUser(user, i)" ></sb-member-card>
         <img [ngClass]="{'mu-selected-checkbox':selectedUserIndex===i, 'mu-dissable-checkbox':selectedUserIndex!==i}" src="assets/imgs/dark_blue_check.svg" alt="selected-checkbox">
       </div>
     </div>
