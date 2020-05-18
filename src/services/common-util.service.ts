@@ -41,6 +41,7 @@ export class CommonUtilService {
     private alert?: any;
     private _currentTabName: string;
     appName: any;
+    private toast: any;
 
     constructor(
         @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
@@ -567,4 +568,19 @@ export class CommonUtilService {
             return popover;
         });
     }
+
+    async presentToastForOffline(msg: string) {
+        this.toast = await this.toastController.create({
+          duration: 3000,
+          message: this.translateMessage(msg),
+          showCloseButton: true,
+          position: 'top',
+          closeButtonText: 'X',
+          cssClass: ['toastHeader', 'offline']
+        });
+        await this.toast.present();
+        this.toast.onDidDismiss(() => {
+          this.toast = undefined;
+        });
+      }
 }

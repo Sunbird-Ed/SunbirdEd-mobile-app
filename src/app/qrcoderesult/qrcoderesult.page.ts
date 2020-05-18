@@ -121,7 +121,6 @@ export class QrcoderesultPage implements OnDestroy {
   stckyindex: string;
   chapterFirstChildId: string;
   showSheenAnimation = true;
-  toast: any;
   @ViewChild(iContent) ionContent: iContent;
 
   constructor(
@@ -441,7 +440,7 @@ export class QrcoderesultPage implements OnDestroy {
     if (this.commonUtilService.networkInfo.isNetworkAvailable || content.isAvailableLocally) {
       this.openPlayer(content, request);
     } else {
-      this.presentToastForOffline('OFFLINE_WARNING_ETBUI_1');
+      this.commonUtilService.presentToastForOffline('OFFLINE_WARNING_ETBUI_1');
     }
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,
@@ -522,7 +521,7 @@ export class QrcoderesultPage implements OnDestroy {
           }
         });
       } else {
-        this.presentToastForOffline('OFFLINE_WARNING_ETBUI_1');
+        this.commonUtilService.presentToastForOffline('OFFLINE_WARNING_ETBUI_1');
       }
     }
   }
@@ -908,20 +907,4 @@ export class QrcoderesultPage implements OnDestroy {
       });
     }
   }
-
-  async presentToastForOffline(msg: string) {
-    this.toast = await this.toastController.create({
-      duration: 3000,
-      message: this.commonUtilService.translateMessage(msg),
-      showCloseButton: true,
-      position: 'top',
-      closeButtonText: 'X',
-      cssClass: ['toastHeader', 'offline']
-    });
-    await this.toast.present();
-    this.toast.onDidDismiss(() => {
-      this.toast = undefined;
-    });
-  }
-
 }
