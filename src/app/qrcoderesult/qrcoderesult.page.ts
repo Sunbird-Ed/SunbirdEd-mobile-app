@@ -335,7 +335,7 @@ export class QrcoderesultPage implements OnDestroy {
         const contentData = data.contentData;
         this.findContentNode(data);
 
-        if (this.results && this.results.length === 0) {
+        if (this.results.length === 0) {
           this.telemetryGeneratorService.generateImpressionTelemetry(ImpressionType.VIEW,
             '',
             PageId.DIAL_LINKED_NO_CONTENT,
@@ -436,7 +436,11 @@ export class QrcoderesultPage implements OnDestroy {
       values,
       undefined,
       this.corRelationList);
-    this.openPlayer(content, request);
+    if (this.commonUtilService.networkInfo.isNetworkAvailable || content.isAvailableLocally) {
+      this.openPlayer(content, request);
+    } else {
+      this.commonUtilService.presentToastForOffline('OFFLINE_WARNING_ETBUI_1');
+    }
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,
       content.isAvailableLocally ? InteractSubtype.PLAY_FROM_DEVICE : InteractSubtype.PLAY_ONLINE,
@@ -493,27 +497,31 @@ export class QrcoderesultPage implements OnDestroy {
         }
       });
     } else {
-      this.telemetryGeneratorService.generateInteractTelemetry(
-        InteractType.TOUCH,
-        Boolean(content.isAvailableLocally) ? InteractSubtype.PLAY_FROM_DEVICE : InteractSubtype.DOWNLOAD_PLAY_CLICKED,
-        !this.appGlobalService.isOnBoardingCompleted ? Environment.ONBOARDING : Environment.HOME,
-        PageId.DIAL_CODE_SCAN_RESULT);
-      // this.navCtrl.push(ContentDetailsPage, {
-      //   content: content,
-      //   depth: '1',
-      //   isChildContent: true,
-      //   downloadAndPlay: true,
-      //   corRelation: this.corRelationList
-      // });
-      this.router.navigate([RouterLinks.CONTENT_DETAILS], {
-        state: {
-          content: content,
-          depth: '1',
-          isChildContent: true,
-          downloadAndPlay: true,
-          corRelation: this.corRelationList
-        }
-      });
+      if (this.commonUtilService.networkInfo.isNetworkAvailable || content.isAvailableLocally) {
+        this.telemetryGeneratorService.generateInteractTelemetry(
+          InteractType.TOUCH,
+          Boolean(content.isAvailableLocally) ? InteractSubtype.PLAY_FROM_DEVICE : InteractSubtype.DOWNLOAD_PLAY_CLICKED,
+          !this.appGlobalService.isOnBoardingCompleted ? Environment.ONBOARDING : Environment.HOME,
+          PageId.DIAL_CODE_SCAN_RESULT);
+        // this.navCtrl.push(ContentDetailsPage, {
+        //   content: content,
+        //   depth: '1',
+        //   isChildContent: true,
+        //   downloadAndPlay: true,
+        //   corRelation: this.corRelationList
+        // });
+        this.router.navigate([RouterLinks.CONTENT_DETAILS], {
+          state: {
+            content: content,
+            depth: '1',
+            isChildContent: true,
+            downloadAndPlay: true,
+            corRelation: this.corRelationList
+          }
+        });
+      } else {
+        this.commonUtilService.presentToastForOffline('OFFLINE_WARNING_ETBUI_1');
+      }
     }
   }
 
@@ -898,5 +906,4 @@ export class QrcoderesultPage implements OnDestroy {
       });
     }
   }
-
 }
