@@ -46,7 +46,6 @@ export class CommonUtilService {
     constructor(
         @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
         @Inject('PROFILE_SERVICE') private profileService: ProfileService,
-        private toastCtrl: ToastController,
         private translate: TranslateService,
         private loadingCtrl: LoadingController,
         private events: Events,
@@ -100,7 +99,7 @@ export class CommonUtilService {
                     cssClass: cssToast ? cssToast : ''
                 };
 
-                const toast = await this.toastCtrl.create(toastOptions);
+                const toast = await this.toastController.create(toastOptions);
                 await toast.present();
             }
         );

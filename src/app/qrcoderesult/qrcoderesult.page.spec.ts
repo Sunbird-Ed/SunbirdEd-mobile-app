@@ -499,18 +499,12 @@ describe('QrcoderesultPage', () => {
             mockCommonUtilService.networkInfo = {
                 isNetworkAvailable: false
             };
-            mockToastController.create = jest.fn(() => {
-                return Promise.resolve({
-                    present: jest.fn(),
-                    onDidDismiss: jest.fn((fn) => {
-                        fn();
-                    })
-                });
-            });
+            mockCommonUtilService.presentToastForOffline = jest.fn();
             // act
             qrcoderesultPage.navigateToDetailsPage(content);
             // assert
             expect(mockCommonUtilService.networkInfo.isNetworkAvailable).toBeFalsy();
+            expect(mockCommonUtilService.presentToastForOffline).toHaveBeenCalledWith('OFFLINE_WARNING_ETBUI_1');
         });
     });
 
