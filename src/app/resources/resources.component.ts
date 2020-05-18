@@ -183,21 +183,21 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   subjectThemeAndIconsMap = {
     Science: {
       background: '#FFD6EB',
-      fontColor: '#CBA3F7',
+      titleColor: '#FD59B3',
       icon: 'assets/imgs/science.svg'
     },
     Mathematics: {
       background: '#FFDFD9',
-      fontColor: '#CBA3F7',
+      titleColor: '#EA2E52',
       icon: 'assets/imgs/mathematics.svg'
     },
     English: {
       background: '#DAFFD8',
-      fontColor: '#CBA3F7'
+      titleColor: '#218432'
     },
     Social: {
       background: '#DAD4FF',
-      fontColor: '#CBA3F7',
+      titleColor: '#635CDC',
       icon: 'assets/imgs/social.svg'
     }
   };
@@ -545,7 +545,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
                 : null,
 
               titleColor: this.subjectThemeAndIconsMap[element.name] ?
-                this.subjectThemeAndIconsMap[element.name].fontColor
+                this.subjectThemeAndIconsMap[element.name].titleColor
                 : null,
 
               cardImg: this.subjectThemeAndIconsMap[element.name] ?
@@ -1227,6 +1227,8 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     const curriculumCourseParams: NavigationExtras = {
       state: {
         theme: event.data.theme,
+        titleColor: event.data.titleColor,
+        subjectIcon: event.data.cardImg,
         subjectName: subject.name,
         curriculumCourseList: subject.contents,
       }
