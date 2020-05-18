@@ -7,7 +7,7 @@ import { AppGlobalService } from '../../services/app-global-service.service';
 import { TelemetryGeneratorService } from '../../services/telemetry-generator.service';
 import find from 'lodash/find';
 import each from 'lodash/each';
-import { IonContent as iContent, ToastController } from '@ionic/angular';
+import { IonContent as iContent } from '@ionic/angular';
 // import map from 'lodash/map';
 import {
   ChildContentRequest,
@@ -145,8 +145,7 @@ export class QrcoderesultPage implements OnDestroy {
     private navCtrl: NavController,
     private ratingHandler: RatingHandler,
     private contentPlayerHandler: ContentPlayerHandler,
-    private textbookTocService: TextbookTocService,
-    public toastController: ToastController
+    private textbookTocService: TextbookTocService
   ) {
     this.getNavData();
   }

@@ -13,7 +13,7 @@ import {
     ContentEventType
 } from 'sunbird-sdk';
 import { TranslateService } from '@ngx-translate/core';
-import { Events, Platform, NavController, ToastController } from '@ionic/angular';
+import { Events, Platform, NavController } from '@ionic/angular';
 import { Router } from '@angular/router';
 import {
     AppGlobalService,
@@ -95,7 +95,6 @@ describe('QrcoderesultPage', () => {
         },
         resetTextbookIds: jest.fn()
     };
-    const mockToastController: Partial<ToastController> = {};
 
     beforeAll(() => {
         qrcoderesultPage = new QrcoderesultPage(
@@ -120,8 +119,7 @@ describe('QrcoderesultPage', () => {
             mockNavCtrl as NavController,
             mockRatingHandler as RatingHandler,
             mockContentPlayerHandler as ContentPlayerHandler,
-            mockTextbookTocService as TextbookTocService,
-            mockToastController as ToastController,
+            mockTextbookTocService as TextbookTocService
         );
     });
 
