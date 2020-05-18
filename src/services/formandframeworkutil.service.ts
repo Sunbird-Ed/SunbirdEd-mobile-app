@@ -20,7 +20,8 @@ import {
     SystemSettings,
     SystemSettingsService,
     WebviewSessionProviderConfig,
-    SignInError
+    SignInError,
+    FrameworkCategoryCode
 } from 'sunbird-sdk';
 
 import { ContentFilterConfig, ContentType, PreferenceKey, SystemSettingsIds } from '@app/app/app.constant';
@@ -399,7 +400,7 @@ export class FormAndFrameworkUtilService {
      * @param profileData : Local profile of current user
      */
     updateLoggedInUser(profileRes, profileData) {
-        return new Promise((resolve, reject) => {
+        return new Promise(async (resolve, reject) => {
             const profile = {
                 board: [],
                 grade: [],
@@ -413,25 +414,26 @@ export class FormAndFrameworkUtilService {
                 let keysLength = 0;
                 profile.syllabus = [profileRes.framework.id[0]];
                 for (const categoryKey in profileRes.framework) {
-                    if (profileRes.framework[categoryKey].length) {
+                    if (profileRes.framework[categoryKey].length
+                    && FrameworkCategoryCodesGroup.DEFAULT_FRAMEWORK_CATEGORIES.includes(categoryKey as FrameworkCategoryCode)) {
                         const request: GetFrameworkCategoryTermsRequest = {
                             currentCategoryCode: categoryKey,
                             language: this.translate.currentLang,
                             requiredCategories: FrameworkCategoryCodesGroup.DEFAULT_FRAMEWORK_CATEGORIES,
                             frameworkId: (profileRes.framework && profileRes.framework.id) ? profileRes.framework.id[0] : undefined
                         };
-                        this.frameworkUtilService.getFrameworkCategoryTerms(request).toPromise()
-                            .then((categoryList: CategoryTerm[]) => {
+                        await this.frameworkUtilService.getFrameworkCategoryTerms(request).toPromise()
+                            .then((categoryTerms: CategoryTerm[]) => {
                                 keysLength++;
                                 profileRes.framework[categoryKey].forEach(element => {
                                     if (categoryKey === 'gradeLevel') {
-                                        const codeObj = categoryList.find((category) => category.name === element);
+                                        const codeObj = categoryTerms.find((category) => category.name === element);
                                         if (codeObj) {
                                             profile['grade'].push(codeObj.code);
                                             profile['gradeValue'][codeObj.code] = element;
                                         }
                                     } else {
-                                        const codeObj = categoryList.find((category) => category.name === element);
+                                        const codeObj = categoryTerms.find((category) => category.name === element);
                                         if (codeObj) {
                                             profile[categoryKey].push(codeObj.code);
                                         }
