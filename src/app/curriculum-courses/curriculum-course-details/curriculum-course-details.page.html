@@ -23,6 +23,6 @@
   </div>
   <div class="ccd-container">
     <div class="ccd-container-header">Chapters</div>
-    <sb-toc-curriculum [isMobile]="true"></sb-toc-curriculum>
+    <sb-toc-curriculum [isMobile]="true" (tocCardClick)="openChapterDetails($event)"></sb-toc-curriculum>
   </div>
 </ion-content>

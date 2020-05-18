@@ -544,6 +544,7 @@ export class RouterLinks {
     // Curriculum courses
     public static readonly CURRICULUM_COURSES = 'curriculum-courses';
     public static readonly CURRICULUM_COURSE_DETAILS = 'curriculum-course-details';
+    public static readonly CHAPTER_DETAILS = 'chapter-details';
 }
 
 export class LibraryCardTypes {

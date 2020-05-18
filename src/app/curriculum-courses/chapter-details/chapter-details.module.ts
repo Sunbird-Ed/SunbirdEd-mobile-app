@@ -5,14 +5,15 @@ import { Routes, RouterModule } from '@angular/router';
 
 import { IonicModule } from '@ionic/angular';
 
-import { CurriculumCourseDetailsPage } from './curriculum-course-details.page';
+import { ChapterDetailsPage } from './chapter-details.page';
 import { CommonConsumptionModule } from '@project-sunbird/common-consumption';
 import { TranslateModule } from '@ngx-translate/core';
+import { ComponentsModule } from '@app/app/components/components.module';
 
 const routes: Routes = [
   {
     path: '',
-    component: CurriculumCourseDetailsPage
+    component: ChapterDetailsPage
   }
 ];
 
@@ -22,9 +23,10 @@ const routes: Routes = [
     FormsModule,
     IonicModule,
     CommonConsumptionModule,
+    ComponentsModule,
     TranslateModule.forChild(),
     RouterModule.forChild(routes),
   ],
-  declarations: [CurriculumCourseDetailsPage]
+  declarations: [ChapterDetailsPage]
 })
-export class CurriculumCourseDetailsPageModule {}
+export class ChapterDetailsPageModule {}

@@ -1,0 +1,60 @@
+<ion-content>
+  <div class="cd-header-container">
+    <div class="cd-label">{{ courseName }}</div>
+    <div class="cd-header-title">{{ chapter.name}}</div>
+    <div class="cd-progress-container">
+      <div class="cd-flex-container cd-align-s">
+        <div class="progress-label">{{'YOUR_PROGRESS_LABEL' | translate}}</div>
+        <div class="cd-label">{{ 'COURSE_COMPLETED_LABEL' | translate:{'%s': '20' } }}</div>
+      </div>
+      <!-- <div>{{ 'COURSE_COMPLETED_LABEL' | translate:{'%s': course?.progress ? course?.progress : '0'} }}</div> -->
+      <app-pb-horizontal [progress]="20" class="course-progress" isOnBoardCard="flase" isCourseProgress="true">
+      </app-pb-horizontal>
+      <!-- <app-pb-horizontal [progress]="course?.progress? course?.progress : 0" class="course-progress"
+        [ngClass]="{'blurbackground': batchExp}" isOnBoardCard="flase" isCourseProgress="true"></app-pb-horizontal> -->
+    </div>
+    <div class="cd-unblock-text">
+      Completed 8 contents to unlock a new achievement
+    </div>
+    <div class="cd-flex-container">
+      <div style="width: 100%;">
+        <button class="cd-chapter-card-button" (click)="startLearning();">{{'START_LEARNING' | translate}}</button>
+      </div>
+      <div>
+        <img class="menu-icon" (click)="showOverflowMenu($event)" src="assets/imgs/menu.svg" alt="menu-icon">
+      </div>
+    </div>
+  </div>
+  <div class="cd-container">
+    <div class="cd-flex-container">
+      <div class="cd-container-title">Contents</div>
+      <div class="cd-container-progress">0/8 completed</div>
+    </div>
+    <div *ngFor="let item of chapter?.children; let index = index;">
+      <h5 *ngIf="item?.mimeType === 'application/vnd.ekstep.content-collection'">
+        <span class="cd-container-sub-title"><strong>{{item?.name}}</strong></span>
+      </h5>
+      <div>
+        <div *ngIf="item;else noContent">
+          <div *ngIf="item?.mimeType !== 'application/vnd.ekstep.content-collection' && !item?.children?.length">
+            <div>
+              <sb-toc-card [content]="item" (tocCardClick)="onTocCardClick($event)" [type]="cardType">
+              </sb-toc-card>
+            </div>
+          </div>
+          <div *ngIf="item?.children?.length">
+            <div *ngFor="let child of item?.children">
+              <div>
+                <sb-toc-child-item [childData]="child" (tocCardClick)="onTocCardClick($event)" [type]="cardType">
+                </sb-toc-child-item>
+              </div>
+            </div>
+          </div>
+        </div>
+        <ng-template #noContent>
+          <div class="heading">{{noContentMessage}}</div>
+        </ng-template>
+      </div>
+    </div>
+  </div>
+</ion-content>

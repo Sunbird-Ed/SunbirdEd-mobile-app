@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { AppHeaderService, CommonUtilService } from '@app/services';
 import { TranslateService } from '@ngx-translate/core';
-import { Router } from '@angular/router';
+import { Router, NavigationExtras } from '@angular/router';
 import { ContentUtil } from '@app/util/content-util';
+import { RouterLinks } from '@app/app/app.constant';
 
 @Component({
   selector: 'app-curriculum-course-details',
@@ -33,6 +34,18 @@ export class CurriculumCourseDetailsPage implements OnInit {
 
   ionViewWillEnter() {
     this.appHeaderService.showHeaderWithBackButton();
+  }
+
+  openChapterDetails(event) {
+    const chapterParams: NavigationExtras = {
+      state: {
+        courseName: this.course.name,
+        chapterData: event.item,
+      }
+    };
+
+    this.router.navigate([`/${RouterLinks.CURRICULUM_COURSES}/${RouterLinks.CHAPTER_DETAILS}`],
+      chapterParams);
   }
 
 }
