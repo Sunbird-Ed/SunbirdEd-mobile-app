@@ -48,16 +48,16 @@ export class ExternalIdVerificationService {
         if (isCustodianUser) {
             await this.profileService.getUserFeed().toPromise()
                 .then(async (userFeed: any) => {
-                        let tenantSpecificMessages: any;
-                        if (userFeed[0].data.prospectChannelsIds.length > 1) {
-                             tenantSpecificMessages = await this.formAndFrameworkUtilService.
-                            getTenantSpecificMessages(serverProfile.rootOrg.rootOrgId);
-                        } else {
-                            tenantSpecificMessages = await this.formAndFrameworkUtilService.
-                            getTenantSpecificMessages(userFeed[0].data.prospectChannelsIds[0].id);
-                        }
                         if (userFeed[0] && (userFeed[0].category).toLowerCase() === 'orgmigrationaction') {
                             let popupLabels = {};
+                            let tenantSpecificMessages: any;
+                            if (userFeed[0].data.prospectChannelsIds.length > 1 || !userFeed[0].data.prospectChannelsIds[0].id) {
+                                 tenantSpecificMessages = await this.formAndFrameworkUtilService.
+                                getTenantSpecificMessages(serverProfile.rootOrg.rootOrgId);
+                            } else {
+                                tenantSpecificMessages = await this.formAndFrameworkUtilService.
+                                getTenantSpecificMessages(userFeed[0].data.prospectChannelsIds[0].id);
+                            }
                             if (tenantSpecificMessages && tenantSpecificMessages.length && tenantSpecificMessages[0].range
                                 && tenantSpecificMessages[0].range.length) {
                                 popupLabels = tenantSpecificMessages[0].range[0];
