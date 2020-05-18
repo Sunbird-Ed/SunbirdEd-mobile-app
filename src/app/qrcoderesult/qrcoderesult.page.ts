@@ -335,7 +335,7 @@ export class QrcoderesultPage implements OnDestroy {
         const contentData = data.contentData;
         this.findContentNode(data);
 
-        if (this.results.length === 0) {
+        if (this.results && this.results.length === 0) {
           this.telemetryGeneratorService.generateImpressionTelemetry(ImpressionType.VIEW,
             '',
             PageId.DIAL_LINKED_NO_CONTENT,

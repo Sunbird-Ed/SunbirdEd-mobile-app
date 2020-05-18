@@ -370,6 +370,9 @@ export class GuestEditPage implements OnInit, OnDestroy {
   private onMediumChange(): Observable<string[]> {
     return this.mediumControl.valueChanges.pipe(
       tap(async (value) => {
+        if (!value.length) {
+          return;
+        }
         await this.commonUtilService.getLoader().then((loader) => {
           this.loader = loader;
           this.loader.present();
