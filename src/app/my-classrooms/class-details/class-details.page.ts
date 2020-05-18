@@ -31,10 +31,10 @@ export class ClassDetailsPage {
   memberListDummy = [
     {
       name: 'Anil',
+      isAdmin: true,
     },
     {
-      name: 'Bala',
-      isAdmin: true,
+      name: 'Bharath',
     },
     {
       name: 'Mani',
@@ -125,8 +125,8 @@ export class ClassDetailsPage {
       console.log('this.groupDetails', this.groupDetails);
       this.groupDetails.members.forEach(m => {
         const member = {
-          title: m.firstName,
-          initial: this.extractInitial(m.firstName),
+          title: 'Balakrishna M',
+          initial: this.extractInitial('Balakrishna'),
           isAdmin: false
         };
         this.memberList.push(member);
