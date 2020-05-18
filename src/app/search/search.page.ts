@@ -1174,7 +1174,9 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
             this.downloadParentContent(parent);
             this.profile = this.appGlobalService.getCurrentUser();
             this.checkProfileData(data.contentData, this.profile);
-            this.showContentDetails(this.childContent, false, false);
+            setTimeout(() => {
+              this.showContentDetails(this.childContent, false, false);
+            }, 400);
           }
         } else {
           this.zone.run(() => {
