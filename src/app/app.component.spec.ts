@@ -1283,7 +1283,7 @@ describe('AppComponent', () => {
                 mockEvents.subscribe = jest.fn((topic, fn) => {
                     switch (topic) {
                         case EventTopics.TAB_CHANGE:
-                            return fn('resources');
+                            return fn('library');
                     }
                 });
                 mockZone.run = jest.fn((fn) => fn());
@@ -1310,11 +1310,11 @@ describe('AppComponent', () => {
                     InteractType.TOUCH,
                     InteractSubtype.TAB_CLICKED,
                     Environment.HOME,
-                    'resources');
-                expect(mockTelemetryGeneratorService.generateImpressionTelemetry).nthCalledWith(1,
+                    'library');
+                expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenCalledWith(
                     ImpressionType.VIEW,
                     '',
-                    'resources',
+                    'library',
                     Environment.HOME,
                     undefined, undefined, undefined, undefined,
                     corRelationList);
@@ -1335,7 +1335,7 @@ describe('AppComponent', () => {
                 mockEvents.subscribe = jest.fn((topic, fn) => {
                     switch (topic) {
                         case EventTopics.TAB_CHANGE:
-                            return fn('resources');
+                            return fn('library');
                     }
                 });
                 mockZone.run = jest.fn((fn) => fn());
@@ -1361,18 +1361,11 @@ describe('AppComponent', () => {
                 // assert
                 jest.advanceTimersByTime(2100);
                 expect(mockEvents.subscribe).toHaveBeenCalled();
-                expect(mockTelemetryGeneratorService.generateInteractTelemetry).nthCalledWith(2,
+                expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
                     InteractType.TOUCH,
                     InteractSubtype.TAB_CLICKED,
                     Environment.HOME,
-                    'resources');
-                expect(mockTelemetryGeneratorService.generateImpressionTelemetry).nthCalledWith(1,
-                    ImpressionType.VIEW,
-                    '',
-                    'resources',
-                    Environment.HOME,
-                    undefined, undefined, undefined, undefined,
-                    corRelationList);
+                    'library');
                 jest.useRealTimers();
                 jest.clearAllTimers();
                 setTimeout(() => {

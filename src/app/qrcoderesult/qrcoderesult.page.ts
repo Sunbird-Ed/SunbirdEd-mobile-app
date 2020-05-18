@@ -428,14 +428,6 @@ export class QrcoderesultPage implements OnDestroy {
     let telemetryObject: TelemetryObject;
     const objectType = this.telemetryGeneratorService.isCollection(content.mimeType) ? content.contentType : ContentType.RESOURCE;
     telemetryObject = new TelemetryObject(identifier, objectType, undefined);
-    this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
-      InteractSubtype.CONTENT_PLAY,
-      !this.appGlobalService.isOnBoardingCompleted ? Environment.ONBOARDING : Environment.HOME,
-      PageId.DIAL_CODE_SCAN_RESULT,
-      telemetryObject,
-      values,
-      undefined,
-      this.corRelationList);
     this.openPlayer(content, request);
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,

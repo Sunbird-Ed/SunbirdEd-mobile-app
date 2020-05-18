@@ -219,7 +219,6 @@ export enum InteractSubtype {
     FLAG_INITIATE = 'flag-initiated',
     FLAG_SUCCESS = 'flag-success',
     FLAG_FAILED = 'flag-failed',
-    CONTENT_PLAY = 'content-play',
     QRCodeScanClicked = 'qr-code-scanner-clicked',
     QRCodeScanSuccess = 'qr-code-scan-success',
     QRCodeScanCancelled = 'qr-code-scan-cancelled',

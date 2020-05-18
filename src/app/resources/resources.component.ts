@@ -1042,16 +1042,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       );
     }
   }
-  onScroll(event) {
-    // Added Telemetry on reaching Horizontal Scroll End
-    if (event && event.target.scrollWidth <= event.target.scrollLeft + event.target.offsetWidth) {
-      this.telemetryGeneratorService.generateInteractTelemetry(InteractType.SCROLL,
-        InteractSubtype.RECENTLY_VIEWED_END_REACHED,
-        Environment.HOME,
-        this.source,
-      );
-    }
-  }
 
   scrollToTop() {
     this.contentView.scrollToTop();

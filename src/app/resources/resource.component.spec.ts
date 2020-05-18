@@ -1592,28 +1592,6 @@ describe('ResourcesComponent', () => {
         expect(mockTelemetryGeneratorService.generateInteractTelemetry).not.toHaveBeenCalled();
     });
 
-    it('should generate interact event if event and horizontal scroll event', () => {
-        // arrange
-        mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
-        // act
-        resourcesComponent.onScroll({ target: { scrollWidth: 10, scrollLeft: 20, offsetWidth: 10 } });
-        // assert
-        expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
-            InteractType.SCROLL,
-            InteractSubtype.RECENTLY_VIEWED_END_REACHED,
-            Environment.HOME,
-            PageId.LIBRARY);
-    });
-
-    it('should cover else part if event is undefined and event target is undefined', () => {
-        // arrange
-        mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
-        // act
-        resourcesComponent.onScroll(undefined);
-        // assert
-        expect(mockTelemetryGeneratorService.generateInteractTelemetry).not.toHaveBeenCalled();
-    });
-
     it('should fetch localContent when called upon', () => {
         // arrange
         mockContentService.getContents = jest.fn((data) => of(data));
@@ -1671,5 +1649,17 @@ describe('ResourcesComponent', () => {
             // assert
             expect(mockAppGlobalService.getCurrentUser).toHaveBeenCalled();
         });
+    });
+
+    it('should call setTimeout for ionViewDidEnter', (done) => {
+        // arrange
+        mockAppGlobalService.showTutorialScreen = jest.fn();
+        // act
+        resourcesComponent.ionViewDidEnter();
+        // assert
+        setTimeout(() => {
+            expect(mockAppGlobalService.showTutorialScreen).toHaveBeenCalled();
+            done();
+        }, 2000);
     });
 });
