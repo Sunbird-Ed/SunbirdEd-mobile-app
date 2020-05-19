@@ -84,7 +84,9 @@
   }
 
   .sp-input-primary ion-input{
+    font-weight: bold;
     border: 1px solid #006de5;
+    --placeholder-opacity: 0.3 !important;
   }
 
   .sp-input-error ion-input{
