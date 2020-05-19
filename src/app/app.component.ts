@@ -547,7 +547,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   private async getSelectedLanguage() {
     const selectedLanguage = await this.preferences.getString(PreferenceKey.SELECTED_LANGUAGE_CODE).toPromise();
     if (selectedLanguage) {
-      await this.translate.use(selectedLanguage).toPromise();
+      await this.translate.use(selectedLanguage);
     }
   }
 

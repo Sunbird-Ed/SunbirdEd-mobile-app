@@ -1272,7 +1272,7 @@ describe('AppComponent', () => {
                 done();
             });
         });
-        it('should subscribe tab change event with pageId resources '
+        it('should subscribe tab change event with pageId library '
             + 'and no board, medium and class is assigned to current profile', (done) => {
                 // arrange
                 mockPlatform.ready = jest.fn(() => {
@@ -1324,7 +1324,8 @@ describe('AppComponent', () => {
                     done();
                 });
             });
-        it('should subscribe tab change event with pageId library '
+
+        it('should subscribe tab change event with pageId courses '
             + 'and board, medium and class is assigned to current profile', (done) => {
                 // arrange
                 mockPlatform.ready = jest.fn(() => {
@@ -1335,7 +1336,7 @@ describe('AppComponent', () => {
                 mockEvents.subscribe = jest.fn((topic, fn) => {
                     switch (topic) {
                         case EventTopics.TAB_CHANGE:
-                            return fn('library');
+                            return fn('courses');
                     }
                 });
                 mockZone.run = jest.fn((fn) => fn());
@@ -1347,14 +1348,11 @@ describe('AppComponent', () => {
                     grade: ['some_grade']
                 } as any;
                 mockAppGlobalService.getCurrentUser = jest.fn(() => mockCurrentProfile);
-
+                mockPreferences.getString = jest.fn(() => of('mock_channel_id'));
                 const corRelationList: Array<CorrelationData> = [];
-                corRelationList.push({ id: mockCurrentProfile.board.join(','), type: CorReleationDataType.BOARD });
-                corRelationList.push({ id: mockCurrentProfile.medium.join(','), type: CorReleationDataType.MEDIUM });
-                corRelationList.push({ id: mockCurrentProfile.grade.join(','), type: CorReleationDataType.CLASS });
-                corRelationList.push({ id: mockCurrentProfile.profileType, type: CorReleationDataType.USERTYPE });
+                corRelationList.push({id: 'mock_channel_id', type: CorReleationDataType.SOURCE});
                 mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
-
+                mockTranslate.use = jest.fn();
                 // act
                 jest.useFakeTimers();
                 appComponent.ngOnInit();
@@ -1365,7 +1363,7 @@ describe('AppComponent', () => {
                     InteractType.TOUCH,
                     InteractSubtype.TAB_CLICKED,
                     Environment.HOME,
-                    'library');
+                    'courses');
                 jest.useRealTimers();
                 jest.clearAllTimers();
                 setTimeout(() => {
