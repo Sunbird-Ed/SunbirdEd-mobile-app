@@ -664,6 +664,6 @@
   "YOU_MUST_JOIN_TO_ACCESS_TRAINING_DETAIL": "You must log in to access training details",
   "YOU_MUST_LOGIN_TO_ACCESS_QUIZ_CONTENT": "You must login to access this content",
   "TUTORIAL_HEADING": "Videos, Interactive content and more...",
-  "DETAIL_TUTORIAL": "{{%s}}'s library is a host of videos, <span class=\"focus-content\">interactive content</span> and <span class=\"focus-content\">videos</span> for you to learn and practice concepts from your textbooks. Click on a textbook to get started!",
+  "DETAIL_TUTORIAL": "{{%s}}'s library is a host of {{%videos}}, {{%interactive}} and {{%worksheets}} for you to learn and practice concepts from your textbooks. Click on a textbook to get started!",
   "TUTORIAL_BUTTON": "Lets get started"
 }
