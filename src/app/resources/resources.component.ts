@@ -46,7 +46,9 @@ import {
   RouterLinks,
   ContentFilterConfig,
   MimeType,
-  EventTopics
+  EventTopics,
+  CourseType,
+  ExploreConstants
 } from '@app/app/app.constant';
 import { AppGlobalService } from '@app/services/app-global-service.service';
 import { SunbirdQRScanner } from '@app/services/sunbirdqrscanner.service';
@@ -496,17 +498,20 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.getGroupByPageReq.mode = 'hard';
     this.getGroupByPageReq.facets = Search.FACETS_ETB;
     this.getGroupByPageReq.contentTypes = [ContentType.TEXTBOOK];
+    this.getGroupByPageReq.fields = ExploreConstants.REQUIRED_FIELDS;
     this.getGroupByPage(isAfterLanguageChange, avoidRefreshList);
   }
 
   // Make this method as private
-  getGroupByPage(isAfterLanguageChange = false, avoidRefreshList = false) {
+  async getGroupByPage(isAfterLanguageChange = false, avoidRefreshList = false) {
+
     const selectedBoardMediumGrade = ((this.getGroupByPageReq.board && this.getGroupByPageReq.board.length
       && this.getGroupByPageReq.board[0]) ? this.getGroupByPageReq.board[0] + ', ' : '') +
       (this.getGroupByPageReq.medium && this.getGroupByPageReq.medium.length
         && this.getGroupByPageReq.medium[0]) + ' Medium, ' +
       (this.getGroupByPageReq.grade && this.getGroupByPageReq.grade.length && this.getGroupByPageReq.grade[0]);
     this.appGlobalService.setSelectedBoardMediumGrade(selectedBoardMediumGrade);
+
     this.storyAndWorksheets = [];
     this.searchApiLoader = !this.refresh;
     const reqvalues = {};
@@ -530,44 +535,16 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       searchCriteria: this.getGroupByPageReq
     };
 
-    // Get the course data
-    this.contentService.searchAndGroupContent(JSON.parse(JSON.stringify(request))).toPromise()
-      .then((response: ContentsGroupedByPageSection) => {
-        this.ngZone.run(() => {
-          response.sections.forEach(element => {
-            const contentListObj = {
-              title: element.name,
-              count: element.contents ?
-                this.commonUtilService.translateMessage('NUMBER_OF_COURSES', element.contents.length)
-                : this.commonUtilService.translateMessage('NO_COURSES'),
-              theme: this.subjectThemeAndIconsMap[element.name] ?
-                this.subjectThemeAndIconsMap[element.name].background
-                : null,
-
-              titleColor: this.subjectThemeAndIconsMap[element.name] ?
-                this.subjectThemeAndIconsMap[element.name].titleColor
-                : null,
-
-              cardImg: this.subjectThemeAndIconsMap[element.name] ?
-                this.subjectThemeAndIconsMap[element.name].icon
-                : null
-            };
-            this.courseList.push(contentListObj);
-          });
-        });
-      })
-      .catch(error => {
-        this.ngZone.run(() => {
-        });
-      });
-
+    const requestBody = JSON.parse(JSON.stringify(request));
     // Get the book data
-    this.contentService.searchAndGroupContent(JSON.parse(JSON.stringify(request))).toPromise()
+    this.contentService.searchAndGroupContent(requestBody).toPromise()
       .then((response: ContentsGroupedByPageSection) => {
         this.ngZone.run(() => {
           this.searchGroupingContents = response;
           const newSections = [];
           this.getCategoryData();
+          // Get the course data
+          this.getCurriculumCourses(requestBody, response);
           this.searchGroupingContents.sections.forEach(element => {
             if (element.name) {
               if (has(element.name, this.selectedLanguage)) {
@@ -657,6 +634,51 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
             this.source, undefined,
             errValues);
         });
+      });
+  }
+
+  private getCurriculumCourses(request: SearchAndGroupContentRequest, bookResponse) {
+    if (bookResponse && bookResponse.combination) {
+      if (bookResponse.combination.medium) {
+        request.searchCriteria.medium = [bookResponse.combination.medium];
+        request.combination.medium = [bookResponse.combination.medium];
+      }
+      if (bookResponse.combination.gradeLevel) {
+        request.searchCriteria.grade = [bookResponse.combination.gradeLevel];
+        request.combination.gradeLevel = [bookResponse.combination.gradeLevel];
+      }
+    }
+    request.searchCriteria.contentTypes = [ContentType.TEXTBOOK];
+    // request.searchCriteria.courseTypes = [CourseType.CURRICULUM_COURSE];
+    console.log('getCurriculumCourses:request = ', request);
+
+    this.contentService.searchAndGroupContent(JSON.parse(JSON.stringify(request))).toPromise()
+      .then((response: ContentsGroupedByPageSection) => {
+        console.log('getCurriculumCourses:response = ', response);
+        this.ngZone.run(() => {
+          response.sections.forEach(element => {
+            const contentListObj = {
+              title: element.name,
+              count: element.contents ?
+                this.commonUtilService.translateMessage('NUMBER_OF_COURSES', element.contents.length)
+                : this.commonUtilService.translateMessage('NO_COURSES'),
+              theme: this.subjectThemeAndIconsMap[element.name] ?
+                this.subjectThemeAndIconsMap[element.name].background
+                : null,
+
+              titleColor: this.subjectThemeAndIconsMap[element.name] ?
+                this.subjectThemeAndIconsMap[element.name].titleColor
+                : null,
+
+              cardImg: this.subjectThemeAndIconsMap[element.name] ?
+                this.subjectThemeAndIconsMap[element.name].icon
+                : null
+            };
+            this.courseList.push(contentListObj);
+          });
+        });
+      })
+      .catch(error => {
       });
   }
 

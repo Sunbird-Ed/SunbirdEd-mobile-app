@@ -53,6 +53,11 @@ export class ContentType {
     ];
 }
 
+export class CourseType {
+    public static readonly TRAINING_COURSE = 'TrainingCourse';
+    public static readonly CURRICULUM_COURSE = 'CurriculumCourse';
+}
+
 export class MimeType {
     public static readonly COLLECTION = 'application/vnd.ekstep.content-collection';
     public static readonly VIDEO = ['video/avi', 'video/mpeg', 'video/quicktime', 'video/3gpp', 'video/mpeg', 'video/mp4',
@@ -145,6 +150,7 @@ export class ExploreConstants {
         'appIcon'
     ];
 }
+
 export class AudienceFilter {
     public static readonly GUEST_TEACHER = ['instructor', 'learner'];
     public static readonly GUEST_STUDENT = ['learner'];
