@@ -33,17 +33,17 @@
         background-color: #008840;
         border: 1px solid #008840;
         color: white;
-        text-align: center;
-        text-decoration: none;
         display: inline-block;
         font-size: 16px;
-        margin: 4px 0px;
         cursor: pointer;
         outline: none;
-        margin-bottom: 8px;
         width: 100%;
         padding: 16px 0px 16px 0px;
         box-shadow: 0 4px 7px 0 rgba(0,0,0,0.25);
+
+        .play-icon {
+            margin-right: px;
+        }
     }
 
     .menu-icon{

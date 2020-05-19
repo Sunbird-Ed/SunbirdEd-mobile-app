@@ -18,7 +18,8 @@
     </div>
     <div class="cd-flex-container">
       <div style="width: 100%;">
-        <button class="cd-chapter-card-button" (click)="startLearning();">{{'START_LEARNING' | translate}}</button>
+        <button class="cd-chapter-card-button" (click)="startLearning();">
+          <img class="play-icon" src="assets/imgs/Play@1.5x.svg" alt="play-icon"> {{'START_LEARNING' | translate}}</button>
       </div>
       <div>
         <img class="menu-icon" (click)="showOverflowMenu($event)" src="assets/imgs/menu.svg" alt="menu-icon">
