@@ -44,6 +44,7 @@ import { SbSharePopupComponent } from './popups/sb-share-popup/sb-share-popup.co
 import { SbAppSharePopupComponent } from './popups/sb-app-share-popup/sb-app-share-popup.component';
 import {ImportPopoverComponent} from './popups/import-popover/import-popover.component';
 import {SbProgressLoaderPage} from '@app/app/components/popups/sb-progress-loader/sb-progress-loader.page';
+import { CollectionActionsComponent } from './collection-acions/collection-acions.component';
 
 @NgModule({
   declarations: [
@@ -81,7 +82,8 @@ import {SbProgressLoaderPage} from '@app/app/components/popups/sb-progress-loade
     SbSharePopupComponent,
     SbAppSharePopupComponent,
     ImportPopoverComponent,
-    SbProgressLoaderPage
+    SbProgressLoaderPage,
+    CollectionActionsComponent
   ],
   imports: [
     CommonModule,
@@ -117,7 +119,8 @@ import {SbProgressLoaderPage} from '@app/app/components/popups/sb-progress-loade
     SbSharePopupComponent,
     SbAppSharePopupComponent,
     ImportPopoverComponent,
-    SbProgressLoaderPage
+    SbProgressLoaderPage,
+    CollectionActionsComponent
   ],
   exports: [
     ApplicationHeaderComponent,
@@ -153,7 +156,8 @@ import {SbProgressLoaderPage} from '@app/app/components/popups/sb-progress-loade
     SbSharePopupComponent,
     SbAppSharePopupComponent,
     ImportPopoverComponent,
-    SbProgressLoaderPage
+    SbProgressLoaderPage,
+    CollectionActionsComponent
   ],
   providers: [FileSizePipe, FilterPipe,  Keyboard]
 })
