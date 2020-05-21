@@ -109,6 +109,10 @@ export class StorageSettingsPage implements OnInit {
   }
 
   ngOnInit() {
+    this.telemetryGeneratorService.generateImpressionTelemetry(
+      ImpressionType.VIEW, '',
+      PageId.STORAGE_SETTINGS,
+      Environment.DOWNLOADS);
     this.fetchStorageVolumes();
     this.fetchStorageDestination();
   }
@@ -148,6 +152,8 @@ export class StorageSettingsPage implements OnInit {
   private handleHeaderEvents(event: { name: string }) {
     switch (event.name) {
       case 'back':
+        this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.STORAGE_SETTINGS, Environment.HOME,
+          true);
         this.location.back();
         break;
     }
