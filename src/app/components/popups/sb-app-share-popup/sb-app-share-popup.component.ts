@@ -104,7 +104,7 @@ export class SbAppSharePopupComponent implements OnInit, OnDestroy {
   generateInteractTelemetry(interactionType, interactSubtype) {
     this.telemetryGeneratorService.generateInteractTelemetry(
       interactionType, interactSubtype,
-      PageId.SETTINGS,
+      PageId.SHARE_APP_POPUP,
       Environment.SETTINGS
     );
   }
@@ -114,6 +114,7 @@ export class SbAppSharePopupComponent implements OnInit, OnDestroy {
   }
 
   closePopover() {
+    this.generateInteractTelemetry(InteractType.TOUCH, InteractSubtype.CLOSE_CLICKED);
     this.popoverCtrl.dismiss();
   }
 

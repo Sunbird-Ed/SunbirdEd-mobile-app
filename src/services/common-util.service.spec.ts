@@ -18,6 +18,8 @@ import { NgZone } from '@angular/core';
 import { WebView } from '@ionic-native/ionic-webview/ngx';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { of } from 'rxjs';
+import { Router } from '@angular/router';
+import { AndroidPermissionsService } from '.';
 
 describe('CommonUtilService', () => {
   let commonUtilService: CommonUtilService;
@@ -70,13 +72,14 @@ describe('CommonUtilService', () => {
   const mockAppversion: Partial<AppVersion> = {
     getAppName: jest.fn(() => Promise.resolve('Sunbird'))
   };
+  const mockRouter: Partial<Router> = {};
+  const mockPermissionService: Partial<AndroidPermissionsService> = {};
 
 
   beforeAll(() => {
     commonUtilService = new CommonUtilService(
       mockSharedPreferences as SharedPreferences,
       mockProfileService as ProfileService,
-      mockToastController as ToastController,
       mockTranslateService as TranslateService,
       mockLoadingController as LoadingController,
       mockEvents as Events,
@@ -86,7 +89,10 @@ describe('CommonUtilService', () => {
       mockPlatform as Platform,
       mockTelemetryGeneratorService as TelemetryGeneratorService,
       mockWebView as WebView,
-      mockAppversion as AppVersion
+      mockAppversion as AppVersion,
+      mockRouter as Router,
+      mockToastController as ToastController,
+      mockPermissionService as AndroidPermissionsService
     );
   });
 
@@ -532,6 +538,26 @@ describe('CommonUtilService', () => {
       commonUtilService.getContentImg(content);
       // assert
       expect(commonUtilService.convertFileSrc).toHaveBeenCalledWith(content.courseLogoUrl);
+    });
+  });
+
+  describe('presentToastForOffline', () => {
+    it('should create a pop-up message', (done) => {
+      const message = 'Connect to the internet to view the content';
+      mockToastController.create = jest.fn(() => {
+        return Promise.resolve({
+            present: jest.fn(),
+            onDidDismiss: jest.fn((fn) => {
+                fn();
+            })
+        });
+      });
+      jest.spyOn(commonUtilService, 'translateMessage').mockImplementation(() => {
+        return message;
+      });
+      commonUtilService.presentToastForOffline(message).then(() => {
+        done();
+      });
     });
   });
 

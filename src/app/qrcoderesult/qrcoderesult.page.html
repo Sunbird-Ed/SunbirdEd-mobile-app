@@ -38,7 +38,8 @@
   </div>
 </div>
 <ion-content *ngIf="results.length>1" class="ion-padding" [scrollEvents]="true" (ionScroll)="onScroll($event)">
-  <div class="card-container" *ngFor="let content of results; let i = index">
+  <div class="card-container" *ngFor="let content of results; let i = index"
+  [ngClass]="{'offline': !content?.isAvailableLocally && !commonUtilService.networkInfo.isNetworkAvailable}">
     <ion-row class="P010">
       <ul class="breadcrumbs">
         <!-- (click)="showSwitchUserAlert(true)" -->
