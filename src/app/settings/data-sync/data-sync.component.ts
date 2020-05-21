@@ -38,6 +38,7 @@ export class DataSyncComponent implements OnInit {
   dataSyncType?: TelemetryAutoSyncModes;
   OPTIONS = TelemetryAutoSyncModes;
   backButtonFunc: Subscription;
+  loader: any;
 
   constructor(
     @Inject('TELEMETRY_SERVICE') private telemetryService: TelemetryService,
@@ -51,23 +52,23 @@ export class DataSyncComponent implements OnInit {
     private platform: Platform
   ) {
     this.lastSyncDateTime = this.telemetryService.lastSyncedTimestamp().pipe(
-        map((ts) => {
-          if (ts) {
-            return window.dayjs(ts).format('DD/MM/YYYY, hh:mm a');
-          }
+      map((ts) => {
+        if (ts) {
+          return window.dayjs(ts).format('DD/MM/YYYY, hh:mm a');
+        }
 
-          return undefined;
-        }),
-        tap(() => {
-          this.changeDetectionRef.detectChanges();
-        })
+        return undefined;
+      }),
+      tap(() => {
+        this.changeDetectionRef.detectChanges();
+      })
     );
   }
 
   async init() {
     this.zone.run(async () => {
       this.dataSyncType = (
-          await this.telemetryService.autoSync.getSyncMode().toPromise() as TelemetryAutoSyncModes | undefined
+        await this.telemetryService.autoSync.getSyncMode().toPromise() as TelemetryAutoSyncModes | undefined
       ) || TelemetryAutoSyncModes.ALWAYS_ON;
     });
   }
@@ -124,57 +125,68 @@ export class DataSyncComponent implements OnInit {
     }
 
     return this.archiveService.export(
-      { objects: [{ type: ArchiveObjectType.TELEMETRY }],
-      filePath: cordova.file.externalCacheDirectory + '/tmp' })
-        .toPromise()
-        .then(async (r) => {
-          await loader.dismiss();
-          return this.social.share('', '', r.filePath, '');
-        })
-        .catch(async (e) => {
-          console.error(e);
-          await loader.dismiss();
+      {
+        objects: [{ type: ArchiveObjectType.TELEMETRY }],
+        filePath: cordova.file.externalCacheDirectory + '/tmp'
+      })
+      .toPromise()
+      .then(async (r) => {
+        await loader.dismiss();
+        return this.social.share('', '', r.filePath, '');
+      })
+      .catch(async (e) => {
+        console.error(e);
+        await loader.dismiss();
 
-          if (e instanceof ObjectNotFoundError) {
-            this.commonUtilService.showToast('SHARE_TELEMETRY_NO_DATA_FOUND');
-          } else {
-            this.commonUtilService.showToast('SHARE_TELEMETRY_FAILED');
-          }
-        });
+        if (e instanceof ObjectNotFoundError) {
+          this.commonUtilService.showToast('SHARE_TELEMETRY_NO_DATA_FOUND');
+        } else {
+          this.commonUtilService.showToast('SHARE_TELEMETRY_FAILED');
+        }
+      });
   }
 
   async onSyncClick() {
     const that = this;
-    const loader = await this.commonUtilService.getLoader();
-    await loader.present();
+    this.loader = await this.commonUtilService.getLoader();
+    await this.loader.present();
     this.generateInteractEvent(InteractType.TOUCH, InteractSubtype.MANUALSYNC_INITIATED, null);
     this.telemetryService.sync({
       ignoreAutoSyncMode: true,
       ignoreSyncThreshold: true
-    }).subscribe((syncStat: TelemetrySyncStat) => {
-        that.zone.run(async () => {
-          if (syncStat.error) {
-            await loader.dismiss();
-            this.commonUtilService.showToast('DATA_SYNC_FAILURE');
-            console.error('Telemetry Data Sync Error: ', syncStat);
-            return;
-          } else if (!syncStat.syncedEventCount) {
-            await loader.dismiss();
-            this.commonUtilService.showToast('DATA_SYNC_NOTHING_TO_SYNC');
-            console.error('Telemetry Data Sync Error: ', syncStat);
-            return;
-          }
+    }).subscribe();
 
-          this.generateInteractEvent(InteractType.OTHER, InteractSubtype.MANUALSYNC_SUCCESS, syncStat.syncedFileSize);
-          await loader.dismiss();
-          this.commonUtilService.showToast('DATA_SYNC_SUCCESSFUL');
-          console.log('Telemetry Data Sync Success: ', syncStat);
-        });
-      }, async (error) => {
-        await loader.dismiss();
+    sbsync.onSyncSucces(async (syncStat) => {
+      if (syncStat.error) {
+        if (this.loader) {
+          await this.loader.dismiss();
+        }
+
         this.commonUtilService.showToast('DATA_SYNC_FAILURE');
-        console.error('Telemetry Data Sync Error: ', error);
-      });
+        console.error('Telemetry Data Sync Error: ', syncStat);
+        return;
+      } else if (!syncStat.syncedEventCount) {
+        if (this.loader) {
+          await this.loader.dismiss();
+        }
+        this.commonUtilService.showToast('DATA_SYNC_NOTHING_TO_SYNC');
+        console.error('Telemetry Data Sync Error: ', syncStat);
+        return;
+      }
+
+      this.generateInteractEvent(InteractType.OTHER, InteractSubtype.MANUALSYNC_SUCCESS, syncStat.syncedFileSize);
+      if (this.loader) {
+        await this.loader.dismiss();
+      }
+      this.commonUtilService.showToast('DATA_SYNC_SUCCESSFUL');
+      console.log('Telemetry Data Sync Success: ', syncStat);
+    }, async (error) => {
+      if (this.loader) {
+        await this.loader.dismiss();
+      }
+      this.commonUtilService.showToast('DATA_SYNC_FAILURE');
+      console.error('Telemetry Data Sync Error: ', error);
+    });
   }
 
   generateInteractEvent(interactType: string, subtype: string, size: number) {
