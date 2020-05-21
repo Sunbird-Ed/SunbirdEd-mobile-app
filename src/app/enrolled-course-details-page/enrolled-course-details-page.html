@@ -43,7 +43,7 @@
 							<div class="sb-dt-card-actions">
 								<div class="wrapper sb-btn-tile-group" *ngIf="course?.progress !==100">
 									<div *ngIf="trackDownloads$ | async; let downloads">
-										<button *ngIf="downloadIdentifiers.size && !isAvailableLocally" [disabled]="downloads.queued.length"
+										<button *ngIf="downloadIdentifiers.size" [disabled]="downloads.queued.length"
 											(click)="showDownloadConfirmationAlert()" slot="icon-only"
 											class="card-button">
 											<ion-icon ios="ios-cloud-download" md="md-cloud-download"
