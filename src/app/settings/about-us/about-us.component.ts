@@ -94,7 +94,7 @@ export class AboutUsComponent implements OnInit {
   }
 
   async shareInformation() {
-    this.generateInteractTelemetry(InteractType.TOUCH, InteractSubtype.SUPPORT_CLICKED);
+    this.generateInteractTelemetry(InteractType.TOUCH, InteractSubtype.SHARE_CLICKED);
     const allUserProfileRequest: GetAllProfileRequest = {
       local: true,
       server: true

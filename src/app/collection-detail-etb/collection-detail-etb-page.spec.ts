@@ -1786,7 +1786,6 @@ describe('collectionDetailEtbPage', () => {
             expect(mockzone.run).toHaveBeenCalled();
         });
 
-
     });
 
     it('should hide deeplink progress loader', () => {

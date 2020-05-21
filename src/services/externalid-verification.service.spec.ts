@@ -168,27 +168,90 @@ describe('ExternalIdVerificationService', () => {
       expect(mockPopOverController.create).not.toHaveBeenCalled();
     });
 
-    it('should show Ext Verification popup if user feed category  orgmigrationaction', (done) => {
+    it('should show Ext Verification popup if user feed category  orgmigrationaction for multiple value of prospectChannelsIds', (done) => {
       // arrange
       externalIdVerificationService.checkQuizContent = jest.fn(() => Promise.resolve(false));
-      externalIdVerificationService.checkJoinTraining =  jest.fn(() => Promise.resolve(true));
+      externalIdVerificationService.checkJoinTraining = jest.fn(() => Promise.resolve(true));
       externalIdVerificationService.isCustodianUser$ = of(true);
       mockCommonUtilService.networkInfo = {
         isNetworkAvailable: true
       };
-      mockProfileService.getUserFeed = jest.fn(() => of([{ category: 'orgmigrationaction' } as any]));
-      mockFormnFrameworkUtilService.getTenantSpecificMessages = jest.fn(() => Promise.resolve([{ range: [{}]}]));
+      mockAppGlobalService.closeSigninOnboardingLoader = jest.fn();
+      externalIdVerificationService.isCustodianUser$ = of(true);
+      mockProfileService.getUserFeed = jest.fn(() => of([{
+        data: {
+          prospectChannels: ['DB_org'],
+          prospectChannelsIds: [
+            { name: 'DB_org', id: '01300580670386995217' },
+            { name: 'DB_org_1', id: '013005806703869952178' }
+          ]
+        },
+        category: 'OrgMigrationAction'
+      }] as any));
       const mockCreate = jest.spyOn(mockPopOverController, 'create');
+      mockFormnFrameworkUtilService.getTenantSpecificMessages = jest.fn(() => Promise.resolve([{ range: [{}] }]));
       // act
       externalIdVerificationService.showExternalIdVerificationPopup();
       // assert
       setTimeout(() => {
+        expect(externalIdVerificationService.isCustodianUser$).toBeTruthy();
+        expect(mockAppGlobalService.closeSigninOnboardingLoader).toHaveBeenCalled();
+        expect(mockProfileService.getUserFeed).toHaveBeenCalled();
+        expect(mockFormnFrameworkUtilService.getTenantSpecificMessages).toHaveBeenCalled();
         expect(mockPopOverController.create).toHaveBeenCalled();
-        expect(mockCreate.mock.calls[0][0]['componentProps']['userFeed']).toEqual({ category: 'orgmigrationaction' });
+        expect(mockCreate.mock.calls[0][0]['componentProps']['userFeed']).toEqual({
+          data: {
+            prospectChannels: ['DB_org'],
+            prospectChannelsIds: [
+              { name: 'DB_org', id: '01300580670386995217' },
+              { name: 'DB_org_1', id: '013005806703869952178' }
+            ]
+          },
+          category: 'OrgMigrationAction'
+        });
         expect(mockCreate.mock.calls[0][0]['componentProps']['tenantMessages']).toEqual({});
         done();
       }, 0);
+    });
 
+    it('should show Ext Verification popup if user feed category  orgmigrationaction', (done) => {
+      // arrange
+      externalIdVerificationService.checkQuizContent = jest.fn(() => Promise.resolve(false));
+      externalIdVerificationService.checkJoinTraining = jest.fn(() => Promise.resolve(true));
+      externalIdVerificationService.isCustodianUser$ = of(true);
+      mockCommonUtilService.networkInfo = {
+        isNetworkAvailable: true
+      };
+      mockAppGlobalService.closeSigninOnboardingLoader = jest.fn();
+      externalIdVerificationService.isCustodianUser$ = of(true);
+      mockProfileService.getUserFeed = jest.fn(() => of([{
+        data: {
+          prospectChannels: ['DB_org'],
+          prospectChannelsIds: [{ name: 'DB_org', id: '01300580670386995217' }]
+        },
+        category: 'OrgMigrationAction'
+      }] as any));
+      const mockCreate = jest.spyOn(mockPopOverController, 'create');
+      mockFormnFrameworkUtilService.getTenantSpecificMessages = jest.fn(() => Promise.resolve([{ range: [{}] }]));
+      // act
+      externalIdVerificationService.showExternalIdVerificationPopup();
+      // assert
+      setTimeout(() => {
+        expect(externalIdVerificationService.isCustodianUser$).toBeTruthy();
+        expect(mockAppGlobalService.closeSigninOnboardingLoader).toHaveBeenCalled();
+        expect(mockProfileService.getUserFeed).toHaveBeenCalled();
+        expect(mockFormnFrameworkUtilService.getTenantSpecificMessages).toHaveBeenCalled();
+        expect(mockPopOverController.create).toHaveBeenCalled();
+        expect(mockCreate.mock.calls[0][0]['componentProps']['userFeed']).toEqual({
+          data: {
+            prospectChannels: ['DB_org'],
+            prospectChannelsIds: [{ name: 'DB_org', id: '01300580670386995217' }]
+          },
+          category: 'OrgMigrationAction'
+        });
+        expect(mockCreate.mock.calls[0][0]['componentProps']['tenantMessages']).toEqual({});
+        done();
+      }, 0);
     });
   });
 

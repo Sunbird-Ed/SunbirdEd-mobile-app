@@ -41,11 +41,11 @@ export class CommonUtilService {
     private alert?: any;
     private _currentTabName: string;
     appName: any;
+    private toast: any;
 
     constructor(
         @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
         @Inject('PROFILE_SERVICE') private profileService: ProfileService,
-        private toastCtrl: ToastController,
         private translate: TranslateService,
         private loadingCtrl: LoadingController,
         private events: Events,
@@ -99,7 +99,7 @@ export class CommonUtilService {
                     cssClass: cssToast ? cssToast : ''
                 };
 
-                const toast = await this.toastCtrl.create(toastOptions);
+                const toast = await this.toastController.create(toastOptions);
                 await toast.present();
             }
         );
@@ -556,4 +556,19 @@ export class CommonUtilService {
             return popover;
         });
     }
+
+    async presentToastForOffline(msg: string) {
+        this.toast = await this.toastController.create({
+          duration: 3000,
+          message: this.translateMessage(msg),
+          showCloseButton: true,
+          position: 'top',
+          closeButtonText: 'X',
+          cssClass: ['toastHeader', 'offline']
+        });
+        await this.toast.present();
+        this.toast.onDidDismiss(() => {
+          this.toast = undefined;
+        });
+      }
 }

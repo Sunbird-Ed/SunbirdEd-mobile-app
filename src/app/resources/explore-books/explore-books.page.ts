@@ -12,7 +12,8 @@ import {
   ImpressionType,
   InteractSubtype,
   InteractType,
-  PageId
+  PageId,
+  CorReleationDataType
 } from 'services/telemetry-constants';
 import {
   ContentSearchCriteria,
@@ -32,7 +33,7 @@ import { Observable, Subscription, of } from 'rxjs';
 import { Router, NavigationExtras } from '@angular/router';
 import { Location } from '@angular/common';
 import { ExploreBooksSortComponent } from '../explore-books-sort/explore-books-sort.component';
-import { tap, switchMap, catchError, mapTo, debounceTime} from 'rxjs/operators';
+import { tap, switchMap, catchError, mapTo, debounceTime } from 'rxjs/operators';
 
 @Component({
   selector: 'app-explore-books',
@@ -153,13 +154,10 @@ export class ExploreBooksPage implements OnInit, OnDestroy {
       this.subjects.unshift({ name: this.commonUtilService.translateMessage('ALL'), selected: true });
       this.contentType = extras.contentType;
 
-      this.corRelationList = [{
-        id: this.selectedGrade,
-        type: 'Grade'
-      }, {
-        id: this.selectedMedium,
-        type: 'Medium'
-      }];
+      this.corRelationList = [
+        ... this.populateCData(this.selectedGrade, CorReleationDataType.CLASS),
+        ... this.populateCData(this.selectedMedium, CorReleationDataType.MEDIUM)
+      ];
 
       const index = this.categoryGradeLevels.findIndex((grade) => grade.name === this.searchForm.value['grade'][0]);
       this.classClick(index);
@@ -203,6 +201,19 @@ export class ExploreBooksPage implements OnInit, OnDestroy {
     if (this.searchFormSubscription) {
       this.searchFormSubscription.unsubscribe();
     }
+  }
+
+  private populateCData(profileAtributes, correlationType): Array<CorrelationData> {
+    const correlationList: Array<CorrelationData> = [];
+    if (profileAtributes) {
+      profileAtributes.forEach((value) => {
+        correlationList.push({
+          id: value,
+          type: correlationType
+        });
+      });
+    }
+    return correlationList;
   }
 
   handleBackButton() {
@@ -330,15 +341,15 @@ export class ExploreBooksPage implements OnInit, OnDestroy {
     const identifier = content.contentId || content.identifier;
     const value = new Map();
     value['identifier'] = identifier;
-    this.corRelationList = [{
+    const corRelationList = [{
       id: 'explore',
-      type: 'Source'
+      type: CorReleationDataType.SOURCE
     }];
 
     const navigationExtras: NavigationExtras = {
       state: {
         content,
-        corRelation: this.corRelationList
+        corRelation: corRelationList
       }
     };
 
@@ -356,7 +367,7 @@ export class ExploreBooksPage implements OnInit, OnDestroy {
       undefined,
       value,
       undefined,
-      this.corRelationList);
+      corRelationList);
 
   }
 
@@ -393,13 +404,6 @@ export class ExploreBooksPage implements OnInit, OnDestroy {
         board: data.values.board || [],
         medium: data.values.medium || []
       });
-      this.corRelationList = [{
-        id: ( data.values.board && data.values.board.length )  ?  data.values.board[0] : '',
-        type: 'Board'
-      }, {
-        id: (data.values.medium && data.values.medium.length) ? data.values.medium[0] : '' ,
-        type: 'Medium'
-      }];
       this.telemetryGeneratorService.generateInteractTelemetry(
         InteractType.TOUCH,
         InteractSubtype.SORT_BY_FILTER_SET,
@@ -408,13 +412,16 @@ export class ExploreBooksPage implements OnInit, OnDestroy {
         undefined,
         undefined,
         undefined,
-        this.corRelationList);
+        [
+          ...this.populateCData(data.values.board, CorReleationDataType.BOARD),
+          ...this.populateCData(data.values.medium, CorReleationDataType.MEDIUM),
+        ]);
     }
     if (!data) {
       this.telemetryGeneratorService.generateBackClickedTelemetry(
-          PageId.EXPLORE_MORE_CONTENT,
-          Environment.HOME,
-          false);
+        PageId.EXPLORE_MORE_CONTENT,
+        Environment.HOME,
+        false);
     }
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,
@@ -466,11 +473,6 @@ export class ExploreBooksPage implements OnInit, OnDestroy {
   }
 
   classClickedForTelemetry(currentClass: string) {
-    this.corRelationList = [{
-      id: currentClass,
-      type: 'Class'
-    }];
-
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,
       InteractSubtype.CLASS_CLICKED,
@@ -479,16 +481,14 @@ export class ExploreBooksPage implements OnInit, OnDestroy {
       undefined,
       undefined,
       undefined,
-      this.corRelationList
+      [{
+        id: currentClass,
+        type: CorReleationDataType.CLASS
+      }]
     );
   }
 
   subjectClicked(index, currentSubject: string) {
-    this.corRelationList = [{
-      id: currentSubject,
-      type: 'Subject'
-    }];
-
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,
       InteractSubtype.SUBJECT_CLICKED,
@@ -497,15 +497,13 @@ export class ExploreBooksPage implements OnInit, OnDestroy {
       undefined,
       undefined,
       undefined,
-      this.corRelationList);
+      [{
+        id: currentSubject,
+        type: CorReleationDataType.SUBJECT
+      }]);
   }
 
   generateMimeTypeClickedTelemetry(mimeTypeName) {
-    this.corRelationList = [{
-      id: mimeTypeName,
-      type: 'MimeType'
-    }];
-
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,
       InteractSubtype.FILTER_CLICKED,
@@ -514,7 +512,10 @@ export class ExploreBooksPage implements OnInit, OnDestroy {
       undefined,
       undefined,
       undefined,
-      this.corRelationList);
+      [{
+        id: mimeTypeName,
+        type: CorReleationDataType.MIMETYPE
+      }]);
   }
 
   hideSortByButton = () => {
