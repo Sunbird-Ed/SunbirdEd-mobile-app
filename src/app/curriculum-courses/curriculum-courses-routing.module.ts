@@ -13,6 +13,10 @@ const routes: Routes = [
         path: RouterLinks.CURRICULUM_COURSE_DETAILS,
         loadChildren: './curriculum-course-details/curriculum-course-details.module#CurriculumCourseDetailsPageModule'
     },
+    {
+        path: RouterLinks.CHAPTER_DETAILS,
+        loadChildren: './chapter-details/chapter-details.module#ChapterDetailsPageModule'
+    },
 ];
 
 @NgModule({

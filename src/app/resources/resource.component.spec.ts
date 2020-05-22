@@ -303,7 +303,10 @@ describe('ResourcesComponent', () => {
                             }
                         },
                     },
-                ]
+                ],
+                combination: {
+                    medium: ['hindi', 'english']
+                }
             } as ContentsGroupedByPageSection));
             mockCommonUtilService.networkInfo.isNetworkAvailable = true;
             mockNgZone.run = jest.fn((fn) => fn());
@@ -352,7 +355,10 @@ describe('ResourcesComponent', () => {
                             }
                         },
                     },
-                ]
+                ],
+                combination: {
+                    gradeLevel: ['class 1', 'class 2']
+                }
             } as ContentsGroupedByPageSection));
             mockCommonUtilService.networkInfo.isNetworkAvailable = true;
             mockNgZone.run = jest.fn((fn) => fn());
