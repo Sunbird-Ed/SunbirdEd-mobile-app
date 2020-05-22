@@ -37,7 +37,8 @@ import {
   ImpressionType,
   InteractSubtype,
   InteractType,
-  PageId
+  PageId,
+  CorReleationDataType
 } from '@app/services/telemetry-constants';
 import {
   ContentType, ViewMore, MimeType, RouterLinks, ContentFilterConfig,
@@ -51,6 +52,7 @@ import { AppHeaderService } from '@app/services/app-header.service';
 import { EnrollmentDetailsComponent } from '../components/enrollment-details/enrollment-details.component';
 import { AppGlobalService } from '@app/services/app-global-service.service';
 import { LocalCourseService } from '@app/services/local-course.service';
+import { ContentUtil } from '@app/util/content-util';
 
 @Component({
   selector: 'app-view-more-activity',
@@ -720,6 +722,14 @@ export class ViewMoreActivityComponent implements OnInit {
     const type = this.telemetryGeneratorService.isCollection(content.mimeType) ? content.contentType : ContentType.COURSE;
     const telemetryObject: TelemetryObject = new TelemetryObject(identifier, type, content.pkgVersion);
 
+    const corRelationList: Array<CorrelationData> = [{
+      id: this.sectionName,
+      type: CorReleationDataType.SECTION
+    }, {
+      id: identifier,
+      type: CorReleationDataType.ROOT_ID
+    }];
+
     const values = new Map();
     values['sectionName'] = this.sectionName;
     values['positionClicked'] = this.index;
@@ -727,9 +737,11 @@ export class ViewMoreActivityComponent implements OnInit {
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
       InteractSubtype.CONTENT_CLICKED,
       this.env,
-      this.pageName ? this.pageName : layoutName,
+      PageId.VIEW_MORE,
       telemetryObject,
-      values);
+      values,
+      ContentUtil.generateRollUp(undefined, identifier),
+      this.commonUtilService.deDupe(corRelationList, 'type'));
 
     this.zone.run(async () => {
       if (layoutName === 'enrolledCourse' || content.contentType === ContentType.COURSE) {
