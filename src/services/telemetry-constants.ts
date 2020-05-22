@@ -130,7 +130,9 @@ export enum PageId {
     USER_TYPE = 'usertype',
     SCAN_OR_MANUAL = 'scan-or-manual',
     PROFILE_SETTINGS = 'profile-settings',
-    POPUP_CATEGORY = 'popup-category'
+    POPUP_CATEGORY = 'popup-category',
+    APP_PERMISSION_POPUP = 'app-permission-popup',
+    STORAGE_SETTINGS = 'storage-settings'
 }
 export enum LogType {
     NOTIFICATION = 'notification'
@@ -427,7 +429,8 @@ export enum InteractSubtype {
     SUCCESS = 'success',
     FAIL = 'fail',
     UI = 'ui',
-    DEVICE = 'device'
+    DEVICE = 'device',
+    DENY_CLICKED = 'deny-clicked',
 }
 
 export enum ID {
@@ -467,6 +470,7 @@ export enum CorReleationDataType {
     CLASS = 'Class',
     DOWNLOADS = 'Downloads',
     SUBJECT = 'Subject',
+    MIMETYPE = 'MimeType',
     USERTYPE = 'UserType',
     DISCOVERY_TYPE = 'DiscoveryType',
     DEEPLINK = 'Deeplink',
