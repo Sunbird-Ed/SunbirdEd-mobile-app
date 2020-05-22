@@ -19,7 +19,8 @@
     <div class="cd-flex-container">
       <div style="width: 100%;">
         <button class="cd-chapter-card-button" (click)="startLearning();">
-          <img class="play-icon" src="assets/imgs/Play@1.5x.svg" alt="play-icon"> {{'START_LEARNING' | translate}}</button>
+          <img class="play-icon" src="assets/imgs/Play@1.5x.svg" alt="play-icon">
+          {{'START_LEARNING' | translate}}</button>
       </div>
       <div>
         <img class="menu-icon" (click)="showOverflowMenu($event)" src="assets/imgs/menu.svg" alt="menu-icon">
@@ -31,31 +32,7 @@
       <div class="cd-container-title">Contents</div>
       <div class="cd-container-progress">0/8 completed</div>
     </div>
-    <div *ngFor="let item of chapter?.children; let index = index;">
-      <h5 *ngIf="item?.mimeType === 'application/vnd.ekstep.content-collection'">
-        <span class="cd-container-sub-title"><strong>{{item?.name}}</strong></span>
-      </h5>
-      <div>
-        <div *ngIf="item;else noContent">
-          <div *ngIf="item?.mimeType !== 'application/vnd.ekstep.content-collection' && !item?.children?.length">
-            <div>
-              <sb-toc-card [content]="item" (tocCardClick)="onTocCardClick($event)" [type]="cardType">
-              </sb-toc-card>
-            </div>
-          </div>
-          <div *ngIf="item?.children?.length">
-            <div *ngFor="let child of item?.children">
-              <div>
-                <sb-toc-child-item [childData]="child" (tocCardClick)="onTocCardClick($event)" [type]="cardType">
-                </sb-toc-child-item>
-              </div>
-            </div>
-          </div>
-        </div>
-        <ng-template #noContent>
-          <div class="heading">{{noContentMessage}}</div>
-        </ng-template>
-      </div>
-    </div>
+    <sb-toc-curriculum *ngIf="!showSheenAnimation && chapter" [type]="cardType" [isAccordion]="true" [tocData]="chapter"
+      (tocCardClick)="openChapterDetails($event)"></sb-toc-curriculum>
   </div>
 </ion-content>

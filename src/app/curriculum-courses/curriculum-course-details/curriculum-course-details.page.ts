@@ -7,7 +7,7 @@ import {
 import { TranslateService } from '@ngx-translate/core';
 import { Router, NavigationExtras } from '@angular/router';
 import { ContentUtil } from '@app/util/content-util';
-import { RouterLinks, ShareItemType } from '@app/app/app.constant';
+import { MimeType, RouterLinks, ShareItemType } from '@app/app/app.constant';
 import {
   ContentDetailRequest, ContentService, Content, ContentImportRequest,
   ContentImport, ContentImportResponse, CorrelationData, ContentImportStatus, TelemetryErrorCode, StorageService, Rollup, DownloadTracking, DownloadService, TelemetryObject, EventsBusService, EventsBusEvent, DownloadEventType, DownloadProgress, ContentEventType, ContentImportCompleted, ContentUpdate
@@ -252,16 +252,27 @@ export class CurriculumCourseDetailsPage implements OnInit {
     });
   }
 
-  openChapterDetails(event) {
-    const chapterParams: NavigationExtras = {
-      state: {
-        courseName: this.course.name,
-        chapterData: event.item,
-      }
-    };
+  onTocCardClick(event) {
+    if (event.item.mimeType === MimeType.COLLECTION) {
+      const chapterParams: NavigationExtras = {
+        state: {
+          courseName: this.course.name,
+          chapterData: event.item,
+        }
+      };
 
-    this.router.navigate([`/${RouterLinks.CURRICULUM_COURSES}/${RouterLinks.CHAPTER_DETAILS}`],
-      chapterParams);
+      this.router.navigate([`/${RouterLinks.CURRICULUM_COURSES}/${RouterLinks.CHAPTER_DETAILS}`],
+        chapterParams);
+    } else {
+      this.router.navigate([RouterLinks.CONTENT_DETAILS], {
+        state: {
+          content: event.item,
+          // depth,
+          // contentState: this.stateData,
+          corRelation: this.corRelationList
+        }
+      });
+    }
   }
 
   private getContentDetails(identifier, refreshContentDetails: boolean) {

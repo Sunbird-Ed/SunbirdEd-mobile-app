@@ -47,7 +47,6 @@ import {
   ContentFilterConfig,
   MimeType,
   EventTopics,
-  CourseType,
   ExploreConstants
 } from '@app/app/app.constant';
 import { AppGlobalService } from '@app/services/app-global-service.service';
@@ -545,17 +544,17 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
           this.getCategoryData();
           // Get the course data
           this.getCurriculumCourses(requestBody, response);
-          this.searchGroupingContents.sections.forEach(element => {
-            if (element.name) {
-              if (has(element.name, this.selectedLanguage)) {
+          this.searchGroupingContents.sections.forEach(section => {
+            if (section.name) {
+              if (has(section.name, this.selectedLanguage)) {
                 const langs = [];
-                forEach(element.name, (value, key) => {
+                forEach(section.name, (value, key) => {
                   langs[key] = value;
                 });
-                element.name = langs[this.selectedLanguage];
+                section.name = langs[this.selectedLanguage];
               }
             }
-            newSections.push(element);
+            newSections.push(section);
           });
           // END OF TEMPORARY CODE
           if (this.profile.subject && this.profile.subject.length) {
@@ -649,29 +648,29 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     }
     request.searchCriteria.contentTypes = [ContentType.TEXTBOOK];
-    // request.searchCriteria.courseTypes = [CourseType.CURRICULUM_COURSE];
+    // request.searchCriteria.framework = ;
     console.log('getCurriculumCourses:request = ', request);
 
     this.contentService.searchAndGroupContent(JSON.parse(JSON.stringify(request))).toPromise()
       .then((response: ContentsGroupedByPageSection) => {
         console.log('getCurriculumCourses:response = ', response);
         this.ngZone.run(() => {
-          response.sections.forEach(element => {
+          response.sections.forEach(section => {
             const contentListObj = {
-              title: element.name,
-              count: element.contents ?
-                this.commonUtilService.translateMessage('NUMBER_OF_COURSES', element.contents.length)
+              title: section.name,
+              count: section.contents ?
+                this.commonUtilService.translateMessage('NUMBER_OF_COURSES', section.contents.length)
                 : this.commonUtilService.translateMessage('NO_COURSES'),
-              theme: this.subjectThemeAndIconsMap[element.name] ?
-                this.subjectThemeAndIconsMap[element.name].background
+              theme: this.subjectThemeAndIconsMap[section.name] ?
+                this.subjectThemeAndIconsMap[section.name].background
                 : null,
 
-              titleColor: this.subjectThemeAndIconsMap[element.name] ?
-                this.subjectThemeAndIconsMap[element.name].titleColor
+              titleColor: this.subjectThemeAndIconsMap[section.name] ?
+                this.subjectThemeAndIconsMap[section.name].titleColor
                 : null,
 
-              cardImg: this.subjectThemeAndIconsMap[element.name] ?
-                this.subjectThemeAndIconsMap[element.name].icon
+              cardImg: this.subjectThemeAndIconsMap[section.name] ?
+                this.subjectThemeAndIconsMap[section.name].icon
                 : null
             };
             this.courseList.push(contentListObj);

@@ -27,8 +27,8 @@
   <div class="ccd-container">
     <div class="ccd-container-header">Chapters</div>
     <div>
-      <sb-toc-curriculum *ngIf="!showSheenAnimation && courseHeirarchy" [isMobile]="true" [tocData]="courseHeirarchy"
-      (tocCardClick)="openChapterDetails($event)"></sb-toc-curriculum>
+      <sb-toc-curriculum *ngIf="!showSheenAnimation && courseHeirarchy" [isChapterListing]="true"
+        [tocData]="courseHeirarchy" (tocCardClick)="onTocCardClick($event)"></sb-toc-curriculum>
     </div>
   </div>
 </ion-content>
@@ -37,6 +37,6 @@
   <app-sb-download-popup *ngIf="downloads.queued.length" (cancelDownloadEmit)="cancelDownload($event)"
     [currentCount]="downloads.completed.length"
     [queuedIdentifiers]="(downloads.queued.length+downloads.completed.length)" [downloadSize]="downloadSize"
-    [collectionName]="contentDetail?.contentData?.name" [showDownload]="true" [showPopover]="showCollapsedPopup">
+    [collectionName]="course?.contentData?.name" [showDownload]="true" [showPopover]="showCollapsedPopup">
   </app-sb-download-popup>
 </ng-container>
