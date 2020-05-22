@@ -675,7 +675,8 @@ export class CoursesPage implements OnInit, OnDestroy {
         state: {
           headerTitle: 'COURSES_IN_PROGRESS',
           userId: this.userId,
-          pageName: ViewMore.PAGE_COURSE_ENROLLED
+          pageName: ViewMore.PAGE_COURSE_ENROLLED,
+          sectionName: this.inProgressSection
         }
       };
     } else {
@@ -693,6 +694,7 @@ export class CoursesPage implements OnInit, OnDestroy {
           requestParams: searchQuery,
           enrolledCourses: this.enrolledCourses,
           guestUser: this.guestUser,
+          sectionName: headerTitle
         }
 
       };

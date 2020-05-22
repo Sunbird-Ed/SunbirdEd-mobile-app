@@ -171,6 +171,10 @@ export class ViewMoreActivityComponent implements OnInit {
         this.audience = this.router.getCurrentNavigation().extras.state.audience;
         this.enrolledCourses = this.router.getCurrentNavigation().extras.state.enrolledCourses;
 
+        if (this.router.getCurrentNavigation().extras.state.sectionName) {
+          this.sectionName = this.router.getCurrentNavigation().extras.state.sectionName;
+        }
+
         if (this.headerTitle !== this.title) {
           console.log('inside header title if condition');
           this.headerTitle = this.headerTitle;
@@ -602,7 +606,8 @@ export class ViewMoreActivityComponent implements OnInit {
     return img;
   }
 
-  openCourseDetails(course) {
+  openCourseDetails(course, index) {
+    this.index = index;
     const payload = {
       guestUser: this.guestUser,
       enrolledCourses: this.enrolledCourses
@@ -711,6 +716,21 @@ export class ViewMoreActivityComponent implements OnInit {
 
 
   private async navigateToDetailsPage(content: any, layoutName) {
+    const identifier = content.contentId || content.identifier;
+    const type = this.telemetryGeneratorService.isCollection(content.mimeType) ? content.contentType : ContentType.RESOURCE;
+    const telemetryObject: TelemetryObject = new TelemetryObject(identifier, type, content.pkgVersion);
+
+    const values = new Map();
+    values['sectionName'] = this.sectionName;
+    values['positionClicked'] = this.index;
+
+    this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
+      InteractSubtype.CONTENT_CLICKED,
+      this.env,
+      this.pageName ? this.pageName : layoutName,
+      telemetryObject,
+      values);
+
     this.zone.run(async () => {
       if (layoutName === 'enrolledCourse' || content.contentType === ContentType.COURSE) {
         this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], {
