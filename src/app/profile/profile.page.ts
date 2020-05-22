@@ -423,7 +423,10 @@ export class ProfilePage implements OnInit {
       courseId: course.courseId,
       certificateToken: certificate.token
     })
-      .subscribe();
+      .subscribe((path) => {
+        console.log('download path', path);
+        this.commonUtilService.showToast('DOWNLOAD_COMPLETED');
+      });
   }
 
   shareTrainingCertificate(course: Course, certificate: CourseCertificate) {

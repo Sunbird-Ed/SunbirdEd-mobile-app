@@ -162,6 +162,7 @@
     text-transform: initial;
   }
 .sb-btn-tile {
+    position: relative;
     flex-direction: column;
     background-color: $white;
     width:72px;
