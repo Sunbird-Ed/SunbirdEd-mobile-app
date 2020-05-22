@@ -305,6 +305,7 @@ export class CoursesPage implements OnInit, OnDestroy {
               for (let count = 0; count < this.enrolledCourses.length; count++){
                 courseList.push(this.enrolledCourses[count]);
                 this.enrolledCourses[count]['cardImg'] = this.commonUtilService.getContentImg(this.enrolledCourses[count]);
+                this.enrolledCourses[count].completionPercentage = this.enrolledCourses[count].completionPercentage || 0;
               }
 
               this.appGlobalService.setEnrolledCourseList(courseList);

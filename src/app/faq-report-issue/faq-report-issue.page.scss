@@ -149,21 +149,15 @@ P{
     width: 100%;
     height: 70px;
     border-radius: 5px;
-    box-shadow: none;
-    border-width: 1px;
-    border-style:solid;
-    border-color: #c3c3c3;
     @include padding(8px 0px 0px 8px);
     resize: none;
 }
 .submit-button{
     width: 100%;
     color: #fff;
-    background: #024f9d;
+    background: #71b3f5;
     height: 40px;
     border-radius: 4px;
-    border-style:solid;
-    border-color:  #024f9d;
     margin: 10px 0px 16px 0px;
     outline: none;
 }
@@ -195,13 +189,14 @@ P{
         right: 0px;
         font-weight: normal;
         font-size: 12px;
+        padding-right: 16px;
     }
     .initiate-email-info-button{
         left: 0px;
     right: 0px;
     position: fixed;
     top: 88vh;
-    padding: 0px 16px;
+    padding: 0px 16px 70px 16px;
     }
 }
 @media only screen and (min-width : 1025px) {
@@ -287,9 +282,6 @@ img>.report-button{
     height: 128px;
     border-radius: 5px;
     box-shadow: none;
-    border-width: 1px;
-    border-style:solid;
-    border-color: #c3c3c3;
     @include padding(8px 0px 0px 8px);
     resize: none;
 }
@@ -299,8 +291,9 @@ img>.report-button{
   font-weight: normal;
 }
 .initiate-email-info{
-        margin-top: 10px;
-    }
+    margin-top: 10px;
+    padding-bottom: 70px;
+}
 @media only screen and (min-width : 1025px) {
     .input-text-form{
         width: 100%;
@@ -334,5 +327,66 @@ a:active, a:hover{
 }
 
 #textareadiv{
-    position: relative
+    position: relative;
+    padding: 20px 16px 0px 16px;
+}
+.item-label-stacked ion-select {
+    border: 1px solid #006de5;
+    border-radius: 5px;
+    margin-top: 16px;
+    padding-left: 8px;
+    padding-right: 10px !important;
+    .select-icon {
+      .select-icon-inner {
+        border: solid blue;
+        border-width: 0 2px 2px 0;
+        display: inline-block;
+        padding: 4px;
+        transform: rotate(45deg);
+        animation: upDownAnimate 5s linear infinite;
+        animation-duration: 0.9s;
+      }
+    }
+    .select-placeholder {
+        color: #006de5;
+        padding-left: 10px;
+    }
+}
+    // Not getting used because of shadow DOM
+.select-placeholder {
+  color: #006de5;
+  padding-left: 10px;
+}
+
+.ge-danger{
+  color: map-get($colors, danger);
+}
+
+ion-item.item-label-stacked {
+    --border-width: 0;
+    --highlight-background: transparent;
+}
+
+.item-select ion-label {
+    color: #006de5;
+}
+
+.item-label-stacked.item-select-disabled {
+    ion-label {
+        color: #333;
+    }
+    ion-select {
+        border-color: #333;
+        // Inside Shadow DOM
+        .select-icon {
+          .select-icon-inner {
+            border-color: #333;
+            animation: none;
+          }
+        }
+        // Inside Shadow DOM
+        .select-placeholder {
+          color: #333;
+        }
+      }
 }

@@ -328,6 +328,14 @@ export class DownloadManagerPage implements DownloadManagerPageInterface, OnInit
   }
 
   private redirectToSettings() {
+    this.telemetryGeneratorService.generateInteractTelemetry(
+      InteractType.TOUCH,
+      InteractSubtype.SETTINGS_CLICKED,
+      Environment.DOWNLOADS,
+      PageId.DOWNLOADS, undefined,
+      undefined,
+      undefined,
+      undefined);
     this.router.navigate([RouterLinks.STORAGE_SETTINGS]);
   }
   private async fetchStorageDestination() {

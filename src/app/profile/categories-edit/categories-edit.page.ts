@@ -249,11 +249,7 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
         });
 
         try {
-          this.framework = await this.frameworkService.getFrameworkDetails({
-            from: CachedItemRequestSourceFrom.SERVER,
-            frameworkId: value[0],
-            requiredCategories: FrameworkCategoryCodesGroup.DEFAULT_FRAMEWORK_CATEGORIES
-          }).toPromise();
+          await this.getFrameworkData(value[0]);
 
           const boardCategoryTermsRequet: GetFrameworkCategoryTermsRequest = {
             frameworkId: this.framework.identifier,
@@ -262,7 +258,7 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
             language: this.translate.currentLang
           };
 
-          const boards = await this.frameworkUtilService.getFrameworkCategoryTerms(boardCategoryTermsRequet).toPromise()
+          const boards = await this.frameworkUtilService.getFrameworkCategoryTerms(boardCategoryTermsRequet).toPromise();
           this.boardList = boards.map(t => ({ name: t.name, code: t.code }));
 
           const boardTerm = boards.find(b => b.name === (this.syllabusList.find((s) => s.code === value[0])!.name));
@@ -375,19 +371,19 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
    */
   onSubmit() {
     const formVal = this.profileEditForm.value;
-    if (!formVal.boards.length && this.syllabusList.length) {
+    if (formVal.boards && !formVal.boards.length && this.syllabusList.length && this.isBoardAvailable) {
       if (this.showOnlyMandatoryFields) {
         this.boardSelect.open();
       } else {
         this.showErrorToastMessage('BOARD');
       }
-    } else if (!formVal.medium.length) {
+    } else if (formVal.medium && !formVal.medium.length) {
       if (this.showOnlyMandatoryFields) {
         this.mediumSelect.open();
       } else {
         this.showErrorToastMessage('MEDIUM');
       }
-    } else if (!formVal.grades.length) {
+    } else if (formVal.grades && !formVal.grades.length) {
       if (this.showOnlyMandatoryFields) {
         this.gradeSelect.open();
       } else {
@@ -540,6 +536,7 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
         this.isBoardAvailable = true;
         this.syllabusControl.patchValue([this.profile.syllabus && this.profile.syllabus[0]] || []);
       } else {
+        await this.getFrameworkData(this.frameworkId);
         this.categories.unshift([]);
         this.isBoardAvailable = false;
         this.mediumList = mediumCategory.terms;
@@ -551,5 +548,13 @@ export class CategoriesEditPage implements OnInit, OnDestroy {
       }
       console.error('getFrameWorkCategoryOrder', err);
     }
+  }
+
+  private async getFrameworkData(frameworkId) {
+    this.framework = await this.frameworkService.getFrameworkDetails({
+      from: CachedItemRequestSourceFrom.SERVER,
+      frameworkId,
+      requiredCategories: FrameworkCategoryCodesGroup.DEFAULT_FRAMEWORK_CATEGORIES
+    }).toPromise();
   }
 }
