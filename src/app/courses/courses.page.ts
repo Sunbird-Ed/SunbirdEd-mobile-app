@@ -833,12 +833,12 @@ export class CoursesPage implements OnInit, OnDestroy {
     this.checkRetiredOpenBatch(params.course, params);
   }
 
-  openCourseDetails(event, index) {
+  openCourseDetails(event, section, index) {
     const contentIndex = this.getContentIndexOf(this.popularAndLatestCourses[index].contents, event.data);
     const params = {
       env: 'home',
       index: contentIndex,
-      sectionName: event.data.name,
+      sectionName: section.name,
       pageName: 'course',
       course: event.data,
       guestUser: this.guestUser,
