@@ -20,7 +20,7 @@ export function animationGrowInTopRight(AnimationC: Animation, baseEl: HTMLEleme
     return Promise.resolve(baseAnimation
         .addElement(baseEl)
         .easing('cubic-bezier(0.36,0.66,0.04,1)')
-        .duration(1000)
+        .duration(800)
         .beforeAddClass('tutorial-popover')
         .add(backdropAnimation)
         .add(wrapperAnimation));

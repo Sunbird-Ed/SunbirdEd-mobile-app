@@ -22,7 +22,7 @@ export function animationShrinkOutTopRight(AnimationC: Animation, baseEl: HTMLEl
     return Promise.resolve(baseAnimation
         .addElement(baseEl)
         .easing('ease-out')
-        .duration(1000)
+        .duration(800)
         .add(backdropAnimation)
         .add(wrapperAnimation));
 
