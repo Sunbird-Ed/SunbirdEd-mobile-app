@@ -717,7 +717,7 @@ export class ViewMoreActivityComponent implements OnInit {
 
   private async navigateToDetailsPage(content: any, layoutName) {
     const identifier = content.contentId || content.identifier;
-    const type = this.telemetryGeneratorService.isCollection(content.mimeType) ? content.contentType : ContentType.RESOURCE;
+    const type = this.telemetryGeneratorService.isCollection(content.mimeType) ? content.contentType : ContentType.COURSE;
     const telemetryObject: TelemetryObject = new TelemetryObject(identifier, type, content.pkgVersion);
 
     const values = new Map();
