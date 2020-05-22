@@ -1781,6 +1781,5 @@ describe('collectionDetailEtbPage', () => {
             expect(mockzone.run).toHaveBeenCalled();
         });
 
-
     });
 });

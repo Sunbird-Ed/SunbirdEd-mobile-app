@@ -126,6 +126,7 @@ export enum PageId {
     DOWNLOAD_ALL_CONFIRMATION_POPUP = 'download-all-confirmation-popup',
     PERMISSION_POPUP = 'permission-popup',
     APP_PERMISSION_POPUP = 'app-permission-popup',
+    STORAGE_SETTINGS = 'storage-settings',
     APP_TUTORIAL_POPUP = 'app-tutorial-popup'
 }
 export enum LogType {
@@ -446,6 +447,7 @@ export enum CorReleationDataType {
     CLASS = 'Class',
     DOWNLOADS = 'Downloads',
     SUBJECT = 'Subject',
+    MIMETYPE = 'MimeType',
     USERTYPE = 'UserType',
     DISCOVERY_TYPE = 'DiscoveryType',
     DEEPLINK = 'Deeplink',

@@ -890,5 +890,4 @@ export class QrcoderesultPage implements OnDestroy {
       });
     }
   }
-
 }
