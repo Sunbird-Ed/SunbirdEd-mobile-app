@@ -4,8 +4,8 @@ import {
   AppGlobalService, UtilityService, CommonUtilService, NotificationService, TelemetryGeneratorService,
   InteractType, InteractSubtype, Environment, PageId, ActivePageService
 } from '../../../services';
-import { DownloadService, SharedPreferences, NotificationService as PushNotificationService, NotificationStatus, EventNamespace, DownloadProgress, DownloadEventType, EventsBusService } from 'sunbird-sdk';
-import { GenericAppConfig, PreferenceKey, EventTopics } from '../../../app/app.constant';
+import { DownloadService, SharedPreferences, NotificationService as PushNotificationService, NotificationStatus, EventNamespace, DownloadProgress, DownloadEventType, EventsBusService, ProfileService, Profile } from 'sunbird-sdk';
+import { GenericAppConfig, PreferenceKey, EventTopics, ProfileConstants } from '../../../app/app.constant';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { Subscription, combineLatest } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
@@ -36,12 +36,15 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
   networkSubscription: Subscription;
   isUnreadNotification: boolean = false;
   menuSide = 'left';
+  profile: Profile;
+  managedProfileList: [];
 
   constructor(
     @Inject('SHARED_PREFERENCES') private preference: SharedPreferences,
     @Inject('DOWNLOAD_SERVICE') private downloadService: DownloadService,
     @Inject('NOTIFICATION_SERVICE') private pushNotificationService: PushNotificationService,
     @Inject('EVENTS_BUS_SERVICE') private eventsBusService: EventsBusService,
+    @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     public menuCtrl: MenuController,
     private commonUtilService: CommonUtilService,
     private events: Events,
@@ -172,6 +175,7 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
       this.preference.getString('app_name').toPromise().then(value => {
         this.appName = value;
       });
+      this.fetchManagedProfileDetails();
     }
   }
 
@@ -226,6 +230,15 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
 
       this.isUnreadNotification = Boolean(newNotificationCount);
     });
+  }
+
+  async fetchManagedProfileDetails() {
+    try {
+      this.profile = await this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise();
+      // this.managedProfileList = await this.profileService.getManagedProfiles().toPromise();
+    } catch (err) {
+      console.log(err);
+    }
   }
 
 }

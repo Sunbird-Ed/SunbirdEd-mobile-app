@@ -788,4 +788,32 @@ export class ProfilePage implements OnInit {
     await popover.present();
   }
 
+  navigateToEditSubProfile() {
+    if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
+      this.commonUtilService.showToast('NEED_INTERNET_TO_CHANGE');
+      return;
+    }
+
+    const navigationExtras: NavigationExtras = {
+      state: {
+        profile: this.profile
+      }
+    };
+    this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.SUB_PROFILE_EDIT}`], navigationExtras);
+  }
+
+  async showSwitchUserPopup() {
+    if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
+      this.commonUtilService.showToast('NEED_INTERNET_TO_CHANGE');
+      return;
+    }
+
+    const navigationExtras: NavigationExtras = {
+      state: {
+        profile: this.profile
+      }
+    };
+    this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.MANAGE_USER_PROFILES}`], navigationExtras);
+  }
+
 }
