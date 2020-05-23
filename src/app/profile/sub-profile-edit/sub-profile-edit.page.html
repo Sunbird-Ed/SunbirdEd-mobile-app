@@ -94,28 +94,29 @@
 
     <div class="flex-container M16">
       <div>
-        <ion-checkbox></ion-checkbox>
+        <ion-checkbox formControlName="tnc"></ion-checkbox>
       </div>
       <div class="sp-tnc-text">
-        <span>{{'SUB_USER_TNC_DETAILS' | translate : {'%s': appName} }}</span>
+        <span>{{'I_UNDERSTAND_AND_ACCEPT' | translate}} 
+          <span (click)="showTncDetails()" class="tnc-link"> {{appName}} {{'TERMS_OF_USE' | translate}}</span>
+        </span>
       </div>
     </div>
-
   </form>
 </ion-content>
 
 <ion-footer>
   <ion-row class="padding-12">
     <ion-col size-md="10" offset-md="1">
-      <ion-button class="ion-text-capitalize" expand="block" [ngStyle]="{'background-color': btnColor}"
-        [disabled]="subProfileEditForm.invalid || disableSubmitButton" (click)="onCancel()">{{'CANCEL' | translate}}
-      </ion-button>
+      <button class="sb-new-btn-outline" (click)="onCancel()">
+        {{'CANCEL' | translate}}
+      </button>
     </ion-col>
 
     <ion-col size-md="10" offset-md="1">
-      <ion-button class="ion-text-capitalize" expand="block" [ngStyle]="{'background-color': btnColor}"
-        [disabled]="subProfileEditForm.invalid || disableSubmitButton" (click)="onSubmit()">{{'ADD_USER' | translate}}
-      </ion-button>
+      <button class="sb-new-btn" (click)="onSubmit()" [ngClass]="{'': subProfileEditForm?.value?.tnc, 'blur-btn': !subProfileEditForm?.value?.tnc}">
+        {{'ADD_USER' | translate}}
+      </button>
     </ion-col>
   </ion-row>
 </ion-footer>

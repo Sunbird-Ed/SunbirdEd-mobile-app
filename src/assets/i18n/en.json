@@ -698,7 +698,7 @@
   "ADD_TO_CLASSROOM": "Add to classroom",
   "NAME_IS_REQUIRED": "Name is required.",
   "ENTER_USER_NAME": "Enter user name",
-  "SUB_USER_TNC_DETAILS": "I understand and accept the {{%s}} Terms of use",
+  "I_UNDERSTAND_AND_ACCEPT": "I understand and accept the",
   "SWITCH_USER": "Switch user",
   "CHOOSE_USER": "Choose user",
   "ADD_USER": "Add user"

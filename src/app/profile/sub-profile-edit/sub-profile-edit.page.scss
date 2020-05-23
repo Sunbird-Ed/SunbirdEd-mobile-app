@@ -150,3 +150,33 @@
 .sp-tnc-text{
   padding: 0 8px;
 }
+
+.sb-new-btn {
+  background-color: #024F9D;
+  color: #FFFFFF;
+  width: 100%;
+  height: 40px;
+  box-shadow: 0 2px 7px 0 rgba(0, 0, 0, 0.25);
+  font-family: "Noto Sans";
+  font-size: 16px;
+}
+
+.sb-new-btn-outline {
+  background-color: #FFFFFF;
+  color: #024F9D;
+  width: 100%;
+  height: 40px;
+  border: 1px solid #024F9D;
+  box-shadow: 0 2px 7px 0 rgba(0, 0, 0, 0.25);
+  font-family: "Noto Sans";
+  font-size: 16px;
+}
+
+.blur-btn {
+  opacity: 0.5;
+}
+
+.tnc-link {
+  color: #024F9D;
+  text-decoration: underline;
+}

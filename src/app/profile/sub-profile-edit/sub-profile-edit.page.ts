@@ -19,14 +19,15 @@ import {
   FrameworkCategoryCode,
   LocationSearchResult,
   SharedPreferences,
-  LocationSearchCriteria
+  LocationSearchCriteria,
+  ServerProfile
 } from 'sunbird-sdk';
 import { CommonUtilService } from '@app/services/common-util.service';
 import { AppGlobalService } from '@app/services/app-global-service.service';
 import { AppHeaderService } from '@app/services/app-header.service';
 import { Router } from '@angular/router';
 import { Location } from '@angular/common';
-import { Location as loc, PreferenceKey } from '@app/app/app.constant';
+import { Location as loc, PreferenceKey, ProfileConstants } from '@app/app/app.constant';
 
 @Component({
   selector: 'app-sub-profile-edit',
@@ -101,6 +102,7 @@ export class SubProfileEditPage implements OnInit, OnDestroy {
   availableState: string;
   availableDistrict: string;
   appName = '';
+  private userProfileDetails: ServerProfile;
 
   get syllabusControl(): FormControl {
     return this.subProfileEditForm.get('syllabus') as FormControl;
@@ -153,8 +155,7 @@ export class SubProfileEditPage implements OnInit, OnDestroy {
     private router: Router,
     private location: Location,
     private platform: Platform,
-    private alertCtrl: AlertController,
-
+    private alertCtrl: AlertController
   ) {
     this.appGlobalService.closeSigninOnboardingLoader();
     this.profile = this.appGlobalService.getCurrentUser();
@@ -182,6 +183,8 @@ export class SubProfileEditPage implements OnInit, OnDestroy {
       this.onGradeChange(),
       this.onStateChange()
     ).subscribe();
+
+    this.getProfileDetails();
   }
 
   ngOnDestroy() {
@@ -208,6 +211,11 @@ export class SubProfileEditPage implements OnInit, OnDestroy {
     }
   }
 
+  async getProfileDetails() {
+    this.userProfileDetails = (await this.profileService.getActiveSessionProfile(
+      { requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise()).serverProfile;
+  }
+
   handleBackButtonEvents() {
     this.backButtonFunc = this.platform.backButton.subscribeWithPriority(0, async () => {
       const activePortal = await this.alertCtrl.getTop();
@@ -230,7 +238,8 @@ export class SubProfileEditPage implements OnInit, OnDestroy {
       medium: [],
       grades: [],
       state: '',
-      district: ''
+      district: '',
+      tnc: false
     });
   }
 
@@ -391,9 +400,37 @@ export class SubProfileEditPage implements OnInit, OnDestroy {
       this.districtSelect.open();
       return;
     }
+    else if (!formVal.tnc) {
+      this.commonUtilService.showToast('Accept the Terms & Conditions.');
+      return;
+    }
 
-    // TODO
-    // this.submitForm(formVal);
+    this.submitForm(formVal);
+  }
+
+  async submitForm(formVal) {
+    const loader = await this.commonUtilService.getLoader();
+    try {
+      await loader.present();
+      const userDetails = {
+        name: formVal.userName,
+        board: formVal.boards || [],
+        medium: formVal.medium || [],
+        grade: formVal.grades || [],
+        state: formVal.state || '',
+        district: formVal.district || '',
+      };
+      const createdUser = await this.profileService.addManagedProfile(userDetails).toPromise();
+      if (createdUser) {
+        this.commonUtilService.showToast('New user created successfully.');
+        this.location.back();
+        console.log(createdUser);
+      }
+    } catch (e) {
+      console.error(e);
+    } finally {
+      await loader.dismiss();
+    }
   }
 
   onInputFields(event) {
@@ -402,10 +439,6 @@ export class SubProfileEditPage implements OnInit, OnDestroy {
     } else {
       this.errorMessages.userName.show = false;
     }
-  }
-
-  async submitForm(formVal) {
-
   }
 
   onCancel() {
@@ -556,6 +589,10 @@ export class SubProfileEditPage implements OnInit, OnDestroy {
         }
       })
     );
+  }
+
+  showTncDetails() {
+    this.commonUtilService.openLink(this.userProfileDetails.tncLatestVersionUrl);
   }
 
 }
