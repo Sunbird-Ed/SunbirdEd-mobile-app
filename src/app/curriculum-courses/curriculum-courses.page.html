@@ -1,7 +1,7 @@
 <ion-content>
   <div class="cc-header" [ngStyle]="{'background': theme}">
     <div class="pull-left">
-      <div class="cc-header-name">
+      <div class="cc-header-name" [ngStyle]="{'color': titleColor}">
         {{ subjectName }}
       </div>
       <div class="cc-header-desc">
@@ -9,7 +9,7 @@
       </div>
     </div>
     <div class="cd-header-icon pull-right">
-      <img src="assets/imgs/mathematics.svg" alt="subject-icon">
+      <img *ngIf="subjectIcon" src="{{subjectIcon}}" alt="subject-icon">
     </div>
   </div>
   <div class="cc-container">

@@ -136,6 +136,7 @@
     <plugin name="cordova.plugins.diagnostic" spec="^5.0.2">
         <variable name="ANDROID_SUPPORT_VERSION" value="28.+" />
     </plugin>
+    <plugin name="com.telerik.plugins.nativepagetransitions" spec="^0.6.5" />
     <plugin name="sb-cordova-plugin-utility" spec="https://github.com/Sunbird-Ed/sb-cordova-plugin-utility.git#release-3.0.0" />
     <plugin name="cordova-plugin-android-downloadmanager" spec="https://github.com/Sunbird-Ed/sb-cordova-plugin-downloadmanager.git#release-2.9.0" />
     <plugin name="sb-cordova-plugin-db" spec="https://github.com/Sunbird-Ed/sb-cordova-plugin-db.git" />
@@ -146,10 +147,10 @@
         <variable name="URL_SCHEME" value="@string/custom_scheme_url" />
         <variable name="URL_HOST" value="mobile" />
     </plugin>
-    <plugin name="com.telerik.plugins.nativepagetransitions" spec="^0.6.5" />
     <plugin name="cordova-plugin-openrap" spec="https://github.com/project-sunbird/cordova-plugin-openrap.git" />
     <plugin name="cordova-plugin-qr-scanner" spec="https://github.com/project-sunbird/cordova-plugin-qr-scanner.git" />
     <plugin name="cordova-plugin-sunbirdsplash" spec="https://github.com/project-sunbird/cordova-plugin-sunbirdsplash.git#release-3.0.0" />
     <plugin name="cordova-plugin-file-support" spec="https://github.com/project-sunbird/cordova-plugin-file-support.git" />
+    <plugin name="sb-cordova-plugin-sync" spec="https://github.com/swayangjit/sb-cordova-plugin-sync.git" />
     <engine name="android" spec="^8.1.0" />
 </widget>

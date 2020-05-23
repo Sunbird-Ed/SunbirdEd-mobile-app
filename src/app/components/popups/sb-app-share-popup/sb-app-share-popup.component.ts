@@ -104,7 +104,7 @@ export class SbAppSharePopupComponent implements OnInit, OnDestroy {
   generateInteractTelemetry(interactionType, interactSubtype) {
     this.telemetryGeneratorService.generateInteractTelemetry(
       interactionType, interactSubtype,
-      PageId.SETTINGS,
+      PageId.SHARE_APP_POPUP,
       Environment.SETTINGS
     );
   }
@@ -114,6 +114,7 @@ export class SbAppSharePopupComponent implements OnInit, OnDestroy {
   }
 
   closePopover() {
+    this.generateInteractTelemetry(InteractType.TOUCH, InteractSubtype.CLOSE_CLICKED);
     this.popoverCtrl.dismiss();
   }
 
@@ -221,12 +222,24 @@ export class SbAppSharePopupComponent implements OnInit, OnDestroy {
               this.permissionService.requestPermission(AndroidPermission.WRITE_EXTERNAL_STORAGE)
                   .subscribe(async (status: AndroidPermissionsStatus) => {
                     if (status.hasPermission) {
+                      this.telemetryGeneratorService.generateInteractTelemetry(
+                          InteractType.TOUCH,
+                          InteractSubtype.ALLOW_CLICKED,
+                          Environment.SETTINGS,
+                          PageId.APP_PERMISSION_POPUP
+                      );
                       resolve(true);
                     } else if (status.isPermissionAlwaysDenied) {
                       await this.commonUtilService.showSettingsPageToast
                       ('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName, this.pageId, true);
                       resolve(false);
                     } else {
+                      this.telemetryGeneratorService.generateInteractTelemetry(
+                          InteractType.TOUCH,
+                          InteractSubtype.DENY_CLICKED,
+                          Environment.SETTINGS,
+                          PageId.APP_PERMISSION_POPUP
+                      );
                       await this.commonUtilService.showSettingsPageToast
                       ('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName, this.pageId, true);
                     }

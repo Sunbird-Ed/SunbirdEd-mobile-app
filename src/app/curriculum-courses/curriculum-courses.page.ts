@@ -12,8 +12,10 @@ import { TranslateService } from '@ngx-translate/core';
 export class CurriculumCoursesPage implements OnInit {
 
   subjectName: string;
+  subjectIcon: string;
   courseList: [];
   theme: string;
+  titleColor: string;
 
   constructor(
     private appHeaderService: AppHeaderService,
@@ -23,8 +25,10 @@ export class CurriculumCoursesPage implements OnInit {
   ) {
     const extrasState = this.router.getCurrentNavigation().extras.state;
     this.subjectName = extrasState.subjectName;
+    this.subjectIcon = extrasState.subjectIcon;
     this.courseList = extrasState.curriculumCourseList;
     this.theme = extrasState.theme;
+    this.titleColor = extrasState.titleColor;
   }
 
   ionViewWillEnter() {
@@ -42,7 +46,6 @@ export class CurriculumCoursesPage implements OnInit {
   openCourseDetails(course) {
     const curriculumCourseParams: NavigationExtras = {
       state: {
-        textbookName: 'TextBook Name',
         curriculumCourse: course,
       }
     };

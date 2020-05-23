@@ -46,7 +46,8 @@ import {
   RouterLinks,
   ContentFilterConfig,
   MimeType,
-  EventTopics
+  EventTopics,
+  ExploreConstants
 } from '@app/app/app.constant';
 import { AppGlobalService } from '@app/services/app-global-service.service';
 import { SunbirdQRScanner } from '@app/services/sunbirdqrscanner.service';
@@ -183,21 +184,21 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   subjectThemeAndIconsMap = {
     Science: {
       background: '#FFD6EB',
-      fontColor: '#CBA3F7',
+      titleColor: '#FD59B3',
       icon: 'assets/imgs/science.svg'
     },
     Mathematics: {
       background: '#FFDFD9',
-      fontColor: '#CBA3F7',
+      titleColor: '#EA2E52',
       icon: 'assets/imgs/mathematics.svg'
     },
     English: {
       background: '#DAFFD8',
-      fontColor: '#CBA3F7'
+      titleColor: '#218432'
     },
     Social: {
       background: '#DAD4FF',
-      fontColor: '#CBA3F7',
+      titleColor: '#635CDC',
       icon: 'assets/imgs/social.svg'
     }
   };
@@ -496,17 +497,20 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.getGroupByPageReq.mode = 'hard';
     this.getGroupByPageReq.facets = Search.FACETS_ETB;
     this.getGroupByPageReq.contentTypes = [ContentType.TEXTBOOK];
+    this.getGroupByPageReq.fields = ExploreConstants.REQUIRED_FIELDS;
     this.getGroupByPage(isAfterLanguageChange, avoidRefreshList);
   }
 
   // Make this method as private
-  getGroupByPage(isAfterLanguageChange = false, avoidRefreshList = false) {
+  async getGroupByPage(isAfterLanguageChange = false, avoidRefreshList = false) {
+
     const selectedBoardMediumGrade = ((this.getGroupByPageReq.board && this.getGroupByPageReq.board.length
       && this.getGroupByPageReq.board[0]) ? this.getGroupByPageReq.board[0] + ', ' : '') +
       (this.getGroupByPageReq.medium && this.getGroupByPageReq.medium.length
         && this.getGroupByPageReq.medium[0]) + ' Medium, ' +
       (this.getGroupByPageReq.grade && this.getGroupByPageReq.grade.length && this.getGroupByPageReq.grade[0]);
     this.appGlobalService.setSelectedBoardMediumGrade(selectedBoardMediumGrade);
+
     this.storyAndWorksheets = [];
     this.searchApiLoader = !this.refresh;
     const reqvalues = {};
@@ -530,55 +534,27 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       searchCriteria: this.getGroupByPageReq
     };
 
-    // Get the course data
-    this.contentService.searchAndGroupContent(JSON.parse(JSON.stringify(request))).toPromise()
-      .then((response: ContentsGroupedByPageSection) => {
-        this.ngZone.run(() => {
-          response.sections.forEach(element => {
-            const contentListObj = {
-              title: element.name,
-              count: element.contents ?
-                this.commonUtilService.translateMessage('NUMBER_OF_COURSES', element.contents.length)
-                : this.commonUtilService.translateMessage('NO_COURSES'),
-              theme: this.subjectThemeAndIconsMap[element.name] ?
-                this.subjectThemeAndIconsMap[element.name].background
-                : null,
-
-              titleColor: this.subjectThemeAndIconsMap[element.name] ?
-                this.subjectThemeAndIconsMap[element.name].fontColor
-                : null,
-
-              cardImg: this.subjectThemeAndIconsMap[element.name] ?
-                this.subjectThemeAndIconsMap[element.name].icon
-                : null
-            };
-            this.courseList.push(contentListObj);
-          });
-        });
-      })
-      .catch(error => {
-        this.ngZone.run(() => {
-        });
-      });
-
+    const requestBody = JSON.parse(JSON.stringify(request));
     // Get the book data
-    this.contentService.searchAndGroupContent(JSON.parse(JSON.stringify(request))).toPromise()
+    this.contentService.searchAndGroupContent(requestBody).toPromise()
       .then((response: ContentsGroupedByPageSection) => {
         this.ngZone.run(() => {
           this.searchGroupingContents = response;
           const newSections = [];
           this.getCategoryData();
-          this.searchGroupingContents.sections.forEach(element => {
-            if (element.name) {
-              if (has(element.name, this.selectedLanguage)) {
+          // Get the course data
+          this.getCurriculumCourses(requestBody, response);
+          this.searchGroupingContents.sections.forEach(section => {
+            if (section.name) {
+              if (has(section.name, this.selectedLanguage)) {
                 const langs = [];
-                forEach(element.name, (value, key) => {
+                forEach(section.name, (value, key) => {
                   langs[key] = value;
                 });
-                element.name = langs[this.selectedLanguage];
+                section.name = langs[this.selectedLanguage];
               }
             }
-            newSections.push(element);
+            newSections.push(section);
           });
           // END OF TEMPORARY CODE
           if (this.profile.subject && this.profile.subject.length) {
@@ -657,6 +633,51 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
             this.source, undefined,
             errValues);
         });
+      });
+  }
+
+  private getCurriculumCourses(request: SearchAndGroupContentRequest, bookResponse) {
+    if (bookResponse && bookResponse.combination) {
+      if (bookResponse.combination.medium) {
+        request.searchCriteria.medium = [bookResponse.combination.medium];
+        request.combination.medium = [bookResponse.combination.medium];
+      }
+      if (bookResponse.combination.gradeLevel) {
+        request.searchCriteria.grade = [bookResponse.combination.gradeLevel];
+        request.combination.gradeLevel = [bookResponse.combination.gradeLevel];
+      }
+    }
+    request.searchCriteria.contentTypes = [ContentType.TEXTBOOK];
+    // request.searchCriteria.framework = ;
+    console.log('getCurriculumCourses:request = ', request);
+
+    this.contentService.searchAndGroupContent(JSON.parse(JSON.stringify(request))).toPromise()
+      .then((response: ContentsGroupedByPageSection) => {
+        console.log('getCurriculumCourses:response = ', response);
+        this.ngZone.run(() => {
+          response.sections.forEach(section => {
+            const contentListObj = {
+              title: section.name,
+              count: section.contents ?
+                this.commonUtilService.translateMessage('NUMBER_OF_COURSES', section.contents.length)
+                : this.commonUtilService.translateMessage('NO_COURSES'),
+              theme: this.subjectThemeAndIconsMap[section.name] ?
+                this.subjectThemeAndIconsMap[section.name].background
+                : null,
+
+              titleColor: this.subjectThemeAndIconsMap[section.name] ?
+                this.subjectThemeAndIconsMap[section.name].titleColor
+                : null,
+
+              cardImg: this.subjectThemeAndIconsMap[section.name] ?
+                this.subjectThemeAndIconsMap[section.name].icon
+                : null
+            };
+            this.courseList.push(contentListObj);
+          });
+        });
+      })
+      .catch(error => {
       });
   }
 
@@ -1227,6 +1248,8 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     const curriculumCourseParams: NavigationExtras = {
       state: {
         theme: event.data.theme,
+        titleColor: event.data.titleColor,
+        subjectIcon: event.data.cardImg,
         subjectName: subject.name,
         curriculumCourseList: subject.contents,
       }

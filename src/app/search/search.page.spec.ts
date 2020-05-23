@@ -1433,7 +1433,7 @@ describe('SearchPage', () => {
                 expect(searchPage.downloadParentContent).toHaveBeenCalledWith('parent');
                 expect(searchPage.checkProfileData).toHaveBeenCalled();
                 done();
-            }, 0);
+            }, 400);
         });
         // it('checkParent', (done) => {
         //     // arrange
