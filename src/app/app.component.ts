@@ -169,6 +169,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.telemetryGeneratorService.generateNotificationClickedTelemetry(
         InteractType.LOCAL,
         this.activePageService.computePageId(this.router.url),
+        undefined,
         corRelationList
       );
     }

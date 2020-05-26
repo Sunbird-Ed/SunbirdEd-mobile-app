@@ -675,7 +675,8 @@ export class CoursesPage implements OnInit, OnDestroy {
         state: {
           headerTitle: 'COURSES_IN_PROGRESS',
           userId: this.userId,
-          pageName: ViewMore.PAGE_COURSE_ENROLLED
+          pageName: ViewMore.PAGE_COURSE_ENROLLED,
+          sectionName: this.inProgressSection
         }
       };
     } else {
@@ -693,6 +694,7 @@ export class CoursesPage implements OnInit, OnDestroy {
           requestParams: searchQuery,
           enrolledCourses: this.enrolledCourses,
           guestUser: this.guestUser,
+          sectionName: headerTitle
         }
 
       };
@@ -833,12 +835,12 @@ export class CoursesPage implements OnInit, OnDestroy {
     this.checkRetiredOpenBatch(params.course, params);
   }
 
-  openCourseDetails(event, index) {
+  openCourseDetails(event, section, index) {
     const contentIndex = this.getContentIndexOf(this.popularAndLatestCourses[index].contents, event.data);
     const params = {
       env: 'home',
       index: contentIndex,
-      sectionName: event.data.name,
+      sectionName: section.name,
       pageName: 'course',
       course: event.data,
       guestUser: this.guestUser,

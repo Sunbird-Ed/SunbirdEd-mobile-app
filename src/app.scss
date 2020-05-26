@@ -1106,6 +1106,14 @@ sb-course-cards-hlist > .layout-course > .header{
   padding: 0 8px !important;
 }
 
+app-courses{
+  sb-course-card{
+    .sb--card{
+      margin-top: 2px !important;
+    }
+  }
+}
+
 .card-section-secondary{
   color: #666666;
   font-family: "Noto Sans";
