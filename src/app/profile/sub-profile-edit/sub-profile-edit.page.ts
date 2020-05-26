@@ -420,12 +420,12 @@ export class SubProfileEditPage implements OnInit, OnDestroy {
         state: formVal.state || '',
         district: formVal.district || '',
       };
-      const createdUser = await this.profileService.addManagedProfile(userDetails).toPromise();
-      if (createdUser) {
-        this.commonUtilService.showToast('New user created successfully.');
-        this.location.back();
-        console.log(createdUser);
-      }
+      // const createdUser = await this.profileService.addManagedProfile(userDetails).toPromise();
+      // if (createdUser) {
+      //   this.commonUtilService.showToast('New user created successfully.');
+      //   this.location.back();
+      //   console.log(createdUser);
+      // }
     } catch (e) {
       console.error(e);
     } finally {
