@@ -1,6 +1,6 @@
 import { PageFilterCallback } from './../page-filter/page-filter.page';
 import { Component, OnInit, AfterViewInit, Inject, NgZone, ViewChild, OnDestroy, ChangeDetectorRef } from '@angular/core';
-import { IonContent as ContentView, Events, ToastController, MenuController } from '@ionic/angular';
+import {IonContent as ContentView, Events, ToastController, MenuController, PopoverController} from '@ionic/angular';
 import { NavigationExtras, Router } from '@angular/router';
 import { animate, group, state, style, transition, trigger } from '@angular/animations';
 import { TranslateService } from '@ngx-translate/core';
@@ -55,13 +55,16 @@ import { TelemetryGeneratorService } from '@app/services/telemetry-generator.ser
 import { CommonUtilService } from '@app/services/common-util.service';
 import { FormAndFrameworkUtilService } from '@app/services/formandframeworkutil.service';
 import {
-  Environment, InteractSubtype, InteractType, PageId, CorReleationDataType, ID
+  Environment, InteractSubtype, InteractType, PageId, CorReleationDataType, ID, ImpressionType, ImpressionSubtype
 } from '@app/services/telemetry-constants';
 import { AppHeaderService } from '@app/services/app-header.service';
 import { SplaschreenDeeplinkActionHandlerDelegate } from '@app/services/sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
 import { ContentUtil } from '@app/util/content-util';
 import { NotificationService } from '@app/services/notification.service';
 import { applyProfileFilter } from '@app/util/filter.util';
+import {SbTutorialPopupComponent} from '@app/app/components/popups/sb-tutorial-popup/sb-tutorial-popup.component';
+import {animationGrowInTopRight} from '../animations/animation-grow-in-top-right';
+import {animationShrinkOutTopRight} from '../animations/animation-shrink-out-top-right';
 
 @Component({
   selector: 'app-resources',
@@ -179,6 +182,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   locallyDownloadResources;
   channelId: string;
   coachTimeout: any;
+  private tutorialPopover;
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -204,6 +208,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     private router: Router,
     private changeRef: ChangeDetectorRef,
     private appNotificationService: NotificationService,
+    private popoverCtrl: PopoverController
   ) {
     this.preferences.getString(PreferenceKey.SELECTED_LANGUAGE_CODE).toPromise()
       .then(val => {
@@ -644,12 +649,12 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   async ionViewWillEnter() {
     this.events.subscribe('update_header', () => {
-      this.headerService.showHeaderWithHomeButton(['search', 'download', 'notification']);
+      this.headerService.showHeaderWithHomeButton(['search', 'download', 'information']);
     });
     this.headerObservable = this.headerService.headerEventEmitted$.subscribe(eventName => {
       this.handleHeaderEvents(eventName);
     });
-    this.headerService.showHeaderWithHomeButton(['search', 'download', 'notification']);
+    this.headerService.showHeaderWithHomeButton(['search', 'download', 'information']);
 
     this.getCategoryData();
 
@@ -667,9 +672,9 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ionViewDidEnter() {
     // Need timer to load the coach screen and for the coach screen to hide if user comes from deeplink.
-    // this.coachTimeout = setTimeout(() => {
-    //   this.appGlobalService.showCouchMarkScreen();
-    // }, 2000);
+    this.coachTimeout = setTimeout(() => {
+      this.appGlobalService.showTutorialScreen();
+    }, 2000);
   }
 
   // Offline Toast
@@ -967,11 +972,46 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       case 'download':
         this.redirectToActivedownloads();
         break;
-      case 'notification':
-        this.redirectToNotifications();
+      // case 'notification':
+      //   this.redirectToNotifications();
+      //   break;
+      case 'information':
+        this.appTutorialScreen();
         break;
       default: console.warn('Use Proper Event name');
     }
+  }
+
+  async appTutorialScreen() {
+    this.telemetryGeneratorService.generateInteractTelemetry(
+        InteractType.TOUCH,
+        InteractSubtype.INFORMATION_ICON_CLICKED,
+        Environment.HOME,
+        PageId.LIBRARY
+    );
+    this.telemetryGeneratorService.generateImpressionTelemetry(
+         ImpressionType.VIEW,
+         ImpressionSubtype.TUTORIAL_WALKTHROUGH,
+         PageId.LIBRARY,
+         Environment.HOME
+     );
+    this.tutorialPopover = await this.popoverCtrl.create({
+      component: SbTutorialPopupComponent,
+      componentProps: {appLabel: this.appLabel},
+      enterAnimation: animationGrowInTopRight,
+      leaveAnimation: animationShrinkOutTopRight,
+      backdropDismiss: false,
+      showBackdrop: true
+    });
+    this.tutorialPopover.present();
+    const {data} = await this.tutorialPopover.onDidDismiss();
+
+    this.telemetryGeneratorService.generateInteractTelemetry(
+        InteractType.TOUCH,
+        data.continueClicked ? InteractSubtype.TUTORIAL_CONTINUE_CLICKED : InteractSubtype.CLOSE_CLICKED,
+        Environment.HOME,
+        PageId.APP_TUTORIAL_POPUP
+    );
   }
 
   redirectToActivedownloads() {
@@ -999,16 +1039,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
         InteractSubtype.BOOK_LIST_END_REACHED,
         Environment.HOME,
         this.source
-      );
-    }
-  }
-  onScroll(event) {
-    // Added Telemetry on reaching Horizontal Scroll End
-    if (event && event.target.scrollWidth <= event.target.scrollLeft + event.target.offsetWidth) {
-      this.telemetryGeneratorService.generateInteractTelemetry(InteractType.SCROLL,
-        InteractSubtype.RECENTLY_VIEWED_END_REACHED,
-        Environment.HOME,
-        this.source,
       );
     }
   }

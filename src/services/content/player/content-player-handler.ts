@@ -40,15 +40,6 @@ export class ContentPlayerHandler {
         const values = new Map();
         values['autoAfterDownload'] = shouldDownloadnPlay;
         values['isStreaming'] = isStreaming;
-        this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
-            InteractSubtype.CONTENT_PLAY,
-            Environment.HOME,
-            PageId.CONTENT_DETAIL,
-            contentInfo.telemetryObject,
-            values,
-            contentInfo.rollUp,
-            contentInfo.correlationList);
-
         if (isStreaming) {
             const extraInfoMap = { hierarchyInfo: [] };
             extraInfoMap.hierarchyInfo = contentInfo.hierachyInfo;
