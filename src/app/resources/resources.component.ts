@@ -647,7 +647,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
         request.combination.gradeLevel = [bookResponse.combination.gradeLevel];
       }
     }
-    request.searchCriteria.contentTypes = [ContentType.TEXTBOOK];
+    request.searchCriteria.contentTypes = [ContentType.COURSE];
     // request.searchCriteria.framework = ;
     console.log('getCurriculumCourses:request = ', request);
 
@@ -657,6 +657,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
         this.ngZone.run(() => {
           response.sections.forEach(section => {
             const contentListObj = {
+              contents: section.contents,
               title: section.name,
               count: section.contents ?
                 this.commonUtilService.translateMessage('NUMBER_OF_COURSES', section.contents.length)
@@ -1241,17 +1242,13 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   navigateToCurriculumCourses(event) {
-    const subject = this.storyAndWorksheets.find(s => {
-      return s.name === event.data.title;
-    });
-
     const curriculumCourseParams: NavigationExtras = {
       state: {
         theme: event.data.theme,
         titleColor: event.data.titleColor,
         subjectIcon: event.data.cardImg,
-        subjectName: subject.name,
-        curriculumCourseList: subject.contents,
+        subjectName: event.data.title,
+        curriculumCourseList: event.data.contents,
       }
     };
 

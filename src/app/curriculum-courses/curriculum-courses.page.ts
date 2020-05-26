@@ -43,15 +43,39 @@ export class CurriculumCoursesPage implements OnInit {
     return img;
   }
 
-  openCourseDetails(course) {
-    const curriculumCourseParams: NavigationExtras = {
-      state: {
-        curriculumCourse: course,
-      }
-    };
+  // openCourseDetails(course) {
+  //   const curriculumCourseParams: NavigationExtras = {
+  //     state: {
+  //       curriculumCourse: course,
+  //     }
+  //   };
 
-    this.router.navigate([`/${RouterLinks.CURRICULUM_COURSES}/${RouterLinks.CURRICULUM_COURSE_DETAILS}`],
-      curriculumCourseParams);
+  //   this.router.navigate([`/${RouterLinks.CURRICULUM_COURSES}/${RouterLinks.CURRICULUM_COURSE_DETAILS}`],
+  //     curriculumCourseParams);
+  // }
+
+  openCourseDetails(course) {
+    // const contentIndex = this.getContentIndexOf(this.popularAndLatestCourses[index].contents, event.data);
+    const params = {
+      env: 'home',
+      // index: contentIndex,
+      // sectionName: event.data.name,
+      // pageName: 'course',
+      course,
+      // guestUser: this.guestUser,
+      // layoutName: this.layoutPopular,
+      // enrolledCourses: this.enrolledCourses,
+      // isFilterApplied: this.isFilterApplied
+    };
+    // this.checkRetiredOpenBatch(params.course, params);
+
+    this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], {
+      state: {
+        content: course,
+        isCourse: true,
+        // corRelation: corRelationList
+      }
+    });
   }
 
 }

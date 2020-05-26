@@ -62,7 +62,7 @@ import {
   CorReleationDataType,
   ID
 } from '../../services/telemetry-constants';
-import { ProfileConstants, ContentType, EventTopics, PreferenceKey, RouterLinks, ShareItemType } from '../app.constant';
+import { ProfileConstants, ContentType, EventTopics, MimeType, PreferenceKey, RouterLinks, ShareItemType } from '../app.constant';
 import { BatchConstants } from '../app.constant';
 import { ContentShareHandlerService } from '../../services/content/content-share-handler.service';
 import { SbGenericPopoverComponent } from '../components/popups/sb-generic-popover/sb-generic-popover.component';
@@ -96,6 +96,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
    * Contains children content data
    */
   childrenData: Array<any> = [];
+  courseHeirarchy: any;
 
   startData: any;
   shownGroup: null;
@@ -659,6 +660,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
       this.showSheenAnimation = false;
       this.enrolledCourseMimeType = content.mimeType;
       this.childrenData = content.children;
+      this.courseHeirarchy = content;
       this.toggleGroup(0, this.childrenData[0]);
       this.startData = content.children;
       this.childContentsData = content;
@@ -1181,6 +1183,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
             }, 1000);
             this.enrolledCourseMimeType = data.mimeType;
             this.childrenData = data.children;
+            this.courseHeirarchy = data;
             this.startData = data.children;
             this.childContentsData = data;
             this.getContentState(true);
@@ -1947,6 +1950,29 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
         resolve(false);
       }
     });
+  }
+
+  onTocCardClick(event) {
+    if (event.item.mimeType === MimeType.COLLECTION) {
+      const chapterParams: NavigationExtras = {
+        state: {
+          courseName: this.course.name,
+          chapterData: event.item,
+        }
+      };
+
+      this.router.navigate([`/${RouterLinks.CURRICULUM_COURSES}/${RouterLinks.CHAPTER_DETAILS}`],
+        chapterParams);
+    } else {
+      this.router.navigate([RouterLinks.CONTENT_DETAILS], {
+        state: {
+          content: event.item,
+          // depth,
+          // contentState: this.stateData,
+          corRelation: this.corRelationList
+        }
+      });
+    }
   }
 
 }
