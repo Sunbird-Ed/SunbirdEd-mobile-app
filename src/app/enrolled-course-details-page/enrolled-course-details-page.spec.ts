@@ -163,7 +163,6 @@ describe('EnrolledCourseDetailsPage', () => {
             // assert
             expect(mockCommonUtilService.getAppName).toHaveBeenCalled();
             expect(enrolledCourseDetailsPage.subscribeUtilityEvents).toHaveBeenCalled();
-            expect(mockDownloadService.trackDownloads).toHaveBeenCalled();
         });
     });
 
