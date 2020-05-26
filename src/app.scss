@@ -1183,3 +1183,11 @@ app-resources{
   width: 100%;
   padding: 16px 0px 16px 0px;
 }
+
+app-manage-user-profiles{
+  sb-member-card{
+    .members-list-item{
+      border: none !important;
+    }
+  }
+}

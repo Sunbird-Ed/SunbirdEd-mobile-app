@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: sketchtool 63.1 (101010) - https://sketch.com -->
+    <title>8744A1BB-F5A2-4DE3-8C76-9161FEB38BC4</title>
+    <desc>Created with sketchtool.</desc>
+    <defs>
+        <filter x="-75.0%" y="-75.0%" width="250.0%" height="250.0%" filterUnits="objectBoundingBox" id="filter-1">
+            <feOffset dx="0" dy="2" in="SourceAlpha" result="shadowOffsetOuter1"></feOffset>
+            <feGaussianBlur stdDeviation="2" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
+            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.25 0" type="matrix" in="shadowBlurOuter1" result="shadowMatrixOuter1"></feColorMatrix>
+            <feMerge>
+                <feMergeNode in="shadowMatrixOuter1"></feMergeNode>
+                <feMergeNode in="SourceGraphic"></feMergeNode>
+            </feMerge>
+        </filter>
+    </defs>
+    <g id="Linked-Profile" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Linked-Profile---select-user" transform="translate(-316.000000, -382.000000)" fill-rule="nonzero">
+            <g id="check" filter="url(#filter-1)" transform="translate(320.000000, 384.000000)">
+                <path d="M8,0 C3.58,0 0,3.58 0,8 C0,12.416 3.58,16 8,16 C12.416,16 16,12.416 16,8 C16,3.58 12.416,0 8,0 Z" id="Path" fill="#024F9D"></path>
+                <polygon id="Path" fill="#FFFFFF" points="6.47619048 11.7184127 2.66666667 7.8777982 3.7447619 6.7909043 6.47619048 9.54462489 12.2552381 3.7184127 13.3333333 4.8053066"></polygon>
+            </g>
+        </g>
+    </g>
+</svg>

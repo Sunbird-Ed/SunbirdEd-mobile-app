@@ -2,7 +2,7 @@ import { Component, OnInit, Inject, NgZone } from '@angular/core';
 import { Location } from '@angular/common';
 import {
   AppHeaderService, CommonUtilService, TelemetryGeneratorService,
-  InteractSubtype, PageId, Environment, InteractType, ErrorType, ImpressionType
+  InteractSubtype, PageId, Environment, InteractType, ErrorType, LoginHandlerService, AppGlobalService
 } from '@app/services';
 import { TranslateService } from '@ngx-translate/core';
 import { Router, NavigationExtras } from '@angular/router';
@@ -10,7 +10,10 @@ import { ContentUtil } from '@app/util/content-util';
 import { MimeType, RouterLinks, ShareItemType } from '@app/app/app.constant';
 import {
   ContentDetailRequest, ContentService, Content, ContentImportRequest,
-  ContentImport, ContentImportResponse, CorrelationData, ContentImportStatus, TelemetryErrorCode, StorageService, Rollup, DownloadTracking, DownloadService, TelemetryObject, EventsBusService, EventsBusEvent, DownloadEventType, DownloadProgress, ContentEventType, ContentImportCompleted, ContentUpdate
+  ContentImport, ContentImportResponse, CorrelationData, ContentImportStatus,
+  TelemetryErrorCode, StorageService, Rollup, DownloadTracking, DownloadService,
+  TelemetryObject, EventsBusService, EventsBusEvent, DownloadEventType, DownloadProgress,
+  ContentEventType, ContentImportCompleted, ContentUpdate
 } from '@project-sunbird/sunbird-sdk';
 import { Events, Platform, PopoverController } from '@ionic/angular';
 import { ConfirmAlertComponent } from '@app/app/components';
@@ -20,6 +23,7 @@ import { Observable, Subscription } from 'rxjs';
 import { share } from 'rxjs/operators';
 import { ContentDeleteHandler } from '@app/services/content/content-delete-handler';
 import { ContentInfo } from '@app/services/content/content-info';
+import { SbPopoverComponent } from '@app/app/components/popups/sb-popover/sb-popover.component';
 // import {
 //   Environment, ErrorType, ImpressionType, InteractSubtype, InteractType, Mode, PageId, ID
 // } from '../../services/telemetry-constants';
@@ -65,6 +69,7 @@ export class CurriculumCourseDetailsPage implements OnInit {
   currentCount = 0;
   trackDownloads$: Observable<DownloadTracking>;
   contentDeleteObservable: any;
+  private extrasData: any;
 
   constructor(
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
@@ -82,10 +87,16 @@ export class CurriculumCourseDetailsPage implements OnInit {
     private fileSizePipe: FileSizePipe,
     private popoverCtrl: PopoverController,
     private location: Location,
-    private router: Router
+    private router: Router,
+    private loginHandlerService: LoginHandlerService,
+    private appGlobalService: AppGlobalService
   ) {
-    const extrasState = this.router.getCurrentNavigation().extras.state;
-    this.course = extrasState.curriculumCourse;
+    if ((!this.router.getCurrentNavigation() || !this.router.getCurrentNavigation().extras) && this.appGlobalService.preSignInData) {
+      this.extrasData = this.appGlobalService.preSignInData;
+    } else {
+      this.extrasData = this.router.getCurrentNavigation().extras.state;
+    }
+    this.course = this.extrasData.curriculumCourse;
     this.initCourseData(this.course);
   }
 
@@ -670,5 +681,38 @@ export class CurriculumCourseDetailsPage implements OnInit {
     await popover.present();
   }
   //// collection-acions END
+
+  navigateToCourseDetails() {
+    const isUserLoggedIn = this.appGlobalService.isUserLoggedIn();
+    if (!isUserLoggedIn) {
+      this.showLoginPopup();
+      return;
+    }
+    // TODO navigate to details
+  }
+
+  async showLoginPopup() {
+    const confirm = await this.popoverCtrl.create({
+      component: SbPopoverComponent,
+      componentProps: {
+        sbPopoverMainTitle: this.commonUtilService.translateMessage('YOU_MUST_JOIN_TO_ACCESS_TRAINING_DETAIL'),
+        metaInfo: this.commonUtilService.translateMessage('TRAININGS_ONLY_REGISTERED_USERS'),
+        sbPopoverHeading: this.commonUtilService.translateMessage('OVERLAY_SIGN_IN'),
+        isNotShowCloseIcon: true,
+        actionsButtons: [
+          {
+            btntext: this.commonUtilService.translateMessage('OVERLAY_SIGN_IN'),
+            btnClass: 'popover-color'
+          },
+        ]
+      },
+      cssClass: 'sb-popover info',
+    });
+    await confirm.present();
+    const { data } = await confirm.onDidDismiss();
+    if (data && data.canDelete) {
+      this.loginHandlerService.signIn({skipRootNavigation: true, componentData: this.extrasData});
+    }
+  }
 
 }

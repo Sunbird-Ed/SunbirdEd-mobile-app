@@ -74,6 +74,7 @@ export class AppGlobalService implements OnDestroy {
     private isJoinTraningOnboarding: any;
     private _signinOnboardingLoader: any;
     private _skipCoachScreenForDeeplink = false;
+    private _preSignInData: any;
 
     constructor(
         @Inject('PROFILE_SERVICE') private profile: ProfileService,
@@ -711,6 +712,19 @@ export class AppGlobalService implements OnDestroy {
     }
     set skipCoachScreenForDeeplink(value) {
         this._skipCoachScreenForDeeplink = value;
+    }
+
+    get preSignInData() {
+        if (this._preSignInData) {
+            const preData = typeof (this._preSignInData) === 'object' ?
+                JSON.parse(JSON.stringify(this._preSignInData)) : this._preSignInData;
+            this._preSignInData = null;
+            return preData;
+        }
+        return null;
+    }
+    set preSignInData(value) {
+        this._preSignInData = value;
     }
 
     // This method is used to reset if any quiz content data is previously saved before Joining a Training

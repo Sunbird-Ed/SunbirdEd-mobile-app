@@ -169,7 +169,7 @@
   "DEVICE_TAGS_SUB": "Add or remove device tags",
   "DISMISS": "CANCEL",
   "DISTRICT": "District",
-  "DISTRICT_OPTION_TEXT": "Select district",
+  "DISTRICT_OPTION_TEXT": "Select District",
   "DOCS": "Documents",
   "DOWNLOAD": "Download",
   "DOWNLOADING": "DOWNLOADING {{%s}} %",
@@ -691,5 +691,15 @@
   "EDIT_NAME": "Edit name",
   "SEARCH_WITHIN_GROUP": "Search within group",
   "CREATE_GROUP_DESCRIPTION": "Bring people together with a few clicks. Create your own group, classroom or study circle to share, monitor and connect.",
-  "LOGIN_TO_CREATE_GROUP_DESCRIPTION": "Login and bring people together with a few clicks. Create your own group, classroom or study circle to share, monitor and connect."
+  "LOGIN_TO_CREATE_GROUP_DESCRIPTION": "Login and bring people together with a few clicks. Create your own group, classroom or study circle to share, monitor and connect.",
+  "ENTER_STUDENT_ID": "Enter Student's ID",
+  "STUDENT_ID": "Student ID",
+  "ADD_NEW_STUDENT": "Add new student",
+  "ADD_TO_CLASSROOM": "Add to classroom",
+  "NAME_IS_REQUIRED": "Name is required.",
+  "ENTER_USER_NAME": "Enter user name",
+  "I_UNDERSTAND_AND_ACCEPT": "I understand and accept the",
+  "SWITCH_USER": "Switch user",
+  "CHOOSE_USER": "Choose user",
+  "ADD_USER": "Add user"
 }
