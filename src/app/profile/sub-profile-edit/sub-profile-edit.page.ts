@@ -424,7 +424,7 @@ export class SubProfileEditPage implements OnInit, OnDestroy {
       // if (createdUser) {
       //   this.commonUtilService.showToast('New user created successfully.');
       //   this.location.back();
-      //   console.log(createdUser);
+      //  console.log(createdUser);
       // }
     } catch (e) {
       console.error(e);
