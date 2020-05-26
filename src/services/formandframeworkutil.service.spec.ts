@@ -809,7 +809,7 @@ describe('FormAndFrameworkUtilService', () => {
       // act
       // assert
       formAndFrameworkUtilService.updateProfileInfo(profile, profileData).then((response) => {
-        expect(mockEvents.publish).toHaveBeenCalledWith('refresh:loggedInProfile');
+        expect(mockEvents.publish).toHaveBeenCalledWith('refresh:loggedInProfile', undefined);
         expect(response).toEqual({ status: true });
         done();
       });
@@ -823,7 +823,7 @@ describe('FormAndFrameworkUtilService', () => {
       // act
       // assert
       formAndFrameworkUtilService.updateProfileInfo(profile, profileData).then((response) => {
-        expect(mockEvents.publish).toHaveBeenCalledWith('refresh:loggedInProfile');
+        expect(mockEvents.publish).toHaveBeenCalledWith('refresh:loggedInProfile', undefined);
         expect(response).toEqual({ status: false, profile: { grade: ['class1'] } });
         done();
       });

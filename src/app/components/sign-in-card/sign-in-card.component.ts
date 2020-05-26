@@ -31,6 +31,7 @@ import {
 import { ContainerService } from '@app/services/container.services';
 import { AppGlobalService } from '@app/services';
 import { Router } from '@angular/router';
+import { EventParams } from './event-params.interface';
 
 @Component({
   selector: 'app-sign-in-card',
@@ -193,7 +194,16 @@ export class SignInCardComponent implements OnInit {
                       });
                     that.profileService.setActiveSessionForProfile(profile.uid).toPromise()
                       .then(() => {
-                        that.formAndFrameworkUtilService.updateLoggedInUser(success, profile)
+                        /* Medatory for login flow
+                         * eventParams are essential parameters for avoiding duplicate calls to API
+                         * skipSession & skipProfile should be false here
+                         * until further change
+                         */
+                        const eventParams: EventParams = {
+                          skipSession: false,
+                          skipProfile: false
+                        };
+                        that.formAndFrameworkUtilService.updateLoggedInUser(success, profile, eventParams)
                           .then(() => {
                             resolve({ slug: success.rootOrg.slug, title: success.rootOrg.orgName });
                           }).catch(() => {
