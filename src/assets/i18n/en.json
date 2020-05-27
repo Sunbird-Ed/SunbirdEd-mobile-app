@@ -692,5 +692,7 @@
   "CREATE_GROUP_DESCRIPTION": "Bring people together with a few clicks. Create your own group, classroom or study circle to share, monitor and connect.",
   "LOGIN_TO_CREATE_GROUP_DESCRIPTION": "Login and bring people together with a few clicks. Create your own group, classroom or study circle to share, monitor and connect.",
   "GET_STARTED": "Get started",
-  "POWER_OF_GROUPS": "Have you discovered the power of groups yet?"
+  "POWER_OF_GROUPS": "Have you discovered the power of groups yet?",
+  "CERTIFICATE_DOWNLOADED": "The certificate downloading is complete",
+  "CERTIFICATE_ALREADY_DOWNLOADED": "The certificate is already downloaded, please check your Download folder"
 }
