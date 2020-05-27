@@ -838,6 +838,15 @@ describe('CoursesPage', () => {
             expect(coursesPage.checkRetiredOpenBatch).toHaveBeenCalled();
         });
     });
-
+    describe('ngOnDestroy()', () => {
+        it('destroy should unsubscribe 12 events', () => {
+            jest.spyOn(coursesPage, 'unsubscribeUtilityEvents');
+            // act
+            coursesPage.ngOnDestroy();
+            // assert
+            expect(coursesPage.unsubscribeUtilityEvents).toBeCalled();
+            expect(mockEvents.unsubscribe).toBeCalledWith('update_header');
+        });
+    });
 });
 
