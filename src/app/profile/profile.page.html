@@ -80,8 +80,14 @@
             <span *ngIf="!(userLocation?.state && userLocation?.state?.name && userLocation?.state?.name?.length)"
                 class="lighter">{{'ADD_STATE' | translate}}</span>
         </div>
-        <div class="container MT10 MB10">
-            <ion-button shape="round" (click)="navigateToEditPersonalDetails()" class="short-btn custom-round">
+        <div class="container MT10 MB10 edit-options">
+            <!-- <ion-button shape="round" fill="outline" (click)="navigateToEditSubProfile()" class="short-btn custom-round ion-text-capitalize">
+                <span class="add-size">+</span> {{'ADD_USERS' | translate }}
+            </ion-button>
+            <ion-button shape="round" fill="outline" (click)="showSwitchUserPopup()" class="short-btn custom-round ion-text-capitalize">
+                {{'SWITCH_USER' | translate }}
+            </ion-button> -->
+            <ion-button shape="round" (click)="navigateToEditPersonalDetails()" class="short-btn custom-round ion-text-capitalize">
                 {{'EDIT' | translate }}
             </ion-button>
         </div>

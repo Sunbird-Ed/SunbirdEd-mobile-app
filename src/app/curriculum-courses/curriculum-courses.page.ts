@@ -46,7 +46,6 @@ export class CurriculumCoursesPage implements OnInit {
   openCourseDetails(course) {
     const curriculumCourseParams: NavigationExtras = {
       state: {
-        textbookName: 'TextBook Name',
         curriculumCourse: course,
       }
     };

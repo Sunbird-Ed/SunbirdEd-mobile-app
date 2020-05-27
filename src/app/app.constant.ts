@@ -145,6 +145,7 @@ export class ExploreConstants {
         'appIcon'
     ];
 }
+
 export class AudienceFilter {
     public static readonly GUEST_TEACHER = ['instructor', 'learner'];
     public static readonly GUEST_STUDENT = ['learner'];
@@ -442,6 +443,8 @@ export class RouterLinks {
     public static readonly GUEST_PROFILE = 'guest-profile';
     public static readonly PERSONAL_DETAILS_EDIT = 'personal-details-edit';
     public static readonly CATEGORIES_EDIT = 'categories-edit';
+    public static readonly SUB_PROFILE_EDIT = 'sub-profile-edit';
+    public static readonly MANAGE_USER_PROFILES = 'manage-user-profiles';
 
     // Courses Routs
     public static readonly COURSES = 'courses';
@@ -544,6 +547,7 @@ export class RouterLinks {
     // Curriculum courses
     public static readonly CURRICULUM_COURSES = 'curriculum-courses';
     public static readonly CURRICULUM_COURSE_DETAILS = 'curriculum-course-details';
+    public static readonly CHAPTER_DETAILS = 'chapter-details';
 }
 
 export class LibraryCardTypes {

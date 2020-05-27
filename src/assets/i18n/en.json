@@ -169,7 +169,7 @@
   "DEVICE_TAGS_SUB": "Add or remove device tags",
   "DISMISS": "CANCEL",
   "DISTRICT": "District",
-  "DISTRICT_OPTION_TEXT": "Select district",
+  "DISTRICT_OPTION_TEXT": "Select District",
   "DOCS": "Documents",
   "DOWNLOAD": "Download",
   "DOWNLOADING": "DOWNLOADING {{%s}} %",
@@ -530,6 +530,7 @@
   "START_ASSESSMENT": "Start assessment",
   "START_COURSE": "START",
   "START_COURSE_NOW": "Start Now",
+  "START_LEARNING": "Start Learning",
   "STAR_RATINGS": "Rating",
   "STATE": "State",
   "STATE_OPTION_TEXT": "Select State",
@@ -694,5 +695,15 @@
   "GET_STARTED": "Get started",
   "POWER_OF_GROUPS": "Have you discovered the power of groups yet?",
   "CERTIFICATE_DOWNLOADED": "The certificate downloading is complete",
-  "CERTIFICATE_ALREADY_DOWNLOADED": "The certificate is already downloaded, please check your Download folder"
+  "CERTIFICATE_ALREADY_DOWNLOADED": "The certificate is already downloaded, please check your Download folder",
+  "ENTER_STUDENT_ID": "Enter Student's ID",
+  "STUDENT_ID": "Student ID",
+  "ADD_NEW_STUDENT": "Add new student",
+  "ADD_TO_CLASSROOM": "Add to classroom",
+  "NAME_IS_REQUIRED": "Name is required.",
+  "ENTER_USER_NAME": "Enter user name",
+  "I_UNDERSTAND_AND_ACCEPT": "I understand and accept the",
+  "SWITCH_USER": "Switch user",
+  "CHOOSE_USER": "Choose user",
+  "ADD_USER": "Add user"
 }

@@ -1,0 +1,39 @@
+.mu-title{
+  font-size: 16px;
+  font-weight: bold;
+  color: #024F9D;
+  margin: 16px;
+}
+
+.mu-selected-user{
+  border: 0.5px solid #007AFF;
+  border-radius: 2px;
+  background-color: #E0EFFF;
+  position: relative;
+}
+
+.mu-selected-checkbox{
+  position: absolute;
+  right: 10px;
+  top: 30%;
+}
+
+.mu-dissable-checkbox{
+  display: none;
+}
+
+ion-footer{
+  ion-button{
+    --background: #024F9D !important;
+  }
+}
+
+.add-size{
+  font-size: 24px;
+  padding-right: 8px;
+}
+
+.button-outline{
+  --background: #E5EDF5 !important;
+  --border-color: #E5EDF5 !important;
+}

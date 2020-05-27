@@ -2,15 +2,18 @@
   <div class="ccd-header-container">
     <div class="ccd-header">
       <div class="ccd-header-icon img-container">
-        <img alt="icon" src='{{course?.appIcon}}'>
-        <!-- <img alt="icon" src='{{course?.contentData?.appIcon}}'> -->
+        <img *ngIf="courseData && courseData.appIcon" alt="icon" src='{{courseData.appIcon}}'>
       </div>
       <div class="ccd-header-desc">
         <div class="ccd-header-name">TextBook Name</div>
-        <div class="ccd-header-title">{{course.name}}</div>
+        <div class="ccd-header-title">{{courseData.name}}</div>
       </div>
     </div>
-    <div class="ccd-header-action">
+    <collection-acions (downloadAllContent)="showDownloadConfirmationAlert()" (shareEvent)="share()"
+      (showOverflowMenuEvent)="showDeletePopOver()" [contentDetail]="course" [showDownloadBtn]="showDownloadBtn"
+      [isDepthChild]='isDepthChild' [trackDownloads]="trackDownloads$">
+    </collection-acions>
+    <div class="ccd-header-action" (click)="navigateToCourseDetails()">
       <div>
         <div class="font-14">Start Learning</div>
         <div class="font-8">Chaper 01</div>
@@ -23,6 +26,17 @@
   </div>
   <div class="ccd-container">
     <div class="ccd-container-header">Chapters</div>
-    <sb-toc-curriculum [isMobile]="true"></sb-toc-curriculum>
+    <div>
+      <sb-toc-curriculum *ngIf="!showSheenAnimation && courseHeirarchy" [isChapterListing]="true"
+        [tocData]="courseHeirarchy" (tocCardClick)="onTocCardClick($event)"></sb-toc-curriculum>
+    </div>
   </div>
 </ion-content>
+
+<ng-container *ngIf="trackDownloads$ | async; let downloads">
+  <app-sb-download-popup *ngIf="downloads.queued.length" (cancelDownloadEmit)="cancelDownload($event)"
+    [currentCount]="downloads.completed.length"
+    [queuedIdentifiers]="(downloads.queued.length+downloads.completed.length)" [downloadSize]="downloadSize"
+    [collectionName]="course?.contentData?.name" [showDownload]="true" [showPopover]="showCollapsedPopup">
+  </app-sb-download-popup>
+</ng-container>

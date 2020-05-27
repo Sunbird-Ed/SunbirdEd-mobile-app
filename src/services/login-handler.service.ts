@@ -118,6 +118,7 @@ export class LoginHandlerService {
             }
           }
 
+          this.appGlobalService.preSignInData = (skipNavigation && skipNavigation.componentData) || null;
           initTabs(that.container, LOGIN_TEACHER_TABS);
           return that.refreshProfileData();
         })
