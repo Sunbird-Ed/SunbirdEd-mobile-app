@@ -10,6 +10,7 @@ import { of, throwError } from 'rxjs';
 import { PreferenceKey } from '../app/app.constant';
 import { Router } from '@angular/router';
 import { Location } from '@angular/common';
+import {SbProgressLoader} from '@app/services/sb-progress-loader.service';
 
 
 describe('LocalCourseService', () => {
@@ -30,6 +31,7 @@ describe('LocalCourseService', () => {
   const mockLocation: Partial<Location> = {
     back: jest.fn()
   };
+  const mockSbProgressLoader: Partial<SbProgressLoader> = {};
 
   beforeAll(() => {
     localCourseService = new LocalCourseService(
@@ -43,7 +45,8 @@ describe('LocalCourseService', () => {
       mockNgZone as NgZone,
       mockAppVersion as AppVersion,
       mockRouter as Router,
-      mockLocation as Location
+      mockLocation as Location,
+      mockSbProgressLoader as SbProgressLoader
     );
   });
 
@@ -338,12 +341,14 @@ describe('LocalCourseService', () => {
       mockCourseService.getEnrolledCourses = jest.fn(() => of([{ courseId: 1 }, { courseId: 2 }]));
       mockAppGlobalService.setEnrolledCourseList = jest.fn();
       mockPreferences.putString = jest.fn(() => of(undefined));
+      mockSbProgressLoader.hide = jest.fn();
       // action
       localCourseService.checkCourseRedirect();
       // assert
       setTimeout(() => {
         expect(mockCommonUtilService.translateMessage).toHaveBeenCalledWith('COURSE_ENROLLED');
         expect(mockAppGlobalService.setEnrolledCourseList).toHaveBeenCalled();
+        expect(mockSbProgressLoader.hide).toHaveBeenCalledWith({id: 'login'});
         done();
       }, 0);
     });
@@ -369,11 +374,13 @@ describe('LocalCourseService', () => {
       mockCourseService.getEnrolledCourses = jest.fn(() => of(undefined));
       mockAppGlobalService.setEnrolledCourseList = jest.fn();
       mockPreferences.putString = jest.fn(() => of(undefined));
+      mockSbProgressLoader.hide = jest.fn();
       // action
       localCourseService.checkCourseRedirect();
       // assert
       setTimeout(() => {
         expect(mockCommonUtilService.translateMessage).toHaveBeenCalledWith('COURSE_ENROLLED');
+        expect(mockSbProgressLoader.hide).toHaveBeenCalledWith({id: 'login'});
         done();
       }, 0);
     });
@@ -399,11 +406,13 @@ describe('LocalCourseService', () => {
       mockCourseService.getEnrolledCourses = jest.fn(() => of([]));
       mockAppGlobalService.setEnrolledCourseList = jest.fn();
       mockPreferences.putString = jest.fn(() => of(undefined));
+      mockSbProgressLoader.hide = jest.fn();
       // action
       localCourseService.checkCourseRedirect();
       // assert
       setTimeout(() => {
         expect(mockCommonUtilService.translateMessage).toHaveBeenCalledWith('COURSE_ENROLLED');
+        expect(mockSbProgressLoader.hide).toHaveBeenCalledWith({id: 'login'});
         done();
       }, 0);
     });
@@ -429,16 +438,17 @@ describe('LocalCourseService', () => {
       mockPreferences.putString = jest.fn(() => of(undefined));
       const networkError = new NetworkError('sample_error');
       jest.spyOn(localCourseService, 'enrollIntoBatch').mockReturnValue(throwError(networkError));
+      mockSbProgressLoader.hide = jest.fn();
       // act
       localCourseService.checkCourseRedirect();
       // assert
       setTimeout(() => {
         expect(mockNgZone.run).toHaveBeenCalled();
         expect(mockPreferences.putString).toHaveBeenCalled();
-        expect(dismissFn).toHaveBeenCalled();
         expect(mockAuthService.getSession).toHaveBeenCalled();
         expect(mockPreferences.getString).toHaveBeenCalled();
         expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
+        expect(mockSbProgressLoader.hide).toHaveBeenCalledWith({id: 'login'});
 
         done();
       }, 0);
@@ -452,10 +462,6 @@ describe('LocalCourseService', () => {
       mockPreferences.getString = jest.fn(() => of(courseAndBatchData));
       const dismissFn = jest.fn(() => Promise.resolve());
       const presentFn = jest.fn(() => Promise.resolve());
-      mockCommonUtilService.getLoader = jest.fn(() => ({
-        present: presentFn,
-        dismiss: dismissFn,
-      })) as any;
       mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
       mockPreferences.putString = jest.fn(() => of(undefined));
       const httpClientError = new HttpClientError('http_clicnt_error', { body: { params: { status: 'USER_ALREADY_ENROLLED_COURSE' } } });
@@ -463,6 +469,7 @@ describe('LocalCourseService', () => {
       mockNgZone.run = jest.fn((cb) => {
         cb();
       }) as any;
+      mockSbProgressLoader.hide = jest.fn();
       // act
       localCourseService.checkCourseRedirect();
       // assert
@@ -470,11 +477,10 @@ describe('LocalCourseService', () => {
         expect(mockEvents.publish).toHaveBeenCalled();
         expect(mockNgZone.run).toHaveBeenCalled();
         expect(mockPreferences.putString).toHaveBeenCalled();
-        expect(dismissFn).toHaveBeenCalled();
         expect(mockAuthService.getSession).toHaveBeenCalled();
         expect(mockPreferences.getString).toHaveBeenCalled();
         expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
-
+        expect(mockSbProgressLoader.hide).toHaveBeenCalledWith({id: 'login'});
         done();
       }, 0);
     });
@@ -506,7 +512,6 @@ describe('LocalCourseService', () => {
         expect(mockCommonUtilService.showToast).toHaveBeenCalled();
         expect(mockNgZone.run).toHaveBeenCalled();
         expect(mockPreferences.putString).toHaveBeenCalled();
-        expect(dismissFn).toHaveBeenCalled();
         expect(mockAuthService.getSession).toHaveBeenCalled();
         expect(mockPreferences.getString).toHaveBeenCalled();
         expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
