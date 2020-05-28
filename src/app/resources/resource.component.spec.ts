@@ -997,7 +997,7 @@ describe('ResourcesComponent', () => {
             resourcesComponent.mediumClickEvent(event, true);
         });
 
-        it('should be handle medium click filter', () => {
+        it('should be handle medium click filter', (done) => {
             // arrange
             jest.spyOn(resourcesComponent, 'generateClassInteractTelemetry').mockImplementation(() => {
                 return;
@@ -1014,8 +1014,11 @@ describe('ResourcesComponent', () => {
             // act
             resourcesComponent.mediumClickHandler(0, 'sample-text', true);
             // assert
-            expect(resourcesComponent.currentGrade).toBe('sample');
-            expect(resourcesComponent.categoryGradeLevelsArray[0]).toBe('sample');
+            setTimeout(() => {
+                expect(resourcesComponent.currentGrade).toBe('sample');
+                expect(resourcesComponent.categoryGradeLevelsArray[0]).toBe('sample');
+                done();
+            }, 1000);
         });
     });
 
