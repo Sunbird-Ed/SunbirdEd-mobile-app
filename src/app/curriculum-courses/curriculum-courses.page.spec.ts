@@ -1,13 +1,14 @@
-import {CurriculumCoursesPage} from './curriculum-courses.page';
+import { CurriculumCoursesPage } from './curriculum-courses.page';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
-import { AppHeaderService, CommonUtilService } from '@app/services';
-import { of } from 'rxjs';
-import { resolve } from 'dns';
+import { AppGlobalService, AppHeaderService, CommonUtilService } from '@app/services';
+import { CourseService } from '@project-sunbird/sunbird-sdk';
 
 describe('CurriculumCoursesPage', () => {
     let curriculumCoursesPage: CurriculumCoursesPage;
+    const mockCourseService: Partial<CourseService> = {};
     const mockAppHeaderService: Partial<AppHeaderService> = {};
+    const mockAppGlobalService: Partial<AppGlobalService> = {};
     const mockCommonUtilService: Partial<CommonUtilService> = {};
     const mockRouter: Partial<Router> = {
         getCurrentNavigation: jest.fn(() => ({
@@ -26,7 +27,9 @@ describe('CurriculumCoursesPage', () => {
 
     beforeAll(() => {
         curriculumCoursesPage = new CurriculumCoursesPage(
+            mockCourseService as CourseService,
             mockAppHeaderService as AppHeaderService,
+            mockAppGlobalService as AppGlobalService,
             mockTranslate as TranslateService,
             mockCommonUtilService as CommonUtilService,
             mockRouter as Router
@@ -47,19 +50,8 @@ describe('CurriculumCoursesPage', () => {
         expect(mockAppHeaderService.showHeaderWithBackButton).toHaveBeenCalled();
     });
 
-    it('should return content image', () => {
-        const content = {
-            courseLogoUrl: 'sample-logo-url',
-            appIcon: 'sample-app-icon'
-        };
-        mockCommonUtilService.getContentImg = jest.fn(() => 'sample-image-code');
-        curriculumCoursesPage.getContentImg(content);
-        // assert
-        expect(mockCommonUtilService.getContentImg).toHaveBeenCalled();
-    });
-
     it('should navigate to curriculumCourse', () => {
-        const course = {name: 'sample-course'};
+        const course = { name: 'sample-course' };
         mockRouter.navigate = jest.fn(() => Promise.resolve(true));
         curriculumCoursesPage.openCourseDetails(course);
         // assert
