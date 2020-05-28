@@ -22,7 +22,7 @@
                 <span class="asPerStateRecord" *ngIf="informationProfileName">{{'STATE_RECORDS' | translate}}</span>
             </span>
         </p>
-        <p class="MT0 MB30"><span>{{'USER_ID' | translate}}:</span><span>{{profile?.userName}}</span></p>
+        <p class="MT0 MB30"><span>{{'APP_ID' | translate:{'%s':appName} }}: </span><span>{{profile?.userName}}</span></p>
     </div>
     <div class="roles-container ion-text-center ion-padding-horizontal">
         <div class="MB5 ion-text-center" *ngFor="let role of roles | slice : startLimit:rolesLimit;">

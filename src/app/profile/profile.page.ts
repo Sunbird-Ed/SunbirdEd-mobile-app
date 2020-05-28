@@ -26,7 +26,8 @@ import {
   TelemetryObject,
   UpdateServerProfileInfoRequest,
   CachedItemRequestSourceFrom,
-  CourseCertificate
+  CourseCertificate,
+  SharedPreferences
 } from 'sunbird-sdk';
 import { Environment, InteractSubtype, InteractType, PageId } from '@app/services/telemetry-constants';
 import { ActivatedRoute, Router, NavigationExtras } from '@angular/router';
@@ -87,12 +88,13 @@ export class ProfilePage implements OnInit {
   timer: any;
   mappedTrainingCertificates: CourseCertificate[] = [];
   isDefaultChannelProfile$: Observable<boolean>;
-
+  appName = '';
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     @Inject('AUTH_SERVICE') private authService: AuthService,
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
     @Inject('COURSE_SERVICE') private courseService: CourseService,
+    @Inject('SHARED_PREFERENCES') private sharedPreferences: SharedPreferences,
     private zone: NgZone,
     private route: ActivatedRoute,
     private router: Router,
@@ -128,6 +130,9 @@ export class ProfilePage implements OnInit {
       this.custodianOrgId = orgId;
     });
 
+    this.sharedPreferences.getString('app_name').toPromise().then(value => {
+      this.appName = value;
+    });
   }
 
   ngOnInit() {

@@ -701,5 +701,6 @@
   "I_UNDERSTAND_AND_ACCEPT": "I understand and accept the",
   "SWITCH_USER": "Switch user",
   "CHOOSE_USER": "Choose user",
-  "ADD_USER": "Add user"
+  "ADD_USER": "Add user",
+  "APP_ID": "{{%s}} ID"
 }
