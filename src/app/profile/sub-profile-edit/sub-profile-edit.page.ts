@@ -20,7 +20,7 @@ import {
   LocationSearchResult,
   SharedPreferences,
   LocationSearchCriteria,
-  ServerProfile
+  ServerProfile,
 } from 'sunbird-sdk';
 import { CommonUtilService } from '@app/services/common-util.service';
 import { AppGlobalService } from '@app/services/app-global-service.service';
@@ -28,6 +28,7 @@ import { AppHeaderService } from '@app/services/app-header.service';
 import { Router } from '@angular/router';
 import { Location } from '@angular/common';
 import { Location as loc, PreferenceKey, ProfileConstants } from '@app/app/app.constant';
+import { AddManagedProfileRequest } from '@project-sunbird/sunbird-sdk/profile/def/add-managed-profile-request';
 
 @Component({
   selector: 'app-sub-profile-edit',
@@ -141,6 +142,42 @@ export class SubProfileEditPage implements OnInit, OnDestroy {
     state: '',
     district: ''
   };
+
+  formApiList = [
+    {
+      "code": "name",
+      "dataType": "text",
+      "name": "FULL_NAME",
+      "label": "Name",
+      "description": "Enter your name",
+      "placeHolder": "ENTER_USER_NAME",
+      "editable": true,
+      "inputType": "input",
+      "required": true,
+      "displayProperty": "Editable",
+      "visible": true,
+      "renderingHints": {
+        "fieldColumnWidth": "twelve"
+      },
+      "index": 1
+    },
+    {
+      "code": "tnc",
+      "dataType": "text",
+      "name": "tnc",
+      "label": "I understand and accept the {instance} Terms of Use.",
+      "description": "",
+      "editable": true,
+      "inputType": "checkbox",
+      "required": true,
+      "displayProperty": "Editable",
+      "visible": true,
+      "renderingHints": {
+        "fieldColumnWidth": "twelve"
+      },
+      "index": 2
+    }
+  ];
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -324,7 +361,7 @@ export class SubProfileEditPage implements OnInit, OnDestroy {
           // if (!this.mediumControl.value) {
           //   this.mediumControl.patchValue(this.profile.medium || []);
           // } else {
-            this.mediumControl.patchValue([]);
+          this.mediumControl.patchValue([]);
           // }
         } catch (e) {
           console.error(e);
@@ -360,7 +397,7 @@ export class SubProfileEditPage implements OnInit, OnDestroy {
           // if (!this.gradeControl.value) {
           //   this.gradeControl.patchValue(this.profile.grade || []);
           // } else {
-            this.gradeControl.patchValue([]);
+          this.gradeControl.patchValue([]);
           // }
         } catch (e) {
           console.error(e);
@@ -374,7 +411,7 @@ export class SubProfileEditPage implements OnInit, OnDestroy {
   private onGradeChange(): Observable<string[]> {
     return this.gradeControl.valueChanges.pipe(
       tap(async () => {
-          this.selectedText.grade = this.formatSelectBoxDisplayText(this.gradeControl, this.gradeList);
+        this.selectedText.grade = this.formatSelectBoxDisplayText(this.gradeControl, this.gradeList);
       })
     );
   }
@@ -384,22 +421,23 @@ export class SubProfileEditPage implements OnInit, OnDestroy {
     if (!formVal.userName.trim().length) {
       this.errorMessages.userName.show = true;
       return;
-    } else if (!formVal.boards || !formVal.boards.length) {
-      this.boardSelect.open();
-      return;
-    } else if (!formVal.medium || !formVal.medium.length) {
-      this.mediumSelect.open();
-      return;
-    } else if (!formVal.grades || !formVal.grades.length) {
-      this.gradeSelect.open();
-      return;
-    } else if (!formVal.state || !formVal.state.length) {
-      this.stateSelect.open();
-      return;
-    } else if (!formVal.district || !formVal.district.length) {
-      this.districtSelect.open();
-      return;
     }
+    // else if (!formVal.boards || !formVal.boards.length) {
+    //   this.boardSelect.open();
+    //   return;
+    // } else if (!formVal.medium || !formVal.medium.length) {
+    //   this.mediumSelect.open();
+    //   return;
+    // } else if (!formVal.grades || !formVal.grades.length) {
+    //   this.gradeSelect.open();
+    //   return;
+    // } else if (!formVal.state || !formVal.state.length) {
+    //   this.stateSelect.open();
+    //   return;
+    // } else if (!formVal.district || !formVal.district.length) {
+    //   this.districtSelect.open();
+    //   return;
+    // }
     else if (!formVal.tnc) {
       this.commonUtilService.showToast('Accept the Terms & Conditions.');
       return;
@@ -409,24 +447,30 @@ export class SubProfileEditPage implements OnInit, OnDestroy {
   }
 
   async submitForm(formVal) {
+    if (!this.profile || !this.profile.serverProfile) {
+      return;
+    }
     const loader = await this.commonUtilService.getLoader();
     try {
       await loader.present();
-      const userDetails = {
-        name: formVal.userName,
-        board: formVal.boards || [],
-        medium: formVal.medium || [],
-        grade: formVal.grades || [],
-        state: formVal.state || '',
-        district: formVal.district || '',
+      const userDetails: AddManagedProfileRequest = {
+        firstName: formVal.userName,
+        managedBy: this.profile.uid,
+        framework: this.profile.serverProfile['framework'] || undefined,
+        locationIds: this.profile.serverProfile['locationIds'] ||
+          (this.profile.serverProfile['userLocations'] && this.profile.serverProfile['userLocations'].map(i => i.id)) || undefined,
       };
-      // const createdUser = await this.profileService.addManagedProfile(userDetails).toPromise();
-      // if (createdUser) {
-      //   this.commonUtilService.showToast('New user created successfully.');
-      //   this.location.back();
-      //  console.log(createdUser);
-      // }
+      if (userDetails && userDetails.framework && userDetails.framework.subject) {
+        userDetails.framework.subject = [];
+      }
+      const createdUser = await this.profileService.addManagedProfile(userDetails).toPromise();
+      if (createdUser) {
+        this.commonUtilService.showToast('SUCCESSFULLY_ADDED_USER', null, null, null, null, createdUser.handle || '');
+        this.location.back();
+      }
+
     } catch (e) {
+      this.commonUtilService.showToast('ERROR_WHILE_ADDING_USER');
       console.error(e);
     } finally {
       await loader.dismiss();
@@ -593,6 +637,13 @@ export class SubProfileEditPage implements OnInit, OnDestroy {
 
   showTncDetails() {
     this.commonUtilService.openLink(this.userProfileDetails.tncLatestVersionUrl);
+  }
+
+  onFormDataChange(event) {
+    console.log('_____ onFormDataChange', event);
+    if (event) {
+      
+    }
   }
 
 }

@@ -2,34 +2,39 @@
 
   <section>
     <div>
-      <p class="mu-title">{{'CHOOSE_USER' | translate}}</p>
+      <p class="mu-title">{{'USE_APP_AS' | translate: {'%s': appName} }}</p>
+    </div>
+
+    <div class="add-user">
+      <ion-button fill="outline" expand="block" (click)="addUser()" class="m-8 ion-text-capitalize">
+        <span class="add-size">+</span> {{'ADD_USER' | translate}}
+      </ion-button>
     </div>
 
     <div class="mx-8">
-      <div [ngClass]="{'mu-selected-user':selectedUserIndex===i, '':selectedUserIndex!==i}" *ngFor="let user of manageProfileList; let i = index">
+      <div [ngClass]="{'mu-selected-user':selectedUserIndex===i, '':selectedUserIndex!==i}" *ngFor="let user of (manageProfileList$ | async); let i = index">
         <sb-member-card 
-          [title]="user.title" 
-          [identifier]="user.id" 
-          [initial]="user.title && user.title[0]" 
+          [title]="user.firstName"
+          [identifier]="user.id"
+          [initial]="user.firstName && user.firstName[0]"
           [cardImg]="selectedUserIndex === i ? 'assets/imgs/dark_blue_check.svg' : ''"
-          (cardClick)="selectedUser(user, i)" >
+          [indexOfMember] = "i"
+          [config]="sbCardConfig"
+          (cardClick)="selecteUser(user, i)">
         </sb-member-card>
       </div>
     </div>
 
-    <ion-button fill="outline" expand="block" (click)="addUser()" class="m-8 ion-text-capitalize">
-      <span class="add-size">+</span> {{'ADD_USER' | translate}}
-    </ion-button>
   </section>
-  
-  </ion-content>
-  
-  <ion-footer>
-    <ion-row>
-      <ion-col>
-        <ion-button class="ion-text-capitalize" expand="block"
-          [disabled]="selectedUserIndex === -1" (click)="switchUser()">{{'SWITCH_USER' | translate}}
-        </ion-button>
-      </ion-col>
-    </ion-row>
-  </ion-footer>
+
+</ion-content>
+
+<ion-footer>
+  <ion-row>
+    <ion-col>
+      <ion-button class="ion-text-capitalize mb-16" expand="block" [disabled]="selectedUserIndex === -1"
+        (click)="switchUser()">{{'SWITCH_USER' | translate}}
+      </ion-button>
+    </ion-col>
+  </ion-row>
+</ion-footer>

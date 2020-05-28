@@ -1,5 +1,5 @@
 <ion-content>
-  <form [formGroup]="subProfileEditForm">
+  <!-- <form [formGroup]="subProfileEditForm">
     <p class="sp-title">{{'CREATE_USER' | translate}}</p>
 
     <ion-item class="input-item" [ngClass]="{'sp-input-primary': !errorMessages.userName.show ,'sp-input-error': errorMessages.userName.show }">
@@ -102,7 +102,40 @@
         </span>
       </div>
     </div>
+  </form> -->
+  
+  <div>
+    <p class="sp-title">{{'CREATE_USER' | translate}}</p>
+    <div class="text-center MT16">
+      <img src="assets/imgs/round_blue_profile.svg" alt="managed-user-profile">
+    </div>
+  </div>
+
+  <form [formGroup]="subProfileEditForm">
+
+    <ion-item class="input-item" [ngClass]="{'sp-input-primary': !errorMessages.userName.show ,'sp-input-error': errorMessages.userName.show }">
+      <ion-label position="stacked" class="label-font align-text ion-text-capitalize">{{'FULL_NAME' | translate }}*</ion-label>
+      <ion-input formControlName="userName" (input)="onInputFields($event)" placeholder="{{'ENTER_USER_NAME' | translate}}"></ion-input>
+      <span *ngIf="errorMessages.userName.show" class="sp-error">{{ errorMessages.userName.message }}</span>
+    </ion-item>
+
+    <div class="M16">
+      {{'PREFERENCES_CAN_BE_UPDATED' | translate}}
+    </div>
+
+    <div class="flex-container M16">
+      <div>
+        <ion-checkbox formControlName="tnc"></ion-checkbox>
+      </div>
+      <div class="sp-tnc-text">
+        <span>{{'I_UNDERSTAND_AND_ACCEPT' | translate}} 
+          <span (click)="showTncDetails()" class="tnc-link"> {{appName}} {{'TERMS_OF_USE' | translate}}</span>
+        </span>
+      </div>
+    </div>
+
   </form>
+  <!-- <app-common-forms [formList]="formApiList" (onFormDataChange)="onFormDataChange($event)"></app-common-forms> -->
 </ion-content>
 
 <ion-footer>

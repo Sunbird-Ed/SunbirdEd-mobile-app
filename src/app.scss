@@ -1191,3 +1191,48 @@ app-manage-user-profiles{
     }
   }
 }
+
+app-application-header{
+  .add-manage-user{
+    sb-member-card{
+      .sb-member__img{
+        background-color: #BFE1CF !important;
+        color: #008840 !important;
+      }
+      .sb-member__name{
+        color: #008840 !important;
+      }
+    }
+  }
+
+  .more-manage-user{
+    sb-member-card{
+      .sb-member__img{
+        padding-bottom: 1rem !important;
+        color: #333333 !important;
+      }
+      .sb-member__name{
+        color: #333333 !important;
+      }
+    }
+  }
+
+  .managed-user-container{
+    sb-member-card{
+      .sb-members-list-item{
+        display: inline-flex !important;
+      }
+    }
+  }
+}
+
+app-manage-user-profiles{
+  .mu-selected-user{
+    sb-member-card{
+      .sb-member__name{
+        font-weight: bold !important;
+        color: #024F9D !important;
+      }
+    }
+  }
+}

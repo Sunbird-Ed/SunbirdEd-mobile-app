@@ -4,13 +4,13 @@ import {
   AppGlobalService, UtilityService, CommonUtilService, NotificationService, TelemetryGeneratorService,
   InteractType, InteractSubtype, Environment, PageId, ActivePageService
 } from '../../../services';
-import { DownloadService, SharedPreferences, NotificationService as PushNotificationService, NotificationStatus, EventNamespace, DownloadProgress, DownloadEventType, EventsBusService, ProfileService, Profile } from 'sunbird-sdk';
-import { GenericAppConfig, PreferenceKey, EventTopics, ProfileConstants } from '../../../app/app.constant';
+import { DownloadService, SharedPreferences, NotificationService as PushNotificationService, NotificationStatus, EventNamespace, DownloadProgress, DownloadEventType, EventsBusService, ProfileService, Profile, CachedItemRequestSourceFrom, ServerProfile } from 'sunbird-sdk';
+import { GenericAppConfig, PreferenceKey, EventTopics, ProfileConstants, RouterLinks } from '../../../app/app.constant';
 import { AppVersion } from '@ionic-native/app-version/ngx';
-import { Subscription, combineLatest } from 'rxjs';
+import { Subscription, combineLatest, Observable, EMPTY } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
 import { NavigationExtras, Router, RouterLink } from '@angular/router';
-import { filter } from 'rxjs/operators';
+import { filter, map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-application-header',
@@ -37,7 +37,8 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
   isUnreadNotification: boolean = false;
   menuSide = 'left';
   profile: Profile;
-  managedProfileList: [];
+  managedProfileList$: Observable<ServerProfile[]> = EMPTY;
+  userAvatarConfig = { size: 'large', isBold: true, isSelectable: false, view: 'horizontal' };
 
   constructor(
     @Inject('SHARED_PREFERENCES') private preference: SharedPreferences,
@@ -235,10 +236,59 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
   async fetchManagedProfileDetails() {
     try {
       this.profile = await this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise();
-      // this.managedProfileList = await this.profileService.getManagedProfiles().toPromise();
+      this.managedProfileList$ = this.profileService.getManagedServerProfiles({ from: CachedItemRequestSourceFrom.SERVER }).pipe(
+        map(profiles => {
+          return profiles.filter(p => p.id !== this.profile.uid);
+        })
+      );
     } catch (err) {
       console.log(err);
     }
+  }
+
+  addManagedUser() {
+    if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
+      this.commonUtilService.showToast('NEED_INTERNET_TO_CHANGE');
+      return;
+    }
+
+    const navigationExtras: NavigationExtras = {
+      state: {
+        profile: this.profile
+      }
+    };
+    this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.SUB_PROFILE_EDIT}`], navigationExtras);
+  }
+
+  openManagedUsers() {
+    if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
+      this.commonUtilService.showToast('NEED_INTERNET_TO_CHANGE');
+      return;
+    }
+
+    const navigationExtras: NavigationExtras = {
+      state: {
+        profile: this.profile
+      }
+    };
+    this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.MANAGE_USER_PROFILES}`], navigationExtras);
+  }
+
+  switchUser(user) {
+    if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
+      this.commonUtilService.showToast('NEED_INTERNET_TO_CHANGE');
+      return;
+    }
+    this.profileService.switchSessionToManagedProfile({ uid: user.id }).toPromise().then(res => {
+      this.events.publish(AppGlobalService.USER_INFO_UPDATED);
+      this.events.publish('loggedInProfile:update');
+      this.menuCtrl.close();
+      this.commonUtilService.showSwitchUserManagedProfileTost('SUCCESSFULLY_SWITCHED_USER', user.firstName);
+      // this.commonUtilService.showToast('SUCCESSFULLY_SWITCHED_USER', null, null, null, null, user.firstName || '');
+    }).catch(err => {
+      this.commonUtilService.showToast('ERROR_WHILE_SWITCHING_USER');
+      console.error(err);
+    });
   }
 
 }

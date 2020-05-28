@@ -45,6 +45,7 @@ import { SbAppSharePopupComponent } from './popups/sb-app-share-popup/sb-app-sha
 import {ImportPopoverComponent} from './popups/import-popover/import-popover.component';
 import {SbProgressLoaderPage} from '@app/app/components/popups/sb-progress-loader/sb-progress-loader.page';
 import { CollectionActionsComponent } from './collection-acions/collection-acions.component';
+import { CommonConsumptionModule } from '@project-sunbird/common-consumption';
 
 @NgModule({
   declarations: [
@@ -92,6 +93,7 @@ import { CollectionActionsComponent } from './collection-acions/collection-acion
     IonicModule,
     ReactiveFormsModule,
     PipesModule,
+    CommonConsumptionModule,
     IonicRatingModule,
     TranslateModule.forChild(),
   ],

@@ -122,8 +122,12 @@ export class ProfilePage implements OnInit {
     });
 
     this.events.subscribe('loggedInProfile:update', (framework) => {
-      this.updateLocalProfile(framework);
-      this.refreshProfileData();
+      if (framework) {
+        this.updateLocalProfile(framework);
+        this.refreshProfileData();
+      } else {
+        this.doRefresh();
+      }
     });
 
     this.formAndFrameworkUtilService.getCustodianOrgId().then((orgId: string) => {

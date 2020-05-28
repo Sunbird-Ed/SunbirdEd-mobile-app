@@ -239,6 +239,9 @@
   "ERROR_UPLOADING_IMG": "Error while uploading image",
   "ERROR_USER_ACCOUNT_BLOCKED": "User account is blocked. Contact your administrator for details",
   "ERROR_WHILE_LOGIN": "Error while logging in",
+  "ERROR_WHILE_ADDING_USER": "Error while adding user",
+  "ERROR_WHILE_SWITCHING_USER": "Error while switching user",
+  "ERROR_WHILE_FETCHING_USERS": "Error while fetching users",
   "EXTRACTING_CONTENT": "Extracting content {{%s}}",
   "FEEDBACK_HINT": "Feedback (optional)",
   "FEEDBACK_HINT_1": "Add a comment here",
@@ -702,5 +705,11 @@
   "SWITCH_USER": "Switch user",
   "CHOOSE_USER": "Choose user",
   "ADD_USER": "Add user",
-  "APP_ID": "{{%s}} ID"
+  "APP_ID": "{{%s}} ID",
+  "PREFERENCES_CAN_BE_UPDATED": "Preferences can be updated from the profile page of the user",
+  "ADD_ANOTHER_USER": "Add another user",
+  "USE_APP_AS": "Use {{%s}} as",
+  "MORE_COUNT": "More ({{%s}})",
+  "SUCCESSFULLY_ADDED_USER": "Successfully added \"{{%s}}\"",
+  "SUCCESSFULLY_SWITCHED_USER": "Now using app as \"{{%s}}\""
 }
