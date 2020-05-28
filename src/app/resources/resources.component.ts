@@ -185,22 +185,43 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     Science: {
       background: '#FFD6EB',
       titleColor: '#FD59B3',
-      icon: 'assets/imgs/science.svg'
+      icon: 'assets/imgs/sub_science.svg'
     },
     Mathematics: {
       background: '#FFDFD9',
       titleColor: '#EA2E52',
-      icon: 'assets/imgs/mathematics.svg'
+      icon: 'assets/imgs/sub_math.svg'
     },
     English: {
       background: '#DAFFD8',
-      titleColor: '#218432'
+      titleColor: '#218432',
+      icon: 'assets/imgs/sub_english.svg'
     },
     Social: {
       background: '#DAD4FF',
       titleColor: '#635CDC',
-      icon: 'assets/imgs/social.svg'
-    }
+      icon: 'assets/imgs/sub_social.svg'
+    },
+    Hindi: {
+      background: '#C2E2E9',
+      titleColor: '#07718A',
+      icon: 'assets/imgs/sub_hindi.svg'
+    },
+    Chemistry: {
+      background: '#FFE59B',
+      titleColor: '#8D6A00',
+      icon: 'assets/imgs/sub_chemistry.svg'
+    },
+    Geography: {
+      background: '#C2ECE6',
+      titleColor: '#149D88',
+      icon: 'assets/imgs/sub_geography.svg'
+    },
+    Sanskrit: {
+      background: '#FFDFC7',
+      titleColor: '#AD632D',
+      icon: 'assets/imgs/sub_science.svg'
+    },
   };
 
 
@@ -648,6 +669,8 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     }
     request.searchCriteria.contentTypes = [ContentType.COURSE];
+    request.searchCriteria.fields = ExploreConstants.COURSE_REQUIRED_FIELDS;
+    request.searchCriteria.languageCode = this.selectedLanguage;
     // request.searchCriteria.framework = ;
     console.log('getCurriculumCourses:request = ', request);
 
@@ -1248,7 +1271,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
         titleColor: event.data.titleColor,
         subjectIcon: event.data.cardImg,
         subjectName: event.data.title,
-        curriculumCourseList: event.data.contents,
+        courseList: event.data.contents,
       }
     };
 

@@ -72,7 +72,8 @@
       </ion-item>
     </ion-list>
 
-    <div class="sb-course-heading" *ngIf="storyAndWorksheets && storyAndWorksheets.length">{{'TEXTBOOK' | translate}}
+    <div [ngClass]="{'sb-course-container': courseList.length === 0}" class="sb-course-heading"
+      *ngIf="storyAndWorksheets && storyAndWorksheets.length">{{'TEXTBOOK' | translate}}
     </div>
     <div *ngFor="let items of storyAndWorksheets">
       <div class="sb-textbook-container" *ngIf="items?.contents && items?.contents?.length">

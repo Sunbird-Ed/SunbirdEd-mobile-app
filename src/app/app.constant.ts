@@ -144,6 +144,11 @@ export class ExploreConstants {
         'framework',
         'appIcon'
     ];
+
+    public static readonly COURSE_REQUIRED_FIELDS = [
+        ...ExploreConstants.REQUIRED_FIELDS,
+        'batches'
+    ];
 }
 
 export class AudienceFilter {
