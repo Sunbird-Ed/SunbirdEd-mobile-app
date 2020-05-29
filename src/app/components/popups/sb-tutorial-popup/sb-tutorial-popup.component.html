@@ -4,10 +4,11 @@
         <p id="heading-text" text-center align-items-center>
             {{'TUTORIAL_HEADING' | translate}}
         </p>
-        <img src="./assets/imgs/tutorial.svg" alt="tutorial">
+        <img style="margin-top: 2em; margin-bottom: 2em" src="./assets/imgs/tutorial.svg" alt="tutorial">
         <p id="details-text"
            [innerHTML]="'DETAIL_TUTORIAL' | translate:  {'%s':  appName, '%videos': videos, '%interactive': interact, '%worksheets': worksheets}">
         </p>
+        <div style="display: flex; flex-grow: 1"></div>
         <button class="sb-btn sb-btn-md sb-btn-primary PR35 W100 ellipsis text-uppercase btn-block continue"
                 (click)="closePopover(true)">
             <ion-grid class="ion-no-padding">
