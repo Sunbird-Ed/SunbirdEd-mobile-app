@@ -662,7 +662,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
         id: this.progressLoaderId,
         ignoreTelemetry: {
           when: {
-            interact: IgnoreTelemetryPatters.IGNORE_PAGE_ID_EVENTS,
+            interact: IgnoreTelemetryPatters.IGNORE_DEEPLINK_PAGE_ID_EVENTS,
             impression: IgnoreTelemetryPatters.IGNORE_CHANNEL_IMPRESSION_EVENTS
           }
         }
@@ -673,7 +673,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
         ignoreTelemetry: {
           when: {
             interact: IgnoreTelemetryPatters.IGNORE_DIAL_CODE_PAGE_ID_EVENTS,
-            impression: IgnoreTelemetryPatters.IGNORE_PAGE_ID_EVENTS
+            impression: IgnoreTelemetryPatters.IGNORE_DEEPLINK_PAGE_ID_EVENTS
           }
         }
       };
@@ -682,8 +682,8 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
         id: this.progressLoaderId,
         ignoreTelemetry: {
           when: {
-            interact: IgnoreTelemetryPatters.IGNORE_PAGE_ID_EVENTS,
-            impression: IgnoreTelemetryPatters.IGNORE_PAGE_ID_EVENTS
+            interact: IgnoreTelemetryPatters.IGNORE_DEEPLINK_PAGE_ID_EVENTS,
+            impression: IgnoreTelemetryPatters.IGNORE_DEEPLINK_PAGE_ID_EVENTS
           }
         }
       };

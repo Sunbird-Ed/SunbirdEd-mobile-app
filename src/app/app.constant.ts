@@ -582,7 +582,9 @@ export class RegexPatterns {
 }
 
 export class IgnoreTelemetryPatters {
-    public static readonly IGNORE_PAGE_ID_EVENTS = /{"pageId":"resources"}|{"pageId":"library"}|{"pageId":"home"}/;
+    public static readonly IGNORE_DEEPLINK_PAGE_ID_EVENTS = /{"pageId":"resources"}|{"pageId":"library"}|{"pageId":"home"}/;
     public static readonly IGNORE_DIAL_CODE_PAGE_ID_EVENTS = /{"pageId":"resources"}|{"pageId":"library"}|{"pageId":"home"}|{"pageId":"search"}/;
     public static readonly IGNORE_CHANNEL_IMPRESSION_EVENTS = /{"pageId":"resources"}|{"pageId":"library"}|{"pageId":"home"}|{"pageId":"onboarding-language-setting"}|{"pageId":"user-type-selection"}|{"pageId":profile-settings"}/;
+    public static readonly IGNORE_SIGN_IN_PAGE_ID_EVENTS = /{"pageId":"resources"}|{"pageId":"library"}|{"pageId":"home"}|{"pageId":"profile"}|{"pageId":"courses"}/;
+
 }

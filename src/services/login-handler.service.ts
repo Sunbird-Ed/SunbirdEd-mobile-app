@@ -262,7 +262,7 @@ export class LoginHandlerService {
       id: 'login',
       ignoreTelemetry: {
         when: {
-          interact: IgnoreTelemetryPatters.IGNORE_PAGE_ID_EVENTS,
+          interact: IgnoreTelemetryPatters.IGNORE_SIGN_IN_PAGE_ID_EVENTS,
           impression: IgnoreTelemetryPatters.IGNORE_CHANNEL_IMPRESSION_EVENTS
         }
       }
