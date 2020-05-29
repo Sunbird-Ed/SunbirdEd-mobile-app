@@ -47,7 +47,11 @@ export class CurriculumCoursesPage implements OnInit {
       // TODO: get the current userId
       const sessionObj = this.appGlobalService.getSessionData();
       const userId = sessionObj[ProfileConstants.USER_TOKEN];
-      await this.getEnrolledCourses(userId);
+      try {
+        this.enrolledCourses = await this.getEnrolledCourses(userId);
+      } catch (error) {
+        console.error('CurriculumCoursesPage', error);
+      }
     }
 
     this.mergeCourseList(this.enrolledCourses, this.courseList);
@@ -69,16 +73,12 @@ export class CurriculumCoursesPage implements OnInit {
       userId,
       returnFreshCourses: true
     };
-    this.courseService.getEnrolledCourses(enrolledCourseRequest).toPromise()
-      .then((enrolledCourses) => {
-        this.enrolledCourses = enrolledCourses ? enrolledCourses : [];
-      }, (err) => {
-      });
+    return this.courseService.getEnrolledCourses(enrolledCourseRequest).toPromise();
   }
 
   private mergeCourseList(enrolledCourses, courseList) {
     this.mergedCourseList = courseList.map((course) => {
-      const enrolledCourse = enrolledCourses.find(c => c.identifier === course.identifier);
+      const enrolledCourse = enrolledCourses.find(c => c.courseId === course.identifier);
       if (enrolledCourse) {
         return {
           ...enrolledCourse,

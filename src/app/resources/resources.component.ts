@@ -669,7 +669,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     }
     request.searchCriteria.contentTypes = [ContentType.COURSE];
-    request.searchCriteria.fields = ExploreConstants.COURSE_REQUIRED_FIELDS;
     request.searchCriteria.languageCode = this.selectedLanguage;
     // request.searchCriteria.framework = ;
     console.log('getCurriculumCourses:request = ', request);
