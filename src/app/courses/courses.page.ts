@@ -1,6 +1,6 @@
-import {Component, Inject, NgZone, OnDestroy, OnInit} from '@angular/core';
+import {Component, Inject, NgZone, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import { Router, NavigationExtras } from '@angular/router';
-import { Events, ToastController, PopoverController } from '@ionic/angular';
+import { Events, ToastController, PopoverController, IonRefresher } from '@ionic/angular';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { QRResultCallback, SunbirdQRScanner } from '../../services/sunbirdqrscanner.service';
 import has from 'lodash/has';
@@ -35,6 +35,9 @@ import { LocalCourseService } from '@app/services/local-course.service';
   styleUrls: ['./courses.page.scss'],
 })
 export class CoursesPage implements OnInit, OnDestroy {
+
+  @ViewChild('courseRefresher') refresher: IonRefresher;
+
   /**
    * Contains enrolled course
    */
@@ -164,6 +167,7 @@ export class CoursesPage implements OnInit, OnDestroy {
   }
 
   ionViewWillEnter() {
+    this.refresher.disabled = false;
     this.isVisible = true;
     this.events.subscribe('update_header', () => {
       this.headerService.showHeaderWithHomeButton(['search', 'filter', 'download']);
@@ -185,6 +189,7 @@ export class CoursesPage implements OnInit, OnDestroy {
   }
 
   ionViewWillLeave() {
+    this.refresher.disabled = true;
     if (this.headerObservable) {
       this.headerObservable.unsubscribe();
     }
