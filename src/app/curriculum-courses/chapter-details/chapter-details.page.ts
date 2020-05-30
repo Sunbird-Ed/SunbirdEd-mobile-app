@@ -1,4 +1,6 @@
-import { PageId } from './../../../services/telemetry-constants';
+import { SbSharePopupComponent } from '@app/app/components/popups/sb-share-popup/sb-share-popup.component';
+
+
 import { Component, OnInit, Inject, NgZone, OnDestroy } from '@angular/core';
 import { AppHeaderService, CommonUtilService, LoginHandlerService, AppGlobalService, LocalCourseService } from '@app/services';
 import { TranslateService } from '@ngx-translate/core';
@@ -6,11 +8,13 @@ import { Router } from '@angular/router';
 import { TocCardType } from '@project-sunbird/common-consumption';
 import { SbPopoverComponent } from '@app/app/components/popups/sb-popover/sb-popover.component';
 import { PopoverController, Events } from '@ionic/angular';
-import { RouterLinks, PreferenceKey, EventTopics, MimeType } from '@app/app/app.constant';
+import { RouterLinks, PreferenceKey, EventTopics, MimeType, ShareItemType } from '@app/app/app.constant';
 import { SharedPreferences, AuthService, Batch, TelemetryObject, ContentState, Content, Course,
    CourseService, GetContentStateRequest, ContentStateResponse } from 'sunbird-sdk';
 import { EnrollCourse } from '@app/app/enrolled-course-details-page/course.interface';
 import { DatePipe } from '@angular/common';
+import { ContentActionsComponent } from './../../components/content-actions/content-actions.component';
+import { PageId } from './../../../services/telemetry-constants';
 
 @Component({
   selector: 'app-chapter-details',
@@ -19,12 +23,12 @@ import { DatePipe } from '@angular/common';
 })
 export class ChapterDetailsPage implements OnInit, OnDestroy {
 
-  courseName: string;
   chapter: any;
   cardType: TocCardType = TocCardType.COURSE;
   isAlreadyEnrolled = false;
   batches = [];
-  course: any;
+  courseContentData: any;
+  courseContent: any;
   courseCardData: any;
   batchExp = false;
   guestUser = true;
@@ -67,7 +71,8 @@ export class ChapterDetailsPage implements OnInit, OnDestroy {
       // console.log('else', this.extrasData);
     // }
     this.appGlobalService.preSignInData = null;
-    this.course = this.extrasData.course;
+    this.courseContentData = this.extrasData.courseContentData;
+    this.courseContent = this.extrasData.courseContent;
     this.chapter = this.extrasData.chapterData;
     this.batches = this.extrasData.batches;
     this.isAlreadyEnrolled = this.extrasData.isAlreadyEnrolled;
@@ -76,9 +81,7 @@ export class ChapterDetailsPage implements OnInit, OnDestroy {
     this.telemetryObject = this.extrasData.telemetryObject;
     this.isChapterCompleted = this.extrasData.isChapterCompleted;
     this.contentStatusData = this.extrasData.contentStatusData;
-    console.log('courseCardData', this.courseCardData);
-    console.log('isChapterCompleted', this.isChapterCompleted);
-    console.log('contentStatusData', this.contentStatusData);
+    console.log('extrasData', this.extrasData);
   }
 
   ngOnInit() {
@@ -106,7 +109,7 @@ export class ChapterDetailsPage implements OnInit, OnDestroy {
           }
           return data.find((element) =>
             (this.courseCardData.batchId && element.batchId === this.courseCardData.batchId)
-            || (!this.courseCardData.batchId && element.courseId === this.course.identifier));
+            || (!this.courseCardData.batchId && element.courseId === this.courseContentData.identifier));
         })
         .catch(e => {
           console.log(e);
@@ -142,7 +145,7 @@ export class ChapterDetailsPage implements OnInit, OnDestroy {
       await loader.present();
       const request: GetContentStateRequest = {
         userId: this.appGlobalService.getUserId(),
-        courseIds: [this.course.identifier],
+        courseIds: [this.courseContentData.identifier],
         returnRefreshedContentStates: returnRefresh,
         batchId: this.courseCardData.batchId
       };
@@ -227,7 +230,7 @@ export class ChapterDetailsPage implements OnInit, OnDestroy {
         .getEnrolledCourses({ userId: this.appGlobalService.getUserId(), returnFreshCourses: true })
         .toPromise()
         .then((cData) => {
-          return cData.find((element) => element.courseId === this.course.identifier);
+          return cData.find((element) => element.courseId === this.courseContentData.identifier);
         });
       this.courseCardData.batchId = res.batchId;
       console.log('enrol succ event -->', this.courseCardData);
@@ -267,11 +270,45 @@ export class ChapterDetailsPage implements OnInit, OnDestroy {
   }
 
   async showOverflowMenu(event) {
+    const actionPopover = await this.popoverCtrl.create({
+      component: ContentActionsComponent,
+      event,
+      cssClass: 'leave-training-popup',
+      showBackdrop: false,
+      componentProps: {
+        content: this.courseContentData,
+        batchDetails: this.batchDetails,
+        pageName: PageId.CHAPTER_DETAILS,
+        chapter: this.chapter
+      },
+    });
+    await actionPopover.present();
+    const { data } = await actionPopover.onDidDismiss();
+    if (data && data.download) {
+      // this.showConfirmAlert();
+    } else if (data.share) {
+      this.share();
+    }
+  }
+
+  async share() {
+    // this.contentShareHandler.shareContent(this.content, this.corRelationList);
+    const popover = await this.popoverCtrl.create({
+      component: SbSharePopupComponent,
+      componentProps: {
+        content: this.courseContent,
+        // corRelationList: this.corRelationList,
+        pageId: PageId.COURSE_DETAIL,
+        shareItemType: ShareItemType.ROOT_COLECTION
+      },
+      cssClass: 'sb-popover',
+    });
+    await popover.present();
   }
 
   openContentDetails(event) {
     if (Object.keys(event.event).length !== 0 ) {
-      if (this.course.createdBy !== this.userId) {
+      if (this.courseContentData.createdBy !== this.userId) {
         if (!this.isAlreadyEnrolled) {
           if (!this.isBatchNotStarted) {
             this.joinTraining();
@@ -311,7 +348,7 @@ export class ChapterDetailsPage implements OnInit, OnDestroy {
             state: {
               ongoingBatches,
               upcommingBatches,
-              course: this.course,
+              course: this.courseContentData,
               // objRollup: this.objRollup,
               telemetryObject: this.telemetryObject,
               // corRelationList: this.corRelationList
@@ -377,7 +414,7 @@ export class ChapterDetailsPage implements OnInit, OnDestroy {
     const { data } = await confirm.onDidDismiss();
     if (data && data.canDelete) {
       this.preferences.putString(PreferenceKey.BATCH_DETAIL_KEY, JSON.stringify(batchdetail)).toPromise();
-      this.preferences.putString(PreferenceKey.COURSE_DATA_KEY, JSON.stringify(this.course)).toPromise();
+      this.preferences.putString(PreferenceKey.COURSE_DATA_KEY, JSON.stringify(this.courseContentData)).toPromise();
       // this.preferences.putString(PreferenceKey.CDATA_KEY, JSON.stringify(this.corRelationList)).toPromise();
       this.appGlobalService.resetSavedQuizContent();
       // this.loginHandlerService.signIn({skipRootNavigation: true, componentData: this.extrasData});
@@ -449,7 +486,7 @@ export class ChapterDetailsPage implements OnInit, OnDestroy {
   navigateToChildrenDetailsPage(content: Content, depth): void {
     const contentState: ContentState = {
       batchId: this.courseCardData.batchId ? this.courseCardData.batchId : '',
-      courseId: this.course.identifier
+      courseId: this.courseContentData.identifier
     };
     this.router.navigate([RouterLinks.CONTENT_DETAILS], {
       state: {
