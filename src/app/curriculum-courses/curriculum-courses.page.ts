@@ -12,7 +12,7 @@ import { FetchEnrolledCourseRequest, CourseService, Course } from '@project-sunb
 })
 export class CurriculumCoursesPage implements OnInit {
 
-  isLoading = false;
+  isLoading = true;
   subjectName: string;
   subjectIcon: string;
   courseList: [];
@@ -42,8 +42,8 @@ export class CurriculumCoursesPage implements OnInit {
   }
 
   async ngOnInit() {
-    this.isLoading = true;
     if (this.appGlobalService.isUserLoggedIn()) {
+      console.log('ngOnInit: true');
       // TODO: get the current userId
       const sessionObj = this.appGlobalService.getSessionData();
       const userId = sessionObj[ProfileConstants.USER_TOKEN];

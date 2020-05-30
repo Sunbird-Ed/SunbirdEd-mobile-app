@@ -2,7 +2,9 @@ import { CurriculumCoursesPage } from './curriculum-courses.page';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { AppGlobalService, AppHeaderService, CommonUtilService } from '@app/services';
-import { CourseService } from '@project-sunbird/sunbird-sdk';
+import { CourseService, Course } from '@project-sunbird/sunbird-sdk';
+import { of } from 'rxjs';
+import { ProfileConstants } from '../app.constant';
 
 describe('CurriculumCoursesPage', () => {
     let curriculumCoursesPage: CurriculumCoursesPage;
@@ -56,5 +58,73 @@ describe('CurriculumCoursesPage', () => {
         curriculumCoursesPage.openCourseDetails(course);
         // assert
         expect(mockRouter.navigate).toHaveBeenCalled();
+    });
+
+    describe('ngOnInit', () => {
+        beforeEach(() => {
+            jest.clearAllMocks();
+            jest.resetAllMocks();
+        });
+
+        it('should call getEnrolledCourses() if user is logged in', (done) => {
+            // arrange
+            mockAppGlobalService.isUserLoggedIn = jest.fn(() => true);
+            mockAppGlobalService.getSessionData = jest.fn(() => ({
+                userToken: 'user_token'
+            }));
+            mockCommonUtilService.getContentImg = jest.fn(() => 'some_img_url');
+            curriculumCoursesPage.courseList = [
+                {
+                    identifier: 'do_some_identifier'
+                }
+            ] as any;
+            const enrolledCourses: Course[] = [
+                {
+                    courseId: 'do_0123'
+                },
+                {
+                    courseId: 'do_some_identifier'
+                }
+            ];
+            mockCourseService.getEnrolledCourses = jest.fn(() => of(enrolledCourses));
+            console.log('enrolledCourses:true ', curriculumCoursesPage.enrolledCourses);
+
+            // act
+            curriculumCoursesPage.ngOnInit();
+
+            // assert
+            setTimeout(() => {
+                expect(mockAppGlobalService.isUserLoggedIn).toBeTruthy();
+                expect(mockAppGlobalService.getSessionData).toHaveBeenCalled();
+                expect(mockCommonUtilService.getContentImg).toHaveBeenCalled();
+                expect(mockCourseService.getEnrolledCourses).toHaveBeenCalledWith({
+                    returnFreshCourses: true, userId: 'user_token'
+                });
+                done();
+            });
+        });
+
+        it('should call not call getEnrolledCourses() if user is guest user', (done) => {
+            // arrange
+            mockAppGlobalService.isUserLoggedIn = jest.fn(() => false);
+            mockCommonUtilService.getContentImg = jest.fn(() => 'some_img_url');
+            curriculumCoursesPage.courseList = [
+                {
+                    identifier: 'do_some_identifier'
+                }
+            ] as any;
+
+            console.log('enrolledCourses:false ', curriculumCoursesPage.enrolledCourses);
+
+            // act
+            curriculumCoursesPage.ngOnInit();
+
+            // assert
+            setTimeout(() => {
+                expect(mockAppGlobalService.isUserLoggedIn).toHaveBeenCalled();
+                expect(mockCommonUtilService.getContentImg).toHaveBeenCalled();
+                done();
+            }, 0);
+        });
     });
 });
