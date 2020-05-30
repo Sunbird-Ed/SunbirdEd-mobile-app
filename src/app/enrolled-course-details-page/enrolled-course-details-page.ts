@@ -1974,7 +1974,6 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
       const chapterParams: NavigationExtras = {
         state: {
           chapterData: event.item,
-          courseContentData: this.course,
           batches: this.batches,
           isAlreadyEnrolled: this.isAlreadyEnrolled,
           courseCardData: this.courseCardData,

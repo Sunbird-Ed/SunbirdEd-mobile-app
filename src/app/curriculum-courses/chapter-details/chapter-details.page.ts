@@ -8,9 +8,9 @@ import { Router } from '@angular/router';
 import { TocCardType } from '@project-sunbird/common-consumption';
 import { SbPopoverComponent } from '@app/app/components/popups/sb-popover/sb-popover.component';
 import { PopoverController, Events } from '@ionic/angular';
-import { RouterLinks, PreferenceKey, EventTopics, MimeType, ShareItemType } from '@app/app/app.constant';
+import { RouterLinks, PreferenceKey, EventTopics, MimeType, ShareItemType, BatchConstants } from '@app/app/app.constant';
 import { SharedPreferences, AuthService, Batch, TelemetryObject, ContentState, Content, Course,
-   CourseService, GetContentStateRequest, ContentStateResponse } from 'sunbird-sdk';
+   CourseService, GetContentStateRequest, ContentStateResponse, CourseBatchStatus, CourseEnrollmentType, SortOrder } from 'sunbird-sdk';
 import { EnrollCourse } from '@app/app/enrolled-course-details-page/course.interface';
 import { DatePipe } from '@angular/common';
 import { ContentActionsComponent } from './../../components/content-actions/content-actions.component';
@@ -35,6 +35,7 @@ export class ChapterDetailsPage implements OnInit, OnDestroy {
   isChapterCompleted = false;
   isChapterStarted = false;
   isBatchNotStarted = false;
+  isFromDeeplink = false;
   userId;
   telemetryObject: TelemetryObject;
   updatedCourseCardData: Course;
@@ -71,7 +72,6 @@ export class ChapterDetailsPage implements OnInit, OnDestroy {
       // console.log('else', this.extrasData);
     // }
     this.appGlobalService.preSignInData = null;
-    this.courseContentData = this.extrasData.courseContentData;
     this.courseContent = this.extrasData.courseContent;
     this.chapter = this.extrasData.chapterData;
     this.batches = this.extrasData.batches;
@@ -81,6 +81,8 @@ export class ChapterDetailsPage implements OnInit, OnDestroy {
     this.telemetryObject = this.extrasData.telemetryObject;
     this.isChapterCompleted = this.extrasData.isChapterCompleted;
     this.contentStatusData = this.extrasData.contentStatusData;
+    this.isFromDeeplink = this.extrasData.isFromDeeplink;
+    this.courseContentData = this.courseContent.contentData;
     console.log('extrasData', this.extrasData);
   }
 
@@ -92,8 +94,12 @@ export class ChapterDetailsPage implements OnInit, OnDestroy {
     this.subscribeUtilityEvents();
     await this.checkLoggedInOrGuestUser();
     this.childContents = [];
+    if (this.isFromDeeplink) {
+      this.getAllBatches();
+    }
     this.getAllContents(this.chapter);
     console.log('this.childContents', this.childContents);
+    this.checkChapterCompletion();
     this.getContentState(true);
 
     if (!this.guestUser) {
@@ -101,6 +107,7 @@ export class ChapterDetailsPage implements OnInit, OnDestroy {
         .toPromise()
         .then((data) => {
           if (data.length > 0) {
+            console.log('getEnrolledCourses', data);
             const courseList: Array<Course> = [];
             for (const course of data) {
               courseList.push(course);
@@ -108,18 +115,24 @@ export class ChapterDetailsPage implements OnInit, OnDestroy {
             this.appGlobalService.setEnrolledCourseList(courseList);
           }
           return data.find((element) =>
-            (this.courseCardData.batchId && element.batchId === this.courseCardData.batchId)
-            || (!this.courseCardData.batchId && element.courseId === this.courseContentData.identifier));
+            (this.courseCardData && this.courseCardData.batchId && element.batchId === this.courseCardData.batchId)
+            || ((!this.courseCardData || !this.courseCardData.batchId) && element.courseId === this.courseContentData.identifier));
         })
         .catch(e => {
           console.log(e);
           return null;
         });
-      if (this.updatedCourseCardData && !this.courseCardData.batch) {
-        this.courseCardData.batch = this.updatedCourseCardData.batch;
-        this.courseCardData.batchId = this.updatedCourseCardData.batchId;
-      }
       console.log('this.updatedCourseCardData', this.updatedCourseCardData);
+      if (this.updatedCourseCardData && (!this.courseCardData || !this.courseCardData.batch)) {
+        this.courseCardData = this.updatedCourseCardData;
+        this.isAlreadyEnrolled = true;
+        // this.courseCardData.batch = this.updatedCourseCardData.batch;
+        // this.courseCardData.batchId = this.updatedCourseCardData.batchId;
+      }
+      if (this.isFromDeeplink) {
+        this.getContentState(true);
+      }
+      console.log('this.courseCardData', this.courseCardData);
     }
   }
 
@@ -131,6 +144,28 @@ export class ChapterDetailsPage implements OnInit, OnDestroy {
     // this.events.unsubscribe('header:decreasezIndex');
   }
 
+  async getAllBatches() {
+    // const loader = await this.commonUtilService.getLoader();
+    const courseBatchesRequest = {
+      filters: {
+        courseId: this.courseContentData.identifier,
+        status: [CourseBatchStatus.NOT_STARTED, CourseBatchStatus.IN_PROGRESS],
+        enrollmentType: CourseEnrollmentType.OPEN
+      },
+      sort_by: { createdDate: SortOrder.DESC },
+      fields: BatchConstants.REQUIRED_FIELDS
+    };
+    // await loader.present();
+    this.courseService.getCourseBatches(courseBatchesRequest).toPromise()
+      .then(async (data: Batch[]) => {
+        // await loader.dismiss();
+        this.batches = data || [];
+      })
+      .catch(async (error: any) => {
+        console.log('Error while fetching all Batches', error);
+      });
+  }
+
   async checkLoggedInOrGuestUser() {
     const session = await this.authService.getSession().toPromise();
     this.guestUser = !session;
@@ -140,9 +175,9 @@ export class ChapterDetailsPage implements OnInit, OnDestroy {
   }
 
   async getContentState(returnRefresh: boolean) {
-    const loader = await this.commonUtilService.getLoader();
-    if (this.courseCardData.batchId) {
-      await loader.present();
+    // const loader = await this.commonUtilService.getLoader();
+    if (this.courseCardData && this.courseCardData.batchId) {
+      // await loader.present();
       const request: GetContentStateRequest = {
         userId: this.appGlobalService.getUserId(),
         courseIds: [this.courseContentData.identifier],
@@ -156,15 +191,15 @@ export class ChapterDetailsPage implements OnInit, OnDestroy {
           console.log('this.contentStatusData', this.contentStatusData);
           this.checkChapterCompletion();
         });
-        await loader.dismiss();
+        // await loader.dismiss();
       }).catch(async (err) => {
-        await loader.dismiss();
+        // await loader.dismiss();
       });
     }
   }
 
   async getBatchDetails() {
-    if (this.courseCardData.batchId) {
+    if (this.courseCardData && this.courseCardData.batchId) {
       this.courseService.getBatchDetails({ batchId: this.courseCardData.batchId }).toPromise()
       .then((data: Batch) => {
         this.zone.run(() => {
