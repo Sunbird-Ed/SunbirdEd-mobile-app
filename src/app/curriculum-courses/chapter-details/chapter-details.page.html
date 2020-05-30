@@ -1,11 +1,11 @@
 <ion-content>
   <div class="cd-header-container">
-    <div class="cd-label">{{ course?.name }}</div>
+    <div class="cd-label">{{ courseContentData?.name }}</div>
     <div class="cd-header-title">{{ chapter.name}}</div>
     <div class="new-div">
       <div *ngIf="!isAlreadyEnrolled">
         <div class="enrollment-info"
-          *ngIf="batches && course?.createdBy !== userId && (batches.length > 1 || (batches.length === 1 && !(todayDate > batches[0].enrollmentEndDate)))">
+          *ngIf="batches && courseContentData?.createdBy !== userId && (batches.length > 1 || (batches.length === 1 && !(todayDate > batches[0].enrollmentEndDate)))">
           <button class="enrolled-course-card-button" (click)="navigateToBatchListPage();">
             {{'JOIN_TRAINING' | translate}}
           </button>
@@ -43,10 +43,8 @@
       <div *ngIf="isAlreadyEnrolled">
         <div *ngIf="courseCardData?.batchId">
           <div class="sb-course-progress-container" *ngIf="!isChapterCompleted && !batchExp">
-            <p class="progress-label"><strong>{{'YOUR_PROGRESS_LABEL' | translate}}</strong>
-            </p>
-            <p>{{ 'COURSE_COMPLETED_LABEL' | translate:{'%s': chapterProgress} }}
-            </p>
+            <p class="progress-label"><strong>{{'YOUR_PROGRESS_LABEL' | translate}}</strong></p>
+            <p>{{viewedContents.length}}/{{childContents.length}} {{"COMPLETED" | translate}}</p>
             <app-pb-horizontal [progress]="chapterProgress"
               class="course-progress" [ngClass]="{'blurbackground': batchExp}"
               isOnBoardCard="flase" isCourseProgress="true"></app-pb-horizontal>

@@ -9,6 +9,7 @@ import { ChapterDetailsPage } from './chapter-details.page';
 import { CommonConsumptionModule } from '@project-sunbird/common-consumption';
 import { TranslateModule } from '@ngx-translate/core';
 import { ComponentsModule } from '@app/app/components/components.module';
+import { ContentActionsComponent } from '../../components';
 
 const routes: Routes = [
   {
@@ -28,6 +29,7 @@ const routes: Routes = [
     RouterModule.forChild(routes),
   ],
   declarations: [ChapterDetailsPage],
+  entryComponents: [ContentActionsComponent],
   providers: [DatePipe]
 })
 export class ChapterDetailsPageModule {}

@@ -1755,6 +1755,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
           this.contentStatusData = success;
 
           if (this.contentStatusData && this.contentStatusData.contentList) {
+            this.getUnitLevelProgress();
             let progress = 0;
             this.contentStatusData.contentList.forEach((contentState: ContentState) => {
               if (contentState.status === 2) {
@@ -1778,6 +1779,21 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
     } else {
       // to be handled when there won't be any batchId
     }
+  }
+
+  getUnitLevelProgress() {
+    this.courseHeirarchy.children.forEach(collection => {
+      const leafNodes = this.getLeafNodes([collection]);
+      const viewedContents = [];
+      for (const content of leafNodes) {
+        if (this.contentStatusData.contentList.find((c) => c.contentId === content.identifier && c.status === 2)) {
+          viewedContents.push(content);
+        }
+      }
+      if (viewedContents.length) {
+        collection.progressPercentage = Math.round((viewedContents.length / leafNodes.length) * 100);
+      }
+    });
   }
 
   async handleHeaderEvents($event) {
@@ -1958,14 +1974,15 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
       const chapterParams: NavigationExtras = {
         state: {
           chapterData: event.item,
-          course: this.course,
+          courseContentData: this.course,
           batches: this.batches,
           isAlreadyEnrolled: this.isAlreadyEnrolled,
           courseCardData: this.courseCardData,
           batchExp: this.batchExp,
           telemetryObject: this.telemetryObject,
           isChapterCompleted: this.courseCompletionData[event.item.identifier],
-          contentStatusData: this.contentStatusData
+          contentStatusData: this.contentStatusData,
+          courseContent: this.content
         }
       };
 

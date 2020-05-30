@@ -17,6 +17,8 @@ import { CommonUtilService } from '../../../services/common-util.service';
 import { Environment, InteractSubtype, InteractType } from '../../../services/telemetry-constants';
 import { SbPopoverComponent } from '../popups/sb-popover/sb-popover.component';
 import { FileSizePipe } from '@app/pipes/file-size/file-size';
+import { PageId } from './../../../services/telemetry-constants';
+
 @Component({
   selector: 'app-content-actions',
   templateUrl: './content-actions.component.html',
@@ -25,6 +27,7 @@ import { FileSizePipe } from '@app/pipes/file-size/file-size';
 export class ContentActionsComponent {
 
   content: any;
+  chapter: any;
   data: any;
   isChild = false;
   contentId: string;
@@ -33,6 +36,7 @@ export class ContentActionsComponent {
   userId = '';
   pageName = '';
   showFlagMenu = true;
+  showChapterActions = false;
   public objRollup: Rollup;
   private corRelationList: Array<CorrelationData>;
 
@@ -55,9 +59,13 @@ export class ContentActionsComponent {
     this.pageName = this.navParams.get('pageName');
     this.objRollup = this.navParams.get('objRollup');
     this.corRelationList = this.navParams.get('corRelationList');
+    this.chapter = this.navParams.get('chapter');
 
     if (this.navParams.get('isChild')) {
       this.isChild = true;
+    }
+    if (this.pageName === PageId.CHAPTER_DETAILS){
+      this.showChapterActions = true;
     }
 
     this.contentId = (this.content && this.content.identifier) ? this.content.identifier : '';
@@ -159,6 +167,14 @@ export class ContentActionsComponent {
       this.objRollup,
       this.corRelationList);
     this.popOverCtrl.dismiss({ unenroll: true });
+  }
+
+  async download() {
+    this.popOverCtrl.dismiss({ download: true });
+  }
+
+  async share() {
+    this.popOverCtrl.dismiss({ share: true });
   }
 
   async deleteContent() {
