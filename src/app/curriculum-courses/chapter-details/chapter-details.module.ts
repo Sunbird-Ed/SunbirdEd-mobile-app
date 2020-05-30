@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Routes, RouterModule } from '@angular/router';
 
@@ -27,6 +27,7 @@ const routes: Routes = [
     TranslateModule.forChild(),
     RouterModule.forChild(routes),
   ],
-  declarations: [ChapterDetailsPage]
+  declarations: [ChapterDetailsPage],
+  providers: [DatePipe]
 })
 export class ChapterDetailsPageModule {}
