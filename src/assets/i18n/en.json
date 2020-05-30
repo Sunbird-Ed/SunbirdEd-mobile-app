@@ -701,5 +701,11 @@
   "I_UNDERSTAND_AND_ACCEPT": "I understand and accept the",
   "SWITCH_USER": "Switch user",
   "CHOOSE_USER": "Choose user",
-  "ADD_USER": "Add user"
+  "ADD_USER": "Add user",
+  "CHAPTER_TRAINING_COMPLETED_SUCCESSFULLY": "You have finished this chapter.",
+  "COMPLETE_CHAPTER_TO_UNLOCK_ACHIEVEMENT": "Complete {{%s}} contents to unlock a new achievement",
+  "START_AGAIN": "Start again",
+  "CONTENTS": "Contents",
+  "COMPLETED": "Completed"
+
 }

@@ -357,8 +357,7 @@
 				</ion-card-content>
 			</ion-card>
 			<div *ngSwitchCase="'modules'">
-				<sb-toc-curriculum [isChapterListing]="true"
-        [tocData]="courseHeirarchy" (tocCardClick)="onTocCardClick($event)"></sb-toc-curriculum>
+				<sb-toc-curriculum [isChapterListing]="true" [tocData]="courseHeirarchy" (tocCardClick)="onTocCardClick($event)"></sb-toc-curriculum>
 				<!-- <div *ngFor="let item of childrenData; let i = index;">
 					<ion-card class="sb-accordian-card">
 						<ion-grid class="sb-accordian-header">

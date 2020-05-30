@@ -224,7 +224,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
   public lastReadContentId;
   public courseCompletionData = {};
   isCertifiedCourse: boolean;
-  showSheenAnimation: boolean = true;
+  showSheenAnimation = true;
   private isOnboardingSkipped: any;
   private isFromChannelDeeplink: any;
   trackDownloads$: Observable<DownloadTracking>;
@@ -1957,8 +1957,15 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
     if (event.item.mimeType === MimeType.COLLECTION) {
       const chapterParams: NavigationExtras = {
         state: {
-          courseName: this.course.name,
           chapterData: event.item,
+          course: this.course,
+          batches: this.batches,
+          isAlreadyEnrolled: this.isAlreadyEnrolled,
+          courseCardData: this.courseCardData,
+          batchExp: this.batchExp,
+          telemetryObject: this.telemetryObject,
+          isChapterCompleted: this.courseCompletionData[event.item.identifier],
+          contentStatusData: this.contentStatusData
         }
       };
 
