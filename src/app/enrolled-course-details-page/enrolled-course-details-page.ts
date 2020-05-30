@@ -1371,6 +1371,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
   }
 
   ionViewDidEnter() {
+    this.sbProgressLoader.hide({id: 'login'});
     this.sbProgressLoader.hide({ id: this.identifier });
   }
 
