@@ -375,8 +375,9 @@ export class ChapterDetailsPage implements OnInit, OnDestroy {
       component: SbSharePopupComponent,
       componentProps: {
         content: this.courseContent,
+        chapterId: this.chapter.identifier,
         // corRelationList: this.corRelationList,
-        pageId: PageId.COURSE_DETAIL,
+        pageId: PageId.CHAPTER_DETAILS,
         shareItemType: ShareItemType.ROOT_COLECTION
       },
       cssClass: 'sb-popover',
