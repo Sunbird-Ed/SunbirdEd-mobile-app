@@ -135,7 +135,8 @@ export enum PageId {
     APP_PERMISSION_POPUP = 'app-permission-popup',
     STORAGE_SETTINGS = 'storage-settings',
     CREATE_MANAGED_USER = 'create-managed-user',
-    MANAGE_USERS = 'manage-users'
+    MANAGE_USERS = 'manage-users',
+    CHAPTER_DETAILS = 'chapter-details'
 }
 export enum LogType {
     NOTIFICATION = 'notification'

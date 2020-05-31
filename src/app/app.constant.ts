@@ -130,19 +130,30 @@ export class ProfileConstants {
 
 export class ExploreConstants {
     public static readonly REQUIRED_FIELDS = [
+        'identifier',
+        'pkgVersion',
         'name',
+        'appIcon',
+        'subject',
+        'medium',
+        'board',
+        'framework',
+        'gradeLevel',
+        'channel',
+        'contentType',
+        'mimeType',
+        'resourceType',
+        'status',
         'downloadUrl',
         'variants',
-        'mimeType',
-        'contentType',
-        'resourceType',
-        'board',
-        'medium',
-        'gradeLevel',
-        'subject',
+        'createdBy',
+        'originData',
+        'origin',
         'streamingUrl',
-        'framework',
-        'appIcon'
+        'dialecodes',
+        'size',
+        'batches',
+        'organisation'
     ];
 }
 

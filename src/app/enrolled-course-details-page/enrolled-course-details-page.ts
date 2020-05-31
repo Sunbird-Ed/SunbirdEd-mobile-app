@@ -62,7 +62,7 @@ import {
   CorReleationDataType,
   ID
 } from '../../services/telemetry-constants';
-import { ProfileConstants, ContentType, EventTopics, PreferenceKey, RouterLinks, ShareItemType } from '../app.constant';
+import { ProfileConstants, ContentType, EventTopics, MimeType, PreferenceKey, RouterLinks, ShareItemType } from '../app.constant';
 import { BatchConstants } from '../app.constant';
 import { ContentShareHandlerService } from '../../services/content/content-share-handler.service';
 import { SbGenericPopoverComponent } from '../components/popups/sb-generic-popover/sb-generic-popover.component';
@@ -96,6 +96,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
    * Contains children content data
    */
   childrenData: Array<any> = [];
+  courseHeirarchy: any;
 
   startData: any;
   shownGroup: null;
@@ -223,7 +224,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
   public lastReadContentId;
   public courseCompletionData = {};
   isCertifiedCourse: boolean;
-  showSheenAnimation: boolean = true;
+  showSheenAnimation = true;
   private isOnboardingSkipped: any;
   private isFromChannelDeeplink: any;
   trackDownloads$: Observable<DownloadTracking>;
@@ -659,6 +660,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
       this.showSheenAnimation = false;
       this.enrolledCourseMimeType = content.mimeType;
       this.childrenData = content.children;
+      this.courseHeirarchy = content;
       this.toggleGroup(0, this.childrenData[0]);
       this.startData = content.children;
       this.childContentsData = content;
@@ -1181,6 +1183,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
             }, 1000);
             this.enrolledCourseMimeType = data.mimeType;
             this.childrenData = data.children;
+            this.courseHeirarchy = data;
             this.startData = data.children;
             this.childContentsData = data;
             this.getContentState(true);
@@ -1752,6 +1755,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
           this.contentStatusData = success;
 
           if (this.contentStatusData && this.contentStatusData.contentList) {
+            this.getUnitLevelProgress();
             let progress = 0;
             this.contentStatusData.contentList.forEach((contentState: ContentState) => {
               if (contentState.status === 2) {
@@ -1775,6 +1779,21 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
     } else {
       // to be handled when there won't be any batchId
     }
+  }
+
+  getUnitLevelProgress() {
+    this.courseHeirarchy.children.forEach(collection => {
+      const leafNodes = this.getLeafNodes([collection]);
+      const viewedContents = [];
+      for (const content of leafNodes) {
+        if (this.contentStatusData.contentList.find((c) => c.contentId === content.identifier && c.status === 2)) {
+          viewedContents.push(content);
+        }
+      }
+      if (viewedContents.length) {
+        collection.progressPercentage = Math.round((viewedContents.length / leafNodes.length) * 100);
+      }
+    });
   }
 
   async handleHeaderEvents($event) {
@@ -1948,6 +1967,36 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
         resolve(false);
       }
     });
+  }
+
+  onTocCardClick(event) {
+    if (event.item.mimeType === MimeType.COLLECTION) {
+      const chapterParams: NavigationExtras = {
+        state: {
+          chapterData: event.item,
+          batches: this.batches,
+          isAlreadyEnrolled: this.isAlreadyEnrolled,
+          courseCardData: this.courseCardData,
+          batchExp: this.batchExp,
+          telemetryObject: this.telemetryObject,
+          isChapterCompleted: this.courseCompletionData[event.item.identifier],
+          contentStatusData: this.contentStatusData,
+          courseContent: this.content
+        }
+      };
+
+      this.router.navigate([`/${RouterLinks.CURRICULUM_COURSES}/${RouterLinks.CHAPTER_DETAILS}`],
+        chapterParams);
+    } else {
+      this.router.navigate([RouterLinks.CONTENT_DETAILS], {
+        state: {
+          content: event.item,
+          // depth,
+          // contentState: this.stateData,
+          corRelation: this.corRelationList
+        }
+      });
+    }
   }
 
 }
