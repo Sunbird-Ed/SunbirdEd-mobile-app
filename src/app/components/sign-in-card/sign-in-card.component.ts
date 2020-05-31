@@ -18,7 +18,7 @@ import {
 } from 'sunbird-sdk';
 
 import { initTabs, LOGIN_TEACHER_TABS } from '@app/app/module.service';
-import { ProfileConstants, PreferenceKey, EventTopics } from '@app/app/app.constant';
+import {ProfileConstants, PreferenceKey, EventTopics, IgnoreTelemetryPatters} from '@app/app/app.constant';
 import { FormAndFrameworkUtilService } from '@app/services/formandframeworkutil.service';
 import { CommonUtilService } from '@app/services/common-util.service';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
@@ -31,6 +31,7 @@ import {
 import { ContainerService } from '@app/services/container.services';
 import { AppGlobalService } from '@app/services';
 import { Router } from '@angular/router';
+import {Context as SbProgressLoaderContext, SbProgressLoader} from '../../../services/sb-progress-loader.service';
 
 @Component({
   selector: 'app-sign-in-card',
@@ -60,7 +61,8 @@ export class SignInCardComponent implements OnInit {
     private telemetryGeneratorService: TelemetryGeneratorService,
     private events: Events,
     private appGlobalService: AppGlobalService,
-    private router: Router
+    private router: Router,
+    private sbProgressLoader: SbProgressLoader
   ) {
 
     this.appVersion.getAppName()
@@ -73,9 +75,9 @@ export class SignInCardComponent implements OnInit {
 
   }
 
-  async signIn() {
+  async signIn(skipNavigation?) {
     this.appGlobalService.resetSavedQuizContent();
-    // clean the prefernces to avoid unnecessary enrolment
+    // clean the preferences to avoid unnecessary enrolment
     if (!this.fromEnrol) {
       this.preferences.putString(PreferenceKey.BATCH_DETAIL_KEY, '').toPromise();
       this.preferences.putString(PreferenceKey.COURSE_DATA_KEY, '').toPromise();
@@ -94,7 +96,6 @@ export class SignInCardComponent implements OnInit {
       this.generateLoginInteractTelemetry(InteractType.TOUCH, InteractSubtype.LOGIN_INITIATE, '');
 
       const that = this;
-      const loader = await this.commonUtilService.getLoader();
       const webviewSessionProviderConfigloader = await this.commonUtilService.getLoader();
 
       let webviewLoginSessionProviderConfig: WebviewSessionProviderConfig;
@@ -119,8 +120,9 @@ export class SignInCardComponent implements OnInit {
       )
         .toPromise()
         .then(async () => {
-          await loader.present();
-          console.log("Hello");
+
+          await this.sbProgressLoader.show(this.generateIgnoreTelemetryContext());
+
           initTabs(that.container, LOGIN_TEACHER_TABS);
           return that.refreshProfileData();
         })
@@ -128,24 +130,20 @@ export class SignInCardComponent implements OnInit {
           return that.refreshTenantData(value.slug, value.title);
         })
         .then(async () => {
-          await loader.dismiss();
-          if (!this.appGlobalService.signinOnboardingLoader) {
-            this.appGlobalService.signinOnboardingLoader = await this.commonUtilService.getLoader();
-            await this.appGlobalService.signinOnboardingLoader.present();
-          }
+          if (!this.appGlobalService.signinOnboardingLoader) {}
           that.ngZone.run(() => {
-            setTimeout(function() {
-              if(that.source === 'courses') {
-                that.router.navigateByUrl("tabs/courses");
+            setTimeout(() => {
+              if (that.source === 'courses') {
+                that.router.navigateByUrl('tabs/courses');
               } else if (that.source === 'profile') {
-                that.router.navigateByUrl("tabs/profile");
+                that.router.navigateByUrl('tabs/profile');
               }
-              
-            },1000);
+
+            }, 1000);
             that.preferences.putString('SHOW_WELCOME_TOAST', 'true').toPromise().then();
 
-            // note: Navigating back to Resourses is though the below event from App-Components.
-            this.events.publish(EventTopics.SIGN_IN_RELOAD);
+            // note: Navigating back to Resources is though the below event from App-Components.
+            this.events.publish(EventTopics.SIGN_IN_RELOAD, skipNavigation);
           });
         })
         .catch(async (err) => {
@@ -156,8 +154,6 @@ export class SignInCardComponent implements OnInit {
           } else {
             this.commonUtilService.showToast('ERROR_WHILE_LOGIN');
           }
-
-          return await loader.dismiss();
         });
     }
   }
@@ -248,4 +244,15 @@ export class SignInCardComponent implements OnInit {
       valuesMap);
   }
 
+  private generateIgnoreTelemetryContext(): SbProgressLoaderContext {
+    return {
+      id: 'login',
+      ignoreTelemetry: {
+        when: {
+          interact: IgnoreTelemetryPatters.IGNORE_SIGN_IN_PAGE_ID_EVENTS,
+          impression: IgnoreTelemetryPatters.IGNORE_CHANNEL_IMPRESSION_EVENTS
+        }
+      }
+    };
+  }
 }

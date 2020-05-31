@@ -40,7 +40,8 @@ export class SbProgressLoader {
             component: SbProgressLoaderPage,
             componentProps: {
                 progress: this.progress.asObservable(),
-            }
+            },
+            cssClass: 'sb-progress-loader'
         });
 
         await this.modal.present();

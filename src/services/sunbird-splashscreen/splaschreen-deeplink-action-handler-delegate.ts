@@ -499,10 +499,8 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
           };
           const isUrlTypeCourse = (new RegExp(String.raw`explore-course`)).test(event.url);
           if (isUrlTypeCourse) {
-            const loader = await this.commonUtilService.getLoader(null, 'Initilizing profile...');
-            await loader.present();
             const isChannelDetected = await this.onChannelDetected(event);
-            await loader.dismiss();
+            await this.sbProgressLoader.hide({id: 'login'});
             if (isChannelDetected) {
               return true;
             }
@@ -549,9 +547,11 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
               corRelation: this.getCorrelationList(payloadUrl)
             }
           });
+        await this.sbProgressLoader.hide({id: 'login'});
       }
     } else {
       this.router.navigateByUrl(RouterLinks.TABS_COURSE);
+      await this.sbProgressLoader.hide({id: 'login'});
     }
   }
 
@@ -662,7 +662,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
         id: this.progressLoaderId,
         ignoreTelemetry: {
           when: {
-            interact: IgnoreTelemetryPatters.IGNORE_PAGE_ID_EVENTS,
+            interact: IgnoreTelemetryPatters.IGNORE_DEEPLINK_PAGE_ID_EVENTS,
             impression: IgnoreTelemetryPatters.IGNORE_CHANNEL_IMPRESSION_EVENTS
           }
         }
@@ -673,7 +673,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
         ignoreTelemetry: {
           when: {
             interact: IgnoreTelemetryPatters.IGNORE_DIAL_CODE_PAGE_ID_EVENTS,
-            impression: IgnoreTelemetryPatters.IGNORE_PAGE_ID_EVENTS
+            impression: IgnoreTelemetryPatters.IGNORE_DEEPLINK_PAGE_ID_EVENTS
           }
         }
       };
@@ -682,8 +682,8 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
         id: this.progressLoaderId,
         ignoreTelemetry: {
           when: {
-            interact: IgnoreTelemetryPatters.IGNORE_PAGE_ID_EVENTS,
-            impression: IgnoreTelemetryPatters.IGNORE_PAGE_ID_EVENTS
+            interact: IgnoreTelemetryPatters.IGNORE_DEEPLINK_PAGE_ID_EVENTS,
+            impression: IgnoreTelemetryPatters.IGNORE_DEEPLINK_PAGE_ID_EVENTS
           }
         }
       };

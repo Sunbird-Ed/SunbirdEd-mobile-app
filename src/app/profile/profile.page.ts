@@ -39,6 +39,7 @@ import { AccountRecoveryInfoComponent } from '../components/popups/account-recov
 import { SocialSharing } from '@ionic-native/social-sharing/ngx';
 import { TeacherIdVerificationComponent } from '../components/popups/teacher-id-verification-popup/teacher-id-verification-popup.component';
 import { Observable } from 'rxjs';
+import {SbProgressLoader} from '@app/services/sb-progress-loader.service';
 
 @Component({
   selector: 'app-profile',
@@ -106,6 +107,7 @@ export class ProfilePage implements OnInit {
     private commonUtilService: CommonUtilService,
     private socialShare: SocialSharing,
     private headerService: AppHeaderService,
+    private sbProgressLoader: SbProgressLoader
   ) {
     const extrasState = this.router.getCurrentNavigation().extras.state;
     if (extrasState) {
@@ -182,6 +184,7 @@ export class ProfilePage implements OnInit {
             this.events.publish('refresh:profile');
             this.refresh = false;
             await loader.dismiss();
+            await this.sbProgressLoader.hide({id: 'login'});
             resolve();
           }, 500);
           // This method is used to handle trainings completed by user
