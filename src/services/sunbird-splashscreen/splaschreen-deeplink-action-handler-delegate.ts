@@ -30,7 +30,11 @@ import {
   TelemetryObject,
   TelemetryService,
   ContentDetailRequest,
-  ChildContentRequest
+  ChildContentRequest,
+  ContentImportRequest,
+  StorageService,
+  ContentImport,
+  Rollup
 } from 'sunbird-sdk';
 import { SplashscreenActionHandlerDelegate } from './splashscreen-action-handler-delegate';
 import { ContentType, MimeType, EventTopics, RouterLinks, LaunchType } from '../../app/app.constant';
@@ -62,6 +66,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
   private currentAppVersionCode: number;
   private progressLoaderId: string;
   private childContent;
+  private isChildContentFound;
 
   // should delay the deeplinks until tabs is loaded- gets triggered from Resource components
   set isDelegateReady(val: boolean) {
@@ -81,6 +86,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
     @Inject('FRAMEWORK_SERVICE') private frameworkService: FrameworkService,
     @Inject('FRAMEWORK_UTIL_SERVICE') private frameworkUtilService: FrameworkUtilService,
     @Inject('TELEMETRY_SERVICE') private telemetryService: TelemetryService,
+    @Inject('STORAGE_SERVICE') private storageService: StorageService,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private commonUtilService: CommonUtilService,
     private appGlobalServices: AppGlobalService,
@@ -256,9 +262,12 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
       const childContentId = url.searchParams.get('contentId');
       if (childContentId) {
         try {
+          this.isChildContentFound = false;
+          this.childContent = undefined;
           if (content && content.isAvailableLocally) {
             this.childContent = await this.getChildContents(childContentId);
           } else {
+            this.importContent([identifier], false);
             content = await this.getContentHeirarchy(identifier);
             await this.getChildContent(content, childContentId);
           }
@@ -776,11 +785,40 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
   async getChildContent(content, childContentId) {
     if (content.identifier === childContentId) {
       this.childContent = content;
-    } else if (content && content.children) {
-      content.children.forEach((element) => {
-        return this.getChildContent(element, childContentId);
+      this.isChildContentFound = true;
+    } else if (!this.isChildContentFound && content && content.children) {
+      content.children.forEach((ele) => {
+        if (!this.isChildContentFound) {
+          this.getChildContent(ele, childContentId);
+        }
       });
     }
-    return (this.childContent || undefined);
+    return (this.childContent);
+  }
+
+  private importContent(identifiers: Array<string>, isChild: boolean) {
+    const contentImportRequest: ContentImportRequest = {
+      contentImportArray: this.getImportContentRequestBody(identifiers, isChild),
+      contentStatusArray: ['Live'],
+      fields: ['appIcon', 'name', 'subject', 'size', 'gradeLevel'],
+    };
+    // // Call content service
+    this.contentService.importContent(contentImportRequest).toPromise();
+  }
+
+  private getImportContentRequestBody(identifiers: Array<string>, isChild: boolean): Array<ContentImport> {
+    const rollUpMap: { [key: string]: Rollup } = {};
+    const requestParams: ContentImport[] = [];
+    identifiers.forEach((value) => {
+      requestParams.push({
+        isChildContent: isChild,
+        destinationFolder: this.storageService.getStorageDestinationDirectoryPath(),
+        contentId: value,
+        correlationData: [],
+        rollUp: rollUpMap[value]
+      });
+    });
+
+    return requestParams;
   }
 }
