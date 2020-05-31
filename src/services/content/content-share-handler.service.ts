@@ -33,7 +33,8 @@ export class ContentShareHandlerService {
     this.commonUtilService.getAppName().then((res) => { this.appName = res; });
   }
 
-  public async shareContent(shareParams: any, content: Content, corRelationList?: CorrelationData[], rollup?: Rollup) {
+  public async shareContent(shareParams: any, content: Content, moduleId: string, subContentIds: Array<string>,
+    corRelationList?: CorrelationData[], rollup?: Rollup) {
     this.telemetryObject = ContentUtil.getTelemetryObject(content);
     this.generateShareInteractEvents(InteractType.TOUCH,
       InteractSubtype.SHARE_CONTENT_INITIATED,
@@ -54,6 +55,7 @@ export class ContentShareHandlerService {
     if (shareParams && shareParams.byFile) {
       exportContentRequest = {
         contentIds: [content.identifier],
+        subContentIds,
         destinationFolder: this.storageService.getStorageDestinationDirectoryPath()
       };
       this.exportContent(exportContentRequest, shareParams, content, corRelationList, rollup);
@@ -61,9 +63,12 @@ export class ContentShareHandlerService {
       this.generateShareInteractEvents(InteractType.OTHER,
         InteractSubtype.SHARE_CONTENT_SUCCESS,
         content.contentData.contentType, corRelationList, rollup);
-      const shareLink = this.commonUtilService.translateMessage('SHARE_CONTENT_LINK', {app_name: this.appName,
-         content_name: content.contentData.name, content_link: this.getContentUtm(shareParams.link, content),
-           play_store_url: await this.getPackageNameWithUTM(true)});
+      const shareLink = this.commonUtilService.translateMessage('SHARE_CONTENT_LINK', {
+        app_name: this.appName,
+        content_name: content.contentData.name,
+        content_link: this.getContentUtm(shareParams.link, content) + `contentId=${moduleId}`,
+        play_store_url: await this.getPackageNameWithUTM(true)
+      });
       this.social.share(null, null, null, shareLink);
     } else if (shareParams && shareParams.saveFile) {
       exportContentRequest = {

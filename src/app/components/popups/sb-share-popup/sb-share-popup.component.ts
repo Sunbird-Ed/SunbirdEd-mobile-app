@@ -1,8 +1,8 @@
 import { UtilityService } from '@app/services/utility-service';
 import { Component, Input, OnInit, OnDestroy } from '@angular/core';
-import {Platform, PopoverController, NavParams, ToastController} from '@ionic/angular';
+import { Platform, PopoverController, NavParams, ToastController } from '@ionic/angular';
 import { Subscription } from 'rxjs';
-import {AndroidPermissionsService, CommonUtilService, ContentShareHandlerService, TelemetryGeneratorService} from '@app/services';
+import { AndroidPermissionsService, CommonUtilService, ContentShareHandlerService, TelemetryGeneratorService } from '@app/services';
 import {
   Environment,
   ImpressionType,
@@ -12,10 +12,10 @@ import {
   InteractSubtype
 } from '@app/services/telemetry-constants';
 import { TelemetryObject } from 'sunbird-sdk';
-import {ShareUrl, ShareMode, ContentType, MimeType} from '@app/app/app.constant';
+import { ShareUrl, ShareMode, ContentType, MimeType } from '@app/app/app.constant';
 import { ContentUtil } from '@app/util/content-util';
-import {AndroidPermission, AndroidPermissionsStatus} from '@app/services/android-permissions/android-permission';
-import {AppVersion} from '@ionic-native/app-version/ngx';
+import { AndroidPermission, AndroidPermissionsStatus } from '@app/services/android-permissions/android-permission';
+import { AppVersion } from '@ionic-native/app-version/ngx';
 
 @Component({
   selector: 'app-sb-share-popup',
@@ -27,7 +27,8 @@ export class SbSharePopupComponent implements OnInit, OnDestroy {
   @Input() content: any;
   @Input() corRelationList: any;
   @Input() objRollup: any;
-  @Input() chapterId: string;
+  @Input() moduleId: string;
+  @Input() subContentIds: Array<string> = [];
   backButtonFunc: Subscription;
   shareOptions = {
     link: {
@@ -66,7 +67,8 @@ export class SbSharePopupComponent implements OnInit, OnDestroy {
     this.objRollup = this.navParams.get('objRollup');
     this.shareItemType = this.navParams.get('shareItemType');
     this.pageId = this.navParams.get('pageId');
-    this.chapterId = this.navParams.get('chapterId');
+    this.moduleId = this.navParams.get('moduleId');
+    this.subContentIds = this.navParams.get('subContentIds');
   }
 
   async ngOnInit() {
@@ -79,11 +81,7 @@ export class SbSharePopupComponent implements OnInit, OnDestroy {
     });
     this.shareType = this.shareOptions.link.value;
     const baseUrl = await this.utilityService.getBuildConfigValue('BASE_URL');
-    if (this.pageId !== PageId.CHAPTER_DETAILS) {
-      this.shareUrl = baseUrl + this.getContentEndPoint(this.content) + this.content.identifier;
-    } else {
-      this.shareUrl = baseUrl + this.getContentEndPoint(this.content) + this.content.identifier + `?contentId=${this.chapterId}`;
-    }
+    this.shareUrl = baseUrl + this.getContentEndPoint(this.content) + this.content.identifier;
 
     this.appName = await this.appVersion.getAppName();
   }
@@ -162,7 +160,8 @@ export class SbSharePopupComponent implements OnInit, OnDestroy {
           byFile: true,
           link: this.shareUrl
         };
-        this.contentShareHandler.shareContent(shareParams, this.content, this.corRelationList, this.objRollup);
+        this.contentShareHandler.shareContent(shareParams, this.content, this.chapterId, this.subContentIds,
+          this.corRelationList, this.objRollup);
         this.popoverCtrl.dismiss();
       } else {
         this.commonUtilService.showSettingsPageToast('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName, this.pageId, true);
@@ -186,7 +185,7 @@ export class SbSharePopupComponent implements OnInit, OnDestroy {
   }
 
   private async checkForPermissions(): Promise<boolean | undefined> {
-    return new Promise < boolean | undefined>(async (resolve, reject) => {
+    return new Promise<boolean | undefined>(async (resolve, reject) => {
       const permissionStatus = await this.commonUtilService.getGivenPermissionStatus(AndroidPermission.WRITE_EXTERNAL_STORAGE);
 
       if (permissionStatus.hasPermission) {
@@ -210,48 +209,48 @@ export class SbSharePopupComponent implements OnInit, OnDestroy {
     await this.popoverCtrl.dismiss();
     return new Promise<boolean | undefined>(async (resolve, reject) => {
       const confirm = await this.commonUtilService.buildPermissionPopover(
-          async (selectedButton: string) => {
-              if (selectedButton === this.commonUtilService.translateMessage('NOT_NOW')) {
-                this.telemetryGeneratorService.generateInteractTelemetry(
-                    InteractType.TOUCH,
-                    InteractSubtype.NOT_NOW_CLICKED,
-                    Environment.HOME,
-                    PageId.PERMISSION_POPUP);
-                await this.commonUtilService.showSettingsPageToast('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName, this.pageId, true);
-              } else if (selectedButton === this.commonUtilService.translateMessage('ALLOW')) {
-                this.telemetryGeneratorService.generateInteractTelemetry(
+        async (selectedButton: string) => {
+          if (selectedButton === this.commonUtilService.translateMessage('NOT_NOW')) {
+            this.telemetryGeneratorService.generateInteractTelemetry(
+              InteractType.TOUCH,
+              InteractSubtype.NOT_NOW_CLICKED,
+              Environment.HOME,
+              PageId.PERMISSION_POPUP);
+            await this.commonUtilService.showSettingsPageToast('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName, this.pageId, true);
+          } else if (selectedButton === this.commonUtilService.translateMessage('ALLOW')) {
+            this.telemetryGeneratorService.generateInteractTelemetry(
+              InteractType.TOUCH,
+              InteractSubtype.ALLOW_CLICKED,
+              Environment.HOME,
+              PageId.PERMISSION_POPUP);
+            this.permissionService.requestPermission(AndroidPermission.WRITE_EXTERNAL_STORAGE)
+              .subscribe(async (status: AndroidPermissionsStatus) => {
+                if (status.hasPermission) {
+                  this.telemetryGeneratorService.generateInteractTelemetry(
                     InteractType.TOUCH,
                     InteractSubtype.ALLOW_CLICKED,
                     Environment.HOME,
-                    PageId.PERMISSION_POPUP);
-                this.permissionService.requestPermission(AndroidPermission.WRITE_EXTERNAL_STORAGE)
-                    .subscribe(async (status: AndroidPermissionsStatus) => {
-                      if (status.hasPermission) {
-                        this.telemetryGeneratorService.generateInteractTelemetry(
-                            InteractType.TOUCH,
-                            InteractSubtype.ALLOW_CLICKED,
-                            Environment.HOME,
-                            PageId.APP_PERMISSION_POPUP
-                        );
-                        resolve(true);
-                      } else if (status.isPermissionAlwaysDenied) {
-                        await this.commonUtilService.showSettingsPageToast
-                        ('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName, this.pageId, true);
-                        resolve(false);
-                      } else {
-                        this.telemetryGeneratorService.generateInteractTelemetry(
-                            InteractType.TOUCH,
-                            InteractSubtype.DENY_CLICKED,
-                            Environment.HOME,
-                            PageId.APP_PERMISSION_POPUP
-                        );
-                        await this.commonUtilService.showSettingsPageToast
-                        ('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName, this.pageId, true);
-                      }
-                      resolve(undefined);
-                    });
-              }
-          }, this.appName, this.commonUtilService.translateMessage('FILE_MANAGER'), 'FILE_MANAGER_PERMISSION_DESCRIPTION', this.pageId, true
+                    PageId.APP_PERMISSION_POPUP
+                  );
+                  resolve(true);
+                } else if (status.isPermissionAlwaysDenied) {
+                  await this.commonUtilService.showSettingsPageToast
+                    ('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName, this.pageId, true);
+                  resolve(false);
+                } else {
+                  this.telemetryGeneratorService.generateInteractTelemetry(
+                    InteractType.TOUCH,
+                    InteractSubtype.DENY_CLICKED,
+                    Environment.HOME,
+                    PageId.APP_PERMISSION_POPUP
+                  );
+                  await this.commonUtilService.showSettingsPageToast
+                    ('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName, this.pageId, true);
+                }
+                resolve(undefined);
+              });
+          }
+        }, this.appName, this.commonUtilService.translateMessage('FILE_MANAGER'), 'FILE_MANAGER_PERMISSION_DESCRIPTION', this.pageId, true
       );
       await confirm.present();
     });

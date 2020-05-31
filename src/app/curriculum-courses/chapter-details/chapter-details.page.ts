@@ -1,7 +1,5 @@
 import { share } from 'rxjs/operators';
 import { SbSharePopupComponent } from '@app/app/components/popups/sb-share-popup/sb-share-popup.component';
-
-
 import { Component, OnInit, Inject, NgZone, OnDestroy } from '@angular/core';
 import { AppHeaderService, CommonUtilService, LoginHandlerService, AppGlobalService, LocalCourseService } from '@app/services';
 import { TranslateService } from '@ngx-translate/core';
@@ -10,8 +8,14 @@ import { TocCardType } from '@project-sunbird/common-consumption';
 import { SbPopoverComponent } from '@app/app/components/popups/sb-popover/sb-popover.component';
 import { PopoverController, Events } from '@ionic/angular';
 import { RouterLinks, PreferenceKey, EventTopics, MimeType, ShareItemType, BatchConstants } from '@app/app/app.constant';
-import { SharedPreferences, AuthService, Batch, TelemetryObject, ContentState, Content, Course,
-   CourseService, GetContentStateRequest, ContentStateResponse, CourseBatchStatus, CourseEnrollmentType, SortOrder, DownloadService, DownloadTracking, DownloadProgress, EventsBusEvent, DownloadEventType, EventsBusService, ContentImportRequest, ContentService, ContentImportResponse, ContentImportStatus, ContentEventType, ContentImportCompleted, ContentUpdate, ContentImport, Rollup } from 'sunbird-sdk';
+import {
+  SharedPreferences, AuthService, Batch, TelemetryObject, ContentState, Content, Course,
+  CourseService, GetContentStateRequest, ContentStateResponse, CourseBatchStatus,
+  CourseEnrollmentType, SortOrder, DownloadService, DownloadTracking, DownloadProgress,
+  EventsBusEvent, DownloadEventType, EventsBusService, ContentImportRequest, ContentService,
+  ContentImportResponse, ContentImportStatus, ContentEventType, ContentImportCompleted,
+  ContentUpdate, ContentImport, Rollup
+} from 'sunbird-sdk';
 import { EnrollCourse } from '@app/app/enrolled-course-details-page/course.interface';
 import { DatePipe } from '@angular/common';
 import { ContentActionsComponent } from './../../components/content-actions/content-actions.component';
@@ -65,7 +69,7 @@ export class ChapterDetailsPage implements OnInit, OnDestroy {
   queuedIdentifiers = [];
   faultyIdentifiers = [];
   currentCount = 0;
-
+  subContentIds: Array<string> = [];
 
   trackDownloads$: Observable<DownloadTracking>;
   public todayDate: any;
@@ -97,7 +101,7 @@ export class ChapterDetailsPage implements OnInit, OnDestroy {
     //   console.log('after login', this.extrasData);
     // } else {
     this.extrasData = this.router.getCurrentNavigation().extras.state;
-      // console.log('else', this.extrasData);
+    // console.log('else', this.extrasData);
     // }
     this.appGlobalService.preSignInData = null;
     this.courseContent = this.extrasData.courseContent;
@@ -116,6 +120,11 @@ export class ChapterDetailsPage implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.subContentIds = [];
+    console.log('chapter: subContentIds: ', this.chapter);
+    this.getSubContentIds(this.chapter);
+    console.log('subContentIds: ', this.subContentIds);
+
     this.trackDownloads$ = this.downloadService.trackDownloads(
       { groupBy: { fieldPath: 'rollUp.l1', value: this.courseContentData.identifier } }).pipe(share());
   }
@@ -228,38 +237,38 @@ export class ChapterDetailsPage implements OnInit, OnDestroy {
         batchId: this.courseCardData.batchId
       };
       this.courseService.getContentState(request).toPromise()
-      .then(async (res: ContentStateResponse) => {
-        this.zone.run(() => {
-          this.contentStatusData = res;
-          console.log('this.contentStatusData', this.contentStatusData);
-          this.checkChapterCompletion();
+        .then(async (res: ContentStateResponse) => {
+          this.zone.run(() => {
+            this.contentStatusData = res;
+            console.log('this.contentStatusData', this.contentStatusData);
+            this.checkChapterCompletion();
+          });
+          // await loader.dismiss();
+        }).catch(async (err) => {
+          // await loader.dismiss();
         });
-        // await loader.dismiss();
-      }).catch(async (err) => {
-        // await loader.dismiss();
-      });
     }
   }
 
   async getBatchDetails() {
     if (this.courseCardData && this.courseCardData.batchId) {
       this.courseService.getBatchDetails({ batchId: this.courseCardData.batchId }).toPromise()
-      .then((data: Batch) => {
-        this.zone.run(() => {
-          if (!data) {
-            return;
-          }
-          this.batchDetails = data;
-          if (this.batchDetails.status === 2) {
-            this.batchExp = true;
-          } else if (this.batchDetails.status === 0) {
-            this.isBatchNotStarted = true;
-            this.courseStartDate = this.batchDetails.startDate;
-          }
-        });
-      }).catch((err) => {
+        .then((data: Batch) => {
+          this.zone.run(() => {
+            if (!data) {
+              return;
+            }
+            this.batchDetails = data;
+            if (this.batchDetails.status === 2) {
+              this.batchExp = true;
+            } else if (this.batchDetails.status === 0) {
+              this.isBatchNotStarted = true;
+              this.courseStartDate = this.batchDetails.startDate;
+            }
+          });
+        }).catch((err) => {
 
-      });
+        });
     }
   }
 
@@ -371,12 +380,12 @@ export class ChapterDetailsPage implements OnInit, OnDestroy {
   }
 
   async share() {
-    // this.contentShareHandler.shareContent(this.content, this.corRelationList);
     const popover = await this.popoverCtrl.create({
       component: SbSharePopupComponent,
       componentProps: {
         content: this.courseContent,
-        chapterId: this.chapter.identifier,
+        moduleId: this.chapter.identifier,
+        subContentIds: this.subContentIds,
         // corRelationList: this.corRelationList,
         pageId: PageId.CHAPTER_DETAILS,
         shareItemType: ShareItemType.ROOT_COLECTION
@@ -387,7 +396,7 @@ export class ChapterDetailsPage implements OnInit, OnDestroy {
   }
 
   openContentDetails(event) {
-    if (Object.keys(event.event).length !== 0 ) {
+    if (Object.keys(event.event).length !== 0) {
       if (this.courseContentData.createdBy !== this.userId) {
         if (!this.isAlreadyEnrolled) {
           if (!this.isBatchNotStarted) {
@@ -396,7 +405,7 @@ export class ChapterDetailsPage implements OnInit, OnDestroy {
         } else {
           if (this.isBatchNotStarted) {
             this.commonUtilService.showToast(this.commonUtilService.translateMessage('COURSE_WILL_BE_AVAILABLE',
-            this.datePipe.transform(this.courseStartDate, 'mediumDate')));
+              this.datePipe.transform(this.courseStartDate, 'mediumDate')));
           } else {
             this.navigateToChildrenDetailsPage(event.data, 1);
           }
@@ -445,7 +454,7 @@ export class ChapterDetailsPage implements OnInit, OnDestroy {
   }
 
   async enrollIntoBatch(item: Batch) {
-    const loader =  await this.commonUtilService.getLoader();
+    const loader = await this.commonUtilService.getLoader();
     if (this.guestUser) {
       this.promptToLogin(item);
     } else {
@@ -459,16 +468,16 @@ export class ChapterDetailsPage implements OnInit, OnDestroy {
 
       this.localCourseService.enrollIntoBatch(enrollCourse).toPromise()
         .then(async (data: boolean) => {
-            await loader.dismiss();
-            this.courseCardData.batchId = item.id;
-            this.commonUtilService.showToast(this.commonUtilService.translateMessage('COURSE_ENROLLED'));
-            this.events.publish(EventTopics.ENROL_COURSE_SUCCESS, {
-              batchId: item.id,
-              courseId: item.courseId
-            });
-            this.isAlreadyEnrolled = true;
+          await loader.dismiss();
+          this.courseCardData.batchId = item.id;
+          this.commonUtilService.showToast(this.commonUtilService.translateMessage('COURSE_ENROLLED'));
+          this.events.publish(EventTopics.ENROL_COURSE_SUCCESS, {
+            batchId: item.id,
+            courseId: item.courseId
+          });
+          this.isAlreadyEnrolled = true;
         }, async (error) => {
-            await loader.dismiss();
+          await loader.dismiss();
         });
     }
   }
@@ -520,17 +529,17 @@ export class ChapterDetailsPage implements OnInit, OnDestroy {
       this.commonUtilService.showToast('NO_BATCHES_AVAILABLE');
       return;
     } else if (
-        this.batches.length === 1 &&
-        this.batches[0].enrollmentEndDate &&
-        (new Date() > new Date(this.batches[0].enrollmentEndDate))
+      this.batches.length === 1 &&
+      this.batches[0].enrollmentEndDate &&
+      (new Date() > new Date(this.batches[0].enrollmentEndDate))
     ) {
       this.commonUtilService.showToast(
-          'ENROLLMENT_ENDED_ON',
-          null,
-          null,
-          null,
-          null,
-          this.datePipe.transform(this.batches[0].enrollmentEndDate)
+        'ENROLLMENT_ENDED_ON',
+        null,
+        null,
+        null,
+        null,
+        this.datePipe.transform(this.batches[0].enrollmentEndDate)
       );
       return;
     }
@@ -669,7 +678,7 @@ export class ChapterDetailsPage implements OnInit, OnDestroy {
         destinationFolder: cordova.file.externalDataDirectory,
         contentId: value,
         // correlationData: this.corRelationList !== undefined ? this.corRelationList : [],
-        correlationData:  [],
+        correlationData: [],
         rollUp: this.rollUpMap[value]
       });
     });
@@ -825,6 +834,19 @@ export class ChapterDetailsPage implements OnInit, OnDestroy {
 
         });
       }) as any;
+  }
+
+  private getSubContentIds(content) {
+    if (content && content.children) {
+      content.children.forEach((ele) => {
+        this.getSubContentIds(ele);
+      });
+    } else {
+      if (content.mimeType !== MimeType.COLLECTION) {
+        this.subContentIds.push(content.identifier);
+      }
+    }
+    return this.subContentIds;
   }
 
 }
