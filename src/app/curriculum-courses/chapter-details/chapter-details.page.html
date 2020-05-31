@@ -2,6 +2,9 @@
   <div class="cd-header-container">
     <div class="cd-label">{{ courseContentData?.name }}</div>
     <div class="cd-header-title">{{ chapter.name}}</div>
+    <div class="cd-of-menu">
+      <img class="cd-menu-icon" (click)="showOverflowMenu($event)" src="assets/imgs/menu.svg" alt="menu-icon">
+    </div>
     <div class="new-div">
       <div *ngIf="!isAlreadyEnrolled">
         <div class="enrollment-info"
@@ -44,7 +47,7 @@
         <div *ngIf="courseCardData?.batchId">
           <div class="sb-course-progress-container" *ngIf="!isChapterCompleted && !batchExp">
             <p class="progress-label"><strong>{{'YOUR_PROGRESS_LABEL' | translate}}</strong></p>
-            <p>{{viewedContents.length}}/{{childContents.length}} {{"COMPLETED" | translate}}</p>
+            <p>{{viewedContents.length}}/{{childContents.length}} {{'COMPLETED' | translate}}</p>
             <app-pb-horizontal [progress]="chapterProgress"
               class="course-progress" [ngClass]="{'blurbackground': batchExp}"
               isOnBoardCard="flase" isCourseProgress="true"></app-pb-horizontal>
@@ -102,9 +105,6 @@
         </div>
       </div>
     </ion-card-content>
-    <div class="cd-unblock-text" *ngIf="isAlreadyEnrolled">
-      {{'COMPLETE_CHAPTER_TO_UNLOCK_ACHIEVEMENT' | translate:{'%s': childContents.length - viewedContents.length} }}
-    </div>
     <div class="cd-flex-container" *ngIf="isAlreadyEnrolled">
       <div style="width: 100%;">
         <button class="cd-chapter-card-button" *ngIf="!isChapterCompleted && !isChapterStarted" (click)="startLearning();">
@@ -119,9 +119,6 @@
           <img class="play-icon" src="assets/imgs/Play@1.5x.svg" alt="play-icon">
           {{'CONTINUE_NOW' | translate}}
         </button>
-      </div>
-      <div>
-        <img class="menu-icon" (click)="showOverflowMenu($event)" src="assets/imgs/menu.svg" alt="menu-icon">
       </div>
     </div>
   </div>
