@@ -45,6 +45,7 @@ export class ChapterDetailsPage implements OnInit, OnDestroy {
   viewedContents = [];
   chapterProgress = 0;
   courseStartDate;
+  public todayDate: any;
 
   private extrasData: any;
 
@@ -90,6 +91,7 @@ export class ChapterDetailsPage implements OnInit, OnDestroy {
   }
 
   async ionViewWillEnter() {
+    this.todayDate = window.dayjs().format('YYYY-MM-DD');
     this.appHeaderService.showHeaderWithBackButton();
     this.subscribeUtilityEvents();
     await this.checkLoggedInOrGuestUser();
