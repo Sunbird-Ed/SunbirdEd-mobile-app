@@ -194,8 +194,8 @@ export enum InteractType {
     DELETE_CHECKED = 'delete-checked',
     DELETE_UNCHECKED = 'delete-unchecked',
     BACKDROP_DISMISSED = 'backdrop-dismissed',
-    LOCAL = "local",
-    FCM = "fcm",
+    LOCAL = 'local',
+    FCM = 'fcm',
     WITHOUT_CONTENT = 'without-content',
     WITH_CONTENT = 'with-content',
     /* New Telemetry */
