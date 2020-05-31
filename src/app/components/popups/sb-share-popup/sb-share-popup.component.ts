@@ -27,6 +27,7 @@ export class SbSharePopupComponent implements OnInit, OnDestroy {
   @Input() content: any;
   @Input() corRelationList: any;
   @Input() objRollup: any;
+  @Input() chapterId: string;
   backButtonFunc: Subscription;
   shareOptions = {
     link: {
@@ -65,6 +66,7 @@ export class SbSharePopupComponent implements OnInit, OnDestroy {
     this.objRollup = this.navParams.get('objRollup');
     this.shareItemType = this.navParams.get('shareItemType');
     this.pageId = this.navParams.get('pageId');
+    this.chapterId = this.navParams.get('chapterId');
   }
 
   async ngOnInit() {
@@ -77,7 +79,12 @@ export class SbSharePopupComponent implements OnInit, OnDestroy {
     });
     this.shareType = this.shareOptions.link.value;
     const baseUrl = await this.utilityService.getBuildConfigValue('BASE_URL');
-    this.shareUrl = baseUrl + this.getContentEndPoint(this.content) + this.content.identifier;
+    if (this.pageId !== PageId.CHAPTER_DETAILS) {
+      this.shareUrl = baseUrl + this.getContentEndPoint(this.content) + this.content.identifier;
+    } else {
+      this.shareUrl = baseUrl + this.getContentEndPoint(this.content) + this.content.identifier + `?contentId=${this.chapterId}`;
+    }
+
     this.appName = await this.appVersion.getAppName();
   }
 

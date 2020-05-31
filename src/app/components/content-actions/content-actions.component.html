@@ -4,6 +4,7 @@
   <ion-item (click)="unenroll()">{{ 'UNENROLL_FROM_COURSE' | translate }}</ion-item>
 </ion-list>
 <ion-list lines="none" *ngIf="showChapterActions">
-  <ion-item (click)="download()" *ngIf="!chapter.isAvailableLocally">{{ 'DOWNLOAD' | translate }}</ion-item>
+  <!-- <ion-item (click)="download()" *ngIf="!chapter.isAvailableLocally">{{ 'DOWNLOAD' | translate }}</ion-item> -->
+  <ion-item (click)="download()">{{ 'DOWNLOAD' | translate }}</ion-item>
   <ion-item (click)="share()">{{ 'SHARE' | translate }}</ion-item>
 </ion-list>
