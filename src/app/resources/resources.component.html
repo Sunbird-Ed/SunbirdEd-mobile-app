@@ -27,7 +27,7 @@
     <div class="sb-course-container" *ngIf="courseList.length">
       <sb-course-cards-hlist [multiRow]="courseList.length > 3" [contentList]="courseList"
         [type]="'curiculum_course_card_grid'" [title]="'COURSES' | translate" [isLoading]="isLoading"
-        (cardClick)="navigateToCurriculumCourses($event)" [maxCardCount]="20">
+        (cardClick)="onCourseCardClick($event)" [maxCardCount]="20">
       </sb-course-cards-hlist>
     </div>
     <div *ngIf="searchApiLoader" class="sb-course-container">

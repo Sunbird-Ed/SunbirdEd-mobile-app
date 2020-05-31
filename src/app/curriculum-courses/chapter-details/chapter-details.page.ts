@@ -68,6 +68,8 @@ export class ChapterDetailsPage implements OnInit, OnDestroy {
 
 
   trackDownloads$: Observable<DownloadTracking>;
+  public todayDate: any;
+
   private extrasData: any;
 
   constructor(
@@ -120,6 +122,8 @@ export class ChapterDetailsPage implements OnInit, OnDestroy {
 
   async ionViewWillEnter() {
     this.downloadIdentifiers = new Set();
+    this.headerService.showHeaderWithBackButton();
+    this.todayDate = window.dayjs().format('YYYY-MM-DD');
     this.headerService.showHeaderWithBackButton();
     this.subscribeUtilityEvents();
     this.subscribeSdkEvent();

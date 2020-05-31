@@ -1263,17 +1263,24 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  navigateToCurriculumCourses(event) {
-    const curriculumCourseParams: NavigationExtras = {
-      state: {
-        theme: event.data.theme,
-        titleColor: event.data.titleColor,
-        subjectIcon: event.data.cardImg,
-        subjectName: event.data.title,
-        courseList: event.data.contents,
-      }
-    };
-
-    this.router.navigate([RouterLinks.CURRICULUM_COURSES], curriculumCourseParams);
+  onCourseCardClick(event) {
+    if (event.data.contents && event.data.contents.length > 1) {
+      const curriculumCourseParams: NavigationExtras = {
+        state: {
+          theme: event.data.theme,
+          titleColor: event.data.titleColor,
+          subjectIcon: event.data.cardImg,
+          subjectName: event.data.title,
+          courseList: event.data.contents,
+        }
+      };
+      this.router.navigate([RouterLinks.CURRICULUM_COURSES], curriculumCourseParams);
+    } else {
+      this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], {
+        state: {
+          content: event.data.contents[0],
+        }
+      });
+    }
   }
 }
