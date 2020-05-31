@@ -280,8 +280,9 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
           if (this.childContent.mimeType === MimeType.COLLECTION) {
             const chapterParams: NavigationExtras = {
               state: {
-                courseName: content.name,
+                courseContent: content,
                 chapterData: this.childContent,
+                isFromDeeplink: true
               }
             };
 
