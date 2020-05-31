@@ -232,6 +232,7 @@
       @include padding(15px);
       background-color: #fff;
       @include margin(null, null, 2px, null);
+      border-bottom: 0.5px solid #979797;
     }
     .content {
       @include margin(8px);

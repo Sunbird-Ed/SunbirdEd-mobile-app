@@ -1,0 +1,52 @@
+<form [formGroup]="commonFormGroup">
+
+  <ng-container *ngFor = "let formElement of formList; let i=index">    
+    
+    <ng-container *ngIf="commonFormGroup.get(formElement.key); let formControl">
+      <ion-item class="input-item cf-input-primary" *ngIf="formElement.type === formInputTypes.INPUT"
+        [ngClass]="{'': (formControl.dirty || formControl.touched) && !formControl.errors ,'cf-input-error': (formControl.dirty || formControl.touched) && formControl.errors }"> 
+        <ion-label position="stacked" class="label-font align-text ion-text-capitalize">{{ formElement.templateOptions?.label | translate }}*</ion-label>
+        <ion-input formControlName="{{formElement.key}}" (input)="onInputChange()" placeholder="{{ formElement.templateOptions?.placeHolder | translate}}"></ion-input>
+        <ng-container *ngFor="let validation of formElement.validations">
+          <div class="cf-error" *ngIf="(validation.message && formControl.errors && formControl.errors[validation.type] && (formControl.dirty || formControl.touched))">
+            {{ validation.message | translate }}
+          </div>
+        </ng-container>
+      </ion-item>
+    </ng-container>
+
+    <ion-item class="input-item" appCustomIonSelect *ngIf="formElement.type === formInputTypes.SELECT">
+      <ion-label position="stacked" class="label-font align-text">{{ formElement.templateOptions?.label | translate }}*</ion-label>
+      <ion-select #boardSelect
+        formControlName="{{formElement.key}}"
+        [multiple]="formElement.templateOptions?.multiple"
+        [interfaceOptions]="fetchInterfaceOption(formElement.templateOptions?.label)"
+        [disabled]="!formElement.templateOptions?.options?.length || checkDisableCondition(formElement)"
+        placeholder="{{ formElement.templateOptions?.placeHolder | translate }}"
+        okText="{{'BTN_SUBMIT' | translate}}"
+        cancelText="{{'CANCEL' | translate}}"
+        (ionChange)="onInputChange($event)">
+        <ion-select-option *ngFor="let selectElement of formElement.templateOptions?.options" value="{{selectElement?.value}}">
+          {{selectElement?.label}}
+        </ion-select-option>
+      </ion-select>
+    </ion-item>
+
+    <div class="flex-container M16" *ngIf="formElement.type === formInputTypes.CHECKBOX">
+      <div>
+        <ion-checkbox formControlName="{{formElement.key}}" (ionChange)="onInputChange()"></ion-checkbox>
+      </div>
+      <ng-container *ngIf="formElement.templateOptions?.label">
+        <span>{{ formElement.templateOptions?.label | translate}}</span>
+      </ng-container>
+      <ng-container *ngIf="formElement.templateOptions?.labelHtml">
+        <div [innerHTML]="formElement.templateOptions?.labelHtml | translateHtml" (click)="handleClick($event)"></div>
+      </ng-container>
+    </div>
+
+    <div class="M16" *ngIf="formElement.type === formInputTypes.LABEL">
+      {{formElement.templateOptions?.label | translate}}
+    </div>
+  </ng-container>
+
+</form>

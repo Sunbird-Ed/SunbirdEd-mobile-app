@@ -190,10 +190,10 @@
     </div>
     <div class="bottom-block">
         <div class="trainings" *ngIf="trainingsCompleted?.length > 0">
-            <div class="bolder heading f16">
-                {{'COURSES' | translate}} ({{mappedTrainingCertificates?.length}})&lrm;
-            </div>
             <div class="content">
+                <div class="bolder heading f16">
+                    {{'COURSES' | translate}} ({{mappedTrainingCertificates?.length}})&lrm;
+                </div>
                 <div class="flex-nowrap"
                     *ngFor="let certificate of (mappedTrainingCertificates | slice : startLimit:trainingsLimit);">
                     <div class="training-1">
