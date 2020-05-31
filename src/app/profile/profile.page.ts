@@ -41,6 +41,7 @@ import { Observable } from 'rxjs';
 import { AndroidPermissionsService } from '@app/services';
 import { AndroidPermissionsStatus, AndroidPermission } from '@app/services/android-permissions/android-permission';
 import { AppVersion } from '@ionic-native/app-version/ngx';
+import {SbProgressLoader} from '@app/services/sb-progress-loader.service';
 
 @Component({
   selector: 'app-profile',
@@ -109,7 +110,8 @@ export class ProfilePage implements OnInit {
     private socialShare: SocialSharing,
     private headerService: AppHeaderService,
     private permissionService: AndroidPermissionsService,
-    private appVersion: AppVersion
+    private appVersion: AppVersion,
+    private sbProgressLoader: SbProgressLoader
   ) {
     const extrasState = this.router.getCurrentNavigation().extras.state;
     if (extrasState) {
@@ -180,6 +182,7 @@ export class ProfilePage implements OnInit {
             this.events.publish('refresh:profile');
             this.refresh = false;
             await loader.dismiss();
+            await this.sbProgressLoader.hide({id: 'login'});
             resolve();
           }, 500);
           // This method is used to handle trainings completed by user
