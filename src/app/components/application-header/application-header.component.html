@@ -91,7 +91,7 @@
   </ion-header>
   <ion-content>
 
-    <section *ngIf="isLoggedIn">
+    <section *ngIf="isLoggedIn && isRtl">
       <ng-container *ngIf="(managedProfileList$ | async); let managedProfileList">
         <section class="user-container">
           
@@ -204,7 +204,7 @@
   </ion-header>
   <ion-content>
 
-    <section *ngIf="isLoggedIn">
+    <section *ngIf="isLoggedIn && !isRtl">
       <ng-container *ngIf="(managedProfileList$ | async); let managedProfileList">
         <section class="user-container">
           
