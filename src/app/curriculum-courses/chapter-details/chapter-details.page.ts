@@ -357,7 +357,8 @@ export class ChapterDetailsPage implements OnInit, OnDestroy {
         content: this.courseContentData,
         batchDetails: this.batchDetails,
         pageName: PageId.CHAPTER_DETAILS,
-        chapter: this.chapter
+        chapter: this.chapter,
+        downloadIdentifiers: this.downloadIdentifiers
       },
     });
     await actionPopover.present();
