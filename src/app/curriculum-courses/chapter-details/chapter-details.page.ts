@@ -1,3 +1,4 @@
+import { share } from 'rxjs/operators';
 import { SbSharePopupComponent } from '@app/app/components/popups/sb-share-popup/sb-share-popup.component';
 
 
@@ -10,11 +11,15 @@ import { SbPopoverComponent } from '@app/app/components/popups/sb-popover/sb-pop
 import { PopoverController, Events } from '@ionic/angular';
 import { RouterLinks, PreferenceKey, EventTopics, MimeType, ShareItemType, BatchConstants } from '@app/app/app.constant';
 import { SharedPreferences, AuthService, Batch, TelemetryObject, ContentState, Content, Course,
-   CourseService, GetContentStateRequest, ContentStateResponse, CourseBatchStatus, CourseEnrollmentType, SortOrder } from 'sunbird-sdk';
+   CourseService, GetContentStateRequest, ContentStateResponse, CourseBatchStatus, CourseEnrollmentType, SortOrder, DownloadService, DownloadTracking, DownloadProgress, EventsBusEvent, DownloadEventType, EventsBusService, ContentImportRequest, ContentService, ContentImportResponse, ContentImportStatus, ContentEventType, ContentImportCompleted, ContentUpdate, ContentImport, Rollup } from 'sunbird-sdk';
 import { EnrollCourse } from '@app/app/enrolled-course-details-page/course.interface';
 import { DatePipe } from '@angular/common';
 import { ContentActionsComponent } from './../../components/content-actions/content-actions.component';
 import { PageId } from './../../../services/telemetry-constants';
+import { Observable, Subscription } from 'rxjs';
+import { ConfirmAlertComponent } from '@app/app/components';
+import { FileSizePipe } from '@app/pipes/file-size/file-size';
+import { ContentUtil } from '@app/util/content-util';
 
 @Component({
   selector: 'app-chapter-details',
@@ -45,14 +50,34 @@ export class ChapterDetailsPage implements OnInit, OnDestroy {
   viewedContents = [];
   chapterProgress = 0;
   courseStartDate;
+  // Contains identifier(s) of locally not available content(s)
+  downloadIdentifiers = new Set();
+  // Contains total size of locally not available content(s)
+  downloadSize = 0;
+  // Contains child content import / download progress
+  downloadProgress = 0;
+  public rollUpMap: { [key: string]: Rollup } = {};
+  identifier: string;
+  isDownloadStarted = false;
+  showCollapsedPopup = true;
+  showDownload: boolean;
+  private eventSubscription: Subscription;
+  queuedIdentifiers = [];
+  faultyIdentifiers = [];
+  currentCount = 0;
 
+
+  trackDownloads$: Observable<DownloadTracking>;
   private extrasData: any;
 
   constructor(
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
     @Inject('AUTH_SERVICE') public authService: AuthService,
     @Inject('COURSE_SERVICE') private courseService: CourseService,
-    private appHeaderService: AppHeaderService,
+    @Inject('DOWNLOAD_SERVICE') private downloadService: DownloadService,
+    @Inject('EVENTS_BUS_SERVICE') private eventsBusService: EventsBusService,
+    @Inject('CONTENT_SERVICE') private contentService: ContentService,
+    private headerService: AppHeaderService,
     private translate: TranslateService,
     private commonUtilService: CommonUtilService,
     private router: Router,
@@ -62,7 +87,8 @@ export class ChapterDetailsPage implements OnInit, OnDestroy {
     private localCourseService: LocalCourseService,
     private events: Events,
     private zone: NgZone,
-    private datePipe: DatePipe
+    private datePipe: DatePipe,
+    private fileSizePipe: FileSizePipe
   ) {
     // if ((!this.router.getCurrentNavigation() || !this.router.getCurrentNavigation().extras) && this.appGlobalService.preSignInData) {
     //   this.extrasData = this.appGlobalService.preSignInData;
@@ -83,15 +109,20 @@ export class ChapterDetailsPage implements OnInit, OnDestroy {
     this.contentStatusData = this.extrasData.contentStatusData;
     this.isFromDeeplink = this.extrasData.isFromDeeplink;
     this.courseContentData = this.courseContent.contentData;
+    this.identifier = this.chapter.identifier;
     console.log('extrasData', this.extrasData);
   }
 
   ngOnInit() {
+    this.trackDownloads$ = this.downloadService.trackDownloads(
+      { groupBy: { fieldPath: 'rollUp.l1', value: this.courseContentData.identifier } }).pipe(share());
   }
 
   async ionViewWillEnter() {
-    this.appHeaderService.showHeaderWithBackButton();
+    this.downloadIdentifiers = new Set();
+    this.headerService.showHeaderWithBackButton();
     this.subscribeUtilityEvents();
+    this.subscribeSdkEvent();
     await this.checkLoggedInOrGuestUser();
     this.childContents = [];
     if (this.isFromDeeplink) {
@@ -133,6 +164,14 @@ export class ChapterDetailsPage implements OnInit, OnDestroy {
         this.getContentState(true);
       }
       console.log('this.courseCardData', this.courseCardData);
+      this.getContentsSize(this.chapter.children);
+    }
+  }
+
+  ionViewWillLeave(): void {
+    this.events.publish('header:setzIndexToNormal');
+    if (this.eventSubscription) {
+      this.eventSubscription.unsubscribe();
     }
   }
 
@@ -320,7 +359,7 @@ export class ChapterDetailsPage implements OnInit, OnDestroy {
     await actionPopover.present();
     const { data } = await actionPopover.onDidDismiss();
     if (data && data.download) {
-      // this.showConfirmAlert();
+      this.showDownloadConfirmationAlert();
     } else if (data.share) {
       this.share();
     }
@@ -535,6 +574,251 @@ export class ChapterDetailsPage implements OnInit, OnDestroy {
         course: this.updatedCourseCardData
       }
     });
+  }
+
+  getContentsSize(data?) {
+    if (data) {
+      data.forEach((value) => {
+        if (value.contentData.size) {
+          this.downloadSize += Number(value.contentData.size);
+        }
+        if (value.children) {
+          this.getContentsSize(value.children);
+        }
+        if (value.isAvailableLocally === false) {
+          this.downloadIdentifiers.add(value.contentData.identifier);
+          this.rollUpMap[value.contentData.identifier] = ContentUtil.generateRollUp(value.hierarchyInfo, undefined);
+        }
+      });
+    }
+  }
+
+  async showDownloadConfirmationAlert() {
+    console.log('this.downloadIdentifiers', this.downloadIdentifiers);
+    if (this.commonUtilService.networkInfo.isNetworkAvailable) {
+      let contentTypeCount;
+      if (this.downloadIdentifiers.size) {
+        contentTypeCount = this.downloadIdentifiers.size;
+      } else {
+        contentTypeCount = '';
+      }
+      if (!this.isBatchNotStarted) {
+        this.downloadProgress = 0;
+      } else {
+        this.commonUtilService.showToast(this.commonUtilService.translateMessage('COURSE_WILL_BE_AVAILABLE',
+          this.datePipe.transform(this.courseStartDate, 'mediumDate')));
+      }
+
+      const popover = await this.popoverCtrl.create({
+        component: ConfirmAlertComponent,
+        componentProps: {
+          sbPopoverHeading: this.commonUtilService.translateMessage('DOWNLOAD'),
+          sbPopoverMainTitle: this.courseContentData.name,
+          isNotShowCloseIcon: true,
+          actionsButtons: [
+            {
+              btntext: this.commonUtilService.translateMessage('DOWNLOAD'),
+              btnClass: 'popover-color'
+            },
+          ],
+          icon: null,
+          metaInfo: this.commonUtilService.translateMessage('ITEMS', contentTypeCount)
+            + ' (' + this.fileSizePipe.transform(this.downloadSize, 2) + ')',
+        },
+        cssClass: 'sb-popover info',
+      });
+      await popover.present();
+      const response = await popover.onDidDismiss();
+      if (response && response.data) {
+        this.isDownloadStarted = true;
+        this.showCollapsedPopup = false;
+        // this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
+        //   'download-all-button-clicked',
+        //   Environment.HOME,
+        //   PageId.COURSE_DETAIL,
+        //   undefined,
+        //   undefined,
+        //   // todo
+        //   // this.objRollup,
+        //   // this.corRelationList
+        // );
+        this.events.publish('header:decreasezIndex');
+        this.importContent(this.downloadIdentifiers, true, true);
+        this.showDownload = true;
+      } else {
+        // Cancel Clicked Telemetry
+        // todo
+        // this.generateCancelDownloadTelemetry(this.contentDetail);
+      }
+    } else {
+      this.commonUtilService.showToast('ERROR_NO_INTERNET_MESSAGE');
+    }
+  }
+
+  getImportContentRequestBody(identifiers, isChild: boolean): Array<ContentImport> {
+    const requestParams = [];
+    identifiers.forEach((value) => {
+      requestParams.push({
+        isChildContent: isChild,
+        destinationFolder: cordova.file.externalDataDirectory,
+        contentId: value,
+        // correlationData: this.corRelationList !== undefined ? this.corRelationList : [],
+        correlationData:  [],
+        rollUp: this.rollUpMap[value]
+      });
+    });
+
+    return requestParams;
+  }
+
+  importContent(identifiers, isChild: boolean, isDownloadAllClicked?) {
+    const option: ContentImportRequest = {
+      contentImportArray: this.getImportContentRequestBody(identifiers, isChild),
+      contentStatusArray: ['Live'],
+      fields: ['appIcon', 'name', 'subject', 'size', 'gradeLevel']
+    };
+    console.log('ContentImportRequest', option);
+    this.contentService.importContent(option).toPromise()
+      .then((data: ContentImportResponse[]) => {
+        this.zone.run(() => {
+          if (data && data[0].status === ContentImportStatus.NOT_FOUND) {
+            this.headerService.showHeaderWithBackButton();
+          }
+          if (data && data.length && this.isDownloadStarted) {
+            data.forEach((value) => {
+              if (value.status === ContentImportStatus.ENQUEUED_FOR_DOWNLOAD) {
+                this.queuedIdentifiers.push(value.identifier);
+              } else if (value.status === ContentImportStatus.NOT_FOUND) {
+                this.faultyIdentifiers.push(value.identifier);
+              }
+            });
+
+            // if (isDownloadAllClicked) {
+            //   this.telemetryGeneratorService.generateDownloadAllClickTelemetry(
+            //     PageId.COURSE_DETAIL,
+            //     this.course,
+            //     this.queuedIdentifiers,
+            //     identifiers.length,
+            //     this.objRollup,
+            //     this.corRelationList
+            //   );
+            // }
+
+            if (this.queuedIdentifiers.length === 0) {
+              // this.restoreDownloadState();
+            }
+            if (this.faultyIdentifiers.length > 0) {
+              const stackTrace: any = {};
+              stackTrace.parentIdentifier = this.courseContentData.identifier;
+              stackTrace.faultyIdentifiers = this.faultyIdentifiers;
+              // this.telemetryGeneratorService.generateErrorTelemetry(Environment.HOME,
+              //   TelemetryErrorCode.ERR_DOWNLOAD_FAILED,
+              //   ErrorType.SYSTEM,
+              //   PageId.COURSE_DETAIL,
+              //   JSON.stringify(stackTrace),
+              // );
+              this.commonUtilService.showToast('UNABLE_TO_FETCH_CONTENT');
+            }
+          }
+        });
+      })
+      .catch((error) => {
+        this.zone.run(() => {
+          if (this.isDownloadStarted) {
+            // this.restoreDownloadState();
+          } else {
+          }
+          if (error && error.error === 'NETWORK_ERROR') {
+            this.commonUtilService.showToast('NEED_INTERNET_TO_CHANGE');
+          } else {
+            this.commonUtilService.showToast('UNABLE_TO_FETCH_CONTENT');
+          }
+        });
+      });
+  }
+
+  /**
+   * Subscribe Sunbird-SDK event to get content download progress
+   */
+  subscribeSdkEvent() {
+    this.eventSubscription = this.eventsBusService.events()
+      .subscribe((event: EventsBusEvent) => {
+        console.log('event--->', event);
+        this.zone.run(() => {
+          // Show download percentage
+          if (event.type === DownloadEventType.PROGRESS) {
+            const downloadEvent = event as DownloadProgress;
+            if (downloadEvent.payload.identifier === this.identifier) {
+              this.downloadProgress = downloadEvent.payload.progress === -1 ? 0 : downloadEvent.payload.progress;
+
+              if (this.downloadProgress === 100) {
+                this.getBatchDetails();
+                this.headerService.showHeaderWithBackButton();
+              }
+            }
+          }
+
+          // Get child content
+          if (event.payload && event.type === ContentEventType.IMPORT_COMPLETED) {
+            this.headerService.showHeaderWithBackButton();
+            const contentImportCompleted = event as ContentImportCompleted;
+            if (this.queuedIdentifiers.length && this.isDownloadStarted) {
+              if (this.queuedIdentifiers.includes(contentImportCompleted.payload.contentId)) {
+                this.currentCount++;
+              }
+
+              if (this.queuedIdentifiers.length === this.currentCount) {
+                this.isDownloadStarted = false;
+                this.currentCount = 0;
+                this.showDownload = false;
+                this.downloadIdentifiers = new Set();
+                this.queuedIdentifiers.length = 0;
+              }
+            } else {
+              this.courseContentData.isAvailableLocally = true;
+              // this.setContentDetails(this.identifier);
+            }
+          }
+
+          if (event.payload && event.type === ContentEventType.SERVER_CONTENT_DATA) {
+            // this.licenseDetails = event.payload.licenseDetails;
+            if (event.payload.size) {
+              this.courseContent.contentData.size = event.payload.size;
+            }
+          }
+
+          if (event.type === ContentEventType.IMPORT_PROGRESS) {
+            // const totalCountMsg = Math.floor((event.payload.currentCount / event.payload.totalCount) * 100) +
+            //   '% (' + event.payload.currentCount + ' / ' + event.payload.totalCount + ')';
+            // this.importProgressMessage = this.commonUtilService.translateMessage('EXTRACTING_CONTENT', totalCountMsg);
+
+            // if (event.payload.currentCount === event.payload.totalCount) {
+            //   let timer = 30;
+            //   const interval = setInterval(() => {
+            //     this.importProgressMessage = `Getting things ready in ${timer--}  seconds`;
+            //     if (timer === 0) {
+            //       this.importProgressMessage = 'Getting things ready';
+            //       clearInterval(interval);
+            //     }
+            //   }, 1000);
+            // }
+          }
+
+          // For content update available
+          const hierarchyInfo = this.courseCardData.hierarchyInfo ? this.courseCardData.hierarchyInfo : null;
+          const contentUpdateEvent = event as ContentUpdate;
+          if (contentUpdateEvent.payload && contentUpdateEvent.payload.contentId === this.courseContentData.identifier &&
+            contentUpdateEvent.type === ContentEventType.UPDATE
+            && hierarchyInfo === null) {
+            this.zone.run(() => {
+              this.headerService.hideHeader();
+              // this.telemetryGeneratorService.generateSpineLoadingTelemetry(this.content, false);
+              // this.importContent([this.identifier], false);
+            });
+          }
+
+        });
+      }) as any;
   }
 
 }
