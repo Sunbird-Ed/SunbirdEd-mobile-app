@@ -69,10 +69,10 @@ export class ContentActionsComponent {
     }
 
     this.contentId = (this.content && this.content.identifier) ? this.content.identifier : '';
-    this.backButtonFunc = this.platform.backButton.subscribeWithPriority(10, () => {
-      this.popOverCtrl.dismiss();
-      this.backButtonFunc.unsubscribe();
-    });
+    // this.backButtonFunc = this.platform.backButton.subscribeWithPriority(10, () => {
+    //   this.popOverCtrl.dismiss();
+    //   this.backButtonFunc.unsubscribe();
+    // });
     this.getUserId();
   }
 
