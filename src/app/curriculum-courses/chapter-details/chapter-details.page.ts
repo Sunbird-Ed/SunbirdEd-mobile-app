@@ -351,13 +351,14 @@ export class ChapterDetailsPage implements OnInit, OnDestroy {
     const actionPopover = await this.popoverCtrl.create({
       component: ContentActionsComponent,
       event,
-      cssClass: 'leave-training-popup',
+      cssClass: 'cd-leave-training-popup',
       showBackdrop: false,
       componentProps: {
         content: this.courseContentData,
         batchDetails: this.batchDetails,
         pageName: PageId.CHAPTER_DETAILS,
-        chapter: this.chapter
+        chapter: this.chapter,
+        downloadIdentifiers: this.downloadIdentifiers
       },
     });
     await actionPopover.present();
