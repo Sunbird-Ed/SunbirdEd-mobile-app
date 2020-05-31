@@ -234,8 +234,10 @@
       @include margin(null, null, 2px, null);
     }
     .content {
-      @include padding(15px);
+      @include margin(8px);
       background-color: #fff;
+      border: 0.5px solid #979797;
+      border-radius: 4px;
     }
   }
 
@@ -283,6 +285,8 @@
     display: flex;
     justify-content: space-between;
     flex-wrap: nowrap;
+    border-bottom: 0.5px solid #979797;
+    @include padding(null, 16px, null, 16px);
   }
 
   .margin-pull-up {
@@ -302,5 +306,21 @@
   .add-size{
     font-size: 24px;
     padding-right: 8px;
+  }
+
+  .enrolled-status-text {
+    font-family: "Noto Sans";
+    font-size: 12px;
+    font-weight: bold;
+  }
+
+  .ongoing-status-text{
+    @extend .enrolled-status-text;
+    color: #024F9D;
+  }
+
+  .completed-status-text{
+    @extend .enrolled-status-text;
+    color: #008840;
   }
 }

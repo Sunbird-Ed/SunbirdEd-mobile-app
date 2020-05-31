@@ -381,7 +381,7 @@ export class ProfilePage implements OnInit {
     this.trainingsCompleted = [];
     this.courseService.getEnrolledCourses(option).toPromise()
       .then((res: Course[]) => {
-        this.trainingsCompleted = res.filter((course) => course.status === 2);
+        this.trainingsCompleted = res.filter((course) => course.status === (2 || 1));
         this.mappedTrainingCertificates = this.mapTrainingsToCertificates(this.trainingsCompleted);
       })
       .catch((error: any) => {
@@ -400,7 +400,8 @@ export class ProfilePage implements OnInit {
         courseName: course.courseName,
         dateTime: course.dateTime,
         courseId: course.courseId,
-        certificate: undefined
+        certificate: undefined,
+        status: course.status
       };
       if (course.certificates && course.certificates.length) {
         oneCert.certificate = course.certificates[0];
@@ -798,34 +799,6 @@ export class ProfilePage implements OnInit {
     });
 
     await popover.present();
-  }
-
-  navigateToEditSubProfile() {
-    if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
-      this.commonUtilService.showToast('NEED_INTERNET_TO_CHANGE');
-      return;
-    }
-
-    const navigationExtras: NavigationExtras = {
-      state: {
-        profile: this.profile
-      }
-    };
-    this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.SUB_PROFILE_EDIT}`], navigationExtras);
-  }
-
-  async showSwitchUserPopup() {
-    if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
-      this.commonUtilService.showToast('NEED_INTERNET_TO_CHANGE');
-      return;
-    }
-
-    const navigationExtras: NavigationExtras = {
-      state: {
-        profile: this.profile
-      }
-    };
-    this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.MANAGE_USER_PROFILES}`], navigationExtras);
   }
 
 }

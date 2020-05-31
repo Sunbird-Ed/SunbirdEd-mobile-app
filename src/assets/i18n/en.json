@@ -585,7 +585,6 @@
   "TO_DO": "To Do",
   "TO_EARN_CERTIFICATE": "Complete training by {{%s}} to earn a certificate",
   "TRAINING": "Training",
-  "TRAININGS_ATTENDED": "Training(s) Attended",
   "TRAININGS_ONLY_REGISTERED_USERS": "Trainings are only for registered users",
   "TRAINING_COMPLETED_SUCCESSFULLY": "You have successfully completed this training",
   "TRAINING_DETAILS": "Training Details",
@@ -711,5 +710,9 @@
   "USE_APP_AS": "Use {{%s}} as",
   "MORE_COUNT": "More ({{%s}})",
   "SUCCESSFULLY_ADDED_USER": "Successfully added \"{{%s}}\"",
-  "SUCCESSFULLY_SWITCHED_USER": "Now using app as \"{{%s}}\""
+  "SUCCESSFULLY_SWITCHED_USER": "Now using {{%app}} as \"{{%user}}\"",
+  "UPDATE_YOUR_PREFERENCE_FROM_PROFILE":"You can update your preferences from the Profile page",
+  "ONGOING": "Ongoing",
+  "COMPLETED": "Completed",
+  "GO_TO_PROFILE": "Go to profile"
 }

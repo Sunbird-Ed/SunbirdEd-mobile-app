@@ -520,25 +520,6 @@ export class CommonUtilService {
         });
     }
 
-    public async showSwitchUserManagedProfileTost(message: string, userName: string) {
-        const toast = await this.toastController.create({
-            message: this.translateMessage(message, userName),
-            cssClass: 'permissionSettingToast',
-            showCloseButton: true,
-            closeButtonText: 'GO TO PROFILE',
-            position: 'bottom',
-            duration: 3000
-        });
-
-        toast.present();
-
-        toast.onWillDismiss().then((res) => {
-            if (res.role === 'cancel') {
-                this.router.navigate([`/${RouterLinks.PROFILE_TAB}`]);
-            }
-        });
-    }
-
     public async buildPermissionPopover(handler: (selectedButton: string) => void,
         appName: string, whichPermission: string,
         permissionDescription: string, pageId, isOnboardingCompleted): Promise<HTMLIonPopoverElement> {

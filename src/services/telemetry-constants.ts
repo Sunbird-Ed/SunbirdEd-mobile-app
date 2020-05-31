@@ -133,7 +133,9 @@ export enum PageId {
     PROFILE_SETTINGS = 'profile-settings',
     POPUP_CATEGORY = 'popup-category',
     APP_PERMISSION_POPUP = 'app-permission-popup',
-    STORAGE_SETTINGS = 'storage-settings'
+    STORAGE_SETTINGS = 'storage-settings',
+    CREATE_MANAGED_USER = 'create-managed-user',
+    MANAGE_USERS = 'manage-users'
 }
 export enum LogType {
     NOTIFICATION = 'notification'
@@ -204,7 +206,9 @@ export enum InteractType {
     SELECT_CATEGORY = 'select-category',
     SELECT_ATTRIBUTE = 'select-attribute',
     SELECT_SUBMIT = 'select-submit',
-    SELECT_CANCEL = 'select-cancel'
+    SELECT_CANCEL = 'select-cancel',
+    SELECT_ADD = 'select-add',
+    SELECT_MORE = 'select-more'
 }
 
 
@@ -453,7 +457,11 @@ export enum ID {
     BACKDROP_CLICKED = 'backdrop-clicked',
     CANCEL_CLICKED = 'cancel-clicked',
     NOTIFICATION_CLICKED = 'notification-clicked',
-    SEE_MORE_CONTENT_BUTTON_CLICKED = 'see-more-content-button-clicked'
+    SEE_MORE_CONTENT_BUTTON_CLICKED = 'see-more-content-button-clicked',
+    BTN_CANCEL = 'btn-cancel',
+    BTN_ADD = 'btn-add',
+    BTN_SWITCH = 'btn-switch',
+    BTN_MORE = 'btn-more'
 }
 
 export enum ActionButtonType {
@@ -483,7 +491,11 @@ export enum CorReleationDataType {
     BOARD_COUNT = 'CountBoard',
     MEDIUM_COUNT = 'CountMedium',
     CLASS_COUNT = 'CountClass',
-    FIRST_TIME_USER = 'FirstTimeUser'
+    FIRST_TIME_USER = 'FirstTimeUser',
+    NAME = 'Name',
+    TNC_VERSION = 'TncVersion',
+    LIUA = 'Liua',
+    SWITCHED_USER = 'Switched-user',
 }
 
 export enum AuditProps {

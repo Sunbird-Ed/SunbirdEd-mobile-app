@@ -46,6 +46,7 @@ import {ImportPopoverComponent} from './popups/import-popover/import-popover.com
 import {SbProgressLoaderPage} from '@app/app/components/popups/sb-progress-loader/sb-progress-loader.page';
 import { CollectionActionsComponent } from './collection-acions/collection-acions.component';
 import { CommonConsumptionModule } from '@project-sunbird/common-consumption';
+import { ToastNavigationComponent } from './popups/toast-navigation/toast-navigation.component';
 
 @NgModule({
   declarations: [
@@ -84,7 +85,8 @@ import { CommonConsumptionModule } from '@project-sunbird/common-consumption';
     SbAppSharePopupComponent,
     ImportPopoverComponent,
     SbProgressLoaderPage,
-    CollectionActionsComponent
+    CollectionActionsComponent,
+    ToastNavigationComponent
   ],
   imports: [
     CommonModule,
@@ -122,7 +124,8 @@ import { CommonConsumptionModule } from '@project-sunbird/common-consumption';
     SbAppSharePopupComponent,
     ImportPopoverComponent,
     SbProgressLoaderPage,
-    CollectionActionsComponent
+    CollectionActionsComponent,
+    ToastNavigationComponent
   ],
   exports: [
     ApplicationHeaderComponent,
@@ -159,7 +162,8 @@ import { CommonConsumptionModule } from '@project-sunbird/common-consumption';
     SbAppSharePopupComponent,
     ImportPopoverComponent,
     SbProgressLoaderPage,
-    CollectionActionsComponent
+    CollectionActionsComponent,
+    ToastNavigationComponent
   ],
   providers: [FileSizePipe, FilterPipe,  Keyboard]
 })

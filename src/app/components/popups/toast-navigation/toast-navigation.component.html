@@ -1,0 +1,14 @@
+<ion-content class="toast-container">
+  <div *ngIf="message">
+    <div>
+      {{message}}
+    </div>
+    <div *ngIf="description">
+      {{description}}
+    </div>
+    <div>
+      <button [ngClass]="btn.btnClass" *ngFor="let btn of actionsButtons"
+        (click)='onSuccessClick()'> {{btn.btntext }}</button>
+    </div>
+  </div>
+</ion-content>
