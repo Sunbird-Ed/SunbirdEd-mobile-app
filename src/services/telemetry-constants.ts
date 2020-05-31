@@ -496,7 +496,7 @@ export enum CorReleationDataType {
     NAME = 'Name',
     TNC_VERSION = 'TncVersion',
     LIUA = 'Liua',
-    SWITCHED_USER = 'Switched-user',
+    SWITCHED_USER = 'SwitchedUser',
 }
 
 export enum AuditProps {

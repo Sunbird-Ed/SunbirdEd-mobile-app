@@ -12,7 +12,7 @@ export class TranslateHtmlPipe implements PipeTransform {
   transform(value: { contents: string, values: string[] }): string {
 
     return Object.keys(value.values).reduce((acc, val) => {
-      return acc.replace(val, this.commonUtilService.translateMessage(value.values[val]));
+      return acc.replace(val, value.values[val] ? this.commonUtilService.translateMessage(value.values[val]) : '');
     }, value.contents);
 
   }

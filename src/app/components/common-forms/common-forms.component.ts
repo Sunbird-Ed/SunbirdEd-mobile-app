@@ -61,7 +61,7 @@ export class CommonFormsComponent implements OnInit {
     this.formList.forEach((element: any) => {
       if (element.type !== this.formInputTypes.LABEL) {
         const formValueList = this.prepareFormValidationData(element);
-        formGroupData[element.key] = formValueList;
+        formGroupData[element.code] = formValueList;
       }
     });
 
@@ -124,25 +124,22 @@ export class CommonFormsComponent implements OnInit {
   onInputChange(event) {
     setTimeout(() => {
       this.onFormDataChange.emit(this.commonFormGroup);
-      if (event) {
-        
-      }
     }, 0);
   }
 
   initilizeInputData(data) {
-    this.commonFormGroup.patchValue({[data.key]: data.value});
+    this.commonFormGroup.patchValue({[data.code]: data.value});
   }
 
   initilizeFormData(data) {
     for (let index = 0; index < this.formList.length; index++) {
       const formDetails = this.formList[index];
-      if (formDetails.key === data.key && formDetails.templateOptions && formDetails.templateOptions.link &&
+      if (formDetails.code === data.code && formDetails.templateOptions && formDetails.templateOptions.link &&
         formDetails.templateOptions.link.label) {
         this.setFormData(index, data.path, data.value);
       }
 
-      if (formDetails.key === data.key && formDetails.templateOptions && formDetails.templateOptions.options) {
+      if (formDetails.code === data.code && formDetails.templateOptions && formDetails.templateOptions.options) {
         this.setFormData(index, data.path, data.value);
       }
     }
@@ -162,11 +159,6 @@ export class CommonFormsComponent implements OnInit {
     }, this.formList[index]);
     console.log(this.formList[index]);
 }
-
-  checkFieldValidation(key, validation) {
-    return validation.message && this.commonFormGroup.get(key).hasError(validation.type) &&
-      (this.commonFormGroup.get(key).dirty || this.commonFormGroup.get(key).touched);
-  }
 
   showInAppBrowser(url) {
     this.commonUtilService.openLink(url);
