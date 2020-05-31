@@ -133,7 +133,8 @@ export enum PageId {
     PROFILE_SETTINGS = 'profile-settings',
     POPUP_CATEGORY = 'popup-category',
     APP_PERMISSION_POPUP = 'app-permission-popup',
-    STORAGE_SETTINGS = 'storage-settings'
+    STORAGE_SETTINGS = 'storage-settings',
+    CHAPTER_DETAILS = 'chapter-details'
 }
 export enum LogType {
     NOTIFICATION = 'notification'

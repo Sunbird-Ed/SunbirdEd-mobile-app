@@ -96,6 +96,7 @@ export class CurriculumCourseDetailsPage implements OnInit {
     } else {
       this.extrasData = this.router.getCurrentNavigation().extras.state;
     }
+    this.appGlobalService.preSignInData = null;
     this.course = this.extrasData.curriculumCourse;
     this.initCourseData(this.course);
   }

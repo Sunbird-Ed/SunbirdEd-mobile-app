@@ -1125,6 +1125,10 @@ sb-course-cards-hlist > .layout-course > .sb--scrolling-wrapper-flexbox {
   padding-left: 8px;
 }
 
+sb-course-cards-hlist > .layout-course > .sb--scrolling-wrapper-flexbox > .sb--card--container:last-child {
+  padding-right: 8px;
+}
+
 app-resources{
 
   .fixed-container{
