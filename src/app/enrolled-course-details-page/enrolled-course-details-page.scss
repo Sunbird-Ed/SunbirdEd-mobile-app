@@ -346,6 +346,7 @@
     color:map-get($colors , danger);
   }
   .sb-course-complete-container {
+    white-space: nowrap;
     width: 100%;
     background-color: #BFE1CF;
     @include padding(8px);

@@ -10,6 +10,7 @@ import { CommonConsumptionModule } from '@project-sunbird/common-consumption';
 import { TranslateModule } from '@ngx-translate/core';
 import { ComponentsModule } from '@app/app/components/components.module';
 import { ContentActionsComponent } from '../../components';
+import { PipesModule } from '@app/pipes/pipes.module';
 
 const routes: Routes = [
   {
@@ -25,6 +26,7 @@ const routes: Routes = [
     IonicModule,
     CommonConsumptionModule,
     ComponentsModule,
+    PipesModule,
     TranslateModule.forChild(),
     RouterModule.forChild(routes),
   ],

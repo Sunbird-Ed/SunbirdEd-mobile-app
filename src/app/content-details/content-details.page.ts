@@ -10,7 +10,6 @@ import {
 } from '@ionic/angular';
 import { Subscription, Observable } from 'rxjs';
 import {
-  AuthService,
   Content,
   ContentDetailRequest,
   ContentEventType,
@@ -24,10 +23,8 @@ import {
   EventsBusEvent,
   EventsBusService,
   GetAllProfileRequest,
-  PlayerService,
   ProfileService,
   Rollup,
-  SharedPreferences,
   StorageService,
   TelemetryObject,
   Course,
@@ -45,7 +42,6 @@ import {
 import { CourseUtilService } from '@app/services/course-util.service';
 import { UtilityService } from '@app/services/utility-service';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
-import { ContentShareHandlerService } from '@app/services/content/content-share-handler.service';
 import { ContentInfo } from '@app/services/content/content-info';
 import { CommonUtilService } from '@app/services/common-util.service';
 import { DialogPopupComponent } from '@app/app/components/popups/dialog-popup/dialog-popup.component';
@@ -179,7 +175,6 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
     private network: Network,
     private fileSizePipe: FileSizePipe,
     private headerService: AppHeaderService,
-    private contentShareHandler: ContentShareHandlerService,
     private appVersion: AppVersion,
     private location: Location,
     private router: Router,
@@ -1081,7 +1076,6 @@ showDeletePopup() {
    * Shares content to external devices
    */
   async share() {
-    // this.contentShareHandler.shareContent(this.content, this.corRelationList, this.objRollup);
     // when content size and sizeOn device is undefined
     if (!this.content.contentData.size) {
       this.content.contentData.size = this.contentSize;

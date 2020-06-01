@@ -28,6 +28,7 @@ export class ContentActionsComponent {
 
   content: any;
   chapter: any;
+  downloadIdentifiers: any;
   data: any;
   isChild = false;
   contentId: string;
@@ -60,19 +61,20 @@ export class ContentActionsComponent {
     this.objRollup = this.navParams.get('objRollup');
     this.corRelationList = this.navParams.get('corRelationList');
     this.chapter = this.navParams.get('chapter');
+    this.downloadIdentifiers = this.navParams.get('downloadIdentifiers');
 
     if (this.navParams.get('isChild')) {
       this.isChild = true;
     }
-    if (this.pageName === PageId.CHAPTER_DETAILS){
+    if (this.pageName === PageId.CHAPTER_DETAILS) {
       this.showChapterActions = true;
     }
 
     this.contentId = (this.content && this.content.identifier) ? this.content.identifier : '';
-    this.backButtonFunc = this.platform.backButton.subscribeWithPriority(10, () => {
-      this.popOverCtrl.dismiss();
-      this.backButtonFunc.unsubscribe();
-    });
+    // this.backButtonFunc = this.platform.backButton.subscribeWithPriority(10, () => {
+    //   this.popOverCtrl.dismiss();
+    //   this.backButtonFunc.unsubscribe();
+    // });
     this.getUserId();
   }
 

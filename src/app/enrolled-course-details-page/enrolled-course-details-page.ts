@@ -64,7 +64,6 @@ import {
 } from '../../services/telemetry-constants';
 import { ProfileConstants, ContentType, EventTopics, MimeType, PreferenceKey, RouterLinks, ShareItemType } from '../app.constant';
 import { BatchConstants } from '../app.constant';
-import { ContentShareHandlerService } from '../../services/content/content-share-handler.service';
 import { SbGenericPopoverComponent } from '../components/popups/sb-generic-popover/sb-generic-popover.component';
 import { ContentActionsComponent, ContentRatingAlertComponent, ConfirmAlertComponent } from '../components';
 import { Location } from '@angular/common';
@@ -251,7 +250,6 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
     private datePipe: DatePipe,
     private utilityService: UtilityService,
     private headerService: AppHeaderService,
-    private contentShareHandler: ContentShareHandlerService,
     private location: Location,
     private router: Router,
     private contentDeleteHandler: ContentDeleteHandler,
@@ -1645,7 +1643,6 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
   }
 
   async share() {
-    // this.contentShareHandler.shareContent(this.content, this.corRelationList);
     const popover = await this.popoverCtrl.create({
       component: SbSharePopupComponent,
       componentProps: {
