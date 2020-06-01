@@ -1780,6 +1780,5 @@ describe('collectionDetailEtbPage', () => {
             expect(mockEventBusService.events).toHaveBeenCalled();
             expect(mockzone.run).toHaveBeenCalled();
         });
-
     });
 });
