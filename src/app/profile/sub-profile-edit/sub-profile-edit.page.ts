@@ -7,6 +7,8 @@ import {
   ProfileService,
   SharedPreferences,
   CorrelationData,
+  FormService,
+  FormRequest,
 } from 'sunbird-sdk';
 import { CommonUtilService } from '@app/services/common-util.service';
 import { AppGlobalService } from '@app/services/app-global-service.service';
@@ -36,44 +38,12 @@ export class SubProfileEditPage {
 
   @ViewChild('commonForms') commonForms: CommonFormsComponent;
 
-  formApiList: any = [
-    {
-      key: 'name',
-      type: 'input',
-      templateOptions: {
-        label: 'FULL_NAME',
-        placeholder: 'ENTER_USER_NAME'
-      },
-      validations: [
-        { type: 'required', value: true, message: 'NAME_IS_REQUIRED' },
-      ]
-    }, {
-      key: 'updatePreference',
-      type: 'label',
-      templateOptions: {
-        label: 'PREFERENCES_CAN_BE_UPDATED'
-      },
-    }, {
-      key: 'tnc',
-      type: 'checkbox',
-      templateOptions: {
-        labelHtml: {
-          contents: `<span> $0 <a href=$url><u> $appName $1 </u></a></span>`,
-          values: {
-            $0: 'I_UNDERSTAND_AND_ACCEPT',
-            $1: 'TERMS_OF_USE'
-          }
-        },
-      },
-      validations: [
-        { type: 'required', value: true, message: '' }
-      ]
-    }
-  ];
+  managedUserFormList: any = [];
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     @Inject('SHARED_PREFERENCES') private sharedPreferences: SharedPreferences,
+    @Inject('FORM_SERVICE') private formService: FormService,
     private commonUtilService: CommonUtilService,
     private appGlobalService: AppGlobalService,
     private headerService: AppHeaderService,
@@ -112,16 +82,35 @@ export class SubProfileEditPage {
   }
 
   ionViewDidEnter() {
-    this.initializeFormData();
+    this.getCreateManagedUserFormApi();
+  }
+
+  getCreateManagedUserFormApi() {
+    const req: FormRequest = {
+      type: 'user',
+      subType: 'manageduser',
+      action: 'create'
+    };
+    this.formService.getForm(req).toPromise()
+    .then((res: any) => {
+        const data = res.form.data.fields;
+        if (data.length) {
+          this.managedUserFormList = data;
+          this.initializeFormData();
+          console.log('this.managedUserFormList', this.managedUserFormList);
+        }
+    }).catch((error: any) => {
+      console.log(error);
+    });
   }
 
   initializeFormData() {
-    for (let index = 0; index < this.formApiList.length; index++) {
-      const formDetails: any = this.formApiList[index];
-      if (formDetails.key === 'tnc' && formDetails.templateOptions && formDetails.templateOptions.labelHtml &&
+    for (let index = 0; index < this.managedUserFormList.length; index++) {
+      const formDetails: any = this.managedUserFormList[index];
+      if (formDetails.code === 'tnc' && formDetails.templateOptions && formDetails.templateOptions.labelHtml &&
         formDetails.templateOptions.labelHtml.contents) {
           formDetails.templateOptions.labelHtml.values['$url'] = this.profile.serverProfile.tncLatestVersionUrl;
-          formDetails.templateOptions.labelHtml.values['$appName'] = this.appName;
+          formDetails.templateOptions.labelHtml.values['$appName'] = this.appName + ' ';
       }
     }
     this.formInitilized = true;
@@ -147,7 +136,7 @@ export class SubProfileEditPage {
     const cData: Array<CorrelationData> = [
       { id: this.formValue.name, type: CorReleationDataType.NAME },
       { id: this.profile.serverProfile.tncLatestVersion || '', type: CorReleationDataType.TNC_VERSION },
-      { id: this.profile.serverProfile['managedBy'] || this.profile.serverProfile.userId || '', type: CorReleationDataType.LIUA }
+      { id: this.profile.serverProfile['managedBy'] || this.profile.uid || '', type: CorReleationDataType.LIUA }
     ];
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.SELECT_ADD,
@@ -165,7 +154,7 @@ export class SubProfileEditPage {
       await loader.present();
       const userDetails: AddManagedProfileRequest = {
         firstName: this.formValue.name,
-        managedBy: this.profile.uid,
+        managedBy: this.profile.serverProfile['managedBy'] || this.profile.uid,
         framework: this.profile.serverProfile['framework'] || undefined,
         locationIds: this.profile.serverProfile['locationIds'] ||
           (this.profile.serverProfile['userLocations'] && this.profile.serverProfile['userLocations'].map(i => i.id)) || undefined,
