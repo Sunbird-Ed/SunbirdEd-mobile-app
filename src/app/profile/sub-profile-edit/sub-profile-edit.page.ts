@@ -1,598 +1,217 @@
 
-import { tap } from 'rxjs/operators';
-import { Subscription, combineLatest, Observable } from 'rxjs';
-import { Component, Inject, ViewChild, OnDestroy, OnInit } from '@angular/core';
-import { IonSelect, Platform, AlertController } from '@ionic/angular';
-import { FormBuilder, FormGroup, FormControl } from '@angular/forms';
-import { TranslateService } from '@ngx-translate/core';
+import { Subscription } from 'rxjs';
+import { Component, Inject, ViewChild } from '@angular/core';
+import { Platform } from '@ionic/angular';
 import {
-  FrameworkService,
-  FrameworkUtilService,
-  GetSuggestedFrameworksRequest,
-  GetFrameworkCategoryTermsRequest,
-  Framework,
-  FrameworkCategoryCodesGroup,
   Profile,
   ProfileService,
-  CachedItemRequestSourceFrom,
-  Channel,
-  FrameworkCategoryCode,
-  LocationSearchResult,
   SharedPreferences,
-  LocationSearchCriteria,
-  ServerProfile
+  CorrelationData,
+  FormService,
+  FormRequest,
 } from 'sunbird-sdk';
 import { CommonUtilService } from '@app/services/common-util.service';
 import { AppGlobalService } from '@app/services/app-global-service.service';
 import { AppHeaderService } from '@app/services/app-header.service';
-import { Router } from '@angular/router';
 import { Location } from '@angular/common';
-import { Location as loc, PreferenceKey, ProfileConstants } from '@app/app/app.constant';
+import { AddManagedProfileRequest } from '@project-sunbird/sunbird-sdk/profile/def/add-managed-profile-request';
+import { CommonFormsComponent } from '@app/app/components/common-forms/common-forms.component';
+import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
+import { Environment, InteractType, ID, PageId, CorReleationDataType, ImpressionType } from '@app/services/telemetry-constants';
 
 @Component({
   selector: 'app-sub-profile-edit',
   templateUrl: './sub-profile-edit.page.html',
   styleUrls: ['./sub-profile-edit.page.scss'],
 })
-export class SubProfileEditPage implements OnInit, OnDestroy {
+export class SubProfileEditPage {
 
-  @ViewChild('boardSelect') boardSelect: IonSelect;
-  @ViewChild('mediumSelect') mediumSelect: IonSelect;
-  @ViewChild('gradeSelect') gradeSelect: IonSelect;
-  @ViewChild('stateSelect') stateSelect: IonSelect;
-  @ViewChild('districtSelect') districtSelect: IonSelect;
+  private profile: Profile;
+  private appName = '';
+  private formValue: any;
+  private backButtonFunc: Subscription;
+  private headerObservable: any;
 
-  private framework: Framework;
-  private formControlSubscriptions: Subscription;
+  public isFormValid = false;
 
-  public syllabusList: { name: string, code: string }[] = [];
-  public mediumList: { name: string, code: string }[] = [];
-  public gradeList: { name: string, code: string }[] = [];
-  public boardList: { name: string, code: string }[] = [];
-  public stateList: LocationSearchResult[] = [];
-  public districtList: LocationSearchResult[] = [];
+  formInitilized = false;
 
-  disableSubmitButton = false;
+  @ViewChild('commonForms') commonForms: CommonFormsComponent;
 
-  profile: Profile;
-  subProfileEditForm: FormGroup;
-  frameworkId: string;
-  categories = [];
-  btnColor = '#8FC4FF';
-  showOnlyMandatoryFields = true;
-  editData = true;
-  loader: any;
-  headerConfig = {
-    showHeader: false,
-    showBurgerMenu: false,
-    actionButtons: []
-  };
-
-  backButtonFunc: Subscription;
-  hasFilledLocation = false;
-
-  /* Custom styles for the select box popup */
-  boardOptions = {
-    header: this.commonUtilService.translateMessage('BOARD').toLocaleUpperCase(),
-    cssClass: 'select-box',
-    animated: false
-  };
-  mediumOptions = {
-    header: this.commonUtilService.translateMessage('MEDIUM').toLocaleUpperCase(),
-    cssClass: 'select-box',
-    animated: false
-  };
-  classOptions = {
-    header: this.commonUtilService.translateMessage('CLASS').toLocaleUpperCase(),
-    cssClass: 'select-box',
-    animated: false
-  };
-  stateOptions = {
-    header: this.commonUtilService.translateMessage('STATE').toLocaleUpperCase(),
-    cssClass: 'select-box',
-    animated: false
-  };
-  districtOptions = {
-    header: this.commonUtilService.translateMessage('DISTRICT').toLocaleUpperCase(),
-    cssClass: 'select-box',
-    animated: false
-  };
-
-  isBoardAvailable = true;
-  availableState: string;
-  availableDistrict: string;
-  appName = '';
-  private userProfileDetails: ServerProfile;
-
-  get syllabusControl(): FormControl {
-    return this.subProfileEditForm.get('syllabus') as FormControl;
-  }
-
-  get boardControl(): FormControl {
-    return this.subProfileEditForm.get('boards') as FormControl;
-  }
-
-  get mediumControl(): FormControl {
-    return this.subProfileEditForm.get('medium') as FormControl;
-  }
-
-  get gradeControl(): FormControl {
-    return this.subProfileEditForm.get('grades') as FormControl;
-  }
-
-  get stateControl(): FormControl {
-    return this.subProfileEditForm.get('state') as FormControl;
-  }
-
-  get districtControl(): FormControl {
-    return this.subProfileEditForm.get('district') as FormControl;
-  }
-
-  errorMessages = {
-    userName: {
-      show: false,
-      message: this.commonUtilService.translateMessage('NAME_IS_REQUIRED')
-    }
-  };
-
-  selectedText = {
-    medium: '',
-    grade: '',
-    state: '',
-    district: ''
-  };
+  managedUserFormList: any = [];
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
-    @Inject('FRAMEWORK_SERVICE') private frameworkService: FrameworkService,
-    @Inject('FRAMEWORK_UTIL_SERVICE') private frameworkUtilService: FrameworkUtilService,
     @Inject('SHARED_PREFERENCES') private sharedPreferences: SharedPreferences,
+    @Inject('FORM_SERVICE') private formService: FormService,
     private commonUtilService: CommonUtilService,
-    private fb: FormBuilder,
-    private translate: TranslateService,
     private appGlobalService: AppGlobalService,
     private headerService: AppHeaderService,
-    private router: Router,
     private location: Location,
     private platform: Platform,
-    private alertCtrl: AlertController
+    private telemetryGeneratorService: TelemetryGeneratorService,
   ) {
-    this.appGlobalService.closeSigninOnboardingLoader();
     this.profile = this.appGlobalService.getCurrentUser();
-    const extrasState = this.router.getCurrentNavigation().extras.state;
-    if (extrasState && extrasState.showOnlyMandatoryFields) {
-      this.hasFilledLocation = extrasState.hasFilledLocation;
-      this.showOnlyMandatoryFields = extrasState.showOnlyMandatoryFields;
-      if (extrasState.profile) {
-        this.profile = extrasState.profile;
-      }
-    } else {
-      this.showOnlyMandatoryFields = false;
-    }
-    this.initializeForm();
 
     this.sharedPreferences.getString('app_name').toPromise().then(value => {
       this.appName = value;
     });
   }
 
-  ngOnInit() {
-    this.formControlSubscriptions = combineLatest(
-      this.onSyllabusChange(),
-      this.onMediumChange(),
-      this.onGradeChange(),
-      this.onStateChange()
-    ).subscribe();
-
-    this.getProfileDetails();
-  }
-
-  ngOnDestroy() {
-    this.formControlSubscriptions.unsubscribe();
-  }
-
   ionViewWillEnter() {
-    this.initializeLoader();
-    this.checkLocationAvailability();
-    if (this.appGlobalService.isUserLoggedIn()) {
-      this.getLoggedInFrameworkCategory();
-    } else {
-      this.getSyllabusDetails();
-    }
-    this.disableSubmitButton = false;
     this.headerService.showHeaderWithBackButton();
-
     this.handleBackButtonEvents();
+    this.headerObservable = this.headerService.headerEventEmitted$.subscribe(eventName => {
+      this.handleHeaderEvents(eventName);
+    });
+    this.telemetryGeneratorService.generateImpressionTelemetry(
+      ImpressionType.VIEW,
+      '',
+      PageId.CREATE_MANAGED_USER,
+      Environment.USER,
+    );
   }
 
   ionViewWillLeave() {
+    if (this.headerObservable) {
+      this.headerObservable.unsubscribe();
+    }
     if (this.backButtonFunc) {
       this.backButtonFunc.unsubscribe();
     }
   }
 
-  async getProfileDetails() {
-    this.userProfileDetails = (await this.profileService.getActiveSessionProfile(
-      { requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise()).serverProfile;
+  ionViewDidEnter() {
+    this.getCreateManagedUserFormApi();
+  }
+
+  getCreateManagedUserFormApi() {
+    const req: FormRequest = {
+      type: 'user',
+      subType: 'manageduser',
+      action: 'create'
+    };
+    this.formService.getForm(req).toPromise()
+    .then((res: any) => {
+        const data = res.form.data.fields;
+        if (data.length) {
+          this.managedUserFormList = data;
+          this.initializeFormData();
+          console.log('this.managedUserFormList', this.managedUserFormList);
+        }
+    }).catch((error: any) => {
+      console.log(error);
+    });
+  }
+
+  initializeFormData() {
+    for (let index = 0; index < this.managedUserFormList.length; index++) {
+      const formDetails: any = this.managedUserFormList[index];
+      if (formDetails.code === 'tnc' && formDetails.templateOptions && formDetails.templateOptions.labelHtml &&
+        formDetails.templateOptions.labelHtml.contents) {
+          formDetails.templateOptions.labelHtml.values['$url'] = this.profile.serverProfile.tncLatestVersionUrl;
+          formDetails.templateOptions.labelHtml.values['$appName'] = this.appName + ' ';
+      }
+    }
+    this.formInitilized = true;
   }
 
   handleBackButtonEvents() {
     this.backButtonFunc = this.platform.backButton.subscribeWithPriority(0, async () => {
-      const activePortal = await this.alertCtrl.getTop();
-      if (activePortal) {
-        activePortal.dismiss();
-      } else {
-        this.location.back();
-      }
+      this.telemetryGeneratorService.generateBackClickedTelemetry(
+        PageId.CREATE_MANAGED_USER,
+        Environment.USER,
+        false
+      );
+      this.location.back();
     });
   }
 
-  initializeForm() {
-    if (this.profile.board && this.profile.board.length > 1) {
-      this.profile.board.splice(1, this.profile.board.length);
-    }
-    this.subProfileEditForm = this.fb.group({
-      userName: '',
-      syllabus: [],
-      boards: [],
-      medium: [],
-      grades: [],
-      state: '',
-      district: '',
-      tnc: false
-    });
-  }
+  async submitForm() {
 
-  async initializeLoader() {
-    this.loader = await this.commonUtilService.getLoader();
-  }
-
-  async getSyllabusDetails() {
-    this.loader = await this.commonUtilService.getLoader();
-    await this.loader.present();
-
-    const getSuggestedFrameworksRequest: GetSuggestedFrameworksRequest = {
-      from: CachedItemRequestSourceFrom.SERVER,
-      language: this.translate.currentLang,
-      requiredCategories: FrameworkCategoryCodesGroup.DEFAULT_FRAMEWORK_CATEGORIES
-    };
-
-    this.frameworkUtilService.getActiveChannelSuggestedFrameworkList(getSuggestedFrameworksRequest).toPromise()
-      .then(async (frameworks: Framework[]) => {
-        if (!frameworks || !frameworks.length) {
-          await this.loader.dismiss();
-          this.commonUtilService.showToast('NO_DATA_FOUND');
-          return;
-        }
-        this.syllabusList = frameworks.map(r => ({ name: r.name, code: r.identifier }));
-        // this.syllabusControl.patchValue([this.profile.syllabus && this.profile.syllabus[0]] || []);
-        // disabling auto fill
-        this.syllabusControl.patchValue([]);
-        await this.loader.dismiss();
-      });
-  }
-
-  private onSyllabusChange(): Observable<string[]> {
-    return this.syllabusControl.valueChanges.pipe(
-      tap(async (value) => {
-        if (!Array.isArray(value)) {
-          this.syllabusControl.patchValue([value]);
-          return;
-        }
-
-        if (!value.length) {
-          return;
-        }
-
-        await this.commonUtilService.getLoader().then((loader) => {
-          this.loader = loader;
-          this.loader.present();
-        });
-
-        try {
-          this.framework = await this.frameworkService.getFrameworkDetails({
-            from: CachedItemRequestSourceFrom.SERVER,
-            frameworkId: value[0],
-            requiredCategories: FrameworkCategoryCodesGroup.DEFAULT_FRAMEWORK_CATEGORIES
-          }).toPromise();
-
-          const boardCategoryTermsRequet: GetFrameworkCategoryTermsRequest = {
-            frameworkId: this.framework.identifier,
-            requiredCategories: [FrameworkCategoryCode.BOARD],
-            currentCategoryCode: FrameworkCategoryCode.BOARD,
-            language: this.translate.currentLang
-          };
-
-          const boards = await this.frameworkUtilService.getFrameworkCategoryTerms(boardCategoryTermsRequet).toPromise()
-          this.boardList = boards.map(t => ({ name: t.name, code: t.code }));
-
-          const boardTerm = boards.find(b => b.name === (this.syllabusList.find((s) => s.code === value[0])!.name));
-
-          this.boardControl.patchValue([boardTerm.code]);
-
-          const nextCategoryTermsRequet: GetFrameworkCategoryTermsRequest = {
-            frameworkId: this.framework.identifier,
-            requiredCategories: [FrameworkCategoryCode.MEDIUM],
-            prevCategoryCode: FrameworkCategoryCode.BOARD,
-            currentCategoryCode: FrameworkCategoryCode.MEDIUM,
-            language: this.translate.currentLang,
-            selectedTermsCodes: this.boardControl.value
-          };
-
-          this.mediumList = (await this.frameworkUtilService.getFrameworkCategoryTerms(nextCategoryTermsRequet).toPromise())
-            .map(t => ({ name: t.name, code: t.code }));
-          // if (!this.mediumControl.value) {
-          //   this.mediumControl.patchValue(this.profile.medium || []);
-          // } else {
-            this.mediumControl.patchValue([]);
-          // }
-        } catch (e) {
-          console.error(e);
-        } finally {
-          this.loader.dismiss();
-        }
-      })
-    );
-  }
-
-  private onMediumChange(): Observable<string[]> {
-    return this.mediumControl.valueChanges.pipe(
-      tap(async (value) => {
-        await this.commonUtilService.getLoader().then((loader) => {
-          this.loader = loader;
-          this.loader.present();
-        });
-
-        this.selectedText.medium = this.formatSelectBoxDisplayText(this.mediumControl, this.mediumList);
-
-        try {
-          const nextCategoryTermsRequet: GetFrameworkCategoryTermsRequest = {
-            frameworkId: this.framework.identifier,
-            requiredCategories: [FrameworkCategoryCode.GRADE_LEVEL],
-            prevCategoryCode: FrameworkCategoryCode.MEDIUM,
-            currentCategoryCode: FrameworkCategoryCode.GRADE_LEVEL,
-            language: this.translate.currentLang,
-            selectedTermsCodes: this.mediumControl.value
-          };
-
-          this.gradeList = (await this.frameworkUtilService.getFrameworkCategoryTerms(nextCategoryTermsRequet).toPromise())
-            .map(t => ({ name: t.name, code: t.code }));
-          // if (!this.gradeControl.value) {
-          //   this.gradeControl.patchValue(this.profile.grade || []);
-          // } else {
-            this.gradeControl.patchValue([]);
-          // }
-        } catch (e) {
-          console.error(e);
-        } finally {
-          this.loader.dismiss();
-        }
-      })
-    );
-  }
-
-  private onGradeChange(): Observable<string[]> {
-    return this.gradeControl.valueChanges.pipe(
-      tap(async () => {
-          this.selectedText.grade = this.formatSelectBoxDisplayText(this.gradeControl, this.gradeList);
-      })
-    );
-  }
-
-  onSubmit() {
-    const formVal = this.subProfileEditForm.value;
-    if (!formVal.userName.trim().length) {
-      this.errorMessages.userName.show = true;
-      return;
-    } else if (!formVal.boards || !formVal.boards.length) {
-      this.boardSelect.open();
-      return;
-    } else if (!formVal.medium || !formVal.medium.length) {
-      this.mediumSelect.open();
-      return;
-    } else if (!formVal.grades || !formVal.grades.length) {
-      this.gradeSelect.open();
-      return;
-    } else if (!formVal.state || !formVal.state.length) {
-      this.stateSelect.open();
-      return;
-    } else if (!formVal.district || !formVal.district.length) {
-      this.districtSelect.open();
-      return;
-    }
-    else if (!formVal.tnc) {
-      this.commonUtilService.showToast('Accept the Terms & Conditions.');
+    if (!this.profile || !this.profile.serverProfile || !this.formValue || !this.formValue.name ) {
       return;
     }
 
-    this.submitForm(formVal);
-  }
-
-  async submitForm(formVal) {
+    const cData: Array<CorrelationData> = [
+      { id: this.formValue.name, type: CorReleationDataType.NAME },
+      { id: this.profile.serverProfile.tncLatestVersion || '', type: CorReleationDataType.TNC_VERSION },
+      { id: this.profile.serverProfile['managedBy'] || this.profile.uid || '', type: CorReleationDataType.LIUA }
+    ];
+    this.telemetryGeneratorService.generateInteractTelemetry(
+      InteractType.SELECT_ADD,
+      '',
+      Environment.USER,
+      PageId.CREATE_MANAGED_USER,
+      undefined,
+      undefined,
+      undefined,
+      cData,
+      ID.BTN_ADD
+    );
     const loader = await this.commonUtilService.getLoader();
     try {
       await loader.present();
-      const userDetails = {
-        name: formVal.userName,
-        board: formVal.boards || [],
-        medium: formVal.medium || [],
-        grade: formVal.grades || [],
-        state: formVal.state || '',
-        district: formVal.district || '',
+      const userDetails: AddManagedProfileRequest = {
+        firstName: this.formValue.name,
+        managedBy: this.profile.serverProfile['managedBy'] || this.profile.uid,
+        framework: this.profile.serverProfile['framework'] || undefined,
+        locationIds: this.profile.serverProfile['locationIds'] ||
+          (this.profile.serverProfile['userLocations'] && this.profile.serverProfile['userLocations'].map(i => i.id)) || undefined,
       };
-      // const createdUser = await this.profileService.addManagedProfile(userDetails).toPromise();
-      // if (createdUser) {
-      //   this.commonUtilService.showToast('New user created successfully.');
-      //   this.location.back();
-      //  console.log(createdUser);
-      // }
+      if (userDetails && userDetails.framework && userDetails.framework.subject) {
+        userDetails.framework.subject = [];
+      }
+      const createdUser = await this.profileService.managedProfileManager.addManagedProfile(userDetails).toPromise();
+      if (createdUser) {
+        this.commonUtilService.showToast('SUCCESSFULLY_ADDED_USER', null, null, null, null, createdUser.handle || '');
+        this.location.back();
+      }
+
     } catch (e) {
+      this.commonUtilService.showToast('ERROR_WHILE_ADDING_USER');
       console.error(e);
     } finally {
       await loader.dismiss();
     }
   }
 
-  onInputFields(event) {
-    if (!event && !event.data && !event.data.trim().length) {
-      this.errorMessages.userName.show = true;
-    } else {
-      this.errorMessages.userName.show = false;
-    }
-  }
-
   onCancel() {
     this.location.back();
-  }
-
-  async getLoggedInFrameworkCategory() {
-    try {
-      const activeChannelDetails: Channel = await this.frameworkService.getChannelDetails({ channelId: this.frameworkService.activeChannelId }).toPromise()
-      const defaultFrameworkDetails: Framework = await this.frameworkService.getFrameworkDetails({
-        frameworkId: activeChannelDetails.defaultFramework, requiredCategories: []
-      }).toPromise();
-      const activeChannelSuggestedFrameworkList: Framework[] = await this.frameworkUtilService.getActiveChannelSuggestedFrameworkList({
-        language: '',
-        requiredCategories: [],
-        ignoreActiveChannel: true
-      }).toPromise();
-      this.frameworkId = activeChannelDetails.defaultFramework;
-      this.categories = defaultFrameworkDetails.categories;
-      const boardCategory = defaultFrameworkDetails.categories.find((c) => c.code === 'board');
-      const mediumCategory = defaultFrameworkDetails.categories.find((c) => c.code === 'medium');
-
-      if (boardCategory) {
-        this.syllabusList = activeChannelSuggestedFrameworkList.map(f => ({ name: f.name, code: f.identifier }));
-        this.isBoardAvailable = true;
-        // this.syllabusControl.patchValue([this.profile.syllabus && this.profile.syllabus[0]] || []);
-        // disabling auto fill
-        this.syllabusControl.patchValue([]);
-      } else {
-        this.categories.unshift([]);
-        this.isBoardAvailable = false;
-        this.mediumList = mediumCategory.terms;
-        // this.mediumControl.patchValue(this.profile.medium || []);
-        // disabling auto fill
-        this.mediumControl.patchValue([]);
-      }
-    } catch (err) {
-      if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
-        this.commonUtilService.showToast(this.commonUtilService.translateMessage('NEED_INTERNET_TO_CHANGE'));
-      }
-      console.error('getFrameWorkCategoryOrder', err);
-    }
-  }
-
-  formatSelectBoxDisplayText(selectedCategory: FormControl, categoryList: { name: string, code: string }[]) {
-    let displayText = '';
-    if (selectedCategory && selectedCategory.value && selectedCategory.value.length && categoryList.length) {
-      selectedCategory.value.forEach((categoryCode: string) => {
-        categoryList.forEach(categoryData => {
-          if (categoryData.code === categoryCode) {
-            displayText += (displayText.length) ? ', ' + categoryData.name : categoryData.name;
-            return;
-          }
-        });
-      });
-    }
-    return displayText;
-  }
-
-  async checkLocationAvailability() {
-    if (this.profile) {
-      if (this.profile.serverProfile && this.profile.serverProfile['userLocations'] && this.profile.serverProfile['userLocations'].length) {
-        for (const ele of this.profile.serverProfile['userLocations']) {
-          if (ele.type === 'district') {
-            this.availableDistrict = ele.name;
-          } else if (ele.type === 'state') {
-            this.availableState = ele.name;
-          }
-        }
-      }
-    } else if (await this.commonUtilService.isDeviceLocationAvailable()) {
-      const availableLocationData = JSON.parse(await this.sharedPreferences.getString(PreferenceKey.DEVICE_LOCATION).toPromise());
-      this.availableState = availableLocationData.state;
-      this.availableDistrict = availableLocationData.district;
-    } else if (await this.commonUtilService.isIpLocationAvailable()) {
-      const availableLocationData = JSON.parse(await this.sharedPreferences.getString(PreferenceKey.IP_LOCATION).toPromise());
-      this.availableState = availableLocationData.state;
-      this.availableDistrict = availableLocationData.district;
-    }
-    this.getStateList();
-  }
-
-  async getStateList() {
-    const loader = await this.commonUtilService.getLoader();
-    await loader.present();
-    const req: LocationSearchCriteria = {
-      from: CachedItemRequestSourceFrom.SERVER,
-      filters: {
-        type: loc.TYPE_STATE
-      }
-    };
-    const stateList: LocationSearchResult[] = await this.profileService.searchLocation(req).toPromise();
-    if (stateList && stateList.length) {
-      this.stateList = stateList;
-      if (this.availableState) {
-        const state = this.stateList.find(s => s.name === this.availableState);
-        if (state) {
-          this.selectedText.state = state.name;
-          this.stateControl.patchValue(state.id);
-        }
-      }
-    } else {
-      this.selectedText.state = '',
-      this.selectedText.district = '',
-      this.stateList = [];
-      this.districtList = [];
-      this.commonUtilService.showToast('NO_DATA_FOUND');
-    }
-    await loader.dismiss();
-  }
-
-  private onStateChange(): Observable<string[]> {
-    let autoFillDistrict = true;
-    return this.stateControl.valueChanges.pipe(
-      tap(async (value) => {
-        const loader = await this.commonUtilService.getLoader();
-        await loader.present();
-        try {
-          const req: LocationSearchCriteria = {
-            from: CachedItemRequestSourceFrom.SERVER,
-            filters: {
-              type: loc.TYPE_DISTRICT,
-              parentId: value
-            }
-          };
-          const districtList: LocationSearchResult[] = await this.profileService.searchLocation(req).toPromise();
-          if (districtList && districtList.length) {
-            this.districtList = districtList;
-            if (this.availableDistrict && autoFillDistrict) {
-              const district = this.districtList.find(d => d.name === this.availableDistrict);
-              if (district) {
-                this.districtControl.patchValue(district.id || '');
-              } else {
-                this.districtControl.patchValue('');
-              }
-            } else {
-              this.districtControl.patchValue('');
-            }
-          } else {
-            this.districtList = [];
-            this.districtControl.patchValue('');
-            this.commonUtilService.showToast('NO_DATA_FOUND');
-          }
-          autoFillDistrict = false;
-          await loader.dismiss();
-        } catch (e) {
-          await loader.dismiss();
-        }
-      })
+    this.telemetryGeneratorService.generateInteractTelemetry(
+      InteractType.SELECT_CANCEL,
+      '',
+      Environment.USER,
+      PageId.CREATE_MANAGED_USER,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      ID.BTN_CANCEL
     );
   }
 
   showTncDetails() {
-    this.commonUtilService.openLink(this.userProfileDetails.tncLatestVersionUrl);
+    this.commonUtilService.openLink(this.profile.serverProfile.tncLatestVersionUrl);
+  }
+
+  onFormDataChange(event) {
+    if (event) {
+      this.isFormValid = event.valid;
+      this.formValue = event.value || undefined;
+    }
+  }
+
+  handleHeaderEvents($event) {
+    switch ($event.name) {
+      case 'back':
+        this.telemetryGeneratorService.generateBackClickedTelemetry(
+          PageId.CREATE_MANAGED_USER,
+          Environment.USER,
+          true
+        );
+        break;
+    }
   }
 
 }

@@ -85,7 +85,7 @@
 
 <ion-menu contentId="mainContent" class="sb-side-menu" *ngIf="isRtl" side="end" persistent="true"
   [swipeGesture]="headerConfig?.showBurgerMenu || false">
-  <ion-header>
+  <ion-header  *ngIf="!isLoggedIn">
     <ion-toolbar>
       <ion-title>
         <img class="img-container" src="{{appLogo}}" alt="app logo">
@@ -147,7 +147,7 @@
 
 <ion-menu contentId="mainContent" class="sb-side-menu" *ngIf="!isRtl" side="start" persistent="true"
   [swipeGesture]="headerConfig?.showBurgerMenu || false">
-  <ion-header>
+  <ion-header *ngIf="!isLoggedIn">
     <ion-toolbar>
       <ion-title>
         <img class="img-container" src="{{appLogo}}" alt="app logo">
@@ -156,6 +156,57 @@
     </ion-toolbar>
   </ion-header>
   <ion-content>
+
+    <section *ngIf="isLoggedIn">
+      <ng-container *ngIf="(managedProfileList$ | async); let managedProfileList">
+        <section class="user-container">
+          
+          <div *ngIf="profile?.handle">
+            <sb-member-card 
+              [title]="profile?.handle"
+              [identifier]="is"
+              [config]="userAvatarConfig"
+              [initial]="profile?.handle && profile?.handle[0]">
+            </sb-member-card>
+          </div>
+          
+          <div class="use-app-label">
+            <span>{{'USE_APP_AS' | translate: {'%s': appName} }}</span>
+          </div>
+
+          <section class="managed-user-container">
+
+            <div class="mu-card" *ngFor="let user of managedProfileList |slice:0:2; let i = index" (click)="switchUser(user)">
+              <sb-member-card
+                [title]="user?.firstName"
+                [identifier]="user?.id"
+                [indexOfMember] = i
+                [initial]="user?.firstName && user?.firstName[0]">
+              </sb-member-card>
+            </div>
+
+            <div class="add-manage-user mu-card" *ngIf="managedProfileList.length <= 2" (click)="addManagedUser()">
+              <sb-member-card
+                [title]="'ADD_USER' | translate"
+                [initial]="'+'">
+              </sb-member-card>
+            </div>
+
+            <div class="more-manage-user mu-card" *ngIf="managedProfileList.length > 2" (click)="openManagedUsers()">
+              <sb-member-card
+                [title]="'MORE_COUNT' | translate: {'%s':managedProfileList.length-2}"
+                [initial]="'...'">
+              </sb-member-card>
+            </div>
+          </section>
+          
+        </section>
+        <div *ngIf="managedProfileList.length > 2" class="another-user-title" (click)="addManagedUser()">
+          <span class="add-sign">+</span> {{'ADD_ANOTHER_USER' | translate}}
+        </div>
+      </ng-container>
+    </section>
+
     <ion-list class="sb-menu-list" lines="none">
 
       <!-- <ion-item (click)="emitSideMenuItemEvent($event, 'MY_CLASSROOMS')">

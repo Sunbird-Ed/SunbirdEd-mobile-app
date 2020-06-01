@@ -22,7 +22,7 @@
                 <span class="asPerStateRecord" *ngIf="informationProfileName">{{'STATE_RECORDS' | translate}}</span>
             </span>
         </p>
-        <p class="MT0 MB30"><span>{{'USER_ID' | translate}}:</span><span>{{profile?.userName}}</span></p>
+        <p class="MT0 MB30"><span>{{'APP_ID' | translate:{'%s':appName} }}: </span><span>{{profile?.userName}}</span></p>
     </div>
     <div class="roles-container ion-text-center ion-padding-horizontal">
         <div class="MB5 ion-text-center" *ngFor="let role of roles | slice : startLimit:rolesLimit;">
@@ -92,7 +92,7 @@
             </ion-button>
         </div>
     </div>
-    <div class="contacts" *ngIf="profile?.phone || profile?.email ">
+    <div class="contacts" *ngIf="!profile?.managedBy && (profile?.phone || profile?.email)">
         <div *ngIf="profile?.phone">
             <div class="phone" (click)="editMobileNumber();">
                 <span class="icon MR10 align-middle">
@@ -190,18 +190,20 @@
     </div>
     <div class="bottom-block">
         <div class="trainings" *ngIf="trainingsCompleted?.length > 0">
-            <div class="bolder heading f16">
-                {{'TRAININGS_ATTENDED' | translate}} ({{mappedTrainingCertificates?.length}})&lrm;
-            </div>
             <div class="content">
+                <div class="bolder heading f16">
+                    {{'COURSES' | translate}} ({{mappedTrainingCertificates?.length}})&lrm;
+                </div>
                 <div class="flex-nowrap"
                     *ngFor="let certificate of (mappedTrainingCertificates | slice : startLimit:trainingsLimit);">
                     <div class="training-1">
-                        <div class="fw">
+                        <div class="fw" (click)="openEnrolledCourse(certificate)">
                             {{certificate.courseName}}
                         </div>
-                        <div class="lighter">
-                            {{certificate.dateTime | date:'MMMM yyyy'}}
+                        <div>
+                            <span *ngIf="certificate.status === 1" class="ongoing-status-text"> {{ 'ONGOING' | translate }}</span>
+                            <span *ngIf="certificate.status === 2" class="completed-status-text"> {{ 'COMPLETED' | translate }}</span>
+                            <span *ngIf="certificate.status === 2" class="lighter"> {{certificate.dateTime | date:'MMMM yyyy'}} </span>
                         </div>
                     </div>
                     <div class="training-2" *ngIf="certificate?.certificate">
