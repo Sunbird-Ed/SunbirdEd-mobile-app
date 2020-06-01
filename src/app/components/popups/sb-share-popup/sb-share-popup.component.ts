@@ -148,7 +148,8 @@ export class SbSharePopupComponent implements OnInit, OnDestroy {
       byLink: true,
       link: this.shareUrl
     };
-    this.contentShareHandler.shareContent(shareParams, this.content, this.corRelationList, this.objRollup);
+    this.contentShareHandler.shareContent(shareParams, this.content, this.moduleId, this.subContentIds,
+      this.corRelationList, this.objRollup);
     this.popoverCtrl.dismiss();
   }
 
@@ -160,7 +161,7 @@ export class SbSharePopupComponent implements OnInit, OnDestroy {
           byFile: true,
           link: this.shareUrl
         };
-        this.contentShareHandler.shareContent(shareParams, this.content, this.chapterId, this.subContentIds,
+        this.contentShareHandler.shareContent(shareParams, this.content, this.moduleId, this.subContentIds,
           this.corRelationList, this.objRollup);
         this.popoverCtrl.dismiss();
       } else {
@@ -176,7 +177,8 @@ export class SbSharePopupComponent implements OnInit, OnDestroy {
         const shareParams = {
           saveFile: true,
         };
-        this.contentShareHandler.shareContent(shareParams, this.content, this.corRelationList, this.objRollup);
+        this.contentShareHandler.shareContent(shareParams, this.content, this.moduleId, this.subContentIds,
+          this.corRelationList, this.objRollup);
         this.popoverCtrl.dismiss();
       } else {
         this.commonUtilService.showSettingsPageToast('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName, this.pageId, true);

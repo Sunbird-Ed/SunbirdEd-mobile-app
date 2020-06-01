@@ -273,13 +273,13 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
           }
         } catch (e) {
           console.error(e);
-          if (e instanceof HttpServerError) {
-            this.commonUtilService.showToast('ERROR_FETCHING_DATA');
-          } else if (e instanceof NetworkError) {
-            this.commonUtilService.showToast('NEED_INTERNET_FOR_DEEPLINK_CONTENT');
-          } else {
-            this.commonUtilService.showToast('ERROR_CONTENT_NOT_AVAILABLE');
-          }
+          // if (e instanceof HttpServerError) {
+          //   this.commonUtilService.showToast('ERROR_FETCHING_DATA');
+          // } else if (e instanceof NetworkError) {
+          //   this.commonUtilService.showToast('NEED_INTERNET_FOR_DEEPLINK_CONTENT');
+          // } else {
+          //   this.commonUtilService.showToast('ERROR_CONTENT_NOT_AVAILABLE');
+          // }
         }
       }
 

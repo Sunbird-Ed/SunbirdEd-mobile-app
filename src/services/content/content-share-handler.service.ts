@@ -63,16 +63,21 @@ export class ContentShareHandlerService {
       this.generateShareInteractEvents(InteractType.OTHER,
         InteractSubtype.SHARE_CONTENT_SUCCESS,
         content.contentData.contentType, corRelationList, rollup);
+      let contentLink = this.getContentUtm(shareParams.link, content);
+      if (moduleId) {
+        contentLink = contentLink + `&contentId=${moduleId}`;
+      }
       const shareLink = this.commonUtilService.translateMessage('SHARE_CONTENT_LINK', {
         app_name: this.appName,
         content_name: content.contentData.name,
-        content_link: this.getContentUtm(shareParams.link, content) + `contentId=${moduleId}`,
+        content_link: contentLink,
         play_store_url: await this.getPackageNameWithUTM(true)
       });
       this.social.share(null, null, null, shareLink);
     } else if (shareParams && shareParams.saveFile) {
       exportContentRequest = {
         contentIds: [content.identifier],
+        subContentIds,
         destinationFolder: cordova.file.externalRootDirectory + 'Download/',
         saveLocally: true
       };
