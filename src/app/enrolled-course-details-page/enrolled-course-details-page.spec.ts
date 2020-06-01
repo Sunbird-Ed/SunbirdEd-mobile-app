@@ -7,7 +7,7 @@ import {
 } from 'sunbird-sdk';
 import {
     LoginHandlerService, CourseUtilService, AppGlobalService, TelemetryGeneratorService,
-    CommonUtilService, UtilityService, AppHeaderService, ContentShareHandlerService,
+    CommonUtilService, UtilityService, AppHeaderService,
     LocalCourseService, PageId, ID, InteractType
 } from '../../services';
 import { NgZone } from '@angular/core';
@@ -94,7 +94,6 @@ describe('EnrolledCourseDetailsPage', () => {
     const mockDatePipe: Partial<DatePipe> = {};
     const mockUtilityService: Partial<UtilityService> = {};
     const mockHeaderService: Partial<AppHeaderService> = {};
-    const mockContentShareHandler: Partial<ContentShareHandlerService> = {};
     const mockLocation: Partial<Location> = {};
     const mockRouter: Partial<Router> = {
         getCurrentNavigation: jest.fn(() => mockEnrolledData),
@@ -133,7 +132,6 @@ describe('EnrolledCourseDetailsPage', () => {
             mockDatePipe as DatePipe,
             mockUtilityService as UtilityService,
             mockHeaderService as AppHeaderService,
-            mockContentShareHandler as ContentShareHandlerService,
             mockLocation as Location,
             mockRouter as Router,
             mockContentDeleteHandler as ContentDeleteHandler,

@@ -923,6 +923,22 @@ ion-split-pane {
     }
   }
 }
+.cd-leave-training-popup {
+  .popover-content {
+    top: 80px !important;
+    // --box-shadow: 0px 3px 6px 5px #eee;
+    transform-origin: right top;
+    transform: scale(1);
+    width: 36% !important;
+    .list-md {
+      padding-top: 0px !important;
+      padding-bottom: 0px !important;
+    }
+    ion-backdrop {
+      opacity: 0;
+    }
+  }
+}
 // common code for both collection-etb and enrolled course details
 .sb-topics-container-ftue {
   .sb-topic-item {
