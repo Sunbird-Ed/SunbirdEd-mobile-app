@@ -120,11 +120,11 @@
 								{{ 'START_COURSE_NOW' | translate }} </span></button>
 						<button *ngIf="showResumeBtn && lastReadContentType !== 'SelfAssess'"
 							class="enrolled-course-card-button"
-							(click)="resumeContent(courseCardData?.lastReadContentId)"><span>
+							(click)="resumeContent()"><span>
 								<img class="play-icon" src="assets/imgs/Play@1.5x.svg" alt="play-icon">
 								{{ 'CONTINUE_NOW' | translate }} </span></button>
 						<button *ngIf="lastReadContentType === 'SelfAssess'" class="enrolled-course-card-button"
-							(click)="resumeContent(courseCardData?.lastReadContentId)"><span>
+							(click)="resumeContent()"><span>
 								<img class="play-icon" src="assets/imgs/Play@1.5x.svg" alt="play-icon">
 								{{ 'START_ASSESSMENT' | translate }} </span></button>
 						<div *ngIf="batchDetails?.endDate && !batchExp" class="enrollment-end-date ion-padding-bottom">
