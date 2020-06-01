@@ -228,6 +228,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
   private isFromChannelDeeplink: any;
   trackDownloads$: Observable<DownloadTracking>;
   showCollapsedPopup = true;
+  resumeCourseFlag = false;
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -269,6 +270,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
       this.corRelationList = extrasState.corRelation;
       this.source = extrasState.source;
       this.isQrCodeLinkToContent = extrasState.isQrCodeLinkToContent;
+      this.resumeCourseFlag = extrasState.resumeCourseFlag || false;
     }
   }
 
@@ -1374,6 +1376,10 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
   ionViewDidEnter() {
     this.sbProgressLoader.hide({id: 'login'});
     this.sbProgressLoader.hide({ id: this.identifier });
+    if (this.resumeCourseFlag) {
+      this.resumeContent(this.identifier);
+      this.resumeCourseFlag = false;
+    }
   }
 
   showLicensce() {

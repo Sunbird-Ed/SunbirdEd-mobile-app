@@ -2052,10 +2052,14 @@ describe('EnrolledCourseDetailsPage', () => {
     it('should hide deeplink progress loader', () => {
         // arrange
         enrolledCourseDetailsPage.identifier = 'sample_doId';
+        enrolledCourseDetailsPage.resumeCourseFlag = true;
+        enrolledCourseDetailsPage.resumeContent = jest.fn();
+
         mockSbProgressLoader.hide = jest.fn();
         // act
         enrolledCourseDetailsPage.ionViewDidEnter();
         // assert
         expect(mockSbProgressLoader.hide).toHaveBeenCalledWith({id: 'sample_doId'});
+        expect(enrolledCourseDetailsPage.resumeContent).toHaveBeenCalledWith('sample_doId');
     });
 });
