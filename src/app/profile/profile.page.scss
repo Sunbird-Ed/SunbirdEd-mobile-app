@@ -161,7 +161,7 @@
     text-align: center;
     text-transform: initial;
   }
-.sb-btn-tile {
+  .sb-btn-tile {
     flex-direction: column;
     background-color: $white;
     width:72px;
@@ -297,5 +297,16 @@
       width:35px;
       height:25px;
       margin-bottom: 4px;
+  }
+  .refresh-icon {
+    color: #007aff;
+    float: right;
+    height: 40px;
+    width: 40px;
+    margin-top: -8px;
+  }
+  ion-icon.refresh-icon.md.hydrated:active {
+    background: #e8e7e7;
+    border-radius: 18px;
   }
 }

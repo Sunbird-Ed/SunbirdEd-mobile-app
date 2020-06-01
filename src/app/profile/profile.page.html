@@ -4,7 +4,7 @@
     <div class="spinner-div" *ngIf="refresh">
         <ion-spinner icon="spiral" class="refreshspinner"></ion-spinner>
     </div>
-    <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
+    <ion-refresher #refresher slot="fixed" (ionRefresh)="doRefresh($event)">
         <ion-refresher-content refreshingSpinner="circles"></ion-refresher-content>
     </ion-refresher>
     <div class="MT15 ion-text-center ion-padding-horizontal" *ngIf="profile?.firstName">
@@ -185,7 +185,8 @@
     <div class="bottom-block">
         <div class="trainings" *ngIf="trainingsCompleted?.length > 0">
             <div class="bolder heading f16">
-                {{'TRAININGS_ATTENDED' | translate}} ({{mappedTrainingCertificates?.length}})&lrm;
+                <span>{{'TRAININGS_ATTENDED' | translate}} ({{mappedTrainingCertificates?.length}})&lrm;</span>
+                <ion-icon ios="ios-refresh-circle" md="md-refresh-circle" class="refresh-icon" (click)="getEnrolledCourses(true, true)" ></ion-icon>
             </div>
             <div class="content">
                 <div class="flex-nowrap"
