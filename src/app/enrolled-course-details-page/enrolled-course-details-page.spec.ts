@@ -2051,15 +2051,18 @@ describe('EnrolledCourseDetailsPage', () => {
 
     it('should hide deeplink progress loader', () => {
         // arrange
+        mockSbProgressLoader.hide = jest.fn(() => Promise.resolve());
         enrolledCourseDetailsPage.identifier = 'sample_doId';
-        enrolledCourseDetailsPage.resumeCourseFlag = true;
-        enrolledCourseDetailsPage.resumeContent = jest.fn();
-
-        mockSbProgressLoader.hide = jest.fn();
+        if (!enrolledCourseDetailsPage.resumeCourseFlag) {
+            enrolledCourseDetailsPage.resumeCourseFlag = true;
+        }
+        jest.spyOn(enrolledCourseDetailsPage, 'resumeContent').mockImplementation(() => {
+            return;
+        });
         // act
         enrolledCourseDetailsPage.ionViewDidEnter();
         // assert
         expect(mockSbProgressLoader.hide).toHaveBeenCalledWith({id: 'sample_doId'});
-        expect(enrolledCourseDetailsPage.resumeContent).toHaveBeenCalledWith('sample_doId');
+        expect(enrolledCourseDetailsPage.resumeCourseFlag).toBe(false);
     });
 });
