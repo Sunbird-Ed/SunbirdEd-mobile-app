@@ -228,7 +228,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
   private isFromChannelDeeplink: any;
   trackDownloads$: Observable<DownloadTracking>;
   showCollapsedPopup = true;
-  private resumeCourseFlag = false;
+  resumeCourseFlag = false;
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
