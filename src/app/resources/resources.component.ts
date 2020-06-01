@@ -46,7 +46,8 @@ import {
   RouterLinks,
   ContentFilterConfig,
   MimeType,
-  EventTopics
+  EventTopics,
+  ExploreConstants
 } from '@app/app/app.constant';
 import { AppGlobalService } from '@app/services/app-global-service.service';
 import { SunbirdQRScanner } from '@app/services/sunbirdqrscanner.service';
@@ -477,6 +478,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.getGroupByPageReq.mode = 'hard';
     this.getGroupByPageReq.facets = Search.FACETS_ETB;
     this.getGroupByPageReq.contentTypes = [ContentType.TEXTBOOK];
+    this.getGroupByPageReq.fields = ExploreConstants.REQUIRED_FIELDS;
     this.getGroupByPage(isAfterLanguageChange, avoidRefreshList);
   }
 
@@ -912,13 +914,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     }
     this.mediumsSelected = [index];
-    setTimeout(() => {
-        const el = document.getElementById('medium' + index);
-        if (el) {
-          el.scrollIntoView({ behavior: 'smooth', block: 'end', inline: 'start' });
-        }
-      }, 1000);
-
   }
 
   navigateToDetailPage(event, sectionName) {
