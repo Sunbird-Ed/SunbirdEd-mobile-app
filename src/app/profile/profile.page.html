@@ -197,7 +197,7 @@
                 <div class="flex-nowrap"
                     *ngFor="let certificate of (mappedTrainingCertificates | slice : startLimit:trainingsLimit);">
                     <div class="training-1">
-                        <div class="fw">
+                        <div class="fw" (click)="openEnrolledCourse(certificate)">
                             {{certificate.courseName}}
                         </div>
                         <div>

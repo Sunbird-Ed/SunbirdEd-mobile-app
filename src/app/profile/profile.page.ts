@@ -381,7 +381,7 @@ export class ProfilePage implements OnInit {
     this.trainingsCompleted = [];
     this.courseService.getEnrolledCourses(option).toPromise()
       .then((res: Course[]) => {
-        this.trainingsCompleted = res.filter((course) => course.status === (2 || 1));
+        this.trainingsCompleted = res.filter((course) => (course.status === 2 || course.status === 1));
         this.mappedTrainingCertificates = this.mapTrainingsToCertificates(this.trainingsCompleted);
       })
       .catch((error: any) => {
@@ -799,6 +799,15 @@ export class ProfilePage implements OnInit {
     });
 
     await popover.present();
+  }
+
+  async openEnrolledCourse(contentData) {
+    try {
+      const content = await this.contentService.getContentDetails({ contentId: contentData.courseId }).toPromise();
+      this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], { state: { content } });
+    } catch (err) {
+      console.error(err);
+    }
   }
 
 }
