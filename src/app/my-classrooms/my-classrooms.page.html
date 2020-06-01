@@ -1,10 +1,10 @@
 <ion-content>
-
   <div class="my-cr-bg">
     <p class="my-cr-title">
       {{'MY_GROUPS' | translate}}
       <img *ngIf="!isGuestUser" src="assets/imgs/ic_group_add_blue.svg" (click)="createClassroom()">
     </p>
+    
     
     <div *ngIf="isGuestUser" class="my-cr-card">
       <div class="my-cr-card-img">

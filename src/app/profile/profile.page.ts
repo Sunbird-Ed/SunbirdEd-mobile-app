@@ -27,7 +27,8 @@ import {
   UpdateServerProfileInfoRequest,
   CachedItemRequestSourceFrom,
   CourseCertificate,
-  SharedPreferences
+  SharedPreferences,
+  CertificateAlreadyDownloaded
 } from 'sunbird-sdk';
 import { Environment, InteractSubtype, InteractType, PageId } from '@app/services/telemetry-constants';
 import { ActivatedRoute, Router, NavigationExtras } from '@angular/router';
@@ -39,7 +40,11 @@ import { AccountRecoveryInfoComponent } from '../components/popups/account-recov
 import { SocialSharing } from '@ionic-native/social-sharing/ngx';
 import { TeacherIdVerificationComponent } from '../components/popups/teacher-id-verification-popup/teacher-id-verification-popup.component';
 import { Observable } from 'rxjs';
+import { AndroidPermissionsService } from '@app/services';
+import { AndroidPermissionsStatus, AndroidPermission } from '@app/services/android-permissions/android-permission';
+import { AppVersion } from '@ionic-native/app-version/ngx';
 import {SbProgressLoader} from '@app/services/sb-progress-loader.service';
+import { FileOpener } from '@ionic-native/file-opener/ngx';
 
 @Component({
   selector: 'app-profile',
@@ -65,6 +70,7 @@ export class ProfilePage implements OnInit {
     state: {},
     district: {}
   };
+  appName = '';
 
   imageUri = 'assets/imgs/ic_profile_default.png';
 
@@ -89,7 +95,6 @@ export class ProfilePage implements OnInit {
   timer: any;
   mappedTrainingCertificates: CourseCertificate[] = [];
   isDefaultChannelProfile$: Observable<boolean>;
-  appName = '';
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     @Inject('AUTH_SERVICE') private authService: AuthService,
@@ -107,7 +112,10 @@ export class ProfilePage implements OnInit {
     private commonUtilService: CommonUtilService,
     private socialShare: SocialSharing,
     private headerService: AppHeaderService,
-    private sbProgressLoader: SbProgressLoader
+    private permissionService: AndroidPermissionsService,
+    private appVersion: AppVersion,
+    private sbProgressLoader: SbProgressLoader,
+    private fileOpener: FileOpener
   ) {
     const extrasState = this.router.getCurrentNavigation().extras.state;
     if (extrasState) {
@@ -141,13 +149,14 @@ export class ProfilePage implements OnInit {
     });
   }
 
-  ngOnInit() {
+  async ngOnInit() {
     this.doRefresh();
     this.events.subscribe('profilePicture:update', (res) => {
       if (res.isUploading && res.url !== '') {
         this.imageUri = res.url;
       }
     });
+    this.appName = await this.appVersion.getAppName();
   }
 
   ionViewWillEnter() {
@@ -419,24 +428,47 @@ export class ProfilePage implements OnInit {
   //   });
   // }
 
-  downloadTrainingCertificate(course: Course, certificate: CourseCertificate) {
-    const telemetryObject: TelemetryObject = new TelemetryObject(certificate.id, ContentType.CERTIFICATE, undefined);
+  async downloadTrainingCertificate(course: Course, certificate: CourseCertificate) {
+    await this.checkForPermissions().then((result) => {
+      if (result) {
+        const telemetryObject: TelemetryObject = new TelemetryObject(certificate.id, ContentType.CERTIFICATE, undefined);
 
-    const values = new Map();
-    values['courseId'] = course.courseId;
+        const values = new Map();
+        values['courseId'] = course.courseId;
 
-    this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
-      InteractSubtype.DOWNLOAD_CERTIFICATE_CLICKED,
-      Environment.USER, // env
-      PageId.PROFILE, // page name
-      telemetryObject,
-      values);
+        this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
+          InteractSubtype.DOWNLOAD_CERTIFICATE_CLICKED,
+          Environment.USER, // env
+          PageId.PROFILE, // page name
+          telemetryObject,
+          values);
+        const downloadRequest = {
+          courseId: course.courseId,
+          certificateToken: certificate.token
+        };
+        this.courseService.downloadCurrentProfileCourseCertificate(downloadRequest).toPromise()
+        .then((res) => {
+          this.commonUtilService.showToast('CERTIFICATE_DOWNLOADED');
+          this.openpdf(res.path);
+        }).catch((err) => {
+          if (err instanceof CertificateAlreadyDownloaded) {
+            const certificateName = certificate.url.substring(certificate.url.lastIndexOf('/') + 1);
+            const filePath = `${cordova.file.externalRootDirectory}Download/${certificateName}`;
+            this.openpdf(filePath);
+            this.commonUtilService.showToast('CERTIFICATE_ALREADY_DOWNLOADED');
+          }
+        });
+      } else {
+        this.commonUtilService.showSettingsPageToast('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName, PageId.PROFILE, true);
+      }
+    });
+  }
 
-    this.courseService.downloadCurrentProfileCourseCertificate({
-      courseId: course.courseId,
-      certificateToken: certificate.token
-    })
-      .subscribe();
+  openpdf(path) {
+    this.fileOpener
+      .open(path, 'application/pdf')
+      .then(() => console.log('File is opened'))
+      .catch(e => console.log('Error opening file', e));
   }
 
   shareTrainingCertificate(course: Course, certificate: CourseCertificate) {
@@ -808,6 +840,77 @@ export class ProfilePage implements OnInit {
     } catch (err) {
       console.error(err);
     }
+  }
+
+  private async checkForPermissions(): Promise<boolean | undefined> {
+    return new Promise < boolean | undefined>(async (resolve, reject) => {
+      const permissionStatus = await this.commonUtilService.getGivenPermissionStatus(AndroidPermission.WRITE_EXTERNAL_STORAGE);
+      if (permissionStatus.hasPermission) {
+        resolve(true);
+      } else if (permissionStatus.isPermissionAlwaysDenied) {
+        await this.commonUtilService.showSettingsPageToast('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName, PageId.PROFILE, true);
+        resolve(false);
+      } else {
+        this.showStoragePermissionPopup().then((result) => {
+          if (result) {
+            resolve(true);
+          } else {
+            resolve(false);
+          }
+        });
+      }
+    });
+  }
+
+  private async showStoragePermissionPopup(): Promise<boolean | undefined> {
+    // await this.popoverCtrl.dismiss();
+    return new Promise<boolean | undefined>(async (resolve, reject) => {
+      const confirm = await this.commonUtilService.buildPermissionPopover(
+          async (selectedButton: string) => {
+            if (selectedButton === this.commonUtilService.translateMessage('NOT_NOW')) {
+              this.telemetryGeneratorService.generateInteractTelemetry(
+                  InteractType.TOUCH,
+                  InteractSubtype.NOT_NOW_CLICKED,
+                  Environment.SETTINGS,
+                  PageId.PERMISSION_POPUP);
+              await this.commonUtilService.showSettingsPageToast('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName, PageId.PROFILE, true);
+            } else if (selectedButton === this.commonUtilService.translateMessage('ALLOW')) {
+              this.telemetryGeneratorService.generateInteractTelemetry(
+                  InteractType.TOUCH,
+                  InteractSubtype.ALLOW_CLICKED,
+                  Environment.SETTINGS,
+                  PageId.PERMISSION_POPUP);
+              this.permissionService.requestPermission(AndroidPermission.WRITE_EXTERNAL_STORAGE)
+                  .subscribe(async (status: AndroidPermissionsStatus) => {
+                    if (status.hasPermission) {
+                      this.telemetryGeneratorService.generateInteractTelemetry(
+                          InteractType.TOUCH,
+                          InteractSubtype.ALLOW_CLICKED,
+                          Environment.SETTINGS,
+                          PageId.APP_PERMISSION_POPUP
+                      );
+                      resolve(true);
+                    } else if (status.isPermissionAlwaysDenied) {
+                      await this.commonUtilService.showSettingsPageToast
+                      ('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName, PageId.PROFILE, true);
+                      resolve(false);
+                    } else {
+                      this.telemetryGeneratorService.generateInteractTelemetry(
+                          InteractType.TOUCH,
+                          InteractSubtype.DENY_CLICKED,
+                          Environment.SETTINGS,
+                          PageId.APP_PERMISSION_POPUP
+                      );
+                      await this.commonUtilService.showSettingsPageToast
+                      ('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName, PageId.PROFILE, true);
+                    }
+                    resolve(undefined);
+                  });
+            }
+          }, this.appName, this.commonUtilService.translateMessage('FILE_MANAGER'), 'FILE_MANAGER_PERMISSION_DESCRIPTION', PageId.PROFILE, true
+      );
+      await confirm.present();
+    });
   }
 
 }
