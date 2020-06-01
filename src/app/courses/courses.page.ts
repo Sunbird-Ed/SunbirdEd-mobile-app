@@ -163,6 +163,22 @@ export class CoursesPage implements OnInit, OnDestroy {
       this.showOverlay = false;
       this.downloadPercentage = 0;
     });
+    this.unsubscribeUtilityEvents();
+  }
+
+  unsubscribeUtilityEvents() {
+    this.events.unsubscribe(AppGlobalService.PROFILE_OBJ_CHANGED);
+    this.events.unsubscribe(EventTopics.COURSE_STATUS_UPDATED_SUCCESSFULLY);
+    this.events.unsubscribe('force_optional_upgrade');
+    this.events.unsubscribe('onboarding-card:completed');
+    this.events.unsubscribe('onboarding-card:increaseProgress');
+    this.events.unsubscribe('course:resume');
+    this.events.unsubscribe(EventTopics.ENROL_COURSE_SUCCESS);
+    this.events.unsubscribe('onAfterLanguageChange:update');
+    this.events.unsubscribe(EventTopics.COURSE_PAGE_ASSEMBLE_CHANNEL_CHANGE);
+    this.events.unsubscribe(EventTopics.TAB_CHANGE);
+    this.events.unsubscribe(EventTopics.REFRESH_ENROLL_COURSE_LIST);
+    this.events.unsubscribe(EventTopics.SIGN_IN_RELOAD);
   }
 
   ionViewWillEnter() {

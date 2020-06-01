@@ -40,6 +40,7 @@ import { RouterLinks } from './app.constant';
 import { TncUpdateHandlerService } from '@app/services/handlers/tnc-update-handler.service';
 import { NetworkAvailabilityToastService } from '@app/services/network-availability-toast/network-availability-toast.service';
 import { SplaschreenDeeplinkActionHandlerDelegate } from '@app/services/sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
+import { EventParams } from './components/sign-in-card/event-params.interface';
 
 declare const cordova;
 
@@ -378,7 +379,16 @@ export class AppComponent implements OnInit, AfterViewInit {
       // this.toggleRouterOutlet = false;
       // This setTimeout is very important for reloading the Tabs page on SignIn.
       setTimeout(async () => {
-        this.events.publish(AppGlobalService.USER_INFO_UPDATED);
+        /* Medatory for login flow
+         * eventParams are essential parameters for avoiding duplicate calls to API
+         * skipSession & skipProfile should be true here
+         * until further change
+         */
+        const eventParams: EventParams = {
+          skipSession: true,
+          skipProfile: true
+        };
+        this.events.publish(AppGlobalService.USER_INFO_UPDATED, eventParams);
         this.toggleRouterOutlet = true;
         this.reloadSigninEvents();
         this.events.publish('UPDATE_TABS');

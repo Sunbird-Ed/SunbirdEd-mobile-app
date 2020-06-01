@@ -13,6 +13,7 @@ import { Observable, Observer } from 'rxjs';
 import { PermissionAsked } from './android-permissions/android-permission';
 import { UpgradePopoverComponent } from '@app/app/components/popups';
 import { AppVersion } from '@ionic-native/app-version/ngx';
+import { EventParams } from '@app/app/components/sign-in-card/event-params.interface';
 
 @Injectable({
     providedIn: 'root'
@@ -360,55 +361,60 @@ export class AppGlobalService implements OnDestroy {
         }
     }
 
-    private initValues() {
+    private initValues(eventParams?: EventParams) {
         this.readConfig();
-
-        this.authService.getSession().toPromise().then((session) => {
-            if (!session) {
-                this.isGuestUser = true;
-                this.session = session;
-                this.getGuestUserInfo();
-            } else {
-                this.guestProfileType = undefined;
-                this.isGuestUser = false;
-                this.session = session;
-            }
-            this.getCurrentUserProfile();
-        });
-
+        /* to make sure there are no duplicate calls to getSession and profile setting
+         * from login flow only eventParams are received via events
+         */
+        if (!eventParams || (eventParams && !eventParams.skipSession)) {
+            this.authService.getSession().toPromise().then((session) => {
+                if (!session) {
+                    this.isGuestUser = true;
+                    this.session = session;
+                    this.getGuestUserInfo();
+                } else {
+                    this.guestProfileType = undefined;
+                    this.isGuestUser = false;
+                    this.session = session;
+                }
+                this.getCurrentUserProfile(eventParams);
+            });
+        }
         this.preferences.getString(PreferenceKey.IS_ONBOARDING_COMPLETED).toPromise()
             .then((result) => {
                 this.isOnBoardingCompleted = (result === 'true') ? true : false;
             });
     }
 
-    private getCurrentUserProfile() {
-        this.profile.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise()
-            .then((response: Profile) => {
-                this.guestUserProfile = response;
-                if (this.guestUserProfile.syllabus && this.guestUserProfile.syllabus.length > 0) {
-                    this.getFrameworkDetails(this.guestUserProfile.syllabus[0])
-                        .then((categories) => {
-                            categories.forEach(category => {
-                                this.frameworkData[category.code] = category;
+    private getCurrentUserProfile(eventParams?: EventParams) {
+        if (!eventParams || (eventParams && !eventParams.skipProfile)) {
+            this.profile.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise()
+                .then((response: Profile) => {
+                    this.guestUserProfile = response;
+                    if (this.guestUserProfile.syllabus && this.guestUserProfile.syllabus.length > 0) {
+                        this.getFrameworkDetails(this.guestUserProfile.syllabus[0])
+                            .then((categories) => {
+                                categories.forEach(category => {
+                                    this.frameworkData[category.code] = category;
+                                });
+    
+                                this.event.publish(AppGlobalService.PROFILE_OBJ_CHANGED);
+                            }).catch(() => {
+                                this.frameworkData = [];
+                                this.event.publish(AppGlobalService.PROFILE_OBJ_CHANGED);
                             });
-
-                            this.event.publish(AppGlobalService.PROFILE_OBJ_CHANGED);
-                        }).catch(() => {
-                            this.frameworkData = [];
-                            this.event.publish(AppGlobalService.PROFILE_OBJ_CHANGED);
-                        });
-                    this.getProfileSettingsStatus();
-                } else {
-                    this.frameworkData = [];
+                        this.getProfileSettingsStatus();
+                    } else {
+                        this.frameworkData = [];
+                        this.event.publish(AppGlobalService.PROFILE_OBJ_CHANGED);
+                    }
+                })
+                .catch((error) => {
+                    console.error(error);
+                    this.guestUserProfile = undefined;
                     this.event.publish(AppGlobalService.PROFILE_OBJ_CHANGED);
-                }
-            })
-            .catch((error) => {
-                console.error(error);
-                this.guestUserProfile = undefined;
-                this.event.publish(AppGlobalService.PROFILE_OBJ_CHANGED);
-            });
+                });
+        }
     }
 
     // Remove this method after refactoring formandframeworkutil.service
