@@ -923,6 +923,22 @@ ion-split-pane {
     }
   }
 }
+.cd-leave-training-popup {
+  .popover-content {
+    top: 80px !important;
+    // --box-shadow: 0px 3px 6px 5px #eee;
+    transform-origin: right top;
+    transform: scale(1);
+    width: 36% !important;
+    .list-md {
+      padding-top: 0px !important;
+      padding-bottom: 0px !important;
+    }
+    ion-backdrop {
+      opacity: 0;
+    }
+  }
+}
 // common code for both collection-etb and enrolled course details
 .sb-topics-container-ftue {
   .sb-topic-item {
@@ -1125,6 +1141,10 @@ sb-course-cards-hlist > .layout-course > .sb--scrolling-wrapper-flexbox {
   padding-left: 8px;
 }
 
+sb-course-cards-hlist > .layout-course > .sb--scrolling-wrapper-flexbox > .sb--card--container:last-child {
+  padding-right: 8px;
+}
+
 app-resources{
 
   .fixed-container{
@@ -1190,4 +1210,52 @@ app-manage-user-profiles{
       border: none !important;
     }
   }
+}
+
+app-application-header{
+  .add-manage-user{
+    sb-member-card{
+      .sb-member__img{
+        background-color: #BFE1CF !important;
+        color: #008840 !important;
+      }
+      .sb-member__name{
+        color: #008840 !important;
+      }
+    }
+  }
+
+  .more-manage-user{
+    sb-member-card{
+      .sb-member__img{
+        padding-bottom: 1rem !important;
+        color: #333333 !important;
+      }
+      .sb-member__name{
+        color: #333333 !important;
+      }
+    }
+  }
+
+  .managed-user-container{
+    sb-member-card{
+      .sb-members-list-item{
+        display: inline-flex !important;
+      }
+    }
+  }
+}
+
+app-manage-user-profiles{
+  .mu-selected-user{
+    sb-member-card{
+      .sb-member__name{
+        font-weight: bold !important;
+        color: #024F9D !important;
+      }
+    }
+  }
+}
+ion-modal.sb-progress-loader {
+  z-index: 50000 !important;
 }

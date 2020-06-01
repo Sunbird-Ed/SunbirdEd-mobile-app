@@ -1,7 +1,7 @@
 .mu-title{
   font-size: 16px;
   font-weight: bold;
-  color: #024F9D;
+  color: #666666;
   margin: 16px;
 }
 
@@ -21,6 +21,17 @@
 .mu-dissable-checkbox{
   display: none;
 }
+ion-button{
+  height: 40px !important;
+}
+
+.add-user{
+  padding: 0 8px;
+  ion-button{
+    --background: #BFE1CF !important;
+    color: #008840;
+  }
+}
 
 ion-footer{
   ion-button{
@@ -36,4 +47,24 @@ ion-footer{
 .button-outline{
   --background: #E5EDF5 !important;
   --border-color: #E5EDF5 !important;
+}
+
+.sb-new-btn {
+  background-color: #024F9D;
+  color: #FFFFFF;
+  width: 100%;
+  height: 40px;
+  box-shadow: 0 2px 7px 0 rgba(0, 0, 0, 0.25);
+  font-family: "Noto Sans";
+  font-size: 16px;
+}
+
+.sb-new-btn-success {
+  background-color: #BFE1CF;
+  color: #008840;
+  width: 100%;
+  height: 40px;
+  box-shadow: 0 2px 7px 0 rgba(0, 0, 0, 0.25);
+  font-family: "Noto Sans";
+  font-size: 16px;
 }

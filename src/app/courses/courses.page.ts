@@ -201,6 +201,7 @@ export class CoursesPage implements OnInit, OnDestroy {
         this.qrScanner.startScanner(PageId.COURSES, false);
       }
     });
+    this.sbProgressLoader.hide({id: 'login'});
   }
 
   ionViewWillLeave() {

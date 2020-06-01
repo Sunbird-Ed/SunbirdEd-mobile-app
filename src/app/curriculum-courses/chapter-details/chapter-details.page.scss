@@ -3,11 +3,23 @@
     margin: 8px;
     border-radius: 2px;
     box-shadow: 0 3px 5px 4px rgba(0,0,0,0.05);
+    position: relative;
 
     .cd-header-title {
         color: #3A3A3A;
         font-size: 16px;
         font-weight: bold;
+    }
+
+    .cd-of-menu{
+        position: absolute;
+        top: 16px;
+        right: 16px;
+        .cd-menu-icon{
+            height: 16px;
+            width: 20px;
+            margin: 8px 8px 8px 16px;
+        }
     }
 
     .cd-progress-container {
@@ -44,12 +56,6 @@
         .play-icon {
             margin-right: px;
         }
-    }
-
-    .menu-icon{
-        height: 16px;
-        width: 20px;
-        margin: 8px 8px 8px 16px;
     }
 }
 

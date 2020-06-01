@@ -26,7 +26,8 @@ import {
   TelemetryObject,
   UpdateServerProfileInfoRequest,
   CachedItemRequestSourceFrom,
-  CourseCertificate
+  CourseCertificate,
+  SharedPreferences
 } from 'sunbird-sdk';
 import { Environment, InteractSubtype, InteractType, PageId } from '@app/services/telemetry-constants';
 import { ActivatedRoute, Router, NavigationExtras } from '@angular/router';
@@ -38,6 +39,7 @@ import { AccountRecoveryInfoComponent } from '../components/popups/account-recov
 import { SocialSharing } from '@ionic-native/social-sharing/ngx';
 import { TeacherIdVerificationComponent } from '../components/popups/teacher-id-verification-popup/teacher-id-verification-popup.component';
 import { Observable } from 'rxjs';
+import {SbProgressLoader} from '@app/services/sb-progress-loader.service';
 
 @Component({
   selector: 'app-profile',
@@ -87,12 +89,13 @@ export class ProfilePage implements OnInit {
   timer: any;
   mappedTrainingCertificates: CourseCertificate[] = [];
   isDefaultChannelProfile$: Observable<boolean>;
-
+  appName = '';
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     @Inject('AUTH_SERVICE') private authService: AuthService,
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
     @Inject('COURSE_SERVICE') private courseService: CourseService,
+    @Inject('SHARED_PREFERENCES') private sharedPreferences: SharedPreferences,
     private zone: NgZone,
     private route: ActivatedRoute,
     private router: Router,
@@ -104,6 +107,7 @@ export class ProfilePage implements OnInit {
     private commonUtilService: CommonUtilService,
     private socialShare: SocialSharing,
     private headerService: AppHeaderService,
+    private sbProgressLoader: SbProgressLoader
   ) {
     const extrasState = this.router.getCurrentNavigation().extras.state;
     if (extrasState) {
@@ -120,14 +124,21 @@ export class ProfilePage implements OnInit {
     });
 
     this.events.subscribe('loggedInProfile:update', (framework) => {
-      this.updateLocalProfile(framework);
-      this.refreshProfileData();
+      if (framework) {
+        this.updateLocalProfile(framework);
+        this.refreshProfileData();
+      } else {
+        this.doRefresh();
+      }
     });
 
     this.formAndFrameworkUtilService.getCustodianOrgId().then((orgId: string) => {
       this.custodianOrgId = orgId;
     });
 
+    this.sharedPreferences.getString('app_name').toPromise().then(value => {
+      this.appName = value;
+    });
   }
 
   ngOnInit() {
@@ -173,6 +184,7 @@ export class ProfilePage implements OnInit {
             this.events.publish('refresh:profile');
             this.refresh = false;
             await loader.dismiss();
+            await this.sbProgressLoader.hide({id: 'login'});
             resolve();
           }, 500);
           // This method is used to handle trainings completed by user
@@ -369,7 +381,7 @@ export class ProfilePage implements OnInit {
     this.trainingsCompleted = [];
     this.courseService.getEnrolledCourses(option).toPromise()
       .then((res: Course[]) => {
-        this.trainingsCompleted = res.filter((course) => course.status === 2);
+        this.trainingsCompleted = res.filter((course) => (course.status === 2 || course.status === 1));
         this.mappedTrainingCertificates = this.mapTrainingsToCertificates(this.trainingsCompleted);
       })
       .catch((error: any) => {
@@ -388,7 +400,8 @@ export class ProfilePage implements OnInit {
         courseName: course.courseName,
         dateTime: course.dateTime,
         courseId: course.courseId,
-        certificate: undefined
+        certificate: undefined,
+        status: course.status
       };
       if (course.certificates && course.certificates.length) {
         oneCert.certificate = course.certificates[0];
@@ -788,32 +801,13 @@ export class ProfilePage implements OnInit {
     await popover.present();
   }
 
-  navigateToEditSubProfile() {
-    if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
-      this.commonUtilService.showToast('NEED_INTERNET_TO_CHANGE');
-      return;
+  async openEnrolledCourse(contentData) {
+    try {
+      const content = await this.contentService.getContentDetails({ contentId: contentData.courseId }).toPromise();
+      this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], { state: { content, resumeCourseFlag: true } });
+    } catch (err) {
+      console.error(err);
     }
-
-    const navigationExtras: NavigationExtras = {
-      state: {
-        profile: this.profile
-      }
-    };
-    this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.SUB_PROFILE_EDIT}`], navigationExtras);
-  }
-
-  async showSwitchUserPopup() {
-    if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
-      this.commonUtilService.showToast('NEED_INTERNET_TO_CHANGE');
-      return;
-    }
-
-    const navigationExtras: NavigationExtras = {
-      state: {
-        profile: this.profile
-      }
-    };
-    this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.MANAGE_USER_PROFILES}`], navigationExtras);
   }
 
 }

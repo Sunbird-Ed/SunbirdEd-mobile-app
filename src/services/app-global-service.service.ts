@@ -721,13 +721,7 @@ export class AppGlobalService implements OnDestroy {
     }
 
     get preSignInData() {
-        if (this._preSignInData) {
-            const preData = typeof (this._preSignInData) === 'object' ?
-                JSON.parse(JSON.stringify(this._preSignInData)) : this._preSignInData;
-            this._preSignInData = null;
-            return preData;
-        }
-        return null;
+        return this._preSignInData;
     }
     set preSignInData(value) {
         this._preSignInData = value;

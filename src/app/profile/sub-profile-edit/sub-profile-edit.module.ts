@@ -7,6 +7,7 @@ import { TranslateModule } from '@ngx-translate/core';
 
 import { SubProfileEditPage } from './sub-profile-edit.page';
 import { DirectivesModule } from '@app/directives/directives.module';
+import { ComponentsModule } from '@app/app/components/components.module';
 
 const routes: Routes = [
   {
@@ -23,7 +24,8 @@ const routes: Routes = [
     IonicModule,
     DirectivesModule,
     RouterModule.forChild(routes),
-    TranslateModule
+    TranslateModule,
+    ComponentsModule
   ],
   declarations: [SubProfileEditPage]
 })

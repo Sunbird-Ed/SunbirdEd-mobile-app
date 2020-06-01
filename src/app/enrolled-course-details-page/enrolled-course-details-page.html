@@ -120,11 +120,11 @@
 								{{ 'START_COURSE_NOW' | translate }} </span></button>
 						<button *ngIf="showResumeBtn && lastReadContentType !== 'SelfAssess'"
 							class="enrolled-course-card-button"
-							(click)="resumeContent(courseCardData?.lastReadContentId)"><span>
+							(click)="resumeContent()"><span>
 								<img class="play-icon" src="assets/imgs/Play@1.5x.svg" alt="play-icon">
 								{{ 'CONTINUE_NOW' | translate }} </span></button>
 						<button *ngIf="lastReadContentType === 'SelfAssess'" class="enrolled-course-card-button"
-							(click)="resumeContent(courseCardData?.lastReadContentId)"><span>
+							(click)="resumeContent()"><span>
 								<img class="play-icon" src="assets/imgs/Play@1.5x.svg" alt="play-icon">
 								{{ 'START_ASSESSMENT' | translate }} </span></button>
 						<div *ngIf="batchDetails?.endDate && !batchExp" class="enrollment-end-date ion-padding-bottom">
@@ -357,7 +357,9 @@
 				</ion-card-content>
 			</ion-card>
 			<div *ngSwitchCase="'modules'">
-				<div *ngFor="let item of childrenData; let i = index;">
+				<sb-toc-curriculum [isChapterListing]="true" [tocData]="courseHeirarchy" (tocCardClick)="onTocCardClick($event)"
+				shadowColor="#d2eadd" progressColor="#008840"></sb-toc-curriculum>
+				<!-- <div *ngFor="let item of childrenData; let i = index;">
 					<ion-card class="sb-accordian-card">
 						<ion-grid class="sb-accordian-header">
 							<ion-row (click)="toggleGroup(i , item)" *ngIf="item?.children">
@@ -396,7 +398,7 @@
 							</div>
 						</div>
 					</ion-card>
-				</div>
+				</div> -->
 			</div>
 		</div>
 	</div>

@@ -62,9 +62,8 @@ import {
   CorReleationDataType,
   ID
 } from '../../services/telemetry-constants';
-import { ProfileConstants, ContentType, EventTopics, PreferenceKey, RouterLinks, ShareItemType } from '../app.constant';
+import { ProfileConstants, ContentType, EventTopics, MimeType, PreferenceKey, RouterLinks, ShareItemType } from '../app.constant';
 import { BatchConstants } from '../app.constant';
-import { ContentShareHandlerService } from '../../services/content/content-share-handler.service';
 import { SbGenericPopoverComponent } from '../components/popups/sb-generic-popover/sb-generic-popover.component';
 import { ContentActionsComponent, ContentRatingAlertComponent, ConfirmAlertComponent } from '../components';
 import { Location } from '@angular/common';
@@ -96,6 +95,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
    * Contains children content data
    */
   childrenData: Array<any> = [];
+  courseHeirarchy: any;
 
   startData: any;
   shownGroup: null;
@@ -223,11 +223,15 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
   public lastReadContentId;
   public courseCompletionData = {};
   isCertifiedCourse: boolean;
-  showSheenAnimation: boolean = true;
+  showSheenAnimation = true;
   private isOnboardingSkipped: any;
   private isFromChannelDeeplink: any;
   trackDownloads$: Observable<DownloadTracking>;
   showCollapsedPopup = true;
+  resumeCourseFlag = false;
+
+  isNextContentFound = false;
+  nextContent: Content;
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -250,7 +254,6 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
     private datePipe: DatePipe,
     private utilityService: UtilityService,
     private headerService: AppHeaderService,
-    private contentShareHandler: ContentShareHandlerService,
     private location: Location,
     private router: Router,
     private contentDeleteHandler: ContentDeleteHandler,
@@ -270,6 +273,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
       this.corRelationList = extrasState.corRelation;
       this.source = extrasState.source;
       this.isQrCodeLinkToContent = extrasState.isQrCodeLinkToContent;
+      this.resumeCourseFlag = extrasState.resumeCourseFlag || false;
     }
   }
 
@@ -430,17 +434,17 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
       this.commonUtilService.showToast('NO_BATCHES_AVAILABLE');
       return;
     } else if (
-        this.batches.length === 1 &&
-        this.batches[0].enrollmentEndDate &&
-        (new Date() > new Date(this.batches[0].enrollmentEndDate))
+      this.batches.length === 1 &&
+      this.batches[0].enrollmentEndDate &&
+      (new Date() > new Date(this.batches[0].enrollmentEndDate))
     ) {
       this.commonUtilService.showToast(
-          'ENROLLMENT_ENDED_ON',
-          null,
-          null,
-          null,
-          null,
-          this.datePipe.transform(this.batches[0].enrollmentEndDate)
+        'ENROLLMENT_ENDED_ON',
+        null,
+        null,
+        null,
+        null,
+        this.datePipe.transform(this.batches[0].enrollmentEndDate)
       );
       return;
     }
@@ -654,29 +658,30 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
       this.corRelationList
     );
     this.contentService.getContentHeirarchy(request).toPromise()
-    .then((content: Content) => {
-      /* setting child content here */
-      this.showSheenAnimation = false;
-      this.enrolledCourseMimeType = content.mimeType;
-      this.childrenData = content.children;
-      this.toggleGroup(0, this.childrenData[0]);
-      this.startData = content.children;
-      this.childContentsData = content;
-      this.getContentState(true);
-      this.telemetryGeneratorService.generatefastLoadingTelemetry(
-        InteractSubtype.FAST_LOADING_FINISHED,
-        PageId.COURSE_DETAIL,
-        this.telemetryObject,
-        undefined,
-        this.objRollup,
-        this.corRelationList
-      );
-    })
-    .catch(error => {
-      console.log('Error Fetching Childrens', error);
-      this.extractApiResponse(data);
-      this.showSheenAnimation = false;
-    });
+      .then((content: Content) => {
+        /* setting child content here */
+        this.showSheenAnimation = false;
+        this.enrolledCourseMimeType = content.mimeType;
+        this.childrenData = content.children;
+        this.courseHeirarchy = content;
+        this.toggleGroup(0, this.childrenData[0]);
+        this.startData = content.children;
+        this.childContentsData = content;
+        this.getContentState(true);
+        this.telemetryGeneratorService.generatefastLoadingTelemetry(
+          InteractSubtype.FAST_LOADING_FINISHED,
+          PageId.COURSE_DETAIL,
+          this.telemetryObject,
+          undefined,
+          this.objRollup,
+          this.corRelationList
+        );
+      })
+      .catch(error => {
+        console.log('Error Fetching Childrens', error);
+        this.extractApiResponse(data);
+        this.showSheenAnimation = false;
+      });
   }
 
   /**
@@ -1048,7 +1053,6 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
   /**
    * Function to get status of child contents
    */
-
   private getStatusOfCourseCompletion(childrenData: Content[]) {
     const contentStatusData = this.contentStatusData;
     this.getLastPlayedName(this.lastReadContentId);
@@ -1181,6 +1185,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
             }, 1000);
             this.enrolledCourseMimeType = data.mimeType;
             this.childrenData = data.children;
+            this.courseHeirarchy = data;
             this.startData = data.children;
             this.childContentsData = data;
             this.getContentState(true);
@@ -1269,10 +1274,14 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
   /**
    * Function gets executed when user click on resume course button.
    */
-  resumeContent(identifier): void {
+  resumeContent(): void {
+    this.isNextContentFound = false;
+    this.nextContent = undefined;
+    this.getNextContent(this.courseHeirarchy, this.contentStatusData.contentList);
+
     const params: NavigationExtras = {
       state: {
-        content: { identifier },
+        content: this.nextContent,
         depth: '1', // Needed to handle some UI elements.
         contentState: {
           batchId: this.courseCardData.batchId ? this.courseCardData.batchId : '',
@@ -1371,7 +1380,12 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
   }
 
   ionViewDidEnter() {
+    this.sbProgressLoader.hide({ id: 'login' });
     this.sbProgressLoader.hide({ id: this.identifier });
+    if (this.resumeCourseFlag) {
+      this.resumeContent();
+      this.resumeCourseFlag = false;
+    }
   }
 
   showLicensce() {
@@ -1641,7 +1655,6 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
   }
 
   async share() {
-    // this.contentShareHandler.shareContent(this.content, this.corRelationList);
     const popover = await this.popoverCtrl.create({
       component: SbSharePopupComponent,
       componentProps: {
@@ -1751,6 +1764,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
           this.contentStatusData = success;
 
           if (this.contentStatusData && this.contentStatusData.contentList) {
+            this.getUnitLevelProgress();
             let progress = 0;
             this.contentStatusData.contentList.forEach((contentState: ContentState) => {
               if (contentState.status === 2) {
@@ -1774,6 +1788,21 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
     } else {
       // to be handled when there won't be any batchId
     }
+  }
+
+  getUnitLevelProgress() {
+    this.courseHeirarchy.children.forEach(collection => {
+      const leafNodes = this.getLeafNodes([collection]);
+      const viewedContents = [];
+      for (const content of leafNodes) {
+        if (this.contentStatusData.contentList.find((c) => c.contentId === content.identifier && c.status === 2)) {
+          viewedContents.push(content);
+        }
+      }
+      if (viewedContents.length) {
+        collection.progressPercentage = Math.round((viewedContents.length / leafNodes.length) * 100);
+      }
+    });
   }
 
   async handleHeaderEvents($event) {
@@ -1947,6 +1976,52 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
         resolve(false);
       }
     });
+  }
+
+  onTocCardClick(event) {
+    if (event.item.mimeType === MimeType.COLLECTION) {
+      const chapterParams: NavigationExtras = {
+        state: {
+          chapterData: event.item,
+          batches: this.batches,
+          isAlreadyEnrolled: this.isAlreadyEnrolled,
+          courseCardData: this.courseCardData,
+          batchExp: this.batchExp,
+          telemetryObject: this.telemetryObject,
+          isChapterCompleted: this.courseCompletionData[event.item.identifier],
+          contentStatusData: this.contentStatusData,
+          courseContent: this.content
+        }
+      };
+
+      this.router.navigate([`/${RouterLinks.CURRICULUM_COURSES}/${RouterLinks.CHAPTER_DETAILS}`],
+        chapterParams);
+    } else {
+      this.router.navigate([RouterLinks.CONTENT_DETAILS], {
+        state: {
+          content: event.item,
+          // depth,
+          // contentState: this.stateData,
+          corRelation: this.corRelationList
+        }
+      });
+    }
+  }
+
+  private getNextContent(courseHeirarchy, contentStateList: ContentState[]) {
+    const result = contentStateList.find(({ contentId }) => contentId === courseHeirarchy.identifier);
+    if ((result && (result.status === 0 || result.status === 1))
+      || (!result && courseHeirarchy.mimeType !== MimeType.COLLECTION)) {
+      this.nextContent = courseHeirarchy;
+      this.isNextContentFound = true;
+    } else if (!this.isNextContentFound && courseHeirarchy && courseHeirarchy.children) {
+      courseHeirarchy.children.forEach((ele) => {
+        if (!this.isNextContentFound) {
+          this.getNextContent(ele, contentStateList);
+        }
+      });
+    }
+    return;
   }
 
 }

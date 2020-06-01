@@ -27,7 +27,11 @@
     <div class="sb-course-container" *ngIf="courseList.length">
       <sb-course-cards-hlist [multiRow]="courseList.length > 3" [contentList]="courseList"
         [type]="'curiculum_course_card_grid'" [title]="'COURSES' | translate" [isLoading]="isLoading"
-        (cardClick)="navigateToCurriculumCourses($event)" [maxCardCount]="20">
+        (cardClick)="onCourseCardClick($event)" [maxCardCount]="20">
+      </sb-course-cards-hlist>
+    </div>
+    <div *ngIf="searchApiLoader" class="sb-course-container">
+      <sb-course-cards-hlist [type]="curiculum_course_card_grid" [isLoading]="searchApiLoader">
       </sb-course-cards-hlist>
     </div>
 
@@ -72,7 +76,8 @@
       </ion-item>
     </ion-list>
 
-    <div class="sb-course-heading" *ngIf="storyAndWorksheets && storyAndWorksheets.length">{{'TEXTBOOK' | translate}}
+    <div [ngClass]="{'sb-course-container': courseList.length === 0}" class="sb-course-heading"
+      *ngIf="storyAndWorksheets && storyAndWorksheets.length">{{'TEXTBOOK' | translate}}
     </div>
     <div *ngFor="let items of storyAndWorksheets">
       <div class="sb-textbook-container" *ngIf="items?.contents && items?.contents?.length">
