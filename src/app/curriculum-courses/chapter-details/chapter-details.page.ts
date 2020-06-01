@@ -631,7 +631,7 @@ export class ChapterDetailsPage implements OnInit, OnDestroy {
         component: ConfirmAlertComponent,
         componentProps: {
           sbPopoverHeading: this.commonUtilService.translateMessage('DOWNLOAD'),
-          sbPopoverMainTitle: this.courseContentData.name,
+          sbPopoverMainTitle: this.chapter.name,
           isNotShowCloseIcon: true,
           actionsButtons: [
             {

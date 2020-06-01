@@ -170,8 +170,12 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    .view-icon{
+      color: #024F9D;
+    }
     .sb-btn-footer-text {
       font-weight: 400;
+      
     }
   }
   button.sb-btn-tile:focus {

@@ -27,7 +27,8 @@ import {
   UpdateServerProfileInfoRequest,
   CachedItemRequestSourceFrom,
   CourseCertificate,
-  SharedPreferences
+  SharedPreferences,
+  CertificateAlreadyDownloaded
 } from 'sunbird-sdk';
 import { Environment, InteractSubtype, InteractType, PageId } from '@app/services/telemetry-constants';
 import { ActivatedRoute, Router, NavigationExtras } from '@angular/router';
@@ -43,6 +44,7 @@ import { AndroidPermissionsService } from '@app/services';
 import { AndroidPermissionsStatus, AndroidPermission } from '@app/services/android-permissions/android-permission';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import {SbProgressLoader} from '@app/services/sb-progress-loader.service';
+import { FileOpener } from '@ionic-native/file-opener/ngx';
 
 @Component({
   selector: 'app-profile',
@@ -93,7 +95,6 @@ export class ProfilePage implements OnInit {
   timer: any;
   mappedTrainingCertificates: CourseCertificate[] = [];
   isDefaultChannelProfile$: Observable<boolean>;
-  appName = '';
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     @Inject('AUTH_SERVICE') private authService: AuthService,
@@ -113,7 +114,8 @@ export class ProfilePage implements OnInit {
     private headerService: AppHeaderService,
     private permissionService: AndroidPermissionsService,
     private appVersion: AppVersion,
-    private sbProgressLoader: SbProgressLoader
+    private sbProgressLoader: SbProgressLoader,
+    private fileOpener: FileOpener
   ) {
     const extrasState = this.router.getCurrentNavigation().extras.state;
     if (extrasState) {
@@ -445,10 +447,14 @@ export class ProfilePage implements OnInit {
           certificateToken: certificate.token
         };
         this.courseService.downloadCurrentProfileCourseCertificate(downloadRequest).toPromise()
-        .then((path) => {
+        .then((res) => {
           this.commonUtilService.showToast('CERTIFICATE_DOWNLOADED');
+          this.openpdf(res.path);
         }).catch((err) => {
-          if (err.message.indexOf('Already downloaded') !== -1) {
+          if (err instanceof CertificateAlreadyDownloaded) {
+            const certificateName = certificate.url.substring(certificate.url.lastIndexOf('/') + 1);
+            const filePath = `${cordova.file.externalRootDirectory}Download/${certificateName}`;
+            this.openpdf(filePath);
             this.commonUtilService.showToast('CERTIFICATE_ALREADY_DOWNLOADED');
           }
         });
@@ -456,6 +462,13 @@ export class ProfilePage implements OnInit {
         this.commonUtilService.showSettingsPageToast('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName, PageId.PROFILE, true);
       }
     });
+  }
+
+  openpdf(path) {
+    this.fileOpener
+      .open(path, 'application/pdf')
+      .then(() => console.log('File is opened'))
+      .catch(e => console.log('Error opening file', e));
   }
 
   shareTrainingCertificate(course: Course, certificate: CourseCertificate) {

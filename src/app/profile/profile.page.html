@@ -209,9 +209,8 @@
                     <div class="training-2" *ngIf="certificate?.certificate">
                         <button class="sb-btn-tile ion-activatable ripple-parent"
                             (click)="downloadTrainingCertificate(certificate, certificate?.certificate)">
-                            <img src="assets/imgs/ic_download_selected.png" class="cert-download"
-                                alt="download certificate">
-                            <span class="sb-btn-footer-text m-t-4">{{ 'DOWNLOAD' | translate }}</span>
+                            <ion-icon class="view-icon" name="md-eye"></ion-icon>
+                            <span class="sb-btn-footer-text m-t-4">{{ 'VIEW' | translate }}</span>
                             <ion-ripple-effect type="unbounded"></ion-ripple-effect>
                         </button>
                     </div>
