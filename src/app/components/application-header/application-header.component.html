@@ -45,13 +45,10 @@
         (click)="emitEvent($event, 'settings');">
         <ion-icon name="settings"></ion-icon>
       </ion-button>
-      <!-- <button ion-button icon-only (click)="emitEvent($event, 'download');">
-            <img src="./assets/imgs/active_download.png" class="tool-icon dw-icon" [ngClass]="{'jump-animation': showDownloadAnimation}">
-        </button> 
-      <ion-button icon-only *ngIf="headerConfig?.actionButtons?.indexOf('notification') >=0"
-        (click)="emitEvent($event, 'notification');" class="active-download-icon">
-        <ion-icon name="notifications-outline"></ion-icon>
-      </ion-button>-->
+<!--      <ion-button icon-only *ngIf="headerConfig?.actionButtons?.indexOf('notification') >=0"-->
+<!--        (click)="emitEvent($event, 'notification');" class="active-download-icon">-->
+<!--        <ion-icon md="md-notifications-outline" ios="ios-notifications-outline"></ion-icon>-->
+<!--      </ion-button>-->
       <ion-button icon-only *ngIf="headerConfig?.actionButtons?.indexOf('search') >=0"
         (click)="emitEvent($event, 'search');">
         <img src="./assets/imgs/ic_search.png" class="tool-icon" alt="search">
@@ -63,7 +60,7 @@
       </ion-button>
       <ion-button icon-only *ngIf="headerConfig?.actionButtons?.indexOf('filter') >=0"
         (click)="emitEvent($event, 'filter');">
-        <img src="./assets/imgs/ic_filter.png" class="tool-icon" alt="filter">
+        <img src="./assets/imgs/ic_action_filter.svg" class="tool-icon" alt="filter">
       </ion-button>
       <ion-button icon-only *ngIf="headerConfig?.actionButtons?.indexOf('filter-applied') >=0"
         (click)="emitEvent($event, 'filter');">
@@ -71,11 +68,11 @@
       </ion-button>
       <ion-button icon-only *ngIf="headerConfig?.actionButtons?.indexOf('share') >=0"
         (click)="emitEvent($event, 'share');">
-        <ion-icon md="md-share" float-right></ion-icon>
+        <ion-icon md="md-share" class="ion-float-right"></ion-icon>
       </ion-button>
       <ion-button icon-only *ngIf="headerConfig?.actionButtons?.indexOf('more') >=0"
         (click)="emitEvent($event, 'more');" style="font-size: 1.8rem;">
-        <ion-icon md="md-more" float-end></ion-icon>
+        <ion-icon class="ion-float-end" md="md-more"></ion-icon>
       </ion-button>
     </ion-buttons>
 

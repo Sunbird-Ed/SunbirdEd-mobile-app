@@ -123,7 +123,9 @@ export enum PageId {
     SHARE_APP_POPUP = 'share-app-popup',
     UPGRADE_POPUP = 'update-popup',
     IMPORT_CONTENT_POPUP = 'import-content-popup',
-    PERMISSION_POPUP = 'permission-popup'
+    DOWNLOAD_ALL_CONFIRMATION_POPUP = 'download-all-confirmation-popup',
+    PERMISSION_POPUP = 'permission-popup',
+    STORAGE_SETTINGS = 'storage-settings'
 }
 export enum LogType {
     NOTIFICATION = 'notification'
@@ -177,6 +179,8 @@ export enum InteractType {
     DELETE_CHECKED = 'delete-checked',
     DELETE_UNCHECKED = 'delete-unchecked',
     BACKDROP_DISMISSED = 'backdrop-dismissed',
+    LOCAL = 'local',
+    FCM = 'fcm',
     WITHOUT_CONTENT = 'without-content',
     WITH_CONTENT = 'with-content'
 }
@@ -387,8 +391,8 @@ export enum InteractSubtype {
     TERMS_OF_USE_CLICKED = 'terms-of-use-clicked',
     USER_VERIFICATION_SUCCESS = 'user-verification-success',
     USER_VERIFICATION_FAILURE = 'user-verification-failure',
-    FAST_LOADING_OF_TEXTBOOK_INITIATED = 'textbook-fast-loading-initiated',
-    FAST_LOADING_OF_TEXTBOOK_FINISHED = 'textbook-fast-loading-finished',
+    FAST_LOADING_INITIATED = 'fast-loading-initiated',
+    FAST_LOADING_FINISHED = 'fast-loading-finished',
     REPORT_ISSUE_CLICKED = 'report-issue-clicked',
     STATE_DIST_CHANGED = 'state-dist-changed',
     STATE_CHANGED = 'state-changed',
@@ -420,6 +424,7 @@ export enum ID {
     LOAD_CLICKED = 'load-clicked',
     BACKDROP_CLICKED = 'backdrop-clicked',
     CANCEL_CLICKED = 'cancel-clicked',
+    NOTIFICATION_CLICKED = 'notification-clicked',
     SEE_MORE_CONTENT_BUTTON_CLICKED = 'see-more-content-button-clicked'
 }
 
@@ -438,10 +443,14 @@ export enum CorReleationDataType {
     CLASS = 'Class',
     DOWNLOADS = 'Downloads',
     SUBJECT = 'Subject',
+    MIMETYPE = 'MimeType',
     USERTYPE = 'UserType',
     DISCOVERY_TYPE = 'DiscoveryType',
     DEEPLINK = 'Deeplink',
+    ACCESS_TYPE = 'AccessType',
+    SCAN = 'Scan',
     SOURCE = 'Source',
+    NOTIFICATION_ID = 'NotificationID'
 }
 
 

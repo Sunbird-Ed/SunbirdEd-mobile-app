@@ -1,11 +1,23 @@
-<ion-card>
-  <ion-card-header>
-    <strong>{{ title | translate: {'%s': appName } }}</strong>
-  </ion-card-header>
-  <ion-card-content class="sign-in-card-text">
-    {{ description | translate: {'%s': appName } }}
-    <br />
-    <br />
-    <ion-button expand="block" (click)="signIn()" class="sign-in-btn">{{ 'SIGN_IN' | translate }}</ion-button>
-  </ion-card-content>
-</ion-card>
+<div *ngIf="source != 'courses'">
+  <ion-card>
+    <ion-card-header>
+      <strong>{{ title | translate: {'%s': appName } }}</strong>
+    </ion-card-header>
+    <ion-card-content class="sign-in-card-text">
+      {{ description | translate: {'%s': appName } }}
+      <br />
+      <br />
+      <ion-button expand="block" (click)="signIn()" class="sign-in-btn">{{ 'SIGN_IN' | translate }}</ion-button>
+    </ion-card-content>
+  </ion-card>
+</div>
+
+<div *ngIf="source == 'courses'">
+  <div class="sign-in-card-success">
+    <p class="sign-in-card-title">{{ 'WANT_TO_CHECK_TRAININGS' | translate: {'%s': appName } }}</p>
+    <div class="sign-in-block">
+      <p>{{ 'LOGIN_TO_JOIN_TRAINING' | translate }}</p>
+      <ion-button expand="block" class="ion-text-capitalize" (click)="signIn()">{{ 'OVERLAY_SIGN_IN' | translate | titlecase }}</ion-button>
+    </div>
+  </div>
+</div>

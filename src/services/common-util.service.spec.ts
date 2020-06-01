@@ -6,7 +6,7 @@ import {
   PopoverController,
   Platform,
 } from '@ionic/angular';
-import { SharedPreferences, ProfileService } from 'sunbird-sdk';
+import { SharedPreferences, ProfileService, CorrelationData } from 'sunbird-sdk';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { InteractType, InteractSubtype, PageId, Environment } from '@app/services/telemetry-constants';
 import { PreferenceKey } from '@app/app/app.constant';
@@ -18,6 +18,8 @@ import { NgZone } from '@angular/core';
 import { WebView } from '@ionic-native/ionic-webview/ngx';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { of } from 'rxjs';
+import { Router } from '@angular/router';
+import { AndroidPermissionsService } from '.';
 
 describe('CommonUtilService', () => {
   let commonUtilService: CommonUtilService;
@@ -53,8 +55,7 @@ describe('CommonUtilService', () => {
     } as any)))
   };
   const mockNetwork: Partial<Network> = {
-    onConnect: jest.fn(() => of({})),
-    onDisconnect: jest.fn(() => of({}))
+    onChange: jest.fn(() => of({ type: 'online' }))
   };
   const mockNgZone: Partial<NgZone> = {
     run: jest.fn((fn) => fn())
@@ -71,13 +72,14 @@ describe('CommonUtilService', () => {
   const mockAppversion: Partial<AppVersion> = {
     getAppName: jest.fn(() => Promise.resolve('Sunbird'))
   };
+  const mockRouter: Partial<Router> = {};
+  const mockPermissionService: Partial<AndroidPermissionsService> = {};
 
 
   beforeAll(() => {
     commonUtilService = new CommonUtilService(
       mockSharedPreferences as SharedPreferences,
       mockProfileService as ProfileService,
-      mockToastController as ToastController,
       mockTranslateService as TranslateService,
       mockLoadingController as LoadingController,
       mockEvents as Events,
@@ -87,7 +89,10 @@ describe('CommonUtilService', () => {
       mockPlatform as Platform,
       mockTelemetryGeneratorService as TelemetryGeneratorService,
       mockWebView as WebView,
-      mockAppversion as AppVersion
+      mockAppversion as AppVersion,
+      mockRouter as Router,
+      mockToastController as ToastController,
+      mockPermissionService as AndroidPermissionsService
     );
   });
 
@@ -508,6 +513,51 @@ describe('CommonUtilService', () => {
         expect(FCMPlugin.unsubscribeFromTopic).toHaveBeenCalled();
         done();
       }, 0);
+    });
+  });
+
+  describe('getFormattedDate', () => {
+    it('should format the date to DD-MMM-YYYY', () => {
+      // arrange
+      const date = '2020 02 10';
+      // act
+      commonUtilService.getFormattedDate(date);
+      // assert
+      expect(date).toEqual(date);
+    });
+  });
+
+  describe('getContentImg', () => {
+    it('should get the content image if present, else show the default image', () => {
+      // arrange
+      const content = {
+        courseLogoUrl: 'sample_url'
+      };
+      commonUtilService.convertFileSrc = jest.fn();
+      // act
+      commonUtilService.getContentImg(content);
+      // assert
+      expect(commonUtilService.convertFileSrc).toHaveBeenCalledWith(content.courseLogoUrl);
+    });
+  });
+
+  describe('presentToastForOffline', () => {
+    it('should create a pop-up message', (done) => {
+      const message = 'Connect to the internet to view the content';
+      mockToastController.create = jest.fn(() => {
+        return Promise.resolve({
+            present: jest.fn(),
+            onDidDismiss: jest.fn((fn) => {
+                fn();
+            })
+        });
+      });
+      jest.spyOn(commonUtilService, 'translateMessage').mockImplementation(() => {
+        return message;
+      });
+      commonUtilService.presentToastForOffline(message).then(() => {
+        done();
+      });
     });
   });
 

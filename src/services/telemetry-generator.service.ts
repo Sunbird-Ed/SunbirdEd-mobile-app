@@ -60,7 +60,7 @@ export class TelemetryGeneratorService {
         const telemetryImpressionRequest = new TelemetryImpressionRequest();
         telemetryImpressionRequest.type = type;
         telemetryImpressionRequest.subType = subtype;
-        telemetryImpressionRequest.pageId = pageid;
+        telemetryImpressionRequest.pageId = pageid || PageId.HOME;
         telemetryImpressionRequest.env = env;
         telemetryImpressionRequest.objId = objectId ? objectId : '';
         telemetryImpressionRequest.objType = objectType ? objectType : '';
@@ -347,5 +347,45 @@ export class TelemetryGeneratorService {
 
     isCollection(mimeType) {
         return mimeType === MimeType.COLLECTION;
+    }
+
+    generateUtmInfoTelemetry(values: Map, pageId, cData: CorrelationData[], object?: TelemetryObject) {
+        this.generateInteractTelemetry(
+            InteractType.OTHER,
+            InteractSubtype.UTM_INFO,
+            Environment.HOME,
+            pageId,
+            object,
+            values,
+            undefined,
+            cData);
+    }
+
+    /* Fast loading telemetry generator */
+    generatefastLoadingTelemetry(interactSubtype, pageId, telemetryObject?, objRollup?, value?, corRelationList?) {
+        this.generateInteractTelemetry(
+            InteractType.OTHER,
+            interactSubtype,
+            Environment.HOME,
+            pageId,
+            telemetryObject,
+            value,
+            objRollup,
+            corRelationList
+        );
+    }
+
+    generateNotificationClickedTelemetry(type, pageId, value?, corRelationList?) {
+        this.generateInteractTelemetry(
+            type,
+            '',
+            Environment.HOME,
+            pageId,
+            undefined,
+            value,
+            undefined,
+            corRelationList,
+            ID.NOTIFICATION_CLICKED
+        );
     }
 }

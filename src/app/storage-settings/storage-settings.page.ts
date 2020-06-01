@@ -109,6 +109,10 @@ export class StorageSettingsPage implements OnInit {
   }
 
   ngOnInit() {
+    this.telemetryGeneratorService.generateImpressionTelemetry(
+      ImpressionType.VIEW, '',
+      PageId.STORAGE_SETTINGS,
+      Environment.DOWNLOADS);
     this.fetchStorageVolumes();
     this.fetchStorageDestination();
   }
@@ -148,6 +152,8 @@ export class StorageSettingsPage implements OnInit {
   private handleHeaderEvents(event: { name: string }) {
     switch (event.name) {
       case 'back':
+        this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.STORAGE_SETTINGS, Environment.HOME,
+          true);
         this.location.back();
         break;
     }
@@ -212,7 +218,7 @@ export class StorageSettingsPage implements OnInit {
     );
     await confirm.present();
 
-    confirm.onWillDismiss().then(({data}) => {
+    confirm.onWillDismiss().then(({ data }) => {
       if (data.buttonClicked === null) {
         this.revertSelectedStorageDestination();
       }
@@ -247,7 +253,7 @@ export class StorageSettingsPage implements OnInit {
       cssClass: 'sb-popover dw-active-downloads-popover',
     });
 
-    this.shouldTransferContentsPopup.present();
+    await this.shouldTransferContentsPopup.present();
     this.telemetryGeneratorService.generateImpressionTelemetry(
       ImpressionType.VIEW,
       '',
@@ -442,7 +448,7 @@ export class StorageSettingsPage implements OnInit {
       ),
       take(1)
     )
-     .subscribe(async (e) => {
+      .subscribe(async (e) => {
         if (e.type === StorageEventType.TRANSFER_REVERT_COMPLETED) {
           this.storageDestination = this.storageDestination === StorageDestination.INTERNAL_STORAGE ?
             StorageDestination.EXTERNAL_STORAGE :
@@ -467,7 +473,7 @@ export class StorageSettingsPage implements OnInit {
       cssClass: 'sb-popover dw-active-downloads-popover',
     });
 
-    this.cancellingTransferPopup.present();
+    await this.cancellingTransferPopup.present();
 
     this.cancellingTransferPopup.onDidDismiss().then(() => {
       this.cancellingTransferPopup = undefined;
@@ -503,7 +509,7 @@ export class StorageSettingsPage implements OnInit {
       cssClass: 'sb-popover warning dw-active-downloads-popover',
     });
 
-    this.duplicateContentPopup.present();
+    await this.duplicateContentPopup.present();
 
     this.telemetryGeneratorService.generateImpressionTelemetry(
       ImpressionType.VIEW,
@@ -568,7 +574,7 @@ export class StorageSettingsPage implements OnInit {
       cssClass: 'sb-popover dw-active-downloads-popover',
     });
 
-    this.successTransferPopup.present();
+    await this.successTransferPopup.present();
 
     this.telemetryGeneratorService.generateImpressionTelemetry(
       ImpressionType.VIEW,
@@ -577,7 +583,7 @@ export class StorageSettingsPage implements OnInit {
       Environment.DOWNLOADS
     );
 
-    this.successTransferPopup.onDidDismiss().then(({data}) => {
+    this.successTransferPopup.onDidDismiss().then(({ data }) => {
       this.successTransferPopup = undefined;
 
       if (data && data.canDelete) {

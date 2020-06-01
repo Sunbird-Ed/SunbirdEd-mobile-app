@@ -1,12 +1,12 @@
 import { Location } from '@angular/common';
-import {Component, Input, NgZone, OnInit} from '@angular/core';
+import { Component, Input, NgZone, OnInit } from '@angular/core';
 import { ContentType, MimeType, RouterLinks, EventTopics } from '@app/app/app.constant';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { CommonUtilService } from '@app/services/common-util.service';
 import { ComingSoonMessageService } from '@app/services/coming-soon-message.service';
 import { PopoverController, Events } from '@ionic/angular';
 import { SbGenericPopoverComponent } from '@app/app/components/popups/sb-generic-popover/sb-generic-popover.component';
-import {Content, TelemetryObject, Rollup, ContentStateResponse} from 'sunbird-sdk';
+import { Content, TelemetryObject, Rollup, ContentStateResponse } from 'sunbird-sdk';
 import { Router, NavigationExtras } from '@angular/router';
 import { TextbookTocService } from '@app/app/collection-detail-etb/textbook-toc-service';
 import {
@@ -49,6 +49,7 @@ export class CollectionChildComponent implements OnInit {
   @Input() batch: any;
   @Input() renderLevel: number;
   @Input() contentStatusData: ContentStateResponse;
+
   public telemetryObject: TelemetryObject;
   public objRollup: Rollup;
   collectionChildIcon: any;
@@ -58,7 +59,7 @@ export class CollectionChildComponent implements OnInit {
   get isContentCompleted(): boolean {
     if (this.contentStatusData && this.isEnrolled) {
       return !!this.contentStatusData.contentList.find(c => c.contentId === this.childData.identifier
-      && c.status === 2);
+        && c.status === 2);
     }
 
     return false;
@@ -74,11 +75,11 @@ export class CollectionChildComponent implements OnInit {
     private telemetryService: TelemetryGeneratorService,
     private location: Location,
     private events: Events,
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.collectionChildIcon = ContentUtil.getAppIcon(this.childData.contentData.appIcon, this.childData.basePath,
-        this.commonUtilService.networkInfo.isNetworkAvailable);
+      this.commonUtilService.networkInfo.isNetworkAvailable);
     if (this.latestParentName) {
       this.checkHierarchy();
     }
@@ -108,8 +109,9 @@ export class CollectionChildComponent implements OnInit {
   setContentId(id: string, collection?) {
     console.log('extractedUrl', this.router);
     if (this.router.url.indexOf(RouterLinks.TEXTBOOK_TOC) !== -1) {
-      const values = new Map();
-      values['unitClicked'] = id;
+      const values = {
+        unitClicked: id
+      };
       // values['parentId'] = this.parentId;
       this.telemetryService.generateInteractTelemetry(
         InteractType.TOUCH,
@@ -121,16 +123,16 @@ export class CollectionChildComponent implements OnInit {
         this.objRollup,
         this.corRelationList
       );
-      this.textbookTocService.setTextbookIds({ rootUnitId: this.rootUnitId, contentId: id, unit: collection});
+      this.textbookTocService.setTextbookIds({ rootUnitId: this.rootUnitId, contentId: id, unit: collection });
       this.location.back();
     }
   }
 
   navigateToDetailsPage(content: Content, depth) {
     if (this.router.url.indexOf(RouterLinks.TEXTBOOK_TOC) !== -1) {
-      const values = new Map();
-      values['contentClicked'] = content.identifier;
-      // values['parentId'] = this.parentId;
+      const values = {
+        contentClicked: content.identifier
+      };
       this.telemetryService.generateInteractTelemetry(
         InteractType.TOUCH,
         InteractSubtype.CONTENT_CLICKED,
@@ -142,14 +144,15 @@ export class CollectionChildComponent implements OnInit {
       this.textbookTocService.setTextbookIds({ rootUnitId: this.rootUnitId, contentId: content.identifier });
       this.location.back();
     } else if (!this.isEnrolled && this.router.url.indexOf(RouterLinks.ENROLLED_COURSE_DETAILS) !== -1) {
-      this.events.publish('courseToc:content-clicked', {isBatchNotStarted: this.isBatchNotStarted, isEnrolled: this.isEnrolled});
+      this.events.publish('courseToc:content-clicked', { isBatchNotStarted: this.isBatchNotStarted, isEnrolled: this.isEnrolled });
     } else if (this.isEnrolled && this.isBatchNotStarted && this.router.url.indexOf(RouterLinks.ENROLLED_COURSE_DETAILS) !== -1) {
-      this.events.publish('courseToc:content-clicked', {isBatchNotStarted: this.isBatchNotStarted, isEnrolled: this.isEnrolled});
+      this.events.publish('courseToc:content-clicked', { isBatchNotStarted: this.isBatchNotStarted, isEnrolled: this.isEnrolled });
     } else {
       //   migration-TODO : remove unnecessary
       //   const stateData = this.navParams.get('contentState');
-      const values = new Map();
-      values['contentClicked'] = content.identifier;
+      const values = {
+        contentClicked: content.identifier
+      };
       // values['parentId'] = this.bookID;
       this.zone.run(async () => {
         if (content.contentType === ContentType.COURSE) {
@@ -182,7 +185,7 @@ export class CollectionChildComponent implements OnInit {
               InteractType.TOUCH,
               InteractSubtype.CONTENT_CLICKED,
               Environment.HOME,
-              PageId.COLLECTION_DETAIL, this.telemetryObject ,
+              PageId.COLLECTION_DETAIL, this.telemetryObject,
               values, this.objRollup, this.corRelationList
             );
             const contentDetailsParams: NavigationExtras = {
@@ -198,13 +201,14 @@ export class CollectionChildComponent implements OnInit {
             this.router.navigate([RouterLinks.CONTENT_DETAILS], contentDetailsParams);
           };
 
-          if (content.contentData.contentType === ContentType.SELF_ASSESS && this.batch && this.batch.status === 2) {
+          if (content.contentData.contentType === ContentType.SELF_ASSESS
+            && this.batch && this.batch.status === 2) {
             this.assessemtnAlert = await this.popoverCtrl.create({
               component: SbGenericPopoverComponent,
               componentProps: {
                 sbPopoverHeading: this.commonUtilService.translateMessage(content['status'] ? 'REDO_ASSESSMENT' : 'START_ASSESSMENT'),
                 sbPopoverMainTitle: this.commonUtilService.translateMessage(content['status'] ?
-                    'TRAINING_ENDED_REDO_ASSESSMENT' : 'TRAINING_ENDED_START_ASSESSMENT'),
+                  'TRAINING_ENDED_REDO_ASSESSMENT' : 'TRAINING_ENDED_START_ASSESSMENT'),
                 actionsButtons: [
                   {
                     btntext: this.commonUtilService.translateMessage('SKIP'),
@@ -243,7 +247,7 @@ export class CollectionChildComponent implements OnInit {
         componentProps: {
           sbPopoverHeading: this.commonUtilService.translateMessage('CONTENT_COMMING_SOON'),
           sbPopoverMainTitle: message ? this.commonUtilService.translateMessage(message) :
-            this.commonUtilService.translateMessage('CONTENT_IS_BEEING_ADDED') + childData.contentData.name,
+            this.commonUtilService.translateMessage('CONTENT_IS_BEEING_ADDED', {content_name : childData.contentData.name }),
           actionsButtons: [
             {
               btntext: this.commonUtilService.translateMessage('OKAY'),
@@ -253,7 +257,7 @@ export class CollectionChildComponent implements OnInit {
         },
         cssClass: 'sb-popover warning',
       });
-      popover.present();
+      await popover.present();
     }
   }
 
@@ -270,6 +274,7 @@ export class CollectionChildComponent implements OnInit {
       return !!activeMimeType.find(m => m === mimeType);
     }
   }
+
   // course-toc: for showing respective contenttype icons
   getContentTypeIcon(content: Content) {
     const mimeType = content.mimeType;
@@ -289,6 +294,6 @@ export class CollectionChildComponent implements OnInit {
   }
 
   playContent(content: Content) {
-    this.events.publish(EventTopics.CONTENT_TO_PLAY, {content});
+    this.events.publish(EventTopics.CONTENT_TO_PLAY, { content });
   }
 }

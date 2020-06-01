@@ -171,5 +171,11 @@
         outline: none;
       }
     }
+
+    .sb-btn-tile-group  button[disabled]{
+      opacity: 0.7;
+      pointer-events: none;
+      cursor: default;
+    }
   }
 }

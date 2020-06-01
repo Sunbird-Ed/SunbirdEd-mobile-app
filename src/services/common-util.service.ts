@@ -1,4 +1,4 @@
-import { Injectable, NgZone, OnDestroy, Inject } from '@angular/core';
+import { Injectable, NgZone, Inject } from '@angular/core';
 import {
     ToastController,
     LoadingController,
@@ -15,11 +15,11 @@ import { PreferenceKey, ProfileConstants, RouterLinks } from '@app/app/app.const
 import { appLanguages } from '@app/app/app.constant';
 
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
-import { InteractType, InteractSubtype, PageId, Environment, ImpressionType } from '@app/services/telemetry-constants';
+import { InteractType, InteractSubtype, PageId, Environment, CorReleationDataType, ImpressionType } from '@app/services/telemetry-constants';
 import { SbGenericPopoverComponent } from '@app/app/components/popups/sb-generic-popover/sb-generic-popover.component';
 import { QRAlertCallBack, QRScannerAlert } from '@app/app/qrscanner-alert/qrscanner-alert.page';
 import { Observable, merge } from 'rxjs';
-import { mapTo } from 'rxjs/operators';
+import { distinctUntilChanged, map, share, tap } from 'rxjs/operators';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { SbPopoverComponent } from '@app/app/components/popups';
 import { AndroidPermissionsStatus } from './android-permissions/android-permission';
@@ -31,24 +31,21 @@ export interface NetworkInfo {
     isNetworkAvailable: boolean;
 }
 @Injectable()
-export class CommonUtilService implements OnDestroy {
+export class CommonUtilService {
     public networkAvailability$: Observable<boolean>;
 
     networkInfo: NetworkInfo = {
-        isNetworkAvailable: false
+        isNetworkAvailable: navigator.onLine
     };
 
-    connectSubscription: any;
-
-    disconnectSubscription: any;
     private alert?: any;
     private _currentTabName: string;
     appName: any;
+    private toast: any;
 
     constructor(
         @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
         @Inject('PROFILE_SERVICE') private profileService: ProfileService,
-        private toastCtrl: ToastController,
         private translate: TranslateService,
         private loadingCtrl: LoadingController,
         private events: Events,
@@ -63,28 +60,37 @@ export class CommonUtilService implements OnDestroy {
         private toastController: ToastController,
         private permissionService: AndroidPermissionsService
     ) {
-        this.listenForEvents();
-
         this.networkAvailability$ = merge(
-            this.network.onConnect().pipe(
-                mapTo(true)
-            ),
-            this.network.onDisconnect().pipe(
-                mapTo(false)
+            this.network.onChange().pipe(
+                map((v) => v.type === 'online'),
             )
+        ).pipe(
+            distinctUntilChanged(),
+            share(),
+            tap((status) => {
+                this.zone.run(() => {
+                    this.networkInfo = {
+                        isNetworkAvailable: status
+                    };
+                });
+            })
         );
     }
 
-    listenForEvents() {
-        this.handleNetworkAvailability();
-    }
-
-    showToast(translationKey, isInactive?, cssToast?, duration?, position?) {
+    showToast(translationKey, isInactive?, cssToast?, duration?, position?, fields?: string | any) {
         if (Boolean(isInactive)) {
             return;
         }
 
-        this.translate.get(translationKey).subscribe(
+        let replaceObject: any = '';
+
+        if (typeof (fields) === 'object') {
+            replaceObject = fields;
+        } else {
+            replaceObject = { '%s': fields };
+        }
+
+        this.translate.get(translationKey, replaceObject).subscribe(
             async (translatedMsg: any) => {
                 const toastOptions = {
                     message: translatedMsg,
@@ -93,7 +99,7 @@ export class CommonUtilService implements OnDestroy {
                     cssClass: cssToast ? cssToast : ''
                 };
 
-                const toast = await this.toastCtrl.create(toastOptions);
+                const toast = await this.toastController.create(toastOptions);
                 await toast.present();
             }
         );
@@ -237,38 +243,6 @@ export class CommonUtilService implements OnDestroy {
             cssClass: 'sb-popover warning',
         });
         await qrAlert.present();
-    }
-    /**
-     * Its check for the network availability
-     * @returns status of the network
-     */
-    private handleNetworkAvailability(): boolean {
-        const updateNetworkAvailabilityStatus = (status: boolean) => {
-            this.zone.run(() => {
-                this.networkInfo.isNetworkAvailable = status;
-            });
-        };
-
-        if (this.network.type === 'none') {
-            updateNetworkAvailabilityStatus(false);
-        } else {
-            updateNetworkAvailabilityStatus(true);
-        }
-
-        this.connectSubscription = this.network.onDisconnect().subscribe(() => {
-            updateNetworkAvailabilityStatus(false);
-        });
-
-        this.disconnectSubscription = this.network.onConnect().subscribe(() => {
-            updateNetworkAvailabilityStatus(true);
-        });
-
-        return this.networkInfo.isNetworkAvailable;
-    }
-
-    ngOnDestroy() {
-        this.connectSubscription.unsubscribe();
-        this.disconnectSubscription.unsubscribe();
     }
 
     /**
@@ -499,8 +473,32 @@ export class CommonUtilService implements OnDestroy {
             });
     }
 
+    generateUTMInfoTelemetry(scannedData, cData, object) {
+        const utmHashes = scannedData.slice(scannedData.indexOf('?') + 1).split('&');
+        const utmParams = {};
+        utmHashes.map(hash => {
+            const [key, val] = hash.split('=');
+            utmParams[key] = decodeURIComponent(val);
+        });
+        this.telemetryGeneratorService.generateUtmInfoTelemetry(utmParams,
+            (cData[0].id === CorReleationDataType.SCAN) ? PageId.QRCodeScanner : PageId.HOME, cData, object);
+    }
+
+    getFormattedDate(date: string | Date) {
+        const inputDate = new Date(date).toDateString();
+        const [, month, day, year] = inputDate.split(' ');
+        const formattedDate = [day, month, year].join('-');
+        return formattedDate;
+    }
+
+    getContentImg(content) {
+        const defaultImg = this.convertFileSrc('assets/imgs/ic_launcher.png');
+        return this.convertFileSrc(content.courseLogoUrl) ||
+            this.convertFileSrc(content.appIcon) || defaultImg;
+    }
+
     isAccessibleForNonStudentRole(profileType) {
-        return profileType === ProfileType.TEACHER || profileType == ProfileType.OTHER;
+        return profileType === ProfileType.TEACHER || profileType === ProfileType.OTHER;
     }
 
     public async getGivenPermissionStatus(permissions): Promise<AndroidPermissionsStatus> {
@@ -534,8 +532,8 @@ export class CommonUtilService implements OnDestroy {
     }
 
     public async buildPermissionPopover(handler: (selectedButton: string) => void,
-                                        appName: string, whichPermission: string,
-                                        permissionDescription: string, pageId, isOnboardingCompleted): Promise<HTMLIonPopoverElement> {
+        appName: string, whichPermission: string,
+        permissionDescription: string, pageId, isOnboardingCompleted): Promise<HTMLIonPopoverElement> {
         return this.popOverCtrl.create({
             component: SbPopoverComponent,
             componentProps: {
@@ -569,4 +567,19 @@ export class CommonUtilService implements OnDestroy {
             return popover;
         });
     }
+
+    async presentToastForOffline(msg: string) {
+        this.toast = await this.toastController.create({
+          duration: 3000,
+          message: this.translateMessage(msg),
+          showCloseButton: true,
+          position: 'top',
+          closeButtonText: 'X',
+          cssClass: ['toastHeader', 'offline']
+        });
+        await this.toast.present();
+        this.toast.onDidDismiss(() => {
+          this.toast = undefined;
+        });
+      }
 }

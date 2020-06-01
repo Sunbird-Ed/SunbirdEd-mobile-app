@@ -1,7 +1,8 @@
-import { Subscription } from 'rxjs';
-import { Component, Inject, ViewChild, ChangeDetectorRef } from '@angular/core';
+import { tap } from 'rxjs/operators';
+import { Subscription, combineLatest, Observable } from 'rxjs';
+import { Component, Inject, ViewChild, ChangeDetectorRef, OnInit, OnDestroy } from '@angular/core';
 import { Events, IonSelect, Platform } from '@ionic/angular';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, FormControl } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 import { initTabs, LOGIN_TEACHER_TABS } from '@app/app/module.service';
 import {
@@ -18,7 +19,8 @@ import {
   UpdateServerProfileInfoRequest,
   ServerProfileDetailsRequest,
   CachedItemRequestSourceFrom,
-  Channel
+  Channel,
+  FrameworkCategoryCode
 } from 'sunbird-sdk';
 import { CommonUtilService } from '@app/services/common-util.service';
 import { AppGlobalService } from '@app/services/app-global-service.service';
@@ -38,51 +40,22 @@ import { TncUpdateHandlerService } from '@app/services/handlers/tnc-update-handl
   templateUrl: './categories-edit.page.html',
   styleUrls: ['./categories-edit.page.scss'],
 })
-export class CategoriesEditPage {
+export class CategoriesEditPage implements OnInit, OnDestroy {
 
   @ViewChild('boardSelect') boardSelect: IonSelect;
   @ViewChild('mediumSelect') mediumSelect: IonSelect;
   @ViewChild('gradeSelect') gradeSelect: IonSelect;
 
-  private _syllabusList = [];
-  private _mediumList = [];
-  private _gradeList = [];
-  private _subjectList = [];
+  private framework: Framework;
+  private formControlSubscriptions: Subscription;
+
+  public syllabusList: { name: string, code: string }[] = [];
+  public mediumList: { name: string, code: string }[] = [];
+  public gradeList: { name: string, code: string }[] = [];
+  public subjectList: { name: string, code: string }[] = [];
+  public boardList: { name: string, code: string }[] = [];
+
   disableSubmitButton = false;
-
-  get syllabusList() {
-    return this._syllabusList;
-  }
-  set syllabusList(v) {
-    this._syllabusList = v;
-    this.changeDetectionRef.detectChanges();
-  }
-
-  get mediumList() {
-    return this._mediumList;
-  }
-  set mediumList(v) {
-    this._mediumList = v;
-    this.changeDetectionRef.detectChanges();
-  }
-
-  get gradeList() {
-    return this._gradeList;
-  }
-  set gradeList(v) {
-    this._gradeList = v;
-    this.changeDetectionRef.detectChanges();
-  }
-
-  get subjectList() {
-    return this._subjectList;
-  }
-  set subjectList(v) {
-    this._subjectList = v;
-    this.changeDetectionRef.detectChanges();
-  }
-
-  boardList = [];
 
   profile: Profile;
   profileEditForm: FormGroup;
@@ -122,6 +95,26 @@ export class CategoriesEditPage {
 
   isBoardAvailable = true;
 
+  get syllabusControl(): FormControl {
+    return this.profileEditForm.get('syllabus') as FormControl;
+  }
+
+  get boardControl(): FormControl {
+    return this.profileEditForm.get('boards') as FormControl;
+  }
+
+  get mediumControl(): FormControl {
+    return this.profileEditForm.get('medium') as FormControl;
+  }
+
+  get gradeControl(): FormControl {
+    return this.profileEditForm.get('grades') as FormControl;
+  }
+
+  get subjectControl(): FormControl {
+    return this.profileEditForm.get('subjects') as FormControl;
+  }
+
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     @Inject('FRAMEWORK_SERVICE') private frameworkService: FrameworkService,
@@ -139,7 +132,6 @@ export class CategoriesEditPage {
     private location: Location,
     private platform: Platform,
     private activePageService: ActivePageService,
-    private changeDetectionRef: ChangeDetectorRef,
     private externalIdVerificationService: ExternalIdVerificationService,
     private tncUpdateHandlerService: TncUpdateHandlerService,
 
@@ -160,6 +152,17 @@ export class CategoriesEditPage {
     this.initializeForm();
   }
 
+  ngOnInit() {
+    this.formControlSubscriptions = combineLatest(
+      this.onSyllabusChange(),
+      this.onMediumChange(),
+      this.onGradeChange(),
+    ).subscribe();
+  }
+
+  ngOnDestroy() {
+    this.formControlSubscriptions.unsubscribe();
+  }
   /**
    * Ionic life cycle event - Fires every time page visits
    */
@@ -193,11 +196,11 @@ export class CategoriesEditPage {
       this.profile.board.splice(1, this.profile.board.length);
     }
     this.profileEditForm = this.fb.group({
-      syllabus: [this.profile.syllabus && this.profile.syllabus[0] || []],
-      boards: [this.profile.board || []],
-      grades: [this.profile.grade || []],
-      medium: [this.profile.medium || []],
-      subjects: [this.profile.subject || []]
+      syllabus: [],
+        boards: [],
+        medium: [],
+        grades: [],
+        subjects: []
     });
   }
 
@@ -205,172 +208,162 @@ export class CategoriesEditPage {
     this.loader = await this.commonUtilService.getLoader();
   }
 
-  /**
-   * It will fetch the syllabus details
-   */
   async getSyllabusDetails() {
-    if (this.profile.syllabus && this.profile.syllabus[0]) {
-      this.frameworkId = this.profile.syllabus[0];
-    }
+    this.loader = await this.commonUtilService.getLoader();
+    await this.loader.present();
+
     const getSuggestedFrameworksRequest: GetSuggestedFrameworksRequest = {
+      from: CachedItemRequestSourceFrom.SERVER,
       language: this.translate.currentLang,
       requiredCategories: FrameworkCategoryCodesGroup.DEFAULT_FRAMEWORK_CATEGORIES
     };
+
     this.frameworkUtilService.getActiveChannelSuggestedFrameworkList(getSuggestedFrameworksRequest).toPromise()
-      .then(async (result: Framework[]) => {
-        if (result && result.length) {
-          result.forEach(element => {
-            // renaming the fields to text, value and checked
-            const value = { 'name': element.name, 'code': element.identifier };
-            this.syllabusList.push(value);
-          });
-
-          if (this.profile && this.profile.syllabus && this.profile.syllabus[0] !== undefined) {
-            const frameworkDetailsRequest: FrameworkDetailsRequest = {
-              frameworkId: this.profile.syllabus[0],
-              requiredCategories: FrameworkCategoryCodesGroup.DEFAULT_FRAMEWORK_CATEGORIES
-            };
-            this.frameworkService.getFrameworkDetails(frameworkDetailsRequest).toPromise()
-              .then(async (framework: Framework) => {
-                this.categories = framework.categories;
-                this.resetForm(0);
-              }).catch(async () => {
-                await this.loader.dismiss();
-                this.commonUtilService.showToast(this.commonUtilService.translateMessage('NEED_INTERNET_TO_CHANGE'));
-              });
-          } else {
-            await this.loader.dismiss();
-          }
-        } else {
+      .then(async (frameworks: Framework[]) => {
+        if (!frameworks || !frameworks.length) {
           await this.loader.dismiss();
-
-          this.commonUtilService.showToast(this.commonUtilService.translateMessage('NO_DATA_FOUND'));
+          this.commonUtilService.showToast('NO_DATA_FOUND');
+          return;
         }
+        this.syllabusList = frameworks.map(r => ({ name: r.name, code: r.identifier }));
+        this.syllabusControl.patchValue([this.profile.syllabus && this.profile.syllabus[0]] || []);
+        await this.loader.dismiss();
       });
   }
 
-  /**
-   * It will resets the form to empty values
-   */
-  resetForm(index: number) {
-    switch (index) {
-      case 0:
-        this.profileEditForm.patchValue({
-          boards: [],
-          grades: [],
-          subjects: [],
-          medium: []
-        });
-        this.fetchNextCategoryOptionsValues(1, 'boardList', [this.profileEditForm.value.syllabus]);
-        break;
-      case 1:
-        this.profileEditForm.patchValue({
-          medium: [],
-          grades: [],
-          subjects: []
-        });
-        this.fetchNextCategoryOptionsValues(2, 'mediumList', this.profileEditForm.value.boards);
-        break;
-      case 2:
-        this.profileEditForm.patchValue({
-          grades: [],
-          subjects: []
-        });
-        this.fetchNextCategoryOptionsValues(3, 'gradeList', this.profileEditForm.value.medium);
-        break;
-      case 3:
-        this.profileEditForm.patchValue({
-          subjects: []
-        });
-        this.fetchNextCategoryOptionsValues(4, 'subjectList', this.profileEditForm.value.grades);
-        break;
-    }
-  }
-
-  /**
-   * It builds API request object and internally call form API to fetch category data.
-   * @param index Index of the field in the form
-   * @param currentField Variable Name of the current field list
-   * @param selectedValue selected value for the currently selected field
-   */
-  fetchNextCategoryOptionsValues(index: number, currentField: string, selectedValue: Array<string>) {
-    if (index === 1) {
-      this.frameworkId = selectedValue[0];
-      if (this.frameworkId.length !== 0) {
-        const frameworkDetailsRequest: FrameworkDetailsRequest = {
-          frameworkId: this.frameworkId,
-          requiredCategories: FrameworkCategoryCodesGroup.DEFAULT_FRAMEWORK_CATEGORIES
-        };
-        this.frameworkService.getFrameworkDetails(frameworkDetailsRequest).toPromise()
-          .then((framework: Framework) => {
-            this.categories = framework.categories;
-            const request: GetFrameworkCategoryTermsRequest = {
-              currentCategoryCode: this.categories[0].code,
-              language: this.translate.currentLang,
-              requiredCategories: FrameworkCategoryCodesGroup.DEFAULT_FRAMEWORK_CATEGORIES,
-              frameworkId: this.frameworkId
-            };
-            this.getCategoryData(request, currentField);
-          }).catch(() => {
-            this.commonUtilService.showToast(this.commonUtilService.translateMessage('NEED_INTERNET_TO_CHANGE'));
-          });
-      }
-    } else {
-      const request: GetFrameworkCategoryTermsRequest = {
-        currentCategoryCode: this.categories[index - 1].code,
-        prevCategoryCode: this.categories[index - 2].code,
-        selectedTermsCodes: selectedValue,
-        language: this.translate.currentLang,
-        requiredCategories: FrameworkCategoryCodesGroup.DEFAULT_FRAMEWORK_CATEGORIES,
-        frameworkId: this.frameworkId
-      };
-      this.getCategoryData(request, currentField);
-    }
-  }
-
-  /**
-   * It makes an API call to fetch the categories values for the selected framework
-   * @param request API request body
-   * @param currentField Variable name of the current field list
-   */
-  getCategoryData(request: GetFrameworkCategoryTermsRequest, currentField: string) {
-    this.frameworkUtilService.getFrameworkCategoryTerms(request).toPromise()
-      .then((result: CategoryTerm[]) => {
-        this[currentField] = result;
-        if (request.currentCategoryCode === 'board') {
-          const boardName = this.syllabusList.find(framework => this.frameworkId === framework.code);
-          if (boardName) {
-            const boardCode = result.find(board => boardName.name === board.name);
-            if (boardCode) {
-              this.profileEditForm.patchValue({
-                boards: [boardCode.code]
-              });
-              this.resetForm(1);
-            } else {
-              this.profileEditForm.patchValue({
-                boards: [result[0].code]
-              });
-              this.resetForm(1);
-            }
-          }
-        } else if (this.editData) {
-          this.editData = false;
-          if (this.isBoardAvailable) {
-            this.profileEditForm.patchValue({
-              medium: this.profile.medium || []
-            });
-          }
-          this.profileEditForm.patchValue({
-            grades: this.profile.grade || []
-          });
-          this.profileEditForm.patchValue({
-            subjects: this.profile.subject || []
-          });
+  private onSyllabusChange(): Observable<string[]> {
+    return this.syllabusControl.valueChanges.pipe(
+      tap(async (value) => {
+        if (!Array.isArray(value)) {
+          this.syllabusControl.patchValue([value]);
+          return;
         }
 
+        if (!value.length) {
+          return;
+        }
+
+        await this.commonUtilService.getLoader().then((loader) => {
+          this.loader = loader;
+          this.loader.present();
+        });
+
+        try {
+          await this.getFrameworkData(value[0]);
+
+          const boardCategoryTermsRequet: GetFrameworkCategoryTermsRequest = {
+            frameworkId: this.framework.identifier,
+            requiredCategories: [FrameworkCategoryCode.BOARD],
+            currentCategoryCode: FrameworkCategoryCode.BOARD,
+            language: this.translate.currentLang
+          };
+
+          const boards = await this.frameworkUtilService.getFrameworkCategoryTerms(boardCategoryTermsRequet).toPromise();
+          this.boardList = boards.map(t => ({ name: t.name, code: t.code }));
+
+          const boardTerm = boards.find(b => b.name === (this.syllabusList.find((s) => s.code === value[0])!.name));
+
+          this.boardControl.patchValue([boardTerm.code]);
+
+          const nextCategoryTermsRequet: GetFrameworkCategoryTermsRequest = {
+            frameworkId: this.framework.identifier,
+            requiredCategories: [FrameworkCategoryCode.MEDIUM],
+            prevCategoryCode: FrameworkCategoryCode.BOARD,
+            currentCategoryCode: FrameworkCategoryCode.MEDIUM,
+            language: this.translate.currentLang,
+            selectedTermsCodes: this.boardControl.value
+          };
+
+          this.mediumList = (await this.frameworkUtilService.getFrameworkCategoryTerms(nextCategoryTermsRequet).toPromise())
+            .map(t => ({ name: t.name, code: t.code }));
+          if (!this.mediumControl.value) {
+            this.mediumControl.patchValue(this.profile.medium || []);
+          } else {
+            this.mediumControl.patchValue([]);
+          }
+        } catch (e) {
+          // todo
+          console.error(e);
+        } finally {
+          // todo
+          // this.mediumControl.patchValue([]);
+          this.loader.dismiss();
+        }
       })
-      .catch(() => {
-      });
+    );
+  }
+
+  private onMediumChange(): Observable<string[]> {
+    return this.mediumControl.valueChanges.pipe(
+      tap(async (value) => {
+        await this.commonUtilService.getLoader().then((loader) => {
+          this.loader = loader;
+          this.loader.present();
+        });
+
+        try {
+          const nextCategoryTermsRequet: GetFrameworkCategoryTermsRequest = {
+            frameworkId: this.framework.identifier,
+            requiredCategories: [FrameworkCategoryCode.GRADE_LEVEL],
+            prevCategoryCode: FrameworkCategoryCode.MEDIUM,
+            currentCategoryCode: FrameworkCategoryCode.GRADE_LEVEL,
+            language: this.translate.currentLang,
+            selectedTermsCodes: this.mediumControl.value
+          };
+
+          this.gradeList = (await this.frameworkUtilService.getFrameworkCategoryTerms(nextCategoryTermsRequet).toPromise())
+            .map(t => ({ name: t.name, code: t.code }));
+          if (!this.gradeControl.value) {
+            this.gradeControl.patchValue(this.profile.grade || []);
+          } else {
+            this.gradeControl.patchValue([]);
+          }
+        } catch (e) {
+          // todo
+          console.error(e);
+        } finally {
+          // todo
+          // this.gradeControl.patchValue([]);
+          this.loader.dismiss();
+        }
+      })
+    );
+  }
+
+  private onGradeChange(): Observable<string[]> {
+    return this.gradeControl.valueChanges.pipe(
+      tap(async () => {
+        // await this.commonUtilService.getLoader().then((loader) => {
+        //   this.loader = loader;
+        //   this.loader.present();
+        // });
+        try {
+          const nextCategoryTermsRequet: GetFrameworkCategoryTermsRequest = {
+            frameworkId: this.framework.identifier,
+            requiredCategories: [FrameworkCategoryCode.SUBJECT],
+            prevCategoryCode: FrameworkCategoryCode.GRADE_LEVEL,
+            currentCategoryCode: FrameworkCategoryCode.SUBJECT,
+            language: this.translate.currentLang,
+            selectedTermsCodes: this.gradeControl.value
+          };
+
+          this.subjectList = (await this.frameworkUtilService.getFrameworkCategoryTerms(nextCategoryTermsRequet).toPromise())
+            .map(t => ({ name: t.name, code: t.code }));
+          if (!this.subjectControl.value) {
+            this.subjectControl.patchValue(this.profile.subject || []);
+          } else {
+            this.subjectControl.patchValue([]);
+          }
+        } catch (e) {
+          // todo
+          console.error(e);
+        } finally {
+          // todo
+          // this.subjectControl.patchValue([]);
+          this.loader.dismiss();
+        }
+      })
+    );
   }
 
   /**
@@ -378,19 +371,19 @@ export class CategoriesEditPage {
    */
   onSubmit() {
     const formVal = this.profileEditForm.value;
-    if (!formVal.boards.length && this.syllabusList.length) {
+    if (formVal.boards && !formVal.boards.length && this.syllabusList.length && this.isBoardAvailable) {
       if (this.showOnlyMandatoryFields) {
         this.boardSelect.open();
       } else {
         this.showErrorToastMessage('BOARD');
       }
-    } else if (!formVal.medium.length) {
+    } else if (formVal.medium && !formVal.medium.length) {
       if (this.showOnlyMandatoryFields) {
         this.mediumSelect.open();
       } else {
         this.showErrorToastMessage('MEDIUM');
       }
-    } else if (!formVal.grades.length) {
+    } else if (formVal.grades && !formVal.grades.length) {
       if (this.showOnlyMandatoryFields) {
         this.gradeSelect.open();
       } else {
@@ -436,7 +429,7 @@ export class CategoriesEditPage {
     if (!this.isBoardAvailable) {
       req.framework['id'] = [this.frameworkId];
     } else if (formVal.syllabus && formVal.syllabus.length) {
-      req.framework['id'] = [formVal.syllabus];
+      req.framework['id'] = [...formVal.syllabus];
     }
     if (formVal.boards && formVal.boards.length) {
       const code = typeof (formVal.boards) === 'string' ? formVal.boards : formVal.boards[0];
@@ -541,12 +534,13 @@ export class CategoriesEditPage {
       if (boardCategory) {
         this.syllabusList = activeChannelSuggestedFrameworkList.map(f => ({ name: f.name, code: f.identifier }));
         this.isBoardAvailable = true;
-        this.resetForm(0);
+        this.syllabusControl.patchValue([this.profile.syllabus && this.profile.syllabus[0]] || []);
       } else {
+        await this.getFrameworkData(this.frameworkId);
         this.categories.unshift([]);
         this.isBoardAvailable = false;
         this.mediumList = mediumCategory.terms;
-        this.resetForm(2);
+        this.mediumControl.patchValue(this.profile.medium || []);
       }
     } catch (err) {
       if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
@@ -554,5 +548,13 @@ export class CategoriesEditPage {
       }
       console.error('getFrameWorkCategoryOrder', err);
     }
+  }
+
+  private async getFrameworkData(frameworkId) {
+    this.framework = await this.frameworkService.getFrameworkDetails({
+      from: CachedItemRequestSourceFrom.SERVER,
+      frameworkId,
+      requiredCategories: FrameworkCategoryCodesGroup.DEFAULT_FRAMEWORK_CATEGORIES
+    }).toPromise();
   }
 }

@@ -1,16 +1,16 @@
 <ion-content>
   <ion-grid>
     <ion-row>
-      <ion-col size="12" no-padding class="text-center">
+      <ion-col size="12" class="text-center ion-no-padding">
         <p class="f18 padding-left-5" color="dark">{{title}}</p>
         <p class="f14" style="color: #4a4a4a">{{description}}</p>
       </ion-col>
       <section class="text-center W100" *ngIf="type==='phone'">
-        <ion-label text-center class="font-weight-bold">{{'ENTER_OTP' | translate}}</ion-label>
-        <ion-col size="12" no-padding class="text-center" *ngIf="invalidOtp">
-          <p class="error">{{'ERROR_OTP' | translate}}</p>
+        <ion-label class="font-weight-bold ion-text-center">{{'ENTER_OTP' | translate}}</ion-label>
+        <ion-col size="12" class="text-center ion-no-padding" *ngIf="invalidOtp">
+          <p class="error">{{'ERROR_OTP' | translate:{'%s': remainingAttempts} }}</p>
         </ion-col>
-        <ion-col size="12" no-padding class="text-center">
+        <ion-col size="12" class="text-center ion-no-padding">
           <div class="W100 merged-input-container MT10">
             <ion-input type="tel" placeholder="{{'OTP_PLACEHOLDER' | translate }}" class="form-control"
               [(ngModel)]="otp"></ion-input>
@@ -19,13 +19,13 @@
       </section>
       <section class="text-center W100" *ngIf="type==='email'">
         <ion-row>
-          <ion-col size="12" no-padding class="text-center">
+          <ion-col size="12" class="text-center ion-no-padding">
             <strong>{{'ENTER_OTP' | translate}}</strong>
           </ion-col>
-          <ion-col size="12" no-padding class="text-center" *ngIf="invalidOtp">
-            <p class="error">{{'ERROR_OTP' | translate}}</p>
+          <ion-col size="12" class="text-center ion-no-padding" *ngIf="invalidOtp">
+            <p class="error">{{'ERROR_OTP' | translate:{'%s': remainingAttempts} }}</p>
           </ion-col>
-          <ion-col size="12" no-padding class="text-center">
+          <ion-col size="12" class="text-center ion-no-padding">
             <div class="W100 merged-input-container MT10">
               <ion-input type="tel" placeholder="{{'OTP_PLACEHOLDER' | translate }}" class="form-control"
                 [(ngModel)]="otp"></ion-input>
@@ -33,7 +33,7 @@
           </ion-col>
         </ion-row>
       </section>
-      <ion-col size="12" no-padding class="text-center">
+      <ion-col size="12" class="text-center ion-no-padding">
         <ion-button fill="clear" (click)="resendOTP();" [disabled]="!enableResend">{{'RESEND_OTP' | translate}}
         </ion-button>
       </ion-col>

@@ -1,6 +1,6 @@
 import { Component, Inject, NgZone, OnDestroy, ViewChild, ChangeDetectorRef, OnInit, AfterViewInit } from '@angular/core';
 import { Router, NavigationExtras } from '@angular/router';
-import { Events, Platform, PopoverController, IonContent, NavController, IonInput } from '@ionic/angular';
+import { Events, Platform, PopoverController, IonContent, NavController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { Location } from '@angular/common';
 import each from 'lodash/each';
@@ -17,9 +17,8 @@ import {
   FrameworkDetailsRequest,
   FrameworkService,
   FrameworkUtilService,
-  GetSuggestedFrameworksRequest, SearchEntry, SearchHistoryService
+  GetSuggestedFrameworksRequest, SearchEntry, SearchHistoryService, SortOrder
 } from 'sunbird-sdk';
-
 import { Map } from '@app/app/telemetryutil';
 import {
   BatchConstants,
@@ -43,6 +42,8 @@ import { ContentUtil } from '@app/util/content-util';
 import { LibraryCardTypes } from '@project-sunbird/common-consumption';
 import { Subscription, Observable, from } from 'rxjs';
 import { switchMap, tap, map as rxjsMap, share, startWith, debounceTime } from 'rxjs/operators';
+import { applyProfileFilter } from '@app/util/filter.util';
+
 
 declare const cordova;
 @Component({
@@ -262,7 +263,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
         && this.appGlobalService.isOnBoardingCompleted) {
         if (this.appGlobalService.isProfileSettingsCompleted || !this.appGlobalService.DISPLAY_ONBOARDING_CATEGORY_PAGE) {
           if (await this.commonUtilService.isDeviceLocationAvailable()) {
-            this.router.navigate([`/${RouterLinks.TABS}`], { state: { loginMode: 'guest' } });
+            this.router.navigate([`/${RouterLinks.TABS}`], { state: { loginMode: 'guest' }, replaceUrl: true });
           } else {
             const navigationExtras: NavigationExtras = {
               state: {
@@ -272,11 +273,12 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
             this.navCtrl.navigateForward([`/${RouterLinks.DISTRICT_MAPPING}`], navigationExtras);
           }
         } else {
-          this.router.navigate([`/${RouterLinks.PROFILE_SETTINGS}`], { state: { isCreateNavigationStack: false, hideBackButton: true, showFrameworkCategoriesMenu: true  } });
+          this.router.navigate([`/${RouterLinks.PROFILE_SETTINGS}`],
+            { state: { isCreateNavigationStack: false, hideBackButton: true, showFrameworkCategoriesMenu: true } });
         }
       } else {
         if (this.source === PageId.ONBOARDING_PROFILE_PREFERENCES) {
-          this.router.navigate([`/${RouterLinks.PROFILE_SETTINGS}`], { state: {showFrameworkCategoriesMenu: true  }, replaceUrl: true });
+          this.router.navigate([`/${RouterLinks.PROFILE_SETTINGS}`], { state: { showFrameworkCategoriesMenu: true }, replaceUrl: true });
         } else {
           this.popCurrentPage();
         }
@@ -331,7 +333,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  private async showContentDetails(content, isRootContent: boolean = false) {
+  private async showContentDetails(content, isRootContent: boolean = false, isAvailableLocally: boolean = true) {
     this.showLoader = false;
     let params;
     if (this.shouldGenerateEndTelemetry) {
@@ -344,7 +346,8 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
         isSingleContent: this.isSingleContent,
         onboarding: this.appGlobalService.isOnBoardingCompleted,
         isProfileUpdated: this.isProfileUpdated,
-        isQrCodeLinkToContent: this.isQrCodeLinkToContent
+        isQrCodeLinkToContent: this.isQrCodeLinkToContent,
+        isAvailableLocally
       };
     } else {
       params = {
@@ -354,7 +357,8 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
         isSingleContent: this.isSingleContent,
         onboarding: this.appGlobalService.isOnBoardingCompleted,
         isProfileUpdated: this.isProfileUpdated,
-        isQrCodeLinkToContent: this.isQrCodeLinkToContent
+        isQrCodeLinkToContent: this.isQrCodeLinkToContent,
+        isAvailableLocally
       };
     }
     if (this.loader) {
@@ -407,7 +411,8 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
             onboarding: params.onboarding,
             parentContent: params.parentContent,
             isProfileUpdated: params.isProfileUpdated,
-            isQrCodeLinkToContent: params.isQrCodeLinkToContent
+            isQrCodeLinkToContent: params.isQrCodeLinkToContent,
+            isAvailableLocally: params.isAvailableLocally
           }
         });
         if (this.isSingleContent) {
@@ -643,6 +648,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
           && res.grade && res.grade.length && res.medium && res.medium.length) {
           this.events.publish(AppGlobalService.USER_INFO_UPDATED);
           this.events.publish('refresh:profile');
+          this.appGlobalService.setOnBoardingCompleted();
         }
         this.commonUtilService.handleToTopicBasedNotification();
         this.appGlobalService.guestUserProfile = res;
@@ -749,25 +755,8 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
     this.dialCodeResult = undefined;
     this.corRelationList = [];
 
-    if (this.profile) {
-
-      if (this.profile.board && this.profile.board.length) {
-        contentSearchRequest.board = this.applyProfileFilter(this.profile.board, contentSearchRequest.board, 'board');
-      }
-
-      if (this.profile.medium && this.profile.medium.length) {
-        contentSearchRequest.medium = this.applyProfileFilter(this.profile.medium, contentSearchRequest.medium, 'medium');
-      }
-
-      if (this.profile.grade && this.profile.grade.length) {
-        contentSearchRequest.grade = this.applyProfileFilter(this.profile.grade, contentSearchRequest.grade, 'gradeLevel');
-      }
-
-    }
-
     this.contentService.searchContent(contentSearchRequest).toPromise()
       .then((response: ContentSearchResult) => {
-
         this.zone.run(() => {
           this.responseData = response;
           if (response) {
@@ -809,45 +798,6 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
       .toPromise();
   }
 
-  applyProfileFilter(profileFilter: Array<any>, assembleFilter: Array<any>, categoryKey?: string) {
-    if (categoryKey) {
-      const nameArray = [];
-      profileFilter.forEach(filterCode => {
-        let nameForCode = this.appGlobalService.getNameForCodeInFramework(categoryKey, filterCode);
-
-        if (!nameForCode) {
-          nameForCode = filterCode;
-        }
-
-        nameArray.push(nameForCode);
-      });
-
-      profileFilter = nameArray;
-    }
-
-
-    if (!assembleFilter) {
-      assembleFilter = [];
-    }
-    assembleFilter = assembleFilter.concat(profileFilter);
-
-    const unique_array = [];
-
-    for (let i = 0; i < assembleFilter.length; i++) {
-      if (unique_array.indexOf(assembleFilter[i]) === -1 && assembleFilter[i].length > 0) {
-        unique_array.push(assembleFilter[i]);
-      }
-    }
-
-    assembleFilter = unique_array;
-
-    if (assembleFilter.length === 0) {
-      return undefined;
-    }
-
-    return assembleFilter;
-  }
-
   private async checkRetiredOpenBatch(content: any, layoutName?: string) {
     this.showLoader = false;
     this.loader = await this.commonUtilService.getLoader();
@@ -870,7 +820,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
     }
     if (anyOpenBatch || !retiredBatches.length) {
       // open the batch directly
-      await  this.showContentDetails(content, true);
+      await this.showContentDetails(content, true);
     } else if (retiredBatches.length) {
       await this.navigateToBatchListPopup(content, layoutName, retiredBatches);
     }
@@ -886,6 +836,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
         enrollmentType: CourseEnrollmentType.OPEN,
         status: [CourseBatchStatus.NOT_STARTED, CourseBatchStatus.IN_PROGRESS]
       },
+      sort_by: { createdDate: SortOrder.DESC },
       fields: BatchConstants.REQUIRED_FIELDS
     };
     const reqvalues = new Map();
@@ -899,11 +850,11 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
               this.batches = res;
               if (this.batches.length) {
                 this.batches.forEach((batch, key) => {
-                    if (batch.status === 1) {
-                      ongoingBatches.push(batch);
-                    } else {
-                      upcommingBatches.push(batch);
-                    }
+                  if (batch.status === 1) {
+                    ongoingBatches.push(batch);
+                  } else {
+                    upcommingBatches.push(batch);
+                  }
                 });
                 this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
                   'ongoing-batch-popup',
@@ -986,6 +937,9 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
       source: 'app',
       from: CachedItemRequestSourceFrom.SERVER
     };
+    if (this.profile && this.profile.board && this.profile.board.length) {
+      pageAssembleCriteria.userProfile = { board: applyProfileFilter(this.appGlobalService, this.profile.board, [], 'board') };
+    }
     // pageAssembleCriteria.hardRefresh = true;
 
     this.pageService.getPageAssemble(pageAssembleCriteria).toPromise()
@@ -1032,7 +986,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
       InteractSubtype.CONTENT_CLICKED,
       !this.appGlobalService.isOnBoardingCompleted ? Environment.ONBOARDING : Environment.HOME,
-      this.isDialCodeSearch ? PageId.DIAL_SEARCH : this.source,
+      this.isDialCodeSearch ? PageId.DIAL_SEARCH : (this.source || PageId.SEARCH),
       telemetryObject,
       values,
       ContentUtil.generateRollUp(undefined, identifier),
@@ -1156,71 +1110,6 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  processDialCodeResultPrev(searchResult) {
-    const collectionArray: Array<any> = searchResult.collectionDataList;
-    const contentArray: Array<any> = searchResult.contentDataList;
-
-    this.dialCodeResult = [];
-    const addedContent = new Array<any>();
-
-    if (collectionArray && collectionArray.length > 0) {
-      collectionArray.forEach((collection) => {
-        contentArray.forEach((content) => {
-          if (collection.childNodes.includes(content.identifier)) {
-            if (collection.content === undefined) {
-              collection.content = [];
-            }
-            collection.content.push(content);
-            addedContent.push(content.identifier);
-          }
-        });
-        this.dialCodeResult.push(collection);
-      });
-    }
-    this.dialCodeContentResult = [];
-
-    let isParentCheckStarted = false;
-
-    const isAllContentMappedToCollection = contentArray.length === addedContent.length;
-
-    if (this.dialCodeResult.length === 1 && this.dialCodeResult[0].content.length === 1 && isAllContentMappedToCollection) {
-      this.parentContent = this.dialCodeResult[0];
-      this.childContent = this.dialCodeResult[0].content[0];
-      this.checkParent(this.dialCodeResult[0], this.dialCodeResult[0].content[0]);
-      isParentCheckStarted = true;
-    }
-    this.generateQRScanSuccessInteractEvent(this.dialCodeResult, this.dialCode);
-    if (contentArray && contentArray.length > 1) {
-      contentArray.forEach((content) => {
-        if (addedContent.indexOf(content.identifier) < 0) {
-          this.dialCodeContentResult.push(content);
-        }
-      });
-    }
-
-    if (contentArray && contentArray.length === 1 && !isParentCheckStarted) {
-      this.location.back();
-      // this.showContentDetails(contentArray[0], true);
-      this.isSingleContent = true;
-      this.openContent(contentArray[0], contentArray[0], 0, true);
-      return;
-    }
-
-    if (this.dialCodeResult.length === 0 && this.dialCodeContentResult.length === 0) {
-      this.location.back();
-      if (this.shouldGenerateEndTelemetry) {
-        this.generateQRSessionEndEvent(this.source, this.dialCode);
-      }
-      this.telemetryGeneratorService.generateImpressionTelemetry(ImpressionType.VIEW,
-        '',
-        PageId.DIAL_NOT_LINKED,
-        Environment.HOME);
-      this.commonUtilService.showContentComingSoonAlert(this.source);
-    } else {
-      this.isEmptyResult = false;
-    }
-  }
-
   generateQRScanSuccessInteractEvent(dialCodeResultCount, dialCode) {
     const values = new Map();
     values.networkAvailable = this.commonUtilService.networkInfo.isNetworkAvailable ? 'Y' : 'N';
@@ -1273,19 +1162,21 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
     const contentRequest: ContentDetailRequest = {
       contentId: identifier
     };
-
     this.contentService.getContentDetails(contentRequest).toPromise()
       .then((data: Content) => {
         if (data) {
           if (data.isAvailableLocally) {
             this.zone.run(() => {
-              this.showContentDetails(child);
+              this.showContentDetails(child, false, true);
             });
           } else {
             this.subscribeSdkEvent();
             this.downloadParentContent(parent);
             this.profile = this.appGlobalService.getCurrentUser();
             this.checkProfileData(data.contentData, this.profile);
+            setTimeout(() => {
+              this.showContentDetails(this.childContent, false, false);
+            }, 400);
           }
         } else {
           this.zone.run(() => {
@@ -1302,7 +1193,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
   downloadParentContent(parent) {
     this.zone.run(() => {
       this.downloadProgress = 0;
-      this.showLoading = true;
+      // this.showLoading = true;
       this.isDownloadStarted = true;
     });
 
@@ -1359,64 +1250,64 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
   subscribeSdkEvent() {
     this.eventSubscription = this.eventsBusService.events()
       .subscribe((event: EventsBusEvent) => {
-      this.zone.run(() => {
-        if (event.type === DownloadEventType.PROGRESS && event.payload.progress) {
-          const downloadEvent = event as DownloadProgress;
-          this.downloadProgress =  downloadEvent.payload.progress === -1 ? 0 : downloadEvent.payload.progress;
-          this.loadingDisplayText = this.commonUtilService.translateMessage('LOADING_CONTENT') + ' ' + this.downloadProgress + ' %';
+        this.zone.run(() => {
+          if (event.type === DownloadEventType.PROGRESS && event.payload.progress) {
+            const downloadEvent = event as DownloadProgress;
+            this.downloadProgress = downloadEvent.payload.progress === -1 ? 0 : downloadEvent.payload.progress;
+            this.loadingDisplayText = this.commonUtilService.translateMessage('LOADING_CONTENT') + ' ' + this.downloadProgress + ' %';
 
-          if (this.downloadProgress === 100) {
-            // this.showLoading = false;
-            this.loadingDisplayText = this.commonUtilService.translateMessage('LOADING_CONTENT') + ' ';
-          }
-        }
-
-        if (event.type === ContentEventType.IMPORT_PROGRESS) {
-          const totalCountMsg = Math.floor((event.payload.currentCount / event.payload.totalCount) * 100) +
-          '% (' + event.payload.currentCount + ' / ' + event.payload.totalCount + ')';
-          this.loadingDisplayText = this.commonUtilService.translateMessage('EXTRACTING_CONTENT', totalCountMsg);
-          if (event.payload.currentCount === event.payload.totalCount) {
-            let timer = 30;
-            const interval = setInterval(() => {
-              this.loadingDisplayText = `Getting things ready in ${timer--}  seconds`;
-              if (timer === 0) {
-                this.loadingDisplayText = 'Getting things ready';
-                clearInterval(interval);
-              }
-            }, 1000);
-          }
-        }
-        // if (event.payload && event.payload.status === 'IMPORT_COMPLETED' && event.type === 'contentImport') {
-        if (event.payload && event.type === ContentEventType.IMPORT_COMPLETED) {
-          if (this.queuedIdentifiers.length && this.isDownloadStarted) {
-            if (this.queuedIdentifiers.includes(event.payload.contentId)) {
-              this.currentCount++;
+            if (this.downloadProgress === 100) {
+              // this.showLoading = false;
+              this.loadingDisplayText = this.commonUtilService.translateMessage('LOADING_CONTENT') + ' ';
             }
-            if (this.queuedIdentifiers.length === this.currentCount) {
-              this.showLoading = false;
-              this.telemetryGeneratorService.generateInteractTelemetry(InteractType.OTHER,
-                InteractSubtype.LOADING_SPINE_COMPLETED,
-                this.source === PageId.USER_TYPE_SELECTION ? Environment.ONBOARDING : Environment.HOME,
-                PageId.DIAL_SEARCH,
-                undefined,
-                undefined,
-                undefined,
-                this.corRelationList
-              );
-              this.showContentDetails(this.childContent);
+          }
+
+          if (event.type === ContentEventType.IMPORT_PROGRESS) {
+            const totalCountMsg = Math.floor((event.payload.currentCount / event.payload.totalCount) * 100) +
+              '% (' + event.payload.currentCount + ' / ' + event.payload.totalCount + ')';
+            this.loadingDisplayText = this.commonUtilService.translateMessage('EXTRACTING_CONTENT', totalCountMsg);
+            if (event.payload.currentCount === event.payload.totalCount) {
+              let timer = 30;
+              const interval = setInterval(() => {
+                this.loadingDisplayText = `Getting things ready in ${timer--}  seconds`;
+                if (timer === 0) {
+                  this.loadingDisplayText = 'Getting things ready';
+                  clearInterval(interval);
+                }
+              }, 1000);
+            }
+          }
+          // if (event.payload && event.payload.status === 'IMPORT_COMPLETED' && event.type === 'contentImport') {
+          if (event.payload && event.type === ContentEventType.IMPORT_COMPLETED) {
+            if (this.queuedIdentifiers.length && this.isDownloadStarted) {
+              if (this.queuedIdentifiers.includes(event.payload.contentId)) {
+                this.currentCount++;
+              }
+              if (this.queuedIdentifiers.length === this.currentCount) {
+                this.showLoading = false;
+                this.telemetryGeneratorService.generateInteractTelemetry(InteractType.OTHER,
+                  InteractSubtype.LOADING_SPINE_COMPLETED,
+                  this.source === PageId.USER_TYPE_SELECTION ? Environment.ONBOARDING : Environment.HOME,
+                  PageId.DIAL_SEARCH,
+                  undefined,
+                  undefined,
+                  undefined,
+                  this.corRelationList
+                );
+                // this.showContentDetails(this.childContent);
+                this.events.publish('savedResources:update', {
+                  update: true
+                });
+              }
+            } else {
               this.events.publish('savedResources:update', {
                 update: true
               });
             }
-          } else {
-            this.events.publish('savedResources:update', {
-              update: true
-            });
           }
-        }
 
-      });
-    }) as any;
+        });
+      }) as any;
   }
 
   /**
@@ -1479,7 +1370,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
       this.corRelationList = new Array<CorrelationData>();
     }
     const corRelation: CorrelationData = new CorrelationData();
-    corRelation.id = id;
+    corRelation.id = id || '';
     corRelation.type = type;
     this.corRelationList.push(corRelation);
   }
@@ -1549,14 +1440,14 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
 
   goBack() {
     this.telemetryGeneratorService.generateBackClickedTelemetry(ImpressionType.SEARCH,
-          Environment.HOME, true, undefined, this.corRelationList);
+      Environment.HOME, true, undefined, this.corRelationList);
     this.navigateToPreviousPage();
   }
 
   getContentCount(resultlist) {
     let totalCount = 0;
     if (resultlist.dialCodeResult.length) {
-      for (let i = 0; i < resultlist.dialCodeResult.length; i++){
+      for (let i = 0; i < resultlist.dialCodeResult.length; i++) {
         if (resultlist.dialCodeResult[i].content && resultlist.dialCodeResult[i].content.length) {
           totalCount += resultlist.dialCodeResult[i].content.length;
         }

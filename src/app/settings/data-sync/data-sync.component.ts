@@ -5,10 +5,11 @@ import {
   TelemetryImpressionRequest,
   TelemetryAutoSyncModes,
   ArchiveService,
-  ArchiveObjectType
+  ArchiveObjectType,
+  ObjectNotFoundError
 } from 'sunbird-sdk';
-import { CommonUtilService } from 'services/common-util.service';
-import { TelemetryGeneratorService } from 'services/telemetry-generator.service';
+import { CommonUtilService } from '@app/services';
+import { TelemetryGeneratorService } from '@app/services';
 
 import {
   PageId,
@@ -16,13 +17,12 @@ import {
   ImpressionType,
   InteractType,
   InteractSubtype
-} from 'services/telemetry-constants';
+} from '@app/services';
 import { SocialSharing } from '@ionic-native/social-sharing/ngx';
 import { Location } from '@angular/common';
 import { Platform } from '@ionic/angular';
 import { Subscription, Observable } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
-import * as dayjs from 'dayjs';
 
 declare const cordova;
 
@@ -53,7 +53,7 @@ export class DataSyncComponent implements OnInit {
     this.lastSyncDateTime = this.telemetryService.lastSyncedTimestamp().pipe(
         map((ts) => {
           if (ts) {
-            return dayjs(ts).format('DD/MM/YYYY, hh:mm a');
+            return window.dayjs(ts).format('DD/MM/YYYY, hh:mm a');
           }
 
           return undefined;
@@ -113,6 +113,16 @@ export class DataSyncComponent implements OnInit {
       Environment.SETTINGS,
       PageId.SETTINGS_DATASYNC,
       undefined);
+
+    try {
+      await this.telemetryService.sync({
+        ignoreAutoSyncMode: false,
+        ignoreSyncThreshold: true
+      }).toPromise();
+    } catch (e) {
+      console.error(e);
+    }
+
     return this.archiveService.export(
       { objects: [{ type: ArchiveObjectType.TELEMETRY }],
       filePath: cordova.file.externalCacheDirectory + '/tmp' })
@@ -124,7 +134,12 @@ export class DataSyncComponent implements OnInit {
         .catch(async (e) => {
           console.error(e);
           await loader.dismiss();
-          this.commonUtilService.showToast('SHARE_TELEMETRY_FAILED');
+
+          if (e instanceof ObjectNotFoundError) {
+            this.commonUtilService.showToast('SHARE_TELEMETRY_NO_DATA_FOUND');
+          } else {
+            this.commonUtilService.showToast('SHARE_TELEMETRY_FAILED');
+          }
         });
   }
 

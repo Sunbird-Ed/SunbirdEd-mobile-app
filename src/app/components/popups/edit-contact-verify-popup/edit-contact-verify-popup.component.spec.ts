@@ -2,7 +2,7 @@ import { EditContactVerifyPopupComponent } from './edit-contact-verify-popup.com
 import { CommonUtilService } from '../../../../services';
 import { PopoverController, Platform, NavParams, MenuController } from '@ionic/angular';
 import { of, throwError } from 'rxjs';
-import { ProfileService } from 'sunbird-sdk';
+import { ProfileService, HttpClientError } from 'sunbird-sdk';
 
 describe('EditContactVerifyPopupComponent', () => {
     let editContactVerifyPopupComponent: EditContactVerifyPopupComponent;
@@ -145,8 +145,21 @@ describe('EditContactVerifyPopupComponent', () => {
 
     it('should handle when ERROR_INVALID_OTP error is returned from API', (done) => {
         // arrange
+        const response = new Response();
+        response.responseCode = 400;
+        response.errorMesg = "RASD";
+        response.body = {
+            params: {
+                err: 'OTP_VERIFICATION_FAILED'
+            },
+            result: {
+                remainingAttempt: 1
+            }
+        };
+        const error: HttpClientError = new HttpClientError('Error', response);
+        // { response: { body: { params: { err: 'OTP_VERIFICATION_FAILED' } } } }
         mockCommonUtilService.networkInfo = { isNetworkAvailable: true };
-        mockProfileService.verifyOTP = jest.fn(() => throwError({ response: { body: { params: { err: 'ERROR_INVALID_OTP' } } } }));
+        mockProfileService.verifyOTP = jest.fn(() => throwError(error));
         // act
         editContactVerifyPopupComponent.verify();
         // assert

@@ -18,7 +18,8 @@ import {
   InteractSubtype,
   Environment, PageId,
   ImpressionType,
-  CorReleationDataType
+  CorReleationDataType,
+  ID
 } from '@app/services/telemetry-constants';
 import { PreferenceKey, EventTopics, SystemSettingsIds, GenericAppConfig, ProfileConstants } from './app.constant';
 import { ActivePageService } from '@app/services/active-page/active-page-service';
@@ -40,6 +41,10 @@ import { TncUpdateHandlerService } from '@app/services/handlers/tnc-update-handl
 import { NetworkAvailabilityToastService } from '@app/services/network-availability-toast/network-availability-toast.service';
 import { SplaschreenDeeplinkActionHandlerDelegate } from '@app/services/sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
 import * as qs from 'qs';
+import { ContentUtil } from '@app/util/content-util';
+
+declare const cordova;
+
 @Component({
   selector: 'app-root',
   templateUrl: 'app.component.html'
@@ -63,6 +68,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   appName: string;
   appVersion: string;
   @ViewChild('mainContent', { read: IonRouterOutlet }) routerOutlet: IonRouterOutlet;
+  isForeground: boolean;
 
   constructor(
     @Inject('TELEMETRY_SERVICE') private telemetryService: TelemetryService,
@@ -155,6 +161,18 @@ export class AppComponent implements OnInit, AfterViewInit {
         this.addNetworkTelemetry(InteractSubtype.INTERNET_DISCONNECTED, pageId);
       }
     });
+
+    if (cordova.plugins.notification && cordova.plugins.notification.local &&
+      cordova.plugins.notification.local.launchDetails && cordova.plugins.notification.local.launchDetails.action === 'click') {
+      const corRelationList: Array<CorrelationData> = [];
+      corRelationList.push({ id: cordova.plugins.notification.local.launchDetails.id, type: CorReleationDataType.NOTIFICATION_ID });
+      this.telemetryGeneratorService.generateNotificationClickedTelemetry(
+        InteractType.LOCAL,
+        this.activePageService.computePageId(this.router.url),
+        undefined,
+        corRelationList
+      );
+    }
     this.notificationSrc.setupLocalNotification();
 
     this.triggerSignInEvent();
@@ -223,7 +241,7 @@ export class AppComponent implements OnInit, AfterViewInit {
           this.syncStatus(status);
         }), {
           deploymentKey
-        }, this.downloadProgress);
+        }, (progress) => this.downloadProgress(progress));
       } else {
         this.telemetryGeneratorService.generateInteractTelemetry(InteractType.OTHER, InteractSubtype.HOTCODE_PUSH_KEY_NOT_DEFINED,
           Environment.HOME, PageId.HOME);
@@ -244,6 +262,13 @@ export class AppComponent implements OnInit, AfterViewInit {
       case SyncStatus.ERROR:
         const value2 = new Map();
         value2['codepushUpdate'] = 'error-in-update';
+    }
+  }
+
+  private downloadProgress(downloadProgress) {
+    if (downloadProgress) {
+      console.log('Downloading ' + downloadProgress.receivedBytes + ' of ' +
+        downloadProgress.totalBytes);
     }
   }
 
@@ -275,13 +300,6 @@ export class AppComponent implements OnInit, AfterViewInit {
         this.codePushExperimentService.setExperimentAppVersion('').subscribe();
       }
     });
-  }
-
-  private downloadProgress(downloadProgress) {
-    if (downloadProgress) {
-      console.log('Downloading ' + downloadProgress.receivedBytes + ' of ' +
-        downloadProgress.totalBytes);
-    }
   }
 
   /* Generates new FCM Token if not available
@@ -320,13 +338,13 @@ export class AppComponent implements OnInit, AfterViewInit {
       const value = {
         notification_id: data.id
       };
-      this.telemetryGeneratorService.generateInteractTelemetry(
-        InteractType.OTHER,
-        InteractSubtype.NOTIFICATION_RECEIVED,
-        Environment.HOME,
+      let corRelationList: Array<CorrelationData> = [];
+      corRelationList.push({ id: data.id, type: CorReleationDataType.NOTIFICATION_ID });
+      this.telemetryGeneratorService.generateNotificationClickedTelemetry(
+        InteractType.FCM,
         this.activePageService.computePageId(this.router.url),
-        undefined,
-        value
+        value,
+        corRelationList
       );
 
       data['isRead'] = data.wasTapped ? 1 : 0;
@@ -336,6 +354,9 @@ export class AppComponent implements OnInit, AfterViewInit {
         this.events.publish('notification-status:update', { isUnreadNotifications: true });
       });
       this.notificationSrc.setNotificationDetails(data);
+      if (this.isForeground) {
+        this.notificationSrc.handleNotification();
+      }
     },
       (success) => {
         console.log('Notification Sucess Callback', success);
@@ -397,10 +418,13 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.telemetryGeneratorService.generateInterruptTelemetry('resume', '');
       this.splashScreenService.handleSunbirdSplashScreenActions();
       this.checkForCodeUpdates();
+      this.notificationSrc.handleNotification();
+      this.isForeground = true;
     });
 
     this.platform.pause.subscribe(() => {
       this.telemetryGeneratorService.generateInterruptTelemetry('background', '');
+      this.isForeground = false;
     });
   }
 
@@ -750,34 +774,7 @@ export class AppComponent implements OnInit, AfterViewInit {
           let cData: CorrelationData[] = [];
           const utmValue = response['val'];
           const params: {[param: string]: string} = qs.parse(utmValue);
-          const utmParams = {};
-          Object.entries(params).forEach(([key, value]) => {
-            const chengeKeyUpperCase = key.split('_').map((elem) => {
-              return (elem.charAt(0).toUpperCase() + elem.slice(1));
-               });
-
-            utmParams[chengeKeyUpperCase.join('')] = decodeURIComponent(value);
-        });
-          if (Object.keys(utmParams)) {
-          cData = Object.keys(utmParams).map((key) => {
-            if (utmParams[key] !== undefined) {
-
-              return {id: key, type: utmParams[key]};
-            }
-          });
-        }
-          try {
-            const url: URL = new URL(params['utm_content']);
-            const overrideChannelSlug = url.searchParams.get('channel');
-            if (overrideChannelSlug) {
-              cData.push({
-                id: CorReleationDataType.SOURCE,
-                type: overrideChannelSlug
-              });
-            }} catch (e) {
-              console.error(e);
-
-            }
+          cData = ContentUtil.genrateUTMCData(params);
           if (response.val && response.val.length) {
             this.splaschreenDeeplinkActionHandlerDelegate.checkUtmContent(response.val);
           }

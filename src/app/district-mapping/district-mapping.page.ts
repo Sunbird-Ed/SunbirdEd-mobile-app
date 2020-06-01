@@ -1,9 +1,9 @@
 import {Component, OnInit, Inject, ChangeDetectorRef, NgZone, ViewChild} from '@angular/core';
 import {
   LocationSearchCriteria, ProfileService,
-  SharedPreferences, Profile, DeviceRegisterRequest, DeviceRegisterService, DeviceInfo, LocationSearchResult
+  SharedPreferences, Profile, DeviceRegisterRequest, DeviceRegisterService, DeviceInfo, LocationSearchResult, CachedItemRequestSourceFrom
 } from 'sunbird-sdk';
-import { Location as loc, PreferenceKey, RouterLinks, LocationConfig } from '../../app/app.constant';
+import { Location as loc, PreferenceKey, RouterLinks, LocationConfig, RegexPatterns } from '../../app/app.constant';
 import { AppHeaderService, CommonUtilService, AppGlobalService, FormAndFrameworkUtilService } from '@app/services';
 import { NavigationExtras, Router } from '@angular/router';
 import { Location } from '@angular/common';
@@ -264,6 +264,7 @@ export class DistrictMappingPage {
     const loader = await this.commonUtilService.getLoader();
     await loader.present();
     const req: LocationSearchCriteria = {
+      from: CachedItemRequestSourceFrom.SERVER,
       filters: {
         type: loc.TYPE_STATE
       }
@@ -298,6 +299,7 @@ export class DistrictMappingPage {
     const loader = await this.commonUtilService.getLoader();
     await loader.present();
     const req: LocationSearchCriteria = {
+      from: CachedItemRequestSourceFrom.SERVER,
       filters: {
         type: loc.TYPE_DISTRICT,
         parentId: pid
@@ -376,7 +378,7 @@ export class DistrictMappingPage {
         locationCodes: [this.stateCode, this.districtCode]
       };
       if (this.profile) {
-        req['firstName'] = this.name.trim();
+        req['firstName'] = (this.name.replace(RegexPatterns.SPECIALCHARECTERSANDEMOJIS, '')).trim();
         req['lastName'] = '';
       }
       const loader = await this.commonUtilService.getLoader();

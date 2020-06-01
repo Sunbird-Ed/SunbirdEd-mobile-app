@@ -20,7 +20,8 @@ import {
     SystemSettings,
     SystemSettingsService,
     WebviewSessionProviderConfig,
-    SignInError
+    SignInError,
+    FrameworkCategoryCode
 } from 'sunbird-sdk';
 
 import { ContentFilterConfig, ContentType, PreferenceKey, SystemSettingsIds } from '@app/app/app.constant';
@@ -43,13 +44,13 @@ export class FormAndFrameworkUtilService {
         private appVersion: AppVersion,
         private translate: TranslateService,
         private events: Events
-    ) {}
+    ) { }
 
     async init() {
         await this.preferences.getString(PreferenceKey.SELECTED_LANGUAGE_CODE).toPromise().then(val => {
-            this.selectedLanguage = val ? val : 'en' ;
+            this.selectedLanguage = val ? val : 'en';
         });
-        await this.getDailCodeConfig();
+        this.invokeUrlRegexFormApi();
     }
 
     getWebviewSessionProviderConfig(context: 'login' | 'merge' | 'migrate'): Promise<WebviewSessionProviderConfig> {
@@ -62,7 +63,7 @@ export class FormAndFrameworkUtilService {
 
         return this.formService.getForm(request).pipe(
             map((result) => {
-                const config = result['data']['fields'].find(c => c.context === context);
+                const config = result['form']['data']['fields'].find(c => c.context === context);
 
                 if (!config) {
                     throw new SignInError('SESSION_PROVIDER_CONFIG_NOT_FOUND');
@@ -92,13 +93,29 @@ export class FormAndFrameworkUtilService {
             }
         });
     }
-    /**
-     *  this method gets the cached dial code config
-     */
-    async getDailCodeConfig() {
-        if (!this.appGlobalService.getCachedDialCodeConfig()) {
-            this.invokeDialCodeFormApi();
+
+    async getDialcodeRegexFormApi(): Promise<string> {
+        const urlRegexConfig = this.appGlobalService.getCachedSupportedUrlRegexConfig();
+        if (!urlRegexConfig || !urlRegexConfig.dialcode) {
+            const regObj = await this.invokeUrlRegexFormApi();
+            if (regObj && regObj.dialcode) {
+                return regObj.dialcode;
+            }
+            return '';
         }
+        return urlRegexConfig.dialcode;
+    }
+
+    async getDeeplinkRegexFormApi(): Promise<string> {
+        const urlRegexConfig = this.appGlobalService.getCachedSupportedUrlRegexConfig();
+        if (!urlRegexConfig || !urlRegexConfig.identifier) {
+            const regObj = await this.invokeUrlRegexFormApi();
+            if (regObj && regObj.identifier) {
+                return regObj.identifier;
+            }
+            return '';
+        }
+        return urlRegexConfig.identifier;
     }
 
     /**
@@ -259,29 +276,28 @@ export class FormAndFrameworkUtilService {
             });
     }
     /**
-     * Network call to form api to fetch dial code config
+     * Network call to form api to fetch Supported URL regex
      */
-     async invokeDialCodeFormApi() {
+    invokeUrlRegexFormApi(): Promise<any> {
         const req: FormRequest = {
             type: 'config',
-            subType: 'dialcode',
+            subType: 'supportedUrlRegex',
             action: 'get'
         };
-        this.formService.getForm(req).toPromise()
-            .then((res: any) => {
-                const data = res.form ? res.form.data.fields : res.data.fields;
-                if (res && data.length) {
-                    for (const ele of data) {
-                        if (ele.code === 'dialcode') {
-                            this.appGlobalService.setDailCodeConfig(ele.values);
-                        }
-                    }
+        return this.formService.getForm(req).toPromise().then((res: any) => {
+            const data = res.form.data.fields;
+            if (res && data.length) {
+                const regObj = {};
+                for (const ele of data) {
+                    regObj[ele.code] = ele.values;
                 }
-
-            }).catch((error: any) => {
-               console.error('error while fetching dial code reg ex ' , error);
-            });
-
+                this.appGlobalService.setSupportedUrlRegexConfig(regObj);
+                return regObj;
+            }
+        }).catch((error: any) => {
+            console.error('error while fetching supported url reg ex ', error);
+            return undefined;
+        });
     }
 
     /**
@@ -384,7 +400,7 @@ export class FormAndFrameworkUtilService {
      * @param profileData : Local profile of current user
      */
     updateLoggedInUser(profileRes, profileData) {
-        return new Promise((resolve, reject) => {
+        return new Promise(async (resolve, reject) => {
             const profile = {
                 board: [],
                 grade: [],
@@ -398,25 +414,26 @@ export class FormAndFrameworkUtilService {
                 let keysLength = 0;
                 profile.syllabus = [profileRes.framework.id[0]];
                 for (const categoryKey in profileRes.framework) {
-                    if (profileRes.framework[categoryKey].length) {
+                    if (profileRes.framework[categoryKey].length
+                    && FrameworkCategoryCodesGroup.DEFAULT_FRAMEWORK_CATEGORIES.includes(categoryKey as FrameworkCategoryCode)) {
                         const request: GetFrameworkCategoryTermsRequest = {
                             currentCategoryCode: categoryKey,
                             language: this.translate.currentLang,
                             requiredCategories: FrameworkCategoryCodesGroup.DEFAULT_FRAMEWORK_CATEGORIES,
                             frameworkId: (profileRes.framework && profileRes.framework.id) ? profileRes.framework.id[0] : undefined
                         };
-                        this.frameworkUtilService.getFrameworkCategoryTerms(request).toPromise()
-                            .then((categoryList: CategoryTerm[]) => {
+                        await this.frameworkUtilService.getFrameworkCategoryTerms(request).toPromise()
+                            .then((categoryTerms: CategoryTerm[]) => {
                                 keysLength++;
                                 profileRes.framework[categoryKey].forEach(element => {
                                     if (categoryKey === 'gradeLevel') {
-                                        const codeObj = categoryList.find((category) => category.name === element);
+                                        const codeObj = categoryTerms.find((category) => category.name === element);
                                         if (codeObj) {
                                             profile['grade'].push(codeObj.code);
                                             profile['gradeValue'][codeObj.code] = element;
                                         }
                                     } else {
-                                        const codeObj = categoryList.find((category) => category.name === element);
+                                        const codeObj = categoryTerms.find((category) => category.name === element);
                                         if (codeObj) {
                                             profile[categoryKey].push(codeObj.code);
                                         }
@@ -503,10 +520,11 @@ export class FormAndFrameworkUtilService {
 
             // if data not cached
             if (rootOrganizations === undefined || rootOrganizations.length === 0) {
-                const searchOrganizationReq: OrganizationSearchCriteria<{ any }> = {
+                const searchOrganizationReq: OrganizationSearchCriteria<{ hashTagId: string; orgName: string; slug: string; }> = {
                     filters: {
                         isRootOrg: true
-                    }
+                    },
+                    fields: ['hashTagId', 'orgName', 'slug']
                 };
                 rootOrganizations = await this.frameworkService.searchOrganization(searchOrganizationReq).toPromise();
                 console.log('rootOrganizations', rootOrganizations);
@@ -588,7 +606,8 @@ export class FormAndFrameworkUtilService {
                 type: 'user',
                 subType: 'externalIdVerification',
                 action: 'onboarding',
-                rootOrgId
+                rootOrgId,
+                from: CachedItemRequestSourceFrom.SERVER,
             };
             this.formService.getForm(req).toPromise()
                 .then((res: any) => {
@@ -598,7 +617,7 @@ export class FormAndFrameworkUtilService {
                     }
                 }).catch((error: any) => {
                     reject(error);
-                    console.error('error while fetching dial code reg ex ' , error);
+                    console.error('error while fetching dial code reg ex ', error);
                 });
         });
     }

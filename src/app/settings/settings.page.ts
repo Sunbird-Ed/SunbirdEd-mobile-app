@@ -126,7 +126,7 @@ export class SettingsPage implements OnInit {
       },
       cssClass: 'sb-popover',
     });
-    popover.present();
+    await popover.present();
   }
 
   generateInteractTelemetry(interactionType, interactSubtype) {
@@ -186,7 +186,7 @@ export class SettingsPage implements OnInit {
       cssClass: 'sb-popover primary',
     });
 
-    confirm.present();
+    await confirm.present();
   }
 
   private async mergeAccount() {
@@ -232,8 +232,8 @@ export class SettingsPage implements OnInit {
         } as MergeServerProfilesRequest;
       }),
       tap(async () => {
-        loader = await (this.commonUtilService.getLoader() as Promise<any>);
-        loader.present();
+        loader = await this.commonUtilService.getLoader();
+        await loader.present();
       }),
       mergeMap((mergeServerProfilesRequest) => {
         return this.profileService.mergeServerProfiles(mergeServerProfilesRequest);

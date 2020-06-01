@@ -5,7 +5,7 @@
     <button class="pull-right sb-btn-sm sb-btn-outline-info" (click)="skipLocation()"
       *ngIf="showNotNowFlag">{{'NOT_NOW'| translate}}</button>
   </div>
-  <div *ngIf="!profile" class="heading"><b>{{'YOUR_LOCATION'| translate}}</b></div>
+  <div *ngIf="!profile" class="heading"><strong>{{'YOUR_LOCATION'| translate}}</strong></div>
   <div *ngIf="!profile" class="sub-heading">{{'YOUR_LOCATION_DETAILS' | translate}}</div>
   <div class="name" *ngIf="profile" [ngClass]="(profile) ? 'margin-top-6' : ''">
     <div><span class="label">{{'NAME' | translate}}</span><span class="error">*</span></div>

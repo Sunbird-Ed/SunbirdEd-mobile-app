@@ -9,7 +9,8 @@ import {
   FrameworkCategoryCodesGroup,
   FrameworkUtilService,
   GetFrameworkCategoryTermsRequest,
-  PageAssembleFilter
+  PageAssembleFilter,
+  CachedItemRequestSourceFrom
 } from 'sunbird-sdk';
 
 import { PageFilterOptionsPage } from './page-filter-options/page-filter-options.page';
@@ -17,7 +18,7 @@ import { AppGlobalService } from 'services/app-global-service.service';
 import { TelemetryGeneratorService } from 'services/telemetry-generator.service';
 import { CommonUtilService } from 'services/common-util.service';
 import { FormAndFrameworkUtilService } from 'services/formandframeworkutil.service';
-import { Environment, ImpressionType, InteractSubtype, InteractType, PageId } from 'services/telemetry-constants';
+import { PageId, ImpressionType, Environment, InteractSubtype, InteractType } from '@app/services';
 
 @Component({
   selector: 'app-page-filter',
@@ -171,6 +172,7 @@ export class PageFilterPage {
   async getFrameworkData(frameworkId: string, currentCategory: string, index: number) {
     return new Promise((resolve, reject) => {
       const req: GetFrameworkCategoryTermsRequest = {
+        from: CachedItemRequestSourceFrom.SERVER,
         currentCategoryCode: currentCategory,
         language: this.translate.currentLang,
         requiredCategories: this.categories,

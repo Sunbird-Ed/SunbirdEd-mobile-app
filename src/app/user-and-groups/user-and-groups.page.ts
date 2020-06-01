@@ -379,13 +379,19 @@ export class UserAndGroupsPage implements OnInit {
   }
 
   onSegmentChange(event) {
+    this.telemetryGeneratorService.generateInteractTelemetry(
+        InteractType.TOUCH,
+        event.detail.value === 'groups' ? InteractSubtype.GROUP_CLICKED : InteractSubtype.USER_CLICKED,
+        Environment.USER,
+        PageId.USERS_GROUPS
+    );
     this.zone.run(() => {
       this.selectedUserIndex = -1;
     });
     this.telemetryGeneratorService.generateImpressionTelemetry(
-      ImpressionType.VIEW, '',
-      event._value,
-      Environment.USER
+        ImpressionType.VIEW, '',
+        event.detail.value,
+        Environment.USER
     );
   }
 

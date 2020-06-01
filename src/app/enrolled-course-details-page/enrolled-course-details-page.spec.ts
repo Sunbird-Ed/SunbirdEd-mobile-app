@@ -3,6 +3,7 @@ import {
     ProfileService, ContentService, EventsBusService, CourseService, SharedPreferences,
     AuthService, CorrelationData, TelemetryObject, FetchEnrolledCourseRequest,
     ProfileType, UnenrollCourseRequest, ContentDetailRequest, ServerProfileDetailsRequest, ServerProfile,
+    NetworkError, DownloadService
 } from 'sunbird-sdk';
 import {
     LoginHandlerService, CourseUtilService, AppGlobalService, TelemetryGeneratorService,
@@ -20,27 +21,34 @@ import { ContentDeleteHandler } from '../../services/content/content-delete-hand
 import { Location } from '@angular/common';
 import {
     mockEnrolledData, contentDetailsResponse, mockCourseCardData,
-    mockGetChildDataResponse, mockImportContentResponse
+    mockGetChildDataResponse, mockImportContentResponse, mockEnrolledCourses,
+    mockCourseCardData_2, mockChildrenData, mockContentStatusData, mockcontentHirerachyResponse
 } from './enrolled-course-details-page.spec.data';
 import { of, Subject, throwError } from 'rxjs';
 import { ContentInfo } from '../../services/content/content-info';
-import { PreferenceKey, ProfileConstants } from '../app.constant';
+import { PreferenceKey, ProfileConstants, EventTopics } from '../app.constant';
 import { isObject } from 'util';
-import dayjs from 'dayjs';
 import { SbPopoverComponent } from '../components/popups';
-import { EnrollmentDetailsComponent } from '../components/enrollment-details/enrollment-details.component';
+import { Mode, Environment, ImpressionType } from '../../services/telemetry-constants';
 
 describe('EnrolledCourseDetailsPage', () => {
     let enrolledCourseDetailsPage: EnrolledCourseDetailsPage;
     const mockProfileService: Partial<ProfileService> = {};
     const mockContentService: Partial<ContentService> = {
-        importContent: jest.fn(() => of(mockImportContentResponse))
+        importContent: jest.fn(() => of(mockImportContentResponse)),
+        getChildContents: jest.fn(),
+        cancelDownload: jest.fn(),
+        getContentHeirarchy: jest.fn()
     };
-    const mockEventsBusService: Partial<EventsBusService> = {};
+    const mockEventsBusService: Partial<EventsBusService> = {
+        events: jest.fn()
+    };
     const mockCourseService: Partial<CourseService> = {
-        getContentState: jest.fn(() => of('success'))
+        getContentState: jest.fn(() => of('success')),
+        getCourseBatches: jest.fn()
     };
     const mockPreferences: Partial<SharedPreferences> = {};
+    const mockDownloadService: Partial<DownloadService> = {};
     const mockAuthService: Partial<AuthService> = {
         getSession: jest.fn(() => of({}))
     };
@@ -53,21 +61,34 @@ describe('EnrolledCourseDetailsPage', () => {
     const mockEvents: Partial<Events> = {};
     const mockFileSizePipe: Partial<FileSizePipe> = {};
     const mockPopoverCtrl: Partial<PopoverController> = {};
-    const mockCourseUtilService: Partial<CourseUtilService> = {};
+    const mockCourseUtilService: Partial<CourseUtilService> = {
+        showCredits: jest.fn()
+    };
     const mockPlatform: Partial<Platform> = {};
     const mockAppGlobalService: Partial<AppGlobalService> = {
         getUserId: jest.fn(() => 'SAMPLE_USER'),
         isUserLoggedIn: jest.fn(() => false),
         getGuestUserInfo: jest.fn(() => Promise.resolve('SAMPLE_GUEST_USER')),
-        resetSavedQuizContent: jest.fn()
+        resetSavedQuizContent: jest.fn(),
+        setEnrolledCourseList: jest.fn(),
+        getEnrolledCourseList: jest.fn(() => mockEnrolledCourses)
     };
     const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {
         generateImpressionTelemetry: jest.fn(),
-        generateInteractTelemetry: jest.fn()
+        generateInteractTelemetry: jest.fn(),
+        generateBackClickedTelemetry: jest.fn(),
+        generateCancelDownloadTelemetry: jest.fn(),
+        generateEndTelemetry: jest.fn(),
+        generateStartTelemetry: jest.fn(),
+        generatefastLoadingTelemetry: jest.fn()
     };
 
     const mockCommonUtilService: Partial<CommonUtilService> = {
         deDupe: jest.fn(),
+        translateMessage: jest.fn(),
+        networkInfo: {
+            isNetworkAvailable: true
+        }
     };
     const mockDatePipe: Partial<DatePipe> = {};
     const mockUtilityService: Partial<UtilityService> = {};
@@ -75,11 +96,17 @@ describe('EnrolledCourseDetailsPage', () => {
     const mockContentShareHandler: Partial<ContentShareHandlerService> = {};
     const mockLocation: Partial<Location> = {};
     const mockRouter: Partial<Router> = {
+        getCurrentNavigation: jest.fn(() => mockEnrolledData),
+        navigate: jest.fn(),
         getCurrentNavigation: jest.fn(() => mockEnrolledData) as any
     };
     const mockTranslate: Partial<TranslateService> = {};
     const mockContentDeleteHandler: Partial<ContentDeleteHandler> = {};
-    const mockLocalCourseService: Partial<LocalCourseService> = {};
+    const mockLocalCourseService: Partial<LocalCourseService> = {
+        prepareEnrollCourseRequest: jest.fn(),
+        enrollIntoBatch: jest.fn(),
+        prepareRequestValue: jest.fn()
+    };
     const mockAppVersion: Partial<AppVersion> = {};
 
     beforeAll(() => {
@@ -90,6 +117,7 @@ describe('EnrolledCourseDetailsPage', () => {
             mockCourseService as CourseService,
             mockPreferences as SharedPreferences,
             mockAuthService as AuthService,
+            mockDownloadService as DownloadService,
             mockLoginHandlerService as LoginHandlerService,
             mockZone as NgZone,
             mockEvents as Events,
@@ -114,6 +142,8 @@ describe('EnrolledCourseDetailsPage', () => {
     beforeEach(() => {
         jest.clearAllMocks();
         jest.restoreAllMocks();
+
+        mockCommonUtilService.networkInfo.isNetworkAvailable = true;
     });
 
     describe('enrolledCourseDetailsPage', () => {
@@ -126,6 +156,7 @@ describe('EnrolledCourseDetailsPage', () => {
         it('should get App name and subscribe utility service by invoked ngOnInit()', () => {
             // arrange
             mockCommonUtilService.getAppName = jest.fn(() => Promise.resolve('DIKSHA'));
+            mockDownloadService.trackDownloads = jest.fn(() => of());
             spyOn(enrolledCourseDetailsPage, 'subscribeUtilityEvents').and.returnValue('BASE_URL');
             // act
             enrolledCourseDetailsPage.ngOnInit();
@@ -269,13 +300,13 @@ describe('EnrolledCourseDetailsPage', () => {
             mockHeaderService.hideHeader = jest.fn();
             spyOn(enrolledCourseDetailsPage, 'importContent').and.stub();
             spyOn(enrolledCourseDetailsPage, 'setCourseStructure').and.stub();
+            spyOn(enrolledCourseDetailsPage, 'getBatchDetails').and.stub();
             // act
             enrolledCourseDetailsPage.extractApiResponse(response);
             // assert
             expect(mockCommonUtilService.showToast).toHaveBeenCalled();
             expect(mockLocation.back).toHaveBeenCalled();
             expect(enrolledCourseDetailsPage.didViewLoad).toBeTruthy();
-            expect(mockHeaderService.hideHeader).toHaveBeenCalled();
         });
     });
     describe('checkCurrentUserType', () => {
@@ -291,14 +322,43 @@ describe('EnrolledCourseDetailsPage', () => {
     });
 
     describe('joinTraining()', () => {
+        it('should show error toast if no batches available', async (done) => {
+            // arrange
+            enrolledCourseDetailsPage.batches = [];
+            mockCommonUtilService.showToast = jest.fn();
+            // act
+            await enrolledCourseDetailsPage.joinTraining();
+            // assert
+            expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('NO_BATCHES_AVAILABLE');
+            done();
+        });
+
+        it('should show error toast if single enrolment expired batch', async (done) => {
+            // arrange
+            enrolledCourseDetailsPage.batches = [{
+                enrollmentEndDate: '2020-04-23'
+            }];
+            mockCommonUtilService.showToast = jest.fn();
+            mockDatePipe.transform = jest.fn((v) => v);
+            // act
+            await enrolledCourseDetailsPage.joinTraining();
+            // assert
+            expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('ENROLLMENT_ENDED_ON', null, null, null, null, '2020-04-23');
+            done();
+        });
+
         it('should be joined training for logged in user', async (done) => {
             // arrange
             mockPopoverCtrl.create = jest.fn(() => (Promise.resolve({
                 present: jest.fn(() => Promise.resolve({})),
                 onDidDismiss: jest.fn(() => Promise.resolve({ canDelete: '' }))
             } as any)));
+            mockCourseService.getBatchDetails = jest.fn(() => of(enrolledCourseDetailsPage.batchDetails));
             mockCommonUtilService.translateMessage = jest.fn(() => '');
+            mockCommonUtilService.networkInfo.isNetworkAvailable = true;
             spyOn(enrolledCourseDetailsPage, 'navigateToBatchListPage').and.stub();
+            spyOn(mockCourseService, 'getBatchDetails').and.stub();
+            enrolledCourseDetailsPage.batches = [{}, {}];
             // act
             enrolledCourseDetailsPage.joinTraining();
             // assert
@@ -495,15 +555,72 @@ describe('EnrolledCourseDetailsPage', () => {
                 emitUpdateIfAny: true,
                 attachContentAccess: true
             };
+            contentDetailsResponse.isAvailableLocally = false;
             mockContentService.getContentDetails = jest.fn(() => of(contentDetailsResponse));
+            jest.spyOn(mockContentService, 'getContentHeirarchy').mockReturnValue(of(mockcontentHirerachyResponse));
             mockZone.run = jest.fn((fn) => fn());
             spyOn(enrolledCourseDetailsPage, 'extractApiResponse').and.stub();
+            spyOn(enrolledCourseDetailsPage, 'getContentState').and.stub();
             // act
             enrolledCourseDetailsPage.setContentDetails('do_21281258639073280011490');
             // assert
             setTimeout(() => {
                 expect(mockContentService.getContentDetails).toHaveBeenCalledWith(option);
                 expect(mockZone.run).toHaveBeenCalled();
+                expect(mockContentService.getContentHeirarchy).toBeCalled();
+                expect(enrolledCourseDetailsPage.getContentState).toBeCalled();
+                expect(enrolledCourseDetailsPage.extractApiResponse).toHaveBeenCalled();
+                done();
+            }, 0);
+        });
+
+        it('should fail getContentHeirarchy() response', (done) => {
+            // arrange
+            const option: ContentDetailRequest = {
+                contentId: 'do_21281258639073280011490',
+                attachFeedback: true,
+                emitUpdateIfAny: true,
+                attachContentAccess: true
+            };
+            contentDetailsResponse.isAvailableLocally = false;
+            mockContentService.getContentDetails = jest.fn(() => of(contentDetailsResponse));
+            mockZone.run = jest.fn((fn) => fn());
+            spyOn(enrolledCourseDetailsPage, 'extractApiResponse').and.stub();
+            spyOn(enrolledCourseDetailsPage, 'getContentState').and.stub();
+            jest.spyOn(mockContentService, 'getContentHeirarchy').mockReturnValue(of(Promise.reject({})));
+            // act
+            enrolledCourseDetailsPage.setContentDetails('do_21281258639073280011490');
+            // assert
+            setTimeout(() => {
+                expect(mockContentService.getContentDetails).toHaveBeenCalledWith(option);
+                expect(mockZone.run).toHaveBeenCalled();
+                expect(mockContentService.getContentHeirarchy).toBeCalled();
+                expect(enrolledCourseDetailsPage.getContentState).not.toBeCalled();
+                expect(enrolledCourseDetailsPage.extractApiResponse).toHaveBeenCalled();
+                done();
+            }, 0);
+        });
+
+        it('should fail getContentHeirarchy() response', (done) => {
+            // arrange
+            const option: ContentDetailRequest = {
+                contentId: 'do_21281258639073280011490',
+                attachFeedback: true,
+                emitUpdateIfAny: true,
+                attachContentAccess: true
+            };
+            contentDetailsResponse.isAvailableLocally = true;
+            mockContentService.getContentDetails = jest.fn(() => of(contentDetailsResponse));
+            mockZone.run = jest.fn((fn) => fn());
+            spyOn(enrolledCourseDetailsPage, 'extractApiResponse').and.stub();
+            jest.spyOn(mockContentService, 'getContentHeirarchy');
+            // act
+            enrolledCourseDetailsPage.setContentDetails('do_21281258639073280011490');
+            // assert
+            setTimeout(() => {
+                expect(mockContentService.getContentDetails).toHaveBeenCalledWith(option);
+                expect(mockZone.run).toHaveBeenCalled();
+                expect(mockContentService.getContentHeirarchy).not.toBeCalled();
                 expect(enrolledCourseDetailsPage.extractApiResponse).toHaveBeenCalled();
                 done();
             }, 0);
@@ -662,8 +779,10 @@ describe('EnrolledCourseDetailsPage', () => {
             enrolledCourseDetailsPage.batchDetails = {
                 courseId: 'sample_course_id',
                 createdBy: 'sample-creator',
-                creatorFirstName: '',
-                creatorLastName: ''
+                creatorDetails: {
+                    firstName: '',
+                    lastName: ''
+                }
             };
             const req: ServerProfileDetailsRequest = {
                 userId: enrolledCourseDetailsPage.batchDetails.createdBy,
@@ -809,6 +928,26 @@ describe('EnrolledCourseDetailsPage', () => {
             enrolledCourseDetailsPage.importContent(['do_21274246255366963214046', 'do_21274246302428364814048'], true, true);
             // assert
             expect(enrolledCourseDetailsPage.queuedIdentifiers).toEqual(['do_21274246255366963214046', 'do_21274246302428364814048']);
+        });
+
+        it('should populate queuedIdentifiers', (done) => {
+            // arrange
+            const data = mockImportContentResponse;
+            data[0].status = -1;
+            mockContentService.importContent = jest.fn(() => of(data));
+            enrolledCourseDetailsPage.isDownloadStarted = true;
+            enrolledCourseDetailsPage.queuedIdentifiers = [];
+            enrolledCourseDetailsPage.faultyIdentifiers = [
+                {}
+            ];
+            // act
+            enrolledCourseDetailsPage.importContent(['do_21274246255366963214046', 'do_21274246302428364814048'], true, false);
+            // assert
+            setTimeout(() => {
+                expect(mockHeaderService.showHeaderWithBackButton).toBeCalled();
+                expect(mockCommonUtilService.showToast).toBeCalledWith('UNABLE_TO_FETCH_CONTENT');
+                done();
+            }, 0);
         });
     });
 
@@ -962,5 +1101,950 @@ describe('EnrolledCourseDetailsPage', () => {
                 done();
             }, 0);
         });
+    });
+
+    describe('handleHeaderEvents()', () => {
+        it('should call share()', () => {
+            // arrange
+            const event = {
+                name: 'share'
+            };
+            jest.spyOn(enrolledCourseDetailsPage, 'share');
+            // act
+            enrolledCourseDetailsPage.handleHeaderEvents(event);
+            // assert
+            expect(enrolledCourseDetailsPage.share).toBeCalled();
+        });
+
+        it('should call showOverflowMenu()', () => {
+            // arrange
+            const event = {
+                name: 'more'
+            };
+            jest.spyOn(enrolledCourseDetailsPage, 'showOverflowMenu');
+            // act
+            enrolledCourseDetailsPage.handleHeaderEvents(event);
+            // assert
+            expect(enrolledCourseDetailsPage.showOverflowMenu).toBeCalled();
+        });
+
+        it('should call handleNavBackButton() and goBack()', () => {
+            // arrange
+            const event = {
+                name: 'back'
+            };
+            spyOn(enrolledCourseDetailsPage, 'handleNavBackButton').and.stub();
+            // act
+            enrolledCourseDetailsPage.handleHeaderEvents(event);
+            // assert
+            expect(enrolledCourseDetailsPage.handleNavBackButton).toBeCalled();
+        });
+    });
+
+    describe('enrollIntoBatch()', () => {
+        it('should call promptToLogin()', () => {
+            // arrange
+            const batch = {
+                id: '121232312'
+            };
+            jest.spyOn(enrolledCourseDetailsPage, 'promptToLogin');
+            // act
+            enrolledCourseDetailsPage.enrollIntoBatch(batch);
+            // assert
+            expect(enrolledCourseDetailsPage.promptToLogin).toBeCalled();
+        });
+
+        it('should should successfuly enroll', (done) => {
+            // arrange
+            const presentFn = jest.fn(() => Promise.resolve());
+            const dismissFn = jest.fn(() => Promise.resolve());
+            mockCommonUtilService.getLoader = jest.fn(() => ({
+                present: presentFn,
+                dismiss: dismissFn,
+            }));
+            const batch = {
+                id: '121232312'
+            };
+            enrolledCourseDetailsPage.guestUser = false;
+            spyOn(mockLocalCourseService, 'prepareEnrollCourseRequest').and.stub();
+            jest.spyOn(mockLocalCourseService, 'enrollIntoBatch').mockReturnValue(of({value: 'asdasds'}));
+            // act
+            enrolledCourseDetailsPage.enrollIntoBatch(batch);
+            // assert
+            expect(mockLocalCourseService.prepareEnrollCourseRequest).toBeCalled();
+            setTimeout(() => {
+                expect(presentFn).toBeCalled();
+                expect(mockTelemetryGeneratorService.generateInteractTelemetry).toBeCalled();
+                expect(mockCommonUtilService.translateMessage).toBeCalledWith('COURSE_ENROLLED');
+                expect(mockEvents.publish).toBeCalled();
+                expect(enrolledCourseDetailsPage.isAlreadyEnrolled).toEqual(true);
+                done();
+            }, 0);
+        });
+
+        it('should should fail', (done) => {
+            // arrange
+            const presentFn = jest.fn(() => Promise.resolve());
+            const dismissFn = jest.fn(() => Promise.resolve());
+            mockCommonUtilService.getLoader = jest.fn(() => ({
+                present: presentFn,
+                dismiss: dismissFn,
+            }));
+            const batch = {
+                id: '121232312'
+            };
+            enrolledCourseDetailsPage.guestUser = false;
+            spyOn(mockLocalCourseService, 'prepareEnrollCourseRequest').and.stub();
+            jest.spyOn(mockLocalCourseService, 'enrollIntoBatch').mockReturnValue(of(Promise.reject()));
+            // act
+            enrolledCourseDetailsPage.enrollIntoBatch(batch);
+            // assert
+            expect(mockLocalCourseService.prepareEnrollCourseRequest).toBeCalled();
+            setTimeout(() => {
+                expect(presentFn).toBeCalled();
+                expect(mockTelemetryGeneratorService.generateInteractTelemetry).toBeCalled();
+                expect(dismissFn).toBeCalled();
+                expect(enrolledCourseDetailsPage.loader).toBeUndefined();
+                done();
+            }, 0);
+        });
+    });
+
+    describe('onSegmentChange()', () => {
+        it('should call generateInteractTelemetry()', () => {
+            // act
+            enrolledCourseDetailsPage.onSegmentChange({
+                detail: {
+                    value: 'value'
+                }
+            });
+            // assert
+            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toBeCalled();
+        });
+    });
+
+    describe('handleUnenrollButton()', () => {
+        it('should set showUnenrollButton to true', () => {
+            // arrange
+            enrolledCourseDetailsPage.batchDetails = {
+                status: 1,
+                enrollmentType: 'open'
+            };
+            enrolledCourseDetailsPage.courseCardData = {
+                status: 0
+            };
+            enrolledCourseDetailsPage.course = {
+                progress: 100
+            };
+            // act
+            enrolledCourseDetailsPage.handleUnenrollButton();
+            // assert
+            expect(enrolledCourseDetailsPage.showUnenrollButton).toEqual(true);
+        });
+
+        it('should be set updatedCourseCardData and set showUnenrollButton to true', () => {
+            // arrange
+            enrolledCourseDetailsPage.updatedCourseCardData = {
+                status: 0
+            };
+            enrolledCourseDetailsPage.batchDetails = {
+                status: 1,
+                enrollmentType: 'open'
+            };
+            enrolledCourseDetailsPage.course = {
+                progress: 100
+            };
+            // act
+            enrolledCourseDetailsPage.handleUnenrollButton();
+            // assert
+            expect(enrolledCourseDetailsPage.showUnenrollButton).toEqual(true);
+        });
+
+        it('should set showUnenrollButton to false', () => {
+            // arrange
+            enrolledCourseDetailsPage.updatedCourseCardData = {
+                status: 0
+            };
+            enrolledCourseDetailsPage.batchDetails = {
+                status: 1,
+                enrollmentType: 'invite-only'
+            };
+            enrolledCourseDetailsPage.course = {
+                progress: 100
+            };
+            // act
+            enrolledCourseDetailsPage.handleUnenrollButton();
+            // assert
+            expect(enrolledCourseDetailsPage.showUnenrollButton).toEqual(false);
+        });
+    });
+
+    describe('mergeProperties()', () => {
+        it('should show all properties merged', () => {
+            // arrange
+            enrolledCourseDetailsPage.course = {
+                prop1: 'prop1',
+                prop2: 'prop2'
+            };
+            // act
+            const returnVal = enrolledCourseDetailsPage.mergeProperties(['prop1', 'prop2']);
+            // assert
+            expect(returnVal).toEqual('prop1, prop2');
+        });
+    });
+
+    describe('setChildContents()', () => {
+        it('should fetch child contents ', (done) => {
+            // arrange
+            const data = {
+                mimeType: 'content',
+                children: [],
+                identifier: 'do_1212123123'
+            };
+            enrolledCourseDetailsPage.courseCardData = {
+                batchId: '123123123'
+            };
+            spyOn(enrolledCourseDetailsPage, 'toggleGroup').and.stub();
+            jest.spyOn(mockContentService, 'getChildContents').mockReturnValue(of(data));
+            jest.spyOn(enrolledCourseDetailsPage, 'getContentState');
+            jest.spyOn(enrolledCourseDetailsPage, 'getContentsSize');
+            // act
+            enrolledCourseDetailsPage.setChildContents();
+            // assert
+            setTimeout(() => {
+                expect(enrolledCourseDetailsPage.enrolledCourseMimeType).toEqual(data.mimeType);
+                expect(enrolledCourseDetailsPage.childrenData).toEqual(data.children);
+                expect(enrolledCourseDetailsPage.childContentsData).toEqual(data);
+                expect(enrolledCourseDetailsPage.getContentState).toBeCalledWith(true);
+                expect(enrolledCourseDetailsPage.getContentsSize).toBeCalledWith(data.children);
+                done();
+            }, 0);
+        });
+
+        it('should setshowChildrenLoader to false', (done) => {
+            // arrange
+            const data = {
+                mimeType: 'content',
+                children: [],
+                identifier: 'do_1212123123'
+            };
+            enrolledCourseDetailsPage.courseCardData = {
+                batchId: '123123123'
+            };
+            spyOn(enrolledCourseDetailsPage, 'toggleGroup').and.stub();
+            jest.spyOn(mockContentService, 'getChildContents').mockReturnValue(of(Promise.reject()));
+            jest.spyOn(enrolledCourseDetailsPage, 'getContentState');
+            jest.spyOn(enrolledCourseDetailsPage, 'getContentsSize');
+            // act
+            enrolledCourseDetailsPage.setChildContents();
+            // assert
+            setTimeout(() => {
+                expect(enrolledCourseDetailsPage.showChildrenLoader).toEqual(false);
+                done();
+            }, 0);
+        });
+    });
+
+    describe('getAllBatches()', () => {
+        it('should fetch all batch list', (done) => {
+            // arrange
+            const data = [
+                {
+                    enrollmentEndDate: '01/01/2020'
+                },
+                {
+                    enrollmentEndDate: '01/01/2020'
+                }
+            ];
+            spyOn(enrolledCourseDetailsPage, 'handleUnenrollButton');
+            jest.spyOn(mockCourseService, 'getCourseBatches').mockReturnValue(of(data));
+            // act
+            enrolledCourseDetailsPage.getAllBatches();
+            // assert
+            setTimeout(() => {
+                expect(enrolledCourseDetailsPage.handleUnenrollButton).toBeCalled();
+                expect(enrolledCourseDetailsPage.showOfflineSection).toEqual(false);
+                expect(enrolledCourseDetailsPage.batchCount).toEqual(data.length);
+                expect(enrolledCourseDetailsPage.batches).toEqual(data);
+                done();
+            }, 0);
+        });
+
+        it('should contain only 1 batch', (done) => {
+            // arrange
+            const data = [
+                {
+                    enrollmentEndDate: '01/01/2020',
+                    endDate: '05/01/2020'
+                }
+            ];
+            spyOn(enrolledCourseDetailsPage, 'handleUnenrollButton');
+            jest.spyOn(mockCourseService, 'getCourseBatches').mockReturnValue(of(data));
+            // act
+            enrolledCourseDetailsPage.getAllBatches();
+            // assert
+            setTimeout(() => {
+                expect(enrolledCourseDetailsPage.handleUnenrollButton).toBeCalled();
+                expect(enrolledCourseDetailsPage.showOfflineSection).toEqual(false);
+                expect(enrolledCourseDetailsPage.batchEndDate).toEqual(data[0].endDate);
+                expect(enrolledCourseDetailsPage.enrollmentEndDate).toEqual(data[0].enrollmentEndDate);
+                done();
+            }, 0);
+        });
+
+        it('should display offline mode', (done) => {
+            // arrange
+            jest.spyOn(mockCourseService, 'getCourseBatches').mockReturnValue(of(Promise.reject(new NetworkError())));
+            // act
+            enrolledCourseDetailsPage.getAllBatches();
+            // assert
+            setTimeout(() => {
+                expect(enrolledCourseDetailsPage.showOfflineSection).toEqual(true);
+                done();
+            }, 0);
+        });
+        it('should not display offline mode', (done) => {
+            // arrange
+            jest.spyOn(mockCourseService, 'getCourseBatches').mockReturnValue(of(Promise.reject()));
+            // act
+            enrolledCourseDetailsPage.getAllBatches();
+            // assert
+            setTimeout(() => {
+                expect(enrolledCourseDetailsPage.showOfflineSection).toEqual(false);
+                done();
+            }, 0);
+        });
+    });
+
+    describe('toggleGroup()', () => {
+        it('should show group', () => {
+            // arrange
+            enrolledCourseDetailsPage.shownGroup = null;
+            // act
+            enrolledCourseDetailsPage.toggleGroup(0, {});
+            // assert
+            expect(enrolledCourseDetailsPage.shownGroup).toEqual(0);
+        });
+        it('should not show group', () => {
+            // arrange
+            enrolledCourseDetailsPage.shownGroup = 1;
+            // act
+            enrolledCourseDetailsPage.toggleGroup(1, {});
+            // assert
+            expect(enrolledCourseDetailsPage.shownGroup).toEqual(null);
+        });
+    });
+
+    describe('cancelDownload()', () => {
+        it('should display header', (done) => {
+            // arrange
+            jest.spyOn(mockContentService, 'cancelDownload').mockReturnValue(of());
+            // act
+            enrolledCourseDetailsPage.cancelDownload();
+            // assert
+            setTimeout(() => {
+                expect(enrolledCourseDetailsPage.showLoading).toEqual(false);
+                expect(mockHeaderService.showHeaderWithBackButton).toBeCalled();
+                expect(mockLocation.back).toBeCalled();
+                done();
+            }, 0);
+        });
+        it('should display header even api fails', (done) => {
+            // arrange
+            jest.spyOn(mockContentService, 'cancelDownload').mockReturnValue(of(Promise.reject()));
+            // act
+            enrolledCourseDetailsPage.cancelDownload();
+            // assert
+            setTimeout(() => {
+                expect(enrolledCourseDetailsPage.showLoading).toEqual(false);
+                expect(mockHeaderService.showHeaderWithBackButton).toBeCalled();
+                expect(mockLocation.back).toBeCalled();
+                done();
+            }, 0);
+        });
+    });
+
+    describe('viewCredits()', () => {
+        it('should show credits', () => {
+            // act
+            jest.spyOn(mockCourseUtilService, 'showCredits');
+            enrolledCourseDetailsPage.viewCredits();
+            // assert
+            expect(mockCourseUtilService.showCredits).toBeCalled();
+        });
+    });
+
+    describe('generateEndEvent()', () => {
+        it('should generate end event', () => {
+            // arrange
+            const objectId = '123456';
+            const objectType = 'Mode';
+            const objectVersion = '14';
+            const telemetryObject = new TelemetryObject(objectId, objectType, objectVersion);
+            // act
+            enrolledCourseDetailsPage.generateEndEvent(objectId, objectType, objectVersion);
+            // assert
+            expect(mockTelemetryGeneratorService.generateEndTelemetry).toBeCalledWith(
+                objectType,
+                Mode.PLAY,
+                PageId.COURSE_DETAIL,
+                Environment.HOME,
+                telemetryObject,
+                {},
+                [{ id: '', type: 'CourseBatch'}]
+            );
+        });
+    });
+
+    describe('generateStartEvent()', () => {
+        it('should generate start event', () => {
+            // arrange
+            const objectId = '123456';
+            const objectType = 'Mode';
+            const objectVersion = '14';
+            const telemetryObject = new TelemetryObject(objectId, objectType, objectVersion);
+            // act
+            enrolledCourseDetailsPage.generateStartEvent(objectId, objectType, objectVersion);
+            // assert
+            expect(mockTelemetryGeneratorService.generateStartTelemetry).toBeCalledWith(
+                PageId.COURSE_DETAIL,
+                telemetryObject,
+                {},
+                [{ id: '', type: 'CourseBatch'}]
+            );
+        });
+    });
+
+    describe('generateImpressionEvent()', () => {
+        it('should generate impression event', () => {
+            // arrange
+            const objectId = '123456';
+            const objectType = 'Mode';
+            const objectVersion = '14';
+            // act
+            enrolledCourseDetailsPage.generateImpressionEvent(objectId, objectType, objectVersion);
+            // assert
+            expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toBeCalledWith(
+                ImpressionType.DETAIL,
+                '',
+                PageId.COURSE_DETAIL,
+                Environment.HOME,
+                objectId,
+                objectType,
+                objectVersion,
+                {},
+                [{ id: '', type: 'CourseBatch'}]
+            );
+        });
+    });
+
+    describe('generateQRSessionEndEvent()', () => {
+        it('should generate QR Session end event', () => {
+            // arrange
+            const pageId = 'Enrolled_Course_Detail';
+            const qrData = '8198h128183h123u';
+            const telemetryObject = new TelemetryObject(qrData, 'qr', undefined);
+            // act
+            enrolledCourseDetailsPage.generateQRSessionEndEvent(pageId, qrData);
+            // assert
+            expect(mockTelemetryGeneratorService.generateEndTelemetry).toBeCalledWith(
+                'qr',
+                Mode.PLAY,
+                pageId,
+                Environment.HOME,
+                telemetryObject,
+                {},
+                [{ id: '', type: 'CourseBatch'}]
+            );
+        });
+
+        it('should not generate telemetry event', () => {
+            // act
+            enrolledCourseDetailsPage.generateQRSessionEndEvent(undefined, '');
+            // assert
+            expect(mockTelemetryGeneratorService.generateEndTelemetry).not.toBeCalled();
+        });
+    });
+
+    describe('goBack()', () => {
+        it('should go to previous page', () => {
+            // act
+            enrolledCourseDetailsPage.goBack();
+            // assert
+            expect(mockEvents.publish).toBeCalledWith('event:update_course_data');
+            expect(mockLocation.back).toBeCalled();
+        });
+        it('should go 2 page back', () => {
+            // arrange
+            enrolledCourseDetailsPage.isQrCodeLinkToContent = true;
+            jest.spyOn(window.history, 'go');
+            // act
+            enrolledCourseDetailsPage.goBack();
+            // assert
+            expect(mockEvents.publish).toBeCalledWith('event:update_course_data');
+            expect(window.history.go).toBeCalledWith(-2);
+        });
+    });
+
+    describe('handleNavBackButton()', () => {
+        it('should generate end event', () => {
+            // arrange
+            jest.spyOn(enrolledCourseDetailsPage, 'generateEndEvent');
+            // act
+            enrolledCourseDetailsPage.handleNavBackButton();
+            // assert
+            expect(enrolledCourseDetailsPage.generateEndEvent).toBeCalled();
+        });
+        it('should generate QR session end event', () => {
+            // arrange
+            enrolledCourseDetailsPage.shouldGenerateEndTelemetry = true;
+            jest.spyOn(enrolledCourseDetailsPage, 'generateEndEvent');
+            jest.spyOn(enrolledCourseDetailsPage, 'generateQRSessionEndEvent');
+            // act
+            enrolledCourseDetailsPage.handleNavBackButton();
+            // assert
+            expect(enrolledCourseDetailsPage.generateEndEvent).toBeCalled();
+            expect(enrolledCourseDetailsPage.generateQRSessionEndEvent).toBeCalled();
+        });
+    });
+
+    describe('ionViewWillEnter()', () => {
+        it('should be aguest user, ', () => {
+            mockAppGlobalService.getUserId = jest.fn(() => {
+                return 'sample_user_id';
+            });
+            // act
+            mockHeaderService.headerEventEmitted$ = {
+                subscribe: jest.fn(() => {})
+            };
+            enrolledCourseDetailsPage.guestUser = true;
+            enrolledCourseDetailsPage.isAlreadyEnrolled = false;
+            jest.spyOn(enrolledCourseDetailsPage, 'checkLoggedInOrGuestUser').mockImplementation();
+            jest.spyOn(enrolledCourseDetailsPage, 'checkCurrentUserType').mockImplementation();
+            spyOn(enrolledCourseDetailsPage, 'isCourseEnrolled').and.stub();
+            spyOn(enrolledCourseDetailsPage, 'subscribeSdkEvent').and.stub();
+            spyOn(enrolledCourseDetailsPage, 'populateCorRelationData');
+            spyOn(enrolledCourseDetailsPage, 'handleBackButton').and.stub();
+            spyOn(enrolledCourseDetailsPage, 'getLastReadContentId');
+            enrolledCourseDetailsPage.ionViewWillEnter().then(() => {
+                expect(enrolledCourseDetailsPage.checkCurrentUserType).toHaveBeenCalled();
+                expect(mockAppGlobalService.getUserId).toHaveBeenCalled();
+                expect(enrolledCourseDetailsPage.guestUser).toEqual(true);
+                expect(mockHeaderService.showHeaderWithBackButton).toBeCalled();
+                expect(enrolledCourseDetailsPage.isCourseEnrolled).toBeCalled();
+                expect(enrolledCourseDetailsPage.subscribeSdkEvent).toBeCalled();
+                expect(enrolledCourseDetailsPage.populateCorRelationData).toBeCalled();
+                expect(enrolledCourseDetailsPage.handleBackButton).toBeCalled();
+                expect(enrolledCourseDetailsPage.getLastReadContentId).toBeCalled();
+            });
+            // assert
+            expect(enrolledCourseDetailsPage.checkLoggedInOrGuestUser).toHaveBeenCalled();
+        });
+
+        it('should be a guest user, ', () => {
+            // act
+            const data = {
+
+            };
+            mockAppGlobalService.setEnrolledCourseList = jest.fn();
+            enrolledCourseDetailsPage.guestUser = false;
+            enrolledCourseDetailsPage.isAlreadyEnrolled = false;
+            enrolledCourseDetailsPage.courseCardData = mockCourseCardData_2;
+            mockHeaderService.headerEventEmitted$ = {
+                subscribe: jest.fn(() => {})
+            };
+            mockCourseService.getEnrolledCourses = jest.fn(() => of(mockEnrolledCourses));
+            // act
+            enrolledCourseDetailsPage.ionViewWillEnter();
+            // assert
+            expect(enrolledCourseDetailsPage.courseCardData.batch).toEqual(enrolledCourseDetailsPage.updatedCourseCardData.batch);
+        });
+    });
+
+    describe('isCourseEnrolled()', () => {
+        it('should unenrolled course', () => {
+            // arrange
+            enrolledCourseDetailsPage.courseCardData = mockCourseCardData;
+            // act
+            enrolledCourseDetailsPage.isCourseEnrolled('do_091231312312');
+            // assert
+            expect(enrolledCourseDetailsPage.isAlreadyEnrolled).toEqual(true);
+            expect(enrolledCourseDetailsPage.courseCardData).toEqual(mockCourseCardData);
+        });
+
+        it('should course already enrolled', () => {
+            // arrange
+            enrolledCourseDetailsPage.isAlreadyEnrolled = false;
+            enrolledCourseDetailsPage.courseCardData = {};
+            // act
+            enrolledCourseDetailsPage.isCourseEnrolled('do_091231312312');
+            // assert
+            expect(enrolledCourseDetailsPage.isAlreadyEnrolled).toEqual(false);
+            expect(enrolledCourseDetailsPage.courseCardData).toEqual(mockEnrolledCourses[0]);
+        });
+
+        it('else condition check ""', () => {
+            // arrange
+            enrolledCourseDetailsPage.isAlreadyEnrolled = false;
+            enrolledCourseDetailsPage.courseCardData = {};
+            // act
+            enrolledCourseDetailsPage.isCourseEnrolled('do_091231312312');
+            // assert
+            expect(enrolledCourseDetailsPage.isAlreadyEnrolled).toEqual(false);
+            expect(enrolledCourseDetailsPage.courseCardData).toEqual(mockEnrolledCourses[0]);
+        });
+
+        it('else condition check "course.courseId === identifier"', () => {
+            // arrange
+            enrolledCourseDetailsPage.isAlreadyEnrolled = false;
+            enrolledCourseDetailsPage.courseCardData = {};
+            // act
+            enrolledCourseDetailsPage.isCourseEnrolled('do_091231312312');
+            // assert
+            expect(enrolledCourseDetailsPage.isAlreadyEnrolled).toEqual(false);
+            expect(enrolledCourseDetailsPage.courseCardData).toEqual(mockEnrolledCourses[0]);
+        });
+    });
+
+    describe('handleBackButton()', () => {
+        it('should ', () => {
+            // arrange
+            jest.spyOn(enrolledCourseDetailsPage, 'generateEndEvent');
+            jest.spyOn(enrolledCourseDetailsPage, 'generateQRSessionEndEvent');
+            jest.spyOn(enrolledCourseDetailsPage, 'goBack');
+            enrolledCourseDetailsPage.shouldGenerateEndTelemetry = true;
+            mockPlatform.backButton = {
+                subscribeWithPriority: jest.fn((x, callback) => callback())
+            };
+            // act
+            enrolledCourseDetailsPage.handleBackButton();
+            // assert
+            expect(enrolledCourseDetailsPage.generateEndEvent).toBeCalled();
+            expect(enrolledCourseDetailsPage.generateQRSessionEndEvent).toBeCalled();
+            expect(enrolledCourseDetailsPage.goBack).not.toBeCalled();
+
+        });
+    });
+
+    describe('ionViewWillLeave()', () => {
+        it('should unsubscribe events', () => {
+            // arrange
+            const unsubscribe = jest.fn();
+            enrolledCourseDetailsPage.headerObservable = {
+                unsubscribe
+            };
+            enrolledCourseDetailsPage.backButtonFunc = {
+                unsubscribe
+            };
+            // act
+            enrolledCourseDetailsPage.ionViewWillLeave();
+            // assert
+            expect(mockEvents.publish).toBeCalledWith('header:setzIndexToNormal');
+            expect(unsubscribe).toBeCalled();
+            expect(unsubscribe).toBeCalled();
+        });
+    });
+
+    describe('ngOnDestroy()', () => {
+        it('should unsubscribe events', () => {
+            // arrange
+            mockEvents.unsubscribe = jest.fn();
+            // act
+            enrolledCourseDetailsPage.ngOnDestroy();
+            // assert
+            expect(mockEvents.unsubscribe).toBeCalledWith(EventTopics.ENROL_COURSE_SUCCESS);
+            expect(mockEvents.unsubscribe).toBeCalledWith('courseToc:content-clicked');
+            expect(mockEvents.unsubscribe).toBeCalledWith(EventTopics.UNENROL_COURSE_SUCCESS);
+            expect(mockEvents.unsubscribe).toBeCalledWith('header:setzIndexToNormal');
+            expect(mockEvents.unsubscribe).toBeCalledWith('header:decreasezIndex');
+        });
+    });
+
+    describe('navigateToBatchListPage()', () => {
+        it('should', async (done) => {
+            // arrange
+            spyOn(enrolledCourseDetailsPage, 'enrollIntoBatch').and.stub();
+            spyOn(mockRouter, 'navigate').and.stub();
+            const presentFn = jest.fn(() => Promise.resolve());
+            const dismissFn = jest.fn(() => Promise.resolve());
+            mockCommonUtilService.getLoader = jest.fn(() => ({
+                present: presentFn,
+                dismiss: dismissFn,
+            }));
+            mockCommonUtilService.networkInfo = { isNetworkAvailable: true };
+            // length 2
+            const batches = [
+                {
+                    status: 1
+                }, {
+                    status: 0
+                }
+            ];
+            enrolledCourseDetailsPage.batches = batches;
+            // act
+            await enrolledCourseDetailsPage.navigateToBatchListPage();
+            // assert
+            expect(mockRouter.navigate).toBeCalled();
+            done();
+        });
+    });
+
+    describe('loadFirstChildren()', () => {
+        it('should have no child contents', () => {
+            // arrange
+            spyOn(enrolledCourseDetailsPage, 'loadFirstChildren').and.callThrough();
+            const node = {};
+            const data = {
+                children: [
+                    {
+                        children: [
+                            node, {}
+                        ]
+                    }, {}
+                ]
+            };
+            // act
+            const result = enrolledCourseDetailsPage.loadFirstChildren(data);
+            // assert
+            expect(result).toBe(node);
+            expect(enrolledCourseDetailsPage.loadFirstChildren).toBeCalledTimes(3);
+        });
+
+        it('should have childrens', () => {
+            // arrange
+            jest.resetAllMocks();
+            const data = {};
+
+            // act
+            const result = enrolledCourseDetailsPage.loadFirstChildren(data);
+            // assert
+            expect(result).toEqual(data);
+        });
+    });
+
+    describe('startContent()', () => {
+        it('should go to content details page', () => {
+            // arrange
+            jest.resetAllMocks();
+            jest.spyOn(enrolledCourseDetailsPage, 'navigateToChildrenDetailsPage');
+            enrolledCourseDetailsPage.startData = '22/03/2020';
+            enrolledCourseDetailsPage.isBatchNotStarted = false;
+            // act
+            enrolledCourseDetailsPage.startContent();
+            // assert
+            expect(enrolledCourseDetailsPage.navigateToChildrenDetailsPage).toBeCalled();
+        });
+
+        it('should show toast message', () => {
+            // arrange
+            jest.resetAllMocks();
+            jest.spyOn(enrolledCourseDetailsPage, 'navigateToChildrenDetailsPage');
+            enrolledCourseDetailsPage.startData = '22/03/2020';
+            enrolledCourseDetailsPage.isBatchNotStarted = true;
+            mockDatePipe.transform = jest.fn();
+            // act
+            enrolledCourseDetailsPage.startContent();
+            // assert
+            expect(mockDatePipe.transform).toBeCalled();
+        });
+    });
+
+    describe('getLastReadContentId()', () => {
+        it('should set lastReadContentId in courseCardData', async () => {
+            // arrange
+            mockAppGlobalService.getUserId = jest.fn(() => {
+                return 'sample_user_id';
+            });
+            // ** for ionViewWillEnter
+            mockHeaderService.headerEventEmitted$ = {
+                subscribe: jest.fn(() => {})
+            };
+            enrolledCourseDetailsPage.guestUser = true;
+            enrolledCourseDetailsPage.isAlreadyEnrolled = false;
+            jest.spyOn(enrolledCourseDetailsPage, 'checkLoggedInOrGuestUser').mockImplementation();
+            jest.spyOn(enrolledCourseDetailsPage, 'checkCurrentUserType').mockImplementation();
+            mockHeaderService.showHeaderWithBackButton = jest.fn(() => { });
+            spyOn(enrolledCourseDetailsPage, 'isCourseEnrolled').and.stub();
+            spyOn(enrolledCourseDetailsPage, 'subscribeSdkEvent').and.stub();
+            spyOn(enrolledCourseDetailsPage, 'populateCorRelationData');
+            spyOn(enrolledCourseDetailsPage, 'handleBackButton').and.stub();
+            spyOn(enrolledCourseDetailsPage, 'setContentDetails').and.stub();
+            // ******
+            // ** for getLastReadContentId
+            mockPreferences.getString = jest.fn(() => of(PreferenceKey.COURSE_IDENTIFIER));
+            // *****
+            // act
+            await enrolledCourseDetailsPage.ionViewWillEnter();
+            // assert
+            expect(mockPreferences.getString).toBeCalled();
+            expect(enrolledCourseDetailsPage.courseCardData.lastReadContentId).toBe('sunbirdcourse_identifier');
+        });
+    });
+
+    describe('getStatusOfCourseCompletion()', () => {
+        it('should set the lastRead value to true', async (done) => {
+            enrolledCourseDetailsPage.courseCardData.batchId = '1234567890';
+            jest.spyOn(mockCourseService, 'getContentState').mockReturnValue(of({}));
+            mockZone.run = jest.fn((cb) => cb());
+
+            // ** getStatusOfCourseCompletion
+            enrolledCourseDetailsPage.childrenData = mockChildrenData;
+            enrolledCourseDetailsPage.lastReadContentId = 'do_135241345727';
+            spyOn(enrolledCourseDetailsPage, 'getLastPlayedName');
+            // act
+            await enrolledCourseDetailsPage.getContentState(false);
+            // assert
+            expect(mockChildrenData[0].lastRead).toBe(undefined);
+            done();
+        });
+
+        it('should set the lastRead value to true', async (done) => {
+            enrolledCourseDetailsPage.courseCardData.batchId = '1234567890';
+            jest.spyOn(mockCourseService, 'getContentState').mockReturnValue(of(mockContentStatusData));
+            mockZone.run = jest.fn((cb) => cb());
+
+            // ** getStatusOfCourseCompletion
+            enrolledCourseDetailsPage.childrenData = mockChildrenData;
+            enrolledCourseDetailsPage.lastReadContentId = 'do_135241345727';
+            spyOn(enrolledCourseDetailsPage, 'getLastPlayedName');
+            // act
+            await enrolledCourseDetailsPage.getContentState(false);
+            // assert
+            expect(mockChildrenData[0].lastRead).toBe(true);
+            done();
+        });
+    });
+
+    describe('subscribeSdkEvent()', () => {
+        it('should be PROGRESS event', () => {
+            // arrange
+            const event = {
+                type: 'PROGRESS',
+                payload: {
+                    identifier: 'do_83424628349',
+                    progress: 100
+                }
+            };
+            enrolledCourseDetailsPage.identifier = 'do_83424628349';
+            mockEventsBusService.events = jest.fn(() => of(event));
+            mockZone.run = jest.fn((cb) => cb());
+            spyOn(enrolledCourseDetailsPage, 'getBatchDetails').and.stub();
+            // act
+            enrolledCourseDetailsPage.subscribeSdkEvent();
+            // assert
+            expect(enrolledCourseDetailsPage.downloadProgress).toBe(100);
+            expect(enrolledCourseDetailsPage.getBatchDetails).toBeCalled();
+            expect(mockHeaderService.showHeaderWithBackButton).toBeCalled();
+
+        });
+
+        it('should be IMPORT_COMPLETED event', () => {
+            // arrange
+            const event = {
+                type: 'IMPORT_COMPLETED',
+                payload: {
+                    contentId: 'do_83424628349',
+                    progress: 100
+                }
+            };
+            const queuedIdentifiers = [
+                'do_83424628349'
+            ];
+            enrolledCourseDetailsPage.queuedIdentifiers = queuedIdentifiers;
+            enrolledCourseDetailsPage.identifier = 'do_83424628349';
+            enrolledCourseDetailsPage.isDownloadStarted = true;
+            mockEventsBusService.events = jest.fn(() => of(event));
+            mockZone.run = jest.fn((cb) => cb());
+            spyOn(enrolledCourseDetailsPage, 'getBatchDetails').and.stub();
+            // act
+            enrolledCourseDetailsPage.subscribeSdkEvent();
+            // assert
+            expect(enrolledCourseDetailsPage.isDownloadStarted).toBe(false);
+            expect(enrolledCourseDetailsPage.queuedIdentifiers.length).toBe(0);
+            expect(mockHeaderService.showHeaderWithBackButton).toBeCalled();
+        });
+
+        it('should be IMPORT_COMPLETED event download not started', () => {
+            // arrange
+            const event = {
+                type: 'IMPORT_COMPLETED',
+                payload: {
+                    contentId: 'do_83424628349',
+                    progress: 100
+                }
+            };
+            const queuedIdentifiers = [
+                'do_83424628349'
+            ];
+            enrolledCourseDetailsPage.queuedIdentifiers = queuedIdentifiers;
+            enrolledCourseDetailsPage.identifier = 'do_83424628349';
+            enrolledCourseDetailsPage.isDownloadStarted = false;
+            mockEventsBusService.events = jest.fn(() => of(event));
+            mockZone.run = jest.fn((cb) => cb());
+            spyOn(enrolledCourseDetailsPage, 'setContentDetails').and.stub();
+            // act
+            enrolledCourseDetailsPage.subscribeSdkEvent();
+            // assert
+            expect(enrolledCourseDetailsPage.setContentDetails).toBeCalled();
+        });
+
+        it('should be SERVER_CONTENT_DATA event', () => {
+            // arrange
+            const event = {
+                type: 'SERVER_CONTENT_DATA',
+                payload: {
+                    contentId: 'do_83424628349',
+                    progress: 100,
+                    licenseDetails: 'SAMPLE_LICENSE',
+                    size: '234'
+                }
+            };
+            mockEventsBusService.events = jest.fn(() => of(event));
+            mockZone.run = jest.fn((cb) => cb());
+            // act
+            enrolledCourseDetailsPage.subscribeSdkEvent();
+            // assert
+            expect(enrolledCourseDetailsPage.content.contentData.size).toBe('234');
+        });
+
+        it('should be IMPORT_PROGRESS event', () => {
+            // arrange
+            const event = {
+                type: 'IMPORT_PROGRESS',
+                payload: {
+                    contentId: 'do_83424628349',
+                    currentCount: 14,
+                    totalCount: 14
+                }
+            };
+            mockEventsBusService.events = jest.fn(() => of(event));
+            mockZone.run = jest.fn((cb) => cb());
+            // act
+            enrolledCourseDetailsPage.subscribeSdkEvent();
+            // assert
+
+        });
+
+        it('should be UPDATE event', () => {
+            // arrange
+            const event = {
+                type: 'UPDATE',
+                payload: {
+                    contentId: 'do_83424628349',
+                    currentCount: 14,
+                    totalCount: 14
+                }
+            };
+            enrolledCourseDetailsPage.identifier = 'do_83424628349';
+            mockEventsBusService.events = jest.fn(() => of(event));
+            spyOn(enrolledCourseDetailsPage, 'importContent').and.stub();
+            mockZone.run = jest.fn((cb) => cb());
+            // act
+            enrolledCourseDetailsPage.subscribeSdkEvent();
+            // assert
+            expect(mockHeaderService.hideHeader).toBeCalled();
+            expect(enrolledCourseDetailsPage.importContent).toBeCalled();
+        });
+
     });
 });

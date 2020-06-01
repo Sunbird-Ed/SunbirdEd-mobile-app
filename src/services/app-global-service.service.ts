@@ -45,9 +45,9 @@ export class AppGlobalService implements OnDestroy {
     locationConfig: Array<any> = [];
 
     /**
-     * This property stores the dial code  configuration at the app level for non standard QR Code
+     * This property stores the Supported Url configuration at the app level for non standard deeplinks
      */
-    dailCodeConfig?: RegExp;
+    supportedUrlRegexConfig?: any;
 
     /**
      * This property stores the organization at the app level for a particular app session
@@ -205,17 +205,17 @@ export class AppGlobalService implements OnDestroy {
     }
 
     /**
-     * This method returns the cached dial code config
+     * This method returns the cached Supported url regex config
      */
-    getCachedDialCodeConfig(): RegExp | undefined {
-        return this.dailCodeConfig;
+    getCachedSupportedUrlRegexConfig(): any {
+        return this.supportedUrlRegexConfig;
     }
 
     /**
-     * This method stores the dial code config, for a non standard dial code
+     * This method stores the Supported url regex config, for a non standard supported url regex
      */
-    setDailCodeConfig(dialCodeConfig: RegExp) {
-        this.dailCodeConfig = dialCodeConfig;
+    setSupportedUrlRegexConfig(supportedUrlRegexConfig: any) {
+        this.supportedUrlRegexConfig = supportedUrlRegexConfig;
     }
 
     /**
@@ -364,6 +364,7 @@ export class AppGlobalService implements OnDestroy {
 
         this.authService.getSession().toPromise().then((session) => {
             if (!session) {
+                this.isGuestUser = true;
                 this.session = session;
                 this.getGuestUserInfo();
             } else {

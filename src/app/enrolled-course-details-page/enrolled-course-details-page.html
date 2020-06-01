@@ -2,15 +2,17 @@
 	<div class="p-8" *ngIf="!showOfflineSection">
 		<ion-card class="card-box-shadow">
 			<ion-card-header class="custom-card-header">
-				<ion-card-title class="font-18 font-weight-900">{{course?.name}}</ion-card-title>
-				<ion-card-subtitle *ngIf="course?.organisation" class="font-14 subtitle-color">{{'CONTENT_CREATED_BY' | translate}}
-					{{course?.organisation.join(', ')}}
+				<ion-card-title class="font-18 font-weight-900">{{course?.name || courseCardData?.courseName}}</ion-card-title>
+				<ion-card-subtitle *ngIf="courseCardData?.organisation || course" class="font-14 subtitle-color">
+					{{'CONTENT_CREATED_BY' | translate}}
+					{{!course?.organisation ? courseCardData?.content?.organisation?.join(', ') : course?.organisation}}
 				</ion-card-subtitle>
 				<div class="hr-border-bottom"></div>
-            </ion-card-header>
+			</ion-card-header>
 			<ion-card-content>
 				<div *ngIf="!isAlreadyEnrolled">
-					<div class="enrollment-info" *ngIf="batches && course?.createdBy !== userId && (batches.length > 1 || (batches.length === 1 && !(todayDate > batches[0].enrollmentEndDate)))">
+					<div class="enrollment-info"
+						*ngIf="batches && course?.createdBy !== userId && (batches.length > 1 || (batches.length === 1 && !(todayDate > batches[0].enrollmentEndDate)))">
 						<button class="enrolled-course-card-button"
 							(click)="navigateToBatchListPage();">{{'JOIN_TRAINING' | translate}}</button>
 						<ion-card-subtitle *ngIf="batchCount || enrollmentEndDate" class="font-12 margin-bottom-2">
@@ -20,7 +22,7 @@
 							</div>
 							<div *ngIf="enrollmentEndDate">
 								<ion-icon class="information-icon" name="information-circle"></ion-icon>
-								{{'LAST_DATE_TO_JOIN' | translate }} {{enrollmentEndDate | date}}
+								{{'LAST_DATE_TO_JOIN' | translate:{'%s': enrollmentEndDate | date} }}
 							</div>
 							<div *ngIf="!enrollmentEndDate && batchEndDate">
 								{{'TRAINING_ENDS_ON' | translate}} {{batchEndDate | date}}
@@ -29,8 +31,17 @@
 					</div>
 				</div>
 				<div class="sb-course-end-container"
-					*ngIf="(batches && !isAlreadyEnrolled && !batches.length) || (batches && !isAlreadyEnrolled && batches.length === 1 && (todayDate > batches[0].enrollmentEndDate))">
-					<p class="main-heading"><b>{{'COURSE_ENDED'  | translate : {'%s': enrollmentEndDate ? (enrollmentEndDate | date) : ''} }}</b></p>
+					*ngIf="batches && !isAlreadyEnrolled && !batches.length">
+					<p class="main-heading">
+						<strong>{{'NO_BATCHES_AVAILABLE'  | translate}}</strong>
+					</p>
+					<p class="sub-heading">{{'THERE_ARE_NO_BATCHES_AVAILABLE_FOR_THIS_TRAINING' | translate}}</p>
+				</div>
+				<div class="sb-course-end-container"
+					 *ngIf="batches && !isAlreadyEnrolled && batches.length === 1 && (todayDate > batches[0].enrollmentEndDate)">
+					<p class="main-heading">
+						<strong>{{'ENROLLMENT_ENDED_ON'  | translate : {'%s': enrollmentEndDate ? (enrollmentEndDate | date) : ''} }}</strong>
+					</p>
 					<p class="sub-heading">{{'THERE_ARE_NO_BATCHES_AVAILABLE_FOR_THIS_TRAINING' | translate}}</p>
 				</div>
 				<div *ngIf="isAlreadyEnrolled">
@@ -38,17 +49,17 @@
 						<div>
 							<div class="sb-dt-card-actions">
 								<div class="wrapper sb-btn-tile-group" *ngIf="course?.progress !==100">
-									<div>
-										<button *ngIf="downloadIdentifiers.size" [disabled]="isDownloadStarted"
+									<div *ngIf="trackDownloads$ | async; let downloads">
+										<button *ngIf="downloadIdentifiers.size" [disabled]="downloads.queued.length"
 											(click)="showDownloadConfirmationAlert()" slot="icon-only"
 											class="card-button">
 											<ion-icon ios="ios-cloud-download" md="md-cloud-download"
-												[ngClass]="(isDownloadStarted)? 'card-icons-downloadStarted': 'card-icons'">
+												[ngClass]="(downloads.queued.length)? 'card-icons-downloadStarted': 'card-icons'">
 											</ion-icon>
 											<p class="card-text">{{'DOWNLOAD' | translate}}
 											</p>
 										</button>
-										<button (click)="showDeletePopup()" slot="icon-only" class="card-button">
+										<button *ngIf="isDownloadComplete || course?.isAvailableLocally" [disabled]="downloads.queued.length" (click)="showDeletePopup()" slot="icon-only" class="card-button">
 											<ion-icon ios="ios-trash" md="md-trash" class="card-icons-red"></ion-icon>
 											<p class="card-text">{{'REMOVE' | translate}}
 											</p>
@@ -62,26 +73,33 @@
 												src="assets/imgs/menu.svg" alt="menu-icon">
 										</div>
 									</div>
-									
+
 								</div>
 								<div *ngIf="courseCardData?.batchId">
-									<div class="sb-course-progress-container" *ngIf="course?.progress!==100 && !batchExp">
-										<p class="progress-label"><b>{{'YOUR_PROGRESS_LABEL' | translate}}</b></p>
-										<p>{{ 'COURSE_COMPLETED_LABEL' | translate:{'%s': course?.progress ? course?.progress : '0'} }}</p>
-										<app-pb-horizontal [progress]="course?.progress? course?.progress : 0" class="course-progress" [ngClass]="{'blurbackground': batchExp}"
+									<div class="sb-course-progress-container"
+										*ngIf="!showSheenAnimation && course?.progress!==100 && !batchExp">
+										<p class="progress-label"><strong>{{'YOUR_PROGRESS_LABEL' | translate}}</strong>
+										</p>
+										<p>{{ 'COURSE_COMPLETED_LABEL' | translate:{'%s': course?.progress ? course?.progress : '0'} }}
+										</p>
+										<app-pb-horizontal [progress]="course?.progress? course?.progress : 0"
+											class="course-progress" [ngClass]="{'blurbackground': batchExp}"
 											isOnBoardCard="flase" isCourseProgress="true"></app-pb-horizontal>
 									</div>
 									<div class="sb-batch-end-container" *ngIf="course?.progress !== 100 && batchExp">
-										<p class="batch-end-main-heading">{{'BATCHEND_MAIN_HEADING'  | translate : {'%s': batchDetails?.endDate ? (batchDetails?.endDate | date) : ''} }}</p>
+										<p class="batch-end-main-heading">
+											{{'BATCHEND_MAIN_HEADING'  | translate : {'%s': batchDetails?.endDate ? (batchDetails?.endDate | date) : ''} }}
+										</p>
 										<p class="batch-end-sub-heading">{{'BATCHEND_SUB_HEADING' | translate}}</p>
 									</div>
 									<div *ngIf="course?.progress && course?.progress === 100"
 										class="sb-course-complete-container ion-padding">
 										<div class="img-container">
-											<img class="success-badge" src='assets/imgs/Badge green.svg'>
+											<img class="success-badge" src='assets/imgs/Badge green.svg'
+												alt="completed">
 										</div>
 										<div class="text-container">
-											<p><b>{{'TRAINING_COMPLETED_SUCCESSFULLY' | translate}}</b></p>
+											<p><strong>{{'TRAINING_COMPLETED_SUCCESSFULLY' | translate}}</strong></p>
 										</div>
 									</div>
 								</div>
@@ -90,36 +108,43 @@
 					</div>
 				</div>
 			</ion-card-content>
-			<div #stickyPillsRef *ngIf="isAlreadyEnrolled && courseCardData?.batchId && course?.progress !== 100" 
-			class="enrolled-course-container">
-			<ion-card class="enrolled-course-card">
-				<ion-card-content class="ion-padding-top">
-                    <ion-card-title class="last-read-content padding-bottom-8">{{lastReadContentName}}</ion-card-title>
-					<button *ngIf="!showResumeBtn && childrenData?.length && lastReadContentType !== 'SelfAssess'" class="enrolled-course-card-button"
-                    (click)="startContent()"><span><img class="play-icon" src="assets/imgs/Play@1.5x.svg"
-                        alt="play-icon">{{
-                            'START_COURSE_NOW' | translate }}</span></button>
-					<button *ngIf="showResumeBtn && lastReadContentType !== 'SelfAssess'" class="enrolled-course-card-button"
-						(click)="resumeContent(courseCardData?.lastReadContentId)"><span><img class="play-icon"
-								src="assets/imgs/Play@1.5x.svg" alt="play-icon">{{
-															'CONTINUE_NOW' | translate }}</span></button>
-					<button *ngIf="lastReadContentType === 'SelfAssess'" class="enrolled-course-card-button"
-						(click)="resumeContent(courseCardData?.lastReadContentId)"><span><img class="play-icon"
-								src="assets/imgs/Play@1.5x.svg" alt="play-icon">{{
-															'START_ASSESSMENT' | translate }}</span></button>
-					<div *ngIf="batchDetails?.endDate && !batchExp" class="enrollment-end-date ion-padding-bottom">
-						<ion-icon name="information-circle"></ion-icon>
-						<span *ngIf="!course?.certificate && lastReadContentType !== 'SelfAssess'">{{'COMPLETE_TRAINING_TO_EARN_CERTIFICATE' | translate: {'%s': batchDetails?.endDate | date} }} </span>
-						<span *ngIf="!course?.certificate && lastReadContentType === 'SelfAssess'">{{'COMPLETE_ASSESSMENT_TO_EARN_CERTIFICATE' | translate: {'%s': batchDetails?.endDate | date} }} </span>
-						<span *ngIf="course?.certificate">{{'TO_EARN_CERTIFICATE' | translate: {'%s': batchDetails?.endDate | date} }}</span>
-					</div>
-				</ion-card-content>
-			</ion-card>
-		</div>
+			<div #stickyPillsRef *ngIf="!showSheenAnimation && isAlreadyEnrolled && courseCardData?.batchId && course?.progress !== 100"
+				class="enrolled-course-container">
+				<ion-card class="enrolled-course-card">
+					<ion-card-content class="ion-padding-top">
+						<ion-card-title class="last-read-content padding-bottom-8">{{lastReadContentName}}
+						</ion-card-title>
+						<button *ngIf="!showResumeBtn && childrenData?.length && lastReadContentType !== 'SelfAssess'"
+							class="enrolled-course-card-button" (click)="startContent()"><span>
+								<img class="play-icon" src="assets/imgs/Play@1.5x.svg" alt="play-icon">
+								{{ 'START_COURSE_NOW' | translate }} </span></button>
+						<button *ngIf="showResumeBtn && lastReadContentType !== 'SelfAssess'"
+							class="enrolled-course-card-button"
+							(click)="resumeContent(courseCardData?.lastReadContentId)"><span>
+								<img class="play-icon" src="assets/imgs/Play@1.5x.svg" alt="play-icon">
+								{{ 'CONTINUE_NOW' | translate }} </span></button>
+						<button *ngIf="lastReadContentType === 'SelfAssess'" class="enrolled-course-card-button"
+							(click)="resumeContent(courseCardData?.lastReadContentId)"><span>
+								<img class="play-icon" src="assets/imgs/Play@1.5x.svg" alt="play-icon">
+								{{ 'START_ASSESSMENT' | translate }} </span></button>
+						<div *ngIf="batchDetails?.endDate && !batchExp" class="enrollment-end-date ion-padding-bottom">
+							<ion-icon name="information-circle"></ion-icon>
+							<span
+								*ngIf="!course?.certificate && lastReadContentType !== 'SelfAssess'">{{'COMPLETE_TRAINING_TO_EARN_CERTIFICATE' | translate: {'%s': batchDetails?.endDate | date} }}
+							</span>
+							<span
+								*ngIf="!course?.certificate && lastReadContentType === 'SelfAssess'">{{'COMPLETE_ASSESSMENT_TO_EARN_CERTIFICATE' | translate: {'%s': batchDetails?.endDate | date} }}
+							</span>
+							<span
+								*ngIf="course?.certificate">{{'TO_EARN_CERTIFICATE' | translate: {'%s': batchDetails?.endDate | date} }}</span>
+						</div>
+					</ion-card-content>
+				</ion-card>
+			</div>
 		</ion-card>
 
 		<ion-card class="card-box-shadow">
-			<ion-card-content class="card-content-bottom-0 card-content-top-0">
+			<ion-card-content *ngIf="!showSheenAnimation || (!guestUser && showSheenAnimation && isAlreadyEnrolled)" class="card-content-bottom-0 card-content-top-0">
 				<ion-segment class="d-flex" [(ngModel)]="segmentType" (ionChange)="onSegmentChange($event)">
 					<ion-segment-button value="info" class="flex-5">
 						<ion-label class="font-12 text-transform-none">{{'TRAINING_INFO' | translate}}</ion-label>
@@ -134,22 +159,87 @@
 				</ion-segment>
 			</ion-card-content>
 		</ion-card>
-		<div [ngSwitch]="segmentType">
+		<ion-card *ngIf="showSheenAnimation && !isAlreadyEnrolled" class="card-box-shadow p-8">
+			<ion-card-content class="card-content-bottom-0 card-content-top-0 animation-card">
+						<div class="animation-card-content">
+							<div class="skeleton-search-card">
+								<app-skeleton-item [width]="'100%'" [height]="'18px'">
+								</app-skeleton-item>
+							</div>
+							<div class="line-seperator">
+								<app-skeleton-item [width]="'2px'" [height]="'34px'">	</app-skeleton-item>
+							</div>
+							<div class="skeleton-search-card">
+								<app-skeleton-item [width]="'100%'" [height]="'18px'">	</app-skeleton-item>
+							</div>
+						</div>
+					</ion-card-content>
+		</ion-card>
+		<ion-card *ngIf="(guestUser && showSheenAnimation) || (!guestUser && showSheenAnimation && !isAlreadyEnrolled)" class="card-box-shadow p-8">
+			<ion-card-content class="card-content-bottom-0 card-content-top-0 animation-bottom-card">
+						<div class="skeleton-animation-item-1">
+							<app-skeleton-item [height]="'22px'"></app-skeleton-item>
+						</div>
+						<div class="skeleton-animation-item-2">
+							<app-skeleton-item [height]="'18px'"></app-skeleton-item>
+						</div>
+				<div class="skeleton-animation-item-3">
+							<app-skeleton-item [height]="'18px'"></app-skeleton-item>
+						</div>
+				<div class="skeleton-animation-item-4">
+							<app-skeleton-item [height]="'18px'"></app-skeleton-item>
+						</div>
+				<div class="skeleton-animation-item-5">
+							<app-skeleton-item [height]="'18px'"></app-skeleton-item>
+						</div>
+				  <div class="skeleton-animation-item-6">
+							<app-skeleton-item [height]="'18px'"></app-skeleton-item>
+						</div>
+				<div class="skeleton-animation-item-7">
+							<app-skeleton-item [height]="'18px'"></app-skeleton-item>
+						</div>
+				<div class="skeleton-animation-item-8">
+							<app-skeleton-item [height]="'18px'"></app-skeleton-item>
+						</div>
+				  <div class="skeleton-animation-item-9">
+							<app-skeleton-item [height]="'18px'"></app-skeleton-item>
+						</div>
+				<div class="skeleton-animation-item-10">
+							<app-skeleton-item [height]="'18px'"></app-skeleton-item>
+						</div>
+				</ion-card-content>
+		</ion-card>
+		<div *ngIf="isAlreadyEnrolled && showSheenAnimation">
+			<ion-card class="bg-grey" *ngFor="let i of [1, 2, 3, 4, 5, 6, 6]">
+				<ion-card-content class="card-content-bottom-0 card-content-top-0 animation-bottom-card mb-16 mt-16">
+				  <div class="skeleton-animation-item-10 mb-16">
+						<app-skeleton-item [height]="'18px'"></app-skeleton-item>
+					</div>
+				  <div class="skeleton-animation-item-11">
+						<app-skeleton-item [height]="'18px'"></app-skeleton-item>
+					</div>
+				</ion-card-content>
+			</ion-card>
+
+		</div>
+		<div *ngIf="(guestUser &&!showSheenAnimation) || (!guestUser && !showSheenAnimation)" [ngSwitch]="segmentType">
 			<ion-card *ngSwitchCase="'info'">
 				<ion-card-content class="ion-no-padding">
 					<div class="ion-padding">
-					<div *ngIf="isCertifiedCourse" class="certificate-container">
-						<div class="certificate-icon">
-							<img class="certificate-icon" src="assets/imgs/Certificate icon.svg" alt="certificate-icon">
+						<div *ngIf="isCertifiedCourse" class="certificate-container">
+							<div class="certificate-icon">
+								<img class="certificate-icon" src="assets/imgs/Certificate icon.svg"
+									alt="certificate-icon">
+							</div>
+							<div class="certificate-text">
+								<ion-card-title class="font-10 certified-section-color font-weight-900">
+									{{'CERTIFIED_TRAINING' | translate}}
+								</ion-card-title>
+							</div>
 						</div>
-						<div class="certificate-text">
-							<ion-card-title class="font-10 certified-section-color font-weight-900">{{'CERTIFIED_TRAINING' | translate}}
-							</ion-card-title>
-						</div>
-					</div>
 						<div class="ion-margin-bottom">
 							<ion-card-title class="font-12 subtitle-color label-margin-bottom">
-								<b>{{'TRAINING_IS_RELEVANT_TO_TEACHERS'| translate}}</b>:
+								<strong>{{'TRAINING_IS_RELEVANT_TO_TEACHERS'| translate}}</strong>:
 							</ion-card-title>
 							<p *ngIf="course?.gradeLevel">{{'CLASS' | translate}} : {{course?.gradeLevel}}</p>
 							<p *ngIf="course?.subject">{{'SUBJECT' | translate}}: {{course?.subject}}</p>
@@ -157,111 +247,112 @@
 						</div>
 						<div class="ion-margin-bottom">
 							<ion-card-title class="font-12 subtitle-color label-margin-bottom">
-								<b>{{'TRAINING_DETAILS' | translate}}</b>
+								<strong>{{'TRAINING_DETAILS' | translate}}</strong>
 							</ion-card-title>
 							<p *ngIf="batchEndDate">{{'TRAINING_END_DATE' | translate }} : {{ batchEndDate | date}}</p>
 						</div>
 						<div>
 							<p>{{course?.description}}</p>
 						</div>
-				</div>
+					</div>
 					<!--credits and license info-->
 					<div *ngIf="course?.author || course?.organisation || course?.license || course?.copyright">
 						<div class="hr-border-bottom"></div>
 						<div>
 							<div class="ion-padding-start">
-							<div class="font-14 view-credits" (click)="showLicensce()">
-								<span><b>{{'CREDITS_LICENCE_INFO' | translate}}</b></span>
-								<span *ngIf="showCredits">
-									<ion-icon name="ios-arrow-up"></ion-icon>
-								</span>
-								<span *ngIf="!showCredits">
-									<ion-icon name="ios-arrow-down"></ion-icon>
-								</span>
+								<div class="font-14 view-credits" (click)="showLicensce()">
+									<span><strong>{{'CREDITS_LICENCE_INFO' | translate}}</strong></span>
+									<span *ngIf="showCredits">
+										<ion-icon name="ios-arrow-up"></ion-icon>
+									</span>
+									<span *ngIf="!showCredits">
+										<ion-icon name="ios-arrow-down"></ion-icon>
+									</span>
+								</div>
 							</div>
-						</div>
 							<div *ngIf="showCredits" class="showLicensce">
 								<div class="ion-padding">
-								<div *ngIf="course?.author">
-									<ion-card-title class="font-12 subtitle-color label-margin-bottom">
-										<b>{{'AUTHOR' | translate}}</b>:
-									</ion-card-title>
-									<p>{{course?.author}}</p>
-								</div>
-								<div *ngIf="course?.organisation">
-									<ion-card-title class="font-12 subtitle-color label-margin-bottom">
-										<b>{{ 'PUBLISHED_BY' | translate:{'%s': appName} }}</b>:
-									</ion-card-title>
-									<p>{{course?.organisation}} </p>
-								</div>
-								<div *ngIf="course?.contributors || course?.creators || course?.attributions">
-									<ion-card-title class="font-12 subtitle-color label-margin-bottom">
-										<b>{{ 'ATTRIBUTIONS' | translate }}</b>:
-									</ion-card-title>
-									<p>{{mergeProperties(['attributions', 'contributors', 'creators'])}}</p>
-								</div>
-								<div *ngIf="course?.license && !licenseDetails">
-									<ion-card-title class="font-12 subtitle-color label-margin-bottom">
-										<b>{{ 'LICENSE' | translate }}</b>:
-									</ion-card-title>
-									<p>{{course?.license}}</p>
-								</div>
-								<div *ngIf="licenseDetails" class="ion-padding-bottom">
+									<div *ngIf="course?.author">
 										<ion-card-title class="font-12 subtitle-color label-margin-bottom">
-											<b>{{ 'LICENSE' | translate }}</b>:
+											<strong>{{'AUTHOR' | translate}}</strong>:
+										</ion-card-title>
+										<p>{{course?.author}}</p>
+									</div>
+									<div *ngIf="course?.organisation">
+										<ion-card-title class="font-12 subtitle-color label-margin-bottom">
+											<strong>{{ 'PUBLISHED_BY' | translate:{'%s': appName} }}</strong>:
+										</ion-card-title>
+										<p>{{course?.organisation}} </p>
+									</div>
+									<div *ngIf="course?.contributors || course?.creators || course?.attributions">
+										<ion-card-title class="font-12 subtitle-color label-margin-bottom">
+											<strong>{{ 'ATTRIBUTIONS' | translate }}</strong>:
+										</ion-card-title>
+										<p>{{mergeProperties(['attributions', 'contributors', 'creators'])}}</p>
+									</div>
+									<div *ngIf="course?.license && !licenseDetails">
+										<ion-card-title class="font-12 subtitle-color label-margin-bottom">
+											<strong>{{ 'LICENSE' | translate }}</strong>:
+										</ion-card-title>
+										<p>{{course?.license}}</p>
+									</div>
+									<div *ngIf="licenseDetails" class="ion-padding-bottom">
+										<ion-card-title class="font-12 subtitle-color label-margin-bottom">
+											<strong>{{ 'LICENSE' | translate }}</strong>:
 										</ion-card-title>
 										<div>{{licenseDetails.name}}</div>
 										<div>{{licenseDetails.description}}</div>
 										<span (click)="openBrowser(licenseDetails.url)"
 											class="sb-url">{{licenseDetails.url}}</span>
 									</div>
-								<div *ngIf="course?.copyright">
-					
-									<ion-card-title class="font-12 subtitle-color label-margin-bottom">
-										<b>{{ 'COPYRIGHT' | translate }}</b>:
-									</ion-card-title>
-									<p>{{course?.copyright}}{{course?.copyrightYear ? ", " + course?.copyrightYear : ""}}</p>
-								</div>
+									<div *ngIf="course?.copyright">
+
+										<ion-card-title class="font-12 subtitle-color label-margin-bottom">
+											<strong>{{ 'COPYRIGHT' | translate }}</strong>:
+										</ion-card-title>
+										<p>{{course?.copyright}}{{course?.copyrightYear ? ", " + course?.copyrightYear : ""}}
+										</p>
+									</div>
 								</div>
 								<!--training derived from section starts-->
 								<div class="origin-data" *ngIf="course?.originData">
-										<div class="font-14 traning-derived-label-background ion-padding-bottom">
-												<span><b>{{'CONTENT_DERIVED_FROM' | translate}}</b></span>
-											</div>
+									<div class="font-14 traning-derived-label-background ion-padding-bottom">
+										<span><strong>{{'CONTENT_DERIVED_FROM' | translate}}</strong></span>
+									</div>
 									<div class="ion-padding">
-									<div *ngIf="course?.originData.name">
-										<ion-card-title class="font-12 subtitle-color label-margin-bottom">
-											<b> {{'ORIGINAL_CONTENT' | translate}}</b>:
-										</ion-card-title>
-										<p>{{course?.originData.name}}</p>
-									</div>
-									<div *ngIf="course?.originData.author">
-					
-										<ion-card-title class="font-12 subtitle-color label-margin-bottom">
-											<b>{{ 'ORIGINAL_AUTHOR' | translate }}</b>:
-										</ion-card-title>
-										<p>{{course?.originData.author}}</p>
-									</div>
-					
-									<div *ngIf="course?.originData.license">
-										<ion-card-title class="font-12 subtitle-color label-margin-bottom">
-											<b>{{ 'LICENSE' | translate }}</b>:
-										</ion-card-title>
-										<p>{{course?.originData.license}}</p>
-									</div>
-					
-									<div *ngIf="course?.originData.organisation">
-										<ion-card-title class="font-12 subtitle-color label-margin-bottom">
-										<b>{{ 'PUBLISHED_BY' | translate:{'%s': appName} }}</b>:
-										</ion-card-title>
-										<p>{{course?.originData.organisation[0]}}</p>
-									</div>
+										<div *ngIf="course?.originData.name">
+											<ion-card-title class="font-12 subtitle-color label-margin-bottom">
+												<strong> {{'ORIGINAL_CONTENT' | translate}}</strong>:
+											</ion-card-title>
+											<p>{{course?.originData.name}}</p>
+										</div>
+										<div *ngIf="course?.originData.author">
+
+											<ion-card-title class="font-12 subtitle-color label-margin-bottom">
+												<strong>{{ 'ORIGINAL_AUTHOR' | translate }}</strong>:
+											</ion-card-title>
+											<p>{{course?.originData.author}}</p>
+										</div>
+
+										<div *ngIf="course?.originData.license">
+											<ion-card-title class="font-12 subtitle-color label-margin-bottom">
+												<strong>{{ 'LICENSE' | translate }}</strong>:
+											</ion-card-title>
+											<p>{{course?.originData.license}}</p>
+										</div>
+
+										<div *ngIf="course?.originData.organisation">
+											<ion-card-title class="font-12 subtitle-color label-margin-bottom">
+												<strong>{{ 'PUBLISHED_BY' | translate:{'%s': appName} }}</strong>:
+											</ion-card-title>
+											<p>{{course?.originData.organisation[0]}}</p>
+										</div>
 									</div>
 								</div>
 								<!-- / training derived from section ends -->
+							</div>
 						</div>
 					</div>
-				</div>
 					<!--/credits and license info-->
 				</ion-card-content>
 			</ion-card>
@@ -272,9 +363,8 @@
 							<ion-row (click)="toggleGroup(i , item)" *ngIf="item?.children">
 								<ion-col size="11">
 									<div class="sb-topic-text" [ngClass]="{'fontBold' : isGroupShown(i)}">
-										<!-- <ion-icon class="sb-checkmark-icon" name="md-checkmark-circle"></ion-icon> -->
-										<ion-icon *ngIf="isAlreadyEnrolled && courseCompletionData[item.identifier]" class="sb-checkmark-icon"
-											name="md-checkmark-circle"></ion-icon>
+										<ion-icon *ngIf="isAlreadyEnrolled && courseCompletionData[item.identifier]"
+											class="sb-checkmark-icon" name="md-checkmark-circle"></ion-icon>
 										{{item?.contentData.name}}
 									</div>
 								</ion-col>
@@ -283,7 +373,7 @@
 										<ion-icon name="ios-arrow-down" class="sb-accordian-arrow"></ion-icon>
 									</div>
 								</ion-col>
-								<ion-col col-1 *ngIf="isGroupShown(i)" class="dd-icon">
+								<ion-col size="1" *ngIf="isGroupShown(i)" class="dd-icon">
 									<div>
 										<ion-icon name="ios-arrow-up" class="sb-accordian-arrow fontBold"></ion-icon>
 									</div>
@@ -292,15 +382,15 @@
 						</ion-grid>
 						<div class="sb-hidden-content"
 							*ngIf="isGroupShown(i) && (item?.children && item?.children?.length)">
-							<!-- <div class="sb-separator-line"></div> -->
 							<div class="box-align" *ngFor="let firstChildren of item?.children; let j = index;">
 								<div class="sb-topics-container sb-topics-container-ftue">
 									<app-collection-child [childData]="firstChildren" [index]="j" [depth]="depth"
 										[activeMimeTypeFilter]="activeMimeTypeFilter" [isTextbookTocPage]="false"
 										[corRelationList]="corRelationList" [isDepthChild]="isDepthChild"
-                                        [breadCrumb]="breadCrumb" [rootUnitId]="item.identifier" [bookID]="identifier"
-                                        [updatedCourseCardData]="updatedCourseCardData" [batch]="batchDetails"
-										[isEnrolled]="isAlreadyEnrolled" [fromCourseToc]="true" [isBatchNotStarted]="isBatchNotStarted" [contentStatusData]="contentStatusData">
+										[breadCrumb]="breadCrumb" [rootUnitId]="item.identifier" [bookID]="identifier"
+										[updatedCourseCardData]="updatedCourseCardData" [batch]="batchDetails"
+										[isEnrolled]="isAlreadyEnrolled" [fromCourseToc]="true"
+										[isBatchNotStarted]="isBatchNotStarted" [contentStatusData]="contentStatusData">
 									</app-collection-child>
 								</div>
 							</div>
@@ -310,27 +400,26 @@
 			</div>
 		</div>
 	</div>
-	<div padding text-center class="mt-32 mb-32" *ngIf="showOfflineSection">
-		<img src="assets/imgs/outline-cloud_off.svg" alt="" />
+	<div class="mt-32 mb-32 ion-text-center ion-padding" *ngIf="showOfflineSection">
+		<img src="assets/imgs/outline-cloud_off.svg" alt="offline" />
 		<ion-text>
-		  <h6 class="offline-header">
-			<strong>{{ 'NO_INTERNET_TITLE' | translate }}</strong>
-		  </h6>
+			<h6 class="offline-header">
+				<strong>{{ 'NO_INTERNET_TITLE' | translate }}</strong>
+			</h6>
 		</ion-text>
 		<p class="offline-content">{{ 'OFFLINE_WARNING_ETBUI' | translate }}</p>
 		<button (click)="getAllBatches()" class="sb-btn sb-btn-outline-info retry-btn">{{'RETRY' | translate}}</button>
 	</div>
 </ion-content>
-<div class="loading-backdrop" *ngIf="showLoading && !isDownloadStarted" text-center>
-	<div class="backdrop-container">
-		<ion-label>{{ 'LOADING_CONTENTS' | translate: {'%s': downloadProgress ? downloadProgress : 0} }}</ion-label>
-		<app-pb-horizontal [progress]="downloadProgress" isOnBoardCard="false"></app-pb-horizontal>
-	</div>
 
-	<div class="backdrop-footer">
-		<ion-button size="small" (click)="cancelDownload()">{{ 'CANCEL' | translate }}</ion-button>
-	</div>
-</div>
-<app-sb-download-popup *ngIf="showDownload" (cancelDownloadEmit)="cancelDownload($event)" [currentCount]="currentCount"
-	[queuedIdentifiers]="queuedIdentifiers" [downloadSize]="downloadSize" [collectionName]="course?.name"
-	[showDownload]="showDownload"></app-sb-download-popup>
+	<ng-container *ngIf="trackDownloads$ | async; let downloads">
+		<app-sb-download-popup *ngIf="downloads.queued.length"
+			(cancelDownloadEmit)="cancelDownload($event)" 
+			[currentCount]="downloads.completed.length"
+			[queuedIdentifiers]="(downloads.queued.length+downloads.completed.length)" 
+			[downloadSize]="downloadSize"
+			[collectionName]="course?.name" 
+			[showDownload]="true"
+			[showPopover]="showCollapsedPopup">
+		</app-sb-download-popup>
+	</ng-container>

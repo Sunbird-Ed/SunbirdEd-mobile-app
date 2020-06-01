@@ -8,13 +8,13 @@
     <ion-title class="color f16">{{'USERS_AND_GROUPS' | translate}}</ion-title>
     <ion-buttons slot="primary">
       <ion-button class="color f18" *ngIf="!playConfig" (click)="goToSharePage()" icon-only>
-        <ion-icon name="share" float-end></ion-icon>
+        <ion-icon name="share" class="ion-float-end"></ion-icon>
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
 
   <ion-toolbar no-border-top>
-    <ion-segment no-padding [(ngModel)]="segmentType" (ionChange)="onSegmentChange($event)">
+    <ion-segment class="ion-no-padding" [(ngModel)]="segmentType" (ionChange)="onSegmentChange($event)">
       <ion-segment-button value="users">
         <ion-label>{{'USERS' | translate}}</ion-label>
       </ion-segment-button>
@@ -31,28 +31,29 @@
         <div class="custom-margin-top">
           <div *ngIf="profileDetails?.handle">
             <ion-text class="ion-padding-top ion-padding-start">
-              <p text-uppercase color="dark_gray" class="subTitle M0">{{ 'LOGGED_IN_AS' | translate}}</p>
+              <p color="dark_gray" class="subTitle M0 ion-text-uppercase">{{ 'LOGGED_IN_AS' | translate}}</p>
             </ion-text>
-            <ion-item class="item-background ug-logged-p0 ion-no-padding" margin-bottom lines="none"
+            <ion-item class="item-background ug-logged-p0 ion-no-padding ion-margin-bottom" lines="none"
               [ngClass]="i===selectedUserIndex ? 'blueBorder' : ''">
               <ion-label class="ion-no-margin">
                 <ion-grid class="radius ion-no-padding">
                   <ion-row class="bg-color-white ug-row-padding radius">
                     <ion-col size="12" class="bg-color-white"
                       (click)="selectUser(i,  profileDetails?.uid, profileDetails?.handle)">
-                      <div class="bg-color-white padding-left-0 rm-label-margin" no-padding>
+                      <div class="bg-color-white padding-left-0 rm-label-margin ion-no-padding">
                         <ion-label>
                           <h6 [ngStyle]="{'color': currentUserId === profileDetails?.uid ? 'dodgerblue' : 'black'}"
                             class="padding-left-2 ion-no-margin elipsis" color="primary">
                             <strong *ngIf="profileDetails">
-                              {{profileDetails.serverProfile ? profileDetails.serverProfile.firstName : profileDetails.handle}}&nbsp;{{profileDetails.serverProfile?.lastName}}</strong>
+                              {{profileDetails.serverProfile ? profileDetails.serverProfile.firstName : profileDetails.handle}}&nbsp;{{profileDetails.serverProfile?.lastName}}
+                            </strong>
                           </h6>
                           <p *ngIf="profileDetails?.profileType === ProfileType.TEACHER">
                             {{'USER_TYPE_1' | translate | titlecase}}</p>
                           <p *ngIf="profileDetails?.profileType === ProfileType.STUDENT">
                             {{'USER_TYPE_2' | translate | titlecase}}</p>
-                            <p *ngIf="profileDetails?.profileType === ProfileType.OTHER">
-                              {{'USER_TYPE_3' | translate | titlecase}}</p>
+                          <p *ngIf="profileDetails?.profileType === ProfileType.OTHER">
+                            {{'USER_TYPE_3' | translate | titlecase}}</p>
                         </ion-label>
                       </div>
                     </ion-col>
@@ -62,16 +63,16 @@
             </ion-item>
           </div>
           <ion-label>
-            <p text-uppercase class="subTitle ug-dark-grey ug-top-left-padding">{{'USERS' | translate}}</p>
+            <p class="subTitle ug-dark-grey ug-top-left-padding ion-text-uppercase">{{'USERS' | translate}}</p>
           </ion-label>
           <div *ngIf="noUsersPresent" class="nouser">
             <h6>{{'NO_USERS_CREATED_YET' | translate}}</h6>
-            <div text-center class="description">
+            <div class="description ion-text-center">
               {{ 'NO_USERS_CREATED_YET_MSG' | translate }}
             </div>
           </div>
           <div *ngIf="loadingUserList" class="nouser margin-bottom">
-            <div text-center class="description">
+            <div class="description ion-text-center">
               <strong>{{'LOADING_USER_LIST' | translate}}</strong>
             </div>
           </div>
@@ -82,7 +83,7 @@
                   <ion-row [ngClass]="i===selectedUserIndex ? 'blueBorder' : ''"
                     class="bg-color-white ug-row-padding radius">
                     <ion-col size="11" class="bg-color-white" (click)="selectUser(i, user?.uid, user?.handle)">
-                      <div class="bg-color-white padding-left-0 rm-label-margin" no-padding>
+                      <div class="bg-color-white padding-left-0 rm-label-margin ion-no-padding">
                         <ion-label>
                           <p class="elipsis"
                             [ngStyle]="{'color': currentUserId === user?.uid ? 'dodgerblue' : 'black'}">
@@ -93,7 +94,7 @@
                               *ngIf="user?.profileType === ProfileType.TEACHER">{{'USER_TYPE_1' | translate | titlecase}}</span>
                             <span
                               *ngIf="user?.profileType === ProfileType.STUDENT">{{'USER_TYPE_2' | translate | titlecase}}</span>
-                              <span
+                            <span
                               *ngIf="user?.profileType === ProfileType.OTHER">{{'USER_TYPE_3' | translate | titlecase}}</span>
                             <span *ngIf="user?.grade?.length" class="separator-dot"></span>
                             {{ getGradeNameFromCode(user) }}
@@ -116,9 +117,9 @@
 
     </ion-list>
     <ion-list *ngSwitchCase="'groups'">
-      <div padding>
+      <div class="ion-padding">
         <div class="firstSection" *ngIf="showEmptyGroupsMessage">
-          <ion-row padding-top>
+          <ion-row class="ion-padding-top">
             <ion-col size-md="6" offset-md="3" size-lg="6" offset-lg="3">
               <div class="ion-text-center ug-pt-30">
                 <img class="image_style" alt="no_group" src="assets/imgs/ic_businessman.png">
@@ -127,7 +128,7 @@
                 <h6>
                   <strong>{{'NO_GROUPS_CREATED_YET' | translate}}</strong>
                 </h6>
-                <div text-center class="description">
+                <div class="description ion-text-center">
                   {{ 'NO_GROUP_MESSAGE' | translate }}
                 </div>
               </div>
@@ -140,7 +141,8 @@
               <ion-grid class="radius">
                 <ion-row class="bg-color-white ug-row-padding radius">
                   <ion-col size="11" class="bg-color-white">
-                    <div class="bg-color-white padding-left-0 rm-label-margin" no-padding (click)="goToGroupDetail(i)">
+                    <div class="bg-color-white padding-left-0 rm-label-margin ion-no-padding"
+                      (click)="goToGroupDetail(i)">
                       <ion-label>
                         <h6 class="elipsis ion-no-margin"
                           [ngStyle]="{'color': currentGroupId === group?.gid ? 'dodgerblue' : 'black'}">
@@ -196,7 +198,7 @@
       </div>
     </div>
   </ion-row>
-  <ion-row padding>
+  <ion-row class="ion-padding">
     <ion-col size-md="10" offset-md="1" *ngIf="!isLoggedIn; else disableSwitchButton">
       <div *ngIf="selectedUserIndex !== -1; else enableCreateButton">
         <ion-button *ngIf="!playConfig" expand="block" center (click)="switchAccountConfirmBox()"

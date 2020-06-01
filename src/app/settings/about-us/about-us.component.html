@@ -9,7 +9,7 @@
     <ion-title>{{ 'ABOUT_US' | translate }}</ion-title>
     <ion-buttons slot="primary">
       <ion-button (click)="shareInformation()" icon-only>
-        <ion-icon name="share" float-end></ion-icon>
+        <ion-icon name="share" class="ion-float-end"></ion-icon>
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
@@ -19,7 +19,7 @@
 <ion-content>
   <ion-list>
     <!-- Device Id -->
-    <ion-item text-wrap>
+    <ion-item class="ion-text-wrap">
       <ion-label>
         <h2>{{ 'DEVICE_ID' | translate }}</h2>
         <p class="settings-item-style" user-select: auto>{{ deviceId | translate}}</p>

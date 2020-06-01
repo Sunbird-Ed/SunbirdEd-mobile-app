@@ -8,6 +8,7 @@ export const mockcollectionData: Partial<Navigation> = {
     previousNavigation: null,
     extras: {
         state: {
+            depth: '5',
             content: {
                 ownershipType: [
                     'createdBy'

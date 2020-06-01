@@ -120,6 +120,7 @@ export class QrcoderesultPage implements OnDestroy {
   latestParents: Array<any> = [];
   stckyindex: string;
   chapterFirstChildId: string;
+  showSheenAnimation = true;
   @ViewChild(iContent) ionContent: iContent;
 
   constructor(
@@ -199,7 +200,53 @@ export class QrcoderesultPage implements OnDestroy {
       this.identifier = this.content.identifier;
     }
     if (this.backToPreviusPage) {
-      this.getChildContents();
+      if (this.navData.isAvailableLocally) {
+        this.getChildContents();
+      } else {
+        this.telemetryGeneratorService.generatefastLoadingTelemetry(
+            InteractSubtype.FAST_LOADING_INITIATED,
+            PageId.DIAL_CODE_SCAN_RESULT,
+            undefined,
+            undefined,
+            undefined,
+            this.corRelationList
+        );
+        const getContentHeirarchyRequest: ContentDetailRequest = {
+          contentId: this.identifier
+        };
+        this.contentService.getContentHeirarchy(getContentHeirarchyRequest).toPromise()
+          .then((content: Content) => {
+            this.showSheenAnimation = false;
+            this.childrenData = content.children;
+            this.parents.splice(0, this.parents.length);
+            this.parents.push(content);
+            this.results = [];
+            this.findContentNode(content);
+            this.telemetryGeneratorService.generatefastLoadingTelemetry(
+                InteractSubtype.FAST_LOADING_FINISHED,
+                PageId.DIAL_CODE_SCAN_RESULT,
+                undefined,
+                undefined,
+                undefined,
+                this.corRelationList
+            );
+            if (this.results && this.results.length === 1) {
+              this.backToPreviusPage = false;
+              this.events.unsubscribe(EventTopics.PLAYER_CLOSED);
+              this.navCtrl.navigateForward([RouterLinks.CONTENT_DETAILS], {
+                state: {
+                  content: this.results[0],
+                  isSingleContent: this.isSingleContent,
+                  resultsSize: this.results.length,
+                  corRelation: this.corRelationList
+                }
+              });
+            }
+          }).catch((err) => {
+            this.showSheenAnimation = false;
+          });
+          // this.importContentInBackground([this.identifier], false);
+      }
       this.backToPreviusPage = false;
     }
     this.unregisterBackButton = this.platform.backButton.subscribeWithPriority(10, () => {
@@ -251,7 +298,8 @@ export class QrcoderesultPage implements OnDestroy {
       this.goBack();
     } else if (this.isSingleContent && this.appGlobalService.isProfileSettingsCompleted) {
       if (await this.commonUtilService.isDeviceLocationAvailable()) {
-        const navigationExtras: NavigationExtras = { state: { loginMode: 'guest' } };
+        this.navCtrl.pop();
+        const navigationExtras: NavigationExtras = { state: { loginMode: 'guest' }, replaceUrl: true };
         this.router.navigate([`/${RouterLinks.TABS}`], navigationExtras);
       } else {
         const navigationExtras: NavigationExtras = {
@@ -270,10 +318,12 @@ export class QrcoderesultPage implements OnDestroy {
   }
 
   getChildContents() {
+    this.showSheenAnimation = false;
     const request: ChildContentRequest = { contentId: this.identifier, hierarchyInfo: [] };
     this.contentService.getChildContents(
       request).toPromise()
       .then(async (data: Content) => {
+        console.log('getChildContents', data);
         if (data && data.contentData) {
           this.childrenData = data.children;
         }
@@ -318,9 +368,9 @@ export class QrcoderesultPage implements OnDestroy {
             }
            });
         }
-
       })
-      .catch(() => {
+      .catch((err) => {
+        console.log('err1-->', err);
         this.zone.run(() => {
           this.showChildrenLoader = false;
         });
@@ -386,7 +436,11 @@ export class QrcoderesultPage implements OnDestroy {
       values,
       undefined,
       this.corRelationList);
-    this.openPlayer(content, request);
+    if (this.commonUtilService.networkInfo.isNetworkAvailable || content.isAvailableLocally) {
+      this.openPlayer(content, request);
+    } else {
+      this.commonUtilService.presentToastForOffline('OFFLINE_WARNING_ETBUI_1');
+    }
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,
       content.isAvailableLocally ? InteractSubtype.PLAY_FROM_DEVICE : InteractSubtype.PLAY_ONLINE,
@@ -443,27 +497,31 @@ export class QrcoderesultPage implements OnDestroy {
         }
       });
     } else {
-      this.telemetryGeneratorService.generateInteractTelemetry(
-        InteractType.TOUCH,
-        Boolean(content.isAvailableLocally) ? InteractSubtype.PLAY_FROM_DEVICE : InteractSubtype.DOWNLOAD_PLAY_CLICKED,
-        !this.appGlobalService.isOnBoardingCompleted ? Environment.ONBOARDING : Environment.HOME,
-        PageId.DIAL_CODE_SCAN_RESULT);
-      // this.navCtrl.push(ContentDetailsPage, {
-      //   content: content,
-      //   depth: '1',
-      //   isChildContent: true,
-      //   downloadAndPlay: true,
-      //   corRelation: this.corRelationList
-      // });
-      this.router.navigate([RouterLinks.CONTENT_DETAILS], {
-        state: {
-          content: content,
-          depth: '1',
-          isChildContent: true,
-          downloadAndPlay: true,
-          corRelation: this.corRelationList
-        }
-      });
+      if (this.commonUtilService.networkInfo.isNetworkAvailable || content.isAvailableLocally) {
+        this.telemetryGeneratorService.generateInteractTelemetry(
+          InteractType.TOUCH,
+          Boolean(content.isAvailableLocally) ? InteractSubtype.PLAY_FROM_DEVICE : InteractSubtype.DOWNLOAD_PLAY_CLICKED,
+          !this.appGlobalService.isOnBoardingCompleted ? Environment.ONBOARDING : Environment.HOME,
+          PageId.DIAL_CODE_SCAN_RESULT);
+        // this.navCtrl.push(ContentDetailsPage, {
+        //   content: content,
+        //   depth: '1',
+        //   isChildContent: true,
+        //   downloadAndPlay: true,
+        //   corRelation: this.corRelationList
+        // });
+        this.router.navigate([RouterLinks.CONTENT_DETAILS], {
+          state: {
+            content: content,
+            depth: '1',
+            isChildContent: true,
+            downloadAndPlay: true,
+            corRelation: this.corRelationList
+          }
+        });
+      } else {
+        this.commonUtilService.presentToastForOffline('OFFLINE_WARNING_ETBUI_1');
+      }
     }
   }
 
@@ -682,10 +740,9 @@ export class QrcoderesultPage implements OnDestroy {
       this.router.navigate([`/${RouterLinks.PROFILE_SETTINGS}`], { state: {showFrameworkCategoriesMenu: true } });
     }
   }
-
   private showAllChild(content: any) {
     this.zone.run(() => {
-      if (content.children === undefined) {
+      if (content.children === undefined || !content.children.length) {
         if (content.mimeType !== MimeType.COLLECTION) {
           if (content.contentData.appIcon) {
             if (content.contentData.appIcon.includes('http:') || content.contentData.appIcon.includes('https:')) {
@@ -849,5 +906,4 @@ export class QrcoderesultPage implements OnDestroy {
       });
     }
   }
-
 }

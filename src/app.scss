@@ -1094,6 +1094,45 @@ ion-split-pane {
   // margin-left: 5%;
 }
 
+.enrolled-course-bg > sb-course-cards-hlist > .layout-course > .header > .title{
+  color: white !important;
+}
+
+sb-course-cards-hlist > .layout-course > .header > .sb-btn-outline-secondary{
+    color: #024F9D;
+}
+
+sb-course-cards-hlist > .layout-course > .header{
+  padding: 0 8px !important;
+}
+
+app-courses{
+  sb-course-card{
+    .sb--card{
+      margin-top: 2px !important;
+    }
+  }
+}
+
+.card-section-secondary{
+  color: #666666;
+  font-family: "Noto Sans";
+}
+
+.card-section-danger{
+  color: #E55A28;
+  font-family: "Noto Sans";
+}
+
+.card-section-invisible{
+  visibility: hidden;
+}
+
+sb-course-cards-hlist > .layout-course > .sb--scrolling-wrapper-flexbox {
+  padding-right: 8px;
+  padding-left: 8px;
+}
+
 app-resources{
 
   .fixed-container{
@@ -1107,6 +1146,9 @@ app-resources{
         padding-top: 18px !important;
         padding-bottom: 18px !important;
         border-radius: 18px !important;
+      }
+      .sb-pills-container{
+        padding: 10px !important;
       }
     }
   }
@@ -1129,4 +1171,7 @@ app-resources{
     }
   }
 
+}
+.popover-viewport{
+  animation-name: none !important;
 }
