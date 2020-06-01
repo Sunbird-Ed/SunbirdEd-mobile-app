@@ -823,7 +823,7 @@ export class ProfilePage implements OnInit {
   async openEnrolledCourse(contentData) {
     try {
       const content = await this.contentService.getContentDetails({ contentId: contentData.courseId }).toPromise();
-      this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], { state: { content } });
+      this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], { state: { content, resumeCourseFlag: true } });
     } catch (err) {
       console.error(err);
     }

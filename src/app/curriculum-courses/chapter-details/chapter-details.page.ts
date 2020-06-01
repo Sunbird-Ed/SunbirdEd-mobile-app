@@ -76,6 +76,9 @@ export class ChapterDetailsPage implements OnInit, OnDestroy {
 
   private extrasData: any;
 
+  isNextContentFound = false;
+  nextContent: Content;
+
   constructor(
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
     @Inject('AUTH_SERVICE') public authService: AuthService,
@@ -142,7 +145,6 @@ export class ChapterDetailsPage implements OnInit, OnDestroy {
       this.getAllBatches();
     }
     this.getAllContents(this.chapter);
-    console.log('this.childContents', this.childContents);
     this.checkChapterCompletion();
     this.getContentState(true);
 
@@ -346,13 +348,14 @@ export class ChapterDetailsPage implements OnInit, OnDestroy {
   }
 
   continueLearning() {
-    if (this.updatedCourseCardData.lastReadContentId) {
-      const child = this.childContents.find((c) => c.identifier === this.updatedCourseCardData.lastReadContentId);
-      if (child) {
-        this.navigateToChildrenDetailsPage(child, 1);
-      } else {
-        this.startLearning();
-      }
+    this.isNextContentFound = false;
+    this.nextContent = undefined;
+    this.getNextContent(this.chapter, this.contentStatusData.contentList);
+
+    if (this.nextContent) {
+      this.navigateToChildrenDetailsPage(this.nextContent, 1);
+    } else {
+      this.startLearning();
     }
   }
 
@@ -847,6 +850,22 @@ export class ChapterDetailsPage implements OnInit, OnDestroy {
       }
     }
     return this.subContentIds;
+  }
+
+  private getNextContent(courseHeirarchy, contentStateList: ContentState[]) {
+    const result = contentStateList.find(({ contentId }) => contentId === courseHeirarchy.identifier);
+    if ((result && (result.status === 0 || result.status === 1))
+      || (!result && courseHeirarchy.mimeType !== MimeType.COLLECTION)) {
+      this.nextContent = courseHeirarchy;
+      this.isNextContentFound = true;
+    } else if (!this.isNextContentFound && courseHeirarchy && courseHeirarchy.children) {
+      courseHeirarchy.children.forEach((ele) => {
+        if (!this.isNextContentFound) {
+          this.getNextContent(ele, contentStateList);
+        }
+      });
+    }
+    return;
   }
 
 }

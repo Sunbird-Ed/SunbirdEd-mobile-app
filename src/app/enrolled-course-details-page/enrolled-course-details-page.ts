@@ -228,6 +228,10 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
   private isFromChannelDeeplink: any;
   trackDownloads$: Observable<DownloadTracking>;
   showCollapsedPopup = true;
+  resumeCourseFlag = false;
+
+  isNextContentFound = false;
+  nextContent: Content;
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -269,6 +273,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
       this.corRelationList = extrasState.corRelation;
       this.source = extrasState.source;
       this.isQrCodeLinkToContent = extrasState.isQrCodeLinkToContent;
+      this.resumeCourseFlag = extrasState.resumeCourseFlag || false;
     }
   }
 
@@ -429,17 +434,17 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
       this.commonUtilService.showToast('NO_BATCHES_AVAILABLE');
       return;
     } else if (
-        this.batches.length === 1 &&
-        this.batches[0].enrollmentEndDate &&
-        (new Date() > new Date(this.batches[0].enrollmentEndDate))
+      this.batches.length === 1 &&
+      this.batches[0].enrollmentEndDate &&
+      (new Date() > new Date(this.batches[0].enrollmentEndDate))
     ) {
       this.commonUtilService.showToast(
-          'ENROLLMENT_ENDED_ON',
-          null,
-          null,
-          null,
-          null,
-          this.datePipe.transform(this.batches[0].enrollmentEndDate)
+        'ENROLLMENT_ENDED_ON',
+        null,
+        null,
+        null,
+        null,
+        this.datePipe.transform(this.batches[0].enrollmentEndDate)
       );
       return;
     }
@@ -653,30 +658,30 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
       this.corRelationList
     );
     this.contentService.getContentHeirarchy(request).toPromise()
-    .then((content: Content) => {
-      /* setting child content here */
-      this.showSheenAnimation = false;
-      this.enrolledCourseMimeType = content.mimeType;
-      this.childrenData = content.children;
-      this.courseHeirarchy = content;
-      this.toggleGroup(0, this.childrenData[0]);
-      this.startData = content.children;
-      this.childContentsData = content;
-      this.getContentState(true);
-      this.telemetryGeneratorService.generatefastLoadingTelemetry(
-        InteractSubtype.FAST_LOADING_FINISHED,
-        PageId.COURSE_DETAIL,
-        this.telemetryObject,
-        undefined,
-        this.objRollup,
-        this.corRelationList
-      );
-    })
-    .catch(error => {
-      console.log('Error Fetching Childrens', error);
-      this.extractApiResponse(data);
-      this.showSheenAnimation = false;
-    });
+      .then((content: Content) => {
+        /* setting child content here */
+        this.showSheenAnimation = false;
+        this.enrolledCourseMimeType = content.mimeType;
+        this.childrenData = content.children;
+        this.courseHeirarchy = content;
+        this.toggleGroup(0, this.childrenData[0]);
+        this.startData = content.children;
+        this.childContentsData = content;
+        this.getContentState(true);
+        this.telemetryGeneratorService.generatefastLoadingTelemetry(
+          InteractSubtype.FAST_LOADING_FINISHED,
+          PageId.COURSE_DETAIL,
+          this.telemetryObject,
+          undefined,
+          this.objRollup,
+          this.corRelationList
+        );
+      })
+      .catch(error => {
+        console.log('Error Fetching Childrens', error);
+        this.extractApiResponse(data);
+        this.showSheenAnimation = false;
+      });
   }
 
   /**
@@ -1048,7 +1053,6 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
   /**
    * Function to get status of child contents
    */
-
   private getStatusOfCourseCompletion(childrenData: Content[]) {
     const contentStatusData = this.contentStatusData;
     this.getLastPlayedName(this.lastReadContentId);
@@ -1270,10 +1274,14 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
   /**
    * Function gets executed when user click on resume course button.
    */
-  resumeContent(identifier): void {
+  resumeContent(): void {
+    this.isNextContentFound = false;
+    this.nextContent = undefined;
+    this.getNextContent(this.courseHeirarchy, this.contentStatusData.contentList);
+
     const params: NavigationExtras = {
       state: {
-        content: { identifier },
+        content: this.nextContent,
         depth: '1', // Needed to handle some UI elements.
         contentState: {
           batchId: this.courseCardData.batchId ? this.courseCardData.batchId : '',
@@ -1372,8 +1380,12 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
   }
 
   ionViewDidEnter() {
-    this.sbProgressLoader.hide({id: 'login'});
+    this.sbProgressLoader.hide({ id: 'login' });
     this.sbProgressLoader.hide({ id: this.identifier });
+    if (this.resumeCourseFlag) {
+      this.resumeContent();
+      this.resumeCourseFlag = false;
+    }
   }
 
   showLicensce() {
@@ -1994,6 +2006,22 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
         }
       });
     }
+  }
+
+  private getNextContent(courseHeirarchy, contentStateList: ContentState[]) {
+    const result = contentStateList.find(({ contentId }) => contentId === courseHeirarchy.identifier);
+    if ((result && (result.status === 0 || result.status === 1))
+      || (!result && courseHeirarchy.mimeType !== MimeType.COLLECTION)) {
+      this.nextContent = courseHeirarchy;
+      this.isNextContentFound = true;
+    } else if (!this.isNextContentFound && courseHeirarchy && courseHeirarchy.children) {
+      courseHeirarchy.children.forEach((ele) => {
+        if (!this.isNextContentFound) {
+          this.getNextContent(ele, contentStateList);
+        }
+      });
+    }
+    return;
   }
 
 }
