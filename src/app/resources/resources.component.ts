@@ -914,6 +914,12 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     }
     this.mediumsSelected = [index];
+    setTimeout(() => {
+      const el = document.getElementById('medium' + index);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'end', inline: 'start' });
+      }
+    }, 1000);
   }
 
   navigateToDetailPage(event, sectionName) {
