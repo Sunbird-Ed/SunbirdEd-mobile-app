@@ -83,13 +83,13 @@
     font-size: 14px;
   }
 
-  .sp-input-primary ion-input{
+  .cf-input-primary ion-input{
     font-weight: bold;
     border: 1px solid #006de5;
     --placeholder-opacity: 0.3 !important;
   }
 
-  .sp-input-error ion-input{
+  .cf-input-error ion-input{
     border: 1px solid red;
   }
 
@@ -111,14 +111,14 @@
 
 }
 
-.sp-title{
+.cf-title{
   font-size: 16px;
   font-weight: bold;
   color: #024F9D;
   margin: 16px 16px 0;
 }
 
-.sp-input-title{
+.cf-input-title{
   color: #333333;
   font-family: "Noto Sans";
   font-size: 14px;
@@ -127,7 +127,7 @@
   margin: 16px 0 8px;
 }
 
-.sp-input-box{
+.cf-input-box{
   border: 0.5px solid #333333;
   border-radius: 2px;
   ion-input{
@@ -135,7 +135,7 @@
   }
 }
 
-.sp-error{
+.cf-error{
   margin-top: 8px;
   display: block;
   font-size: 12px;
@@ -147,17 +147,29 @@
   padding-top: 8px;
 }
 
-.sp-tnc-text{
+.cf-tnc-text{
   padding: 0 8px;
 }
 
-ion-footer{
-  ion-button{
-    --background: #024F9D !important;
-    height: 40px !important;
-    font-family: "Noto Sans";
-    font-size: 16px;
-  }
+.sb-new-btn {
+  background-color: #024F9D;
+  color: #FFFFFF;
+  width: 100%;
+  height: 40px;
+  box-shadow: 0 2px 7px 0 rgba(0, 0, 0, 0.25);
+  font-family: "Noto Sans";
+  font-size: 16px;
+}
+
+.sb-new-btn-outline {
+  background-color: #FFFFFF;
+  color: #024F9D;
+  width: 100%;
+  height: 40px;
+  border: 1px solid #024F9D;
+  box-shadow: 0 2px 7px 0 rgba(0, 0, 0, 0.25);
+  font-family: "Noto Sans";
+  font-size: 16px;
 }
 
 .blur-btn {
@@ -167,4 +179,10 @@ ion-footer{
 .tnc-link {
   color: #024F9D;
   text-decoration: underline;
+}
+
+ion-checkbox {
+  margin-right: 8px;
+  --background-checked: #024F9D !important;
+  --border-color-checked: #024F9D !important;
 }
