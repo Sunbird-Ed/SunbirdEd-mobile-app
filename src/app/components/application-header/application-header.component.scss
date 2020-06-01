@@ -42,3 +42,41 @@ ion-icon {
         width: 16px;
     }
 }
+
+.user-container{
+    padding: 8px;
+    background-color: #EDF4F9;
+
+    .use-app-label{
+        color: #666666;
+        font-family: "Noto Sans";
+        font-size: 14px;
+        letter-spacing: 0;
+        line-height: 14px;
+        margin: 8px 8px 0;
+    }
+
+    .managed-user-container {
+        display: flex;
+        text-align: center;
+
+        .mu-card {
+            flex: 0 0 33.33%;
+        }
+    }
+}
+
+.another-user-title{
+    background-color: #BFE1CF;
+    color: #008840;
+    font-family: "Noto Sans";
+    font-size: 16px;
+    letter-spacing: 0;
+    line-height: 16px;
+    padding: 12px 16px;
+}
+
+.add-sign{
+    font-size: 24px;
+    padding: 0 4px ;
+}

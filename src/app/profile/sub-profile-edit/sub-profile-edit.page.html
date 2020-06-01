@@ -1,122 +1,29 @@
 <ion-content>
-  <form [formGroup]="subProfileEditForm">
+
+  <div>
     <p class="sp-title">{{'CREATE_USER' | translate}}</p>
-
-    <ion-item class="input-item" [ngClass]="{'sp-input-primary': !errorMessages.userName.show ,'sp-input-error': errorMessages.userName.show }">
-      <ion-label position="stacked" class="label-font align-text ion-text-capitalize">{{'FULL_NAME' | translate }}*</ion-label>
-      <ion-input formControlName="userName" (input)="onInputFields($event)" placeholder="{{'ENTER_USER_NAME' | translate}}"></ion-input>
-      <span *ngIf="errorMessages.userName.show" class="sp-error">{{ errorMessages.userName.message }}</span>
-    </ion-item>
-
-    <ion-item class="input-item" appCustomIonSelect *ngIf="isBoardAvailable">
-      <ion-label position="stacked" class="label-font align-text">{{'BOARD' | translate }}*</ion-label>
-      <ion-select #boardSelect
-        formControlName="syllabus"
-        multiple="false"
-        [interfaceOptions]="boardOptions"
-        placeholder="{{ (syllabusList.length ? 'BOARD_OPTION_TEXT':'NO_DATA_FOUND') | translate }}"
-        okText="{{'BTN_SUBMIT' | translate}}"
-        cancelText="{{'CANCEL' | translate}}"
-        [disabled]="!syllabusList.length">
-        <ion-select-option *ngFor="let eachSyllabus of syllabusList" value="{{eachSyllabus?.code}}">
-          {{eachSyllabus?.name}}
-        </ion-select-option>
-      </ion-select>
-    </ion-item>
-
-    <ion-item class="input-item" appCustomIonSelect>
-      <ion-label position="stacked" class="label-font align-text">{{'MEDIUM' | translate }}*</ion-label>
-      <ion-select #mediumSelect
-        [selectedText]="selectedText.medium"
-        formControlName="medium"
-        multiple="true"
-        [interfaceOptions]="mediumOptions"
-        placeholder="{{ (mediumList.length ? 'MEDIUM_OPTION_TEXT':'NO_DATA_FOUND') | translate }}"
-        okText="{{'BTN_SUBMIT' | translate}}"
-        cancelText="{{'CANCEL' | translate}}"
-        [disabled]="(!mediumList.length || (subProfileEditForm.value.boards === '' && isBoardAvailable))">
-        <ion-select-option *ngFor="let medium of mediumList" value="{{medium?.code}}">
-          {{medium?.name}}
-        </ion-select-option>
-      </ion-select>
-    </ion-item>
-
-    <ion-item class="input-item" appCustomIonSelect>
-      <ion-label position="stacked" class="label-font align-text">{{'CLASS' | translate }}*</ion-label>
-      <ion-select #gradeSelect
-        [selectedText]="selectedText.grade" 
-        formControlName="grades"  
-        multiple="true" 
-        [interfaceOptions]="classOptions"
-        placeholder="{{ (gradeList.length ? 'GRADE_OPTION_TEXT':'NO_DATA_FOUND') | translate }}"
-        okText="{{'BTN_SUBMIT' | translate}}" 
-        cancelText="{{'CANCEL' | translate}}"
-        [disabled]="(!gradeList.length || !(subProfileEditForm.value.medium != ''))">
-        <ion-select-option *ngFor="let grade of gradeList" class="ion-text-capitalize" value="{{grade?.code}}">
-          {{grade?.name}}
-        </ion-select-option>
-      </ion-select>
-    </ion-item>
-
-    <ion-item class="input-item" appCustomIonSelect>
-      <ion-label position="stacked" class="label-font">{{'STATE' | translate}}*</ion-label>
-      <ion-select #stateSelect
-        [selectedText]="stateSelect?.value?.name"
-        formControlName="state"  
-        [disabled]="!stateList.length"
-        [multiple]="false"
-        [interfaceOptions]="stateOptions"
-        [placeholder]="'STATE_OPTION_TEXT' | translate"
-        [okText]="'BTN_SUBMIT' | translate"
-        [cancelText]="'CANCEL' | translate">
-        <ion-select-option *ngFor="let state of stateList" [value]="state.id">
-          {{state?.name}}
-        </ion-select-option>
-      </ion-select>
-    </ion-item>
-
-    <ion-item class="input-item" appCustomIonSelect>
-      <ion-label position="stacked" class="label-font">{{'DISTRICT' | translate}}*</ion-label>
-      <ion-select #districtSelect
-        [selectedText]="districtSelect?.value?.name"
-        formControlName="district"  
-        [disabled]="!districtList.length"
-        [multiple]="false"
-        [interfaceOptions]="districtOptions"
-        [placeholder]="'DISTRICT_OPTION_TEXT' | translate"
-        [okText]="'BTN_SUBMIT' | translate"
-        [cancelText]="'CANCEL' | translate">
-        <ion-select-option *ngFor="let district of districtList" [value]="district.id">
-          {{district?.name}}
-        </ion-select-option>
-      </ion-select>
-    </ion-item>
-
-    <div class="flex-container M16">
-      <div>
-        <ion-checkbox formControlName="tnc"></ion-checkbox>
-      </div>
-      <div class="sp-tnc-text">
-        <span>{{'I_UNDERSTAND_AND_ACCEPT' | translate}} 
-          <span (click)="showTncDetails()" class="tnc-link"> {{appName}} {{'TERMS_OF_USE' | translate}}</span>
-        </span>
-      </div>
+    <div class="text-center MT16">
+      <img src="assets/imgs/round_blue_profile.svg" alt="managed-user-profile">
     </div>
-  </form>
+  </div>
+
+  <app-common-forms *ngIf="formInitilized" #commonForms [formList]="managedUserFormList" (onFormDataChange)="onFormDataChange($event)"></app-common-forms>
 </ion-content>
 
 <ion-footer>
   <ion-row class="padding-12">
-    <ion-col size-md="10" offset-md="1">
-      <button class="sb-new-btn-outline" (click)="onCancel()">
+
+    <ion-col>
+      <ion-button class="ion-text-capitalize mb-16" expand="block" (click)="onCancel()">
         {{'CANCEL' | translate}}
-      </button>
+      </ion-button>
     </ion-col>
 
-    <ion-col size-md="10" offset-md="1">
-      <button class="sb-new-btn" (click)="onSubmit()" [ngClass]="{'': subProfileEditForm?.value?.tnc, 'blur-btn': !subProfileEditForm?.value?.tnc}">
-        {{'ADD_USER' | translate}}
-      </button>
+    <ion-col>
+      <ion-button class="ion-text-capitalize mb-16" expand="block" [disabled]="!isFormValid"
+        (click)="submitForm()">{{'ADD_USER' | translate}}
+      </ion-button>
     </ion-col>
+
   </ion-row>
 </ion-footer>

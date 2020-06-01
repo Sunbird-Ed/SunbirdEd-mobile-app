@@ -1,16 +1,17 @@
 import { ChangeDetectorRef, Component, EventEmitter, Inject, Input, OnInit, Output, OnDestroy, NgZone } from '@angular/core';
-import { Events, MenuController, Platform } from '@ionic/angular';
+import { Events, MenuController, Platform, PopoverController } from '@ionic/angular';
 import {
   AppGlobalService, UtilityService, CommonUtilService, NotificationService, TelemetryGeneratorService,
-  InteractType, InteractSubtype, Environment, PageId, ActivePageService
+  InteractType, InteractSubtype, Environment, ActivePageService, ID, CorReleationDataType
 } from '../../../services';
-import { DownloadService, SharedPreferences, NotificationService as PushNotificationService, NotificationStatus, EventNamespace, DownloadProgress, DownloadEventType, EventsBusService, ProfileService, Profile } from 'sunbird-sdk';
-import { GenericAppConfig, PreferenceKey, EventTopics, ProfileConstants } from '../../../app/app.constant';
+import { DownloadService, SharedPreferences, NotificationService as PushNotificationService, NotificationStatus, EventNamespace, DownloadProgress, DownloadEventType, EventsBusService, ProfileService, Profile, CachedItemRequestSourceFrom, ServerProfile, CorrelationData } from 'sunbird-sdk';
+import { GenericAppConfig, PreferenceKey, EventTopics, ProfileConstants, RouterLinks } from '../../../app/app.constant';
 import { AppVersion } from '@ionic-native/app-version/ngx';
-import { Subscription, combineLatest } from 'rxjs';
+import { Subscription, combineLatest, Observable, EMPTY } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
 import { NavigationExtras, Router, RouterLink } from '@angular/router';
-import { filter } from 'rxjs/operators';
+import { filter, map } from 'rxjs/operators';
+import { ToastNavigationComponent } from '../popups/toast-navigation/toast-navigation.component';
 
 @Component({
   selector: 'app-application-header',
@@ -37,7 +38,8 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
   isUnreadNotification: boolean = false;
   menuSide = 'left';
   profile: Profile;
-  managedProfileList: [];
+  managedProfileList$: Observable<ServerProfile[]> = EMPTY;
+  userAvatarConfig = { size: 'large', isBold: true, isSelectable: false, view: 'horizontal' };
 
   constructor(
     @Inject('SHARED_PREFERENCES') private preference: SharedPreferences,
@@ -58,7 +60,8 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
     private router: Router,
     private ngZone: NgZone,
     private telemetryGeneratorService: TelemetryGeneratorService,
-    private activePageService: ActivePageService
+    private activePageService: ActivePageService,
+    private popoverCtrl: PopoverController
   ) {
     this.setLanguageValue();
     this.events.subscribe('onAfterLanguageChange:update', (res) => {
@@ -235,9 +238,122 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
   async fetchManagedProfileDetails() {
     try {
       this.profile = await this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise();
-      // this.managedProfileList = await this.profileService.getManagedProfiles().toPromise();
+      this.managedProfileList$ = this.profileService.managedProfileManager.getManagedServerProfiles({
+        from: CachedItemRequestSourceFrom.SERVER,
+        requiredFields: ProfileConstants.REQUIRED_FIELDS
+      }).pipe(
+        map(profiles => {
+          return profiles.filter(p => p.id !== this.profile.uid);
+        })
+      );
     } catch (err) {
       console.log(err);
+    }
+  }
+
+  addManagedUser() {
+    if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
+      this.commonUtilService.showToast('NEED_INTERNET_TO_CHANGE');
+      return;
+    }
+    const pageId = this.activePageService.computePageId(this.router.url);
+    this.telemetryGeneratorService.generateInteractTelemetry(
+      InteractType.SELECT_ADD,
+      '',
+      Environment.HOME,
+      pageId,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      ID.BTN_ADD
+    );
+
+    this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.SUB_PROFILE_EDIT}`]);
+  }
+
+  openManagedUsers() {
+    if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
+      this.commonUtilService.showToast('NEED_INTERNET_TO_CHANGE');
+      return;
+    }
+    const pageId = this.activePageService.computePageId(this.router.url);
+    this.telemetryGeneratorService.generateInteractTelemetry(
+      InteractType.SELECT_MORE,
+      '',
+      Environment.HOME,
+      pageId,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      ID.BTN_MORE
+    );
+
+    const navigationExtras: NavigationExtras = {
+      state: {
+        profile: this.profile
+      }
+    };
+    this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.MANAGE_USER_PROFILES}`], navigationExtras);
+  }
+
+  switchUser(user) {
+    if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
+      this.commonUtilService.showToast('NEED_INTERNET_TO_CHANGE');
+      return;
+    }
+    const pageId = this.activePageService.computePageId(this.router.url);
+    const cData: Array<CorrelationData> = [
+      { id: user.id || '', type: CorReleationDataType.SWITCHED_USER }
+    ];
+    this.telemetryGeneratorService.generateInteractTelemetry(
+      InteractType.SELECT_ADD,
+      '',
+      Environment.HOME,
+      pageId,
+      undefined,
+      undefined,
+      undefined,
+      cData,
+      ID.BTN_SWITCH
+    );
+    this.profileService.managedProfileManager.switchSessionToManagedProfile({ uid: user.id }).toPromise().then(res => {
+      this.events.publish(AppGlobalService.USER_INFO_UPDATED);
+      this.events.publish('loggedInProfile:update');
+      this.menuCtrl.close();
+      this.showSwitchSuccessPopup(user.firstName);
+    }).catch(err => {
+      this.commonUtilService.showToast('ERROR_WHILE_SWITCHING_USER');
+      console.error(err);
+    });
+  }
+
+  async showSwitchSuccessPopup(name) {
+    const confirm = await this.popoverCtrl.create({
+      component: ToastNavigationComponent,
+      componentProps: {
+        message: this.commonUtilService.translateMessage('SUCCESSFULLY_SWITCHED_USER',  { '%app': this.appName, '%user': name }),
+        description: this.commonUtilService.translateMessage('UPDATE_YOUR_PREFERENCE_FROM_PROFILE'),
+        actionsButtons: [
+          {
+            btntext: this.commonUtilService.translateMessage('GO_TO_PROFILE'),
+            btnClass: 'btn-right'
+          }
+        ]
+      },
+      cssClass: 'sb-popover'
+    });
+    await confirm.present();
+    setTimeout(() => {
+      if (confirm) {
+        confirm.dismiss();
+      }
+    }, 3000);
+    const { data } = await confirm.onDidDismiss();
+    console.log(data);
+    if (data) {
+      this.router.navigate([`/${RouterLinks.PROFILE_TAB}`]);
     }
   }
 

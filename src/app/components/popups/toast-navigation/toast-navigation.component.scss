@@ -1,0 +1,18 @@
+.toast-container{
+  --padding-top: 16px;
+  --padding-bottom: 16px;
+  --padding-start: 16px;
+  --padding-end: 16px;
+  --background: #333333;
+  --color: #FFFFFF;
+}
+
+.btn-right{
+  float: right;
+  background-color: #333333;
+  padding: 12px;
+  color: #F7B500;
+  font-family: "Noto Sans";
+  font-size: 14px;
+  text-transform: uppercase;
+}

@@ -8,3 +8,4 @@ export * from './edit-contact-details-popup/edit-contact-details-popup.component
 export * from './edit-contact-verify-popup/edit-contact-verify-popup.component';
 export * from './sb-insufficient-storage-popup/sb-insufficient-storage-popup';
 export * from './sb-app-share-popup/sb-app-share-popup.component';
+export * from './toast-navigation/toast-navigation.component';
