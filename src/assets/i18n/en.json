@@ -322,7 +322,7 @@
   "LICENSE": "License terms",
   "LOAD": "Load",
   "LOADER_PROGRESS_DESCRIPTION": "We are getting things ready.",
-  "LOADER_PROGRESS_DESC_SUB_HEADING": "Hold On...",
+  "LOADER_PROGRESS_DESC_SUB_HEADING": "Hold on...",
   "LOADING_CONTENT": "Loading content",
   "LOADING_CONTENTS": "Loading content {{%s}} %",
   "LOADING_USER_LIST": "Loading user list, please wait",
