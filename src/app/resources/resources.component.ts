@@ -535,7 +535,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.storyAndWorksheets = [];
     this.searchApiLoader = !this.refresh;
     const reqvalues = {};
-    this.courseList = [];
     reqvalues['pageReq'] = this.getGroupByPageReq;
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.OTHER,
       InteractSubtype.RESOURCE_PAGE_REQUEST,
@@ -677,13 +676,20 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       .then((response: ContentsGroupedByPageSection) => {
         console.log('getCurriculumCourses:response = ', response);
         this.ngZone.run(() => {
+          this.courseList = [];
           response.sections.forEach(section => {
+            let countLabel = this.commonUtilService.translateMessage('NO_COURSES');
+            if (section.contents) {
+              if (section.contents.length === 1) {
+                countLabel = this.commonUtilService.translateMessage('NUMBER_OF_COURSE_1');
+              } else {
+                countLabel = this.commonUtilService.translateMessage('NUMBER_OF_COURSES', section.contents.length);
+              }
+            }
             const contentListObj = {
               contents: section.contents,
               title: section.name,
-              count: section.contents ?
-                this.commonUtilService.translateMessage('NUMBER_OF_COURSES', section.contents.length)
-                : this.commonUtilService.translateMessage('NO_COURSES'),
+              count: countLabel,
               theme: this.subjectThemeAndIconsMap[section.name] ?
                 this.subjectThemeAndIconsMap[section.name].background
                 : null,
