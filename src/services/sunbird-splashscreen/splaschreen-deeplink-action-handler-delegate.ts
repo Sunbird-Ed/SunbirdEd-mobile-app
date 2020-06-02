@@ -165,14 +165,8 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
         userType: ProfileType.OTHER
       };
       this.setDefaultOnboardingData(params);
-      this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS],
-        {
-          state: {
-            content,
-            isOnboardingSkipped: true,
-            corRelation: this.getCorrelationList(urlMatch.input)
-          }
-        });
+
+      this.navigateToCourseDetail(content.identifier, content, inputUrl, true);
     } else {
       this.checkForDeeplinkWithoutOnboarding(content, inputUrl);
     }
@@ -257,65 +251,9 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
         this.telemetryGeneratorService.generateAppLaunchTelemetry(LaunchType.DEEPLINK, source);
       }
 
-      const url = new URL(source);
-      // Read version code from deeplink.
-      const childContentId = url.searchParams.get('contentId');
-      if (childContentId) {
-        try {
-          this.isChildContentFound = false;
-          this.childContent = undefined;
-          if (content && content.isAvailableLocally) {
-            this.childContent = await this.getChildContents(childContentId);
-          } else {
-            this.importContent([identifier], false);
-            content = await this.getContentHeirarchy(identifier);
-            await this.getChildContent(content, childContentId);
-          }
-        } catch (e) {
-          console.error(e);
-          // if (e instanceof HttpServerError) {
-          //   this.commonUtilService.showToast('ERROR_FETCHING_DATA');
-          // } else if (e instanceof NetworkError) {
-          //   this.commonUtilService.showToast('NEED_INTERNET_FOR_DEEPLINK_CONTENT');
-          // } else {
-          //   this.commonUtilService.showToast('ERROR_CONTENT_NOT_AVAILABLE');
-          // }
-        }
-      }
-
       this.appGlobalServices.skipCoachScreenForDeeplink = true;
       if (content && content.contentType.toLowerCase() === ContentType.COURSE.toLowerCase()) {
-        if (this.childContent) {
-          if (this.childContent.mimeType === MimeType.COLLECTION) {
-            const chapterParams: NavigationExtras = {
-              state: {
-                courseContent: content,
-                chapterData: this.childContent,
-                isFromDeeplink: true
-              }
-            };
-
-            this.router.navigate([`/${RouterLinks.CURRICULUM_COURSES}/${RouterLinks.CHAPTER_DETAILS}`],
-              chapterParams);
-          } else {
-            this.router.navigate([RouterLinks.CONTENT_DETAILS], {
-              state: {
-                content: this.childContent,
-                // depth,
-                // contentState: this.stateData,
-                // corRelation: this.corRelationList
-              }
-            });
-          }
-        } else {
-          this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS],
-            {
-              state: {
-                content,
-                corRelation: this.getCorrelationList(source)
-              }
-            });
-        }
+        this.navigateToCourseDetail(identifier, content, source);
       } else if (content && content.mimeType === MimeType.COLLECTION) {
         if (this.router.url && this.router.url.indexOf(RouterLinks.COLLECTION_DETAIL_ETB) !== -1) {
           this.events.publish(EventTopics.DEEPLINK_COLLECTION_PAGE_OPEN, { content });
@@ -611,6 +549,58 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
     } else {
       this.router.navigateByUrl(RouterLinks.TABS_COURSE);
       await this.sbProgressLoader.hide({ id: 'login' });
+    }
+  }
+
+  async navigateToCourseDetail(identifier, content: Content | null, source: string, isOnboardingSkipped = false) {
+    const url = new URL(source);
+    const childContentId = url.searchParams.get('contentId');
+    if (childContentId) {
+      try {
+        this.isChildContentFound = false;
+        this.childContent = undefined;
+        if (content && content.isAvailableLocally) {
+          this.childContent = await this.getChildContents(childContentId);
+        } else {
+          this.importContent([identifier], false);
+          content = await this.getContentHeirarchy(identifier);
+          await this.getChildContent(content, childContentId);
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    }
+    if (this.childContent) {
+      if (this.childContent.mimeType === MimeType.COLLECTION) {
+        const chapterParams: NavigationExtras = {
+          state: {
+            courseContent: content,
+            chapterData: this.childContent,
+            isOnboardingSkipped,
+            isFromDeeplink: true
+          }
+        };
+
+        this.router.navigate([`/${RouterLinks.CURRICULUM_COURSES}/${RouterLinks.CHAPTER_DETAILS}`],
+          chapterParams);
+      } else {
+        this.router.navigate([RouterLinks.CONTENT_DETAILS], {
+          state: {
+            content: this.childContent,
+            isOnboardingSkipped,
+            depth: 1,
+          }
+        });
+      }
+    } else {
+      this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS],
+        {
+          state: {
+            content,
+            isOnboardingSkipped,
+            corRelation: this.getCorrelationList(source)
+          }
+        });
     }
   }
 

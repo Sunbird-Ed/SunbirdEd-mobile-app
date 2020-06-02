@@ -24,6 +24,7 @@ import { Observable, Subscription } from 'rxjs';
 import { ConfirmAlertComponent } from '@app/app/components';
 import { FileSizePipe } from '@app/pipes/file-size/file-size';
 import { ContentUtil } from '@app/util/content-util';
+import { SbProgressLoader } from '@app/services/sb-progress-loader.service';
 
 @Component({
   selector: 'app-chapter-details',
@@ -97,7 +98,8 @@ export class ChapterDetailsPage implements OnInit, OnDestroy {
     private events: Events,
     private zone: NgZone,
     private datePipe: DatePipe,
-    private fileSizePipe: FileSizePipe
+    private fileSizePipe: FileSizePipe,
+    private sbProgressLoader: SbProgressLoader
   ) {
     // if ((!this.router.getCurrentNavigation() || !this.router.getCurrentNavigation().extras) && this.appGlobalService.preSignInData) {
     //   this.extrasData = this.appGlobalService.preSignInData;
@@ -119,14 +121,11 @@ export class ChapterDetailsPage implements OnInit, OnDestroy {
     this.isFromDeeplink = this.extrasData.isFromDeeplink;
     this.courseContentData = this.courseContent.contentData;
     this.identifier = this.chapter.identifier;
-    console.log('extrasData', this.extrasData);
   }
 
   ngOnInit() {
     this.subContentIds = [];
-    console.log('chapter: subContentIds: ', this.chapter);
     this.getSubContentIds(this.chapter);
-    console.log('subContentIds: ', this.subContentIds);
 
     this.trackDownloads$ = this.downloadService.trackDownloads(
       { groupBy: { fieldPath: 'rollUp.l1', value: this.courseContentData.identifier } }).pipe(share());
@@ -188,6 +187,10 @@ export class ChapterDetailsPage implements OnInit, OnDestroy {
     if (this.eventSubscription) {
       this.eventSubscription.unsubscribe();
     }
+  }
+
+  ionViewDidEnter(): void {
+    this.sbProgressLoader.hide({ id: this.courseContent.identifier });
   }
 
   ngOnDestroy() {
