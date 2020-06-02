@@ -859,7 +859,10 @@ export class ChapterDetailsPage implements OnInit, OnDestroy {
 
   private getNextContent(courseHeirarchy, contentStateList: ContentState[]) {
     const result = contentStateList.find(({ contentId }) => contentId === courseHeirarchy.identifier);
-
+    if (!this.isFirstContent && courseHeirarchy.mimeType !== MimeType.COLLECTION) {
+      this.nextContent = courseHeirarchy;
+      this.isFirstContent = true;
+    }
     if ((result && (result.status === 0 || result.status === 1))
       || (!result && courseHeirarchy.mimeType !== MimeType.COLLECTION)) {
       this.nextContent = courseHeirarchy;
@@ -869,11 +872,6 @@ export class ChapterDetailsPage implements OnInit, OnDestroy {
       courseHeirarchy.children.forEach((ele) => {
         if (!this.isNextContentFound) {
           this.getNextContent(ele, contentStateList);
-        }
-
-        if (!this.isFirstContent && courseHeirarchy.mimeType !== MimeType.COLLECTION) {
-          this.nextContent = ele;
-          this.isFirstContent = true;
         }
       });
     }
