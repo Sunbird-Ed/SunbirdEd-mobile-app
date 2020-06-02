@@ -33,6 +33,7 @@ export class CommonFormsComponent implements OnInit {
 
   @Input() formList: any = [];
   @Output() onFormDataChange = new EventEmitter();
+  @Output() onCommonFormInitialized = new EventEmitter()
 
   commonFormGroup: FormGroup;
   formInputTypes = InputType;
@@ -58,20 +59,23 @@ export class CommonFormsComponent implements OnInit {
       return;
     }
     const formGroupData = {};
-    this.formList.forEach((element: any) => {
+    this.formList.forEach((element: any, index) => {
       if (element.type !== this.formInputTypes.LABEL) {
-        const formValueList = this.prepareFormValidationData(element);
+        const formValueList = this.prepareFormValidationData(element, index);
         formGroupData[element.code] = formValueList;
       }
     });
 
     this.commonFormGroup = this.formBuilder.group(formGroupData);
+    setTimeout(() => {
+      this.onCommonFormInitialized.emit(true);
+    }, 100);
   }
 
   /**
    * @return [''/0/[]/false, Validator.required]
    */
-  private prepareFormValidationData(element) {
+  private prepareFormValidationData(element, index) {
     const formValueList = [];
     const validationList = [];
 
@@ -90,19 +94,23 @@ export class CommonFormsComponent implements OnInit {
     formValueList.push(defaultVal);
 
     if (element.validations && element.validations.length) {
-      element.validations.forEach(data => {
+      element.validations.forEach((data, i) => {
         switch (data.type) {
           case this.formValidationTypes.REQUIRED:
             validationList.push(element.type === this.formInputTypes.CHECKBOX ? Validators.requiredTrue : Validators.required);
+            if (this.formList[index].templateOptions && this.formList[index].templateOptions.label) {
+              this.formList[index].templateOptions.label =
+                this.commonUtilService.translateMessage(this.formList[index].templateOptions.label) + ' *';
+            }
             break;
           case this.formValidationTypes.PATTERN:
-            validationList.push(Validators.pattern(element.validations.pattern));
+            validationList.push(Validators.pattern(element.validations[i].value));
             break;
           case this.formValidationTypes.MINLENGTH:
-            validationList.push(Validators.minLength(element.validations.minLength));
+            validationList.push(Validators.minLength(element.validations[i].value));
             break;
           case this.formValidationTypes.MAXLENGTH:
-            validationList.push(Validators.minLength(element.validations.minLength));
+            validationList.push(Validators.maxLength(element.validations[i].value));
             break;
         }
       });
@@ -173,7 +181,7 @@ export class CommonFormsComponent implements OnInit {
   checkDisableCondition(formElement) {
     if (formElement.templateOptions && formElement.templateOptions.prefill && formElement.templateOptions.prefill.length) {
       for (let index = 0; index < formElement.templateOptions.prefill.length; index++) {
-        if (!(this.commonFormGroup.value[formElement.templateOptions.prefill[index].key]).length) {
+        if (!(this.commonFormGroup.value[formElement.templateOptions.prefill[index].code]).length) {
           return true;
         }
       }

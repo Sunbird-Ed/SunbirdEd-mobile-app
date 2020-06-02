@@ -259,6 +259,7 @@
 
   .custom-round {
     border-radius: 64px !important;
+    --background: #024F9D !important;
   }
 
   .bottom-block {
@@ -328,5 +329,52 @@
   .completed-status-text{
     @extend .enrolled-status-text;
     color: #008840;
+  }
+
+  .self-declare-teacher-btn{
+    margin: 8px 0 16px;
+    ion-button{
+      text-transform: none;
+      --background: #008840 !important;
+      --padding-start: 24px;
+      --padding-end: 24px;
+    }
+    
+    .question-badge{
+      background-color: white;
+      color: #008840;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      padding-top: 2px;
+      margin: 0 0 2px 8px;
+      font-size: 14px;
+      font-weight: bold;
+    }
+  }
+
+  .self-declare-teacher-details{
+    padding: 16px;
+    background-color: #196dab;
+    text-align: center;
+    color: #FFFFFF;
+    font-size: 14px;
+    
+    .container{
+      @include margin(null, null, 8px, null);
+    }
+
+    ion-button{
+      text-transform: none;
+      --background: #FFFFFF !important;
+      --padding-start: 24px;
+      --padding-end: 24px;
+      --color: #024F9D;
+    }
+
+    .declare-info{
+      margin: 0;
+      font-size: 12px;
+    }
   }
 }

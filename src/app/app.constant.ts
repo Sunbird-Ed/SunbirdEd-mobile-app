@@ -456,6 +456,7 @@ export class RouterLinks {
     public static readonly CATEGORIES_EDIT = 'categories-edit';
     public static readonly SUB_PROFILE_EDIT = 'sub-profile-edit';
     public static readonly MANAGE_USER_PROFILES = 'manage-user-profiles';
+    public static readonly SELF_DECLARED_TEACHER_EDIT = 'self-declared-teacher-edit';
 
     // Courses Routs
     public static readonly COURSES = 'courses';

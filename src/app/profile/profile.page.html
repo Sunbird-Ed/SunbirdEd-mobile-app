@@ -87,9 +87,15 @@
             <ion-button shape="round" fill="outline" (click)="showSwitchUserPopup()" class="short-btn custom-round ion-text-capitalize">
                 {{'SWITCH_USER' | translate }}
             </ion-button> -->
-            <ion-button shape="round" (click)="navigateToEditPersonalDetails()" class="short-btn custom-round ion-text-capitalize">
+            <ion-button shape="round" (click)="navigateToEditPersonalDetails()" class="custom-round ion-text-capitalize">
                 {{'EDIT' | translate }}
             </ion-button>
+
+            <div class="self-declare-teacher-btn" *ngIf = "!profile?.externalIds?.length">
+                <ion-button (click)="openSelfDeclareTeacherForm('add')">
+                    {{'IM_A_TEACHER' | translate}} <span class="question-badge">?</span>
+                </ion-button>
+            </div>
         </div>
     </div>
     <div class="contacts" *ngIf="!profile?.managedBy && (profile?.phone || profile?.email)">
@@ -165,11 +171,35 @@
             <div class="bolder">{{profile?.framework?.subject.join(', ')}}</div>
         </div>
         <div class="container">
-            <ion-button shape="round" (click)="navigateToCategoriesEditPage()" class="short-btn custom-round">
+            <ion-button shape="round" (click)="navigateToCategoriesEditPage()" class="custom-round">
                 {{'EDIT' | translate }}
             </ion-button>
         </div>
     </div>
+
+    <div class="self-declare-teacher-details" *ngIf="selfDeclaredTeacherDetails?.schoolName || selfDeclaredTeacherDetails?.udiseId || selfDeclaredTeacherDetails?.teacherId">
+        <div class="container" *ngIf = "selfDeclaredTeacherDetails?.schoolName">
+            <div>{{'SCHOOL_OR_ORG_NAME' | translate }}</div>
+            <div class="bolder">{{selfDeclaredTeacherDetails?.schoolName}}</div>
+        </div>
+
+        <div class="container" *ngIf = "selfDeclaredTeacherDetails?.udiseId">
+            <div>{{'SCHOOL_UDISE_ID_OR_ORG_ID' | translate }}</div>
+            <div class="bolder">{{selfDeclaredTeacherDetails?.udiseId}}</div>
+        </div>
+
+        <div class="container" *ngIf = "selfDeclaredTeacherDetails?.teacherId">
+            <div>{{'YOUR_ID_FROM_STATE_BOARD_ORG' | translate }}</div>
+            <div class="bolder">{{selfDeclaredTeacherDetails?.teacherId}}</div>
+        </div>
+
+        <ion-button shape="round" (click)="openSelfDeclareTeacherForm('edit')" class="custom-round">
+            {{'UPDATE' | translate }}
+        </ion-button>
+
+        <p class="declare-info">{{'SELF_DECLARED_INFO' | translate }}</p>
+    </div>
+
     <div class="badges ion-text-center ion-padding-horizontal" *ngIf="profile?.badgeAssertions?.length > 0">
         <p class="bolder f16">{{'MY_BADGES' | translate }} ({{profile?.badgeAssertions?.length}})&lrm;</p>
         <ion-avatar item-center="" *ngFor="let batch of profile.badgeAssertions | slice : startLimit:badgesLimit;">
