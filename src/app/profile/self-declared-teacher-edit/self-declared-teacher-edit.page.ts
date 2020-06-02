@@ -384,11 +384,13 @@ export class SelfDeclaredTeacherEditPage {
   }
 
   async submit() {
+    const loader = await this.commonUtilService.getLoader();
     try {
 
       if (!this.commonForms && !this.commonForms.commonFormGroup && !this.commonForms.commonFormGroup.value) {
         return;
       }
+      await loader.present();
       const formValue = this.commonForms.commonFormGroup.value;
 
       const stateCode = this.stateList.find(state => state.id === formValue.state).code;
@@ -450,7 +452,8 @@ export class SelfDeclaredTeacherEditPage {
     } catch (err) {
       console.error(err);
       this.commonUtilService.showToast('Something went wrong.');
-
+    } finally{
+      await loader.dismiss();
     }
 
   }
