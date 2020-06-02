@@ -95,6 +95,7 @@ export class ProfilePage implements OnInit {
   timer: any;
   mappedTrainingCertificates: CourseCertificate[] = [];
   isDefaultChannelProfile$: Observable<boolean>;
+  selfDeclaredTeacherDetails: any;
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     @Inject('AUTH_SERVICE') private authService: AuthService,
@@ -200,6 +201,7 @@ export class ProfilePage implements OnInit {
 
           this.getEnrolledCourses();
           this.searchContent();
+          this.getSelfDeclaredTeacherDetails();
         });
       })
       .catch(async error => {
@@ -486,8 +488,6 @@ export class ProfilePage implements OnInit {
       contentType === ContentType.WORKSHEET;
   }
 
-
-
   /**
    * Navigate to the course/content details page
    */
@@ -499,9 +499,7 @@ export class ProfilePage implements OnInit {
     } else {
       const telemetryObjectType = this.isResource(content.contentType) ? ContentType.RESOURCE : content.contentType;
       telemetryObject = new TelemetryObject(identifier, telemetryObjectType, undefined);
-
     }
-
 
     const values = new Map();
     values['sectionName'] = 'Contributions';
@@ -866,51 +864,83 @@ export class ProfilePage implements OnInit {
     // await this.popoverCtrl.dismiss();
     return new Promise<boolean | undefined>(async (resolve, reject) => {
       const confirm = await this.commonUtilService.buildPermissionPopover(
-          async (selectedButton: string) => {
-            if (selectedButton === this.commonUtilService.translateMessage('NOT_NOW')) {
-              this.telemetryGeneratorService.generateInteractTelemetry(
-                  InteractType.TOUCH,
-                  InteractSubtype.NOT_NOW_CLICKED,
-                  Environment.SETTINGS,
-                  PageId.PERMISSION_POPUP);
-              await this.commonUtilService.showSettingsPageToast('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName, PageId.PROFILE, true);
-            } else if (selectedButton === this.commonUtilService.translateMessage('ALLOW')) {
-              this.telemetryGeneratorService.generateInteractTelemetry(
-                  InteractType.TOUCH,
-                  InteractSubtype.ALLOW_CLICKED,
-                  Environment.SETTINGS,
-                  PageId.PERMISSION_POPUP);
-              this.permissionService.requestPermission(AndroidPermission.WRITE_EXTERNAL_STORAGE)
-                  .subscribe(async (status: AndroidPermissionsStatus) => {
-                    if (status.hasPermission) {
-                      this.telemetryGeneratorService.generateInteractTelemetry(
-                          InteractType.TOUCH,
-                          InteractSubtype.ALLOW_CLICKED,
-                          Environment.SETTINGS,
-                          PageId.APP_PERMISSION_POPUP
-                      );
-                      resolve(true);
-                    } else if (status.isPermissionAlwaysDenied) {
-                      await this.commonUtilService.showSettingsPageToast
-                      ('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName, PageId.PROFILE, true);
-                      resolve(false);
-                    } else {
-                      this.telemetryGeneratorService.generateInteractTelemetry(
-                          InteractType.TOUCH,
-                          InteractSubtype.DENY_CLICKED,
-                          Environment.SETTINGS,
-                          PageId.APP_PERMISSION_POPUP
-                      );
-                      await this.commonUtilService.showSettingsPageToast
-                      ('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName, PageId.PROFILE, true);
-                    }
-                    resolve(undefined);
-                  });
-            }
-          }, this.appName, this.commonUtilService.translateMessage('FILE_MANAGER'), 'FILE_MANAGER_PERMISSION_DESCRIPTION', PageId.PROFILE, true
+        async (selectedButton: string) => {
+          if (selectedButton === this.commonUtilService.translateMessage('NOT_NOW')) {
+            this.telemetryGeneratorService.generateInteractTelemetry(
+              InteractType.TOUCH,
+              InteractSubtype.NOT_NOW_CLICKED,
+              Environment.SETTINGS,
+              PageId.PERMISSION_POPUP);
+            await this.commonUtilService.showSettingsPageToast('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName, PageId.PROFILE, true);
+          } else if (selectedButton === this.commonUtilService.translateMessage('ALLOW')) {
+            this.telemetryGeneratorService.generateInteractTelemetry(
+              InteractType.TOUCH,
+              InteractSubtype.ALLOW_CLICKED,
+              Environment.SETTINGS,
+              PageId.PERMISSION_POPUP);
+            this.permissionService.requestPermission(AndroidPermission.WRITE_EXTERNAL_STORAGE)
+              .subscribe(async (status: AndroidPermissionsStatus) => {
+                if (status.hasPermission) {
+                  this.telemetryGeneratorService.generateInteractTelemetry(
+                    InteractType.TOUCH,
+                    InteractSubtype.ALLOW_CLICKED,
+                    Environment.SETTINGS,
+                    PageId.APP_PERMISSION_POPUP
+                  );
+                  resolve(true);
+                } else if (status.isPermissionAlwaysDenied) {
+                  await this.commonUtilService.showSettingsPageToast
+                    ('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName, PageId.PROFILE, true);
+                  resolve(false);
+                } else {
+                  this.telemetryGeneratorService.generateInteractTelemetry(
+                    InteractType.TOUCH,
+                    InteractSubtype.DENY_CLICKED,
+                    Environment.SETTINGS,
+                    PageId.APP_PERMISSION_POPUP
+                  );
+                  await this.commonUtilService.showSettingsPageToast
+                    ('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName, PageId.PROFILE, true);
+                }
+                resolve(undefined);
+              });
+          }
+        }, this.appName, this.commonUtilService.translateMessage('FILE_MANAGER'), 'FILE_MANAGER_PERMISSION_DESCRIPTION', PageId.PROFILE, true
       );
       await confirm.present();
     });
+  }
+
+  openSelfDeclareTeacherForm(type) {
+    this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.SELF_DECLARED_TEACHER_EDIT}/${type}`], {
+      state: {
+        profile: this.profile
+      }
+    });
+  }
+
+  getSelfDeclaredTeacherDetails() {
+    this.selfDeclaredTeacherDetails = {
+      schoolName: '',
+      udiseId: '',
+      teacherId: ''
+    };
+
+    if (this.isCustodianOrgId && this.profile && this.profile.externalIds) {
+      this.profile.externalIds.forEach(ele => {
+        switch (ele.idType) {
+          case 'declared-school-name':
+            this.selfDeclaredTeacherDetails.schoolName = ele.id;
+            break;
+          case 'declared-school-udise-code':
+            this.selfDeclaredTeacherDetails.udiseId = ele.id;
+            break;
+          case 'declared-ext-id':
+            this.selfDeclaredTeacherDetails.teacherId = ele.id;
+            break;
+        }
+      });
+    }
   }
 
 }

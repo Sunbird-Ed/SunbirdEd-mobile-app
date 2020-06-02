@@ -5,10 +5,10 @@
     <ng-container *ngIf="commonFormGroup.get(formElement.code); let formControl">
       <ion-item class="input-item cf-input-primary" *ngIf="formElement.type === formInputTypes.INPUT"
         [ngClass]="{'': (formControl.dirty || formControl.touched) && !formControl.errors ,'cf-input-error': (formControl.dirty || formControl.touched) && formControl.errors }"> 
-        <ion-label position="stacked" class="label-font align-text ion-text-capitalize">{{ formElement.templateOptions?.label | translate }}*</ion-label>
+        <ion-label position="stacked" class="label-font align-text ion-text-capitalize">{{ formElement.templateOptions?.label | translate }}</ion-label>
         <ion-input formControlName="{{formElement.code}}" (input)="onInputChange()" placeholder="{{ formElement.templateOptions?.placeHolder | translate}}"></ion-input>
         <ng-container *ngFor="let validation of formElement.validations">
-          <div class="cf-error" *ngIf="(validation.message && formControl.errors && formControl.errors[validation.type] && (formControl.dirty || formControl.touched))">
+          <div class="cf-error" *ngIf="(validation.type && (validation.type).toLowerCase && validation.message && formControl.errors && formControl.errors[(validation.type).toLowerCase()] && (formControl.dirty || formControl.touched))">
             {{ validation.message | translate }}
           </div>
         </ng-container>
@@ -16,8 +16,8 @@
     </ng-container>
 
     <ion-item class="input-item" appCustomIonSelect *ngIf="formElement.type === formInputTypes.SELECT">
-      <ion-label position="stacked" class="label-font align-text">{{ formElement.templateOptions?.label | translate }}*</ion-label>
-      <ion-select #boardSelect
+      <ion-label position="stacked" class="label-font align-text">{{ formElement.templateOptions?.label | translate }}</ion-label>
+      <ion-select
         formControlName="{{formElement.code}}"
         [multiple]="formElement.templateOptions?.multiple"
         [interfaceOptions]="fetchInterfaceOption(formElement.templateOptions?.label)"
