@@ -78,6 +78,7 @@ export class ChapterDetailsPage implements OnInit, OnDestroy {
   private extrasData: any;
 
   isNextContentFound = false;
+  isFirstContent = false;
   nextContent: Content;
 
   constructor(
@@ -352,6 +353,7 @@ export class ChapterDetailsPage implements OnInit, OnDestroy {
 
   continueLearning() {
     this.isNextContentFound = false;
+    this.isFirstContent = false;
     this.nextContent = undefined;
     this.getNextContent(this.chapter, this.contentStatusData.contentList);
 
@@ -857,18 +859,27 @@ export class ChapterDetailsPage implements OnInit, OnDestroy {
 
   private getNextContent(courseHeirarchy, contentStateList: ContentState[]) {
     const result = contentStateList.find(({ contentId }) => contentId === courseHeirarchy.identifier);
+    if (!this.isFirstContent && courseHeirarchy.mimeType !== MimeType.COLLECTION) {
+      this.nextContent = courseHeirarchy;
+      this.isFirstContent = true;
+    }
     if ((result && (result.status === 0 || result.status === 1))
       || (!result && courseHeirarchy.mimeType !== MimeType.COLLECTION)) {
       this.nextContent = courseHeirarchy;
       this.isNextContentFound = true;
+      this.isFirstContent = true;
     } else if (!this.isNextContentFound && courseHeirarchy && courseHeirarchy.children) {
       courseHeirarchy.children.forEach((ele) => {
         if (!this.isNextContentFound) {
           this.getNextContent(ele, contentStateList);
         }
+
+        if (!this.isFirstContent && courseHeirarchy.mimeType !== MimeType.COLLECTION) {
+          this.nextContent = ele;
+          this.isFirstContent = true;
+        }
       });
     }
-    return;
+    return this.nextContent;
   }
-
 }
