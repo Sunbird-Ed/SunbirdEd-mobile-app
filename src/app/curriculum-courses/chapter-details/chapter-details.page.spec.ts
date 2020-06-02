@@ -13,6 +13,7 @@ import { FileSizePipe } from '@app/pipes/file-size/file-size';
 import { FileService } from '@project-sunbird/sunbird-sdk/util/file/def/file-service';
 import { MimeType, EventTopics } from '../../app.constant';
 import { of, throwError } from 'rxjs';
+import { SbProgressLoader } from '../../../services/sb-progress-loader.service';
 
 describe('ChapterDetailsPage', () => {
     let chapterDetailsPage: ChapterDetailsPage;
@@ -56,6 +57,7 @@ describe('ChapterDetailsPage', () => {
     const mockPopoverCtrl: Partial<PopoverController> = {};
     const mockPreferences: Partial<SharedPreferences> = {};
     const mockZone: Partial<NgZone> = {};
+    const mockSbProgressLoader: Partial<SbProgressLoader> = {};
 
     beforeAll(() => {
         chapterDetailsPage = new ChapterDetailsPage(
@@ -76,7 +78,8 @@ describe('ChapterDetailsPage', () => {
             mockEvents as Events,
             mockZone as NgZone,
             mockDatePipe as DatePipe,
-            mockFileSizePipe as FileSizePipe
+            mockFileSizePipe as FileSizePipe,
+            mockSbProgressLoader as SbProgressLoader
         );
     });
 

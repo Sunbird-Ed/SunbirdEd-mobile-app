@@ -24,6 +24,7 @@ import { Observable, Subscription } from 'rxjs';
 import { ConfirmAlertComponent } from '@app/app/components';
 import { FileSizePipe } from '@app/pipes/file-size/file-size';
 import { ContentUtil } from '@app/util/content-util';
+import { SbProgressLoader } from '@app/services/sb-progress-loader.service';
 
 @Component({
   selector: 'app-chapter-details',
@@ -77,6 +78,7 @@ export class ChapterDetailsPage implements OnInit, OnDestroy {
   private extrasData: any;
 
   isNextContentFound = false;
+  isFirstContent = false;
   nextContent: Content;
 
   constructor(
@@ -97,7 +99,8 @@ export class ChapterDetailsPage implements OnInit, OnDestroy {
     private events: Events,
     private zone: NgZone,
     private datePipe: DatePipe,
-    private fileSizePipe: FileSizePipe
+    private fileSizePipe: FileSizePipe,
+    private sbProgressLoader: SbProgressLoader
   ) {
     // if ((!this.router.getCurrentNavigation() || !this.router.getCurrentNavigation().extras) && this.appGlobalService.preSignInData) {
     //   this.extrasData = this.appGlobalService.preSignInData;
@@ -119,14 +122,11 @@ export class ChapterDetailsPage implements OnInit, OnDestroy {
     this.isFromDeeplink = this.extrasData.isFromDeeplink;
     this.courseContentData = this.courseContent.contentData;
     this.identifier = this.chapter.identifier;
-    console.log('extrasData', this.extrasData);
   }
 
   ngOnInit() {
     this.subContentIds = [];
-    console.log('chapter: subContentIds: ', this.chapter);
     this.getSubContentIds(this.chapter);
-    console.log('subContentIds: ', this.subContentIds);
 
     this.trackDownloads$ = this.downloadService.trackDownloads(
       { groupBy: { fieldPath: 'rollUp.l1', value: this.courseContentData.identifier } }).pipe(share());
@@ -188,6 +188,10 @@ export class ChapterDetailsPage implements OnInit, OnDestroy {
     if (this.eventSubscription) {
       this.eventSubscription.unsubscribe();
     }
+  }
+
+  ionViewDidEnter(): void {
+    this.sbProgressLoader.hide({ id: this.courseContent.identifier });
   }
 
   ngOnDestroy() {
@@ -349,6 +353,7 @@ export class ChapterDetailsPage implements OnInit, OnDestroy {
 
   continueLearning() {
     this.isNextContentFound = false;
+    this.isFirstContent = false;
     this.nextContent = undefined;
     this.getNextContent(this.chapter, this.contentStatusData.contentList);
 
@@ -854,18 +859,27 @@ export class ChapterDetailsPage implements OnInit, OnDestroy {
 
   private getNextContent(courseHeirarchy, contentStateList: ContentState[]) {
     const result = contentStateList.find(({ contentId }) => contentId === courseHeirarchy.identifier);
+    if (!this.isFirstContent && courseHeirarchy.mimeType !== MimeType.COLLECTION) {
+      this.nextContent = courseHeirarchy;
+      this.isFirstContent = true;
+    }
     if ((result && (result.status === 0 || result.status === 1))
       || (!result && courseHeirarchy.mimeType !== MimeType.COLLECTION)) {
       this.nextContent = courseHeirarchy;
       this.isNextContentFound = true;
+      this.isFirstContent = true;
     } else if (!this.isNextContentFound && courseHeirarchy && courseHeirarchy.children) {
       courseHeirarchy.children.forEach((ele) => {
         if (!this.isNextContentFound) {
           this.getNextContent(ele, contentStateList);
         }
+
+        if (!this.isFirstContent && courseHeirarchy.mimeType !== MimeType.COLLECTION) {
+          this.nextContent = ele;
+          this.isFirstContent = true;
+        }
       });
     }
-    return;
+    return this.nextContent;
   }
-
 }
