@@ -448,7 +448,9 @@ export class SelfDeclaredTeacherEditPage {
       await this.profileService.updateServerProfile(req).toPromise();
       this.events.publish('loggedInProfile:update');
       this.location.back();
-      const message = (this.editType === 'add') ? 'Added Successfully' : 'Updated Successfully'
+      const message = (this.editType === 'add') ?
+        this.commonUtilService.translateMessage('THANK_YOU_FOR_SUBMITTING_YOUR_DETAILS') :
+        'Updated Successfully'
       this.commonUtilService.showToast(message);
     } catch (err) {
       console.error(err);
