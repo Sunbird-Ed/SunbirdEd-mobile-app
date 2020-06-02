@@ -926,7 +926,7 @@ export class ProfilePage implements OnInit {
       teacherId: ''
     };
 
-    if (this.isCustodianOrgId && this.profile) {
+    if (this.isCustodianOrgId && this.profile && this.profile.externalIds) {
       this.profile.externalIds.forEach(ele => {
         switch (ele.idType) {
           case 'declared-school-name':

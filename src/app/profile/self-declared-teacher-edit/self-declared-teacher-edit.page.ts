@@ -241,6 +241,7 @@ export class SelfDeclaredTeacherEditPage {
       this.commonForms.commonFormGroup.patchValue({
         state: this.formValue.state
       });
+      this.getDistrict(this.formValue.state);
     }
   }
 
@@ -415,7 +416,7 @@ export class SelfDeclaredTeacherEditPage {
           }
 
           // externalIds declared but removed
-          if (!formValue[formData.code] && this.profile.externalIds.find(eid => {
+          if (!formValue[formData.code] && this.profile.externalIds && this.profile.externalIds.find(eid => {
             return eid.idType === formValue[formData.code];
           })) {
             externalIds.push({
@@ -461,7 +462,6 @@ export class SelfDeclaredTeacherEditPage {
   onFormDataChange(event) {
     if (event) {
       if (event.value && this.formValue && event.value.state !== this.formValue.state) {
-        this.getDistrict(event.value.state);
         this.getTeacherDetailsFormApi(event.value.state);
       }
 
