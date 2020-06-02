@@ -723,5 +723,21 @@
   "ADD_NEW_STUDENT": "Add new student",
   "ADD_TO_CLASSROOM": "Add to classroom",
   "NAME_IS_REQUIRED": "Name is required.",
-  "ENTER_USER_NAME": "Enter user name"
+  "ENTER_USER_NAME": "Enter user name",
+  "SCHOOL_OR_ORG_NAME": "School/ Org name",
+  "ENTER_SCHOOL_NAME": "Enter school name",
+  "SCHOOL_UDISE_ID_OR_ORG_ID": "School UDISE ID/ Org ID",
+  "ENTER_UDISE_ID": "Enter UDISE ID",
+  "VALIDATION_MINIMUM_LENGTH": "Minimum length should be 11 numbers",
+  "VALIDATION_MAXIMUM_LENGTH": "Maximum length should be 11 numbers",
+  "ONLY_DIGIT_NUMBER_IS_ALLOWED": "Only 11 digit number is allowed",
+  "ENTER_ID_AS_REQUESTED_BY_STATE_BOARD_ORG": "Enter ID as requested by your State/ Board/ Org",
+  "ENTER_ID": "Enter ID",
+  "ID_IS_REQUIRED": "ID is required",
+  "IM_A_TEACHER": "I’m a Teacher",
+  "SELF_DECLARED_INFO":"Self declared info",
+  "YOUR_ID_FROM_STATE_BOARD_ORG":"Your ID from State/ Board/ Org",
+  "ADD_EDIT_SELF_DECLARED_TEACHER_INFO": "These details may be made available to your declared State to validate and follow progress",
+  "UPDATE_DETAILS":"Update Details",
+  "PLEASE_PROVIDE_FOLLOWING_DETAILS":"Please provide the following details"
 }
