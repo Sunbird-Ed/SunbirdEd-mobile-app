@@ -741,5 +741,7 @@
   "ADD_NEW_STUDENT": "Add new student",
   "ADD_TO_CLASSROOM": "Add to classroom",
   "NAME_IS_REQUIRED": "Name is required.",
-  "ENTER_USER_NAME": "Enter user name"
+  "ENTER_USER_NAME": "Enter user name",
+  "CERTIFICATE_DOWNLOAD_INFO": "Certificate is getting downloaded",
+  "NO_CONTENT_AVAILABLE_IN_MODULE": "There is no content available in this module"
 }

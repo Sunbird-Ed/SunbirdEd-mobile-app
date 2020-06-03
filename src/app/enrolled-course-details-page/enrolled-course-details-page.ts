@@ -1343,10 +1343,6 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
   ionViewDidEnter() {
     this.sbProgressLoader.hide({ id: 'login' });
     this.sbProgressLoader.hide({ id: this.identifier });
-    if (this.resumeCourseFlag) {
-      this.resumeContent();
-      this.resumeCourseFlag = false;
-    }
   }
 
   showLicensce() {
@@ -1732,7 +1728,13 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
           if (this.courseHeirarchy && this.courseHeirarchy.children) {
             this.getStatusOfCourseCompletion(this.courseHeirarchy.children);
           }
+
+          if (this.resumeCourseFlag) {
+            this.resumeContent();
+            this.resumeCourseFlag = false;
+          }
         }).catch((error: any) => {
+          this.resumeCourseFlag = false;
         });
     } else {
       // to be handled when there won't be any batchId
