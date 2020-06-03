@@ -9,9 +9,9 @@ import {NavParams, PopoverController} from '@ionic/angular';
 export class SbTutorialPopupComponent implements OnInit {
     appName = '';
     isPopoverPresent = false;
-    videos = '<strong class="bold">Videos</strong>';
-    interact = '<strong class="bold">Interactive Videos</strong>';
-    worksheets = '<strong class="bold">Worksheets</strong>';
+    videos = '<strong class="bold">explanation videos</strong>';
+    interact = '<strong class="bold">question banks</strong>';
+    worksheets = '<strong class="bold">interactive study material</strong>';
     constructor(
         private popoverCtrl: PopoverController,
         private navParams: NavParams
