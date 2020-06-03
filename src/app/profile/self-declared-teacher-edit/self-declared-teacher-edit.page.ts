@@ -7,10 +7,11 @@ import { Location as loc, PreferenceKey } from '../../../app/app.constant';
 import { AppHeaderService, CommonUtilService, AppGlobalService } from '@app/services';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common';
-import { Events, IonSelect } from '@ionic/angular';
+import { Events, IonSelect, PopoverController } from '@ionic/angular';
 import { Subscription } from 'rxjs';
 import { Platform } from '@ionic/angular';
 import { CommonFormsComponent } from '@app/app/components/common-forms/common-forms.component';
+import { SbPopoverComponent } from '@app/app/components/popups/sb-popover/sb-popover.component';
 
 @Component({
   selector: 'app-self-declared-teacher-edit',
@@ -122,7 +123,8 @@ export class SelfDeclaredTeacherEditPage {
     public events: Events,
     public platform: Platform,
     private ngZone: NgZone,
-    private activatedRoute: ActivatedRoute
+    private activatedRoute: ActivatedRoute,
+    private popoverCtrl: PopoverController
   ) {
     const navigation = this.router.getCurrentNavigation();
     if (navigation && navigation.extras && navigation.extras.state) {
@@ -448,17 +450,17 @@ export class SelfDeclaredTeacherEditPage {
       await this.profileService.updateServerProfile(req).toPromise();
       this.events.publish('loggedInProfile:update');
       this.location.back();
-      const message = (this.editType === 'add') ?
-        this.commonUtilService.translateMessage('THANK_YOU_FOR_SUBMITTING_YOUR_DETAILS') :
-        'Updated Successfully'
-      this.commonUtilService.showToast(message);
+      if (this.editType === 'add') {
+        this.showAddedSuccessfullPopup();
+      } else {
+        this.commonUtilService.showToast(this.commonUtilService.translateMessage('UPDATED_SUCCESSFULLY'));
+      }
     } catch (err) {
       console.error(err);
       this.commonUtilService.showToast('Something went wrong.');
     } finally{
       await loader.dismiss();
     }
-
   }
 
   onFormDataChange(event) {
@@ -474,4 +476,27 @@ export class SelfDeclaredTeacherEditPage {
     }
   }
 
+  async showAddedSuccessfullPopup() {
+    const confirm = await this.popoverCtrl.create({
+      component: SbPopoverComponent,
+      componentProps: {
+        sbPopoverHeading: this.commonUtilService.translateMessage('THANK_YOU_FOR_SUBMITTING_YOUR_DETAILS'),
+        sbPopoverMainTitle: this.commonUtilService.translateMessage('YOU_CAN_EDIT_TEACHER_INFO'),
+        showCloseBtn: false,
+        actionsButtons: [
+          {
+            btntext: this.commonUtilService.translateMessage('OK'),
+            btnClass: 'popover-color'
+          },
+        ]
+      },
+      cssClass: 'sb-popover success',
+    });
+    await confirm.present();
+    const { data } = await confirm.onDidDismiss();
+
+    if (data && data.canDelete) {
+      console.log(data);
+    }
+  }
 }
