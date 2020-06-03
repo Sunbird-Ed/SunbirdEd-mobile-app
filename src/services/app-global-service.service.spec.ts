@@ -552,7 +552,6 @@ describe('AppGlobalService', () => {
             appGlobalService.skipCoachScreenForDeeplink = false;
             mockPreferences.getBoolean = jest.fn(() => of(false));
             mockAppVersion.getAppName = jest.fn(() => Promise.resolve('appname'));
-            mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
             mockPreferences.putBoolean = jest.fn(() => of(undefined));
             mockPopoverCtrl.create = jest.fn(() => (Promise.resolve({
                 present: jest.fn(() => Promise.resolve({})),
@@ -561,20 +560,8 @@ describe('AppGlobalService', () => {
             // act
             appGlobalService.showTutorialScreen().then(() => {
                 // assert
-                expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenCalledWith(
-                    ImpressionType.VIEW,
-                    ImpressionSubtype.TUTORIAL_WALKTHROUGH,
-                    PageId.LIBRARY,
-                    Environment.ONBOARDING
-                );
                 setTimeout(() => {
                     expect(mockPopoverCtrl.create).toHaveBeenCalled();
-                    expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
-                        InteractType.TOUCH,
-                        InteractSubtype.CLOSE_CLICKED,
-                        Environment.HOME,
-                        PageId.APP_TUTORIAL_POPUP
-                    );
                     done();
 
                 }, 0);
@@ -587,7 +574,6 @@ describe('AppGlobalService', () => {
             appGlobalService.skipCoachScreenForDeeplink = false;
             mockPreferences.getBoolean = jest.fn(() => of(false));
             mockAppVersion.getAppName = jest.fn(() => Promise.resolve('appname'));
-            mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
             mockPreferences.putBoolean = jest.fn(() => of(undefined));
             mockPopoverCtrl.create = jest.fn(() => (Promise.resolve({
                 present: jest.fn(() => Promise.resolve({})),
@@ -596,20 +582,8 @@ describe('AppGlobalService', () => {
             // act
             appGlobalService.showTutorialScreen().then(() => {
                 // assert
-                expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenCalledWith(
-                    ImpressionType.VIEW,
-                    ImpressionSubtype.TUTORIAL_WALKTHROUGH,
-                    PageId.LIBRARY,
-                    Environment.ONBOARDING
-                );
                 setTimeout(() => {
                     expect(mockPopoverCtrl.create).toHaveBeenCalled();
-                    expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
-                        InteractType.TOUCH,
-                        InteractSubtype.TUTORIAL_CONTINUE_CLICKED,
-                        Environment.HOME,
-                        PageId.APP_TUTORIAL_POPUP
-                    );
                     done();
                 }, 0);
                 expect(mockPreferences.putBoolean).toHaveBeenCalledWith(PreferenceKey.COACH_MARK_SEEN, true);

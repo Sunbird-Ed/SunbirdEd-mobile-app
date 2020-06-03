@@ -1,6 +1,8 @@
 import {Component, OnInit} from '@angular/core';
 import {NavParams, PopoverController} from '@ionic/angular';
-import {TranslateService} from '@ngx-translate/core';
+import {CommonUtilService} from '@app/services/common-util.service';
+import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
+import {Environment, ImpressionSubtype, ImpressionType, InteractSubtype, InteractType, PageId} from '@app/services/telemetry-constants';
 
 @Component({
     selector: 'app-sb-tutorial-popup',
@@ -16,15 +18,22 @@ export class SbTutorialPopupComponent implements OnInit {
     constructor(
         private popoverCtrl: PopoverController,
         private navParams: NavParams,
-        private translate: TranslateService
+        private commonUtilService: CommonUtilService,
+        private telemetryGeneratorService: TelemetryGeneratorService
     ) {
-        this.explainVideos = '<strong class="bold">' + this.translateMessage('EXP_VIDEOS') + '</strong>';
-        this.quesBanks = '<strong class="bold">' + this.translateMessage('QUES_BANKS') + '</strong>';
-        this.interactiveMaterial = '<strong class="bold">' + this.translateMessage('INTERACTIVE_MATERIAL') + '</strong>';
+        this.explainVideos = '<strong class="bold">' + this.commonUtilService.translateMessage('EXP_VIDEOS') + '</strong>';
+        this.quesBanks = '<strong class="bold">' + this.commonUtilService.translateMessage('QUES_BANKS') + '</strong>';
+        this.interactiveMaterial = '<strong class="bold">' + this.commonUtilService.translateMessage('INTERACTIVE_MATERIAL') + '</strong>';
     }
 
     ngOnInit() {
         this.appName = this.navParams.get('appLabel');
+        this.telemetryGeneratorService.generateImpressionTelemetry(
+            ImpressionType.VIEW,
+            ImpressionSubtype.TUTORIAL_WALKTHROUGH,
+            PageId.LIBRARY,
+            Environment.HOME
+        );
 
         setTimeout(() => {
             this.isPopoverPresent = true;
@@ -32,24 +41,12 @@ export class SbTutorialPopupComponent implements OnInit {
     }
 
     closePopover(continueClicked: boolean) {
-        this.popoverCtrl.dismiss({continueClicked});
-    }
-
-    private translateMessage(messageConst: string, fields?: string | any): string {
-        let translatedMsg = '';
-        let replaceObject: any = '';
-
-        if (typeof (fields) === 'object') {
-            replaceObject = fields;
-        } else {
-            replaceObject = { '%s': fields };
-        }
-
-        this.translate.get(messageConst, replaceObject).subscribe(
-            (value: any) => {
-                translatedMsg = value;
-            }
+        this.popoverCtrl.dismiss();
+        this.telemetryGeneratorService.generateInteractTelemetry(
+            InteractType.TOUCH,
+            continueClicked ? InteractSubtype.TUTORIAL_CONTINUE_CLICKED : InteractSubtype.CLOSE_CLICKED,
+            Environment.HOME,
+            PageId.APP_TUTORIAL_POPUP
         );
-        return translatedMsg;
     }
 }
