@@ -59,8 +59,6 @@ export class CurriculumCoursesPage implements OnInit {
   }
 
   openCourseDetails(course) {
-    // this.checkRetiredOpenBatch(params.course, params);
-
     this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], {
       state: {
         content: course,
