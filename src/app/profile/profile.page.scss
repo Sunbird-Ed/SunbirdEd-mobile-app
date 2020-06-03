@@ -377,4 +377,12 @@
       font-size: 12px;
     }
   }
+
+  .app-name{
+    text-transform: lowercase;
+    display: inline-block;
+  }
+  .app-name::first-letter{
+    text-transform: capitalize
+  }
 }

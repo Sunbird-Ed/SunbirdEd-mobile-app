@@ -33,7 +33,6 @@
   "ANSWER": "Answer",
   "APPLY": "APPLY",
   "APPLY_FILTER": "APPLY FILTER",
-  "APP_ID": "{{%s}} ID",
   "APP_QR_CODE": "Have a {{%s}} QR Code?",
   "APP_RATING_RATE_EXPERIENCE": "Rate your app experience",
   "APP_RATING_RATE_ON_PLAYSTORE": "Would you like to submit your rating to the Play Store?",
@@ -741,5 +740,8 @@
   "ADD_EDIT_SELF_DECLARED_TEACHER_INFO": "These details may be made available to your declared State to validate and follow progress",
   "UPDATE_DETAILS":"Update Details",
   "PLEASE_PROVIDE_FOLLOWING_DETAILS":"Please provide the following details",
-  "THANK_YOU_FOR_SUBMITTING_YOUR_DETAILS": "Thank you for submitting your details"
+  "THANK_YOU_FOR_SUBMITTING_YOUR_DETAILS": "Thank you for submitting your details",
+  "YOU_CAN_EDIT_TEACHER_INFO": "You can edit this information from your profile if you need to",
+  "UPDATED_SUCCESSFULLY": "Updated successfully",
+  "ID": "id"
 }

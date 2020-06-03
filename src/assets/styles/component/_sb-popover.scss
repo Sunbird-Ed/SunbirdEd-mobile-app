@@ -217,6 +217,29 @@
   }
 }
 
+.sb-popover.success {
+  .sb-popover-header {
+    background-color: #008840;
+    .sb-popover-toolbar .toolbar-background {
+      background-color: #008840;
+    }
+  }
+  .popover-content {
+    .sb-popover-items {
+      padding: 16px;
+      .icon-container {
+        ion-icon {
+          font-size: ($font-size-base * 2)+2;
+          color: #008840;
+        }
+      }
+    }
+  }
+  .sb-popover-footer .sb-popover-action-btn.popover-color {
+    background-color: #008840;
+  }
+}
+
 // For Permission Popup
 .sb-popover.sb-popover-permissions {
   .sb-popover-items {
@@ -300,6 +323,13 @@
   .sb-popover-header,
   .sb-popover-header .sb-popover-toolbar {
     --background: #{$tertiary-color};
+  }
+}
+
+.sb-popover.success {
+  .sb-popover-header,
+  .sb-popover-header .sb-popover-toolbar {
+    --background: #008840;
   }
 }
 
