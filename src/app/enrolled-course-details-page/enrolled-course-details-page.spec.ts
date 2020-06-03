@@ -2031,6 +2031,6 @@ describe('EnrolledCourseDetailsPage', () => {
         enrolledCourseDetailsPage.ionViewDidEnter();
         // assert
         expect(mockSbProgressLoader.hide).toHaveBeenCalledWith({id: 'sample_doId'});
-        expect(enrolledCourseDetailsPage.resumeCourseFlag).toBe(false);
+        expect(enrolledCourseDetailsPage.resumeCourseFlag).toBe(true);
     });
 });

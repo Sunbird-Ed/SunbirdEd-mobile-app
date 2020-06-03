@@ -735,7 +735,7 @@ describe('ChapterDetailsPage', () => {
 
         it('should show toast message like COURSE_WILL_BE_AVAILABLE', () => {
             // arrnge
-            chapterDetailsPage.childContents = [];
+            chapterDetailsPage.childContents = [{ identifier: 'do-123' }];
             chapterDetailsPage.isBatchNotStarted = true;
             mockDatePipe.transform = jest.fn(() => '2020-06-02');
             mockCommonUtilService.translateMessage = jest.fn(() => 'The batch is available from sunbird');
@@ -743,11 +743,24 @@ describe('ChapterDetailsPage', () => {
             // act
             chapterDetailsPage.startLearning();
             // assert
-            expect(chapterDetailsPage.childContents.length).toBe(0);
+            expect(chapterDetailsPage.childContents.length).toBeGreaterThan(0);
             expect(chapterDetailsPage.isBatchNotStarted).toBeTruthy();
             expect(mockCommonUtilService.translateMessage).toHaveBeenCalledWith('COURSE_WILL_BE_AVAILABLE', '2020-06-02');
             expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('The batch is available from sunbird');
             expect(mockDatePipe.transform).toHaveBeenCalled();
+        });
+
+        it('should show toast message like COURSE_WILL_BE_AVAILABLE', () => {
+            // arrnge
+            chapterDetailsPage.childContents = [];
+            chapterDetailsPage.isBatchNotStarted = true;
+            mockCommonUtilService.showToast = jest.fn();
+            // act
+            chapterDetailsPage.startLearning();
+            // assert
+            expect(chapterDetailsPage.childContents.length).toBe(0);
+            expect(chapterDetailsPage.isBatchNotStarted).toBeTruthy();
+            expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('NO_CONTENT_AVAILABLE_IN_MODULE');
         });
     });
 
