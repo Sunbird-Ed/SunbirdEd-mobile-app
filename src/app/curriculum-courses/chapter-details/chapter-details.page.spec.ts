@@ -315,7 +315,8 @@ describe('ChapterDetailsPage', () => {
                 mockEvents as Events,
                 mockZone as NgZone,
                 mockDatePipe as DatePipe,
-                mockFileSizePipe as FileSizePipe
+                mockFileSizePipe as FileSizePipe,
+                mockSbProgressLoader as SbProgressLoader
             );
         });
         it('should return all batches', (done) => {
@@ -406,6 +407,725 @@ describe('ChapterDetailsPage', () => {
             setTimeout(() => {
                 done();
             }, 0);
+        });
+    });
+
+    describe('getBatchDetails', () => {
+        it('should return courseStartDate if status is 0', (done) => {
+            // arrange
+            chapterDetailsPage.courseCardData = {
+                batchId: 'sample-batch-id'
+            };
+            mockCourseService.getBatchDetails = jest.fn(() => of({
+                status: 0,
+                startDate: '2020-06-02'
+            })) as any;
+            mockZone.run = jest.fn((fn) => fn());
+            // act
+            chapterDetailsPage.getBatchDetails();
+            // assert
+            setTimeout(() => {
+                expect(chapterDetailsPage.courseCardData).toBeTruthy();
+                expect(chapterDetailsPage.courseCardData.batchId).toBeTruthy();
+                expect(mockCourseService.getBatchDetails).toHaveBeenCalledWith({batchId: chapterDetailsPage.courseCardData.batchId});
+                expect(mockZone.run).toHaveBeenCalled();
+                expect(chapterDetailsPage.batchDetails).toStrictEqual({
+                    status: 0,
+                    startDate: '2020-06-02'
+                });
+                expect(chapterDetailsPage.isBatchNotStarted).toBeTruthy();
+                expect(chapterDetailsPage.courseStartDate.batchId).toBe(chapterDetailsPage.batchDetails.batchId);
+                done();
+            }, 0);
+        });
+
+        it('should return batch Expire date if status is 2', (done) => {
+            // arrange
+            chapterDetailsPage.courseCardData = {
+                batchId: 'sample-batch-id'
+            };
+            mockCourseService.getBatchDetails = jest.fn(() => of({
+                status: 2,
+                startDate: '2020-06-02'
+            })) as any;
+            mockZone.run = jest.fn((fn) => fn());
+            // act
+            chapterDetailsPage.getBatchDetails();
+            // assert
+            setTimeout(() => {
+                expect(chapterDetailsPage.courseCardData).toBeTruthy();
+                expect(chapterDetailsPage.courseCardData.batchId).toBeTruthy();
+                expect(mockCourseService.getBatchDetails).toHaveBeenCalledWith({batchId: chapterDetailsPage.courseCardData.batchId});
+                expect(mockZone.run).toHaveBeenCalled();
+                expect(chapterDetailsPage.batchDetails).toStrictEqual({
+                    status: 2,
+                    startDate: '2020-06-02'
+                });
+                expect(chapterDetailsPage.batchExp).toBeTruthy();
+                done();
+            }, 0);
+        });
+
+        it('should return null if response is undefined', (done) => {
+            // arrange
+            chapterDetailsPage.courseCardData = {
+                batchId: 'sample-batch-id'
+            };
+            mockCourseService.getBatchDetails = jest.fn(() => of(undefined));
+            mockZone.run = jest.fn((fn) => fn());
+            // act
+            chapterDetailsPage.getBatchDetails();
+            // assert
+            setTimeout(() => {
+                expect(chapterDetailsPage.courseCardData).toBeTruthy();
+                expect(chapterDetailsPage.courseCardData.batchId).toBeTruthy();
+                expect(mockCourseService.getBatchDetails).toHaveBeenCalledWith({batchId: chapterDetailsPage.courseCardData.batchId});
+                expect(mockZone.run).toHaveBeenCalled();
+                done();
+            }, 0);
+        });
+
+        it('should return null if status is > 2', (done) => {
+            // arrange
+            chapterDetailsPage.courseCardData = {
+                batchId: 'sample-batch-id'
+            };
+            mockCourseService.getBatchDetails = jest.fn(() => of({
+                status: 3,
+                startDate: '2020-06-02'
+            })) as any;
+            mockZone.run = jest.fn((fn) => fn());
+            // act
+            chapterDetailsPage.getBatchDetails();
+            // assert
+            setTimeout(() => {
+                expect(chapterDetailsPage.courseCardData).toBeTruthy();
+                expect(chapterDetailsPage.courseCardData.batchId).toBeTruthy();
+                expect(mockCourseService.getBatchDetails).toHaveBeenCalledWith({batchId: chapterDetailsPage.courseCardData.batchId});
+                expect(mockZone.run).toHaveBeenCalled();
+                expect(chapterDetailsPage.batchDetails).toStrictEqual({
+                    status: 3,
+                    startDate: '2020-06-02'
+                });
+                done();
+            }, 0);
+        });
+
+        it('should handel error for catch part', (done) => {
+            // arrange
+            chapterDetailsPage.courseCardData = {
+                batchId: 'sample-batch-id'
+            };
+            mockCourseService.getBatchDetails = jest.fn(() => throwError({error: 'error'}));
+            mockZone.run = jest.fn((fn) => fn());
+            // act
+            chapterDetailsPage.getBatchDetails();
+            // assert
+            setTimeout(() => {
+                expect(chapterDetailsPage.courseCardData).toBeTruthy();
+                expect(chapterDetailsPage.courseCardData.batchId).toBeTruthy();
+                expect(mockCourseService.getBatchDetails).toHaveBeenCalledWith({batchId: chapterDetailsPage.courseCardData.batchId});
+                done();
+            }, 0);
+        });
+
+        it('should return null if curseCard is undefined', (done) => {
+            // arrange
+            chapterDetailsPage.courseCardData = {
+                batchId: undefined
+            };
+            // act
+            chapterDetailsPage.getBatchDetails();
+            // assert
+            setTimeout(() => {
+                expect(chapterDetailsPage.courseCardData.batchId).toBeFalsy();
+                done();
+            }, 0);
+        });
+    });
+
+    describe('getAllContents', () => {
+        it('should return all leaves contents which mimeType is not collection', () => {
+            // arrange
+            const collection = {
+                children: [{
+                    id: 'do-123',
+                    mimeType: MimeType.AUDIO[0],
+                    children: [{
+                        id: 'do-0-123',
+                        mimeType: MimeType.DOCS[0]
+                    }]
+                }, {
+                    id: '234',
+                    mimeType: MimeType.COLLECTION
+                }, {
+                    id: '345',
+                    mimeType: MimeType.INTERACTION[0],
+                    children: [
+                        {
+                            id: 'do-0-345',
+                            mimeType: MimeType.DOCS[1]
+                        }, {
+                            id: 'do-1-345',
+                            mimeType: MimeType.COLLECTION
+                        }
+                    ]
+                }]
+            };
+            // act
+            chapterDetailsPage.getAllContents(collection);
+            // assert
+            expect(chapterDetailsPage.childContents).toStrictEqual([
+                {id: 'do-0-123', mimeType: 'application/pdf'},
+                {id: 'do-0-345', mimeType: 'application/epub'}
+            ]);
+        });
+    });
+
+    describe('checkChapterCompletion', () => {
+        it('should return progress for chapter complition if isChapterCompleted', () => {
+            // arrange
+            chapterDetailsPage.contentStatusData = {
+                contentList: [
+                    {
+                        id: 'do-123',
+                        contentId: 'sample-content-id',
+                        status: 2
+                    }
+                ]
+            };
+
+            chapterDetailsPage.childContents = [{
+                identifier: 'sample-content-id'
+            }];
+            // act
+            chapterDetailsPage.checkChapterCompletion();
+            // arrange
+            expect(chapterDetailsPage.contentStatusData).toBeTruthy();
+            expect(chapterDetailsPage.contentStatusData.contentList.length).toBeGreaterThan(0);
+            expect(chapterDetailsPage.isChapterCompleted).toBeTruthy();
+            expect(chapterDetailsPage.chapterProgress).toBe(100);
+        });
+
+        it('should return progress for chapter complition if isChapterStarted', () => {
+            // arrange
+            chapterDetailsPage.contentStatusData = {
+                contentList: [
+                    {
+                        id: 'do-123',
+                        contentId: 'sample-content-id',
+                        status: 2
+                    }
+                ]
+            };
+
+            chapterDetailsPage.childContents = [{
+                identifier: 'sample-content-id'
+            }, {
+                identifier: 'sample-id-2'
+            }];
+            // act
+            chapterDetailsPage.checkChapterCompletion();
+            // arrange
+            expect(chapterDetailsPage.contentStatusData).toBeTruthy();
+            expect(chapterDetailsPage.contentStatusData.contentList.length).toBeGreaterThan(0);
+            expect(chapterDetailsPage.isChapterCompleted).toBeTruthy();
+            expect(chapterDetailsPage.chapterProgress).toBe(50);
+        });
+
+        it('should return progress for chapter complition if isChapterStarted is false', () => {
+            // arrange
+            chapterDetailsPage.contentStatusData = {
+                contentList: [
+                    {
+                        id: 'do-123',
+                        contentId: 'sample-content-id',
+                        status: 2
+                    }
+                ]
+            };
+
+            chapterDetailsPage.childContents = [];
+            // act
+            chapterDetailsPage.checkChapterCompletion();
+            // arrange
+            expect(chapterDetailsPage.contentStatusData).toBeTruthy();
+            expect(chapterDetailsPage.contentStatusData.contentList.length).toBeGreaterThan(0);
+            expect(chapterDetailsPage.isChapterCompleted).toBeTruthy();
+        });
+
+        it('should return nothing for else part', () => {
+            // arrange
+            chapterDetailsPage.contentStatusData = {
+                contentList: []
+            };
+
+            // act
+            chapterDetailsPage.checkChapterCompletion();
+            // arrange
+            expect(chapterDetailsPage.contentStatusData).toBeTruthy();
+            expect(chapterDetailsPage.contentStatusData.contentList.length).toBe(0);
+        });
+    });
+
+    describe('subscribeUtilityEvents', () => {
+        it('should return enrolled courses', (done) => {
+            // arrange
+            mockCommonUtilService.getLoader = jest.fn();
+            const mockData = {
+                batchId: 'sample-batch-id'
+            };
+            mockEvents.subscribe = jest.fn((topic, fn) => {
+                switch (topic) {
+                    case EventTopics.ENROL_COURSE_SUCCESS:
+                        return fn(mockData);
+                }
+            });
+            mockAppGlobalService.getUserId = jest.fn(() => 'sample-user-id');
+            mockCourseService.getEnrolledCourses = jest.fn(() => of([
+                {
+                    courseId: 'sample-course-id'
+                }
+            ]));
+            chapterDetailsPage.courseContentData = {
+                identifier: 'sample-course-id'
+            };
+            jest.spyOn(chapterDetailsPage, 'getBatchDetails').mockImplementation(() => {
+                return Promise.resolve();
+            });
+            jest.spyOn(chapterDetailsPage, 'getContentState').mockImplementation(() => {
+                return Promise.resolve();
+            });
+            // act
+            chapterDetailsPage.subscribeUtilityEvents();
+            // assert
+            setTimeout(() => {
+                expect(mockCommonUtilService.getLoader).toHaveBeenCalled();
+                expect(mockEvents.subscribe).toHaveBeenCalled();
+                expect(chapterDetailsPage.isAlreadyEnrolled).toBeTruthy();
+                expect(chapterDetailsPage.updatedCourseCardData).toStrictEqual(
+                    {
+                        courseId: 'sample-course-id'
+                    }
+                );
+                expect(chapterDetailsPage.updatedCourseCardData.courseId).toEqual(chapterDetailsPage.courseContentData.identifier);
+                expect(chapterDetailsPage.courseCardData.batchId).toBe(mockData.batchId);
+                done();
+            }, 0);
+        });
+    });
+
+    describe('startLearning', () => {
+        it('should load FirstChildren', () => {
+            // arrnge
+            chapterDetailsPage.childContents = [{identifier: 'do-123'}];
+            chapterDetailsPage.isBatchNotStarted = false;
+            jest.spyOn(chapterDetailsPage, 'loadFirstChildren').mockImplementation(() => {
+                return;
+            });
+            jest.spyOn(chapterDetailsPage, 'navigateToChildrenDetailsPage').mockImplementation(() => {
+                return;
+            });
+            // act
+            chapterDetailsPage.startLearning();
+            // assert
+            expect(chapterDetailsPage.childContents.length).toBeGreaterThan(0);
+            expect(chapterDetailsPage.isBatchNotStarted).toBeFalsy();
+        });
+
+        it('should show toast message like COURSE_WILL_BE_AVAILABLE', () => {
+            // arrnge
+            chapterDetailsPage.childContents = [];
+            chapterDetailsPage.isBatchNotStarted = true;
+            mockDatePipe.transform = jest.fn(() => '2020-06-02');
+            mockCommonUtilService.translateMessage = jest.fn(() => 'The batch is available from sunbird');
+            mockCommonUtilService.showToast = jest.fn();
+            // act
+            chapterDetailsPage.startLearning();
+            // assert
+            expect(chapterDetailsPage.childContents.length).toBe(0);
+            expect(chapterDetailsPage.isBatchNotStarted).toBeTruthy();
+            expect(mockCommonUtilService.translateMessage).toHaveBeenCalledWith('COURSE_WILL_BE_AVAILABLE', '2020-06-02');
+            expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('The batch is available from sunbird');
+            expect(mockDatePipe.transform).toHaveBeenCalled();
+        });
+    });
+
+    describe('continueLearning', () => {
+        it('should navigate To ChildrenDetailsPage and return the content which is not played', () => {
+            // arrange
+            chapterDetailsPage.isNextContentFound = false;
+            chapterDetailsPage.isFirstContent = false;
+            chapterDetailsPage.nextContent = undefined;
+            chapterDetailsPage.chapter = {
+                identifier: 'do-123',
+                mimeType: MimeType.DOCS[0],
+                children: [
+                    {
+                        identifier: 'do-1-123',
+                        mimeType: MimeType.COLLECTION
+                    },
+                    {
+                        identifier: 'do-2-123',
+                        mimeType: MimeType.DOCS[0]
+                    }
+                ]
+            };
+            chapterDetailsPage.contentStatusData = {
+                contentList: [
+                    {
+                        contentId: 'do-123',
+                        status: 2
+                    },
+                    {
+                        contentId: 'do-1-123',
+                        status: 1
+                    },
+                    {
+                        contentId: 'do-2-123',
+                        status: 0
+                    }
+                ]
+            };
+            // act
+            chapterDetailsPage.continueLearning();
+            // asser
+            expect(chapterDetailsPage.nextContent).toStrictEqual({
+                identifier: 'do-1-123',
+                mimeType: 'application/vnd.ekstep.content-collection'
+            });
+            expect(chapterDetailsPage.isNextContentFound).toBeTruthy();
+            expect(chapterDetailsPage.isFirstContent).toBeTruthy();
+        });
+
+        it('should navigate To ChildrenDetailsPage and return first content if every contents are played', () => {
+            // arrange
+            chapterDetailsPage.isNextContentFound = false;
+            chapterDetailsPage.isFirstContent = false;
+            chapterDetailsPage.nextContent = undefined;
+            chapterDetailsPage.chapter = {
+                identifier: 'do-123',
+                mimeType: MimeType.DOCS[0],
+                children: [
+                    {
+                        identifier: 'do-1-123',
+                        mimeType: MimeType.COLLECTION
+                    },
+                    {
+                        identifier: 'do-2-123',
+                        mimeType: MimeType.DOCS[0]
+                    }
+                ]
+            };
+            chapterDetailsPage.contentStatusData = {
+                contentList: [
+                    {
+                        contentId: 'do-123',
+                        status: 2
+                    },
+                    {
+                        contentId: 'do-1-123',
+                        status: 2
+                    },
+                    {
+                        contentId: 'do-2-123',
+                        status: 2
+                    }
+                ]
+            };
+            // act
+            chapterDetailsPage.continueLearning();
+            // asser
+            expect(chapterDetailsPage.nextContent).toStrictEqual(chapterDetailsPage.chapter);
+            expect(chapterDetailsPage.isNextContentFound).toBeFalsy();
+            expect(chapterDetailsPage.isFirstContent).toBeTruthy();
+        });
+
+        it('should navigate To ChildrenDetailsPage and return first content if every contents are played and root is collection', () => {
+            // arrange
+            chapterDetailsPage.isNextContentFound = false;
+            chapterDetailsPage.isFirstContent = false;
+            chapterDetailsPage.nextContent = undefined;
+            chapterDetailsPage.chapter = {
+                identifier: 'do-123',
+                mimeType: MimeType.COLLECTION,
+                children: [
+                    {
+                        identifier: 'do-1-123',
+                        mimeType: MimeType.COLLECTION
+                    },
+                    {
+                        identifier: 'do-2-123',
+                        mimeType: MimeType.DOCS[0]
+                    }
+                ]
+            };
+            chapterDetailsPage.contentStatusData = {
+                contentList: [
+                    {
+                        contentId: 'do-123',
+                        status: 2
+                    },
+                    {
+                        contentId: 'do-1-123',
+                        status: 2
+                    },
+                    {
+                        contentId: 'do-2-123',
+                        status: 2
+                    }
+                ]
+            };
+            // act
+            chapterDetailsPage.continueLearning();
+            // asser
+            expect(chapterDetailsPage.nextContent).toStrictEqual(chapterDetailsPage.chapter.children[1]);
+            expect(chapterDetailsPage.isNextContentFound).toBeFalsy();
+            expect(chapterDetailsPage.isFirstContent).toBeTruthy();
+        });
+
+        it('should navigate To ChildrenDetailsPage and return first content if children is undefined', () => {
+            // arrange
+            chapterDetailsPage.isNextContentFound = false;
+            chapterDetailsPage.isFirstContent = false;
+            chapterDetailsPage.nextContent = undefined;
+            chapterDetailsPage.chapter = {
+                identifier: 'do-123',
+                mimeType: MimeType.DOCS[0]
+            };
+            chapterDetailsPage.contentStatusData = {
+                contentList: [
+                    {
+                        contentId: 'do-123',
+                        status: 2
+                    },
+                    {
+                        contentId: 'do-1-123',
+                        status: 1
+                    },
+                    {
+                        contentId: 'do-2-123',
+                        status: 0
+                    }
+                ]
+            };
+            // act
+            chapterDetailsPage.continueLearning();
+            // asser
+            expect(chapterDetailsPage.nextContent).toStrictEqual({
+                identifier: 'do-123',
+                mimeType: MimeType.DOCS[0]
+            });
+            expect(chapterDetailsPage.isNextContentFound).toBeFalsy();
+            expect(chapterDetailsPage.isFirstContent).toBeTruthy();
+        });
+
+        it('should called startLearning if nextContent is not available', () => {
+             // arrange
+             chapterDetailsPage.isNextContentFound = false;
+             chapterDetailsPage.isFirstContent = false;
+             chapterDetailsPage.nextContent = undefined;
+             chapterDetailsPage.chapter = {
+                 identifier: 'do-123',
+                 mimeType: MimeType.COLLECTION
+             };
+             chapterDetailsPage.contentStatusData = {
+                 contentList: [
+                     {
+                         contentId: 'do-123',
+                         status: 2
+                     }
+                 ]
+             };
+             // act
+             chapterDetailsPage.continueLearning();
+             // asser
+             expect(chapterDetailsPage.nextContent).toBeUndefined();
+             expect(chapterDetailsPage.isNextContentFound).toBeFalsy();
+             expect(chapterDetailsPage.isFirstContent).toBeFalsy();
+        });
+    });
+
+    describe('showOverflowMenu', () => {
+        it('should invoked showOverflowMenu for download', () => {
+            const presentFn = jest.fn(() => Promise.resolve({}));
+            const onDidDismissFn = jest.fn(() => Promise.resolve({ data: { download: true } }));
+            mockPopoverCtrl.create = jest.fn(() => (Promise.resolve({
+                present: presentFn,
+                onDidDismiss: onDidDismissFn
+            } as any)));
+            jest.spyOn(chapterDetailsPage, 'showDownloadConfirmationAlert').mockImplementation(() => {
+                return Promise.resolve();
+            });
+            // act
+            chapterDetailsPage.showOverflowMenu({});
+            // assert
+            setTimeout(() => {
+                expect(mockPopoverCtrl.create).toHaveBeenCalled();
+                expect(presentFn).toHaveBeenCalled();
+                expect(onDidDismissFn).toHaveBeenCalled();
+            }, 0);
+        });
+
+        it('should invoked showOverflowMenu for share', () => {
+            const presentFn = jest.fn(() => Promise.resolve({}));
+            const onDidDismissFn = jest.fn(() => Promise.resolve({ data: { share: true } }));
+            mockPopoverCtrl.create = jest.fn(() => (Promise.resolve({
+                present: presentFn,
+                onDidDismiss: onDidDismissFn
+            } as any)));
+            jest.spyOn(chapterDetailsPage, 'showDownloadConfirmationAlert').mockImplementation(() => {
+                return Promise.resolve();
+            });
+            // act
+            chapterDetailsPage.showOverflowMenu({});
+            // assert
+            setTimeout(() => {
+                expect(mockPopoverCtrl.create).toHaveBeenCalled();
+                expect(presentFn).toHaveBeenCalled();
+                expect(onDidDismissFn).toHaveBeenCalled();
+            }, 0);
+        });
+
+        it('should invoked showOverflowMenu for unknown', () => {
+            const presentFn = jest.fn(() => Promise.resolve({}));
+            const onDidDismissFn = jest.fn(() => Promise.resolve({ data: { } }));
+            mockPopoverCtrl.create = jest.fn(() => (Promise.resolve({
+                present: presentFn,
+                onDidDismiss: onDidDismissFn
+            } as any)));
+            jest.spyOn(chapterDetailsPage, 'showDownloadConfirmationAlert').mockImplementation(() => {
+                return Promise.resolve();
+            });
+            // act
+            chapterDetailsPage.showOverflowMenu({});
+            // assert
+            setTimeout(() => {
+                expect(mockPopoverCtrl.create).toHaveBeenCalled();
+                expect(presentFn).toHaveBeenCalled();
+                expect(onDidDismissFn).toHaveBeenCalled();
+            }, 0);
+        });
+    });
+
+    describe('openContentDetails', () => {
+        it('should invoked joinTraining()', () => {
+            // arrange
+            const event = {
+                event: [{name: 'sample-name'}]
+            };
+            chapterDetailsPage.courseContentData = {
+                createdBy: 'sample-creator'
+            };
+            chapterDetailsPage.userId = 'sample-user';
+            chapterDetailsPage.isAlreadyEnrolled = false;
+            chapterDetailsPage.isBatchNotStarted = false;
+            jest.spyOn(chapterDetailsPage, 'joinTraining').mockImplementation(() => {
+                return Promise.resolve();
+            });
+            // act
+            chapterDetailsPage.openContentDetails(event);
+            // assert
+            expect(Object.keys(event.event).length).toBeGreaterThan(0);
+            expect(chapterDetailsPage.courseContentData.createdBy).not.toEqual(chapterDetailsPage.userId);
+            expect(chapterDetailsPage.isAlreadyEnrolled).toBeFalsy();
+            expect(chapterDetailsPage.isBatchNotStarted).toBeFalsy();
+        });
+
+        it('should not invoked joinTraining() if isBatchNotStarted', () => {
+            // arrange
+            const event = {
+                event: [{name: 'sample-name'}]
+            };
+            chapterDetailsPage.courseContentData = {
+                createdBy: 'sample-creator'
+            };
+            chapterDetailsPage.userId = 'sample-user';
+            chapterDetailsPage.isAlreadyEnrolled = false;
+            chapterDetailsPage.isBatchNotStarted = true;
+            // act
+            chapterDetailsPage.openContentDetails(event);
+            // assert
+            expect(Object.keys(event.event).length).toBeGreaterThan(0);
+            expect(chapterDetailsPage.courseContentData.createdBy).not.toEqual(chapterDetailsPage.userId);
+            expect(chapterDetailsPage.isAlreadyEnrolled).toBeFalsy();
+            expect(chapterDetailsPage.isBatchNotStarted).toBeTruthy();
+        });
+
+        it('should show a course available toast if isAlreadyEnrolled', () => {
+            // arrange
+            const event = {
+                event: [{name: 'sample-name'}]
+            };
+            chapterDetailsPage.courseContentData = {
+                createdBy: 'sample-creator'
+            };
+            chapterDetailsPage.userId = 'sample-user';
+            chapterDetailsPage.isAlreadyEnrolled = true;
+            chapterDetailsPage.isBatchNotStarted = true;
+            mockDatePipe.transform = jest.fn(() => '2020-06-02');
+            mockCommonUtilService.translateMessage = jest.fn(() => 'The batch is available from sunbird');
+            mockCommonUtilService.showToast = jest.fn();
+            // act
+            chapterDetailsPage.openContentDetails(event);
+            // assert
+            expect(Object.keys(event.event).length).toBeGreaterThan(0);
+            expect(chapterDetailsPage.courseContentData.createdBy).not.toEqual(chapterDetailsPage.userId);
+            expect(chapterDetailsPage.isAlreadyEnrolled).toBeTruthy();
+            expect(chapterDetailsPage.isBatchNotStarted).toBeTruthy();
+            expect(mockCommonUtilService.translateMessage).toHaveBeenCalledWith('COURSE_WILL_BE_AVAILABLE', '2020-06-02');
+            expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('The batch is available from sunbird');
+            expect(mockDatePipe.transform).toHaveBeenCalled();
+        });
+
+        it('should navigate To ChildrenDetailsPage', () => {
+            // arrange
+            const event = {
+                event: [{name: 'sample-name'}],
+                data: {name: 'data-name'}
+            };
+            chapterDetailsPage.courseContentData = {
+                createdBy: 'sample-creator'
+            };
+            chapterDetailsPage.userId = 'sample-user';
+            chapterDetailsPage.isAlreadyEnrolled = true;
+            chapterDetailsPage.isBatchNotStarted = false;
+            // act
+            chapterDetailsPage.openContentDetails(event);
+            // assert
+            expect(Object.keys(event.event).length).toBeGreaterThan(0);
+            expect(chapterDetailsPage.courseContentData.createdBy).not.toEqual(chapterDetailsPage.userId);
+            expect(chapterDetailsPage.isAlreadyEnrolled).toBeTruthy();
+            expect(chapterDetailsPage.isBatchNotStarted).toBeFalsy();
+        });
+
+        it('should return null if userId matched', () => {
+            // arrange
+            const event = {
+                event: [{name: 'sample-name'}],
+                data: {name: 'data-name'}
+            };
+            chapterDetailsPage.courseContentData = {
+                createdBy: 'sample-creator'
+            };
+            chapterDetailsPage.userId = 'sample-creator';
+            // act
+            chapterDetailsPage.openContentDetails(event);
+            // assert
+            expect(Object.keys(event.event).length).toBeGreaterThan(0);
+            expect(chapterDetailsPage.courseContentData.createdBy).toEqual(chapterDetailsPage.userId);
+        });
+
+        it('should return null if userId if event size is 0', () => {
+            // arrange
+            const event = {
+                event: [],
+                data: {name: 'data-name'}
+            };
+            // act
+            chapterDetailsPage.openContentDetails(event);
+            // assert
+            expect(Object.keys(event.event).length).toEqual(0);
         });
     });
 });
