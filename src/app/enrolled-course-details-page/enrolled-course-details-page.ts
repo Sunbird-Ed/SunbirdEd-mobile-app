@@ -94,10 +94,8 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
   /**
    * Contains children content data
    */
-  childrenData: Array<any> = [];
   courseHeirarchy: any;
 
-  startData: any;
   shownGroup: null;
 
   /**
@@ -115,10 +113,6 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
    */
   downloadSize = 0;
 
-  /**
-   * this hold the mime type of a collection
-   */
-  enrolledCourseMimeType: string;
   /**
    * Flag to show / hide resume button
    */
@@ -184,9 +178,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
   backButtonFunc = undefined;
   shouldGenerateEndTelemetry = false;
   source = '';
-  firstChild;
   /** Whole child content is stored and it is used to find first child */
-  childContentsData;
   isBatchNotStarted = false;
   private eventSubscription: Subscription;
   corRelationList: Array<CorrelationData>;
@@ -198,8 +190,6 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
   segmentType = 'info';
   // isEnrolled = false;
   showDownload: boolean;
-  lastReadContentName: string;
-  lastReadContentType: string;
   enrollmentEndDate: string;
   loader?: HTMLIonLoadingElement;
   isQrCodeLinkToContent: any;
@@ -335,7 +325,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
         if (this.identifier && res.courseId && this.identifier === res.courseId) {
           this.isAlreadyEnrolled = true;
           this.zone.run(() => {
-            this.getContentsSize(this.childrenData);
+            this.getContentsSize(this.courseHeirarchy.children);
             if (this.loader) {
               this.loader.dismiss();
               this.loader = undefined;
@@ -665,12 +655,8 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
       .then((content: Content) => {
         /* setting child content here */
         this.showSheenAnimation = false;
-        this.enrolledCourseMimeType = content.mimeType;
-        this.childrenData = content.children;
         this.courseHeirarchy = content;
-        this.toggleGroup(0, this.childrenData[0]);
-        this.startData = content.children;
-        this.childContentsData = content;
+        this.toggleGroup(0, content.children[0]);
         this.getContentState(true);
         this.telemetryGeneratorService.generatefastLoadingTelemetry(
           InteractSubtype.FAST_LOADING_FINISHED,
@@ -708,9 +694,6 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
         this.generateStartEvent(this.course.identifier, this.course.contentType, this.course.pkgVersion);
       }
       this.didViewLoad = true;
-      if (this.courseCardData.lastReadContentId) {
-        this.getLastPlayedName(this.courseCardData.lastReadContentId);
-      }
 
       if (this.course && this.course.isAvailableLocally) {
         this.headerService.showHeaderWithBackButton();
@@ -1059,7 +1042,9 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
    */
   private getStatusOfCourseCompletion(childrenData: Content[]) {
     const contentStatusData = this.contentStatusData;
-    this.getLastPlayedName(this.lastReadContentId);
+
+    this.initNextContent();
+
     const that = this;
     this.zone.run(() => {
       childrenData.forEach((childContent) => {
@@ -1149,26 +1134,6 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
     return this.shownGroup === group;
   }
 
-  getLastPlayedName(id) {
-    if (this.showResumeBtn) {
-      const option = {
-        contentId: id,
-        hierarchyInfo: null,
-        level: !this.courseCardData.batchId ? 1 : 0,
-      };
-      this.contentService.getContentDetails(option).toPromise()
-        .then((data: Content) => {
-          this.lastReadContentName = data.contentData.name;
-          this.lastReadContentType = data.contentData.contentType;
-        }).catch(() => {
-
-        });
-    } else if (this.childContentsData) {
-      const firstChild = this.loadFirstChildren(this.childContentsData);
-      this.lastReadContentName = firstChild.contentData.name;
-    }
-  }
-
   /**
    * Function to set child contents
    */
@@ -1187,16 +1152,12 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
                 this.stickyPillsRef.nativeElement.classList.add('sticky');
               }
             }, 1000);
-            this.enrolledCourseMimeType = data.mimeType;
-            this.childrenData = data.children;
             this.courseHeirarchy = data;
-            this.startData = data.children;
-            this.childContentsData = data;
             this.getContentState(true);
           }
           if (this.courseCardData.batchId) {
             this.downloadSize = 0;
-            this.getContentsSize(this.childrenData);
+            this.getContentsSize(this.courseHeirarchy.children);
           }
           this.showChildrenLoader = false;
         });
@@ -1279,11 +1240,6 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
    * Function gets executed when user click on resume course button.
    */
   resumeContent(): void {
-    this.isNextContentFound = false;
-    this.isFirstContent = false;
-    this.nextContent = undefined;
-    this.getNextContent(this.courseHeirarchy, this.contentStatusData.contentList);
-
     const params: NavigationExtras = {
       state: {
         content: this.nextContent,
@@ -1387,10 +1343,6 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
   ionViewDidEnter() {
     this.sbProgressLoader.hide({ id: 'login' });
     this.sbProgressLoader.hide({ id: this.identifier });
-    if (this.resumeCourseFlag) {
-      this.resumeContent();
-      this.resumeCourseFlag = false;
-    }
   }
 
   showLicensce() {
@@ -1625,19 +1577,6 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
   }
 
   /**
-   * Loads first children with in the start data
-   */
-  loadFirstChildren(data) {
-    if (data && (data.children === undefined)) {
-      return data;
-    } else {
-      for (const child of data.children) {
-        return this.loadFirstChildren(child);
-      }
-    }
-  }
-
-  /**
    * Get executed when user click on start button
    */
   startContent() {
@@ -1650,9 +1589,9 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
       this.objRollup,
       this.corRelationList
     );
-    if (this.startData && this.startData.length && !this.isBatchNotStarted) {
-      this.firstChild = this.loadFirstChildren(this.childContentsData);
-      this.navigateToChildrenDetailsPage(this.firstChild, 1);
+    if (this.courseHeirarchy && this.courseHeirarchy.children
+      && this.courseHeirarchy.children.length && !this.isBatchNotStarted) {
+      this.navigateToChildrenDetailsPage(this.nextContent, 1);
     } else {
       this.commonUtilService.showToast(this.commonUtilService.translateMessage('COURSE_WILL_BE_AVAILABLE',
         this.datePipe.transform(this.courseStartDate, 'mediumDate')));
@@ -1768,6 +1707,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
         .then((success: ContentStateResponse) => {
           this.contentStatusData = success;
 
+          this.initNextContent();
           if (this.contentStatusData && this.contentStatusData.contentList) {
             this.getLocalCourseAndUnitProgress();
             let progress = 0;
@@ -1785,10 +1725,16 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
             }
           }
 
-          if (this.childrenData) {
-            this.getStatusOfCourseCompletion(this.childrenData);
+          if (this.courseHeirarchy && this.courseHeirarchy.children) {
+            this.getStatusOfCourseCompletion(this.courseHeirarchy.children);
+          }
+
+          if (this.resumeCourseFlag) {
+            this.resumeContent();
+            this.resumeCourseFlag = false;
           }
         }).catch((error: any) => {
+          this.resumeCourseFlag = false;
         });
     } else {
       // to be handled when there won't be any batchId
@@ -2018,6 +1964,13 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
         }
       });
     }
+  }
+
+  private initNextContent() {
+    this.isNextContentFound = false;
+    this.isFirstContent = false;
+    this.nextContent = undefined;
+    this.getNextContent(this.courseHeirarchy, this.contentStatusData.contentList);
   }
 
   private getNextContent(courseHeirarchy, contentStateList: ContentState[]) {

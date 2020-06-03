@@ -2,6 +2,7 @@ import { Component, NgZone, OnInit, Inject } from '@angular/core';
 import {
   Events,
   PopoverController,
+  ToastController,
 } from '@ionic/angular';
 import { generateInteractTelemetry } from '@app/app/telemetryutil';
 import { ContentCard, ContentType, MimeType, ProfileConstants, RouterLinks, ContentFilterConfig } from '@app/app/app.constant';
@@ -45,6 +46,7 @@ import { AndroidPermissionsStatus, AndroidPermission } from '@app/services/andro
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import {SbProgressLoader} from '@app/services/sb-progress-loader.service';
 import { FileOpener } from '@ionic-native/file-opener/ngx';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-profile',
@@ -117,7 +119,9 @@ export class ProfilePage implements OnInit {
     private permissionService: AndroidPermissionsService,
     private appVersion: AppVersion,
     private sbProgressLoader: SbProgressLoader,
-    private fileOpener: FileOpener
+    private fileOpener: FileOpener,
+    private toastController: ToastController,
+    private translate: TranslateService
   ) {
     const extrasState = this.router.getCurrentNavigation().extras.state;
     if (extrasState) {
@@ -432,7 +436,13 @@ export class ProfilePage implements OnInit {
   // }
 
   async downloadTrainingCertificate(course: Course, certificate: CourseCertificate) {
-    await this.checkForPermissions().then((result) => {
+    const downloadMessage = await this.translate.get('CERTIFICATE_DOWNLOAD_INFO').toPromise();
+    const toastOptions = {
+      message: downloadMessage || 'Certificate getting downloaded'
+    };
+    const toast = await this.toastController.create(toastOptions);
+
+    await this.checkForPermissions().then(async (result) => {
       if (result) {
         const telemetryObject: TelemetryObject = new TelemetryObject(certificate.id, ContentType.CERTIFICATE, undefined);
 
@@ -449,16 +459,17 @@ export class ProfilePage implements OnInit {
           courseId: course.courseId,
           certificateToken: certificate.token
         };
+        await toast.present();
         this.courseService.downloadCurrentProfileCourseCertificate(downloadRequest).toPromise()
-        .then((res) => {
-          this.commonUtilService.showToast('CERTIFICATE_DOWNLOADED');
+        .then(async (res) => {
+          await toast.dismiss();
           this.openpdf(res.path);
-        }).catch((err) => {
+        }).catch(async (err) => {
+          await toast.dismiss();
           if (err instanceof CertificateAlreadyDownloaded) {
             const certificateName = certificate.url.substring(certificate.url.lastIndexOf('/') + 1);
             const filePath = `${cordova.file.externalRootDirectory}Download/${certificateName}`;
             this.openpdf(filePath);
-            this.commonUtilService.showToast('CERTIFICATE_ALREADY_DOWNLOADED');
           }
         });
       } else {
@@ -471,7 +482,10 @@ export class ProfilePage implements OnInit {
     this.fileOpener
       .open(path, 'application/pdf')
       .then(() => console.log('File is opened'))
-      .catch(e => console.log('Error opening file', e));
+      .catch((e) => {
+        console.log('Error opening file', e);
+        this.commonUtilService.showToast('CERTIFICATE_ALREADY_DOWNLOADED');
+      });
   }
 
   shareTrainingCertificate(course: Course, certificate: CourseCertificate) {
