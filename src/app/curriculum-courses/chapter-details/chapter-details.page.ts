@@ -346,8 +346,12 @@ export class ChapterDetailsPage implements OnInit, OnDestroy {
       const firstChild = this.loadFirstChildren(this.chapter);
       this.navigateToChildrenDetailsPage(firstChild, 1);
     } else {
-      this.commonUtilService.showToast(this.commonUtilService.translateMessage('COURSE_WILL_BE_AVAILABLE',
+      if (!this.childContents.length) {
+        this.commonUtilService.showToast('NO_CONTENT_AVAILABLE_IN_MODULE');
+      } else {
+        this.commonUtilService.showToast(this.commonUtilService.translateMessage('COURSE_WILL_BE_AVAILABLE',
         this.datePipe.transform(this.courseStartDate, 'mediumDate')));
+      }
     }
   }
 

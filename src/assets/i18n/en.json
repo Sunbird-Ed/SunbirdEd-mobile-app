@@ -93,7 +93,7 @@
   "CHANGE": "Change",
   "CHANGE_ROLE": "Change Role",
   "CHANGE_USER": "Change User",
-  "CHAPTER_TRAINING_COMPLETED_SUCCESSFULLY": "You have finished this chapter.",
+  "CHAPTER_TRAINING_COMPLETED_SUCCESSFULLY": "You have finished this module.",
   "CHECK_FOR_UPDATES": "Check for Updates",
   "CHOOSE_FROM_FOLLOWING": "Select from the following",
   "CHOOSE_LANGUAGE": "Choose Your Preferred Language",
@@ -742,5 +742,6 @@
   "UPDATE_DETAILS":"Update Details",
   "PLEASE_PROVIDE_FOLLOWING_DETAILS":"Please provide the following details",
   "THANK_YOU_FOR_SUBMITTING_YOUR_DETAILS": "Thank you for submitting your details",
-  "CERTIFICATE_DOWNLOAD_INFO": "Certificate getting downloaded"
+  "CERTIFICATE_DOWNLOAD_INFO": "Certificate is getting downloaded",
+  "NO_CONTENT_AVAILABLE_IN_MODULE": "There is no content available in this module"
 }
