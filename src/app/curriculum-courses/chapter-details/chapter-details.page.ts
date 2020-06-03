@@ -766,7 +766,6 @@ export class ChapterDetailsPage implements OnInit, OnDestroy {
   subscribeSdkEvent() {
     this.eventSubscription = this.eventsBusService.events()
       .subscribe((event: EventsBusEvent) => {
-        console.log('event--->', event);
         this.zone.run(() => {
           // Show download percentage
           if (event.type === DownloadEventType.PROGRESS) {
