@@ -1298,27 +1298,34 @@ describe('EnrolledCourseDetailsPage', () => {
     describe('setChildContents()', () => {
         it('should fetch child contents ', (done) => {
             // arrange
-            const data = {
-                mimeType: 'content',
-                children: [],
-                identifier: 'do_1212123123'
-            };
             enrolledCourseDetailsPage.courseCardData = {
                 batchId: '123123123'
             };
-            spyOn(enrolledCourseDetailsPage, 'toggleGroup').and.stub();
-            jest.spyOn(mockContentService, 'getChildContents').mockReturnValue(of(data));
-            jest.spyOn(enrolledCourseDetailsPage, 'getContentState');
-            jest.spyOn(enrolledCourseDetailsPage, 'getContentsSize');
+            mockContentService.getChildContents = jest.fn(() => of({
+                id: 'do-123',
+                children: [{id: 'do-1-123'}]
+            }));
+            mockZone.run = jest.fn((fn) => fn());
+            enrolledCourseDetailsPage.courseCardData = {
+                batchId: 'sample-batch-id'
+            };
+            jest.spyOn(enrolledCourseDetailsPage, 'getContentState').mockImplementation(() => {
+                return;
+            });
+            jest.spyOn(enrolledCourseDetailsPage, 'getContentsSize').mockImplementation(() => {
+                return;
+            });
             // act
             enrolledCourseDetailsPage.setChildContents();
             // assert
             setTimeout(() => {
-                expect(enrolledCourseDetailsPage.enrolledCourseMimeType).toEqual(data.mimeType);
-                expect(enrolledCourseDetailsPage.childrenData).toEqual(data.children);
-                expect(enrolledCourseDetailsPage.childContentsData).toEqual(data);
+                expect(mockContentService.getChildContents).toHaveBeenCalled();
                 expect(enrolledCourseDetailsPage.getContentState).toBeCalledWith(true);
-                expect(enrolledCourseDetailsPage.getContentsSize).toBeCalledWith(data.children);
+                expect(enrolledCourseDetailsPage.getContentsSize).toBeCalledWith([{id: 'do-1-123'}]);
+                expect(enrolledCourseDetailsPage.courseHeirarchy).toStrictEqual({
+                    id: 'do-123',
+                    children: [{id: 'do-1-123'}]
+                });
                 done();
             }, 0);
         });
@@ -1330,18 +1337,15 @@ describe('EnrolledCourseDetailsPage', () => {
                 children: [],
                 identifier: 'do_1212123123'
             };
-            enrolledCourseDetailsPage.courseCardData = {
-                batchId: '123123123'
-            };
-            spyOn(enrolledCourseDetailsPage, 'toggleGroup').and.stub();
-            jest.spyOn(mockContentService, 'getChildContents').mockReturnValue(of(Promise.reject()));
-            jest.spyOn(enrolledCourseDetailsPage, 'getContentState');
-            jest.spyOn(enrolledCourseDetailsPage, 'getContentsSize');
+            mockContentService.getChildContents = jest.fn(() => throwError({error: 'error'}));
+            mockZone.run = jest.fn((fn) => fn());
             // act
             enrolledCourseDetailsPage.setChildContents();
             // assert
             setTimeout(() => {
                 expect(enrolledCourseDetailsPage.showChildrenLoader).toEqual(false);
+                expect(mockContentService.getChildContents).toHaveBeenCalled();
+                expect(mockZone.run).toHaveBeenCalled();
                 done();
             }, 0);
         });
@@ -1791,39 +1795,6 @@ describe('EnrolledCourseDetailsPage', () => {
         });
     });
 
-    describe('loadFirstChildren()', () => {
-        it('should have no child contents', () => {
-            // arrange
-            spyOn(enrolledCourseDetailsPage, 'loadFirstChildren').and.callThrough();
-            const node = {};
-            const data = {
-                children: [
-                    {
-                        children: [
-                            node, {}
-                        ]
-                    }, {}
-                ]
-            };
-            // act
-            const result = enrolledCourseDetailsPage.loadFirstChildren(data);
-            // assert
-            expect(result).toBe(node);
-            expect(enrolledCourseDetailsPage.loadFirstChildren).toBeCalledTimes(3);
-        });
-
-        it('should have childrens', () => {
-            // arrange
-            jest.resetAllMocks();
-            const data = {};
-
-            // act
-            const result = enrolledCourseDetailsPage.loadFirstChildren(data);
-            // assert
-            expect(result).toEqual(data);
-        });
-    });
-
     describe('startContent()', () => {
         it('should go to content details page', () => {
             // arrange
@@ -1892,7 +1863,6 @@ describe('EnrolledCourseDetailsPage', () => {
             // ** getStatusOfCourseCompletion
             enrolledCourseDetailsPage.childrenData = mockChildrenData;
             enrolledCourseDetailsPage.lastReadContentId = 'do_135241345727';
-            spyOn(enrolledCourseDetailsPage, 'getLastPlayedName');
             // act
             await enrolledCourseDetailsPage.getContentState(false);
             // assert
@@ -1906,13 +1876,11 @@ describe('EnrolledCourseDetailsPage', () => {
             mockZone.run = jest.fn((cb) => cb());
 
             // ** getStatusOfCourseCompletion
-            enrolledCourseDetailsPage.childrenData = mockChildrenData;
             enrolledCourseDetailsPage.lastReadContentId = 'do_135241345727';
-            spyOn(enrolledCourseDetailsPage, 'getLastPlayedName');
             // act
             await enrolledCourseDetailsPage.getContentState(false);
             // assert
-            expect(mockChildrenData[0].lastRead).toBe(true);
+            expect(mockChildrenData[0].children).toBeTruthy();
             done();
         });
     });
