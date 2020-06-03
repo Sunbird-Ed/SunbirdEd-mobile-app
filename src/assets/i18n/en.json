@@ -664,6 +664,9 @@
   "YOU_MUST_JOIN_TO_ACCESS_TRAINING_DETAIL": "You must log in to access training details",
   "YOU_MUST_LOGIN_TO_ACCESS_QUIZ_CONTENT": "You must login to access this content",
   "TUTORIAL_HEADING": "Videos, interactive content, eTextbooks and more...",
-  "DETAIL_TUTORIAL": "{{%s}}'s library has a host of {{%videos}}, {{%interactive}} and other {{%worksheets}}. Click on a textbook to start exploring the library!",
-  "TUTORIAL_BUTTON": "Choose a textbook to start"
+  "DETAIL_TUTORIAL": "{{%appName}}'s library has a host of {{%explainVideos}}, {{%quesBanks}} and other {{%interactiveMaterial}}. Click on a textbook to start exploring the library!",
+  "TUTORIAL_BUTTON": "Choose a textbook to start",
+  "EXP_VIDEOS": "explanation videos",
+  "QUES_BANKS": "question banks",
+  "INTERACTIVE_MATERIAL": "interactive study material"
 }
