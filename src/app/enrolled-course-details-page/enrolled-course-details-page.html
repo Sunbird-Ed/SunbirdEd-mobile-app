@@ -112,28 +112,28 @@
 				class="enrolled-course-container">
 				<ion-card class="enrolled-course-card">
 					<ion-card-content class="ion-padding-top">
-						<ion-card-title class="last-read-content padding-bottom-8">{{lastReadContentName}}
+						<ion-card-title class="last-read-content padding-bottom-8">{{nextContent?.name}}
 						</ion-card-title>
-						<button *ngIf="!showResumeBtn && childrenData?.length && lastReadContentType !== 'SelfAssess'"
+						<button *ngIf="!showResumeBtn && courseHeirarchy?.children?.length && nextContent?.contentType !== 'SelfAssess'"
 							class="enrolled-course-card-button" (click)="startContent()"><span>
 								<img class="play-icon" src="assets/imgs/Play@1.5x.svg" alt="play-icon">
 								{{ 'START_COURSE_NOW' | translate }} </span></button>
-						<button *ngIf="showResumeBtn && lastReadContentType !== 'SelfAssess'"
+						<button *ngIf="showResumeBtn && nextContent?.contentType !== 'SelfAssess'"
 							class="enrolled-course-card-button"
 							(click)="resumeContent()"><span>
 								<img class="play-icon" src="assets/imgs/Play@1.5x.svg" alt="play-icon">
 								{{ 'CONTINUE_NOW' | translate }} </span></button>
-						<button *ngIf="lastReadContentType === 'SelfAssess'" class="enrolled-course-card-button"
+						<button *ngIf="nextContent?.contentType === 'SelfAssess'" class="enrolled-course-card-button"
 							(click)="resumeContent()"><span>
 								<img class="play-icon" src="assets/imgs/Play@1.5x.svg" alt="play-icon">
 								{{ 'START_ASSESSMENT' | translate }} </span></button>
 						<div *ngIf="batchDetails?.endDate && !batchExp" class="enrollment-end-date ion-padding-bottom">
 							<ion-icon name="information-circle"></ion-icon>
 							<span
-								*ngIf="!course?.certificate && lastReadContentType !== 'SelfAssess'">{{'COMPLETE_TRAINING_TO_EARN_CERTIFICATE' | translate: {'%s': batchDetails?.endDate | date} }}
+								*ngIf="!course?.certificate && nextContent?.contentType !== 'SelfAssess'">{{'COMPLETE_TRAINING_TO_EARN_CERTIFICATE' | translate: {'%s': batchDetails?.endDate | date} }}
 							</span>
 							<span
-								*ngIf="!course?.certificate && lastReadContentType === 'SelfAssess'">{{'COMPLETE_ASSESSMENT_TO_EARN_CERTIFICATE' | translate: {'%s': batchDetails?.endDate | date} }}
+								*ngIf="!course?.certificate && nextContent?.contentType === 'SelfAssess'">{{'COMPLETE_ASSESSMENT_TO_EARN_CERTIFICATE' | translate: {'%s': batchDetails?.endDate | date} }}
 							</span>
 							<span
 								*ngIf="course?.certificate">{{'TO_EARN_CERTIFICATE' | translate: {'%s': batchDetails?.endDate | date} }}</span>
@@ -359,7 +359,7 @@
 			<div *ngSwitchCase="'modules'">
 				<sb-toc-curriculum [isChapterListing]="true" [tocData]="courseHeirarchy" (tocCardClick)="onTocCardClick($event)"
 				shadowColor="#d2eadd" progressColor="#008840"></sb-toc-curriculum>
-				<!-- <div *ngFor="let item of childrenData; let i = index;">
+				<!-- <div *ngFor="let item of courseHeirarchy.children let i = index;">
 					<ion-card class="sb-accordian-card">
 						<ion-grid class="sb-accordian-header">
 							<ion-row (click)="toggleGroup(i , item)" *ngIf="item?.children">
