@@ -75,7 +75,7 @@ import { ContentDeleteHandler } from '@app/services/content/content-delete-handl
 import { LocalCourseService } from '@app/services';
 import { EnrollCourse } from './course.interface';
 import { SbSharePopupComponent } from '../components/popups/sb-share-popup/sb-share-popup.component';
-import { share } from 'rxjs/operators';
+import { share, startWith } from 'rxjs/operators';
 import { SbProgressLoader } from '../../services/sb-progress-loader.service';
 declare const cordova;
 
@@ -288,7 +288,10 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
       this.segmentType = 'modules';
     }
     this.trackDownloads$ = this.downloadService.trackDownloads({ groupBy: { fieldPath: 'rollUp.l1', value: this.identifier } }).pipe(
-      share());
+      share(), startWith({
+        completed: [],
+        queued: []
+      }));
   }
 
   showDeletePopup() {
@@ -325,7 +328,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
       this.courseCardData.batchId = res.batchId;
       await this.getBatchDetails();
       this.segmentType = 'modules';
-      this.getCourseProgress();
+      // this.getCourseProgress();
       this.getContentState(true);
       if (res && res.batchId) {
         this.batchId = res.batchId;
@@ -732,7 +735,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
         this.userRating = contentFeedback[0].rating;
         this.ratingComment = contentFeedback[0].comments;
       }
-      this.getCourseProgress();
+      // this.getCourseProgress();
     } else {
       this.commonUtilService.showToast('ERROR_CONTENT_NOT_AVAILABLE');
       this.location.back();
@@ -1766,7 +1769,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
           this.contentStatusData = success;
 
           if (this.contentStatusData && this.contentStatusData.contentList) {
-            this.getUnitLevelProgress();
+            this.getLocalCourseAndUnitProgress();
             let progress = 0;
             this.contentStatusData.contentList.forEach((contentState: ContentState) => {
               if (contentState.status === 2) {
@@ -1775,7 +1778,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
             });
 
             this.courseCardData.progress = progress;
-            this.getCourseProgress();
+            // this.getCourseProgress();
 
             if (this.courseCardData.progress && this.courseCardData.progress > 0) {
               this.showResumeBtn = true;
@@ -1792,19 +1795,26 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
     }
   }
 
-  getUnitLevelProgress() {
+  getLocalCourseAndUnitProgress() {
+    const courseLevelViewedContents = [];
     this.courseHeirarchy.children.forEach(collection => {
       const leafNodes = this.getLeafNodes([collection]);
-      const viewedContents = [];
+      const UnitLevelViewedContents = [];
       for (const content of leafNodes) {
         if (this.contentStatusData.contentList.find((c) => c.contentId === content.identifier && c.status === 2)) {
-          viewedContents.push(content);
+          UnitLevelViewedContents.push(content);
+          courseLevelViewedContents.push(content);
         }
       }
-      if (viewedContents.length) {
-        collection.progressPercentage = Math.round((viewedContents.length / leafNodes.length) * 100);
+      if (UnitLevelViewedContents.length) {
+        collection.progressPercentage = Math.round((UnitLevelViewedContents.length / leafNodes.length) * 100);
       }
     });
+    if (courseLevelViewedContents.length) {
+      const leafNodes = this.getLeafNodes([this.courseHeirarchy]);
+      this.course.progress = Math.round((courseLevelViewedContents.length / leafNodes.length) * 100);
+      console.log('localcourseProgressPercentage', this.course.progress);
+    }
   }
 
   async handleHeaderEvents($event) {
