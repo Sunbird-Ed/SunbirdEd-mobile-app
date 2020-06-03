@@ -142,7 +142,7 @@
   <app-sb-download-popup *ngIf="downloads.queued.length"
     (cancelDownloadEmit)="cancelDownload($event)" 
     [currentCount]="downloads.completed.length"
-    [queuedIdentifiers]="(downloads.queued.length+downloads.completed.length)" 
+    [queuedIdentifiers]="(downloadIdentifiers.size)" 
     [downloadSize]="downloadSize"
     [collectionName]="chapter?.name" 
     [showDownload]="true"

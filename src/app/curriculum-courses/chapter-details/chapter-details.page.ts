@@ -122,6 +122,9 @@ export class ChapterDetailsPage implements OnInit, OnDestroy {
     this.isFromDeeplink = this.extrasData.isFromDeeplink;
     this.courseContentData = this.courseContent.contentData;
     this.identifier = this.chapter.identifier;
+    if (!this.telemetryObject) {
+      this.telemetryObject = ContentUtil.getTelemetryObject(this.courseContent);
+    }
   }
 
   ngOnInit() {
