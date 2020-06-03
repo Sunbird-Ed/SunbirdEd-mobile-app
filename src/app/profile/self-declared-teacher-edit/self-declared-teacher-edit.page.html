@@ -8,6 +8,8 @@
 
 </ion-content>
 <ion-footer>
-  <ion-button expand="block" [disabled]="!isFormValid" class="mb-16 mr-16 ml-16" *ngIf="editType === 'add'" (click)="submit()"> {{'BTN_SUBMIT' | translate}} </ion-button>
-  <ion-button expand="block" [disabled]="!isFormValid" class="mb-16 mr-16 ml-16" *ngIf="editType === 'edit'" (click)="submit()"> {{'UPDATE' | translate}} </ion-button>
+  <ion-button expand="block" [disabled]="!isFormValid" class="M16 MB30" (click)="submit()">
+    <span *ngIf="editType === 'add'">{{'BTN_SUBMIT' | translate}}</span> 
+    <span *ngIf="editType === 'edit'">{{'UPDATE' | translate}}</span> 
+  </ion-button>
 </ion-footer>

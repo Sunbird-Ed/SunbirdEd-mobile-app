@@ -76,10 +76,11 @@ export class ProfilePage implements OnInit {
 
   imageUri = 'assets/imgs/ic_profile_default.png';
 
-  readonly DEFAULT_PAGINATION_LIMIT = 2;
+  readonly DEFAULT_PAGINATION_LIMIT = 3;
+  readonly DEFAULT_ENROLLED_COURSE_LIMIT = 3;
   rolesLimit = 2;
   badgesLimit = 2;
-  trainingsLimit = 2;
+  trainingsLimit = this.DEFAULT_ENROLLED_COURSE_LIMIT;
   startLimit = 0;
   custodianOrgId: string;
   isCustodianOrgId: boolean;
@@ -367,7 +368,7 @@ export class ProfilePage implements OnInit {
   }
 
   showLessTrainings(): void {
-    this.trainingsLimit = this.DEFAULT_PAGINATION_LIMIT;
+    this.trainingsLimit = this.DEFAULT_ENROLLED_COURSE_LIMIT;
   }
 
 

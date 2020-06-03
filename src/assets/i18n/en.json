@@ -34,7 +34,6 @@
   "ANSWER": "Answer",
   "APPLY": "APPLY",
   "APPLY_FILTER": "APPLY FILTER",
-  "APP_ID": "{{%s}} ID",
   "APP_QR_CODE": "Have a {{%s}} QR Code?",
   "APP_RATING_RATE_EXPERIENCE": "Rate your app experience",
   "APP_RATING_RATE_ON_PLAYSTORE": "Would you like to submit your rating to the Play Store?",
@@ -742,6 +741,9 @@
   "ADD_TO_CLASSROOM": "Add to classroom",
   "NAME_IS_REQUIRED": "Name is required.",
   "ENTER_USER_NAME": "Enter user name",
+  "YOU_CAN_EDIT_TEACHER_INFO": "You can edit this information from your profile if you need to",
+  "UPDATED_SUCCESSFULLY": "Updated successfully",
+  "ID": "id",
   "CERTIFICATE_DOWNLOAD_INFO": "Certificate is getting downloaded",
   "NO_CONTENT_AVAILABLE_IN_MODULE": "There is no content available in this module"
 }

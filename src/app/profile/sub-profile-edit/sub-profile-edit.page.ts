@@ -9,6 +9,7 @@ import {
   CorrelationData,
   FormService,
   FormRequest,
+  CachedItemRequestSourceFrom,
 } from 'sunbird-sdk';
 import { CommonUtilService } from '@app/services/common-util.service';
 import { AppGlobalService } from '@app/services/app-global-service.service';
@@ -18,6 +19,7 @@ import { AddManagedProfileRequest } from '@project-sunbird/sunbird-sdk/profile/d
 import { CommonFormsComponent } from '@app/app/components/common-forms/common-forms.component';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { Environment, InteractType, ID, PageId, CorReleationDataType, ImpressionType } from '@app/services/telemetry-constants';
+import { ProfileConstants } from '@app/app/app.constant';
 
 @Component({
   selector: 'app-sub-profile-edit',
@@ -152,12 +154,22 @@ export class SubProfileEditPage {
     const loader = await this.commonUtilService.getLoader();
     try {
       await loader.present();
+      let parentProfile;
+      if (this.profile.serverProfile.managedBy) {
+        parentProfile = await this.profileService.getServerProfilesDetails({
+          from: CachedItemRequestSourceFrom.CACHE,
+          userId: this.profile.serverProfile.managedBy,
+          requiredFields: ProfileConstants.REQUIRED_FIELDS
+        }).toPromise();
+      } else {
+        parentProfile = this.profile.serverProfile;
+      }
       const userDetails: AddManagedProfileRequest = {
         firstName: this.formValue.name,
-        managedBy: this.profile.serverProfile['managedBy'] || this.profile.uid,
-        framework: this.profile.serverProfile['framework'] || undefined,
-        locationIds: this.profile.serverProfile['locationIds'] ||
-          (this.profile.serverProfile['userLocations'] && this.profile.serverProfile['userLocations'].map(i => i.id)) || undefined,
+        managedBy: parentProfile.userId,
+        framework: parentProfile['framework'] || undefined,
+        locationIds: parentProfile['locationIds'] ||
+          (parentProfile['userLocations'] && parentProfile['userLocations'].map(i => i.id)) || undefined,
       };
       if (userDetails && userDetails.framework && userDetails.framework.subject) {
         userDetails.framework.subject = [];
