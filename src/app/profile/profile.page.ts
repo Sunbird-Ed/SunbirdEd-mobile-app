@@ -390,7 +390,7 @@ export class ProfilePage implements OnInit {
    */
   getEnrolledCourses() {
     const option = {
-      userId: this.profile.userId,
+      userId: this.profile.userId || this.profile.id,
       refreshEnrolledCourses: false,
       returnRefreshedEnrolledCourses: true
     };

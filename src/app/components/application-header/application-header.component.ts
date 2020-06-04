@@ -239,7 +239,7 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
     try {
       this.profile = await this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise();
       this.managedProfileList$ = this.profileService.managedProfileManager.getManagedServerProfiles({
-        from: CachedItemRequestSourceFrom.CACHE,
+        from: CachedItemRequestSourceFrom.SERVER,
         requiredFields: ProfileConstants.REQUIRED_FIELDS
       }).pipe(
         map(profiles => {
