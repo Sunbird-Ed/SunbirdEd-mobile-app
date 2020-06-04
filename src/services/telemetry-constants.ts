@@ -136,7 +136,8 @@ export enum PageId {
     STORAGE_SETTINGS = 'storage-settings',
     CREATE_MANAGED_USER = 'create-managed-user',
     MANAGE_USERS = 'manage-users',
-    CHAPTER_DETAILS = 'chapter-details'
+    CHAPTER_DETAILS = 'chapter-details',
+    TEACHER_SELF_DECLARATION = 'teacher-self-declaration'
 }
 export enum LogType {
     NOTIFICATION = 'notification'
@@ -209,7 +210,10 @@ export enum InteractType {
     SELECT_SUBMIT = 'select-submit',
     SELECT_CANCEL = 'select-cancel',
     SELECT_ADD = 'select-add',
-    SELECT_MORE = 'select-more'
+    SELECT_MORE = 'select-more',
+    SUBMISSION_INITIATED = 'submission-initiated',
+    SUBMISSION_SUCCESS = 'submission-success',
+    SUBMISSION_FAILURE = 'submission-failure'
 }
 
 
@@ -437,6 +441,8 @@ export enum InteractSubtype {
     UI = 'ui',
     DEVICE = 'device',
     DENY_CLICKED = 'deny-clicked',
+    NEW = 'new',
+    EXISTING = 'existing',
 }
 
 export enum ID {
@@ -462,7 +468,10 @@ export enum ID {
     BTN_CANCEL = 'btn-cancel',
     BTN_ADD = 'btn-add',
     BTN_SWITCH = 'btn-switch',
-    BTN_MORE = 'btn-more'
+    BTN_MORE = 'btn-more',
+    BTN_UPDATE = 'btn-update',
+    BTN_I_AM_A_TEACHER = 'btn-i-am-a-teacher',
+    TEACHER_DECLARATION = 'teacher-declaration'
 }
 
 export enum ActionButtonType {

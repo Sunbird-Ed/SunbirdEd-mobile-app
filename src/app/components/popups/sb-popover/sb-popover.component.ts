@@ -14,6 +14,7 @@ export class SbPopoverComponent implements OnDestroy {
   sbPopoverMainTitle: any;
   sbPopoverContent: any;
   sbPopoverHtmlContent?: string;
+  sbPopoverInfo: any;
   actionsButtons: any;
   icon: any;
   metaInfo: any;
@@ -53,6 +54,8 @@ export class SbPopoverComponent implements OnDestroy {
     this.sbPopoverHeading = this.navParams.get('sbPopoverHeading');
     this.sbPopoverMainTitle = this.navParams.get('sbPopoverMainTitle');
     this.showCloseBtn = this.navParams.get('showCloseBtn');
+    this.sbPopoverInfo = this.navParams.get('sbPopoverInfo');
+
 
     this.content = this.navParams.get('content');
     this.data = this.navParams.get('data');

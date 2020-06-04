@@ -31,7 +31,7 @@ import {
   SharedPreferences,
   CertificateAlreadyDownloaded
 } from 'sunbird-sdk';
-import { Environment, InteractSubtype, InteractType, PageId } from '@app/services/telemetry-constants';
+import { Environment, InteractSubtype, InteractType, PageId, ID } from '@app/services/telemetry-constants';
 import { ActivatedRoute, Router, NavigationExtras } from '@angular/router';
 import { EditContactVerifyPopupComponent } from '@app/app/components/popups/edit-contact-verify-popup/edit-contact-verify-popup.component';
 import {
@@ -44,7 +44,7 @@ import { Observable } from 'rxjs';
 import { AndroidPermissionsService } from '@app/services';
 import { AndroidPermissionsStatus, AndroidPermission } from '@app/services/android-permissions/android-permission';
 import { AppVersion } from '@ionic-native/app-version/ngx';
-import {SbProgressLoader} from '@app/services/sb-progress-loader.service';
+import { SbProgressLoader } from '@app/services/sb-progress-loader.service';
 import { FileOpener } from '@ionic-native/file-opener/ngx';
 import { TranslateService } from '@ngx-translate/core';
 
@@ -199,7 +199,7 @@ export class ProfilePage implements OnInit {
             this.events.publish('refresh:profile');
             this.refresh = false;
             await loader.dismiss();
-            await this.sbProgressLoader.hide({id: 'login'});
+            await this.sbProgressLoader.hide({ id: 'login' });
             resolve();
           }, 500);
           // This method is used to handle trainings completed by user
@@ -390,7 +390,7 @@ export class ProfilePage implements OnInit {
    */
   getEnrolledCourses() {
     const option = {
-      userId: this.profile.userId,
+      userId: this.profile.userId || this.profile.id,
       refreshEnrolledCourses: false,
       returnRefreshedEnrolledCourses: true
     };
@@ -461,17 +461,17 @@ export class ProfilePage implements OnInit {
         };
         await toast.present();
         this.courseService.downloadCurrentProfileCourseCertificate(downloadRequest).toPromise()
-        .then(async (res) => {
-          await toast.dismiss();
-          this.openpdf(res.path);
-        }).catch(async (err) => {
-          await toast.dismiss();
-          if (err instanceof CertificateAlreadyDownloaded) {
-            const certificateName = certificate.url.substring(certificate.url.lastIndexOf('/') + 1);
-            const filePath = `${cordova.file.externalRootDirectory}Download/${certificateName}`;
-            this.openpdf(filePath);
-          }
-        });
+          .then(async (res) => {
+            await toast.dismiss();
+            this.openpdf(res.path);
+          }).catch(async (err) => {
+            await toast.dismiss();
+            if (err instanceof CertificateAlreadyDownloaded) {
+              const certificateName = certificate.url.substring(certificate.url.lastIndexOf('/') + 1);
+              const filePath = `${cordova.file.externalRootDirectory}Download/${certificateName}`;
+              this.openpdf(filePath);
+            }
+          });
       } else {
         this.commonUtilService.showSettingsPageToast('FILE_MANAGER_PERMISSION_DESCRIPTION', this.appName, PageId.PROFILE, true);
       }
@@ -846,17 +846,23 @@ export class ProfilePage implements OnInit {
     await popover.present();
   }
 
-  async openEnrolledCourse(contentData) {
+  async openEnrolledCourse(coursecertificate) {
     try {
-      const content = await this.contentService.getContentDetails({ contentId: contentData.courseId }).toPromise();
-      this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], { state: { content, resumeCourseFlag: true } });
+      const content = await this.contentService.getContentDetails({ contentId: coursecertificate.courseId }).toPromise();
+      const courseParams: NavigationExtras = {
+        state: {
+          content,
+          resumeCourseFlag: (coursecertificate.status === 1)
+        }
+      };
+      this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], courseParams);
     } catch (err) {
       console.error(err);
     }
   }
 
   private async checkForPermissions(): Promise<boolean | undefined> {
-    return new Promise < boolean | undefined>(async (resolve, reject) => {
+    return new Promise<boolean | undefined>(async (resolve, reject) => {
       const permissionStatus = await this.commonUtilService.getGivenPermissionStatus(AndroidPermission.WRITE_EXTERNAL_STORAGE);
       if (permissionStatus.hasPermission) {
         resolve(true);
@@ -927,6 +933,19 @@ export class ProfilePage implements OnInit {
   }
 
   openSelfDeclareTeacherForm(type) {
+    const telemetryId = type === 'add' ? ID.BTN_I_AM_A_TEACHER : ID.BTN_UPDATE;
+    this.telemetryGeneratorService.generateInteractTelemetry(
+      InteractType.TOUCH,
+      '',
+      Environment.USER,
+      PageId.PROFILE,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      telemetryId
+    );
+
     this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.SELF_DECLARED_TEACHER_EDIT}/${type}`], {
       state: {
         profile: this.profile
