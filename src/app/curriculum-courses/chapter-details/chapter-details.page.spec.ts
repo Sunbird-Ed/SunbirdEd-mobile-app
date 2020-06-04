@@ -31,13 +31,10 @@ describe('ChapterDetailsPage', () => {
                     },
                     courseContent: {
                         name: 'course-content', identifier: 'do-123',
+                        batchId: 'sample-batch-id',
                         contentData: { name: 'sample-content-data', identifier: 'do-12345' }
                     },
-                    isFromDeeplink: true,
-                    courseCardData: {
-                        batchId: 'sample-batch-id',
-                        identifier: 'sample-course-id'
-                    }
+                    isFromDeeplink: true
                 }
             }
         })) as any
@@ -400,7 +397,7 @@ describe('ChapterDetailsPage', () => {
 
         it('should not return contentState for catch part', (done) => {
             // arrange
-            chapterDetailsPage.courseCardData = undefined;
+            chapterDetailsPage.courseContent = undefined;
             // act
             chapterDetailsPage.getContentState(true);
             // assert
@@ -413,7 +410,7 @@ describe('ChapterDetailsPage', () => {
     describe('getBatchDetails', () => {
         it('should return courseStartDate if status is 0', (done) => {
             // arrange
-            chapterDetailsPage.courseCardData = {
+            chapterDetailsPage.courseContent = {
                 batchId: 'sample-batch-id'
             };
             mockCourseService.getBatchDetails = jest.fn(() => of({
@@ -425,9 +422,9 @@ describe('ChapterDetailsPage', () => {
             chapterDetailsPage.getBatchDetails();
             // assert
             setTimeout(() => {
-                expect(chapterDetailsPage.courseCardData).toBeTruthy();
-                expect(chapterDetailsPage.courseCardData.batchId).toBeTruthy();
-                expect(mockCourseService.getBatchDetails).toHaveBeenCalledWith({ batchId: chapterDetailsPage.courseCardData.batchId });
+                expect(chapterDetailsPage.courseContent).toBeTruthy();
+                expect(chapterDetailsPage.courseContent.batchId).toBeTruthy();
+                expect(mockCourseService.getBatchDetails).toHaveBeenCalledWith({ batchId: chapterDetailsPage.courseContent.batchId });
                 expect(mockZone.run).toHaveBeenCalled();
                 expect(chapterDetailsPage.batchDetails).toStrictEqual({
                     status: 0,
@@ -441,7 +438,7 @@ describe('ChapterDetailsPage', () => {
 
         it('should return batch Expire date if status is 2', (done) => {
             // arrange
-            chapterDetailsPage.courseCardData = {
+            chapterDetailsPage.courseContent = {
                 batchId: 'sample-batch-id'
             };
             mockCourseService.getBatchDetails = jest.fn(() => of({
@@ -453,9 +450,9 @@ describe('ChapterDetailsPage', () => {
             chapterDetailsPage.getBatchDetails();
             // assert
             setTimeout(() => {
-                expect(chapterDetailsPage.courseCardData).toBeTruthy();
-                expect(chapterDetailsPage.courseCardData.batchId).toBeTruthy();
-                expect(mockCourseService.getBatchDetails).toHaveBeenCalledWith({ batchId: chapterDetailsPage.courseCardData.batchId });
+                expect(chapterDetailsPage.courseContent).toBeTruthy();
+                expect(chapterDetailsPage.courseContent.batchId).toBeTruthy();
+                expect(mockCourseService.getBatchDetails).toHaveBeenCalledWith({ batchId: chapterDetailsPage.courseContent.batchId });
                 expect(mockZone.run).toHaveBeenCalled();
                 expect(chapterDetailsPage.batchDetails).toStrictEqual({
                     status: 2,
@@ -468,7 +465,7 @@ describe('ChapterDetailsPage', () => {
 
         it('should return null if response is undefined', (done) => {
             // arrange
-            chapterDetailsPage.courseCardData = {
+            chapterDetailsPage.courseContent = {
                 batchId: 'sample-batch-id'
             };
             mockCourseService.getBatchDetails = jest.fn(() => of(undefined));
@@ -477,9 +474,9 @@ describe('ChapterDetailsPage', () => {
             chapterDetailsPage.getBatchDetails();
             // assert
             setTimeout(() => {
-                expect(chapterDetailsPage.courseCardData).toBeTruthy();
-                expect(chapterDetailsPage.courseCardData.batchId).toBeTruthy();
-                expect(mockCourseService.getBatchDetails).toHaveBeenCalledWith({ batchId: chapterDetailsPage.courseCardData.batchId });
+                expect(chapterDetailsPage.courseContent).toBeTruthy();
+                expect(chapterDetailsPage.courseContent.batchId).toBeTruthy();
+                expect(mockCourseService.getBatchDetails).toHaveBeenCalledWith({ batchId: chapterDetailsPage.courseContent.batchId });
                 expect(mockZone.run).toHaveBeenCalled();
                 done();
             }, 0);
@@ -487,7 +484,7 @@ describe('ChapterDetailsPage', () => {
 
         it('should return null if status is > 2', (done) => {
             // arrange
-            chapterDetailsPage.courseCardData = {
+            chapterDetailsPage.courseContent = {
                 batchId: 'sample-batch-id'
             };
             mockCourseService.getBatchDetails = jest.fn(() => of({
@@ -499,9 +496,9 @@ describe('ChapterDetailsPage', () => {
             chapterDetailsPage.getBatchDetails();
             // assert
             setTimeout(() => {
-                expect(chapterDetailsPage.courseCardData).toBeTruthy();
-                expect(chapterDetailsPage.courseCardData.batchId).toBeTruthy();
-                expect(mockCourseService.getBatchDetails).toHaveBeenCalledWith({ batchId: chapterDetailsPage.courseCardData.batchId });
+                expect(chapterDetailsPage.courseContent).toBeTruthy();
+                expect(chapterDetailsPage.courseContent.batchId).toBeTruthy();
+                expect(mockCourseService.getBatchDetails).toHaveBeenCalledWith({ batchId: chapterDetailsPage.courseContent.batchId });
                 expect(mockZone.run).toHaveBeenCalled();
                 expect(chapterDetailsPage.batchDetails).toStrictEqual({
                     status: 3,
@@ -513,7 +510,7 @@ describe('ChapterDetailsPage', () => {
 
         it('should handel error for catch part', (done) => {
             // arrange
-            chapterDetailsPage.courseCardData = {
+            chapterDetailsPage.courseContent = {
                 batchId: 'sample-batch-id'
             };
             mockCourseService.getBatchDetails = jest.fn(() => throwError({ error: 'error' }));
@@ -522,23 +519,23 @@ describe('ChapterDetailsPage', () => {
             chapterDetailsPage.getBatchDetails();
             // assert
             setTimeout(() => {
-                expect(chapterDetailsPage.courseCardData).toBeTruthy();
-                expect(chapterDetailsPage.courseCardData.batchId).toBeTruthy();
-                expect(mockCourseService.getBatchDetails).toHaveBeenCalledWith({ batchId: chapterDetailsPage.courseCardData.batchId });
+                expect(chapterDetailsPage.courseContent).toBeTruthy();
+                expect(chapterDetailsPage.courseContent.batchId).toBeTruthy();
+                expect(mockCourseService.getBatchDetails).toHaveBeenCalledWith({ batchId: chapterDetailsPage.courseContent.batchId });
                 done();
             }, 0);
         });
 
         it('should return null if curseCard is undefined', (done) => {
             // arrange
-            chapterDetailsPage.courseCardData = {
+            chapterDetailsPage.courseContent = {
                 batchId: undefined
             };
             // act
             chapterDetailsPage.getBatchDetails();
             // assert
             setTimeout(() => {
-                expect(chapterDetailsPage.courseCardData.batchId).toBeFalsy();
+                expect(chapterDetailsPage.courseContent.batchId).toBeFalsy();
                 done();
             }, 0);
         });
@@ -709,7 +706,7 @@ describe('ChapterDetailsPage', () => {
                     }
                 );
                 expect(chapterDetailsPage.updatedCourseCardData.courseId).toEqual(chapterDetailsPage.courseContentData.identifier);
-                expect(chapterDetailsPage.courseCardData.batchId).toBe(mockData.batchId);
+                expect(chapterDetailsPage.courseContent.batchId).toBe(mockData.batchId);
                 done();
             }, 0);
         });
@@ -1348,7 +1345,7 @@ describe('ChapterDetailsPage', () => {
                 expect(presentFn).toHaveBeenCalled();
                 expect(mockCommonUtilService.getLoader).toHaveBeenCalled();
                 expect(dismissFn).toHaveBeenCalled();
-                expect(chapterDetailsPage.courseCardData.batchId).toBe(items.id);
+                expect(chapterDetailsPage.courseContent.batchId).toBe(items.id);
                 expect(mockCommonUtilService.translateMessage).toHaveBeenCalledWith('COURSE_ENROLLED');
                 expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('course enrolled');
                 expect(mockEvents.publish).toHaveBeenCalledWith(EventTopics.ENROL_COURSE_SUCCESS, {

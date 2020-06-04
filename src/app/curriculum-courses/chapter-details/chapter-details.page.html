@@ -44,7 +44,7 @@
     </div>
     <ion-card-content class="ion-no-padding">
       <div *ngIf="isAlreadyEnrolled">
-        <div *ngIf="courseCardData?.batchId">
+        <div *ngIf="courseContent?.batchId">
           <div class="sb-course-progress-container" *ngIf="!isChapterCompleted && !batchExp">
             <p class="progress-label"><strong>{{'YOUR_PROGRESS_LABEL' | translate}}</strong></p>
             <p>{{viewedContents.length}}/{{childContents.length}} {{'COMPLETED' | translate}}</p>

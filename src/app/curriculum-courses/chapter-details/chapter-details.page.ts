@@ -39,7 +39,6 @@ export class ChapterDetailsPage implements OnInit, OnDestroy {
   batches = [];
   courseContentData: any;
   courseContent: any;
-  courseCardData: any;
   batchExp = false;
   guestUser = true;
   isChapterCompleted = false;
@@ -114,7 +113,7 @@ export class ChapterDetailsPage implements OnInit, OnDestroy {
     this.chapter = this.extrasData.chapterData;
     this.batches = this.extrasData.batches;
     this.isAlreadyEnrolled = this.extrasData.isAlreadyEnrolled;
-    this.courseCardData = this.extrasData.courseCardData;
+    // this.courseCardData = this.extrasData.courseCardData;
     this.batchExp = this.extrasData.batchExp;
     this.telemetryObject = this.extrasData.telemetryObject;
     this.isChapterCompleted = this.extrasData.isChapterCompleted;
@@ -164,24 +163,21 @@ export class ChapterDetailsPage implements OnInit, OnDestroy {
             this.appGlobalService.setEnrolledCourseList(courseList);
           }
           return data.find((element) =>
-            (this.courseCardData && this.courseCardData.batchId && element.batchId === this.courseCardData.batchId)
-            || ((!this.courseCardData || !this.courseCardData.batchId) && element.courseId === this.courseContentData.identifier));
+            (this.courseContent.batchId && element.batchId === this.courseContent.batchId)
+            || (!this.courseContent.batchId && element.courseId === this.identifier));
         })
         .catch(e => {
           console.log(e);
           return null;
         });
-      console.log('this.updatedCourseCardData', this.updatedCourseCardData);
-      if (this.updatedCourseCardData && (!this.courseCardData || !this.courseCardData.batch)) {
-        this.courseCardData = this.updatedCourseCardData;
+      if (this.updatedCourseCardData && !this.courseContent.batch) {
+        this.courseContent = this.updatedCourseCardData;
         this.isAlreadyEnrolled = true;
-        // this.courseCardData.batch = this.updatedCourseCardData.batch;
-        // this.courseCardData.batchId = this.updatedCourseCardData.batchId;
       }
       if (this.isFromDeeplink) {
         this.getContentState(true);
       }
-      console.log('this.courseCardData', this.courseCardData);
+      console.log('this.courseCardData', this.courseContent);
       this.getContentsSize(this.chapter.children);
     }
   }
@@ -237,13 +233,13 @@ export class ChapterDetailsPage implements OnInit, OnDestroy {
 
   async getContentState(returnRefresh: boolean) {
     // const loader = await this.commonUtilService.getLoader();
-    if (this.courseCardData && this.courseCardData.batchId) {
+    if (this.courseContent.batchId) {
       // await loader.present();
       const request: GetContentStateRequest = {
         userId: this.appGlobalService.getUserId(),
         courseIds: [this.courseContentData.identifier],
         returnRefreshedContentStates: returnRefresh,
-        batchId: this.courseCardData.batchId
+        batchId: this.courseContent.batchId
       };
       this.courseService.getContentState(request).toPromise()
         .then(async (res: ContentStateResponse) => {
@@ -260,8 +256,8 @@ export class ChapterDetailsPage implements OnInit, OnDestroy {
   }
 
   async getBatchDetails() {
-    if (this.courseCardData && this.courseCardData.batchId) {
-      this.courseService.getBatchDetails({ batchId: this.courseCardData.batchId }).toPromise()
+    if (this.courseContent && this.courseContent.batchId) {
+      this.courseService.getBatchDetails({ batchId: this.courseContent.batchId }).toPromise()
         .then((data: Batch) => {
           this.zone.run(() => {
             if (!data) {
@@ -328,8 +324,8 @@ export class ChapterDetailsPage implements OnInit, OnDestroy {
         .then((cData) => {
           return cData.find((element) => element.courseId === this.courseContentData.identifier);
         });
-      this.courseCardData.batchId = res.batchId;
-      console.log('enrol succ event -->', this.courseCardData);
+      this.courseContent.batchId = res.batchId;
+      console.log('enrol succ event -->', this.courseContent);
       await this.getBatchDetails();
       // this.getCourseProgress();
       this.getContentState(true);
@@ -353,7 +349,7 @@ export class ChapterDetailsPage implements OnInit, OnDestroy {
         this.commonUtilService.showToast('NO_CONTENT_AVAILABLE_IN_MODULE');
       } else {
         this.commonUtilService.showToast(this.commonUtilService.translateMessage('COURSE_WILL_BE_AVAILABLE',
-        this.datePipe.transform(this.courseStartDate, 'mediumDate')));
+          this.datePipe.transform(this.courseStartDate, 'mediumDate')));
       }
     }
   }
@@ -478,13 +474,13 @@ export class ChapterDetailsPage implements OnInit, OnDestroy {
         userId: this.userId,
         batch: item,
         pageId: PageId.COURSE_BATCHES,
-        courseId: undefined
+        courseId: this.courseContent.identifier
       };
 
       this.localCourseService.enrollIntoBatch(enrollCourse).toPromise()
         .then(async (data: boolean) => {
           await loader.dismiss();
-          this.courseCardData.batchId = item.id;
+          this.courseContent.batchId = item.id;
           this.commonUtilService.showToast(this.commonUtilService.translateMessage('COURSE_ENROLLED'));
           this.events.publish(EventTopics.ENROL_COURSE_SUCCESS, {
             batchId: item.id,
@@ -589,7 +585,7 @@ export class ChapterDetailsPage implements OnInit, OnDestroy {
    */
   navigateToChildrenDetailsPage(content: Content, depth): void {
     const contentState: ContentState = {
-      batchId: this.courseCardData.batchId ? this.courseCardData.batchId : '',
+      batchId: this.courseContent.batchId ? this.courseContent.batchId : '',
       courseId: this.courseContentData.identifier
     };
     this.router.navigate([RouterLinks.CONTENT_DETAILS], {
@@ -834,7 +830,7 @@ export class ChapterDetailsPage implements OnInit, OnDestroy {
           }
 
           // For content update available
-          const hierarchyInfo = this.courseCardData.hierarchyInfo ? this.courseCardData.hierarchyInfo : null;
+          const hierarchyInfo = this.courseContent.hierarchyInfo ? this.courseContent.hierarchyInfo : null;
           const contentUpdateEvent = event as ContentUpdate;
           if (contentUpdateEvent.payload && contentUpdateEvent.payload.contentId === this.courseContentData.identifier &&
             contentUpdateEvent.type === ContentEventType.UPDATE
