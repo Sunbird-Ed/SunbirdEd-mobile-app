@@ -31,7 +31,7 @@ import {
   SharedPreferences,
   CertificateAlreadyDownloaded
 } from 'sunbird-sdk';
-import { Environment, InteractSubtype, InteractType, PageId } from '@app/services/telemetry-constants';
+import { Environment, InteractSubtype, InteractType, PageId, ID } from '@app/services/telemetry-constants';
 import { ActivatedRoute, Router, NavigationExtras } from '@angular/router';
 import { EditContactVerifyPopupComponent } from '@app/app/components/popups/edit-contact-verify-popup/edit-contact-verify-popup.component';
 import {
@@ -927,6 +927,19 @@ export class ProfilePage implements OnInit {
   }
 
   openSelfDeclareTeacherForm(type) {
+    const telemetryId = type === 'add' ? ID.BTN_I_AM_A_TEACHER : ID.BTN_UPDATE;
+    this.telemetryGeneratorService.generateInteractTelemetry(
+      InteractType.TOUCH,
+      '',
+      Environment.USER,
+      PageId.PROFILE,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      telemetryId
+    );
+
     this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.SELF_DECLARED_TEACHER_EDIT}/${type}`], {
       state: {
         profile: this.profile
