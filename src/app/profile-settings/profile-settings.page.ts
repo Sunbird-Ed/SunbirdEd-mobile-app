@@ -381,10 +381,10 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
       this.appGlobalService.generateSaveClickedTelemetry(this.extractProfileForTelemetry(this.profileSettingsForm.value), 'passed',
         PageId.ONBOARDING_PROFILE_PREFERENCES, InteractSubtype.FINISH_CLICKED);
       /* New Telemetry */
-      const correlationList: Array<CorrelationData> = [];
-      correlationList.push({ id: this.syllabusControl.value, type: CorReleationDataType.BOARD });
-      correlationList.push({ id: this.mediumControl.value, type: CorReleationDataType.MEDIUM });
-      correlationList.push({ id: this.gradeControl.value, type: CorReleationDataType.BOARD });
+      let correlationList: Array<CorrelationData> = [];
+      correlationList = this.populateCData(this.syllabusControl.value, CorReleationDataType.BOARD);
+      correlationList = correlationList.concat(this.populateCData(this.mediumControl.value, CorReleationDataType.MEDIUM));
+      correlationList = correlationList.concat(this.populateCData(this.gradeControl.value, CorReleationDataType.CLASS));
       this.telemetryGeneratorService.generateInteractTelemetry(
         InteractType.SELECT_SUBMIT, '',
         Environment.ONBOARDING,

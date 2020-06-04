@@ -438,7 +438,7 @@ export class TelemetryGeneratorService {
     generateBackClickedNewTelemetry(isDeviceBack, env, pageId) {
         this.generateInteractTelemetry(
             InteractType.SELECT_BACK,
-            isDeviceBack ? InteractSubtype.DEVICE_BACK_CLICKED : InteractSubtype.UI,
+            isDeviceBack ? InteractSubtype.DEVICE : InteractSubtype.UI,
             env,
             pageId
         );
