@@ -1168,38 +1168,6 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
       });
   }
 
-  /**
-   * Redirect to child content details page
-   */
-  navigateToChildrenDetailsPage(content: Content, depth): void {
-    const subtype = InteractSubtype.CONTENT_CLICKED;
-    const contentState: ContentState = {
-      batchId: this.courseCardData.batchId ? this.courseCardData.batchId : '',
-      courseId: this.identifier
-    };
-    this.zone.run(() => {
-      this.router.navigate([RouterLinks.CONTENT_DETAILS], {
-        state: {
-          content,
-          depth,
-          contentState,
-          isChildContent: true,
-          corRelation: this.corRelationList,
-          isCourse: true,
-          course: this.updatedCourseCardData
-        }
-      });
-      this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
-        subtype,
-        Environment.HOME,
-        PageId.COURSE_DETAIL,
-        ContentUtil.getTelemetryObject(content),
-        undefined,
-        ContentUtil.generateRollUp(content.hierarchyInfo, undefined),
-        this.corRelationList);
-    });
-  }
-
   cancelDownload() {
     const showHeader = () => {
       this.zone.run(() => {
@@ -1236,27 +1204,37 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
     }
   }
 
+  startContent() {
+    this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
+      InteractSubtype.START_CLICKED,
+      Environment.HOME,
+      PageId.COURSE_DETAIL,
+      this.telemetryObject,
+      undefined,
+      this.objRollup,
+      this.corRelationList
+    );
+    if (this.courseHeirarchy && this.courseHeirarchy.children
+      && this.courseHeirarchy.children.length && !this.isBatchNotStarted) {
+      if (!this.nextContent) {
+        this.initNextContent();
+      }
+      this.navigateToContentDetails(this.nextContent, 1);
+    } else {
+      this.commonUtilService.showToast(this.commonUtilService.translateMessage('COURSE_WILL_BE_AVAILABLE',
+        this.datePipe.transform(this.courseStartDate, 'mediumDate')));
+    }
+  }
+
   /**
    * Function gets executed when user click on resume course button.
    */
   resumeContent(): void {
-    const params: NavigationExtras = {
-      state: {
-        content: this.nextContent,
-        depth: '1', // Needed to handle some UI elements.
-        contentState: {
-          batchId: this.courseCardData.batchId ? this.courseCardData.batchId : '',
-          courseId: this.identifier
-        },
-        isResumedCourse: true,
-        isChildContent: true,
-        resumedCourseCardData: this.courseCardData,
-        corRelation: this.corRelationList,
-        isCourse: true,
-        course: this.updatedCourseCardData
-      }
-    };
-    this.router.navigate([RouterLinks.CONTENT_DETAILS], params);
+    if (!this.nextContent) {
+      this.initNextContent();
+    }
+    this.navigateToContentDetails(this.nextContent, 1);
+
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
       InteractSubtype.RESUME_CLICKED,
       Environment.HOME,
@@ -1266,6 +1244,29 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
       this.objRollup,
       this.corRelationList
     );
+  }
+
+  /**
+   * Redirect to child content details page
+   */
+  private navigateToContentDetails(content: Content, depth): void {
+    const params: NavigationExtras = {
+      state: {
+        content,
+        depth, // Needed to handle some UI elements.
+        contentState: {
+          batchId: this.courseCardData.batchId ? this.courseCardData.batchId : '',
+          courseId: this.identifier
+        },
+        // isResumedCourse: true,
+        isChildContent: true,
+        // resumedCourseCardData: this.courseCardData,
+        corRelation: this.corRelationList,
+        isCourse: true,
+        course: this.updatedCourseCardData
+      }
+    };
+    this.router.navigate([RouterLinks.CONTENT_DETAILS], params);
   }
 
   /**
@@ -1576,28 +1577,6 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
     }
   }
 
-  /**
-   * Get executed when user click on start button
-   */
-  startContent() {
-    this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
-      InteractSubtype.START_CLICKED,
-      Environment.HOME,
-      PageId.COURSE_DETAIL,
-      this.telemetryObject,
-      undefined,
-      this.objRollup,
-      this.corRelationList
-    );
-    if (this.courseHeirarchy && this.courseHeirarchy.children
-      && this.courseHeirarchy.children.length && !this.isBatchNotStarted) {
-      this.navigateToChildrenDetailsPage(this.nextContent, 1);
-    } else {
-      this.commonUtilService.showToast(this.commonUtilService.translateMessage('COURSE_WILL_BE_AVAILABLE',
-        this.datePipe.transform(this.courseStartDate, 'mediumDate')));
-    }
-  }
-
   async share() {
     const popover = await this.popoverCtrl.create({
       component: SbSharePopupComponent,
@@ -1819,6 +1798,9 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
               courseId: item.courseId
             });
             this.isAlreadyEnrolled = true;
+            this.contentStatusData = {
+              contentList: []
+            };
           });
         }, (error) => {
           this.zone.run(async () => {
@@ -1955,14 +1937,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
       this.router.navigate([`/${RouterLinks.CURRICULUM_COURSES}/${RouterLinks.CHAPTER_DETAILS}`],
         chapterParams);
     } else {
-      this.router.navigate([RouterLinks.CONTENT_DETAILS], {
-        state: {
-          content: event.item,
-          // depth,
-          // contentState: this.stateData,
-          corRelation: this.corRelationList
-        }
-      });
+      this.navigateToContentDetails(event.item, 1);
     }
   }
 

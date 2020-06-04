@@ -121,13 +121,17 @@
 						</ion-card-title>
 						<button
 							*ngIf="!showResumeBtn && courseHeirarchy?.children?.length && nextContent?.contentType !== 'SelfAssess'"
-							class="enrolled-course-card-button" (click)="startContent()"><span>
+							class="enrolled-course-card-button" (click)="startContent()">
+							<span>
 								<img class="play-icon" src="assets/imgs/Play@1.5x.svg" alt="play-icon">
-								{{ 'START_COURSE_NOW' | translate }} </span></button>
+								{{ 'START_COURSE_NOW' | translate }} </span>
+						</button>
 						<button *ngIf="showResumeBtn && nextContent?.contentType !== 'SelfAssess'"
-							class="enrolled-course-card-button" (click)="resumeContent()"><span>
+							class="enrolled-course-card-button" (click)="resumeContent()">
+							<span>
 								<img class="play-icon" src="assets/imgs/Play@1.5x.svg" alt="play-icon">
-								{{ 'CONTINUE_NOW' | translate }} </span></button>
+								{{ 'CONTINUE_NOW' | translate }} </span>
+						</button>
 						<button *ngIf="nextContent?.contentType === 'SelfAssess'" class="enrolled-course-card-button"
 							(click)="resumeContent()">
 							<span>
