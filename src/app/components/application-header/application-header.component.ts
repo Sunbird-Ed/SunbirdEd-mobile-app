@@ -239,7 +239,7 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
     try {
       this.profile = await this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise();
       this.managedProfileList$ = this.profileService.managedProfileManager.getManagedServerProfiles({
-        from: CachedItemRequestSourceFrom.SERVER,
+        from: CachedItemRequestSourceFrom.CACHE,
         requiredFields: ProfileConstants.REQUIRED_FIELDS
       }).pipe(
         map(profiles => {
@@ -273,10 +273,6 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
   }
 
   openManagedUsers() {
-    if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
-      this.commonUtilService.showToast('NEED_INTERNET_TO_CHANGE');
-      return;
-    }
     const pageId = this.activePageService.computePageId(this.router.url);
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.SELECT_MORE,
@@ -299,10 +295,6 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
   }
 
   switchUser(user) {
-    if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
-      this.commonUtilService.showToast('NEED_INTERNET_TO_CHANGE');
-      return;
-    }
     const pageId = this.activePageService.computePageId(this.router.url);
     const cData: Array<CorrelationData> = [
       { id: user.id || '', type: CorReleationDataType.SWITCHED_USER }

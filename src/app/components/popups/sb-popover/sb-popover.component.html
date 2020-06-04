@@ -15,7 +15,7 @@
       <img [src]=img alt="" />
     </div>
 
-    <div class="sb-popover-content-details" *ngIf="sbPopoverMainTitle || metaInfo || sbPopoverContent || sbPopoverHtmlContent">
+    <div class="sb-popover-content-details" *ngIf="sbPopoverMainTitle || metaInfo || sbPopoverContent || sbPopoverHtmlContent || sbPopoverInfo">
       <div class="main-title">
         {{sbPopoverMainTitle}}
         <div class="meta-info">
@@ -26,6 +26,9 @@
         {{sbPopoverContent}}
       </div>
       <div *ngIf="sbPopoverHtmlContent" [innerHTML]="sbPopoverHtmlContent">
+      </div>
+      <div class="sb-popover-information" *ngIf="sbPopoverInfo">
+        {{sbPopoverInfo}}
       </div>
     </div>
   </div>
