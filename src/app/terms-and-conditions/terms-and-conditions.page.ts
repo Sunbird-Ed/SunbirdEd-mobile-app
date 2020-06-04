@@ -112,7 +112,10 @@ export class TermsAndConditionsPage implements OnInit {
       );
       await loader.present();
       // await tncUpdateHandlerService.onAcceptTnc(this.userProfileDetails);
-      const isTCAccepted = await this.profileService.acceptTermsAndConditions({ version: this.userProfileDetails.tncLatestVersion })
+      const isTCAccepted = await this.profileService.acceptTermsAndConditions({
+        userId: this.userProfileDetails.userId,
+        version: this.userProfileDetails.tncLatestVersion
+      })
         .toPromise();
 
       if (isTCAccepted) {
