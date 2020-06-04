@@ -29,8 +29,9 @@ import { ContentInfo } from '../../services/content/content-info';
 import { PreferenceKey, ProfileConstants, EventTopics } from '../app.constant';
 import { isObject } from 'util';
 import { SbPopoverComponent } from '../components/popups';
-import { Mode, Environment, ImpressionType } from '../../services/telemetry-constants';
+import { Mode, Environment, ImpressionType, InteractSubtype } from '../../services/telemetry-constants';
 import {SbProgressLoader} from '@app/services/sb-progress-loader.service';
+import {MimeType} from '../app.constant';
 
 describe('EnrolledCourseDetailsPage', () => {
     let enrolledCourseDetailsPage: EnrolledCourseDetailsPage;
@@ -1796,28 +1797,85 @@ describe('EnrolledCourseDetailsPage', () => {
     });
 
     describe('startContent()', () => {
-        it('should go to content details page', () => {
+        it('should find next content which status is 0 or 1', () => {
             // arrange
-            jest.resetAllMocks();
-            jest.spyOn(enrolledCourseDetailsPage, 'navigateToChildrenDetailsPage');
-            enrolledCourseDetailsPage.startData = '22/03/2020';
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            enrolledCourseDetailsPage.courseHeirarchy = {
+                identifier: 'do-123',
+                mimeType: MimeType.DOCS[0],
+                children: [
+                    {
+                        identifier: 'do-1-123',
+                        mimeType: MimeType.COLLECTION
+                    },
+                    {
+                        identifier: 'do-2-123',
+                        mimeType: MimeType.DOCS[0]
+                    }
+                ]
+            };
+            enrolledCourseDetailsPage.contentStatusData = {
+                contentList: [
+                        {
+                        contentId: 'do-123',
+                        status: 2
+                    },
+                    {
+                        contentId: 'do-1-123',
+                        status: 1
+                    },
+                    {
+                        contentId: 'do-2-123',
+                        status: 0
+                    }
+                ]
+            };
             enrolledCourseDetailsPage.isBatchNotStarted = false;
+            enrolledCourseDetailsPage.nextContent = false;
             // act
             enrolledCourseDetailsPage.startContent();
             // assert
-            expect(enrolledCourseDetailsPage.navigateToChildrenDetailsPage).toBeCalled();
+            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+                InteractType.TOUCH,
+                InteractSubtype.START_CLICKED,
+                Environment.HOME,
+                PageId.COURSE_DETAIL,
+                {id: 'do_21281258639073280011490', type: 'Course', version: '2'},
+                undefined,
+                {l1: 'do_091231312312'},
+                [{id: '', type: 'CourseBatch'}],
+            );
+            expect(enrolledCourseDetailsPage.courseHeirarchy).toBeTruthy();
+            expect(enrolledCourseDetailsPage.courseHeirarchy.children.length).toBeGreaterThan(0);
+            expect(enrolledCourseDetailsPage.isBatchNotStarted).toBeFalsy();
         });
 
         it('should show toast message', () => {
             // arrange
-            jest.resetAllMocks();
-            jest.spyOn(enrolledCourseDetailsPage, 'navigateToChildrenDetailsPage');
-            enrolledCourseDetailsPage.startData = '22/03/2020';
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            enrolledCourseDetailsPage.courseHeirarchy = {
+                children: []
+            };
             enrolledCourseDetailsPage.isBatchNotStarted = true;
-            mockDatePipe.transform = jest.fn();
+            mockCommonUtilService.translateMessage = jest.fn(() => 'course will be available');
+            mockCommonUtilService.showToast = jest.fn();
+            mockDatePipe.transform = jest.fn(() => '2020-06-04');
             // act
             enrolledCourseDetailsPage.startContent();
             // assert
+            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+                InteractType.TOUCH,
+                InteractSubtype.START_CLICKED,
+                Environment.HOME,
+                PageId.COURSE_DETAIL,
+                {id: 'do_21281258639073280011490', type: 'Course', version: '2'},
+                undefined,
+                {l1: 'do_091231312312'},
+                [{id: '', type: 'CourseBatch'}],
+            );
+            expect(enrolledCourseDetailsPage.courseHeirarchy.children.length).toBe(0);
+            expect(mockCommonUtilService.translateMessage).toHaveBeenCalledWith('COURSE_WILL_BE_AVAILABLE', '2020-06-04');
+            expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('course will be available');
             expect(mockDatePipe.transform).toBeCalled();
         });
     });
