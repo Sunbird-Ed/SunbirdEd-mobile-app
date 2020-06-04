@@ -369,16 +369,16 @@ describe('ProfileSettingsPage', () => {
                     let value;
                     switch (arg) {
                         case 'syllabus':
-                            value = { value: { board: ['AP']}};
+                            value = { board: ['AP', 'NCRT']};
                             break;
                         case 'board':
                             value = { value: { board: ['AP']}};
                             break;
                         case 'medium':
-                            value = { value: { medium: ['English']}};
+                            value = { medium: ['English']};
                             break;
                         case 'grade':
-                            value = { value: { medium: []}};
+                            value = { grade: ['class1']};
                             break;
                     }
                     return value;
