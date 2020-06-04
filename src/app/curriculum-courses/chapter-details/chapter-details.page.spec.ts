@@ -1204,7 +1204,11 @@ describe('ChapterDetailsPage', () => {
                             ongoingBatches: [
                                 { batchId: 'sample-batch-id', status: 1 }
                             ],
-                            telemetryObject: undefined,
+                            telemetryObject: {
+                                id: 'do-123',
+                                type: undefined,
+                                version: undefined,
+                            },
                             upcommingBatches: [{ batchId: 'sample-batch-id', status: 2 }]
                         }
                     });
@@ -1520,6 +1524,11 @@ describe('ChapterDetailsPage', () => {
             };
             // act
             chapterDetailsPage.loadFirstChildren(data);
+            // assert
+            expect(data.children.length).toBeGreaterThan(0);
         });
+    });
+
+    describe('joinTraining', () => {
     });
 });
