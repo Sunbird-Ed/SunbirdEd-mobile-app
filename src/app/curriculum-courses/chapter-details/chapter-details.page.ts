@@ -164,7 +164,7 @@ export class ChapterDetailsPage implements OnInit, OnDestroy {
           }
           return data.find((element) =>
             (this.courseContent.batchId && element.batchId === this.courseContent.batchId)
-            || (!this.courseContent.batchId && element.courseId === this.identifier));
+            || (!this.courseContent.batchId && element.courseId === this.courseContent.identifier));
         })
         .catch(e => {
           console.log(e);
