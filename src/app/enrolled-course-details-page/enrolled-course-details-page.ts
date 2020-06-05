@@ -277,11 +277,6 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
     if (this.courseCardData.batchId) {
       this.segmentType = 'modules';
     }
-    this.trackDownloads$ = this.downloadService.trackDownloads({ groupBy: { fieldPath: 'rollUp.l1', value: this.identifier } }).pipe(
-      share(), startWith({
-        completed: [],
-        queued: []
-      }));
   }
 
   showDeletePopup() {
@@ -324,6 +319,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
         this.batchId = res.batchId;
         if (this.identifier && res.courseId && this.identifier === res.courseId) {
           this.isAlreadyEnrolled = true;
+          this.subscribeTrackDiwnloads();
           this.zone.run(() => {
             this.getContentsSize(this.courseHeirarchy.children);
             if (this.loader) {
@@ -409,6 +405,11 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
     if (session) {
       this.userId = session.userToken;
     }
+  }
+
+  subscribeTrackDownloads() {
+    this.trackDownloads$ = this.downloadService.trackDownloads({ groupBy: { fieldPath: 'rollUp.l1', value: this.identifier } }).pipe(
+      share());
   }
 
   checkCurrentUserType() {
@@ -1401,6 +1402,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
           if (!this.guestUser && this.courseCardData.batch && course.batchId
             === this.courseCardData.batch.identifier) {
             this.isAlreadyEnrolled = true;
+            this.subscribeTrackDownloads();
             this.courseCardData = course;
           } else if (!this.courseCardData.batch) {
             this.courseCardData = course;
@@ -1800,11 +1802,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
               courseId: item.courseId
             });
             this.isAlreadyEnrolled = true;
-            this.contentStatusData = {
-              contentList: []
-            };
-            await this.loader.dismiss();
-            this.loader = undefined;
+            this.subscribeTrackDownloads();
           });
         }, (error) => {
           this.zone.run(async () => {

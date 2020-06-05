@@ -822,6 +822,9 @@ describe('CoursesPage', () => {
                 }
             };
             const index = 0;
+            const sectionData = {
+                name: 'sectionName'
+            };
             coursesPage.popularAndLatestCourses = [{
                     contents: [{
                         identifier: 'sample_id1'
@@ -833,7 +836,7 @@ describe('CoursesPage', () => {
                 }];
             coursesPage.checkRetiredOpenBatch = jest.fn();
             // act
-            coursesPage.openCourseDetails(contentData, index);
+            coursesPage.openCourseDetails(contentData, sectionData, index);
             // assert
             expect(coursesPage.checkRetiredOpenBatch).toHaveBeenCalled();
         });

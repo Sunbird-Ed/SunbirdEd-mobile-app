@@ -385,4 +385,15 @@
   .app-name::first-letter{
     text-transform: capitalize
   }
+  .refresh-icon {
+    color: #007aff;
+    float: right;
+    height: 40px;
+    width: 40px;
+    margin-top: -8px;
+  }
+  ion-icon.refresh-icon.md.hydrated:active {
+    background: #e8e7e7;
+    border-radius: 18px;
+  }
 }
