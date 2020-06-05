@@ -30,9 +30,19 @@ declare const supportfile;
 
 describe('AppComponent', () => {
     let appComponent: AppComponent;
+    window.cordova.plugins = {
+        notification: {
+            local: {
+                launchDetails: {
+                    action: 'click'
+                }
+            }
+        }
+    };
     const mockActivePageService: Partial<ActivePageService> = {};
     const mockAppGlobalService: Partial<AppGlobalService> = {
-        getUserId: jest.fn(() => 'some_user_id')
+        getUserId: jest.fn(() => 'some_user_id'),
+        getProfileSettingsStatus: jest.fn()
     };
     const mockAppRatingService: Partial<AppRatingService> = {
         checkInitialDate: jest.fn()
@@ -42,7 +52,9 @@ describe('AppComponent', () => {
         isDeviceLocationAvailable: jest.fn(() => Promise.resolve(true))
     };
     const mockDeviceRegisterService: Partial<DeviceRegisterService> = {};
-    const mockProfileService: Partial<ProfileService> = {};
+    const mockProfileService: Partial<ProfileService> = {
+        getActiveSessionProfile: jest.fn()
+    };
     const mockEvents: Partial<Events> = { publish: jest.fn() };
     const mockEventsBusService: Partial<EventsBusService> = {
         events: jest.fn(() => of({}))
@@ -75,7 +87,8 @@ describe('AppComponent', () => {
         // putString: jest.fn(() => of(undefined))
     };
     const mockRouter: Partial<Router> = {
-        events: EMPTY
+        events: EMPTY,
+        navigate: jest.fn()
     };
     const mockSplashScreenService: Partial<SplashScreenService> = {};
     const mockStatusBar: Partial<StatusBar> = {
@@ -85,7 +98,8 @@ describe('AppComponent', () => {
         getSystemSettings: jest.fn(() => of({}))
     };
     const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {
-        genererateAppStartTelemetry: jest.fn()
+        genererateAppStartTelemetry: jest.fn(),
+        generateNotificationClickedTelemetry: jest.fn()
     };
     const mockTelemetryAutoSyncService: Partial<TelemetryAutoSyncService> = {
         // start: jest.fn(() => of({}))
@@ -232,6 +246,7 @@ describe('AppComponent', () => {
                 actionButtons: ['search'],
             };
             mockHeaderService.headerConfigEmitted$ = of(mockConfig);
+            mockActivePageService.computePageId = jest.fn(() => 'some_page_id');
             // act
             jest.useFakeTimers();
             appComponent.ngOnInit();
@@ -548,34 +563,135 @@ describe('AppComponent', () => {
             jest.restoreAllMocks();
         });
 
-        it('should get the hotCodePush', (done) => {
+        it('should go to catch block if response is not stringify', (done) => {
             // arrange
-            // mockFormAndFrameworkUtilService.checkNewAppVersion = jest.fn(() => {
-            //     return {
-            //         then: jest.fn((cb) => {
-            //             cb(result);
-            //             return {
-            //                 catch: jest.fn()
-            //             };
-            //         })
-            //     } as any;
-            // });
             mockPlatform.ready = jest.fn(() => {
                 return {
                     then: jest.fn((cb) => cb('ready'))
                 } as any;
             });
-            mockSystemSettingsService.getSystemSettings = jest.fn(() => of({value: '{ \"deploymentKey\": \"\"}'}));
+            const hotCodePushKey = {
+                deploymentKey: ''
+            };
+            mockSystemSettingsService.getSystemSettings = jest.fn(() => of({ value: hotCodePushKey }));
+            mockCodePushExperimentService.setDefaultDeploymentKey = jest.fn(() => of());
 
             // act
-            jest.useFakeTimers();
             appComponent.ngOnInit();
-            jest.advanceTimersByTime(5500);
             // assert
-            expect(mockSystemSettingsService.getSystemSettings).toHaveBeenCalled();
-            jest.useRealTimers();
-            jest.clearAllTimers();
             setTimeout(() => {
+                expect(mockSystemSettingsService.getSystemSettings).toHaveBeenCalled();
+                expect(mockCodePushExperimentService.setDefaultDeploymentKey).not.toHaveBeenCalled();
+                done();
+            });
+        });
+        it('should not set setDefaultDeploymentKey if hotCodePushKey is empty', (done) => {
+            // arrange
+            mockPlatform.ready = jest.fn(() => {
+                return {
+                    then: jest.fn((cb) => cb('ready'))
+                } as any;
+            });
+            mockSystemSettingsService.getSystemSettings = jest.fn(() => of({ value: '{ \"deploymentKey\": \"\"}' }));
+            mockCodePushExperimentService.setDefaultDeploymentKey = jest.fn(() => of());
+
+            // act
+            appComponent.ngOnInit();
+            // assert
+            setTimeout(() => {
+                expect(mockSystemSettingsService.getSystemSettings).toHaveBeenCalled();
+                expect(mockCodePushExperimentService.setDefaultDeploymentKey).not.toHaveBeenCalled();
+                done();
+            });
+        });
+        it('should set setDefaultDeploymentKey if hotCodePushKey not empty', (done) => {
+            // arrange
+            mockPlatform.ready = jest.fn(() => {
+                return {
+                    then: jest.fn((cb) => cb('ready'))
+                } as any;
+            });
+            mockSystemSettingsService.getSystemSettings = jest.fn(() => of({ value: '{ \"deploymentKey\": \"some_key\"}' }));
+            mockCodePushExperimentService.setDefaultDeploymentKey = jest.fn(() => of());
+
+            // act
+            appComponent.ngOnInit();
+            // assert
+            setTimeout(() => {
+                expect(mockSystemSettingsService.getSystemSettings).toHaveBeenCalled();
+                expect(mockCodePushExperimentService.setDefaultDeploymentKey).toHaveBeenCalled();
+                done();
+            });
+        });
+    });
+    describe('checkForCodeUpdates', () => {
+        beforeEach(() => {
+            // arrange
+            mockPlatform.ready = jest.fn(() => {
+                return new Promise((resolve) => {
+                    resolve('ready');
+                });
+            });
+            mockHeaderService.headerConfigEmitted$ = EMPTY;
+            mockCommonUtilService.networkAvailability$ = EMPTY;
+            mockCommonUtilService.isDeviceLocationAvailable = jest.fn(() => Promise.resolve(true));
+            mockEventsBusService.events = jest.fn(() => EMPTY);
+            mockNotificationSrc.setupLocalNotification = jest.fn();
+            mockSystemSettingsService.getSystemSettings = jest.fn(() => EMPTY);
+            mockUtilityService.getBuildConfigValue = jest.fn(() => Promise.resolve('some_app_name'));
+            mockTelemetryAutoSyncService.start = jest.fn(() => EMPTY);
+            mockEvents.subscribe = jest.fn();
+            mockPreferences.getString = jest.fn((key) => {
+                switch (key) {
+                    case PreferenceKey.SELECTED_LANGUAGE_CODE:
+                        return of('');
+                    case PreferenceKey.FCM_TOKEN:
+                        return of('some_token');
+                    case PreferenceKey.DEPLOYMENT_KEY:
+                        return of('some_deployment_key');
+                    case PreferenceKey.SYNC_CONFIG:
+                        return of('some_config');
+                    default:
+                        return of('');
+                }
+            });
+            mockPreferences.putString = jest.fn(() => EMPTY);
+            jest.spyOn(appComponent, 'checkAndroidWebViewVersion').mockImplementation();
+            mockUtilityService.getDeviceSpec = jest.fn(() => Promise.resolve(mockDeviceSpec));
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            mockUtilityService.getUtmInfo = jest.fn(() => Promise.resolve(''));
+            mockFormAndFrameworkUtilService.checkNewAppVersion = jest.fn(() => Promise.resolve(''));
+        });
+
+        afterEach(() => {
+            jest.resetAllMocks();
+            jest.restoreAllMocks();
+        });
+
+        it('should call codePush sync', (done) => {
+            // arrange
+            mockPlatform.ready = jest.fn(() => {
+                return {
+                    then: jest.fn((cb) => cb('ready'))
+                } as any;
+            });
+            codePush.sync = jest.fn((status, deploymentKey, downloadProgress) => {
+                status(SyncStatus.DOWNLOADING_PACKAGE);
+                downloadProgress({ receivedBytes: 10, totalBytes: 100 });
+                downloadProgress({ receivedBytes: 20, totalBytes: 100 });
+                downloadProgress({ receivedBytes: 50, totalBytes: 100 });
+                downloadProgress({ receivedBytes: 100, totalBytes: 100 });
+                status(SyncStatus.INSTALLING_UPDATE);
+                status(SyncStatus.ERROR);
+            });
+
+            // act
+            appComponent.ngOnInit();
+            // assert
+            setTimeout(() => {
+                expect(codePush.sync).toHaveBeenCalledWith(expect.any(Function),
+                    expect.objectContaining({ deploymentKey: 'some_deployment_key' }),
+                    expect.any(Function));
                 done();
             });
         });
@@ -729,8 +845,8 @@ describe('AppComponent', () => {
             });
             const mockData = {
                 'id': 'some_id',
-                "wasTapped": true,
-                "actionData": '{\"key\":\"value\"}'
+                'wasTapped': true,
+                'actionData': '{\"key\":\"value\"}'
             };
             FCMPlugin.onNotification = jest.fn((callback, success, error) => {
                 callback(mockData);
@@ -746,13 +862,11 @@ describe('AppComponent', () => {
             // assert
             setTimeout(() => {
                 expect(FCMPlugin.onNotification).toHaveBeenCalled();
-                expect(mockTelemetryGeneratorService.generateInteractTelemetry).nthCalledWith(1,
-                    InteractType.OTHER,
-                    InteractSubtype.NOTIFICATION_RECEIVED,
-                    Environment.HOME,
+                expect(mockTelemetryGeneratorService.generateNotificationClickedTelemetry).nthCalledWith(1,
+                    InteractType.FCM,
                     'some_page_id',
-                    undefined,
-                    { notification_id: 'some_id' }
+                    { notification_id: 'some_id' },
+                    [{"id": "some_id", "type": "NotificationID"}]
                 );
                 done();
             });
@@ -767,8 +881,8 @@ describe('AppComponent', () => {
             });
             const mockData = {
                 'id': 'some_id',
-                "wasTapped": false,
-                "actionData": '{\"key\":\"value\"}'
+                'wasTapped': false,
+                'actionData': '{\"key\":\"value\"}'
             };
             FCMPlugin.onNotification = jest.fn((callback, success, error) => {
                 callback(mockData);
@@ -784,13 +898,11 @@ describe('AppComponent', () => {
             // assert
             setTimeout(() => {
                 expect(FCMPlugin.onNotification).toHaveBeenCalled();
-                expect(mockTelemetryGeneratorService.generateInteractTelemetry).nthCalledWith(1,
-                    InteractType.OTHER,
-                    InteractSubtype.NOTIFICATION_RECEIVED,
-                    Environment.HOME,
+                expect(mockTelemetryGeneratorService.generateNotificationClickedTelemetry).nthCalledWith(1,
+                    InteractType.FCM,
                     'some_page_id',
-                    undefined,
-                    { notification_id: 'some_id' }
+                    { notification_id: 'some_id' },
+                    [{"id": "some_id", "type": "NotificationID"}]
                 );
                 done();
             });
@@ -1320,6 +1432,48 @@ describe('AppComponent', () => {
                 expect(document.documentElement.dir).toEqual('ltr');
                 done();
             });
+        });
+    });
+
+    describe('checkDeviceLocation()', () => {
+
+        it('shouldn\'t show location selection page if location available', () => {
+            // arrange
+            mockCommonUtilService.isDeviceLocationAvailable = jest.fn(() => Promise.resolve(true));
+            // act
+            appComponent.reloadGuestEvents();
+            // assert
+            expect(mockRouter.navigate).not.toHaveBeenCalled();
+        });
+
+        it('shouldn\'t show location selection page if BMC value is not selected', () => {
+            // arrange
+            mockCommonUtilService.isDeviceLocationAvailable = jest.fn(() => Promise.resolve(false));
+            mockProfileService.getActiveSessionProfile = jest.fn(() => of({} as any));
+            mockAppGlobalService.getProfileSettingsStatus = jest.fn(() => Promise.resolve(false));
+            // act
+            appComponent.reloadGuestEvents();
+            // assert
+            expect(mockRouter.navigate).not.toHaveBeenCalled();
+        });
+
+        it('should show location selection page if BMC value is not selected', () => {
+            // arrange
+            mockCommonUtilService.isDeviceLocationAvailable = jest.fn(() => Promise.resolve(false));
+            mockProfileService.getActiveSessionProfile = jest.fn(() => of({} as any));
+            mockAppGlobalService.getProfileSettingsStatus = jest.fn(() => Promise.resolve(true));
+            // act
+            appComponent.reloadGuestEvents();
+            // assert
+
+            setTimeout(() => {
+                expect(mockRouter.navigate).toHaveBeenCalledWith(['/', 'district-mapping'], {
+                    state: {
+                        isShowBackButton: false
+                    }
+                });
+            }, 0);
+
         });
     });
 

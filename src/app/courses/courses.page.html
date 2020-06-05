@@ -1,81 +1,55 @@
 <ion-content hide-header-footer overflow-scroll="true" style="background: #efeff4;"
   class="main-container avoid-bottom-tabs-space" scrollEvents="true">
-  <!-- <ion-refresher (ionRefresh)="getCourseTabData($event)"></ion-refresher> -->
 
   <ion-refresher slot="fixed" (ionRefresh)="getCourseTabData($event)">
     <ion-refresher-content refreshingSpinner="circles"></ion-refresher-content>
   </ion-refresher>
 
-  <div *ngIf="!guestUser && enrolledCourses && enrolledCourses.length" class="course-page-color"
-    [ngClass]="{'height-130': showLoader}">
-    <div class="item padding-11">
-      <span float-start class="scroll-heading">
-        {{ 'COURSES_IN_PROGRESS' | translate }}
-      </span>
-      <span float-end class="view-all-link" *ngIf="enrolledCourses && enrolledCourses.length"
-        (click)="navigateToViewMoreContentsPage(true)">
-        <a>{{ 'VIEW_ALL' | translate }}</a>
-      </span>
-    </div>
-    <div *ngIf="enrolledCourses && enrolledCourses.length" scrollX="true" style="width: 100%;height: auto;"
-          no-padding>
-          <div class="inner inprogress-courses" style="display:flex">
-             <app-coursecard *ngFor="let course of enrolledCourses; let i=index" [env]="'home'" [index]="i"
-              [sectionName]="inProgressSection" [pageName]="'course'" [course]="course" [guestUser]="guestUser"
-              [layoutName]="layoutInProgress"></app-coursecard> 
-          </div>
-        </div>
-    <div *ngIf="enrolledCourses && enrolledCourses.length === 0 && !showLoader">{{ 'NO_DATA_FOUND' | translate }}</div>
-    <ion-spinner name="crescent" class="ion-padding" *ngIf="showLoader" style="padding-top: 100px;"></ion-spinner>
-  </div>
-
-  <div *ngFor="let course of popularAndLatestCourses">
-    <div *ngIf="course?.contents?.length">
-      <div class="course-scroll-holder">
-        <div class="item padding-11">
-          <span float-start class="scroll-heading">{{course?.name}}</span>
-          <span float-end class="view-all-link"
-            (click)="navigateToViewMoreContentsPage(false,course.searchQuery, course.name)">
-            <a>{{ 'VIEW_ALL' | translate }}</a>
-          </span>
-        </div>
-        <div scrollX="true" style="width: 100%; height: 186px;" no-padding style=" width: 100%;
-        display: flex;">
-            <app-coursecard *ngFor="let item of course.contents; let i=index" [env]="'home'" [index]="i"
-              [sectionName]="course.name" [enrolledCourses]="enrolledCourses" [pageName]="'course'" [course]="item"
-              [layoutName]="layoutPopular" [guestUser]="guestUser"[isFilterApplied]="isFilterApplied" >
-            </app-coursecard>
-        </div>
-      </div>
-    </div>
-    <!-- <div class="devider-line"></div> -->
-  </div>
-  <div *ngIf="pageApiLoader && popularAndLatestCourses && popularAndLatestCourses.length === 0">
-    <div class="course-scroll-holder" style="height: 500px;">
-      <ion-spinner name="crescent" class="ion-padding" style="padding-top: 110px;"></ion-spinner>
-    </div>
-  </div>
-  <!-- </div> -->
-
-  <div padding text-center *ngIf="!commonUtilService?.networkInfo?.isNetworkAvailable">
-
-    <img height="80" width="100" src="assets/imgs/ic_offline.png" />
-    <ion-text>
-<h6 color="secondary_black">
-      <b>{{ 'NO_INTERNET_TITLE' | translate }}</b>
-    </h6>
-</ion-text>
-    <p color="dark_gray">{{ 'OFFLINE_WARNING' | translate }}</p>
-    <ion-text>
-<b text-uppercase color="primary"
-      (click)="retryShowingPopularCourses(true); showOfflineWarning();">{{'RETRY_ACTION' | translate}}</b>
-</ion-text>
-  </div>
-  <div *ngIf="showSignInCard" class="signin-card-bg">
+  <div *ngIf="showSignInCard" class="enrolled-course-bg">
     <app-sign-in-card [source]="'courses'" (valueChange)="showOfflineWarning($event)"></app-sign-in-card>
   </div>
+
+  <div *ngIf="!guestUser" class="pt-8 enrolled-course-bg">
+    <ng-container *ngIf="enrolledCourses && enrolledCourses.length">
+      <sb-course-cards-hlist [title]="'COURSES_IN_PROGRESS' | translate" [type]="courseCardType.MY_COURSE_RECENTLY_VIEWED_CARD_GRID" 
+      [contentList]="enrolledCourses" [viewMoreButtonText]="'VIEW_ALL' | translate" 
+      (viewMoreClick)="navigateToViewMoreContentsPage(true)" (cardClick)="openEnrolledCourseDetails($event)"></sb-course-cards-hlist>
+    </ng-container>
+    <ng-container *ngIf="showLoader && enrolledCourses && enrolledCourses.length === 0">
+      <sb-course-cards-hlist [type]="courseCardType.MY_COURSE_RECENTLY_VIEWED_CARD_GRID" [isLoading]="showLoader"></sb-course-cards-hlist>
+    </ng-container>
+  </div>
+
+  <div *ngFor="let section of popularAndLatestCourses; let i=index;">
+    <div *ngIf="section?.contents?.length" class="course-card-pd" [ngClass]="{'course-grid-bg': i%2 !== 0}">
+      <sb-course-cards-hlist [title]="section?.name" [type]="courseCardType.COURSE_CARD_GRID" [viewMoreButtonText]="'VIEW_ALL' | translate"
+      [contentList]="section?.contents" (viewMoreClick)="navigateToViewMoreContentsPage(false, section.id, section.searchQuery, section.name)"
+      [maxCardCount]="9" (cardClick)="openCourseDetails($event, section, i)" [multiRow]="section?.contents?.length > 3"></sb-course-cards-hlist>
+    </div>
+  </div>
+  <div *ngIf="pageApiLoader && popularAndLatestCourses && popularAndLatestCourses.length === 0">
+    <div *ngFor="let section of [1,2,3,4]; let i=index;">
+      <div class="course-card-pd" [ngClass]="{'course-grid-bg': i%2 !== 0}">
+        <sb-course-cards-hlist [multiRow]="true" [type]="courseCardType.COURSE_CARD_GRID" [isLoading]="pageApiLoader"></sb-course-cards-hlist>
+      </div>
+    </div>
+  </div>
+
+  <div class="ion-text-center ion-padding" *ngIf="!commonUtilService?.networkInfo?.isNetworkAvailable">
+    <img height="80" width="100" src="assets/imgs/ic_offline.png" alt="offline" />
+    <ion-text>
+      <h6 color="secondary_black">
+        <strong>{{ 'NO_INTERNET_TITLE' | translate }}</strong>
+      </h6>
+    </ion-text>
+    <p color="dark_gray">{{ 'OFFLINE_WARNING' | translate }}</p>
+    <ion-text>
+      <strong class="ion-text-uppercase" color="primary"
+        (click)="retryShowingPopularCourses(true); showOfflineWarning();">{{'RETRY_ACTION' | translate}}</strong>
+    </ion-text>
+  </div>
 </ion-content>
-<ion-backdrop class="loading-backdrop" *ngIf="showOverlay" text-center>
+<ion-backdrop class="loading-backdrop ion-text-center" *ngIf="showOverlay">
   <div class="backdrop-container">
     <span *ngIf="downloadPercentage !== 100">
       <ion-label>{{ 'LOADING_CONTENT' | translate }} {{ downloadPercentage ? (downloadPercentage) : '0' }} %</ion-label>

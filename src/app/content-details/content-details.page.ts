@@ -6,11 +6,9 @@ import { Component, Inject, NgZone, OnInit, ViewEncapsulation, OnDestroy } from 
 import {
   Events,
   Platform,
-  PopoverController,
-  ToastController,
-  NavController
+  PopoverController
 } from '@ionic/angular';
-import { Subscription } from 'rxjs';
+import { Subscription, Observable } from 'rxjs';
 import {
   AuthService,
   Content,
@@ -32,7 +30,8 @@ import {
   SharedPreferences,
   StorageService,
   TelemetryObject,
-  Course, ContentData
+  Course,
+  DownloadService
 } from 'sunbird-sdk';
 
 import { Map } from '@app/app/telemetryutil';
@@ -73,7 +72,6 @@ import { LoginHandlerService } from '@app/services/login-handler.service';
 import { SbSharePopupComponent } from '../components/popups/sb-share-popup/sb-share-popup.component';
 import { FileOpener } from '@ionic-native/file-opener/ngx';
 import { Components } from '@ionic/core/dist/types/components';
-
 
 @Component({
   selector: 'app-content-details',
@@ -152,6 +150,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
   resultLength: any;
   course: Course;
   fileTransfer: FileTransferObject;
+  contentSize: any;
   // Newly Added
   licenseDetails;
   resumedCourseCardData: any;
@@ -159,15 +158,14 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
   private isLoginPromptOpen = false;
   private autoPlayQuizContent = false;
   shouldNavigateBack = false;
+  isContentDownloading$: Observable<boolean>;
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
     @Inject('EVENTS_BUS_SERVICE') private eventBusService: EventsBusService,
-    @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
-    @Inject('PLAYER_SERVICE') private playerService: PlayerService,
     @Inject('STORAGE_SERVICE') private storageService: StorageService,
-    @Inject('AUTH_SERVICE') private authService: AuthService,
+    @Inject('DOWNLOAD_SERVICE') private downloadService: DownloadService,
     private zone: NgZone,
     private events: Events,
     private popoverCtrl: PopoverController,
@@ -230,6 +228,9 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
       this.shouldNavigateBack = extras.shouldNavigateBack;
       this.checkLimitedContentSharingFlag(extras.content);
     }
+    this.isContentDownloading$ = this.downloadService.getActiveDownloadRequests().pipe(
+      map((requests) => !!requests.find((request) => request.identifier === this.identifier))
+    );
   }
 
   ngOnInit() {
@@ -407,6 +408,9 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
     this.contentService.getContentDetails(req).toPromise()
       .then(async (data: Content) => {
         if (data) {
+          if (data.contentData.size) {
+            this.contentSize = data.contentData.size;
+          }
           this.extractApiResponse(data);
           if (!showRating) {
             await loader.dismiss();
@@ -422,7 +426,8 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
 
         if (showRating) {
           this.contentPlayerHandler.setContentPlayerLaunchStatus(false);
-          this.ratingHandler.showRatingPopup(this.isContentPlayed, data, 'automatic', this.corRelationList, this.objRollup, this.shouldNavigateBack);
+          this.ratingHandler.showRatingPopup(this.isContentPlayed, data, 'automatic', this.corRelationList, this.objRollup,
+           this.shouldNavigateBack);
           this.contentPlayerHandler.setLastPlayedContentId('');
         }
       })
@@ -433,10 +438,9 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
           // this.content.downloadable = false;
           this.isDownloadStarted = false;
         }
-        if (error.hasOwnProperty('CONNECTION_ERROR') === 'CONNECTION_ERROR') {
+        if (error.hasOwnProperty('CONNECTION_ERROR')) {
           this.commonUtilService.showToast('ERROR_NO_INTERNET_MESSAGE');
-        } else if (error.hasOwnProperty('SERVER_ERROR') === 'SERVER_ERROR' ||
-          error.hasOwnProperty('SERVER_AUTH_ERROR') === 'SERVER_AUTH_ERROR') {
+        } else if (error.hasOwnProperty('SERVER_ERROR') || error.hasOwnProperty('SERVER_AUTH_ERROR')) {
           this.commonUtilService.showToast('ERROR_FETCHING_DATA');
         } else {
           this.commonUtilService.showToast('ERROR_CONTENT_NOT_AVAILABLE');
@@ -777,7 +781,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
           sbPopoverMainTitle: this.content.contentData.name,
           icon: null,
           metaInfo:
-            '1 item ' + '(' + this.fileSizePipe.transform(this.content.contentData.size, 2) + ')',
+            '1 item ' + '(' + this.fileSizePipe.transform(this.content.contentData.size || this.contentSize, 2) + ')',
           isUpdateAvail: this.contentDownloadable[this.content.identifier] && this.isUpdateAvail,
         },
         cssClass: 'sb-popover info',
@@ -1001,10 +1005,11 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
       });
     }
   }
+
   /**
    * Play content
    */
-  playContent(isStreaming: boolean) {
+  private playContent(isStreaming: boolean) {
     if (this.apiLevel < 21 && this.appAvailability === 'false') {
       this.showPopupDialog();
     } else {
@@ -1044,7 +1049,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
       });
   }
 
-  showDeletePopup() {
+showDeletePopup() {
     this.contentDeleteObservable = this.contentDeleteHandler.contentDeleteCompleted$.subscribe(() => {
       this.content.contentData.streamingUrl = this.streamingUrl;
       this.contentDownloadable[this.content.identifier] = false;
@@ -1058,6 +1063,10 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
       correlationList: this.corRelationList,
       hierachyInfo: undefined
     };
+    // when content size and sizeOn device is undefined
+    if (!this.content.contentData.size) {
+      this.content.contentData.size = this.contentSize;
+    }
     this.contentDeleteHandler.showContentDeletePopup(this.content, this.isChildContent, contentInfo, PageId.CONTENT_DETAIL);
   }
 
@@ -1066,6 +1075,10 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
    */
   async share() {
     // this.contentShareHandler.shareContent(this.content, this.corRelationList, this.objRollup);
+    // when content size and sizeOn device is undefined
+    if (!this.content.contentData.size) {
+      this.content.contentData.size = this.contentSize;
+    }
     const popover = await this.popoverCtrl.create({
       component: SbSharePopupComponent,
       componentProps: {
@@ -1077,7 +1090,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
       },
       cssClass: 'sb-popover',
     });
-    popover.present();
+    await popover.present();
   }
 
   /**
@@ -1114,7 +1127,8 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
       corRelationList
     );
   }
-  async showPopupDialog() {
+
+  private async showPopupDialog() {
     const popover = await this.popoverCtrl.create({
       component: DialogPopupComponent,
       componentProps: {
@@ -1124,7 +1138,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
       },
       cssClass: 'popover-alert'
     });
-    popover.present();
+    await popover.present();
   }
 
   mergeProperties(mergeProp) {
@@ -1219,13 +1233,13 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
 
   async openPDFPreview(content: Content) {
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
-        InteractSubtype.PRINT_PDF_CLICKED,
-        Environment.HOME,
-        PageId.CONTENT_DETAIL,
-        this.telemetryObject,
-        undefined,
-        this.objRollup,
-        this.corRelationList
+      InteractSubtype.PRINT_PDF_CLICKED,
+      Environment.HOME,
+      PageId.CONTENT_DETAIL,
+      this.telemetryObject,
+      undefined,
+      this.objRollup,
+      this.corRelationList
     );
 
     let url: string;
@@ -1255,7 +1269,6 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
         });
       });
     } catch (e) {
-      console.error(e);
       this.commonUtilService.showToast('ERROR_COULD_NOT_OPEN_FILE');
     } finally {
       await loader.dismiss();

@@ -1,14 +1,11 @@
-import { ActivatedRoute, Router } from '@angular/router';
-import { AppHeaderService, CommonUtilService, AppGlobalService, FormAndFrameworkUtilService } from '../../../services';
-import { Component, Inject, OnInit, ViewChild, ChangeDetectorRef } from '@angular/core';
-import { Events, LoadingController } from '@ionic/angular';
+import { Router } from '@angular/router';
+import { AppHeaderService, CommonUtilService } from '../../../services';
+import { Component, Inject, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Events } from '@ionic/angular';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { TranslateService } from '@ngx-translate/core';
-
 import { Location as loc } from '../../app.constant';
 import { LocationSearchCriteria, ProfileService } from 'sunbird-sdk';
 import { Location } from '@angular/common';
-import { Subject } from 'rxjs';
 
 @Component({
   selector: 'app-personal-details-edit',
@@ -43,8 +40,8 @@ export class PersonalDetailsEditPage implements OnInit {
   frameworkId: string;
   categories = [];
   btnColor = '#8FC4FF';
-  showOnlyMandatoryFields: boolean = true;
-  editData: boolean = true;
+  showOnlyMandatoryFields = true;
+  editData = true;
 
   /* Custom styles for the select box popup */
   stateOptions = {
@@ -55,7 +52,7 @@ export class PersonalDetailsEditPage implements OnInit {
     title: this.commonUtilService.translateMessage('DISTRICT').toLocaleUpperCase(),
     cssClass: 'select-box'
   };
-  disableSubmitFlag: boolean = false;
+  disableSubmitFlag = false;
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -140,7 +137,7 @@ export class PersonalDetailsEditPage implements OnInit {
 
   async getDistrict(parentId: string, resetDistrictFlag?: boolean) {
     let loader = await this.commonUtilService.getLoader();
-    loader.present();
+    await loader.present();
     const req: LocationSearchCriteria = {
       filters: {
         type: loc.TYPE_DISTRICT,
@@ -183,20 +180,10 @@ export class PersonalDetailsEditPage implements OnInit {
     }
   }
 
-
-  /**
-   * Shows Toast Message with `red` color
-   * @param {string} fieldName Name of the field in the form
-   */
-  showErrorToastMessage(fieldName: string) {
-    this.btnColor = '#8FC4FF';
-    this.commonUtilService.showToast(this.commonUtilService.translateMessage('NAME_HINT'), false, 'redErrorToast');
-  }
-
   enableSubmitButton() {
     const formValues = this.profileEditForm.value;
     if ((formValues.states && formValues.states.length && formValues.districts && formValues.districts.length) ||
-    (formValues.states && !formValues.states.length && formValues.districts && !formValues.districts.length)) {
+      (formValues.states && !formValues.states.length && formValues.districts && !formValues.districts.length)) {
       this.disableSubmitFlag = false;
     } else if (formValues.states && formValues.states.length && formValues.districts && !formValues.districts.length) {
       this.disableSubmitFlag = true;
@@ -205,9 +192,7 @@ export class PersonalDetailsEditPage implements OnInit {
 
   /**
    * It makes an update API call.
-   * @param {object} formVal Object of Form values
    */
-
   async submitForm() {
     let loader = await this.commonUtilService.getLoader();
     await loader.present();

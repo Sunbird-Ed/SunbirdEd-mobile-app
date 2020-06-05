@@ -235,7 +235,7 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
     this.hideOnboardingSplashScreen();
   }
 
-  async hideOnboardingSplashScreen() {
+  hideOnboardingSplashScreen() {
     if (this.navParams && this.navParams.forwardMigration) {
       this.splashScreenService.handleSunbirdSplashScreenActions();
     }
@@ -381,10 +381,8 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
   }
 
   async fetchSyllabusList() {
-    await this.commonUtilService.getLoader().then((loader) => {
-      this.loader = loader;
-      this.loader.present();
-    });
+    this.loader = await this.commonUtilService.getLoader();
+    await this.loader.present();
 
     const getSuggestedFrameworksRequest: GetSuggestedFrameworksRequest = {
       from: CachedItemRequestSourceFrom.SERVER,
@@ -392,17 +390,15 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
       requiredCategories: FrameworkCategoryCodesGroup.DEFAULT_FRAMEWORK_CATEGORIES
     };
 
-    await this.frameworkUtilService.getActiveChannelSuggestedFrameworkList(getSuggestedFrameworksRequest).toPromise()
+    this.frameworkUtilService.getActiveChannelSuggestedFrameworkList(getSuggestedFrameworksRequest).toPromise()
       .then(async (frameworks: Framework[]) => {
         if (!frameworks || !frameworks.length) {
-          this.loader.dismiss();
+          await this.loader.dismiss();
           this.commonUtilService.showToast('NO_DATA_FOUND');
           return;
         }
-
         this.syllabusList = frameworks.map(r => ({ name: r.name, code: r.identifier }));
-
-        this.loader.dismiss();
+        await this.loader.dismiss();
       });
   }
 

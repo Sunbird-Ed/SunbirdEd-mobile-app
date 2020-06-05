@@ -5,6 +5,8 @@
   
     .sb-modal-close{
       font-size: 24px !important;
+      position: absolute;
+      right: 10%;
     }
   
     .content-rating-alert ion-backdrop {
@@ -66,8 +68,8 @@
     }
   
     .app-rating-img{
-      margin-top: $base-block-space * 2;
-      padding-left: $base-block-space * 1;
+      margin-top: $base-block-space * 3;
+      margin-bottom: $base-block-space * 0.5;
       height: $base-block-space * 7;
     }
   

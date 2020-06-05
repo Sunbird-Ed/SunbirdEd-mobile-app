@@ -1,11 +1,11 @@
 <ion-content hide-header-footer class="main-container avoid-bottom-tabs-space" (ionScrollEnd)="logScrollEnd($event)"
   scrollEvents="true" #contentView>
   <div slot="fixed" class="fixed-container">
-    <sb-library-filters [list]="categoryMediumNamesArray" [selectedItems]="mediumsSelected" [layout]="mediumFilterLayout" 
-      (selectedFilter)="mediumClickEvent($event, true)">
+    <sb-library-filters [list]="categoryMediumNamesArray" [selectedItems]="mediumsSelected"
+      [layout]="mediumFilterLayout" (selectedFilter)="mediumClickEvent($event, true)">
     </sb-library-filters>
-    <sb-library-filters  [list]="categoryGradeLevelsArray" [selectedItems]="classSelected" 
-      [layout]="classFilterLayout" (selectedFilter)="classClickEvent($event, true);">
+    <sb-library-filters [list]="categoryGradeLevelsArray" [selectedItems]="classSelected" [layout]="classFilterLayout"
+      (selectedFilter)="classClickEvent($event, true);">
     </sb-library-filters>
   </div>
   <div class="scrollable-container">
@@ -29,7 +29,7 @@
 
         <div class="sb-recently-viewed-items">
           <div class="sb-recenlty-viewed-title">{{ 'RECENTLY_VIEWED' | translate }}
-            <button class="sb-btn sb-btn-sm sb-btn-outline-info view-all-p8" float-end
+            <button class="sb-btn sb-btn-sm sb-btn-outline-info view-all-p8 ion-float-end"
               (click)="navigateToViewMoreContentsPage(recentViewedSection);">
               {{ 'VIEW_ALL' | translate }}</button>
           </div>
@@ -37,13 +37,12 @@
           <div class="sb-card-scroll-container" (scroll)='onScroll($event)'>
             <!-- Card style -->
             <div class="sb-card-container sb-card-recently-container">
-              <!-- <app-new-course-card *ngFor="let course of recentlyViewedResources; let i=index" [course]="course" [pageName]="'library'"
-                [env]="'home'" [index]="i" [sectionName]="'RecentlyViewed'" [layoutName]="'layoutSavedContent'">
-              </app-new-course-card> -->
               <div class="recently-viewed-card-size" *ngFor="let content of recentlyViewedResources">
-                <sb-library-card 
-                [isOffline]="!content?.isAvailableLocally && !commonUtilService.networkInfo.isNetworkAvailable" [content]="content?.contentData" [type]="'recently_viewed'" (cardClick)="recentlyViewedCardClick($event, content);" 
-                [cardImg]="(!(!content.isAvailableLocally && !commonUtilService.networkInfo.isNetworkAvailable)) ? (commonUtilService.convertFileSrc(content?.contentData?.courseLogoUrl) || commonUtilService.convertFileSrc(content?.contentData?.appIcon) || defaultImg) : 'assets/imgs/ic_offline_white_sm.png'">
+                <sb-library-card
+                  [isOffline]="!content?.isAvailableLocally && !commonUtilService.networkInfo.isNetworkAvailable"
+                  [content]="content?.contentData" [type]="'recently_viewed'"
+                  (cardClick)="recentlyViewedCardClick($event, content);"
+                  [cardImg]="(!(!content.isAvailableLocally && !commonUtilService.networkInfo.isNetworkAvailable)) ? (commonUtilService.convertFileSrc(content?.contentData?.courseLogoUrl) || commonUtilService.convertFileSrc(content?.contentData?.appIcon) || defaultImg) : 'assets/imgs/ic_offline_white_sm.png'">
                 </sb-library-card>
               </div>
             </div>
@@ -67,16 +66,17 @@
 
     <div *ngFor="let items of storyAndWorksheets">
       <div class="sb-textbook-container" *ngIf="items?.contents && items?.contents?.length">
-        <sb-library-cards-stack [title]="items?.name" [contentList]="items?.contents" [isOffline]="!commonUtilService.networkInfo.isNetworkAvailable"
-          [viewMoreButtonText]="'VIEW_MORE' | translate" [maxCardCount]="3"
-          (viewMoreClick)="navigateToTextbookPage(items?.contents, items.name)" (cardClick)="navigateToDetailPage($event, items.name)">
+        <sb-library-cards-stack [title]="items?.name" [contentList]="items?.contents"
+          [isOffline]="!commonUtilService.networkInfo.isNetworkAvailable" [viewMoreButtonText]="'VIEW_MORE' | translate"
+          [maxCardCount]="3" (viewMoreClick)="navigateToTextbookPage(items?.contents, items.name)"
+          (cardClick)="navigateToDetailPage($event, items.name)">
         </sb-library-cards-stack>
       </div>
     </div>
     <div class="sb-explore-container" *ngIf="storyAndWorksheets && storyAndWorksheets.length !== 0">
       <div class="text-center" *ngIf="commonUtilService?.networkInfo?.isNetworkAvailable">
         <p class="information">{{'MORE_CONTENT' | translate:{'%s': appLabel} }}</p>
-        <ion-button class="explore-more-content" outline (click)="exploreOtherContents()">
+        <ion-button class="explore-more-content" fill="outline" (click)="exploreOtherContents()">
           {{'DATA' | translate}} </ion-button>
       </div>
     </div>
@@ -87,7 +87,7 @@
         </div>
         <div class="text-center">
           <p class="sb-nodownloads-title">
-            <b>{{'NO_BOOKS_AVAILABLE' | translate}}</b>
+            <strong>{{'NO_BOOKS_AVAILABLE' | translate}}</strong>
           </p>
           <p class="sub-heading">{{'NO_BOOKS_DEFINITION' | translate:{'%s': appLabel} }}</p>
           <ion-button class="explore-more-books" (click)="exploreOtherContents()">
@@ -111,7 +111,7 @@
       </ion-list>
     </div>
 
-    <div padding text-center class="mt-32 mb-32" *ngIf="!commonUtilService?.networkInfo?.isNetworkAvailable">
+    <div class="ion-padding" text-center class="mt-32 mb-32" *ngIf="!commonUtilService?.networkInfo?.isNetworkAvailable">
       <img src="assets/imgs/outline-cloud_off.svg" alt="" />
       <ion-text>
         <h6 class="offline-header">

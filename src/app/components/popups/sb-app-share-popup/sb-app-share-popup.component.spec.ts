@@ -184,6 +184,9 @@ describe('SbAppSharePopupComponent', () => {
     it('should dismiss popover on closepopover', () => {
         // arrange
         mockPopoverCtrl.dismiss = jest.fn();
+        jest.spyOn(sbAppSharePopupComponent, 'generateInteractTelemetry').mockImplementation(() => {
+            return 0;
+        });
         // act
         sbAppSharePopupComponent.closePopover();
         // assert
@@ -208,13 +211,14 @@ describe('SbAppSharePopupComponent', () => {
                 undefined, undefined, undefined, undefined,
                 ID.SHARE_CONFIRM);
             expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
-                InteractType.TOUCH, InteractSubtype.SHARE_APP_INITIATED,
-                PageId.SETTINGS,
-                Environment.SETTINGS);
-            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
-                InteractType.OTHER, InteractSubtype.SHARE_APP_SUCCESS,
-                PageId.SETTINGS,
-                Environment.SETTINGS);
+                'share', '',
+                Environment.SETTINGS,
+                PageId.SHARE_APP_POPUP,
+                undefined,
+                undefined,
+                undefined,
+                undefined,
+                ID.SHARE_CONFIRM);
             expect(mockPopoverCtrl.dismiss).toHaveBeenCalled();
             expect(mockCommonUtilService.translateMessage).toHaveBeenCalled();
             done();
@@ -243,14 +247,6 @@ describe('SbAppSharePopupComponent', () => {
                 PageId.SHARE_APP_POPUP,
                 undefined, undefined, undefined, undefined,
                 ID.SHARE_CONFIRM);
-            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
-                InteractType.TOUCH, InteractSubtype.SHARE_APP_INITIATED,
-                PageId.SETTINGS,
-                Environment.SETTINGS);
-            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
-                InteractType.OTHER, InteractSubtype.SHARE_APP_SUCCESS,
-                PageId.SETTINGS,
-                Environment.SETTINGS);
             expect(mockPopoverCtrl.dismiss).toHaveBeenCalled();
             done();
         }, 0);
@@ -288,7 +284,7 @@ describe('SbAppSharePopupComponent', () => {
 
         mockCommonUtilService.buildPermissionPopover = jest.fn(() => Promise.resolve({
             present: presentFN
-        }));
+        })) as any;
         // act
         sbAppSharePopupComponent.saveFile();
         // assert
@@ -300,14 +296,7 @@ describe('SbAppSharePopupComponent', () => {
                 PageId.SHARE_APP_POPUP,
                 undefined, undefined, undefined, undefined,
                 ID.SHARE_CONFIRM);
-            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
-                InteractType.TOUCH, InteractSubtype.SHARE_APP_INITIATED,
-                PageId.SETTINGS,
-                Environment.SETTINGS);
-            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
-                InteractType.OTHER, InteractSubtype.SHARE_APP_SUCCESS,
-                PageId.SETTINGS,
-                Environment.SETTINGS);
+            expect(mockCommonUtilService.getGivenPermissionStatus).toHaveBeenCalled();
             done();
         }, 0);
     });

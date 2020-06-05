@@ -1,5 +1,5 @@
 <ion-content overflow-scroll="true">
-  <div [ngClass]="{'p-16': !localContentsCard}">
+  <div>
     <div class="sb-view-all-container" *ngIf="localContentsCard">
 
       <div class="sb-view-all-items">
@@ -10,20 +10,33 @@
       </div>
 
     </div>
-    <div class="empty-search-result" *ngIf="!showLoader && searchList && searchList.length === 0" text-center
+    <div class="empty-search-result ion-text-center" *ngIf="!showLoader && searchList && searchList.length === 0"
       padding-top>
       {{ 'EMPTY_SEARCH_RESULTS' | translate }}
     </div>
 
-    <div *ngIf="searchList && searchList.length">
-      <ng-container *ngIf="!localContentsCard">
-        <app-view-more-card *ngFor="let item of searchList" [content]="item" [type]="pageType"
-          [cardDisabled]="showDisabled(item)" [enrolledCourses]="enrolledCourses" [guestUser]="guestUser">
-        </app-view-more-card>
+    <div>
+      <div class="view-more-course-bg" *ngIf="!localContentsCard">
+        <p class="title" *ngIf="pageType === 'enrolledCourse'">{{'COURSES_IN_PROGRESS' | translate}}</p>
+        <p class="title" *ngIf="pageType === 'popularCourses'">{{title}}</p>
+        <p *ngIf="searchList && searchList.length" class="count-text">{{'SHOWING_ITEMS' | translate:{'%s': searchList.length} }}</p>
+        <ng-container *ngIf="!isLoading">
+          <div *ngFor="let item of searchList; let i = index" class="mb-8">
+            <sb-my-course-card *ngIf="pageType === 'enrolledCourse'" [course]="item" [section]="null"
+            [cardImg]="getContentImg(item)" (click)="openCourseDetails(item, i)"></sb-my-course-card>
+            <sb-course-card *ngIf="pageType === 'popularCourses'" [course]="item"  [section]="null"
+            [cardImg]="getContentImg(item)" (click)="openCourseDetails(item, i)"></sb-course-card>
+          </div>
+        </ng-container>
+        <ng-container *ngIf="isLoading">
+          <div *ngFor="let item of [0,1,2,3,4,5,6,7,8,9,10,11,12,13]" class="mb-8 mt-8">
+            <sb-my-course-card *ngIf="pageType === 'enrolledCourse'" [isLoading]="isLoading"></sb-my-course-card>
+            <sb-course-card *ngIf="pageType === 'popularCourses'" [isLoading]="isLoading"></sb-course-card>
+          </div>
+        </ng-container>
+      </div>
 
-      </ng-container>
-
-      <ng-container *ngIf="localContentsCard">
+      <ng-container *ngIf="localContentsCard && searchList && searchList.length">
         <div class="sb-view-all-container">
           <div class="sb-card-container sb-card-view-all-container">
             <app-view-all-card *ngFor="let item of searchList" [userId]="userId" [content]="item" [type]="pageType"
@@ -32,7 +45,6 @@
         </div>
       </ng-container>
     </div>
-    <!-- TODO: need good logic here -->
     <div class="px-5">
       <ion-button expand="block" *ngIf="searchList && searchList.length && loadMoreBtn" (click)="loadMore();">
         {{ 'VIEW_MORE' | translate }}
@@ -40,7 +52,7 @@
     </div>
   </div>
 </ion-content>
-<ion-backdrop class="loading-backdrop" *ngIf="showOverlay" text-center>
+<ion-backdrop class="loading-backdrop ion-text-center" *ngIf="showOverlay">
   <div class="backdrop-container">
     <span *ngIf="downloadPercentage !== 100">
       <ion-label>{{ 'LOADING_CONTENT' | translate }} {{ downloadPercentage ? (downloadPercentage) : '0' }} %</ion-label>

@@ -30,6 +30,7 @@ describe('QRScannerResultHandler', () => {
     generateInteractTelemetry: jest.fn(),
     generateImpressionTelemetry: jest.fn(),
     generateEndTelemetry: jest.fn(),
+    generateUtmInfoTelemetry: jest.fn()
   };
 
   const mockRouter: Partial<Router> = {
@@ -47,7 +48,6 @@ describe('QRScannerResultHandler', () => {
   };
 
   const mockFormAndFrameworkUtilService: Partial<FormAndFrameworkUtilService> = {
-    getDailCodeConfig: jest.fn(() => Promise.resolve())
   };
 
   const mockPageAssembleService: Partial<PageAssembleService> = {};
@@ -78,42 +78,51 @@ describe('QRScannerResultHandler', () => {
     expect(qRScannerResultHandler).toBeTruthy();
   });
 
-  describe('getDailCodeRegularExpression()', () => {
-    it('should return cached dialcode config if cache is available', async () => {
+
+  describe('parseDialCode()', () => {
+    it('should return parsed data from the link', (done) => {
       // arrange
-      const regEx: RegExp = new RegExp('sample_regex');
-      mockAppglobalService.getCachedDialCodeConfig = jest.fn(() => new RegExp('sample_regex'));
+      mockFormAndFrameworkUtilService.getDialcodeRegexFormApi = jest.fn(() =>
+        Promise.resolve('(\\/dial\\/(?<sunbird>[a-zA-Z0-9]+)|(\\/QR\\/\\?id=(?<epathshala>[a-zA-Z0-9]+)))'));
       // act
-      const response = await qRScannerResultHandler['getDailCodeRegularExpression']();
       // assert
-      expect(response).toEqual(regEx);
+      qRScannerResultHandler.parseDialCode('https//www.sunbirded.org/get/dial/ABCDEF').then((response) => {
+        expect(response).toEqual('ABCDEF');
+        done();
+      });
     });
 
-    it('should return cached dialcode config if cache is not available', async () => {
+    it('should not return parsed data if scannData does not match to regex', (done) => {
       // arrange
-      const regEx: RegExp = new RegExp('sample_regex');
-      mockAppglobalService.getCachedDialCodeConfig = jest.fn(() => undefined);
+      const formValResponse = { values: '(\\/dial\\/(?<sunbird>[a-zA-Z0-9]+)|(\\/QR\\/\\?id=(?<epathshala>[a-zA-Z0-9]+)))' };
+      const regexExp = formValResponse.values;
+      qRScannerResultHandler['getDailCodeRegularExpression'] = jest.fn(() => Promise.resolve(regexExp));
+      mockFormAndFrameworkUtilService.getDialcodeRegexFormApi = jest.fn(() =>
+        Promise.resolve('(\\/dial\\/([a-zA-Z0-9]+)|(\\/QR\\/\\?id=([a-zA-Z0-9]+)))'));
       // act
-      const response = await qRScannerResultHandler['getDailCodeRegularExpression']();
       // assert
-      expect(response).toEqual(undefined);
+      qRScannerResultHandler.parseDialCode('https//www.sunbirded.org/get/content/ABCDEF').then((response) => {
+        expect(response).toBeUndefined();
+        done();
+      });
+
+    });
+
+    it('should return undefined if dailCode regex is undefined', (done) => {
+      // arrange
+      const formValResponse = { values: '(\\/dial\\/(?<sunbird>[a-zA-Z0-9]+)|(\\/QR\\/\\?id=(?<epathshala>[a-zA-Z0-9]+)))' };
+      const regexExp = formValResponse.values;
+      qRScannerResultHandler['getDailCodeRegularExpression'] = jest.fn(() => Promise.resolve(regexExp));
+      mockFormAndFrameworkUtilService.getDialcodeRegexFormApi = jest.fn(() =>
+        Promise.resolve(undefined));
+      // act
+      // assert
+      qRScannerResultHandler.parseDialCode('https//www.sunbirded.org/get/dial/ABCDEF').then((response) => {
+        expect(response).toBeUndefined();
+        done();
+      });
     });
   });
-
-  // describe('parseDialCode()', () => {
-  //   it('should return parsed data from the link', (done) => {
-  //     // arrange
-  //     const formValResponse =  {values: '(\\/dial\\/(?<sunbird>[a-zA-Z0-9]+)|(\\/QR\\/\\?id=(?<epathshala>[a-zA-Z0-9]+)))'};
-  //     const regexExp: RegExp = formValResponse.values;
-  //     qRScannerResultHandler['getDailCodeRegularExpression'] = jest.fn(() => Promise.resolve(regexExp));
-  //     // act
-  //     // assert
-  //     qRScannerResultHandler.parseDialCode('https//www.sunbirded.org/get/dial/ABCDEF').then((response) => {
-  //       expect(response).toEqual({});
-  //       done();
-  //     });
-  //   });
-  // });
 
   describe('isContentId()', () => {
     it('should return true if its a valid content deeplink', () => {
@@ -127,7 +136,7 @@ describe('QRScannerResultHandler', () => {
       // arrange
       // act
       // assert
-      expect(qRScannerResultHandler.isContentId('https://sunbirded.org/learn/course/do_212718772878598144126')).toBeTruthy();
+      expect(qRScannerResultHandler.isContentId('https://sunbirded.org/explore-course/course/do_212718772878598144126')).toBeTruthy();
     });
 
     it('should return true if its a valid Textbook deeplink', () => {
@@ -141,14 +150,19 @@ describe('QRScannerResultHandler', () => {
   describe('handleDialCode()', () => {
     it('should navigate to Search page if the scanned data is a dialocde link', () => {
       // arrange
+      mockTelemetryGeneratorService.generateUtmInfoTelemetry = jest.fn();
       // act
       qRScannerResultHandler.handleDialCode('profile-settings',
-        'https://sunbirded.org/get/dial/ABCDEF', 'ABCDEF');
+        'https://sunbirded.org/get/dial/ABCDEF?utm_source=google-play&channel=igot', 'ABCDEF');
       // assert
       expect(mockNavController.navigateForward).toHaveBeenCalledWith(['/search'], {
         state: {
           dialCode: 'ABCDEF',
-          corRelation: [{ id: 'ABCDEF', type: 'qr' }, {id: 'https://sunbirded.org', type: 'Source'}],
+          corRelation: [{ id: 'ABCDEF', type: 'qr' },
+           {id: 'https://sunbirded.org', type: 'Source'},
+           {id: 'Scan', type: 'AccessType'},
+           {id: 'igot', type: 'Source'},
+            {id: 'google-play', type: 'UtmSource'}],
           source: 'profile-settings',
           shouldGenerateEndTelemetry: true
         }
@@ -175,7 +189,7 @@ describe('QRScannerResultHandler', () => {
       mockContentService.getContentDetails = jest.fn(() => of(content));
       // act
       qRScannerResultHandler.handleContentId('profile-settings',
-        'https://sunbirded.org/resources/play/content/do_12345');
+        'https://sunbirded.org/resources/play/content/do_12345?utm_source=google-play&channel=igot');
       // assert
       const values = new Map();
       values['networkAvailable'] = 'Y';
@@ -185,7 +199,11 @@ describe('QRScannerResultHandler', () => {
         expect(mockRouter.navigate).toHaveBeenCalledWith(['/content-details'], {
           state: {
             content,
-            corRelation: [{id: 'do_12345', type: 'qr'}, { id: 'https://sunbirded.org', type: 'Source' }],
+            corRelation: [{ id: 'do_12345', type: 'qr' },
+            {id: 'https://sunbirded.org', type: 'Source'},
+            {id: 'Scan', type: 'AccessType'},
+            {id: 'igot', type: 'Source'},
+            {id: 'google-play', type: 'UtmSource'}],
             source: 'profile-settings',
             shouldGenerateEndTelemetry: true
           }
@@ -194,7 +212,7 @@ describe('QRScannerResultHandler', () => {
         expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(InteractType.OTHER,
           InteractSubtype.QRCodeScanSuccess,
           Environment.HOME,
-          PageId.QRCodeScanner, { id: 'do_12345', type: 'qr', version: undefined },
+          PageId.QRCodeScanner, { id: 'do_12345?utm_source=google-play&channel=igot', type: 'qr', version: undefined },
           values,
           undefined,
           [{id: 'https://sunbirded.org', type: 'Source'}]);
@@ -202,7 +220,7 @@ describe('QRScannerResultHandler', () => {
           ImpressionType.VIEW, ImpressionSubtype.QR_CODE_VALID,
           PageId.QRCodeScanner,
           Environment.HOME,
-          'do_12345', ObjectType.QR, '');
+          'do_12345?utm_source=google-play&channel=igot', ObjectType.QR, '');
         done();
       });
     });
@@ -216,7 +234,7 @@ describe('QRScannerResultHandler', () => {
       mockContentService.getContentDetails = jest.fn(() => of(content));
       // act
       qRScannerResultHandler.handleContentId('profile-settings',
-        'https://sunbirded.org/resources/play/collection/do_12345');
+        'https://sunbirded.org/resources/play/collection/do_12345?utm_source=google-play&channel=igot');
       // assert
       const values = new Map();
       values['networkAvailable'] = 'Y';
@@ -226,7 +244,11 @@ describe('QRScannerResultHandler', () => {
         expect(mockRouter.navigate).toHaveBeenCalledWith(['/collection-detail-etb'], {
           state: {
             content,
-            corRelation: [{ id: 'do_12345', type: 'qr' }, {id: 'https://sunbirded.org', type: 'Source'}],
+            corRelation: [{ id: 'do_12345', type: 'qr' },
+            {id: 'https://sunbirded.org', type: 'Source'},
+            {id: 'Scan', type: 'AccessType'},
+            {id: 'igot', type: 'Source'},
+            {id: 'google-play', type: 'UtmSource'}],
             source: 'profile-settings',
             shouldGenerateEndTelemetry: true
           }
@@ -235,7 +257,7 @@ describe('QRScannerResultHandler', () => {
         expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(InteractType.OTHER,
           InteractSubtype.QRCodeScanSuccess,
           Environment.HOME,
-          PageId.QRCodeScanner, { id: 'do_12345', type: 'qr', version: undefined },
+          PageId.QRCodeScanner, { id: 'do_12345?utm_source=google-play&channel=igot', type: 'qr', version: undefined },
           values,
           undefined,
           [{id: 'https://sunbirded.org', type: 'Source'}]);
@@ -243,7 +265,7 @@ describe('QRScannerResultHandler', () => {
           ImpressionType.VIEW, ImpressionSubtype.QR_CODE_VALID,
           PageId.QRCodeScanner,
           Environment.HOME,
-          'do_12345', ObjectType.QR, '');
+          'do_12345?utm_source=google-play&channel=igot', ObjectType.QR, '');
         done();
       });
     });
@@ -257,7 +279,7 @@ describe('QRScannerResultHandler', () => {
       mockContentService.getContentDetails = jest.fn(() => of(content));
       // act
       qRScannerResultHandler.handleContentId('profile-settings',
-        'https://sunbirded.org/learn/course/do_12345');
+        'https://sunbirded.org/learn/course/do_12345?utm_source=google-play&channel=igot');
       // assert
       const values = new Map();
       values['networkAvailable'] = 'Y';
@@ -267,7 +289,11 @@ describe('QRScannerResultHandler', () => {
         expect(mockRouter.navigate).toHaveBeenCalledWith(['/enrolled-course-details'], {
           state: {
             content,
-            corRelation: [{ id: 'do_12345', type: 'qr' }, {id: 'https://sunbirded.org', type: 'Source'}],
+            corRelation: [{ id: 'do_12345', type: 'qr' },
+            {id: 'https://sunbirded.org', type: 'Source'},
+            {id: 'Scan', type: 'AccessType'},
+            {id: 'igot', type: 'Source'},
+            {id: 'google-play', type: 'UtmSource'}],
             source: 'profile-settings',
             shouldGenerateEndTelemetry: true
           }
@@ -276,7 +302,7 @@ describe('QRScannerResultHandler', () => {
         expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(InteractType.OTHER,
           InteractSubtype.QRCodeScanSuccess,
           Environment.HOME,
-          PageId.QRCodeScanner, { id: 'do_12345', type: 'qr', version: undefined },
+          PageId.QRCodeScanner, { id: 'do_12345?utm_source=google-play&channel=igot', type: 'qr', version: undefined },
           values,
           undefined,
           [{id: 'https://sunbirded.org', type: 'Source'}]);
@@ -284,7 +310,7 @@ describe('QRScannerResultHandler', () => {
           ImpressionType.VIEW, ImpressionSubtype.QR_CODE_VALID,
           PageId.QRCodeScanner,
           Environment.HOME,
-          'do_12345', ObjectType.QR, '');
+          'do_12345?utm_source=google-play&channel=igot', ObjectType.QR, '');
         done();
       });
     });
@@ -351,6 +377,29 @@ describe('QRScannerResultHandler', () => {
         Environment.HOME,
         { id: 'ABCDEF', type: 'qr', version: undefined });
     });
+
+    it('should generate INTERACT and END event in case of invalid dialcode for pageId unavailable', (done) => {
+      // arrange
+      qRScannerResultHandler.scannedUrlMap = undefined;
+      // act
+      qRScannerResultHandler.handleInvalidQRCode(
+        undefined, 'ABCDEF');
+      // assert
+      const values = new Map();
+      values['networkAvailable'] = 'Y';
+      // values['scannedData'] = 'ABCDEF';
+      values['action'] = 'UNKNOWN';
+      setTimeout(() => {
+        expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(InteractType.OTHER,
+          InteractSubtype.QRCodeScanSuccess,
+          Environment.HOME,
+          PageId.QRCodeScanner,
+          undefined, values,
+          undefined,
+          [{id: '', type: 'Source'}]);
+        done();
+      }, 0);
+    });
   });
 
   describe('handleCertsQR()', () => {
@@ -358,6 +407,50 @@ describe('QRScannerResultHandler', () => {
       // arrange
       const context = { pdata: { id: 'org.sunbird', ver: '1.0' } };
       mockTelemetryService.buildContext = jest.fn(() => of(context));
+      jest.spyOn(global['cordova']['InAppBrowser'], 'open').mockImplementation(() => {
+        return {
+          addEventListener: (_, cb) => {
+            cb({ url: 'explore-course' });
+          },
+          close: () => { }
+        };
+      });
+      mockEvents.publish = jest.fn(() => []);
+      // act
+      qRScannerResultHandler.handleCertsQR(
+        'profile-settings', 'https://sunbirded.org/learn/certs/do_12345');
+      // assert
+      const values = new Map();
+      values['networkAvailable'] = 'Y';
+      values['scannedData'] = 'https://sunbirded.org/learn/certs/do_12345';
+      values['action'] = 'OpenBrowser';
+      values['scannedFrom'] = 'mobileApp';
+
+      setTimeout(() => {
+        expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(InteractType.OTHER,
+          InteractSubtype.QRCodeScanSuccess,
+          Environment.HOME,
+          PageId.QRCodeScanner, { id: 'do_12345', type: 'certificate', version: undefined },
+          values,
+          undefined,
+        [{id: 'https://sunbirded.org', type: 'Source'}]);
+        done();
+      });
+    });
+
+    it('should not open inappbrowser if link does not match', (done) => {
+      // arrange
+      const context = { pdata: { id: 'org.sunbird', ver: '1.0' } };
+      mockTelemetryService.buildContext = jest.fn(() => of(context));
+      jest.spyOn(global['cordova']['InAppBrowser'], 'open').mockImplementation(() => {
+        return {
+          addEventListener: (_, cb) => {
+            cb({ url: 'course' });
+          },
+          close: () => { }
+        };
+      });
+      mockEvents.publish = jest.fn(() => []);
       // act
       qRScannerResultHandler.handleCertsQR(
         'profile-settings', 'https://sunbirded.org/learn/certs/do_12345');
@@ -378,8 +471,40 @@ describe('QRScannerResultHandler', () => {
           [{id: 'https://sunbirded.org', type: 'Source'}]);
         done();
       });
+    });
 
+    it('should not open inappbrowser if url unavailable', (done) => {
+      // arrange
+      const context = { pdata: { id: 'org.sunbird', ver: '1.0' } };
+      mockTelemetryService.buildContext = jest.fn(() => of(context));
+      jest.spyOn(global['cordova']['InAppBrowser'], 'open').mockImplementation(() => {
+        return {
+          addEventListener: (_, cb) => {
+            cb({ path: 'course' });
+          },
+          close: () => { }
+        };
+      });
+      mockEvents.publish = jest.fn(() => []);
+      // act
+      qRScannerResultHandler.handleCertsQR(
+        'profile-settings', 'https://sunbirded.org/learn/certs/do_12345');
+      // assert
+      const values = new Map();
+      values['networkAvailable'] = 'Y';
+      values['scannedData'] = 'https://sunbirded.org/learn/certs/do_12345';
+      values['action'] = 'OpenBrowser';
+      values['scannedFrom'] = 'mobileApp';
+
+      setTimeout(() => {
+        expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(InteractType.OTHER,
+          InteractSubtype.QRCodeScanSuccess,
+          Environment.HOME,
+          PageId.QRCodeScanner, { id: 'do_12345', type: 'certificate', version: undefined },
+          values, undefined,
+          [{id: 'https://sunbirded.org', type: 'Source'}]);
+        done();
+      });
     });
   });
-
 });

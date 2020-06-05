@@ -1,21 +1,16 @@
 import { Component, NgZone, Inject } from '@angular/core';
 import { NavController, Events, PopoverController, NavParams } from '@ionic/angular';
 import {
-  SharedPreferences,
-  EnrollCourseRequest,
-  AuthService,
-  TelemetryObject,
-  InteractType,
-  CourseBatchesRequest,
-  CourseEnrollmentType,
-  CourseBatchStatus
+    SharedPreferences,
+    AuthService,
+    TelemetryObject,
+    InteractType,
 } from 'sunbird-sdk';
-import { PreferenceKey, ProfileConstants, EventTopics, ContentType, MimeType, BatchConstants, RouterLinks } from '@app/app/app.constant';
+import { PreferenceKey, ProfileConstants, EventTopics, ContentType, RouterLinks } from '@app/app/app.constant';
 import { CommonUtilService } from '@app/services/common-util.service';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { InteractSubtype, Environment, PageId } from '@app/services/telemetry-constants';
 import { Router } from '@angular/router';
-import * as dayjs from 'dayjs';
 import { LocalCourseService } from '@app/services';
 import { EnrollCourse } from '@app/app/enrolled-course-details-page/course.interface';
 
@@ -55,7 +50,7 @@ export class EnrollmentDetailsComponent {
         this.ongoingBatches = this.navParams.get('ongoingBatches');
         this.upcommingBatches = this.navParams.get('upcommingBatches');
         this.retiredBatched = this.navParams.get('retiredBatched');
-        this.todayDate = (dayjs['default'] || dayjs)().format('YYYY-MM-DD');
+        this.todayDate = window.dayjs().format('YYYY-MM-DD');
         this.courseId = this.navParams.get('courseId');
         this.getUserId();
 
@@ -92,7 +87,7 @@ export class EnrollmentDetailsComponent {
         this.preference.putString(PreferenceKey.CONTENT_CONTEXT, JSON.stringify(contentContextMap));
     }
 
-    enrollIntoBatch(content: any): void {
+    async enrollIntoBatch(content: any) {
 
         const enrollCourseRequest = this.localCourseService.prepareEnrollCourseRequest(this.userId, content, this.courseId);
         this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
@@ -101,8 +96,8 @@ export class EnrollmentDetailsComponent {
             PageId.CONTENT_DETAIL, undefined,
             this.localCourseService.prepareRequestValue(enrollCourseRequest));
 
-        const loader = this.commonUtilService.getLoader();
-        loader.present();
+        const loader = await this.commonUtilService.getLoader();
+        await loader.present();
         const enrollCourse: EnrollCourse = {
             userId: this.userId,
             batch: content,

@@ -1,8 +1,8 @@
 import { ChangeDetectorRef, Component, Inject, OnDestroy, OnInit } from '@angular/core';
-import { NavController, PopoverController, ToastController } from '@ionic/angular';
+import { PopoverController } from '@ionic/angular';
 import { ActiveDownloadsInterface } from './active-downloads.interface';
-import { Observable, Subscription} from 'rxjs';
-import { InteractSubtype, Environment, PageId, ActionButtonType, ImpressionType, InteractType } from '../../services/telemetry-constants';
+import { Observable, Subscription } from 'rxjs';
+import { InteractSubtype, Environment, PageId, InteractType } from '../../services/telemetry-constants';
 import {
   ContentDownloadRequest,
   DownloadEventType,
@@ -19,7 +19,8 @@ import { AppHeaderService, CommonUtilService, TelemetryGeneratorService } from '
 import { SbNoNetworkPopupComponent } from '../components/popups/sb-no-network-popup/sb-no-network-popup.component';
 import { SbPopoverComponent } from '../components/popups/sb-popover/sb-popover.component';
 import { featureIdMap } from '@app/feature-id-map';
-import { map, tap, filter, take} from 'rxjs/operators';
+import { tap, filter, take } from 'rxjs/operators';
+
 @Component({
   selector: 'app-active-downloads',
   templateUrl: './active-downloads.page.html',
@@ -47,9 +48,7 @@ export class ActiveDownloadsPage implements OnInit, OnDestroy, ActiveDownloadsIn
     private popoverCtrl: PopoverController,
     private changeDetectionRef: ChangeDetectorRef,
     private headerService: AppHeaderService,
-    private navCtrl: NavController,
     private commonUtilService: CommonUtilService,
-    private toastController: ToastController,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private location: Location,
     @Inject('DOWNLOAD_SERVICE') private downloadService: DownloadService,
@@ -92,6 +91,7 @@ export class ActiveDownloadsPage implements OnInit, OnDestroy, ActiveDownloadsIn
     this.fetchStorageDestination();
     this.checkAvailableSpace();
   }
+
   ionViewDidLoad() {
     this.telemetryGeneratorService.generatePageViewTelemetry(
       PageId.ACTIVE_DOWNLOADS,
@@ -132,8 +132,8 @@ export class ActiveDownloadsPage implements OnInit, OnDestroy, ActiveDownloadsIn
 
   private initDownloadProgress(): void {
     this._downloadProgressSubscription = this.eventsBusService.events(EventNamespace.DOWNLOADS).pipe(
-       filter((event) => event.type === DownloadEventType.PROGRESS),
-       tap((event) => {
+      filter((event) => event.type === DownloadEventType.PROGRESS),
+      tap((event) => {
         const downloadEvent = event as DownloadProgress;
         this.downloadProgressMap[downloadEvent.payload.identifier] = downloadEvent.payload.progress;
         this.changeDetectionRef.detectChanges();
@@ -241,7 +241,7 @@ export class ActiveDownloadsPage implements OnInit, OnDestroy, ActiveDownloadsIn
       cssClass: 'sb-popover no-network',
     });
 
-    this._toast.present();
+    await this._toast.present();
   }
   private async fetchStorageDestination() {
     this.storageDestination = await this.storageService.getStorageDestination().toPromise();
@@ -260,7 +260,7 @@ export class ActiveDownloadsPage implements OnInit, OnDestroy, ActiveDownloadsIn
       cssClass: 'sb-popover no-network',
     });
 
-    this._toast.present();
+    await this._toast.present();
   }
 
   private checkAvailableSpace() {

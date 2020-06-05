@@ -42,7 +42,7 @@
       <!---Block shows list of users -->
       <div *ngIf="otherUsers?.length > 0">
         <ion-text>
-          <p text-uppercase color="dark_gray" class="subTitle">{{ 'OTHER_USERS' | translate}}</p>
+          <p color="dark_gray" class="subTitle ion-text-uppercase">{{ 'OTHER_USERS' | translate}}</p>
         </ion-text>
         <div>
           <div class="flex-card-container" *ngFor="let user of otherUsers;let i=index" lines="none"
@@ -68,13 +68,13 @@
         <div class="img-container">
           <img class="image_style" alt="no_user" src="assets/imgs/ic_businessman.png">
         </div>
-        <ion-row padding-top>
+        <ion-row class="ion-padding-top">
           <ion-col size-md="6" offset-md="3" size-lg="6" offset-lg="3">
             <div class="image-text">
               <h6>
                 <strong>{{'NO_GROUPS_CREATED_YET' | translate}}</strong>
               </h6>
-              <div text-center class="description">
+              <div class="description ion-text-center">
                 {{ 'NO_GROUP_MESSAGE' | translate }}
               </div>
             </div>

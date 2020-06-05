@@ -1,5 +1,5 @@
 import { Subscription } from 'rxjs';
-import { Events, Platform } from '@ionic/angular';
+import { Events, Platform, PopoverController } from '@ionic/angular';
 import { ActivatedRoute, Router, NavigationExtras } from '@angular/router';
 import { Location } from '@angular/common';
 import { Component, Inject, NgZone, OnInit, Input } from '@angular/core';
@@ -23,7 +23,13 @@ import {
   TelemetryObject,
   CorrelationData,
   LogLevel,
-  Mode
+  CourseEnrollmentType,
+  CourseBatchStatus,
+  Batch,
+  CourseBatchesRequest,
+  FetchEnrolledCourseRequest,
+  SharedPreferences,
+  SortOrder,
 } from 'sunbird-sdk';
 
 import {
@@ -31,14 +37,22 @@ import {
   ImpressionType,
   InteractSubtype,
   InteractType,
-  PageId
+  PageId,
+  CorReleationDataType
 } from '@app/services/telemetry-constants';
-import { ContentType, ViewMore, MimeType, RouterLinks, ContentFilterConfig } from '@app/app/app.constant';
+import {
+  ContentType, ViewMore, MimeType, RouterLinks, ContentFilterConfig,
+  ContentCard, BatchConstants, PreferenceKey
+} from '@app/app/app.constant';
 import { FormAndFrameworkUtilService } from '@app/services/formandframeworkutil.service';
 import { CourseUtilService } from '@app/services/course-util.service';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { CommonUtilService } from '@app/services/common-util.service';
 import { AppHeaderService } from '@app/services/app-header.service';
+import { EnrollmentDetailsComponent } from '../components/enrollment-details/enrollment-details.component';
+import { AppGlobalService } from '@app/services/app-global-service.service';
+import { LocalCourseService } from '@app/services/local-course.service';
+import { ContentUtil } from '@app/util/content-util';
 
 @Component({
   selector: 'app-view-more-activity',
@@ -122,11 +136,14 @@ export class ViewMoreActivityComponent implements OnInit {
   objId;
   objType;
   objVer;
+  loader: any;
+  isLoading = false;
 
   constructor(
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
     @Inject('EVENTS_BUS_SERVICE') private eventBusService: EventsBusService,
     @Inject('COURSE_SERVICE') private courseService: CourseService,
+    @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
     private events: Events,
     private ngZone: NgZone,
     private courseUtilService: CourseUtilService,
@@ -138,7 +155,10 @@ export class ViewMoreActivityComponent implements OnInit {
     private location: Location,
     private platform: Platform,
     private zone: NgZone,
-    private formAndFrameworkUtilService: FormAndFrameworkUtilService
+    private formAndFrameworkUtilService: FormAndFrameworkUtilService,
+    private appGlobalService: AppGlobalService,
+    private popoverCtrl: PopoverController,
+    private localCourseService: LocalCourseService
   ) {
     this.route.queryParams.subscribe(params => {
       if (this.router.getCurrentNavigation().extras.state) {
@@ -152,6 +172,10 @@ export class ViewMoreActivityComponent implements OnInit {
         this.searchQuery = this.router.getCurrentNavigation().extras.state.requestParams;
         this.audience = this.router.getCurrentNavigation().extras.state.audience;
         this.enrolledCourses = this.router.getCurrentNavigation().extras.state.enrolledCourses;
+
+        if (this.router.getCurrentNavigation().extras.state.sectionName) {
+          this.sectionName = this.router.getCurrentNavigation().extras.state.sectionName;
+        }
 
         if (this.headerTitle !== this.title) {
           console.log('inside header title if condition');
@@ -182,7 +206,9 @@ export class ViewMoreActivityComponent implements OnInit {
   ionViewWillEnter(): void {
     this.zone.run(() => {
       this.headerService.showHeaderWithBackButton();
-      this.tabBarElement.style.display = 'none';
+      if (this.tabBarElement) {
+        this.tabBarElement.style.display = 'none';
+      }
       this.handleBackButton();
     });
   }
@@ -215,16 +241,17 @@ export class ViewMoreActivityComponent implements OnInit {
    * Search content
    */
   async search() {
-    const loader = await this.commonUtilService.getLoader();
-    await loader.present();
+    this.isLoading = true;
+    const selectedLanguage = await this.preferences.getString(PreferenceKey.SELECTED_LANGUAGE_CODE).toPromise();
     const searchCriteria: ContentSearchCriteria = {
-      searchType: SearchType.FILTER
+      searchType: SearchType.FILTER,
+      languageCode: selectedLanguage
     };
     this.searchQuery.request['searchType'] = SearchType.FILTER;
     this.searchQuery.request['offset'] = this.offset;
     this.contentService.searchContent(searchCriteria, this.searchQuery).toPromise()
       .then((data: ContentSearchResult) => {
-        this.ngZone.run(async () => {
+        this.ngZone.run(() => {
           if (data && data.contentDataList) {
             this.loadMoreBtn = data.contentDataList.length >= this.searchLimit;
             if (this.isLoadMore) {
@@ -237,14 +264,14 @@ export class ViewMoreActivityComponent implements OnInit {
           } else {
             this.loadMoreBtn = false;
           }
-          await loader.dismiss();
+          this.isLoading = false;
         });
         this.generateImpressionEvent();
         this.generateLogEvent(data);
       })
-      .catch(async () => {
+      .catch(() => {
         console.error('Error: while fetching view more content');
-        await loader.dismiss();
+        this.isLoading = false;
       });
   }
 
@@ -301,9 +328,8 @@ export class ViewMoreActivityComponent implements OnInit {
   /**
    * Get enrolled courses
    */
-  async getEnrolledCourse() {
-    const loader = await this.commonUtilService.getLoader();
-    await loader.present();
+  getEnrolledCourse() {
+    this.isLoading = true;
     this.pageType = 'enrolledCourse';
     const option = {
       userId: this.userId,
@@ -311,16 +337,19 @@ export class ViewMoreActivityComponent implements OnInit {
       returnRefreshedEnrolledCourses: true
     };
     this.courseService.getEnrolledCourses(option).toPromise()
-      .then(async (data: Course[]) => {
+      .then((data: Course[]) => {
         if (data) {
           this.searchList = data;
           this.loadMoreBtn = false;
+          for (const course of data) {
+            course.completionPercentage = course.completionPercentage || 0;
+          }
         }
-        await loader.dismiss();
+        this.isLoading = false;
       })
-      .catch(async (error: any) => {
+      .catch((error: any) => {
         console.error('error while loading enrolled courses', error);
-        await loader.dismiss();
+        this.isLoading = false;
       });
   }
 
@@ -515,7 +544,9 @@ export class ViewMoreActivityComponent implements OnInit {
       if (this.eventSubscription) {
         this.eventSubscription.unsubscribe();
       }
-      this.tabBarElement.style.display = 'flex';
+      if (this.tabBarElement) {
+        this.tabBarElement.style.display = 'flex';
+      }
       this.isLoadMore = false;
       this.showOverlay = false;
       this.backButtonFunc.unsubscribe();
@@ -571,4 +602,192 @@ export class ViewMoreActivityComponent implements OnInit {
       });
     }
   }
+
+  getContentImg(content) {
+    const img = this.commonUtilService.getContentImg(content);
+    return img;
+  }
+
+  openCourseDetails(course, index) {
+    this.index = index;
+    const payload = {
+      guestUser: this.guestUser,
+      enrolledCourses: this.enrolledCourses
+    };
+
+    this.checkRetiredOpenBatch(course, this.pageType, payload);
+  }
+
+  async checkRetiredOpenBatch(content: any, layoutName?: string, payload?: any) {
+    this.loader = await this.commonUtilService.getLoader();
+    await this.loader.present();
+    let anyOpenBatch = false;
+    const enrolledCourses = payload.enrolledCourses || [];
+    let retiredBatches: Array<any> = [];
+    if (layoutName !== ContentCard.LAYOUT_INPROGRESS) {
+      retiredBatches = enrolledCourses.filter((element) => {
+        if (element.contentId === content.identifier && element.batch.status === 1 && element.cProgress !== 100) {
+          anyOpenBatch = true;
+          content.batch = element.batch;
+        }
+        if (element.contentId === content.identifier && element.batch.status === 2 && element.cProgress !== 100) {
+          return element;
+        }
+      });
+    }
+    if (anyOpenBatch || !retiredBatches.length) {
+      // open the batch directly
+      this.navigateToDetailsPage(content, layoutName);
+    } else if (retiredBatches.length) {
+      this.navigateToBatchListPopup(content, layoutName, retiredBatches, payload);
+    }
+    await this.loader.dismiss();
+  }
+
+  private async navigateToBatchListPopup(content: any, layoutName?: string, retiredBatches?: any, payload?: any) {
+    const ongoingBatches = [];
+    const upcommingBatches = [];
+    const courseBatchesRequest: CourseBatchesRequest = {
+      filters: {
+        courseId: layoutName === ContentCard.LAYOUT_INPROGRESS ? content.contentId : content.identifier,
+        enrollmentType: CourseEnrollmentType.OPEN,
+        status: [CourseBatchStatus.NOT_STARTED, CourseBatchStatus.IN_PROGRESS]
+      },
+      sort_by: { createdDate: SortOrder.DESC },
+      fields: BatchConstants.REQUIRED_FIELDS
+    };
+    const reqvalues = new Map();
+    reqvalues['enrollReq'] = courseBatchesRequest;
+
+    if (this.commonUtilService.networkInfo.isNetworkAvailable) {
+      if (!payload.guestUser) {
+        this.loader = await this.commonUtilService.getLoader();
+        await this.loader.present();
+        this.courseService.getCourseBatches(courseBatchesRequest).toPromise()
+          .then((res: Batch[]) => {
+            this.zone.run(async () => {
+              const batches = res;
+              if (batches.length) {
+                batches.forEach((batch, key) => {
+                  if (batch.status === 1) {
+                    ongoingBatches.push(batch);
+                  } else {
+                    upcommingBatches.push(batch);
+                  }
+                });
+                this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
+                  'showing-enrolled-ongoing-batch-popup',
+                  Environment.HOME,
+                  PageId.CONTENT_DETAIL, undefined,
+                  reqvalues);
+                await this.loader.dismiss();
+
+                const popover = await this.popoverCtrl.create({
+                  component: EnrollmentDetailsComponent,
+                  componentProps: {
+                    upcommingBatches,
+                    ongoingBatches,
+                    retiredBatches,
+                    courseId: content.identifier
+                  },
+                  cssClass: 'enrollement-popover'
+                });
+                await popover.present();
+                const { data } = await popover.onDidDismiss();
+                if (data && data.isEnrolled) {
+                  this.getEnrolledCourses();
+                }
+
+              } else {
+                await this.loader.dismiss();
+                this.navigateToDetailsPage(content, layoutName);
+                this.commonUtilService.showToast('NO_BATCHES_AVAILABLE');
+              }
+            });
+          })
+          .catch((error: any) => {
+            console.log('error while fetching course batches ==>', error);
+          });
+      } else {
+        this.router.navigate([RouterLinks.COURSE_BATCHES]);
+      }
+    } else {
+      this.commonUtilService.showToast('ERROR_NO_INTERNET_MESSAGE');
+    }
+  }
+
+
+  private async navigateToDetailsPage(content: any, layoutName) {
+    const identifier = content.contentId || content.identifier;
+    const type = this.telemetryGeneratorService.isCollection(content.mimeType) ? content.contentType : ContentType.COURSE;
+    const telemetryObject: TelemetryObject = new TelemetryObject(identifier, type, content.pkgVersion);
+
+    const corRelationList: Array<CorrelationData> = [{
+      id: this.sectionName,
+      type: CorReleationDataType.SECTION
+    }, {
+      id: identifier,
+      type: CorReleationDataType.ROOT_ID
+    }];
+
+    const values = new Map();
+    values['sectionName'] = this.sectionName;
+    values['positionClicked'] = this.index;
+
+    this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
+      InteractSubtype.CONTENT_CLICKED,
+      this.env,
+      PageId.VIEW_MORE,
+      telemetryObject,
+      values,
+      ContentUtil.generateRollUp(undefined, identifier),
+      this.commonUtilService.deDupe(corRelationList, 'type'));
+
+    this.zone.run(async () => {
+      if (layoutName === 'enrolledCourse' || content.contentType === ContentType.COURSE) {
+        this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], {
+          state: { content }
+        });
+      } else if (content.mimeType === MimeType.COLLECTION) {
+        this.router.navigate([RouterLinks.COLLECTION_DETAIL_ETB], {
+          state: { content }
+        });
+
+      } else {
+        this.router.navigate([RouterLinks.CONTENT_DETAILS], {
+          state: { content }
+        });
+      }
+    });
+  }
+
+  getEnrolledCourses(returnRefreshedCourses: boolean = false): void {
+
+    const option: FetchEnrolledCourseRequest = {
+      userId: this.userId,
+      returnFreshCourses: returnRefreshedCourses
+    };
+    this.courseService.getEnrolledCourses(option).toPromise()
+      .then((enrolledCourses) => {
+        if (enrolledCourses) {
+          this.zone.run(() => {
+            this.enrolledCourses = enrolledCourses;
+            if (this.enrolledCourses.length > 0) {
+              const courseList: Array<Course> = [];
+              for (const course of this.enrolledCourses) {
+                course.completionPercentage = course.completionPercentage || 0;
+                courseList.push(course);
+              }
+
+              this.appGlobalService.setEnrolledCourseList(courseList);
+            }
+
+            this.showLoader = false;
+          });
+        }
+      }, (err) => {
+        this.showLoader = false;
+      });
+  }
+
 }

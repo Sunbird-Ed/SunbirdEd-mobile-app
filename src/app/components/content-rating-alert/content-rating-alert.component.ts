@@ -42,7 +42,7 @@ export class ContentRatingAlertComponent implements OnInit {
   comment = '';
   backButtonFunc = undefined;
   ratingCount: any;
-  content: Content;
+  content: any;
   showCommentBox = false;
   private pageId = '';
   userRating = 0;
@@ -161,7 +161,7 @@ export class ContentRatingAlertComponent implements OnInit {
       contentId: this.content.identifier,
       rating: this.ratingCount ? this.ratingCount : this.userRating,
       comments: this.allComments,
-      contentVersion: this.content.contentData.pkgVersion
+      contentVersion: this.content.contentData ? this.content.contentData.pkgVersion : this.content.pkgVersion
     };
     const paramsMap = new Map();
     paramsMap['Ratings'] = this.ratingCount ? this.ratingCount : this.userRating;
@@ -223,7 +223,7 @@ export class ContentRatingAlertComponent implements OnInit {
     };
     this.formService.getForm(req).toPromise()
       .then((res: any) => {
-          const data = res.form ? res.form.data.fields : res.data.fields;
+          const data = res.form.data.fields;
           if (data.length) {
               this.contentRatingOptions = data[0];
               this.createRatingForm(this.userRating);
@@ -244,7 +244,7 @@ export class ContentRatingAlertComponent implements OnInit {
     };
     this.formService.getForm(req).toPromise()
     .then((res: any) => {
-        const data = res.form ? res.form.data.fields : res.data.fields;
+        const data = res.form.data.fields;
         if (data.length) {
             this.contentRatingOptions = data[0];
             this.createRatingForm(this.userRating);

@@ -1,12 +1,14 @@
 import { FormAndFrameworkUtilService } from './formandframeworkutil.service';
-import { ProfileService,
+import {
+  ProfileService,
   SystemSettingsService,
   FrameworkUtilService,
   FormService,
   FrameworkService,
   SharedPreferences,
   ProfileType,
-  ProfileSource } from 'sunbird-sdk';
+  ProfileSource
+} from 'sunbird-sdk';
 import { AppGlobalService } from './app-global-service.service';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { TranslateService } from '@ngx-translate/core';
@@ -48,7 +50,7 @@ describe('FormAndFrameworkUtilService', () => {
   const mockAppGlobalService: Partial<AppGlobalService> = {
     setLibraryFilterConfig: jest.fn(),
     setCourseFilterConfig: jest.fn(),
-    setDailCodeConfig: jest.fn(),
+    setSupportedUrlRegexConfig: jest.fn(),
     setLocationConfig: jest.fn(),
     setRootOrganizations: jest.fn()
   };
@@ -551,49 +553,6 @@ describe('FormAndFrameworkUtilService', () => {
     });
   });
 
-  describe('getDailCodeConfig()', () => {
-
-    it('should invoke invokeDialCodeFormApi() if cached response is not available', (done) => {
-      // arrange
-      mockAppGlobalService.getCachedDialCodeConfig = jest.fn(() => undefined);
-      mockFormService.getForm = jest.fn(() => of(mockDialCodeConfigResponse));
-      jest.spyOn<any, any>(formAndFrameworkUtilService, 'invokeDialCodeFormApi');
-      // act
-      // assert
-      formAndFrameworkUtilService.getDailCodeConfig().then((response) => {
-        expect(formAndFrameworkUtilService['invokeDialCodeFormApi']).toHaveBeenCalled();
-        done();
-      });
-    });
-  });
-
-  describe('invokeDialCodeFormApi()', () => {
-
-    it('should return dialcode config', (done) => {
-      // arrange
-      mockFormService.getForm = jest.fn(() => of(mockDialCodeConfigResponse));
-      // act
-      // assert
-      formAndFrameworkUtilService['invokeDialCodeFormApi']();
-      setTimeout(() => {
-        expect(mockAppGlobalService.setDailCodeConfig).toHaveBeenCalledWith('sample_regex');
-        done();
-      }, 0);
-    });
-
-    it('should reject the error if API throws some error', (done) => {
-      // arrange
-      mockFormService.getForm = jest.fn(() => throwError({ error: 'API_ERROR' }));
-      // act
-      // assert
-      formAndFrameworkUtilService['invokeDialCodeFormApi']();
-      setTimeout(() => {
-        expect(mockAppGlobalService.setDailCodeConfig).not.toHaveBeenCalledWith('sample_regex');
-        done();
-      }, 0);
-    });
-  });
-
   describe('getLocationConfig()', () => {
 
     it('should invoke invokeLocationConfigFormApi if cached response is not available', (done) => {
@@ -665,12 +624,12 @@ describe('FormAndFrameworkUtilService', () => {
 
     it('should invoke getDailCodeConfig', (done) => {
       // arrange
-      jest.spyOn(formAndFrameworkUtilService, 'getDailCodeConfig');
+      jest.spyOn(formAndFrameworkUtilService, 'invokeUrlRegexFormApi');
       // act
       // assert
       formAndFrameworkUtilService.init();
       setTimeout((() => {
-        expect(formAndFrameworkUtilService.getDailCodeConfig).toHaveBeenCalled();
+        expect(formAndFrameworkUtilService.invokeUrlRegexFormApi).toHaveBeenCalled();
         done();
       }), 0);
     });
@@ -724,7 +683,9 @@ describe('FormAndFrameworkUtilService', () => {
       // act
       // assert
       formAndFrameworkUtilService.getSupportedContentFilterConfig('library').then((response) => {
-        expect(response).toEqual(['Story', 'Worksheet', 'Game', 'Resource', 'Collection', 'TextBook', 'LessonPlan']);
+        expect(response).toEqual(['Story', 'Worksheet', 'Game', 'Resource', 'Collection', 'TextBook', 'eTextBook',
+          'LessonPlan', 'FocusSpot', 'LearningOutcomeDefinition', 'PracticeQuestionSet', 'CuriosityQuestions',
+          'MarkingSchemeRubric', 'ExplanationResource', 'ExperientialResource']);
         done();
       });
     });
@@ -750,13 +711,10 @@ describe('FormAndFrameworkUtilService', () => {
       // act
       // assert
       formAndFrameworkUtilService.getSupportedContentFilterConfig('downloads').then((response) => {
-        expect(response).toEqual(['Story', 'Worksheet', 'Game', 'Resource', 'Collection', 'TextBook', 'LessonPlan', 'Course', 'FocusSpot',
-          'LearningOutcomeDefinition',
-          'PracticeQuestionSet',
-          'CuriosityQuestions',
-          'MarkingSchemeRubric',
-          'ExplanationResource',
-          'ExperientialResource']);
+        expect(response).toEqual(['Story', 'Worksheet', 'Game', 'Resource', 'Collection', 'TextBook', 'eTextBook',
+          'LessonPlan', 'FocusSpot', 'LearningOutcomeDefinition', 'PracticeQuestionSet', 'CuriosityQuestions',
+          'MarkingSchemeRubric', 'ExplanationResource', 'ExperientialResource',
+          'Course']);
         done();
       });
     });
@@ -787,7 +745,7 @@ describe('FormAndFrameworkUtilService', () => {
       formAndFrameworkUtilService.getRootOrganizations();
       // assert
       setTimeout(() => {
-        expect(mockAppGlobalService.setRootOrganizations).toHaveBeenCalledWith(['sample_org']);
+        expect(mockAppGlobalService.getCachedRootOrganizations).toHaveBeenCalled();
         done();
       }, 0);
     });
@@ -845,7 +803,7 @@ describe('FormAndFrameworkUtilService', () => {
 
     it('should update the profile information successfully', (done) => {
       // arrange
-      mockProfileService.updateProfile = jest.fn(() => of({ medium: ['English'], grade: ['class1']} as any));
+      mockProfileService.updateProfile = jest.fn(() => of({ medium: ['English'], grade: ['class1'] } as any));
       const profile = { syllabus: ['tn'], board: ['tn', 'ap'], medium: ['English'], grade: ['class1'] };
       const profileData = { profileType: ProfileType.TEACHER, source: ProfileSource.SERVER };
       // act
@@ -859,14 +817,14 @@ describe('FormAndFrameworkUtilService', () => {
 
     it('should update the profile information successfully and send the response back', (done) => {
       // arrange
-      mockProfileService.updateProfile = jest.fn(() => of({ grade: ['class1']} as any));
+      mockProfileService.updateProfile = jest.fn(() => of({ grade: ['class1'] } as any));
       const profile = { syllabus: ['tn'], board: ['tn', 'ap'], medium: ['English'], grade: ['class1'] };
       const profileData = { profileType: ProfileType.TEACHER, source: ProfileSource.SERVER };
       // act
       // assert
       formAndFrameworkUtilService.updateProfileInfo(profile, profileData).then((response) => {
         expect(mockEvents.publish).toHaveBeenCalledWith('refresh:loggedInProfile');
-        expect(response).toEqual({ status: false, profile: { grade: ['class1']} });
+        expect(response).toEqual({ status: false, profile: { grade: ['class1'] } });
         done();
       });
     });
@@ -890,25 +848,27 @@ describe('FormAndFrameworkUtilService', () => {
     it('should update logged in user information successfully', (done) => {
       // arrange
       mockFrameworkUtilService.getFrameworkCategoryTerms = jest.fn(() => of(mockCategoryTermsResponse));
-      mockProfileService.updateProfile = jest.fn(() => of({ medium: ['English'], grade: ['class1']} as any));
+      mockProfileService.updateProfile = jest.fn(() => of({ medium: ['English'], grade: ['class1'] } as any));
       const profile = { syllabus: ['tn'], board: ['tn', 'ap'], medium: ['English'], grade: ['class1'] };
-      const profileRes = { framework: {
-        gradeLevel : [
-          'Class 1'
-       ],
-        subject : [
-          'Telugu'
-       ],
-        id : [
-          'ts_k-12_2'
-       ],
-        medium : [
-          'English'
-       ],
-        board : [
-          'State (Andhra Pradesh)'
-       ]
-     }};
+      const profileRes = {
+        framework: {
+          gradeLevel: [
+            'Class 1'
+          ],
+          subject: [
+            'Telugu'
+          ],
+          id: [
+            'ts_k-12_2'
+          ],
+          medium: [
+            'English'
+          ],
+          board: [
+            'State (Andhra Pradesh)'
+          ]
+        }
+      };
       // act
       // assert
       formAndFrameworkUtilService.updateLoggedInUser(profileRes, profile).then((response) => {
@@ -919,26 +879,28 @@ describe('FormAndFrameworkUtilService', () => {
 
     it('should update logged in user information successfully if getFramework API fails', (done) => {
       // arrange
-      mockFrameworkUtilService.getFrameworkCategoryTerms = jest.fn(() =>  throwError({ error: 'API_ERROR' }));
-      mockProfileService.updateProfile = jest.fn(() => of({ medium: ['English'], grade: ['class1']} as any));
+      mockFrameworkUtilService.getFrameworkCategoryTerms = jest.fn(() => throwError({ error: 'API_ERROR' }));
+      mockProfileService.updateProfile = jest.fn(() => of({ medium: ['English'], grade: ['class1'] } as any));
       const profile = { syllabus: ['tn'], board: ['tn', 'ap'], medium: ['English'], grade: ['class1'] };
-      const profileRes = { framework: {
-        gradeLevel : [
-          'Class 1'
-       ],
-        subject : [
-          'Telugu'
-       ],
-        id : [
-          'ts_k-12_2'
-       ],
-        medium : [
-          'English'
-       ],
-        board : [
-          'State (Andhra Pradesh)'
-       ]
-     }};
+      const profileRes = {
+        framework: {
+          gradeLevel: [
+            'Class 1'
+          ],
+          subject: [
+            'Telugu'
+          ],
+          id: [
+            'ts_k-12_2'
+          ],
+          medium: [
+            'English'
+          ],
+          board: [
+            'State (Andhra Pradesh)'
+          ]
+        }
+      };
       // act
       // assert
       formAndFrameworkUtilService.updateLoggedInUser(profileRes, profile).then((response) => {
@@ -949,15 +911,87 @@ describe('FormAndFrameworkUtilService', () => {
 
     it('should resolve if  framework info is not available', (done) => {
       // arrange
-      mockFrameworkUtilService.getFrameworkCategoryTerms = jest.fn(() =>  throwError({ error: 'API_ERROR' }));
-      mockProfileService.updateProfile = jest.fn(() => of({ medium: ['English'], grade: ['class1']} as any));
+      mockFrameworkUtilService.getFrameworkCategoryTerms = jest.fn(() => throwError({ error: 'API_ERROR' }));
+      mockProfileService.updateProfile = jest.fn(() => of({ medium: ['English'], grade: ['class1'] } as any));
       const profile = { syllabus: ['tn'], board: ['tn', 'ap'], medium: ['English'], grade: ['class1'] };
-      const profileRes = { framework: {}};
+      const profileRes = { framework: {} };
       // act
       // assert
       formAndFrameworkUtilService.updateLoggedInUser(profileRes, profile).then((response) => {
         expect(response).toEqual({ status: false });
         done();
+      });
+    });
+  });
+
+  describe('getDialcodeRegexFormApi()', () => {
+    it('should return the dailcode regex if it is already saved', () => {
+      mockAppGlobalService.getCachedSupportedUrlRegexConfig = jest.fn(() => undefined);
+      jest.spyOn(formAndFrameworkUtilService, 'invokeUrlRegexFormApi').mockImplementation(() => Promise.resolve({
+        dialcode: 'sample-dail-code'
+      }));
+
+      formAndFrameworkUtilService.getDialcodeRegexFormApi().then(() => {
+        setTimeout(() => {
+        }, 0);
+      });
+    });
+
+    it('should fetch the formAPI data and return the dailcode regex', () => {
+      mockAppGlobalService.getCachedSupportedUrlRegexConfig = jest.fn(() => ({ dialcode: 'dailcodeRegex' }));
+      jest.spyOn(formAndFrameworkUtilService, 'invokeUrlRegexFormApi').mockImplementation(() => Promise.resolve({
+        dialcode: 'sample-dail-code'
+      }));
+
+      formAndFrameworkUtilService.getDialcodeRegexFormApi().then(() => {
+        setTimeout(() => {
+        }, 0);
+      });
+    });
+
+    it('should fetch the formAPI data and but if dialcode regex is not present then return empty string', () => {
+      mockAppGlobalService.getCachedSupportedUrlRegexConfig = jest.fn(() => undefined);
+      jest.spyOn(formAndFrameworkUtilService, 'invokeUrlRegexFormApi').mockImplementation(() => Promise.resolve());
+
+      formAndFrameworkUtilService.getDialcodeRegexFormApi().then(() => {
+        setTimeout(() => {
+        }, 0);
+      });
+    });
+  });
+
+  describe('getDeeplinkRegexFormApi()', () => {
+    it('should return the deeplink regex if it is already saved', () => {
+      mockAppGlobalService.getCachedSupportedUrlRegexConfig = jest.fn(() => undefined);
+      jest.spyOn(formAndFrameworkUtilService, 'invokeUrlRegexFormApi').mockImplementation(() => Promise.resolve({
+        identifier: 'sample-dail-code'
+      }));
+
+      formAndFrameworkUtilService.getDeeplinkRegexFormApi().then(() => {
+        setTimeout(() => {
+        }, 0);
+      });
+    });
+
+    it('should fetch the formAPI data and return the deeplink regex', () => {
+      mockAppGlobalService.getCachedSupportedUrlRegexConfig = jest.fn(() => ({ identifier: 'dailcodeRegex' }));
+      jest.spyOn(formAndFrameworkUtilService, 'invokeUrlRegexFormApi').mockImplementation(() => Promise.resolve({
+        identifier: 'sample-dail-code'
+      }));
+
+      formAndFrameworkUtilService.getDeeplinkRegexFormApi().then(() => {
+        setTimeout(() => {
+        }, 0);
+      });
+    });
+
+    it('should fetch the formAPI data and but if deeplink regex is not present then return empty string', () => {
+      mockAppGlobalService.getCachedSupportedUrlRegexConfig = jest.fn(() => undefined);
+      jest.spyOn(formAndFrameworkUtilService, 'invokeUrlRegexFormApi').mockImplementation(() => Promise.resolve());
+
+      formAndFrameworkUtilService.getDeeplinkRegexFormApi().then(() => {
+        setTimeout(() => {
+        }, 0);
       });
     });
   });

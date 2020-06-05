@@ -6,8 +6,6 @@ import {
     FrameworkService,
     FrameworkUtilService,
     ProfileService,
-    SharedPreferences,
-    DeviceRegisterService,
     ContentService,
     EventsBusService,
     PlayerService,
@@ -15,23 +13,17 @@ import {
     ContentEventType
 } from 'sunbird-sdk';
 import { TranslateService } from '@ngx-translate/core';
-import { Events, Platform, AlertController, NavController } from '@ionic/angular';
+import { Events, Platform, NavController } from '@ionic/angular';
 import { Router } from '@angular/router';
-import { AppVersion } from '@ionic-native/app-version/ngx';
 import {
     AppGlobalService,
     TelemetryGeneratorService,
     CommonUtilService,
-    SunbirdQRScanner,
-    ContainerService,
     AppHeaderService
 } from 'services';
-import { SplashScreenService } from '@app/services/splash-screen.service';
-import { Scanner } from 'typescript';
 import { Location } from '@angular/common';
 import { ImpressionType, PageId, Environment, InteractSubtype, InteractType } from '@app/services/telemetry-constants';
-import { of, Subscription, throwError } from 'rxjs';
-import { FormControl } from '@angular/forms';
+import { of, throwError } from 'rxjs';
 import { NgZone } from '@angular/core';
 import { CanvasPlayerService } from '../../services';
 import { File } from '@ionic-native/file/ngx';
@@ -61,8 +53,15 @@ describe('QrcoderesultPage', () => {
     };
     const mockPlatform: Partial<Platform> = {};
     const mockProfileService: Partial<ProfileService> = {};
+    const mockRoterExtras = {
+        extras: {
+            state: {
+                isAvailableLocally: false
+            }
+        }
+    };
     const mockRouter: Partial<Router> = {
-        getCurrentNavigation: jest.fn(() => undefined),
+        getCurrentNavigation: jest.fn(() => mockRoterExtras as any),
         navigate: jest.fn(() => Promise.resolve(true))
     };
     const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {
@@ -71,7 +70,9 @@ describe('QrcoderesultPage', () => {
         generateBackClickedTelemetry: jest.fn()
     };
     const mockTranslate: Partial<TranslateService> = {};
-    const mockContentService: Partial<ContentService> = {};
+    const mockContentService: Partial<ContentService> = {
+        getContentHeirarchy : jest.fn(() => of(undefined))
+    };
     const mockEventsBusService: Partial<EventsBusService> = {};
     const mockPlayerService: Partial<PlayerService> = {};
     const mockZone: Partial<NgZone> = {
@@ -81,7 +82,8 @@ describe('QrcoderesultPage', () => {
     const mockFile: Partial<File> = {};
 
     const mockNavCtrl: Partial<NavController> = {
-        navigateForward: jest.fn(() => Promise.resolve(true))
+        navigateForward: jest.fn(() => Promise.resolve(true)),
+        pop: jest.fn(() => Promise.resolve())
     };
     const mockRatingHandler: Partial<RatingHandler> = {};
     const mockContentPlayerHandler: Partial<ContentPlayerHandler> = {};
@@ -154,13 +156,28 @@ describe('QrcoderesultPage', () => {
         });
         it('should assign varaibles from navigation extras', (done) => {
             // arrange
-            // qrcoderesultPage.getFirstChildOfChapter.and.stub();
-            const unit = {
-                identifier: 'parentid',
-                contentData: {identifier: 'parentid'},
-                mimeType: MimeType.COLLECTION,
-                children: [{identifier: 'childid', basePath: 'basePath'}]
+            mockTelemetryGeneratorService.generatefastLoadingTelemetry = jest.fn();
+            const mockContentHeirarchy = {
+                identifier: 'id',
+                children: [
+                    {
+                        identifier: 'id2',
+                        children : [],
+                        mimeType: 'mime',
+                        contentData: {}
+                    },
+                    {
+                        identifier: 'id3',
+                        children : [],
+                        mimeType: 'mime',
+                        contentData: {}
+                    }
+                ],
+                contentData: {
+                    name: 'name1'
+                }
             };
+            mockContentService.getContentHeirarchy = jest.fn(() => of(mockContentHeirarchy));
             mockTextbookTocService.textbookIds = { unit : {
                 identifier: 'parentid',
                 contentData: {identifier: 'parentid'},
@@ -184,8 +201,18 @@ describe('QrcoderesultPage', () => {
             // assert
             expect(mockHeaderService.hideHeader).toHaveBeenCalled();
             expect(qrcoderesultPage.content).toEqual({identifier: 'id'});
+            expect(mockTelemetryGeneratorService.generatefastLoadingTelemetry).toHaveBeenCalledWith(
+                InteractSubtype.FAST_LOADING_INITIATED,
+                PageId.DIAL_CODE_SCAN_RESULT,
+                undefined,
+                undefined,
+                undefined,
+                undefined
+            );
             setTimeout(() => {
                 expect(mockTextbookTocService.resetTextbookIds).toHaveBeenCalled();
+                expect(qrcoderesultPage.showSheenAnimation).toEqual(false);
+                expect(qrcoderesultPage.results.length).toEqual(2);
                 done();
             }, 200);
         });
@@ -447,6 +474,9 @@ describe('QrcoderesultPage', () => {
                 identifier: 'id'
             };
             mockTextbookTocService.setTextbookIds = jest.fn();
+            mockCommonUtilService.networkInfo = {
+                isNetworkAvailable: true
+            };
             // act
             qrcoderesultPage.navigateToDetailsPage(content);
             // assert
@@ -455,6 +485,24 @@ describe('QrcoderesultPage', () => {
                 expect.anything()
             );
             expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
+            expect(mockCommonUtilService.networkInfo.isNetworkAvailable).toBeTruthy();
+        });
+
+        it('should not navigate to content details page for offline', () => {
+            // arrange
+            const content = {
+                identifier: 'id'
+            };
+            mockTextbookTocService.setTextbookIds = jest.fn();
+            mockCommonUtilService.networkInfo = {
+                isNetworkAvailable: false
+            };
+            mockCommonUtilService.presentToastForOffline = jest.fn();
+            // act
+            qrcoderesultPage.navigateToDetailsPage(content);
+            // assert
+            expect(mockCommonUtilService.networkInfo.isNetworkAvailable).toBeFalsy();
+            expect(mockCommonUtilService.presentToastForOffline).toHaveBeenCalledWith('OFFLINE_WARNING_ETBUI_1');
         });
     });
 

@@ -30,7 +30,7 @@ export const generateImpressionTelemetry = (
     if (corRelationList !== undefined) {
         telemetryImpressionRequest.correlationData = corRelationList;
     }
-    return this.telemetryImpressionRequest;
+    return telemetryImpressionRequest;
 };
 
 export const generateInteractTelemetry = (

@@ -1,15 +1,18 @@
 <ion-content overflow-scroll="true">
   <div class="sb-view-all-container">
     <div class="sb-view-all-items">
-      <ion-grid no-padding *ngIf="(activeDownloadRequests$ | async)?.length">
+      <ion-grid class="ion-no-padding" *ngIf="(activeDownloadRequests$ | async)?.length">
         <ion-row>
           <ion-col class="ad-pt-4" size="9">
-            <div class="download-page-heading"><b>{{'ACTIVE_DOWNLOADS' | translate}}</b></div>
-            <div class="download-page-info">{{'DOWNLOADING_CONTENT' | translate}} :
-              1/{{(activeDownloadRequests$ | async)?.length}}</div>
+            <div class="download-page-heading">
+              <strong>{{'ACTIVE_DOWNLOADS' | translate}}</strong>
+            </div>
+            <div class="download-page-info">
+              {{'DOWNLOADING_CONTENT' | translate}} : 1/{{(activeDownloadRequests$ | async)?.length}}
+            </div>
           </ion-col>
-          <ion-col no-padding size="3">
-            <div float-right text-center (click)="cancelAllDownloads()">
+          <ion-col class="ion-no-padding" size="3">
+            <div class="ion-float-right ion-text-center" (click)="cancelAllDownloads()">
               <ion-icon class="download-cancel-icon" ios="ios-close" md="md-close"></ion-icon>
               <div class="download-page-info">{{'CANCEL_ALL' | translate}}</div>
             </div>
@@ -24,40 +27,41 @@
     </div>
     <ng-container *ngIf="(activeDownloadRequests$ | async) as activeDownloadRequests">
       <div class="img-mt-88" *ngIf="!activeDownloadRequests.length">
-        <div text-center>
-          <img src="./assets/imgs/no_downloads.png" alt="">
+        <div class="ion-text-center">
+          <img src="./assets/imgs/no_downloads.png" alt="no_downloads">
         </div>
-        <div text-center>
+        <div class="ion-text-center">
           <p>
-            <b>{{ 'NO_DOWNLOADS' | translate }}</b>
+            <strong>{{ 'NO_DOWNLOADS' | translate }}</strong>
           </p>
           <p>{{ 'NO_DOWNLOADS_INFO' | translate }}</p>
         </div>
       </div>
       <div *ngIf="activeDownloadRequests.length"
-           class="sb-card-container sb-card-view-all-container ad-pb-88 ad-no-box-shadow">
+        class="sb-card-container sb-card-view-all-container ad-pb-88 ad-no-box-shadow">
         <div *ngFor="let activeDownload of activeDownloadRequests; let i = index">
           <ng-container *ngIf="getContentDownloadProgress(activeDownload.identifier) as downloadProgress; else pending">
             <ion-row class="ad-border-bottom-1">
-              <ion-col no-padding size="10">
+              <ion-col class="ion-no-padding" size="10">
                 <div class="sb-card">
                   <div start class="img-container">
-                    <img [src]="commonUtilService.convertFileSrc(activeDownload.contentMeta.appIcon) || defaultImg">
+                    <img [src]="commonUtilService.convertFileSrc(activeDownload.contentMeta.appIcon) || defaultImg"
+                      alt="icon">
                   </div>
                   <div end class="sb-card-details">
                     <div class="title">{{activeDownload?.contentMeta.name}}</div>
-                    <div class="info grade_ellipsis"><span
-                            class="class">{{activeDownload.contentMeta.subject}}</span><span
-                            class="separator-dot"></span><span
-                            class="subject">{{activeDownload.contentMeta.gradeLevel?.join(', ')}}</span>
+                    <div class="info grade_ellipsis">
+                      <span class="class">{{activeDownload.contentMeta.subject}}</span>
+                      <span class="separator-dot"></span>
+                      <span class="subject">{{activeDownload.contentMeta.gradeLevel?.join(', ')}}</span>
                     </div>
                     <div class="info">
                       <ng-container *ngIf="!downloadProgress || downloadProgress === -1">
                         {{ 'WAITING_TO_DOWNLOAD' | translate }}
                       </ng-container>
                       <ng-container *ngIf="downloadProgress >= 0 && downloadProgress < 100">
-                        {{((downloadProgress / 100) * activeDownload.contentMeta.size) | fileSize}}
-                        / {{activeDownload.contentMeta.size | fileSize}}
+                        {{((downloadProgress / 100) * activeDownload.contentMeta.size) | fileSize}} /
+                        {{activeDownload.contentMeta.size | fileSize}}
                       </ng-container>
                       <ng-container *ngIf="downloadProgress === 100">
                         {{ 'IMPORTING' | translate }}
@@ -65,16 +69,15 @@
                     </div>
                   </div>
                 </div>
-                <div class="popover-progress-container ad-ml-8"
-                     *ngIf="downloadProgress >= 0 && downloadProgress < 100">
-                  <div [ngStyle]="{'left': downloadProgress + '%'}"
-                       class="progress-highlight">
+                <div class="popover-progress-container ad-ml-8" *ngIf="downloadProgress >= 0 && downloadProgress < 100">
+                  <div [ngStyle]="{'left': downloadProgress + '%'}" class="progress-highlight">
                   </div>
                 </div>
               </ion-col>
               <ion-col size="2">
-                <button *ngIf="downloadProgress !== 100" no-margin class="action-btn float-end delete mr-8 ad-action-btn" margin-right
-                        (click)="cancelDownload(activeDownload)">
+                <button *ngIf="downloadProgress !== 100"
+                  class="action-btn float-end delete mr-8 ad-action-btn ion-no-margin ion-margin-right"
+                  (click)="cancelDownload(activeDownload)">
                   {{'CANCEL' | translate}}
                 </button>
               </ion-col>
@@ -82,17 +85,18 @@
           </ng-container>
           <ng-template #pending>
             <ion-row class="ad-border-bottom-1">
-              <ion-col no-padding size="10">
+              <ion-col class="ion-no-padding" size="10">
                 <div class="sb-card">
                   <div start class="img-container">
-                    <img [src]="commonUtilService.convertFileSrc(activeDownload.contentMeta.appIcon) || defaultImg">
+                    <img [src]="commonUtilService.convertFileSrc(activeDownload.contentMeta.appIcon) || defaultImg"
+                      alt="icon">
                   </div>
                   <div end class="sb-card-details">
                     <div class="title">{{activeDownload?.contentMeta.name}}</div>
-                    <div class="info grade_ellipsis"><span
-                            class="class">{{activeDownload.contentMeta.subject}}</span><span
-                            class="separator-dot"></span><span
-                            class="subject">{{activeDownload.contentMeta.gradeLevel?.join(', ')}}</span>
+                    <div class="info grade_ellipsis">
+                      <span class="class">{{activeDownload.contentMeta.subject}}</span>
+                      <span class="separator-dot"></span>
+                      <span class="subject">{{activeDownload.contentMeta.gradeLevel?.join(', ')}}</span>
                     </div>
                     <div class="info">
                       {{ 'WAITING_TO_DOWNLOAD' | translate }}
@@ -101,8 +105,8 @@
                 </div>
               </ion-col>
               <ion-col size="2">
-                <button no-margin class="action-btn float-end delete mr-8 ad-action-btn" margin-right
-                        (click)="cancelDownload(activeDownload)">
+                <button class="action-btn float-end delete mr-8 ad-action-btn ion-no-margin ion-margin-right"
+                  (click)="cancelDownload(activeDownload)">
                   {{'CANCEL' | translate}}
                 </button>
               </ion-col>

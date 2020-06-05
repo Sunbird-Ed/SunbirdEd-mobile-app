@@ -423,4 +423,47 @@ describe('TelemetryGeneratorService', () => {
 
   });
 
+  describe('generateUtmInfoTelemetry', () => {
+    it('should invoke interact() for generate UtmInfo telemetry', () => {
+      // arrange
+      const value = [
+        {
+          utm_source: 'sunbird',
+          utm_medium: 'search',
+          utm_campaign: 'dial',
+          utm_term: 'ABCDEF'
+        }
+      ];
+      const cData = [{
+        id: 'scan',
+        type: 'accessType'
+      }];
+      const object = {
+        id: 'sample-id',
+        type: 'sample-type',
+        version: 'sample-version'
+      };
+      // act
+      telemetryGeneratorService.generateUtmInfoTelemetry(value, 'sample-pageId', cData, object);
+      // assert
+      const mockInteract = jest.spyOn(mockTelemetryService, 'interact');
+      expect(mockInteract.mock.calls[0][0]['type']).toEqual('OTHER');
+      expect(mockInteract.mock.calls[0][0]['subType']).toEqual('utm-info');
+      expect(mockInteract.mock.calls[0][0]['env']).toEqual(Environment.HOME);
+      expect(mockInteract.mock.calls[0][0]['pageId']).toEqual('sample-pageId');
+      expect(mockInteract.mock.calls[0][0]['correlationData']).toEqual(cData);
+    });
+  });
+
+  describe('generatefastLoadingTelemetry()', () => {
+    it('should invoke interact() for generate fastloading telemetry', () => {
+      // arrange
+      jest.spyOn(telemetryGeneratorService, 'generateInteractTelemetry');
+      // act
+      telemetryGeneratorService.generatefastLoadingTelemetry('INITIATED', 'pageID');
+      // assert
+      expect(telemetryGeneratorService.generateInteractTelemetry).toBeCalled();
+    });
+  });
+
 });

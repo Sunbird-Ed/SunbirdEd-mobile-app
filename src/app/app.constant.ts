@@ -5,6 +5,7 @@ export class ContentType {
     public static readonly RESOURCE = 'Resource';
     public static readonly COLLECTION = 'Collection';
     public static readonly TEXTBOOK = 'TextBook';
+    public static readonly E_TEXTBOOK = 'eTextBook';
     public static readonly LESSON_PLAN = 'LessonPlan';
     public static readonly COURSE = 'Course';
     public static readonly CERTIFICATE = 'Certificate';
@@ -30,18 +31,8 @@ export class ContentType {
         ContentType.RESOURCE,
         ContentType.COLLECTION,
         ContentType.TEXTBOOK,
-        ContentType.LESSON_PLAN
-    ];
-    // TODO: not need to pass content types, by default all the content types should display
-    public static readonly FOR_DOWNLOADED_TAB = [
-        ContentType.STORY,
-        ContentType.WORKSHEET,
-        ContentType.GAME,
-        ContentType.RESOURCE,
-        ContentType.COLLECTION,
-        ContentType.TEXTBOOK,
+        ContentType.E_TEXTBOOK,
         ContentType.LESSON_PLAN,
-        ContentType.COURSE,
         ContentType.FOCUS_SPOT,
         ContentType.LEARNING_OUTCOME_DEFINITION,
         ContentType.PRACTICE_QUESTION_SET,
@@ -49,6 +40,11 @@ export class ContentType {
         ContentType.MARKING_SCHEME_RUBRIC,
         ContentType.EXPLANATION_RESOURCE,
         ContentType.EXPERIENTIAL_RESOURCE
+    ];
+    // TODO: not need to pass content types, by default all the content types should display
+    public static readonly FOR_DOWNLOADED_TAB = [
+        ...ContentType.FOR_LIBRARY_TAB,
+        ...ContentType.FOR_COURSE_TAB
     ];
     public static readonly FOR_DIAL_CODE_SEARCH = [
         ContentType.TEXTBOOK,
@@ -98,19 +94,18 @@ export class Search {
 
 export class BatchConstants {
     public static readonly REQUIRED_FIELDS = [
-        'endDate',
-        'description',
+        'identifier',
+        'id',
         'name',
         'enrollmentType',
+        'description',
         'hashTagId',
-        'startDate',
         'courseId',
         'status',
         'createdBy',
-        'creatorFirstName',
-        'creatorLastName',
-        'identifier',
-        'id',
+        // 'creatorDetails',
+        'startDate',
+        'endDate',
         'enrollmentEndDate',
         'cert_templates'
     ];
@@ -169,6 +164,7 @@ export class EventTopics {
     public static readonly HAMBURGER_MENU_CLICKED = 'HAMBURGER_MENU_CLICKED';
     public static readonly NEXT_CONTENT = 'event:NextContent';
     public static readonly DEEPLINK_CONTENT_PAGE_OPEN = 'DEEPLINK_CONTENT_PAGE_OPEN';
+    public static readonly DEEPLINK_COLLECTION_PAGE_OPEN = 'DEEPLINK_COLLECTION_PAGE_OPEN';
     public static readonly CONTENT_TO_PLAY = 'event:ContentToPlay';
     public static readonly COACH_MARK_SEEN = 'coach_mark_seen';
     public static readonly TAB_CHANGE = 'tab.change';
@@ -558,4 +554,9 @@ export class ShareMode {
 export class LaunchType {
     public static readonly DEEPLINK = 'deeplink';
     public static readonly SIDELOAD = 'sideload';
+}
+
+export class RegexPatterns {
+    public static readonly SPECIALCHARECTERSANDEMOJIS =
+    /([-!$%^&*()_+÷|~=`{}[:;<>?,.×/£¥"'@#\]]|[\u2700-\u27bf]|(?:\ud83c[\udde6-\uddff]){2}|[\ud800-\udbff][\udc00-\udfff]|[\u0023-\u0039]\ufe0f?\u20e3|\u3299|\u3297|\u303d|\u3030|\u24c2|\ud83c[\udd70-\udd71]|\ud83c[\udd7e-\udd7f]|\ud83c\udd8e|\ud83c[\udd91-\udd9a]|\ud83c[\udde6-\uddff]|\ud83c[\ude01-\ude02]|\ud83c\ude1a|\ud83c\ude2f|\ud83c[\ude32-\ude3a]|\ud83c[\ude50-\ude51]|\u203c|\u2049|[\u25aa-\u25ab]|\u25b6|\u25c0|[\u25fb-\u25fe]|\u00a9|\u00ae|\u2122|\u2139|\ud83c\udc04|[\u2600-\u26FF]|\u2b05|\u2b06|\u2b07|\u2b1b|\u2b1c|\u2b50|\u2b55|\u231a|\u231b|\u2328|\u23cf|[\u23e9-\u23f3]|[\u23f8-\u23fa]|\ud83c\udccf|\u2934|\u2935|[\u2190-\u21ff])/g;
 }

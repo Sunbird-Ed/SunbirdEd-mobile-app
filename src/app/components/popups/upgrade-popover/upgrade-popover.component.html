@@ -1,17 +1,16 @@
 <div class="close-container">
     <ion-icon *ngIf="!isMandatoryUpgrade" name="close" class="sb-modal-close"
-              (click)="cancel(); $event.preventDefault(); $event.stopPropagation();"></ion-icon>
+        (click)="cancel(); $event.preventDefault(); $event.stopPropagation();"></ion-icon>
 </div>
 
-<ion-content padding-top padding-horizontal>
-    <div text-center>
+<ion-content class="ion-padding-top ion-padding-horizontal">
+    <div class="ion-text-center">
         <img src="assets/imgs/ic_launcher.png" alt="app" height="70" width="70" />
         <h6>
             <strong>{{upgradeType?.title | translate: {'app_name': appName} }}</strong>
         </h6>
         <p class="scroll">{{upgradeType?.desc | translate }}</p>
     </div>
-
 </ion-content>
 <ion-footer no-border padding>
     <ion-button *ngIf="!isMandatoryUpgrade && actionButtonNo" expand="block" fill="outline" size="small"
