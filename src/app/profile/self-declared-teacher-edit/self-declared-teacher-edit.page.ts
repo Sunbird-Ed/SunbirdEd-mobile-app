@@ -445,7 +445,9 @@ export class SelfDeclaredTeacherEditPage {
       }
     }
 
-    return telemetryValue.length ? map.set('fieldsChanged', telemetryValue) : undefined;
+    const fieldsChanged = map.set('fieldsChanged', telemetryValue);
+
+    return fieldsChanged;
   }
 
 }
