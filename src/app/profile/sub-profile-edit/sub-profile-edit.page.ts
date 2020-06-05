@@ -140,17 +140,8 @@ export class SubProfileEditPage {
       { id: this.profile.serverProfile.tncLatestVersion || '', type: CorReleationDataType.TNC_VERSION },
       { id: this.profile.serverProfile['managedBy'] || this.profile.uid || '', type: CorReleationDataType.LIUA }
     ];
-    this.telemetryGeneratorService.generateInteractTelemetry(
-      InteractType.SELECT_ADD,
-      '',
-      Environment.USER,
-      PageId.CREATE_MANAGED_USER,
-      undefined,
-      undefined,
-      undefined,
-      cData,
-      ID.BTN_ADD
-    );
+    this.generateTelemetryInteract(InteractType.SELECT_ADD, ID.BTN_ADD);
+
     const loader = await this.commonUtilService.getLoader();
     try {
       await loader.present();
@@ -179,10 +170,15 @@ export class SubProfileEditPage {
         this.commonUtilService.showToast('SUCCESSFULLY_ADDED_USER', null, null, null, null, createdUser.handle || '');
         this.location.back();
       }
+      this.generateTelemetryInteract(InteractType.CREATE_SUCCESS, ID.MUA_USER_CREATION);
 
-    } catch (e) {
-      this.commonUtilService.showToast('ERROR_WHILE_ADDING_USER');
-      console.error(e);
+    } catch (err) {
+      this.generateTelemetryInteract(InteractType.CREATE_FAILURE, ID.MUA_USER_CREATION);
+      if (err.response.body && err.response.body.params && err.response.body.params.status === 'MANAGED_USER_LIMIT_EXCEEDED') {
+        this.commonUtilService.showToast('USER_CREATION_LIMIT_EXCEEDED');
+      } else {
+        this.commonUtilService.showToast('ERROR_WHILE_ADDING_USER');
+      }
     } finally {
       await loader.dismiss();
     }
@@ -190,17 +186,7 @@ export class SubProfileEditPage {
 
   onCancel() {
     this.location.back();
-    this.telemetryGeneratorService.generateInteractTelemetry(
-      InteractType.SELECT_CANCEL,
-      '',
-      Environment.USER,
-      PageId.CREATE_MANAGED_USER,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      ID.BTN_CANCEL
-    );
+    this.generateTelemetryInteract(InteractType.SELECT_CANCEL, ID.BTN_CANCEL);
   }
 
   showTncDetails() {
@@ -224,6 +210,20 @@ export class SubProfileEditPage {
         );
         break;
     }
+  }
+
+  generateTelemetryInteract(type, id?) {
+    this.telemetryGeneratorService.generateInteractTelemetry(
+      type,
+      '',
+      Environment.USER,
+      PageId.CREATE_MANAGED_USER,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      id
+    );
   }
 
 }

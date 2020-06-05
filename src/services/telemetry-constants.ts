@@ -213,7 +213,11 @@ export enum InteractType {
     SELECT_MORE = 'select-more',
     SUBMISSION_INITIATED = 'submission-initiated',
     SUBMISSION_SUCCESS = 'submission-success',
-    SUBMISSION_FAILURE = 'submission-failure'
+    SUBMISSION_FAILURE = 'submission-failure',
+    CREATE_SUCCESS = 'create-success',
+    CREATE_FAILURE = 'create-failure',
+    SWITCH_SUCCESS = 'switch-success',
+    SWITCH_FAILURE = 'switch-failure',
 }
 
 
@@ -471,7 +475,8 @@ export enum ID {
     BTN_MORE = 'btn-more',
     BTN_UPDATE = 'btn-update',
     BTN_I_AM_A_TEACHER = 'btn-i-am-a-teacher',
-    TEACHER_DECLARATION = 'teacher-declaration'
+    TEACHER_DECLARATION = 'teacher-declaration',
+    MUA_USER_CREATION = 'mua-user-creation'
 }
 
 export enum ActionButtonType {

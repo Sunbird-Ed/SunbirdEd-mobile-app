@@ -65,7 +65,7 @@ export class SelfDeclaredTeacherEditPage {
     this.headerService.showHeaderWithBackButton();
     await this.checkLocationAvailability();
 
-    this.generateTelemetryInteract(InteractType.SUBMISSION_INITIATED);
+    this.generateTelemetryInteract(InteractType.SUBMISSION_INITIATED, ID.TEACHER_DECLARATION);
 
     this.telemetryGeneratorService.generateImpressionTelemetry(
       ImpressionType.VIEW,
@@ -277,7 +277,12 @@ export class SelfDeclaredTeacherEditPage {
   }
 
   async submit() {
-    this.generateTelemetryInteract(InteractType.TOUCH);
+    if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
+      this.commonUtilService.showToast('NEED_INTERNET_TO_CHANGE');
+    }
+
+    const id = this.editType === 'add' ? ID.SUBMIT_CLICKED : ID.BTN_UPDATE;
+    this.generateTelemetryInteract(InteractType.TOUCH, id);
 
     const loader = await this.commonUtilService.getLoader();
     let telemetryValue;
@@ -350,7 +355,7 @@ export class SelfDeclaredTeacherEditPage {
       await this.profileService.updateServerProfile(req).toPromise();
       this.events.publish('loggedInProfile:update');
 
-      this.generateTelemetryInteract(InteractType.SUBMISSION_SUCCESS, telemetryValue);
+      this.generateTelemetryInteract(InteractType.SUBMISSION_SUCCESS, ID.TEACHER_DECLARATION, telemetryValue);
       this.location.back();
       if (this.editType === 'add') {
         this.showAddedSuccessfullPopup();
@@ -359,7 +364,7 @@ export class SelfDeclaredTeacherEditPage {
       }
     } catch (err) {
       console.error(err);
-      this.generateTelemetryInteract(InteractType.SUBMISSION_FAILURE, telemetryValue);
+      this.generateTelemetryInteract(InteractType.SUBMISSION_FAILURE, ID.TEACHER_DECLARATION, telemetryValue);
       this.commonUtilService.showToast('Something went wrong.');
     } finally{
       await loader.dismiss();
@@ -403,7 +408,7 @@ export class SelfDeclaredTeacherEditPage {
     }
   }
 
-  generateTelemetryInteract(type, value?) {
+  generateTelemetryInteract(type, id, value?) {
     this.telemetryGeneratorService.generateInteractTelemetry(
       type,
       this.editType === 'add' ? InteractSubtype.NEW : InteractSubtype.EXISTING,
@@ -413,7 +418,7 @@ export class SelfDeclaredTeacherEditPage {
       value || undefined,
       undefined,
       undefined,
-      ID.TEACHER_DECLARATION
+      id
     );
   }
 

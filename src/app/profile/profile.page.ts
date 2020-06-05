@@ -181,6 +181,10 @@ export class ProfilePage implements OnInit {
     this.events.unsubscribe('update_header');
   }
 
+  ionViewDidEnter() {
+    this.getEnrolledCourses();
+  }
+
 
   async doRefresh(refresher?) {
     const loader = await this.commonUtilService.getLoader();
@@ -933,6 +937,9 @@ export class ProfilePage implements OnInit {
   }
 
   openSelfDeclareTeacherForm(type) {
+    if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
+      this.commonUtilService.showToast('NEED_INTERNET_TO_CHANGE');
+    }
     const telemetryId = type === 'add' ? ID.BTN_I_AM_A_TEACHER : ID.BTN_UPDATE;
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,
