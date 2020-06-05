@@ -1803,6 +1803,8 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
             this.contentStatusData = {
               contentList: []
             };
+            await this.loader.dismiss();
+            this.loader = undefined;
           });
         }, (error) => {
           this.zone.run(async () => {
