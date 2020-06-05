@@ -256,7 +256,6 @@ describe('TncUpdateHandlerService', () => {
       setTimeout(() => {
         expect(mockAuthService.getSession).toHaveBeenCalled();
         expect(mockProfileService.getServerProfilesDetails).toHaveBeenCalledWith(profileReq);
-        expect(mockProfileService.getActiveProfileSession).toHaveBeenCalled();
         expect(mockFormAndFrameworkUtilService.updateLoggedInUser).toHaveBeenCalled();
       }, 0);
 
