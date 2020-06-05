@@ -225,7 +225,7 @@
                     {{'COURSES' | translate}} ({{mappedTrainingCertificates?.length}})&lrm;
                 </div>
                 <div class="flex-nowrap"
-                    *ngFor="let certificate of (mappedTrainingCertificates | slice : startLimit:trainingsLimit);">
+                    *ngFor="let certificate of (mappedTrainingCertificates | slice : startLimit:trainingsLimit) |sortBy: 'status' : 'asc';">
                     <div class="training-1">
                         <div class="fw" (click)="openEnrolledCourse(certificate)">
                             {{certificate.courseName}}
