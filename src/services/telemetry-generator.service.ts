@@ -429,7 +429,8 @@ export class TelemetryGeneratorService {
             undefined,
             value,
             undefined,
-            corRelationList
+            corRelationList,
+            ID.NOTIFICATION_CLICKED
         );
     }
 
