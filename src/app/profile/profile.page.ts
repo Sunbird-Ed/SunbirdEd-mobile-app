@@ -150,9 +150,6 @@ export class ProfilePage implements OnInit {
       this.custodianOrgId = orgId;
     });
 
-    this.sharedPreferences.getString('app_name').toPromise().then(value => {
-      this.appName = value;
-    });
   }
 
   async ngOnInit() {
