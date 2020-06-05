@@ -366,6 +366,9 @@ describe('ChapterDetailsPage', () => {
     describe('getContentState', () => {
         it('should return contentState', (done) => {
             // arrange
+            chapterDetailsPage.courseContent = {
+                batchId: 'sample-batch-id'
+            };
             mockAppGlobalService.getUserId = jest.fn(() => 'sample-user-id');
             mockCourseService.getContentState = jest.fn(() => of({})) as any;
             mockZone.run = jest.fn((fn) => fn());
@@ -373,6 +376,7 @@ describe('ChapterDetailsPage', () => {
             chapterDetailsPage.getContentState(true);
             // assert
             setTimeout(() => {
+                expect(chapterDetailsPage.courseContent.batchId).toBeTruthy();
                 expect(mockAppGlobalService.getUserId).toHaveBeenCalled();
                 expect(mockCourseService.getContentState).toHaveBeenCalled();
                 expect(mockZone.run).toHaveBeenCalled();
@@ -382,6 +386,9 @@ describe('ChapterDetailsPage', () => {
 
         it('should not return contentState for catch part', (done) => {
             // arrange
+            chapterDetailsPage.courseContent = {
+                batchId: 'sample-batch-id'
+            };
             mockAppGlobalService.getUserId = jest.fn(() => 'sample-user-id');
             mockCourseService.getContentState = jest.fn(() => throwError({ error: 'error' }));
             mockZone.run = jest.fn((fn) => fn());
@@ -389,19 +396,23 @@ describe('ChapterDetailsPage', () => {
             chapterDetailsPage.getContentState(true);
             // assert
             setTimeout(() => {
+                expect(chapterDetailsPage.courseContent.batchId).toBeTruthy();
                 expect(mockAppGlobalService.getUserId).toHaveBeenCalled();
                 expect(mockCourseService.getContentState).toHaveBeenCalled();
                 done();
             }, 0);
         });
 
-        it('should not return contentState for catch part', (done) => {
+        it('should not return contentState for else part', (done) => {
             // arrange
-            chapterDetailsPage.courseContent = undefined;
+            chapterDetailsPage.courseContent = {
+                batchId: undefined
+            };
             // act
             chapterDetailsPage.getContentState(true);
             // assert
             setTimeout(() => {
+                expect(chapterDetailsPage.courseContent.batchId).toBeUndefined();
                 done();
             }, 0);
         });
@@ -1368,7 +1379,7 @@ describe('ChapterDetailsPage', () => {
                 dismiss: dismissFn
             }));
             chapterDetailsPage.guestUser = false;
-            mockLocalCourseService.enrollIntoBatch = jest.fn(() => throwError({error: 'error'}));
+            mockLocalCourseService.enrollIntoBatch = jest.fn(() => throwError({ error: 'error' }));
             // act
             chapterDetailsPage.enrollIntoBatch(items);
             setTimeout(() => {
@@ -1423,14 +1434,14 @@ describe('ChapterDetailsPage', () => {
             } as any)));
             mockCommonUtilService.translateMessage = jest.fn((key) => {
                 switch (key) {
-                  case 'YOU_MUST_JOIN_TO_ACCESS_TRAINING_DETAIL':
-                    return 'YOU_MUST_JOIN_TO_ACCESS_TRAINING_DETAIL';
-                  case 'TRAININGS_ONLY_REGISTERED_USERS':
-                    return 'TRAININGS_ONLY_REGISTERED_USERS';
-                  case 'OVERLAY_SIGN_IN':
-                    return 'OVERLAY_SIGN_IN';
+                    case 'YOU_MUST_JOIN_TO_ACCESS_TRAINING_DETAIL':
+                        return 'YOU_MUST_JOIN_TO_ACCESS_TRAINING_DETAIL';
+                    case 'TRAININGS_ONLY_REGISTERED_USERS':
+                        return 'TRAININGS_ONLY_REGISTERED_USERS';
+                    case 'OVERLAY_SIGN_IN':
+                        return 'OVERLAY_SIGN_IN';
                 }
-              });
+            });
             mockPreferences.putString = jest.fn(() => of(undefined));
             mockAppGlobalService.resetSavedQuizContent = jest.fn();
             mockLoginHandlerService.signIn = jest.fn(() => Promise.resolve());
@@ -1440,23 +1451,23 @@ describe('ChapterDetailsPage', () => {
             setTimeout(() => {
                 expect(mockPopoverCtrl.create).toHaveBeenCalledWith(expect.objectContaining({
                     componentProps: expect.objectContaining({
-                      sbPopoverMainTitle: 'YOU_MUST_JOIN_TO_ACCESS_TRAINING_DETAIL',
-                      metaInfo: 'TRAININGS_ONLY_REGISTERED_USERS',
-                      sbPopoverHeading: 'OVERLAY_SIGN_IN',
-                      isNotShowCloseIcon: true,
-                      actionsButtons: expect.arrayContaining([
-                        expect.objectContaining({
-                          btntext: 'OVERLAY_SIGN_IN',
-                          btnClass: 'popover-color'
-                        })
-                      ])
+                        sbPopoverMainTitle: 'YOU_MUST_JOIN_TO_ACCESS_TRAINING_DETAIL',
+                        metaInfo: 'TRAININGS_ONLY_REGISTERED_USERS',
+                        sbPopoverHeading: 'OVERLAY_SIGN_IN',
+                        isNotShowCloseIcon: true,
+                        actionsButtons: expect.arrayContaining([
+                            expect.objectContaining({
+                                btntext: 'OVERLAY_SIGN_IN',
+                                btnClass: 'popover-color'
+                            })
+                        ])
                     })
-                  }));
+                }));
                 expect(presentFn).toHaveBeenCalled();
                 expect(onDidDismissFn).toHaveBeenCalled();
                 expect(mockPreferences.putString).toHaveBeenNthCalledWith(1, PreferenceKey.BATCH_DETAIL_KEY, JSON.stringify(batchdetail));
                 expect(mockPreferences.putString).toHaveBeenNthCalledWith(2,
-                     PreferenceKey.COURSE_DATA_KEY, JSON.stringify(chapterDetailsPage.courseContentData));
+                    PreferenceKey.COURSE_DATA_KEY, JSON.stringify(chapterDetailsPage.courseContentData));
                 expect(mockAppGlobalService.resetSavedQuizContent).toHaveBeenCalled();
                 expect(mockLoginHandlerService.signIn).toHaveBeenCalled();
                 done();
@@ -1478,32 +1489,32 @@ describe('ChapterDetailsPage', () => {
             } as any)));
             mockCommonUtilService.translateMessage = jest.fn((key) => {
                 switch (key) {
-                  case 'YOU_MUST_JOIN_TO_ACCESS_TRAINING_DETAIL':
-                    return 'YOU_MUST_JOIN_TO_ACCESS_TRAINING_DETAIL';
-                  case 'TRAININGS_ONLY_REGISTERED_USERS':
-                    return 'TRAININGS_ONLY_REGISTERED_USERS';
-                  case 'OVERLAY_SIGN_IN':
-                    return 'OVERLAY_SIGN_IN';
+                    case 'YOU_MUST_JOIN_TO_ACCESS_TRAINING_DETAIL':
+                        return 'YOU_MUST_JOIN_TO_ACCESS_TRAINING_DETAIL';
+                    case 'TRAININGS_ONLY_REGISTERED_USERS':
+                        return 'TRAININGS_ONLY_REGISTERED_USERS';
+                    case 'OVERLAY_SIGN_IN':
+                        return 'OVERLAY_SIGN_IN';
                 }
-              });
+            });
             // act
             chapterDetailsPage.promptToLogin(batchdetail);
             // assert
             setTimeout(() => {
                 expect(mockPopoverCtrl.create).toHaveBeenCalledWith(expect.objectContaining({
                     componentProps: expect.objectContaining({
-                      sbPopoverMainTitle: 'YOU_MUST_JOIN_TO_ACCESS_TRAINING_DETAIL',
-                      metaInfo: 'TRAININGS_ONLY_REGISTERED_USERS',
-                      sbPopoverHeading: 'OVERLAY_SIGN_IN',
-                      isNotShowCloseIcon: true,
-                      actionsButtons: expect.arrayContaining([
-                        expect.objectContaining({
-                          btntext: 'OVERLAY_SIGN_IN',
-                          btnClass: 'popover-color'
-                        })
-                      ])
+                        sbPopoverMainTitle: 'YOU_MUST_JOIN_TO_ACCESS_TRAINING_DETAIL',
+                        metaInfo: 'TRAININGS_ONLY_REGISTERED_USERS',
+                        sbPopoverHeading: 'OVERLAY_SIGN_IN',
+                        isNotShowCloseIcon: true,
+                        actionsButtons: expect.arrayContaining([
+                            expect.objectContaining({
+                                btntext: 'OVERLAY_SIGN_IN',
+                                btnClass: 'popover-color'
+                            })
+                        ])
                     })
-                  }));
+                }));
                 expect(presentFn).toHaveBeenCalled();
                 expect(onDidDismissFn).toHaveBeenCalled();
                 done();
