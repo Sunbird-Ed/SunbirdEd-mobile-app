@@ -181,11 +181,6 @@ export class ProfilePage implements OnInit {
     this.events.unsubscribe('update_header');
   }
 
-  ionViewDidEnter() {
-    this.getEnrolledCourses();
-  }
-
-
   async doRefresh(refresher?) {
     const loader = await this.commonUtilService.getLoader();
     this.isRefreshProfile = true;
