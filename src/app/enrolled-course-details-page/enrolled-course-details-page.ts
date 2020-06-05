@@ -745,11 +745,12 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
   /**
    * Get batch details
    */
-  async getBatchDetails() {
-    if (!this.courseCardData || !this.courseCardData.batchId) {
+  async getBatchDetails(batchId?) {
+    if (!batchId && (!this.courseCardData || !this.courseCardData.batchId)) {
       return;
     }
-    this.courseService.getBatchDetails({ batchId: this.courseCardData.batchId }).toPromise()
+    const currentBatchId = batchId || this.courseCardData.batchId;
+    this.courseService.getBatchDetails({ batchId: currentBatchId }).toPromise()
       .then((data: Batch) => {
         this.zone.run(() => {
           if (!data) {
@@ -1093,6 +1094,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
         } else if (data && data.length === 1) {
           this.batchEndDate = data[0].endDate;
           this.enrollmentEndDate = data[0].enrollmentEndDate;
+          this.getBatchDetails(data[0].identifier);
         }
       })
       .catch(async (error: any) => {
