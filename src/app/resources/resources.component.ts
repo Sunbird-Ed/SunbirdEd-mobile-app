@@ -1270,6 +1270,10 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   onCourseCardClick(event) {
+    const corRelationList: Array<CorrelationData> = [];
+    corRelationList.push({id: event.data.title, type: CorReleationDataType.SUBJECT});
+    corRelationList.push({id: (event.data.contents.length).toString() , type: CorReleationDataType.COURSE_COUNT});
+
     if (event.data.contents && event.data.contents.length > 1) {
       const curriculumCourseParams: NavigationExtras = {
         state: {
@@ -1280,8 +1284,28 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
           courseList: event.data.contents,
         }
       };
+      this.telemetryGeneratorService.generateInteractTelemetry(
+          InteractType.TOUCH,
+          InteractSubtype.SUBJECT_CARD_CLICKED,
+          Environment.HOME,
+          PageId.LIBRARY,
+          undefined,
+          undefined,
+          undefined,
+          corRelationList
+      );
       this.router.navigate([RouterLinks.CURRICULUM_COURSES], curriculumCourseParams);
     } else {
+      this.telemetryGeneratorService.generateInteractTelemetry(
+          InteractType.TOUCH,
+          InteractSubtype.SUBJECT_CARD_CLICKED,
+          Environment.HOME,
+          PageId.LIBRARY,
+          undefined,
+          undefined,
+          undefined,
+          corRelationList
+      );
       this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], {
         state: {
           content: event.data.contents[0],

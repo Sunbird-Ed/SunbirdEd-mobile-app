@@ -1,12 +1,15 @@
 import { share } from 'rxjs/operators';
 import { SbSharePopupComponent } from '@app/app/components/popups/sb-share-popup/sb-share-popup.component';
 import { Component, OnInit, Inject, NgZone, OnDestroy } from '@angular/core';
-import { AppHeaderService, CommonUtilService, LoginHandlerService, AppGlobalService, LocalCourseService } from '@app/services';
+import {
+  AppHeaderService, CommonUtilService, LoginHandlerService, AppGlobalService, LocalCourseService,
+  TelemetryGeneratorService
+} from '@app/services';
 import { TranslateService } from '@ngx-translate/core';
 import { Router } from '@angular/router';
 import { TocCardType } from '@project-sunbird/common-consumption';
 import { SbPopoverComponent } from '@app/app/components/popups/sb-popover/sb-popover.component';
-import { PopoverController, Events } from '@ionic/angular';
+import {PopoverController, Events, Platform} from '@ionic/angular';
 import { RouterLinks, PreferenceKey, EventTopics, MimeType, ShareItemType, BatchConstants } from '@app/app/app.constant';
 import {
   SharedPreferences, AuthService, Batch, TelemetryObject, ContentState, Content, Course,
@@ -17,9 +20,9 @@ import {
   ContentUpdate, ContentImport, Rollup
 } from 'sunbird-sdk';
 import { EnrollCourse } from '@app/app/enrolled-course-details-page/course.interface';
-import { DatePipe } from '@angular/common';
+import {DatePipe, Location} from '@angular/common';
 import { ContentActionsComponent } from './../../components/content-actions/content-actions.component';
-import { PageId } from './../../../services/telemetry-constants';
+import { PageId, Environment, InteractType, InteractSubtype } from './../../../services/telemetry-constants';
 import { Observable, Subscription } from 'rxjs';
 import { ConfirmAlertComponent } from '@app/app/components';
 import { FileSizePipe } from '@app/pipes/file-size/file-size';
@@ -79,7 +82,8 @@ export class ChapterDetailsPage implements OnInit, OnDestroy {
   isNextContentFound = false;
   isFirstContent = false;
   nextContent: Content;
-
+  headerObservable: Subscription;
+  backButtonFunc: Subscription;
   constructor(
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
     @Inject('AUTH_SERVICE') public authService: AuthService,
@@ -99,7 +103,10 @@ export class ChapterDetailsPage implements OnInit, OnDestroy {
     private zone: NgZone,
     private datePipe: DatePipe,
     private fileSizePipe: FileSizePipe,
-    private sbProgressLoader: SbProgressLoader
+    private sbProgressLoader: SbProgressLoader,
+    private telemetryGeneratorService: TelemetryGeneratorService,
+    private location: Location,
+    private platform: Platform
   ) {
     // if ((!this.router.getCurrentNavigation() || !this.router.getCurrentNavigation().extras) && this.appGlobalService.preSignInData) {
     //   this.extrasData = this.appGlobalService.preSignInData;
@@ -138,7 +145,6 @@ export class ChapterDetailsPage implements OnInit, OnDestroy {
     this.downloadIdentifiers = new Set();
     this.headerService.showHeaderWithBackButton();
     this.todayDate = window.dayjs().format('YYYY-MM-DD');
-    this.headerService.showHeaderWithBackButton();
     this.subscribeUtilityEvents();
     this.subscribeSdkEvent();
     await this.checkLoggedInOrGuestUser();
@@ -148,6 +154,13 @@ export class ChapterDetailsPage implements OnInit, OnDestroy {
     }
     this.getAllContents(this.chapter);
     this.checkChapterCompletion();
+    this.headerObservable = this.headerService.headerEventEmitted$.subscribe(event => {
+      this.handleHeaderEvents(event);
+    });
+    this.backButtonFunc = this.platform.backButton.subscribeWithPriority(10, () => {
+      this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.CHAPTER_DETAILS, Environment.HOME, false);
+      this.location.back();
+    });
     this.getContentState(true);
 
     if (!this.guestUser) {
@@ -164,7 +177,7 @@ export class ChapterDetailsPage implements OnInit, OnDestroy {
           }
           return data.find((element) =>
             (this.courseContent.batchId && element.batchId === this.courseContent.batchId)
-            || (!this.courseContent.batchId && element.courseId === this.identifier));
+            || (!this.courseContent.batchId && element.courseId === this.courseContent.identifier));
         })
         .catch(e => {
           console.log(e);
@@ -181,15 +194,28 @@ export class ChapterDetailsPage implements OnInit, OnDestroy {
       this.getContentsSize(this.chapter.children);
     }
   }
+  handleHeaderEvents($event) {
+    if ($event.name === 'back') {
+      this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.CHAPTER_DETAILS, Environment.HOME, true);
+      this.location.back();
+    }
+  }
 
   ionViewWillLeave(): void {
     this.events.publish('header:setzIndexToNormal');
     if (this.eventSubscription) {
       this.eventSubscription.unsubscribe();
     }
+    if (this.headerObservable) {
+      this.headerObservable.unsubscribe();
+    }
+    if (this.backButtonFunc) {
+      this.backButtonFunc.unsubscribe();
+    }
   }
 
   ionViewDidEnter(): void {
+    this.sbProgressLoader.hide({id: 'login'});
     this.sbProgressLoader.hide({ id: this.courseContent.identifier });
   }
 
@@ -391,6 +417,12 @@ export class ChapterDetailsPage implements OnInit, OnDestroy {
   }
 
   async share() {
+    this.telemetryGeneratorService.generateInteractTelemetry(
+        InteractType.TOUCH,
+        InteractSubtype.SHARE_CLICKED,
+        Environment.HOME,
+        PageId.CHAPTER_DETAILS
+    );
     const popover = await this.popoverCtrl.create({
       component: SbSharePopupComponent,
       componentProps: {
@@ -634,7 +666,12 @@ export class ChapterDetailsPage implements OnInit, OnDestroy {
         this.commonUtilService.showToast(this.commonUtilService.translateMessage('COURSE_WILL_BE_AVAILABLE',
           this.datePipe.transform(this.courseStartDate, 'mediumDate')));
       }
-
+      this.telemetryGeneratorService.generateInteractTelemetry(
+          InteractType.TOUCH,
+          InteractSubtype.DOWNLOAD_CLICKED,
+          Environment.HOME,
+          PageId.CHAPTER_DETAILS
+      );
       const popover = await this.popoverCtrl.create({
         component: ConfirmAlertComponent,
         componentProps: {

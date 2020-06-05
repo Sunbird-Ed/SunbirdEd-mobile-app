@@ -137,7 +137,8 @@ export enum PageId {
     CREATE_MANAGED_USER = 'create-managed-user',
     MANAGE_USERS = 'manage-users',
     CHAPTER_DETAILS = 'chapter-details',
-    TEACHER_SELF_DECLARATION = 'teacher-self-declaration'
+    TEACHER_SELF_DECLARATION = 'teacher-self-declaration',
+    COURSE_LIST = 'course-list'
 }
 export enum LogType {
     NOTIFICATION = 'notification'
@@ -447,6 +448,7 @@ export enum InteractSubtype {
     DENY_CLICKED = 'deny-clicked',
     NEW = 'new',
     EXISTING = 'existing',
+    SUBJECT_CARD_CLICKED = 'subject-card-clicked'
 }
 
 export enum ID {
@@ -512,7 +514,8 @@ export enum CorReleationDataType {
     LIUA = 'Liua',
     SWITCHED_USER = 'SwitchedUser',
     NEW_VALUE = 'NewValue',
-    OLD_VALUE = 'OldValue'
+    OLD_VALUE = 'OldValue',
+    COURSE_COUNT = 'CourseCount'
 }
 
 export enum AuditProps {
