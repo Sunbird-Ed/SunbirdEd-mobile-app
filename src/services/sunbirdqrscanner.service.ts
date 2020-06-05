@@ -208,9 +208,14 @@ getProfileSettingConfig() {
             if (scannedData === 'cancel' ||
               scannedData === 'cancel_hw_back' ||
               scannedData === 'cancel_nav_back') {
-              this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.QRCodeScanner,
+              this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.SCAN_OR_MANUAL,
                 source === PageId.ONBOARDING_PROFILE_PREFERENCES ? Environment.ONBOARDING : Environment.HOME,
                 scannedData === 'cancel_nav_back');
+              this.telemetryGeneratorService.generateBackClickedNewTelemetry(
+                scannedData === 'cancel_hw_back',
+                this.appGlobalService.isOnBoardingCompleted ? Environment.HOME : Environment.ONBOARDING,
+                PageId.SCAN_OR_MANUAL
+               );
               this.telemetryGeneratorService.generateInteractTelemetry(
                 InteractType.OTHER,
                 InteractSubtype.QRCodeScanCancelled,

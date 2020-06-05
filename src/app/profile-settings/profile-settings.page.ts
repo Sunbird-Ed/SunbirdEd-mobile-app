@@ -279,10 +279,10 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
   }
 
   cancelEvent(category?: string) {
-    this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
-      InteractSubtype.CANCEL_CLICKED,
+    this.telemetryGeneratorService.generateInteractTelemetry(InteractType.SELECT_CANCEL,
+      '',
       Environment.ONBOARDING,
-      PageId.ONBOARDING_PROFILE_PREFERENCES,
+      PageId.MANUAL_PROFILE,
       undefined
     );
 
@@ -388,7 +388,7 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
       this.telemetryGeneratorService.generateInteractTelemetry(
         InteractType.SELECT_SUBMIT, '',
         Environment.ONBOARDING,
-        PageId.PROFILE_SETTINGS,
+        PageId.MANUAL_PROFILE,
         undefined,
         undefined,
         undefined,
@@ -698,7 +698,7 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
 
     /* New Telemetry */
     this.telemetryGeneratorService.generatePageLoadedTelemetry(
-      PageId.PROFILE_SETTINGS,
+      PageId.MANUAL_PROFILE,
       Environment.ONBOARDING
     );
 
@@ -740,7 +740,7 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.SELECT_CATEGORY, '',
       Environment.ONBOARDING,
-      PageId.PROFILE_SETTINGS,
+      PageId.MANUAL_PROFILE,
       undefined,
       undefined,
       undefined,
@@ -774,7 +774,7 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.SELECT_SUBMIT, '',
       Environment.ONBOARDING,
-      PageId.POPUP_CATEGORY,
+      PageId.MANUAL_PROFILE,
       undefined,
       undefined,
       undefined,
