@@ -746,5 +746,6 @@
   "UPDATED_SUCCESSFULLY": "Updated successfully",
   "ID": "id",
   "CERTIFICATE_DOWNLOAD_INFO": "Certificate is getting downloaded",
-  "NO_CONTENT_AVAILABLE_IN_MODULE": "There is no content available in this module"
+  "NO_CONTENT_AVAILABLE_IN_MODULE": "There is no content available in this module",
+  "USER_CREATION_LIMIT_EXCEEDED": "User Creation limit exceeded"
 }

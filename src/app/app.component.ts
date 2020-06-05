@@ -655,6 +655,8 @@ export class AppComponent implements OnInit, AfterViewInit {
       const routeUrl = this.router.url;
 
       if ((routeUrl.indexOf(RouterLinks.USER_TYPE_SELECTION) !== -1)
+        || (routeUrl.indexOf(RouterLinks.CHAPTER_DETAILS) !== -1)
+        || (routeUrl.indexOf(RouterLinks.CURRICULUM_COURSES) !== -1)
         || (routeUrl.indexOf(RouterLinks.ACTIVE_DOWNLOADS) !== -1)
         || (routeUrl.indexOf(RouterLinks.COLLECTION_DETAIL_ETB) !== -1)
         || (routeUrl.indexOf(RouterLinks.COLLECTION_DETAILS) !== -1)
