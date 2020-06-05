@@ -24,10 +24,10 @@
         <ng-container *ngIf="!isLoading">
           <div *ngFor="let item of searchList; let i = index" class="mb-8">
             <sb-my-course-card *ngIf="pageType === 'enrolledCourse'" [course]="item" [section]="null"
-              [cardImg]="getContentImg(item)" (click)="openCourseDetails(item)" [hideProgress]="true">
+              [cardImg]="getContentImg(item)" (click)="openCourseDetails(item, i)" [hideProgress]="true">
             </sb-my-course-card>
             <sb-course-card *ngIf="pageType === 'popularCourses'" [course]="item" [section]="null"
-              [cardImg]="getContentImg(item)" (click)="openCourseDetails(item)"></sb-course-card>
+              [cardImg]="getContentImg(item)" (click)="openCourseDetails(item, i)"></sb-course-card>
           </div>
         </ng-container>
         <ng-container *ngIf="isLoading">
