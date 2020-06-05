@@ -292,11 +292,14 @@ export class SelfDeclaredTeacherEditPage {
         return;
       }
 
-      await loader.present();
       const formValue = this.commonForms.commonFormGroup.value;
-      const orgDetails = this.frameworkService.searchOrganization({ filters: { locationIds: [formValue.state] } }).toPromise();
+      const orgDetails: any = await this.frameworkService.searchOrganization({ filters: { locationIds: [formValue.state] } }).toPromise();
+      if (!orgDetails || !orgDetails.content || !orgDetails.content.length || !orgDetails.content[0].channel) {
+        return;
+      }
+      const rootOrgId = orgDetails.content[0].channel;
 
-      console.log(orgDetails);
+      await loader.present();
       const stateCode = this.stateList.find(state => state.id === formValue.state).code;
       const districtCode = this.districtList.find(district => district.id === formValue.district).code;
 
@@ -312,7 +315,7 @@ export class SelfDeclaredTeacherEditPage {
                 id: formValue[formData.code],
                 operation: 'add',
                 idType: formData.code,
-                provider: 'ROOT_ORG'
+                provider: rootOrgId
               });
               return;
             }
@@ -326,7 +329,7 @@ export class SelfDeclaredTeacherEditPage {
               id: 'abc',
               operation: 'remove',
               idType: formData.code,
-              provider: 'ROOT_ORG'
+              provider: rootOrgId
             });
             return;
           }
@@ -337,13 +340,13 @@ export class SelfDeclaredTeacherEditPage {
               id: formValue[formData.code],
               operation: 'edit',
               idType: formData.code,
-              provider: 'ROOT_ORG'
+              provider: rootOrgId
             });
           }
         }
       });
       const req = {
-        userId: this.profile.userId || this.profile.id,
+        userId: this.profile.userId,
         locationCodes: [stateCode, districtCode],
         externalIds
       };
@@ -365,8 +368,8 @@ export class SelfDeclaredTeacherEditPage {
     } catch (err) {
       console.error(err);
       this.generateTelemetryInteract(InteractType.SUBMISSION_FAILURE, ID.TEACHER_DECLARATION, telemetryValue);
-      this.commonUtilService.showToast('Something went wrong.');
-    } finally{
+      this.commonUtilService.showToast('SOMETHING_WENT_WRONG');
+    } finally {
       await loader.dismiss();
     }
   }

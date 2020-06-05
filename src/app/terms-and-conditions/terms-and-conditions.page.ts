@@ -113,14 +113,14 @@ export class TermsAndConditionsPage implements OnInit {
       await loader.present();
       // await tncUpdateHandlerService.onAcceptTnc(this.userProfileDetails);
       const isTCAccepted = await this.profileService.acceptTermsAndConditions({
-        userId: this.userProfileDetails.userId || this.userProfileDetails.id,
+        userId: this.userProfileDetails.userId,
         version: this.userProfileDetails.tncLatestVersion
       })
         .toPromise();
 
       if (isTCAccepted) {
         const serverProfile = await this.profileService.getServerProfilesDetails({
-          userId: this.userProfileDetails.userId || this.userProfileDetails.id,
+          userId: this.userProfileDetails.userId,
           requiredFields: ProfileConstants.REQUIRED_FIELDS,
           from: CachedItemRequestSourceFrom.SERVER
         }).toPromise();
