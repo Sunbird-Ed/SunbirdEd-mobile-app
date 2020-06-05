@@ -1,9 +1,13 @@
 import { Component, OnInit, Inject } from '@angular/core';
-import { AppHeaderService, CommonUtilService, AppGlobalService } from '@app/services';
+import {CommonUtilService, AppGlobalService, TelemetryGeneratorService, PageId, Environment} from '@app/services';
 import { Router } from '@angular/router';
 import { RouterLinks, ProfileConstants } from '../app.constant';
 import { TranslateService } from '@ngx-translate/core';
 import { FetchEnrolledCourseRequest, CourseService, Course } from '@project-sunbird/sunbird-sdk';
+import {Subscription} from 'rxjs';
+import {Location} from '@angular/common';
+import {Platform} from '@ionic/angular';
+import { AppHeaderService } from '@app/services/app-header.service';
 
 @Component({
   selector: 'app-curriculum-courses',
@@ -20,6 +24,9 @@ export class CurriculumCoursesPage implements OnInit {
   titleColor: string;
   enrolledCourses: Array<Course> = [];
   mergedCourseList: [];
+  headerObservable: Subscription;
+  backButtonFunc: Subscription;
+
 
   constructor(
     @Inject('COURSE_SERVICE') private courseService: CourseService,
@@ -27,7 +34,10 @@ export class CurriculumCoursesPage implements OnInit {
     private appGlobalService: AppGlobalService,
     private translate: TranslateService,
     private commonUtilService: CommonUtilService,
-    private router: Router
+    private router: Router,
+    private telemetryGeneratorService: TelemetryGeneratorService,
+    private location: Location,
+    private platform: Platform,
   ) {
     const extrasState = this.router.getCurrentNavigation().extras.state;
     this.subjectName = extrasState.subjectName;
@@ -39,6 +49,24 @@ export class CurriculumCoursesPage implements OnInit {
 
   ionViewWillEnter() {
     this.appHeaderService.showHeaderWithBackButton();
+
+    this.headerObservable = this.appHeaderService.headerEventEmitted$.subscribe(eventName => {
+      this.handleHeaderEvents(eventName);
+    });
+
+    this.backButtonFunc = this.platform.backButton.subscribeWithPriority(10, () => {
+      this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.COURSE_LIST, Environment.HOME, false);
+      this.location.back();
+    });
+  }
+
+  ionViewWillLeave(): void {
+    if (this.headerObservable) {
+      this.headerObservable.unsubscribe();
+    }
+    if (this.backButtonFunc) {
+      this.backButtonFunc.unsubscribe();
+    }
   }
 
   async ngOnInit() {
@@ -94,4 +122,10 @@ export class CurriculumCoursesPage implements OnInit {
     });
   }
 
+  handleHeaderEvents($event) {
+    if ($event.name === 'back') {
+      this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.COURSE_LIST, Environment.HOME, true);
+      this.location.back();
+    }
+  }
 }
