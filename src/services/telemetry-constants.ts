@@ -517,7 +517,8 @@ export enum CorReleationDataType {
     SWITCHED_USER = 'SwitchedUser',
     NEW_VALUE = 'NewValue',
     OLD_VALUE = 'OldValue',
-    COURSE_COUNT = 'CourseCount'
+    COURSE_COUNT = 'CourseCount',
+    CHILD_UI = 'ChildUi'
 }
 
 export enum AuditProps {
@@ -525,5 +526,8 @@ export enum AuditProps {
     PROFILE_TYPE = 'profile_type'
 }
 
+export enum CorReleationDataId {
+    POPUP_CATEGORY = 'popup-category'
+}
 
 
