@@ -289,12 +289,14 @@ export class SelfDeclaredTeacherEditPage {
     try {
 
       if (!this.commonForms && !this.commonForms.commonFormGroup && !this.commonForms.commonFormGroup.value) {
+        this.commonUtilService.showToast('SOMETHING_WENT_WRONG');
         return;
       }
 
       const formValue = this.commonForms.commonFormGroup.value;
       const orgDetails: any = await this.frameworkService.searchOrganization({ filters: { locationIds: [formValue.state] } }).toPromise();
       if (!orgDetails || !orgDetails.content || !orgDetails.content.length || !orgDetails.content[0].channel) {
+        this.commonUtilService.showToast('SOMETHING_WENT_WRONG');
         return;
       }
       const rootOrgId = orgDetails.content[0].channel;
@@ -308,7 +310,7 @@ export class SelfDeclaredTeacherEditPage {
         if (formData.code !== 'state' && formData.code !== 'district') {
           // no externalIds declared
           if (!this.profile.externalIds || !this.profile.externalIds.length || !this.profile.externalIds.find(eid => {
-            return eid.idType === formValue[formData.code];
+            return eid.idType === formData.code;
           })) {
             if (formValue[formData.code]) {
               externalIds.push({
@@ -323,7 +325,7 @@ export class SelfDeclaredTeacherEditPage {
 
           // externalIds declared but removed
           if (!formValue[formData.code] && this.profile.externalIds && this.profile.externalIds.find(eid => {
-            return eid.idType === formValue[formData.code];
+            return eid.idType === formData.code;
           })) {
             externalIds.push({
               id: 'abc',
