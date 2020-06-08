@@ -1,6 +1,8 @@
 import { Component, OnInit, Inject } from '@angular/core';
-import {CommonUtilService, AppGlobalService, TelemetryGeneratorService, PageId, Environment,
-  InteractType, InteractSubtype} from '@app/services';
+import {
+  CommonUtilService, AppGlobalService, TelemetryGeneratorService, PageId, Environment,
+  InteractType, InteractSubtype, ImpressionType, ImpressionSubtype
+} from '@app/services';
 import { Router } from '@angular/router';
 import { RouterLinks, ProfileConstants } from '../app.constant';
 import { TranslateService } from '@ngx-translate/core';
@@ -62,6 +64,12 @@ export class CurriculumCoursesPage implements OnInit {
       this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.COURSE_LIST, Environment.HOME, false);
       this.location.back();
     });
+    this.telemetryGeneratorService.generateImpressionTelemetry(
+        ImpressionType.VIEW,
+        '',
+        PageId.COURSE_LIST,
+        Environment.HOME
+    );
   }
 
   ionViewWillLeave(): void {
