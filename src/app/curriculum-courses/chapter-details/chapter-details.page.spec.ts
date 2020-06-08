@@ -6,14 +6,15 @@ import {
     SharedPreferences, AuthService, CourseService, DownloadService,
     EventsBusService, ContentService
 } from '@project-sunbird/sunbird-sdk';
-import { PopoverController, Events } from '@ionic/angular';
+import { PopoverController, Events, Platform } from '@ionic/angular';
 import { NgZone } from '@angular/core';
-import { DatePipe } from '@angular/common';
+import { DatePipe, Location } from '@angular/common';
 import { FileSizePipe } from '@app/pipes/file-size/file-size';
 import { FileService } from '@project-sunbird/sunbird-sdk/util/file/def/file-service';
 import { MimeType, EventTopics, RouterLinks, PreferenceKey } from '../../app.constant';
 import { of, throwError } from 'rxjs';
 import { SbProgressLoader } from '../../../services/sb-progress-loader.service';
+import { TelemetryGeneratorService } from '../../../services/telemetry-generator.service';
 
 describe('ChapterDetailsPage', () => {
     let chapterDetailsPage: ChapterDetailsPage;
@@ -55,6 +56,9 @@ describe('ChapterDetailsPage', () => {
     const mockPreferences: Partial<SharedPreferences> = {};
     const mockZone: Partial<NgZone> = {};
     const mockSbProgressLoader: Partial<SbProgressLoader> = {};
+    const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {};
+    const mockLocation: Partial<Location> = {};
+    const mockPlatform: Partial<Platform> = {};
 
     beforeAll(() => {
         chapterDetailsPage = new ChapterDetailsPage(
@@ -76,7 +80,10 @@ describe('ChapterDetailsPage', () => {
             mockZone as NgZone,
             mockDatePipe as DatePipe,
             mockFileSizePipe as FileSizePipe,
-            mockSbProgressLoader as SbProgressLoader
+            mockSbProgressLoader as SbProgressLoader,
+            mockTelemetryGeneratorService as TelemetryGeneratorService,
+            mockLocation as Location,
+            mockPlatform as Platform
         );
     });
 
@@ -313,7 +320,10 @@ describe('ChapterDetailsPage', () => {
                 mockZone as NgZone,
                 mockDatePipe as DatePipe,
                 mockFileSizePipe as FileSizePipe,
-                mockSbProgressLoader as SbProgressLoader
+                mockSbProgressLoader as SbProgressLoader,
+                mockTelemetryGeneratorService as TelemetryGeneratorService,
+                mockLocation as Location,
+                mockPlatform as Platform
             );
         });
         it('should return all batches', (done) => {
@@ -1298,7 +1308,10 @@ describe('ChapterDetailsPage', () => {
                 mockZone as NgZone,
                 mockDatePipe as DatePipe,
                 mockFileSizePipe as FileSizePipe,
-                mockSbProgressLoader as SbProgressLoader
+                mockSbProgressLoader as SbProgressLoader,
+                mockTelemetryGeneratorService as TelemetryGeneratorService,
+                mockLocation as Location,
+                mockPlatform as Platform
             );
         });
         beforeEach(() => {
@@ -1413,7 +1426,10 @@ describe('ChapterDetailsPage', () => {
                 mockZone as NgZone,
                 mockDatePipe as DatePipe,
                 mockFileSizePipe as FileSizePipe,
-                mockSbProgressLoader as SbProgressLoader
+                mockSbProgressLoader as SbProgressLoader,
+                mockTelemetryGeneratorService as TelemetryGeneratorService,
+                mockLocation as Location,
+                mockPlatform as Platform
             );
         });
         beforeEach(() => {
