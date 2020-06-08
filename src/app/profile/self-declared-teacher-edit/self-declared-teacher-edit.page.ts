@@ -65,7 +65,7 @@ export class SelfDeclaredTeacherEditPage {
     this.headerService.showHeaderWithBackButton();
     await this.checkLocationAvailability();
 
-    this.generateTelemetryInteract(InteractType.SUBMISSION_INITIATED);
+    this.generateTelemetryInteract(InteractType.SUBMISSION_INITIATED, ID.TEACHER_DECLARATION);
 
     this.telemetryGeneratorService.generateImpressionTelemetry(
       ImpressionType.VIEW,
@@ -277,21 +277,31 @@ export class SelfDeclaredTeacherEditPage {
   }
 
   async submit() {
-    this.generateTelemetryInteract(InteractType.TOUCH);
+    if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
+      this.commonUtilService.showToast('NEED_INTERNET_TO_CHANGE');
+    }
+
+    const id = this.editType === 'add' ? ID.SUBMIT_CLICKED : ID.BTN_UPDATE;
+    this.generateTelemetryInteract(InteractType.TOUCH, id);
 
     const loader = await this.commonUtilService.getLoader();
     let telemetryValue;
     try {
 
       if (!this.commonForms && !this.commonForms.commonFormGroup && !this.commonForms.commonFormGroup.value) {
+        this.commonUtilService.showToast('SOMETHING_WENT_WRONG');
         return;
       }
 
-      await loader.present();
       const formValue = this.commonForms.commonFormGroup.value;
-      const orgDetails = this.frameworkService.searchOrganization({ filters: { locationIds: [formValue.state] } }).toPromise();
+      const orgDetails: any = await this.frameworkService.searchOrganization({ filters: { locationIds: [formValue.state] } }).toPromise();
+      if (!orgDetails || !orgDetails.content || !orgDetails.content.length || !orgDetails.content[0].channel) {
+        this.commonUtilService.showToast('SOMETHING_WENT_WRONG');
+        return;
+      }
+      const rootOrgId = orgDetails.content[0].channel;
 
-      console.log(orgDetails);
+      await loader.present();
       const stateCode = this.stateList.find(state => state.id === formValue.state).code;
       const districtCode = this.districtList.find(district => district.id === formValue.district).code;
 
@@ -300,14 +310,14 @@ export class SelfDeclaredTeacherEditPage {
         if (formData.code !== 'state' && formData.code !== 'district') {
           // no externalIds declared
           if (!this.profile.externalIds || !this.profile.externalIds.length || !this.profile.externalIds.find(eid => {
-            return eid.idType === formValue[formData.code];
+            return eid.idType === formData.code;
           })) {
             if (formValue[formData.code]) {
               externalIds.push({
                 id: formValue[formData.code],
                 operation: 'add',
                 idType: formData.code,
-                provider: 'ROOT_ORG'
+                provider: rootOrgId
               });
               return;
             }
@@ -315,13 +325,13 @@ export class SelfDeclaredTeacherEditPage {
 
           // externalIds declared but removed
           if (!formValue[formData.code] && this.profile.externalIds && this.profile.externalIds.find(eid => {
-            return eid.idType === formValue[formData.code];
+            return eid.idType === formData.code;
           })) {
             externalIds.push({
               id: 'abc',
               operation: 'remove',
               idType: formData.code,
-              provider: 'ROOT_ORG'
+              provider: rootOrgId
             });
             return;
           }
@@ -332,13 +342,13 @@ export class SelfDeclaredTeacherEditPage {
               id: formValue[formData.code],
               operation: 'edit',
               idType: formData.code,
-              provider: 'ROOT_ORG'
+              provider: rootOrgId
             });
           }
         }
       });
       const req = {
-        userId: this.profile.userId || this.profile.id,
+        userId: this.profile.userId,
         locationCodes: [stateCode, districtCode],
         externalIds
       };
@@ -350,7 +360,7 @@ export class SelfDeclaredTeacherEditPage {
       await this.profileService.updateServerProfile(req).toPromise();
       this.events.publish('loggedInProfile:update');
 
-      this.generateTelemetryInteract(InteractType.SUBMISSION_SUCCESS, telemetryValue);
+      this.generateTelemetryInteract(InteractType.SUBMISSION_SUCCESS, ID.TEACHER_DECLARATION, telemetryValue);
       this.location.back();
       if (this.editType === 'add') {
         this.showAddedSuccessfullPopup();
@@ -359,9 +369,9 @@ export class SelfDeclaredTeacherEditPage {
       }
     } catch (err) {
       console.error(err);
-      this.generateTelemetryInteract(InteractType.SUBMISSION_FAILURE, telemetryValue);
-      this.commonUtilService.showToast('Something went wrong.');
-    } finally{
+      this.generateTelemetryInteract(InteractType.SUBMISSION_FAILURE, ID.TEACHER_DECLARATION, telemetryValue);
+      this.commonUtilService.showToast('SOMETHING_WENT_WRONG');
+    } finally {
       await loader.dismiss();
     }
   }
@@ -403,7 +413,7 @@ export class SelfDeclaredTeacherEditPage {
     }
   }
 
-  generateTelemetryInteract(type, value?) {
+  generateTelemetryInteract(type, id, value?) {
     this.telemetryGeneratorService.generateInteractTelemetry(
       type,
       this.editType === 'add' ? InteractSubtype.NEW : InteractSubtype.EXISTING,
@@ -413,7 +423,7 @@ export class SelfDeclaredTeacherEditPage {
       value || undefined,
       undefined,
       undefined,
-      ID.TEACHER_DECLARATION
+      id
     );
   }
 
@@ -437,7 +447,9 @@ export class SelfDeclaredTeacherEditPage {
       }
     }
 
-    return telemetryValue.length ? map.set('fieldsChanged', telemetryValue) : undefined;
+    const fieldsChanged = map.set('fieldsChanged', telemetryValue);
+
+    return fieldsChanged;
   }
 
 }

@@ -138,7 +138,8 @@ export enum PageId {
     MANAGE_USERS = 'manage-users',
     CHAPTER_DETAILS = 'chapter-details',
     TEACHER_SELF_DECLARATION = 'teacher-self-declaration',
-    COURSE_LIST = 'course-list'
+    COURSE_LIST = 'course-list',
+    MANUAL_PROFILE = 'manual profile'
 }
 export enum LogType {
     NOTIFICATION = 'notification'
@@ -214,7 +215,11 @@ export enum InteractType {
     SELECT_MORE = 'select-more',
     SUBMISSION_INITIATED = 'submission-initiated',
     SUBMISSION_SUCCESS = 'submission-success',
-    SUBMISSION_FAILURE = 'submission-failure'
+    SUBMISSION_FAILURE = 'submission-failure',
+    CREATE_SUCCESS = 'create-success',
+    CREATE_FAILURE = 'create-failure',
+    SWITCH_SUCCESS = 'switch-success',
+    SWITCH_FAILURE = 'switch-failure',
 }
 
 
@@ -303,6 +308,7 @@ export enum InteractSubtype {
     GROUP_CLICKED = 'group-clicked',
     CLASS_CLICKED = 'class-clicked',
     MEDIUM_CLICKED = 'medium-clicked',
+    REFRESH_CLICKED = 'refresh-clicked',
     REPORTS_BY_USER_CLICKED = 'byuser-tab-clicked',
     REPORTS_BY_QUESTION_CLICKED = 'byquestion-tab-clicked',
     REPORTS_SORTBY_QUESTION_CLICKED = 'sortby-question-clicked',
@@ -473,7 +479,8 @@ export enum ID {
     BTN_MORE = 'btn-more',
     BTN_UPDATE = 'btn-update',
     BTN_I_AM_A_TEACHER = 'btn-i-am-a-teacher',
-    TEACHER_DECLARATION = 'teacher-declaration'
+    TEACHER_DECLARATION = 'teacher-declaration',
+    MUA_USER_CREATION = 'mua-user-creation'
 }
 
 export enum ActionButtonType {
@@ -510,7 +517,8 @@ export enum CorReleationDataType {
     SWITCHED_USER = 'SwitchedUser',
     NEW_VALUE = 'NewValue',
     OLD_VALUE = 'OldValue',
-    COURSE_COUNT = 'CourseCount'
+    COURSE_COUNT = 'CourseCount',
+    CHILD_UI = 'ChildUi'
 }
 
 export enum AuditProps {
@@ -518,5 +526,8 @@ export enum AuditProps {
     PROFILE_TYPE = 'profile_type'
 }
 
+export enum CorReleationDataId {
+    POPUP_CATEGORY = 'popup-category'
+}
 
 

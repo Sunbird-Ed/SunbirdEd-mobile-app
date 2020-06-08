@@ -1,8 +1,9 @@
-import { Component, NgZone, OnInit, Inject } from '@angular/core';
+import { Component, NgZone, OnInit, Inject, ViewChild } from '@angular/core';
 import {
   Events,
   PopoverController,
   ToastController,
+  IonRefresher,
 } from '@ionic/angular';
 import { generateInteractTelemetry } from '@app/app/telemetryutil';
 import { ContentCard, ContentType, MimeType, ProfileConstants, RouterLinks, ContentFilterConfig } from '@app/app/app.constant';
@@ -54,6 +55,8 @@ import { TranslateService } from '@ngx-translate/core';
   styleUrls: ['./profile.page.scss'],
 })
 export class ProfilePage implements OnInit {
+
+  @ViewChild('refresher') refresher: IonRefresher;
 
   profile: any = {};
   userId = '';
@@ -150,9 +153,6 @@ export class ProfilePage implements OnInit {
       this.custodianOrgId = orgId;
     });
 
-    this.sharedPreferences.getString('app_name').toPromise().then(value => {
-      this.appName = value;
-    });
   }
 
   async ngOnInit() {
@@ -179,15 +179,19 @@ export class ProfilePage implements OnInit {
   ionViewWillLeave(): void {
     this.headerObservable.unsubscribe();
     this.events.unsubscribe('update_header');
+    this.refresher.disabled = true;
   }
 
-
+  ionViewDidEnter() {
+    this.refresher.disabled = false;
+  }
+  
   async doRefresh(refresher?) {
     const loader = await this.commonUtilService.getLoader();
     this.isRefreshProfile = true;
     if (!refresher) {
       await loader.present();
-    } else {
+    } else if (refresher.target) {
       this.telemetryGeneratorService.generatePullToRefreshTelemetry(PageId.PROFILE, Environment.HOME);
       refresher.target.complete();
       this.refresh = true;
@@ -204,7 +208,7 @@ export class ProfilePage implements OnInit {
           }, 500);
           // This method is used to handle trainings completed by user
 
-          this.getEnrolledCourses();
+          this.getEnrolledCourses(refresher);
           this.searchContent();
           this.getSelfDeclaredTeacherDetails();
         });
@@ -388,17 +392,27 @@ export class ProfilePage implements OnInit {
    *
    * It internally calls course handler of genie sdk
    */
-  getEnrolledCourses() {
+  async getEnrolledCourses(refresher?, refreshCourseList?) {
+    const loader = await this.commonUtilService.getLoader();
+    if (refreshCourseList) { 
+      loader.present();
+      this.telemetryGeneratorService.generateInteractTelemetry(
+        InteractType.TOUCH,
+        InteractSubtype.REFRESH_CLICKED,
+        Environment.USER,
+        PageId.PROFILE
+      );
+    }
     const option = {
       userId: this.profile.userId || this.profile.id,
-      refreshEnrolledCourses: false,
-      returnRefreshedEnrolledCourses: true
+      returnFreshCourses: refresher ? true : false
     };
     this.trainingsCompleted = [];
     this.courseService.getEnrolledCourses(option).toPromise()
       .then((res: Course[]) => {
         this.trainingsCompleted = res.filter((course) => (course.status === 2 || course.status === 1));
         this.mappedTrainingCertificates = this.mapTrainingsToCertificates(this.trainingsCompleted);
+        refreshCourseList ? loader.dismiss() : false;
       })
       .catch((error: any) => {
         console.error('error while loading enrolled courses', error);
@@ -933,6 +947,9 @@ export class ProfilePage implements OnInit {
   }
 
   openSelfDeclareTeacherForm(type) {
+    if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
+      this.commonUtilService.showToast('NEED_INTERNET_TO_CHANGE');
+    }
     const telemetryId = type === 'add' ? ID.BTN_I_AM_A_TEACHER : ID.BTN_UPDATE;
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,

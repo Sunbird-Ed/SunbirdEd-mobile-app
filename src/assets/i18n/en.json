@@ -702,6 +702,7 @@
   "WAITING_TO_DOWNLOAD": "Waiting to download...",
   "WAIT_REQUEST": "Fetching content ...",
   "WANT_TO_CHECK_FREE_TRAININGS": "Want to check courses?",
+  "WANT_TO_CHECK_TRAININGS": "Want to check trainings on {{%s}}?",
   "WARNING_PLEASE_MAKE_SOME_CHANGES": "Make changes",
   "WEBVIEW_UPDATE_TEXT": "For an effective experience, download the latest version of WebView from the Google Play store.",
   "WELCOME_BACK": "WELCOME BACK {{%s}}",
@@ -745,5 +746,6 @@
   "UPDATED_SUCCESSFULLY": "Updated successfully",
   "ID": "id",
   "CERTIFICATE_DOWNLOAD_INFO": "Certificate is getting downloaded",
-  "NO_CONTENT_AVAILABLE_IN_MODULE": "There is no content available in this module"
+  "NO_CONTENT_AVAILABLE_IN_MODULE": "There is no content available in this module",
+  "USER_CREATION_LIMIT_EXCEEDED": "User Creation limit exceeded"
 }

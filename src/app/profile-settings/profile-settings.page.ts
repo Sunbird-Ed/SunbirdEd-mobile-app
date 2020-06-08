@@ -14,7 +14,8 @@ import {
   InteractSubtype,
   InteractType,
   PageId,
-  CorReleationDataType
+  CorReleationDataType,
+  CorReleationDataId
 } from '@app/services/telemetry-constants';
 import {
   Framework,
@@ -279,15 +280,9 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
   }
 
   cancelEvent(category?: string) {
-    this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
-      InteractSubtype.CANCEL_CLICKED,
-      Environment.ONBOARDING,
-      PageId.ONBOARDING_PROFILE_PREFERENCES,
-      undefined
-    );
+    let correlationList: Array<CorrelationData> = [];
 
     /* New Telemetry */
-    let correlationList: Array<CorrelationData> = [];
     switch (category) {
       case 'board':
         correlationList = this.populateCData(this.syllabusControl.value, CorReleationDataType.BOARD);
@@ -299,10 +294,11 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
         correlationList = this.populateCData(this.gradeControl.value, CorReleationDataType.CLASS);
         break;
     }
+    correlationList.push({id: CorReleationDataId.POPUP_CATEGORY, type: CorReleationDataType.CHILD_UI});
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.SELECT_CANCEL, '',
       Environment.ONBOARDING,
-      PageId.POPUP_CATEGORY,
+      PageId.MANUAL_PROFILE,
       undefined,
       undefined,
       undefined,
@@ -388,7 +384,7 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
       this.telemetryGeneratorService.generateInteractTelemetry(
         InteractType.SELECT_SUBMIT, '',
         Environment.ONBOARDING,
-        PageId.PROFILE_SETTINGS,
+        PageId.MANUAL_PROFILE,
         undefined,
         undefined,
         undefined,
@@ -698,7 +694,7 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
 
     /* New Telemetry */
     this.telemetryGeneratorService.generatePageLoadedTelemetry(
-      PageId.PROFILE_SETTINGS,
+      PageId.MANUAL_PROFILE,
       Environment.ONBOARDING
     );
 
@@ -740,7 +736,7 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.SELECT_CATEGORY, '',
       Environment.ONBOARDING,
-      PageId.PROFILE_SETTINGS,
+      PageId.MANUAL_PROFILE,
       undefined,
       undefined,
       undefined,
@@ -770,11 +766,11 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
         correlationList = this.populateCData(this.gradeControl.value, CorReleationDataType.CLASS);
         break;
     }
-
+    correlationList.push({id: CorReleationDataId.POPUP_CATEGORY, type: CorReleationDataType.CHILD_UI});
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.SELECT_SUBMIT, '',
       Environment.ONBOARDING,
-      PageId.POPUP_CATEGORY,
+      PageId.MANUAL_PROFILE,
       undefined,
       undefined,
       undefined,
