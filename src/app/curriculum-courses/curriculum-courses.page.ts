@@ -4,11 +4,12 @@ import {CommonUtilService, AppGlobalService, TelemetryGeneratorService, PageId, 
 import { Router } from '@angular/router';
 import { RouterLinks, ProfileConstants } from '../app.constant';
 import { TranslateService } from '@ngx-translate/core';
-import { FetchEnrolledCourseRequest, CourseService, Course, CorrelationData } from '@project-sunbird/sunbird-sdk';
+import { FetchEnrolledCourseRequest, CourseService, Course, CorrelationData, TelemetryObject } from '@project-sunbird/sunbird-sdk';
 import {Subscription} from 'rxjs';
 import {Location} from '@angular/common';
 import {Platform} from '@ionic/angular';
 import { AppHeaderService } from '@app/services/app-header.service';
+import {ContentUtil} from '@app/util/content-util';
 
 @Component({
   selector: 'app-curriculum-courses',
@@ -91,14 +92,15 @@ export class CurriculumCoursesPage implements OnInit {
 
   openCourseDetails(course) {
     this.corRelationList = this.commonUtilService.deDupe(this.corRelationList, 'type');
+    const telemetryObject: TelemetryObject = new TelemetryObject(course.identifier, course.contentType, course.pkgVersion);
     this.telemetryGeneratorService.generateInteractTelemetry(
         InteractType.TOUCH,
         InteractSubtype.CONTENT_CLICKED,
         Environment.HOME,
         PageId.COURSE_LIST,
+        telemetryObject,
         undefined,
-        undefined,
-        undefined,
+        ContentUtil.generateRollUp(undefined, course.identifier),
         this.corRelationList);
     this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], {
       state: {
