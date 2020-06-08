@@ -1310,7 +1310,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], {
         state: {
           content: event.data.contents[0],
-          corRelationList
+          corRelation: corRelationList
         }
       });
     }
