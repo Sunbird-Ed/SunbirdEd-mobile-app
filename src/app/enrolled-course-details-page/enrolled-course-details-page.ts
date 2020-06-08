@@ -319,7 +319,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
         this.batchId = res.batchId;
         if (this.identifier && res.courseId && this.identifier === res.courseId) {
           this.isAlreadyEnrolled = true;
-          this.subscribeTrackDiwnloads();
+          this.subscribeTrackDownloads();
           this.zone.run(() => {
             this.getContentsSize(this.courseHeirarchy.children);
             if (this.loader) {
