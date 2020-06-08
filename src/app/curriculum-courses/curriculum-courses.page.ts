@@ -1,9 +1,10 @@
 import { Component, OnInit, Inject } from '@angular/core';
-import {CommonUtilService, AppGlobalService, TelemetryGeneratorService, PageId, Environment} from '@app/services';
+import {CommonUtilService, AppGlobalService, TelemetryGeneratorService, PageId, Environment,
+  InteractType, InteractSubtype} from '@app/services';
 import { Router } from '@angular/router';
 import { RouterLinks, ProfileConstants } from '../app.constant';
 import { TranslateService } from '@ngx-translate/core';
-import { FetchEnrolledCourseRequest, CourseService, Course } from '@project-sunbird/sunbird-sdk';
+import { FetchEnrolledCourseRequest, CourseService, Course, CorrelationData } from '@project-sunbird/sunbird-sdk';
 import {Subscription} from 'rxjs';
 import {Location} from '@angular/common';
 import {Platform} from '@ionic/angular';
@@ -26,6 +27,7 @@ export class CurriculumCoursesPage implements OnInit {
   mergedCourseList: [];
   headerObservable: Subscription;
   backButtonFunc: Subscription;
+  corRelationList: Array<CorrelationData>;
 
 
   constructor(
@@ -45,6 +47,7 @@ export class CurriculumCoursesPage implements OnInit {
     this.courseList = extrasState.courseList;
     this.theme = extrasState.theme;
     this.titleColor = extrasState.titleColor;
+    this.corRelationList = extrasState.corRelationList;
   }
 
   ionViewWillEnter() {
@@ -87,9 +90,20 @@ export class CurriculumCoursesPage implements OnInit {
   }
 
   openCourseDetails(course) {
+    this.corRelationList = this.commonUtilService.deDupe(this.corRelationList, 'type');
+    this.telemetryGeneratorService.generateInteractTelemetry(
+        InteractType.TOUCH,
+        InteractSubtype.CONTENT_CLICKED,
+        Environment.HOME,
+        PageId.COURSE_LIST,
+        undefined,
+        undefined,
+        undefined,
+        this.corRelationList);
     this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], {
       state: {
         content: course,
+        corRelationList: this.corRelationList
       }
     });
   }

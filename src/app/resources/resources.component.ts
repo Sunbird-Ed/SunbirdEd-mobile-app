@@ -1282,6 +1282,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
           subjectIcon: event.data.cardImg,
           subjectName: event.data.title,
           courseList: event.data.contents,
+          corRelationList
         }
       };
       this.telemetryGeneratorService.generateInteractTelemetry(
@@ -1309,6 +1310,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], {
         state: {
           content: event.data.contents[0],
+          corRelationList
         }
       });
     }

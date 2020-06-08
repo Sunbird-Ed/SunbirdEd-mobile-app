@@ -261,7 +261,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
       this.isFromChannelDeeplink = extrasState.isFromChannelDeeplink;
       // console.log('this.courseCardData', this.courseCardData);
       this.identifier = this.courseCardData.contentId || this.courseCardData.identifier;
-      this.corRelationList = extrasState.corRelation;
+      this.corRelationList = extrasState.corRelation || extrasState.corRelationList;
       this.source = extrasState.source;
       this.isQrCodeLinkToContent = extrasState.isQrCodeLinkToContent;
       this.resumeCourseFlag = extrasState.resumeCourseFlag || false;
