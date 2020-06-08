@@ -92,7 +92,7 @@ export class CurriculumCoursesPage implements OnInit {
 
   openCourseDetails(course) {
     this.corRelationList = this.commonUtilService.deDupe(this.corRelationList, 'type');
-    const telemetryObject: TelemetryObject = new TelemetryObject(course.identifier, course.contentType, course.pkgVersion);
+    const telemetryObject: TelemetryObject = ContentUtil.getTelemetryObject(course);
     this.telemetryGeneratorService.generateInteractTelemetry(
         InteractType.TOUCH,
         InteractSubtype.CONTENT_CLICKED,
