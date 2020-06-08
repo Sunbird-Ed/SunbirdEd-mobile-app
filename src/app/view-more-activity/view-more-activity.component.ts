@@ -37,7 +37,8 @@ import {
   ImpressionType,
   InteractSubtype,
   InteractType,
-  PageId
+  PageId,
+  CorReleationDataType
 } from '@app/services/telemetry-constants';
 import {
   ContentType, ViewMore, MimeType, RouterLinks, ContentFilterConfig,
@@ -51,6 +52,7 @@ import { AppHeaderService } from '@app/services/app-header.service';
 import { EnrollmentDetailsComponent } from '../components/enrollment-details/enrollment-details.component';
 import { AppGlobalService } from '@app/services/app-global-service.service';
 import { LocalCourseService } from '@app/services/local-course.service';
+import { ContentUtil } from '@app/util/content-util';
 
 @Component({
   selector: 'app-view-more-activity',
@@ -170,6 +172,10 @@ export class ViewMoreActivityComponent implements OnInit {
         this.searchQuery = this.router.getCurrentNavigation().extras.state.requestParams;
         this.audience = this.router.getCurrentNavigation().extras.state.audience;
         this.enrolledCourses = this.router.getCurrentNavigation().extras.state.enrolledCourses;
+
+        if (this.router.getCurrentNavigation().extras.state.sectionName) {
+          this.sectionName = this.router.getCurrentNavigation().extras.state.sectionName;
+        }
 
         if (this.headerTitle !== this.title) {
           console.log('inside header title if condition');
@@ -327,8 +333,7 @@ export class ViewMoreActivityComponent implements OnInit {
     this.pageType = 'enrolledCourse';
     const option = {
       userId: this.userId,
-      refreshEnrolledCourses: false,
-      returnRefreshedEnrolledCourses: true
+      returnFreshCourses: true
     };
     this.courseService.getEnrolledCourses(option).toPromise()
       .then((data: Course[]) => {
@@ -602,7 +607,8 @@ export class ViewMoreActivityComponent implements OnInit {
     return img;
   }
 
-  openCourseDetails(course) {
+  openCourseDetails(course, index) {
+    this.index = index;
     const payload = {
       guestUser: this.guestUser,
       enrolledCourses: this.enrolledCourses
@@ -711,6 +717,31 @@ export class ViewMoreActivityComponent implements OnInit {
 
 
   private async navigateToDetailsPage(content: any, layoutName) {
+    const identifier = content.contentId || content.identifier;
+    const type = this.telemetryGeneratorService.isCollection(content.mimeType) ? content.contentType : ContentType.COURSE;
+    const telemetryObject: TelemetryObject = new TelemetryObject(identifier, type, content.pkgVersion);
+
+    const corRelationList: Array<CorrelationData> = [{
+      id: this.sectionName,
+      type: CorReleationDataType.SECTION
+    }, {
+      id: identifier,
+      type: CorReleationDataType.ROOT_ID
+    }];
+
+    const values = new Map();
+    values['sectionName'] = this.sectionName;
+    values['positionClicked'] = this.index;
+
+    this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
+      InteractSubtype.CONTENT_CLICKED,
+      this.env,
+      PageId.VIEW_MORE,
+      telemetryObject,
+      values,
+      ContentUtil.generateRollUp(undefined, identifier),
+      this.commonUtilService.deDupe(corRelationList, 'type'));
+
     this.zone.run(async () => {
       if (layoutName === 'enrolledCourse' || content.contentType === ContentType.COURSE) {
         this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], {

@@ -138,7 +138,8 @@ export enum PageId {
     MANAGE_USERS = 'manage-users',
     CHAPTER_DETAILS = 'chapter-details',
     TEACHER_SELF_DECLARATION = 'teacher-self-declaration',
-    COURSE_LIST = 'course-list'
+    COURSE_LIST = 'course-list',
+    MANUAL_PROFILE = 'manual profile'
 }
 export enum LogType {
     NOTIFICATION = 'notification'
@@ -307,6 +308,7 @@ export enum InteractSubtype {
     GROUP_CLICKED = 'group-clicked',
     CLASS_CLICKED = 'class-clicked',
     MEDIUM_CLICKED = 'medium-clicked',
+    REFRESH_CLICKED = 'refresh-clicked',
     REPORTS_BY_USER_CLICKED = 'byuser-tab-clicked',
     REPORTS_BY_QUESTION_CLICKED = 'byquestion-tab-clicked',
     REPORTS_SORTBY_QUESTION_CLICKED = 'sortby-question-clicked',
