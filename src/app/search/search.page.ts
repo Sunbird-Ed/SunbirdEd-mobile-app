@@ -298,6 +298,11 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
   handleDeviceBackButton() {
     this.backButtonFunc = this.platform.backButton.subscribeWithPriority(10, () => {
       this.navigateToPreviousPage();
+      this.telemetryGeneratorService.generateBackClickedNewTelemetry(
+        true,
+        this.appGlobalService.isOnBoardingCompleted ? Environment.HOME : Environment.ONBOARDING,
+        PageId.SCAN
+       );
       this.telemetryGeneratorService.generateBackClickedTelemetry(ImpressionType.SEARCH,
         Environment.HOME, false, undefined, this.corRelationList);
     });
@@ -1081,6 +1086,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
           displayDialCodeResult.push(dialCodeCourseResultObj);
         }
       }
+      this.generateImpressionEvent(displayDialCodeResult[0].dialCodeResult);
 
       let isParentCheckStarted = false;
       if (dialCodeResultObj.dialCodeResult.length === 1 && dialCodeResultObj.dialCodeResult[0].content.length === 1
@@ -1378,13 +1384,28 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
     this.corRelationList.push(corRelation);
   }
 
-  private generateImpressionEvent() {
-    this.telemetryGeneratorService.generateImpressionTelemetry(
-      ImpressionType.SEARCH, '',
-      this.source ? this.source : PageId.SEARCH,
-      Environment.HOME, '', '', '',
-      undefined,
-      this.corRelationList);
+  private generateImpressionEvent(dialCodeResult?) {
+    if (dialCodeResult && dialCodeResult.length) {
+      const corRelationList: Array<CorrelationData> = [];
+      corRelationList.push({id: this.dialCode, type: CorReleationDataType.QR});
+      corRelationList.push({id: dialCodeResult.length.toString(), type: CorReleationDataType.COUNT_BOOK});
+      this.telemetryGeneratorService.generatePageLoadedTelemetry(
+        PageId.QR_BOOK_RESULT,
+        this.source = PageId.ONBOARDING_PROFILE_PREFERENCES ? Environment.ONBOARDING : Environment.HOME,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        corRelationList
+      );
+    } else {
+      this.telemetryGeneratorService.generateImpressionTelemetry(
+        ImpressionType.SEARCH, '',
+        this.source ? this.source : PageId.SEARCH,
+        Environment.HOME, '', '', '',
+        undefined,
+        this.corRelationList);
+    }
   }
 
   private generateLogEvent(searchResult) {
@@ -1442,6 +1463,11 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
   }
 
   goBack() {
+    this.telemetryGeneratorService.generateBackClickedNewTelemetry(
+      false,
+      this.appGlobalService.isOnBoardingCompleted ? Environment.HOME : Environment.ONBOARDING,
+      PageId.SCAN
+     );
     this.telemetryGeneratorService.generateBackClickedTelemetry(ImpressionType.SEARCH,
       Environment.HOME, true, undefined, this.corRelationList);
     this.navigateToPreviousPage();
