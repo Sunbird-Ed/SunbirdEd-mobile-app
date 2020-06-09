@@ -161,7 +161,7 @@ export class ManageUserProfilesPage implements OnInit {
       return;
     }
 
-    this.router.navigate([`/${RouterLinks.PROFILE_TAB}/${RouterLinks.SUB_PROFILE_EDIT}`]);
+    this.router.navigate([`/${RouterLinks.PROFILE}/${RouterLinks.SUB_PROFILE_EDIT}`]);
   }
 
   handleHeaderEvents($event) {
