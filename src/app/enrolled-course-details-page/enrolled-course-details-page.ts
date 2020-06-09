@@ -1935,6 +1935,15 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
 
   onTocCardClick(event) {
     if (event.item.mimeType === MimeType.COLLECTION) {
+      this.telemetryGeneratorService.generateInteractTelemetry(
+        InteractType.TOUCH,
+        InteractSubtype.TRAINING_MODULE_CLICKED,
+        Environment.HOME,
+        PageId.COURSE_DETAIL,
+        this.telemetryObject,
+        undefined,
+        this.objRollup,
+        this.corRelationList);
       const chapterParams: NavigationExtras = {
         state: {
           chapterData: event.item,
