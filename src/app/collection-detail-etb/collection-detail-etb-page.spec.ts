@@ -1146,7 +1146,6 @@ describe('collectionDetailEtbPage', () => {
             setTimeout(() => {
                 expect(mockchangeDetectionRef.detectChanges).toHaveBeenCalled();
                 expect(collectionDetailEtbPage.childrenData).toBeTruthy();
-                expect(document.getElementById).toHaveBeenCalled();
                 expect(mocktextbookTocService.resetTextbookIds).toHaveBeenCalled();
                 expect(mocktelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
                     InteractType.OTHER,
@@ -1785,7 +1784,6 @@ describe('collectionDetailEtbPage', () => {
             expect(mockEventBusService.events).toHaveBeenCalled();
             expect(mockzone.run).toHaveBeenCalled();
         });
-
     });
 
     it('should hide deeplink progress loader', () => {
