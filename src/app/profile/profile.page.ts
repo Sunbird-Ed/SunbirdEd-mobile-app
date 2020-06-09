@@ -69,7 +69,6 @@ export class ProfilePage implements OnInit {
   refresh: boolean;
   profileName: string;
   onProfile = true;
-  trainingsCompleted = [];
   roles = [];
   userLocation = {
     state: {},
@@ -361,7 +360,7 @@ export class ProfilePage implements OnInit {
   }
 
   showMoreTrainings(): void {
-    this.trainingsLimit = this.trainingsCompleted.length;
+    this.trainingsLimit = this.mappedTrainingCertificates.length;
     generateInteractTelemetry(
       InteractType.TOUCH,
       InteractSubtype.VIEW_MORE_CLICKED,
@@ -394,7 +393,7 @@ export class ProfilePage implements OnInit {
    */
   async getEnrolledCourses(refresher?, refreshCourseList?) {
     const loader = await this.commonUtilService.getLoader();
-    if (refreshCourseList) { 
+    if (refreshCourseList) {
       loader.present();
       this.telemetryGeneratorService.generateInteractTelemetry(
         InteractType.TOUCH,
@@ -407,11 +406,12 @@ export class ProfilePage implements OnInit {
       userId: this.profile.userId || this.profile.id,
       returnFreshCourses: refresher ? true : false
     };
-    this.trainingsCompleted = [];
+    this.mappedTrainingCertificates = [];
     this.courseService.getEnrolledCourses(option).toPromise()
       .then((res: Course[]) => {
-        this.trainingsCompleted = res.filter((course) => (course.status === 2 || course.status === 1));
-        this.mappedTrainingCertificates = this.mapTrainingsToCertificates(this.trainingsCompleted);
+        if (res.length) {
+          this.mappedTrainingCertificates = this.mapTrainingsToCertificates(res);
+        }
         refreshCourseList ? loader.dismiss() : false;
       })
       .catch((error: any) => {
@@ -866,7 +866,7 @@ export class ProfilePage implements OnInit {
       const courseParams: NavigationExtras = {
         state: {
           content,
-          resumeCourseFlag: (coursecertificate.status === 1)
+          resumeCourseFlag: (coursecertificate.status === 1 || coursecertificate.status === 0)
         }
       };
       this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], courseParams);
