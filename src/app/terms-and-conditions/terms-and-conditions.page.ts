@@ -14,6 +14,7 @@ import { FormAndFrameworkUtilService, AppGlobalService } from '@app/services';
 import { Router, NavigationExtras } from '@angular/router';
 import { SplashScreenService } from '@app/services/splash-screen.service';
 import { ExternalIdVerificationService } from '@app/services/externalid-verification.service';
+import {SbProgressLoader} from '@app/services/sb-progress-loader.service';
 
 @Component({
   selector: 'app-terms-and-conditions',
@@ -42,7 +43,8 @@ export class TermsAndConditionsPage implements OnInit {
     private router: Router,
     private splashScreenService: SplashScreenService,
     private externalIdVerificationService: ExternalIdVerificationService,
-    private appGlobalService: AppGlobalService
+    private appGlobalService: AppGlobalService,
+    private sbProgressLoader: SbProgressLoader
   ) {
   }
 
@@ -67,6 +69,10 @@ export class TermsAndConditionsPage implements OnInit {
   ionViewWillEnter() {
     this.unregisterBackButtonAction = this.platform.backButton.
       subscribeWithPriority(999, async () => this.showToastOnFirstBackNavigation());
+  }
+
+  ionViewDidEnter() {
+    this.sbProgressLoader.hide({id: 'login'});
   }
 
   public ionViewWillLeave() {
@@ -112,7 +118,10 @@ export class TermsAndConditionsPage implements OnInit {
       );
       await loader.present();
       // await tncUpdateHandlerService.onAcceptTnc(this.userProfileDetails);
-      const isTCAccepted = await this.profileService.acceptTermsAndConditions({ version: this.userProfileDetails.tncLatestVersion })
+      const isTCAccepted = await this.profileService.acceptTermsAndConditions({
+        userId: this.userProfileDetails.userId,
+        version: this.userProfileDetails.tncLatestVersion
+      })
         .toPromise();
 
       if (isTCAccepted) {

@@ -26,6 +26,7 @@ import {
 
 import { ContentFilterConfig, ContentType, PreferenceKey, SystemSettingsIds } from '@app/app/app.constant';
 import { map } from 'rxjs/operators';
+import { EventParams } from '@app/app/components/sign-in-card/event-params.interface';
 
 @Injectable()
 export class FormAndFrameworkUtilService {
@@ -399,7 +400,7 @@ export class FormAndFrameworkUtilService {
      * @param profileRes : profile details of logged in user which can be obtained using userProfileService.getUserProfileDetails
      * @param profileData : Local profile of current user
      */
-    updateLoggedInUser(profileRes, profileData) {
+    updateLoggedInUser(profileRes, profileData, eventParams?: EventParams) {
         return new Promise(async (resolve, reject) => {
             const profile = {
                 board: [],
@@ -440,7 +441,7 @@ export class FormAndFrameworkUtilService {
                                     }
                                 });
                                 if (categoryKeysLen === keysLength) {
-                                    this.updateProfileInfo(profile, profileData)
+                                    this.updateProfileInfo(profile, profileData, eventParams)
                                         .then((response) => {
                                             resolve(response);
                                         });
@@ -449,7 +450,7 @@ export class FormAndFrameworkUtilService {
                             .catch(err => {
                                 keysLength++;
                                 if (categoryKeysLen === keysLength) {
-                                    this.updateProfileInfo(profile, profileData)
+                                    this.updateProfileInfo(profile, profileData, eventParams)
                                         .then((response) => {
                                             resolve(response);
                                         });
@@ -465,7 +466,7 @@ export class FormAndFrameworkUtilService {
         });
     }
 
-    updateProfileInfo(profile, profileData) {
+    updateProfileInfo(profile, profileData, eventParams?: EventParams) {
         return new Promise((resolve, reject) => {
             const req: Profile = {
                 syllabus: profile.syllabus,
@@ -487,7 +488,7 @@ export class FormAndFrameworkUtilService {
             this.profileService.updateProfile(req).toPromise()
                 .then((res: any) => {
                     const updateProfileRes = res;
-                    this.events.publish('refresh:loggedInProfile');
+                    this.events.publish('refresh:loggedInProfile', eventParams);
                     if (updateProfileRes.grade && updateProfileRes.medium &&
                         updateProfileRes.grade.length && updateProfileRes.medium.length
                     ) {

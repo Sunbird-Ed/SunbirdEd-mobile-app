@@ -9,6 +9,7 @@ import { ProfileRoutingModule } from '@app/app/profile/profile-routing.module';
 import { TranslateModule } from '@ngx-translate/core';
 import { ComponentsModule } from '@app/app/components/components.module';
 import { DirectivesModule } from '@app/directives/directives.module';
+import { PipesModule } from '@app/pipes/pipes.module';
 
 const routes: Routes = [
   {
@@ -25,7 +26,8 @@ const routes: Routes = [
     ProfileRoutingModule,
     TranslateModule,
     ComponentsModule,
-    DirectivesModule
+    DirectivesModule,
+    PipesModule
   ],
   declarations: [ProfilePage],
   entryComponents: []

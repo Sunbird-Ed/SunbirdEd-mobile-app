@@ -34,7 +34,10 @@ describe('SplaschreenDeeplinkActionHandlerDelegate', () => {
     it('should generate an impression event', () => {
       // arrange
       const payload: TelemetryActionPayload = {
-        eid: 'IMPRESSION'
+        eid: 'IMPRESSION',
+        extraInfo: {
+          isFirstTime: true
+        }
       };
       const telemetryData = {
         env: Environment.HOME,

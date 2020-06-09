@@ -1,0 +1,32 @@
+@import "src/assets/styles/_custom-mixins.scss";
+.cc-header{
+    @include clearfix;
+    background: #FFDFD9;
+    padding: 16px;
+    text-align: left;
+    box-shadow: 0 2px 7px 0 rgba(255,226,222,0.52);
+
+    .cc-header-name{
+        font-size: 16px;
+        font-weight: 600;
+        color: #EA2E52;
+        text-transform: capitalize;
+    }
+
+    .cc-header-desc{
+        color: #666666;
+        font-size: 8px;
+        text-transform: uppercase;
+    }
+
+    .cd-header-icon {
+        img {
+            height: 36px;
+            width: 36px;
+        }
+    }
+}
+
+.cc-container {
+    padding: 16px;
+}

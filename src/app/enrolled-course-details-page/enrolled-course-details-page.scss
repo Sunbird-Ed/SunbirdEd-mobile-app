@@ -346,6 +346,7 @@
     color:map-get($colors , danger);
   }
   .sb-course-complete-container {
+    white-space: nowrap;
     width: 100%;
     background-color: #BFE1CF;
     @include padding(8px);
@@ -364,6 +365,7 @@
       display: inline-block;
       padding-left: 10px;
       @include padding(0px 0px 0px 11px);
+      white-space: normal;
     }
   }
   .card-text{

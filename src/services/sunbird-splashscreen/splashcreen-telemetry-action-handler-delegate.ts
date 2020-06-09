@@ -1,8 +1,8 @@
 import { SplashscreenActionHandlerDelegate } from './splashscreen-action-handler-delegate';
 import { Observable, of } from 'rxjs';
 import { Inject, Injectable } from '@angular/core';
-import { TelemetryService, InteractType } from 'sunbird-sdk';
-import { Environment, ImpressionType, PageId } from '@app/services/telemetry-constants';
+import { TelemetryService, InteractType, CorrelationData } from 'sunbird-sdk';
+import { Environment, ImpressionType, PageId, CorReleationDataType } from '@app/services/telemetry-constants';
 import { mapTo } from 'rxjs/operators';
 
 interface TelemetryActionPayload {
@@ -20,6 +20,17 @@ export class SplashcreenTelemetryActionHandlerDelegate implements SplashscreenAc
   onAction(payload: TelemetryActionPayload): Observable<undefined> {
     switch (payload.eid) {
       case 'IMPRESSION': {
+        /* New Telemetry */
+        const correlationList: Array<CorrelationData> = [];
+        
+        correlationList.push({id:  payload.extraInfo && payload.extraInfo.isFirstTime ? 'true' : 'false', type: CorReleationDataType.FIRST_TIME_USER});
+
+        this.telemetryService.impression({
+          env: Environment.ONBOARDING,
+          type: ImpressionType.PAGE_LOADED,
+          pageId: PageId.SPLASH,
+          correlationData: correlationList
+        }).toPromise();
         return this.telemetryService.impression({
           env: Environment.HOME,
           type: ImpressionType.VIEW,

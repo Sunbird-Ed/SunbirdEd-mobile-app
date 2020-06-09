@@ -1,0 +1,32 @@
+<ion-content>
+  <div class="cc-header" [ngStyle]="{'background': theme}">
+    <div class="pull-left">
+      <div class="cc-header-name" [ngStyle]="{'color': titleColor}">
+        {{ subjectName }}
+      </div>
+      <div class="cc-header-desc">
+        {{'NUMBER_OF_COURSES' | translate:{'%s': courseList.length} }}
+      </div>
+    </div>
+    <div class="cd-header-icon pull-right">
+      <img *ngIf="subjectIcon" src="{{subjectIcon}}" alt="subject-icon">
+    </div>
+  </div>
+  <div class="cc-container">
+    <ng-container *ngIf="!isLoading">
+      <div *ngIf="mergedCourseList && mergedCourseList.length">
+        <div *ngFor="let course of mergedCourseList" class="mb-8">
+          <sb-my-course-card *ngIf="course.isEnrolledCourse" [course]="course" [section]="null"
+            [cardImg]="course.cardImg" (click)="openCourseDetails(course)" [hideProgress]="true"></sb-my-course-card>
+          <sb-course-card *ngIf="!course.isEnrolledCourse" [course]="course" [section]="null" [cardImg]="course.appIcon"
+            (click)="openCourseDetails(course)"></sb-course-card>
+        </div>
+      </div>
+    </ng-container>
+    <ng-container *ngIf="isLoading">
+      <div *ngFor="let item of [0,1,2,3,4,5,6,7,8,9,10]" class="mb-8">
+        <sb-course-card [isLoading]="isLoading"></sb-course-card>
+      </div>
+    </ng-container>
+  </div>
+</ion-content>

@@ -43,6 +43,12 @@ import { TeacherIdVerificationComponent } from './popups/teacher-id-verification
 import { SbSharePopupComponent } from './popups/sb-share-popup/sb-share-popup.component';
 import { SbAppSharePopupComponent } from './popups/sb-app-share-popup/sb-app-share-popup.component';
 import {ImportPopoverComponent} from './popups/import-popover/import-popover.component';
+import {SbProgressLoaderPage} from '@app/app/components/popups/sb-progress-loader/sb-progress-loader.page';
+import { CollectionActionsComponent } from './collection-acions/collection-acions.component';
+import { MyGroupsPopoverComponent } from './popups/sb-my-groups-popover/sb-my-groups-popover.component';
+import { CommonConsumptionModule } from '@project-sunbird/common-consumption';
+import { ToastNavigationComponent } from './popups/toast-navigation/toast-navigation.component';
+import { CommonFormsComponent } from './common-forms/common-forms.component';
 
 @NgModule({
   declarations: [
@@ -79,7 +85,12 @@ import {ImportPopoverComponent} from './popups/import-popover/import-popover.com
     TeacherIdVerificationComponent,
     SbSharePopupComponent,
     SbAppSharePopupComponent,
-    ImportPopoverComponent
+    ImportPopoverComponent,
+    SbProgressLoaderPage,
+    CollectionActionsComponent,
+    MyGroupsPopoverComponent,
+    ToastNavigationComponent,
+    CommonFormsComponent
   ],
   imports: [
     CommonModule,
@@ -88,6 +99,7 @@ import {ImportPopoverComponent} from './popups/import-popover/import-popover.com
     IonicModule,
     ReactiveFormsModule,
     PipesModule,
+    CommonConsumptionModule,
     IonicRatingModule,
     TranslateModule.forChild(),
   ],
@@ -114,7 +126,12 @@ import {ImportPopoverComponent} from './popups/import-popover/import-popover.com
     TeacherIdVerificationComponent,
     SbSharePopupComponent,
     SbAppSharePopupComponent,
-    ImportPopoverComponent
+    ImportPopoverComponent,
+    SbProgressLoaderPage,
+    CollectionActionsComponent,
+    MyGroupsPopoverComponent,
+    ToastNavigationComponent,
+    CommonFormsComponent
   ],
   exports: [
     ApplicationHeaderComponent,
@@ -149,7 +166,12 @@ import {ImportPopoverComponent} from './popups/import-popover/import-popover.com
     TeacherIdVerificationComponent,
     SbSharePopupComponent,
     SbAppSharePopupComponent,
-    ImportPopoverComponent
+    ImportPopoverComponent,
+    SbProgressLoaderPage,
+    CollectionActionsComponent,
+    MyGroupsPopoverComponent,
+    ToastNavigationComponent,
+    CommonFormsComponent
   ],
   providers: [FileSizePipe, FilterPipe,  Keyboard]
 })

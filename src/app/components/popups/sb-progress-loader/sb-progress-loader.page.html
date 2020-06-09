@@ -1,0 +1,8 @@
+<ion-content>
+    <div class="content">
+        <img src="/assets/imgs/book.gif" alt="book"/>
+        <ion-progress-bar class="progress" color="primary" [value]="(progress | async) / 100"></ion-progress-bar>
+        <p class="load-status">{{'LOADER_PROGRESS_DESCRIPTION' | translate}}</p>
+        <p class="load-status">{{'LOADER_PROGRESS_DESC_SUB_HEADING' | translate}}</p>
+    </div>
+</ion-content>

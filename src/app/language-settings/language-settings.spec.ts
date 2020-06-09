@@ -29,7 +29,10 @@ describe('LanguageSettingsPage', () => {
 
     const mockNgZone: Partial<NgZone> = {};
 
-    const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {};
+    const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {
+        generateAuditTelemetry: jest.fn(),
+        generatePageLoadedTelemetry: jest.fn()
+    };
 
     const mockPlatform: Partial<Platform> = {};
 
