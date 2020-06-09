@@ -27,7 +27,7 @@
       <sb-course-cards-hlist [title]="section?.name" [type]="courseCardType.COURSE_CARD_GRID"
         [viewMoreButtonText]="'VIEW_ALL' | translate" [contentList]="section?.contents"
         (viewMoreClick)="navigateToViewMoreContentsPage(false, section.id, section.searchQuery, section.name)"
-        [maxCardCount]="9" (cardClick)="openCourseDetails($event, i)" [multiRow]="section?.contents?.length > 3">
+        [maxCardCount]="9" (cardClick)="openCourseDetails($event,section, i)" [multiRow]="section?.contents?.length > 3">
       </sb-course-cards-hlist>
     </div>
   </div>
