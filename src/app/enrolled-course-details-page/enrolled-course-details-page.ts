@@ -1039,6 +1039,19 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
     }, []);
   }
 
+  private getLeafNodeIdsWithoutDuplicates(contents: Content[]) {
+    return contents.reduce((acc, content) => {
+      if (content.children) {
+        acc = acc.concat(this.getLeafNodeIdsWithoutDuplicates(content.children));
+      } else {
+        if (acc.indexOf(content.identifier) === -1) {
+          acc.push(content.identifier);
+        }
+      }
+      return acc;
+    }, []);
+  }
+
   /**
    * Function to get status of child contents
    */
@@ -1727,21 +1740,21 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
   getLocalCourseAndUnitProgress() {
     const courseLevelViewedContents = [];
     this.courseHeirarchy.children.forEach(collection => {
-      const leafNodes = this.getLeafNodes([collection]);
+      const leafNodeIds = this.getLeafNodeIdsWithoutDuplicates([collection]);
       const UnitLevelViewedContents = [];
-      for (const content of leafNodes) {
-        if (this.contentStatusData.contentList.find((c) => c.contentId === content.identifier && c.status === 2)) {
-          UnitLevelViewedContents.push(content);
-          courseLevelViewedContents.push(content);
+      for (const contentId of leafNodeIds) {
+        if (this.contentStatusData.contentList.find((c) => c.contentId === contentId && c.status === 2)) {
+          UnitLevelViewedContents.push(contentId);
+          courseLevelViewedContents.push(contentId);
         }
       }
       if (UnitLevelViewedContents.length) {
-        collection.progressPercentage = Math.round((UnitLevelViewedContents.length / leafNodes.length) * 100);
+        collection.progressPercentage = Math.round((UnitLevelViewedContents.length / leafNodeIds.length) * 100);
       }
     });
     if (courseLevelViewedContents.length) {
-      const leafNodes = this.getLeafNodes([this.courseHeirarchy]);
-      this.course.progress = Math.round((courseLevelViewedContents.length / leafNodes.length) * 100);
+      const leafNodeIds = this.getLeafNodeIdsWithoutDuplicates([this.courseHeirarchy]);
+      this.course.progress = Math.round((courseLevelViewedContents.length / leafNodeIds.length) * 100);
       console.log('localcourseProgressPercentage', this.course.progress);
     }
   }
