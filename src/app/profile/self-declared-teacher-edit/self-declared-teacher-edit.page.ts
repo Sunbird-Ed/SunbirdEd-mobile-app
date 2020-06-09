@@ -429,7 +429,6 @@ export class SelfDeclaredTeacherEditPage {
 
   getUpdatedValues(formVal) {
     const telemetryValue = [];
-    const map = new Map();
 
     this.profile.userLocations.forEach(ele => {
       if (ele.type === 'state' && ele.id !== formVal.state) {
@@ -447,7 +446,7 @@ export class SelfDeclaredTeacherEditPage {
       }
     }
 
-    const fieldsChanged = map.set('fieldsChanged', telemetryValue);
+    const fieldsChanged = { fieldsChanged: telemetryValue };
 
     return fieldsChanged;
   }
