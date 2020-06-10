@@ -22,7 +22,7 @@ import {
 import { EnrollCourse } from '@app/app/enrolled-course-details-page/course.interface';
 import {DatePipe, Location} from '@angular/common';
 import { ContentActionsComponent } from './../../components/content-actions/content-actions.component';
-import { PageId, Environment, InteractType, InteractSubtype } from './../../../services/telemetry-constants';
+import { PageId, Environment, InteractType, InteractSubtype, ImpressionType } from './../../../services/telemetry-constants';
 import { Observable, Subscription } from 'rxjs';
 import { ConfirmAlertComponent } from '@app/app/components';
 import { FileSizePipe } from '@app/pipes/file-size/file-size';
@@ -84,6 +84,7 @@ export class ChapterDetailsPage implements OnInit, OnDestroy {
   nextContent: Content;
   headerObservable: Subscription;
   backButtonFunc: Subscription;
+  public objRollup: Rollup;
   constructor(
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
     @Inject('AUTH_SERVICE') public authService: AuthService,
@@ -136,7 +137,10 @@ export class ChapterDetailsPage implements OnInit, OnDestroy {
   ngOnInit() {
     this.subContentIds = [];
     this.getSubContentIds(this.chapter);
-
+    if (this.courseContentData.hierarchyInfo) {
+      this.objRollup = ContentUtil.generateRollUp(this.courseContentData.hierarchyInfo, this.identifier);
+    }
+    this.generateImpressionEvent(this.courseContentData.identifier, this.courseContentData.contentType, this.courseContentData.pkgVersion);
     this.trackDownloads$ = this.downloadService.trackDownloads(
       { groupBy: { fieldPath: 'rollUp.l1', value: this.courseContentData.identifier } }).pipe(share());
   }
@@ -367,6 +371,15 @@ export class ChapterDetailsPage implements OnInit, OnDestroy {
   }
 
   startLearning() {
+    this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
+      InteractSubtype.START_CLICKED,
+      Environment.HOME,
+      PageId.CHAPTER_DETAILS,
+      this.telemetryObject,
+      undefined,
+      this.objRollup,
+      // this.corRelationList
+    );
     if (this.childContents.length && !this.isBatchNotStarted) {
       const firstChild = this.loadFirstChildren(this.chapter);
       this.navigateToChildrenDetailsPage(firstChild, 1);
@@ -387,6 +400,15 @@ export class ChapterDetailsPage implements OnInit, OnDestroy {
     this.getNextContent(this.chapter, this.contentStatusData.contentList);
 
     if (this.nextContent) {
+      this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
+        InteractSubtype.RESUME_CLICKED,
+        Environment.HOME,
+        PageId.CHAPTER_DETAILS,
+        this.telemetryObject,
+        undefined,
+        this.objRollup,
+        // this.corRelationList
+      );
       this.navigateToChildrenDetailsPage(this.nextContent, 1);
     } else {
       this.startLearning();
@@ -481,7 +503,7 @@ export class ChapterDetailsPage implements OnInit, OnDestroy {
               ongoingBatches,
               upcommingBatches,
               course: this.courseContentData,
-              // objRollup: this.objRollup,
+              objRollup: this.objRollup,
               telemetryObject: this.telemetryObject,
               // corRelationList: this.corRelationList
             }
@@ -502,6 +524,12 @@ export class ChapterDetailsPage implements OnInit, OnDestroy {
       this.promptToLogin(item);
     } else {
       await loader.present();
+      const enrollCourseRequest = this.localCourseService.prepareEnrollCourseRequest(this.userId, item);
+      this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
+        InteractSubtype.ENROLL_CLICKED,
+        Environment.HOME,
+        PageId.CHAPTER_DETAILS, undefined,
+        this.localCourseService.prepareRequestValue(enrollCourseRequest));
       const enrollCourse: EnrollCourse = {
         userId: this.userId,
         batch: item,
@@ -616,6 +644,18 @@ export class ChapterDetailsPage implements OnInit, OnDestroy {
    * Redirect to child content details page
    */
   navigateToChildrenDetailsPage(content: Content, depth): void {
+    const values = {
+      contentClicked: content.identifier
+    };
+    this.telemetryGeneratorService.generateInteractTelemetry(
+      InteractType.TOUCH,
+      InteractSubtype.CONTENT_CLICKED,
+      Environment.HOME,
+      PageId.CHAPTER_DETAILS, this.telemetryObject,
+      values,
+      this.objRollup,
+      // this.corRelationList
+    );
     const contentState: ContentState = {
       batchId: this.courseContent.batchId ? this.courseContent.batchId : '',
       courseId: this.courseContentData.identifier
@@ -915,5 +955,16 @@ export class ChapterDetailsPage implements OnInit, OnDestroy {
       });
     }
     return this.nextContent;
+  }
+  generateImpressionEvent(objectId, objectType, objectVersion) {
+    this.telemetryGeneratorService.generateImpressionTelemetry(ImpressionType.DETAIL,
+      '', PageId.CHAPTER_DETAILS,
+      Environment.HOME,
+      objectId,
+      objectType,
+      objectVersion,
+      this.objRollup,
+      // this.corRelationList
+      );
   }
 }

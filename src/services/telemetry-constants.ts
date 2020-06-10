@@ -142,7 +142,8 @@ export enum PageId {
     MANUAL_PROFILE = 'manual profile',
     SCAN = 'scan',
     QR_BOOK_RESULT = 'qr-book-result',
-    QR_CONTENT_RESULT = 'qr-content-result'
+    QR_CONTENT_RESULT = 'qr-content-result',
+    APP_TUTORIAL_POPUP = 'app-tutorial-popup'
 }
 export enum LogType {
     NOTIFICATION = 'notification'
@@ -178,7 +179,7 @@ export enum ImpressionSubtype {
     QR_CODE_VALID = 'qr-code-valid',
     INVALID_QR_CODE = 'invalid-qr-code',
     APP_RATING_POPUP = 'app-rating-popup',
-    QR_SCAN_WALKTHROUGH = 'qr-scan-walkthrough',
+    TUTORIAL_WALKTHROUGH = 'tutorial-walkthrough',
     COMINGSOON_POPUP = 'coming-soon-popup',
     EXPLORE_MORE_CONTENT = 'explore-more-content',
     RECOVERY_ACCOUNT_POPUP = 'recovery-account-popup',
@@ -260,7 +261,6 @@ export enum InteractSubtype {
     FLAG_INITIATE = 'flag-initiated',
     FLAG_SUCCESS = 'flag-success',
     FLAG_FAILED = 'flag-failed',
-    CONTENT_PLAY = 'content-play',
     QRCodeScanClicked = 'qr-code-scanner-clicked',
     QRCodeScanSuccess = 'qr-code-scan-success',
     QRCodeScanCancelled = 'qr-code-scan-cancelled',
@@ -455,7 +455,9 @@ export enum InteractSubtype {
     DENY_CLICKED = 'deny-clicked',
     NEW = 'new',
     EXISTING = 'existing',
-    SUBJECT_CARD_CLICKED = 'subject-card-clicked'
+    SUBJECT_CARD_CLICKED = 'subject-card-clicked',
+    INFORMATION_ICON_CLICKED = 'information-icon-clicked',
+    TUTORIAL_CONTINUE_CLICKED = 'tutorial-continue-clicked',
 }
 
 export enum ID {

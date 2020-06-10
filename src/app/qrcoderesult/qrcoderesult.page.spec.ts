@@ -487,23 +487,6 @@ describe('QrcoderesultPage', () => {
             expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalled();
             expect(mockCommonUtilService.networkInfo.isNetworkAvailable).toBeTruthy();
         });
-
-        it('should not navigate to content details page for offline', () => {
-            // arrange
-            const content = {
-                identifier: 'id'
-            };
-            mockTextbookTocService.setTextbookIds = jest.fn();
-            mockCommonUtilService.networkInfo = {
-                isNetworkAvailable: false
-            };
-            mockCommonUtilService.presentToastForOffline = jest.fn();
-            // act
-            qrcoderesultPage.navigateToDetailsPage(content);
-            // assert
-            expect(mockCommonUtilService.networkInfo.isNetworkAvailable).toBeFalsy();
-            expect(mockCommonUtilService.presentToastForOffline).toHaveBeenCalledWith('OFFLINE_WARNING_ETBUI_1');
-        });
     });
 
     it('should get all the profiles', (done) => {
