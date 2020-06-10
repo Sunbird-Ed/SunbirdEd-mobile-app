@@ -150,7 +150,7 @@ export class DataSyncComponent implements OnInit {
     const that = this;
     this.loader = await this.commonUtilService.getLoader();
     await this.loader.present();
-    this.generateInteractEvent(InteractType.TOUCH, InteractSubtype.MANUALSYNC_INITIATED, null);
+    this.generateInteractEvent(InteractType.TOUCH, InteractSubtype.SYNC_NOW_CLICKED, null);
     this.telemetryService.sync({
       ignoreAutoSyncMode: true,
       ignoreSyncThreshold: true
@@ -191,18 +191,14 @@ export class DataSyncComponent implements OnInit {
 
   generateInteractEvent(interactType: string, subtype: string, size: number) {
     /*istanbul ignore else */
-    if (size != null) {
       this.telemetryGeneratorService.generateInteractTelemetry(
         interactType,
         subtype,
         Environment.SETTINGS,
         PageId.SETTINGS_DATASYNC,
         undefined,
-        {
-          SizeOfFileInKB: (size / 1000) + ''
-        }
+        size ? { SizeOfFileInKB: (size / 1000) + '' } : undefined
       );
-    }
   }
 
   handleBackButton() {
