@@ -554,7 +554,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
 
   async navigateToCourseDetail(identifier, content: Content | null, source: string, isOnboardingSkipped = false) {
     const url = new URL(source);
-    const childContentId = url.searchParams.get('contentId');
+    const childContentId = url.searchParams.get('moduleId');
     if (childContentId) {
       try {
         this.isChildContentFound = false;
