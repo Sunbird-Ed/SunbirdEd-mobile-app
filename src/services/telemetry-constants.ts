@@ -139,7 +139,10 @@ export enum PageId {
     CHAPTER_DETAILS = 'chapter-details',
     TEACHER_SELF_DECLARATION = 'teacher-self-declaration',
     COURSE_LIST = 'course-list',
-    MANUAL_PROFILE = 'manual profile'
+    MANUAL_PROFILE = 'manual profile',
+    SCAN = 'scan',
+    QR_BOOK_RESULT = 'qr-book-result',
+    QR_CONTENT_RESULT = 'qr-content-result'
 }
 export enum LogType {
     NOTIFICATION = 'notification'
@@ -166,7 +169,8 @@ export enum ImpressionType {
     /* New Telemetry */
     PAGE_LOADED = 'page-loaded',
     PAGE_REQUEST = 'page-request',
-    SET_LANGUAGE = 'set-language'
+    SET_LANGUAGE = 'set-language',
+    QR_REQUEST = 'qr-request'
 }
 export enum ImpressionSubtype {
     QRCodeScanInitiate = 'qr-code-scan-initiate',
@@ -220,6 +224,7 @@ export enum InteractType {
     CREATE_FAILURE = 'create-failure',
     SWITCH_SUCCESS = 'switch-success',
     SWITCH_FAILURE = 'switch-failure',
+    QR_CAPTURED = 'qr-captured'
 }
 
 
@@ -518,7 +523,10 @@ export enum CorReleationDataType {
     NEW_VALUE = 'NewValue',
     OLD_VALUE = 'OldValue',
     COURSE_COUNT = 'CourseCount',
-    CHILD_UI = 'ChildUi'
+    CHILD_UI = 'ChildUi',
+    QR = 'QR',
+    COUNT_BOOK = 'CountBook',
+    COUNT_CONTENT = 'CountContent'
 }
 
 export enum AuditProps {

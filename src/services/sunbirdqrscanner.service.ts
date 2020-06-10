@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription, Observable, Observer } from 'rxjs';
-import { Profile, ProfileType, TelemetryObject } from 'sunbird-sdk';
+import { Profile, ProfileType, TelemetryObject, CorrelationData } from 'sunbird-sdk';
 import {
   Environment,
   ImpressionSubtype,
@@ -9,7 +9,8 @@ import {
   InteractSubtype,
   InteractType,
   Mode,
-  PageId
+  PageId,
+  CorReleationDataType
 } from './telemetry-constants';
 import { ContainerService } from '@app/services/container.services';
 import { AndroidPermissionsService } from '@app/services/android-permissions/android-permissions.service';
@@ -208,13 +209,13 @@ getProfileSettingConfig() {
             if (scannedData === 'cancel' ||
               scannedData === 'cancel_hw_back' ||
               scannedData === 'cancel_nav_back') {
-              this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.SCAN_OR_MANUAL,
+              this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.SCAN,
                 source === PageId.ONBOARDING_PROFILE_PREFERENCES ? Environment.ONBOARDING : Environment.HOME,
                 scannedData === 'cancel_nav_back');
               this.telemetryGeneratorService.generateBackClickedNewTelemetry(
                 scannedData === 'cancel_hw_back',
                 this.appGlobalService.isOnBoardingCompleted ? Environment.HOME : Environment.ONBOARDING,
-                PageId.SCAN_OR_MANUAL
+                PageId.SCAN
                );
               this.telemetryGeneratorService.generateInteractTelemetry(
                 InteractType.OTHER,
@@ -223,6 +224,18 @@ getProfileSettingConfig() {
                 PageId.QRCodeScanner);
               this.generateEndEvent(source, '');
             } else if (dialCode) {
+              const corRelationList: Array<CorrelationData> = [];
+              corRelationList.push({id: dialCode, type: CorReleationDataType.QR});
+              this.telemetryGeneratorService.generateInteractTelemetry(
+                InteractType.QR_CAPTURED,
+                '',
+                source === PageId.ONBOARDING_PROFILE_PREFERENCES ? Environment.ONBOARDING : Environment.HOME,
+                PageId.SCAN,
+                undefined,
+                undefined,
+                undefined,
+                corRelationList);
+              this.generateImpressionTelemetry(source, dialCode);
               this.qrScannerResultHandler.handleDialCode(source, scannedData, dialCode);
             } else if (this.qrScannerResultHandler.isContentId(scannedData)) {
               this.qrScannerResultHandler.handleContentId(source, scannedData);
@@ -242,12 +255,27 @@ getProfileSettingConfig() {
     });
   }
 
-generateImpressionTelemetry(source) {
-    this.telemetryGeneratorService.generateImpressionTelemetry(
-      ImpressionType.VIEW,
-      ImpressionSubtype.QRCodeScanInitiate,
-      source,
-      source === PageId.ONBOARDING_PROFILE_PREFERENCES ? Environment.ONBOARDING : Environment.HOME);
+generateImpressionTelemetry(source, dialCode?) {
+    if (dialCode) {
+     const corRelationList: Array<CorrelationData> = [];
+     corRelationList.push({id: dialCode, type: CorReleationDataType.QR});
+     this.telemetryGeneratorService.generateImpressionTelemetry(
+      ImpressionType.QR_REQUEST, '',
+      PageId.SCAN,
+      source ? Environment.ONBOARDING : Environment.HOME, '', '', '',
+      undefined,
+      corRelationList);
+     } else {
+      this.telemetryGeneratorService.generatePageLoadedTelemetry(
+        PageId.SCAN,
+        source === PageId.ONBOARDING_PROFILE_PREFERENCES ? Environment.ONBOARDING : Environment.HOME
+     );
+      this.telemetryGeneratorService.generateImpressionTelemetry(
+        ImpressionType.VIEW,
+        ImpressionSubtype.QRCodeScanInitiate,
+        source,
+        source === PageId.ONBOARDING_PROFILE_PREFERENCES ? Environment.ONBOARDING : Environment.HOME);
+     }
   }
 
 generateStartEvent(pageId: string) {
