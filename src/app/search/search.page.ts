@@ -298,11 +298,6 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
   handleDeviceBackButton() {
     this.backButtonFunc = this.platform.backButton.subscribeWithPriority(10, () => {
       this.navigateToPreviousPage();
-      this.telemetryGeneratorService.generateBackClickedNewTelemetry(
-        true,
-        this.appGlobalService.isOnBoardingCompleted ? Environment.HOME : Environment.ONBOARDING,
-        PageId.SEARCH
-       );
       this.telemetryGeneratorService.generateBackClickedTelemetry(ImpressionType.SEARCH,
         Environment.HOME, false, undefined, this.corRelationList);
     });
@@ -1447,11 +1442,6 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
   }
 
   goBack() {
-    this.telemetryGeneratorService.generateBackClickedNewTelemetry(
-      false,
-      this.appGlobalService.isOnBoardingCompleted ? Environment.HOME : Environment.ONBOARDING,
-      PageId.SEARCH
-     );
     this.telemetryGeneratorService.generateBackClickedTelemetry(ImpressionType.SEARCH,
       Environment.HOME, true, undefined, this.corRelationList);
     this.navigateToPreviousPage();
