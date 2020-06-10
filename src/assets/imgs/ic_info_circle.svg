@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>info icon</title>
+    <g id="Page-2" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Library_landing-page" transform="translate(-320.000000, -37.000000)" fill="#024F9D">
+            <path d="M333.2,55 L333.2,47.8 L330.8,47.8 L330.8,55 L333.2,55 Z M320,49 C320,55.624 325.376,61 332,61 C338.624,61 344,55.624 344,49 C344,42.376 338.624,37 332,37 C325.376,37 320,42.376 320,49 Z M322.4,49 C322.4,43.708 326.708,39.4 332,39.4 C337.292,39.4 341.6,43.708 341.6,49 C341.6,54.292 337.292,58.6 332,58.6 C326.708,58.6 322.4,54.292 322.4,49 Z M333.2,45.4 L333.2,43 L330.8,43 L330.8,45.4 L333.2,45.4 Z" id="info-icon"></path>
+        </g>
+    </g>
+</svg>

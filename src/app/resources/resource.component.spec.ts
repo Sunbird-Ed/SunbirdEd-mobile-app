@@ -25,14 +25,14 @@ import {
     AppGlobalService,
     AppHeaderService,
     CommonUtilService, Environment,
-    FormAndFrameworkUtilService,
+    FormAndFrameworkUtilService, ImpressionSubtype, ImpressionType,
     InteractSubtype,
     InteractType,
     PageId,
     SunbirdQRScanner,
     TelemetryGeneratorService
 } from '@app/services';
-import { Events, MenuController, ToastController } from '@ionic/angular';
+import { Events, MenuController, PopoverController, ToastController } from '@ionic/angular';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { Network } from '@ionic-native/network/ngx';
 import { TranslateService } from '@ngx-translate/core';
@@ -105,6 +105,7 @@ describe('ResourcesComponent', () => {
     };
     const mockAppNotificationService: Partial<NotificationService> = {};
     const mockChangeRef: Partial<ChangeDetectorRef> = {};
+    const mockPopoverCtrl: Partial<PopoverController> = {};
 
     const constructComponent = () => {
         resourcesComponent = new ResourcesComponent(
@@ -130,7 +131,8 @@ describe('ResourcesComponent', () => {
             mockHeaderService as AppHeaderService,
             mockRouter as Router,
             mockChangeRef as ChangeDetectorRef,
-            mockAppNotificationService as NotificationService
+            mockAppNotificationService as NotificationService,
+            mockPopoverCtrl as PopoverController
         );
     };
     beforeAll(() => {
@@ -1001,7 +1003,7 @@ describe('ResourcesComponent', () => {
             resourcesComponent.mediumClickEvent(event, true);
         });
 
-        it('should be handle medium click filter', () => {
+        it('should be handle medium click filter', (done) => {
             // arrange
             jest.spyOn(resourcesComponent, 'generateClassInteractTelemetry').mockImplementation(() => {
                 return;
@@ -1018,8 +1020,11 @@ describe('ResourcesComponent', () => {
             // act
             resourcesComponent.mediumClickHandler(0, 'sample-text', true);
             // assert
-            expect(resourcesComponent.currentGrade).toBe('sample');
-            expect(resourcesComponent.categoryGradeLevelsArray[0]).toBe('sample');
+            setTimeout(() => {
+                expect(resourcesComponent.currentGrade).toBe('sample');
+                expect(resourcesComponent.categoryGradeLevelsArray[0]).toBe('sample');
+                done();
+            }, 1000);
         });
     });
 
@@ -1495,11 +1500,75 @@ describe('ResourcesComponent', () => {
 
         it('should call notification method when event name is equal notification', () => {
             // arrange
-            jest.spyOn(resourcesComponent, 'redirectToNotifications').mockImplementation();
+            jest.spyOn(resourcesComponent, 'appTutorialScreen').mockImplementation();
             // act
-            resourcesComponent.handleHeaderEvents({ name: 'notification' });
+            resourcesComponent.handleHeaderEvents({ name: 'information' });
             // assert
-            expect(resourcesComponent.redirectToNotifications).toHaveBeenCalled();
+            expect(resourcesComponent.appTutorialScreen).toHaveBeenCalled();
+        });
+
+        it('should call appTutorialScreen method', (done) => {
+            // arrange
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
+            mockPopoverCtrl.create = jest.fn(() => (Promise.resolve({
+                present: jest.fn(() => Promise.resolve({})),
+                onDidDismiss: jest.fn(() => Promise.resolve({data: {continueClicked: true}}))
+            } as any)));
+            // act
+            resourcesComponent.appTutorialScreen();
+            // assert
+            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+                InteractType.TOUCH,
+                InteractSubtype.INFORMATION_ICON_CLICKED,
+                Environment.HOME,
+                PageId.LIBRARY
+            );
+            expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenCalledWith(
+                ImpressionType.VIEW,
+                ImpressionSubtype.TUTORIAL_WALKTHROUGH,
+                PageId.LIBRARY,
+                Environment.HOME
+            );
+            setTimeout(() => {
+                expect(mockPopoverCtrl.create).toHaveBeenCalled();
+                expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+                    InteractType.TOUCH,
+                    'tutorial-continue-clicked',
+                    Environment.HOME,
+                    PageId.APP_TUTORIAL_POPUP
+                );
+                done();
+            }, 0);
+        });
+
+        it('should generate close clicked telemetry', (done) => {
+            // arrange
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
+            mockPopoverCtrl.create = jest.fn(() => (Promise.resolve({
+                present: jest.fn(() => Promise.resolve({})),
+                onDidDismiss: jest.fn(() => Promise.resolve({data: {continueClicked: false}}))
+            } as any)));
+            // act
+            resourcesComponent.appTutorialScreen();
+            // assert
+            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+                InteractType.TOUCH,
+                InteractSubtype.INFORMATION_ICON_CLICKED,
+                Environment.HOME,
+                PageId.LIBRARY
+            );
+            setTimeout(() => {
+                expect(mockPopoverCtrl.create).toHaveBeenCalled();
+                expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+                    InteractType.TOUCH,
+                    InteractSubtype.CLOSE_CLICKED,
+                    Environment.HOME,
+                    PageId.APP_TUTORIAL_POPUP
+                );
+                done();
+            }, 0);
         });
 
         it('should go default section if event is not matched at all', () => {
@@ -1528,28 +1597,6 @@ describe('ResourcesComponent', () => {
         mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
         // act
         resourcesComponent.logScrollEnd(undefined);
-        // assert
-        expect(mockTelemetryGeneratorService.generateInteractTelemetry).not.toHaveBeenCalled();
-    });
-
-    it('should generate interact event if event and horizontal scroll event', () => {
-        // arrange
-        mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
-        // act
-        resourcesComponent.onScroll({ target: { scrollWidth: 10, scrollLeft: 20, offsetWidth: 10 } });
-        // assert
-        expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
-            InteractType.SCROLL,
-            InteractSubtype.RECENTLY_VIEWED_END_REACHED,
-            Environment.HOME,
-            PageId.LIBRARY);
-    });
-
-    it('should cover else part if event is undefined and event target is undefined', () => {
-        // arrange
-        mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
-        // act
-        resourcesComponent.onScroll(undefined);
         // assert
         expect(mockTelemetryGeneratorService.generateInteractTelemetry).not.toHaveBeenCalled();
     });
@@ -1611,5 +1658,17 @@ describe('ResourcesComponent', () => {
             // assert
             expect(mockAppGlobalService.getCurrentUser).toHaveBeenCalled();
         });
+    });
+
+    it('should call setTimeout for ionViewDidEnter', (done) => {
+        // arrange
+        mockAppGlobalService.showTutorialScreen = jest.fn();
+        // act
+        resourcesComponent.ionViewDidEnter();
+        // assert
+        setTimeout(() => {
+            expect(mockAppGlobalService.showTutorialScreen).toHaveBeenCalled();
+            done();
+        }, 2000);
     });
 });

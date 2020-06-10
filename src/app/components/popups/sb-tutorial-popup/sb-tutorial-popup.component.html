@@ -1,0 +1,27 @@
+<div id="main-content">
+    <img class="close-icon" src="assets/imgs/close_tutorial.svg" alt="close-icon" (click)="closePopover(false)">
+    <div class="tutorial-content">
+        <p id="heading-text" text-center align-items-center>
+            {{'TUTORIAL_HEADING' | translate}}
+        </p>
+        <img style="margin-top: 2em; margin-bottom: 2em" src="./assets/imgs/tutorial.svg" alt="tutorial">
+        <p id="details-text"
+           [innerHTML]="'DETAIL_TUTORIAL' | translate:  {'%appName':  appName, '%explainVideos': explainVideos, '%quesBanks': quesBanks, '%interactiveMaterial': interactiveMaterial}">
+        </p>
+        <div style="display: flex; flex-grow: 1"></div>
+        <button class="sb-btn sb-btn-md sb-btn-primary PR35 W100 ellipsis text-uppercase btn-block continue"
+                (click)="closePopover(true)">
+            <ion-grid class="ion-no-padding">
+                <ion-row class="ion-justify-content-between">
+                    <ion-col class="ion-no-padding">
+                    </ion-col>
+                    <ion-col class="ion-no-padding">{{ 'TUTORIAL_BUTTON' | translate }}</ion-col>
+                    <ion-col class="ion-no-padding text-align-end ion-align-self-center">
+                        <img class="arrow-icon" src="assets/imgs/ic_back.svg" alt="arrow-icon"
+                             [class.animate]="isPopoverPresent">
+                    </ion-col>
+                </ion-row>
+            </ion-grid>
+        </button>
+    </div>
+</div>
