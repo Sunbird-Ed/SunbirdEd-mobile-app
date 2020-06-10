@@ -127,7 +127,7 @@ export class ChapterDetailsPage implements OnInit, OnDestroy {
     this.isChapterCompleted = this.extrasData.isChapterCompleted;
     this.contentStatusData = this.extrasData.contentStatusData;
     this.isFromDeeplink = this.extrasData.isFromDeeplink;
-    this.courseContentData = this.courseContent.contentData;
+    this.courseContentData = this.courseContent;
     this.identifier = this.chapter.identifier;
     if (!this.telemetryObject) {
       this.telemetryObject = ContentUtil.getTelemetryObject(this.courseContent);
@@ -137,10 +137,10 @@ export class ChapterDetailsPage implements OnInit, OnDestroy {
   ngOnInit() {
     this.subContentIds = [];
     this.getSubContentIds(this.chapter);
-    if (this.courseContentData.hierarchyInfo) {
-      this.objRollup = ContentUtil.generateRollUp(this.courseContentData.hierarchyInfo, this.identifier);
+    if (this.chapter.hierarchyInfo) {
+      this.objRollup = ContentUtil.generateRollUp(this.chapter.hierarchyInfo, this.identifier);
     }
-    this.generateImpressionEvent(this.courseContentData.identifier, this.courseContentData.contentType, this.courseContentData.pkgVersion);
+    this.generateImpressionEvent(this.chapter.identifier, this.chapter.contentType, this.chapter.contentData.pkgVersion);
     this.trackDownloads$ = this.downloadService.trackDownloads(
       { groupBy: { fieldPath: 'rollUp.l1', value: this.courseContentData.identifier } }).pipe(share());
   }
@@ -448,7 +448,7 @@ export class ChapterDetailsPage implements OnInit, OnDestroy {
     const popover = await this.popoverCtrl.create({
       component: SbSharePopupComponent,
       componentProps: {
-        content: this.courseContent,
+        content: this.courseContentData,
         moduleId: this.chapter.identifier,
         subContentIds: this.subContentIds,
         // corRelationList: this.corRelationList,
@@ -462,7 +462,7 @@ export class ChapterDetailsPage implements OnInit, OnDestroy {
 
   openContentDetails(event) {
     if (Object.keys(event.event).length !== 0) {
-      if (this.courseContentData.createdBy !== this.userId) {
+      if (this.courseContentData.contentData.createdBy !== this.userId) {
         if (!this.isAlreadyEnrolled) {
           if (!this.isBatchNotStarted) {
             this.joinTraining();

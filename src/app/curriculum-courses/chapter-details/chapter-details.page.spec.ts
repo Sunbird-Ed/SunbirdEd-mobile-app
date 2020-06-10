@@ -1049,7 +1049,9 @@ describe('ChapterDetailsPage', () => {
                 event: [{ name: 'sample-name' }]
             };
             chapterDetailsPage.courseContentData = {
-                createdBy: 'sample-creator'
+                contentData: {
+                    createdBy: 'sample-creator'
+                }
             };
             chapterDetailsPage.userId = 'sample-user';
             chapterDetailsPage.isAlreadyEnrolled = false;
@@ -1061,7 +1063,7 @@ describe('ChapterDetailsPage', () => {
             chapterDetailsPage.openContentDetails(event);
             // assert
             expect(Object.keys(event.event).length).toBeGreaterThan(0);
-            expect(chapterDetailsPage.courseContentData.createdBy).not.toEqual(chapterDetailsPage.userId);
+            expect(chapterDetailsPage.courseContentData.contentData.createdBy).not.toEqual(chapterDetailsPage.userId);
             expect(chapterDetailsPage.isAlreadyEnrolled).toBeFalsy();
             expect(chapterDetailsPage.isBatchNotStarted).toBeFalsy();
         });
@@ -1072,7 +1074,9 @@ describe('ChapterDetailsPage', () => {
                 event: [{ name: 'sample-name' }]
             };
             chapterDetailsPage.courseContentData = {
-                createdBy: 'sample-creator'
+                contentData: {
+                    createdBy: 'sample-creator'
+                }
             };
             chapterDetailsPage.userId = 'sample-user';
             chapterDetailsPage.isAlreadyEnrolled = false;
@@ -1081,7 +1085,7 @@ describe('ChapterDetailsPage', () => {
             chapterDetailsPage.openContentDetails(event);
             // assert
             expect(Object.keys(event.event).length).toBeGreaterThan(0);
-            expect(chapterDetailsPage.courseContentData.createdBy).not.toEqual(chapterDetailsPage.userId);
+            expect(chapterDetailsPage.courseContentData.contentData.createdBy).not.toEqual(chapterDetailsPage.userId);
             expect(chapterDetailsPage.isAlreadyEnrolled).toBeFalsy();
             expect(chapterDetailsPage.isBatchNotStarted).toBeTruthy();
         });
@@ -1092,7 +1096,9 @@ describe('ChapterDetailsPage', () => {
                 event: [{ name: 'sample-name' }]
             };
             chapterDetailsPage.courseContentData = {
-                createdBy: 'sample-creator'
+                contentData: {
+                    createdBy: 'sample-creator'
+                }
             };
             chapterDetailsPage.userId = 'sample-user';
             chapterDetailsPage.isAlreadyEnrolled = true;
@@ -1104,7 +1110,7 @@ describe('ChapterDetailsPage', () => {
             chapterDetailsPage.openContentDetails(event);
             // assert
             expect(Object.keys(event.event).length).toBeGreaterThan(0);
-            expect(chapterDetailsPage.courseContentData.createdBy).not.toEqual(chapterDetailsPage.userId);
+            expect(chapterDetailsPage.courseContentData.contentData.createdBy).not.toEqual(chapterDetailsPage.userId);
             expect(chapterDetailsPage.isAlreadyEnrolled).toBeTruthy();
             expect(chapterDetailsPage.isBatchNotStarted).toBeTruthy();
             expect(mockCommonUtilService.translateMessage).toHaveBeenCalledWith('COURSE_WILL_BE_AVAILABLE', '2020-06-02');
@@ -1119,7 +1125,9 @@ describe('ChapterDetailsPage', () => {
                 data: { name: 'data-name' }
             };
             chapterDetailsPage.courseContentData = {
-                createdBy: 'sample-creator'
+                contentData: {
+                    createdBy: 'sample-creator'
+                }
             };
             chapterDetailsPage.userId = 'sample-user';
             chapterDetailsPage.isAlreadyEnrolled = true;
@@ -1128,7 +1136,7 @@ describe('ChapterDetailsPage', () => {
             chapterDetailsPage.openContentDetails(event);
             // assert
             expect(Object.keys(event.event).length).toBeGreaterThan(0);
-            expect(chapterDetailsPage.courseContentData.createdBy).not.toEqual(chapterDetailsPage.userId);
+            expect(chapterDetailsPage.courseContentData.contentData.createdBy).not.toEqual(chapterDetailsPage.userId);
             expect(chapterDetailsPage.isAlreadyEnrolled).toBeTruthy();
             expect(chapterDetailsPage.isBatchNotStarted).toBeFalsy();
         });
@@ -1140,14 +1148,16 @@ describe('ChapterDetailsPage', () => {
                 data: { name: 'data-name' }
             };
             chapterDetailsPage.courseContentData = {
-                createdBy: 'sample-creator'
+                contentData: {
+                    createdBy: 'sample-creator'
+                }
             };
             chapterDetailsPage.userId = 'sample-creator';
             // act
             chapterDetailsPage.openContentDetails(event);
             // assert
             expect(Object.keys(event.event).length).toBeGreaterThan(0);
-            expect(chapterDetailsPage.courseContentData.createdBy).toEqual(chapterDetailsPage.userId);
+            expect(chapterDetailsPage.courseContentData.contentData.createdBy).toEqual(chapterDetailsPage.userId);
         });
 
         it('should return null if userId if event size is 0', () => {
