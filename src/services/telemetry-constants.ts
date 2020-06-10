@@ -141,8 +141,6 @@ export enum PageId {
     COURSE_LIST = 'course-list',
     MANUAL_PROFILE = 'manual profile',
     SCAN = 'scan',
-    QR_BOOK_RESULT = 'qr-book-result',
-    QR_CONTENT_RESULT = 'qr-content-result',
     APP_TUTORIAL_POPUP = 'app-tutorial-popup'
 }
 export enum LogType {
@@ -458,6 +456,7 @@ export enum InteractSubtype {
     SUBJECT_CARD_CLICKED = 'subject-card-clicked',
     INFORMATION_ICON_CLICKED = 'information-icon-clicked',
     TUTORIAL_CONTINUE_CLICKED = 'tutorial-continue-clicked',
+    SYNC_NOW_CLICKED = 'sync-now-clicked'
 }
 
 export enum ID {
