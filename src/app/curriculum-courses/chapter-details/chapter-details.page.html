@@ -8,7 +8,7 @@
     <div class="new-div">
       <div *ngIf="!isAlreadyEnrolled">
         <div class="enrollment-info"
-          *ngIf="batches && courseContentData?.createdBy !== userId && (batches.length > 1 || (batches.length === 1 && !(todayDate > batches[0].enrollmentEndDate)))">
+          *ngIf="batches && courseContentData?.contentData?.createdBy !== userId && (batches.length > 1 || (batches.length === 1 && !(todayDate > batches[0].enrollmentEndDate)))">
           <button class="enrolled-course-card-button" (click)="navigateToBatchListPage();">
             {{'JOIN_TRAINING' | translate}}
           </button>
