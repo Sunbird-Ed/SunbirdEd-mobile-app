@@ -141,7 +141,8 @@ export enum PageId {
     COURSE_LIST = 'course-list',
     MANUAL_PROFILE = 'manual profile',
     SCAN = 'scan',
-    APP_TUTORIAL_POPUP = 'app-tutorial-popup'
+    APP_TUTORIAL_POPUP = 'app-tutorial-popup',
+    COURSE_SEARCH_FILTER = 'course-search-filter'
 }
 export enum LogType {
     NOTIFICATION = 'notification'
@@ -527,7 +528,8 @@ export enum CorReleationDataType {
     CHILD_UI = 'ChildUi',
     QR = 'QR',
     COUNT_BOOK = 'CountBook',
-    COUNT_CONTENT = 'CountContent'
+    COUNT_CONTENT = 'CountContent',
+    PAGE_ID = 'PageId'
 }
 
 export enum AuditProps {
@@ -536,7 +538,11 @@ export enum AuditProps {
 }
 
 export enum CorReleationDataId {
-    POPUP_CATEGORY = 'popup-category'
+    POPUP_CATEGORY = 'popup-category',
+    LANGUAGE = 'language',
 }
 
+export enum AuditType {
+    SET_LANGUAGE = 'set-language',
+}
 

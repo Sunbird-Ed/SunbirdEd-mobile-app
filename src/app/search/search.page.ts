@@ -679,7 +679,8 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
       });
       this.router.navigate(['/filters'], {
         state: {
-          filterCriteria: this.responseData.filterCriteria
+          filterCriteria: this.responseData.filterCriteria,
+          source: this.source
         }
       });
     });
