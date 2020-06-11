@@ -16,7 +16,8 @@ import {
   InteractType,
   PageId,
   CorReleationDataType,
-  AuditProps
+  AuditProps,
+  AuditType
 } from '@app/services/telemetry-constants';
 import { ContainerService } from '@app/services/container.services';
 import { initTabs, GUEST_STUDENT_TABS, GUEST_TEACHER_TABS } from '@app/app/module.service';
@@ -251,6 +252,10 @@ export class UserTypeSelectionPage {
               Environment.ONBOARDING,
               AuditState.AUDIT_UPDATED,
               [AuditProps.PROFILE_TYPE],
+              AuditType.SELECT_USERTYPE,
+              undefined,
+              undefined,
+              undefined,
               correlationlist
             );
           }).catch(() => {

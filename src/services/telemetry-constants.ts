@@ -529,7 +529,8 @@ export enum CorReleationDataType {
     QR = 'QR',
     COUNT_BOOK = 'CountBook',
     COUNT_CONTENT = 'CountContent',
-    PAGE_ID = 'PageId'
+    PAGE_ID = 'PageId',
+    MANUAL_PROFILE = 'manual-profile'
 }
 
 export enum AuditProps {
@@ -540,9 +541,12 @@ export enum AuditProps {
 export enum CorReleationDataId {
     POPUP_CATEGORY = 'popup-category',
     LANGUAGE = 'language',
+    MANUAL_PROFILE = 'manual-profile'
 }
 
 export enum AuditType {
     SET_LANGUAGE = 'set-language',
+    SELECT_USERTYPE = 'set-usertype',
+    SET_PROFILE = 'set-profile'
 }
 

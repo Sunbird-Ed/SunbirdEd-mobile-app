@@ -15,7 +15,8 @@ import {
   InteractType,
   PageId,
   CorReleationDataType,
-  CorReleationDataId
+  CorReleationDataId,
+  AuditType
 } from '@app/services/telemetry-constants';
 import {
   Framework,
@@ -639,6 +640,7 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
           PageId.ONBOARDING_PROFILE_PREFERENCES, profile, 'manual', Environment.ONBOARDING
         );
         const correlationlist: Array<CorrelationData> = [];
+        correlationlist.push({id: CorReleationDataId.MANUAL_PROFILE, type: CorReleationDataType.MANUAL_PROFILE});
         correlationlist.concat(this.populateCData(this.boardControl.value, CorReleationDataType.BOARD));
         correlationlist.concat(this.populateCData(this.mediumControl.value, CorReleationDataType.MEDIUM));
         correlationlist.concat(this.populateCData(this.gradeControl.value, CorReleationDataType.CLASS));
@@ -646,6 +648,7 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
           Environment.ONBOARDING,
           AuditState.AUDIT_UPDATED,
           undefined,
+          AuditType.SET_PROFILE,
           undefined,
           undefined,
           undefined,
