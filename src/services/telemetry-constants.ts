@@ -139,7 +139,9 @@ export enum PageId {
     CHAPTER_DETAILS = 'chapter-details',
     TEACHER_SELF_DECLARATION = 'teacher-self-declaration',
     COURSE_LIST = 'course-list',
-    MANUAL_PROFILE = 'manual profile'
+    MANUAL_PROFILE = 'manual profile',
+    SCAN = 'scan',
+    APP_TUTORIAL_POPUP = 'app-tutorial-popup'
 }
 export enum LogType {
     NOTIFICATION = 'notification'
@@ -166,7 +168,8 @@ export enum ImpressionType {
     /* New Telemetry */
     PAGE_LOADED = 'page-loaded',
     PAGE_REQUEST = 'page-request',
-    SET_LANGUAGE = 'set-language'
+    SET_LANGUAGE = 'set-language',
+    QR_REQUEST = 'qr-request'
 }
 export enum ImpressionSubtype {
     QRCodeScanInitiate = 'qr-code-scan-initiate',
@@ -174,7 +177,7 @@ export enum ImpressionSubtype {
     QR_CODE_VALID = 'qr-code-valid',
     INVALID_QR_CODE = 'invalid-qr-code',
     APP_RATING_POPUP = 'app-rating-popup',
-    QR_SCAN_WALKTHROUGH = 'qr-scan-walkthrough',
+    TUTORIAL_WALKTHROUGH = 'tutorial-walkthrough',
     COMINGSOON_POPUP = 'coming-soon-popup',
     EXPLORE_MORE_CONTENT = 'explore-more-content',
     RECOVERY_ACCOUNT_POPUP = 'recovery-account-popup',
@@ -220,6 +223,7 @@ export enum InteractType {
     CREATE_FAILURE = 'create-failure',
     SWITCH_SUCCESS = 'switch-success',
     SWITCH_FAILURE = 'switch-failure',
+    QR_CAPTURED = 'qr-captured'
 }
 
 
@@ -255,7 +259,6 @@ export enum InteractSubtype {
     FLAG_INITIATE = 'flag-initiated',
     FLAG_SUCCESS = 'flag-success',
     FLAG_FAILED = 'flag-failed',
-    CONTENT_PLAY = 'content-play',
     QRCodeScanClicked = 'qr-code-scanner-clicked',
     QRCodeScanSuccess = 'qr-code-scan-success',
     QRCodeScanCancelled = 'qr-code-scan-cancelled',
@@ -450,7 +453,10 @@ export enum InteractSubtype {
     DENY_CLICKED = 'deny-clicked',
     NEW = 'new',
     EXISTING = 'existing',
-    SUBJECT_CARD_CLICKED = 'subject-card-clicked'
+    SUBJECT_CARD_CLICKED = 'subject-card-clicked',
+    INFORMATION_ICON_CLICKED = 'information-icon-clicked',
+    TUTORIAL_CONTINUE_CLICKED = 'tutorial-continue-clicked',
+    SYNC_NOW_CLICKED = 'sync-now-clicked'
 }
 
 export enum ID {
@@ -518,7 +524,10 @@ export enum CorReleationDataType {
     NEW_VALUE = 'NewValue',
     OLD_VALUE = 'OldValue',
     COURSE_COUNT = 'CourseCount',
-    CHILD_UI = 'ChildUi'
+    CHILD_UI = 'ChildUi',
+    QR = 'QR',
+    COUNT_BOOK = 'CountBook',
+    COUNT_CONTENT = 'CountContent'
 }
 
 export enum AuditProps {

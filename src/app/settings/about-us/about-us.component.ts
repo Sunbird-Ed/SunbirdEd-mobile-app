@@ -179,6 +179,7 @@ export class AboutUsComponent implements OnInit {
   }
 
   goBack() {
+    this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.SETTINGS_ABOUT_US, Environment.SETTINGS, true);
     this.location.back();
   }
 

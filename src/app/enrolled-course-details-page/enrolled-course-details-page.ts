@@ -210,7 +210,6 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
   public showUnenroll: boolean;
   public todayDate: any;
   public rollUpMap: { [key: string]: Rollup } = {};
-  public lastReadContentId;
   public courseCompletionData = {};
   isCertifiedCourse: boolean;
   showSheenAnimation = true;
@@ -259,7 +258,6 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
       this.courseCardData = extrasState.content;
       this.isOnboardingSkipped = extrasState.isOnboardingSkipped;
       this.isFromChannelDeeplink = extrasState.isFromChannelDeeplink;
-      // console.log('this.courseCardData', this.courseCardData);
       this.identifier = this.courseCardData.contentId || this.courseCardData.identifier;
       this.corRelationList = extrasState.corRelation;
       this.source = extrasState.source;
@@ -1016,18 +1014,6 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
     }
   }
 
-  private async getLastReadContentId() {
-    this.lastReadContentId = this.courseCardData.lastReadContentId;
-    const userId = this.appGlobalService.getUserId();
-    const lastReadContentIdKey = 'lastReadContentId_' + userId + '_' + this.identifier + '_' + this.courseCardData.batchId;
-    const chacedLastReadContentId = await this.preferences.getString(lastReadContentIdKey).toPromise();
-    if (chacedLastReadContentId) {
-      this.lastReadContentId = chacedLastReadContentId;
-      this.courseCardData.lastReadContentId = chacedLastReadContentId;
-    }
-    return this.lastReadContentId;
-  }
-
   private getLeafNodes(contents: Content[]) {
     return contents.reduce((acc, content) => {
       if (content.children) {
@@ -1060,7 +1046,6 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
 
     this.initNextContent();
 
-    const that = this;
     this.zone.run(() => {
       childrenData.forEach((childContent) => {
         if (childContent.children && childContent.children.length) {
@@ -1069,9 +1054,6 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
               if (contentStatusData.contentList.length) {
                 const statusData = contentStatusData.contentList.find(c => c.contentId === eachContent.identifier);
                 if (statusData) {
-                  if (that.lastReadContentId === statusData.contentId) {
-                    childContent['lastRead'] = true;
-                  }
                   return !(statusData.status === 0 || statusData.status === 1);
                 }
                 return false;
@@ -1348,13 +1330,10 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
       this.handleHeaderEvents(eventName);
     });
 
-    // this.showResumeBtn = !!this.courseCardData.lastReadContentId;
-
     // If courseCardData does not have a batch id then it is not a enrolled course
     this.subscribeSdkEvent();
     this.populateCorRelationData(this.courseCardData.batchId);
     this.handleBackButton();
-    this.getLastReadContentId();
   }
 
   ionViewDidEnter() {
@@ -1935,6 +1914,15 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
 
   onTocCardClick(event) {
     if (event.item.mimeType === MimeType.COLLECTION) {
+      this.telemetryGeneratorService.generateInteractTelemetry(
+        InteractType.TOUCH,
+        InteractSubtype.TRAINING_MODULE_CLICKED,
+        Environment.HOME,
+        PageId.COURSE_DETAIL,
+        this.telemetryObject,
+        undefined,
+        this.objRollup,
+        this.corRelationList);
       const chapterParams: NavigationExtras = {
         state: {
           chapterData: event.item,

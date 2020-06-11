@@ -49,6 +49,7 @@ import { MyGroupsPopoverComponent } from './popups/sb-my-groups-popover/sb-my-gr
 import { CommonConsumptionModule } from '@project-sunbird/common-consumption';
 import { ToastNavigationComponent } from './popups/toast-navigation/toast-navigation.component';
 import { CommonFormsComponent } from './common-forms/common-forms.component';
+import {SbTutorialPopupComponent} from './popups/sb-tutorial-popup/sb-tutorial-popup.component';
 
 @NgModule({
   declarations: [
@@ -90,7 +91,8 @@ import { CommonFormsComponent } from './common-forms/common-forms.component';
     CollectionActionsComponent,
     MyGroupsPopoverComponent,
     ToastNavigationComponent,
-    CommonFormsComponent
+    CommonFormsComponent,
+    SbTutorialPopupComponent
   ],
   imports: [
     CommonModule,
@@ -131,7 +133,8 @@ import { CommonFormsComponent } from './common-forms/common-forms.component';
     CollectionActionsComponent,
     MyGroupsPopoverComponent,
     ToastNavigationComponent,
-    CommonFormsComponent
+    CommonFormsComponent,
+    SbTutorialPopupComponent
   ],
   exports: [
     ApplicationHeaderComponent,
@@ -171,7 +174,8 @@ import { CommonFormsComponent } from './common-forms/common-forms.component';
     CollectionActionsComponent,
     MyGroupsPopoverComponent,
     ToastNavigationComponent,
-    CommonFormsComponent
+    CommonFormsComponent,
+    SbTutorialPopupComponent
   ],
   providers: [FileSizePipe, FilterPipe,  Keyboard]
 })

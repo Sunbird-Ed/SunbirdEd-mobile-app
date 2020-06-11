@@ -65,7 +65,7 @@ export class ContentShareHandlerService {
         content.contentData.contentType, corRelationList, rollup);
       let contentLink = this.getContentUtm(shareParams.link, content);
       if (moduleId) {
-        contentLink = contentLink + `&contentId=${moduleId}`;
+        contentLink = contentLink + `&moduleId=${moduleId}`;
       }
       const shareLink = this.commonUtilService.translateMessage('SHARE_CONTENT_LINK', {
         app_name: this.appName,
