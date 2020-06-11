@@ -4,7 +4,7 @@ import { AppHeaderService, CommonUtilService, LoginHandlerService, AppGlobalServ
 import { Router } from '@angular/router';
 import {
     SharedPreferences, AuthService, CourseService, DownloadService,
-    EventsBusService, ContentService
+    EventsBusService, ContentService, TelemetryObject
 } from '@project-sunbird/sunbird-sdk';
 import { PopoverController, Events, Platform } from '@ionic/angular';
 import { NgZone } from '@angular/core';
@@ -15,6 +15,7 @@ import { MimeType, EventTopics, RouterLinks, PreferenceKey } from '../../app.con
 import { of, throwError } from 'rxjs';
 import { SbProgressLoader } from '../../../services/sb-progress-loader.service';
 import { TelemetryGeneratorService } from '../../../services/telemetry-generator.service';
+import { ImpressionType, PageId, Environment, InteractSubtype, InteractType } from '../../../services/telemetry-constants';
 
 describe('ChapterDetailsPage', () => {
     let chapterDetailsPage: ChapterDetailsPage;
@@ -28,7 +29,10 @@ describe('ChapterDetailsPage', () => {
                     chapterData: {
                         chapterName: 'sample-chapter',
                         children: [{ identifier: 'd0-12', mimeType: MimeType.COLLECTION },
-                        { identifier: 'd0-13', mimeType: MimeType.VIDEO[0] }]
+                        { identifier: 'd0-13', mimeType: MimeType.VIDEO[0] }],
+                        contentData: { pkgVersion: 'sample-pkg-ver' },
+                        hierarchyInfo: [],
+                        identifier: 'do-123'
                     },
                     courseContent: {
                         name: 'course-content', identifier: 'do-123',
@@ -99,10 +103,24 @@ describe('ChapterDetailsPage', () => {
         it('should return all leave chapters of collection mimeType', () => {
             // arrange
             mockDownloadService.trackDownloads = jest.fn(() => of({ completed: 'yes' })) as any;
+            mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
             // act
             chapterDetailsPage.ngOnInit();
             // assert
             expect(mockDownloadService.trackDownloads).toHaveBeenCalled();
+            expect(chapterDetailsPage.chapter.hierarchyInfo).toBeTruthy();
+            expect(chapterDetailsPage.chapter.contentData.pkgVersion).toBe('sample-pkg-ver');
+            expect(chapterDetailsPage.chapter.identifier).toBe('do-123');
+            expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenCalledWith(
+                ImpressionType.DETAIL,
+                '', PageId.CHAPTER_DETAILS,
+                Environment.HOME,
+                chapterDetailsPage.chapter.identifier,
+                undefined,
+                chapterDetailsPage.chapter.contentData.pkgVersion,
+                {}
+            );
+
         });
     });
 
@@ -134,6 +152,10 @@ describe('ChapterDetailsPage', () => {
             jest.spyOn(chapterDetailsPage, 'getContentsSize').mockImplementation(() => {
                 return;
             });
+            const mockConfig = {
+                subscribe: jest.fn(() => { })
+            };
+            mockAppHeaderService.headerEventEmitted$ = of(mockConfig);
             chapterDetailsPage.guestUser = false;
             mockAppGlobalService.setEnrolledCourseList = jest.fn();
             mockCourseService.getEnrolledCourses = jest.fn(() => of([
@@ -142,11 +164,28 @@ describe('ChapterDetailsPage', () => {
                     courseId: 'sample-course-id'
                 }
             ]));
+            jest.spyOn(chapterDetailsPage, 'handleHeaderEvents').mockImplementation(() => {
+                return;
+            });
+            const subscribeWithPriorityData = jest.fn((_, fn) => fn({}));
+            mockPlatform.backButton = {
+                subscribeWithPriority: subscribeWithPriorityData,
+            } as any;
+            mockTelemetryGeneratorService.generateBackClickedTelemetry = jest.fn();
+            mockLocation.back = jest.fn();
             // act
             chapterDetailsPage.ionViewWillEnter();
             // assert
             setTimeout(() => {
                 expect(mockAppHeaderService.showHeaderWithBackButton).toHaveBeenCalled();
+                expect(mockAppHeaderService.headerEventEmitted$).toBeTruthy();
+                expect(subscribeWithPriorityData).toHaveBeenCalled();
+                expect(mockTelemetryGeneratorService.generateBackClickedTelemetry).toHaveBeenCalledWith(
+                    PageId.CHAPTER_DETAILS,
+                    Environment.HOME,
+                    false
+                );
+                expect(mockLocation.back).toHaveBeenCalled();
                 expect(chapterDetailsPage.guestUser).toBeFalsy();
                 expect(mockCourseService.getEnrolledCourses).toHaveBeenCalled();
                 expect(mockAppGlobalService.setEnrolledCourseList).toHaveBeenCalled();
@@ -181,6 +220,19 @@ describe('ChapterDetailsPage', () => {
             jest.spyOn(chapterDetailsPage, 'getContentsSize').mockImplementation(() => {
                 return;
             });
+            jest.spyOn(chapterDetailsPage, 'handleHeaderEvents').mockImplementation(() => {
+                return;
+            });
+            const mockConfig = {
+                subscribe: jest.fn(() => { })
+            };
+            mockAppHeaderService.headerEventEmitted$ = of(mockConfig);
+            const subscribeWithPriorityData = jest.fn((_, fn) => fn({}));
+            mockPlatform.backButton = {
+                subscribeWithPriority: subscribeWithPriorityData,
+            } as any;
+            mockTelemetryGeneratorService.generateBackClickedTelemetry = jest.fn();
+            mockLocation.back = jest.fn();
             chapterDetailsPage.guestUser = false;
             mockCourseService.getEnrolledCourses = jest.fn(() => of([]));
             // act
@@ -188,6 +240,13 @@ describe('ChapterDetailsPage', () => {
             // assert
             setTimeout(() => {
                 expect(mockAppHeaderService.showHeaderWithBackButton).toHaveBeenCalled();
+                expect(mockAppHeaderService.headerEventEmitted$).toBeTruthy();
+                expect(subscribeWithPriorityData).toHaveBeenCalled();
+                expect(mockTelemetryGeneratorService.generateBackClickedTelemetry).toHaveBeenCalledWith(
+                    PageId.CHAPTER_DETAILS,
+                    Environment.HOME,
+                    false
+                );
                 expect(chapterDetailsPage.guestUser).toBeFalsy();
                 expect(mockCourseService.getEnrolledCourses).toHaveBeenCalled();
                 done();
@@ -221,6 +280,19 @@ describe('ChapterDetailsPage', () => {
             jest.spyOn(chapterDetailsPage, 'getContentsSize').mockImplementation(() => {
                 return;
             });
+            jest.spyOn(chapterDetailsPage, 'handleHeaderEvents').mockImplementation(() => {
+                return;
+            });
+            const mockConfig = {
+                subscribe: jest.fn(() => { })
+            };
+            mockAppHeaderService.headerEventEmitted$ = of(mockConfig);
+            const subscribeWithPriorityData = jest.fn((_, fn) => fn({}));
+            mockPlatform.backButton = {
+                subscribeWithPriority: subscribeWithPriorityData,
+            } as any;
+            mockTelemetryGeneratorService.generateBackClickedTelemetry = jest.fn();
+            mockLocation.back = jest.fn();
             chapterDetailsPage.isFromDeeplink = false;
             chapterDetailsPage.guestUser = false;
             mockAppGlobalService.setEnrolledCourseList = jest.fn();
@@ -234,6 +306,13 @@ describe('ChapterDetailsPage', () => {
             // assert
             setTimeout(() => {
                 expect(mockAppHeaderService.showHeaderWithBackButton).toHaveBeenCalled();
+                expect(mockAppHeaderService.headerEventEmitted$).toBeTruthy();
+                expect(subscribeWithPriorityData).toHaveBeenCalled();
+                expect(mockTelemetryGeneratorService.generateBackClickedTelemetry).toHaveBeenCalledWith(
+                    PageId.CHAPTER_DETAILS,
+                    Environment.HOME,
+                    false
+                );
                 expect(chapterDetailsPage.guestUser).toBeFalsy();
                 expect(chapterDetailsPage.isFromDeeplink).toBeFalsy();
                 expect(mockCourseService.getEnrolledCourses).toHaveBeenCalled();
@@ -269,6 +348,19 @@ describe('ChapterDetailsPage', () => {
             jest.spyOn(chapterDetailsPage, 'getContentsSize').mockImplementation(() => {
                 return;
             });
+            jest.spyOn(chapterDetailsPage, 'handleHeaderEvents').mockImplementation(() => {
+                return;
+            });
+            const mockConfig = {
+                subscribe: jest.fn(() => { })
+            };
+            mockAppHeaderService.headerEventEmitted$ = of(mockConfig);
+            const subscribeWithPriorityData = jest.fn((_, fn) => fn({}));
+            mockPlatform.backButton = {
+                subscribeWithPriority: subscribeWithPriorityData,
+            } as any;
+            mockTelemetryGeneratorService.generateBackClickedTelemetry = jest.fn();
+            mockLocation.back = jest.fn();
             chapterDetailsPage.isFromDeeplink = false;
             chapterDetailsPage.guestUser = true;
             // act
@@ -276,6 +368,13 @@ describe('ChapterDetailsPage', () => {
             // assert
             setTimeout(() => {
                 expect(mockAppHeaderService.showHeaderWithBackButton).toHaveBeenCalled();
+                expect(mockAppHeaderService.headerEventEmitted$).toBeTruthy();
+                expect(subscribeWithPriorityData).toHaveBeenCalled();
+                expect(mockTelemetryGeneratorService.generateBackClickedTelemetry).toHaveBeenCalledWith(
+                    PageId.CHAPTER_DETAILS,
+                    Environment.HOME,
+                    false
+                );
                 expect(chapterDetailsPage.guestUser).toBeTruthy();
                 expect(chapterDetailsPage.isFromDeeplink).toBeFalsy();
                 done();
@@ -736,6 +835,7 @@ describe('ChapterDetailsPage', () => {
     describe('startLearning', () => {
         it('should load FirstChildren', () => {
             // arrnge
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             chapterDetailsPage.childContents = [{ identifier: 'do-123' }];
             chapterDetailsPage.isBatchNotStarted = false;
             jest.spyOn(chapterDetailsPage, 'loadFirstChildren').mockImplementation(() => {
@@ -747,12 +847,20 @@ describe('ChapterDetailsPage', () => {
             // act
             chapterDetailsPage.startLearning();
             // assert
+            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+                InteractType.TOUCH,
+                InteractSubtype.START_CLICKED,
+                Environment.HOME,
+                PageId.CHAPTER_DETAILS,
+                new TelemetryObject(chapterDetailsPage.childContents[0].identifier,
+                    undefined, undefined), undefined, undefined);
             expect(chapterDetailsPage.childContents.length).toBeGreaterThan(0);
             expect(chapterDetailsPage.isBatchNotStarted).toBeFalsy();
         });
 
         it('should show toast message like COURSE_WILL_BE_AVAILABLE', () => {
             // arrnge
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             chapterDetailsPage.childContents = [{ identifier: 'do-123' }];
             chapterDetailsPage.isBatchNotStarted = true;
             mockDatePipe.transform = jest.fn(() => '2020-06-02');
@@ -761,6 +869,13 @@ describe('ChapterDetailsPage', () => {
             // act
             chapterDetailsPage.startLearning();
             // assert
+            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+                InteractType.TOUCH,
+                InteractSubtype.START_CLICKED,
+                Environment.HOME,
+                PageId.CHAPTER_DETAILS,
+                new TelemetryObject(chapterDetailsPage.childContents[0].identifier,
+                    undefined, undefined), undefined, undefined);
             expect(chapterDetailsPage.childContents.length).toBeGreaterThan(0);
             expect(chapterDetailsPage.isBatchNotStarted).toBeTruthy();
             expect(mockCommonUtilService.translateMessage).toHaveBeenCalledWith('COURSE_WILL_BE_AVAILABLE', '2020-06-02');
@@ -770,12 +885,20 @@ describe('ChapterDetailsPage', () => {
 
         it('should show toast message like COURSE_WILL_BE_AVAILABLE', () => {
             // arrnge
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             chapterDetailsPage.childContents = [];
             chapterDetailsPage.isBatchNotStarted = true;
             mockCommonUtilService.showToast = jest.fn();
             // act
             chapterDetailsPage.startLearning();
             // assert
+            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+                InteractType.TOUCH,
+                InteractSubtype.START_CLICKED,
+                Environment.HOME,
+                PageId.CHAPTER_DETAILS,
+                new TelemetryObject('do-123',
+                    undefined, undefined), undefined, undefined);
             expect(chapterDetailsPage.childContents.length).toBe(0);
             expect(chapterDetailsPage.isBatchNotStarted).toBeTruthy();
             expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('NO_CONTENT_AVAILABLE_IN_MODULE');
@@ -1227,16 +1350,15 @@ describe('ChapterDetailsPage', () => {
                     {
                         state: {
                             course: {
-                                createdBy: 'sample-creator'
+                                contentData: {
+                                    createdBy: 'sample-creator'
+                                },
                             },
+                            objRollup: undefined,
                             ongoingBatches: [
                                 { batchId: 'sample-batch-id', status: 1 }
                             ],
-                            telemetryObject: {
-                                id: 'do-123',
-                                type: undefined,
-                                version: undefined,
-                            },
+                            telemetryObject: new TelemetryObject('do-123', undefined, undefined),
                             upcommingBatches: [{ batchId: 'sample-batch-id', status: 2 }]
                         }
                     });
@@ -1366,6 +1488,11 @@ describe('ChapterDetailsPage', () => {
                 dismiss: dismissFn
             }));
             chapterDetailsPage.guestUser = false;
+            mockLocalCourseService.prepareEnrollCourseRequest = jest.fn(() => { });
+            const prepareResponseValue = new Map();
+            prepareResponseValue['enrollReq'] = { name: 'sample-name' };
+            mockLocalCourseService.prepareRequestValue = jest.fn(() => prepareResponseValue);
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             mockLocalCourseService.enrollIntoBatch = jest.fn(() => of({}));
             mockCommonUtilService.translateMessage = jest.fn(() => 'course enrolled');
             mockCommonUtilService.showToast = jest.fn();
@@ -1376,6 +1503,14 @@ describe('ChapterDetailsPage', () => {
             setTimeout(() => {
                 expect(mockCommonUtilService.getLoader).toHaveBeenCalled();
                 expect(chapterDetailsPage.guestUser).toBeFalsy();
+                expect(mockLocalCourseService.prepareEnrollCourseRequest).toHaveBeenCalled();
+                expect(mockLocalCourseService.prepareRequestValue).toHaveBeenCalled();
+                expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+                    InteractType.TOUCH,
+                    InteractSubtype.ENROLL_CLICKED,
+                    Environment.HOME,
+                    PageId.CHAPTER_DETAILS, undefined, prepareResponseValue
+                );
                 expect(presentFn).toHaveBeenCalled();
                 expect(mockCommonUtilService.getLoader).toHaveBeenCalled();
                 expect(dismissFn).toHaveBeenCalled();
@@ -1402,12 +1537,25 @@ describe('ChapterDetailsPage', () => {
                 dismiss: dismissFn
             }));
             chapterDetailsPage.guestUser = false;
+            mockLocalCourseService.prepareEnrollCourseRequest = jest.fn(() => { });
+            const prepareResponseValue = new Map();
+            prepareResponseValue['enrollReq'] = { name: 'sample-name' };
+            mockLocalCourseService.prepareRequestValue = jest.fn(() => prepareResponseValue);
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             mockLocalCourseService.enrollIntoBatch = jest.fn(() => throwError({ error: 'error' }));
             // act
             chapterDetailsPage.enrollIntoBatch(items);
             setTimeout(() => {
                 expect(mockCommonUtilService.getLoader).toHaveBeenCalled();
                 expect(chapterDetailsPage.guestUser).toBeFalsy();
+                expect(mockLocalCourseService.prepareEnrollCourseRequest).toHaveBeenCalled();
+                expect(mockLocalCourseService.prepareRequestValue).toHaveBeenCalled();
+                expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+                    InteractType.TOUCH,
+                    InteractSubtype.ENROLL_CLICKED,
+                    Environment.HOME,
+                    PageId.CHAPTER_DETAILS, undefined, prepareResponseValue
+                );
                 expect(presentFn).toHaveBeenCalled();
                 expect(mockLocalCourseService.enrollIntoBatch).toHaveBeenCalled();
                 done();
