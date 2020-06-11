@@ -357,6 +357,7 @@ describe('AppComponent', () => {
                 expect(mockTelemetryGeneratorService.generateNotificationClickedTelemetry).toHaveBeenCalledWith(
                     'local',
                     'sample-page',
+                    undefined,
                     [{id: undefined, type: 'NotificationID'}]
                 );
                 expect(mockPreferences.getString).toHaveBeenCalledWith(PreferenceKey.CAMPAIGN_PARAMETERS);
@@ -385,6 +386,7 @@ describe('AppComponent', () => {
                 expect(mockTelemetryGeneratorService.generateNotificationClickedTelemetry).toHaveBeenCalledWith(
                     InteractType.LOCAL,
                     'sample-page',
+                    undefined,
                     [{id: undefined, type: 'NotificationID'}]
                 );
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).not.nthCalledWith(2,
@@ -411,6 +413,7 @@ describe('AppComponent', () => {
                 expect(mockTelemetryGeneratorService.generateNotificationClickedTelemetry).toHaveBeenCalledWith(
                     InteractType.LOCAL,
                     'sample-page',
+                    undefined,
                     [{id: undefined, type: 'NotificationID'}]
                 );
                 done();
@@ -775,6 +778,7 @@ describe('AppComponent', () => {
                 expect(mockTelemetryGeneratorService.generateNotificationClickedTelemetry).toHaveBeenCalledWith(
                     InteractType.LOCAL,
                     'sample-page',
+                    undefined,
                     [{id: undefined, type: 'NotificationID'}]
                 );
                 expect(SunbirdSdk.instance.updateDeviceRegisterConfig).toHaveBeenCalledWith({ fcmToken: 'some_token' });
@@ -817,6 +821,7 @@ describe('AppComponent', () => {
                 expect(mockTelemetryGeneratorService.generateNotificationClickedTelemetry).toHaveBeenCalledWith(
                     InteractType.LOCAL,
                     'sample-page',
+                    undefined,
                     [{id: undefined, type: 'NotificationID'}]
                 );
                 expect(FCMPlugin.onTokenRefresh).toHaveBeenCalled();
@@ -879,9 +884,9 @@ describe('AppComponent', () => {
                 } as any;
             });
             const mockData = {
-                'id': 'some_id',
-                'wasTapped': true,
-                'actionData': '{\"key\":\"value\"}'
+                id: 'some_id',
+                wasTapped: true,
+                actionData: '{\"key\":\"value\"}'
             };
             FCMPlugin.onNotification = jest.fn((callback, success, error) => {
                 callback(mockData);
@@ -901,7 +906,13 @@ describe('AppComponent', () => {
                     InteractType.FCM,
                     'some_page_id',
                     { notification_id: 'some_id' },
-                    [{"id": "some_id", "type": "NotificationID"}]
+                    [{id: 'some_id', type: 'NotificationID'}]
+                );
+                expect(mockTelemetryGeneratorService.generateNotificationClickedTelemetry).nthCalledWith(2,
+                    InteractType.LOCAL,
+                    'some_page_id',
+                    undefined,
+                    [{id: undefined, type: 'NotificationID'}]
                 );
                 done();
             });
@@ -915,9 +926,9 @@ describe('AppComponent', () => {
                 } as any;
             });
             const mockData = {
-                'id': 'some_id',
-                'wasTapped': false,
-                'actionData': '{\"key\":\"value\"}'
+                id: 'some_id',
+                wasTapped: false,
+                actionData: '{\"key\":\"value\"}'
             };
             FCMPlugin.onNotification = jest.fn((callback, success, error) => {
                 callback(mockData);
@@ -937,7 +948,13 @@ describe('AppComponent', () => {
                     InteractType.FCM,
                     'some_page_id',
                     { notification_id: 'some_id' },
-                    [{"id": "some_id", "type": "NotificationID"}]
+                    [{id: 'some_id', type: 'NotificationID'}]
+                );
+                expect(mockTelemetryGeneratorService.generateNotificationClickedTelemetry).nthCalledWith(2,
+                    InteractType.LOCAL,
+                    'some_page_id',
+                    undefined,
+                    [{id: undefined, type: 'NotificationID'}]
                 );
                 done();
             });

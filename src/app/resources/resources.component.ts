@@ -1,6 +1,6 @@
 import { PageFilterCallback } from './../page-filter/page-filter.page';
 import { Component, OnInit, AfterViewInit, Inject, NgZone, ViewChild, OnDestroy, ChangeDetectorRef } from '@angular/core';
-import {IonContent as ContentView, Events, ToastController, MenuController, PopoverController} from '@ionic/angular';
+import {IonContent as ContentView, Events, ToastController, MenuController, PopoverController, IonRefresher} from '@ionic/angular';
 import { NavigationExtras, Router } from '@angular/router';
 import { animate, group, state, style, transition, trigger } from '@angular/animations';
 import { TranslateService } from '@ngx-translate/core';
@@ -110,6 +110,8 @@ import {animationShrinkOutTopRight} from '../animations/animation-shrink-out-top
   ]
 })
 export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
+  @ViewChild('libraryRefresher') refresher: IonRefresher;
+
   pageLoadedSuccess = false;
   storyAndWorksheets: Array<any>;
   selectedValue: Array<string> = [];
@@ -349,6 +351,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ionViewWillLeave(): void {
+    this.refresher.disabled = true;
     if (this.eventSubscription) {
       this.eventSubscription.unsubscribe();
     }
@@ -781,6 +784,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ionViewDidEnter() {
+    this.refresher.disabled = false;
     // Need timer to load the coach screen and for the coach screen to hide if user comes from deeplink.
     this.coachTimeout = setTimeout(() => {
       this.appGlobalService.showTutorialScreen();
