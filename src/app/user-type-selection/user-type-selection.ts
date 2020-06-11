@@ -246,7 +246,7 @@ export class UserTypeSelectionPage {
             }
             this.profile = success;
             this.gotoNextPage();
-            const correlationlist: Array<CorrelationData> = [];
+            const correlationlist: Array<CorrelationData> = [{id: PageId.USER_TYPE, type: CorReleationDataType.FROM_PAGE}];
             correlationlist.push({ id: this.selectedUserType, type: CorReleationDataType.USERTYPE });
             this.telemetryGeneratorService.generateAuditTelemetry(
               Environment.ONBOARDING,

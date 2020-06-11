@@ -10,7 +10,7 @@ import { CommonUtilService } from '@app/services/common-util.service';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { AppHeaderService } from '@app/services/app-header.service';
 import { Environment, ID, ImpressionType, InteractSubtype,
-         InteractType, PageId, AuditProps, CorReleationDataType, AuditType, CorReleationDataId } from '@app/services/telemetry-constants';
+         InteractType, PageId, AuditProps, CorReleationDataType, AuditType } from '@app/services/telemetry-constants';
 import { NotificationService } from '@app/services/notification.service';
 import { Location } from '@angular/common';
 import { Subscription } from 'rxjs';
@@ -270,8 +270,7 @@ export class LanguageSettingsPage {
         selectedLanguage: this.language
       });
       this.notification.setupLocalNotification(this.language);
-      const corRelationList: Array<CorrelationData> = [];
-      corRelationList.push({id: CorReleationDataId.LANGUAGE, type: CorReleationDataType.PAGE_ID});
+      const corRelationList: Array<CorrelationData> = [{id: PageId.LANGUAGE, type: CorReleationDataType.FROM_PAGE}];
       this.telemetryGeneratorService.generateAuditTelemetry(
         this.isFromSettings ? Environment.SETTINGS : Environment.ONBOARDING,
         AuditState.AUDIT_UPDATED,

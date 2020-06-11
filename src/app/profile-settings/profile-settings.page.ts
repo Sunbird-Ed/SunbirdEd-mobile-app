@@ -15,7 +15,6 @@ import {
   InteractType,
   PageId,
   CorReleationDataType,
-  CorReleationDataId,
   AuditType
 } from '@app/services/telemetry-constants';
 import {
@@ -295,7 +294,7 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
         correlationList = this.populateCData(this.gradeControl.value, CorReleationDataType.CLASS);
         break;
     }
-    correlationList.push({id: CorReleationDataId.POPUP_CATEGORY, type: CorReleationDataType.CHILD_UI});
+    correlationList.push({id: PageId.POPUP_CATEGORY, type: CorReleationDataType.CHILD_UI});
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.SELECT_CANCEL, '',
       Environment.ONBOARDING,
@@ -639,11 +638,10 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
         this.telemetryGeneratorService.generateProfilePopulatedTelemetry(
           PageId.ONBOARDING_PROFILE_PREFERENCES, profile, 'manual', Environment.ONBOARDING
         );
-        const correlationlist: Array<CorrelationData> = [];
-        correlationlist.push({id: CorReleationDataId.MANUAL_PROFILE, type: CorReleationDataType.MANUAL_PROFILE});
-        correlationlist.concat(this.populateCData(this.boardControl.value, CorReleationDataType.BOARD));
-        correlationlist.concat(this.populateCData(this.mediumControl.value, CorReleationDataType.MEDIUM));
-        correlationlist.concat(this.populateCData(this.gradeControl.value, CorReleationDataType.CLASS));
+        let correlationlist: Array<CorrelationData> = [{id: PageId.MANUAL_PROFILE, type: CorReleationDataType.FROM_PAGE}];
+        correlationlist = correlationlist.concat(this.populateCData(this.boardControl.value, CorReleationDataType.BOARD));
+        correlationlist = correlationlist.concat(this.populateCData(this.mediumControl.value, CorReleationDataType.MEDIUM));
+        correlationlist = correlationlist.concat(this.populateCData(this.gradeControl.value, CorReleationDataType.CLASS));
         this.telemetryGeneratorService.generateAuditTelemetry(
           Environment.ONBOARDING,
           AuditState.AUDIT_UPDATED,
@@ -769,7 +767,7 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
         correlationList = this.populateCData(this.gradeControl.value, CorReleationDataType.CLASS);
         break;
     }
-    correlationList.push({id: CorReleationDataId.POPUP_CATEGORY, type: CorReleationDataType.CHILD_UI});
+    correlationList.push({id: PageId.POPUP_CATEGORY, type: CorReleationDataType.CHILD_UI});
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.SELECT_SUBMIT, '',
       Environment.ONBOARDING,
