@@ -1106,12 +1106,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
         Environment.HOME,
         PageId.LIBRARY
     );
-    this.telemetryGeneratorService.generateImpressionTelemetry(
-         ImpressionType.VIEW,
-         ImpressionSubtype.TUTORIAL_WALKTHROUGH,
-         PageId.LIBRARY,
-         Environment.HOME
-     );
     this.tutorialPopover = await this.popoverCtrl.create({
       component: SbTutorialPopupComponent,
       componentProps: {appLabel: this.appLabel},
@@ -1121,14 +1115,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       showBackdrop: true
     });
     this.tutorialPopover.present();
-    const {data} = await this.tutorialPopover.onDidDismiss();
-
-    this.telemetryGeneratorService.generateInteractTelemetry(
-        InteractType.TOUCH,
-        data.continueClicked ? InteractSubtype.TUTORIAL_CONTINUE_CLICKED : InteractSubtype.CLOSE_CLICKED,
-        Environment.HOME,
-        PageId.APP_TUTORIAL_POPUP
-    );
   }
 
   redirectToActivedownloads() {
