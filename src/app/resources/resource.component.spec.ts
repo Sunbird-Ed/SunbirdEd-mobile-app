@@ -1510,7 +1510,6 @@ describe('ResourcesComponent', () => {
         it('should call appTutorialScreen method', (done) => {
             // arrange
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
-            mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
             mockPopoverCtrl.create = jest.fn(() => (Promise.resolve({
                 present: jest.fn(() => Promise.resolve({})),
                 onDidDismiss: jest.fn(() => Promise.resolve({data: {continueClicked: true}}))
@@ -1524,20 +1523,8 @@ describe('ResourcesComponent', () => {
                 Environment.HOME,
                 PageId.LIBRARY
             );
-            expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenCalledWith(
-                ImpressionType.VIEW,
-                ImpressionSubtype.TUTORIAL_WALKTHROUGH,
-                PageId.LIBRARY,
-                Environment.HOME
-            );
             setTimeout(() => {
                 expect(mockPopoverCtrl.create).toHaveBeenCalled();
-                expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
-                    InteractType.TOUCH,
-                    'tutorial-continue-clicked',
-                    Environment.HOME,
-                    PageId.APP_TUTORIAL_POPUP
-                );
                 done();
             }, 0);
         });
@@ -1545,7 +1532,6 @@ describe('ResourcesComponent', () => {
         it('should generate close clicked telemetry', (done) => {
             // arrange
             mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
-            mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
             mockPopoverCtrl.create = jest.fn(() => (Promise.resolve({
                 present: jest.fn(() => Promise.resolve({})),
                 onDidDismiss: jest.fn(() => Promise.resolve({data: {continueClicked: false}}))
@@ -1561,12 +1547,6 @@ describe('ResourcesComponent', () => {
             );
             setTimeout(() => {
                 expect(mockPopoverCtrl.create).toHaveBeenCalled();
-                expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
-                    InteractType.TOUCH,
-                    InteractSubtype.CLOSE_CLICKED,
-                    Environment.HOME,
-                    PageId.APP_TUTORIAL_POPUP
-                );
                 done();
             }, 0);
         });

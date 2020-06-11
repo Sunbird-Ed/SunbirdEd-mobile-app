@@ -759,19 +759,6 @@ export class AppGlobalService implements OnDestroy {
                     leaveAnimation: animationShrinkOutTopRight
                 });
                 tutorialPopover.present();
-                this.telemetryGeneratorService.generateImpressionTelemetry(
-                    ImpressionType.VIEW,
-                    ImpressionSubtype.TUTORIAL_WALKTHROUGH,
-                    PageId.LIBRARY,
-                    Environment.ONBOARDING
-                );
-                const {data} = await tutorialPopover.onDidDismiss();
-                this.telemetryGeneratorService.generateInteractTelemetry(
-                    InteractType.TOUCH,
-                    data.continueClicked ? InteractSubtype.TUTORIAL_CONTINUE_CLICKED : InteractSubtype.CLOSE_CLICKED,
-                    Environment.HOME,
-                    PageId.APP_TUTORIAL_POPUP
-                );
                 this.preferences.putBoolean(PreferenceKey.COACH_MARK_SEEN, true).toPromise().then();
             }
         }
