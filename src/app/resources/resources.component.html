@@ -9,7 +9,7 @@
     </sb-library-filters>
   </div>
   <div class="scrollable-container">
-    <ion-refresher #libraryRefresher slot="fixed" pullFactor="0.5" pullMin="100" pullMax="200" (ionRefresh)="swipeDownToRefresh($event)"></ion-refresher>
+    <ion-refresher #libraryRefresher slot="fixed" (ionRefresh)="swipeDownToRefresh($event)"></ion-refresher>
 
     <ion-list class="m-n" *ngIf="showLoader || refresh" style="padding-top: 100px;">
       <app-skeleton-item height="16px" width="40%" style="padding: 16px;"></app-skeleton-item>
