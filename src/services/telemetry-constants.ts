@@ -139,9 +139,10 @@ export enum PageId {
     CHAPTER_DETAILS = 'chapter-details',
     TEACHER_SELF_DECLARATION = 'teacher-self-declaration',
     COURSE_LIST = 'course-list',
-    MANUAL_PROFILE = 'manual profile',
+    MANUAL_PROFILE = 'manual-profile',
     SCAN = 'scan',
-    APP_TUTORIAL_POPUP = 'app-tutorial-popup'
+    APP_TUTORIAL_POPUP = 'app-tutorial-popup',
+    COURSE_SEARCH_FILTER = 'course-search-filter'
 }
 export enum LogType {
     NOTIFICATION = 'notification'
@@ -527,7 +528,8 @@ export enum CorReleationDataType {
     CHILD_UI = 'ChildUi',
     QR = 'QR',
     COUNT_BOOK = 'CountBook',
-    COUNT_CONTENT = 'CountContent'
+    COUNT_CONTENT = 'CountContent',
+    FROM_PAGE = 'FromPage'
 }
 
 export enum AuditProps {
@@ -535,8 +537,9 @@ export enum AuditProps {
     PROFILE_TYPE = 'profile_type'
 }
 
-export enum CorReleationDataId {
-    POPUP_CATEGORY = 'popup-category'
+export enum AuditType {
+    SET_LANGUAGE = 'set-language',
+    SELECT_USERTYPE = 'set-usertype',
+    SET_PROFILE = 'set-profile'
 }
-
 
