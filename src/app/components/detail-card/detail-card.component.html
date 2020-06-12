@@ -27,8 +27,8 @@
     <div class="left">
     </div>
     <div class="right">
-      <div *ngIf="contentDetail?.contentData?.me_totalRatingsCount" (click)="rateContent()" class="sb-rating-view">
-        <span class="sb-rating-value">{{ contentDetail?.contentData?.me_totalRatingsCount }}</span>
+      <div *ngIf="contentDetail?.contentData?.me_averageRating" (click)="rateContent()" class="sb-rating-view">
+        <span class="sb-rating-value">{{ contentDetail?.contentData?.me_averageRating }}</span>
         <span class="sb-rating-star">
           <ion-icon ios="ios-star" md="md-star"></ion-icon>
         </span>
