@@ -438,17 +438,22 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
     const telemetryObject = new TelemetryObject(identifier ? identifier : dialCode, identifier ? 'Content' : 'qr', undefined);
     const utmUrl = url.slice(url.indexOf('?') + 1);
     const params: { [param: string]: string } = qs.parse(utmUrl);
-    const utmcData: CorrelationData[] = [{
+    const utmcData: CorrelationData[] = [];
+
+    if (utmUrl !== url) {
+      ContentUtil.genrateUTMCData(params).forEach((element) => {
+        utmcData.push(element);
+      });
+    }
+
+    const corRelationData: CorrelationData[] = [{
       id: CorReleationDataType.DEEPLINK,
       type: CorReleationDataType.ACCESS_TYPE
     }];
-
-    ContentUtil.genrateUTMCData(params).forEach((element) => {
-      utmcData.push(element);
-    });
-
-    this.telemetryService.updateCampaignParameters(utmcData);
-    this.telemetryGeneratorService.generateUtmInfoTelemetry(params, PageId.HOME, telemetryObject);
+    if (utmcData && utmcData.length) {
+      this.telemetryService.updateCampaignParameters(utmcData);
+      this.telemetryGeneratorService.generateUtmInfoTelemetry(params, PageId.HOME, telemetryObject, corRelationData);
+    }
 
     return utmcData;
   }

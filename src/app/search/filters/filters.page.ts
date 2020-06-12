@@ -24,6 +24,7 @@ export class FiltersPage {
   facetsFilter: Array<any> = [];
 
   unregisterBackButton: Subscription;
+  source: string;
 
   constructor(
     // private navParams: NavParams,
@@ -38,6 +39,7 @@ export class FiltersPage {
     private telemetryGeneratorService: TelemetryGeneratorService
   ) {
     this.filterCriteria = this.router.getCurrentNavigation().extras.state.filterCriteria;
+    this.source = this.router.getCurrentNavigation().extras.state.source;
     this.init();
     this.handleBackButton();
     console.log('filer ciriteria', this.filterCriteria);
@@ -48,7 +50,8 @@ export class FiltersPage {
       component: FilteroptionComponent,
       componentProps:
       {
-        facet: facet
+        facet,
+        source: this.source
       },
       cssClass: 'option-box'
     });
@@ -57,7 +60,7 @@ export class FiltersPage {
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
       InteractSubtype.FILTER_CLICKED,
       Environment.HOME,
-      PageId.LIBRARY_SEARCH_FILTER,
+      this.source.match('courses') ? PageId.COURSE_SEARCH_FILTER : PageId.LIBRARY_SEARCH_FILTER,
       undefined,
       values);
     await popUp.present();
@@ -73,7 +76,7 @@ export class FiltersPage {
         InteractType.TOUCH,
         InteractSubtype.APPLY_FILTER_CLICKED,
         Environment.HOME,
-        PageId.LIBRARY_SEARCH_FILTER,
+        this.source.match('courses') ? PageId.COURSE_SEARCH_FILTER : PageId.LIBRARY_SEARCH_FILTER,
         undefined,
         values);
     this.events.publish('search.applyFilter', this.filterCriteria);
