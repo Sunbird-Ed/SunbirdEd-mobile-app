@@ -631,7 +631,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
         });
       })
       .catch((error: any) => {
-        if (error instanceof NetworkError) {
+        if (NetworkError.isInstance(error)) {
           this.commonUtilService.showToast('ERROR_NO_INTERNET_MESSAGE');
         } else {
           this.commonUtilService.showToast('ERROR_FETCHING_DATA');
@@ -1095,7 +1095,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
       })
       .catch(async (error: any) => {
         // await loader.dismiss();
-        if (error instanceof NetworkError) {
+        if (NetworkError.isInstance(error)) {
           this.showOfflineSection = true;
         } else {
           this.showOfflineSection = false;
