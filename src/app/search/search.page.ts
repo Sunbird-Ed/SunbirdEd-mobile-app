@@ -604,7 +604,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
                     this.setCurrentProfile(0, data);
                   }
                 }).catch((err) => {
-                  if (err instanceof NetworkError) {
+                  if (NetworkError.isInstance(err)) {
                     this.commonUtilService.showToast('ERROR_OFFLINE_MODE');
                   }
                 });
@@ -614,7 +614,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
           });
         })
         .catch((err) => {
-          if (err instanceof NetworkError) {
+          if (NetworkError.isInstance(err)) {
             this.commonUtilService.showToast('ERROR_OFFLINE_MODE');
           }
         });
@@ -1188,7 +1188,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
           });
         }
       }).catch((err) => {
-        if (err instanceof NetworkError) {
+        if (NetworkError.isInstance(err)) {
           this.commonUtilService.showToast('ERROR_OFFLINE_MODE');
         }
       });
@@ -1240,7 +1240,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
         });
       })
       .catch((err) => {
-        if (err instanceof NetworkError) {
+        if (NetworkError.isInstance(err)) {
           this.commonUtilService.showToast('ERROR_OFFLINE_MODE');
           this.showLoading = false;
           this.isDownloadStarted = false;

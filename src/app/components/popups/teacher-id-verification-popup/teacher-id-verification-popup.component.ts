@@ -151,7 +151,7 @@ export class TeacherIdVerificationComponent implements OnInit {
         }
       })
       .catch((error) => {
-        if (error instanceof HttpClientError) {
+        if (HttpClientError.isInstance(error)) {
           if (error.response.responseCode === 400) {
             this.generateTelemetryForFailedVerification();
             this.teacherIdFlag = TeacherIdPopupFlags.FAILED_STATE_ID;
