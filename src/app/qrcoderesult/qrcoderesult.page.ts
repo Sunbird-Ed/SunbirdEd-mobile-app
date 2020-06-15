@@ -661,7 +661,7 @@ export class QrcoderesultPage implements OnDestroy {
         this.zone.run(() => {
           this.isDownloadStarted = false;
           this.showLoading = false;
-          if (error instanceof NetworkError) {
+          if (NetworkError.isInstance(error)) {
             this.commonUtilService.showToast('NEED_INTERNET_TO_CHANGE');
           } else {
             this.commonUtilService.showToast('UNABLE_TO_FETCH_CONTENT');

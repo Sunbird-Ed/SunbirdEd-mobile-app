@@ -72,7 +72,8 @@ export class EditContactVerifyPopupComponent implements OnInit {
           this.popOverCtrl.dismiss({ OTPSuccess: true, value: this.key });
         })
         .catch(error => {
-          if (error instanceof HttpClientError && error.response.responseCode === 400) {
+          if (HttpClientError.isInstance(error)
+           && error.response.responseCode === 400) {
             if (typeof error.response.body  === 'object') {
               if (error.response.body.params.err === 'OTP_VERIFICATION_FAILED' &&
               error.response.body.result.remainingAttempt > 0) {
