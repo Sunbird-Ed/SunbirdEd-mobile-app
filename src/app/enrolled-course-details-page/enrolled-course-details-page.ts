@@ -48,7 +48,8 @@ import {
   SortOrder,
   AuthService,
   DownloadTracking,
-  DownloadService
+  DownloadService,
+  AuditState
 } from 'sunbird-sdk';
 import { Subscription, Observable } from 'rxjs';
 import {
@@ -1596,6 +1597,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
   }
 
   goBack() {
+    this.appGlobalService.generateCourseCompleteTelemetry = false;
     this.events.publish('event:update_course_data');
     if (this.isQrCodeLinkToContent) {
       window.history.go(-2);
@@ -1734,7 +1736,36 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
     if (courseLevelViewedContents.length) {
       const leafNodeIds = this.getLeafNodeIdsWithoutDuplicates([this.courseHeirarchy]);
       this.course.progress = Math.round((courseLevelViewedContents.length / leafNodeIds.length) * 100);
-      console.log('localcourseProgressPercentage', this.course.progress);
+    }
+    if (!this.course.progress || this.course.progress !== 100) {
+      this.appGlobalService.generateCourseCompleteTelemetry = true;
+    }
+    if (this.appGlobalService.generateCourseCompleteTelemetry && this.course.progress === 100) {
+      this.appGlobalService.generateCourseCompleteTelemetry = false;
+      const cdata = [
+        {
+            type: 'CourseId',
+            id: this.identifier
+        },
+        {
+            type: 'BatchId',
+            id: this.batchDetails.id || ''
+        },
+        {
+            type: 'UserId',
+            id: this.userId
+        },
+      ];
+      this.telemetryGeneratorService.generateAuditTelemetry(
+        Environment.COURSE,
+        AuditState.AUDIT_UPDATED,
+        ['progress'],
+        undefined,
+        this.telemetryObject.id,
+        this.telemetryObject.type,
+        this.telemetryObject.version,
+        cdata
+      );
     }
   }
 
@@ -1930,7 +1961,6 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
           isAlreadyEnrolled: this.isAlreadyEnrolled,
           courseCardData: this.courseCardData,
           batchExp: this.batchExp,
-          telemetryObject: this.telemetryObject,
           isChapterCompleted: this.courseCompletionData[event.item.identifier],
           contentStatusData: this.contentStatusData,
           courseContent: this.content
