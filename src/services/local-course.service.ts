@@ -71,10 +71,10 @@ export class LocalCourseService {
       }),
       catchError(err => {
         const requestValue = this.prepareRequestValue(enrollCourseRequest);
-        if (err instanceof NetworkError) {
+        if (NetworkError.isInstance(err)) {
           requestValue.error = err.code;
           this.commonUtilService.showToast(this.commonUtilService.translateMessage('ERROR_NO_INTERNET_MESSAGE'));
-        } else if (err instanceof HttpClientError) {
+        } else if (HttpClientError.isInstance(err)) {
           if (err.response.body && err.response.body.params && err.response.body.params.status === 'USER_ALREADY_ENROLLED_COURSE') {
             requestValue.error = err.response.body.params.status;
             this.commonUtilService.showToast(this.commonUtilService.translateMessage('ALREADY_ENROLLED_COURSE'));
@@ -177,10 +177,10 @@ export class LocalCourseService {
       }, (err) => {
         this.zone.run(async () => {
           await this.preferences.putString(PreferenceKey.CDATA_KEY, '').toPromise();
-          if (err instanceof NetworkError) {
+          if (NetworkError.isInstance(err)) {
             this.commonUtilService.showToast(this.commonUtilService.translateMessage('ERROR_NO_INTERNET_MESSAGE'));
             this.getEnrolledCourses();
-          } else if (err instanceof HttpClientError) {
+          } else if (HttpClientError.isInstance(err)) {
             if (err.response.body && err.response.body.params && err.response.body.params.status === 'USER_ALREADY_ENROLLED_COURSE') {
               this.events.publish(EventTopics.ENROL_COURSE_SUCCESS, {
                 batchId: batch.id,

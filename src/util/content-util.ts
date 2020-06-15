@@ -133,7 +133,6 @@ export class ContentUtil {
           });
         }
       } catch (e) {
-        console.error(e);
       }
       if ((key === 'utm_campaign') || (key === 'channel')) {
         cData.push({ id: params[key], type: CorReleationDataType.SOURCE });
