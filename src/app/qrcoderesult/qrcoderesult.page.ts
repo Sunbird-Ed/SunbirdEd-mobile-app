@@ -36,10 +36,11 @@ import {
   PlayerService,
   Profile,
   ProfileService,
-  TelemetryObject
+  TelemetryObject,
+  ObjectType
 } from 'sunbird-sdk';
 import { Subscription } from 'rxjs';
-import { Environment, ImpressionType, InteractSubtype, InteractType, PageId } from '../../services/telemetry-constants';
+import { Environment, ImpressionType, InteractSubtype, InteractType, PageId, CorReleationDataType, Mode } from '../../services/telemetry-constants';
 import { CanvasPlayerService } from '../../services/canvas-player.service';
 import { File } from '@ionic-native/file/ngx';
 import { AppHeaderService } from '../../services/app-header.service';
@@ -191,6 +192,13 @@ export class QrcoderesultPage implements OnDestroy {
     this.isProfileUpdated = this.navData.isProfileUpdated;
     this.searchIdentifier = this.content.identifier;
     this.isQrCodeLinkToContent = this.navData.isQrCodeLinkToContent;
+    this.telemetryGeneratorService.generateImpressionTelemetry(
+      ImpressionType.PAGE_REQUEST, '',
+      PageId.QR_CONTENT_RESULT,
+      !this.appGlobalService.isOnBoardingCompleted ? Environment.ONBOARDING : Environment.HOME,
+      '', '', '', undefined,
+      [this.corRelationList[0]]
+    );
 
     if (this.parentContent) {
       this.isParentContentAvailable = true;
@@ -263,6 +271,18 @@ export class QrcoderesultPage implements OnDestroy {
     this.telemetryGeneratorService.generateImpressionTelemetry(ImpressionType.VIEW, '',
       PageId.DIAL_CODE_SCAN_RESULT,
       !this.appGlobalService.isProfileSettingsCompleted ? Environment.ONBOARDING : this.appGlobalService.getPageIdForTelemetry());
+
+    const corRelationData: Array<CorrelationData> = [];
+    corRelationData.push(this.corRelationList[0]);
+    corRelationData.push({id: this.content.children.length.toString(), type: CorReleationDataType.COUNT_CONTENT});
+    this.telemetryGeneratorService.generatePageLoadedTelemetry(
+      PageId.QR_CONTENT_RESULT,
+      !this.appGlobalService.isOnBoardingCompleted ? Environment.ONBOARDING : Environment.HOME,
+      this.content.identifier,
+      ObjectType.CONTENT,
+      undefined, undefined,
+      corRelationData
+    );
 
     if (!AppGlobalService.isPlayerLaunched) {
       this.calculateAvailableUserCount();
@@ -429,6 +449,7 @@ export class QrcoderesultPage implements OnDestroy {
     const objectType = this.telemetryGeneratorService.isCollection(content.mimeType) ? content.contentType : ContentType.RESOURCE;
     telemetryObject = new TelemetryObject(identifier, objectType, undefined);
     this.openPlayer(content, request);
+    this.interactEventForPlayAndDownload(content, true);
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,
       content.isAvailableLocally ? InteractSubtype.PLAY_FROM_DEVICE : InteractSubtype.PLAY_ONLINE,
@@ -459,6 +480,7 @@ export class QrcoderesultPage implements OnDestroy {
   }
 
   navigateToDetailsPage(content, paths?, contentIdentifier?) {
+    this.interactEventForPlayAndDownload(content, false);
     if (content && content.contentData && content.contentData.contentType === ContentType.COURSE) {
       // this.navCtrl.push(EnrolledCourseDetailsPage, {
       //   content: content,
@@ -889,5 +911,25 @@ export class QrcoderesultPage implements OnDestroy {
         this.getFirstChildOfChapter(child);
       });
     }
+  }
+
+  private interactEventForPlayAndDownload(content, play) {
+    const telemetryObject = new TelemetryObject(content.identifier, ObjectType.CONTENT, '');
+    const corRelationData: Array<CorrelationData> = [];
+    corRelationData.push(this.corRelationList[0]);
+    corRelationData.push({id: Mode.PLAY, type: CorReleationDataType.MODE});
+    corRelationData.push({id: content.contentType, type: CorReleationDataType.TYPE});
+    corRelationData.push({id: this.commonUtilService.networkInfo.isNetworkAvailable ?
+      Mode.ONLINE : Mode.OFFLINE, type: InteractSubtype.NETWORK_STATUS});
+    this.telemetryGeneratorService.generateInteractTelemetry(
+      play ? InteractType.PLAY : InteractType.DOWNLOAD,
+      undefined,
+      !this.appGlobalService.isOnBoardingCompleted ? Environment.ONBOARDING : Environment.HOME,
+      PageId.QR_CONTENT_RESULT,
+      telemetryObject,
+      undefined,
+      undefined,
+      corRelationData
+    );
   }
 }

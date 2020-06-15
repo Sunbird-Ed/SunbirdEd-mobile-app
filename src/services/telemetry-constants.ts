@@ -26,7 +26,9 @@ export enum ObjectType {
     QR = 'Qr'
 }
 export enum Mode {
-    PLAY = 'play'
+    PLAY = 'play',
+    ONLINE = 'online',
+    OFFLINE = 'offline'
 }
 export enum PageId {
     SPLASH_SCREEN = 'splash',
@@ -142,7 +144,9 @@ export enum PageId {
     MANUAL_PROFILE = 'manual-profile',
     SCAN = 'scan',
     APP_TUTORIAL_POPUP = 'app-tutorial-popup',
-    COURSE_SEARCH_FILTER = 'course-search-filter'
+    COURSE_SEARCH_FILTER = 'course-search-filter',
+    QR_BOOK_RESULT = 'qr-book-result',
+    QR_CONTENT_RESULT = 'qr-content-result'
 }
 export enum LogType {
     NOTIFICATION = 'notification'
@@ -224,7 +228,9 @@ export enum InteractType {
     CREATE_FAILURE = 'create-failure',
     SWITCH_SUCCESS = 'switch-success',
     SWITCH_FAILURE = 'switch-failure',
-    QR_CAPTURED = 'qr-captured'
+    QR_CAPTURED = 'qr-captured',
+    PLAY = 'play',
+    DOWNLOAD = 'download'
 }
 
 
@@ -529,7 +535,9 @@ export enum CorReleationDataType {
     QR = 'QR',
     COUNT_BOOK = 'CountBook',
     COUNT_CONTENT = 'CountContent',
-    FROM_PAGE = 'FromPage'
+    FROM_PAGE = 'FromPage',
+    MODE = 'Mode',
+    TYPE = 'Type'
 }
 
 export enum AuditProps {
