@@ -808,14 +808,7 @@ export class CollectionDetailEtbPage implements OnInit {
           }
         });
       } else {
-        this.router.navigate([RouterLinks.CONTENT_DETAILS], {
-          state: {
-            content,
-            depth,
-            contentState: this.stateData,
-            corRelation: this.corRelationList
-          }
-        });
+        this.navigateToContentPage(content, depth);
       }
     });
   }
@@ -1385,23 +1378,9 @@ export class CollectionDetailEtbPage implements OnInit {
       this.generateInteractTelemetry(isStreaming, contentInfo.telemetryObject, contentInfo.rollUp, contentInfo.correlationList);
       this.contentPlayerHandler.launchContentPlayer(this.playingContent, isStreaming, shouldDownloadAndPlay, contentInfo, false, true);
     } else if (!this.commonUtilService.networkInfo.isNetworkAvailable && !this.playingContent.isAvailableLocally) {
-      const params: NavigationExtras = {
-        state: {
-          isChildContent: true,
-          content: this.playingContent,
-          corRelation: this.corRelationList,
-        }
-      };
-      this.router.navigate([RouterLinks.CONTENT_DETAILS], params);
+      this.navigateToContentPage(this.playingContent, 1);
     } else {
-      const params: NavigationExtras = {
-        state: {
-          isChildContent: true,
-          content: this.playingContent,
-          corRelation: this.corRelationList,
-        }
-      };
-      this.router.navigate([RouterLinks.CONTENT_DETAILS], params);
+      this.navigateToContentPage(this.playingContent, 1);
     }
   }
 
