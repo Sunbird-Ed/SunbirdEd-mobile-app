@@ -79,6 +79,8 @@ export class AppGlobalService implements OnDestroy {
     private _signinOnboardingLoader: any;
     private _skipCoachScreenForDeeplink = false;
     private _preSignInData: any;
+    private _generateCourseCompleteTelemetry = false;
+    private _generateCourseUnitCompleteTelemetry = false;
 
     constructor(
         @Inject('PROFILE_SERVICE') private profile: ProfileService,
@@ -728,6 +730,20 @@ export class AppGlobalService implements OnDestroy {
     }
     set preSignInData(value) {
         this._preSignInData = value;
+    }
+
+    get generateCourseCompleteTelemetry() {
+        return this._generateCourseCompleteTelemetry;
+    }
+    set generateCourseCompleteTelemetry(value) {
+        this._generateCourseCompleteTelemetry = value;
+    }
+
+    get generateCourseUnitCompleteTelemetry() {
+        return this._generateCourseUnitCompleteTelemetry;
+    }
+    set generateCourseUnitCompleteTelemetry(value) {
+        this._generateCourseUnitCompleteTelemetry = value;
     }
 
     // This method is used to reset if any quiz content data is previously saved before Joining a Training

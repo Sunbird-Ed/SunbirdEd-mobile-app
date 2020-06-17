@@ -4,7 +4,9 @@
     border-radius: 2px;
     box-shadow: 0 3px 5px 4px rgba(0,0,0,0.05);
     position: relative;
-
+    .cd-title-container{
+        margin-bottom: 8px;
+    }
     .cd-header-title {
         color: #3A3A3A;
         font-size: 16px;
@@ -60,7 +62,7 @@
 }
 
 .cd-container {
-    padding: 16px;
+    padding: 0px 16px 16px 16px;
 
     .cd-container-title {
         color: #3A3A3A;

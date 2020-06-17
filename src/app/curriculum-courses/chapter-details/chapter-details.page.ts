@@ -17,7 +17,7 @@ import {
   CourseEnrollmentType, SortOrder, DownloadService, DownloadTracking, DownloadProgress,
   EventsBusEvent, DownloadEventType, EventsBusService, ContentImportRequest, ContentService,
   ContentImportResponse, ContentImportStatus, ContentEventType, ContentImportCompleted,
-  ContentUpdate, ContentImport, Rollup
+  ContentUpdate, ContentImport, Rollup, AuditState
 } from 'sunbird-sdk';
 import { EnrollCourse } from '@app/app/enrolled-course-details-page/course.interface';
 import {DatePipe, Location} from '@angular/common';
@@ -123,15 +123,12 @@ export class ChapterDetailsPage implements OnInit, OnDestroy {
     this.isAlreadyEnrolled = this.extrasData.isAlreadyEnrolled;
     // this.courseCardData = this.extrasData.courseCardData;
     this.batchExp = this.extrasData.batchExp;
-    this.telemetryObject = this.extrasData.telemetryObject;
     this.isChapterCompleted = this.extrasData.isChapterCompleted;
     this.contentStatusData = this.extrasData.contentStatusData;
     this.isFromDeeplink = this.extrasData.isFromDeeplink;
     this.courseContentData = this.courseContent;
     this.identifier = this.chapter.identifier;
-    if (!this.telemetryObject) {
-      this.telemetryObject = ContentUtil.getTelemetryObject(this.courseContent);
-    }
+    this.telemetryObject = ContentUtil.getTelemetryObject(this.chapter);
   }
 
   ngOnInit() {
@@ -163,6 +160,7 @@ export class ChapterDetailsPage implements OnInit, OnDestroy {
     });
     this.backButtonFunc = this.platform.backButton.subscribeWithPriority(10, () => {
       this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.CHAPTER_DETAILS, Environment.HOME, false);
+      this.appGlobalService.generateCourseUnitCompleteTelemetry = false;
       this.location.back();
     });
     this.getContentState(true);
@@ -202,6 +200,7 @@ export class ChapterDetailsPage implements OnInit, OnDestroy {
     if ($event.name === 'back') {
       this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.CHAPTER_DETAILS, Environment.HOME, true);
       this.location.back();
+      this.appGlobalService.generateCourseUnitCompleteTelemetry = false;
     }
   }
 
@@ -337,6 +336,40 @@ export class ChapterDetailsPage implements OnInit, OnDestroy {
       if (this.viewedContents.length) {
         this.chapterProgress = Math.round((this.viewedContents.length / this.childContents.length) * 100);
         console.log('chapterProgress', this.chapterProgress);
+      }
+      if  (!this.chapterProgress || this.chapterProgress !== 100) {
+        this.appGlobalService.generateCourseUnitCompleteTelemetry = true;
+      }
+      if (this.appGlobalService.generateCourseUnitCompleteTelemetry && this.chapterProgress === 100) {
+        this.appGlobalService.generateCourseUnitCompleteTelemetry = false;
+        const cdata = [
+          {
+              type: 'CourseId',
+              id: this.courseContentData.identifier
+          },
+          {
+              type: 'BatchId',
+              id: this.courseContent.batchId || ''
+          },
+          {
+              type: 'UserId',
+              id: this.userId
+          },
+          {
+            type: 'UnitId',
+            id: this.identifier
+        },
+        ];
+        this.telemetryGeneratorService.generateAuditTelemetry(
+          Environment.COURSE,
+          AuditState.AUDIT_UPDATED,
+          ['progress'],
+          undefined,
+          this.telemetryObject.id,
+          this.telemetryObject.type,
+          this.telemetryObject.version,
+          cdata
+        );
       }
     }
   }
