@@ -58,7 +58,7 @@ import { SbProgressLoader, Context as SbProgressLoaderContext } from '../sb-prog
 
 @Injectable()
 export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenActionHandlerDelegate, ExternalChannelOverrideListener {
-  private savedUrl: any;
+  private savedPayloadUrl: any;
 
   private _isDelegateReady = false;
   private isOnboardingCompleted = false;
@@ -71,9 +71,9 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
   // should delay the deeplinks until tabs is loaded- gets triggered from Resource components
   set isDelegateReady(val: boolean) {
     this._isDelegateReady = val;
-    if (val && this.savedUrl) {
-      this.checkDeeplinkMatch(this.savedUrl);
-      this.savedUrl = null;
+    if (val && this.savedPayloadUrl) {
+      this.handleDeeplink(this.savedPayloadUrl);
+      this.savedPayloadUrl = null;
     }
   }
 
@@ -107,71 +107,134 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
 
   onAction(payload: any): Observable<undefined> {
     if (payload && payload.url) {
-      this.checkDeeplinkMatch(payload.url);
+      this.handleDeeplink(payload.url);
     }
     return of(undefined);
   }
 
-  private async checkDeeplinkMatch(payloadUrl: string) {
+  // This method is called only when the user redirects directly from the Playstore
+  checkUtmContent(utmVal: string): void {
+    const utmRegex = new RegExp(String.raw`(?:utm_content=(?<utm_content>[^&]*))`);
+    const res = utmRegex.exec(utmVal);
+    if (res && res.groups && res.groups.utm_content && res.groups.utm_content.length) {
+      const payload = { url: res.groups.utm_content };
+      this.onAction(payload);
+    }
+  }
+
+  private async handleDeeplink(payloadUrl: string) {
     const dialCode = await this.qrScannerResultHandler.parseDialCode(payloadUrl);
     const urlRegex = new RegExp(await this.formFrameWorkUtilService.getDeeplinkRegexFormApi());
     const urlMatch = payloadUrl.match(urlRegex);
 
-    await this.sbProgressLoader.show(this.generateProgressLoaderContext(payloadUrl, urlMatch, dialCode));
-
-    this.generateUtmTelemetryEvent(urlMatch, dialCode, payloadUrl);
-
-    // checks if the channel slug is present, else the normal deeplink flow executes
-    if (await this.checkCourseChannelSlug(payloadUrl, urlMatch)) {
-      return;
+    let identifier;
+    if (urlMatch && urlMatch.groups) {
+      identifier = urlMatch.groups.quizId || urlMatch.groups.contentId || urlMatch.groups.courseId;
     }
 
-    if ((urlMatch && urlMatch.groups) || dialCode) {
-      this.checkIfOnboardingComplete(urlMatch, dialCode, payloadUrl);
+    await this.sbProgressLoader.show(this.generateProgressLoaderContext(payloadUrl, identifier, dialCode));
+
+    this.generateUtmTelemetryEvent(identifier, dialCode, payloadUrl);
+
+    // Read version code from deeplink.
+    const requiredVersionCode = this.getQueryParamValue(payloadUrl, 'vCode');
+    // Check if deelink is compatible with the current app.
+    if (requiredVersionCode && !(await this.isAppCompatible(requiredVersionCode))) {
+      this.closeProgressLoader();
+      this.upgradeAppPopover(requiredVersionCode);
     } else {
+      // checks if the channel slug is present, else the normal deeplink flow executes
+      if (await this.checkCourseChannelSlug(payloadUrl, identifier)) {
+        return;
+      }
+
+      if (identifier || dialCode) {
+        this.checkIfOnboardingComplete(identifier, dialCode, payloadUrl);
+      } else {
+        this.closeProgressLoader();
+      }
+    }
+  }
+
+  private generateProgressLoaderContext(url, identifier, dialCode): SbProgressLoaderContext {
+    if (this.progressLoaderId) {
       this.closeProgressLoader();
     }
+    this.progressLoaderId = dialCode || identifier || ProgressPopupContext.DEEPLINK;
+    const deeplinkUrl: URL = new URL(url);
+    const channelSlug = deeplinkUrl.searchParams.get('channel');
+    if (channelSlug) {
+      return {
+        id: this.progressLoaderId,
+        ignoreTelemetry: {
+          when: {
+            interact: IgnoreTelemetryPatters.IGNORE_DEEPLINK_PAGE_ID_EVENTS,
+            impression: IgnoreTelemetryPatters.IGNORE_CHANNEL_IMPRESSION_EVENTS
+          }
+        }
+      };
+    } else if (dialCode) {
+      return {
+        id: this.progressLoaderId,
+        ignoreTelemetry: {
+          when: {
+            interact: IgnoreTelemetryPatters.IGNORE_DIAL_CODE_PAGE_ID_EVENTS,
+            impression: IgnoreTelemetryPatters.IGNORE_DEEPLINK_PAGE_ID_EVENTS
+          }
+        }
+      };
+    } else if (identifier) {
+      return {
+        id: this.progressLoaderId,
+        ignoreTelemetry: {
+          when: {
+            interact: IgnoreTelemetryPatters.IGNORE_DEEPLINK_PAGE_ID_EVENTS,
+            impression: IgnoreTelemetryPatters.IGNORE_DEEPLINK_PAGE_ID_EVENTS
+          }
+        }
+      };
+    }
+    return {
+      id: this.progressLoaderId
+    };
+  }
+
+  private closeProgressLoader() {
+    this.sbProgressLoader.hide({
+      id: this.progressLoaderId
+    });
+    this.progressLoaderId = undefined;
+  }
+
+  private generateUtmTelemetryEvent(identifier, dialCode, url) {
+    // TODO: Here identifier and dialcode both could be undefined.
+    // TODO: What needs to pass if deeplink in not having neither identifier nor dialcode.
+    const telemetryObject = new TelemetryObject(identifier ? identifier : dialCode, identifier ? 'Content' : 'qr', undefined);
+    const utmUrl = url.slice(url.indexOf('?') + 1);
+    const params: { [param: string]: string } = qs.parse(utmUrl);
+    const utmcData: CorrelationData[] = [];
+
+    if (utmUrl !== url) {
+      ContentUtil.genrateUTMCData(params).forEach((element) => {
+        utmcData.push(element);
+      });
+    }
+
+    const corRelationData: CorrelationData[] = [{
+      id: CorReleationDataType.DEEPLINK,
+      type: CorReleationDataType.ACCESS_TYPE
+    }];
+    if (utmcData && utmcData.length) {
+      this.telemetryService.updateCampaignParameters(utmcData);
+      this.telemetryGeneratorService.generateUtmInfoTelemetry(params, PageId.HOME, telemetryObject, corRelationData);
+    }
+
+    return utmcData;
   }
 
   private getQueryParamValue(payloadUrl: string, queryParam: string): string {
     const url = new URL(payloadUrl);
     return url.searchParams.get(queryParam);
-  }
-
-  private async checkIfOnboardingComplete(urlMatch, dialCode, payloadUrl) {
-    if (!this.isOnboardingCompleted) {
-      this.isOnboardingCompleted =
-        (await this.preferences.getString(PreferenceKey.IS_ONBOARDING_COMPLETED).toPromise() === 'true') ? true : false;
-    }
-    const session = await this.authService.getSession().toPromise();
-
-    // Read version code from deeplink.
-    const requiredVersionCode = this.getQueryParamValue(payloadUrl, 'vCode');
-    let content = null;
-
-    // checking only for quizId or content Id, since only contents can be considered as quiz.
-    if (urlMatch && urlMatch.groups && (urlMatch.groups.quizId || urlMatch.groups.contentId || urlMatch.groups.courseId)) {
-      content = await this.getContentData(urlMatch.groups.quizId || urlMatch.groups.contentId || urlMatch.groups.courseId);
-      if (!content && !dialCode) {
-        this.closeProgressLoader();
-        return;
-      }
-    }
-    if (requiredVersionCode && !(await this.isAppCompatible(requiredVersionCode))) {
-      this.closeProgressLoader();
-      this.upgradeAppPopover(requiredVersionCode);
-    } else if (this.isOnboardingCompleted || session) {
-      this.handleNavigation(urlMatch, content, dialCode, payloadUrl);
-    } else if (content && content.contentType === ContentType.COURSE.toLowerCase()) {
-      const params = {
-        userType: ProfileType.OTHER
-      };
-      this.setDefaultOnboardingData(params);
-
-      this.navigateToCourseDetail(content.identifier, content, payloadUrl, true);
-    } else {
-      this.checkForDeeplinkWithoutOnboarding(content, payloadUrl);
-    }
   }
 
   private async isAppCompatible(requiredVersionCode) {
@@ -204,8 +267,40 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
     await this.appGlobalServices.openPopover(result);
   }
 
-  private async checkForDeeplinkWithoutOnboarding(content: any, inputUrl: string): Promise<void> {
-    this.savedUrl = null;
+  private async checkIfOnboardingComplete(identifier, dialCode, payloadUrl) {
+    if (!this.isOnboardingCompleted) {
+      this.isOnboardingCompleted =
+        (await this.preferences.getString(PreferenceKey.IS_ONBOARDING_COMPLETED).toPromise() === 'true') ? true : false;
+    }
+    const session = await this.authService.getSession().toPromise();
+
+    let content = null;
+
+    // checking only for quizId or content Id, since only contents can be considered as quiz.
+    if (identifier) {
+      content = await this.getContentData(identifier);
+      if (!content && !dialCode) {
+        this.closeProgressLoader();
+        return;
+      }
+    }
+
+    if (this.isOnboardingCompleted || session) {
+      this.handleNavigation(identifier, content, dialCode, payloadUrl);
+    } else if (content && content.contentType === ContentType.COURSE.toLowerCase()) {
+      const params = {
+        userType: ProfileType.OTHER
+      };
+      this.setDefaultOnboardingData(params);
+
+      this.navigateToCourseDetail(content.identifier, content, payloadUrl, true);
+    } else {
+      this.checkForDeeplinkWithoutOnboarding(content, payloadUrl);
+    }
+  }
+
+  private async checkForDeeplinkWithoutOnboarding(content: any, payloadUrl: string): Promise<void> {
+    this.savedPayloadUrl = null;
     if (this.loginPopup) {
       await this.loginPopup.dismiss();
     }
@@ -214,11 +309,11 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
       content.contentType !== ContentType.COURSE.toLowerCase() && content.mimeType !== MimeType.COLLECTION) {
       this.showLoginWithoutOnboardingPopup(content.identifier || content.contentId);
     } else {
-      this.savedUrl = inputUrl;
+      this.savedPayloadUrl = payloadUrl;
     }
   }
 
-  private handleNavigation(urlMatch: any, content?: Content | null, dialCode?, payloadUrl?): void {
+  private handleNavigation(identifier: any, content?: Content | null, dialCode?, payloadUrl?): void {
     if (this._isDelegateReady) {
       if (dialCode) {
         this.appGlobalServices.skipCoachScreenForDeeplink = true;
@@ -232,13 +327,12 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
               corRelation: this.getCorrelationList(payloadUrl)
             }
           });
-      } else if (urlMatch && urlMatch.groups && (urlMatch.groups.quizId || urlMatch.groups.contentId || urlMatch.groups.courseId)) {
-        this.navigateContent(urlMatch.groups.quizId || urlMatch.groups.contentId || urlMatch.groups.courseId, true,
-          content, payloadUrl);
+      } else if (identifier) {
+        this.navigateContent(identifier, true, content, payloadUrl);
       }
     } else {
       this.closeProgressLoader();
-      this.savedUrl = payloadUrl;
+      this.savedPayloadUrl = payloadUrl;
     }
   }
 
@@ -350,16 +444,6 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
     );
   }
 
-  // This method is called only when the user redirects directly from the Playstore
-  checkUtmContent(utmVal: string): void {
-    const utmRegex = new RegExp(String.raw`(?:utm_content=(?<utm_content>[^&]*))`);
-    const res = utmRegex.exec(utmVal);
-    if (res && res.groups && res.groups.utm_content && res.groups.utm_content.length) {
-      const payload = { url: res.groups.utm_content };
-      this.onAction(payload);
-    }
-  }
-
   private async showLoginWithoutOnboardingPopup(quizId) {
     this.appGlobalServices.resetSavedQuizContent();
     this.loginPopup = await this.popoverCtrl.create({
@@ -431,36 +515,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
     }
   }
 
-  private generateUtmTelemetryEvent(urlMatch, dialCode, url) {
-    let identifier;
-    if (urlMatch && urlMatch.groups) {
-      identifier = urlMatch.groups.contentId ? urlMatch.groups.contentId : urlMatch.groups.courseId;
-    }
-
-    const telemetryObject = new TelemetryObject(identifier ? identifier : dialCode, identifier ? 'Content' : 'qr', undefined);
-    const utmUrl = url.slice(url.indexOf('?') + 1);
-    const params: { [param: string]: string } = qs.parse(utmUrl);
-    const utmcData: CorrelationData[] = [];
-
-    if (utmUrl !== url) {
-      ContentUtil.genrateUTMCData(params).forEach((element) => {
-        utmcData.push(element);
-      });
-    }
-
-    const corRelationData: CorrelationData[] = [{
-      id: CorReleationDataType.DEEPLINK,
-      type: CorReleationDataType.ACCESS_TYPE
-    }];
-    if (utmcData && utmcData.length) {
-      this.telemetryService.updateCampaignParameters(utmcData);
-      this.telemetryGeneratorService.generateUtmInfoTelemetry(params, PageId.HOME, telemetryObject, corRelationData);
-    }
-
-    return utmcData;
-  }
-
-  private async checkCourseChannelSlug(payloadUrl, urlMatch) {
+  private async checkCourseChannelSlug(payloadUrl, identifier) {
     if (!this.isOnboardingCompleted) {
       this.isOnboardingCompleted =
         (await this.preferences.getString(PreferenceKey.IS_ONBOARDING_COMPLETED).toPromise() === 'true') ? true : false;
@@ -484,13 +539,10 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
           setTimeout(() => {
             this.events.publish(EventTopics.COURSE_PAGE_ASSEMBLE_CHANNEL_CHANGE);
           }, 500);
-          let courseId;
-          if (urlMatch && urlMatch.groups && urlMatch.groups.courseId) {
-            courseId = urlMatch.groups.courseId;
-          }
+
           const event = {
             url: payloadUrl,
-            courseId,
+            courseId: identifier,
             avb: '',
             channelId: org.identifier,
             extras: {
@@ -553,7 +605,11 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
   }
 
   async navigateToCourseDetail(identifier, content: Content | null, payloadUrl: string, isOnboardingSkipped = false, isFromChannelDeeplink = false) {
-    const childContentId = this.getQueryParamValue(payloadUrl, 'moduleId');
+    let childContentId = this.getQueryParamValue(payloadUrl, 'moduleId');
+    if (!childContentId) {
+      childContentId = this.getQueryParamValue(payloadUrl, 'contentId');
+    }
+
     if (childContentId) {
       try {
         this.isChildContentFound = false;
@@ -586,8 +642,14 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
         this.router.navigate([RouterLinks.CONTENT_DETAILS], {
           state: {
             content: this.childContent,
-            isOnboardingSkipped,
             depth: 1,
+            // contentState,  // check in chapter detail page
+            isChildContent: true,
+            // corRelation: this.corRelationList,
+            corRelation: undefined,
+            isCourse: true,
+            // course: this.updatedCourseCardData, // check in chapter detail page
+            isOnboardingSkipped
           }
         });
       }
@@ -699,57 +761,6 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
     return corRelationList;
   }
 
-  private generateProgressLoaderContext(url, urlMatch, dialCode): SbProgressLoaderContext {
-    if (this.progressLoaderId) {
-      this.closeProgressLoader();
-    }
-    this.progressLoaderId = dialCode || (urlMatch && urlMatch.groups &&
-      (urlMatch.groups.quizId || urlMatch.groups.contentId || urlMatch.groups.courseId)) || ProgressPopupContext.DEEPLINK;
-    const deeplinkUrl: URL = new URL(url);
-    const channelSlug = deeplinkUrl.searchParams.get('channel');
-    if (channelSlug) {
-      return {
-        id: this.progressLoaderId,
-        ignoreTelemetry: {
-          when: {
-            interact: IgnoreTelemetryPatters.IGNORE_DEEPLINK_PAGE_ID_EVENTS,
-            impression: IgnoreTelemetryPatters.IGNORE_CHANNEL_IMPRESSION_EVENTS
-          }
-        }
-      };
-    } else if (dialCode) {
-      return {
-        id: this.progressLoaderId,
-        ignoreTelemetry: {
-          when: {
-            interact: IgnoreTelemetryPatters.IGNORE_DIAL_CODE_PAGE_ID_EVENTS,
-            impression: IgnoreTelemetryPatters.IGNORE_DEEPLINK_PAGE_ID_EVENTS
-          }
-        }
-      };
-    } else if (urlMatch && urlMatch.groups && (urlMatch.groups.quizId || urlMatch.groups.contentId || urlMatch.groups.courseId)) {
-      return {
-        id: this.progressLoaderId,
-        ignoreTelemetry: {
-          when: {
-            interact: IgnoreTelemetryPatters.IGNORE_DEEPLINK_PAGE_ID_EVENTS,
-            impression: IgnoreTelemetryPatters.IGNORE_DEEPLINK_PAGE_ID_EVENTS
-          }
-        }
-      };
-    }
-    return {
-      id: this.progressLoaderId
-    };
-  }
-
-  private closeProgressLoader() {
-    this.sbProgressLoader.hide({
-      id: this.progressLoaderId
-    });
-    this.progressLoaderId = undefined;
-  }
-
   async getChildContents(identifier) {
     const childContentRequest: ChildContentRequest = {
       contentId: identifier,
@@ -762,14 +773,7 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
     const request: ContentDetailRequest = {
       contentId: identifier
     };
-    // this.telemetryGeneratorService.generatefastLoadingTelemetry(
-    //   InteractSubtype.FAST_LOADING_INITIATED,
-    //   PageId.COURSE_DETAIL,
-    //   this.telemetryObject,
-    //   undefined,
-    //   this.objRollup,
-    //   this.corRelationList
-    // );
+
     return this.contentService.getContentHeirarchy(request).toPromise();
   }
 
