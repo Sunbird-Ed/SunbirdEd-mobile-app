@@ -147,7 +147,7 @@ export enum PageId {
     COURSE_SEARCH_FILTER = 'course-search-filter',
     QR_BOOK_RESULT = 'qr-book-result',
     QR_CONTENT_RESULT = 'qr-content-result',
-    LOCATION = 'location'
+    LOCATION = 'location',
 }
 export enum LogType {
     NOTIFICATION = 'notification'
@@ -470,7 +470,11 @@ export enum InteractSubtype {
     SYNC_NOW_CLICKED = 'sync-now-clicked',
     DOWNLOAD_REQUEST = 'download-request',
     DOWLOAD_POPUP = 'download-popup',
-    DOWNLOAD = 'download'
+    DOWNLOAD = 'download',
+    CTA = 'cta',
+    CLOSE_ICON = 'close-icon',
+    OUTSIDE = 'outside',
+    QR_NOT_LINKED = 'qr-not-linked',
 }
 
 export enum ID {
