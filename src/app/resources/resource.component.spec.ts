@@ -645,6 +645,7 @@ describe('ResourcesComponent', () => {
 
     it('should check for subscription and unsubscribe all those events when ionViewWillLeave()', (done) => {
         // arrange
+        resourcesComponent.refresher = {disabled: false};
         mockHeaderService.showHeaderWithHomeButton = jest.fn();
         jest.spyOn(resourcesComponent, 'getCategoryData').mockImplementation();
         jest.spyOn(resourcesComponent, 'getCurrentUser').mockImplementation();
@@ -907,6 +908,7 @@ describe('ResourcesComponent', () => {
 
     it('should subscribe events and other methods when ionViewWillEnter()', (done) => {
         // arrange
+        resourcesComponent.refresher = {disabled: false};
         resourcesComponent.pageLoadedSuccess = false;
         mockHeaderService.showHeaderWithHomeButton = jest.fn();
         mockHeaderService.headerEventEmitted$ = NEVER;
@@ -1642,6 +1644,7 @@ describe('ResourcesComponent', () => {
 
     it('should call setTimeout for ionViewDidEnter', (done) => {
         // arrange
+        resourcesComponent.refresher = {disabled: false};
         mockAppGlobalService.showTutorialScreen = jest.fn();
         // act
         resourcesComponent.ionViewDidEnter();
