@@ -123,6 +123,7 @@ export class QrcoderesultPage implements OnDestroy {
   chapterFirstChildId: string;
   showSheenAnimation = true;
   @ViewChild(iContent) ionContent: iContent;
+  onboarding = false;
 
   constructor(
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
@@ -186,6 +187,7 @@ export class QrcoderesultPage implements OnDestroy {
     this.shouldGenerateEndTelemetry = this.navData.shouldGenerateEndTelemetry;
     this.source = this.navData.source;
     this.isSingleContent = this.navData.isSingleContent;
+    this.onboarding = this.navData.onboarding;
 
     // check for parent content
     this.parentContent = this.navData.parentContent;
@@ -195,7 +197,7 @@ export class QrcoderesultPage implements OnDestroy {
     this.telemetryGeneratorService.generateImpressionTelemetry(
       ImpressionType.PAGE_REQUEST, '',
       PageId.QR_CONTENT_RESULT,
-      !this.appGlobalService.isOnBoardingCompleted ? Environment.ONBOARDING : Environment.HOME,
+      this.onboarding ? Environment.ONBOARDING : Environment.HOME,
       '', '', '', undefined,
       [this.corRelationList[0]]
     );
@@ -277,7 +279,7 @@ export class QrcoderesultPage implements OnDestroy {
     corRelationData.push({id: this.content.children.length.toString(), type: CorReleationDataType.COUNT_CONTENT});
     this.telemetryGeneratorService.generatePageLoadedTelemetry(
       PageId.QR_CONTENT_RESULT,
-      !this.appGlobalService.isOnBoardingCompleted ? Environment.ONBOARDING : Environment.HOME,
+      this.onboarding ? Environment.ONBOARDING : Environment.HOME,
       this.content.identifier,
       ObjectType.CONTENT,
       undefined, undefined,
@@ -309,6 +311,11 @@ export class QrcoderesultPage implements OnDestroy {
   }
 
  async handleBackButton(clickSource?) {
+    this.telemetryGeneratorService.generateBackClickedNewTelemetry(
+     clickSource === InteractSubtype.DEVICE_BACK_CLICKED ? true : false,
+     this.onboarding ? Environment.ONBOARDING : Environment.HOME,
+     PageId.QR_CONTENT_RESULT
+    );
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,
       clickSource || InteractSubtype.NAV_BACK_CLICKED,
@@ -521,11 +528,12 @@ export class QrcoderesultPage implements OnDestroy {
       // });
       this.router.navigate([RouterLinks.CONTENT_DETAILS], {
         state: {
-          content: content,
+          content,
           depth: '1',
           isChildContent: true,
           downloadAndPlay: true,
-          corRelation: this.corRelationList
+          corRelation: this.corRelationList,
+          onboarding: this.onboarding
         }
       });
     }
@@ -811,6 +819,7 @@ export class QrcoderesultPage implements OnDestroy {
         this.setContentDetails(playingContent.identifier, true);
         this.events.unsubscribe(EventTopics.PLAYER_CLOSED);
       });
+      this.generateNewImpressionEvent();
       if (data.metadata.mimeType === 'application/vnd.ekstep.ecml-archive') {
         if (!request.streaming) {
           this.file.checkFile(`file://${data.metadata.basePath}/`, 'index.ecml').then((isAvailable) => {
@@ -924,12 +933,21 @@ export class QrcoderesultPage implements OnDestroy {
     this.telemetryGeneratorService.generateInteractTelemetry(
       play ? InteractType.PLAY : InteractType.DOWNLOAD,
       undefined,
-      !this.appGlobalService.isOnBoardingCompleted ? Environment.ONBOARDING : Environment.HOME,
+      this.onboarding ? Environment.ONBOARDING : Environment.HOME,
       PageId.QR_CONTENT_RESULT,
       telemetryObject,
       undefined,
       undefined,
       corRelationData
     );
+  }
+
+  generateNewImpressionEvent() {
+    this.telemetryGeneratorService.generateImpressionTelemetry(
+      InteractType.PLAY,
+      InteractSubtype.DOWNLOAD,
+      PageId.QR_CONTENT_RESULT,
+      this.onboarding ? Environment.ONBOARDING : Environment.HOME,
+     );
   }
 }

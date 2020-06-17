@@ -194,6 +194,11 @@ export class CommonUtilService {
             source ? source : PageId.HOME
         );
         if (source !== 'permission') {
+            this.telemetryGeneratorService.generateImpressionTelemetry(
+                InteractType.POPUP_LOADED, '',
+                source === PageId.ONBOARDING_PROFILE_PREFERENCES ? Environment.ONBOARDING : Environment.HOME,
+                source === PageId.ONBOARDING_PROFILE_PREFERENCES ? PageId.SCAN_OR_MANUAL : PageId.HOME,
+            );
             this.afterOnBoardQRErrorAlert('ERROR_CONTENT_NOT_FOUND', 'CONTENT_IS_BEING_ADDED');
             return;
         }

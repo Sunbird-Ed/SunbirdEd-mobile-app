@@ -300,6 +300,19 @@ generateEndEvent(pageId: string, qrData: string) {
   }
 
   async showInvalidCodeAlert() {
+    const corRelationList: CorrelationData[] = [{
+      id: PageId.SCAN,
+      type: CorReleationDataType.CHILD_UI
+    }];
+    this.telemetryGeneratorService.generateInteractTelemetry(
+      InteractSubtype.QR_CODE_INVALID, '',
+      this.source === PageId.ONBOARDING_PROFILE_PREFERENCES ? Environment.ONBOARDING : Environment.HOME,
+      this.source === PageId.ONBOARDING_PROFILE_PREFERENCES ? PageId.SCAN_OR_MANUAL : this.source,
+      undefined,
+      undefined,
+      undefined,
+      corRelationList
+      );
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.OTHER,
       InteractSubtype.QR_CODE_INVALID,

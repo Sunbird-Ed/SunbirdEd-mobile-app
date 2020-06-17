@@ -28,7 +28,8 @@ import {
   StorageService,
   TelemetryObject,
   Course,
-  DownloadService
+  DownloadService,
+  ObjectType
 } from 'sunbird-sdk';
 
 import { Map } from '@app/app/telemetryutil';
@@ -52,6 +53,7 @@ import {
   InteractType,
   Mode,
   PageId,
+  CorReleationDataType,
 } from '@app/services/telemetry-constants';
 import { FileSizePipe } from '@app/pipes/file-size/file-size';
 import { SbGenericPopoverComponent } from '@app/app/components/popups/sb-generic-popover/sb-generic-popover.component';
@@ -156,6 +158,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
   private autoPlayQuizContent = false;
   shouldNavigateBack = false;
   isContentDownloading$: Observable<boolean>;
+  onboarding = false;
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -224,6 +227,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
       this.shouldOpenPlayAsPopup = extras.isCourse;
       this.shouldNavigateBack = extras.shouldNavigateBack;
       this.checkLimitedContentSharingFlag(extras.content);
+      this.onboarding = extras.onboarding;
     }
     this.isContentDownloading$ = this.downloadService.getActiveDownloadRequests().pipe(
       map((requests) => !!requests.find((request) => request.identifier === this.identifier))
@@ -308,6 +312,15 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
     } else {
       this.generateTelemetry();
     }
+    this.telemetryGeneratorService.generatePageLoadedTelemetry(
+      PageId.CONTENT_DETAIL,
+      this.onboarding ? Environment.ONBOARDING : Environment.HOME,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      this.corRelationList
+    );
     this.isPlayedFromCourse();
     this.setContentDetails(
       this.identifier, true,
@@ -542,7 +555,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
     if (!this.didViewLoad && !this.isContentPlayed || forceGenerate) {
       this.objRollup = ContentUtil.generateRollUp(this.cardData.hierarchyInfo, this.identifier);
       this.telemetryObject = ContentUtil.getTelemetryObject(this.cardData);
-      this.generateImpressionEvent(this.cardData.identifier, this.telemetryObject.type, this.cardData.pkgVersion);
+      this.generateImpressionEvent(false, this.cardData.identifier, this.telemetryObject.type, this.cardData.pkgVersion);
       this.generateStartEvent();
     }
     this.didViewLoad = true;
@@ -564,7 +577,24 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
       this.corRelationList);
   }
 
-  generateImpressionEvent(objectId, objectType, objectVersion) {
+  generateImpressionEvent(download, objectId?, objectType?, objectVersion?) {
+    const cData: CorrelationData[] = [{
+      id: PageId.CONTENT_DETAIL,
+      type: CorReleationDataType.CHILD_UI
+    }];
+    cData.push(this.corRelationList[0]);
+    if (this.downloadAndPlay || download) {
+      this.telemetryGeneratorService.generateImpressionTelemetry(
+        download ? InteractType.DOWNLOAD_COMPLETE : InteractSubtype.DOWNLOAD_REQUEST,
+        download ? InteractType.DOWNLOAD_COMPLETE : InteractSubtype.DOWNLOAD_REQUEST,
+        download ? PageId.QR_CONTENT_RESULT : PageId.CONTENT_DETAIL,
+        this.onboarding ? Environment.ONBOARDING : Environment.HOME,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        download ? cData : this.corRelationList);
+    }
     this.telemetryGeneratorService.generateImpressionTelemetry(
       ImpressionType.DETAIL, '',
       PageId.CONTENT_DETAIL,
@@ -574,6 +604,12 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
       objectVersion,
       this.objRollup,
       this.corRelationList);
+
+    this.telemetryGeneratorService.generateImpressionTelemetry(
+        ImpressionType.PAGE_REQUEST, '',
+        PageId.CONTENT_DETAIL,
+        this.onboarding ? Environment.ONBOARDING : Environment.HOME
+      );
   }
 
   generateStartEvent() {
@@ -721,6 +757,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
             this.isDownloadStarted = false;
             this.cancelDownloading = false;
             this.contentDownloadable[this.content.identifier] = true;
+            this.generateImpressionEvent(true);
             this.setContentDetails(this.identifier, false, false);
             this.downloadProgress = '';
             this.events.publish('savedResources:update', {
@@ -835,6 +872,21 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
   }
 
   cancelDownload() {
+    const ObjectTelemetry = new TelemetryObject(this.cardData.identifier, ObjectType.CONTENT, '');
+    const corRelationData: CorrelationData[] = [{
+      id: InteractSubtype.DOWLOAD_POPUP,
+      type: CorReleationDataType.CHILD_UI
+    }];
+    this.telemetryGeneratorService.generateInteractTelemetry(
+      InteractType.SELECT_CLOSE,
+      InteractSubtype.CANCEL,
+      this.onboarding ? Environment.ONBOARDING : Environment.HOME,
+      PageId.CONTENT_DETAIL,
+      ObjectTelemetry,
+      undefined,
+      undefined,
+      corRelationData
+    );
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
       this.isUpdateAvail ? InteractSubtype.DOWNLOAD_CANCEL_CLICKED : InteractSubtype.DOWNLOAD_CANCEL_CLICKED,
       Environment.HOME,

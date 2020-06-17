@@ -146,7 +146,8 @@ export enum PageId {
     APP_TUTORIAL_POPUP = 'app-tutorial-popup',
     COURSE_SEARCH_FILTER = 'course-search-filter',
     QR_BOOK_RESULT = 'qr-book-result',
-    QR_CONTENT_RESULT = 'qr-content-result'
+    QR_CONTENT_RESULT = 'qr-content-result',
+    LOCATION = 'location'
 }
 export enum LogType {
     NOTIFICATION = 'notification'
@@ -230,7 +231,10 @@ export enum InteractType {
     SWITCH_FAILURE = 'switch-failure',
     QR_CAPTURED = 'qr-captured',
     PLAY = 'play',
-    DOWNLOAD = 'download'
+    DOWNLOAD = 'download',
+    SELECT_CLOSE = 'select-close',
+    DOWNLOAD_COMPLETE = 'download-complete',
+    POPUP_LOADED = 'popup-loaded'
 }
 
 
@@ -463,7 +467,10 @@ export enum InteractSubtype {
     SUBJECT_CARD_CLICKED = 'subject-card-clicked',
     INFORMATION_ICON_CLICKED = 'information-icon-clicked',
     TUTORIAL_CONTINUE_CLICKED = 'tutorial-continue-clicked',
-    SYNC_NOW_CLICKED = 'sync-now-clicked'
+    SYNC_NOW_CLICKED = 'sync-now-clicked',
+    DOWNLOAD_REQUEST = 'download-request',
+    DOWLOAD_POPUP = 'download-popup',
+    DOWNLOAD = 'download'
 }
 
 export enum ID {
@@ -537,7 +544,9 @@ export enum CorReleationDataType {
     COUNT_CONTENT = 'CountContent',
     FROM_PAGE = 'FromPage',
     MODE = 'Mode',
-    TYPE = 'Type'
+    TYPE = 'Type',
+    STATE = 'State',
+    DISTRICT = 'District'
 }
 
 export enum AuditProps {
@@ -548,6 +557,7 @@ export enum AuditProps {
 export enum AuditType {
     SET_LANGUAGE = 'set-language',
     SELECT_USERTYPE = 'set-usertype',
-    SET_PROFILE = 'set-profile'
+    SET_PROFILE = 'set-profile',
+    TOAST_SEEN = 'toast-seen'
 }
 

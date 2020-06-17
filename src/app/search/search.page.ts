@@ -17,7 +17,7 @@ import {
   FrameworkDetailsRequest,
   FrameworkService,
   FrameworkUtilService,
-  GetSuggestedFrameworksRequest, SearchEntry, SearchHistoryService, SortOrder
+  GetSuggestedFrameworksRequest, SearchEntry, SearchHistoryService, SortOrder, AuditState
 } from 'sunbird-sdk';
 import { Map } from '@app/app/telemetryutil';
 import {
@@ -31,7 +31,7 @@ import { FormAndFrameworkUtilService } from '@app/services/formandframeworkutil.
 import { CommonUtilService } from '@app/services/common-util.service';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import {
-  Environment, ImpressionType, InteractSubtype, InteractType, LogLevel, Mode, PageId, CorReleationDataType
+  Environment, ImpressionType, InteractSubtype, InteractType, LogLevel, Mode, PageId, CorReleationDataType, AuditType
 } from '@app/services/telemetry-constants';
 import { AppHeaderService } from '@app/services/app-header.service';
 import { AppVersion } from '@ionic-native/app-version/ngx';
@@ -970,6 +970,21 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
           this.showLoader = false;
           if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
             this.commonUtilService.showToast('ERROR_OFFLINE_MODE');
+            const corRelationList: Array<CorrelationData> = [];
+            corRelationList.push({id: this.dialCode, type: CorReleationDataType.QR});
+
+            if (this.source === PageId.ONBOARDING_PROFILE_PREFERENCES) {
+              this.telemetryGeneratorService.generateAuditTelemetry(
+                !this.appGlobalService.isOnBoardingCompleted ? Environment.ONBOARDING : Environment.HOME,
+                AuditState.AUDIT_UPDATED,
+                undefined,
+                AuditType.SET_PROFILE,
+                undefined,
+                undefined,
+                undefined,
+                corRelationList
+              );
+            }
           } else {
             this.commonUtilService.showToast('SOMETHING_WENT_WRONG');
           }
