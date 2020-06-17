@@ -86,7 +86,8 @@ export class SelfDeclaredTeacherEditPage {
       type: 'user',
       subType: 'teacherDetails',
       action: 'submit',
-      rootOrgId: rootOrgId || '*'
+      rootOrgId: rootOrgId || '*',
+      component: 'app'
     };
 
     let formData: any = await this.fetchFormApi(req);
