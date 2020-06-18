@@ -75,6 +75,7 @@ export class CurriculumCoursesPage implements OnInit {
   }
 
   ionViewWillLeave(): void {
+    console.log('in ionViewWillLeave');
     if (this.headerObservable) {
       this.headerObservable.unsubscribe();
     }
