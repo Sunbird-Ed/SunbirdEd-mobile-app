@@ -6,7 +6,7 @@ import {
 import { Router } from '@angular/router';
 import { RouterLinks, ProfileConstants } from '../app.constant';
 import { TranslateService } from '@ngx-translate/core';
-import { FetchEnrolledCourseRequest, CourseService, Course, CorrelationData, TelemetryObject } from '@project-sunbird/sunbird-sdk';
+import { CourseService, Course, CorrelationData, TelemetryObject, GetUserEnrolledCoursesRequest } from '@project-sunbird/sunbird-sdk';
 import {Subscription} from 'rxjs';
 import {Location} from '@angular/common';
 import {Platform} from '@ionic/angular';
@@ -31,6 +31,7 @@ export class CurriculumCoursesPage implements OnInit {
   headerObservable: Subscription;
   backButtonFunc: Subscription;
   corRelationList: Array<CorrelationData>;
+  appliedFilter;
 
 
   constructor(
@@ -51,9 +52,10 @@ export class CurriculumCoursesPage implements OnInit {
     this.theme = extrasState.theme;
     this.titleColor = extrasState.titleColor;
     this.corRelationList = extrasState.corRelationList;
+    this.appliedFilter = extrasState.appliedFilter;
   }
 
-  ionViewWillEnter() {
+  async ionViewWillEnter() {
     this.appHeaderService.showHeaderWithBackButton();
 
     this.headerObservable = this.appHeaderService.headerEventEmitted$.subscribe(eventName => {
@@ -83,7 +85,6 @@ export class CurriculumCoursesPage implements OnInit {
 
   async ngOnInit() {
     if (this.appGlobalService.isUserLoggedIn()) {
-      console.log('ngOnInit: true');
       // TODO: get the current userId
       const sessionObj = this.appGlobalService.getSessionData();
       const userId = sessionObj[ProfileConstants.USER_TOKEN];
@@ -119,11 +120,14 @@ export class CurriculumCoursesPage implements OnInit {
   }
 
   async getEnrolledCourses(userId: string) {
-    const enrolledCourseRequest: FetchEnrolledCourseRequest = {
-      userId,
-      returnFreshCourses: true
+    this.appliedFilter.subject = [this.subjectName];
+    const enrolledCourseRequest: GetUserEnrolledCoursesRequest = {
+      request: {
+        userId,
+        filters: this.appliedFilter
+      }
     };
-    return this.courseService.getEnrolledCourses(enrolledCourseRequest).toPromise();
+    return this.courseService.getUserEnrolledCourses(enrolledCourseRequest).toPromise();
   }
 
   private mergeCourseList(enrolledCourses, courseList) {
