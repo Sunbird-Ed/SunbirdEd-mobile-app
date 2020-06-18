@@ -49,7 +49,6 @@ import { Platform, Events, NavController } from '@ionic/angular';
 import { RatingHandler } from '@app/services/rating/rating-handler';
 import { ContentPlayerHandler } from '@app/services/content/player/content-player-handler';
 import { mapTo, map } from 'rxjs/operators';
-import { ComingSoonMessageService } from '@app/services/coming-soon-message.service';
 declare const cordova;
 
 @Component({
@@ -146,8 +145,7 @@ export class QrcoderesultPage implements OnDestroy {
     private navCtrl: NavController,
     private ratingHandler: RatingHandler,
     private contentPlayerHandler: ContentPlayerHandler,
-    private textbookTocService: TextbookTocService,
-    private comingSoonMessageService: ComingSoonMessageService
+    private textbookTocService: TextbookTocService
   ) {
     this.getNavData();
   }
@@ -342,7 +340,6 @@ export class QrcoderesultPage implements OnDestroy {
             '',
             PageId.DIAL_LINKED_NO_CONTENT,
             Environment.HOME);
-          const message = await this.comingSoonMessageService.getComingSoonMessage(data);
           if (this.isProfileUpdated) {
              if (!await this.commonUtilService.isDeviceLocationAvailable()) {
               const navigationExtras: NavigationExtras = {
@@ -354,9 +351,9 @@ export class QrcoderesultPage implements OnDestroy {
              } else {
               this.navCtrl.navigateBack([RouterLinks.TABS]);
              }
-             this.commonUtilService.showContentComingSoonAlert(this.source, message);
+             this.commonUtilService.showContentComingSoonAlert(this.source, data);
             } else {
-              this.commonUtilService.showContentComingSoonAlert(this.source, message);
+              this.commonUtilService.showContentComingSoonAlert(this.source, data);
               window.history.go(-2);
             }
         } else if (this.results && this.results.length === 1) {
