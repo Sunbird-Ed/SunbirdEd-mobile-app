@@ -853,7 +853,7 @@ describe('ChapterDetailsPage', () => {
                 Environment.HOME,
                 PageId.CHAPTER_DETAILS,
                 new TelemetryObject(chapterDetailsPage.childContents[0].identifier,
-                    undefined, undefined), undefined, undefined);
+                    undefined, 'sample-pkg-ver'), undefined, undefined);
             expect(chapterDetailsPage.childContents.length).toBeGreaterThan(0);
             expect(chapterDetailsPage.isBatchNotStarted).toBeFalsy();
         });
@@ -875,7 +875,7 @@ describe('ChapterDetailsPage', () => {
                 Environment.HOME,
                 PageId.CHAPTER_DETAILS,
                 new TelemetryObject(chapterDetailsPage.childContents[0].identifier,
-                    undefined, undefined), undefined, undefined);
+                    undefined, 'sample-pkg-ver'), undefined, undefined);
             expect(chapterDetailsPage.childContents.length).toBeGreaterThan(0);
             expect(chapterDetailsPage.isBatchNotStarted).toBeTruthy();
             expect(mockCommonUtilService.translateMessage).toHaveBeenCalledWith('COURSE_WILL_BE_AVAILABLE', '2020-06-02');
@@ -898,7 +898,7 @@ describe('ChapterDetailsPage', () => {
                 Environment.HOME,
                 PageId.CHAPTER_DETAILS,
                 new TelemetryObject('do-123',
-                    undefined, undefined), undefined, undefined);
+                    undefined, 'sample-pkg-ver'), undefined, undefined);
             expect(chapterDetailsPage.childContents.length).toBe(0);
             expect(chapterDetailsPage.isBatchNotStarted).toBeTruthy();
             expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('NO_CONTENT_AVAILABLE_IN_MODULE');
@@ -1358,7 +1358,7 @@ describe('ChapterDetailsPage', () => {
                             ongoingBatches: [
                                 { batchId: 'sample-batch-id', status: 1 }
                             ],
-                            telemetryObject: new TelemetryObject('do-123', undefined, undefined),
+                            telemetryObject: new TelemetryObject('do-123', undefined, 'sample-pkg-ver'),
                             upcommingBatches: [{ batchId: 'sample-batch-id', status: 2 }]
                         }
                     });
