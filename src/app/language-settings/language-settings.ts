@@ -170,15 +170,13 @@ export class LanguageSettingsPage {
       cData.push({id: this.tappedLanguage, type: CorReleationDataType.OLD_VALUE});
     }
     this.telemetryGeneratorService.generateInteractTelemetry(
-      InteractType.SELECT_LANGUAGE,
-      this.tappedLanguage || '',
+      InteractType.SELECT_LANGUAGE, '',
       this.isFromSettings ? Environment.SETTINGS : Environment.ONBOARDING,
       PageId.LANGUAGE,
       undefined,
       undefined,
       undefined,
-      cData,
-      this.language
+      cData
     );
     this.tappedLanguage = this.language;
     if (this.language) {
@@ -227,6 +225,10 @@ export class LanguageSettingsPage {
       valuesMap
     );
     /* New Telemetry */
+    const cData: CorrelationData[] = [{
+      id: currentLanguage,
+      type: CorReleationDataType.NEW_VALUE
+    }];
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.SELECT_CONTINUE,
       InteractSubtype.SUCCESS,
@@ -235,8 +237,7 @@ export class LanguageSettingsPage {
       undefined,
       undefined,
       undefined,
-      undefined,
-      this.language
+      cData
     );
   }
 
