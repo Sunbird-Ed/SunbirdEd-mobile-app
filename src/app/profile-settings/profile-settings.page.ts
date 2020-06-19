@@ -334,7 +334,7 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
     this.telemetryGeneratorService.generateBackClickedNewTelemetry(
       !isNavBack,
       Environment.ONBOARDING,
-      this.showQRScanner ? PageId.SCAN_OR_MANUAL : PageId.PROFILE_SETTINGS
+      this.showQRScanner ? PageId.SCAN_OR_MANUAL : PageId.MANUAL_PROFILE
     );
 
     if (this.showQRScanner === false) {
@@ -642,6 +642,7 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
         correlationlist = correlationlist.concat(this.populateCData(this.boardControl.value, CorReleationDataType.BOARD));
         correlationlist = correlationlist.concat(this.populateCData(this.mediumControl.value, CorReleationDataType.MEDIUM));
         correlationlist = correlationlist.concat(this.populateCData(this.gradeControl.value, CorReleationDataType.CLASS));
+        correlationlist.push({id: PageId.MANUAL, type: CorReleationDataType.FILL_MODE});
         this.telemetryGeneratorService.generateAuditTelemetry(
           Environment.ONBOARDING,
           AuditState.AUDIT_UPDATED,
