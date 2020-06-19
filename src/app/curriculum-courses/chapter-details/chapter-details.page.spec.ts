@@ -45,10 +45,14 @@ describe('ChapterDetailsPage', () => {
         })) as any
     };
     const mockTranslate: Partial<TranslateService> = {};
-    const mockAppGlobalService: Partial<AppGlobalService> = {};
+    const mockAppGlobalService: Partial<AppGlobalService> = {
+        getUserId: jest.fn(() => 'SAMPLE_USER')
+    };
     const mockAuthService: Partial<AuthService> = {};
     const mockContentService: Partial<ContentService> = {};
-    const mockCourseService: Partial<CourseService> = {};
+    const mockCourseService: Partial<CourseService> = {
+        getBatchDetails: jest.fn(() => of('batch' as any))
+    };
     const mockDatePipe: Partial<DatePipe> = {};
     const mockDownloadService: Partial<DownloadService> = {};
     const mockEvents: Partial<Events> = {};
@@ -57,7 +61,9 @@ describe('ChapterDetailsPage', () => {
     const mockLocalCourseService: Partial<LocalCourseService> = {};
     const mockLoginHandlerService: Partial<LoginHandlerService> = {};
     const mockPopoverCtrl: Partial<PopoverController> = {};
-    const mockPreferences: Partial<SharedPreferences> = {};
+    const mockPreferences: Partial<SharedPreferences> = {
+        putString: jest.fn(() => of())
+    };
     const mockZone: Partial<NgZone> = {};
     const mockSbProgressLoader: Partial<SbProgressLoader> = {};
     const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {};
@@ -161,7 +167,8 @@ describe('ChapterDetailsPage', () => {
             mockCourseService.getEnrolledCourses = jest.fn(() => of([
                 {
                     batchId: 'sample-batch-id',
-                    courseId: 'sample-course-id'
+                    courseId: 'sample-course-id',
+                    batch: {status: 1}
                 }
             ]));
             jest.spyOn(chapterDetailsPage, 'handleHeaderEvents').mockImplementation(() => {
@@ -631,7 +638,8 @@ describe('ChapterDetailsPage', () => {
         it('should handel error for catch part', (done) => {
             // arrange
             chapterDetailsPage.courseContent = {
-                batchId: 'sample-batch-id'
+                batchId: 'sample-batch-id',
+                batch: {staus: 1}
             };
             mockCourseService.getBatchDetails = jest.fn(() => throwError({ error: 'error' }));
             mockZone.run = jest.fn((fn) => fn());
