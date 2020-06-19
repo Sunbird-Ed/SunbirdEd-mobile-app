@@ -92,14 +92,13 @@ export class SunbirdQRScanner {
       const permissionStatus = await this.commonUtilService.getGivenPermissionStatus(AndroidPermission.CAMERA);
 
       if (permissionStatus.hasPermission) {
-        this.startQRScanner(screenTitle, displayText, displayTextColor, buttonText, showButton, source);
-        resolve('success');
+        resolve(this.startQRScanner(screenTitle, displayText, displayTextColor, buttonText, showButton, source));
       } else if (permissionStatus.isPermissionAlwaysDenied) {
         await this.commonUtilService.showSettingsPageToast('CAMERA_PERMISSION_DESCRIPTION', this.appName, PageId.QRCodeScanner, false);
       } else {
         this.showPopover(source).then((result) => {
           if (result) {
-              resolve('success');
+              resolve(result);
           } else {
            resolve(undefined);
           }
@@ -135,8 +134,13 @@ export class SunbirdQRScanner {
                       pageId === PageId.ONBOARDING_PROFILE_PREFERENCES ? Environment.ONBOARDING : Environment.HOME,
                       PageId.APP_PERMISSION_POPUP
                   );
-                  this.startScanner(this.source, this.showButton);
-                  resolve('success');
+                  this.startScanner(this.source, this.showButton).then((result) => {
+                    if (result) {
+                      resolve(result);
+                    } else {
+                      resolve(undefined);
+                    }
+                  });
               } else {
                   this.telemetryGeneratorService.generateInteractTelemetry(
                       InteractType.TOUCH,
@@ -147,7 +151,6 @@ export class SunbirdQRScanner {
                   this.commonUtilService.showSettingsPageToast
                 ('CAMERA_PERMISSION_DESCRIPTION', this.appName, PageId.QRCodeScanner, this.appGlobalService.isOnBoardingCompleted);
               }
-              resolve(undefined);
             }, (e) => { reject(e); });
           }
         }, this.appName, this.commonUtilService.translateMessage('CAMERA'), 'CAMERA_PERMISSION_DESCRIPTION', PageId.QRCodeScanner,
