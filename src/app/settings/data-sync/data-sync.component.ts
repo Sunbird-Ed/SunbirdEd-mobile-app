@@ -157,7 +157,7 @@ export class DataSyncComponent implements OnInit {
     }).subscribe();
 
     sbsync.onSyncSucces(async (syncStat) => {
-      if (syncStat.error) {
+      if (syncStat.telemetry_error) {
         if (this.loader) {
           await this.loader.dismiss();
         }
