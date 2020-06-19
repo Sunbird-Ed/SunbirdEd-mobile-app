@@ -191,6 +191,7 @@ export class ChapterDetailsPage implements OnInit, OnDestroy {
       }
       if (this.isFromDeeplink) {
         this.getContentState(true);
+        this.getBatchDetails();
       }
       console.log('this.courseCardData', this.courseContent);
       this.getContentsSize(this.chapter.children);
@@ -299,11 +300,28 @@ export class ChapterDetailsPage implements OnInit, OnDestroy {
               this.isBatchNotStarted = true;
               this.courseStartDate = this.batchDetails.startDate;
             }
+            this.saveContentContext(this.appGlobalService.getUserId(),
+            this.batchDetails.courseId, this.courseContent.batchId, this.batchDetails.status);
           });
         }).catch((err) => {
-
+          this.saveContentContext(this.appGlobalService.getUserId(),
+            this.courseContent.courseId, this.courseContent.batchId, this.courseContent.batch.status);
         });
     }
+  }
+
+  saveContentContext(userId, courseId, batchId, batchStatus) {
+    const contentContextMap = new Map();
+    // store content context in the below map
+    contentContextMap['userId'] = userId;
+    contentContextMap['courseId'] = courseId;
+    contentContextMap['batchId'] = batchId;
+    if (batchStatus) {
+      contentContextMap['batchStatus'] = batchStatus;
+    }
+
+    // store the contentContextMap in shared preference and access it from SDK
+    this.preferences.putString(PreferenceKey.CONTENT_CONTEXT, JSON.stringify(contentContextMap)).toPromise().then();
   }
 
   getAllContents(collection) {

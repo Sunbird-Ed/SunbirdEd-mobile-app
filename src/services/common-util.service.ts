@@ -25,7 +25,6 @@ import { SbPopoverComponent } from '@app/app/components/popups';
 import { AndroidPermissionsStatus } from './android-permissions/android-permission';
 import { Router } from '@angular/router';
 import { AndroidPermissionsService } from './android-permissions/android-permissions.service';
-import { ComingSoonMessageService } from './coming-soon-message.service';
 
 declare const FCMPlugin;
 export interface NetworkInfo {
@@ -59,8 +58,7 @@ export class CommonUtilService {
         private appVersion: AppVersion,
         private router: Router,
         private toastController: ToastController,
-        private permissionService: AndroidPermissionsService,
-        private comingSoonMessageService: ComingSoonMessageService
+        private permissionService: AndroidPermissionsService
     ) {
         this.networkAvailability$ = merge(
             this.network.onChange().pipe(
@@ -188,11 +186,7 @@ export class CommonUtilService {
      * Show popup with Try Again and Skip button.
      * @param source Page from alert got called
      */
-    async  showContentComingSoonAlert(source, content?) {
-        let message;
-        if (content) {
-             message = await this.comingSoonMessageService.getComingSoonMessage(content);
-        }
+    async  showContentComingSoonAlert(source) {
         this.telemetryGeneratorService.generateInteractTelemetry(
             InteractType.OTHER,
             InteractSubtype.QR_CODE_COMINGSOON,
@@ -200,7 +194,7 @@ export class CommonUtilService {
             source ? source : PageId.HOME
         );
         if (source !== 'permission') {
-            this.afterOnBoardQRErrorAlert('ERROR_CONTENT_NOT_FOUND', (message || 'CONTENT_IS_BEING_ADDED'));
+            this.afterOnBoardQRErrorAlert('ERROR_CONTENT_NOT_FOUND', 'CONTENT_IS_BEING_ADDED');
             return;
         }
         let popOver: any;
