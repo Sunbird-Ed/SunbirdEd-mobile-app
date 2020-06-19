@@ -334,7 +334,7 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
     this.telemetryGeneratorService.generateBackClickedNewTelemetry(
       !isNavBack,
       Environment.ONBOARDING,
-      PageId.SCAN_OR_MANUAL
+      this.showQRScanner ? PageId.SCAN_OR_MANUAL : PageId.MANUAL_PROFILE
     );
 
     if (this.showQRScanner === false) {
