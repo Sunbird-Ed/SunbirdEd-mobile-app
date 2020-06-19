@@ -257,7 +257,7 @@
                         <ion-icon class="ML10" name="ios-arrow-down"></ion-icon>
                     </ion-button>
                     <ion-button shape="round" class="txt-capitalize custom-round"
-                        *ngIf="trainingsLimit > mappedTrainingCertificates?.length" (click)="showLessTrainings()">
+                        *ngIf="trainingsLimit >= mappedTrainingCertificates?.length" (click)="showLessTrainings()">
                         {{'SHOW_LESS' | translate }}
                         <ion-icon class="ML10" name="ios-arrow-up"></ion-icon>
                     </ion-button>
