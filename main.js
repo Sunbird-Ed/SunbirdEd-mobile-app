@@ -48,11 +48,6 @@ var formRequestArray = [{
         'type': 'config',
         'subType': 'webview_version',
         'action': 'get'
-    },
-    {
-        'type': 'user',
-        'subType': 'manageduser',
-        'action': 'create'
     }
 ];
 
