@@ -44,11 +44,11 @@ export class TncUpdateHandlerService {
 
     this.profileService.getServerProfilesDetails(request).toPromise()
       .then((profile) => {
-        if (!this.hasProfileTncUpdated(profile)) {
+        if (this.hasProfileTncUpdated(profile)) {
+          this.presentTncPage({ profile });
+        } else {
           this.checkBmc(profile);
-          return;
         }
-        this.presentTncPage({ profile });
       }).catch(e => {
         this.appGlobalService.closeSigninOnboardingLoader();
       });

@@ -13,6 +13,7 @@ import { TelemetryGeneratorService } from '@app/services/telemetry-generator.ser
 import { InteractType, Environment, PageId, ID, CorReleationDataType, ImpressionType } from '@app/services/telemetry-constants';
 import { Location } from '@angular/common';
 import { ToastNavigationComponent } from '@app/app/components/popups/toast-navigation/toast-navigation.component';
+import { TncUpdateHandlerService } from '@app/services/handlers/tnc-update-handler.service';
 
 @Component({
   selector: 'app-manage-user-profiles',
@@ -45,7 +46,8 @@ export class ManageUserProfilesPage implements OnInit {
     private telemetryGeneratorService: TelemetryGeneratorService,
     private platform: Platform,
     private location: Location,
-    private popoverCtrl: PopoverController
+    private popoverCtrl: PopoverController,
+    private tncUpdateHandlerService: TncUpdateHandlerService
   ) {
     this.manageProfileList$ = combineLatest([
       this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }),
@@ -137,6 +139,7 @@ export class ManageUserProfilesPage implements OnInit {
       this.events.publish('loggedInProfile:update');
       this.showSwitchSuccessPopup(this.selectedUser.firstName);
       this.router.navigate([RouterLinks.TABS]);
+      this.tncUpdateHandlerService.checkForTncUpdate();
     }).catch(err => {
       this.commonUtilService.showToast('ERROR_WHILE_SWITCHING_USER');
       console.error(err);
