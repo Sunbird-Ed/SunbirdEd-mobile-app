@@ -357,6 +357,7 @@ describe('AppComponent', () => {
                 expect(mockTelemetryGeneratorService.generateNotificationClickedTelemetry).toHaveBeenCalledWith(
                     'local',
                     'sample-page',
+                    undefined,
                     [{id: undefined, type: 'NotificationID'}]
                 );
                 expect(mockPreferences.getString).toHaveBeenCalledWith(PreferenceKey.CAMPAIGN_PARAMETERS);
@@ -385,6 +386,7 @@ describe('AppComponent', () => {
                 expect(mockTelemetryGeneratorService.generateNotificationClickedTelemetry).toHaveBeenCalledWith(
                     InteractType.LOCAL,
                     'sample-page',
+                    undefined,
                     [{id: undefined, type: 'NotificationID'}]
                 );
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).not.nthCalledWith(2,
@@ -411,6 +413,7 @@ describe('AppComponent', () => {
                 expect(mockTelemetryGeneratorService.generateNotificationClickedTelemetry).toHaveBeenCalledWith(
                     InteractType.LOCAL,
                     'sample-page',
+                    undefined,
                     [{id: undefined, type: 'NotificationID'}]
                 );
                 done();
@@ -775,6 +778,7 @@ describe('AppComponent', () => {
                 expect(mockTelemetryGeneratorService.generateNotificationClickedTelemetry).toHaveBeenCalledWith(
                     InteractType.LOCAL,
                     'sample-page',
+                    undefined,
                     [{id: undefined, type: 'NotificationID'}]
                 );
                 expect(SunbirdSdk.instance.updateDeviceRegisterConfig).toHaveBeenCalledWith({ fcmToken: 'some_token' });
@@ -817,6 +821,7 @@ describe('AppComponent', () => {
                 expect(mockTelemetryGeneratorService.generateNotificationClickedTelemetry).toHaveBeenCalledWith(
                     InteractType.LOCAL,
                     'sample-page',
+                    undefined,
                     [{id: undefined, type: 'NotificationID'}]
                 );
                 expect(FCMPlugin.onTokenRefresh).toHaveBeenCalled();
