@@ -12,6 +12,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { NavigationExtras, Router, RouterLink } from '@angular/router';
 import { filter, map } from 'rxjs/operators';
 import { ToastNavigationComponent } from '../popups/toast-navigation/toast-navigation.component';
+import { TncUpdateHandlerService } from '@app/services/handlers/tnc-update-handler.service';
 
 @Component({
   selector: 'app-application-header',
@@ -61,7 +62,8 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
     private ngZone: NgZone,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private activePageService: ActivePageService,
-    private popoverCtrl: PopoverController
+    private popoverCtrl: PopoverController,
+    private tncUpdateHandlerService: TncUpdateHandlerService
   ) {
     this.setLanguageValue();
     this.events.subscribe('onAfterLanguageChange:update', (res) => {
@@ -315,6 +317,7 @@ export class ApplicationHeaderComponent implements OnInit, OnDestroy {
       this.events.publish('loggedInProfile:update');
       this.menuCtrl.close();
       this.showSwitchSuccessPopup(user.firstName);
+      this.tncUpdateHandlerService.checkForTncUpdate();
     }).catch(err => {
       this.commonUtilService.showToast('ERROR_WHILE_SWITCHING_USER');
       console.error(err);

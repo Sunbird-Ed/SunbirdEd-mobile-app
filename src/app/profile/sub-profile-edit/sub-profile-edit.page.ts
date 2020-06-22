@@ -160,8 +160,7 @@ export class SubProfileEditPage {
         firstName: this.formValue.name,
         managedBy: parentProfile.userId,
         framework: parentProfile['framework'] || undefined,
-        locationIds: parentProfile['locationIds'] ||
-          (parentProfile['userLocations'] && parentProfile['userLocations'].map(i => i.id)) || undefined,
+        locationCodes: (parentProfile['userLocations'] && parentProfile['userLocations'].map(i => i.code)) || undefined,
       };
       if (userDetails && userDetails.framework && userDetails.framework.subject) {
         userDetails.framework.subject = [];
