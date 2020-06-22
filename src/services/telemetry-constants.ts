@@ -531,7 +531,8 @@ export enum CorReleationDataType {
     COUNT_BOOK = 'CountBook',
     COUNT_CONTENT = 'CountContent',
     FROM_PAGE = 'FromPage',
-    FILL_MODE = 'FillMode'
+    FILL_MODE = 'FillMode',
+    LANGUAGE = 'Language'
 }
 
 export enum AuditProps {
