@@ -184,7 +184,9 @@ describe('CoursesPage', () => {
 
     it('should handle header service by invoked ionViewWillEnter', () => {
         // arrange
-        coursesPage.refresher = {disabled: false};
+        coursesPage.refresher = {
+            disabled: true
+        } as any;
         mockEvents.subscribe = jest.fn((_, fn) => fn());
         mockHeaderService.showHeaderWithHomeButton = jest.fn();
         const data = jest.fn((fn => fn()));

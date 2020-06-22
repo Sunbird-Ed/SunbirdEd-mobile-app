@@ -108,6 +108,7 @@ export class SignInCardComponent implements OnInit {
         webviewMigrateSessionProviderConfig = await this.formAndFrameworkUtilService.getWebviewSessionProviderConfig('migrate');
         await webviewSessionProviderConfigloader.dismiss();
       } catch (e) {
+        this.sbProgressLoader.hide({id: 'login'});
         await webviewSessionProviderConfigloader.dismiss();
         this.commonUtilService.showToast('ERROR_WHILE_LOGIN');
         return;
@@ -149,7 +150,7 @@ export class SignInCardComponent implements OnInit {
         })
         .catch(async (err) => {
           console.error(err);
-
+          this.sbProgressLoader.hide({id: 'login'});
           if (err instanceof SignInError) {
             this.commonUtilService.showToast(err.message);
           } else {
