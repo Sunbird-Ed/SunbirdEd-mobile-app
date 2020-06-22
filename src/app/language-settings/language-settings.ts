@@ -274,9 +274,9 @@ export class LanguageSettingsPage {
       });
       this.notification.setupLocalNotification(this.language);
       const corRelationList: Array<CorrelationData> = [
-        { id: PageId.LANGUAGE, type: CorReleationDataType.FROM_PAGE },
-        { id: this.language || '', type: CorReleationDataType.LANGUAGE }
+        { id: PageId.LANGUAGE, type: CorReleationDataType.FROM_PAGE }
       ];
+      corRelationList.push({ id: this.language || '', type: CorReleationDataType.LANGUAGE });
       this.telemetryGeneratorService.generateAuditTelemetry(
         this.isFromSettings ? Environment.SETTINGS : Environment.ONBOARDING,
         AuditState.AUDIT_UPDATED,
