@@ -1448,18 +1448,21 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
     this.navigateToPreviousPage();
   }
 
-  getContentCount(resultlist) {
+  getContentCount(displayDialCodeResult) {
     let totalCount = 0;
-    if (resultlist.dialCodeResult.length) {
-      for (let i = 0; i < resultlist.dialCodeResult.length; i++) {
-        if (resultlist.dialCodeResult[i].content && resultlist.dialCodeResult[i].content.length) {
-          totalCount += resultlist.dialCodeResult[i].content.length;
+    displayDialCodeResult.forEach(resultlist => {
+      if (resultlist.dialCodeResult.length) {
+        for (let i = 0; i < resultlist.dialCodeResult.length; i++) {
+          if (resultlist.dialCodeResult[i].content && resultlist.dialCodeResult[i].content.length) {
+            totalCount += resultlist.dialCodeResult[i].content.length;
+          }
         }
       }
-    }
-    if (resultlist.dialCodeContentResult.length) {
-      totalCount += resultlist.dialCodeContentResult.length;
-    }
+      if (resultlist.dialCodeContentResult.length) {
+        totalCount += resultlist.dialCodeContentResult.length;
+      }
+    });
     return totalCount;
   }
+
 }
