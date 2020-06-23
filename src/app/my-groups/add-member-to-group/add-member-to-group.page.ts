@@ -1,26 +1,22 @@
-import { ChangeDetectorRef, Component, Inject, OnDestroy, OnInit } from '@angular/core';
-import { Observable, Subscription } from 'rxjs';
-import { InteractSubtype, Environment, PageId, InteractType } from '../../services/telemetry-constants';
+import { Component, Inject } from '@angular/core';
+import { Subscription } from 'rxjs';
 import {
-  EventNamespace,
-  EventsBusService,
   ServerProfileDetailsRequest,
   ProfileService,
 } from 'sunbird-sdk';
 import { Location } from '@angular/common';
-import { AppHeaderService, CommonUtilService, TelemetryGeneratorService } from '../../services/index';
-import { tap, filter, take } from 'rxjs/operators';
 import { Router, NavigationExtras } from '@angular/router';
 import { RouterLinks, ProfileConstants } from '@app/app/app.constant';
 import { Platform } from '@ionic/angular';
-import { AuthService, ClassRoomService, ClassRoom, ClassRoomAddMemberByIdRequest } from '@project-sunbird/sunbird-sdk';
+import { ClassRoomService, ClassRoomAddMemberByIdRequest } from '@project-sunbird/sunbird-sdk';
+import { AppHeaderService, CommonUtilService } from '@app/services';
 
 @Component({
-  selector: 'app-add-user-to-class',
-  templateUrl: './add-user-to-class.page.html',
-  styleUrls: ['./add-user-to-class.page.scss'],
+  selector: 'app-add-member-to-group',
+  templateUrl: './add-member-to-group.page.html',
+  styleUrls: ['./add-member-to-group.page.scss'],
 })
-export class AddUserToClassPage {
+export class AddMemberToGroupPage {
   userId = '';
   isUserIdVerified = false;
   showErrorMsg = false;
@@ -62,7 +58,7 @@ export class AddUserToClassPage {
     switch ($event.name) {
       case 'back':
         // this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.COLLECTION_DETAIL, Environment.HOME,
-          // true, this.cardData.identifier, this.corRelationList);
+        // true, this.cardData.identifier, this.corRelationList);
         this.handleBackButton(true);
         break;
     }
@@ -72,7 +68,7 @@ export class AddUserToClassPage {
     if (this.isUserIdVerified) {
       this.isUserIdVerified = false;
     } else {
-        this.location.back();
+      this.location.back();
     }
   }
 
