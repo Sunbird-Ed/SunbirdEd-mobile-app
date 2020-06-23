@@ -22,16 +22,16 @@ import { AppGlobalService } from '@app/services/app-global-service.service';
 import { AppHeaderService } from '@app/services/app-header.service';
 import { Router } from '@angular/router';
 import { Location } from '@angular/common';
-import {  ClassRoomService, ClassRoom, ClassRoomCreateRequest } from '@project-sunbird/sunbird-sdk';
+import { ClassRoomService, ClassRoom, ClassRoomCreateRequest } from '@project-sunbird/sunbird-sdk';
 import { RouterLinks } from '@app/app/app.constant';
 
 
 @Component({
-  selector: 'app-create-edit-classroom',
-  templateUrl: './create-edit-classroom.page.html',
-  styleUrls: ['./create-edit-classroom.page.scss'],
+  selector: 'app-create-edit-group',
+  templateUrl: './create-edit-group.page.html',
+  styleUrls: ['./create-edit-group.page.scss'],
 })
-export class CreateEditClassroomPage implements OnInit, OnDestroy {
+export class CreateEditGroupPage implements OnInit, OnDestroy {
 
   @ViewChild('boardSelect') boardSelect: IonSelect;
   @ViewChild('mediumSelect') mediumSelect: IonSelect;
@@ -441,7 +441,7 @@ export class CreateEditClassroomPage implements OnInit, OnDestroy {
     }
   }
 
-  
+
 
   async getLoggedInFrameworkCategory() {
     try {

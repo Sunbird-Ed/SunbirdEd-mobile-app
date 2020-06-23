@@ -692,15 +692,15 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   menuItemAction(menuName) {
     switch (menuName.menuItem) {
-      case 'MY_CLASSROOMS':
+      case 'MY_GROUPS':
         this.telemetryGeneratorService.generateInteractTelemetry(
           InteractType.TOUCH,
-          InteractSubtype.MY_CLASSROOMS_CLICKED,
+          InteractSubtype.MY_GROUPS_CLICKED,
           Environment.USER,
           PageId.PROFILE
         );
         const navigationExtrasUG: NavigationExtras = { state: { profile: this.profile } };
-        this.router.navigate([`/${RouterLinks.MY_CLASSROOMS}`], navigationExtrasUG);
+        this.router.navigate([`/${RouterLinks.MY_GROUPS}`], navigationExtrasUG);
         break;
 
       case 'REPORTS':
