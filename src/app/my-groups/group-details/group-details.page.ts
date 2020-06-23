@@ -166,4 +166,14 @@ export class GroupDetailsPage {
     return split[0];
   }
 
+  navigateToActivityDetails() {
+    const navigationExtras: NavigationExtras = {
+      state: {
+        groupId: this.groupId
+      }
+    };
+    this.router.navigate([`/${RouterLinks.MY_GROUPS}/${RouterLinks.ACTIVITY_DETAILS}`], navigationExtras);
+
+  }
+
 }

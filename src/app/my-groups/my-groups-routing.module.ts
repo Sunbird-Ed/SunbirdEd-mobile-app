@@ -17,6 +17,10 @@ const routes: Routes = [
         path: RouterLinks.ADD_MEMBER_TO_GROUP,
         loadChildren: './add-member-to-group/add-member-to-group.module#AddMemberToGroupPageModule'
     },
+    {
+        path: RouterLinks.ACTIVITY_DETAILS,
+        loadChildren: './activity-details/activity-details.module#ActivityDetailsPageModule'
+    },
 ];
 
 @NgModule({
