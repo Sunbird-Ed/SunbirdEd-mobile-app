@@ -609,7 +609,6 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
     if (!childContentId) {
       childContentId = this.getQueryParamValue(payloadUrl, 'contentId');
     }
-
     if (childContentId) {
       try {
         this.isChildContentFound = false;

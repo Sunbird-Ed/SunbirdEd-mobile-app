@@ -142,7 +142,8 @@ export enum PageId {
     MANUAL_PROFILE = 'manual-profile',
     SCAN = 'scan',
     APP_TUTORIAL_POPUP = 'app-tutorial-popup',
-    COURSE_SEARCH_FILTER = 'course-search-filter'
+    COURSE_SEARCH_FILTER = 'course-search-filter',
+    MANUAL = 'manual'
 }
 export enum LogType {
     NOTIFICATION = 'notification'
@@ -529,7 +530,8 @@ export enum CorReleationDataType {
     QR = 'QR',
     COUNT_BOOK = 'CountBook',
     COUNT_CONTENT = 'CountContent',
-    FROM_PAGE = 'FromPage'
+    FROM_PAGE = 'FromPage',
+    FILL_MODE = 'FillMode'
 }
 
 export enum AuditProps {

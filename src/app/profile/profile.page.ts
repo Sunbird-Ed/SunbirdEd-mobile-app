@@ -30,7 +30,8 @@ import {
   CachedItemRequestSourceFrom,
   CourseCertificate,
   SharedPreferences,
-  CertificateAlreadyDownloaded
+  CertificateAlreadyDownloaded,
+  NetworkError
 } from 'sunbird-sdk';
 import { Environment, InteractSubtype, InteractType, PageId, ID } from '@app/services/telemetry-constants';
 import { ActivatedRoute, Router, NavigationExtras } from '@angular/router';
@@ -454,7 +455,6 @@ export class ProfilePage implements OnInit {
     const toastOptions = {
       message: downloadMessage || 'Certificate getting downloaded'
     };
-    const toast = await this.toastController.create(toastOptions);
 
     await this.checkForPermissions().then(async (result) => {
       if (result) {
@@ -473,17 +473,27 @@ export class ProfilePage implements OnInit {
           courseId: course.courseId,
           certificateToken: certificate.token
         };
-        await toast.present();
+        let toast;
+        if (this.commonUtilService.networkInfo.isNetworkAvailable) {
+          toast = await this.toastController.create(toastOptions);
+          await toast.present();
+        }
         this.courseService.downloadCurrentProfileCourseCertificate(downloadRequest).toPromise()
           .then(async (res) => {
-            await toast.dismiss();
+            if (toast) {
+              await toast.dismiss();
+            }
             this.openpdf(res.path);
           }).catch(async (err) => {
-            await toast.dismiss();
+            if (toast) {
+              await toast.dismiss();
+            }
             if (err instanceof CertificateAlreadyDownloaded) {
               const certificateName = certificate.url.substring(certificate.url.lastIndexOf('/') + 1);
               const filePath = `${cordova.file.externalRootDirectory}Download/${certificateName}`;
               this.openpdf(filePath);
+            } else if (NetworkError.isInstance(err)) {
+              this.commonUtilService.showToast('NO_INTERNET_TITLE', false, '', 3000, 'top');
             }
           });
       } else {
