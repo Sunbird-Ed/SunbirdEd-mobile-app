@@ -5,8 +5,8 @@ import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
 
-import { MyClassroomsPage } from './my-classrooms.page';
-import { MyClassroomsRoutingModule } from './my-classrooms-routing.module';
+import { MyGroupsPage } from './my-groups.page';
+import { MyGroupsRoutingModule } from './my-groups-routing.module';
 import { CommonConsumptionModule } from '@project-sunbird/common-consumption';
 import { ComponentsModule } from '../components/components.module';
 
@@ -16,12 +16,12 @@ import { ComponentsModule } from '../components/components.module';
     FormsModule,
     IonicModule,
     TranslateModule.forChild(),
-    MyClassroomsRoutingModule,
+    MyGroupsRoutingModule,
     CommonConsumptionModule,
     ComponentsModule
   ],
   declarations: [
-    MyClassroomsPage,
+    MyGroupsPage,
   ]
 })
-export class MyClassroomsPageModule { }
+export class MyGroupsPageModule { }

@@ -4,33 +4,29 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Routes, RouterModule } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
-
-import { ClassDetailsPage } from './class-details.page';
+import { CreateEditGroupPage } from './create-edit-group.page';
+import { DirectivesModule } from '@app/directives/directives.module';
 import { CommonConsumptionModule } from '@project-sunbird/common-consumption';
-import { ComponentsModule } from '../../components/components.module';
-import { OverflowMenuComponent } from '../../profile/overflow-menu/overflow-menu.component';
-import { PipesModule } from '@app/pipes/pipes.module';
 
 const routes: Routes = [
   {
     path: '',
-    component: ClassDetailsPage
+    component: CreateEditGroupPage
   }
 ];
 
 @NgModule({
-  declarations: [ClassDetailsPage],
+  declarations: [CreateEditGroupPage],
   imports: [
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
     IonicModule,
+    DirectivesModule,
     RouterModule.forChild(routes),
     TranslateModule.forChild(),
-    CommonConsumptionModule,
-    ComponentsModule,
+    CommonConsumptionModule
   ],
-  exports: [ClassDetailsPage],
-  entryComponents: [OverflowMenuComponent]
+  exports: [CreateEditGroupPage]
 })
-export class ClassDetailsPageModule {}
+export class CreateEditGroupPageModule { }

@@ -1,27 +1,21 @@
-import { ChangeDetectorRef, Component, Inject, OnDestroy, OnInit } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import { Observable, Subscription } from 'rxjs';
-import { InteractSubtype, Environment, PageId, InteractType } from '../../../services/telemetry-constants';
-import {
-  EventNamespace,
-  EventsBusService,
-} from 'sunbird-sdk';
 import { Location } from '@angular/common';
-import { AppHeaderService, CommonUtilService, TelemetryGeneratorService } from '../../../services/index';
-import { tap, filter, take } from 'rxjs/operators';
+import { AppHeaderService } from '../../../services/index';
 import { Router, NavigationExtras } from '@angular/router';
 import { RouterLinks, MenuOverflow } from '@app/app/app.constant';
 import { Platform, PopoverController } from '@ionic/angular';
 import { ClassRoomGetByIdRequest, ClassRoomService, ClassRoom } from '@project-sunbird/sunbird-sdk';
 import { OverflowMenuComponent } from '@app/app/profile/overflow-menu/overflow-menu.component';
 import GraphemeSplitter from 'grapheme-splitter';
-import { FilterPipe } from '@app/pipes/filter/filter.pipe'
+import { FilterPipe } from '@app/pipes/filter/filter.pipe';
 
 @Component({
-  selector: 'app-class-details',
-  templateUrl: './class-details.page.html',
-  styleUrls: ['./class-details.page.scss'],
+  selector: 'app-group-details',
+  templateUrl: './group-details.page.html',
+  styleUrls: ['./group-details.page.scss'],
 })
-export class ClassDetailsPage {
+export class GroupDetailsPage {
 
   headerObservable: any;
   groupId: string;
@@ -81,7 +75,7 @@ export class ClassDetailsPage {
     switch ($event.name) {
       case 'back':
         // this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.COLLECTION_DETAIL, Environment.HOME,
-          // true, this.cardData.identifier, this.corRelationList);
+        // true, this.cardData.identifier, this.corRelationList);
         this.handleBackButton(true);
         break;
     }
@@ -93,11 +87,11 @@ export class ClassDetailsPage {
 
   navigateToAddUserPage() {
     const navigationExtras: NavigationExtras = {
-        state: {
-          groupId: this.groupId
-        }
-      };
-    this.router.navigate([`/${RouterLinks.ADD_USER_TO_CLASS}`], navigationExtras);
+      state: {
+        groupId: this.groupId
+      }
+    };
+    this.router.navigate([`/${RouterLinks.MY_GROUPS}/${RouterLinks.ADD_MEMBER_TO_GROUP}`], navigationExtras);
   }
 
   ionViewWillLeave() {
@@ -170,6 +164,16 @@ export class ClassDetailsPage {
     const splitter = new GraphemeSplitter();
     const split: string[] = splitter.splitGraphemes(name.trim());
     return split[0];
+  }
+
+  navigateToActivityDetails() {
+    const navigationExtras: NavigationExtras = {
+      state: {
+        groupId: this.groupId
+      }
+    };
+    this.router.navigate([`/${RouterLinks.MY_GROUPS}/${RouterLinks.ACTIVITY_DETAILS}`], navigationExtras);
+
   }
 
 }
