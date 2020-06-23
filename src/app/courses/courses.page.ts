@@ -998,7 +998,7 @@ export class CoursesPage implements OnInit, OnDestroy {
       values,
       ContentUtil.generateRollUp(undefined, identifier),
       this.commonUtilService.deDupe(corRelationList, 'type'));
-      if (courseDetails.layoutName === ContentCard.LAYOUT_INPROGRESS || content.contentType === ContentType.COURSE) {
+    if (courseDetails.layoutName === ContentCard.LAYOUT_INPROGRESS || content.contentType === ContentType.COURSE) {
       this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], {
         state: {
           content,

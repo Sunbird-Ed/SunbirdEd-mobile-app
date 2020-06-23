@@ -148,6 +148,7 @@ export enum PageId {
     QR_BOOK_RESULT = 'qr-book-result',
     QR_CONTENT_RESULT = 'qr-content-result',
     LOCATION = 'location',
+    MANUAL = 'manual'
 }
 export enum LogType {
     NOTIFICATION = 'notification'
@@ -550,7 +551,8 @@ export enum CorReleationDataType {
     MODE = 'Mode',
     TYPE = 'Type',
     STATE = 'State',
-    DISTRICT = 'District'
+    DISTRICT = 'District',
+    FILL_MODE = 'FillMode'
 }
 
 export enum AuditProps {

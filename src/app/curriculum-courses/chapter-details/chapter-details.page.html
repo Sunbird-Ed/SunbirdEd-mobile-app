@@ -1,9 +1,11 @@
 <ion-content>
   <div class="cd-header-container">
-    <div class="cd-label">{{ courseContentData?.name }}</div>
-    <div class="cd-header-title">{{ chapter.name}}</div>
-    <div class="cd-of-menu">
-      <img class="cd-menu-icon" (click)="showOverflowMenu($event)" src="assets/imgs/menu.svg" alt="menu-icon">
+    <div class="cd-title-container">
+      <div class="cd-label">{{ courseContentData?.name }}</div>
+      <div class="cd-header-title">{{ chapter.name}}</div>
+      <div class="cd-of-menu">
+        <img class="cd-menu-icon" (click)="showOverflowMenu($event)" src="assets/imgs/menu.svg" alt="menu-icon">
+      </div>
     </div>
     <div class="new-div">
       <div *ngIf="!isAlreadyEnrolled">
