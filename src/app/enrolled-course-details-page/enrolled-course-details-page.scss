@@ -96,6 +96,7 @@
     }
     .enrolled-course-card{
         background-color:#d2eadd;
+        margin-bottom: 0 !important;
     }
     ion-card{
         --ion-item-background: white;
@@ -107,7 +108,7 @@
        margin-right: 6.43px;
     }
     ion-content{
-        --ion-background-color: #F9F9F8;
+        --ion-background-color: white;
     }
     .hr-border-bottom {
         box-sizing: border-box;

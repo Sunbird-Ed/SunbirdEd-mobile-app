@@ -142,7 +142,8 @@ export enum PageId {
     MANUAL_PROFILE = 'manual-profile',
     SCAN = 'scan',
     APP_TUTORIAL_POPUP = 'app-tutorial-popup',
-    COURSE_SEARCH_FILTER = 'course-search-filter'
+    COURSE_SEARCH_FILTER = 'course-search-filter',
+    MANUAL = 'manual'
 }
 export enum LogType {
     NOTIFICATION = 'notification'
@@ -302,7 +303,7 @@ export enum InteractSubtype {
     DELETE_ALL_CLICKED = 'delete-from-device-button-clicked',
     SHARE_USER_GROUP_INITIATE = 'share-usergroup-initiate',
     SHARE_USER_GROUP_SUCCESS = 'share-usergroup-success',
-    MY_CLASSROOMS_CLICKED = 'my-classrooms-clicked',
+    MY_GROUPS_CLICKED = 'my-groups-clicked',
     REPORTS_CLICKED = 'reports-clicked',
     USERS_TAB_CLICKED = 'users-tab-clicked',
     GROUPS_TAB_CLICKED = 'groups-tab-clicked',
@@ -529,7 +530,8 @@ export enum CorReleationDataType {
     QR = 'QR',
     COUNT_BOOK = 'CountBook',
     COUNT_CONTENT = 'CountContent',
-    FROM_PAGE = 'FromPage'
+    FROM_PAGE = 'FromPage',
+    FILL_MODE = 'FillMode'
 }
 
 export enum AuditProps {
