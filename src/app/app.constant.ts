@@ -189,15 +189,15 @@ export class ShareUrl {
 }
 
 export class MenuOverflow {
-    public static readonly MENU_GUEST = ['MY_CLASSROOMS', 'REPORTS', 'SETTINGS'];
-    public static readonly MENU_LOGIN = ['MY_CLASSROOMS', 'REPORTS', 'SETTINGS', 'LOGOUT'];
+    public static readonly MENU_GUEST = ['MY_GROUPS', 'REPORTS', 'SETTINGS'];
+    public static readonly MENU_LOGIN = ['MY_GROUPS', 'REPORTS', 'SETTINGS', 'LOGOUT'];
     public static readonly DOWNLOAD_FILTERS = ['CONTENT_SIZE', 'LAST_VIEWED'];
     public static readonly GROUP_OPTIONS = ['EDIT_NAME'];
 }
 
 export class SideMenu {
-    public static readonly MENU_GUEST = ['MY_CLASSROOMS', 'REPORTS', 'LANGUAGE', 'SETTINGS'];
-    public static readonly MENU_LOGIN = ['MY_CLASSROOMS', 'REPORTS', 'LANGUAGE', 'SETTINGS', 'LOGOUT'];
+    public static readonly MENU_GUEST = ['MY_GROUPS', 'REPORTS', 'LANGUAGE', 'SETTINGS'];
+    public static readonly MENU_LOGIN = ['MY_GROUPS', 'REPORTS', 'LANGUAGE', 'SETTINGS', 'LOGOUT'];
 }
 
 export class FormConstant {
@@ -549,12 +549,11 @@ export class RouterLinks {
     // routing to Term of use Web Page
     public static readonly TERM_OF_USE = '/privacy-policy/terms-of-use.html';
 
-    // Class Rooms
-    public static readonly MY_CLASSROOMS = 'my-classrooms';
-    public static readonly CREATE_EDIT_CLASSROOM = 'create-edit-classroom';
-    public static readonly CLASS_DETAILS = 'class-details';
-
-    public static readonly ADD_USER_TO_CLASS = 'add-user-to-class';
+    // My Groups
+    public static readonly MY_GROUPS = 'my-groups';
+    public static readonly CREATE_EDIT_GROUP = 'create-edit-group';
+    public static readonly MY_GROUP_DETAILS = 'group-details';
+    public static readonly ADD_MEMBER_TO_GROUP = 'add-member-to-group';
 
     // Curriculum courses
     public static readonly CURRICULUM_COURSES = 'curriculum-courses';

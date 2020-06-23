@@ -10,11 +10,11 @@ import { PopoverController } from '@ionic/angular';
 import { MyGroupsPopoverComponent } from '../components/popups/sb-my-groups-popover/sb-my-groups-popover.component';
 
 @Component({
-  selector: 'app-my-classrooms',
-  templateUrl: './my-classrooms.page.html',
-  styleUrls: ['./my-classrooms.page.scss'],
+  selector: 'app-my-groups',
+  templateUrl: './my-groups.page.html',
+  styleUrls: ['./my-groups.page.scss'],
 })
-export class MyClassroomsPage implements OnInit, OnDestroy {
+export class MyGroupsPage implements OnInit, OnDestroy {
   isGuestUser: boolean;
   groupList: ClassRoom[] = [];
   groupListLoader = false;
@@ -62,7 +62,7 @@ export class MyClassroomsPage implements OnInit, OnDestroy {
   }
 
   createClassroom() {
-    this.router.navigate([`/${RouterLinks.MY_CLASSROOMS}/${RouterLinks.CREATE_EDIT_CLASSROOM}`]);
+    this.router.navigate([`/${RouterLinks.MY_GROUPS}/${RouterLinks.CREATE_EDIT_GROUP}`]);
   }
 
   login() {
@@ -86,7 +86,7 @@ export class MyClassroomsPage implements OnInit, OnDestroy {
         groupId: e.data.identifier
       }
     };
-    this.router.navigate([`/${RouterLinks.MY_CLASSROOMS}/${RouterLinks.CLASS_DETAILS}`], navigationExtras);
+    this.router.navigate([`/${RouterLinks.MY_GROUPS}/${RouterLinks.MY_GROUP_DETAILS}`], navigationExtras);
   }
 
   async openinfopopup() {
