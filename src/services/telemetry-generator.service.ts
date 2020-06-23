@@ -30,7 +30,7 @@ export class TelemetryGeneratorService {
     ) {
     }
 
-    generateAuditTelemetry(env, currentSate?, updatedProperties?, type?, objId?, objType?, objVer?, correlationData?) {
+    generateAuditTelemetry(env, currentSate?, updatedProperties?, type?, objId?, objType?, objVer?, correlationData?, objRollup?) {
         const telemetryAuditRequest: TelemetryAuditRequest = {
             env: env ? env : undefined,
             currentState: currentSate ? currentSate : undefined,
@@ -39,6 +39,7 @@ export class TelemetryGeneratorService {
             objId: objId ? objId : undefined,
             objType: objType ? objType : undefined,
             objVer: objVer ? objVer : undefined,
+            rollUp: objRollup || {},
             correlationData: correlationData ? correlationData : undefined,
             actor: new Actor()
         };
