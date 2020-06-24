@@ -132,6 +132,7 @@ describe('CurriculumCoursesPage', () => {
                 userToken: 'user_token'
             }));
             mockCommonUtilService.getContentImg = jest.fn(() => 'some_img_url');
+            curriculumCoursesPage.appliedFilter = {};
             curriculumCoursesPage.courseList = [
                 {
                     identifier: 'do_some_identifier'
@@ -145,8 +146,7 @@ describe('CurriculumCoursesPage', () => {
                     courseId: 'do_some_identifier'
                 }
             ];
-            mockCourseService.getEnrolledCourses = jest.fn(() => of(enrolledCourses));
-            console.log('enrolledCourses:true ', curriculumCoursesPage.enrolledCourses);
+            mockCourseService.getUserEnrolledCourses = jest.fn(() => of(enrolledCourses));
 
             // act
             curriculumCoursesPage.ngOnInit();
@@ -156,8 +156,13 @@ describe('CurriculumCoursesPage', () => {
                 expect(mockAppGlobalService.isUserLoggedIn).toBeTruthy();
                 expect(mockAppGlobalService.getSessionData).toHaveBeenCalled();
                 expect(mockCommonUtilService.getContentImg).toHaveBeenCalled();
-                expect(mockCourseService.getEnrolledCourses).toHaveBeenCalledWith({
-                    returnFreshCourses: true, userId: 'user_token'
+                expect(mockCourseService.getUserEnrolledCourses).toHaveBeenCalledWith({
+                    request: {
+                        userId: 'user_token',
+                        filters: {
+                            subject: ['sample-subject']
+                        }
+                      }
                 });
                 done();
             });
