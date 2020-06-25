@@ -1301,6 +1301,11 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     corRelationList.push({id: (event.data.contents.length).toString() , type: CorReleationDataType.COURSE_COUNT});
 
     if (event.data.contents && event.data.contents.length > 1) {
+      const appliedFilter = {
+        board: this.getGroupByPageReq.board,
+        medium: this.getGroupByPageReq.medium,
+        gradeLevel: this.getGroupByPageReq.grade,
+      };
       const curriculumCourseParams: NavigationExtras = {
         state: {
           theme: event.data.theme,
@@ -1308,7 +1313,8 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
           subjectIcon: event.data.cardImg,
           subjectName: event.data.title,
           courseList: event.data.contents,
-          corRelationList
+          corRelationList,
+          appliedFilter
         }
       };
       this.telemetryGeneratorService.generateInteractTelemetry(
