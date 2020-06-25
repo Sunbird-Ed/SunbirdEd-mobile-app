@@ -108,11 +108,11 @@
         <div class="sb-textbook-container">
           <div class="sb-textbook-items">
             <div class="sb-textbook-title-container">
-              <span class="textbook-icon">
+              <!-- <span class="textbook-icon">
                 <ion-icon ios="ios-albums" md="md-albums"></ion-icon>
-              </span>
+              </span> -->
               <span class="textbook-title">
-                Courses
+                {{'COURSES' | translate}}
               </span>
             </div>
             <!-- Card style -->
@@ -143,13 +143,24 @@
 
       <div *ngIf="resultlist && !resultlist.isCourse">
         <div class="px-8">
+          
           <div class="pt-8">
-            <p class="results-count" *ngIf="resultlist.dialCodeContentResult || resultlist.dialCodeResult">
+            <!-- <p class="results-count" *ngIf="resultlist.dialCodeContentResult || resultlist.dialCodeResult">
               {{'QR_SHOWING_MULTIPLE_BOOK_RESULT' | translate:{'%s': getContentCount(resultlist)} }}
+              <strong>"{{resultlist.dialCodeContentResult[0]?.dialcodes[0] || resultlist.dialCodeResult[0]?.content[0]?.dialcodes[0]}}"</strong>
+            </p> -->
+            <p class="results-count" *ngIf="resultlist.dialCodeContentResult || resultlist.dialCodeResult">
+              {{'QR_SHOWING_MULTIPLE_BOOK_RESULT' | translate:{'%s': getContentCount(displayDialCodeResult)} }}
               <strong>"{{resultlist.dialCodeContentResult[0]?.dialcodes[0] || resultlist.dialCodeResult[0]?.content[0]?.dialcodes[0]}}"</strong>
             </p>
           </div>
           <!-- Collection List -->
+          <div class="sb-textbook-title-container">
+            <!-- <span class="textbook-icon">
+              <ion-icon ios="ios-albums" md="md-albums"></ion-icon>
+            </span> -->
+            <span class="textbook-title">{{'TEXTBOOKS' | translate}}</span>
+          </div>
           <div *ngFor="let result of resultlist.dialCodeResult" class="ion-no-padding ion-no-margin">
 
             <div *ngIf="result && result.content && result.content.length">
