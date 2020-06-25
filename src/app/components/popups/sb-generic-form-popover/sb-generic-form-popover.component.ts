@@ -41,7 +41,7 @@ export class SbGenericFormPopoverComponent implements OnInit, OnDestroy {
     this.popoverCtrl.dismiss({ isLeftButtonClicked: null });
   }
 
-  deleteContent(buttonIndex: number = 0) {
+  submit(buttonIndex: number = 0) {
     this.popoverCtrl.dismiss(
         {
             isLeftButtonClicked: !Boolean(buttonIndex),
