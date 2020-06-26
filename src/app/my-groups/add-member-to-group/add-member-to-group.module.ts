@@ -6,14 +6,13 @@ import { IonicModule } from '@ionic/angular';
 import { DirectivesModule } from '@app/directives/directives.module';
 import { PipesModule } from '@app/pipes/pipes.module';
 import { TranslateModule } from '@ngx-translate/core';
-import { ComponentsModule } from '../components/components.module';
-
-import { AddUserToClassPage } from './add-user-to-class.page';
+import { ComponentsModule } from '../../components/components.module';
+import { AddMemberToGroupPage } from './add-member-to-group.page';
 
 const routes: Routes = [
   {
     path: '',
-    component: AddUserToClassPage
+    component: AddMemberToGroupPage
   }
 ];
 
@@ -28,6 +27,6 @@ const routes: Routes = [
     DirectivesModule,
     ComponentsModule
   ],
-  declarations: [AddUserToClassPage]
+  declarations: [AddMemberToGroupPage]
 })
-export class AddUserToClassPageSModule {}
+export class AddMemberToGroupPageModule {}

@@ -1,32 +1,27 @@
-import { ChangeDetectorRef, Component, Inject, OnDestroy, OnInit } from '@angular/core';
-import { Observable, Subscription } from 'rxjs';
-import { InteractSubtype, Environment, PageId, InteractType } from '../../../services/telemetry-constants';
-import {
-  EventNamespace,
-  EventsBusService,
-} from 'sunbird-sdk';
+import { Component, Inject } from '@angular/core';
+import { Subscription } from 'rxjs';
 import { Location } from '@angular/common';
-import { AppHeaderService, CommonUtilService, TelemetryGeneratorService } from '../../../services/index';
-import { tap, filter, take } from 'rxjs/operators';
+import { AppHeaderService, PageId, FormAndFrameworkUtilService, CommonUtilService } from '../../../services';
 import { Router, NavigationExtras } from '@angular/router';
-import { RouterLinks, MenuOverflow } from '@app/app/app.constant';
+import { RouterLinks, MenuOverflow, ContentType } from '@app/app/app.constant';
 import { Platform, PopoverController } from '@ionic/angular';
 import { ClassRoomGetByIdRequest, ClassRoomService, ClassRoom } from '@project-sunbird/sunbird-sdk';
 import { OverflowMenuComponent } from '@app/app/profile/overflow-menu/overflow-menu.component';
 import GraphemeSplitter from 'grapheme-splitter';
-import { FilterPipe } from '@app/pipes/filter/filter.pipe'
+import { SbGenericFormPopoverComponent } from '@app/app/components/popups/sb-generic-form-popover/sb-generic-form-popover.component';
 
 @Component({
-  selector: 'app-class-details',
-  templateUrl: './class-details.page.html',
-  styleUrls: ['./class-details.page.scss'],
+  selector: 'app-group-details',
+  templateUrl: './group-details.page.html',
+  styleUrls: ['./group-details.page.scss'],
 })
-export class ClassDetailsPage {
+export class GroupDetailsPage {
 
   headerObservable: any;
   groupId: string;
   groupDetails: ClassRoom;
-  activeTab = 'members';
+  activeTab = 'courses';
+  activityList = [];
   memberList = [];
   memberListDummy = [
     {
@@ -55,7 +50,8 @@ export class ClassDetailsPage {
     private location: Location,
     private platform: Platform,
     private popoverCtrl: PopoverController,
-    private filter: FilterPipe
+    private formAndFrameworkUtilService: FormAndFrameworkUtilService,
+    private commonUtilService: CommonUtilService,
   ) {
     const extras = this.router.getCurrentNavigation().extras.state;
     this.groupId = extras.groupId;
@@ -81,7 +77,7 @@ export class ClassDetailsPage {
     switch ($event.name) {
       case 'back':
         // this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.COLLECTION_DETAIL, Environment.HOME,
-          // true, this.cardData.identifier, this.corRelationList);
+        // true, this.cardData.identifier, this.corRelationList);
         this.handleBackButton(true);
         break;
     }
@@ -93,11 +89,11 @@ export class ClassDetailsPage {
 
   navigateToAddUserPage() {
     const navigationExtras: NavigationExtras = {
-        state: {
-          groupId: this.groupId
-        }
-      };
-    this.router.navigate([`/${RouterLinks.ADD_USER_TO_CLASS}`], navigationExtras);
+      state: {
+        groupId: this.groupId
+      }
+    };
+    this.router.navigate([`/${RouterLinks.MY_GROUPS}/${RouterLinks.ADD_MEMBER_TO_GROUP}`], navigationExtras);
   }
 
   ionViewWillLeave() {
@@ -170,6 +166,60 @@ export class ClassDetailsPage {
     const splitter = new GraphemeSplitter();
     const split: string[] = splitter.splitGraphemes(name.trim());
     return split[0];
+  }
+
+  navigateToActivityDetails() {
+    const navigationExtras: NavigationExtras = {
+      state: {
+        groupId: this.groupId
+      }
+    };
+    this.router.navigate([`/${RouterLinks.MY_GROUPS}/${RouterLinks.ACTIVITY_DETAILS}`], navigationExtras);
+  }
+
+  async showAddActivityPopup() {
+    try {
+      const supportedActivityList = await this.formAndFrameworkUtilService.invokeSupportedGroupActivitiesFormApi();
+
+      const selectActivityPopup = await this.popoverCtrl.create({
+        component: SbGenericFormPopoverComponent,
+        componentProps: {
+          sbPopoverHeading: this.commonUtilService.translateMessage('SELECT_ACTIVITY'),
+          actionsButtons: [
+            {
+              btntext: this.commonUtilService.translateMessage('NEXT'),
+              btnClass: 'popover-color'
+            }
+          ],
+          icon: null,
+          formItems: supportedActivityList
+        },
+        cssClass: 'sb-popover info',
+      });
+      await selectActivityPopup.present();
+      const { data } = await selectActivityPopup.onDidDismiss();
+      if (data && data.selectedVal && data.selectedVal.activityType === 'Content') {
+        this.search(data);
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
+  private async search(data) {
+    // this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
+    //   InteractSubtype.SEARCH_BUTTON_CLICKED,
+    //   Environment.HOME,
+    //   PageId.COURSES);
+    // const contentType = ContentType.FOR_COURSE_TAB;
+    // const contentType = await this.formAndFrameworkUtilService.getSupportedContentFilterConfig(ContentFilterConfig.NAME_COURSE);
+    this.router.navigate([RouterLinks.SEARCH], {
+      state: {
+        contentType: data.selectedVal.activityValues,
+        source: PageId.GROUP_DETAIL,
+        groupId: this.groupId
+      }
+    });
   }
 
 }

@@ -1132,6 +1132,11 @@ app-courses{
       margin-top: 2px !important;
     }
   }
+  sb-course-cards-hlist{
+    .title{
+      height: auto !important;
+    }
+  }
 }
 
 .card-section-secondary{

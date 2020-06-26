@@ -1525,12 +1525,12 @@ describe('AppComponent', () => {
     });
 
     describe('menuItemAction', () => {
-        it('should navigate to classroom page when classroom is clicked in menu', () => {
+        it('should navigate to groups page when my group is clicked in menu', () => {
             // arrange
             const menuName = {
-                menuItem: 'MY_CLASSROOMS'
+                menuItem: 'MY_GROUPS'
             };
-            const routeUrl = [`/${RouterLinks.MY_CLASSROOMS}`];
+            const routeUrl = [`/${RouterLinks.MY_GROUPS}`];
 
             // act
             appComponent.menuItemAction(menuName);
