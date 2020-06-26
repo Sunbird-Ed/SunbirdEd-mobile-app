@@ -35,7 +35,16 @@
         </div>
       </div>
       <div class="gd-tab-content" *ngIf="activeTab=='courses'">
+        <div class="gd-member-search">
+          <ion-icon class="gd-member-search-icon" md="md-search"></ion-icon>
+          <input type="text" [(ngModel)]="searchMember" (ngModelChange)="onSearch(searchMember)">
+        </div>
         <sb-course-card [section]="null" (click)="navigateToActivityDetails()"></sb-course-card>
+        <div class="cd-btn" *ngIf="!activityList.length">
+          <button class="sb-btn-large" (click)="showAddActivityPopup()">
+            + {{'ADD_ACTIVITY' | translate}}
+          </button>
+        </div>
         <!-- <sb-course-card *ngIf="!course.isEnrolledCourse" [course]="course" [section]="null" [cardImg]="course.appIcon"
           (click)="openCourseDetails(course)"></sb-course-card> -->
         <!-- <div *ngFor="let item of [0,1,2,3,4]" class="mb-8 mt-8">
