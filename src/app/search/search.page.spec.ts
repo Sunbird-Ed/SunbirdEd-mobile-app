@@ -1241,6 +1241,8 @@ describe('SearchPage', () => {
             mockFormAndFrameworkUtilService.getSupportedContentFilterConfig = jest.fn(
                 () => Promise.resolve(getSupportedContentFilterConfigResp));
             mockpageService.getPageAssemble = jest.fn(() => throwError({}));
+            searchPage.source = PageId.ONBOARDING_PROFILE_PREFERENCES;
+            mockTelemetryGeneratorService.generateAuditTelemetry = jest.fn();
             // act
             searchPage.getContentForDialCode();
             // assert
@@ -1249,6 +1251,16 @@ describe('SearchPage', () => {
                 expect(searchPage.contentType).toEqual(getSupportedContentFilterConfigResp);
                 expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('ERROR_OFFLINE_MODE');
                 expect(mockLocation.back).toHaveBeenCalled();
+                expect(mockTelemetryGeneratorService.generateAuditTelemetry).toHaveBeenCalledWith(
+                    Environment.HOME,
+                    'Updated',
+                    undefined,
+                    'set-profile',
+                    undefined,
+                    undefined,
+                    undefined,
+                    [{id: 'abcdef', type: 'QR'}]
+                );
                 done();
             }, 0);
         });
