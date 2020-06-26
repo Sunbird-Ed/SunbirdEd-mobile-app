@@ -728,11 +728,11 @@
   "MY_GROUPS": "My groups",
   "YOU_HAVE_TO_LOG_IN_TO_CREATE_GROUPS": "You have to log in to create groups",
   "CURRENTLY_YOU_DO_NOT_HAVE_ANY_GROUPS": "Currently, you do not have any Groups",
-  "GROUP_NAME_IS_REQUIRED": "Group name is required.",
+  "GROUP_NAME_IS_REQUIRED": "You have to enter the group name",
   "VERIFY": "Verify",
-  "ENTER_MEMBER_ID": "Enter a valid member ID",
-  "INVALID_MEMBER_ID": "Invalid member ID",
-  "MEMBER_ID": "User ID",
+  "ENTER_MEMBER_ID": "Enter DIKSHA ID",
+  "INVALID_MEMBER_ID": "You have entered a invalid DIKSHA ID",
+  "MEMBER_ID": "DIKSHA ID",
   "ADD_MEMBER": "Add member",
   "ADD_NEW_MEMBER": "Add new member",
   "ADD_MEMBER_CONFIRMATION":  "Do you want to add <b>{{%s}}</b> as a member?",
@@ -766,5 +766,6 @@
   "GROUP_DESCRIPTION": "Group description",
   "GROUP_DESCRIPTION_PLACEHOLDER": "Group of individuals, typically who shares a similarinterest, who discuss ideas & solve problems",
   "GROUP_TERMS_IS_REQUIRED": "You have to agree to {{%appName}} terms od service, before you proceed",
-  "CHARECTERS_REMAINING": "Charecters remaining"
+  "CHARECTERS_REMAINING": "Charecters remaining",
+  "WHAT_IS_MEMBER_ID": "What is a DIKSHA ID? "
 }
