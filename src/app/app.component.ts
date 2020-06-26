@@ -513,13 +513,13 @@ export class AppComponent implements OnInit, AfterViewInit {
     pageId = pageId.toLowerCase();
     const env = pageId.localeCompare(PageId.PROFILE) ? Environment.HOME : Environment.USER;
     const corRelationList: Array<CorrelationData> = [];
-    if (pageId === 'resources') {
+    if (pageId === PageId.LIBRARY) {
       const currentProfile: Profile = this.appGlobalService.getCurrentUser();
       corRelationList.push({ id: currentProfile.board ? currentProfile.board.join(',') : '', type: CorReleationDataType.BOARD });
       corRelationList.push({ id: currentProfile.medium ? currentProfile.medium.join(',') : '', type: CorReleationDataType.MEDIUM });
       corRelationList.push({ id: currentProfile.grade ? currentProfile.grade.join(',') : '', type: CorReleationDataType.CLASS });
       corRelationList.push({ id: currentProfile.profileType, type: CorReleationDataType.USERTYPE });
-    } else if (pageId === 'courses') {
+    } else if (pageId === PageId.COURSES) {
       const channelId = await this.preferences.getString(PreferenceKey.PAGE_ASSEMBLE_ORGANISATION_ID).toPromise();
       if (channelId) {
         corRelationList.push({ id: channelId, type: CorReleationDataType.SOURCE });
@@ -556,7 +556,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   private async getSelectedLanguage() {
     const selectedLanguage = await this.preferences.getString(PreferenceKey.SELECTED_LANGUAGE_CODE).toPromise();
     if (selectedLanguage) {
-      await this.translate.use(selectedLanguage).toPromise();
+      await this.translate.use(selectedLanguage);
     }
   }
 
@@ -692,15 +692,15 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   menuItemAction(menuName) {
     switch (menuName.menuItem) {
-      case 'MY_CLASSROOMS':
+      case 'MY_GROUPS':
         this.telemetryGeneratorService.generateInteractTelemetry(
           InteractType.TOUCH,
-          InteractSubtype.MY_CLASSROOMS_CLICKED,
+          InteractSubtype.MY_GROUPS_CLICKED,
           Environment.USER,
           PageId.PROFILE
         );
         const navigationExtrasUG: NavigationExtras = { state: { profile: this.profile } };
-        this.router.navigate([`/${RouterLinks.MY_CLASSROOMS}`], navigationExtrasUG);
+        this.router.navigate([`/${RouterLinks.MY_GROUPS}`], navigationExtrasUG);
         break;
 
       case 'REPORTS':

@@ -674,7 +674,7 @@ export class CoursesPage implements OnInit, OnDestroy {
         }
       })
       .catch((err) => {
-        if (err instanceof NetworkError) {
+        if (NetworkError.isInstance(err)) {
           this.commonUtilService.showToast('NO_INTERNET');
         } else {
           this.commonUtilService.showToast('ERROR_CONTENT_NOT_AVAILABLE');

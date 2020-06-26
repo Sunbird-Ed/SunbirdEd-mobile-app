@@ -48,7 +48,8 @@ import {
   SortOrder,
   AuthService,
   DownloadTracking,
-  DownloadService
+  DownloadService,
+  AuditState
 } from 'sunbird-sdk';
 import { Subscription, Observable } from 'rxjs';
 import {
@@ -178,6 +179,8 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
   backButtonFunc = undefined;
   shouldGenerateEndTelemetry = false;
   source = '';
+  groupId: string;
+  isFromGroupFlow = false;
   /** Whole child content is stored and it is used to find first child */
   isBatchNotStarted = false;
   private eventSubscription: Subscription;
@@ -210,7 +213,6 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
   public showUnenroll: boolean;
   public todayDate: any;
   public rollUpMap: { [key: string]: Rollup } = {};
-  public lastReadContentId;
   public courseCompletionData = {};
   isCertifiedCourse: boolean;
   showSheenAnimation = true;
@@ -259,10 +261,13 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
       this.courseCardData = extrasState.content;
       this.isOnboardingSkipped = extrasState.isOnboardingSkipped;
       this.isFromChannelDeeplink = extrasState.isFromChannelDeeplink;
-      // console.log('this.courseCardData', this.courseCardData);
       this.identifier = this.courseCardData.contentId || this.courseCardData.identifier;
       this.corRelationList = extrasState.corRelation;
       this.source = extrasState.source;
+      if (this.source === PageId.GROUP_DETAIL) {
+        this.isFromGroupFlow = true;
+      }
+      this.groupId = extrasState.groupId;
       this.isQrCodeLinkToContent = extrasState.isQrCodeLinkToContent;
       this.resumeCourseFlag = extrasState.resumeCourseFlag || false;
     }
@@ -633,7 +638,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
         });
       })
       .catch((error: any) => {
-        if (error instanceof NetworkError) {
+        if (NetworkError.isInstance(error)) {
           this.commonUtilService.showToast('ERROR_NO_INTERNET_MESSAGE');
         } else {
           this.commonUtilService.showToast('ERROR_FETCHING_DATA');
@@ -1016,18 +1021,6 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
     }
   }
 
-  private async getLastReadContentId() {
-    this.lastReadContentId = this.courseCardData.lastReadContentId;
-    const userId = this.appGlobalService.getUserId();
-    const lastReadContentIdKey = 'lastReadContentId_' + userId + '_' + this.identifier + '_' + this.courseCardData.batchId;
-    const chacedLastReadContentId = await this.preferences.getString(lastReadContentIdKey).toPromise();
-    if (chacedLastReadContentId) {
-      this.lastReadContentId = chacedLastReadContentId;
-      this.courseCardData.lastReadContentId = chacedLastReadContentId;
-    }
-    return this.lastReadContentId;
-  }
-
   private getLeafNodes(contents: Content[]) {
     return contents.reduce((acc, content) => {
       if (content.children) {
@@ -1060,7 +1053,6 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
 
     this.initNextContent();
 
-    const that = this;
     this.zone.run(() => {
       childrenData.forEach((childContent) => {
         if (childContent.children && childContent.children.length) {
@@ -1069,9 +1061,6 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
               if (contentStatusData.contentList.length) {
                 const statusData = contentStatusData.contentList.find(c => c.contentId === eachContent.identifier);
                 if (statusData) {
-                  if (that.lastReadContentId === statusData.contentId) {
-                    childContent['lastRead'] = true;
-                  }
                   return !(statusData.status === 0 || statusData.status === 1);
                 }
                 return false;
@@ -1113,7 +1102,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
       })
       .catch(async (error: any) => {
         // await loader.dismiss();
-        if (error instanceof NetworkError) {
+        if (NetworkError.isInstance(error)) {
           this.showOfflineSection = true;
         } else {
           this.showOfflineSection = false;
@@ -1348,13 +1337,10 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
       this.handleHeaderEvents(eventName);
     });
 
-    // this.showResumeBtn = !!this.courseCardData.lastReadContentId;
-
     // If courseCardData does not have a batch id then it is not a enrolled course
     this.subscribeSdkEvent();
     this.populateCorRelationData(this.courseCardData.batchId);
     this.handleBackButton();
-    this.getLastReadContentId();
   }
 
   ionViewDidEnter() {
@@ -1617,6 +1603,7 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
   }
 
   goBack() {
+    this.appGlobalService.generateCourseCompleteTelemetry = false;
     this.events.publish('event:update_course_data');
     if (this.isQrCodeLinkToContent) {
       window.history.go(-2);
@@ -1755,7 +1742,36 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
     if (courseLevelViewedContents.length) {
       const leafNodeIds = this.getLeafNodeIdsWithoutDuplicates([this.courseHeirarchy]);
       this.course.progress = Math.round((courseLevelViewedContents.length / leafNodeIds.length) * 100);
-      console.log('localcourseProgressPercentage', this.course.progress);
+    }
+    if (!this.course.progress || this.course.progress !== 100) {
+      this.appGlobalService.generateCourseCompleteTelemetry = true;
+    }
+    if (this.appGlobalService.generateCourseCompleteTelemetry && this.course.progress === 100) {
+      this.appGlobalService.generateCourseCompleteTelemetry = false;
+      const cdata = [
+        {
+          type: 'CourseId',
+          id: this.identifier
+        },
+        {
+          type: 'BatchId',
+          id: this.batchDetails.id || ''
+        },
+        {
+          type: 'UserId',
+          id: this.userId
+        },
+      ];
+      this.telemetryGeneratorService.generateAuditTelemetry(
+        Environment.COURSE,
+        AuditState.AUDIT_UPDATED,
+        ['progress'],
+        undefined,
+        this.telemetryObject.id,
+        this.telemetryObject.type,
+        this.telemetryObject.version,
+        cdata
+      );
     }
   }
 
@@ -1934,7 +1950,21 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
   }
 
   onTocCardClick(event) {
+    // If from group flow then should not go to next page.
+    if (this.isFromGroupFlow) {
+      return;
+    }
+
     if (event.item.mimeType === MimeType.COLLECTION) {
+      this.telemetryGeneratorService.generateInteractTelemetry(
+        InteractType.TOUCH,
+        InteractSubtype.TRAINING_MODULE_CLICKED,
+        Environment.HOME,
+        PageId.COURSE_DETAIL,
+        this.telemetryObject,
+        undefined,
+        this.objRollup,
+        this.corRelationList);
       const chapterParams: NavigationExtras = {
         state: {
           chapterData: event.item,
@@ -1942,7 +1972,6 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
           isAlreadyEnrolled: this.isAlreadyEnrolled,
           courseCardData: this.courseCardData,
           batchExp: this.batchExp,
-          telemetryObject: this.telemetryObject,
           isChapterCompleted: this.courseCompletionData[event.item.identifier],
           contentStatusData: this.contentStatusData,
           courseContent: this.content
@@ -1982,6 +2011,10 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
       });
     }
     return this.nextContent;
+  }
+
+  addToGroupActivity() {
+    this.location.back();
   }
 
 }

@@ -15,7 +15,7 @@ import {
   InteractType,
   PageId,
   CorReleationDataType,
-  CorReleationDataId
+  AuditType
 } from '@app/services/telemetry-constants';
 import {
   Framework,
@@ -294,7 +294,7 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
         correlationList = this.populateCData(this.gradeControl.value, CorReleationDataType.CLASS);
         break;
     }
-    correlationList.push({id: CorReleationDataId.POPUP_CATEGORY, type: CorReleationDataType.CHILD_UI});
+    correlationList.push({id: PageId.POPUP_CATEGORY, type: CorReleationDataType.CHILD_UI});
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.SELECT_CANCEL, '',
       Environment.ONBOARDING,
@@ -334,7 +334,7 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
     this.telemetryGeneratorService.generateBackClickedNewTelemetry(
       !isNavBack,
       Environment.ONBOARDING,
-      this.showQRScanner ? PageId.SCAN_OR_MANUAL : PageId.PROFILE_SETTINGS
+      this.showQRScanner ? PageId.SCAN_OR_MANUAL : PageId.MANUAL_PROFILE
     );
 
     if (this.showQRScanner === false) {
@@ -638,14 +638,16 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
         this.telemetryGeneratorService.generateProfilePopulatedTelemetry(
           PageId.ONBOARDING_PROFILE_PREFERENCES, profile, 'manual', Environment.ONBOARDING
         );
-        const correlationlist: Array<CorrelationData> = [];
-        correlationlist.concat(this.populateCData(this.boardControl.value, CorReleationDataType.BOARD));
-        correlationlist.concat(this.populateCData(this.mediumControl.value, CorReleationDataType.MEDIUM));
-        correlationlist.concat(this.populateCData(this.gradeControl.value, CorReleationDataType.CLASS));
+        let correlationlist: Array<CorrelationData> = [{id: PageId.MANUAL_PROFILE, type: CorReleationDataType.FROM_PAGE}];
+        correlationlist = correlationlist.concat(this.populateCData(this.boardControl.value, CorReleationDataType.BOARD));
+        correlationlist = correlationlist.concat(this.populateCData(this.mediumControl.value, CorReleationDataType.MEDIUM));
+        correlationlist = correlationlist.concat(this.populateCData(this.gradeControl.value, CorReleationDataType.CLASS));
+        correlationlist.push({id: PageId.MANUAL, type: CorReleationDataType.FILL_MODE});
         this.telemetryGeneratorService.generateAuditTelemetry(
           Environment.ONBOARDING,
           AuditState.AUDIT_UPDATED,
           undefined,
+          AuditType.SET_PROFILE,
           undefined,
           undefined,
           undefined,
@@ -766,7 +768,7 @@ export class ProfileSettingsPage implements OnInit, OnDestroy, AfterViewInit {
         correlationList = this.populateCData(this.gradeControl.value, CorReleationDataType.CLASS);
         break;
     }
-    correlationList.push({id: CorReleationDataId.POPUP_CATEGORY, type: CorReleationDataType.CHILD_UI});
+    correlationList.push({id: PageId.POPUP_CATEGORY, type: CorReleationDataType.CHILD_UI});
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.SELECT_SUBMIT, '',
       Environment.ONBOARDING,

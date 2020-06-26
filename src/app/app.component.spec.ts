@@ -357,6 +357,7 @@ describe('AppComponent', () => {
                 expect(mockTelemetryGeneratorService.generateNotificationClickedTelemetry).toHaveBeenCalledWith(
                     'local',
                     'sample-page',
+                    undefined,
                     [{id: undefined, type: 'NotificationID'}]
                 );
                 expect(mockPreferences.getString).toHaveBeenCalledWith(PreferenceKey.CAMPAIGN_PARAMETERS);
@@ -385,6 +386,7 @@ describe('AppComponent', () => {
                 expect(mockTelemetryGeneratorService.generateNotificationClickedTelemetry).toHaveBeenCalledWith(
                     InteractType.LOCAL,
                     'sample-page',
+                    undefined,
                     [{id: undefined, type: 'NotificationID'}]
                 );
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).not.nthCalledWith(2,
@@ -411,6 +413,7 @@ describe('AppComponent', () => {
                 expect(mockTelemetryGeneratorService.generateNotificationClickedTelemetry).toHaveBeenCalledWith(
                     InteractType.LOCAL,
                     'sample-page',
+                    undefined,
                     [{id: undefined, type: 'NotificationID'}]
                 );
                 done();
@@ -775,6 +778,7 @@ describe('AppComponent', () => {
                 expect(mockTelemetryGeneratorService.generateNotificationClickedTelemetry).toHaveBeenCalledWith(
                     InteractType.LOCAL,
                     'sample-page',
+                    undefined,
                     [{id: undefined, type: 'NotificationID'}]
                 );
                 expect(SunbirdSdk.instance.updateDeviceRegisterConfig).toHaveBeenCalledWith({ fcmToken: 'some_token' });
@@ -817,6 +821,7 @@ describe('AppComponent', () => {
                 expect(mockTelemetryGeneratorService.generateNotificationClickedTelemetry).toHaveBeenCalledWith(
                     InteractType.LOCAL,
                     'sample-page',
+                    undefined,
                     [{id: undefined, type: 'NotificationID'}]
                 );
                 expect(FCMPlugin.onTokenRefresh).toHaveBeenCalled();
@@ -879,9 +884,9 @@ describe('AppComponent', () => {
                 } as any;
             });
             const mockData = {
-                'id': 'some_id',
-                'wasTapped': true,
-                'actionData': '{\"key\":\"value\"}'
+                id: 'some_id',
+                wasTapped: true,
+                actionData: '{\"key\":\"value\"}'
             };
             FCMPlugin.onNotification = jest.fn((callback, success, error) => {
                 callback(mockData);
@@ -901,7 +906,13 @@ describe('AppComponent', () => {
                     InteractType.FCM,
                     'some_page_id',
                     { notification_id: 'some_id' },
-                    [{"id": "some_id", "type": "NotificationID"}]
+                    [{id: 'some_id', type: 'NotificationID'}]
+                );
+                expect(mockTelemetryGeneratorService.generateNotificationClickedTelemetry).nthCalledWith(2,
+                    InteractType.LOCAL,
+                    'some_page_id',
+                    undefined,
+                    [{id: undefined, type: 'NotificationID'}]
                 );
                 done();
             });
@@ -915,9 +926,9 @@ describe('AppComponent', () => {
                 } as any;
             });
             const mockData = {
-                'id': 'some_id',
-                'wasTapped': false,
-                'actionData': '{\"key\":\"value\"}'
+                id: 'some_id',
+                wasTapped: false,
+                actionData: '{\"key\":\"value\"}'
             };
             FCMPlugin.onNotification = jest.fn((callback, success, error) => {
                 callback(mockData);
@@ -937,7 +948,13 @@ describe('AppComponent', () => {
                     InteractType.FCM,
                     'some_page_id',
                     { notification_id: 'some_id' },
-                    [{"id": "some_id", "type": "NotificationID"}]
+                    [{id: 'some_id', type: 'NotificationID'}]
+                );
+                expect(mockTelemetryGeneratorService.generateNotificationClickedTelemetry).nthCalledWith(2,
+                    InteractType.LOCAL,
+                    'some_page_id',
+                    undefined,
+                    [{id: undefined, type: 'NotificationID'}]
                 );
                 done();
             });
@@ -1311,7 +1328,7 @@ describe('AppComponent', () => {
                 done();
             });
         });
-        it('should subscribe tab change event with pageId resources '
+        it('should subscribe tab change event with pageId library '
             + 'and no board, medium and class is assigned to current profile', (done) => {
                 // arrange
                 mockPlatform.ready = jest.fn(() => {
@@ -1322,7 +1339,7 @@ describe('AppComponent', () => {
                 mockEvents.subscribe = jest.fn((topic, fn) => {
                     switch (topic) {
                         case EventTopics.TAB_CHANGE:
-                            return fn('resources');
+                            return fn('library');
                     }
                 });
                 mockZone.run = jest.fn((fn) => fn());
@@ -1349,11 +1366,11 @@ describe('AppComponent', () => {
                     InteractType.TOUCH,
                     InteractSubtype.TAB_CLICKED,
                     Environment.HOME,
-                    'resources');
-                expect(mockTelemetryGeneratorService.generateImpressionTelemetry).nthCalledWith(1,
+                    'library');
+                expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenCalledWith(
                     ImpressionType.VIEW,
                     '',
-                    'resources',
+                    'library',
                     Environment.HOME,
                     undefined, undefined, undefined, undefined,
                     corRelationList);
@@ -1363,7 +1380,8 @@ describe('AppComponent', () => {
                     done();
                 });
             });
-        it('should subscribe tab change event with pageId library '
+
+        it('should subscribe tab change event with pageId courses '
             + 'and board, medium and class is assigned to current profile', (done) => {
                 // arrange
                 mockPlatform.ready = jest.fn(() => {
@@ -1374,7 +1392,7 @@ describe('AppComponent', () => {
                 mockEvents.subscribe = jest.fn((topic, fn) => {
                     switch (topic) {
                         case EventTopics.TAB_CHANGE:
-                            return fn('resources');
+                            return fn('courses');
                     }
                 });
                 mockZone.run = jest.fn((fn) => fn());
@@ -1386,32 +1404,22 @@ describe('AppComponent', () => {
                     grade: ['some_grade']
                 } as any;
                 mockAppGlobalService.getCurrentUser = jest.fn(() => mockCurrentProfile);
-
+                mockPreferences.getString = jest.fn(() => of('mock_channel_id'));
                 const corRelationList: Array<CorrelationData> = [];
-                corRelationList.push({ id: mockCurrentProfile.board.join(','), type: CorReleationDataType.BOARD });
-                corRelationList.push({ id: mockCurrentProfile.medium.join(','), type: CorReleationDataType.MEDIUM });
-                corRelationList.push({ id: mockCurrentProfile.grade.join(','), type: CorReleationDataType.CLASS });
-                corRelationList.push({ id: mockCurrentProfile.profileType, type: CorReleationDataType.USERTYPE });
+                corRelationList.push({id: 'mock_channel_id', type: CorReleationDataType.SOURCE});
                 mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
-
+                mockTranslate.use = jest.fn();
                 // act
                 jest.useFakeTimers();
                 appComponent.ngOnInit();
                 // assert
                 jest.advanceTimersByTime(2100);
                 expect(mockEvents.subscribe).toHaveBeenCalled();
-                expect(mockTelemetryGeneratorService.generateInteractTelemetry).nthCalledWith(2,
+                expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
                     InteractType.TOUCH,
                     InteractSubtype.TAB_CLICKED,
                     Environment.HOME,
-                    'resources');
-                expect(mockTelemetryGeneratorService.generateImpressionTelemetry).nthCalledWith(1,
-                    ImpressionType.VIEW,
-                    '',
-                    'resources',
-                    Environment.HOME,
-                    undefined, undefined, undefined, undefined,
-                    corRelationList);
+                    'courses');
                 jest.useRealTimers();
                 jest.clearAllTimers();
                 setTimeout(() => {
@@ -1517,12 +1525,12 @@ describe('AppComponent', () => {
     });
 
     describe('menuItemAction', () => {
-        it('should navigate to classroom page when classroom is clicked in menu', () => {
+        it('should navigate to groups page when my group is clicked in menu', () => {
             // arrange
             const menuName = {
-                menuItem: 'MY_CLASSROOMS'
+                menuItem: 'MY_GROUPS'
             };
-            const routeUrl = [`/${RouterLinks.MY_CLASSROOMS}`];
+            const routeUrl = [`/${RouterLinks.MY_GROUPS}`];
 
             // act
             appComponent.menuItemAction(menuName);

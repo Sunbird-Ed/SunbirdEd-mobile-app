@@ -1,10 +1,13 @@
 import { CurriculumCoursesPage } from './curriculum-courses.page';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
-import { AppGlobalService, AppHeaderService, CommonUtilService } from '@app/services';
-import { CourseService, Course } from '@project-sunbird/sunbird-sdk';
+import { AppGlobalService, AppHeaderService, CommonUtilService,
+         TelemetryGeneratorService, PageId, Environment, ImpressionType,
+         InteractSubtype, InteractType } from '@app/services';
+import { CourseService, Course, CourseBatchStatus, TelemetryObject } from '@project-sunbird/sunbird-sdk';
 import { of } from 'rxjs';
-import { ProfileConstants } from '../app.constant';
+import { Location } from '@angular/common';
+import { Platform } from '@ionic/angular';
 
 describe('CurriculumCoursesPage', () => {
     let curriculumCoursesPage: CurriculumCoursesPage;
@@ -26,6 +29,9 @@ describe('CurriculumCoursesPage', () => {
         })) as any
     };
     const mockTranslate: Partial<TranslateService> = {};
+    const mockLocation: Partial<Location> = {};
+    const mockPlatform: Partial<Platform> = {};
+    const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {};
 
     beforeAll(() => {
         curriculumCoursesPage = new CurriculumCoursesPage(
@@ -34,7 +40,10 @@ describe('CurriculumCoursesPage', () => {
             mockAppGlobalService as AppGlobalService,
             mockTranslate as TranslateService,
             mockCommonUtilService as CommonUtilService,
-            mockRouter as Router
+            mockRouter as Router,
+            mockTelemetryGeneratorService as TelemetryGeneratorService,
+            mockLocation as Location,
+            mockPlatform as Platform
         );
     });
 
@@ -47,17 +56,67 @@ describe('CurriculumCoursesPage', () => {
     });
 
     it('should handle header back button', () => {
+        // arrange
         mockAppHeaderService.showHeaderWithBackButton = jest.fn();
+        const mockConfig = {
+            subscribe: jest.fn(() => { })
+        };
+        mockAppHeaderService.headerEventEmitted$ = of(mockConfig);
+        jest.spyOn(curriculumCoursesPage, 'handleHeaderEvents').mockImplementation(() => {
+            return;
+        });
+        const subscribeWithPriorityData = jest.fn((_, fn) => fn({}));
+        mockPlatform.backButton = {
+                subscribeWithPriority: subscribeWithPriorityData,
+            } as any;
+        mockTelemetryGeneratorService.generateBackClickedTelemetry = jest.fn();
+        mockLocation.back = jest.fn();
+        mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
+        // act
         curriculumCoursesPage.ionViewWillEnter();
+        // assert
         expect(mockAppHeaderService.showHeaderWithBackButton).toHaveBeenCalled();
+        expect(mockAppHeaderService.headerEventEmitted$).toBeTruthy();
+        expect(mockPlatform.backButton).not.toBeUndefined();
+        expect(mockTelemetryGeneratorService.generateBackClickedTelemetry).toHaveBeenCalledWith(
+            PageId.COURSE_LIST,
+            Environment.HOME, false
+        );
+        expect(mockLocation.back).toHaveBeenCalled();
+        expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenCalledWith(
+            ImpressionType.VIEW,
+            '',
+            PageId.COURSE_LIST,
+            Environment.HOME
+        );
     });
 
     it('should navigate to curriculumCourse', () => {
+        // arrange
         const course = { name: 'sample-course' };
+        curriculumCoursesPage.corRelationList = [{
+            id: 'do_123',
+            type: 'course'
+        }as any];
+        mockCommonUtilService.deDupe = jest.fn(() => curriculumCoursesPage.corRelationList);
+        mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
         mockRouter.navigate = jest.fn(() => Promise.resolve(true));
+        const telemetryObject = new TelemetryObject(undefined, undefined, undefined);
+        // act
         curriculumCoursesPage.openCourseDetails(course);
         // assert
+        expect(mockCommonUtilService.deDupe).toHaveBeenCalledWith(curriculumCoursesPage.corRelationList, 'type');
         expect(mockRouter.navigate).toHaveBeenCalled();
+        expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+            InteractType.TOUCH,
+            InteractSubtype.CONTENT_CLICKED,
+            Environment.HOME,
+            PageId.COURSE_LIST,
+            telemetryObject,
+            undefined,
+            {l1: undefined},
+            curriculumCoursesPage.corRelationList,
+        );
     });
 
     describe('ngOnInit', () => {
@@ -73,6 +132,7 @@ describe('CurriculumCoursesPage', () => {
                 userToken: 'user_token'
             }));
             mockCommonUtilService.getContentImg = jest.fn(() => 'some_img_url');
+            curriculumCoursesPage.appliedFilter = {};
             curriculumCoursesPage.courseList = [
                 {
                     identifier: 'do_some_identifier'
@@ -86,8 +146,7 @@ describe('CurriculumCoursesPage', () => {
                     courseId: 'do_some_identifier'
                 }
             ];
-            mockCourseService.getEnrolledCourses = jest.fn(() => of(enrolledCourses));
-            console.log('enrolledCourses:true ', curriculumCoursesPage.enrolledCourses);
+            mockCourseService.getUserEnrolledCourses = jest.fn(() => of(enrolledCourses));
 
             // act
             curriculumCoursesPage.ngOnInit();
@@ -97,8 +156,13 @@ describe('CurriculumCoursesPage', () => {
                 expect(mockAppGlobalService.isUserLoggedIn).toBeTruthy();
                 expect(mockAppGlobalService.getSessionData).toHaveBeenCalled();
                 expect(mockCommonUtilService.getContentImg).toHaveBeenCalled();
-                expect(mockCourseService.getEnrolledCourses).toHaveBeenCalledWith({
-                    returnFreshCourses: true, userId: 'user_token'
+                expect(mockCourseService.getUserEnrolledCourses).toHaveBeenCalledWith({
+                    request: {
+                        userId: 'user_token',
+                        filters: {
+                            subject: ['sample-subject']
+                        }
+                      }
                 });
                 done();
             });

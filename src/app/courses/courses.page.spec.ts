@@ -184,6 +184,9 @@ describe('CoursesPage', () => {
 
     it('should handle header service by invoked ionViewWillEnter', () => {
         // arrange
+        coursesPage.refresher = {
+            disabled: true
+        } as any;
         mockEvents.subscribe = jest.fn((_, fn) => fn());
         mockHeaderService.showHeaderWithHomeButton = jest.fn();
         const data = jest.fn((fn => fn()));
@@ -236,6 +239,7 @@ describe('CoursesPage', () => {
     describe('ionViewWillLeave', () => {
         it('should unsubscribe eventservice and headerObservable by invoked ionViewWillLeave', () => {
             // arrange
+            coursesPage.refresher = {disabled: true};
             coursesPage.headerObservable = true;
             coursesPage.headerObservable = {
                 unsubscribe: jest.fn(() => true)

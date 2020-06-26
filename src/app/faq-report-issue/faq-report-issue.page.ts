@@ -42,30 +42,30 @@ const SUBJECT_NAME = 'support request';
 })
 export class FaqReportIssuePage implements OnInit, OnDestroy {
 
-  @ViewChild('boardSelect') boardSelect: any;
-  @ViewChild('mediumSelect') mediumSelect: any;
-  @ViewChild('gradeSelect') gradeSelect: any;
-  @ViewChild('subjectSelect') subjectSelect: any;
+  // @ViewChild('boardSelect') boardSelect: any;
+  // @ViewChild('mediumSelect') mediumSelect: any;
+  // @ViewChild('gradeSelect') gradeSelect: any;
+  // @ViewChild('subjectSelect') subjectSelect: any;
 
-  boardOptions = {
-    title: this.commonUtilService.translateMessage('BOARD').toLocaleUpperCase(),
-    cssClass: 'select-box'
-  };
+  // boardOptions = {
+  //   title: this.commonUtilService.translateMessage('BOARD').toLocaleUpperCase(),
+  //   cssClass: 'select-box'
+  // };
 
-  mediumOptions = {
-    title: this.commonUtilService.translateMessage('MEDIUM').toLocaleUpperCase(),
-    cssClass: 'select-box'
-  };
+  // mediumOptions = {
+  //   title: this.commonUtilService.translateMessage('MEDIUM').toLocaleUpperCase(),
+  //   cssClass: 'select-box'
+  // };
 
-  classOptions = {
-    title: this.commonUtilService.translateMessage('CLASS').toLocaleUpperCase(),
-    cssClass: 'select-box'
-  };
+  // classOptions = {
+  //   title: this.commonUtilService.translateMessage('CLASS').toLocaleUpperCase(),
+  //   cssClass: 'select-box'
+  // };
 
-  subjectsOptions = {
-    title: this.commonUtilService.translateMessage('SUBJECTS').toLocaleUpperCase(),
-    cssClass: 'select-box'
-  };
+  // subjectsOptions = {
+  //   title: this.commonUtilService.translateMessage('SUBJECTS').toLocaleUpperCase(),
+  //   cssClass: 'select-box'
+  // };
 
   data: any;
   private messageListener: (evt: Event) => void;
@@ -100,25 +100,25 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
 
   btnColor = '#8FC4FF';
 
-  get syllabusControl(): FormControl {
-    return this.supportCategoryForm.get('syllabus') as FormControl;
-  }
+  // get syllabusControl(): FormControl {
+  //   return this.supportCategoryForm.get('syllabus') as FormControl;
+  // }
 
-  get boardControl(): FormControl {
-    return this.supportCategoryForm.get('board') as FormControl;
-  }
+  // get boardControl(): FormControl {
+  //   return this.supportCategoryForm.get('board') as FormControl;
+  // }
 
-  get mediumControl(): FormControl {
-    return this.supportCategoryForm.get('medium') as FormControl;
-  }
+  // get mediumControl(): FormControl {
+  //   return this.supportCategoryForm.get('medium') as FormControl;
+  // }
 
-  get gradeControl(): FormControl {
-    return this.supportCategoryForm.get('grades') as FormControl;
-  }
+  // get gradeControl(): FormControl {
+  //   return this.supportCategoryForm.get('grades') as FormControl;
+  // }
 
-  get subjectControl(): FormControl {
-    return this.supportCategoryForm.get('subjects') as FormControl;
-  }
+  // get subjectControl(): FormControl {
+  //   return this.supportCategoryForm.get('subjects') as FormControl;
+  // }
 
   get emailContentControl(): FormControl {
     return this.supportCategoryForm.get('emailContent') as FormControl;
@@ -147,11 +147,11 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
       console.log('Data from Faq-Help', this.data);
     }
     this.supportCategoryForm = new FormGroup({
-      syllabus: new FormControl([], (c) => c.value.length ? undefined : { length: 'NOT_SELECTED' }),
-      board: new FormControl([], (c) => c.value.length ? undefined : { length: 'NOT_SELECTED' }),
-      medium: new FormControl([], (c) => c.value.length ? undefined : { length: 'NOT_SELECTED' }),
-      grades: new FormControl([], (c) => c.value.length ? undefined : { length: 'NOT_SELECTED' }),
-      subjects: new FormControl([], (c) => c.value.length ? undefined : { length: 'NOT_SELECTED' }),
+      // syllabus: new FormControl([], (c) => c.value.length ? undefined : { length: 'NOT_SELECTED' }),
+      // board: new FormControl([], (c) => c.value.length ? undefined : { length: 'NOT_SELECTED' }),
+      // medium: new FormControl([], (c) => c.value.length ? undefined : { length: 'NOT_SELECTED' }),
+      // grades: new FormControl([], (c) => c.value.length ? undefined : { length: 'NOT_SELECTED' }),
+      // subjects: new FormControl([], (c) => c.value.length ? undefined : { length: 'NOT_SELECTED' }),
       emailContent: new FormControl('', (c) => c.value !== '' ? undefined : { length: 'NOT_SELECTED' })
     });
     this.profileService.getActiveSessionProfile({ requiredFields: ProfileConstants.REQUIRED_FIELDS }).toPromise()
@@ -185,28 +185,28 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
       });
   }
 
-  async fetchSyllabusList() {
-    this.loader = await this.commonUtilService.getLoader();
-    await this.loader.present();
+  // async fetchSyllabusList() {
+  //   this.loader = await this.commonUtilService.getLoader();
+  //   await this.loader.present();
 
-    const getSuggestedFrameworksRequest: GetSuggestedFrameworksRequest = {
-      from: CachedItemRequestSourceFrom.SERVER,
-      language: this.translate.currentLang,
-      requiredCategories: FrameworkCategoryCodesGroup.DEFAULT_FRAMEWORK_CATEGORIES
-    };
+  //   const getSuggestedFrameworksRequest: GetSuggestedFrameworksRequest = {
+  //     from: CachedItemRequestSourceFrom.SERVER,
+  //     language: this.translate.currentLang,
+  //     requiredCategories: FrameworkCategoryCodesGroup.DEFAULT_FRAMEWORK_CATEGORIES
+  //   };
 
-    this.frameworkUtilService.getActiveChannelSuggestedFrameworkList(getSuggestedFrameworksRequest).toPromise()
-      .then(async (frameworks: Framework[]) => {
-        if (!frameworks || !frameworks.length) {
-          await this.loader.dismiss();
-          this.commonUtilService.showToast('NO_DATA_FOUND');
-          return;
-        }
-        this.syllabusList = frameworks.map(r => ({ name: r.name, code: r.identifier }));
-        this.syllabusControl.patchValue([this.profile.syllabus && this.profile.syllabus[0]] || []);
-        await this.loader.dismiss();
-      });
-  }
+  //   this.frameworkUtilService.getActiveChannelSuggestedFrameworkList(getSuggestedFrameworksRequest).toPromise()
+  //     .then(async (frameworks: Framework[]) => {
+  //       if (!frameworks || !frameworks.length) {
+  //         await this.loader.dismiss();
+  //         this.commonUtilService.showToast('NO_DATA_FOUND');
+  //         return;
+  //       }
+  //       this.syllabusList = frameworks.map(r => ({ name: r.name, code: r.identifier }));
+  //       this.syllabusControl.patchValue([this.profile.syllabus && this.profile.syllabus[0]] || []);
+  //       await this.loader.dismiss();
+  //     });
+  // }
 
   ngOnInit() {
     this.appVersion.getAppName()
@@ -226,9 +226,9 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
     );
 
     this.formControlSubscriptions = combineLatest(
-      this.onBoardChange(),
+      /* this.onBoardChange(),
       this.onMediumChange(),
-      this.onGradeChange(),
+      this.onGradeChange(), */
       this.supportCategoryForm.valueChanges.pipe(
         delay(250),
         tap(() => {
@@ -236,10 +236,10 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
         })
       )
     ).subscribe();
-    this.fetchSyllabusList();
+    // this.fetchSyllabusList();
   }
 
-  private onBoardChange(): Observable<string[]> {
+  /* private onBoardChange(): Observable<string[]> {
     return this.syllabusControl.valueChanges.pipe(
       tap(async (value) => {
         if (!Array.isArray(value)) {
@@ -301,9 +301,9 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
         }
       })
     );
-  }
+  } */
 
-  private onMediumChange(): Observable<string[]> {
+  /* private onMediumChange(): Observable<string[]> {
     return this.mediumControl.valueChanges.pipe(
       tap(async (value) => {
         await this.commonUtilService.getLoader().then((loader) => {
@@ -339,9 +339,9 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
         }
       })
     );
-  }
+  } */
 
-  private onGradeChange(): Observable<string[]> {
+  /* private onGradeChange(): Observable<string[]> {
     return this.gradeControl.valueChanges.pipe(
       tap(async () => {
         // await this.commonUtilService.getLoader().then((loader) => {
@@ -375,7 +375,7 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
         }
       })
     );
-  }
+  } */
 
   ngOnDestroy() {
     window.removeEventListener('message', this.messageListener);
@@ -464,9 +464,9 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
     return userDetails;
   }
 
-  getBMCS() {
-    return (this.boardControl.value)
-  }
+  // getBMCS() {
+  //   return (this.boardControl.value)
+  // }
 
   initiateEmail() {
     if (this.supportCategoryForm.valid) {
@@ -480,17 +480,18 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
       return;
     }
 
-    for (const [control, selector] of [
-      [this.syllabusControl, this.boardSelect],
-      [this.mediumControl, this.mediumSelect],
-      [this.gradeControl, this.gradeSelect],
-      [this.subjectControl, this.subjectSelect]
-    ]) {
-      if (!control.value.length) {
-        selector.open();
-        return;
-      }
-    }
+    // ** to open the select box if not selected **
+    // for (const [control, selector] of [
+    //   [this.syllabusControl, this.boardSelect],
+    //   [this.mediumControl, this.mediumSelect],
+    //   [this.gradeControl, this.gradeSelect],
+    //   [this.subjectControl, this.subjectSelect]
+    // ]) {
+    //   if (!control.value.length) {
+    //     selector.open();
+    //     return;
+    //   }
+    // }
   }
 
   countChar(val) {
@@ -513,10 +514,10 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
     const loader = await this.commonUtilService.getLoader();
     await loader.present();
     const correlationlist: Array<CorrelationData> = [];
-    correlationlist.push({ id: this.boardControl.value, type: CorReleationDataType.BOARD });
-    correlationlist.push({ id: this.mediumControl.value, type: CorReleationDataType.MEDIUM });
-    correlationlist.push({ id: this.gradeControl.value, type: CorReleationDataType.CLASS });
-    correlationlist.push({ id: this.subjectControl.value, type: CorReleationDataType.SUBJECT });
+    // correlationlist.push({ id: this.boardControl.value, type: CorReleationDataType.BOARD });
+    // correlationlist.push({ id: this.mediumControl.value, type: CorReleationDataType.MEDIUM });
+    // correlationlist.push({ id: this.gradeControl.value, type: CorReleationDataType.CLASS });
+    // correlationlist.push({ id: this.subjectControl.value, type: CorReleationDataType.SUBJECT });
     this.generateInteractEvent(InteractType.TOUCH, InteractSubtype.MANUALSYNC_INITIATED, null);
     this.telemetryService.sync({
       ignoreAutoSyncMode: true,

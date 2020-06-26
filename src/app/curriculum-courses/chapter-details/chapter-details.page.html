@@ -1,14 +1,16 @@
 <ion-content>
   <div class="cd-header-container">
-    <div class="cd-label">{{ courseContentData?.name }}</div>
-    <div class="cd-header-title">{{ chapter.name}}</div>
-    <div class="cd-of-menu">
-      <img class="cd-menu-icon" (click)="showOverflowMenu($event)" src="assets/imgs/menu.svg" alt="menu-icon">
+    <div class="cd-title-container">
+      <div class="cd-label">{{ courseContentData?.name }}</div>
+      <div class="cd-header-title">{{ chapter.name}}</div>
+      <div class="cd-of-menu">
+        <img class="cd-menu-icon" (click)="showOverflowMenu($event)" src="assets/imgs/menu.svg" alt="menu-icon">
+      </div>
     </div>
     <div class="new-div">
       <div *ngIf="!isAlreadyEnrolled">
         <div class="enrollment-info"
-          *ngIf="batches && courseContentData?.createdBy !== userId && (batches.length > 1 || (batches.length === 1 && !(todayDate > batches[0].enrollmentEndDate)))">
+          *ngIf="batches && courseContentData?.contentData?.createdBy !== userId && (batches.length > 1 || (batches.length === 1 && !(todayDate > batches[0].enrollmentEndDate)))">
           <button class="enrolled-course-card-button" (click)="navigateToBatchListPage();">
             {{'JOIN_TRAINING' | translate}}
           </button>
@@ -117,7 +119,7 @@
         </button>
         <button class="cd-chapter-card-button" *ngIf="!isChapterCompleted && isChapterStarted" (click)="continueLearning();">
           <img class="play-icon" src="assets/imgs/Play@1.5x.svg" alt="play-icon">
-          {{'CONTINUE_NOW' | translate}}
+          {{'CONTINUE_LEARNING' | translate}}
         </button>
       </div>
     </div>

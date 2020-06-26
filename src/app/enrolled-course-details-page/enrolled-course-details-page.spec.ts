@@ -287,7 +287,7 @@ describe('EnrolledCourseDetailsPage', () => {
             expect(enrolledCourseDetailsPage.generateStartEvent).toBeCalled();
             expect(response.contentData.status).not.toBe('Live');
             expect(mockCommonUtilService.showToast).toHaveBeenCalled();
-            expect(response.contentData.me_totalRatingsCount).toBe(4);
+            expect(response.contentData.me_averageRating).toBe(4);
             expect(mockLocation.back).toHaveBeenCalled();
         });
 
@@ -1631,7 +1631,6 @@ describe('EnrolledCourseDetailsPage', () => {
             spyOn(enrolledCourseDetailsPage, 'subscribeSdkEvent').and.stub();
             spyOn(enrolledCourseDetailsPage, 'populateCorRelationData');
             spyOn(enrolledCourseDetailsPage, 'handleBackButton').and.stub();
-            spyOn(enrolledCourseDetailsPage, 'getLastReadContentId');
             enrolledCourseDetailsPage.ionViewWillEnter().then(() => {
                 expect(enrolledCourseDetailsPage.checkCurrentUserType).toHaveBeenCalled();
                 expect(mockAppGlobalService.getUserId).toHaveBeenCalled();
@@ -1641,7 +1640,6 @@ describe('EnrolledCourseDetailsPage', () => {
                 expect(enrolledCourseDetailsPage.subscribeSdkEvent).toBeCalled();
                 expect(enrolledCourseDetailsPage.populateCorRelationData).toBeCalled();
                 expect(enrolledCourseDetailsPage.handleBackButton).toBeCalled();
-                expect(enrolledCourseDetailsPage.getLastReadContentId).toBeCalled();
             });
             // assert
             expect(enrolledCourseDetailsPage.checkLoggedInOrGuestUser).toHaveBeenCalled();
@@ -1876,69 +1874,6 @@ describe('EnrolledCourseDetailsPage', () => {
             expect(mockCommonUtilService.translateMessage).toHaveBeenCalledWith('COURSE_WILL_BE_AVAILABLE', '2020-06-04');
             expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('course will be available');
             expect(mockDatePipe.transform).toBeCalled();
-        });
-    });
-
-    describe('getLastReadContentId()', () => {
-        it('should set lastReadContentId in courseCardData', async () => {
-            // arrange
-            mockAppGlobalService.getUserId = jest.fn(() => {
-                return 'sample_user_id';
-            });
-            // ** for ionViewWillEnter
-            mockHeaderService.headerEventEmitted$ = {
-                subscribe: jest.fn(() => {})
-            };
-            enrolledCourseDetailsPage.guestUser = true;
-            enrolledCourseDetailsPage.isAlreadyEnrolled = false;
-            jest.spyOn(enrolledCourseDetailsPage, 'checkLoggedInOrGuestUser').mockImplementation();
-            jest.spyOn(enrolledCourseDetailsPage, 'checkCurrentUserType').mockImplementation();
-            mockHeaderService.showHeaderWithBackButton = jest.fn(() => { });
-            spyOn(enrolledCourseDetailsPage, 'isCourseEnrolled').and.stub();
-            spyOn(enrolledCourseDetailsPage, 'subscribeSdkEvent').and.stub();
-            spyOn(enrolledCourseDetailsPage, 'populateCorRelationData');
-            spyOn(enrolledCourseDetailsPage, 'handleBackButton').and.stub();
-            spyOn(enrolledCourseDetailsPage, 'setContentDetails').and.stub();
-            // ******
-            // ** for getLastReadContentId
-            mockPreferences.getString = jest.fn(() => of(PreferenceKey.COURSE_IDENTIFIER));
-            // *****
-            // act
-            await enrolledCourseDetailsPage.ionViewWillEnter();
-            // assert
-            expect(mockPreferences.getString).toBeCalled();
-            expect(enrolledCourseDetailsPage.courseCardData.lastReadContentId).toBe('sunbirdcourse_identifier');
-        });
-    });
-
-    describe('getStatusOfCourseCompletion()', () => {
-        it('should set the lastRead value to true', async (done) => {
-            enrolledCourseDetailsPage.courseCardData.batchId = '1234567890';
-            jest.spyOn(mockCourseService, 'getContentState').mockReturnValue(of({}));
-            mockZone.run = jest.fn((cb) => cb());
-
-            // ** getStatusOfCourseCompletion
-            enrolledCourseDetailsPage.childrenData = mockChildrenData;
-            enrolledCourseDetailsPage.lastReadContentId = 'do_135241345727';
-            // act
-            await enrolledCourseDetailsPage.getContentState(false);
-            // assert
-            expect(mockChildrenData[0].lastRead).toBe(undefined);
-            done();
-        });
-
-        it('should set the lastRead value to true', async (done) => {
-            enrolledCourseDetailsPage.courseCardData.batchId = '1234567890';
-            jest.spyOn(mockCourseService, 'getContentState').mockReturnValue(of(mockContentStatusData));
-            mockZone.run = jest.fn((cb) => cb());
-
-            // ** getStatusOfCourseCompletion
-            enrolledCourseDetailsPage.lastReadContentId = 'do_135241345727';
-            // act
-            await enrolledCourseDetailsPage.getContentState(false);
-            // assert
-            expect(mockChildrenData[0].children).toBeTruthy();
-            done();
         });
     });
 

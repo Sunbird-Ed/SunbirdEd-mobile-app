@@ -319,9 +319,9 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
     return new Promise(async resolve => {
       const content = await this.contentService.getContentDetails({ contentId }).toPromise()
         .catch(e => {
-          if (e instanceof HttpServerError) {
+          if (HttpServerError.isInstance(e)) {
             this.commonUtilService.showToast('ERROR_FETCHING_DATA');
-          } else if (e instanceof NetworkError) {
+          } else if (NetworkError.isInstance(e)) {
             this.commonUtilService.showToast('NEED_INTERNET_FOR_DEEPLINK_CONTENT');
           } else {
             this.commonUtilService.showToast('ERROR_CONTENT_NOT_AVAILABLE');
@@ -438,17 +438,22 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
     const telemetryObject = new TelemetryObject(identifier ? identifier : dialCode, identifier ? 'Content' : 'qr', undefined);
     const utmUrl = url.slice(url.indexOf('?') + 1);
     const params: { [param: string]: string } = qs.parse(utmUrl);
-    const utmcData: CorrelationData[] = [{
+    const utmcData: CorrelationData[] = [];
+
+    if (utmUrl !== url) {
+      ContentUtil.genrateUTMCData(params).forEach((element) => {
+        utmcData.push(element);
+      });
+    }
+
+    const corRelationData: CorrelationData[] = [{
       id: CorReleationDataType.DEEPLINK,
       type: CorReleationDataType.ACCESS_TYPE
     }];
-
-    ContentUtil.genrateUTMCData(params).forEach((element) => {
-      utmcData.push(element);
-    });
-
-    this.telemetryService.updateCampaignParameters(utmcData);
-    this.telemetryGeneratorService.generateUtmInfoTelemetry(params, PageId.HOME, telemetryObject);
+    if (utmcData && utmcData.length) {
+      this.telemetryService.updateCampaignParameters(utmcData);
+      this.telemetryGeneratorService.generateUtmInfoTelemetry(params, PageId.HOME, telemetryObject, corRelationData);
+    }
 
     return utmcData;
   }
@@ -553,8 +558,11 @@ export class SplaschreenDeeplinkActionHandlerDelegate implements SplashscreenAct
   }
 
   async navigateToCourseDetail(identifier, content: Content | null, source: string, isOnboardingSkipped = false) {
-    const url = new URL(source);
-    const childContentId = url.searchParams.get('contentId');
+    let childContentId;
+    if (source) {
+      const url = new URL(source);
+      childContentId = url.searchParams.get('moduleId');
+    }
     if (childContentId) {
       try {
         this.isChildContentFound = false;

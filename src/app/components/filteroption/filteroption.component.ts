@@ -1,32 +1,40 @@
-import { Component , ViewEncapsulation  } from '@angular/core';
+import { Component, ViewEncapsulation, OnDestroy } from '@angular/core';
 import { NavParams, PopoverController, Platform } from '@ionic/angular';
 import { Subscription } from 'rxjs';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import {
   Environment, InteractSubtype, InteractType, PageId
 } from '@app/services/telemetry-constants';
+
 @Component({
   selector: 'app-filteroption',
   templateUrl: './filteroption.component.html',
   styleUrls: ['./filteroption.component.scss'],
   encapsulation: ViewEncapsulation.None
 })
-export class FilteroptionComponent {
+export class FilteroptionComponent implements OnDestroy {
 
   facets: any;
   backButtonFunc: Subscription;
+  source: string;
 
   constructor(
     private navParams: NavParams,
     private popCtrl: PopoverController,
     private platform: Platform,
     private telemetryGeneratorService: TelemetryGeneratorService
-    ) {
+  ) {
     this.facets = this.navParams.get('facet');
+    this.source = this.navParams.get('source');
     this.backButtonFunc = this.platform.backButton.subscribeWithPriority(11, () => {
       this.popCtrl.dismiss();
-      this.backButtonFunc.unsubscribe();
     });
+  }
+
+  ngOnDestroy() {
+    if (this.backButtonFunc) {
+      this.backButtonFunc.unsubscribe();
+    }
   }
 
   confirm() {
@@ -34,15 +42,15 @@ export class FilteroptionComponent {
     values['option'] = this.facets.name;
     const appliedFilter = [];
     this.facets.values.map((element) => {
-       if (element.apply) {
-          appliedFilter.push(element.name);
-       }
+      if (element.apply) {
+        appliedFilter.push(element.name);
+      }
     });
     values['selectedFilter'] = appliedFilter;
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
       InteractSubtype.APPLY_FILTER_CLICKED,
       Environment.HOME,
-      PageId.LIBRARY_SEARCH_FILTER,
+      this.source.match('courses') ? PageId.COURSE_SEARCH_FILTER : PageId.LIBRARY_SEARCH_FILTER,
       undefined,
       values);
     this.popCtrl.dismiss();

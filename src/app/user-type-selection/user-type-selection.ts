@@ -16,7 +16,8 @@ import {
   InteractType,
   PageId,
   CorReleationDataType,
-  AuditProps
+  AuditProps,
+  AuditType
 } from '@app/services/telemetry-constants';
 import { ContainerService } from '@app/services/container.services';
 import { initTabs, GUEST_STUDENT_TABS, GUEST_TEACHER_TABS } from '@app/app/module.service';
@@ -245,12 +246,16 @@ export class UserTypeSelectionPage {
             }
             this.profile = success;
             this.gotoNextPage();
-            const correlationlist: Array<CorrelationData> = [];
+            const correlationlist: Array<CorrelationData> = [{id: PageId.USER_TYPE, type: CorReleationDataType.FROM_PAGE}];
             correlationlist.push({ id: this.selectedUserType, type: CorReleationDataType.USERTYPE });
             this.telemetryGeneratorService.generateAuditTelemetry(
               Environment.ONBOARDING,
               AuditState.AUDIT_UPDATED,
               [AuditProps.PROFILE_TYPE],
+              AuditType.SELECT_USERTYPE,
+              undefined,
+              undefined,
+              undefined,
               correlationlist
             );
           }).catch(() => {

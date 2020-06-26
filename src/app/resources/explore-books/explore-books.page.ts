@@ -131,6 +131,7 @@ export class ExploreBooksPage implements OnInit, OnDestroy {
   mediumList: Array<FilterValue>;
   corRelationList: Array<CorrelationData>;
   checkedSortByButton = true;
+  currentSelectedClass: any;
 
   constructor(
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
@@ -287,6 +288,9 @@ export class ExploreBooksPage implements OnInit, OnDestroy {
           values);
         this.showLoader = true;
         this.contentSearchResult = [];
+        if (this.currentSelectedClass) {
+          searchCriteria.grade[0] = this.currentSelectedClass;
+        }
         return this.contentService.searchContent(searchCriteria).pipe(
           catchError(() => {
             this.zone.run(() => {
@@ -473,6 +477,7 @@ export class ExploreBooksPage implements OnInit, OnDestroy {
   }
 
   classClickedForTelemetry(currentClass: string) {
+    this.currentSelectedClass = currentClass;
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,
       InteractSubtype.CLASS_CLICKED,

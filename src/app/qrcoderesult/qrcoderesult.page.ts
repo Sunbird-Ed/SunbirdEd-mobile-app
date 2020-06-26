@@ -428,19 +428,7 @@ export class QrcoderesultPage implements OnDestroy {
     let telemetryObject: TelemetryObject;
     const objectType = this.telemetryGeneratorService.isCollection(content.mimeType) ? content.contentType : ContentType.RESOURCE;
     telemetryObject = new TelemetryObject(identifier, objectType, undefined);
-    this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
-      InteractSubtype.CONTENT_PLAY,
-      !this.appGlobalService.isOnBoardingCompleted ? Environment.ONBOARDING : Environment.HOME,
-      PageId.DIAL_CODE_SCAN_RESULT,
-      telemetryObject,
-      values,
-      undefined,
-      this.corRelationList);
-    if (this.commonUtilService.networkInfo.isNetworkAvailable || content.isAvailableLocally) {
-      this.openPlayer(content, request);
-    } else {
-      this.commonUtilService.presentToastForOffline('OFFLINE_WARNING_ETBUI_1');
-    }
+    this.openPlayer(content, request);
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.TOUCH,
       content.isAvailableLocally ? InteractSubtype.PLAY_FROM_DEVICE : InteractSubtype.PLAY_ONLINE,
@@ -497,31 +485,27 @@ export class QrcoderesultPage implements OnDestroy {
         }
       });
     } else {
-      if (this.commonUtilService.networkInfo.isNetworkAvailable || content.isAvailableLocally) {
-        this.telemetryGeneratorService.generateInteractTelemetry(
-          InteractType.TOUCH,
-          Boolean(content.isAvailableLocally) ? InteractSubtype.PLAY_FROM_DEVICE : InteractSubtype.DOWNLOAD_PLAY_CLICKED,
-          !this.appGlobalService.isOnBoardingCompleted ? Environment.ONBOARDING : Environment.HOME,
-          PageId.DIAL_CODE_SCAN_RESULT);
-        // this.navCtrl.push(ContentDetailsPage, {
-        //   content: content,
-        //   depth: '1',
-        //   isChildContent: true,
-        //   downloadAndPlay: true,
-        //   corRelation: this.corRelationList
-        // });
-        this.router.navigate([RouterLinks.CONTENT_DETAILS], {
-          state: {
-            content: content,
-            depth: '1',
-            isChildContent: true,
-            downloadAndPlay: true,
-            corRelation: this.corRelationList
-          }
-        });
-      } else {
-        this.commonUtilService.presentToastForOffline('OFFLINE_WARNING_ETBUI_1');
-      }
+      this.telemetryGeneratorService.generateInteractTelemetry(
+        InteractType.TOUCH,
+        Boolean(content.isAvailableLocally) ? InteractSubtype.PLAY_FROM_DEVICE : InteractSubtype.DOWNLOAD_PLAY_CLICKED,
+        !this.appGlobalService.isOnBoardingCompleted ? Environment.ONBOARDING : Environment.HOME,
+        PageId.DIAL_CODE_SCAN_RESULT);
+      // this.navCtrl.push(ContentDetailsPage, {
+      //   content: content,
+      //   depth: '1',
+      //   isChildContent: true,
+      //   downloadAndPlay: true,
+      //   corRelation: this.corRelationList
+      // });
+      this.router.navigate([RouterLinks.CONTENT_DETAILS], {
+        state: {
+          content: content,
+          depth: '1',
+          isChildContent: true,
+          downloadAndPlay: true,
+          corRelation: this.corRelationList
+        }
+      });
     }
   }
 
@@ -677,7 +661,7 @@ export class QrcoderesultPage implements OnDestroy {
         this.zone.run(() => {
           this.isDownloadStarted = false;
           this.showLoading = false;
-          if (error instanceof NetworkError) {
+          if (NetworkError.isInstance(error)) {
             this.commonUtilService.showToast('NEED_INTERNET_TO_CHANGE');
           } else {
             this.commonUtilService.showToast('UNABLE_TO_FETCH_CONTENT');

@@ -14,6 +14,9 @@ import { PermissionAsked } from './android-permissions/android-permission';
 import { UpgradePopoverComponent } from '@app/app/components/popups';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { EventParams } from '@app/app/components/sign-in-card/event-params.interface';
+import {SbTutorialPopupComponent} from '@app/app/components/popups/sb-tutorial-popup/sb-tutorial-popup.component';
+import {animationGrowInTopRight} from '@app/app/animations/animation-grow-in-top-right';
+import {animationShrinkOutTopRight} from '@app/app/animations/animation-shrink-out-top-right';
 
 @Injectable({
     providedIn: 'root'
@@ -76,6 +79,8 @@ export class AppGlobalService implements OnDestroy {
     private _signinOnboardingLoader: any;
     private _skipCoachScreenForDeeplink = false;
     private _preSignInData: any;
+    private _generateCourseCompleteTelemetry = false;
+    private _generateCourseUnitCompleteTelemetry = false;
 
     constructor(
         @Inject('PROFILE_SERVICE') private profile: ProfileService,
@@ -727,6 +732,20 @@ export class AppGlobalService implements OnDestroy {
         this._preSignInData = value;
     }
 
+    get generateCourseCompleteTelemetry() {
+        return this._generateCourseCompleteTelemetry;
+    }
+    set generateCourseCompleteTelemetry(value) {
+        this._generateCourseCompleteTelemetry = value;
+    }
+
+    get generateCourseUnitCompleteTelemetry() {
+        return this._generateCourseUnitCompleteTelemetry;
+    }
+    set generateCourseUnitCompleteTelemetry(value) {
+        this._generateCourseUnitCompleteTelemetry = value;
+    }
+
     // This method is used to reset if any quiz content data is previously saved before Joining a Training
     // So it wont affect in the exterId verification page
     resetSavedQuizContent() {
@@ -740,20 +759,22 @@ export class AppGlobalService implements OnDestroy {
         }
     }
 
-    async showCouchMarkScreen() {
+    async showTutorialScreen() {
         if (this.skipCoachScreenForDeeplink) {
             this.skipCoachScreenForDeeplink = false;
         } else {
-            const coachMarkSeen = await this.preferences.getBoolean(PreferenceKey.COACH_MARK_SEEN).toPromise();
-            if (!coachMarkSeen) {
+            const tutorialScreen = await this.preferences.getBoolean(PreferenceKey.COACH_MARK_SEEN).toPromise();
+            if (!tutorialScreen) {
                 const appLabel = await this.appVersion.getAppName();
-                this.event.publish(EventTopics.COACH_MARK_SEEN, { showWalkthroughBackDrop: true, appName: appLabel });
-                this.telemetryGeneratorService.generateImpressionTelemetry(
-                    ImpressionType.VIEW,
-                    ImpressionSubtype.QR_SCAN_WALKTHROUGH,
-                    PageId.LIBRARY,
-                    Environment.ONBOARDING
-                );
+                const tutorialPopover = await this.popoverCtrl.create({
+                    component: SbTutorialPopupComponent,
+                    componentProps: {appLabel},
+                    showBackdrop: true,
+                    backdropDismiss: false,
+                    enterAnimation: animationGrowInTopRight,
+                    leaveAnimation: animationShrinkOutTopRight
+                });
+                tutorialPopover.present();
                 this.preferences.putBoolean(PreferenceKey.COACH_MARK_SEEN, true).toPromise().then();
             }
         }

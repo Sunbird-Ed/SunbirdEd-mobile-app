@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
-import { NavParams, PopoverController, NavController, Events, Platform } from '@ionic/angular';
-import orderBy from 'lodash/orderBy';
+import { PopoverController, Events, Platform } from '@ionic/angular';
 import find from 'lodash/find';
 import { CommonUtilService } from '@app/services/common-util.service';
 import { Subscription } from 'rxjs';
@@ -12,6 +11,7 @@ import { TelemetryGeneratorService } from '@app/services/telemetry-generator.ser
 import {
   Environment, InteractSubtype, InteractType, PageId
 } from '@app/services/telemetry-constants';
+
 @Component({
   selector: 'app-filters',
   templateUrl: './filters.page.html',
@@ -24,11 +24,10 @@ export class FiltersPage {
   facetsFilter: Array<any> = [];
 
   unregisterBackButton: Subscription;
+  source: string;
 
   constructor(
-    // private navParams: NavParams,
     private popCtrl: PopoverController,
-    private navCtrl: NavController,
     private events: Events,
     private commonUtilService: CommonUtilService,
     private platform: Platform,
@@ -38,9 +37,21 @@ export class FiltersPage {
     private telemetryGeneratorService: TelemetryGeneratorService
   ) {
     this.filterCriteria = this.router.getCurrentNavigation().extras.state.filterCriteria;
+    this.source = this.router.getCurrentNavigation().extras.state.source;
     this.init();
     this.handleBackButton();
     console.log('filer ciriteria', this.filterCriteria);
+  }
+
+  ionViewWillEnter() {
+    this.headerService.showHeaderWithBackButton([], this.commonUtilService.translateMessage('FILTER'));
+  }
+
+  ionViewWillLeave() {
+    // Unregister the custom back button action for this page
+    if (this.unregisterBackButton) {
+      this.unregisterBackButton.unsubscribe();
+    }
   }
 
   async openFilterOptions(facet) {
@@ -48,7 +59,8 @@ export class FiltersPage {
       component: FilteroptionComponent,
       componentProps:
       {
-        facet: facet
+        facet,
+        source: this.source
       },
       cssClass: 'option-box'
     });
@@ -57,28 +69,28 @@ export class FiltersPage {
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
       InteractSubtype.FILTER_CLICKED,
       Environment.HOME,
-      PageId.LIBRARY_SEARCH_FILTER,
+      this.source.match('courses') ? PageId.COURSE_SEARCH_FILTER : PageId.LIBRARY_SEARCH_FILTER,
       undefined,
       values);
     await popUp.present();
   }
 
   applyFilter() {
-    this.navCtrl.pop();
     const values = {
       appliedFilter: {}
     };
     values.appliedFilter = this.filterCriteria;
     this.telemetryGeneratorService.generateInteractTelemetry(
-        InteractType.TOUCH,
-        InteractSubtype.APPLY_FILTER_CLICKED,
-        Environment.HOME,
-        PageId.LIBRARY_SEARCH_FILTER,
-        undefined,
-        values);
+      InteractType.TOUCH,
+      InteractSubtype.APPLY_FILTER_CLICKED,
+      Environment.HOME,
+      this.source.match('courses') ? PageId.COURSE_SEARCH_FILTER : PageId.LIBRARY_SEARCH_FILTER,
+      undefined,
+      values);
     this.events.publish('search.applyFilter', this.filterCriteria);
-  }
 
+    this.location.back();
+  }
 
   getSelectedOptionCount(facet) {
     let count = 0;
@@ -115,9 +127,9 @@ export class FiltersPage {
         if (facet.name === 'gradeLevel') {
           const maxIndex: number = facet.values.reduce((acc, val) => (val.index && (val.index > acc)) ? val.index : acc, 0);
           facet.values.sort((i, j) => (i.index || maxIndex + 1) - (j.index || maxIndex + 1));
-      } else {
-        facet.values.sort((i, j) => i.name.localeCompare(j.name));
-      }
+        } else {
+          facet.values.sort((i, j) => i.name.localeCompare(j.name));
+        }
         facet.values.forEach((element, index) => {
           if (element.name.toUpperCase() === 'other'.toUpperCase()) {
             const elementVal = element;
@@ -150,17 +162,6 @@ export class FiltersPage {
     this.unregisterBackButton = this.platform.backButton.subscribeWithPriority(10, () => {
       this.location.back();
     });
-  }
-
-  ionViewWillEnter() {
-    this.headerService.showHeaderWithBackButton([], this.commonUtilService.translateMessage('FILTER'));
-  }
-
-  ionViewWillLeave() {
-    // Unregister the custom back button action for this page
-    if (this.unregisterBackButton) {
-      this.unregisterBackButton.unsubscribe();
-    }
   }
 
 }

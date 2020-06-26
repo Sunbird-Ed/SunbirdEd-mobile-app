@@ -30,12 +30,13 @@ export class TelemetryGeneratorService {
     ) {
     }
 
-    generateAuditTelemetry(env, currentSate?, updatedProperties?, objId?, objType?, objVer?, correlationData?) {
+    generateAuditTelemetry(env, currentSate?, updatedProperties?, type?, objId?, objType?, objVer?, correlationData?) {
         const telemetryAuditRequest: TelemetryAuditRequest = {
             env: env ? env : undefined,
             currentState: currentSate ? currentSate : undefined,
             updatedProperties: updatedProperties ? updatedProperties : undefined,
-            objId: objId ? objId: undefined,
+            type: type ? type : undefined,
+            objId: objId ? objId : undefined,
             objType: objType ? objType : undefined,
             objVer: objVer ? objVer : undefined,
             correlationData: correlationData ? correlationData : undefined,
@@ -395,7 +396,7 @@ export class TelemetryGeneratorService {
         return mimeType === MimeType.COLLECTION;
     }
 
-    generateUtmInfoTelemetry(values: Map, pageId, object?: TelemetryObject) {
+    generateUtmInfoTelemetry(values: Map, pageId, object?: TelemetryObject, corRelationData?) {
         this.generateInteractTelemetry(
             InteractType.OTHER,
             InteractSubtype.UTM_INFO,
@@ -403,7 +404,8 @@ export class TelemetryGeneratorService {
             pageId,
             object,
             values,
-            undefined);
+            undefined,
+            corRelationData);
     }
 
     /* Fast loading telemetry generator */

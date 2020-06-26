@@ -413,29 +413,17 @@ export class CommonUtilService {
 
     isUserLocationAvalable(profile: any): boolean {
         const location = this.getUserLocation(profile);
-        if (location && location.state && location.state['name'] && location.district && location.district['name']) {
-            return true;
-        } else {
-            return false;
-        }
+        return !!(location && location.state && location.state['name'] && location.district && location.district['name']);
     }
 
     async isDeviceLocationAvailable(): Promise<boolean> {
         const deviceLoc = await this.preferences.getString(PreferenceKey.DEVICE_LOCATION).toPromise();
-        if (deviceLoc) {
-            return true;
-        } else {
-            return false;
-        }
+        return !!deviceLoc;
     }
 
     async isIpLocationAvailable(): Promise<boolean> {
         const deviceLoc = await this.preferences.getString(PreferenceKey.IP_LOCATION).toPromise();
-        if (deviceLoc) {
-            return true;
-        } else {
-            return false;
-        }
+        return !!deviceLoc;
     }
 
     handleToTopicBasedNotification() {
