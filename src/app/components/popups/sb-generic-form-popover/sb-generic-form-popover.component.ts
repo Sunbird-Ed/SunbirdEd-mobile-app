@@ -42,12 +42,14 @@ export class SbGenericFormPopoverComponent implements OnInit, OnDestroy {
   }
 
   submit(buttonIndex: number = 0) {
-    this.popoverCtrl.dismiss(
+    if (this.selectedVal) {
+      this.popoverCtrl.dismiss(
         {
-            isLeftButtonClicked: !Boolean(buttonIndex),
-            selectedVal: this.selectedVal
+          isLeftButtonClicked: !Boolean(buttonIndex),
+          selectedVal: this.formItems[parseInt(this.selectedVal, 10)]
         }
-    );
+      );
+    }
   }
 
 }

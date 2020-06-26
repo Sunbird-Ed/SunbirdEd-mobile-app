@@ -352,6 +352,24 @@ export class FormAndFrameworkUtilService {
             });
     }
 
+    public async invokeSupportedGroupActivitiesFormApi(): Promise<any> {
+        const req: FormRequest = {
+            type: 'group',
+            subType: 'activities',
+            action: 'list',
+        };
+
+        // form api call
+        return this.formService.getForm(req).toPromise()
+            .then((res: any) => {
+                // this.setContentFilterConfig(res.form.data.fields);
+                return res.form.data.fields;
+            }).catch((error: any) => {
+                console.log('Error - ' + error);
+                return error;
+            });
+    }
+
     async getSupportedContentFilterConfig(name): Promise<Array<string>> {
         // get cached library config
         let contentFilterConfig: any = this.getCachedContentFilterConfig();
@@ -416,7 +434,7 @@ export class FormAndFrameworkUtilService {
                 profile.syllabus = [profileRes.framework.id[0]];
                 for (const categoryKey in profileRes.framework) {
                     if (profileRes.framework[categoryKey].length
-                    && FrameworkCategoryCodesGroup.DEFAULT_FRAMEWORK_CATEGORIES.includes(categoryKey as FrameworkCategoryCode)) {
+                        && FrameworkCategoryCodesGroup.DEFAULT_FRAMEWORK_CATEGORIES.includes(categoryKey as FrameworkCategoryCode)) {
                         const request: GetFrameworkCategoryTermsRequest = {
                             currentCategoryCode: categoryKey,
                             language: this.translate.currentLang,
