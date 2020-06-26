@@ -462,7 +462,7 @@
   "PLEASE_SELECT_A_LANGUAGE": "Select a language",
   "PLEASE_SELECT_USER": "Select a user",
   "POPULAR_COURSES": "Popular Courses",
-  "POWER_OF_GROUPS": "Have you discovered the power of groups yet?",
+  "POWER_OF_GROUPS": "Have you explored the potential of groups yet?",
   "PREFERENCES_CAN_BE_UPDATED": "Preferences can be updated from the profile page of the user",
   "PREVIEWS": "PREVIEWS",
   "PREVIOUS_USER_SETTINGS": "Continue with previous user settings?",
@@ -734,8 +734,8 @@
   "MEMBERS": "Members",
   "EDIT_NAME": "Edit name",
   "SEARCH_WITHIN_GROUP": "Search within group",
-  "CREATE_GROUP_DESCRIPTION": "Bring people together with a few clicks. Create your own group, classroom or study circle to share, monitor and connect.",
-  "LOGIN_TO_CREATE_GROUP_DESCRIPTION": "Login and bring people together with a few clicks. Create your own group, classroom or study circle to share, monitor and connect.",
+  "CREATE_GROUP_DESCRIPTION": "You are just a click away from creating a group",
+  "LOGIN_TO_CREATE_GROUP_DESCRIPTION": "The first step towards creating your own group, study circle or classroom is to login",
   "ENTER_STUDENT_ID": "Enter Student's ID",
   "STUDENT_ID": "Student ID",
   "ADD_NEW_STUDENT": "Add new student",
@@ -753,5 +753,10 @@
   "TUTORIAL_BUTTON": "Choose a textbook to start",
   "EXP_VIDEOS": "explanation videos",
   "QUES_BANKS": "question banks",
-  "INTERACTIVE_MATERIAL": "interactive study material"
+  "INTERACTIVE_MATERIAL": "interactive study material",
+  "CREATE_GROUP_DESCRIPTION_POPUP": "You are just three clicks away from crating your own group, classroom or study circle to connect people, share activities and monitor progress",
+  "GROUP_DESCRIPTION": "Group description",
+  "GROUP_DESCRIPTION_PLACEHOLDER": "Group of individuals, typically who shares a similarinterest, who discuss ideas & solve problems",
+  "GROUP_TERMS_IS_REQUIRED": "You have to agree to {{%appName}} terms od service, before you proceed",
+  "CHARECTERS_REMAINING": "Charecters remaining"
 }

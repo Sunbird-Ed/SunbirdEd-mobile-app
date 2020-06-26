@@ -49,17 +49,17 @@
 }
 
 .my-cr-btn{
-  padding: 0px 8px 24px;
-  ion-button{
-    --background: #024F9D !important;
-    
-  }
-  .sb-btn-large{
-    padding: 8px 0px 8px 0px;
-    img{
-      margin-right: 8px;
-      position: relative;
-      bottom: 2px;
+    padding: 0px 8px 24px;
+    ion-button{
+      --background: #024F9D !important;
+      
     }
-  }
+    .sb-btn-large{
+      padding: 16px 0px 16px 0px;
+      img{
+        margin-right: 8px;
+        position: relative;
+        bottom: 2px;
+      }
+    }
 }

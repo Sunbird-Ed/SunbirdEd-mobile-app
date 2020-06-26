@@ -8,7 +8,8 @@
     
     <div *ngIf="isGuestUser" class="my-cr-card">
       <div class="my-cr-card-img">
-        <img src="assets/imgs/group_school.svg">
+        <img src="assets/imgs/ic_my_groups.svg">
+        <!-- <img src="{{appLogo}}"> -->
       </div>
       <p class="my-cr-subtitle">{{'LOGIN_TO_CREATE_GROUP_DESCRIPTION' | translate}}</p>
 
@@ -19,7 +20,7 @@
 
     <div *ngIf="!isGuestUser && !groupList.length" class="my-cr-card">
       <div class="my-cr-card-img">
-        <img src="assets/imgs/group_school.svg">
+        <img src="assets/imgs/ic_my_groups.svg">
       </div>
       <p class="my-cr-subtitle">{{'CREATE_GROUP_DESCRIPTION' | translate}}</p>
 

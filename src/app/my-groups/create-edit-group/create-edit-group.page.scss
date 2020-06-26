@@ -7,69 +7,38 @@
     font-weight: normal;
   }
 
-  .select-text:first-letter {
-    text-transform: capitalize;
-  }
-
-  .custom-footer-background .toolbar-background-ios,
-  .custom-footer-background .toolbar-background-md {
-    background: unset !important;
-  }
   .padding-12 {
     padding: 12px !important;
   }
-  .item-select-disabled {
-    .label-md {
-      color: map-get($colors, medium_gray);
-      opacity: 1;
-    }
+
+  .cr-desc{
+    border: 1px solid #333 !important;
   }
 
-  .item-label-stacked ion-select {
-    border: 1px solid #006de5;
-    border-radius: 5px;
-    margin-top: 16px;
-    padding-left: 8px;
-    padding-right: 16px !important;
-    font-size: 14px;
-    font-family: "Noto Sans Bold" serif;
-    .select-icon {
-      .select-icon-inner {
-        border: solid blue;
-        border-width: 0 2px 2px 0;
-        display: inline-block;
-        padding: 4px;
-        transform: rotate(45deg);
-        animation: upDownAnimate 5s linear infinite;
-        animation-duration: 0.9s;
-      }
-    }
+  .cr-error-checkbox{
+    margin: 0 0 0 48px;
+    position: relative;
+    top: -10px;
   }
 
-  .item-label-stacked.item-select-disabled {
-    ion-label {
-      color: #333;
-    }
-    ion-select {
-      border-color: #333;
-      .select-icon {
-        .select-icon-inner {
-          border-color: #333;
-          animation: none;
-        }
-      }
-      .select-placeholder {
-        color: #333;
-      }
-    }
+  .char-info{
+    display: block;
+    text-align: right;
+    width: 100%;
+    font-size: 12px;
+    padding-top: 4px;
+    color: #999999;
   }
+  
 
   ion-item {
-    --border-color: var(--ion-color-danger, #f1453d);
+    // --border-color: var(--ion-color-danger, #f1453d);
   }
 
-  ion-button{
-    --background: #024F9D !important;
+  .sb-btn-large{
+    &.inactive{
+      background-color: #969696;
+    }
     img{
       margin-right: 8px;
       position: relative;
@@ -78,15 +47,20 @@
   }
 
   .item-label-stacked ion-input {
-    border-radius: 5px;
     margin-top: 16px;
     padding-left: 16px !important;
     padding-right: 16px !important;
     font-size: 14px;
   }
 
+  .item-label-stacked ion-textarea {
+    margin-top: 16px;
+    padding: 0 16px;
+  }
+  
+
   .cr-input-primary ion-input{
-    border: 1px solid #006de5;
+    border: 1px solid #333;
   }
 
   .cr-input-error ion-input{
@@ -97,6 +71,7 @@
     --border-width: 0;
     --highlight-background: transparent;
   }
+
   .item-select ion-label {
     color: #006de5;
   }
@@ -107,6 +82,12 @@
     font-size: 14px;
     letter-spacing: 0;
     line-height: 19px;
+    sup{
+      font-size: 22px;
+      top: 0px;
+      margin-left: 4px;
+      color: #FF4456;
+    }
   }
 
 }
