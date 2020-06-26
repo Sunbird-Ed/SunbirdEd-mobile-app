@@ -174,11 +174,15 @@ describe('DistrictMappingPage', () => {
 
         } as any;
         window.history.replaceState({ source: 'guest-profile', isShowBackButton: true }, 'MOCK');
+        mockTelemetryGeneratorService.generateBackClickedNewTelemetry = jest.fn();
         // act
         districtMappingPage.handleDeviceBackButton();
         // assert
         expect(mockTelemetryGeneratorService.generateBackClickedTelemetry).toHaveBeenCalledWith(
             PageId.DISTRICT_MAPPING, Environment.USER, false);
+        expect(mockTelemetryGeneratorService.generateBackClickedNewTelemetry).toHaveBeenCalledWith(
+            true, 'user', 'location'
+        );
     });
 
     it('should unsubscribe backButtonFunc in ionViewWillLeave', () => {
@@ -436,6 +440,7 @@ describe('DistrictMappingPage', () => {
         mockCommonUtilService.isDeviceLocationAvailable = jest.fn(() => Promise.resolve(false));
         jest.spyOn(districtMappingPage, 'saveDeviceLocation').mockImplementation();
         mockAppGlobalService.setOnBoardingCompleted = jest.fn();
+        mockTelemetryGeneratorService.generateAuditTelemetry = jest.fn();
         // act
         districtMappingPage.submit();
         // assert
@@ -448,6 +453,7 @@ describe('DistrictMappingPage', () => {
                     loginMode: 'guest'
                 }
             });
+            expect(mockTelemetryGeneratorService.generateAuditTelemetry).toHaveBeenCalled();
             done();
         }, 1);
     });

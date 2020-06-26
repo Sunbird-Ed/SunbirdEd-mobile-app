@@ -670,6 +670,7 @@ describe('ContentDetailsPage', () => {
             spyOn(contentDetailsPage, 'isPlayedFromCourse').and.stub();
             spyOn(contentDetailsPage, 'setContentDetails').and.stub();
             spyOn(contentDetailsPage, 'findHierarchyOfContent').and.stub();
+            mockTelemetryGeneratorService.generatePageLoadedTelemetry = jest.fn();
             // act
             contentDetailsPage.ionViewWillEnter();
             // assert
@@ -678,6 +679,15 @@ describe('ContentDetailsPage', () => {
             expect(contentDetailsPage.setContentDetails).toBeCalled();
             expect(contentDetailsPage.findHierarchyOfContent).toBeCalled();
             expect(contentDetailsPage.handleDeviceBackButton).toBeCalled();
+            expect(mockTelemetryGeneratorService.generatePageLoadedTelemetry).toHaveBeenCalledWith(
+                PageId.CONTENT_DETAIL,
+                Environment.HOME,
+                undefined,
+                undefined,
+                undefined,
+                undefined,
+                undefined
+            );
         });
     });
 

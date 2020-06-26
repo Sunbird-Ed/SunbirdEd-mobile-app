@@ -194,12 +194,14 @@ export class QrcoderesultPage implements OnDestroy {
     this.isProfileUpdated = this.navData.isProfileUpdated;
     this.searchIdentifier = this.content.identifier;
     this.isQrCodeLinkToContent = this.navData.isQrCodeLinkToContent;
+    const cData: CorrelationData[] = [];
+    cData.push(this.corRelationList[0]);
     this.telemetryGeneratorService.generateImpressionTelemetry(
       ImpressionType.PAGE_REQUEST, '',
       PageId.QR_CONTENT_RESULT,
       this.onboarding ? Environment.ONBOARDING : Environment.HOME,
       '', '', '', undefined,
-      [this.corRelationList[0]]
+      cData
     );
 
     if (this.parentContent) {
