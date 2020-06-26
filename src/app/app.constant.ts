@@ -192,7 +192,7 @@ export class MenuOverflow {
     public static readonly MENU_GUEST = ['MY_GROUPS', 'REPORTS', 'SETTINGS'];
     public static readonly MENU_LOGIN = ['MY_GROUPS', 'REPORTS', 'SETTINGS', 'LOGOUT'];
     public static readonly DOWNLOAD_FILTERS = ['CONTENT_SIZE', 'LAST_VIEWED'];
-    public static readonly GROUP_OPTIONS = ['EDIT_NAME'];
+    public static readonly GROUP_OPTIONS = ['EDIT_GROUP_DETAILS', 'DELETE_GROUP'];
 }
 
 export class SideMenu {

@@ -9,6 +9,7 @@ import { ClassRoomGetByIdRequest, ClassRoomService, ClassRoom } from '@project-s
 import { OverflowMenuComponent } from '@app/app/profile/overflow-menu/overflow-menu.component';
 import GraphemeSplitter from 'grapheme-splitter';
 import { SbGenericFormPopoverComponent } from '@app/app/components/popups/sb-generic-form-popover/sb-generic-form-popover.component';
+import { SbGenericPopoverComponent } from '@app/app/components/popups';
 
 @Component({
   selector: 'app-group-details',
@@ -141,7 +142,8 @@ export class GroupDetailsPage {
     //   InteractType.TOUCH,
     //   InteractSubtype.SORT_OPTION_CLICKED,
     //   Environment.DOWNLOADS,
-    //   PageId.DOWNLOADS);
+    // PageId.GROUP_DETAIL);
+
     const groupOptions = await this.popoverCtrl.create({
       component: OverflowMenuComponent,
       event,
@@ -151,9 +153,168 @@ export class GroupDetailsPage {
       cssClass: 'download-popover'
     });
     await groupOptions.present();
+
     const { data } = await groupOptions.onDidDismiss();
     if (data) {
       console.log('dataon dismiss', data);
+      if (data.selectedItem === 'EDIT_GROUP_DETAILS') {
+        this.router.navigate([`/${RouterLinks.MY_GROUPS}/${RouterLinks.CREATE_EDIT_GROUP}`]);
+      } else if (data.selectedItem === 'DELETE_GROUP') {
+        this.showDeleteGroupPopup();
+      }
+    }
+  }
+
+  private async showDeleteGroupPopup() {
+    // TODO: Add telemetry
+    const deleteConfirm = await this.popoverCtrl.create({
+      component: SbGenericPopoverComponent,
+      componentProps: {
+        sbPopoverHeading: this.commonUtilService.translateMessage('DELETE_GROUP_POPUP_TITLE'),
+        actionsButtons: [
+          {
+            btntext: this.commonUtilService.translateMessage('REMOVE'),
+            btnClass: 'popover-color'
+          },
+        ],
+        icon: null,
+        sbPopoverContent: this.commonUtilService.translateMessage('DELETE_GROUP_DESC', { group_name: this.groupDetails.name })
+      },
+      cssClass: 'sb-popover danger',
+    });
+    await deleteConfirm.present();
+
+    const { data } = await deleteConfirm.onDidDismiss();
+    if (data) {
+      this.location.back();
+    }
+  }
+
+  private async showLeaveGroupPopup() {
+    // TODO: Add telemetry
+    const deleteConfirm = await this.popoverCtrl.create({
+      component: SbGenericPopoverComponent,
+      componentProps: {
+        sbPopoverHeading: this.commonUtilService.translateMessage('LEAVE_GROUP_POPUP_TITLE'),
+        actionsButtons: [
+          {
+            btntext: this.commonUtilService.translateMessage('LEAVE_GROUP'),
+            btnClass: 'popover-color'
+          },
+        ],
+        icon: null,
+        sbPopoverContent: this.commonUtilService.translateMessage('LEAVE_GROUP_POPUP_DESC', { group_name: this.groupDetails.name })
+      },
+      cssClass: 'sb-popover danger',
+    });
+    await deleteConfirm.present();
+
+    const { data } = await deleteConfirm.onDidDismiss();
+    if (data) {
+      // TODO: API integration
+      this.location.back();
+    }
+  }
+
+  private async showRemoveActivityPopup() {
+    // TODO: Add telemetry
+    const deleteConfirm = await this.popoverCtrl.create({
+      component: SbGenericPopoverComponent,
+      componentProps: {
+        sbPopoverHeading: this.commonUtilService.translateMessage('REMOVE_ACTIVITY_POPUP_TITLE'),
+        actionsButtons: [
+          {
+            btntext: this.commonUtilService.translateMessage('REMOVE_ACTIVITY'),
+            btnClass: 'popover-color'
+          },
+        ],
+        icon: null,
+        sbPopoverContent: this.commonUtilService.translateMessage('REMOVE_ACTIVITY_GROUP_DESC')
+      },
+      cssClass: 'sb-popover danger',
+    });
+    await deleteConfirm.present();
+
+    const { data } = await deleteConfirm.onDidDismiss();
+    if (data) {
+      // TODO: API integration
+    }
+  }
+
+  private async showRemoveMemberPopup(memberName) {
+    // TODO: Add telemetry
+    const deleteConfirm = await this.popoverCtrl.create({
+      component: SbGenericPopoverComponent,
+      componentProps: {
+        sbPopoverHeading: this.commonUtilService.translateMessage('REMOVE_MEMBER_POPUP_TITLE'),
+        actionsButtons: [
+          {
+            btntext: this.commonUtilService.translateMessage('REMOVE_MEMBER'),
+            btnClass: 'popover-color'
+          },
+        ],
+        icon: null,
+        sbPopoverContent: this.commonUtilService.translateMessage('REMOVE_MEMBER_GROUP_DESC', { member_name: memberName })
+      },
+      cssClass: 'sb-popover danger',
+    });
+    await deleteConfirm.present();
+
+    const { data } = await deleteConfirm.onDidDismiss();
+    if (data) {
+      // TODO: API integration
+    }
+  }
+
+  private async showMakeGroupAdminPopup(memberName) {
+    // TODO: Add telemetry
+    const deleteConfirm = await this.popoverCtrl.create({
+      component: SbGenericPopoverComponent,
+      componentProps: {
+        sbPopoverHeading: this.commonUtilService.translateMessage('MAKE_GROUP_ADMIN_POPUP_TITLE'),
+        actionsButtons: [
+          {
+            btntext: this.commonUtilService.translateMessage('MAKE_ADMIN'),
+            btnClass: 'popover-color'
+          },
+        ],
+        icon: null,
+        sbPopoverContent: this.commonUtilService.translateMessage('MAKE_GROUP_ADMIN_POPUP_DESC',
+          { member_name: memberName })
+      },
+      cssClass: 'sb-popover',
+    });
+    await deleteConfirm.present();
+
+    const { data } = await deleteConfirm.onDidDismiss();
+    if (data) {
+      // TODO: API integration
+    }
+  }
+
+  private async showDismissAsGroupAdminPopup(memberName) {
+    // TODO: Add telemetry
+    const deleteConfirm = await this.popoverCtrl.create({
+      component: SbGenericPopoverComponent,
+      componentProps: {
+        sbPopoverHeading: this.commonUtilService.translateMessage('DISMISS_AS_GROUP_ADMIN_POPUP_TITLE'),
+        actionsButtons: [
+          {
+            btntext: this.commonUtilService.translateMessage('DISMISS_AS_GROUP_ADMIN'),
+            btnClass: 'popover-color'
+          },
+        ],
+        icon: null,
+        sbPopoverContent: this.commonUtilService.translateMessage('DISMISS_AS_GROUP_ADMIN_POPUP_DESC',
+          { member_name: memberName })
+      },
+      cssClass: 'sb-popover',
+    });
+    await deleteConfirm.present();
+
+    const { data } = await deleteConfirm.onDidDismiss();
+    if (data) {
+      // TODO: API integration
     }
   }
 
