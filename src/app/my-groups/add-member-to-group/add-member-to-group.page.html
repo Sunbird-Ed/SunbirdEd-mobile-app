@@ -30,8 +30,7 @@
             <app-profile-avatar [username]="userName"></app-profile-avatar>
             <h3>{{userName}}</h3>
         </div>  
-        <div class="au-desc" [innerHtml]="'ADD_MEMBER_CONFIRMATION' | translate : {'%s': userName } ">
-        </div>
+        <div class="au-desc">{{'ADD_MEMBER_CONFIRMATION' | translate}}</div>
     </div>
 </ion-content>
 <ion-footer>
@@ -42,7 +41,7 @@
     </div>
     <div class="au-btn" *ngIf="isUserIdVerified">
         <button class="sb-btn-large" (click)="onAddToGroup()">
-            <img src="assets/imgs/ic_group_add_white.svg">
+            <img src="assets/imgs/ic_person_add_white.svg">
             {{'ADD_TO_GROUP' | translate}}
         </button>
     </div>
