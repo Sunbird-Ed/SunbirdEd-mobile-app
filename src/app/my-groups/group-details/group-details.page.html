@@ -4,18 +4,19 @@
       <div class="gd-title">
         <div class="gd-name">
           {{groupDetails?.name}}
+          <div class="gd-created-by">Created by creator name </div>
         </div>
         <div class="gd-opts">
-          <img class="add-member-icon" (click)="navigateToAddUserPage()" src="assets/imgs/ic_person_add_blue.svg">
+          <!-- <img class="add-member-icon" (click)="navigateToAddUserPage()" src="assets/imgs/ic_person_add_blue.svg"> -->
           <ion-icon md="md-more" (click)="showGroupOptions($event)"></ion-icon>
         </div>
       </div>
       <div class="gd-tab-header">
         <div class="gd-tab" (click)="switchTabs('courses')" [ngClass]="{'active': activeTab=='courses'}">
-          <div class="gd-tab-name">{{'ACTIVITIES' | translate}}</div>
+          <div class="gd-tab-name gd-tab-border">{{'ACTIVITIES' | translate}}</div>
         </div>
         <div class="gd-tab" (click)="switchTabs('members')" [ngClass]="{'active': activeTab=='members'}">
-          <div class="gd-tab-name gd-tab-border">{{'MEMBERS' | translate}}</div>
+          <div class="gd-tab-name">{{'MEMBERS' | translate}}</div>
         </div>
       </div>
     </div>
@@ -25,6 +26,14 @@
         <div class="gd-member-search">
           <ion-icon class="gd-member-search-icon" md="md-search"></ion-icon>
           <input type="text" [(ngModel)]="searchMember" (ngModelChange)="onSearch(searchMember)">
+        </div>
+        <div class="gd-add-member">
+          <span class="gd-add-member-icon">
+            <img src="assets/imgs/ic_person_add_white.svg" (click)="navigateToAddUserPage()">
+          </span>
+          <span class="gd-large-text">
+            {{'ADD_MEMBER' | translate}}
+          </span>
         </div>
         <sb-member-list [memberList]="memberList" [isMenu]="true"></sb-member-list>
         <div class="cd-btn" *ngIf="!memberList.length">
@@ -40,11 +49,8 @@
           <input type="text" [(ngModel)]="searchMember" (ngModelChange)="onSearch(searchMember)">
         </div>
         <sb-course-card [section]="null" (click)="navigateToActivityDetails()"></sb-course-card>
-        <div class="cd-btn" *ngIf="!activityList.length">
-          <button class="sb-btn-large" (click)="showAddActivityPopup()">
-            + {{'ADD_ACTIVITY' | translate}}
-          </button>
-        </div>
+
+
         <!-- <sb-course-card *ngIf="!course.isEnrolledCourse" [course]="course" [section]="null" [cardImg]="course.appIcon"
           (click)="openCourseDetails(course)"></sb-course-card> -->
         <!-- <div *ngFor="let item of [0,1,2,3,4]" class="mb-8 mt-8">
@@ -55,3 +61,11 @@
   </div>
 
 </ion-content>
+
+<ion-footer *ngIf="activeTab=='courses'">
+  <div class="cd-btn" *ngIf="!activityList.length">
+    <button class="sb-btn-large" (click)="showAddActivityPopup()">
+      + {{'ADD_ACTIVITY' | translate}}
+    </button>
+  </div>
+</ion-footer>
