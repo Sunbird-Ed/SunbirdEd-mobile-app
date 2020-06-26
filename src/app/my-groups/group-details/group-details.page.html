@@ -7,7 +7,6 @@
           <div class="gd-created-by">Created by creator name </div>
         </div>
         <div class="gd-opts">
-          <!-- <img class="add-member-icon" (click)="navigateToAddUserPage()" src="assets/imgs/ic_person_add_blue.svg"> -->
           <ion-icon md="md-more" (click)="showGroupOptions($event)"></ion-icon>
         </div>
       </div>
@@ -35,7 +34,12 @@
             {{'ADD_MEMBER' | translate}}
           </span>
         </div>
-        <sb-member-list [memberList]="memberList" [isMenu]="true"></sb-member-list>
+        <div *ngFor="let member of memberList">
+          <sb-member-card [config]="{size:'medium', isBold:false, isSelectable:false, view:'horizontal'}"
+            [identifier]="member.identifier" [initial]="member.initial" [title]="member.title" [isMenu]="member.isMenu"
+            [isAdmin]="member.isAdmin" (menuClick)="memberMenuClick($event)">
+          </sb-member-card>
+        </div>
         <div class="cd-btn" *ngIf="!memberList.length">
           <button class="sb-btn-large" (click)="navigateToAddUserPage()">
             <img src="assets/imgs/ic_person_add_white.svg">

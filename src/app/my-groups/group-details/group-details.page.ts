@@ -26,19 +26,26 @@ export class GroupDetailsPage {
   memberList = [];
   memberListDummy = [
     {
+      identifier: '1',
       name: 'Anil',
       isAdmin: true,
+      isCreator: true
     },
     {
+      identifier: '2',
       name: 'Bharath',
+      isAdmin: true
     },
     {
+      identifier: '3',
       name: 'Mani',
     },
     {
+      identifier: '4',
       name: 'Naveen',
     },
     {
+      identifier: '5',
       name: 'Sharath',
     },
   ];
@@ -111,9 +118,11 @@ export class GroupDetailsPage {
     };
     this.memberListDummy.forEach(m => {
       const member = {
+        identifier: m.identifier,
         title: m.name,
         initial: this.extractInitial(m.name),
-        isAdmin: m.isAdmin ? true : false
+        isAdmin: m.isAdmin ? true : false,
+        isMenu: m.isCreator ? false : true // TODO: if creator of group is same as logged in user then assign isCreator as true
       };
       this.memberList.push(member);
     });
@@ -128,8 +137,8 @@ export class GroupDetailsPage {
         };
         this.memberList.push(member);
       });
-    } catch {
-
+    } catch (e) {
+      console.error(e);
     }
   }
 
@@ -157,10 +166,46 @@ export class GroupDetailsPage {
     const { data } = await groupOptions.onDidDismiss();
     if (data) {
       console.log('dataon dismiss', data);
-      if (data.selectedItem === 'EDIT_GROUP_DETAILS') {
+      if (data.selectedItem === 'MENU_EDIT_GROUP_DETAILS') {
         this.router.navigate([`/${RouterLinks.MY_GROUPS}/${RouterLinks.CREATE_EDIT_GROUP}`]);
-      } else if (data.selectedItem === 'DELETE_GROUP') {
+      } else if (data.selectedItem === 'MENU_DELETE_GROUP') {
         this.showDeleteGroupPopup();
+      }
+    }
+  }
+
+  async memberMenuClick(event) {
+    // this.telemetryGeneratorService.generateInteractTelemetry(
+    //   InteractType.TOUCH,
+    //   InteractSubtype.SORT_OPTION_CLICKED,
+    //   Environment.DOWNLOADS,
+    // PageId.GROUP_DETAIL);
+    const selectedMemberDetail = this.memberList.find(m => m.identifier === event.data.identifier);
+    let menuList = MenuOverflow.MENU_GROUP_MEMBER_NON_ADMIN;
+
+    if (selectedMemberDetail.isAdmin) {  // Is admin and creator
+      menuList = MenuOverflow.MENU_GROUP_MEMBER_ADMIN;
+    }
+
+    const groupOptions = await this.popoverCtrl.create({
+      component: OverflowMenuComponent,
+      event,
+      componentProps: {
+        list: menuList
+      },
+      cssClass: 'download-popover'
+    });
+    await groupOptions.present();
+
+    const { data } = await groupOptions.onDidDismiss();
+    if (data) {
+      console.log('dataon dismiss', data);
+      if (data.selectedItem === 'MENU_MAKE_GROUP_ADMIN') {
+        this.showMakeGroupAdminPopup(selectedMemberDetail.title);
+      } else if (data.selectedItem === 'MENU_REMOVE_FROM_GROUP') {
+        this.showRemoveMemberPopup(selectedMemberDetail.title);
+      } else if (data.selectedItem === 'DISMISS_AS_GROUP_ADMIN') {
+        this.showDismissAsGroupAdminPopup(selectedMemberDetail.title);
       }
     }
   }
