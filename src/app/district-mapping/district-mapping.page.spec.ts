@@ -1,7 +1,7 @@
 import { DistrictMappingPage } from '../district-mapping/district-mapping.page';
 import {
     AppGlobalService, AppHeaderService, CommonUtilService,
-    FormAndFrameworkUtilService, TelemetryGeneratorService, ImpressionType
+    FormAndFrameworkUtilService, TelemetryGeneratorService, ImpressionType, InteractType
 } from '../../services';
 import { InteractSubtype, PageId, Environment } from '@app/services/telemetry-constants';
 import { DeviceRegisterService } from '../../../../sunbird-mobile-sdk/src/device-register';
@@ -337,6 +337,7 @@ describe('DistrictMappingPage', () => {
         districtMappingPage.name = 'sample_name';
         mockCommonUtilService.isDeviceLocationAvailable = jest.fn(() => Promise.resolve(false));
         jest.spyOn(districtMappingPage, 'saveDeviceLocation').mockImplementation();
+        mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
         // act
         districtMappingPage.submit();
         // assert
@@ -346,6 +347,23 @@ describe('DistrictMappingPage', () => {
             expect(mockEvents.publish).toHaveBeenCalledWith('loggedInProfile:update',
                 { firstName: 'samplename', lastName: '', locationCodes: ['2', '2'], userId: '12345' });
             expect(mockLocation.back).toHaveBeenCalled();
+            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenNthCalledWith(1,
+                InteractType.SELECT_SUBMIT, '',
+                'onboarding',
+                PageId.LOCATION,
+                undefined,
+                undefined,
+                undefined,
+                [{id: 'Odisha', type: 'State'}, {id: 'Cuttack', type: 'District'}]
+            );
+            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenNthCalledWith(2,
+                InteractType.LOCATION_CHANGED,
+                'dist-changed',
+                'onboarding',
+                PageId.DISTRICT_MAPPING,
+                undefined, {isPopulatedLocation: true}, undefined,
+                [{id: 'user:location_capture', type: 'Feature'}, {id: 'SB-14682', type: 'Task'}], 'submit-clicked'
+            );
             done();
         }, 1);
     });
@@ -728,6 +746,47 @@ describe('DistrictMappingPage', () => {
             true,
             'onboarding',
             PageId.LOCATION
+        );
+    });
+
+    it('should generate telemetry for cancel event', () => {
+        mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+        districtMappingPage.cancelEvent();
+        expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+            InteractType.SELECT_CANCEL, '',
+            'onboarding',
+            PageId.LOCATION,
+            undefined, undefined, undefined, [{id: 'popup-category', type: 'ChildUi'}]
+        );
+    });
+
+    it('should generate telemetry for on state CategoryCliked', () => {
+        districtMappingPage.stateList = ['AP', 'rajasthan'];
+        mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+        districtMappingPage.onCategoryCliked('state');
+        expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+            InteractType.SELECT_CATEGORY, '',
+            'onboarding',
+            PageId.LOCATION,
+            undefined,
+            undefined,
+            undefined,
+            [{id: '2', type: 'State'}]
+        );
+    });
+
+    it('should generate telemetry for on district CategoryCliked', () => {
+        districtMappingPage.districtList = ['dist-1', 'dist-2'];
+        mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+        districtMappingPage.onCategoryCliked('district');
+        expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+            InteractType.SELECT_CATEGORY, '',
+            'onboarding',
+            PageId.LOCATION,
+            undefined,
+            undefined,
+            undefined,
+            [{id: '2', type: 'District'}]
         );
     });
 
