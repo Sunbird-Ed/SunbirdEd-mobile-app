@@ -60,6 +60,8 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('searchInput') searchBar;
   contentType: Array<string> = [];
   source: string;
+  groupId: string;
+  isFromGroupFlow = false;
   dialCode: string;
   dialCodeResult: Array<any> = [];
   dialCodeContentResult: Array<any> = [];
@@ -142,6 +144,10 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
       this.contentType = extras.contentType;
       this.corRelationList = extras.corRelation;
       this.source = extras.source;
+      if (this.source === PageId.GROUP_DETAIL) {
+        this.isFromGroupFlow = true;
+      }
+      this.groupId = extras.groupId;
       this.enrolledCourses = extras.enrolledCourses;
       this.guestUser = extras.guestUser;
       this.userId = extras.userId;
@@ -163,10 +169,15 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
   ionViewWillEnter() {
     this.headerService.hideHeader();
     this.handleDeviceBackButton();
+
+    if (this.source === PageId.GROUP_DETAIL && this.isFirstLaunch) {
+      this.isFirstLaunch = false;
+      this.handleSearch();
+    }
   }
 
   ionViewDidEnter() {
-    if (!this.dialCode && this.isFirstLaunch) {
+    if (!this.dialCode && this.isFirstLaunch && this.source !== PageId.GROUP_DETAIL) {
       setTimeout(() => {
         this.isFirstLaunch = false;
         this.searchBar.setFocus();
@@ -387,6 +398,8 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
       }
       this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], {
         state: {
+          source: this.source,
+          groupId: this.groupId,
           content: params.content,
           corRelation: params.corRelation,
           isSingleContent: params.isSingleContent,
@@ -428,6 +441,8 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
       } else {
         this.router.navigate([RouterLinks.COLLECTION_DETAIL_ETB], {
           state: {
+            source: this.source,
+            groupId: this.groupId,
             content: params.content,
             corRelation: params.corRelation,
             isSingleContent: params.isSingleContent,
@@ -732,7 +747,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
 
   handleSearch() {
     this.scrollToTop();
-    if (this.searchKeywords.length < 3) {
+    if (this.searchKeywords.length < 3 && this.source !== PageId.GROUP_DETAIL) {
       return;
     }
 
@@ -794,6 +809,9 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private addSearchHistoryEntry() {
+    if (!this.searchKeywords) {
+      return;
+    }
     this.searchHistoryService
       .addEntry({
         query: this.searchKeywords,
