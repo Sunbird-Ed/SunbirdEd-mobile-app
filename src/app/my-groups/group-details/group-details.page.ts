@@ -3,7 +3,7 @@ import { Subscription } from 'rxjs';
 import { Location } from '@angular/common';
 import { AppHeaderService, PageId, FormAndFrameworkUtilService, CommonUtilService } from '../../../services';
 import { Router, NavigationExtras } from '@angular/router';
-import { RouterLinks, MenuOverflow, ContentType } from '@app/app/app.constant';
+import { RouterLinks, MenuOverflow } from '@app/app/app.constant';
 import { Platform, PopoverController } from '@ionic/angular';
 import { ClassRoomGetByIdRequest, ClassRoomService, ClassRoom } from '@project-sunbird/sunbird-sdk';
 import { OverflowMenuComponent } from '@app/app/profile/overflow-menu/overflow-menu.component';
@@ -122,7 +122,7 @@ export class GroupDetailsPage {
         title: m.name,
         initial: this.extractInitial(m.name),
         isAdmin: m.isAdmin ? true : false,
-        isMenu: m.isCreator ? false : true // TODO: if creator of group is same as logged in user then assign isCreator as true
+        isMenu: m.isCreator ? false : true // TODO: if member is group creator then do not show menu
       };
       this.memberList.push(member);
     });
@@ -146,7 +146,40 @@ export class GroupDetailsPage {
     this.activeTab = tab;
   }
 
-  async showGroupOptions(event) {
+  async groupMenuClick() {
+    // this.telemetryGeneratorService.generateInteractTelemetry(
+    //   InteractType.TOUCH,
+    //   InteractSubtype.SORT_OPTION_CLICKED,
+    //   Environment.DOWNLOADS,
+    // PageId.GROUP_DETAIL);
+
+    let menuList = MenuOverflow.MENU_GROUP_ADMIN;
+    // TODO: Handle below condition while API intigration.
+    // if (!isAdmin) {
+    //   menuList = MenuOverflow.MENU_GROUP_NON_ADMIN;
+    // }
+
+    const groupOptions = await this.popoverCtrl.create({
+      component: OverflowMenuComponent,
+      componentProps: {
+        list: menuList
+      },
+      cssClass: 'download-popover'
+    });
+    await groupOptions.present();
+
+    const { data } = await groupOptions.onDidDismiss();
+    if (data) {
+      console.log('dataon dismiss', data);
+      if (data.selectedItem === 'MENU_EDIT_GROUP_DETAILS') {
+        this.router.navigate([`/${RouterLinks.MY_GROUPS}/${RouterLinks.CREATE_EDIT_GROUP}`]);
+      } else if (data.selectedItem === 'MENU_DELETE_GROUP') {
+        this.showDeleteGroupPopup();
+      }
+    }
+  }
+
+  async activityMenuClick() {
     // this.telemetryGeneratorService.generateInteractTelemetry(
     //   InteractType.TOUCH,
     //   InteractSubtype.SORT_OPTION_CLICKED,
@@ -155,9 +188,8 @@ export class GroupDetailsPage {
 
     const groupOptions = await this.popoverCtrl.create({
       component: OverflowMenuComponent,
-      event,
       componentProps: {
-        list: MenuOverflow.GROUP_OPTIONS
+        list: MenuOverflow.MENU_GROUP_ACTIVITY_ADMIN
       },
       cssClass: 'download-popover'
     });
@@ -189,7 +221,6 @@ export class GroupDetailsPage {
 
     const groupOptions = await this.popoverCtrl.create({
       component: OverflowMenuComponent,
-      event,
       componentProps: {
         list: menuList
       },
