@@ -119,7 +119,7 @@ export class ContentUtil {
   }
 
 
-  public static genrateUTMCData(params: { [param: string]: string }): CorrelationData[] {
+  public static genrateUTMCData(params: { [param: string]: any }): CorrelationData[] {
     const utmParams = {};
     const cData: CorrelationData[] = [];
     Object.entries(params).forEach(([key, value]) => {
@@ -135,7 +135,13 @@ export class ContentUtil {
       } catch (e) {
       }
       if ((key === 'utm_campaign') || (key === 'channel')) {
-        cData.push({ id: params[key], type: CorReleationDataType.SOURCE });
+        if (Array.isArray(params[key])) {
+          params[key].forEach(ele => {
+             cData.push({id: ele, type: CorReleationDataType.SOURCE});
+          });
+        } else {
+          cData.push({ id: params[key], type: CorReleationDataType.SOURCE });
+        }
       } else {
         const chengeKeyUpperCase = key.split('_').map((elem) => {
           return (elem.charAt(0).toUpperCase() + elem.slice(1));
@@ -147,7 +153,13 @@ export class ContentUtil {
     if (Object.keys(utmParams)) {
       Object.keys(utmParams).map((key) => {
         if (utmParams[key] !== undefined) {
-          cData.push({ id: utmParams[key], type: key });
+          if (Array.isArray(params[key])) {
+            utmParams[key].forEach(ele => {
+               cData.push({id: ele, type: key});
+            });
+          } else {
+            cData.push({ id: utmParams[key], type: key });
+          }
         }
       });
     }
@@ -155,3 +167,4 @@ export class ContentUtil {
     return cData;
   }
 }
+
