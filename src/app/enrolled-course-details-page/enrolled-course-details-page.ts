@@ -61,7 +61,8 @@ import {
   Mode,
   PageId,
   CorReleationDataType,
-  ID
+  ID,
+  AuditType
 } from '../../services/telemetry-constants';
 import { ProfileConstants, ContentType, EventTopics, MimeType, PreferenceKey, RouterLinks, ShareItemType } from '../app.constant';
 import { BatchConstants } from '../app.constant';
@@ -1766,11 +1767,12 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
         Environment.COURSE,
         AuditState.AUDIT_UPDATED,
         ['progress'],
-        undefined,
+        AuditType.COURSE_PROGRESS,
         this.telemetryObject.id,
         this.telemetryObject.type,
         this.telemetryObject.version,
-        cdata
+        cdata,
+        this.telemetryObject.rollup
       );
     }
   }

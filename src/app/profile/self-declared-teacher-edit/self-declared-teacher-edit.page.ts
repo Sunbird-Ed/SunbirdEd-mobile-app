@@ -306,7 +306,7 @@ export class SelfDeclaredTeacherEditPage {
       const stateCode = this.stateList.find(state => state.id === formValue.state).code;
       const districtCode = this.districtList.find(district => district.id === formValue.district).code;
 
-      const externalIds = [];
+      const externalIds = this.removeExternalIdsOnStateChange(rootOrgId);
       this.teacherDetailsForm.forEach(formData => {
         if (formData.code !== 'state' && formData.code !== 'district') {
           // no externalIds declared
@@ -329,7 +329,7 @@ export class SelfDeclaredTeacherEditPage {
             return eid.idType === formData.code;
           })) {
             externalIds.push({
-              id: 'abc',
+              id: 'remove',
               operation: 'remove',
               idType: formData.code,
               provider: rootOrgId
@@ -450,6 +450,20 @@ export class SelfDeclaredTeacherEditPage {
     const fieldsChanged = { fieldsChanged: telemetryValue };
 
     return fieldsChanged;
+  }
+
+  private removeExternalIdsOnStateChange(rootOrgId) {
+    const externalIds = [];
+
+    if (this.profile && this.profile.externalIds && this.profile.externalIds.length &&
+      this.profile.externalIds[0].provider && this.profile.externalIds[0].provider !== rootOrgId) {
+      this.profile.externalIds.forEach(externalId => {
+        externalIds.push({ ...externalId, operation: 'remove' });
+      });
+      this.profile.externalIds = [];
+    }
+
+    return externalIds;
   }
 
 }
