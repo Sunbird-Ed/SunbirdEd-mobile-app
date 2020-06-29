@@ -164,7 +164,7 @@ export class GroupDetailsPage {
       componentProps: {
         list: menuList
       },
-      cssClass: 'download-popover'
+      cssClass: 'group-option-popover'
     });
     await groupOptions.present();
 
