@@ -22,7 +22,7 @@ import {
 import { EnrollCourse } from '@app/app/enrolled-course-details-page/course.interface';
 import {DatePipe, Location} from '@angular/common';
 import { ContentActionsComponent } from './../../components/content-actions/content-actions.component';
-import { PageId, Environment, InteractType, InteractSubtype, ImpressionType } from './../../../services/telemetry-constants';
+import { PageId, Environment, InteractType, InteractSubtype, ImpressionType, AuditType } from './../../../services/telemetry-constants';
 import { Observable, Subscription } from 'rxjs';
 import { ConfirmAlertComponent } from '@app/app/components';
 import { FileSizePipe } from '@app/pipes/file-size/file-size';
@@ -191,6 +191,7 @@ export class ChapterDetailsPage implements OnInit, OnDestroy {
       }
       if (this.isFromDeeplink) {
         this.getContentState(true);
+        this.getBatchDetails();
       }
       console.log('this.courseCardData', this.courseContent);
       this.getContentsSize(this.chapter.children);
@@ -299,11 +300,28 @@ export class ChapterDetailsPage implements OnInit, OnDestroy {
               this.isBatchNotStarted = true;
               this.courseStartDate = this.batchDetails.startDate;
             }
+            this.saveContentContext(this.appGlobalService.getUserId(),
+            this.batchDetails.courseId, this.courseContent.batchId, this.batchDetails.status);
           });
         }).catch((err) => {
-
+          this.saveContentContext(this.appGlobalService.getUserId(),
+            this.courseContent.courseId, this.courseContent.batchId, this.courseContent.batch.status);
         });
     }
+  }
+
+  saveContentContext(userId, courseId, batchId, batchStatus) {
+    const contentContextMap = new Map();
+    // store content context in the below map
+    contentContextMap['userId'] = userId;
+    contentContextMap['courseId'] = courseId;
+    contentContextMap['batchId'] = batchId;
+    if (batchStatus) {
+      contentContextMap['batchStatus'] = batchStatus;
+    }
+
+    // store the contentContextMap in shared preference and access it from SDK
+    this.preferences.putString(PreferenceKey.CONTENT_CONTEXT, JSON.stringify(contentContextMap)).toPromise().then();
   }
 
   getAllContents(collection) {
@@ -345,7 +363,7 @@ export class ChapterDetailsPage implements OnInit, OnDestroy {
         const cdata = [
           {
               type: 'CourseId',
-              id: this.courseContentData.identifier
+              id: this.courseContentData.identifier || ''
           },
           {
               type: 'BatchId',
@@ -353,22 +371,23 @@ export class ChapterDetailsPage implements OnInit, OnDestroy {
           },
           {
               type: 'UserId',
-              id: this.userId
+              id: this.userId || ''
           },
           {
             type: 'UnitId',
-            id: this.identifier
+            id: this.identifier || ''
         },
         ];
         this.telemetryGeneratorService.generateAuditTelemetry(
           Environment.COURSE,
           AuditState.AUDIT_UPDATED,
           ['progress'],
-          undefined,
+          AuditType.UNIT_PROGRESS,
           this.telemetryObject.id,
           this.telemetryObject.type,
           this.telemetryObject.version,
-          cdata
+          cdata,
+          this.telemetryObject.rollup
         );
       }
     }

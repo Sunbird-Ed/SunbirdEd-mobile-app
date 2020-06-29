@@ -9,8 +9,10 @@ import { Map } from '@app/app/telemetryutil';
 import { CommonUtilService } from '@app/services/common-util.service';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { AppHeaderService } from '@app/services/app-header.service';
-import { Environment, ID, ImpressionType, InteractSubtype,
-         InteractType, PageId, AuditProps, CorReleationDataType, AuditType } from '@app/services/telemetry-constants';
+import {
+  Environment, ID, ImpressionType, InteractSubtype,
+  InteractType, PageId, AuditProps, CorReleationDataType, AuditType
+} from '@app/services/telemetry-constants';
 import { NotificationService } from '@app/services/notification.service';
 import { Location } from '@angular/common';
 import { Subscription } from 'rxjs';
@@ -167,18 +169,16 @@ export class LanguageSettingsPage {
       type: CorReleationDataType.NEW_VALUE
     }];
     if (this.tappedLanguage) {
-      cData.push({id: this.tappedLanguage, type: CorReleationDataType.OLD_VALUE});
+      cData.push({ id: this.tappedLanguage, type: CorReleationDataType.OLD_VALUE });
     }
     this.telemetryGeneratorService.generateInteractTelemetry(
-      InteractType.SELECT_LANGUAGE,
-      this.tappedLanguage || '',
+      InteractType.SELECT_LANGUAGE, '',
       this.isFromSettings ? Environment.SETTINGS : Environment.ONBOARDING,
       PageId.LANGUAGE,
       undefined,
       undefined,
       undefined,
-      cData,
-      this.language
+      cData
     );
     this.tappedLanguage = this.language;
     if (this.language) {
@@ -227,6 +227,10 @@ export class LanguageSettingsPage {
       valuesMap
     );
     /* New Telemetry */
+    const cData: CorrelationData[] = [{
+      id: currentLanguage,
+      type: CorReleationDataType.NEW_VALUE
+    }];
     this.telemetryGeneratorService.generateInteractTelemetry(
       InteractType.SELECT_CONTINUE,
       InteractSubtype.SUCCESS,
@@ -235,8 +239,7 @@ export class LanguageSettingsPage {
       undefined,
       undefined,
       undefined,
-      undefined,
-      this.language
+      cData
     );
   }
 
@@ -270,7 +273,10 @@ export class LanguageSettingsPage {
         selectedLanguage: this.language
       });
       this.notification.setupLocalNotification(this.language);
-      const corRelationList: Array<CorrelationData> = [{id: PageId.LANGUAGE, type: CorReleationDataType.FROM_PAGE}];
+      const corRelationList: Array<CorrelationData> = [
+        { id: PageId.LANGUAGE, type: CorReleationDataType.FROM_PAGE }
+      ];
+      corRelationList.push({ id: this.language || '', type: CorReleationDataType.LANGUAGE });
       this.telemetryGeneratorService.generateAuditTelemetry(
         this.isFromSettings ? Environment.SETTINGS : Environment.ONBOARDING,
         AuditState.AUDIT_UPDATED,
