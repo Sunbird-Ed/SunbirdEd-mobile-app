@@ -33,4 +33,4 @@ Node JS Version - above 8
 
 **4. How to debug apk**    
     - Open chrome and enter `chrome://inspect`    
-    - Select app    
+    - Select app
