@@ -242,6 +242,7 @@ export class PreferenceKey {
     public static readonly COACH_MARK_SEEN = 'coach_mark_seen';
     public static readonly PAGE_ASSEMBLE_ORGANISATION_ID = 'page_assemble_organisation_id';
     public static readonly CAMPAIGN_PARAMETERS = 'campaign_parameters';
+    public static readonly CREATE_GROUP_INFO_POPUP = 'create_group_info_popup';
 }
 
 export class GenericAppConfig {

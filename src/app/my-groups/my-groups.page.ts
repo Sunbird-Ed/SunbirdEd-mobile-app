@@ -2,8 +2,8 @@ import { Component, OnInit, Inject, OnDestroy } from '@angular/core';
 import { Router, NavigationExtras } from '@angular/router';
 
 import { AppHeaderService } from '@app/services/app-header.service';
-import { RouterLinks } from '../app.constant';
-import { AuthService, ClassRoomService, ClassRoom } from '@project-sunbird/sunbird-sdk';
+import { RouterLinks, PreferenceKey } from '../app.constant';
+import { AuthService, ClassRoomService, ClassRoom, SharedPreferences } from '@project-sunbird/sunbird-sdk';
 import { LoginHandlerService } from '@app/services/login-handler.service';
 import { CommonUtilService } from '@app/services';
 import { PopoverController } from '@ionic/angular';
@@ -23,12 +23,13 @@ export class MyGroupsPage implements OnInit, OnDestroy {
   constructor(
     @Inject('AUTH_SERVICE') public authService: AuthService,
     @Inject('CLASS_ROOM_SERVICE') public classRoomService: ClassRoomService,
+    @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
     private headerService: AppHeaderService,
     private router: Router,
     private loginHandlerService: LoginHandlerService,
     private commonUtilService: CommonUtilService,
     private popoverCtrl: PopoverController
-  ) {  }
+  ) { }
 
   ngOnInit() {
     this.checkUserLoggedIn();
@@ -45,6 +46,14 @@ export class MyGroupsPage implements OnInit, OnDestroy {
       this.handleHeaderEvents(eventName);
     });
     this.fetchGroupList();
+  }
+
+  async ionViewDidEnter() {
+    const groupInfoScreen = await this.preferences.getBoolean(PreferenceKey.CREATE_GROUP_INFO_POPUP).toPromise();
+    if (!groupInfoScreen) {
+      this.openinfopopup();
+      this.preferences.putBoolean(PreferenceKey.CREATE_GROUP_INFO_POPUP, true).toPromise().then();
+    }
   }
 
   ngOnDestroy() {
@@ -66,7 +75,7 @@ export class MyGroupsPage implements OnInit, OnDestroy {
   }
 
   login() {
-    this.loginHandlerService.signIn({skipRootNavigation: true});
+    this.loginHandlerService.signIn({ skipRootNavigation: true });
   }
 
   async fetchGroupList() {
