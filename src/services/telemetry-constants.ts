@@ -548,6 +548,7 @@ export enum CorReleationDataType {
     COUNT_BOOK = 'CountBook',
     COUNT_CONTENT = 'CountContent',
     FROM_PAGE = 'FromPage',
+    LANGUAGE = 'Language',
     MODE = 'Mode',
     TYPE = 'Type',
     STATE = 'State',
@@ -564,6 +565,8 @@ export enum AuditType {
     SET_LANGUAGE = 'set-language',
     SELECT_USERTYPE = 'set-usertype',
     SET_PROFILE = 'set-profile',
+    UNIT_PROGRESS = 'unit-progress',
+    COURSE_PROGRESS = 'course-progress',
     TOAST_SEEN = 'toast-seen'
 }
 
