@@ -477,6 +477,7 @@ describe('QrcoderesultPage', () => {
             mockCommonUtilService.networkInfo = {
                 isNetworkAvailable: true
             };
+            mockTelemetryGeneratorService.isCollection = jest.fn();
             // act
             qrcoderesultPage.navigateToDetailsPage(content);
             // assert

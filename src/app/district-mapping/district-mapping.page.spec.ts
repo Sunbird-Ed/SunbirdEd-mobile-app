@@ -155,7 +155,7 @@ describe('DistrictMappingPage', () => {
         districtMappingPage.availableLocationState = 'Odisha';
         districtMappingPage.availableLocationDistrict = 'Odisha';
         districtMappingPage.isAutoPopulated = true;
-        jest.spyOn(districtMappingPage, 'eventForSelectCategory').mockImplementation(() => {
+        jest.spyOn(districtMappingPage, 'generateTelemetryForCategorySelect').mockImplementation(() => {
             return;
         });
         // act
@@ -338,12 +338,17 @@ describe('DistrictMappingPage', () => {
         mockCommonUtilService.isDeviceLocationAvailable = jest.fn(() => Promise.resolve(false));
         jest.spyOn(districtMappingPage, 'saveDeviceLocation').mockImplementation();
         mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+        mockCommonUtilService.getLoader = jest.fn(() => ({
+            present: jest.fn(),
+            dismiss: jest.fn()
+        }));
         // act
         districtMappingPage.submit();
         // assert
         setTimeout(() => {
             expect(mockProfileService.updateServerProfile).toHaveBeenCalledTimes(1);
             expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('PROFILE_UPDATE_SUCCESS');
+            expect(mockCommonUtilService.getLoader).toHaveBeenCalled();
             expect(mockEvents.publish).toHaveBeenCalledWith('loggedInProfile:update',
                 { firstName: 'samplename', lastName: '', locationCodes: ['2', '2'], userId: '12345' });
             expect(mockLocation.back).toHaveBeenCalled();

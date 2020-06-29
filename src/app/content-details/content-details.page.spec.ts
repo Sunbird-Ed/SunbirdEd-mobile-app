@@ -679,15 +679,6 @@ describe('ContentDetailsPage', () => {
             expect(contentDetailsPage.setContentDetails).toBeCalled();
             expect(contentDetailsPage.findHierarchyOfContent).toBeCalled();
             expect(contentDetailsPage.handleDeviceBackButton).toBeCalled();
-            expect(mockTelemetryGeneratorService.generatePageLoadedTelemetry).toHaveBeenCalledWith(
-                PageId.CONTENT_DETAIL,
-                Environment.HOME,
-                undefined,
-                undefined,
-                undefined,
-                undefined,
-                [{id: 'do-123', type: 'Content'}]
-            );
         });
     });
 
@@ -1062,6 +1053,7 @@ describe('ContentDetailsPage', () => {
     it('should generate ImpressionEvent', () => {
         contentDetailsPage.downloadAndPlay = true;
         mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
+        mockTelemetryGeneratorService.generatePageLoadedTelemetry = jest.fn();
         contentDetailsPage.generateImpressionEvent('download');
         // assert
         expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenNthCalledWith(1,
@@ -1078,6 +1070,15 @@ describe('ContentDetailsPage', () => {
             PageId.CONTENT_DETAIL,
             Environment.HOME,
             undefined, undefined, undefined, {l1: 'do_123', l2: 'do_123', l3: 'do_1'}, [{id: 'do-123', type: 'Content'}]
+        );
+        expect(mockTelemetryGeneratorService.generatePageLoadedTelemetry).toHaveBeenCalledWith(
+            PageId.CONTENT_DETAIL,
+            Environment.HOME,
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            [{id: 'do-123', type: 'Content'}]
         );
     });
 
