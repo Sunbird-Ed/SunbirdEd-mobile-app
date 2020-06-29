@@ -162,7 +162,7 @@ export class DistrictMappingPage {
       this.showStates = false;
       this.stateName = name;
       this.stateCode = code;
-      this.eventForSelectCategory(name, true);
+      this.generateTelemetryForCategorySelect(name, true);
       await this.getDistrict(id);
     });
   }
@@ -176,7 +176,7 @@ export class DistrictMappingPage {
       this.districtName = name;
       this.districtCode = code;
       this.showDistrict = false;
-      this.eventForSelectCategory(name, false);
+      this.generateTelemetryForCategorySelect(name, false);
     });
   }
 
@@ -610,7 +610,7 @@ export class DistrictMappingPage {
     );
   }
 
-  eventForSelectCategory(value, isState) {
+  generateTelemetryForCategorySelect(value, isState) {
     const corRelationList: CorrelationData[] = [{id: PageId.POPUP_CATEGORY, type: CorReleationDataType.CHILD_UI}];
     corRelationList.push({id: value,
       type: isState ? CorReleationDataType.STATE : CorReleationDataType.DISTRICT});

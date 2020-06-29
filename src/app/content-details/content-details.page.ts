@@ -312,15 +312,6 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
     } else {
       this.generateTelemetry();
     }
-    this.telemetryGeneratorService.generatePageLoadedTelemetry(
-      PageId.CONTENT_DETAIL,
-      this.onboarding ? Environment.ONBOARDING : Environment.HOME,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      this.corRelationList
-    );
     this.isPlayedFromCourse();
     this.setContentDetails(
       this.identifier, true,
@@ -609,6 +600,16 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
         ImpressionType.PAGE_REQUEST, '',
         PageId.CONTENT_DETAIL,
         this.onboarding ? Environment.ONBOARDING : Environment.HOME
+      );
+
+    this.telemetryGeneratorService.generatePageLoadedTelemetry(
+        PageId.CONTENT_DETAIL,
+        this.onboarding ? Environment.ONBOARDING : Environment.HOME,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        this.corRelationList
       );
   }
 

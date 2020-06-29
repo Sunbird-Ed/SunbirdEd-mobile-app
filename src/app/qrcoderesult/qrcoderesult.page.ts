@@ -925,7 +925,8 @@ export class QrcoderesultPage implements OnDestroy {
   }
 
   private interactEventForPlayAndDownload(content, play) {
-    const telemetryObject = new TelemetryObject(content.identifier, ObjectType.CONTENT, '');
+    const objectType = this.telemetryGeneratorService.isCollection(content.mimeType) ? content.contentType : ContentType.RESOURCE;
+    const telemetryObject = new TelemetryObject(content.identifier, objectType, undefined);
     const corRelationData: Array<CorrelationData> = [];
     corRelationData.push(this.corRelationList[0]);
     corRelationData.push({id: Mode.PLAY, type: CorReleationDataType.MODE});
