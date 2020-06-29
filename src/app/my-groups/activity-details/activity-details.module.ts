@@ -7,6 +7,7 @@ import { IonicModule } from '@ionic/angular';
 
 import { ActivityDetailsPage } from './activity-details.page';
 import { CommonConsumptionModule } from '@project-sunbird/common-consumption';
+import { TranslateModule } from '@ngx-translate/core';
 
 const routes: Routes = [
   {
@@ -21,6 +22,7 @@ const routes: Routes = [
     FormsModule,
     IonicModule,
     CommonConsumptionModule,
+    TranslateModule.forChild(),
     RouterModule.forChild(routes)
   ],
   declarations: [ActivityDetailsPage]

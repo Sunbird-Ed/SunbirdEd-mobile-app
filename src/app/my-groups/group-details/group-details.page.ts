@@ -408,7 +408,8 @@ export class GroupDetailsPage {
   navigateToActivityDetails() {
     const navigationExtras: NavigationExtras = {
       state: {
-        groupId: this.groupId
+        groupId: this.groupId,
+        memberList: this.memberList
       }
     };
     this.router.navigate([`/${RouterLinks.MY_GROUPS}/${RouterLinks.ACTIVITY_DETAILS}`], navigationExtras);
