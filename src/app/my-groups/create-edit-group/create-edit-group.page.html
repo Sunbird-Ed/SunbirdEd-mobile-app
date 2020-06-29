@@ -6,13 +6,13 @@
       'cr-input-error': ((createGroupFormControls.groupName.touched || createGroupFormSubmitted) && createGroupFormControls.groupName.errors?.required)}">
       <ion-label position="stacked" class="label-font align-text">{{'GROUP_NAME' | translate }}<sup>*</sup></ion-label>
       <ion-input formControlName="groupName" maxlength="50" placeholder="{{'ENTER_GROUP_NAME' | translate}}"></ion-input>
-      <span class="char-info" *ngIf="!((createGroupFormControls.groupName.touched || createGroupFormSubmitted) && createGroupFormControls.groupName.errors?.required)">{{50 - createGroupFormControls.groupName.value?.length}} {{'CHARECTERS_REMAINING' | translate}}</span>
+      <span class="char-info" *ngIf="!((createGroupFormControls.groupName.touched || createGroupFormSubmitted) && createGroupFormControls.groupName.errors?.required)">{{50 - createGroupFormControls.groupName.value?.length}} {{'CHARACTERS_REMAINING' | translate}}</span>
       <span *ngIf="(createGroupFormControls.groupName.touched || createGroupFormSubmitted) && createGroupFormControls.groupName.errors?.required" class="cr-error">{{ errorMessages.groupName.message | translate }}</span>
     </ion-item>
     <ion-item class="input-item cr-input-primary">
       <ion-label position="stacked" class="label-font align-text">{{'GROUP_DESCRIPTION' | translate }}</ion-label>
       <ion-textarea class="cr-desc" formControlName="groupDesc" maxlength="150" rows="4" placeholder="{{'GROUP_DESCRIPTION_PLACEHOLDER' | translate}}"></ion-textarea>
-      <span class="char-info">{{150 - createGroupFormControls.groupDesc.value?.length}} {{'CHARECTERS_REMAINING' | translate}}</span>
+      <span class="char-info">{{150 - createGroupFormControls.groupDesc.value?.length}} {{'CHARACTERS_REMAINING' | translate}}</span>
     </ion-item>
     <div>
       <ion-item class="input-item cr-input-primary" lines="none">

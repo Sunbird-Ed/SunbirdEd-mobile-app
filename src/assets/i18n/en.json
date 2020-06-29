@@ -782,8 +782,10 @@
   "EXP_VIDEOS": "explanation videos",
   "QUES_BANKS": "question banks",
   "INTERACTIVE_MATERIAL": "interactive study material",
-  "CHARECTERS_REMAINING": "Charecters remaining",
+  "CHARACTERS_REMAINING": "Characters remaining",
   "WHAT_IS_MEMBER_ID": "What is a DIKSHA ID? ",
   "I_AGREE_TO": "I agree to",
-  "TERMS_OF_SERVICES": "terms of services"
+  "TERMS_OF_SERVICES": "terms of services",
+  "LAST_UPDATED": "Last updated: {{%s}}%",
+  "SEARCH_FOR_GROUP_MEMBER": "Search for group member"
 }
