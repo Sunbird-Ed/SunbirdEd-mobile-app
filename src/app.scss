@@ -1337,3 +1337,25 @@ ion-modal.sb-progress-loader {
   color: #0ec254;
   font-weight: bold;
 }
+
+.group-option-popover {
+  padding: 16px;
+  ion-item {
+    font-size: 14px;
+    font-family: "Noto Sans";
+  }
+
+  ion-item:nth-child(1) {
+    color: #333333;
+  }
+  ion-item:nth-child(2) {
+    color: #FF4558;
+  }
+}
+
+.group-option-popover .popover-content {
+  top: 82px !important;
+  left: 173px !important;
+  width: 196px;
+  height: 80px;
+}
