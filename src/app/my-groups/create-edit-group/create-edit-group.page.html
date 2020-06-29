@@ -16,13 +16,13 @@
     </ion-item>
     <div>
       <ion-item class="input-item cr-input-primary" lines="none">
-        <ion-checkbox formControlName="groupTerms" color="secondary" checked="false" slot="start"></ion-checkbox>
-        <ion-label>I agree to {{appName}} <span>terms of services</span></ion-label>
+        <ion-checkbox formControlName="groupTerms" color="secondary" checked="false"></ion-checkbox>
+        <ion-label class="cr-terms-checkbox">{{'I_AGREE_TO' | translate}} {{appName}} <span class="cr-terms">{{'TERMS_OF_SERVICES' | translate}}</span></ion-label>
       </ion-item>
       <p
       *ngIf="(createGroupFormControls.groupTerms.touched || createGroupFormSubmitted) && createGroupFormControls.groupTerms.errors?.required"
         class="cr-error cr-error-checkbox"
-        [innerHTML]="'GROUP_TERMS_IS_REQUIRED' | translate:  {'%appName':  appName}" >{{ errorMessages.groupTerms.message }}</p>
+        [innerHTML]="'GROUP_TERMS_IS_REQUIRED' | translate:  {'app_name':  appName}" >{{ errorMessages.groupTerms.message }}</p>
     </div>
     
   </form>

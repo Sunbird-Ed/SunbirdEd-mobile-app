@@ -585,7 +585,7 @@ describe('ContentDetailsPage', () => {
                 Environment.HOME,
                 telemetryObject,
                 rollUp,
-                undefined);
+                [{id: 'do-123', type: 'Content'}]);
         });
 
         it('should generate END Telemetry with  contentType if telemetryObject contentType is empty', () => {
@@ -601,7 +601,7 @@ describe('ContentDetailsPage', () => {
                 Environment.HOME,
                 contentDetailsPage.telemetryObject,
                 rollUp,
-                undefined);
+                [{id: 'do-123', type: 'Content'}]);
         });
     });
 
@@ -670,6 +670,7 @@ describe('ContentDetailsPage', () => {
             spyOn(contentDetailsPage, 'isPlayedFromCourse').and.stub();
             spyOn(contentDetailsPage, 'setContentDetails').and.stub();
             spyOn(contentDetailsPage, 'findHierarchyOfContent').and.stub();
+            mockTelemetryGeneratorService.generatePageLoadedTelemetry = jest.fn();
             // act
             contentDetailsPage.ionViewWillEnter();
             // assert
@@ -725,7 +726,7 @@ describe('ContentDetailsPage', () => {
                 Environment.HOME,
                 true,
                 'do_212911645382959104165',
-                undefined,
+                [{id: 'do-123', type: 'Content'}],
                 { l1: 'do_123', l2: 'do_123', l3: 'do_1' },
                 { id: 'do_12345', type: '', version: '1' }
             );
@@ -746,7 +747,7 @@ describe('ContentDetailsPage', () => {
                 Environment.HOME,
                 true,
                 'do_212911645382959104165',
-                undefined,
+                [{id: 'do-123', type: 'Content'}],
                 { l1: 'do_123', l2: 'do_123', l3: 'do_1' },
                 { id: 'do_12345', type: '', version: '1' }
             );
@@ -766,7 +767,7 @@ describe('ContentDetailsPage', () => {
                 Environment.HOME,
                 false,
                 'do_212911645382959104165',
-                undefined,
+                [{id: 'do-123', type: 'Content'}],
                 { l1: 'do_123', l2: 'do_123', l3: 'do_1' },
                 { id: 'do_12345', type: '', version: '1' }
             );
@@ -785,7 +786,7 @@ describe('ContentDetailsPage', () => {
                 Environment.HOME,
                 false,
                 'do_212911645382959104165',
-                undefined,
+                [{id: 'do-123', type: 'Content'}],
                 { l1: 'do_123', l2: 'do_123', l3: 'do_1' },
                 { id: 'do_12345', type: '', version: '1' }
             );
@@ -1049,6 +1050,38 @@ describe('ContentDetailsPage', () => {
         });
     });
 
+    it('should generate ImpressionEvent', () => {
+        contentDetailsPage.downloadAndPlay = true;
+        mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
+        mockTelemetryGeneratorService.generatePageLoadedTelemetry = jest.fn();
+        contentDetailsPage.generateImpressionEvent('download');
+        // assert
+        expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenNthCalledWith(1,
+            InteractType.DOWNLOAD_COMPLETE,
+            InteractType.DOWNLOAD_COMPLETE,
+            PageId.QR_CONTENT_RESULT,
+            Environment.HOME,
+            undefined,
+            undefined, undefined, undefined,
+            [{id: 'content-detail', type: 'ChildUi'}, {id: 'do-123', type: 'Content'}]
+        );
+        expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenNthCalledWith(2,
+            ImpressionType.DETAIL, '',
+            PageId.CONTENT_DETAIL,
+            Environment.HOME,
+            undefined, undefined, undefined, {l1: 'do_123', l2: 'do_123', l3: 'do_1'}, [{id: 'do-123', type: 'Content'}]
+        );
+        expect(mockTelemetryGeneratorService.generatePageLoadedTelemetry).toHaveBeenCalledWith(
+            PageId.CONTENT_DETAIL,
+            Environment.HOME,
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            [{id: 'do-123', type: 'Content'}]
+        );
+    });
+
     describe('showDeletePopup', () => {
         it('should delete a content if content size is not available', () => {
             // arrange
@@ -1231,7 +1264,7 @@ describe('ContentDetailsPage', () => {
             false,
             { contentData: { name: 'matrix', size: 101100 } },
             'rating',
-            undefined,
+            [{id: 'do-123', type: 'Content'}],
             { l1: 'do_123', l2: 'do_123', l3: 'do_1' }
         );
     });
@@ -1268,5 +1301,30 @@ describe('ContentDetailsPage', () => {
         contentDetailsPage.ionViewDidEnter();
         // assert
         expect(mockSbProgressLoader.hide).toHaveBeenCalledWith({ id: 'sample_doId' });
+    });
+
+    describe('cancelDownload', () => {
+        it('should generate telemetry for cancel download', () => {
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            mockContentService.cancelDownload = jest.fn(() => of(undefined));
+            // act
+            contentDetailsPage.cancelDownload();
+            // assert
+            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenNthCalledWith(1,
+                InteractType.SELECT_CLOSE,
+                InteractSubtype.CANCEL,
+                Environment.HOME,
+                PageId.CONTENT_DETAIL,
+                {id: 'sample_id1', type: 'Content', version: ''}, undefined, undefined,
+                [{id: 'download-popup', type: 'ChildUi'}]
+            );
+            expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenNthCalledWith(2,
+                InteractType.TOUCH,
+                InteractSubtype.DOWNLOAD_CANCEL_CLICKED,
+                Environment.HOME,
+                PageId.CONTENT_DETAIL,
+                undefined, undefined, {l1: 'do_123', l2: 'do_123', l3: 'do_1'}, undefined
+            );
+        });
     });
 });

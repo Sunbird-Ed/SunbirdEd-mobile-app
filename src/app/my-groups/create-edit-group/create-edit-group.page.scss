@@ -11,6 +11,10 @@
     padding: 12px !important;
   }
 
+  .cr-terms{
+    color: $blue;
+  }
+
   .cr-error-checkbox{
     margin: 0 0 0 48px;
     position: relative;
@@ -79,6 +83,9 @@
     font-size: 14px;
     letter-spacing: 0;
     line-height: 19px;
+    &.cr-terms-checkbox{
+      margin-left: 16px;
+    }
     sup{
       font-size: 22px;
       top: 0px;
