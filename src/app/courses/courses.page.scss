@@ -1,6 +1,7 @@
 @import "src/assets/styles/base/_variables.scss";
 @import "src/assets/styles/_custom-mixins.scss";
 @import "src/assets/styles/fonts.scss";
+@import "src/assets/styles/_variables.scss";
 :host {
   .loading-backdrop {
     .backdrop-container {
@@ -19,7 +20,7 @@
       @include padding(null, null, 16px, null !important);
     }
 
-    background-color: #ffffff;
+    background-color: map-get($colors, white);
     height: 100%;
     z-index: 1000;
     opacity: 1 !important;
@@ -111,7 +112,7 @@
   }
 
   .enrolled-course-bg {
-    background: linear-gradient(#008840, #008840 100px, white 100px, white 100%);
+    background: linear-gradient($green, $green 100px, white 100px, white 100%);
   }
 
   .course-grid-bg{

@@ -17,11 +17,11 @@
   font-weight: bold;
   line-height: 19px;
   text-align: center;
-  color: #666666;
+  color: map-get($colors, textGrey);
 }
 
 .sub-heading {
-  color: #666666;
+  color: map-get($colors, textGrey);
   font-size: 12px;
   line-height: 17px;
   text-align: center;
@@ -72,7 +72,7 @@
     padding-bottom: 16px;
   }
 
-  background-color: #ffffff;
+  background-color: map-get($colors, white);
   height: 100%;
   z-index: 1000;
   opacity: 1 !important;
@@ -164,13 +164,13 @@ ion-card .card .card-md {
 }
 
 .font-blue {
-  color: #024f9d;
+  color: $blue;
   font-size: 30px;
 }
 
 .text-selected {
   padding: 4px;
-  color: #024f9d;
+  color: $blue;
   font-weight: bolder;
 }
 
@@ -190,7 +190,7 @@ ion-card .card .card-md {
 
 .view-credits {
   span {
-    color: #024F9D;
+    color: $blue;
 
     ion-icon {
       padding: 0 0 4px 8px;
@@ -204,7 +204,7 @@ ion-card .card .card-md {
 
 .credit-label-padding {
   padding: 14px 14px 8px 14px;
-  background-color: #f2f2f2;
+  background-color: map-get($colors, white_f2);
 }
 
 .content-padding {
@@ -220,7 +220,7 @@ ion-card .card .card-md {
 }
 
 .traning-derived-label-background {
-  background-color: #f2f2f2;
+  background-color: map-get($colors, white_f2);
   padding: 8px 0px 8px 15px;
 }
 
@@ -248,16 +248,16 @@ ion-card .card .card-md {
 
 .font-blue-text {
   padding: 4px;
-  color: #024f9d;
+  color: $blue;
 }
 
 .font-grey-text {
   //  padding: 4px;
-  color: #979797;
+  color: map-get($colors, dark_gray);
 }
 
 .grey-icon {
-  color: #979797;
+  color: map-get($colors, dark_gray);
   font-size: ($font-size-base + 4);
 }
 
@@ -282,7 +282,7 @@ $newColors: (primary:#024f9d,
 .separator-dot {
   width: 4px;
   height: 4px;
-  background-color: #d8d8d8;
+  background-color: map-get($colors, light_silver);
   border-radius: 50%;
   display: inline-block;
   vertical-align: middle;
@@ -291,7 +291,7 @@ $newColors: (primary:#024f9d,
 .separator-line {
   height: 1px;
   opacity: 0.36;
-  background-color: #979797;
+  background-color: map-get($colors, dark_gray);
   width: 100%;
 }
 
@@ -308,7 +308,7 @@ $newColors: (primary:#024f9d,
 }
 
 .bg-white {
-  background-color: #fff;
+  background-color: map-get($colors, white);
 }
 
 .bg-sucess {
@@ -449,7 +449,7 @@ shadow {
         font-stretch: normal;
         line-height: normal;
         letter-spacing: -0.4px;
-        color: #333333;
+        color: map-get($colors, primary_black);
         height: 42px;
       }
 
@@ -460,7 +460,7 @@ shadow {
         font-stretch: normal;
         line-height: normal;
         letter-spacing: -0.4px;
-        color: #979797;
+        color: map-get($colors, dark_gray);
       }
     }
 
@@ -646,7 +646,7 @@ shadow {
         font-stretch: normal;
         line-height: normal;
         letter-spacing: -0.4px;
-        color: #333333;
+        color: map-get($colors, primary_black);
         height: 42px;
       }
 
@@ -657,7 +657,7 @@ shadow {
         font-stretch: normal;
         line-height: normal;
         letter-spacing: -0.4px;
-        color: #979797;
+        color: map-get($colors, dark_gray);
       }
     }
 
@@ -732,7 +732,7 @@ shadow {
 }
 
 .sb-hidden-content {
-  background-color: #F2F2F2;
+  background-color: map-get($colors, white_f2);
   height: 34.15%;
   width: 100%;
   border-radius: 0 0 2px 2px;
@@ -744,7 +744,7 @@ shadow {
   height: 6.1%;
   width: 100%;
   border-radius: 2px;
-  background-color: #FFFFFF;
+  background-color: map-get($colors, white);
   box-shadow: 0 4px 7px 0 rgba(0, 0, 0, 0.1);
 }
 
@@ -771,7 +771,7 @@ shadow {
   @include clearfix;
   color: $blue;
   padding: $base-block-space;
-  background-color: #fff;
+  background-color: map-get($colors, white);
 
   .pull-left {
     line-height: 30px;

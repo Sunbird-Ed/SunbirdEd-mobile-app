@@ -1,4 +1,5 @@
 @import "src/assets/styles/base/_variables.scss";
+@import "src/assets/styles/_variables.scss";
 
 .flex-grow-1{
     flex-grow: 1;
@@ -22,7 +23,7 @@
         text-overflow: ellipsis;
         white-space: nowrap;
         margin-right: 15px;
-        border: 1px solid #EDF4F9;
+        border: 1px solid $light-blue;
         padding: 5px;
         color: #a4a4a4;
         position: relative;
@@ -36,7 +37,7 @@
         top: -10px;
     }
     .share-info{
-        background: #EDF4F9;
+        background: $light-blue;
         margin-left: 20px;
         padding: 5px;
         margin-right: 15px;

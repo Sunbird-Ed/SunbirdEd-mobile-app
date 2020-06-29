@@ -1,6 +1,7 @@
 @import "src/assets/styles/base/_variables.scss";
 @import "src/assets/styles/_custom-mixins.scss";
 @import "src/assets/styles/variables";
+@import "src/assets/styles/_variables.scss";
 
 
 :host {
@@ -43,7 +44,7 @@
       //   }
       // }
       .rating-label{
-        color: #999;
+        color: $gray-300;
         font-size: 14px;
         margin: 0;
         flex: 1 1 0;

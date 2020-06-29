@@ -3,18 +3,18 @@
 
 :host {
     .input-container {
-        border: 0.5px solid #333333;
+        border: 0.5px solid map-get($colors, primary_black);
         padding: 11px;
 
         .input {
-            border: #ffffff;
+            border: map-get($colors, white);
             outline: none;
         }
 
         .input-icon {
             float: right;
             font-size: 20px;
-            color: #333333;
+            color: map-get($colors, primary_black);
         }
     }
 
@@ -29,7 +29,7 @@
     .label {
         font-size: 13px;
         padding-left: 16px;
-        color: #333333;
+        color: map-get($colors, primary_black);
     }
 
     .name {
@@ -50,7 +50,7 @@
         border-right: white;
         border-top: white;
         border-left: white;
-        border-bottom: 0.5px solid #333333;
+        border-bottom: 0.5px solid map-get($colors, primary_black);
         padding-bottom: 6px;
         padding-left: 11px;
         font-size: 13px;
@@ -65,7 +65,7 @@
         border-left: white;
         border-right: white;
         border-top: white;
-        border-bottom: 0.5px solid #333333;
+        border-bottom: 0.5px solid map-get($colors, primary_black);
         width:100%;
         outline: none;
     }
@@ -116,14 +116,14 @@
     }
 
     .heading {
-        color: #024f9d;
+        color: $blue;
         text-align: center;
         font-size: 14px;
         margin: 16px 0px 16px 0px;
     }
 
     .sub-heading {
-        color: #333333;
+        color: map-get($colors, primary_black);
         font-size: 12px;
         margin: 16px 0px 25px 0px;
     }

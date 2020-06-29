@@ -1,3 +1,4 @@
+@import "src/assets/styles/_variables.scss";
 .cd-header-container {
     padding: 16px;
     margin: 8px;
@@ -32,7 +33,7 @@
 
         .progress-label {
             font-size: 10px !important;
-            color: #333333;
+            color: map-get($colors, primary_black);
             font-weight: bold;
         }
     }
@@ -44,8 +45,8 @@
     }
 
     .cd-chapter-card-button {
-        background-color: #008840;
-        border: 1px solid #008840;
+        background-color: $green;
+        border: 1px solid $green;
         color: white;
         display: inline-block;
         font-size: 16px;
@@ -71,7 +72,7 @@
     }
 
     .cd-container-progress {
-        color: #666666;
+        color: map-get($colors, textGrey);
         font-size: 12px;
     }
 
@@ -93,6 +94,6 @@
 }
 
 .cd-label {
-    color: #666666;
+    color: map-get($colors, textGrey);
     font-size: 10px;
 }
