@@ -9,13 +9,13 @@ import {
 import { TranslateService } from '@ngx-translate/core';
 import { Network } from '@ionic-native/network/ngx';
 import { WebView } from '@ionic-native/ionic-webview/ngx';
-import { SharedPreferences, ProfileService, Profile, ProfileType } from 'sunbird-sdk';
+import { SharedPreferences, ProfileService, Profile, ProfileType, CorrelationData } from 'sunbird-sdk';
 
 import { PreferenceKey, ProfileConstants, RouterLinks } from '@app/app/app.constant';
 import { appLanguages } from '@app/app/app.constant';
 
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
-import { InteractType, InteractSubtype, PageId, Environment, CorReleationDataType, ImpressionType } from '@app/services/telemetry-constants';
+import { InteractType, InteractSubtype, PageId, Environment, CorReleationDataType, ImpressionType, ObjectType } from '@app/services/telemetry-constants';
 import { SbGenericPopoverComponent } from '@app/app/components/popups/sb-generic-popover/sb-generic-popover.component';
 import { QRAlertCallBack, QRScannerAlert } from '@app/app/qrscanner-alert/qrscanner-alert.page';
 import { Observable, merge } from 'rxjs';
@@ -186,7 +186,7 @@ export class CommonUtilService {
      * Show popup with Try Again and Skip button.
      * @param source Page from alert got called
      */
-    async  showContentComingSoonAlert(source) {
+    async  showContentComingSoonAlert(source, dialCode?) {
         this.telemetryGeneratorService.generateInteractTelemetry(
             InteractType.OTHER,
             InteractSubtype.QR_CODE_COMINGSOON,
@@ -194,7 +194,7 @@ export class CommonUtilService {
             source ? source : PageId.HOME
         );
         if (source !== 'permission') {
-            this.afterOnBoardQRErrorAlert('ERROR_CONTENT_NOT_FOUND', 'CONTENT_IS_BEING_ADDED');
+            this.afterOnBoardQRErrorAlert('ERROR_CONTENT_NOT_FOUND', 'CONTENT_IS_BEING_ADDED', source, dialCode);
             return;
         }
         let popOver: any;
@@ -226,7 +226,7 @@ export class CommonUtilService {
      * @param heading Alert heading
      * @param message Alert message
      */
-    async afterOnBoardQRErrorAlert(heading, message) {
+    async afterOnBoardQRErrorAlert(heading, message, source?, dialCode?) {
         const qrAlert = await this.popOverCtrl.create({
             component: SbGenericPopoverComponent,
             componentProps: {
@@ -243,6 +243,35 @@ export class CommonUtilService {
             cssClass: 'sb-popover warning',
         });
         await qrAlert.present();
+        const corRelationList: CorrelationData[] = [{
+            id: this.translateMessage(heading) === this.translateMessage('INVALID_QR') ?
+              InteractSubtype.QR_CODE_INVALID : InteractSubtype.QR_NOT_LINKED,
+            type: CorReleationDataType.CHILD_UI
+        }];
+        corRelationList.push({id: dialCode, type: ObjectType.QR});
+        // generate impression telemetry
+        this.telemetryGeneratorService.generateImpressionTelemetry(
+            InteractType.POPUP_LOADED, '',
+            source === PageId.ONBOARDING_PROFILE_PREFERENCES ? PageId.SCAN_OR_MANUAL : source,
+            source === PageId.ONBOARDING_PROFILE_PREFERENCES ? Environment.ONBOARDING : Environment.HOME,
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            corRelationList
+        );
+        const { data } = await qrAlert.onDidDismiss();
+        // generate interact telemetry for close popup
+        this.telemetryGeneratorService.generateInteractTelemetry(
+        InteractType.SELECT_CLOSE,
+        data ? (data.isLeftButtonClicked ? InteractSubtype.CTA : InteractSubtype.CLOSE_ICON) : InteractSubtype.OUTSIDE,
+        source === PageId.ONBOARDING_PROFILE_PREFERENCES ? Environment.ONBOARDING : Environment.HOME,
+        source === PageId.ONBOARDING_PROFILE_PREFERENCES ? PageId.SCAN_OR_MANUAL : PageId.HOME,
+        undefined,
+        undefined,
+        undefined,
+        corRelationList
+      );
     }
 
     /**

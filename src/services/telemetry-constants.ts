@@ -26,7 +26,9 @@ export enum ObjectType {
     QR = 'Qr'
 }
 export enum Mode {
-    PLAY = 'play'
+    PLAY = 'play',
+    ONLINE = 'online',
+    OFFLINE = 'offline'
 }
 export enum PageId {
     SPLASH_SCREEN = 'splash',
@@ -143,6 +145,9 @@ export enum PageId {
     SCAN = 'scan',
     APP_TUTORIAL_POPUP = 'app-tutorial-popup',
     COURSE_SEARCH_FILTER = 'course-search-filter',
+    QR_BOOK_RESULT = 'qr-book-result',
+    QR_CONTENT_RESULT = 'qr-content-result',
+    LOCATION = 'location',
     MANUAL = 'manual'
 }
 export enum LogType {
@@ -225,7 +230,12 @@ export enum InteractType {
     CREATE_FAILURE = 'create-failure',
     SWITCH_SUCCESS = 'switch-success',
     SWITCH_FAILURE = 'switch-failure',
-    QR_CAPTURED = 'qr-captured'
+    QR_CAPTURED = 'qr-captured',
+    PLAY = 'play',
+    DOWNLOAD = 'download',
+    SELECT_CLOSE = 'select-close',
+    DOWNLOAD_COMPLETE = 'download-complete',
+    POPUP_LOADED = 'popup-loaded'
 }
 
 
@@ -458,7 +468,14 @@ export enum InteractSubtype {
     SUBJECT_CARD_CLICKED = 'subject-card-clicked',
     INFORMATION_ICON_CLICKED = 'information-icon-clicked',
     TUTORIAL_CONTINUE_CLICKED = 'tutorial-continue-clicked',
-    SYNC_NOW_CLICKED = 'sync-now-clicked'
+    SYNC_NOW_CLICKED = 'sync-now-clicked',
+    DOWNLOAD_REQUEST = 'download-request',
+    DOWLOAD_POPUP = 'download-popup',
+    DOWNLOAD = 'download',
+    CTA = 'cta',
+    CLOSE_ICON = 'close-icon',
+    OUTSIDE = 'outside',
+    QR_NOT_LINKED = 'qr-not-linked',
 }
 
 export enum ID {
@@ -531,6 +548,10 @@ export enum CorReleationDataType {
     COUNT_BOOK = 'CountBook',
     COUNT_CONTENT = 'CountContent',
     FROM_PAGE = 'FromPage',
+    MODE = 'Mode',
+    TYPE = 'Type',
+    STATE = 'State',
+    DISTRICT = 'District',
     FILL_MODE = 'FillMode'
 }
 
@@ -542,6 +563,7 @@ export enum AuditProps {
 export enum AuditType {
     SET_LANGUAGE = 'set-language',
     SELECT_USERTYPE = 'set-usertype',
-    SET_PROFILE = 'set-profile'
+    SET_PROFILE = 'set-profile',
+    TOAST_SEEN = 'toast-seen'
 }
 
