@@ -22,7 +22,7 @@
       <p
       *ngIf="(createGroupFormControls.groupTerms.touched || createGroupFormSubmitted) && createGroupFormControls.groupTerms.errors?.required"
         class="cr-error cr-error-checkbox"
-        [innerHTML]="'GROUP_TERMS_IS_REQUIRED' | translate:  {'%appName':  appName}" >{{ errorMessages.groupTerms.message }}</p>
+        [innerHTML]="'GROUP_TERMS_IS_REQUIRED' | translate:  {'app_name':  appName}" >{{ errorMessages.groupTerms.message }}</p>
     </div>
     
   </form>
