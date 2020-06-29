@@ -11,6 +11,7 @@ import { TelemetryGeneratorService } from './telemetry-generator.service';
 import { QRScannerResultHandler } from './qrscanresulthandler.service';
 import { of } from 'rxjs';
 import { EventEmitter } from 'events';
+import { InteractType, InteractSubtype, PageId, Environment } from './telemetry-constants';
 
 describe('SunbirdQRScanner', () => {
   let sunbirdQRScanner: SunbirdQRScanner;
@@ -63,12 +64,36 @@ describe('SunbirdQRScanner', () => {
     expect(sunbirdQRScanner).toBeTruthy();
   });
 
-  // describe('checkQuizContent()', () => {
-  //   it('should navigate to contentdetails page if its a Quiztype content', (done) => {
-  //     // arrange
-  //     // act
-  //     // assert
-  //   });
-  // });
+  describe('showInvalidCodeAlert', () => {
+    it('should show Invalid Code Alert', () => {
+      // arrange
+      const scannData = 'sample-scan-data';
+      mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+      sunbirdQRScanner.source = PageId.ONBOARDING_PROFILE_PREFERENCES;
+      mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
+      mockCommonUtilService.afterOnBoardQRErrorAlert = jest.fn(() => Promise.resolve());
+      // act
+      sunbirdQRScanner.showInvalidCodeAlert(scannData);
+      // assert
+      setTimeout(() => {
+        expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+          InteractType.OTHER,
+          InteractSubtype.QR_CODE_INVALID,
+          Environment.ONBOARDING,
+          undefined
+        );
+        expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenCalledWith(
+          InteractSubtype.QR_CODE_INVALID, '',
+          sunbirdQRScanner.source,
+          Environment.HOME,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          undefined
+        );
+      }, 0);
+    });
+  });
 
 });

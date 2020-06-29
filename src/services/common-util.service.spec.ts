@@ -242,6 +242,7 @@ describe('CommonUtilService', () => {
         present: jest.fn(() => Promise.resolve({})),
         onDidDismiss: jest.fn(() => Promise.resolve({ data: undefined }))
       } as any);
+      mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
       // act
       commonUtilService.afterOnBoardQRErrorAlert('sample_heading', 'sample_message');
       // assert
@@ -470,6 +471,7 @@ describe('CommonUtilService', () => {
     it('should return true if IP location is available', () => {
       // arrange
       mockSharedPreferences.getString = jest.fn(() => of({} as any));
+      mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
       // act
       // assert
       commonUtilService.isIpLocationAvailable().then((response) => {

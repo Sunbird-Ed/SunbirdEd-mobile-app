@@ -1241,6 +1241,8 @@ describe('SearchPage', () => {
             mockFormAndFrameworkUtilService.getSupportedContentFilterConfig = jest.fn(
                 () => Promise.resolve(getSupportedContentFilterConfigResp));
             mockpageService.getPageAssemble = jest.fn(() => throwError({}));
+            searchPage.source = PageId.ONBOARDING_PROFILE_PREFERENCES;
+            mockTelemetryGeneratorService.generateAuditTelemetry = jest.fn();
             // act
             searchPage.getContentForDialCode();
             // assert
@@ -1249,6 +1251,16 @@ describe('SearchPage', () => {
                 expect(searchPage.contentType).toEqual(getSupportedContentFilterConfigResp);
                 expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('ERROR_OFFLINE_MODE');
                 expect(mockLocation.back).toHaveBeenCalled();
+                expect(mockTelemetryGeneratorService.generateAuditTelemetry).toHaveBeenCalledWith(
+                    Environment.HOME,
+                    'Updated',
+                    undefined,
+                    'set-profile',
+                    undefined,
+                    undefined,
+                    undefined,
+                    [{id: 'abcdef', type: 'QR'}]
+                );
                 done();
             }, 0);
         });
@@ -1542,6 +1554,55 @@ describe('SearchPage', () => {
         //         done();
         //     }, 0);
         // });
+
+        describe('handleDeviceBackButton', () => {
+            it('should handle Device BackButton for dialcode', () => {
+                // arrange
+                const subscribeWithPriorityData = jest.fn((_, fn) => fn());
+                mockPlatform.backButton = {
+                    subscribeWithPriority: subscribeWithPriorityData
+                } as any;
+                jest.spyOn(searchPage, 'navigateToPreviousPage').mockImplementation(() => {
+                    return Promise.resolve();
+                });
+                searchPage.displayDialCodeResult = [{dialCodeResult: ['result-1', 'result-2']}];
+                mockTelemetryGeneratorService.generateBackClickedNewTelemetry = jest.fn();
+                // act
+                searchPage.handleDeviceBackButton();
+                // assert
+                expect(searchPage.displayDialCodeResult[0].dialCodeResult.length).toBeGreaterThan(0);
+                expect(mockTelemetryGeneratorService.generateBackClickedNewTelemetry).toHaveBeenCalledWith(
+                    true,
+                    Environment.HOME,
+                    PageId.QR_BOOK_RESULT
+                );
+            });
+
+            it('should handle Device BackButton', () => {
+                // arrange
+                const subscribeWithPriorityData = jest.fn((_, fn) => fn());
+                mockPlatform.backButton = {
+                    subscribeWithPriority: subscribeWithPriorityData
+                } as any;
+                jest.spyOn(searchPage, 'navigateToPreviousPage').mockImplementation(() => {
+                    return Promise.resolve();
+                });
+                searchPage.displayDialCodeResult = [{dialCodeResult: []}];
+                mockTelemetryGeneratorService.generateBackClickedTelemetry = jest.fn();
+                // act
+                searchPage.handleDeviceBackButton();
+                // assert
+                expect(searchPage.displayDialCodeResult[0].dialCodeResult.length).toBe(0);
+                expect(mockTelemetryGeneratorService.generateBackClickedTelemetry).toHaveBeenCalledWith(
+                    ImpressionType.SEARCH,
+                    Environment.HOME, false, undefined,
+                    [{id: '', type: 'API'},
+                    {id: '', type: 'API'},
+                    {id: 'SearchResult', type: 'Section'},
+                    {id: 'filter', type: 'DiscoveryType'}]
+                );
+            });
+        });
     });
 
 });
