@@ -150,7 +150,7 @@ export class GroupDetailsPage {
       componentProps: {
         list: MenuOverflow.GROUP_OPTIONS
       },
-      cssClass: 'download-popover'
+      cssClass: 'group-option-popover'
     });
     await groupOptions.present();
 
