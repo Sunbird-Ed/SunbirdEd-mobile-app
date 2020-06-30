@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { FilterPipe } from '@app/pipes/filter/filter.pipe';
 
 @Component({
   selector: 'app-activity-details',
@@ -8,15 +9,23 @@ import { Router } from '@angular/router';
 })
 export class ActivityDetailsPage implements OnInit {
   memberList: any;
+  filteredMemberList: any;
+  searchValue: string;
   constructor(
-    private router: Router
+    private router: Router,
+    private filterPipe: FilterPipe
   ) {
     const extras = this.router.getCurrentNavigation().extras.state;
     this.memberList = extras.memberList;
-    console.log('memberList', this.memberList);
+    this.filteredMemberList = [...this.memberList];
   }
 
   ngOnInit() {
+  }
+
+  onSearch(searchText) {
+    this.searchValue = searchText;
+    this.filteredMemberList = [...this.filterPipe.transform(this.memberList, 'title', searchText)];
   }
 
 }
