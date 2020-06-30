@@ -10,6 +10,7 @@ import { OverflowMenuComponent } from '@app/app/profile/overflow-menu/overflow-m
 import GraphemeSplitter from 'grapheme-splitter';
 import { SbGenericFormPopoverComponent } from '@app/app/components/popups/sb-generic-form-popover/sb-generic-form-popover.component';
 import { SbGenericPopoverComponent } from '@app/app/components/popups';
+import { FilterPipe } from '@app/pipes/filter/filter.pipe';
 
 @Component({
   selector: 'app-group-details',
@@ -24,6 +25,7 @@ export class GroupDetailsPage {
   activeTab = 'courses';
   activityList = [];
   memberList = [];
+  filteredMemberList = [];
   memberListDummy = [
     {
       identifier: '1',
@@ -49,6 +51,7 @@ export class GroupDetailsPage {
       name: 'Sharath',
     },
   ];
+  searchValue: string;
   private unregisterBackButton: Subscription;
 
   constructor(
@@ -60,6 +63,7 @@ export class GroupDetailsPage {
     private popoverCtrl: PopoverController,
     private formAndFrameworkUtilService: FormAndFrameworkUtilService,
     private commonUtilService: CommonUtilService,
+    private filterPipe: FilterPipe
   ) {
     const extras = this.router.getCurrentNavigation().extras.state;
     this.groupId = extras.groupId;
@@ -137,6 +141,7 @@ export class GroupDetailsPage {
         };
         this.memberList.push(member);
       });
+      this.filteredMemberList = new Array(...this.memberList);
     } catch (e) {
       console.error(e);
     }
@@ -394,9 +399,10 @@ export class GroupDetailsPage {
     }
   }
 
-  onSearch(text) {
-    console.log('onsearch', text);
-    // this.memberList = this.filter.transform(this.memberList, text);
+  onSearch(searchText) {
+    console.log('onsearch', searchText);
+    this.searchValue = searchText;
+    this.filteredMemberList = [...this.filterPipe.transform(this.memberList, 'title', searchText)];
   }
 
   extractInitial(name) {

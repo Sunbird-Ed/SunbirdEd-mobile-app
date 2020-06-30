@@ -10,6 +10,8 @@ import { RouterLinks, ProfileConstants } from '@app/app/app.constant';
 import { Platform } from '@ionic/angular';
 import { ClassRoomService, ClassRoomAddMemberByIdRequest } from '@project-sunbird/sunbird-sdk';
 import { AppHeaderService, CommonUtilService } from '@app/services';
+import { PopoverController } from '@ionic/angular';
+import { MyGroupsPopoverComponent } from '../../components/popups/sb-my-groups-popover/sb-my-groups-popover.component';
 
 @Component({
   selector: 'app-add-member-to-group',
@@ -33,7 +35,8 @@ export class AddMemberToGroupPage {
     private router: Router,
     private location: Location,
     private platform: Platform,
-    private commonUtilService: CommonUtilService
+    private commonUtilService: CommonUtilService,
+    private popoverCtrl: PopoverController
   ) {
     const extras = this.router.getCurrentNavigation().extras.state;
     this.groupId = extras.groupId;
@@ -126,6 +129,22 @@ export class AddMemberToGroupPage {
     this.headerObservable.unsubscribe();
     if (this.unregisterBackButton) {
       this.unregisterBackButton.unsubscribe();
+    }
+  }
+
+  async openinfopopup() {
+    const popover = await this.popoverCtrl.create({
+      component: MyGroupsPopoverComponent,
+      componentProps: {
+        isFromAddMember: true
+      },
+      cssClass: 'popover-my-groups'
+    });
+    await popover.present();
+    const { data } = await popover.onDidDismiss();
+    if (data === undefined) { // Backdrop clicked
+    } else if (data.closeDeletePopOver) { // Close clicked
+    } else if (data.canDelete) {
     }
   }
 
