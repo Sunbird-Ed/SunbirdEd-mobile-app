@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { CommonUtilService } from '@app/services';
 
 @Component({
   selector: 'app-activity-details',
@@ -7,9 +8,13 @@ import { Router } from '@angular/router';
   styleUrls: ['./activity-details.page.scss'],
 })
 export class ActivityDetailsPage implements OnInit {
+
+  timeStamp = '';
   memberList: any;
+
   constructor(
-    private router: Router
+    private router: Router,
+    private commonUtilService: CommonUtilService,
   ) {
     const extras = this.router.getCurrentNavigation().extras.state;
     this.memberList = extras.memberList;
@@ -17,6 +22,10 @@ export class ActivityDetailsPage implements OnInit {
   }
 
   ngOnInit() {
+  }
+
+  onSearch(text) {
+    console.log('onsearch', text);
   }
 
 }
