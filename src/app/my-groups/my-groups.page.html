@@ -4,8 +4,8 @@
       {{'MY_GROUPS' | translate}}
       <img *ngIf="!isGuestUser" src="assets/imgs/ic_group_add_blue.svg" (click)="createClassroom()">
     </p>
-    
-    
+
+
     <div *ngIf="isGuestUser" class="my-cr-card">
       <div class="my-cr-card-img">
         <img src="assets/imgs/ic_my_groups.svg">
@@ -33,9 +33,10 @@
     </div>
 
     <div *ngFor="let group of groupList">
-      <sb-group-card [group]="group" [title]="group.name" [subTitle]="group.subTitle" [cardImg]="'https://cdn1.iconfinder.com/data/icons/back-to-school-37/24/school-512.png'" [isLoading]="groupListLoader" (cardClick)="navigateToGroupdetailsPage($event)"></sb-group-card>
+      <sb-group-card [isMobile]="true" [group]="group" [isLoading]="groupListLoader"
+        (cardClick)="navigateToGroupdetailsPage($event)"></sb-group-card>
     </div>
 
   </div>
-  
+
 </ion-content>

@@ -1,26 +1,28 @@
 import { Component, Input, OnInit, OnChanges } from '@angular/core';
-import GraphemeSplitter from 'grapheme-splitter';
+import { CommonUtilService } from '@app/services';
 
 @Component({
   selector: 'app-profile-avatar',
   templateUrl: './profile-avatar.component.html',
   styleUrls: ['./profile-avatar.component.scss'],
 })
-export class ProfileAvatarComponent implements OnInit , OnChanges {
+export class ProfileAvatarComponent implements OnInit, OnChanges {
   @Input() username: string;
   @Input() isStateUser: boolean;
   bgColor: string;
   color: string;
   initial: string;
-  // GraphemeSplitter = require('grapheme-splitter');
-  constructor() { }
+
+  constructor(
+    private commonUtilService: CommonUtilService,
+  ) { }
+
   ngOnInit() {
     this.extractInitial();
   }
 
   /**
    * It will detect the changes of username and call the extractInitial() method
-   * @param changes
    */
   ngOnChanges(changes: any) {
     this.username = changes.username.currentValue;
@@ -58,12 +60,10 @@ export class ProfileAvatarComponent implements OnInit , OnChanges {
   }
 
   /**
- * It will extract the first character of the user name and return with different BG color
- */
+   * It will extract the first character of the user name and return with different BG color
+   */
   extractInitial() {
-    const splitter = new GraphemeSplitter();
-    const split: string[] = splitter.splitGraphemes(this.username.trim());
-    this.initial = split[0];
+    this.initial = this.commonUtilService.extractInitial(this.username);
     if (this.initial) {
       this.getBgColor(this.username);
     }
