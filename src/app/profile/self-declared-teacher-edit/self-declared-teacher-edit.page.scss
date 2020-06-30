@@ -13,7 +13,7 @@
 }
 
 ion-button{
-    --background: #024F9D !important;
+    --background: #{$blue} !important;
     height: 40px !important;
     text-transform: capitalize !important;
 }

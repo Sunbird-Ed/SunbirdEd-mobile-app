@@ -307,9 +307,9 @@
     }
   }
   .sc-ion-segment-md-h{
-    --color-checked : #024f9d;
+    --color-checked : #{$blue};
     font-weight: bold;
-    --color: #467fb8;
+    --color: #{map-get($colors, cornflower_blue)};
   }
   .wrapper {
     grid-template-columns: 100px 100px 100px auto;

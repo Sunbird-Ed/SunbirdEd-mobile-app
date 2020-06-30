@@ -40,7 +40,7 @@
   .sb-search-header-meta {
     padding-top: 1rem;
 
-    color: #024F9D;
+    color: $blue;
     font-size: 1.2rem;
     font-size: 12px;
   }
@@ -99,7 +99,7 @@
     }
     .textbook-title {
         height: ($base-block-space * 3);	
-        color: #024F9D;	
+        color: $blue;	
         font-size: 18px;	
         font-weight: bold;
         text-transform: capitalize;
@@ -256,7 +256,7 @@
     }
   
     ion-header .button-native {
-      --color : $primary-color;
+      --color : #{$primary-color};
     }
   
   .sb-textbook-container {

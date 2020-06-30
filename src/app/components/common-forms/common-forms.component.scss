@@ -73,7 +73,7 @@
   }
 
   ion-button{
-    --background: #024F9D  !important;
+    --background: #{$blue}  !important;
   }
 
   .item-label-stacked ion-input {
@@ -184,6 +184,6 @@
 
 ion-checkbox {
   margin-right: 8px;
-  --background-checked: #024F9D !important;
-  --border-color-checked: #024F9D !important;
+  --background-checked: #{$blue} !important;
+  --border-color-checked: #{$blue} !important;
 }

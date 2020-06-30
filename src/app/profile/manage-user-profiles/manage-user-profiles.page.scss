@@ -30,14 +30,14 @@ ion-button{
 .add-user{
   padding: 0 8px;
   ion-button{
-    --background: #BFE1CF !important;
+    --background: #{map-get($colors, light_grayish_green)} !important;
     color: $green;
   }
 }
 
 ion-footer{
   ion-button{
-    --background: $blue !important;
+    --background: #{$blue} !important;
   }
 }
 
@@ -47,8 +47,8 @@ ion-footer{
 }
 
 .button-outline{
-  --background: #E5EDF5 !important;
-  --border-color: #E5EDF5 !important;
+  --background: #{map-get($colors, pale_blue)} !important;
+  --border-color: #{map-get($colors, pale_blue)} !important;
 }
 
 .sb-new-btn {

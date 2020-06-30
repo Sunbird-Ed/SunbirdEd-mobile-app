@@ -772,7 +772,7 @@ ion-toast {
   --ion-safe-area-bottom: -8px;
 }
 ion-toast.redErrorToast {
-  --background: #ff0000;
+  --background: #{map-get($colors, vivid_red)};
 }
 
 ion-toast.sb-toast.available-later {
@@ -787,7 +787,7 @@ ion-toast.sb-toast.available-later {
   box-shadow: 0 -1px 1px 0 rgba(0, 0, 0, 0.16), 0 2px 1px 0 rgba(0, 0, 0, 0.24);
 }
 ion-toast.green-toast{
-  --background: #008000;
+  --background: #{map-get($colors, office_green)};
 }
 
 .btn-block {
@@ -899,8 +899,8 @@ ion-toast.green-toast{
 }
 
 .no-net-popup {
-  --background: #e55a28 !important;
-  --color: #fff !important;
+  --background: #{$orange} !important;
+  --color: #{$white} !important;
 }
 
 .no-net-close-btn {
@@ -915,7 +915,7 @@ ion-split-pane {
   .popover-content {
     top: 168.273px !important;
     left: 220px !important;
-    --box-shadow: 0px 3px 6px 5px #eee;
+    --box-shadow: 0px 3px 6px 5px #{map-get($colors, empty_color)};
     transform-origin: right top;
     transform: scale(1);
     width: 36% !important;

@@ -5,8 +5,8 @@
   --padding-bottom: 16px;
   --padding-start: 16px;
   --padding-end: 16px;
-  --background: #333333;
-  --color: #FFFFFF;
+  --background: #{$gray-800};
+  --color: #{$white};
 }
 
 .btn-right{

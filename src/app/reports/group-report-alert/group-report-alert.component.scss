@@ -1,4 +1,5 @@
 @import "src/assets/styles/_custom-mixins.scss";
+@import "src/assets/styles/_variables.scss";
 
 :host {
   .msg {
@@ -154,7 +155,7 @@
   overflow-y: hidden;
 }
 .group-report-alert ion-backdrop {
-  background-color: #000 !important;
+  background-color: map-get($colors, black) !important;
   opacity: 0.4 !important;
 }
 .fromGroup ngx-datatable datatable-body {

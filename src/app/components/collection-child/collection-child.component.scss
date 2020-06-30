@@ -124,7 +124,7 @@
     color: $blue;
 }
 .play-button{
-    --border-color: #024f9d;
+    --border-color: #{$blue};
     --border-width: 1px;
     text-transform: none;
     height: 3em;

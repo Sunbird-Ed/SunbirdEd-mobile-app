@@ -72,7 +72,7 @@
   }
 
   ion-button{
-    --background: #024F9D !important;
+    --background: #{$blue} !important;
   }
 
   .item-label-stacked ion-input {
@@ -153,7 +153,7 @@
 
 ion-footer{
   ion-button{
-    --background: #024F9D !important;
+    --background: #{$blue} !important;
     height: 40px !important;
     font-family: "Noto Sans";
     font-size: 16px;

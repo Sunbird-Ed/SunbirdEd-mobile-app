@@ -37,9 +37,9 @@
         color: map-get($colors, primary_black);
       }
       ion-button{
-        --background: #008840 !important;
-        --background-hover: #008840 !important;
-        --background-activated: #008840 !important;
+        --background: #{$green} !important;
+        --background-hover: #{$green} !important;
+        --background-activated: #{$green} !important;
       }
     }
   }

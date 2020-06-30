@@ -55,11 +55,11 @@
   }
   .explore-more-content {
     border-radius: 4px;
-    --background: #F3F7FA;
-    --color: #024F90;
+    --background: #{map-get($colors, white_f3)};
+    --color: #{map-get($colors, deep_blue)};
   }
   .explore-more-books {
-    --background: #024F9D;
+    --background: #{$blue};
     border-radius: 4px;
   }
 .sub-heading {
