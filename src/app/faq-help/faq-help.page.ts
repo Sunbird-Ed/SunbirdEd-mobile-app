@@ -17,7 +17,11 @@ import {
   SystemSettingsService,
   SystemSettings,
   FaqService,
-  GetFaqRequest
+  GetFaqRequest,
+  FrameworkUtilService,
+  FrameworkService,
+  FormRequest,
+  FormService
 } from 'sunbird-sdk';
 import { PreferenceKey, appLanguages, RouterLinks } from '../app.constant';
 import { SocialSharing } from '@ionic-native/social-sharing/ngx';
@@ -66,8 +70,11 @@ export class FaqHelpPage implements OnInit {
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
     @Inject('DEVICE_INFO') private deviceInfo: DeviceInfo,
+    @Inject('FORM_SERVICE') private formService: FormService,
     @Inject('SYSTEM_SETTINGS_SERVICE') private systemSettingsService: SystemSettingsService,
     @Inject('FAQ_SERVICE') private faqService: FaqService,
+    @Inject('FRAMEWORK_UTIL_SERVICE') private frameworkUtilService: FrameworkUtilService,
+    @Inject('FRAMEWORK_SERVICE') private frameworkService: FrameworkService,
     private domSanitizer: DomSanitizer,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private socialSharing: SocialSharing,
@@ -143,7 +150,7 @@ export class FaqHelpPage implements OnInit {
     }
 
     this.faqService.getFaqDetails(faqRequest).subscribe(data => {
-      this.zone.run( () => {
+      this.zone.run(() => {
         this.data = data;
         this.constants = this.data.constants;
         this.faqs = this.data.faqs;
@@ -312,13 +319,23 @@ export class FaqHelpPage implements OnInit {
     this.textValue = '';
   }
 
-  navigateToReportIssue() {
+  async navigateToReportIssue() {
     this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
       InteractSubtype.REPORT_ISSUE_CLICKED,
       Environment.USER,
       PageId.FAQ,
       undefined,
       undefined);
+
+    // setting formConfig value
+    const req: FormRequest = {
+      type: "dynamicform",
+      subType: "support",
+      action: "get",
+      component: "app"
+    };
+    const formConfig = (await this.formService.getForm(req).toPromise() as any).form.data.fields;
+    this.appGlobalService.formConfig = formConfig;
     this.router.navigate([RouterLinks.FAQ_REPORT_ISSUE], {
       state: {
         data: this.data

@@ -225,7 +225,8 @@ export enum InteractType {
     CREATE_FAILURE = 'create-failure',
     SWITCH_SUCCESS = 'switch-success',
     SWITCH_FAILURE = 'switch-failure',
-    QR_CAPTURED = 'qr-captured'
+    QR_CAPTURED = 'qr-captured',
+    SUPPORT = 'support'
 }
 
 
@@ -488,7 +489,8 @@ export enum ID {
     BTN_UPDATE = 'btn-update',
     BTN_I_AM_A_TEACHER = 'btn-i-am-a-teacher',
     TEACHER_DECLARATION = 'teacher-declaration',
-    MUA_USER_CREATION = 'mua-user-creation'
+    MUA_USER_CREATION = 'mua-user-creation',
+    NOTIFICATION_REQUEST = 'notification-request'
 }
 
 export enum ActionButtonType {
@@ -532,7 +534,9 @@ export enum CorReleationDataType {
     COUNT_CONTENT = 'CountContent',
     FROM_PAGE = 'FromPage',
     FILL_MODE = 'FillMode',
-    LANGUAGE = 'Language'
+    LANGUAGE = 'Language',
+    CATEGORY = "Category",
+    SUBCATEGORY = "Subcategory"
 }
 
 export enum AuditProps {

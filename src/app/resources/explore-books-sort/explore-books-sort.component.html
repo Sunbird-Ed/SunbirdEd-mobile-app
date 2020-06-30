@@ -1,23 +1,20 @@
-<ion-content>
-  <h4 class="sort-heading">{{'SORT_BY' | translate}}</h4>
-  <form novalidate [formGroup]="sortForm" class="form-position">
-      <ion-item>
-          <ion-label position="stacked" class="label-font text-uppercase">{{'BOARD' | translate }}</ion-label>
-          <ion-select multiple="true" #boardSelect text-capitalize formControlName="board" [interfaceOptions]="boardOptions"
-              okText="{{'BTN_SUBMIT' | translate}}" cancelText="{{'CANCEL' | translate}}" placeholder="{{'BOARD_OPTION_TEXT' | translate}}">
-              <ion-select-option *ngFor="let board of boardList" value="{{board?.name}}">{{board?.name}}&lrm;</ion-select-option>
-          </ion-select>
-      </ion-item>
-
-      <ion-item>
-          <ion-label position="stacked" class="label-font text-uppercase">{{'MEDIUM' | translate }}</ion-label>
-          <ion-select formControlName="medium" #mediumSelect multiple="true" text-capitalize [interfaceOptions]="mediumOptions"
-              okText="{{'BTN_SUBMIT' | translate}}" cancelText="{{'CANCEL' | translate}}" placeholder="{{'MEDIUM_OPTION_TEXT' | translate}}">
-              <ion-select-option *ngFor="let medium of mediumList" text-capitalize value="{{medium?.name}}">{{medium?.name}}</ion-select-option>
-          </ion-select>
-      </ion-item>
-  </form>
+<ion-content padding>
+    <div style="align-content: end">
+        <img style="float: right" align-items-end src="./assets/imgs/ic_close.svg" alt=""
+            (click)="handleBackButton(true)">
+    </div>
+    <div style="padding: 8px">
+        <img id="thanks-holder-image" src="./assets/imgs/ic_thankyou.svg" alt="">
+    </div>
+    <div style="margin-top: 2rem; margin-bottom: 4rem">
+        <p>{{'THANKING_NOTE' | translate: {'%s': appName} }}</p>
+    </div>
+    <p style="margin-top: 2rem; color: #333333">{{'EXPLORE_HEADING' | translate: {'%s': appName} }}</p>
+    <div class="sb-textbook-container">
+        <sb-library-cards-stack [contentList]="storyAndWorksheets"
+            [isOffline]="!commonUtilService.networkInfo.isNetworkAvailable" [maxCardCount]="3"
+            [viewMoreButtonText]="'SEE_MORE_CONTENT' | translate"
+            (viewMoreClick)="navigateToTextbookPage(storyAndWorksheets)" (cardClick)="navigateToTextBookDetailPage($event)">
+        </sb-library-cards-stack>
+    </div>
 </ion-content>
-<ion-footer class="bottom-button">
-  <ion-button expand="block" class="sort-by" (click)="dismiss()"> {{'SAVE' | translate}}</ion-button>
-</ion-footer>

@@ -49,7 +49,9 @@ import { MyGroupsPopoverComponent } from './popups/sb-my-groups-popover/sb-my-gr
 import { CommonConsumptionModule } from '@project-sunbird/common-consumption';
 import { ToastNavigationComponent } from './popups/toast-navigation/toast-navigation.component';
 import { CommonFormsComponent } from './common-forms/common-forms.component';
-import {SbTutorialPopupComponent} from './popups/sb-tutorial-popup/sb-tutorial-popup.component';
+import { SbTutorialPopupComponent } from './popups/sb-tutorial-popup/sb-tutorial-popup.component';
+import { SupportAcknowledgement } from './support-acknowledgement/support-acknowledgement.compoentn';
+import { AcknowledgeResponseComponent } from './acknowledge-response/acknowledge-response.component';
 
 @NgModule({
   declarations: [
@@ -92,7 +94,9 @@ import {SbTutorialPopupComponent} from './popups/sb-tutorial-popup/sb-tutorial-p
     MyGroupsPopoverComponent,
     ToastNavigationComponent,
     CommonFormsComponent,
-    SbTutorialPopupComponent
+    SbTutorialPopupComponent,
+    SupportAcknowledgement,
+    AcknowledgeResponseComponent
   ],
   imports: [
     CommonModule,
@@ -134,7 +138,9 @@ import {SbTutorialPopupComponent} from './popups/sb-tutorial-popup/sb-tutorial-p
     MyGroupsPopoverComponent,
     ToastNavigationComponent,
     CommonFormsComponent,
-    SbTutorialPopupComponent
+    SbTutorialPopupComponent,
+    SupportAcknowledgement,
+    AcknowledgeResponseComponent
   ],
   exports: [
     ApplicationHeaderComponent,
@@ -175,7 +181,9 @@ import {SbTutorialPopupComponent} from './popups/sb-tutorial-popup/sb-tutorial-p
     MyGroupsPopoverComponent,
     ToastNavigationComponent,
     CommonFormsComponent,
-    SbTutorialPopupComponent
+    SbTutorialPopupComponent,
+    SupportAcknowledgement,
+    AcknowledgeResponseComponent
   ],
   providers: [FileSizePipe, FilterPipe,  Keyboard]
 })

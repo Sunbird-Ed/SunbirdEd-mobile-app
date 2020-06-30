@@ -1,99 +1,23 @@
 <ion-content>
-  <div class="help-header-send-email">
+  <div *ngIf="data" class="help-header-send-email">
     <h4> {{data?.constants?.reportIssue}}</h4>
     <p>{{data?.constants?.explainMsg}}</p>
   </div>
-  <div class="info-msg-send-email">
-    <p>{{ data?.constants?.tellMoreMsg }}</p>
-  </div>
-  <div class="send-email-form">
-    <form action="#" id="send-email-form" [formGroup]="supportCategoryForm">
+  <div class="send-email-form align-left">
+    <sb-form [config]='formConfig' (valueChanges)="valueChanged($event)"
+    (statusChanges)="statusChanged($event)" (dataLoadStatus)="dataLoadStatus($event)">
+    </sb-form>
 
-    <!-- Board -->
-    <!-- <ion-item appCustomIonSelect class="ge-item-16">
-      <ion-label position="stacked" class="label-font ge-label ion-text-uppercase">{{'BOARD' | translate }} &lrm;
-        <ion-text>
-          <span class="ge-danger">&nbsp;*</span>
-        </ion-text>
-      </ion-label>
-      <ion-select [disabled]="!syllabusList.length" #boardSelect multiple="false" formControlName="syllabus"
-        class="ion-text-capitalize" [interfaceOptions]="boardOptions"
-        placeholder="{{'BOARD_OPTION_TEXT' | translate}}"
-        okText="{{'BTN_SUBMIT' | translate}}" cancelText="{{'CANCEL' | translate}}">
-        <ion-select-option *ngFor="let syllabus of syllabusList" value="{{syllabus?.code}}">
-          {{syllabus?.name}}&lrm;
-        </ion-select-option>
-      </ion-select>
-    </ion-item> -->
-
-    <!-- Medium -->
-    <!-- <ion-item appCustomIonSelect class="ge-item-16">
-      <ion-label position="stacked" class="label-font ge-label ion-text-uppercase">
-        {{'MEDIUM' | translate }}
-        <ion-text>
-          <span class="ge-danger">&nbsp;*</span>
-        </ion-text>
-      </ion-label>
-      <ion-select multiple="true" #mediumSelect class="ion-text-capitalize"
-        [disabled]="(!mediumList.length || !boardControl.value.length)" [interfaceOptions]="mediumOptions"
-        formControlName="medium" placeholder="{{'MEDIUM_OPTION_TEXT' | translate}}"
-        okText="{{'BTN_SUBMIT' | translate}}" cancelText="{{'CANCEL' | translate}}">
-        <ion-select-option *ngFor="let medium of mediumList" class="ion-text-capitalize" value="{{medium?.code}}">
-          {{medium?.name}}
-        </ion-select-option>
-      </ion-select>
-    </ion-item> -->
-
-    <!-- Grade -->
-    <!-- <ion-item appCustomIonSelect class="ge-item-16">
-      <ion-label position="stacked" class="label-font ge-label ion-text-uppercase">{{'CLASS' | translate }}<ion-text>
-          <span class="ge-danger">&nbsp;*</span>
-        </ion-text>
-      </ion-label>
-      <ion-select multiple="true" #gradeSelect class="ion-text-capitalize"
-        formControlName="grades"
-        placeholder="{{'SUBJECT_OPTION_TEXT' | translate}}"
-        [disabled]="(!gradeList.length || !mediumControl.value.length)" [interfaceOptions]="classOptions"
-        okText="{{'BTN_SUBMIT' | translate}}" cancelText="{{'CANCEL' | translate}}">
-        <ion-select-option *ngFor="let grade of gradeList" class="ion-text-capitalize" value="{{grade?.code}}">
-          {{grade?.name}}
-        </ion-select-option>
-      </ion-select>
-    </ion-item> -->
-
-    <!-- Subjects -->
-    <!-- <ion-item appCustomIonSelect class="ge-item-16">
-      <ion-label position="stacked" class="label-font ge-label ion-text-uppercase">{{'SUBJECTS' | translate }}
-        <ion-text>
-          <span class="ge-danger">&nbsp;*</span>
-        </ion-text>
-      </ion-label>
-      <ion-select multiple="true" #subjectSelect class="ion-text-capitalize" [interfaceOptions]="subjectsOptions" formControlName="subjects"
-        placeholder="{{ (subjectList.length ? 'SUBJECT_OPTION_TEXT':'NO_DATA_FOUND') | translate }}"
-        [disabled]="(!subjectList.length || !gradeControl.value.length)"
-        okText="{{'BTN_SUBMIT' | translate}}" cancelText="{{'CANCEL' | translate}}">
-        <ion-select-option *ngFor="let subject of subjectList" class="ion-text-capitalize" value="{{subject?.code}}">
-          {{subject?.name}}
-        </ion-select-option>
-      </ion-select>
-    </ion-item> -->
-
-      <div id="textareadiv">
-        <textarea #textarea type="text" name="moreInfo" placeholder="{{data?.constants?.typeHere}}"
-          class="input-text-form" maxLength="1000" formControlName="emailContent"
-          (keyup)="countChar(emailContent)"></textarea>
-        <p id="textareainfo"> <span id="charleft" *ngIf="!charEntered">1000</span><span
-            *ngIf="charEntered">{{charsLeft}}</span>{{ data?.constants?.charactersLeft}}</p>
+    <div class="initiate-email-info">
+      <div class="initiate-email-info-button">
+        <button id="initiate-email" (click)="submit()" [style.background-color]="btnColor" class="submit-button">
+          {{'BTN_SUBMIT' | translate}}
+        </button>
       </div>
-      <div class="initiate-email-info">
-        <p class="send-email-info">{{ data?.constants?.triggerEmailMsg}}</p>
-        <div class="initiate-email-info-button">
-          <button id="initiate-email" (click)="initiateEmail()" [style.background-color]="btnColor"
-          class="submit-button">
-            {{data?.constants?.initiateEmailButton}}
-          </button>
-        </div>
-      </div>
-    </form>
+    </div>
   </div>
+  <support-acknowledgement *ngIf="showSupportContact" (closeEvents)="showSupportContact = false"
+  [boardContact]="boardContact"></support-acknowledgement>
+  <acknowledge-response *ngIf="showThanksResponse" (popupDismiss)="responseSubmitted($event)"></acknowledge-response>
+
 </ion-content>
