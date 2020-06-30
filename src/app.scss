@@ -772,7 +772,7 @@ ion-toast {
   --ion-safe-area-bottom: -8px;
 }
 ion-toast.redErrorToast {
-  --background:map-get($colors, vivid_red);
+  --background: #ff0000;
 }
 
 ion-toast.sb-toast.available-later {
@@ -787,7 +787,7 @@ ion-toast.sb-toast.available-later {
   box-shadow: 0 -1px 1px 0 rgba(0, 0, 0, 0.16), 0 2px 1px 0 rgba(0, 0, 0, 0.24);
 }
 ion-toast.green-toast{
-  --background: map-get($colors, office_green);
+  --background: #008000;
 }
 
 .btn-block {
