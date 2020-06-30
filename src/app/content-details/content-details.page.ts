@@ -573,7 +573,9 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
       id: PageId.CONTENT_DETAIL,
       type: CorReleationDataType.CHILD_UI
     }];
-    cData.push(this.corRelationList[0]);
+    if (this.corRelationList && this.corRelationList.length) {
+      cData.push(this.corRelationList[0]);
+    }
     if (this.downloadAndPlay || download) {
       this.telemetryGeneratorService.generateImpressionTelemetry(
         download ? InteractType.DOWNLOAD_COMPLETE : InteractSubtype.DOWNLOAD_REQUEST,

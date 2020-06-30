@@ -195,7 +195,9 @@ export class QrcoderesultPage implements OnDestroy {
     this.searchIdentifier = this.content.identifier;
     this.isQrCodeLinkToContent = this.navData.isQrCodeLinkToContent;
     const cData: CorrelationData[] = [];
-    cData.push(this.corRelationList[0]);
+    if (this.corRelationList && this.corRelationList.length) {
+      cData.push(this.corRelationList[0]);
+    }
     this.telemetryGeneratorService.generateImpressionTelemetry(
       ImpressionType.PAGE_REQUEST, '',
       PageId.QR_CONTENT_RESULT,
@@ -277,7 +279,9 @@ export class QrcoderesultPage implements OnDestroy {
       !this.appGlobalService.isProfileSettingsCompleted ? Environment.ONBOARDING : this.appGlobalService.getPageIdForTelemetry());
 
     const corRelationData: Array<CorrelationData> = [];
-    corRelationData.push(this.corRelationList[0]);
+    if (this.corRelationList && this.corRelationList.length) {
+      corRelationData.push(this.corRelationList[0]);
+    }
     corRelationData.push({id: this.content.children.length.toString(), type: CorReleationDataType.COUNT_CONTENT});
     this.telemetryGeneratorService.generatePageLoadedTelemetry(
       PageId.QR_CONTENT_RESULT,
@@ -928,7 +932,9 @@ export class QrcoderesultPage implements OnDestroy {
     const objectType = this.telemetryGeneratorService.isCollection(content.mimeType) ? content.contentType : ContentType.RESOURCE;
     const telemetryObject = new TelemetryObject(content.identifier, objectType, undefined);
     const corRelationData: Array<CorrelationData> = [];
-    corRelationData.push(this.corRelationList[0]);
+    if (this.corRelationList && this.corRelationList.length) {
+      corRelationData.push(this.corRelationList[0]);
+    }
     corRelationData.push({id: Mode.PLAY, type: CorReleationDataType.MODE});
     corRelationData.push({id: content.contentType, type: CorReleationDataType.TYPE});
     corRelationData.push({id: this.commonUtilService.networkInfo.isNetworkAvailable ?
