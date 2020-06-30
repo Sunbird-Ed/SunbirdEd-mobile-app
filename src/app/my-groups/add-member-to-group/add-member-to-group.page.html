@@ -4,7 +4,7 @@
         <div class="au-ip">
             <div class="au-ip-info clearfix">
                 <span class="pull-left">{{'MEMBER_ID' | translate}}<sup>*</sup></span>
-                <span class="pull-right">
+                <span class="pull-right" (click)="openinfopopup()">
                     {{'WHAT_IS_MEMBER_ID' | translate}}
                     <ion-icon class="au-info-icon" name="ios-information-circle-outline"></ion-icon>
                 </span>
@@ -35,7 +35,7 @@
 </ion-content>
 <ion-footer>
     <div class="au-btn" *ngIf="!isUserIdVerified">
-        <button class="sb-btn-large" (click)="onVerify()">
+        <button class="sb-btn-large" [class.inactive]="!userId" (click)="onVerify()">
             {{'VERIFY' | translate}}
         </button>
     </div>

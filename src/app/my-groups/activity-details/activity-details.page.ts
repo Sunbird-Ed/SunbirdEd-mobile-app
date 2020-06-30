@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { FilterPipe } from '@app/pipes/filter/filter.pipe';
 import { CommonUtilService } from '@app/services';
 
 @Component({
@@ -12,21 +13,24 @@ export class ActivityDetailsPage implements OnInit {
   searchMember = '';
   timeStamp = '';
   memberList: any;
-
+  filteredMemberList: any;
+  searchValue: string;
   constructor(
     private router: Router,
-    private commonUtilService: CommonUtilService,
+    private filterPipe: FilterPipe,
+    private commonUtilService: CommonUtilService
   ) {
     const extras = this.router.getCurrentNavigation().extras.state;
     this.memberList = extras.memberList;
-    console.log('memberList', this.memberList);
+    this.filteredMemberList = [...this.memberList];
   }
 
   ngOnInit() {
   }
 
-  onSearch(text) {
-    console.log('onsearch', text);
+  onSearch(searchText) {
+    this.searchValue = searchText;
+    this.filteredMemberList = [...this.filterPipe.transform(this.memberList, 'title', searchText)];
   }
 
 }
