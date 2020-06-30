@@ -9,6 +9,7 @@ import { CommonUtilService } from '@app/services';
 })
 export class ActivityDetailsPage implements OnInit {
 
+  searchMember = '';
   timeStamp = '';
   memberList: any;
 
