@@ -72,7 +72,7 @@
     }
 
     .cd-container-progress {
-        color: map-get($colors, textGrey);
+        color: map-get($colors, granite_gray);
         font-size: 12px;
     }
 
@@ -94,6 +94,6 @@
 }
 
 .cd-label {
-    color: map-get($colors, textGrey);
+    color: map-get($colors, granite_gray);
     font-size: 10px;
 }

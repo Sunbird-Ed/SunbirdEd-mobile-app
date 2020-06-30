@@ -50,12 +50,12 @@
             font-stretch: normal;
             line-height: normal;
             letter-spacing: normal;
-            color: map-get($colors, textGrey);
+            color: map-get($colors, granite_gray);
         }
     
         .size{
             font-size: 11px;
-            color: map-get($colors, textGrey);
+            color: map-get($colors, granite_gray);
         }
     
         .name, .author{

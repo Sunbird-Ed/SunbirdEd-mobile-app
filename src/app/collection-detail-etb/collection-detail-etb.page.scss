@@ -17,11 +17,11 @@
   font-weight: bold;
   line-height: 19px;
   text-align: center;
-  color: map-get($colors, textGrey);
+  color: map-get($colors, granite_gray);
 }
 
 .sub-heading {
-  color: map-get($colors, textGrey);
+  color: map-get($colors, granite_gray);
   font-size: 12px;
   line-height: 17px;
   text-align: center;
@@ -212,7 +212,7 @@ ion-card .card .card-md {
 }
 
 .subtitle-color {
-  color: map-get($colors, textGrey);
+  color: map-get($colors, granite_gray);
 }
 
 .label-margin-bottom {

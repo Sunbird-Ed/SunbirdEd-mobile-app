@@ -112,7 +112,6 @@
       font-size: 14px !important;
       color: map-get($colors, primary_black);
       font-size: 14px !important;
-      color: map-get($colors, primary_black);
       width: 100%;
       white-space: normal;
       min-height: 32px;
@@ -134,7 +133,7 @@
       font-stretch: normal;
       line-height: normal;
       letter-spacing: normal;
-      color: map-get($colors, textGrey);
+      color: map-get($colors, granite_gray);
       min-height: 20px;
     }
   }
