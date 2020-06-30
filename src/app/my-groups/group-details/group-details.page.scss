@@ -79,6 +79,9 @@
         }
     }
 }
+.gd-add-member-container{
+    box-shadow: 0 2px 7px 0 rgba(0,0,0,0.25);
+}
 
 .gd-member-search {
     position: relative;
@@ -137,7 +140,7 @@
 .gd-add-member {
     border-bottom: 1px solid $gray-100;
     margin-bottom: 16px;
-    padding: 16px;
+    padding: 16px 8px;
 }
 
 .gd-add-member-icon {
@@ -147,6 +150,7 @@
     background-color:$green;
     display: inline-block;
     vertical-align: middle;
+    margin-right: 8px;
     img {
         position: relative;
         top: 12px;

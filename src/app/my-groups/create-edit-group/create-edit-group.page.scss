@@ -76,14 +76,18 @@
   // .item-select ion-label {
   //   color: #006de5;
   // }
-
+  ion-checkbox{
+    &.cr-terms-checkbox{
+      --ion-color-base: green !important;
+    }
+  }
   ion-label {
     color: $gray-800;
     font-family: "Noto Sans";
     font-size: 14px;
     letter-spacing: 0;
     line-height: 19px;
-    &.cr-terms-checkbox{
+    &.cr-terms-checkbox-label{
       margin-left: 16px;
     }
     sup{

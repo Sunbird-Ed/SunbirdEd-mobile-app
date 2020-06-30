@@ -8,6 +8,8 @@ import { LoginHandlerService } from '@app/services/login-handler.service';
 import { CommonUtilService } from '@app/services';
 import { PopoverController } from '@ionic/angular';
 import { MyGroupsPopoverComponent } from '../components/popups/sb-my-groups-popover/sb-my-groups-popover.component';
+import {animationGrowInTopRight} from '../animations/animation-grow-in-top-right';
+import {animationShrinkOutTopRight} from '../animations/animation-shrink-out-top-right';
 
 @Component({
   selector: 'app-my-groups',
@@ -106,7 +108,11 @@ export class MyGroupsPage implements OnInit, OnDestroy {
         body: this.commonUtilService.translateMessage('ANDROID_NOT_SUPPORTED_DESC'),
         buttonText: this.commonUtilService.translateMessage('INSTALL_CROSSWALK')
       },
-      cssClass: 'popover-my-groups'
+      cssClass: 'popover-my-groups',
+      enterAnimation: animationGrowInTopRight,
+      leaveAnimation: animationShrinkOutTopRight,
+      backdropDismiss: false,
+      showBackdrop: true
     });
     await popover.present();
     const { data } = await popover.onDidDismiss();
