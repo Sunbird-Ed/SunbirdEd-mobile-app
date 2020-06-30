@@ -52,6 +52,7 @@ import { CommonFormsComponent } from './common-forms/common-forms.component';
 import { SbTutorialPopupComponent } from './popups/sb-tutorial-popup/sb-tutorial-popup.component';
 import { SupportAcknowledgement } from './support-acknowledgement/support-acknowledgement.compoentn';
 import { AcknowledgeResponseComponent } from './acknowledge-response/acknowledge-response.component';
+import { ExploreBooksSortComponent } from '../resources/explore-books-sort/explore-books-sort.component';
 
 @NgModule({
   declarations: [
@@ -96,7 +97,8 @@ import { AcknowledgeResponseComponent } from './acknowledge-response/acknowledge
     CommonFormsComponent,
     SbTutorialPopupComponent,
     SupportAcknowledgement,
-    AcknowledgeResponseComponent
+    AcknowledgeResponseComponent,
+    ExploreBooksSortComponent
   ],
   imports: [
     CommonModule,
@@ -140,7 +142,8 @@ import { AcknowledgeResponseComponent } from './acknowledge-response/acknowledge
     CommonFormsComponent,
     SbTutorialPopupComponent,
     SupportAcknowledgement,
-    AcknowledgeResponseComponent
+    AcknowledgeResponseComponent,
+    ExploreBooksSortComponent
   ],
   exports: [
     ApplicationHeaderComponent,
@@ -183,7 +186,8 @@ import { AcknowledgeResponseComponent } from './acknowledge-response/acknowledge
     CommonFormsComponent,
     SbTutorialPopupComponent,
     SupportAcknowledgement,
-    AcknowledgeResponseComponent
+    AcknowledgeResponseComponent,
+    ExploreBooksSortComponent
   ],
   providers: [FileSizePipe, FilterPipe,  Keyboard]
 })

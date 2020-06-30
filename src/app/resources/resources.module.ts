@@ -12,8 +12,7 @@ import { ExploreBooksSortComponent } from './explore-books-sort/explore-books-so
 
 @NgModule({
   declarations: [
-    ResourcesComponent,
-    ExploreBooksSortComponent
+    ResourcesComponent
   ],
   imports: [
     CommonModule,
@@ -36,6 +35,6 @@ import { ExploreBooksSortComponent } from './explore-books-sort/explore-books-so
   exports: [
     ResourcesComponent
   ],
-  entryComponents: [ExploreBooksSortComponent]
+  entryComponents: []
 })
 export class ResourcesModule { }
