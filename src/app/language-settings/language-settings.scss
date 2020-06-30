@@ -62,7 +62,7 @@ ion-content {
     text-align: center;
   }
   &.selected {
-    background-color: #0076FE;
+    background-color: map-get($colors, vived_blue_fe);
     box-shadow: 0 20px 40px -10px rgba(2,79,157,0.3);
     ion-label {
       color: white;

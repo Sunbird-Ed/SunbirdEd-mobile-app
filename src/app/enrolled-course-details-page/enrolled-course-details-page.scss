@@ -18,7 +18,7 @@
       border-radius: 0 !important;
     }
     .sb-url {
-      color: #0a55a0;
+      color: map-get($colors, bright_blue_a0);
       font-size: 14px;
       text-decoration: underline;
     }
@@ -37,10 +37,10 @@
         padding: 7px 0px 0px 4px;
     }
     .certified-section-color{
-      color: #08539f;
+      color: map-get($colors, bright_blue_9f);
     }
     .certified-training-section{
-        background-color: #e5edf5;
+        background-color: map-get($colors, pale_blue);
         padding: 8px;
     }
     .font-10{
@@ -96,7 +96,7 @@
         font-size: 14px;
     }
     .enrolled-course-card{
-        background-color:#d2eadd;
+        background-color: map-get($colors, pale_green);
         margin-bottom: 0 !important;
     }
     ion-card{
@@ -228,7 +228,7 @@
       }
     }
     .border-right{
-      border-right: 1.5px solid #e6e6e6;
+      border-right: 1.5px solid map-get($colors, white_e6);
       margin: 0px 0px 10px 11px;
     }
     .hr-div {
@@ -249,7 +249,7 @@
     padding-right: 5%;
   }
   .sb-hidden-content{
-    background-color: #E5EDF5 !important;
+    background-color: map-get($colors, pale_blue) !important;
     // height: 34.15% !important;
     width: 100% !important;
     border-radius: 0 0 2px 2px !important;
@@ -261,7 +261,7 @@
     width: 100% !important;
     border-radius: 2px !important;
     background-color: map-get($colors, white) !important;
-    box-shadow: 0px 5px 5px 3px #ddd;
+    box-shadow: 0px 5px 5px 3px map-get($colors, light_gray_dd);
   }
   .sb-topic-text {
       // padding-top: 5px;
@@ -299,7 +299,7 @@
     display: inline-flex;
     flex-wrap: nowrap;
     align-items:center;
-    background-color: #E5EDF6;
+    background-color: map-get($colors, pale_blue_f6);
     padding: 4px;
     margin-bottom: 12px;
     .certificate-icon {
@@ -350,7 +350,7 @@
   .sb-course-complete-container {
     white-space: nowrap;
     width: 100%;
-    background-color: #BFE1CF;
+    background-color: map-get($colors, light_grayish_green);
     @include padding(8px);
     .img-container{
       width: 20%;
@@ -397,7 +397,7 @@
   }
   
   .sb-course-progress-container{
-      background-color: #E5EDF5;
+      background-color: map-get($colors, pale_blue);
       padding: 8px;
       height: 70px;	
       width: auto;
@@ -415,7 +415,7 @@
   }
 
   .sb-batch-end-container{
-    background-color: #FBE7E0;
+    background-color: map-get($colors, pale_red);
     padding: 8px 16px;
     height: auto;	
     width: auto;
@@ -443,7 +443,7 @@
     padding-left: 5em !important;
   }
   .sb-course-end-container{
-    background-color: #FBE7E0;
+    background-color: map-get($colors, pale_red);
     padding: 10px;
     height: 70px;	
     width: auto;
@@ -483,7 +483,7 @@ ion-segment-button{
 }
 
 .card-box-shadow {
-  box-shadow: 0px 5px 5px 3px #ddd;
+  box-shadow: 0px 5px 5px 3px map-get($colors, light_gray_dd);
 }
 
 .animation-card{

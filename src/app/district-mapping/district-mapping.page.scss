@@ -23,7 +23,7 @@
     }
     
     .error-input{
-      border-bottom: 1.5px solid #e76026 !important;
+      border-bottom: 1.5px solid map-get($colors, bright_red_e7) !important;
     }
 
     .label {
@@ -71,7 +71,7 @@
     }
 
     .disableInput {
-        background-color: #EBEBE4;
+        background-color: map-get($colors, white_eb);
     };
     .danger {
         color: red;
@@ -84,7 +84,7 @@
     .input-label {
         font-weight: 200;
         font-size: 14px;
-        color: #797979;
+        color: map-get($colors, gray_79);
     }
 
     .margin-top {
@@ -145,12 +145,12 @@
     }
 
     ::-webkit-scrollbar-thumb {
-        background: #818181;
+        background: map-get($colors, gray_81);
         border-radius: 10px;
     }
 
     ::-webkit-scrollbar-thumb:hover {
-        background: #bababa;
+        background: map-get($colors, gray_ba);
     }
 
     .block-button {
@@ -159,7 +159,7 @@
         width: 92%;
         margin: 0 4% 32px 4%;
         color: white;
-        background-color: #0076fe;
+        background-color: map-get($colors, vived_blue_fe);
         text-transform: uppercase;
     }
     .arrow-icon {

@@ -62,7 +62,7 @@
 
 .red-toast {
   .toast-container {
-    background-color: #ff0000;
+    background-color: map-get($colors, vivid_red);
     #toast-hdr-6 {
       padding-left: 69px !important;
     }

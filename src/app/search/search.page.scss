@@ -16,7 +16,7 @@
     justify-content: center;
     align-items: center;
 
-    background-color: #F3F7FA;
+    background-color: map-get($colors, white_fa);;
   }
 
   .sb-search-history-entry {
@@ -146,7 +146,7 @@
       font-size: 14px;
       line-height: 14px;
       span.button-inner{
-        color:#2E92FF;
+        color: map-get($colors, vivid_blue);
       }
       
     }
@@ -367,7 +367,7 @@
   }
 
   .skeleton-header{
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid map-get($colors, empty_color);
     @include padding(8px);
   }
 
@@ -375,7 +375,7 @@
     @include padding(8px);
     display: flex;
     flex-direction: row-reverse;
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid map-get($colors, empty_color);
     box-shadow: 0 -1px 5px 0px rgba(0,0,0,0.1);
   }
 

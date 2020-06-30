@@ -8,7 +8,7 @@
         padding-top: 10px;
         width: 90%;
         margin: 0 auto;
-        box-shadow: 0px 0px 10px #aaaaaa;
+        box-shadow: 0px 0px 10px map-get($colors, bright_gray);
         background-color: map-get($colors, white);
         border-radius: 5px;
         display: flex;
@@ -92,7 +92,7 @@
     }
     .rt-raw-items{
         &:nth-child(odd){
-            background-color: #eee;
+            background-color: map-get($colors, empty_color);
         }
     }
 }

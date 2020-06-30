@@ -75,7 +75,7 @@ p{
     color: $blue;
 }
 .info-msg{
-        background-color: #F3F7FA
+        background-color: map-get($colors, white_fa)
     }
 .report-text{
       padding-left: 6px;
@@ -132,7 +132,7 @@ p{
     border-radius: 0px !important;
 }
 .panel-body{
-    background-color: #F3F7FA;
+    background-color: map-get($colors, white_fa);
 }
 .panel-interact{
     text-align: center; 
@@ -141,8 +141,8 @@ p{
 }
 .panel-interact>button{
     margin: 10px 5px 0px 5px;
-    background-color: #F3F7FA;
-    border-color: #F3F7FA;
+    background-color: map-get($colors, white_fa);
+    border-color: map-get($colors, white_fa);
     width: 80px;
     color: $blue;
     font-size: 13px;
@@ -160,7 +160,7 @@ p{
     padding:10px !important;
     margin: auto !important;
     margin-top:10px !important;
-    background: #F3F7FA;
+    background: map-get($colors, white_fa);
     width: 200px;
     border-radius: 4px;
     color:$green;
@@ -185,7 +185,7 @@ p{
     box-shadow: none;
     border-width: 1px;
     border-style:solid;
-    border-color: #c3c3c3;
+    border-color: map-get($colors, light_gray-c3);
     @include padding(8px 0px 0px 8px);
     resize: none;
 }
@@ -322,7 +322,7 @@ img>.report-button{
     box-shadow: none;
     border-width: 1px;
     border-style:solid;
-    border-color: #c3c3c3;
+    border-color: map-get($colors, light_gray-c3);
     @include padding(15px);
     resize: none;
 }
@@ -342,7 +342,7 @@ img>.report-button{
         box-shadow: none;
         border-width: 1px;
         border-style:solid;
-        border-color: #c3c3c3;
+        border-color: map-get($colors, light_gray-c3);
         @include padding(8px 0px 0px 8px);
         margin: 0px;
         resize: none;

@@ -25,7 +25,7 @@
         @include padding(5px, 15px);
         color: map-get($colors, primary_black);
         border-radius: 100px;
-        border: solid 0.5px #c6dbd8;
+        border: solid 0.5px map-get($colors, pale_cyan);
         font-size: 11px;
         @include margin(null, 10px, null, null);
     }
@@ -86,9 +86,9 @@
             min-height:15vh; 
             // background: #E9E9E9;
             .img-container {
-                border: 1px solid #c6dbd8;
+                border: 1px solid map-get($colors, pale_cyan);
                 padding: 0 !important;
-                background: #E9E9E9;
+                background: map-get($colors, white_e9);
                 min-height: 18vh;
                 max-height: 18vh;
                 border-radius: 4px;
@@ -132,7 +132,7 @@
     }
     
     .custom-btn, .default{
-        background-color: #0076FE;
+        background-color: map-get($colors, vived_blue_fe);
         color: map-get($colors, white);
     }
 

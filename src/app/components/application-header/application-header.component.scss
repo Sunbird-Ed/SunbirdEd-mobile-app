@@ -25,7 +25,7 @@ ion-icon {
 .new-feature-badge{
     color: map-get($colors, white);
     margin-left: 8px;
-    background-color: #FF6979;
+    background-color: map-get($colors, bright_red);
     font-size: 8px;
     font-weight: bold;
     height: 12px;
@@ -68,7 +68,7 @@ ion-icon {
 }
 
 .another-user-title{
-    background-color: #BFE1CF;
+    background-color: map-get($colors, light_grayish_green);
     color: $green;
     font-family: "Noto Sans";
     font-size: 16px;

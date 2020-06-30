@@ -34,7 +34,7 @@
   }
 
   .downloads-only {
-    background: #f8f8f8;
+    background: map-get($colors, white_f8);
     @include margin(-16px, -16px, 16px, -16px);
     @include padding(0, 16px);
   }
@@ -92,7 +92,7 @@
       margin: 12px 0 0;
     }
     .count-text {
-      color: #FAFAFA;
+      color: map-get($colors, white_fa);
       font-family: "Noto Sans";
       font-size: 12px;
       margin: 0 0 12px;

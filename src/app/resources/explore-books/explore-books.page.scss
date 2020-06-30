@@ -33,7 +33,7 @@
     padding: 8px 8px;
     margin: 1rem 1rem;
 
-    border: 1px solid #80a7ce;
+    border: 1px solid map-get($colors, light_blue_80);
     border-radius: 4px;
     background-color: map-get($colors, white);
 

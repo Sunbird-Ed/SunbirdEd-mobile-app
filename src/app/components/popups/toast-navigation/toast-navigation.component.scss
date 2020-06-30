@@ -13,7 +13,7 @@
   float: right;
   background-color: map-get($colors, primary_black);
   padding: 12px;
-  color: #F7B500;
+  color: map-get($colors, vivid_orange);
   font-family: "Noto Sans";
   font-size: 14px;
   text-transform: uppercase;

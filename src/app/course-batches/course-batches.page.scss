@@ -39,7 +39,7 @@
         font-size: 18px !important;
     }
     .background-gray{
-        background: #efeff4;
+        background: map-get($colors, gray_white);
         @include margin(-16px, -26px, 0, -26px);
         @include padding(null, null, null, 25px !important);
     }

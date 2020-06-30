@@ -18,13 +18,13 @@
 
     .play-icon
     {
-        color : #00ba75;
+        color : map-get($colors, vivid_green);
         font-size: 30px;
     }
 
     .checkmark-icon
     {
-      color : #00ba75;
+      color : map-get($colors, vivid_green);
       font-size: 18px;
       margin-left: 5px;
     }
@@ -74,7 +74,7 @@
     .content-icon{
         width: 38px;
         height: 38px;
-        border: 0.5px solid #D6D6D6;
+        border: 0.5px solid map-get($colors, medium_light_gray);
         background-color: map-get($colors, medium_gray);
         display: inline-block;
     }

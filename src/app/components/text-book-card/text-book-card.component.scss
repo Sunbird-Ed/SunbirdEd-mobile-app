@@ -12,7 +12,7 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    color: #969696;
+    color: map-get($colors, gray_96);
   }
 
   .textbook-margin-4 {
