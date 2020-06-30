@@ -25,6 +25,7 @@ import { SbPopoverComponent } from '@app/app/components/popups';
 import { AndroidPermissionsStatus } from './android-permissions/android-permission';
 import { Router } from '@angular/router';
 import { AndroidPermissionsService } from './android-permissions/android-permissions.service';
+import GraphemeSplitter from 'grapheme-splitter';
 
 declare const FCMPlugin;
 export interface NetworkInfo {
@@ -186,7 +187,7 @@ export class CommonUtilService {
      * Show popup with Try Again and Skip button.
      * @param source Page from alert got called
      */
-    async  showContentComingSoonAlert(source, dialCode?) {
+    async showContentComingSoonAlert(source, dialCode?) {
         this.telemetryGeneratorService.generateInteractTelemetry(
             InteractType.OTHER,
             InteractSubtype.QR_CODE_COMINGSOON,
@@ -245,10 +246,10 @@ export class CommonUtilService {
         await qrAlert.present();
         const corRelationList: CorrelationData[] = [{
             id: this.translateMessage(heading) === this.translateMessage('INVALID_QR') ?
-              InteractSubtype.QR_CODE_INVALID : InteractSubtype.QR_NOT_LINKED,
+                InteractSubtype.QR_CODE_INVALID : InteractSubtype.QR_NOT_LINKED,
             type: CorReleationDataType.CHILD_UI
         }];
-        corRelationList.push({id: dialCode, type: ObjectType.QR});
+        corRelationList.push({ id: dialCode, type: ObjectType.QR });
         // generate impression telemetry
         this.telemetryGeneratorService.generateImpressionTelemetry(
             InteractType.POPUP_LOADED, '',
@@ -263,15 +264,15 @@ export class CommonUtilService {
         const { data } = await qrAlert.onDidDismiss();
         // generate interact telemetry for close popup
         this.telemetryGeneratorService.generateInteractTelemetry(
-        InteractType.SELECT_CLOSE,
-        data ? (data.isLeftButtonClicked ? InteractSubtype.CTA : InteractSubtype.CLOSE_ICON) : InteractSubtype.OUTSIDE,
-        source === PageId.ONBOARDING_PROFILE_PREFERENCES ? Environment.ONBOARDING : Environment.HOME,
-        source === PageId.ONBOARDING_PROFILE_PREFERENCES ? PageId.SCAN_OR_MANUAL : PageId.HOME,
-        undefined,
-        undefined,
-        undefined,
-        corRelationList
-      );
+            InteractType.SELECT_CLOSE,
+            data ? (data.isLeftButtonClicked ? InteractSubtype.CTA : InteractSubtype.CLOSE_ICON) : InteractSubtype.OUTSIDE,
+            source === PageId.ONBOARDING_PROFILE_PREFERENCES ? Environment.ONBOARDING : Environment.HOME,
+            source === PageId.ONBOARDING_PROFILE_PREFERENCES ? PageId.SCAN_OR_MANUAL : PageId.HOME,
+            undefined,
+            undefined,
+            undefined,
+            corRelationList
+        );
     }
 
     /**
@@ -576,16 +577,26 @@ export class CommonUtilService {
 
     async presentToastForOffline(msg: string) {
         this.toast = await this.toastController.create({
-          duration: 3000,
-          message: this.translateMessage(msg),
-          showCloseButton: true,
-          position: 'top',
-          closeButtonText: 'X',
-          cssClass: ['toastHeader', 'offline']
+            duration: 3000,
+            message: this.translateMessage(msg),
+            showCloseButton: true,
+            position: 'top',
+            closeButtonText: 'X',
+            cssClass: ['toastHeader', 'offline']
         });
         await this.toast.present();
         this.toast.onDidDismiss(() => {
-          this.toast = undefined;
+            this.toast = undefined;
         });
-      }
+    }
+
+    extractInitial(name) {
+        let initial = '';
+        if (name) {
+            const splitter = new GraphemeSplitter();
+            const split: string[] = splitter.splitGraphemes(name.trim());
+            initial = split[0];
+        }
+        return initial;
+    }
 }
