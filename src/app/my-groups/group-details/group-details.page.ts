@@ -184,7 +184,7 @@ export class GroupDetailsPage {
     }
   }
 
-  async activityMenuClick() {
+  async activityMenuClick(event) {
     // this.telemetryGeneratorService.generateInteractTelemetry(
     //   InteractType.TOUCH,
     //   InteractSubtype.SORT_OPTION_CLICKED,
@@ -411,7 +411,7 @@ export class GroupDetailsPage {
     return split[0];
   }
 
-  navigateToActivityDetails() {
+  navigateToActivityDetails(event) {
     const navigationExtras: NavigationExtras = {
       state: {
         groupId: this.groupId,

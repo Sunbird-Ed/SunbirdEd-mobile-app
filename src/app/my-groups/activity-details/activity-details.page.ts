@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { FilterPipe } from '@app/pipes/filter/filter.pipe';
+import { CommonUtilService } from '@app/services';
 
 @Component({
   selector: 'app-activity-details',
@@ -8,12 +9,16 @@ import { FilterPipe } from '@app/pipes/filter/filter.pipe';
   styleUrls: ['./activity-details.page.scss'],
 })
 export class ActivityDetailsPage implements OnInit {
+
+  searchMember = '';
+  timeStamp = '';
   memberList: any;
   filteredMemberList: any;
   searchValue: string;
   constructor(
     private router: Router,
-    private filterPipe: FilterPipe
+    private filterPipe: FilterPipe,
+    private commonUtilService: CommonUtilService
   ) {
     const extras = this.router.getCurrentNavigation().extras.state;
     this.memberList = extras.memberList;

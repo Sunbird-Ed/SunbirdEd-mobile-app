@@ -38,9 +38,10 @@
           <img *ngIf="!searchValue" src="assets/imgs/no_member.svg" alt="">
           <img *ngIf="searchValue" src="assets/imgs/empty_search_result.svg" alt="">
         </div>
-        <div *ngFor="let member of filteredMemberList">
+        <div *ngFor="let member of filteredMemberList; let i = index">
           <sb-member-card [config]="{size:'medium', isBold:false, isSelectable:false, view:'horizontal'}"
-            [identifier]="member.identifier" [initial]="member.initial" [title]="member.title" [isMenu]="member.isMenu"
+            [identifier]="member.identifier" [indexOfMember]="i"
+            [initial]="commonUtilService.extractInitial(member.title)" [title]="member.title" [isMenu]="member.isMenu"
             [isAdmin]="member.isAdmin" (menuClick)="memberMenuClick($event)">
           </sb-member-card>
         </div>
@@ -56,11 +57,9 @@
           <ion-icon class="gd-member-search-icon" md="md-search"></ion-icon>
           <input type="text" [(ngModel)]="searchMember" (ngModelChange)="onSearch(searchMember)">
         </div>
-        <!-- <div *ngIf="!memberList || !memberList.length" class="text-center">
-          <img *ngIf="!searchValue" src="assets/imgs/no_member.svg" alt="">
-          <img *ngIf="searchValue" src="assets/imgs/empty_search_result.svg" alt="">
-        </div> -->
-        <sb-course-card [section]="null" (click)="navigateToActivityDetails()"></sb-course-card>
+        <sb-course-card [section]="null" (click)="navigateToActivityDetails($event)" [isMenu]="true"
+          (menuClick)="activityMenuClick($event)"></sb-course-card>
+
         <!-- <sb-course-card *ngIf="!course.isEnrolledCourse" [course]="course" [section]="null" [cardImg]="course.appIcon"
           (click)="openCourseDetails(course)"></sb-course-card> -->
         <!-- <div *ngFor="let item of [0,1,2,3,4]" class="mb-8 mt-8">
