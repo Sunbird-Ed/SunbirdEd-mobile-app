@@ -1063,13 +1063,15 @@ describe('ContentDetailsPage', () => {
             Environment.HOME,
             undefined,
             undefined, undefined, undefined,
-            [{id: 'content-detail', type: 'ChildUi'}, {id: 'do-123', type: 'Content'}]
+            [{id: 'do-123', type: 'Content'}, {id: 'content-detail', type: 'ChildUi'}]
         );
         expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenNthCalledWith(2,
             ImpressionType.DETAIL, '',
             PageId.CONTENT_DETAIL,
             Environment.HOME,
-            undefined, undefined, undefined, {l1: 'do_123', l2: 'do_123', l3: 'do_1'}, [{id: 'do-123', type: 'Content'}]
+            undefined, undefined, undefined, {l1: 'do_123', l2: 'do_123', l3: 'do_1'},
+            [{id: 'do-123', type: 'Content'},
+            {id: 'content-detail', type: 'ChildUi'}]
         );
         expect(mockTelemetryGeneratorService.generatePageLoadedTelemetry).toHaveBeenCalledWith(
             PageId.CONTENT_DETAIL,
@@ -1078,7 +1080,7 @@ describe('ContentDetailsPage', () => {
             undefined,
             undefined,
             undefined,
-            [{id: 'do-123', type: 'Content'}]
+            [{id: 'do-123', type: 'Content'}, {id: 'content-detail', type: 'ChildUi'}]
         );
     });
 
@@ -1264,7 +1266,10 @@ describe('ContentDetailsPage', () => {
             false,
             { contentData: { name: 'matrix', size: 101100 } },
             'rating',
-            [{id: 'do-123', type: 'Content'}],
+            [{id: 'do-123', type: 'Content'}, {
+                id: PageId.CONTENT_DETAIL,
+                type: 'ChildUi'
+              }],
             { l1: 'do_123', l2: 'do_123', l3: 'do_1' }
         );
     });
