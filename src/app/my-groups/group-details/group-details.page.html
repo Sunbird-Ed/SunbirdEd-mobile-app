@@ -15,7 +15,7 @@
           <div class="gd-tab-name gd-tab-border">{{'ACTIVITIES' | translate}}</div>
         </div>
         <div class="gd-tab" (click)="switchTabs('members')" [ngClass]="{'active': activeTab=='members'}">
-          <div class="gd-tab-name">{{'MEMBERS' | translate}}</div>
+          <div class="gd-tab-name">{{'MEMBERS' | translate}} ({{memberList.length}})</div>
         </div>
       </div>
     </div>
@@ -26,27 +26,31 @@
           <ion-icon class="gd-member-search-icon" md="md-search"></ion-icon>
           <input type="text" [(ngModel)]="searchMember" (ngModelChange)="onSearch(searchMember)">
         </div>
-        <div class="gd-add-member">
+        <div class="gd-add-member" (click)="navigateToAddUserPage()">
           <span class="gd-add-member-icon">
-            <img src="assets/imgs/ic_person_add_white.svg" (click)="navigateToAddUserPage()">
+            <img src="assets/imgs/ic_person_add_white.svg">
           </span>
           <span class="gd-large-text">
             {{'ADD_MEMBER' | translate}}
           </span>
         </div>
-        <div *ngFor="let member of memberList; let i = index">
+        <div *ngIf="!filteredMemberList || !filteredMemberList.length" class="text-center">
+          <img *ngIf="!searchValue" src="assets/imgs/no_member.svg" alt="">
+          <img *ngIf="searchValue" src="assets/imgs/empty_search_result.svg" alt="">
+        </div>
+        <div *ngFor="let member of filteredMemberList; let i = index">
           <sb-member-card [config]="{size:'medium', isBold:false, isSelectable:false, view:'horizontal'}"
             [identifier]="member.identifier" [indexOfMember]="i"
             [initial]="commonUtilService.extractInitial(member.title)" [title]="member.title" [isMenu]="member.isMenu"
             [isAdmin]="member.isAdmin" (menuClick)="memberMenuClick($event)">
           </sb-member-card>
         </div>
-        <div class="cd-btn" *ngIf="!memberList.length">
+        <!-- <div class="cd-btn" *ngIf="!memberList.length">
           <button class="sb-btn-large" (click)="navigateToAddUserPage()">
             <img src="assets/imgs/ic_person_add_white.svg">
             {{'ADD_MEMBER' | translate}}
           </button>
-        </div>
+        </div> -->
       </div>
       <div class="gd-tab-content" *ngIf="activeTab=='courses'">
         <div class="gd-member-search">

@@ -787,6 +787,11 @@
   "WHAT_IS_MEMBER_ID": "What is a DIKSHA ID? ",
   "I_AGREE_TO": "I agree to",
   "TERMS_OF_SERVICES": "terms of services",
-  "LAST_UPDATED": "Last updated: {{%s}}%",
-  "SEARCH_FOR_GROUP_MEMBER": "Search for group member"
+  "LAST_UPDATED": "Last updated: {{%s}}",
+  "SEARCH_FOR_GROUP_MEMBER": "Search for group member",
+  "ADD_MEMBER_POPUP_TITLE": "Where can I see the {{%s}} ID?",
+  "ADD_MEMBER_POPUP_DESC": "Use the following instructions to guide members to identify their unique {{%s}} ID.",
+  "ADD_MEMBER_POPUP_STEP_1": "<span>Step 1</span> : Click Profile tab",
+  "ADD_MEMBER_POPUP_STEP_2": "<span>Step 2</span> : See the {{%s}} ID here"
+
 }
