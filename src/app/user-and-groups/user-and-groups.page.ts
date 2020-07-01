@@ -5,8 +5,8 @@ import { Location } from '@angular/common';
 import {
   AuthService,
   GetAllProfileRequest,
-  Group,
-  GroupService,
+  GroupServiceDeprecated,
+  GroupDeprecated,
   Profile,
   ProfileService,
   ProfileType,
@@ -51,7 +51,7 @@ export class UserAndGroupsPage implements OnInit {
   playConfig: any;
 
   userList: Array<Profile> = [];
-  groupList: Array<Group> = [];
+  groupList: Array<GroupDeprecated> = [];
 
   profileDetails: Profile;
   loadingUserList = false;
@@ -71,7 +71,7 @@ export class UserAndGroupsPage implements OnInit {
   constructor(
     private zone: NgZone,
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
-    @Inject('GROUP_SERVICE') private groupService: GroupService,
+    @Inject('GROUP_SERVICE_DEPRECATED') private groupService: GroupServiceDeprecated,
     @Inject('AUTH_SERVICE') private authService: AuthService,
     private platform: Platform,
     private appGlobalService: AppGlobalService,
@@ -131,7 +131,7 @@ export class UserAndGroupsPage implements OnInit {
   }
 
   getCurrentGroup() {
-    this.groupService.getActiveSessionGroup().subscribe((val: Group) => {
+    this.groupService.getActiveSessionGroup().subscribe((val: GroupDeprecated) => {
       const group = val;
       if (group) {
         this.zone.run(() => {
@@ -201,50 +201,50 @@ export class UserAndGroupsPage implements OnInit {
       this.zone.run(() => {
         this.profileService.getAllProfiles(profileRequest).pipe(
           map((profiles) => profiles.filter((profile) => !!profile.handle))
-           ).subscribe(async (profiles) => {
-            const profileList: Array<Profile> = profiles;
-            if (profileList && profileList.length) {
-              this.userList = [...profileList].sort((prev: Profile, next: Profile) => {
-                if (prev.uid === this.currentUserId) {
-                  return -1;
-                }
+        ).subscribe(async (profiles) => {
+          const profileList: Array<Profile> = profiles;
+          if (profileList && profileList.length) {
+            this.userList = [...profileList].sort((prev: Profile, next: Profile) => {
+              if (prev.uid === this.currentUserId) {
+                return -1;
+              }
 
-                if (next.uid === this.currentUserId) {
-                  return 1;
-                }
+              if (next.uid === this.currentUserId) {
+                return 1;
+              }
 
-                if (prev.handle < next.handle) {
-                  return -1;
-                }
-                if (prev.handle > next.handle) {
-                  return 1;
-                }
-                return 0;
-              });
-              this.noUsersPresent = false;
-              this.loadingUserList = false;
-            } else {
-              this.noUsersPresent = true;
-              this.loadingUserList = false;
-            }
-
-            await loader.dismiss();
-
-          }, async () => {
-            await loader.dismiss();
+              if (prev.handle < next.handle) {
+                return -1;
+              }
+              if (prev.handle > next.handle) {
+                return 1;
+              }
+              return 0;
+            });
+            this.noUsersPresent = false;
+            this.loadingUserList = false;
+          } else {
             this.noUsersPresent = true;
             this.loadingUserList = false;
-          });
+          }
+
+          await loader.dismiss();
+
+        }, async () => {
+          await loader.dismiss();
+          this.noUsersPresent = true;
+          this.loadingUserList = false;
+        });
       });
     }, 1000);
   }
 
   getAllGroup() {
     this.zone.run(() => {
-      this.groupService.getAllGroups().subscribe((groups: Group[]) => {
+      this.groupService.getAllGroups().subscribe((groups: GroupDeprecated[]) => {
         if (groups && groups.length) {
           this.showEmptyGroupsMessage = false;
-          this.groupList = [...groups].sort((prev: Group, next: Group) => {
+          this.groupList = [...groups].sort((prev: GroupDeprecated, next: GroupDeprecated) => {
             if (prev.gid === this.currentGroupId) {
               return -1;
             }
@@ -380,18 +380,18 @@ export class UserAndGroupsPage implements OnInit {
 
   onSegmentChange(event) {
     this.telemetryGeneratorService.generateInteractTelemetry(
-        InteractType.TOUCH,
-        event.detail.value === 'groups' ? InteractSubtype.GROUP_CLICKED : InteractSubtype.USER_CLICKED,
-        Environment.USER,
-        PageId.USERS_GROUPS
+      InteractType.TOUCH,
+      event.detail.value === 'groups' ? InteractSubtype.GROUP_CLICKED : InteractSubtype.USER_CLICKED,
+      Environment.USER,
+      PageId.USERS_GROUPS
     );
     this.zone.run(() => {
       this.selectedUserIndex = -1;
     });
     this.telemetryGeneratorService.generateImpressionTelemetry(
-        ImpressionType.VIEW, '',
-        event.detail.value,
-        Environment.USER
+      ImpressionType.VIEW, '',
+      event.detail.value,
+      Environment.USER
     );
   }
 
@@ -484,12 +484,12 @@ export class UserAndGroupsPage implements OnInit {
       this.profileService.getAllProfiles().pipe(
         map((profiles) => (profiles.sort((p1, p2) => p2.createdAt - p1.createdAt))[0])
       )
-      .toPromise().then((lastCreatedProfile: any) => {
-        this.lastCreatedProfileData = lastCreatedProfile;
-        resolve(lastCreatedProfile);
-      }).catch(() => {
-        reject(null);
-      });
+        .toPromise().then((lastCreatedProfile: any) => {
+          this.lastCreatedProfileData = lastCreatedProfile;
+          resolve(lastCreatedProfile);
+        }).catch(() => {
+          reject(null);
+        });
     });
   }
 
@@ -653,7 +653,7 @@ export class UserAndGroupsPage implements OnInit {
       });
   }
 
-  getGradeNameFromCode(data: Profile | Group): string {
+  getGradeNameFromCode(data: Profile | GroupDeprecated): string {
     if (data.grade && data.grade.length > 0) {
       const gradeName = [];
       data.grade.forEach(code => {
