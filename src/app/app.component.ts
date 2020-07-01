@@ -164,7 +164,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     if (cordova.plugins.notification && cordova.plugins.notification.local &&
       cordova.plugins.notification.local.launchDetails && cordova.plugins.notification.local.launchDetails.action === 'click') {
       const corRelationList: Array<CorrelationData> = [];
-      const localNotificationId = cordova.plugins.notification.local.launchDetails.id + '';
+      const localNotificationId = cordova.plugins.notification.local.launchDetails.id;
       corRelationList.push({ id: localNotificationId  ? localNotificationId + '' : '', type: CorReleationDataType.NOTIFICATION_ID });
       this.telemetryGeneratorService.generateNotificationClickedTelemetry(
         InteractType.LOCAL,

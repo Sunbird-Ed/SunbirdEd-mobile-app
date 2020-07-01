@@ -358,7 +358,7 @@ describe('AppComponent', () => {
                     'local',
                     'sample-page',
                     undefined,
-                    [{id: undefined, type: 'NotificationID'}]
+                    [{id: '', type: 'NotificationID'}]
                 );
                 expect(mockPreferences.getString).toHaveBeenCalledWith(PreferenceKey.CAMPAIGN_PARAMETERS);
                 expect(mockTranslate.use).toHaveBeenCalled();
@@ -387,7 +387,7 @@ describe('AppComponent', () => {
                     InteractType.LOCAL,
                     'sample-page',
                     undefined,
-                    [{id: undefined, type: 'NotificationID'}]
+                    [{id: '', type: 'NotificationID'}]
                 );
                 expect(mockTelemetryGeneratorService.generateInteractTelemetry).not.nthCalledWith(2,
                     InteractType.OTHER,
@@ -414,7 +414,7 @@ describe('AppComponent', () => {
                     InteractType.LOCAL,
                     'sample-page',
                     undefined,
-                    [{id: undefined, type: 'NotificationID'}]
+                    [{id: '', type: 'NotificationID'}]
                 );
                 done();
             }, 0);
@@ -779,7 +779,7 @@ describe('AppComponent', () => {
                     InteractType.LOCAL,
                     'sample-page',
                     undefined,
-                    [{id: undefined, type: 'NotificationID'}]
+                    [{id: '', type: 'NotificationID'}]
                 );
                 expect(SunbirdSdk.instance.updateDeviceRegisterConfig).toHaveBeenCalledWith({ fcmToken: 'some_token' });
                 done();
@@ -822,7 +822,7 @@ describe('AppComponent', () => {
                     InteractType.LOCAL,
                     'sample-page',
                     undefined,
-                    [{id: undefined, type: 'NotificationID'}]
+                    [{id: '', type: 'NotificationID'}]
                 );
                 expect(FCMPlugin.onTokenRefresh).toHaveBeenCalled();
                 expect(SunbirdSdk.instance.updateDeviceRegisterConfig).toHaveBeenCalledWith({ fcmToken: 'some_token' });
