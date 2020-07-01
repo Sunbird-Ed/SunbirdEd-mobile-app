@@ -309,7 +309,8 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
   handleDeviceBackButton() {
     this.backButtonFunc = this.platform.backButton.subscribeWithPriority(10, () => {
       this.navigateToPreviousPage();
-      if (this.displayDialCodeResult[0].dialCodeResult.length) {
+      if (this.displayDialCodeResult && this.displayDialCodeResult[0].dialCodeResult &&
+        this.displayDialCodeResult[0].dialCodeResult.length) {
         this.telemetryGeneratorService.generateBackClickedNewTelemetry(
           true,
           this.source === PageId.ONBOARDING ? Environment.ONBOARDING : Environment.HOME,
@@ -1499,7 +1500,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
   }
 
   goBack() {
-    if (this.displayDialCodeResult[0].dialCodeResult.length) {
+    if (this.displayDialCodeResult && this.displayDialCodeResult[0].dialCodeResult && this.displayDialCodeResult[0].dialCodeResult.length) {
       this.telemetryGeneratorService.generateBackClickedNewTelemetry(
         false,
         this.source === PageId.ONBOARDING ? Environment.ONBOARDING : Environment.HOME,
