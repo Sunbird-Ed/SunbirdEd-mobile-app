@@ -31,7 +31,8 @@ import {
   SortOrder,
   CorrelationData,
   ContentsGroupedByPageSection,
-  SearchAndGroupContentRequest
+  SearchAndGroupContentRequest,
+  CachedItemRequestSourceFrom
 } from 'sunbird-sdk';
 
 import {
@@ -480,7 +481,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   /**
    * Get popular content
    */
-  getPopularContent(isAfterLanguageChange = false, contentSearchCriteria?: ContentSearchCriteria, avoidRefreshList = false) {
+  getPopularContent(isAfterLanguageChange = false, contentSearchCriteria?: ContentSearchCriteria, isPullToRefreshed = false) {
     this.storyAndWorksheets = [];
     this.searchApiLoader = true;
 
@@ -527,11 +528,11 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.getGroupByPageReq.facets = Search.FACETS_ETB;
     this.getGroupByPageReq.contentTypes = [ContentType.TEXTBOOK];
     this.getGroupByPageReq.fields = ExploreConstants.REQUIRED_FIELDS;
-    this.getGroupByPage(isAfterLanguageChange, avoidRefreshList);
+    this.getGroupByPage(isAfterLanguageChange, isPullToRefreshed);
   }
 
   // Make this method as private
-  async getGroupByPage(isAfterLanguageChange = false, avoidRefreshList = false) {
+  async getGroupByPage(isAfterLanguageChange = false, isPullToRefreshed = false) {
 
     const selectedBoardMediumGrade = ((this.getGroupByPageReq.board && this.getGroupByPageReq.board.length
       && this.getGroupByPageReq.board[0]) ? this.getGroupByPageReq.board[0] + ', ' : '') +
@@ -554,6 +555,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       sortOrder: SortOrder.ASC
     }];
     const request: SearchAndGroupContentRequest = {
+      from: isPullToRefreshed ? CachedItemRequestSourceFrom.SERVER : CachedItemRequestSourceFrom.CACHE,
       groupBy: 'subject',
       combination: {
         medium: this.getGroupByPageReq.medium,
@@ -824,7 +826,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     if (refresher) {
       refresher.target.complete();
       this.telemetryGeneratorService.generatePullToRefreshTelemetry(PageId.LIBRARY, Environment.HOME);
-      this.getGroupByPage();
+      this.getGroupByPage(false, true);
     } else {
       this.getPopularContent(false, null, avoidRefreshList);
     }
