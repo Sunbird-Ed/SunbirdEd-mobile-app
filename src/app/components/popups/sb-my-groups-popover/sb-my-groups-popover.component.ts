@@ -1,19 +1,20 @@
 import { Component } from '@angular/core';
 import { NavParams, PopoverController } from '@ionic/angular';
-import { XwalkConstants } from '@app/app/app.constant';
-import { UtilityService } from '@app/services/utility-service';
 import { CommonUtilService } from '@app/services';
+
 @Component({
   selector: 'app-my-groups-popover',
   templateUrl: './sb-my-groups-popover.component.html',
   styleUrls: ['./sb-my-groups-popover.component.scss'],
 })
 export class MyGroupsPopoverComponent {
+
   title: string;
   body: any;
   buttonText: string;
   isFromAddMember = false;
   appName: string;
+
   constructor(
     private popOverCtrl: PopoverController,
     private navParams: NavParams,

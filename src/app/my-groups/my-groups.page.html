@@ -33,8 +33,8 @@
     </div>
 
     <div *ngFor="let group of groupList">
-      <sb-group-card [isMobile]="true" [initial]="commonUtilService.extractInitial(group.name)" [group]="group"
-        [isLoading]="groupListLoader" (cardClick)="navigateToGroupdetailsPage($event)"></sb-group-card>
+      <sb-group-card [isMobile]="true" [group]="group" [isLoading]="groupListLoader"
+        (cardClick)="navigateToGroupdetailsPage($event)"></sb-group-card>
     </div>
 
   </div>
