@@ -1222,21 +1222,11 @@ app-resources{
 }
 
 .popover-my-groups {
-  .popover-content.sc-ion-popover-md {
-    width: 90%;
-    top: 5% !important;
-    bottom: 5% !important;;
-    left: 5% !important;
-  }
-  .mg-popup-flex-item{
-    // flex: 1;
-  }
+  
   .mg-popup-content {
     display: flex;
     flex-direction: column;
     height: 90vh;
-    padding: 16px;
-    position: relative;
     justify-content: space-between;
   }
   .mg-popup-close{
