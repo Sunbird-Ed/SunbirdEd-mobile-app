@@ -481,7 +481,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   /**
    * Get popular content
    */
-  getPopularContent(isAfterLanguageChange = false, contentSearchCriteria?: ContentSearchCriteria, pullToRefreshCalled = false) {
+  getPopularContent(isAfterLanguageChange = false, contentSearchCriteria?: ContentSearchCriteria, isPullToRefreshed = false) {
     this.storyAndWorksheets = [];
     this.searchApiLoader = true;
 
@@ -528,11 +528,11 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.getGroupByPageReq.facets = Search.FACETS_ETB;
     this.getGroupByPageReq.contentTypes = [ContentType.TEXTBOOK];
     this.getGroupByPageReq.fields = ExploreConstants.REQUIRED_FIELDS;
-    this.getGroupByPage(isAfterLanguageChange, pullToRefreshCalled);
+    this.getGroupByPage(isAfterLanguageChange, isPullToRefreshed);
   }
 
   // Make this method as private
-  async getGroupByPage(isAfterLanguageChange = false, pullToRefreshCalled = false) {
+  async getGroupByPage(isAfterLanguageChange = false, isPullToRefreshed = false) {
 
     const selectedBoardMediumGrade = ((this.getGroupByPageReq.board && this.getGroupByPageReq.board.length
       && this.getGroupByPageReq.board[0]) ? this.getGroupByPageReq.board[0] + ', ' : '') +
@@ -555,7 +555,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       sortOrder: SortOrder.ASC
     }];
     const request: SearchAndGroupContentRequest = {
-      from: pullToRefreshCalled ? CachedItemRequestSourceFrom.SERVER : CachedItemRequestSourceFrom.CACHE,
+      from: isPullToRefreshed ? CachedItemRequestSourceFrom.SERVER : CachedItemRequestSourceFrom.CACHE,
       groupBy: 'subject',
       combination: {
         medium: this.getGroupByPageReq.medium,
