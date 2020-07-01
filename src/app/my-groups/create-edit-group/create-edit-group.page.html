@@ -16,8 +16,8 @@
     </ion-item>
     <div>
       <ion-item class="input-item cr-input-primary" lines="none">
-        <ion-checkbox formControlName="groupTerms" color="secondary" checked="false"></ion-checkbox>
-        <ion-label class="cr-terms-checkbox">{{'I_AGREE_TO' | translate}} {{appName}} <span class="cr-terms">{{'TERMS_OF_SERVICES' | translate}}</span></ion-label>
+        <ion-checkbox class="cr-terms-checkbox" formControlName="groupTerms" color="secondary" checked="false"></ion-checkbox>
+        <ion-label class="cr-terms-checkbox-label">{{'I_AGREE_TO' | translate}} {{appName}} <span class="cr-terms">{{'TERMS_OF_SERVICES' | translate}}</span></ion-label>
       </ion-item>
       <p
       *ngIf="(createGroupFormControls.groupTerms.touched || createGroupFormSubmitted) && createGroupFormControls.groupTerms.errors?.required"

@@ -11,6 +11,8 @@ import { Platform } from '@ionic/angular';
 import { ClassRoomService, ClassRoomAddMemberByIdRequest } from '@project-sunbird/sunbird-sdk';
 import { AppHeaderService, CommonUtilService } from '@app/services';
 import { PopoverController } from '@ionic/angular';
+import {animationGrowInTopRight} from '../../animations/animation-grow-in-top-right';
+import {animationShrinkOutTopRight} from '../../animations/animation-shrink-out-top-right';
 import { MyGroupsPopoverComponent } from '../../components/popups/sb-my-groups-popover/sb-my-groups-popover.component';
 
 @Component({
@@ -138,6 +140,10 @@ export class AddMemberToGroupPage {
       componentProps: {
         isFromAddMember: true
       },
+      enterAnimation: animationGrowInTopRight,
+      leaveAnimation: animationShrinkOutTopRight,
+      backdropDismiss: false,
+      showBackdrop: true,
       cssClass: 'popover-my-groups'
     });
     await popover.present();
