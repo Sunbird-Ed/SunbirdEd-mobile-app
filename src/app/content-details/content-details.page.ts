@@ -569,12 +569,11 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
   }
 
   generateImpressionEvent(download, objectId?, objectType?, objectVersion?) {
-    const cData: CorrelationData[] = [{
-      id: PageId.CONTENT_DETAIL,
-      type: CorReleationDataType.CHILD_UI
-    }];
     if (this.corRelationList && this.corRelationList.length) {
-      cData.push(this.corRelationList[0]);
+      this.corRelationList.push({
+        id: PageId.CONTENT_DETAIL,
+        type: CorReleationDataType.CHILD_UI
+      });
     }
     if (this.downloadAndPlay || download) {
       this.telemetryGeneratorService.generateImpressionTelemetry(
@@ -586,7 +585,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
         undefined,
         undefined,
         undefined,
-        download ? cData : this.corRelationList);
+        this.corRelationList);
     }
     this.telemetryGeneratorService.generateImpressionTelemetry(
       ImpressionType.DETAIL, '',

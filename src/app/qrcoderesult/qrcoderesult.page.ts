@@ -194,16 +194,12 @@ export class QrcoderesultPage implements OnDestroy {
     this.isProfileUpdated = this.navData.isProfileUpdated;
     this.searchIdentifier = this.content.identifier;
     this.isQrCodeLinkToContent = this.navData.isQrCodeLinkToContent;
-    const cData: CorrelationData[] = [];
-    if (this.corRelationList && this.corRelationList.length) {
-      cData.push(this.corRelationList[0]);
-    }
     this.telemetryGeneratorService.generateImpressionTelemetry(
       ImpressionType.PAGE_REQUEST, '',
       PageId.QR_CONTENT_RESULT,
       this.onboarding ? Environment.ONBOARDING : Environment.HOME,
       '', '', '', undefined,
-      cData
+      this.corRelationList
     );
 
     if (this.parentContent) {
@@ -278,18 +274,16 @@ export class QrcoderesultPage implements OnDestroy {
       PageId.DIAL_CODE_SCAN_RESULT,
       !this.appGlobalService.isProfileSettingsCompleted ? Environment.ONBOARDING : this.appGlobalService.getPageIdForTelemetry());
 
-    const corRelationData: Array<CorrelationData> = [];
     if (this.corRelationList && this.corRelationList.length) {
-      corRelationData.push(this.corRelationList[0]);
+      this.corRelationList.push({id: this.content.children.length.toString(), type: CorReleationDataType.COUNT_CONTENT});
     }
-    corRelationData.push({id: this.content.children.length.toString(), type: CorReleationDataType.COUNT_CONTENT});
     this.telemetryGeneratorService.generatePageLoadedTelemetry(
       PageId.QR_CONTENT_RESULT,
       this.onboarding ? Environment.ONBOARDING : Environment.HOME,
       this.content.identifier,
       ObjectType.CONTENT,
       undefined, undefined,
-      corRelationData
+      this.corRelationList
     );
 
     if (!AppGlobalService.isPlayerLaunched) {
@@ -931,14 +925,12 @@ export class QrcoderesultPage implements OnDestroy {
   private interactEventForPlayAndDownload(content, play) {
     const objectType = this.telemetryGeneratorService.isCollection(content.mimeType) ? content.contentType : ContentType.RESOURCE;
     const telemetryObject = new TelemetryObject(content.identifier, objectType, undefined);
-    const corRelationData: Array<CorrelationData> = [];
     if (this.corRelationList && this.corRelationList.length) {
-      corRelationData.push(this.corRelationList[0]);
-    }
-    corRelationData.push({id: Mode.PLAY, type: CorReleationDataType.MODE});
-    corRelationData.push({id: content.contentType, type: CorReleationDataType.TYPE});
-    corRelationData.push({id: this.commonUtilService.networkInfo.isNetworkAvailable ?
+      this.corRelationList.push({id: Mode.PLAY, type: CorReleationDataType.MODE});
+      this.corRelationList.push({id: content.contentType, type: CorReleationDataType.TYPE});
+      this.corRelationList.push({id: this.commonUtilService.networkInfo.isNetworkAvailable ?
       Mode.ONLINE : Mode.OFFLINE, type: InteractSubtype.NETWORK_STATUS});
+    }
     this.telemetryGeneratorService.generateInteractTelemetry(
       play ? InteractType.PLAY : InteractType.DOWNLOAD,
       undefined,
@@ -947,7 +939,7 @@ export class QrcoderesultPage implements OnDestroy {
       telemetryObject,
       undefined,
       undefined,
-      corRelationData
+      this.corRelationList
     );
   }
 
