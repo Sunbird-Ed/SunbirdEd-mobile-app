@@ -1,6 +1,7 @@
 @import "src/assets/styles/variables";
 @import "src/assets/styles/_custom-mixins";
 @import "src/assets/styles/fonts";
+@import "src/assets/styles/_variables.scss";
 
 :host{
     div.scrollable-container {
@@ -23,7 +24,7 @@
     z-index: 1;
    }
   .main-container {
-    background: #fff;
+    background: map-get($colors, white);
     position: relative;
   }
   .offline-header {
@@ -43,10 +44,10 @@
   }
   .animation-background {
     padding: 0px 8px 0px 8px;
-    background-color: #f2f2f2;
+    background-color: map-get($colors, white_f2);
   }
   .sb-view-more {
-    background: #edf4f9;
+    background: $light-blue;
     text-align: center;
     padding: $base-block-space * 2;
     color: $primary-color;
@@ -54,17 +55,17 @@
   }
   .explore-more-content {
     border-radius: 4px;
-    --background: #F3F7FA;
-    --color: #024F90;
+    --background: #{map-get($colors, white_f3)};
+    --color: #{map-get($colors, deep_blue)};
   }
   .explore-more-books {
-    --background: #024F9D;
+    --background: #{$blue};
     border-radius: 4px;
   }
 .sub-heading {
   padding: 1em 4em !important;
   font-size: 12px;
-  color: #999999;
+  color: $gray-300;
   margin: 0;
 }
 .sb-nodownloads-container {
@@ -77,7 +78,7 @@
     margin: 0;
     font-size: 16px;
     padding-top: 4%;
-    color: #666666;
+    color: map-get($colors, granite_gray);
     font-weight: bold;
     letter-spacing: -0.46px
   }
@@ -114,7 +115,7 @@
   margin-top: 130px;
 }
 .sb-course-heading{
-  background: #E5EDF5;
+  background: map-get($colors, pale_blue);
   padding: 16px;
   font-size: 18px;
   font-weight: bold;

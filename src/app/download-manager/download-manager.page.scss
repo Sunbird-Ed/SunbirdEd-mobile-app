@@ -1,6 +1,7 @@
 @import "src/assets/styles/base/_variables.scss";
+@import "src/assets/styles/_variables.scss";
 
     .sb-dw-manager{
         background-color: #{$light-blue-bg};
-        border-bottom: 2px solid #fff;
+        border-bottom: 2px solid map-get($colors, white);
     }

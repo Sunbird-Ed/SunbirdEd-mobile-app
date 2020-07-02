@@ -1,6 +1,7 @@
 @import "src/assets/styles/base/_variables.scss";
 @import "src/assets/styles/_custom-mixins.scss";
 @import "src/assets/styles/fonts.scss";
+@import "src/assets/styles/_variables.scss";
 :host {
   .loading-backdrop {
     .backdrop-container {
@@ -19,7 +20,7 @@
       @include padding(null, null, 16px, null !important);
     }
 
-    background-color: #ffffff;
+    background-color: map-get($colors, white);
     height: 100%;
     z-index: 1000;
     opacity: 1 !important;
@@ -37,7 +38,7 @@
   }
   .inprogress-courses {
     .bottom-container {
-      background: #efeff4;
+      background: map-get($colors, gray_white);
     }
   }
   .scroll-heading {
@@ -58,14 +59,14 @@
     // @include text-align('end');
   }
   .course-scroll-holder {
-    background-color: #fdfefe;
+    background-color: map-get($colors, white_fe);
   }
   .toolbar-title-md {
     margin-left: -5px !important;
     @include margin(null, null, null, -5px !important);
   }
   .course-page-color {
-    background: #efeff4;
+    background: map-get($colors, gray_white);
   }
   .padding-11 {
     @include padding(11px);
@@ -75,7 +76,7 @@
     height: 134px;
   }
   .devider-line {
-    background: #efeff4;
+    background: map-get($colors, gray_white);
     height: 7px;
   }
 
@@ -86,7 +87,7 @@
   ion-select {
     max-width: 75%;
     font-size: 14px;
-    color: #488aff;
+    color: map-get($colors, vived_blue_ff);
     @extend .font-weight-bold;
   }
   /* To give some space between the icons in the header */
@@ -111,11 +112,11 @@
   }
 
   .enrolled-course-bg {
-    background: linear-gradient(#008840, #008840 100px, white 100px, white 100%);
+    background: linear-gradient($green, $green 100px, white 100px, white 100%);
   }
 
   .course-grid-bg{
-    background-color: #E0F5EA;
+    background-color: map-get($colors, pale_green_e0);
   }
 
   .course-card-pd{

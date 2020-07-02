@@ -2,7 +2,7 @@
 @import "src/assets/styles/_custom-mixins";
 :host {
   .permission-title {
-    color: #333333;
+    color: map-get($colors, primary_black);
     font-size: 16px;
     line-height: 22px;
   }
@@ -26,7 +26,7 @@
 
       .title {
         font-size: 14px;
-        color: #333333;
+        color: map-get($colors, primary_black);
         font-weight: bold;
         line-height: 19px;
       }

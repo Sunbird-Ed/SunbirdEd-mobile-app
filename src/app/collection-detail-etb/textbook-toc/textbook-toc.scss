@@ -1,11 +1,12 @@
 @import "src/assets/styles/base/_variables.scss";
+@import "src/assets/styles/_variables.scss";
 :host {
   .scroll-content {
     padding-bottom: 20% !important;
   }
   .sb-topic-text{
     width: 90.28%;
-    color: #024F9D;
+    color: $blue;
     font-size: 14px;
     font-weight: bold;
     line-height: 20px;
@@ -17,7 +18,7 @@
   .sb-accordian-card {
     margin: 0 !important;
     box-shadow: none;
-    border-bottom: 1px solid #CCCCCC;
+    border-bottom: 1px solid map-get($colors, medium_gray);
   }
   .sb-play-selected{
     font-weight: normal;
