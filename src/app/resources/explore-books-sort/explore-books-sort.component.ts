@@ -24,7 +24,7 @@ export class ExploreBooksSortComponent implements OnInit, OnDestroy {
   @Input() boardList: string[];
   @Input() mediumList: string[];
   @Input() gradeList: string[];
-  @Input() cureLan: string;
+  @Input() curLang: string;
   storyAndWorksheets: Array<any>;
   unregisterBackButton: Subscription;
   searchRequest: ContentSearchCriteria = {
@@ -34,9 +34,8 @@ export class ExploreBooksSortComponent implements OnInit, OnDestroy {
   public imageSrcMap = new Map();
   defaultImg: string;
   constructor(
-    private navParams: NavParams,
     private platform: Platform,
-    public commonUtilService: CommonUtilService,
+    private commonUtilService: CommonUtilService,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private fb: FormBuilder,
     private modalCtrl: ModalController,

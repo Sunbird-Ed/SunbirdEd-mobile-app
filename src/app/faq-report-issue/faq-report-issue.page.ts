@@ -20,9 +20,7 @@ import {
   FrameworkCategoryCode,
   TelemetryService,
   TelemetrySyncStat,
-  CorrelationData,
-  FormRequest,
-  FormService
+  CorrelationData
 } from 'sunbird-sdk';
 import { Environment, InteractType, PageId, ImpressionType, InteractSubtype, CorReleationDataType, ID } from '@app/services/telemetry-constants';
 import { AppGlobalService } from '@app/services/app-global-service.service';
@@ -33,7 +31,7 @@ import { map, tap, switchMap, distinctUntilChanged, catchError } from 'rxjs/oper
 import { TranslateService } from '@ngx-translate/core';
 import { FormControl } from '@angular/forms';
 import { Subscription, defer, of, EMPTY } from 'rxjs';
-import { AppHeaderService } from '@app/services';
+import { AppHeaderService, FormAndFrameworkUtilService } from '@app/services';
 import { Location } from '@angular/common';
 import { FieldConfigOptionsBuilder, FieldConfigOption } from 'common-form-elements';
 import { ExploreBooksSortComponent } from '../resources/explore-books-sort/explore-books-sort.component';
@@ -43,7 +41,7 @@ const KEY_SUNBIRD_CONFIG_FILE_PATH = 'sunbird_config_file_path';
 const SUBJECT_NAME = 'support request';
 
 @Component({
-  selector: 'app-faq-report-issue',
+  selector: 'app-fa-report-issue',
   templateUrl: './faq-report-issue.page.html',
   styleUrls: ['./faq-report-issue.page.scss']
 })
@@ -63,8 +61,6 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
   len: any;
   charEntered: boolean;
   loader: any;
-  private framework: Framework;
-  private formControlSubscriptions: Subscription;
   profile: any = {
     board: [],
     medium: [],
@@ -107,7 +103,6 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
     @Inject('FRAMEWORK_SERVICE') private frameworkService: FrameworkService,
     @Inject('FRAMEWORK_UTIL_SERVICE') private frameworkUtilService: FrameworkUtilService,
     @Inject('TELEMETRY_SERVICE') private telemetryService: TelemetryService,
-    @Inject('FORM_SERVICE') private formService: FormService,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private appGlobalService: AppGlobalService,
     private commonUtilService: CommonUtilService,
@@ -117,7 +112,8 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
     private appVersion: AppVersion,
     private translate: TranslateService,
     private modalCtrl: ModalController,
-    public zone: NgZone
+    public zone: NgZone,
+    private formAndFrameworkUtilService: FormAndFrameworkUtilService
   ) {
     if (this.router.getCurrentNavigation().extras.state) {
       this.data = this.router.getCurrentNavigation().extras.state.data;
@@ -352,7 +348,7 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
         [this.formValues.children.subcategory.medium.name] : null,
         geadeList: (this.formValues.children && this.formValues.children.subcategory && this.formValues.children.subcategory.grade) ?
         [this.formValues.children.subcategory.grade.name] : null,
-        cureLan: this.translate.currentLang
+        curLang: this.translate.currentLang
       }
     });
     this.location.back();
@@ -378,14 +374,7 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
   }
 
   async showContactBoard() {
-    const req: FormRequest = {
-      type: "form",
-      subType: "boardContactInfo",
-      action: "get",
-      component: "app"
-    };
-    const stateContactList = (await this.formService.getForm(req).toPromise() as any).form.data.fields;
-    console.log('contact List', stateContactList);
+    const stateContactList = await this.formAndFrameworkUtilService.getStateContactList();
     stateContactList.forEach(element => {
       if (this.formValues.children.subcategory.board.code === element.id) {
         if (this.isFormValid) {

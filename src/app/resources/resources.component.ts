@@ -31,9 +31,7 @@ import {
   SortOrder,
   CorrelationData,
   ContentsGroupedByPageSection,
-  SearchAndGroupContentRequest,
-  FormService,
-  FormRequest
+  SearchAndGroupContentRequest
 } from 'sunbird-sdk';
 
 import {
@@ -240,7 +238,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     @Inject('FRAMEWORK_SERVICE') private frameworkService: FrameworkService,
     @Inject('CONTENT_SERVICE') private contentService: ContentService,
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
-    @Inject('FORM_SERVICE') private formService: FormService,
     private splaschreenDeeplinkActionHandlerDelegate: SplaschreenDeeplinkActionHandlerDelegate,
     private ngZone: NgZone,
     private qrScanner: SunbirdQRScanner,
@@ -1164,13 +1161,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
         selectedMedium: this.getGroupByPageReq.medium
       }
     };
-    const req: FormRequest = {
-      type: "dynamicform",
-      subType: "support",
-      action: "get",
-      component: "app"
-    } as any;
-    const formConfig = (await this.formService.getForm(req).toPromise() as any).form.data.fields;
+    const formConfig = await this.formAndFrameworkUtilService.getFormConfig();
     formConfig[0]['default'] = FormConfigCategories.CONTENT;
     formConfig[0].templateOptions['hidden'] = true;
     formConfig[1]['default'] = FormConfigSubcategories.CONTENT_AVAILABILITY;

@@ -8,9 +8,6 @@ import { AppHeaderService, } from '@app/services/app-header.service';
 import { FormAndFrameworkUtilService, } from '@app/services/formandframeworkutil.service';
 import { Environment, InteractType, PageId, InteractSubtype, ImpressionType } from '@app/services/telemetry-constants';
 import {
-  ProfileService,
-  ContentService,
-  DeviceInfo,
   SharedPreferences,
   TelemetryObject,
   GetSystemSettingsRequest,
@@ -18,13 +15,8 @@ import {
   SystemSettings,
   FaqService,
   GetFaqRequest,
-  FrameworkUtilService,
-  FrameworkService,
-  FormRequest,
-  FormService
 } from 'sunbird-sdk';
 import { PreferenceKey, appLanguages, RouterLinks } from '../app.constant';
-import { SocialSharing } from '@ionic-native/social-sharing/ngx';
 import { Location } from '@angular/common';
 import { AppVersion } from '@ionic-native/app-version/ngx';
 import { TranslateService } from '@ngx-translate/core';
@@ -67,17 +59,10 @@ export class FaqHelpPage implements OnInit {
   value: any;
   constructor(
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
-    @Inject('PROFILE_SERVICE') private profileService: ProfileService,
-    @Inject('CONTENT_SERVICE') private contentService: ContentService,
-    @Inject('DEVICE_INFO') private deviceInfo: DeviceInfo,
-    @Inject('FORM_SERVICE') private formService: FormService,
     @Inject('SYSTEM_SETTINGS_SERVICE') private systemSettingsService: SystemSettingsService,
     @Inject('FAQ_SERVICE') private faqService: FaqService,
-    @Inject('FRAMEWORK_UTIL_SERVICE') private frameworkUtilService: FrameworkUtilService,
-    @Inject('FRAMEWORK_SERVICE') private frameworkService: FrameworkService,
     private domSanitizer: DomSanitizer,
     private telemetryGeneratorService: TelemetryGeneratorService,
-    private socialSharing: SocialSharing,
     private commonUtilService: CommonUtilService,
     private appGlobalService: AppGlobalService,
     private headerService: AppHeaderService,
@@ -327,14 +312,7 @@ export class FaqHelpPage implements OnInit {
       undefined,
       undefined);
 
-    // setting formConfig value
-    const req: FormRequest = {
-      type: "dynamicform",
-      subType: "support",
-      action: "get",
-      component: "app"
-    };
-    const formConfig = (await this.formService.getForm(req).toPromise() as any).form.data.fields;
+    const formConfig = await this.formAndFrameworkUtilService.getFormConfig();
     this.appGlobalService.formConfig = formConfig;
     this.router.navigate([RouterLinks.FAQ_REPORT_ISSUE], {
       state: {

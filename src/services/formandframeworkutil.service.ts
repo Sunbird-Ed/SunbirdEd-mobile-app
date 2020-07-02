@@ -644,4 +644,24 @@ export class FormAndFrameworkUtilService {
                 });
         });
     }
+
+    async getFormConfig() {
+        const req: FormRequest = {
+            type: "dynamicform",
+            subType: "support",
+            action: "get",
+            component: "app"
+        };
+        return (await this.formService.getForm(req).toPromise() as any).form.data.fields;
+    }
+
+    async getStateContactList() {
+        const req: FormRequest = {
+            type: "form",
+            subType: "boardContactInfo",
+            action: "get",
+            component: "app"
+          };
+          return (await this.formService.getForm(req).toPromise() as any).form.data.fields;
+    }
 }
