@@ -7,11 +7,11 @@ import { Router } from '@angular/router';
 import { RouterLinks, ProfileConstants } from '../app.constant';
 import { TranslateService } from '@ngx-translate/core';
 import { CourseService, Course, CorrelationData, TelemetryObject, GetUserEnrolledCoursesRequest } from '@project-sunbird/sunbird-sdk';
-import {Subscription} from 'rxjs';
-import {Location} from '@angular/common';
-import {Platform} from '@ionic/angular';
+import { Subscription } from 'rxjs';
+import { Location } from '@angular/common';
+import { Platform } from '@ionic/angular';
 import { AppHeaderService } from '@app/services/app-header.service';
-import {ContentUtil} from '@app/util/content-util';
+import { ContentUtil } from '@app/util/content-util';
 
 @Component({
   selector: 'app-curriculum-courses',
@@ -67,10 +67,10 @@ export class CurriculumCoursesPage implements OnInit {
       this.location.back();
     });
     this.telemetryGeneratorService.generateImpressionTelemetry(
-        ImpressionType.VIEW,
-        '',
-        PageId.COURSE_LIST,
-        Environment.HOME
+      ImpressionType.VIEW,
+      '',
+      PageId.COURSE_LIST,
+      Environment.HOME
     );
   }
 
@@ -83,16 +83,17 @@ export class CurriculumCoursesPage implements OnInit {
     }
   }
 
-  async ngOnInit() {
+  ngOnInit() {
     if (this.appGlobalService.isUserLoggedIn()) {
       // TODO: get the current userId
-      const sessionObj = this.appGlobalService.getSessionData();
-      const userId = sessionObj[ProfileConstants.USER_TOKEN];
-      try {
-        this.enrolledCourses = await this.getEnrolledCourses(userId);
-      } catch (error) {
-        console.error('CurriculumCoursesPage', error);
-      }
+      this.appGlobalService.getActiveProfileUid()
+        .then(async (uid) => {
+          try {
+            this.enrolledCourses = await this.getEnrolledCourses(uid);
+          } catch (error) {
+            console.error('CurriculumCoursesPage', error);
+          }
+        });
     }
 
     this.mergeCourseList(this.enrolledCourses, this.courseList);
@@ -103,14 +104,14 @@ export class CurriculumCoursesPage implements OnInit {
     this.corRelationList = this.commonUtilService.deDupe(this.corRelationList, 'type');
     const telemetryObject: TelemetryObject = ContentUtil.getTelemetryObject(course);
     this.telemetryGeneratorService.generateInteractTelemetry(
-        InteractType.TOUCH,
-        InteractSubtype.CONTENT_CLICKED,
-        Environment.HOME,
-        PageId.COURSE_LIST,
-        telemetryObject,
-        undefined,
-        ContentUtil.generateRollUp(undefined, course.identifier),
-        this.corRelationList);
+      InteractType.TOUCH,
+      InteractSubtype.CONTENT_CLICKED,
+      Environment.HOME,
+      PageId.COURSE_LIST,
+      telemetryObject,
+      undefined,
+      ContentUtil.generateRollUp(undefined, course.identifier),
+      this.corRelationList);
     this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], {
       state: {
         content: course,
