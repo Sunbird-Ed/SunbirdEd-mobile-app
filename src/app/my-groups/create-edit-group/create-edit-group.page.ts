@@ -1,13 +1,12 @@
 import { Subscription } from 'rxjs';
-import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import { Platform, AlertController } from '@ionic/angular';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  Profile, GroupService, GroupCreateRequest, GroupJoinStrategy, GroupMemberRole
+  GroupService, GroupCreateRequest, GroupMembershipType
 } from 'sunbird-sdk';
 import { CommonUtilService } from '@app/services/common-util.service';
-import { AppGlobalService } from '@app/services/app-global-service.service';
 import { AppHeaderService } from '@app/services/app-header.service';
 import { Location } from '@angular/common';
 
@@ -16,11 +15,10 @@ import { Location } from '@angular/common';
   templateUrl: './create-edit-group.page.html',
   styleUrls: ['./create-edit-group.page.scss'],
 })
-export class CreateEditGroupPage implements OnInit, OnDestroy {
+export class CreateEditGroupPage {
 
   appName: string;
   createGroupFormSubmitted = false;
-  profile: Profile;
   createGroupForm: FormGroup;
   backButtonFunc: Subscription;
   hasFilledLocation = false;
@@ -39,21 +37,12 @@ export class CreateEditGroupPage implements OnInit, OnDestroy {
     private commonUtilService: CommonUtilService,
     private fb: FormBuilder,
     private translate: TranslateService,
-    private appGlobalService: AppGlobalService,
     private headerService: AppHeaderService,
     private location: Location,
     private platform: Platform,
     private alertCtrl: AlertController,
   ) {
     this.initializeForm();
-  }
-
-  ngOnInit() {
-    this.profile = this.appGlobalService.getCurrentUser();
-  }
-
-  ngOnDestroy() {
-    // this.formControlSubscriptions.unsubscribe();
   }
 
   ionViewWillEnter() {
@@ -100,17 +89,13 @@ export class CreateEditGroupPage implements OnInit, OnDestroy {
     }
   }
 
-  async createGroup(formVal) {
+  private async createGroup(formVal) {
     const loader = await this.commonUtilService.getLoader();
     await loader.present();
     const groupCreateRequest: GroupCreateRequest = {
-      joinStrategy: GroupJoinStrategy.MODERATED,
       name: formVal.groupName,
       description: formVal.groupDesc,
-      members: [{
-        memberId: this.profile.uid,
-        role: GroupMemberRole.ADMIN
-      }]
+      membershipType: GroupMembershipType.MODERATED
     };
     this.groupService.create(groupCreateRequest).toPromise().then(async (res) => {
       await loader.dismiss();
