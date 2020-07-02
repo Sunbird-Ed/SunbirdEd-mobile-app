@@ -5,7 +5,7 @@ import { AppHeaderService, PageId, FormAndFrameworkUtilService, CommonUtilServic
 import { Router, NavigationExtras } from '@angular/router';
 import { RouterLinks, MenuOverflow } from '@app/app/app.constant';
 import { Platform, PopoverController } from '@ionic/angular';
-import { ClassRoomGetByIdRequest, ClassRoomService, ClassRoom } from '@project-sunbird/sunbird-sdk';
+import { GroupService, GetByIdRequest, Group } from '@project-sunbird/sunbird-sdk';
 import { OverflowMenuComponent } from '@app/app/profile/overflow-menu/overflow-menu.component';
 import GraphemeSplitter from 'grapheme-splitter';
 import { SbGenericFormPopoverComponent } from '@app/app/components/popups/sb-generic-form-popover/sb-generic-form-popover.component';
@@ -21,7 +21,7 @@ export class GroupDetailsPage {
 
   headerObservable: any;
   groupId: string;
-  groupDetails: ClassRoom;
+  groupDetails: Group;
   activeTab = 'courses';
   activityList = [];
   memberList = [];
@@ -55,7 +55,7 @@ export class GroupDetailsPage {
   private unregisterBackButton: Subscription;
 
   constructor(
-    @Inject('CLASS_ROOM_SERVICE') public classRoomService: ClassRoomService,
+    @Inject('GROUP_SERVICE') public groupService: GroupService,
     private headerService: AppHeaderService,
     private router: Router,
     private location: Location,
@@ -117,8 +117,9 @@ export class GroupDetailsPage {
 
   async fetchGroupDetails() {
     this.memberList = [];
-    const classRoomGetByIdRequest: ClassRoomGetByIdRequest = {
-      id: this.groupId
+    const getByIdRequest: GetByIdRequest = {
+      id: this.groupId,
+      includeMembers: true
     };
     this.memberListDummy.forEach(m => {
       const member = {
@@ -131,7 +132,7 @@ export class GroupDetailsPage {
       this.memberList.push(member);
     });
     try {
-      this.groupDetails = await this.classRoomService.getById(classRoomGetByIdRequest).toPromise();
+      this.groupDetails = await this.groupService.getById(getByIdRequest).toPromise();
       console.log('this.groupDetails', this.groupDetails);
       this.groupDetails.members.forEach(m => {
         const member = {

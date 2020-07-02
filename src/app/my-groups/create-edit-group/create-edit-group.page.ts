@@ -1,21 +1,15 @@
-import { tap } from 'rxjs/operators';
-import { Subscription, combineLatest, Observable } from 'rxjs';
-import { Component, Inject, ViewChild, OnDestroy, OnInit } from '@angular/core';
-import { IonSelect, Platform, AlertController } from '@ionic/angular';
-import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
+import { Subscription } from 'rxjs';
+import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
+import { Platform, AlertController } from '@ionic/angular';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  Profile,
+  Profile, GroupService, GroupCreateRequest, GroupJoinStrategy, GroupMemberRole
 } from 'sunbird-sdk';
 import { CommonUtilService } from '@app/services/common-util.service';
 import { AppGlobalService } from '@app/services/app-global-service.service';
 import { AppHeaderService } from '@app/services/app-header.service';
-import { Router } from '@angular/router';
 import { Location } from '@angular/common';
-import { ClassRoomService, ClassRoom, ClassRoomCreateRequest } from '@project-sunbird/sunbird-sdk';
-import { RouterLinks } from '@app/app/app.constant';
-import { AppVersion } from '@ionic-native/app-version/ngx';
-
 
 @Component({
   selector: 'app-create-edit-group',
@@ -41,23 +35,21 @@ export class CreateEditGroupPage implements OnInit, OnDestroy {
   };
 
   constructor(
-    @Inject('CLASS_ROOM_SERVICE') public classRoomService: ClassRoomService,
+    @Inject('GROUP_SERVICE') public groupService: GroupService,
     private commonUtilService: CommonUtilService,
     private fb: FormBuilder,
     private translate: TranslateService,
     private appGlobalService: AppGlobalService,
     private headerService: AppHeaderService,
-    private router: Router,
     private location: Location,
     private platform: Platform,
     private alertCtrl: AlertController,
-    private appVersion: AppVersion,
   ) {
     this.initializeForm();
-    this.getAppName();
   }
 
   ngOnInit() {
+    this.profile = this.appGlobalService.getCurrentUser();
   }
 
   ngOnDestroy() {
@@ -73,6 +65,8 @@ export class CreateEditGroupPage implements OnInit, OnDestroy {
     if (this.backButtonFunc) {
       this.backButtonFunc.unsubscribe();
     }
+
+    this.commonUtilService.getAppName().then((res) => { this.appName = res; });
   }
 
   handleBackButtonEvents() {
@@ -84,13 +78,6 @@ export class CreateEditGroupPage implements OnInit, OnDestroy {
         this.location.back();
       }
     });
-  }
-  getAppName() {
-    this.appVersion.getAppName()
-      .then((appName: any) => {
-        this.appName = appName;
-        console.log('this.appName', this.appName);
-      });
   }
 
   initializeForm() {
@@ -116,15 +103,16 @@ export class CreateEditGroupPage implements OnInit, OnDestroy {
   async createGroup(formVal) {
     const loader = await this.commonUtilService.getLoader();
     await loader.present();
-    const createClassRoomReq: ClassRoomCreateRequest = {
+    const groupCreateRequest: GroupCreateRequest = {
+      joinStrategy: GroupJoinStrategy.MODERATED,
       name: formVal.groupName,
-      board: 'formVal.boards[0]',
-      medium: 'formVal.medium',
-      gradeLevel: 'formVal.grades',
-      subject: 'formVal.subjects',
-      // groupDesc: formVal.groupDesc
+      description: formVal.groupDesc,
+      members: [{
+        memberId: this.profile.uid,
+        role: GroupMemberRole.ADMIN
+      }]
     };
-    this.classRoomService.create(createClassRoomReq).toPromise().then(async (res) => {
+    this.groupService.create(groupCreateRequest).toPromise().then(async (res) => {
       await loader.dismiss();
       this.commonUtilService.showToast('GROUP_CREATED');
       this.location.back();
