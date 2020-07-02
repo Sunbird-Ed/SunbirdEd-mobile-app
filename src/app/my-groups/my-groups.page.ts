@@ -4,7 +4,7 @@ import { AppHeaderService } from '@app/services/app-header.service';
 import { RouterLinks, PreferenceKey } from '../app.constant';
 import {
   AuthService, SharedPreferences, GroupService, Group,
-  GroupSearchCriteria, CachedItemRequestSourceFrom, Profile
+  GroupSearchCriteria, CachedItemRequestSourceFrom, Profile, SortOrder
 } from '@project-sunbird/sunbird-sdk';
 import { LoginHandlerService } from '@app/services/login-handler.service';
 import { CommonUtilService, AppGlobalService } from '@app/services';
@@ -26,7 +26,7 @@ export class MyGroupsPage implements OnInit, OnDestroy {
   groupList: GroupData[] = [];
   groupListLoader = false;
   headerObservable: any;
-  profile: Profile;
+  userId: string;
 
   constructor(
     @Inject('AUTH_SERVICE') public authService: AuthService,
@@ -42,7 +42,15 @@ export class MyGroupsPage implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.checkUserLoggedIn();
-    this.profile = this.appGlobalService.getCurrentUser();
+    this.appGlobalService.getActiveProfileUid()
+      .then(async (uid) => {
+        this.userId = uid;
+        const groupInfoScreen = await this.preferences.getBoolean(PreferenceKey.CREATE_GROUP_INFO_POPUP).toPromise();
+        if (!groupInfoScreen) {
+          this.openinfopopup();
+          this.preferences.putBoolean(PreferenceKey.CREATE_GROUP_INFO_POPUP, true).toPromise().then();
+        }
+      });
   }
 
   async checkUserLoggedIn() {
@@ -55,15 +63,10 @@ export class MyGroupsPage implements OnInit, OnDestroy {
     this.headerObservable = this.headerService.headerEventEmitted$.subscribe(eventName => {
       this.handleHeaderEvents(eventName);
     });
-    this.fetchGroupList();
   }
 
   async ionViewDidEnter() {
-    const groupInfoScreen = await this.preferences.getBoolean(PreferenceKey.CREATE_GROUP_INFO_POPUP).toPromise();
-    if (!groupInfoScreen) {
-      this.openinfopopup();
-      this.preferences.putBoolean(PreferenceKey.CREATE_GROUP_INFO_POPUP, true).toPromise().then();
-    }
+    this.fetchGroupList();
   }
 
   ngOnDestroy() {
@@ -95,11 +98,9 @@ export class MyGroupsPage implements OnInit, OnDestroy {
         from: CachedItemRequestSourceFrom.SERVER,
         request: {
           filters: {
-            memberId: this.profile.uid
+            userId: this.userId
           },
-          sort_by: new Map(),
-          limit: 10,
-          offset: 0
+          sort_by: { name: SortOrder.ASC }
         }
       };
       this.groupList = (await this.groupService.search(groupSearchCriteria).toPromise())

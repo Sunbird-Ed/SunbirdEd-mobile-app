@@ -126,7 +126,7 @@ export class AddMemberToGroupPage {
       groupId: this.groupId,
       addMembersRequest: {
         members: [{
-          memberId: this.userDetails.userId,
+          userId: this.userDetails.userId,
           role: GroupMemberRole.MEMBER
         }]
       }

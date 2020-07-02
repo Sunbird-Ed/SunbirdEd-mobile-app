@@ -28,7 +28,7 @@ import { FilterPipe } from '@app/pipes/filter/filter.pipe';
 })
 export class GroupDetailsPage implements OnInit {
 
-  profile: Profile;
+  userId: string;
   headerObservable: any;
   groupId: string;
   groupDetails: Group;
@@ -56,7 +56,10 @@ export class GroupDetailsPage implements OnInit {
   }
 
   ngOnInit() {
-    this.profile = this.appGlobalService.getCurrentUser();
+    this.appGlobalService.getActiveProfileUid()
+      .then((uid) => {
+        this.userId = uid;
+      });
   }
 
   ionViewWillEnter() {
@@ -108,7 +111,10 @@ export class GroupDetailsPage implements OnInit {
     this.memberList = [];
     const getByIdRequest: GetByIdRequest = {
       id: this.groupId,
-      includeMembers: true
+      options: {
+        includeMembers: true,
+        includeActivities: true
+      }
     };
     try {
       this.groupDetails = await this.groupService.getById(getByIdRequest).toPromise();
@@ -186,7 +192,7 @@ export class GroupDetailsPage implements OnInit {
     //   InteractSubtype.SORT_OPTION_CLICKED,
     //   Environment.DOWNLOADS,
     // PageId.GROUP_DETAIL);
-    const selectedMemberDetail = this.memberList.find(m => m.memberId === event.data.identifier);
+    const selectedMemberDetail = this.memberList.find(m => m.userId === event.data.userId);
     let menuList = MenuOverflow.MENU_GROUP_MEMBER_NON_ADMIN;
 
     if (selectedMemberDetail.role === GroupMemberRole.ADMIN) {  // Is admin and creator
@@ -272,7 +278,7 @@ export class GroupDetailsPage implements OnInit {
       const removeMembersRequest: RemoveMembersRequest = {
         groupId: this.groupId,
         removeMembersRequest: {
-          memberIds: [this.profile.uid]
+          userIds: [this.userId]
         }
       };
       try {
@@ -344,7 +350,7 @@ export class GroupDetailsPage implements OnInit {
       const removeMembersRequest: RemoveMembersRequest = {
         groupId: this.groupId,
         removeMembersRequest: {
-          memberIds: [selectedMember.memberId]
+          userIds: [selectedMember.userId]
         }
       };
       try {
@@ -381,7 +387,7 @@ export class GroupDetailsPage implements OnInit {
         groupId: this.groupId,
         updateMembersRequest: {
           members: [{
-            memberId: selectedMember.memberId,
+            userId: selectedMember.userId,
             role: GroupMemberRole.ADMIN
           }]
         }
@@ -420,7 +426,7 @@ export class GroupDetailsPage implements OnInit {
         groupId: this.groupId,
         updateMembersRequest: {
           members: [{
-            memberId: selectedMember.memberId,
+            userId: selectedMember.userId,
             role: GroupMemberRole.MEMBER
           }]
         }
