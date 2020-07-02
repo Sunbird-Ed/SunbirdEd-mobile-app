@@ -10,6 +10,8 @@ import { CommonUtilService } from '@app/services/common-util.service';
 import { AppGlobalService } from '@app/services/app-global-service.service';
 import { AppHeaderService } from '@app/services/app-header.service';
 import { Location } from '@angular/common';
+import { UtilityService } from '@app/services';
+import { RouterLinks } from '@app/app/app.constant';
 
 @Component({
   selector: 'app-create-edit-group',
@@ -44,6 +46,7 @@ export class CreateEditGroupPage implements OnInit, OnDestroy {
     private location: Location,
     private platform: Platform,
     private alertCtrl: AlertController,
+    private utilityService: UtilityService
   ) {
     this.initializeForm();
   }
@@ -59,14 +62,13 @@ export class CreateEditGroupPage implements OnInit, OnDestroy {
   ionViewWillEnter() {
     this.headerService.showHeaderWithBackButton();
     this.handleBackButtonEvents();
+    this.commonUtilService.getAppName().then((res) => { this.appName = res; });
   }
 
   ionViewWillLeave() {
     if (this.backButtonFunc) {
       this.backButtonFunc.unsubscribe();
     }
-
-    this.commonUtilService.getAppName().then((res) => { this.appName = res; });
   }
 
   handleBackButtonEvents() {
@@ -120,6 +122,17 @@ export class CreateEditGroupPage implements OnInit, OnDestroy {
       await loader.dismiss();
       this.commonUtilService.showToast('SOMETHING_WENT_WRONG');
     });
+  }
+
+  async openTermsOfUse() {
+    console.log('openTermsOfUse clicked');
+    // this.generateInteractTelemetry(InteractType.TOUCH, InteractSubtype.TERMS_OF_USE_CLICKED);
+    const baseUrl = await this.utilityService.getBuildConfigValue('TOU_BASE_URL');
+    const url = baseUrl + RouterLinks.TERM_OF_USE;
+    const options
+      = 'hardwareback=yes,clearcache=no,zoom=no,toolbar=yes,disallowoverscroll=yes';
+
+    (window as any).cordova.InAppBrowser.open(url, '_blank', options);
   }
 
 }
