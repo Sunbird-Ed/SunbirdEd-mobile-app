@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
-import { NavParams, PopoverController, NavController, Events, Platform } from '@ionic/angular';
-import orderBy from 'lodash/orderBy';
+import { PopoverController, Events, Platform } from '@ionic/angular';
 import find from 'lodash/find';
 import { CommonUtilService } from '@app/services/common-util.service';
 import { Subscription } from 'rxjs';
@@ -12,6 +11,7 @@ import { TelemetryGeneratorService } from '@app/services/telemetry-generator.ser
 import {
   Environment, InteractSubtype, InteractType, PageId
 } from '@app/services/telemetry-constants';
+
 @Component({
   selector: 'app-filters',
   templateUrl: './filters.page.html',
@@ -27,9 +27,7 @@ export class FiltersPage {
   source: string;
 
   constructor(
-    // private navParams: NavParams,
     private popCtrl: PopoverController,
-    private navCtrl: NavController,
     private events: Events,
     private commonUtilService: CommonUtilService,
     private platform: Platform,
@@ -43,6 +41,17 @@ export class FiltersPage {
     this.init();
     this.handleBackButton();
     console.log('filer ciriteria', this.filterCriteria);
+  }
+
+  ionViewWillEnter() {
+    this.headerService.showHeaderWithBackButton([], this.commonUtilService.translateMessage('FILTER'));
+  }
+
+  ionViewWillLeave() {
+    // Unregister the custom back button action for this page
+    if (this.unregisterBackButton) {
+      this.unregisterBackButton.unsubscribe();
+    }
   }
 
   async openFilterOptions(facet) {
@@ -67,21 +76,21 @@ export class FiltersPage {
   }
 
   applyFilter() {
-    this.navCtrl.pop();
     const values = {
       appliedFilter: {}
     };
     values.appliedFilter = this.filterCriteria;
     this.telemetryGeneratorService.generateInteractTelemetry(
-        InteractType.TOUCH,
-        InteractSubtype.APPLY_FILTER_CLICKED,
-        Environment.HOME,
-        this.source.match('courses') ? PageId.COURSE_SEARCH_FILTER : PageId.LIBRARY_SEARCH_FILTER,
-        undefined,
-        values);
+      InteractType.TOUCH,
+      InteractSubtype.APPLY_FILTER_CLICKED,
+      Environment.HOME,
+      this.source.match('courses') ? PageId.COURSE_SEARCH_FILTER : PageId.LIBRARY_SEARCH_FILTER,
+      undefined,
+      values);
     this.events.publish('search.applyFilter', this.filterCriteria);
-  }
 
+    this.location.back();
+  }
 
   getSelectedOptionCount(facet) {
     let count = 0;
@@ -118,9 +127,9 @@ export class FiltersPage {
         if (facet.name === 'gradeLevel') {
           const maxIndex: number = facet.values.reduce((acc, val) => (val.index && (val.index > acc)) ? val.index : acc, 0);
           facet.values.sort((i, j) => (i.index || maxIndex + 1) - (j.index || maxIndex + 1));
-      } else {
-        facet.values.sort((i, j) => i.name.localeCompare(j.name));
-      }
+        } else {
+          facet.values.sort((i, j) => i.name.localeCompare(j.name));
+        }
         facet.values.forEach((element, index) => {
           if (element.name.toUpperCase() === 'other'.toUpperCase()) {
             const elementVal = element;
@@ -153,17 +162,6 @@ export class FiltersPage {
     this.unregisterBackButton = this.platform.backButton.subscribeWithPriority(10, () => {
       this.location.back();
     });
-  }
-
-  ionViewWillEnter() {
-    this.headerService.showHeaderWithBackButton([], this.commonUtilService.translateMessage('FILTER'));
-  }
-
-  ionViewWillLeave() {
-    // Unregister the custom back button action for this page
-    if (this.unregisterBackButton) {
-      this.unregisterBackButton.unsubscribe();
-    }
   }
 
 }

@@ -8,6 +8,7 @@ import { PipesModule } from '@app/pipes/pipes.module';
 import { TranslateModule } from '@ngx-translate/core';
 import { ComponentsModule } from '../../components/components.module';
 import { AddMemberToGroupPage } from './add-member-to-group.page';
+import { OverflowMenuComponent } from '../../profile/overflow-menu/overflow-menu.component';
 
 const routes: Routes = [
   {
@@ -27,6 +28,7 @@ const routes: Routes = [
     DirectivesModule,
     ComponentsModule
   ],
-  declarations: [AddMemberToGroupPage]
+  declarations: [AddMemberToGroupPage],
+  entryComponents: [OverflowMenuComponent]
 })
 export class AddMemberToGroupPageModule {}

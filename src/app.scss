@@ -1222,21 +1222,11 @@ app-resources{
 }
 
 .popover-my-groups {
-  .popover-content.sc-ion-popover-md {
-    width: 90%;
-    top: 5% !important;
-    bottom: 5% !important;;
-    left: 5% !important;
-  }
-  .mg-popup-flex-item{
-    // flex: 1;
-  }
+  
   .mg-popup-content {
     display: flex;
     flex-direction: column;
     height: 90vh;
-    padding: 16px;
-    position: relative;
     justify-content: space-between;
   }
   .mg-popup-close{
@@ -1251,6 +1241,19 @@ app-resources{
     font-weight: bold;
     text-align: center;
     padding-top: 16px;
+    .am-title{
+      font-size: 18px;
+    }
+    .am-desc{
+      font-size: 16px;
+      font-weight: normal;
+    }
+  }
+  .am-step{
+    font-weight: bold;
+    span{
+      color: $orange;
+    }
   }
   .mg-popup-content-body{
     text-align: center;
@@ -1336,4 +1339,40 @@ ion-modal.sb-progress-loader {
 .bold {
   color: #0ec254;
   font-weight: bold;
+}
+
+.group-option-popover {
+  padding: 16px;
+  ion-item {
+    font-size: 14px;
+    font-family: "Noto Sans";
+  }
+
+  ion-item:nth-child(1) {
+    color: #333333;
+  }
+  ion-item:nth-child(2) {
+    color: $red;
+  }
+}
+
+.group-option-popover .popover-content {
+  top: 82px !important;
+  left: 215px !important;
+  padding: 16px 8px;
+  width: auto;
+  // width: 196px;
+  // height: 80px;
+  ion-item {
+    --min-height: 16px !important;
+    &:first-child{
+      padding-bottom: 16px;
+    }
+    label{
+      margin: 0;
+    }
+    .item-inner{
+      padding: 0;
+    }
+  }
 }

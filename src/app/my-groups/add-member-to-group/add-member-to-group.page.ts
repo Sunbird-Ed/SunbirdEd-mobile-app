@@ -3,13 +3,19 @@ import { Subscription } from 'rxjs';
 import {
   ServerProfileDetailsRequest,
   ProfileService,
+  GroupService,
+  AddMembersRequest,
+  GroupMemberRole
 } from 'sunbird-sdk';
 import { Location } from '@angular/common';
 import { Router, NavigationExtras } from '@angular/router';
 import { RouterLinks, ProfileConstants } from '@app/app/app.constant';
 import { Platform } from '@ionic/angular';
-import { ClassRoomService, ClassRoomAddMemberByIdRequest } from '@project-sunbird/sunbird-sdk';
 import { AppHeaderService, CommonUtilService } from '@app/services';
+import { PopoverController } from '@ionic/angular';
+import {animationGrowInTopRight} from '../../animations/animation-grow-in-top-right';
+import {animationShrinkOutTopRight} from '../../animations/animation-shrink-out-top-right';
+import { MyGroupsPopoverComponent } from '../../components/popups/sb-my-groups-popover/sb-my-groups-popover.component';
 
 @Component({
   selector: 'app-add-member-to-group',
@@ -25,15 +31,17 @@ export class AddMemberToGroupPage {
   groupId: string;
   userDetails;
   private unregisterBackButton: Subscription;
+  appName: string;
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
-    @Inject('CLASS_ROOM_SERVICE') public classRoomService: ClassRoomService,
+    @Inject('GROUP_SERVICE') public groupService: GroupService,
     private headerService: AppHeaderService,
     private router: Router,
     private location: Location,
     private platform: Platform,
-    private commonUtilService: CommonUtilService
+    private commonUtilService: CommonUtilService,
+    private popoverCtrl: PopoverController
   ) {
     const extras = this.router.getCurrentNavigation().extras.state;
     this.groupId = extras.groupId;
@@ -45,6 +53,7 @@ export class AddMemberToGroupPage {
       this.handleHeaderEvents(eventName);
     });
     this.handleDeviceBackButton();
+    this.commonUtilService.getAppName().then((res) => { this.appName = res; });
   }
 
   handleDeviceBackButton() {
@@ -108,11 +117,16 @@ export class AddMemberToGroupPage {
   async onAddToGroup() {
     const loader = await this.commonUtilService.getLoader();
     await loader.present();
-    const addMemberToGroupReq: ClassRoomAddMemberByIdRequest = {
-      memberId: this.userDetails.userId,
+    const addMemberToGroupReq: AddMembersRequest = {
+      addMembersRequest: {
+        members: [{
+          memberId: this.userDetails.userId,
+          role: GroupMemberRole.MEMBER
+        }]
+      },
       groupId: this.groupId
     };
-    this.classRoomService.addMemberById(addMemberToGroupReq).toPromise().then(async (res) => {
+    this.groupService.addMembers(addMemberToGroupReq).toPromise().then(async (res) => {
       await loader.dismiss();
       this.commonUtilService.showToast('MEMBER_ADDED_TO_GROUP');
       this.location.back();
@@ -126,6 +140,26 @@ export class AddMemberToGroupPage {
     this.headerObservable.unsubscribe();
     if (this.unregisterBackButton) {
       this.unregisterBackButton.unsubscribe();
+    }
+  }
+
+  async openinfopopup() {
+    const popover = await this.popoverCtrl.create({
+      component: MyGroupsPopoverComponent,
+      componentProps: {
+        isFromAddMember: true
+      },
+      enterAnimation: animationGrowInTopRight,
+      leaveAnimation: animationShrinkOutTopRight,
+      backdropDismiss: false,
+      showBackdrop: true,
+      cssClass: 'popover-my-groups'
+    });
+    await popover.present();
+    const { data } = await popover.onDidDismiss();
+    if (data === undefined) { // Backdrop clicked
+    } else if (data.closeDeletePopOver) { // Close clicked
+    } else if (data.canDelete) {
     }
   }
 

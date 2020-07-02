@@ -17,7 +17,7 @@ import {
   FrameworkDetailsRequest,
   FrameworkService,
   FrameworkUtilService,
-  GetSuggestedFrameworksRequest, SearchEntry, SearchHistoryService, SortOrder
+  GetSuggestedFrameworksRequest, SearchEntry, SearchHistoryService, SortOrder, AuditState
 } from 'sunbird-sdk';
 import { Map } from '@app/app/telemetryutil';
 import {
@@ -31,7 +31,7 @@ import { FormAndFrameworkUtilService } from '@app/services/formandframeworkutil.
 import { CommonUtilService } from '@app/services/common-util.service';
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import {
-  Environment, ImpressionType, InteractSubtype, InteractType, LogLevel, Mode, PageId, CorReleationDataType
+  Environment, ImpressionType, InteractSubtype, InteractType, LogLevel, Mode, PageId, CorReleationDataType, AuditType
 } from '@app/services/telemetry-constants';
 import { AppHeaderService } from '@app/services/app-header.service';
 import { AppVersion } from '@ionic-native/app-version/ngx';
@@ -60,6 +60,8 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('searchInput') searchBar;
   contentType: Array<string> = [];
   source: string;
+  groupId: string;
+  isFromGroupFlow = false;
   dialCode: string;
   dialCodeResult: Array<any> = [];
   dialCodeContentResult: Array<any> = [];
@@ -142,6 +144,10 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
       this.contentType = extras.contentType;
       this.corRelationList = extras.corRelation;
       this.source = extras.source;
+      if (this.source === PageId.GROUP_DETAIL) {
+        this.isFromGroupFlow = true;
+      }
+      this.groupId = extras.groupId;
       this.enrolledCourses = extras.enrolledCourses;
       this.guestUser = extras.guestUser;
       this.userId = extras.userId;
@@ -163,10 +169,15 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
   ionViewWillEnter() {
     this.headerService.hideHeader();
     this.handleDeviceBackButton();
+
+    if (this.source === PageId.GROUP_DETAIL && this.isFirstLaunch) {
+      this.isFirstLaunch = false;
+      this.handleSearch();
+    }
   }
 
   ionViewDidEnter() {
-    if (!this.dialCode && this.isFirstLaunch) {
+    if (!this.dialCode && this.isFirstLaunch && this.source !== PageId.GROUP_DETAIL) {
       setTimeout(() => {
         this.isFirstLaunch = false;
         this.searchBar.setFocus();
@@ -298,8 +309,17 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
   handleDeviceBackButton() {
     this.backButtonFunc = this.platform.backButton.subscribeWithPriority(10, () => {
       this.navigateToPreviousPage();
-      this.telemetryGeneratorService.generateBackClickedTelemetry(ImpressionType.SEARCH,
-        Environment.HOME, false, undefined, this.corRelationList);
+      if (this.displayDialCodeResult && this.displayDialCodeResult[0].dialCodeResult &&
+        this.displayDialCodeResult[0].dialCodeResult.length) {
+        this.telemetryGeneratorService.generateBackClickedNewTelemetry(
+          true,
+          this.source === PageId.ONBOARDING ? Environment.ONBOARDING : Environment.HOME,
+          PageId.QR_BOOK_RESULT
+        );
+      } else {
+        this.telemetryGeneratorService.generateBackClickedTelemetry(ImpressionType.SEARCH,
+          Environment.HOME, false, undefined, this.corRelationList);
+      }
     });
   }
 
@@ -387,6 +407,8 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
       }
       this.router.navigate([RouterLinks.ENROLLED_COURSE_DETAILS], {
         state: {
+          source: this.source,
+          groupId: this.groupId,
           content: params.content,
           corRelation: params.corRelation,
           isSingleContent: params.isSingleContent,
@@ -428,6 +450,8 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
       } else {
         this.router.navigate([RouterLinks.COLLECTION_DETAIL_ETB], {
           state: {
+            source: this.source,
+            groupId: this.groupId,
             content: params.content,
             corRelation: params.corRelation,
             isSingleContent: params.isSingleContent,
@@ -732,7 +756,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
 
   handleSearch() {
     this.scrollToTop();
-    if (this.searchKeywords.length < 3) {
+    if (this.searchKeywords.length < 3 && this.source !== PageId.GROUP_DETAIL) {
       return;
     }
 
@@ -794,6 +818,9 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private addSearchHistoryEntry() {
+    if (!this.searchKeywords) {
+      return;
+    }
     this.searchHistoryService
       .addEntry({
         query: this.searchKeywords,
@@ -962,6 +989,21 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
           this.showLoader = false;
           if (!this.commonUtilService.networkInfo.isNetworkAvailable) {
             this.commonUtilService.showToast('ERROR_OFFLINE_MODE');
+            const corRelationList: Array<CorrelationData> = [];
+            corRelationList.push({id: this.dialCode, type: CorReleationDataType.QR});
+
+            if (this.source === PageId.ONBOARDING_PROFILE_PREFERENCES) {
+              this.telemetryGeneratorService.generateAuditTelemetry(
+                !this.appGlobalService.isOnBoardingCompleted ? Environment.ONBOARDING : Environment.HOME,
+                AuditState.AUDIT_UPDATED,
+                undefined,
+                AuditType.SET_PROFILE,
+                undefined,
+                undefined,
+                undefined,
+                corRelationList
+              );
+            }
           } else {
             this.commonUtilService.showToast('SOMETHING_WENT_WRONG');
           }
@@ -1082,7 +1124,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
           displayDialCodeResult.push(dialCodeCourseResultObj);
         }
       }
-
+      this.generateImpressionEvent(displayDialCodeResult[0].dialCodeResult);
       let isParentCheckStarted = false;
       if (dialCodeResultObj.dialCodeResult.length === 1 && dialCodeResultObj.dialCodeResult[0].content.length === 1
         && isAllContentMappedToCollection) {
@@ -1110,7 +1152,7 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
         '',
         PageId.DIAL_NOT_LINKED,
         Environment.HOME);
-      this.commonUtilService.showContentComingSoonAlert(this.source);
+      this.commonUtilService.showContentComingSoonAlert(this.source, this.dialCode);
     }
   }
 
@@ -1379,13 +1421,28 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
     this.corRelationList.push(corRelation);
   }
 
-  private generateImpressionEvent() {
-    this.telemetryGeneratorService.generateImpressionTelemetry(
-      ImpressionType.SEARCH, '',
-      this.source ? this.source : PageId.SEARCH,
-      Environment.HOME, '', '', '',
-      undefined,
-      this.corRelationList);
+  private generateImpressionEvent(dialCodeResult?) {
+    if (dialCodeResult && dialCodeResult.length) {
+      const corRelationList: Array<CorrelationData> = [];
+      corRelationList.push({id: this.dialCode, type: CorReleationDataType.QR});
+      corRelationList.push({id: dialCodeResult.length.toString(), type: CorReleationDataType.COUNT_BOOK});
+      this.telemetryGeneratorService.generatePageLoadedTelemetry(
+        PageId.QR_BOOK_RESULT,
+        this.source = PageId.ONBOARDING_PROFILE_PREFERENCES ? Environment.ONBOARDING : Environment.HOME,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        corRelationList
+      );
+    } else {
+      this.telemetryGeneratorService.generateImpressionTelemetry(
+        ImpressionType.SEARCH, '',
+        this.source ? this.source : PageId.SEARCH,
+        Environment.HOME, '', '', '',
+        undefined,
+        this.corRelationList);
+    }
   }
 
   private generateLogEvent(searchResult) {
@@ -1443,23 +1500,34 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
   }
 
   goBack() {
-    this.telemetryGeneratorService.generateBackClickedTelemetry(ImpressionType.SEARCH,
-      Environment.HOME, true, undefined, this.corRelationList);
+    if (this.displayDialCodeResult && this.displayDialCodeResult[0].dialCodeResult && this.displayDialCodeResult[0].dialCodeResult.length) {
+      this.telemetryGeneratorService.generateBackClickedNewTelemetry(
+        false,
+        this.source === PageId.ONBOARDING ? Environment.ONBOARDING : Environment.HOME,
+        PageId.QR_BOOK_RESULT
+      );
+    } else {
+      this.telemetryGeneratorService.generateBackClickedTelemetry(ImpressionType.SEARCH,
+        Environment.HOME, true, undefined, this.corRelationList);
+    }
     this.navigateToPreviousPage();
   }
 
-  getContentCount(resultlist) {
+  getContentCount(displayDialCodeResult) {
     let totalCount = 0;
-    if (resultlist.dialCodeResult.length) {
-      for (let i = 0; i < resultlist.dialCodeResult.length; i++) {
-        if (resultlist.dialCodeResult[i].content && resultlist.dialCodeResult[i].content.length) {
-          totalCount += resultlist.dialCodeResult[i].content.length;
+    displayDialCodeResult.forEach(resultlist => {
+      if (resultlist.dialCodeResult.length) {
+        for (let i = 0; i < resultlist.dialCodeResult.length; i++) {
+          if (resultlist.dialCodeResult[i].content && resultlist.dialCodeResult[i].content.length) {
+            totalCount += resultlist.dialCodeResult[i].content.length;
+          }
         }
       }
-    }
-    if (resultlist.dialCodeContentResult.length) {
-      totalCount += resultlist.dialCodeContentResult.length;
-    }
+      if (resultlist.dialCodeContentResult.length) {
+        totalCount += resultlist.dialCodeContentResult.length;
+      }
+    });
     return totalCount;
   }
+
 }

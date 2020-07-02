@@ -85,6 +85,26 @@
       background-color: #f3f3f3;
       margin:  0 5%;
     }
+
+  .sb-textbook-title-container{
+    height: ($base-block-space * 3);
+    @include margin(null, null, $base-block-space, null);
+    margin-top: 16px;
+    .textbook-icon {
+        height: 17px;	
+        transform: scaleX(-1);
+          @include margin(0, ($base-block-space * 1), 0, 0);
+        color: $tertiary-color;
+    }
+    .textbook-title {
+        height: ($base-block-space * 3);	
+        color: #024F9D;	
+        font-size: 18px;	
+        font-weight: bold;
+        text-transform: capitalize;
+        line-height: ($base-block-space * 3)
+    }
+}
   
   
     ion-item {
@@ -101,9 +121,7 @@
   
     .content-list {
       margin-bottom: 0 !important;
-      padding-top: 16px;
-  
-  
+      margin-top: 16px;
       .label {
         margin-top: 0 !important;
         margin-bottom: 0 !important;
@@ -241,33 +259,10 @@
     }
   
   .sb-textbook-container {
-    margin-top: ($base-block-space * 2);
     @include padding(($base-block-space * 1));
     width: 100%;
     &:last-child{
         margin-bottom: ($base-block-space * 2);
-    }
-  
-    .sb-textbook-items {
-        .sb-textbook-title-container{
-            height: ($base-block-space * 3);
-            @include margin(null, null, $base-block-space, null);
-  
-            .textbook-icon {
-                height: 17px;	
-                transform: scaleX(-1);
-                 @include margin(0, ($base-block-space * 1), 0, 0);
-                color: $tertiary-color;
-            }
-            .textbook-title {
-                height: ($base-block-space * 3);	
-                color: #024F9D;	
-                font-size: 18px;	
-                font-weight: bold;
-                text-transform: capitalize;
-                line-height: ($base-block-space * 3)
-            }
-        }
     }
   
     // .sb-view-all-container {

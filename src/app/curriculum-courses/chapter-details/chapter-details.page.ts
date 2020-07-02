@@ -22,7 +22,7 @@ import {
 import { EnrollCourse } from '@app/app/enrolled-course-details-page/course.interface';
 import {DatePipe, Location} from '@angular/common';
 import { ContentActionsComponent } from './../../components/content-actions/content-actions.component';
-import { PageId, Environment, InteractType, InteractSubtype, ImpressionType } from './../../../services/telemetry-constants';
+import { PageId, Environment, InteractType, InteractSubtype, ImpressionType, AuditType } from './../../../services/telemetry-constants';
 import { Observable, Subscription } from 'rxjs';
 import { ConfirmAlertComponent } from '@app/app/components';
 import { FileSizePipe } from '@app/pipes/file-size/file-size';
@@ -363,7 +363,7 @@ export class ChapterDetailsPage implements OnInit, OnDestroy {
         const cdata = [
           {
               type: 'CourseId',
-              id: this.courseContentData.identifier
+              id: this.courseContentData.identifier || ''
           },
           {
               type: 'BatchId',
@@ -371,22 +371,23 @@ export class ChapterDetailsPage implements OnInit, OnDestroy {
           },
           {
               type: 'UserId',
-              id: this.userId
+              id: this.userId || ''
           },
           {
             type: 'UnitId',
-            id: this.identifier
+            id: this.identifier || ''
         },
         ];
         this.telemetryGeneratorService.generateAuditTelemetry(
           Environment.COURSE,
           AuditState.AUDIT_UPDATED,
           ['progress'],
-          undefined,
+          AuditType.UNIT_PROGRESS,
           this.telemetryObject.id,
           this.telemetryObject.type,
           this.telemetryObject.version,
-          cdata
+          cdata,
+          this.telemetryObject.rollup
         );
       }
     }

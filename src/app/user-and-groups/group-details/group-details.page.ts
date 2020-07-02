@@ -9,11 +9,11 @@ import {
 import {
   AuthService,
   GetAllProfileRequest,
-  Group,
-  GroupService,
+  GroupServiceDeprecated,
+  GroupDeprecated,
+  ProfilesToGroupRequestDeprecated,
   Profile,
   ProfileService,
-  ProfilesToGroupRequest,
   ProfileType,
   SharedPreferences,
   TelemetryObject
@@ -50,7 +50,7 @@ import { map } from 'rxjs/operators';
   styleUrls: ['./group-details.page.scss'],
 })
 export class GroupDetailsPage {
-  group: Group;
+  group: GroupDeprecated;
   currentUserId: string;
   currentGroupId: string;
   userList: Array<Profile> = [];
@@ -64,7 +64,7 @@ export class GroupDetailsPage {
   backButtonFunc: Subscription;
 
   constructor(
-    @Inject('GROUP_SERVICE') private groupService: GroupService,
+    @Inject('GROUP_SERVICE_DEPRECATED') private groupService: GroupServiceDeprecated,
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     @Inject('AUTH_SERVICE') private authService: AuthService,
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
@@ -112,7 +112,7 @@ export class GroupDetailsPage {
       this.profileService.getAllProfiles(profileRequest).pipe(
         map((profiles) => profiles.filter((profile) => !!profile.handle))
       )
-      .toPromise()
+        .toPromise()
         .then((profiles) => {
           this.zone.run(async () => {
             await loader.dismiss();
@@ -440,7 +440,7 @@ export class GroupDetailsPage {
 
       }
     });
-    const req: ProfilesToGroupRequest = {
+    const req: ProfilesToGroupRequestDeprecated = {
       groupId: this.group.gid,
       uidList: this.userUids
     };
@@ -452,7 +452,7 @@ export class GroupDetailsPage {
       }, error => { });
   }
 
-  getGradeNameFromCode(data: Profile | Group): string {
+  getGradeNameFromCode(data: Profile | GroupDeprecated): string {
     if (data.grade && data.grade.length > 0) {
       const gradeName = [];
       data.grade.forEach(code => {

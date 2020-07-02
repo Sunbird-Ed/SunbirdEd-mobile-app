@@ -1,13 +1,15 @@
 import { Component, Inject } from '@angular/core';
-import { Observable, Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { Location } from '@angular/common';
-import { AppHeaderService } from '../../../services/index';
+import { AppHeaderService, PageId, FormAndFrameworkUtilService, CommonUtilService } from '../../../services';
 import { Router, NavigationExtras } from '@angular/router';
 import { RouterLinks, MenuOverflow } from '@app/app/app.constant';
 import { Platform, PopoverController } from '@ionic/angular';
-import { ClassRoomGetByIdRequest, ClassRoomService, ClassRoom } from '@project-sunbird/sunbird-sdk';
+import { GroupService, GetByIdRequest, Group } from '@project-sunbird/sunbird-sdk';
 import { OverflowMenuComponent } from '@app/app/profile/overflow-menu/overflow-menu.component';
 import GraphemeSplitter from 'grapheme-splitter';
+import { SbGenericFormPopoverComponent } from '@app/app/components/popups/sb-generic-form-popover/sb-generic-form-popover.component';
+import { SbGenericPopoverComponent } from '@app/app/components/popups';
 import { FilterPipe } from '@app/pipes/filter/filter.pipe';
 
 @Component({
@@ -19,37 +21,49 @@ export class GroupDetailsPage {
 
   headerObservable: any;
   groupId: string;
-  groupDetails: ClassRoom;
-  activeTab = 'members';
+  groupDetails: Group;
+  activeTab = 'courses';
+  activityList = [];
   memberList = [];
+  filteredMemberList = [];
   memberListDummy = [
     {
+      identifier: '1',
       name: 'Anil',
       isAdmin: true,
+      isCreator: true
     },
     {
+      identifier: '2',
       name: 'Bharath',
+      isAdmin: true
     },
     {
+      identifier: '3',
       name: 'Mani',
     },
     {
+      identifier: '4',
       name: 'Naveen',
     },
     {
+      identifier: '5',
       name: 'Sharath',
     },
   ];
+  searchValue: string;
   private unregisterBackButton: Subscription;
 
   constructor(
-    @Inject('CLASS_ROOM_SERVICE') public classRoomService: ClassRoomService,
+    @Inject('GROUP_SERVICE') public groupService: GroupService,
     private headerService: AppHeaderService,
     private router: Router,
     private location: Location,
     private platform: Platform,
     private popoverCtrl: PopoverController,
-    private filter: FilterPipe
+    private formAndFrameworkUtilService: FormAndFrameworkUtilService,
+    private commonUtilService: CommonUtilService,
+    private filterPipe: FilterPipe
   ) {
     const extras = this.router.getCurrentNavigation().extras.state;
     this.groupId = extras.groupId;
@@ -103,19 +117,22 @@ export class GroupDetailsPage {
 
   async fetchGroupDetails() {
     this.memberList = [];
-    const classRoomGetByIdRequest: ClassRoomGetByIdRequest = {
-      id: this.groupId
+    const getByIdRequest: GetByIdRequest = {
+      id: this.groupId,
+      includeMembers: true
     };
     this.memberListDummy.forEach(m => {
       const member = {
+        identifier: m.identifier,
         title: m.name,
         initial: this.extractInitial(m.name),
-        isAdmin: m.isAdmin ? true : false
+        isAdmin: m.isAdmin ? true : false,
+        isMenu: m.isCreator ? false : true // TODO: if member is group creator then do not show menu
       };
       this.memberList.push(member);
     });
     try {
-      this.groupDetails = await this.classRoomService.getById(classRoomGetByIdRequest).toPromise();
+      this.groupDetails = await this.groupService.getById(getByIdRequest).toPromise();
       console.log('this.groupDetails', this.groupDetails);
       this.groupDetails.members.forEach(m => {
         const member = {
@@ -125,8 +142,9 @@ export class GroupDetailsPage {
         };
         this.memberList.push(member);
       });
-    } catch {
-
+      this.filteredMemberList = new Array(...this.memberList);
+    } catch (e) {
+      console.error(e);
     }
   }
 
@@ -134,30 +152,258 @@ export class GroupDetailsPage {
     this.activeTab = tab;
   }
 
-  async showGroupOptions(event) {
+  async groupMenuClick() {
     // this.telemetryGeneratorService.generateInteractTelemetry(
     //   InteractType.TOUCH,
     //   InteractSubtype.SORT_OPTION_CLICKED,
     //   Environment.DOWNLOADS,
-    //   PageId.DOWNLOADS);
+    // PageId.GROUP_DETAIL);
+
+    let menuList = MenuOverflow.MENU_GROUP_ADMIN;
+    // TODO: Handle below condition while API intigration.
+    // if (!isAdmin) {
+    //   menuList = MenuOverflow.MENU_GROUP_NON_ADMIN;
+    // }
+
     const groupOptions = await this.popoverCtrl.create({
       component: OverflowMenuComponent,
-      event,
       componentProps: {
-        list: MenuOverflow.GROUP_OPTIONS
+        list: menuList
+      },
+      cssClass: 'group-option-popover'
+    });
+    await groupOptions.present();
+
+    const { data } = await groupOptions.onDidDismiss();
+    if (data) {
+      console.log('dataon dismiss', data);
+      if (data.selectedItem === 'MENU_EDIT_GROUP_DETAILS') {
+        this.router.navigate([`/${RouterLinks.MY_GROUPS}/${RouterLinks.CREATE_EDIT_GROUP}`]);
+      } else if (data.selectedItem === 'MENU_DELETE_GROUP') {
+        this.showDeleteGroupPopup();
+      }
+    }
+  }
+
+  async activityMenuClick(event) {
+    // this.telemetryGeneratorService.generateInteractTelemetry(
+    //   InteractType.TOUCH,
+    //   InteractSubtype.SORT_OPTION_CLICKED,
+    //   Environment.DOWNLOADS,
+    // PageId.GROUP_DETAIL);
+
+    const groupOptions = await this.popoverCtrl.create({
+      component: OverflowMenuComponent,
+      componentProps: {
+        list: MenuOverflow.MENU_GROUP_ACTIVITY_ADMIN
       },
       cssClass: 'download-popover'
     });
     await groupOptions.present();
+
     const { data } = await groupOptions.onDidDismiss();
     if (data) {
       console.log('dataon dismiss', data);
+      if (data.selectedItem === 'MENU_EDIT_GROUP_DETAILS') {
+        this.router.navigate([`/${RouterLinks.MY_GROUPS}/${RouterLinks.CREATE_EDIT_GROUP}`]);
+      } else if (data.selectedItem === 'MENU_DELETE_GROUP') {
+        this.showDeleteGroupPopup();
+      }
     }
   }
 
-  onSearch(text) {
-    console.log('onsearch', text);
-    // this.memberList = this.filter.transform(this.memberList, text);
+  async memberMenuClick(event) {
+    // this.telemetryGeneratorService.generateInteractTelemetry(
+    //   InteractType.TOUCH,
+    //   InteractSubtype.SORT_OPTION_CLICKED,
+    //   Environment.DOWNLOADS,
+    // PageId.GROUP_DETAIL);
+    const selectedMemberDetail = this.memberList.find(m => m.identifier === event.data.identifier);
+    let menuList = MenuOverflow.MENU_GROUP_MEMBER_NON_ADMIN;
+
+    if (selectedMemberDetail.isAdmin) {  // Is admin and creator
+      menuList = MenuOverflow.MENU_GROUP_MEMBER_ADMIN;
+    }
+
+    const groupOptions = await this.popoverCtrl.create({
+      component: OverflowMenuComponent,
+      componentProps: {
+        list: menuList
+      },
+      cssClass: 'download-popover'
+    });
+    await groupOptions.present();
+
+    const { data } = await groupOptions.onDidDismiss();
+    if (data) {
+      console.log('dataon dismiss', data);
+      if (data.selectedItem === 'MENU_MAKE_GROUP_ADMIN') {
+        this.showMakeGroupAdminPopup(selectedMemberDetail.title);
+      } else if (data.selectedItem === 'MENU_REMOVE_FROM_GROUP') {
+        this.showRemoveMemberPopup(selectedMemberDetail.title);
+      } else if (data.selectedItem === 'DISMISS_AS_GROUP_ADMIN') {
+        this.showDismissAsGroupAdminPopup(selectedMemberDetail.title);
+      }
+    }
+  }
+
+  private async showDeleteGroupPopup() {
+    // TODO: Add telemetry
+    const deleteConfirm = await this.popoverCtrl.create({
+      component: SbGenericPopoverComponent,
+      componentProps: {
+        sbPopoverHeading: this.commonUtilService.translateMessage('DELETE_GROUP_POPUP_TITLE'),
+        actionsButtons: [
+          {
+            btntext: this.commonUtilService.translateMessage('REMOVE'),
+            btnClass: 'popover-color'
+          },
+        ],
+        icon: null,
+        sbPopoverContent: this.commonUtilService.translateMessage('DELETE_GROUP_DESC', { group_name: this.groupDetails.name })
+      },
+      cssClass: 'sb-popover danger',
+    });
+    await deleteConfirm.present();
+
+    const { data } = await deleteConfirm.onDidDismiss();
+    if (data) {
+      this.location.back();
+    }
+  }
+
+  private async showLeaveGroupPopup() {
+    // TODO: Add telemetry
+    const deleteConfirm = await this.popoverCtrl.create({
+      component: SbGenericPopoverComponent,
+      componentProps: {
+        sbPopoverHeading: this.commonUtilService.translateMessage('LEAVE_GROUP_POPUP_TITLE'),
+        actionsButtons: [
+          {
+            btntext: this.commonUtilService.translateMessage('LEAVE_GROUP'),
+            btnClass: 'popover-color'
+          },
+        ],
+        icon: null,
+        sbPopoverContent: this.commonUtilService.translateMessage('LEAVE_GROUP_POPUP_DESC', { group_name: this.groupDetails.name })
+      },
+      cssClass: 'sb-popover danger',
+    });
+    await deleteConfirm.present();
+
+    const { data } = await deleteConfirm.onDidDismiss();
+    if (data) {
+      // TODO: API integration
+      this.location.back();
+    }
+  }
+
+  private async showRemoveActivityPopup() {
+    // TODO: Add telemetry
+    const deleteConfirm = await this.popoverCtrl.create({
+      component: SbGenericPopoverComponent,
+      componentProps: {
+        sbPopoverHeading: this.commonUtilService.translateMessage('REMOVE_ACTIVITY_POPUP_TITLE'),
+        actionsButtons: [
+          {
+            btntext: this.commonUtilService.translateMessage('REMOVE_ACTIVITY'),
+            btnClass: 'popover-color'
+          },
+        ],
+        icon: null,
+        sbPopoverContent: this.commonUtilService.translateMessage('REMOVE_ACTIVITY_GROUP_DESC')
+      },
+      cssClass: 'sb-popover danger',
+    });
+    await deleteConfirm.present();
+
+    const { data } = await deleteConfirm.onDidDismiss();
+    if (data) {
+      // TODO: API integration
+    }
+  }
+
+  private async showRemoveMemberPopup(memberName) {
+    // TODO: Add telemetry
+    const deleteConfirm = await this.popoverCtrl.create({
+      component: SbGenericPopoverComponent,
+      componentProps: {
+        sbPopoverHeading: this.commonUtilService.translateMessage('REMOVE_MEMBER_POPUP_TITLE'),
+        actionsButtons: [
+          {
+            btntext: this.commonUtilService.translateMessage('REMOVE_MEMBER'),
+            btnClass: 'popover-color'
+          },
+        ],
+        icon: null,
+        sbPopoverContent: this.commonUtilService.translateMessage('REMOVE_MEMBER_GROUP_DESC', { member_name: memberName })
+      },
+      cssClass: 'sb-popover danger',
+    });
+    await deleteConfirm.present();
+
+    const { data } = await deleteConfirm.onDidDismiss();
+    if (data) {
+      // TODO: API integration
+    }
+  }
+
+  private async showMakeGroupAdminPopup(memberName) {
+    // TODO: Add telemetry
+    const deleteConfirm = await this.popoverCtrl.create({
+      component: SbGenericPopoverComponent,
+      componentProps: {
+        sbPopoverHeading: this.commonUtilService.translateMessage('MAKE_GROUP_ADMIN_POPUP_TITLE'),
+        actionsButtons: [
+          {
+            btntext: this.commonUtilService.translateMessage('MAKE_ADMIN'),
+            btnClass: 'popover-color'
+          },
+        ],
+        icon: null,
+        sbPopoverContent: this.commonUtilService.translateMessage('MAKE_GROUP_ADMIN_POPUP_DESC',
+          { member_name: memberName })
+      },
+      cssClass: 'sb-popover',
+    });
+    await deleteConfirm.present();
+
+    const { data } = await deleteConfirm.onDidDismiss();
+    if (data) {
+      // TODO: API integration
+    }
+  }
+
+  private async showDismissAsGroupAdminPopup(memberName) {
+    // TODO: Add telemetry
+    const deleteConfirm = await this.popoverCtrl.create({
+      component: SbGenericPopoverComponent,
+      componentProps: {
+        sbPopoverHeading: this.commonUtilService.translateMessage('DISMISS_AS_GROUP_ADMIN_POPUP_TITLE'),
+        actionsButtons: [
+          {
+            btntext: this.commonUtilService.translateMessage('DISMISS_AS_GROUP_ADMIN'),
+            btnClass: 'popover-color'
+          },
+        ],
+        icon: null,
+        sbPopoverContent: this.commonUtilService.translateMessage('DISMISS_AS_GROUP_ADMIN_POPUP_DESC',
+          { member_name: memberName })
+      },
+      cssClass: 'sb-popover',
+    });
+    await deleteConfirm.present();
+
+    const { data } = await deleteConfirm.onDidDismiss();
+    if (data) {
+      // TODO: API integration
+    }
+  }
+
+  onSearch(searchText) {
+    console.log('onsearch', searchText);
+    this.searchValue = searchText;
+    this.filteredMemberList = [...this.filterPipe.transform(this.memberList, 'title', searchText)];
   }
 
   extractInitial(name) {
@@ -166,14 +412,59 @@ export class GroupDetailsPage {
     return split[0];
   }
 
-  navigateToActivityDetails() {
+  navigateToActivityDetails(event) {
     const navigationExtras: NavigationExtras = {
       state: {
-        groupId: this.groupId
+        groupId: this.groupId,
+        memberList: this.memberList
       }
     };
     this.router.navigate([`/${RouterLinks.MY_GROUPS}/${RouterLinks.ACTIVITY_DETAILS}`], navigationExtras);
+  }
 
+  async showAddActivityPopup() {
+    try {
+      const supportedActivityList = await this.formAndFrameworkUtilService.invokeSupportedGroupActivitiesFormApi();
+
+      const selectActivityPopup = await this.popoverCtrl.create({
+        component: SbGenericFormPopoverComponent,
+        componentProps: {
+          sbPopoverHeading: this.commonUtilService.translateMessage('SELECT_ACTIVITY'),
+          actionsButtons: [
+            {
+              btntext: this.commonUtilService.translateMessage('NEXT'),
+              btnClass: 'popover-color'
+            }
+          ],
+          icon: null,
+          formItems: supportedActivityList
+        },
+        cssClass: 'sb-popover info',
+      });
+      await selectActivityPopup.present();
+      const { data } = await selectActivityPopup.onDidDismiss();
+      if (data && data.selectedVal && data.selectedVal.activityType === 'Content') {
+        this.search(data);
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
+  private async search(data) {
+    // this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
+    //   InteractSubtype.SEARCH_BUTTON_CLICKED,
+    //   Environment.HOME,
+    //   PageId.COURSES);
+    // const contentType = ContentType.FOR_COURSE_TAB;
+    // const contentType = await this.formAndFrameworkUtilService.getSupportedContentFilterConfig(ContentFilterConfig.NAME_COURSE);
+    this.router.navigate([RouterLinks.SEARCH], {
+      state: {
+        contentType: data.selectedVal.activityValues,
+        source: PageId.GROUP_DETAIL,
+        groupId: this.groupId
+      }
+    });
   }
 
 }

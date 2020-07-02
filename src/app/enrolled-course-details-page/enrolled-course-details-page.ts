@@ -61,7 +61,8 @@ import {
   Mode,
   PageId,
   CorReleationDataType,
-  ID
+  ID,
+  AuditType
 } from '../../services/telemetry-constants';
 import { ProfileConstants, ContentType, EventTopics, MimeType, PreferenceKey, RouterLinks, ShareItemType } from '../app.constant';
 import { BatchConstants } from '../app.constant';
@@ -179,6 +180,8 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
   backButtonFunc = undefined;
   shouldGenerateEndTelemetry = false;
   source = '';
+  groupId: string;
+  isFromGroupFlow = false;
   /** Whole child content is stored and it is used to find first child */
   isBatchNotStarted = false;
   private eventSubscription: Subscription;
@@ -262,6 +265,10 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
       this.identifier = this.courseCardData.contentId || this.courseCardData.identifier;
       this.corRelationList = extrasState.corRelation;
       this.source = extrasState.source;
+      if (this.source === PageId.GROUP_DETAIL) {
+        this.isFromGroupFlow = true;
+      }
+      this.groupId = extrasState.groupId;
       this.isQrCodeLinkToContent = extrasState.isQrCodeLinkToContent;
       this.resumeCourseFlag = extrasState.resumeCourseFlag || false;
     }
@@ -1744,27 +1751,28 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
       this.appGlobalService.generateCourseCompleteTelemetry = false;
       const cdata = [
         {
-            type: 'CourseId',
-            id: this.identifier
+          type: 'CourseId',
+          id: this.identifier
         },
         {
-            type: 'BatchId',
-            id: this.batchDetails.id || ''
+          type: 'BatchId',
+          id: this.batchDetails.id || ''
         },
         {
-            type: 'UserId',
-            id: this.userId
+          type: 'UserId',
+          id: this.userId
         },
       ];
       this.telemetryGeneratorService.generateAuditTelemetry(
         Environment.COURSE,
         AuditState.AUDIT_UPDATED,
         ['progress'],
-        undefined,
+        AuditType.COURSE_PROGRESS,
         this.telemetryObject.id,
         this.telemetryObject.type,
         this.telemetryObject.version,
-        cdata
+        cdata,
+        this.telemetryObject.rollup
       );
     }
   }
@@ -1944,6 +1952,11 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
   }
 
   onTocCardClick(event) {
+    // If from group flow then should not go to next page.
+    if (this.isFromGroupFlow) {
+      return;
+    }
+
     if (event.item.mimeType === MimeType.COLLECTION) {
       this.telemetryGeneratorService.generateInteractTelemetry(
         InteractType.TOUCH,
@@ -2000,6 +2013,10 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
       });
     }
     return this.nextContent;
+  }
+
+  addToGroupActivity() {
+    this.location.back();
   }
 
 }
