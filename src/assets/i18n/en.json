@@ -160,7 +160,8 @@
   "CREDITS_LICENCE_INFO": "Credits & License Info",
   "CSV_DOWNLOAD_SUCCESS": "{{%s}} saved in ‘Downloads’",
   "CURRENT_LANGUAGE": "Current Language ",
-  "DATA": "See more books and content",
+  "REQUEST_CONTENT": "Request for Content",
+  "SEE_MORE_BOOKS": "See more books and content",
   "DATA_SYNC": "Data Sync",
   "DATA_SYNC_FAILURE": "Could not sync data,  try again later",
   "DATA_SYNC_NOTHING_TO_SYNC": "Nothing to sync",
@@ -753,5 +754,8 @@
   "TUTORIAL_BUTTON": "Choose a textbook to start",
   "EXP_VIDEOS": "explanation videos",
   "QUES_BANKS": "question banks",
-  "INTERACTIVE_MATERIAL": "interactive study material"
+  "INTERACTIVE_MATERIAL": "interactive study material",
+  "THANKING_NOTE": "We will notify you as soon as your state board uploads your requested books on {{%s}}",
+  "EXPLORE_HEADING": "Explore following on {{%s}}",
+  "SEE_MORE_CONTENT": "See more content"
 }

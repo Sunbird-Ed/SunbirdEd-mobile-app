@@ -8,6 +8,9 @@ import { IonicModule } from '@ionic/angular';
 import { FaqReportIssuePage } from './faq-report-issue.page';
 import { TranslateModule } from '@ngx-translate/core';
 import { DirectivesModule } from '@app/directives/directives.module';
+import { CommonFormElementsModule } from 'common-form-elements';
+import { ComponentsModule } from '../components/components.module';
+import { CommonConsumptionModule } from '@project-sunbird/common-consumption';
 
 const routes: Routes = [
   {
@@ -24,6 +27,9 @@ const routes: Routes = [
     IonicModule,
     TranslateModule,
     ReactiveFormsModule,
+    ComponentsModule,
+    CommonFormElementsModule,
+    CommonConsumptionModule,
     RouterModule.forChild(routes)
   ],
   declarations: [FaqReportIssuePage]

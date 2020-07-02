@@ -191,12 +191,13 @@ P{
         font-size: 12px;
         padding-right: 16px;
     }
-    .initiate-email-info-button{
+    .initiate-email-info-button {
+        background: #FFF;
         left: 0px;
-    right: 0px;
-    position: fixed;
-    top: 88vh;
-    padding: 0px 16px 70px 16px;
+        right: 0px;
+        position: fixed;
+        top: 90vh;
+        padding: 0px 16px 70px 16px;
     }
 }
 @media only screen and (min-width : 1025px) {
@@ -220,8 +221,7 @@ img>.report-button{
     text-align: center;
     padding: 15px;
 }
-.send-email-form{
-    text-align: center;
+.send-email-form {
     margin: 0 16px;
 }
 #send-email-form{
