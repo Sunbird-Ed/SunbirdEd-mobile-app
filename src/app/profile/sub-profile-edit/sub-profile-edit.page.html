@@ -7,7 +7,11 @@
     </div>
   </div>
 
-  <app-common-forms *ngIf="formInitilized" #commonForms [formList]="managedUserFormList" (onFormDataChange)="onFormDataChange($event)"></app-common-forms>
+  <app-common-forms *ngIf="formInitilized" 
+    [config]="managedUserFormList" 
+    (valueChanges)="formValueChanges($event)"
+    (statusChanges)="formStatusChanges($event)">
+  </app-common-forms>
 </ion-content>
 
 <ion-footer>

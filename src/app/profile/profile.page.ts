@@ -982,6 +982,8 @@ export class ProfilePage implements OnInit {
 
   getSelfDeclaredTeacherDetails() {
     this.selfDeclaredTeacherDetails = {
+      state: '',
+      district: '',
       schoolName: '',
       udiseId: '',
       teacherId: ''
@@ -990,6 +992,12 @@ export class ProfilePage implements OnInit {
     if (this.isCustodianOrgId && this.profile && this.profile.externalIds) {
       this.profile.externalIds.forEach(ele => {
         switch (ele.idType) {
+          case 'declared-state':
+            this.selfDeclaredTeacherDetails.state = ele.id;
+            break;
+          case 'declared-district':
+            this.selfDeclaredTeacherDetails.district = ele.id;
+            break;
           case 'declared-school-name':
             this.selfDeclaredTeacherDetails.schoolName = ele.id;
             break;

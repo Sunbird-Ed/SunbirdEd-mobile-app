@@ -72,13 +72,8 @@
     --border-color: var(--ion-color-danger, #f1453d);
   }
 
-  ion-button{
-    --background: #024F9D !important;
-  }
-
   .item-label-stacked ion-input {
     border-radius: 5px;
-    margin-top: 16px;
     padding-left: 16px !important;
     padding-right: 16px !important;
     font-size: 14px;
@@ -86,11 +81,11 @@
 
   .cf-input-primary ion-input{
     font-weight: bold;
-    border: 1px solid #006de5;
+    border: none;
     --placeholder-opacity: 0.3 !important;
   }
 
-  .cf-input-error ion-input{
+  .cf-input-error{
     border: 1px solid red;
   }
 
@@ -186,4 +181,47 @@ ion-checkbox {
   margin-right: 8px;
   --background-checked: #024F9D !important;
   --border-color-checked: #024F9D !important;
+}
+
+.merged-input-container {
+  border: 1px solid #4a90e2;
+  display: flex;
+  flex: 1 1 auto;
+  border-radius: 6px;
+  .decorator {
+    display: inline-block;
+    max-width: 50px;
+  }
+  .custom {
+    display: inline-block;
+  }
+  ion-input{
+    border: none;
+  }
+  span{
+    font-size: 14px;
+    opacity: 0.7;
+    margin: auto;
+  }
+
+}
+
+.verification-btn{
+  text-align: center;
+  ion-button {
+    --background: #008840 !important;
+  }
+}
+
+.otp-validator{
+  padding-left: 8px;
+  padding-right: 8px;
+}
+
+.prefix{
+  padding-left: 8px;;
+}
+
+.required-star{
+  color: red;
 }
