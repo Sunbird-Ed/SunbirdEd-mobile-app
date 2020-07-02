@@ -4,7 +4,7 @@ import { AppHeaderService } from '@app/services/app-header.service';
 import { RouterLinks, PreferenceKey } from '../app.constant';
 import {
   AuthService, SharedPreferences, GroupService, Group,
-  GroupSearchCriteria, CachedItemRequestSourceFrom, Profile, SortOrder
+  GroupSearchCriteria, CachedItemRequestSourceFrom, SortOrder
 } from '@project-sunbird/sunbird-sdk';
 import { LoginHandlerService } from '@app/services/login-handler.service';
 import { CommonUtilService, AppGlobalService } from '@app/services';
@@ -53,9 +53,8 @@ export class MyGroupsPage implements OnInit, OnDestroy {
       });
   }
 
-  async checkUserLoggedIn() {
-    const session = await this.authService.getSession().toPromise();
-    this.isGuestUser = !session;
+  private checkUserLoggedIn() {
+    this.isGuestUser = !this.appGlobalService.isUserLoggedIn();
   }
 
   ionViewWillEnter() {
