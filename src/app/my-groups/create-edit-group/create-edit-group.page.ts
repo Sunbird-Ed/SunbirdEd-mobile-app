@@ -100,7 +100,7 @@ export class CreateEditGroupPage implements OnInit, OnDestroy {
     }
   }
 
-  async createGroup(formVal) {
+  private async createGroup(formVal) {
     const loader = await this.commonUtilService.getLoader();
     await loader.present();
     const groupCreateRequest: GroupCreateRequest = {

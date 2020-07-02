@@ -42,8 +42,8 @@
           <div *ngFor="let member of filteredMemberList; let i = index">
             <sb-member-card [config]="{size:'medium', isBold:false, isSelectable:false, view:'horizontal'}"
               [identifier]="member.identifier" [indexOfMember]="i"
-              [initial]="commonUtilService.extractInitial(member.title)" [title]="member.title" [isMenu]="member.isMenu"
-              [isAdmin]="member.isAdmin" (menuClick)="memberMenuClick($event)">
+              [initial]="commonUtilService.extractInitial(member.name)" [title]="member.name" [isMenu]="member.isMenu"
+              [isAdmin]="member.role === 'admin'" (menuClick)="memberMenuClick($event)">
             </sb-member-card>
           </div>
         </div>
