@@ -17,8 +17,8 @@
     .progress-outer-course{	
        width: 100%;	
        text-align: center;	
-       background-color:#d8d8d8;	
-       color: #FFFFFF;
+       background-color: map-get($colors, light_silver);	
+       color: map-get($colors, white);
     }
     .progress-inner-onboard {
         min-width: 0;

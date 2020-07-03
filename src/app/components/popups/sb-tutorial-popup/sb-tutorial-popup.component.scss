@@ -1,3 +1,4 @@
+@import "src/assets/styles/_variables.scss";
 img.arrow-icon{
   display: inline-block;
   width: 22px;
@@ -34,12 +35,12 @@ img.arrow-icon{
   font-size: 14px;
   line-height: 19px;
   text-align: center;
-  color: #333333;
+  color: map-get($colors, primary_black);
 }
 
 #heading-text {
   margin-top: 1rem;
-  color: #333333;
+  color: map-get($colors, primary_black);
   font-weight: bold;
   padding-left: 5em;
   padding-right: 4em;

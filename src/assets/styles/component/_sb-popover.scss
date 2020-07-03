@@ -1,4 +1,5 @@
 /*Sb popover css*/
+@import "src/assets/styles/_variables.scss";
 .sb-popover {
   ion-backdrop {
     background-color: rgba(0, 0, 0, 0.59);
@@ -285,34 +286,34 @@
     padding: 16px;
 
     .popover-button-cancel {
-      background-color: #fff;
+      background-color: map-get($colors, white);
       --background: white;
-      border: 1px solid #024f9d;
-      color: #024f9d !important;
+      border: 1px solid $blue;
+      color: $blue !important;
       width: 150px;
     }
     @media only screen and (max-width : 720px) {
     .popover-button-cancel-longlength { 
-      background-color: #fff;
+      background-color: map-get($colors, white);
       --background: white;
-      border: 1px solid #024f9d;
-      color: #024f9d !important;
+      border: 1px solid $blue;
+      color: $blue !important;
       width: 160px;
       padding: 8px;
     }
     }
     @media only screen and (min-width : 721px) and (max-width : 1025px) {
       .popover-button-cancel-longlength { 
-        background-color: #fff;
+        background-color: map-get($colors, white);
         --background: white;
-        border: 1px solid #024f9d;
-        color: #024f9d !important;
+        border: 1px solid $blue;
+        color: $blue !important;
         width: 150px;
     }
   }
     .popover-button-allow {
-      border: 1px solid #024f9d;
-      background-color: #024f9d;
+      border: 1px solid $blue;
+      background-color: $blue;
       width: 150px;
     }
 
@@ -382,7 +383,7 @@
   --max-height: 100% !important;
   .popover-content{
     --max-height: 100% !important;
-    background: #fff !important;
+    background: map-get($colors, white) !important;
     .rating-full-height {
       height: 100vh !important;
     }

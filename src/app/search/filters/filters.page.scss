@@ -32,7 +32,7 @@
       flex-wrap: nowrap;
       align-items:center;
       justify-content:center;
-      background-color:#f1f1f1;
+      background-color: map-get($colors, white_f1);
       padding: 23px;
       margin-bottom: 12px;
       .card-text {

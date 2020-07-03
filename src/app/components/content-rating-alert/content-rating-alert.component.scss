@@ -1,6 +1,7 @@
 @import "src/assets/styles/base/_variables.scss";
 @import "src/assets/styles/_custom-mixins.scss";
 @import "src/assets/styles/variables";
+@import "src/assets/styles/_variables.scss";
 
 
 :host {
@@ -26,7 +27,7 @@
     .rating-qstn{
       margin-left: 16px;
       padding: 16px 0;
-      border-top: 1px solid #a4a4a4;
+      border-top: 1px solid map-get($colors, gray_solid);
       font-size: 16px;
     }
   }
@@ -35,7 +36,7 @@
       --min-height: 30px;
       display: flex;
       padding: 8px 8px 8px 0;
-      border-bottom: 1px solid #eeeeee8c;
+      border-bottom: 1px solid map-get($colors, light_gray_8c);
       margin-left: 16px;
       // &:last-child{
       //   &.active{
@@ -43,13 +44,13 @@
       //   }
       // }
       .rating-label{
-        color: #999;
+        color: $gray-300;
         font-size: 14px;
         margin: 0;
         flex: 1 1 0;
         text-align: left;
         &.active-label{
-          color: #074F9D;
+          color: map-get($colors, brighter_blue);
         }
       }
       ion-checkbox{
@@ -62,7 +63,7 @@
         padding: 5px;
         width: 100%;
         margin: 10px 0;
-        border: 1px solid #eee;
+        border: 1px solid map-get($colors, empty_color);
         border-radius: 5px;
         resize: none;
       }

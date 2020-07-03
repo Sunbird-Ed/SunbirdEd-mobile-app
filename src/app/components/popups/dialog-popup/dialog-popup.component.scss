@@ -1,4 +1,5 @@
 @import "src/assets/styles/variables";
+@import "src/assets/styles/_variables.scss";
 .popover-alert .popover-content {
     margin: 0;
     width: 100% !important;
@@ -18,9 +19,9 @@
   }
   
   .popover-alert .close-button{
-      background-color: #ffffff;
+      background-color: map-get($colors, white);
       box-shadow: unset;
-      color: black;
+      color: map-get($colors, black);
   }
 
   .popover-alert .alert-header{

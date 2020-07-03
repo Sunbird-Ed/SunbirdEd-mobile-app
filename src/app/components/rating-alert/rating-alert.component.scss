@@ -1,6 +1,7 @@
 @import "src/assets/styles/base/_variables.scss";
 @import "src/assets/styles/_custom-mixins.scss";
 @import "src/assets/styles/variables.scss";
+@import "src/assets/styles/_variables.scss";
 :host {
   
     .sb-modal-close{
@@ -95,7 +96,7 @@
     }
 
     .sb-popover-items{
-      background-color: #fff;
+      background-color: map-get($colors, white);
       border-radius: 5px;
     }
         
