@@ -1,5 +1,6 @@
 @import "src/assets/styles/base/_variables.scss";
 @import "src/assets/styles/_custom-mixins";
+@import "src/assets/styles/_variables.scss";
 :host {
   .clear-btn {
     @include rtl {
@@ -18,7 +19,7 @@
   }
 
   ion-content {
-    --background: #d9e5f0;
+    --background: #{map-get($colors, pale_blue_f0)};
   }
 
   ion-list.list-md {

@@ -1,11 +1,12 @@
 @import "src/assets/styles/fonts.scss";
+@import "src/assets/styles/_variables.scss";
 
 :host {
   .fromUser .ngx-datatable.scroll-vertical .datatable-body {
     height: calc(100vh - 34vh) !important;
   }
   ion-title.color,ion-button.color {
-    --color:#024f9d !important;
+    --color: #{$blue} !important;
     font-weight:bold !important;
   }
 }

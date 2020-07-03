@@ -44,7 +44,7 @@
     margin-bottom: 0 !important;
     margin-left: 16px;
     font-weight: 500 !important;
-    color: #999;
+    color: $gray-300;
     font-size: 12px;
   }
   .label-font {
@@ -62,7 +62,7 @@
 
 .red-toast {
   .toast-container {
-    background-color: #ff0000;
+    background-color: map-get($colors, vivid_red);
     #toast-hdr-6 {
       padding-left: 69px !important;
     }

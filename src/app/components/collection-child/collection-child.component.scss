@@ -5,7 +5,7 @@
     .separator-line {
         height: 1px;
         opacity: 0.36;
-        background-color: #979797;
+        background-color: map-get($colors, dark_gray);
         width: 100%;
     }
     .pull-right{
@@ -18,13 +18,13 @@
 
     .play-icon
     {
-        color : #00ba75;
+        color : map-get($colors, vivid_green);
         font-size: 30px;
     }
 
     .checkmark-icon
     {
-      color : #00ba75;
+      color : map-get($colors, vivid_green);
       font-size: 18px;
       margin-left: 5px;
     }
@@ -32,7 +32,7 @@
     .font-grey-text
     {
       //  padding: 4px;
-        color : #979797;
+        color : map-get($colors, dark_gray);
     }
 
     .P10{
@@ -47,7 +47,7 @@
 
     .grey-icon
     {
-        color : #979797;
+        color : map-get($colors, dark_gray);
         font-size: 18px;
     }
 
@@ -74,13 +74,13 @@
     .content-icon{
         width: 38px;
         height: 38px;
-        border: 0.5px solid #D6D6D6;
-        background-color: #CCCCCC;
+        border: 0.5px solid map-get($colors, medium_light_gray);
+        background-color: map-get($colors, medium_gray);
         display: inline-block;
     }
     .content-name {
         padding-left: 1em;
-        color: black;
+        color: map-get($colors, black);
     }
     .sb-checkmark-icon{
         color : $secondary-200;
@@ -96,11 +96,11 @@
     }
     .sb-bold-blue{
         font-weight: bolder;
-        color:#024f9d;
+        color: $blue;
         padding: 8px;
     }
     .sb-blue-text{
-        color:#024f9d;
+        color: $blue;
     }
     .sb-highlighted-row{
         @include padding($base-block-space * 1);
@@ -110,7 +110,7 @@
     .sb-textbook-toc{
         @include padding($base-block-space * 1);
         display: flex;
-        color:#024f9d;
+        color: $blue;
         @include clearfix;
     }
 }
@@ -121,10 +121,10 @@
 
 .content-playbutton {
     padding-left: 4px;
-    color: #024f9d;
+    color: $blue;
 }
 .play-button{
-    --border-color: #024f9d;
+    --border-color: #{$blue};
     --border-width: 1px;
     text-transform: none;
     height: 3em;
