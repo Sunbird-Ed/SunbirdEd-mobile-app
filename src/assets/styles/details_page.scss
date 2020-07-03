@@ -1,9 +1,11 @@
+@import "src/assets/styles/_variables.scss";
+
 .padding-10 {
     padding: 10px;
 }
 
 .background-gray {
-    background: #efeff4;
+    background: map-get($colors, gray_white);
     @include margin(0, -26px);
     @include padding(null, null, null, 25px !important);
 }

@@ -1,7 +1,7 @@
 @import "src/assets/styles/_variables.scss";
 :host {
   .label-font {
-    color: #333333 !important;
+    color: map-get($colors, primary_black) !important;
     font-family: "Noto Sans" !important;
     font-size: 22px !important;
     font-weight: normal;
@@ -24,12 +24,12 @@
       opacity: 1;
     }
     ion-select {
-      border-color: #333;
+      border-color: map-get($colors, primary_black);
     }
   }
 
   .item-label-stacked ion-select {
-    border: 1px solid #006de5;
+    border: 1px solid map-get($colors, thick_blue);
     border-radius: 5px;
     margin-top: 16px;
     padding-left: 8px;
@@ -51,18 +51,18 @@
 
   .item-label-stacked.item-select-disabled {
     ion-label {
-      color: #333;
+      color: map-get($colors, primary_black);
     }
     ion-select {
-      border-color: #333;
+      border-color: map-get($colors, primary_black);
       .select-icon {
         .select-icon-inner {
-          border-color: #333;
+          border-color: map-get($colors, primary_black);
           animation: none;
         }
       }
       .select-placeholder {
-        color: #333;
+        color: map-get($colors, primary_black);
       }
     }
   }
@@ -72,7 +72,7 @@
   }
 
   ion-button{
-    --background: #024F9D !important;
+    --background: #{$blue} !important;
   }
 
   .item-label-stacked ion-input {
@@ -85,7 +85,7 @@
 
   .sp-input-primary ion-input{
     font-weight: bold;
-    border: 1px solid #006de5;
+    border: 1px solid map-get($colors, primary);
     --placeholder-opacity: 0.3 !important;
   }
 
@@ -98,11 +98,11 @@
     --highlight-background: transparent;
   }
   .item-select ion-label {
-    color: #006de5;
+    color: map-get($colors, primary);
   }
 
   ion-label {
-    color: #333333;
+    color: map-get($colors, primary_black);
     font-family: "Noto Sans";
     font-size: 14px;
     letter-spacing: 0;
@@ -114,12 +114,12 @@
 .sp-title{
   font-size: 16px;
   font-weight: bold;
-  color: #024F9D;
+  color: $blue;
   margin: 16px 16px 0;
 }
 
 .sp-input-title{
-  color: #333333;
+  color: map-get($colors, primary_black);
   font-family: "Noto Sans";
   font-size: 14px;
   letter-spacing: 0;
@@ -128,7 +128,7 @@
 }
 
 .sp-input-box{
-  border: 0.5px solid #333333;
+  border: 0.5px solid map-get($colors, primary_black);
   border-radius: 2px;
   ion-input{
     margin: 0 8px;
@@ -153,7 +153,7 @@
 
 ion-footer{
   ion-button{
-    --background: #024F9D !important;
+    --background: #{$blue} !important;
     height: 40px !important;
     font-family: "Noto Sans";
     font-size: 16px;
@@ -165,6 +165,6 @@ ion-footer{
 }
 
 .tnc-link {
-  color: #024F9D;
+  color: $blue;
   text-decoration: underline;
 }

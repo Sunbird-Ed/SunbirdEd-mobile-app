@@ -1,5 +1,6 @@
 @import "src/assets/styles/base/_variables.scss";
 @import "src/assets/styles/mixins/bourbon/library/_clearfix.scss";
+@import "src/assets/styles/_variables.scss";
 
 :host {
   .sb-card-active {
@@ -16,7 +17,7 @@
 
   ion-checkbox {
     --border-width: 1px;
-    --border-color: #7AB4EE;
+    --border-color: #{map-get($colors, light_blue_ee)};
     --background-checked: #{$blue};
     --border-color-checked: #{$blue};
     --border-radius: 4px;

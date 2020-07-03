@@ -3,7 +3,7 @@
 :host {
     .label-font {
        font-weight: 600 !important;
-        color: #979797 !important;
+        color: map-get($colors, dark_gray) !important;
         font-size: 14px !important;
     }
     .select-text {
@@ -44,9 +44,9 @@
     }
     
     .popover-alert .close-button{
-        background-color: #ffffff;
+        background-color: map-get($colors, white);
         box-shadow: unset;
-        color: black;
+        color: map-get($colors, black);
     }
   
     .popover-alert .alert-header{

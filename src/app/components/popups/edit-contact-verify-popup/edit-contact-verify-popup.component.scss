@@ -1,6 +1,8 @@
+@import "src/assets/styles/_variables.scss";
+
 :host {
   .merged-input-container {
-    border: 1px solid #4a90e2;
+    border: 1px solid $form-input-border-active-color;
     display: flex;
     flex: 1 1 auto;
     border-radius: 4px;

@@ -1,19 +1,21 @@
 @import "src/assets/styles/base/_variables.scss";
 @import "src/assets/styles/_custom-mixins.scss";
+@import "src/assets/styles/_variables.scss";
+
 // :host {
     .download-page-heading{
-        color: white;
+        color: map-get($colors, white);
         font-size: $font-size-base + 2;
     }
 
     .download-page-info{
-        color: white;
+        color: map-get($colors, white);
         font-size: $font-size-base - 2;
     }
 
     .download-cancel-icon{
         font-size: $font-size-base * 2;
-        color: white;
+        color: map-get($colors, white);
     }
 
     .ad-pt-4{
@@ -33,7 +35,7 @@
     }
 
     .ad-border-bottom-1{
-        border-bottom: 1px solid #EEE2E2;
+        border-bottom: 1px solid map-get($colors, light_grayish_red);
     }
 
     .ad-no-box-shadow{
