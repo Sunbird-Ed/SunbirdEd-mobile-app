@@ -43,24 +43,6 @@ describe('MyGroupsPage', () => {
         expect(myGroupsPage).toBeTruthy();
     });
 
-    it('should return session', (done) => {
-        mockAuthService.getSession = jest.fn(() => of({ sessionId: 'sample-session-id' }) as any);
-        myGroupsPage.checkUserLoggedIn();
-        setTimeout(() => {
-            expect(mockAuthService.getSession).toHaveBeenCalled();
-            expect(myGroupsPage.isGuestUser).toBeFalsy();
-            done();
-        }, 0);
-    });
-
-    it('should checked loggedIn or not by invoked ngOnInit', () => {
-        jest.spyOn(myGroupsPage, 'checkUserLoggedIn').mockImplementation(() => {
-            return Promise.resolve();
-        });
-        mockAppGlobalService.getCurrentUser = jest.fn(() => {});
-        myGroupsPage.ngOnInit();
-    });
-
     describe('openinfopopup', () => {
         it('should return undefined for backDrop clicked', (done) => {
             mockPopoverCtrl.create = jest.fn(() => (Promise.resolve({
@@ -83,7 +65,7 @@ describe('MyGroupsPage', () => {
         it('should close popup for clicked on close icpn', (done) => {
             mockPopoverCtrl.create = jest.fn(() => (Promise.resolve({
                 present: jest.fn(() => Promise.resolve({})),
-                onDidDismiss: jest.fn(() => Promise.resolve({ data: {closeDeletePopOver: true} }))
+                onDidDismiss: jest.fn(() => Promise.resolve({ data: { closeDeletePopOver: true } }))
             } as any)));
             mockCommonUtilService.translateMessage = jest.fn(() => 'ANDROID_NOT_SUPPORTED');
             mockCommonUtilService.translateMessage = jest.fn(() => 'ANDROID_NOT_SUPPORTED_DESC');
@@ -101,7 +83,7 @@ describe('MyGroupsPage', () => {
         it('should delete popup', (done) => {
             mockPopoverCtrl.create = jest.fn(() => (Promise.resolve({
                 present: jest.fn(() => Promise.resolve({})),
-                onDidDismiss: jest.fn(() => Promise.resolve({ data: {canDelete: true} }))
+                onDidDismiss: jest.fn(() => Promise.resolve({ data: { canDelete: true } }))
             } as any)));
             mockCommonUtilService.translateMessage = jest.fn(() => 'ANDROID_NOT_SUPPORTED');
             mockCommonUtilService.translateMessage = jest.fn(() => 'ANDROID_NOT_SUPPORTED_DESC');
@@ -119,7 +101,7 @@ describe('MyGroupsPage', () => {
         it('should not delete popup', (done) => {
             mockPopoverCtrl.create = jest.fn(() => (Promise.resolve({
                 present: jest.fn(() => Promise.resolve({})),
-                onDidDismiss: jest.fn(() => Promise.resolve({ data: {canDelete: false} }))
+                onDidDismiss: jest.fn(() => Promise.resolve({ data: { canDelete: false } }))
             } as any)));
             mockCommonUtilService.translateMessage = jest.fn(() => 'ANDROID_NOT_SUPPORTED');
             mockCommonUtilService.translateMessage = jest.fn(() => 'ANDROID_NOT_SUPPORTED_DESC');
@@ -133,6 +115,42 @@ describe('MyGroupsPage', () => {
                 done();
             }, 0);
         });
+    });
+
+
+    it('should open openinfopopup by invoked ngOnInit', (done) => {
+        mockAppGlobalService.isUserLoggedIn = jest.fn(() => false);
+        mockAppGlobalService.getActiveProfileUid = jest.fn(() => Promise.resolve('sample-uid'));
+        mockPreferences.getBoolean = jest.fn(() => of(false));
+        jest.spyOn(myGroupsPage, 'openinfopopup').mockImplementation(() => {
+            return Promise.resolve();
+        });
+        mockPreferences.putBoolean = jest.fn(() => of(true));
+        myGroupsPage.ngOnInit();
+        setTimeout(() => {
+            expect(myGroupsPage.isGuestUser).toBeTruthy();
+            expect(mockAppGlobalService.isUserLoggedIn).toHaveBeenCalled();
+            expect(mockAppGlobalService.getActiveProfileUid).toHaveBeenCalled();
+            expect(myGroupsPage.userId).toBe('sample-uid');
+            expect(mockPreferences.getBoolean).toHaveBeenCalledWith(PreferenceKey.CREATE_GROUP_INFO_POPUP);
+            expect(mockPreferences.putBoolean).toHaveBeenCalledWith(PreferenceKey.CREATE_GROUP_INFO_POPUP, true);
+            done();
+        }, 0);
+    });
+
+    it('should not open openinfopopup by invoked ngOnInit', (done) => {
+        mockAppGlobalService.isUserLoggedIn = jest.fn(() => false);
+        mockAppGlobalService.getActiveProfileUid = jest.fn(() => Promise.resolve('sample-uid'));
+        mockPreferences.getBoolean = jest.fn(() => of(true));
+        myGroupsPage.ngOnInit();
+        setTimeout(() => {
+            expect(myGroupsPage.isGuestUser).toBeTruthy();
+            expect(mockAppGlobalService.isUserLoggedIn).toHaveBeenCalled();
+            expect(mockAppGlobalService.getActiveProfileUid).toHaveBeenCalled();
+            expect(myGroupsPage.userId).toBe('sample-uid');
+            expect(mockPreferences.getBoolean).toHaveBeenCalledWith(PreferenceKey.CREATE_GROUP_INFO_POPUP);
+            done();
+        }, 0);
     });
 
     it('should return popup for groupInfo', () => {
@@ -159,7 +177,7 @@ describe('MyGroupsPage', () => {
 
         it('should not return groupList', (done) => {
             myGroupsPage.groupListLoader = true;
-            mockGroupService.search  = jest.fn(() => throwError({ error: 'error' }));
+            mockGroupService.search = jest.fn(() => throwError({ error: 'error' }));
             myGroupsPage.fetchGroupList();
             setTimeout(() => {
                 expect(myGroupsPage.groupListLoader).toBeFalsy();
@@ -190,27 +208,11 @@ describe('MyGroupsPage', () => {
     });
 
     describe('ionViewDidEnter', () => {
-        it('should not open infoPopup if groupInfoScreen is true', (done) => {
-            mockPreferences.getBoolean = jest.fn(() => of(true));
-            myGroupsPage.ionViewDidEnter();
-            setTimeout(() => {
-                expect(mockPreferences.getBoolean).toHaveBeenCalledWith(PreferenceKey.CREATE_GROUP_INFO_POPUP);
-                done();
-            }, 0);
-        });
-
-        it('should return openInfoPopup by if groupInfoScreen is false', (done) => {
-            mockPreferences.getBoolean = jest.fn(() => of(false));
-            jest.spyOn(myGroupsPage, 'openinfopopup').mockImplementation(() => {
+        it('should invoked fetchGroupList', () => {
+            jest.spyOn(myGroupsPage, 'fetchGroupList').mockImplementation(() => {
                 return Promise.resolve();
             });
-            mockPreferences.putBoolean = jest.fn(() => of(true));
             myGroupsPage.ionViewDidEnter();
-            setTimeout(() => {
-                expect(mockPreferences.getBoolean).toHaveBeenCalledWith(PreferenceKey.CREATE_GROUP_INFO_POPUP);
-                expect(mockPreferences.putBoolean).toHaveBeenCalledWith(PreferenceKey.CREATE_GROUP_INFO_POPUP, true);
-                done();
-            }, 0);
         });
     });
 

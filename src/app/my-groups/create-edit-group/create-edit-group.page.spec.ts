@@ -1,5 +1,5 @@
 import { CreateEditGroupPage } from './create-edit-group.page';
-import { ClassRoomService } from '@project-sunbird/sunbird-sdk';
+import { GroupService } from '@project-sunbird/sunbird-sdk';
 import { FormBuilder } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 import { Router } from '@angular/router';
@@ -14,11 +14,7 @@ import { of, throwError } from 'rxjs';
 describe('CreateEditGroupPage', () => {
     let createEditGroupPage: CreateEditGroupPage;
     const mockAlertCtrl: Partial<AlertController> = {};
-    const mockAppGlobalService: Partial<AppGlobalService> = {};
-    const mockAppVersion: Partial<AppVersion> = {
-        getAppName: jest.fn(() => Promise.resolve('sunbird'))
-    };
-    const mockClassRoomService: Partial<ClassRoomService> = {};
+    const mockGroupService: Partial<GroupService> = {};
     const mockCommonUtilService: Partial<CommonUtilService> = {};
     const mockFormBuilder: Partial<FormBuilder> = {
         group: jest.fn(() => { }) as any
@@ -27,16 +23,14 @@ describe('CreateEditGroupPage', () => {
     const mockLocation: Partial<Location> = {};
     const mockPlatform: Partial<Platform> = {
     };
-    const mockRouter: Partial<Router> = {};
     const mockTranslate: Partial<TranslateService> = {};
 
     beforeAll(() => {
         createEditGroupPage = new CreateEditGroupPage(
-            mockClassRoomService as ClassRoomService,
+            mockGroupService as GroupService,
             mockCommonUtilService as CommonUtilService,
             mockFormBuilder as FormBuilder,
             mockTranslate as TranslateService,
-            mockAppGlobalService as AppGlobalService,
             mockHeaderService as AppHeaderService,
             mockLocation as Location,
             mockPlatform as Platform,
@@ -50,12 +44,6 @@ describe('CreateEditGroupPage', () => {
 
     it('should be create a instance of createEditGroupPage', () => {
         expect(createEditGroupPage).toBeTruthy();
-    });
-
-    it('should return current user', () => {
-        mockAppGlobalService.getCurrentUser = jest.fn(() => {});
-        createEditGroupPage.ngOnInit();
-        expect(mockAppGlobalService.getCurrentUser).toHaveBeenCalled();
     });
 
     describe('handleBackButtonEvents', () => {
@@ -126,29 +114,27 @@ describe('CreateEditGroupPage', () => {
         expect(createEditGroupPage.createGroupFormControls).toEqual({id: {}});
     });
 
-    describe('createGroup', () => {
-        it('should return new created group', (done) => {
-            const request = {
-                groupName: 'new-sample-group'
-            };
+    describe('onSubmit', () => {
+        it('should return and new group invoked createGroup if createGroupForm is valid', (done) => {
+            createEditGroupPage.createGroupForm = {
+                value: {groupName: 'new-sample-group', groupDesc: 'group-desc'},
+                valid: true
+            } as any;
             const dismissFn = jest.fn(() => Promise.resolve());
             const presentFn = jest.fn(() => Promise.resolve());
             mockCommonUtilService.getLoader = jest.fn(() => ({
                 present: presentFn,
                 dismiss: dismissFn,
             }));
-            mockClassRoomService.create = jest.fn(() => of({})) as any;
+            mockGroupService.create = jest.fn(() => of({})) as any;
             mockCommonUtilService.showToast = jest.fn();
             mockLocation.back = jest.fn();
-            createEditGroupPage.profile = {
-                uid: 'sample-uid'
-            };
-            // act
-            createEditGroupPage.createGroup(request);
-            // assert
+            createEditGroupPage.onSubmit();
+            expect(createEditGroupPage.createGroupFormSubmitted).toBeTruthy();
+            expect(createEditGroupPage.createGroupForm.valid).toBeTruthy();
             setTimeout(() => {
                 expect(presentFn).toHaveBeenCalled();
-                expect(mockClassRoomService.create).toHaveBeenCalled();
+                expect(mockGroupService.create).toHaveBeenCalled();
                 expect(dismissFn).toHaveBeenCalled();
                 expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('GROUP_CREATED');
                 expect(mockLocation.back).toHaveBeenCalled();
@@ -156,43 +142,30 @@ describe('CreateEditGroupPage', () => {
             }, 0);
         });
 
-        it('should return new created group', (done) => {
-            const request = {
-                groupName: 'new-sample-group'
-            };
+        it('should not return and new group invoked createGroup if createGroupForm is valid for catch part', (done) => {
+            createEditGroupPage.createGroupForm = {
+                value: {groupName: 'new-sample-group', groupDesc: 'group-desc'},
+                valid: true
+            } as any;
             const dismissFn = jest.fn(() => Promise.resolve());
             const presentFn = jest.fn(() => Promise.resolve());
             mockCommonUtilService.getLoader = jest.fn(() => ({
                 present: presentFn,
                 dismiss: dismissFn,
             }));
-            mockClassRoomService.create = jest.fn(() => throwError({error: 'error'})) as any;
+            mockGroupService.create = jest.fn(() => throwError({error: 'error'})) as any;
             mockCommonUtilService.showToast = jest.fn();
-            createEditGroupPage.profile = {
-                uid: 'sample-uid'
-            };
-            // act
-            createEditGroupPage.createGroup(request);
-            // assert
+            mockLocation.back = jest.fn();
+            createEditGroupPage.onSubmit();
+            expect(createEditGroupPage.createGroupFormSubmitted).toBeTruthy();
+            expect(createEditGroupPage.createGroupForm.valid).toBeTruthy();
             setTimeout(() => {
                 expect(presentFn).toHaveBeenCalled();
-                expect(mockClassRoomService.create).toHaveBeenCalled();
+                expect(mockGroupService.create).toHaveBeenCalled();
                 expect(dismissFn).toHaveBeenCalled();
                 expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('SOMETHING_WENT_WRONG');
                 done();
             }, 0);
-        });
-    });
-
-    describe('onSubmit', () => {
-        it('should invoked createGroup if createGroupForm is valid', () => {
-            createEditGroupPage.createGroupForm = {
-                value: {groupName: 'new-sample-group'},
-                valid: true
-            } as any;
-            createEditGroupPage.onSubmit();
-            expect(createEditGroupPage.createGroupFormSubmitted).toBeTruthy();
-            expect(createEditGroupPage.createGroupForm.valid).toBeTruthy();
         });
 
         it('should not invoked createGroup if createGroupForm is not valid', () => {
