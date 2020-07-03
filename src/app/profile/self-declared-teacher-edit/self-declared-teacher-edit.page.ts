@@ -291,7 +291,10 @@ export class SelfDeclaredTeacherEditPage {
       const formValue = this.latestFormValue.children.externalIds;
       const selectdState = this.getStateIdFromCode(formValue['declared-state']);
       const orgDetails: any = await this.frameworkService.searchOrganization({
-        filters: { locationIds: [selectdState && selectdState.id] }
+        filters: {
+          locationIds: [selectdState && selectdState.id],
+          isRootOrg: true
+        }
       }).toPromise();
       if (!orgDetails || !orgDetails.content || !orgDetails.content.length || !orgDetails.content[0].channel) {
         this.commonUtilService.showToast('SOMETHING_WENT_WRONG');
