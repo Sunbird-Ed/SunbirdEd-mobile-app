@@ -9,10 +9,9 @@ import {
 import { TranslateService } from '@ngx-translate/core';
 import { Network } from '@ionic-native/network/ngx';
 import { WebView } from '@ionic-native/ionic-webview/ngx';
-import { SharedPreferences, ProfileService, Profile, ProfileType, CorrelationData } from 'sunbird-sdk';
+import { SharedPreferences, ProfileService, Profile, ProfileType, CorrelationData, CachedItemRequestSourceFrom, LocationSearchCriteria } from 'sunbird-sdk';
 
-import { PreferenceKey, ProfileConstants, RouterLinks } from '@app/app/app.constant';
-import { appLanguages } from '@app/app/app.constant';
+import { PreferenceKey, ProfileConstants, RouterLinks, appLanguages, Location as loc } from '@app/app/app.constant';
 
 import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
 import { InteractType, InteractSubtype, PageId, Environment, CorReleationDataType, ImpressionType, ObjectType } from '@app/services/telemetry-constants';
@@ -598,5 +597,37 @@ export class CommonUtilService {
             initial = split[0];
         }
         return initial;
+    }
+
+    async getStateList() {
+        const req: LocationSearchCriteria = {
+            from: CachedItemRequestSourceFrom.SERVER,
+            filters: {
+                type: loc.TYPE_STATE
+            }
+        };
+        try {
+            const stateList = await this.profileService.searchLocation(req).toPromise();
+            return stateList || [];
+        } catch {
+            return [];
+        }
+    }
+
+    async getDistrictList(id?: string, code?: string) {
+        const req: LocationSearchCriteria = {
+            from: CachedItemRequestSourceFrom.SERVER,
+            filters: {
+              type: loc.TYPE_DISTRICT,
+              parentId: id || undefined,
+              code: code || undefined
+            }
+        };
+        try {
+            const districtList = await this.profileService.searchLocation(req).toPromise();
+            return districtList || [];
+        } catch {
+            return [];
+        }
     }
 }
