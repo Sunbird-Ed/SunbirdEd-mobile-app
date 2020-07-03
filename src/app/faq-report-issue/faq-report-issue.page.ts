@@ -93,6 +93,7 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
   showSupportContact: boolean;
   showThanksResponse: boolean;
   formContext: any;
+  supportEmail: any;
 
   constructor(
     private router: Router,
@@ -244,7 +245,7 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
                 this.subjectDetails = this.appName + ' ' + SUBJECT_NAME + ' for ' + this.categories;
                 this.socialSharing.shareViaEmail(message,
                   this.subjectDetails,
-                  [this.appGlobalService.SUPPORT_EMAIL],
+                  [this.supportEmail ? this.supportEmail : this.appGlobalService.SUPPORT_EMAIL],
                   null,
                   null,
                   this.fileUrl)
@@ -363,7 +364,14 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
     }, 3000);
   }
 
-  initiateEmailAction() {
+  async initiateEmailAction() {
+    const stateContactList = await this.formAndFrameworkUtilService.getStateContactList();
+    this.supportEmail = undefined;
+    stateContactList.forEach(element => {
+      if (this.formValues.children.subcategory.board.code === element.id) {
+        this.supportEmail = element.contactinfo && element.contactinfo.email ? element.contactinfo.email : undefined;
+      }
+    });
     if (!this.showSupportContact && this.isFormValid) {
       this.value = {};
       this.value.action = 'initiate-email-clicked';
