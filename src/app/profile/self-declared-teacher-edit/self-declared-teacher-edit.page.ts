@@ -118,7 +118,7 @@ export class SelfDeclaredTeacherEditPage {
       from: CachedItemRequestSourceFrom.SERVER,
       type: 'user',
       subType: 'teacherDetails',
-      action: 'submit',
+      action: 'submit_v2',
       rootOrgId: rootOrgId || '*',
       component: 'app'
     };
