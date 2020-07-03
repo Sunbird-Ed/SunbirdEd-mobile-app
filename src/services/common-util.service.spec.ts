@@ -563,4 +563,55 @@ describe('CommonUtilService', () => {
     });
   });
 
+  describe('getStateList', () => {
+    it('should return the state list', (done) => {
+      // arrange
+      mockProfileService.searchLocation = jest.fn(() => of([]));
+      // act
+      commonUtilService.getStateList().then((res) => {
+        // assert
+        expect(res).toEqual([]);
+        expect(res).toReturn();
+        done();
+      });
+    });
+
+    it('should return empty state list', (done) => {
+      // arrange
+      mockProfileService.searchLocation = jest.fn();
+      // act
+      commonUtilService.getStateList().then((res) => {
+        // assert
+        expect(res).toReturn();
+        done();
+      });
+    });
+  });
+
+  describe('getDistrictList', () => {
+    it('should return the district list', (done) => {
+      // arrange
+      const id = 'state_id';
+      mockProfileService.searchLocation = jest.fn(() => of([]));
+      // act
+      commonUtilService.getDistrictList(id).then((res) => {
+        // assert
+        expect(res).toEqual([]);
+        expect(res).toReturn();
+        done();
+      });
+    });
+
+    it('should return empty district list', (done) => {
+      // arrange
+      mockProfileService.searchLocation = jest.fn();
+      // act
+      commonUtilService.getDistrictList().then((res) => {
+        // assert
+        expect(res).toReturn();
+        done();
+      });
+    });
+  });
+
 });
