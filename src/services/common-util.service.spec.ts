@@ -17,7 +17,7 @@ import { Network } from '@ionic-native/network/ngx';
 import { NgZone } from '@angular/core';
 import { WebView } from '@ionic-native/ionic-webview/ngx';
 import { AppVersion } from '@ionic-native/app-version/ngx';
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
 import { Router } from '@angular/router';
 import { AndroidPermissionsService } from '.';
 
@@ -558,6 +558,68 @@ describe('CommonUtilService', () => {
         return message;
       });
       commonUtilService.presentToastForOffline(message).then(() => {
+        done();
+      });
+    });
+  });
+
+  describe('getStateList', () => {
+    it('should return the state list', (done) => {
+      // arrange
+      mockProfileService.searchLocation = jest.fn(() => of([]));
+      // act
+      commonUtilService.getStateList().then((res) => {
+        // assert
+        expect(res).toEqual([]);
+        done();
+      });
+    });
+
+    it('should return empty state list', (done) => {
+      // arrange
+      mockProfileService.searchLocation = jest.fn(() => throwError(new Error()));
+      // act
+      commonUtilService.getStateList().then((res) => {
+        // assert
+        expect(res).toEqual([]);
+        done();
+      });
+    });
+  });
+
+  describe('getDistrictList', () => {
+    it('should return the district list with state id', (done) => {
+      // arrange
+      const id = 'state_id';
+      mockProfileService.searchLocation = jest.fn(() => of([]));
+      // act
+      commonUtilService.getDistrictList(id).then((res) => {
+        // assert
+        expect(res).toEqual([]);
+        done();
+      });
+    });
+
+    it('should return the district list with state code', (done) => {
+      // arrange
+      const code = 'state_code';
+      mockProfileService.searchLocation = jest.fn(() => of([]));
+      // act
+      commonUtilService.getDistrictList(code).then((res) => {
+        // assert
+        expect(res).toEqual([]);
+        done();
+      });
+    });
+
+    it('should return empty district list', (done) => {
+      // arrange
+      const id = 'state_id';
+      mockProfileService.searchLocation = jest.fn(() => throwError(new Error()));
+      // act
+      commonUtilService.getDistrictList(id).then((res) => {
+        // assert
+        expect(res).toEqual([]);
         done();
       });
     });

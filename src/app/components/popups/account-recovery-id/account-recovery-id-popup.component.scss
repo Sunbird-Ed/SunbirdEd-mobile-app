@@ -31,7 +31,7 @@
 }
 
 .ar-header {
-    background-color: map-get($colors, primary);
+    background-color: #{$blue};
     color: map-get($colors, white);
     padding: 16px 0;
 }
@@ -43,4 +43,17 @@
 
 .custom-shadow {
     box-shadow: 0 -5px 5px -5px rgba(0, 0, 0, 0.2);
+}
+
+ion-button{
+    --background: #{$blue} !important;
+    color: map-get($colors, white);
+    --background-hover: #{$blue} !important;
+    --background-activated: #{$blue} !important;
+}
+
+ion-button[fill="outline"]{
+    --background: map-get($colors, white) !important;
+    color: #{$blue};
+    --border-color: #{$blue};
 }
