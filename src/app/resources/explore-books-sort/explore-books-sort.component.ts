@@ -35,7 +35,7 @@ export class ExploreBooksSortComponent implements OnInit, OnDestroy {
   defaultImg: string;
   constructor(
     private platform: Platform,
-    private commonUtilService: CommonUtilService,
+    public commonUtilService: CommonUtilService,
     private telemetryGeneratorService: TelemetryGeneratorService,
     private fb: FormBuilder,
     private modalCtrl: ModalController,
