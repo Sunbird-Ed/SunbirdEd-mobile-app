@@ -117,8 +117,8 @@ export class SelfDeclaredTeacherEditPage {
     const req: FormRequest = {
       from: CachedItemRequestSourceFrom.SERVER,
       type: 'user',
-      subType: 'teacherDetails',
-      action: 'submit_v2',
+      subType: 'teacherDetails_v2',
+      action: 'submit',
       rootOrgId: rootOrgId || '*',
       component: 'app'
     };
