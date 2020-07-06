@@ -213,7 +213,8 @@ export class SelfDeclaredTeacherEditPage {
 
   private assignDefaultValue(childConfig: FieldConfig<any>, formLoaded) {
     if (formLoaded) {
-      return;
+      childConfig.default = this.formValue[childConfig.code];
+      return childConfig;
     }
     if (this.profile.externalIds && this.profile.externalIds.length) {
       this.profile.externalIds.forEach(eId => {
