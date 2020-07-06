@@ -135,7 +135,7 @@ export class ContentUtil {
       } catch (e) {
       }
       if ((key === 'utm_campaign') || (key === 'channel')) {
-        if (!Array.isArray(params[key]) && (params[key] && params[key] !== '')) {
+        if (params[key] && !Array.isArray(params[key])) {
           cData.push({ id: params[key], type: CorReleationDataType.SOURCE });
         } else {
           // should generate error telemetry for duplicate campaign parameter
@@ -149,7 +149,7 @@ export class ContentUtil {
     });
     if (Object.keys(utmParams)) {
       Object.keys(utmParams).map((key) => {
-        if (!Array.isArray(utmParams[key]) && (utmParams[key] && utmParams[key] !== '')) {
+        if (utmParams[key] && !Array.isArray(utmParams[key])) {
           cData.push({ id: utmParams[key], type: key });
         } else {
            // should generate error telemetry for duplicate campaign parameter
