@@ -22,6 +22,9 @@ export class FormValidationAsyncFactory {
     return (marker: string, triggers: QueryList<any>) => {
       if (marker === 'MOBILE_OTP_VALIDATION') {
         return async (control: FormControl) => {
+          if (control && !control.value) {
+            return null;
+          }
           return new Promise<ValidationErrors | null>(resolve => {
             const trigger: IonButton = triggers.find(e => e['el'].getAttribute('data-marker') === 'MOBILE_OTP_VALIDATION');
             if (trigger) {
@@ -48,6 +51,9 @@ export class FormValidationAsyncFactory {
     return (marker: string, triggers: QueryList<any>) => {
       if (marker === 'EMAIL_OTP_VALIDATION') {
         return async (control: FormControl) => {
+          if (control && !control.value) {
+            return null;
+          }
           return new Promise<ValidationErrors | null>(resolve => {
             const trigger: IonButton = triggers.find(e => e['el'].getAttribute('data-marker') === 'EMAIL_OTP_VALIDATION');
             if (trigger) {

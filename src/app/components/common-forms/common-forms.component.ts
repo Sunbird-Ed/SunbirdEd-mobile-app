@@ -112,7 +112,7 @@ export class CommonFormsComponent implements OnInit, OnChanges, OnDestroy, After
         }
       })
     ).subscribe();
-    this.statusChangesSubscription = this.formGroup.valueChanges.pipe(
+    this.statusChangesSubscription = this.formGroup.statusChanges.pipe(
       tap((v) => {
         this.statusChanges.emit({
           isPristine: this.formGroup.pristine,
