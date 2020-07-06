@@ -48,15 +48,12 @@ import { distinctUntilChanged, switchMap, tap } from 'rxjs/operators';
 })
 export class SelfDeclaredTeacherEditPage {
 
-  private formValue: any;
   private profile: ServerProfile;
   private initialExternalIds: any;
   private backButtonFunc: Subscription;
   private availableLocationDistrict: string;
   private availableLocationState: string;
-  private loader: any
   private latestFormValue: any;
-  private latestFormStatus: any;
   private selectedStateCode: any;
 
   editType = 'add';
@@ -213,8 +210,8 @@ export class SelfDeclaredTeacherEditPage {
 
   private assignDefaultValue(childConfig: FieldConfig<any>, formLoaded) {
     if (formLoaded) {
-      if (this.formValue) {
-        childConfig.default = this.formValue[childConfig.code];
+      if (this.latestFormValue && this.latestFormValue.children.externalIds) {
+        childConfig.default = this.latestFormValue.children.externalIds[childConfig.code];
       }
       return childConfig;
     }
@@ -606,7 +603,6 @@ export class SelfDeclaredTeacherEditPage {
   }
 
   formStatusChanges(event) {
-    this.latestFormStatus = event;
     this.isFormValid = event.isValid;
   }
 
