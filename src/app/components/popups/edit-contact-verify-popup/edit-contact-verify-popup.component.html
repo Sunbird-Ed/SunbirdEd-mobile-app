@@ -1,8 +1,10 @@
 <ion-content>
+  <div class="ecv-header ion-text-center">
+    <h6 class="M0">{{title | titlecase}}</h6>
+  </div>
   <ion-grid>
     <ion-row>
       <ion-col size="12" class="text-center ion-no-padding">
-        <p class="f18 padding-left-5" color="dark">{{title}}</p>
         <p class="f14" style="color: #4a4a4a">{{description}}</p>
       </ion-col>
       <section class="text-center W100" *ngIf="type==='phone'">

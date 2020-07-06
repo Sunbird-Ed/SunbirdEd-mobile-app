@@ -20,7 +20,6 @@
   "ADD_ACTIVITY": "Add activity",
   "ADD_ANOTHER_USER": "Add another user",
   "ADD_DISTRICT": "Add District",
-  "ADD_EDIT_SELF_DECLARED_TEACHER_INFO": "These details may be made available to your declared State to validate and follow progress",
   "ADD_EMAIL": "Add Email Address",
   "ADD_MEMBER": "Add member",
   "ADD_PHONE": "Add Mobile Number",
@@ -266,6 +265,7 @@
   "ERROR_OTP": "Incorrect OTP. Number of attempts remaining : {{%s}}",
   "ERROR_PHONE_EXISTS": "This mobile number is already registered. Try with a different mobile number",
   "ERROR_PHONE_INVALID": "Enter a valid mobile number",
+  "ERROR_PHONE_REQUIRED": "Mobile number is required",
   "ERROR_SAME_EMAIL_UPDATED": "This email address is already linked to your profile. Enter another email address",
   "ERROR_SAME_PHONE_UPDATED": "This mobile number is already linked to your profile. Enter another mobile number",
   "ERROR_SERVER_CONNECTION": "Unable to connect to server",
@@ -792,6 +792,9 @@
   "ADD_MEMBER_POPUP_TITLE": "Where can I see the {{%s}} ID?",
   "ADD_MEMBER_POPUP_DESC": "Use the following instructions to guide members to identify their unique {{%s}} ID.",
   "ADD_MEMBER_POPUP_STEP_1": "<span>Step 1</span> : Click Profile tab",
-  "ADD_MEMBER_POPUP_STEP_2": "<span>Step 2</span> : See the {{%s}} ID here"
+  "ADD_MEMBER_POPUP_STEP_2": "<span>Step 2</span> : See the {{%s}} ID here",
+  "PRIVACY_POLICY": "Privacy Policy",
+  "SELF_DECLARE_TEACHER_TNC": "I agree to share these details with the Administrators of",
+  "AS_PER_THE": "as per the"
 
 }
