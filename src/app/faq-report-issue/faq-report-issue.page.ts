@@ -30,7 +30,7 @@ import { AppVersion } from '@ionic-native/app-version/ngx';
 import { map, tap, switchMap, distinctUntilChanged, catchError } from 'rxjs/operators';
 import { TranslateService } from '@ngx-translate/core';
 import { FormControl } from '@angular/forms';
-import { Subscription, defer, of, EMPTY } from 'rxjs';
+import { defer, of, EMPTY } from 'rxjs';
 import { AppHeaderService, FormAndFrameworkUtilService } from '@app/services';
 import { Location } from '@angular/common';
 import { FieldConfigOptionsBuilder, FieldConfigOption } from 'common-form-elements';
@@ -756,16 +756,12 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
     switch (type) {
       case 'board':
         return boardClosure;
-        break;
       case 'medium':
         return mediumClosure;
-        break;
       case 'grade':
         return gradeClosure;
-        break;
       case 'subject':
         return subjectClosure;
-        break;
     }
   }
 
@@ -779,12 +775,17 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
       }
   }
 
-  prepareEmailContent($event) {
+  prepareEmailContent(formValue) {
     this.bmgsString = null;
     this.categories = null;
     const bmgskeys = ['board', 'medium', 'grade', 'subject', 'contentname'];
     const categorykeys = ['category', 'subcategory'];
-    const fields = $event.children.subcategory;
+    let fields = [];
+    if (formValue.children.subcategory) {
+      fields = formValue.children.subcategory;
+    } else if (formValue.children) {
+      fields = formValue.children;
+    }
     bmgskeys.forEach(element => {
       if (Object.prototype.hasOwnProperty.call(fields, element)) {
         if (!this.bmgsString) {
@@ -795,11 +796,11 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
       }
     });
     categorykeys.forEach(element => {
-      if (Object.prototype.hasOwnProperty.call($event, element)) {
+      if (Object.prototype.hasOwnProperty.call(formValue, element)) {
         if (!this.categories) {
-          $event[element] ? this.categories = $event[element]: null;
+          formValue[element] ? this.categories = formValue[element]: null;
         } else {
-          $event[element] ? this.categories += " - " + $event[element]: null;
+          formValue[element] ? this.categories += " - " + formValue[element]: null;
         }
       }
     });
@@ -836,7 +837,6 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
 
   responseSubmitted() {
     if (this.formContext !== FormConfigSubcategories.CONTENT_AVAILABILITY) {
-      this.location.back();
       this.location.back();
     }
   }
