@@ -1,4 +1,4 @@
-<div [formGroup]="formGroup">
+<div [formGroup]="formGroup" *ngIf="formGroup">
   <ng-container *ngFor="let field of config; let index = i">
 
     <div *ngIf="field.type === FieldConfigInputType.SELECT || field.type === FieldConfigInputType.NESTED_SELECT"
