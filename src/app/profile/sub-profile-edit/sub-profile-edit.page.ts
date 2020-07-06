@@ -90,8 +90,8 @@ export class SubProfileEditPage {
   getCreateManagedUserFormApi() {
     const req: FormRequest = {
       type: 'user',
-      subType: 'manageduser_v2',
-      action: 'create'
+      subType: 'manageduser',
+      action: 'create_v2'
     };
     this.formService.getForm(req).toPromise()
     .then((res: any) => {
