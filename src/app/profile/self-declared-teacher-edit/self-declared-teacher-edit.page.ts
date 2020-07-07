@@ -164,7 +164,7 @@ export class SelfDeclaredTeacherEditPage {
               if (!isFormLoaded) {
                 this.initialExternalIds[childConfig.code] = stateCode;
               }
-              childConfig.templateOptions.options = this.buildStateListClosure(stateCode, isFormLoaded);
+              childConfig.templateOptions.options = this.buildStateListClosure(stateCode);
             } else if (childConfig.templateOptions['dataSrc'].params.id === 'district') {
               let districtDetails;
               if (this.profile.externalIds && this.profile.externalIds.length) {
