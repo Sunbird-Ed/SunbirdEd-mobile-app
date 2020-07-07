@@ -48,14 +48,14 @@ export class CreateEditGroupPage {
   ionViewWillEnter() {
     this.headerService.showHeaderWithBackButton();
     this.handleBackButtonEvents();
+
+    this.commonUtilService.getAppName().then((res) => { this.appName = res; });
   }
 
   ionViewWillLeave() {
     if (this.backButtonFunc) {
       this.backButtonFunc.unsubscribe();
     }
-
-    this.commonUtilService.getAppName().then((res) => { this.appName = res; });
   }
 
   handleBackButtonEvents() {
@@ -102,6 +102,7 @@ export class CreateEditGroupPage {
       this.commonUtilService.showToast('GROUP_CREATED');
       this.location.back();
     }).catch(async (err) => {
+      console.error(err);
       await loader.dismiss();
       this.commonUtilService.showToast('SOMETHING_WENT_WRONG');
     });
