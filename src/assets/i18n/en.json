@@ -383,7 +383,7 @@
   "NO_ASSESSMENT": "No assessment available",
   "NO_BATCHES_AVAILABLE": "No batches available",
   "NO_BOOKS_AVAILABLE": "Board is adding books",
-  "NO_BOOKS_DEFINITION": "Your board is yet to add more books. Tap the button to see more books and content on {{%s}}",
+  "NO_BOOKS_DEFINITION": "Your board is yet to add more books. Tap the button below to request for content on {{%s}}",
   "NO_CONTENTS": "No {{%s}} ",
   "NO_CONTENTS_FOUND": "Could not find content",
   "NO_CONTENTS_MESSAGE": "Select another content type ",
