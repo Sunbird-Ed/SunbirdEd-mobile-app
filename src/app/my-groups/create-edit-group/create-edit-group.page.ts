@@ -110,7 +110,6 @@ export class CreateEditGroupPage {
   }
 
   async openTermsOfUse() {
-    console.log('openTermsOfUse clicked');
     // this.generateInteractTelemetry(InteractType.TOUCH, InteractSubtype.TERMS_OF_USE_CLICKED);
     const baseUrl = await this.utilityService.getBuildConfigValue('TOU_BASE_URL');
     const url = baseUrl + RouterLinks.TERM_OF_USE;
