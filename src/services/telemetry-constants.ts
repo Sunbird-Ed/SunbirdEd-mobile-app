@@ -506,7 +506,9 @@ export enum ID {
     BTN_I_AM_A_TEACHER = 'btn-i-am-a-teacher',
     TEACHER_DECLARATION = 'teacher-declaration',
     MUA_USER_CREATION = 'mua-user-creation',
-    DATA_SHARING = 'data-sharing'
+    DATA_SHARING = 'data-sharing',
+    VALIDATE_EMAIL = 'validate-email',
+    VALIDATE_MOBILE = 'validate-mobile'
 }
 
 export enum ActionButtonType {

@@ -795,5 +795,6 @@
   "SEARCH_FOR_GROUP_MEMBER": "Search for group member",
   "PRIVACY_POLICY": "Privacy Policy",
   "SELF_DECLARE_TEACHER_TNC": "I agree to share these details with the Administrators of",
-  "AS_PER_THE": "as per the"
+  "AS_PER_THE": "as per the",
+  "SPECIAL_CHARACTERS_NOT_SUPPORTED": "Special characters not supported"
 }

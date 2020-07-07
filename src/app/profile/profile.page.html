@@ -188,18 +188,28 @@
             <div class="bolder">{{selfDeclaredTeacherDetails?.district}}</div>
         </div>
 
+        <div class="container" *ngIf = "selfDeclaredTeacherDetails?.mobile">
+            <div>{{'PHONE_PLACEHOLDER' | translate }}:</div>
+            <div class="bolder">{{selfDeclaredTeacherDetails?.mobile}}</div>
+        </div>
+
+        <div class="container" *ngIf = "selfDeclaredTeacherDetails?.email">
+            <div>{{'EMAIL_ID_PLACEHOLDER' | translate }}:</div>
+            <div class="bolder">{{selfDeclaredTeacherDetails?.email}}</div>
+        </div>
+
         <div class="container" *ngIf = "selfDeclaredTeacherDetails?.schoolName">
-            <div>{{'SCHOOL_OR_ORG_NAME' | translate }}</div>
+            <div>{{'SCHOOL_OR_ORG_NAME' | translate }}:</div>
             <div class="bolder">{{selfDeclaredTeacherDetails?.schoolName}}</div>
         </div>
 
         <div class="container" *ngIf = "selfDeclaredTeacherDetails?.udiseId">
-            <div>{{'SCHOOL_UDISE_ID_OR_ORG_ID' | translate }}</div>
+            <div>{{'SCHOOL_UDISE_ID_OR_ORG_ID' | translate }}:</div>
             <div class="bolder">{{selfDeclaredTeacherDetails?.udiseId}}</div>
         </div>
 
         <div class="container" *ngIf = "selfDeclaredTeacherDetails?.teacherId">
-            <div>{{'YOUR_ID_FROM_STATE_BOARD_ORG' | translate }}</div>
+            <div>{{'YOUR_ID_FROM_STATE_BOARD_ORG' | translate }}:</div>
             <div class="bolder">{{selfDeclaredTeacherDetails?.teacherId}}</div>
         </div>
 
