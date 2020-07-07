@@ -148,7 +148,8 @@ export enum PageId {
     QR_BOOK_RESULT = 'qr-book-result',
     QR_CONTENT_RESULT = 'qr-content-result',
     LOCATION = 'location',
-    MANUAL = 'manual'
+    MANUAL = 'manual',
+    COURSE_COMPLETION_POPUP = 'course-completion-popup'
 }
 export enum LogType {
     NOTIFICATION = 'notification'

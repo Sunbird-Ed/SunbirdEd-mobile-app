@@ -804,6 +804,9 @@ export class EnrolledCourseDetailsPage implements OnInit, OnDestroy {
     contentContextMap['userId'] = userId;
     contentContextMap['courseId'] = courseId;
     contentContextMap['batchId'] = batchId;
+    contentContextMap['isCertified'] = this.isCertifiedCourse;
+    const leafNodeIds = this.getLeafNodeIdsWithoutDuplicates([this.courseHeirarchy]);
+    contentContextMap['leafNodeIds'] = leafNodeIds;
     if (batchStatus) {
       contentContextMap['batchStatus'] = batchStatus;
     }

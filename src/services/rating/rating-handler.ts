@@ -12,6 +12,7 @@ import { PopoverController } from '@ionic/angular';
 import { AppGlobalService } from '@app/services/app-global-service.service';
 import { ContentUtil } from '@app/util/content-util';
 import { Router } from '@angular/router';
+import { CourseCompletionPopoverComponent } from '@app/app/components/popups/sb-course-completion-popup/sb-course-completion-popup.component';
 
 @Injectable({
     providedIn: 'root'
@@ -22,6 +23,7 @@ export class RatingHandler {
     private userComment: string;
     public telemetryObject: TelemetryObject;
     public useNewComments = false;
+    private courseContext: any;
     constructor(
         @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
         private popoverCtrl: PopoverController,
@@ -38,8 +40,11 @@ export class RatingHandler {
         popupType: string,
         corRelationList: CorrelationData[],
         rollUp: Rollup,
-        shouldNavigateBack?: boolean
+        shouldNavigateBack?: boolean,
+        courseContext?: any
     ) {
+        // to show coursecompletion popup when course is completed
+        this.courseContext = courseContext || '';
         const paramsMap = new Map();
         const contentFeedback: any = content.contentFeedback;
         this.telemetryObject = ContentUtil.getTelemetryObject(content);
@@ -113,6 +118,9 @@ export class RatingHandler {
             this.userRating = data.rating;
             this.userComment = data.comment;
         }
+        if (this.courseContext) {
+            this.openCourseCompletionPopup();
+        }
     }
 
     public resetRating() {
@@ -171,4 +179,24 @@ export class RatingHandler {
                 return false;
             });
     }
+
+    async openCourseCompletionPopup() {
+        const popUp = await this.popoverCtrl.create({
+          component: CourseCompletionPopoverComponent,
+          componentProps: {
+            isCertified: this.courseContext['isCertified']
+          },
+          cssClass: 'sb-course-completion-popover',
+        });
+        await popUp.present();
+        const { data } = await popUp.onDidDismiss();
+        if (data === undefined) {
+            this.telemetryGeneratorService.generateInteractTelemetry(
+                InteractType.TOUCH,
+                InteractSubtype.CLOSE_CLICKED,
+                PageId.COURSE_COMPLETION_POPUP,
+                Environment.HOME
+            );
+        }
+      }
 }

@@ -29,7 +29,11 @@ import {
   TelemetryObject,
   Course,
   DownloadService,
-  ObjectType
+  ObjectType,
+  SharedPreferences,
+  GetContentStateRequest,
+  ContentStateResponse,
+  CourseService
 } from 'sunbird-sdk';
 
 import { Map } from '@app/app/telemetryutil';
@@ -38,7 +42,7 @@ import { AppGlobalService } from '@app/services/app-global-service.service';
 import { AppHeaderService } from '@app/services/app-header.service';
 import {
   ContentConstants, EventTopics, XwalkConstants, RouterLinks, ContentFilterConfig,
-  ShareItemType, ContentType
+  ShareItemType, ContentType, PreferenceKey
 } from '@app/app/app.constant';
 import { CourseUtilService } from '@app/services/course-util.service';
 import { UtilityService } from '@app/services/utility-service';
@@ -159,6 +163,8 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
   shouldNavigateBack = false;
   isContentDownloading$: Observable<boolean>;
   onboarding = false;
+  showCourseCompletePopup = false;
+  courseContext: any;
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
@@ -166,6 +172,8 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
     @Inject('EVENTS_BUS_SERVICE') private eventBusService: EventsBusService,
     @Inject('STORAGE_SERVICE') private storageService: StorageService,
     @Inject('DOWNLOAD_SERVICE') private downloadService: DownloadService,
+    @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
+    @Inject('COURSE_SERVICE') private courseService: CourseService,
     private zone: NgZone,
     private events: Events,
     private popoverCtrl: PopoverController,
@@ -297,7 +305,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
   /**
    * Ionic life cycle hook
    */
-  ionViewWillEnter() {
+  async ionViewWillEnter() {
     this.headerService.hideHeader();
 
     if (this.isResumedCourse && !this.contentPlayerHandler.isContentPlayerLaunched()) {
@@ -313,6 +321,9 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
       this.generateTelemetry();
     }
     this.isPlayedFromCourse();
+    if (this.shouldOpenPlayAsPopup) {
+      await this.getContentState();
+    }
     this.setContentDetails(
       this.identifier, true,
       this.contentPlayerHandler.getLastPlayedContentId() === this.identifier);
@@ -429,11 +440,15 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
             await loader.dismiss();
           }
         }
-
         if (showRating) {
           this.contentPlayerHandler.setContentPlayerLaunchStatus(false);
-          this.ratingHandler.showRatingPopup(this.isContentPlayed, data, 'automatic', this.corRelationList, this.objRollup,
+          if (this.showCourseCompletePopup) {
+            this.ratingHandler.showRatingPopup(this.isContentPlayed, data, 'automatic', this.corRelationList, this.objRollup,
+           this.shouldNavigateBack, this.courseContext);
+          } else {
+            this.ratingHandler.showRatingPopup(this.isContentPlayed, data, 'automatic', this.corRelationList, this.objRollup,
            this.shouldNavigateBack);
+          }
           this.contentPlayerHandler.setLastPlayedContentId('');
         }
       })
@@ -657,7 +672,7 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
     //     this.location.back();
     //   }
     // }
-
+    this.appGlobalService.showCourseCompletePopup = false;
     // Tested in ionic 4 working as expected
     if (this.source === PageId.ONBOARDING_PROFILE_PREFERENCES) {
       this.router.navigate([`/${RouterLinks.PROFILE_SETTINGS}`], { state: {showFrameworkCategoriesMenu: true  }, replaceUrl: true });
@@ -1329,4 +1344,44 @@ showDeletePopup() {
       await loader.dismiss();
     }
   }
+
+  // pass coursecontext to ratinghandler if course is completed
+  async getContentState() {
+    return new Promise(async (resolve, reject) => {
+      this.courseContext = await this.preferences.getString(PreferenceKey.CONTENT_CONTEXT).toPromise();
+      this.courseContext = JSON.parse(this.courseContext);
+      if (this.courseContext.courseId && this.courseContext.batchId && this.courseContext.leafNodeIds) {
+        const request: GetContentStateRequest = {
+          userId: this.appGlobalService.getUserId(),
+          courseIds: [this.courseContext.courseId],
+          returnRefreshedContentStates: true,
+          batchId: this.courseContext.batchId
+        };
+        let progress = 0;
+        try {
+          const contentStatusData: ContentStateResponse = await this.courseService.getContentState(request).toPromise();
+          if (contentStatusData && contentStatusData.contentList) {
+            const viewedContents = [];
+            for (const contentId of this.courseContext.leafNodeIds) {
+              if (contentStatusData.contentList.find((c) => c.contentId === contentId && c.status === 2)) {
+                viewedContents.push(contentId);
+              }
+            }
+            progress = Math.round((viewedContents.length / this.courseContext.leafNodeIds.length) * 100);
+          }
+        } catch (err) {
+          reject(err);
+        }
+        if (progress !== 100) {
+          this.appGlobalService.showCourseCompletePopup = true;
+        }
+        if (this.appGlobalService.showCourseCompletePopup && progress === 100) {
+          this.appGlobalService.showCourseCompletePopup = false;
+          this.showCourseCompletePopup = true;
+        }
+      }
+      resolve();
+    });
+  }
+
 }

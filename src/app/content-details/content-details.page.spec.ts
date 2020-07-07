@@ -11,7 +11,8 @@ import {
     StorageService,
     TelemetryObject,
     Content,
-    GetAllProfileRequest
+    GetAllProfileRequest,
+    CourseService
 } from 'sunbird-sdk';
 import { ContentServiceImpl } from 'sunbird-sdk/content/impl/content-service-impl';
 import { EventsBusServiceImpl } from 'sunbird-sdk/events-bus/impl/events-bus-service-impl';
@@ -48,7 +49,7 @@ import {
     PageId,
 } from '@app/services/telemetry-constants';
 import { ContentUtil } from '@app/util/content-util';
-import { EventTopics, ContentType, ShareItemType } from '../app.constant';
+import { EventTopics, ContentType, ShareItemType, PreferenceKey } from '../app.constant';
 import { FileOpener } from '@ionic-native/file-opener/ngx';
 import { FileTransfer } from '@ionic-native/file-transfer/ngx';
 import { truncate } from 'fs';
@@ -66,6 +67,9 @@ describe('ContentDetailsPage', () => {
     const mockStorageService: Partial<StorageService> = {};
     const mockDownloadService: Partial<DownloadService> = {
         getActiveDownloadRequests: jest.fn(() => EMPTY)
+    };
+    const mockCourseService: Partial<CourseService> = {
+        getContentState: jest.fn(() => of('success'))
     };
     const mockNgZone: Partial<NgZone> = {
         run: jest.fn()
@@ -127,6 +131,8 @@ describe('ContentDetailsPage', () => {
             mockEventBusService as EventsBusServiceImpl,
             mockStorageService as StorageServiceImpl,
             mockDownloadService as DownloadService,
+            mockPreferences as SharedPreferences,
+            mockCourseService as CourseService,
             mockNgZone as NgZone,
             mockEvents as Events,
             mockPopoverController as PopoverController,
@@ -1330,6 +1336,55 @@ describe('ContentDetailsPage', () => {
                 PageId.CONTENT_DETAIL,
                 undefined, undefined, {l1: 'do_123', l2: 'do_123', l3: 'do_1'}, undefined
             );
+        });
+    });
+    describe('getContentState', () => {
+        it('should not show course complete popup', (done) => {
+            // arrange
+            mockAppGlobalService.showCourseCompletePopup = false;
+            mockAppGlobalService.getUserId = jest.fn(() => 'userid');
+            const contenxt = '{"userId":"userid","courseId":"courseid","batchId":"batchid","isCertified":false,"leafNodeIds":["id1","id2"],"batchStatus":1}'
+            mockPreferences.getString = jest.fn((key) => {
+                switch (key) {
+                    case PreferenceKey.CONTENT_CONTEXT:
+                        return of(contenxt);
+                }
+            });
+            const contentStatus = {
+                contentList: [{contentId: 'id1'}]
+            };
+            mockCourseService.getContentState = jest.fn(() => of(contentStatus));
+            // act
+            contentDetailsPage.getContentState();
+            // assert
+            setTimeout(() => {
+                expect(mockAppGlobalService.showCourseCompletePopup).toBe(true);
+                done();
+            });
+        });
+        it('should show course complete popup', (done) => {
+            // arrange
+            mockAppGlobalService.showCourseCompletePopup = true;
+            mockAppGlobalService.getUserId = jest.fn(() => 'userid');
+            const context = '{"userId":"userid","courseId":"courseid","batchId":"batchid","isCertified":false,"leafNodeIds":["id1"],"batchStatus":2}'
+            mockPreferences.getString = jest.fn((key) => {
+                switch (key) {
+                    case PreferenceKey.CONTENT_CONTEXT:
+                        return of(context);
+                }
+            });
+            const contentStatus = {
+                contentList: [{contentId: 'id1', status: 2}]
+            };
+            mockCourseService.getContentState = jest.fn(() => of(contentStatus));
+            // act
+            contentDetailsPage.getContentState();
+            // assert
+            setTimeout(() => {
+                expect(mockAppGlobalService.showCourseCompletePopup).toBe(false);
+                expect(contentDetailsPage.showCourseCompletePopup).toBe(true);
+                done();
+            });
         });
     });
 });
