@@ -175,7 +175,8 @@ export class GroupDetailsPage implements OnInit {
       componentProps: {
         list: MenuOverflow.MENU_GROUP_ACTIVITY_ADMIN
       },
-      cssClass: 'download-popover'
+      event: event.event,
+      cssClass: 'download-popover my-group-menu'
     });
     await groupOptions.present();
 
@@ -204,7 +205,8 @@ export class GroupDetailsPage implements OnInit {
       componentProps: {
         list: menuList
       },
-      cssClass: 'download-popover'
+      event: event.event,
+      cssClass: 'download-popover my-group-menu'
     });
     await groupOptions.present();
 

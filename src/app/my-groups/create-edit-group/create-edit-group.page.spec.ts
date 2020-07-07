@@ -2,20 +2,24 @@ import { CreateEditGroupPage } from './create-edit-group.page';
 import { GroupService } from '@project-sunbird/sunbird-sdk';
 import { FormBuilder } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
-import { Router } from '@angular/router';
 import { Platform, AlertController } from '@ionic/angular';
-import { AppVersion } from '@ionic-native/app-version/ngx';
 import { CommonUtilService } from '@app/services/common-util.service';
-import { AppGlobalService } from '@app/services/app-global-service.service';
 import { AppHeaderService } from '@app/services/app-header.service';
 import { Location } from '@angular/common';
 import { of, throwError } from 'rxjs';
+import { UtilityService } from '../../../services';
 
 describe('CreateEditGroupPage', () => {
     let createEditGroupPage: CreateEditGroupPage;
     const mockAlertCtrl: Partial<AlertController> = {};
     const mockGroupService: Partial<GroupService> = {};
-    const mockCommonUtilService: Partial<CommonUtilService> = {};
+    const mockCommonUtilService: Partial<CommonUtilService> = {
+        getAppName : jest.fn(() => Promise.resolve('Sunbird')),
+        getBuildConfigValue: jest.fn(() => Promise.resolve('sampleConfig'))
+    };
+    const mockUtilityService: Partial<UtilityService> = {
+        getBuildConfigValue: jest.fn(() => Promise.resolve('sampleConfig'))
+    };
     const mockFormBuilder: Partial<FormBuilder> = {
         group: jest.fn(() => { }) as any
     };
@@ -34,7 +38,8 @@ describe('CreateEditGroupPage', () => {
             mockHeaderService as AppHeaderService,
             mockLocation as Location,
             mockPlatform as Platform,
-            mockAlertCtrl as AlertController
+            mockAlertCtrl as AlertController,
+            mockUtilityService as UtilityService
         );
     });
 
@@ -81,8 +86,10 @@ describe('CreateEditGroupPage', () => {
         jest.spyOn(createEditGroupPage, 'handleBackButtonEvents').mockImplementation(() => {
             return;
         });
+        mockCommonUtilService.getAppName = jest.fn(() => Promise.resolve('Sunbird'));
         createEditGroupPage.ionViewWillEnter();
         expect(mockHeaderService.showHeaderWithBackButton).toHaveBeenCalled();
+        expect(mockCommonUtilService.getAppName).toHaveBeenCalled();
     });
 
     describe('ionViewWillLeave', () => {
@@ -90,18 +97,14 @@ describe('CreateEditGroupPage', () => {
             createEditGroupPage.backButtonFunc = {
                 unsubscribe: jest.fn()
             } as any;
-            mockCommonUtilService.getAppName = jest.fn(() => Promise.resolve('Sunbird'));
             createEditGroupPage.ionViewWillLeave();
             expect(createEditGroupPage.backButtonFunc).toBeTruthy();
-            expect(mockCommonUtilService.getAppName).toHaveBeenCalled();
         });
 
         it('should unsubscribe backButton for else part', () => {
             createEditGroupPage.backButtonFunc = undefined;
-            mockCommonUtilService.getAppName = jest.fn(() => Promise.resolve('Sunbird'));
             createEditGroupPage.ionViewWillLeave();
             expect(createEditGroupPage.backButtonFunc).toBeFalsy();
-            expect(mockCommonUtilService.getAppName).toHaveBeenCalled();
         });
     });
 
@@ -177,5 +180,13 @@ describe('CreateEditGroupPage', () => {
             expect(createEditGroupPage.createGroupFormSubmitted).toBeTruthy();
             expect(createEditGroupPage.createGroupForm.valid).toBeFalsy();
         });
+    });
+
+    it( 'should open terms of use page', () => {
+        // arrange
+        // action
+        createEditGroupPage.openTermsOfUse();
+        // assert
+        expect(mockUtilityService.getBuildConfigValue).toHaveBeenCalled();
     });
 });
