@@ -133,8 +133,8 @@ export class AddMemberToGroupPage {
     };
     this.groupService.addMembers(addMemberToGroupReq).toPromise()
       .then(async (res) => {
-        if (res.errors && res.errors.length) {
-          throw res.errors[0];
+        if (res.error && res.error.members && res.error.members.length) {
+          throw res.error.members[0];
         } else {
           await loader.dismiss();
           this.commonUtilService.showToast('MEMBER_ADDED_TO_GROUP');

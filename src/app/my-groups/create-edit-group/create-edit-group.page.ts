@@ -104,6 +104,7 @@ export class CreateEditGroupPage {
       this.commonUtilService.showToast('GROUP_CREATED');
       this.location.back();
     }).catch(async (err) => {
+      console.error(err);
       await loader.dismiss();
       this.commonUtilService.showToast('SOMETHING_WENT_WRONG');
     });
