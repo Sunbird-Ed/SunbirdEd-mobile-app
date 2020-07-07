@@ -18,11 +18,11 @@ export class FormValidationAsyncFactory {
     private telemetryGeneratorService: TelemetryGeneratorService,
   ) { }
 
-  mobileVerificationAsyncFactory(formElement: FieldConfig<any>, profile: ServerProfile, telemetryData?) {
+  mobileVerificationAsyncFactory(formElement: FieldConfig<any>, profile: ServerProfile, initialMobileVal, telemetryData?) {
     return (marker: string, triggers: QueryList<any>) => {
       if (marker === 'MOBILE_OTP_VALIDATION') {
         return async (control: FormControl) => {
-          if (control && !control.value) {
+          if ((control && !control.value) || (initialMobileVal && initialMobileVal === control.value)) {
             return null;
           }
           return new Promise<ValidationErrors | null>(resolve => {
@@ -54,11 +54,11 @@ export class FormValidationAsyncFactory {
     };
   }
 
-  emailVerificationAsyncFactory(formElement: FieldConfig<any>, profile: ServerProfile, telemetryData?) {
+  emailVerificationAsyncFactory(formElement: FieldConfig<any>, profile: ServerProfile, initialEmailVal, telemetryData?) {
     return (marker: string, triggers: QueryList<any>) => {
       if (marker === 'EMAIL_OTP_VALIDATION') {
         return async (control: FormControl) => {
-          if (control && !control.value) {
+          if ((control && !control.value) || (initialEmailVal && initialEmailVal === control.value)) {
             return null;
           }
           return new Promise<ValidationErrors | null>(resolve => {
