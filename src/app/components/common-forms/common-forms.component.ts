@@ -33,12 +33,7 @@ export class CommonFormsComponent implements OnInit, OnChanges, OnDestroy, After
   constructor(
     private formBuilder: FormBuilder,
     private commonUtilService: CommonUtilService
-  ) {
-    if (!window['forms']) {
-      window['forms'] = [];
-    }
-    window['forms'].push(this);
-  }
+  ) { }
   ngOnDestroy(): void {
     this.finalize.emit();
     if (this.statusChangesSubscription) {

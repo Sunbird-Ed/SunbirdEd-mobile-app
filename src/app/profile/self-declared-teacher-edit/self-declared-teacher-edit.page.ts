@@ -174,11 +174,25 @@ export class SelfDeclaredTeacherEditPage {
 
           if (childConfig.asyncValidation) {
             if (childConfig.asyncValidation.marker === 'MOBILE_OTP_VALIDATION') {
+              const telemetryData = {
+                type: InteractType.TOUCH,
+                subType: '',
+                env: Environment.USER,
+                pageId: PageId.TEACHER_SELF_DECLARATION,
+                id: ID.VALIDATE_MOBILE
+              };
               childConfig.asyncValidation.asyncValidatorFactory =
-                this.formValidationAsyncFactory.mobileVerificationAsyncFactory(childConfig, this.profile);
+                this.formValidationAsyncFactory.mobileVerificationAsyncFactory(childConfig, this.profile, telemetryData);
             } else if (childConfig.asyncValidation.marker === 'EMAIL_OTP_VALIDATION') {
+              const telemetryData = {
+                type: InteractType.TOUCH,
+                subType: '',
+                env: Environment.USER,
+                pageId: PageId.TEACHER_SELF_DECLARATION,
+                id: ID.VALIDATE_EMAIL
+              };
               childConfig.asyncValidation.asyncValidatorFactory =
-                this.formValidationAsyncFactory.emailVerificationAsyncFactory(childConfig, this.profile);
+                this.formValidationAsyncFactory.emailVerificationAsyncFactory(childConfig, this.profile, telemetryData);
             }
             childConfig = this.assignDefaultValue(childConfig, formLoaded);
             return childConfig;
