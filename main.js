@@ -53,6 +53,16 @@ var formRequestArray = [{
         'type': 'user',
         'subType': 'manageduser',
         'action': 'create'
+    },{
+        'type': 'dynamicform',
+        'subType': 'support',
+        'action': 'get',
+        'component': 'app'
+    },{
+        'type': 'form',
+        'subType': 'boardContactInfo',
+        'action': 'get',
+        'component': 'app'
     }
 ];
 
