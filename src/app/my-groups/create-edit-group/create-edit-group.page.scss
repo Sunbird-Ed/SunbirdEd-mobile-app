@@ -11,14 +11,8 @@
     padding: 12px !important;
   }
 
-  .cr-terms{
-    color: $blue;
-  }
-
   .cr-error-checkbox{
-    margin: 0 0 0 48px;
-    position: relative;
-    top: -10px;
+    margin: 0 0 0 34px;
   }
 
   .char-info{
@@ -81,15 +75,25 @@
       --ion-color-base: green !important;
     }
   }
+  .cr-terms-container{
+    padding: 0 16px;
+    font-size: 14px;
+    .cr-terms-checkbox-label{
+      margin-left: 16px;
+      display: inline-block;
+      vertical-align: super;
+      margin-bottom: 0;
+    }
+    .cr-terms{
+      color: $blue;
+    }
+  }
   ion-label {
     color: $gray-800;
     font-family: "Noto Sans";
     font-size: 14px;
     letter-spacing: 0;
     line-height: 19px;
-    &.cr-terms-checkbox-label{
-      margin-left: 16px;
-    }
     sup{
       font-size: 22px;
       top: 0px;
