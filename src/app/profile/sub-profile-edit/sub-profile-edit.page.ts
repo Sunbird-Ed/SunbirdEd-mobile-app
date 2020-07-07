@@ -91,7 +91,8 @@ export class SubProfileEditPage {
     const req: FormRequest = {
       type: 'user',
       subType: 'manageduser_v2',
-      action: 'create'
+      action: 'create',
+      component: 'app'
     };
     this.formService.getForm(req).toPromise()
     .then((res: any) => {

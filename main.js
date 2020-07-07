@@ -56,8 +56,8 @@ var formRequestArray = [{
     },
     {
         'type': 'user',
-        'subType': 'manageduser',
-        'action': 'create_v2'
+        'subType': 'manageduser_v2',
+        'action': 'create'
     },
     {
         'type': 'group',

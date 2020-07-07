@@ -6,8 +6,6 @@ import { ProfileConstants } from '@app/app/app.constant';
 import { CommonUtilService } from '../common-util.service';
 import { EditContactVerifyPopupComponent } from '@app/app/components/popups/edit-contact-verify-popup/edit-contact-verify-popup.component';
 import { FieldConfig } from '@app/app/components/common-forms/field-config';
-import { resolve } from 'dns';
-
 
 @Injectable({ providedIn: 'root' })
 export class FormValidationAsyncFactory {
@@ -30,11 +28,15 @@ export class FormValidationAsyncFactory {
             if (trigger) {
               const that = this;
               trigger['el'].onclick = (async () => {
-                const isOtpVerified: boolean = await that.generateAndVerifyOTP(profile, control, ProfileConstants.CONTACT_TYPE_PHONE);
-                if (isOtpVerified) {
-                  resolve(null);
-                } else {
-                  resolve({ asyncValidation: 'error' });
+                try {
+                  const isOtpVerified: boolean = await that.generateAndVerifyOTP(profile, control, ProfileConstants.CONTACT_TYPE_PHONE);
+                  if (isOtpVerified) {
+                    resolve(null);
+                  } else {
+                    resolve({ asyncValidation: 'error' });
+                  }
+                } catch (e) {
+                  console.log(e);
                 }
               }).bind(this);
               return;
@@ -59,11 +61,15 @@ export class FormValidationAsyncFactory {
             if (trigger) {
               const that = this;
               trigger['el'].onclick = (async () => {
-                const isOtpVerified: boolean = await that.generateAndVerifyOTP(profile, control, ProfileConstants.CONTACT_TYPE_EMAIL);
-                if (isOtpVerified) {
-                  resolve(null);
-                } else {
-                  resolve({ asyncValidation: 'error' });
+                try {
+                  const isOtpVerified: boolean = await that.generateAndVerifyOTP(profile, control, ProfileConstants.CONTACT_TYPE_EMAIL);
+                  if (isOtpVerified) {
+                    resolve(null);
+                  } else {
+                    resolve({ asyncValidation: 'error' });
+                  }
+                } catch (e) {
+                  console.error(e);
                 }
               }).bind(this);
               return;
@@ -98,6 +104,8 @@ export class FormValidationAsyncFactory {
     } catch (e) {
       if (e.hasOwnProperty(e) === 'ERROR_RATE_LIMIT_EXCEEDED') {
         this.commonUtilService.showToast('You have exceeded the maximum limit for OTP, Please try after some time.');
+      } else if (e.message === 'CANCEL') {
+        throw e;
       }
       return false;
     } finally {
@@ -121,6 +129,8 @@ export class FormValidationAsyncFactory {
       const data = await this.openContactVerifyPopup(EditContactVerifyPopupComponent, componentProps, 'popover-alert input-focus');
       if (data && data.OTPSuccess) {
         return true;
+      } else if (!data || !data.OTPSuccess) {
+        throw new Error('CANCEL');
       }
       return false;
     } else {
@@ -136,6 +146,8 @@ export class FormValidationAsyncFactory {
       const data = await this.openContactVerifyPopup(EditContactVerifyPopupComponent, componentProps, 'popover-alert input-focus');
       if (data && data.OTPSuccess) {
         return true;
+      } else if (!data || !data.OTPSuccess) {
+        throw new Error('CANCEL');
       }
       return false;
     }
