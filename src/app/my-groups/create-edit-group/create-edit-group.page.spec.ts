@@ -10,13 +10,18 @@ import { AppGlobalService } from '@app/services/app-global-service.service';
 import { AppHeaderService } from '@app/services/app-header.service';
 import { Location } from '@angular/common';
 import { of, throwError } from 'rxjs';
+import { UtilityService } from '../../../services';
 
 describe('CreateEditGroupPage', () => {
     let createEditGroupPage: CreateEditGroupPage;
     const mockAlertCtrl: Partial<AlertController> = {};
     const mockGroupService: Partial<GroupService> = {};
     const mockCommonUtilService: Partial<CommonUtilService> = {
-        getAppName : jest.fn(() => Promise.resolve('Sunbird'))
+        getAppName : jest.fn(() => Promise.resolve('Sunbird')),
+        getBuildConfigValue: jest.fn(() => Promise.resolve('sampleConfig'))
+    };
+    const mockUtilityService: Partial<UtilityService> = {
+        getBuildConfigValue: jest.fn(() => Promise.resolve('sampleConfig'))
     };
     const mockFormBuilder: Partial<FormBuilder> = {
         group: jest.fn(() => { }) as any
@@ -36,7 +41,8 @@ describe('CreateEditGroupPage', () => {
             mockHeaderService as AppHeaderService,
             mockLocation as Location,
             mockPlatform as Platform,
-            mockAlertCtrl as AlertController
+            mockAlertCtrl as AlertController,
+            mockUtilityService as UtilityService
         );
     });
 
@@ -85,6 +91,7 @@ describe('CreateEditGroupPage', () => {
         });
         createEditGroupPage.ionViewWillEnter();
         expect(mockHeaderService.showHeaderWithBackButton).toHaveBeenCalled();
+        expect(mockCommonUtilService.getAppName).toHaveBeenCalled();
     });
 
     describe('ionViewWillLeave', () => {
@@ -177,5 +184,13 @@ describe('CreateEditGroupPage', () => {
             expect(createEditGroupPage.createGroupFormSubmitted).toBeTruthy();
             expect(createEditGroupPage.createGroupForm.valid).toBeFalsy();
         });
+    });
+
+    it( 'should open terms of use page', () => {
+        // arrange
+        // action
+        createEditGroupPage.openTermsOfUse();
+        // assert
+        expect(mockUtilityService.getBuildConfigValue).toHaveBeenCalled();
     });
 });
