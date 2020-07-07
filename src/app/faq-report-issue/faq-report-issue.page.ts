@@ -294,7 +294,7 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
   submit() {
     this.prepareEmailContent(this.formValues);
 
-    if (this.formValues && this.formValues.subcategory) {
+    if (this.formValues) {
       if (Object.prototype.hasOwnProperty.call(this.callToAction, this.formValues.subcategory)) {
         this.takeAction(this.callToAction[this.formValues.subcategory]);
       } else if (Object.prototype.hasOwnProperty.call(this.callToAction, this.formValues.category)) {
@@ -368,7 +368,7 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
     const stateContactList = await this.formAndFrameworkUtilService.getStateContactList();
     this.supportEmail = undefined;
     stateContactList.forEach(element => {
-      if (this.formValues.children.subcategory.board.code === element.id) {
+      if (this.formValues.children.subcategory && this.formValues.children.subcategory.board && this.formValues.children.subcategory.board.code === element.id) {
         this.supportEmail = element.contactinfo && element.contactinfo.email ? element.contactinfo.email : undefined;
       }
     });
@@ -376,7 +376,11 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
       this.value = {};
       this.value.action = 'initiate-email-clicked';
       this.value.value = {};
-      this.value.initiateEmailBody = this.formValues.children.subcategory.details;
+      if (this.formValues.children && this.formValues.children.subcategory && this.formValues.children.subcategory) {
+        this.value.initiateEmailBody = this.formValues.children.subcategory.details
+      } else if (this.formValues.children && this.formValues.children.category && this.formValues.children.category) {
+        this.value.initiateEmailBody = this.formValues.children.category.details;
+      }
       window.parent.postMessage(this.value, '*');
     }
   }
