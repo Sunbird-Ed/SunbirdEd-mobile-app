@@ -292,6 +292,9 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
   }
 
   submit() {
+    if (!this.isFormValid) {
+      return false;
+    }
     this.prepareEmailContent(this.formValues);
 
     if (this.formValues) {
