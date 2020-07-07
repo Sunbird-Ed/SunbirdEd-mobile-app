@@ -1377,3 +1377,33 @@ ion-modal.sb-progress-loader {
     }
   }
 }
+.my-group-menu {
+  .popover-content{
+    margin-top: -30px;
+  }
+}
+.sb-course-completion-popover{
+  .popover-content{
+    width: 90% !important;
+    // top: 0 !important;
+    // bottom: 0;
+    left: 0 !important;
+    right: 0 !important;
+    // height: 200px;
+    margin: auto;
+  }
+  .cc-popup-close{
+    padding: 16px 16px 0 0;
+    font-size: 18px;
+  }
+  .course-completion-title{
+    color: $green;
+    font-size: 18px;
+    font-weight: bold;
+  }
+  .course-completion-info{
+    color: $green;
+    font-size: 14px;
+    padding-bottom: 16px;
+  }
+}

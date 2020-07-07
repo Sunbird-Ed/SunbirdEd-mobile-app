@@ -132,7 +132,8 @@
                     {{ (content.name && content.name.length > 30) ? (content.name | slice:0:30) + '...' : (content.name) }}
                   </div>
                   <div class="grade_ellipsis">
-                    <span class="info subject">{{ content.size | fileSize: 0}}</span>
+                    <!-- <span class="info subject">{{ content.size | fileSize: 0}}</span> -->
+                    <span class="info subject">{{ content.creator}}</span>
                   </div>
                 </div>
               </div>
