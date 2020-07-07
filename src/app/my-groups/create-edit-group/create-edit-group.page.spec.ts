@@ -2,11 +2,8 @@ import { CreateEditGroupPage } from './create-edit-group.page';
 import { GroupService } from '@project-sunbird/sunbird-sdk';
 import { FormBuilder } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
-import { Router } from '@angular/router';
 import { Platform, AlertController } from '@ionic/angular';
-import { AppVersion } from '@ionic-native/app-version/ngx';
 import { CommonUtilService } from '@app/services/common-util.service';
-import { AppGlobalService } from '@app/services/app-global-service.service';
 import { AppHeaderService } from '@app/services/app-header.service';
 import { Location } from '@angular/common';
 import { of, throwError } from 'rxjs';
@@ -81,8 +78,10 @@ describe('CreateEditGroupPage', () => {
         jest.spyOn(createEditGroupPage, 'handleBackButtonEvents').mockImplementation(() => {
             return;
         });
+        mockCommonUtilService.getAppName = jest.fn(() => Promise.resolve('Sunbird'));
         createEditGroupPage.ionViewWillEnter();
         expect(mockHeaderService.showHeaderWithBackButton).toHaveBeenCalled();
+        expect(mockCommonUtilService.getAppName).toHaveBeenCalled();
     });
 
     describe('ionViewWillLeave', () => {
@@ -90,18 +89,14 @@ describe('CreateEditGroupPage', () => {
             createEditGroupPage.backButtonFunc = {
                 unsubscribe: jest.fn()
             } as any;
-            mockCommonUtilService.getAppName = jest.fn(() => Promise.resolve('Sunbird'));
             createEditGroupPage.ionViewWillLeave();
             expect(createEditGroupPage.backButtonFunc).toBeTruthy();
-            expect(mockCommonUtilService.getAppName).toHaveBeenCalled();
         });
 
         it('should unsubscribe backButton for else part', () => {
             createEditGroupPage.backButtonFunc = undefined;
-            mockCommonUtilService.getAppName = jest.fn(() => Promise.resolve('Sunbird'));
             createEditGroupPage.ionViewWillLeave();
             expect(createEditGroupPage.backButtonFunc).toBeFalsy();
-            expect(mockCommonUtilService.getAppName).toHaveBeenCalled();
         });
     });
 
