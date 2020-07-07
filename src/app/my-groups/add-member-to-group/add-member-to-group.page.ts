@@ -1,11 +1,12 @@
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, ViewChild, OnInit, OnChanges } from '@angular/core';
 import { Subscription } from 'rxjs';
 import {
   ServerProfileDetailsRequest,
   ProfileService,
   GroupService,
   AddMembersRequest,
-  GroupMemberRole
+  GroupMemberRole,
+  SystemSettingsService
 } from 'sunbird-sdk';
 import { Location } from '@angular/common';
 import { Router } from '@angular/router';
@@ -24,27 +25,44 @@ import { MyGroupsPopoverComponent } from '../../components/popups/sb-my-groups-p
 })
 export class AddMemberToGroupPage {
   userId = '';
+  captchaResponse: string;
   isUserIdVerified = false;
   showErrorMsg = false;
   headerObservable: any;
   userName = 'Rahul';
   groupId: string;
+  sunbirdGoogleCaptchaKey: string;
   userDetails;
   private unregisterBackButton: Subscription;
   appName: string;
+  @ViewChild('cap') cap;
 
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     @Inject('GROUP_SERVICE') public groupService: GroupService,
+    @Inject('SYSTEM_SETTINGS_SERVICE') private systemSettingsService: SystemSettingsService,
     private headerService: AppHeaderService,
     private router: Router,
     private location: Location,
     private platform: Platform,
     private commonUtilService: CommonUtilService,
-    private popoverCtrl: PopoverController
+    private popoverCtrl: PopoverController,
   ) {
     const extras = this.router.getCurrentNavigation().extras.state;
     this.groupId = extras.groupId;
+    this.getGoogleCaptchaSiteKey();
+  }
+
+  getGoogleCaptchaSiteKey() {
+    if (!Boolean(this.commonUtilService.getGoogleCaptchaSitekey())) {
+      this.systemSettingsService.getSystemSettings({ id: 'googleReCaptcha' }).toPromise()
+        .then((res) => {
+          this.sunbirdGoogleCaptchaKey = res.value;
+          this.commonUtilService.setGoogleCaptchaSitekey(res.value);
+        });
+    } else if (Boolean(this.commonUtilService.getGoogleCaptchaSitekey())) {
+      this.sunbirdGoogleCaptchaKey = this.commonUtilService.getGoogleCaptchaSitekey();
+    }
   }
 
   ionViewWillEnter() {
@@ -87,11 +105,21 @@ export class AddMemberToGroupPage {
     }
   }
 
+  async captchaResolved(res) {
+    this.captchaResponse = res;
+  }
+
   async onVerifyClick() {
+    this.cap.execute();
     if (!this.userId) {
       this.showErrorMsg = true;
       return;
     }
+
+    if (!this.captchaResponse) {
+      return false;
+    }
+
     this.showErrorMsg = false;
     const req: ServerProfileDetailsRequest = {
       userId: 'da4e72df-0371-45be-9df4-a7c7762d3d7f',
@@ -141,7 +169,7 @@ export class AddMemberToGroupPage {
           this.location.back();
         }
       }).catch(async (e) => {
-        console.error(e);
+        console.log(e);
         await loader.dismiss();
         this.commonUtilService.showToast('SOMETHING_WENT_WRONG');
       });

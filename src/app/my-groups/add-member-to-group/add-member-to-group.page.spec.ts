@@ -1,5 +1,5 @@
-import { AddMemberToGroupPage } from './add-member-to-group.page';
-import { ProfileService, GroupService } from '@project-sunbird/sunbird-sdk';
+import { AddMemberToGroupPage } from '@app/app/my-groups/add-member-to-group/add-member-to-group.page';
+import { ProfileService, GroupService, SystemSettingsService } from '@project-sunbird/sunbird-sdk';
 import { Router } from '@angular/router';
 import { Platform, PopoverController } from '@ionic/angular';
 import { AppHeaderService, CommonUtilService } from '@app/services';
@@ -9,7 +9,13 @@ import { of, throwError, Subscription } from 'rxjs';
 describe('AddMemberToGroupPage', () => {
     let addMemberToGroupPage: AddMemberToGroupPage;
     const mockGroupService: Partial<GroupService> = {};
-    const mockCommonUtilService: Partial<CommonUtilService> = {};
+    const mockSystemSettingService: Partial<SystemSettingsService> = {
+        getSystemSettings : jest.fn(() => of({value: 'sample value'}) as any )
+    };
+    const mockCommonUtilService: Partial<CommonUtilService> = {
+        getGoogleCaptchaSitekey: jest.fn(() => { }),
+        setGoogleCaptchaSitekey: jest.fn()
+    };
     const mockHeaderService: Partial<AppHeaderService> = {};
     const mockLocation: Partial<Location> = {};
     const mockPlatform: Partial<Platform> = {
@@ -33,6 +39,7 @@ describe('AddMemberToGroupPage', () => {
         addMemberToGroupPage = new AddMemberToGroupPage(
             mockProfileService as ProfileService,
             mockGroupService as GroupService,
+            mockSystemSettingService as SystemSettingsService,
             mockHeaderService as AppHeaderService,
             mockRouter as Router,
             mockLocation as Location,
@@ -105,6 +112,9 @@ describe('AddMemberToGroupPage', () => {
 
     describe('onVerifyClick', () => {
         it('should return errorMessage if userId is undefined', (done) => {
+            addMemberToGroupPage.cap = {
+                execute : jest.fn()
+            };
             addMemberToGroupPage.userId = undefined;
             addMemberToGroupPage.onVerifyClick();
             setTimeout(() => {
@@ -115,6 +125,12 @@ describe('AddMemberToGroupPage', () => {
         });
 
         it('should return userDetails for serverProfile', (done) => {
+            addMemberToGroupPage.cap = {
+                execute : jest.fn()
+            };
+            addMemberToGroupPage.captchaResponse = {
+                value: 'sample'
+            };
             addMemberToGroupPage.userId = 'sample-user-id';
             const dismissFn = jest.fn(() => Promise.resolve());
             const presentFn = jest.fn(() => Promise.resolve());
