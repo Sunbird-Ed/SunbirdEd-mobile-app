@@ -15,7 +15,9 @@ describe('CreateEditGroupPage', () => {
     let createEditGroupPage: CreateEditGroupPage;
     const mockAlertCtrl: Partial<AlertController> = {};
     const mockGroupService: Partial<GroupService> = {};
-    const mockCommonUtilService: Partial<CommonUtilService> = {};
+    const mockCommonUtilService: Partial<CommonUtilService> = {
+        getAppName : jest.fn(() => Promise.resolve('Sunbird'))
+    };
     const mockFormBuilder: Partial<FormBuilder> = {
         group: jest.fn(() => { }) as any
     };
@@ -93,7 +95,6 @@ describe('CreateEditGroupPage', () => {
             mockCommonUtilService.getAppName = jest.fn(() => Promise.resolve('Sunbird'));
             createEditGroupPage.ionViewWillLeave();
             expect(createEditGroupPage.backButtonFunc).toBeTruthy();
-            expect(mockCommonUtilService.getAppName).toHaveBeenCalled();
         });
 
         it('should unsubscribe backButton for else part', () => {
@@ -101,7 +102,6 @@ describe('CreateEditGroupPage', () => {
             mockCommonUtilService.getAppName = jest.fn(() => Promise.resolve('Sunbird'));
             createEditGroupPage.ionViewWillLeave();
             expect(createEditGroupPage.backButtonFunc).toBeFalsy();
-            expect(mockCommonUtilService.getAppName).toHaveBeenCalled();
         });
     });
 
