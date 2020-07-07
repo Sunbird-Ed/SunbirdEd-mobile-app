@@ -798,5 +798,6 @@
   "AS_PER_THE": "as per the",
   "COURSE_COMPLETION_POPUP_DESC": "You will be notified on your registered contact details about the course certificate within 7 days",
   "COURSE_COMPLETION_POPUP_NO_CERTIFICATE": "Note: This course does not have a certificate",
-  "CONGRATULATIONS": "Congratulations!"
+  "CONGRATULATIONS": "Congratulations!",
+  "SPECIAL_CHARACTERS_NOT_SUPPORTED": "Special characters not supported"
 }
