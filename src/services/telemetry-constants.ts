@@ -520,6 +520,9 @@ export enum ID {
     TEACHER_DECLARATION = 'teacher-declaration',
     MUA_USER_CREATION = 'mua-user-creation',
     DATA_SHARING = 'data-sharing',
+    VALIDATE_EMAIL = 'validate-email',
+    VALIDATE_MOBILE = 'validate-mobile',
+    DATA_SHARING = 'data-sharing',
     CREATE_GROUP = 'create-group'
 }
 

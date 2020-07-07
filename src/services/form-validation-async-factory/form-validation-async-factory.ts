@@ -6,6 +6,7 @@ import { ProfileConstants } from '@app/app/app.constant';
 import { CommonUtilService } from '../common-util.service';
 import { EditContactVerifyPopupComponent } from '@app/app/components/popups/edit-contact-verify-popup/edit-contact-verify-popup.component';
 import { FieldConfig } from '@app/app/components/common-forms/field-config';
+import { TelemetryGeneratorService } from '../telemetry-generator.service';
 
 @Injectable({ providedIn: 'root' })
 export class FormValidationAsyncFactory {
@@ -13,14 +14,15 @@ export class FormValidationAsyncFactory {
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     private commonUtilService: CommonUtilService,
-    private popoverCtrl: PopoverController
+    private popoverCtrl: PopoverController,
+    private telemetryGeneratorService: TelemetryGeneratorService,
   ) { }
 
-  mobileVerificationAsyncFactory(formElement: FieldConfig<any>, profile: ServerProfile) {
+  mobileVerificationAsyncFactory(formElement: FieldConfig<any>, profile: ServerProfile, initialMobileVal, telemetryData?) {
     return (marker: string, triggers: QueryList<any>) => {
       if (marker === 'MOBILE_OTP_VALIDATION') {
         return async (control: FormControl) => {
-          if (control && !control.value) {
+          if ((control && !control.value) || (initialMobileVal && initialMobileVal === control.value)) {
             return null;
           }
           return new Promise<ValidationErrors | null>(resolve => {
@@ -28,6 +30,9 @@ export class FormValidationAsyncFactory {
             if (trigger) {
               const that = this;
               trigger['el'].onclick = (async () => {
+                if (telemetryData) {
+                  this.generateTelemetryInteract(telemetryData);
+                }
                 try {
                   const isOtpVerified: boolean = await that.generateAndVerifyOTP(profile, control, ProfileConstants.CONTACT_TYPE_PHONE);
                   if (isOtpVerified) {
@@ -49,11 +54,11 @@ export class FormValidationAsyncFactory {
     };
   }
 
-  emailVerificationAsyncFactory(formElement: FieldConfig<any>, profile: ServerProfile) {
+  emailVerificationAsyncFactory(formElement: FieldConfig<any>, profile: ServerProfile, initialEmailVal, telemetryData?) {
     return (marker: string, triggers: QueryList<any>) => {
       if (marker === 'EMAIL_OTP_VALIDATION') {
         return async (control: FormControl) => {
-          if (control && !control.value) {
+          if ((control && !control.value) || (initialEmailVal && initialEmailVal === control.value)) {
             return null;
           }
           return new Promise<ValidationErrors | null>(resolve => {
@@ -61,6 +66,9 @@ export class FormValidationAsyncFactory {
             if (trigger) {
               const that = this;
               trigger['el'].onclick = (async () => {
+                if (telemetryData) {
+                  this.generateTelemetryInteract(telemetryData);
+                }
                 try {
                   const isOtpVerified: boolean = await that.generateAndVerifyOTP(profile, control, ProfileConstants.CONTACT_TYPE_EMAIL);
                   if (isOtpVerified) {
@@ -159,6 +167,20 @@ export class FormValidationAsyncFactory {
     const { data } = await popover.onDidDismiss();
 
     return data;
+  }
+
+  private generateTelemetryInteract(telemetryData) {
+    this.telemetryGeneratorService.generateInteractTelemetry(
+      telemetryData.type,
+      telemetryData.subType,
+      telemetryData.env,
+      telemetryData.pageId,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      telemetryData.id
+    );
   }
 
 }
