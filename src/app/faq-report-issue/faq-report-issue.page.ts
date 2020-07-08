@@ -197,7 +197,7 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
     if (this.headerObservable) {
       this.headerObservable.unsubscribe();
     }
-    this.appGlobalService.formConfig = null;
+    this.appGlobalService.formConfig = undefined;
   }
   
   receiveMessage(event) {
@@ -246,8 +246,8 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
                 this.socialSharing.shareViaEmail(message,
                   this.subjectDetails,
                   [this.supportEmail ? this.supportEmail : this.appGlobalService.SUPPORT_EMAIL],
-                  null,
-                  null,
+                  undefined,
+                  undefined,
                   this.fileUrl)
                   .catch(error => {
                     console.error(error);
@@ -286,7 +286,7 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
         this.appGlobalService.getSelectedBoardMediumGrade() + ticketSummary;
     }
     this.categories ? userDetails += '.<br> <br>' + this.commonUtilService.translateMessage('DEVICE_ID') + ': ' + this.deviceId + '<br>'
-      : null;
+      : undefined;
     userDetails += ticketSummary;
     return userDetails;
   }
@@ -347,11 +347,11 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
       componentProps:
       {
         boardList: (this.formValues.children && this.formValues.children.subcategory && this.formValues.children.subcategory.board) ?
-        [this.formValues.children.subcategory.board.name] : null,
+        [this.formValues.children.subcategory.board.name] : undefined,
         mediumList: (this.formValues.children && this.formValues.children.subcategory && this.formValues.children.subcategory.medium) ?
-        [this.formValues.children.subcategory.medium.name] : null,
+        [this.formValues.children.subcategory.medium.name] : undefined,
         geadeList: (this.formValues.children && this.formValues.children.subcategory && this.formValues.children.subcategory.grade) ?
-        [this.formValues.children.subcategory.grade.name] : null,
+        [this.formValues.children.subcategory.grade.name] : undefined,
         curLang: this.translate.currentLang
       }
     });
@@ -371,8 +371,10 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
     const stateContactList = await this.formAndFrameworkUtilService.getStateContactList();
     this.supportEmail = undefined;
     stateContactList.forEach(element => {
-      if (this.formValues.children.subcategory && this.formValues.children.subcategory.board && this.formValues.children.subcategory.board.code === element.id) {
-        this.supportEmail = element.contactinfo && element.contactinfo.email ? element.contactinfo.email : undefined;
+      if (this.formValues.children.subcategory && this.formValues.children.subcategory.board &&
+      this.formValues.children.subcategory.board.code === element.id && element.contactinfo &&
+      element.contactinfo.email) {
+        this.supportEmail = element.contactinfo.email;
       }
     });
     if (!this.showSupportContact && this.isFormValid) {
@@ -392,7 +394,7 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
     const stateContactList = await this.formAndFrameworkUtilService.getStateContactList();
     stateContactList.forEach(element => {
       if (this.formValues.children.subcategory.board.code === element.id) {
-        if (this.isFormValid) {
+        if (this.isFormValid && element.conteactInfo.contactinfo && element.conteactInfo.contactinfo.number) {
           this.boardContact = element;
           this.showSupportContact = true;
         }
@@ -420,26 +422,26 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
     const correlationlist: Array<CorrelationData> = [];
     // Category
     this.formValues && this.formValues.category ?
-    correlationlist.push({ id: this.formValues.category, type: CorReleationDataType.CATEGORY }) : null;
+    correlationlist.push({ id: this.formValues.category, type: CorReleationDataType.CATEGORY }) : undefined;
     // SubCategory
     this.formValues && this.formValues.subcategory ?
-    correlationlist.push({ id: this.formValues.subcategory, type: CorReleationDataType.SUBCATEGORY }) : null;
+    correlationlist.push({ id: this.formValues.subcategory, type: CorReleationDataType.SUBCATEGORY }) : undefined;
     if (this.formValues && this.formValues.children && this.formValues.children.subcategory) {
       // Board
       this.formValues.children.subcategory.board && this.formValues.children.subcategory.board.name ?
-      correlationlist.push({ id: this.formValues.children.subcategory.board.name, type: CorReleationDataType.BOARD }) : null;
+      correlationlist.push({ id: this.formValues.children.subcategory.board.name, type: CorReleationDataType.BOARD }) : undefined;
       // Medium
       this.formValues.children.subcategory.medium && this.formValues.children.subcategory.medium.name ?
-      correlationlist.push({ id: this.formValues.children.subcategory.medium.name, type: CorReleationDataType.MEDIUM }) : null;
+      correlationlist.push({ id: this.formValues.children.subcategory.medium.name, type: CorReleationDataType.MEDIUM }) : undefined;
       // Grade
       this.formValues.children.subcategory.grade && this.formValues.children.subcategory.grade.name ?
-      correlationlist.push({ id: this.formValues.children.subcategory.grade.name, type: CorReleationDataType.CLASS }) : null;
+      correlationlist.push({ id: this.formValues.children.subcategory.grade.name, type: CorReleationDataType.CLASS }) : undefined;
       // Subject
       this.formValues.children.subcategory.subject && this.formValues.children.subcategory.subject.name ?
-      correlationlist.push({ id: this.formValues.children.subcategory.subject.name, type: CorReleationDataType.SUBJECT }) : null;
+      correlationlist.push({ id: this.formValues.children.subcategory.subject.name, type: CorReleationDataType.SUBJECT }) : undefined;
     }
 
-    return correlationlist ? correlationlist : null;
+    return correlationlist ? correlationlist : undefined;
   }
 
   async syncTelemetry() {
@@ -448,7 +450,7 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
     await loader.present();
     const correlationlist: Array<CorrelationData> = this.prepareTelemetryCorrelation();
     
-    this.generateInteractEvent(InteractType.TOUCH, InteractSubtype.MANUALSYNC_INITIATED, null);
+    this.generateInteractEvent(InteractType.TOUCH, InteractSubtype.MANUALSYNC_INITIATED, undefined);
     this.telemetryService.sync({
       ignoreAutoSyncMode: true,
       ignoreSyncThreshold: true
@@ -476,7 +478,7 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
 
   generateInteractEvent(interactType: string, subtype: string, size: number, corRelationList?) {
     /*istanbul ignore else */
-    if (size != null) {
+    if (size != undefined) {
       this.telemetryGeneratorService.generateInteractTelemetry(
         interactType,
         subtype,
@@ -783,8 +785,8 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
   }
 
   prepareEmailContent(formValue) {
-    this.bmgsString = null;
-    this.categories = null;
+    this.bmgsString = undefined;
+    this.categories = undefined;
     const bmgskeys = ['board', 'medium', 'grade', 'subject', 'contentname'];
     const categorykeys = ['category', 'subcategory'];
     let fields = [];
@@ -805,9 +807,9 @@ export class FaqReportIssuePage implements OnInit, OnDestroy {
     categorykeys.forEach(element => {
       if (Object.prototype.hasOwnProperty.call(formValue, element)) {
         if (!this.categories) {
-          formValue[element] ? this.categories = formValue[element]: null;
+          formValue[element] ? this.categories = formValue[element]: undefined;
         } else {
-          formValue[element] ? this.categories += " - " + formValue[element]: null;
+          formValue[element] ? this.categories += " - " + formValue[element]: undefined;
         }
       }
     });
