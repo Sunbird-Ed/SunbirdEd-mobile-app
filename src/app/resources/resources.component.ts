@@ -691,7 +691,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
             let countLabel = this.commonUtilService.translateMessage('NO_COURSES');
             if (section.contents) {
               if (section.contents.length === 1) {
-                countLabel = this.commonUtilService.translateMessage('NUMBER_OF_COURSE_1');
+                countLabel = this.commonUtilService.translateMessage('NUMBER_OF_COURSE_1', 1);
               } else {
                 countLabel = this.commonUtilService.translateMessage('NUMBER_OF_COURSES', section.contents.length);
               }
