@@ -54,6 +54,7 @@ import { FileOpener } from '@ionic-native/file-opener/ngx';
 import { FileTransfer } from '@ionic-native/file-transfer/ngx';
 import { truncate } from 'fs';
 import { SbProgressLoader } from '@app/services/sb-progress-loader.service';
+import { LocalCourseService } from '../../services';
 
 describe('ContentDetailsPage', () => {
     let contentDetailsPage: ContentDetailsPage;
@@ -68,9 +69,7 @@ describe('ContentDetailsPage', () => {
     const mockDownloadService: Partial<DownloadService> = {
         getActiveDownloadRequests: jest.fn(() => EMPTY)
     };
-    const mockCourseService: Partial<CourseService> = {
-        getContentState: jest.fn(() => of('success'))
-    };
+    const mockLocalCourseService: Partial<LocalCourseService> = {};
     const mockNgZone: Partial<NgZone> = {
         run: jest.fn()
     };
@@ -132,7 +131,6 @@ describe('ContentDetailsPage', () => {
             mockStorageService as StorageServiceImpl,
             mockDownloadService as DownloadService,
             mockPreferences as SharedPreferences,
-            mockCourseService as CourseService,
             mockNgZone as NgZone,
             mockEvents as Events,
             mockPopoverController as PopoverController,
@@ -157,7 +155,8 @@ describe('ContentDetailsPage', () => {
             mockLoginHandlerService as LoginHandlerService,
             mockFileOpener as FileOpener,
             mockFileTransfer as FileTransfer,
-            mockSbProgressLoader as SbProgressLoader
+            mockSbProgressLoader as SbProgressLoader,
+            mockLocalCourseService as LocalCourseService,
         );
     });
     beforeEach(() => {
@@ -1350,10 +1349,7 @@ describe('ContentDetailsPage', () => {
                         return of(contenxt);
                 }
             });
-            const contentStatus = {
-                contentList: [{contentId: 'id1'}]
-            };
-            mockCourseService.getContentState = jest.fn(() => of(contentStatus));
+            mockLocalCourseService.getCourseProgress = jest.fn(() => Promise.resolve(10));
             // act
             contentDetailsPage.getContentState();
             // assert
@@ -1373,10 +1369,7 @@ describe('ContentDetailsPage', () => {
                         return of(context);
                 }
             });
-            const contentStatus = {
-                contentList: [{contentId: 'id1', status: 2}]
-            };
-            mockCourseService.getContentState = jest.fn(() => of(contentStatus));
+            mockLocalCourseService.getCourseProgress = jest.fn(() => Promise.resolve(100));
             // act
             contentDetailsPage.getContentState();
             // assert

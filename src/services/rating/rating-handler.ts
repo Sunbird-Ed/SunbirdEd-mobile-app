@@ -12,7 +12,6 @@ import { PopoverController } from '@ionic/angular';
 import { AppGlobalService } from '@app/services/app-global-service.service';
 import { ContentUtil } from '@app/util/content-util';
 import { Router } from '@angular/router';
-import { CourseCompletionPopoverComponent } from '@app/app/components/popups/sb-course-completion-popup/sb-course-completion-popup.component';
 
 @Injectable({
     providedIn: 'root'
@@ -41,10 +40,8 @@ export class RatingHandler {
         corRelationList: CorrelationData[],
         rollUp: Rollup,
         shouldNavigateBack?: boolean,
-        courseContext?: any
+        onDidDismiss?: () => void
     ) {
-        // to show coursecompletion popup when course is completed
-        this.courseContext = courseContext || '';
         const paramsMap = new Map();
         const contentFeedback: any = content.contentFeedback;
         this.telemetryObject = ContentUtil.getTelemetryObject(content);
@@ -62,15 +59,15 @@ export class RatingHandler {
                             this.showAppRatingPopup();
                         } else {
                             paramsMap['isPlayed'] = 'Y';
-                            this.showContentRatingPopup(content, popupType, shouldNavigateBack);
+                            this.showContentRatingPopup(content, popupType, shouldNavigateBack, onDidDismiss);
                         }
                     }).catch(err => {
                         paramsMap['isPlayed'] = 'Y';
-                        this.showContentRatingPopup(content, popupType, shouldNavigateBack);
+                        this.showContentRatingPopup(content, popupType, shouldNavigateBack, onDidDismiss);
                     });
                 } else {
                     paramsMap['isPlayed'] = 'Y';
-                    this.showContentRatingPopup(content, popupType, shouldNavigateBack);
+                    this.showContentRatingPopup(content, popupType, shouldNavigateBack, onDidDismiss);
                 }
             } else if (popupType === 'manual') {
                 paramsMap['isPlayed'] = 'Y';
@@ -93,7 +90,7 @@ export class RatingHandler {
 
     }
 
-    async showContentRatingPopup(content: Content, popupType: string, shouldNavigateBack?: boolean) {
+    async showContentRatingPopup(content: Content, popupType: string, shouldNavigateBack?: boolean, onDidDismiss?: () => void) {
         const contentFeedback: any = content.contentFeedback;
         if (contentFeedback && contentFeedback.length) {
             this.userRating = this.userRating ? this.userRating : contentFeedback[0].rating;
@@ -118,8 +115,8 @@ export class RatingHandler {
             this.userRating = data.rating;
             this.userComment = data.comment;
         }
-        if (this.courseContext) {
-            this.openCourseCompletionPopup();
+        if (onDidDismiss) {
+            onDidDismiss();
         }
     }
 
@@ -180,23 +177,4 @@ export class RatingHandler {
             });
     }
 
-    async openCourseCompletionPopup() {
-        const popUp = await this.popoverCtrl.create({
-          component: CourseCompletionPopoverComponent,
-          componentProps: {
-            isCertified: this.courseContext['isCertified']
-          },
-          cssClass: 'sb-course-completion-popover',
-        });
-        await popUp.present();
-        const { data } = await popUp.onDidDismiss();
-        if (data === undefined) {
-            this.telemetryGeneratorService.generateInteractTelemetry(
-                InteractType.TOUCH,
-                InteractSubtype.CLOSE_CLICKED,
-                PageId.COURSE_COMPLETION_POPUP,
-                Environment.HOME
-            );
-        }
-      }
 }

@@ -30,10 +30,7 @@ import {
   Course,
   DownloadService,
   ObjectType,
-  SharedPreferences,
-  GetContentStateRequest,
-  ContentStateResponse,
-  CourseService
+  SharedPreferences
 } from 'sunbird-sdk';
 
 import { Map } from '@app/app/telemetryutil';
@@ -44,11 +41,14 @@ import {
   ContentConstants, EventTopics, XwalkConstants, RouterLinks, ContentFilterConfig,
   ShareItemType, ContentType, PreferenceKey
 } from '@app/app/app.constant';
-import { CourseUtilService } from '@app/services/course-util.service';
-import { UtilityService } from '@app/services/utility-service';
-import { TelemetryGeneratorService } from '@app/services/telemetry-generator.service';
+import {
+  CourseUtilService,
+  LocalCourseService,
+  UtilityService,
+  TelemetryGeneratorService,
+  CommonUtilService,
+ } from '@app/services';
 import { ContentInfo } from '@app/services/content/content-info';
-import { CommonUtilService } from '@app/services/common-util.service';
 import { DialogPopupComponent } from '@app/app/components/popups/dialog-popup/dialog-popup.component';
 import {
   Environment,
@@ -75,6 +75,7 @@ import { SbSharePopupComponent } from '../components/popups/sb-share-popup/sb-sh
 import { FileOpener } from '@ionic-native/file-opener/ngx';
 import { Components } from '@ionic/core/dist/types/components';
 import { SbProgressLoader } from '../../services/sb-progress-loader.service';
+import { CourseCompletionPopoverComponent } from '../components/popups/sb-course-completion-popup/sb-course-completion-popup.component';
 
 @Component({
   selector: 'app-content-details',
@@ -173,7 +174,6 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
     @Inject('STORAGE_SERVICE') private storageService: StorageService,
     @Inject('DOWNLOAD_SERVICE') private downloadService: DownloadService,
     @Inject('SHARED_PREFERENCES') private preferences: SharedPreferences,
-    @Inject('COURSE_SERVICE') private courseService: CourseService,
     private zone: NgZone,
     private events: Events,
     private popoverCtrl: PopoverController,
@@ -198,7 +198,8 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
     private loginHandlerService: LoginHandlerService,
     private fileOpener: FileOpener,
     private transfer: FileTransfer,
-    private sbProgressLoader: SbProgressLoader
+    private sbProgressLoader: SbProgressLoader,
+    private localCourseService: LocalCourseService
   ) {
     this.subscribePlayEvent();
     this.checkDeviceAPILevel();
@@ -443,8 +444,14 @@ export class ContentDetailsPage implements OnInit, OnDestroy {
         if (showRating) {
           this.contentPlayerHandler.setContentPlayerLaunchStatus(false);
           if (this.showCourseCompletePopup) {
-            this.ratingHandler.showRatingPopup(this.isContentPlayed, data, 'automatic', this.corRelationList, this.objRollup,
-           this.shouldNavigateBack, this.courseContext);
+            this.ratingHandler.showRatingPopup(
+              this.isContentPlayed,
+              data,
+              'automatic',
+              this.corRelationList,
+              this.objRollup,
+              this.shouldNavigateBack,
+              () => { this.openCourseCompletionPopup(); });
           } else {
             this.ratingHandler.showRatingPopup(this.isContentPlayed, data, 'automatic', this.corRelationList, this.objRollup,
            this.shouldNavigateBack);
@@ -1351,27 +1358,7 @@ showDeletePopup() {
       this.courseContext = await this.preferences.getString(PreferenceKey.CONTENT_CONTEXT).toPromise();
       this.courseContext = JSON.parse(this.courseContext);
       if (this.courseContext.courseId && this.courseContext.batchId && this.courseContext.leafNodeIds) {
-        const request: GetContentStateRequest = {
-          userId: this.appGlobalService.getUserId(),
-          courseIds: [this.courseContext.courseId],
-          returnRefreshedContentStates: true,
-          batchId: this.courseContext.batchId
-        };
-        let progress = 0;
-        try {
-          const contentStatusData: ContentStateResponse = await this.courseService.getContentState(request).toPromise();
-          if (contentStatusData && contentStatusData.contentList) {
-            const viewedContents = [];
-            for (const contentId of this.courseContext.leafNodeIds) {
-              if (contentStatusData.contentList.find((c) => c.contentId === contentId && c.status === 2)) {
-                viewedContents.push(contentId);
-              }
-            }
-            progress = Math.round((viewedContents.length / this.courseContext.leafNodeIds.length) * 100);
-          }
-        } catch (err) {
-          reject(err);
-        }
+        const progress = await this.localCourseService.getCourseProgress(this.courseContext);
         if (progress !== 100) {
           this.appGlobalService.showCourseCompletePopup = true;
         }
@@ -1382,6 +1369,26 @@ showDeletePopup() {
       }
       resolve();
     });
+  }
+
+  async openCourseCompletionPopup() {
+    const popUp = await this.popoverCtrl.create({
+      component: CourseCompletionPopoverComponent,
+      componentProps: {
+        isCertified: this.courseContext['isCertified']
+      },
+      cssClass: 'sb-course-completion-popover',
+    });
+    await popUp.present();
+    const { data } = await popUp.onDidDismiss();
+    if (data === undefined) {
+        this.telemetryGeneratorService.generateInteractTelemetry(
+            InteractType.TOUCH,
+            InteractSubtype.CLOSE_CLICKED,
+            PageId.COURSE_COMPLETION_POPUP,
+            Environment.HOME
+        );
+    }
   }
 
 }
