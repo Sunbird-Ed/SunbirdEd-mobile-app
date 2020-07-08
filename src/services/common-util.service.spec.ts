@@ -506,13 +506,12 @@ describe('CommonUtilService', () => {
         }
         return of(value);
       });
-      jest.spyOn(FCMPlugin, 'unsubscribeFromTopic');
-      jest.spyOn(FCMPlugin, 'subscribeToTopic');
       // act
       commonUtilService.handleToTopicBasedNotification();
       // assert
       setTimeout(() => {
-        expect(FCMPlugin.unsubscribeFromTopic).toHaveBeenCalled();
+        expect(mockProfileService.getActiveSessionProfile).toHaveBeenCalled();
+        expect(mockSharedPreferences.getString).toHaveBeenCalled();
         done();
       }, 0);
     });

@@ -77,3 +77,9 @@ global.plugins = {
         openGooglePlayPage: () => Promise.resolve()
     }
 }
+global.FCMPlugin = {
+    getToken: () => {},
+    onNotification: () => {},
+    onTokenRefresh: () => {},
+    subscribeToTopic: () => {}
+}
