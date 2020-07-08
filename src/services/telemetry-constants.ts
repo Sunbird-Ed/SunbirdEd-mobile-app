@@ -522,7 +522,6 @@ export enum ID {
     DATA_SHARING = 'data-sharing',
     VALIDATE_EMAIL = 'validate-email',
     VALIDATE_MOBILE = 'validate-mobile',
-    DATA_SHARING = 'data-sharing',
     CREATE_GROUP = 'create-group'
 }
 
