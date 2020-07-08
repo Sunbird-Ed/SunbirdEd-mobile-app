@@ -8,13 +8,13 @@ import {
   GroupMemberRole
 } from 'sunbird-sdk';
 import { Location } from '@angular/common';
-import { Router, NavigationExtras } from '@angular/router';
-import { RouterLinks, ProfileConstants } from '@app/app/app.constant';
+import { Router } from '@angular/router';
+import { ProfileConstants } from '@app/app/app.constant';
 import { Platform } from '@ionic/angular';
 import { AppHeaderService, CommonUtilService } from '@app/services';
 import { PopoverController } from '@ionic/angular';
-import {animationGrowInTopRight} from '../../animations/animation-grow-in-top-right';
-import {animationShrinkOutTopRight} from '../../animations/animation-shrink-out-top-right';
+import { animationGrowInTopRight } from '../../animations/animation-grow-in-top-right';
+import { animationShrinkOutTopRight } from '../../animations/animation-shrink-out-top-right';
 import { MyGroupsPopoverComponent } from '../../components/popups/sb-my-groups-popover/sb-my-groups-popover.component';
 
 @Component({
@@ -56,12 +56,18 @@ export class AddMemberToGroupPage {
     this.commonUtilService.getAppName().then((res) => { this.appName = res; });
   }
 
+  ionViewWillLeave() {
+    this.headerObservable.unsubscribe();
+    if (this.unregisterBackButton) {
+      this.unregisterBackButton.unsubscribe();
+    }
+  }
+
   handleDeviceBackButton() {
     this.unregisterBackButton = this.platform.backButton.subscribeWithPriority(10, () => {
       this.handleBackButton(false);
     });
   }
-
 
   handleHeaderEvents($event) {
     switch ($event.name) {
@@ -81,8 +87,7 @@ export class AddMemberToGroupPage {
     }
   }
 
-  async onVerify() {
-
+  async onVerifyClick() {
     if (!this.userId) {
       this.showErrorMsg = true;
       return;
@@ -114,33 +119,32 @@ export class AddMemberToGroupPage {
     this.userId = '';
   }
 
-  async onAddToGroup() {
+  async onAddToGroupClick() {
     const loader = await this.commonUtilService.getLoader();
     await loader.present();
     const addMemberToGroupReq: AddMembersRequest = {
+      groupId: this.groupId,
       addMembersRequest: {
         members: [{
-          memberId: this.userDetails.userId,
+          userId: this.userDetails.userId,
           role: GroupMemberRole.MEMBER
         }]
-      },
-      groupId: this.groupId
+      }
     };
-    this.groupService.addMembers(addMemberToGroupReq).toPromise().then(async (res) => {
-      await loader.dismiss();
-      this.commonUtilService.showToast('MEMBER_ADDED_TO_GROUP');
-      this.location.back();
-    }).catch(async (err) => {
-      await loader.dismiss();
-      this.commonUtilService.showToast('SOMETHING_WENT_WRONG');
-    });
-  }
-
-  ionViewWillLeave() {
-    this.headerObservable.unsubscribe();
-    if (this.unregisterBackButton) {
-      this.unregisterBackButton.unsubscribe();
-    }
+    this.groupService.addMembers(addMemberToGroupReq).toPromise()
+      .then(async (res) => {
+        if (res.error && res.error.members && res.error.members.length) {
+          throw res.error.members[0];
+        } else {
+          await loader.dismiss();
+          this.commonUtilService.showToast('MEMBER_ADDED_TO_GROUP');
+          this.location.back();
+        }
+      }).catch(async (e) => {
+        console.error(e);
+        await loader.dismiss();
+        this.commonUtilService.showToast('SOMETHING_WENT_WRONG');
+      });
   }
 
   async openinfopopup() {

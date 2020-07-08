@@ -1,9 +1,10 @@
 @import "src/assets/styles/_custom-mixins.scss";
 @import "src/assets/styles/variables";
+@import "src/assets/styles/_variables.scss";
 :host {
   .close-button.button-outline-md {
     border-color: transparent;
-    color: #2e3f51;
+    color: map-get($colors, grayish_blue);
     background-color: transparent;
     box-shadow: none;
     opacity: 1;
@@ -45,7 +46,7 @@
     overflow-y: hidden;
   }
   ion-backdrop {
-    background-color: #222 !important;
+    background-color: map-get($colors, dark) !important;
     opacity: 0.4 !important;
   }
 
@@ -54,7 +55,7 @@
   }
 
   .merged-input-container {
-    border: 1px solid #4a90e2;
+    border: 1px solid $form-input-border-active-color;
     display: flex;
     flex: 1 1 auto;
     border-radius: 4px;
@@ -75,8 +76,22 @@
   }
 
   .ecd-header {
-    background-color: map-get($colors, primary);
+    background-color: #{$blue};
     color: map-get($colors, white);
     padding: 16px 0;
   }
+
+  ion-button{
+    --background: #{$blue} !important;
+    color: map-get($colors, white);
+    --background-hover: #{$blue} !important;
+    --background-activated: #{$blue} !important;
+  }
+
+  ion-button[fill="outline"]{
+    --background: map-get($colors, white) !important;
+    color: #{$blue};
+    --border-color: #{$blue};
+  }
+
 }

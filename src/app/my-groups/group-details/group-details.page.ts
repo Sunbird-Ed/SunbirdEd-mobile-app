@@ -1,11 +1,20 @@
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { Location } from '@angular/common';
-import { AppHeaderService, PageId, FormAndFrameworkUtilService, CommonUtilService } from '../../../services';
+import {
+  AppHeaderService, PageId,
+  FormAndFrameworkUtilService,
+  CommonUtilService, AppGlobalService
+} from '../../../services';
 import { Router, NavigationExtras } from '@angular/router';
 import { RouterLinks, MenuOverflow } from '@app/app/app.constant';
 import { Platform, PopoverController } from '@ionic/angular';
-import { GroupService, GetByIdRequest, Group } from '@project-sunbird/sunbird-sdk';
+import {
+  GroupService, GetByIdRequest, Group,
+  GroupMember, GroupMemberRole, DeleteByIdRequest,
+  RemoveMembersRequest, Profile,
+  UpdateMembersRequest, RemoveActivitiesRequest
+} from '@project-sunbird/sunbird-sdk';
 import { OverflowMenuComponent } from '@app/app/profile/overflow-menu/overflow-menu.component';
 import GraphemeSplitter from 'grapheme-splitter';
 import { SbGenericFormPopoverComponent } from '@app/app/components/popups/sb-generic-form-popover/sb-generic-form-popover.component';
@@ -17,45 +26,22 @@ import { FilterPipe } from '@app/pipes/filter/filter.pipe';
   templateUrl: './group-details.page.html',
   styleUrls: ['./group-details.page.scss'],
 })
-export class GroupDetailsPage {
+export class GroupDetailsPage implements OnInit {
 
+  userId: string;
   headerObservable: any;
   groupId: string;
   groupDetails: Group;
   activeTab = 'courses';
   activityList = [];
-  memberList = [];
+  memberList: GroupMember[] = [];
   filteredMemberList = [];
-  memberListDummy = [
-    {
-      identifier: '1',
-      name: 'Anil',
-      isAdmin: true,
-      isCreator: true
-    },
-    {
-      identifier: '2',
-      name: 'Bharath',
-      isAdmin: true
-    },
-    {
-      identifier: '3',
-      name: 'Mani',
-    },
-    {
-      identifier: '4',
-      name: 'Naveen',
-    },
-    {
-      identifier: '5',
-      name: 'Sharath',
-    },
-  ];
   searchValue: string;
   private unregisterBackButton: Subscription;
 
   constructor(
     @Inject('GROUP_SERVICE') public groupService: GroupService,
+    private appGlobalService: AppGlobalService,
     private headerService: AppHeaderService,
     private router: Router,
     private location: Location,
@@ -67,6 +53,13 @@ export class GroupDetailsPage {
   ) {
     const extras = this.router.getCurrentNavigation().extras.state;
     this.groupId = extras.groupId;
+  }
+
+  ngOnInit() {
+    this.appGlobalService.getActiveProfileUid()
+      .then((uid) => {
+        this.userId = uid;
+      });
   }
 
   ionViewWillEnter() {
@@ -83,7 +76,6 @@ export class GroupDetailsPage {
       this.handleBackButton(false);
     });
   }
-
 
   handleHeaderEvents($event) {
     switch ($event.name) {
@@ -115,33 +107,19 @@ export class GroupDetailsPage {
     }
   }
 
-  async fetchGroupDetails() {
+  private async fetchGroupDetails() {
     this.memberList = [];
     const getByIdRequest: GetByIdRequest = {
       id: this.groupId,
-      includeMembers: true
+      options: {
+        includeMembers: true,
+        includeActivities: true
+      }
     };
-    this.memberListDummy.forEach(m => {
-      const member = {
-        identifier: m.identifier,
-        title: m.name,
-        initial: this.extractInitial(m.name),
-        isAdmin: m.isAdmin ? true : false,
-        isMenu: m.isCreator ? false : true // TODO: if member is group creator then do not show menu
-      };
-      this.memberList.push(member);
-    });
     try {
       this.groupDetails = await this.groupService.getById(getByIdRequest).toPromise();
       console.log('this.groupDetails', this.groupDetails);
-      this.groupDetails.members.forEach(m => {
-        const member = {
-          title: 'Balakrishna M',
-          initial: this.extractInitial('Balakrishna'),
-          isAdmin: false
-        };
-        this.memberList.push(member);
-      });
+      this.memberList = this.groupDetails.members;
       this.filteredMemberList = new Array(...this.memberList);
     } catch (e) {
       console.error(e);
@@ -197,18 +175,15 @@ export class GroupDetailsPage {
       componentProps: {
         list: MenuOverflow.MENU_GROUP_ACTIVITY_ADMIN
       },
-      cssClass: 'download-popover'
+      event: event.event,
+      cssClass: 'download-popover my-group-menu'
     });
     await groupOptions.present();
 
     const { data } = await groupOptions.onDidDismiss();
     if (data) {
       console.log('dataon dismiss', data);
-      if (data.selectedItem === 'MENU_EDIT_GROUP_DETAILS') {
-        this.router.navigate([`/${RouterLinks.MY_GROUPS}/${RouterLinks.CREATE_EDIT_GROUP}`]);
-      } else if (data.selectedItem === 'MENU_DELETE_GROUP') {
-        this.showDeleteGroupPopup();
-      }
+      this.showRemoveActivityPopup(data);
     }
   }
 
@@ -218,10 +193,10 @@ export class GroupDetailsPage {
     //   InteractSubtype.SORT_OPTION_CLICKED,
     //   Environment.DOWNLOADS,
     // PageId.GROUP_DETAIL);
-    const selectedMemberDetail = this.memberList.find(m => m.identifier === event.data.identifier);
+    const selectedMemberDetail = this.memberList.find(m => m.userId === event.data.userId);
     let menuList = MenuOverflow.MENU_GROUP_MEMBER_NON_ADMIN;
 
-    if (selectedMemberDetail.isAdmin) {  // Is admin and creator
+    if (selectedMemberDetail.role === GroupMemberRole.ADMIN) {  // Is admin and creator
       menuList = MenuOverflow.MENU_GROUP_MEMBER_ADMIN;
     }
 
@@ -230,7 +205,8 @@ export class GroupDetailsPage {
       componentProps: {
         list: menuList
       },
-      cssClass: 'download-popover'
+      event: event.event,
+      cssClass: 'download-popover my-group-menu'
     });
     await groupOptions.present();
 
@@ -238,11 +214,11 @@ export class GroupDetailsPage {
     if (data) {
       console.log('dataon dismiss', data);
       if (data.selectedItem === 'MENU_MAKE_GROUP_ADMIN') {
-        this.showMakeGroupAdminPopup(selectedMemberDetail.title);
+        this.showMakeGroupAdminPopup(selectedMemberDetail);
       } else if (data.selectedItem === 'MENU_REMOVE_FROM_GROUP') {
-        this.showRemoveMemberPopup(selectedMemberDetail.title);
+        this.showRemoveMemberPopup(selectedMemberDetail);
       } else if (data.selectedItem === 'DISMISS_AS_GROUP_ADMIN') {
-        this.showDismissAsGroupAdminPopup(selectedMemberDetail.title);
+        this.showDismissAsGroupAdminPopup(selectedMemberDetail);
       }
     }
   }
@@ -268,13 +244,21 @@ export class GroupDetailsPage {
 
     const { data } = await deleteConfirm.onDidDismiss();
     if (data) {
-      this.location.back();
+      const deleteByIdRequest: DeleteByIdRequest = {
+        id: this.groupId
+      };
+      try {
+        this.groupService.deleteById(deleteByIdRequest).toPromise();
+        this.location.back();
+      } catch (e) {
+        console.error(e);
+      }
     }
   }
 
   private async showLeaveGroupPopup() {
     // TODO: Add telemetry
-    const deleteConfirm = await this.popoverCtrl.create({
+    const leaveGroupConfirm = await this.popoverCtrl.create({
       component: SbGenericPopoverComponent,
       componentProps: {
         sbPopoverHeading: this.commonUtilService.translateMessage('LEAVE_GROUP_POPUP_TITLE'),
@@ -289,18 +273,29 @@ export class GroupDetailsPage {
       },
       cssClass: 'sb-popover danger',
     });
-    await deleteConfirm.present();
+    await leaveGroupConfirm.present();
 
-    const { data } = await deleteConfirm.onDidDismiss();
+    const { data } = await leaveGroupConfirm.onDidDismiss();
     if (data) {
-      // TODO: API integration
+      const removeMembersRequest: RemoveMembersRequest = {
+        groupId: this.groupId,
+        removeMembersRequest: {
+          userIds: [this.userId]
+        }
+      };
+      try {
+        this.groupService.removeMembers(removeMembersRequest).toPromise();
+        this.location.back();
+      } catch (e) {
+        console.error(e);
+      }
       this.location.back();
     }
   }
 
-  private async showRemoveActivityPopup() {
+  private async showRemoveActivityPopup(selectedActivity) {
     // TODO: Add telemetry
-    const deleteConfirm = await this.popoverCtrl.create({
+    const removeActivityConfirm = await this.popoverCtrl.create({
       component: SbGenericPopoverComponent,
       componentProps: {
         sbPopoverHeading: this.commonUtilService.translateMessage('REMOVE_ACTIVITY_POPUP_TITLE'),
@@ -315,17 +310,27 @@ export class GroupDetailsPage {
       },
       cssClass: 'sb-popover danger',
     });
-    await deleteConfirm.present();
+    await removeActivityConfirm.present();
 
-    const { data } = await deleteConfirm.onDidDismiss();
+    const { data } = await removeActivityConfirm.onDidDismiss();
     if (data) {
-      // TODO: API integration
+      const removeActivitiesRequest: RemoveActivitiesRequest = {
+        groupId: this.groupId,
+        removeActivitiesRequest: {
+          activityIds: [selectedActivity.id]
+        }
+      };
+      try {
+        this.groupService.removeActivities(removeActivitiesRequest).toPromise();
+      } catch (e) {
+        console.error(e);
+      }
     }
   }
 
-  private async showRemoveMemberPopup(memberName) {
+  private async showRemoveMemberPopup(selectedMember) {
     // TODO: Add telemetry
-    const deleteConfirm = await this.popoverCtrl.create({
+    const removeMemberConfirm = await this.popoverCtrl.create({
       component: SbGenericPopoverComponent,
       componentProps: {
         sbPopoverHeading: this.commonUtilService.translateMessage('REMOVE_MEMBER_POPUP_TITLE'),
@@ -336,21 +341,31 @@ export class GroupDetailsPage {
           },
         ],
         icon: null,
-        sbPopoverContent: this.commonUtilService.translateMessage('REMOVE_MEMBER_GROUP_DESC', { member_name: memberName })
+        sbPopoverContent: this.commonUtilService.translateMessage('REMOVE_MEMBER_GROUP_DESC', { member_name: selectedMember.name })
       },
       cssClass: 'sb-popover danger',
     });
-    await deleteConfirm.present();
+    await removeMemberConfirm.present();
 
-    const { data } = await deleteConfirm.onDidDismiss();
+    const { data } = await removeMemberConfirm.onDidDismiss();
     if (data) {
-      // TODO: API integration
+      const removeMembersRequest: RemoveMembersRequest = {
+        groupId: this.groupId,
+        removeMembersRequest: {
+          userIds: [selectedMember.userId]
+        }
+      };
+      try {
+        this.groupService.removeMembers(removeMembersRequest).toPromise();
+      } catch (e) {
+        console.error(e);
+      }
     }
   }
 
-  private async showMakeGroupAdminPopup(memberName) {
+  private async showMakeGroupAdminPopup(selectedMember) {
     // TODO: Add telemetry
-    const deleteConfirm = await this.popoverCtrl.create({
+    const makeGroupAdminConfirm = await this.popoverCtrl.create({
       component: SbGenericPopoverComponent,
       componentProps: {
         sbPopoverHeading: this.commonUtilService.translateMessage('MAKE_GROUP_ADMIN_POPUP_TITLE'),
@@ -362,21 +377,34 @@ export class GroupDetailsPage {
         ],
         icon: null,
         sbPopoverContent: this.commonUtilService.translateMessage('MAKE_GROUP_ADMIN_POPUP_DESC',
-          { member_name: memberName })
+          { member_name: selectedMember.name })
       },
       cssClass: 'sb-popover',
     });
-    await deleteConfirm.present();
+    await makeGroupAdminConfirm.present();
 
-    const { data } = await deleteConfirm.onDidDismiss();
+    const { data } = await makeGroupAdminConfirm.onDidDismiss();
     if (data) {
-      // TODO: API integration
+      const updateMembersRequest: UpdateMembersRequest = {
+        groupId: this.groupId,
+        updateMembersRequest: {
+          members: [{
+            userId: selectedMember.userId,
+            role: GroupMemberRole.ADMIN
+          }]
+        }
+      };
+      try {
+        this.groupService.updateMembers(updateMembersRequest).toPromise();
+      } catch (e) {
+        console.error(e);
+      }
     }
   }
 
-  private async showDismissAsGroupAdminPopup(memberName) {
+  private async showDismissAsGroupAdminPopup(selectedMember) {
     // TODO: Add telemetry
-    const deleteConfirm = await this.popoverCtrl.create({
+    const dismissAsGroupAdminConfirm = await this.popoverCtrl.create({
       component: SbGenericPopoverComponent,
       componentProps: {
         sbPopoverHeading: this.commonUtilService.translateMessage('DISMISS_AS_GROUP_ADMIN_POPUP_TITLE'),
@@ -388,15 +416,28 @@ export class GroupDetailsPage {
         ],
         icon: null,
         sbPopoverContent: this.commonUtilService.translateMessage('DISMISS_AS_GROUP_ADMIN_POPUP_DESC',
-          { member_name: memberName })
+          { member_name: selectedMember.name })
       },
       cssClass: 'sb-popover',
     });
-    await deleteConfirm.present();
+    await dismissAsGroupAdminConfirm.present();
 
-    const { data } = await deleteConfirm.onDidDismiss();
+    const { data } = await dismissAsGroupAdminConfirm.onDidDismiss();
     if (data) {
-      // TODO: API integration
+      const updateMembersRequest: UpdateMembersRequest = {
+        groupId: this.groupId,
+        updateMembersRequest: {
+          members: [{
+            userId: selectedMember.userId,
+            role: GroupMemberRole.MEMBER
+          }]
+        }
+      };
+      try {
+        this.groupService.updateMembers(updateMembersRequest).toPromise();
+      } catch (e) {
+        console.error(e);
+      }
     }
   }
 
@@ -456,8 +497,6 @@ export class GroupDetailsPage {
     //   InteractSubtype.SEARCH_BUTTON_CLICKED,
     //   Environment.HOME,
     //   PageId.COURSES);
-    // const contentType = ContentType.FOR_COURSE_TAB;
-    // const contentType = await this.formAndFrameworkUtilService.getSupportedContentFilterConfig(ContentFilterConfig.NAME_COURSE);
     this.router.navigate([RouterLinks.SEARCH], {
       state: {
         contentType: data.selectedVal.activityValues,

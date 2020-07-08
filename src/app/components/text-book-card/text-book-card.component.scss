@@ -1,3 +1,4 @@
+@import "src/assets/styles/_variables.scss";
 :host {
   .sb-card {
     .img-container {
@@ -11,7 +12,7 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    color: #969696;
+    color: map-get($colors, gray_96);
   }
 
   .textbook-margin-4 {
@@ -19,6 +20,6 @@
   }
 
   .sb-card:not(:last-child) {
-    border-bottom: solid 1px #ccc;
+    border-bottom: solid 1px map-get($colors, medium_gray);
   }
 }

@@ -505,7 +505,10 @@ export enum ID {
     BTN_UPDATE = 'btn-update',
     BTN_I_AM_A_TEACHER = 'btn-i-am-a-teacher',
     TEACHER_DECLARATION = 'teacher-declaration',
-    MUA_USER_CREATION = 'mua-user-creation'
+    MUA_USER_CREATION = 'mua-user-creation',
+    DATA_SHARING = 'data-sharing',
+    VALIDATE_EMAIL = 'validate-email',
+    VALIDATE_MOBILE = 'validate-mobile'
 }
 
 export enum ActionButtonType {
@@ -567,6 +570,7 @@ export enum AuditType {
     SET_PROFILE = 'set-profile',
     UNIT_PROGRESS = 'unit-progress',
     COURSE_PROGRESS = 'course-progress',
-    TOAST_SEEN = 'toast-seen'
+    TOAST_SEEN = 'toast-seen',
+    TNC_DATA_SHARING = 'tnc-data-sharing'
 }
 

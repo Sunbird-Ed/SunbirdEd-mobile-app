@@ -90,7 +90,7 @@ export class SubProfileEditPage {
   getCreateManagedUserFormApi() {
     const req: FormRequest = {
       type: 'user',
-      subType: 'manageduser',
+      subType: 'manageduser_v2',
       action: 'create',
       component: 'app'
     };
@@ -193,13 +193,6 @@ export class SubProfileEditPage {
     this.commonUtilService.openLink(this.profile.serverProfile.tncLatestVersionUrl);
   }
 
-  onFormDataChange(event) {
-    if (event) {
-      this.isFormValid = event.valid;
-      this.formValue = event.value || undefined;
-    }
-  }
-
   handleHeaderEvents($event) {
     switch ($event.name) {
       case 'back':
@@ -224,6 +217,14 @@ export class SubProfileEditPage {
       undefined,
       id
     );
+  }
+
+  formValueChanges(event) {
+    this.formValue = event;
+  }
+
+  formStatusChanges(event) {
+    this.isFormValid = event.isValid;
   }
 
 }

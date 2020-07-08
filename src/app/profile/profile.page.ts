@@ -6,7 +6,15 @@ import {
   IonRefresher,
 } from '@ionic/angular';
 import { generateInteractTelemetry } from '@app/app/telemetryutil';
-import { ContentCard, ContentType, MimeType, ProfileConstants, RouterLinks, ContentFilterConfig } from '@app/app/app.constant';
+import {
+  ContentCard,
+  ContentType,
+  MimeType,
+  ProfileConstants,
+  RouterLinks,
+  ContentFilterConfig,
+  Location as loc
+} from '@app/app/app.constant';
 import { FormAndFrameworkUtilService } from '@app/services/formandframeworkutil.service';
 import { AppGlobalService } from '@app/services/app-global-service.service';
 import { CommonUtilService } from '@app/services/common-util.service';
@@ -31,7 +39,8 @@ import {
   CourseCertificate,
   SharedPreferences,
   CertificateAlreadyDownloaded,
-  NetworkError
+  NetworkError,
+  LocationSearchCriteria
 } from 'sunbird-sdk';
 import { Environment, InteractSubtype, InteractType, PageId, ID } from '@app/services/telemetry-constants';
 import { ActivatedRoute, Router, NavigationExtras } from '@angular/router';
@@ -102,6 +111,8 @@ export class ProfilePage implements OnInit {
   mappedTrainingCertificates: CourseCertificate[] = [];
   isDefaultChannelProfile$: Observable<boolean>;
   selfDeclaredTeacherDetails: any;
+  private stateList: any;
+
   constructor(
     @Inject('PROFILE_SERVICE') private profileService: ProfileService,
     @Inject('AUTH_SERVICE') private authService: AuthService,
@@ -163,6 +174,7 @@ export class ProfilePage implements OnInit {
       }
     });
     this.appName = await this.appVersion.getAppName();
+    this.stateList = await this.commonUtilService.getStateList();
   }
 
   ionViewWillEnter() {
@@ -980,16 +992,35 @@ export class ProfilePage implements OnInit {
     });
   }
 
-  getSelfDeclaredTeacherDetails() {
+  async getSelfDeclaredTeacherDetails() {
     this.selfDeclaredTeacherDetails = {
+      state: '',
+      district: '',
       schoolName: '',
       udiseId: '',
       teacherId: ''
     };
 
     if (this.isCustodianOrgId && this.profile && this.profile.externalIds) {
+      let stateCode = '';
+      let districtCode = '';
+      let stateDetails;
+      let districtDetails;
+
       this.profile.externalIds.forEach(ele => {
         switch (ele.idType) {
+          case 'declared-state':
+            stateCode = ele.id;
+            break;
+          case 'declared-district':
+            districtCode = ele.id;
+            break;
+          case 'declared-phone':
+            this.selfDeclaredTeacherDetails.mobile = ele.id;
+            break;
+          case 'declared-email':
+            this.selfDeclaredTeacherDetails.email = ele.id;
+            break;
           case 'declared-school-name':
             this.selfDeclaredTeacherDetails.schoolName = ele.id;
             break;
@@ -1001,7 +1032,18 @@ export class ProfilePage implements OnInit {
             break;
         }
       });
+      if (stateCode && this.stateList && this.stateList.length) {
+        stateDetails = this.stateList.find(state => state.code === stateCode);
+        this.selfDeclaredTeacherDetails.state = (stateDetails && stateDetails.name) || '';
+      }
+      if (stateDetails && stateDetails.id) {
+        const districtList = await this.commonUtilService.getDistrictList(stateDetails.id);
+        districtDetails = districtList.find(district => district.code === districtCode);
+        this.selfDeclaredTeacherDetails.district = (districtDetails && districtDetails.name) || '';
+      }
     }
   }
+
+
 
 }

@@ -42,12 +42,12 @@
 </ion-content>
 <ion-footer>
     <div class="au-btn" *ngIf="!isUserIdVerified">
-        <button class="sb-btn-large" [class.inactive]="!userId" (click)="onVerify()">
+        <button class="sb-btn-large" [class.inactive]="!userId" [disabled]="!userId" (click)="onVerifyClick()">
             {{'VERIFY' | translate}}
         </button>
     </div>
     <div class="au-btn" *ngIf="isUserIdVerified">
-        <button class="sb-btn-large" (click)="onAddToGroup()">
+        <button class="sb-btn-large" (click)="onAddToGroupClick()">
             <img src="assets/imgs/ic_person_add_white.svg">
             {{'ADD_TO_GROUP' | translate}}
         </button>

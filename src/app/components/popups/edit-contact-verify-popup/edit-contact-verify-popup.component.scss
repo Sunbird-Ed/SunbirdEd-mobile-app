@@ -1,6 +1,8 @@
+@import "src/assets/styles/_variables.scss";
+
 :host {
   .merged-input-container {
-    border: 1px solid #4a90e2;
+    border: 1px solid $form-input-border-active-color;
     display: flex;
     flex: 1 1 auto;
     border-radius: 4px;
@@ -8,6 +10,30 @@
       display: inline-block;
       max-width: 45px;
     }
+  }
+
+  .ecv-header {
+    background-color: #{$blue};
+    color: map-get($colors, white);
+    padding: 16px 0;
+  }
+
+  ion-button{
+    --background: #{$blue} !important;
+    color: map-get($colors, white);
+    --background-hover: #{$blue} !important;
+    --background-activated: #{$blue} !important;
+  }
+
+  ion-button[fill="outline"]{
+    --background: map-get($colors, white) !important;
+    color: #{$blue};
+    --border-color: #{$blue};
+  }
+
+  ion-button[fill="clear"]{
+    --background: map-get($colors, white) !important;
+    color: #{$blue};
   }
 }
 

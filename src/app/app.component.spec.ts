@@ -27,6 +27,7 @@ import { BackButtonEmitter } from '@ionic/angular/dist/providers/platform';
 import { SplaschreenDeeplinkActionHandlerDelegate } from '../services/sunbird-splashscreen/splaschreen-deeplink-action-handler-delegate';
 
 declare const supportfile;
+declare const plugins;
 
 describe('AppComponent', () => {
     let appComponent: AppComponent;
@@ -39,7 +40,9 @@ describe('AppComponent', () => {
             }
         }
     };
-    const mockActivePageService: Partial<ActivePageService> = {};
+    const mockActivePageService: Partial<ActivePageService> = {
+        computePageId: jest.fn(() => 'sample-page-id')
+    };
     const mockAppGlobalService: Partial<AppGlobalService> = {
         getUserId: jest.fn(() => 'some_user_id'),
         getProfileSettingsStatus: jest.fn()
@@ -127,7 +130,9 @@ describe('AppComponent', () => {
         sims: 0,
         cap: ['some_cap']
     };
-    const mockUtilityService: Partial<UtilityService> = {};
+    const mockUtilityService: Partial<UtilityService> = {
+        clearUtmInfo: jest.fn(() => Promise.resolve())
+    };
     const mockZone: Partial<NgZone> = {};
     const mockLocalCourseService: Partial<LocalCourseService> = {};
     const mockSplaschreenDeeplinkActionHandlerDelegate: Partial<SplaschreenDeeplinkActionHandlerDelegate> = {};
@@ -1012,6 +1017,14 @@ describe('AppComponent', () => {
                     then: jest.fn((cb) => cb('ready'))
                 } as any;
             });
+            mockRouter.events = of({
+                subscribe: jest.fn()
+            }) as any;
+            const subscribeWithPriorityData = jest.fn((_, fn) => fn());
+            mockPlatform.backButton = {
+                subscribeWithPriority: subscribeWithPriorityData
+            } as any;
+            mockRouter.url = RouterLinks.LIBRARY_TAB;
             const mockUpdateData = {
                 deploymentKey: 'some_key',
                 appVersion: 'some_app_name'
@@ -1025,6 +1038,8 @@ describe('AppComponent', () => {
             mockCodePushExperimentService.getDefaultDeploymentKey = jest.fn(() => of('some_default_key'));
             mockCodePushExperimentService.setExperimentKey = jest.fn(() => of());
             mockCodePushExperimentService.setExperimentAppVersion = jest.fn(() => of());
+            mockMenuCtrl.isOpen = jest.fn(() => Promise.resolve(true));
+            mockMenuCtrl.close = jest.fn(() => Promise.resolve(true));
 
             // act
             appComponent.ngOnInit();
@@ -1032,6 +1047,9 @@ describe('AppComponent', () => {
             setTimeout(() => {
                 expect(codePush.getCurrentPackage).toHaveBeenCalled();
                 expect(mockCodePushExperimentService.getDefaultDeploymentKey).toHaveBeenCalled();
+                expect(mockPlatform.backButton).not.toBeUndefined();
+                expect(mockMenuCtrl.isOpen).toHaveBeenCalled();
+                expect(mockMenuCtrl.close).toHaveBeenCalled();
                 done();
             });
         });
@@ -1049,12 +1067,22 @@ describe('AppComponent', () => {
             codePush.getCurrentPackage = jest.fn((callback) => {
                 callback(mockUpdateData);
             });
+            mockRouter.events = of({
+                subscribe: jest.fn()
+            }) as any;
+            const subscribeWithPriorityData = jest.fn((_, fn) => fn());
+            mockPlatform.backButton = {
+                subscribeWithPriority: subscribeWithPriorityData
+            } as any;
+            mockRouter.url = RouterLinks.LIBRARY_TAB;
             // TODO:
             mockUtilityService.getBuildConfigValue = jest.fn(() => Promise.resolve('some_app_name'));
             appComponent.appVersion = 'some_app_name';
             mockCodePushExperimentService.getDefaultDeploymentKey = jest.fn(() => of('some_key'));
             mockCodePushExperimentService.setExperimentKey = jest.fn(() => of());
             mockCodePushExperimentService.setExperimentAppVersion = jest.fn(() => of());
+            mockMenuCtrl.isOpen = jest.fn(() => Promise.resolve(false));
+            mockCommonUtilService.showExitPopUp = jest.fn(() => Promise.resolve());
 
             // act
             appComponent.ngOnInit();
@@ -1062,6 +1090,9 @@ describe('AppComponent', () => {
             setTimeout(() => {
                 expect(codePush.getCurrentPackage).toHaveBeenCalled();
                 expect(mockCodePushExperimentService.getDefaultDeploymentKey).toHaveBeenCalled();
+                expect(mockPlatform.backButton).not.toBeUndefined();
+                expect(mockMenuCtrl.isOpen).toHaveBeenCalled();
+                expect(mockCommonUtilService.showExitPopUp).toHaveBeenCalled();
                 done();
             });
         });
@@ -1080,12 +1111,22 @@ describe('AppComponent', () => {
                 codePush.getCurrentPackage = jest.fn((callback) => {
                     callback(mockUpdateData);
                 });
+                mockRouter.events = of({
+                    subscribe: jest.fn()
+                }) as any;
+                const subscribeWithPriorityData = jest.fn((_, fn) => fn());
+                mockPlatform.backButton = {
+                    subscribeWithPriority: subscribeWithPriorityData
+                } as any;
+                mockRouter.url = 'sample-page';
+                appComponent.rootPageDisplayed = false;
                 // TODO:
                 mockUtilityService.getBuildConfigValue = jest.fn(() => Promise.resolve('some_current_app_name'));
                 appComponent.appVersion = 'some_current_app_name';
                 mockCodePushExperimentService.getDefaultDeploymentKey = jest.fn(() => of('some_default_key'));
                 mockCodePushExperimentService.setExperimentKey = jest.fn(() => of());
                 mockCodePushExperimentService.setExperimentAppVersion = jest.fn(() => of());
+                mockLocation.back = jest.fn();
 
                 // act
                 appComponent.ngOnInit();
@@ -1093,6 +1134,9 @@ describe('AppComponent', () => {
                 setTimeout(() => {
                     expect(codePush.getCurrentPackage).toHaveBeenCalled();
                     expect(mockCodePushExperimentService.getDefaultDeploymentKey).toHaveBeenCalled();
+                    expect(mockPlatform.backButton).not.toBeUndefined();
+                    expect(appComponent.rootPageDisplayed).toBeFalsy();
+                    expect(mockLocation.back).toHaveBeenCalled();
                     done();
                 });
             });
@@ -1504,21 +1548,24 @@ describe('AppComponent', () => {
             expect(mockRouter.navigate).not.toHaveBeenCalled();
         });
 
-        it('should show location selection page if BMC value is not selected', () => {
+        it('should show location selection page if BMC value is not selected', (done) => {
             // arrange
             mockCommonUtilService.isDeviceLocationAvailable = jest.fn(() => Promise.resolve(false));
             mockProfileService.getActiveSessionProfile = jest.fn(() => of({} as any));
             mockAppGlobalService.getProfileSettingsStatus = jest.fn(() => Promise.resolve(true));
+            mockSplashScreenService.handleSunbirdSplashScreenActions = jest.fn(() => Promise.resolve({})) as any;
             // act
             appComponent.reloadGuestEvents();
             // assert
 
             setTimeout(() => {
+                expect(mockSplashScreenService.handleSunbirdSplashScreenActions).toHaveBeenCalled();
                 expect(mockRouter.navigate).toHaveBeenCalledWith(['/', 'district-mapping'], {
                     state: {
                         isShowBackButton: false
                     }
                 });
+                done();
             }, 0);
 
         });
@@ -1537,6 +1584,105 @@ describe('AppComponent', () => {
 
             // assert
             expect(mockRouter.navigate).toHaveBeenCalledWith(routeUrl, expect.anything());
+        });
+    });
+
+    describe('checkAndroidWebViewVersion', () => {
+        it('should generate a impression event for webviewConfig', (done) => {
+            mockFormAndFrameworkUtilService.getWebviewConfig = jest.fn(() => Promise.resolve(1));
+            document.getElementById = jest.fn(() => ({style: {display: 'auto'}})) as any;
+            mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
+            // act
+            appComponent.checkAndroidWebViewVersion();
+           // assert
+            setTimeout(() => {
+            expect(mockFormAndFrameworkUtilService.getWebviewConfig).toHaveBeenCalled();
+            expect(document.getElementById).toHaveBeenCalled();
+            expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenCalledWith(
+              ImpressionType.VIEW, '',
+              PageId.UPDATE_WEBVIEW_POPUP,
+              Environment.HOME
+            );
+            done();
+           }, 0);
+        });
+
+        it('should generate a impression event for webviewConfig', (done) => {
+            mockFormAndFrameworkUtilService.getWebviewConfig = jest.fn(() => Promise.reject({error: 'error'}));
+            document.getElementById = jest.fn(() => ({style: {display: 'auto'}})) as any;
+            // act
+            appComponent.checkAndroidWebViewVersion();
+           // assert
+            setTimeout(() => {
+            expect(mockFormAndFrameworkUtilService.getWebviewConfig).toHaveBeenCalled();
+            expect(document.getElementById).toHaveBeenCalled();
+            done();
+           }, 0);
+        });
+    });
+
+    it('should return GooglePlayPage', () => {
+        mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn(() => {});
+        appComponent.openPlaystore();
+        expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+            InteractType.TOUCH,
+            InteractSubtype.UPDATE_WEBVIEW_CLICKED,
+            Environment.HOME,
+            PageId.UPDATE_WEBVIEW_POPUP
+        );
+    });
+
+    describe('ngAfterViewInit', () => {
+        it('should return downloadProgress for platform resume', (done) => {
+            mockPlatform.resume = of({
+                subscribe: jest.fn()
+            }) as any ;
+            const value = new Map();
+            mockTelemetryGeneratorService.generateInterruptTelemetry = jest.fn();
+            mockSplashScreenService.handleSunbirdSplashScreenActions = jest.fn(() => Promise.resolve()) as any;
+            mockPreferences.getString = jest.fn(() => of('{key: "sample-ke"}'));
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            mockNotificationSrc.handleNotification = jest.fn(() => Promise.resolve());
+            // act
+            appComponent.ngAfterViewInit();
+            // assert
+            setTimeout(() => {
+                expect(mockTelemetryGeneratorService.generateInterruptTelemetry).toHaveBeenCalledWith('resume', '');
+                expect(mockSplashScreenService.handleSunbirdSplashScreenActions).toHaveBeenCalled();
+                expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(InteractType.OTHER,
+                    InteractSubtype.HOTCODE_PUSH_INITIATED,
+                    Environment.HOME, PageId.HOME, null, value);
+                expect(mockPreferences.getString).toHaveBeenCalledWith(PreferenceKey.DEPLOYMENT_KEY);
+                expect(mockNotificationSrc.handleNotification).toHaveBeenCalled();
+                expect(appComponent.isForeground).toBeTruthy();
+                done();
+            }, 0);
+        });
+
+        it('should generate a event for for platform pause', (done) => {
+            mockPlatform.pause = of({
+                subscribe: jest.fn()
+            }) as any ;
+            const value = new Map();
+            mockTelemetryGeneratorService.generateInterruptTelemetry = jest.fn();
+            mockSplashScreenService.handleSunbirdSplashScreenActions = jest.fn(() => Promise.resolve()) as any;
+            mockPreferences.getString = jest.fn(() => of(undefined));
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
+            mockNotificationSrc.handleNotification = jest.fn(() => Promise.resolve());
+            // act
+            appComponent.ngAfterViewInit();
+            // assert
+            setTimeout(() => {
+                expect(mockTelemetryGeneratorService.generateInterruptTelemetry).toHaveBeenCalledWith('background', '');
+                expect(mockSplashScreenService.handleSunbirdSplashScreenActions).toHaveBeenCalled();
+                expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(InteractType.OTHER,
+                    InteractSubtype.HOTCODE_PUSH_KEY_NOT_DEFINED,
+                    Environment.HOME, PageId.HOME);
+                expect(mockPreferences.getString).toHaveBeenCalledWith(PreferenceKey.DEPLOYMENT_KEY);
+                expect(mockNotificationSrc.handleNotification).toHaveBeenCalled();
+                expect(appComponent.isForeground).toBeFalsy();
+                done();
+            }, 0);
         });
     });
 
