@@ -7,7 +7,15 @@ import { CommonUtilService } from '@app/services/common-util.service';
 import { AppHeaderService } from '@app/services/app-header.service';
 import { Location } from '@angular/common';
 import { of, throwError } from 'rxjs';
-import { UtilityService } from '../../../services';
+import {
+    Environment, ID,
+    ImpressionSubtype,
+    ImpressionType,
+    InteractType,
+    PageId,
+    TelemetryGeneratorService,
+    UtilityService
+} from '../../../services';
 
 describe('CreateEditGroupPage', () => {
     let createEditGroupPage: CreateEditGroupPage;
@@ -28,6 +36,7 @@ describe('CreateEditGroupPage', () => {
     const mockPlatform: Partial<Platform> = {
     };
     const mockTranslate: Partial<TranslateService> = {};
+    const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {};
 
     beforeAll(() => {
         createEditGroupPage = new CreateEditGroupPage(
@@ -39,7 +48,8 @@ describe('CreateEditGroupPage', () => {
             mockLocation as Location,
             mockPlatform as Platform,
             mockAlertCtrl as AlertController,
-            mockUtilityService as UtilityService
+            mockUtilityService as UtilityService,
+            mockTelemetryGeneratorService as TelemetryGeneratorService
         );
     });
 
@@ -73,9 +83,13 @@ describe('CreateEditGroupPage', () => {
             } as any;
             mockAlertCtrl.getTop = jest.fn(() => undefined);
             mockLocation.back = jest.fn();
+            mockTelemetryGeneratorService.generateBackClickedTelemetry = jest.fn();
             createEditGroupPage.handleBackButtonEvents();
             setTimeout(() => {
                 expect(mockPlatform.backButton).not.toBeUndefined();
+                expect(mockTelemetryGeneratorService.generateBackClickedTelemetry).toHaveBeenCalledWith(
+                    PageId.CREATE_GROUP, Environment.GROUP, false
+                );
                 done();
             }, 0);
         });
@@ -83,13 +97,32 @@ describe('CreateEditGroupPage', () => {
 
     it('should return headers with backButton', () => {
         mockHeaderService.showHeaderWithBackButton = jest.fn();
+        const data = jest.fn((fn => fn({name: 'sample-event'})));
+        mockHeaderService.headerEventEmitted$ = {
+            subscribe: data
+        } as any;
         jest.spyOn(createEditGroupPage, 'handleBackButtonEvents').mockImplementation(() => {
             return;
         });
         mockCommonUtilService.getAppName = jest.fn(() => Promise.resolve('Sunbird'));
+        mockTelemetryGeneratorService.generateImpressionTelemetry = jest.fn();
+        mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
         createEditGroupPage.ionViewWillEnter();
         expect(mockHeaderService.showHeaderWithBackButton).toHaveBeenCalled();
         expect(mockCommonUtilService.getAppName).toHaveBeenCalled();
+        expect(mockTelemetryGeneratorService.generateImpressionTelemetry).toHaveBeenCalledWith(
+            ImpressionType.VIEW, ImpressionSubtype.CREATE_GROUP_FORM, PageId.CREATE_GROUP, Environment.GROUP);
+        expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+            InteractType.INITIATED,
+            '',
+            Environment.GROUP,
+            PageId.CREATE_GROUP,
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            ID.CREATE_GROUP
+        );
     });
 
     describe('ionViewWillLeave', () => {

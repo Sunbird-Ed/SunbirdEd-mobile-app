@@ -11,6 +11,8 @@ import { AppHeaderService } from '@app/services/app-header.service';
 import { Location } from '@angular/common';
 import { UtilityService } from '@app/services';
 import { RouterLinks } from '@app/app/app.constant';
+import {Environment, ID, ImpressionSubtype, ImpressionType, InteractType, PageId,
+  TelemetryGeneratorService, InteractSubtype} from '@app/services';
 
 @Component({
   selector: 'app-create-edit-group',
@@ -24,7 +26,6 @@ export class CreateEditGroupPage {
   createGroupForm: FormGroup;
   backButtonFunc: Subscription;
   hasFilledLocation = false;
-
   errorMessages = {
     groupName: {
       message: 'GROUP_NAME_IS_REQUIRED'
@@ -33,6 +34,7 @@ export class CreateEditGroupPage {
       message: 'GROUP_TERMS_IS_REQUIRED'
     }
   };
+  headerObservable: Subscription;
 
   constructor(
     @Inject('GROUP_SERVICE') public groupService: GroupService,
@@ -43,18 +45,45 @@ export class CreateEditGroupPage {
     private location: Location,
     private platform: Platform,
     private alertCtrl: AlertController,
-    private utilityService: UtilityService
+    private utilityService: UtilityService,
+    private telemetryGeneratorService: TelemetryGeneratorService
   ) {
     this.initializeForm();
   }
 
   ionViewWillEnter() {
     this.headerService.showHeaderWithBackButton();
+
+    this.headerObservable = this.headerService.headerEventEmitted$.subscribe(eventName => {
+      this.handleHeaderEvents(eventName);
+    });
+
     this.handleBackButtonEvents();
     this.commonUtilService.getAppName().then((res) => { this.appName = res; });
+
+    this.telemetryGeneratorService.generateImpressionTelemetry
+    (ImpressionType.VIEW, ImpressionSubtype.CREATE_GROUP_FORM, PageId.CREATE_GROUP, Environment.GROUP);
+
+    this.telemetryGeneratorService.generateInteractTelemetry(
+        InteractType.INITIATED,
+        '',
+        Environment.GROUP,
+        PageId.CREATE_GROUP,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        ID.CREATE_GROUP
+    );
   }
 
   ionViewWillLeave() {
+    this.commonUtilService.getAppName().then((res) => { this.appName = res; });
+
+    if (this.headerObservable) {
+      this.headerObservable.unsubscribe();
+    }
+
     if (this.backButtonFunc) {
       this.backButtonFunc.unsubscribe();
     }
@@ -66,6 +95,7 @@ export class CreateEditGroupPage {
       if (activePortal) {
         activePortal.dismiss();
       } else {
+        this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.CREATE_GROUP, Environment.GROUP, false);
         this.location.back();
       }
     });
@@ -102,6 +132,17 @@ export class CreateEditGroupPage {
     this.groupService.create(groupCreateRequest).toPromise().then(async (res) => {
       await loader.dismiss();
       this.commonUtilService.showToast('GROUP_CREATED');
+      this.telemetryGeneratorService.generateInteractTelemetry(
+          InteractType.SUCCESS,
+          '',
+          Environment.GROUP,
+          PageId.CREATE_GROUP,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          ID.CREATE_GROUP
+      );
       this.location.back();
     }).catch(async (err) => {
       console.error(err);
@@ -111,7 +152,12 @@ export class CreateEditGroupPage {
   }
 
   async openTermsOfUse() {
-    // this.generateInteractTelemetry(InteractType.TOUCH, InteractSubtype.TERMS_OF_USE_CLICKED);
+    this.telemetryGeneratorService.generateInteractTelemetry(
+        InteractType.TOUCH,
+        InteractSubtype.TERMS_OF_USE_CLICKED,
+        Environment.GROUP,
+        PageId.CREATE_GROUP
+    );
     const baseUrl = await this.utilityService.getBuildConfigValue('TOU_BASE_URL');
     const url = baseUrl + RouterLinks.TERM_OF_USE;
     const options
@@ -120,4 +166,12 @@ export class CreateEditGroupPage {
     (window as any).cordova.InAppBrowser.open(url, '_blank', options);
   }
 
+  handleHeaderEvents($event) {
+    switch ($event.name) {
+      case 'back':
+        this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.CREATE_GROUP, Environment.GROUP, true);
+        this.location.back();
+        break;
+    }
+  }
 }
