@@ -7,11 +7,21 @@ import {
   GroupSearchCriteria, CachedItemRequestSourceFrom, SortOrder
 } from '@project-sunbird/sunbird-sdk';
 import { LoginHandlerService } from '@app/services/login-handler.service';
-import { CommonUtilService, AppGlobalService } from '@app/services';
-import { PopoverController } from '@ionic/angular';
+import {
+  CommonUtilService,
+  AppGlobalService,
+  TelemetryGeneratorService,
+  ImpressionType,
+  PageId,
+  Environment, InteractType, InteractSubtype
+} from '@app/services';
+import {Platform, PopoverController} from '@ionic/angular';
 import { MyGroupsPopoverComponent } from '../components/popups/sb-my-groups-popover/sb-my-groups-popover.component';
 import { animationGrowInTopRight } from '../animations/animation-grow-in-top-right';
 import { animationShrinkOutTopRight } from '../animations/animation-shrink-out-top-right';
+import {SbProgressLoader} from '@app/services/sb-progress-loader.service';
+import {Subscription} from 'rxjs';
+import {Location} from '@angular/common';
 
 interface GroupData extends Group {
   initial: string;
@@ -27,6 +37,7 @@ export class MyGroupsPage implements OnInit, OnDestroy {
   groupListLoader = false;
   headerObservable: any;
   userId: string;
+  unregisterBackButton: Subscription;
 
   constructor(
     @Inject('AUTH_SERVICE') public authService: AuthService,
@@ -37,7 +48,11 @@ export class MyGroupsPage implements OnInit, OnDestroy {
     private router: Router,
     private loginHandlerService: LoginHandlerService,
     private commonUtilService: CommonUtilService,
-    private popoverCtrl: PopoverController
+    private popoverCtrl: PopoverController,
+    private sbProgressLoader: SbProgressLoader,
+    private telemetryGeneratorService: TelemetryGeneratorService,
+    private platform: Platform,
+    private location: Location
   ) { }
 
   ngOnInit() {
@@ -58,6 +73,7 @@ export class MyGroupsPage implements OnInit, OnDestroy {
   }
 
   ionViewWillEnter() {
+    this.handleBackButton();
     this.headerService.showHeaderWithBackButton(['groupInfo']);
     this.headerObservable = this.headerService.headerEventEmitted$.subscribe(eventName => {
       this.handleHeaderEvents(eventName);
@@ -65,12 +81,23 @@ export class MyGroupsPage implements OnInit, OnDestroy {
   }
 
   async ionViewDidEnter() {
+    this.sbProgressLoader.hide({id: 'login'});
     this.fetchGroupList();
+    this.telemetryGeneratorService.generateImpressionTelemetry(
+        ImpressionType.VIEW,
+        '',
+        PageId.MY_GROUP,
+        Environment.GROUP
+    );
   }
 
   ngOnDestroy() {
     if (this.headerObservable) {
       this.headerObservable.unsubscribe();
+    }
+
+    if (this.unregisterBackButton) {
+      this.unregisterBackButton.unsubscribe();
     }
   }
 
@@ -79,14 +106,30 @@ export class MyGroupsPage implements OnInit, OnDestroy {
       case 'groupInfo':
         this.openinfopopup();
         break;
+        case 'back':
+            this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.MY_GROUP, Environment.GROUP, true);
+            this.location.back();
+            break;
     }
   }
 
   createClassroom() {
+    this.telemetryGeneratorService.generateInteractTelemetry(
+        InteractType.TOUCH,
+        InteractSubtype.CREATE_GROUP_CLICKED,
+        Environment.GROUP,
+        PageId.MY_GROUP
+    );
     this.router.navigate([`/${RouterLinks.MY_GROUPS}/${RouterLinks.CREATE_EDIT_GROUP}`]);
   }
 
   login() {
+    this.telemetryGeneratorService.generateInteractTelemetry(
+        InteractType.TOUCH,
+        InteractSubtype.LOGIN_CLICKED,
+        Environment.GROUP,
+        PageId.MY_GROUP
+    );
     this.loginHandlerService.signIn({ skipRootNavigation: true });
   }
 
@@ -145,6 +188,16 @@ export class MyGroupsPage implements OnInit, OnDestroy {
     } else if (data.closeDeletePopOver) { // Close clicked
     } else if (data.canDelete) {
     }
+  }
+
+  private handleBackButton() {
+    this.unregisterBackButton = this.platform.backButton.subscribeWithPriority(10, () => {
+      this.telemetryGeneratorService.generateBackClickedTelemetry(
+          PageId.MY_GROUP,
+          Environment.GROUP,
+          false);
+      this.location.back();
+    });
   }
 
 }

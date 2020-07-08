@@ -1,13 +1,23 @@
 import { MyGroupsPage } from './my-groups.page';
-import { AuthService, ClassRoomService, SharedPreferences, GroupService } from '@project-sunbird/sunbird-sdk';
+import {AuthService, ClassRoomService, SharedPreferences, GroupService} from '@project-sunbird/sunbird-sdk';
 import { Router } from '@angular/router';
-import { PopoverController } from '@ionic/angular';
+import {Platform, PopoverController} from '@ionic/angular';
 import { AppHeaderService } from '@app/services/app-header.service';
 import { LoginHandlerService } from '@app/services/login-handler.service';
-import { CommonUtilService, AppGlobalService } from '@app/services';
+import {
+    CommonUtilService,
+    AppGlobalService,
+    TelemetryGeneratorService,
+    InteractType,
+    InteractSubtype,
+    Environment,
+    PageId
+} from '@app/services';
 import { of, throwError } from 'rxjs';
 import { PreferenceKey, RouterLinks } from '../app.constant';
 import { MyGroupsPopoverComponent } from '../components/popups/sb-my-groups-popover/sb-my-groups-popover.component';
+import {SbProgressLoader} from '@app/services/sb-progress-loader.service';
+import {Location} from '@angular/common';
 
 describe('MyGroupsPage', () => {
     let myGroupsPage: MyGroupsPage;
@@ -20,6 +30,10 @@ describe('MyGroupsPage', () => {
     const mockPreferences: Partial<SharedPreferences> = {};
     const mockRouter: Partial<Router> = {};
     const mockGroupService: Partial<GroupService> = {};
+    const mockSbProgressLoader: Partial<SbProgressLoader> = {};
+    const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {};
+    const mockPlatform: Platform<Platform> = {};
+    const mockLocation: Partial<Location> = {};
 
     beforeAll(() => {
         myGroupsPage = new MyGroupsPage(
@@ -31,7 +45,11 @@ describe('MyGroupsPage', () => {
             mockRouter as Router,
             mockLoginHandlerService as LoginHandlerService,
             mockCommonUtilService as CommonUtilService,
-            mockPopoverCtrl as PopoverController
+            mockPopoverCtrl as PopoverController,
+            mockSbProgressLoader as SbProgressLoader,
+            mockTelemetryGeneratorService as TelemetryGeneratorService,
+            mockPlatform as Platform,
+            mockLocation as Location
         );
     });
 
@@ -197,12 +215,24 @@ describe('MyGroupsPage', () => {
         jest.spyOn(myGroupsPage, 'fetchGroupList').mockImplementation(() => {
             return Promise.resolve();
         });
+        const subscribeWithPriorityData = jest.fn((_, fn) => fn());
+        mockPlatform.backButton = {
+            subscribeWithPriority: subscribeWithPriorityData
+        } as any;
+        mockTelemetryGeneratorService.generateBackClickedTelemetry = jest.fn();
+        mockLocation.back = jest.fn();
         // act
         myGroupsPage.ionViewWillEnter();
         // assert
         setTimeout(() => {
+            expect(subscribeWithPriorityData).toBeTruthy();
             expect(mockHeaderService.showHeaderWithBackButton).toHaveBeenCalled();
             expect(mockHeaderService.headerEventEmitted$).not.toBeUndefined();
+            expect(mockTelemetryGeneratorService.generateBackClickedTelemetry).toHaveBeenCalledWith(
+                PageId.MY_GROUP,
+                Environment.GROUP,
+                false);
+            expect(mockLocation.back).toHaveBeenCalled();
             done();
         }, 0);
     });
@@ -234,13 +264,27 @@ describe('MyGroupsPage', () => {
 
     it('should navigate to CREATE_EDIT_GROUP', () => {
         mockRouter.navigate = jest.fn(() => Promise.resolve(true));
+        mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
         myGroupsPage.createClassroom();
+        expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+            InteractType.TOUCH,
+            InteractSubtype.CREATE_GROUP_CLICKED,
+            Environment.GROUP,
+            PageId.MY_GROUP
+        );
         expect(mockRouter.navigate).toHaveBeenCalledWith([`/${RouterLinks.MY_GROUPS}/${RouterLinks.CREATE_EDIT_GROUP}`]);
     });
 
     it('should return loggedIn user', () => {
         mockLoginHandlerService.signIn = jest.fn(() => Promise.resolve());
+        mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
         myGroupsPage.login();
+        expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+            InteractType.TOUCH,
+            InteractSubtype.LOGIN_CLICKED,
+            Environment.GROUP,
+            PageId.MY_GROUP
+        );
         expect(mockLoginHandlerService.signIn).toHaveBeenCalledWith({ skipRootNavigation: true });
     });
 

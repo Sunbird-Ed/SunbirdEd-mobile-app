@@ -4,7 +4,7 @@ import { Location } from '@angular/common';
 import {
   AppHeaderService, PageId,
   FormAndFrameworkUtilService,
-  CommonUtilService, AppGlobalService
+  CommonUtilService, AppGlobalService, TelemetryGeneratorService, InteractType, InteractSubtype, Environment, ImpressionType
 } from '../../../services';
 import { Router, NavigationExtras } from '@angular/router';
 import { RouterLinks, MenuOverflow } from '@app/app/app.constant';
@@ -49,7 +49,8 @@ export class GroupDetailsPage implements OnInit {
     private popoverCtrl: PopoverController,
     private formAndFrameworkUtilService: FormAndFrameworkUtilService,
     private commonUtilService: CommonUtilService,
-    private filterPipe: FilterPipe
+    private filterPipe: FilterPipe,
+    private telemetryGeneratorService: TelemetryGeneratorService
   ) {
     const extras = this.router.getCurrentNavigation().extras.state;
     this.groupId = extras.groupId;
@@ -69,6 +70,8 @@ export class GroupDetailsPage implements OnInit {
     });
     this.handleDeviceBackButton();
     this.fetchGroupDetails();
+
+    this.telemetryGeneratorService.generateImpressionTelemetry(ImpressionType.VIEW, '', PageId.GROUP_DETAIL, Environment.GROUP);
   }
 
   handleDeviceBackButton() {
@@ -92,6 +95,8 @@ export class GroupDetailsPage implements OnInit {
   }
 
   navigateToAddUserPage() {
+    this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
+        InteractSubtype.ADD_MEMBER_CLICKED, Environment.GROUP, PageId.GROUP_DETAIL);
     const navigationExtras: NavigationExtras = {
       state: {
         groupId: this.groupId
@@ -137,7 +142,7 @@ export class GroupDetailsPage implements OnInit {
     //   Environment.DOWNLOADS,
     // PageId.GROUP_DETAIL);
 
-    let menuList = MenuOverflow.MENU_GROUP_ADMIN;
+    const menuList = MenuOverflow.MENU_GROUP_ADMIN;
     // TODO: Handle below condition while API intigration.
     // if (!isAdmin) {
     //   menuList = MenuOverflow.MENU_GROUP_NON_ADMIN;
@@ -464,6 +469,8 @@ export class GroupDetailsPage implements OnInit {
   }
 
   async showAddActivityPopup() {
+    this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
+        InteractSubtype.ADD_ACTIVITY_CLICKED, Environment.GROUP, PageId.GROUP_DETAIL);
     try {
       const supportedActivityList = await this.formAndFrameworkUtilService.invokeSupportedGroupActivitiesFormApi();
 
