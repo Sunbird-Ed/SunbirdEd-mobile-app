@@ -11,7 +11,8 @@ import {
     StorageService,
     TelemetryObject,
     Content,
-    GetAllProfileRequest
+    GetAllProfileRequest,
+    CourseService
 } from 'sunbird-sdk';
 import { ContentServiceImpl } from 'sunbird-sdk/content/impl/content-service-impl';
 import { EventsBusServiceImpl } from 'sunbird-sdk/events-bus/impl/events-bus-service-impl';
@@ -48,11 +49,12 @@ import {
     PageId,
 } from '@app/services/telemetry-constants';
 import { ContentUtil } from '@app/util/content-util';
-import { EventTopics, ContentType, ShareItemType } from '../app.constant';
+import { EventTopics, ContentType, ShareItemType, PreferenceKey } from '../app.constant';
 import { FileOpener } from '@ionic-native/file-opener/ngx';
 import { FileTransfer } from '@ionic-native/file-transfer/ngx';
 import { truncate } from 'fs';
 import { SbProgressLoader } from '@app/services/sb-progress-loader.service';
+import { LocalCourseService } from '../../services';
 
 describe('ContentDetailsPage', () => {
     let contentDetailsPage: ContentDetailsPage;
@@ -67,6 +69,7 @@ describe('ContentDetailsPage', () => {
     const mockDownloadService: Partial<DownloadService> = {
         getActiveDownloadRequests: jest.fn(() => EMPTY)
     };
+    const mockLocalCourseService: Partial<LocalCourseService> = {};
     const mockNgZone: Partial<NgZone> = {
         run: jest.fn()
     };
@@ -127,6 +130,7 @@ describe('ContentDetailsPage', () => {
             mockEventBusService as EventsBusServiceImpl,
             mockStorageService as StorageServiceImpl,
             mockDownloadService as DownloadService,
+            mockPreferences as SharedPreferences,
             mockNgZone as NgZone,
             mockEvents as Events,
             mockPopoverController as PopoverController,
@@ -151,7 +155,8 @@ describe('ContentDetailsPage', () => {
             mockLoginHandlerService as LoginHandlerService,
             mockFileOpener as FileOpener,
             mockFileTransfer as FileTransfer,
-            mockSbProgressLoader as SbProgressLoader
+            mockSbProgressLoader as SbProgressLoader,
+            mockLocalCourseService as LocalCourseService,
         );
     });
     beforeEach(() => {
@@ -1330,6 +1335,49 @@ describe('ContentDetailsPage', () => {
                 PageId.CONTENT_DETAIL,
                 undefined, undefined, {l1: 'do_123', l2: 'do_123', l3: 'do_1'}, undefined
             );
+        });
+    });
+    describe('getContentState', () => {
+        it('should not show course complete popup', (done) => {
+            // arrange
+            mockAppGlobalService.showCourseCompletePopup = false;
+            mockAppGlobalService.getUserId = jest.fn(() => 'userid');
+            const contenxt = '{"userId":"userid","courseId":"courseid","batchId":"batchid","isCertified":false,"leafNodeIds":["id1","id2"],"batchStatus":1}'
+            mockPreferences.getString = jest.fn((key) => {
+                switch (key) {
+                    case PreferenceKey.CONTENT_CONTEXT:
+                        return of(contenxt);
+                }
+            });
+            mockLocalCourseService.getCourseProgress = jest.fn(() => Promise.resolve(10));
+            // act
+            contentDetailsPage.getContentState();
+            // assert
+            setTimeout(() => {
+                expect(mockAppGlobalService.showCourseCompletePopup).toBe(true);
+                done();
+            });
+        });
+        it('should show course complete popup', (done) => {
+            // arrange
+            mockAppGlobalService.showCourseCompletePopup = true;
+            mockAppGlobalService.getUserId = jest.fn(() => 'userid');
+            const context = '{"userId":"userid","courseId":"courseid","batchId":"batchid","isCertified":false,"leafNodeIds":["id1"],"batchStatus":2}'
+            mockPreferences.getString = jest.fn((key) => {
+                switch (key) {
+                    case PreferenceKey.CONTENT_CONTEXT:
+                        return of(context);
+                }
+            });
+            mockLocalCourseService.getCourseProgress = jest.fn(() => Promise.resolve(100));
+            // act
+            contentDetailsPage.getContentState();
+            // assert
+            setTimeout(() => {
+                expect(mockAppGlobalService.showCourseCompletePopup).toBe(false);
+                expect(contentDetailsPage.showCourseCompletePopup).toBe(true);
+                done();
+            });
         });
     });
 });
