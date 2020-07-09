@@ -18,7 +18,7 @@
       </div>
     </div>
 
-    <div *ngIf="!isGuestUser && !groupList.length" class="my-cr-card">
+    <div *ngIf="!isGuestUser && !groupList.length && !groupListLoader" class="my-cr-card">
       <div class="my-cr-card-img">
         <img src="assets/imgs/ic_my_groups.svg" alt="my-group">
       </div>
@@ -33,8 +33,12 @@
     </div>
 
     <div *ngFor="let group of groupList">
-      <sb-group-card [isMobile]="true" [group]="group" [isLoading]="groupListLoader"
-        (cardClick)="navigateToGroupdetailsPage($event)"></sb-group-card>
+      <sb-group-card [isMobile]="true" [group]="group" (cardClick)="navigateToGroupdetailsPage($event)"></sb-group-card>
+    </div>
+    <div *ngIf="!isGuestUser && groupListLoader">
+      <div *ngFor="let item of [0,1,2,3,4,5,6,7,8,9,10]">
+        <sb-group-card [isMobile]="true" [isLoading]="true"></sb-group-card>
+      </div>
     </div>
 
   </div>
