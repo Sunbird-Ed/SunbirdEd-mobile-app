@@ -15,13 +15,13 @@ import {
   PageId,
   Environment, InteractType, InteractSubtype
 } from '@app/services';
-import {Platform, PopoverController} from '@ionic/angular';
+import { Platform, PopoverController } from '@ionic/angular';
 import { MyGroupsPopoverComponent } from '../components/popups/sb-my-groups-popover/sb-my-groups-popover.component';
 import { animationGrowInTopRight } from '../animations/animation-grow-in-top-right';
 import { animationShrinkOutTopRight } from '../animations/animation-shrink-out-top-right';
-import {SbProgressLoader} from '@app/services/sb-progress-loader.service';
-import {Subscription} from 'rxjs';
-import {Location} from '@angular/common';
+import { SbProgressLoader } from '@app/services/sb-progress-loader.service';
+import { Subscription } from 'rxjs';
+import { Location } from '@angular/common';
 
 interface GroupData extends Group {
   initial: string;
@@ -57,6 +57,9 @@ export class MyGroupsPage implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.checkUserLoggedIn();
+    if (!this.isGuestUser) {
+      this.groupListLoader = true;
+    }
     this.appGlobalService.getActiveProfileUid()
       .then(async (uid) => {
         this.userId = uid;
@@ -81,13 +84,15 @@ export class MyGroupsPage implements OnInit, OnDestroy {
   }
 
   async ionViewDidEnter() {
-    this.sbProgressLoader.hide({id: 'login'});
-    this.fetchGroupList();
+    this.sbProgressLoader.hide({ id: 'login' });
+    if (!this.isGuestUser) {
+      this.fetchGroupList();
+    }
     this.telemetryGeneratorService.generateImpressionTelemetry(
-        ImpressionType.VIEW,
-        '',
-        PageId.MY_GROUP,
-        Environment.GROUP
+      ImpressionType.VIEW,
+      '',
+      PageId.MY_GROUP,
+      Environment.GROUP
     );
   }
 
@@ -108,29 +113,29 @@ export class MyGroupsPage implements OnInit, OnDestroy {
             InteractSubtype.INFORMATION_ICON_CLICKED, Environment.GROUP, PageId.MY_GROUP);
         this.openinfopopup();
         break;
-        case 'back':
-            this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.MY_GROUP, Environment.GROUP, true);
-            this.location.back();
-            break;
+      case 'back':
+        this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.MY_GROUP, Environment.GROUP, true);
+        this.location.back();
+        break;
     }
   }
 
   createClassroom() {
     this.telemetryGeneratorService.generateInteractTelemetry(
-        InteractType.TOUCH,
-        InteractSubtype.CREATE_GROUP_CLICKED,
-        Environment.GROUP,
-        PageId.MY_GROUP
+      InteractType.TOUCH,
+      InteractSubtype.CREATE_GROUP_CLICKED,
+      Environment.GROUP,
+      PageId.MY_GROUP
     );
     this.router.navigate([`/${RouterLinks.MY_GROUPS}/${RouterLinks.CREATE_EDIT_GROUP}`]);
   }
 
   login() {
     this.telemetryGeneratorService.generateInteractTelemetry(
-        InteractType.TOUCH,
-        InteractSubtype.LOGIN_CLICKED,
-        Environment.GROUP,
-        PageId.MY_GROUP
+      InteractType.TOUCH,
+      InteractSubtype.LOGIN_CLICKED,
+      Environment.GROUP,
+      PageId.MY_GROUP
     );
     this.loginHandlerService.signIn({ skipRootNavigation: true });
   }
@@ -156,7 +161,8 @@ export class MyGroupsPage implements OnInit, OnDestroy {
         });
       this.groupListLoader = false;
       console.log('this.groupList', this.groupList);
-    } catch {
+    } catch (e) {
+      console.error(e);
       this.groupListLoader = false;
     }
   }
@@ -195,9 +201,9 @@ export class MyGroupsPage implements OnInit, OnDestroy {
   private handleBackButton() {
     this.unregisterBackButton = this.platform.backButton.subscribeWithPriority(10, () => {
       this.telemetryGeneratorService.generateBackClickedTelemetry(
-          PageId.MY_GROUP,
-          Environment.GROUP,
-          false);
+        PageId.MY_GROUP,
+        Environment.GROUP,
+        false);
       this.location.back();
     });
   }

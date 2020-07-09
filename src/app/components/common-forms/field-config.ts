@@ -60,6 +60,7 @@ export interface FieldConfig<T> {
   }[];
   asyncValidation?: {
     marker: string,
+    message?: string,
     trigger?: string,
     asyncValidatorFactory?: AsyncValidatorFactory
   };
