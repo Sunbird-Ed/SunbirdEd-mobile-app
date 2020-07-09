@@ -1361,18 +1361,21 @@ ion-modal.sb-progress-loader {
     color: $red;
   }
 }
+.group-option-popover-admin {
+  ion-item:nth-child(1) {
+    color: $red;
+  }
+}
 
 .group-option-popover .popover-content {
-  top: 82px !important;
-  left: 215px !important;
   padding: 16px 8px;
   width: auto;
-  // width: 196px;
-  // height: 80px;
+  margin-top: -30px;
   ion-item {
     --min-height: 16px !important;
+    padding-top: 16px;
     &:first-child{
-      padding-bottom: 16px;
+      padding-top: 0;
     }
     label{
       margin: 0;
@@ -1389,18 +1392,13 @@ ion-modal.sb-progress-loader {
 }
 .sb-course-completion-popover{
   .popover-content{
-    // width: 90% !important;
-    // top: 0 !important;
-    // bottom: 0;
     left: 0 !important;
     right: 0 !important;
-    // height: 200px;
     margin: auto;
     width: 250px !important;
     padding: 16px;
   }
   .cc-popup-close{
-    // padding: 16px 16px 0 0;
     font-size: 18px;
   }
   .course-completion-title{
@@ -1412,7 +1410,6 @@ ion-modal.sb-progress-loader {
     color: $green;
     font-size: 14px;
     padding-top: 8px;
-    // padding-bottom: 16px;
   }
   .course-completion-cert{
     padding-top: 16px;

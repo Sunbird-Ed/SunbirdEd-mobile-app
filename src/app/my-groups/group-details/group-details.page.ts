@@ -134,7 +134,7 @@ export class GroupDetailsPage implements OnInit {
     this.activeTab = tab;
   }
 
-  async groupMenuClick() {
+  async groupMenuClick(event) {
     // this.telemetryGeneratorService.generateInteractTelemetry(
     //   InteractType.TOUCH,
     //   InteractSubtype.SORT_OPTION_CLICKED,
@@ -152,6 +152,7 @@ export class GroupDetailsPage implements OnInit {
       componentProps: {
         list: menuList
       },
+      event,
       cssClass: 'group-option-popover'
     });
     await groupOptions.present();
@@ -180,7 +181,7 @@ export class GroupDetailsPage implements OnInit {
         list: MenuOverflow.MENU_GROUP_ACTIVITY_ADMIN
       },
       event: event.event,
-      cssClass: 'download-popover my-group-menu'
+      cssClass: 'group-option-popover group-option-popover-admin'
     });
     await groupOptions.present();
 
@@ -210,7 +211,7 @@ export class GroupDetailsPage implements OnInit {
         list: menuList
       },
       event: event.event,
-      cssClass: 'download-popover my-group-menu'
+      cssClass: 'group-option-popover'
     });
     await groupOptions.present();
 
