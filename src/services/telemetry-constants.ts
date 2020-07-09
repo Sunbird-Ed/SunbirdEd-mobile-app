@@ -153,7 +153,8 @@ export enum PageId {
     LOCATION = 'location',
     MANUAL = 'manual',
     COURSE_COMPLETION_POPUP = 'course-completion-popup',
-    MY_GROUP = 'my-group'
+    MY_GROUP = 'my-group',
+    ADD_MEMBER = 'add-member'
 }
 
 export enum LogType {
@@ -199,7 +200,8 @@ export enum ImpressionSubtype {
     DISTRICT_LOCATION_MAPPING = 'district-location-mapping',
     UPGRADE_POPUP = 'upgrade-popup',
     DEEPLINK = 'deeplink',
-    CREATE_GROUP_FORM = 'create-group-form'
+    CREATE_GROUP_FORM = 'create-group-form',
+    DISPLAY_DIKSHA_ID_TUTORIAL = 'display-diksha-id-tutorial'
 }
 
 export enum InteractType {
@@ -489,7 +491,15 @@ export enum InteractSubtype {
     OUTSIDE = 'outside',
     QR_NOT_LINKED = 'qr-not-linked',
     ADD_MEMBER_CLICKED = 'add-member-clicked',
-    ADD_ACTIVITY_CLICKED = 'add-activity-clicked'
+    ADD_ACTIVITY_CLICKED = 'add-activity-clicked',
+    DELETE_GROUP_CLICKED = 'delete-group-clicked',
+    LEAVE_GROUP_CLICKED = 'leave-group-clicked',
+    MAKE_GROUP_ADMIN_CLICKED = 'make-group-admin-clicked',
+    DISMISS_GROUP_ADMIN_CLICKED = 'dismiss-group-admin-clicked',
+    REMOVE_MEMBER_CLICKED = 'remove-member-clicked',
+    REMOVE_ACTIVITY_CLICKED = 'remove-activity-clicked',
+    VERIFY_CLICKED = 'verify-clicked',
+    ADD_MEMBER_TO_GROUP_CLICKED = 'add-member-to-group-clicked'
 }
 
 export enum ID {
@@ -523,7 +533,15 @@ export enum ID {
     DATA_SHARING = 'data-sharing',
     VALIDATE_EMAIL = 'validate-email',
     VALIDATE_MOBILE = 'validate-mobile',
-    CREATE_GROUP = 'create-group'
+    CREATE_GROUP = 'create-group',
+    DELETE_GROUP = 'delete-group',
+    LEAVE_GROUP = 'leave-group',
+    MAKE_GROUP_ADMIN = 'make-group-admin',
+    DISMISS_GROUP_ADMIN = 'dismiss-group-admin',
+    REMOVE_MEMBER = 'remove-member',
+    REMOVE_ACTIVITY = 'remove-activity',
+    VERIFY_MEMBER = 'verify-member',
+    ADD_MEMBER_TO_GROUP = 'add-member-to-group'
 }
 
 export enum ActionButtonType {

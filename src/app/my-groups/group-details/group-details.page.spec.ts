@@ -70,7 +70,10 @@ describe('GroupDetailsPage', () => {
 
     it('should navigate to previous page', () => {
         mockLocation.back = jest.fn();
+        mockTelemetryGeneratorService.generateBackClickedTelemetry = jest.fn();
         groupDetailsPage.handleBackButton(true);
+        expect(mockTelemetryGeneratorService.generateBackClickedTelemetry).toHaveBeenCalledWith(
+            PageId.GROUP_DETAIL, Environment.GROUP, true);
         expect(mockLocation.back).toHaveBeenCalled();
     });
 
@@ -90,7 +93,7 @@ describe('GroupDetailsPage', () => {
         expect(mockPlatform.backButton).not.toBeUndefined();
     });
 
-    it('should handel device back button', () => {
+    it('should handle device back button', () => {
         const data = {
             name: 'back'
         };

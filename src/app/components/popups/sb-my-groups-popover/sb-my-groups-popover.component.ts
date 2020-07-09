@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { NavParams, PopoverController } from '@ionic/angular';
-import { CommonUtilService } from '@app/services';
+import {CommonUtilService, Environment, ImpressionSubtype, ImpressionType, PageId, TelemetryGeneratorService} from '@app/services';
 
 @Component({
   selector: 'app-my-groups-popover',
@@ -18,7 +18,8 @@ export class MyGroupsPopoverComponent {
   constructor(
     private popOverCtrl: PopoverController,
     private navParams: NavParams,
-    private commonUtilService: CommonUtilService
+    private commonUtilService: CommonUtilService,
+    private telemetryGeneratorService: TelemetryGeneratorService
   ) { }
 
   ionViewWillEnter() {
@@ -27,6 +28,11 @@ export class MyGroupsPopoverComponent {
     this.buttonText = this.navParams.get('buttonText');
     this.isFromAddMember = this.navParams.get('isFromAddMember');
     this.commonUtilService.getAppName().then((res) => { this.appName = res; });
+
+    if (this.isFromAddMember) {
+      this.telemetryGeneratorService.generateImpressionTelemetry(ImpressionType.VIEW,
+          ImpressionSubtype.DISPLAY_DIKSHA_ID_TUTORIAL, PageId.ADD_MEMBER, Environment.GROUP);
+    }
   }
 
   close() {

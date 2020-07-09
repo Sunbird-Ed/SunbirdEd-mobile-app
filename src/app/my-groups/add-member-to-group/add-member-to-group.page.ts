@@ -11,7 +11,15 @@ import { Location } from '@angular/common';
 import { Router } from '@angular/router';
 import { ProfileConstants } from '@app/app/app.constant';
 import { Platform } from '@ionic/angular';
-import { AppHeaderService, CommonUtilService } from '@app/services';
+import {
+  AppHeaderService,
+  CommonUtilService,
+  Environment, ID,
+  InteractSubtype,
+  InteractType,
+  PageId,
+  TelemetryGeneratorService
+} from '@app/services';
 import { PopoverController } from '@ionic/angular';
 import { animationGrowInTopRight } from '../../animations/animation-grow-in-top-right';
 import { animationShrinkOutTopRight } from '../../animations/animation-shrink-out-top-right';
@@ -41,7 +49,8 @@ export class AddMemberToGroupPage {
     private location: Location,
     private platform: Platform,
     private commonUtilService: CommonUtilService,
-    private popoverCtrl: PopoverController
+    private popoverCtrl: PopoverController,
+    private telemetryGeneratorService: TelemetryGeneratorService
   ) {
     const extras = this.router.getCurrentNavigation().extras.state;
     this.groupId = extras.groupId;
@@ -72,8 +81,6 @@ export class AddMemberToGroupPage {
   handleHeaderEvents($event) {
     switch ($event.name) {
       case 'back':
-        // this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.COLLECTION_DETAIL, Environment.HOME,
-        // true, this.cardData.identifier, this.corRelationList);
         this.handleBackButton(true);
         break;
     }
@@ -83,11 +90,17 @@ export class AddMemberToGroupPage {
     if (this.isUserIdVerified) {
       this.isUserIdVerified = false;
     } else {
+      this.telemetryGeneratorService.generateBackClickedTelemetry(PageId.ADD_MEMBER, Environment.GROUP, isNavBack);
       this.location.back();
     }
   }
 
   async onVerifyClick() {
+    this.telemetryGeneratorService.generateInteractTelemetry(
+        InteractType.TOUCH,
+        InteractSubtype.VERIFY_CLICKED,
+        Environment.GROUP,
+        PageId.ADD_MEMBER);
     if (!this.userId) {
       this.showErrorMsg = true;
       return;
@@ -97,6 +110,16 @@ export class AddMemberToGroupPage {
       userId: 'da4e72df-0371-45be-9df4-a7c7762d3d7f',
       requiredFields: ProfileConstants.REQUIRED_FIELDS
     };
+    this.telemetryGeneratorService.generateInteractTelemetry(
+        InteractType.INITIATED,
+        '',
+        Environment.GROUP,
+        PageId.ADD_MEMBER,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        ID.VERIFY_MEMBER);
     const loader = await this.commonUtilService.getLoader();
     await loader.present();
     this.profileService.getServerProfilesDetails(req).toPromise()
@@ -107,6 +130,16 @@ export class AddMemberToGroupPage {
           this.userName = serverProfile.firstName ? serverProfile.firstName : '';
           this.userName += serverProfile.lastName ? serverProfile.lastName : '';
           this.isUserIdVerified = true;
+          this.telemetryGeneratorService.generateInteractTelemetry(
+              InteractType.SUCCESS,
+              '',
+              Environment.GROUP,
+              PageId.ADD_MEMBER,
+              undefined,
+              undefined,
+              undefined,
+              undefined,
+              ID.VERIFY_MEMBER);
           console.log('this.userName', this.userName);
         }
       }).catch(async () => {
@@ -120,8 +153,23 @@ export class AddMemberToGroupPage {
   }
 
   async onAddToGroupClick() {
+    this.telemetryGeneratorService.generateInteractTelemetry(
+        InteractType.TOUCH,
+        InteractSubtype.ADD_MEMBER_TO_GROUP_CLICKED,
+        Environment.GROUP,
+        PageId.ADD_MEMBER);
     const loader = await this.commonUtilService.getLoader();
     await loader.present();
+    this.telemetryGeneratorService.generateInteractTelemetry(
+        InteractType.INITIATED,
+        '',
+        Environment.GROUP,
+        PageId.ADD_MEMBER,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        ID.ADD_MEMBER_TO_GROUP);
     const addMemberToGroupReq: AddMembersRequest = {
       groupId: this.groupId,
       addMembersRequest: {
@@ -137,6 +185,16 @@ export class AddMemberToGroupPage {
           throw res.error.members[0];
         } else {
           await loader.dismiss();
+          this.telemetryGeneratorService.generateInteractTelemetry(
+              InteractType.SUCCESS,
+              '',
+              Environment.GROUP,
+              PageId.ADD_MEMBER,
+              undefined,
+              undefined,
+              undefined,
+              undefined,
+              ID.ADD_MEMBER_TO_GROUP);
           this.commonUtilService.showToast('MEMBER_ADDED_TO_GROUP');
           this.location.back();
         }
