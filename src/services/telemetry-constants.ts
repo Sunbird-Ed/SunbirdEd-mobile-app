@@ -152,6 +152,7 @@ export enum PageId {
     QR_CONTENT_RESULT = 'qr-content-result',
     LOCATION = 'location',
     MANUAL = 'manual',
+    COURSE_COMPLETION_POPUP = 'course-completion-popup',
     MY_GROUP = 'my-group'
 }
 
