@@ -7,7 +7,7 @@
           <div class="gd-created-by">Created by creator name </div>
         </div>
         <div class="gd-opts">
-          <ion-icon md="md-more" (click)="groupMenuClick()"></ion-icon>
+          <ion-icon md="md-more" (click)="groupMenuClick($event)"></ion-icon>
         </div>
       </div>
       <div class="gd-tab-header">
@@ -24,7 +24,7 @@
       <div class="gd-tab-content" *ngIf="activeTab=='members'">
         <div class="gd-member-search">
           <ion-icon class="gd-member-search-icon" md="md-search"></ion-icon>
-          <input type="text" [(ngModel)]="searchMember" (ngModelChange)="onSearch(searchMember)">
+          <input type="text" [(ngModel)]="searchMember" placeholder="{{'GROUP_MEMBER_SEARCH_PLACEHOLDER' | translate}}" (ngModelChange)="onSearch(searchMember)" >
         </div>
         <div class="gd-add-member-container">
           <div class="gd-add-member" (click)="navigateToAddUserPage()">
@@ -57,7 +57,7 @@
       <div class="gd-tab-content" *ngIf="activeTab=='courses'">
         <div class="gd-member-search">
           <ion-icon class="gd-member-search-icon" md="md-search"></ion-icon>
-          <input type="text" [(ngModel)]="searchMember" (ngModelChange)="onSearch(searchMember)">
+          <input type="text" [(ngModel)]="searchMember" placeholder="{{'ACTIVITIESE_SEARCH_PLACEHOLDER' | translate}}" (ngModelChange)="onSearch(searchMember)">
         </div>
         <sb-course-card [section]="null" (click)="navigateToActivityDetails($event)" [isMenu]="showMenu"
           (menuClick)="activityMenuClick($event)"></sb-course-card>

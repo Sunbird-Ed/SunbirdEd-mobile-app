@@ -51,11 +51,13 @@
     margin-top: 16px;
     padding: 0 16px;
     border: 1px solid $gray-800 !important;
+    border-radius: 2px;
   }
   
 
   .cr-input-primary ion-input{
     border: 1px solid $gray-800;
+    border-radius: 2px;
   }
 
   .cr-input-error ion-input{
