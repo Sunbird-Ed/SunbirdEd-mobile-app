@@ -201,7 +201,8 @@ export enum ImpressionSubtype {
     UPGRADE_POPUP = 'upgrade-popup',
     DEEPLINK = 'deeplink',
     CREATE_GROUP_FORM = 'create-group-form',
-    DISPLAY_DIKSHA_ID_TUTORIAL = 'display-diksha-id-tutorial'
+    DISPLAY_DIKSHA_ID_TUTORIAL = 'display-diksha-id-tutorial',
+    GROUP_TUTORIAL = 'my-group-tutorial-popup'
 }
 
 export enum InteractType {

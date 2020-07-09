@@ -104,6 +104,8 @@ export class MyGroupsPage implements OnInit, OnDestroy {
   handleHeaderEvents($event) {
     switch ($event.name) {
       case 'groupInfo':
+        this.telemetryGeneratorService.generateInteractTelemetry(InteractType.TOUCH,
+            InteractSubtype.INFORMATION_ICON_CLICKED, Environment.GROUP, PageId.MY_GROUP);
         this.openinfopopup();
         break;
         case 'back':
