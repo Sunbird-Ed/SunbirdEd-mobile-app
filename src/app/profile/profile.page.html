@@ -177,7 +177,7 @@
         </div>
     </div>
 
-    <div class="self-declare-teacher-details" *ngIf="selfDeclaredTeacherDetails">
+    <div class="self-declare-teacher-details" *ngIf="selfDeclaredTeacherDetails?.state || selfDeclaredTeacherDetails?.district || selfDeclaredTeacherDetails?.mobile || selfDeclaredTeacherDetails?.teacherId">
         <div class="container" *ngIf = "selfDeclaredTeacherDetails?.state">
             <div>{{'STATE' | translate }}:</div>
             <div class="bolder">{{selfDeclaredTeacherDetails?.state}}</div>
