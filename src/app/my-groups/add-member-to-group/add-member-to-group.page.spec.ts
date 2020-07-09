@@ -2,7 +2,15 @@ import { AddMemberToGroupPage } from './add-member-to-group.page';
 import { ProfileService, GroupService } from '@project-sunbird/sunbird-sdk';
 import { Router } from '@angular/router';
 import { Platform, PopoverController } from '@ionic/angular';
-import { AppHeaderService, CommonUtilService } from '@app/services';
+import {
+    AppHeaderService,
+    CommonUtilService,
+    Environment, ID,
+    InteractSubtype,
+    InteractType,
+    PageId,
+    TelemetryGeneratorService
+} from '@app/services';
 import { Location } from '@angular/common';
 import { of, throwError, Subscription } from 'rxjs';
 
@@ -28,6 +36,7 @@ describe('AddMemberToGroupPage', () => {
             }
         })) as any
     };
+    const mockTelemetryGeneratorService: Partial<TelemetryGeneratorService> = {};
 
     beforeAll(() => {
         addMemberToGroupPage = new AddMemberToGroupPage(
@@ -38,7 +47,8 @@ describe('AddMemberToGroupPage', () => {
             mockLocation as Location,
             mockPlatform as Platform,
             mockCommonUtilService as CommonUtilService,
-            mockPopoverCtrl as PopoverController
+            mockPopoverCtrl as PopoverController,
+            mockTelemetryGeneratorService as TelemetryGeneratorService
         );
     });
 
@@ -60,8 +70,14 @@ describe('AddMemberToGroupPage', () => {
         it('should back to previous page', () => {
             addMemberToGroupPage.isUserIdVerified = false;
             mockLocation.back = jest.fn();
+            mockTelemetryGeneratorService.generateBackClickedTelemetry = jest.fn();
             addMemberToGroupPage.handleBackButton(true);
             expect(addMemberToGroupPage.isUserIdVerified).toBeFalsy();
+            expect(mockTelemetryGeneratorService.generateBackClickedTelemetry).toHaveBeenCalledWith(
+                PageId.ADD_MEMBER,
+                Environment.GROUP,
+                true
+            );
             expect(mockLocation.back).toHaveBeenCalled();
         });
     });
@@ -73,7 +89,7 @@ describe('AddMemberToGroupPage', () => {
         addMemberToGroupPage.handleDeviceBackButton();
     });
 
-    it('should handel device back button', () => {
+    it('should handle device back button', () => {
         const data = {
             name: 'back'
         };
@@ -106,8 +122,15 @@ describe('AddMemberToGroupPage', () => {
     describe('onVerifyClick', () => {
         it('should return errorMessage if userId is undefined', (done) => {
             addMemberToGroupPage.userId = undefined;
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             addMemberToGroupPage.onVerifyClick();
             setTimeout(() => {
+                expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+                    InteractType.TOUCH,
+                    InteractSubtype.VERIFY_CLICKED,
+                    Environment.GROUP,
+                    PageId.ADD_MEMBER
+                );
                 expect(addMemberToGroupPage.userId).toBeUndefined();
                 expect(addMemberToGroupPage.showErrorMsg).toBeTruthy();
                 done();
@@ -126,10 +149,22 @@ describe('AddMemberToGroupPage', () => {
                 firstName: 'jhon',
                 lastName: 'snow'
             })) as any;
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             // act
             addMemberToGroupPage.onVerifyClick();
             // assert
             setTimeout(() => {
+                expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+                    InteractType.INITIATED,
+                    '',
+                    Environment.GROUP,
+                    PageId.ADD_MEMBER,
+                    undefined,
+                    undefined,
+                    undefined,
+                    undefined,
+                    ID.VERIFY_MEMBER
+                );
                 expect(addMemberToGroupPage.userId).not.toBeUndefined();
                 expect(presentFn).toHaveBeenCalled();
                 expect(dismissFn).toHaveBeenCalled();
@@ -138,6 +173,17 @@ describe('AddMemberToGroupPage', () => {
                     firstName: 'jhon',
                     lastName: 'snow'
                 });
+                expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+                    InteractType.SUCCESS,
+                    '',
+                    Environment.GROUP,
+                    PageId.ADD_MEMBER,
+                    undefined,
+                    undefined,
+                    undefined,
+                    undefined,
+                    ID.VERIFY_MEMBER
+                );
                 expect(addMemberToGroupPage.userName).toBe('jhonsnow');
                 expect(addMemberToGroupPage.isUserIdVerified).toBeTruthy();
                 done();
@@ -156,10 +202,22 @@ describe('AddMemberToGroupPage', () => {
                 firstName: undefined,
                 lastName: undefined
             })) as any;
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             // act
             addMemberToGroupPage.onVerifyClick();
             // assert
             setTimeout(() => {
+                expect(mockTelemetryGeneratorService.generateInteractTelemetry).toHaveBeenCalledWith(
+                    InteractType.INITIATED,
+                    '',
+                    Environment.GROUP,
+                    PageId.ADD_MEMBER,
+                    undefined,
+                    undefined,
+                    undefined,
+                    undefined,
+                    ID.VERIFY_MEMBER
+                );
                 expect(addMemberToGroupPage.userId).not.toBeUndefined();
                 expect(presentFn).toHaveBeenCalled();
                 expect(dismissFn).toHaveBeenCalled();
@@ -183,6 +241,7 @@ describe('AddMemberToGroupPage', () => {
                 dismiss: dismissFn,
             }));
             mockProfileService.getServerProfilesDetails = jest.fn(() => of(undefined)) as any;
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             // act
             addMemberToGroupPage.onVerifyClick();
             // assert
@@ -203,6 +262,7 @@ describe('AddMemberToGroupPage', () => {
                 present: presentFn,
                 dismiss: dismissFn,
             }));
+            mockTelemetryGeneratorService.generateInteractTelemetry = jest.fn();
             mockProfileService.getServerProfilesDetails = jest.fn(() => throwError({error: 'error'})) as any;
             // act
             addMemberToGroupPage.onVerifyClick();
