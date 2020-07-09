@@ -15,15 +15,12 @@ import {
     AppGlobalService,
     TelemetryGeneratorService,
     CommonUtilService,
-    SunbirdQRScanner,
     ContainerService,
-    AppHeaderService, FormAndFrameworkUtilService
+    AppHeaderService
 } from '../../../services';
 import { Location } from '@angular/common';
-import { ImpressionType, PageId, Environment, InteractSubtype, InteractType } from '../../../services/telemetry-constants';
-import { of, Subscription } from 'rxjs';
-import { FormControl, FormBuilder } from '@angular/forms';
-import { doesNotReject } from 'assert';
+import { of } from 'rxjs';
+import { FormBuilder } from '@angular/forms';
 
 describe('ProfileSettingsPage', () => {
     let guestEditPage: GuestEditPage;
@@ -105,6 +102,7 @@ describe('ProfileSettingsPage', () => {
 
     beforeEach(() => {
         jest.clearAllMocks();
+        jest.resetAllMocks();
     });
 
     it('should be create a instance of guestEditPage', () => {
@@ -177,7 +175,7 @@ describe('ProfileSettingsPage', () => {
     describe('onSubjectChanged', () => {
         it('should change subject in telemetry', () => {
             // arrange
-            guestEditPage.profileForTelemetry = {subject: 'subject'};
+            guestEditPage.profileForTelemetry = { subject: 'subject' };
             mockAppGlobalService.generateAttributeChangeTelemetry = jest.fn();
             // act
             guestEditPage.onSubjectChanged('subject1');
@@ -217,7 +215,7 @@ describe('ProfileSettingsPage', () => {
             guestEditPage.onSubmit();
             // assert
             setTimeout(() => {
-                expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('USER_TYPE_SELECT_WARNING');
+                expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('translated1', false, 'red-toast');
                 done();
             }, 0);
         });
@@ -228,7 +226,7 @@ describe('ProfileSettingsPage', () => {
                 value: {
                     userType: 'userType'
                 },
-                getRawValue: jest.fn(() => {})
+                getRawValue: jest.fn(() => { })
             } as any;
             mockCommonUtilService.translateMessage = jest.fn((arg) => {
                 let value;
@@ -243,12 +241,12 @@ describe('ProfileSettingsPage', () => {
                 return value;
             }
             );
-            jest.spyOn(guestEditPage.guestEditForm, 'getRawValue').mockReturnValue({name: ''});
+            jest.spyOn(guestEditPage.guestEditForm, 'getRawValue').mockReturnValue({ name: '' });
             // act
             guestEditPage.onSubmit();
             // assert
             setTimeout(() => {
-                expect(mockCommonUtilService.showToast).toHaveBeenCalledWith( 'translated1', false, 'red-toast');
+                expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('translated1', false, 'red-toast');
                 done();
             }, 0);
         });
@@ -261,7 +259,7 @@ describe('ProfileSettingsPage', () => {
                     userType: 'userType',
                     boards: []
                 },
-                getRawValue: jest.fn(() => {})
+                getRawValue: jest.fn(() => { })
             } as any;
             mockCommonUtilService.translateMessage = jest.fn((arg) => {
                 let value;
@@ -276,13 +274,13 @@ describe('ProfileSettingsPage', () => {
                 return value;
             }
             );
-            jest.spyOn(guestEditPage.guestEditForm, 'getRawValue').mockReturnValue({name: 'name'});
+            jest.spyOn(guestEditPage.guestEditForm, 'getRawValue').mockReturnValue({ name: 'name' });
             mockAppGlobalService.generateSaveClickedTelemetry = jest.fn();
             // act
             guestEditPage.onSubmit();
             // assert
             setTimeout(() => {
-                expect(mockCommonUtilService.showToast).toHaveBeenCalledWith( 'translated1', false, 'red-toast');
+                expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('translated1', false, 'red-toast');
                 done();
             }, 0);
         });
@@ -296,7 +294,7 @@ describe('ProfileSettingsPage', () => {
                     boards: ['board'],
                     medium: []
                 },
-                getRawValue: jest.fn(() => {})
+                getRawValue: jest.fn(() => { })
             } as any;
             mockCommonUtilService.translateMessage = jest.fn((arg) => {
                 let value;
@@ -311,13 +309,13 @@ describe('ProfileSettingsPage', () => {
                 return value;
             }
             );
-            jest.spyOn(guestEditPage.guestEditForm, 'getRawValue').mockReturnValue({name: 'name'});
+            jest.spyOn(guestEditPage.guestEditForm, 'getRawValue').mockReturnValue({ name: 'name' });
             mockAppGlobalService.generateSaveClickedTelemetry = jest.fn();
             // act
             guestEditPage.onSubmit();
             // assert
             setTimeout(() => {
-                expect(mockCommonUtilService.showToast).toHaveBeenCalledWith( 'translated1', false, 'red-toast');
+                expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('translated1', false, 'red-toast');
                 done();
             }, 0);
         });
@@ -332,7 +330,7 @@ describe('ProfileSettingsPage', () => {
                     medium: ['medium'],
                     grades: []
                 },
-                getRawValue: jest.fn(() => {})
+                getRawValue: jest.fn(() => { })
             } as any;
             mockCommonUtilService.translateMessage = jest.fn((arg) => {
                 let value;
@@ -347,13 +345,13 @@ describe('ProfileSettingsPage', () => {
                 return value;
             }
             );
-            jest.spyOn(guestEditPage.guestEditForm, 'getRawValue').mockReturnValue({name: 'name'});
+            jest.spyOn(guestEditPage.guestEditForm, 'getRawValue').mockReturnValue({ name: 'name' });
             mockAppGlobalService.generateSaveClickedTelemetry = jest.fn();
             // act
             guestEditPage.onSubmit();
             // assert
             setTimeout(() => {
-                expect(mockCommonUtilService.showToast).toHaveBeenCalledWith( 'translated1', false, 'red-toast');
+                expect(mockCommonUtilService.showToast).toHaveBeenCalledWith('translated1', false, 'red-toast');
                 done();
             }, 0);
         });
@@ -370,7 +368,7 @@ describe('ProfileSettingsPage', () => {
                     medium: ['medium'],
                     grades: ['grade']
                 },
-                getRawValue: jest.fn(() => {})
+                getRawValue: jest.fn(() => { })
             } as any;
             mockCommonUtilService.translateMessage = jest.fn((arg) => {
                 let value;
@@ -385,7 +383,7 @@ describe('ProfileSettingsPage', () => {
                 return value;
             }
             );
-            jest.spyOn(guestEditPage.guestEditForm, 'getRawValue').mockReturnValue({name: 'name'});
+            jest.spyOn(guestEditPage.guestEditForm, 'getRawValue').mockReturnValue({ name: 'name' });
             mockAppGlobalService.generateSaveClickedTelemetry = jest.fn();
             // act
             guestEditPage.onSubmit();
@@ -408,7 +406,7 @@ describe('ProfileSettingsPage', () => {
                     medium: ['medium'],
                     grades: ['grade']
                 },
-                getRawValue: jest.fn(() => {})
+                getRawValue: jest.fn(() => { })
             } as any;
             mockCommonUtilService.translateMessage = jest.fn((arg) => {
                 let value;
@@ -423,7 +421,7 @@ describe('ProfileSettingsPage', () => {
                 return value;
             }
             );
-            jest.spyOn(guestEditPage.guestEditForm, 'getRawValue').mockReturnValue({name: 'name'});
+            jest.spyOn(guestEditPage.guestEditForm, 'getRawValue').mockReturnValue({ name: 'name' });
             mockAppGlobalService.generateSaveClickedTelemetry = jest.fn();
             // act
             guestEditPage.onSubmit();
