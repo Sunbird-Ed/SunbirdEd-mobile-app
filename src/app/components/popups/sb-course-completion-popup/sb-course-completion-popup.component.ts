@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { NavParams, PopoverController } from '@ionic/angular';
 @Component({
   selector: 'app-my-groups-popover',
-  templateUrl: '/sb-course-completion-popup.component.html',
+  templateUrl: './sb-course-completion-popup.component.html',
   styleUrls: ['./sb-course-completion-popup.component.scss'],
 })
 export class CourseCompletionPopoverComponent {
