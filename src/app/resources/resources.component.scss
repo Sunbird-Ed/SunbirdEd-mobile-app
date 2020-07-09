@@ -21,7 +21,7 @@
   z-index: 1;
 }
 .main-container {
-  background: #fff;
+  background: $white;
   position: relative;
 }
 .offline-header {
@@ -44,7 +44,7 @@
   background-color: #f2f2f2;
 }
 .sb-view-more {
-  background: #edf4f9;
+  background: $light-blue;
   text-align: center;
   padding: $base-block-space * 2;
   color: $primary-color;
@@ -52,13 +52,13 @@
 }
 .explore-more-content {
   border-radius: 4px;
-  background-color: #FFFFFF;
+  background-color: $white;
   color: #004D9F;
   padding-left: 16px;
   padding-right: 16px;
 }
 .explore-more-books {
-  --background: #024F9D;
+  --background: #{$blue};
   border-radius: 4px;
   padding-left: 16px;
   padding-right: 16px;
@@ -66,7 +66,7 @@
 .sub-heading {
   padding: 1em 4em !important;
   font-size: 12px;
-  color: #333333;
+  color: $gray-800;
   margin: 0;
 }
 .sb-nodownloads-container {
@@ -79,7 +79,7 @@
     margin: 0;
     font-size: 16px;
     padding-top: 4%;
-    color: #666666;
+    color: $gray-400;
     font-weight: bold;
     letter-spacing: -0.46px
   }
