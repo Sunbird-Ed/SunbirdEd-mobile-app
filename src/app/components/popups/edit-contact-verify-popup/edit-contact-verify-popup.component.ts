@@ -98,13 +98,11 @@ export class EditContactVerifyPopupComponent implements OnInit {
       let req: GenerateOtpRequest;
       if (this.type === ProfileConstants.CONTACT_TYPE_PHONE) {
         req = {
-          userId: this.userId,
           key: this.key,
           type: ProfileConstants.CONTACT_TYPE_PHONE
         };
       } else {
         req = {
-          userId: this.userId,
           key: this.key,
           type: ProfileConstants.CONTACT_TYPE_EMAIL
         };
@@ -117,8 +115,9 @@ export class EditContactVerifyPopupComponent implements OnInit {
           await loader.dismiss();
           loader = undefined;
         })
-        .catch(async () => {
+        .catch(async (e) => {
           if (loader) {
+            this.commonUtilService.showToast('SOMETHING_WENT_WRONG');
             await loader.dismiss();
             loader = undefined;
           }
