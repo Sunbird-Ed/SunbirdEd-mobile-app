@@ -1124,7 +1124,9 @@ export class SearchPage implements OnInit, AfterViewInit, OnDestroy {
           displayDialCodeResult.push(dialCodeCourseResultObj);
         }
       }
-      this.generateImpressionEvent(displayDialCodeResult[0].dialCodeResult);
+      if (displayDialCodeResult.length && displayDialCodeResult[0].dialCodeResult) {
+        this.generateImpressionEvent(displayDialCodeResult[0].dialCodeResult);
+      }
       let isParentCheckStarted = false;
       if (dialCodeResultObj.dialCodeResult.length === 1 && dialCodeResultObj.dialCodeResult[0].content.length === 1
         && isAllContentMappedToCollection) {
