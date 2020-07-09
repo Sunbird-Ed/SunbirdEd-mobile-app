@@ -98,14 +98,11 @@
     <div *ngIf="!searchApiLoader && storyAndWorksheets && storyAndWorksheets.length === 0">
       <div class="sb-nodownloads-container" *ngIf="commonUtilService?.networkInfo?.isNetworkAvailable">
         <div class="text-center">
-          <img style="width: 19.58%; height: 7.72%;" src="./assets/imgs/group.svg" alt="">
+          <img style="width: 45%;" src="./assets/imgs/group.svg" alt="">
         </div>
         <div class="text-center">
-          <p class="sb-nodownloads-title">
-            <strong>{{'NO_BOOKS_AVAILABLE' | translate}}</strong>
-          </p>
-          <p class="sub-heading">{{'NO_BOOKS_DEFINITION' | translate:{'%s': appLabel} }}</p>
-          <ion-button class="explore-more-books" (click)="requestMoreContent()">
+          <p class="sub-heading">{{'NO_BOOKS_TEXT' | translate:{'%s': appLabel} }}</p>
+          <ion-button class="explore-more-books" expand="block" (click)="requestMoreContent()">
             {{'REQUEST_CONTENT' | translate}} </ion-button>
         </div>
       </div>
