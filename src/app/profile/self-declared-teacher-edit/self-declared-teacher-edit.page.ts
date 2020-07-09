@@ -162,7 +162,10 @@ export class SelfDeclaredTeacherEditPage {
                 stateCode = stateDetails && stateDetails.id;
               }
               if (!isFormLoaded) {
-                this.initialExternalIds[childConfig.code] = stateCode;
+                this.initialExternalIds[childConfig.code] = {
+                  name: this.commonUtilService.translateMessage(childConfig.templateOptions.label) || '',
+                  value: stateCode
+                };
               }
               childConfig.templateOptions.options = this.buildStateListClosure(stateCode);
             } else if (childConfig.templateOptions['dataSrc'].params.id === 'district') {
@@ -172,7 +175,10 @@ export class SelfDeclaredTeacherEditPage {
               }
 
               if (!isFormLoaded) {
-                this.initialExternalIds[childConfig.code] = districtDetails && districtDetails.id;
+                this.initialExternalIds[childConfig.code] = {
+                  name: this.commonUtilService.translateMessage(childConfig.templateOptions.label) || '',
+                  value: districtDetails && districtDetails.id
+                } ;
               }
               childConfig.templateOptions.options = this.buildDistrictListClosure(districtDetails && districtDetails.id, isFormLoaded);
             }
@@ -182,29 +188,27 @@ export class SelfDeclaredTeacherEditPage {
           if (childConfig.asyncValidation) {
             childConfig = this.assignDefaultValue(childConfig, isFormLoaded);
 
+            const telemetryData = {
+              type: InteractType.TOUCH,
+              subType: '',
+              env: Environment.USER,
+              pageId: PageId.TEACHER_SELF_DECLARATION,
+              id: ''
+            };
+            const initialValue = this.initialExternalIds[childConfig.code] && this.initialExternalIds[childConfig.code].value;
+
             if (childConfig.asyncValidation.marker === 'MOBILE_OTP_VALIDATION') {
-              const telemetryData = {
-                type: InteractType.TOUCH,
-                subType: '',
-                env: Environment.USER,
-                pageId: PageId.TEACHER_SELF_DECLARATION,
-                id: ID.VALIDATE_MOBILE
-              };
+              telemetryData['id'] = ID.VALIDATE_MOBILE;
+
               childConfig.asyncValidation.asyncValidatorFactory =
                 this.formValidationAsyncFactory.mobileVerificationAsyncFactory(
-                  childConfig, this.profile, this.initialExternalIds[childConfig.code], telemetryData
+                  childConfig, this.profile, initialValue, telemetryData
                 );
             } else if (childConfig.asyncValidation.marker === 'EMAIL_OTP_VALIDATION') {
-              const telemetryData = {
-                type: InteractType.TOUCH,
-                subType: '',
-                env: Environment.USER,
-                pageId: PageId.TEACHER_SELF_DECLARATION,
-                id: ID.VALIDATE_EMAIL
-              };
+              telemetryData['id'] = ID.VALIDATE_EMAIL;
               childConfig.asyncValidation.asyncValidatorFactory =
                 this.formValidationAsyncFactory.emailVerificationAsyncFactory(
-                  childConfig, this.profile, this.initialExternalIds[childConfig.code], telemetryData
+                  childConfig, this.profile, initialValue, telemetryData
                 );
             }
             return childConfig;
@@ -260,7 +264,10 @@ export class SelfDeclaredTeacherEditPage {
     }
 
     if (!isFormLoaded) {
-      this.initialExternalIds[childConfig.code] = childConfig.default || undefined;
+      this.initialExternalIds[childConfig.code] = {
+        name: this.commonUtilService.translateMessage(childConfig.templateOptions.label) || '',
+        value: childConfig.default || undefined
+      };
     }
     return childConfig;
   }
@@ -447,17 +454,9 @@ export class SelfDeclaredTeacherEditPage {
   getUpdatedValues(formVal) {
     const telemetryValue = [];
 
-    this.profile['userLocations'].forEach(ele => {
-      if (ele.type === 'state' && ele.id !== formVal.state) {
-        telemetryValue.push('State');
-      }
-      if (ele.type === 'district' && ele.id !== formVal.district) {
-        telemetryValue.push('District');
-      }
-    });
-
     for (const data in this.initialExternalIds) {
-      if (data !== 'state' && data !== 'district' && this.initialExternalIds[data].value !== formVal[data]) {
+      if (this.initialExternalIds[data] && this.initialExternalIds[data].value !== null &&
+        this.initialExternalIds[data].value !== undefined && this.initialExternalIds[data].value !== formVal[data]) {
         telemetryValue.push(this.initialExternalIds[data].name);
       }
     }
